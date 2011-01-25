@@ -185,9 +185,7 @@ static bool advanceCurrentStream(FormStreamFields* form)
         }
 #endif
         const String& path = nextInput.m_shouldGenerateFile ? nextInput.m_generatedFilename : nextInput.m_filename;
-        RetainPtr<CFStringRef> filename(AdoptCF, path.createCFString());
-        RetainPtr<CFURLRef> fileURL(AdoptCF, CFURLCreateWithFileSystemPath(0, filename.get(), kCFURLPOSIXPathStyle, FALSE));
-        form->currentStream = CFReadStreamCreateWithFile(0, fileURL.get());
+        form->currentStream = CFReadStreamCreateWithFile(0, pathAsURL(path).get());
         if (!form->currentStream) {
             // The file must have been removed or become unreadable.
             return false;

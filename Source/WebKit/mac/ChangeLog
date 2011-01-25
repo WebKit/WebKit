@@ -1,3 +1,15 @@
+2011-01-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit is using CSBackupSetItemExcluded incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=53095
+        rdar://problem/8790540
+
+        * Misc/WebIconDatabase.mm:
+        (importToWebCoreFormat): Removed code that was calling CSBackupSetItemExcluded.
+        It was incorrect, and this responsibility has been moved to WebCore.
+
 2011-01-24  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Eric Seidel.

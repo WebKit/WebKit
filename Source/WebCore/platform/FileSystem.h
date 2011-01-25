@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Collabora, Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,15 @@
 #ifndef FileSystem_h
 #define FileSystem_h
 
+#include "PlatformString.h"
+#include <time.h>
+#include <wtf/Forward.h>
+#include <wtf/Vector.h>
+
+#if PLATFORM(CF)
+#include <wtf/RetainPtr.h>
+#endif
+
 #if PLATFORM(QT)
 #include <QFile>
 #include <QLibrary>
@@ -39,15 +48,9 @@
 #endif
 
 #if PLATFORM(CF) || (PLATFORM(QT) && defined(Q_WS_MAC))
-#include <CoreFoundation/CFBundle.h>
-#endif
-
-#include "PlatformString.h"
-#include <time.h>
-#include <wtf/Forward.h>
-#include <wtf/Vector.h>
-
+typedef struct __CFBundle* CFBundleRef;
 typedef const struct __CFData* CFDataRef;
+#endif
 
 #if OS(WINDOWS)
 // These are to avoid including <winbase.h> in a header for Chromium
@@ -122,8 +125,6 @@ const PlatformFileHandle invalidPlatformFileHandle = reinterpret_cast<HANDLE>(-1
 #elif PLATFORM(BREWMP)
 typedef IFile* PlatformFileHandle;
 const PlatformFileHandle invalidPlatformFileHandle = 0;
-typedef void* PlatformModule;
-typedef unsigned PlatformModuleVersion;
 #elif PLATFORM(GTK)
 typedef GFileIOStream* PlatformFileHandle;
 const PlatformFileHandle invalidPlatformFileHandle = 0;
@@ -161,6 +162,9 @@ String homeDirectoryPath();
 String pathGetFileName(const String&);
 String directoryName(const String&);
 
+bool canExcludeFromBackup(); // Returns true if any file can ever be excluded from backup.
+bool excludeFromBackup(const String&); // Returns true if successful.
+
 Vector<String> listDirectory(const String& path, const String& filter = String());
 
 CString fileSystemRepresentation(const String&);
@@ -179,17 +183,18 @@ int writeToFile(PlatformFileHandle, const char* data, int length);
 // Returns number of bytes actually written if successful, -1 otherwise.
 int readFromFile(PlatformFileHandle, char* data, int length);
 
-// Methods for dealing with loadable modules
+// Functions for working with loadable modules.
 bool unloadModule(PlatformModule);
 
 // Encode a string for use within a file name.
 String encodeForFileName(const String&);
 
-#if PLATFORM(WIN)
-String localUserSpecificStorageDirectory();
-String roamingUserSpecificStorageDirectory();
+#if PLATFORM(CF)
+RetainPtr<CFURLRef> pathAsURL(const String&);
+#endif
 
-bool safeCreateFile(const String&, CFDataRef);
+#if PLATFORM(CHROMIUM)
+String pathGetDisplayFileName(const String&);
 #endif
 
 #if PLATFORM(GTK)
@@ -198,8 +203,10 @@ String filenameForDisplay(const String&);
 CString applicationDirectoryPath();
 #endif
 
-#if PLATFORM(CHROMIUM)
-String pathGetDisplayFileName(const String&);
+#if PLATFORM(WIN)
+String localUserSpecificStorageDirectory();
+String roamingUserSpecificStorageDirectory();
+bool safeCreateFile(const String&, CFDataRef);
 #endif
 
 } // namespace WebCore

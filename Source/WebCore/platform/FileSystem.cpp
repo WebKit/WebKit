@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -100,5 +100,19 @@ String encodeForFileName(const String& inputStr)
 
     return String(buffer.data(), p - buffer.data());
 }
+
+#if !PLATFORM(MAC)
+
+bool canExcludeFromBackup()
+{
+    return false;
+}
+
+bool excludeFromBackup(const String&)
+{
+    return false;
+}
+
+#endif
 
 } // namespace WebCore

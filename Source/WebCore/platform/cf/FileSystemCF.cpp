@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,12 +25,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #import "config.h"
 #import "FileSystem.h"
 
 #import "PlatformString.h"
-#import <wtf/text/CString.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/CString.h>
 
 namespace WebCore {
 
@@ -52,6 +53,18 @@ CString fileSystemRepresentation(const String& path)
     }
 
     return string;
+}
+
+RetainPtr<CFURLRef> pathAsURL(const String& path)
+{
+    CFURLPathStyle pathStyle;
+#if PLATFORM(WIN)
+    pathStyle = kCFURLWindowsPathStyle;
+#else
+    pathStyle = kCFURLPOSIXPathStyle;
+#endif
+    return RetainPtr<CFURLRef>(AdoptCF, CFURLCreateWithFileSystemPath(0,
+        RetainPtr<CFStringRef>(AdoptCF, path.createCFString()).get(), pathStyle, FALSE));
 }
 
 } // namespace WebCore

@@ -145,17 +145,8 @@ static void advanceCurrentStream(FormStreamFields *form)
         char* data = nextInput.m_data.releaseBuffer();
         form->currentStream = CFReadStreamCreateWithBytesNoCopy(0, reinterpret_cast<const UInt8*>(data), size, kCFAllocatorNull);
         form->currentData = data;
-    } else {
-        CFStringRef filename = nextInput.m_filename.createCFString();
-#if PLATFORM(WIN)
-        CFURLRef fileURL = CFURLCreateWithFileSystemPath(0, filename, kCFURLWindowsPathStyle, FALSE);
-#else
-        CFURLRef fileURL = CFURLCreateWithFileSystemPath(0, filename, kCFURLPOSIXPathStyle, FALSE);
-#endif
-        CFRelease(filename);
-        form->currentStream = CFReadStreamCreateWithFile(0, fileURL);
-        CFRelease(fileURL);
-    }
+    } else
+        form->currentStream = CFReadStreamCreateWithFile(0, pathAsURL(nextInput.m_filename).get());
     form->remainingElements.removeLast();
 
     // Set up the callback.

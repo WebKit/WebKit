@@ -1,3 +1,39 @@
+2011-01-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit is using CSBackupSetItemExcluded incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=53095
+        rdar://problem/8790540
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::performOpenInitialization): Added code to
+        exclude the database from backup one time, and record inside the
+        database that this has been done.
+        (WebCore::IconDatabase::wasExcludedFromBackup): Added.
+        (WebCore::IconDatabase::setWasExcludedFromBackup): Added.
+        * loader/icon/IconDatabase.h: Added new functions above.
+
+        * platform/FileSystem.cpp:
+        (WebCore::canExcludeFromBackup): Added.
+        (WebCore::excludeFromBackup): Added.
+
+        * platform/FileSystem.h: Added canExcludeFromBackup, excludeFromBackup,
+        and pathAsURL functions. Cleaned up ifdefs and comments a bit and sorted
+        things alphabetically, particularly platform-specific sections.
+
+        * platform/cf/FileSystemCF.cpp:
+        (WebCore::pathAsURL): Added.
+
+        * platform/mac/FileSystemMac.mm:
+        (WebCore::canExcludeFromBackup): Added.
+        (WebCore::excludeFromBackup): Added.
+
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        (WebCore::advanceCurrentStream): Changed to call pathAsURL.
+        * platform/network/mac/FormDataStreamMac.mm:
+        (WebCore::advanceCurrentStream): Ditto.
+
 2011-01-25  Helder Correia  <helder@sencha.com>
 
         Reviewed by Dirk Schulze.

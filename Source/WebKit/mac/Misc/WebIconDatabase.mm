@@ -590,24 +590,6 @@ bool importToWebCoreFormat()
         [ThreadEnabler enableThreading];
     ASSERT([NSThread isMultiThreaded]);    
     
-#ifndef BUILDING_ON_TIGER 
-    // Tell backup software (i.e., Time Machine) to never back up the icon database, because  
-    // it's a large file that changes frequently, thus using a lot of backup disk space, and 
-    // it's unlikely that many users would be upset about it not being backed up. We do this 
-    // here because this code is only executed once for each icon database instance. We could 
-    // make this configurable on a per-client basis someday if that seemed useful. 
-    // See <rdar://problem/5320208>.
-    // FIXME: This has nothing to do with importing from the old to the new database format and should be moved elsewhere,
-    // especially because we might eventually delete all of this legacy importing code and we shouldn't delete this.
-    CFStringRef databasePath = iconDatabase()->databasePath().createCFString();
-    if (databasePath) {
-        CFURLRef databasePathURL = CFURLCreateWithFileSystemPath(0, databasePath, kCFURLPOSIXPathStyle, FALSE); 
-        CFRelease(databasePath);
-        CSBackupSetItemExcluded(databasePathURL, true, true); 
-        CFRelease(databasePathURL);
-    }
-#endif 
-
     // Get the directory the old icon database *should* be in
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *databaseDirectory = [defaults objectForKey:WebIconDatabaseImportDirectoryDefaultsKey];

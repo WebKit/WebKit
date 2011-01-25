@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1051,7 +1051,6 @@ static int databaseVersionNumber(SQLiteDatabase& db)
 
 static bool isValidDatabase(SQLiteDatabase& db)
 {
-
     // These four tables should always exist in a valid db
     if (!db.tableExists("IconInfo") || !db.tableExists("IconData") || !db.tableExists("PageURL") || !db.tableExists("IconDatabaseInfo"))
         return false;
@@ -1155,6 +1154,13 @@ void IconDatabase::performOpenInitialization()
     // Reduce sqlite RAM cache size from default 2000 pages (~1.5kB per page). 3MB of cache for icon database is overkill
     if (!SQLiteStatement(m_syncDB, "PRAGMA cache_size = 200;").executeCommand())         
         LOG_ERROR("SQLite database could not set cache_size");
+
+    // Tell backup software (i.e., Time Machine) to never back up the icon database, because  
+    // it's a large file that changes frequently, thus using a lot of backup disk space, and 
+    // it's unlikely that many users would be upset about it not being backed up. We could 
+    // make this configurable on a per-client basis some day if some clients don't want this.
+    if (canExcludeFromBackup() && !wasExcludedFromBackup() && excludeFromBackup(m_completeDatabasePath))
+        setWasExcludedFromBackup();
 }
 
 bool IconDatabase::checkIntegrity()
@@ -2084,6 +2090,20 @@ void IconDatabase::writeIconSnapshotToSQLDatabase(const IconSnapshot& snapshot)
 
         m_setIconDataStatement->reset();
     }
+}
+
+bool IconDatabase::wasExcludedFromBackup()
+{
+    ASSERT_ICON_SYNC_THREAD();
+
+    return SQLiteStatement(m_syncDB, "SELECT value FROM IconDatabaseInfo WHERE key = 'ExcludedFromBackup';").getColumnInt(0);
+}
+
+void IconDatabase::setWasExcludedFromBackup()
+{
+    ASSERT_ICON_SYNC_THREAD();
+
+    SQLiteStatement(m_syncDB, "INSERT INTO IconDatabaseInfo (key, value) VALUES ('ExcludedFromBackup', 1)").executeCommand();
 }
 
 } // namespace WebCore

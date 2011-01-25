@@ -199,6 +199,9 @@ private:
     bool imported();
     void setImported(bool);
     
+    bool wasExcludedFromBackup();
+    void setWasExcludedFromBackup();
+
     bool m_initialPruningComplete;
         
     void setIconURLForPageURLInSQLDatabase(const String&, const String&);
