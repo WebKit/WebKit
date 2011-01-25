@@ -33,6 +33,7 @@ from __future__ import with_statement
 import time
 
 from webkitpy.common.system import filesystem_mock
+from webkitpy.tool import mocktool
 
 from webkitpy.layout_tests.layout_package import test_output
 
@@ -192,26 +193,22 @@ WONTFIX SKIP : failures/expected/exception.html = CRASH
 class TestPort(base.Port):
     """Test implementation of the Port interface."""
 
-    def __init__(self, **kwargs):
-        # FIXME: what happens if we're not passed in the test filesystem
-        # and the tests don't match what's in the filesystem?
-        #
-        # We'll leave as is for now to avoid unnecessary dependencies while
-        # converting all of the unit tests over to using
-        # unit_test_filesystem(). If things get out of sync the tests should
-        # fail in fairly obvious ways. Eventually we want to just do:
-        #
-        # assert kwargs['filesystem']._tests
-        # self._tests = kwargs['filesystem']._tests
+    def __init__(self, port_name=None, user=None, filesystem=None, **kwargs):
+        if not filesystem:
+            filesystem = unit_test_filesystem()
 
-        if 'filesystem' not in kwargs or kwargs['filesystem'] is None:
-            kwargs['filesystem'] = unit_test_filesystem()
-            self._tests = kwargs['filesystem']._tests
-        else:
-            self._tests = unit_test_list()
+        assert filesystem._tests
+        self._tests = filesystem._tests
 
-        kwargs.setdefault('port_name', 'test')
-        base.Port.__init__(self, **kwargs)
+        if not user:
+            user = mocktool.MockUser()
+
+        if not port_name or port_name == 'test':
+            port_name = 'test-mac'
+
+        self._expectations_path = LAYOUT_TEST_DIR + '/platform/test/test_expectations.txt'
+        base.Port.__init__(self, port_name=port_name, filesystem=filesystem, user=user,
+                           **kwargs)
 
     def baseline_path(self):
         return self._filesystem.join(self.layout_tests_dir(), 'platform',
@@ -264,17 +261,23 @@ class TestPort(base.Port):
     def test_base_platform_names(self):
         return ('mac', 'win')
 
-    def test_expectations(self):
-        return self._filesystem.read_text_file(LAYOUT_TEST_DIR + '/platform/test/test_expectations.txt')
+    def path_to_test_expectations_file(self):
+        return self._expectations_path
 
     def test_platform_name(self):
+        if self._name == 'test-win':
+            return 'win'
         return 'mac'
 
     def test_platform_names(self):
         return self.test_base_platform_names()
 
     def test_platform_name_to_name(self, test_platform_name):
-        return test_platform_name
+        name_map = {
+            'mac': 'test-mac',
+            'win': 'test-win',
+        }
+        return name_map[test_platform_name]
 
     def version(self):
         return ''

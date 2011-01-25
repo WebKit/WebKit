@@ -582,7 +582,7 @@ class Port(object):
 
         Basically this string should contain the equivalent of a
         test_expectations file. See test_expectations.py for more details."""
-        raise NotImplementedError('Port.test_expectations')
+        return self._filesystem.read_text_file(self.path_to_test_expectations_file())
 
     def test_expectations_overrides(self):
         """Returns an optional set of overrides for the test_expectations.

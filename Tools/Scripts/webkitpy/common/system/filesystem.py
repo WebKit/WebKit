@@ -165,8 +165,8 @@ class FileSystem(object):
             if e.errno != errno.EEXIST:
                 raise
 
-    def move(self, src, dest):
-        shutil.move(src, dest)
+    def move(self, source, destination):
+        shutil.move(source, destination)
 
     def mtime(self, path):
         return os.stat(path).st_mtime

@@ -89,7 +89,7 @@ class TestExpectations:
         """Loads and parses the test expectations given in the string.
         Args:
             port: handle to object containing platform-specific functionality
-            test: list of all of the test files
+            tests: list of all of the test files
             expectations: test expectations as a string
             test_platform_name: name of the platform to match expectations
                 against. Note that this may be different than

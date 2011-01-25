@@ -45,7 +45,7 @@ import unittest
 from webkitpy.common import array_stream
 from webkitpy.common.system import outputcapture
 from webkitpy.common.system import filesystem_mock
-from webkitpy.common.system import user
+from webkitpy.tool import mocktool
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.layout_tests.layout_package import dump_render_tree_thread
@@ -54,14 +54,6 @@ from webkitpy.python24.versioning import compare_version
 from webkitpy.test.skip import skip_if
 
 from webkitpy.thirdparty.mock import Mock
-
-
-class MockUser():
-    def __init__(self):
-        self.url = None
-
-    def open_url(self, url):
-        self.url = url
 
 
 def parse_args(extra_args=None, record_results=False, tests_included=False,
@@ -93,7 +85,7 @@ def passing_run(extra_args=None, port_obj=None, record_results=False,
                                       tests_included)
     if not port_obj:
         port_obj = port.get(port_name=options.platform, options=options,
-                            user=MockUser(), filesystem=filesystem)
+                            user=mocktool.MockUser(), filesystem=filesystem)
     res = run_webkit_tests.run(port_obj, options, parsed_args)
     return res == 0
 
@@ -103,7 +95,7 @@ def logging_run(extra_args=None, port_obj=None, record_results=False, tests_incl
                                       record_results=record_results,
                                       tests_included=tests_included,
                                       print_nothing=False)
-    user = MockUser()
+    user = mocktool.MockUser()
     if not port_obj:
         port_obj = port.get(port_name=options.platform, options=options,
                             user=user, filesystem=filesystem)
@@ -135,7 +127,7 @@ def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False, 
         extra_args = ['passes', 'failures'] + extra_args
     options, parsed_args = parse_args(extra_args, tests_included=True)
 
-    user = MockUser()
+    user = mocktool.MockUser()
 
     test_batches = []
 
@@ -216,7 +208,8 @@ class MainTest(unittest.TestCase):
 
     def test_full_results_html(self):
         # FIXME: verify html?
-        self.assertTrue(passing_run(['--full-results-html']))
+        res, out, err, user = logging_run(['--full-results-html'])
+        self.assertEqual(res, 0)
 
     def test_help_printing(self):
         res, out, err, user = logging_run(['--help-printing'])
@@ -256,7 +249,7 @@ class MainTest(unittest.TestCase):
 
     def test_lint_test_files__errors(self):
         options, parsed_args = parse_args(['--lint-test-files'])
-        user = MockUser()
+        user = mocktool.MockUser()
         port_obj = port.get(options.platform, options=options, user=user)
         port_obj.test_expectations = lambda: "# syntax error"
         res, out, err = run_and_capture(port_obj, options, parsed_args)
@@ -352,7 +345,7 @@ class MainTest(unittest.TestCase):
         self.assertEqual(res, 3)
         self.assertFalse(out.empty())
         self.assertFalse(err.empty())
-        self.assertEqual(user.url, '/tmp/layout-test-results/results.html')
+        self.assertEqual(user.opened_urls, ['/tmp/layout-test-results/results.html'])
 
     def test_exit_after_n_failures(self):
         # Unexpected failures should result in tests stopping.
@@ -414,7 +407,7 @@ class MainTest(unittest.TestCase):
         with fs.mkdtemp() as tmpdir:
             res, out, err, user = logging_run(['--results-directory=' + str(tmpdir)],
                                               tests_included=True, filesystem=fs)
-            self.assertEqual(user.url, fs.join(tmpdir, 'results.html'))
+            self.assertEqual(user.opened_urls, [fs.join(tmpdir, 'results.html')])
 
     def test_results_directory_default(self):
         # We run a configuration that should fail, to generate output, then
@@ -422,7 +415,7 @@ class MainTest(unittest.TestCase):
 
         # This is the default location.
         res, out, err, user = logging_run(tests_included=True)
-        self.assertEqual(user.url, '/tmp/layout-test-results/results.html')
+        self.assertEqual(user.opened_urls, ['/tmp/layout-test-results/results.html'])
 
     def test_results_directory_relative(self):
         # We run a configuration that should fail, to generate output, then
@@ -430,7 +423,7 @@ class MainTest(unittest.TestCase):
 
         res, out, err, user = logging_run(['--results-directory=foo'],
                                           tests_included=True)
-        self.assertEqual(user.url, '/tmp/foo/results.html')
+        self.assertEqual(user.opened_urls, ['/tmp/foo/results.html'])
 
     def test_tolerance(self):
         class ImageDiffTestPort(TestPort):
@@ -441,7 +434,7 @@ class MainTest(unittest.TestCase):
 
         def get_port_for_run(args):
             options, parsed_args = run_webkit_tests.parse_args(args)
-            test_port = ImageDiffTestPort(options=options, user=MockUser())
+            test_port = ImageDiffTestPort(options=options, user=mocktool.MockUser())
             passing_run(args, port_obj=test_port, tests_included=True)
             return test_port
 
@@ -511,9 +504,9 @@ class RebaselineTest(unittest.TestCase):
         file_list.remove('/tmp/layout-test-results/tests_run.txt')
         self.assertEqual(len(file_list), 6)
         self.assertBaselines(file_list,
-            "/platform/test/passes/image")
+            "/platform/test-mac/passes/image")
         self.assertBaselines(file_list,
-            "/platform/test/failures/expected/missing_image")
+            "/platform/test-mac/failures/expected/missing_image")
 
 
 class DryrunTest(unittest.TestCase):

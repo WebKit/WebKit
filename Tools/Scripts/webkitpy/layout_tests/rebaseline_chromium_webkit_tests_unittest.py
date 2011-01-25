@@ -32,7 +32,6 @@
 import unittest
 
 from webkitpy.tool import mocktool
-from webkitpy.common.system import filesystem_mock
 from webkitpy.common.system.executive import Executive, ScriptError
 
 import port
@@ -88,11 +87,11 @@ class TestRebaseliner(unittest.TestCase):
     def make_rebaseliner(self):
         options = mocktool.MockOptions(configuration=None,
                                        html_directory=None)
-        filesystem = filesystem_mock.MockFileSystem()
+        filesystem = port.unit_test_filesystem()
         host_port_obj = port.get('test', options, filesystem=filesystem)
         target_options = options
         target_port_obj = port.get('test', target_options, filesystem=filesystem)
-        platform = 'test'
+        platform = target_port_obj.test_platform_name()
         return rebaseline_chromium_webkit_tests.Rebaseliner(
             host_port_obj, target_port_obj, platform, options)
 
@@ -131,7 +130,7 @@ class TestRebaseliner(unittest.TestCase):
 class TestHtmlGenerator(unittest.TestCase):
     def make_generator(self, files, tests):
         options = mocktool.MockOptions(configuration=None, html_directory='/tmp')
-        host_port = port.get('test', options, filesystem=filesystem_mock.MockFileSystem(files))
+        host_port = port.get('test', options, filesystem=port.unit_test_filesystem(files))
         generator = rebaseline_chromium_webkit_tests.HtmlGenerator(
             host_port,
             target_port=None,

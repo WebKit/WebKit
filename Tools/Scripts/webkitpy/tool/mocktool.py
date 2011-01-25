@@ -548,6 +548,9 @@ class MockUser(object):
     def prompt_with_list(cls, list_title, list_items, can_choose_multiple=False, raw_input=raw_input):
         pass
 
+    def __init__(self):
+        self.opened_urls = []
+
     def edit(self, files):
         pass
 
@@ -565,6 +568,7 @@ class MockUser(object):
         return True
 
     def open_url(self, url):
+        self.opened_urls.append(url)
         if url.startswith("file://"):
             log("MOCK: user.open_url: file://...")
             return

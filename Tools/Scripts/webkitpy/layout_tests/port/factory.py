@@ -70,7 +70,7 @@ def _get_kwargs(**kwargs):
         raise NotImplementedError('unknown port; sys.platform = "%s"' %
                                   sys.platform)
 
-    if port_to_use == 'test':
+    if port_to_use.startswith('test'):
         import test
         maker = test.TestPort
     elif port_to_use.startswith('dryrun'):

@@ -1,3 +1,24 @@
+2011-01-25  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Minor bug fixes and cleanup for filesystem wrappers, port/* test
+        classes, test_expectations.py. This change adds "test-win" and
+        "test-mac" variants to the test port so that we can better test
+        rebaselining, and adds a MockUser() object for reuse in testing.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53036
+
+        * Scripts/webkitpy/common/system/filesystem.py:
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations.py:
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
 2011-01-25  Tony Chang  <tony@chromium.org>
 
         Reviewed by Dimitri Glazkov.

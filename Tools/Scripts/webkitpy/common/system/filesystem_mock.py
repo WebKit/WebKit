@@ -69,6 +69,7 @@ class MockFileSystem(object):
             raise IOError(errno.EISDIR, destination, os.strerror(errno.ISDIR))
 
         self.files[destination] = self.files[source]
+        self.written_files[destination] = self.files[source]
 
     def dirname(self, path):
         return self._split(path)[0]
@@ -196,18 +197,20 @@ class MockFileSystem(object):
         # FIXME: Implement such that subsequent calls to isdir() work?
         pass
 
-    def move(self, src, dst):
-        if self.files[src] is None:
-            self._raise_not_found(src)
-        self.files[dst] = self.files[src]
-        self.files[src] = None
+    def move(self, source, destination):
+        if self.files[source] is None:
+            self._raise_not_found(source)
+        self.files[destination] = self.files[source]
+        self.written_files[destination] = self.files[destination]
+        self.files[source] = None
+        self.written_files[source] = None
 
     def normpath(self, path):
         return path
 
-    def open_binary_tempfile(self, suffix):
+    def open_binary_tempfile(self, suffix=''):
         path = self._mktemp(suffix)
-        return WritableFileObject(self, path), path
+        return (WritableFileObject(self, path), path)
 
     def open_text_file_for_writing(self, path, append=False):
         return WritableFileObject(self, path, append)
@@ -225,6 +228,7 @@ class MockFileSystem(object):
         if self.files[path] is None:
             self._raise_not_found(path)
         self.files[path] = None
+        self.written_files[path] = None
 
     def rmtree(self, path):
         if not path.endswith('/'):
