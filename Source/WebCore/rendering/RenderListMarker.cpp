@@ -1130,7 +1130,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
         if (style()->highlight() != nullAtom && !paintInfo.context->paintingDisabled())
             paintCustomHighlight(tx, ty, style()->highlight(), true);
 #endif
-        context->drawImage(m_image->image(this, marker.size()), style()->colorSpace(), marker);
+        context->drawImage(m_image->image(this, marker.size()).get(), style()->colorSpace(), marker);
         if (selectionState() != SelectionNone) {
             IntRect selRect = localSelectionRect();
             selRect.move(boxOrigin.x(), boxOrigin.y());

@@ -83,7 +83,7 @@ HTMLCanvasElement* CSSCanvasValue::element(Document* document)
     return m_element;
 }
 
-Image* CSSCanvasValue::image(RenderObject* renderer, const IntSize& /*size*/)
+PassRefPtr<Image> CSSCanvasValue::image(RenderObject* renderer, const IntSize& /*size*/)
 {
     ASSERT(m_clients.contains(renderer));
     HTMLCanvasElement* elt = element(renderer->document());

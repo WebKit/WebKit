@@ -26,6 +26,7 @@
 #ifndef StylePendingImage_h
 #define StylePendingImage_h
 
+#include "Image.h"
 #include "StyleImage.h"
 
 namespace WebCore {
@@ -52,7 +53,7 @@ public:
     virtual void setImageContainerSize(const IntSize&) { }
     virtual void addClient(RenderObject*) { }
     virtual void removeClient(RenderObject*) { }
-    virtual Image* image(RenderObject*, const IntSize&) const
+    virtual PassRefPtr<Image> image(RenderObject*, const IntSize&) const
     {
         ASSERT_NOT_REACHED();
         return 0;

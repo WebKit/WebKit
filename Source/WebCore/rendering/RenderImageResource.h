@@ -28,6 +28,7 @@
 
 #include "CachedImage.h"
 #include "CachedResourceHandle.h"
+#include "Image.h"
 #include "StyleImage.h"
 
 namespace WebCore {
@@ -53,7 +54,7 @@ public:
 
     void resetAnimation();
 
-    virtual Image* image(int /* width */ = 0, int /* height */ = 0) { return m_cachedImage ? m_cachedImage->image() : nullImage(); }
+    virtual PassRefPtr<Image> image(int /* width */ = 0, int /* height */ = 0) const { return m_cachedImage ? m_cachedImage->image() : nullImage(); }
     virtual bool errorOccurred() const { return m_cachedImage && m_cachedImage->errorOccurred(); }
 
     virtual void setImageContainerSize(const IntSize& size) const;

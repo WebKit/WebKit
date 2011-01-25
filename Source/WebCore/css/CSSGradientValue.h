@@ -46,7 +46,7 @@ struct CSSGradientColorStop {
 
 class CSSGradientValue : public CSSImageGeneratorValue {
 public:
-    virtual Image* image(RenderObject*, const IntSize&);
+    virtual PassRefPtr<Image> image(RenderObject*, const IntSize&);
 
     void setFirstX(PassRefPtr<CSSPrimitiveValue> val) { m_firstX = val; }
     void setFirstY(PassRefPtr<CSSPrimitiveValue> val) { m_firstY = val; }

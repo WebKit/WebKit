@@ -122,7 +122,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
             PaintInfo savedInfo(childPaintInfo);
 
             if (SVGRenderSupport::prepareToRenderSVGContent(this, childPaintInfo)) {
-                Image* image = m_imageResource->image();
+                RefPtr<Image> image = m_imageResource->image();
                 FloatRect destRect = m_objectBoundingBox;
                 FloatRect srcRect(0, 0, image->width(), image->height());
 
@@ -130,7 +130,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
                 if (imageElement->preserveAspectRatio().align() != SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_NONE)
                     imageElement->preserveAspectRatio().transformRect(destRect, srcRect);
 
-                childPaintInfo.context->drawImage(image, ColorSpaceDeviceRGB, destRect, srcRect);
+                childPaintInfo.context->drawImage(image.get(), ColorSpaceDeviceRGB, destRect, srcRect);
             }
 
             SVGRenderSupport::finishRenderSVGContent(this, childPaintInfo, savedInfo.context);

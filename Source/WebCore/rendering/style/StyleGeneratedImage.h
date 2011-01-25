@@ -51,7 +51,7 @@ public:
     virtual void setImageContainerSize(const IntSize&);
     virtual void addClient(RenderObject*);
     virtual void removeClient(RenderObject*);
-    virtual Image* image(RenderObject*, const IntSize&) const;
+    virtual PassRefPtr<Image> image(RenderObject*, const IntSize&) const;
     
 private:
     StyleGeneratedImage(CSSImageGeneratorValue* val, bool fixedSize)

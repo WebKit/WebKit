@@ -41,7 +41,7 @@ using namespace std;
 
 namespace WebCore {
 
-Image* CSSGradientValue::image(RenderObject* renderer, const IntSize& size)
+PassRefPtr<Image> CSSGradientValue::image(RenderObject* renderer, const IntSize& size)
 {
     if (!m_clients.contains(renderer))
         return 0;
@@ -58,10 +58,9 @@ Image* CSSGradientValue::image(RenderObject* renderer, const IntSize& size)
 
     // We need to create an image.
     RefPtr<Image> newImage = GeneratedImage::create(createGradient(renderer, size), size);
-    result = newImage.get();
-    putImage(size, newImage.release());
+    putImage(size, newImage);
 
-    return result;
+    return newImage.release();
 }
 
 // Should only ever be called for deprecated gradients.

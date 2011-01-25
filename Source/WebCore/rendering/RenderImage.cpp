@@ -267,7 +267,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
             int usableWidth = cWidth - 2;
             int usableHeight = cHeight - 2;
 
-            Image* image = m_imageResource->image();
+            RefPtr<Image> image = m_imageResource->image();
 
             if (m_imageResource->errorOccurred() && !image->isNull() && usableWidth >= image->width() && usableHeight >= image->height()) {
                 // Center the error image, accounting for border and padding.
@@ -279,7 +279,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
                     centerY = 0;
                 imageX = leftBorder + leftPad + centerX + 1;
                 imageY = topBorder + topPad + centerY + 1;
-                context->drawImage(image, style()->colorSpace(), IntPoint(tx + imageX, ty + imageY));
+                context->drawImage(image.get(), style()->colorSpace(), IntPoint(tx + imageX, ty + imageY));
                 errorPictureDrawn = true;
             }
 
@@ -304,7 +304,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
             }
         }
     } else if (m_imageResource->hasImage() && cWidth > 0 && cHeight > 0) {
-        Image* img = m_imageResource->image(cWidth, cHeight);
+        RefPtr<Image> img = m_imageResource->image(cWidth, cHeight);
         if (!img || img->isNull())
             return;
 
@@ -370,14 +370,14 @@ void RenderImage::paintIntoRect(GraphicsContext* context, const IntRect& rect)
     if (!m_imageResource->hasImage() || m_imageResource->errorOccurred() || rect.width() <= 0 || rect.height() <= 0)
         return;
 
-    Image* img = m_imageResource->image(rect.width(), rect.height());
+    RefPtr<Image> img = m_imageResource->image(rect.width(), rect.height());
     if (!img || img->isNull())
         return;
 
     HTMLImageElement* imageElt = (node() && node()->hasTagName(imgTag)) ? static_cast<HTMLImageElement*>(node()) : 0;
     CompositeOperator compositeOperator = imageElt ? imageElt->compositeOperator() : CompositeSourceOver;
-    bool useLowQualityScaling = shouldPaintAtLowQuality(context, m_imageResource->image(), 0, rect.size());
-    context->drawImage(m_imageResource->image(rect.width(), rect.height()), style()->colorSpace(), rect, compositeOperator, useLowQualityScaling);
+    bool useLowQualityScaling = shouldPaintAtLowQuality(context, m_imageResource->image().get(), 0, rect.size());
+    context->drawImage(m_imageResource->image(rect.width(), rect.height()).get(), style()->colorSpace(), rect, compositeOperator, useLowQualityScaling);
 }
 
 int RenderImage::minimumReplacedHeight() const

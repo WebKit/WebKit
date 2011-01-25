@@ -72,7 +72,7 @@ void StyleGeneratedImage::removeClient(RenderObject* renderer)
     m_generator->removeClient(renderer);
 }
 
-Image* StyleGeneratedImage::image(RenderObject* renderer, const IntSize& size) const
+PassRefPtr<Image> StyleGeneratedImage::image(RenderObject* renderer, const IntSize& size) const
 {
     return m_generator->image(renderer, size);
 }

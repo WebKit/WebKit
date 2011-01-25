@@ -25,6 +25,7 @@
 #define StyleImage_h
 
 #include "CSSValue.h"
+#include "Image.h"
 #include "IntSize.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -33,7 +34,6 @@
 namespace WebCore {
 
 class CSSValue;
-class Image;
 class RenderObject;
 
 typedef void* WrappedImagePtr;
@@ -59,7 +59,7 @@ public:
     virtual void setImageContainerSize(const IntSize&) = 0;
     virtual void addClient(RenderObject*) = 0;
     virtual void removeClient(RenderObject*) = 0;
-    virtual Image* image(RenderObject*, const IntSize&) const = 0;
+    virtual PassRefPtr<Image> image(RenderObject*, const IntSize&) const = 0;
     virtual WrappedImagePtr data() const = 0;
 
     virtual bool isCachedImage() const { return false; }

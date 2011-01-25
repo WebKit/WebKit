@@ -40,7 +40,7 @@ public:
 
     virtual String cssText() const;
 
-    virtual Image* image(RenderObject*, const IntSize&);
+    virtual PassRefPtr<Image> image(RenderObject*, const IntSize&);
     virtual bool isFixedSize() const { return true; }
     virtual IntSize fixedSize(const RenderObject*);
 

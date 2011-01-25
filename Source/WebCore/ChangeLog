@@ -1,3 +1,49 @@
+2011-01-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Refcount Images used in rendering code
+        https://bugs.webkit.org/show_bug.cgi?id=52701
+
+        Change StyleImage::image(RenderObject*, const IntSize&) and
+        CSSImageGeneratorValue::image(RenderObject*, const IntSize&) to
+        return PassRefPtr<Image>, and adjust other code accordingly.
+        
+        This allows us to return one-time images, for example for CSS gradients
+        whose appearance may change depending on factors other than the renderer
+        and the destination size.
+
+        * css/CSSCanvasValue.cpp:
+        (WebCore::CSSCanvasValue::image):
+        * css/CSSCanvasValue.h:
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::image):
+        * css/CSSGradientValue.h:
+        * css/CSSImageGeneratorValue.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::paintNinePieceImage):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        (WebCore::RenderImage::paintIntoRect):
+        * rendering/RenderImageResource.h:
+        (WebCore::RenderImageResource::image):
+        * rendering/RenderImageResourceStyleImage.h:
+        (WebCore::RenderImageResourceStyleImage::image):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        * rendering/style/StyleCachedImage.cpp:
+        (WebCore::StyleCachedImage::image):
+        * rendering/style/StyleCachedImage.h:
+        * rendering/style/StyleGeneratedImage.cpp:
+        (WebCore::StyleGeneratedImage::image):
+        * rendering/style/StyleGeneratedImage.h:
+        * rendering/style/StyleImage.h:
+        * rendering/style/StylePendingImage.h:
+        (WebCore::StylePendingImage::image):
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+
 2011-01-24  Tony Chang  <tony@chromium.org>
 
         Unreviewed, round ascent and descent to match old code.
