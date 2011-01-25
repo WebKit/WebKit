@@ -2,6 +2,38 @@
 
         Not reviewed.
 
+        Update Leopard svg/ pixel test baselines, to make run-webkit-tests -p pass again with --tolerance 0.
+        Contains only marginal differences, or updates pixel test results that were forgotten to update.
+
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.checksum: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.png: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/filters-composite-02-b-expected.checksum:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/filters-composite-02-b-expected.png:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/struct-image-07-t-expected.checksum: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/struct-image-07-t-expected.png: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/struct-use-01-t-expected.checksum: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/struct-use-01-t-expected.png: Added.
+        * platform/mac-leopard/svg/css/text-gradient-shadow-expected.checksum: Added.
+        * platform/mac-leopard/svg/css/text-gradient-shadow-expected.png: Added.
+        * platform/mac-leopard/svg/custom/image-rescale-clip-expected.checksum:
+        * platform/mac-leopard/svg/custom/image-rescale-clip-expected.png:
+        * platform/mac-leopard/svg/custom/image-rescale-scroll-expected.checksum: Added.
+        * platform/mac-leopard/svg/custom/image-rescale-scroll-expected.png: Added.
+        * platform/mac-leopard/svg/custom/junk-data-expected.checksum:
+        * platform/mac-leopard/svg/custom/junk-data-expected.png:
+        * platform/mac-leopard/svg/custom/missing-xlink-expected.checksum:
+        * platform/mac-leopard/svg/custom/missing-xlink-expected.png:
+        * platform/mac-leopard/svg/filters/feComposite-expected.checksum:
+        * platform/mac-leopard/svg/filters/feComposite-expected.png:
+        * platform/mac-leopard/svg/filters/filter-rounding-issues-expected.checksum: Added.
+        * platform/mac-leopard/svg/filters/filter-rounding-issues-expected.png: Added.
+        * platform/mac-leopard/svg/repaint/filter-repaint-expected.checksum:
+        * platform/mac-leopard/svg/repaint/filter-repaint-expected.png:
+
+2011-01-25  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
         Update Snow Leopard svg/ pixel test baselines, to make run-webkit-tests -p pass again with --tolerance 0.
         Contains only marginal differences, or updates pixel test results that were forgotten to update.
 
