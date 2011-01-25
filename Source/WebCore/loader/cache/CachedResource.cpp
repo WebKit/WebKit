@@ -123,8 +123,8 @@ CachedResource::~CachedResource()
         CRASH();
     }
     
-#ifndef NDEBUG
     m_deleted = true;
+#ifndef NDEBUG
     cachedResourceLeakCounter.decrement();
 #endif
 

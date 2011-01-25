@@ -1,5 +1,13 @@
 2011-01-24  Mihai Parparita  <mihaip@chromium.org>
 
+        Unreviewed. Missed move of one m_deleted use to be outside NDEBUG block
+        in r76575.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::~CachedResource):
+
+2011-01-24  Mihai Parparita  <mihaip@chromium.org>
+
         Reviewed by Tony Chang.
 
         Add runtime checks for invariants in memory cache
