@@ -1,3 +1,17 @@
+2011-01-25  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        JSON.stringify processing time exponentially grows with size of object
+        https://bugs.webkit.org/show_bug.cgi?id=51922
+
+        Remove last use of reserveCapacity from JSON stringification, as it results
+        in appalling append behaviour when there are a large number of property names
+        and nothing else.
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::appendQuotedString):
+
 2011-01-25  Antti Koivisto  <antti@apple.com>
 
         Not reviewed.

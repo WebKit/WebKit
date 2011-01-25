@@ -284,9 +284,6 @@ void Stringifier::appendQuotedString(UStringBuilder& builder, const UString& val
 {
     int length = value.length();
 
-    // String length plus 2 for quote marks plus 8 so we can accomodate a few escaped characters.
-    builder.reserveCapacity(builder.length() + length + 2 + 8);
-
     builder.append('"');
 
     const UChar* data = value.characters();
