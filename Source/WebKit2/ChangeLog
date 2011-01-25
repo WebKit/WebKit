@@ -1,3 +1,20 @@
+2011-01-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Improve scale factor resetting
+        https://bugs.webkit.org/show_bug.cgi?id=53093
+        
+        Two key changes:
+        - Don't set the scale factor to what it already is, as this causes an
+        uneeded force layout and scroll
+        - Don't ever set the scale factor based on a non-main frame committing
+        
+        This fixes two WebKit2 layout tests.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+
 2011-01-24  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Eric Seidel.

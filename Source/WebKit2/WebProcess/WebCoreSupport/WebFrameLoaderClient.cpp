@@ -430,14 +430,11 @@ void WebFrameLoaderClient::dispatchDidCommitLoad()
 
     webPage->send(Messages::WebPageProxy::DidCommitLoadForFrame(m_frame->frameID(), response.mimeType(), m_frameHasCustomRepresentation, PlatformCertificateInfo(response), InjectedBundleUserMessageEncoder(userData.get())));
 
-    // Restore the page scale factor.
-    double newPageScaleFactor = m_frame->coreFrame()->pageScaleFactor();
-    
     // Only restore the scale factor for standard frame loads (of the main frame).
-    if (m_frame->isMainFrame() && m_frame->coreFrame()->loader()->loadType() == FrameLoadTypeStandard)
-        newPageScaleFactor = 1.0;
-
-    webPage->scaleWebView(newPageScaleFactor, IntPoint());
+    if (m_frame->isMainFrame() && m_frame->coreFrame()->loader()->loadType() == FrameLoadTypeStandard) {
+        if (m_frame->coreFrame()->pageScaleFactor() != 1.0)
+            webPage->scaleWebView(1.0, IntPoint());
+    }
 }
 
 void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError& error)
