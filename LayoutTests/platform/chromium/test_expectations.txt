@@ -3098,13 +3098,6 @@ BUGRNIWA SLOW LINUX : fast/text/large-text-composed-char-dos.html = PASS
 // Seems to be caused by http://trac.webkit.org/changeset/76291
 BUGWK53042 : fast/overflow/overflow-rtl-vertical.html = IMAGE
 
-// These tests have been failing since WebKit roll 76389:76408 has been reverted
-BUGRNIWA WIN MAC : fast/animation/request-animation-frame-cancel.html = PASS TEXT
-BUGRNIWA WIN MAC : fast/animation/request-animation-frame-cancel2.html = PASS TEXT
-BUGRNIWA WIN MAC : fast/animation/request-animation-frame-display.html = PASS TEXT
-BUGRNIWA WIN MAC : fast/animation/request-animation-frame-within-callback.html = PASS TEXT
-BUGRNIWA WIN MAC : fast/animation/request-animation-frame.html = PASS TEXT
-
 // Added by http://trac.webkit.org/changeset/76548
 BUGCR70686 MAC : fast/text/international/cjk-segmentation.html = TEXT
 

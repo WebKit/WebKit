@@ -1,3 +1,9 @@
+2011-01-25  James Robinson  <jamesr@chromium.org>
+
+        Remove = TEXT PASS lines for tests that consistently pass.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-25  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix: rollback untintentional changes in media expected results.
