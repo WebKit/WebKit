@@ -780,6 +780,39 @@
 
 2011-01-24  Zhenyao Mo  <zmo@google.com>
 
+        Reviewed by Eric Seidel.
+
+        Cleanup WebGLGetInfo and related get*Parameter helpers in WebGLRenderingContext
+        https://bugs.webkit.org/show_bug.cgi?id=52338
+
+        Removed the long/unsigned long types and corresponding get functions
+        and use int/unsigned int instead.
+
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::toJS):
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::toV8Object):
+        * html/canvas/WebGLGetInfo.cpp:
+        (WebCore::WebGLGetInfo::WebGLGetInfo):
+        (WebCore::WebGLGetInfo::getInt):
+        (WebCore::WebGLGetInfo::getUnsignedInt):
+        * html/canvas/WebGLGetInfo.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getBufferParameter):
+        (WebCore::WebGLRenderingContext::getFramebufferAttachmentParameter):
+        (WebCore::WebGLRenderingContext::getParameter):
+        (WebCore::WebGLRenderingContext::getProgramParameter):
+        (WebCore::WebGLRenderingContext::getRenderbufferParameter):
+        (WebCore::WebGLRenderingContext::getShaderParameter):
+        (WebCore::WebGLRenderingContext::getTexParameter):
+        (WebCore::WebGLRenderingContext::getUniform):
+        (WebCore::WebGLRenderingContext::getVertexAttrib):
+        (WebCore::WebGLRenderingContext::getIntParameter):
+        (WebCore::WebGLRenderingContext::getUnsignedIntParameter):
+        * html/canvas/WebGLRenderingContext.h:
+
+2011-01-24  Zhenyao Mo  <zmo@google.com>
+
         Reviewed by Darin Adler.
 
         Remove sizeInBytes from GraphicsContext3D's various implementations

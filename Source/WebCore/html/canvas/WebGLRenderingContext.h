@@ -461,8 +461,7 @@ public:
     WebGLGetInfo getBooleanArrayParameter(GC3Denum pname);
     WebGLGetInfo getFloatParameter(GC3Denum pname);
     WebGLGetInfo getIntParameter(GC3Denum pname);
-    WebGLGetInfo getLongParameter(GC3Denum pname);
-    WebGLGetInfo getUnsignedLongParameter(GC3Denum pname);
+    WebGLGetInfo getUnsignedIntParameter(GC3Denum pname);
     WebGLGetInfo getWebGLFloatArrayParameter(GC3Denum pname);
     WebGLGetInfo getWebGLIntArrayParameter(GC3Denum pname);
 

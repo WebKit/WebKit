@@ -1752,8 +1752,8 @@ WebGLGetInfo WebGLRenderingContext::getBufferParameter(GC3Denum target, GC3Denum
     GC3Dint value = 0;
     m_context->getBufferParameteriv(target, pname, &value);
     if (pname == GraphicsContext3D::BUFFER_SIZE)
-        return WebGLGetInfo(static_cast<long>(value));
-    return WebGLGetInfo(static_cast<unsigned long>(value));
+        return WebGLGetInfo(value);
+    return WebGLGetInfo(static_cast<unsigned int>(value));
 }
 
 PassRefPtr<WebGLContextAttributes> WebGLRenderingContext::getContextAttributes()
@@ -1826,8 +1826,8 @@ WebGLGetInfo WebGLRenderingContext::getFramebufferAttachmentParameter(GC3Denum t
         GC3Dint value = 0;
         m_context->getFramebufferAttachmentParameteriv(target, attachment, pname, &value);
         if (pname == GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
-            return WebGLGetInfo(static_cast<unsigned long>(value));
-        return WebGLGetInfo(static_cast<long>(value));
+            return WebGLGetInfo(static_cast<unsigned int>(value));
+        return WebGLGetInfo(value);
     }
 
     WebGLStateRestorer(this, false);
@@ -1856,13 +1856,13 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname, ExceptionCode& 
     WebGLStateRestorer(this, false);
     switch (pname) {
     case GraphicsContext3D::ACTIVE_TEXTURE:
-        return getUnsignedLongParameter(pname);
+        return getUnsignedIntParameter(pname);
     case GraphicsContext3D::ALIASED_LINE_WIDTH_RANGE:
         return getWebGLFloatArrayParameter(pname);
     case GraphicsContext3D::ALIASED_POINT_SIZE_RANGE:
         return getWebGLFloatArrayParameter(pname);
     case GraphicsContext3D::ALPHA_BITS:
-        return getLongParameter(pname);
+        return getIntParameter(pname);
     case GraphicsContext3D::ARRAY_BUFFER_BINDING:
         return WebGLGetInfo(PassRefPtr<WebGLBuffer>(m_boundArrayBuffer));
     case GraphicsContext3D::BLEND:
@@ -1870,19 +1870,19 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname, ExceptionCode& 
     case GraphicsContext3D::BLEND_COLOR:
         return getWebGLFloatArrayParameter(pname);
     case GraphicsContext3D::BLEND_DST_ALPHA:
-        return getUnsignedLongParameter(pname);
+        return getUnsignedIntParameter(pname);
     case GraphicsContext3D::BLEND_DST_RGB:
-        return getUnsignedLongParameter(pname);
+        return getUnsignedIntParameter(pname);
     case GraphicsContext3D::BLEND_EQUATION_ALPHA:
-        return getUnsignedLongParameter(pname);
+        return getUnsignedIntParameter(pname);
     case GraphicsContext3D::BLEND_EQUATION_RGB:
-        return getUnsignedLongParameter(pname);
+        return getUnsignedIntParameter(pname);
     case GraphicsContext3D::BLEND_SRC_ALPHA:
-        return getUnsignedLongParameter(pname);
+        return getUnsignedIntParameter(pname);
     case GraphicsContext3D::BLEND_SRC_RGB:
-        return getUnsignedLongParameter(pname);
+        return getUnsignedIntParameter(pname);
     case GraphicsContext3D::BLUE_BITS:
-        return getLongParameter(pname);
+        return getIntParameter(pname);
     case GraphicsContext3D::COLOR_CLEAR_VALUE:
         return getWebGLFloatArrayParameter(pname);
     case GraphicsContext3D::COLOR_WRITEMASK:
@@ -1893,15 +1893,15 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname, ExceptionCode& 
     case GraphicsContext3D::CULL_FACE:
         return getBooleanParameter(pname);
     case GraphicsContext3D::CULL_FACE_MODE:
-        return getUnsignedLongParameter(pname);
+        return getUnsignedIntParameter(pname);
     case GraphicsContext3D::CURRENT_PROGRAM:
         return WebGLGetInfo(PassRefPtr<WebGLProgram>(m_currentProgram));
     case GraphicsContext3D::DEPTH_BITS:
-        return getLongParameter(pname);
+        return getIntParameter(pname);
     case GraphicsContext3D::DEPTH_CLEAR_VALUE:
         return getFloatParameter(pname);
     case GraphicsContext3D::DEPTH_FUNC:
-        return getUnsignedLongParameter(pname);
+        return getUnsignedIntParameter(pname);
     case GraphicsContext3D::DEPTH_RANGE:
         return getWebGLFloatArrayParameter(pname);
     case GraphicsContext3D::DEPTH_TEST:
@@ -1915,43 +1915,43 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname, ExceptionCode& 
     case GraphicsContext3D::FRAMEBUFFER_BINDING:
         return WebGLGetInfo(PassRefPtr<WebGLFramebuffer>(m_framebufferBinding));
     case GraphicsContext3D::FRONT_FACE:
-        return getUnsignedLongParameter(pname);
+        return getUnsignedIntParameter(pname);
     case GraphicsContext3D::GENERATE_MIPMAP_HINT:
-        return getUnsignedLongParameter(pname);
+        return getUnsignedIntParameter(pname);
     case GraphicsContext3D::GREEN_BITS:
-        return getLongParameter(pname);
+        return getIntParameter(pname);
     case GraphicsContext3D::LINE_WIDTH:
         return getFloatParameter(pname);
     case GraphicsContext3D::MAX_COMBINED_TEXTURE_IMAGE_UNITS:
-        return getLongParameter(pname);
+        return getIntParameter(pname);
     case GraphicsContext3D::MAX_CUBE_MAP_TEXTURE_SIZE:
-        return getLongParameter(pname);
+        return getIntParameter(pname);
     case GraphicsContext3D::MAX_FRAGMENT_UNIFORM_VECTORS:
-        return getLongParameter(pname);
+        return getIntParameter(pname);
     case GraphicsContext3D::MAX_RENDERBUFFER_SIZE:
-        return getLongParameter(pname);
+        return getIntParameter(pname);
     case GraphicsContext3D::MAX_TEXTURE_IMAGE_UNITS:
-        return getLongParameter(pname);
+        return getIntParameter(pname);
     case GraphicsContext3D::MAX_TEXTURE_SIZE:
-        return getLongParameter(pname);
+        return getIntParameter(pname);
     case GraphicsContext3D::MAX_VARYING_VECTORS:
-        return getLongParameter(pname);
+        return getIntParameter(pname);
     case GraphicsContext3D::MAX_VERTEX_ATTRIBS:
-        return getLongParameter(pname);
+        return getIntParameter(pname);
     case GraphicsContext3D::MAX_VERTEX_TEXTURE_IMAGE_UNITS:
-        return getLongParameter(pname);
+        return getIntParameter(pname);
     case GraphicsContext3D::MAX_VERTEX_UNIFORM_VECTORS:
-        return getLongParameter(pname);
+        return getIntParameter(pname);
     case GraphicsContext3D::MAX_VIEWPORT_DIMS:
         return getWebGLIntArrayParameter(pname);
     case GraphicsContext3D::NUM_COMPRESSED_TEXTURE_FORMATS:
         // WebGL 1.0 specifies that there are no compressed texture formats.
-        return WebGLGetInfo(static_cast<long>(0));
+        return WebGLGetInfo(static_cast<int>(0));
     case GraphicsContext3D::NUM_SHADER_BINARY_FORMATS:
         // FIXME: should we always return 0 for this?
-        return getLongParameter(pname);
+        return getIntParameter(pname);
     case GraphicsContext3D::PACK_ALIGNMENT:
-        return getLongParameter(pname);
+        return getIntParameter(pname);
     case GraphicsContext3D::POLYGON_OFFSET_FACTOR:
         return getFloatParameter(pname);
     case GraphicsContext3D::POLYGON_OFFSET_FILL:
@@ -1959,19 +1959,19 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname, ExceptionCode& 
     case GraphicsContext3D::POLYGON_OFFSET_UNITS:
         return getFloatParameter(pname);
     case GraphicsContext3D::RED_BITS:
-        return getLongParameter(pname);
+        return getIntParameter(pname);
     case GraphicsContext3D::RENDERBUFFER_BINDING:
         return WebGLGetInfo(PassRefPtr<WebGLRenderbuffer>(m_renderbufferBinding));
     case GraphicsContext3D::RENDERER:
         return WebGLGetInfo(m_context->getString(GraphicsContext3D::RENDERER));
     case GraphicsContext3D::SAMPLE_BUFFERS:
-        return getLongParameter(pname);
+        return getIntParameter(pname);
     case GraphicsContext3D::SAMPLE_COVERAGE_INVERT:
         return getBooleanParameter(pname);
     case GraphicsContext3D::SAMPLE_COVERAGE_VALUE:
         return getFloatParameter(pname);
     case GraphicsContext3D::SAMPLES:
-        return getLongParameter(pname);
+        return getIntParameter(pname);
     case GraphicsContext3D::SCISSOR_BOX:
         return getWebGLIntArrayParameter(pname);
     case GraphicsContext3D::SCISSOR_TEST:
@@ -1979,54 +1979,53 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname, ExceptionCode& 
     case GraphicsContext3D::SHADING_LANGUAGE_VERSION:
         return WebGLGetInfo("WebGL GLSL ES 1.0 (" + m_context->getString(GraphicsContext3D::SHADING_LANGUAGE_VERSION) + ")");
     case GraphicsContext3D::STENCIL_BACK_FAIL:
-        return getUnsignedLongParameter(pname);
+        return getUnsignedIntParameter(pname);
     case GraphicsContext3D::STENCIL_BACK_FUNC:
-        return getUnsignedLongParameter(pname);
+        return getUnsignedIntParameter(pname);
     case GraphicsContext3D::STENCIL_BACK_PASS_DEPTH_FAIL:
-        return getUnsignedLongParameter(pname);
+        return getUnsignedIntParameter(pname);
     case GraphicsContext3D::STENCIL_BACK_PASS_DEPTH_PASS:
-        return getUnsignedLongParameter(pname);
+        return getUnsignedIntParameter(pname);
     case GraphicsContext3D::STENCIL_BACK_REF:
-        return getLongParameter(pname);
+        return getIntParameter(pname);
     case GraphicsContext3D::STENCIL_BACK_VALUE_MASK:
-        return getUnsignedLongParameter(pname);
+        return getUnsignedIntParameter(pname);
     case GraphicsContext3D::STENCIL_BACK_WRITEMASK:
-        return getUnsignedLongParameter(pname);
+        return getUnsignedIntParameter(pname);
     case GraphicsContext3D::STENCIL_BITS:
-        return getLongParameter(pname);
+        return getIntParameter(pname);
     case GraphicsContext3D::STENCIL_CLEAR_VALUE:
-        return getLongParameter(pname);
+        return getIntParameter(pname);
     case GraphicsContext3D::STENCIL_FAIL:
-        return getUnsignedLongParameter(pname);
+        return getUnsignedIntParameter(pname);
     case GraphicsContext3D::STENCIL_FUNC:
-        return getUnsignedLongParameter(pname);
+        return getUnsignedIntParameter(pname);
     case GraphicsContext3D::STENCIL_PASS_DEPTH_FAIL:
-        return getUnsignedLongParameter(pname);
+        return getUnsignedIntParameter(pname);
     case GraphicsContext3D::STENCIL_PASS_DEPTH_PASS:
-        return getUnsignedLongParameter(pname);
+        return getUnsignedIntParameter(pname);
     case GraphicsContext3D::STENCIL_REF:
-        return getLongParameter(pname);
+        return getIntParameter(pname);
     case GraphicsContext3D::STENCIL_TEST:
         return getBooleanParameter(pname);
     case GraphicsContext3D::STENCIL_VALUE_MASK:
-        return getUnsignedLongParameter(pname);
+        return getUnsignedIntParameter(pname);
     case GraphicsContext3D::STENCIL_WRITEMASK:
-        return getUnsignedLongParameter(pname);
+        return getUnsignedIntParameter(pname);
     case GraphicsContext3D::SUBPIXEL_BITS:
-        return getLongParameter(pname);
+        return getIntParameter(pname);
     case GraphicsContext3D::TEXTURE_BINDING_2D:
         return WebGLGetInfo(PassRefPtr<WebGLTexture>(m_textureUnits[m_activeTextureUnit].m_texture2DBinding));
     case GraphicsContext3D::TEXTURE_BINDING_CUBE_MAP:
         return WebGLGetInfo(PassRefPtr<WebGLTexture>(m_textureUnits[m_activeTextureUnit].m_textureCubeMapBinding));
     case GraphicsContext3D::UNPACK_ALIGNMENT:
-        // FIXME: should this be "long" in the spec?
         return getIntParameter(pname);
     case GraphicsContext3D::UNPACK_FLIP_Y_WEBGL:
         return WebGLGetInfo(m_unpackFlipY);
     case GraphicsContext3D::UNPACK_PREMULTIPLY_ALPHA_WEBGL:
         return WebGLGetInfo(m_unpackPremultiplyAlpha);
     case GraphicsContext3D::UNPACK_COLORSPACE_CONVERSION_WEBGL:
-        return WebGLGetInfo(static_cast<unsigned long>(m_unpackColorspaceConversion));
+        return WebGLGetInfo(m_unpackColorspaceConversion);
     case GraphicsContext3D::VENDOR:
         return WebGLGetInfo("Webkit (" + m_context->getString(GraphicsContext3D::VENDOR) + ")");
     case GraphicsContext3D::VERSION:
@@ -2035,7 +2034,7 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname, ExceptionCode& 
         return getWebGLIntArrayParameter(pname);
     case Extensions3D::FRAGMENT_SHADER_DERIVATIVE_HINT_OES: // OES_standard_derivatives
         if (m_oesStandardDerivatives)
-            return getUnsignedLongParameter(Extensions3D::FRAGMENT_SHADER_DERIVATIVE_HINT_OES);
+            return getUnsignedIntParameter(Extensions3D::FRAGMENT_SHADER_DERIVATIVE_HINT_OES);
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
         return WebGLGetInfo();
     default:
@@ -2067,7 +2066,7 @@ WebGLGetInfo WebGLRenderingContext::getProgramParameter(WebGLProgram* program, G
     case GraphicsContext3D::ACTIVE_UNIFORMS:
     case GraphicsContext3D::ACTIVE_UNIFORM_MAX_LENGTH:
         m_context->getProgramiv(objectOrZero(program), pname, &value);
-        return WebGLGetInfo(static_cast<long>(value));
+        return WebGLGetInfo(value);
     default:
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
         return WebGLGetInfo();
@@ -2102,13 +2101,13 @@ WebGLGetInfo WebGLRenderingContext::getRenderbufferParameter(GC3Denum target, GC
     if (m_renderbufferBinding->getInternalFormat() == GraphicsContext3D::DEPTH_STENCIL
         && !m_renderbufferBinding->isValid()) {
         ASSERT(!isDepthStencilSupported());
-        long value = 0;
+        int value = 0;
         switch (pname) {
         case GraphicsContext3D::RENDERBUFFER_WIDTH:
-            value = static_cast<long>(m_renderbufferBinding->getWidth());
+            value = m_renderbufferBinding->getWidth();
             break;
         case GraphicsContext3D::RENDERBUFFER_HEIGHT:
-            value = static_cast<long>(m_renderbufferBinding->getHeight());
+            value = m_renderbufferBinding->getHeight();
             break;
         case GraphicsContext3D::RENDERBUFFER_RED_SIZE:
         case GraphicsContext3D::RENDERBUFFER_GREEN_SIZE:
@@ -2123,7 +2122,7 @@ WebGLGetInfo WebGLRenderingContext::getRenderbufferParameter(GC3Denum target, GC
             value = 8;
             break;
         case GraphicsContext3D::RENDERBUFFER_INTERNAL_FORMAT:
-            return WebGLGetInfo(static_cast<unsigned long>(m_renderbufferBinding->getInternalFormat()));
+            return WebGLGetInfo(m_renderbufferBinding->getInternalFormat());
         default:
             m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
             return WebGLGetInfo();
@@ -2143,9 +2142,9 @@ WebGLGetInfo WebGLRenderingContext::getRenderbufferParameter(GC3Denum target, GC
     case GraphicsContext3D::RENDERBUFFER_DEPTH_SIZE:
     case GraphicsContext3D::RENDERBUFFER_STENCIL_SIZE:
         m_context->getRenderbufferParameteriv(target, pname, &value);
-        return WebGLGetInfo(static_cast<long>(value));
+        return WebGLGetInfo(value);
     case GraphicsContext3D::RENDERBUFFER_INTERNAL_FORMAT:
-        return WebGLGetInfo(static_cast<unsigned long>(m_renderbufferBinding->getInternalFormat()));
+        return WebGLGetInfo(m_renderbufferBinding->getInternalFormat());
     default:
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
         return WebGLGetInfo();
@@ -2167,11 +2166,11 @@ WebGLGetInfo WebGLRenderingContext::getShaderParameter(WebGLShader* shader, GC3D
         return WebGLGetInfo(static_cast<bool>(value));
     case GraphicsContext3D::SHADER_TYPE:
         m_context->getShaderiv(objectOrZero(shader), pname, &value);
-        return WebGLGetInfo(static_cast<unsigned long>(value));
+        return WebGLGetInfo(static_cast<unsigned int>(value));
     case GraphicsContext3D::INFO_LOG_LENGTH:
     case GraphicsContext3D::SHADER_SOURCE_LENGTH:
         m_context->getShaderiv(objectOrZero(shader), pname, &value);
-        return WebGLGetInfo(static_cast<long>(value));
+        return WebGLGetInfo(value);
     default:
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
         return WebGLGetInfo();
@@ -2227,7 +2226,7 @@ WebGLGetInfo WebGLRenderingContext::getTexParameter(GC3Denum target, GC3Denum pn
     case GraphicsContext3D::TEXTURE_WRAP_S:
     case GraphicsContext3D::TEXTURE_WRAP_T:
         m_context->getTexParameteriv(target, pname, &value);
-        return WebGLGetInfo(static_cast<unsigned long>(value));
+        return WebGLGetInfo(static_cast<unsigned int>(value));
     default:
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
         return WebGLGetInfo();
@@ -2349,7 +2348,7 @@ WebGLGetInfo WebGLRenderingContext::getUniform(WebGLProgram* program, const WebG
                     GC3Dint value[4] = {0};
                     m_context->getUniformiv(objectOrZero(program), location, value);
                     if (length == 1)
-                        return WebGLGetInfo(static_cast<long>(value[0]));
+                        return WebGLGetInfo(value[0]);
                     return WebGLGetInfo(Int32Array::create(value, length));
                 }
                 case GraphicsContext3D::BOOL: {
@@ -2416,16 +2415,16 @@ WebGLGetInfo WebGLRenderingContext::getVertexAttrib(GC3Duint index, GC3Denum pna
         return WebGLGetInfo(m_vertexAttribState[index].normalized);
     case GraphicsContext3D::VERTEX_ATTRIB_ARRAY_SIZE:
         if (index >= m_vertexAttribState.size())
-            return WebGLGetInfo(static_cast<long>(4));
-        return WebGLGetInfo(static_cast<long>(m_vertexAttribState[index].size));
+            return WebGLGetInfo(static_cast<int>(4));
+        return WebGLGetInfo(m_vertexAttribState[index].size);
     case GraphicsContext3D::VERTEX_ATTRIB_ARRAY_STRIDE:
         if (index >= m_vertexAttribState.size())
-            return WebGLGetInfo(static_cast<long>(0));
-        return WebGLGetInfo(static_cast<long>(m_vertexAttribState[index].originalStride));
+            return WebGLGetInfo(static_cast<int>(0));
+        return WebGLGetInfo(m_vertexAttribState[index].originalStride);
     case GraphicsContext3D::VERTEX_ATTRIB_ARRAY_TYPE:
         if (index >= m_vertexAttribState.size())
-            return WebGLGetInfo(static_cast<unsigned long>(GraphicsContext3D::FLOAT));
-        return WebGLGetInfo(static_cast<unsigned long>(m_vertexAttribState[index].type));
+            return WebGLGetInfo(static_cast<unsigned int>(GraphicsContext3D::FLOAT));
+        return WebGLGetInfo(m_vertexAttribState[index].type);
     case GraphicsContext3D::CURRENT_VERTEX_ATTRIB:
         if (index >= m_vertexAttribState.size()) {
             float value[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -3831,22 +3830,16 @@ WebGLGetInfo WebGLRenderingContext::getFloatParameter(GC3Denum pname)
 
 WebGLGetInfo WebGLRenderingContext::getIntParameter(GC3Denum pname)
 {
-    return getLongParameter(pname);
+    GC3Dint value = 0;
+    m_context->getIntegerv(pname, &value);
+    return WebGLGetInfo(value);
 }
 
-WebGLGetInfo WebGLRenderingContext::getLongParameter(GC3Denum pname)
+WebGLGetInfo WebGLRenderingContext::getUnsignedIntParameter(GC3Denum pname)
 {
     GC3Dint value = 0;
     m_context->getIntegerv(pname, &value);
-    return WebGLGetInfo(static_cast<long>(value));
-}
-
-WebGLGetInfo WebGLRenderingContext::getUnsignedLongParameter(GC3Denum pname)
-{
-    GC3Dint value = 0;
-    m_context->getIntegerv(pname, &value);
-    GC3Duint uValue = static_cast<GC3Duint>(value);
-    return WebGLGetInfo(static_cast<unsigned long>(uValue));
+    return WebGLGetInfo(static_cast<unsigned int>(value));
 }
 
 WebGLGetInfo WebGLRenderingContext::getWebGLFloatArrayParameter(GC3Denum pname)
