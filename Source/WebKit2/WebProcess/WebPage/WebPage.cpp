@@ -313,6 +313,11 @@ void WebPage::changeAcceleratedCompositingMode(WebCore::GraphicsLayer* layer)
     if (m_isClosed)
         return;
 
+    // With the new drawing area we don't need to inform the UI process when the accelerated
+    // compositing mode changes.
+    if (m_drawingArea->info().type == DrawingAreaInfo::Impl)
+        return;
+
     bool compositing = layer;
     
     // Tell the UI process that accelerated compositing changed. It may respond by changing
@@ -342,6 +347,7 @@ void WebPage::enterAcceleratedCompositingMode(GraphicsLayer* layer)
 void WebPage::exitAcceleratedCompositingMode()
 {
     changeAcceleratedCompositingMode(0);
+    m_drawingArea->setRootCompositingLayer(0);
 }
 #endif
 

@@ -1,3 +1,17 @@
+2011-01-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Don't inform the UI process about compositing changes when using the new drawing area
+        https://bugs.webkit.org/show_bug.cgi?id=53120
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::changeAcceleratedCompositingMode):
+        Return early if we're using the new drawing area.
+
+        (WebKit::WebPage::exitAcceleratedCompositingMode):
+        Call setRootCompositingLayer(0) so the drawing area knows when we leave accelerated compositing.
+
 2011-01-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
