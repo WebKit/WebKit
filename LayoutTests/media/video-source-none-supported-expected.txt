@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 114: TypeError: 'null' is not an object (evaluating 'current.previousSibling')
 1. Test that no usable <source> element leaves the media element with networkState == NETWORK_NO_SOURCE
 
 ++ ERROR, src = test.mp4, type = "audio/x-chicken-face"

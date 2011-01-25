@@ -1,5 +1,11 @@
-FAIL: Timed out waiting for notifyDone to be called
 Test that audio element can use a data: url
 
 EVENT(loadstart)
+EVENT(durationchange)
+EVENT(loadedmetadata)
+EVENT(loadeddata)
+EVENT(canplay)
+EVENT(canplaythrough)
+EXPECTED (mediaElement.duration.toFixed(2) == '2.94') OK
+END OF TEST
 

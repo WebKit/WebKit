@@ -1,3 +1,28 @@
+2011-01-20  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        REGRESSION (r72119): Audio never plays on Star Wars intro animation
+        https://bugs.webkit.org/show_bug.cgi?id=52467
+        
+        QuickTime's eat/m4a movie importer compontent doesn't list audio/m4a as a mime
+        type which it supports, though it handles .m4a files just fine.  Change the way
+        we build the list of supported MIME Types through a new WebKitSystemInterface
+        function.
+        
+        Caused by r72119, which adds system-specific extension->MIME entries to the cache
+        before global entries, and the system-specific entries include QuickTime's registry 
+        entries which contain the audio/m4a MIME type, while its components do not.
+
+        Test: media/audio-mpeg4-supported.html
+
+        * WebCore.vcproj/QTMovieWinCommon.vsprops:
+        * platform/graphics/win/QTMovie.cpp:
+        (getMIMETypeCallBack):
+        (initializeSupportedTypes):
+        (QTMovie::countSupportedTypes): gSupportedTypes is now a CFArrayRef.
+        (QTMovie::getSupportedType): Ditto.
+
 2011-01-25  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Jeremy Orlow.

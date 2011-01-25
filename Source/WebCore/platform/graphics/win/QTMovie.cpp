@@ -33,6 +33,7 @@
 #include <Movies.h>
 #include <QTML.h>
 #include <QuickTimeComponents.h>
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
@@ -60,7 +61,7 @@ union UppParam {
     void* ptr;
 };
 
-static Vector<CFStringRef>* gSupportedTypes = 0;
+static CFMutableArrayRef gSupportedTypes = 0;
 static SInt32 quickTimeVersion = 0;
 
 class QTMoviePrivate : public QTMovieTaskClient {
@@ -747,112 +748,59 @@ long QTMovie::timeScale() const
     return GetMovieTimeScale(m_private->m_movie);
 }
 
+static void getMIMETypeCallBack(const char* type);
+
 static void initializeSupportedTypes() 
 {
     if (gSupportedTypes)
         return;
 
-    gSupportedTypes = new Vector<CFStringRef>;
+    gSupportedTypes = CFArrayCreateMutable(kCFAllocatorDefault, 0, &kCFTypeArrayCallBacks);
     if (quickTimeVersion < minimumQuickTimeVersion) {
         LOG_ERROR("QuickTime version %x detected, at least %x required. Returning empty list of supported media MIME types.", quickTimeVersion, minimumQuickTimeVersion);
         return;
     }
 
     // QuickTime doesn't have an importer for video/quicktime. Add it manually.
-    gSupportedTypes->append(CFSTR("video/quicktime"));
+    CFArrayAppendValue(gSupportedTypes, CFSTR("video/quicktime"));
+    
+    wkGetQuickTimeMIMETypeList(getMIMETypeCallBack);
+}
 
-    for (int index = 0; index < 2; index++) {
-        ComponentDescription findCD;
+static void getMIMETypeCallBack(const char* type)
+{
+    ASSERT(type);
+    CFStringRef cfType = CFStringCreateWithCString(kCFAllocatorDefault, type, kCFStringEncodingMacRoman);
+    if (!cfType)
+        return;
 
-        // look at all movie importers that can import in place and are installed. 
-        findCD.componentType = MovieImportType;
-        findCD.componentSubType = 0;
-        findCD.componentManufacturer = 0;
-        findCD.componentFlagsMask = cmpIsMissing | movieImportSubTypeIsFileExtension | canMovieImportInPlace | dontAutoFileMovieImport;
-
-        // look at those registered by HFS file types the first time through, by file extension the second time
-        findCD.componentFlags = canMovieImportInPlace | (index ? movieImportSubTypeIsFileExtension : 0);
-        
-        long componentCount = CountComponents(&findCD);
-        if (!componentCount)
-            continue;
-
-        Component comp = 0;
-        while (comp = FindNextComponent(comp, &findCD)) {
-            // Does this component have a MIME type container?
-            ComponentDescription infoCD;
-            OSErr err = GetComponentInfo(comp, &infoCD, nil /*name*/, nil /*info*/, nil /*icon*/);
-            if (err)
-                continue;
-            if (!(infoCD.componentFlags & hasMovieImportMIMEList))
-                continue;
-            QTAtomContainer mimeList = 0;
-            err = MovieImportGetMIMETypeList((ComponentInstance)comp, &mimeList);
-            if (err || !mimeList)
-                continue;
-
-            // Grab every type from the container.
-            QTLockContainer(mimeList);
-            int typeCount = QTCountChildrenOfType(mimeList, kParentAtomIsContainer, kMimeInfoMimeTypeTag);
-            for (int typeIndex = 1; typeIndex <= typeCount; typeIndex++) {
-                QTAtom mimeTag = QTFindChildByIndex(mimeList, 0, kMimeInfoMimeTypeTag, typeIndex, 0);
-                if (!mimeTag)
-                    continue;
-                char* atomData;
-                long typeLength;
-                if (noErr != QTGetAtomDataPtr(mimeList, mimeTag, &typeLength, &atomData))
-                    continue;
-
-                char typeBuffer[256];
-                if (typeLength >= sizeof(typeBuffer))
-                    continue;
-                memcpy(typeBuffer, atomData, typeLength);
-                typeBuffer[typeLength] = 0;
-
-                // Only add "audio/..." and "video/..." types.
-                if (strncmp(typeBuffer, "audio/", 6) && strncmp(typeBuffer, "video/", 6))
-                    continue;
-
-                CFStringRef cfMimeType = CFStringCreateWithCString(0, typeBuffer, kCFStringEncodingUTF8);
-                if (!cfMimeType)
-                    continue;
-
-                // Only add each type once.
-                bool alreadyAdded = false;
-                for (int addedIndex = 0; addedIndex < gSupportedTypes->size(); addedIndex++) {
-                    CFStringRef type = gSupportedTypes->at(addedIndex);
-                    if (kCFCompareEqualTo == CFStringCompare(cfMimeType, type, kCFCompareCaseInsensitive)) {
-                        alreadyAdded = true;
-                        break;
-                    }
-                }
-                if (!alreadyAdded)
-                    gSupportedTypes->append(cfMimeType);
-                else
-                    CFRelease(cfMimeType);
-            }
-            DisposeHandle(mimeList);
-        }
+    // Filter out all non-audio or -video MIME Types, and only add each type once:
+    if (CFStringHasPrefix(cfType, CFSTR("audio/")) || CFStringHasPrefix(cfType, CFSTR("video/"))) {
+        CFRange range = CFRangeMake(0, CFArrayGetCount(gSupportedTypes));
+        if (!CFArrayContainsValue(gSupportedTypes, range, cfType))
+            CFArrayAppendValue(gSupportedTypes, cfType);
     }
+
+    CFRelease(cfType);
 }
 
 unsigned QTMovie::countSupportedTypes()
 {
     initializeSupportedTypes();
-    return static_cast<unsigned>(gSupportedTypes->size());
+    return static_cast<unsigned>(CFArrayGetCount(gSupportedTypes));
 }
 
 void QTMovie::getSupportedType(unsigned index, const UChar*& str, unsigned& len)
 {
     initializeSupportedTypes();
-    ASSERT(index < gSupportedTypes->size());
+    ASSERT(index < CFArrayGetCount(gSupportedTypes));
 
     // Allocate sufficient buffer to hold any MIME type
     static UniChar* staticBuffer = 0;
     if (!staticBuffer)
         staticBuffer = new UniChar[32];
 
-    CFStringRef cfstr = gSupportedTypes->at(index);
+    CFStringRef cfstr = (CFStringRef)CFArrayGetValueAtIndex(gSupportedTypes, index);
     len = CFStringGetLength(cfstr);
     CFRange range = { 0, len };
     CFStringGetCharacters(cfstr, range, staticBuffer);

@@ -573,6 +573,7 @@ media/audio-data-url.html
 media/audio-delete-while-slider-thumb-clicked.html
 media/audio-delete-while-step-button-clicked.html
 media/audio-mpeg-supported.html
+media/audio-mpeg4-supported.html
 media/audio-no-installed-engines.html
 media/audio-play-event.html
 media/before-load-member-access.html

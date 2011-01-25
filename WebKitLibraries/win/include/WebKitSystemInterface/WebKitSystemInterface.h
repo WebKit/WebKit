@@ -169,6 +169,9 @@ CFURLRequestRef wkCFURLRequestCreateFromSerializableRepresentation(CFDictionaryR
 CFDictionaryRef wkCFURLResponseCreateSerializableRepresentation(CFURLResponseRef cfResponse, CFTypeRef tokenNull);
 CFURLResponseRef wkCFURLResponseCreateFromSerializableRepresentation(CFDictionaryRef representation, CFTypeRef tokenNull);
 
+typedef void (*wkQuickTimeMIMETypeCallBack)(const char* mimeType);
+void wkGetQuickTimeMIMETypeList(wkQuickTimeMIMETypeCallBack);
+
 typedef enum {
     WKMediaUIPartFullscreenButton   = 0,
     WKMediaUIPartMuteButton,
