@@ -2004,9 +2004,6 @@ BUGCR42875 WONTFIX SKIP : fast/js/sputnik = TEXT
 BUGWK38360 WIN LINUX : fast/images/svg-background-partial-redraw.html = FAIL
 BUGWK38360 WIN LINUX : svg/carto.net/tabgroup.svg = FAIL
 
-// Failing a few times, flak dashboard seems to agree.
-BUGCR41973 MAC : svg/text/text-text-05-t.svg = IMAGE
-
 // WebKit roll 58626:58719
 BUGCR43963 WIN : fast/forms/searchfield-heights.html = IMAGE
 BUGCR43963 LINUX : fast/forms/searchfield-heights.html = IMAGE+TEXT TEXT
@@ -2154,7 +2151,7 @@ BUGWK39655 : fast/dom/prototype-property.html = FAIL
 // These SVG tests have been flaky on Win from quite some time.
 // Hard to pin down which roll introduced the flakiness.
 BUGCR45106 WIN : svg/clip-path/clip-path-evenodd-nonzero.svg = PASS CRASH
-BUGCR45106 WIN : svg/text/text-text-05-t.svg = PASS CRASH
+//BUGCR45106 WIN : svg/text/text-text-05-t.svg = PASS CRASH
 
 BUGCR45720 WIN LINUX : http/tests/websocket/tests/reload-crash.html = PASS CRASH
 
@@ -2165,7 +2162,7 @@ BUGWK42798 SKIP : fast/notifications/notifications-cancel-request-permission.htm
 // HTML5 Geolocation API does not use window.clientInformation.
 BUGCR11246 SKIP : fast/dom/Window/window-properties-geolocation.html = TEXT
 
-BUGWK40740 MAC LINUX : svg/W3C-SVG-1.1/fonts-glyph-02-t.svg = CRASH PASS
+//BUGWK40740 MAC LINUX : svg/W3C-SVG-1.1/fonts-glyph-02-t.svg = CRASH PASS
 
 BUGCR46603 : fast/frames/lots-of-iframes.html = PASS TIMEOUT
 BUGCR46603 : fast/frames/lots-of-objects.html = PASS TIMEOUT
@@ -3111,6 +3108,5 @@ BUGRNIWA WIN MAC : fast/animation/request-animation-frame.html = PASS TEXT
 BUGCR70686 MAC : fast/text/international/cjk-segmentation.html = TEXT
 
 // Regressions from r76442.
-BUGTONY WIN : svg/W3C-SVG-1.1/animate-elem-24-t.svg = TEXT
-BUGTONY WIN : svg/W3C-SVG-1.1/fonts-glyph-02-t.svg = CRASH TEXT
 BUGTONY WIN : svg/custom/svg-fonts-in-html.html = IMAGE+TEXT
+

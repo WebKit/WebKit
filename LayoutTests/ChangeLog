@@ -1,3 +1,18 @@
+2011-01-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Another unreviewed SVG rebaselines for Chromium.
+
+        * platform/chromium-linux/svg/text/text-text-05-t-expected.checksum:
+        * platform/chromium-linux/svg/text/text-text-05-t-expected.png:
+        * platform/chromium-mac/svg/text/text-text-05-t-expected.checksum:
+        * platform/chromium-mac/svg/text/text-text-05-t-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-24-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.txt:
+        * platform/chromium-win/svg/text/text-text-05-t-expected.checksum:
+        * platform/chromium-win/svg/text/text-text-05-t-expected.png:
+        * platform/chromium-win/svg/text/text-text-05-t-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-01-25  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin Adler.
