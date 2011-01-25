@@ -45,12 +45,12 @@ test("div", "A   B", "A \xA0 B");
 test("div", "A    B", "A \xA0 \xA0B"); 
 
 test("div", " AB", "\xA0AB");
-test("div", "  AB", "\xA0\xA0AB");
-test("div", "   AB", "\xA0\xA0 AB");
-test("div", "    AB", "\xA0\xA0 \xA0AB");
-test("div", "     AB", "\xA0\xA0 \xA0 AB");
-test("div", "      AB", "\xA0\xA0 \xA0 \xA0AB");
-test("div", "       AB", "\xA0\xA0 \xA0 \xA0 AB");
+test("div", "  AB", "\xA0 AB");
+test("div", "   AB", "\xA0 \xA0AB");
+test("div", "    AB", "\xA0 \xA0 AB");
+test("div", "     AB", "\xA0 \xA0 \xA0AB");
+test("div", "      AB", "\xA0 \xA0 \xA0 AB");
+test("div", "       AB", "\xA0 \xA0 \xA0 \xA0AB");
 test("div", "AB  ", "AB \xA0");
 test("div", "AB   ", "AB \xA0\xA0");
 test("div", "AB    ", "AB \xA0 \xA0");
@@ -58,13 +58,12 @@ test("div", "AB     ", "AB \xA0 \xA0\xA0");
 test("div", "AB      ", "AB \xA0 \xA0 \xA0");
 test("div", "AB       ", "AB \xA0 \xA0 \xA0\xA0");
 
-test("div", "  A  B  ", "\xA0\xA0A \xA0B \xA0");
-test("div", "\t\tA\t\tB\t\t", "\xA0\xA0A \xA0B \xA0");
+test("div", "  A  B  ", "\xA0 A \xA0B \xA0");
+test("div", "\t\tA\t\tB\t\t", "\xA0 A \xA0B \xA0");
 
 test("div", " ", "\xA0");
 test("div", "  ", "\xA0\xA0");
-// This is wrong. This should insert interleaved nbsp and whitespace. See https://bugs.webkit.org/show_bug.cgi?id=52781.
-test("div", "   ", "\xA0\xA0\xA0");
+test("div", "   ", "\xA0 \xA0");
 
 test("pre", "AB", "AB");
 test("pre", "A B", "A B");

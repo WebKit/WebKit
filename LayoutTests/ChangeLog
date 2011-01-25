@@ -1,3 +1,15 @@
+2011-01-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        Inserting multiple whitespace using text composition (IME) should insert interleaved nbsp and whitespace.
+        https://bugs.webkit.org/show_bug.cgi?id=52781
+
+        The test was rebaselined to have interleaved space and non-breaking space.
+
+        * editing/inserting/insert-composition-whitespace-expected.txt:
+        * editing/inserting/insert-composition-whitespace.html:
+
 2011-01-24  Martin Robinson  <mrobinson@igalia.com>
 
         Skip one more crashing test.

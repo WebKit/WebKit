@@ -26,10 +26,11 @@
 #ifndef htmlediting_h
 #define htmlediting_h
 
-#include <wtf/Forward.h>
-#include "HTMLNames.h"
+#include "CharacterNames.h"
 #include "ExceptionCode.h"
+#include "HTMLNames.h"
 #include "Position.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -231,8 +232,11 @@ VisibleSelection avoidIntersectionWithNode(const VisibleSelection&, Node*);
 VisibleSelection selectionForParagraphIteration(const VisibleSelection&);
     
 
-// Miscellaneous functions on String
-    
+// Miscellaneous functions on Text
+inline bool isWhitespace(UChar c)
+{
+    return c == noBreakSpace || c == ' ' || c == '\n' || c == '\t';
+}
 String stringWithRebalancedWhitespace(const String&, bool, bool);
 const String& nonBreakingSpaceString();
 

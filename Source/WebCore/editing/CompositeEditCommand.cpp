@@ -390,11 +390,6 @@ void CompositeEditCommand::setNodeAttribute(PassRefPtr<Element> element, const Q
     applyCommandToComposite(SetNodeAttributeCommand::create(element, attribute, value));
 }
 
-static inline bool isWhitespace(UChar c)
-{
-    return c == noBreakSpace || c == ' ' || c == '\n' || c == '\t';
-}
-
 static inline bool containsOnlyWhitespace(const String& text)
 {
     for (unsigned i = 0; i < text.length(); ++i) {

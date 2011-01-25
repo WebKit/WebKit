@@ -356,25 +356,27 @@ int lastOffsetForEditing(const Node* node)
 
 String stringWithRebalancedWhitespace(const String& string, bool startIsStartOfParagraph, bool endIsEndOfParagraph)
 {
-    DEFINE_STATIC_LOCAL(String, twoSpaces, ("  "));
-    DEFINE_STATIC_LOCAL(String, nbsp, ("\xa0"));
-    DEFINE_STATIC_LOCAL(String, pattern, (" \xa0"));
+    Vector<UChar> rebalancedString;
+    append(rebalancedString, string);
 
-    String rebalancedString = string;
+    bool previousCharacterWasSpace = false;
+    for (size_t i = 0; i < rebalancedString.size(); i++) {
+        if (!isWhitespace(rebalancedString[i])) {
+            previousCharacterWasSpace = false;
+            continue;
+        }
 
-    rebalancedString.replace(noBreakSpace, ' ');
-    rebalancedString.replace('\n', ' ');
-    rebalancedString.replace('\t', ' ');
-    
-    rebalancedString.replace(twoSpaces, pattern);
-    
-    if (startIsStartOfParagraph && rebalancedString[0] == ' ')
-        rebalancedString.replace(0, 1, nbsp);
-    int end = rebalancedString.length() - 1;
-    if (endIsEndOfParagraph && rebalancedString[end] == ' ')
-        rebalancedString.replace(end, 1, nbsp);    
+        if (previousCharacterWasSpace || (!i && startIsStartOfParagraph) || (i + 1 == rebalancedString.size() && endIsEndOfParagraph)) {
+            rebalancedString[i] = noBreakSpace;
+            previousCharacterWasSpace = false;
+        } else {
+            rebalancedString[i] = ' ';
+            previousCharacterWasSpace = true;
+        }
+            
+    }
 
-    return rebalancedString;
+    return String::adopt(rebalancedString);
 }
 
 bool isTableStructureNode(const Node *node)

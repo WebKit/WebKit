@@ -1,3 +1,24 @@
+2011-01-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        Inserting multiple whitespace using text composition (IME) should insert interleaved nbsp and whitespace.
+        https://bugs.webkit.org/show_bug.cgi?id=52781
+
+        The bug was caused by stringWithRebalancedWhitespace's replacing the space at the beginning of a paragraph
+        and the end of a paragraph by a non-breaking space after it replaced two consecutive spaces by a space and
+        non-breaking space pattern, thereby replacing more spaces by non-breaking spaces than needed.
+
+        Rewrote the function using Vector<UChar> to fix the bug. New function no longer calls String::replace
+        multiple times but instead it traverses through the string and replaces a space that immediately follows
+        another space or appears at the beginning of a paragraph or at the end of a paragraph by a non-break space.
+
+        * editing/CompositeEditCommand.cpp:
+        * editing/htmlediting.cpp:
+        (WebCore::stringWithRebalancedWhitespace): Written.
+        * editing/htmlediting.h:
+        (WebCore::isWhitespace): Removed from CompositeEditCommand.cpp
+
 2011-01-24  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.
