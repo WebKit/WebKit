@@ -2037,6 +2037,7 @@ fast/repaint/inline-outline-repaint.html
 fast/text/find-case-folding.html
 fast/text/large-text-composed-char.html
 fast/text/basic/014.html
+fast/text/international/cjk-segmentation.html
 fast/text/international/rtl-white-space-pre-wrap.html
 fast/text/whitespace/pre-wrap-overflow-selection.html
 fast/block/basic/text-indent-rtl.html

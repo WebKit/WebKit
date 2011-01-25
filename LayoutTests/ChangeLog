@@ -1,3 +1,12 @@
+2011-01-24  Xiaomei Ji  <xji@chromium.org>
+
+        Unreviewed.
+
+        Skip cjk-segmentation.html (introduced in r76548) in QT.
+        QT skipped range-expand.html, skip cjk-segmentation as well.
+
+        * platform/qt/Skipped:
+
 2011-01-24  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Eric Seidel.
