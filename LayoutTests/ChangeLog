@@ -1,3 +1,15 @@
+2011-01-25  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, add chromium-mac baselines after r76599.
+
+        The platform/mac-leopard results were stale which is why the expected
+        text results aren't updated as well.
+
+        * platform/chromium-mac/svg/custom/junk-data-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/junk-data-expected.png: Added.
+        * platform/chromium-mac/svg/custom/missing-xlink-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/missing-xlink-expected.png: Added.
+
 2011-01-25  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Mihai Parparita.
