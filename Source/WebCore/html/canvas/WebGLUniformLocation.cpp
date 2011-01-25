@@ -31,7 +31,7 @@
 #include "WebGLUniformLocation.h"
 
 namespace WebCore {
-    
+
 PassRefPtr<WebGLUniformLocation> WebGLUniformLocation::create(WebGLProgram* program, GC3Dint location)
 {
     return adoptRef(new WebGLUniformLocation(program, location));

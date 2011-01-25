@@ -42,10 +42,10 @@ public:
     static PassRefPtr<WebGLBuffer> create(WebGLRenderingContext*);
 
     bool associateBufferData(GC3Dsizeiptr size);
-    bool associateBufferData(ArrayBuffer* array);
-    bool associateBufferData(ArrayBufferView* array);
-    bool associateBufferSubData(GC3Dintptr offset, ArrayBuffer* array);
-    bool associateBufferSubData(GC3Dintptr offset, ArrayBufferView* array);
+    bool associateBufferData(ArrayBuffer*);
+    bool associateBufferData(ArrayBufferView*);
+    bool associateBufferSubData(GC3Dintptr offset, ArrayBuffer*);
+    bool associateBufferSubData(GC3Dintptr offset, ArrayBufferView*);
 
     GC3Dsizeiptr byteLength() const;
     const ArrayBuffer* elementArrayBuffer() const { return m_elementArrayBuffer.get(); }

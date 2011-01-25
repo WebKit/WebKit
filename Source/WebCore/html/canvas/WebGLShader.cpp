@@ -32,7 +32,7 @@
 #include "WebGLRenderingContext.h"
 
 namespace WebCore {
-    
+
 PassRefPtr<WebGLShader> WebGLShader::create(WebGLRenderingContext* ctx, GC3Denum type)
 {
     return adoptRef(new WebGLShader(ctx, type));

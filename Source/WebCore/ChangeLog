@@ -1,3 +1,34 @@
+2011-01-24  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Style cleanup for WebGLRenderingContext
+        https://bugs.webkit.org/show_bug.cgi?id=52352
+
+        * html/canvas/WebGLBuffer.cpp:
+        * html/canvas/WebGLBuffer.h:
+        * html/canvas/WebGLObject.cpp:
+        * html/canvas/WebGLProgram.cpp:
+        * html/canvas/WebGLRenderbuffer.cpp:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::create):
+        (WebCore::WebGLRenderingContext::blendFunc):
+        (WebCore::WebGLRenderingContext::createShader):
+        (WebCore::WebGLRenderingContext::deleteBuffer):
+        (WebCore::WebGLRenderingContext::deleteShader):
+        (WebCore::WebGLRenderingContext::deleteTexture):
+        (WebCore::WebGLRenderingContext::disableVertexAttribArray):
+        (WebCore::WebGLRenderingContext::validateIndexArrayPrecise):
+        (WebCore::WebGLRenderingContext::validateRenderingState):
+        (WebCore::WebGLRenderingContext::enableVertexAttribArray):
+        (WebCore::WebGLRenderingContext::getUniform):
+        (WebCore::WebGLRenderingContext::detachAndRemoveAllObjects):
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLShader.cpp:
+        * html/canvas/WebGLTexture.cpp:
+        * html/canvas/WebGLUniformLocation.cpp:
+        * html/canvas/WebGLUniformLocation.h:
+
 2011-01-24  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Eric Seidel.

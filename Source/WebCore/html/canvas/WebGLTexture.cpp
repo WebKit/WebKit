@@ -33,7 +33,7 @@
 #include "WebGLRenderingContext.h"
 
 namespace WebCore {
-    
+
 PassRefPtr<WebGLTexture> WebGLTexture::create(WebGLRenderingContext* ctx)
 {
     return adoptRef(new WebGLTexture(ctx));

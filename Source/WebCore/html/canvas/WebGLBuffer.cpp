@@ -34,7 +34,7 @@
 #include "WebGLRenderingContext.h"
 
 namespace WebCore {
-    
+
 PassRefPtr<WebGLBuffer> WebGLBuffer::create(WebGLRenderingContext* ctx)
 {
     return adoptRef(new WebGLBuffer(ctx));

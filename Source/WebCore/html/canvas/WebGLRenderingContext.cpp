@@ -351,7 +351,7 @@ PassOwnPtr<WebGLRenderingContext> WebGLRenderingContext::create(HTMLCanvasElemen
         canvas->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextcreationerrorEvent, false, true, "Could not create a WebGL context."));
         return 0;
     }
-        
+
     return new WebGLRenderingContext(canvas, context, attributes);
 }
 
@@ -575,7 +575,6 @@ void WebGLRenderingContext::bindBuffer(GC3Denum target, WebGLBuffer* buffer, Exc
     cleanupAfterGraphicsCall(false);
 }
 
-
 void WebGLRenderingContext::bindFramebuffer(GC3Denum target, WebGLFramebuffer* buffer, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
@@ -615,7 +614,6 @@ void WebGLRenderingContext::bindRenderbuffer(GC3Denum target, WebGLRenderbuffer*
         renderBuffer->setHasEverBeenBound();
     cleanupAfterGraphicsCall(false);
 }
-
 
 void WebGLRenderingContext::bindTexture(GC3Denum target, WebGLTexture* texture, ExceptionCode& ec)
 {
@@ -684,7 +682,7 @@ void WebGLRenderingContext::blendFunc(GC3Denum sfactor, GC3Denum dfactor)
         return;
     m_context->blendFunc(sfactor, dfactor);
     cleanupAfterGraphicsCall(false);
-}       
+}
 
 void WebGLRenderingContext::blendFuncSeparate(GC3Denum srcRGB, GC3Denum dstRGB, GC3Denum srcAlpha, GC3Denum dstAlpha)
 {
@@ -989,7 +987,7 @@ PassRefPtr<WebGLBuffer> WebGLRenderingContext::createBuffer()
     addObject(o.get());
     return o;
 }
-        
+
 PassRefPtr<WebGLFramebuffer> WebGLRenderingContext::createFramebuffer()
 {
     if (isContextLost())
@@ -1035,7 +1033,7 @@ PassRefPtr<WebGLShader> WebGLRenderingContext::createShader(GC3Denum type, Excep
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
         return 0;
     }
-    
+
     RefPtr<WebGLShader> o = WebGLShader::create(this, type);
     addObject(o.get());
     return o;
@@ -1053,7 +1051,7 @@ void WebGLRenderingContext::deleteBuffer(WebGLBuffer* buffer)
 {
     if (isContextLost() || !buffer)
         return;
-    
+
     buffer->deleteObject();
 
     if (!isGLES2Compliant()) {
@@ -1111,7 +1109,7 @@ void WebGLRenderingContext::deleteShader(WebGLShader* shader)
 {
     if (isContextLost() || !shader)
         return;
-    
+
     shader->deleteObject();
 }
 
@@ -1119,7 +1117,7 @@ void WebGLRenderingContext::deleteTexture(WebGLTexture* texture)
 {
     if (isContextLost() || !texture)
         return;
-    
+
     texture->deleteObject();
     if (m_framebufferBinding)
         m_framebufferBinding->removeAttachment(texture);
@@ -1167,7 +1165,6 @@ void WebGLRenderingContext::detachShader(WebGLProgram* program, WebGLShader* sha
     cleanupAfterGraphicsCall(false);
 }
 
-
 void WebGLRenderingContext::disable(GC3Denum cap)
 {
     if (isContextLost() || !validateCapability(cap))
@@ -1185,7 +1182,7 @@ void WebGLRenderingContext::disableVertexAttribArray(GC3Duint index, ExceptionCo
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return;
     }
-    
+
     if (index < m_vertexAttribState.size())
         m_vertexAttribState[index].enabled = false;
 
@@ -1308,8 +1305,8 @@ bool WebGLRenderingContext::validateIndexArrayPrecise(GC3Dsizei count, GC3Denum 
                 lastIndex = *p;
             ++p;
         }
-    }    
-        
+    }
+
     // Then set the last index in the index array and make sure it is valid.
     numElementsRequired = lastIndex + 1;
     return numElementsRequired > 0;
@@ -1353,10 +1350,10 @@ bool WebGLRenderingContext::validateRenderingState(int numElementsRequired)
             }
         }
     }
-    
+
     if (smallestNumElements == INT_MAX)
         smallestNumElements = 0;
-    
+
     return numElementsRequired <= smallestNumElements;
 }
 
@@ -1512,12 +1509,12 @@ void WebGLRenderingContext::enableVertexAttribArray(GC3Duint index, ExceptionCod
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return;
     }
-    
+
     if (index >= m_vertexAttribState.size())
         m_vertexAttribState.resize(index + 1);
-        
+
     m_vertexAttribState[index].enabled = true;
-    
+
     m_context->enableVertexAttribArray(index);
     cleanupAfterGraphicsCall(false);
 }
@@ -1529,7 +1526,6 @@ void WebGLRenderingContext::finish()
     m_context->finish();
     cleanupAfterGraphicsCall(true);
 }
-
 
 void WebGLRenderingContext::flush()
 {
@@ -2243,7 +2239,7 @@ WebGLGetInfo WebGLRenderingContext::getUniform(WebGLProgram* program, const WebG
         return WebGLGetInfo();
     }
     GC3Dint location = uniformLocation->location();
-    
+
     WebGLStateRestorer(this, false);
     // FIXME: make this more efficient using WebGLUniformLocation and caching types in it
     GC3Dint activeUniforms = 0;
@@ -3748,7 +3744,7 @@ void WebGLRenderingContext::detachAndRemoveAllObjects()
     HashSet<RefPtr<WebGLObject> >::iterator pend = m_canvasObjects.end();
     for (HashSet<RefPtr<WebGLObject> >::iterator it = m_canvasObjects.begin(); it != pend; ++it)
         (*it)->detachContext();
-        
+
     m_canvasObjects.clear();
 }
 

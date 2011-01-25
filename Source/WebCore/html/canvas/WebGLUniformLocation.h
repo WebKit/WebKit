@@ -39,14 +39,14 @@ class WebGLUniformLocation : public RefCounted<WebGLUniformLocation> {
 public:
     virtual ~WebGLUniformLocation() { }
 
-    static PassRefPtr<WebGLUniformLocation> create(WebGLProgram* program, GC3Dint location);
+    static PassRefPtr<WebGLUniformLocation> create(WebGLProgram*, GC3Dint location);
 
     WebGLProgram* program() const;
 
     GC3Dint location() const;
 
 protected:
-    WebGLUniformLocation(WebGLProgram* program, GC3Dint location);
+    WebGLUniformLocation(WebGLProgram*, GC3Dint location);
 
 private:
     RefPtr<WebGLProgram> m_program;

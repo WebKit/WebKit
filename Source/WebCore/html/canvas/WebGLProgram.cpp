@@ -32,7 +32,7 @@
 #include "WebGLRenderingContext.h"
 
 namespace WebCore {
-    
+
 PassRefPtr<WebGLProgram> WebGLProgram::create(WebGLRenderingContext* ctx)
 {
     return adoptRef(new WebGLProgram(ctx));

@@ -32,7 +32,7 @@
 #include "WebGLRenderingContext.h"
 
 namespace WebCore {
-    
+
 WebGLObject::WebGLObject(WebGLRenderingContext* context)
     : m_object(0)
     , m_context(context)
