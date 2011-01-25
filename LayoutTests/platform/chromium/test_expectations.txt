@@ -3110,3 +3110,6 @@ BUGRNIWA WIN MAC : fast/animation/request-animation-frame.html = PASS TEXT
 
 // Failing after r76422
 BUGCR70573 LINUX : fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport.html = TEXT
+
+// Added by http://trac.webkit.org/changeset/76548
+BUGCR70686 MAC : fast/text/international/cjk-segmentation.html = TEXT
