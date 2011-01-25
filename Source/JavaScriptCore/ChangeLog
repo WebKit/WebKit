@@ -1,3 +1,19 @@
+2011-01-25  Marcilio Mendonca  <mamendonca@rim.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 53087: Refactoring: replaced a hanging "else" with a "return"
+        statement
+        https://bugs.webkit.org/show_bug.cgi?id=53087.
+
+        Refactoring work: Replaced a hanging "else" within an #if PLATFORM(M
+        with a "return" so that the code is more readable and less error pro
+        (e.g., "else" doesn't use braces so adding extra lines to the else
+        block won't have any effect; even worse, code still compiles
+        successfully.
+
+        * wtf/Assertions.cpp:
+
 2011-01-24  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Eric Seidel.

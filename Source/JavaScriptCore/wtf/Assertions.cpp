@@ -101,7 +101,8 @@ static void vprintf_stderr_common(const char* format, va_list args)
         free(buffer);
         CFRelease(str);
         CFRelease(cfFormat);
-    } else
+        return;
+    }
 #elif PLATFORM(BREWMP)
     // When str is 0, the return value is the number of bytes needed
     // to accept the result including null termination.
