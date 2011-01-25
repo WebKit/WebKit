@@ -1,3 +1,21 @@
+2011-01-24  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Add runtime checks for invariants in memory cache
+        https://bugs.webkit.org/show_bug.cgi?id=53059
+        
+        To help track down bug 53045, add some CRASH calls in addition to
+        ASSERTs, so that we can track down failures in reliability bots.
+
+        Just some checks, no new tests necessary.
+        
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::cachedImage):
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::~CachedResource):
+
 2011-01-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

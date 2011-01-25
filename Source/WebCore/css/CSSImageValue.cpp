@@ -67,6 +67,10 @@ StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader)
 StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader, const String& url)
 {
     ASSERT(loader);
+    if (!loader) {
+        // FIXME: Remove when http://webkit.org/b/53045 is fixed.
+        CRASH();
+    }
 
     if (!m_accessedImage) {
         m_accessedImage = true;

@@ -93,8 +93,8 @@ CachedResource::CachedResource(const String& url, Type type)
     , m_loading(false)
     , m_type(type)
     , m_status(Pending)
-#ifndef NDEBUG
     , m_deleted(false)
+#ifndef NDEBUG
     , m_lruIndex(0)
 #endif
     , m_nextInAllResourcesList(0)
@@ -117,6 +117,12 @@ CachedResource::~CachedResource()
     ASSERT(!inCache());
     ASSERT(!m_deleted);
     ASSERT(url().isNull() || memoryCache()->resourceForURL(KURL(ParsedURLString, url())) != this);
+    
+    if (m_deleted) {
+        // FIXME: Remove when http://webkit.org/b/53045 is fixed.
+        CRASH();
+    }
+    
 #ifndef NDEBUG
     m_deleted = true;
     cachedResourceLeakCounter.decrement();
