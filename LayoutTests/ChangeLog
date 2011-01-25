@@ -1,3 +1,12 @@
+2011-01-25  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed, skipping flaky test on GTK debug bots.
+
+        fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=53073
+
+        * platform/gtk/Skipped: Skipped test.
+
 2011-01-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Nikolas Zimmermann.
