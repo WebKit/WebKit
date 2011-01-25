@@ -1,3 +1,15 @@
+2011-01-25  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt][WK2] Add QWKPage::processCrashed() signal
+        https://bugs.webkit.org/show_bug.cgi?id=53076
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::processDidCrash):
+        * UIProcess/API/qt/qwkpage.h:
+        * UIProcess/API/qt/qwkpage_p.h:
+
 2011-01-24  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

@@ -393,6 +393,11 @@ void QWKPagePrivate::didRelaunchProcess()
         q->setViewportSize(wkView->size().toSize());
 }
 
+void QWKPagePrivate::processDidCrash()
+{
+    emit q->processCrashed();
+}
+
 QWKPage::QWKPage(QWKContext* context)
     : d(new QWKPagePrivate(this, context))
 {
