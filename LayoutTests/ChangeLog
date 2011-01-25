@@ -1,3 +1,17 @@
+2011-01-24  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
+        Chromium-Linux rebaseline for r76567.
+
+        * platform/chromium-linux/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.checksum:
+        * platform/chromium-linux/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.png:
+        * platform/chromium-linux/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.txt:
+        * platform/chromium-linux/fast/speech/input-appearance-numberandspeech-expected.checksum:
+        * platform/chromium-linux/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-linux/fast/speech/input-appearance-numberandspeech-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-01-24  Martin Robinson  <mrobinson@igalia.com>
 
         Skip a slightly different set of tests after r76555. Seems that some of these

@@ -2819,7 +2819,7 @@ BUGCR62433 MAC LINUX : fast/backgrounds/animated-gif-as-background.html = IMAGE
 BUGCR62433 MAC LINUX : fast/images/gif-loop-count.html = IMAGE
 
 // input-speech related failures
-BUG_DRT WIN MAC : fast/speech/input-appearance-numberandspeech.html = IMAGE
+BUG_DRT WIN MAC : fast/speech/input-appearance-numberandspeech.html = IMAGE IMAGE+TEXT
 BUG_DRT WIN MAC : fast/speech/input-appearance-searchandspeech.html = IMAGE
 BUG_DRT WIN MAC : fast/speech/input-appearance-speechbutton.html = IMAGE
 
