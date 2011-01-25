@@ -56,6 +56,8 @@ compositing/iframes/iframe-src-change.html
 
 # WebKitTestRunner needs an implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
+fast/forms/input-number-change-type-on-focus.html
+fast/forms/search-hide-cancel-on-cancel.html
 fast/dom/search-shadow-host-crash.html
 http/tests/security/isolatedWorld/events.html
 http/tests/security/isolatedWorld/userGestureEvents.html

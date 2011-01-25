@@ -1,3 +1,12 @@
+2011-01-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Skip some new tests for WebKit2 that use eventSender
+        https://bugs.webkit.org/show_bug.cgi?id=53068
+
+        * platform/mac-wk2/Skipped:
+
 2011-01-24  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.
