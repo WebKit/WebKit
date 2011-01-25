@@ -138,6 +138,10 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
     }
     AnimationMode animationMode = this->animationMode();
     if (m_propertyType == PathProperty) {
+        if (animationMode == ToAnimation) {
+            ASSERT(results->m_animatedPathPointer);
+            m_fromPath = results->m_animatedPathPointer->copy();
+        }
         if (!percentage) {
             ASSERT(m_fromPath);
             ASSERT(percentage >= 0);
@@ -210,8 +214,9 @@ bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const
         }
     } else if (m_propertyType == PathProperty) {
         SVGPathParserFactory* factory = SVGPathParserFactory::self();
-        if (factory->buildSVGPathByteStreamFromString(fromString, m_fromPath, UnalteredParsing)) {
-            if (factory->buildSVGPathByteStreamFromString(toString, m_toPath, UnalteredParsing))
+        if (factory->buildSVGPathByteStreamFromString(toString, m_toPath, UnalteredParsing)) {
+            // For to-animations the from number is calculated later
+            if (animationMode() == ToAnimation || factory->buildSVGPathByteStreamFromString(fromString, m_fromPath, UnalteredParsing))
                 return true;
         }
         m_fromPath.clear();
@@ -272,7 +277,9 @@ void SVGAnimateElement::resetToBaseValue(const String& baseString)
             return;
     } else if (m_propertyType == PathProperty) {
         m_animatedPath.clear();
-        m_animatedPathPointer = 0;
+        SVGPathParserFactory* factory = SVGPathParserFactory::self();
+        factory->buildSVGPathByteStreamFromString(baseString, m_animatedPath, UnalteredParsing);
+        m_animatedPathPointer = m_animatedPath.get();
         return;
     } else if (m_propertyType == PointsProperty) {
         m_animatedPoints.clear();

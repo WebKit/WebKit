@@ -1,3 +1,24 @@
+2011-01-25  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG is missing to-animation support for Path
+        https://bugs.webkit.org/show_bug.cgi?id=52982
+
+        SVG was missing 'to' animation support for SVG paths. Even the fallback to discrete
+        animation did not work and an assert was thrown, because of the missing m_fromPath.
+        This also influences a test of the W3C test suite. Subtest 2 of animate-elem-83-t.svg passes now.
+
+        Test: svg/animations/animate-path-to-animation.html
+
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::calculateAnimatedValue): Take the value of the last SVGAnimateElement for
+        m_fromPath, since 'to' animations are accumulative.
+        (WebCore::SVGAnimateElement::calculateFromAndToValues): Added support for 'to' animations.
+        (WebCore::SVGAnimateElement::resetToBaseValue): Set m_animatedPath on the first animation element to baseVal.
+        * svg/SVGPathByteStream.h:
+        (WebCore::SVGPathByteStream::copySVGPathByteStream): Return copy of current byte stream.
+
 2011-01-25  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

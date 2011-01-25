@@ -51,6 +51,11 @@ public:
         return adoptPtr(new SVGPathByteStream);
     }
 
+    PassOwnPtr<SVGPathByteStream> copy()
+    {
+        return adoptPtr(new SVGPathByteStream(m_data));
+    }
+
     typedef Vector<unsigned char> Data;
     typedef Data::const_iterator DataIterator;
 
@@ -62,6 +67,11 @@ public:
 
 private:
     SVGPathByteStream() { }
+    SVGPathByteStream(Data& data)
+        : m_data(data)
+    {
+    }
+
     Data m_data;
 };
 

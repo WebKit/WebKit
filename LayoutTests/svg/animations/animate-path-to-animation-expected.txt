@@ -1,0 +1,19 @@
+SVG 1.1 dynamic animation tests
+
+Test calcMode spline with to animation. You should see a green 100x100 path and only PASS messages
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS path.pathSegList.getItem(0).x is 40
+PASS path.pathSegList.getItem(0).y is 40
+PASS path.pathSegList.getItem(0).x is almost 20, after first half
+PASS path.pathSegList.getItem(0).y is almost 20, after first half
+PASS path.pathSegList.getItem(0).x is almost 0, after first half
+PASS path.pathSegList.getItem(0).y is almost 0, after first half
+PASS path.pathSegList.getItem(0).x is 40
+PASS path.pathSegList.getItem(0).y is 40
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

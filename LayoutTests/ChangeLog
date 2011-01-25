@@ -1,3 +1,20 @@
+2011-01-25  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG is missing to-animation support for Path
+        https://bugs.webkit.org/show_bug.cgi?id=52982
+
+        Added an animation test to check 'to' animations in combination with SVG paths.
+
+        * svg/animations/animate-path-to-animation-expected.txt: Added.
+        * svg/animations/animate-path-to-animation.html: Added.
+        * svg/animations/script-tests/animate-path-to-animation.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+
 2011-01-25  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Introduce FontMetrics abstraction
