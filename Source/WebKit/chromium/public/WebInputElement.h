@@ -74,7 +74,6 @@ namespace WebKit {
         WEBKIT_API WebString placeholder() const;
         WEBKIT_API bool isAutofilled() const;
         WEBKIT_API void setAutofilled(bool);
-        WEBKIT_API void dispatchFormControlChangeEvent();
         WEBKIT_API void setSelectionRange(int, int);
         WEBKIT_API int selectionStart() const;
         WEBKIT_API int selectionEnd() const;

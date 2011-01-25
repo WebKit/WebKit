@@ -53,6 +53,11 @@ WebString WebFormControlElement::formControlType() const
     return constUnwrap<HTMLFormControlElement>()->type();
 }
 
+void WebFormControlElement::dispatchFormControlChangeEvent()
+{
+    unwrap<HTMLFormControlElement>()->dispatchFormControlChangeEvent();
+}
+
 WebString WebFormControlElement::nameForAutofill() const
 {
     String name = constUnwrap<HTMLFormControlElement>()->name();

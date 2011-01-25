@@ -57,6 +57,8 @@ public:
     WEBKIT_API WebString formControlName() const;
     WEBKIT_API WebString formControlType() const;
 
+    WEBKIT_API void dispatchFormControlChangeEvent();
+
     // Returns the name that should be used for the specified |element| when
     // storing autofill data.  This is either the field name or its id, an empty
     // string if it has no name and no id.

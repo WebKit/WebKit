@@ -135,11 +135,6 @@ void WebInputElement::setAutofilled(bool autoFilled)
     unwrap<HTMLInputElement>()->setAutofilled(autoFilled);
 }
 
-void WebInputElement::dispatchFormControlChangeEvent()
-{
-    unwrap<HTMLInputElement>()->dispatchFormControlChangeEvent();
-}
-
 void WebInputElement::setSelectionRange(int start, int end)
 {
     unwrap<HTMLInputElement>()->setSelectionRange(start, end);
