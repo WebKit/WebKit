@@ -1,3 +1,35 @@
+2011-01-24  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Reset the page scale factor on standard frame loads
+        https://bugs.webkit.org/show_bug.cgi?id=53058
+        <rdar://problem/8908844>
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::scaleWebView):
+        Don't set m_viewScaleFactor here. It will be set in viewScaleFactorDidChange.
+
+        (WebKit::WebPageProxy::viewScaleFactorDidChange):
+        Update m_viewScaleFactor.
+
+        * UIProcess/WebPageProxy.h:
+        Add viewScaleFactorDidChange.
+
+        * UIProcess/WebPageProxy.messages.in:
+        Add ViewScaleFactorDidChange message.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+        Set the scale factor.
+
+        (WebKit::WebFrameLoaderClient::restoreViewState):
+        Inform the UI process about the new view scale factor.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::scaleWebView):
+        Send a ViewScaleFactorDidChange message.
+
 2011-01-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders Carlsson.

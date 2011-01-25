@@ -890,7 +890,6 @@ void WebPageProxy::scaleWebView(double scale, const IntPoint& origin)
     if (!isValid())
         return;
 
-    m_viewScaleFactor = scale;
     process()->send(Messages::WebPage::ScaleWebView(scale, origin), m_pageID);
 }
 
@@ -918,6 +917,11 @@ void WebPageProxy::setFixedLayoutSize(const IntSize& size)
 
     m_fixedLayoutSize = size;
     process()->send(Messages::WebPage::SetFixedLayoutSize(size), m_pageID);
+}
+
+void WebPageProxy::viewScaleFactorDidChange(double scaleFactor)
+{
+    m_viewScaleFactor = scaleFactor;
 }
 
 void WebPageProxy::findString(const String& string, FindOptions options, unsigned maxMatchCount)

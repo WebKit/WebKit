@@ -1733,6 +1733,14 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     }
 }
 
+- (BOOL)mouseDownCanMoveWindow
+{
+    BOOL result = [super mouseDownCanMoveWindow];
+
+    NSLog(@"%@, %@ %d", self, NSStringFromSelector(_cmd), result);
+    return result;
+}
+
 - (void)_handleAutoscrollForMouseDragged:(NSEvent *)event 
 { 
     [self autoscroll:event]; 

@@ -614,6 +614,8 @@ void WebPage::scaleWebView(double scale, const IntPoint& origin)
     if (!frame)
         return;
     frame->scalePage(scale, origin);
+
+    send(Messages::WebPageProxy::ViewScaleFactorDidChange(scale));
 }
 
 double WebPage::viewScaleFactor() const

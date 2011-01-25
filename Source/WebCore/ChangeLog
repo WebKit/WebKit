@@ -1,3 +1,15 @@
+2011-01-24  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Reset the page scale factor on standard frame loads
+        https://bugs.webkit.org/show_bug.cgi?id=53058
+        <rdar://problem/8908844>
+
+        Add a symbol needed by WebKit2.
+
+        * WebCore.exp.in:
+
 2011-01-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

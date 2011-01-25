@@ -260,6 +260,8 @@ public:
     void sendAccessibilityPresenterToken(const CoreIPC::DataReference&);
 #endif
 
+    void viewScaleFactorDidChange(double);
+
     // Find.
     void findString(const String&, FindOptions, unsigned maxMatchCount);
     void hideFindUI();

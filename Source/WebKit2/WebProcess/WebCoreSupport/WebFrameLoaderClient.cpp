@@ -57,6 +57,7 @@
 #include <WebCore/FrameView.h>
 #include <WebCore/HTMLAppletElement.h>
 #include <WebCore/HTMLFormElement.h>
+#include <WebCore/HistoryItem.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MouseEvent.h>
 #include <WebCore/Page.h>
@@ -426,7 +427,17 @@ void WebFrameLoaderClient::dispatchDidCommitLoad()
     webPage->sandboxExtensionTracker().didCommitProvisionalLoad(m_frame);
 
     // Notify the UIProcess.
+
     webPage->send(Messages::WebPageProxy::DidCommitLoadForFrame(m_frame->frameID(), response.mimeType(), m_frameHasCustomRepresentation, PlatformCertificateInfo(response), InjectedBundleUserMessageEncoder(userData.get())));
+
+    // Restore the page scale factor.
+    double newPageScaleFactor = m_frame->coreFrame()->pageScaleFactor();
+    
+    // Only restore the scale factor for standard frame loads (of the main frame).
+    if (m_frame->isMainFrame() && m_frame->coreFrame()->loader()->loadType() == FrameLoadTypeStandard)
+        newPageScaleFactor = 1.0;
+
+    webPage->scaleWebView(newPageScaleFactor, IntPoint());
 }
 
 void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError& error)
@@ -1003,7 +1014,9 @@ void WebFrameLoaderClient::saveViewStateToItem(HistoryItem*)
 
 void WebFrameLoaderClient::restoreViewState()
 {
-    notImplemented();
+    // Inform the UI process of the scale factor.
+    double scaleFactor = m_frame->coreFrame()->loader()->history()->currentItem()->pageScaleFactor();
+    m_frame->page()->send(Messages::WebPageProxy::ViewScaleFactorDidChange(scaleFactor));
 }
 
 void WebFrameLoaderClient::provisionalLoadStarted()
