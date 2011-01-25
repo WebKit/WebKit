@@ -432,8 +432,8 @@ void WebFrameLoaderClient::dispatchDidCommitLoad()
 
     // Only restore the scale factor for standard frame loads (of the main frame).
     if (m_frame->isMainFrame() && m_frame->coreFrame()->loader()->loadType() == FrameLoadTypeStandard) {
-        if (m_frame->coreFrame()->pageScaleFactor() != 1.0)
-            webPage->scaleWebView(1.0, IntPoint());
+        if (m_frame->coreFrame()->pageScaleFactor() != 1)
+            webPage->scaleWebView(1, IntPoint());
     }
 }
 

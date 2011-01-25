@@ -1,5 +1,14 @@
 2011-01-25  Maciej Stachowiak  <mjs@apple.com>
 
+        Rubber stamped by Dan Bernstein.
+
+        Change some floating point constants from 1.0 to 1.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+
+2011-01-25  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Anders Carlsson.
 
         Improve scale factor resetting
