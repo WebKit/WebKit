@@ -1113,6 +1113,10 @@ fast/dom/gc-11.html
 # https://bugs.webkit.org/show_bug.cgi?id=51242
 fast/dom/global-constructors.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=53085
+# Cairo doesn't support repeat-x and repeat-y
+fast/canvas/patternfill-repeat.html
+
 #   Tests generating new results
 fast/block/basic/001.html
 fast/block/basic/002.html
@@ -1456,7 +1460,6 @@ fast/canvas/fillrect-gradient-zero-stops.html
 fast/canvas/fillrect_gradient.html
 fast/canvas/gradient-add-second-start-end-stop.html
 fast/canvas/image-object-in-canvas.html
-fast/canvas/patternfill-repeat.html
 fast/canvas/quadraticCurveTo.xml
 fast/canvas/zero-size-fill-rect.html
 fast/clip/001.html
