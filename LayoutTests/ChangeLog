@@ -1,3 +1,12 @@
+2011-01-25  Dmitry Titov  <dimich@chromium.org>
+
+        [Chromium] Not reviewed, rebaseline for a test.
+        The difference is because V8 has different error messages.
+
+        * platform/chromium-mac/fast/js/js-continue-break-restrictions-expected.txt: Added.
+        * platform/chromium-win/fast/js/js-continue-break-restrictions-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-01-25  James Robinson  <jamesr@chromium.org>
 
         Remove = TEXT PASS lines for tests that consistently pass.

@@ -3072,9 +3072,6 @@ BUGCR69571 : plugins/destroy-on-setwindow.html = CRASH
 // Failing after r75768
 BUGCR69639 : http/tests/loading/cross-origin-XHR-willLoadRequest.html = TEXT
 
-// New test, added in r75852 for JSC, fails in V8
-BUGCR69736 : fast/js/js-continue-break-restrictions.html = TEXT
-
 // New test added in http://trac.webkit.org/changeset/76185
 // Fails in V8, perhaps needs a V8-specific fix.
 BUGCR70334 : fast/js/toString-recursion.html = TEXT
