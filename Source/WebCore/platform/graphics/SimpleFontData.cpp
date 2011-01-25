@@ -79,31 +79,30 @@ SimpleFontData::SimpleFontData(PassOwnPtr<SVGFontData> svgFontData, int size, bo
     if (unitsPerEm)
         scale /= unitsPerEm;
 
-    // FIXME: Use floating-point metrics, now that they're exposed!
-    int xHeight = static_cast<int>(svgFontFaceElement->xHeight() * scale);
-    int ascent = static_cast<int>(svgFontFaceElement->ascent() * scale);
-    int descent = static_cast<int>(svgFontFaceElement->descent() * scale);
-    int lineGap = static_cast<int>(0.1f * size);
+    float xHeight = svgFontFaceElement->xHeight() * scale;
+    float ascent = svgFontFaceElement->ascent() * scale;
+    float descent = svgFontFaceElement->descent() * scale;
+    float lineGap = 0.1f * size;
     m_fontMetrics.setUnitsPerEm(unitsPerEm);
     m_fontMetrics.setAscent(ascent);
     m_fontMetrics.setDescent(descent);
     m_fontMetrics.setLineGap(lineGap);
-    m_fontMetrics.setLineSpacing(ascent + descent + lineGap);
+    m_fontMetrics.setLineSpacing(roundf(ascent) + roundf(descent) + roundf(lineGap));
     m_fontMetrics.setXHeight(xHeight);
 
     SVGFontElement* associatedFontElement = svgFontFaceElement->associatedFontElement();
 
     Vector<SVGGlyphIdentifier> spaceGlyphs;
     associatedFontElement->getGlyphIdentifiersForString(String(" ", 1), spaceGlyphs);
-    m_spaceWidth = spaceGlyphs.isEmpty() ? xHeight : static_cast<float>(spaceGlyphs.first().horizontalAdvanceX * scale);
+    m_spaceWidth = spaceGlyphs.isEmpty() ? xHeight : spaceGlyphs.first().horizontalAdvanceX * scale;
 
     Vector<SVGGlyphIdentifier> numeralZeroGlyphs;
     associatedFontElement->getGlyphIdentifiersForString(String("0", 1), numeralZeroGlyphs);
-    m_avgCharWidth = numeralZeroGlyphs.isEmpty() ? m_spaceWidth : static_cast<float>(numeralZeroGlyphs.first().horizontalAdvanceX * scale);
+    m_avgCharWidth = numeralZeroGlyphs.isEmpty() ? m_spaceWidth : numeralZeroGlyphs.first().horizontalAdvanceX * scale;
 
     Vector<SVGGlyphIdentifier> letterWGlyphs;
     associatedFontElement->getGlyphIdentifiersForString(String("W", 1), letterWGlyphs);
-    m_maxCharWidth = letterWGlyphs.isEmpty() ? ascent : static_cast<float>(letterWGlyphs.first().horizontalAdvanceX * scale);
+    m_maxCharWidth = letterWGlyphs.isEmpty() ? ascent : letterWGlyphs.first().horizontalAdvanceX * scale;
 
     // FIXME: is there a way we can get the space glyph from the SVGGlyphIdentifier above?
     m_spaceGlyph = 0;
@@ -133,9 +132,8 @@ void SimpleFontData::initCharWidths()
     if (m_avgCharWidth <= 0.f)
         m_avgCharWidth = m_fontMetrics.xHeight();
 
-    // FIXME: Use floating-point metrics, now that they're exposed!
     if (m_maxCharWidth <= 0.f)
-        m_maxCharWidth = max<float>(m_avgCharWidth, m_fontMetrics.ascent());
+        m_maxCharWidth = max(m_avgCharWidth, m_fontMetrics.floatAscent());
 }
 
 void SimpleFontData::platformGlyphInit()

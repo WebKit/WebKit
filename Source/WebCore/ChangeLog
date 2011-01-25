@@ -1,3 +1,19 @@
+2011-01-25  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Introduce FontMetrics abstraction
+        https://bugs.webkit.org/show_bug.cgi?id=51456
+
+        Use accurate floating-point metrics for SVG Font calculations instead of casting float -> integer.
+        This hopefully fixes differences between 32/64 bit bots.
+
+        Needs new layout test results for several platforms, which need to be taken from the bots landing afterwards.
+
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::SimpleFontData):
+        (WebCore::SimpleFontData::initCharWidths):
+
 2011-01-24  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
