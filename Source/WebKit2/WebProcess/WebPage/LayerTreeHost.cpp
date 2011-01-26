@@ -45,6 +45,7 @@ LayerTreeHost::LayerTreeHost(WebPage* webPage)
 
 LayerTreeHost::~LayerTreeHost()
 {
+    platformInvalidate();
 }
 
 void LayerTreeHost::attachRootCompositingLayer(GraphicsLayer* graphicsLayer)
@@ -57,7 +58,7 @@ void LayerTreeHost::detachRootCompositingLayer()
     // FIXME: Implement.
 }
 
-bool LayerTreeHost::syncCompositingLayers()
+bool LayerTreeHost::flushPendingLayerChanges()
 {
     return m_webPage->corePage()->mainFrame()->view()->syncCompositingStateIncludingSubframes();
 }

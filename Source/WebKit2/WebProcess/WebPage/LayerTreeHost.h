@@ -50,10 +50,21 @@ public:
     void attachRootCompositingLayer(WebCore::GraphicsLayer*);
     void detachRootCompositingLayer();
 
-private:
-    WebPage* m_webPage;
+    void scheduleLayerFlush();
 
-    bool syncCompositingLayers();
+private:
+    void platformInvalidate();
+
+    bool flushPendingLayerChanges();
+
+#if PLATFORM(MAC)
+    static void flushPendingLayerChangesRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void*);
+    void flushPendingLayerChangesRunLoopObserverCallback();
+    
+    RetainPtr<CFRunLoopObserverRef> m_flushPendingLayerChangesRunLoopObserver;
+#endif
+
+    WebPage* m_webPage;
 };
 
 } // namespace WebKit

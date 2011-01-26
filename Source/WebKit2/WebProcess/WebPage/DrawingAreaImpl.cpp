@@ -134,6 +134,7 @@ void DrawingAreaImpl::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
 
 void DrawingAreaImpl::scheduleCompositingLayerSync()
 {
+    m_layerTreeHost.scheduleLayerFlush();
 }
 
 void DrawingAreaImpl::syncCompositingLayers()

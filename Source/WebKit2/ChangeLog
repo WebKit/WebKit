@@ -1,5 +1,36 @@
 2011-01-25  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Adam Roben.
+
+        Add and implement LayerTreeHost::scheduleLayerFlush
+        https://bugs.webkit.org/show_bug.cgi?id=53135
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add LayerTreeHostMac.mm.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::scheduleCompositingLayerSync):
+        Call LayerTreeHost::scheduleLayerFlush.
+
+        * WebProcess/WebPage/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::~LayerTreeHost):
+        Call platformInvalidate().
+
+        (WebKit::LayerTreeHost::flushPendingLayerChanges):
+        Rename from syncCompositingLayers.
+
+        * WebProcess/WebPage/mac/LayerTreeHostMac.mm: Added.
+        (WebKit::LayerTreeHost::scheduleLayerFlush):
+        Create a run loop observer if needed. This code is copied from LayerBackedDrawingAreaMac.mm
+
+        (WebKit::LayerTreeHost::platformInvalidate):
+        Invalidate the run loop observer.
+
+        (WebKit::LayerTreeHost::flushPendingLayerChangesRunLoopObserverCallback):
+        Call flushPendingChanges() and remove the run loop observer if it succeeded.
+
+2011-01-25  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Simon Fraser.
 
         Add LayerTreeHost class
