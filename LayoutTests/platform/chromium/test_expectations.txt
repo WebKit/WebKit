@@ -3089,3 +3089,6 @@ BUGWK53042 : fast/overflow/overflow-rtl-vertical.html = IMAGE
 BUGCR70686 MAC : fast/text/international/cjk-segmentation.html = TEXT
 
 BUGWK53112 WIN LINUX : inspector/debugger-scripts.html = TIMEOUT
+
+// Added by http://trac.webkit.org/changeset/76674
+BUGCR70882 WIN LINUX : fast/text/offsetForPosition-complex-fallback.html = TEXT
