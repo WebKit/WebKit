@@ -139,7 +139,7 @@ void HTMLInputElement::updateCheckedRadioButtons()
             control->setNeedsValidityCheck();
         }
     }
-   
+
     if (renderer() && renderer()->style()->hasAppearance())
         renderer()->theme()->stateChanged(renderer(), CheckedState);
 }
@@ -349,7 +349,7 @@ void HTMLInputElement::applyStep(double count, ExceptionCode& ec)
     if (newValue > m_inputType->maximum())
         newValue = m_inputType->maximum();
     setValueAsNumber(newValue, ec);
-    
+
     if (AXObjectCache::accessibilityEnabled())
          document()->axObjectCache()->postNotification(renderer(), AXObjectCache::AXValueChanged, true);
 }
@@ -379,7 +379,7 @@ bool HTMLInputElement::isMouseFocusable() const
 }
 
 void HTMLInputElement::updateFocusAppearance(bool restorePreviousSelection)
-{        
+{
     if (isTextField())
         InputElement::updateFocusAppearance(m_data, this, this, restorePreviousSelection);
     else
@@ -528,11 +528,11 @@ void HTMLInputElement::accessKeyAction(bool sendToAnyElement)
 bool HTMLInputElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
     if (((attrName == heightAttr || attrName == widthAttr) && m_inputType->shouldRespectHeightAndWidthAttributes())
-        || attrName == vspaceAttr 
+        || attrName == vspaceAttr
         || attrName == hspaceAttr) {
         result = eUniversal;
         return false;
-    } 
+    }
 
     if (attrName == alignAttr && m_inputType->shouldRespectAlignAttribute()) {
         // Share with <img> since the alignment behavior is the same.
@@ -1111,7 +1111,7 @@ void HTMLInputElement::setAutofilled(bool autofilled)
 {
     if (autofilled == m_isAutofilled)
         return;
-        
+
     m_isAutofilled = autofilled;
     setNeedsStyleRecalc();
 }
@@ -1202,7 +1202,7 @@ void HTMLInputElement::willMoveToNewOwnerDocument()
     // Always unregister for cache callbacks when leaving a document, even if we would otherwise like to be registered
     if (needsActivationCallback())
         document()->unregisterForDocumentActivationCallbacks(this);
-        
+
     document()->checkedRadioButtons().removeButton(this);
 
     HTMLFormControlElementWithState::willMoveToNewOwnerDocument();
@@ -1211,10 +1211,10 @@ void HTMLInputElement::willMoveToNewOwnerDocument()
 void HTMLInputElement::didMoveToNewOwnerDocument()
 {
     registerForActivationCallbackIfNeeded();
-        
+
     HTMLFormControlElementWithState::didMoveToNewOwnerDocument();
 }
-    
+
 void HTMLInputElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
     HTMLFormControlElementWithState::addSubresourceAttributeURLs(urls);

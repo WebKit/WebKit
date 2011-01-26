@@ -1,3 +1,19 @@
+2011-01-25  Ilya Sherman  <isherman@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove trailing whitespace in HTMLInputElement.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=53152
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateCheckedRadioButtons):
+        (WebCore::HTMLInputElement::applyStep):
+        (WebCore::HTMLInputElement::updateFocusAppearance):
+        (WebCore::HTMLInputElement::mapToEntry):
+        (WebCore::HTMLInputElement::setAutofilled):
+        (WebCore::HTMLInputElement::willMoveToNewOwnerDocument):
+        (WebCore::HTMLInputElement::didMoveToNewOwnerDocument):
+
 2011-01-25  Mike Reed  <reed@google.com>
 
         Reviewed by James Robinson.
