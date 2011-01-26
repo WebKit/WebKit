@@ -2,6 +2,16 @@
 
         Reviewed by Yury Semikhatsky.
 
+        Web Inspector: live edit does not update source snippet.
+        https://bugs.webkit.org/show_bug.cgi?id=53097
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._scriptSourceChanged):
+
+2011-01-26  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
         Web Inspector: Incorrect on-hover evaluation of a variable named 'profile'.
         https://bugs.webkit.org/show_bug.cgi?id=53018
 

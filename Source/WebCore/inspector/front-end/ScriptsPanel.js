@@ -256,14 +256,16 @@ WebInspector.ScriptsPanel.prototype = {
         var oldSource = event.data.oldSource;
 
         var script = WebInspector.debuggerModel.scriptForSourceID(sourceID);
-        var oldView = script._sourceFrame
-        if (oldView) {
-            delete script._sourceFrame;
-            this.viewRecreated(oldView, this._sourceFrameForScriptOrResource(script));
-        }
         if (script.resource) {
+            delete script._sourceFrame;
+            delete script.resource._sourceFrame;
             var revertHandle = WebInspector.debuggerModel.editScriptSource.bind(WebInspector.debuggerModel, sourceID, oldSource);
             script.resource.setContent(script.source, revertHandle);
+        } else {
+            var oldView = script._sourceFrame;
+            delete script._sourceFrame;
+            if (oldView)
+                this.viewRecreated(oldView, this._sourceFrameForScriptOrResource(script));
         }
 
         var callFrames = WebInspector.debuggerModel.callFrames;
