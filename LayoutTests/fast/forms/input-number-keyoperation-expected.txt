@@ -9,6 +9,10 @@ Press the up arrow key:
 PASS input.value is "124"
 Press the down arrow key:
 PASS input.value is "123"
+Disable input element:
+PASS input.value is "123"
+Read-only input element:
+PASS input.value is "123"
 PASS successfullyParsed is true
 
 TEST COMPLETE

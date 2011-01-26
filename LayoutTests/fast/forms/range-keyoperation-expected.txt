@@ -44,6 +44,10 @@ PASS input.value is "0"
 PASS changeEventCounter is lastChangeEventCounter
 PASS input.value is "2"
 
+Disabled and read-only
+PASS input.value is "1"
+PASS input.value is "1"
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -2,6 +2,20 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Range and number inputs should reject increment and decrement by
+        keyboard or mouse wheel if they are disabled or read-only
+        https://bugs.webkit.org/show_bug.cgi?id=53151
+
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::handleKeydownEvent): Check disabled() and readOnly().
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::handleKeydownEventForSpinButton): ditto.
+        (WebCore::TextFieldInputType::handleWheelEventForSpinButton): ditto.
+
+2011-01-25  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         API to support localized numbers for <input type=number>
         https://bugs.webkit.org/show_bug.cgi?id=45730
 

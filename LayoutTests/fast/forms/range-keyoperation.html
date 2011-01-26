@@ -122,6 +122,20 @@ sendKey(input, 'Up');
 shouldBe('input.value', '"2"');
 
 debug('');
+debug('Disabled and read-only');
+input.disabled = true;
+input.value = '1';
+input.step = '1';
+input.min = '0';
+input.max = '100';
+sendKey(input, 'Up');
+shouldBe('input.value', '"1"');
+input.removeAttribute('disabled');
+input.readOnly = true;
+sendKey(input, 'Up');
+shouldBe('input.value', '"1"');
+
+debug('');
 var successfullyParsed = true;
 </script>
 <script src="../../fast/js/resources/js-test-post.js"></script>

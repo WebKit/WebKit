@@ -29,4 +29,15 @@ debug('Wheel down by 256:');
 dispatchWheelEvent(input, 0, -256);
 shouldBe('input.value', '"0"');
 
+debug('Disabled input element:');
+input.disabled = true;
+dispatchWheelEvent(input, 0, 1);
+shouldBe('input.value', '"0"');
+input.removeAttribute('disabled');
+
+debug('Read-only input element:');
+input.readOnly = true;
+dispatchWheelEvent(input, 0, 1);
+shouldBe('input.value', '"0"');
+
 var successfullyParsed = true;

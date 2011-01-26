@@ -154,6 +154,8 @@ void RangeInputType::handleMouseDownEvent(MouseEvent* event)
 
 void RangeInputType::handleKeydownEvent(KeyboardEvent* event)
 {
+    if (element()->disabled() || element()->readOnly())
+        return;
     const String& key = event->keyIdentifier();
     if (key != "Up" && key != "Right" && key != "Down" && key != "Left")
         return;

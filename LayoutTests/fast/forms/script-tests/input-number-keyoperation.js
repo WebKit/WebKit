@@ -17,4 +17,15 @@ debug('Press the down arrow key:');
 eventSender.keyDown('downArrow');
 shouldBe('input.value', '"123"');
 
+debug('Disable input element:');
+input.disabled = true;
+eventSender.keyDown('upArrow');
+shouldBe('input.value', '"123"');
+input.removeAttribute('disabled');
+
+debug('Read-only input element:');
+input.readOnly = true;
+eventSender.keyDown('upArrow');
+shouldBe('input.value', '"123"');
+
 var successfullyParsed = true;
