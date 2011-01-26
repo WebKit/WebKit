@@ -1,3 +1,18 @@
+2011-01-26  Zalan Bujtas <zbujtas@gmail.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Path::normalAngleAtLength() returns incorrect value on ACID3.
+
+        QPainterPath returns angle values with the origo being at the top left corner,
+        we need to account for this in normalAngleAtLength().
+        This Regressed with r66979.
+
+        No new tests as this is already covered by ACID3.
+
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::Path::normalAngleAtLength):
+
 2011-01-26  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
