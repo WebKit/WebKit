@@ -1,3 +1,25 @@
+2011-01-25  Cris Neckar  <cdn@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add a hashset of DOMURLs to ScriptExecutionContext to track back references.
+        https://bugs.webkit.org/show_bug.cgi?id=53038
+
+        Test: fast/dom/window-domurl-crash.html
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::~ScriptExecutionContext):
+        (WebCore::ScriptExecutionContext::createdDomUrl):
+        (WebCore::ScriptExecutionContext::destroyedDomUrl):
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::domUrls):
+        * html/DOMURL.cpp:
+        (WebCore::DOMURL::DOMURL):
+        (WebCore::DOMURL::~DOMURL):
+        (WebCore::DOMURL::contextDestroyed):
+        * html/DOMURL.h:
+        (WebCore::DOMURL::scriptExecutionContext):
+
 2011-01-23  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin Adler.

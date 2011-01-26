@@ -60,6 +60,7 @@ namespace WebCore {
     class FileThread;
 #endif
     class MessagePort;
+    class DOMURL;
     class SecurityOrigin;
     class ScriptCallStack;
 
@@ -112,6 +113,11 @@ namespace WebCore {
         void destroyedMessagePort(MessagePort*);
         const HashSet<MessagePort*>& messagePorts() const { return m_messagePorts; }
 
+#if ENABLE(BLOB)
+        void createdDomUrl(DOMURL*);
+        void destroyedDomUrl(DOMURL*);
+        const HashSet<DOMURL*>& domUrls() const { return m_domUrls; }
+#endif
         void ref() { refScriptExecutionContext(); }
         void deref() { derefScriptExecutionContext(); }
 
@@ -171,6 +177,7 @@ namespace WebCore {
 
 #if ENABLE(BLOB)
         HashSet<String> m_publicBlobURLs;
+        HashSet<DOMURL*> m_domUrls;
 #endif
 
         virtual void refScriptExecutionContext() = 0;

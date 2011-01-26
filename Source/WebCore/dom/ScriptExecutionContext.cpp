@@ -30,6 +30,7 @@
 #include "ActiveDOMObject.h"
 #include "Blob.h"
 #include "BlobURL.h"
+#include "DOMURL.h"
 #include "Database.h"
 #include "DatabaseTask.h"
 #include "DatabaseThread.h"
@@ -120,6 +121,12 @@ ScriptExecutionContext::~ScriptExecutionContext()
     HashSet<String>::iterator publicBlobURLsEnd = m_publicBlobURLs.end();
     for (HashSet<String>::iterator iter = m_publicBlobURLs.begin(); iter != publicBlobURLsEnd; ++iter)
         ThreadableBlobRegistry::unregisterBlobURL(KURL(ParsedURLString, *iter));
+
+    HashSet<DOMURL*>::iterator domUrlsEnd = m_domUrls.end();
+    for (HashSet<DOMURL*>::iterator iter = m_domUrls.begin(); iter != domUrlsEnd; ++iter) {
+        ASSERT((*iter)->scriptExecutionContext() == this);
+        (*iter)->contextDestroyed();
+    }
 #endif
 }
 
@@ -193,6 +200,20 @@ void ScriptExecutionContext::destroyedMessagePort(MessagePort* port)
 
     m_messagePorts.remove(port);
 }
+
+#if ENABLE(BLOB)
+void ScriptExecutionContext::createdDomUrl(DOMURL* url)
+{
+    ASSERT(url);
+    m_domUrls.add(url);
+}
+
+void ScriptExecutionContext::destroyedDomUrl(DOMURL* url)
+{
+    ASSERT(url);
+    m_domUrls.remove(url);
+}
+#endif
 
 bool ScriptExecutionContext::canSuspendActiveDOMObjects()
 {

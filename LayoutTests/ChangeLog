@@ -1,3 +1,13 @@
+2011-01-25  Cris Neckar  <cdn@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Test for crash when a window's location changes before creating an object URL.
+        https://bugs.webkit.org/show_bug.cgi?id=53038
+
+        * fast/dom/window-domurl-crash-expected.txt: Added.
+        * fast/dom/window-domurl-crash.html: Added.
+
 2011-01-25  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Tony Chang.
