@@ -1,3 +1,13 @@
+2011-01-26  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Rubber-stamped by Andreas Kling.
+
+        Fix my blog's feed URL, since it seems to have changed with the
+        new version of Wordpress causing unwanted posts to appear in
+        Planet WebKit.
+
+        * config.ini:
+
 2010-11-22  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Andreas Kling.
