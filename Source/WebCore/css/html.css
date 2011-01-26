@@ -61,7 +61,10 @@ body {
 
 p {
     display: block;
-    margin: 1.0__qem 0px
+    -webkit-margin-before: 1__qem;
+    -webkit-margin-after: 1__qem;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
 }
 
 div {
@@ -87,7 +90,10 @@ address {
 
 blockquote {
     display: block;
-    margin: 1__qem 40px 1em 40px
+    -webkit-margin-before: 1__qem;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 40px;
+    -webkit-margin-end: 40px;
 }
 
 figcaption {
@@ -96,7 +102,10 @@ figcaption {
 
 figure {
     display: block;
-    margin: 1em 40px 1em 40px
+    -webkit-margin-before: 1em;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 40px;
+    -webkit-margin-end: 40px;
 }
 
 q {
@@ -121,7 +130,10 @@ center {
 
 hr {
     display: block;
-    margin: 0.5em auto;
+    -webkit-margin-before: 0.5em;
+    -webkit-margin-after: 0.5em;
+    -webkit-margin-start: auto;
+    -webkit-margin-end: auto;
     border-style: inset;
     border-width: 1px
 }
@@ -135,41 +147,59 @@ map {
 h1 {
     display: block;
     font-size: 2em;
-    margin: .67__qem 0 .67em 0;
+    -webkit-margin-before: 0.67__qem;
+    -webkit-margin-after: 0.67em;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
     font-weight: bold
 }
 
 h2 {
     display: block;
     font-size: 1.5em;
-    margin: .83__qem 0 .83em 0;
+    -webkit-margin-before: 0.83__qem;
+    -webkit-margin-after: 0.83em;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
     font-weight: bold
 }
 
 h3 {
     display: block;
     font-size: 1.17em;
-    margin: 1__qem 0 1em 0;
+    -webkit-margin-before: 1__qem;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
     font-weight: bold
 }
 
 h4 {
     display: block;
-    margin: 1.33__qem 0 1.33em 0;
+    -webkit-margin-before: 1.33__qem;
+    -webkit-margin-after: 1.33em;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
     font-weight: bold
 }
 
 h5 {
     display: block;
     font-size: .83em;
-    margin: 1.67__qem 0 1.67em 0;
+    -webkit-margin-before: 1.67__qem;
+    -webkit-margin-after: 1.67em;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
     font-weight: bold
 }
 
 h6 {
     display: block;
     font-size: .67em;
-    margin: 2.33__qem 0 2.33em 0;
+    -webkit-margin-before: 2.33__qem;
+    -webkit-margin-after: 2.33em;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
     font-weight: bold
 }
 

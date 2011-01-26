@@ -1947,6 +1947,10 @@ void RenderObject::mapLocalToContainer(RenderBoxModelObject* repaintContainer, b
     if (!o)
         return;
 
+    IntPoint centerPoint = roundedIntPoint(transformState.mappedPoint());
+    if (o->isBox() && o->style()->isFlippedBlocksWritingMode())
+        transformState.move(toRenderBox(o)->flipForWritingModeIncludingColumns(roundedIntPoint(transformState.mappedPoint())) - centerPoint);
+
     IntSize columnOffset;
     o->adjustForColumns(columnOffset, roundedIntPoint(transformState.mappedPoint()));
     if (!columnOffset.isZero())

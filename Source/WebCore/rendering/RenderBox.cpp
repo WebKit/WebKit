@@ -1268,8 +1268,14 @@ IntSize RenderBox::offsetFromContainer(RenderObject* o, const IntPoint& point) c
 
     if (!isInline() || isReplaced()) {
         if (style()->position() != AbsolutePosition && style()->position() != FixedPosition) {
-            o->adjustForColumns(offset, IntPoint(point.x() + x(), point.y() + y()));
-            offset += locationOffsetIncludingFlipping();
+            if (o->hasColumns()) {
+                IntRect columnRect(frameRect());
+                toRenderBlock(o)->flipForWritingModeIncludingColumns(columnRect);
+                offset += IntSize(columnRect.location().x(), columnRect.location().y());
+                columnRect.move(point.x(), point.y());
+                o->adjustForColumns(offset, columnRect.location());
+            } else
+                offset += locationOffsetIncludingFlipping();
         } else
             offset += locationOffset();
     }
@@ -3326,6 +3332,13 @@ IntPoint RenderBox::flipForWritingMode(const IntPoint& position) const
     if (!style()->isFlippedBlocksWritingMode())
         return position;
     return style()->isHorizontalWritingMode() ? IntPoint(position.x(), height() - position.y()) : IntPoint(width() - position.x(), position.y());
+}
+
+IntPoint RenderBox::flipForWritingModeIncludingColumns(const IntPoint& point) const
+{
+    if (!hasColumns() || !style()->isFlippedBlocksWritingMode())
+        return flipForWritingMode(point);
+    return toRenderBlock(this)->flipForWritingModeIncludingColumns(point);
 }
 
 IntSize RenderBox::flipForWritingMode(const IntSize& offset) const

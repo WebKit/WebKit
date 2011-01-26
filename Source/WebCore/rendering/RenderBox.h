@@ -172,7 +172,7 @@ public:
     int clientTop() const { return borderTop(); }
     int clientWidth() const;
     int clientHeight() const;
-    int clientLogicalBottom() const { return style()->isHorizontalWritingMode() ? clientTop() + clientHeight() : clientLeft() + clientWidth(); }
+    int clientLogicalBottom() const { return borderBefore() + (style()->isHorizontalWritingMode() ? clientHeight() : clientWidth()); }
     IntRect clientBoxRect() const { return IntRect(clientLeft(), clientTop(), clientWidth(), clientHeight()); }
 
     // scrollWidth/scrollHeight will be the same as clientWidth/clientHeight unless the
@@ -378,6 +378,7 @@ public:
     IntPoint flipForWritingMode(const RenderBox* child, const IntPoint&, FlippingAdjustment) const;
     int flipForWritingMode(int position) const; // The offset is in the block direction (y for horizontal writing modes, x for vertical writing modes).
     IntPoint flipForWritingMode(const IntPoint&) const;
+    IntPoint flipForWritingModeIncludingColumns(const IntPoint&) const;
     IntSize flipForWritingMode(const IntSize&) const;
     void flipForWritingMode(IntRect&) const;
     IntSize locationOffsetIncludingFlipping() const;

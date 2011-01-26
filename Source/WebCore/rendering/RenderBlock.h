@@ -106,6 +106,9 @@ public:
     // Block flows subclass availableWidth to handle multi column layout (shrinking the width available to children when laying out.)
     virtual int availableLogicalWidth() const;
 
+    IntPoint flipForWritingModeIncludingColumns(const IntPoint&) const;
+    void flipForWritingModeIncludingColumns(IntRect&) const;
+
     RootInlineBox* firstRootBox() const { return static_cast<RootInlineBox*>(firstLineBox()); }
     RootInlineBox* lastRootBox() const { return static_cast<RootInlineBox*>(lastLineBox()); }
 
@@ -212,6 +215,9 @@ public:
 
     virtual void scrollbarsChanged(bool /*horizontalScrollbarChanged*/, bool /*verticalScrollbarChanged*/) { };
 
+    int logicalRightOffsetForContent() const { return style()->isHorizontalWritingMode() ? borderLeft() + paddingLeft() + availableLogicalWidth() : borderTop() + paddingTop() + availableLogicalWidth(); }
+    int logicalLeftOffsetForContent() const { return style()->isHorizontalWritingMode() ? borderLeft() + paddingLeft() : borderTop() + paddingTop(); }
+
 protected:
     // These functions are only used internally to manipulate the render tree structure via remove/insert/appendChildNode.
     // Since they are typically called only to move objects around within anonymous blocks (which only have layers in
@@ -261,8 +267,6 @@ protected:
     virtual void paint(PaintInfo&, int tx, int ty);
     virtual void paintObject(PaintInfo&, int tx, int ty);
 
-    int logicalRightOffsetForContent() const { return style()->isHorizontalWritingMode() ? borderLeft() + paddingLeft() + availableLogicalWidth() : borderTop() + paddingTop() + availableLogicalWidth(); }
-    int logicalLeftOffsetForContent() const { return style()->isHorizontalWritingMode() ? borderLeft() + paddingLeft() : borderTop() + paddingTop(); }
     int logicalRightOffsetForLine(int position, int fixedOffset, bool applyTextIndent = true, int* logicalHeightRemaining = 0) const;
     int logicalLeftOffsetForLine(int position, int fixedOffset, bool applyTextIndent = true, int* logicalHeightRemaining = 0) const;
 
@@ -399,7 +403,7 @@ private:
         int bottom() const { ASSERT(isPlaced()); return m_frameRect.bottom(); }
         int width() const { return m_frameRect.width(); }
         int height() const { return m_frameRect.height(); }
-    
+
         void setLeft(int left) { m_frameRect.setX(left); }
         void setTop(int top) { m_frameRect.setY(top); }
         void setWidth(int width) { m_frameRect.setWidth(width); }
@@ -417,11 +421,13 @@ private:
         bool m_isPlaced : 1;
     };
 
-    int logicalTopForFloat(FloatingObject* child) const { return style()->isHorizontalWritingMode() ? child->top() : child->left(); }
-    int logicalBottomForFloat(FloatingObject* child) const { return style()->isHorizontalWritingMode() ? child->bottom() : child->right(); }
-    int logicalLeftForFloat(FloatingObject* child) const { return style()->isHorizontalWritingMode() ? child->left() : child->top(); }
-    int logicalRightForFloat(FloatingObject* child) const { return style()->isHorizontalWritingMode() ? child->right() : child->bottom(); }
-    int logicalWidthForFloat(FloatingObject* child) const { return style()->isHorizontalWritingMode() ? child->width() : child->height(); }
+    IntPoint flipFloatForWritingMode(const FloatingObject*, const IntPoint&) const;
+
+    int logicalTopForFloat(const FloatingObject* child) const { return style()->isHorizontalWritingMode() ? child->top() : child->left(); }
+    int logicalBottomForFloat(const FloatingObject* child) const { return style()->isHorizontalWritingMode() ? child->bottom() : child->right(); }
+    int logicalLeftForFloat(const FloatingObject* child) const { return style()->isHorizontalWritingMode() ? child->left() : child->top(); }
+    int logicalRightForFloat(const FloatingObject* child) const { return style()->isHorizontalWritingMode() ? child->right() : child->bottom(); }
+    int logicalWidthForFloat(const FloatingObject* child) const { return style()->isHorizontalWritingMode() ? child->width() : child->height(); }
     void setLogicalTopForFloat(FloatingObject* child, int logicalTop)
     {
         if (style()->isHorizontalWritingMode())
@@ -449,6 +455,22 @@ private:
             child->setWidth(logicalWidth);
         else
             child->setHeight(logicalWidth);
+    }
+
+    int leftForFloatIncludingMargin(const FloatingObject* child) const
+    {
+        if (style()->isHorizontalWritingMode())
+            return child->left() + child->renderer()->marginLeft();
+        else
+            return child->left() + marginBeforeForChild(child->renderer());
+    }
+        
+    int topForFloatIncludingMargin(const FloatingObject* child) const
+    {
+        if (style()->isHorizontalWritingMode())
+            return child->top() + marginBeforeForChild(child->renderer());
+        else
+            return child->top() + child->renderer()->marginTop();
     }
 
     // The following functions' implementations are in RenderBlockLineLayout.cpp.
@@ -488,7 +510,7 @@ private:
 
     FloatingObject* insertFloatingObject(RenderBox*);
     void removeFloatingObject(RenderBox*);
-    void removeFloatingObjectsBelow(FloatingObject*, int y);
+    void removeFloatingObjectsBelow(FloatingObject*, int logicalOffset);
     
     // Called from lineWidth, to position the floats added in the last line.
     // Returns true if and only if it has positioned any floats.
@@ -667,11 +689,11 @@ private:
     // End helper functions and structs used by layoutBlockChildren.
 
     // Pagination routines.
-    int nextPageTop(int yPos) const; // Returns the top of the next page following yPos.
-    int applyBeforeBreak(RenderBox* child, int yPos); // If the child has a before break, then return a new yPos that shifts to the top of the next page/column.
-    int applyAfterBreak(RenderBox* child, int yPos, MarginInfo& marginInfo); // If the child has an after break, then return a new yPos that shifts to the top of the next page/column.
-    int adjustForUnsplittableChild(RenderBox* child, int yPos, bool includeMargins = false); // If the child is unsplittable and can't fit on the current page, return the top of the next page/column.
-    void adjustLinePositionForPagination(RootInlineBox*, int& deltaY); // Computes a deltaY value that put a line at the top of the next page if it doesn't fit on the current page.
+    int nextPageLogicalTop(int logicalOffset) const; // Returns the top of the next page following logicalOffset.
+    int applyBeforeBreak(RenderBox* child, int logicalOffset); // If the child has a before break, then return a new yPos that shifts to the top of the next page/column.
+    int applyAfterBreak(RenderBox* child, int logicalOffset, MarginInfo& marginInfo); // If the child has an after break, then return a new offset that shifts to the top of the next page/column.
+    int adjustForUnsplittableChild(RenderBox* child, int logicalOffset, bool includeMargins = false); // If the child is unsplittable and can't fit on the current page, return the top of the next page/column.
+    void adjustLinePositionForPagination(RootInlineBox*, int& deltaOffset); // Computes a deltaOffset value that put a line at the top of the next page if it doesn't fit on the current page.
 
     typedef PositionedObjectsListHashSet::const_iterator Iterator;
     DeprecatedPtrList<FloatingObject>* m_floatingObjects;

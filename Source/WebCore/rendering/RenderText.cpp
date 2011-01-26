@@ -345,8 +345,12 @@ void RenderText::absoluteQuads(Vector<FloatQuad>& quads, ClippingOption option)
 
         // Shorten the width of this text box if it ends in an ellipsis.
         IntRect ellipsisRect = (option == ClipToEllipsis) ? ellipsisRectForBox(box, 0, textLength()) : IntRect();
-        if (!ellipsisRect.isEmpty())
-            boundaries.setWidth(ellipsisRect.right() - boundaries.x());
+        if (!ellipsisRect.isEmpty()) {
+            if (style()->isHorizontalWritingMode())
+                boundaries.setWidth(ellipsisRect.right() - boundaries.x());
+            else
+                boundaries.setHeight(ellipsisRect.bottom() - boundaries.y());
+        }
         quads.append(localToAbsoluteQuad(FloatRect(boundaries)));
     }
 }
@@ -374,8 +378,13 @@ void RenderText::absoluteQuadsForRange(Vector<FloatQuad>& quads, unsigned start,
             IntRect r(box->calculateBoundaries());
             if (useSelectionHeight) {
                 IntRect selectionRect = box->selectionRect(0, 0, start, end);
-                r.setHeight(selectionRect.height());
-                r.setY(selectionRect.y());
+                if (box->isHorizontal()) {
+                    r.setHeight(selectionRect.height());
+                    r.setY(selectionRect.y());
+                } else {
+                    r.setWidth(selectionRect.width());
+                    r.setX(selectionRect.x());
+                }
             }
             quads.append(localToAbsoluteQuad(FloatRect(r)));
         } else {
@@ -384,8 +393,13 @@ void RenderText::absoluteQuadsForRange(Vector<FloatQuad>& quads, unsigned start,
             if (r.height()) {
                 if (!useSelectionHeight) {
                     // change the height and y position because selectionRect uses selection-specific values
-                    r.setHeight(box->logicalHeight());
-                    r.setY(box->y());
+                    if (box->isHorizontal()) {
+                        r.setHeight(box->logicalHeight());
+                        r.setY(box->y());
+                    } else {
+                        r.setWidth(box->logicalHeight());
+                        r.setX(box->x());
+                    }
                 }
                 quads.append(localToAbsoluteQuad(FloatRect(r)));
             }

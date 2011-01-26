@@ -167,11 +167,11 @@ int LayoutState::pageLogicalOffset(int childLogicalOffset) const
     return m_layoutOffset.height() + childLogicalOffset - m_pageOffset.height();
 }
 
-void LayoutState::addForcedColumnBreak(int childY)
+void LayoutState::addForcedColumnBreak(int childLogicalOffset)
 {
     if (!m_columnInfo || m_columnInfo->columnHeight())
         return;
-    m_columnInfo->addForcedBreak(pageLogicalOffset(childY));
+    m_columnInfo->addForcedBreak(pageLogicalOffset(childLogicalOffset));
 }
 
 } // namespace WebCore

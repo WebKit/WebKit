@@ -71,7 +71,7 @@ public:
     // direction (so an x-offset in vertical text and a y-offset for horizontal text).
     int pageLogicalOffset(int childLogicalOffset) const;
 
-    void addForcedColumnBreak(int childY);
+    void addForcedColumnBreak(int childLogicalOffset);
     
     bool pageLogicalHeight() const { return m_pageLogicalHeight; }
     bool pageLogicalHeightChanged() const { return m_pageLogicalHeightChanged; }

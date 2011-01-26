@@ -2569,13 +2569,18 @@ void RenderLayer::paintChildLayerIntoColumns(RenderLayer* childLayer, RenderLaye
     int layerY = 0;
     columnBlock->layer()->convertToLayerCoords(rootLayer, layerX, layerY);
     
+    bool isHorizontal = columnBlock->style()->isHorizontalWritingMode();
+
     ColumnInfo* colInfo = columnBlock->columnInfo();
     unsigned colCount = columnBlock->columnCount(colInfo);
-    int currYOffset = 0;
+    int currLogicalTopOffset = 0;
     for (unsigned i = 0; i < colCount; i++) {
         // For each rect, we clip to the rect, and then we adjust our coords.
         IntRect colRect = columnBlock->columnRectAt(colInfo, i);
-        int currXOffset = colRect.x() - (columnBlock->borderLeft() + columnBlock->paddingLeft());
+        columnBlock->flipForWritingMode(colRect);
+        int logicalLeftOffset = (isHorizontal ? colRect.x() : colRect.y()) - columnBlock->logicalLeftOffsetForContent();
+        IntSize offset = isHorizontal ? IntSize(logicalLeftOffset, currLogicalTopOffset) : IntSize(currLogicalTopOffset, logicalLeftOffset);
+
         colRect.move(layerX, layerY);
 
         IntRect localDirtyRect(paintDirtyRect);
@@ -2595,7 +2600,7 @@ void RenderLayer::paintChildLayerIntoColumns(RenderLayer* childLayer, RenderLaye
                 if (oldHasTransform)
                     oldTransform = *childLayer->transform();
                 TransformationMatrix newTransform(oldTransform);
-                newTransform.translateRight(currXOffset, currYOffset);
+                newTransform.translateRight(offset.width(), offset.height());
                 
                 childLayer->m_transform.set(new TransformationMatrix(newTransform));
                 childLayer->paintLayer(rootLayer, context, localDirtyRect, paintBehavior, paintingRoot, overlapTestRequests, paintFlags);
@@ -2610,7 +2615,7 @@ void RenderLayer::paintChildLayerIntoColumns(RenderLayer* childLayer, RenderLaye
                 int childY = 0;
                 columnLayers[colIndex - 1]->convertToLayerCoords(rootLayer, childX, childY);
                 TransformationMatrix transform;
-                transform.translateRight(childX + currXOffset, childY + currYOffset);
+                transform.translateRight(childX + offset.width(), childY + offset.height());
                 
                 // Apply the transform.
                 context->concatCTM(transform.toAffineTransform());
@@ -2625,7 +2630,11 @@ void RenderLayer::paintChildLayerIntoColumns(RenderLayer* childLayer, RenderLaye
         }
 
         // Move to the next position.
-        currYOffset -= colRect.height();
+        int blockDelta = isHorizontal ? colRect.height() : colRect.width();
+        if (columnBlock->style()->isFlippedBlocksWritingMode())
+            currLogicalTopOffset += blockDelta;
+        else
+            currLogicalTopOffset -= blockDelta;
     }
 }
 
@@ -3038,21 +3047,35 @@ RenderLayer* RenderLayer::hitTestChildLayerColumns(RenderLayer* childLayer, Rend
     int colCount = columnBlock->columnCount(colInfo);
     
     // We have to go backwards from the last column to the first.
-    int left = columnBlock->borderLeft() + columnBlock->paddingLeft();
-    int currYOffset = 0;
+    bool isHorizontal = columnBlock->style()->isHorizontalWritingMode();
+    int logicalLeft = columnBlock->logicalLeftOffsetForContent();
+    int currLogicalTopOffset = 0;
     int i;
-    for (i = 0; i < colCount; i++)
-        currYOffset -= columnBlock->columnRectAt(colInfo, i).height();
+    for (i = 0; i < colCount; i++) {
+        IntRect colRect = columnBlock->columnRectAt(colInfo, i);
+        int blockDelta =  (isHorizontal ? colRect.height() : colRect.width());
+        if (columnBlock->style()->isFlippedBlocksWritingMode())
+            currLogicalTopOffset += blockDelta;
+        else
+            currLogicalTopOffset -= blockDelta;
+    }
     for (i = colCount - 1; i >= 0; i--) {
         // For each rect, we clip to the rect, and then we adjust our coords.
         IntRect colRect = columnBlock->columnRectAt(colInfo, i);
-        int currXOffset = colRect.x() - left;
-        currYOffset += colRect.height();
+        columnBlock->flipForWritingMode(colRect);
+        int currLogicalLeftOffset = (isHorizontal ? colRect.x() : colRect.y()) - logicalLeft;
+        int blockDelta =  (isHorizontal ? colRect.height() : colRect.width());
+        if (columnBlock->style()->isFlippedBlocksWritingMode())
+            currLogicalTopOffset -= blockDelta;
+        else
+            currLogicalTopOffset += blockDelta;
         colRect.move(layerX, layerY);
 
         IntRect localClipRect(hitTestRect);
         localClipRect.intersect(colRect);
         
+        IntSize offset = isHorizontal ? IntSize(currLogicalLeftOffset, currLogicalTopOffset) : IntSize(currLogicalTopOffset, currLogicalLeftOffset);
+
         if (!localClipRect.isEmpty() && localClipRect.intersects(result.rectForPoint(hitTestPoint))) {
             RenderLayer* hitLayer = 0;
             if (!columnIndex) {
@@ -3062,7 +3085,7 @@ RenderLayer* RenderLayer::hitTestChildLayerColumns(RenderLayer* childLayer, Rend
                 if (oldHasTransform)
                     oldTransform = *childLayer->transform();
                 TransformationMatrix newTransform(oldTransform);
-                newTransform.translateRight(currXOffset, currYOffset);
+                newTransform.translateRight(offset.width(), offset.height());
                 
                 childLayer->m_transform.set(new TransformationMatrix(newTransform));
                 hitLayer = childLayer->hitTestLayer(rootLayer, columnLayers[0], request, result, localClipRect, hitTestPoint, false, transformState, zOffset);
@@ -3075,7 +3098,7 @@ RenderLayer* RenderLayer::hitTestChildLayerColumns(RenderLayer* childLayer, Rend
                 // This involves subtracting out the position of the layer in our current coordinate space.
                 RenderLayer* nextLayer = columnLayers[columnIndex - 1];
                 RefPtr<HitTestingTransformState> newTransformState = nextLayer->createLocalTransformState(rootLayer, nextLayer, localClipRect, hitTestPoint, transformState);
-                newTransformState->translate(currXOffset, currYOffset, HitTestingTransformState::AccumulateTransform);
+                newTransformState->translate(offset.width(), offset.height(), HitTestingTransformState::AccumulateTransform);
                 IntPoint localPoint = roundedIntPoint(newTransformState->mappedPoint());
                 IntRect localHitTestRect = newTransformState->mappedQuad().enclosingBoundingBox();
                 newTransformState->flatten();
@@ -3345,19 +3368,9 @@ IntRect RenderLayer::localBoundingBox() const
     // as part of our bounding box.  We do this because we are the responsible layer for both hit testing and painting those
     // floats.
     IntRect result;
-    if (renderer()->isRenderInline()) {
-        // Go from our first line box to our last line box.
-        RenderInline* inlineFlow = toRenderInline(renderer());
-        InlineFlowBox* firstBox = inlineFlow->firstLineBox();
-        if (!firstBox)
-            return result;
-        int top = firstBox->topVisualOverflow();
-        int bottom = inlineFlow->lastLineBox()->bottomVisualOverflow();
-        int left = firstBox->x();
-        for (InlineFlowBox* curr = firstBox->nextLineBox(); curr; curr = curr->nextLineBox())
-            left = min(left, curr->x());
-        result = IntRect(left, top, width(), bottom - top);
-    } else if (renderer()->isTableRow()) {
+    if (renderer()->isRenderInline())
+        result = toRenderInline(renderer())->linesVisualOverflowBoundingBox();
+    else if (renderer()->isTableRow()) {
         // Our bounding box is just the union of all of our cells' border/overflow rects.
         for (RenderObject* child = renderer()->firstChild(); child; child = child->nextSibling()) {
             if (child->isTableCell()) {
@@ -3393,7 +3406,10 @@ IntRect RenderLayer::localBoundingBox() const
 IntRect RenderLayer::boundingBox(const RenderLayer* ancestorLayer) const
 {    
     IntRect result = localBoundingBox();
-
+    if (renderer()->isBox())
+        renderBox()->flipForWritingMode(result);
+    else
+        renderer()->containingBlock()->flipForWritingMode(result);
     int deltaX = 0, deltaY = 0;
     convertToLayerCoords(ancestorLayer, deltaX, deltaY);
     result.move(deltaX, deltaY);

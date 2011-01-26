@@ -790,7 +790,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
                         adjustLinePositionForPagination(lineBox, adjustment);
                         if (adjustment) {
                             int oldLineWidth = availableLogicalWidthForLine(oldLogicalHeight, firstLine);
-                            lineBox->adjustPosition(0, adjustment);
+                            lineBox->adjustBlockDirectionPosition(adjustment);
                             if (useRepaintBounds) // This can only be a positive adjustment, so no need to update repaintTop.
                                 repaintLogicalBottom = max(repaintLogicalBottom, afterSideVisualOverflowForLine(lineBox));
                                 
@@ -848,7 +848,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
                     if (delta) {
                         repaintLogicalTop = min(repaintLogicalTop, beforeSideVisualOverflowForLine(line) + min(delta, 0));
                         repaintLogicalBottom = max(repaintLogicalBottom, afterSideVisualOverflowForLine(line) + max(delta, 0));
-                        line->adjustPosition(0, delta);
+                        line->adjustBlockDirectionPosition(delta);
                     }
                     if (Vector<RenderBox*>* cleanLineFloats = line->floatsPtr()) {
                         Vector<RenderBox*>::iterator end = cleanLineFloats->end();
@@ -965,7 +965,7 @@ RootInlineBox* RenderBlock::determineStartPosition(bool& firstLine, bool& fullLa
                         
                     repaintLogicalTop = min(repaintLogicalTop, beforeSideVisualOverflowForLine(curr) + min(paginationDelta, 0));
                     repaintLogicalBottom = max(repaintLogicalBottom, afterSideVisualOverflowForLine(curr) + max(paginationDelta, 0));
-                    curr->adjustPosition(0, paginationDelta);
+                    curr->adjustBlockDirectionPosition(paginationDelta);
                 }                
             }
             

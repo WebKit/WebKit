@@ -1,3 +1,109 @@
+2011-01-26  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46421, make multi-column layout work with vertical text.
+
+        Added new tests in fast/multicol/vertical-lr and fast/multicol/vertical-rl.
+
+        * css/html.css:
+        Update p, blockquote and h1-h6 to respect directionality so that column layout tests that use those
+        elements work properly.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        Fix a flipping bug with the computation of lineTopIncludingMargins where it could be incorrectly shrunk
+        in some cases (causing lines to all stack on top of one another).
+
+        * rendering/InlineTextBox.h:
+        (WebCore::InlineTextBox::calculateBoundaries):
+        Fix calculateBoundaries to be physical rather than logical.
+
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::addForcedColumnBreak):
+        * rendering/LayoutState.h:
+        Rename childY to childLogicalOffset.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::addOverflowFromChildren):
+        (WebCore::RenderBlock::addOverflowFromFloats):
+        (WebCore::RenderBlock::collapseMargins):
+        (WebCore::RenderBlock::estimateLogicalTopPosition):
+        (WebCore::RenderBlock::layoutBlockChild):
+        (WebCore::RenderBlock::markForPaginationRelayoutIfNeeded):
+        (WebCore::RenderBlock::paintColumnRules):
+        (WebCore::RenderBlock::paintColumnContents):
+        (WebCore::RenderBlock::paintFloats):
+        (WebCore::RenderBlock::selectionGaps):
+        (WebCore::RenderBlock::removeFloatingObjectsBelow):
+        (WebCore::RenderBlock::addOverhangingFloats):
+        (WebCore::RenderBlock::hitTestFloats):
+        (WebCore::RenderBlock::hitTestColumns):
+        (WebCore::RenderBlock::calcColumnWidth):
+        (WebCore::RenderBlock::desiredColumnWidth):
+        (WebCore::RenderBlock::columnRectAt):
+        (WebCore::RenderBlock::layoutColumns):
+        (WebCore::RenderBlock::adjustPointToColumnContents):
+        (WebCore::RenderBlock::adjustRectForColumns):
+        (WebCore::RenderBlock::flipForWritingModeIncludingColumns):
+        (WebCore::RenderBlock::adjustForColumns):
+        (WebCore::RenderBlock::adjustForBorderFit):
+        (WebCore::RenderBlock::nextPageLogicalTop):
+        (WebCore::RenderBlock::applyBeforeBreak):
+        (WebCore::RenderBlock::applyAfterBreak):
+        (WebCore::RenderBlock::adjustForUnsplittableChild):
+        (WebCore::RenderBlock::adjustLinePositionForPagination):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::logicalRightOffsetForContent):
+        (WebCore::RenderBlock::logicalLeftOffsetForContent):
+        (WebCore::RenderBlock::leftForFloatIncludingMargin):
+        (WebCore::RenderBlock::topForFloatIncludingMargin):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::determineStartPosition):
+        Reworking of all the RenderBlock column functions to support flipping and vertical modes.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::offsetFromContainer):
+        (WebCore::RenderBox::flipForWritingModeIncludingColumns):
+        Patch offsetFromContainer to be aware of flipped block writing modes when dealing with column layouts.
+
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::clientLogicalBottom):
+        Fix a bug in clientLogicalBottom where it didn't add in the right border/padding.
+        
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        Better terminology for pagination.
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::offsetFromContainer):
+        (WebCore::RenderInline::mapLocalToContainer):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintChildLayerIntoColumns):
+        (WebCore::RenderLayer::hitTestChildLayerColumns):
+        (WebCore::RenderLayer::localBoundingBox):
+        (WebCore::RenderLayer::boundingBox):
+        Patch painting in RenderLayers to be vertical-text-aware.
+    
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::mapLocalToContainer):
+        Add code to be flipped block-aware with columns.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::layout):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows):
+        Fix pagination to use better terminology.
+        
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::absoluteQuads):
+        (WebCore::RenderText::absoluteQuadsForRange):
+        Fix a bug where vertical text wasn't taken into account.
+
 2011-01-26  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r76719.

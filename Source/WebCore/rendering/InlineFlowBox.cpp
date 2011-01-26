@@ -604,7 +604,7 @@ void InlineFlowBox::placeBoxesInBlockDirection(int top, int maxHeight, int maxAs
         }
         
         int newLogicalTop = curr->logicalTop();
-        int newLogicalTopIncludingMargins;
+        int newLogicalTopIncludingMargins = newLogicalTop;
         int boxHeight = curr->logicalHeight();
         int boxHeightIncludingMargins = boxHeight;
             

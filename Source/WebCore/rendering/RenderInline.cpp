@@ -749,7 +749,7 @@ void RenderInline::computeRectForRepaint(RenderBoxModelObject* repaintContainer,
 IntSize RenderInline::offsetFromContainer(RenderObject* container, const IntPoint& point) const
 {
     ASSERT(container == this->container());
-
+    
     IntSize offset;    
     if (isRelPositioned())
         offset += relativePositionOffset();
@@ -782,6 +782,10 @@ void RenderInline::mapLocalToContainer(RenderBoxModelObject* repaintContainer, b
     RenderObject* o = container(repaintContainer, &containerSkipped);
     if (!o)
         return;
+
+    IntPoint centerPoint = roundedIntPoint(transformState.mappedPoint());
+    if (o->isBox() && o->style()->isFlippedBlocksWritingMode())
+        transformState.move(toRenderBox(o)->flipForWritingModeIncludingColumns(roundedIntPoint(transformState.mappedPoint())) - centerPoint);
 
     IntSize containerOffset = offsetFromContainer(o, roundedIntPoint(transformState.mappedPoint()));
 

@@ -1,3 +1,119 @@
+2011-01-26  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46421, make multi-column layout work with vertical text.
+
+        Added new tests in fast/multicol/vertical-lr and fast/multicol/vertical-rl.
+
+        * fast/multicol/break-properties-expected.txt:
+        * fast/multicol/break-properties.html:
+        * fast/multicol/float-truncation.html:
+        * fast/multicol/vertical-lr: Added.
+        * fast/multicol/vertical-lr/border-padding-pagination.html: Added.
+        * fast/multicol/vertical-lr/break-properties-expected.txt: Added.
+        * fast/multicol/vertical-lr/break-properties.html: Added.
+        * fast/multicol/vertical-lr/column-break-with-balancing.html: Added.
+        * fast/multicol/vertical-lr/column-count-with-rules.html: Added.
+        * fast/multicol/vertical-lr/column-rules.html: Added.
+        * fast/multicol/vertical-lr/float-avoidance.html: Added.
+        * fast/multicol/vertical-lr/float-multicol.html: Added.
+        * fast/multicol/vertical-lr/float-paginate-complex.html: Added.
+        * fast/multicol/vertical-lr/float-paginate.html: Added.
+        * fast/multicol/vertical-lr/float-truncation-expected.txt: Added.
+        * fast/multicol/vertical-lr/float-truncation.html: Added.
+        * fast/multicol/vertical-lr/gap-non-negative-expected.txt: Added.
+        * fast/multicol/vertical-lr/gap-non-negative.html: Added.
+        * fast/multicol/vertical-lr/image-inside-nested-blocks-with-border-expected.txt: Added.
+        * fast/multicol/vertical-lr/image-inside-nested-blocks-with-border.html: Added.
+        * fast/multicol/vertical-lr/nested-columns.html: Added.
+        * fast/multicol/vertical-lr/resources: Added.
+        * fast/multicol/vertical-lr/resources/blimp.png: Added.
+        * fast/multicol/vertical-lr/unsplittable-inline-block.html: Added.
+        * fast/multicol/vertical-rl: Added.
+        * fast/multicol/vertical-rl/border-padding-pagination.html: Added.
+        * fast/multicol/vertical-rl/break-properties-expected.txt: Added.
+        * fast/multicol/vertical-rl/break-properties.html: Added.
+        * fast/multicol/vertical-rl/column-break-with-balancing.html: Added.
+        * fast/multicol/vertical-rl/column-count-with-rules.html: Added.
+        * fast/multicol/vertical-rl/column-rules.html: Added.
+        * fast/multicol/vertical-rl/float-avoidance.html: Added.
+        * fast/multicol/vertical-rl/float-multicol.html: Added.
+        * fast/multicol/vertical-rl/float-paginate-complex.html: Added.
+        * fast/multicol/vertical-rl/float-paginate.html: Added.
+        * fast/multicol/vertical-rl/float-truncation-expected.txt: Added.
+        * fast/multicol/vertical-rl/float-truncation.html: Added.
+        * fast/multicol/vertical-rl/gap-non-negative-expected.txt: Added.
+        * fast/multicol/vertical-rl/gap-non-negative.html: Added.
+        * fast/multicol/vertical-rl/image-inside-nested-blocks-with-border-expected.txt: Added.
+        * fast/multicol/vertical-rl/image-inside-nested-blocks-with-border.html: Added.
+        * fast/multicol/vertical-rl/nested-columns.html: Added.
+        * fast/multicol/vertical-rl/resources: Added.
+        * fast/multicol/vertical-rl/resources/blimp.png: Added.
+        * fast/multicol/vertical-rl/unsplittable-inline-block.html: Added.
+        * platform/mac/fast/multicol/vertical-lr: Added.
+        * platform/mac/fast/multicol/vertical-lr/border-padding-pagination-expected.checksum: Added.
+        * platform/mac/fast/multicol/vertical-lr/border-padding-pagination-expected.png: Added.
+        * platform/mac/fast/multicol/vertical-lr/border-padding-pagination-expected.txt: Added.
+        * platform/mac/fast/multicol/vertical-lr/column-break-with-balancing-expected.checksum: Added.
+        * platform/mac/fast/multicol/vertical-lr/column-break-with-balancing-expected.png: Added.
+        * platform/mac/fast/multicol/vertical-lr/column-break-with-balancing-expected.txt: Added.
+        * platform/mac/fast/multicol/vertical-lr/column-count-with-rules-expected.checksum: Added.
+        * platform/mac/fast/multicol/vertical-lr/column-count-with-rules-expected.png: Added.
+        * platform/mac/fast/multicol/vertical-lr/column-count-with-rules-expected.txt: Added.
+        * platform/mac/fast/multicol/vertical-lr/column-rules-expected.checksum: Added.
+        * platform/mac/fast/multicol/vertical-lr/column-rules-expected.png: Added.
+        * platform/mac/fast/multicol/vertical-lr/column-rules-expected.txt: Added.
+        * platform/mac/fast/multicol/vertical-lr/float-avoidance-expected.checksum: Added.
+        * platform/mac/fast/multicol/vertical-lr/float-avoidance-expected.png: Added.
+        * platform/mac/fast/multicol/vertical-lr/float-avoidance-expected.txt: Added.
+        * platform/mac/fast/multicol/vertical-lr/float-multicol-expected.checksum: Added.
+        * platform/mac/fast/multicol/vertical-lr/float-multicol-expected.png: Added.
+        * platform/mac/fast/multicol/vertical-lr/float-multicol-expected.txt: Added.
+        * platform/mac/fast/multicol/vertical-lr/float-paginate-complex-expected.checksum: Added.
+        * platform/mac/fast/multicol/vertical-lr/float-paginate-complex-expected.png: Added.
+        * platform/mac/fast/multicol/vertical-lr/float-paginate-complex-expected.txt: Added.
+        * platform/mac/fast/multicol/vertical-lr/float-paginate-expected.checksum: Added.
+        * platform/mac/fast/multicol/vertical-lr/float-paginate-expected.png: Added.
+        * platform/mac/fast/multicol/vertical-lr/float-paginate-expected.txt: Added.
+        * platform/mac/fast/multicol/vertical-lr/nested-columns-expected.checksum: Added.
+        * platform/mac/fast/multicol/vertical-lr/nested-columns-expected.png: Added.
+        * platform/mac/fast/multicol/vertical-lr/nested-columns-expected.txt: Added.
+        * platform/mac/fast/multicol/vertical-lr/unsplittable-inline-block-expected.checksum: Added.
+        * platform/mac/fast/multicol/vertical-lr/unsplittable-inline-block-expected.png: Added.
+        * platform/mac/fast/multicol/vertical-lr/unsplittable-inline-block-expected.txt: Added.
+        * platform/mac/fast/multicol/vertical-rl: Added.
+        * platform/mac/fast/multicol/vertical-rl/border-padding-pagination-expected.checksum: Added.
+        * platform/mac/fast/multicol/vertical-rl/border-padding-pagination-expected.png: Added.
+        * platform/mac/fast/multicol/vertical-rl/border-padding-pagination-expected.txt: Added.
+        * platform/mac/fast/multicol/vertical-rl/column-break-with-balancing-expected.checksum: Added.
+        * platform/mac/fast/multicol/vertical-rl/column-break-with-balancing-expected.png: Added.
+        * platform/mac/fast/multicol/vertical-rl/column-break-with-balancing-expected.txt: Added.
+        * platform/mac/fast/multicol/vertical-rl/column-count-with-rules-expected.checksum: Added.
+        * platform/mac/fast/multicol/vertical-rl/column-count-with-rules-expected.png: Added.
+        * platform/mac/fast/multicol/vertical-rl/column-count-with-rules-expected.txt: Added.
+        * platform/mac/fast/multicol/vertical-rl/column-rules-expected.checksum: Added.
+        * platform/mac/fast/multicol/vertical-rl/column-rules-expected.png: Added.
+        * platform/mac/fast/multicol/vertical-rl/column-rules-expected.txt: Added.
+        * platform/mac/fast/multicol/vertical-rl/float-avoidance-expected.checksum: Added.
+        * platform/mac/fast/multicol/vertical-rl/float-avoidance-expected.png: Added.
+        * platform/mac/fast/multicol/vertical-rl/float-avoidance-expected.txt: Added.
+        * platform/mac/fast/multicol/vertical-rl/float-multicol-expected.checksum: Added.
+        * platform/mac/fast/multicol/vertical-rl/float-multicol-expected.png: Added.
+        * platform/mac/fast/multicol/vertical-rl/float-multicol-expected.txt: Added.
+        * platform/mac/fast/multicol/vertical-rl/float-paginate-complex-expected.checksum: Added.
+        * platform/mac/fast/multicol/vertical-rl/float-paginate-complex-expected.png: Added.
+        * platform/mac/fast/multicol/vertical-rl/float-paginate-complex-expected.txt: Added.
+        * platform/mac/fast/multicol/vertical-rl/float-paginate-expected.checksum: Added.
+        * platform/mac/fast/multicol/vertical-rl/float-paginate-expected.png: Added.
+        * platform/mac/fast/multicol/vertical-rl/float-paginate-expected.txt: Added.
+        * platform/mac/fast/multicol/vertical-rl/nested-columns-expected.checksum: Added.
+        * platform/mac/fast/multicol/vertical-rl/nested-columns-expected.png: Added.
+        * platform/mac/fast/multicol/vertical-rl/nested-columns-expected.txt: Added.
+        * platform/mac/fast/multicol/vertical-rl/unsplittable-inline-block-expected.checksum: Added.
+        * platform/mac/fast/multicol/vertical-rl/unsplittable-inline-block-expected.png: Added.
+        * platform/mac/fast/multicol/vertical-rl/unsplittable-inline-block-expected.txt: Added.
+
 2011-01-26  Tony Chang  <tony@chromium.org>
 
         Reviewed by Ryosuke Niwa.
