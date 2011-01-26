@@ -1,3 +1,72 @@
+2011-01-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed, unskip passing canvas tests in GTK port.
+
+        * platform/gtk/Skipped: Unskip passing canvas tests.
+        * platform/gtk/fast/canvas/arc360-expected.checksum: Added.
+        * platform/gtk/fast/canvas/arc360-expected.png: Added.
+        * platform/gtk/fast/canvas/arc360-expected.txt: Added.
+        * platform/gtk/fast/canvas/canvas-as-image-expected.checksum: Added.
+        * platform/gtk/fast/canvas/canvas-as-image-expected.png: Added.
+        * platform/gtk/fast/canvas/canvas-as-image-expected.txt: Added.
+        * platform/gtk/fast/canvas/canvas-as-image-incremental-repaint-expected.checksum: Added.
+        * platform/gtk/fast/canvas/canvas-as-image-incremental-repaint-expected.png: Added.
+        * platform/gtk/fast/canvas/canvas-as-image-incremental-repaint-expected.txt: Added.
+        * platform/gtk/fast/canvas/canvas-before-css-expected.checksum: Added.
+        * platform/gtk/fast/canvas/canvas-before-css-expected.png: Added.
+        * platform/gtk/fast/canvas/canvas-before-css-expected.txt: Added.
+        * platform/gtk/fast/canvas/canvas-bg-expected.checksum: Added.
+        * platform/gtk/fast/canvas/canvas-bg-expected.png: Added.
+        * platform/gtk/fast/canvas/canvas-bg-expected.txt: Added.
+        * platform/gtk/fast/canvas/canvas-bg-zoom-expected.checksum: Added.
+        * platform/gtk/fast/canvas/canvas-bg-zoom-expected.png: Added.
+        * platform/gtk/fast/canvas/canvas-bg-zoom-expected.txt: Added.
+        * platform/gtk/fast/canvas/canvas-incremental-repaint-2-expected.checksum: Added.
+        * platform/gtk/fast/canvas/canvas-incremental-repaint-2-expected.png: Added.
+        * platform/gtk/fast/canvas/canvas-incremental-repaint-2-expected.txt: Added.
+        * platform/gtk/fast/canvas/canvas-resize-reset-expected.checksum: Added.
+        * platform/gtk/fast/canvas/canvas-resize-reset-expected.png: Added.
+        * platform/gtk/fast/canvas/canvas-resize-reset-expected.txt: Added.
+        * platform/gtk/fast/canvas/canvas-size-change-after-layout-expected.checksum: Added.
+        * platform/gtk/fast/canvas/canvas-size-change-after-layout-expected.png: Added.
+        * platform/gtk/fast/canvas/canvas-size-change-after-layout-expected.txt: Added.
+        * platform/gtk/fast/canvas/canvas-text-baseline-expected.checksum: Added.
+        * platform/gtk/fast/canvas/canvas-text-baseline-expected.png: Added.
+        * platform/gtk/fast/canvas/canvas-text-baseline-expected.txt: Added.
+        * platform/gtk/fast/canvas/canvas-transforms-during-path-expected.checksum: Added.
+        * platform/gtk/fast/canvas/canvas-transforms-during-path-expected.png: Added.
+        * platform/gtk/fast/canvas/canvas-transforms-during-path-expected.txt: Added.
+        * platform/gtk/fast/canvas/canvasDrawingIntoSelf-expected.checksum: Added.
+        * platform/gtk/fast/canvas/canvasDrawingIntoSelf-expected.png: Added.
+        * platform/gtk/fast/canvas/canvasDrawingIntoSelf-expected.txt: Added.
+        * platform/gtk/fast/canvas/drawImage-expected.checksum: Added.
+        * platform/gtk/fast/canvas/drawImage-expected.png: Added.
+        * platform/gtk/fast/canvas/drawImage-expected.txt: Added.
+        * platform/gtk/fast/canvas/drawImage-with-globalAlpha-expected.checksum: Added.
+        * platform/gtk/fast/canvas/drawImage-with-globalAlpha-expected.png: Added.
+        * platform/gtk/fast/canvas/drawImage-with-globalAlpha-expected.txt: Added.
+        * platform/gtk/fast/canvas/fill-stroke-clip-reset-path-expected.checksum: Added.
+        * platform/gtk/fast/canvas/fill-stroke-clip-reset-path-expected.png: Added.
+        * platform/gtk/fast/canvas/fill-stroke-clip-reset-path-expected.txt: Added.
+        * platform/gtk/fast/canvas/fillrect-gradient-zero-stops-expected.checksum: Added.
+        * platform/gtk/fast/canvas/fillrect-gradient-zero-stops-expected.png: Added.
+        * platform/gtk/fast/canvas/fillrect-gradient-zero-stops-expected.txt: Added.
+        * platform/gtk/fast/canvas/fillrect_gradient-expected.checksum: Added.
+        * platform/gtk/fast/canvas/fillrect_gradient-expected.png: Added.
+        * platform/gtk/fast/canvas/fillrect_gradient-expected.txt: Added.
+        * platform/gtk/fast/canvas/gradient-add-second-start-end-stop-expected.checksum: Added.
+        * platform/gtk/fast/canvas/gradient-add-second-start-end-stop-expected.png: Added.
+        * platform/gtk/fast/canvas/gradient-add-second-start-end-stop-expected.txt: Added.
+        * platform/gtk/fast/canvas/image-object-in-canvas-expected.checksum: Added.
+        * platform/gtk/fast/canvas/image-object-in-canvas-expected.png: Added.
+        * platform/gtk/fast/canvas/image-object-in-canvas-expected.txt: Added.
+        * platform/gtk/fast/canvas/quadraticCurveTo-expected.checksum: Added.
+        * platform/gtk/fast/canvas/quadraticCurveTo-expected.png: Added.
+        * platform/gtk/fast/canvas/quadraticCurveTo-expected.txt: Added.
+        * platform/gtk/fast/canvas/zero-size-fill-rect-expected.checksum: Added.
+        * platform/gtk/fast/canvas/zero-size-fill-rect-expected.png: Added.
+        * platform/gtk/fast/canvas/zero-size-fill-rect-expected.txt: Added.
+
 2011-01-26  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed Chromium test expectation change.

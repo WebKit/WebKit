@@ -1006,7 +1006,6 @@ editing/unsupported-content/table-type-before.html
 
 # Tests in fast/ directory
 #   Tests failing
-fast/canvas/canvas-bg-zoom.html
 fast/canvas/canvas-getImageData.html
 fast/canvas/canvas-gradient-addStop-error.html
 fast/canvas/canvas-zoom.html
@@ -1439,29 +1438,9 @@ fast/box-sizing/box-sizing.html
 fast/box-sizing/panels-one.html
 fast/box-sizing/panels-two.html
 fast/box-sizing/percentage-height.html
-fast/canvas/arc360.html
-fast/canvas/canvas-as-image-incremental-repaint.html
-fast/canvas/canvas-as-image.html
-fast/canvas/canvas-before-css.html
-fast/canvas/canvas-bg.html
 fast/canvas/canvas-composite.html
-fast/canvas/canvas-incremental-repaint-2.html
 fast/canvas/canvas-incremental-repaint.html
-fast/canvas/canvas-resize-reset.html
-fast/canvas/canvas-size-change-after-layout.html
 fast/canvas/canvas-text-alignment.html
-fast/canvas/canvas-text-baseline.html
-fast/canvas/canvas-transforms-during-path.html
-fast/canvas/canvasDrawingIntoSelf.html
-fast/canvas/drawImage-with-globalAlpha.html
-fast/canvas/drawImage.html
-fast/canvas/fill-stroke-clip-reset-path.html
-fast/canvas/fillrect-gradient-zero-stops.html
-fast/canvas/fillrect_gradient.html
-fast/canvas/gradient-add-second-start-end-stop.html
-fast/canvas/image-object-in-canvas.html
-fast/canvas/quadraticCurveTo.xml
-fast/canvas/zero-size-fill-rect.html
 fast/clip/001.html
 fast/clip/002.html
 fast/clip/003.html
