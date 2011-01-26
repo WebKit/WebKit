@@ -1,3 +1,26 @@
+2011-01-25  Ned Holbrook  <nholbrook@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        ComplexTextController incorrectly conflates string length and range of indexes
+        https://bugs.webkit.org/show_bug.cgi?id=52760
+
+        Test: fast/text/offsetForPosition-complex-fallback.html
+
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::offsetForPosition):
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun):
+        (WebCore::ComplexTextController::ComplexTextRun::setIsNonMonotonic):
+        (WebCore::ComplexTextController::advance):
+        * platform/graphics/mac/ComplexTextController.h:
+        (WebCore::ComplexTextController::ComplexTextRun::create):
+        (WebCore::ComplexTextController::ComplexTextRun::indexEnd):
+        * platform/graphics/mac/ComplexTextControllerATSUI.cpp:
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun):
+        * platform/graphics/mac/ComplexTextControllerCoreText.cpp:
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun):
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharactersCoreText):
+
 2011-01-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by David Hyatt.

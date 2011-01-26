@@ -1,3 +1,13 @@
+2011-01-25  Ned Holbrook  <nholbrook@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        ComplexTextController incorrectly conflates string length and range of indexes
+        https://bugs.webkit.org/show_bug.cgi?id=52760
+
+        * fast/text/offsetForPosition-complex-fallback-expected.txt: Added.
+        * fast/text/offsetForPosition-complex-fallback.html: Added.
+
 2011-01-25  Sam Weinig  <sam@webkit.org>
 
         Make this test a bit more robust agains different scrollbar widths.

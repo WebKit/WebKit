@@ -42,12 +42,13 @@ extern const CFStringRef kCTTypesetterOptionForcedEmbeddingLevel;
 
 namespace WebCore {
 
-ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const SimpleFontData* fontData, const UChar* characters, unsigned stringLocation, size_t stringLength)
+ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const SimpleFontData* fontData, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange)
     : m_coreTextRun(ctRun)
     , m_fontData(fontData)
     , m_characters(characters)
     , m_stringLocation(stringLocation)
     , m_stringLength(stringLength)
+    , m_indexEnd(runRange.location + runRange.length)
     , m_isMonotonic(true)
 {
     m_glyphCount = CTRunGetGlyphCount(m_coreTextRun.get());
@@ -165,7 +166,8 @@ void ComplexTextController::collectComplexTextRunsForCharactersCoreText(const UC
     for (CFIndex r = 0; r < runCount; r++) {
         CTRunRef ctRun = static_cast<CTRunRef>(CFArrayGetValueAtIndex(runArray, r));
         ASSERT(CFGetTypeID(ctRun) == CTRunGetTypeID());
-        m_complexTextRuns.append(ComplexTextRun::create(ctRun, fontData, cp, stringLocation, length));
+        CFRange runRange = CTRunGetStringRange(ctRun);
+        m_complexTextRuns.append(ComplexTextRun::create(ctRun, fontData, cp, stringLocation, length, runRange));
     }
 }
 

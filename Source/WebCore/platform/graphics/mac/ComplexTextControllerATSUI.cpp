@@ -146,6 +146,7 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(ATSUTextLayout atsuTextLay
     , m_characters(characters)
     , m_stringLocation(stringLocation)
     , m_stringLength(stringLength)
+    , m_indexEnd(stringLocation + stringLength)
     , m_directionalOverride(directionalOverride)
     , m_isMonotonic(true)
 {

@@ -72,9 +72,9 @@ private:
     class ComplexTextRun : public RefCounted<ComplexTextRun> {
     public:
 #if USE(CORE_TEXT)
-        static PassRefPtr<ComplexTextRun> create(CTRunRef ctRun, const SimpleFontData* fontData, const UChar* characters, unsigned stringLocation, size_t stringLength)
+        static PassRefPtr<ComplexTextRun> create(CTRunRef ctRun, const SimpleFontData* fontData, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange)
         {
-            return adoptRef(new ComplexTextRun(ctRun, fontData, characters, stringLocation, stringLength));
+            return adoptRef(new ComplexTextRun(ctRun, fontData, characters, stringLocation, stringLength, runRange));
         }
 #endif
 #if USE(ATSUI)
@@ -94,6 +94,7 @@ private:
         unsigned stringLocation() const { return m_stringLocation; }
         size_t stringLength() const { return m_stringLength; }
         ALWAYS_INLINE CFIndex indexAt(size_t i) const;
+        CFIndex indexEnd() const { return m_indexEnd; }
         CFIndex endOffsetAt(size_t i) const { ASSERT(!m_isMonotonic); return m_glyphEndOffsets[i]; }
         const CGGlyph* glyphs() const { return m_glyphs; }
         const CGSize* advances() const { return m_advances; }
@@ -102,7 +103,7 @@ private:
 
     private:
 #if USE(CORE_TEXT)
-        ComplexTextRun(CTRunRef, const SimpleFontData*, const UChar* characters, unsigned stringLocation, size_t stringLength);
+        ComplexTextRun(CTRunRef, const SimpleFontData*, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange);
         void createTextRunFromFontDataCoreText(bool ltr);
 #endif
 #if USE(ATSUI)
@@ -133,6 +134,7 @@ private:
 #if USE(ATSUI)
         Vector<CFIndex, 64> m_atsuiIndices;
 #endif
+        CFIndex m_indexEnd;
         Vector<CFIndex, 64> m_glyphEndOffsets;
         Vector<CGGlyph, 64> m_glyphsVector;
         const CGGlyph* m_glyphs;

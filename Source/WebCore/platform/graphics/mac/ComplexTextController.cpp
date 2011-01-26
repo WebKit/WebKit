@@ -118,9 +118,9 @@ int ComplexTextController::offsetForPosition(float h, bool includePartialGlyphs)
                 CFIndex hitGlyphStart = complexTextRun.indexAt(j);
                 CFIndex hitGlyphEnd;
                 if (m_run.ltr())
-                    hitGlyphEnd = max<CFIndex>(hitGlyphStart, j + 1 < complexTextRun.glyphCount() ? complexTextRun.indexAt(j + 1) : static_cast<CFIndex>(complexTextRun.stringLength()));
+                    hitGlyphEnd = max<CFIndex>(hitGlyphStart, j + 1 < complexTextRun.glyphCount() ? complexTextRun.indexAt(j + 1) : static_cast<CFIndex>(complexTextRun.indexEnd()));
                 else
-                    hitGlyphEnd = max<CFIndex>(hitGlyphStart, j > 0 ? complexTextRun.indexAt(j - 1) : static_cast<CFIndex>(complexTextRun.stringLength()));
+                    hitGlyphEnd = max<CFIndex>(hitGlyphStart, j > 0 ? complexTextRun.indexAt(j - 1) : static_cast<CFIndex>(complexTextRun.indexEnd()));
 
                 // FIXME: Instead of dividing the glyph's advance equally between the characters, this
                 // could use the glyph's "ligature carets". However, there is no Core Text API to get the
@@ -311,6 +311,7 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(const SimpleFontData* font
     , m_characters(characters)
     , m_stringLocation(stringLocation)
     , m_stringLength(stringLength)
+    , m_indexEnd(stringLocation + stringLength)
     , m_isMonotonic(true)
 {
 #if USE(CORE_TEXT) && USE(ATSUI)
@@ -335,7 +336,7 @@ void ComplexTextController::ComplexTextRun::setIsNonMonotonic()
 
     m_glyphEndOffsets.grow(m_glyphCount);
     for (size_t i = 0; i < m_glyphCount; ++i) {
-        CFIndex nextMappedIndex = m_stringLength;
+        CFIndex nextMappedIndex = m_indexEnd;
         for (size_t j = indexAt(i) + 1; j < m_stringLength; ++j) {
             if (mappedIndices[j]) {
                 nextMappedIndex = j;
@@ -370,9 +371,9 @@ void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
             unsigned glyphEndOffset;
             if (complexTextRun.isMonotonic()) {
                 if (ltr)
-                    glyphEndOffset = max<unsigned>(glyphStartOffset, g + 1 < glyphCount ? static_cast<unsigned>(complexTextRun.indexAt(g + 1)) : complexTextRun.stringLength());
+                    glyphEndOffset = max<unsigned>(glyphStartOffset, g + 1 < glyphCount ? static_cast<unsigned>(complexTextRun.indexAt(g + 1)) : complexTextRun.indexEnd());
                 else
-                    glyphEndOffset = max<unsigned>(glyphStartOffset, g > 0 ? static_cast<unsigned>(complexTextRun.indexAt(g - 1)) : complexTextRun.stringLength());
+                    glyphEndOffset = max<unsigned>(glyphStartOffset, g > 0 ? static_cast<unsigned>(complexTextRun.indexAt(g - 1)) : complexTextRun.indexEnd());
             } else
                 glyphEndOffset = complexTextRun.endOffsetAt(g);
 
@@ -386,7 +387,7 @@ void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
 
             unsigned oldCharacterInCurrentGlyph = m_characterInCurrentGlyph;
             m_characterInCurrentGlyph = min(m_currentCharacter - complexTextRun.stringLocation(), glyphEndOffset) - glyphStartOffset;
-            // FIXME: Instead of dividing the glyph's advance equially between the characters, this
+            // FIXME: Instead of dividing the glyph's advance equally between the characters, this
             // could use the glyph's "ligature carets". However, there is no Core Text API to get the
             // ligature carets.
             if (glyphStartOffset == glyphEndOffset) {
