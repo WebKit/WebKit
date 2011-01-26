@@ -1501,7 +1501,7 @@ sub buildCMakeProject($@)
             push @buildArgs, "-DCMAKE_BUILD_TYPE=Release";
         }
 
-        push @buildArgs, sourceDir();
+        push @buildArgs, sourceDir() . "/Source";
 
         $dir = File::Spec->catfile($dir, $config);
         File::Path::mkpath($dir);

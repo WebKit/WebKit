@@ -1,3 +1,15 @@
+2011-01-25  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Move main CMakeLists.txt into Source directory
+        https://bugs.webkit.org/show_bug.cgi?id=52888
+
+        * CMakeLists.txt: Removed.
+        * Source/CMakeLists.txt: Copied from CMakeLists.txt.
+        * Source/cmakeconfig.h.cmake: Copied from cmakeconfig.h.cmake.
+        * cmakeconfig.h.cmake: Removed.
+
 2011-01-24  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Eric Seidel.

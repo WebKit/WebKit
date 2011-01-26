@@ -1,5 +1,14 @@
 2011-01-25  Patrick Gansterer  <paroga@webkit.org>
 
+        Reviewed by Adam Barth.
+
+        Move main CMakeLists.txt into Source directory
+        https://bugs.webkit.org/show_bug.cgi?id=52888
+
+        * Scripts/webkitdirs.pm:
+
+2011-01-25  Patrick Gansterer  <paroga@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Improve label text in submit-to-ews
