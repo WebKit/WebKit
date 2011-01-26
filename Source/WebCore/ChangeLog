@@ -2,7 +2,7 @@
 
         Reviewed by Pavel Feldman.
 
-        Web Inspector: summary bar is not resized properly with the rest of network panel
+        Web Inspector: size is wrong for cached resources in Network panel
         - Set the size for 304/not modified resources from cached resource.
         - Add response headers size to resource transfer size.
         https://bugs.webkit.org/show_bug.cgi?id=52886
