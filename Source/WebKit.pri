@@ -47,10 +47,6 @@ building-libs {
     DEPENDPATH += $$PWD/WebKit/qt/Api
 }
 
-!mac:!unix|symbian {
-    DEFINES += USE_SYSTEM_MALLOC=1
-}
-
 CONFIG(release, debug|release) {
     DEFINES += NDEBUG
 }

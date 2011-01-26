@@ -31,6 +31,7 @@
 // Author: Sanjay Ghemawat
 
 #include "config.h"
+#if !(defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC)
 #include "TCSystemAlloc.h"
 
 #include <algorithm>
@@ -519,3 +520,6 @@ void TCMalloc_SystemCommit(void* start, size_t length)
 // declared in TCSystemAlloc.h
 
 #endif
+
+#endif // #if !(defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC)
+

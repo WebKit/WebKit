@@ -22,6 +22,7 @@ SOURCES += \
     wtf/RandomNumber.cpp \
     wtf/RefCountedLeakCounter.cpp \
     wtf/StackBounds.cpp \
+    wtf/TCSystemAlloc.cpp \
     wtf/ThreadingNone.cpp \
     wtf/Threading.cpp \
     wtf/TypeTraits.cpp \
@@ -40,10 +41,6 @@ contains(DEFINES, USE_GSTREAMER=1) {
     DEFINES += ENABLE_GLIB_SUPPORT=1
     PKGCONFIG += glib-2.0 gio-2.0
     CONFIG += link_pkgconfig
-}
-
-!contains(DEFINES, USE_SYSTEM_MALLOC=1) {
-    SOURCES += wtf/TCSystemAlloc.cpp
 }
 
 unix:!symbian: SOURCES += wtf/OSAllocatorPosix.cpp
