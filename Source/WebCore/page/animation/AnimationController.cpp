@@ -145,15 +145,15 @@ void AnimationControllerPrivate::fireEventsAndUpdateStyle()
     bool updateStyle = !m_eventsToDispatch.isEmpty() || !m_nodeChangesToDispatch.isEmpty();
     
     // fire all the events
-    Vector<EventToDispatch>::const_iterator eventsToDispatchEnd = m_eventsToDispatch.end();
-    for (Vector<EventToDispatch>::const_iterator it = m_eventsToDispatch.begin(); it != eventsToDispatchEnd; ++it) {
+    Vector<EventToDispatch> eventsToDispatch = m_eventsToDispatch;
+    m_eventsToDispatch.clear();
+    Vector<EventToDispatch>::const_iterator eventsToDispatchEnd = eventsToDispatch.end();
+    for (Vector<EventToDispatch>::const_iterator it = eventsToDispatch.begin(); it != eventsToDispatchEnd; ++it) {
         if (it->eventType == eventNames().webkitTransitionEndEvent)
             it->element->dispatchEvent(WebKitTransitionEvent::create(it->eventType, it->name, it->elapsedTime));
         else
             it->element->dispatchEvent(WebKitAnimationEvent::create(it->eventType, it->name, it->elapsedTime));
     }
-    
-    m_eventsToDispatch.clear();
     
     // call setChanged on all the elements
     Vector<RefPtr<Node> >::const_iterator nodeChangesToDispatchEnd = m_nodeChangesToDispatch.end();

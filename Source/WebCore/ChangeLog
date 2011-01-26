@@ -1,3 +1,15 @@
+2011-01-26  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Make fireEventsAndUpdateStyle use stack local vectors. 
+        https://bugs.webkit.org/show_bug.cgi?id=46760
+
+        Test: animations/animation-add-events-in-handler.html
+
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::fireEventsAndUpdateStyle):
+
 2011-01-26  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.
