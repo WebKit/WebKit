@@ -9,7 +9,7 @@ PASS invalidFired = false; !form.checkValidity() && invalidFired is true
 
 "invalid" event is canceled.
 PASS input.addEventListener("invalid", cancelListener, false); !input.checkValidity() && invalidFired is true
-PASS invalidFired = false; form.checkValidity() && invalidFired is true
+PASS invalidFired = false; !form.checkValidity() && invalidFired is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

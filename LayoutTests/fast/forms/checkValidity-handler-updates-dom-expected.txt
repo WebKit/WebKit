@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 The target form is removed.
-PASS document.getElementById("f1").checkValidity() is true
+PASS document.getElementById("f1").checkValidity() is false
 
 A control to be checked is removed.
 PASS document.getElementById("f1").checkValidity() is false

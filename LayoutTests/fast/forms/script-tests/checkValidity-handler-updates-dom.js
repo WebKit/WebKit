@@ -10,9 +10,9 @@ var handler = function(event) {
     parent.innerHTML = '';
 };
 document.getElementById('i').addEventListener('invalid', handler, false);
-// The control is invalid, but it is not listed in 'unhandled invalid controls'
-// because it is not in any documents.
-shouldBeTrue('document.getElementById("f1").checkValidity()');
+// The specificiation doesn't define the behavior in this case.
+// It's ok if WebKit doesn't crash.
+shouldBeFalse('document.getElementById("f1").checkValidity()');
 
 // ----------------------------------------------------------------
 debug('');

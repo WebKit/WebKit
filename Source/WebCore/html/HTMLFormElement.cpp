@@ -221,8 +221,7 @@ bool HTMLFormElement::validateInteractively(Event* event)
     }
 
     Vector<RefPtr<FormAssociatedElement> > unhandledInvalidControls;
-    collectUnhandledInvalidControls(unhandledInvalidControls);
-    if (unhandledInvalidControls.isEmpty())
+    if (!checkInvalidControlsAndCollectUnhandled(unhandledInvalidControls))
         return true;
     // If the form has invalid controls, abort submission.
 
@@ -586,8 +585,7 @@ HTMLFormControlElement* HTMLFormElement::defaultButton() const
 bool HTMLFormElement::checkValidity()
 {
     Vector<RefPtr<FormAssociatedElement> > controls;
-    collectUnhandledInvalidControls(controls);
-    return controls.isEmpty();
+    return !checkInvalidControlsAndCollectUnhandled(controls);
 }
 
 void HTMLFormElement::broadcastFormEvent(const AtomicString& eventName)
@@ -623,7 +621,7 @@ void HTMLFormElement::dispatchFormChange()
     broadcastFormEvent(eventNames().formchangeEvent);
 }
 
-void HTMLFormElement::collectUnhandledInvalidControls(Vector<RefPtr<FormAssociatedElement> >& unhandledInvalidControls)
+bool HTMLFormElement::checkInvalidControlsAndCollectUnhandled(Vector<RefPtr<FormAssociatedElement> >& unhandledInvalidControls)
 {
     RefPtr<HTMLFormElement> protector(this);
     // Copy m_associatedElements because event handlers called from
@@ -632,10 +630,15 @@ void HTMLFormElement::collectUnhandledInvalidControls(Vector<RefPtr<FormAssociat
     elements.reserveCapacity(m_associatedElements.size());
     for (unsigned i = 0; i < m_associatedElements.size(); ++i)
         elements.append(m_associatedElements[i]);
+    bool hasInvalidControls = false;
     for (unsigned i = 0; i < elements.size(); ++i) {
-        if (elements[i]->form() == this && elements[i]->isFormControlElement())
-            static_cast<HTMLFormControlElement*>(elements[i].get())->checkValidity(&unhandledInvalidControls);
+        if (elements[i]->form() == this && elements[i]->isFormControlElement()) {
+            HTMLFormControlElement* control = static_cast<HTMLFormControlElement*>(elements[i].get());
+            if (!control->checkValidity(&unhandledInvalidControls) && control->form() == this)
+                hasInvalidControls = true;
+        }
     }
+    return hasInvalidControls;
 }
 
 HTMLFormControlElement* HTMLFormElement::elementForAlias(const AtomicString& alias)

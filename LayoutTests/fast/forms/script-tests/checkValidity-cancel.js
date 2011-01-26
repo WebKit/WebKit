@@ -26,7 +26,7 @@ cancelListener.handleEvent = function(event) {
 };
 // Even if 'invalid' is canceled, the input.checkValidity() result is still false.
 shouldBeTrue('input.addEventListener("invalid", cancelListener, false); !input.checkValidity() && invalidFired');
-// form.checkValidity() should be true.
-shouldBeTrue('invalidFired = false; form.checkValidity() && invalidFired');
+// form.checkValidity() also should be false.
+shouldBeTrue('invalidFired = false; !form.checkValidity() && invalidFired');
 
 var successfullyParsed = true;
