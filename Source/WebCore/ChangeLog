@@ -1,3 +1,23 @@
+2011-01-26  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        A speculative fix for Bug 52422 - [chromium] More crash in
+        FontFallbackList::determinePitch(const Font* font)
+        https://bugs.webkit.org/show_bug.cgi?id=52422
+
+        My previous change may not work on non-US Windows whose system fonts
+        have localized aliases matching to the system locale because of a
+        font-name mismatch in createFontIndirectAndGetWinName(). This change
+        tries all the fonts installed in a PC and returns the first font that we
+        can create without errors.
+
+        * platform/graphics/chromium/FontCacheChromiumWin.cpp:
+        (WebCore::GetLastResortFallbackFontProcData::GetLastResortFallbackFontProcData):
+        Added a struct used for getLastResortFallbackFontProc().
+        (WebCore::getLastResortFallbackFontProc): Added a callback for EnumFontFamilies().
+        (WebCore::FontCache::getLastResortFallbackFont): Use EnumFontFamilies() to find a last-resort font.
+
 2011-01-26  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Nate Chapin.

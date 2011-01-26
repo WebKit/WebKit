@@ -399,6 +399,28 @@ static int CALLBACK traitsInFamilyEnumProc(CONST LOGFONT* logFont, CONST TEXTMET
     return 1;
 }
 
+struct GetLastResortFallbackFontProcData {
+    GetLastResortFallbackFontProcData(FontCache* fontCache, const FontDescription* fontDescription, wchar_t* fontName)
+        : m_fontCache(fontCache)
+        , m_fontDescription(fontDescription)
+        , m_fontName(fontName)
+        , m_fontData(0)
+    {
+    }
+
+    FontCache* m_fontCache;
+    const FontDescription* m_fontDescription;
+    wchar_t* m_fontName;
+    SimpleFontData* m_fontData;
+};
+
+static int CALLBACK getLastResortFallbackFontProc(const LOGFONT* logFont, const TEXTMETRIC* metrics, DWORD fontType, LPARAM lParam)
+{
+    GetLastResortFallbackFontProcData* procData = reinterpret_cast<GetLastResortFallbackFontProcData*>(lParam);
+    procData->m_fontData = fontDataFromDescriptionAndLogFont(procData->m_fontCache, *procData->m_fontDescription, *logFont, procData->m_fontName);
+    return !procData->m_fontData;
+}
+
 void FontCache::platformInit()
 {
     // Not needed on Windows.
@@ -546,6 +568,21 @@ SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& desc
             return simpleFont;
         if (simpleFont = fontDataFromDescriptionAndLogFont(this, description, nonClientMetrics.lfSmCaptionFont, fallbackFontName))
             return simpleFont;
+    }
+
+    // Fall back to all the fonts installed in this PC. When a font has a
+    // localized name according to the system locale as well as an English name,
+    // both GetTextFace() and EnumFontFamilies() return the localized name. So,
+    // FontCache::createFontPlatformData() does not filter out the fonts
+    // returned by this EnumFontFamilies() call.
+    HDC dc = GetDC(0);
+    if (dc) {
+        GetLastResortFallbackFontProcData procData(this, &description, fallbackFontName);
+        EnumFontFamilies(dc, 0, getLastResortFallbackFontProc, reinterpret_cast<LPARAM>(&procData));
+        ReleaseDC(0, dc);
+
+        if (procData.m_fontData)
+            return procData.m_fontData;
     }
 
     ASSERT_NOT_REACHED();
