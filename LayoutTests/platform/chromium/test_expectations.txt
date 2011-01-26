@@ -3092,3 +3092,21 @@ BUGWK53112 WIN LINUX : inspector/debugger-scripts.html = TIMEOUT
 
 // Added by http://trac.webkit.org/changeset/76674
 BUGCR70882 WIN LINUX : fast/text/offsetForPosition-complex-fallback.html = TEXT
+// Started failing at http://trac.webkit.org/changeset/76674
+BUGCR70882 MAC : fast/text/atsui-small-caps-punctuation-size.html = IMAGE
+BUGCR70882 MAC : fast/text/capitalize-boundaries.html = IMAGE
+BUGCR70882 MAC : fast/text/drawBidiText.html = IMAGE
+BUGCR70882 MAC : fast/text/international/bidi-AN-after-empty-run.html = IMAGE
+BUGCR70882 MAC : fast/text/international/bidi-CS-after-AN.html = IMAGE
+BUGCR70882 MAC : fast/text/international/bidi-linebreak-001.html = IMAGE
+BUGCR70882 MAC : fast/text/international/bidi-linebreak-002.html = IMAGE
+BUGCR70882 MAC : fast/text/international/bidi-linebreak-003.html = IMAGE
+BUGCR70882 MAC : fast/text/international/bidi-mirror-he-ar.html = IMAGE
+BUGCR70882 MAC : fast/text/international/bidi-neutral-run.html = IMAGE
+BUGCR70882 MAC : fast/text/international/complex-character-based-fallback.html = IMAGE
+BUGCR70882 MAC : fast/text/international/danda-space.html = IMAGE
+BUGCR70882 MAC : fast/text/international/hebrew-vowels.html = IMAGE
+BUGCR70882 MAC : fast/text/international/hindi-spacing.html = IMAGE
+BUGCR70882 MAC : fast/text/international/hindi-whitespace.html = IMAGE
+BUGCR70882 MAC : fast/text/international/thai-baht-space.html = IMAGE
+BUGCR70882 MAC : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE

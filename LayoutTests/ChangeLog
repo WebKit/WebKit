@@ -1,3 +1,11 @@
+2011-01-26  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed Chromium test expectation change.
+
+        Mark some complex script tests as failing since r76674.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-26  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Nate Chapin.
