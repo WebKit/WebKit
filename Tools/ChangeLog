@@ -1,3 +1,12 @@
+2011-01-25  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Improve label text in submit-to-ews
+        https://bugs.webkit.org/show_bug.cgi?id=53130
+
+        * QueueStatusServer/templates/submittoews.html:
+
 2011-01-25  Mansi Mithal  <mansi.mithal@nokia.com>
 
         Reviewed by Antonio Gomes.
