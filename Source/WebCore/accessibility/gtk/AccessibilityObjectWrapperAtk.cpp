@@ -994,7 +994,7 @@ static gchar* utf8Substr(const gchar* string, gint start, gint end)
     if (start > strLen || end > strLen)
         return 0;
     gchar* startPtr = g_utf8_offset_to_pointer(string, start);
-    gsize lenInBytes = g_utf8_offset_to_pointer(string, end) -  startPtr + 1;
+    gsize lenInBytes = g_utf8_offset_to_pointer(string, end + 1) -  startPtr;
     gchar* output = static_cast<gchar*>(g_malloc0(lenInBytes + 1));
     return g_utf8_strncpy(output, startPtr, end - start + 1);
 }

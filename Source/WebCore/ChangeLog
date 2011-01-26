@@ -1,3 +1,16 @@
+2011-01-26  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Reliable crash with getTextAtOffset()
+        https://bugs.webkit.org/show_bug.cgi?id=53131
+
+        Properly calculate length in bytes for a UTF8 substring.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (utf8Substr): Use character instead of bytes as units to
+        calculate the length in bytes for the UTF8 string.
+
 2011-01-25  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Kent Tamura.
