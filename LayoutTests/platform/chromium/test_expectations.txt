@@ -1995,11 +1995,6 @@ BUGUKAI WIN MAC SKIP : fast/text/international/bold-bengali.html = FAIL
 // They should be moved to the JavaScriptCore test suite.
 BUGCR42875 WONTFIX SKIP : fast/js/sputnik = TEXT
 
-// These tests may just need to be rebaselined.
-// WebKit roll 58400:58523
-BUGWK38360 WIN LINUX : fast/images/svg-background-partial-redraw.html = FAIL
-BUGWK38360 WIN LINUX : svg/carto.net/tabgroup.svg = FAIL
-
 // WebKit roll 58626:58719
 BUGCR43963 WIN : fast/forms/searchfield-heights.html = IMAGE
 BUGCR43963 LINUX : fast/forms/searchfield-heights.html = IMAGE+TEXT TEXT
