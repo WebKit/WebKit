@@ -109,6 +109,8 @@ bool WebInspectorClient::inspectorStartsAttached()
 {
     String value;
     populateSetting(inspectorStartsAttachedSetting, &value);
+    if (value.isEmpty())
+        return true;
     return value == "true";
 }
 

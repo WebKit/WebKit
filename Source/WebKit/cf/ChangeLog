@@ -1,3 +1,13 @@
+2011-01-26  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: inspector should start in attached state by default
+        https://bugs.webkit.org/show_bug.cgi?id=53165
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+        (WebInspectorClient::inspectorStartsAttached):
+
 2011-01-25  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
