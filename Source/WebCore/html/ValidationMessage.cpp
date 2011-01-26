@@ -105,7 +105,7 @@ protected:
     ElementWithPseudoId(Document* doc, const AtomicString& pseudoName)
         : HTMLElement(divTag, doc)
         , m_pseudoName(pseudoName) { };
-    virtual AtomicString shadowPseudoId() const { return m_pseudoName; }
+    virtual const AtomicString& shadowPseudoId() const { return m_pseudoName; }
 
 private:
     AtomicString m_pseudoName;

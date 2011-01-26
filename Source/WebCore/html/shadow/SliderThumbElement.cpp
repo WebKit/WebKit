@@ -184,5 +184,11 @@ void SliderThumbElement::detach()
     HTMLDivElement::detach();
 }
 
+const AtomicString& SliderThumbElement::shadowPseudoId() const
+{
+    DEFINE_STATIC_LOCAL(AtomicString, sliderThumb, ("-webkit-slider-thumb"));
+    return sliderThumb;
+}
+
 }
 

@@ -53,7 +53,7 @@ public:
     void dragFrom(const IntPoint&);
     virtual void defaultEventHandler(Event*);
     virtual void detach();
-    virtual AtomicString shadowPseudoId() const;
+    virtual const AtomicString& shadowPseudoId() const;
 
 private:
     SliderThumbElement(Document*);
@@ -75,12 +75,6 @@ inline SliderThumbElement::SliderThumbElement(Document* document)
 inline PassRefPtr<SliderThumbElement> SliderThumbElement::create(Document* document)
 {
     return adoptRef(new SliderThumbElement(document));
-}
-
-inline AtomicString SliderThumbElement::shadowPseudoId() const
-{
-    DEFINE_STATIC_LOCAL(AtomicString, sliderThumb, ("-webkit-slider-thumb"));
-    return sliderThumb;
 }
 
 inline SliderThumbElement* toSliderThumbElement(Node* node)

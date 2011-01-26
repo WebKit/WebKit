@@ -1,3 +1,33 @@
+2011-01-25  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Reduce ref-count churn in shadowPseudoId.
+        https://bugs.webkit.org/show_bug.cgi?id=53136
+
+        Refactoring, so no new tests.
+
+        * dom/Element.h:
+        (WebCore::Element::shadowPseudoId): Changed signature to use const AtomicString&
+        * html/ValidationMessage.cpp:
+        (WebCore::ElementWithPseudoId::shadowPseudoId): Ditto.
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::shadowPseudoId): Ditto, plus moved from the header file.
+        * html/shadow/SliderThumbElement.h: Ditto.
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlMuteButtonElement::shadowPseudoId): Ditto.
+        (WebCore::MediaControlVolumeSliderMuteButtonElement::shadowPseudoId): Ditto.
+        (WebCore::MediaControlPlayButtonElement::shadowPseudoId): Ditto.
+        (WebCore::MediaControlSeekForwardButtonElement::shadowPseudoId): Ditto.
+        (WebCore::MediaControlSeekBackButtonElement::shadowPseudoId): Ditto.
+        (WebCore::MediaControlRewindButtonElement::shadowPseudoId): Ditto.
+        (WebCore::MediaControlReturnToRealtimeButtonElement::shadowPseudoId): Ditto.
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::shadowPseudoId): Ditto.
+        (WebCore::MediaControlTimelineElement::shadowPseudoId): Ditto.
+        (WebCore::MediaControlVolumeSliderElement::shadowPseudoId): Ditto.
+        (WebCore::MediaControlFullscreenButtonElement::shadowPseudoId): Ditto.
+        * rendering/MediaControlElements.h: Ditto.
+
 2011-01-26  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
