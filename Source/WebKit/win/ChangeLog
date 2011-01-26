@@ -1,5 +1,12 @@
 2011-01-25  Steve Falkenburg  <sfalken@apple.com>
 
+        Windows production build fix.
+        Build correct configuration of Interfaces for Debug_All.
+
+        * WebKit.vcproj/WebKit.submit.sln:
+
+2011-01-25  Steve Falkenburg  <sfalken@apple.com>
+
         Rubber-stamped by Adam Roben.
 
         Windows production build fix.
