@@ -1,3 +1,14 @@
+2011-01-26  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by John Sullivan.
+
+        WebKit2: Need API to get the frame load state of a BundleFrame
+        https://bugs.webkit.org/show_bug.cgi?id=53193
+
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameGetFrameLoadState): Call through to the FrameLoader to get the frame load state.
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.h:
+
 2011-01-25  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Antti Koivisto.

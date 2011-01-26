@@ -55,6 +55,29 @@ WKURLRef WKBundleFrameCopyProvisionalURL(WKBundleFrameRef frameRef)
     return toCopiedURLAPI(toImpl(frameRef)->provisionalURL());
 }
 
+WKFrameLoadState WKBundleFrameGetFrameLoadState(WKBundleFrameRef frameRef)
+{
+    Frame* coreFrame = toImpl(frameRef)->coreFrame();
+    if (!coreFrame)
+        return kWKFrameLoadStateFinished;
+
+    FrameLoader* loader = coreFrame->loader();
+    if (!loader)
+        return kWKFrameLoadStateFinished;
+
+    switch (loader->state()) {
+    case FrameStateProvisional:
+        return kWKFrameLoadStateProvisional;
+    case FrameStateCommittedPage:
+        return kWKFrameLoadStateCommitted;
+    case FrameStateComplete:
+        return kWKFrameLoadStateFinished;
+    }
+
+    ASSERT_NOT_REACHED();
+    return kWKFrameLoadStateFinished;
+}
+
 WKArrayRef WKBundleFrameCopyChildFrames(WKBundleFrameRef frameRef)
 {
     return toAPI(toImpl(frameRef)->childFrames().releaseRef());    
