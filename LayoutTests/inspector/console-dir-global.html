@@ -22,7 +22,7 @@ function frontend_expandAndDumpConsoleMessages(testController)
     // Need test to be async to expand console objects.
     testController.waitUntilDone();
 
-    InspectorBackend.evaluate("window", "console", evalCallback);
+    InspectorBackend.evaluate("window", "console", false, evalCallback);
 
     function evalCallback(result)
     {

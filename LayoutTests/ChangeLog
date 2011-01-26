@@ -1,3 +1,11 @@
+2011-01-26  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: inspector tests fix.
+
+        * http/tests/inspector/inspector-test2.js:
+        (initialize_InspectorTest.InspectorTest.evaluateInPage):
+        * inspector/console-format.html:
+
 2011-01-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed, unskip passing canvas tests in GTK port.

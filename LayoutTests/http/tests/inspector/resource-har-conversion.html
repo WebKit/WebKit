@@ -26,7 +26,7 @@ var test = function()
     }
 
     InspectorTest.reloadPageIfNeeded(function() {
-        InspectorBackend.evaluate("doXHR()", "console", function() {
+        InspectorBackend.evaluate("doXHR()", "console", false, function() {
             addCookieHeadersToResource(findResourceByURL(/inspector-test2\.js$/));
             var entries = (new WebInspector.HARLog()).build().entries;
             entries.sort(InspectorTest.resourceURLComparer);

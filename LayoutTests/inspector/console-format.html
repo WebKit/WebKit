@@ -80,7 +80,7 @@ function frontend_evalExpression(expression)
         self.addMessage(new WebInspector.ConsoleCommandResult(result, expression));
     }
 
-    self.evalInInspectedWindow(expression, "console", printResult);
+    self.evalInInspectedWindow(expression, "console", false, printResult);
 }
 
 </script>
