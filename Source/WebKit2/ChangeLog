@@ -1,3 +1,32 @@
+2011-01-25  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WK2 leaks when a page is closed
+        https://bugs.webkit.org/show_bug.cgi?id=53100
+
+        Allow the WKView a chance to clean up on a page close. In this case,
+        cleaning up means removing the references the accessibility token has
+        to the window.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::pageClosed):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setRemoteAccessibilityWindow:]):
+        (-[WKView _setAccessibilityChildToken:]):
+        (-[WKView _processDidCrash]):
+        (-[WKView _pageClosed]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/API/qt/qwkpage_p.h:
+        (QWKPagePrivate::pageClosed):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::pageClosed):
+        * UIProcess/win/WebView.h:
+
 2011-01-25  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Adam Roben.

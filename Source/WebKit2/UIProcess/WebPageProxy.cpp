@@ -254,6 +254,7 @@ void WebPageProxy::close()
     m_isClosed = true;
 
     m_backForwardList->pageClosed();
+    m_pageClient->pageClosed();
 
     process()->disconnectFramesFromPage(this);
     m_mainFrame = 0;

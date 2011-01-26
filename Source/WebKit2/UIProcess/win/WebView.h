@@ -116,6 +116,7 @@ private:
     virtual bool isViewInWindow();
     virtual void processDidCrash();
     virtual void didRelaunchProcess();
+    virtual void pageClosed();
     virtual void takeFocus(bool direction);
     virtual void toolTipChanged(const WTF::String&, const WTF::String&);
     virtual void setCursor(const WebCore::Cursor&);

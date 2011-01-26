@@ -277,6 +277,13 @@ static bool useNewDrawingArea()
     return YES;
 }
 
+- (void)_setRemoteAccessibilityWindow:(id)window
+{
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    WKAXInitializeRemoteElementWithWindow(_data->_remoteAccessibilityChild.get(), window);    
+#endif
+}
+
 - (void)setFrameSize:(NSSize)size
 {
     [super setFrameSize:size];
@@ -1193,6 +1200,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive | WebPageProxy::ViewIsInWindow);
     }
 
+    [self _setRemoteAccessibilityWindow:[self window]];
 }
 
 - (void)_windowDidBecomeKey:(NSNotification *)notification
@@ -1300,7 +1308,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 {
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
     _data->_remoteAccessibilityChild = WKAXRemoteElementForToken((CFDataRef)data);
-    WKAXInitializeRemoteElementWithWindow(_data->_remoteAccessibilityChild.get(), [self window]);
+    [self _setRemoteAccessibilityWindow:[self window]];
 #endif
 }
 
@@ -1395,6 +1403,14 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 - (void)_processDidCrash
 {
     [self setNeedsDisplay:YES];
+    [self _setRemoteAccessibilityWindow:nil];
+}
+
+- (void)_pageClosed
+{
+    // When the page closes, the references the accessibility child has to the window 
+    // need to be removed, otherwise it can leak.
+    [self _setRemoteAccessibilityWindow:nil];
 }
 
 - (void)_didRelaunchProcess

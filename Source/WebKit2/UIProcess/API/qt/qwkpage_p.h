@@ -62,6 +62,7 @@ public:
 #endif // USE(ACCELERATED_COMPOSITING)
     virtual void pageDidRequestScroll(const WebCore::IntSize&);
     virtual void processDidCrash();
+    virtual void pageClosed() { }
     virtual void didRelaunchProcess();
     virtual void didChangeContentsSize(const WebCore::IntSize&);
     virtual void didFindZoomableArea(const WebCore::IntRect&);

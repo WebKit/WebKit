@@ -60,6 +60,7 @@ private:
     virtual bool isViewInWindow();
     
     virtual void processDidCrash();
+    virtual void pageClosed();
     virtual void didRelaunchProcess();
     virtual void takeFocus(bool direction);
     virtual void toolTipChanged(const String& oldToolTip, const String& newToolTip);

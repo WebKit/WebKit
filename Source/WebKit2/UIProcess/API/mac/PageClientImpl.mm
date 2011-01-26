@@ -181,6 +181,11 @@ void PageClientImpl::processDidCrash()
 {
     [m_wkView _processDidCrash];
 }
+    
+void PageClientImpl::pageClosed()
+{
+    [m_wkView _pageClosed];
+}
 
 void PageClientImpl::didRelaunchProcess()
 {

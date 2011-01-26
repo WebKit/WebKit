@@ -36,6 +36,7 @@ namespace WebKit {
 - (PassOwnPtr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy;
 - (BOOL)_isFocused;
 - (void)_processDidCrash;
+- (void)_pageClosed;
 - (void)_didRelaunchProcess;
 - (void)_takeFocus:(BOOL)direction;
 - (void)_toolTipChangedFrom:(NSString *)oldToolTip to:(NSString *)newToolTip;

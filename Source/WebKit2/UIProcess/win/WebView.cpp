@@ -626,6 +626,10 @@ bool WebView::isViewInWindow()
     return m_isInWindow;
 }
 
+void WebView::pageClosed()
+{
+}
+
 void WebView::processDidCrash()
 {
     updateNativeCursor();
