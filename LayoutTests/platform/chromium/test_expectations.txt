@@ -1236,7 +1236,7 @@ BUGCR23496 MAC : tables/mozilla_expected_failures/core/captions2.html = IMAGE
 // are around either or both text or image may mismatch.
 BUGWK48651 LINUX MAC : http/tests/navigation/javascriptlink-frames.html = IMAGE IMAGE+TEXT
 BUGWK48651 LINUX MAC : http/tests/navigation/error404-goback.html = IMAGE IMAGE+TEXT TEXT
-BUGWK48651 LINUX MAC : http/tests/navigation/postredirect-frames.html = IMAGE IMAGE+TEXT
+BUGWK48651 LINUX : http/tests/navigation/postredirect-frames.html = IMAGE
 BUGWK48651 MAC : http/tests/navigation/error404-subframeload.html = IMAGE
 
 BUGCR26253 SLOW WIN RELEASE : http/tests/navigation/reload-subframe-object.html = PASS
@@ -2573,7 +2573,7 @@ BUGWK44406 : http/tests/appcache/foreign-fallback.html = PASS FAIL CRASH
 // This test starts to timeout during build bots were down between 68880:68920
 BUG_HCLAM WIN : fast/css/acid2-pixel.html = TIMEOUT PASS
 
-BUGCR62738 BUGCR60845 WIN LINUX : media/video-size.html = PASS TEXT
+BUGCR62738 BUGCR60845 WIN LINUX : media/video-size.html = PASS TEXT CRASH TIMEOUT
 
 // Unexpected timeout in these tests.
 BUG_HCLAM : http/tests/css/border-image-loading.html = TEXT TIMEOUT PASS
@@ -3056,10 +3056,6 @@ BUGCR69571 : plugins/destroy-on-setwindow.html = CRASH
 
 // Failing after r75768
 BUGCR69639 : http/tests/loading/cross-origin-XHR-willLoadRequest.html = TEXT
-
-// New test added in http://trac.webkit.org/changeset/76185
-// Fails in V8, perhaps needs a V8-specific fix.
-BUGCR70334 : fast/js/toString-recursion.html = TEXT
 
 // Behavior changed in http://trac.webkit.org/changeset/76180,
 // need to investigate
