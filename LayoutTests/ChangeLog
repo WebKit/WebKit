@@ -1,5 +1,11 @@
 2011-01-25  Sam Weinig  <sam@webkit.org>
 
+        Make this test a bit more robust agains different scrollbar widths.
+
+        * fast/overflow/overflow-rtl-vertical-origin.html:
+
+2011-01-25  Sam Weinig  <sam@webkit.org>
+
         Reviewed by David Hyatt.
 
         Scrollbars don't work correctly for top-to-bottom text in an overflow: scroll area
