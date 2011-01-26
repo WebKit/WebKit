@@ -1,3 +1,13 @@
+2011-01-25  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: evaluate in console may not work when window.console is substituted or deleted.
+        https://bugs.webkit.org/show_bug.cgi?id=53072
+
+        * inspector/console-substituted-expected.txt: Added.
+        * inspector/console-substituted.html: Added.
+
 2011-01-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Layout test missing expectation after 58524

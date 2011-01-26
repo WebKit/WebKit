@@ -253,16 +253,18 @@ InjectedScript.prototype = {
         // Only install command line api object for the time of evaluation.
         // Surround the expression in with statements to inject our command line API so that
         // the window object properties still take more precedent than our API functions.
-        inspectedWindow.console._commandLineAPI = this._commandLineAPI;
+        if (inspectedWindow.console)
+            inspectedWindow.console._commandLineAPI = this._commandLineAPI;
     
         // We don't want local variables to be shadowed by global ones when evaluating on CallFrame.
         if (!isEvalOnCallFrame)
             expression = "with (window) {\n" + expression + "\n} ";
         if (injectCommandLineAPI)
-            expression = "with (window ? window.console._commandLineAPI : {}) {\n" + expression + "\n}";
+            expression = "with ((window && window.console && window.console._commandLineAPI) || {}) {\n" + expression + "\n}";
         var value = evalFunction.call(object, expression);
     
-        delete inspectedWindow.console._commandLineAPI;
+        if (inspectedWindow.console)
+            delete inspectedWindow.console._commandLineAPI;
     
         // When evaluating on call frame error is not thrown, but returned as a value.
         if (this._type(value) === "error")
