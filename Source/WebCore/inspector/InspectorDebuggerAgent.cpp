@@ -249,18 +249,18 @@ void InspectorDebuggerAgent::setPauseOnExceptionsState(long pauseState, long* ne
     *newState = ScriptDebugServer::shared().pauseOnExceptionsState();
 }
 
-void InspectorDebuggerAgent::evaluateOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, const String& objectGroup, RefPtr<InspectorValue>* result)
+void InspectorDebuggerAgent::evaluateOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorValue>* result)
 {
     InjectedScript injectedScript = m_inspectorAgent->injectedScriptHost()->injectedScriptForObjectId(callFrameId.get());
     if (!injectedScript.hasNoValue())
-        injectedScript.evaluateOnCallFrame(callFrameId, expression, objectGroup, result);
+        injectedScript.evaluateOnCallFrame(callFrameId, expression, objectGroup, includeCommandLineAPI, result);
 }
 
-void InspectorDebuggerAgent::getCompletionsOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, bool includeInspectorCommandLineAPI, RefPtr<InspectorValue>* result)
+void InspectorDebuggerAgent::getCompletionsOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, bool includeCommandLineAPI, RefPtr<InspectorValue>* result)
 {
     InjectedScript injectedScript = m_inspectorAgent->injectedScriptHost()->injectedScriptForObjectId(callFrameId.get());
     if (!injectedScript.hasNoValue())
-        injectedScript.getCompletionsOnCallFrame(callFrameId, expression, includeInspectorCommandLineAPI, result);
+        injectedScript.getCompletionsOnCallFrame(callFrameId, expression, includeCommandLineAPI, result);
 }
 
 PassRefPtr<InspectorValue> InspectorDebuggerAgent::currentCallFrames()

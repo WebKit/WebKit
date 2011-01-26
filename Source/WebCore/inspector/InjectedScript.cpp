@@ -44,20 +44,22 @@ InjectedScript::InjectedScript(ScriptObject injectedScriptObject)
 {
 }
 
-void InjectedScript::evaluate(const String& expression, const String& objectGroup, RefPtr<InspectorValue>* result)
+void InjectedScript::evaluate(const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorValue>* result)
 {
     ScriptFunctionCall function(m_injectedScriptObject, "evaluate");
     function.appendArgument(expression);
     function.appendArgument(objectGroup);
+    function.appendArgument(includeCommandLineAPI);
     makeCall(function, result);
 }
 
-void InjectedScript::evaluateOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, const String& objectGroup, RefPtr<InspectorValue>* result)
+void InjectedScript::evaluateOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorValue>* result)
 {
     ScriptFunctionCall function(m_injectedScriptObject, "evaluateOnCallFrame");
     function.appendArgument(callFrameId->toJSONString());
     function.appendArgument(expression);
     function.appendArgument(objectGroup);
+    function.appendArgument(includeCommandLineAPI);
     makeCall(function, result);
 }
 
@@ -69,20 +71,20 @@ void InjectedScript::evaluateOnSelf(const String& functionBody, PassRefPtr<Inspe
     makeCall(function, result);
 }
 
-void InjectedScript::getCompletions(const String& expression, bool includeInspectorCommandLineAPI, RefPtr<InspectorValue>* result)
+void InjectedScript::getCompletions(const String& expression, bool includeCommandLineAPI, RefPtr<InspectorValue>* result)
 {
     ScriptFunctionCall function(m_injectedScriptObject, "getCompletions");
     function.appendArgument(expression);
-    function.appendArgument(includeInspectorCommandLineAPI);
+    function.appendArgument(includeCommandLineAPI);
     makeCall(function, result);
 }
 
-void InjectedScript::getCompletionsOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, bool includeInspectorCommandLineAPI, RefPtr<InspectorValue>* result)
+void InjectedScript::getCompletionsOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, bool includeCommandLineAPI, RefPtr<InspectorValue>* result)
 {
     ScriptFunctionCall function(m_injectedScriptObject, "getCompletionsOnCallFrame");
     function.appendArgument(callFrameId->toJSONString());
     function.appendArgument(expression);
-    function.appendArgument(includeInspectorCommandLineAPI);
+    function.appendArgument(includeCommandLineAPI);
     makeCall(function, result);
 }
 

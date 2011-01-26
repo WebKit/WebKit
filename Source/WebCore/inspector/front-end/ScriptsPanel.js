@@ -314,7 +314,7 @@ WebInspector.ScriptsPanel.prototype = {
         return selectedCallFrame.id;
     },
 
-    evaluateInSelectedCallFrame: function(code, updateInterface, objectGroup, callback)
+    evaluateInSelectedCallFrame: function(code, updateInterface, objectGroup, includeCommandLineAPI, callback)
     {
         var selectedCallFrame = this.sidebarPanes.callstack.selectedCallFrame;
         if (!this._paused || !selectedCallFrame)
@@ -323,24 +323,15 @@ WebInspector.ScriptsPanel.prototype = {
         if (typeof updateInterface === "undefined")
             updateInterface = true;
 
-        var self = this;
         function updatingCallbackWrapper(result)
         {
-            callback(result);
-            if (updateInterface)
-                self.sidebarPanes.scopechain.update(selectedCallFrame);
-        }
-        this.doEvalInCallFrame(selectedCallFrame, code, objectGroup, updatingCallbackWrapper);
-    },
-
-    doEvalInCallFrame: function(callFrame, code, objectGroup, callback)
-    {
-        function evalCallback(result)
-        {
-            if (result)
+            if (result) {
                 callback(WebInspector.RemoteObject.fromPayload(result));
+                if (updateInterface)
+                    this.sidebarPanes.scopechain.update(selectedCallFrame);
+            }
         }
-        InspectorBackend.evaluateOnCallFrame(callFrame.id, code, objectGroup, evalCallback);
+        InspectorBackend.evaluateOnCallFrame(selectedCallFrame.id, code, objectGroup, includeCommandLineAPI, updatingCallbackWrapper.bind(this));
     },
 
     _debuggerPaused: function(event)

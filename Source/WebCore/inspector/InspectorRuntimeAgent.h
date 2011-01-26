@@ -57,8 +57,8 @@ public:
     ~InspectorRuntimeAgent();
 
     // Part of the protocol.
-    void evaluate(const String& expression, const String& objectGroup, RefPtr<InspectorValue>* result);
-    void getCompletions(const String& expression, bool includeInspectorCommandLineAPI, RefPtr<InspectorValue>* result);
+    void evaluate(const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
+    void getCompletions(const String& expression, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
     void getProperties(PassRefPtr<InspectorObject> objectId, bool ignoreHasOwnProperty, bool abbreviate, RefPtr<InspectorValue>* result);
     void setPropertyValue(PassRefPtr<InspectorObject> objectId, const String& propertyName, const String& expression, RefPtr<InspectorValue>* result);
     void releaseWrapperObjectGroup(long injectedScriptId, const String& objectGroup);

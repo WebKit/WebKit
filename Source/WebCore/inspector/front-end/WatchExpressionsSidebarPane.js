@@ -139,7 +139,7 @@ WebInspector.WatchExpressionsSection.prototype = {
             if (!expression)
                 continue;
 
-            WebInspector.console.evalInInspectedWindow("(" + expression + ")", this._watchObjectGroupId, appendResult.bind(this, expression, i));
+            WebInspector.console.evalInInspectedWindow("(" + expression + ")", this._watchObjectGroupId, false, appendResult.bind(this, expression, i));
         }
 
         // note this is setting the expansion of the tree, not the section;

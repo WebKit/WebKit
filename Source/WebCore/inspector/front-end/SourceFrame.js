@@ -759,7 +759,7 @@ WebInspector.SourceFrame.prototype = {
                 return;
             showObjectPopup.call(this, result);
         }
-        WebInspector.panels.scripts.evaluateInSelectedCallFrame(element.textContent, false, this._popoverObjectGroup, evaluateCallback.bind(this));
+        WebInspector.panels.scripts.evaluateInSelectedCallFrame(element.textContent, false, this._popoverObjectGroup, false, evaluateCallback.bind(this));
     },
 
     _editBreakpointCondition: function(lineNumber, condition, callback)

@@ -186,18 +186,18 @@ InjectedScript.prototype = {
         return Object.keys(propertyNameSet);
     },
 
-    getCompletions: function(expression, includeInspectorCommandLineAPI)
+    getCompletions: function(expression, includeCommandLineAPI)
     {
         var props = {};
         try {
             if (!expression)
                 expression = "this";
-            var expressionResult = this._evaluateOn(inspectedWindow.eval, inspectedWindow, expression, false);
+            var expressionResult = this._evaluateOn(inspectedWindow.eval, inspectedWindow, expression, false, false);
 
             if (typeof expressionResult === "object")
                 this._populatePropertyNames(expressionResult, props);
     
-            if (includeInspectorCommandLineAPI) {
+            if (includeCommandLineAPI) {
                 for (var prop in this._commandLineAPI)
                     props[prop] = true;
             }
@@ -206,7 +206,7 @@ InjectedScript.prototype = {
         return props;
     },
 
-    getCompletionsOnCallFrame: function(callFrameId, expression, includeInspectorCommandLineAPI)
+    getCompletionsOnCallFrame: function(callFrameId, expression, includeCommandLineAPI)
     {
         var props = {};
         try {
@@ -215,7 +215,7 @@ InjectedScript.prototype = {
                 return props;
 
             if (expression) {
-                var expressionResult = this._evaluateOn(callFrame.evaluate, callFrame, expression, true);
+                var expressionResult = this._evaluateOn(callFrame.evaluate, callFrame, expression, true, false);
                 if (typeof expressionResult === "object")
                     this._populatePropertyNames(expressionResult, props);
             } else {
@@ -225,7 +225,7 @@ InjectedScript.prototype = {
                     this._populatePropertyNames(scopeChain[i], props);
             }
     
-            if (includeInspectorCommandLineAPI) {
+            if (includeCommandLineAPI) {
                 for (var prop in this._commandLineAPI)
                     props[prop] = true;
             }
@@ -234,21 +234,21 @@ InjectedScript.prototype = {
         return props;
     },
 
-    evaluate: function(expression, objectGroup)
+    evaluate: function(expression, objectGroup, injectCommandLineAPI)
     {
-        return this._evaluateAndWrap(inspectedWindow.eval, inspectedWindow, expression, objectGroup, false);
+        return this._evaluateAndWrap(inspectedWindow.eval, inspectedWindow, expression, objectGroup, false, injectCommandLineAPI);
     },
 
-    _evaluateAndWrap: function(evalFunction, object, expression, objectGroup, isEvalOnCallFrame)
+    _evaluateAndWrap: function(evalFunction, object, expression, objectGroup, isEvalOnCallFrame, injectCommandLineAPI)
     {
         try {
-            return this._wrapObject(this._evaluateOn(evalFunction, object, expression, isEvalOnCallFrame), objectGroup);
+            return this._wrapObject(this._evaluateOn(evalFunction, object, expression, isEvalOnCallFrame, injectCommandLineAPI), objectGroup);
         } catch (e) {
             return InjectedScript.RemoteObject.fromException(e);
         }
     },
 
-    _evaluateOn: function(evalFunction, object, expression, isEvalOnCallFrame)
+    _evaluateOn: function(evalFunction, object, expression, isEvalOnCallFrame, injectCommandLineAPI)
     {
         // Only install command line api object for the time of evaluation.
         // Surround the expression in with statements to inject our command line API so that
@@ -258,7 +258,8 @@ InjectedScript.prototype = {
         // We don't want local variables to be shadowed by global ones when evaluating on CallFrame.
         if (!isEvalOnCallFrame)
             expression = "with (window) {\n" + expression + "\n} ";
-        expression = "with (window ? window.console._commandLineAPI : {}) {\n" + expression + "\n}";
+        if (injectCommandLineAPI)
+            expression = "with (window ? window.console._commandLineAPI : {}) {\n" + expression + "\n}";
         var value = evalFunction.call(object, expression);
     
         delete inspectedWindow.console._commandLineAPI;
@@ -291,12 +292,12 @@ InjectedScript.prototype = {
         return result;
     },
 
-    evaluateOnCallFrame: function(callFrameId, code, objectGroup)
+    evaluateOnCallFrame: function(callFrameId, expression, objectGroup, injectCommandLineAPI)
     {
         var callFrame = this._callFrameForId(callFrameId);
         if (!callFrame)
             return false;
-        return this._evaluateAndWrap(callFrame.evaluate, callFrame, code, objectGroup, true);
+        return this._evaluateAndWrap(callFrame.evaluate, callFrame, expression, objectGroup, true, injectCommandLineAPI);
     },
 
     _callFrameForId: function(callFrameId)

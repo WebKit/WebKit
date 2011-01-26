@@ -359,12 +359,12 @@ WebInspector.ConsoleView.prototype = {
         var reportCompletions = this._reportCompletions.bind(this, bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix);
         // Collect comma separated object properties for the completion.
 
-        var includeInspectorCommandLineAPI = (!dotNotation && !bracketNotation);
+        var includeCommandLineAPI = (!dotNotation && !bracketNotation);
         var injectedScriptAccess;
         if (WebInspector.panels.scripts && WebInspector.panels.scripts.paused)
-            InspectorBackend.getCompletionsOnCallFrame(WebInspector.panels.scripts.selectedCallFrameId(), expressionString, includeInspectorCommandLineAPI, reportCompletions);
+            InspectorBackend.getCompletionsOnCallFrame(WebInspector.panels.scripts.selectedCallFrameId(), expressionString, includeCommandLineAPI, reportCompletions);
         else
-            InspectorBackend.getCompletions(expressionString, includeInspectorCommandLineAPI, reportCompletions);
+            InspectorBackend.getCompletions(expressionString, includeCommandLineAPI, reportCompletions);
     },
 
     _reportCompletions: function(bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix, result, isException) {
@@ -510,17 +510,13 @@ WebInspector.ConsoleView.prototype = {
         }
     },
 
-    evalInInspectedWindow: function(expression, objectGroup, callback)
+    evalInInspectedWindow: function(expression, objectGroup, includeCommandLineAPI, callback)
     {
         if (WebInspector.panels.scripts && WebInspector.panels.scripts.paused) {
-            WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression, false, objectGroup, callback);
+            WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression, false, objectGroup, includeCommandLineAPI, callback);
             return;
         }
-        this.doEvalInWindow(expression, objectGroup, callback);
-    },
 
-    doEvalInWindow: function(expression, objectGroup, callback)
-    {
         if (!expression) {
             // There is no expression, so the completion should happen against global properties.
             expression = "this";
@@ -530,7 +526,7 @@ WebInspector.ConsoleView.prototype = {
         {
             callback(WebInspector.RemoteObject.fromPayload(result));
         }
-        InspectorBackend.evaluate(expression, objectGroup, evalCallback);
+        InspectorBackend.evaluate(expression, objectGroup, includeCommandLineAPI, evalCallback);
     },
 
     _enterKeyPressed: function(event)
@@ -561,7 +557,7 @@ WebInspector.ConsoleView.prototype = {
 
             self.addMessage(new WebInspector.ConsoleCommandResult(result, commandMessage));
         }
-        this.evalInInspectedWindow(str, "console", printResult);
+        this.evalInInspectedWindow(str, "console", true, printResult);
     },
 
     _format: function(output, forceObjectFormat)

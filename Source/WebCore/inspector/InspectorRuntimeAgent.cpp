@@ -45,18 +45,18 @@ InspectorRuntimeAgent::InspectorRuntimeAgent(InjectedScriptHost* injectedScriptH
 
 InspectorRuntimeAgent::~InspectorRuntimeAgent() { }
 
-void InspectorRuntimeAgent::evaluate(const String& expression, const String& objectGroup, RefPtr<InspectorValue>* result)
+void InspectorRuntimeAgent::evaluate(const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorValue>* result)
 {
     InjectedScript injectedScript = m_injectedScriptHost->injectedScriptForMainFrame();
     if (!injectedScript.hasNoValue())
-        injectedScript.evaluate(expression, objectGroup, result);
+        injectedScript.evaluate(expression, objectGroup, includeCommandLineAPI, result);
 }
 
-void InspectorRuntimeAgent::getCompletions(const String& expression, bool includeInspectorCommandLineAPI, RefPtr<InspectorValue>* result)
+void InspectorRuntimeAgent::getCompletions(const String& expression, bool includeCommandLineAPI, RefPtr<InspectorValue>* result)
 {
     InjectedScript injectedScript = m_injectedScriptHost->injectedScriptForMainFrame();
     if (!injectedScript.hasNoValue())
-        injectedScript.getCompletions(expression, includeInspectorCommandLineAPI, result);
+        injectedScript.getCompletions(expression, includeCommandLineAPI, result);
 }
 
 void InspectorRuntimeAgent::getProperties(PassRefPtr<InspectorObject> objectId, bool ignoreHasOwnProperty, bool abbreviate, RefPtr<InspectorValue>* result)

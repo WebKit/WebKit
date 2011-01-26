@@ -71,8 +71,8 @@ module core {
         // Runtime
         ///////////////////////////////////////////////////////////////////////
 
-        [domain=Runtime] void evaluate(in String expression, in String objectGroup, out Value result);
-        [domain=Runtime] void getCompletions(in String expression, in boolean includeInspectorCommandLineAPI, out Value result);
+        [domain=Runtime] void evaluate(in String expression, in String objectGroup, in boolean includeCommandLineAPI, out Value result);
+        [domain=Runtime] void getCompletions(in String expression, in boolean includeCommandLineAPI, out Value result);
         [domain=Runtime] void getProperties(in Object objectId, in boolean ignoreHasOwnProperty, in boolean abbreviate, out Value result);
         [domain=Runtime] void setPropertyValue(in Object objectId, in String propertyName, in String expression, out Value result);
         [domain=Runtime] void releaseWrapperObjectGroup(in long injectedScriptId, in String objectGroup);
@@ -276,8 +276,8 @@ module core {
 
         [domain=Debugger] void setPauseOnExceptionsState(in long pauseOnExceptionsState, out long newState);
 
-        [domain=Debugger] void evaluateOnCallFrame(in Object callFrameId, in String expression, in String objectGroup, out Value result);
-        [domain=Debugger] void getCompletionsOnCallFrame(in Object callFrameId, in String expression, in boolean includeInspectorCommandLineAPI, out Value result);
+        [domain=Debugger] void evaluateOnCallFrame(in Object callFrameId, in String expression, in String objectGroup, in boolean includeCommandLineAPI, out Value result);
+        [domain=Debugger] void getCompletionsOnCallFrame(in Object callFrameId, in String expression, in boolean includeCommandLineAPI, out Value result);
 
         [notify, domain=Debugger] void breakpointResolved(out String breakpointId, out Object breakpoint);
 

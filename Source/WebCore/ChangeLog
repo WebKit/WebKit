@@ -1,3 +1,39 @@
+2011-01-26  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Incorrect on-hover evaluation of a variable named 'profile'.
+        https://bugs.webkit.org/show_bug.cgi?id=53018
+
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::evaluate):
+        (WebCore::InjectedScript::evaluateOnCallFrame):
+        (WebCore::InjectedScript::getCompletions):
+        (WebCore::InjectedScript::getCompletionsOnCallFrame):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptSource.js:
+        (.):
+        * inspector/Inspector.idl:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::evaluateOnCallFrame):
+        (WebCore::InspectorDebuggerAgent::getCompletionsOnCallFrame):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::evaluate):
+        (WebCore::InspectorRuntimeAgent::getCompletions):
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.completions):
+        (WebInspector.ConsoleView.prototype.evalInInspectedWindow):
+        (WebInspector.ConsoleView.prototype._enterKeyPressed):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.evaluateInSelectedCallFrame.updatingCallbackWrapper):
+        (WebInspector.ScriptsPanel.prototype.evaluateInSelectedCallFrame):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._showPopup):
+        * inspector/front-end/WatchExpressionsSidebarPane.js:
+        (WebInspector.WatchExpressionsSection.prototype.update):
+
 2011-01-26  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Kent Tamura.
