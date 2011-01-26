@@ -1,3 +1,10 @@
+2011-01-25  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows production build fix.
+        Use correct configuration-specific path in makefile.
+
+        * WebCore.vcproj/WebCore.make:
+
 2011-01-25  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
