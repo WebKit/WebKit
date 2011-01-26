@@ -617,6 +617,8 @@ void WebFrameLoaderClient::dispatchDecidePolicyForMIMEType(FramePolicyFunction f
 
     uint64_t listenerID = m_frame->setUpPolicyListener(function);
     const String& url = request.url().string(); // FIXME: Pass entire request.
+    if (!url)
+        return;
 
     bool receivedPolicyAction;
     uint64_t policyAction;

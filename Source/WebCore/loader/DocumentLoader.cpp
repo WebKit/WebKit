@@ -168,9 +168,9 @@ void DocumentLoader::setRequest(const ResourceRequest& req)
     KURL oldURL = m_request.url();
     m_request = req;
 
-    // Only send webView:didReceiveServerRedirectForProvisionalLoadForFrame: if URL changed.
+    // Only send webView:didReceiveServerRedirectForProvisionalLoadForFrame: if URL changed (and is non-null).
     // Also, don't send it when replacing unreachable URLs with alternate content.
-    if (!handlingUnreachableURL && oldURL != req.url())
+    if (!handlingUnreachableURL && !req.url().isNull() && oldURL != req.url())
         frameLoader()->didReceiveServerRedirectForProvisionalLoadForFrame();
 }
 

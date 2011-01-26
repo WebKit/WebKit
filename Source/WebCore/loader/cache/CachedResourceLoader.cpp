@@ -80,6 +80,7 @@ static CachedResource* createResource(CachedResource::Type type, const KURL& url
 CachedResourceLoader::CachedResourceLoader(Document* document)
     : m_document(document)
     , m_requestCount(0)
+    , m_loadDoneActionTimer(this, &CachedResourceLoader::loadDoneActionTimerFired)
     , m_autoLoadImages(true)
     , m_loadFinishing(false)
     , m_allowStaleResources(false)
@@ -519,6 +520,25 @@ void CachedResourceLoader::loadDone(CachedResourceRequest* request)
         m_requests.remove(request);
     if (frame())
         frame()->loader()->loadDone();
+
+    if (!request) {
+        // If the request passed to this function is null, loadDone finished synchronously from when
+        // the load was started, so we want to kick off our next set of loads (via checkForPendingPreloads
+        // and servePendingRequests) asynchronously.
+        m_loadDoneActionTimer.startOneShot(0);
+        return;
+    }
+
+    performPostLoadActions();
+}
+
+void CachedResourceLoader::loadDoneActionTimerFired(Timer<CachedResourceLoader>*)
+{
+    performPostLoadActions();
+}
+
+void CachedResourceLoader::performPostLoadActions()
+{
     checkForPendingPreloads();
     resourceLoadScheduler()->servePendingRequests();
 }
@@ -583,11 +603,10 @@ void CachedResourceLoader::preload(CachedResource::Type type, const String& url,
 
 void CachedResourceLoader::checkForPendingPreloads() 
 {
-    unsigned count = m_pendingPreloads.size();
-    if (!count || !m_document->body() || !m_document->body()->renderer())
+    if (m_pendingPreloads.isEmpty() || !m_document->body() || !m_document->body()->renderer())
         return;
-    for (unsigned i = 0; i < count; ++i) {
-        PendingPreload& preload = m_pendingPreloads[i];
+    while (!m_pendingPreloads.isEmpty()) {
+        PendingPreload preload = m_pendingPreloads.takeFirst();
         // Don't request preload if the resource already loaded normally (this will result in double load if the page is being reloaded with cached results ignored).
         if (!cachedResource(m_document->completeURL(preload.m_url)))
             requestPreload(preload.m_type, preload.m_url, preload.m_charset);

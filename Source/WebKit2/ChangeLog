@@ -1,3 +1,15 @@
+2011-01-25  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        Crashes loading pages when cancelling subresource loads through WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=53123
+        <rdar://problem/8914361>
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForMIMEType): If our URL is null, return early instead of dispatching
+            a message.
+
 2011-01-25  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

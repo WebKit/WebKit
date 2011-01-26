@@ -1,3 +1,36 @@
+2011-01-25  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        Crashes loading pages when cancelling subresource loads through WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=53123
+        <rdar://problem/8914361>
+        
+        Fix a crash that happened when cancelling subresource loads through WebKit.
+        
+        When a load is cancelled synchronously (via the WebKit client), CachedResourceLoader::requestResource 
+        can be called recursively on the same function, either leading to infinite recursion, or deleting 
+        an object when it is not done being used.
+        
+        The fix for this was to call checkForPendingPreloads and servePendingRequests asynchronously when 
+        CachedResourceLoader::loadDone was called synchronously (due to the load being cancelled synchronously).
+
+        Test: fast/loader/willSendRequest-null-for-preload.html
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::setRequest): Only dispatch didReceiveServerRedirectForProvisionalLoadForFrame 
+            if our new URL is non-null.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::CachedResourceLoader): Initialize our timer.
+        (WebCore::CachedResourceLoader::loadDone): If the CachedResource we were passed in was 0, that means this 
+            function was called synchronously
+            from CachedResourceRequest::load, and we don't want to call into checkForPendingPreloads synchronously, 
+            so put it on a 0-delay timer to make the calls to checkForPendingPreloads and servePendingRequests asynchronous.
+        (WebCore::CachedResourceLoader::loadDonePendingActionTimerFired): Call checkForPendingPreloads and servePendingRequests.
+        (WebCore::CachedResourceLoader::checkForPendingPreloads): m_pendingPreloads is now a Deque instead of a Vector, 
+            so use Deque methods.
+        * loader/cache/CachedResourceLoader.h: Add the timer, the timer callback function, and make m_pendingPreloads a Deque.
+
 2011-01-25  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

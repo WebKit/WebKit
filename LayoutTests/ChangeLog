@@ -1,3 +1,16 @@
+2011-01-25  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed byAntti Koivisto.
+
+        Crashes loading pages when cancelling subresource loads through WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=53123
+        <rdar://problem/8914361>
+        
+        Add tests for crashing when cancelling subresource loads through WebKit via setWillSendRequestReturnsNull.
+
+        * fast/loader/willSendRequest-null-for-preload-expected.txt: Added.
+        * fast/loader/willSendRequest-null-for-preload.html: Added.
+
 2011-01-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed Chromium Linux rebaselines for r76688.
