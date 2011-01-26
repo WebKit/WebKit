@@ -11,6 +11,18 @@ function runTest()
     var source = document.getElementById("source");
     var textWithNull = "Copy\0 paste me";
     source.textContent = textWithNull;
+
+    var results = document.getElementById("results");
+    // Make sure innerHTML still has the NULL.
+    if (source.innerHTML != textWithNull) {
+        results.innerText = "source.innerHTML has the wrong value (expected " +
+            JSON.stringify(textWithNull) + " but found " +
+            JSON.stringify(source.innerHTML) + ").";
+        Markup.dump(document.body);
+        Markup.notifyDone();
+        return;
+    }
+
     sel.setPosition(source, 0);
     document.execCommand("SelectAll");
     document.execCommand("Copy");
@@ -23,7 +35,6 @@ function runTest()
     destinationPlainText.focus();
     document.execCommand("Paste");
 
-    var results = document.getElementById("results");
     var expectedPlainTextValue = "Copy paste me";
     if (expectedPlainTextValue != destinationPlainText.value) {
         results.innerText = "Plain text field has the wrong value (expected " +

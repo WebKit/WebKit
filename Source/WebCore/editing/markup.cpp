@@ -124,7 +124,7 @@ public:
     }
 
     Node* serializeNodes(Node* startNode, Node* pastEnd);
-    void appendString(const String& s) { return MarkupAccumulator::appendString(s); }
+    virtual void appendString(const String& s) { return MarkupAccumulator::appendString(s); }
     void wrapWithNode(Node*, bool convertBlocksToInlines = false, RangeFullySelectsNode = DoesFullySelectNode);
     void wrapWithStyleNode(CSSStyleDeclaration*, Document*, bool isBlock = false);
     String takeResults();
@@ -184,7 +184,8 @@ String StyledMarkupAccumulator::takeResults()
 
     concatenateMarkup(result);
 
-    return String::adopt(result);
+    // We remove '\0' characters because they are not visibly rendered to the user.
+    return String::adopt(result).replace(0, "");
 }
 
 void StyledMarkupAccumulator::appendText(Vector<UChar>& out, Text* text)

@@ -72,7 +72,7 @@ public:
     String serializeNodes(Node* node, Node* nodeToSkip, EChildrenOnly childrenOnly);
 
 protected:
-    void appendString(const String&);
+    virtual void appendString(const String&);
     void appendStartTag(Node*, Namespaces* = 0);
     void appendEndTag(Node*);
     static size_t totalLength(const Vector<String>&);
