@@ -190,7 +190,7 @@ void RenderMedia::createPanel()
 void RenderMedia::createMuteButton()
 {
     ASSERT(!m_muteButton);
-    m_muteButton = MediaControlMuteButtonElement::create(mediaElement());
+    m_muteButton = MediaControlMuteButtonElement::create(mediaElement(), MediaControlMuteButtonElement::Controller);
     m_muteButton->attachToParent(m_panel.get());
 }
 
@@ -204,14 +204,14 @@ void RenderMedia::createPlayButton()
 void RenderMedia::createSeekBackButton()
 {
     ASSERT(!m_seekBackButton);
-    m_seekBackButton = MediaControlSeekBackButtonElement::create(mediaElement());
+    m_seekBackButton = MediaControlSeekButtonElement::create(mediaElement(), MEDIA_CONTROLS_SEEK_BACK_BUTTON);
     m_seekBackButton->attachToParent(m_panel.get());
 }
 
 void RenderMedia::createSeekForwardButton()
 {
     ASSERT(!m_seekForwardButton);
-    m_seekForwardButton = MediaControlSeekForwardButtonElement::create(mediaElement());
+    m_seekForwardButton = MediaControlSeekButtonElement::create(mediaElement(), MEDIA_CONTROLS_SEEK_FORWARD_BUTTON);
     m_seekForwardButton->attachToParent(m_panel.get());
 }
 
@@ -278,7 +278,7 @@ void RenderMedia::createVolumeSlider()
 void RenderMedia::createVolumeSliderMuteButton()
 {
     ASSERT(!m_volumeSliderMuteButton);
-    m_volumeSliderMuteButton = MediaControlVolumeSliderMuteButtonElement::create(mediaElement());
+    m_volumeSliderMuteButton = MediaControlMuteButtonElement::create(mediaElement(), MediaControlMuteButtonElement::VolumeSlider);
     m_volumeSliderMuteButton->attachToParent(m_volumeSliderContainer.get());
     
 }

@@ -174,9 +174,11 @@ public:
     HTMLMediaElement* mediaElement() const { return m_mediaElement; }
 
 protected:
-    MediaControlInputElement(HTMLMediaElement*, MediaControlElementType);
+    MediaControlInputElement(HTMLMediaElement*, PseudoId);
 
     void setDisplayType(MediaControlElementType);
+
+    PseudoId pseudoStyleId() const { return m_pseudoStyleId; }
 
 private:
     virtual void attach();
@@ -188,7 +190,8 @@ private:
 
     virtual void updateDisplayType() { }
 
-    HTMLMediaElement* m_mediaElement;
+    HTMLMediaElement* m_mediaElement;   
+    PseudoId m_pseudoStyleId;
     MediaControlElementType m_displayType;
 };
 
@@ -196,30 +199,16 @@ private:
 
 class MediaControlMuteButtonElement : public MediaControlInputElement {
 public:
-    static PassRefPtr<MediaControlMuteButtonElement> create(HTMLMediaElement*);
+    enum ButtonLocation { Controller, VolumeSlider };
+    static PassRefPtr<MediaControlMuteButtonElement> create(HTMLMediaElement*, ButtonLocation);
 
     virtual void defaultEventHandler(Event*);
 
-protected:
-    MediaControlMuteButtonElement(HTMLMediaElement*, MediaControlElementType);
-
 private:
+    MediaControlMuteButtonElement(HTMLMediaElement*, ButtonLocation);
+
     virtual void updateDisplayType();
-    virtual AtomicString shadowPseudoId() const;
 };
-
-// ----------------------------
-
-class MediaControlVolumeSliderMuteButtonElement : public MediaControlMuteButtonElement {
-public:
-    static PassRefPtr<MediaControlVolumeSliderMuteButtonElement> create(HTMLMediaElement*);
-
-private:
-    MediaControlVolumeSliderMuteButtonElement(HTMLMediaElement*);
-
-    virtual AtomicString shadowPseudoId() const;
-};
-
 
 // ----------------------------
 
@@ -233,20 +222,20 @@ private:
     MediaControlPlayButtonElement(HTMLMediaElement*);
 
     virtual void updateDisplayType();
-    virtual AtomicString shadowPseudoId() const;
 };
 
 // ----------------------------
 
 class MediaControlSeekButtonElement : public MediaControlInputElement {
 public:
+    static PassRefPtr<MediaControlSeekButtonElement> create(HTMLMediaElement*, PseudoId);
+
     virtual void defaultEventHandler(Event*);
 
-protected:
-    MediaControlSeekButtonElement(HTMLMediaElement*, MediaControlElementType);
-
 private:
-    virtual bool isForwardButton() const = 0;
+    MediaControlSeekButtonElement(HTMLMediaElement*, PseudoId);
+
+    bool isForwardButton() const;
 
     virtual void detach();
     void seekTimerFired(Timer<MediaControlSeekButtonElement>*);
@@ -255,33 +244,7 @@ private:
     bool m_capturing;
     Timer<MediaControlSeekButtonElement> m_seekTimer;
 };
-
-// ----------------------------
-
-class MediaControlSeekForwardButtonElement : public MediaControlSeekButtonElement {
-public:
-    static PassRefPtr<MediaControlSeekForwardButtonElement> create(HTMLMediaElement*);
-
-private:
-    MediaControlSeekForwardButtonElement(HTMLMediaElement*);
-
-    virtual bool isForwardButton() const { return true; }
-    virtual AtomicString shadowPseudoId() const;
-};
-
-// ----------------------------
-
-class MediaControlSeekBackButtonElement : public MediaControlSeekButtonElement {
-public:
-    static PassRefPtr<MediaControlSeekBackButtonElement> create(HTMLMediaElement*);
-
-private:
-    MediaControlSeekBackButtonElement(HTMLMediaElement*);
-
-    virtual bool isForwardButton() const { return false; }
-    virtual AtomicString shadowPseudoId() const;
-};
-
+    
 // ----------------------------
 
 class MediaControlRewindButtonElement : public MediaControlInputElement {
@@ -292,8 +255,6 @@ public:
 
 private:
     MediaControlRewindButtonElement(HTMLMediaElement*);
-
-    virtual AtomicString shadowPseudoId() const;
 };
 
 // ----------------------------
@@ -306,8 +267,6 @@ public:
 
 private:
     MediaControlReturnToRealtimeButtonElement(HTMLMediaElement*);
-
-    virtual AtomicString shadowPseudoId() const;
 };    
 
 // ----------------------------
@@ -322,7 +281,6 @@ private:
     MediaControlToggleClosedCaptionsButtonElement(HTMLMediaElement*);
 
     virtual void updateDisplayType();
-    virtual AtomicString shadowPseudoId() const;
 };    
 
 // ----------------------------
@@ -336,8 +294,6 @@ public:
 
 private:
     MediaControlTimelineElement(HTMLMediaElement*);
-
-    virtual AtomicString shadowPseudoId() const;
 };
 
 // ----------------------------
@@ -351,8 +307,6 @@ public:
 
 private:
     MediaControlVolumeSliderElement(HTMLMediaElement*);
-
-    virtual AtomicString shadowPseudoId() const;
 };
 
 // ----------------------------
@@ -365,8 +319,6 @@ public:
 
 private:
     MediaControlFullscreenButtonElement(HTMLMediaElement*);
-
-    virtual AtomicString shadowPseudoId() const;
 };
 
 // ----------------------------
