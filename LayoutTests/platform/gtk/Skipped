@@ -4793,6 +4793,7 @@ http/tests/security/no-referrer.html
 
 # GTK+ does not have layoutTestController.setWillSendRequestReturnsNull.
 fast/loader/onload-willSendRequest-null-for-script.html
+fast/loader/willSendRequest-null-for-preload.html
 
 # GTK+ does not have layoutTestController.setDomainRelaxationForbiddenForURLScheme
 http/tests/security/setDomainRelaxationForbiddenForURLScheme.html

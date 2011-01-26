@@ -1,3 +1,10 @@
+2011-01-26  Brian Weinstein  <bweinstein@apple.com>
+
+        Skip fast/loader/willSendRequest-null-for-preload.html on GTK, because GTK doesn't have
+        support for setWillSendRequestReturnsNull.
+
+        * platform/gtk/Skipped:
+
 2011-01-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another unreviewed Chromium test expectation update.
