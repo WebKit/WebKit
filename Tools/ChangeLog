@@ -1,3 +1,16 @@
+2011-01-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r76709.
+        http://trac.webkit.org/changeset/76709
+        https://bugs.webkit.org/show_bug.cgi?id=53194
+
+        "broke python tests on non-snowleopard platforms" (Requested
+        by dpranke on #webkit).
+
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        * Scripts/webkitpy/layout_tests/port/mock_drt.py: Removed.
+        * Scripts/webkitpy/layout_tests/port/mock_drt_unittest.py: Removed.
+
 2011-01-26  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.

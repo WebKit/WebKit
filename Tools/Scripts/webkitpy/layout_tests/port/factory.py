@@ -32,7 +32,7 @@
 
 import sys
 
-ALL_PORT_NAMES = ['test', 'dryrun', 'mock', 'mac', 'win', 'gtk', 'qt', 'chromium-mac',
+ALL_PORT_NAMES = ['test', 'dryrun', 'mac', 'win', 'gtk', 'qt', 'chromium-mac',
                   'chromium-linux', 'chromium-win', 'google-chrome-win',
                   'google-chrome-mac', 'google-chrome-linux32', 'google-chrome-linux64']
 
@@ -76,9 +76,6 @@ def _get_kwargs(**kwargs):
     elif port_to_use.startswith('dryrun'):
         import dryrun
         maker = dryrun.DryRunPort
-    elif port_to_use.startswith('mock'):
-        import mock_drt
-        maker = mock_drt.MockDRTPort
     elif port_to_use.startswith('mac'):
         import mac
         maker = mac.MacPort
