@@ -1,3 +1,48 @@
+2011-01-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed Chromium rebaselines for r76688.
+
+        * platform/chromium-linux/fast/backgrounds/size/contain-and-cover-expected.checksum:
+        * platform/chromium-linux/fast/backgrounds/size/contain-and-cover-expected.png:
+        * platform/chromium-linux/fast/backgrounds/svg-as-background-5-expected.checksum:
+        * platform/chromium-linux/fast/backgrounds/svg-as-background-5-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-33-t-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-33-t-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-morph-01-f-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-morph-01-f-expected.png:
+        * platform/chromium-linux/svg/custom/focus-ring-expected.checksum:
+        * platform/chromium-linux/svg/custom/focus-ring-expected.png:
+        * platform/chromium-linux/svg/custom/svg-curve-with-relative-cordinates-expected.checksum:
+        * platform/chromium-linux/svg/custom/svg-curve-with-relative-cordinates-expected.png:
+        * platform/chromium-linux/svg/transforms/animated-path-inside-transformed-html-expected.checksum: Added.
+        * platform/chromium-linux/svg/transforms/animated-path-inside-transformed-html-expected.png: Added.
+        * platform/chromium-win/fast/backgrounds/size/contain-and-cover-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/size/contain-and-cover-expected.png:
+        * platform/chromium-win/fast/backgrounds/svg-as-background-5-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/svg-as-background-5-expected.png:
+        * platform/chromium-win/fast/images/animated-svg-as-image-expected.checksum:
+        * platform/chromium-win/fast/images/animated-svg-as-image-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-24-t-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-24-t-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-33-t-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-33-t-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-morph-01-f-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-morph-01-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/render-groups-01-b-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/render-groups-01-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/render-groups-03-t-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/render-groups-03-t-expected.png:
+        * platform/chromium-win/svg/custom/focus-ring-expected.checksum:
+        * platform/chromium-win/svg/custom/focus-ring-expected.png:
+        * platform/chromium-win/svg/custom/svg-curve-with-relative-cordinates-expected.checksum:
+        * platform/chromium-win/svg/custom/svg-curve-with-relative-cordinates-expected.png:
+        * platform/chromium-win/svg/custom/use-css-events-expected.checksum:
+        * platform/chromium-win/svg/custom/use-css-events-expected.png:
+        * platform/chromium-win/svg/transforms/animated-path-inside-transformed-html-expected.checksum:
+        * platform/chromium-win/svg/transforms/animated-path-inside-transformed-html-expected.png:
+        * platform/chromium-win/svg/zoom/text/zoom-coords-viewattr-01-b-expected.checksum:
+        * platform/chromium-win/svg/zoom/text/zoom-coords-viewattr-01-b-expected.png:
+
 2011-01-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Andreas Kling.
