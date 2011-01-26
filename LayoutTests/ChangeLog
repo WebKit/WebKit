@@ -1,3 +1,12 @@
+2011-01-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Another unreviewed Chromium rebaselines for r76688.
+
+        * platform/chromium-win/svg/batik/text/textEffect3-expected.checksum:
+        * platform/chromium-win/svg/batik/text/textEffect3-expected.png:
+        * platform/chromium-win/svg/custom/use-setAttribute-crash-expected.checksum:
+        * platform/chromium-win/svg/custom/use-setAttribute-crash-expected.png:
+
 2011-01-25  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed byAntti Koivisto.
