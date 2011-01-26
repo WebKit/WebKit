@@ -3102,3 +3102,7 @@ BUGCR70882 MAC : fast/text/international/hindi-spacing.html = IMAGE
 BUGCR70882 MAC : fast/text/international/hindi-whitespace.html = IMAGE
 BUGCR70882 MAC : fast/text/international/thai-baht-space.html = IMAGE
 BUGCR70882 MAC : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE
+
+BUGCR70941 LINUX : userscripts/user-script-image-document.html = PASS TIMEOUT
+BUGCR70942 LINUX : editing/execCommand/break-out-of-empty-list-item.html = PASS TIMEOUT
+BUGRNIWA SLOW WIN : editing/execCommand/4786404-1.html = PASS

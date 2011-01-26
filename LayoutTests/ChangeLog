@@ -1,3 +1,9 @@
+2011-01-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed Chromium test expectation update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-26  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Adam Barth.
