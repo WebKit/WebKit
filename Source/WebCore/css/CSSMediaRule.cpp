@@ -88,8 +88,8 @@ unsigned CSSMediaRule::insertRule(const String& rule, unsigned index, ExceptionC
     newRule->setParent(this);
     unsigned returnedIndex = m_lstCSSRules->insertRule(newRule.get(), index);
 
-    // stylesheet() can only return 0 for computed style declarations.
-    stylesheet()->styleSheetChanged();
+    if (stylesheet())
+        stylesheet()->styleSheetChanged();
 
     return returnedIndex;
 }
@@ -105,8 +105,8 @@ void CSSMediaRule::deleteRule(unsigned index, ExceptionCode& ec)
 
     m_lstCSSRules->deleteRule(index);
 
-    // stylesheet() can only return 0 for computed style declarations.
-    stylesheet()->styleSheetChanged();
+    if (stylesheet())
+        stylesheet()->styleSheetChanged();
 }
 
 String CSSMediaRule::cssText() const

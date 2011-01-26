@@ -34,7 +34,6 @@ namespace WebCore {
 
 XSLStyleSheet::XSLStyleSheet(Node* parentNode, const String& originalURL, const KURL& finalURL,  bool embedded)
     : StyleSheet(parentNode, originalURL, finalURL)
-    , m_ownerDocument(parentNode->document())
     , m_embedded(embedded)
 {
 }
@@ -62,9 +61,10 @@ void XSLStyleSheet::clearDocuments()
 
 CachedResourceLoader* XSLStyleSheet::cachedResourceLoader()
 {
-    if (!m_ownerDocument)
+    Document* document = ownerDocument();
+    if (!document)
         return 0;
-    return m_ownerDocument->cachedResourceLoader();
+    return document->cachedResourceLoader();
 }
 
 bool XSLStyleSheet::parseString(const String& string, bool)
@@ -85,6 +85,12 @@ void XSLStyleSheet::loadChildSheets()
 void XSLStyleSheet::loadChildSheet(const String&)
 {
     notImplemented();
+}
+
+Document* XSLStyleSheet::ownerDocument()
+{
+    Node* node = ownerNode();
+    return node ? node->document() : 0;
 }
 
 void XSLStyleSheet::setParentStyleSheet(XSLStyleSheet*)

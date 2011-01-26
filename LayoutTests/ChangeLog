@@ -1,3 +1,16 @@
+2011-01-26  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove cached document reference from CSSStyleSheet and XSLStyleSheet.
+        https://bugs.webkit.org/show_bug.cgi?id=52084
+
+        Added test for accessing a style sheet associated with a document that
+        has been removed.
+
+        * fast/dom/css-delete-doc-expected.txt: Added.
+        * fast/dom/css-delete-doc.html: Added.
+
 2011-01-26  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

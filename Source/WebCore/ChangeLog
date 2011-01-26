@@ -1,3 +1,31 @@
+2011-01-26  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove cached document reference from CSSStyleSheet and XSLStyleSheet.
+        https://bugs.webkit.org/show_bug.cgi?id=52084
+
+        Test: fast/dom/css-delete-doc.html
+
+        * css/CSSMediaRule.cpp:
+        (WebCore::CSSMediaRule::insertRule):
+        (WebCore::CSSMediaRule::deleteRule):
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::CSSStyleSheet):
+        (WebCore::CSSStyleSheet::document):
+        * css/CSSStyleSheet.h:
+        * xml/XSLStyleSheet.h:
+        (WebCore::XSLStyleSheet::parentStyleSheet):
+        * xml/XSLStyleSheetLibxslt.cpp:
+        (WebCore::XSLStyleSheet::XSLStyleSheet):
+        (WebCore::XSLStyleSheet::cachedResourceLoader):
+        (WebCore::XSLStyleSheet::setParentStyleSheet):
+        (WebCore::XSLStyleSheet::ownerDocument):
+        * xml/XSLStyleSheetQt.cpp:
+        (WebCore::XSLStyleSheet::XSLStyleSheet):
+        (WebCore::XSLStyleSheet::cachedResourceLoader):
+        (WebCore::XSLStyleSheet::ownerDocument):
+
 2011-01-25  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Kent Tamura.
