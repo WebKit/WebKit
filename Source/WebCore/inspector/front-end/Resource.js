@@ -34,6 +34,7 @@ WebInspector.Resource = function(identifier, url)
     this._requestMethod = "";
     this._category = WebInspector.resourceCategories.other;
     this._pendingContentCallbacks = [];
+    this._responseHeadersSize = 0;
 }
 
 // Keep these in sync with WebCore::InspectorResource::Type
@@ -237,8 +238,21 @@ WebInspector.Resource.prototype = {
 
     get transferSize()
     {
-        // FIXME: this is wrong for chunked-encoding resources.
-        return this.cached ? 0 : Number(this.responseHeaders["Content-Length"] || this.resourceSize || 0);
+        if (this.cached)
+            return 0;
+        if (this.statusCode === 304) // Not modified
+            return this._responseHeadersSize;
+        // FIXME: We prefer using Content-Length over resourceSize as
+        // resourceSize may differ from actual transfer size if platform's
+        // network stack performed decoding (e.g. gzip decompression).
+        // The Content-Length, though, is expected to come from raw
+        // response headers and will reflect actual transfer length.
+        // This won't work for chunked content encoding, so fall back to
+        // resourceSize when we don't have Content-Length. This still won't
+        // work for chunks with non-trivial encodings. We need a way to
+        // get actaul transfer size from the network stack.
+        var bodySize = Number(this.responseHeaders["Content-Length"] || this.resourceSize);
+        return this._responseHeadersSize + bodySize;
     },
 
     get expectedContentLength()
@@ -302,7 +316,6 @@ WebInspector.Resource.prototype = {
         if (x)
             delete this._timing;
     },
-
 
     get timing()
     {
@@ -431,6 +444,8 @@ WebInspector.Resource.prototype = {
     set responseHeaders(x)
     {
         this._responseHeaders = x;
+        // FIXME: we should take actual headers size from network stack, when possible.
+        this._responseHeadersSize = this._headersSize(x);
         delete this._sortedResponseHeaders;
         delete this._responseCookies;
 
@@ -512,6 +527,14 @@ WebInspector.Resource.prototype = {
         }
     },
 
+    _headersSize: function(headers)
+    {
+        var size = 0;
+        for (var header in headers)
+            size += header.length + headers[header].length + 3; // _typical_ overhead per herader is ": ".length + "\n".length.
+        return size;
+    },
+
     get errors()
     {
         return this._errors || 0;
@@ -550,9 +573,9 @@ WebInspector.Resource.prototype = {
             return true;
 
         if (typeof this.type === "undefined"
-         || this.type === WebInspector.Resource.Type.Other
-         || this.type === WebInspector.Resource.Type.XHR
-         || this.type === WebInspector.Resource.Type.WebSocket)
+            || this.type === WebInspector.Resource.Type.Other
+            || this.type === WebInspector.Resource.Type.XHR
+            || this.type === WebInspector.Resource.Type.WebSocket)
             return true;
 
         if (!this.mimeType)

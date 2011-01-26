@@ -316,23 +316,27 @@ void InspectorResourceAgent::didReceiveResponse(unsigned long identifier, Docume
 {
     RefPtr<InspectorObject> resourceResponse = buildObjectForResourceResponse(response);
     String type = "Other";
+    long cachedResourceSize = 0;
+
     if (loader) {
-        if (equalIgnoringFragmentIdentifier(response.url(), loader->frameLoader()->iconURL()))
-            type = "Image";
-        else {
-            CachedResource* cachedResource = InspectorResourceAgent::cachedResource(loader->frame(), response.url());
-            if (cachedResource)
-                type = cachedResourceTypeString(*cachedResource);
-
-            if (equalIgnoringFragmentIdentifier(response.url(), loader->url()) && type == "Other")
-                type = "Document";
-
+        CachedResource* cachedResource = InspectorResourceAgent::cachedResource(loader->frame(), response.url());
+        if (cachedResource) {
+            type = cachedResourceTypeString(*cachedResource);
+            cachedResourceSize = cachedResource->encodedSize();
             // Use mime type from cached resource in case the one in response is empty.
-            if (response.mimeType().isEmpty() && cachedResource)
+            if (response.mimeType().isEmpty())
                 resourceResponse->setString("mimeType", cachedResource->response().mimeType());
         }
+        if (equalIgnoringFragmentIdentifier(response.url(), loader->frameLoader()->iconURL()))
+            type = "Image";
+        else if (equalIgnoringFragmentIdentifier(response.url(), loader->url()) && type == "Other")
+            type = "Document";
     }
     m_frontend->didReceiveResponse(identifier, currentTime(), type, resourceResponse);
+    // If we revalidated the resource and got Not modified, send content length following didReceiveResponse
+    // as there will be no calls to didReceiveContentLength from the network stack.
+    if (cachedResourceSize && response.httpStatusCode() == 304)
+        didReceiveContentLength(identifier, cachedResourceSize);
 }
 
 void InspectorResourceAgent::didReceiveContentLength(unsigned long identifier, int lengthReceived)

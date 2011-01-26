@@ -1,3 +1,21 @@
+2011-01-26  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: summary bar is not resized properly with the rest of network panel
+        - Set the size for 304/not modified resources from cached resource.
+        - Add response headers size to resource transfer size.
+        https://bugs.webkit.org/show_bug.cgi?id=52886
+
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::didReceiveResponse):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource):
+        (WebInspector.Resource.prototype.get transferSize):
+        (WebInspector.Resource.prototype.set responseHeaders):
+        (WebInspector.Resource.prototype._headersSize):
+        (WebInspector.Resource.prototype._mimeTypeIsConsistentWithType):
+
 2011-01-26  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by Simon Hausmann.
