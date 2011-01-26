@@ -164,6 +164,7 @@ protected slots:
     void toggleInterruptingJavaScriptEnabled(bool enable);
     void toggleJavascriptCanOpenWindows(bool enable);
     void toggleAutoLoadImages(bool enable);
+    void togglePlugins(bool enable);
 
 #if defined(QT_CONFIGURED_WITH_OPENGL)
     void toggleQGLWidgetViewport(bool enable);

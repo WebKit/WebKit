@@ -1,3 +1,18 @@
+2011-01-26  Mansi Mithal  <mansi.mithal@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        QtTestBrowser should have a UI Setting to disable plugins
+        https://bugs.webkit.org/show_bug.cgi?id=52408
+        
+        Added a new action item named "Disable Plugins"
+        under the "Settings" menu. 
+
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::createChrome):
+        (LauncherWindow::togglePlugins):
+        * QtTestBrowser/launcherwindow.h:
+
 2011-01-25  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Barth.

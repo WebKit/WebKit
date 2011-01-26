@@ -371,6 +371,10 @@ void LauncherWindow::createChrome()
     toggleAutoLoadImages->setCheckable(true);
     toggleAutoLoadImages->setChecked(false);
 
+    QAction* togglePlugins = settingsMenu->addAction("Disable Plugins", this, SLOT(togglePlugins(bool)));
+    togglePlugins->setCheckable(true);
+    togglePlugins->setChecked(false);
+
     QAction* toggleInterruptingJavaScripteEnabled = settingsMenu->addAction("Enable interrupting js scripts", this, SLOT(toggleInterruptingJavaScriptEnabled(bool)));
     toggleInterruptingJavaScripteEnabled->setCheckable(true);
     toggleInterruptingJavaScripteEnabled->setChecked(false);
@@ -777,6 +781,11 @@ void LauncherWindow::toggleJavascriptCanOpenWindows(bool enable)
 void LauncherWindow::toggleAutoLoadImages(bool enable)
 {
     page()->settings()->setAttribute(QWebSettings::AutoLoadImages, !enable);
+}
+
+void LauncherWindow::togglePlugins(bool enable)
+{
+    page()->settings()->setAttribute(QWebSettings::PluginsEnabled, !enable);
 }
 
 #if defined(QT_CONFIGURED_WITH_OPENGL)
