@@ -105,8 +105,6 @@ symbian|maemo5|maemo6 {
 
 disable_uitools: DEFINES *= QT_NO_UITOOLS
 
-contains(DEFINES, QT_NO_UITOOLS): CONFIG -= uitools
-
 # Disable a few warnings on Windows. The warnings are also
 # disabled in WebKitLibraries/win/tools/vsprops/common.vsprops
 win32-msvc*|wince*: QMAKE_CXXFLAGS += -wd4291 -wd4344 -wd4396 -wd4503 -wd4800 -wd4819 -wd4996
@@ -139,3 +137,5 @@ CONFIG(qt_minimal) {
     DEFINES *= QT_NO_UNDOSTACK
     DEFINES *= QT_NO_XRENDER
 }
+
+contains(DEFINES, QT_NO_UITOOLS): CONFIG -= uitools
