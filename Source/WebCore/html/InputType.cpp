@@ -506,6 +506,11 @@ void InputType::didDispatchClick(Event*, const ClickHandlingState&)
 {
 }
 
+String InputType::visibleValue() const
+{
+    return element()->value();
+}
+
 bool InputType::isAcceptableValue(const String&)
 {
     return true;

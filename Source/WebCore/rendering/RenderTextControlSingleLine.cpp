@@ -680,7 +680,7 @@ void RenderTextControlSingleLine::updateFromElement()
             // flag is false. It protects an unacceptable renderer value from
             // being overwritten with the DOM value.
             if (!static_cast<HTMLInputElement*>(node())->formControlValueMatchesRenderer())
-                setInnerTextValue(inputElement()->value());
+                setInnerTextValue(inputElement()->visibleValue());
         }
     }
 

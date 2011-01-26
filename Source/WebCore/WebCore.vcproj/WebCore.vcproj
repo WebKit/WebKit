@@ -30177,6 +30177,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\text\LocalizedNumber.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\text\LocalizedNumberNone.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\text\ParserUtilities.h"
 					>
 				</File>

@@ -1121,6 +1121,11 @@ FileList* HTMLInputElement::files()
     return m_inputType->files();
 }
 
+String HTMLInputElement::visibleValue() const
+{
+    return m_inputType->visibleValue();
+}
+
 bool HTMLInputElement::isAcceptableValue(const String& proposedValue) const
 {
     return m_inputType->isAcceptableValue(proposedValue);

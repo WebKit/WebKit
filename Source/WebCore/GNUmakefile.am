@@ -2618,6 +2618,8 @@ webcore_sources += \
 	Source/WebCore/platform/text/Hyphenation.h \
 	Source/WebCore/platform/text/LineEnding.cpp \
 	Source/WebCore/platform/text/LineEnding.h \
+	Source/WebCore/platform/text/LocalizedNumber.h \
+	Source/WebCore/platform/text/LocalizedNumberNone.cpp \
 	Source/WebCore/platform/text/ParserUtilities.h \
 	Source/WebCore/platform/text/PlatformString.h \
 	Source/WebCore/platform/text/RegularExpression.cpp \

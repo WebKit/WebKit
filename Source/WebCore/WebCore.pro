@@ -1175,6 +1175,7 @@ SOURCES += \
     platform/text/Base64.cpp \
     platform/text/BidiContext.cpp \
     platform/text/Hyphenation.cpp \
+    platform/text/LocalizedNumberNone.cpp \
     platform/ContentType.cpp \
     platform/CrossThreadCopier.cpp \
     platform/DeprecatedPtrListImpl.cpp \

@@ -3314,6 +3314,8 @@
             'platform/text/Hyphenation.h',
             'platform/text/LineEnding.cpp',
             'platform/text/LineEnding.h',
+            'platform/text/LocalizedNumber.h',
+            'platform/text/LocalizedNumberNone.cpp',
             'platform/text/ParserUtilities.h',
             'platform/text/PlatformString.h',
             'platform/text/RegularExpression.cpp',

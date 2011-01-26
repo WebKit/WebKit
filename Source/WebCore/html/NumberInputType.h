@@ -64,6 +64,7 @@ private:
     virtual String serialize(double) const;
     virtual double acceptableError(double) const;
     virtual void handleBlurEvent();
+    virtual String visibleValue() const;
     virtual bool isAcceptableValue(const String&);
     virtual String sanitizeValue(const String&);
     virtual bool hasUnacceptableValue();

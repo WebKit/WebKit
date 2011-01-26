@@ -148,6 +148,7 @@ public:
     virtual String typeMismatchText() const;
     virtual String valueMissingText() const;
     virtual bool canSetStringValue() const;
+    virtual String visibleValue() const;
     virtual bool isAcceptableValue(const String&);
     virtual String sanitizeValue(const String&);
     virtual bool hasUnacceptableValue();

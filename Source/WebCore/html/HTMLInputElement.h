@@ -258,6 +258,7 @@ private:
 
     virtual void cacheSelection(int start, int end);
 
+    virtual String visibleValue() const;
     virtual bool isAcceptableValue(const String&) const;
     virtual String sanitizeValue(const String&) const;
     virtual bool hasUnacceptableValue() const;

@@ -1,3 +1,59 @@
+2011-01-25  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        API to support localized numbers for <input type=number>
+        https://bugs.webkit.org/show_bug.cgi?id=45730
+
+        Introduce platform/text/LocalizedNumber.h, and
+        LocalizedNumberNone.cpp, which is an empty implementation of the
+        functions in LocalizedNumber.h.  We use LocalizedNumberNone.cpp in
+        all platforms for now.
+
+        A string in a type=number field is parsed as a localized number
+        first. If the parsing fails, it is parsed as the HTML5 number.
+
+        We introduce HTMLInputElement::visibleValue(). It represents a value
+        which should be drawn by a renderer. HTMLInputElement::value() always
+        returns a number formatted for HTML5, and visibleValue() may return a
+        localized number.
+
+        No new tests because this doesn't change any behavior.
+
+        * Android.mk: Add LocalizedNumber.h and/or LocalizedNumberNone.cpp.
+        * CMakeLists.txt: ditto.
+        * GNUmakefile.am: ditto.
+        * WebCore.gypi: ditto.
+        * WebCore.pro: ditto.
+        * WebCore.vcproj/WebCore.vcproj: ditto.
+        * WebCore.xcodeproj/project.pbxproj: ditto.
+        * dom/InputElement.h: Add visibleValue().
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::visibleValue): Added.  Just call InputType::visibleValue().
+        * html/HTMLInputElement.h: Declare visibleValue().
+        * html/InputType.cpp:
+        (WebCore::InputType::visibleValue): Add the default implementation of
+          visibleValue(), which returns HTMLInputElement::value().
+        * html/InputType.h: Add declarations.
+        * html/NumberInputType.cpp:
+        (WebCore::isHTMLNumberCharacter): Renamed from isNumberCharacter().
+        (WebCore::isNumberCharacter): Calls isLocalizedNumberCharacter() and isHTMLNumberCharacter().
+        (WebCore::NumberInputType::visibleValue):
+          Returns a localized number string produced by formatLocalizedNumber().
+        (WebCore::NumberInputType::isAcceptableValue): Calls parseLocalizedNumber().
+        (WebCore::NumberInputType::sanitizeValue): Calls parseLocalizedNumber().
+        * html/NumberInputType.h: Add declarations.
+        * platform/text/LocalizedNumber.h: Added.
+        * platform/text/LocalizedNumberNone.cpp: Added.
+        (WebCore::parseLocalizedNumber):
+        (WebCore::formatLocalizedNumber):
+        (WebCore::isLocalizedNumberCharacter):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::updateFromElement):
+          Calls InputElement::visibleValue() instead of value().
+        * wml/WMLInputElement.h:
+        (WebCore::WMLInputElement::visibleValue): Added. It just calls value().
+
 2011-01-25  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
