@@ -1,5 +1,14 @@
 2011-01-26  Brian Weinstein  <bweinstein@apple.com>
 
+        Skip fast/loader/willSendRequest-null-for-preload.html on WebKit2, because WebKit2 doesn't have
+        setWillSendRequestReturnsNull yet.
+        
+        This is tracked by https://bugs.webkit.org/show_bug.cgi?id=42690.
+
+        * platform/mac-wk2/Skipped:
+
+2011-01-26  Brian Weinstein  <bweinstein@apple.com>
+
         Reviewed by Ryosuke Niwa.
 
         Update the test landed in r76701 to not depend on loading a "script" from http://example.com, make it

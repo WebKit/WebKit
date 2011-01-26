@@ -1735,6 +1735,7 @@ fast/loader/onload-willSendRequest-null-for-frame.html
 fast/loader/onload-willSendRequest-null-for-script.html
 fast/loader/subresource-willSendRequest-null.html
 plugins/plugin-document-willSendRequest-null.html
+fast/loader/willSendRequest-null-for-preload.html
 
 # WebKitTestRunner needs layoutTestController.setStopProvisionalFrameLoads
 # <https://bugs.webkit.org/show_bug.cgi?id=42691>
