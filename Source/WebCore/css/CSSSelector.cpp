@@ -140,10 +140,6 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
         return SEARCH_RESULTS_BUTTON;
     case PseudoMediaControlsPanel:
         return MEDIA_CONTROLS_PANEL;
-    case PseudoMediaControlsMuteButton:
-        return MEDIA_CONTROLS_MUTE_BUTTON;
-    case PseudoMediaControlsPlayButton:
-        return MEDIA_CONTROLS_PLAY_BUTTON;
     case PseudoMediaControlsTimelineContainer:
         return MEDIA_CONTROLS_TIMELINE_CONTAINER;
     case PseudoMediaControlsVolumeSliderContainer:
@@ -152,26 +148,8 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
         return MEDIA_CONTROLS_CURRENT_TIME_DISPLAY;
     case PseudoMediaControlsTimeRemainingDisplay:
         return MEDIA_CONTROLS_TIME_REMAINING_DISPLAY;
-    case PseudoMediaControlsTimeline:
-        return MEDIA_CONTROLS_TIMELINE;
-    case PseudoMediaControlsVolumeSlider:
-        return MEDIA_CONTROLS_VOLUME_SLIDER;
-    case PseudoMediaControlsVolumeSliderMuteButton:
-        return MEDIA_CONTROLS_VOLUME_SLIDER_MUTE_BUTTON;
-    case PseudoMediaControlsSeekBackButton:
-        return MEDIA_CONTROLS_SEEK_BACK_BUTTON;
-    case PseudoMediaControlsSeekForwardButton:
-        return MEDIA_CONTROLS_SEEK_FORWARD_BUTTON;
-    case PseudoMediaControlsRewindButton:
-        return MEDIA_CONTROLS_REWIND_BUTTON;
-    case PseudoMediaControlsReturnToRealtimeButton:
-        return MEDIA_CONTROLS_RETURN_TO_REALTIME_BUTTON;
-    case PseudoMediaControlsToggleClosedCaptions:
-        return MEDIA_CONTROLS_TOGGLE_CLOSED_CAPTIONS_BUTTON;
     case PseudoMediaControlsStatusDisplay:
         return MEDIA_CONTROLS_STATUS_DISPLAY;
-    case PseudoMediaControlsFullscreenButton:
-        return MEDIA_CONTROLS_FULLSCREEN_BUTTON;
     case PseudoScrollbar:
         return SCROLLBAR;
     case PseudoScrollbarButton:
@@ -347,18 +325,7 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
     DEFINE_STATIC_LOCAL(AtomicString, link, ("link"));
     DEFINE_STATIC_LOCAL(AtomicString, lang, ("lang("));
     DEFINE_STATIC_LOCAL(AtomicString, mediaControlsPanel, ("-webkit-media-controls-panel"));
-    DEFINE_STATIC_LOCAL(AtomicString, mediaControlsMuteButton, ("-webkit-media-controls-mute-button"));
-    DEFINE_STATIC_LOCAL(AtomicString, mediaControlsPlayButton, ("-webkit-media-controls-play-button"));
-    DEFINE_STATIC_LOCAL(AtomicString, mediaControlsTimeline, ("-webkit-media-controls-timeline"));
-    DEFINE_STATIC_LOCAL(AtomicString, mediaControlsVolumeSlider, ("-webkit-media-controls-volume-slider"));
-    DEFINE_STATIC_LOCAL(AtomicString, mediaControlsVolumeSliderMuteButton, ("-webkit-media-controls-volume-slider-mute-button"));
-    DEFINE_STATIC_LOCAL(AtomicString, mediaControlsSeekBackButton, ("-webkit-media-controls-seek-back-button"));
-    DEFINE_STATIC_LOCAL(AtomicString, mediaControlsSeekForwardButton, ("-webkit-media-controls-seek-forward-button"));
-    DEFINE_STATIC_LOCAL(AtomicString, mediaControlsRewindButton, ("-webkit-media-controls-rewind-button"));
-    DEFINE_STATIC_LOCAL(AtomicString, mediaControlsReturnToRealtimeButton, ("-webkit-media-controls-return-to-realtime-button"));
-    DEFINE_STATIC_LOCAL(AtomicString, mediaControlsToggleClosedCaptionsButton, ("-webkit-media-controls-toggle-closed-captions-button"));
     DEFINE_STATIC_LOCAL(AtomicString, mediaControlsStatusDisplay, ("-webkit-media-controls-status-display"));
-    DEFINE_STATIC_LOCAL(AtomicString, mediaControlsFullscreenButton, ("-webkit-media-controls-fullscreen-button"));
     DEFINE_STATIC_LOCAL(AtomicString, mediaControlsTimelineContainer, ("-webkit-media-controls-timeline-container"));
     DEFINE_STATIC_LOCAL(AtomicString, mediaControlsVolumeSliderContainer, ("-webkit-media-controls-volume-slider-container"));
     DEFINE_STATIC_LOCAL(AtomicString, mediaControlsCurrentTimeDisplay, ("-webkit-media-controls-current-time-display"));
@@ -464,20 +431,9 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
         nameToPseudoType->set(link.impl(), CSSSelector::PseudoLink);
         nameToPseudoType->set(lang.impl(), CSSSelector::PseudoLang);
         nameToPseudoType->set(mediaControlsPanel.impl(), CSSSelector::PseudoMediaControlsPanel);
-        nameToPseudoType->set(mediaControlsMuteButton.impl(), CSSSelector::PseudoMediaControlsMuteButton);
-        nameToPseudoType->set(mediaControlsPlayButton.impl(), CSSSelector::PseudoMediaControlsPlayButton);
         nameToPseudoType->set(mediaControlsCurrentTimeDisplay.impl(), CSSSelector::PseudoMediaControlsCurrentTimeDisplay);
         nameToPseudoType->set(mediaControlsTimeRemainingDisplay.impl(), CSSSelector::PseudoMediaControlsTimeRemainingDisplay);
-        nameToPseudoType->set(mediaControlsTimeline.impl(), CSSSelector::PseudoMediaControlsTimeline);
-        nameToPseudoType->set(mediaControlsVolumeSlider.impl(), CSSSelector::PseudoMediaControlsVolumeSlider);
-        nameToPseudoType->set(mediaControlsVolumeSliderMuteButton.impl(), CSSSelector::PseudoMediaControlsVolumeSliderMuteButton);
-        nameToPseudoType->set(mediaControlsSeekBackButton.impl(), CSSSelector::PseudoMediaControlsSeekBackButton);
-        nameToPseudoType->set(mediaControlsSeekForwardButton.impl(), CSSSelector::PseudoMediaControlsSeekForwardButton);
-        nameToPseudoType->set(mediaControlsRewindButton.impl(), CSSSelector::PseudoMediaControlsRewindButton);
-        nameToPseudoType->set(mediaControlsReturnToRealtimeButton.impl(), CSSSelector::PseudoMediaControlsReturnToRealtimeButton);
-        nameToPseudoType->set(mediaControlsToggleClosedCaptionsButton.impl(), CSSSelector::PseudoMediaControlsToggleClosedCaptions);
         nameToPseudoType->set(mediaControlsStatusDisplay.impl(), CSSSelector::PseudoMediaControlsStatusDisplay);
-        nameToPseudoType->set(mediaControlsFullscreenButton.impl(), CSSSelector::PseudoMediaControlsFullscreenButton);
         nameToPseudoType->set(mediaControlsTimelineContainer.impl(), CSSSelector::PseudoMediaControlsTimelineContainer);
         nameToPseudoType->set(mediaControlsVolumeSliderContainer.impl(), CSSSelector::PseudoMediaControlsVolumeSliderContainer);
         nameToPseudoType->set(notStr.impl(), CSSSelector::PseudoNot);
@@ -574,20 +530,9 @@ void CSSSelector::extractPseudoType() const
 #endif
     case PseudoInnerSpinButton:
     case PseudoMediaControlsPanel:
-    case PseudoMediaControlsMuteButton:
-    case PseudoMediaControlsPlayButton:
     case PseudoMediaControlsCurrentTimeDisplay:
     case PseudoMediaControlsTimeRemainingDisplay:
-    case PseudoMediaControlsTimeline:
-    case PseudoMediaControlsVolumeSlider:
-    case PseudoMediaControlsVolumeSliderMuteButton:
-    case PseudoMediaControlsSeekBackButton:
-    case PseudoMediaControlsSeekForwardButton:
-    case PseudoMediaControlsRewindButton:
-    case PseudoMediaControlsReturnToRealtimeButton:
-    case PseudoMediaControlsToggleClosedCaptions:
     case PseudoMediaControlsStatusDisplay:
-    case PseudoMediaControlsFullscreenButton:
     case PseudoMediaControlsTimelineContainer:
     case PseudoMediaControlsVolumeSliderContainer:
     case PseudoMeterHorizontalBar:
