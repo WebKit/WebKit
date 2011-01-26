@@ -140,6 +140,10 @@ public:
     virtual WebString getRequestableExtensionsCHROMIUM() = 0;
     virtual void requestExtensionCHROMIUM(const char*) = 0;
 
+    // GL_CHROMIUM_framebuffer_multisample
+    virtual void blitFramebufferCHROMIUM(int srcX0, int srcY0, int srcX1, int srcY1, int dstX0, int dstY0, int dstX1, int dstY1, unsigned mask, unsigned filter) = 0;
+    virtual void renderbufferStorageMultisampleCHROMIUM(unsigned long target, int samples, unsigned internalformat, unsigned width, unsigned height) = 0;
+
     // The entry points below map directly to the OpenGL ES 2.0 API.
     // See: http://www.khronos.org/registry/gles/
     // and: http://www.khronos.org/opengles/sdk/docs/man/

@@ -119,6 +119,8 @@ void DrawingBuffer::publishToPlatformLayer()
         
     if (m_callback)
         m_callback->willPublish();
+    if (multisample())
+        commit();
     unsigned parentTexture = m_internal->platformLayer->textureId();
     // FIXME: We do the copy in the canvas' (child) context so that it executes in the correct order relative to
     // other commands in the child context.  This ensures that the parent texture always contains a complete

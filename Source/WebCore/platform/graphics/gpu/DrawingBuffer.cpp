@@ -41,10 +41,11 @@ namespace WebCore {
 PassRefPtr<DrawingBuffer> DrawingBuffer::create(GraphicsContext3D* context, const IntSize& size)
 {
     Extensions3D* extensions = context->getExtensions();
-    bool multisampleSupported = extensions->supports("GL_ANGLE_framebuffer_blit") && extensions->supports("GL_ANGLE_framebuffer_multisample");
+    bool multisampleSupported = extensions->supports("GL_ANGLE_framebuffer_blit") && extensions->supports("GL_ANGLE_framebuffer_multisample") && extensions->supports("GL_OES_rgb8_rgba8");
     if (multisampleSupported) {
         extensions->ensureEnabled("GL_ANGLE_framebuffer_blit");
         extensions->ensureEnabled("GL_ANGLE_framebuffer_multisample");
+        extensions->ensureEnabled("GL_OES_rgb8_rgba8");
     }
     bool packedDepthStencilSupported = extensions->supports("GL_OES_packed_depth_stencil");
     if (packedDepthStencilSupported)
@@ -153,13 +154,15 @@ void DrawingBuffer::reset(const IntSize& newSize)
     m_context->makeContextCurrent();
     
     const GraphicsContext3D::Attributes& attributes = m_context->getContextAttributes();
-    unsigned long internalColorFormat, colorFormat;
+    unsigned long internalColorFormat, colorFormat, internalRenderbufferFormat;
     if (attributes.alpha) {
         internalColorFormat = GraphicsContext3D::RGBA;
         colorFormat = GraphicsContext3D::RGBA;
+        internalRenderbufferFormat = Extensions3D::RGBA8_OES;
     } else {
         internalColorFormat = GraphicsContext3D::RGB;
         colorFormat = GraphicsContext3D::RGB;
+        internalRenderbufferFormat = Extensions3D::RGB8_OES;
     }
 
 
@@ -173,7 +176,7 @@ void DrawingBuffer::reset(const IntSize& newSize)
         m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO);
 
         m_context->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, m_multisampleColorBuffer);
-        m_context->getExtensions()->renderbufferStorageMultisample(GraphicsContext3D::RENDERBUFFER, sampleCount, internalColorFormat, m_size.width(), m_size.height());
+        m_context->getExtensions()->renderbufferStorageMultisample(GraphicsContext3D::RENDERBUFFER, sampleCount, internalRenderbufferFormat, m_size.width(), m_size.height());
         m_context->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::RENDERBUFFER, m_multisampleColorBuffer);
         resizeDepthStencil(sampleCount);
         if (m_context->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
@@ -190,7 +193,8 @@ void DrawingBuffer::reset(const IntSize& newSize)
     m_context->texImage2DResourceSafe(GraphicsContext3D::TEXTURE_2D, 0, internalColorFormat, m_size.width(), m_size.height(), 0, colorFormat, GraphicsContext3D::UNSIGNED_BYTE);
     m_context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, m_colorBuffer, 0);
     m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, 0);
-    resizeDepthStencil(0);
+    if (!multisample())
+        resizeDepthStencil(0);
     if (m_context->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
         // Cleanup
         clear();

@@ -258,6 +258,10 @@ public:
     bool supportsCopyTextureToParentTextureCHROMIUM();
     void copyTextureToParentTextureCHROMIUM(Platform3DObject texture, Platform3DObject parentTexture);
 
+    // GL_CHROMIUM_framebuffer_multisample
+    void blitFramebufferCHROMIUM(GC3Dint srcX0, GC3Dint srcY0, GC3Dint srcX1, GC3Dint srcY1, GC3Dint dstX0, GC3Dint dstY0, GC3Dint dstX1, GC3Dint dstY1, GC3Dbitfield mask, GC3Denum filter);
+    void renderbufferStorageMultisampleCHROMIUM(GC3Denum target, GC3Dsizei samples, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height);
+
 private:
     OwnPtr<WebKit::WebGraphicsContext3D> m_impl;
     OwnPtr<Extensions3DChromium> m_extensions;

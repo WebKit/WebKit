@@ -52,6 +52,7 @@ public:
     //   GL_ANGLE_framebuffer_blit / GL_ANGLE_framebuffer_multisample
     //   GL_OES_texture_float
     //   GL_OES_standard_derivatives
+    //   GL_OES_rgb8_rgba8
 
     // Takes full name of extension; for example,
     // "GL_EXT_texture_format_BGRA8888".
@@ -87,6 +88,10 @@ public:
 
         // GL_OES_standard_derivatives names
         FRAGMENT_SHADER_DERIVATIVE_HINT_OES = 0x8B8B,
+
+        // GL_OES_rgb8_rgba8 names
+        RGB8_OES = 0x8051,
+        RGBA8_OES = 0x8058,
     };
 
     // GL_ARB_robustness

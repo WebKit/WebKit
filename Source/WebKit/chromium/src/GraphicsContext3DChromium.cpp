@@ -364,6 +364,12 @@ rt GraphicsContext3DInternal::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 
     return m_impl->name(a1, a2, a3, a4, a5, a6, a7, a8, a9);   \
 }
 
+#define DELEGATE_TO_IMPL_10(name, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10) \
+void GraphicsContext3DInternal::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7, t8 a8, t9 a9, t10 a10) \
+{ \
+    m_impl->name(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10); \
+}
+
 DELEGATE_TO_IMPL_R(makeContextCurrent, bool)
 
 bool GraphicsContext3DInternal::isGLES2Compliant() const
@@ -691,6 +697,14 @@ void splitStringHelper(const String& str, HashSet<String>& set)
         set.add(substrings[i]);
 }
 
+String mapExtensionName(const String& name)
+{
+    if (name == "GL_ANGLE_framebuffer_blit"
+        || name == "GL_ANGLE_framebuffer_multisample")
+        return "GL_CHROMIUM_framebuffer_multisample";
+    return name;
+}
+
 } // anonymous namespace
 
 void GraphicsContext3DInternal::initializeExtensions()
@@ -710,25 +724,27 @@ void GraphicsContext3DInternal::initializeExtensions()
 bool GraphicsContext3DInternal::supportsExtension(const String& name)
 {
     initializeExtensions();
-    return m_enabledExtensions.contains(name) || m_requestableExtensions.contains(name);
+    String mappedName = mapExtensionName(name);
+    return m_enabledExtensions.contains(mappedName) || m_requestableExtensions.contains(mappedName);
 }
 
 bool GraphicsContext3DInternal::ensureExtensionEnabled(const String& name)
 {
     initializeExtensions();
 
-    if (m_enabledExtensions.contains(name))
+    String mappedName = mapExtensionName(name);
+    if (m_enabledExtensions.contains(mappedName))
         return true;
 
-    if (m_requestableExtensions.contains(name)) {
-        m_impl->requestExtensionCHROMIUM(name.ascii().data());
+    if (m_requestableExtensions.contains(mappedName)) {
+        m_impl->requestExtensionCHROMIUM(mappedName.ascii().data());
         m_enabledExtensions.clear();
         m_requestableExtensions.clear();
         m_initializedAvailableExtensions = false;
     }
 
     initializeExtensions();
-    return m_enabledExtensions.contains(name);
+    return m_enabledExtensions.contains(mappedName);
 }
 
 DELEGATE_TO_IMPL_4R(mapBufferSubDataCHROMIUM, GC3Denum, GC3Dsizeiptr, GC3Dsizei, GC3Denum, void*)
@@ -736,6 +752,8 @@ DELEGATE_TO_IMPL_1(unmapBufferSubDataCHROMIUM, const void*)
 DELEGATE_TO_IMPL_9R(mapTexSubImage2DCHROMIUM, GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, GC3Denum, void*)
 DELEGATE_TO_IMPL_1(unmapTexSubImage2DCHROMIUM, const void*)
 DELEGATE_TO_IMPL_2(copyTextureToParentTextureCHROMIUM, Platform3DObject, Platform3DObject)
+DELEGATE_TO_IMPL_10(blitFramebufferCHROMIUM, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dbitfield, GC3Denum)
+DELEGATE_TO_IMPL_5(renderbufferStorageMultisampleCHROMIUM, GC3Denum, GC3Dsizei, GC3Denum, GC3Dsizei, GC3Dsizei)
 
 //----------------------------------------------------------------------
 // GraphicsContext3D
