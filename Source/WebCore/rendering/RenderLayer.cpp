@@ -1665,7 +1665,7 @@ int RenderLayer::scrollPosition(Scrollbar* scrollbar) const
     if (scrollbar->orientation() == HorizontalScrollbar)
         return scrollXOffset();
     if (scrollbar->orientation() == VerticalScrollbar)
-        return m_scrollY;
+        return scrollYOffset();
     return 0;
 }
 
@@ -2033,8 +2033,8 @@ void RenderLayer::updateScrollInfoAfterLayout()
         // Layout may cause us to be in an invalid scroll position.  In this case we need
         // to pull our scroll offsets back to the max (or push them up to the min).
         int newX = max(0, min(scrollXOffset(), scrollWidth() - box->clientWidth()));
-        int newY = max(0, min(m_scrollY, scrollHeight() - box->clientHeight()));
-        if (newX != scrollXOffset() || newY != m_scrollY) {
+        int newY = max(0, min(scrollYOffset(), scrollHeight() - box->clientHeight()));
+        if (newX != scrollXOffset() || newY != scrollYOffset()) {
             RenderView* view = renderer()->view();
             ASSERT(view);
             // scrollToOffset() may call updateLayerPositions(), which doesn't work

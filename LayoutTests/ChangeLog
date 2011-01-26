@@ -1,3 +1,13 @@
+2011-01-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Scrollbars don't work correctly for top-to-bottom text in an overflow: scroll area
+        https://bugs.webkit.org/show_bug.cgi?id=53048
+
+        * fast/overflow/overflow-rtl-vertical-origin-expected.txt: Added.
+        * fast/overflow/overflow-rtl-vertical-origin.html: Added.
+
 2011-01-25  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.

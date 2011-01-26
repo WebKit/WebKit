@@ -1,0 +1,23 @@
+<body>
+    <p>This tests that the scroll origin for boxes with -webkit-writing-mode:vertical-rl; direction:rtl; overflow:scroll is correct.</p>
+    <div id="test" style="-webkit-writing-mode:vertical-rl; direction:rtl; overflow:scroll; width: 200px; height: 200px">
+        <div style="height: 300px; width: 100px;"></div>
+    </div>
+    <pre id="console"></pre>
+    
+    <script>
+        function log(msg)
+        {
+            document.getElementById('console').appendChild(document.createTextNode(msg + "\n"));
+        }
+
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+
+        var t = document.getElementById("test");
+        if (t.scrollTop == 115)
+            log("PASS: test.scrollTop is correct.")
+        else
+            log("FAIL: test.scrollTop is incorrect. It is " + t.scrollTop + " but should be 115.");
+    </script>
+</body>

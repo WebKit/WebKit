@@ -1,3 +1,17 @@
+2011-01-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Scrollbars don't work correctly for top-to-bottom text in an overflow: scroll area
+        https://bugs.webkit.org/show_bug.cgi?id=53048
+
+        Test: fast/overflow/overflow-rtl-vertical-origin.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollPosition):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        Take the scroll origin into account when calculating scrollbars in more places.
+
 2011-01-25  Steve Falkenburg  <sfalken@apple.com>
 
         Windows production build fix.
