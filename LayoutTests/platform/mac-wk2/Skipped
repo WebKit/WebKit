@@ -56,6 +56,7 @@ compositing/iframes/iframe-src-change.html
 
 # WebKitTestRunner needs an implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
+fast/text/offsetForPosition-complex-fallback.html
 svg/animations/animate-path-to-animation.html
 fast/forms/input-number-change-type-on-focus.html
 fast/forms/search-hide-cancel-on-cancel.html
