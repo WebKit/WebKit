@@ -60,6 +60,10 @@ WK_EXPORT void WKPreferencesSetCompositingRepaintCountersVisible(WKPreferencesRe
 WK_EXPORT bool WKPreferencesGetCompositingRepaintCountersVisible(WKPreferencesRef);
 
 // Defaults to false.
+WK_EXPORT void WKPreferencesSetWebGLEnabled(WKPreferencesRef, bool);
+WK_EXPORT bool WKPreferencesGetWebGLEnabled(WKPreferencesRef);
+
+// Defaults to false.
 WK_EXPORT void WKPreferencesSetNeedsSiteSpecificQuirks(WKPreferencesRef, bool);
 WK_EXPORT bool WKPreferencesGetNeedsSiteSpecificQuirks(WKPreferencesRef);
 

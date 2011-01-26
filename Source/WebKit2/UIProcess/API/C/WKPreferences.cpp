@@ -330,6 +330,16 @@ bool WKPreferencesGetCompositingRepaintCountersVisible(WKPreferencesRef preferen
     return toImpl(preferencesRef)->compositingRepaintCountersVisible();
 }
 
+void WKPreferencesSetWebGLEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setWebGLEnabled(flag);
+}
+
+bool WKPreferencesGetWebGLEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->webGLEnabled();
+}
+
 void WKPreferencesSetNeedsSiteSpecificQuirks(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setNeedsSiteSpecificQuirks(flag);

@@ -55,6 +55,7 @@ namespace WebKit {
     macro(AcceleratedCompositingEnabled, acceleratedCompositingEnabled, Bool, bool, true) \
     macro(CompositingBordersVisible, compositingBordersVisible, Bool, bool, false) \
     macro(CompositingRepaintCountersVisible, compositingRepaintCountersVisible, Bool, bool, false) \
+    macro(WebGLEnabled, webGLEnabled, Bool, bool, false) \
     macro(ForceFTPDirectoryListings, forceFTPDirectoryListings, Bool, bool, false) \
     macro(TabsToLinks, tabsToLinks, Bool, bool, false) \
     macro(DNSPrefetchingEnabled, dnsPrefetchingEnabled, Bool, bool, false) \

@@ -1,3 +1,18 @@
+2011-01-25  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Expose WebGL flag set/get in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=53096
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetWebGLEnabled):
+        (WKPreferencesGetWebGLEnabled):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2011-01-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.
