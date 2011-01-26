@@ -1,5 +1,17 @@
 2011-01-25  Kent Tamura  <tkent@chromium.org>
 
+        Unreviewed, test expectation update.
+
+        * platform/chromium-win/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.checksum: Added.
+        * platform/chromium-win/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.png: Added.
+        * platform/chromium-win/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.txt: Added.
+        * platform/chromium-win/fast/speech/input-appearance-numberandspeech-expected.checksum:
+        * platform/chromium-win/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-win/fast/speech/input-appearance-numberandspeech-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
+2011-01-25  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         Radio button group state is not restored correctly

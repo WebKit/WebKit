@@ -772,10 +772,6 @@ BUGCR20226 : fast/forms/datalist.html = TEXT
 BUGCR20226 : fast/forms/input-list.html = FAIL
 BUGCR20226 : fast/forms/input-selectedoption.html = FAIL
 
-// Generic theme in test_shell doesn't have inner-spin-button support.
-// We need to do rebaseline when we switch to DRT.
-BUGWK38570 WIN : fast/forms/input-appearance-spinbutton-disabled-readonly.html = IMAGE+TEXT
-
 // The feature was disabled due to a compatibility issue.
 BUGWK40520 : fast/forms/interactive-validation-lost-focusable.html = TEXT
 BUGWK40520 : fast/forms/interactive-validation-prevented.html = TEXT
@@ -2814,11 +2810,6 @@ BUGCR65279 LINUX DEBUG : fast/css/visited-link-hang.html = TEXT PASS
 // DRT needs to schedule paints on invalidations like Chrome does.
 BUGCR62433 MAC LINUX : fast/backgrounds/animated-gif-as-background.html = IMAGE
 BUGCR62433 MAC LINUX : fast/images/gif-loop-count.html = IMAGE
-
-// input-speech related failures
-BUG_DRT WIN MAC : fast/speech/input-appearance-numberandspeech.html = IMAGE IMAGE+TEXT
-BUG_DRT WIN MAC : fast/speech/input-appearance-searchandspeech.html = IMAGE
-BUG_DRT WIN MAC : fast/speech/input-appearance-speechbutton.html = IMAGE
 
 // Similar to the above, input-search related failures
 BUG_DRT MAC : fast/css/input-search-padding.html = IMAGE

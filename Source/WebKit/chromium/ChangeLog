@@ -1,3 +1,9 @@
+2011-01-25  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed trivial change.
+
+        * DEPS: Roll to r72581 to have a webkit_support fix.
+
 2011-01-25  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Jeremy Orlow.
