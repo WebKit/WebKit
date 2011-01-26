@@ -58,6 +58,7 @@ static const char optionEnableAccelerated2DCanvas[] = "--enable-accelerated-2d-c
 static const char optionStressOpt[] = "--stress-opt";
 static const char optionStressDeopt[] = "--stress-deopt";
 static const char optionJavaScriptFlags[] = "--js-flags=";
+static const char optionNoTimeout[] = "--no-timeout=";
 
 static void runTest(TestShell& shell, TestParams& params, const string& testName, bool testShellMode)
 {
@@ -123,6 +124,7 @@ int main(int argc, char* argv[])
     bool stressDeopt = false;
     bool hardwareAcceleratedGL = false;
     string javaScriptFlags;
+    bool noTimeout = false;
     for (int i = 1; i < argc; ++i) {
         string argument(argv[i]);
         if (argument == "-")
@@ -155,6 +157,8 @@ int main(int argc, char* argv[])
             stressDeopt = true;
         else if (!argument.find(optionJavaScriptFlags))
             javaScriptFlags = argument.substr(strlen(optionJavaScriptFlags));
+        else if (!argument.find(optionNoTimeout))
+            noTimeout = true;
         else if (argument.size() && argument[0] == '-')
             fprintf(stderr, "Unknown option: %s\n", argv[i]);
         else
@@ -182,6 +186,10 @@ int main(int argc, char* argv[])
         shell.setJavaScriptFlags(javaScriptFlags);
         shell.setStressOpt(stressOpt);
         shell.setStressDeopt(stressDeopt);
+        if (noTimeout) {
+            // 0x20000000ms is big enough for the purpose to avoid timeout in debugging.
+            shell.setLayoutTestTimeout(0x20000000);
+        }
         if (serverMode && !tests.size()) {
             params.printSeparators = true;
             char testString[2048]; // 2048 is the same as the sizes of other platforms.
