@@ -67,7 +67,7 @@ i interfaceName=HTMLElement
 iframe interfaceName=HTMLIFrameElement
 image mapToTagName=img
 img interfaceName=HTMLImageElement, constructorNeedsFormElement
-input constructorNeedsFormElement
+input constructorNeedsFormElement, constructorNeedsCreatedByParser
 ins interfaceName=HTMLModElement
 isindex interfaceName=HTMLIsIndexElement, constructorNeedsFormElement
 kbd interfaceName=HTMLElement

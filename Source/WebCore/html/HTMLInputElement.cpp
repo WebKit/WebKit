@@ -62,7 +62,7 @@ using namespace HTMLNames;
 
 const int maxSavedResults = 256;
 
-HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
+HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form, bool createdByParser)
     : HTMLTextFormControlElement(tagName, document, form)
     , m_maxResults(-1)
     , m_isChecked(false)
@@ -72,14 +72,16 @@ HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* docum
     , m_isActivatedSubmit(false)
     , m_autocomplete(Uninitialized)
     , m_isAutofilled(false)
+    , m_stateRestored(false)
+    , m_parsingInProgress(createdByParser)
     , m_inputType(InputType::createText(this))
 {
     ASSERT(hasTagName(inputTag) || hasTagName(isindexTag));
 }
 
-PassRefPtr<HTMLInputElement> HTMLInputElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
+PassRefPtr<HTMLInputElement> HTMLInputElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form, bool createdByParser)
 {
-    return adoptRef(new HTMLInputElement(tagName, document, form));
+    return adoptRef(new HTMLInputElement(tagName, document, form, createdByParser));
 }
 
 HTMLInputElement::~HTMLInputElement()
@@ -506,6 +508,7 @@ bool HTMLInputElement::saveFormControlState(String& result) const
 void HTMLInputElement::restoreFormControlState(const String& state)
 {
     m_inputType->restoreFormControlState(state);
+    m_stateRestored = true;
 }
 
 bool HTMLInputElement::canStartSelection() const
@@ -574,11 +577,14 @@ void HTMLInputElement::parseMappedAttribute(Attribute* attr)
         setFormControlValueMatchesRenderer(false);
         setNeedsValidityCheck();
     } else if (attr->name() == checkedAttr) {
-        if (m_reflectsCheckedAttribute) {
+        // Another radio button in the same group might be checked by state
+        // restore. We shouldn't call setChecked() even if this has the checked
+        // attribute. So, delay the setChecked() call until
+        // finishParsingChildren() is called if parsing is in progress.
+        if (!m_parsingInProgress && m_reflectsCheckedAttribute) {
             setChecked(!attr->isNull());
             m_reflectsCheckedAttribute = true;
         }
-        setNeedsValidityCheck();
     } else if (attr->name() == maxlengthAttr) {
         InputElement::parseMaxLengthAttribute(m_data, this, this, attr);
         setNeedsValidityCheck();
@@ -645,6 +651,18 @@ void HTMLInputElement::parseMappedAttribute(Attribute* attr)
 #endif
     else
         HTMLTextFormControlElement::parseMappedAttribute(attr);
+}
+
+void HTMLInputElement::finishParsingChildren()
+{
+    m_parsingInProgress = false;
+    HTMLFormControlElementWithState::finishParsingChildren();
+    if (!m_stateRestored) {
+        bool checked = hasAttribute(checkedAttr);
+        if (checked)
+            setChecked(checked);
+        m_reflectsCheckedAttribute = true;
+    }
 }
 
 bool HTMLInputElement::rendererIsNeeded(RenderStyle* style)
@@ -745,6 +763,7 @@ void HTMLInputElement::setChecked(bool nowChecked, bool sendChangeEvent)
     setNeedsStyleRecalc();
 
     updateCheckedRadioButtons();
+    setNeedsValidityCheck();
 
     // Ideally we'd do this from the render tree (matching
     // RenderTextView), but it's not possible to do it at the moment

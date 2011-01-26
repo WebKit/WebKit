@@ -2,6 +2,16 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Radio button group state is not restored correctly
+        https://bugs.webkit.org/show_bug.cgi?id=50442
+
+        * fast/forms/state-restore-radio-group-expected.txt: Added.
+        * fast/forms/state-restore-radio-group.html: Added.
+
+2011-01-25  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         HTMLFormElement::checkValidity() returns incorrect result if 'invalid' events are canceled.
         https://bugs.webkit.org/show_bug.cgi?id=52565
 

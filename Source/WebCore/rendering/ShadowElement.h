@@ -43,6 +43,12 @@ protected:
         BaseElement::setShadowHost(shadowParent);
     }
 
+    ShadowElement(const QualifiedName& name, HTMLElement* shadowParent, HTMLFormElement* form, bool createdByParser)
+        : BaseElement(name, shadowParent->document(), form, createdByParser)
+    {
+        BaseElement::setShadowHost(shadowParent);
+    }
+
 public:
     virtual void detach();
 };

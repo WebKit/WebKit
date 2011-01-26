@@ -2,6 +2,57 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Radio button group state is not restored correctly
+        https://bugs.webkit.org/show_bug.cgi?id=50442
+
+        Fixes a bug that radio button states are not restored correctly in
+        a case that non-first radio button in a group is checked.
+
+        If "checked" attribute is present, the radio button is checked and
+        other radio buttons in the group are unchecked. This behavior
+        disturbs form state restoring. This patch changes this behavior so
+        that the "checked" attribute handling is delayed after form state
+        restoring.
+
+        Test: fast/forms/state-restore-radio-group.html
+
+        * html/HTMLFormControlElement.h:
+         Make finishParsingChildren() protected so that HTMLInpuElement can call it.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::HTMLInputElement):
+         - Add createdByParser parameter.
+         - Initialize m_stateRestored and m_parsingInProgress.
+        (WebCore::HTMLInputElement::create): Sync with the constructor.
+        (WebCore::HTMLInputElement::restoreFormControlState):
+         Set m_stateRestored in order to refer it in finishParsingChildren().
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+         Don't call setChecked() during parsing. Move setNeedsValidityCheck()
+         to setChecked().
+        (WebCore::HTMLInputElement::finishParsingChildren):
+         Call setChecked() if form state is not restored.
+        (WebCore::HTMLInputElement::setChecked):
+         Move setNeedsValidityCheck() from parseMappedAttribute() because
+         finishParsingChildren() also needs to call setNeedsValidityCheck().
+        * html/HTMLInputElement.h:
+         - Remove the default value of HTMLFormElement* of the HTMLInputElement
+           constructor, and add createdByParser parameter.
+         - Introduce m_parsingInProgress and m_stateRestored.
+        * html/HTMLIsIndexElement.cpp:
+        (WebCore::HTMLIsIndexElement::HTMLIsIndexElement):
+         Sync with the HTMLInputElement constructor change.
+        * html/HTMLTagNames.in: Add constructorNeedsCreatedByParser flag.
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlInputElement::MediaControlInputElement):
+         Sync with the HTMLInputElement constructor change.
+        * rendering/ShadowElement.cpp:
+        (WebCore::ShadowInputElement::ShadowInputElement): ditto.
+        * rendering/ShadowElement.h:
+        (WebCore::ShadowElement::ShadowElement): ditto.
+
+2011-01-25  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         HTMLFormElement::checkValidity() returns incorrect result if 'invalid' events are canceled.
         https://bugs.webkit.org/show_bug.cgi?id=52565
 

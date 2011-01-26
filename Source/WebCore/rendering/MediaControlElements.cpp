@@ -353,7 +353,7 @@ bool MediaControlStatusDisplayElement::rendererIsNeeded(RenderStyle* style)
 // ----------------------------
     
 MediaControlInputElement::MediaControlInputElement(HTMLMediaElement* mediaElement, PseudoId pseudo)
-    : HTMLInputElement(inputTag, mediaElement->document())
+    : HTMLInputElement(inputTag, mediaElement->document(), 0, false)
     , m_mediaElement(mediaElement)
     , m_pseudoStyleId(pseudo)
 {

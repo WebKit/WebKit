@@ -37,7 +37,7 @@ class KURL;
 
 class HTMLInputElement : public HTMLTextFormControlElement, public InputElement {
 public:
-    static PassRefPtr<HTMLInputElement> create(const QualifiedName&, Document*, HTMLFormElement*);
+    static PassRefPtr<HTMLInputElement> create(const QualifiedName&, Document*, HTMLFormElement*, bool createdByParser);
     virtual ~HTMLInputElement();
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitspeechchange);
@@ -198,7 +198,7 @@ public:
     void updateCheckedRadioButtons();
     
 protected:
-    HTMLInputElement(const QualifiedName&, Document*, HTMLFormElement* = 0);
+    HTMLInputElement(const QualifiedName&, Document*, HTMLFormElement*, bool createdByParser);
 
     virtual void defaultEventHandler(Event*);
 
@@ -240,6 +240,7 @@ private:
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(Attribute*);
+    virtual void finishParsingChildren();
 
     virtual void copyNonAttributeProperties(const Element* source);
 
@@ -313,6 +314,8 @@ private:
 #if ENABLE(DATALIST)
     bool m_hasNonEmptyList : 1;
 #endif
+    bool m_stateRestored : 1;
+    bool m_parsingInProgress : 1;
     OwnPtr<InputType> m_inputType;
 };
 

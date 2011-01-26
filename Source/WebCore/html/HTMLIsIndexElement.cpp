@@ -33,7 +33,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 HTMLIsIndexElement::HTMLIsIndexElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
-    : HTMLInputElement(tagName, document, form)
+    : HTMLInputElement(tagName, document, form, false)
 {
     ASSERT(hasTagName(isindexTag));
     setDefaultName(isindexTag.localName());

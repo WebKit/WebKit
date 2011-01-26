@@ -114,7 +114,7 @@ PassRefPtr<ShadowInputElement> ShadowInputElement::create(HTMLElement* shadowPar
 }
 
 ShadowInputElement::ShadowInputElement(HTMLElement* shadowParent)
-    : ShadowElement<HTMLInputElement>(inputTag, shadowParent)
+    : ShadowElement<HTMLInputElement>(inputTag, shadowParent, 0, false)
 {
 }
 
