@@ -1,3 +1,16 @@
+2011-01-26  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        Update the test landed in r76701 to not depend on loading a "script" from http://example.com, make it
+        use a local script (which still reproduces the crash).
+
+        * fast/loader/resources/empty-script.js: Added.
+        * fast/loader/willSendRequest-null-for-preload-expected.txt: Removed the line for the console error.
+        * fast/loader/willSendRequest-null-for-preload.html: Have the script in the head be a local script.
+        * platform/win/fast/loader: Removed.
+        * platform/win/fast/loader/willSendRequest-null-for-preload-expected.txt: Removed. No need for platform-specific results.
+
 2011-01-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another unreviewed Chromium rebaselines for r76688.
