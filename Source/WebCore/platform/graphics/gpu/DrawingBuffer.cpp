@@ -145,8 +145,6 @@ void DrawingBuffer::resizeDepthStencil(int sampleCount)
 
 void DrawingBuffer::reset(const IntSize& newSize)
 {
-    if (m_size == newSize)
-        return;
     m_size = newSize;
 
     if (!m_context)

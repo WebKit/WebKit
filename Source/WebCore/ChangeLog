@@ -1,3 +1,20 @@
+2011-01-25  Mike Reed  <reed@google.com>
+
+        Reviewed by James Robinson.
+
+        DrawingBufer::reset() today checks if the new size is the same as its
+        m_size, and if so, returns immediately. This does not match the
+        semantics of <canvas>, which wants to clear its contents anytime the
+        size is specified.
+        https://bugs.webkit.org/show_bug.cgi?id=53149
+
+        Test: Covered by existing <canvas> tests using gpu.
+
+        * platform/graphics/chromium/DrawingBufferChromium.cpp:
+        (WebCore::DrawingBuffer::DrawingBuffer):
+        * platform/graphics/gpu/DrawingBuffer.cpp:
+        (WebCore::DrawingBuffer::reset):
+
 2011-01-25  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by Adam Barth.
