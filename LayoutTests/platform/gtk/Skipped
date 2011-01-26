@@ -1438,7 +1438,6 @@ fast/box-sizing/box-sizing.html
 fast/box-sizing/panels-one.html
 fast/box-sizing/panels-two.html
 fast/box-sizing/percentage-height.html
-fast/canvas/canvas-composite.html
 fast/canvas/canvas-incremental-repaint.html
 fast/canvas/canvas-text-alignment.html
 fast/clip/001.html
