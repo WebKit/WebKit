@@ -227,28 +227,20 @@ void Path::transform(const AffineTransform& xform)
     m_path->transform(xform);
 }
 
-// Computes the bounding box for the stroke and style currently selected into
-// the given bounding box. This also takes into account the stroke width.
-static FloatRect boundingBoxForCurrentStroke(const GraphicsContext* context)
-{
-    SkPaint paint;
-    context->platformContext()->setupPaintForStroking(&paint, 0, 0);
-    SkPath boundingPath;
-    paint.getFillPath(context->platformContext()->currentPathInLocalCoordinates(), &boundingPath);
-    return boundingPath.getBounds();
-}
-
 FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier)
 {
     GraphicsContext* scratch = scratchContext();
     scratch->save();
-    scratch->beginPath();
-    scratch->addPath(*this);
 
     if (applier)
         applier->strokeStyle(scratch);
 
-    FloatRect r = boundingBoxForCurrentStroke(scratch);
+    SkPaint paint;
+    scratch->platformContext()->setupPaintForStroking(&paint, 0, 0);
+    SkPath boundingPath;
+    paint.getFillPath(*platformPath(), &boundingPath);
+
+    FloatRect r = boundingPath.getBounds();
     scratch->restore();
     return r;
 }

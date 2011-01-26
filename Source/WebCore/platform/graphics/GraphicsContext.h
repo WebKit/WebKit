@@ -369,11 +369,6 @@ namespace WebCore {
         void setCompositeOperation(CompositeOperator);
         CompositeOperator compositeOperation() const;
 
-#if PLATFORM(SKIA)
-        void beginPath();
-        void addPath(const Path&);
-#endif
-
         void clip(const Path&);
 
         // This clip function is used only by <canvas> code. It allows

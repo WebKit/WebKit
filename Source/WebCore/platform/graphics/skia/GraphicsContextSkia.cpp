@@ -309,20 +309,6 @@ void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness
     platformContext()->clipPathAntiAliased(path);
 }
 
-void GraphicsContext::addPath(const Path& path)
-{
-    if (paintingDisabled())
-        return;
-    platformContext()->addPath(*path.platformPath());
-}
-
-void GraphicsContext::beginPath()
-{
-    if (paintingDisabled())
-        return;
-    platformContext()->beginPath();
-}
-
 void GraphicsContext::clearPlatformShadow()
 {
     if (paintingDisabled())
@@ -431,11 +417,7 @@ void GraphicsContext::clipPath(const Path& pathToClip, WindRule clipRule)
     if (platformContext()->useGPU())
         platformContext()->gpuCanvas()->clipPath(pathToClip);
 
-    // FIXME: Be smarter about this.
-    beginPath();
-    addPath(pathToClip);
-
-    SkPath path = platformContext()->currentPathInLocalCoordinates();
+    SkPath path = *pathToClip.platformPath();
     if (!isPathSkiaSafe(getCTM(), path))
         return;
 
@@ -738,17 +720,13 @@ void GraphicsContext::fillPath(const Path& pathToFill)
     if (paintingDisabled())
         return;
 
-    // FIXME: Be smarter about this.
-    beginPath();
-    addPath(pathToFill);
-
     if (platformContext()->useGPU() && platformContext()->canAccelerate()) {
         platformContext()->prepareForHardwareDraw();
         platformContext()->gpuCanvas()->fillPath(pathToFill);
         return;
     }
 
-    SkPath path = platformContext()->currentPathInLocalCoordinates();
+    SkPath path = *pathToFill.platformPath();
     if (!isPathSkiaSafe(getCTM(), path))
       return;
 
@@ -1204,11 +1182,7 @@ void GraphicsContext::strokePath(const Path& pathToStroke)
     if (paintingDisabled())
         return;
 
-    // FIXME: Be smarter about this.
-    beginPath();
-    addPath(pathToStroke);
-
-    SkPath path = platformContext()->currentPathInLocalCoordinates();
+    SkPath path = *pathToStroke.platformPath();
     if (!isPathSkiaSafe(getCTM(), path))
         return;
 

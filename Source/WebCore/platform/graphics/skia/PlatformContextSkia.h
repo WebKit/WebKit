@@ -118,7 +118,6 @@ public:
     void setAlpha(float);
     void setLineCap(SkPaint::Cap);
     void setLineJoin(SkPaint::Join);
-    void setFillRule(SkPath::FillType);
     void setXfermodeMode(SkXfermode::Mode);
     void setFillColor(SkColor);
     void setFillShader(SkShader*);
@@ -136,10 +135,6 @@ public:
     TextDrawingModeFlags getTextDrawingMode() const;
     float getAlpha() const;
     int getNormalizedAlpha() const;
-
-    void beginPath();
-    void addPath(const SkPath&);
-    SkPath currentPathInLocalCoordinates() const;
 
     void canvasClipPath(const SkPath&);
 
@@ -219,9 +214,6 @@ private:
     // Pointer to the current drawing state. This is a cached value of
     // mStateStack.back().
     State* m_state;
-
-    // Current path in global coordinates.
-    SkPath m_path;
 
     // Stores image sizes for a hint to compute image resampling modes.
     // Values are used in ImageSkia.cpp

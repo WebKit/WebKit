@@ -550,36 +550,10 @@ SkColor PlatformContextSkia::effectiveStrokeColor() const
     return m_state->applyAlpha(m_state->m_strokeColor);
 }
 
-void PlatformContextSkia::beginPath()
-{
-    m_path.reset();
-}
-
-void PlatformContextSkia::addPath(const SkPath& path)
-{
-    m_path.addPath(path, m_canvas->getTotalMatrix());
-}
-
-SkPath PlatformContextSkia::currentPathInLocalCoordinates() const
-{
-    SkPath localPath = m_path;
-    const SkMatrix& matrix = m_canvas->getTotalMatrix();
-    SkMatrix inverseMatrix;
-    if (!matrix.invert(&inverseMatrix))
-        return SkPath();
-    localPath.transform(inverseMatrix);
-    return localPath;
-}
-
 void PlatformContextSkia::canvasClipPath(const SkPath& path)
 {
     m_state->m_canvasClipApplied = true;
     m_canvas->clipPath(path);
-}
-
-void PlatformContextSkia::setFillRule(SkPath::FillType fr)
-{
-    m_path.setFillType(fr);
 }
 
 void PlatformContextSkia::setFillShader(SkShader* fillShader)

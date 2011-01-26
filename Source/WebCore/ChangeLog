@@ -1,3 +1,20 @@
+2011-01-26  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [SKIA] Remove "current path" of GraphicsContext
+        https://bugs.webkit.org/show_bug.cgi?id=53124
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::clipPath):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        * platform/graphics/skia/PathSkia.cpp:
+        (WebCore::Path::strokeBoundingRect):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        * platform/graphics/skia/PlatformContextSkia.h:
+
 2011-01-26  Zalan Bujtas <zbujtas@gmail.com>
 
         Reviewed by Andreas Kling.
