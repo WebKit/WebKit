@@ -32,6 +32,7 @@
 #include "CollectionType.h"
 #include "Color.h"
 #include "ContainerNode.h"
+#include "DOMTimeStamp.h"
 #include "DocumentTiming.h"
 #include "QualifiedName.h"
 #include "ScriptExecutionContext.h"
@@ -1078,7 +1079,7 @@ public:
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     int webkitRequestAnimationFrame(PassRefPtr<RequestAnimationFrameCallback>, Element*);
     void webkitCancelRequestAnimationFrame(int id);
-    void serviceScriptedAnimations();
+    void serviceScriptedAnimations(DOMTimeStamp);
 #endif
 
     bool mayCauseFlashOfUnstyledContent() const;

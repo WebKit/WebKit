@@ -1,3 +1,16 @@
+2011-01-26  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Add a DOMTimeStamp parameter to the requestAnimationFrame callback
+        https://bugs.webkit.org/show_bug.cgi?id=53142
+
+        Adds a test for the parameter passed to the requestAnimationFrame callback.
+
+        * fast/animation/request-animation-frame-timestamps-expected.txt: Added.
+        * fast/animation/request-animation-frame-timestamps.html: Added.
+        * fast/animation/script-tests/request-animation-frame-timestamps.js: Added.
+
 2011-01-25  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed Chromium test expectation change

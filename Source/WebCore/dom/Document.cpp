@@ -4986,7 +4986,7 @@ void Document::webkitCancelRequestAnimationFrame(int id)
     }
 }
 
-void Document::serviceScriptedAnimations()
+void Document::serviceScriptedAnimations(DOMTimeStamp time)
 {
     if (!m_requestAnimationFrameCallbacks)
         return;
@@ -5014,7 +5014,7 @@ void Document::serviceScriptedAnimations()
             RequestAnimationFrameCallback* callback = callbacks[i].get();
             if (!callback->m_firedOrCancelled && (!callback->m_element || callback->m_element->renderer())) {
                 callback->m_firedOrCancelled = true;
-                callback->handleEvent();
+                callback->handleEvent(time);
                 firedCallback = true;
                 callbacks.remove(i);
                 break;

@@ -121,6 +121,7 @@
 #include "WebVector.h"
 #include "WebViewClient.h"
 #include <wtf/ByteArray.h>
+#include <wtf/CurrentTime.h>
 #include <wtf/RefPtr.h>
 
 #if PLATFORM(CG)
@@ -979,7 +980,7 @@ void WebViewImpl::animate()
     if (webframe) {
         FrameView* view = webframe->frameView();
         if (view)
-            view->serviceScriptedAnimations();
+            view->serviceScriptedAnimations(convertSecondsToDOMTimeStamp(currentTime()));
     }
 #endif
 }

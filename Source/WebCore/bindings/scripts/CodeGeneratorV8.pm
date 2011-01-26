@@ -2393,7 +2393,7 @@ END
             @args = ();
             foreach my $param (@params) {
                 my $paramName = $param->name;
-                push(@implContent, "    v8::Handle<v8::Value> ${paramName}Handle = toV8(${paramName});\n");
+                push(@implContent, "    v8::Handle<v8::Value> ${paramName}Handle = " . NativeToJSValue($param, $paramName) . ";\n");
                 push(@implContent, "    if (${paramName}Handle.IsEmpty()) {\n");
                 push(@implContent, "        CRASH();\n");
                 push(@implContent, "        return true;\n");
@@ -3089,76 +3089,81 @@ sub IsDOMNodeType
 }
 
 
-sub ReturnNativeToJSValue
+sub NativeToJSValue
 {
     my $signature = shift;
     my $value = shift;
     my $indent = shift;
     my $type = GetTypeFromSignature($signature);
 
-    return "return v8Boolean($value)" if $type eq "boolean";
-    return "return v8::Handle<v8::Value>()" if $type eq "void";     # equivalent to v8::Undefined()
+    return "v8Boolean($value)" if $type eq "boolean";
+    return "v8::Handle<v8::Value>()" if $type eq "void";     # equivalent to v8::Undefined()
 
     # HTML5 says that unsigned reflected attributes should be in the range
     # [0, 2^31). When a value isn't in this range, a default value (or 0)
     # should be returned instead.
     if ($signature->extendedAttributes->{"Reflect"} and ($type eq "unsigned long" or $type eq "unsigned short")) {
         $value =~ s/getUnsignedIntegralAttribute/getIntegralAttribute/g;
-        return "return v8::Integer::NewFromUnsigned(std::max(0, " . $value . "))";
+        return "v8::Integer::NewFromUnsigned(std::max(0, " . $value . "))";
     }
 
     # For all the types where we use 'int' as the representation type,
     # we use Integer::New which has a fast Smi conversion check.
     my $nativeType = GetNativeType($type);
-    return "return v8::Integer::New($value)" if $nativeType eq "int";
-    return "return v8::Integer::NewFromUnsigned($value)" if $nativeType eq "unsigned";
+    return "v8::Integer::New($value)" if $nativeType eq "int";
+    return "v8::Integer::NewFromUnsigned($value)" if $nativeType eq "unsigned";
 
-    return "return v8DateOrNull($value)" if $type eq "Date";
+    return "v8DateOrNull($value)" if $type eq "Date";
     # long long and unsigned long long are not representable in ECMAScript.
-    return "return v8::Number::New(static_cast<double>($value))" if $type eq "long long" or $type eq "unsigned long long" or $type eq "DOMTimeStamp";
-    return "return v8::Number::New($value)" if $codeGenerator->IsPrimitiveType($type) or $type eq "SVGPaintType";
-    return "return $value.v8Value()" if $nativeType eq "ScriptValue";
+    return "v8::Number::New(static_cast<double>($value))" if $type eq "long long" or $type eq "unsigned long long" or $type eq "DOMTimeStamp";
+    return "v8::Number::New($value)" if $codeGenerator->IsPrimitiveType($type) or $type eq "SVGPaintType";
+    return "$value.v8Value()" if $nativeType eq "ScriptValue";
 
     if ($codeGenerator->IsStringType($type)) {
         my $conv = $signature->extendedAttributes->{"ConvertNullStringTo"};
         if (defined $conv) {
-            return "return v8StringOrNull($value)" if $conv eq "Null";
-            return "return v8StringOrUndefined($value)" if $conv eq "Undefined";
-            return "return v8StringOrFalse($value)" if $conv eq "False";
+            return "v8StringOrNull($value)" if $conv eq "Null";
+            return "v8StringOrUndefined($value)" if $conv eq "Undefined";
+            return "v8StringOrFalse($value)" if $conv eq "False";
 
             die "Unknown value for ConvertNullStringTo extended attribute";
         }
         $conv = $signature->extendedAttributes->{"ConvertScriptString"};
-        return "return v8StringOrNull($value)" if $conv;
-        return "return v8String($value)";
+        return "v8StringOrNull($value)" if $conv;
+        return "v8String($value)";
     }
 
     AddIncludesForType($type);
 
     # special case for non-DOM node interfaces
     if (IsDOMNodeType($type)) {
-        return "return toV8(${value}" . ($signature->extendedAttributes->{"ReturnsNew"} ? ", true)" : ")");
+        return "toV8(${value}" . ($signature->extendedAttributes->{"ReturnsNew"} ? ", true)" : ")");
     }
 
     if ($type eq "EventTarget") {
-        return "return V8DOMWrapper::convertEventTargetToV8Object($value)";
+        return "V8DOMWrapper::convertEventTargetToV8Object($value)";
     }
 
     if ($type eq "EventListener") {
         $implIncludes{"V8AbstractEventListener.h"} = 1;
-        return "return ${value} ? v8::Handle<v8::Value>(static_cast<V8AbstractEventListener*>(${value})->getListenerObject(imp->scriptExecutionContext())) : v8::Handle<v8::Value>(v8::Null())";
+        return "${value} ? v8::Handle<v8::Value>(static_cast<V8AbstractEventListener*>(${value})->getListenerObject(imp->scriptExecutionContext())) : v8::Handle<v8::Value>(v8::Null())";
     }
 
     if ($type eq "SerializedScriptValue") {
         $implIncludes{"$type.h"} = 1;
-        return "return $value->deserialize()";
+        return "$value->deserialize()";
     }
 
     $implIncludes{"wtf/RefCounted.h"} = 1;
     $implIncludes{"wtf/RefPtr.h"} = 1;
     $implIncludes{"wtf/GetPtr.h"} = 1;
 
-    return "return toV8($value)";
+    return "toV8($value)";
+}
+
+sub ReturnNativeToJSValue
+{
+    return "return " . NativeToJSValue(@_);
 }
 
 # Internal helper

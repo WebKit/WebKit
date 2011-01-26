@@ -1651,10 +1651,10 @@ void FrameView::unscheduleRelayout()
 }
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
-void FrameView::serviceScriptedAnimations()
+void FrameView::serviceScriptedAnimations(DOMTimeStamp time)
 {
     for (Frame* frame = m_frame.get(); frame; frame = frame->tree()->traverseNext())
-        frame->document()->serviceScriptedAnimations();
+        frame->document()->serviceScriptedAnimations(time);
 }
 #endif
 

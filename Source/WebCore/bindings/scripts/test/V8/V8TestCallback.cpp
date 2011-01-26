@@ -29,6 +29,9 @@
 #include "V8CustomVoidCallback.h"
 #include "V8DOMString.h"
 #include "V8Proxy.h"
+#include <wtf/GetPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 #include <wtf/Assertions.h>
 
@@ -113,7 +116,7 @@ bool V8TestCallback::callbackWithClass2Param(Class2* class2Param, const String& 
         CRASH();
         return true;
     }
-    v8::Handle<v8::Value> strArgHandle = toV8(strArg);
+    v8::Handle<v8::Value> strArgHandle = v8String(strArg);
     if (strArgHandle.IsEmpty()) {
         CRASH();
         return true;

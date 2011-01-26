@@ -1,3 +1,18 @@
+2011-01-26  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Add a DOMTimeStamp parameter to the requestAnimationFrame callback
+        https://bugs.webkit.org/show_bug.cgi?id=53142
+
+        Provides a timestamp to use for imperative animation callbacks.  In this patch the timestamp is
+        just the current time at the start of the callback invocation algorithm.  In the future we
+        could enhance this to try to take the compositing delay into effect to try to synchronize
+        imperative animations more closely with declarative ones, but this should do for now.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::animate):
+
 2011-01-25  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed trivial change.

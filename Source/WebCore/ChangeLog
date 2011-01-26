@@ -1,3 +1,30 @@
+2011-01-26  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Add a DOMTimeStamp parameter to the requestAnimationFrame callback
+        https://bugs.webkit.org/show_bug.cgi?id=53142
+
+        This adds a DOMTimeStamp parameter to the requestAnimationFrame callback to more
+        closely match mozilla's proposal.  This is useful if the page has multiple imperative animations
+        and wants to ensure that they all remain synchronized.  If each callback used Date.now() to
+        update its animation state, they would potentially be out of sync with each other.  If they use
+        the timestamp then all callbacks for the same "frame" will update to the same state.
+
+        Test: fast/animation/request-animation-frame-timestamps.html
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/scripts/test/V8/V8TestCallback.cpp:
+        (WebCore::V8TestCallback::callbackWithClass2Param):
+        * dom/Document.cpp:
+        (WebCore::Document::serviceScriptedAnimations):
+        * dom/Document.h:
+        * dom/RequestAnimationFrameCallback.h:
+        * dom/RequestAnimationFrameCallback.idl:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::serviceScriptedAnimations):
+        * page/FrameView.h:
+
 2011-01-25  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed attempt to fix compilation error for Chromium Clang.
