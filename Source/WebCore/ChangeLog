@@ -1,3 +1,27 @@
+2011-01-26  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fixed TiledBacking store to take into account new dirty regions caused by
+        paint time layouts.
+
+        Flawed rendering design for QtWebKit resulting in artifacts being displayed
+        https://bugs.webkit.org/show_bug.cgi?id=49184
+
+        There are no new tests as this patch aims at fixing flicker that
+        happen randomly, mostly on slow hardware, thus are hard to reproduce
+        consistently in an automated test.
+
+        This patch does not fully address the said bug but it is a step in the
+        right direction. A full solution to the bug, as currently perceived,
+        requires either a Qt GUI API change, a performance hit for QtWebKit,
+        or a hack, until a full solution is provided this patch is progress.
+
+        * platform/graphics/TiledBackingStore.cpp:
+        (WebCore::TiledBackingStore::updateTileBuffers):
+        Changed to take into account newly dirtied areas created during
+        tile update initiated layouts during the same update.
+
 2011-01-26  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Andreas Kling.

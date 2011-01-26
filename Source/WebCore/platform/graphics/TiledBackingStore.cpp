@@ -93,6 +93,8 @@ void TiledBackingStore::updateTileBuffers()
     if (m_contentsFrozen)
         return;
     
+    m_client->tiledBackingStorePaintBegin();
+
     Vector<IntRect> paintedArea;
     Vector<RefPtr<Tile> > dirtyTiles;
     TileMap::iterator end = m_tiles.end();
@@ -104,11 +106,10 @@ void TiledBackingStore::updateTileBuffers()
         paintedArea.append(mapToContents(it->second->rect()));
     }
     
-    if (dirtyTiles.isEmpty())
+    if (dirtyTiles.isEmpty()) {
+        m_client->tiledBackingStorePaintEnd(paintedArea);
         return;
-    
-    m_client->tiledBackingStorePaintBegin();
-
+    }
     // FIXME: In single threaded case, tile back buffers could be updated asynchronously 
     // one by one and then swapped to front in one go. This would minimize the time spent
     // blocking on tile updates.
