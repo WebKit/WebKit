@@ -1,3 +1,10 @@
+2011-01-25  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed attempt to fix compilation error for Chromium Clang.
+
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::advance):
+
 2011-01-25  Ned Holbrook  <nholbrook@apple.com>
 
         Reviewed by Dan Bernstein.
