@@ -444,7 +444,12 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML, con
 
     m_frame = frame;
 
-    if (frame || !url.isEmpty())
+    // We depend on the url getting immediately set in subframes, but we
+    // also depend on the url NOT getting immediately set in opened windows.
+    // See fast/dom/early-frame-url.html
+    // and fast/dom/location-new-window-no-crash.html, respectively.
+    // FIXME: Can/should we unify this behavior?
+    if ((frame && frame->ownerElement()) || !url.isEmpty())
         setURL(url);
 
     // Setting of m_baseURL needs to happen after the setURL call, since that
@@ -4567,9 +4572,8 @@ void Document::updateURLForPushOrReplaceState(const KURL& url)
     if (!f)
         return;
 
-    // FIXME: Eliminate this redundancy.
     setURL(url);
-    f->loader()->setURL(url);
+    f->loader()->setOutgoingReferrer(url);
     f->loader()->documentLoader()->replaceRequestURLForSameDocumentNavigation(url);
 }
 

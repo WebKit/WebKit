@@ -476,15 +476,16 @@ KURL FrameLoader::iconURL()
         return KURL(ParsedURLString, m_frame->document()->iconURL());
 
     // Don't return a favicon iconURL unless we're http or https
-    if (!m_URL.protocolInHTTPFamily())
+    KURL documentURL = m_frame->document()->url();
+    if (!documentURL.protocolInHTTPFamily())
         return KURL();
 
     KURL url;
-    bool couldSetProtocol = url.setProtocol(m_URL.protocol());
+    bool couldSetProtocol = url.setProtocol(documentURL.protocol());
     ASSERT_UNUSED(couldSetProtocol, couldSetProtocol);
-    url.setHost(m_URL.host());
-    if (m_URL.hasPort())
-        url.setPort(m_URL.port());
+    url.setHost(documentURL.host());
+    if (documentURL.hasPort())
+        url.setPort(documentURL.port());
     url.setPath("/favicon.ico");
     return url;
 }
@@ -513,10 +514,9 @@ bool FrameLoader::didOpenURL(const KURL& url)
             window->setDefaultStatus(String());
         }
     }
-    m_URL = url;
-    if (m_URL.protocolInHTTPFamily() && !m_URL.host().isEmpty() && m_URL.path().isEmpty())
-        m_URL.setPath("/");
-    m_workingURL = m_URL;
+    m_workingURL = url;
+    if (m_workingURL.protocolInHTTPFamily() && !m_workingURL.host().isEmpty() && m_workingURL.path().isEmpty())
+        m_workingURL.setPath("/");
 
     started();
 
@@ -536,9 +536,7 @@ void FrameLoader::didExplicitOpen()
     // from a subsequent window.document.open / window.document.write call. 
     // Canceling redirection here works for all cases because document.open 
     // implicitly precedes document.write.
-    m_frame->navigationScheduler()->cancel(); 
-    if (m_frame->document()->url() != blankURL())
-        m_URL = m_frame->document()->url();
+    m_frame->navigationScheduler()->cancel();
 }
 
 
@@ -630,21 +628,26 @@ void FrameLoader::receivedFirstData()
         return;
 
     if (url.isEmpty())
-        url = m_URL.string();
+        url = m_frame->document()->url().string();
     else
         url = m_frame->document()->completeURL(url).string();
 
     m_frame->navigationScheduler()->scheduleRedirect(delay, url);
 }
 
-void FrameLoader::setURL(const KURL& url)
+const KURL& FrameLoader::url() const
 {
-    KURL ref(url);
-    ref.setUser(String());
-    ref.setPass(String());
-    ref.removeFragmentIdentifier();
-    m_outgoingReferrer = ref.string();
-    m_URL = url;
+    ASSERT(m_frame->document());
+    return m_frame->document()->url();
+}
+
+void FrameLoader::setOutgoingReferrer(const KURL& url)
+{
+    KURL outgoingReferrer(url);
+    outgoingReferrer.setUser(String());
+    outgoingReferrer.setPass(String());
+    outgoingReferrer.removeFragmentIdentifier();
+    m_outgoingReferrer = outgoingReferrer.string();
 }
 
 void FrameLoader::didBeginDocument(bool dispatch)
@@ -720,7 +723,7 @@ void FrameLoader::startIconLoader()
             if (!iconDatabase()->iconDataKnownForIconURL(urlString)) {
                 LOG(IconDatabase, "Told not to load icon %s but icon data is not yet available - registering for notification and requesting load from disk", urlString.ascii().data());
                 m_client->registerForIconNotification();
-                iconDatabase()->iconForPageURL(m_URL.string(), IntSize(0, 0));
+                iconDatabase()->iconForPageURL(m_frame->document()->url().string(), IntSize(0, 0));
                 iconDatabase()->iconForPageURL(originalRequestURL().string(), IntSize(0, 0));
             } else
                 m_client->dispatchDidReceiveIcon();
@@ -757,8 +760,8 @@ void FrameLoader::startIconLoader()
 void FrameLoader::commitIconURLToIconDatabase(const KURL& icon)
 {
     ASSERT(iconDatabase());
-    LOG(IconDatabase, "Committing iconURL %s to database for pageURLs %s and %s", icon.string().ascii().data(), m_URL.string().ascii().data(), originalRequestURL().string().ascii().data());
-    iconDatabase()->setIconURLForPageURL(icon.string(), m_URL.string());
+    LOG(IconDatabase, "Committing iconURL %s to database for pageURLs %s and %s", icon.string().ascii().data(), m_frame->document()->url().string().ascii().data(), originalRequestURL().string().ascii().data());
+    iconDatabase()->setIconURLForPageURL(icon.string(), m_frame->document()->url().string());
     iconDatabase()->setIconURLForPageURL(icon.string(), originalRequestURL().string());
 }
 
@@ -784,7 +787,7 @@ void FrameLoader::finishedParsing()
     // Check if the scrollbars are really needed for the content.
     // If not, remove them, relayout, and repaint.
     m_frame->view()->restoreScrollbar();
-    m_frame->view()->scrollToFragment(m_URL);
+    m_frame->view()->scrollToFragment(m_frame->document()->url());
 }
 
 void FrameLoader::loadDone()
@@ -1023,7 +1026,7 @@ void FrameLoader::checkIfDisplayInsecureContent(SecurityOrigin* context, const K
     if (!isMixedContent(context, url))
         return;
 
-    String message = makeString("The page at ", m_URL.string(), " displayed insecure content from ", url.string(), ".\n");
+    String message = makeString("The page at ", m_frame->document()->url().string(), " displayed insecure content from ", url.string(), ".\n");
     m_frame->domWindow()->console()->addMessage(HTMLMessageSource, LogMessageType, WarningMessageLevel, message, 1, String());
 
     m_client->didDisplayInsecureContent();
@@ -1034,7 +1037,7 @@ void FrameLoader::checkIfRunInsecureContent(SecurityOrigin* context, const KURL&
     if (!isMixedContent(context, url))
         return;
 
-    String message = makeString("The page at ", m_URL.string(), " ran insecure content from ", url.string(), ".\n");
+    String message = makeString("The page at ", m_frame->document()->url().string(), " ran insecure content from ", url.string(), ".\n");
     m_frame->domWindow()->console()->addMessage(HTMLMessageSource, LogMessageType, WarningMessageLevel, message, 1, String());
 
     m_client->didRunInsecureContent(context);
@@ -1111,7 +1114,7 @@ void FrameLoader::updateFirstPartyForCookies()
     if (m_frame->tree()->parent())
         setFirstPartyForCookies(m_frame->tree()->parent()->document()->firstPartyForCookies());
     else
-        setFirstPartyForCookies(m_URL);
+        setFirstPartyForCookies(m_frame->document()->url());
 }
 
 void FrameLoader::setFirstPartyForCookies(const KURL& url)
@@ -1129,6 +1132,7 @@ void FrameLoader::loadInSameDocument(const KURL& url, SerializedScriptValue* sta
     ASSERT(!stateObject || (stateObject && !isNewNavigation));
 
     // Update the data source's request with the new URL to fake the URL change
+    KURL oldURL = m_frame->document()->url();
     m_frame->document()->setURL(url);
     documentLoader()->replaceRequestURLForSameDocumentNavigation(url);
     if (isNewNavigation && !shouldTreatURLAsSameAsCurrent(url) && !stateObject) {
@@ -1146,11 +1150,8 @@ void FrameLoader::loadInSameDocument(const KURL& url, SerializedScriptValue* sta
         history()->updateBackForwardListForFragmentScroll();
     }
     
-    String oldURL;
-    bool hashChange = equalIgnoringFragmentIdentifier(url, m_URL) && url.fragmentIdentifier() != m_URL.fragmentIdentifier();
-    oldURL = m_URL;
+    bool hashChange = equalIgnoringFragmentIdentifier(url, oldURL) && url.fragmentIdentifier() != oldURL.fragmentIdentifier();
     
-    m_URL = url;
     history()->updateForSameDocumentNavigation();
 
     // If we were in the autoscroll/panScroll mode we want to stop it before following the link to the anchor
@@ -1164,7 +1165,7 @@ void FrameLoader::loadInSameDocument(const KURL& url, SerializedScriptValue* sta
     // We need to scroll to the fragment whether or not a hash change occurred, since
     // the user might have scrolled since the previous navigation.
     if (FrameView* view = m_frame->view())
-        view->scrollToFragment(m_URL);
+        view->scrollToFragment(url);
     
     m_isComplete = false;
     checkCompleted();
@@ -1849,7 +1850,8 @@ void FrameLoader::commitProvisionalLoad()
     RefPtr<CachedPage> cachedPage = m_loadingFromCachedPage ? pageCache()->get(history()->provisionalItem()) : 0;
     RefPtr<DocumentLoader> pdl = m_provisionalDocumentLoader;
 
-    LOG(PageCache, "WebCoreLoading %s: About to commit provisional load from previous URL '%s' to new URL '%s'", m_frame->tree()->uniqueName().string().utf8().data(), m_URL.string().utf8().data(), 
+    LOG(PageCache, "WebCoreLoading %s: About to commit provisional load from previous URL '%s' to new URL '%s'", m_frame->tree()->uniqueName().string().utf8().data(),
+        m_frame->document() ? m_frame->document()->url().string().utf8().data() : "", 
         pdl ? pdl->url().string().utf8().data() : "<no provisional DocumentLoader>");
 
     // Check to see if we need to cache the page we are navigating away from into the back/forward cache.
@@ -1903,7 +1905,8 @@ void FrameLoader::commitProvisionalLoad()
         didOpenURL(url);
     }
 
-    LOG(Loading, "WebCoreLoading %s: Finished committing provisional load to URL %s", m_frame->tree()->uniqueName().string().utf8().data(), m_URL.string().utf8().data());
+    LOG(Loading, "WebCoreLoading %s: Finished committing provisional load to URL %s", m_frame->tree()->uniqueName().string().utf8().data(),
+        m_frame->document() ? m_frame->document()->url().string().utf8().data() : "");
 
     if (m_loadType == FrameLoadTypeStandard && m_documentLoader->isClientRedirect())
         history()->updateForClientRedirect();
@@ -2136,7 +2139,6 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
     if (url.protocolInHTTPFamily() && !url.host().isEmpty() && url.path().isEmpty())
         url.setPath("/");
     
-    m_URL = url;
     m_workingURL = url;
 
     started();
@@ -2862,7 +2864,7 @@ bool FrameLoader::shouldScrollToAnchor(bool isFormSubmission, const String& http
         && loadType != FrameLoadTypeReload
         && loadType != FrameLoadTypeReloadFromOrigin
         && loadType != FrameLoadTypeSame
-        && !shouldReload(this->url(), url)
+        && !shouldReload(m_frame->document()->url(), url)
         // We don't want to just scroll if a link from within a
         // frameset is trying to reload the frameset into _top.
         && !m_frame->document()->isFrameSet();
