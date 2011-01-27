@@ -1,3 +1,102 @@
+2011-01-26  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed Chromium test expectation change.
+
+        Update test expectations for r76743
+
+        * platform/chromium-linux/css1/box_properties/clear_float-expected.checksum:
+        * platform/chromium-linux/css1/box_properties/clear_float-expected.png:
+        * platform/chromium-linux/css1/box_properties/float_elements_in_series-expected.checksum:
+        * platform/chromium-linux/css1/box_properties/float_elements_in_series-expected.png:
+        * platform/chromium-linux/css1/box_properties/float_on_text_elements-expected.checksum:
+        * platform/chromium-linux/css1/box_properties/float_on_text_elements-expected.png:
+        * platform/chromium-linux/css2.1/t0905-c5525-fltwidth-00-c-g-expected.checksum:
+        * platform/chromium-linux/css2.1/t0905-c5525-fltwidth-00-c-g-expected.png:
+        * platform/chromium-linux/fast/multicol/shadow-breaking-expected.checksum:
+        * platform/chromium-linux/fast/multicol/shadow-breaking-expected.png: Added.
+        * platform/chromium-linux/fast/repaint/line-flow-with-floats-1-expected.checksum:
+        * platform/chromium-linux/fast/repaint/line-flow-with-floats-1-expected.png:
+        * platform/chromium-linux/fast/repaint/line-flow-with-floats-10-expected.checksum:
+        * platform/chromium-linux/fast/repaint/line-flow-with-floats-10-expected.png:
+        * platform/chromium-linux/fast/repaint/line-flow-with-floats-2-expected.checksum:
+        * platform/chromium-linux/fast/repaint/line-flow-with-floats-2-expected.png:
+        * platform/chromium-linux/fast/repaint/line-flow-with-floats-3-expected.checksum:
+        * platform/chromium-linux/fast/repaint/line-flow-with-floats-3-expected.png:
+        * platform/chromium-linux/fast/repaint/line-flow-with-floats-4-expected.checksum:
+        * platform/chromium-linux/fast/repaint/line-flow-with-floats-4-expected.png:
+        * platform/chromium-linux/fast/repaint/line-flow-with-floats-5-expected.checksum:
+        * platform/chromium-linux/fast/repaint/line-flow-with-floats-5-expected.png:
+        * platform/chromium-linux/fast/repaint/line-flow-with-floats-6-expected.checksum:
+        * platform/chromium-linux/fast/repaint/line-flow-with-floats-6-expected.png:
+        * platform/chromium-linux/fast/repaint/line-flow-with-floats-7-expected.checksum:
+        * platform/chromium-linux/fast/repaint/line-flow-with-floats-7-expected.png:
+        * platform/chromium-linux/fast/repaint/line-flow-with-floats-8-expected.checksum:
+        * platform/chromium-linux/fast/repaint/line-flow-with-floats-8-expected.png:
+        * platform/chromium-linux/svg/custom/svg-fonts-in-html-expected.checksum:
+        * platform/chromium-linux/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/x_tr_align_justify-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/x_tr_align_justify-expected.png:
+        * platform/chromium-mac/css1/box_properties/clear_float-expected.checksum: Added.
+        * platform/chromium-mac/css1/box_properties/clear_float-expected.png: Added.
+        * platform/chromium-mac/css1/box_properties/float_on_text_elements-expected.checksum: Added.
+        * platform/chromium-mac/css1/box_properties/float_on_text_elements-expected.png: Added.
+        * platform/chromium-mac/css2.1/t0905-c5525-fltwidth-00-c-g-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t0905-c5525-fltwidth-00-c-g-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/shadow-breaking-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/shadow-breaking-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-1-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-1-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-10-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-10-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-2-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-2-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-3-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-3-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-4-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-4-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-5-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-5-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-6-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-6-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-7-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-7-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-8-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-8-expected.png:
+        * platform/chromium-mac/svg/custom/svg-fonts-in-html-expected.checksum:
+        * platform/chromium-mac/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium-win/css1/box_properties/clear_float-expected.checksum:
+        * platform/chromium-win/css1/box_properties/clear_float-expected.png:
+        * platform/chromium-win/css1/box_properties/float_elements_in_series-expected.checksum:
+        * platform/chromium-win/css1/box_properties/float_elements_in_series-expected.png:
+        * platform/chromium-win/css1/box_properties/float_on_text_elements-expected.checksum:
+        * platform/chromium-win/css1/box_properties/float_on_text_elements-expected.png:
+        * platform/chromium-win/css2.1/t0905-c5525-fltwidth-00-c-g-expected.checksum:
+        * platform/chromium-win/css2.1/t0905-c5525-fltwidth-00-c-g-expected.png:
+        * platform/chromium-win/fast/multicol/shadow-breaking-expected.checksum:
+        * platform/chromium-win/fast/multicol/shadow-breaking-expected.png:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-1-expected.checksum:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-1-expected.png:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-10-expected.checksum:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-10-expected.png:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-2-expected.checksum:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-2-expected.png:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-3-expected.checksum:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-3-expected.png:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-4-expected.checksum:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-4-expected.png:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-5-expected.checksum:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-5-expected.png:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-6-expected.checksum:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-6-expected.png:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-7-expected.checksum:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-7-expected.png:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-8-expected.checksum:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-8-expected.png:
+        * platform/chromium-win/svg/custom/svg-fonts-in-html-expected.checksum:
+        * platform/chromium-win/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/x_tr_align_justify-expected.checksum:
+        * platform/chromium-win/tables/mozilla/marvin/x_tr_align_justify-expected.png:
+
 2011-01-26  Dan Bernstein  <mitz@apple.com>
 
         Updated results for the html.css changes in r76726. The old results were prepared before
