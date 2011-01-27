@@ -1,3 +1,9 @@
+2011-01-27  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, fix typo introduced in r76783.
+
+        * platform/gtk/Skipped:
+
 2011-01-27  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
