@@ -2573,7 +2573,8 @@ BUGWK44406 : http/tests/appcache/foreign-fallback.html = PASS FAIL CRASH
 // This test starts to timeout during build bots were down between 68880:68920
 BUG_HCLAM WIN : fast/css/acid2-pixel.html = TIMEOUT PASS
 
-BUGCR62738 BUGCR60845 WIN LINUX : media/video-size.html = PASS TEXT CRASH TIMEOUT
+BUGCR62738 BUGCR60845 WIN LINUX RELEASE : media/video-size.html = PASS TIMEOUT
+BUGCR62738 BUGCR60845 WIN LINUX MAC DEBUG : media/video-size.html = CRASH PASS TIMEOUT
 
 // Unexpected timeout in these tests.
 BUG_HCLAM : http/tests/css/border-image-loading.html = TEXT TIMEOUT PASS
@@ -2918,9 +2919,12 @@ BUGCR66085 LINUX : media/constructors.html = PASS TIMEOUT
 BUGCR66085 : media/remove-from-document.html = PASS TIMEOUT
 BUGCR66085 MAC : media/video-display-toggle.html = PASS TIMEOUT
 BUGCR66085 : media/video-play-pause-exception.html = PASS TIMEOUT
-BUGCR66085 : media/video-source.html = PASS TIMEOUT
+BUGCR66085 WIN : media/video-source.html = PASS TIMEOUT
+BUGCR66085 LINUX RELEASE : media/video-source.html = PASS TIMEOUT
+BUGCR66085 LINUX DEBUG : media/video-source.html = CRASH PASS TIMEOUT
+
 BUGCR66085 : media/video-source-type.html = PASS TIMEOUT
-BUGCR66085 LINUX : media/video-src-source.html = PASS TIMEOUT
+BUGCR66085 LINUX DEBUG : media/video-src-source.html = CRASH PASS TIMEOUT
 
 // Flaky failures
 BUGCR66087 WIN : fast/dom/Geolocation/timestamp.html = PASS TEXT

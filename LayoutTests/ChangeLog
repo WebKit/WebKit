@@ -1,3 +1,9 @@
+2011-01-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed Chromium test expectation update for video tests.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-27  Charlie Reis  <creis@chromium.org>
 
         Reviewed by Mihai Parparita.
