@@ -134,7 +134,6 @@ fast/media/mq-transform-03.html
 fast/text/backslash-to-yen-sign-euc.html
 fast/text/hyphenate-first-word.html
 fast/text/hyphenate-locale.html
-fast/text/international/bidi-mirror-he-ar.html
 fast/text/international/bold-bengali.html
 media/video-zoom.html
 svg/W3C-SVG-1.1/text-tselect-02-f.svg

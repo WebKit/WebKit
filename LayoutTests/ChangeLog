@@ -1,3 +1,10 @@
+2011-01-27  Jessie Berlin  <jberlin@apple.com>
+
+        fast/text/international/bidi-mirror-he-ar.html now passed on Windows in WebKit2.
+        Unreviewed.
+
+        * platform/win-wk2/Skipped:
+
 2011-01-27  Maciej Stachowiak  <mjs@apple.com>
 
         Unreviewed.
