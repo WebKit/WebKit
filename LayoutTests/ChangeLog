@@ -1,3 +1,12 @@
+2011-01-27  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, new GTK baselines for fast/text/justify* tests
+        introduced in r76743.
+
+        * platform/gtk/fast/text/justify-ideograph-complex-expected.txt: Added.
+        * platform/gtk/fast/text/justify-ideograph-simple-expected.txt: Added.
+        * platform/gtk/fast/text/justify-ideograph-vertical-expected.txt: Added.
+
 2011-01-27  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
