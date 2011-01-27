@@ -1,3 +1,15 @@
+2011-01-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add or update WebKit2-specific results to account for different reporting of scroll position
+        https://bugs.webkit.org/show_bug.cgi?id=53226
+
+        * platform/mac-wk2/fast/multicol: Added.
+        * platform/mac-wk2/fast/multicol/vertical-rl: Added.
+        * platform/mac-wk2/fast/multicol/vertical-rl/column-break-with-balancing-expected.txt: Added.
+        * platform/mac-wk2/fast/multicol/vertical-rl/float-paginate-complex-expected.txt: Added.
+
 2011-01-26  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.
