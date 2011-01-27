@@ -49,35 +49,27 @@ void HTMLViewSourceParser::insert(const SegmentedString&)
 
 void HTMLViewSourceParser::pumpTokenizer()
 {
-    while (m_tokenizer->nextToken(m_input.current(), m_token)) {
-        m_token.end(m_input.current().numberOfCharactersConsumed());
+    while (true) {
+        m_sourceTracker.start(m_input, m_token);
+        if (!m_tokenizer->nextToken(m_input.current(), m_token))
+            break;
+        m_sourceTracker.end(m_input, m_token);
+
         document()->addSource(sourceForToken(), m_token);
         updateTokenizerState();
-        m_token.clear(m_input.current().numberOfCharactersConsumed());
+        m_token.clear();
     }
 }
 
 void HTMLViewSourceParser::append(const SegmentedString& input)
 {
     m_input.appendToEnd(input);
-    m_source.append(input);
     pumpTokenizer();
 }
 
 String HTMLViewSourceParser::sourceForToken()
 {
-    if (m_token.type() == HTMLToken::EndOfFile)
-        return String();
-
-    ASSERT(m_source.numberOfCharactersConsumed() == m_token.startIndex());
-    UChar* data = 0;
-    int length = m_token.endIndex() - m_token.startIndex();
-    String source = String::createUninitialized(length, data);
-    for (int i = 0; i < length; ++i) {
-        data[i] = *m_source;
-        m_source.advance();
-    }
-    return source;
+    return m_sourceTracker.sourceForToken(m_token);
 }
 
 void HTMLViewSourceParser::updateTokenizerState()

@@ -30,6 +30,7 @@
 #include "FragmentScriptingPermission.h"
 #include "HTMLInputStream.h"
 #include "HTMLScriptRunnerHost.h"
+#include "HTMLSourceTracker.h"
 #include "HTMLToken.h"
 #include "ScriptableDocumentParser.h"
 #include "SegmentedString.h"
@@ -141,6 +142,7 @@ private:
     OwnPtr<HTMLTreeBuilder> m_treeBuilder;
     OwnPtr<HTMLPreloadScanner> m_preloadScanner;
     OwnPtr<HTMLParserScheduler> m_parserScheduler;
+    HTMLSourceTracker m_sourceTracker;
 
     bool m_endWasDelayed;
     unsigned m_writeNestingLevel;

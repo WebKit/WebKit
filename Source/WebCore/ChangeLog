@@ -1,3 +1,73 @@
+2011-01-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Generalize the mechanism view-source uses to remember the source for an HTMLToken
+        https://bugs.webkit.org/show_bug.cgi?id=53200
+
+        Currently view-source tracks the source associated with each HTMLToken.
+        We want to re-use this mechanism for the new XSS auditor.  This patch
+        moves this code into its own class so it can be shared between the
+        view-source parser and the general HTML parser.  This patch also add
+        support for tracking the source of tokens that span document.write
+        boundaries.
+
+        No functional change.  This code change is somewhat tested by our
+        view-source layout tests.
+
+        * Android.mk:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+            - Fun with updating build files.
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::pumpTokenizer):
+            - Teach HTMLDocumentParser to track the source for HTMLTokens.
+              Currently, this information isn't used, but it will be shortly.
+              I ran the HTML parser benchmark and this change didn't have a
+              measurable effect.
+        * html/parser/HTMLDocumentParser.h:
+            - Composite in the HTMLSourceTracker.
+        * html/parser/HTMLSourceTracker.cpp: Added.
+        (WebCore::HTMLSourceTracker::HTMLSourceTracker):
+        (WebCore::HTMLSourceTracker::start):
+        (WebCore::HTMLSourceTracker::end):
+            - This function should eventualy be folded into HTMLTokenizer.
+        (WebCore::HTMLSourceTracker::sourceForToken):
+        * html/parser/HTMLSourceTracker.h: Added.
+        * html/parser/HTMLToken.h:
+            - Now HTMLTokens always have a start index of zero.  To do the job
+              of the old start index, this patch introduces the notion of a
+              baseOffset.  Unlike the start index (which was used as the base
+              offset for all the other indicies), the baseOffset can change
+              over the lifetime of the token.  We need the flexibility to
+              change the offset for tokens that span document.write boundaries.
+              Values are now normalized to zero-offset when stored.
+        (WebCore::HTMLToken::clear):
+        (WebCore::HTMLToken::setBaseOffset):
+        (WebCore::HTMLToken::end):
+        (WebCore::HTMLToken::beginAttributeName):
+        (WebCore::HTMLToken::endAttributeName):
+        (WebCore::HTMLToken::beginAttributeValue):
+        (WebCore::HTMLToken::endAttributeValue):
+        * html/parser/HTMLViewSourceParser.cpp:
+            - Updates the HTMLViewSourceParser to use the new
+              HTMLSourceTracker.
+        (WebCore::HTMLViewSourceParser::pumpTokenizer):
+        (WebCore::HTMLViewSourceParser::append):
+        (WebCore::HTMLViewSourceParser::sourceForToken):
+            - This function now just calls through to HTMLSourceTracker.
+        * html/parser/HTMLViewSourceParser.h:
+        * platform/text/SegmentedString.cpp:
+        (WebCore::SegmentedString::currentColumn):
+        (WebCore::SegmentedString::setCurrentPosition):
+        * platform/text/SegmentedString.h:
+        (WebCore::SegmentedString::numberOfCharactersConsumed):
+            - We need to handle the general case now.  The "slow" version
+              doesn't turn out to be any slower in practice anyway.
+
 2011-01-27  Sam Weinig  <sam@webkit.org>
 
         Fix all the builds.

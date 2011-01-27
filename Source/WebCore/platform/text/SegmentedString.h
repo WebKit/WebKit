@@ -206,12 +206,14 @@ public:
 
     int numberOfCharactersConsumed() const
     {
-        // We don't currently handle the case when there are pushed character.
-        ASSERT(!m_pushedChar1);
-        return m_numberOfCharactersConsumedPriorToCurrentString + m_currentString.numberOfCharactersConsumed();
+        int numberOfPushedCharacters = 0;
+        if (m_pushedChar1) {
+            ++numberOfPushedCharacters;
+            if (m_pushedChar2)
+                ++numberOfPushedCharacters;
+        }
+        return m_numberOfCharactersConsumedPriorToCurrentString + m_currentString.numberOfCharactersConsumed() - numberOfPushedCharacters;
     }
-
-    int numberOfCharactersConsumedSlow() const;
 
     String toString() const;
 

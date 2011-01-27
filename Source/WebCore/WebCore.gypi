@@ -1987,6 +1987,8 @@
             'html/parser/HTMLScriptRunner.cpp',
             'html/parser/HTMLScriptRunner.h',
             'html/parser/HTMLScriptRunnerHost.h',
+            'html/parser/HTMLSourceTracker.cpp',
+            'html/parser/HTMLSourceTracker.h',
             'html/parser/HTMLToken.h',
             'html/parser/HTMLTokenizer.cpp',
             'html/parser/HTMLTokenizer.h',

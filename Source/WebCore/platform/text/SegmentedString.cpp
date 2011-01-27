@@ -186,17 +186,6 @@ void SegmentedString::advanceSubstring()
     }
 }
 
-int SegmentedString::numberOfCharactersConsumedSlow() const
-{
-    int result = m_numberOfCharactersConsumedPriorToCurrentString + m_currentString.numberOfCharactersConsumed();
-    if (m_pushedChar1) {
-        --result;
-        if (m_pushedChar2)
-            --result;
-    }
-    return result;
-}
-
 String SegmentedString::toString() const
 {
     String result;
@@ -262,14 +251,14 @@ WTF::ZeroBasedNumber SegmentedString::currentLine() const
 
 WTF::ZeroBasedNumber SegmentedString::currentColumn() const
 {
-    int zeroBasedColumn = numberOfCharactersConsumedSlow() - m_numberOfCharactersConsumedPriorToCurrentLine;
+    int zeroBasedColumn = numberOfCharactersConsumed() - m_numberOfCharactersConsumedPriorToCurrentLine;
     return WTF::ZeroBasedNumber::fromZeroBasedInt(zeroBasedColumn);
 }
 
 void SegmentedString::setCurrentPosition(WTF::ZeroBasedNumber line, WTF::ZeroBasedNumber columnAftreProlog, int prologLength)
 {
     m_currentLine = line.zeroBasedInt();
-    m_numberOfCharactersConsumedPriorToCurrentLine = numberOfCharactersConsumedSlow() + prologLength - columnAftreProlog.zeroBasedInt();
+    m_numberOfCharactersConsumedPriorToCurrentLine = numberOfCharactersConsumed() + prologLength - columnAftreProlog.zeroBasedInt();
 }
 
 }

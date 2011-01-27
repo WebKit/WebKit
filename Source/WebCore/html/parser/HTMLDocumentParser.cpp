@@ -226,8 +226,11 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
         if (!m_treeBuilder->isParsingFragment()
             && document()->frame() && document()->frame()->navigationScheduler()->locationChangePending())
             break;
+
+        m_sourceTracker.start(m_input, m_token);
         if (!m_tokenizer->nextToken(m_input.current(), m_token))
             break;
+        m_sourceTracker.end(m_input, m_token);
 
         m_treeBuilder->constructTreeFromToken(m_token);
         m_token.clear();

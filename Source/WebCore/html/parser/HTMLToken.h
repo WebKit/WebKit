@@ -64,20 +64,26 @@ public:
 
     HTMLToken() { clear(); }
 
-    void clear(int startIndex = 0)
+    void clear()
     {
         m_type = Uninitialized;
-        m_range.m_start = startIndex;
-        m_range.m_end = startIndex;
+        m_range.m_start = 0;
+        m_range.m_end = 0;
+        m_baseOffset = 0;
         m_data.clear();
     }
 
     int startIndex() const { return m_range.m_start; }
     int endIndex() const { return m_range.m_end; }
 
-    void end(int endIndex)
+    void setBaseOffset(int offset)
     {
-        m_range.m_end = endIndex;
+        m_baseOffset = offset;
+    }
+
+    void end(int endOffset)
+    {
+        m_range.m_end = endOffset - m_baseOffset;
     }
 
     void makeEndOfFile()
@@ -172,29 +178,30 @@ public:
 #endif
     }
 
-    void beginAttributeName(int index)
+    void beginAttributeName(int offset)
     {
-        m_currentAttribute->m_nameRange.m_start = index;
+        m_currentAttribute->m_nameRange.m_start = offset - m_baseOffset;
     }
 
-    void endAttributeName(int index)
+    void endAttributeName(int offset)
     {
+        int index = offset - m_baseOffset;
         m_currentAttribute->m_nameRange.m_end = index;
         m_currentAttribute->m_valueRange.m_start = index;
         m_currentAttribute->m_valueRange.m_end = index;
     }
 
-    void beginAttributeValue(int index)
+    void beginAttributeValue(int offset)
     {
-        m_currentAttribute->m_valueRange.m_start = index;
+        m_currentAttribute->m_valueRange.m_start = offset - m_baseOffset;
 #ifndef NDEBUG
         m_currentAttribute->m_valueRange.m_end = 0;
 #endif
     }
 
-    void endAttributeValue(int index)
+    void endAttributeValue(int offset)
     {
-        m_currentAttribute->m_valueRange.m_end = index;
+        m_currentAttribute->m_valueRange.m_end = offset - m_baseOffset;
     }
 
     void appendToAttributeName(UChar character)
@@ -331,9 +338,8 @@ private:
     };
 
     Type m_type;
-
-    // Which characters from the input stream are represented by this token.
-    Range m_range;
+    Range m_range; // Always starts at zero.
+    int m_baseOffset;
 
     // "name" for DOCTYPE, StartTag, and EndTag
     // "characters" for Character

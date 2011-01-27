@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2010 Adam Barth. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,56 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTMLViewSourceParser_h
-#define HTMLViewSourceParser_h
+#ifndef HTMLSourceTracker_h
+#define HTMLSourceTracker_h
 
-#include "DecodedDataDocumentParser.h"
 #include "HTMLInputStream.h"
-#include "HTMLSourceTracker.h"
 #include "HTMLToken.h"
-#include "HTMLTokenizer.h"
-#include "HTMLViewSourceDocument.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
-class HTMLTokenizer;
-class HTMLScriptRunner;
-class HTMLTreeBuilder;
-class HTMLPreloadScanner;
-class ScriptController;
-class ScriptSourceCode;
-
-class HTMLViewSourceParser :  public DecodedDataDocumentParser {
+class HTMLSourceTracker {
+    WTF_MAKE_NONCOPYABLE(HTMLSourceTracker);
 public:
-    static PassRefPtr<HTMLViewSourceParser> create(HTMLViewSourceDocument* document)
-    {
-        return adoptRef(new HTMLViewSourceParser(document));
-    }
-    virtual ~HTMLViewSourceParser();
+    HTMLSourceTracker();
 
-protected:
-    explicit HTMLViewSourceParser(HTMLViewSourceDocument*);
+    // FIXME: Once we move "end" into HTMLTokenizer, rename "start" to
+    // something that makes it obvious that this method can be called multiple
+    // times.
+    void start(const HTMLInputStream&, HTMLToken&);
+    void end(const HTMLInputStream&, HTMLToken&);
 
-    HTMLTokenizer* tokenizer() const { return m_tokenizer.get(); }
+    String sourceForToken(const HTMLToken&);
 
 private:
-    // DocumentParser
-    virtual void insert(const SegmentedString&);
-    virtual void append(const SegmentedString&);
-    virtual void finish();
-    virtual bool finishWasCalled();
-
-    HTMLViewSourceDocument* document() const { return static_cast<HTMLViewSourceDocument*>(DecodedDataDocumentParser::document()); }
-
-    void pumpTokenizer();
-    String sourceForToken();
-    void updateTokenizerState();
-
-    HTMLInputStream m_input;
-    HTMLToken m_token;
-    HTMLSourceTracker m_sourceTracker;
-    OwnPtr<HTMLTokenizer> m_tokenizer;
+    String m_sourceFromPreviousSegments;
+    SegmentedString m_source;
 };
 
 }

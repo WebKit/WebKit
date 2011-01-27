@@ -55445,6 +55445,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\html\parser\HTMLSourceTracker.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLSourceTracker.h"
+					>
+				</File>
+				<File
 					RelativePath="..\html\parser\HTMLToken.h"
 					>
 				</File>
