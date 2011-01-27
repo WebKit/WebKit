@@ -1,3 +1,12 @@
+2011-01-26  Andy Estes  <aestes@apple.com>
+
+        Rubber-stamped by Darin Adler.
+
+        Inline HTMLObjectElement::hasValidClassId().
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::hasValidClassId):
+
 2011-01-26  Evan Martin  <evan@chromium.org>
 
         Reviewed by Tony Chang.

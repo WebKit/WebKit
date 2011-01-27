@@ -236,7 +236,7 @@ bool HTMLObjectElement::hasFallbackContent() const
     return false;
 }
     
-bool HTMLObjectElement::hasValidClassId()
+inline bool HTMLObjectElement::hasValidClassId()
 {
     // HTML5 says that fallback content should be rendered if a non-empty
     // classid is specified for which the UA can't find a suitable plug-in.
