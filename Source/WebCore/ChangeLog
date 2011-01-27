@@ -1,3 +1,10 @@
+2011-01-27  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed WinCE build fix for r76743.
+
+        * platform/graphics/wince/FontWinCE.cpp:
+        (WebCore::TextRunComponent::TextRunComponent):
+
 2011-01-27  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
