@@ -1,3 +1,9 @@
+2011-01-27  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed GTK build fix after r76797.
+
+        * Shared/WebPreferencesStore.h: Use Qt fonts preference for the moment.
+
 2011-01-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.

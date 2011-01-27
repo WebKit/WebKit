@@ -103,7 +103,7 @@ namespace WebKit {
     macro(SerifFontFamily, serifFontFamily, String, String, "Times") \
     \
 
-#elif PLATFORM(QT)
+#elif PLATFORM(QT) || PLATFORM(GTK)
 
 #define FOR_EACH_WEBKIT_FONT_FAMILY_PREFERENCE(macro) \
     macro(StandardFontFamily, standardFontFamily, String, String, "Times") \
