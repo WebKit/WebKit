@@ -1,3 +1,9 @@
+2011-01-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed Chromium text expectation update.
+
+        * platform/chromium/test_expectations.txt: Apparently, video-size.html crashes on Linux due to crbug.com/71087.
+
 2011-01-27  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Kent Tamura.

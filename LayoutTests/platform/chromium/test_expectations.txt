@@ -2573,8 +2573,9 @@ BUGWK44406 : http/tests/appcache/foreign-fallback.html = PASS FAIL CRASH
 // This test starts to timeout during build bots were down between 68880:68920
 BUG_HCLAM WIN : fast/css/acid2-pixel.html = TIMEOUT PASS
 
-BUGCR62738 BUGCR60845 WIN LINUX RELEASE : media/video-size.html = PASS TIMEOUT
-BUGCR62738 BUGCR60845 WIN LINUX MAC DEBUG : media/video-size.html = CRASH PASS TIMEOUT
+BUGCR62738 BUGCR60845 WIN RELEASE : media/video-size.html = PASS TIMEOUT
+BUGCR62738 BUGCR60845 WIN MAC DEBUG : media/video-size.html = CRASH PASS TIMEOUT
+BUGCR62738 BUGCR60845 BUGCR71087 LINUX : media/video-size.html = CRASH PASS TIMEOUT
 
 // Unexpected timeout in these tests.
 BUG_HCLAM : http/tests/css/border-image-loading.html = TEXT TIMEOUT PASS
