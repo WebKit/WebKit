@@ -1,3 +1,14 @@
+2011-01-27  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Closure and Global variable details automatically collapsing on each step through JavaScript code.
+        https://bugs.webkit.org/show_bug.cgi?id=53234
+
+        * inspector/front-end/ScopeChainSidebarPane.js:
+        (WebInspector.ScopeChainSidebarPane):
+        (WebInspector.ScopeChainSidebarPane.prototype.update):
+
 2011-01-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r76789.

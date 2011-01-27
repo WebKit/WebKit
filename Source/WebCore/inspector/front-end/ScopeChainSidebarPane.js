@@ -26,6 +26,8 @@
 WebInspector.ScopeChainSidebarPane = function()
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Scope Variables"));
+    this._sections = [];
+    this._expandedSections = {};
     this._expandedProperties = [];
 }
 
@@ -34,9 +36,6 @@ WebInspector.ScopeChainSidebarPane.prototype = {
     {
         this.bodyElement.removeChildren();
 
-        this.sections = [];
-        this.callFrame = callFrame;
-
         if (!callFrame) {
             var infoElement = document.createElement("div");
             infoElement.className = "info";
@@ -44,6 +43,18 @@ WebInspector.ScopeChainSidebarPane.prototype = {
             this.bodyElement.appendChild(infoElement);
             return;
         }
+
+        for (var i = 0; i < this._sections.length; ++i) {
+            var section = this._sections[i];
+            if (!section.title)
+                continue;
+            if (section.expanded)
+                this._expandedSections[section.title] = true;
+            else
+                delete this._expandedSections[section.title];
+        }
+
+        this._sections = [];
 
         var foundLocalScope = false;
         var scopeChain = callFrame.scopeChain;
@@ -81,10 +92,10 @@ WebInspector.ScopeChainSidebarPane.prototype = {
             section.editInSelectedCallFrameWhenPaused = true;
             section.pane = this;
 
-            if (!foundLocalScope || scopeObjectProxy.isLocal)
+            if (!foundLocalScope || scopeObjectProxy.isLocal || title in this._expandedSections)
                 section.expanded = true;
 
-            this.sections.push(section);
+            this._sections.push(section);
             this.bodyElement.appendChild(section.element);
         }
     }

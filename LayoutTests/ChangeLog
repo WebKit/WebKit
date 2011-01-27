@@ -1,3 +1,13 @@
+2011-01-27  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Closure and Global variable details automatically collapsing on each step through JavaScript code.
+        https://bugs.webkit.org/show_bug.cgi?id=53234
+
+        * inspector/debugger-expand-scope.html:
+        * inspector/debugger-proto-property.html:
+
 2011-01-27  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, fix typo introduced in r76783.
