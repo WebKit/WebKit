@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2006, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,7 @@
 #include "config.h"
 #include "CString.h"
 
-using std::min;
+using namespace std;
 
 namespace WTF {
 
@@ -45,7 +45,10 @@ void CString::init(const char* str, unsigned length)
 {
     if (!str)
         return;
-    
+
+    if (length >= numeric_limits<size_t>::max())
+        CRASH();
+
     m_buffer = CStringBuffer::create(length + 1);
     memcpy(m_buffer->mutableData(), str, length); 
     m_buffer->mutableData()[length] = '\0';
@@ -61,6 +64,9 @@ char* CString::mutableData()
     
 CString CString::newUninitialized(size_t length, char*& characterBuffer)
 {
+    if (length >= numeric_limits<size_t>::max())
+        CRASH();
+
     CString result;
     result.m_buffer = CStringBuffer::create(length + 1);
     char* bytes = result.m_buffer->mutableData();
@@ -73,11 +79,11 @@ void CString::copyBufferIfNeeded()
 {
     if (!m_buffer || m_buffer->hasOneRef())
         return;
-        
-    int len = m_buffer->length();
-    RefPtr<CStringBuffer> m_temp = m_buffer;
-    m_buffer = CStringBuffer::create(len);
-    memcpy(m_buffer->mutableData(), m_temp->data(), len);
+
+    RefPtr<CStringBuffer> buffer = m_buffer.release();
+    size_t length = buffer->length();
+    m_buffer = CStringBuffer::create(length);
+    memcpy(m_buffer->mutableData(), buffer->data(), length);
 }
 
 bool operator==(const CString& a, const CString& b)

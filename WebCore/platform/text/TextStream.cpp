@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2008, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,8 @@
 
 #include "PlatformString.h"
 #include <wtf/StringExtras.h>
+
+using namespace std;
 
 namespace WebCore {
 
@@ -84,6 +86,8 @@ TextStream& TextStream::operator<<(const char* string)
 {
     size_t stringLength = strlen(string);
     size_t textLength = m_text.size();
+    if (stringLength > numeric_limits<size_t>::max() - textLength)
+        CRASH();
     m_text.grow(textLength + stringLength);
     for (size_t i = 0; i < stringLength; ++i)
         m_text[textLength + i] = string[i];
