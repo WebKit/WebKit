@@ -1,3 +1,15 @@
+2011-01-26  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] WebFrame::forms() should not return empty WebFormElements
+        https://bugs.webkit.org/show_bug.cgi?id=53204
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::forms):
+         - Should iterate by forms->length(), not the number of HTMLElements.
+         - Do not increment the index for "temp" if a node is not an HTMLElement.
+
 2011-01-26  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
