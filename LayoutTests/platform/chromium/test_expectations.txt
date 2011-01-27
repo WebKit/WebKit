@@ -3109,3 +3109,11 @@ BUGCR71009 WIN LINUX : fast/text/text-letter-spacing.html = TEXT
 
 // Added by and started crashing at http://trac.webkit.org/changeset/76743
 BUGCR71013 LINUX : fast/text/justify-ideograph-vertical.html = CRASH
+
+// Started failing at http://trac.webkit.org/changeset/76743
+BUGCR71022 WIN LINUX : fast/overflow/overflow-rtl-vertical.html = IMAGE+TEXT
+BUGCR71022 WIN LINUX : fast/text/justify-ideograph-complex.html = IMAGE+TEXT
+BUGCR71022 MAC : fast/text/justify-ideograph-complex.html = IMAGE
+BUGCR71022 WIN LINUX : fast/text/justify-ideograph-simple.html = IMAGE+TEXT
+BUGCR71022 MAC : fast/text/justify-ideograph-simple.html = IMAGE
+BUGCR71022 WIN MAC : fast/text/justify-ideograph-vertical.html = IMAGE+TEXT
