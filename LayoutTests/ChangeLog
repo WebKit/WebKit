@@ -1,3 +1,10 @@
+2011-01-26  Martin Robinson  <mrobinson@igalia.com>
+
+        Add the next set of GTK+ baselines for the CSS 2.1 test suite.
+
+        * platform/gtk/Skipped: Unskip the next block of tests.
+        * platform/gtk/css2.1: Added CSS 2.1 test results for GTK+.
+
 2010-01-26  Evan Martin  <evan@chromium.org>
 
         Reviewed by Tony Chang.
