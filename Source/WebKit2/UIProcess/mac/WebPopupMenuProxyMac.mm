@@ -63,8 +63,9 @@ void WebPopupMenuProxyMac::populate(const Vector<WebPopupItem>& items)
         if (items[i].m_type == WebPopupItem::Seperator)
             [[m_popup.get() menu] addItem:[NSMenuItem separatorItem]];
         else {
-            [m_popup.get() addItemWithTitle:nsStringFromWebCoreString(items[i].m_text)];
+            [m_popup.get() addItemWithTitle:@""];
             NSMenuItem* menuItem = [m_popup.get() lastItem];
+            [menuItem setTitle:nsStringFromWebCoreString(items[i].m_text)];
             [menuItem setEnabled:items[i].m_isEnabled];
             [menuItem setToolTip:nsStringFromWebCoreString(items[i].m_toolTip)];
         }

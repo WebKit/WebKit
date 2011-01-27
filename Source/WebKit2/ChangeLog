@@ -1,3 +1,13 @@
+2011-01-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Allow pop-up menus to contain multiple items that have the same title.
+
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        (WebKit::WebPopupMenuProxyMac::populate): Set the item’s title after adding it rather than
+        when adding it, so that it will not replace any existing item with the same title.
+
 2011-01-27  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
