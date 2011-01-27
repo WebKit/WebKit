@@ -1,3 +1,16 @@
+2011-01-26  Jing Jin  <jjin@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+        
+        Several WKView Internal category methods are implemented in the main category.
+        https://bugs.webkit.org/show_bug.cgi?id=53195
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setEventBeingResent:]): Moved into implementation of WKView (Internal).
+        (-[WKView _interceptKeyEvent:]): Moved into implementation of WKView (Internal).
+        (-[WKView _getTextInputState:selectionEnd:underlines:WebCore::]): Moved into implementation of WKView (Internal).
+        (-[WKView _setAccessibilityChildToken:]): Moved into implementation of WKView (Internal).
+
 2011-01-26  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by John Sullivan.

@@ -842,27 +842,6 @@ EVENT_HANDLER(scrollWheel, Wheel)
     return [self _handleStyleKeyEquivalent:event] || [super performKeyEquivalent:event];
 }
 
-- (void)_setEventBeingResent:(NSEvent *)event
-{
-    _data->_keyDownEventBeingResent = [event retain];
-}
-
-- (Vector<KeypressCommand>&)_interceptKeyEvent:(NSEvent *)theEvent 
-{
-    _data->_commandsList.clear();
-    // interpretKeyEvents will trigger one or more calls to doCommandBySelector or setText
-    // that will populate the commandsList vector.
-    [self interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
-    return _data->_commandsList;
-}
-
-- (void)_getTextInputState:(unsigned)start selectionEnd:(unsigned)end underlines:(Vector<WebCore::CompositionUnderline>&)lines
-{
-    start = _data->_selectionStart;
-    end = _data->_selectionEnd;
-    lines = _data->_underlines;
-}
-
 - (void)keyUp:(NSEvent *)theEvent
 {
     _data->_page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent, self));
@@ -1304,14 +1283,6 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
 }
 
-- (void)_setAccessibilityChildToken:(NSData *)data
-{
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
-    _data->_remoteAccessibilityChild = WKAXRemoteElementForToken((CFDataRef)data);
-    [self _setRemoteAccessibilityWindow:[self window]];
-#endif
-}
-
 - (BOOL)accessibilityIsIgnored
 {
     return NO;
@@ -1444,6 +1415,27 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
         [toolbarItem(item) setEnabled:isEnabled];
         // FIXME <rdar://problem/8803392>: If the item is neither a menu nor toolbar item, it will be left enabled.
     }
+}
+
+- (void)_setEventBeingResent:(NSEvent *)event
+{
+    _data->_keyDownEventBeingResent = [event retain];
+}
+
+- (Vector<KeypressCommand>&)_interceptKeyEvent:(NSEvent *)theEvent 
+{
+    _data->_commandsList.clear();
+    // interpretKeyEvents will trigger one or more calls to doCommandBySelector or setText
+    // that will populate the commandsList vector.
+    [self interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
+    return _data->_commandsList;
+}
+
+- (void)_getTextInputState:(unsigned)start selectionEnd:(unsigned)end underlines:(Vector<WebCore::CompositionUnderline>&)lines
+{
+    start = _data->_selectionStart;
+    end = _data->_selectionEnd;
+    lines = _data->_underlines;
 }
 
 - (NSRect)_convertToDeviceSpace:(NSRect)rect
@@ -1683,6 +1675,14 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     [self _switchToDrawingAreaTypeIfNecessary:DrawingAreaInfo::ChunkedUpdate];
 }
 #endif // USE(ACCELERATED_COMPOSITING)
+
+- (void)_setAccessibilityChildToken:(NSData *)data
+{
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    _data->_remoteAccessibilityChild = WKAXRemoteElementForToken((CFDataRef)data);
+    [self _setRemoteAccessibilityWindow:[self window]];
+#endif
+}
 
 - (void)_setComplexTextInputEnabled:(BOOL)complexTextInputEnabled pluginComplexTextInputIdentifier:(uint64_t)pluginComplexTextInputIdentifier
 {
