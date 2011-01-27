@@ -1,3 +1,21 @@
+2011-01-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed Chromium rebaselines.
+
+        * platform/chromium-mac/css2.1/t0905-c5525-fltcont-00-d-g-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t0905-c5525-fltcont-00-d-g-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-9-expected.checksum:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-9-expected.png:
+        * platform/chromium-mac/fast/text/justify-ideograph-complex-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/justify-ideograph-complex-expected.png: Added.
+        * platform/chromium-mac/fast/text/justify-ideograph-simple-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/justify-ideograph-simple-expected.png: Added.
+        * platform/chromium-mac/fast/text/justify-ideograph-vertical-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/justify-ideograph-vertical-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/marvin/x_thead_align_justify-expected.checksum: Added.
+        * platform/chromium-mac/tables/mozilla/marvin/x_thead_align_justify-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-01-27  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK baselines for
