@@ -580,10 +580,13 @@ WebInspector.ProfilesPanel.prototype = {
 
     _toggleProfiling: function(optionalAlways)
     {
-        if (this._profilerEnabled)
+        if (this._profilerEnabled) {
+            WebInspector.settings.profilerEnabled = false;
             InspectorBackend.disableProfiler(true);
-        else
-            InspectorBackend.enableProfiler(!!optionalAlways);
+        } else {
+            WebInspector.settings.profilerEnabled = !!optionalAlways;
+            InspectorBackend.enableProfiler();
+        }
     },
 
     _populateProfiles: function()

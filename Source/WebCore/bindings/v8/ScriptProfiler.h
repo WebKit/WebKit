@@ -56,7 +56,6 @@ public:
     static void start(ScriptState* state, const String& title);
     static PassRefPtr<ScriptProfile> stop(ScriptState* state, const String& title);
     static PassRefPtr<ScriptHeapSnapshot> takeHeapSnapshot(const String& title, HeapSnapshotProgress*);
-    static bool isProfilerAlwaysEnabled();
 };
 
 } // namespace WebCore

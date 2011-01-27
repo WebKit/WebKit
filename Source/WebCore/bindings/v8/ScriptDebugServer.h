@@ -99,7 +99,6 @@ public:
     PassRefPtr<JavaScriptCallFrame> currentCallFrame();
 
     void setEnabled(bool);
-    bool isDebuggerAlwaysEnabled();
 
     class Task {
     public:

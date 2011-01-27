@@ -1659,8 +1659,6 @@
 		7A1F2B52126C61B20006A7E6 /* InspectorClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A1F2B51126C61B20006A7E6 /* InspectorClient.cpp */; };
 		7A24587B1021EAF4000A00AA /* InspectorDOMAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A2458791021EAF4000A00AA /* InspectorDOMAgent.cpp */; };
 		7A24587C1021EAF4000A00AA /* InspectorDOMAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A24587A1021EAF4000A00AA /* InspectorDOMAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7A5640BF12DF9E5E00F4536D /* InspectorSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A5640BD12DF9E5E00F4536D /* InspectorSettings.cpp */; };
-		7A5640C012DF9E5E00F4536D /* InspectorSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A5640BE12DF9E5E00F4536D /* InspectorSettings.h */; };
 		7A674BDB0F9EBF4E006CF099 /* PageGroupLoadDeferrer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A674BD90F9EBF4E006CF099 /* PageGroupLoadDeferrer.cpp */; };
 		7A674BDC0F9EBF4E006CF099 /* PageGroupLoadDeferrer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A674BDA0F9EBF4E006CF099 /* PageGroupLoadDeferrer.h */; };
 		7A74ECBA101839A600BF939E /* InspectorDOMStorageAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A74ECB8101839A500BF939E /* InspectorDOMStorageAgent.cpp */; };
@@ -8103,8 +8101,6 @@
 		7A24587A1021EAF4000A00AA /* InspectorDOMAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorDOMAgent.h; sourceTree = "<group>"; };
 		7A563E5412DE32B000F4536D /* InjectedScriptSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedScriptSource.h; sourceTree = "<group>"; };
 		7A563F9512DF5C9100F4536D /* InjectedScriptSource.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = InjectedScriptSource.js; sourceTree = "<group>"; };
-		7A5640BD12DF9E5E00F4536D /* InspectorSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorSettings.cpp; sourceTree = "<group>"; };
-		7A5640BE12DF9E5E00F4536D /* InspectorSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorSettings.h; sourceTree = "<group>"; };
 		7A674BD90F9EBF4E006CF099 /* PageGroupLoadDeferrer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageGroupLoadDeferrer.cpp; sourceTree = "<group>"; };
 		7A674BDA0F9EBF4E006CF099 /* PageGroupLoadDeferrer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageGroupLoadDeferrer.h; sourceTree = "<group>"; };
 		7A74ECB8101839A500BF939E /* InspectorDOMStorageAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorDOMStorageAgent.cpp; sourceTree = "<group>"; };
@@ -13026,8 +13022,6 @@
 				82AB1772125C826700C5069D /* InspectorResourceAgent.h */,
 				7AA365ED12E7265400DCA242 /* InspectorRuntimeAgent.cpp */,
 				7AF11A5912E727490061F23C /* InspectorRuntimeAgent.h */,
-				7A5640BD12DF9E5E00F4536D /* InspectorSettings.cpp */,
-				7A5640BE12DF9E5E00F4536D /* InspectorSettings.h */,
 				4FA3B908125CD12100300BAD /* InspectorState.cpp */,
 				4FA3B909125CD12200300BAD /* InspectorState.h */,
 				82AB176F125C826700C5069D /* InspectorStyleSheet.cpp */,
@@ -20928,7 +20922,6 @@
 				9F0D6B2F121BFEBA006C0288 /* InspectorProfilerAgent.h in Headers */,
 				82AB1776125C826700C5069D /* InspectorResourceAgent.h in Headers */,
 				7AF11A5A12E727490061F23C /* InspectorRuntimeAgent.h in Headers */,
-				7A5640C012DF9E5E00F4536D /* InspectorSettings.h in Headers */,
 				4FA3B90B125CD12200300BAD /* InspectorState.h in Headers */,
 				82AB1774125C826700C5069D /* InspectorStyleSheet.h in Headers */,
 				754133A8102E00E800075D00 /* InspectorTimelineAgent.h in Headers */,
@@ -23672,7 +23665,6 @@
 				9F0D6B2E121BFEBA006C0288 /* InspectorProfilerAgent.cpp in Sources */,
 				82AB1775125C826700C5069D /* InspectorResourceAgent.cpp in Sources */,
 				7AA365EE12E7265400DCA242 /* InspectorRuntimeAgent.cpp in Sources */,
-				7A5640BF12DF9E5E00F4536D /* InspectorSettings.cpp in Sources */,
 				4FA3B90A125CD12200300BAD /* InspectorState.cpp in Sources */,
 				82AB1773125C826700C5069D /* InspectorStyleSheet.cpp in Sources */,
 				754133AA102E00F400075D00 /* InspectorTimelineAgent.cpp in Sources */,

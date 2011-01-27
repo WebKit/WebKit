@@ -66,11 +66,6 @@ InspectorDebuggerAgent::~InspectorDebuggerAgent()
     m_pausedScriptState = 0;
 }
 
-bool InspectorDebuggerAgent::isDebuggerAlwaysEnabled()
-{
-    return ScriptDebugServer::shared().isDebuggerAlwaysEnabled();
-}
-
 void InspectorDebuggerAgent::activateBreakpoints()
 {
     ScriptDebugServer::shared().activateBreakpoints();

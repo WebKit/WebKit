@@ -58,16 +58,19 @@ WebInspector.Settings = function()
 {
     this.installApplicationSetting("colorFormat", "hex");
     this.installApplicationSetting("consoleHistory", []);
+    this.installApplicationSetting("debuggerEnabled", false);
+    this.installApplicationSetting("profilerEnabled", false);
     this.installApplicationSetting("eventListenersFilter", "all");
+    this.installApplicationSetting("lastActivePanel", "elements");
     this.installApplicationSetting("lastViewedScriptFile", "application");
+    this.installApplicationSetting("monitoringXHREnabled", false);
+    this.installApplicationSetting("pauseOnExceptionState", WebInspector.ScriptsPanel.PauseOnExceptionsState.DontPauseOnExceptions);
     this.installApplicationSetting("resourcesLargeRows", true);
     this.installApplicationSetting("resourcesSortOptions", {timeOption: "responseTime", sizeOption: "transferSize"});
     this.installApplicationSetting("resourceViewTab", "content");
     this.installApplicationSetting("showInheritedComputedStyleProperties", false);
     this.installApplicationSetting("showUserAgentStyles", true);
     this.installApplicationSetting("watchExpressions", []);
-    this.installApplicationSetting("lastActivePanel", "elements");
-    this.installApplicationSetting("pauseOnExceptionState", WebInspector.ScriptsPanel.PauseOnExceptionsState.DontPauseOnExceptions);
 
     this.installProjectSetting("breakpoints", {});
     this.installProjectSetting("nativeBreakpoints", []);
