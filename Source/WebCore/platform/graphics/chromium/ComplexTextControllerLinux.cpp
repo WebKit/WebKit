@@ -160,14 +160,10 @@ bool ComplexTextController::nextScriptRun()
     // So we allow that to run first, then do a second pass over the range it
     // found and take the largest subregion that stays within a single font.
     m_currentFontData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos], false).fontData;
-    bool isFirstCharacterLowerCase = u_islower(m_item.string[m_item.item.pos]);
     unsigned endOfRun;
     for (endOfRun = 1; endOfRun < m_item.item.length; ++endOfRun) {
-        UChar nextCharacter = m_item.string[m_item.item.pos + endOfRun];
-        const SimpleFontData* nextFontData = m_font->glyphDataForCharacter(nextCharacter, false).fontData;
+        const SimpleFontData* nextFontData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos + endOfRun], false).fontData;
         if (nextFontData != m_currentFontData)
-            break;
-        if (m_font->isSmallCaps() && isFirstCharacterLowerCase != u_islower(nextCharacter))
             break;
     }
     m_item.item.length = endOfRun;
@@ -193,8 +189,9 @@ void ComplexTextController::setupFontForScriptRun()
 {
     FontDataVariant fontDataVariant = AutoVariant;
     // Determine if this script run needs to be converted to small caps.
-    // nextScriptRun() will always send us a run of the same case, so we only
-    // need to check the first character's case.
+    // nextScriptRun() will always send us a run of the same case, because a
+    // case change while in small-caps mode always results in different
+    // FontData, so we only need to check the first character's case.
     if (m_font->isSmallCaps() && u_islower(m_item.string[m_item.item.pos])) {
         m_smallCapsString = String(m_run.data(m_item.item.pos), m_item.item.length);
         m_smallCapsString.makeUpper();

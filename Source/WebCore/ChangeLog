@@ -1,3 +1,17 @@
+2011-01-27  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [Chromium] Simplify small caps logic in complex text on linux
+        https://bugs.webkit.org/show_bug.cgi?id=53207
+
+        Test: fast/text/atsui-multiple-renderers.html
+              fast/text/atsui-small-caps-punctuation-size.html
+
+        * platform/graphics/chromium/ComplexTextControllerLinux.cpp:
+        (WebCore::ComplexTextController::nextScriptRun): Remove redundant logic. Case changes in a text run imply FontData changes.
+        (WebCore::ComplexTextController::setupFontForScriptRun): Update comment to reflect above.
+
 2011-01-27  Adam Barth  <abarth@webkit.org>
 
         In which I attempt to fix the EFL build.
