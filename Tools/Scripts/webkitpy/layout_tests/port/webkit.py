@@ -159,7 +159,7 @@ class WebKitPort(base.Port):
             if m.group(2) == 'passed':
                 result = False
         elif output and diff_filename:
-            self._filesystem.write_text_file(diff_filename, output)
+            self._filesystem.write_binary_file(diff_filename, output)
         elif sp.timed_out:
             _log.error("ImageDiff timed out")
         elif sp.crashed:

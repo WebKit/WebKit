@@ -1,3 +1,15 @@
+2011-01-26  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        Fix regression introduced in r76322 ... new-run-webkit-tests
+        was attempting to save the image diff output as a UTF-8-encoded
+        file.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53210
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
 2011-01-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r76709.
