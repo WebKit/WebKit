@@ -1,3 +1,38 @@
+2011-01-27  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed Chromium test expectation change.
+
+        * platform/chromium-mac-leopard/css2.1/t0905-c5525-fltcont-00-d-g-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/css2.1/t0905-c5525-fltcont-00-d-g-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/blockflow/vertical-baseline-alignment-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/blockflow/vertical-baseline-alignment-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/multicol/shadow-breaking-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-1-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-1-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-10-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-10-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-2-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-2-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-3-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-3-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-4-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-4-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-5-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-5-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-6-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-6-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-7-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-7-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-8-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-8-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-9-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-9-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/text/complex-text-opacity-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/text/complex-text-opacity-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/text/complex-text-opacity-expected.txt: Removed.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/x_thead_align_justify-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/x_thead_align_justify-expected.png: Removed.
+
 2011-01-27  Maciej Stachowiak  <mjs@apple.com>
 
         Unreviewed.
