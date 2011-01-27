@@ -3116,4 +3116,5 @@ BUGCR71022 WIN LINUX : fast/text/justify-ideograph-complex.html = IMAGE+TEXT
 BUGCR71022 MAC : fast/text/justify-ideograph-complex.html = IMAGE
 BUGCR71022 WIN LINUX : fast/text/justify-ideograph-simple.html = IMAGE+TEXT
 BUGCR71022 MAC : fast/text/justify-ideograph-simple.html = IMAGE
-BUGCR71022 WIN MAC : fast/text/justify-ideograph-vertical.html = IMAGE+TEXT
+BUGCR71022 WIN : fast/text/justify-ideograph-vertical.html = IMAGE+TEXT
+BUGCR71022 MAC : fast/text/justify-ideograph-vertical.html = IMAGE
