@@ -1,3 +1,14 @@
+2011-01-27  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed.
+
+        New test expectations for http/tests/navigation/error404* in GTK.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/http/tests/navigation/error404-basic-expected.txt: Added.
+        * platform/gtk/http/tests/navigation/error404-goback-expected.txt: Added.
+        * platform/gtk/http/tests/navigation/error404-subframeload-expected.txt: Added.
+
 2011-01-27  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skipping 2 more media tests.
