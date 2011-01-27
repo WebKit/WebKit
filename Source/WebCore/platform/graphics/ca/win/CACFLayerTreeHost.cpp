@@ -190,6 +190,9 @@ CACFLayerTreeHost::CACFLayerTreeHost()
     , m_mustResetLostDeviceBeforeRendering(false)
     , m_shouldFlushPendingGraphicsLayerChanges(false)
     , m_isFlushingLayerChanges(false)
+#if !ASSERT_DISABLED
+    , m_state(WindowNotSet)
+#endif
 {
     // Point the CACFContext to this
     wkCACFContextSetUserData(m_context, this);
@@ -232,6 +235,24 @@ void CACFLayerTreeHost::setWindow(HWND window)
 {
     if (window == m_window)
         return;
+
+#if !ASSERT_DISABLED
+    switch (m_state) {
+    case WindowNotSet:
+        ASSERT_ARG(window, window);
+        ASSERT(!m_window);
+        m_state = WindowSet;
+        break;
+    case WindowSet:
+        ASSERT_ARG(window, !window);
+        ASSERT(m_window);
+        m_state = WindowCleared;
+        break;
+    case WindowCleared:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+#endif
 
     if (m_window)
         destroyRenderer();

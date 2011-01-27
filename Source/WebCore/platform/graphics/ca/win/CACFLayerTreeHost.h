@@ -118,6 +118,9 @@ private:
 #ifndef NDEBUG
     bool m_printTree;
 #endif
+#if !ASSERT_DISABLED
+    enum { WindowNotSet, WindowSet, WindowCleared } m_state;
+#endif
 };
 
 }

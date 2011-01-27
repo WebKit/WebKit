@@ -1,5 +1,20 @@
 2011-01-26  Adam Roben  <aroben@apple.com>
 
+        Add assertions that CACFLayerTreeHost gains and loses an HWND only once
+
+        CACFLayerTreeHost doesn't support any other use pattern.
+
+        Reviewed by Sam Weinig.
+
+        * platform/graphics/ca/win/CACFLayerTreeHost.cpp:
+        (WebCore::CACFLayerTreeHost::CACFLayerTreeHost): Initialize new member.
+        (WebCore::CACFLayerTreeHost::setWindow): Assert that we transition from not having a window,
+        to having a window, to not having a window just once over the lifetime of this object.
+
+        * platform/graphics/ca/win/CACFLayerTreeHost.h: Added m_state.
+
+2011-01-26  Adam Roben  <aroben@apple.com>
+
         Notify layers that their animations have started when we flush the context, not when we
         render
 
