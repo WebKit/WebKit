@@ -92,13 +92,24 @@ namespace WebKit {
     macro(SerifFontFamily, serifFontFamily, String, String, "Times New Roman") \
     \
 
-#else
+#elif PLATFORM(MAC)
 
 #define FOR_EACH_WEBKIT_FONT_FAMILY_PREFERENCE(macro) \
     macro(StandardFontFamily, standardFontFamily, String, String, "Times") \
     macro(CursiveFontFamily, cursiveFontFamily, String, String, "Apple Chancery") \
     macro(FantasyFontFamily, fantasyFontFamily, String, String, "Papyrus") \
     macro(FixedFontFamily, fixedFontFamily, String, String, "Courier") \
+    macro(SansSerifFontFamily, sansSerifFontFamily, String, String, "Helvetica") \
+    macro(SerifFontFamily, serifFontFamily, String, String, "Times") \
+    \
+
+#elif PLATFORM(QT)
+
+#define FOR_EACH_WEBKIT_FONT_FAMILY_PREFERENCE(macro) \
+    macro(StandardFontFamily, standardFontFamily, String, String, "Times") \
+    macro(CursiveFontFamily, cursiveFontFamily, String, String, "Comic Sans MS") \
+    macro(FantasyFontFamily, fantasyFontFamily, String, String, "Impact") \
+    macro(FixedFontFamily, fixedFontFamily, String, String, "Courier New") \
     macro(SansSerifFontFamily, sansSerifFontFamily, String, String, "Helvetica") \
     macro(SerifFontFamily, serifFontFamily, String, String, "Times") \
     \

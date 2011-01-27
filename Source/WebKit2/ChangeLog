@@ -1,3 +1,13 @@
+2011-01-27  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt][WK2] Lots of layout test failures due to wrong font type
+        https://bugs.webkit.org/show_bug.cgi?id=53233
+
+        * Shared/WebPreferencesStore.h:
+        Specialize default font families for Qt.
+
 2011-01-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dan Bernstein.
