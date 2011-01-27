@@ -4715,12 +4715,6 @@ canvas/philip/tests/2d.imageData.put.wrongtype.html
 canvas/philip/tests/2d.pattern.image.incomplete.empty.html
 canvas/philip/tests/2d.pattern.image.incomplete.omitted.html
 
-# Setting CSS properties such as padding and margin does not work properly
-# on form elements: https://bugs.webkit.org/show_bug.cgi?id=40855
-fast/forms/basic-selects.html
-fast/forms/basic-textareas-quirks.html
-fast/forms/textarea-metrics.html
-
 # Fake italics do not work: https://bugs.webkit.org/show_bug.cgi?id=40856
 fast/text/fake-italic.html
 

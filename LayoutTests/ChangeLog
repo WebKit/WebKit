@@ -1,5 +1,22 @@
 2011-01-26  Martin Robinson  <mrobinson@igalia.com>
 
+        [GTK] Text input controls do not react properly to CSS styling
+        https://bugs.webkit.org/show_bug.cgi?id=40855
+
+        Unskip tests which were previously skipped due to issue #40855.
+        The bug is closed now, so it's safe to rebaseline the tests and
+        unskip them.
+
+        * platform/gtk/Skipped: Unskip tests.
+        * platform/gtk/fast/forms/basic-selects-expected.checksum:
+        * platform/gtk/fast/forms/basic-selects-expected.png:
+        * platform/gtk/fast/forms/basic-selects-expected.txt:
+        * platform/gtk/fast/forms/basic-textareas-quirks-expected.checksum:
+        * platform/gtk/fast/forms/basic-textareas-quirks-expected.png:
+        * platform/gtk/fast/forms/basic-textareas-quirks-expected.txt:
+
+2011-01-26  Martin Robinson  <mrobinson@igalia.com>
+
         [GTK] media/unsupported-rtsp.html fails after timing out
         https://bugs.webkit.org/show_bug.cgi?id=53056
 
