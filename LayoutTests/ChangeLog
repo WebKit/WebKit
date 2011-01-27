@@ -1,5 +1,18 @@
 2011-01-26  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Reviewed Chromium Mac rebaselines for r76726.
+
+        * platform/chromium-mac/fast/blockflow/vertical-baseline-alignment-expected.checksum: Added.
+        * platform/chromium-mac/fast/blockflow/vertical-baseline-alignment-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/vertical-rl: Added.
+        * platform/chromium-mac/fast/multicol/vertical-rl/column-break-with-balancing-expected.txt: Added.
+        * platform/chromium-mac/fast/table/028-vertical-expected.checksum: Added.
+        * platform/chromium-mac/fast/table/028-vertical-expected.png: Added.
+        * platform/chromium-mac/fast/text/complex-text-opacity-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/complex-text-opacity-expected.png: Added.
+
+2011-01-26  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed Chromium Windows/Linux rebaselines for r76726.
 
         * platform/chromium-linux/fast/multicol/vertical-rl/float-multicol-expected.checksum: Added.
