@@ -1,3 +1,29 @@
+2011-01-27  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, new GTK baselines for fast/multicol tests as follow-up
+        of r76726.
+
+        * platform/gtk/fast/multicol/vertical-lr/border-padding-pagination-expected.txt: Added.
+        * platform/gtk/fast/multicol/vertical-lr/column-break-with-balancing-expected.txt: Added.
+        * platform/gtk/fast/multicol/vertical-lr/column-count-with-rules-expected.txt: Added.
+        * platform/gtk/fast/multicol/vertical-lr/column-rules-expected.txt: Added.
+        * platform/gtk/fast/multicol/vertical-lr/float-avoidance-expected.txt: Added.
+        * platform/gtk/fast/multicol/vertical-lr/float-multicol-expected.txt: Added.
+        * platform/gtk/fast/multicol/vertical-lr/float-paginate-complex-expected.txt: Added.
+        * platform/gtk/fast/multicol/vertical-lr/float-paginate-expected.txt: Added.
+        * platform/gtk/fast/multicol/vertical-lr/nested-columns-expected.txt: Added.
+        * platform/gtk/fast/multicol/vertical-lr/unsplittable-inline-block-expected.txt: Added.
+        * platform/gtk/fast/multicol/vertical-rl/border-padding-pagination-expected.txt: Added.
+        * platform/gtk/fast/multicol/vertical-rl/column-break-with-balancing-expected.txt: Added.
+        * platform/gtk/fast/multicol/vertical-rl/column-count-with-rules-expected.txt: Added.
+        * platform/gtk/fast/multicol/vertical-rl/column-rules-expected.txt: Added.
+        * platform/gtk/fast/multicol/vertical-rl/float-avoidance-expected.txt: Added.
+        * platform/gtk/fast/multicol/vertical-rl/float-multicol-expected.txt: Added.
+        * platform/gtk/fast/multicol/vertical-rl/float-paginate-complex-expected.txt: Added.
+        * platform/gtk/fast/multicol/vertical-rl/float-paginate-expected.txt: Added.
+        * platform/gtk/fast/multicol/vertical-rl/nested-columns-expected.txt: Added.
+        * platform/gtk/fast/multicol/vertical-rl/unsplittable-inline-block-expected.txt: Added.
+
 2011-01-27  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
