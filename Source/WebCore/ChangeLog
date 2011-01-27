@@ -1,5 +1,77 @@
 2011-01-27  Adam Roben  <aroben@apple.com>
 
+        Split CACFLayerTreeHost into base and derived classes
+
+        The derived class, LegacyCACFLayerTreeHost, contains all the D3D-related code. A later patch
+        will add a new derived class that replaces the D3D code with a different rendering API.
+
+        For now, LegacyCACFLayerTreeHost lives in CACFLayerTreeHost.cpp. This keeps the diff a
+        little smaller. A later patch will move it to its own source files.
+
+        Preparation for <http://webkit.org/b/53251> <rdar://problem/8925496> CACFLayerTreeHost
+        should use WKCACFView for rendering
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/ca/win/CACFLayerTreeHost.cpp:
+        (WebCore::CACFLayerTreeHost::acceleratedCompositingAvailable): Clear the window before
+        destroying the host, as that is now the API contract that clients must fulfill.
+        (WebCore::LegacyCACFLayerTreeHost::create): Added. Simple creator.
+        (WebCore::CACFLayerTreeHost::create): Now instantiates a LegacyCACFLayerTreeHost. Calls the
+        new initialize function to perform initialization that has to happen after the vtable has
+        been set up.
+
+        (WebCore::LegacyCACFLayerTreeHost::LegacyCACFLayerTreeHost):
+        (WebCore::CACFLayerTreeHost::CACFLayerTreeHost):
+        (WebCore::LegacyCACFLayerTreeHost::initializeContext):
+        (WebCore::CACFLayerTreeHost::initialize):
+        Moved some initialization code from the CACFLayerTreeHost constructor into these new
+        functions.
+
+        (WebCore::LegacyCACFLayerTreeHost::~LegacyCACFLayerTreeHost): Added. Moved code here from
+        ~CACFLayerTreeHost.
+        (WebCore::CACFLayerTreeHost::~CACFLayerTreeHost): Rather than clearing the window at this
+        point (which would be too late, since we won't be able to call into the derived class's
+        virtual functions), just assert that it has already been cleared (or was never set in the
+        first place).
+        (WebCore::LegacyCACFLayerTreeHost::createRenderer): Renamed from
+        CACFLayerTreeHost::createRenderer, and changed to use getters instead of accessing
+        CACFLayerTreeHost's data members directly.
+
+        (WebCore::LegacyCACFLayerTreeHost::destroyRenderer):
+        (WebCore::CACFLayerTreeHost::destroyRenderer):
+        Moved some code to the new LegacyCACFLayerTreeHost function.
+
+        (WebCore::LegacyCACFLayerTreeHost::resize):
+        (WebCore::LegacyCACFLayerTreeHost::renderTimerFired):
+        Moved these functions to LegacyCACFLayerTreeHost.
+
+        (WebCore::LegacyCACFLayerTreeHost::paint):
+        (WebCore::CACFLayerTreeHost::paint):
+        Moved some code to the new LegacyCACFLayerTreeHost function.
+
+        (WebCore::LegacyCACFLayerTreeHost::render):
+        (WebCore::LegacyCACFLayerTreeHost::renderSoon):
+        Moved these functions to LegacyCACFLayerTreeHost.
+
+        (WebCore::CACFLayerTreeHost::flushPendingLayerChangesNow): Moved code to flush the context
+        from here...
+        (WebCore::LegacyCACFLayerTreeHost::flushContext): ...to this new function.
+
+        (WebCore::LegacyCACFLayerTreeHost::lastCommitTime): Moved code to get the last commit time
+        to this new function...
+        (WebCore::CACFLayerTreeHost::notifyAnimationsStarted): ...from here.
+
+        (WebCore::LegacyCACFLayerTreeHost::initD3DGeometry):
+        (WebCore::LegacyCACFLayerTreeHost::resetDevice):
+        Moved these functions to LegacyCACFLayerTreeHost.
+
+        * platform/graphics/ca/win/CACFLayerTreeHost.h: Made some functions virtual, removed some
+        members that have moved to LegacyCACFLayerTreeHost, grouped remaining members more
+        logically, and added some getters used by LegacyCACFLayerTreeHost.
+
+2011-01-27  Adam Roben  <aroben@apple.com>
+
         Move CACFLayerTreeHostClient to its own header file
 
         Rubber-stamped by Steve Falkenburg.

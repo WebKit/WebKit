@@ -169,34 +169,102 @@ bool CACFLayerTreeHost::acceleratedCompositingAvailable()
     RefPtr<CACFLayerTreeHost> host = CACFLayerTreeHost::create();
     host->setWindow(testWindow);
     available = host->createRenderer();
+    host->setWindow(0);
     ::DestroyWindow(testWindow);
 
     return available;
+}
+
+// FIXME: Currently there is a LegacyCACFLayerTreeHost for each WebView and each
+// has its own WKCACFContext and Direct3DDevice9, which is inefficient.
+// (https://bugs.webkit.org/show_bug.cgi?id=31855)
+class LegacyCACFLayerTreeHost : public CACFLayerTreeHost {
+public:
+    static PassRefPtr<LegacyCACFLayerTreeHost> create();
+    virtual ~LegacyCACFLayerTreeHost();
+
+private:
+    LegacyCACFLayerTreeHost();
+
+    void initD3DGeometry();
+
+    // Call this when the device window has changed size or when IDirect3DDevice9::Present returns
+    // D3DERR_DEVICELOST. Returns true if the device was recovered, false if rendering must be
+    // aborted and reattempted soon.
+    enum ResetReason { ChangedWindowSize, LostDevice };
+    bool resetDevice(ResetReason);
+
+    void renderSoon();
+    void renderTimerFired(Timer<LegacyCACFLayerTreeHost>*);
+
+    virtual void initializeContext(void* userData, PlatformCALayer*);
+    virtual void resize();
+    virtual bool createRenderer();
+    virtual void destroyRenderer();
+    virtual CFTimeInterval lastCommitTime() const;
+    virtual void flushContext();
+    virtual void paint();
+    virtual void render(const Vector<CGRect>& dirtyRects = Vector<CGRect>());
+
+    Timer<LegacyCACFLayerTreeHost> m_renderTimer;
+    COMPtr<IDirect3DDevice9> m_d3dDevice;
+    WKCACFContext* m_context;
+    bool m_mightBeAbleToCreateDeviceLater;
+    bool m_mustResetLostDeviceBeforeRendering;
+
+#ifndef NDEBUG
+    bool m_printTree;
+#endif
+};
+
+PassRefPtr<LegacyCACFLayerTreeHost> LegacyCACFLayerTreeHost::create()
+{
+    return adoptRef(new LegacyCACFLayerTreeHost);
 }
 
 PassRefPtr<CACFLayerTreeHost> CACFLayerTreeHost::create()
 {
     if (!acceleratedCompositingAvailable())
         return 0;
-    return adoptRef(new CACFLayerTreeHost());
+    RefPtr<CACFLayerTreeHost> host = LegacyCACFLayerTreeHost::create();
+    host->initialize();
+    return host.release();
+}
+
+LegacyCACFLayerTreeHost::LegacyCACFLayerTreeHost()
+    : m_renderTimer(this, &LegacyCACFLayerTreeHost::renderTimerFired)
+    , m_context(wkCACFContextCreate())
+    , m_mightBeAbleToCreateDeviceLater(true)
+    , m_mustResetLostDeviceBeforeRendering(false)
+{
+#ifndef NDEBUG
+    char* printTreeFlag = getenv("CA_PRINT_TREE");
+    m_printTree = printTreeFlag && atoi(printTreeFlag);
+#endif
 }
 
 CACFLayerTreeHost::CACFLayerTreeHost()
     : m_client(0)
-    , m_mightBeAbleToCreateDeviceLater(true)
     , m_rootLayer(PlatformCALayer::create(PlatformCALayer::LayerTypeRootLayer, 0))
-    , m_context(wkCACFContextCreate())
     , m_window(0)
-    , m_renderTimer(this, &CACFLayerTreeHost::renderTimerFired)
-    , m_mustResetLostDeviceBeforeRendering(false)
     , m_shouldFlushPendingGraphicsLayerChanges(false)
     , m_isFlushingLayerChanges(false)
 #if !ASSERT_DISABLED
     , m_state(WindowNotSet)
 #endif
 {
+}
+
+void LegacyCACFLayerTreeHost::initializeContext(void* userData, PlatformCALayer* layer)
+{
+    wkCACFContextSetUserData(m_context, userData);
+    wkCACFContextSetLayer(m_context, layer->platformLayer());
+}
+
+void CACFLayerTreeHost::initialize()
+{
     // Point the CACFContext to this
-    wkCACFContextSetUserData(m_context, this);
+    initializeContext(this, m_rootLayer.get());
 
     // Under the root layer, we have a clipping layer to clip the content,
     // that contains a scroll layer that we use for scrolling the content.
@@ -216,20 +284,16 @@ CACFLayerTreeHost::CACFLayerTreeHost()
     m_rootLayer->setBackgroundColor(debugColor);
     CGColorRelease(debugColor);
 #endif
+}
 
-    if (m_context)
-        wkCACFContextSetLayer(m_context, m_rootLayer->platformLayer());
-
-#ifndef NDEBUG
-    char* printTreeFlag = getenv("CA_PRINT_TREE");
-    m_printTree = printTreeFlag && atoi(printTreeFlag);
-#endif
+LegacyCACFLayerTreeHost::~LegacyCACFLayerTreeHost()
+{
+    wkCACFContextDestroy(m_context);
 }
 
 CACFLayerTreeHost::~CACFLayerTreeHost()
 {
-    setWindow(0);
-    wkCACFContextDestroy(m_context);
+    ASSERT_WITH_MESSAGE(m_state != WindowSet, "Must call setWindow(0) before destroying CACFLayerTreeHost");
 }
 
 void CACFLayerTreeHost::setWindow(HWND window)
@@ -294,7 +358,7 @@ void CACFLayerTreeHost::layerTreeDidChange()
     LayerChangesFlusher::shared().flushPendingLayerChangesSoon(this);
 }
 
-bool CACFLayerTreeHost::createRenderer()
+bool LegacyCACFLayerTreeHost::createRenderer()
 {
     if (m_d3dDevice || !m_mightBeAbleToCreateDeviceLater)
         return m_d3dDevice;
@@ -302,14 +366,14 @@ bool CACFLayerTreeHost::createRenderer()
     m_mightBeAbleToCreateDeviceLater = false;
     D3DPRESENT_PARAMETERS parameters = initialPresentationParameters();
 
-    if (!d3d() || !::IsWindow(m_window))
+    if (!d3d() || !::IsWindow(window()))
         return false;
 
     // D3D doesn't like to make back buffers for 0 size windows. We skirt this problem if we make the
     // passed backbuffer width and height non-zero. The window will necessarily get set to a non-zero
     // size eventually, and then the backbuffer size will get reset.
     RECT rect;
-    GetClientRect(m_window, &rect);
+    GetClientRect(window(), &rect);
 
     if (rect.left-rect.right == 0 || rect.bottom-rect.top == 0) {
         parameters.BackBufferWidth = 1;
@@ -327,7 +391,7 @@ bool CACFLayerTreeHost::createRenderer()
         behaviorFlags |= D3DCREATE_SOFTWARE_VERTEXPROCESSING;
 
     COMPtr<IDirect3DDevice9> device;
-    if (FAILED(d3d()->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_window, behaviorFlags, &parameters, &device))) {
+    if (FAILED(d3d()->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, window(), behaviorFlags, &parameters, &device))) {
         // In certain situations (e.g., shortly after waking from sleep), Direct3DCreate9() will
         // return an IDirect3D9 for which IDirect3D9::CreateDevice will always fail. In case we
         // have one of these bad IDirect3D9s, get rid of it so we'll fetch a new one the next time
@@ -360,18 +424,16 @@ bool CACFLayerTreeHost::createRenderer()
 
     wkCACFContextSetD3DDevice(m_context, m_d3dDevice.get());
 
-    if (IsWindow(m_window)) {
-        m_rootLayer->setBounds(bounds());
+    if (IsWindow(window())) {
+        rootLayer()->setBounds(bounds());
         wkCACFContextFlush(m_context);
     }
 
     return true;
 }
 
-void CACFLayerTreeHost::destroyRenderer()
+void LegacyCACFLayerTreeHost::destroyRenderer()
 {
-    LayerChangesFlusher::shared().cancelPendingFlush(this);
-
     wkCACFContextSetLayer(m_context, 0);
 
     wkCACFContextSetD3DDevice(m_context, 0);
@@ -380,13 +442,19 @@ void CACFLayerTreeHost::destroyRenderer()
         s_d3d->Release();
 
     s_d3d = 0;
-    m_rootLayer = 0;
-    m_rootChildLayer = 0;
-
     m_mightBeAbleToCreateDeviceLater = true;
+
+    CACFLayerTreeHost::destroyRenderer();
 }
 
-void CACFLayerTreeHost::resize()
+void CACFLayerTreeHost::destroyRenderer()
+{
+    m_rootLayer = 0;
+    m_rootChildLayer = 0;
+    LayerChangesFlusher::shared().cancelPendingFlush(this);
+}
+
+void LegacyCACFLayerTreeHost::resize()
 {
     if (!m_d3dDevice)
         return;
@@ -395,8 +463,8 @@ void CACFLayerTreeHost::resize()
     // reset the device the next time we try to render.
     resetDevice(ChangedWindowSize);
 
-    if (m_rootLayer) {
-        m_rootLayer->setBounds(bounds());
+    if (rootLayer()) {
+        rootLayer()->setBounds(bounds());
         wkCACFContextFlush(m_context);
     }
 }
@@ -431,12 +499,12 @@ static void getDirtyRects(HWND window, Vector<CGRect>& outRects)
         outRects[i] = winRectToCGRect(*rect, clientRect);
 }
 
-void CACFLayerTreeHost::renderTimerFired(Timer<CACFLayerTreeHost>*)
+void LegacyCACFLayerTreeHost::renderTimerFired(Timer<LegacyCACFLayerTreeHost>*)
 {
     paint();
 }
 
-void CACFLayerTreeHost::paint()
+void LegacyCACFLayerTreeHost::paint()
 {
     createRenderer();
     if (!m_d3dDevice) {
@@ -445,12 +513,17 @@ void CACFLayerTreeHost::paint()
         return;
     }
 
+    CACFLayerTreeHost::paint();
+}
+
+void CACFLayerTreeHost::paint()
+{
     Vector<CGRect> dirtyRects;
     getDirtyRects(m_window, dirtyRects);
     render(dirtyRects);
 }
 
-void CACFLayerTreeHost::render(const Vector<CGRect>& windowDirtyRects)
+void LegacyCACFLayerTreeHost::render(const Vector<CGRect>& windowDirtyRects)
 {
     ASSERT(m_d3dDevice);
 
@@ -517,7 +590,7 @@ void CACFLayerTreeHost::render(const Vector<CGRect>& windowDirtyRects)
 
 #ifndef NDEBUG
     if (m_printTree)
-        m_rootLayer->printTree();
+        rootLayer()->printTree();
 #endif
 
     // If timeToNextRender is not infinity, it means animations are running, so queue up to render again
@@ -525,7 +598,7 @@ void CACFLayerTreeHost::render(const Vector<CGRect>& windowDirtyRects)
         renderSoon();
 }
 
-void CACFLayerTreeHost::renderSoon()
+void LegacyCACFLayerTreeHost::renderSoon()
 {
     if (!m_renderTimer.isActive())
         m_renderTimer.startOneShot(0);
@@ -552,9 +625,7 @@ void CACFLayerTreeHost::flushPendingLayerChangesNow()
     }
 
     // Flush changes stored up in PlatformCALayers to the context so they will be rendered.
-    wkCACFContextFlush(m_context);
-
-    renderSoon();
+    flushContext();
 
     // All pending animations will have been started with the flush. Fire the animationStarted calls.
     notifyAnimationsStarted();
@@ -562,10 +633,21 @@ void CACFLayerTreeHost::flushPendingLayerChangesNow()
     m_isFlushingLayerChanges = false;
 }
 
+void LegacyCACFLayerTreeHost::flushContext()
+{
+    wkCACFContextFlush(m_context);
+    renderSoon();
+}
+
+CFTimeInterval LegacyCACFLayerTreeHost::lastCommitTime() const
+{
+    return wkCACFContextGetLastCommitTime(m_context);
+}
+
 void CACFLayerTreeHost::notifyAnimationsStarted()
 {
     double currentTime = WTF::currentTime();
-    double time = currentTime + wkCACFContextGetLastCommitTime(m_context) - CACurrentMediaTime();
+    double time = currentTime + lastCommitTime() - CACurrentMediaTime();
     ASSERT(time <= currentTime);
 
     HashSet<RefPtr<PlatformCALayer> >::iterator end = m_pendingAnimatedLayers.end();
@@ -583,7 +665,7 @@ CGRect CACFLayerTreeHost::bounds() const
     return winRectToCGRect(clientRect);
 }
 
-void CACFLayerTreeHost::initD3DGeometry()
+void LegacyCACFLayerTreeHost::initD3DGeometry()
 {
     ASSERT(m_d3dDevice);
 
@@ -600,7 +682,7 @@ void CACFLayerTreeHost::initD3DGeometry()
     m_d3dDevice->SetTransform(D3DTS_PROJECTION, &projection);
 }
 
-bool CACFLayerTreeHost::resetDevice(ResetReason reason)
+bool LegacyCACFLayerTreeHost::resetDevice(ResetReason reason)
 {
     ASSERT(m_d3dDevice);
     ASSERT(m_context);

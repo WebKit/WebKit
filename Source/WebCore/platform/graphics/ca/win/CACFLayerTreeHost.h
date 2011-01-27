@@ -50,69 +50,53 @@ namespace WebCore {
 class CACFLayerTreeHostClient;
 class PlatformCALayer;
 
-// FIXME: Currently there is a CACFLayerTreeHost for each WebView and each
-// has its own CARenderOGLContext and Direct3DDevice9, which is inefficient.
-// (https://bugs.webkit.org/show_bug.cgi?id=31855)
 class CACFLayerTreeHost : public RefCounted<CACFLayerTreeHost> {
     friend PlatformCALayer;
 
 public:
     static PassRefPtr<CACFLayerTreeHost> create();
-    ~CACFLayerTreeHost();
+    virtual ~CACFLayerTreeHost();
 
     static bool acceleratedCompositingAvailable();
 
     void setClient(CACFLayerTreeHostClient* client) { m_client = client; }
 
     void setRootChildLayer(PlatformCALayer*);
-    void layerTreeDidChange();
     void setWindow(HWND);
-    void paint();
-    void resize();
+    virtual void paint();
+    virtual void resize() = 0;
     void flushPendingGraphicsLayerChangesSoon();
     void flushPendingLayerChangesNow();
 
 protected:
-    PlatformCALayer* rootLayer() const;
-    void addPendingAnimatedLayer(PassRefPtr<PlatformCALayer>);
-
-private:
     CACFLayerTreeHost();
 
-    bool createRenderer();
-    void destroyRenderer();
-    void renderSoon();
-    void renderTimerFired(Timer<CACFLayerTreeHost>*);
+    CGRect bounds() const;
+    PlatformCALayer* rootLayer() const;
+    HWND window() const { return m_window; }
     void notifyAnimationsStarted();
 
-    CGRect bounds() const;
+    virtual bool createRenderer() = 0;
+    virtual void destroyRenderer();
 
-    void initD3DGeometry();
+private:
+    void initialize();
+    void addPendingAnimatedLayer(PassRefPtr<PlatformCALayer>);
+    void layerTreeDidChange();
 
-    // Call this when the device window has changed size or when IDirect3DDevice9::Present returns
-    // D3DERR_DEVICELOST. Returns true if the device was recovered, false if rendering must be
-    // aborted and reattempted soon.
-    enum ResetReason { ChangedWindowSize, LostDevice };
-    bool resetDevice(ResetReason);
-
-    void render(const Vector<CGRect>& dirtyRects = Vector<CGRect>());
+    virtual void flushContext() = 0;
+    virtual CFTimeInterval lastCommitTime() const = 0;
+    virtual void render(const Vector<CGRect>& dirtyRects = Vector<CGRect>()) = 0;
+    virtual void initializeContext(void* userData, PlatformCALayer*) = 0;
 
     CACFLayerTreeHostClient* m_client;
-    bool m_mightBeAbleToCreateDeviceLater;
-    COMPtr<IDirect3DDevice9> m_d3dDevice;
     RefPtr<PlatformCALayer> m_rootLayer;
     RefPtr<PlatformCALayer> m_rootChildLayer;
-    WKCACFContext* m_context;
+    HashSet<RefPtr<PlatformCALayer> > m_pendingAnimatedLayers;
     HWND m_window;
-    Timer<CACFLayerTreeHost> m_renderTimer;
-    bool m_mustResetLostDeviceBeforeRendering;
     bool m_shouldFlushPendingGraphicsLayerChanges;
     bool m_isFlushingLayerChanges;
-    HashSet<RefPtr<PlatformCALayer> > m_pendingAnimatedLayers;
 
-#ifndef NDEBUG
-    bool m_printTree;
-#endif
 #if !ASSERT_DISABLED
     enum { WindowNotSet, WindowSet, WindowCleared } m_state;
 #endif
