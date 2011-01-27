@@ -1,3 +1,12 @@
+2011-01-27  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip flaky test, needs further investigation on the failure.
+
+        [GTK] media/audio-delete-while-slider-thumb-clicked.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=53247
+
+        * platform/gtk/Skipped:
+
 2011-01-27  Jessie Berlin  <jberlin@apple.com>
 
         fast/text/international/bidi-mirror-he-ar.html now passed on Windows in WebKit2.

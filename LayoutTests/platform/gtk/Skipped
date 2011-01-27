@@ -5094,3 +5094,6 @@ http/tests/xmlhttprequest/simple-cross-origin-denied-events-post-sync.html
 # This media test fails; possibly because the AAC codec is not installed on the test bots:
 # https://bugs.webkit.org/show_bug.cgi?id=53125
 media/audio-mpeg4-supported.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=53247
+media/audio-delete-while-slider-thumb-clicked.html
