@@ -78,6 +78,7 @@ protected:
 
     virtual bool createRenderer() = 0;
     virtual void destroyRenderer();
+    virtual void contextDidChange();
 
 private:
     void initialize();

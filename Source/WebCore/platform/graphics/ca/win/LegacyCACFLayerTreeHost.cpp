@@ -189,7 +189,7 @@ bool LegacyCACFLayerTreeHost::createRenderer()
 
     if (IsWindow(window())) {
         rootLayer()->setBounds(bounds());
-        wkCACFContextFlush(m_context);
+        flushContext();
     }
 
     return true;
@@ -221,7 +221,7 @@ void LegacyCACFLayerTreeHost::resize()
 
     if (rootLayer()) {
         rootLayer()->setBounds(bounds());
-        wkCACFContextFlush(m_context);
+        flushContext();
     }
 }
 
@@ -326,6 +326,11 @@ void LegacyCACFLayerTreeHost::renderSoon()
 void LegacyCACFLayerTreeHost::flushContext()
 {
     wkCACFContextFlush(m_context);
+    contextDidChange();
+}
+
+void LegacyCACFLayerTreeHost::contextDidChange()
+{
     renderSoon();
 }
 

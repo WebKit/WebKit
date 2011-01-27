@@ -28966,6 +28966,14 @@
 							RelativePath="..\platform\graphics\ca\win\PlatformCALayerWinInternal.h"
 							>
 						</File>
+						<File
+							RelativePath="..\platform\graphics\ca\win\WKCACFViewLayerTreeHost.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\platform\graphics\ca\win\WKCACFViewLayerTreeHost.h"
+							>
+						</File>
 					</Filter>
 				</Filter>
 			</Filter>

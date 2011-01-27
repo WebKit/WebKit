@@ -32,6 +32,7 @@
 #include "LayerChangesFlusher.h"
 #include "LegacyCACFLayerTreeHost.h"
 #include "PlatformCALayer.h"
+#include "WKCACFViewLayerTreeHost.h"
 #include "WebCoreInstanceHandle.h"
 #include <limits.h>
 #include <wtf/CurrentTime.h>
@@ -96,7 +97,7 @@ bool CACFLayerTreeHost::acceleratedCompositingAvailable()
     wcex.hInstance = WebCore::instanceHandle();
     wcex.lpszClassName = L"CoreAnimationTesterWindowClass";
     ::RegisterClassEx(&wcex);
-    HWND testWindow = ::CreateWindow(L"CoreAnimationTesterWindowClass", L"CoreAnimationTesterWindow", WS_POPUP, -500, -500, 0, 0, 0, 0, 0, 0);
+    HWND testWindow = ::CreateWindow(L"CoreAnimationTesterWindowClass", L"CoreAnimationTesterWindow", WS_POPUP, -500, -500, 20, 20, 0, 0, 0, 0);
 
     if (!testWindow) {
         available = false;
@@ -116,7 +117,9 @@ PassRefPtr<CACFLayerTreeHost> CACFLayerTreeHost::create()
 {
     if (!acceleratedCompositingAvailable())
         return 0;
-    RefPtr<CACFLayerTreeHost> host = LegacyCACFLayerTreeHost::create();
+    RefPtr<CACFLayerTreeHost> host = WKCACFViewLayerTreeHost::create();
+    if (!host)
+        host = LegacyCACFLayerTreeHost::create();
     host->initialize();
     return host.release();
 }
@@ -292,10 +295,13 @@ void CACFLayerTreeHost::flushPendingLayerChangesNow()
     // Flush changes stored up in PlatformCALayers to the context so they will be rendered.
     flushContext();
 
+    m_isFlushingLayerChanges = false;
+}
+
+void CACFLayerTreeHost::contextDidChange()
+{
     // All pending animations will have been started with the flush. Fire the animationStarted calls.
     notifyAnimationsStarted();
-
-    m_isFlushingLayerChanges = false;
 }
 
 void CACFLayerTreeHost::notifyAnimationsStarted()

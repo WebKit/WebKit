@@ -23,60 +23,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LegacyCACFLayerTreeHost_h
-#define LegacyCACFLayerTreeHost_h
+#ifndef WKCACFViewLayerTreeHost_h
+#define WKCACFViewLayerTreeHost_h
 
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "CACFLayerTreeHost.h"
 
+typedef struct _WKCACFView* WKCACFViewRef;
+
 namespace WebCore {
 
-// FIXME: Currently there is a LegacyCACFLayerTreeHost for each WebView and each
-// has its own WKCACFContext and Direct3DDevice9, which is inefficient.
-// (https://bugs.webkit.org/show_bug.cgi?id=31855)
-class LegacyCACFLayerTreeHost : public CACFLayerTreeHost {
+class WKCACFViewLayerTreeHost : public CACFLayerTreeHost {
 public:
-    static PassRefPtr<LegacyCACFLayerTreeHost> create();
-    virtual ~LegacyCACFLayerTreeHost();
+    static PassRefPtr<WKCACFViewLayerTreeHost> create();
 
 private:
-    LegacyCACFLayerTreeHost();
+    WKCACFViewLayerTreeHost();
 
-    void initD3DGeometry();
-
-    // Call this when the device window has changed size or when IDirect3DDevice9::Present returns
-    // D3DERR_DEVICELOST. Returns true if the device was recovered, false if rendering must be
-    // aborted and reattempted soon.
-    enum ResetReason { ChangedWindowSize, LostDevice };
-    bool resetDevice(ResetReason);
-
-    void renderSoon();
-    void renderTimerFired(Timer<LegacyCACFLayerTreeHost>*);
+    void updateViewIfNeeded();
+    static void contextDidChangeCallback(WKCACFViewRef, void* info);
 
     virtual void initializeContext(void* userData, PlatformCALayer*);
     virtual void resize();
     virtual bool createRenderer();
     virtual void destroyRenderer();
-    virtual CFTimeInterval lastCommitTime() const;
     virtual void flushContext();
     virtual void contextDidChange();
     virtual void paint();
     virtual void render(const Vector<CGRect>& dirtyRects = Vector<CGRect>());
+    virtual CFTimeInterval lastCommitTime() const;
 
-    Timer<LegacyCACFLayerTreeHost> m_renderTimer;
-    COMPtr<IDirect3DDevice9> m_d3dDevice;
-    WKCACFContext* m_context;
-    bool m_mightBeAbleToCreateDeviceLater;
-    bool m_mustResetLostDeviceBeforeRendering;
-
-#ifndef NDEBUG
-    bool m_printTree;
-#endif
+    RetainPtr<WKCACFViewRef> m_view;
+    bool m_viewNeedsUpdate;
 };
 
 } // namespace WebCore
 
 #endif // USE(ACCELERATED_COMPOSITING)
 
-#endif // LegacyCACFLayerTreeHost_h
+#endif // WKCACFViewLayerTreeHost_h

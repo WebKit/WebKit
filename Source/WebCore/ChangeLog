@@ -1,5 +1,68 @@
 2011-01-27  Adam Roben  <aroben@apple.com>
 
+        Add WKCACFViewLayerTreeHost
+
+        This is a class that derives from CACFLayerTreeHost and uses a WKCACFView to render.
+
+        Fixes <http://webkit.org/b/53251> <rdar://problem/8925496> CACFLayerTreeHost should use
+        WKCACFView for rendering
+
+        * WebCore.vcproj/WebCore.vcproj: Added WKCACFViewLayerTreeHost.{cpp,h}.
+
+        * platform/graphics/ca/win/CACFLayerTreeHost.cpp:
+        (WebCore::CACFLayerTreeHost::acceleratedCompositingAvailable): Make the test window have a
+        non-zero size. WKCACFView will always say it can't render if you pass it a 0-sized window,
+        so we need a non-empty window to perform a valid test.
+        (WebCore::CACFLayerTreeHost::create): First try to create a WKCACFViewLayerTreeHost, then
+        fall back to a LegacyCACFLayerTreeHost.
+        (WebCore::CACFLayerTreeHost::flushPendingLayerChangesNow): Moved code to react to the
+        context flush from here...
+        (WebCore::CACFLayerTreeHost::contextDidChange): ...to here. Derived classes are required to
+        call this function whenever changes are flushed to the context.
+
+        * platform/graphics/ca/win/CACFLayerTreeHost.h: Added contextDidChange.
+
+        * platform/graphics/ca/win/LegacyCACFLayerTreeHost.cpp:
+        (WebCore::LegacyCACFLayerTreeHost::createRenderer):
+        (WebCore::LegacyCACFLayerTreeHost::resize):
+        Changed to use flushContext instead of flushing the context manually so that we will always
+        notify the base class when the context gets flushed.
+
+        (WebCore::LegacyCACFLayerTreeHost::flushContext): Added a call to contextDidChange so the
+        base class will know what happened. Moved code to schedule a render from here...
+        (WebCore::LegacyCACFLayerTreeHost::contextDidChange): ...to here.
+
+        * platform/graphics/ca/win/LegacyCACFLayerTreeHost.h: Added contextDidChange.
+
+        * platform/graphics/ca/win/WKCACFViewLayerTreeHost.cpp: Added.
+        (WebCore::WKCACFViewLayerTreeHost::create): If WebKitQuartzCoreAdditions, which provides
+        WKCACFView, isn't present, bail. Otherwise allocate and return a new host.
+        (WebCore::WKCACFViewLayerTreeHost::WKCACFViewLayerTreeHost): Initialize members.
+        (WebCore::WKCACFViewLayerTreeHost::updateViewIfNeeded): Update the view if we previously
+        marked that we needed to do so, and flush the context if our layer's bounds have changed.
+        (WebCore::WKCACFViewLayerTreeHost::contextDidChangeCallback): Call through to
+        contextDidChange.
+        (WebCore::WKCACFViewLayerTreeHost::contextDidChange): Tell the WKCACFView to start rendering
+        (if we didn't already), then call up to the base class.
+        (WebCore::WKCACFViewLayerTreeHost::initializeContext): Set the context's user data, the
+        view's layer, and hook up our "context did change" callback.
+        (WebCore::WKCACFViewLayerTreeHost::resize): Mark that the view needs to be updated the next
+        time we paint.
+        (WebCore::WKCACFViewLayerTreeHost::createRenderer): Update our view and return whether it is
+        able to render or not.
+        (WebCore::WKCACFViewLayerTreeHost::destroyRenderer): Clear out all the info we passed down
+        to the view.
+        (WebCore::WKCACFViewLayerTreeHost::lastCommitTime): Call through to the view.
+        (WebCore::WKCACFViewLayerTreeHost::flushContext): Ditto.
+        (WebCore::WKCACFViewLayerTreeHost::paint): Update the view so it will draw at the right
+        size, then call up to the base class.
+        (WebCore::WKCACFViewLayerTreeHost::render): Invalidate the view using the passed-in dirty
+        rects, then ask it to draw.
+
+        * platform/graphics/ca/win/WKCACFViewLayerTreeHost.h: Copied from Source/WebCore/platform/graphics/ca/win/LegacyCACFLayerTreeHost.h.
+
+2011-01-27  Adam Roben  <aroben@apple.com>
+
         Move LegacyCACFLayerTreeHost into its own files
 
         More preparation for <http://webkit.org/b/53251> <rdar://problem/8925496> CACFLayerTreeHost
