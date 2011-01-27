@@ -149,7 +149,7 @@ bool ComplexTextController::nextScriptRun()
     // Ensure we're not pointing at the small caps buffer.
     m_item.string = m_run.characters();
 
-    if (!hb_utf16_script_run_next(&m_numCodePoints, &m_item.item, m_run.characters(), m_run.length(), &m_indexOfNextScriptRun))
+    if (!hb_utf16_script_run_next(0, &m_item.item, m_run.characters(), m_run.length(), &m_indexOfNextScriptRun))
         return false;
 
     // It is actually wrong to consider script runs at all in this code.

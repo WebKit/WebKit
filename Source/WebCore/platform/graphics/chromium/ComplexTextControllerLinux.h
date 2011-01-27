@@ -111,7 +111,7 @@ public:
     const unsigned short* logClusters() const { return m_item.log_clusters; }
 
     // return the number of code points in the current script run
-    const unsigned numCodePoints() const { return m_numCodePoints; }
+    const unsigned numCodePoints() const { return m_item.item.length; }
 
     // Return the current pixel position of the controller.
     const unsigned offsetX() const { return m_offsetX; }
@@ -141,7 +141,6 @@ private:
     ssize_t m_indexOfNextScriptRun; // Indexes the script run in |m_run|.
     unsigned m_offsetX; // Offset in pixels to the start of the next script run.
     unsigned m_pixelWidth; // Width (in px) of the current script run.
-    unsigned m_numCodePoints; // Code points in current script run.
     unsigned m_glyphsArrayCapacity; // Current size of all the Harfbuzz arrays.
 
     OwnPtr<TextRun> m_normalizedRun;

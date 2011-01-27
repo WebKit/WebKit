@@ -1,3 +1,16 @@
+2010-01-26  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] crash on getBoundingClientRect in complex text
+        https://bugs.webkit.org/show_bug.cgi?id=53199
+
+        Add a test that reproduces the crash and verifies the resulting values
+        are sane (when it didn't crash, it would get garbage values).
+
+        * platform/chromium-linux/fast/text/international/complex-text-rectangle-expected.txt: Added.
+        * platform/chromium-linux/fast/text/international/complex-text-rectangle.html: Added.
+
 2011-01-26  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

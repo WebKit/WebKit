@@ -1,3 +1,20 @@
+2011-01-26  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] crash on getBoundingClientRect in complex text
+        https://bugs.webkit.org/show_bug.cgi?id=53199
+
+        Use the correct array bound; we want the number of characters processed by
+        the shaper, not the longest continuous script run length.
+
+        Test: platform/chromium-linux/fast/text/international/complex-text-rectangle.html
+
+        * platform/graphics/chromium/ComplexTextControllerLinux.cpp:
+        (WebCore::ComplexTextController::nextScriptRun):
+        * platform/graphics/chromium/ComplexTextControllerLinux.h:
+        (WebCore::ComplexTextController::numCodePoints):
+
 2011-01-26  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
