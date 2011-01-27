@@ -1,3 +1,14 @@
+2011-01-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        <rdar://problem/8446709> Allow inter-ideograph justification for CJK
+        https://bugs.webkit.org/show_bug.cgi?id=53184
+
+        * src/WebTextRun.cpp:
+        (WebKit::WebTextRun::operator WebCore::TextRun): Added a TrailingExpansionBehavior parameter to the
+        RenderText constructor.
+
 2011-01-26  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.

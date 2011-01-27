@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2006, 2007 Apple Computer, Inc.
+ * Copyright (C) 2003, 2006, 2007, 2011 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,12 +33,18 @@ class RenderSVGResource;
 
 class TextRun {
 public:
-    TextRun(const UChar* c, int len, bool allowTabs = false, int xpos = 0, int padding = 0, bool rtl = false, bool directionalOverride = false,
+    enum TrailingExpansionBehavior {
+        AllowTrailingExpansion,
+        ForbidTrailingExpansion
+    };
+
+    TextRun(const UChar* c, int len, bool allowTabs = false, int xpos = 0, int expansion = 0, TrailingExpansionBehavior trailingExpansionBehavior = AllowTrailingExpansion, bool rtl = false, bool directionalOverride = false,
               bool applyRunRounding = true, bool applyWordRounding = true)
         : m_characters(c)
         , m_len(len)
         , m_xpos(xpos)
-        , m_padding(padding)
+        , m_expansion(expansion)
+        , m_trailingExpansionBehavior(trailingExpansionBehavior)
 #if ENABLE(SVG)
         , m_horizontalGlyphStretch(1)
 #endif
@@ -55,12 +61,13 @@ public:
     {
     }
 
-    TextRun(const String& s, bool allowTabs = false, int xpos = 0, int padding = 0, bool rtl = false, bool directionalOverride = false,
+    TextRun(const String& s, bool allowTabs = false, int xpos = 0, int expansion = 0, TrailingExpansionBehavior trailingExpansionBehavior = AllowTrailingExpansion, bool rtl = false, bool directionalOverride = false,
               bool applyRunRounding = true, bool applyWordRounding = true)
         : m_characters(s.characters())
         , m_len(s.length())
         , m_xpos(xpos)
-        , m_padding(padding)
+        , m_expansion(expansion)
+        , m_trailingExpansionBehavior(trailingExpansionBehavior)
 #if ENABLE(SVG)
         , m_horizontalGlyphStretch(1)
 #endif
@@ -92,7 +99,8 @@ public:
 
     bool allowTabs() const { return m_allowTabs; }
     int xPos() const { return m_xpos; }
-    int padding() const { return m_padding; }
+    int expansion() const { return m_expansion; }
+    bool allowsTrailingExpansion() const { return m_trailingExpansionBehavior == AllowTrailingExpansion; }
     bool rtl() const { return m_rtl; }
     bool ltr() const { return !m_rtl; }
     bool directionalOverride() const { return m_directionalOverride; }
@@ -121,7 +129,8 @@ private:
     // start of the containing block. In the case of right alignment or center alignment, left start of
     // the text line is not the same as left start of the containing block.
     int m_xpos;  
-    int m_padding;
+    int m_expansion;
+    TrailingExpansionBehavior m_trailingExpansionBehavior;
 #if ENABLE(SVG)
     float m_horizontalGlyphStretch;
 #endif

@@ -49,7 +49,7 @@ UniscribeController::UniscribeController(const Font* font, const TextRun& run, H
     , m_end(run.length())
     , m_currentCharacter(0)
     , m_runWidthSoFar(0)
-    , m_padding(run.padding())
+    , m_padding(run.expansion())
     , m_computingOffsetPosition(false)
     , m_includePartialGlyphs(false)
     , m_offsetX(0)

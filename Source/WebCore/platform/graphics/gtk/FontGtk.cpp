@@ -215,6 +215,11 @@ bool Font::canReturnFallbackFontsForComplexText()
     return false;
 }
 
+bool Font::canExpandAroundIdeographsInComplexText()
+{
+    return false;
+}
+
 static void drawGlyphsShadow(GraphicsContext* graphicsContext, cairo_t* context, const FloatPoint& point, PangoLayoutLine* layoutLine, PangoRegionType renderRegion)
 {
     ContextShadow* shadow = graphicsContext->contextShadow();

@@ -47,6 +47,11 @@ bool Font::canReturnFallbackFontsForComplexText()
     return true;
 }
 
+bool Font::canExpandAroundIdeographsInComplexText()
+{
+    return true;
+}
+
 static void showGlyphsWithAdvances(const SimpleFontData* font, CGContextRef context, const CGGlyph* glyphs, const CGSize* advances, size_t count)
 {
     const FontPlatformData& platformData = font->platformData();

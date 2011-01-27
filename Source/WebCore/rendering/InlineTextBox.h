@@ -1,7 +1,7 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2009, 2010, 2011 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,6 +25,7 @@
 
 #include "InlineBox.h"
 #include "RenderText.h" // so textRenderer() can be inline
+#include "TextRun.h"
 
 namespace WebCore {
 
@@ -109,7 +110,7 @@ private:
 public:
     virtual bool isLineBreak() const;
 
-    void setSpaceAdd(int add) { m_logicalWidth -= m_toAdd; m_toAdd = add; m_logicalWidth += m_toAdd; }
+    void setExpansion(int expansion) { m_logicalWidth -= m_expansion; m_expansion = expansion; m_logicalWidth += m_expansion; }
 
 private:
     virtual bool isInlineTextBox() const { return true; }    
@@ -156,6 +157,8 @@ private:
     void paintSpellingOrGrammarMarker(GraphicsContext*, const IntPoint& boxOrigin, const DocumentMarker&, RenderStyle*, const Font&, bool grammar);
     void paintTextMatchMarker(GraphicsContext*, const IntPoint& boxOrigin, const DocumentMarker&, RenderStyle*, const Font&);
     void computeRectForReplacementMarker(const DocumentMarker&, RenderStyle*, const Font&);
+
+    TextRun::TrailingExpansionBehavior trailingExpansionBehavior() const { return m_expansion && nextLeafChild() ? TextRun::AllowTrailingExpansion : TextRun::ForbidTrailingExpansion; }
 };
 
 inline RenderText* InlineTextBox::textRenderer() const

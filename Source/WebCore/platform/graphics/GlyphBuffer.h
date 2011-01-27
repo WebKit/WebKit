@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2009, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2008 Torch Mobile Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -187,7 +187,20 @@ public:
         m_advances.append(advance);
     }
 #endif
-    
+
+    void expandLastAdvance(float width)
+    {
+        ASSERT(!isEmpty());
+        GlyphBufferAdvance& lastAdvance = m_advances.last();
+#if PLATFORM(CG) || (PLATFORM(WX) && OS(DARWIN))
+        lastAdvance.width += width;
+#elif OS(WINCE)
+        lastAdvance += width;
+#else
+        lastAdvance += FloatSize(width, 0);
+#endif
+    }
+
 private:
     Vector<const SimpleFontData*, 2048> m_fontData;
     Vector<GlyphBufferGlyph, 2048> m_glyphs;

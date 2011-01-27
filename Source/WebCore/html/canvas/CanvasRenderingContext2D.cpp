@@ -1771,7 +1771,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
 
     unsigned length = text.length();
     const UChar* string = text.characters();
-    TextRun textRun(string, length, 0, 0, 0, rtl, override, false, false);
+    TextRun textRun(string, length, false, 0, 0, TextRun::AllowTrailingExpansion, rtl, override, false, false);
 
     // Draw the item text at the correct point.
     FloatPoint location(x, y);
@@ -1793,7 +1793,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
         break;
     }
 
-    float width = font.width(TextRun(text, false, 0, 0, rtl, override));
+    float width = font.width(TextRun(text, false, 0, 0, TextRun::AllowTrailingExpansion, rtl, override));
 
     TextAlign align = state().m_textAlign;
     if (align == StartTextAlign)

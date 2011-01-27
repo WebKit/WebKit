@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -177,8 +177,9 @@ private:
     unsigned m_glyphInCurrentRun;
     unsigned m_characterInCurrentGlyph;
     float m_finalRoundingWidth;
-    float m_padding;
-    float m_padPerSpace;
+    float m_expansion;
+    float m_expansionPerOpportunity;
+    bool m_afterExpansion;
 
     HashSet<const SimpleFontData*>* m_fallbackFonts;
 

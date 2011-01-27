@@ -45,6 +45,11 @@ bool Font::canReturnFallbackFontsForComplexText()
     return true;
 }
 
+bool Font::canExpandAroundIdeographsInComplexText()
+{
+    return false;
+}
+
 FloatRect Font::selectionRectForComplexText(const TextRun& run, const FloatPoint& point, int h,
                                             int from, int to) const
 {

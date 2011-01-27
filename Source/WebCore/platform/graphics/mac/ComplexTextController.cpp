@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,7 +71,8 @@ ComplexTextController::ComplexTextController(const Font* font, const TextRun& ru
     , m_glyphInCurrentRun(0)
     , m_characterInCurrentGlyph(0)
     , m_finalRoundingWidth(0)
-    , m_padding(run.padding())
+    , m_expansion(run.expansion())
+    , m_afterExpansion(true)
     , m_fallbackFonts(fallbackFonts)
     , m_minGlyphBoundingBoxX(numeric_limits<float>::max())
     , m_maxGlyphBoundingBoxX(numeric_limits<float>::min())
@@ -79,19 +80,18 @@ ComplexTextController::ComplexTextController(const Font* font, const TextRun& ru
     , m_maxGlyphBoundingBoxY(numeric_limits<float>::min())
     , m_lastRoundingGlyph(0)
 {
-    if (!m_padding)
-        m_padPerSpace = 0;
+    if (!m_expansion)
+        m_expansionPerOpportunity = 0;
     else {
-        int numSpaces = 0;
-        for (int s = 0; s < m_run.length(); s++) {
-            if (Font::treatAsSpace(m_run[s]))
-                numSpaces++;
-        }
+        bool isAfterExpansion = true;
+        unsigned expansionOpportunityCount = Font::expansionOpportunityCount(m_run.characters(), m_end, isAfterExpansion);
+        if (isAfterExpansion && !m_run.allowsTrailingExpansion())
+            expansionOpportunityCount--;
 
-        if (!numSpaces)
-            m_padPerSpace = 0;
+        if (!expansionOpportunityCount)
+            m_expansionPerOpportunity = 0;
         else
-            m_padPerSpace = m_padding / numSpaces;
+            m_expansionPerOpportunity = m_expansion / expansionOpportunityCount;
     }
 
     collectComplexTextRuns();
@@ -422,6 +422,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
 {
     CGFloat widthSinceLastRounding = 0;
     size_t runCount = m_complexTextRuns.size();
+    bool hasExtraSpacing = (m_font.letterSpacing() || m_font.wordSpacing() || m_expansion) && !m_run.spacingDisabled();
     for (size_t r = 0; r < runCount; ++r) {
         ComplexTextRun& complexTextRun = *m_complexTextRuns[r];
         unsigned glyphCount = complexTextRun.glyphCount();
@@ -434,7 +435,6 @@ void ComplexTextController::adjustGlyphsAndAdvances()
         const UChar* cp = complexTextRun.characters();
         CGFloat roundedSpaceWidth = roundCGFloat(fontData->spaceWidth());
         bool roundsAdvances = !m_font.isPrinterFont() && fontData->platformData().roundsGlyphAdvances();
-        bool hasExtraSpacing = (m_font.letterSpacing() || m_font.wordSpacing() || m_padding) && !m_run.spacingDisabled();
         CGPoint glyphOrigin = CGPointZero;
         CFIndex lastCharacterIndex = m_run.ltr() ? numeric_limits<CFIndex>::min() : numeric_limits<CFIndex>::max();
         bool isMonotonic = true;
@@ -490,25 +490,29 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                     advance.width += m_font.letterSpacing();
 
                 // Handle justification and word-spacing.
-                if (treatAsSpace) {
-                    // Account for padding. WebCore uses space padding to justify text.
-                    // We distribute the specified padding over the available spaces in the run.
-                    if (m_padding) {
-                        // Use leftover padding if not evenly divisible by number of spaces.
-                        if (m_padding < m_padPerSpace) {
-                            advance.width += m_padding;
-                            m_padding = 0;
-                        } else {
-                            float previousPadding = m_padding;
-                            m_padding -= m_padPerSpace;
-                            advance.width += roundf(previousPadding) - roundf(m_padding);
+                if (treatAsSpace || Font::isCJKIdeograph(ch)) {
+                    // Distribute the run's total expansion evenly over all expansion opportunities in the run.
+                    if (m_expansion && (!lastGlyph || m_run.allowsTrailingExpansion())) {
+                        float previousExpansion = m_expansion;
+                        if (!treatAsSpace && !m_afterExpansion) {
+                            // Take the expansion opportunity before this ideograph.
+                            m_expansion -= m_expansionPerOpportunity;
+                            int expansion = roundf(previousExpansion) - roundf(m_expansion);
+                            m_totalWidth += expansion;
+                            m_adjustedAdvances.last().width += expansion;
+                            previousExpansion = m_expansion;
                         }
-                    }
+                        m_expansion -= m_expansionPerOpportunity;
+                        advance.width += roundf(previousExpansion) - roundf(m_expansion);
+                        m_afterExpansion = true;
+                    } else
+                        m_afterExpansion = false;
 
                     // Account for word-spacing.
-                    if (characterIndex > 0 && !Font::treatAsSpace(*m_run.data(characterIndex - 1)) && m_font.wordSpacing())
+                    if (treatAsSpace && characterIndex > 0 && !Font::treatAsSpace(*m_run.data(characterIndex - 1)) && m_font.wordSpacing())
                         advance.width += m_font.wordSpacing();
-                }
+                } else
+                    m_afterExpansion = false;
             }
 
             // Deal with the float/integer impedance mismatch between CG and WebCore. "Words" (characters 

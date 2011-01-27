@@ -50,6 +50,11 @@ bool Font::canReturnFallbackFontsForComplexText()
     return false;
 }
 
+bool Font::canExpandAroundIdeographsInComplexText()
+{
+    return false;
+}
+
 float Font::floatWidthForComplexText(const TextRun&, HashSet<const SimpleFontData*>*, GlyphOverflow*) const
 {
     notImplemented();

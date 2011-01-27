@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2006, 2008, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Holger Hans Peter Freyther
  *
  * This library is free software; you can redistribute it and/or
@@ -50,8 +50,9 @@ struct WidthIterator {
 
     unsigned m_currentCharacter;
     float m_runWidthSoFar;
-    float m_padding;
-    float m_padPerSpace;
+    float m_expansion;
+    float m_expansionPerOpportunity;
+    bool m_isAfterExpansion;
     float m_finalRoundingWidth;
 
 private:

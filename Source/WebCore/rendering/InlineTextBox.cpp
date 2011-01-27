@@ -1,7 +1,7 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -40,7 +40,6 @@
 #include "RenderRubyText.h"
 #include "RenderTheme.h"
 #include "Text.h"
-#include "TextRun.h"
 #include "break_lines.h"
 #include <wtf/AlwaysInline.h>
 
@@ -163,7 +162,7 @@ IntRect InlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos)
         ePos = len;
     }
 
-    IntRect r = enclosingIntRect(f.selectionRectForText(TextRun(characters, len, textObj->allowTabs(), textPos(), m_toAdd, !isLeftToRightDirection(), m_dirOverride),
+    IntRect r = enclosingIntRect(f.selectionRectForText(TextRun(characters, len, textObj->allowTabs(), textPos(), m_expansion, trailingExpansionBehavior(), !isLeftToRightDirection(), m_dirOverride),
                                                         IntPoint(), selHeight, sPos, ePos));
                                                         
     int logicalWidth = r.width();
@@ -608,7 +607,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
     if (hasHyphen())
         adjustCharactersAndLengthForHyphen(charactersWithHyphen, styleToUse, characters, length);
 
-    TextRun textRun(characters, length, textRenderer()->allowTabs(), textPos(), m_toAdd, !isLeftToRightDirection(), m_dirOverride || styleToUse->visuallyOrdered());
+    TextRun textRun(characters, length, textRenderer()->allowTabs(), textPos(), m_expansion, trailingExpansionBehavior(), !isLeftToRightDirection(), m_dirOverride || styleToUse->visuallyOrdered());
 
     int sPos = 0;
     int ePos = 0;
@@ -762,7 +761,7 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const IntPoint& box
     int selHeight = selectionHeight();
     IntPoint localOrigin(boxOrigin.x(), boxOrigin.y() - deltaY);
     context->clip(IntRect(localOrigin, IntSize(m_logicalWidth, selHeight)));
-    context->drawHighlightForText(font, TextRun(characters, length, textRenderer()->allowTabs(), textPos(), m_toAdd, 
+    context->drawHighlightForText(font, TextRun(characters, length, textRenderer()->allowTabs(), textPos(), m_expansion, trailingExpansionBehavior(), 
                                   !isLeftToRightDirection(), m_dirOverride || style->visuallyOrdered()),
                                   localOrigin, selHeight, c, style->colorSpace(), sPos, ePos);
     context->restore();
@@ -786,7 +785,7 @@ void InlineTextBox::paintCompositionBackground(GraphicsContext* context, const I
     int deltaY = renderer()->style()->isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
     int selHeight = selectionHeight();
     IntPoint localOrigin(boxOrigin.x(), boxOrigin.y() - deltaY);
-    context->drawHighlightForText(font, TextRun(textRenderer()->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_toAdd,
+    context->drawHighlightForText(font, TextRun(textRenderer()->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_expansion, trailingExpansionBehavior(),
                                   !isLeftToRightDirection(), m_dirOverride || style->visuallyOrdered()),
                                   localOrigin, selHeight, c, style->colorSpace(), sPos, ePos);
     context->restore();
@@ -948,7 +947,7 @@ void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, const IntP
         int deltaY = renderer()->style()->isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
         int selHeight = selectionHeight();
         IntPoint startPoint(boxOrigin.x(), boxOrigin.y() - deltaY);
-        TextRun run(textRenderer()->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_toAdd, !isLeftToRightDirection(), m_dirOverride || style->visuallyOrdered());
+        TextRun run(textRenderer()->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_expansion, trailingExpansionBehavior(), !isLeftToRightDirection(), m_dirOverride || style->visuallyOrdered());
          
         IntRect markerRect = enclosingIntRect(font.selectionRectForText(run, startPoint, selHeight, startPosition, endPosition));
         start = markerRect.x() - startPoint.x();
@@ -992,7 +991,7 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, const IntPoint& bo
 
     int sPos = max(marker.startOffset - m_start, (unsigned)0);
     int ePos = min(marker.endOffset - m_start, (unsigned)m_len);    
-    TextRun run(textRenderer()->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_toAdd, !isLeftToRightDirection(), m_dirOverride || style->visuallyOrdered());
+    TextRun run(textRenderer()->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_expansion, trailingExpansionBehavior(), !isLeftToRightDirection(), m_dirOverride || style->visuallyOrdered());
     
     // Always compute and store the rect associated with this marker. The computed rect is in absolute coordinates.
     IntRect markerRect = enclosingIntRect(font.selectionRectForText(run, IntPoint(m_x, selectionTop()), selHeight, sPos, ePos));
@@ -1020,7 +1019,7 @@ void InlineTextBox::computeRectForReplacementMarker(const DocumentMarker& marker
     
     int sPos = max(marker.startOffset - m_start, (unsigned)0);
     int ePos = min(marker.endOffset - m_start, (unsigned)m_len);    
-    TextRun run(textRenderer()->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_toAdd, !isLeftToRightDirection(), m_dirOverride || style->visuallyOrdered());
+    TextRun run(textRenderer()->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_expansion, trailingExpansionBehavior(), !isLeftToRightDirection(), m_dirOverride || style->visuallyOrdered());
     IntPoint startPoint = IntPoint(m_x, y);
     
     // Compute and store the rect associated with this marker.
@@ -1185,7 +1184,7 @@ int InlineTextBox::offsetForPosition(int lineOffset, bool includePartialGlyphs) 
     RenderStyle* style = text->style(m_firstLine);
     const Font* f = &style->font();
     int offset = f->offsetForPosition(TextRun(textRenderer()->text()->characters() + m_start, m_len,
-        textRenderer()->allowTabs(), textPos(), m_toAdd, !isLeftToRightDirection(), m_dirOverride || style->visuallyOrdered()),
+        textRenderer()->allowTabs(), textPos(), m_expansion, trailingExpansionBehavior(), !isLeftToRightDirection(), m_dirOverride || style->visuallyOrdered()),
         lineOffset - logicalLeft(), includePartialGlyphs);
     if (blockIsInOppositeDirection && (!offset || offset == m_len))
         return !offset ? m_len : 0;
@@ -1205,7 +1204,7 @@ int InlineTextBox::positionForOffset(int offset) const
     int from = !isLeftToRightDirection() ? offset - m_start : 0;
     int to = !isLeftToRightDirection() ? m_len : offset - m_start;
     // FIXME: Do we need to add rightBearing here?
-    return enclosingIntRect(f.selectionRectForText(TextRun(text->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_toAdd, !isLeftToRightDirection(), m_dirOverride),
+    return enclosingIntRect(f.selectionRectForText(TextRun(text->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_expansion, trailingExpansionBehavior(), !isLeftToRightDirection(), m_dirOverride),
                                                    IntPoint(logicalLeft(), 0), 0, from, to)).right();
 }
 

@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2006, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2006, 2010, 2011 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -293,7 +293,7 @@ Font::CodePath Font::codePath(const TextRun& run) const
         return s_codePath;
 
 #if PLATFORM(QT)
-    if (run.padding() || run.rtl() || isSmallCaps() || wordSpacing() || letterSpacing())
+    if (run.expansion() || run.rtl() || isSmallCaps() || wordSpacing() || letterSpacing())
         return Complex;
 #endif
 
@@ -456,6 +456,33 @@ bool Font::isCJKIdeographOrSymbol(UChar32 c)
         return true;
 
     return isCJKIdeograph(c);
+}
+
+unsigned Font::expansionOpportunityCount(const UChar* characters, size_t length, bool& isAfterExpansion)
+{
+    static bool expandAroundIdeographs = canExpandAroundIdeographsInComplexText();
+    unsigned count = 0;
+    for (size_t i = 0; i < length; ++i) {
+        UChar32 character = characters[i];
+        if (treatAsSpace(character)) {
+            count++;
+            isAfterExpansion = true;
+            continue;
+        }
+        if (U16_IS_LEAD(character) && i + 1 < length && U16_IS_TRAIL(characters[i + 1])) {
+            character = U16_GET_SUPPLEMENTARY(character, characters[i + 1]);
+            i++;
+        }
+        if (expandAroundIdeographs && isCJKIdeograph(character)) {
+            if (!isAfterExpansion)
+                count++;
+            count++;
+            isAfterExpansion = true;
+            continue;
+        }
+        isAfterExpansion = false;
+    }
+    return count;
 }
 
 bool Font::canReceiveTextEmphasis(UChar32 c)

@@ -39,7 +39,7 @@ namespace WebKit {
 
 WebTextRun::operator WebCore::TextRun() const
 {
-    return TextRun(text, false, 0, 0, rtl, directionalOverride);
+    return TextRun(text, false, 0, 0, TextRun::AllowTrailingExpansion, rtl, directionalOverride);
 }
 
 } // namespace WebKit

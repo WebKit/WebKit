@@ -632,7 +632,7 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
             
         unsigned length = itemText.length();
         const UChar* string = itemText.characters();
-        TextRun textRun(string, length, false, 0, 0, itemText.defaultWritingDirection() == WTF::Unicode::RightToLeft);
+        TextRun textRun(string, length, false, 0, 0, TextRun::AllowTrailingExpansion, itemText.defaultWritingDirection() == WTF::Unicode::RightToLeft);
 
         context.setFillColor(optionTextColor, ColorSpaceDeviceRGB);
         

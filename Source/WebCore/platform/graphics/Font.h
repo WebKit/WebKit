@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2006, 2007, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2006, 2007, 2010, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Holger Hans Peter Freyther
  *
  * This library is free software; you can redistribute it and/or
@@ -142,7 +142,9 @@ public:
 
     static bool isCJKIdeograph(UChar32);
     static bool isCJKIdeographOrSymbol(UChar32);
-    
+
+    static unsigned expansionOpportunityCount(const UChar*, size_t length, bool& isAfterExpansion);
+
 #if PLATFORM(QT)
     QFont font() const;
 #endif
@@ -177,6 +179,7 @@ private:
     bool getEmphasisMarkGlyphData(const AtomicString&, GlyphData&) const;
 
     static bool canReturnFallbackFontsForComplexText();
+    static bool canExpandAroundIdeographsInComplexText();
 
     CodePath codePath(const TextRun&) const;
 

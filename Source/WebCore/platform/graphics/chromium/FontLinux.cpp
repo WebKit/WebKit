@@ -55,6 +55,11 @@ bool Font::canReturnFallbackFontsForComplexText()
     return false;
 }
 
+bool Font::canExpandAroundIdeographsInComplexText()
+{
+    return false;
+}
+
 static bool isCanvasMultiLayered(SkCanvas* canvas)
 {
     SkCanvas::LayerIter layerIterator(canvas, false);
@@ -204,7 +209,7 @@ void Font::drawComplexText(GraphicsContext* gc, const TextRun& run,
     ComplexTextController controller(run, point.x(), this);
     controller.setWordSpacingAdjustment(wordSpacing());
     controller.setLetterSpacingAdjustment(letterSpacing());
-    controller.setPadding(run.padding());
+    controller.setPadding(run.expansion());
 
     if (run.rtl()) {
         // FIXME: this causes us to shape the text twice -- once to compute the width and then again
@@ -213,7 +218,7 @@ void Font::drawComplexText(GraphicsContext* gc, const TextRun& run,
         controller.reset(point.x() + controller.widthOfFullRun());
         // We need to set the padding again because ComplexTextController layout consumed the value.
         // Fixing the above problem would help here too.
-        controller.setPadding(run.padding());
+        controller.setPadding(run.expansion());
     }
 
     while (controller.nextScriptRun()) {
@@ -241,7 +246,7 @@ float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFon
     ComplexTextController controller(run, 0, this);
     controller.setWordSpacingAdjustment(wordSpacing());
     controller.setLetterSpacingAdjustment(letterSpacing());
-    controller.setPadding(run.padding());
+    controller.setPadding(run.expansion());
     return controller.widthOfFullRun();
 }
 
@@ -275,11 +280,11 @@ int Font::offsetForPositionForComplexText(const TextRun& run, float xFloat,
     ComplexTextController controller(run, 0, this);
     controller.setWordSpacingAdjustment(wordSpacing());
     controller.setLetterSpacingAdjustment(letterSpacing());
-    controller.setPadding(run.padding());
+    controller.setPadding(run.expansion());
     if (run.rtl()) {
         // See FIXME in drawComplexText.
         controller.reset(controller.widthOfFullRun());
-        controller.setPadding(run.padding());
+        controller.setPadding(run.expansion());
     }
 
     unsigned basePosition = 0;
@@ -326,11 +331,11 @@ FloatRect Font::selectionRectForComplexText(const TextRun& run,
     ComplexTextController controller(run, 0, this);
     controller.setWordSpacingAdjustment(wordSpacing());
     controller.setLetterSpacingAdjustment(letterSpacing());
-    controller.setPadding(run.padding());
+    controller.setPadding(run.expansion());
     if (run.rtl()) {
         // See FIXME in drawComplexText.
         controller.reset(controller.widthOfFullRun());
-        controller.setPadding(run.padding());
+        controller.setPadding(run.expansion());
     }
 
     // Iterate through the script runs in logical order, searching for the run covering the positions of interest.

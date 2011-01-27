@@ -57,6 +57,15 @@ bool Font::canReturnFallbackFontsForComplexText()
 #endif
 }
 
+bool Font::canExpandAroundIdeographsInComplexText()
+{
+#if OS(DARWIN)
+    return true;
+#else
+    return false;
+#endif
+}
+
 void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* font, const GlyphBuffer& glyphBuffer, 
                       int from, int numGlyphs, const FloatPoint& point) const
 {

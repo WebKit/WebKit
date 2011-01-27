@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003, 2004, 2006, 2007, 2008, 2009, 2010 Apple Inc. All right reserved.
+ * Copyright (C) 2003, 2004, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All right reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -310,7 +310,9 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
     int availableLogicalWidth = availableLogicalWidthForLine(logicalHeight(), firstLine);
     int totalLogicalWidth = lineBox->getFlowSpacingLogicalWidth();
     bool needsWordSpacing = false;
-    unsigned numSpaces = 0;
+    unsigned expansionOpportunityCount = 0;
+    bool isAfterExpansion = true;
+    Vector<unsigned, 16> expansionOpportunities;
     ETextAlign textAlign = style()->textAlign();
 
     for (BidiRun* r = firstRun; r; r = r->next()) {
@@ -322,12 +324,9 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
             RenderText* rt = toRenderText(r->m_object);
 
             if (textAlign == JUSTIFY && r != trailingSpaceRun) {
-                const UChar* characters = rt->characters();
-                for (int i = r->m_start; i < r->m_stop; i++) {
-                    UChar c = characters[i];
-                    if (Font::treatAsSpace(c))
-                        numSpaces++;
-                }
+                unsigned opportunitiesInRun = Font::expansionOpportunityCount(rt->characters() + r->m_start, r->m_stop - r->m_start, isAfterExpansion);
+                expansionOpportunities.append(opportunitiesInRun);
+                expansionOpportunityCount += opportunitiesInRun;
             }
 
             if (int length = rt->textLength()) {
@@ -354,14 +353,22 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
                 GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(static_cast<InlineTextBox*>(r->m_box), make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).first;
                 it->second.second = glyphOverflow;
             }
-        } else if (!r->m_object->isRenderInline()) {
-            RenderBox* renderBox = toRenderBox(r->m_object);
-            renderBox->computeLogicalWidth();
-            r->m_box->setLogicalWidth(logicalWidthForChild(renderBox));
-            totalLogicalWidth += marginStartForChild(renderBox) + marginEndForChild(renderBox);
+        } else {
+            isAfterExpansion = false;
+            if (!r->m_object->isRenderInline()) {
+                RenderBox* renderBox = toRenderBox(r->m_object);
+                renderBox->computeLogicalWidth();
+                r->m_box->setLogicalWidth(logicalWidthForChild(renderBox));
+                totalLogicalWidth += marginStartForChild(renderBox) + marginEndForChild(renderBox);
+            }
         }
 
         totalLogicalWidth += r->m_box->logicalWidth();
+    }
+
+    if (isAfterExpansion && !expansionOpportunities.isEmpty()) {
+        expansionOpportunities.last()--;
+        expansionOpportunityCount--;
     }
 
     // Armed with the total width of the line (without justification),
@@ -385,7 +392,7 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
             }
             break;
         case JUSTIFY:
-            if (numSpaces && !reachedEnd && !lineBox->endsWithBreak()) {
+            if (expansionOpportunityCount && !reachedEnd && !lineBox->endsWithBreak()) {
                 if (trailingSpaceRun) {
                     totalLogicalWidth -= trailingSpaceRun->m_box->logicalWidth();
                     trailingSpaceRun->m_box->setLogicalWidth(0);
@@ -394,7 +401,7 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
             }
             // fall through
         case TAAUTO:
-            numSpaces = 0;
+            expansionOpportunityCount = 0;
             // for right to left fall through to right aligned
             if (style()->isLeftToRightDirection()) {
                 if (totalLogicalWidth > availableLogicalWidth && trailingSpaceRun)
@@ -436,31 +443,26 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
             break;
     }
 
-    if (numSpaces) {
+    if (expansionOpportunityCount) {
+        size_t i = 0;
         for (BidiRun* r = firstRun; r; r = r->next()) {
             if (!r->m_box || r == trailingSpaceRun)
                 continue;
 
-            int spaceAdd = 0;
             if (r->m_object->isText()) {
-                unsigned spaces = 0;
-                const UChar* characters = toRenderText(r->m_object)->characters();
-                for (int i = r->m_start; i < r->m_stop; i++) {
-                    UChar c = characters[i];
-                    if (Font::treatAsSpace(c))
-                        spaces++;
-                }
+                unsigned opportunitiesInRun = expansionOpportunities[i++];
 
-                ASSERT(spaces <= numSpaces);
+                ASSERT(opportunitiesInRun <= expansionOpportunityCount);
 
                 // Only justify text if whitespace is collapsed.
                 if (r->m_object->style()->collapseWhiteSpace()) {
-                    spaceAdd = (availableLogicalWidth - totalLogicalWidth) * spaces / numSpaces;
-                    static_cast<InlineTextBox*>(r->m_box)->setSpaceAdd(spaceAdd);
-                    totalLogicalWidth += spaceAdd;
+                    InlineTextBox* textBox = static_cast<InlineTextBox*>(r->m_box);
+                    int expansion = (availableLogicalWidth - totalLogicalWidth) * opportunitiesInRun / expansionOpportunityCount;
+                    textBox->setExpansion(expansion);
+                    totalLogicalWidth += expansion;
                 }
-                numSpaces -= spaces;
-                if (!numSpaces)
+                expansionOpportunityCount -= opportunitiesInRun;
+                if (!expansionOpportunityCount)
                     break;
             }
         }

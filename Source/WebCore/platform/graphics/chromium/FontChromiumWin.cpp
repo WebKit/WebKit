@@ -369,6 +369,11 @@ bool Font::canReturnFallbackFontsForComplexText()
     return false;
 }
 
+bool Font::canExpandAroundIdeographsInComplexText()
+{
+    return false;
+}
+
 void Font::drawGlyphs(GraphicsContext* graphicsContext,
                       const SimpleFontData* font,
                       const GlyphBuffer& glyphBuffer,

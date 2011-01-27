@@ -1,3 +1,106 @@
+2011-01-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        <rdar://problem/8446709> Allow inter-ideograph justification for CJK
+        https://bugs.webkit.org/show_bug.cgi?id=53184
+
+        Tests: fast/text/justify-ideograph-complex.html
+               fast/text/justify-ideograph-simple.html
+               fast/text/justify-ideograph-vertical.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawTextInternal): Corrected the type of the third parameter
+        passed to the TextRun constructor and added the trailingExpansionBehavior parameter.
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::expansionOpportunityCount): Added. Returns the number of expansion opportunities
+        for text justification. On entry, isAfterExpansion says whether an expansion opportunity exists
+        before the first character. On return, isAfterExpansion says whether an expansion opportunity
+        exists after the last character.
+        * platform/graphics/Font.h: 
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::expandLastAdvance): Added.
+        * platform/graphics/TextRun.h:
+        (WebCore::TextRun::TextRun): Added a TrailingExpansionBehavior parameter to the constructors.
+        Renamed padding to expansion.
+        (WebCore::TextRun::expansion): Renamed padding() to this.
+        (WebCore::TextRun::allowsTrailingExpansion): Added this accessor.
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::WidthIterator): Initialize m_isAfterExpansion. Use Font::expansionOpportunityCount()
+        and adjust the count if it includes a trailing expansion opportunity but the run disallows trailing
+        expansion.
+        (WebCore::WidthIterator::advance): Apply expansion before and after CJK ideographs.
+        (WebCore::WidthIterator::advanceOneCharacter): Changed to not clear the GlyphBuffer so that advance()
+        can expand the last advance if it is followed by a CJK ideograph.
+        * platform/graphics/WidthIterator.h: Renamed m_padding to m_expansion and m_padPerSpace
+        to m_expansionPerOpportunity.
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::Font::canExpandAroundIdeographsInComplexText): Added.
+        * platform/graphics/chromium/FontLinux.cpp:
+        (WebCore::Font::canExpandAroundIdeographsInComplexText): Added.
+        * platform/graphics/efl/FontEfl.cpp:
+        (WebCore::Font::canExpandAroundIdeographsInComplexText): Added.
+        * platform/graphics/gtk/FontGtk.cpp:
+        (WebCore::Font::canExpandAroundIdeographsInComplexText): Added.
+        * platform/graphics/haiku/FontHaiku.cpp:
+        (WebCore::Font::canExpandAroundIdeographsInComplexText): Added.
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::ComplexTextController): Initialize m_isAfterExpansion. Use
+        Font::expansionOpportunityCount() and adjust the count if it includes a trailing expansion
+        opportunity but the run disallows trailing expansion.
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances): Moved the definition and initialization
+        of hasExtraSpacing outside the loop. Apply expansion before and after CJK ideographs.
+        * platform/graphics/mac/ComplexTextController.h: Renamed m_padding to m_expansion and m_padPerSpace
+        to m_expansionPerOpportunity.
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::canExpandAroundIdeographsInComplexText): Added.
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::Font::canExpandAroundIdeographsInComplexText): Added.
+        * platform/graphics/win/FontWin.cpp:
+        (WebCore::Font::canExpandAroundIdeographsInComplexText): Added.
+        * platform/graphics/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::UniscribeController): Updated for rename.
+        * platform/graphics/wince/FontWinCE.cpp:
+        (WebCore::Font::canExpandAroundIdeographsInComplexText): Added.
+        * platform/graphics/wx/FontWx.cpp:
+        (WebCore::Font::canExpandAroundIdeographsInComplexText): Added.
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint): Pass a TrailingExpansionBehavior to the TextRun constructor.
+        (WebCore::EllipsisBox::selectionRect): Ditto.
+        (WebCore::EllipsisBox::paintSelection): Ditto.
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::InlineBox): Renamed m_toAdd to m_expansion.
+        (WebCore::InlineBox::expansion): Renamed toAdd() to this.
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionRect): Pass a TrailingExpansionBehavior to the TextRun constructor.
+        (WebCore::InlineTextBox::paint): Ditto.
+        (WebCore::InlineTextBox::paintSelection): Ditto.
+        (WebCore::InlineTextBox::paintCompositionBackground): Ditto.
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker): Ditto.
+        (WebCore::InlineTextBox::paintTextMatchMarker): Ditto.
+        (WebCore::InlineTextBox::computeRectForReplacementMarker): Ditto.
+        (WebCore::InlineTextBox::offsetForPosition): Ditto.
+        (WebCore::InlineTextBox::positionForOffset): Ditto.
+        * rendering/InlineTextBox.h:
+        (WebCore::InlineTextBox::setExpansion): Renamed setSpaceAdd() to this.
+        (WebCore::InlineTextBox::trailingExpansionBehavior): Added. Trailing expansion is allowed if this
+        is not the last leaf box on the line.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine): Keep expansion opportunity counts
+        in a vector instead of computing them twice. Discard the trailing expansion opportunity in the
+        last text box.
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject): Pass a TrailingExpansionBehavior to the TextRun constructor.
+        (WebCore::RenderFileUploadControl::computePreferredLogicalWidths): Ditto.
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement): Ditto.
+        (WebCore::RenderListBox::paintItemForeground): Ditto. Also corrected the type of the second parameter.
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::getAvgCharWidth): Ditto.
+        (WebCore::RenderTextControl::paintPlaceholder): Ditto.
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::constructTextRun): Ditto.
+
 2011-01-26  Andy Estes  <aestes@apple.com>
 
         Rubber-stamped by Darin Adler.

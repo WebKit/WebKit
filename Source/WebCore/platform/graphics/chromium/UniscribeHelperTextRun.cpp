@@ -55,10 +55,10 @@ UniscribeHelperTextRun::UniscribeHelperTextRun(const TextRun& run,
 
     init();
 
-    // Padding is the amount to add to make justification happen. This
+    // Expansion is the amount to add to make justification happen. This
     // should be done after Init() so all the runs are already measured.
-    if (run.padding() > 0)
-        justify(run.padding());
+    if (run.expansion() > 0)
+        justify(run.expansion());
 }
 
 UniscribeHelperTextRun::UniscribeHelperTextRun(

@@ -973,7 +973,7 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
     else if (m_settings.itemTextDirectionalityHint ==
              PopupContainerSettings::FirstStrongDirectionalCharacterDirection)
         rtl = itemText.defaultWritingDirection() == WTF::Unicode::RightToLeft;
-    TextRun textRun(itemText.characters(), itemText.length(), false, 0, 0, rtl);
+    TextRun textRun(itemText.characters(), itemText.length(), false, 0, 0, TextRun::AllowTrailingExpansion, rtl);
     // If the text is right-to-left, make it right-aligned by adjusting its
     // beginning position.
     if (rightAligned)
@@ -1001,7 +1001,7 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
     // Draw the the label if applicable.
     if (itemLabel.isEmpty())
         return;
-    TextRun labelTextRun(itemLabel.characters(), itemLabel.length(), false, 0, 0, rtl);
+    TextRun labelTextRun(itemLabel.characters(), itemLabel.length(), false, 0, 0, TextRun::AllowTrailingExpansion, rtl);
     if (rightAligned)
         textX = max(0, m_popupClient->clientPaddingLeft() - m_popupClient->clientInsetLeft());
     else

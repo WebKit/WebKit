@@ -1,3 +1,23 @@
+2011-01-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        <rdar://problem/8446709> Allow inter-ideograph justification for CJK
+        https://bugs.webkit.org/show_bug.cgi?id=53184
+
+        * fast/text/justify-ideograph-complex.html: Added.
+        * fast/text/justify-ideograph-simple.html: Added.
+        * fast/text/justify-ideograph-vertical.html: Added.
+        * platform/mac/fast/text/justify-ideograph-complex-expected.checksum: Added.
+        * platform/mac/fast/text/justify-ideograph-complex-expected.png: Added.
+        * platform/mac/fast/text/justify-ideograph-complex-expected.txt: Added.
+        * platform/mac/fast/text/justify-ideograph-simple-expected.checksum: Added.
+        * platform/mac/fast/text/justify-ideograph-simple-expected.png: Added.
+        * platform/mac/fast/text/justify-ideograph-simple-expected.txt: Added.
+        * platform/mac/fast/text/justify-ideograph-vertical-expected.checksum: Added.
+        * platform/mac/fast/text/justify-ideograph-vertical-expected.png: Added.
+        * platform/mac/fast/text/justify-ideograph-vertical-expected.txt: Added.
+
 2011-01-26  Martin Robinson  <mrobinson@igalia.com>
 
         Add the final set of CSS 2.1 GTK+ baselines.

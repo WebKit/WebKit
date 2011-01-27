@@ -364,6 +364,7 @@ TextRun SVGInlineTextBox::constructTextRun(RenderStyle* style, const SVGTextFrag
                 , false /* allowTabs */
                 , 0 /* xPos, only relevant with allowTabs=true */
                 , 0 /* padding, only relevant for justified text, not relevant for SVG */
+                , TextRun::AllowTrailingExpansion
                 , direction() == RTL
                 , m_dirOverride || style->visuallyOrdered() /* directionalOverride */);
 

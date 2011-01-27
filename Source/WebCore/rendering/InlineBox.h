@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2009, 2010, 2011 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -61,7 +61,7 @@ public:
         , m_determinedIfPrevOnLineExists(false)
         , m_nextOnLineExists(false)
         , m_prevOnLineExists(false)
-        , m_toAdd(0)
+        , m_expansion(0)
 #ifndef NDEBUG
         , m_hasBadParent(false)
 #endif
@@ -95,7 +95,7 @@ public:
         , m_determinedIfPrevOnLineExists(false)
         , m_nextOnLineExists(false)
         , m_prevOnLineExists(false)
-        , m_toAdd(0)
+        , m_expansion(0)
 #ifndef NDEBUG
         , m_hasBadParent(false)
 #endif
@@ -290,7 +290,7 @@ public:
 
     void setHasBadParent();
 
-    int toAdd() const { return m_toAdd; }
+    int expansion() const { return m_expansion; }
     
     bool visibleToHitTesting() const { return renderer()->style()->visibility() == VISIBLE && renderer()->style()->pointerEvents() != PE_NONE; }
     
@@ -348,7 +348,7 @@ protected:
     mutable bool m_determinedIfPrevOnLineExists : 1;
     mutable bool m_nextOnLineExists : 1;
     mutable bool m_prevOnLineExists : 1;
-    int m_toAdd : 11; // for justified text
+    int m_expansion : 11; // for justified text
 
 #ifndef NDEBUG
 private:

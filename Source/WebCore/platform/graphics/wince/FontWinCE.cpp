@@ -112,7 +112,7 @@ static int generateComponents(TextRunComponents* components, const Font &font, c
 {
     int letterSpacing = font.letterSpacing();
     int wordSpacing = font.wordSpacing();
-    int padding = run.padding();
+    int padding = run.expansion();
     int numSpaces = 0;
     if (padding) {
         for (int i = 0; i < run.length(); i++)
@@ -336,6 +336,11 @@ FloatRect Font::selectionRectForComplexText(const TextRun& run, const FloatPoint
 }
 
 bool Font::canReturnFallbackFontsForComplexText()
+{
+    return false;
+}
+
+bool Font::canExpandAroundIdeographsInComplexText()
 {
     return false;
 }
