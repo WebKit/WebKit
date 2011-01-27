@@ -1,3 +1,15 @@
+2011-01-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r76789.
+        http://trac.webkit.org/changeset/76789
+        https://bugs.webkit.org/show_bug.cgi?id=53238
+
+        Broke GTK layout tests (Requested by podivilov on #webkit).
+
+        * inspector/front-end/ScopeChainSidebarPane.js:
+        (WebInspector.ScopeChainSidebarPane):
+        (WebInspector.ScopeChainSidebarPane.prototype.update):
+
 2011-01-27  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
