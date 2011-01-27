@@ -1,3 +1,17 @@
+2011-01-27  Dirk Schulze  <krit@webkit.org>
+
+        Unreviewed rebaseline.
+
+        SVG animation of Paths with segments of different coordinate modes on begin and end
+        https://bugs.webkit.org/show_bug.cgi?id=52984
+
+        Rebaseline for SL. HTML were created by make-script-test-wrappers now.
+        Skip added tests on WebKit2 because of missing eventSender.
+
+        * platform/mac-wk2/Skipped:
+        * svg/animations/animate-path-nested-transforms-expected.txt:
+        * svg/animations/animate-text-nested-transforms-expected.txt:
+
 2011-01-27  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium rebaseline for fast/text/text-letter-spacing.html

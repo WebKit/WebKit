@@ -1,13 +1,9 @@
-Test nested transforms with animateMotion
+SVG 1.1 dynamic animation tests
 
 test to determine whether auto-rotate animateMotion path animations pre-muliply or post-multiply animation transform matrix
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-
-
-    
-  
 
 PASS rootSVGElement.getBBox().x is almost 400 (within 20)
 PASS rootSVGElement.getBBox().y is almost 240 (within 20)
