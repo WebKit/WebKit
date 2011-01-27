@@ -123,6 +123,8 @@ public:
     QPoint tripleClick;
     QBasicTimer tripleClickTimer;
     QGraphicsWKView::BackingStoreType backingStoreType;
+
+    bool isConnectedToEngine;
 };
 
 class QtViewportAttributesPrivate : public QSharedData {

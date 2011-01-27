@@ -117,6 +117,8 @@ public:
 
     void findZoomableAreaForPoint(const QPoint&);
 
+    bool isConnectedToEngine() const;
+
 public:
     Q_SIGNAL void statusBarMessage(const QString&);
     Q_SIGNAL void titleChanged(const QString&);
@@ -133,7 +135,8 @@ public:
     Q_SIGNAL void zoomableAreaFound(const QRect&);
     Q_SIGNAL void focusNextPrevChild(bool);
     Q_SIGNAL void showContextMenu(QMenu*);
-    Q_SIGNAL void processCrashed();
+    Q_SIGNAL void engineConnected();
+    Q_SIGNAL void engineDisconnected();
 
 protected:
     void timerEvent(QTimerEvent*);

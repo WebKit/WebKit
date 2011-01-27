@@ -89,6 +89,7 @@ QWKPagePrivate::QWKPagePrivate(QWKPage* qq, QWKContext* c)
     , preferences(0)
     , createNewPageFn(0)
     , backingStoreType(QGraphicsWKView::Simple)
+    , isConnectedToEngine(true)
 {
     memset(actions, 0, sizeof(actions));
     page = context->d->context->createWebPage(this, 0);
@@ -391,11 +392,15 @@ void QWKPagePrivate::didRelaunchProcess()
     QGraphicsWKView* wkView = static_cast<QGraphicsWKView*>(view);
     if (wkView)
         q->setViewportSize(wkView->size().toSize());
+
+    isConnectedToEngine = true;
+    emit q->engineConnected();
 }
 
 void QWKPagePrivate::processDidCrash()
 {
-    emit q->processCrashed();
+    isConnectedToEngine = false;
+    emit q->engineDisconnected();
 }
 
 QWKPage::QWKPage(QWKContext* context)
@@ -778,6 +783,11 @@ void QWKPage::findZoomableAreaForPoint(const QPoint& point)
 void QWKPagePrivate::didFindZoomableArea(const IntRect& area)
 {
     emit q->zoomableAreaFound(QRect(area));
+}
+
+bool QWKPage::isConnectedToEngine() const
+{
+    return d->isConnectedToEngine;
 }
 
 #include "moc_qwkpage.cpp"
