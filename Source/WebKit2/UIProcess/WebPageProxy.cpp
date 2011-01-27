@@ -612,7 +612,13 @@ void WebPageProxy::performDragControllerAction(DragControllerAction action, WebC
 {
     if (!isValid())
         return;
+#if PLATFORM(WIN)
+    // FIXME: We should pass the drag data map only on DragEnter.
+    process()->send(Messages::WebPage::PerformDragControllerAction(action, dragData->clientPosition(), dragData->globalPosition(),
+        dragData->draggingSourceOperationMask(), dragData->dragDataMap(), dragData->flags()), m_pageID);
+#else
     process()->send(Messages::WebPage::PerformDragControllerAction(action, dragData->clientPosition(), dragData->globalPosition(), dragData->draggingSourceOperationMask(), dragStorageName, dragData->flags()), m_pageID);
+#endif
 }
 
 void WebPageProxy::didPerformDragControllerAction(uint64_t resultOperation)

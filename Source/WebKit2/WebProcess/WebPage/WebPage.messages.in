@@ -106,7 +106,12 @@ messages -> WebPage {
     CountStringMatches(WTF::String string, uint32_t findOptions, unsigned maxMatchCount)
 
     # Drag and drop.
+#if PLATFORM(WIN)
+    PerformDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, HashMap<UINT,Vector<String>> dataMap, uint32_t flags)
+#endif
+#if !PLATFORM(WIN)
     PerformDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, WTF::String dragStorageName, uint32_t flags)
+#endif
     DragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t operation)
 
     # Popup menu.

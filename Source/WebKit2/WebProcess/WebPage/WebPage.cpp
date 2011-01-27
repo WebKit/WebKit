@@ -1331,6 +1331,37 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* evt)
 }
 #endif
 
+#if PLATFORM(WIN)
+void WebPage::performDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, const WebCore::DragDataMap& dataMap, uint32_t flags)
+{
+    if (!m_page) {
+        send(Messages::WebPageProxy::DidPerformDragControllerAction(DragOperationNone));
+        return;
+    }
+
+    DragData dragData(dataMap, clientPosition, globalPosition, static_cast<DragOperation>(draggingSourceOperationMask), static_cast<DragApplicationFlags>(flags));
+    switch (action) {
+    case DragControllerActionEntered:
+        send(Messages::WebPageProxy::DidPerformDragControllerAction(m_page->dragController()->dragEntered(&dragData)));
+        break;
+
+    case DragControllerActionUpdated:
+        send(Messages::WebPageProxy::DidPerformDragControllerAction(m_page->dragController()->dragUpdated(&dragData)));
+        break;
+        
+    case DragControllerActionExited:
+        m_page->dragController()->dragExited(&dragData);
+        break;
+        
+    case DragControllerActionPerformDrag:
+        m_page->dragController()->performDrag(&dragData);
+        break;
+        
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+#else
 void WebPage::performDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, const String& dragStorageName, uint32_t flags)
 {
     if (!m_page) {
@@ -1360,6 +1391,7 @@ void WebPage::performDragControllerAction(uint64_t action, WebCore::IntPoint cli
         ASSERT_NOT_REACHED();
     }
 }
+#endif
 
 void WebPage::dragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t operation)
 {

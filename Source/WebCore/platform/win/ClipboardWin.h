@@ -29,6 +29,7 @@
 #include "COMPtr.h"
 #include "CachedResourceClient.h"
 #include "Clipboard.h"
+#include "DragData.h"
 
 struct IDataObject;
 
@@ -50,6 +51,10 @@ public:
     static PassRefPtr<ClipboardWin> create(ClipboardType clipboardType, WCDataObject* dataObject, ClipboardAccessPolicy policy, Frame* frame)
     {
         return adoptRef(new ClipboardWin(clipboardType, dataObject, policy, frame));
+    }
+    static PassRefPtr<ClipboardWin> create(ClipboardType clipboardType, const DragDataMap& dataMap, ClipboardAccessPolicy policy, Frame* frame)
+    {
+        return adoptRef(new ClipboardWin(clipboardType, dataMap, policy, frame));
     }
     ~ClipboardWin();
 
@@ -80,12 +85,14 @@ public:
 private:
     ClipboardWin(ClipboardType, IDataObject*, ClipboardAccessPolicy, Frame*);
     ClipboardWin(ClipboardType, WCDataObject*, ClipboardAccessPolicy, Frame*);
+    ClipboardWin(ClipboardType, const DragDataMap&, ClipboardAccessPolicy, Frame*);
 
     void resetFromClipboard();
     void setDragImage(CachedImage*, Node*, const IntPoint&);
 
     COMPtr<IDataObject> m_dataObject;
     COMPtr<WCDataObject> m_writableDataObject;
+    DragDataMap m_dragDataMap;
     Frame* m_frame;
 };
 

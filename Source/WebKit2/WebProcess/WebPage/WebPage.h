@@ -40,6 +40,7 @@
 #include "Plugin.h"
 #include "SandboxExtension.h"
 #include "WebEditCommand.h"
+#include <WebCore/DragData.h>
 #include <WebCore/Editor.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
@@ -304,7 +305,11 @@ public:
 #endif
 
     void replaceSelectionWithText(WebCore::Frame*, const String&);
+#if PLATFORM(WIN)
+    void performDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, const WebCore::DragDataMap&, uint32_t flags);
+#else
     void performDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, const WTF::String& dragStorageName, uint32_t flags);
+#endif
     void dragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t operation);
 
     void beginPrinting(uint64_t frameID, const PrintInfo&);

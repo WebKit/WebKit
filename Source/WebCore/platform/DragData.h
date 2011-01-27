@@ -31,6 +31,7 @@
 #include "IntPoint.h"
 
 #include <wtf/Forward.h>
+#include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
@@ -51,6 +52,7 @@ QT_END_NAMESPACE
 typedef const QMimeData* DragDataRef;
 #elif PLATFORM(WIN)
 typedef struct IDataObject* DragDataRef;
+#include <wtf/text/WTFString.h>
 #elif PLATFORM(WX)
 typedef class wxDataObject* DragDataRef;
 #elif PLATFORM(GTK)
@@ -82,7 +84,11 @@ enum DragApplicationFlags {
     DragApplicationHasAttachedSheet = 4,
     DragApplicationIsCopyKeyDown = 8
 };
-    
+
+#if PLATFORM(WIN)
+typedef HashMap<UINT, Vector<String> > DragDataMap;
+#endif
+
 class DragData {
 public:
     enum FilenameConversionPolicy { DoNotConvertFilenames, ConvertFilenames };
@@ -90,7 +96,10 @@ public:
     // clientPosition is taken to be the position of the drag event within the target window, with (0,0) at the top left
     DragData(DragDataRef, const IntPoint& clientPosition, const IntPoint& globalPosition, DragOperation, DragApplicationFlags = DragApplicationNone);
     DragData(const String& dragStorageName, const IntPoint& clientPosition, const IntPoint& globalPosition, DragOperation, DragApplicationFlags = DragApplicationNone);
-
+#if PLATFORM(WIN)
+    DragData(const DragDataMap&, const IntPoint& clientPosition, const IntPoint& globalPosition, DragOperation sourceOperationMask, DragApplicationFlags = DragApplicationNone);
+    const DragDataMap& dragDataMap();
+#endif
     const IntPoint& clientPosition() const { return m_clientPosition; }
     const IntPoint& globalPosition() const { return m_globalPosition; }
     DragApplicationFlags flags() { return m_applicationFlags; }
@@ -116,6 +125,9 @@ private:
     DragApplicationFlags m_applicationFlags;
 #if PLATFORM(MAC)
     RetainPtr<NSPasteboard> m_pasteboard;
+#endif
+#if PLATFORM(WIN)
+    DragDataMap m_dragDataMap;
 #endif
 };
     

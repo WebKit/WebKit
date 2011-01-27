@@ -1,3 +1,57 @@
+2011-01-26  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler and Adam Roben.
+
+        WebKit2: add support for drag and drop on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=52775
+        <rdar://problem/8514409>
+        
+        On Windows the access to the content being dragged is
+        provided via the IDataObject interface that is made available
+        to the window that registers itself as drop target.
+        Since this interface cannot be accessed from the WebProcess,
+        in every call to one of the methods of the IDropTarget interface
+        we serialize the content of the drag clipboard and send it over to
+        the WebProcess.
+        The bulk of this patch consists in the refactoring needed in DragData
+        and ClipboardWin classes to extract the data from the serialized object.
+        
+        * platform/DragData.cpp:
+        * platform/DragData.h:
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::getWebLocData):
+        (WebCore::getURL):
+        (WebCore::getPlainText):
+        (WebCore::getTextHTML):
+        (WebCore::getCFHTML):
+        (WebCore::fragmentFromFilenames):
+        (WebCore::containsFilenames):
+        (WebCore::fragmentFromHTML):
+        (WebCore::containsHTML):
+        (WebCore::getClipboardData):
+        * platform/win/ClipboardUtilitiesWin.h:
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::Clipboard::create):
+        (WebCore::ClipboardWin::ClipboardWin):
+        (WebCore::ClipboardWin::getData):
+        (WebCore::ClipboardWin::types):
+        (WebCore::ClipboardWin::files):
+        (WebCore::ClipboardWin::hasData):
+        * platform/win/ClipboardWin.h:
+        (WebCore::ClipboardWin::create):
+        * platform/win/DragDataWin.cpp:
+        (WebCore::DragData::DragData):
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::dragDataMap):
+        (WebCore::DragData::asURL):
+        (WebCore::DragData::containsFiles):
+        (WebCore::DragData::asFilenames):
+        (WebCore::DragData::containsPlainText):
+        (WebCore::DragData::asPlainText):
+        (WebCore::DragData::canSmartReplace):
+        (WebCore::DragData::containsCompatibleContent):
+        (WebCore::DragData::asFragment):
+
 2011-01-27  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Martin Robinson.

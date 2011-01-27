@@ -243,6 +243,8 @@ WebView::WebView(RECT rect, WebContext* context, WebPageGroup* pageGroup, HWND p
 
     m_page->initializeWebPage();
 
+    CoCreateInstance(CLSID_DragDropHelper, 0, CLSCTX_INPROC_SERVER, IID_IDropTargetHelper, (void**)&m_dropTargetHelper);
+
     ::ShowWindow(m_window, SW_SHOW);
 
     // FIXME: Initializing the tooltip window here matches WebKit win, but seems like something
@@ -258,6 +260,11 @@ WebView::~WebView()
     // Tooltip window needs to be explicitly destroyed since it isn't a WS_CHILD.
     if (::IsWindow(m_toolTipWindow))
         ::DestroyWindow(m_toolTipWindow);
+}
+
+void WebView::initialize()
+{
+    ::RegisterDragDrop(m_window, this);
 }
 
 void WebView::setParentWindow(HWND parentWindow)
@@ -569,6 +576,7 @@ void WebView::stopTrackingMouseLeave()
 
 void WebView::close()
 {
+    ::RevokeDragDrop(m_window);
     setParentWindow(0);
     m_page->close();
 }
@@ -1090,6 +1098,133 @@ void WebView::windowReceivedMessage(HWND, UINT message, WPARAM wParam, LPARAM)
             // systemParameterChanged(wParam);
             break;
     }
+}
+
+HRESULT STDMETHODCALLTYPE WebView::QueryInterface(REFIID riid, void** ppvObject)
+{
+    *ppvObject = 0;
+    if (IsEqualGUID(riid, IID_IUnknown))
+        *ppvObject = static_cast<IUnknown*>(this);
+    else if (IsEqualGUID(riid, IID_IDropTarget))
+        *ppvObject = static_cast<IDropTarget*>(this);
+    else
+        return E_NOINTERFACE;
+
+    AddRef();
+    return S_OK;
+}
+
+ULONG STDMETHODCALLTYPE WebView::AddRef(void)
+{
+    ref();
+    return refCount();
+}
+
+ULONG STDMETHODCALLTYPE WebView::Release(void)
+{
+    deref();
+    return refCount();
+}
+
+static DWORD dragOperationToDragCursor(DragOperation op)
+{
+    DWORD res = DROPEFFECT_NONE;
+    if (op & DragOperationCopy) 
+        res = DROPEFFECT_COPY;
+    else if (op & DragOperationLink) 
+        res = DROPEFFECT_LINK;
+    else if (op & DragOperationMove) 
+        res = DROPEFFECT_MOVE;
+    else if (op & DragOperationGeneric) 
+        res = DROPEFFECT_MOVE; // This appears to be the Firefox behaviour
+    return res;
+}
+
+WebCore::DragOperation WebView::keyStateToDragOperation(DWORD grfKeyState) const
+{
+    if (!m_page)
+        return DragOperationNone;
+
+    // Conforms to Microsoft's key combinations as documented for 
+    // IDropTarget::DragOver. Note, grfKeyState is the current 
+    // state of the keyboard modifier keys on the keyboard. See:
+    // <http://msdn.microsoft.com/en-us/library/ms680129(VS.85).aspx>.
+    DragOperation operation = m_page->dragOperation();
+
+    if ((grfKeyState & (MK_CONTROL | MK_SHIFT)) == (MK_CONTROL | MK_SHIFT))
+        operation = DragOperationLink;
+    else if ((grfKeyState & MK_CONTROL) == MK_CONTROL)
+        operation = DragOperationCopy;
+    else if ((grfKeyState & MK_SHIFT) == MK_SHIFT)
+        operation = DragOperationGeneric;
+
+    return operation;
+}
+
+HRESULT STDMETHODCALLTYPE WebView::DragEnter(IDataObject* pDataObject, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
+{
+    m_dragData = 0;
+    m_page->resetDragOperation();
+
+    if (m_dropTargetHelper)
+        m_dropTargetHelper->DragEnter(m_window, pDataObject, (POINT*)&pt, *pdwEffect);
+
+    POINTL localpt = pt;
+    ::ScreenToClient(m_window, (LPPOINT)&localpt);
+    DragData data(pDataObject, IntPoint(localpt.x, localpt.y), IntPoint(pt.x, pt.y), keyStateToDragOperation(grfKeyState));
+    m_page->performDragControllerAction(DragControllerActionEntered, &data);
+    *pdwEffect = dragOperationToDragCursor(m_page->dragOperation());
+
+    m_lastDropEffect = *pdwEffect;
+    m_dragData = pDataObject;
+
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebView::DragOver(DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
+{
+    if (m_dropTargetHelper)
+        m_dropTargetHelper->DragOver((POINT*)&pt, *pdwEffect);
+
+    if (m_dragData) {
+        POINTL localpt = pt;
+        ::ScreenToClient(m_window, (LPPOINT)&localpt);
+        DragData data(m_dragData.get(), IntPoint(localpt.x, localpt.y), IntPoint(pt.x, pt.y), keyStateToDragOperation(grfKeyState));
+        m_page->performDragControllerAction(DragControllerActionUpdated, &data);
+        *pdwEffect = dragOperationToDragCursor(m_page->dragOperation());
+    } else
+        *pdwEffect = DROPEFFECT_NONE;
+
+    m_lastDropEffect = *pdwEffect;
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebView::DragLeave()
+{
+    if (m_dropTargetHelper)
+        m_dropTargetHelper->DragLeave();
+
+    if (m_dragData) {
+        DragData data(m_dragData.get(), IntPoint(), IntPoint(), DragOperationNone);
+        m_page->performDragControllerAction(DragControllerActionExited, &data);
+        m_dragData = 0;
+        m_page->resetDragOperation();
+    }
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebView::Drop(IDataObject* pDataObject, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
+{
+    if (m_dropTargetHelper)
+        m_dropTargetHelper->Drop(pDataObject, (POINT*)&pt, *pdwEffect);
+
+    m_dragData = 0;
+    *pdwEffect = m_lastDropEffect;
+    POINTL localpt = pt;
+    ::ScreenToClient(m_window, (LPPOINT)&localpt);
+    DragData data(pDataObject, IntPoint(localpt.x, localpt.y), IntPoint(pt.x, pt.y), keyStateToDragOperation(grfKeyState));
+    m_page->performDragControllerAction(DragControllerActionPerformDrag, &data);
+    return S_OK;
 }
 
 } // namespace WebKit

@@ -294,7 +294,7 @@ public:
     void backForwardRemovedItem(uint64_t itemID);
 
     // Drag and drop support.
-    void performDragControllerAction(DragControllerAction, WebCore::DragData*, const String&);
+    void performDragControllerAction(DragControllerAction, WebCore::DragData*, const String& = String());
     void didPerformDragControllerAction(uint64_t resultOperation);
     void dragEnded(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, uint64_t operation);
 #if PLATFORM(MAC)

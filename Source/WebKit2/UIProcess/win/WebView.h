@@ -29,20 +29,28 @@
 #include "APIObject.h"
 #include "PageClient.h"
 #include "WebPageProxy.h"
+#include <WebCore/COMPtr.h>
+#include <WebCore/DragActions.h>
+#include <WebCore/DragData.h>
 #include <WebCore/WindowMessageListener.h>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <ShlObj.h>
+
+interface IDropTargetHelper;
 
 namespace WebKit {
 
 class DrawingAreaProxy;
 
-class WebView : public APIObject, public PageClient, WebCore::WindowMessageListener {
+class WebView : public APIObject, public PageClient, WebCore::WindowMessageListener, public IDropTarget {
 public:
     static PassRefPtr<WebView> create(RECT rect, WebContext* context, WebPageGroup* pageGroup, HWND parentWindow)
     {
-        return adoptRef(new WebView(rect, context, pageGroup, parentWindow));
+        RefPtr<WebView> webView = adoptRef(new WebView(rect, context, pageGroup, parentWindow));
+        webView->initialize();
+        return webView;
     }
     ~WebView();
 
@@ -52,6 +60,18 @@ public:
     void setIsInWindow(bool);
     void setOverrideCursor(HCURSOR overrideCursor);
     void setInitialFocus(bool forward);
+    void initialize();
+
+    // IUnknown
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef(void);
+    virtual ULONG STDMETHODCALLTYPE Release(void);
+
+    // IDropTarget
+    virtual HRESULT STDMETHODCALLTYPE DragEnter(IDataObject* pDataObject, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect);
+    virtual HRESULT STDMETHODCALLTYPE DragOver(DWORD grfKeyState, POINTL pt, DWORD* pdwEffect);
+    virtual HRESULT STDMETHODCALLTYPE DragLeave();
+    virtual HRESULT STDMETHODCALLTYPE Drop(IDataObject* pDataObject, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect);
 
     WebPageProxy* page() const { return m_page.get(); }
 
@@ -142,6 +162,7 @@ private:
     void didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference&);
     virtual double customRepresentationZoomFactor();
     virtual void setCustomRepresentationZoomFactor(double);
+    WebCore::DragOperation keyStateToDragOperation(DWORD grfKeyState) const;
 
     virtual HWND nativeWindow();
 
@@ -165,6 +186,13 @@ private:
     RefPtr<WebPageProxy> m_page;
 
     unsigned m_inIMEComposition;
+    COMPtr<IDataObject> m_dragData;
+    COMPtr<IDropTargetHelper> m_dropTargetHelper;
+    // FIXME: This variable is part of a workaround. The drop effect (pdwEffect) passed to Drop is incorrect. 
+    // We set this variable in DragEnter and DragOver so that it can be used in Drop to set the correct drop effect. 
+    // Thus, on return from DoDragDrop we have the correct pdwEffect for the drag-and-drop operation.
+    // (see https://bugs.webkit.org/show_bug.cgi?id=29264)
+    DWORD m_lastDropEffect;
 };
 
 } // namespace WebKit

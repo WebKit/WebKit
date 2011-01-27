@@ -340,7 +340,9 @@ exit:
 
 PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy policy, DragData* dragData, Frame* frame)
 {
-    return ClipboardWin::create(DragAndDrop, dragData->platformData(), policy, frame);
+    if (dragData->platformData())
+        return ClipboardWin::create(DragAndDrop, dragData->platformData(), policy, frame);
+    return ClipboardWin::create(DragAndDrop, dragData->dragDataMap(), policy, frame);
 }
 
 ClipboardWin::ClipboardWin(ClipboardType clipboardType, IDataObject* dataObject, ClipboardAccessPolicy policy, Frame* frame)
@@ -356,6 +358,15 @@ ClipboardWin::ClipboardWin(ClipboardType clipboardType, WCDataObject* dataObject
     , m_dataObject(dataObject)
     , m_writableDataObject(dataObject)
     , m_frame(frame)
+{
+}
+
+ClipboardWin::ClipboardWin(ClipboardType clipboardType, const DragDataMap& dataMap, ClipboardAccessPolicy policy, Frame* frame)
+    : Clipboard(policy, clipboardType)
+    , m_dataObject(0)
+    , m_writableDataObject(0)
+    , m_frame(frame)
+    , m_dragDataMap(dataMap)
 {
 }
 
@@ -442,19 +453,19 @@ void ClipboardWin::clearAllData()
 String ClipboardWin::getData(const String& type, bool& success) const
 {     
     success = false;
-    if (policy() != ClipboardReadable || !m_dataObject)
+    if (policy() != ClipboardReadable || !m_dataObject || m_dragDataMap.isEmpty())
         return "";
 
     ClipboardDataType dataType = clipboardTypeFromMIMEType(type);
     if (dataType == ClipboardDataTypeText)
-        return getPlainText(m_dataObject.get(), success);
+        return m_dataObject ? getPlainText(m_dataObject.get(), success) : getPlainText(&m_dragDataMap);
     if (dataType == ClipboardDataTypeURL)
-        return getURL(m_dataObject.get(), DragData::DoNotConvertFilenames, success);
+        return m_dataObject ? getURL(m_dataObject.get(), DragData::DoNotConvertFilenames, success) : getURL(&m_dragDataMap, DragData::DoNotConvertFilenames);
     else if (dataType == ClipboardDataTypeTextHTML) {
-        String data = getTextHTML(m_dataObject.get(), success);
+        String data = m_dataObject ? getTextHTML(m_dataObject.get(), success) : getTextHTML(&m_dragDataMap);
         if (success)
             return data;
-        return getCFHTML(m_dataObject.get(), success);
+        return m_dataObject ? getCFHTML(m_dataObject.get(), success) : getCFHTML(&m_dragDataMap);
     }
     
     return "";
@@ -510,22 +521,30 @@ HashSet<String> ClipboardWin::types() const
     if (policy() != ClipboardReadable && policy() != ClipboardTypesReadable)
         return results;
 
-    if (!m_dataObject)
+    if (!m_dataObject || m_dragDataMap.isEmpty())
         return results;
 
-    COMPtr<IEnumFORMATETC> itr;
+    if (m_dataObject) {
+        COMPtr<IEnumFORMATETC> itr;
 
-    if (FAILED(m_dataObject->EnumFormatEtc(DATADIR_GET, &itr)))
-        return results;
+        if (FAILED(m_dataObject->EnumFormatEtc(DATADIR_GET, &itr)))
+            return results;
 
-    if (!itr)
-        return results;
+        if (!itr)
+            return results;
 
-    FORMATETC data;
+        FORMATETC data;
 
-    // IEnumFORMATETC::Next returns S_FALSE if there are no more items.
-    while (itr->Next(1, &data, 0) == S_OK)
-        addMimeTypesForFormat(results, data);
+        // IEnumFORMATETC::Next returns S_FALSE if there are no more items.
+        while (itr->Next(1, &data, 0) == S_OK)
+            addMimeTypesForFormat(results, data);
+    } else {
+        for (DragDataMap::const_iterator it = m_dragDataMap.begin(); it != m_dragDataMap.end(); ++it) {
+            FORMATETC data;
+            data.cfFormat = (*it).first;
+            addMimeTypesForFormat(results, data);
+        }
+    }
 
     return results;
 }
@@ -540,27 +559,35 @@ PassRefPtr<FileList> ClipboardWin::files() const
     if (policy() != ClipboardReadable && policy() != ClipboardTypesReadable)
         return files.release();
 
-    if (!m_dataObject)
+    if (!m_dataObject || m_dragDataMap.isEmpty())
         return files.release();
 
-    STGMEDIUM medium;
-    if (FAILED(m_dataObject->GetData(cfHDropFormat(), &medium)))
-        return files.release();
+    if (m_dataObject) {
+        STGMEDIUM medium;
+        if (FAILED(m_dataObject->GetData(cfHDropFormat(), &medium)))
+            return files.release();
 
-    HDROP hdrop = reinterpret_cast<HDROP>(GlobalLock(medium.hGlobal));
-    if (!hdrop)
-        return files.release();
+        HDROP hdrop = reinterpret_cast<HDROP>(GlobalLock(medium.hGlobal));
+        if (!hdrop)
+            return files.release();
 
-    WCHAR filename[MAX_PATH];
-    UINT fileCount = DragQueryFileW(hdrop, 0xFFFFFFFF, 0, 0);
-    for (UINT i = 0; i < fileCount; i++) {
-        if (!DragQueryFileW(hdrop, i, filename, WTF_ARRAY_LENGTH(filename)))
-            continue;
-        files->append(File::create(reinterpret_cast<UChar*>(filename)));
+        WCHAR filename[MAX_PATH];
+        UINT fileCount = DragQueryFileW(hdrop, 0xFFFFFFFF, 0, 0);
+        for (UINT i = 0; i < fileCount; i++) {
+            if (!DragQueryFileW(hdrop, i, filename, WTF_ARRAY_LENGTH(filename)))
+                continue;
+            files->append(File::create(reinterpret_cast<UChar*>(filename)));
+        }
+
+        GlobalUnlock(medium.hGlobal);
+        ReleaseStgMedium(&medium);
+        return files.release();
     }
-
-    GlobalUnlock(medium.hGlobal);
-    ReleaseStgMedium(&medium);
+    if (!m_dragDataMap.contains(cfHDropFormat()->cfFormat))
+        return files.release();
+    Vector<String> filesVector = m_dragDataMap.get(cfHDropFormat()->cfFormat);
+    for (Vector<String>::iterator it = filesVector.begin(); it != filesVector.end(); ++it)
+        files->append(File::create((*it).characters()));
     return files.release();
 #endif
 }
@@ -778,25 +805,28 @@ void ClipboardWin::writePlainText(const String& text)
     
 bool ClipboardWin::hasData()
 {
-    if (!m_dataObject)
+    if (!m_dataObject && m_dragDataMap.isEmpty())
         return false;
 
-    COMPtr<IEnumFORMATETC> itr;
-    if (FAILED(m_dataObject->EnumFormatEtc(DATADIR_GET, &itr)))
+    if (m_dataObject) {
+        COMPtr<IEnumFORMATETC> itr;
+        if (FAILED(m_dataObject->EnumFormatEtc(DATADIR_GET, &itr)))
+            return false;
+
+        if (!itr)
+            return false;
+
+        FORMATETC data;
+
+        // IEnumFORMATETC::Next returns S_FALSE if there are no more items.
+        if (itr->Next(1, &data, 0) == S_OK) {
+            // There is at least one item in the IDataObject
+            return true;
+        }
+
         return false;
-
-    if (!itr)
-        return false;
-
-    FORMATETC data;
-
-    // IEnumFORMATETC::Next returns S_FALSE if there are no more items.
-    if (itr->Next(1, &data, 0) == S_OK) {
-        // There is at least one item in the IDataObject
-        return true;
     }
-
-    return false;
+    return !m_dragDataMap.isEmpty();
 }
 
 void ClipboardWin::setExternalDataObject(IDataObject *dataObject)

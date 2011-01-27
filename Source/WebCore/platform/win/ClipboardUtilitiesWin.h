@@ -55,16 +55,26 @@ void replaceNewlinesWithWindowsStyleNewlines(String&);
 void replaceNBSPWithSpace(String&);
 
 bool containsFilenames(const IDataObject*);
+bool containsFilenames(const DragDataMap*);
 bool containsHTML(IDataObject*);
+bool containsHTML(const DragDataMap*);
 
 PassRefPtr<DocumentFragment> fragmentFromFilenames(Document*, const IDataObject*);
+PassRefPtr<DocumentFragment> fragmentFromFilenames(Document*, const DragDataMap*);
 PassRefPtr<DocumentFragment> fragmentFromHTML(Document*, IDataObject*);
+PassRefPtr<DocumentFragment> fragmentFromHTML(Document*, const DragDataMap*);
 PassRefPtr<DocumentFragment> fragmentFromCFHTML(Document*, const String& cfhtml);
 
 String getURL(IDataObject*, DragData::FilenameConversionPolicy, bool& success, String* title = 0);
+String getURL(const DragDataMap*, DragData::FilenameConversionPolicy, String* title = 0);
 String getPlainText(IDataObject*, bool& success);
+String getPlainText(const DragDataMap*);
 String getTextHTML(IDataObject*, bool& success);
+String getTextHTML(const DragDataMap*);
 String getCFHTML(IDataObject*, bool& success);
+String getCFHTML(const DragDataMap*);
+
+void getClipboardData(IDataObject*, FORMATETC* fetc, Vector<String>& dataStrings);
 
 } // namespace WebCore
 
