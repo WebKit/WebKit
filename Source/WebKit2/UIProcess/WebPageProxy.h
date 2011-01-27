@@ -105,6 +105,10 @@ struct PrintInfo;
 struct WebPageCreationParameters;
 struct WebPopupItem;
 
+#if ENABLE(GESTURE_EVENTS)
+class WebGestureEvent;
+#endif
+
 typedef GenericCallback<WKStringRef, StringImpl*> StringCallback;
 
 class WebPageProxy : public APIObject, public WebPopupMenuProxy::Client {
@@ -215,6 +219,9 @@ public:
     void handleMouseEvent(const WebMouseEvent&);
     void handleWheelEvent(const WebWheelEvent&);
     void handleKeyboardEvent(const NativeWebKeyboardEvent&);
+#if ENABLE(GESTURE_EVENTS)
+    void handleGestureEvent(const WebGestureEvent&);
+#endif
 #if ENABLE(TOUCH_EVENTS)
     void handleTouchEvent(const WebTouchEvent&);
 #endif

@@ -5083,6 +5083,7 @@
 		BC94D14F0C275C68006BC617 /* JSHistory.h in Headers */ = {isa = PBXBuildFile; fileRef = BC94D14D0C275C68006BC617 /* JSHistory.h */; };
 		BC94D1530C275C8B006BC617 /* History.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC94D1500C275C8B006BC617 /* History.cpp */; };
 		BC94D1540C275C8B006BC617 /* History.h in Headers */ = {isa = PBXBuildFile; fileRef = BC94D1510C275C8B006BC617 /* History.h */; };
+		BC9585E112F0989500755821 /* PlatformGestureEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9585DF12F0989500755821 /* PlatformGestureEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC96DB430F3A880E00573CB3 /* RenderBoxModelObject.h in Headers */ = {isa = PBXBuildFile; fileRef = BC96DB420F3A880E00573CB3 /* RenderBoxModelObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC96DB460F3A882200573CB3 /* RenderBoxModelObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC96DB450F3A882200573CB3 /* RenderBoxModelObject.cpp */; };
 		BC97E23A109144950010D361 /* HTMLAllCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC97E238109144950010D361 /* HTMLAllCollection.h */; };
@@ -11400,6 +11401,7 @@
 		BC94D1500C275C8B006BC617 /* History.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = History.cpp; sourceTree = "<group>"; };
 		BC94D1510C275C8B006BC617 /* History.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = History.h; sourceTree = "<group>"; };
 		BC94D1520C275C8B006BC617 /* History.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = History.idl; sourceTree = "<group>"; };
+		BC9585DF12F0989500755821 /* PlatformGestureEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformGestureEvent.h; sourceTree = "<group>"; };
 		BC96DB420F3A880E00573CB3 /* RenderBoxModelObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderBoxModelObject.h; sourceTree = "<group>"; };
 		BC96DB450F3A882200573CB3 /* RenderBoxModelObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderBoxModelObject.cpp; sourceTree = "<group>"; };
 		BC97E238109144950010D361 /* HTMLAllCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLAllCollection.h; sourceTree = "<group>"; };
@@ -18296,6 +18298,7 @@
 				BC772C4D0C4EB3040083285F /* MIMETypeRegistry.h */,
 				4B2708C50AF19EE40065127F /* Pasteboard.h */,
 				935C476609AC4D4300A6AAB4 /* PlatformKeyboardEvent.h */,
+				BC9585DF12F0989500755821 /* PlatformGestureEvent.h */,
 				932871BF0B20DEB70049035A /* PlatformMenuDescription.h */,
 				935C476709AC4D4300A6AAB4 /* PlatformMouseEvent.h */,
 				BCEC01D60C274EB4009F4EC9 /* PlatformScreen.h */,
@@ -22436,6 +22439,7 @@
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
 				BC8AE34F12EA096A00EB3AE6 /* ScrollableArea.h in Headers */,
 				4F2D205412EAE7B3005C2874 /* InspectorAgent.h in Headers */,
+				BC9585E112F0989500755821 /* PlatformGestureEvent.h in Headers */,
 				E134F5AB12EE343F004EC58D /* IntRectHash.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

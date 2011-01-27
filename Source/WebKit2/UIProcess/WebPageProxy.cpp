@@ -702,6 +702,17 @@ void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
     process()->send(Messages::WebPage::KeyEvent(event), m_pageID);
 }
 
+#if ENABLE(GESTURE_EVENTS)
+void WebPageProxy::handleGestureEvent(const WebGestureEvent& event)
+{
+    if (!isValid())
+        return;
+
+    process()->responsivenessTimer()->start();
+    process()->send(Messages::WebPage::GestureEvent(event), m_pageID);
+}
+#endif
+
 #if ENABLE(TOUCH_EVENTS)
 void WebPageProxy::handleTouchEvent(const WebTouchEvent& event)
 {
@@ -2112,6 +2123,10 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
     case WebEvent::KeyUp:
     case WebEvent::RawKeyDown:
     case WebEvent::Char:
+#if ENABLE(GESTURE_EVENTS)
+    case WebEvent::GestureScrollBegin:
+    case WebEvent::GestureScrollEnd:
+#endif
         process()->responsivenessTimer()->stop();
         break;
     }
@@ -2126,6 +2141,10 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
         break;
     case WebEvent::MouseDown:
     case WebEvent::MouseUp:
+#if ENABLE(GESTURE_EVENTS)
+    case WebEvent::GestureScrollBegin:
+    case WebEvent::GestureScrollEnd:
+#endif
         break;
 
     case WebEvent::Wheel: {

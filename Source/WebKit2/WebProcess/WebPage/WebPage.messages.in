@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Apple Inc. All rights reserved.
+# Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -32,6 +32,9 @@ messages -> WebPage {
     KeyEvent(WebKit::WebKeyboardEvent event)
     MouseEvent(WebKit::WebMouseEvent event)
     WheelEvent(WebKit::WebWheelEvent event)
+#if ENABLE(GESTURE_EVENTS)
+    GestureEvent(WebKit::WebGestureEvent event)
+#endif
 #if ENABLE(TOUCH_EVENTS)
     TouchEvent(WebKit::WebTouchEvent event)
 #endif

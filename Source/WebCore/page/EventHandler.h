@@ -53,9 +53,9 @@ class EventTarget;
 class FloatPoint;
 class FloatQuad;
 class Frame;
+class HTMLFrameSetElement;
 class HitTestRequest;
 class HitTestResult;
-class HTMLFrameSetElement;
 class KeyboardEvent;
 class MouseEventWithHitTestResults;
 class Node;
@@ -65,13 +65,17 @@ class PlatformWheelEvent;
 class RenderLayer;
 class RenderObject;
 class RenderWidget;
-class Scrollbar;
 class SVGElementInstance;
+class Scrollbar;
 class TextEvent;
 class TouchEvent;
 class WheelEvent;
 class Widget;
-    
+
+#if ENABLE(GESTURE_EVENTS)
+class PlatformGestureEvent;
+#endif
+
 #if ENABLE(DRAG_SUPPORT)
 extern const int LinkDragHysteresis;
 extern const int ImageDragHysteresis;
@@ -160,6 +164,10 @@ public:
     bool handleMouseReleaseEvent(const PlatformMouseEvent&);
     bool handleWheelEvent(PlatformWheelEvent&);
     void defaultWheelEventHandler(Node*, WheelEvent*);
+
+#if ENABLE(GESTURE_EVENTS)
+    bool handleGestureEvent(const PlatformGestureEvent&);
+#endif
 
 #if ENABLE(CONTEXT_MENUS)
     bool sendContextMenuEvent(const PlatformMouseEvent&);

@@ -421,6 +421,7 @@ def headers_for_type(type):
         'WebCore::KeypressCommand': '<WebCore/KeyboardEvent.h>',
         'WebCore::PluginInfo': '<WebCore/PluginData.h>',
         'WebCore::TextCheckingResult': '<WebCore/EditorClient.h>',
+        'WebKit::WebGestureEvent': '"WebEvent.h"',
         'WebKit::WebKeyboardEvent': '"WebEvent.h"',
         'WebKit::WebMouseEvent': '"WebEvent.h"',
         'WebKit::WebTouchEvent': '"WebEvent.h"',

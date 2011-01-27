@@ -38,6 +38,10 @@ public:
     static WebMouseEvent createWebMouseEvent(NSEvent *event, NSView *windowView);
     static WebWheelEvent createWebWheelEvent(NSEvent *event, NSView *windowView);
     static WebKeyboardEvent createWebKeyboardEvent(NSEvent *event, NSView *windowView);
+
+#if ENABLE(GESTURE_EVENTS)
+    static WebGestureEvent createWebGestureEvent(NSEvent *event, NSView *windowView);
+#endif
 };
 
 } // namespace WebKit

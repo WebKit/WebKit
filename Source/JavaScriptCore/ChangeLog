@@ -1,3 +1,12 @@
+2011-01-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add events to represent the start/end of a gesture scroll
+        https://bugs.webkit.org/show_bug.cgi?id=53215
+
+        * wtf/Platform.h: Add ENABLE for gesture events. 
+
 2011-01-26  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Laszlo Gombos.

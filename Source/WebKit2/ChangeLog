@@ -1,3 +1,44 @@
+2011-01-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add events to represent the start/end of a gesture scroll
+        https://bugs.webkit.org/show_bug.cgi?id=53215
+
+        * Scripts/webkit2/messages.py:
+        * Shared/WebEvent.h:
+        (WebKit::WebGestureEvent::WebGestureEvent):
+        (WebKit::WebGestureEvent::position):
+        (WebKit::WebGestureEvent::globalPosition):
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformGestureEvent::WebKit2PlatformGestureEvent):
+        (WebKit::platform):
+        * Shared/WebEventConversion.h:
+        * Shared/WebGestureEvent.cpp: Added.
+        (WebKit::WebGestureEvent::WebGestureEvent):
+        (WebKit::WebGestureEvent::encode):
+        (WebKit::WebGestureEvent::decode):
+        (WebKit::WebGestureEvent::isGestureEventType):
+        * Shared/mac/WebEventFactory.h:
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::gestureEventTypeForEvent):
+        (WebKit::WebEventFactory::createWebGestureEvent):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView shortCircuitedEndGestureWithEvent:]):
+        (-[WKView beginGestureWithEvent:]):
+        (-[WKView viewDidMoveToWindow]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleGestureEvent):
+        (WebKit::WebPageProxy::didReceiveEvent):
+        * UIProcess/WebPageProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::handleGestureEvent):
+        (WebKit::WebPage::gestureEvent):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        Pipe gesture events down to WebCore.
+
 2011-01-26  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

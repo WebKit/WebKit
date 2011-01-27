@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,13 +55,20 @@ public:
         KeyDown,
         KeyUp,
         RawKeyDown,
-        Char
+        Char,
+
+#if ENABLE(GESTURE_EVENTS)
+        // WebGestureEvent
+        GestureScrollBegin,
+        GestureScrollEnd,
+#endif
+
 #if ENABLE(TOUCH_EVENTS)
-        ,
+        // WebTouchEvent
         TouchStart,
         TouchMove,
         TouchEnd,
-        TouchCancel
+        TouchCancel,
 #endif
     };
 
@@ -230,8 +237,30 @@ private:
     bool m_isSystemKey;
 };
 
-#if ENABLE(TOUCH_EVENTS)
 
+#if ENABLE(GESTURE_EVENTS)
+// FIXME: Move this class to its own header file.
+class WebGestureEvent : public WebEvent {
+public:
+    WebGestureEvent() { }
+    WebGestureEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, Modifiers, double timestamp);
+
+    const WebCore::IntPoint position() const { return m_position; }
+    const WebCore::IntPoint globalPosition() const { return m_globalPosition; }
+
+    void encode(CoreIPC::ArgumentEncoder*) const;
+    static bool decode(CoreIPC::ArgumentDecoder*, WebGestureEvent&);
+
+private:
+    static bool isGestureEventType(Type);
+
+    WebCore::IntPoint m_position;
+    WebCore::IntPoint m_globalPosition;
+};
+#endif // ENABLE(GESTURE_EVENTS)
+
+
+#if ENABLE(TOUCH_EVENTS)
 // FIXME: Move this class to its own header file.
 // FIXME: Having "Platform" in the name makes it sound like this event is platform-specific or low-
 // level in some way. That doesn't seem to be the case.

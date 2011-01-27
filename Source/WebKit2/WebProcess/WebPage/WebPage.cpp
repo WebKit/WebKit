@@ -917,6 +917,26 @@ void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
     send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(keyboardEvent.type()), handled));
 }
 
+#if ENABLE(GESTURE_EVENTS)
+static bool handleGestureEvent(const WebGestureEvent& gestureEvent, Page* page)
+{
+    Frame* frame = page->mainFrame();
+    if (!frame->view())
+        return false;
+
+    PlatformGestureEvent platformGestureEvent = platform(gestureEvent);
+    return frame->eventHandler()->handleGestureEvent(platformGestureEvent);
+}
+
+void WebPage::gestureEvent(const WebGestureEvent& gestureEvent)
+{
+    CurrentEvent currentEvent(gestureEvent);
+
+    bool handled = handleGestureEvent(gestureEvent, m_page.get());
+    send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(gestureEvent.type()), handled));
+}
+#endif
+
 void WebPage::validateMenuItem(const String& commandName)
 {
     bool isEnabled = false;

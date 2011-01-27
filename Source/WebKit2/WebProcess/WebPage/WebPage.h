@@ -100,6 +100,10 @@ struct PrintInfo;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
 
+#if ENABLE(GESTURE_EVENTS)
+class WebGestureEvent;
+#endif
+
 #if ENABLE(TOUCH_EVENTS)
 class WebTouchEvent;
 #endif
@@ -350,11 +354,15 @@ private:
     void setInitialFocus(bool);
     void setWindowResizerSize(const WebCore::IntSize&);
     void setIsInWindow(bool);
+    void validateMenuItem(const String&);
+    void executeEditCommand(const String&);
+
     void mouseEvent(const WebMouseEvent&);
     void wheelEvent(const WebWheelEvent&);
     void keyEvent(const WebKeyboardEvent&);
-    void validateMenuItem(const String&);
-    void executeEditCommand(const String&);
+#if ENABLE(GESTURE_EVENTS)
+    void gestureEvent(const WebGestureEvent&);
+#endif
 #if ENABLE(TOUCH_EVENTS)
     void touchEvent(const WebTouchEvent&);
 #endif

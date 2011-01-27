@@ -135,6 +135,10 @@ typedef HashMap<String, ValidationVector> ValidationMap;
     NSEvent *_mouseDownEvent;
     BOOL _ignoringMouseDraggedEvents;
     BOOL _dragHasStarted;
+
+#if ENABLE(GESTURE_EVENTS)
+    id _endGestureMonitor;
+#endif
 }
 @end
 
@@ -758,6 +762,41 @@ EVENT_HANDLER(scrollWheel, Wheel)
     [self _mouseHandler:event];
 }
 
+#if ENABLE(GESTURE_EVENTS)
+
+static const short kIOHIDEventTypeScroll = 6;
+
+- (void)shortCircuitedEndGestureWithEvent:(NSEvent *)event
+{
+    if ([event subtype] != kIOHIDEventTypeScroll)
+        return;
+
+    WebGestureEvent webEvent = WebEventFactory::createWebGestureEvent(event, self);
+    _data->_page->handleGestureEvent(webEvent);
+
+    if (_data->_endGestureMonitor) {
+        [NSEvent removeMonitor:_data->_endGestureMonitor];
+        _data->_endGestureMonitor = nil;
+    }
+}
+
+- (void)beginGestureWithEvent:(NSEvent *)event
+{
+    if ([event subtype] != kIOHIDEventTypeScroll)
+        return;
+
+    WebGestureEvent webEvent = WebEventFactory::createWebGestureEvent(event, self);
+    _data->_page->handleGestureEvent(webEvent);
+
+    if (!_data->_endGestureMonitor) {
+        _data->_endGestureMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskEndGesture handler:^(NSEvent *blockEvent) {
+            [self shortCircuitedEndGestureWithEvent:blockEvent];
+            return blockEvent;
+        }];
+    }
+}
+#endif
+
 - (void)doCommandBySelector:(SEL)selector
 {
     if (selector != @selector(noop:))
@@ -1177,8 +1216,14 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     } else {
         _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
         _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive | WebPageProxy::ViewIsInWindow);
-    }
 
+#if ENABLE(GESTURE_EVENTS)
+        if (_data->_endGestureMonitor) {
+            [NSEvent removeMonitor:_data->_endGestureMonitor];
+            _data->_endGestureMonitor = nil;
+        }
+#endif
+    }
     [self _setRemoteAccessibilityWindow:[self window]];
 }
 

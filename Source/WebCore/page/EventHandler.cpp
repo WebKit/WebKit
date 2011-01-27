@@ -78,6 +78,10 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/StdLibExtras.h>
 
+#if ENABLE(GESTURE_EVENTS)
+#include "PlatformGestureEvent.h"
+#endif
+
 #if ENABLE(SVG)
 #include "SVGDocument.h"
 #include "SVGElementInstance.h"
@@ -2034,6 +2038,14 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent* wheelEv
     if (!m_useLatchedWheelEventNode)
         m_previousWheelScrolledNode = stopNode;
 }
+
+#if ENABLE(GESTURE_EVENTS)
+bool EventHandler::handleGestureEvent(const PlatformGestureEvent&)
+{
+    // FIXME: Handle gesture events.
+    return true;
+}
+#endif
 
 #if ENABLE(CONTEXT_MENUS)
 bool EventHandler::sendContextMenuEvent(const PlatformMouseEvent& event)

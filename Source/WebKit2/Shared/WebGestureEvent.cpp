@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,50 +23,49 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebEventConversion_h
-#define WebEventConversion_h
-
-#include <WebCore/PlatformKeyboardEvent.h>
-#include <WebCore/PlatformMouseEvent.h>
-#include <WebCore/PlatformWheelEvent.h>
+#include "WebEvent.h"
 
 #if ENABLE(GESTURE_EVENTS)
-#include <WebCore/PlatformGestureEvent.h>
-#endif
 
-#if ENABLE(TOUCH_EVENTS)
-#include <WebCore/PlatformTouchEvent.h>
-#include <WebCore/PlatformTouchPoint.h>
-#endif
+#include "Arguments.h"
+#include "WebCoreArgumentCoders.h"
 
-namespace WebKit {
+using namespace WebCore;
 
-class WebMouseEvent;
-class WebWheelEvent;
-class WebKeyboardEvent;
+namespace WebKit {    
 
-#if ENABLE(GESTURE_EVENTS)
-class WebGestureEvent;
-#endif
+WebGestureEvent::WebGestureEvent(Type type, const IntPoint& position, const IntPoint& globalPosition, Modifiers modifiers, double timestamp)
+    : WebEvent(type, modifiers, timestamp)
+    , m_position(position)
+    , m_globalPosition(globalPosition)
+{
+    ASSERT(isGestureEventType(type));
+}
 
-#if ENABLE(TOUCH_EVENTS)
-class WebTouchEvent;
-class WebTouchPoint;
-#endif
+void WebGestureEvent::encode(CoreIPC::ArgumentEncoder* encoder) const
+{
+    WebEvent::encode(encoder);
 
-WebCore::PlatformMouseEvent platform(const WebMouseEvent&);
-WebCore::PlatformWheelEvent platform(const WebWheelEvent&);
-WebCore::PlatformKeyboardEvent platform(const WebKeyboardEvent&);
+    encoder->encode(m_position);
+    encoder->encode(m_globalPosition);
+}
 
-#if ENABLE(GESTURE_EVENTS)
-WebCore::PlatformGestureEvent platform(const WebGestureEvent&);
-#endif
+bool WebGestureEvent::decode(CoreIPC::ArgumentDecoder* decoder, WebGestureEvent& t)
+{
+    if (!WebEvent::decode(decoder, t))
+        return false;
+    if (!decoder->decode(t.m_position))
+        return false;
+    if (!decoder->decode(t.m_globalPosition))
+        return false;
+    return true;
+}
 
-#if ENABLE(TOUCH_EVENTS)
-WebCore::PlatformTouchEvent platform(const WebTouchEvent&);
-WebCore::PlatformTouchPoint platform(const WebTouchPoint&);
-#endif
+bool WebGestureEvent::isGestureEventType(Type type)
+{
+    return type == GestureScrollBegin || type == GestureScrollEnd;
+}
 
 } // namespace WebKit
 
-#endif // WebEventConversion_h
+#endif // ENABLE(GESTURE_EVENTS)
