@@ -921,7 +921,7 @@ void ScrollView::calculateOverhangAreasForPainting(IntRect& horizontalOverhangRe
     }
 }
 
-void ScrollView::paintOverhangAreas(GraphicsContext*, const IntRect&, const IntRect&)
+void ScrollView::paintOverhangAreas(GraphicsContext* context, const IntRect& horizontalOverhangRect, const IntRect& verticalOverhangRect)
 {
     // FIXME: This should be checking the dirty rect.
 

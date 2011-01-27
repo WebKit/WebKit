@@ -1,5 +1,12 @@
 2011-01-27  Sam Weinig  <sam@webkit.org>
 
+        Fix all the builds.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::paintOverhangAreas): Add parameters.
+
+2011-01-27  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Dave Hyatt.
 
         Add ability to do an unconstrained scroll on a ScrollView
