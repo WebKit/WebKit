@@ -29,10 +29,13 @@
 
 #include "ActivateFonts.h"
 
+#include <QApplication>
 #include <QByteArray>
 #include <QDir>
+#include <QWindowsStyle>
 
 #ifdef Q_WS_X11
+#include <QX11Info>
 #include <fontconfig/fontconfig.h>
 #endif
 
@@ -43,6 +46,8 @@ namespace WTR {
 void activateFonts()
 {
 #if defined(Q_WS_X11)
+    FcInit();
+
     static int numFonts = -1;
 
     // Some test cases may add or remove application fonts (via @font-face).
@@ -78,6 +83,18 @@ void activateFonts()
     appFontSet = FcConfigGetFonts(config, FcSetApplication);
     numFonts = appFontSet->nfont;
 #endif
+
+    QApplication::setGraphicsSystem("raster");
+    QApplication::setStyle(new QWindowsStyle);
+
+    QFont f("Sans Serif");
+    f.setPointSize(9);
+    f.setWeight(QFont::Normal);
+    f.setStyle(QFont::StyleNormal);
+    QApplication::setFont(f);
+
+    QX11Info::setAppDpiX(0, 96);
+    QX11Info::setAppDpiY(0, 96);
 }
 
 }

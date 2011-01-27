@@ -1,3 +1,13 @@
+2011-01-27  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt][WK2] WTR should be initialized in the same way as DRT
+        https://bugs.webkit.org/show_bug.cgi?id=53240
+
+        * WebKitTestRunner/InjectedBundle/qt/ActivateFontsQt.cpp:
+        (WTR::activateFonts): Added missing initialization steps.
+
 2011-01-27  Joone Hur <joone.hur@collabora.co.uk>
 
         Unreviewed. 
