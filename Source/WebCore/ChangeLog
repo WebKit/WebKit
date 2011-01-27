@@ -1,3 +1,22 @@
+2011-01-26  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        shaderSource needs to preserve original source
+        https://bugs.webkit.org/show_bug.cgi?id=52833
+
+        Test: fast/canvas/webgl/gl-getshadersource.html
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getShaderParameter): Intercept SHADER_SOURCE_LENGTH.
+        (WebCore::WebGLRenderingContext::getShaderSource): Intercept the call.
+        (WebCore::WebGLRenderingContext::shaderSource): Cache the source.
+        * html/canvas/WebGLShader.cpp: Cache shader source.
+        (WebCore::WebGLShader::WebGLShader):
+        * html/canvas/WebGLShader.h: Ditto.
+        (WebCore::WebGLShader::getSource):
+        (WebCore::WebGLShader::setSource):
+
 2011-01-27  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed WinCE build fix for r76743.

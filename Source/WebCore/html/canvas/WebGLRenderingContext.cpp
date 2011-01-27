@@ -2164,8 +2164,12 @@ WebGLGetInfo WebGLRenderingContext::getShaderParameter(WebGLShader* shader, GC3D
         m_context->getShaderiv(objectOrZero(shader), pname, &value);
         return WebGLGetInfo(static_cast<unsigned int>(value));
     case GraphicsContext3D::INFO_LOG_LENGTH:
-    case GraphicsContext3D::SHADER_SOURCE_LENGTH:
         m_context->getShaderiv(objectOrZero(shader), pname, &value);
+        return WebGLGetInfo(value);
+    case GraphicsContext3D::SHADER_SOURCE_LENGTH:
+        value = static_cast<GC3Dint>(shader->getSource().length());
+        if (value > 0)
+            value++; // Includes the null termination character.
         return WebGLGetInfo(value);
     default:
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
@@ -2191,8 +2195,7 @@ String WebGLRenderingContext::getShaderSource(WebGLShader* shader, ExceptionCode
         return String();
     if (!validateWebGLObject(shader))
         return "";
-    WebGLStateRestorer(this, false);
-    return m_context->getShaderSource(objectOrZero(shader));
+    return shader->getSource();
 }
 
 Vector<String> WebGLRenderingContext::getSupportedExtensions()
@@ -2772,6 +2775,7 @@ void WebGLRenderingContext::shaderSource(WebGLShader* shader, const String& stri
     String stringWithoutComments = StripComments(string).result();
     if (!validateString(stringWithoutComments))
         return;
+    shader->setSource(string);
     m_context->shaderSource(objectOrZero(shader), stringWithoutComments);
     cleanupAfterGraphicsCall(false);
 }

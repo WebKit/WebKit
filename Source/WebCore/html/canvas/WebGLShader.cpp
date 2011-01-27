@@ -41,6 +41,7 @@ PassRefPtr<WebGLShader> WebGLShader::create(WebGLRenderingContext* ctx, GC3Denum
 WebGLShader::WebGLShader(WebGLRenderingContext* ctx, GC3Denum type)
     : WebGLObject(ctx)
     , m_type(type)
+    , m_source("")
 {
     setObject(context()->graphicsContext3D()->createShader(type));
 }

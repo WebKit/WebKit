@@ -40,6 +40,9 @@ public:
     static PassRefPtr<WebGLShader> create(WebGLRenderingContext*, GC3Denum);
 
     GC3Denum getType() const { return m_type; }
+    const String& getSource() const { return m_source; }
+
+    void setSource(const String& source) { m_source = source; }
 
 private:
     WebGLShader(WebGLRenderingContext*, GC3Denum);
@@ -49,6 +52,7 @@ private:
     virtual bool isShader() const { return true; }
 
     GC3Denum m_type;
+    String m_source;
 };
 
 } // namespace WebCore
