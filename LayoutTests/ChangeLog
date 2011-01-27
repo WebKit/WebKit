@@ -1,5 +1,11 @@
 2011-01-27  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Another Unreviewed Chromium test expectation update.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-01-27  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed Chromium test expectation update.
 
         * platform/chromium/test_expectations.txt:

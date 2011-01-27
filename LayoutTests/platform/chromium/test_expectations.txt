@@ -3110,7 +3110,7 @@ BUGCR71009 WIN LINUX : fast/text/text-letter-spacing.html = TEXT
 BUGCR71009 MAC : fast/multicol/vertical-rl/float-paginate-complex.html = TEXT
 
 // Added by and started crashing at http://trac.webkit.org/changeset/76743
-BUGCR71013 LINUX : fast/text/justify-ideograph-vertical.html = CRASH
+BUGCR71013 LINUX : fast/text/justify-ideograph-vertical.html = CRASH IMAGE+TEXT
 
 // Started failing at http://trac.webkit.org/changeset/76743
 BUGCR71022 WIN LINUX : fast/overflow/overflow-rtl-vertical.html = IMAGE+TEXT
