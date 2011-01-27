@@ -2,6 +2,46 @@
 
         Reviewed Chromium Windows/Linux rebaselines for r76726.
 
+        * platform/chromium-linux/fast/multicol/vertical-rl/float-multicol-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/vertical-rl/float-multicol-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/vertical-rl/float-paginate-complex-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/vertical-rl/float-paginate-complex-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/vertical-rl/float-paginate-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/vertical-rl/float-paginate-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/vertical-rl/nested-columns-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/vertical-rl/nested-columns-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/vertical-rl/unsplittable-inline-block-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/vertical-rl/unsplittable-inline-block-expected.png: Added.
+        * platform/chromium-linux/fast/table/028-vertical-expected.checksum:
+        * platform/chromium-linux/fast/table/028-vertical-expected.png:
+        * platform/chromium-linux/fast/table/border-collapsing/003-vertical-expected.checksum:
+        * platform/chromium-linux/fast/table/border-collapsing/003-vertical-expected.png:
+        * platform/chromium-win/fast/multicol/vertical-rl/float-multicol-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/vertical-rl/float-multicol-expected.png: Added.
+        * platform/chromium-win/fast/multicol/vertical-rl/float-multicol-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/vertical-rl/float-paginate-complex-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/vertical-rl/float-paginate-complex-expected.png: Added.
+        * platform/chromium-win/fast/multicol/vertical-rl/float-paginate-complex-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/vertical-rl/float-paginate-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/vertical-rl/float-paginate-expected.png: Added.
+        * platform/chromium-win/fast/multicol/vertical-rl/float-paginate-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/vertical-rl/nested-columns-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/vertical-rl/nested-columns-expected.png: Added.
+        * platform/chromium-win/fast/multicol/vertical-rl/nested-columns-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/vertical-rl/unsplittable-inline-block-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/vertical-rl/unsplittable-inline-block-expected.png: Added.
+        * platform/chromium-win/fast/multicol/vertical-rl/unsplittable-inline-block-expected.txt: Added.
+        * platform/chromium-win/fast/table/028-vertical-expected.checksum:
+        * platform/chromium-win/fast/table/028-vertical-expected.png:
+        * platform/chromium-win/fast/table/028-vertical-expected.txt:
+        * platform/chromium-win/fast/table/border-collapsing/003-vertical-expected.checksum:
+        * platform/chromium-win/fast/table/border-collapsing/003-vertical-expected.png:
+        * platform/chromium-win/fast/table/border-collapsing/003-vertical-expected.txt:
+
+2011-01-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed Chromium Windows/Linux rebaselines for r76726.
+
         * platform/chromium-linux/fast/multicol/vertical-lr/float-paginate-complex-expected.checksum: Added.
         * platform/chromium-linux/fast/multicol/vertical-lr/float-paginate-complex-expected.png: Added.
         * platform/chromium-linux/fast/multicol/vertical-lr/float-paginate-expected.checksum: Added.
