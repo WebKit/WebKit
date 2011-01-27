@@ -28,6 +28,7 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#include "CACFLayerTreeHostClient.h"
 #include "LayerChangesFlusher.h"
 #include "PlatformCALayer.h"
 #include "WebCoreInstanceHandle.h"

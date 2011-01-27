@@ -152,6 +152,11 @@
 #include <WebKitSystemInterface/WebKitSystemInterface.h> 
 #endif
 
+#if USE(ACCELERATED_COMPOSITING)
+#include <WebCore/CACFLayerTreeHost.h>
+#include <WebCore/PlatformCALayer.h>
+#endif
+
 #include <ShlObj.h>
 #include <comutil.h>
 #include <dimm.h>

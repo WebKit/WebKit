@@ -1,3 +1,14 @@
+2011-01-27  Adam Roben  <aroben@apple.com>
+
+        Trim down #includes in WebView.h
+
+        Rubber-stamped by Steve Falkenburg.
+
+        * WebView.cpp: Moved some #includes here from the header file.
+
+        * WebView.h: Replaced some broader #includes with more specific ones, plus a
+        forward-declaration.
+
 2011-01-25  Steve Falkenburg  <sfalken@apple.com>
 
         Windows production build fix.

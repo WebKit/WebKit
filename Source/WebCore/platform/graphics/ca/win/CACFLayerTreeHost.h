@@ -47,13 +47,8 @@ typedef struct CGImage* CGImageRef;
 
 namespace WebCore {
 
+class CACFLayerTreeHostClient;
 class PlatformCALayer;
-
-class CACFLayerTreeHostClient {
-public:
-    virtual ~CACFLayerTreeHostClient() { }
-    virtual void flushPendingGraphicsLayerChanges() { }
-};
 
 // FIXME: Currently there is a CACFLayerTreeHost for each WebView and each
 // has its own CARenderOGLContext and Direct3DDevice9, which is inefficient.

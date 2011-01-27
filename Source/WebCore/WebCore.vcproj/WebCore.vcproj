@@ -25738,6 +25738,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\ScrollableArea.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\ScrollableArea.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\ScrollAnimator.cpp"
 				>
 			</File>
@@ -25751,14 +25759,6 @@
 			</File>
 			<File
 				RelativePath="..\platform\ScrollAnimatorWin.h"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\ScrollableArea.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\ScrollableArea.h"
 				>
 			</File>
 			<File
@@ -28897,6 +28897,10 @@
 									Name="VCCustomBuildTool"
 								/>
 							</FileConfiguration>
+						</File>
+						<File
+							RelativePath="..\platform\graphics\ca\win\CACFLayerTreeHostClient.h"
+							>
 						</File>
 						<File
 							RelativePath="..\platform\graphics\ca\win\LayerChangesFlusher.cpp"
@@ -43709,14 +43713,6 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug_All|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="Debug_Cairo_CFLite|Win32"
 					ExcludedFromBuild="true"
 					>
@@ -43788,17 +43784,9 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_LTCG|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\dom\EventTarget.h"
+				RelativePath="..\dom\EventQueue.h"
 				>
 			</File>
 			<File
@@ -43814,6 +43802,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -43844,17 +43840,9 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_All|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\dom\EventQueue.h"
+				RelativePath="..\dom\EventTarget.h"
 				>
 			</File>
 			<File
@@ -65625,6 +65613,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\UglifyJS\parse-js.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\Placard.js"
 					>
 				</File>
@@ -65634,6 +65626,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\Popover.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\UglifyJS\process.js"
 					>
 				</File>
 				<File
@@ -65834,14 +65830,6 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\WorkersSidebarPane.js"
-					>
-				</File>
-					<File
-					RelativePath="..\inspector\front-end\UglifyJS\parse-js.js"
-					>
-				</File>
-					<File
-					RelativePath="..\inspector\front-end\UglifyJS\process.js"
 					>
 				</File>
 			</Filter>

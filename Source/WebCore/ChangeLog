@@ -1,3 +1,24 @@
+2011-01-27  Adam Roben  <aroben@apple.com>
+
+        Move CACFLayerTreeHostClient to its own header file
+
+        Rubber-stamped by Steve Falkenburg.
+
+        * WebCore.vcproj/WebCore.vcproj: Added CACFLayerTreeHostClient.h. Also let VS have its way
+        with the file.
+
+        * platform/graphics/ca/win/CACFLayerTreeHost.cpp: Added new #include.
+
+        * platform/graphics/ca/win/CACFLayerTreeHost.h: Removed CACFLayerTreeHostClient.
+
+        * platform/graphics/ca/win/CACFLayerTreeHostClient.h: Added.
+
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.cpp: Moved some #includes here
+        from the header file.
+
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.h: Replaced broader #includes
+        with more specific ones, plus a forward-declaration.
+
 2011-01-27  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Tony Chang.

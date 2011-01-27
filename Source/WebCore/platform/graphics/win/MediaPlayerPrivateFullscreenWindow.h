@@ -26,9 +26,10 @@
 #ifndef MediaPlayerPrivateFullscreenWindow_h
 #define MediaPlayerPrivateFullscreenWindow_h
 
+#include <wtf/RefPtr.h>
+
 #if USE(ACCELERATED_COMPOSITING)
-#include "CACFLayerTreeHost.h"
-#include "PlatformCALayer.h"
+#include "CACFLayerTreeHostClient.h"
 #endif
 
 typedef unsigned WPARAM;
@@ -39,6 +40,11 @@ typedef LONG_PTR LRESULT;
 typedef unsigned int UINT;
 
 namespace WebCore {
+
+#if USE(ACCELERATED_COMPOSITING)
+class CACFLayerTreeHost;
+class PlatformCALayer;
+#endif
 
 class MediaPlayerPrivateFullscreenClient {
 public:

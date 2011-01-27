@@ -34,6 +34,11 @@
 #include <CoreGraphics/CGColor.h>
 #endif
 
+#if USE(ACCELERATED_COMPOSITING)
+#include "CACFLayerTreeHost.h"
+#include "PlatformCALayer.h"
+#endif
+
 namespace WebCore {
 
 MediaPlayerPrivateFullscreenWindow::MediaPlayerPrivateFullscreenWindow(MediaPlayerPrivateFullscreenClient* client)

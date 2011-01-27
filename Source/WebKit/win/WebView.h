@@ -40,8 +40,12 @@
 #include <wtf/RefPtr.h>
 
 #if USE(ACCELERATED_COMPOSITING)
-#include <WebCore/CACFLayerTreeHost.h>
-#include <WebCore/PlatformCALayer.h>
+#include <WebCore/CACFLayerTreeHostClient.h>
+#include <WebCore/GraphicsLayerClient.h>
+
+namespace WebCore {
+    class CACFLayerTreeHost;
+}
 #endif
 
 class FullscreenVideoController;
