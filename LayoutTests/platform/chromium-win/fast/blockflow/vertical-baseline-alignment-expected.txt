@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (587,0) size 213x600
-  RenderBlock {HTML} at (0,0) size 213x600
-    RenderBody {BODY} at (8,8) size 197x584
-      RenderBlock {P} at (0,24) size 114x536
+layer at (531,0) size 269x600
+  RenderBlock {HTML} at (0,0) size 269x600
+    RenderBody {BODY} at (24,8) size 221x584
+      RenderBlock {P} at (0,0) size 114x584
         RenderInline {SPAN} at (0,0) size 27x102
           RenderText {#text} at (23,0) size 27x102
             text run at (23,0) width 102: "\x{7B2C}\x{4E00}\x{6BB5}\x{843D} "
@@ -17,7 +17,7 @@ layer at (587,0) size 213x600
             RenderText {#text} at (89,297) size 15x165
               text run at (89,297) width 165: "SHOULD NOT BE CENTERED."
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (114,24) size 83x536
+      RenderBlock {P} at (138,0) size 83x584
         RenderInline {SPAN} at (0,0) size 27x470
           RenderText {#text} at (49,0) size 27x102
             text run at (49,0) width 102: "\x{7B2C}\x{4E8C}\x{6BB5}\x{843D} "

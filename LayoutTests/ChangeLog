@@ -1,3 +1,56 @@
+2011-01-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed Chromium Windows/Linux rebaselines for r76726.
+
+        * platform/chromium-linux/fast/blockflow/vertical-baseline-alignment-expected.checksum:
+        * platform/chromium-linux/fast/blockflow/vertical-baseline-alignment-expected.png:
+        * platform/chromium-linux/fast/lists/002-vertical-expected.checksum:
+        * platform/chromium-linux/fast/lists/002-vertical-expected.png:
+        * platform/chromium-linux/fast/lists/002-vertical-expected.txt: Removed.
+        * platform/chromium-linux/fast/lists/003-vertical-expected.checksum:
+        * platform/chromium-linux/fast/lists/003-vertical-expected.png:
+        * platform/chromium-linux/fast/multicol/vertical-lr: Added.
+        * platform/chromium-linux/fast/multicol/vertical-lr/border-padding-pagination-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/vertical-lr/border-padding-pagination-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/vertical-lr/column-break-with-balancing-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/vertical-lr/column-break-with-balancing-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/vertical-lr/column-count-with-rules-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/vertical-lr/column-count-with-rules-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/vertical-lr/column-rules-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/vertical-lr/column-rules-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/vertical-lr/float-avoidance-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/vertical-lr/float-avoidance-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/vertical-lr/float-multicol-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/vertical-lr/float-multicol-expected.png: Added.
+        * platform/chromium-win/fast/blockflow/vertical-baseline-alignment-expected.checksum:
+        * platform/chromium-win/fast/blockflow/vertical-baseline-alignment-expected.png:
+        * platform/chromium-win/fast/blockflow/vertical-baseline-alignment-expected.txt:
+        * platform/chromium-win/fast/lists/002-vertical-expected.checksum:
+        * platform/chromium-win/fast/lists/002-vertical-expected.png:
+        * platform/chromium-win/fast/lists/002-vertical-expected.txt:
+        * platform/chromium-win/fast/lists/003-vertical-expected.checksum:
+        * platform/chromium-win/fast/lists/003-vertical-expected.png:
+        * platform/chromium-win/fast/lists/003-vertical-expected.txt:
+        * platform/chromium-win/fast/multicol/vertical-lr: Added.
+        * platform/chromium-win/fast/multicol/vertical-lr/border-padding-pagination-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/vertical-lr/border-padding-pagination-expected.png: Added.
+        * platform/chromium-win/fast/multicol/vertical-lr/border-padding-pagination-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/vertical-lr/column-break-with-balancing-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/vertical-lr/column-break-with-balancing-expected.png: Added.
+        * platform/chromium-win/fast/multicol/vertical-lr/column-break-with-balancing-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/vertical-lr/column-count-with-rules-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/vertical-lr/column-count-with-rules-expected.png: Added.
+        * platform/chromium-win/fast/multicol/vertical-lr/column-count-with-rules-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/vertical-lr/column-rules-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/vertical-lr/column-rules-expected.png: Added.
+        * platform/chromium-win/fast/multicol/vertical-lr/column-rules-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/vertical-lr/float-avoidance-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/vertical-lr/float-avoidance-expected.png: Added.
+        * platform/chromium-win/fast/multicol/vertical-lr/float-avoidance-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/vertical-lr/float-multicol-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/vertical-lr/float-multicol-expected.png: Added.
+        * platform/chromium-win/fast/multicol/vertical-lr/float-multicol-expected.txt: Added.
+
 2011-01-26  Brian Weinstein  <bweinstein@apple.com>
 
         Rebaseline Windows fast/blockfow results after r76726.
