@@ -1,6 +1,17 @@
-Tests that the Styles sidebar pane URLs are linked correctly. Bug 51663
+Tests that URLs are linked to and completed correctly. Bugs 51663, 53171
 
 
+Partial URLs completed:
+http://example.com/
+http://example.com/moo
+https://secure.com/moo
+https://secure.com/moo
+http://example.com/moo
+http://example.com/foo/zoo/moo
+http://example.com/foo/boo/moo
+http://example.com/moo
+http://example.com/foo?a=b
+http://example.com/foo?a=b
 Link for a URI from CSS document:
 LayoutTests/inspector/resources/fromcss.png
 Link for a URI from iframe inline stylesheet:

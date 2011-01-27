@@ -1515,7 +1515,19 @@ WebInspector.completeURL = function(baseURL, href)
         var path = href;
         if (path.charAt(0) !== "/") {
             var basePath = parsedURL.path;
-            path = basePath.substring(0, basePath.lastIndexOf("/")) + "/" + path;
+            // A href of "?foo=bar" implies "basePath?foo=bar".
+            // With "basePath?a=b" and "?foo=bar" we should get "basePath?foo=bar".
+            var prefix;
+            if (path.charAt(0) === "?") {
+                var basePathCutIndex = basePath.indexOf("?");
+                if (basePathCutIndex !== -1)
+                    prefix = basePath.substring(0, basePathCutIndex);
+                else
+                    prefix = basePath;
+            } else
+                prefix = basePath.substring(0, basePath.lastIndexOf("/")) + "/";
+
+            path = prefix + path;
         } else if (path.length > 1 && path.charAt(1) === "/") {
             // href starts with "//" which is a full URL with the protocol dropped (use the baseURL protocol).
             return parsedURL.scheme + ":" + path;

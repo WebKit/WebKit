@@ -1,3 +1,13 @@
+2011-01-27  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Elements panel] Tooltip for relative links incorrectly identifies current URL
+        https://bugs.webkit.org/show_bug.cgi?id=53171
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.completeURL): Taught to understand partial href's that start with "?" (contain GET parameters only)
+
 2011-01-27  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

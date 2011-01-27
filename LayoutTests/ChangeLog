@@ -1,3 +1,13 @@
+2011-01-27  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Elements panel] Tooltip for relative links incorrectly identifies current URL
+        https://bugs.webkit.org/show_bug.cgi?id=53171
+
+        * inspector/styles-url-linkify-expected.txt:
+        * inspector/styles-url-linkify.html:
+
 2011-01-27  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed.

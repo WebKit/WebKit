@@ -46,8 +46,29 @@ function test()
         InspectorTest.selectElementAndRun("local", executeLocalTest);
     }
 
+    function completeURL(baseURL, href)
+    {
+        InspectorTest.addResult(WebInspector.completeURL(baseURL, href));
+    }
+
+    function completeURLTest()
+    {
+        InspectorTest.addResult("Partial URLs completed:");
+        completeURL("http://example.com", "/");
+        completeURL("http://example.com", "moo");
+        completeURL("http://example.com/", "https://secure.com/moo");
+        completeURL("https://example.com/foo", "//secure.com/moo");
+        completeURL("http://example.com/foo/zoo", "/moo");
+        completeURL("http://example.com/foo/zoo/", "moo");
+        completeURL("http://example.com/foo/zoo", "boo/moo");
+        completeURL("http://example.com/foo", "moo");
+        completeURL("http://example.com/foo", "?a=b");
+        completeURL("http://example.com/foo?c=d", "?a=b");
+    }
+
     function executeLocalTest()
     {
+        completeURLTest();
         InspectorTest.addResult("Link for a URI from CSS document:");
         dumpHref();
         InspectorTest.selectElementAndRun("iframed", executeIframedTest);
@@ -67,7 +88,7 @@ function test()
 </head>
 <body onload="runAfterIframeLoaded()">
 <p>
-Tests that the Styles sidebar pane URLs are linked correctly. <a href="http://bugs.webkit.org/show_bug.cgi?id=51663">Bug 51663</a>
+Tests that URLs are linked to and completed correctly. Bugs <a href="http://bugs.webkit.org/show_bug.cgi?id=51663">51663</a>, <a href="http://bugs.webkit.org/show_bug.cgi?id=53171">53171</a>
 </p>
 <div id="local"></div>
 <iframe src="resources/styles-url-linkify-iframe.html"></iframe>
