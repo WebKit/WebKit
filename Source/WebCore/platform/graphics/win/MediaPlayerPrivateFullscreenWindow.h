@@ -53,13 +53,10 @@ public:
     ~MediaPlayerPrivateFullscreenWindow();
 
     void createWindow(HWND ownerWindow);
-    void close();
     
     HWND hwnd() const { return m_hwnd; }
 
 #if USE(ACCELERATED_COMPOSITING)
-    CACFLayerTreeHost* layerView() const { return m_layerTreeHost.get(); }
-
     PlatformCALayer* rootChildLayer() const { return m_rootChild.get(); }
     void setRootChildLayer(PassRefPtr<PlatformCALayer>);
 #endif

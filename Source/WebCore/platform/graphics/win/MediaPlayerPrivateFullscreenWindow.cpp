@@ -47,8 +47,11 @@ MediaPlayerPrivateFullscreenWindow::MediaPlayerPrivateFullscreenWindow(MediaPlay
 
 MediaPlayerPrivateFullscreenWindow::~MediaPlayerPrivateFullscreenWindow()
 {
-    if (m_hwnd)
-        close();
+    if (!m_hwnd)
+        return;
+
+    ::DestroyWindow(m_hwnd);
+    ASSERT(!m_hwnd);
 }
 
 void MediaPlayerPrivateFullscreenWindow::createWindow(HWND parentHwnd)
@@ -65,8 +68,7 @@ void MediaPlayerPrivateFullscreenWindow::createWindow(HWND parentHwnd)
         windowAtom = ::RegisterClassEx(&wcex);
     }
 
-    if (m_hwnd)
-        close();
+    ASSERT(!m_hwnd);
 
     MONITORINFO mi = {0};
     mi.cbSize = sizeof(MONITORINFO);
@@ -85,12 +87,6 @@ void MediaPlayerPrivateFullscreenWindow::createWindow(HWND parentHwnd)
 #endif
 
     ::SetFocus(m_hwnd);
-}
-
-void MediaPlayerPrivateFullscreenWindow::close()
-{
-    ::DestroyWindow(m_hwnd);
-    ASSERT(!m_hwnd);
 }
 
 #if USE(ACCELERATED_COMPOSITING)

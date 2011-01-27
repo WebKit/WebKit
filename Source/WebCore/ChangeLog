@@ -1,3 +1,19 @@
+2011-01-26  Adam Roben  <aroben@apple.com>
+
+        Small cleanup in MediaPlayerPrivateFullscreenWindow
+
+        Reviewed by Sam Weinig.
+
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.cpp:
+        (WebCore::MediaPlayerPrivateFullscreenWindow::~MediaPlayerPrivateFullscreenWindow): Moved
+        code here from close(), since this was the only place that called it after the following
+        change to createWindow.
+        (WebCore::MediaPlayerPrivateFullscreenWindow::createWindow): Replaced code that handled the
+        case where we had already created the window with an assertion that we have not already done
+        so. Our single caller (FullscreenVideoController) did not require this behavior.
+
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.h: Removed layerView.
+
 2011-01-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.
