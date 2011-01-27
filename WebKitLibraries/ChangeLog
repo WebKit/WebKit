@@ -1,3 +1,20 @@
+2011-01-26  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/53192> Add experimental support for HTTP pipelining in CFNetwork
+        <rdar://problem/8821760>
+
+        Reviewed by Antti Koivisto.
+
+        * WebKitSystemInterface.h:
+            New methods added for HTTP pipelining support.
+        (WKGetHTTPPipeliningPriority): Added.
+        (WKSetHTTPPipeliningPriority): Added.
+            Unrelated methods added after updating the header.
+        (WKMakeScrollbarPainter): Added.
+        (WKScrollbarPainterPaint): Added.
+        * libWebKitSystemInterfaceLeopard.a: Updated.
+        * libWebKitSystemInterfaceSnowLeopard.a: Updated.
+
 2011-01-24  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.

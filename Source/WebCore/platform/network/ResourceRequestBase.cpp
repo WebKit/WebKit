@@ -45,6 +45,7 @@ PassOwnPtr<ResourceRequest> ResourceRequestBase::adopt(PassOwnPtr<CrossThreadRes
     request->setTimeoutInterval(data->m_timeoutInterval);
     request->setFirstPartyForCookies(data->m_firstPartyForCookies);
     request->setHTTPMethod(data->m_httpMethod);
+    request->setPriority(data->m_priority);
     request->setTargetType(data->m_targetType);
 
     request->updateResourceRequest();
@@ -78,6 +79,7 @@ PassOwnPtr<CrossThreadResourceRequestData> ResourceRequestBase::copyData() const
     data->m_firstPartyForCookies = firstPartyForCookies().copy();
     data->m_httpMethod = httpMethod().crossThreadString();
     data->m_httpHeaders = httpHeaderFields().copyData();
+    data->m_priority = priority();
     data->m_targetType = m_targetType;
 
     data->m_responseContentDispositionEncodingFallbackArray.reserveInitialCapacity(m_responseContentDispositionEncodingFallbackArray.size());
@@ -314,6 +316,23 @@ void ResourceRequestBase::setAllowCookies(bool allowCookies)
         m_platformRequestUpdated = false;
 }
 
+ResourceLoadPriority ResourceRequestBase::priority() const
+{
+    updateResourceRequest();
+
+    return m_priority;
+}
+
+void ResourceRequestBase::setPriority(ResourceLoadPriority priority)
+{
+    updateResourceRequest();
+
+    m_priority = priority;
+
+    if (url().protocolInHTTPFamily())
+        m_platformRequestUpdated = false;
+}
+
 void ResourceRequestBase::addHTTPHeaderField(const AtomicString& name, const String& value) 
 {
     updateResourceRequest();
@@ -352,6 +371,9 @@ bool equalIgnoringHeaderFields(const ResourceRequestBase& a, const ResourceReque
     if (a.allowCookies() != b.allowCookies())
         return false;
     
+    if (a.priority() != b.priority())
+        return false;
+
     FormData* formDataA = a.httpBody();
     FormData* formDataB = b.httpBody();
     

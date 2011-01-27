@@ -144,6 +144,8 @@ void DocumentThreadableLoader::makeCrossOriginAccessRequestWithPreflight(const R
         preflightRequest.setHTTPHeaderField("Access-Control-Request-Headers", String::adopt(headerBuffer));
     }
 
+    preflightRequest.setPriority(request.priority());
+
     loadRequest(preflightRequest, DoSecurityCheck);
 }
 

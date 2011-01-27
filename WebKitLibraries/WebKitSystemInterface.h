@@ -327,6 +327,8 @@ UInt8 WKGetNSEventKeyChar(NSEvent *);
 void WKSetCAAnimationValueFunction(CAPropertyAnimation*, NSString* function);
 
 unsigned WKInitializeMaximumHTTPConnectionCountPerHost(unsigned preferredConnectionCount);
+int WKGetHTTPPipeliningPriority(NSURLRequest *);
+void WKSetHTTPPipeliningPriority(NSMutableURLRequest *, int priority);
 
 void WKSetCONNECTProxyForStream(CFReadStreamRef, CFStringRef proxyHost, CFNumberRef proxyPort);
 void WKSetCONNECTProxyAuthorizationForStream(CFReadStreamRef, CFStringRef proxyAuthorizationString);
@@ -376,6 +378,10 @@ bool WKSandboxExtensionInvalidate(WKSandboxExtensionRef sandboxExtension);
 
 const char* WKSandboxExtensionGetSerializedFormat(WKSandboxExtensionRef sandboxExtension, size_t* length);
 WKSandboxExtensionRef WKSandboxExtensionCreateFromSerializedFormat(const char* serializationFormat, size_t length);
+
+typedef struct __WKScrollbarPainter *WKScrollbarPainterRef;
+WKScrollbarPainterRef WKMakeScrollbarPainter(int controlSize, bool isHorizontal);
+void WKScrollbarPainterPaint(WKScrollbarPainterRef, bool enabled, double value, CGFloat proportion, CGRect frameRect);
 
 #endif
 

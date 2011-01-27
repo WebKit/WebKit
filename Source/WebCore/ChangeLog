@@ -1,3 +1,94 @@
+2011-01-26  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/53192> Add experimental support for HTTP pipelining in CFNetwork
+        <rdar://problem/8821760>
+
+        Reviewed by Antti Koivisto.
+
+        This adds support for HTTP pipelining in CFNetwork, but does not
+        enable it.  To enable it post-SnowLeopard, use this command:
+
+            defaults write BUNDLE.ID WebKitEnableHTTPPipelining -bool YES
+
+        Once enabled, it is possible to force the same load priority
+        (high) to be sent to CFNetwork to allow WebCore to handle the
+        scheduling:
+
+            defaults write BUNDLE.ID WebKitForceHTTPPipeliningPriorityHigh -bool YES
+
+        * WebCore.exp.in: Export _wkGetHTTPPipeliningPriority and
+        _wkSetHTTPPipeliningPriority.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::makeCrossOriginAccessRequestWithPreflight):
+        Copy the priority to preflightRequest.
+
+        * loader/ResourceLoadScheduler.cpp:
+        (WebCore::ResourceLoadScheduler::scheduleLoad): Refactored code
+        at the end of the method to use an early return.
+
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::load): Set the priority on the
+        ResourceRequest object based on the priority of the
+        CachedResourceRequest before calling
+        ResourceLoadScheduler::scheduleSubresourceLoad().
+
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::startLoading): Create a ResourceRequest
+        object and set its priority to ResourceLoadPriorityLow before
+        passing it to ResourceLoadScheduler::scheduleSubresourceLoad().
+
+        * platform/mac/WebCoreSystemInterface.h:
+        (wkGetHTTPPipeliningPriority): Added.
+        (wkSetHTTPPipeliningPriority): Added.
+        * platform/mac/WebCoreSystemInterface.mm:
+        (wkGetHTTPPipeliningPriority): Added.
+        (wkSetHTTPPipeliningPriority): Added.
+
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::adopt): Set m_priority when
+        adopting a CrossThreadResourceRequestData.
+        (WebCore::ResourceRequestBase::copyData): Set m_priority when
+        creating a CrossThreadResourceRequestData.
+        (WebCore::ResourceRequestBase::priority): Added.
+        (WebCore::ResourceRequestBase::setPriority): Added.
+        (WebCore::equalIgnoringHeaderFields): Priorities must match when
+        comparing two ResourceRequest objects.
+
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::ResourceRequestBase::ResourceRequestBase): Set default
+        priority of new objects to ResourceLoadPriorityLow.
+        (WebCore::ResourceRequestBase::priority): Added declaration.
+        (WebCore::ResourceRequestBase::setPriority): Added declaration.
+        (WebCore::isHTTPPipeliningEnabled): Added.
+        (WebCore::shouldUseHTTPPipeliningPriority): Added.
+
+        * platform/network/cf/ResourceRequestCFNet.cpp: Updated so that
+        Mac OS X and Windows share code.
+        (WebCore::initializeMaximumHTTPConnectionCountPerHost): Always
+        set the HTTP connection count per host, but return an
+        'unlimited' value when using HTTP pipelining.  This method used
+        to be defined in ResourceRequestMac.mm for Mac OS X.
+        (WebCore::readBooleanPreference): Added.  Helper method for
+        reading boolean user defaults.
+        (WebCore::isHTTPPipeliningEnabled): Returns value of user
+        default key WebKitEnableHTTPPipelining, or false if not set.
+        (WebCore::shouldUseHTTPPipeliningPriority): Returns value of
+        user default key WebKitForceHTTPPipeliningPriorityHigh, or false
+        if not set.
+        * platform/network/cf/ResourceRequestCFNet.h: Updated so that
+        Mac OS X and Windows share code.  Fixed indentation.
+        (WebCore::mapHTTPPipeliningPriorityToResourceLoadPriority): Added.
+        (WebCore::mapResourceLoadPriorityToHTTPPipeliningPriority): Added.
+
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest): Update
+        HTTP pipelining priority on NSMutableFURLRequest object.
+        (WebCore::ResourceRequest::doUpdateResourceRequest): Update
+        m_priority from the NSURLRequest object.
+        (WebCore::initializeMaximumHTTPConnectionCountPerHost): Removed.
+        Code is now shared with Windows in ResourceRequestCFNet.cpp.
+
 2011-01-26  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.

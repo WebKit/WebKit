@@ -90,7 +90,7 @@ PassRefPtr<SubresourceLoader> ResourceLoadScheduler::scheduleSubresourceLoad(Fra
         scheduleLoad(loader.get(), priority);
     return loader;
 }
-    
+
 PassRefPtr<NetscapePlugInStreamLoader> ResourceLoadScheduler::schedulePluginStreamLoad(Frame* frame, NetscapePlugInStreamLoaderClient* client, const ResourceRequest& request)
 {
     PassRefPtr<NetscapePlugInStreamLoader> loader = NetscapePlugInStreamLoader::create(frame, client, request);
@@ -120,11 +120,12 @@ void ResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Resourc
     if (priority > ResourceLoadPriorityLow || !resourceLoader->url().protocolInHTTPFamily() || (priority == ResourceLoadPriorityLow && !hadRequests)) {
         // Try to request important resources immediately.
         servePendingRequests(host, priority);
-    } else {
-        // Handle asynchronously so early low priority requests don't get scheduled before later high priority ones.
-        InspectorInstrumentation::didScheduleResourceRequest(resourceLoader->frameLoader() ? resourceLoader->frameLoader()->frame()->document() : 0, resourceLoader->url());
-        scheduleServePendingRequests();
+        return;
     }
+
+    // Handle asynchronously so early low priority requests don't get scheduled before later high priority ones.
+    InspectorInstrumentation::didScheduleResourceRequest(resourceLoader->frameLoader() ? resourceLoader->frameLoader()->frame()->document() : 0, resourceLoader->url());
+    scheduleServePendingRequests();
 }
 
 void ResourceLoadScheduler::remove(ResourceLoader* resourceLoader)

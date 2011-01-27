@@ -113,6 +113,7 @@ PassRefPtr<CachedResourceRequest> CachedResourceRequest::load(CachedResourceLoad
 #endif
 
     ResourceLoadPriority priority = resource->loadPriority();
+    resourceRequest.setPriority(priority);
 
     RefPtr<SubresourceLoader> loader = resourceLoadScheduler()->scheduleSubresourceLoad(cachedResourceLoader->document()->frame(),
         request.get(), resourceRequest, priority, securityCheck, sendResourceLoadCallbacks);

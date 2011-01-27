@@ -1,3 +1,14 @@
+2011-01-26  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/53192> Add experimental support for HTTP pipelining in CFNetwork
+        <rdar://problem/8821760>
+
+        Reviewed by Antti Koivisto.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Added initialization for
+        GetHTTPPipeliningPriority and SetHTTPPipeliningPriority.
+
 2011-01-26  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.

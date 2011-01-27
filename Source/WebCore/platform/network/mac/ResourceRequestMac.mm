@@ -31,6 +31,8 @@
 #import "WebCoreSystemInterface.h"
 
 #import "FormDataStreamMac.h"
+#import "ResourceRequestCFNet.h"
+#import "WebCoreSystemInterface.h"
 
 #import <Foundation/Foundation.h>
 
@@ -65,7 +67,12 @@ void ResourceRequest::doUpdateResourceRequest()
     if (NSString* method = [m_nsRequest.get() HTTPMethod])
         m_httpMethod = method;
     m_allowCookies = [m_nsRequest.get() HTTPShouldHandleCookies];
-    
+
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    if (isHTTPPipeliningEnabled() && !shouldForceHTTPPipeliningPriorityHigh())
+        m_priority = mapHTTPPipeliningPriorityToResourceLoadPriority(wkGetHTTPPipeliningPriority(m_nsRequest.get()));
+#endif
+
     NSDictionary *headers = [m_nsRequest.get() allHTTPHeaderFields];
     NSEnumerator *e = [headers keyEnumerator];
     NSString *name;
@@ -111,6 +118,13 @@ void ResourceRequest::doUpdatePlatformRequest()
     wkSupportsMultipartXMixedReplace(nsRequest);
 #endif
 
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    if (isHTTPPipeliningEnabled()) {
+        int priority = mapResourceLoadPriorityToHTTPPipeliningPriority(m_priority);
+        wkSetHTTPPipeliningPriority(nsRequest, shouldForceHTTPPipeliningPriorityHigh() ? 2 : priority);
+    }
+#endif
+
     [nsRequest setCachePolicy:(NSURLRequestCachePolicy)cachePolicy()];
     if (timeoutInterval() != unspecifiedTimeoutInterval)
         [nsRequest setTimeoutInterval:timeoutInterval()];
@@ -153,12 +167,6 @@ void ResourceRequest::applyWebArchiveHackForMail()
 {
     // Hack because Mail checks for this property to detect data / archive loads
     [NSURLProtocol setProperty:@"" forKey:@"WebDataRequest" inRequest:(NSMutableURLRequest *)nsURLRequest()];
-}
-    
-unsigned initializeMaximumHTTPConnectionCountPerHost()
-{
-    static const unsigned preferredConnectionCount = 6;
-    return wkInitializeMaximumHTTPConnectionCountPerHost(preferredConnectionCount);
 }
 
 } // namespace WebCore

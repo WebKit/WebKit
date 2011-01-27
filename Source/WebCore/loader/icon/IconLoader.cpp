@@ -69,7 +69,10 @@ void IconLoader::startLoading()
     // SubresourceLoader::create returns.
     m_loadIsInProgress = true;
 
-    RefPtr<SubresourceLoader> loader = resourceLoadScheduler()->scheduleSubresourceLoad(m_frame, this, m_frame->loader()->iconURL());
+    ResourceRequest resourceRequest(m_frame->loader()->iconURL());
+    resourceRequest.setPriority(ResourceLoadPriorityLow);
+
+    RefPtr<SubresourceLoader> loader = resourceLoadScheduler()->scheduleSubresourceLoad(m_frame, this, resourceRequest);
     if (!loader)
         LOG_ERROR("Failed to start load for icon at url %s", m_frame->loader()->iconURL().string().ascii().data());
 

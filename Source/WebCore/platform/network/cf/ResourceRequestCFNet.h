@@ -26,18 +26,55 @@
 #ifndef ResourceRequestCFNet_h
 #define ResourceRequestCFNet_h
 
-#if USE(CFNETWORK)
+#include "ResourceLoadPriority.h"
 
+#if USE(CFNETWORK)
 typedef const struct _CFURLRequest* CFURLRequestRef;
+#endif
 
 namespace WebCore {
 
-    class ResourceRequest;
+class ResourceRequest;
 
-    void getResourceRequest(ResourceRequest&, CFURLRequestRef);
-    CFURLRequestRef cfURLRequest(const ResourceRequest&);
+#if USE(CFNETWORK)
+void getResourceRequest(ResourceRequest&, CFURLRequestRef);
+CFURLRequestRef cfURLRequest(const ResourceRequest&);
+#endif
+
+inline ResourceLoadPriority mapHTTPPipeliningPriorityToResourceLoadPriority(int priority)
+{
+    switch (priority) {
+    case 0:
+        return ResourceLoadPriorityLow;
+    case 1:
+        return ResourceLoadPriorityMedium;
+    case 2:
+        return ResourceLoadPriorityHigh;
+    default:
+        ASSERT_NOT_REACHED();
+        return ResourceLoadPriorityLowest;
+    }
 }
 
-#endif // USE(CFNETWORK)
+inline int mapResourceLoadPriorityToHTTPPipeliningPriority(ResourceLoadPriority priority)
+{
+    switch (priority) {
+    case ResourceLoadPriorityVeryLow:
+    case ResourceLoadPriorityLow:
+        return 0;
+    case ResourceLoadPriorityMedium:
+        return 1;
+    case ResourceLoadPriorityHigh:
+        return 2;
+    case ResourceLoadPriorityUnresolved:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+} // namespace WebCore
 
 #endif // ResourceRequestCFNet_h

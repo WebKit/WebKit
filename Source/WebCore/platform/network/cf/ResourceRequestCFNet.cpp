@@ -26,15 +26,21 @@
 #include "config.h"
 #include "ResourceRequestCFNet.h"
 
-#if USE(CFNETWORK)
-
-#include "FormDataStreamCFNet.h"
 #include "ResourceRequest.h"
 
+#if PLATFORM(MAC)
+#include "WebCoreSystemInterface.h"
+#endif
+
+#if USE(CFNETWORK)
+#include "FormDataStreamCFNet.h"
 #include <CFNetwork/CFURLRequestPriv.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
+#endif
 
 namespace WebCore {
+
+#if USE(CFNETWORK)
 
 typedef void (*CFURLRequestSetContentDispositionEncodingFallbackArrayFunction)(CFMutableURLRequestRef, CFArrayRef);
 typedef CFArrayRef (*CFURLRequestCopyContentDispositionEncodingFallbackArrayFunction)(CFURLRequestRef);
@@ -189,12 +195,43 @@ void ResourceRequest::doUpdateResourceRequest()
     m_httpBody = httpBodyFromRequest(m_cfRequest.get());
 }
 
+#endif // USE(CFNETWORK)
+
 unsigned initializeMaximumHTTPConnectionCountPerHost()
 {
     static const unsigned preferredConnectionCount = 6;
-    return wkInitializeMaximumHTTPConnectionCountPerHost(preferredConnectionCount);
+    static const unsigned unlimitedConnectionCount = 10000;
+
+    // Always set the connection count per host, even when pipelining.
+    unsigned maximumHTTPConnectionCountPerHost = wkInitializeMaximumHTTPConnectionCountPerHost(preferredConnectionCount);
+
+#if PLATFORM(MAC)
+    if (isHTTPPipeliningEnabled()) {
+        // When pipelining do not rate-limit requests sent from WebCore since CFNetwork handles that.
+        return unlimitedConnectionCount;
+    }
+#endif
+
+    return maximumHTTPConnectionCountPerHost;
+}
+
+static inline bool readBooleanPreference(CFStringRef key)
+{
+    Boolean keyExistsAndHasValidFormat;
+    Boolean result = CFPreferencesGetAppBooleanValue(key, kCFPreferencesCurrentApplication, &keyExistsAndHasValidFormat);
+    return keyExistsAndHasValidFormat ? result : false;
+}
+
+bool isHTTPPipeliningEnabled()
+{
+    static bool isEnabled = readBooleanPreference(CFSTR("WebKitEnableHTTPPipelining"));
+    return isEnabled;
+}
+
+bool shouldForceHTTPPipeliningPriorityHigh()
+{
+    static bool shouldForcePriorityHigh = readBooleanPreference(CFSTR("WebKitForceHTTPPipeliningPriorityHigh"));
+    return shouldForcePriorityHigh;
 }
 
 } // namespace WebCore
-
-#endif // USE(CFNETWORK)

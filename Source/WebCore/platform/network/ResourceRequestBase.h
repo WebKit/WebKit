@@ -29,8 +29,9 @@
 #define ResourceRequestBase_h
 
 #include "FormData.h"
-#include "KURL.h"
 #include "HTTPHeaderMap.h"
+#include "KURL.h"
+#include "ResourceLoadPriority.h"
 
 #include <wtf/OwnPtr.h>
 
@@ -128,6 +129,9 @@ namespace WebCore {
         bool allowCookies() const;
         void setAllowCookies(bool allowCookies);
 
+        ResourceLoadPriority priority() const;
+        void setPriority(ResourceLoadPriority);
+
         bool isConditional() const;
 
         // Whether the associated ResourceHandleClient needs to be notified of
@@ -157,6 +161,7 @@ namespace WebCore {
             , m_reportUploadProgress(false)
             , m_reportLoadTiming(false)
             , m_reportRawHeaders(false)
+            , m_priority(ResourceLoadPriorityLow)
             , m_targetType(TargetIsSubresource)
         {
         }
@@ -172,6 +177,7 @@ namespace WebCore {
             , m_reportUploadProgress(false)
             , m_reportLoadTiming(false)
             , m_reportRawHeaders(false)
+            , m_priority(ResourceLoadPriorityLow)
             , m_targetType(TargetIsSubresource)
         {
         }
@@ -197,6 +203,7 @@ namespace WebCore {
         bool m_reportUploadProgress;
         bool m_reportLoadTiming;
         bool m_reportRawHeaders;
+        ResourceLoadPriority m_priority;
         TargetType m_targetType;
 
     private:
@@ -223,10 +230,19 @@ namespace WebCore {
         Vector<String> m_responseContentDispositionEncodingFallbackArray;
         RefPtr<FormData> m_httpBody;
         bool m_allowCookies;
+        ResourceLoadPriority m_priority;
         ResourceRequestBase::TargetType m_targetType;
     };
     
     unsigned initializeMaximumHTTPConnectionCountPerHost();
+
+#if PLATFORM(CF)
+    bool isHTTPPipeliningEnabled();
+    bool shouldForceHTTPPipeliningPriorityHigh();
+#else
+    inline bool isHTTPPipeliningEnabled() { return false; }
+    inline bool shouldForceHTTPPipeliningPriorityHigh() { return false; }
+#endif
 
 } // namespace WebCore
 

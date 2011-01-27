@@ -60,6 +60,7 @@ void InitWebCoreSystemInterface(void)
     INIT(GetFontInLanguageForCharacter);
     INIT(GetFontInLanguageForRange);
     INIT(GetGlyphTransformedAdvances);
+    INIT(GetHTTPPipeliningPriority);
     INIT(GetMIMETypeForExtension);
     INIT(GetNSURLResponseLastModifiedDate);
     INIT(GetPreferredExtensionForMIMEType);
@@ -75,6 +76,7 @@ void InitWebCoreSystemInterface(void)
     INIT(SetCONNECTProxyForStream);
     INIT(SetCookieStoragePrivateBrowsingEnabled);
     INIT(SetDragImage);
+    INIT(SetHTTPPipeliningPriority);
     INIT(SetNSURLConnectionDefersCallbacks);
     INIT(SetNSURLRequestShouldContentSniff);
     INIT(SetPatternBaseCTM);
