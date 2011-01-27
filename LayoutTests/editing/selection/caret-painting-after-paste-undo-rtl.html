@@ -1,0 +1,21 @@
+<html>
+<head>
+<script src="../editing.js" language="JavaScript" type="text/JavaScript"></script>
+<script>
+function editingTest() {
+ doubleClick(0, 0);
+ copyCommand();
+ var editor = document.getElementById("editor");
+ editor.focus();
+ pasteCommand();
+ undoCommand();
+}
+</script>
+</head>
+<body onLoad="runEditingTest();">
+<div>To run this test, copy some text, paste it into the box below, and then undo.
+ The caret should be positioned respecting the box's border and padding.</div><br>
+<div id="editor" contenteditable=true style="direction: rtl; border:2px inset #eee; padding: 5px;">
+</div>
+</body>
+</html>
