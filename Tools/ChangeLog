@@ -1,5 +1,15 @@
 2011-01-27  Balazs Kelemen  <kbalazs@webkit.org>
 
+        Rubber-stamped by Ariya Hidayat.
+
+        Trivial crash fix in WTR.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize): Increase the size
+        of the vector by one to be able to store the null character.
+
+2011-01-27  Balazs Kelemen  <kbalazs@webkit.org>
+
         Reviewed by Csaba Osztrogonác.
 
         [Qt][WK2] WTR should be initialized in the same way as DRT

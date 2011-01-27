@@ -242,7 +242,7 @@ void TestController::initialize(int argc, const char* argv[])
 
     const char* path = libraryPathForTesting();
     if (path) {
-        Vector<char> databaseDirectory(strlen(path) + strlen("/Databases"));
+        Vector<char> databaseDirectory(strlen(path) + strlen("/Databases") + 1);
         sprintf(databaseDirectory.data(), "%s%s", path, "/Databases");
         WKRetainPtr<WKStringRef> databaseDirectoryWK(AdoptWK, WKStringCreateWithUTF8CString(databaseDirectory.data()));
         WKContextSetDatabaseDirectory(m_context.get(), databaseDirectoryWK.get());
