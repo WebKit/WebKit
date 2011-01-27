@@ -1,3 +1,20 @@
+2011-01-27  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] [Symbian] Move project files into Source
+        https://bugs.webkit.org/show_bug.cgi?id=52891
+
+        Fix the Symbian build after the project files
+        are moved to Source directory. On Symbian qmake
+        needs to run in the same directory where the main
+        pro files (WebKit.pro, Tools.pro) are located.
+
+        * Scripts/webkitdirs.pm: Change to the directory where the pro file
+        is located before running qmake for Symbian. Qmake on Symbian
+        does not properly honor the "-o" option, work it around by setting
+        the name of the Makefile to bld.inf.
+
 2011-01-27  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Andreas Kling.

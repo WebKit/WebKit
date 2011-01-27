@@ -1571,6 +1571,13 @@ sub buildQMakeProject($@)
     push @buildArgs, "INSTALL_HEADERS=" . $installHeaders if defined($installHeaders);
     push @buildArgs, "INSTALL_LIBS=" . $installLibs if defined($installLibs);
     my $dir = File::Spec->canonpath(productDir());
+
+
+    # On Symbian qmake needs to run in the same directory where the pro file is located.
+    if (isSymbian()) {
+        $dir = $sourceDir . "/Source";
+    }
+
     File::Path::mkpath($dir);
     chdir $dir or die "Failed to cd into " . $dir . "\n";
 
@@ -1648,9 +1655,17 @@ sub buildQMakeProject($@)
     }
 
     $buildArgs[-1] = sourceDir() . "/Tools/Tools.pro";
-    print "Calling '$qmakebin @buildArgs -o Makefile.Tools' in " . $dir . "\n\n";
+    my $makefile = "Makefile.Tools";
 
-    $result = system "$qmakebin @buildArgs -o Makefile.Tools";
+    # On Symbian qmake needs to run in the same directory where the pro file is located.
+    if (isSymbian()) {
+        $dir = $sourceDir . "/Tools";
+        chdir $dir or die "Failed to cd into " . $dir . "\n";
+        $makefile = "bld.inf";
+    }
+
+    print "Calling '$qmakebin @buildArgs -o $makefile' in " . $dir . "\n\n";
+    $result = system "$qmakebin @buildArgs -o $makefile";
     if ($result ne 0) {
        die "Failed to setup build environment using $qmakebin!\n";
     }
@@ -1667,8 +1682,8 @@ sub buildQMakeProject($@)
 
     my $makeTools = "echo No Makefile for Tools. Skipping make";
 
-    if (-e "$dir/Makefile.Tools") {
-        $makeTools = "$make $makeargs -f Makefile.Tools";
+    if (-e "$dir/$makefile") {
+        $makeTools = "$make $makeargs -f $makefile";
     }
 
     if ($clean) {
