@@ -1,5 +1,25 @@
 2011-01-26  Jing Jin  <jjin@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Methods to temporarily disable size updates to the page drawing area in WKView.
+        https://bugs.webkit.org/show_bug.cgi?id=53206
+        Part of <rdar://problem/8818585>
+
+        * UIProcess/API/mac/WKView.h: Added _frameSizeUpdateDisabledCount.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView setFrameSize:]): Only update page size if frame size updates are enabled.
+        (-[WKView _setDrawingAreaSize:]): Helper method to set the page's drawing area's size.
+        (-[WKView disableFrameSizeUpdates]): Increment _frameSizeUpdateDisabledCount
+        (-[WKView enableFrameSizeUpdates]): Decrement _frameSizeUpdateDisabledCount, and if the count is 0, meaning
+        that no one is disabling frame size updates anymore, update the drawing area's size to match the current frame.
+        (-[WKView frameSizeUpdatesDisabled]): Returns YES if at least one caller is disabling frame size updates.
+        * UIProcess/API/mac/WKViewInternal.h: Declared -disableFrameSizeUpdates, -enableFrameSizeUpdates, and -frameSizeUpdatesDisabled.
+        * UIProcess/API/mac/WKViewPrivate.h: Added.
+        * WebKit2.xcodeproj/project.pbxproj: Added WKViewPrivate.h
+
+2011-01-26  Jing Jin  <jjin@apple.com>
+
         Rubber-stamped by Dan Bernstein.
         
         Several WKView Internal category methods are implemented in the main category.

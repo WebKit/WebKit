@@ -44,6 +44,8 @@
 #import "WKPrintingView.h"
 #import "WKStringCF.h"
 #import "WKTextInputWindowController.h"
+#import "WKViewInternal.h"
+#import "WKViewPrivate.h"
 #import "WebContext.h"
 #import "WebEventFactory.h"
 #import "WebPage.h"
@@ -287,11 +289,9 @@ static bool useNewDrawingArea()
 - (void)setFrameSize:(NSSize)size
 {
     [super setFrameSize:size];
-
-    if (!_data->_page->drawingArea())
-        return;
     
-    _data->_page->drawingArea()->setSize(IntSize(size));
+    if (![self frameSizeUpdatesDisabled])
+        [self _setDrawingAreaSize:size];
 }
 
 - (void)_updateWindowAndViewFrames
@@ -1758,4 +1758,36 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     _data->_dragHasStarted = NO;
 }
 
+- (void)_setDrawingAreaSize:(NSSize)size
+{
+    if (!_data->_page->drawingArea())
+        return;
+    
+    _data->_page->drawingArea()->setSize(IntSize(size));
+}    
+
 @end
+
+@implementation WKView (Private)
+
+- (void)disableFrameSizeUpdates
+{
+    _frameSizeUpdatesDisabledCount++;
+}
+
+- (void)enableFrameSizeUpdates
+{
+    if (!_frameSizeUpdatesDisabledCount)
+        return;
+    
+    if (!(--_frameSizeUpdatesDisabledCount))
+        [self _setDrawingAreaSize:[self frame].size];
+}
+
+- (BOOL)frameSizeUpdatesDisabled
+{
+    return _frameSizeUpdatesDisabledCount > 0;
+}
+
+@end
+

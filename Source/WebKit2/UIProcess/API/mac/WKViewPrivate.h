@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
-#import <WebKit2/WKBase.h>
+@interface WKView (Private)
 
-@class WKViewData;
-
-WK_EXPORT
-@interface WKView : NSView <NSTextInput> {
-    WKViewData *_data;
-    unsigned _frameSizeUpdatesDisabledCount;
-}
-
-- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef;
-- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef;
-
-- (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(WKFrameRef)frameRef;
-- (BOOL)canChangeFrameLayout:(WKFrameRef)frameRef;
-
-@property(readonly) WKPageRef pageRef;
-
-@property BOOL drawsBackground;
-@property BOOL drawsTransparentBackground;
+// Stops updating the size of the page as the WKView frame size updates.
+// This should always be followed by enableFrameSizeUpdates. Calls can be nested.
+- (void)disableFrameSizeUpdates;
+// Immediately updates the size of the page to match WKView's frame size
+// and allows subsequent updates as the frame size is set. Calls can be nested.
+- (void)enableFrameSizeUpdates;
+- (BOOL)frameSizeUpdatesDisabled;
 
 @end

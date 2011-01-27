@@ -646,6 +646,7 @@
 		BCF69FA31176D01400471A52 /* WebNavigationData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF69FA11176D01400471A52 /* WebNavigationData.cpp */; };
 		BCF69FA91176D1CB00471A52 /* WKNavigationData.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF69FA71176D1CB00471A52 /* WKNavigationData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BCF69FAA1176D1CB00471A52 /* WKNavigationData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF69FA81176D1CB00471A52 /* WKNavigationData.cpp */; };
+		BFA6179F12F0B99D0033E0CA /* WKViewPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BFA6179E12F0B99D0033E0CA /* WKViewPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C01A260112662F2100C9ED55 /* ShareableBitmapCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C01A260012662F2100C9ED55 /* ShareableBitmapCG.cpp */; };
 		C02BFF1E1251502E009CCBEA /* NativeWebKeyboardEventMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C02BFF1D1251502E009CCBEA /* NativeWebKeyboardEventMac.mm */; };
 		C0337DAE127A24FE008FF4F4 /* WebEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0337DAD127A24FE008FF4F4 /* WebEvent.cpp */; };
@@ -1404,6 +1405,7 @@
 		BCF69FA11176D01400471A52 /* WebNavigationData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebNavigationData.cpp; sourceTree = "<group>"; };
 		BCF69FA71176D1CB00471A52 /* WKNavigationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationData.h; sourceTree = "<group>"; };
 		BCF69FA81176D1CB00471A52 /* WKNavigationData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKNavigationData.cpp; sourceTree = "<group>"; };
+		BFA6179E12F0B99D0033E0CA /* WKViewPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKViewPrivate.h; sourceTree = "<group>"; };
 		C01A260012662F2100C9ED55 /* ShareableBitmapCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShareableBitmapCG.cpp; sourceTree = "<group>"; };
 		C02BFF1512514FD8009CCBEA /* NativeWebKeyboardEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeWebKeyboardEvent.h; sourceTree = "<group>"; };
 		C02BFF1D1251502E009CCBEA /* NativeWebKeyboardEventMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeWebKeyboardEventMac.mm; sourceTree = "<group>"; };
@@ -2333,6 +2335,7 @@
 				BC8699B2116AADAA002A925B /* WKView.h */,
 				BC8699B3116AADAA002A925B /* WKView.mm */,
 				BC8699B4116AADAA002A925B /* WKViewInternal.h */,
+				BFA6179E12F0B99D0033E0CA /* WKViewPrivate.h */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -3083,6 +3086,7 @@
 				C574A58112E66681002DFE98 /* PasteboardTypes.h in Headers */,
 				E134F01712EA5D33004EC58D /* WKPrintingView.h in Headers */,
 				1A186EEA12EF7618008E5F37 /* LayerTreeHost.h in Headers */,
+				BFA6179F12F0B99D0033E0CA /* WKViewPrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

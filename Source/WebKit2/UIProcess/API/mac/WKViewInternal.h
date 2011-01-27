@@ -65,4 +65,5 @@ namespace WebKit {
 - (void)_setCustomRepresentationZoomFactor:(double)zoomFactor;
 - (void)_setDragImage:(NSImage *)image at:(NSPoint)clientPoint linkDrag:(BOOL)linkDrag;
 
+- (void)_setDrawingAreaSize:(NSSize)size;
 @end
