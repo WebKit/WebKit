@@ -2314,6 +2314,8 @@ media/video-source-error.html
 media/controls-after-reload.html
 media/controls-strict.html
 media/video-display-toggle.html
+media/controls-styling.html
+edia/video-volume-slider.html
 
 #   Tests generating new results
 media/video-aspect-ratio.html
