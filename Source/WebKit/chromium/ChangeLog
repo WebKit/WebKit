@@ -1,5 +1,11 @@
 2011-01-27  Zhenyao Mo  <zmo@google.com>
 
+        Unreviewed, roll back webkit chromium rev to 72637.
+
+        * DEPS:
+
+2011-01-27  Zhenyao Mo  <zmo@google.com>
+
         Unreviewed.
 
         Roll Webkit Chromium rev from 72637 to 72868.
