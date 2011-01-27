@@ -1,3 +1,17 @@
+2011-01-27  Cris Neckar  <cdn@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Clear the parent on a css keyframe's m_style when removing it from the stylesheet.
+        https://bugs.webkit.org/show_bug.cgi?id=52320
+
+        Test: fast/css/css-keyframe-style-crash.html
+
+        * css/CSSRuleList.cpp:
+        (WebCore::CSSRuleList::deleteRule):
+        * css/WebKitCSSKeyframesRule.cpp:
+        (WebCore::WebKitCSSKeyframesRule::~WebKitCSSKeyframesRule):
+
 2011-01-27  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Kent Tamura.

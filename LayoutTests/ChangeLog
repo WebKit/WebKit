@@ -1,3 +1,13 @@
+2011-01-27  Cris Neckar  <cdn@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Test for crash when accessing a keyframe's style rule.
+        https://bugs.webkit.org/show_bug.cgi?id=52320
+
+        * fast/css/css-keyframe-style-crash-expected.txt: Added.
+        * fast/css/css-keyframe-style-crash.html: Added.
+
 2011-01-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed Chromium text expectation update.
