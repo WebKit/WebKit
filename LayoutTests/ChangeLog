@@ -1,5 +1,12 @@
 2011-01-27  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, GTK baselines for
+        http/tests/misc/favicon-as-image.html which was unskipped in r76555.
+
+        * platform/gtk/http/tests/misc/favicon-as-image-expected.txt: Added.
+
+2011-01-27  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK baselines for fast/dom/52776.html, follow-up of r76319.
 
         * platform/gtk/fast/dom/52776-expected.txt: Added.
