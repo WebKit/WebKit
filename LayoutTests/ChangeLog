@@ -2,6 +2,12 @@
 
         Unreviewed Chromium test expectation change.
 
+        * platform/chromium/test_expectations.txt:
+
+2011-01-27  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed Chromium test expectation change.
+
         * platform/chromium-mac-leopard/css2.1/t0905-c5525-fltcont-00-d-g-expected.checksum: Removed.
         * platform/chromium-mac-leopard/css2.1/t0905-c5525-fltcont-00-d-g-expected.png: Removed.
         * platform/chromium-mac-leopard/fast/blockflow/vertical-baseline-alignment-expected.checksum: Removed.
