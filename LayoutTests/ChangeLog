@@ -1,5 +1,11 @@
 2011-01-27  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, GTK baselines for fast/dom/52776.html, follow-up of r76319.
+
+        * platform/gtk/fast/dom/52776-expected.txt: Added.
+
+2011-01-27  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, new GTK baselines for fast/text/justify* tests
         introduced in r76743.
 
