@@ -1,3 +1,12 @@
+2011-01-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Unreviewed.
+
+        Fix mistake in my previous commit; I accidentally copied the old mac results instead
+        of the new mac results for this test.
+
+        * platform/mac-wk2/fast/blockflow/Kusa-Makura-background-canvas-expected.txt:
+
 2011-01-27  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, rebaseline of the favicon-as-image test from the build
@@ -187,15 +196,6 @@
         * platform/chromium-mac-leopard/fast/text/complex-text-opacity-expected.txt: Removed.
         * platform/chromium-mac-leopard/tables/mozilla/marvin/x_thead_align_justify-expected.checksum: Removed.
         * platform/chromium-mac-leopard/tables/mozilla/marvin/x_thead_align_justify-expected.png: Removed.
-
-2011-01-27  Maciej Stachowiak  <mjs@apple.com>
-
-        Unreviewed.
-
-        Fix mistake in my previous commit; I accidentally copied the old mac results instead
-        of the new mac results for this test.
-
-        * platform/mac-wk2/fast/blockflow/Kusa-Makura-background-canvas-expected.txt:
 
 2011-01-27  Csaba Osztrogonác  <ossy@webkit.org>
 
