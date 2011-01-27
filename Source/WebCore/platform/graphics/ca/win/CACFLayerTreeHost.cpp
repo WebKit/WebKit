@@ -258,9 +258,6 @@ void CACFLayerTreeHost::setWindow(HWND window)
         destroyRenderer();
 
     m_window = window;
-
-    if (m_window)
-        createRenderer();
 }
 
 PlatformCALayer* CACFLayerTreeHost::rootLayer() const
@@ -362,8 +359,10 @@ bool CACFLayerTreeHost::createRenderer()
 
     wkCACFContextSetD3DDevice(m_context, m_d3dDevice.get());
 
-    if (IsWindow(m_window))
+    if (IsWindow(m_window)) {
         m_rootLayer->setBounds(bounds());
+        wkCACFContextFlush(m_context);
+    }
 
     return true;
 }

@@ -1,5 +1,21 @@
 2011-01-26  Adam Roben  <aroben@apple.com>
 
+        Don't create the Direct3D device before it's first needed
+
+        We only need the device once we decide to render. There's no point in creating it before
+        then.
+
+        Reviewed by Sam Weinig.
+
+        * platform/graphics/ca/win/CACFLayerTreeHost.cpp:
+        (WebCore::CACFLayerTreeHost::setWindow): Removed the call to createRenderer() from here.
+        We already have code to create it when we first try to draw.
+        (WebCore::CACFLayerTreeHost::createRenderer): Flush the context after we set our layer's
+        bounds so that the bounds will take effect the next time we render (which could be just
+        after this function returns).
+
+2011-01-26  Adam Roben  <aroben@apple.com>
+
         Add assertions that CACFLayerTreeHost gains and loses an HWND only once
 
         CACFLayerTreeHost doesn't support any other use pattern.
