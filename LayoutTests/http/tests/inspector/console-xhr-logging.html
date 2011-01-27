@@ -46,12 +46,8 @@ function requestHelper(method, url)
 function frontend_enableXMLHttpRequestLogging(testController)
 {
     InspectorBackend.setMonitoringXHREnabled(true, function() {
-         if (WebInspector.console._monitoringXHREnabled)
-            testController.notifyDone("enabled");
+        testController.notifyDone("enabled");
     });
-
-    if (WebInspector.console._monitoringXHREnabled)
-        return "enabled";
 
     testController.waitUntilDone();
 }
@@ -59,12 +55,8 @@ function frontend_enableXMLHttpRequestLogging(testController)
 function frontend_disableXMLHttpRequestLogging(testController)
 {
     InspectorBackend.setMonitoringXHREnabled(false, function() {
-        if (!WebInspector.console._monitoringXHREnabled)
-            testController.notifyDone("disabled");
+        testController.notifyDone("disabled");
     });
-
-    if (!WebInspector.console._monitoringXHREnabled)
-        return "disabled";
 
     testController.waitUntilDone();
 }

@@ -94,7 +94,6 @@ module core {
         [domain=Console] void clearConsoleMessages();
         [notify, domain=Console] void consoleMessagesCleared();
         [domain=Console] void setMonitoringXHREnabled(in boolean enabled);
-        [notify, domain=Console] void monitoringXHRStateChanged(out boolean enabled);
 
         ///////////////////////////////////////////////////////////////////////
         // Network API
@@ -239,8 +238,8 @@ module core {
         // Debugger API
         ///////////////////////////////////////////////////////////////////////
 
-        [domain=Inspector] void enableDebugger(in boolean always);
-        [domain=Inspector] void disableDebugger(in boolean always);
+        [domain=Inspector] void enableDebugger();
+        [domain=Inspector] void disableDebugger();
 
         [notify, domain=Debugger] void debuggerWasEnabled();
         [notify, domain=Debugger] void debuggerWasDisabled();
@@ -290,8 +289,8 @@ module core {
         // Profiler API
         ///////////////////////////////////////////////////////////////////////
 
-        [domain=Inspector] void enableProfiler(in boolean always);
-        [domain=Inspector] void disableProfiler(in boolean always);
+        [domain=Inspector] void enableProfiler();
+        [domain=Inspector] void disableProfiler();
         [notify, domain=Profiler] void profilerWasEnabled();
         [notify, domain=Profiler] void profilerWasDisabled();
 

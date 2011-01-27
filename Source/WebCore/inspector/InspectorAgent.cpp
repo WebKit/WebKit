@@ -72,7 +72,6 @@
 #include "InspectorProfilerAgent.h"
 #include "InspectorResourceAgent.h"
 #include "InspectorRuntimeAgent.h"
-#include "InspectorSettings.h"
 #include "InspectorState.h"
 #include "InspectorTimelineAgent.h"
 #include "InspectorValues.h"
@@ -146,7 +145,6 @@ InspectorAgent::InspectorAgent(InspectorController* inspectorController, Page* p
     , m_injectedScriptHost(InjectedScriptHost::create(this))
     , m_consoleAgent(new InspectorConsoleAgent(this))
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    , m_attachDebuggerWhenShown(false)
     , m_profilerAgent(InspectorProfilerAgent::create(this))
 #endif
 {
@@ -450,9 +448,7 @@ void InspectorAgent::disconnectFrontend()
     // If the window is being closed with the debugger enabled,
     // remember this state to re-enable debugger on the next window
     // opening.
-    bool debuggerWasEnabled = debuggerEnabled();
     disableDebugger();
-    m_attachDebuggerWhenShown = debuggerWasEnabled;
 #endif
     setSearchingForNode(false);
     unbindAllResources();
@@ -570,10 +566,8 @@ void InspectorAgent::restoreDebugger()
 {
     ASSERT(m_frontend);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (InspectorDebuggerAgent::isDebuggerAlwaysEnabled() || m_attachDebuggerWhenShown || m_settings->getBoolean(InspectorSettings::DebuggerAlwaysEnabled)) {
-        enableDebugger(false);
-        m_attachDebuggerWhenShown = false;
-    }
+    if (m_state->getBoolean(InspectorState::debuggerEnabled))
+        enableDebugger();
 #endif
 }
 
@@ -582,7 +576,7 @@ void InspectorAgent::restoreProfiler(ProfilerRestoreAction action)
     ASSERT(m_frontend);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     m_profilerAgent->setFrontend(m_frontend.get());
-    if (!ScriptProfiler::isProfilerAlwaysEnabled() && m_settings->getBoolean(InspectorSettings::ProfilerAlwaysEnabled))
+    if (m_state->getBoolean(InspectorState::profilerEnabled))
         enableProfiler();
     if (action == ProfilerRestoreResetAgent)
         m_profilerAgent->resetFrontendProfiles();
@@ -703,14 +697,6 @@ void InspectorAgent::willSendRequest(ResourceRequest& request)
                 request.setHTTPHeaderField(it->first, it->second);
         }
     }
-}
-
-void InspectorAgent::ensureSettingsLoaded()
-{
-    if (m_settings)
-        return;
-    m_settings = new InspectorSettings(m_client);
-    m_state->setBoolean(InspectorState::monitoringXHR, m_settings->getBoolean(InspectorSettings::MonitoringXHREnabled));
 }
 
 void InspectorAgent::startTimelineProfiler()
@@ -992,17 +978,17 @@ bool InspectorAgent::profilerEnabled() const
     return enabled() && m_profilerAgent->enabled();
 }
 
-void InspectorAgent::enableProfiler(bool always, bool skipRecompile)
+void InspectorAgent::enableProfiler()
 {
-    if (always)
-        m_settings->setBoolean(InspectorSettings::ProfilerAlwaysEnabled, true);
-    m_profilerAgent->enable(skipRecompile);
+    if (profilerEnabled())
+        return;
+    m_state->setBoolean(InspectorState::profilerEnabled, true);
+    m_profilerAgent->enable(false);
 }
 
-void InspectorAgent::disableProfiler(bool always)
+void InspectorAgent::disableProfiler()
 {
-    if (always)
-        m_settings->setBoolean(InspectorSettings::ProfilerAlwaysEnabled, false);
+    m_state->setBoolean(InspectorState::profilerEnabled, false);
     m_profilerAgent->disable();
 }
 #endif
@@ -1017,18 +1003,17 @@ void InspectorAgent::showAndEnableDebugger()
         return;
 
     if (!m_frontend) {
-        m_attachDebuggerWhenShown = true;
+        m_state->setBoolean(InspectorState::debuggerEnabled, true);
         showPanel(ScriptsPanel);
     } else
-        enableDebugger(false);
+        enableDebugger();
 }
 
-void InspectorAgent::enableDebugger(bool always)
+void InspectorAgent::enableDebugger()
 {
-    ASSERT(!debuggerEnabled());
-    if (always)
-        m_settings->setBoolean(InspectorSettings::DebuggerAlwaysEnabled, true);
-
+    if (debuggerEnabled())
+        return;
+    m_state->setBoolean(InspectorState::debuggerEnabled, true);
     ASSERT(m_inspectedPage);
 
     m_debuggerAgent = InspectorDebuggerAgent::create(this, m_frontend.get());
@@ -1037,23 +1022,18 @@ void InspectorAgent::enableDebugger(bool always)
     m_frontend->debuggerWasEnabled();
 }
 
-void InspectorAgent::disableDebugger(bool always)
+void InspectorAgent::disableDebugger()
 {
     if (!enabled())
         return;
-
-    if (always)
-        m_settings->setBoolean(InspectorSettings::DebuggerAlwaysEnabled, false);
-
     ASSERT(m_inspectedPage);
-
     m_debuggerAgent.clear();
     m_browserDebuggerAgent.clear();
 
-    m_attachDebuggerWhenShown = false;
-
-    if (m_frontend)
+    if (m_frontend) {
         m_frontend->debuggerWasDisabled();
+        m_state->setBoolean(InspectorState::debuggerEnabled, false);
+    }
 }
 
 void InspectorAgent::resume()

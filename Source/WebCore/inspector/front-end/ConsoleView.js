@@ -150,11 +150,6 @@ WebInspector.ConsoleView.prototype = {
             {
                 console.clearMessages();
             },
-
-            monitoringXHRStateChanged: function(enabled)
-            {
-                console._monitoringXHREnabled = enabled;
-            }
         }
         InspectorBackend.registerDomainDispatcher("Console", dispatcher);
     },
@@ -418,9 +413,12 @@ WebInspector.ConsoleView.prototype = {
             return;
         }
 
-        var itemAction = InspectorBackend.setMonitoringXHREnabled.bind(InspectorBackend, !this._monitoringXHREnabled);
+        var itemAction = function () {
+            WebInspector.settings.monitoringXHREnabled = !WebInspector.settings.monitoringXHREnabled;
+            InspectorBackend.setMonitoringXHREnabled(WebInspector.settings.monitoringXHREnabled);
+        }.bind(this);
         var contextMenu = new WebInspector.ContextMenu();
-        contextMenu.appendCheckboxItem(WebInspector.UIString("XMLHttpRequest logging"), itemAction, this._monitoringXHREnabled);
+        contextMenu.appendCheckboxItem(WebInspector.UIString("XMLHttpRequest logging"), itemAction, WebInspector.settings.monitoringXHREnabled)
         contextMenu.appendItem(WebInspector.UIString("Clear Console"), this.requestClearMessages.bind(this));
         contextMenu.show(event);
     },

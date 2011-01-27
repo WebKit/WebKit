@@ -90,9 +90,4 @@ PassRefPtr<ScriptHeapSnapshot> ScriptProfiler::takeHeapSnapshot(const String& ti
     return snapshot ? ScriptHeapSnapshot::create(snapshot) : 0;
 }
 
-bool ScriptProfiler::isProfilerAlwaysEnabled()
-{
-    return true;
-}
-
 } // namespace WebCore

@@ -65,7 +65,7 @@ PassOwnPtr<InspectorProfilerAgent> InspectorProfilerAgent::create(InspectorAgent
 InspectorProfilerAgent::InspectorProfilerAgent(InspectorAgent* inspectorAgent)
     : m_inspectorAgent(inspectorAgent)
     , m_frontend(0)
-    , m_enabled(ScriptProfiler::isProfilerAlwaysEnabled())
+    , m_enabled(false)
     , m_recordingUserInitiatedProfile(false)
     , m_currentUserInitiatedProfileNumber(-1)
     , m_nextUserInitiatedProfileNumber(1)
@@ -229,7 +229,7 @@ void InspectorProfilerAgent::startUserInitiatedProfiling()
     if (m_recordingUserInitiatedProfile)
         return;
     if (!enabled()) {
-        enable(false);
+        enable(true);
         ScriptDebugServer::shared().recompileAllJSFunctions();
     }
     m_recordingUserInitiatedProfile = true;

@@ -2049,8 +2049,6 @@
             'inspector/InspectorRuntimeAgent.cpp',
             'inspector/InspectorRuntimeAgent.h',
             'inspector/InspectorState.cpp',
-            'inspector/InspectorSettings.h',
-            'inspector/InspectorSettings.cpp',
             'inspector/InspectorState.h',
             'inspector/InspectorStyleSheet.cpp',
             'inspector/InspectorStyleSheet.h',

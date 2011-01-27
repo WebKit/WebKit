@@ -33,7 +33,6 @@
 #include "InspectorAgent.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorFrontend.h"
-#include "InspectorSettings.h"
 #include "InspectorState.h"
 #include "ResourceError.h"
 #include "ResourceResponse.h"
@@ -194,9 +193,6 @@ void InspectorConsoleAgent::didFailLoading(unsigned long identifier, const Resou
 void InspectorConsoleAgent::setMonitoringXHREnabled(bool enabled)
 {
     m_inspectorAgent->state()->setBoolean(InspectorState::monitoringXHR, enabled);
-    m_inspectorAgent->settings()->setBoolean(InspectorSettings::MonitoringXHREnabled, enabled);
-    if (m_frontend)
-        m_frontend->monitoringXHRStateChanged(enabled);
 }
 
 void InspectorConsoleAgent::setConsoleMessagesEnabled(bool enabled)
@@ -205,7 +201,6 @@ void InspectorConsoleAgent::setConsoleMessagesEnabled(bool enabled)
     if (!enabled || !m_frontend)
         return;
 
-    m_frontend->monitoringXHRStateChanged(m_inspectorAgent->state()->getBoolean(InspectorState::monitoringXHR));
     if (m_expiredConsoleMessageCount)
         m_frontend->updateConsoleMessageExpiredCount(m_expiredConsoleMessageCount);
     unsigned messageCount = m_consoleMessages.size();

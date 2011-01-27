@@ -74,7 +74,6 @@ class InspectorObject;
 class InspectorProfilerAgent;
 class InspectorResourceAgent;
 class InspectorRuntimeAgent;
-class InspectorSettings;
 class InspectorState;
 class InspectorStorageAgent;
 class InspectorTimelineAgent;
@@ -237,13 +236,13 @@ public:
     void startUserInitiatedProfiling();
     void stopProfiling() { stopUserInitiatedProfiling(); }
     void stopUserInitiatedProfiling();
-    void enableProfiler(bool always = false, bool skipRecompile = false);
-    void disableProfiler(bool always = false);
+    void enableProfiler();
+    void disableProfiler();
     bool profilerEnabled() const;
 
     void showAndEnableDebugger();
-    void enableDebugger(bool always);
-    void disableDebugger(bool always = false);
+    void enableDebugger();
+    void disableDebugger();
     bool debuggerEnabled() const { return m_debuggerAgent; }
     void resume();
 
@@ -258,7 +257,6 @@ public:
     void setInspectorExtensionAPI(const String& source);
 
     InspectorState* state() { return m_state.get(); }
-    InspectorSettings* settings() { return m_settings.get(); }
 
     // InspectorAgent API
     void getInspectorState(RefPtr<InspectorObject>* state);
@@ -269,7 +267,6 @@ public:
     void didEvaluateForTestInFrontend(long callId, const String& jsonResult);
 
     // InspectorInstrumentation API
-    void ensureSettingsLoaded();
     void willSendRequest(ResourceRequest&);
 
 private:
@@ -314,7 +311,6 @@ private:
 
     OwnPtr<InspectorTimelineAgent> m_timelineAgent;
     OwnPtr<InspectorState> m_state;
-    OwnPtr<InspectorSettings> m_settings;
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     OwnPtr<InspectorApplicationCacheAgent> m_applicationCacheAgent;
@@ -347,7 +343,6 @@ private:
     Vector<String> m_scriptsToEvaluateOnLoad;
     String m_inspectorExtensionAPI;
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    bool m_attachDebuggerWhenShown;
     OwnPtr<InspectorDebuggerAgent> m_debuggerAgent;
     OwnPtr<InspectorBrowserDebuggerAgent> m_browserDebuggerAgent;
     OwnPtr<InspectorProfilerAgent> m_profilerAgent;

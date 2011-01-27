@@ -1,3 +1,69 @@
+2011-01-27  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: store all settings related to the agents on the frontend side
+        https://bugs.webkit.org/show_bug.cgi?id=53174
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/ScriptDebugServer.cpp:
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/js/ScriptProfiler.cpp:
+        * bindings/js/ScriptProfiler.h:
+        * bindings/v8/ScriptDebugServer.cpp:
+        * bindings/v8/ScriptDebugServer.h:
+        * bindings/v8/ScriptProfiler.cpp:
+        * bindings/v8/ScriptProfiler.h:
+        * inspector/Inspector.idl:
+        * inspector/InspectorAgent.cpp: profiler and debugger enablement state is now stored
+        on the front-end side and will be pushed to the backend when the frontend is loaded.
+        (WebCore::InspectorAgent::InspectorAgent):
+        (WebCore::InspectorAgent::disconnectFrontend):
+        (WebCore::InspectorAgent::restoreDebugger):
+        (WebCore::InspectorAgent::restoreProfiler):
+        (WebCore::InspectorAgent::enableProfiler):
+        (WebCore::InspectorAgent::disableProfiler):
+        (WebCore::InspectorAgent::showAndEnableDebugger):
+        (WebCore::InspectorAgent::enableDebugger):
+        (WebCore::InspectorAgent::disableDebugger):
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorConsoleAgent.cpp: XHR failures will be logged to the console only
+        if the front-end was opened during current browser session and XHR logging is turned on
+        there.
+        (WebCore::InspectorConsoleAgent::setMonitoringXHREnabled):
+        (WebCore::InspectorConsoleAgent::setConsoleMessagesEnabled):
+        * inspector/InspectorDebuggerAgent.cpp:
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::identifierForInitialRequestImpl):
+        (WebCore::InspectorInstrumentation::didLoadResourceFromMemoryCacheImpl):
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::InspectorProfilerAgent):
+        (WebCore::InspectorProfilerAgent::startUserInitiatedProfiling):
+        * inspector/InspectorSettings.cpp: Removed.
+        * inspector/InspectorSettings.h: Removed.
+        * inspector/InspectorState.cpp:
+        (WebCore::InspectorState::InspectorState):
+        * inspector/InspectorState.h:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._registerConsoleDomainDispatcher.dispatcher.consoleMessagesCleared):
+        (WebInspector.ConsoleView.prototype._registerConsoleDomainDispatcher):
+        (WebInspector.ConsoleView.prototype._handleContextMenuEvent.itemAction):
+        (WebInspector.ConsoleView.prototype._handleContextMenuEvent):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype._toggleProfiling):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._toggleDebugging):
+        * inspector/front-end/Settings.js:
+        (WebInspector.Settings):
+        * inspector/front-end/inspector.js:
+
 2011-01-27  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

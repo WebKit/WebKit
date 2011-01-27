@@ -1,3 +1,14 @@
+2011-01-27  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: store all settings related to the agents on the frontend side
+        https://bugs.webkit.org/show_bug.cgi?id=53174
+
+        * http/tests/inspector/console-xhr-logging.html: since the setting doesn't change on the front-end
+        side there is no need to check it after modifying backend's value.
+        * inspector/report-protocol-errors.html: use the new signature of disableDebugger method.
+
 2011-01-27  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, new GTK baselines for fast/multicol tests as follow-up
