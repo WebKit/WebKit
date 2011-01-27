@@ -42,6 +42,8 @@ layer at (8,126) size 82x18
   RenderInline (relative positioned) {SPAN} at (0,0) size 82x18
     RenderText {#text} at (0,0) size 82x18
       text run at (0,0) width 82: "Content after"
+layer at (8,162) size 0x0
+  RenderInline (relative positioned) {SPAN} at (0,0) size 0x0
 layer at (8,202) size 86x18
   RenderInline (relative positioned) {SPAN} at (0,0) size 86x18
     RenderText {#text} at (0,0) size 86x18
@@ -50,3 +52,9 @@ layer at (8,236) size 94x18
   RenderInline (relative positioned) {SPAN} at (0,0) size 94x18
     RenderText {#text} at (0,0) size 94x18
       text run at (0,0) width 94: "Content before"
+layer at (8,312) size 0x0
+  RenderInline (relative positioned) {SPAN} at (0,0) size 0x0
+layer at (8,312) size 0x0
+  RenderInline (relative positioned) {SPAN} at (0,0) size 0x0
+layer at (8,352) size 0x0
+  RenderInline (relative positioned) {SPAN} at (0,0) size 0x0

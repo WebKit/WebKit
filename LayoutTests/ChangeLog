@@ -1,3 +1,12 @@
+2011-01-27  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed rebaseline of fast/inline/continuation-outlines-with-layers.html
+        afte r76726.
+
+        * platform/mac/fast/inline/continuation-outlines-with-layers-expected.txt:
+        * platform/chromium-win/fast/inline/continuation-outlines-with-layers-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-01-27  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
