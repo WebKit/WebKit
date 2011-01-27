@@ -1,3 +1,40 @@
+2011-01-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        Add ability to do an unconstrained scroll on a ScrollView
+        https://bugs.webkit.org/show_bug.cgi?id=53249
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::ScrollView):
+        Initialize m_constrainsScrollingToContentEdge to true.
+
+        (WebCore::ScrollView::setScrollOffset):
+        Only constrain the offset if the m_constrainsScrollingToContentEdge is set.
+
+        (WebCore::ScrollView::updateScrollbars):
+        Simplify expression converting an IntSize to an IntPoint.
+        
+        (WebCore::ScrollView::paint):
+        Paint the overhang if there is any.
+        
+        (WebCore::ScrollView::calculateOverhangAreasForPainting):
+        Calculate the overhang in viewport coordinates for painting.
+
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::constrainsScrollingToContentEdge):
+        (WebCore::ScrollView::setConstrainsScrollingToContentEdge):
+        Add bit to control whether the scroll position should be constrained
+        to the content edge when set.
+
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::usedTotalSize):
+        (WebCore::ScrollbarThemeComposite::thumbPosition):
+        (WebCore::ScrollbarThemeComposite::thumbLength):
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::paint):
+        Improve calculations of thumb size and position to take overhang into account.
+
 2011-01-27  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

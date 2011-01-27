@@ -417,14 +417,31 @@ static int scrollbarPartToHIPressedState(ScrollbarPart part)
 bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, const IntRect& damageRect)
 {
 #if defined(USE_WK_SCROLLBAR_PAINTER)
+    float value = 0.0f;
+    float totalSize = 0.0f;
+
+    if (scrollbar->currentPos() < 0) {
+        // Scrolled past the top.
+        value = 0.0f;
+        totalSize = scrollbar->totalSize() - scrollbar->currentPos();
+    } else if (scrollbar->visibleSize() + scrollbar->currentPos() > scrollbar->totalSize()) {
+        // Scrolled past the bottom.
+        value = 1.0f;
+        totalSize = scrollbar->visibleSize() + scrollbar->currentPos();
+    } else {
+        // Within the bounds of the scrollable area.
+        value = scrollbar->currentPos() / scrollbar->maximum();
+        totalSize = scrollbar->totalSize();
+    }
+
     context->save();
     context->clip(damageRect);
     context->translate(scrollbar->frameRect().x(), scrollbar->frameRect().y());
     LocalCurrentGraphicsContext localContext(context);
     wkScrollbarPainterPaint(scrollbarMap()->get(scrollbar).get(),
                             scrollbar->enabled(),
-                            scrollbar->currentPos() / scrollbar->maximum(),
-                            static_cast<CGFloat>(scrollbar->visibleSize()) / scrollbar->totalSize(),
+                            value,
+                            static_cast<CGFloat>(scrollbar->visibleSize()) / totalSize,
                             scrollbar->frameRect());
     context->restore();
     return true;
@@ -434,9 +451,27 @@ bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, co
     trackInfo.version = 0;
     trackInfo.kind = scrollbar->controlSize() == RegularScrollbar ? kThemeMediumScrollBar : kThemeSmallScrollBar;
     trackInfo.bounds = scrollbar->frameRect();
+
+    float maximum = 0.0f;
+    float position = 0.0f;
+    if (scrollbar->currentPos() < 0) {
+        // Scrolled past the top.
+        maximum = (scrollbar->totalSize() - scrollbar->currentPos()) - scrollbar->visibleSize();
+        position = 0;
+    } else if (scrollbar->visibleSize() + scrollbar->currentPos() > scrollbar->totalSize()) {
+        // Scrolled past the bottom.
+        maximum = scrollbar->currentPos();
+        position = maximum;
+    } else {
+        // Within the bounds of the scrollable area.
+        maximum = scrollbar->maximum();
+        position = scrollbar->currentPos();
+    }
+
     trackInfo.min = 0;
-    trackInfo.max = scrollbar->maximum();
-    trackInfo.value = scrollbar->currentPos();
+    trackInfo.max = static_cast<int>(maximum);
+    trackInfo.value = static_cast<int>(position);
+
     trackInfo.trackInfo.scrollbar.viewsize = scrollbar->visibleSize();
     trackInfo.attributes = 0;
     if (scrollbar->orientation() == HorizontalScrollbar)

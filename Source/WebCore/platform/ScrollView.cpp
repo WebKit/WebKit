@@ -35,8 +35,7 @@
 #include "ScrollbarTheme.h"
 #include <wtf/StdLibExtras.h>
 
-
-using std::max;
+using namespace std;
 
 namespace WebCore {
 
@@ -56,6 +55,7 @@ ScrollView::ScrollView()
     , m_paintsEntireContents(false)
     , m_clipsRepaints(true)
     , m_delegatesScrolling(false)
+    , m_constrainsScrollingToContentEdge(true)
 {
     platformInit();
 }
@@ -322,8 +322,12 @@ int ScrollView::scrollSize(ScrollbarOrientation orientation) const
 
 void ScrollView::setScrollOffset(const IntPoint& offset)
 {
-    int horizontalOffset = std::max(std::min(offset.x(), contentsWidth() - visibleWidth()), 0);
-    int verticalOffset = std::max(std::min(offset.y(), contentsHeight() - visibleHeight()), 0);
+    int horizontalOffset = offset.x();
+    int verticalOffset = offset.y();
+    if (constrainsScrollingToContentEdge()) {
+        horizontalOffset = max(min(horizontalOffset, contentsWidth() - visibleWidth()), 0);
+        verticalOffset = max(min(verticalOffset, contentsHeight() - visibleHeight()), 0);
+    }
 
     IntSize newOffset = m_scrollOffset;
     newOffset.setWidth(horizontalOffset - m_scrollOrigin.x());
@@ -498,7 +502,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 
     m_inUpdateScrollbars = true;
 
-    IntPoint scrollPoint = adjustScrollPositionWithinRange(IntPoint(desiredOffset.width(), desiredOffset.height()));
+    IntPoint scrollPoint = adjustScrollPositionWithinRange(IntPoint(desiredOffset));
     IntSize scroll(scrollPoint.x(), scrollPoint.y());
 
     if (m_horizontalScrollbar) {
@@ -860,6 +864,13 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
 
     context->restore();
 
+    IntRect horizontalOverhangRect;
+    IntRect verticalOverhangRect;
+    calculateOverhangAreasForPainting(horizontalOverhangRect, verticalOverhangRect);
+
+    if (!horizontalOverhangRect.isEmpty() || !verticalOverhangRect.isEmpty())
+        paintOverhangAreas(context, horizontalOverhangRect, verticalOverhangRect);
+
     // Now paint the scrollbars.
     if (!m_scrollbarsSuppressed && (m_horizontalScrollbar || m_verticalScrollbar)) {
         context->save();
@@ -876,6 +887,51 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
     // Paint the panScroll Icon
     if (m_drawPanScrollIcon)
         paintPanScrollIcon(context);
+}
+
+void ScrollView::calculateOverhangAreasForPainting(IntRect& horizontalOverhangRect, IntRect& verticalOverhangRect)
+{
+    if (scrollY() < 0) {
+        horizontalOverhangRect = frameRect();
+        horizontalOverhangRect.setHeight(-scrollY());
+    } else if (scrollY() > contentsHeight() - visibleContentRect(true).height()) {
+        int height = scrollY() - (contentsHeight() - visibleContentRect(true).height());
+        horizontalOverhangRect = frameRect();
+        horizontalOverhangRect.setY(frameRect().bottom() - height);
+        horizontalOverhangRect.setHeight(height);
+    }
+
+    if (scrollX() < 0) {
+        verticalOverhangRect.setWidth(-scrollX());
+        verticalOverhangRect.setHeight(frameRect().height() - horizontalOverhangRect.height());
+        verticalOverhangRect.setX(frameRect().x());
+        if (horizontalOverhangRect.y() == frameRect().y())
+            verticalOverhangRect.setY(frameRect().y() + horizontalOverhangRect.height());
+        else
+            verticalOverhangRect.setY(frameRect().y());
+    } else if (scrollX() > contentsWidth() - visibleContentRect(true).width()) {
+        int width = scrollX() - (contentsWidth() - visibleContentRect(true).width());
+        verticalOverhangRect.setWidth(width);
+        verticalOverhangRect.setHeight(frameRect().height() - horizontalOverhangRect.height());
+        verticalOverhangRect.setX(frameRect().right() - width);
+        if (horizontalOverhangRect.y() == frameRect().y())
+            verticalOverhangRect.setY(frameRect().y() + horizontalOverhangRect.height());
+        else
+            verticalOverhangRect.setY(frameRect().y());
+    }
+}
+
+void ScrollView::paintOverhangAreas(GraphicsContext*, const IntRect&, const IntRect&)
+{
+    // FIXME: This should be checking the dirty rect.
+
+    context->setFillColor(Color::white, ColorSpaceDeviceRGB);
+    if (!horizontalOverhangRect.isEmpty())
+        context->fillRect(horizontalOverhangRect);
+
+    context->setFillColor(Color::white, ColorSpaceDeviceRGB);
+    if (!verticalOverhangRect.isEmpty())
+        context->fillRect(verticalOverhangRect);
 }
 
 bool ScrollView::isPointInScrollbarCorner(const IntPoint& windowPoint)

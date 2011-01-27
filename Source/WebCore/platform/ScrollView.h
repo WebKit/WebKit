@@ -162,7 +162,11 @@ public:
     int contentsWidth() const { return contentsSize().width(); }
     int contentsHeight() const { return contentsSize().height(); }
     virtual void setContentsSize(const IntSize&);
-   
+
+    // Functions for controlling if you can scroll past the end of the document.
+    bool constrainsScrollingToContentEdge() const { return m_constrainsScrollingToContentEdge; }
+    void setConstrainsScrollingToContentEdge(bool constrainsScrollingToContentEdge) { m_constrainsScrollingToContentEdge = constrainsScrollingToContentEdge; }
+
     // Functions for querying the current scrolled position (both as a point, a size, or as individual X and Y values).
     IntPoint scrollPosition() const { return visibleContentRect().location(); }
     IntSize scrollOffset() const { return visibleContentRect().location() - IntPoint(); } // Gets the scrolled position as an IntSize. Convenient for adding to other sizes.
@@ -275,7 +279,7 @@ protected:
 
     virtual void repaintContentRectangle(const IntRect&, bool now = false);
     virtual void paintContents(GraphicsContext*, const IntRect& damageRect) = 0;
-    
+
     virtual void contentsResized() = 0;
     virtual void visibleContentsResized() = 0;
 
@@ -335,6 +339,8 @@ private:
     bool m_clipsRepaints;
     bool m_delegatesScrolling;
 
+    bool m_constrainsScrollingToContentEdge;
+
     // There are 8 possible combinations of writing mode and direction.  Scroll origin will be non-zero in the x or y axis
     // if there is any reversed direction or writing-mode.  The combinations are:
     // writing-mode / direction     scrollOrigin.x() set    scrollOrigin.y() set
@@ -356,6 +362,9 @@ private:
 
     // Called when the scroll position within this view changes.  FrameView overrides this to generate repaint invalidations.
     virtual void repaintFixedElementsAfterScrolling() {}
+
+    void calculateOverhangAreasForPainting(IntRect& horizontalOverhangRect, IntRect& verticalOverhangRect);
+    void paintOverhangAreas(GraphicsContext*, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea);
 
     void platformInit();
     void platformDestroy();
