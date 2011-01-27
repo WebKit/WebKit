@@ -1,3 +1,11 @@
+2011-01-27  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed, fixed upstream Chromium build
+        
+        r76844 should have rolled back Chromium DEPS to 72673, not 72637.
+
+        * DEPS:
+
 2011-01-27  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, roll back webkit chromium rev to 72637.
