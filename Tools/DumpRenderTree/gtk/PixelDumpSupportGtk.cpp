@@ -37,13 +37,14 @@
 PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool, bool, bool, bool)
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
+    GtkWidget* viewContainer = gtk_widget_get_parent(GTK_WIDGET(view));
     gint width, height;
 #ifdef GTK_API_VERSION_2
-    GdkPixmap* pixmap = gtk_widget_get_snapshot(GTK_WIDGET(view), 0);
+    GdkPixmap* pixmap = gtk_widget_get_snapshot(viewContainer, 0);
     gdk_pixmap_get_size(pixmap, &width, &height);
 #else
-    width = gtk_widget_get_allocated_width(GTK_WIDGET(view));
-    height = gtk_widget_get_allocated_height(GTK_WIDGET(view));
+    width = gtk_widget_get_allocated_width(viewContainer);
+    height = gtk_widget_get_allocated_height(viewContainer);
 #endif
 
     cairo_surface_t* imageSurface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height);
@@ -53,7 +54,7 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool, bool, bool, bool)
     cairo_paint(context);
     g_object_unref(pixmap);
 #else
-    gtk_widget_draw(GTK_WIDGET(view), context);
+    gtk_widget_draw(viewContainer, context);
 #endif
 
     return BitmapContext::createByAdoptingBitmapAndContext(0, context);
