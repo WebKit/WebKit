@@ -439,26 +439,12 @@ void CACFLayerTreeHost::render(const Vector<CGRect>& windowDirtyRects)
         return;
     }
 
-    // All pending animations will have been started with the flush. Fire the animationStarted calls
-    double currentTime = WTF::currentTime();
-    double currentMediaTime = CACurrentMediaTime();
-    double t = currentTime + wkCACFContextGetLastCommitTime(m_context) - currentMediaTime;
-    ASSERT(t <= currentTime);
-
-    HashSet<RefPtr<PlatformCALayer> >::iterator end = m_pendingAnimatedLayers.end();
-    for (HashSet<RefPtr<PlatformCALayer> >::iterator it = m_pendingAnimatedLayers.begin(); it != end; ++it) {
-        PlatformCALayerClient* owner = (*it)->owner();
-        owner->platformCALayerAnimationStarted(t);
-    }
-
-    m_pendingAnimatedLayers.clear();
-
     CGRect bounds = this->bounds();
 
     // Give the renderer some space to use. This needs to be valid until the
     // wkCACFContextFinishUpdate() call below.
     char space[4096];
-    if (!wkCACFContextBeginUpdate(m_context, space, sizeof(space), currentMediaTime, bounds, windowDirtyRects.data(), windowDirtyRects.size()))
+    if (!wkCACFContextBeginUpdate(m_context, space, sizeof(space), CACurrentMediaTime(), bounds, windowDirtyRects.data(), windowDirtyRects.size()))
         return;
 
     HRESULT err = S_OK;
@@ -549,7 +535,23 @@ void CACFLayerTreeHost::flushPendingLayerChangesNow()
 
     renderSoon();
 
+    // All pending animations will have been started with the flush. Fire the animationStarted calls.
+    notifyAnimationsStarted();
+
     m_isFlushingLayerChanges = false;
+}
+
+void CACFLayerTreeHost::notifyAnimationsStarted()
+{
+    double currentTime = WTF::currentTime();
+    double time = currentTime + wkCACFContextGetLastCommitTime(m_context) - CACurrentMediaTime();
+    ASSERT(time <= currentTime);
+
+    HashSet<RefPtr<PlatformCALayer> >::iterator end = m_pendingAnimatedLayers.end();
+    for (HashSet<RefPtr<PlatformCALayer> >::iterator it = m_pendingAnimatedLayers.begin(); it != end; ++it)
+        (*it)->animationStarted(time);
+
+    m_pendingAnimatedLayers.clear();
 }
 
 CGRect CACFLayerTreeHost::bounds() const

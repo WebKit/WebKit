@@ -1,5 +1,25 @@
 2011-01-26  Adam Roben  <aroben@apple.com>
 
+        Notify layers that their animations have started when we flush the context, not when we
+        render
+
+        r76372 separated context flushing from rendering, but this bit of code got left behind.
+
+        Reviewed by Sam Weinig.
+
+        * platform/graphics/ca/win/CACFLayerTreeHost.cpp:
+        (WebCore::CACFLayerTreeHost::render): Moved code to notify the layers from here to
+        notifyAnimationsStarted.
+        (WebCore::CACFLayerTreeHost::flushPendingLayerChangesNow): Added a call to
+        notifyAnimationsStarted after we flush the context.
+        (WebCore::CACFLayerTreeHost::notifyAnimationsStarted): Added. Code came from render. Changed
+        to call PlatformCALayer::animationStarted rather than calling through to the client
+        directly.
+
+        * platform/graphics/ca/win/CACFLayerTreeHost.h: Added notifyAniamtionsStarted.
+
+2011-01-26  Adam Roben  <aroben@apple.com>
+
         Small cleanup in MediaPlayerPrivateFullscreenWindow
 
         Reviewed by Sam Weinig.

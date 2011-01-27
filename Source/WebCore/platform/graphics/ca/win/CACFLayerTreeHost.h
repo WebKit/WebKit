@@ -88,6 +88,7 @@ private:
     void destroyRenderer();
     void renderSoon();
     void renderTimerFired(Timer<CACFLayerTreeHost>*);
+    void notifyAnimationsStarted();
 
     CGRect bounds() const;
 
