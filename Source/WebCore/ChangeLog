@@ -1,3 +1,13 @@
+2011-01-26  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] LayoutTests/media/audio-mpeg4-supported.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=53125
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mimeTypeCache): Add audio/x-m4a mimetype in the cache.
+
 2011-01-26  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

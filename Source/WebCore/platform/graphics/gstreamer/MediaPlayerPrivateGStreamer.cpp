@@ -1384,11 +1384,15 @@ static HashSet<String> mimeTypeCache()
 
                 // These formats are supported by GStreamer, but not
                 // correctly advertised.
-                if (g_str_equal(name, "video/x-h264")
-                    || g_str_equal(name, "audio/x-m4a")) {
+                if (g_str_equal(name, "video/x-h264")) {
                     cache.add(String("video/mp4"));
+                    cached = true;
+                }
+
+                if (g_str_equal(name, "audio/x-m4a")) {
                     cache.add(String("audio/aac"));
                     cache.add(String("audio/mp4"));
+                    cache.add(String("audio/x-m4a"));
                     cached = true;
                 }
 
