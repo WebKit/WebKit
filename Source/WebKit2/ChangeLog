@@ -1,3 +1,39 @@
+2011-01-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        WebKitTestRunner needs to support layoutTestController.evaluateInWebInspector
+        https://bugs.webkit.org/show_bug.cgi?id=42319
+
+        Add WKBundleInspector and APIs needed to implement WebKitTestRunner APIs.
+        
+        * GNUmakefile.am:
+        * Shared/API/c/WKBase.h:
+        * Shared/APIObject.h:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleInspector.cpp: Added.
+        (WKBundleInspectorGetTypeID):
+        (WKBundleInspectorShow):
+        (WKBundleInspectorClose):
+        (WKBundleInspectorEvaluateScriptForTest):
+        (WKBundleInspectorSetPageProfilingEnabled):
+        * WebProcess/InjectedBundle/API/c/WKBundleInspector.h: Added.
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageGetInspector):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::create):
+        (WebKit::WebInspector::evaluateScriptForTest):
+        * WebProcess/WebPage/WebInspector.h:
+        (WebKit::WebInspector::type):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::inspector):
+        * WebProcess/WebPage/WebPage.h:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.make:
+
 2011-01-26  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/53192> Add experimental support for HTTP pipelining in CFNetwork

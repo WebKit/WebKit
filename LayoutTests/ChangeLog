@@ -1,3 +1,14 @@
+2011-01-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        WebKitTestRunner needs to support layoutTestController.evaluateInWebInspector
+        https://bugs.webkit.org/show_bug.cgi?id=42319
+        
+        Unskip inspector tests (except the few that mysteriously fail).
+
+        * platform/mac-wk2/Skipped:
+
 2011-01-27  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed Chromium test expectation change.

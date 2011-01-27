@@ -92,6 +92,7 @@ typedef const struct OpaqueWKBundleBackForwardListItem* WKBundleBackForwardListI
 typedef const struct OpaqueWKBundleDOMCSSStyleDeclaration* WKBundleCSSStyleDeclarationRef;
 typedef const struct OpaqueWKBundleFrame* WKBundleFrameRef;
 typedef const struct OpaqueWKBundleHitTestResult* WKBundleHitTestResultRef;
+typedef const struct OpaqueWKBundleInspector* WKBundleInspectorRef;
 typedef const struct OpaqueWKBundleNodeHandle* WKBundleNodeHandleRef;
 typedef const struct OpaqueWKBundlePage* WKBundlePageRef;
 typedef const struct OpaqueWKBundlePageGroup* WKBundlePageGroupRef;

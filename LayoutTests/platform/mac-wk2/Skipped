@@ -56,6 +56,7 @@ compositing/iframes/iframe-src-change.html
 
 # WebKitTestRunner needs an implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
+inspector/timeline-event-dispatch.html
 fast/text/offsetForPosition-complex-fallback.html
 svg/animations/animate-path-to-animation.html
 fast/forms/input-number-change-type-on-focus.html
@@ -1254,12 +1255,6 @@ editing/undo/undo-typing-001.html
 # <rdar://problem/8867804>
 svg/css/cursor-replace.svg
 
-# WebKitTestRunner needs to support evaluateInWebInspector
-# <https://bugs.webkit.org/show_bug.cgi?id=42319>
-http/tests/inspector-enabled
-http/tests/inspector
-inspector
-
 # WebKitTestRunner needs to support layoutTestController.dumpDOMAsWebArchive
 # <https://bugs.webkit.org/show_bug.cgi?id=42324>
 http/tests/webarchive/cross-origin-stylesheet-crash.html
@@ -2282,6 +2277,10 @@ fast/workers/storage/open-database-creation-callback-sync.html
 fast/workers/storage/open-database-inputs-sync.html
 fast/workers/storage/sql-exception-codes-sync.html
 storage/multiple-databases-garbage-collection.html
+
+# Unknown failures after enabling inspector tests
+inspector/timeline-paint.html
+inspector/timeline-script-tag-1.html
 
 ### END OF (3) Unclassified failures
 ########################################

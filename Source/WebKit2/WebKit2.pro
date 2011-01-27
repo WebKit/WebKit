@@ -620,6 +620,7 @@ SOURCES += \
     WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.cpp \
     WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp \
     WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp \
+    WebProcess/InjectedBundle/API/c/WKBundleInspector.cpp \
     WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp \
     WebProcess/InjectedBundle/API/c/WKBundlePage.cpp \
     WebProcess/InjectedBundle/API/c/WKBundlePageGroup.cpp \

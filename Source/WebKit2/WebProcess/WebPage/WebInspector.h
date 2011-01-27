@@ -28,6 +28,7 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "APIObject.h"
 #include "Connection.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -37,11 +38,11 @@ namespace WebKit {
 class WebPage;
 struct WebPageCreationParameters;
 
-class WebInspector {
-    WTF_MAKE_NONCOPYABLE(WebInspector);
-
+class WebInspector : public APIObject {
 public:
-    explicit WebInspector(WebPage*);
+    static const Type APIType = TypeBundleInspector;
+
+    static PassRefPtr<WebInspector> create(WebPage*);
 
     WebPage* page() const { return m_page; }
     WebPage* inspectorPage() const { return m_inspectorPage; }
@@ -49,9 +50,22 @@ public:
     // Implemented in generated WebInspectorMessageReceiver.cpp
     void didReceiveWebInspectorMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
+    // Called by WebInspector messages
+    void show();
+    void close();
+
+    void evaluateScriptForTest(long callID, const String& script);
+
+    void startPageProfiling();
+    void stopPageProfiling();
+
 private:
     friend class WebInspectorClient;
     friend class WebInspectorFrontendClient;
+
+    explicit WebInspector(WebPage*);
+
+    virtual Type type() const { return APIType; }
 
     // Called from WebInspectorClient
     WebPage* createInspectorPage();
@@ -63,10 +77,6 @@ private:
     // Implemented in platform WebInspector file
     String localizedStringsURL() const;
 
-    // Called by WebInspector messages
-    void show();
-    void close();
-
     void showConsole();
 
     void startJavaScriptDebugging();
@@ -74,9 +84,6 @@ private:
 
     void startJavaScriptProfiling();
     void stopJavaScriptProfiling();
-
-    void startPageProfiling();
-    void stopPageProfiling();
 
     WebPage* m_page;
     WebPage* m_inspectorPage;

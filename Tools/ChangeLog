@@ -1,3 +1,24 @@
+2011-01-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        WebKitTestRunner needs to support layoutTestController.evaluateInWebInspector
+        https://bugs.webkit.org/show_bug.cgi?id=42319
+        
+        Add evaluateInWebInspector and other APIs needed for inspector tests to run.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::showWebInspector):
+        (WTR::LayoutTestController::closeWebInspector):
+        (WTR::LayoutTestController::evaluateInWebInspector):
+        (WTR::LayoutTestController::setTimelineProfilingEnabled):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::shouldOpenWebInspector):
+        (WTR::TestInvocation::invoke):
+        * WebKitTestRunner/WebKitTestRunnerPrefix.h:
+
 2011-01-26  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

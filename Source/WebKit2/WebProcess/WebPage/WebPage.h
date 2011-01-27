@@ -496,7 +496,7 @@ private:
     RefPtr<PageOverlay> m_pageOverlay;
 
 #if ENABLE(INSPECTOR)
-    OwnPtr<WebInspector> m_inspector;
+    RefPtr<WebInspector> m_inspector;
 #endif
     RefPtr<WebPopupMenu> m_activePopupMenu;
     RefPtr<WebContextMenu> m_contextMenu;

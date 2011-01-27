@@ -1294,7 +1294,7 @@ WebInspector* WebPage::inspector()
     if (m_isClosed)
         return 0;
     if (!m_inspector)
-        m_inspector = adoptPtr(new WebInspector(this));
+        m_inspector = WebInspector::create(this);
     return m_inspector.get();
 }
 #endif

@@ -31,6 +31,7 @@
 #include <climits>
 #include <cstdio>
 #include <WebKit2/WKContextPrivate.h>
+#include <WebKit2/WKInspector.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
@@ -113,6 +114,11 @@ static void sizeWebViewForCurrentTest(char* pathOrURL)
         TestController::shared().mainWebView()->resizeTo(normalWidth, normalHeight);
 }
 
+static bool shouldOpenWebInspector(const char* pathOrURL)
+{
+    return strstr(pathOrURL, "inspector/");
+}
+
 void TestInvocation::invoke()
 {
     sizeWebViewForCurrentTest(m_pathOrURL);
@@ -130,17 +136,18 @@ void TestInvocation::invoke()
         return;
     }
 
+    if (shouldOpenWebInspector(m_pathOrURL))
+        WKInspectorShow(WKPageGetInspector(TestController::shared().mainWebView()->page()));
+
     WKPageLoadURL(TestController::shared().mainWebView()->page(), m_url.get());
 
     TestController::shared().runUntil(m_gotFinalMessage, TestController::LongTimeout);
-    if (!m_gotFinalMessage) {
+    if (!m_gotFinalMessage)
         dump("Timed out waiting for final message from web process\n");
-        return;
-    }
-    if (m_error) {
+    else if (m_error)
         dump("FAIL\n");
-        return;
-    }
+
+    WKInspectorClose(WKPageGetInspector(TestController::shared().mainWebView()->page()));
 }
 
 void TestInvocation::dump(const char* stringToDump)

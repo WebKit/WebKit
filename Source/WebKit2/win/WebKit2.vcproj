@@ -1808,6 +1808,14 @@
 							>
 						</File>
 						<File
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleInspector.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleInspector.h"
+							>
+						</File>
+						<File
 							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleHitTestResult.cpp"
 							>
 						</File>

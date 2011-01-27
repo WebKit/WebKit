@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef __OBJC__
-#include <Cocoa/Cocoa.h>
+#ifndef WKBundleInspector_h
+#define WKBundleInspector_h
+
+#include <WebKit2/WKBase.h>
+
+#if ENABLE(INSPECTOR)
+
+#ifndef __cplusplus
+#include <stdbool.h>
 #endif
 
-#if defined(WIN32) || defined(_WIN32)
-// If we don't define these, they get defined in windef.h. 
-// We want to use std::min and std::max
-#define max max
-#define min min
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-#include <wtf/Platform.h>
-#include <WebKit2/WebKit2.h>
+WK_EXPORT WKTypeID WKBundleInspectorGetTypeID();
+
+WK_EXPORT void WKBundleInspectorShow(WKBundleInspectorRef inspector);
+WK_EXPORT void WKBundleInspectorClose(WKBundleInspectorRef inspector);
+
+WK_EXPORT void WKBundleInspectorEvaluateScriptForTest(WKBundleInspectorRef inspector, long callID, WKStringRef script);
+WK_EXPORT void WKBundleInspectorSetPageProfilingEnabled(WKBundleInspectorRef inspector, bool enabled);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // ENABLE(INSPECTOR)
+
+#endif // WKBundleInspector_h
+

@@ -433,6 +433,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleInitialize.h \
+	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleInspector.cpp \
+	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleInspector.h \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.h \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h \

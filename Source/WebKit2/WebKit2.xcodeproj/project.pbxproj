@@ -286,6 +286,8 @@
 		51ACBBA1127A8F2C00D203B9 /* WebContextMenuProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51ACBB9F127A8F2C00D203B9 /* WebContextMenuProxyMac.mm */; };
 		51B3005012529D0E000B5CA0 /* WebBackForwardListCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51B3004E12529D0E000B5CA0 /* WebBackForwardListCF.cpp */; };
 		51B3005112529D0E000B5CA0 /* WebPageProxyCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51B3004F12529D0E000B5CA0 /* WebPageProxyCF.cpp */; };
+		6501BD1A12F1243400E9F248 /* WKBundleInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65B86F1712F11D7B00B7DD8A /* WKBundleInspector.cpp */; };
+		65B86F1E12F11DE300B7DD8A /* WKBundleInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B86F1812F11D7B00B7DD8A /* WKBundleInspector.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6D8A91A611F0EFD100DD01FE /* com.apple.WebProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = 6D8A91A511F0EFD100DD01FE /* com.apple.WebProcess.sb */; };
 		762B748D120BC75C00819339 /* WKPreferencesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 762B7484120BBA2D00819339 /* WKPreferencesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
@@ -1035,6 +1037,8 @@
 		51B3004F12529D0E000B5CA0 /* WebPageProxyCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebPageProxyCF.cpp; path = cf/WebPageProxyCF.cpp; sourceTree = "<group>"; };
 		5DAD7294116FF70B00EE5396 /* WebProcess.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebProcess.xcconfig; sourceTree = "<group>"; };
 		5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = BaseTarget.xcconfig; sourceTree = "<group>"; };
+		65B86F1712F11D7B00B7DD8A /* WKBundleInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleInspector.cpp; sourceTree = "<group>"; };
+		65B86F1812F11D7B00B7DD8A /* WKBundleInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleInspector.h; sourceTree = "<group>"; };
 		6D8A91A511F0EFD100DD01FE /* com.apple.WebProcess.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = com.apple.WebProcess.sb; path = WebProcess/com.apple.WebProcess.sb; sourceTree = "<group>"; };
 		762B7481120BBA0100819339 /* FontSmoothingLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontSmoothingLevel.h; sourceTree = "<group>"; };
 		762B7484120BBA2D00819339 /* WKPreferencesPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPreferencesPrivate.h; sourceTree = "<group>"; };
@@ -2443,6 +2447,8 @@
 				BC49862E124D18C100D834E1 /* WKBundleHitTestResult.cpp */,
 				BC49862D124D18C100D834E1 /* WKBundleHitTestResult.h */,
 				BC204EED11C83EC8008F3375 /* WKBundleInitialize.h */,
+				65B86F1712F11D7B00B7DD8A /* WKBundleInspector.cpp */,
+				65B86F1812F11D7B00B7DD8A /* WKBundleInspector.h */,
 				BC4BEFE0120A1A4C00FBA0C7 /* WKBundleNodeHandle.cpp */,
 				BC4BEFDF120A1A4C00FBA0C7 /* WKBundleNodeHandle.h */,
 				BC57450B1263B155006F0F12 /* WKBundleNodeHandlePrivate.h */,
@@ -2839,6 +2845,7 @@
 				BC204EF011C83EC8008F3375 /* WKBundleAPICast.h in Headers */,
 				BCD25F1711D6BDE100169B0E /* WKBundleFrame.h in Headers */,
 				BC204EF211C83EC8008F3375 /* WKBundleInitialize.h in Headers */,
+				65B86F1E12F11DE300B7DD8A /* WKBundleInspector.h in Headers */,
 				BC20528111C94284008F3375 /* WKBundlePage.h in Headers */,
 				BC1B419811D41D570011E8DD /* WKBundlePagePrivate.h in Headers */,
 				BCB9E24B1120E15C00A137E0 /* WKContext.h in Headers */,
@@ -3556,6 +3563,7 @@
 				BC9585C812F095B800755821 /* WebGestureEvent.cpp in Sources */,
 				1A186EEB12EF7618008E5F37 /* LayerTreeHost.cpp in Sources */,
 				1A18718512EF9877008E5F37 /* LayerTreeHostMac.mm in Sources */,
+				6501BD1A12F1243400E9F248 /* WKBundleInspector.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

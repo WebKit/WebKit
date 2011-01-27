@@ -73,6 +73,7 @@ all:
     xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundleFramePrivate.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundleHitTestResult.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundleInitialize.h" "%ConfigurationBuildDir%\include\WebKit2"
+    xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundleInspector.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundleNodeHandle.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundleNodeHandlePrivate.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundlePage.h" "%ConfigurationBuildDir%\include\WebKit2"

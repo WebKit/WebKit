@@ -184,3 +184,10 @@ WKImageRef WKBundlePageCreateSnapshotInDocumentCoordinates(WKBundlePageRef pageR
     RefPtr<WebImage> webImage = toImpl(pageRef)->snapshotInDocumentCoordinates(toIntRect(rect), toImageOptions(options));
     return toAPI(webImage.release().leakRef());
 }
+
+#if defined(ENABLE_INSPECTOR) && ENABLE_INSPECTOR
+WKBundleInspectorRef WKBundlePageGetInspector(WKBundlePageRef pageRef)
+{
+    return toAPI(toImpl(pageRef)->inspector());
+}
+#endif

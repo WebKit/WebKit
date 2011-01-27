@@ -38,6 +38,11 @@ using namespace WebCore;
 
 namespace WebKit {
 
+PassRefPtr<WebInspector> WebInspector::create(WebPage* page)
+{
+    return adoptRef(new WebInspector(page));
+}
+
 WebInspector::WebInspector(WebPage* page)
     : m_page(page)
     , m_inspectorPage(0)
@@ -89,6 +94,11 @@ void WebInspector::show()
 void WebInspector::close()
 {
     m_page->corePage()->inspectorController()->close();
+}
+
+void WebInspector::evaluateScriptForTest(long callID, const String& script)
+{
+    m_page->corePage()->inspectorController()->evaluateForTestInFrontend(callID, script);
 }
 
 void WebInspector::showConsole()

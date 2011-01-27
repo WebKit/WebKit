@@ -85,6 +85,7 @@ public:
         TypeBundleBackForwardListItem,
         TypeBundleFrame,
         TypeBundleHitTestResult,
+        TypeBundleInspector,
         TypeBundleNodeHandle,
         TypeBundlePage,
         TypeBundlePageGroup,

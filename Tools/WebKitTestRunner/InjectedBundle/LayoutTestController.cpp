@@ -32,6 +32,7 @@
 #include <WebKit2/WKBundleBackForwardList.h>
 #include <WebKit2/WKBundleFrame.h>
 #include <WebKit2/WKBundleFramePrivate.h>
+#include <WebKit2/WKBundleInspector.h>
 #include <WebKit2/WKBundlePagePrivate.h>
 #include <WebKit2/WKBundleScriptWorld.h>
 #include <WebKit2/WKBundlePrivate.h>
@@ -307,6 +308,27 @@ void LayoutTestController::clearBackForwardList()
 void LayoutTestController::makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception)
 {
     setProperty(context, windowObject, "layoutTestController", this, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, exception);
+}
+
+void LayoutTestController::showWebInspector()
+{
+    WKBundleInspectorShow(WKBundlePageGetInspector(InjectedBundle::shared().page()->page()));
+}
+
+void LayoutTestController::closeWebInspector()
+{
+    WKBundleInspectorClose(WKBundlePageGetInspector(InjectedBundle::shared().page()->page()));
+}
+
+void LayoutTestController::evaluateInWebInspector(long callID, JSStringRef script)
+{
+    WKRetainPtr<WKStringRef> scriptWK = toWK(script);
+    WKBundleInspectorEvaluateScriptForTest(WKBundlePageGetInspector(InjectedBundle::shared().page()->page()), callID, scriptWK.get());
+}
+
+void LayoutTestController::setTimelineProfilingEnabled(bool enabled)
+{
+    WKBundleInspectorSetPageProfilingEnabled(WKBundlePageGetInspector(InjectedBundle::shared().page()->page()), enabled);
 }
 
 typedef WTF::HashMap<unsigned, WKRetainPtr<WKBundleScriptWorldRef> > WorldMap;

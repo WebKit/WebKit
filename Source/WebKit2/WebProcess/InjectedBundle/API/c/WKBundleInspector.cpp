@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef __OBJC__
-#include <Cocoa/Cocoa.h>
-#endif
+#include "WKBundleInspector.h"
 
-#if defined(WIN32) || defined(_WIN32)
-// If we don't define these, they get defined in windef.h. 
-// We want to use std::min and std::max
-#define max max
-#define min min
-#endif
+#if ENABLE(INSPECTOR)
 
-#include <wtf/Platform.h>
-#include <WebKit2/WebKit2.h>
+#include "WKAPICast.h"
+#include "WKBundleAPICast.h"
+#include "WebInspector.h"
+
+using namespace WebCore;
+using namespace WebKit;
+
+WKTypeID WKBundleInspectorGetTypeID()
+{
+    return toAPI(WebInspector::APIType);
+}
+
+void WKBundleInspectorShow(WKBundleInspectorRef inspectorRef)
+{
+    return toImpl(inspectorRef)->show();
+}
+
+void WKBundleInspectorClose(WKBundleInspectorRef inspectorRef)
+{
+    return toImpl(inspectorRef)->close();
+}
+
+void WKBundleInspectorEvaluateScriptForTest(WKBundleInspectorRef inspectorRef, long callID, WKStringRef script)
+{
+    return toImpl(inspectorRef)->evaluateScriptForTest(callID, toImpl(script)->string());
+}
+
+void WKBundleInspectorSetPageProfilingEnabled(WKBundleInspectorRef inspectorRef, bool enabled)
+{
+    if (enabled)
+        toImpl(inspectorRef)->startPageProfiling();
+    else
+        toImpl(inspectorRef)->stopPageProfiling();
+}
+
+#endif // ENABLE(INSPECTOR)

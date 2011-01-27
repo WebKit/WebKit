@@ -126,6 +126,11 @@ public:
     void evaluateScriptInIsolatedWorld(JSContextRef, unsigned worldID, JSStringRef script);
     static unsigned worldIDForWorld(WKBundleScriptWorldRef);
 
+    void showWebInspector();
+    void closeWebInspector();
+    void evaluateInWebInspector(long callId, JSStringRef script);
+    void setTimelineProfilingEnabled(bool);
+
 private:
     static const double waitToDumpWatchdogTimerInterval;
 
