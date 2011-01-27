@@ -1,3 +1,65 @@
+2011-01-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        Add Qt specific expected results for new passing tests introduced in r76726.
+        Compared to Mac png files and Mac expected files.
+
+        * platform/qt/fast/multicol/vertical-lr/border-padding-pagination-expected.checksum: Added.
+        * platform/qt/fast/multicol/vertical-lr/border-padding-pagination-expected.png: Added.
+        * platform/qt/fast/multicol/vertical-lr/border-padding-pagination-expected.txt: Added.
+        * platform/qt/fast/multicol/vertical-lr/column-break-with-balancing-expected.checksum: Added.
+        * platform/qt/fast/multicol/vertical-lr/column-break-with-balancing-expected.png: Added.
+        * platform/qt/fast/multicol/vertical-lr/column-break-with-balancing-expected.txt: Added.
+        * platform/qt/fast/multicol/vertical-lr/column-rules-expected.checksum: Added.
+        * platform/qt/fast/multicol/vertical-lr/column-rules-expected.png: Added.
+        * platform/qt/fast/multicol/vertical-lr/column-rules-expected.txt: Added.
+        * platform/qt/fast/multicol/vertical-lr/float-avoidance-expected.checksum: Added.
+        * platform/qt/fast/multicol/vertical-lr/float-avoidance-expected.png: Added.
+        * platform/qt/fast/multicol/vertical-lr/float-avoidance-expected.txt: Added.
+        * platform/qt/fast/multicol/vertical-lr/float-multicol-expected.checksum: Added.
+        * platform/qt/fast/multicol/vertical-lr/float-multicol-expected.png: Added.
+        * platform/qt/fast/multicol/vertical-lr/float-multicol-expected.txt: Added.
+        * platform/qt/fast/multicol/vertical-lr/float-paginate-complex-expected.checksum: Added.
+        * platform/qt/fast/multicol/vertical-lr/float-paginate-complex-expected.png: Added.
+        * platform/qt/fast/multicol/vertical-lr/float-paginate-complex-expected.txt: Added.
+        * platform/qt/fast/multicol/vertical-lr/float-paginate-expected.checksum: Added.
+        * platform/qt/fast/multicol/vertical-lr/float-paginate-expected.png: Added.
+        * platform/qt/fast/multicol/vertical-lr/float-paginate-expected.txt: Added.
+        * platform/qt/fast/multicol/vertical-lr/nested-columns-expected.checksum: Added.
+        * platform/qt/fast/multicol/vertical-lr/nested-columns-expected.png: Added.
+        * platform/qt/fast/multicol/vertical-lr/nested-columns-expected.txt: Added.
+        * platform/qt/fast/multicol/vertical-lr/unsplittable-inline-block-expected.checksum: Added.
+        * platform/qt/fast/multicol/vertical-lr/unsplittable-inline-block-expected.png: Added.
+        * platform/qt/fast/multicol/vertical-lr/unsplittable-inline-block-expected.txt: Added.
+        * platform/qt/fast/multicol/vertical-rl/border-padding-pagination-expected.checksum: Added.
+        * platform/qt/fast/multicol/vertical-rl/border-padding-pagination-expected.png: Added.
+        * platform/qt/fast/multicol/vertical-rl/border-padding-pagination-expected.txt: Added.
+        * platform/qt/fast/multicol/vertical-rl/column-break-with-balancing-expected.checksum: Added.
+        * platform/qt/fast/multicol/vertical-rl/column-break-with-balancing-expected.png: Added.
+        * platform/qt/fast/multicol/vertical-rl/column-break-with-balancing-expected.txt: Added.
+        * platform/qt/fast/multicol/vertical-rl/column-rules-expected.checksum: Added.
+        * platform/qt/fast/multicol/vertical-rl/column-rules-expected.png: Added.
+        * platform/qt/fast/multicol/vertical-rl/column-rules-expected.txt: Added.
+        * platform/qt/fast/multicol/vertical-rl/float-avoidance-expected.checksum: Added.
+        * platform/qt/fast/multicol/vertical-rl/float-avoidance-expected.png: Added.
+        * platform/qt/fast/multicol/vertical-rl/float-avoidance-expected.txt: Added.
+        * platform/qt/fast/multicol/vertical-rl/float-multicol-expected.checksum: Added.
+        * platform/qt/fast/multicol/vertical-rl/float-multicol-expected.png: Added.
+        * platform/qt/fast/multicol/vertical-rl/float-multicol-expected.txt: Added.
+        * platform/qt/fast/multicol/vertical-rl/float-paginate-complex-expected.checksum: Added.
+        * platform/qt/fast/multicol/vertical-rl/float-paginate-complex-expected.png: Added.
+        * platform/qt/fast/multicol/vertical-rl/float-paginate-complex-expected.txt: Added.
+        * platform/qt/fast/multicol/vertical-rl/float-paginate-expected.checksum: Added.
+        * platform/qt/fast/multicol/vertical-rl/float-paginate-expected.png: Added.
+        * platform/qt/fast/multicol/vertical-rl/float-paginate-expected.txt: Added.
+        * platform/qt/fast/multicol/vertical-rl/nested-columns-expected.checksum: Added.
+        * platform/qt/fast/multicol/vertical-rl/nested-columns-expected.png: Added.
+        * platform/qt/fast/multicol/vertical-rl/nested-columns-expected.txt: Added.
+        * platform/qt/fast/multicol/vertical-rl/unsplittable-inline-block-expected.checksum: Added.
+        * platform/qt/fast/multicol/vertical-rl/unsplittable-inline-block-expected.png: Added.
+        * platform/qt/fast/multicol/vertical-rl/unsplittable-inline-block-expected.txt: Added.
+
 2011-01-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r76773.
