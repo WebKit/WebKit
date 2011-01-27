@@ -1391,7 +1391,10 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     } else {
         RetainPtr<WKPrintingView> printingView(AdoptNS, [[WKPrintingView alloc] initWithFrameProxy:toImpl(frameRef)]);
         // NSPrintOperation takes ownership of the view.
-        return [NSPrintOperation printOperationWithView:printingView.get()];
+        NSPrintOperation *printOperation = [NSPrintOperation printOperationWithView:printingView.get()];
+        [printOperation setCanSpawnSeparateThread:YES];
+        printingView->_printOperation = printOperation;
+        return printOperation;
     }
 }
 

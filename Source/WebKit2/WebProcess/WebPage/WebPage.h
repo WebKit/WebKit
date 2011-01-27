@@ -309,9 +309,10 @@ public:
 
     void beginPrinting(uint64_t frameID, const PrintInfo&);
     void endPrinting();
-    void computePagesForPrinting(uint64_t frameID, const PrintInfo&, Vector<WebCore::IntRect>& resultPageRects, double& resultTotalScaleFactorForPrinting);
+    void computePagesForPrinting(uint64_t frameID, const PrintInfo&, uint64_t callbackID);
 #if PLATFORM(MAC)
-    void drawRectToPDF(uint64_t frameID, const WebCore::IntRect&, Vector<uint8_t>& pdfData);
+    void drawRectToPDF(uint64_t frameID, const WebCore::IntRect&, uint64_t callbackID);
+    void drawPagesToPDF(uint64_t frameID, uint32_t first, uint32_t count, uint64_t callbackID);
 #endif
 
     bool mainFrameHasCustomRepresentation() const;

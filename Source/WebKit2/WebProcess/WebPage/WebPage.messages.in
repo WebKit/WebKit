@@ -139,11 +139,12 @@ messages -> WebPage {
     SetWindowResizerSize(WebCore::IntSize intersectsView)
 
     # Printing.
-    BeginPrinting(uint64_t frameID, WebKit::PrintInfo printInfo);
+    BeginPrinting(uint64_t frameID, WebKit::PrintInfo printInfo)
     EndPrinting();
-    ComputePagesForPrinting(uint64_t frameID, WebKit::PrintInfo printInfo) -> (Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting)
+    ComputePagesForPrinting(uint64_t frameID, WebKit::PrintInfo printInfo, uint64_t callbackID)
 #if PLATFORM(MAC)
-    DrawRectToPDF(uint64_t frameID, WebCore::IntRect rect) -> (Vector<uint8_t> pdfData)
+    DrawRectToPDF(uint64_t frameID, WebCore::IntRect rect, uint64_t callbackID)
+    DrawPagesToPDF(uint64_t frameID, uint32_t first, uint32_t count, uint64_t callbackID)
 #endif
 
     // FIXME: This a dummy message, to avoid breaking the build for platforms that don't require

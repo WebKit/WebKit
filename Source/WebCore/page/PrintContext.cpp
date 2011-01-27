@@ -165,8 +165,7 @@ void PrintContext::spoolPage(GraphicsContext& ctx, int pageNumber, float width)
 void PrintContext::spoolRect(GraphicsContext& ctx, const IntRect& rect)
 {
     ctx.save();
-    ctx.scale(FloatSize(1, -1));
-    ctx.translate(0, -m_frame->view()->contentsHeight());
+    ctx.translate(-rect.x(), -rect.y());
     ctx.clip(rect);
     m_frame->view()->paintContents(&ctx, rect);
     ctx.restore();

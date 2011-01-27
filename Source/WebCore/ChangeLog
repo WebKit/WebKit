@@ -1,3 +1,15 @@
+2011-01-26  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53197
+        <rdar://problem/8895682> Make WebKit2 printing asynchronous
+
+        * WebCore.exp.in: Export more PrintContext methods that we didn't use on Mac before.
+
+        * page/PrintContext.cpp: (WebCore::PrintContext::spoolRect): Changed to make the same
+        transformation as spoolPages does for consistency.
+
 2011-01-27  David Grogan  <dgrogan@google.com>
 
         Reviewed by Jeremy Orlow.

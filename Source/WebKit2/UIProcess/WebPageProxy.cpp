@@ -275,8 +275,10 @@ void WebPageProxy::close()
 
     m_toolTip = String();
 
+    invalidateCallbackMap(m_voidCallbacks);
     invalidateCallbackMap(m_dataCallbacks);
     invalidateCallbackMap(m_stringCallbacks);
+    invalidateCallbackMap(m_computedPagesCallbacks);
 
     Vector<WebEditCommandProxy*> editCommandVector;
     copyToVector(m_editCommandSet, editCommandVector);
@@ -2208,6 +2210,17 @@ void WebPageProxy::stringCallback(const String& resultString, uint64_t callbackI
     callback->performCallbackWithReturnValue(resultString.impl());
 }
 
+void WebPageProxy::computedPagesCallback(const Vector<WebCore::IntRect>& pageRects, double totalScaleFactorForPrinting, uint64_t callbackID)
+{
+    RefPtr<ComputedPagesCallback> callback = m_computedPagesCallbacks.take(callbackID);
+    if (!callback) {
+        // FIXME: Log error or assert.
+        return;
+    }
+
+    callback->performCallbackWithReturnValue(pageRects, totalScaleFactorForPrinting);
+}
+
 #if PLATFORM(MAC)
 void WebPageProxy::sendAccessibilityPresenterToken(const CoreIPC::DataReference& token)
 {
@@ -2298,6 +2311,7 @@ void WebPageProxy::processDidCrash()
     invalidateCallbackMap(m_voidCallbacks);
     invalidateCallbackMap(m_dataCallbacks);
     invalidateCallbackMap(m_stringCallbacks);
+    invalidateCallbackMap(m_computedPagesCallbacks);
 
     Vector<WebEditCommandProxy*> editCommandVector;
     copyToVector(m_editCommandSet, editCommandVector);
@@ -2464,17 +2478,27 @@ void WebPageProxy::endPrinting()
     process()->send(Messages::WebPage::EndPrinting(), m_pageID);
 }
 
-void WebPageProxy::computePagesForPrinting(WebFrameProxy* frame, const PrintInfo& printInfo, Vector<WebCore::IntRect>& resultPageRects, double& resultTotalScaleFactorForPrinting)
+void WebPageProxy::computePagesForPrinting(WebFrameProxy* frame, const PrintInfo& printInfo, PassRefPtr<ComputedPagesCallback> callback)
 {
-    // Layout for printing can take a long time, but we need to have the answer.
-    process()->sendSync(Messages::WebPage::ComputePagesForPrinting(frame->frameID(), printInfo), Messages::WebPage::ComputePagesForPrinting::Reply(resultPageRects, resultTotalScaleFactorForPrinting), m_pageID);
+    uint64_t callbackID = callback->callbackID();
+    m_computedPagesCallbacks.set(callbackID, callback.get());
+    m_isInPrintingMode = true;
+    process()->send(Messages::WebPage::ComputePagesForPrinting(frame->frameID(), printInfo, callbackID), m_pageID);
 }
 
 #if PLATFORM(MAC)
-void WebPageProxy::drawRectToPDF(WebFrameProxy* frame, const IntRect& rect, Vector<uint8_t>& pdfData)
+void WebPageProxy::drawRectToPDF(WebFrameProxy* frame, const IntRect& rect, PassRefPtr<DataCallback> callback)
 {
-    // Printing can take a long time, but we need to have the answer.
-    process()->sendSync(Messages::WebPage::DrawRectToPDF(frame->frameID(), rect), Messages::WebPage::DrawRectToPDF::Reply(pdfData), m_pageID);
+    uint64_t callbackID = callback->callbackID();
+    m_dataCallbacks.set(callbackID, callback.get());
+    process()->send(Messages::WebPage::DrawRectToPDF(frame->frameID(), rect, callbackID), m_pageID);
+}
+
+void WebPageProxy::drawPagesToPDF(WebFrameProxy* frame, uint32_t first, uint32_t count, PassRefPtr<DataCallback> callback)
+{
+    uint64_t callbackID = callback->callbackID();
+    m_dataCallbacks.set(callbackID, callback.get());
+    process()->send(Messages::WebPage::DrawPagesToPDF(frame->frameID(), first, count, callbackID), m_pageID);
 }
 #endif
 

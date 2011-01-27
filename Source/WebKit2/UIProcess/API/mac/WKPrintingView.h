@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebCore/IntRect.h>
-#import <wtf/RefPtr.h>
+#import <WebCore/IntRectHash.h>
+#import <wtf/RetainPtr.h>
 
 @class WKPrintingViewData;
 
@@ -34,9 +34,25 @@ namespace WebKit {
 
 @interface WKPrintingView : NSView {
 @public
+    NSPrintOperation *_printOperation; // WKPrintingView is owned by the operation.
+
     RefPtr<WebKit::WebFrameProxy> _webFrame;
-    Vector<WebCore::IntRect> _webPrintingPageRects;
-    double _webTotalScaleFactorForPrinting;
+    Vector<WebCore::IntRect> _printingPageRects;
+    double _totalScaleFactorForPrinting;
+    HashMap<WebCore::IntRect, Vector<uint8_t> > _pagePreviews;
+
+    Vector<uint8_t> _printedPagesData;
+    RetainPtr<CGPDFDocumentRef> _printedPagesPDFDocument;
+
+    uint64_t _expectedComputedPagesCallback;
+    HashMap<uint64_t, WebCore::IntRect> _expectedPreviewCallbacks;
+    uint64_t _latestExpectedPreviewCallback;
+    uint64_t _expectedPrintCallback;
+    BOOL _isForcingPreviewUpdate;
+
+    BOOL _isPrintingFromSecondaryThread;
+    Mutex _printingCallbackMutex;
+    ThreadCondition _printingCallbackCondition;
 }
 
 - (id)initWithFrameProxy:(WebKit::WebFrameProxy*)frame;

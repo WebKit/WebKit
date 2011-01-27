@@ -1,3 +1,93 @@
+2011-01-26  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53197
+        <rdar://problem/8895682> Make WebKit2 printing asynchronous
+
+        <rdar://problem/8899988> REGRESSION(WebKit2): Attempting to print WHATWG HTML spec shows
+        1-page blank preview
+
+        <rdar://problem/8900078> WebKit2 printing has a separate message exchange per page when
+        printing instead of printing all at once
+
+        * UIProcess/API/mac/WKPrintingView.h: Store a lot more cached information.
+
+        * UIProcess/API/mac/WKPrintingView.mm:
+        (-[WKPrintingView _adjustPrintingMarginsForHeaderAndFooter]): Use PrintOperation stored in
+        class. We generally want that now, because current operation will not be set up on other threads.
+        (-[WKPrintingView _isPrintingPreview]): Added. Preview is different, because it can draw
+        a placeholder - but actual printing need to wait until UI process has data.
+        (-[WKPrintingView _updatePreview]): Force AppKit to update print preview when we have real
+        data to replace placeholder with.
+        (-[WKPrintingView _hasPageRects]): Return if page rects have already been computed.
+        (-[WKPrintingView _expectedPreviewCallbackForRect:]): Find an existing request for this rect,
+        if any.
+        (pageDidDrawToPDF): Update preview - or if actually printing, release control to printing thread.
+        (-[WKPrintingView _preparePDFDataForPrintingOnSecondaryThread]): Ask for a PDF document with
+        pages the user asked to print.
+        (pageDidComputePageRects): When web process returns page geometry data, we update preview to display
+        a page count (which indirectly triggers a request for a preview). When actually printing,
+        request a PDF right away, we'll need it later.
+        (-[WKPrintingView _askPageToComputePageRects]): Ask web process for page geometry.
+        (prepareDataForPrintingOnSecondaryThread): This function starts preparing all data necessary
+        for actual printing on main thread.
+        (-[WKPrintingView knowsPageRange:]): Changed to be async for preview, and to call main
+        thread for actual printing.
+        (-[WKPrintingView _pageForRect:]): Find page number for a given range, assuming that AppKit
+        always asks for full pages.
+        (-[WKPrintingView _drawPDFDocument:page:atPoint:]): A helper function to draw a PDF document.
+        (-[WKPrintingView _drawPreview:]): Draw the whole page for preview.
+        (-[WKPrintingView _recursiveDisplayRectIfNeededIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:topView:]):
+        Draw the whole page for actual printing.
+        (-[WKPrintingView _drawPageBorderWithSizeOnMainThread:]): Call drawPageBorderWithSize: with
+        correct graphics context and print operation.
+        (-[WKPrintingView drawPageBorderWithSize:]): Delegate work to main thread when called from a
+        secondary one.
+        (-[WKPrintingView _provideTotalScaleFactorForPrintOperation:]): Added an assertion that
+        our stored NSPrintOperation isn't out of sync with reality.
+        (-[WKPrintingView rectForPage:]): Handle the case where we don't have the data yet, drawing
+        a placeholder.
+        (-[WKPrintingView endDocument]): When page setup changes, we must reset all state.
+
+        * UIProcess/API/mac/WKView.mm: (-[WKView printOperationWithPrintInfo:forFrame:]): Tell
+        NSPrintingView which operation it's serving, so that it knows it even when current operation
+        isn't set.
+
+        * UIProcess/GenericCallback.h:
+        (WebKit::ComputedPagesCallback::create):
+        (WebKit::ComputedPagesCallback::~ComputedPagesCallback):
+        (WebKit::ComputedPagesCallback::performCallbackWithReturnValue):
+        (WebKit::ComputedPagesCallback::invalidate):
+        (WebKit::ComputedPagesCallback::callbackID):
+        (WebKit::ComputedPagesCallback::generateCallbackID):
+        (WebKit::ComputedPagesCallback::ComputedPagesCallback):
+        Added ComputedPagesCallback, which returns a vector of IntRects and a double. Hopefully,
+        it will become a specialization of GenericCallback one day.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close): Added m_voidCallbacks - it looks like they were omitted
+        by accident.
+        (WebKit::WebPageProxy::computedPagesCallback): Added.
+        (WebKit::WebPageProxy::processDidCrash): Added m_computedPagesCallbacks.
+        (WebKit::WebPageProxy::computePagesForPrinting): Async now!
+        (WebKit::WebPageProxy::drawRectToPDF): Ditto.
+        (WebKit::WebPageProxy::drawPagesToPDF): Added.
+        * UIProcess/WebPageProxy.h:
+
+        * UIProcess/WebPageProxy.messages.in: Added ComputedPagesCallback.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::beginPriting): Compute page rects right away - we'll need them in
+        drawPagesToPDF(), which doesn't have a PrintInfo.
+        (WebKit::WebPage::computePagesForPrinting): Send async response.
+        (WebKit::WebPage::drawRectToPDF): This function used to draw into original
+        location at frame coordinates, and now it draws at (0, 0).
+        (WebKit::WebPage::drawPagesToPDF): Added - make a multi-page PDF.
+        * WebProcess/WebPage/WebPage.h:
+
+        * WebProcess/WebPage/WebPage.messages.in: Added DrawPagesToPDF.
+
 2011-01-27  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed GTK build fix after r76797.

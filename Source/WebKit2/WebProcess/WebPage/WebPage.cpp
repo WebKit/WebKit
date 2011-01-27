@@ -1784,6 +1784,9 @@ void WebPage::beginPrinting(uint64_t frameID, const PrintInfo& printInfo)
         m_printContext = adoptPtr(new PrintContext(coreFrame));
 
     m_printContext->begin(printInfo.availablePaperWidth, printInfo.availablePaperHeight);
+
+    float fullPageHeight;
+    m_printContext->computePageRects(FloatRect(0, 0, printInfo.availablePaperWidth, printInfo.availablePaperHeight), 0, 0, printInfo.pageSetupScaleFactor, fullPageHeight, true);
 }
 
 void WebPage::endPrinting()
@@ -1791,57 +1794,90 @@ void WebPage::endPrinting()
     m_printContext = nullptr;
 }
 
-void WebPage::computePagesForPrinting(uint64_t frameID, const PrintInfo& printInfo, Vector<IntRect>& resultPageRects, double& resultTotalScaleFactorForPrinting)
+void WebPage::computePagesForPrinting(uint64_t frameID, const PrintInfo& printInfo, uint64_t callbackID)
 {
+    Vector<IntRect> resultPageRects;
+    double resultTotalScaleFactorForPrinting = 1;
+
     beginPrinting(frameID, printInfo);
 
-    WebFrame* frame = WebProcess::shared().webFrame(frameID);
-    if (!frame)
-        return;
-
-    float fullPageHeight;
-    m_printContext->computePageRects(FloatRect(0, 0, printInfo.availablePaperWidth, printInfo.availablePaperHeight), 0, 0, printInfo.pageSetupScaleFactor, fullPageHeight, true);
-
-    resultTotalScaleFactorForPrinting = m_printContext->computeAutomaticScaleFactor(printInfo.availablePaperWidth) * printInfo.pageSetupScaleFactor;
-    resultPageRects = m_printContext->pageRects();
+    if (m_printContext) {
+        resultPageRects = m_printContext->pageRects();
+        resultTotalScaleFactorForPrinting = m_printContext->computeAutomaticScaleFactor(printInfo.availablePaperWidth) * printInfo.pageSetupScaleFactor;
+    }
 
     // If we're asked to print, we should actually print at least a blank page.
     if (resultPageRects.isEmpty())
         resultPageRects.append(IntRect(0, 0, 1, 1));
+
+    send(Messages::WebPageProxy::ComputedPagesCallback(resultPageRects, resultTotalScaleFactorForPrinting, callbackID));
 }
 
 #if PLATFORM(MAC)
 // FIXME: Find a better place for Mac specific code.
-void WebPage::drawRectToPDF(uint64_t frameID, const WebCore::IntRect& rect, Vector<uint8_t>& pdfData)
+void WebPage::drawRectToPDF(uint64_t frameID, const WebCore::IntRect& rect, uint64_t callbackID)
 {
     WebFrame* frame = WebProcess::shared().webFrame(frameID);
-    if (!frame)
-        return;
-
-    Frame* coreFrame = frame->coreFrame();
-    if (!coreFrame)
-        return;
-
-    ASSERT(coreFrame->document()->printing());
+    Frame* coreFrame = frame ? frame->coreFrame() : 0;
 
     RetainPtr<CFMutableDataRef> pdfPageData(AdoptCF, CFDataCreateMutable(0, 0));
 
-    // FIXME: Use CGDataConsumerCreate with callbacks to avoid copying the data.
-    RetainPtr<CGDataConsumerRef> pdfDataConsumer(AdoptCF, CGDataConsumerCreateWithCFData(pdfPageData.get()));
+    if (coreFrame) {
+        ASSERT(coreFrame->document()->printing());
 
-    CGRect mediaBox = CGRectMake(0, 0, frame->size().width(), frame->size().height());
-    RetainPtr<CGContextRef> context(AdoptCF, CGPDFContextCreate(pdfDataConsumer.get(), &mediaBox, 0));
-    RetainPtr<CFDictionaryRef> pageInfo(AdoptCF, CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-    CGPDFContextBeginPage(context.get(), pageInfo.get());
+        // FIXME: Use CGDataConsumerCreate with callbacks to avoid copying the data.
+        RetainPtr<CGDataConsumerRef> pdfDataConsumer(AdoptCF, CGDataConsumerCreateWithCFData(pdfPageData.get()));
 
-    GraphicsContext ctx(context.get());
-    m_printContext->spoolRect(ctx, rect);
+        CGRect mediaBox = CGRectMake(0, 0, rect.width(), rect.height());
+        RetainPtr<CGContextRef> context(AdoptCF, CGPDFContextCreate(pdfDataConsumer.get(), &mediaBox, 0));
+        RetainPtr<CFDictionaryRef> pageInfo(AdoptCF, CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+        CGPDFContextBeginPage(context.get(), pageInfo.get());
 
-    CGPDFContextEndPage(context.get());
-    CGPDFContextClose(context.get());
+        GraphicsContext ctx(context.get());
+        ctx.scale(FloatSize(1, -1));
+        ctx.translate(0, -rect.height());
+        m_printContext->spoolRect(ctx, rect);
 
-    pdfData.resize(CFDataGetLength(pdfPageData.get()));
-    CFDataGetBytes(pdfPageData.get(), CFRangeMake(0, pdfData.size()), pdfData.data());
+        CGPDFContextEndPage(context.get());
+        CGPDFContextClose(context.get());
+    }
+
+    send(Messages::WebPageProxy::DataCallback(CoreIPC::DataReference(CFDataGetBytePtr(pdfPageData.get()), CFDataGetLength(pdfPageData.get())), callbackID));
+}
+
+void WebPage::drawPagesToPDF(uint64_t frameID, uint32_t first, uint32_t count, uint64_t callbackID)
+{
+    WebFrame* frame = WebProcess::shared().webFrame(frameID);
+    Frame* coreFrame = frame ? frame->coreFrame() : 0;
+
+    RetainPtr<CFMutableDataRef> pdfPageData(AdoptCF, CFDataCreateMutable(0, 0));
+
+    if (coreFrame) {
+        ASSERT(coreFrame->document()->printing());
+
+        // FIXME: Use CGDataConsumerCreate with callbacks to avoid copying the data.
+        RetainPtr<CGDataConsumerRef> pdfDataConsumer(AdoptCF, CGDataConsumerCreateWithCFData(pdfPageData.get()));
+
+        CGRect mediaBox = m_printContext->pageRect(0);
+        RetainPtr<CGContextRef> context(AdoptCF, CGPDFContextCreate(pdfDataConsumer.get(), &mediaBox, 0));
+        for (uint32_t page = first; page < first + count; ++page) {
+            if (page > m_printContext->pageCount())
+                break;
+
+            RetainPtr<CFDictionaryRef> pageInfo(AdoptCF, CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+            CGPDFContextBeginPage(context.get(), pageInfo.get());
+
+            GraphicsContext ctx(context.get());
+            ctx.scale(FloatSize(1, -1));
+            ctx.translate(0, -m_printContext->pageRect(page).height());
+            m_printContext->spoolPage(ctx, page, m_printContext->pageRect(page).width());
+
+            CGPDFContextEndPage(context.get());
+        }
+        CGPDFContextClose(context.get());
+    }
+
+    send(Messages::WebPageProxy::DataCallback(CoreIPC::DataReference(CFDataGetBytePtr(pdfPageData.get()), CFDataGetLength(pdfPageData.get())), callbackID));
 }
 #endif
 
