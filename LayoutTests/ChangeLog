@@ -1,3 +1,12 @@
+2011-01-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Unreviewed.
+
+        Fix mistake in my previous commit; I accidentally copied the old mac results instead
+        of the new mac results for this test.
+
+        * platform/mac-wk2/fast/blockflow/Kusa-Makura-background-canvas-expected.txt:
+
 2011-01-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
