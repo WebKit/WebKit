@@ -50,8 +50,8 @@ bool RenderBoxModelObject::s_layerWasSelfPainting = false;
 static const double cInterpolationCutoff = 800. * 800.;
 static const double cLowQualityTimeThreshold = 0.500; // 500 ms
 
-typedef pair<RenderBoxModelObject*, const void*> LastPaintSizeMapKey;
-typedef HashMap<LastPaintSizeMapKey, IntSize> LastPaintSizeMap;
+typedef HashMap<const void*, IntSize> LayerSizeMap;
+typedef HashMap<RenderBoxModelObject*, LayerSizeMap> ObjectLayerSizeMap;
 
 // The HashMap for storing continuation pointers.
 // An inline can be split with blocks occuring in between the inline content.
@@ -68,14 +68,16 @@ class ImageQualityController {
 public:
     ImageQualityController();
     bool shouldPaintAtLowQuality(GraphicsContext*, RenderBoxModelObject*, Image*, const void* layer, const IntSize&);
-    void keyDestroyed(LastPaintSizeMapKey key);
+    void removeLayer(RenderBoxModelObject*, LayerSizeMap* innerMap, const void* layer);
+    void set(RenderBoxModelObject*, LayerSizeMap* innerMap, const void* layer, const IntSize&);
     void objectDestroyed(RenderBoxModelObject*);
+    bool isEmpty() { return m_objectLayerSizeMap.isEmpty(); }
 
 private:
     void highQualityRepaintTimerFired(Timer<ImageQualityController>*);
     void restartTimer();
 
-    LastPaintSizeMap m_lastPaintSizeMap;
+    ObjectLayerSizeMap m_objectLayerSizeMap;
     Timer<ImageQualityController> m_timer;
     bool m_animatedResizeIsActive;
 };
@@ -86,31 +88,41 @@ ImageQualityController::ImageQualityController()
 {
 }
 
-void ImageQualityController::keyDestroyed(LastPaintSizeMapKey key)
+void ImageQualityController::removeLayer(RenderBoxModelObject* object, LayerSizeMap* innerMap, const void* layer)
 {
-    m_lastPaintSizeMap.remove(key);
-    if (m_lastPaintSizeMap.isEmpty()) {
-        m_animatedResizeIsActive = false;
-        m_timer.stop();
+    if (innerMap) {
+        innerMap->remove(layer);
+        if (innerMap->isEmpty())
+            objectDestroyed(object);
+    }
+}
+    
+void ImageQualityController::set(RenderBoxModelObject* object, LayerSizeMap* innerMap, const void* layer, const IntSize& size)
+{
+    if (innerMap)
+        innerMap->set(layer, size);
+    else {
+        LayerSizeMap newInnerMap;
+        newInnerMap.set(layer, size);
+        m_objectLayerSizeMap.set(object, newInnerMap);
     }
 }
     
 void ImageQualityController::objectDestroyed(RenderBoxModelObject* object)
 {
-    Vector<LastPaintSizeMapKey> keysToDie;
-    for (LastPaintSizeMap::iterator it = m_lastPaintSizeMap.begin(); it != m_lastPaintSizeMap.end(); ++it)
-        if (it->first.first == object)
-            keysToDie.append(it->first);
-    for (Vector<LastPaintSizeMapKey>::iterator it = keysToDie.begin(); it != keysToDie.end(); ++it)
-        keyDestroyed(*it);
+    m_objectLayerSizeMap.remove(object);
+    if (m_objectLayerSizeMap.isEmpty()) {
+        m_animatedResizeIsActive = false;
+        m_timer.stop();
+    }
 }
-    
+
 void ImageQualityController::highQualityRepaintTimerFired(Timer<ImageQualityController>*)
 {
     if (m_animatedResizeIsActive) {
         m_animatedResizeIsActive = false;
-        for (LastPaintSizeMap::iterator it = m_lastPaintSizeMap.begin(); it != m_lastPaintSizeMap.end(); ++it)
-            it->first.first->repaint();
+        for (ObjectLayerSizeMap::iterator it = m_objectLayerSizeMap.begin(); it != m_objectLayerSizeMap.end(); ++it)
+            it->first->repaint();
     }
 }
 
@@ -130,17 +142,24 @@ bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext* context, R
     // is actually being scaled.
     IntSize imageSize(image->width(), image->height());
 
-    // Look ourselves up in the hashtable.
-    LastPaintSizeMapKey key(object, layer);
-    LastPaintSizeMap::iterator i = m_lastPaintSizeMap.find(key);
+    // Look ourselves up in the hashtables.
+    ObjectLayerSizeMap::iterator i = m_objectLayerSizeMap.find(object);
+    LayerSizeMap* innerMap = i != m_objectLayerSizeMap.end() ? &i->second : 0;
+    IntSize oldSize;
+    bool isFirstResize = true;
+    if (innerMap) {
+        LayerSizeMap::iterator j = innerMap->find(layer);
+        if (j != innerMap->end()) {
+            isFirstResize = false;
+            oldSize = j->second;
+        }
+    }
 
     const AffineTransform& currentTransform = context->getCTM();
     bool contextIsScaled = !currentTransform.isIdentityOrTranslationOrFlipped();
     if (!contextIsScaled && imageSize == size) {
         // There is no scale in effect. If we had a scale in effect before, we can just remove this object from the list.
-        if (i != m_lastPaintSizeMap.end())
-            m_lastPaintSizeMap.remove(key);
-
+        removeLayer(object, innerMap, layer);
         return false;
     }
 
@@ -150,39 +169,44 @@ bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext* context, R
         if (totalPixels > cInterpolationCutoff)
             return true;
     }
+
     // If an animated resize is active, paint in low quality and kick the timer ahead.
     if (m_animatedResizeIsActive) {
-        m_lastPaintSizeMap.set(key, size);
+        set(object, innerMap, layer, size);
         restartTimer();
         return true;
     }
     // If this is the first time resizing this image, or its size is the
     // same as the last resize, draw at high res, but record the paint
     // size and set the timer.
-    if (i == m_lastPaintSizeMap.end() || size == i->second) {
+    if (isFirstResize || oldSize == size) {
         restartTimer();
-        m_lastPaintSizeMap.set(key, size);
+        set(object, innerMap, layer, size);
         return false;
     }
     // If the timer is no longer active, draw at high quality and don't
     // set the timer.
     if (!m_timer.isActive()) {
-        keyDestroyed(key);
+        removeLayer(object, innerMap, layer);
         return false;
     }
     // This object has been resized to two different sizes while the timer
     // is active, so draw at low quality, set the flag for animated resizes and
     // the object to the list for high quality redraw.
-    m_lastPaintSizeMap.set(key, size);
+    set(object, innerMap, layer, size);
     m_animatedResizeIsActive = true;
     restartTimer();
     return true;
 }
 
+static ImageQualityController* gImageQualityController = 0;
+
 static ImageQualityController* imageQualityController()
 {
-    static ImageQualityController* controller = new ImageQualityController;
-    return controller;
+    if (!gImageQualityController)
+        gImageQualityController = new ImageQualityController;
+
+    return gImageQualityController;
 }
 
 void RenderBoxModelObject::setSelectionState(SelectionState s)
@@ -223,7 +247,13 @@ RenderBoxModelObject::~RenderBoxModelObject()
     // Our layer should have been destroyed and cleared by now
     ASSERT(!hasLayer());
     ASSERT(!m_layer);
-    imageQualityController()->objectDestroyed(this);
+    if (gImageQualityController) {
+        gImageQualityController->objectDestroyed(this);
+        if (gImageQualityController->isEmpty()) {
+            delete gImageQualityController;
+            gImageQualityController = 0;
+        }
+    }
 }
 
 void RenderBoxModelObject::destroyLayer()
