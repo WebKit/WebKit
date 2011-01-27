@@ -1,7 +1,16 @@
+2011-01-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed Chromium rebaseline and text expectation update.
+
+        * platform/chromium-linux/fast/repaint/select-option-background-color-expected.checksum: Added.
+        * platform/chromium-linux/fast/repaint/select-option-background-color-expected.png: Added.
+        * platform/chromium-linux/fast/repaint/select-option-background-color-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-01-27  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed rebaseline of fast/inline/continuation-outlines-with-layers.html
-        afte r76726.
+        after r76726.
 
         * platform/mac/fast/inline/continuation-outlines-with-layers-expected.txt:
         * platform/chromium-win/fast/inline/continuation-outlines-with-layers-expected.txt:
