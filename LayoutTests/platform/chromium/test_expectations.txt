@@ -3106,3 +3106,6 @@ BUGRNIWA SLOW WIN : editing/execCommand/4786404-1.html = PASS
 // Started failing at http://trac.webkit.org/changeset/76726
 BUGCR71009 : fast/inline/continuation-outlines-with-layers.html = TEXT
 BUGCR71009 WIN LINUX : fast/text/text-letter-spacing.html = TEXT
+
+// Added by and started crashing at http://trac.webkit.org/changeset/76743
+BUGCR71013 LINUX : fast/text/justify-ideograph-vertical.html = CRASH

@@ -2,6 +2,14 @@
 
         Unreviewed Chromium test expectation change.
 
+        fast/text/justify-ideograph-vertical.html crashes on LINUX.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-01-26  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed Chromium test expectation change.
+
         Mark the tests started failing at http://trac.webkit.org/changeset/76726 as such.
 
         * platform/chromium/test_expectations.txt:
