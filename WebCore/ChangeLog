@@ -1,3 +1,15 @@
+2011-01-27  Mark Rowe  <mrowe@apple.com>
+
+        Merge r74887.
+
+    2011-01-02  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Simon Fraser.
+
+        <rdar://problem/8812159> Update copyright strings
+
+        * Info.plist:
+
 2010-10-14  Mark Rowe  <mrowe@apple.com>
 
         Merge r62683.
