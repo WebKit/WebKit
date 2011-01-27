@@ -3110,7 +3110,6 @@ BUGCR70942 LINUX : editing/execCommand/break-out-of-empty-list-item.html = PASS 
 BUGRNIWA SLOW WIN : editing/execCommand/4786404-1.html = PASS
 
 // Started failing at http://trac.webkit.org/changeset/76726
-BUGCR71009 WIN LINUX : fast/text/text-letter-spacing.html = TEXT
 BUGCR71009 MAC : fast/multicol/vertical-rl/float-paginate-complex.html = TEXT
 
 // Added by and started crashing at http://trac.webkit.org/changeset/76743

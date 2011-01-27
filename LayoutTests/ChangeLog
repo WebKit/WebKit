@@ -1,3 +1,11 @@
+2011-01-27  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium rebaseline for fast/text/text-letter-spacing.html
+        with changes matching the mac ones done by r76739.
+
+        * platform/chromium-win/fast/text/text-letter-spacing-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-01-25  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Darin Adler.
