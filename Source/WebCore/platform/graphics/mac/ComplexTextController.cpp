@@ -84,7 +84,7 @@ ComplexTextController::ComplexTextController(const Font* font, const TextRun& ru
         m_expansionPerOpportunity = 0;
     else {
         bool isAfterExpansion = true;
-        unsigned expansionOpportunityCount = Font::expansionOpportunityCount(m_run.characters(), m_end, isAfterExpansion);
+        unsigned expansionOpportunityCount = Font::expansionOpportunityCount(m_run.characters(), m_end, m_run.ltr() ? LTR : RTL, isAfterExpansion);
         if (isAfterExpansion && !m_run.allowsTrailingExpansion())
             expansionOpportunityCount--;
 

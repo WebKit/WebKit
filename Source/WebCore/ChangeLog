@@ -1,3 +1,30 @@
+2011-01-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        REGRESSION (r76743): Uneven spacing in right-to-left justified text
+        https://bugs.webkit.org/show_bug.cgi?id=53225
+
+        Fixes failure in fast/text/atsui-spacing-features.html
+
+        There was an inconsistency between rendering code and font code in the interpretation of
+        'after expansion' and 'trailing expansion'. Changed all code to interpret these in terms of
+        visual order rather than logical.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::expansionOpportunityCount): Added a text direction parameter and changed to
+        iterate in visual order accordingly.
+        * platform/graphics/Font.h:
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::WidthIterator): Pass the run direction to expansionOpportunityCount().
+        (WebCore::WidthIterator::advance): For right-to-left runs, evaluate the trailing expansion
+        condition with respect to the first character, which is the trailing character in visual order.
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::ComplexTextController): Pass the run direction to
+        expansionOpportunityCount().
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine): Ditto.
+
 2011-01-26  Adam Roben  <aroben@apple.com>
 
         Don't create the Direct3D device before it's first needed

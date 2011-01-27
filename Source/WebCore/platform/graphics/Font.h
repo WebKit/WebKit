@@ -29,6 +29,7 @@
 #include "FontDescription.h"
 #include "FontFallbackList.h"
 #include "SimpleFontData.h"
+#include "TextDirection.h"
 #include "TypesettingFeatures.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -143,7 +144,7 @@ public:
     static bool isCJKIdeograph(UChar32);
     static bool isCJKIdeographOrSymbol(UChar32);
 
-    static unsigned expansionOpportunityCount(const UChar*, size_t length, bool& isAfterExpansion);
+    static unsigned expansionOpportunityCount(const UChar*, size_t length, TextDirection, bool& isAfterExpansion);
 
 #if PLATFORM(QT)
     QFont font() const;

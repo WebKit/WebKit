@@ -64,7 +64,7 @@ WidthIterator::WidthIterator(const Font* font, const TextRun& run, HashSet<const
         m_expansionPerOpportunity = 0;
     else {
         bool isAfterExpansion = true;
-        unsigned expansionOpportunityCount = Font::expansionOpportunityCount(m_run.characters(), m_end, isAfterExpansion);
+        unsigned expansionOpportunityCount = Font::expansionOpportunityCount(m_run.characters(), m_end, m_run.ltr() ? LTR : RTL, isAfterExpansion);
         if (isAfterExpansion && !m_run.allowsTrailingExpansion())
             expansionOpportunityCount--;
 
@@ -177,7 +177,8 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
             bool treatAsSpace = Font::treatAsSpace(c);
             if (treatAsSpace || (expandAroundIdeographs && Font::isCJKIdeograph(c))) {
                 // Distribute the run's total expansion evenly over all expansion opportunities in the run.
-                if (m_expansion && (m_run.allowsTrailingExpansion() || currentCharacter + clusterLength < static_cast<size_t>(m_run.length()))) {
+                if (m_expansion && (m_run.allowsTrailingExpansion() || (m_run.ltr() && currentCharacter + clusterLength < static_cast<size_t>(m_run.length()))
+                    || (m_run.rtl() && currentCharacter))) {
                     float previousExpansion = m_expansion;
                     if (!treatAsSpace && !m_isAfterExpansion) {
                         // Take the expansion opportunity before this ideograph.
