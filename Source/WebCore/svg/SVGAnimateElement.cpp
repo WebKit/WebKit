@@ -100,6 +100,9 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
 {
     ASSERT(percentage >= 0.f && percentage <= 1.f);
     ASSERT(resultElement);
+    bool isInFirstHalfOfAnimation = percentage < 0.5;
+    AnimationMode animationMode = this->animationMode();
+    
     if (hasTagName(SVGNames::setTag))
         percentage = 1.f;
     if (!resultElement->hasTagName(SVGNames::animateTag) && !resultElement->hasTagName(SVGNames::animateColorTag) 
@@ -111,32 +114,40 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
         return;
     if (m_propertyType == NumberProperty) {
         // To animation uses contributions from the lower priority animations as the base value.
-        if (animationMode() == ToAnimation)
+        if (animationMode == ToAnimation)
             m_fromNumber = results->m_animatedNumber;
-    
-        double number = (m_toNumber - m_fromNumber) * percentage + m_fromNumber;
+        
+        double number;
+        if (calcMode() == CalcModeDiscrete)
+            number = isInFirstHalfOfAnimation ? m_fromNumber : m_toNumber;
+        else
+            number = (m_toNumber - m_fromNumber) * percentage + m_fromNumber;
 
         // FIXME: This is not correct for values animation.
         if (isAccumulated() && repeat)
             number += m_toNumber * repeat;
-        if (isAdditive() && animationMode() != ToAnimation)
+        if (isAdditive() && animationMode != ToAnimation)
             results->m_animatedNumber += number;
         else 
             results->m_animatedNumber = number;
         return;
     } 
     if (m_propertyType == ColorProperty) {
-        if (animationMode() == ToAnimation)
+        if (animationMode == ToAnimation)
             m_fromColor = results->m_animatedColor;
-        Color color = ColorDistance(m_fromColor, m_toColor).scaledDistance(percentage).addToColorAndClamp(m_fromColor);
+        Color color;
+        if (calcMode() == CalcModeDiscrete)
+            color = isInFirstHalfOfAnimation ? m_fromColor : m_toColor;
+        else
+            color = ColorDistance(m_fromColor, m_toColor).scaledDistance(percentage).addToColorAndClamp(m_fromColor);
+
         // FIXME: Accumulate colors.
-        if (isAdditive() && animationMode() != ToAnimation)
+        if (isAdditive() && animationMode != ToAnimation)
             results->m_animatedColor = ColorDistance::addColorsAndClamp(results->m_animatedColor, color);
         else
             results->m_animatedColor = color;
         return;
     }
-    AnimationMode animationMode = this->animationMode();
     if (m_propertyType == PathProperty) {
         if (animationMode == ToAnimation) {
             ASSERT(results->m_animatedPathPointer);

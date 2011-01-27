@@ -1,3 +1,18 @@
+2011-01-27  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG animation doesn't support calcMode discrete for number and color values.
+        https://bugs.webkit.org/show_bug.cgi?id=53189
+
+        Add support for calcMode discrete on number and color animation.
+
+        Tests: svg/animations/animate-color-calcMode-discrete.html
+               svg/animations/animate-number-calcMode-discrete.html
+
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::calculateAnimatedValue):
+
 2011-01-26  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
