@@ -39,6 +39,10 @@ WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint
     , m_delta(delta)
     , m_wheelTicks(wheelTicks)
     , m_granularity(granularity)
+#if PLATFORM(MAC)
+    , m_phase(PhaseNone)
+    , m_hasPreciseScrollingDeltas(false)
+#endif
 {
     ASSERT(isWheelEventType(type));
 }
@@ -69,6 +73,7 @@ void WebWheelEvent::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(m_granularity);
 #if PLATFORM(MAC)
     encoder->encode(m_phase);
+    encoder->encode(m_hasPreciseScrollingDeltas);
 #endif
 }
 
@@ -88,6 +93,8 @@ bool WebWheelEvent::decode(CoreIPC::ArgumentDecoder* decoder, WebWheelEvent& t)
         return false;
 #if PLATFORM(MAC)
     if (!decoder->decode(t.m_phase))
+        return false;
+    if (!decoder->decode(t.m_hasPreciseScrollingDeltas))
         return false;
 #endif
     return true;

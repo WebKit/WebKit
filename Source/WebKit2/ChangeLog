@@ -1,3 +1,18 @@
+2011-01-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Encode/Decode hasPreciseScrollingDeltas bit in WebWheelEvent
+        https://bugs.webkit.org/show_bug.cgi?id=53254
+
+        * Shared/WebWheelEvent.cpp:
+        (WebKit::WebWheelEvent::WebWheelEvent):
+        Initialize m_phase and m_hasPreciseScrollingDeltas.
+
+        (WebKit::WebWheelEvent::encode):
+        (WebKit::WebWheelEvent::decode):
+        Add missing coding for m_hasPreciseScrollingDeltas.
+
 2011-01-26  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler and Adam Roben.
