@@ -6,7 +6,7 @@ layer at (0,0) size 784x637
       RenderBlock (anonymous) at (0,0) size 768x21
         RenderText {#text} at (0,0) size 294x21
           text run at (0,0) width 294: "These two tables should be the same height."
-      RenderBlock {DIV} at (0,21) size 69x600
+      RenderBlock {DIV} at (0,21) size 85x600
         RenderTable {TABLE} at (0,0) size 23x320
           RenderTableSection {TBODY} at (0,0) size 23x320
             RenderTableRow {TR} at (0,0) size 23x320
@@ -18,8 +18,8 @@ layer at (0,0) size 784x637
                   text run at (1,1) width 8: "2"
               RenderTableCell {TD} at (0,314) size 23x5 [border: (1px solid #008000)] [r=0 c=2 rs=1 cs=1]
                 RenderImage {IMG} at (1,1) size 20x4 [bgcolor=#FFA500]
-        RenderBlock {P} at (23,16) size 0x568
-        RenderTable {TABLE} at (23,0) size 46x320
+        RenderBlock {P} at (39,0) size 0x600
+        RenderTable {TABLE} at (39,0) size 46x320
           RenderTableSection {TBODY} at (0,0) size 46x320
             RenderTableRow {TR} at (0,0) size 23x320
               RenderTableCell {TD} at (0,0) size 23x64 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]

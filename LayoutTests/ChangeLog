@@ -1,3 +1,26 @@
+2011-01-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] Update test expectations after r76726.
+
+        * platform/qt/fast/lists/002-vertical-expected.checksum:
+        * platform/qt/fast/lists/002-vertical-expected.png:
+        * platform/qt/fast/lists/002-vertical-expected.txt:
+        * platform/qt/fast/lists/003-vertical-expected.checksum:
+        * platform/qt/fast/lists/003-vertical-expected.png:
+        * platform/qt/fast/lists/003-vertical-expected.txt:
+        * platform/qt/fast/overflow/overflow-rtl-vertical-expected.checksum:
+        * platform/qt/fast/overflow/overflow-rtl-vertical-expected.png:
+        * platform/qt/fast/overflow/overflow-rtl-vertical-expected.txt:
+        * platform/qt/fast/table/028-vertical-expected.checksum:
+        * platform/qt/fast/table/028-vertical-expected.png:
+        * platform/qt/fast/table/028-vertical-expected.txt:
+        * platform/qt/fast/table/border-collapsing/003-vertical-expected.checksum:
+        * platform/qt/fast/table/border-collapsing/003-vertical-expected.png:
+        * platform/qt/fast/table/border-collapsing/003-vertical-expected.txt:
+        * platform/qt/fast/table/height-percent-test-vertical-expected.txt:
+
 2011-01-26  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed Chromium test expectation change.
