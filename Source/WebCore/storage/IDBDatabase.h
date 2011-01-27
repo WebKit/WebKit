@@ -76,6 +76,8 @@ private:
 
     RefPtr<IDBDatabaseBackendInterface> m_backend;
     RefPtr<IDBTransactionBackendInterface> m_setVersionTransaction;
+
+    bool m_noNewTransactions;
 };
 
 } // namespace WebCore

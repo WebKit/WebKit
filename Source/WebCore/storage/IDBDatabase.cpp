@@ -46,6 +46,7 @@ const unsigned long defaultTimeout = 0; // Infinite.
 
 IDBDatabase::IDBDatabase(PassRefPtr<IDBDatabaseBackendInterface> backend)
     : m_backend(backend)
+    , m_noNewTransactions(false)
 {
     // We pass a reference of this object before it can be adopted.
     relaxAdoptionRequirement();
@@ -109,6 +110,10 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
         ec = IDBDatabaseException::CONSTRAINT_ERR;
         return 0;
     }
+    if (m_noNewTransactions) {
+        ec = IDBDatabaseException::NOT_ALLOWED_ERR;
+        return 0;
+    }
 
     // We need to create a new transaction synchronously. Locks are acquired asynchronously. Operations
     // can be queued against the transaction at any point. They will start executing as soon as the
@@ -126,7 +131,7 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
 
 void IDBDatabase::close()
 {
-    m_backend->close();
+    m_noNewTransactions = true;
 }
 
 } // namespace WebCore

@@ -1,0 +1,105 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test closing a database connection in IndexedDB.");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    shouldBeTrue("'webkitIndexedDB' in window");
+    shouldBeFalse("webkitIndexedDB == null");
+
+    result = evalAndLog("webkitIndexedDB.open('some db name')");
+    verifyResult(result);
+    result.onsuccess = openSuccess;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    debug("openSuccess():");
+    verifySuccessEvent(event);
+    window.db = evalAndLog("db = event.result");
+    result = evalAndLog("result = db.setVersion('version 1')");
+    result.onsuccess = inSetVersion;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function inSetVersion()
+{
+    verifySuccessEvent(event);
+    deleteAllObjectStores(db, doSetVersionStuff);
+}
+
+function doSetVersionStuff()
+{
+    event.result.oncomplete = runFirstRegularTransaction;
+    event.result.onabort = unexpectedAbortCallback;
+    store = evalAndLog("store = db.createObjectStore('store')");
+    request = evalAndLog("request = store.put('x', 'y')");
+    request.onsuccess = onPutSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function onPutSuccess()
+{
+    verifySuccessEvent(event);
+}
+
+function runFirstRegularTransaction()
+{
+    debug("running first transaction")
+    currentTransaction = evalAndLog("currentTransaction = db.transaction([], webkitIDBTransaction.READ_WRITE)");
+    currentTransaction.onabort = unexpectedAbortCallback;
+    currentTransaction.oncomplete = firstTransactionComplete;
+    objectStore = currentTransaction.objectStore('store');
+    result = evalAndLog("objectStore.put('a', 'b')");
+    result.onerror = unexpectedErrorCallback;
+}
+
+function firstTransactionComplete()
+{
+    evalAndLog("db.close()");
+    evalAndExpectException("db.transaction([], webkitIDBTransaction.READ_WRITE)", "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
+
+    debug("")
+    debug("verify that we can reopen the db after calling close")
+    result = evalAndLog("webkitIndexedDB.open('some db name')");
+    verifyResult(result);
+    result.onsuccess = onSecondOpen
+    result.onerror = unexpectedErrorCallback;
+}
+
+function onSecondOpen() {
+    verifySuccessEvent(event);
+    second_db = evalAndLog("second_db = event.result");
+    currentTransaction = evalAndLog("currentTransaction = second_db.transaction([], webkitIDBTransaction.READ_WRITE)");
+    store = currentTransaction.objectStore('store');
+    request = evalAndLog("request = store.put('1', '2')");
+    request.onsuccess = onFinalPutSuccess;
+    request.onerror = unexpectedErrorCallback;
+    currentTransaction.oncomplete = done;
+    currentTransaction.onabort = unexpectedAbortCallback;
+}
+
+function onFinalPutSuccess() {
+    verifySuccessEvent(event);
+}
+
+var successfullyParsed = true;
+
+test();
+
+</script>
+</body>
+</html>
