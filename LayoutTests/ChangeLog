@@ -1,3 +1,10 @@
+2011-01-26  Brian Weinstein  <bweinstein@apple.com>
+
+        Rebaseline Windows fast/blockfow results after r76726.
+
+        * platform/win/fast/blockflow/Kusa-Makura-background-canvas-expected.txt:
+        * platform/win/fast/blockflow/vertical-baseline-alignment-expected.txt:
+
 2011-01-26  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
