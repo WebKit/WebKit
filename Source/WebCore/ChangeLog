@@ -1,3 +1,19 @@
+2011-01-27  Adam Roben  <aroben@apple.com>
+
+        Move LegacyCACFLayerTreeHost into its own files
+
+        More preparation for <http://webkit.org/b/53251> <rdar://problem/8925496> CACFLayerTreeHost
+        should use WKCACFView for rendering
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.vcproj/WebCore.vcproj: Added LegacyCACFLayerTreeHost.{cpp,h}.
+
+        * platform/graphics/ca/win/CACFLayerTreeHost.cpp: Moved code from here to new files.
+
+        * platform/graphics/ca/win/LegacyCACFLayerTreeHost.cpp: Added.
+        * platform/graphics/ca/win/LegacyCACFLayerTreeHost.h: Added.
+
 2011-01-27  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed WinCE build fix for r76824.

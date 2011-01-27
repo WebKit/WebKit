@@ -28943,6 +28943,14 @@
 							</FileConfiguration>
 						</File>
 						<File
+							RelativePath="..\platform\graphics\ca\win\LegacyCACFLayerTreeHost.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\platform\graphics\ca\win\LegacyCACFLayerTreeHost.h"
+							>
+						</File>
+						<File
 							RelativePath="..\platform\graphics\ca\win\PlatformCAAnimationWin.cpp"
 							>
 						</File>
