@@ -1,5 +1,12 @@
 2011-01-26  Martin Robinson  <mrobinson@igalia.com>
 
+        Add the final set of CSS 2.1 GTK+ baselines.
+
+        * platform/gtk/Skipped: Unskip the remaining CSS 2.1 tests.
+        * platform/gtk/css2.1: Add the remaining baselines.
+
+2011-01-26  Martin Robinson  <mrobinson@igalia.com>
+
         Add the next set of GTK+ baselines for the CSS 2.1 test suite.
 
         * platform/gtk/Skipped: Unskip the next block of tests.
