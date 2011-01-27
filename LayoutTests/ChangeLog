@@ -1,3 +1,9 @@
+2011-01-27  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed Chromium test expectaion change.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dan Bernstein.
