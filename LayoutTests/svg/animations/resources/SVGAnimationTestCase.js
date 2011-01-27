@@ -7,6 +7,29 @@ function isCloseEnough(actual, desired, tolerance)
     return diff <= tolerance;
 }
 
+function shouldBeCloseEnough(_a, _b, tolerance)
+{
+    if (typeof _a != "string" || typeof _b != "string" || typeof tolerance != "number")
+        debug("WARN: shouldBeCloseEnough() expects two string and one number arguments");
+    var exception;
+    var _av;
+    try {
+        _av = eval(_a);
+    } catch (e) {
+        exception = e;
+    }
+    var _bv = eval(_b);
+    
+    if (exception)
+        testFailed(_a + " should be " + _bv + ". Threw exception " + exception);
+    else if (isCloseEnough(_av, _bv, tolerance))
+        testPassed(_a + " is " + _b);
+    else if (typeof(_av) == typeof(_bv))
+        testFailed(_a + " should be close to " + _bv + ". Was " + stringify(_av) + ".");
+    else
+        testFailed(_a + " should be close to " + _bv + " (of type " + typeof _bv + "). Was " + _av + " (of type " + typeof _av + ").");
+}
+
 function moveAnimationTimelineAndSample(index)
 {
     var animationId = expectedResults[index][0];

@@ -1,3 +1,49 @@
+2011-01-27  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG animation of Paths with segments of different coordinate modes on begin and end
+        https://bugs.webkit.org/show_bug.cgi?id=52984
+
+        At the moment we just support SVG path animations, if the number of segments on the given start path
+        is the same as the number of segments on the given end path. But a segment on a given position must be identical
+        on both paths as well. Not only the segment type, also the coordinate mode of the segments must be identical.
+        If MoveToRel is on the second position on the start path a MoveToRel must be on the second position
+        of the end path too. According to the SVG spec, at least the coordinate mode can differ. Means, if we have MoveToRel
+        in the start path, we can use MoveToAbs on the same position in the end path.
+
+        This patch fixes the blending code to follow the spec here. It was necessary to track the current position of
+        both paths, transform coordinates to the same coordinate mode and transform the resulting animation coordinate back
+        to the coordinate mode of either the start or the end path. Which mode is taken depends on the progress of the
+        animation.
+
+        Tests: svg/animations/animate-path-animation-Cc-Ss.html
+               svg/animations/animate-path-animation-Ll-Vv-Hh.html
+               svg/animations/animate-path-animation-Qq-Tt.html
+               svg/animations/animate-path-animation-cC-sS-inverse.html
+               svg/animations/animate-path-animation-lL-vV-hH-inverse.html
+               svg/animations/animate-path-animation-qQ-tT-inverse.html
+
+        * svg/SVGPathBlender.cpp:
+        (WebCore::blendFloatPoint):
+        (WebCore::blendAnimatedFloat):
+        (WebCore::SVGPathBlender::blendAnimatedDimensionalFloat):
+        (WebCore::SVGPathBlender::blendAnimatedFloatPoint):
+        (WebCore::SVGPathBlender::blendMoveToSegment):
+        (WebCore::SVGPathBlender::blendLineToSegment):
+        (WebCore::SVGPathBlender::blendLineToHorizontalSegment):
+        (WebCore::SVGPathBlender::blendLineToVerticalSegment):
+        (WebCore::SVGPathBlender::blendCurveToCubicSegment):
+        (WebCore::SVGPathBlender::blendCurveToCubicSmoothSegment):
+        (WebCore::SVGPathBlender::blendCurveToQuadraticSegment):
+        (WebCore::SVGPathBlender::blendCurveToQuadraticSmoothSegment):
+        (WebCore::SVGPathBlender::blendArcToSegment):
+        (WebCore::coordinateModeOfCommand):
+        (WebCore::isSegmentEqual):
+        (WebCore::SVGPathBlender::blendAnimatedPath):
+        (WebCore::SVGPathBlender::cleanup):
+        * svg/SVGPathBlender.h:
+
 2011-01-27  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by Dimitri Glazkov.

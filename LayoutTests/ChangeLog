@@ -1,3 +1,68 @@
+2011-01-27  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG animation of Paths with segments of different coordinate modes on begin and end
+        https://bugs.webkit.org/show_bug.cgi?id=52984
+
+        Added tests to check the correct behavior on path animations, where the coordinate modes
+        of the start path differs from the one on the end path.
+
+        * svg/animations/animate-path-animation-Cc-Ss-expected.txt: Added.
+        * svg/animations/animate-path-animation-Cc-Ss.html: Added.
+        * svg/animations/animate-path-animation-Ll-Vv-Hh-expected.txt: Added.
+        * svg/animations/animate-path-animation-Ll-Vv-Hh.html: Added.
+        * svg/animations/animate-path-animation-Qq-Tt-expected.txt: Added.
+        * svg/animations/animate-path-animation-Qq-Tt.html: Added.
+        * svg/animations/animate-path-animation-cC-sS-inverse-expected.txt: Added.
+        * svg/animations/animate-path-animation-cC-sS-inverse.html: Added.
+        * svg/animations/animate-path-animation-lL-vV-hH-inverse-expected.txt: Added.
+        * svg/animations/animate-path-animation-lL-vV-hH-inverse.html: Added.
+        * svg/animations/animate-path-animation-qQ-tT-inverse-expected.txt: Added.
+        * svg/animations/animate-path-animation-qQ-tT-inverse.html: Added.
+        * svg/animations/animate-path-nested-transforms.html: Cleanup.
+        * svg/animations/animate-text-nested-transforms.html: Cleanup.
+        * svg/animations/resources/SVGAnimationTestCase.js:
+        (shouldBeCloseEnough): For debug output of values with tolerance level.
+        (startTest):
+        (sampleAnimation):
+        * svg/animations/script-tests/animate-path-animation-Cc-Ss.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (sample4):
+        (executeTest):
+        * svg/animations/script-tests/animate-path-animation-Ll-Vv-Hh.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (sample4):
+        (executeTest):
+        * svg/animations/script-tests/animate-path-animation-Qq-Tt.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (sample4):
+        (executeTest):
+        * svg/animations/script-tests/animate-path-animation-cC-sS-inverse.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (sample4):
+        (executeTest):
+        * svg/animations/script-tests/animate-path-animation-lL-vV-hH-inverse.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (sample4):
+        (executeTest):
+        * svg/animations/script-tests/animate-path-animation-qQ-tT-inverse.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (sample4):
+        (executeTest):
+
 2011-01-27  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by Dimitri Glazkov.
