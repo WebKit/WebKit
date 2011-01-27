@@ -1,3 +1,17 @@
+2011-01-27  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Space characters in source document interfere with reported caret offset
+        https://bugs.webkit.org/show_bug.cgi?id=53033
+
+        Calculate caret offset from rendered text instead of from node contents.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (objectAndOffsetUnignored): Calculate the caret offset based only
+        on positions and ranges, instead of using the computed offset in
+        the container node.
+
 2011-01-26  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

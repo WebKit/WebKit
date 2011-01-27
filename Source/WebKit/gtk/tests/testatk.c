@@ -46,6 +46,8 @@ static const char* contentsInTable = "<html><body><table><tr><td>foo</td><td>bar
 
 static const char* contentsInTableWithHeaders = "<html><body><table><tr><th>foo</th><th>bar</th><th colspan='2'>baz</th></tr><tr><th>qux</th><td>1</td><td>2</td><td>3</td></tr><tr><th rowspan='2'>quux</th><td>4</td><td>5</td><td>6</td></tr><tr><td>6</td><td>7</td><td>8</td></tr><tr><th>corge</th><td>9</td><td>10</td><td>11</td></tr></table><table><tr><td>1</td><td>2</td></tr><tr><td>3</td><td>4</td></tr></table></body></html>";
 
+static const char* contentsWithExtraneousWhiteSpaces = "<html><head><body><p>This\n                          paragraph\n                                                      is\n                                                                                                                                                                                                                                                                                                                                                                            borked!</p></body></html>";
+
 static const char* comboBoxSelector = "<html><body><select><option selected value='foo'>foo</option><option value='bar'>bar</option></select></body></html>";
 
 static const char* formWithTextInputs = "<html><body><form><input type='text' name='entry' /></form></body></html>";
@@ -223,6 +225,47 @@ static void runGetTextTests(AtkText* textObject)
     /* ATK_TEXT_BOUNDARY_LINE_END */
     testGetTextFunction(textObject, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_END,
                         0, "This is a test. This is the second sentence. And this the third.", 0, 64);
+}
+
+static void testWebkitAtkCaretOffsetsAndExtranousWhiteSpaces()
+{
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    g_object_ref_sink(webView);
+    GtkAllocation allocation = { 0, 0, 800, 600 };
+    gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
+    webkit_web_view_load_string(webView, contentsWithExtraneousWhiteSpaces, 0, 0, 0);
+
+    /* Wait for the accessible objects to be created. */
+    waitForAccessibleObjects();
+
+    /* Enable caret browsing. */
+    WebKitWebSettings* settings = webkit_web_view_get_settings(webView);
+    g_object_set(G_OBJECT(settings), "enable-caret-browsing", TRUE, NULL);
+    webkit_web_view_set_settings(webView, settings);
+
+    /* Get to the inner AtkText object. */
+    AtkObject* object = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    g_assert(object);
+    object = atk_object_ref_accessible_child(object, 0);
+    g_assert(object);
+
+    AtkText* textObject = ATK_TEXT(object);
+    g_assert(ATK_IS_TEXT(textObject));
+
+    gchar* text = atk_text_get_text(textObject, 0, -1);
+    g_assert_cmpstr(text, ==, "This paragraph is borked!");
+    g_free(text);
+
+    gint characterCount = atk_text_get_character_count(textObject);
+    g_assert_cmpint(characterCount, ==, 25);
+
+    gboolean result = atk_text_set_caret_offset(textObject, characterCount - 1);
+    g_assert_cmpint(result, ==, TRUE);
+
+    gint caretOffset = atk_text_get_caret_offset(textObject);
+    g_assert_cmpint(caretOffset, ==, characterCount - 1);
+
+    g_object_unref(webView);
 }
 
 static void testWebkitAtkComboBox()
@@ -1350,6 +1393,7 @@ int main(int argc, char** argv)
     gtk_test_init(&argc, &argv, 0);
 
     g_test_bug_base("https://bugs.webkit.org/");
+    g_test_add_func("/webkit/atk/caretOffsetsAndExtranousWhiteSpaces", testWebkitAtkCaretOffsetsAndExtranousWhiteSpaces);
     g_test_add_func("/webkit/atk/comboBox", testWebkitAtkComboBox);
     g_test_add_func("/webkit/atk/getTextAtOffset", testWebkitAtkGetTextAtOffset);
     g_test_add_func("/webkit/atk/getTextAtOffsetForms", testWebkitAtkGetTextAtOffsetForms);

@@ -2457,8 +2457,6 @@ AtkObject* webkit_accessible_get_focused_element(WebKitAccessible* accessible)
 
 AccessibilityObject* objectAndOffsetUnignored(AccessibilityObject* coreObject, int& offset, bool ignoreLinks)
 {
-    Node* endNode = static_cast<AccessibilityRenderObject*>(coreObject)->renderer()->node();
-    int endOffset = coreObject->selection().end().computeOffsetInContainerNode();
     // Indication that something bogus has transpired.
     offset = -1;
 
@@ -2473,16 +2471,12 @@ AccessibilityObject* objectAndOffsetUnignored(AccessibilityObject* coreObject, i
     if (!realObject)
         return 0;
 
-    Node* node = static_cast<AccessibilityRenderObject*>(realObject)->renderer()->node();
+    Node* node = realObject->node();
     if (node) {
-        RefPtr<Range> range = rangeOfContents(node);
-        if (range->ownerDocument() == node->document()) {
-            ExceptionCode ec = 0;
-            range->setEndBefore(endNode, ec);
-            if (range->boundaryPointsValid())
-                offset = range->text().length() + endOffset;
-        }
+        RefPtr<Range> range = Range::create(node->document(), firstPositionInNode(node), realObject->selection().end());
+        offset = TextIterator::rangeLength(range.get());
     }
+
     return realObject;
 }
 
