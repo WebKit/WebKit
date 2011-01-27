@@ -1,3 +1,12 @@
+2011-01-27  Robert Hogan  <robert@webkit.org>
+
+        Rubber-stamped by Andreas Kling.
+
+        [Qt] Style Fix: correct indentation in FrameLoadeClientQt:createPlugin
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createPlugin):
+
 2011-01-24  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Eric Seidel.
