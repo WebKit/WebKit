@@ -1,3 +1,16 @@
+2011-01-27  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, updated GTK baselines after r76726.
+
+        * platform/gtk/fast/blockflow/Kusa-Makura-background-canvas-expected.txt:
+        * platform/gtk/fast/blockflow/vertical-baseline-alignment-expected.txt:
+        * platform/gtk/fast/lists/002-vertical-expected.txt:
+        * platform/gtk/fast/lists/003-vertical-expected.txt:
+        * platform/gtk/fast/overflow/overflow-rtl-vertical-expected.txt:
+        * platform/gtk/fast/table/028-vertical-expected.txt:
+        * platform/gtk/fast/table/border-collapsing/003-vertical-expected.txt:
+        * platform/gtk/fast/table/height-percent-test-vertical-expected.txt:
+
 2011-01-27  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed Chromium test expectation change.
