@@ -32,6 +32,11 @@ bool DragData::containsURL(Frame*, FilenameConversionPolicy filenamePolicy) cons
     return false;
 }
 
+const DragDataMap& DragData::dragDataMap()
+{
+    return m_dragDataMap;
+}
+
 String DragData::asURL(Frame*, FilenameConversionPolicy filenamePolicy, String* title) const
 {
     return String();

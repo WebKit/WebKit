@@ -1,3 +1,10 @@
+2011-01-27  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed WinCE build fix for r76824.
+
+        * platform/wince/DragDataWinCE.cpp:
+        (WebCore::DragData::dragDataMap):
+
 2011-01-27  Adam Roben  <aroben@apple.com>
 
         Split CACFLayerTreeHost into base and derived classes
