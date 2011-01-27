@@ -2838,7 +2838,8 @@ BUGCR59665 : media/video-loop.html = CRASH TIMEOUT PASS FAIL
 // See https://bugs.webkit.org/show_bug.cgi?id=45021 for more info.
 // UNIMPLEMENTED for chrome
 BUGCR59665 BUGWK45021 SKIP : media/context-menu-actions.html = CRASH TIMEOUT PASS
-BUGCR54334 MAC LINUX DEBUG : media/video-timeupdate-during-playback.html = PASS TIMEOUT
+BUGCR54334 MAC DEBUG : media/video-timeupdate-during-playback.html = PASS TIMEOUT
+BUGCR54334 LINUX DEBUG : media/video-timeupdate-during-playback.html = PASS TIMEOUT CRASH
 // Started flakily failing on win debug around r70597, WebKit r75136.
 BUGCR54334 WIN DEBUG : media/video-timeupdate-during-playback.html = PASS TEXT TIMEOUT
 
