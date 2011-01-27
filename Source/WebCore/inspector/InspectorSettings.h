@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,37 +28,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptProfiler_h
-#define ScriptProfiler_h
+#ifndef InspectorSettings_h
+#define InspectorSettings_h
+
+#if ENABLE(INSPECTOR)
 
 #include "PlatformString.h"
-#include "ScriptHeapSnapshot.h"
-#include "ScriptProfile.h"
-#include "ScriptState.h"
 
+#include <wtf/HashMap.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
-class InspectorObject;
+class InspectorClient;
 
-class ScriptProfiler {
-    WTF_MAKE_NONCOPYABLE(ScriptProfiler);
+class InspectorSettings {
 public:
-    class HeapSnapshotProgress {
-    public:
-        virtual ~HeapSnapshotProgress() { }
-        virtual void Start(int totalWork) = 0;
-        virtual void Worked(int workDone) = 0;
-        virtual void Done() = 0;
-        virtual bool isCanceled() = 0;
-    };
+    static const char* MonitoringXHREnabled;
+    static const char* ProfilerAlwaysEnabled;
+    static const char* DebuggerAlwaysEnabled;
 
-    static void start(ScriptState* state, const String& title);
-    static PassRefPtr<ScriptProfile> stop(ScriptState* state, const String& title);
-    static PassRefPtr<ScriptHeapSnapshot> takeHeapSnapshot(const String& title, HeapSnapshotProgress*);
-    static bool isProfilerAlwaysEnabled();
+    InspectorSettings(InspectorClient* client);
+
+    bool getBoolean(const String& name);
+    void setBoolean(const String& name, bool value);
+
+    long getLong(const String& name);
+    void setLong(const String& name, long value);
+
+private:
+    void registerBoolean(const String& name, bool defaultValue);
+    void registerLong(const String& name, long defaultValue);
+
+    typedef HashMap<String, String> Dictionary;
+    Dictionary m_defaultValues;
+    InspectorClient* m_client;
 };
 
 } // namespace WebCore
 
-#endif // ScriptProfiler_h
+#endif // ENABLE(INSPECTOR)
+#endif // !defined(InspectorSettings_h)

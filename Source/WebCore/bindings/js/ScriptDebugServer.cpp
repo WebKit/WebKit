@@ -117,6 +117,11 @@ void ScriptDebugServer::removeListener(ScriptDebugListener* listener, Page* page
     didRemoveListener(page);
 }
 
+bool ScriptDebugServer::isDebuggerAlwaysEnabled()
+{
+    return false;
+}
+
 bool ScriptDebugServer::hasListenersInterestedInPage(Page* page)
 {
     ASSERT_ARG(page, page);

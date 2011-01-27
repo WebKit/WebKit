@@ -60,6 +60,8 @@ public:
     static PassOwnPtr<InspectorDebuggerAgent> create(InspectorAgent*, InspectorFrontend*);
     virtual ~InspectorDebuggerAgent();
 
+    static bool isDebuggerAlwaysEnabled();
+
     void setAllJavaScriptBreakpoints(PassRefPtr<InspectorObject>);
     void inspectedURLChanged(const String& url);
 

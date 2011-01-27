@@ -601,13 +601,6 @@ WebInspector.doLoadedDone = function()
     }
     InspectorBackend.populateScriptObjects(onPopulateScriptObjects);
 
-    if (Preferences.debuggerAlwaysEnabled || WebInspector.settings.debuggerEnabled)
-        InspectorBackend.enableDebugger();
-    if (Preferences.profilerAlwaysEnabled || WebInspector.settings.profilerEnabled)
-        InspectorBackend.enableProfiler();
-    if (WebInspector.settings.monitoringXHREnabled)
-        InspectorBackend.setMonitoringXHREnabled(true);
-
     InspectorBackend.setConsoleMessagesEnabled(true);
 
     function propertyNamesCallback(names)

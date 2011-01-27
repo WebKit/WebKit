@@ -93,6 +93,8 @@ public:
 
     JavaScriptCallFrame* currentCallFrame();
 
+    bool isDebuggerAlwaysEnabled();
+
 private:
     typedef HashSet<ScriptDebugListener*> ListenerSet;
     typedef void (ScriptDebugServer::*JavaScriptExecutionCallback)(ScriptDebugListener*);

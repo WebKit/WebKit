@@ -376,6 +376,7 @@ void InspectorInstrumentation::identifierForInitialRequestImpl(InspectorAgent* i
 {
     if (!ic->enabled())
         return;
+    ic->ensureSettingsLoaded();
 
     if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))
         resourceAgent->identifierForInitialRequest(identifier, request.url(), loader);
@@ -400,6 +401,7 @@ void InspectorInstrumentation::didLoadResourceFromMemoryCacheImpl(InspectorAgent
 {
     if (!ic->enabled())
         return;
+    ic->ensureSettingsLoaded();
     if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))
         resourceAgent->didLoadResourceFromMemoryCache(loader, cachedResource);
 }

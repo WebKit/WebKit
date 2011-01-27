@@ -801,13 +801,10 @@ WebInspector.ScriptsPanel.prototype = {
         this._waitingToPause = false;
         this._stepping = false;
 
-        if (this._debuggerEnabled) {
-            WebInspector.settings.debuggerEnabled = false;
-            InspectorBackend.disableDebugger();
-        } else {
-            WebInspector.settings.debuggerEnabled = !!optionalAlways;
-            InspectorBackend.enableDebugger();
-        }
+        if (this._debuggerEnabled)
+            InspectorBackend.disableDebugger(true);
+        else
+            InspectorBackend.enableDebugger(!!optionalAlways);
     },
 
     _togglePauseOnExceptions: function()

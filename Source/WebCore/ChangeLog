@@ -1,3 +1,80 @@
+2011-01-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r76770.
+        http://trac.webkit.org/changeset/76770
+        https://bugs.webkit.org/show_bug.cgi?id=53229
+
+        Some inspector tests fail (Requested by yurys on #webkit).
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::isDebuggerAlwaysEnabled):
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/js/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::isProfilerAlwaysEnabled):
+        * bindings/js/ScriptProfiler.h:
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::isDebuggerAlwaysEnabled):
+        * bindings/v8/ScriptDebugServer.h:
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::isProfilerAlwaysEnabled):
+        * bindings/v8/ScriptProfiler.h:
+        * inspector/Inspector.idl:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        (WebCore::InspectorAgent::disconnectFrontend):
+        (WebCore::InspectorAgent::restoreDebugger):
+        (WebCore::InspectorAgent::restoreProfiler):
+        (WebCore::InspectorAgent::ensureSettingsLoaded):
+        (WebCore::InspectorAgent::enableProfiler):
+        (WebCore::InspectorAgent::disableProfiler):
+        (WebCore::InspectorAgent::showAndEnableDebugger):
+        (WebCore::InspectorAgent::enableDebugger):
+        (WebCore::InspectorAgent::disableDebugger):
+        * inspector/InspectorAgent.h:
+        (WebCore::InspectorAgent::settings):
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::setMonitoringXHREnabled):
+        (WebCore::InspectorConsoleAgent::setConsoleMessagesEnabled):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::isDebuggerAlwaysEnabled):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::identifierForInitialRequestImpl):
+        (WebCore::InspectorInstrumentation::didLoadResourceFromMemoryCacheImpl):
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::InspectorProfilerAgent):
+        (WebCore::InspectorProfilerAgent::startUserInitiatedProfiling):
+        * inspector/InspectorSettings.cpp: Added.
+        (WebCore::InspectorSettings::InspectorSettings):
+        (WebCore::InspectorSettings::getBoolean):
+        (WebCore::InspectorSettings::setBoolean):
+        (WebCore::InspectorSettings::getLong):
+        (WebCore::InspectorSettings::setLong):
+        (WebCore::InspectorSettings::registerBoolean):
+        (WebCore::InspectorSettings::registerLong):
+        * inspector/InspectorSettings.h: Copied from Source/WebCore/bindings/v8/ScriptProfiler.h.
+        * inspector/InspectorState.cpp:
+        (WebCore::InspectorState::InspectorState):
+        * inspector/InspectorState.h:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._registerConsoleDomainDispatcher.dispatcher.monitoringXHRStateChanged):
+        (WebInspector.ConsoleView.prototype._registerConsoleDomainDispatcher):
+        (WebInspector.ConsoleView.prototype._handleContextMenuEvent):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype._toggleProfiling):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._toggleDebugging):
+        * inspector/front-end/Settings.js:
+        (WebInspector.Settings):
+        * inspector/front-end/inspector.js:
+
 2011-01-26  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.

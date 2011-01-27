@@ -1062,6 +1062,7 @@ SOURCES += \
     inspector/InspectorProfilerAgent.cpp \
     inspector/InspectorResourceAgent.cpp \
     inspector/InspectorRuntimeAgent.cpp \
+    inspector/InspectorSettings.cpp \
     inspector/InspectorState.cpp \
     inspector/InspectorStyleSheet.cpp \
     inspector/InspectorTimelineAgent.cpp \
@@ -1961,6 +1962,7 @@ HEADERS += \
     inspector/InspectorProfilerAgent.h \
     inspector/InspectorResourceAgent.h \
     inspector/InspectorRuntimeAgent.h \
+    inspector/InspectorSettings.h \
     inspector/InspectorState.h \
     inspector/InspectorStyleSheet.h \
     inspector/InspectorTimelineAgent.h \

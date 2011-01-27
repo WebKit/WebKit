@@ -342,6 +342,11 @@ void ScriptDebugServer::setEnabled(bool value)
      m_enabled = value;
 }
 
+bool ScriptDebugServer::isDebuggerAlwaysEnabled()
+{
+    return m_enabled;
+}
+
 void ScriptDebugServer::interruptAndRun(PassOwnPtr<Task> task)
 {
     v8::Debug::DebugBreakForCommand(new ClientDataImpl(task));
