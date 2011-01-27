@@ -1,3 +1,11 @@
+2011-01-27  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Anders Carlsson.
+
+        Reverted an accidental change in r76561.
+
+        * WebView/WebHTMLView.mm:
+
 2011-01-26  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/53192> Add experimental support for HTTP pipelining in CFNetwork
