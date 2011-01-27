@@ -342,7 +342,7 @@ void IDBObjectStoreBackendImpl::deleteInternal(ScriptExecutionContext*, PassRefP
     ok = indexQuery.step() == SQLResultDone;
     ASSERT_UNUSED(ok, ok);
 
-    callbacks->onSuccess();
+    callbacks->onSuccess(SerializedScriptValue::nullValue());
 }
 
 PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::createIndex(const String& name, const String& keyPath, bool unique, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
@@ -483,7 +483,7 @@ void IDBObjectStoreBackendImpl::openCursorInternal(ScriptExecutionContext*, Pass
     query->bindInt64(currentColumn, objectStore->id());
 
     if (query->step() != SQLResultRow) {
-        callbacks->onSuccess();
+        callbacks->onSuccess(SerializedScriptValue::nullValue());
         return;
     }
 

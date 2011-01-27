@@ -1,3 +1,22 @@
+2011-01-27  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        IndexedDB: Remove IDBCallbacks::onSuccess() used for null values.
+        https://bugs.webkit.org/show_bug.cgi?id=53178
+
+        Remove the IDBCallbacks::onSuccess() function that was used for
+        null values, and replace such calls with calls to
+        IDBCallBacks::onSuccess(SerializedScriptValue::nullValue())
+        instead.
+
+        * public/WebIDBCallbacks.h:
+        (WebKit::WebIDBCallbacks::onSuccess):
+        * src/IDBCallbacksProxy.cpp:
+        * src/IDBCallbacksProxy.h:
+        * src/WebIDBCallbacksImpl.cpp:
+        * src/WebIDBCallbacksImpl.h:
+
 2011-01-26  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

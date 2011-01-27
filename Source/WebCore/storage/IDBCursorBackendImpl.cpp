@@ -115,7 +115,7 @@ void IDBCursorBackendImpl::updateInternal(ScriptExecutionContext*, PassRefPtr<ID
 
     if (cursor->m_isSerializedScriptValueCursor)
         cursor->m_currentSerializedScriptValue = value.release();
-    callbacks->onSuccess();
+    callbacks->onSuccess(SerializedScriptValue::nullValue());
 }
 
 void IDBCursorBackendImpl::continueFunction(PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode& ec)
@@ -138,7 +138,7 @@ void IDBCursorBackendImpl::continueFunctionInternal(ScriptExecutionContext*, Pas
             cursor->m_currentKey = 0;
             cursor->m_currentSerializedScriptValue = 0;
             cursor->m_currentIDBKeyValue = 0;
-            callbacks->onSuccess();
+            callbacks->onSuccess(SerializedScriptValue::nullValue());
             return;
         }
 

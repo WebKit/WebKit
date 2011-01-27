@@ -65,12 +65,6 @@ void IDBCallbacksProxy::onError(PassRefPtr<IDBDatabaseError> idbDatabaseError)
     m_callbacks.clear();
 }
 
-void IDBCallbacksProxy::onSuccess()
-{
-    m_callbacks->onSuccess();
-    m_callbacks.clear();
-}
-
 void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBCursorBackendInterface> idbCursorBackend)
 {
     m_callbacks->onSuccess(new WebKit::WebIDBCursorImpl(idbCursorBackend));

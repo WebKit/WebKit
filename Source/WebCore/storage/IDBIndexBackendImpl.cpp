@@ -100,7 +100,7 @@ void IDBIndexBackendImpl::openCursorInternal(ScriptExecutionContext*, PassRefPtr
     query->bindInt64(indexColumn, index->id());
 
     if (query->step() != SQLResultRow) {
-        callbacks->onSuccess();
+        callbacks->onSuccess(SerializedScriptValue::nullValue());
         return;
     }
 

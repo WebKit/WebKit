@@ -49,7 +49,6 @@ public:
     virtual ~IDBCallbacks() { }
 
     virtual void onError(PassRefPtr<IDBDatabaseError>) = 0;
-    virtual void onSuccess() = 0; // For "null".
     virtual void onSuccess(PassRefPtr<IDBCursorBackendInterface>) = 0;
     virtual void onSuccess(PassRefPtr<IDBDatabaseBackendInterface>) = 0;
     virtual void onSuccess(PassRefPtr<IDBIndexBackendInterface>) = 0;

@@ -61,11 +61,6 @@ void WebIDBCallbacksImpl::onError(const WebKit::WebIDBDatabaseError& error)
     m_callbacks->onError(error);
 }
 
-void WebIDBCallbacksImpl::onSuccess()
-{
-    m_callbacks->onSuccess();
-}
-
 void WebIDBCallbacksImpl::onSuccess(WebKit::WebIDBCursor* cursor)
 {
     m_callbacks->onSuccess(IDBCursorBackendProxy::create(cursor));

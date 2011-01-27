@@ -42,7 +42,6 @@ public:
     virtual ~WebIDBCallbacksImpl();
 
     virtual void onError(const WebKit::WebIDBDatabaseError&);
-    virtual void onSuccess(); // For "null".
     virtual void onSuccess(WebKit::WebIDBCursor*);
     virtual void onSuccess(WebKit::WebIDBDatabase*);
     virtual void onSuccess(const WebKit::WebIDBKey&);

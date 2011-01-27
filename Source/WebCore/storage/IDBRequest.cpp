@@ -76,11 +76,6 @@ void IDBRequest::onError(PassRefPtr<IDBDatabaseError> error)
     scheduleEvent(0, error);
 }
 
-void IDBRequest::onSuccess()
-{
-    scheduleEvent(IDBAny::createNull(), 0);
-}
-
 void IDBRequest::onSuccess(PassRefPtr<IDBCursorBackendInterface> backend)
 {
     scheduleEvent(IDBAny::create(IDBCursor::create(backend, this, m_transaction.get())), 0);
