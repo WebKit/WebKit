@@ -1,3 +1,12 @@
+2011-01-26  Dan Bernstein  <mitz@apple.com>
+
+        Updated results for the html.css changes in r76726. The old results were prepared before
+        r76726.
+
+        * platform/mac/fast/text/justify-ideograph-vertical-expected.checksum:
+        * platform/mac/fast/text/justify-ideograph-vertical-expected.png:
+        * platform/mac/fast/text/justify-ideograph-vertical-expected.txt:
+
 2011-01-26  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed Chromium test expectation change.
