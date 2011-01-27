@@ -1,3 +1,31 @@
+2011-01-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Move ScrollView scroll wheel code to ScrollAnimator.
+
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::handleWheelEvent):
+        * platform/ScrollAnimator.h:
+        Moved implementation of handleWheelEvent from ScrollView::wheelEvent.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::wheelEvent):
+        Call down to the ScrollableArea.
+
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::handleWheelEvent):
+        Call down to the ScrollAnimator.
+
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::scrollPosition):
+        (WebCore::ScrollableArea::minimumScrollPosition):
+        (WebCore::ScrollableArea::maximumScrollPosition):
+        (WebCore::ScrollableArea::visibleContentRect):
+        (WebCore::ScrollableArea::visibleHeight):
+        (WebCore::ScrollableArea::visibleWidth):
+        Add functions needed to implement wheel event in the animator.
+
 2011-01-26  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/53192> Add experimental support for HTTP pipelining in CFNetwork

@@ -108,6 +108,11 @@ void ScrollableArea::scrollToYOffsetWithoutAnimation(float y)
     scrollToOffsetWithoutAnimation(FloatPoint(m_scrollAnimator->currentPosition().x(), y));
 }
 
+void ScrollableArea::handleWheelEvent(PlatformWheelEvent& wheelEvent)
+{
+    m_scrollAnimator->handleWheelEvent(wheelEvent);
+}
+
 void ScrollableArea::setScrollOffsetFromAnimation(const IntPoint& offset)
 {
     // Tell the derived class to scroll its contents.

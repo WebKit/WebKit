@@ -47,6 +47,8 @@ public:
     void scrollToXOffsetWithoutAnimation(float x);
     void scrollToYOffsetWithoutAnimation(float x);
 
+    void handleWheelEvent(PlatformWheelEvent&);
+
     virtual int scrollSize(ScrollbarOrientation) const = 0;
     virtual int scrollPosition(Scrollbar*) const = 0;
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&) = 0;
@@ -81,6 +83,14 @@ public:
 
     virtual Scrollbar* horizontalScrollbar() const { return 0; }
     virtual Scrollbar* verticalScrollbar() const { return 0; }
+
+    virtual IntPoint scrollPosition() const { ASSERT_NOT_REACHED(); return IntPoint(); }
+    virtual IntPoint minimumScrollPosition() const { ASSERT_NOT_REACHED(); return IntPoint(); }
+    virtual IntPoint maximumScrollPosition() const { ASSERT_NOT_REACHED(); return IntPoint(); }
+
+    virtual IntRect visibleContentRect(bool = false) const { ASSERT_NOT_REACHED(); return IntRect(); }
+    virtual int visibleHeight() const { ASSERT_NOT_REACHED(); return 0; }
+    virtual int visibleWidth() const { ASSERT_NOT_REACHED(); return 0; }
 
 private:
     // NOTE: Only called from the ScrollAnimator.

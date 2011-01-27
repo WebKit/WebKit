@@ -731,31 +731,7 @@ void ScrollView::wheelEvent(PlatformWheelEvent& e)
         return;
     }
 
-    // Accept the event if we have a scrollbar in that direction and can still
-    // scroll any further.
-    float deltaX = m_horizontalScrollbar ? e.deltaX() : 0;
-    float deltaY = m_verticalScrollbar ? e.deltaY() : 0;
-    
-    IntSize maxForwardScrollDelta = maximumScrollPosition() - scrollPosition();
-    IntSize maxBackwardScrollDelta = scrollPosition() - minimumScrollPosition();
-    if ((deltaX < 0 && maxForwardScrollDelta.width() > 0)
-        || (deltaX > 0 && maxBackwardScrollDelta.width() >0)
-        || (deltaY < 0 && maxForwardScrollDelta.height() > 0)
-        || (deltaY > 0 && maxBackwardScrollDelta.height() > 0)) {
-        e.accept();
-        if (e.granularity() == ScrollByPageWheelEvent) {
-            ASSERT(!e.deltaX());
-            bool negative = deltaY < 0;
-            deltaY = max(max(static_cast<float>(visibleHeight()) * Scrollbar::minFractionToStepWhenPaging(), static_cast<float>(visibleHeight() - Scrollbar::maxOverlapBetweenPages())), 1.0f);
-            if (negative)
-                deltaY = -deltaY;
-        }
-
-        if (deltaY)
-            ScrollableArea::scroll(ScrollUp, ScrollByPixel, deltaY);
-        if (deltaX)
-            ScrollableArea::scroll(ScrollLeft, ScrollByPixel, deltaX);
-    }
+    ScrollableArea::handleWheelEvent(e);
 }
 
 void ScrollView::setFrameRect(const IntRect& newRect)

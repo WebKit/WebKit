@@ -37,6 +37,7 @@
 namespace WebCore {
 
 class FloatPoint;
+class PlatformWheelEvent;
 class ScrollableArea;
 
 class ScrollAnimator {
@@ -52,6 +53,8 @@ public:
     virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier);
 
     virtual void scrollToOffsetWithoutAnimation(const FloatPoint&);
+
+    virtual void handleWheelEvent(PlatformWheelEvent&);
 
     FloatPoint currentPosition() const;
 
