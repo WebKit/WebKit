@@ -1,3 +1,10 @@
+2011-01-27  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, rebaseline of the favicon-as-image test from the build
+        bot.
+
+        * platform/gtk/http/tests/misc/favicon-as-image-expected.txt:
+
 2011-01-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another Unreviewed Chromium test expectation update.
