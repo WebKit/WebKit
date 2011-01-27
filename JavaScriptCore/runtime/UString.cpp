@@ -600,6 +600,8 @@ CString UString::UTF8String(bool strict) const
 {
     // Allocate a buffer big enough to hold all the characters.
     const unsigned length = size();
+    if (length > numeric_limits<unsigned>::max() / 3)
+        return CString();
     Vector<char, 1024> buffer(length * 3);
 
     // Convert to runs of 8-bit characters.
