@@ -36,9 +36,20 @@ static QWKPage* newPageFunction(QWKPage* page)
 
 QGraphicsWKView::BackingStoreType BrowserWindow::backingStoreTypeForNewWindow = QGraphicsWKView::Simple;
 
+QVector<int> BrowserWindow::m_zoomLevels;
+
 BrowserWindow::BrowserWindow(QWKContext* context)
+    : m_currentZoom(100) ,
+      m_browser(new BrowserView(backingStoreTypeForNewWindow, context))
 {
     setAttribute(Qt::WA_DeleteOnClose);
+
+    connect(m_browser->view(), SIGNAL(loadProgress(int)), SLOT(loadProgress(int)));
+    connect(m_browser->view(), SIGNAL(titleChanged(const QString&)), SLOT(titleChanged(const QString&)));
+    connect(m_browser->view(), SIGNAL(urlChanged(const QUrl&)), SLOT(urlChanged(const QUrl&)));
+
+    this->setCentralWidget(m_browser);
+    m_browser->setFocus(Qt::OtherFocusReason);
 
     QMenu* fileMenu = menuBar()->addMenu("&File");
     fileMenu->addAction("New Window", this, SLOT(newWindow()), QKeySequence::New);
@@ -46,16 +57,20 @@ BrowserWindow::BrowserWindow(QWKContext* context)
     fileMenu->addSeparator();
     fileMenu->addAction("Quit", this, SLOT(close()));
 
+    QMenu* viewMenu = menuBar()->addMenu("&View");
+    viewMenu->addAction(page()->action(QWKPage::Stop));
+    viewMenu->addAction(page()->action(QWKPage::Reload));
+    viewMenu->addSeparator();
+    QAction* zoomIn = viewMenu->addAction("Zoom &In", this, SLOT(zoomIn()));
+    QAction* zoomOut = viewMenu->addAction("Zoom &Out", this, SLOT(zoomOut()));
+    QAction* resetZoom = viewMenu->addAction("Reset Zoom", this, SLOT(resetZoom()));
+
+    zoomIn->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Plus));
+    zoomOut->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Minus));
+    resetZoom->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_0));
+
     QMenu* toolsMenu = menuBar()->addMenu("&Develop");
     toolsMenu->addAction("Change User Agent", this, SLOT(showUserAgentDialog()));
-
-    m_browser = new BrowserView(backingStoreTypeForNewWindow, context);
-    connect(m_browser->view(), SIGNAL(loadProgress(int)), SLOT(loadProgress(int)));
-    connect(m_browser->view(), SIGNAL(titleChanged(const QString&)), SLOT(titleChanged(const QString&)));
-    connect(m_browser->view(), SIGNAL(urlChanged(const QUrl&)), SLOT(urlChanged(const QUrl&)));
-
-    this->setCentralWidget(m_browser);
-    m_browser->setFocus(Qt::OtherFocusReason);
 
     m_addressBar = new QLineEdit();
     connect(m_addressBar, SIGNAL(returnPressed()), SLOT(changeLocation()));
@@ -71,6 +86,13 @@ BrowserWindow::BrowserWindow(QWKContext* context)
     connect(selectAddressBar, SIGNAL(activated()), this, SLOT(openLocation()));
 
     page()->setCreateNewPageFunction(newPageFunction);
+
+    // the zoom values are chosen to be like in Mozilla Firefox 3
+    if (!m_zoomLevels.count()) {
+        m_zoomLevels << 30 << 50 << 67 << 80 << 90;
+        m_zoomLevels << 100;
+        m_zoomLevels << 110 << 120 << 133 << 150 << 170 << 200 << 240 << 300;
+    }
 
     resize(960, 640);
     show();
@@ -153,23 +175,30 @@ void BrowserWindow::openFile()
 #endif
 }
 
-void BrowserWindow::updateUserAgentList()
+void BrowserWindow::zoomIn()
 {
-    QFile file(":/useragentlist.txt");
+    int i = m_zoomLevels.indexOf(m_currentZoom);
+    Q_ASSERT(i >= 0);
+    if (i < m_zoomLevels.count() - 1)
+        m_currentZoom = m_zoomLevels[i + 1];
 
-    if (file.open(QIODevice::ReadOnly)) {
-        while (!file.atEnd()) {
-            QString agent = file.readLine().trimmed();
-            if (!m_userAgentList.contains(agent))
-                m_userAgentList << agent;
-        }
-        file.close();
-    }
+    applyZoom();
+}
 
-    Q_ASSERT(!m_userAgentList.isEmpty());
-    QWKPage* wkPage = page();
-    if (!(wkPage->customUserAgent().isEmpty() || m_userAgentList.contains(wkPage->customUserAgent())))
-        m_userAgentList << wkPage->customUserAgent();
+void BrowserWindow::zoomOut()
+{
+    int i = m_zoomLevels.indexOf(m_currentZoom);
+    Q_ASSERT(i >= 0);
+    if (i > 0)
+        m_currentZoom = m_zoomLevels[i - 1];
+
+    applyZoom();
+}
+
+void BrowserWindow::resetZoom()
+{
+    m_currentZoom = 100;
+    applyZoom();
 }
 
 void BrowserWindow::showUserAgentDialog()
@@ -199,6 +228,30 @@ void BrowserWindow::showUserAgentDialog()
 
     if (dialog.exec() && !combo->currentText().isEmpty())
         page()->setCustomUserAgent(combo->currentText());
+}
+
+void BrowserWindow::updateUserAgentList()
+{
+    QFile file(":/useragentlist.txt");
+
+    if (file.open(QIODevice::ReadOnly)) {
+        while (!file.atEnd()) {
+            QString agent = file.readLine().trimmed();
+            if (!m_userAgentList.contains(agent))
+                m_userAgentList << agent;
+        }
+        file.close();
+    }
+
+    Q_ASSERT(!m_userAgentList.isEmpty());
+    QWKPage* wkPage = page();
+    if (!(wkPage->customUserAgent().isEmpty() || m_userAgentList.contains(wkPage->customUserAgent())))
+        m_userAgentList << wkPage->customUserAgent();
+}
+
+void BrowserWindow::applyZoom()
+{
+    page()->setPageZoomFactor(qreal(m_currentZoom) / 100.0);
 }
 
 BrowserWindow::~BrowserWindow()

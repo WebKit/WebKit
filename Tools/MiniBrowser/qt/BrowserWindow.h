@@ -56,10 +56,20 @@ protected slots:
     void titleChanged(const QString&);
     void urlChanged(const QUrl&);
     void openFile();
+
+    void zoomIn();
+    void zoomOut();
+    void resetZoom();
+
     void showUserAgentDialog();
 
 private:
     void updateUserAgentList();
+
+    void applyZoom();
+
+    static QVector<int> m_zoomLevels;
+    int m_currentZoom;
 
     BrowserView* m_browser;
     QLineEdit* m_addressBar;

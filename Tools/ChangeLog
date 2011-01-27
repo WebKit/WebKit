@@ -1,3 +1,21 @@
+2011-01-27  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Add simple zooming features to MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=53231
+
+        Add View menu and Zoom In, Zoom Out, Zoom Reset actions to MiniBrowser.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::BrowserWindow):
+        (BrowserWindow::zoomIn):
+        (BrowserWindow::zoomOut):
+        (BrowserWindow::resetZoom):
+        (BrowserWindow::updateUserAgentList):
+        (BrowserWindow::applyZoom):
+        * MiniBrowser/qt/BrowserWindow.h:
+
 2011-01-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dan Bernstein.
