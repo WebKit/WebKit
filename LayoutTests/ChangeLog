@@ -1,3 +1,11 @@
+2011-01-26  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] media/unsupported-rtsp.html fails after timing out
+        https://bugs.webkit.org/show_bug.cgi?id=53056
+
+        * platform/gtk/Skipped: Update the skipped list to explain why this
+        test is skipped and should remain skipped.
+
 2011-01-26  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
