@@ -1,3 +1,15 @@
+2011-01-27  Charlie Reis  <creis@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        back-during-onload-hung-page.php causes Chromium WebKit bot to fail
+        https://bugs.webkit.org/show_bug.cgi?id=53220
+
+        Reduces the timeout on a script that shouldn't finish during a test.
+        This avoids problems in one of the Chromium WebKit builders.
+
+        * http/tests/history/resources/back-during-onload-hung-page.php: Reduce timeout.
+
 2011-01-26  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

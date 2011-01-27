@@ -1,2 +1,2 @@
-<? sleep(1000); ?>
+<? sleep(60); ?>
 FAIL: Should never see this
