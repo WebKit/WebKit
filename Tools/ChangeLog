@@ -1,3 +1,11 @@
+2011-01-27  Joone Hur <joone.hur@collabora.co.uk>
+
+        Unreviewed. 
+
+        Adding myself to committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-01-27  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Csaba Osztrogonác.
