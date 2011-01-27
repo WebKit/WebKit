@@ -1,3 +1,21 @@
+2011-01-27  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        new-run-webkit-tests: turn off pixel tests correctly by default
+        for webkit-based ports. r70013 (bug 47510) used
+        port.set_option_default() to attempt to set default values, but
+        that didn't work correctly. I have removed set_option_default
+        for now since it was only being used in two places and in three
+        useless unit tests. There is a separate bug open to fix the
+        option parsing (48095), so this workaround is fine for now.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53217
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+
 2011-01-27  Balazs Kelemen  <kbalazs@webkit.org>
 
         Rubber-stamped by Ariya Hidayat.

@@ -121,8 +121,7 @@ class Port(object):
         # certainly won't be available, so it's a good test to keep us
         # from erroring out later.
         self._pretty_patch_available = self._filesystem.exists(self._pretty_patch_path)
-        self.set_option_default('configuration', None)
-        if self._options.configuration is None:
+        if not hasattr(self._options, 'configuration') or self._options.configuration is None:
             self._options.configuration = self.default_configuration()
 
     def default_child_processes(self):

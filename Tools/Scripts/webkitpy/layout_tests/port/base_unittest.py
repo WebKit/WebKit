@@ -224,19 +224,6 @@ class PortTest(unittest.TestCase):
         port = base.Port()
         self.assertEqual(port.get_option('foo', 'bar'), 'bar')
 
-    def test_set_option_default__unset(self):
-        port = base.Port()
-        port.set_option_default('foo', 'bar')
-        self.assertEqual(port.get_option('foo'), 'bar')
-
-    def test_set_option_default__set(self):
-        options, args = optparse.OptionParser().parse_args([])
-        options.foo = 'bar'
-        port = base.Port(options=options)
-        # This call should have no effect.
-        port.set_option_default('foo', 'new_bar')
-        self.assertEqual(port.get_option('foo'), 'bar')
-
     def test_name__unset(self):
         port = base.Port()
         self.assertEqual(port.name(), None)

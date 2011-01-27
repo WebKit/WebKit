@@ -57,7 +57,8 @@ class WebKitPort(base.Port):
 
         # FIXME: disable pixel tests until they are run by default on the
         # build machines.
-        self.set_option_default('pixel_tests', False)
+        if not hasattr(self._options, "pixel_tests") or self._options.pixel_tests == None:
+            self._options.pixel_tests = False
 
     def baseline_path(self):
         return self._webkit_baseline_path(self._name)
@@ -120,9 +121,9 @@ class WebKitPort(base.Port):
         return self._diff_image_reply(sp, diff_filename)
 
     def _diff_image_request(self, expected_contents, actual_contents):
-        # FIXME: use self.get_option('tolerance') and
-        # self.set_option_default('tolerance', 0.1) once that behaves correctly
-        # with default values.
+        # FIXME: There needs to be a more sane way of handling default
+        # values for options so that you can distinguish between a default
+        # value of None and a default value that wasn't set.
         if self.get_option('tolerance') is not None:
             tolerance = self.get_option('tolerance')
         else:
