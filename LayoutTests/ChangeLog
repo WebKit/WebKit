@@ -1,3 +1,16 @@
+2011-01-27  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Kent Tamura.
+
+        Add test for:
+        Color changes to option elements in a select multiple aren't drawn immediately
+        https://bugs.webkit.org/show_bug.cgi?id=49790
+
+        * fast/repaint/select-option-background-color.html: Added.
+        * platform/mac/fast/repaint/select-option-background-color-expected.checksum: Added.
+        * platform/mac/fast/repaint/select-option-background-color-expected.png: Added.
+        * platform/mac/fast/repaint/select-option-background-color-expected.txt: Added.
+
 2011-01-27  David Grogan  <dgrogan@google.com>
 
         Reviewed by Jeremy Orlow.

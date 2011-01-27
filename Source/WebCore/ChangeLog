@@ -1,3 +1,17 @@
+2011-01-27  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Kent Tamura.
+
+        Color changes to option elements in a select multiple aren't drawn immediately
+        https://bugs.webkit.org/show_bug.cgi?id=49790
+
+        Redirect style changes on <option> element to the owner <select> element.
+
+        Test: fast/repaint/select-option-background-color.html
+
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::setRenderStyle):
+
 2011-01-19  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Darin Adler.
