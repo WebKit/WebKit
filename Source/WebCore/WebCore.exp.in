@@ -1293,6 +1293,9 @@ _wkIOSurfaceContextCreate
 _wkIOSurfaceContextCreateImage
 _wkMakeScrollbarPainter
 _wkScrollbarPainterPaint
+_wkScrollbarThickness
+_wkScrollbarMinimumThumbLength
+_wkScrollbarMinimumTotalLengthNeededForThumb
 #endif
 
 #if ENABLE(3D_RENDERING)

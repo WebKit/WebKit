@@ -117,13 +117,15 @@ ScrollbarTheme* ScrollbarTheme::nativeTheme()
 }
 
 // FIXME: Get these numbers from CoreUI.
-static int cScrollbarThickness[] = { 15, 11 };
 static int cRealButtonLength[] = { 28, 21 };
-static int cButtonInset[] = { 14, 11 };
 static int cButtonHitInset[] = { 3, 2 };
 // cRealButtonLength - cButtonInset
 static int cButtonLength[] = { 14, 10 };
+#if !defined(USE_WK_SCROLLBAR_PAINTER)
+static int cScrollbarThickness[] = { 15, 11 };
+static int cButtonInset[] = { 14, 11 };
 static int cThumbMinLength[] = { 26, 20 };
+#endif
 
 static int cOuterButtonLength[] = { 16, 14 }; // The outer button in a double button pair is a bit bigger.
 static int cOuterButtonOverlap = 2;
@@ -131,13 +133,15 @@ static int cOuterButtonOverlap = 2;
 static float gInitialButtonDelay = 0.5f;
 static float gAutoscrollButtonDelay = 0.05f;
 static bool gJumpOnTrackClick = false;
+
+#if defined(USE_WK_SCROLLBAR_PAINTER)
+static ScrollbarButtonsPlacement gButtonPlacement = ScrollbarButtonsNone;
+#else
 static ScrollbarButtonsPlacement gButtonPlacement = ScrollbarButtonsDoubleEnd;
+#endif
 
 static void updateArrowPlacement()
 {
-#if defined(USE_WK_SCROLLBAR_PAINTER)
-    gButtonPlacement = ScrollbarButtonsNone;
-#else
     NSString *buttonPlacement = [[NSUserDefaults standardUserDefaults] objectForKey:@"AppleScrollBarVariant"];
     if ([buttonPlacement isEqualToString:@"Single"])
         gButtonPlacement = ScrollbarButtonsSingle;
@@ -145,9 +149,13 @@ static void updateArrowPlacement()
         gButtonPlacement = ScrollbarButtonsDoubleStart;
     else if ([buttonPlacement isEqualToString:@"DoubleBoth"])
         gButtonPlacement = ScrollbarButtonsDoubleBoth;
-    else
-        gButtonPlacement = ScrollbarButtonsDoubleEnd; // The default is ScrollbarButtonsDoubleEnd.
+    else {
+#if defined(USE_WK_SCROLLBAR_PAINTER)
+        gButtonPlacement = ScrollbarButtonsNone;
+#else
+        gButtonPlacement = ScrollbarButtonsDoubleEnd;
 #endif
+    }
 }
 
 void ScrollbarThemeMac::registerScrollbar(Scrollbar* scrollbar)
@@ -192,7 +200,11 @@ void ScrollbarThemeMac::preferencesChanged()
 
 int ScrollbarThemeMac::scrollbarThickness(ScrollbarControlSize controlSize)
 {
+#if defined(USE_WK_SCROLLBAR_PAINTER)
+    return wkScrollbarThickness(controlSize);
+#else
     return cScrollbarThickness[controlSize];
+#endif
 }
 
 bool ScrollbarThemeMac::usesOverlayScrollbars() const
@@ -218,20 +230,29 @@ ScrollbarButtonsPlacement ScrollbarThemeMac::buttonsPlacement() const
 
 bool ScrollbarThemeMac::hasButtons(Scrollbar* scrollbar)
 {
-    return scrollbar->enabled() && (scrollbar->orientation() == HorizontalScrollbar ? 
-             scrollbar->width() : 
-             scrollbar->height()) >= 2 * (cRealButtonLength[scrollbar->controlSize()] - cButtonHitInset[scrollbar->controlSize()]);
+    return scrollbar->enabled() && gButtonPlacement != ScrollbarButtonsNone
+             && (scrollbar->orientation() == HorizontalScrollbar
+             ? scrollbar->width()
+             : scrollbar->height()) >= 2 * (cRealButtonLength[scrollbar->controlSize()] - cButtonHitInset[scrollbar->controlSize()]);
 }
 
 bool ScrollbarThemeMac::hasThumb(Scrollbar* scrollbar)
 {
+    int minLengthForThumb;
+#if defined(USE_WK_SCROLLBAR_PAINTER)
+    minLengthForThumb = wkScrollbarMinimumTotalLengthNeededForThumb(scrollbarMap()->get(scrollbar).get());
+#else
+    minLengthForThumb = 2 * cButtonInset[scrollbar->controlSize()] + cThumbMinLength[scrollbar->controlSize()] + 1;
+#endif
     return scrollbar->enabled() && (scrollbar->orientation() == HorizontalScrollbar ? 
              scrollbar->width() : 
-             scrollbar->height()) >= 2 * cButtonInset[scrollbar->controlSize()] + cThumbMinLength[scrollbar->controlSize()] + 1;
+             scrollbar->height()) >= minLengthForThumb;
 }
 
 static IntRect buttonRepaintRect(const IntRect& buttonRect, ScrollbarOrientation orientation, ScrollbarControlSize controlSize, bool start)
 {
+    ASSERT(gButtonPlacement != ScrollbarButtonsNone);
+
     IntRect paintRect(buttonRect);
     if (orientation == HorizontalScrollbar) {
         paintRect.setWidth(cRealButtonLength[controlSize]);
@@ -359,7 +380,11 @@ IntRect ScrollbarThemeMac::trackRect(Scrollbar* scrollbar, bool painting)
 
 int ScrollbarThemeMac::minimumThumbLength(Scrollbar* scrollbar)
 {
+#if defined(USE_WK_SCROLLBAR_PAINTER)
+    return wkScrollbarMinimumThumbLength(scrollbarMap()->get(scrollbar).get());
+#else
     return cThumbMinLength[scrollbar->controlSize()];
+#endif
 }
 
 bool ScrollbarThemeMac::shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent& evt)

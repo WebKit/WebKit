@@ -190,6 +190,9 @@ extern CGImageRef (*wkIOSurfaceContextCreateImage)(CGContextRef context);
 typedef struct __WKScrollbarPainter *WKScrollbarPainterRef;
 extern WKScrollbarPainterRef (*wkMakeScrollbarPainter)(int controlSize, bool isHorizontal);
 extern void (*wkScrollbarPainterPaint)(WKScrollbarPainterRef, bool enabled, double value, CGFloat proportion, CGRect frameRect);
+extern int (*wkScrollbarThickness)(int controlSize);
+extern int (*wkScrollbarMinimumThumbLength)(WKScrollbarPainterRef);
+extern int (*wkScrollbarMinimumTotalLengthNeededForThumb)(WKScrollbarPainterRef);
 #endif
 
 }

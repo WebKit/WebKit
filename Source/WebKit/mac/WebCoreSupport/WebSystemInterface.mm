@@ -125,6 +125,9 @@ void InitWebCoreSystemInterface(void)
     INIT(IOSurfaceContextCreateImage);
     INIT(MakeScrollbarPainter);
     INIT(ScrollbarPainterPaint);
+    INIT(ScrollbarThickness);
+    INIT(ScrollbarMinimumThumbLength);
+    INIT(ScrollbarMinimumTotalLengthNeededForThumb);
 #endif
 
     didInit = true;

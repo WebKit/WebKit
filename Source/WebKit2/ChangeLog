@@ -1,3 +1,13 @@
+2011-01-26  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for <rdar://problem/8895140> Adopt WKScrollbar metrics 
+        when using WKScrollbars.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2011-01-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.

@@ -95,6 +95,9 @@ void InitWebCoreSystemInterface(void)
         INIT(CreateCTTypesetterWithUniCharProviderAndOptions);
         INIT(MakeScrollbarPainter);
         INIT(ScrollbarPainterPaint);
+        INIT(ScrollbarThickness);
+        INIT(ScrollbarMinimumThumbLength);
+        INIT(ScrollbarMinimumTotalLengthNeededForThumb);
 #else
         INIT(GetHyphenationLocationBeforeIndex);
 #endif
