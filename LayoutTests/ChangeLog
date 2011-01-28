@@ -1,5 +1,12 @@
 2011-01-28  Jessie Berlin  <jberlin@apple.com>
 
+        Add Windows expected (failing) results to get the bots green. Unreviewed.
+        https://bugs.webkit.org/show_bug.cgi?id=53310
+
+        * platform/win/fast/dom/window-domurl-crash-expected.txt: Added.
+
+2011-01-28  Jessie Berlin  <jberlin@apple.com>
+
         Check in Windows-specific expected results to get the bots green. Unreviewed.
         https://bugs.webkit.org/show_bug.cgi?id=53307
 
