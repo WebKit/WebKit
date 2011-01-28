@@ -40,10 +40,22 @@ public:
     void filterToken(HTMLToken&);
 
 private:
+    enum State {
+        Initial,
+        AfterScriptStartTag,
+    };
+
+    void filterTokenAfterScriptStartTag(HTMLToken&);
+    void filterScriptToken(HTMLToken&);
+
+    String snippetForRange(const HTMLToken&, int start, int end);
     String snippetForAttribute(const HTMLToken&, const HTMLToken::Attribute&);
+
     bool isContainedInRequest(const String&);
 
     HTMLDocumentParser* m_parser;
+    State m_state;
+    String m_cachedSnippet;
 };
 
 }

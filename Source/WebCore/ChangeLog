@@ -2,6 +2,49 @@
 
         Reviewed by Daniel Bates.
 
+        Teach XSSFilter how to filter <script> elements
+        https://bugs.webkit.org/show_bug.cgi?id=53279
+
+        This patch adds the ability for the XSSFilter to block injected
+        <script> elements.  Handling script elements is slightly subtle because
+        these elements act very differently depending on whether they have a
+        src attribute.
+        
+        In the "src case", which check whether the src attribute was present in
+        the request.  In the "non-src case", we check whether the start tag and
+        the body of the script element was included in the request.  Checking
+        for the whole start tag means we miss out on some attribute splitting
+        attacks inside of script tags, but that doesn't seem like that big a
+        deal.
+
+        This patch also introduces some amount of state into the XSSFilter
+        because inline script elements span multiple tokens.  There's a lot of
+        tuning and optimization left in these cases, some of which I've noted
+        with FIXMEs.
+
+        To test this patch, I played around with some of the existing
+        XSSAuditor tests.  Hopefully I'll be able to run the test suite more
+        systematically in the future.
+
+        * html/parser/HTMLToken.h:
+        (WebCore::HTMLToken::eraseCharacters):
+        (WebCore::HTMLToken::eraseValueOfAttribute):
+        * html/parser/XSSFilter.cpp:
+        (WebCore::HTMLNames::hasName):
+        (WebCore::HTMLNames::findAttributeWithName):
+        (WebCore::HTMLNames::isNameOfScriptCarryingAttribute):
+        (WebCore::XSSFilter::XSSFilter):
+        (WebCore::XSSFilter::filterToken):
+        (WebCore::XSSFilter::filterTokenAfterScriptStartTag):
+        (WebCore::XSSFilter::filterScriptToken):
+        (WebCore::XSSFilter::snippetForRange):
+        (WebCore::XSSFilter::snippetForAttribute):
+        * html/parser/XSSFilter.h:
+
+2011-01-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Daniel Bates.
+
         Sketch out new XSS filter design (disabled by default)
         https://bugs.webkit.org/show_bug.cgi?id=53205
 

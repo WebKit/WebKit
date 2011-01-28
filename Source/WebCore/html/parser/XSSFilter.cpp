@@ -28,6 +28,7 @@
 
 #include "Document.h"
 #include "HTMLDocumentParser.h"
+#include "HTMLNames.h"
 #include "TextEncoding.h"
 #include "TextResourceDecoder.h"
 #include <wtf/text/CString.h>
@@ -37,18 +38,32 @@
 
 namespace WebCore {
 
+using namespace HTMLNames;
+
 namespace {
+
+bool hasName(const HTMLToken& token, const QualifiedName& name)
+{
+    return equalIgnoringNullity(token.name(), static_cast<const String&>(name.localName()));
+}
+
+bool findAttributeWithName(const HTMLToken& token, const QualifiedName& name, size_t& indexOfMatchingAttribute)
+{
+    for (size_t i = 0; i < token.attributes().size(); ++i) {
+        if (equalIgnoringNullity(token.attributes().at(i).m_name, name.localName())) {
+            indexOfMatchingAttribute = i;
+            return true;
+        }
+    }
+    return false;
+}
 
 bool isNameOfScriptCarryingAttribute(const Vector<UChar, 32>& name)
 {
     const size_t lengthOfShortestScriptCarryingAttribute = 5; // To wit: oncut.
     if (name.size() < lengthOfShortestScriptCarryingAttribute)
         return false;
-    if (name[0] != 'o' && name[0] != 'O')
-        return false;
-    if (name[1] != 'n' && name[0] != 'N')
-        return false;
-    return true;
+    return name[0] == 'o' && name[1] == 'n';
 }
 
 String decodeURL(const String& string, const TextEncoding& encoding)
@@ -68,6 +83,7 @@ String decodeURL(const String& string, const TextEncoding& encoding)
 
 XSSFilter::XSSFilter(HTMLDocumentParser* parser)
     : m_parser(parser)
+    , m_state(Initial)
 {
     ASSERT(m_parser);
 }
@@ -78,18 +94,78 @@ void XSSFilter::filterToken(HTMLToken& token)
     ASSERT_UNUSED(token, &token);
     return;
 #else
+    switch (m_state) {
+    case Initial: 
+        break;
+    case AfterScriptStartTag:
+        filterTokenAfterScriptStartTag(token);
+        ASSERT(m_state == Initial);
+        m_cachedSnippet = String();
+        return;
+    }
+
     if (token.type() != HTMLToken::StartTag)
         return;
 
-    HTMLToken::AttributeList::const_iterator iter = token.attributes().begin();
-    for (; iter != token.attributes().end(); ++iter) {
-        if (!isNameOfScriptCarryingAttribute(iter->m_name))
+    if (hasName(token, scriptTag)) {
+        filterScriptToken(token);
+        return;
+    }
+
+    for (size_t i = 0; i < token.attributes().size(); ++i) {
+        const HTMLToken::Attribute& attribute = token.attributes().at(i);
+        if (!isNameOfScriptCarryingAttribute(attribute.m_name))
             continue;
-        if (!isContainedInRequest(snippetForAttribute(token, *iter)))
+        if (!isContainedInRequest(snippetForAttribute(token, attribute)))
             continue;
-        iter->m_value.clear();
+        token.eraseValueOfAttribute(i);
     }
 #endif
+}
+
+void XSSFilter::filterTokenAfterScriptStartTag(HTMLToken& token)
+{
+    ASSERT(m_state == AfterScriptStartTag);
+    m_state = Initial;
+
+    if (token.type() != HTMLToken::Character) {
+        ASSERT(token.type() == HTMLToken::EndTag || token.type() == HTMLToken::EndOfFile);
+        return;
+    }
+
+    int start = 0;
+    // FIXME: We probably want to grab only the first few characters of the
+    //        contents of the script element.
+    int end = token.endIndex() - token.startIndex();
+    if (isContainedInRequest(m_cachedSnippet + snippetForRange(token, start, end))) {
+        token.eraseCharacters();
+        token.appendToCharacter(' '); // Technically, character tokens can't be empty.
+    }
+}
+
+void XSSFilter::filterScriptToken(HTMLToken& token)
+{
+    ASSERT(m_state == Initial);
+    ASSERT(token.type() == HTMLToken::StartTag);
+    ASSERT(hasName(token, scriptTag));
+
+    size_t indexOfFirstSrcAttribute;
+    if (findAttributeWithName(token, srcAttr, indexOfFirstSrcAttribute)) {
+        const HTMLToken::Attribute& srcAttribute = token.attributes().at(indexOfFirstSrcAttribute);
+        if (isContainedInRequest(snippetForAttribute(token, srcAttribute)))
+            token.eraseValueOfAttribute(indexOfFirstSrcAttribute);
+        return;
+    }
+
+    m_state = AfterScriptStartTag;
+    m_cachedSnippet = m_parser->sourceForToken(token);
+}
+
+String XSSFilter::snippetForRange(const HTMLToken& token, int start, int end)
+{
+    // FIXME: There's an extra allocation here that we could save by
+    //        passing the range to the parser.
+    return m_parser->sourceForToken(token).substring(start, end - start);
 }
 
 String XSSFilter::snippetForAttribute(const HTMLToken& token, const HTMLToken::Attribute& attribute)
@@ -98,10 +174,7 @@ String XSSFilter::snippetForAttribute(const HTMLToken& token, const HTMLToken::A
     int start = attribute.m_nameRange.m_start - token.startIndex();
     // FIXME: We probably want to grab only the first few characters of the attribute value.
     int end = attribute.m_valueRange.m_end - token.startIndex();
-
-    // FIXME: There's an extra allocation here that we could save by
-    //        passing the range to the parser.
-    return m_parser->sourceForToken(token).substring(start, end - start);
+    return snippetForRange(token, start, end);
 }
 
 bool XSSFilter::isContainedInRequest(const String& snippet)

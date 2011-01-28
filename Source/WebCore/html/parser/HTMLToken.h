@@ -246,6 +246,18 @@ public:
         return m_data;
     }
 
+    void eraseCharacters()
+    {
+        ASSERT(m_type == Character);
+        m_data.clear();
+    }
+
+    void eraseValueOfAttribute(size_t i)
+    {
+        ASSERT(m_type == StartTag || m_type == EndTag);
+        m_attributes[i].m_value.clear();
+    }
+
     const DataVector& characters() const
     {
         ASSERT(m_type == Character);
