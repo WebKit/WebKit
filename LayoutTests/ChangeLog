@@ -1,3 +1,15 @@
+2011-01-28  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, a chromium win/linux rebaseline.  The mac result was
+        rebaselined in r76735.
+
+        * platform/chromium-linux/fast/overflow/overflow-rtl-vertical-expected.checksum:
+        * platform/chromium-linux/fast/overflow/overflow-rtl-vertical-expected.png:
+        * platform/chromium-win/fast/overflow/overflow-rtl-vertical-expected.checksum:
+        * platform/chromium-win/fast/overflow/overflow-rtl-vertical-expected.png:
+        * platform/chromium-win/fast/overflow/overflow-rtl-vertical-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-01-28  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -3102,7 +3102,6 @@ BUGCR71009 MAC : fast/multicol/vertical-rl/float-paginate-complex.html = TEXT
 BUGCR71013 LINUX : fast/text/justify-ideograph-vertical.html = CRASH IMAGE+TEXT
 
 // Started failing at http://trac.webkit.org/changeset/76743
-BUGCR71022 WIN LINUX : fast/overflow/overflow-rtl-vertical.html = IMAGE+TEXT
 BUGCR71022 WIN LINUX : fast/text/justify-ideograph-complex.html = IMAGE+TEXT
 BUGCR71022 WIN LINUX : fast/text/justify-ideograph-simple.html = IMAGE+TEXT
 BUGCR71022 WIN : fast/text/justify-ideograph-vertical.html = IMAGE+TEXT
