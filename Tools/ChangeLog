@@ -2,6 +2,15 @@
 
         Reviewed by Tony Chang.
 
+        committers.py - add an IRC nickname for dpranke
+        https://bugs.webkit.org/show_bug.cgi?id=53335
+
+        * Scripts/webkitpy/common/config/committers.py:
+
+2011-01-28  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
         new-run-webkit-tests: add a "mock DRT" port implementation
         and a separate class that emulates what we expect the
         DumpRenderTree behavior to be.
