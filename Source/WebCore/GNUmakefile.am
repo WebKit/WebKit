@@ -4941,6 +4941,8 @@ EXTRA_DIST += \
 	Source/WebCore/html/parser/HTMLEntityNames.in \
 	Source/WebCore/icu/LICENSE \
 	Source/WebCore/inspector/CodeGeneratorInspector.pm \
+	Source/WebCore/inspector/InjectedScriptSource.js \
+	Source/WebCore/inspector/xxd.pl \
 	Source/WebCore/LICENSE-APPLE \
 	Source/WebCore/LICENSE-LGPL-2 \
 	Source/WebCore/LICENSE-LGPL-2.1 \

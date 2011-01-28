@@ -1,3 +1,12 @@
+2011-01-28  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Fix dist compilation for the release
+        https://bugs.webkit.org/show_bug.cgi?id=53290
+
+        * GNUmakefile.am: Added inspector files to the extra dist.
+
 2011-01-28  Ilya Sherman  <isherman@chromium.org>
 
         Reviewed by Andreas Kling.
