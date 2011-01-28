@@ -520,7 +520,7 @@ void DumpRenderTree::dryRunPrint(QWebFrame* frame)
 #endif
 }
 
-void DumpRenderTree::resetToConsistentStateBeforeTesting()
+void DumpRenderTree::resetToConsistentStateBeforeTesting(const QUrl& url)
 {
     // reset so that any current loads are stopped
     // NOTE: that this has to be done before the layoutTestController is
@@ -549,6 +549,14 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting()
 
     m_page->mainFrame()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAsNeeded);
     m_page->mainFrame()->setScrollBarPolicy(Qt::Horizontal, Qt::ScrollBarAsNeeded);
+
+    if (url.scheme() == "http" || url.scheme() == "https") {
+        // credentials may exist from previous tests.
+        m_page->setNetworkAccessManager(0);
+        delete m_networkAccessManager;
+        m_networkAccessManager = new NetworkAccessManager(this);
+        m_page->setNetworkAccessManager(m_networkAccessManager);
+    }
 
     WorkQueue::shared()->clear();
     WorkQueue::shared()->setFrozen(false);
@@ -583,7 +591,7 @@ static bool isWebInspectorTest(const QUrl& url)
 void DumpRenderTree::open(const QUrl& url)
 {
     DumpRenderTreeSupportQt::dumpResourceLoadCallbacksPath(QFileInfo(url.toString()).path());
-    resetToConsistentStateBeforeTesting();
+    resetToConsistentStateBeforeTesting(url);
 
     if (isWebInspectorTest(m_page->mainFrame()->url()))
         layoutTestController()->closeWebInspector();

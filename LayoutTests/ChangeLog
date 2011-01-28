@@ -1,3 +1,12 @@
+2011-01-28  Chang Shu  <chang.shu@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        Unskipp auth.html after fix.
+        https://bugs.webkit.org/show_bug.cgi?id=36688
+
+        * platform/qt/Skipped:
+
 2011-01-28  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Added newly-failing tests to expectations, will be fixing them shortly.

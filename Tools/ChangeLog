@@ -1,3 +1,16 @@
+2011-01-28  Chang Shu  <chang.shu@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        Reset NetworkAccessManager to clean up credentials from previous tests.
+        This change causes no performance overhead either.
+        https://bugs.webkit.org/show_bug.cgi?id=36688
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::resetToConsistentStateBeforeTesting):
+        (WebCore::DumpRenderTree::open):
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+
 2011-01-28  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Andreas Kling.

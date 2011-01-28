@@ -86,7 +86,7 @@ public:
     void setDumpPixels(bool);
 
     void closeRemainingWindows();
-    void resetToConsistentStateBeforeTesting();
+    void resetToConsistentStateBeforeTesting(const QUrl&);
 
     LayoutTestController *layoutTestController() const { return m_controller; }
     EventSender *eventSender() const { return m_eventSender; }
