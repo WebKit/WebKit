@@ -206,7 +206,7 @@ void HTMLSelectElement::remove(HTMLOptionElement* option)
     option->remove(ec);
 }
 
-String HTMLSelectElement::value()
+String HTMLSelectElement::value() const
 {
     const Vector<Element*>& items = listItems();
     for (unsigned i = 0; i < items.size(); i++) {

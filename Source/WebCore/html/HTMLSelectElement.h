@@ -55,7 +55,7 @@ public:
     void remove(int index);
     void remove(HTMLOptionElement*);
 
-    String value();
+    String value() const;
     void setValue(const String&);
 
     PassRefPtr<HTMLOptionsCollection> options();

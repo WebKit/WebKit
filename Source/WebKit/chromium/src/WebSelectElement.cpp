@@ -46,14 +46,14 @@ void WebSelectElement::setValue(const WebString& value)
     unwrap<HTMLSelectElement>()->setValue(value);
 }
 
-WebString WebSelectElement::value()
+WebString WebSelectElement::value() const
 {
-    return unwrap<HTMLSelectElement>()->value();
+    return constUnwrap<HTMLSelectElement>()->value();
 }
 
-WebVector<WebElement> WebSelectElement::listItems()
+WebVector<WebElement> WebSelectElement::listItems() const
 {
-    const Vector<Element*>& sourceItems = unwrap<HTMLSelectElement>()->listItems();
+    const Vector<Element*>& sourceItems = constUnwrap<HTMLSelectElement>()->listItems();
     WebVector<WebElement> items(sourceItems.size());
     for (size_t i = 0; i < sourceItems.size(); ++i)
         items[i] = WebElement(static_cast<HTMLElement*>(sourceItems[i]));
