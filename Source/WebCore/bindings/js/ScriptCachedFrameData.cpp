@@ -84,7 +84,7 @@ void ScriptCachedFrameData::restore(Frame* frame)
         JSDOMWindowShell* windowShell = iter->second.get();
 
         if (JSDOMWindow* window = m_windows.get(world))
-            windowShell->setWindow(window);
+            windowShell->setWindow(window->globalData(), window);
         else {
             windowShell->setWindow(frame->domWindow());
 

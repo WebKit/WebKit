@@ -31,7 +31,7 @@ namespace JSC {
     class JSAPIValueWrapper : public JSCell {
         friend JSValue jsAPIValueWrapper(ExecState*, JSValue);
     public:
-        JSValue value() const { return m_value; }
+        JSValue value() const { return m_value.get(); }
 
         virtual bool isAPIValueWrapper() const { return true; }
 
@@ -44,12 +44,12 @@ namespace JSC {
     private:
         JSAPIValueWrapper(ExecState* exec, JSValue value)
             : JSCell(exec->globalData().apiWrapperStructure.get())
-            , m_value(value)
         {
+            m_value.set(exec->globalData(), this, value);
             ASSERT(!value.isCell());
         }
 
-        JSValue m_value;
+        WriteBarrier<Unknown> m_value;
     };
 
     inline JSValue jsAPIValueWrapper(ExecState* exec, JSValue value)

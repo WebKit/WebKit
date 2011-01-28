@@ -79,7 +79,7 @@ JSValue JSJavaScriptCallFrame::scopeChain(ExecState* exec) const
 
     MarkedArgumentBuffer list;
     do {
-        list.append(*iter);
+        list.append(iter->get());
         ++iter;
     } while (iter != end);
 
@@ -100,7 +100,7 @@ JSValue JSJavaScriptCallFrame::scopeType(ExecState* exec)
 
     bool foundLocalScope = false;
     for (ScopeChainIterator iter = scopeChain->begin(); iter != end; ++iter) {
-        JSObject* scope = *iter;
+        JSC::DeprecatedPtr<JSObject> scope = *iter;
         if (scope->isActivationObject()) {
             if (!foundLocalScope) {
                 // First activation object is local scope, each successive activation object is closure.

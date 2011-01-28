@@ -85,7 +85,7 @@ namespace JSC {
         RefPtr<StructureChain> m_cachedPrototypeChain;
         uint32_t m_numCacheableSlots;
         uint32_t m_jsStringsSize;
-        OwnArrayPtr<JSValue> m_jsStrings;
+        OwnArrayPtr<WriteBarrier<Unknown> > m_jsStrings;
     };
 
     inline void Structure::setEnumerationCache(JSPropertyNameIterator* enumerationCache)

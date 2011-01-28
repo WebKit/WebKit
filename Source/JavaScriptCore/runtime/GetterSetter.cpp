@@ -33,9 +33,9 @@ void GetterSetter::markChildren(MarkStack& markStack)
     JSCell::markChildren(markStack);
 
     if (m_getter)
-        markStack.append(m_getter);
+        markStack.append(&m_getter);
     if (m_setter)
-        markStack.append(m_setter);
+        markStack.append(&m_setter);
 }
 
 bool GetterSetter::isGetterSetter() const

@@ -96,7 +96,7 @@ JSValue JSHTMLDocument::all(ExecState* exec) const
 void JSHTMLDocument::setAll(ExecState* exec, JSValue value)
 {
     // Add "all" to the property map.
-    putDirect(Identifier(exec, "all"), value);
+    putDirect(exec->globalData(), Identifier(exec, "all"), value);
 }
 
 // Custom functions

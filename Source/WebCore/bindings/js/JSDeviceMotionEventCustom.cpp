@@ -114,18 +114,18 @@ static PassRefPtr<DeviceMotionData::RotationRate> readRotationRateArgument(JSVal
 static JSObject* createAccelerationObject(const DeviceMotionData::Acceleration* acceleration, ExecState* exec)
 {
     JSObject* object = constructEmptyObject(exec);
-    object->putDirect(Identifier(exec, "x"), acceleration->canProvideX() ? jsNumber(acceleration->x()) : jsNull());
-    object->putDirect(Identifier(exec, "y"), acceleration->canProvideY() ? jsNumber(acceleration->y()) : jsNull());
-    object->putDirect(Identifier(exec, "z"), acceleration->canProvideZ() ? jsNumber(acceleration->z()) : jsNull());
+    object->putDirect(exec->globalData(), Identifier(exec, "x"), acceleration->canProvideX() ? jsNumber(acceleration->x()) : jsNull());
+    object->putDirect(exec->globalData(), Identifier(exec, "y"), acceleration->canProvideY() ? jsNumber(acceleration->y()) : jsNull());
+    object->putDirect(exec->globalData(), Identifier(exec, "z"), acceleration->canProvideZ() ? jsNumber(acceleration->z()) : jsNull());
     return object;
 }
 
 static JSObject* createRotationRateObject(const DeviceMotionData::RotationRate* rotationRate, ExecState* exec)
 {
     JSObject* object = constructEmptyObject(exec);
-    object->putDirect(Identifier(exec, "alpha"), rotationRate->canProvideAlpha() ? jsNumber(rotationRate->alpha()) : jsNull());
-    object->putDirect(Identifier(exec, "beta"),  rotationRate->canProvideBeta()  ? jsNumber(rotationRate->beta())  : jsNull());
-    object->putDirect(Identifier(exec, "gamma"), rotationRate->canProvideGamma() ? jsNumber(rotationRate->gamma()) : jsNull());
+    object->putDirect(exec->globalData(), Identifier(exec, "alpha"), rotationRate->canProvideAlpha() ? jsNumber(rotationRate->alpha()) : jsNull());
+    object->putDirect(exec->globalData(), Identifier(exec, "beta"),  rotationRate->canProvideBeta()  ? jsNumber(rotationRate->beta())  : jsNull());
+    object->putDirect(exec->globalData(), Identifier(exec, "gamma"), rotationRate->canProvideGamma() ? jsNumber(rotationRate->gamma()) : jsNull());
     return object;
 }
 

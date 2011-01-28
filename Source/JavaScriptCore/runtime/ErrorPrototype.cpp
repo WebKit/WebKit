@@ -41,7 +41,7 @@ ErrorPrototype::ErrorPrototype(ExecState* exec, JSGlobalObject* globalObject, No
 {
     // The constructor will be added later in ErrorConstructor's constructor
 
-    putDirectWithoutTransition(exec->propertyNames().name, jsNontrivialString(exec, "Error"), DontEnum);
+    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().name, jsNontrivialString(exec, "Error"), DontEnum);
     putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, globalObject, prototypeFunctionStructure, 0, exec->propertyNames().toString, errorProtoFuncToString), DontEnum);
 }
 

@@ -335,9 +335,9 @@ void markDOMNodesForDocument(MarkStack& markStack, Document* document)
 
         JSWrapperCache::iterator nodeEnd = nodeDict->uncheckedEnd();
         for (JSWrapperCache::iterator nodeIt = nodeDict->uncheckedBegin(); nodeIt != nodeEnd; ++nodeIt) {
-            JSNode* jsNode = nodeIt->second;
-            if (isObservableThroughDOM(jsNode, world))
-                markStack.append(jsNode);
+            DeprecatedPtr<JSNode>& jsNode = nodeIt->second;
+            if (isObservableThroughDOM(jsNode.get(), world))
+                markStack.append(&jsNode);
         }
     }
 }
@@ -416,8 +416,8 @@ void markDOMObjectWrapper(MarkStack& markStack, JSGlobalData& globalData, void* 
         return;
 
     for (JSGlobalDataWorldIterator worldIter(&globalData); worldIter; ++worldIter) {
-        if (DOMObject* wrapper = worldIter->m_wrappers.uncheckedGet(object))
-            markStack.append(wrapper);
+        if (DeprecatedPtr<DOMObject>* wrapperSlot = worldIter->m_wrappers.uncheckedGetSlot(object))
+            markStack.append(wrapperSlot);
     }
 }
 
@@ -426,15 +426,15 @@ void markDOMNodeWrapper(MarkStack& markStack, Document* document, Node* node)
     if (document) {
         JSWrapperCacheMap& wrapperCacheMap = document->wrapperCacheMap();
         for (JSWrapperCacheMap::iterator iter = wrapperCacheMap.begin(); iter != wrapperCacheMap.end(); ++iter) {
-            if (JSNode* wrapper = iter->second->uncheckedGet(node))
-                markStack.append(wrapper);
+            if (DeprecatedPtr<JSNode>* wrapperSlot = iter->second->uncheckedGetSlot(node))
+                markStack.append(wrapperSlot);
         }
         return;
     }
 
     for (JSGlobalDataWorldIterator worldIter(JSDOMWindow::commonJSGlobalData()); worldIter; ++worldIter) {
-        if (DOMObject* wrapper = worldIter->m_wrappers.uncheckedGet(node))
-            markStack.append(wrapper);
+        if (DeprecatedPtr<DOMObject>* wrapperSlot = worldIter->m_wrappers.uncheckedGetSlot(node))
+            markStack.append(wrapperSlot);
     }
 }
 

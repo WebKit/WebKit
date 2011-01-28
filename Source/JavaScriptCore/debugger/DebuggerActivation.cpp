@@ -30,12 +30,12 @@
 
 namespace JSC {
 
-DebuggerActivation::DebuggerActivation(JSObject* activation)
+DebuggerActivation::DebuggerActivation(JSGlobalData& globalData, JSObject* activation)
     : JSObject(DebuggerActivation::createStructure(jsNull()))
 {
     ASSERT(activation);
     ASSERT(activation->isActivationObject());
-    m_activation = static_cast<JSActivation*>(activation);
+    m_activation.set(globalData, this, static_cast<JSActivation*>(activation));
 }
 
 void DebuggerActivation::markChildren(MarkStack& markStack)
@@ -43,7 +43,7 @@ void DebuggerActivation::markChildren(MarkStack& markStack)
     JSObject::markChildren(markStack);
 
     if (m_activation)
-        markStack.append(m_activation);
+        markStack.append(&m_activation);
 }
 
 UString DebuggerActivation::className() const

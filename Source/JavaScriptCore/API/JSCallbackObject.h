@@ -54,11 +54,11 @@ struct JSCallbackObjectData {
         return m_privateProperties->getPrivateProperty(propertyName);
     }
     
-    void setPrivateProperty(const Identifier& propertyName, JSValue value)
+    void setPrivateProperty(JSGlobalData& globalData, JSCell* owner, const Identifier& propertyName, JSValue value)
     {
         if (!m_privateProperties)
             m_privateProperties = adoptPtr(new JSPrivatePropertyMap);
-        m_privateProperties->setPrivateProperty(propertyName, value);
+        m_privateProperties->setPrivateProperty(globalData, owner, propertyName, value);
     }
     
     void deletePrivateProperty(const Identifier& propertyName)
@@ -83,12 +83,13 @@ struct JSCallbackObjectData {
             PrivatePropertyMap::const_iterator location = m_propertyMap.find(propertyName.impl());
             if (location == m_propertyMap.end())
                 return JSValue();
-            return location->second;
+            return location->second.get();
         }
         
-        void setPrivateProperty(const Identifier& propertyName, JSValue value)
+        void setPrivateProperty(JSGlobalData& globalData, JSCell* owner, const Identifier& propertyName, JSValue value)
         {
-            m_propertyMap.set(propertyName.impl(), value);
+            WriteBarrier<Unknown> empty;
+            m_propertyMap.add(propertyName.impl(), empty).first->second.set(globalData, owner, value);
         }
         
         void deletePrivateProperty(const Identifier& propertyName)
@@ -100,12 +101,12 @@ struct JSCallbackObjectData {
         {
             for (PrivatePropertyMap::iterator ptr = m_propertyMap.begin(); ptr != m_propertyMap.end(); ++ptr) {
                 if (ptr->second)
-                    markStack.append(ptr->second);
+                    markStack.append(&ptr->second);
             }
         }
 
     private:
-        typedef HashMap<RefPtr<StringImpl>, JSValue, IdentifierRepHash> PrivatePropertyMap;
+        typedef HashMap<RefPtr<StringImpl>, WriteBarrier<Unknown>, IdentifierRepHash> PrivatePropertyMap;
         PrivatePropertyMap m_propertyMap;
     };
     OwnPtr<JSPrivatePropertyMap> m_privateProperties;
@@ -137,9 +138,9 @@ public:
         return m_callbackObjectData->getPrivateProperty(propertyName);
     }
     
-    void setPrivateProperty(const Identifier& propertyName, JSValue value)
+    void setPrivateProperty(JSGlobalData& globalData, const Identifier& propertyName, JSValue value)
     {
-        m_callbackObjectData->setPrivateProperty(propertyName, value);
+        m_callbackObjectData->setPrivateProperty(globalData, this, propertyName, value);
     }
     
     void deletePrivateProperty(const Identifier& propertyName)

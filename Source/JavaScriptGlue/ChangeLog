@@ -1,3 +1,16 @@
+2011-01-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Convert markstack to a slot visitor API
+        https://bugs.webkit.org/show_bug.cgi?id=53219
+
+        There's no reason to recurse here, the value we
+        were marking was protected.
+
+        * JSValueWrapper.cpp:
+        (JSValueWrapper::JSObjectMark):
+
 2011-01-23  Mark Rowe  <mrowe@apple.com>
 
         Follow-up to r76477.

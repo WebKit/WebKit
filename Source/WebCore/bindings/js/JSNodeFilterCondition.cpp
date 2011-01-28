@@ -39,14 +39,14 @@ JSNodeFilterCondition::JSNodeFilterCondition(JSValue filter)
 
 void JSNodeFilterCondition::markAggregate(MarkStack& markStack)
 {
-    markStack.append(m_filter);
+    markStack.append(&m_filter);
 }
 
 short JSNodeFilterCondition::acceptNode(JSC::ExecState* exec, Node* filterNode) const
 {
     JSLock lock(SilenceAssertionsOnly);
 
-    if (!m_filter.isObject())
+    if (!m_filter->isObject())
         return NodeFilter::FILTER_ACCEPT;
 
    // The exec argument here should only be null if this was called from a
@@ -58,11 +58,11 @@ short JSNodeFilterCondition::acceptNode(JSC::ExecState* exec, Node* filterNode) 
     if (!exec)
         return NodeFilter::FILTER_REJECT;
 
-    JSValue function = m_filter;
+    JSValue function = m_filter.get();
     CallData callData;
     CallType callType = getCallData(function, callData);
     if (callType == CallTypeNone) {
-        function = m_filter.get(exec, Identifier(exec, "acceptNode"));
+        function = m_filter->get(exec, Identifier(exec, "acceptNode"));
         callType = getCallData(function, callData);
         if (callType == CallTypeNone) {
             throwError(exec, createTypeError(exec, "NodeFilter object does not have an acceptNode function"));
@@ -77,7 +77,7 @@ short JSNodeFilterCondition::acceptNode(JSC::ExecState* exec, Node* filterNode) 
     if (exec->hadException())
         return NodeFilter::FILTER_REJECT;
 
-    JSValue result = JSC::call(exec, function, callType, callData, m_filter, args);
+    JSValue result = JSC::call(exec, function, callType, callData, m_filter.get(), args);
     if (exec->hadException())
         return NodeFilter::FILTER_REJECT;
 

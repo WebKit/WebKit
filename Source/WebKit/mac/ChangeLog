@@ -1,3 +1,15 @@
+2011-01-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Convert markstack to a slot visitor API
+        https://bugs.webkit.org/show_bug.cgi?id=53219
+
+        Update to new marking api
+
+        * WebView/WebScriptDebugDelegate.mm:
+        (-[WebScriptCallFrame scopeChain]):
+
 2011-01-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

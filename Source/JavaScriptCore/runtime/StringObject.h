@@ -53,7 +53,7 @@ namespace JSC {
 
     protected:
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesMarkChildren | OverridesGetPropertyNames | JSWrapperObject::StructureFlags;
-        StringObject(NonNullPassRefPtr<Structure>, JSString*);
+        StringObject(JSGlobalData&, NonNullPassRefPtr<Structure>, JSString*);
   };
 
     StringObject* asStringObject(JSValue);

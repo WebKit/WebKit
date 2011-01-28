@@ -255,7 +255,7 @@ UString JSString::toString(ExecState* exec) const
 
 inline StringObject* StringObject::create(ExecState* exec, JSString* string)
 {
-    return new (exec) StringObject(exec->lexicalGlobalObject()->stringObjectStructure(), string);
+    return new (exec) StringObject(exec->globalData(), exec->lexicalGlobalObject()->stringObjectStructure(), string);
 }
 
 JSObject* JSString::toObject(ExecState* exec) const
