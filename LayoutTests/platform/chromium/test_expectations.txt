@@ -1183,9 +1183,6 @@ BUGCR10363 MAC : tables/mozilla/bugs/bug9024.html = FAIL
 // bad key event handling
 BUGCR10366 MAC : fast/events/option-tab.html = TEXT
 
-// Not really sure why these are failing at the moment
-BUGCR10376 MAC : fast/dom/isindex-002.html = FAIL
-
 // These two have a different object type in the dom dump. Plugin-related.
 // Ignored on Win/Linux because they rely on QT to provide a TIFF decoder.
 BUGCR10378 MAC : fast/images/embed-image.html = FAIL

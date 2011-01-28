@@ -1,5 +1,14 @@
 2011-01-28  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] Added expectations for a passing test.
+
+        * platform/chromium-mac/fast/dom/isindex-002-expected.checksum: Added.
+        * platform/chromium-mac/fast/dom/isindex-002-expected.png: Added.
+        * platform/chromium-mac/fast/dom/isindex-002-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
+2011-01-28  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Updated Chromium baselines for a bug that was fixed.
         https://bugs.webkit.org/show_bug.cgi?id=45527
 
