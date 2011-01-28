@@ -1,5 +1,73 @@
 2011-01-27  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Reviewed by Kent Tamura.
+
+        Change HTMLInputElement-derived parts of media element shadow DOM to use shadowPseudoId.
+        https://bugs.webkit.org/show_bug.cgi?id=53122
+
+        This is the first step in converting HTMLMediaElement to the new shadow DOM.
+
+        Should not regress any existing tests. No observable change in behavior.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::pseudoId): Removed now-unnecessary hard-coded pseudo-element selectors.
+        (WebCore::nameToPseudoTypeMap): Ditto.
+        (WebCore::CSSSelector::extractPseudoType): Ditto.
+        * css/CSSSelector.h: Ditto.
+        * css/mediaControls.css: Added proper initial values, now that elements use the proper selector pipeline.
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlInputElement::MediaControlInputElement): Removed the switch statement,
+            which is now replaced with virtual shadowPseudoId on each corresponding class.
+        (WebCore::MediaControlInputElement::styleForElement): Changed to use element pipeline.
+        (WebCore::MediaControlMuteButtonElement::MediaControlMuteButtonElement): Changed to set
+            display type in constructor.
+        (WebCore::MediaControlMuteButtonElement::create): Changed to not take PseudoId as
+            constructor argument.
+        (WebCore::MediaControlMuteButtonElement::shadowPseudoId): Added.
+        (WebCore::MediaControlVolumeSliderMuteButtonElement::MediaControlVolumeSliderMuteButtonElement): Added
+            to disambiguate from the MediaControlMuteButtonElement.
+        (WebCore::MediaControlVolumeSliderMuteButtonElement::create): Added.
+        (WebCore::MediaControlVolumeSliderMuteButtonElement::shadowPseudoId): Added.
+        (WebCore::MediaControlPlayButtonElement::MediaControlPlayButtonElement): Changed to not take PseudoId as
+            constructor argument.
+        (WebCore::MediaControlPlayButtonElement::shadowPseudoId): Added.
+        (WebCore::MediaControlSeekButtonElement::MediaControlSeekButtonElement): Changed to not take PseudoId as
+            constructor argument.
+        (WebCore::MediaControlSeekForwardButtonElement::MediaControlSeekForwardButtonElement): Added.
+        (WebCore::MediaControlSeekForwardButtonElement::create): Added.
+        (WebCore::MediaControlSeekForwardButtonElement::shadowPseudoId): Added.
+        (WebCore::MediaControlSeekBackButtonElement::MediaControlSeekBackButtonElement): Added.
+        (WebCore::MediaControlSeekBackButtonElement::create): Added.
+        (WebCore::MediaControlSeekBackButtonElement::shadowPseudoId): Added.
+        (WebCore::MediaControlRewindButtonElement::MediaControlRewindButtonElement): Added.
+        (WebCore::MediaControlRewindButtonElement::shadowPseudoId): Added.
+        (WebCore::MediaControlReturnToRealtimeButtonElement::MediaControlReturnToRealtimeButtonElement): Changed to not take PseudoId as
+            constructor argument.
+        (WebCore::MediaControlReturnToRealtimeButtonElement::shadowPseudoId): Added.
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::MediaControlToggleClosedCaptionsButtonElement): Changed to not take PseudoId as
+            constructor argument.
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::shadowPseudoId): Added.
+        (WebCore::MediaControlTimelineElement::MediaControlTimelineElement): Changed to not take PseudoId as
+            constructor argument.
+        (WebCore::MediaControlTimelineElement::shadowPseudoId): Added.
+        (WebCore::MediaControlVolumeSliderElement::MediaControlVolumeSliderElement): Changed to not take PseudoId as
+            constructor argument.
+        (WebCore::MediaControlVolumeSliderElement::shadowPseudoId): Added.
+        (WebCore::MediaControlFullscreenButtonElement::MediaControlFullscreenButtonElement): Changed to not take PseudoId as
+            constructor argument.
+        (WebCore::MediaControlFullscreenButtonElement::shadowPseudoId): Added.
+        * rendering/MediaControlElements.h:
+        (WebCore::MediaControlSeekForwardButtonElement::isForwardButton): Added.
+        (WebCore::MediaControlSeekBackButtonElement::isForwardButton): Added.
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::createMuteButton): Changed to use new constructor.
+        (WebCore::RenderMedia::createSeekBackButton): Ditto.
+        (WebCore::RenderMedia::createSeekForwardButton): Ditto.
+        (WebCore::RenderMedia::createVolumeSliderMuteButton): Ditto.
+        * rendering/style/RenderStyleConstants.h: Removed constants that are no longer used.
+
+2011-01-27  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Reviewed by Eric Carlson.
 
         Split MediaControls out of RenderMedia.
