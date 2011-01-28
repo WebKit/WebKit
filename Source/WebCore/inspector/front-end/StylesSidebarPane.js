@@ -1709,10 +1709,6 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
     editingEnded: function(context)
     {
-        if (this._prompt) {
-            this._prompt.removeFromElement();
-            delete this._prompt;
-        }
         this.hasChildren = context.hasChildren;
         if (context.expanded)
             this.expand();
@@ -1727,6 +1723,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
     editingCancelled: function(element, context)
     {
+        this._removePrompt();
         if ("originalPropertyText" in this)
             this.applyStyleText(this.originalPropertyText, true);
         else {
@@ -1742,6 +1739,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
     editingCommitted: function(element, userInput, previousContent, context, moveDirection)
     {
+        this._removePrompt();
         this.editingEnded(context);
         var isEditingName = context.isEditingName;
 
@@ -1836,6 +1834,15 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
             if (moveToSelector)
                 section.startEditingSelector();
+        }
+    },
+
+    _removePrompt: function()
+    {
+        // BUG 53242. This cannot go into editingEnded(), as it should always happen first for any editing outcome.
+        if (this._prompt) {
+            this._prompt.removeFromElement();
+            delete this._prompt;
         }
     },
 
