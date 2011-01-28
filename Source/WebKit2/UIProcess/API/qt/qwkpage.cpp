@@ -18,6 +18,7 @@
  *
  */
 
+#include "config.h"
 #include "qwkpage.h"
 #include "qwkpage_p.h"
 

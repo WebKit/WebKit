@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "WebPreferencesStore.h"
 
 #include "FontSmoothingLevel.h"

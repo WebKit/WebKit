@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
+
 #include "WebPopupItem.h"
 
 #include "ArgumentCoders.h"

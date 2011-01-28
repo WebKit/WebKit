@@ -18,6 +18,7 @@
  *
  */
 
+#include "config.h"
 #include "qgraphicswkview.h"
 
 #include "ChunkedUpdateDrawingAreaProxy.h"

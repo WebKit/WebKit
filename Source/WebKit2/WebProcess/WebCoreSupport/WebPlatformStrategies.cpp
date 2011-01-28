@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "WebPlatformStrategies.h"
 
 #if USE(PLATFORM_STRATEGIES)

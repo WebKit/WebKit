@@ -1,3 +1,14 @@
+2011-01-27  Greg Coletta  <greg.coletta@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        Get rid of prefix header dependency for WebKit2 build system
+        https://bugs.webkit.org/show_bug.cgi?id=50174
+
+        Guard EmptyProtocalDefinitions.h to make sure it's not included twice.
+
+        * platform/mac/EmptyProtocolDefinitions.h:
+
 2011-01-27  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dan Bernstein.

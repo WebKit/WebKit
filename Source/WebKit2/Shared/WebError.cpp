@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
+#include "config.h"
 #include "WebError.h"
 
 #include <wtf/text/WTFString.h>

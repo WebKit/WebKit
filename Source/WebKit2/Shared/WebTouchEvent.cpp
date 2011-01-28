@@ -23,9 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(TOUCH_EVENTS)
-
+#include "config.h"
 #include "WebEvent.h"
+
+#if ENABLE(TOUCH_EVENTS)
 
 #include "ArgumentCoders.h"
 #include "Arguments.h"

@@ -25,6 +25,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "SharedMemory.h"
 
 #include "ArgumentDecoder.h"

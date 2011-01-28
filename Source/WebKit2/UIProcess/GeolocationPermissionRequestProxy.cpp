@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "GeolocationPermissionRequestProxy.h"
 
 #include "GeolocationPermissionRequestManagerProxy.h"

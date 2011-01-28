@@ -18,7 +18,6 @@
 */
 
 #include "config.h"
-
 #include "WebFrameNetworkingContext.h"
 
 #include "WebProcess.h"

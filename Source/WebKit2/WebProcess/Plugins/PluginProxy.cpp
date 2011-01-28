@@ -23,9 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(PLUGIN_PROCESS)
-
+#include "config.h"
 #include "PluginProxy.h"
+
+#if ENABLE(PLUGIN_PROCESS)
 
 #include "DataReference.h"
 #include "NPRemoteObjectMap.h"

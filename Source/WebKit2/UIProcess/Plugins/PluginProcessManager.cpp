@@ -23,9 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(PLUGIN_PROCESS)
-
+#include "config.h"
 #include "PluginProcessManager.h"
+
+#if ENABLE(PLUGIN_PROCESS)
 
 #include "PluginInfoStore.h"
 #include "PluginProcessProxy.h"

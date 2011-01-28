@@ -26,6 +26,7 @@
 // NOTE: This implementation is very similar to the implementation of popups in WebCore::PopupMenuWin.
 // We should try and factor out the common bits and share them.
 
+#include "config.h"
 #include "WebPopupMenuProxyWin.h"
 
 #include "WebView.h"

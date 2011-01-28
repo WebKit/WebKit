@@ -17,6 +17,7 @@
     Boston, MA 02110-1301, USA.
 */
 
+#include "config.h"
 #include "ClientImpl.h"
 
 #include "WebFrameProxy.h"

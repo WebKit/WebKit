@@ -23,9 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(PLUGIN_PROCESS)
-
+#include "config.h"
 #include "WebProcessConnection.h"
+
+#if ENABLE(PLUGIN_PROCESS)
 
 #include "NPRemoteObjectMap.h"
 #include "PluginControllerProxy.h"

@@ -18,6 +18,7 @@
  *
  */
 
+#include "config.h"
 #include "WKURLQt.h"
 
 #include "WKAPICast.h"

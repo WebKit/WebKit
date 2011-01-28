@@ -23,9 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(PLUGIN_PROCESS)
-
+#include "config.h"
 #include "NPObjectMessageReceiver.h"
+
+#if ENABLE(PLUGIN_PROCESS)
 
 #include "NPIdentifierData.h"
 #include "NPRemoteObjectMap.h"

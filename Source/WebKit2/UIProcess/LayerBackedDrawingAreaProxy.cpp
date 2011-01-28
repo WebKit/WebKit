@@ -23,9 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if USE(ACCELERATED_COMPOSITING)
-
+#include "config.h"
 #include "LayerBackedDrawingAreaProxy.h"
+
+#if USE(ACCELERATED_COMPOSITING)
 
 #include "DrawingAreaMessageKinds.h"
 #include "DrawingAreaProxyMessageKinds.h"

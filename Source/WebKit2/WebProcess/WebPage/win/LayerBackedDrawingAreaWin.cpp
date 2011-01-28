@@ -23,9 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if USE(ACCELERATED_COMPOSITING)
-
+#include "config.h"
 #include "LayerBackedDrawingArea.h"
+
+#if USE(ACCELERATED_COMPOSITING)
 
 using namespace WebCore;
 

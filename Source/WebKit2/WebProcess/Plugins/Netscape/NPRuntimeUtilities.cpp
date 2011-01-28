@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "NPRuntimeUtilities.h"
 
 #include <wtf/text/CString.h>

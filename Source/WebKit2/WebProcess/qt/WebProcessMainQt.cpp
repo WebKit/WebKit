@@ -24,6 +24,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "RunLoop.h"
 #include <runtime/InitializeThreading.h>
 #include "WebProcess.h"

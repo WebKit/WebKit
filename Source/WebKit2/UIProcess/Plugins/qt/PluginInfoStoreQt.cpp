@@ -25,6 +25,7 @@
 
 // Note: this file is only for UNIX. On other platforms we can reuse the native implementation.
 
+#include "config.h"
 #include "PluginInfoStore.h"
 
 #include "NetscapePluginModule.h"

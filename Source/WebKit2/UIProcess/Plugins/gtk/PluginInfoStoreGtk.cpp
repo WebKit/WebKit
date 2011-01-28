@@ -24,7 +24,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
+#include "config.h"
 #include "PluginInfoStore.h"
 
 #include "NotImplemented.h"

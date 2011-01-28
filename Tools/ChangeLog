@@ -1,3 +1,15 @@
+2011-01-27  Greg Coletta  <greg.coletta@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        Get rid of prefix header dependency for WebKit2 build system
+        https://bugs.webkit.org/show_bug.cgi?id=50174
+
+        Change the style checker so that it enforces config.h include for
+        WebKit2.
+
+        * Scripts/webkitpy/style/checker.py:
+
 2011-01-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin Adler.

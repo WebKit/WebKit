@@ -19,6 +19,7 @@
  *
  */
 
+#include "config.h"
 #include "WebContextMenu.h"
 
 #include "ContextMenuState.h"

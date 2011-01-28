@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "WebEditorClient.h"
 
 #define DISABLE_NOT_IMPLEMENTED_WARNINGS 1

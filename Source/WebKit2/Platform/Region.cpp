@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "Region.h"
 
 // A region class based on the paper "Scanline Coherent Shape Algebra"

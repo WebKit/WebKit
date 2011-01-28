@@ -23,9 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(TILED_BACKING_STORE)
-
+#include "config.h"
 #include "TiledDrawingArea.h"
+
+#if ENABLE(TILED_BACKING_STORE)
 
 #include "DrawingAreaMessageKinds.h"
 #include "DrawingAreaProxyMessageKinds.h"

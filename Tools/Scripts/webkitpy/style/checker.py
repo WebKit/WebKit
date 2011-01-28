@@ -162,24 +162,18 @@ _PATH_RULES_SPECIFIER = [
       "-whitespace/parens"]),
 
     # WebKit2 rules:
-    # WebKit2 doesn't use config.h, and certain directories have other
-    # idiosyncracies.
+    # WebKit2 and certain directories have idiosyncracies.
     ([# NPAPI has function names with underscores.
       "Source/WebKit2/WebProcess/Plugins/Netscape"],
-     ["-build/include_order",
-      "-readability/naming"]),
+     ["-readability/naming"]),
     ([# The WebKit2 C API has names with underscores and whitespace-aligned
       # struct members. Also, we allow unnecessary parameter names in
       # WebKit2 APIs because we're matching CF's header style.
       "Source/WebKit2/UIProcess/API/C/",
       "Source/WebKit2/WebProcess/InjectedBundle/API/c/"],
-     ["-build/include_order",
-      "-readability/naming",
+     ["-readability/naming",
       "-readability/parameter_name",
       "-whitespace/declaration"]),
-    ([# Nothing in WebKit2 uses config.h.
-      "Source/WebKit2/"],
-     ["-build/include_order"]),
 
     # For third-party Python code, keep only the following checks--
     #

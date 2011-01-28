@@ -24,7 +24,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "Attachment.h"
+
 #if PLATFORM(QT)
 #include <unistd.h>
 #include <errno.h>

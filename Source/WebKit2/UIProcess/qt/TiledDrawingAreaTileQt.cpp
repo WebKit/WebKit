@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "TiledDrawingAreaTile.h"
 
 #if ENABLE(TILED_BACKING_STORE)

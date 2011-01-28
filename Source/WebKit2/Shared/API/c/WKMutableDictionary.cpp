@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "WKMutableDictionary.h"
 
 #include "MutableDictionary.h"

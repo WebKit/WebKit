@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "Plugin.h"
 
 #include "WebCoreArgumentCoders.h"

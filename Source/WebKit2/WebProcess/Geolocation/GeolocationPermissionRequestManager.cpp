@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "GeolocationPermissionRequestManager.h"
 
 #include "WebFrame.h"

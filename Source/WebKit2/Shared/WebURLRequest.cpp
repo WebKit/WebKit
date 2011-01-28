@@ -7,6 +7,7 @@
  *
  */
 
+#include "config.h"
 #include "WebURLRequest.h"
 
 using namespace WebCore;

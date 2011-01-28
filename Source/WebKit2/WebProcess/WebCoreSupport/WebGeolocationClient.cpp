@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "WebGeolocationClient.h"
 
 #if ENABLE(CLIENT_BASED_GEOLOCATION)

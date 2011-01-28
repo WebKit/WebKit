@@ -20,6 +20,7 @@
  */
 
 
+#include "config.h"
 #include "WebSearchPopupMenu.h"
 
 using namespace WebCore;

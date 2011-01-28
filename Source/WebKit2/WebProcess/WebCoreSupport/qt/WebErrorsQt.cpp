@@ -24,6 +24,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "WebErrors.h"
 
 #include <WebCore/ResourceRequest.h>

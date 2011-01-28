@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "WebGeolocationManager.h"
 
 #include "WebGeolocationManagerProxyMessages.h"

@@ -18,6 +18,7 @@
  *
  */
 
+#include "config.h"
 #include "qwkcontext.h"
 #include "qwkcontext_p.h"
 

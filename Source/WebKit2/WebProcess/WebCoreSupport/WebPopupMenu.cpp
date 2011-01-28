@@ -19,6 +19,7 @@
  *
  */
 
+#include "config.h"
 #include "WebPopupMenu.h"
 
 #include "PlatformPopupMenuData.h"

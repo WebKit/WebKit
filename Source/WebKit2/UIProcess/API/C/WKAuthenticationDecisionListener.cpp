@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "WKAuthenticationDecisionListener.h"
 
 #include "AuthenticationDecisionListener.h"

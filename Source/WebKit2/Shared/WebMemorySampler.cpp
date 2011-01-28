@@ -23,9 +23,10 @@
  *
  */
 
-#if ENABLE(MEMORY_SAMPLER)
-
+#include "config.h"
 #include "WebMemorySampler.h"
+
+#if ENABLE(MEMORY_SAMPLER)
 
 #include <wtf/text/CString.h>
 
