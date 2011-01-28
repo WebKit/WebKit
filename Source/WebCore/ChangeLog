@@ -1,3 +1,36 @@
+2011-01-27  Carol Szabo <carol.szabo@nokia.com>
+
+        Reviewed by David Hyatt.
+
+        A corrupted counter tree is created when renderers are added to the
+        tree bypassing RenderObject::addChild
+        https://bugs.webkit.org/show_bug.cgi?id=51270
+
+        No new tests. This patch reimplements the fix for bugs 43812 and
+        51637 and hence all tests are already there as part of the original
+        fixes for those bugs.
+
+        * rendering/RenderCounter.cpp:
+        (WebCore::findPlaceForCounter):
+        Removed old workaround as this patch hopefully fixes the real
+        problem.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addChild):
+        Removed call to counter updater as it was moved to a lower level.
+        (WebCore::RenderObject::destroy):
+        Moved attached counter nodes destruction to after the node is
+        removed from the tree.
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::removeChildNode):
+        (WebCore::RenderObjectChildList::appendChildNode):
+        (WebCore::RenderObjectChildList::insertChildNode):
+        Added notifications to the Counter system such that the
+        CounterForest reflects the changes to the RendererTree.
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::destroy):
+        Applied the same changes as for RenderObject::destroy()
+        since RenderObject::destroy() is not called from here.
+
 2011-01-27  Adam Roben  <aroben@apple.com>
 
         Add WKCACFViewLayerTreeHost

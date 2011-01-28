@@ -316,7 +316,6 @@ void RenderObject::addChild(RenderObject* newChild, RenderObject* beforeChild)
         // Just add it...
         children->insertChildNode(this, newChild, beforeChild);
     }
-    RenderCounter::rendererSubtreeAttached(newChild); 
     if (newChild->isText() && newChild->style()->textTransform() == CAPITALIZE) {
         RefPtr<StringImpl> textToTransform = toRenderText(newChild)->originalText();
         if (textToTransform)
@@ -2158,9 +2157,6 @@ void RenderObject::destroy()
     if (frame() && frame()->eventHandler()->autoscrollRenderer() == this)
         frame()->eventHandler()->stopAutoscrollTimer(true);
 
-    if (m_hasCounterNodeMap)
-        RenderCounter::destroyCounterNodes(this);
-
     if (AXObjectCache::accessibilityEnabled()) {
         document()->axObjectCache()->childrenChanged(this->parent());
         document()->axObjectCache()->remove(this);
@@ -2172,6 +2168,14 @@ void RenderObject::destroy()
     // in this function changes, be sure to fix RenderWidget::destroy() as well.
 
     remove();
+
+    // If this renderer had a parent, remove should have destroyed any counters
+    // attached to this renderer and marked the affected other counters for
+    // reevaluation. This apparently redundant check is here for the case when
+    // this renderer had no parent at the time remove() was called.
+
+    if (m_hasCounterNodeMap)
+        RenderCounter::destroyCounterNodes(this);
 
     // FIXME: Would like to do this in RenderBoxModelObject, but the timing is so complicated that this can't easily
     // be moved into RenderBoxModelObject::destroy.

@@ -120,14 +120,15 @@ void RenderWidget::destroy()
     if (RenderView* v = view())
         v->removeWidget(this);
 
-    if (m_hasCounterNodeMap)
-        RenderCounter::destroyCounterNodes(this);
     
     if (AXObjectCache::accessibilityEnabled()) {
         document()->axObjectCache()->childrenChanged(this->parent());
         document()->axObjectCache()->remove(this);
     }
     remove();
+
+    if (m_hasCounterNodeMap)
+        RenderCounter::destroyCounterNodes(this);
 
     setWidget(0);
 

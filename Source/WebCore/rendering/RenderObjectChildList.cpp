@@ -128,6 +128,9 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
     oldChild->setNextSibling(0);
     oldChild->setParent(0);
 
+    if (oldChild->m_hasCounterNodeMap)
+        RenderCounter::destroyCounterNodes(oldChild);
+
     if (AXObjectCache::accessibilityEnabled())
         owner->document()->axObjectCache()->childrenChanged(owner);
 
@@ -175,6 +178,7 @@ void RenderObjectChildList::appendChildNode(RenderObject* owner, RenderObject* n
             owner->dirtyLinesFromChangedChild(newChild);
     }
 
+    RenderCounter::rendererSubtreeAttached(newChild);
     newChild->setNeedsLayoutAndPrefWidthsRecalc(); // Goes up the containing block hierarchy.
     if (!owner->normalChildNeedsLayout())
         owner->setChildNeedsLayout(true); // We may supply the static position for an absolute positioned child.
@@ -234,6 +238,7 @@ void RenderObjectChildList::insertChildNode(RenderObject* owner, RenderObject* c
             owner->dirtyLinesFromChangedChild(child);
     }
 
+    RenderCounter::rendererSubtreeAttached(child);
     child->setNeedsLayoutAndPrefWidthsRecalc();
     if (!owner->normalChildNeedsLayout())
         owner->setChildNeedsLayout(true); // We may supply the static position for an absolute positioned child.
