@@ -3124,3 +3124,7 @@ BUGCR71022 WIN : fast/text/justify-ideograph-vertical.html = IMAGE+TEXT
 
 BUGCR71087 WIN LINUX DEBUG : media/video-currentTime.html = CRASH PASS TIMEOUT
 BUGCR71087 MAC DEBUG : media/video-currentTime.html = PASS TIMEOUT
+
+// due to changes in style propagation, fixing.
+BUGWK53314 : media/controls-strict.html = IMAGE+TEXT
+BUGWK53314 : media/video-zoom-controls.html = IMAGE+TEXT

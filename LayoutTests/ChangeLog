@@ -1,3 +1,10 @@
+2011-01-28  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Added newly-failing tests to expectations, will be fixing them shortly.
+        https://bugs.webkit.org/show_bug.cgi?id=53314
+
+        * platform/chromium/test_expectations.txt: Added.
+
 2011-01-28  Jessie Berlin  <jberlin@apple.com>
 
         Adding tests broken on Windows 7 Release in 76853,76856,76858 to the Skipped list to get the
