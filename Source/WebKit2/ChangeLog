@@ -1,5 +1,16 @@
 2011-01-27  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
+        Unreviewed build fix for Mac Intel Debug after r76916.
+
+        Fix macro redefinition by guarding the redefined macros.
+
+        Check if the macro is already defined before defininig it.
+        c++config.h has the same macros with the same values.
+
+        * config.h:
+
+2011-01-27  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
         Reviewed by Adam Barth.
 
         Update the expected results for test-webkitpy after r76916.

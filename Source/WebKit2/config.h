@@ -34,7 +34,7 @@
 #include <wtf/FastMalloc.h>
 #endif
 
-#ifdef __cplusplus
+#if defined(__cplusplus) && !defined(EXTERN_C_BEGIN) && !defined(EXTERN_C_END)
 #define EXTERN_C_BEGIN extern "C" {
 #define EXTERN_C_END }
 #else
