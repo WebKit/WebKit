@@ -1174,7 +1174,26 @@ QColor RenderThemeQt::getMediaControlForegroundColor(RenderObject* o) const
 
 bool RenderThemeQt::paintMediaFullscreenButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
-    return RenderTheme::paintMediaFullscreenButton(o, paintInfo, r);
+    HTMLMediaElement* mediaElement = getMediaElementFromRenderObject(o);
+    if (!mediaElement)
+        return false;
+
+    StylePainter p(this, paintInfo);
+    if (!p.isValid())
+        return true;
+
+    p.painter->setRenderHint(QPainter::Antialiasing, true);
+
+    paintMediaBackground(p.painter, r);
+
+    WorldMatrixTransformer transformer(p.painter, o, r);
+    const QPointF arrowPolygon[9] = { QPointF(20, 0), QPointF(100, 0), QPointF(100, 80),
+            QPointF(80, 80), QPointF(80, 30), QPointF(10, 100), QPointF(0, 90), QPointF(70, 20), QPointF(20, 20)};
+
+    p.painter->setBrush(getMediaControlForegroundColor(o));
+    p.painter->drawPolygon(arrowPolygon, 9);
+
+    return false;
 }
 
 bool RenderThemeQt::paintMediaMuteButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)

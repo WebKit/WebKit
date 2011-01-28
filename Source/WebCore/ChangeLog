@@ -1,3 +1,17 @@
+2011-01-27  Yi Shen  <yi.4.shen@nokia.com>, Tor Arne Vestbø <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Add fullscreen media control button for html video
+        https://bugs.webkit.org/show_bug.cgi?id=51543
+
+        Implement media control fullscreen button for QtWebKit html5 video.
+
+        * css/mediaControlsQt.css:
+        (video::-webkit-media-controls-fullscreen-button):
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::paintMediaFullscreenButton):
+
 2011-01-27  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.

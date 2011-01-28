@@ -213,7 +213,12 @@ audio::-webkit-media-controls-fullscreen-button {
 }
 
 video::-webkit-media-controls-fullscreen-button {
-    display: none;
+    top: 0px;
+    right: 0px;
+    width: 12px;
+    height: 12px;
+    padding: 6px;
+    margin: 5px 5px 5px 3px;
 }
 
 audio::-webkit-media-controls-rewind-button {
