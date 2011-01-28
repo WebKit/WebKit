@@ -1,3 +1,10 @@
+2011-01-28  Adam Roben  <aroben@apple.com>
+
+        Chromium build fix after r76967
+
+        * wtf/ThreadingPrimitives.h: Use OS(WINDOWS) instead of PLATFORM(WIN), to match other
+        similar macros in this file.
+
 2011-01-28  Michael Saboff  <msaboff@apple.com>
 
         Potentially Unsafe HashSet of RuntimeObject* in RootObject definition
