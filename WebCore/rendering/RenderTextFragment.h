@@ -49,9 +49,13 @@ public:
     StringImpl* contentString() const { return m_contentString.get(); }
     virtual PassRefPtr<StringImpl> originalText() const;
 
+protected:
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+
 private:
     virtual void setTextInternal(PassRefPtr<StringImpl>);
     virtual UChar previousCharacter() const;
+    RenderBlock* blockForAccompanyingFirstLetter() const;
 
     unsigned m_start;
     unsigned m_end;

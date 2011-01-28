@@ -246,6 +246,19 @@ RenderStyle* RenderStyle::addCachedPseudoStyle(PassRefPtr<RenderStyle> pseudo)
     return result;
 }
 
+void RenderStyle::removeCachedPseudoStyle(PseudoId pid)
+{
+    if (!m_cachedPseudoStyles)
+        return;
+    for (size_t i = 0; i < m_cachedPseudoStyles->size(); ++i) {
+        RenderStyle* pseudoStyle = m_cachedPseudoStyles->at(i).get();
+        if (pseudoStyle->styleType() == pid) {
+            m_cachedPseudoStyles->remove(i);
+            return;
+        }
+    }
+}
+
 bool RenderStyle::inheritedNotEqual(const RenderStyle* other) const
 {
     return inherited_flags != other->inherited_flags ||

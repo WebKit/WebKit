@@ -1,5 +1,37 @@
 2011-01-28  Mark Rowe  <mrowe@apple.com>
 
+        Merge r70797.
+
+    2010-10-28  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by David Hyatt.
+
+        Fix for Bug 14550 - Non-layout style change does not update nested first-letter
+        https://bugs.webkit.org/show_bug.cgi?id=14550
+
+        If a render text fragment is accompanied by a first letter, update the
+        first letter's style when the fragment's style is changed.
+
+        Test: fast/css/first-letter-nested.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleDidChange): Stop calling updateFirstLetter
+        from here.
+        * rendering/RenderBlock.h: Make updateFirstLetter accessbile from
+        RenderTextFragment.
+        * rendering/RenderTextFragment.cpp:
+        (WebCore::RenderTextFragment::styleDidChange): If appropriate, update
+        first letter after removing stale cached pseudo style.
+        (WebCore::RenderTextFragment::blockForAccompanyingFirstLetter): Helper
+        to get the block for the first letter.
+        * rendering/RenderTextFragment.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::removeCachedPseudoStyle): Remove the specified
+        pseudo style from cache.
+        * rendering/style/RenderStyle.h:
+
+2011-01-28  Mark Rowe  <mrowe@apple.com>
+
         Merge r73432.
 
     2010-12-07  Justin Schuh  <jschuh@chromium.org>
