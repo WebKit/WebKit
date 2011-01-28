@@ -1,3 +1,11 @@
+2011-01-28  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed.
+
+        Unskipped some tests. They're not failing anymore.
+
+        * platform/gtk/Skipped:
+
 2011-01-27  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
