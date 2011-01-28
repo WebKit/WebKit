@@ -1544,6 +1544,9 @@ void WebFrameImpl::scopeStringMatches(int identifier,
 
     RefPtr<Range> searchRange(rangeOfContents(frame()->document()));
 
+    Node* originalEndContainer = searchRange->endContainer();
+    int originalEndOffset = searchRange->endOffset();
+
     ExceptionCode ec = 0, ec2 = 0;
     if (m_resumeScopingFromRange.get()) {
         // This is a continuation of a scoping operation that timed out and didn't
@@ -1557,9 +1560,6 @@ void WebFrameImpl::scopeStringMatches(int identifier,
             return;
         }
     }
-
-    Node* originalEndContainer = searchRange->endContainer();
-    int originalEndOffset = searchRange->endOffset();
 
     // This timeout controls how long we scope before releasing control.  This
     // value does not prevent us from running for longer than this, but it is

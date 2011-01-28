@@ -1,3 +1,22 @@
+2011-01-27  Finnur Thorarinsson  <finnur.webkit@gmail.com>
+
+        Reviewed by Ojan Vafai.
+
+        This addresses a regression introduced by r75784, as described in:
+        https://bugs.webkit.org/show_bug.cgi?id=53176
+
+        The problem is that originalEndContainer and originalEndOffset was
+        meant to capture the end of the document, but was being assigned after
+        a call to searchRange->setStart() (when scoping is restarted), which can
+        result in the Range being collapsed to start (thereby assigning the
+        wrong value to the Container/Offset pair).
+
+        This code is never triggered by layout tests, but I'm adding a regressiono
+        test on the Chromium side for this.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::scopeStringMatches):
+
 2011-01-27  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
