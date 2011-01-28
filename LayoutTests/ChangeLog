@@ -1,3 +1,16 @@
+2011-01-27  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        contentEditable formatBlock crashes on divs with contenteditable="false"
+        https://bugs.webkit.org/show_bug.cgi?id=53263
+
+        Add test for executing a formatBlock command on a selection containing an
+        element with contenteditable=false.
+
+        * editing/execCommand/format-block-contenteditable-false-expected.txt: Added.
+        * editing/execCommand/format-block-contenteditable-false.html: Added.
+
 2011-01-27  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.

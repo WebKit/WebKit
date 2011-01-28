@@ -1,3 +1,17 @@
+2011-01-27  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        contentEditable formatBlock crashes on divs with contenteditable="false"
+        https://bugs.webkit.org/show_bug.cgi?id=53263
+
+        Check if editableRootForPosition returns null for position.
+
+        Test: editing/execCommand/format-block-contenteditable-false.html
+
+        * editing/FormatBlockCommand.cpp:
+        (WebCore::FormatBlockCommand::formatRange):
+
 2011-01-27  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.
