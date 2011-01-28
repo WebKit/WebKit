@@ -55509,6 +55509,14 @@
 				Name="shadow"
 				>
 				<File
+					RelativePath="..\html\shadow\MediaControls.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\shadow\MediaControls.h"
+					>
+				</File>
+				<File
 					RelativePath="..\html\shadow\SliderThumbElement.cpp"
 					>
 				</File>

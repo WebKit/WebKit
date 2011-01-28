@@ -2001,6 +2001,8 @@
             'html/parser/TextDocumentParser.h',
             'html/parser/TextViewSourceParser.cpp',
             'html/parser/TextViewSourceParser.h',
+            'html/shadow/MediaControls.cpp',
+            'html/shadow/MediaControls.h',
             'html/shadow/SliderThumbElement.cpp',
             'html/shadow/SliderThumbElement.h',
             'inspector/ConsoleMessage.cpp',

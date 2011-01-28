@@ -1,3 +1,43 @@
+2011-01-27  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Split MediaControls out of RenderMedia.
+        https://bugs.webkit.org/show_bug.cgi?id=53252
+
+        Near-mechanical moving of stuff, no change in behavior, thus no new tests.
+
+        * Android.mk: Added MediaControls to build system.
+        * CMakeLists.txt: Ditto.
+        * GNUmakefile.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::defaultEventHandler): Changed to forward events to MediaControls.
+        * html/shadow/MediaControls.cpp: Copied all controls-related methods from
+            Source/WebCore/rendering/RenderMedia.cpp, pulled them into their own class called MediaControls. 
+        * html/shadow/MediaControls.h: Ditto from Source/WebCore/rendering/RenderMedia.h.
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlTimelineElement::defaultEventHandler): Changed to use MediaControls.
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::RenderMedia): Moved relevant constructor initializers out to MediaControls.
+        (WebCore::RenderMedia::destroy): Changed to use MediaControls.
+        (WebCore::RenderMedia::styleDidChange): Ditto.
+        (WebCore::RenderMedia::layout): Ditto.
+        (WebCore::RenderMedia::updateFromElement): Ditto.
+        * rendering/RenderMedia.h: Updated defs accordingly and removed player() accessor, which
+            is only used by sub-class RenderVideo.
+        (WebCore::RenderMedia::controls): Added.
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::~RenderVideo): Changed to access MediaPlayer* directly from mediaElement().
+        (WebCore::RenderVideo::calculateIntrinsicSize): Ditto.
+        (WebCore::RenderVideo::paintReplaced): Ditto.
+        (WebCore::RenderVideo::updatePlayer): Ditto.
+        (WebCore::RenderVideo::supportsAcceleratedRendering): Ditto.
+        (WebCore::RenderVideo::acceleratedRenderingStateChanged): Ditto.
+
 2011-01-28  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

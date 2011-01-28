@@ -37,6 +37,7 @@
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "LocalizedStrings.h"
+#include "MediaControls.h"
 #include "MouseEvent.h"
 #include "Page.h"
 #include "RenderMedia.h"
@@ -740,7 +741,7 @@ void MediaControlTimelineElement::defaultEventHandler(Event* event)
 
     RenderSlider* slider = toRenderSlider(renderer());
     if (slider && slider->inDragMode())
-        toRenderMedia(mediaElement()->renderer())->updateTimeDisplay();
+        toRenderMedia(mediaElement()->renderer())->controls()->updateTimeDisplay();
 
     if (event->type() == eventNames().mouseupEvent)
         mediaElement()->endScrubbing();

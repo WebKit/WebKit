@@ -1039,6 +1039,7 @@ SOURCES += \
     html/parser/HTMLViewSourceParser.cpp \
     html/parser/TextDocumentParser.cpp \
     html/parser/TextViewSourceParser.cpp \
+    html/shadow/MediaControls.cpp \
     html/shadow/SliderThumbElement.cpp \
     inspector/ConsoleMessage.cpp \
     inspector/InjectedScript.cpp \

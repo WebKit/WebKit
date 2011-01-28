@@ -56,7 +56,7 @@ RenderVideo::RenderVideo(HTMLVideoElement* video)
 
 RenderVideo::~RenderVideo()
 {
-    if (MediaPlayer* p = player()) {
+    if (MediaPlayer* p = mediaElement()->player()) {
         p->setVisible(false);
         p->setFrameView(0);
     }
@@ -108,9 +108,9 @@ IntSize RenderVideo::calculateIntrinsicSize()
     // The intrinsic height of a video element's playback area is the intrinsic height 
     // of the video resource, if that is available; otherwise it is the intrinsic 
     // height of the poster frame, if that is available; otherwise it is 150 CSS pixels.
-    
-    if (player() && video->readyState() >= HTMLVideoElement::HAVE_METADATA)
-        return player()->naturalSize();
+    MediaPlayer* player = mediaElement()->player();
+    if (player && video->readyState() >= HTMLVideoElement::HAVE_METADATA)
+        return player->naturalSize();
 
     if (video->shouldDisplayPosterImage() && !m_cachedImageSize.isEmpty() && !imageResource()->errorOccurred())
         return m_cachedImageSize;
@@ -186,7 +186,7 @@ bool RenderVideo::shouldDisplayVideo() const
 
 void RenderVideo::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
 {
-    MediaPlayer* mediaPlayer = player();
+    MediaPlayer* mediaPlayer = mediaElement()->player();
     bool displayingPoster = videoElement()->shouldDisplayPosterImage();
 
     if (!displayingPoster) {
@@ -228,7 +228,7 @@ void RenderVideo::updatePlayer()
 {
     updateIntrinsicSize();
 
-    MediaPlayer* mediaPlayer = player();
+    MediaPlayer* mediaPlayer = mediaElement()->player();
     if (!mediaPlayer)
         return;
 
@@ -265,7 +265,7 @@ int RenderVideo::minimumReplacedHeight() const
 #if USE(ACCELERATED_COMPOSITING)
 bool RenderVideo::supportsAcceleratedRendering() const
 {
-    MediaPlayer* p = player();
+    MediaPlayer* p = mediaElement()->player();
     if (p)
         return p->supportsAcceleratedRendering();
 
@@ -274,7 +274,7 @@ bool RenderVideo::supportsAcceleratedRendering() const
 
 void RenderVideo::acceleratedRenderingStateChanged()
 {
-    MediaPlayer* p = player();
+    MediaPlayer* p = mediaElement()->player();
     if (p)
         p->acceleratedRenderingStateChanged();
 }

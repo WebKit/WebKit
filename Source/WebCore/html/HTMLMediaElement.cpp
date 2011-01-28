@@ -48,6 +48,7 @@
 #include "HTMLSourceElement.h"
 #include "HTMLVideoElement.h"
 #include "Logging.h"
+#include "MediaControls.h"
 #include "MediaDocument.h"
 #include "MediaError.h"
 #include "MediaList.h"
@@ -2287,7 +2288,7 @@ void HTMLMediaElement::defaultEventHandler(Event* event)
         widget->handleEvent(event);
 #else
     if (renderer() && renderer()->isMedia())
-        toRenderMedia(renderer())->forwardEvent(event);
+        toRenderMedia(renderer())->controls()->forwardEvent(event);
     if (event->defaultHandled())
         return;
     HTMLElement::defaultEventHandler(event);
