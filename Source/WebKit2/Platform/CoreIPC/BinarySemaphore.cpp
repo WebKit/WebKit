@@ -28,6 +28,8 @@
 
 namespace CoreIPC {
 
+#if !PLATFORM(WIN)
+
 BinarySemaphore::BinarySemaphore()
     : m_isSet(false)
 {
@@ -61,5 +63,6 @@ bool BinarySemaphore::wait(double absoluteTime)
     return true;
 }
 
+#endif // !PLATFORM(WIN)
 
 } // namespace CoreIPC

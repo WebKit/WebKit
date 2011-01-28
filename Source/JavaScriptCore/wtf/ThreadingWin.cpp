@@ -458,20 +458,15 @@ void ThreadCondition::wait(Mutex& mutex)
 
 bool ThreadCondition::timedWait(Mutex& mutex, double absoluteTime)
 {
-    double currentTime = WTF::currentTime();
+    DWORD interval = absoluteTimeToWaitTimeoutInterval(absoluteTime);
 
-    // Time is in the past - return immediately.
-    if (absoluteTime < currentTime)
+    if (!interval) {
+        // Consider the wait to have timed out, even if our condition has already been signaled, to
+        // match the pthreads implementation.
         return false;
-
-    // Time is too far in the future (and would overflow unsigned long) - wait forever.
-    if (absoluteTime - currentTime > static_cast<double>(INT_MAX) / 1000.0) {
-        wait(mutex);
-        return true;
     }
 
-    double intervalMilliseconds = (absoluteTime - currentTime) * 1000.0;
-    return m_condition.timedWait(mutex.impl(), static_cast<unsigned long>(intervalMilliseconds));
+    return m_condition.timedWait(mutex.impl(), interval);
 }
 
 void ThreadCondition::signal()
@@ -482,6 +477,21 @@ void ThreadCondition::signal()
 void ThreadCondition::broadcast()
 {
     m_condition.signal(true); // Unblock all threads.
+}
+
+DWORD absoluteTimeToWaitTimeoutInterval(double absoluteTime)
+{
+    double currentTime = WTF::currentTime();
+
+    // Time is in the past - return immediately.
+    if (absoluteTime < currentTime)
+        return 0;
+
+    // Time is too far in the future (and would overflow unsigned long) - wait forever.
+    if (absoluteTime - currentTime > static_cast<double>(INT_MAX) / 1000.0)
+        return INFINITE;
+
+    return (absoluteTime - currentTime) * 1000;
 }
 
 } // namespace WTF

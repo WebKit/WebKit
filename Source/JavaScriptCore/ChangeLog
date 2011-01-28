@@ -1,3 +1,22 @@
+2011-01-27  Adam Roben  <aroben@apple.com>
+
+        Extract code to convert a WTF absolute time to a Win32 wait interval into a separate
+        function
+
+        Fixes <http://webkit.org/b/53208> <rdar://problem/8922490> BinarySemaphore should wrap a
+        Win32 event
+
+        Reviewed by Dave Hyatt.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Export the new function.
+
+        * wtf/ThreadingPrimitives.h: Declare the new function.
+
+        * wtf/ThreadingWin.cpp:
+        (WTF::ThreadCondition::timedWait): Moved code to convert the absolute time to a wait
+        interval from here...
+        (WTF::absoluteTimeToWaitTimeoutInterval): ...to here.
+
 2011-01-28  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.

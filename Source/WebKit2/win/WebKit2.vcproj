@@ -399,14 +399,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Shared\ShareableBitmap.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\Shared\ShareableBitmap.h"
-				>
-			</File>
-			<File
 				RelativePath="..\Shared\CacheModel.h"
 				>
 			</File>
@@ -512,6 +504,14 @@
 			</File>
 			<File
 				RelativePath="..\Shared\SessionState.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\ShareableBitmap.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\ShareableBitmap.h"
 				>
 			</File>
 			<File
@@ -1808,14 +1808,6 @@
 							>
 						</File>
 						<File
-							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleInspector.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleInspector.h"
-							>
-						</File>
-						<File
 							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleHitTestResult.cpp"
 							>
 						</File>
@@ -1825,6 +1817,14 @@
 						</File>
 						<File
 							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleInitialize.h"
+							>
+						</File>
+						<File
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleInspector.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleInspector.h"
 							>
 						</File>
 						<File
@@ -2976,6 +2976,10 @@
 				<Filter
 					Name="win"
 					>
+					<File
+						RelativePath="..\Platform\CoreIPC\win\BinarySemaphoreWin.cpp"
+						>
+					</File>
 					<File
 						RelativePath="..\Platform\CoreIPC\win\ConnectionWin.cpp"
 						>

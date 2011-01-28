@@ -1,3 +1,25 @@
+2011-01-27  Adam Roben  <aroben@apple.com>
+
+        Change BinarySemaphore to wrap an auto-reset Win32 event on Windows
+
+        Fixes <http://webkit.org/b/53208> <rdar://problem/8922490>.
+
+        Reviewed by Dave Hyatt.
+
+        * Platform/CoreIPC/BinarySemaphore.cpp: Wrap this implementation in #if !PLATFORM(WIN).
+
+        * Platform/CoreIPC/BinarySemaphore.h: Make the Windows implementation have a single HANDLE
+        member that holds the event.
+
+        * Platform/CoreIPC/win/BinarySemaphoreWin.cpp: Copied from Source/WebKit2/Platform/CoreIPC/BinarySemaphore.cpp.
+        (CoreIPC::BinarySemaphore::BinarySemaphore): Create our event.
+        (CoreIPC::BinarySemaphore::~BinarySemaphore): Destory our event.
+        (CoreIPC::BinarySemaphore::signal): Signal the event.
+        (CoreIPC::BinarySemaphore::wait): Convert the absolute time to a wait interval, then wait
+        for the event to be signaled or for the interval to elapse.
+
+        * win/WebKit2.vcproj: Added BinarySemaphoreWin.cpp. Also let VS have its way with the file.
+
 2011-01-27  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Anders Carlsson.

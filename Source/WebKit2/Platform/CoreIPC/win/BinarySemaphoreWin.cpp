@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,52 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BinarySemaphore_h
-#define BinarySemaphore_h
-
-#include <wtf/Noncopyable.h>
-#include <wtf/ThreadingPrimitives.h>
+#include "config.h"
+#include "BinarySemaphore.h"
 
 namespace CoreIPC {
 
-class BinarySemaphore {
-    WTF_MAKE_NONCOPYABLE(BinarySemaphore);
+BinarySemaphore::BinarySemaphore()
+    : m_event(::CreateEventW(0, FALSE, FALSE, 0))
+{
+}
 
-public:
-    BinarySemaphore();
-    ~BinarySemaphore();
+BinarySemaphore::~BinarySemaphore()
+{
+    ::CloseHandle(m_event);
+}
 
-    void signal();
-    bool wait(double absoluteTime);
+void BinarySemaphore::signal()
+{
+    ::SetEvent(m_event);
+}
 
-private:
-#if PLATFORM(WIN)
-    HANDLE m_event;
-#else
-    bool m_isSet;
+bool BinarySemaphore::wait(double absoluteTime)
+{
+    DWORD interval = absoluteTimeToWaitTimeoutInterval(absoluteTime);
+    if (!interval) {
+        // Consider the wait to have timed out, even if the event has already been signaled, to
+        // match the WTF::ThreadCondition implementation.
+        return false;
+    }
 
-    Mutex m_mutex;
-    ThreadCondition m_condition;
-#endif
-};
+    DWORD result = ::WaitForSingleObjectEx(m_event, interval, FALSE);
+    switch (result) {
+    case WAIT_OBJECT_0:
+        // The event was signaled.
+        return true;
+
+    case WAIT_TIMEOUT:
+        // The wait timed out.
+        return false;
+
+    case WAIT_FAILED:
+        ASSERT_WITH_MESSAGE(false, "::WaitForSingleObjectEx failed with error %lu", ::GetLastError());
+        return false;
+    default:
+        ASSERT_WITH_MESSAGE(false, "::WaitForSingleObjectEx returned unexpected result %lu", result);
+        return false;
+    }
+}
 
 } // namespace CoreIPC
-
-
-#endif // BinarySemaphore_h
