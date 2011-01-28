@@ -136,8 +136,6 @@ private:
     RefPtr<MediaControlTimeDisplayElement> m_timeRemainingDisplay;
     RefPtr<MediaControlStatusDisplayElement> m_statusDisplay;
     RenderObjectChildList m_children;
-    Node* m_lastUnderNode;
-    Node* m_nodeUnderMouse;
     
     Timer<RenderMedia> m_timeUpdateTimer;
     Timer<RenderMedia> m_opacityAnimationTimer;
