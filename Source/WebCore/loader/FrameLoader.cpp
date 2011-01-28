@@ -635,12 +635,6 @@ void FrameLoader::receivedFirstData()
     m_frame->navigationScheduler()->scheduleRedirect(delay, url);
 }
 
-const KURL& FrameLoader::url() const
-{
-    ASSERT(m_frame->document());
-    return m_frame->document()->url();
-}
-
 void FrameLoader::setOutgoingReferrer(const KURL& url)
 {
     KURL outgoingReferrer(url);

@@ -703,7 +703,7 @@ KURL WebFrame::url() const
     if (!coreFrame)
         return KURL();
 
-    return coreFrame->loader()->url();
+    return coreFrame->document()->url();
 }
 
 HRESULT STDMETHODCALLTYPE WebFrame::stopLoading( void)

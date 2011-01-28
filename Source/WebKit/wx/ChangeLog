@@ -1,3 +1,13 @@
+2011-01-27  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Use Document::url() instead of FrameLoader::url().
+        https://bugs.webkit.org/show_bug.cgi?id=41165
+
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::dispatchDidFinishDocumentLoad):
+
 2011-01-14  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Antti Koivisto.

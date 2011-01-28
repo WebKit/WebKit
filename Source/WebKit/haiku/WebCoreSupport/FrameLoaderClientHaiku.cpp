@@ -261,7 +261,7 @@ void FrameLoaderClientHaiku::dispatchDidFinishDocumentLoad()
 {
     if (m_webView) {
         BMessage message(LOAD_DOC_COMPLETED);
-        message.AddString("url", m_frame->loader()->url().string());
+        message.AddString("url", m_frame->document()->url().string());
         m_messenger->SendMessage(&message);
     }
 }
@@ -323,7 +323,7 @@ void FrameLoaderClientHaiku::postProgressFinishedNotification()
 {
     if (m_webView) {
         BMessage message(LOAD_DL_COMPLETED);
-        message.AddString("url", m_frame->loader()->url().string());
+        message.AddString("url", m_frame->document()->url().string());
         m_messenger->SendMessage(&message);
     }
 }

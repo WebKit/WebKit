@@ -1,3 +1,13 @@
+2011-01-27  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Use Document::url() instead of FrameLoader::url().
+        https://bugs.webkit.org/show_bug.cgi?id=41165
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::url):
+
 2011-01-27  Robert Hogan  <robert@webkit.org>
 
         Rubber-stamped by Andreas Kling.

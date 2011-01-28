@@ -378,7 +378,7 @@ static PassRefPtr<InspectorObject> buildObjectForFrame(Frame* frame)
             name = frame->ownerElement()->getAttribute(HTMLNames::idAttr);
         frameObject->setString("name", name);
     }
-    frameObject->setString("url", frame->loader()->url().string());
+    frameObject->setString("url", frame->document()->url().string());
     return frameObject;
 }
 

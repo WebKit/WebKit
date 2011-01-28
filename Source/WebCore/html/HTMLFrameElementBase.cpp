@@ -80,7 +80,7 @@ bool HTMLFrameElementBase::isURLAllowed() const
     // But we don't allow more than one.
     bool foundSelfReference = false;
     for (Frame* frame = document()->frame(); frame; frame = frame->tree()->parent()) {
-        if (equalIgnoringFragmentIdentifier(frame->loader()->url(), completeURL)) {
+        if (equalIgnoringFragmentIdentifier(frame->document()->url(), completeURL)) {
             if (foundSelfReference)
                 return false;
             foundSelfReference = true;

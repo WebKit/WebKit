@@ -51,7 +51,7 @@ inline const KURL& Location::url() const
 {
     ASSERT(m_frame);
 
-    const KURL& url = m_frame->loader()->url();
+    const KURL& url = m_frame->document()->url();
     if (!url.isValid())
         return blankURL(); // Use "about:blank" while the page is still loading (before we have a frame).
 
@@ -167,7 +167,7 @@ void Location::setProtocol(const String& protocol, DOMWindow* activeWindow, DOMW
 {
     if (!m_frame)
         return;
-    KURL url = m_frame->loader()->url();
+    KURL url = m_frame->document()->url();
     if (!url.setProtocol(protocol)) {
         ec = SYNTAX_ERR;
         return;
@@ -179,7 +179,7 @@ void Location::setHost(const String& host, DOMWindow* activeWindow, DOMWindow* f
 {
     if (!m_frame)
         return;
-    KURL url = m_frame->loader()->url();
+    KURL url = m_frame->document()->url();
     url.setHostAndPort(host);
     m_frame->domWindow()->setLocation(url.string(), activeWindow, firstWindow);
 }
@@ -188,7 +188,7 @@ void Location::setHostname(const String& hostname, DOMWindow* activeWindow, DOMW
 {
     if (!m_frame)
         return;
-    KURL url = m_frame->loader()->url();
+    KURL url = m_frame->document()->url();
     url.setHost(hostname);
     m_frame->domWindow()->setLocation(url.string(), activeWindow, firstWindow);
 }
@@ -197,7 +197,7 @@ void Location::setPort(const String& portString, DOMWindow* activeWindow, DOMWin
 {
     if (!m_frame)
         return;
-    KURL url = m_frame->loader()->url();
+    KURL url = m_frame->document()->url();
     int port = portString.toInt();
     if (port < 0 || port > 0xFFFF)
         url.removePort();
@@ -210,7 +210,7 @@ void Location::setPathname(const String& pathname, DOMWindow* activeWindow, DOMW
 {
     if (!m_frame)
         return;
-    KURL url = m_frame->loader()->url();
+    KURL url = m_frame->document()->url();
     url.setPath(pathname);
     m_frame->domWindow()->setLocation(url.string(), activeWindow, firstWindow);
 }
@@ -219,7 +219,7 @@ void Location::setSearch(const String& search, DOMWindow* activeWindow, DOMWindo
 {
     if (!m_frame)
         return;
-    KURL url = m_frame->loader()->url();
+    KURL url = m_frame->document()->url();
     url.setQuery(search);
     m_frame->domWindow()->setLocation(url.string(), activeWindow, firstWindow);
 }
@@ -228,7 +228,7 @@ void Location::setHash(const String& hash, DOMWindow* activeWindow, DOMWindow* f
 {
     if (!m_frame)
         return;
-    KURL url = m_frame->loader()->url();
+    KURL url = m_frame->document()->url();
     String oldFragmentIdentifier = url.fragmentIdentifier();
     String newFragmentIdentifier = hash;
     if (hash[0] == '#')
@@ -268,7 +268,7 @@ void Location::reload(DOMWindow* activeWindow)
         targetWindow->printErrorMessage(targetWindow->crossDomainAccessErrorMessage(activeWindow));
         return;
     }
-    if (protocolIsJavaScript(m_frame->loader()->url()))
+    if (protocolIsJavaScript(m_frame->document()->url()))
         return;
     m_frame->navigationScheduler()->scheduleRefresh();
 }

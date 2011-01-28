@@ -2646,7 +2646,7 @@ void Document::processHttpEquiv(const String& equiv, const String& content)
         String url;
         if (frame && parseHTTPRefresh(content, true, delay, url)) {
             if (url.isEmpty())
-                url = frame->loader()->url().string();
+                url = m_url.string();
             else
                 url = completeURL(url).string();
             frame->navigationScheduler()->scheduleRedirect(delay, url);
@@ -2927,7 +2927,7 @@ void Document::removePendingSheet()
         parser->executeScriptsWaitingForStylesheets();
 
     if (m_gotoAnchorNeededAfterStylesheetsLoad && view())
-        view()->scrollToFragment(m_frame->loader()->url());
+        view()->scrollToFragment(m_url);
 }
 
 void Document::styleSelectorChanged(StyleSelectorUpdateFlag updateFlag)

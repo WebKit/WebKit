@@ -67,7 +67,7 @@ DocumentWriter::DocumentWriter(Frame* frame)
 void DocumentWriter::replaceDocument(const String& source)
 {
     m_frame->loader()->stopAllLoaders();
-    begin(m_frame->loader()->url(), true, m_frame->document()->securityOrigin());
+    begin(m_frame->document()->url(), true, m_frame->document()->securityOrigin());
 
     if (!source.isNull()) {
         if (!m_receivedData) {
@@ -245,7 +245,7 @@ void DocumentWriter::setDecoder(TextResourceDecoder* decoder)
 
 String DocumentWriter::deprecatedFrameEncoding() const
 {
-    return m_frame->loader()->url().isEmpty() ? m_encoding : encoding();
+    return m_frame->document()->url().isEmpty() ? m_encoding : encoding();
 }
 
 void DocumentWriter::setDocumentWasLoadedAsPartOfNavigation()

@@ -65,7 +65,7 @@ CachedFrameBase::CachedFrameBase(Frame* frame)
     , m_documentLoader(frame->loader()->documentLoader())
     , m_view(frame->view())
     , m_mousePressNode(frame->eventHandler()->mousePressNode())
-    , m_url(frame->loader()->url())
+    , m_url(frame->document()->url())
     , m_isMainFrame(!frame->tree()->parent())
 {
 }

@@ -267,7 +267,6 @@ public:
 
     void frameDetached();
 
-    const KURL& url() const;
     void setOutgoingReferrer(const KURL&);
 
     void loadDone();

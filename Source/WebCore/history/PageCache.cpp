@@ -111,7 +111,7 @@ static bool logCanCacheFrameDecision(Frame* frame, int indentLevel)
             PCLOG("   -Frame contains plugins");
             cannotCache = true;
         }
-        if (frame->loader()->url().protocolIs("https")) {
+        if (frame->document()->url().protocolIs("https")) {
             PCLOG("   -Frame is HTTPS");
             cannotCache = true;
         }
@@ -260,7 +260,7 @@ bool PageCache::canCachePageContainingThisFrame(Frame* frame)
         // they would need to be destroyed and then recreated, and there is no way that we can recreate
         // the right NPObjects. See <rdar://problem/5197041> for more information.
         && !frame->loader()->subframeLoader()->containsPlugins()
-        && !frame->loader()->url().protocolIs("https")
+        && !frame->document()->url().protocolIs("https")
         && (!frame->domWindow() || !frame->domWindow()->hasEventListeners(eventNames().unloadEvent))
 #if ENABLE(DATABASE)
         && !frame->document()->hasOpenDatabases()

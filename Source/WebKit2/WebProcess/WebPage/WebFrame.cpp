@@ -334,7 +334,7 @@ String WebFrame::url() const
     if (!m_coreFrame)
         return String();
 
-    return m_coreFrame->loader()->url().string();
+    return m_coreFrame->document()->url().string();
 }
 
 String WebFrame::innerText() const

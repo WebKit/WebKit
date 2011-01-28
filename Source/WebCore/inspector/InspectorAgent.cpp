@@ -1347,7 +1347,7 @@ void InspectorAgent::setInspectorExtensionAPI(const String& source)
 
 KURL InspectorAgent::inspectedURL() const
 {
-    return m_inspectedPage->mainFrame()->loader()->url();
+    return m_inspectedPage->mainFrame()->document()->url();
 }
 
 KURL InspectorAgent::inspectedURLWithoutFragment() const

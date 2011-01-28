@@ -757,7 +757,7 @@ void QWebFrame::setUrl(const QUrl &url)
 
 QUrl QWebFrame::url() const
 {
-    return d->frame->loader()->url();
+    return d->frame->document()->url();
 }
 
 /*!
@@ -813,7 +813,7 @@ QUrl QWebFrame::baseUrl() const
 
 QIcon QWebFrame::icon() const
 {
-    return QWebSettings::iconForUrl(d->frame->loader()->url());
+    return QWebSettings::iconForUrl(d->frame->document()->url());
 }
 
 /*!

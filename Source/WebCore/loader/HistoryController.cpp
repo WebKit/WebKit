@@ -323,7 +323,7 @@ void HistoryController::updateForStandardLoad(HistoryUpdateType updateType)
         if (Page* page = m_frame->page())
             addVisitedLink(page, historyURL);
 
-        if (!frameLoader->documentLoader()->didCreateGlobalHistoryEntry() && frameLoader->documentLoader()->unreachableURL().isEmpty() && !frameLoader->url().isEmpty())
+        if (!frameLoader->documentLoader()->didCreateGlobalHistoryEntry() && frameLoader->documentLoader()->unreachableURL().isEmpty() && !m_frame->document()->url().isEmpty())
             frameLoader->client()->updateGlobalHistoryRedirectLinks();
     }
 }
@@ -365,7 +365,7 @@ void HistoryController::updateForRedirectWithLockedBackForwardList()
         if (Page* page = m_frame->page())
             addVisitedLink(page, historyURL);
 
-        if (!m_frame->loader()->documentLoader()->didCreateGlobalHistoryEntry() && m_frame->loader()->documentLoader()->unreachableURL().isEmpty() && !m_frame->loader()->url().isEmpty())
+        if (!m_frame->loader()->documentLoader()->didCreateGlobalHistoryEntry() && m_frame->loader()->documentLoader()->unreachableURL().isEmpty() && !m_frame->document()->url().isEmpty())
             m_frame->loader()->client()->updateGlobalHistoryRedirectLinks();
     }
 }
@@ -459,7 +459,7 @@ void HistoryController::recursiveUpdateForCommit()
 
 void HistoryController::updateForSameDocumentNavigation()
 {
-    if (m_frame->loader()->url().isEmpty())
+    if (m_frame->document()->url().isEmpty())
         return;
 
     Settings* settings = m_frame->settings();
@@ -470,7 +470,7 @@ void HistoryController::updateForSameDocumentNavigation()
     if (!page)
         return;
 
-    addVisitedLink(page, m_frame->loader()->url());
+    addVisitedLink(page, m_frame->document()->url());
 }
 
 void HistoryController::updateForFrameLoadCompleted()

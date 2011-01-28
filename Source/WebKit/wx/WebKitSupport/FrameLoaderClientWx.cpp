@@ -320,7 +320,7 @@ void FrameLoaderClientWx::dispatchDidFinishDocumentLoad()
     if (m_webView) {
         wxWebViewLoadEvent wkEvent(m_webView);
         wkEvent.SetState(wxWEBVIEW_LOAD_DOC_COMPLETED);
-        wkEvent.SetURL(m_frame->loader()->url().string());
+        wkEvent.SetURL(m_frame->document()->url().string());
         m_webView->GetEventHandler()->ProcessEvent(wkEvent);
     }
 }
@@ -394,7 +394,7 @@ void FrameLoaderClientWx::postProgressFinishedNotification()
     if (m_webView) {
         wxWebViewLoadEvent wkEvent(m_webView);
         wkEvent.SetState(wxWEBVIEW_LOAD_DL_COMPLETED);
-        wkEvent.SetURL(m_frame->loader()->url().string());
+        wkEvent.SetURL(m_frame->document()->url().string());
         m_webView->GetEventHandler()->ProcessEvent(wkEvent);
     }
 }

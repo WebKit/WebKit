@@ -1,3 +1,58 @@
+2011-01-27  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Remove FrameLoader::url() and update callers to use
+        Document::url().
+        https://bugs.webkit.org/show_bug.cgi?id=41165
+
+        Refactor, no new tests.
+
+        * WebCore.exp.in:
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv):
+        (WebCore::Document::removePendingSheet):
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::CachedFrameBase):
+        * history/PageCache.cpp:
+        (WebCore::logCanCacheFrameDecision):
+        (WebCore::PageCache::canCachePageContainingThisFrame):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::isURLAllowed):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::allowedToLoadFrameURL):
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::inspectedURL):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::buildObjectForFrame):
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::replaceDocument):
+        (WebCore::DocumentWriter::deprecatedFrameEncoding):
+        * loader/FrameLoader.cpp:
+        * loader/FrameLoader.h:
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::updateForStandardLoad):
+        (WebCore::HistoryController::updateForRedirectWithLockedBackForwardList):
+        (WebCore::HistoryController::updateForSameDocumentNavigation):
+        * loader/NavigationScheduler.cpp:
+        (WebCore::ScheduledHistoryNavigation::fire):
+        (WebCore::NavigationScheduler::scheduleLocationChange):
+        (WebCore::NavigationScheduler::scheduleRefresh):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateControlTints):
+        * page/Location.cpp:
+        (WebCore::Location::url):
+        (WebCore::Location::setProtocol):
+        (WebCore::Location::setHost):
+        (WebCore::Location::setHostname):
+        (WebCore::Location::setPort):
+        (WebCore::Location::setPathname):
+        (WebCore::Location::setSearch):
+        (WebCore::Location::setHash):
+        (WebCore::Location::reload):
+        * page/Page.cpp:
+        (WebCore::Page::goToItem):
+
 2011-01-27  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Darin Adler.
