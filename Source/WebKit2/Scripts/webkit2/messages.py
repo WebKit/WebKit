@@ -49,7 +49,6 @@ _license_header = """/*
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
 """
 
 class MessageReceiver(object):
@@ -324,7 +323,6 @@ def generate_messages_header(file):
     result = []
 
     result.append(_license_header)
-    result.append('\n')
 
     result.append('#ifndef %s\n' % header_guard)
     result.append('#define %s\n\n' % header_guard)
@@ -475,6 +473,7 @@ def generate_message_handler(file):
     result = []
 
     result.append(_license_header)
+    result.append('#include "config.h"\n')
     result.append('\n')
 
     if receiver.condition:

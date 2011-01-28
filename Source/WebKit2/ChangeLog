@@ -1,5 +1,14 @@
 2011-01-28  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Don't put config.h in the message headers.
+
+        * Scripts/webkit2/messages.py:
+        * Scripts/webkit2/messages_unittest.py:
+
+2011-01-28  Anders Carlsson  <andersca@apple.com>
+
         Fix build.
 
         * Shared/mac/ShareableSurface.cpp:

@@ -247,8 +247,6 @@ _expected_header = """/*
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-
 #ifndef WebPageMessages_h
 #define WebPageMessages_h
 
