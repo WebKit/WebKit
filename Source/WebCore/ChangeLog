@@ -1,3 +1,26 @@
+2011-01-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Re-land this patch with the missing null check that caused crashes in layout tests.
+
+        Changing cursor style has no effect until the mouse moves
+        https://bugs.webkit.org/show_bug.cgi?id=14344
+        rdar://problem/7563712
+
+        No tests added because we don't have infrastructure for testing actual cursor
+        changes (as opposed to cursor style computation) at this time. We might add it later.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchFakeMouseMoveEventSoon): Added.
+        * page/EventHandler.h: Ditto.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::areNonIdenticalCursorListsEqual): Added.
+        (WebCore::areCursorsEqual): Added.
+        (WebCore::RenderObject::styleDidChange): Call dispatchFakeMouseMoveEventSoon if
+        cursor styles changed.
+
 2011-01-28  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Eric Seidel.
