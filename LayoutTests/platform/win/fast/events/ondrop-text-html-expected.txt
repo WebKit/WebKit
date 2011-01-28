@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 21: text/plain: undefined
+CONSOLE MESSAGE: line 23: text/html: undefined
+This test verifies that we can get text/html from the drag object during an ondrop event. This test requires DRT.
+FAIL

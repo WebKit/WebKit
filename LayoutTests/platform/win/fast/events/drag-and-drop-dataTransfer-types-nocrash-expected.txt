@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 88: TypeError: 'null' is not an object (evaluating 'event.dataTransfer.types.indexOf')
+This test checks that on a successful drop we can access event.dataTransfer.types without crashing.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+TEST COMPLETE
+

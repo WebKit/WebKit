@@ -1,3 +1,13 @@
+2011-01-28  Jessie Berlin  <jberlin@apple.com>
+
+        Add Windows expected (failing) results to get the bots green. Unreviewed.
+        https://bugs.webkit.org/show_bug.cgi?id=53304
+
+        * platform/win/editing/pasteboard/get-data-text-plain-paste-expected.txt: Added.
+        * platform/win/editing/pasteboard/onpaste-text-html-expected.txt: Added.
+        * platform/win/fast/events/drag-and-drop-dataTransfer-types-nocrash-expected.txt: Added.
+        * platform/win/fast/events/ondrop-text-html-expected.txt: Added.
+
 2011-01-27  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
