@@ -1,3 +1,16 @@
+2011-01-28  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Updated Chromium baselines for a bug that was fixed.
+        https://bugs.webkit.org/show_bug.cgi?id=45527
+
+        * platform/chromium-linux/fast/dom/replaceChild-expected.checksum:
+        * platform/chromium-linux/fast/dom/replaceChild-expected.png:
+        * platform/chromium-mac/fast/dom/replaceChild-expected.checksum: Added.
+        * platform/chromium-mac/fast/dom/replaceChild-expected.png: Added.
+        * platform/chromium-win/fast/dom/replaceChild-expected.checksum:
+        * platform/chromium-win/fast/dom/replaceChild-expected.png:
+        * platform/chromium/test_expectations.txt: Removed expectation of failure.
+
 2011-01-28  Jessie Berlin  <jberlin@apple.com>
 
         [Windows 7 Release Tests] fast/repaint/select-option-background-color.html failing since introduction in r76826

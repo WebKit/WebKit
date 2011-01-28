@@ -1782,9 +1782,6 @@ BUGCR2844 SKIP : http/tests/appcache/non-html.xhtml = TIMEOUT PASS
 // New failures from WebKit r51577
 BUGCR29164 WIN LINUX MAC : fast/frames/sandboxed-iframe-plugins.html = TEXT
 
-// New failures from WebKit merge 51581:51584
-BUGCR29167 MAC DEBUG : fast/dom/replaceChild.html = IMAGE PASS
-
 // Failures introduced by USE_NEW_BUILDER in Skia.
 BUGCR33287 WIN LINUX : fast/canvas/set-colors.html = TEXT
 
@@ -2490,10 +2487,6 @@ BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-dom-azimuth-
 BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-dom-elevation-attr.html = IMAGE
 BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-svgdom-azimuth-prop.html = IMAGE
 BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-svgdom-elevation-prop.html = IMAGE
-
-// Regressions from webkit r67182
-BUGWK45527 WIN LINUX : fast/dom/replaceChild.html = IMAGE
-BUGWK45527 MAC RELEASE : fast/dom/replaceChild.html = IMAGE
 
 // Regression from r67285
 BUGWK45623 WIN LINUX : fast/dynamic/first-letter-display-change.html = IMAGE
