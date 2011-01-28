@@ -1,5 +1,24 @@
 2011-01-27  Mark Rowe  <mrowe@apple.com>
 
+        Merge r71256.
+
+    2010-11-03  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Tests for https://bugs.webkit.org/show_bug.cgi?id=46579
+
+        * fast/loader/ping-error-expected.txt: Added.
+        * fast/loader/ping-error.html: Added.
+        * fast/loader/resources/ping-error-frame.html: Added.
+        * fast/loader/resources/ping-error-window.html: Added.
+        * http/tests/navigation/image-load-in-subframe-unload-handler-expected.txt: Added.
+        * http/tests/navigation/image-load-in-subframe-unload-handler.html: Added.
+        * http/tests/navigation/resources/image-load-in-subframe-unload-handler-helper.html: Added.
+        * http/tests/navigation/resources/subframe-with-unload-handler-in-parent.html: Added.
+
+2011-01-27  Mark Rowe  <mrowe@apple.com>
+
         Merge r74084.
 
     2010-12-14  Brady Eidson  <beidson@apple.com>

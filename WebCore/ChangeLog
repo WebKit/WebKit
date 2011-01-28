@@ -1,5 +1,24 @@
 2011-01-27  Mark Rowe  <mrowe@apple.com>
 
+        Merge r71256.
+
+    2010-11-03  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Wait to stop all loads for a frame being detached until after its
+        chidlren have been detached. This ensures that any loads started
+        by a child's unload event handler will be properly cancelled.
+        https://bugs.webkit.org/show_bug.cgi?id=46579
+
+        Tests: fast/loader/ping-error.html
+               http/tests/navigation/image-load-in-subframe-unload-handler.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::detachFromParent):
+
+2011-01-27  Mark Rowe  <mrowe@apple.com>
+
         Merge r74084.
 
     2010-12-14  Brady Eidson  <beidson@apple.com>

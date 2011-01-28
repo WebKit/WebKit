@@ -1,0 +1,2 @@
+frame "<!--framePath //<!--frame0-->-->" - has 1 onunload handler(s)
+Test for bug 46579: Reproducible crash in appcache code when closing pgatour.com
