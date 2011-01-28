@@ -69,6 +69,9 @@ public:
     const_iterator uncheckedBegin() const { return m_map.begin(); }
     const_iterator uncheckedEnd() const { return m_map.end(); }
 
+    bool isValid(iterator it) const { return Heap::isCellMarked(it->second); }
+    bool isValid(const_iterator it) const { return Heap::isCellMarked(it->second); }
+
 private:
     HashMap<KeyType, MappedType> m_map;
 };

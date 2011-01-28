@@ -1,3 +1,21 @@
+2011-01-27  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Potentially Unsafe HashSet of RuntimeObject* in RootObject definition
+        https://bugs.webkit.org/show_bug.cgi?id=53271
+
+        Precautionary change.
+        Changed RootObject to use WeakGCMap instead of HashSet.
+        Found will looking for another issue, but can't produce a test case
+        that is problematic.  THerefore there aren't any new tests.
+
+        * bridge/runtime_root.cpp:
+        (JSC::Bindings::RootObject::invalidate):
+        (JSC::Bindings::RootObject::addRuntimeObject):
+        (JSC::Bindings::RootObject::removeRuntimeObject):
+        * bridge/runtime_root.h:
+
 2011-01-27  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.

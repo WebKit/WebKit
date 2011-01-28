@@ -1,3 +1,14 @@
+2011-01-27  Michael Saboff  <msaboff@apple.com>
+
+        Potentially Unsafe HashSet of RuntimeObject* in RootObject definition
+        https://bugs.webkit.org/show_bug.cgi?id=53271
+
+        Added new isValid() methods to check if a contained object in
+        a WeakGCMap is valid when using an unchecked iterator.
+
+        * runtime/WeakGCMap.h:
+        (JSC::WeakGCMap::isValid):
+
 2011-01-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.
