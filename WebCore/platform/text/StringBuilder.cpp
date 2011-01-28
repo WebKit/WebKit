@@ -31,17 +31,26 @@
 
 #include "StringBuffer.h"
 
+using namespace std;
+
 namespace WebCore {
+
+static inline void checkedAppend(unsigned& totalLength, unsigned charactersToAppend)
+{
+    if (numeric_limits<unsigned>::max() - charactersToAppend <= totalLength)
+        CRASH();
+
+    totalLength += charactersToAppend;
+}
 
 void StringBuilder::append(const String& string)
 {
     if (string.isNull())
         return;
 
-    if (m_totalLength == UINT_MAX)
-        m_totalLength = string.length();
-    else
-        m_totalLength += string.length();
+    unsigned totalLength = length();
+    checkedAppend(totalLength, string.length());
+    m_totalLength = totalLength;
 
     if (!string.isEmpty())
         m_strings.append(string);
@@ -49,20 +58,18 @@ void StringBuilder::append(const String& string)
 
 void StringBuilder::append(UChar c)
 {
-    if (m_totalLength == UINT_MAX)
-        m_totalLength = 1;
-    else
-        m_totalLength += 1;
+    unsigned totalLength = length();
+    checkedAppend(totalLength, 1);
+    m_totalLength = totalLength;
 
     m_strings.append(String(&c, 1));
 }
 
 void StringBuilder::append(char c)
 {
-    if (m_totalLength == UINT_MAX)
-        m_totalLength = 1;
-    else
-        m_totalLength += 1;
+    unsigned totalLength = length();
+    checkedAppend(totalLength, 1);
+    m_totalLength = totalLength;
 
     m_strings.append(String(&c, 1));
 }
@@ -86,7 +93,7 @@ String StringBuilder::toString() const
     for (unsigned i = 0; i < count; ++i) {
         StringImpl* string = m_strings[i].impl();
         unsigned length = string->length(); 
-        memcpy(p, string->characters(), length * 2);
+        memcpy(p, string->characters(), length * sizeof(UChar));
         p += length;
     }
 
@@ -97,15 +104,15 @@ String StringBuilder::toString() const
 
 void StringBuilder::clear()
 {
-    m_totalLength = UINT_MAX;
+    m_totalLength = numeric_limits<unsigned>::max();
     m_strings.clear();
 }
 
 unsigned StringBuilder::length() const
 {
-    if (m_totalLength == UINT_MAX)
+    if (isNull())
         return 0;
     return m_totalLength;
 }
 
-}
+} // namespace WebCore

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,14 +30,16 @@
 #define StringBuilder_h
 
 #include "PlatformString.h"
+#include <limits>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
     class StringBuilder {
     public:
-        StringBuilder() : m_totalLength(UINT_MAX) {}
+        StringBuilder() : m_totalLength(std::numeric_limits<unsigned>::max()) {}
 
-        void setNonNull() { if (m_totalLength == UINT_MAX) m_totalLength = 0; }
+        void setNonNull() { if (isNull()) m_totalLength = 0; }
 
         void append(const String&);
         void append(UChar);
@@ -49,7 +51,7 @@ namespace WebCore {
         String toString() const;
 
     private:
-        bool isNull() const { return m_totalLength == UINT_MAX; }
+        bool isNull() const { return m_totalLength == std::numeric_limits<unsigned>::max(); }
 
         unsigned m_totalLength;
         Vector<String, 16> m_strings;
