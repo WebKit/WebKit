@@ -2312,6 +2312,7 @@ media/controls-strict.html
 media/video-display-toggle.html
 media/controls-styling.html
 media/video-volume-slider.html
+media/video-controls-rendering.html
 
 #   Tests generating new results
 media/video-aspect-ratio.html
