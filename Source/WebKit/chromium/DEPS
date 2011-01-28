@@ -32,7 +32,7 @@
 
 vars = {
   'chromium_svn': 'http://src.chromium.org/svn/trunk/src',
-  'chromium_rev': '72673'
+  'chromium_rev': '72894'
 }
 
 deps = {
@@ -68,6 +68,8 @@ deps = {
     Var('chromium_svn')+'/testing@'+Var('chromium_rev'),
   'testing/gtest':
     From('chromium_deps', 'src/testing/gtest'),
+  'testing/gmock':
+    From('chromium_deps', 'src/testing/gmock'),
 
   # v8 javascript engine
   'v8': From('chromium_deps', 'src/v8'),

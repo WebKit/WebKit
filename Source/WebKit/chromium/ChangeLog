@@ -1,3 +1,10 @@
+2011-01-27  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, roll webkit chromium rev from 72673 to 72894.
+        Also, added gmock section in DEPS to pull down gmock.
+
+        * DEPS:
+
 2011-01-27  Alexey Marinichev  <amarinichev@chromium.org>
 
         Reviewed by Kenneth Russell.
