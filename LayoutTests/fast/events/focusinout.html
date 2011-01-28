@@ -9,24 +9,41 @@ function writePass(id)
     document.getElementById(id).innerHTML = "PASS";
 }
 
+function writeFailed(id, reason)
+{
+    document.getElementById(id).innerHTML = "FAIL: " + reason;
+}
+
 function focusHandler(event)
 {
-    writePass('result1');
+    if (event.type == "focusin")
+        writePass('result1');
+    else
+        writeFailed('result1', "Wrong event type");
 }
 
 function blurHandler(event)
 {
-    writePass('result2');
+    if (event.type == "focusout")
+        writePass('result2');
+    else
+        writeFailed('result2', "Wrong event type");
 }
 
 function focusHandlerTwo(event)
 {
-    writePass('result3');
+    if (event.type == "DOMFocusIn")
+        writePass('result3');
+    else
+        writeFailed('result3', "Wrong event type");
 }
 
 function blurHandlerTwo(event)
 {
-    writePass('result4');
+    if (event.type == "DOMFocusOut")
+        writePass('result4');
+    else
+        writeFailed('result4', "Wrong event type");
 }
 </script>
 </head>

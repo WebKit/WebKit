@@ -253,25 +253,4 @@ void Event::setUnderlyingEvent(PassRefPtr<Event> ue)
     m_underlyingEvent = ue;
 }
 
-const AtomicString& Event::aliasedType() const
-{
-    if (type() == eventNames().focusinEvent)
-        return eventNames().DOMFocusInEvent;
-    if (type() == eventNames().focusoutEvent)
-        return eventNames().DOMFocusOutEvent;
-    if (type() == eventNames().DOMFocusInEvent)
-        return eventNames().focusinEvent;
-    if (type() == eventNames().DOMFocusOutEvent)
-        return eventNames().focusoutEvent;
-    
-    ASSERT_NOT_REACHED();
-    return type();
-}
-
-bool Event::hasAliasedType() const
-{
-    return type() == eventNames().focusinEvent || type() == eventNames().focusoutEvent ||
-           type() == eventNames().DOMFocusInEvent || type() == eventNames().DOMFocusOutEvent;
-}
-
 } // namespace WebCore

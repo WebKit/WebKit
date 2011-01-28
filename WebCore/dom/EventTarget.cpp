@@ -282,14 +282,6 @@ bool EventTarget::fireEventListeners(Event* event)
     if (result != d->eventListenerMap.end())
         fireEventListeners(event, d, *result->second);
     
-    // Alias DOMFocusIn/DOMFocusOut to focusin/focusout (and vice versa). Just consider them to be the
-    // same event (triggering one another's handlers).  This mechanism allows us to deprecate or change event
-    // names in the future and still make them be interoperable.
-    if (event->hasAliasedType() && !event->immediatePropagationStopped()) {
-        EventListenerMap::iterator result = d->eventListenerMap.find(event->aliasedType());
-        if (result != d->eventListenerMap.end())
-            fireEventListeners(event, d, *result->second);
-    }
     return !event->defaultPrevented();
 }
         
