@@ -1,5 +1,12 @@
 2011-01-28  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Skip webkitAudioPannerNode from the test. It's not yet implemented across
+        all ports/platforms.
+
+        * fast/dom/script-tests/prototype-inheritance.js: Skipped webkitAudioPannerNode.
+
+2011-01-28  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Added expectations for a passing test.
 
         * platform/chromium-mac/fast/dom/isindex-002-expected.checksum: Added.
