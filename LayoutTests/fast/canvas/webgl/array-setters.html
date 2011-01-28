@@ -38,7 +38,7 @@ function testSetters(typeName, low, high) {
     array = [0, 1, 2, 3, 4, 5];
     webGLArray = new type(6);
     webGLArray.set(array);
-    array = webGLArray.slice(2, 4);
+    array = webGLArray.subset(2, 4);
     array[0] = 88;
     array[1] = 99;
     shouldBe("webGLArray[2]", "88");

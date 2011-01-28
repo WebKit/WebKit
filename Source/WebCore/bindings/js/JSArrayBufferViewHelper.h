@@ -137,7 +137,7 @@ PassRefPtr<C> constructArrayBufferView(JSC::ExecState* exec)
     // JavaScript DOM bindings can distinguish between "new
     // <Type>Array()" and what occurs when a previously-constructed
     // ArrayBufferView is returned to JavaScript; e.g., from
-    // "array.slice()".
+    // "array.subset()".
     if (exec->argumentCount() < 1)
         return C::create(0);
     

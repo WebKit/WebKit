@@ -43,8 +43,8 @@ public:
     void set(TypedArrayBase<unsigned char>* array, unsigned offset, ExceptionCode& ec) { return TypedArrayBase<unsigned char>::set(array, offset, ec); }
     void set(unsigned index, double value) { return IntegralTypedArrayBase<unsigned char>::set(index, value); }
 
-    PassRefPtr<Uint8Array> slice(int start) const;
-    PassRefPtr<Uint8Array> slice(int start, int end) const;
+    PassRefPtr<Uint8Array> subset(int start) const;
+    PassRefPtr<Uint8Array> subset(int start, int end) const;
 
 private:
     Uint8Array(PassRefPtr<ArrayBuffer> buffer,

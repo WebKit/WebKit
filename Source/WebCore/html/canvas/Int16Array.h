@@ -41,8 +41,8 @@ public:
     using TypedArrayBase<short>::set;
     using IntegralTypedArrayBase<short>::set;
 
-    PassRefPtr<Int16Array> slice(int start) const;
-    PassRefPtr<Int16Array> slice(int start, int end) const;
+    PassRefPtr<Int16Array> subset(int start) const;
+    PassRefPtr<Int16Array> subset(int start, int end) const;
 
 private:
     Int16Array(PassRefPtr<ArrayBuffer> buffer,

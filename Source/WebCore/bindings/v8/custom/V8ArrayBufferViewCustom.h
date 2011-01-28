@@ -87,7 +87,7 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
     int argLen = args.Length();
     if (!argLen) {
         // This happens when we return a previously constructed
-        // ArrayBufferView, e.g. from the call to <Type>Array.slice().
+        // ArrayBufferView, e.g. from the call to <Type>Array.subset().
         // The V8DOMWrapper will set the internal pointer in the
         // created object. Unfortunately it doesn't look like it's
         // possible to distinguish between this case and that where
@@ -99,7 +99,7 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
         V8DOMWrapper::setDOMWrapper(args.Holder(), type, array.get());
         // Do not call SetIndexedPropertiesToExternalArrayData on this
         // object. Not only is there no point from a performance
-        // perspective, but doing so causes errors in the slice() case.
+        // perspective, but doing so causes errors in the subset() case.
         return toV8(array.release(), args.Holder());
     }
 

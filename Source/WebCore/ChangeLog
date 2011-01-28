@@ -1,3 +1,45 @@
+2011-01-27  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        Rename Typed Array slice() to subset()
+        https://bugs.webkit.org/show_bug.cgi?id=53273
+
+        * bindings/js/JSArrayBufferViewHelper.h:
+        (WebCore::constructArrayBufferView):
+        * bindings/v8/custom/V8ArrayBufferViewCustom.h:
+        (WebCore::constructWebGLArray):
+        * html/canvas/Float32Array.cpp:
+        (WebCore::Float32Array::subset):
+        * html/canvas/Float32Array.h:
+        * html/canvas/Float32Array.idl:
+        * html/canvas/Int16Array.cpp:
+        (WebCore::Int16Array::subset):
+        * html/canvas/Int16Array.h:
+        * html/canvas/Int16Array.idl:
+        * html/canvas/Int32Array.cpp:
+        (WebCore::Int32Array::subset):
+        * html/canvas/Int32Array.h:
+        * html/canvas/Int32Array.idl:
+        * html/canvas/Int8Array.cpp:
+        (WebCore::Int8Array::subset):
+        * html/canvas/Int8Array.h:
+        * html/canvas/Int8Array.idl:
+        * html/canvas/TypedArrayBase.h:
+        (WebCore::TypedArrayBase::subsetImpl):
+        * html/canvas/Uint16Array.cpp:
+        (WebCore::Uint16Array::subset):
+        * html/canvas/Uint16Array.h:
+        * html/canvas/Uint16Array.idl:
+        * html/canvas/Uint32Array.cpp:
+        (WebCore::Uint32Array::subset):
+        * html/canvas/Uint32Array.h:
+        * html/canvas/Uint32Array.idl:
+        * html/canvas/Uint8Array.cpp:
+        (WebCore::Uint8Array::subset):
+        * html/canvas/Uint8Array.h:
+        * html/canvas/Uint8Array.idl:
+
 2011-01-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

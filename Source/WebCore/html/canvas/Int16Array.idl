@@ -39,7 +39,7 @@ module html {
         const unsigned int BYTES_PER_ELEMENT = 2;
 
         readonly attribute unsigned long length;
-        Int16Array slice(in long start, in [Optional] long end);
+        Int16Array subset(in long start, in [Optional] long end);
 
         // void set(in Int16Array array, [Optional] in unsigned long offset);
         // void set(in sequence<long> array, [Optional] in unsigned long offset);

@@ -14,8 +14,8 @@ PASS test Float32Array SetFromTypedArray
 PASS negativeTest Float32Array SetFromTypedArray
 PASS test Float32Array SetFromArray
 PASS negativeTest Float32Array SetFromArray
-PASS test Float32Array Slice
-PASS negativeTest Float32Array Slice
+PASS test Float32Array Subset
+PASS negativeTest Float32Array Subset
 PASS test Float32Array BoundaryConditions(-500.5, -500.5, 500.5, 500.5)
 PASS Construction of Float32Array with null buffer threw exception
 PASS Construction of Float32Array with (null buffer, 0) threw exception
@@ -28,17 +28,17 @@ PASS Construction of Float32Array with unaligned offset threw an exception
 PASS Construction of Float32Array with unaligned length threw an exception
 PASS Construction of huge Float32Array threw exception
 PASS Array lengths matched with explicit and implicit creation of ArrayBuffer
-Testing slicing of Float32Array
+Testing subsetting of Float32Array
 PASS array.length is 32 / typeSize
-PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
-PASS array.slice(4, -2147483648).length is 0
+PASS array.subset(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
+PASS array.subset(4, -2147483648).length is 0
 PASS array.length is 0
-Testing slicing with default inputs of Float32Array
+Testing subsetting with default inputs of Float32Array
 PASS array.length is 32 / typeSize
-PASS array.slice(0).length is (32 / typeSize)
-PASS array.slice(2).length is (32 / typeSize) - 2
-PASS array.slice(-2).length is 2
-PASS array.slice(-2147483648).length is (32 / typeSize)
+PASS array.subset(0).length is (32 / typeSize)
+PASS array.subset(2).length is (32 / typeSize) - 2
+PASS array.subset(-2).length is 2
+PASS array.subset(-2147483648).length is (32 / typeSize)
 PASS Setting Float32Array from array with out-of-range offset was caught
 PASS Setting Float32Array from fake array with invalid length was caught
 PASS Setting Float32Array from Float32Array with out-of-range offset was caught
@@ -57,8 +57,8 @@ PASS test Int8Array SetFromTypedArray
 PASS negativeTest Int8Array SetFromTypedArray
 PASS test Int8Array SetFromArray
 PASS negativeTest Int8Array SetFromArray
-PASS test Int8Array Slice
-PASS negativeTest Int8Array Slice
+PASS test Int8Array Subset
+PASS negativeTest Int8Array Subset
 PASS test Int8Array BoundaryConditions(-128, -128, 127, 127)
 PASS Construction of Int8Array with null buffer threw exception
 PASS Construction of Int8Array with (null buffer, 0) threw exception
@@ -68,16 +68,16 @@ PASS Construction of ArrayBuffer with negative size threw exception
 PASS Construction of Int8Array with negative size threw exception
 PASS Construction of Int8Array with negative out-of-range values threw an exception
 PASS Array lengths matched with explicit and implicit creation of ArrayBuffer
-Testing slicing of Int8Array
+Testing subsetting of Int8Array
 PASS array.length is 32 / typeSize
-PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
-PASS array.slice(4, -2147483648).length is 0
-Testing slicing with default inputs of Int8Array
+PASS array.subset(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
+PASS array.subset(4, -2147483648).length is 0
+Testing subsetting with default inputs of Int8Array
 PASS array.length is 32 / typeSize
-PASS array.slice(0).length is (32 / typeSize)
-PASS array.slice(2).length is (32 / typeSize) - 2
-PASS array.slice(-2).length is 2
-PASS array.slice(-2147483648).length is (32 / typeSize)
+PASS array.subset(0).length is (32 / typeSize)
+PASS array.subset(2).length is (32 / typeSize) - 2
+PASS array.subset(-2).length is 2
+PASS array.subset(-2147483648).length is (32 / typeSize)
 PASS Setting Int8Array from array with out-of-range offset was caught
 PASS Setting Int8Array from fake array with invalid length was caught
 PASS Setting Int8Array from Int8Array with out-of-range offset was caught
@@ -96,8 +96,8 @@ PASS test Int16Array SetFromTypedArray
 PASS negativeTest Int16Array SetFromTypedArray
 PASS test Int16Array SetFromArray
 PASS negativeTest Int16Array SetFromArray
-PASS test Int16Array Slice
-PASS negativeTest Int16Array Slice
+PASS test Int16Array Subset
+PASS negativeTest Int16Array Subset
 PASS test Int16Array BoundaryConditions(-32768, -32768, 32767, 32767)
 PASS Construction of Int16Array with null buffer threw exception
 PASS Construction of Int16Array with (null buffer, 0) threw exception
@@ -110,17 +110,17 @@ PASS Construction of Int16Array with unaligned offset threw an exception
 PASS Construction of Int16Array with unaligned length threw an exception
 PASS Construction of huge Int16Array threw exception
 PASS Array lengths matched with explicit and implicit creation of ArrayBuffer
-Testing slicing of Int16Array
+Testing subsetting of Int16Array
 PASS array.length is 32 / typeSize
-PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
-PASS array.slice(4, -2147483648).length is 0
+PASS array.subset(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
+PASS array.subset(4, -2147483648).length is 0
 PASS array.length is 0
-Testing slicing with default inputs of Int16Array
+Testing subsetting with default inputs of Int16Array
 PASS array.length is 32 / typeSize
-PASS array.slice(0).length is (32 / typeSize)
-PASS array.slice(2).length is (32 / typeSize) - 2
-PASS array.slice(-2).length is 2
-PASS array.slice(-2147483648).length is (32 / typeSize)
+PASS array.subset(0).length is (32 / typeSize)
+PASS array.subset(2).length is (32 / typeSize) - 2
+PASS array.subset(-2).length is 2
+PASS array.subset(-2147483648).length is (32 / typeSize)
 PASS Setting Int16Array from array with out-of-range offset was caught
 PASS Setting Int16Array from fake array with invalid length was caught
 PASS Setting Int16Array from Int16Array with out-of-range offset was caught
@@ -139,8 +139,8 @@ PASS test Int32Array SetFromTypedArray
 PASS negativeTest Int32Array SetFromTypedArray
 PASS test Int32Array SetFromArray
 PASS negativeTest Int32Array SetFromArray
-PASS test Int32Array Slice
-PASS negativeTest Int32Array Slice
+PASS test Int32Array Subset
+PASS negativeTest Int32Array Subset
 PASS test Int32Array BoundaryConditions(-2147483648, -2147483648, 2147483647, 2147483647)
 PASS Construction of Int32Array with null buffer threw exception
 PASS Construction of Int32Array with (null buffer, 0) threw exception
@@ -153,17 +153,17 @@ PASS Construction of Int32Array with unaligned offset threw an exception
 PASS Construction of Int32Array with unaligned length threw an exception
 PASS Construction of huge Int32Array threw exception
 PASS Array lengths matched with explicit and implicit creation of ArrayBuffer
-Testing slicing of Int32Array
+Testing subsetting of Int32Array
 PASS array.length is 32 / typeSize
-PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
-PASS array.slice(4, -2147483648).length is 0
+PASS array.subset(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
+PASS array.subset(4, -2147483648).length is 0
 PASS array.length is 0
-Testing slicing with default inputs of Int32Array
+Testing subsetting with default inputs of Int32Array
 PASS array.length is 32 / typeSize
-PASS array.slice(0).length is (32 / typeSize)
-PASS array.slice(2).length is (32 / typeSize) - 2
-PASS array.slice(-2).length is 2
-PASS array.slice(-2147483648).length is (32 / typeSize)
+PASS array.subset(0).length is (32 / typeSize)
+PASS array.subset(2).length is (32 / typeSize) - 2
+PASS array.subset(-2).length is 2
+PASS array.subset(-2147483648).length is (32 / typeSize)
 PASS Setting Int32Array from array with out-of-range offset was caught
 PASS Setting Int32Array from fake array with invalid length was caught
 PASS Setting Int32Array from Int32Array with out-of-range offset was caught
@@ -182,8 +182,8 @@ PASS test Uint8Array SetFromTypedArray
 PASS negativeTest Uint8Array SetFromTypedArray
 PASS test Uint8Array SetFromArray
 PASS negativeTest Uint8Array SetFromArray
-PASS test Uint8Array Slice
-PASS negativeTest Uint8Array Slice
+PASS test Uint8Array Subset
+PASS negativeTest Uint8Array Subset
 PASS test Uint8Array BoundaryConditions(0, 0, 255, 255)
 PASS Construction of Uint8Array with null buffer threw exception
 PASS Construction of Uint8Array with (null buffer, 0) threw exception
@@ -193,16 +193,16 @@ PASS Construction of ArrayBuffer with negative size threw exception
 PASS Construction of Uint8Array with negative size threw exception
 PASS Construction of Uint8Array with negative out-of-range values threw an exception
 PASS Array lengths matched with explicit and implicit creation of ArrayBuffer
-Testing slicing of Uint8Array
+Testing subsetting of Uint8Array
 PASS array.length is 32 / typeSize
-PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
-PASS array.slice(4, -2147483648).length is 0
-Testing slicing with default inputs of Uint8Array
+PASS array.subset(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
+PASS array.subset(4, -2147483648).length is 0
+Testing subsetting with default inputs of Uint8Array
 PASS array.length is 32 / typeSize
-PASS array.slice(0).length is (32 / typeSize)
-PASS array.slice(2).length is (32 / typeSize) - 2
-PASS array.slice(-2).length is 2
-PASS array.slice(-2147483648).length is (32 / typeSize)
+PASS array.subset(0).length is (32 / typeSize)
+PASS array.subset(2).length is (32 / typeSize) - 2
+PASS array.subset(-2).length is 2
+PASS array.subset(-2147483648).length is (32 / typeSize)
 PASS Setting Uint8Array from array with out-of-range offset was caught
 PASS Setting Uint8Array from fake array with invalid length was caught
 PASS Setting Uint8Array from Uint8Array with out-of-range offset was caught
@@ -221,8 +221,8 @@ PASS test Uint16Array SetFromTypedArray
 PASS negativeTest Uint16Array SetFromTypedArray
 PASS test Uint16Array SetFromArray
 PASS negativeTest Uint16Array SetFromArray
-PASS test Uint16Array Slice
-PASS negativeTest Uint16Array Slice
+PASS test Uint16Array Subset
+PASS negativeTest Uint16Array Subset
 PASS test Uint16Array BoundaryConditions(0, 0, 65535, 65535)
 PASS Construction of Uint16Array with null buffer threw exception
 PASS Construction of Uint16Array with (null buffer, 0) threw exception
@@ -235,17 +235,17 @@ PASS Construction of Uint16Array with unaligned offset threw an exception
 PASS Construction of Uint16Array with unaligned length threw an exception
 PASS Construction of huge Uint16Array threw exception
 PASS Array lengths matched with explicit and implicit creation of ArrayBuffer
-Testing slicing of Uint16Array
+Testing subsetting of Uint16Array
 PASS array.length is 32 / typeSize
-PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
-PASS array.slice(4, -2147483648).length is 0
+PASS array.subset(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
+PASS array.subset(4, -2147483648).length is 0
 PASS array.length is 0
-Testing slicing with default inputs of Uint16Array
+Testing subsetting with default inputs of Uint16Array
 PASS array.length is 32 / typeSize
-PASS array.slice(0).length is (32 / typeSize)
-PASS array.slice(2).length is (32 / typeSize) - 2
-PASS array.slice(-2).length is 2
-PASS array.slice(-2147483648).length is (32 / typeSize)
+PASS array.subset(0).length is (32 / typeSize)
+PASS array.subset(2).length is (32 / typeSize) - 2
+PASS array.subset(-2).length is 2
+PASS array.subset(-2147483648).length is (32 / typeSize)
 PASS Setting Uint16Array from array with out-of-range offset was caught
 PASS Setting Uint16Array from fake array with invalid length was caught
 PASS Setting Uint16Array from Uint16Array with out-of-range offset was caught
@@ -264,8 +264,8 @@ PASS test Uint32Array SetFromTypedArray
 PASS negativeTest Uint32Array SetFromTypedArray
 PASS test Uint32Array SetFromArray
 PASS negativeTest Uint32Array SetFromArray
-PASS test Uint32Array Slice
-PASS negativeTest Uint32Array Slice
+PASS test Uint32Array Subset
+PASS negativeTest Uint32Array Subset
 PASS test Uint32Array BoundaryConditions(0, 0, 4294967295, 4294967295)
 PASS Construction of Uint32Array with null buffer threw exception
 PASS Construction of Uint32Array with (null buffer, 0) threw exception
@@ -278,17 +278,17 @@ PASS Construction of Uint32Array with unaligned offset threw an exception
 PASS Construction of Uint32Array with unaligned length threw an exception
 PASS Construction of huge Uint32Array threw exception
 PASS Array lengths matched with explicit and implicit creation of ArrayBuffer
-Testing slicing of Uint32Array
+Testing subsetting of Uint32Array
 PASS array.length is 32 / typeSize
-PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
-PASS array.slice(4, -2147483648).length is 0
+PASS array.subset(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
+PASS array.subset(4, -2147483648).length is 0
 PASS array.length is 0
-Testing slicing with default inputs of Uint32Array
+Testing subsetting with default inputs of Uint32Array
 PASS array.length is 32 / typeSize
-PASS array.slice(0).length is (32 / typeSize)
-PASS array.slice(2).length is (32 / typeSize) - 2
-PASS array.slice(-2).length is 2
-PASS array.slice(-2147483648).length is (32 / typeSize)
+PASS array.subset(0).length is (32 / typeSize)
+PASS array.subset(2).length is (32 / typeSize) - 2
+PASS array.subset(-2).length is 2
+PASS array.subset(-2147483648).length is (32 / typeSize)
 PASS Setting Uint32Array from array with out-of-range offset was caught
 PASS Setting Uint32Array from fake array with invalid length was caught
 PASS Setting Uint32Array from Uint32Array with out-of-range offset was caught

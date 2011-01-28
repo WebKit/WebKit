@@ -51,14 +51,14 @@ Int16Array::Int16Array(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsi
 {
 }
 
-PassRefPtr<Int16Array> Int16Array::slice(int start) const
+PassRefPtr<Int16Array> Int16Array::subset(int start) const
 {
-    return slice(start, length());
+    return subset(start, length());
 }
 
-PassRefPtr<Int16Array> Int16Array::slice(int start, int end) const
+PassRefPtr<Int16Array> Int16Array::subset(int start, int end) const
 {
-    return sliceImpl<Int16Array>(start, end);
+    return subsetImpl<Int16Array>(start, end);
 }
 
 }
