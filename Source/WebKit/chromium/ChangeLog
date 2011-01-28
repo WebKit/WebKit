@@ -1,3 +1,14 @@
+2011-01-28  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium] Remove deprecated openFileSystem method signature
+        https://bugs.webkit.org/show_bug.cgi?id=53262
+
+        Chromium still builds after this patch.
+
+        * public/WebFrameClient.h:
+
 2011-01-28  Ilya Sherman  <isherman@chromium.org>
 
         Reviewed by Andreas Kling.
