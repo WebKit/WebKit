@@ -120,17 +120,6 @@ String CSSValueList::cssText() const
     return result;
 }
 
-PassOwnPtr<CSSParserValueList> CSSValueList::createParserValueList() const
-{
-    size_t size = m_values.size();
-    if (!size)
-        return 0;
-    OwnPtr<CSSParserValueList> result = adoptPtr(new CSSParserValueList);
-    for (size_t i = 0; i < size; ++i)
-        result->addValue(m_values[i]->parserValue());
-    return result.release();
-}
-
 void CSSValueList::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const CSSStyleSheet* styleSheet)
 {
     size_t size = m_values.size();

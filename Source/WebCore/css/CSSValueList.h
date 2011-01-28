@@ -58,8 +58,6 @@ public:
 
     virtual String cssText() const;
 
-    PassOwnPtr<CSSParserValueList> createParserValueList() const;
-
     virtual void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*);
 
 protected:

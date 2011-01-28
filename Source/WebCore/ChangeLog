@@ -1,3 +1,18 @@
+2011-01-28  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Remove dead code that tried to map from CSS values to parser values
+        https://bugs.webkit.org/show_bug.cgi?id=53318
+
+        * css/CSSFunctionValue.cpp:
+        * css/CSSFunctionValue.h:
+        * css/CSSPrimitiveValue.cpp:
+        * css/CSSPrimitiveValue.h:
+        * css/CSSValue.h:
+        * css/CSSValueList.cpp:
+        * css/CSSValueList.h:
+
 2011-01-28  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Adam Roben.

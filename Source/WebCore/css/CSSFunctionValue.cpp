@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSFunctionValue.h"
 
+#include "CSSParserValues.h"
 #include "CSSValueList.h"
 #include <wtf/PassOwnPtr.h>
 
@@ -49,20 +50,6 @@ String CSSFunctionValue::cssText() const
         result += m_args->cssText();
     result += ")";
     return result;
-}
-
-CSSParserValue CSSFunctionValue::parserValue() const
-{
-    CSSParserValue val;
-    val.id = 0;
-    val.isInt = false;
-    val.unit = CSSParserValue::Function;
-    val.function = new CSSParserFunction;
-    val.function->name.characters = const_cast<UChar*>(m_name.characters());
-    val.function->name.length = m_name.length();
-    if (m_args)
-        val.function->args = m_args->createParserValueList();
-    return val;
 }
 
 }

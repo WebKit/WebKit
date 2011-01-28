@@ -44,8 +44,6 @@ public:
     
     virtual String cssText() const;
 
-    virtual CSSParserValue parserValue() const;
-
 private:
     explicit CSSFunctionValue(CSSParserFunction*);
     

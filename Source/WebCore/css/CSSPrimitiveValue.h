@@ -185,8 +185,6 @@ public:
 
     virtual bool isQuirkValue() { return false; }
 
-    virtual CSSParserValue parserValue() const;
-
     virtual void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*);
 
 protected:

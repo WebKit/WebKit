@@ -21,7 +21,6 @@
 #ifndef CSSValue_h
 #define CSSValue_h
 
-#include "CSSParserValues.h"
 #include "KURLHash.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/RefPtr.h>
@@ -69,8 +68,6 @@ public:
     virtual bool isSVGColor() const { return false; }
     virtual bool isSVGPaint() const { return false; }
 #endif
-
-    virtual CSSParserValue parserValue() const { ASSERT_NOT_REACHED(); return CSSParserValue(); }
 
     virtual void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*) { }
 };
