@@ -1,5 +1,22 @@
 2011-01-27  Mark Rowe  <mrowe@apple.com>
 
+        Merge r75168.
+
+    2011-01-06  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Tests that we do not crash when accessing a deleted parent stylesheet
+        from a removed css rule.
+        https://bugs.webkit.org/show_bug.cgi?id=51993
+
+        * fast/dom/StyleSheet/removed-media-rule-deleted-parent-crash-expected.txt: Added.
+        * fast/dom/StyleSheet/removed-media-rule-deleted-parent-crash.html: Added.
+        * fast/dom/StyleSheet/removed-stylesheet-rule-deleted-parent-crash-expected.txt: Added.
+        * fast/dom/StyleSheet/removed-stylesheet-rule-deleted-parent-crash.html: Added.
+
+2011-01-27  Mark Rowe  <mrowe@apple.com>
+
         Merge r74954.
 
     2010-12-20  Abhishek Arya  <inferno@chromium.org>

@@ -76,6 +76,7 @@ void CSSRuleList::deleteRule(unsigned index)
         return;
     }
 
+    m_lstCSSRules[index]->setParent(0);
     m_lstCSSRules.remove(index);
 }
 
