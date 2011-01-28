@@ -76,6 +76,11 @@ public:
         bool canRecoverFromContextLoss;
     };
 
+    class WebGraphicsContextLostCallback {
+    public:
+        virtual void onContextLost() = 0;
+    };
+
     // This destructor needs to be public so that using classes can destroy instances if initialization fails.
     virtual ~WebGraphicsContext3D() {}
 
@@ -328,6 +333,8 @@ public:
     virtual void deleteRenderbuffer(unsigned) = 0;
     virtual void deleteShader(unsigned) = 0;
     virtual void deleteTexture(unsigned) = 0;
+
+    virtual void setContextLostCallback(WebGraphicsContextLostCallback* callback) {}
 };
 
 } // namespace WebKit

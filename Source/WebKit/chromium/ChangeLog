@@ -1,3 +1,13 @@
+2011-01-27  Alexey Marinichev  <amarinichev@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Add a callback to WebGraphicsContext3D that is called when a context is lost
+        https://bugs.webkit.org/show_bug.cgi?id=53153
+
+        * public/WebGraphicsContext3D.h:
+        (WebKit::WebGraphicsContext3D::setContextLostCallback):
+
 2011-01-27  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed, fixed upstream Chromium build
