@@ -211,9 +211,13 @@ void WebScriptDebugger::exception(const DebuggerCallFrame& debuggerCallFrame, in
     WebView *webView = [webFrame webView];
     [m_topCallFrame.get() _setDebuggerCallFrame:debuggerCallFrame];
 
-    WebScriptDebugDelegateImplementationCache* implementations = WebViewGetScriptDebugDelegateImplementations(webView);
-    if (implementations->exceptionWasRaisedFunc)
-        CallScriptDebugDelegate(implementations->exceptionWasRaisedFunc, webView, @selector(webView:exceptionWasRaised:sourceId:line:forWebFrame:), m_topCallFrame.get(), sourceID, lineNumber, webFrame);
+    WebScriptDebugDelegateImplementationCache* cache = WebViewGetScriptDebugDelegateImplementations(webView);
+    if (cache->exceptionWasRaisedFunc) {
+        if (cache->exceptionWasRaisedExpectsHasHandlerFlag)
+            CallScriptDebugDelegate(cache->exceptionWasRaisedFunc, webView, @selector(webView:exceptionWasRaised:hasHandler:sourceId:line:forWebFrame:), m_topCallFrame.get(), hasHandler, sourceID, lineNumber, webFrame);
+        else
+            CallScriptDebugDelegate(cache->exceptionWasRaisedFunc, webView, @selector(webView:exceptionWasRaised:sourceId:line:forWebFrame:), m_topCallFrame.get(), sourceID, lineNumber, webFrame);
+    }
 
     m_callingDelegate = false;
 }

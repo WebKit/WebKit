@@ -99,9 +99,17 @@ enum {
 
 // exception is being thrown
 - (void)webView:(WebView *)webView   exceptionWasRaised:(WebScriptCallFrame *)frame
+                                             hasHandler:(BOOL)hasHandler
                                                sourceId:(WebSourceId)sid
                                                    line:(int)lineno
                                             forWebFrame:(WebFrame *)webFrame;
+
+// exception is being thrown (deprecated old version; called only if new version is not implemented)
+- (void)webView:(WebView *)webView   exceptionWasRaised:(WebScriptCallFrame *)frame
+                                               sourceId:(WebSourceId)sid
+                                                   line:(int)lineno
+                                            forWebFrame:(WebFrame *)webFrame;
+
 @end
 
 
