@@ -1,3 +1,9 @@
+2011-01-28  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Update expectations for prototype-inheritance to match platform/mac.
+
+        * platform/chromium/fast/dom/prototype-inheritance-expected.txt: Updated.
+
 2011-01-28  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Adam Roben.

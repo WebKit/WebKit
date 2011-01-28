@@ -45,10 +45,6 @@ PASS inner.CSSValue.isInner is true
 PASS inner.CSSValue.constructor.isInner is true
 PASS inner.CSSValueList.isInner is true
 PASS inner.CSSValueList.constructor.isInner is true
-PASS inner.CSSVariablesDeclaration.isInner is true
-PASS inner.CSSVariablesDeclaration.constructor.isInner is true
-PASS inner.CSSVariablesRule.isInner is true
-PASS inner.CSSVariablesRule.constructor.isInner is true
 PASS inner.CanvasGradient.isInner is true
 PASS inner.CanvasGradient.constructor.isInner is true
 PASS inner.CanvasPattern.isInner is true
@@ -73,6 +69,8 @@ PASS inner.DOMImplementation.isInner is true
 PASS inner.DOMImplementation.constructor.isInner is true
 PASS inner.DOMParser.isInner is true
 PASS inner.DOMParser.constructor.isInner is true
+PASS inner.DOMSettableTokenList.isInner is true
+PASS inner.DOMSettableTokenList.constructor.isInner is true
 PASS inner.DOMStringList.isInner is true
 PASS inner.DOMStringList.constructor.isInner is true
 PASS inner.DOMStringMap.isInner is true
@@ -175,6 +173,8 @@ PASS inner.HTMLInputElement.isInner is true
 PASS inner.HTMLInputElement.constructor.isInner is true
 PASS inner.HTMLIsIndexElement.isInner is true
 PASS inner.HTMLIsIndexElement.constructor.isInner is true
+PASS inner.HTMLKeygenElement.isInner is true
+PASS inner.HTMLKeygenElement.constructor.isInner is true
 PASS inner.HTMLLIElement.isInner is true
 PASS inner.HTMLLIElement.constructor.isInner is true
 PASS inner.HTMLLabelElement.isInner is true
@@ -249,8 +249,6 @@ PASS inner.Image.isInner is true
 PASS inner.Image.constructor.isInner is true
 PASS inner.ImageData.isInner is true
 PASS inner.ImageData.constructor.isInner is true
-FAIL inner.Infinity.isInner should be true. Was false.
-FAIL inner.Infinity.constructor.isInner should be true. Was false.
 PASS inner.JSON.isInner is true
 PASS inner.JSON.constructor.isInner is true
 PASS inner.KeyboardEvent.isInner is true
@@ -275,8 +273,6 @@ PASS inner.MouseEvent.isInner is true
 PASS inner.MouseEvent.constructor.isInner is true
 PASS inner.MutationEvent.isInner is true
 PASS inner.MutationEvent.constructor.isInner is true
-FAIL inner.NaN.isInner should be true. Was false.
-FAIL inner.NaN.constructor.isInner should be true. Was false.
 PASS inner.NamedNodeMap.isInner is true
 PASS inner.NamedNodeMap.constructor.isInner is true
 PASS inner.Node.isInner is true
@@ -677,8 +673,6 @@ FAIL inner.clientInformation.isInner should be true. Was false.
 FAIL inner.clientInformation.constructor.isInner should be true. Was false.
 FAIL inner.close.isInner should be true. Was false.
 FAIL inner.close.constructor.isInner should be true. Was false.
-FAIL inner.closed.isInner should be true. Was false.
-FAIL inner.closed.constructor.isInner should be true. Was false.
 PASS inner.confirm.isInner is true
 PASS inner.confirm.constructor.isInner is true
 FAIL inner.console.isInner should be true. Was false.
@@ -687,12 +681,6 @@ PASS inner.decodeURI.isInner is true
 PASS inner.decodeURI.constructor.isInner is true
 PASS inner.decodeURIComponent.isInner is true
 PASS inner.decodeURIComponent.constructor.isInner is true
-FAIL inner.defaultStatus.isInner should be true. Was false.
-FAIL inner.defaultStatus.constructor.isInner should be true. Was false.
-FAIL inner.defaultstatus.isInner should be true. Was false.
-FAIL inner.defaultstatus.constructor.isInner should be true. Was false.
-FAIL inner.devicePixelRatio.isInner should be true. Was false.
-FAIL inner.devicePixelRatio.constructor.isInner should be true. Was false.
 PASS inner.dispatchEvent.isInner is true
 PASS inner.dispatchEvent.constructor.isInner is true
 PASS inner.document.isInner is true
@@ -727,48 +715,30 @@ PASS inner.google.isInner is true
 PASS inner.google.constructor.isInner is true
 FAIL inner.history.isInner should be true. Was false.
 FAIL inner.history.constructor.isInner should be true. Was false.
-FAIL inner.innerHeight.isInner should be true. Was false.
-FAIL inner.innerHeight.constructor.isInner should be true. Was false.
-FAIL inner.innerWidth.isInner should be true. Was false.
-FAIL inner.innerWidth.constructor.isInner should be true. Was false.
 PASS inner.isFinite.isInner is true
 PASS inner.isFinite.constructor.isInner is true
-FAIL inner.isInner.isInner should be true. Was false.
-FAIL inner.isInner.constructor.isInner should be true. Was false.
 PASS inner.isNaN.isInner is true
 PASS inner.isNaN.constructor.isInner is true
-FAIL inner.length.isInner should be true. Was false.
-FAIL inner.length.constructor.isInner should be true. Was false.
 FAIL inner.localStorage.isInner should be true. Was false.
 FAIL inner.localStorage.constructor.isInner should be true. Was false.
 FAIL inner.location.isInner should be true. Was false.
 FAIL inner.location.constructor.isInner should be true. Was false.
 FAIL inner.locationbar.isInner should be true. Was false.
 FAIL inner.locationbar.constructor.isInner should be true. Was false.
+PASS inner.matchMedia.isInner is true
+PASS inner.matchMedia.constructor.isInner is true
 FAIL inner.menubar.isInner should be true. Was false.
 FAIL inner.menubar.constructor.isInner should be true. Was false.
 PASS inner.moveBy.isInner is true
 PASS inner.moveBy.constructor.isInner is true
 PASS inner.moveTo.isInner is true
 PASS inner.moveTo.constructor.isInner is true
-FAIL inner.name.isInner should be true. Was false.
-FAIL inner.name.constructor.isInner should be true. Was false.
 FAIL inner.navigator.isInner should be true. Was false.
 FAIL inner.navigator.constructor.isInner should be true. Was false.
-FAIL inner.offscreenBuffering.isInner should be true. Was false.
-FAIL inner.offscreenBuffering.constructor.isInner should be true. Was false.
 PASS inner.open.isInner is true
 PASS inner.open.constructor.isInner is true
 PASS inner.openDatabase.isInner is true
 PASS inner.openDatabase.constructor.isInner is true
-FAIL inner.outerHeight.isInner should be true. Was false.
-FAIL inner.outerHeight.constructor.isInner should be true. Was false.
-FAIL inner.outerWidth.isInner should be true. Was false.
-FAIL inner.outerWidth.constructor.isInner should be true. Was false.
-FAIL inner.pageXOffset.isInner should be true. Was false.
-FAIL inner.pageXOffset.constructor.isInner should be true. Was false.
-FAIL inner.pageYOffset.isInner should be true. Was false.
-FAIL inner.pageYOffset.constructor.isInner should be true. Was false.
 PASS inner.parseFloat.isInner is true
 PASS inner.parseFloat.constructor.isInner is true
 PASS inner.parseInt.isInner is true
@@ -791,24 +761,12 @@ PASS inner.resizeTo.isInner is true
 PASS inner.resizeTo.constructor.isInner is true
 FAIL inner.screen.isInner should be true. Was false.
 FAIL inner.screen.constructor.isInner should be true. Was false.
-FAIL inner.screenLeft.isInner should be true. Was false.
-FAIL inner.screenLeft.constructor.isInner should be true. Was false.
-FAIL inner.screenTop.isInner should be true. Was false.
-FAIL inner.screenTop.constructor.isInner should be true. Was false.
-FAIL inner.screenX.isInner should be true. Was false.
-FAIL inner.screenX.constructor.isInner should be true. Was false.
-FAIL inner.screenY.isInner should be true. Was false.
-FAIL inner.screenY.constructor.isInner should be true. Was false.
 PASS inner.scroll.isInner is true
 PASS inner.scroll.constructor.isInner is true
 PASS inner.scrollBy.isInner is true
 PASS inner.scrollBy.constructor.isInner is true
 PASS inner.scrollTo.isInner is true
 PASS inner.scrollTo.constructor.isInner is true
-FAIL inner.scrollX.isInner should be true. Was false.
-FAIL inner.scrollX.constructor.isInner should be true. Was false.
-FAIL inner.scrollY.isInner should be true. Was false.
-FAIL inner.scrollY.constructor.isInner should be true. Was false.
 FAIL inner.scrollbars.isInner should be true. Was false.
 FAIL inner.scrollbars.constructor.isInner should be true. Was false.
 PASS inner.self.isInner is true
@@ -819,8 +777,6 @@ PASS inner.setInterval.isInner is true
 PASS inner.setInterval.constructor.isInner is true
 PASS inner.setTimeout.isInner is true
 PASS inner.setTimeout.constructor.isInner is true
-FAIL inner.status.isInner should be true. Was false.
-FAIL inner.status.constructor.isInner should be true. Was false.
 FAIL inner.statusbar.isInner should be true. Was false.
 FAIL inner.statusbar.constructor.isInner should be true. Was false.
 PASS inner.stop.isInner is true
@@ -831,10 +787,42 @@ FAIL inner.toolbar.isInner should be true. Was false.
 FAIL inner.toolbar.constructor.isInner should be true. Was false.
 PASS inner.unescape.isInner is true
 PASS inner.unescape.constructor.isInner is true
+PASS inner.webkitCancelRequestAnimationFrame.isInner is true
+PASS inner.webkitCancelRequestAnimationFrame.constructor.isInner is true
 PASS inner.webkitConvertPointFromNodeToPage.isInner is true
 PASS inner.webkitConvertPointFromNodeToPage.constructor.isInner is true
 PASS inner.webkitConvertPointFromPageToNode.isInner is true
 PASS inner.webkitConvertPointFromPageToNode.constructor.isInner is true
+PASS inner.webkitIDBCursor.isInner is true
+PASS inner.webkitIDBCursor.constructor.isInner is true
+PASS inner.webkitIDBDatabase.isInner is true
+PASS inner.webkitIDBDatabase.constructor.isInner is true
+PASS inner.webkitIDBDatabaseError.isInner is true
+PASS inner.webkitIDBDatabaseError.constructor.isInner is true
+PASS inner.webkitIDBDatabaseException.isInner is true
+PASS inner.webkitIDBDatabaseException.constructor.isInner is true
+PASS inner.webkitIDBErrorEvent.isInner is true
+PASS inner.webkitIDBErrorEvent.constructor.isInner is true
+PASS inner.webkitIDBEvent.isInner is true
+PASS inner.webkitIDBEvent.constructor.isInner is true
+PASS inner.webkitIDBFactory.isInner is true
+PASS inner.webkitIDBFactory.constructor.isInner is true
+PASS inner.webkitIDBIndex.isInner is true
+PASS inner.webkitIDBIndex.constructor.isInner is true
+PASS inner.webkitIDBKeyRange.isInner is true
+PASS inner.webkitIDBKeyRange.constructor.isInner is true
+PASS inner.webkitIDBObjectStore.isInner is true
+PASS inner.webkitIDBObjectStore.constructor.isInner is true
+PASS inner.webkitIDBRequest.isInner is true
+PASS inner.webkitIDBRequest.constructor.isInner is true
+PASS inner.webkitIDBSuccessEvent.isInner is true
+PASS inner.webkitIDBSuccessEvent.constructor.isInner is true
+PASS inner.webkitIDBTransaction.isInner is true
+PASS inner.webkitIDBTransaction.constructor.isInner is true
+FAIL inner.webkitIndexedDB.isInner should be true. Was false.
+FAIL inner.webkitIndexedDB.constructor.isInner should be true. Was false.
+PASS inner.webkitRequestAnimationFrame.isInner is true
+PASS inner.webkitRequestAnimationFrame.constructor.isInner is true
 PASS inner.window.isInner is true
 PASS inner.window.constructor.isInner is true
 PASS successfullyParsed is true
