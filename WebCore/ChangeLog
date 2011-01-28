@@ -1,5 +1,21 @@
 2011-01-27  Mark Rowe  <mrowe@apple.com>
 
+        Merge r72013.
+
+    2010-11-14  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Event dispatch call can blow away the node's renderer initialized
+        before the call in updateSelectionForMouseDrag function. We need
+        to initialize it after the call.
+        https://bugs.webkit.org/show_bug.cgi?id=49524
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::updateSelectionForMouseDrag):
+
+2011-01-27  Mark Rowe  <mrowe@apple.com>
+
         Merge r70473.
 
     2010-10-25  Cris Neckar  <cdn@chromium.org>

@@ -595,11 +595,11 @@ void EventHandler::updateSelectionForMouseDrag(Node* targetNode, const IntPoint&
     if (!targetNode)
         return;
 
+    if (!canMouseDragExtendSelect(targetNode))
+        return;
+
     RenderObject* targetRenderer = targetNode->renderer();
     if (!targetRenderer)
-        return;
-        
-    if (!canMouseDragExtendSelect(targetNode))
         return;
 
     VisiblePosition targetPosition(targetRenderer->positionForPoint(localPoint));
