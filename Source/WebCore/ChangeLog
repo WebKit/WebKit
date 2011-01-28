@@ -1,3 +1,13 @@
+2011-01-28  Adrienne Walker  <enne@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Remove a spurious diagnostic CRASH check.
+        https://bugs.webkit.org/show_bug.cgi?id=52379
+
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::invalidateRect):
+
 2011-01-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

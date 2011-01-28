@@ -208,8 +208,6 @@ void LayerTilerChromium::invalidateRect(const IntRect& contentRect)
             IntRect bound = tileLayerRect(i, j);
             bound.intersect(layerRect);
             tile->m_dirtyLayerRect.unite(bound);
-            if (!tileLayerRect(i, j).contains(tile->m_dirtyLayerRect))
-                CRASH();
         }
     }
 }
