@@ -462,7 +462,8 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         inherited_flags._text_transform != other->inherited_flags._text_transform ||
         inherited_flags._direction != other->inherited_flags._direction ||
         inherited_flags._white_space != other->inherited_flags._white_space ||
-        noninherited_flags._clear != other->noninherited_flags._clear)
+        noninherited_flags._clear != other->noninherited_flags._clear ||
+        noninherited_flags._unicodeBidi != other->noninherited_flags._unicodeBidi)
         return StyleDifferenceLayout;
 
     // Check block flow direction.

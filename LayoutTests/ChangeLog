@@ -1,3 +1,15 @@
+2011-01-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Changing unicode-bidi doesn’t force layout
+        https://bugs.webkit.org/show_bug.cgi?id=53311
+
+        * fast/dynamic/unicode-bidi-expected.checksum: Added.
+        * fast/dynamic/unicode-bidi-expected.png: Added.
+        * fast/dynamic/unicode-bidi-expected.txt: Added.
+        * fast/dynamic/unicode-bidi.html: Added.
+
 2011-01-28  Jessie Berlin  <jberlin@apple.com>
 
         Add Windows expected (failing) results to get the bots green. Unreviewed.
