@@ -59,6 +59,9 @@ protected slots:
     void openLocation();
     void changeLocation();
 
+protected:
+    QString addressUrl() const;
+
 private:
     void buildUI();
 

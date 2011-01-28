@@ -208,6 +208,8 @@ private:
     QPropertyAnimation* m_zoomAnimation;
     QList<QTouchEvent::TouchPoint> m_touchPoints;
     bool m_touchMocking;
+
+    QString m_inputUrl;
 };
 
 #endif

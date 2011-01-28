@@ -1,3 +1,20 @@
+2011-01-27  Jacob Dinu  <dinu.jacob@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] QtTestBrowser: User input lost when toggling use of QGraphicsView
+        https://bugs.webkit.org/show_bug.cgi?id=48440
+
+        Preserve user input when toggling use of QGraphicsView
+
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::initializeView):
+        (LauncherWindow::loadFinished):
+        * QtTestBrowser/launcherwindow.h:
+        * QtTestBrowser/mainwindow.cpp:
+        (MainWindow::addressUrl):
+        * QtTestBrowser/mainwindow.h:
+
 2011-01-27  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Mihai Parparita.

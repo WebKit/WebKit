@@ -171,6 +171,14 @@ void MainWindow::load(const QUrl& url)
     page()->mainFrame()->load(url);
 }
 
+QString MainWindow::addressUrl() const
+{
+#ifndef QT_NO_INPUTDIALOG
+    return urlEdit->text();
+#endif
+    return QString();
+}
+
 void MainWindow::changeLocation()
 {
 #ifndef QT_NO_INPUTDIALOG

@@ -96,6 +96,7 @@ void LauncherWindow::initializeView()
 {
     delete m_view;
 
+    m_inputUrl = addressUrl();
     QUrl url = page()->mainFrame()->url();
     setPage(new WebPage(this));
     page()->setQnamThreaded(m_windowOptions.useThreadedQnam);
@@ -142,6 +143,10 @@ void LauncherWindow::initializeView()
 
     if (url.isValid())
         page()->mainFrame()->load(url);
+    else  {
+        setAddressUrl(m_inputUrl);
+        m_inputUrl = QString();
+    }
 }
 
 void LauncherWindow::applyPrefs()
@@ -538,8 +543,13 @@ void LauncherWindow::loadStarted()
 void LauncherWindow::loadFinished()
 {
     QUrl url = page()->mainFrame()->url();
-    setAddressUrl(url.toString(QUrl::RemoveUserInfo));
     addCompleterEntry(url);
+    if (m_inputUrl.isEmpty())
+        setAddressUrl(url.toString(QUrl::RemoveUserInfo));
+    else {
+        setAddressUrl(m_inputUrl);
+        m_inputUrl = QString();
+    }
 }
 
 void LauncherWindow::showLinkHover(const QString &link, const QString &toolTip)
