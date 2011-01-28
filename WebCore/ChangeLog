@@ -1,5 +1,32 @@
 2011-01-27  Mark Rowe  <mrowe@apple.com>
 
+        Merge r72969.
+
+    2010-11-30  Chris Guillory  <chris.guillory@google.com>
+
+        Reviewed by Chris Fleizach.
+
+        Computing style on a stale node while sending pending accessibility notification.
+        https://bugs.webkit.org/show_bug.cgi?id=50162
+
+        Retain node pointer members of AccessibilityImageMapLink.
+
+        Test: accessibility/image-map-title-causes-crash.html
+
+        * accessibility/AccessibilityImageMapLink.cpp:
+        (WebCore::AccessibilityImageMapLink::parentObject):
+        (WebCore::AccessibilityImageMapLink::anchorElement):
+        (WebCore::AccessibilityImageMapLink::url):
+        (WebCore::AccessibilityImageMapLink::elementRect):
+        * accessibility/AccessibilityImageMapLink.h:
+        (WebCore::AccessibilityImageMapLink::areaElement):
+        (WebCore::AccessibilityImageMapLink::mapElement):
+        (WebCore::AccessibilityImageMapLink::node):
+        * dom/Document.cpp:
+        (WebCore::Document::clearAXObjectCache):
+
+2011-01-27  Mark Rowe  <mrowe@apple.com>
+
         Merge r60992.
 
     2010-06-10  Yuzo Fujishima  <yuzo@google.com>
