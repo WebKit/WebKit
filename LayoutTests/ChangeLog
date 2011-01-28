@@ -1,3 +1,14 @@
+2011-01-28  Adam Roben  <aroben@apple.com>
+
+        Unskip compositing-related tests that are now fixed
+
+        Fixes <http://webkit.org/b/53302> [Windows 7 Release Tests] changesets 76853, 76856, and
+        76858 broke ~36 animations, compositing, and transitions tests
+
+        Reviewed by Sam Weinig.
+
+        * platform/win/Skipped:
+
 2011-01-28  Jessie Berlin  <jberlin@apple.com>
 
         [Windows 7 Release Tests] fast/text/justify-ideograph-complex/simple/vertical.html failing since introduction in r76743.

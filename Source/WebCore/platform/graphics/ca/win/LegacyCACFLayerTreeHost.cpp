@@ -332,6 +332,7 @@ void LegacyCACFLayerTreeHost::flushContext()
 void LegacyCACFLayerTreeHost::contextDidChange()
 {
     renderSoon();
+    CACFLayerTreeHost::contextDidChange();
 }
 
 CFTimeInterval LegacyCACFLayerTreeHost::lastCommitTime() const

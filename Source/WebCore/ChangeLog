@@ -1,3 +1,19 @@
+2011-01-28  Adam Roben  <aroben@apple.com>
+
+        Notify CACFLayerTreeHost when the context is flushed
+
+        LegacyCACFLayerTreeHost was keeping this a secret, which meant that WebCore's animation
+        timers were never starting.
+
+        Fixes <http://webkit.org/b/53302> [Windows 7 Release Tests] changesets 76853, 76856, and
+        76858 broke ~36 animations, compositing, and transitions tests
+
+        Reviewed by Sam Weinig.
+
+        * platform/graphics/ca/win/LegacyCACFLayerTreeHost.cpp:
+        (WebCore::LegacyCACFLayerTreeHost::contextDidChange): Call up to the base class after we
+        start our render timer.
+
 2011-01-28  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Dan Bernstein.
