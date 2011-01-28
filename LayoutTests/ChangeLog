@@ -1,3 +1,15 @@
+2011-01-27  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Tests that we do not crash when calculating the first line box
+        baseline for the table.
+        https://bugs.webkit.org/show_bug.cgi?id=53265
+
+        * fast/table/recalc-section-first-body-crash-main-expected.txt: Added.
+        * fast/table/recalc-section-first-body-crash-main.html: Added.
+        * fast/table/resources/recalc-section-first-body-crash.html: Added.
+
 2011-01-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed, rolling out r76839.

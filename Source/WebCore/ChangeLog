@@ -1,3 +1,22 @@
+2011-01-27  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Recalc table sections if needed before calculating the first line
+        box baseline.
+        https://bugs.webkit.org/show_bug.cgi?id=53265
+
+        When we try to calculate the baseline position of a table cell,
+        we recurse through all the child sibling boxes (when children are
+        non inline) and add their first linebox baseline values. If one of
+        the children is a table with pending section recalc, we will access
+        wrong table section values. We recalc table sections if it is needed.
+
+        Test: fast/table/recalc-section-first-body-crash-main.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::firstLineBoxBaseline):
+
 2011-01-27  Adrienne Walker  <enne@google.com>
 
         Reviewed by Kenneth Russell.

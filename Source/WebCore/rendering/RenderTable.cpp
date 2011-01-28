@@ -1126,6 +1126,8 @@ int RenderTable::firstLineBoxBaseline() const
     if (isWritingModeRoot())
         return -1;
 
+    recalcSectionsIfNeeded();
+
     RenderTableSection* firstNonEmptySection = m_head ? m_head : (m_firstBody ? m_firstBody : m_foot);
     if (firstNonEmptySection && !firstNonEmptySection->numRows())
         firstNonEmptySection = sectionBelow(firstNonEmptySection, true);
