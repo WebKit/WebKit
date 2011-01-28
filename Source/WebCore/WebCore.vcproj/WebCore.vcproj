@@ -55504,6 +55504,14 @@
 					RelativePath="..\html\parser\TextViewSourceParser.h"
 					>
 				</File>
+				<File
+					RelativePath="..\html\parser\XSSFilter.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\XSSFilter.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="shadow"

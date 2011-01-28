@@ -81,6 +81,7 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors
     , m_scriptRunner(HTMLScriptRunner::create(document, this))
     , m_treeBuilder(HTMLTreeBuilder::create(this, document, reportErrors, usePreHTML5ParserQuirks(document)))
     , m_parserScheduler(HTMLParserScheduler::create(this))
+    , m_xssFilter(this)
     , m_endWasDelayed(false)
     , m_writeNestingLevel(0)
 {
@@ -92,6 +93,7 @@ HTMLDocumentParser::HTMLDocumentParser(DocumentFragment* fragment, Element* cont
     : ScriptableDocumentParser(fragment->document())
     , m_tokenizer(HTMLTokenizer::create(usePreHTML5ParserQuirks(fragment->document())))
     , m_treeBuilder(HTMLTreeBuilder::create(this, fragment, contextElement, scriptingPermission, usePreHTML5ParserQuirks(fragment->document())))
+    , m_xssFilter(this)
     , m_endWasDelayed(false)
     , m_writeNestingLevel(0)
 {
@@ -231,6 +233,8 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
         if (!m_tokenizer->nextToken(m_input.current(), m_token))
             break;
         m_sourceTracker.end(m_input, m_token);
+
+        m_xssFilter.filterToken(m_token);
 
         m_treeBuilder->constructTreeFromToken(m_token);
         m_token.clear();
@@ -401,6 +405,11 @@ bool HTMLDocumentParser::inScriptExecution() const
     if (!m_scriptRunner)
         return false;
     return m_scriptRunner->isExecutingScript();
+}
+
+String HTMLDocumentParser::sourceForToken(const HTMLToken& token)
+{
+    return m_sourceTracker.sourceForToken(token);
 }
 
 int HTMLDocumentParser::lineNumber() const

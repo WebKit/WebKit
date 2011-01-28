@@ -2001,6 +2001,8 @@
             'html/parser/TextDocumentParser.h',
             'html/parser/TextViewSourceParser.cpp',
             'html/parser/TextViewSourceParser.h',
+            'html/parser/XSSFilter.cpp',
+            'html/parser/XSSFilter.h',
             'html/shadow/MediaControls.cpp',
             'html/shadow/MediaControls.h',
             'html/shadow/SliderThumbElement.cpp',

@@ -1039,6 +1039,7 @@ SOURCES += \
     html/parser/HTMLViewSourceParser.cpp \
     html/parser/TextDocumentParser.cpp \
     html/parser/TextViewSourceParser.cpp \
+    html/parser/XSSFilter.cpp \
     html/shadow/MediaControls.cpp \
     html/shadow/SliderThumbElement.cpp \
     inspector/ConsoleMessage.cpp \
@@ -1939,6 +1940,7 @@ HEADERS += \
     html/parser/HTMLTokenizer.h \
     html/parser/HTMLTreeBuilder.h \
     html/parser/HTMLViewSourceParser.h \
+    html/parser/XSSFilter.h \
     inspector/ConsoleMessage.h \
     inspector/InjectedScript.h \
     inspector/InjectedScriptHost.h \

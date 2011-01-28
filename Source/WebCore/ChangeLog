@@ -1,3 +1,35 @@
+2011-01-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Daniel Bates.
+
+        Sketch out new XSS filter design (disabled by default)
+        https://bugs.webkit.org/show_bug.cgi?id=53205
+
+        This patch adds a basic sketch of the new XSS filter design.  Rather
+        than watching scripts as they execute, in this design, we watch tokens
+        emitted by the tokenizer.  We then map the tokens directly back into
+        input characters, which lets us skip all the complicated logic related
+        to HTML entities and double-decoding of JavaScript URLs.
+
+        This patch contains only the bare essentially machinery.  I'll add more
+        in future patches and eventually remove the previous code once this
+        code is up and running correctly.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::HTMLDocumentParser):
+        (WebCore::HTMLDocumentParser::pumpTokenizer):
+        (WebCore::HTMLDocumentParser::sourceForToken):
+        * html/parser/HTMLDocumentParser.h:
+        * html/parser/XSSFilter.cpp: Added.
+        * html/parser/XSSFilter.h: Added.
+
 2011-01-28  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Geoffrey Garen.

@@ -346,6 +346,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/parser/HTMLViewSourceParser.cpp \
 	html/parser/TextDocumentParser.cpp \
 	html/parser/TextViewSourceParser.cpp \
+	html/parser/XSSFilter.cpp \
 	\
 	html/shadow/MediaControls.cpp \
 	html/shadow/SliderThumbElement.cpp \
