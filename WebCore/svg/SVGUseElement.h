@@ -72,6 +72,7 @@ namespace WebCore {
         friend class RenderSVGShadowTreeRootContainer;
         bool isPendingResource() const { return m_isPendingResource; }
         void buildShadowAndInstanceTree(SVGShadowTreeRootElement*);
+        void detachInstance();
 
     private:
         virtual bool hasRelativeValues() const;

@@ -127,8 +127,8 @@ void SVGUseElement::insertedIntoDocument()
 
 void SVGUseElement::removedFromDocument()
 {
-    m_targetElementInstance = 0;
-    SVGElement::removedFromDocument();
+    detachInstance();
+    SVGStyledTransformableElement::removedFromDocument();
 }
 
 void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
@@ -458,8 +458,7 @@ void SVGUseElement::buildShadowAndInstanceTree(SVGShadowTreeRootElement* shadowR
     if (targetElement && targetElement->isSVGElement())
         target = static_cast<SVGElement*>(targetElement);
 
-    if (m_targetElementInstance)
-        m_targetElementInstance = 0;
+    detachInstance();
 
     // Do not allow self-referencing.
     // 'target' may be null, if it's a non SVG namespaced element.
@@ -485,7 +484,7 @@ void SVGUseElement::buildShadowAndInstanceTree(SVGShadowTreeRootElement* shadowR
     // SVG specification does not say a word about <use> & cycles. My view on this is: just ignore it!
     // Non-appearing <use> content is easier to debug, then half-appearing content.
     if (foundProblem) {
-        m_targetElementInstance = 0;
+        detachInstance();
         return;
     }
 
@@ -518,7 +517,7 @@ void SVGUseElement::buildShadowAndInstanceTree(SVGShadowTreeRootElement* shadowR
     // Do NOT leave an inconsistent instance tree around, instead destruct it.
     if (!m_targetElementInstance->shadowTreeElement()) {
         shadowRoot->removeAllChildren();
-        m_targetElementInstance = 0;
+        detachInstance();
         return;
     }
 
@@ -554,6 +553,14 @@ void SVGUseElement::buildShadowAndInstanceTree(SVGShadowTreeRootElement* shadowR
     updateContainerSizes();
 }
 
+void SVGUseElement::detachInstance()
+{
+    if (!m_targetElementInstance)
+        return;
+    m_targetElementInstance->clearUseElement();
+    m_targetElementInstance = 0;
+}
+
 RenderObject* SVGUseElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderSVGShadowTreeRootContainer(this);
@@ -575,7 +582,7 @@ void SVGUseElement::attach()
 
 void SVGUseElement::detach()
 {
-    m_targetElementInstance = 0;
+    detachInstance();
     SVGStyledTransformableElement::detach();
 }
 

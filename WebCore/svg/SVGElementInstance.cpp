@@ -103,7 +103,8 @@ void SVGElementInstance::invalidateAllInstancesOfElement(SVGElement* element)
     const HashSet<SVGElementInstance*>::const_iterator end = set.end();
     for (HashSet<SVGElementInstance*>::const_iterator it = set.begin(); it != end; ++it) {
         ASSERT((*it)->correspondingElement() == element);
-        (*it)->correspondingUseElement()->invalidateShadowTree();
+        if (SVGUseElement* element = (*it)->correspondingUseElement())
+            element->invalidateShadowTree();
     }
 
     // Be sure to rebuild use trees, if needed

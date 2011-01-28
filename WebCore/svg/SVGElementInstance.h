@@ -57,6 +57,7 @@ namespace WebCore {
         SVGElement* correspondingElement() const { return m_element.get(); }
         SVGUseElement* correspondingUseElement() const { return m_useElement; }
         SVGElement* shadowTreeElement() const { return m_shadowTreeElement.get(); }
+        void clearUseElement() { m_useElement = 0; }
 
         SVGElementInstance* parentNode() const { return parent(); }
         PassRefPtr<SVGElementInstanceList> childNodes();
