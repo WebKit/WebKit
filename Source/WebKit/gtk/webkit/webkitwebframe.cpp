@@ -768,7 +768,7 @@ static void draw_page_callback(GtkPrintOperation* op, GtkPrintContext* context, 
 {
     PrintContext* printContext = reinterpret_cast<PrintContext*>(user_data);
 
-    if (page_nr >= printContext->pageCount())
+    if (page_nr >= static_cast<gint>(printContext->pageCount()))
         return;
 
     cairo_t* cr = gtk_print_context_get_cairo_context(context);
