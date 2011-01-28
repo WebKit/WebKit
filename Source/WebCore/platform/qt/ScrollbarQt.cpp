@@ -74,6 +74,11 @@ bool Scrollbar::contextMenu(const PlatformMouseEvent& event)
     QAction* actionSelected = menu.exec(globalPos);
 
     if (actionSelected == actScrollHere) {
+        // Set the pressed position to the middle of the thumb so that when we 
+        // do move, the delta will be from the current pixel position of the
+        // thumb to the new position
+        int position = theme()->trackPosition(this) + theme()->thumbPosition(this) + theme()->thumbLength(this) / 2;
+        setPressedPos(position); 
         const QPoint pos = convertFromContainingWindow(event.pos());
         moveThumb(horizontal ? pos.x() : pos.y());
     } else if (actionSelected == actScrollTop)

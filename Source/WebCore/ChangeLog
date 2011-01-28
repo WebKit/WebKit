@@ -1,3 +1,25 @@
+2011-01-28  Aparna Nandyal  <aparna.nand@wipro.com>
+
+        Reviewed by Andreas Kling.
+
+        Setting value of m_PressedPos to make scrolling smooth
+
+        Page scroll popup menu "Scroll here" option not working when cliking above scroll slider/handler.
+        https://bugs.webkit.org/show_bug.cgi?id=51349
+
+        The value of m_PressedPos was getting set before moveThumb() call
+        in all other scenarios except when "Scroll Here" option is used.
+        Hence scrolling with this option was not as expected even in cases
+        where scrolling was happening. The thumb would move in unexpected
+        direction. m_PressedPos is now set to pressed position so delta is
+        calculated.
+        Unable to write a test case as the test needs to click on "Scroll
+        Here" option of context sensitive menu and QTest is unable to do it.
+        Besides no new functionality introduced.
+
+        * platform/qt/ScrollbarQt.cpp:
+        (WebCore::Scrollbar::contextMenu):
+
 2011-01-28  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
