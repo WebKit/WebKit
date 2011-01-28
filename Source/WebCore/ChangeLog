@@ -1,3 +1,15 @@
+2011-01-27  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        texSubImage2D's format/type needs to match the internalformat/type from the previous texImage2D call
+        https://bugs.webkit.org/show_bug.cgi?id=53054
+
+        Test: fast/canvas/webgl/tex-sub-image-2d-bad-args.html
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::texSubImage2DBase): Check format/type match.
+
 2011-01-27  Yi Shen  <yi.4.shen@nokia.com>, Tor Arne Vestbø <tor.arne.vestbo@nokia.com>
 
         Reviewed by Andreas Kling.

@@ -3078,12 +3078,21 @@ void WebGLRenderingContext::texSubImage2DBase(GC3Denum target, GC3Dint level, GC
     ec = 0;
     if (isContextLost())
         return;
-    if (!validateTexFuncFormatAndType(format, type))
+    if (!validateTexFuncParameters(target, level, format, width, height, 0, format, type))
         return;
-    if (!validateTextureBinding(target, true))
+    if (!validateSize(xoffset, yoffset))
         return;
-    if (!validateSize(xoffset, yoffset) || !validateSize(width, height))
+    WebGLTexture* tex = validateTextureBinding(target, true);
+    if (!tex)
         return;
+    if (xoffset + width > tex->getWidth(target, level) || yoffset + height > tex->getHeight(target, level)) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+        return;
+    }
+    if (tex->getInternalFormat(target, level) != format || tex->getType(target, level) != type) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+        return;
+    }
     m_context->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
     cleanupAfterGraphicsCall(false);
 }
