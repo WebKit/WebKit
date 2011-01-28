@@ -762,6 +762,7 @@ void SVGUseElement::expandUseElementsInShadowTree(SVGShadowTreeRootElement* shad
         // Don't ASSERT(target) here, it may be "pending", too.
         // Setup sub-shadow tree root node
         RefPtr<SVGShadowTreeContainerElement> cloneParent = new SVGShadowTreeContainerElement(document());
+        use->cloneChildNodes(cloneParent.get());
 
         // Spec: In the generated content, the 'use' will be replaced by 'g', where all attributes from the
         // 'use' element except for x, y, width, height and xlink:href are transferred to the generated 'g' element.
@@ -771,14 +772,6 @@ void SVGUseElement::expandUseElementsInShadowTree(SVGShadowTreeRootElement* shad
         if (target && !isDisallowedElement(target)) {
             RefPtr<Element> newChild = target->cloneElementWithChildren();
 
-            // We don't walk the target tree element-by-element, and clone each element,
-            // but instead use cloneElementWithChildren(). This is an optimization for the common
-            // case where <use> doesn't contain disallowed elements (ie. <foreignObject>).
-            // Though if there are disallowed elements in the subtree, we have to remove them.
-            // For instance: <use> on <g> containing <foreignObject> (indirect case).
-            if (subtreeContainsDisallowedElement(newChild.get()))
-                removeDisallowedElementsFromSubtree(newChild.get());
-
             SVGElement* newChildPtr = 0;
             if (newChild->isSVGElement())
                 newChildPtr = static_cast<SVGElement*>(newChild.get());
@@ -787,6 +780,14 @@ void SVGUseElement::expandUseElementsInShadowTree(SVGShadowTreeRootElement* shad
             cloneParent->appendChild(newChild.release(), ec);
             ASSERT(!ec);
         }
+
+        // We don't walk the target tree element-by-element, and clone each element,
+        // but instead use cloneElementWithChildren(). This is an optimization for the common
+        // case where <use> doesn't contain disallowed elements (ie. <foreignObject>).
+        // Though if there are disallowed elements in the subtree, we have to remove them.
+        // For instance: <use> on <g> containing <foreignObject> (indirect case).
+        if (subtreeContainsDisallowedElement(cloneParent.get()))
+            removeDisallowedElementsFromSubtree(cloneParent.get());
 
         // Replace <use> with referenced content.
         ASSERT(use->parentNode()); 
