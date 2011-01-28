@@ -71,6 +71,12 @@ class DryRunPort(object):
     def __getattr__(self, name):
         return getattr(self.__delegate, name)
 
+    def acquire_http_lock(self):
+        pass
+
+    def release_http_lock(self):
+        pass
+
     def check_build(self, needs_http):
         return True
 

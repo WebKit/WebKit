@@ -76,6 +76,9 @@ def _get_kwargs(**kwargs):
     elif port_to_use.startswith('dryrun'):
         import dryrun
         maker = dryrun.DryRunPort
+    elif port_to_use.startswith('mock-'):
+        import mock_drt
+        maker = mock_drt.MockDRTPort
     elif port_to_use.startswith('mac'):
         import mac
         maker = mac.MacPort

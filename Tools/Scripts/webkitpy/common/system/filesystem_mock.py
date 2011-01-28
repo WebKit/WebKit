@@ -216,7 +216,7 @@ class MockFileSystem(object):
         return WritableFileObject(self, path, append)
 
     def read_text_file(self, path):
-        return self.read_binary_file(path)
+        return self.read_binary_file(path).decode('utf-8')
 
     def read_binary_file(self, path):
         # Intentionally raises KeyError if we don't recognize the path.
@@ -245,7 +245,7 @@ class MockFileSystem(object):
         return (path[0:idx], path[idx:])
 
     def write_text_file(self, path, contents):
-        return self.write_binary_file(path, contents)
+        return self.write_binary_file(path, contents.encode('utf-8'))
 
     def write_binary_file(self, path, contents):
         self.files[path] = contents

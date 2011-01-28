@@ -52,9 +52,17 @@ class TestInstance:
         self.keyboard = False
         self.error = ''
         self.timeout = False
-        self.actual_text = self.base + '-txt\n'
-        self.actual_checksum = self.base + '-checksum\n'
-        self.actual_image = self.base + '-png\n'
+
+        # The values of each field are treated as raw byte strings. They
+        # will be converted to unicode strings where appropriate using
+        # MockFileSystem.read_text_file().
+        self.actual_text = self.base + '-txt'
+        self.actual_checksum = self.base + '-checksum'
+
+        # We add the '\x8a' for the image file to prevent the value from
+        # being treated as UTF-8 (the character is invalid)
+        self.actual_image = self.base + '\x8a' + '-png'
+
         self.expected_text = self.actual_text
         self.expected_checksum = self.actual_checksum
         self.expected_image = self.actual_image
@@ -85,53 +93,44 @@ class TestList:
 def unit_test_list():
     tests = TestList()
     tests.add('failures/expected/checksum.html',
-                actual_checksum='checksum_fail-checksum')
+              actual_checksum='checksum_fail-checksum')
     tests.add('failures/expected/crash.html', crash=True)
     tests.add('failures/expected/exception.html', exception=True)
     tests.add('failures/expected/timeout.html', timeout=True)
     tests.add('failures/expected/hang.html', hang=True)
-    tests.add('failures/expected/missing_text.html',
-                expected_text=None)
+    tests.add('failures/expected/missing_text.html', expected_text=None)
     tests.add('failures/expected/image.html',
-                actual_image='image_fail-png',
-                expected_image='image-png')
+              actual_image='image_fail-png',
+              expected_image='image-png')
     tests.add('failures/expected/image_checksum.html',
-                actual_checksum='image_checksum_fail-checksum',
-                actual_image='image_checksum_fail-png')
-    tests.add('failures/expected/keyboard.html',
-                keyboard=True)
-    tests.add('failures/expected/missing_check.html',
-                expected_checksum=None)
-    tests.add('failures/expected/missing_image.html',
-                expected_image=None)
-    tests.add('failures/expected/missing_text.html',
-                expected_text=None)
+              actual_checksum='image_checksum_fail-checksum',
+              actual_image='image_checksum_fail-png')
+    tests.add('failures/expected/keyboard.html', keyboard=True)
+    tests.add('failures/expected/missing_check.html', expected_checksum=None)
+    tests.add('failures/expected/missing_image.html', expected_image=None)
+    tests.add('failures/expected/missing_text.html', expected_text=None)
     tests.add('failures/expected/newlines_leading.html',
-                expected_text="\nfoo\n",
-                actual_text="foo\n")
+              expected_text="\nfoo\n", actual_text="foo\n")
     tests.add('failures/expected/newlines_trailing.html',
-                expected_text="foo\n\n",
-                actual_text="foo\n")
+              expected_text="foo\n\n", actual_text="foo\n")
     tests.add('failures/expected/newlines_with_excess_CR.html',
-                expected_text="foo\r\r\r\n",
-                actual_text="foo\n")
-    tests.add('failures/expected/text.html',
-                actual_text='text_fail-png')
+              expected_text="foo\r\r\r\n", actual_text="foo\n")
+    tests.add('failures/expected/text.html', actual_text='text_fail-png')
     tests.add('failures/unexpected/crash.html', crash=True)
     tests.add('failures/unexpected/text-image-checksum.html',
-                actual_text='text-image-checksum_fail-txt',
-                actual_checksum='text-image-checksum_fail-checksum')
+              actual_text='text-image-checksum_fail-txt',
+              actual_checksum='text-image-checksum_fail-checksum')
     tests.add('failures/unexpected/timeout.html', timeout=True)
     tests.add('http/tests/passes/text.html')
     tests.add('http/tests/ssl/text.html')
     tests.add('passes/error.html', error='stuff going to stderr')
     tests.add('passes/image.html')
     tests.add('passes/platform_image.html')
+
     # Text output files contain "\r\n" on Windows.  This may be
     # helpfully filtered to "\r\r\n" by our Python/Cygwin tooling.
     tests.add('passes/text.html',
-                expected_text='\nfoo\n\n',
-                actual_text='\nfoo\r\n\r\r\n')
+              expected_text='\nfoo\n\n', actual_text='\nfoo\r\n\r\r\n')
     tests.add('websocket/tests/passes/text.html')
     return tests
 
@@ -210,6 +209,11 @@ class TestPort(base.Port):
         base.Port.__init__(self, port_name=port_name, filesystem=filesystem, user=user,
                            **kwargs)
 
+    def _path_to_driver(self):
+        # This routine shouldn't normally be called, but it is called by
+        # the mock_drt Driver. We return something, but make sure it's useless.
+        return 'junk'
+
     def baseline_path(self):
         return self._filesystem.join(self.layout_tests_dir(), 'platform',
                                      self.name() + self.version())
@@ -224,7 +228,7 @@ class TestPort(base.Port):
                    diff_filename=None):
         diffed = actual_contents != expected_contents
         if diffed and diff_filename:
-            self._filesystem.write_text_file(diff_filename,
+            self._filesystem.write_binary_file(diff_filename,
                 "< %s\n---\n> %s\n" % (expected_contents, actual_contents))
         return diffed
 
@@ -290,7 +294,7 @@ class TestDriver(base.Driver):
         self._port = port
 
     def cmd_line(self):
-        return ['None']
+        return [self._port._path_to_driver()]
 
     def poll(self):
         return True
