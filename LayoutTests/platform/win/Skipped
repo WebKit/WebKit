@@ -395,6 +395,42 @@ svg/custom/clip-path-referencing-use2.svg
 # Assertion failure http://webkit.org/b/52913
 transitions/transition-end-event-destroy-iframe.html
 
+# Time out http://webkit.org/b/53302
+animations/animation-end-event-destroy-renderer.html
+animations/animation-hit-test-transform.html
+animations/animation-start-event-destroy-renderer.html
+animations/big-rotation.html
+animations/combo-transform-rotate+scale.html
+animations/dynamic-stylesheet-loading.html
+animations/fill-mode-transform.html
+animations/keyframe-timing-functions-transform.html
+animations/matrix-anim.html
+animations/missing-from-to-transforms.html
+animations/missing-keyframe-properties-timing-function.html
+animations/missing-keyframe-properties.html
+animations/missing-values-first-keyframe.html
+animations/missing-values-last-keyframe.html
+animations/negative-delay.html
+animations/opacity-transform-animation.html
+animations/simultaneous-start-transform.html
+animations/suspend-transform-animation.html
+animations/transition-and-animation-1.html
+animations/transition-and-animation-2.html
+animations/3d/change-transform-in-end-event.html
+animations/3d/state-at-end-event-transform.html
+animations/3d/transform-perspective.html
+compositing/animation/animation-compositing.html
+compositing/animation/state-at-end-event-transform-layer.html
+compositing/geometry/limit-layer-bounds-opacity-transition.html
+transitions/extra-transition.html
+transitions/interrupt-transform-transition.html
+transitions/move-after-transition.html
+transitions/start-transform-transition.html
+transitions/transition-end-event-destroy-renderer.html
+transitions/transition-end-event-multiple-04.html
+transitions/transition-end-event-rendering.html
+transitions/transition-end-event-transform.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
