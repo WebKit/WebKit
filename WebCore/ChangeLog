@@ -1,5 +1,24 @@
 2011-01-27  Mark Rowe  <mrowe@apple.com>
 
+        Merge r71925.
+
+    2010-11-11  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Not allow drag and drop across different origins.
+        https://bugs.webkit.org/show_bug.cgi?id=49098
+
+        Test: http/tests/security/drag-drop-different-origin.html
+
+        * page/DragController.cpp:
+        (WebCore::DragController::tryDocumentDrag):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::canDropOnTarget):
+        * page/SecurityOrigin.h:
+
+2011-01-27  Mark Rowe  <mrowe@apple.com>
+
         Merge r72013.
 
     2010-11-14  Abhishek Arya  <inferno@chromium.org>

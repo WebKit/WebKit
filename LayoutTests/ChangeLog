@@ -1,5 +1,20 @@
 2011-01-27  Mark Rowe  <mrowe@apple.com>
 
+        Merge r71925.
+
+    2010-11-10  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Check that drag and drop is not allowed across different origins.
+        https://bugs.webkit.org/show_bug.cgi?id=49098
+  
+        * http/tests/security/drag-drop-different-origin-expected.txt: Added.
+        * http/tests/security/drag-drop-different-origin.html: Added.
+        * http/tests/security/resources/drag-drop.html: Added.
+
+2011-01-27  Mark Rowe  <mrowe@apple.com>
+
         Merge r70473.
 
     2010-10-25  Cris Neckar  <cdn@chromium.org>

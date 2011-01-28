@@ -91,6 +91,11 @@ public:
     // represents a local file, then the local load is allowed.
     static bool canLoad(const KURL&, const String& referrer, Document* document);
 
+    // Returns true if this SecurityOrigin can receive drag content from the
+    // initiator. For example, call this function before allowing content to be
+    // dropped onto a target.
+    bool canReceiveDragData(const SecurityOrigin* dragInitiator) const;    
+
     // Returns true if this SecurityOrigin can load local resources, such
     // as images, iframes, and style sheets, and can link to local URLs.
     // For example, call this function before creating an iframe to a
