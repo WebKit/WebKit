@@ -299,6 +299,10 @@ void LayerTilerChromium::update(TilePaintInterface& painter, const IntRect& cont
 #error "Need to implement for your platform."
 #endif
 
+    // Painting could cause compositing to get turned off, which may cause the tiler to become invalidated mid-update.
+    if (!m_tiles.size())
+        return;
+
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
             Tile* tile = m_tiles[tileIndex(i, j)].get();
@@ -357,7 +361,7 @@ void LayerTilerChromium::setLayerPosition(const IntPoint& layerPosition)
 
 void LayerTilerChromium::draw(const IntRect& contentRect)
 {
-    if (m_skipsDraw)
+    if (m_skipsDraw || !m_tiles.size())
         return;
 
     // We reuse the shader program used by ContentLayerChromium.

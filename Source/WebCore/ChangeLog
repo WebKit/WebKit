@@ -1,3 +1,16 @@
+2011-01-27  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Tiled compositor crashes if compositing turned off mid-paint
+        https://bugs.webkit.org/show_bug.cgi?id=53198
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawLayers):
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::update):
+        (WebCore::LayerTilerChromium::draw):
+
 2011-01-27  Carol Szabo <carol.szabo@nokia.com>
 
         Reviewed by David Hyatt.

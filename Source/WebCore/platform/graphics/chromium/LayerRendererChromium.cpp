@@ -265,6 +265,11 @@ void LayerRendererChromium::drawLayers(const IntRect& visibleRect, const IntRect
     // Re-enable color writes to layers, which may be partially transparent.
     m_context->colorMask(true, true, true, true);
 
+    // Recheck that we still have a root layer.  This may become null if
+    // compositing gets turned off during a paint operation.
+    if (!m_rootLayer)
+        return;
+
     // Set the root visible/content rects --- used by subsequent drawLayers calls.
     m_rootVisibleRect = visibleRect;
     m_rootContentRect = contentRect;
