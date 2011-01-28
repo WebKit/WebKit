@@ -559,8 +559,10 @@ static NSData* iconDataFromPathForIconURL(NSString *databasePath, NSString *icon
 @implementation WebIconDatabasePrivate
 @end
 
-@interface ThreadEnabler : NSObject
+@interface ThreadEnabler : NSObject {
+}
 + (void)enableThreading;
+
 - (void)threadEnablingSelector:(id)arg;
 @end
 
@@ -568,6 +570,7 @@ static NSData* iconDataFromPathForIconURL(NSString *databasePath, NSString *icon
 
 - (void)threadEnablingSelector:(id)arg
 {
+    return;
 }
 
 + (void)enableThreading
@@ -586,7 +589,7 @@ bool importToWebCoreFormat()
     if (![NSThread isMultiThreaded])
         [ThreadEnabler enableThreading];
     ASSERT([NSThread isMultiThreaded]);    
-
+    
     // Get the directory the old icon database *should* be in
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *databaseDirectory = [defaults objectForKey:WebIconDatabaseImportDirectoryDefaultsKey];

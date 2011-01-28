@@ -1,3 +1,17 @@
+2011-01-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r76891.
+        http://trac.webkit.org/changeset/76891
+        https://bugs.webkit.org/show_bug.cgi?id=53280
+
+        Makes every layout test crash (Requested by othermaciej on
+        #webkit).
+
+        * page/EventHandler.cpp:
+        * page/EventHandler.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::styleDidChange):
+
 2011-01-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed, rolling out r76839.

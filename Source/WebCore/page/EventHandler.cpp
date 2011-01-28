@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -2150,15 +2150,6 @@ void EventHandler::scheduleHoverStateUpdate()
 {
     if (!m_hoverTimer.isActive())
         m_hoverTimer.startOneShot(0);
-}
-
-void EventHandler::dispatchFakeMouseMoveEventSoon()
-{
-    if (m_mousePressed)
-        return;
-
-    if (!m_fakeMouseMoveEventTimer.isActive())
-        m_fakeMouseMoveEventTimer.startOneShot(fakeMouseMoveInterval);
 }
 
 void EventHandler::dispatchFakeMouseMoveEventSoonInQuad(const FloatQuad& quad)
