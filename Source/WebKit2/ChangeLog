@@ -1,3 +1,17 @@
+2011-01-28  Andreas Kling  <kling@webkit.org>
+
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt][WK2] Combine QWKPage::engine{Connected,Disconnected} into one signal.
+
+        Having two signals for this is redundant, combine them into
+        QWKPage::engineConnectionChanged(bool connected).
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::didRelaunchProcess):
+        (QWKPagePrivate::processDidCrash):
+        * UIProcess/API/qt/qwkpage.h:
+
 2011-01-27  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Maciej Stachowiak.

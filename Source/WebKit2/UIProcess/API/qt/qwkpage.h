@@ -135,8 +135,7 @@ public:
     Q_SIGNAL void zoomableAreaFound(const QRect&);
     Q_SIGNAL void focusNextPrevChild(bool);
     Q_SIGNAL void showContextMenu(QMenu*);
-    Q_SIGNAL void engineConnected();
-    Q_SIGNAL void engineDisconnected();
+    Q_SIGNAL void engineConnectionChanged(bool connected);
 
 protected:
     void timerEvent(QTimerEvent*);

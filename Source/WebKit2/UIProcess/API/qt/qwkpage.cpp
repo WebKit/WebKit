@@ -395,13 +395,13 @@ void QWKPagePrivate::didRelaunchProcess()
         q->setViewportSize(wkView->size().toSize());
 
     isConnectedToEngine = true;
-    emit q->engineConnected();
+    emit q->engineConnectionChanged(true);
 }
 
 void QWKPagePrivate::processDidCrash()
 {
     isConnectedToEngine = false;
-    emit q->engineDisconnected();
+    emit q->engineConnectionChanged(false);
 }
 
 QWKPage::QWKPage(QWKContext* context)
