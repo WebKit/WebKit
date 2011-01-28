@@ -2631,13 +2631,8 @@ BUGCR58735 SLOW : http/tests/misc/prefetch-purpose.html = PASS
 BUGCR58936 : fast/js/basic-strict-mode.html = TEXT
 BUGCR58936 : fast/js/numeric-escapes-in-string-literals.html = TEXT
 
-// Started failing around Webkit r69541 in this build.
-// http://build.chromium.org/buildbot/waterfall.fyi/builders/Webkit%20Linux%20%28webkit.org%29/builds/40424
-BUGCR58942 : fast/dom/prototype-inheritance.html = TEXT
-
 // Started failing at Webkit r69628.
 BUGWK47578 : printing/simultaneous-position-float-change.html = IMAGE+TEXT
-
 
 // We don't support layoutTestController.nodesFromRect so this test just times out
 BUGWK46600 SKIP : fast/dom/nodesFromRect-links-and-text.html = TEXT

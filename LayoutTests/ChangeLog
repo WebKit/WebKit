@@ -1,5 +1,11 @@
 2011-01-28  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Remove now-passing test from expectations.
+
+        * platform/chromium/test_expectations.txt: Expectation of failure removed.
+
+2011-01-28  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Update expectations for prototype-inheritance to match platform/mac.
 
         * platform/chromium/fast/dom/prototype-inheritance-expected.txt: Updated.
