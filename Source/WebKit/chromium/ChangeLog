@@ -1,5 +1,14 @@
 2011-01-27  Zhenyao Mo  <zmo@google.com>
 
+        Reviewed by Kenneth Russell.
+
+        Define GC3D types to match GL types and use them in WebGraphicsContext3D
+        https://bugs.webkit.org/show_bug.cgi?id=51947
+
+        * public/WebGraphicsContext3D.h:
+
+2011-01-27  Zhenyao Mo  <zmo@google.com>
+
         Unreviewed, roll webkit chromium rev from 72673 to 72894.
         Also, added gmock section in DEPS to pull down gmock.
 
