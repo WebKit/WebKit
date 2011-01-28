@@ -1,5 +1,11 @@
 2011-01-28  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        * Shared/mac/ShareableSurface.cpp:
+
+2011-01-28  Anders Carlsson  <andersca@apple.com>
+
         Try to unbreak the Windows build.
 
         * UIProcess/cf/WebPageProxyCF.cpp:

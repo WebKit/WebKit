@@ -33,6 +33,7 @@
 #include <OpenGL/CGLIOSurface.h>
 #include <OpenGL/CGLMacro.h>
 #include <OpenGL/OpenGL.h>
+#include <mach/mach_port.h>
 
 // The CGLMacro.h header adds an implicit CGLContextObj parameter to all OpenGL calls,
 // which is good because it allows us to make OpenGL calls without saving and restoring the
