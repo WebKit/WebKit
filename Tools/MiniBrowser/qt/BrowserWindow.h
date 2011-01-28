@@ -60,6 +60,7 @@ protected slots:
     void zoomIn();
     void zoomOut();
     void resetZoom();
+    void toggleZoomTextOnly(bool on);
 
     void showUserAgentDialog();
 
@@ -68,8 +69,9 @@ private:
 
     void applyZoom();
 
-    static QVector<int> m_zoomLevels;
-    int m_currentZoom;
+    static QVector<qreal> m_zoomLevels;
+    bool m_isZoomTextOnly;
+    qreal m_currentZoom;
 
     BrowserView* m_browser;
     QLineEdit* m_addressBar;

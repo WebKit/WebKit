@@ -1,3 +1,21 @@
+2011-01-28  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Add Zoom Text Only action to MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=53297
+
+        Add Zoom Text Only action to MiniBrowser's view menu, change zoom levels to avoid unnecessary divides.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::BrowserWindow):
+        (BrowserWindow::zoomIn):
+        (BrowserWindow::zoomOut):
+        (BrowserWindow::resetZoom):
+        (BrowserWindow::toggleZoomTextOnly):
+        (BrowserWindow::applyZoom):
+        * MiniBrowser/qt/BrowserWindow.h:
+
 2011-01-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -36,11 +36,12 @@ static QWKPage* newPageFunction(QWKPage* page)
 
 QGraphicsWKView::BackingStoreType BrowserWindow::backingStoreTypeForNewWindow = QGraphicsWKView::Simple;
 
-QVector<int> BrowserWindow::m_zoomLevels;
+QVector<qreal> BrowserWindow::m_zoomLevels;
 
 BrowserWindow::BrowserWindow(QWKContext* context)
-    : m_currentZoom(100) ,
-      m_browser(new BrowserView(backingStoreTypeForNewWindow, context))
+    : m_isZoomTextOnly(false)
+    , m_currentZoom(1)
+    , m_browser(new BrowserView(backingStoreTypeForNewWindow, context))
 {
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -64,6 +65,9 @@ BrowserWindow::BrowserWindow(QWKContext* context)
     QAction* zoomIn = viewMenu->addAction("Zoom &In", this, SLOT(zoomIn()));
     QAction* zoomOut = viewMenu->addAction("Zoom &Out", this, SLOT(zoomOut()));
     QAction* resetZoom = viewMenu->addAction("Reset Zoom", this, SLOT(resetZoom()));
+    QAction* zoomText = viewMenu->addAction("Zoom Text Only", this, SLOT(toggleZoomTextOnly(bool)));
+    zoomText->setCheckable(true);
+    zoomText->setChecked(false);
 
     zoomIn->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Plus));
     zoomOut->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Minus));
@@ -89,9 +93,9 @@ BrowserWindow::BrowserWindow(QWKContext* context)
 
     // the zoom values are chosen to be like in Mozilla Firefox 3
     if (!m_zoomLevels.count()) {
-        m_zoomLevels << 30 << 50 << 67 << 80 << 90;
-        m_zoomLevels << 100;
-        m_zoomLevels << 110 << 120 << 133 << 150 << 170 << 200 << 240 << 300;
+        m_zoomLevels << 0.3 << 0.5 << 0.67 << 0.8 << 0.9;
+        m_zoomLevels << 1;
+        m_zoomLevels << 1.1 << 1.2 << 1.33 << 1.5 << 1.7 << 2 << 2.4 << 3;
     }
 
     resize(960, 640);
@@ -177,6 +181,11 @@ void BrowserWindow::openFile()
 
 void BrowserWindow::zoomIn()
 {
+    if (m_isZoomTextOnly)
+        m_currentZoom = page()->textZoomFactor();
+    else
+        m_currentZoom = page()->pageZoomFactor();
+
     int i = m_zoomLevels.indexOf(m_currentZoom);
     Q_ASSERT(i >= 0);
     if (i < m_zoomLevels.count() - 1)
@@ -187,6 +196,11 @@ void BrowserWindow::zoomIn()
 
 void BrowserWindow::zoomOut()
 {
+    if (m_isZoomTextOnly)
+        m_currentZoom = page()->textZoomFactor();
+    else
+        m_currentZoom = page()->pageZoomFactor();
+
     int i = m_zoomLevels.indexOf(m_currentZoom);
     Q_ASSERT(i >= 0);
     if (i > 0)
@@ -197,8 +211,13 @@ void BrowserWindow::zoomOut()
 
 void BrowserWindow::resetZoom()
 {
-    m_currentZoom = 100;
+    m_currentZoom = 1;
     applyZoom();
+}
+
+void BrowserWindow::toggleZoomTextOnly(bool b)
+{
+    m_isZoomTextOnly = b;
 }
 
 void BrowserWindow::showUserAgentDialog()
@@ -251,7 +270,10 @@ void BrowserWindow::updateUserAgentList()
 
 void BrowserWindow::applyZoom()
 {
-    page()->setPageZoomFactor(qreal(m_currentZoom) / 100.0);
+    if (m_isZoomTextOnly)
+        page()->setTextZoomFactor(m_currentZoom);
+    else
+        page()->setPageZoomFactor(m_currentZoom);
 }
 
 BrowserWindow::~BrowserWindow()
