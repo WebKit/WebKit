@@ -85,6 +85,7 @@ InjectedScript.reset = function()
 {
     InjectedScript._searchResults = [];
     InjectedScript._includedInSearchResultsPropertyName = "__includedInInspectorSearchResults";
+    InjectedScript._inspectedNodes = [];
 }
 
 InjectedScript.reset();
@@ -283,14 +284,15 @@ InjectedScript.getCompletions = function(expression, includeInspectorCommandLine
         } else {
             if (!expression)
                 expression = "this";
-            expressionResult = InjectedScript._evaluateOn(inspectedWindow.eval, inspectedWindow, expression);
+            expressionResult = InjectedScript._evaluateOn(inspectedWindow.eval, inspectedWindow, expression, false);
         }
         if (typeof expressionResult == "object")
             InjectedScript._populatePropertyNames(expressionResult, props);
-        if (includeInspectorCommandLineAPI)
-            for (var prop in inspectedWindow.console._inspectorCommandLineAPI)
-                if (prop.charAt(0) !== '_')
-                    props[prop] = true;
+
+        if (includeInspectorCommandLineAPI) {
+            for (var prop in InjectedScript._commandLineAPI)
+                props[prop] = true;
+        }
     } catch(e) {
     }
     return props;
@@ -321,13 +323,20 @@ InjectedScript._evaluateAndWrap = function(evalFunction, object, expression, obj
 
 InjectedScript._evaluateOn = function(evalFunction, object, expression, dontUseCommandLineAPI)
 {
-    InjectedScript._ensureCommandLineAPIInstalled(evalFunction, object);
-    // Surround the expression in with statements to inject our command line API so that
-    // the window object properties still take more precedent than our API functions.
-    if (!dontUseCommandLineAPI)
-        expression = "with (window.console._inspectorCommandLineAPI) { with (window) {\n" + expression + "\n} }";
+    if (!dontUseCommandLineAPI) {
+        // Only install command line api object for the time of evaluation.
+
+        // Surround the expression in with statements to inject our command line API so that
+        // the window object properties still take more precedent than our API functions.
+        inspectedWindow.console._commandLineAPI = InjectedScript._commandLineAPI;
+
+        expression = "with (window.console._commandLineAPI) { with (window) {\n" + expression + "\n} }";
+    }
 
     var value = evalFunction.call(object, expression);
+
+    if (!dontUseCommandLineAPI)
+        delete inspectedWindow.console._commandLineAPI;
 
     // When evaluating on call frame error is not thrown, but returned as a value.
     if (InjectedScript._type(value) === "error")
@@ -342,8 +351,7 @@ InjectedScript.addInspectedNode = function(nodeId)
     if (!node)
         return false;
 
-    InjectedScript._ensureCommandLineAPIInstalled(inspectedWindow.eval, inspectedWindow);
-    var inspectedNodes = inspectedWindow.console._inspectorCommandLineAPI._inspectedNodes;
+    var inspectedNodes = InjectedScript._inspectedNodes;
     inspectedNodes.unshift(node);
     if (inspectedNodes.length >= 5)
         inspectedNodes.pop();
@@ -641,114 +649,6 @@ InjectedScript.clearConsoleMessages = function()
     return true;
 }
 
-InjectedScript._inspectObject = function(o)
-{
-    if (arguments.length === 0)
-        return;
-
-    inspectedWindow.console.log(o);
-    if (InjectedScript._type(o) === "node") {
-        InjectedScriptHost.pushNodePathToFrontend(o, false, true);
-    } else {
-        switch (InjectedScript._describe(o)) {
-            case "Database":
-                InjectedScriptHost.selectDatabase(o);
-                break;
-            case "Storage":
-                InjectedScriptHost.selectDOMStorage(o);
-                break;
-        }
-    }
-}
-
-InjectedScript._copy = function(o)
-{
-    if (InjectedScript._type(o) === "node") {
-        var nodeId = InjectedScriptHost.pushNodePathToFrontend(o, false, false);
-        InjectedScriptHost.copyNode(nodeId);
-    } else {
-        InjectedScriptHost.copyText(o);
-    }
-}
-
-InjectedScript._ensureCommandLineAPIInstalled = function(evalFunction, evalObject)
-{
-    if (evalFunction.call(evalObject, "window.console._inspectorCommandLineAPI"))
-        return;
-    var inspectorCommandLineAPI = evalFunction.call(evalObject, "window.console._inspectorCommandLineAPI = { \n\
-        $: function() { return document.getElementById.apply(document, arguments) }, \n\
-        $$: function() { return document.querySelectorAll.apply(document, arguments) }, \n\
-        $x: function(xpath, context) \n\
-        { \n\
-            var nodes = []; \n\
-            try { \n\
-                var doc = context || document; \n\
-                var results = doc.evaluate(xpath, doc, null, XPathResult.ANY_TYPE, null); \n\
-                var node; \n\
-                while (node = results.iterateNext()) nodes.push(node); \n\
-            } catch (e) {} \n\
-            return nodes; \n\
-        }, \n\
-        dir: function() { return console.dir.apply(console, arguments) }, \n\
-        dirxml: function() { return console.dirxml.apply(console, arguments) }, \n\
-        keys: function(o) { var a = []; for (var k in o) a.push(k); return a; }, \n\
-        values: function(o) { var a = []; for (var k in o) a.push(o[k]); return a; }, \n\
-        profile: function() { return console.profile.apply(console, arguments) }, \n\
-        profileEnd: function() { return console.profileEnd.apply(console, arguments) }, \n\
-        _logEvent: function _inspectorCommandLineAPI_logEvent(e) { console.log(e.type, e); }, \n\
-        _allEventTypes: [\"mouse\", \"key\", \"load\", \"unload\", \"abort\", \"error\", \n\
-            \"select\", \"change\", \"submit\", \"reset\", \"focus\", \"blur\", \n\
-            \"resize\", \"scroll\"], \n\
-        _normalizeEventTypes: function(t) \n\
-        { \n\
-            if (typeof t === \"undefined\") \n\
-                t = console._inspectorCommandLineAPI._allEventTypes; \n\
-            else if (typeof t === \"string\") \n\
-                t = [t]; \n\
-            var i, te = []; \n\
-            for (i = 0; i < t.length; i++) { \n\
-                if (t[i] === \"mouse\") \n\
-                    te.splice(0, 0, \"mousedown\", \"mouseup\", \"click\", \"dblclick\", \n\
-                        \"mousemove\", \"mouseover\", \"mouseout\"); \n\
-                else if (t[i] === \"key\") \n\
-                    te.splice(0, 0, \"keydown\", \"keyup\", \"keypress\"); \n\
-                else \n\
-                    te.push(t[i]); \n\
-            } \n\
-            return te; \n\
-        }, \n\
-        monitorEvents: function(o, t) \n\
-        { \n\
-            if (!o || !o.addEventListener || !o.removeEventListener) \n\
-                return; \n\
-            t = console._inspectorCommandLineAPI._normalizeEventTypes(t); \n\
-            for (i = 0; i < t.length; i++) { \n\
-                o.removeEventListener(t[i], console._inspectorCommandLineAPI._logEvent, false); \n\
-                o.addEventListener(t[i], console._inspectorCommandLineAPI._logEvent, false); \n\
-            } \n\
-        }, \n\
-        unmonitorEvents: function(o, t) \n\
-        { \n\
-            if (!o || !o.removeEventListener) \n\
-                return; \n\
-            t = console._inspectorCommandLineAPI._normalizeEventTypes(t); \n\
-            for (i = 0; i < t.length; i++) { \n\
-                o.removeEventListener(t[i], console._inspectorCommandLineAPI._logEvent, false); \n\
-            } \n\
-        }, \n\
-        _inspectedNodes: [], \n\
-        get $0() { return console._inspectorCommandLineAPI._inspectedNodes[0] }, \n\
-        get $1() { return console._inspectorCommandLineAPI._inspectedNodes[1] }, \n\
-        get $2() { return console._inspectorCommandLineAPI._inspectedNodes[2] }, \n\
-        get $3() { return console._inspectorCommandLineAPI._inspectedNodes[3] }, \n\
-        get $4() { return console._inspectorCommandLineAPI._inspectedNodes[4] }, \n\
-    };");
-
-    inspectorCommandLineAPI.clear = InjectedScript.clearConsoleMessages;
-    inspectorCommandLineAPI.inspect = InjectedScript._inspectObject;
-    inspectorCommandLineAPI.copy = InjectedScript._copy;
-}
-
 InjectedScript._resolveObject = function(objectProxy)
 {
     var object = InjectedScript._objectForId(objectProxy.objectId);
@@ -775,11 +675,11 @@ InjectedScript._objectForId = function(objectId)
     // - numbers point to DOM Node via the InspectorDOMAgent mapping
     // - strings point to console objects cached in InspectorController for lazy evaluation upon them
     // - objects contain complex ids and are currently used for scoped objects
-    if (typeof objectId === "number") {
+    if (typeof objectId === "number")
         return InjectedScript._nodeForId(objectId);
-    } else if (typeof objectId === "string") {
+    else if (typeof objectId === "string")
         return InjectedScript.unwrapObject(objectId);
-    } else if (typeof objectId === "object") {
+    else if (typeof objectId === "object") {
         var callFrame = InjectedScript._callFrameForId(objectId.callFrame);
         if (objectId.thisObject)
             return callFrame.thisObject;
@@ -1039,6 +939,176 @@ InjectedScript._escapeCharacters = function(str, chars)
 
     return result;
 }
+
+InjectedScript._logEvent = function(event)
+{
+    console.log(event.type, event);
+}
+
+InjectedScript._normalizeEventTypes = function(types)
+{
+    if (typeof types === "undefined")
+        types = [ "mouse", "key", "load", "unload", "abort", "error", "select", "change", "submit", "reset", "focus", "blur", "resize", "scroll" ];
+    else if (typeof types === "string")
+        types = [ types ];
+
+    var result = [];
+    for (var i = 0; i < types.length; i++) {
+        if (types[i] === "mouse")
+            result.splice(0, 0, "mousedown", "mouseup", "click", "dblclick", "mousemove", "mouseover", "mouseout");
+        else if (types[i] === "key")
+            result.splice(0, 0, "keydown", "keyup", "keypress");
+        else
+            result.push(types[i]);
+    }
+    return result;
+};
+
+function CommandLineAPI()
+{
+}
+
+CommandLineAPI.prototype = {
+    // Only add API functions here, private stuff should go to
+    // InjectedScript so that it is not suggested by the completion.
+    $: function()
+    {
+        return document.getElementById.apply(document, arguments)
+    },
+
+    $$: function()
+    {
+        return document.querySelectorAll.apply(document, arguments)
+    },
+
+    $x: function(xpath, context)
+    {
+        var nodes = [];
+        try {
+            var doc = context || document;
+            var results = doc.evaluate(xpath, doc, null, XPathResult.ANY_TYPE, null);
+            var node;
+            while (node = results.iterateNext())
+                nodes.push(node);
+        } catch (e) {
+        }
+        return nodes;
+    },
+
+    dir: function()
+    {
+        return console.dir.apply(console, arguments)
+    },
+
+    dirxml: function()
+    {
+        return console.dirxml.apply(console, arguments)
+    },
+
+    keys: function(object)
+    {
+        return Object.keys(object);
+    },
+
+    values: function(object)
+    {
+        var result = [];
+        for (var key in object)
+            result.push(object[key]);
+        return result;
+    },
+
+    profile: function()
+    {
+        return console.profile.apply(console, arguments)
+    },
+
+    profileEnd: function()
+    {
+        return console.profileEnd.apply(console, arguments)
+    },
+
+    monitorEvents: function(object, types)
+    {
+        if (!object || !object.addEventListener || !object.removeEventListener)
+            return;
+        types = InjectedScript._normalizeEventTypes(types);
+        for (var i = 0; i < types.length; ++i) {
+            object.removeEventListener(types[i], InjectedScript._logEvent, false);
+            object.addEventListener(types[i], InjectedScript._logEvent, false);
+        }
+    },
+
+    unmonitorEvents: function(object, types)
+    {
+        if (!object || !object.addEventListener || !object.removeEventListener)
+            return;
+        types = InjectedScript._normalizeEventTypes(types);
+        for (var i = 0; i < types.length; ++i)
+            object.removeEventListener(types[i], InjectedScript._logEvent, false);
+    },
+
+    inspect: function(object)
+    {
+        if (arguments.length === 0)
+            return;
+
+        inspectedWindow.console.log(object);
+        if (InjectedScript._type(object) === "node")
+            InjectedScriptHost.pushNodePathToFrontend(object, false, true);
+        else {
+            switch (InjectedScript._describe(object)) {
+                case "Database":
+                    InjectedScriptHost.selectDatabase(object);
+                    break;
+                case "Storage":
+                    InjectedScriptHost.selectDOMStorage(object);
+                    break;
+            }
+        }
+    },
+
+    copy: function(object)
+    {
+        if (InjectedScript._type(object) === "node") {
+            var nodeId = InjectedScriptHost.pushNodePathToFrontend(object, false, false);
+            InjectedScriptHost.copyNode(nodeId);
+        } else
+            InjectedScriptHost.copyText(object);
+    },
+
+    clear: function()
+    {
+        InjectedScriptHost.clearConsoleMessages();
+    },
+
+    get $0()
+    {
+        return InjectedScript._inspectedNodes[0];
+    },
+
+    get $1()
+    {
+        return InjectedScript._inspectedNodes[1];
+    },
+
+    get $2()
+    {
+        return InjectedScript._inspectedNodes[2];
+    },
+
+    get $3()
+    {
+        return InjectedScript._inspectedNodes[3];
+    },
+
+    get $4()
+    {
+        return InjectedScript._inspectedNodes[4];
+    }
+}
+
+InjectedScript._commandLineAPI = new CommandLineAPI();
 
 return InjectedScript;
 });
