@@ -1,3 +1,49 @@
+2011-01-28  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add ShareableSurface class
+        https://bugs.webkit.org/show_bug.cgi?id=53313
+
+        * Shared/mac/ShareableSurface.cpp: Added.
+        (WebKit::ShareableSurface::Handle::Handle):
+        Initialize the mach port.
+
+        (WebKit::ShareableSurface::Handle::~Handle):
+        Deallocate our send right if needed.
+
+        (WebKit::ShareableSurface::Handle::encode):
+        Encode the send right, and then null it out.
+
+        (WebKit::ShareableSurface::Handle::decode):
+        Decode the send right.
+        
+        (WebKit::createIOSurface):
+        Create an IOSurface with the given size.
+
+        (WebKit::ShareableSurface::create):
+        Create an IOSurface, either from a size or from a handle.
+
+        (WebKit::ShareableSurface::~ShareableSurface):
+        Delete the texture and framebuffer.
+
+        (WebKit::ShareableSurface::createHandle):
+        Create a mach port from the surface.
+
+        (WebKit::ShareableSurface::attach):
+        Create an FBO if needed and bind it.
+
+        (WebKit::ShareableSurface::detach):
+        Unbind the FBO.
+
+        (WebKit::ShareableSurface::textureID):
+        Generate a new texture and bind it to the IOSurface.
+
+        * Shared/mac/ShareableSurface.h: Added.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
 2011-01-27  Adam Roben  <aroben@apple.com>
 
         Change BinarySemaphore to wrap an auto-reset Win32 event on Windows

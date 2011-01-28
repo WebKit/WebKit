@@ -174,6 +174,8 @@
 		1A910072126675C4001842F5 /* FindIndicator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A910070126675C4001842F5 /* FindIndicator.cpp */; };
 		1A91010A1268C8CA001842F5 /* FindIndicatorWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9101081268C8CA001842F5 /* FindIndicatorWindow.h */; };
 		1A91010B1268C8CA001842F5 /* FindIndicatorWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A9101091268C8CA001842F5 /* FindIndicatorWindow.mm */; };
+		1A9636BC12F348490078A062 /* ShareableSurface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9636BA12F348490078A062 /* ShareableSurface.cpp */; };
+		1A9636BD12F348490078A062 /* ShareableSurface.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9636BB12F348490078A062 /* ShareableSurface.h */; };
 		1AA1CC5D100FA1A10078DEBC /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */; };
 		1AA1CD07100FA1BA0078DEBC /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CD06100FA1BA0078DEBC /* Carbon.framework */; };
 		1AA2E51D12E4C05E00BC4966 /* CGUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA2E51B12E4C05E00BC4966 /* CGUtilities.h */; };
@@ -918,6 +920,8 @@
 		1A910070126675C4001842F5 /* FindIndicator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FindIndicator.cpp; sourceTree = "<group>"; };
 		1A9101081268C8CA001842F5 /* FindIndicatorWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FindIndicatorWindow.h; sourceTree = "<group>"; };
 		1A9101091268C8CA001842F5 /* FindIndicatorWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FindIndicatorWindow.mm; sourceTree = "<group>"; };
+		1A9636BA12F348490078A062 /* ShareableSurface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShareableSurface.cpp; sourceTree = "<group>"; };
+		1A9636BB12F348490078A062 /* ShareableSurface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareableSurface.h; sourceTree = "<group>"; };
 		1AA1C79A100E7FC50078DEBC /* WebCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
@@ -2354,13 +2358,16 @@
 		BC111B5A112F628200337BAB /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				C574A57F12E66681002DFE98 /* PasteboardTypes.h */,
-				C574A58012E66681002DFE98 /* PasteboardTypes.mm */,
 				1A6F9FB611E1408500DB1371 /* CommandLineMac.cpp */,
 				C02BFF1D1251502E009CCBEA /* NativeWebKeyboardEventMac.mm */,
-				BCF505E61243047B005955AE /* PlatformCertificateInfo.mm */,
+				C574A57F12E66681002DFE98 /* PasteboardTypes.h */,
+				C574A58012E66681002DFE98 /* PasteboardTypes.mm */,
 				BCF505E51243047B005955AE /* PlatformCertificateInfo.h */,
+				BCF505E61243047B005955AE /* PlatformCertificateInfo.mm */,
 				E1CC1B8F12D7EADF00625838 /* PrintInfoMac.mm */,
+				1AAB4AA91296F1540023952F /* SandboxExtensionMac.mm */,
+				1A9636BA12F348490078A062 /* ShareableSurface.cpp */,
+				1A9636BB12F348490078A062 /* ShareableSurface.h */,
 				BC9E95D211449B0300870E71 /* UpdateChunk.cpp */,
 				BC9E95D111449B0300870E71 /* UpdateChunk.h */,
 				BCE23262122C6CF300D5C35A /* WebCoreArgumentCodersMac.mm */,
@@ -2369,7 +2376,6 @@
 				905620E512BC2476000799B6 /* WebMemorySampler.mac.mm */,
 				BCE231C0122C466E00D5C35A /* WebURLRequestMac.mm */,
 				BC90A1D5122DD66A00CC8C50 /* WebURLResponseMac.mm */,
-				1AAB4AA91296F1540023952F /* SandboxExtensionMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -3101,6 +3107,7 @@
 				E134F01712EA5D33004EC58D /* WKPrintingView.h in Headers */,
 				1A186EEA12EF7618008E5F37 /* LayerTreeHost.h in Headers */,
 				BFA6179F12F0B99D0033E0CA /* WKViewPrivate.h in Headers */,
+				1A9636BD12F348490078A062 /* ShareableSurface.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3568,6 +3575,7 @@
 				1A186EEB12EF7618008E5F37 /* LayerTreeHost.cpp in Sources */,
 				1A18718512EF9877008E5F37 /* LayerTreeHostMac.mm in Sources */,
 				6501BD1A12F1243400E9F248 /* WKBundleInspector.cpp in Sources */,
+				1A9636BC12F348490078A062 /* ShareableSurface.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
