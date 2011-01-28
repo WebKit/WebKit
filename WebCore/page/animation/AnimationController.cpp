@@ -433,6 +433,9 @@ void AnimationControllerPrivate::removeFromStartTimeResponseWaitList(AnimationBa
         }
         prevAnimation = animation;
     }
+    
+    if (!m_startTimeResponseWaiters)
+        m_waitingForStartTimeResponse = false;
 }
 
 void AnimationControllerPrivate::startTimeResponse(double time)
