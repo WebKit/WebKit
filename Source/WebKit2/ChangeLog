@@ -1,3 +1,18 @@
+2011-01-28  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        <rdar://problem/8857651> Implement unregisterWorld for WebKit2
+        Rename unregisterWorld to clearWrappers.  Clearing the wrappers reduces the 
+        memory use of isolated worlds.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.cpp:
+        (WKBundleScriptWorldClearWrappers):
+        * WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.h:
+        * WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp:
+        (WebKit::InjectedBundleScriptWorld::clearWrappers):
+        * WebProcess/InjectedBundle/InjectedBundleScriptWorld.h:
+
 2011-01-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

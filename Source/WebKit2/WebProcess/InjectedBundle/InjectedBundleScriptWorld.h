@@ -47,6 +47,8 @@ public:
     virtual ~InjectedBundleScriptWorld();
 
     WebCore::DOMWrapperWorld* coreWorld() const;
+    
+    void clearWrappers();
 
 private:
     InjectedBundleScriptWorld(PassRefPtr<WebCore::DOMWrapperWorld>);

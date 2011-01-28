@@ -81,5 +81,10 @@ DOMWrapperWorld* InjectedBundleScriptWorld::coreWorld() const
 {
     return m_world.get();
 }
+    
+void InjectedBundleScriptWorld::clearWrappers()
+{
+    m_world->clearWrappers();
+}
 
 } // namespace WebKit

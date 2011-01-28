@@ -47,3 +47,8 @@ WKBundleScriptWorldRef WKBundleScriptWorldNormalWorld()
 {
     return toAPI(InjectedBundleScriptWorld::normalWorld());
 }
+
+void WKBundleScriptWorldClearWrappers(WKBundleScriptWorldRef scriptWorldRef)
+{
+    toImpl(scriptWorldRef)->clearWrappers();
+}
