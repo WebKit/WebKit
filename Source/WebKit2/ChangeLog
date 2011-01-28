@@ -2,6 +2,26 @@
 
         Reviewed by Sam Weinig.
 
+        Add an OBJC_CLASS macro for forward declaring an Objective-C class
+        https://bugs.webkit.org/show_bug.cgi?id=53337
+
+        * Shared/NativeWebKeyboardEvent.h:
+        * Shared/PrintInfo.h:
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.h:
+        * UIProcess/LayerBackedDrawingAreaProxy.h:
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        * UIProcess/mac/WebPopupMenuProxyMac.h:
+        * WebProcess/Downloads/Download.h:
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/WebPage/LayerBackedDrawingArea.h:
+        * WebProcess/WebPage/WebPage.h:
+        * config.h:
+
+2011-01-28  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Don't put config.h in the message headers.
 
         * Scripts/webkit2/messages.py:

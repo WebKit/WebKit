@@ -36,15 +36,10 @@
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
-#ifdef __OBJC__
-@class NSWindow;
-@class WKView;
-@class WebInspectorProxyObjCAdapter;
-#else
-class NSWindow;
-class WKView;
-class WebInspectorProxyObjCAdapter;
-#endif
+
+OBJC_CLASS NSWindow;
+OBJC_CLASS WKView;
+OBJC_CLASS WebInspectorProxyObjCAdapter;
 #endif
 
 namespace WebKit {

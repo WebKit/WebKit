@@ -35,11 +35,8 @@
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
-#ifdef __OBJC__
-@class CALayer;
-#else
-class CALayer;
-#endif
+OBJC_CLASS NSPopUpButtonCell;
+OBJC_CLASS WKView;
 typedef struct __WKCARemoteLayerClientRef *WKCARemoteLayerClientRef;
 #endif
 

@@ -33,13 +33,9 @@
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
-#ifdef __OBJC__
-@class CALayer;
-@class WKView;
-#else
-class CALayer;
-class WKView;
-#endif
+
+OBJC_CLASS CALayer;
+OBJC_CLASS WKView;
 #endif
 
 namespace WebKit {

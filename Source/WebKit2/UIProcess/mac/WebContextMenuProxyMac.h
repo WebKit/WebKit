@@ -29,13 +29,8 @@
 #include "WebContextMenuProxy.h"
 #include <wtf/RetainPtr.h>
 
-#ifdef __OBJC__
-@class NSPopUpButtonCell;
-@class WKView;
-#else
-class NSPopUpButtonCell;
-class WKView;
-#endif
+OBJC_CLASS NSPopUpButtonCell;
+OBJC_CLASS WKView;
 
 namespace WebKit {
 

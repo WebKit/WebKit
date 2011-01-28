@@ -28,11 +28,7 @@
 
 #include <wtf/Platform.h>
 
-#ifdef __OBJC__
-@class NSPrintInfo;
-#else
-class NSPrintInfo;
-#endif
+OBJC_CLASS NSPrintInfo;
 
 namespace CoreIPC {
     class ArgumentDecoder;

@@ -56,11 +56,7 @@
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
-#ifdef __OBJC__
-@class AccessibilityWebPageObject;
-#else
-class AccessibilityWebPageObject;
-#endif
+OBJC_CLASS AccessibilityWebPageObject;
 #endif
 
 namespace CoreIPC {

@@ -30,11 +30,7 @@
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
-#ifdef __OBJC__
-@class NSView;
-#else
-class NSView;
-#endif
+OBJC_CLASS NSView;
 #elif PLATFORM(QT)
 #include <QKeyEvent>
 #endif

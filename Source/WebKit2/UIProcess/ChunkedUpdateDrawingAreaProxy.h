@@ -31,11 +31,7 @@
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
-#ifdef __OBJC__
-@class WKView;
-#else
-class WKView;
-#endif
+OBJC_CLASS WKView;
 #elif PLATFORM(QT)
 #include <QImage>
 class QGraphicsWKView;
