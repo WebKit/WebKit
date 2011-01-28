@@ -40,6 +40,7 @@ namespace WebCore {
 
         void addClient(SVGElement*);
         void removeClient(SVGElement*);
+        void removeReferencedElement(SVGElement*);
 
         virtual bool isValid() const { return SVGTests::isValid(); }
 
