@@ -146,6 +146,10 @@ WK_EXPORT bool WKPreferencesGetAuthorAndUserStylesEnabled(WKPreferencesRef prefe
 WK_EXPORT void WKPreferencesSetShouldPrintBackgrounds(WKPreferencesRef preferences, bool shouldPrintBackgrounds);
 WK_EXPORT bool WKPreferencesGetShouldPrintBackgrounds(WKPreferencesRef preferences);
 
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetJavaScriptCanAccessClipboard(WKPreferencesRef preferencesRef, bool enabled);
+WK_EXPORT bool WKPreferencesGetJavaScriptCanAccessClipboard(WKPreferencesRef preferencesRef);
+
 #ifdef __cplusplus
 }
 #endif

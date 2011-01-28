@@ -459,3 +459,13 @@ bool WKPreferencesGetDOMPasteAllowed(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->domPasteAllowed();
 }
+
+void WKPreferencesSetJavaScriptCanAccessClipboard(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setJavaScriptCanAccessClipboard(enabled);
+}
+
+bool WKPreferencesGetJavaScriptCanAccessClipboard(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->javaScriptCanAccessClipboard();
+}

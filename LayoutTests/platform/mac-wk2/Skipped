@@ -56,6 +56,24 @@ compositing/iframes/iframe-src-change.html
 
 # WebKitTestRunner needs an implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
+editing/pasteboard/emacs-ctrl-k-y-001.html
+editing/pasteboard/drag-drop-dead-frame.html
+editing/pasteboard/drag-drop-modifies-page.html
+editing/pasteboard/drag-selected-image-to-contenteditable.html
+editing/pasteboard/drop-link.html
+editing/pasteboard/drop-text-events-sideeffect.html
+editing/pasteboard/drop-text-events.html
+editing/pasteboard/drop-text-without-selection.html
+editing/pasteboard/emacs-ctrl-a-k-y.html
+editing/pasteboard/smart-drag-drop.html
+editing/pasteboard/smart-paste-001.html
+editing/pasteboard/smart-paste-002.html
+editing/pasteboard/smart-paste-003.html
+editing/pasteboard/smart-paste-004.html
+editing/pasteboard/smart-paste-005.html
+editing/pasteboard/smart-paste-007.html
+editing/pasteboard/smart-paste-008.html
+editing/pasteboard/subframe-dragndrop-1.html
 inspector/timeline-event-dispatch.html
 fast/text/offsetForPosition-complex-fallback.html
 svg/animations/animate-path-to-animation.html
@@ -1091,150 +1109,11 @@ http/tests/navigation/ping-same-origin.html
 loader/go-back-to-different-window-size.html
 media/restore-from-page-cache.html
 
-# execCommand("Paste") doesn't work in WebKitTestRunner
-# <https://bugs.webkit.org/show_bug.cgi?id=52785>
-editing/pasteboard/copy-null-characters.html
-editing/execCommand/4128080-2.html
-editing/execCommand/5939887.html
-editing/execCommand/copy-without-selection.html
-editing/execCommand/enabling-and-selection.html
-editing/execCommand/paste-1.html
-editing/execCommand/paste-2.html
-editing/execCommand/paste-and-match-style-event.html 
-editing/pasteboard/19644-1.html 
-editing/pasteboard/19644-2.html
-editing/pasteboard/3976872.html
-editing/pasteboard/4076267-2.html
-editing/pasteboard/4076267-3.html
-editing/pasteboard/4076267.html
-editing/pasteboard/4242293-1.html
-editing/pasteboard/4242293.html
-editing/pasteboard/4641033.html
-editing/pasteboard/4922709.html
-editing/pasteboard/4944770-1.html
-editing/pasteboard/4989774.html 
-editing/pasteboard/5006779.html
-editing/pasteboard/5027857.html
-editing/pasteboard/5028447.html
-editing/pasteboard/5065605.html
-editing/pasteboard/5071074.html
-editing/pasteboard/5075944-2.html
-editing/pasteboard/5075944.html
-editing/pasteboard/5247341.html
-editing/pasteboard/5368833.html
-editing/pasteboard/5478250.html
-editing/pasteboard/5601583-1.html
-editing/pasteboard/5665299.html
-editing/pasteboard/5761530-1.html
-editing/pasteboard/5780697-2.html
-editing/pasteboard/block-wrappers-necessary.html
-editing/pasteboard/copy-backslash-with-euc.html
-editing/pasteboard/copy-in-password-field.html
-editing/pasteboard/copy-paste-bidi.html
-editing/pasteboard/copy-paste-float.html
-editing/pasteboard/copy-resolves-urls.html
-editing/pasteboard/copy-standalone-image.html
-editing/pasteboard/cut-text-001.html
-editing/pasteboard/display-block-on-spans.html
-editing/pasteboard/drag-drop-dead-frame.html
-editing/pasteboard/drag-drop-modifies-page.html
-editing/pasteboard/drag-selected-image-to-contenteditable.html
-editing/pasteboard/drop-link.html
-editing/pasteboard/drop-text-events-sideeffect.html
-editing/pasteboard/drop-text-events.html
-editing/pasteboard/drop-text-without-selection.html
-editing/pasteboard/emacs-ctrl-a-k-y.html
-editing/pasteboard/emacs-ctrl-k-y-001.html
-editing/pasteboard/get-data-text-plain-paste.html
-editing/pasteboard/input-field-1.html
-editing/pasteboard/page-zoom.html
-editing/pasteboard/paste-4035648-fix.html
-editing/pasteboard/paste-4038267-fix.html
-editing/pasteboard/paste-4039777-fix.html
-editing/pasteboard/paste-blockquote-before-blockquote.html
-editing/pasteboard/paste-double-nested-blockquote-before-blockquote.html
-editing/pasteboard/paste-event-only-once.html
-editing/pasteboard/paste-line-endings-001.html
-editing/pasteboard/paste-line-endings-002.html
-editing/pasteboard/paste-line-endings-003.html
-editing/pasteboard/paste-line-endings-004.html
-editing/pasteboard/paste-line-endings-005.html
-editing/pasteboard/paste-line-endings-006.html
-editing/pasteboard/paste-line-endings-007.html
-editing/pasteboard/paste-line-endings-008.html
-editing/pasteboard/paste-line-endings-009.html
-editing/pasteboard/paste-line-endings-010.html
-editing/pasteboard/paste-list-001.html
-editing/pasteboard/paste-list-002.html
-editing/pasteboard/paste-list-003.html
-editing/pasteboard/paste-list-004.html
-editing/pasteboard/paste-match-style-001.html
-editing/pasteboard/paste-match-style-002.html
-editing/pasteboard/paste-noscript-svg.html
-editing/pasteboard/paste-noscript-xhtml.xhtml
-editing/pasteboard/paste-noscript.html
-editing/pasteboard/paste-plaintext-user-select-none.html
-editing/pasteboard/paste-pre-001.html
-editing/pasteboard/paste-pre-002.html
-editing/pasteboard/paste-RTFD.html
-editing/pasteboard/paste-table-001.html
-editing/pasteboard/paste-table-002.html
-editing/pasteboard/paste-table-003.html
-editing/pasteboard/paste-table-cells.html
-editing/pasteboard/paste-text-001.html
-editing/pasteboard/paste-text-002.html
-editing/pasteboard/paste-text-003.html
-editing/pasteboard/paste-text-004.html
-editing/pasteboard/paste-text-005.html
-editing/pasteboard/paste-text-006.html
-editing/pasteboard/paste-text-007.html
-editing/pasteboard/paste-text-008.html
-editing/pasteboard/paste-text-009.html
-editing/pasteboard/paste-text-010.html
-editing/pasteboard/paste-text-011.html
-editing/pasteboard/paste-text-012.html
-editing/pasteboard/paste-text-013.html
-editing/pasteboard/paste-text-014.html
-editing/pasteboard/paste-text-015.html
-editing/pasteboard/paste-text-016.html
-editing/pasteboard/paste-text-017.html
-editing/pasteboard/paste-text-018.html
-editing/pasteboard/paste-text-019.html
-editing/pasteboard/paste-text-at-tabspan-001.html
-editing/pasteboard/paste-text-at-tabspan-002.html
-editing/pasteboard/paste-text-at-tabspan-003.html
-editing/pasteboard/paste-text-events.html
-editing/pasteboard/paste-TIFF.html
-editing/pasteboard/paste-unrendered-select.html 
-editing/pasteboard/paste-visible-script.html
-editing/pasteboard/paste-xml.xhtml
-editing/pasteboard/pasting-tabs.html
-editing/pasteboard/select-element-1.html
-editing/pasteboard/smart-drag-drop.html
-editing/pasteboard/smart-paste-001.html
-editing/pasteboard/smart-paste-002.html
-editing/pasteboard/smart-paste-003-trailing-whitespace.html
-editing/pasteboard/smart-paste-003.html
-editing/pasteboard/smart-paste-004.html
-editing/pasteboard/smart-paste-005.html
-editing/pasteboard/smart-paste-006.html
-editing/pasteboard/smart-paste-007.html
-editing/pasteboard/smart-paste-008.html
-editing/pasteboard/styled-element-markup.html
-editing/pasteboard/subframe-dragndrop-1.html
-editing/pasteboard/testcase-9507.html
-editing/pasteboard/undoable-fragment-removes.html
-editing/style/5065910.html
-editing/style/apply-through-end-of-document.html
-editing/style/font-family-with-space.html
-fast/forms/plaintext-mode-1.html
-fast/forms/plaintext-mode-2.html
-fast/forms/textarea-paste-newline.html
-http/tests/misc/copy-resolves-urls.html
-platform/mac/editing/pasteboard/text-precomposed.html
-
 # execCommand("undo") doesn't work in WebKit2
 # <rdar://problem/8862023>
+fast/forms/input-paste-undo.html
+editing/pasteboard/undoable-fragment-removes.html
+fast/forms/plaintext-mode-1.html
 editing/deleting/delete-and-undo.html
 editing/execCommand/format-block-multiple-paragraphs-in-pre.html
 editing/execCommand/convert-style-elements-to-spans.html
@@ -2290,6 +2169,12 @@ storage/multiple-databases-garbage-collection.html
 inspector/timeline-paint.html
 inspector/timeline-script-tag-1.html
 
+# Crashes the WebProcess
+editing/pasteboard/copy-standalone-image.html
+
+# Mysterious failure after enabling paste tests
+platform/mac/editing/pasteboard/text-precomposed.html
+
 ### END OF (3) Unclassified failures
 ########################################
 
@@ -2321,6 +2206,11 @@ platform/mac/editing/pasteboard/5583362.html
 platform/mac/plugins/jsobjc-dom-wrappers.html
 platform/mac/plugins/jsobjc-simple.html
 platform/mac/plugins/throw-on-dealloc.html
+
+# WebKitTestRunner doesn't have objCPlugin
+# (but these tests sound like things we may want to test another way)
+editing/pasteboard/paste-RTFD.html
+editing/pasteboard/paste-TIFF.html
 
 # WebKitTestRunner doesn't have eventSender.enableDOMUIEventLogging
 platform/mac/fast/events/objc-event-api.html

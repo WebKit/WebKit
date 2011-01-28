@@ -1,3 +1,20 @@
+2011-01-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler.
+
+        execCommand("Paste") doesn't work in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=52785
+        
+        Thread through the new JavaScriptCanAccessClipboard setting.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetJavaScriptCanAccessClipboard):
+        (WKPreferencesGetJavaScriptCanAccessClipboard):
+        * UIProcess/API/C/WKPreferences.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2011-01-27  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.

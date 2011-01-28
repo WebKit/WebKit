@@ -65,6 +65,7 @@ namespace WebKit {
     macro(AuthorAndUserStylesEnabled, authorAndUserStylesEnabled, Bool, bool, true) \
     macro(PaginateDuringLayoutEnabled, paginateDuringLayoutEnabled, Bool, bool, false) \
     macro(DOMPasteAllowed, domPasteAllowed, Bool, bool, false) \
+    macro(JavaScriptCanAccessClipboard, javaScriptCanAccessClipboard, Bool, bool, false) \
     macro(ShouldPrintBackgrounds, shouldPrintBackgrounds, Bool, bool, false) \
     \
 
