@@ -1,3 +1,21 @@
+2011-01-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed, rolling out r76839.
+        http://trac.webkit.org/changeset/76839
+        https://bugs.webkit.org/show_bug.cgi?id=49744
+
+        broke pixel tests
+
+        * editing/selection/caret-painting-after-paste-undo-rtl.html: Removed.
+        * editing/selection/caret-painting-after-paste-undo.html: Removed.
+        * platform/mac/editing/deleting/5408255-expected.png:
+        * platform/mac/editing/selection/caret-painting-after-paste-undo-expected.checksum: Removed.
+        * platform/mac/editing/selection/caret-painting-after-paste-undo-expected.png: Removed.
+        * platform/mac/editing/selection/caret-painting-after-paste-undo-expected.txt: Removed.
+        * platform/mac/editing/selection/caret-painting-after-paste-undo-rtl-expected.checksum: Removed.
+        * platform/mac/editing/selection/caret-painting-after-paste-undo-rtl-expected.png: Removed.
+        * platform/mac/editing/selection/caret-painting-after-paste-undo-rtl-expected.txt: Removed.
+
 2011-01-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin Adler.

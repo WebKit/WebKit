@@ -2960,16 +2960,12 @@ IntRect RenderBox::localCaretRect(InlineBox* box, int caretOffset, int* extraWid
     // They never refer to children.
     // FIXME: Paint the carets inside empty blocks differently than the carets before/after elements.
 
+    // FIXME: What about border and padding?
     IntRect rect(x(), y(), caretWidth, height());
     bool ltr = box ? box->isLeftToRightDirection() : style()->isLeftToRightDirection();
 
-    if (isTable()) {
-        if ((!caretOffset) ^ ltr)
-            rect.move(IntSize(width() - caretWidth, 0));
-    } else if ((!caretOffset) ^ ltr)
-        rect.move(IntSize(width() - caretWidth - borderRight() - paddingRight(), borderTop() + paddingTop()));
-    else
-        rect.move(IntSize(borderLeft() + paddingLeft(), borderTop() + paddingTop()));
+    if ((!caretOffset) ^ ltr)
+        rect.move(IntSize(width() - caretWidth, 0));
 
     if (box) {
         RootInlineBox* rootBox = box->root();

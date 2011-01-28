@@ -1,3 +1,14 @@
+2011-01-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed, rolling out r76839.
+        http://trac.webkit.org/changeset/76839
+        https://bugs.webkit.org/show_bug.cgi?id=49744
+
+        broke pixel tests
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::localCaretRect):
+
 2011-01-27  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Darin Adler.
