@@ -731,28 +731,31 @@ class TestRunner:
             except Queue.Empty:
                 return
 
-            expected = self._expectations.matches_an_expected_result(
-                result.filename, result.type, self._options.pixel_tests)
-            result_summary.add(result, expected)
-            exp_str = self._expectations.get_expectations_string(
-                result.filename)
-            got_str = self._expectations.expectation_to_string(result.type)
-            self._printer.print_test_result(result, expected, exp_str, got_str)
-            self._printer.print_progress(result_summary, self._retrying,
-                                         self._test_files_list)
+            self._update_summary_with_result(result_summary, result)
 
-            def interrupt_if_at_failure_limit(limit, count, message):
-                if limit and count >= limit:
-                    raise TestRunInterruptedException(message % count)
+    def _update_summary_with_result(self, result_summary, result):
+        expected = self._expectations.matches_an_expected_result(
+            result.filename, result.type, self._options.pixel_tests)
+        result_summary.add(result, expected)
+        exp_str = self._expectations.get_expectations_string(
+            result.filename)
+        got_str = self._expectations.expectation_to_string(result.type)
+        self._printer.print_test_result(result, expected, exp_str, got_str)
+        self._printer.print_progress(result_summary, self._retrying,
+                                        self._test_files_list)
 
-            interrupt_if_at_failure_limit(
-                self._options.exit_after_n_failures,
-                result_summary.unexpected_failures,
-                "Aborting run since %d failures were reached")
-            interrupt_if_at_failure_limit(
-                self._options.exit_after_n_crashes_or_timeouts,
-                result_summary.unexpected_crashes_or_timeouts,
-                "Aborting run since %d crashes or timeouts were reached")
+        def interrupt_if_at_failure_limit(limit, count, message):
+            if limit and count >= limit:
+                raise TestRunInterruptedException(message % count)
+
+        interrupt_if_at_failure_limit(
+            self._options.exit_after_n_failures,
+            result_summary.unexpected_failures,
+            "Aborting run since %d failures were reached")
+        interrupt_if_at_failure_limit(
+            self._options.exit_after_n_crashes_or_timeouts,
+            result_summary.unexpected_crashes_or_timeouts,
+            "Aborting run since %d crashes or timeouts were reached")
 
     def _clobber_old_results(self):
         # Just clobber the actual test results directories since the other

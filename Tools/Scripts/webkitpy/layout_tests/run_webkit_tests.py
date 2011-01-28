@@ -30,8 +30,6 @@
 
 """Run layout tests."""
 
-from __future__ import with_statement
-
 import errno
 import logging
 import optparse
@@ -127,6 +125,9 @@ def _set_up_derived_options(port_obj, options):
     """Sets the options values that depend on other options values."""
     # We return a list of warnings to print after the printer is initialized.
     warnings = []
+
+    if options.worker_model is None:
+        options.worker_model = port_obj.default_worker_model()
 
     if options.worker_model == 'old-inline':
         if options.child_processes and int(options.child_processes) > 1:
@@ -368,8 +369,8 @@ def parse_args(args=None):
             help="Number of DumpRenderTrees to run in parallel."),
         # FIXME: Display default number of child processes that will run.
         optparse.make_option("--worker-model", action="store",
-            default="old-threads", help=("controls worker model. Valid values "
-            "are 'old-inline', 'old-threads'.")),
+            default=None, help=("controls worker model. Valid values "
+                                "are 'old-inline', 'old-threads'.")),
         optparse.make_option("--experimental-fully-parallel",
             action="store_true", default=False,
             help="run all tests in parallel"),

@@ -52,7 +52,7 @@ class MacPort(WebKitPort):
         # four threads in parallel.
         # See https://bugs.webkit.org/show_bug.cgi?id=36622
         child_processes = WebKitPort.default_child_processes(self)
-        if child_processes > 4:
+        if self.get_option('worker_model') == 'old-threads' and child_processes > 4:
             return 4
         return child_processes
 
