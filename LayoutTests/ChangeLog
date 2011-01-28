@@ -1,3 +1,14 @@
+2011-01-28  Jessie Berlin  <jberlin@apple.com>
+
+        [Windows 7 Release Tests] fast/text/justify-ideograph-complex/simple/vertical.html failing since introduction in r76743.
+        https://bugs.webkit.org/show_bug.cgi?id=53321
+
+        Unreviewed, checking in failing expected results to get the Windows 7 Release Tests bots green.
+
+        * platform/win/fast/text/justify-ideograph-complex-expected.txt: Added.
+        * platform/win/fast/text/justify-ideograph-simple-expected.txt: Added.
+        * platform/win/fast/text/justify-ideograph-vertical-expected.txt: Added.
+
 2011-01-28  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Remove now-passing test from expectations.
