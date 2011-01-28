@@ -1,5 +1,25 @@
 2011-01-27  Mark Rowe  <mrowe@apple.com>
 
+        Merge r75851.
+
+    2011-01-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        WebCore part of <rdar://problem/8441312> Crash in -[NSView _invalidateGStatesForTree]
+
+        * WebCore.exp.in: Export RenderWidget::suspendWidgetHierarchyUpdates() and
+        RenderWidget::resumeWidgetHierarchyUpdates().
+        * manual-tests/plug-in-mutates-NSView-hierarchy-during-resize.html: Added.
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::setWidgetGeometry): Removed the assertion that widget hierarchy updates
+        are disabled. When this assertion was added, this condition was a subset of the “calling out to
+        plug-in code is forbidden” condition, hence the assertion was valid. The WebKit part of this
+        change now suspends widget hierarchy updates even at times where plug-in code is expected to be
+        called, which invalidates the assertion.
+
+2011-01-27  Mark Rowe  <mrowe@apple.com>
+
         Merge r71426.
 
     2010-11-04  Alexey Proskuryakov  <ap@apple.com>

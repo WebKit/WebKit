@@ -103,6 +103,7 @@
 #import <WebCore/Page.h>
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/Range.h>
+#import <WebCore/RenderWidget.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SelectionController.h>
 #import <WebCore/SharedBuffer.h>
@@ -223,6 +224,7 @@ extern NSString *NSTextInputReplacementRangeAttributeName;
 - (NSRect)_dirtyRect;
 - (void)_setDrawsOwnDescendants:(BOOL)drawsOwnDescendants;
 - (BOOL)_drawnByAncestor;
+- (void)_invalidateGStatesForTree;
 - (void)_propagateDirtyRectsToOpaqueAncestors;
 - (void)_windowChangedKeyState;
 #if USE(ACCELERATED_COMPOSITING) && defined(BUILDING_ON_LEOPARD)
@@ -452,7 +454,7 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     
     id savedSubviews;
     BOOL subviewsSetAside;
-    
+
 #if USE(ACCELERATED_COMPOSITING)
     NSView *layerHostingView;
 #endif
@@ -3393,6 +3395,17 @@ WEBCORE_COMMAND(yankAndSelect)
     NSRect visibleRect = [super visibleRect];
     [clipView setAdditionalClip:additionalClip];
     return visibleRect;
+}
+
+- (void)_invalidateGStatesForTree
+{
+    // AppKit is in the process of traversing the NSView tree, and is going to send -renewGState to
+    // descendants, including plug-in views. This can result in calls out to plug-in code and back into
+    // WebCore via JavaScript, which could normally mutate the NSView tree while it is being traversed.
+    // Defer those mutations while descendants are being traveresed.
+    RenderWidget::suspendWidgetHierarchyUpdates();
+    [super _invalidateGStatesForTree];
+    RenderWidget::resumeWidgetHierarchyUpdates();
 }
 
 - (BOOL)isFlipped 
