@@ -1,3 +1,12 @@
+2011-01-28  Jessie Berlin  <jberlin@apple.com>
+
+        [Windows 7 Release Tests] fast/repaint/select-option-background-color.html failing since introduction in r76826
+        https://bugs.webkit.org/show_bug.cgi?id=53327
+
+        Unreviewed, adding Windows-specific results to get the Windows 7 Release Test bot green.
+
+        * platform/win/fast/repaint/select-option-background-color-expected.txt: Added.
+
 2011-01-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed Chromium rebaselines.
