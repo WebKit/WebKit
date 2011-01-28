@@ -1,3 +1,13 @@
+2011-01-28  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        We should hold RefPtrs to SVG font faces
+        https://bugs.webkit.org/show_bug.cgi?id=53270
+
+        * svg/custom/use-multiple-on-nested-disallowed-font-expected.txt: Added.
+        * svg/custom/use-multiple-on-nested-disallowed-font.html: Added.
+
 2011-01-28  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

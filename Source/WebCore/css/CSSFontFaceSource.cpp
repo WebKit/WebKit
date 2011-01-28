@@ -168,7 +168,7 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
 #if ENABLE(SVG_FONTS)
             // In-Document SVG Fonts
             if (m_svgFontFaceElement)
-                fontData.set(new SimpleFontData(adoptPtr(new SVGFontData(m_svgFontFaceElement)), fontDescription.computedPixelSize(), syntheticBold, syntheticItalic));
+                fontData.set(new SimpleFontData(adoptPtr(new SVGFontData(m_svgFontFaceElement.get())), fontDescription.computedPixelSize(), syntheticBold, syntheticItalic));
 #endif
         }
     } else {
@@ -190,6 +190,16 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
 }
 
 #if ENABLE(SVG_FONTS)
+SVGFontFaceElement* CSSFontFaceSource::svgFontFaceElement() const
+{
+    return m_svgFontFaceElement.get();
+}
+
+void CSSFontFaceSource::setSVGFontFaceElement(PassRefPtr<SVGFontFaceElement> element) 
+{ 
+    m_svgFontFaceElement = element;
+}
+
 bool CSSFontFaceSource::isSVGFontFaceSource() const
 {
     return m_svgFontFaceElement || (m_font && m_font->isSVGFont());

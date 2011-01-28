@@ -261,6 +261,11 @@ String SVGFontFaceElement::fontFamily() const
     return m_styleDeclaration->getPropertyValue(CSSPropertyFontFamily);
 }
 
+SVGFontElement* SVGFontFaceElement::associatedFontElement() const
+{
+    return m_fontElement.get();
+}
+
 void SVGFontFaceElement::rebuildFontFace()
 {
     if (!inDocument())
