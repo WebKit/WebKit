@@ -109,7 +109,8 @@ var typeInfos = [
       return typeInfo.srcValues[index] == value;
     },
     srcValues: [16, 15, 14],
-    srcValuesBad: [],
+    srcValuesLess: [],
+    srcValuesNonMultiple: null,
   },
   { type: 'vec2',
     jsTypeOf: 'Float32Array',
@@ -140,7 +141,8 @@ var typeInfos = [
              typeInfo.srcValues[index * 2 + 1] == value[1];
     },
     srcValues: [16, 15, 14, 13, 12, 11],
-    srcValuesBad: [16],
+    srcValuesLess: [16],
+    srcValuesNonMultiple: [16, 15, 14, 13, 12, 11, 10],
   },
   { type: 'vec3',
     jsTypeOf: 'Float32Array',
@@ -174,7 +176,8 @@ var typeInfos = [
              typeInfo.srcValues[index * 3 + 2] == value[2];
     },
     srcValues: [16, 15, 14, 13, 12, 11, 10, 9, 8],
-    srcValuesBad: [16, 15],
+    srcValuesLess: [16, 15],
+    srcValuesNonMultiple: [16, 15, 14, 13, 12, 11, 10, 9, 8, 7],
   },
   { type: 'vec4',
     jsTypeOf: 'Float32Array',
@@ -211,7 +214,8 @@ var typeInfos = [
              typeInfo.srcValues[index * 4 + 3] == value[3];
     },
     srcValues: [16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5],
-    srcValuesBad: [16, 15, 14],
+    srcValuesLess: [16, 15, 14],
+    srcValuesNonMultiple: [16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4],
   }
 ];
 
@@ -231,33 +235,39 @@ for (var tt = 0; tt < typeInfos.length; ++tt) {
             "uniform name is 'color[0]' not 'color' as per OpenGL ES 2.0.24 section 2.10");
   var loc = gl.getUniformLocation(program, "color[0]");
   var srcValues = typeInfo.srcValues;
-  var srcValuesBad = typeInfo.srcValuesBad;
+  var srcValuesLess = typeInfo.srcValuesLess;
+  var srcValuesNonMultiple = typeInfo.srcValuesNonMultiple;
 
   // Try setting the value before using the program
   gl[typeInfo.setter](loc, srcValues);
   glErrorShouldBe(gl, gl.INVALID_OPERATION,
-            "should fail if there is no current program");
+                  "should fail if there is no current program");
 
   gl.useProgram(program);
-  gl[typeInfo.setter](loc, srcValuesBad);
+  gl[typeInfo.setter](loc, srcValuesLess);
   glErrorShouldBe(gl, gl.INVALID_VALUE,
-            "should fail with insufficient array size with gl." + typeInfo.setter);
+                  "should fail with insufficient array size with gl." + typeInfo.setter);
+  if (srcValuesNonMultiple) {
+    gl[typeInfo.setter](loc, srcValuesNonMultiple);
+    glErrorShouldBe(gl, gl.INVALID_VALUE,
+                    "should fail with non-multiple array size with gl." + typeInfo.setter);
+  }
   gl[typeInfo.setter](loc, srcValues);
   glErrorShouldBe(gl, gl.NO_ERROR,
-            "can set an array of uniforms with gl." + typeInfo.setter);
+                  "can set an array of uniforms with gl." + typeInfo.setter);
   var values = gl.getUniform(program, loc);
   glErrorShouldBe(gl, gl.NO_ERROR,
-            "can call gl.getUniform");
+                  "can call gl.getUniform");
   assertMsg(typeInfo.checkType(values),
             "gl.getUniform returns the correct type.");
   for (var ii = 0; ii < typeInfo.numSrcValues; ++ii) {
     var elemLoc = gl.getUniformLocation(program, "color[" + ii + "]");
     glErrorShouldBe(gl, gl.NO_ERROR,
-              "can get location of element " + ii +
-              " of array from gl.getUniformLocation");
+                    "can get location of element " + ii +
+                    " of array from gl.getUniformLocation");
     var value = gl.getUniform(program, elemLoc);
     glErrorShouldBe(gl, gl.NO_ERROR,
-              "can get value of element " + ii + " of array from gl.getUniform");
+                    "can get value of element " + ii + " of array from gl.getUniform");
     assertMsg(typeInfo.checkValue(typeInfo, ii, value),
               "value put in (" + typeInfo.srcValueAsString(ii, srcValues) +
               ") matches value pulled out (" +
@@ -265,7 +275,7 @@ for (var tt = 0; tt < typeInfos.length; ++tt) {
   }
   typeInfo.invalidSet(loc);
   glErrorShouldBe(gl, gl.INVALID_OPERATION,
-            "using the wrong size of gl.Uniform fails");
+                  "using the wrong size of gl.Uniform fails");
   var exceptionCaught = false;
   if (typeInfo.illegalSet) {
     try {
@@ -278,7 +288,7 @@ for (var tt = 0; tt < typeInfos.length; ++tt) {
 
   gl.useProgram(null);
   glErrorShouldBe(gl, gl.NO_ERROR,
-            "can call gl.useProgram(null)");
+                  "can call gl.useProgram(null)");
 }
 debug("");
 successfullyParsed = true;

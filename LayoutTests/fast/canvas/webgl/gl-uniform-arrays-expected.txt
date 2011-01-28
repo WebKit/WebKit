@@ -29,6 +29,7 @@ PASS 1 uniform found
 PASS uniform name is 'color[0]' not 'color' as per OpenGL ES 2.0.24 section 2.10
 PASS getError was expected value: INVALID_OPERATION : should fail if there is no current program
 PASS getError was expected value: INVALID_VALUE : should fail with insufficient array size with gl.uniform2fv
+PASS getError was expected value: INVALID_VALUE : should fail with non-multiple array size with gl.uniform2fv
 PASS getError was expected value: NO_ERROR : can set an array of uniforms with gl.uniform2fv
 PASS getError was expected value: NO_ERROR : can call gl.getUniform
 PASS gl.getUniform returns the correct type.
@@ -50,6 +51,7 @@ PASS 1 uniform found
 PASS uniform name is 'color[0]' not 'color' as per OpenGL ES 2.0.24 section 2.10
 PASS getError was expected value: INVALID_OPERATION : should fail if there is no current program
 PASS getError was expected value: INVALID_VALUE : should fail with insufficient array size with gl.uniform3fv
+PASS getError was expected value: INVALID_VALUE : should fail with non-multiple array size with gl.uniform3fv
 PASS getError was expected value: NO_ERROR : can set an array of uniforms with gl.uniform3fv
 PASS getError was expected value: NO_ERROR : can call gl.getUniform
 PASS gl.getUniform returns the correct type.
@@ -71,6 +73,7 @@ PASS 1 uniform found
 PASS uniform name is 'color[0]' not 'color' as per OpenGL ES 2.0.24 section 2.10
 PASS getError was expected value: INVALID_OPERATION : should fail if there is no current program
 PASS getError was expected value: INVALID_VALUE : should fail with insufficient array size with gl.uniform4fv
+PASS getError was expected value: INVALID_VALUE : should fail with non-multiple array size with gl.uniform4fv
 PASS getError was expected value: NO_ERROR : can set an array of uniforms with gl.uniform4fv
 PASS getError was expected value: NO_ERROR : can call gl.getUniform
 PASS gl.getUniform returns the correct type.

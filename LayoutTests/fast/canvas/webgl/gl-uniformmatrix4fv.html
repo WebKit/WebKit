@@ -40,22 +40,29 @@ debug("Checking gl.uniformMatrix.");
 gl = initWebGL("example", "vshader", "fshader", [ "vPosition"], [ 0, 0, 0, 1 ], 1);
 for (var ii = 2; ii <= 4; ++ii) {
   var loc = gl.getUniformLocation(gl.program, "world" + ii);
-  var mat = [];
+  var matLess = [];
   for (var jj = 0; jj < ii; ++jj) {
     for (var ll = 0; ll < ii; ++ll) {
       if (jj == ii - 1 && ll == ii - 1)
         continue;
-      mat[jj * ii + ll] = (jj == ll) ? 1 : 0;
+      matLess[jj * ii + ll] = (jj == ll) ? 1 : 0;
     }
   }
+  var mat = matLess.concat([1]);
+  var matMore = mat.concat([1]);
   name = "uniformMatrix" + ii + "fv";
+  gl[name](loc, false, matLess);
+  glErrorShouldBe(gl, gl.INVALID_VALUE, "should fail with insufficient array size for " + name);
   gl[name](loc, false, mat);
-  assertMsg(gl.getError() == gl.INVALID_VALUE, "should fail with insufficient array size for " + name);
+  glErrorShouldBe(gl, gl.NO_ERROR, "should succeed with correct array size for " + name);
+  gl[name](loc, false, matMore);
+  glErrorShouldBe(gl, gl.INVALID_VALUE, "should fail with more than 1 array size for " + name);
+
   mat[ii * ii - 1] = 1;
   gl[name](loc, false, mat);
-  assertMsg(gl.getError() == gl.NO_ERROR, "can call " + name + "with transpose = false");
+  glErrorShouldBe(gl, gl.NO_ERROR, "can call " + name + "with transpose = false");
   gl[name](loc, true, mat);
-  assertMsg(gl.getError() == gl.INVALID_VALUE, name + " should return INVALID_VALUE with transpose = true");
+  glErrorShouldBe(gl, gl.INVALID_VALUE, name + " should return INVALID_VALUE with transpose = true");
 }
 
 debug("");

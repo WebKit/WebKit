@@ -4390,7 +4390,7 @@ bool WebGLRenderingContext::validateUniformMatrixParameters(const WebGLUniformLo
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return false;
     }
-    if (size < requiredMinSize) {
+    if (size < requiredMinSize || (size % requiredMinSize)) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return false;
     }
