@@ -24,12 +24,9 @@ PASS gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, g
 PASS gl.getProgramParameter(standardProgram, gl.DELETE_STATUS) is false
 PASS gl.getProgramParameter(standardProgram, gl.LINK_STATUS) is true
 PASS typeof gl.getProgramParameter(standardProgram, gl.VALIDATE_STATUS) is "boolean"
-PASS typeof gl.getProgramParameter(standardProgram, gl.INFO_LOG_LENGTH) is "number"
 PASS gl.getProgramParameter(standardProgram, gl.ATTACHED_SHADERS) is 2
 PASS gl.getProgramParameter(standardProgram, gl.ACTIVE_ATTRIBUTES) is 2
-PASS gl.getProgramParameter(standardProgram, gl.ACTIVE_ATTRIBUTE_MAX_LENGTH) is non-zero.
 PASS gl.getProgramParameter(standardProgram, gl.ACTIVE_UNIFORMS) is 1
-PASS gl.getProgramParameter(standardProgram, gl.ACTIVE_UNIFORM_MAX_LENGTH) is non-zero.
 PASS gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_WIDTH) is 2
 PASS gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_HEIGHT) is 2
 PASS gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_INTERNAL_FORMAT) is non-zero.
@@ -43,8 +40,6 @@ PASS gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_ALPHA_SIZE) is
 PASS gl.getShaderParameter(standardVert, gl.SHADER_TYPE) is gl.VERTEX_SHADER
 PASS gl.getShaderParameter(standardVert, gl.DELETE_STATUS) is false
 PASS gl.getShaderParameter(standardVert, gl.COMPILE_STATUS) is true
-PASS typeof gl.getShaderParameter(standardVert, gl.INFO_LOG_LENGTH) is "number"
-PASS gl.getShaderParameter(standardVert, gl.SHADER_SOURCE_LENGTH) is non-zero.
 PASS gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER) is gl.NEAREST
 PASS gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER) is gl.NEAREST
 PASS gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S) is gl.CLAMP_TO_EDGE

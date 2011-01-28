@@ -21,15 +21,11 @@ var canvas = document.getElementById("example");
 var gl = wtu.create3DContext(canvas);
 var original = document.getElementById("vshader").text;
 var shader = gl.createShader(gl.VERTEX_SHADER);
-var sourceLength = gl.getShaderParameter(shader, gl.SHADER_SOURCE_LENGTH);
-shouldBe("sourceLength", "0");
 gl.shaderSource(shader, original);
 var source = gl.getShaderSource(shader);
 shouldBe("source", "original");
-sourceLength = gl.getShaderParameter(shader, gl.SHADER_SOURCE_LENGTH);
-shouldBe("sourceLength", "17");
-successfullyParsed = true;
 glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors.");
+successfullyParsed = true;
 </script>
 </body>
 </body>

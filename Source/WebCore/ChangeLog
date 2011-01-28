@@ -1,3 +1,15 @@
+2011-01-27  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Remove _LENGTH enumerants
+        https://bugs.webkit.org/show_bug.cgi?id=53259
+
+        * html/canvas/WebGLRenderingContext.cpp: Remove queries for *LENGTH.
+        (WebCore::WebGLRenderingContext::getProgramParameter):
+        (WebCore::WebGLRenderingContext::getShaderParameter):
+        * html/canvas/WebGLRenderingContext.idl: Remove *LENGTH.
+
 2011-01-28  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -258,9 +258,7 @@ module html {
         const unsigned int VALIDATE_STATUS                  = 0x8B83;
         const unsigned int ATTACHED_SHADERS                 = 0x8B85;
         const unsigned int ACTIVE_UNIFORMS                  = 0x8B86;
-        const unsigned int ACTIVE_UNIFORM_MAX_LENGTH        = 0x8B87;
         const unsigned int ACTIVE_ATTRIBUTES                = 0x8B89;
-        const unsigned int ACTIVE_ATTRIBUTE_MAX_LENGTH      = 0x8B8A;
         const unsigned int SHADING_LANGUAGE_VERSION         = 0x8B8C;
         const unsigned int CURRENT_PROGRAM                  = 0x8B8D;
 
@@ -389,8 +387,6 @@ module html {
 
         /* Shader Source */
         const unsigned int COMPILE_STATUS                 = 0x8B81;
-        const unsigned int INFO_LOG_LENGTH                = 0x8B84;
-        const unsigned int SHADER_SOURCE_LENGTH           = 0x8B88;
         const unsigned int SHADER_COMPILER                = 0x8DFA;
 
         /* Shader Precision-Specified Types */

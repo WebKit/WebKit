@@ -92,12 +92,9 @@ shouldBe('gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHME
 shouldBe('gl.getProgramParameter(standardProgram, gl.DELETE_STATUS)', 'false');
 shouldBe('gl.getProgramParameter(standardProgram, gl.LINK_STATUS)', 'true');
 shouldBe('typeof gl.getProgramParameter(standardProgram, gl.VALIDATE_STATUS)', '"boolean"');
-shouldBe('typeof gl.getProgramParameter(standardProgram, gl.INFO_LOG_LENGTH)', '"number"');
 shouldBe('gl.getProgramParameter(standardProgram, gl.ATTACHED_SHADERS)', '2');
 shouldBe('gl.getProgramParameter(standardProgram, gl.ACTIVE_ATTRIBUTES)', '2');
-shouldBeNonZero('gl.getProgramParameter(standardProgram, gl.ACTIVE_ATTRIBUTE_MAX_LENGTH)');
 shouldBe('gl.getProgramParameter(standardProgram, gl.ACTIVE_UNIFORMS)', '1');
-shouldBeNonZero('gl.getProgramParameter(standardProgram, gl.ACTIVE_UNIFORM_MAX_LENGTH)');
 
 // Test getRenderbufferParameter
 shouldBe('gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_WIDTH)', '2');
@@ -120,8 +117,6 @@ shouldBeNonZero('gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_AL
 shouldBe('gl.getShaderParameter(standardVert, gl.SHADER_TYPE)', 'gl.VERTEX_SHADER');
 shouldBe('gl.getShaderParameter(standardVert, gl.DELETE_STATUS)', 'false');
 shouldBe('gl.getShaderParameter(standardVert, gl.COMPILE_STATUS)', 'true');
-shouldBe('typeof gl.getShaderParameter(standardVert, gl.INFO_LOG_LENGTH)', '"number"');
-shouldBeNonZero('gl.getShaderParameter(standardVert, gl.SHADER_SOURCE_LENGTH)');
 
 // Test getTexParameter
 gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);

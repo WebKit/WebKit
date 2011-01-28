@@ -1,3 +1,16 @@
+2011-01-27  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Remove _LENGTH enumerants
+        https://bugs.webkit.org/show_bug.cgi?id=53259
+
+        * fast/canvas/webgl/constants.html:
+        * fast/canvas/webgl/gl-getshadersource-expected.txt:
+        * fast/canvas/webgl/gl-getshadersource.html:
+        * fast/canvas/webgl/gl-object-get-calls-expected.txt:
+        * fast/canvas/webgl/gl-object-get-calls.html:
+
 2011-01-28  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed.

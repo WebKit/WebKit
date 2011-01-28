@@ -2055,12 +2055,9 @@ WebGLGetInfo WebGLRenderingContext::getProgramParameter(WebGLProgram* program, G
         return WebGLGetInfo(static_cast<bool>(value));
     case GraphicsContext3D::LINK_STATUS:
         return WebGLGetInfo(program->getLinkStatus());
-    case GraphicsContext3D::INFO_LOG_LENGTH:
     case GraphicsContext3D::ATTACHED_SHADERS:
     case GraphicsContext3D::ACTIVE_ATTRIBUTES:
-    case GraphicsContext3D::ACTIVE_ATTRIBUTE_MAX_LENGTH:
     case GraphicsContext3D::ACTIVE_UNIFORMS:
-    case GraphicsContext3D::ACTIVE_UNIFORM_MAX_LENGTH:
         m_context->getProgramiv(objectOrZero(program), pname, &value);
         return WebGLGetInfo(value);
     default:
@@ -2163,14 +2160,6 @@ WebGLGetInfo WebGLRenderingContext::getShaderParameter(WebGLShader* shader, GC3D
     case GraphicsContext3D::SHADER_TYPE:
         m_context->getShaderiv(objectOrZero(shader), pname, &value);
         return WebGLGetInfo(static_cast<unsigned int>(value));
-    case GraphicsContext3D::INFO_LOG_LENGTH:
-        m_context->getShaderiv(objectOrZero(shader), pname, &value);
-        return WebGLGetInfo(value);
-    case GraphicsContext3D::SHADER_SOURCE_LENGTH:
-        value = static_cast<GC3Dint>(shader->getSource().length());
-        if (value > 0)
-            value++; // Includes the null termination character.
-        return WebGLGetInfo(value);
     default:
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
         return WebGLGetInfo();
