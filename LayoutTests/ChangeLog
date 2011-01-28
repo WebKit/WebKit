@@ -1,3 +1,14 @@
+2011-01-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed Chromium rebaselines.
+
+        Check in the same result as fast/dom/window-domurl-crash-expected.txt because Windows port
+        intentionally added a failing result in http://trac.webkit.org/changeset/76953.
+
+        The Windows port's bug is tracked by https://bugs.webkit.org/show_bug.cgi?id=53310.
+
+        * platform/chromium-win/fast/dom/window-domurl-crash-expected.txt: Added.
+
 2011-01-28  Adam Roben  <aroben@apple.com>
 
         Unskip compositing-related tests that are now fixed
