@@ -5075,6 +5075,13 @@ editing/input/page-up-down-scrolls.html
 # DRT does not obey layoutTestController.addURLToRedirect()
 http/tests/loading/cross-origin-XHR-willLoadRequest.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=52798
+http/tests/security/local-CSS-from-remote.html
+http/tests/security/local-JavaScript-from-remote.html
+http/tests/security/local-iFrame-from-remote.html
+http/tests/security/local-image-from-remote.html
+http/tests/security/local-user-CSS-from-remote.html
+
 # This test is skipped because it assumes we cannot play RTSP, but we can.
 # See https://bugs.webkit.org/show_bug.cgi?id=53056
 media/unsupported-rtsp.html
