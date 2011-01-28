@@ -15,14 +15,14 @@ function log(message) {
     
     <div id=console></div>
     
-    <img src="resources/foobar">
     <script id=test_script></script>
 
     <script>
         if (window.layoutTestController)
             layoutTestController.dumpAsText();
 
-        document.getElementById('test_script').src = "resources/foobar";
+        <!-- we are an HTTP test so the security origin will fail the file method -->
+        document.getElementById('test_script').src = "file:///foobar";
         
         script = document.createElement("script");
         script.setAttribute("src", "resources/foobar");

@@ -1,0 +1,35 @@
+<div id="logDiv">FAILED</div>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var logDiv = document.getElementById("logDiv");
+
+function clearLog()
+{
+    logDiv.innerHTML = "";
+}
+
+function log(string)
+{
+    logDiv.appendChild(document.createTextNode(string));
+    logDiv.appendChild(document.createElement("br"));
+}
+
+function checkLoadedImage(event, testNumber) {
+    var imageWidth = event.target.width;
+    if (imageWidth == 25)
+        log("PASS " + testNumber + " of 3");
+    else
+        log("IMAGE SIZE " + imageWidth + " FAIL - " + testNumber + " of 2");
+}
+</script>
+
+<img src="resources/reload-subresource-when-type-changes.js">
+<script src="resources/reload-subresource-when-type-changes.js"></script>
+
+<link rel="prefetch" href="resources/image1.png">
+<img src="resources/image1.png" onerror="log('LOAD ERROR - FAIL 2 of 3)" onload="checkLoadedImage(event, 2)">
+
+<script src="resources/image2.png"></script>
+<img src="resources/image2.png" onerror="log('LOAD ERROR - FAIL 2 of 3)" onload="checkLoadedImage(event, 3)">
