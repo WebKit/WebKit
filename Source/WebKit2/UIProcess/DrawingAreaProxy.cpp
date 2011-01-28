@@ -35,7 +35,6 @@ namespace WebKit {
 DrawingAreaProxy::DrawingAreaProxy(DrawingAreaInfo::Type type, WebPageProxy* webPageProxy)
     : m_info(type, nextIdentifier())
     , m_webPageProxy(webPageProxy)
-    , m_size(webPageProxy->viewSize())
 {
 }
 

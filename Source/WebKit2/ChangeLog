@@ -1,3 +1,20 @@
+2011-01-27  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2: Page flashes just before accelerated compositing animation
+        https://bugs.webkit.org/show_bug.cgi?id=53274
+
+        When switching out of compositing mode, the new ChunkedUpdateDrawingAreaProxy
+        is getting created with the current page size. When the setSize() call is
+        subsequently made, the sizeDidChange() call is not made (which does the initial
+        render of the page) because the old size and new size are the same. The solution
+        is to skip the setting of the size in the ctor and let it go through a size
+        change sequence.
+
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::DrawingAreaProxy):
+
 2011-01-28  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Xan Lopez.
