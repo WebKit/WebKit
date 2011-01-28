@@ -1,5 +1,23 @@
 2011-01-27  Mark Rowe  <mrowe@apple.com>
 
+        Merge r70517.
+
+    2010-10-26  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Protect the frame from being blown away in loadWithDocumentLoader function call.
+        dispatchBeforeLoadEvent can cause the frame to be freed, which gets later used in
+        continueLoadAfterNavigationPolicy call.
+        https://bugs.webkit.org/show_bug.cgi?id=48281
+
+        Test: fast/events/form-iframe-target-before-load-crash.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+
+2011-01-27  Mark Rowe  <mrowe@apple.com>
+
         Merge r72817.
 
     2010-11-29  Gavin Peters  <gavinp@chromium.org>
