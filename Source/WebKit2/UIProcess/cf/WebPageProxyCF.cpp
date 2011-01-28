@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
+#include "config.h"
 #include "WebPageProxy.h"
 
 #include "DataReference.h"
