@@ -110,6 +110,7 @@ public:
 
     String provisionalURL() const;
     String suggestedFilenameForResourceWithURL(const WebCore::KURL&) const;
+    String mimeTypeForResourceWithURL(const WebCore::KURL&) const;
 
     // Simple listener class used by plug-ins to know when frames finish or fail loading.
     class LoadListener {

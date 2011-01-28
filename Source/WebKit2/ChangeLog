@@ -1,3 +1,28 @@
+2011-01-28  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John Sullivan.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53330
+        Need InjectedBundle API to get the response MIMEType for a URL
+
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameCopyMIMETypeForResourceWithURL):
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.h:
+
+        Get the MIMEType from the in-memory cache, or cachedResponseMIMETypeForURL() if not available:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::mimeTypeForResourceWithURL):
+        * WebProcess/WebPage/WebFrame.h:
+
+        Get the MIMEType from the platform's disk cache if available:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::cachedResponseMIMETypeForURL):
+        * WebProcess/WebPage/qt/WebPageQt.cpp:
+        (WebKit::WebPage::cachedResponseMIMETypeForURL):
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::cachedResponseMIMETypeForURL):
+
 2011-01-28  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

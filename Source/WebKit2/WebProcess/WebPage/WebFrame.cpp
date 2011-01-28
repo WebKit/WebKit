@@ -544,4 +544,20 @@ String WebFrame::suggestedFilenameForResourceWithURL(const KURL& url) const
     return resource->response().suggestedFilename();
 }
 
+String WebFrame::mimeTypeForResourceWithURL(const KURL& url) const
+{
+    if (!m_coreFrame)
+        return String();
+
+    DocumentLoader* loader = m_coreFrame->loader()->documentLoader();
+    if (!loader)
+        return String();
+    
+    RefPtr<ArchiveResource> resource = loader->subresource(url);
+    if (resource)
+        return resource->mimeType();
+
+    return page()->cachedResponseMIMETypeForURL(url);
+}
+
 } // namespace WebKit

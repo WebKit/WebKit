@@ -63,6 +63,7 @@ WK_EXPORT WKRect WKBundleFrameGetVisibleContentBounds(WKBundleFrameRef frame);
 WK_EXPORT WKSize WKBundleFrameGetScrollOffset(WKBundleFrameRef frame);
 
 WK_EXPORT WKStringRef WKBundleFrameCopySuggestedFilenameForResourceWithURL(WKBundleFrameRef frame, WKURLRef url);
+WK_EXPORT WKStringRef WKBundleFrameCopyMIMETypeForResourceWithURL(WKBundleFrameRef frame, WKURLRef url);
 
 #ifdef __cplusplus
 }

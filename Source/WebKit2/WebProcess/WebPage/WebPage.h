@@ -252,6 +252,7 @@ public:
     WebContextMenu* contextMenu();
     
     bool hasLocalDataForURL(const WebCore::KURL&);
+    String cachedResponseMIMETypeForURL(const WebCore::KURL&);
     
     static bool canHandleRequest(const WebCore::ResourceRequest&);
 

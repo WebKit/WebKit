@@ -271,6 +271,12 @@ bool WebPage::platformHasLocalDataForURL(const WebCore::KURL&)
     return false;
 }
 
+String WebPage::cachedResponseMIMETypeForURL(const WebCore::KURL&)
+{
+    // FIXME: Implement
+    return String();
+}
+
 bool WebPage::canHandleRequest(const WebCore::ResourceRequest&)
 {
     // FIXME: Implement

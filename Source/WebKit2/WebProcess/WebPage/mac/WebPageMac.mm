@@ -358,6 +358,16 @@ bool WebPage::platformHasLocalDataForURL(const WebCore::KURL& url)
     return cachedResponse;
 }
 
+String WebPage::cachedResponseMIMETypeForURL(const WebCore::KURL& url)
+{
+    NSMutableURLRequest* request = [[NSMutableURLRequest alloc] initWithURL:url];
+    [request setValue:(NSString*)userAgent() forHTTPHeaderField:@"User-Agent"];
+    NSCachedURLResponse *cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request];
+    [request release];
+    
+    return [[cachedResponse response] MIMEType];
+}
+
 bool WebPage::canHandleRequest(const WebCore::ResourceRequest& request)
 {
     if ([NSURLConnection canHandleRequest:request.nsURLRequest()])
