@@ -1,3 +1,48 @@
+2011-01-27  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix performance regression in ImageQualityController::objectDestroyed().
+        https://bugs.webkit.org/show_bug.cgi?id=52645
+
+        In r72282, I inadvertently introduced this regression by using a
+        linear search through the hash map on object destruction.  This was
+        because the hash key consisted of both object pointer and layer id,
+        but on object destruction we only know the object pointer, requiring
+        a search to find all the layers. 
+        By replacing the hash map with two nested hash maps, where the outer key
+        is the object and the inner key is the layer, we can find all the
+        relevant data for an object in one hash lookup.
+
+        * rendering/RenderBoxModelObject.cpp:
+        Replace the (object,layer)->size HashMap with object->layer and
+        layer->size HashMaps.
+        (WebCore::ImageQualityController::isEmpty):
+        Implement isEmpty() for the outer HashMap.
+        (WebCore::ImageQualityController::removeLayer):
+        When a layer is removed, remove it from the inner hash map.
+        (WebCore::ImageQualityController::set):
+        Implement set():  if the inner map exists, set the layer->size tuple
+        directly.  If not, create a new inner map, set the tuple, and insert
+        it in the outer map.
+        (WebCore::ImageQualityController::objectDestroyed):
+        Look up the object in the outer map only.
+        (WebCore::ImageQualityController::highQualityRepaintTimerFired):
+        Cosmetic changes for the renamed now-outer hash map.
+        (WebCore::ImageQualityController::shouldPaintAtLowQuality):
+        Do both outer and inner hash map lookups.  Call set() to add/update
+        entries to the hash maps.  keyDestroyed() is now removeLayer().
+        (WebCore::imageQualityController):
+        Make the ImageQualityController a file-static global, so it can be
+        created and destroyed on the fly.
+        (WebCore::RenderBoxModelObject::~RenderBoxModelObject):
+        If there is no ImageQualityController, don't call objectDestroyed().
+        If it's empty, delete it.
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintIntoRect):
+        Also pass the Image* as the (void*) layer, since 0 is not a valid
+        HashMap key.
+
 2011-01-27  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.

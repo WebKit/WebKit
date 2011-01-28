@@ -376,7 +376,8 @@ void RenderImage::paintIntoRect(GraphicsContext* context, const IntRect& rect)
 
     HTMLImageElement* imageElt = (node() && node()->hasTagName(imgTag)) ? static_cast<HTMLImageElement*>(node()) : 0;
     CompositeOperator compositeOperator = imageElt ? imageElt->compositeOperator() : CompositeSourceOver;
-    bool useLowQualityScaling = shouldPaintAtLowQuality(context, m_imageResource->image().get(), 0, rect.size());
+    Image* image = m_imageResource->image().get();
+    bool useLowQualityScaling = shouldPaintAtLowQuality(context, image, image, rect.size());
     context->drawImage(m_imageResource->image(rect.width(), rect.height()).get(), style()->colorSpace(), rect, compositeOperator, useLowQualityScaling);
 }
 
