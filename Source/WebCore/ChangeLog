@@ -1,3 +1,28 @@
+2011-01-28  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Potentially Unsafe HashSet of RuntimeObject* in RootObject definition
+        https://bugs.webkit.org/show_bug.cgi?id=53271
+
+        Reapplying this patch with the change that the second ASSERT in 
+        RootObject::removeRuntimeObject was changed to use
+        .uncheckedGet() instead of the failing .get().  The object in question
+        could be in the process of being GC'ed.  The get() call will not return
+        such an object while the uncheckedGet() call will return the (unsafe) 
+        object.  This is the behavior we want.
+
+        Precautionary change.
+        Changed RootObject to use WeakGCMap instead of HashSet.
+        Found will looking for another issue, but can't produce a test case
+        that is problematic.  THerefore there aren't any new tests.
+
+        * bridge/runtime_root.cpp:
+        (JSC::Bindings::RootObject::invalidate):
+        (JSC::Bindings::RootObject::addRuntimeObject):
+        (JSC::Bindings::RootObject::removeRuntimeObject):
+        * bridge/runtime_root.h:
+
 2011-01-28  Adam Roben  <aroben@apple.com>
 
         Notify CACFLayerTreeHost when the context is flushed
