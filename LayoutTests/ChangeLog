@@ -1,3 +1,9 @@
+2011-01-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed Chromium test expectation update.
+
+        * platform/chromium/test_expectations.txt: More media test crashes due to crbug.com/71087.
+
 2011-01-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adam Barth.

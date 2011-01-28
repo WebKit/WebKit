@@ -2917,7 +2917,9 @@ BUGCR66085 LINUX DEBUG : http/tests/media/reload-after-dialog.html = CRASH
 BUGCR66085 LINUX : http/tests/media/video-cancel-load.html = PASS TIMEOUT
 BUGCR66085 LINUX : http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html = PASS TIMEOUT
 BUGCR66085 LINUX : media/constructors.html = PASS TIMEOUT
-BUGCR66085 : media/remove-from-document.html = PASS TIMEOUT
+BUGCR66085 WIN MAC : media/remove-from-document.html = PASS TIMEOUT
+BUGCR66085 LINUX RELEASE : media/remove-from-document.html = PASS TIMEOUT
+BUGCR66085 BUGCR71087 LINUX DEBUG : media/remove-from-document.html = CRASH PASS TIMEOUT
 BUGCR66085 MAC : media/video-display-toggle.html = PASS TIMEOUT
 BUGCR66085 : media/video-play-pause-exception.html = PASS TIMEOUT
 BUGCR66085 WIN : media/video-source.html = PASS TIMEOUT
@@ -3105,7 +3107,8 @@ BUGCR70882 MAC : fast/text/international/hindi-whitespace.html = IMAGE
 BUGCR70882 MAC : fast/text/international/thai-baht-space.html = IMAGE
 BUGCR70882 MAC : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE
 
-BUGCR70941 LINUX : userscripts/user-script-image-document.html = PASS TIMEOUT
+BUGCR70941 LINUX RELEASE : userscripts/user-script-image-document.html = PASS TIMEOUT
+BUGCR70941 BUGCR71087 LINUX DEBUG : userscripts/user-script-image-document.html = CRASH PASS TIMEOUT
 BUGCR70942 LINUX : editing/execCommand/break-out-of-empty-list-item.html = PASS TIMEOUT
 BUGRNIWA SLOW WIN : editing/execCommand/4786404-1.html = PASS
 
@@ -3121,3 +3124,5 @@ BUGCR71022 WIN LINUX : fast/text/justify-ideograph-complex.html = IMAGE+TEXT
 BUGCR71022 WIN LINUX : fast/text/justify-ideograph-simple.html = IMAGE+TEXT
 BUGCR71022 WIN : fast/text/justify-ideograph-vertical.html = IMAGE+TEXT
 
+BUGCR71087 WIN LINUX DEBUG : media/video-currentTime.html = CRASH PASS TIMEOUT
+BUGCR71087 MAC DEBUG : media/video-currentTime.html = PASS TIMEOUT
