@@ -405,7 +405,7 @@ if (isGtk()) {
     {
         my ($feature, $isEnabled, $defaultValue) = @_;
         return "" if $defaultValue == $isEnabled;
-        return $feature . "=" . ($isEnabled ? $feature : " ");
+        return $feature . "=" . ($isEnabled ? $feature : "");
     }
 
     foreach (@features) {
