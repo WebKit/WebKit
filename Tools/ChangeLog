@@ -1,5 +1,11 @@
 2011-01-28  Pratik Solanki  <psolanki@apple.com>
 
+        Unreviewed. Removing .swp file checked in by mistake.
+
+        * Scripts/.webkitdirs.pm.swp: Removed.
+
+2011-01-28  Pratik Solanki  <psolanki@apple.com>
+
         Reviewed by David Kilzer.
 
         Space not necessary for undefined feature
