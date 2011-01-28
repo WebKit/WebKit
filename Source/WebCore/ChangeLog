@@ -1,3 +1,18 @@
+2011-01-28  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Some drag and drop tests fail since r76824
+        https://bugs.webkit.org/show_bug.cgi?id=53304
+
+        There were '||' instead of '&&' in the checks for valid
+        clipboard content.
+        
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::ClipboardWin::getData):
+        (WebCore::ClipboardWin::types):
+        (WebCore::ClipboardWin::files):
+
 2011-01-28  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] AudioProcessingEvent.h and JSJavaScriptAudioNode.h: No such file or directory

@@ -453,7 +453,7 @@ void ClipboardWin::clearAllData()
 String ClipboardWin::getData(const String& type, bool& success) const
 {     
     success = false;
-    if (policy() != ClipboardReadable || !m_dataObject || m_dragDataMap.isEmpty())
+    if (policy() != ClipboardReadable || (!m_dataObject && m_dragDataMap.isEmpty()))
         return "";
 
     ClipboardDataType dataType = clipboardTypeFromMIMEType(type);
@@ -521,7 +521,7 @@ HashSet<String> ClipboardWin::types() const
     if (policy() != ClipboardReadable && policy() != ClipboardTypesReadable)
         return results;
 
-    if (!m_dataObject || m_dragDataMap.isEmpty())
+    if (!m_dataObject && m_dragDataMap.isEmpty())
         return results;
 
     if (m_dataObject) {
@@ -559,7 +559,7 @@ PassRefPtr<FileList> ClipboardWin::files() const
     if (policy() != ClipboardReadable && policy() != ClipboardTypesReadable)
         return files.release();
 
-    if (!m_dataObject || m_dragDataMap.isEmpty())
+    if (!m_dataObject && m_dragDataMap.isEmpty())
         return files.release();
 
     if (m_dataObject) {
