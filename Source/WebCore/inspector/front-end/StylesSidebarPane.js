@@ -1929,8 +1929,29 @@ WebInspector.StylesSidebarPane.CSSPropertyPrompt.prototype = {
         var reverse = event.keyIdentifier === "Up";
         if (this.autoCompleteElement)
             this.complete(false, reverse); // Accept the current suggestion, if any.
+        else {
+            // Select the word suffix to affect it when computing the subsequent suggestion.
+            this._selectCurrentWordSuffix();
+        }
+
         this.complete(false, reverse); // Actually increment/decrement the suggestion.
         event.handled = true;
+    },
+
+    _selectCurrentWordSuffix: function()
+    {
+        var selection = window.getSelection();
+        if (!selection.rangeCount)
+            return;
+
+        var selectionRange = selection.getRangeAt(0);
+        if (!selectionRange.commonAncestorContainer.isDescendant(this.element))
+            return;
+        var wordSuffixRange = selectionRange.startContainer.rangeOfWord(selectionRange.startOffset, WebInspector.StylesSidebarPane.StyleValueDelimiters, this.element, "forward");
+        if (!wordSuffixRange.toString())
+            return;
+        selection.removeAllRanges();
+        selection.addRange(wordSuffixRange);
     },
 
     _buildPropertyCompletions: function(wordRange, bestMatchOnly, completionsReadyCallback)

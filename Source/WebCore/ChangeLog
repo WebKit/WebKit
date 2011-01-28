@@ -1,3 +1,15 @@
+2011-01-28  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [STYLES] Up/Down-suggestion breaks an existing keyword
+        https://bugs.webkit.org/show_bug.cgi?id=53295
+
+        Select the current word suffix before switching to the next suggestion.
+
+        * inspector/front-end/StylesSidebarPane.js:
+        ():
+
 2011-01-28  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Xan Lopez.
