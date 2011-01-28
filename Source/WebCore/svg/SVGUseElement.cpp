@@ -716,6 +716,8 @@ void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* ta
 
         // Enter recursion, appending new instance tree nodes to the "instance" object.
         buildInstanceTree(element, instancePtr, foundProblem);
+        if (foundProblem)
+            return;
     }
 
     if (!targetHasUseTag || !newTarget)
