@@ -1,3 +1,16 @@
+2011-01-27  Adrienne Walker  <enne@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Add CRASH calls to further debug tiled compositor memcpy crash.
+        https://bugs.webkit.org/show_bug.cgi?id=52379
+
+        Test: LayoutTests/compositing (to verify these weren't triggered)
+
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::invalidateRect):
+        (WebCore::LayerTilerChromium::update):
+
 2011-01-27  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
