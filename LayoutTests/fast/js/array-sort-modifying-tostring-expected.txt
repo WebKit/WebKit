@@ -1,0 +1,11 @@
+Test of array with toString() override that truncates array.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Array length is unchanged.
+PASS Array values are correct.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

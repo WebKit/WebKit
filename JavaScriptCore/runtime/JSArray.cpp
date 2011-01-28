@@ -643,8 +643,6 @@ static int compareNumbersForQSort(const void* a, const void* b)
     return (da > db) - (da < db);
 }
 
-typedef std::pair<JSValue, UString> ValueStringPair;
-
 static int compareByStringPairForQSort(const void* a, const void* b)
 {
     const ValueStringPair* va = static_cast<const ValueStringPair*>(a);
@@ -704,15 +702,14 @@ void JSArray::sort(ExecState* exec)
         throwOutOfMemoryError(exec);
         return;
     }
+    
+    Heap::heap(this)->pushTempSortVector(&values);
 
     for (size_t i = 0; i < lengthNotIncludingUndefined; i++) {
         JSValue value = m_storage->m_vector[i];
         ASSERT(!value.isUndefined());
         values[i].first = value;
     }
-
-    // FIXME: While calling these toString functions, the array could be mutated.
-    // In that case, objects pointed to by values in this vector might get garbage-collected!
 
     // FIXME: The following loop continues to call toString on subsequent values even after
     // a toString call raises an exception.
@@ -734,12 +731,18 @@ void JSArray::sort(ExecState* exec)
     qsort(values.begin(), values.size(), sizeof(ValueStringPair), compareByStringPairForQSort);
 #endif
 
-    // FIXME: If the toString function changed the length of the array, this might be
-    // modifying the vector incorrectly.
+    // If the toString function changed the length of the array or vector storage,
+    // increase the length to handle the orignal number of actual values.
+    if (m_vectorLength < lengthNotIncludingUndefined)
+        increaseVectorLength(lengthNotIncludingUndefined);
+    if (m_storage->m_length < lengthNotIncludingUndefined)
+        m_storage->m_length = lengthNotIncludingUndefined;
 
     for (size_t i = 0; i < lengthNotIncludingUndefined; i++)
         m_storage->m_vector[i] = values[i].first;
 
+    Heap::heap(this)->popTempSortVector(&values);
+    
     checkConsistency(SortConsistencyCheck);
 }
 

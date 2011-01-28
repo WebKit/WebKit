@@ -1002,6 +1002,33 @@ void Heap::markProtectedObjects(MarkStack& markStack)
     }
 }
 
+void Heap::pushTempSortVector(Vector<ValueStringPair>* tempVector)
+{
+    m_tempSortingVectors.append(tempVector);
+}
+
+void Heap::popTempSortVector(Vector<ValueStringPair>* tempVector)
+{
+    ASSERT_UNUSED(tempVector, tempVector == m_tempSortingVectors.last());
+    m_tempSortingVectors.removeLast();
+}
+    
+void Heap::markTempSortVectors(MarkStack& markStack)
+{
+    typedef Vector<Vector<ValueStringPair>* > VectorOfValueStringVectors;
+
+    VectorOfValueStringVectors::iterator end = m_tempSortingVectors.end();
+    for (VectorOfValueStringVectors::iterator it = m_tempSortingVectors.begin(); it != end; ++it) {
+        Vector<ValueStringPair>* tempSortingVector = *it;
+
+        Vector<ValueStringPair>::iterator vectorEnd = tempSortingVector->end();
+        for (Vector<ValueStringPair>::iterator vectorIt = tempSortingVector->begin(); vectorIt != vectorEnd; ++vectorIt)
+            if (vectorIt->first)
+                markStack.append(vectorIt->first);
+        markStack.drain();
+    }
+}
+    
 void Heap::clearMarkBits()
 {
     for (size_t i = 0; i < m_heap.usedBlocks; ++i)
@@ -1089,6 +1116,9 @@ void Heap::markRoots()
 
     // Mark explicitly registered roots.
     markProtectedObjects(markStack);
+    
+    // Mark temporary vector for Array sorting
+    markTempSortVectors(markStack);
 
     // Mark misc. other roots.
     if (m_markListSet && m_markListSet->size())
