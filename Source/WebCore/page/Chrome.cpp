@@ -508,6 +508,11 @@ bool Chrome::selectItemWritingDirectionIsNatural()
     return m_client->selectItemWritingDirectionIsNatural();
 }
 
+bool Chrome::selectItemAlignmentFollowsMenuWritingDirection()
+{
+    return m_client->selectItemAlignmentFollowsMenuWritingDirection();
+}
+
 PassRefPtr<PopupMenu> Chrome::createPopupMenu(PopupMenuClient* client) const
 {
     return m_client->createPopupMenu(client);

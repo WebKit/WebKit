@@ -399,6 +399,11 @@ bool ChromeClientHaiku::selectItemWritingDirectionIsNatural()
     return false;
 }
 
+bool ChromeClientHaiku::selectItemAlignmentFollowsMenuWritingDirection()
+{
+    return false;
+}
+
 PassRefPtr<PopupMenu> ChromeClientHaiku::createPopupMenu(PopupMenuClient* client) const
 {
     return adoptRef(new PopupMenuHaiku(client));

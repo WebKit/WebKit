@@ -476,6 +476,11 @@ bool ChromeClientWx::selectItemWritingDirectionIsNatural()
     return false;
 }
 
+bool ChromeClientWx::selectItemAlignmentFollowsMenuWritingDirection()
+{
+    return false;
+}
+
 PassRefPtr<PopupMenu> ChromeClientWx::createPopupMenu(PopupMenuClient* client) const
 {
     return adoptRef(new PopupMenuWx(client));

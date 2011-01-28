@@ -612,6 +612,11 @@ void WebChromeClient::formDidBlur(const Node*)
 
 bool WebChromeClient::selectItemWritingDirectionIsNatural()
 {
+    return false;
+}
+
+bool WebChromeClient::selectItemAlignmentFollowsMenuWritingDirection()
+{
     return true;
 }
 

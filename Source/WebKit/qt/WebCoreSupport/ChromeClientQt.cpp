@@ -736,6 +736,11 @@ bool ChromeClientQt::selectItemWritingDirectionIsNatural()
     return false;
 }
 
+bool ChromeClientQt::selectItemAlignmentFollowsMenuWritingDirection()
+{
+    return false;
+}
+
 PassRefPtr<PopupMenu> ChromeClientQt::createPopupMenu(PopupMenuClient* client) const
 {
     return adoptRef(new PopupMenuQt(client, this));

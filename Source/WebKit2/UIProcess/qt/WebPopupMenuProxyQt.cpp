@@ -42,7 +42,7 @@ WebPopupMenuProxyQt::~WebPopupMenuProxyQt()
 {
 }
 
-void WebPopupMenuProxyQt::showPopupMenu(const IntRect& rect, const Vector<WebPopupItem>& items, const PlatformPopupMenuData&, int32_t selectedIndex)
+void WebPopupMenuProxyQt::showPopupMenu(const IntRect& rect, WebCore::TextDirection, const Vector<WebPopupItem>& items, const PlatformPopupMenuData&, int32_t selectedIndex)
 {
 }
 

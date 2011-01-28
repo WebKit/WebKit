@@ -163,6 +163,7 @@ namespace WebCore {
 #endif
 
         bool selectItemWritingDirectionIsNatural();
+        bool selectItemAlignmentFollowsMenuWritingDirection();
         PassRefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const;
         PassRefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const;
 

@@ -49,13 +49,13 @@ public:
     }
     ~WebPopupMenuProxyMac();
 
-    virtual void showPopupMenu(const WebCore::IntRect&, const Vector<WebPopupItem>&, const PlatformPopupMenuData&, int32_t selectedIndex);
+    virtual void showPopupMenu(const WebCore::IntRect&, WebCore::TextDirection, const Vector<WebPopupItem>&, const PlatformPopupMenuData&, int32_t selectedIndex);
     virtual void hidePopupMenu();
 
 private:
     WebPopupMenuProxyMac(WKView*, WebPopupMenuProxy::Client* client);
 
-    void populate(const Vector<WebPopupItem>&);
+    void populate(const Vector<WebPopupItem>&, WebCore::TextDirection);
 
     RetainPtr<NSPopUpButtonCell> m_popup;
     WKView* m_webView;

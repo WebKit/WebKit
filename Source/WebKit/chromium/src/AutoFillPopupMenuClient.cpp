@@ -293,7 +293,7 @@ void AutoFillPopupMenuClient::initialize(
     // the input element: textField.
     m_regularStyle.set(new PopupMenuStyle(Color::black, Color::white, regularFont,
                                           true, false, Length(WebCore::Fixed),
-                                          textField->renderer()->style()->direction()));
+                                          textField->renderer()->style()->direction(), textField->renderer()->style()->unicodeBidi() == Override));
 
     FontDescription warningFontDescription = regularFont.fontDescription();
     warningFontDescription.setItalic(true);
@@ -305,7 +305,8 @@ void AutoFillPopupMenuClient::initialize(
                                           m_regularStyle->isVisible(),
                                           m_regularStyle->isDisplayNone(),
                                           m_regularStyle->textIndent(),
-                                          m_regularStyle->textDirection()));
+                                          m_regularStyle->textDirection(),
+                                          m_regularStyle->hasTextDirectionOverride()));
 }
 
 void AutoFillPopupMenuClient::setSuggestions(const WebVector<WebString>& names,

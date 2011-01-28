@@ -1,3 +1,44 @@
+2011-01-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/4761512> <select> can't display right-to-left (rtl) languages
+        https://bugs.webkit.org/show_bug.cgi?id=19785
+
+        Changed <select> pop-up menus on Mac OS X Snow Leopard and later to have their items aligned in the
+        direction corresponding to the writing direction of the <select> element, with the checkmarks
+        on the "start" side, and use the <option>'s writing direction rather than "natural". Made the
+        pop-up button match the menu by adding a Chrome boolean function, selectItemAlignmentFollowsMenuWritingDirection(),
+        which returns true for this pop-up behavior.
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::selectItemAlignmentFollowsMenuWritingDirection): Added.
+        * manual-tests/pop-up-alignment-and-direction.html: Added.
+        * page/Chrome.cpp:
+        (WebCore::Chrome::selectItemAlignmentFollowsMenuWritingDirection): Added. Calls through to the
+        client.
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * platform/PopupMenuStyle.h:
+        (WebCore::PopupMenuStyle::PopupMenuStyle): Added hasTextDirectionOverride parameter and member
+        variable initialization.
+        (WebCore::PopupMenuStyle::hasTextDirectionOverride): Added this accessor.
+        * platform/mac/PopupMenuMac.mm:
+        (WebCore::PopupMenuMac::populate): Set the pop-up's layout direction and items' text alignment
+        to match the menu's writing direction. Set items' writing direction and direction override
+        according to their styles.
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::RenderMenuList): Removed unncesaary initialization of a smart pointer.
+        (WebCore::RenderMenuList::adjustInnerStyle): If the alignment of items in the menu follows the
+        menu's writing direction, use that alignment for the button as well. Also in this mode, use the
+        item's writing direction and override setting.
+        (WebCore::RenderMenuList::setTextFromOption): Store the option element's style.
+        (WebCore::RenderMenuList::itemStyle): Pass the text direction override value.
+        (WebCore::RenderMenuList::menuStyle): Ditto. Also use the button's direction, not the inner text's.
+        * rendering/RenderMenuList.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::menuStyle): Pass the text direction override value.
+
 2011-01-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Daniel Bates.

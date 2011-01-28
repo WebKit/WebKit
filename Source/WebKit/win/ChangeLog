@@ -1,3 +1,14 @@
+2011-01-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <select> can't display right-to-left (rtl) languages
+        https://bugs.webkit.org/show_bug.cgi?id=19785
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::selectItemAlignmentFollowsMenuWritingDirection): Added.
+        * WebCoreSupport/WebChromeClient.h:
+
 2011-01-27  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.

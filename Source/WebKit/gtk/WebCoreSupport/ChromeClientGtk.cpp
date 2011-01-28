@@ -674,6 +674,11 @@ bool ChromeClient::selectItemWritingDirectionIsNatural()
     return true;
 }
 
+bool ChromeClient::selectItemAlignmentFollowsMenuWritingDirection()
+{
+    return false;
+}
+
 PassRefPtr<WebCore::PopupMenu> ChromeClient::createPopupMenu(WebCore::PopupMenuClient* client) const
 {
     return adoptRef(new PopupMenuGtk(client));

@@ -862,6 +862,11 @@ bool WebChromeClient::selectItemWritingDirectionIsNatural()
     return true;
 }
 
+bool WebChromeClient::selectItemAlignmentFollowsMenuWritingDirection()
+{
+    return false;
+}
+
 PassRefPtr<PopupMenu> WebChromeClient::createPopupMenu(PopupMenuClient* client) const
 {
     return adoptRef(new PopupMenuWin(client));

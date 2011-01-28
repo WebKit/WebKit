@@ -749,7 +749,20 @@ void WebChromeClient::formDidBlur(const WebCore::Node* node)
 
 bool WebChromeClient::selectItemWritingDirectionIsNatural()
 {
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    return false;
+#else
     return true;
+#endif
+}
+
+bool WebChromeClient::selectItemAlignmentFollowsMenuWritingDirection()
+{
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    return true;
+#else
+    return false;
+#endif
 }
 
 PassRefPtr<WebCore::PopupMenu> WebChromeClient::createPopupMenu(WebCore::PopupMenuClient* client) const

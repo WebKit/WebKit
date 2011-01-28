@@ -532,6 +532,11 @@ bool ChromeClientEfl::selectItemWritingDirectionIsNatural()
     return true;
 }
 
+bool ChromeClientEfl::selectItemAlignmentFollowsMenuWritingDirection()
+{
+    return false;
+}
+
 PassRefPtr<PopupMenu> ChromeClientEfl::createPopupMenu(PopupMenuClient* client) const
 {
     return adoptRef(new PopupMenuEfl(client));

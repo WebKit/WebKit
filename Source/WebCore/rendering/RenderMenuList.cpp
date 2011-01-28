@@ -2,7 +2,7 @@
  * This file is part of the select element renderer in WebCore.
  *
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
- * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  *               2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
@@ -55,7 +55,6 @@ RenderMenuList::RenderMenuList(Element* element)
     , m_optionsChanged(true)
     , m_optionsWidth(0)
     , m_lastSelectedIndex(-1)
-    , m_popup(0)
     , m_popupIsVisible(false)
 {
 }
@@ -84,19 +83,24 @@ void RenderMenuList::createInnerBlock()
 
 void RenderMenuList::adjustInnerStyle()
 {
-    m_innerBlock->style()->setBoxFlex(1.0f);
+    RenderStyle* innerStyle = m_innerBlock->style();
+    innerStyle->setBoxFlex(1);
     
-    m_innerBlock->style()->setPaddingLeft(Length(theme()->popupInternalPaddingLeft(style()), Fixed));
-    m_innerBlock->style()->setPaddingRight(Length(theme()->popupInternalPaddingRight(style()), Fixed));
-    m_innerBlock->style()->setPaddingTop(Length(theme()->popupInternalPaddingTop(style()), Fixed));
-    m_innerBlock->style()->setPaddingBottom(Length(theme()->popupInternalPaddingBottom(style()), Fixed));
+    innerStyle->setPaddingLeft(Length(theme()->popupInternalPaddingLeft(style()), Fixed));
+    innerStyle->setPaddingRight(Length(theme()->popupInternalPaddingRight(style()), Fixed));
+    innerStyle->setPaddingTop(Length(theme()->popupInternalPaddingTop(style()), Fixed));
+    innerStyle->setPaddingBottom(Length(theme()->popupInternalPaddingBottom(style()), Fixed));
 
     if (document()->page()->chrome()->selectItemWritingDirectionIsNatural()) {
         // Items in the popup will not respect the CSS text-align and direction properties,
         // so we must adjust our own style to match.
-        m_innerBlock->style()->setTextAlign(LEFT);
+        innerStyle->setTextAlign(LEFT);
         TextDirection direction = (m_buttonText && m_buttonText->text()->defaultWritingDirection() == WTF::Unicode::RightToLeft) ? RTL : LTR;
-        m_innerBlock->style()->setDirection(direction);
+        innerStyle->setDirection(direction);
+    } else if (m_optionStyle && document()->page()->chrome()->selectItemAlignmentFollowsMenuWritingDirection()) {
+        innerStyle->setTextAlign(style()->isLeftToRightDirection() ? LEFT : RIGHT);
+        innerStyle->setDirection(m_optionStyle->direction());
+        innerStyle->setUnicodeBidi(m_optionStyle->unicodeBidi());
     }
 }
 
@@ -184,8 +188,11 @@ void RenderMenuList::setTextFromOption(int optionIndex)
     int i = select->optionToListIndex(optionIndex);
     String text = "";
     if (i >= 0 && i < size) {
-        if (OptionElement* optionElement = toOptionElement(listItems[i]))
+        Element* element = listItems[i];
+        if (OptionElement* optionElement = toOptionElement(element)) {
             text = optionElement->textIndentedToRespectGroupLabel();
+            m_optionStyle = element->renderStyle();
+        }
     }
 
     setText(text.stripWhiteSpace());
@@ -418,7 +425,7 @@ PopupMenuStyle RenderMenuList::itemStyle(unsigned listIndex) const
     Element* element = listItems[listIndex];
     
     RenderStyle* style = element->renderStyle() ? element->renderStyle() : element->computedStyle();
-    return style ? PopupMenuStyle(style->visitedDependentColor(CSSPropertyColor), itemBackgroundColor(listIndex), style->font(), style->visibility() == VISIBLE, style->display() == NONE, style->textIndent(), style->direction()) : menuStyle();
+    return style ? PopupMenuStyle(style->visitedDependentColor(CSSPropertyColor), itemBackgroundColor(listIndex), style->font(), style->visibility() == VISIBLE, style->display() == NONE, style->textIndent(), style->direction(), style->unicodeBidi() == Override) : menuStyle();
 }
 
 Color RenderMenuList::itemBackgroundColor(unsigned listIndex) const
@@ -448,7 +455,7 @@ Color RenderMenuList::itemBackgroundColor(unsigned listIndex) const
 PopupMenuStyle RenderMenuList::menuStyle() const
 {
     RenderStyle* s = m_innerBlock ? m_innerBlock->style() : style();
-    return PopupMenuStyle(s->visitedDependentColor(CSSPropertyColor), s->visitedDependentColor(CSSPropertyBackgroundColor), s->font(), s->visibility() == VISIBLE, s->display() == NONE, s->textIndent(), s->direction());
+    return PopupMenuStyle(s->visitedDependentColor(CSSPropertyColor), s->visitedDependentColor(CSSPropertyBackgroundColor), s->font(), s->visibility() == VISIBLE, s->display() == NONE, s->textIndent(), style()->direction(), style()->unicodeBidi() == Override);
 }
 
 HostWindow* RenderMenuList::hostWindow() const

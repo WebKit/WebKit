@@ -1,3 +1,20 @@
+2011-01-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <select> can't display right-to-left (rtl) languages
+        https://bugs.webkit.org/show_bug.cgi?id=19785
+
+        * src/AutoFillPopupMenuClient.cpp:
+        (WebKit::AutoFillPopupMenuClient::initialize): Pass hasTextDirectionOverride to the PopupMenuStyle
+        constructor.
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::selectItemAlignmentFollowsMenuWritingDirection): Added.
+        * src/ChromeClientImpl.h:
+        * tests/PopupMenuTest.cpp:
+        (WebKit::TestPopupMenuClient::itemStyle): Pass hasTextDirectionOverride to the PopupMenuStyle
+        constructor.
+
 2011-01-28  Adam Klein  <adamk@chromium.org>
 
         Reviewed by Kent Tamura.

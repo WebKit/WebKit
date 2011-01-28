@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,7 +47,7 @@ WebPopupMenuProxyMac::~WebPopupMenuProxyMac()
         [m_popup.get() setControlView:nil];
 }
 
-void WebPopupMenuProxyMac::populate(const Vector<WebPopupItem>& items)
+void WebPopupMenuProxyMac::populate(const Vector<WebPopupItem>& items, TextDirection menuTextDirection)
 {
     if (m_popup)
         [m_popup.get() removeAllItems];
@@ -64,20 +64,37 @@ void WebPopupMenuProxyMac::populate(const Vector<WebPopupItem>& items)
             [[m_popup.get() menu] addItem:[NSMenuItem separatorItem]];
         else {
             [m_popup.get() addItemWithTitle:@""];
-            NSMenuItem* menuItem = [m_popup.get() lastItem];
-            [menuItem setTitle:nsStringFromWebCoreString(items[i].m_text)];
+            NSMenuItem *menuItem = [m_popup.get() lastItem];
+
+            RetainPtr<NSMutableParagraphStyle> paragraphStyle(AdoptNS, [[NSParagraphStyle defaultParagraphStyle] mutableCopy]);
+            NSWritingDirection writingDirection = items[i].m_textDirection == LTR ? NSWritingDirectionLeftToRight : NSWritingDirectionRightToLeft;
+            [paragraphStyle.get() setBaseWritingDirection:writingDirection];
+            [paragraphStyle.get() setAlignment:menuTextDirection == LTR ? NSLeftTextAlignment : NSRightTextAlignment];
+            RetainPtr<NSMutableDictionary> attributes(AdoptNS, [[NSMutableDictionary alloc] initWithObjectsAndKeys:
+                paragraphStyle.get(), NSParagraphStyleAttributeName,
+                [m_popup.get() font], NSFontAttributeName,
+            nil]);
+            if (items[i].m_hasTextDirectionOverride) {
+                RetainPtr<NSNumber> writingDirectionValue(AdoptNS, [[NSNumber alloc] initWithInteger:writingDirection + NSTextWritingDirectionOverride]);
+                RetainPtr<NSArray> writingDirectionArray(AdoptNS, [[NSArray alloc] initWithObjects:writingDirectionValue.get(), nil]);
+                [attributes.get() setObject:writingDirectionArray.get() forKey:NSWritingDirectionAttributeName];
+            }
+            RetainPtr<NSAttributedString> string(AdoptNS, [[NSAttributedString alloc] initWithString:nsStringFromWebCoreString(items[i].m_text) attributes:attributes.get()]);
+
+            [menuItem setAttributedTitle:string.get()];
             [menuItem setEnabled:items[i].m_isEnabled];
             [menuItem setToolTip:nsStringFromWebCoreString(items[i].m_toolTip)];
         }
     }
 }
 
-void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, const Vector<WebPopupItem>& items, const PlatformPopupMenuData&, int32_t selectedIndex)
+void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection textDirection, const Vector<WebPopupItem>& items, const PlatformPopupMenuData&, int32_t selectedIndex)
 {
-    populate(items);
+    populate(items, textDirection);
 
     [m_popup.get() attachPopUpWithFrame:rect inView:m_webView];
     [m_popup.get() selectItemAtIndex:selectedIndex];
+    [m_popup.get() setUserInterfaceLayoutDirection:textDirection == LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
 
     NSMenu* menu = [m_popup.get() menu];
 

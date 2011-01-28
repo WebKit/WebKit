@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #ifndef WebPopupMenuProxy_h
 #define WebPopupMenuProxy_h
 
+#include <WebCore/TextDirection.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -56,7 +57,7 @@ public:
     {
     }
 
-    virtual void showPopupMenu(const WebCore::IntRect& rect, const Vector<WebPopupItem>& items, const PlatformPopupMenuData&, int32_t selectedIndex) = 0;
+    virtual void showPopupMenu(const WebCore::IntRect& rect, WebCore::TextDirection, const Vector<WebPopupItem>& items, const PlatformPopupMenuData&, int32_t selectedIndex) = 0;
     virtual void hidePopupMenu() = 0;
 
 protected:

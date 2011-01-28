@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2008, 2010, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * This library is free software; you can redistribute it and/or
@@ -75,6 +75,11 @@ void PopupMenuMac::populate()
     if (!client()->shouldPopOver())
         [m_popup.get() addItemWithTitle:@""];
 
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    TextDirection menuTextDirection = client()->menuStyle().textDirection();
+    [m_popup.get() setUserInterfaceLayoutDirection:menuTextDirection == LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
+#endif // !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+
     ASSERT(client());
     int size = client()->listSize();
 
@@ -92,13 +97,27 @@ void PopupMenuMac::populate()
                 }
                 [attributes setObject:font forKey:NSFontAttributeName];
             }
+
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+            RetainPtr<NSMutableParagraphStyle> paragraphStyle(AdoptNS, [[NSParagraphStyle defaultParagraphStyle] mutableCopy]);
+            [paragraphStyle.get() setAlignment:menuTextDirection == LTR ? NSLeftTextAlignment : NSRightTextAlignment];
+            NSWritingDirection writingDirection = style.textDirection() == LTR ? NSWritingDirectionLeftToRight : NSWritingDirectionRightToLeft;
+            [paragraphStyle.get() setBaseWritingDirection:writingDirection];
+            if (style.hasTextDirectionOverride()) {
+                RetainPtr<NSNumber> writingDirectionValue(AdoptNS, [[NSNumber alloc] initWithInteger:writingDirection + NSTextWritingDirectionOverride]);
+                RetainPtr<NSArray> writingDirectionArray(AdoptNS, [[NSArray alloc] initWithObjects:writingDirectionValue.get(), nil]);
+                [attributes setObject:writingDirectionArray.get() forKey:NSWritingDirectionAttributeName];
+            }
+            [attributes setObject:paragraphStyle.get() forKey:NSParagraphStyleAttributeName];
+#endif // !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+
             // FIXME: Add support for styling the foreground and background colors.
             // FIXME: Find a way to customize text color when an item is highlighted.
-            NSAttributedString* string = [[NSAttributedString alloc] initWithString:client()->itemText(i) attributes:attributes];
+            NSAttributedString *string = [[NSAttributedString alloc] initWithString:client()->itemText(i) attributes:attributes];
             [attributes release];
 
             [m_popup.get() addItemWithTitle:@""];
-            NSMenuItem* menuItem = [m_popup.get() lastItem];
+            NSMenuItem *menuItem = [m_popup.get() lastItem];
             [menuItem setAttributedTitle:string];
             [menuItem setEnabled:client()->itemIsEnabled(i)];
             [menuItem setToolTip:client()->itemToolTip(i)];

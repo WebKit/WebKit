@@ -292,6 +292,7 @@ namespace WebCore {
 #endif
 
         virtual bool selectItemWritingDirectionIsNatural() = 0;
+        virtual bool selectItemAlignmentFollowsMenuWritingDirection() = 0;
         virtual PassRefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const = 0;
         virtual PassRefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const = 0;
 

@@ -390,6 +390,11 @@ bool ChromeClientWinCE::selectItemWritingDirectionIsNatural()
     return false;
 }
 
+bool ChromeClientWinCE::selectItemAlignmentFollowsMenuWritingDirection()
+{
+    return false;
+}
+
 PassRefPtr<PopupMenu> ChromeClientWinCE::createPopupMenu(PopupMenuClient* client) const
 {
     return adoptRef(new PopupMenuWin(client));

@@ -1860,7 +1860,7 @@ void WebPageProxy::setTextFromItemForPopupMenu(WebPopupMenuProxy*, int32_t index
     process()->send(Messages::WebPage::SetTextForActivePopupMenu(index), m_pageID);
 }
 
-void WebPageProxy::showPopupMenu(const IntRect& rect, const Vector<WebPopupItem>& items, int32_t selectedIndex, const PlatformPopupMenuData& data)
+void WebPageProxy::showPopupMenu(const IntRect& rect, uint64_t textDirection, const Vector<WebPopupItem>& items, int32_t selectedIndex, const PlatformPopupMenuData& data)
 {
     if (m_activePopupMenu)
         m_activePopupMenu->hidePopupMenu();
@@ -1872,7 +1872,7 @@ void WebPageProxy::showPopupMenu(const IntRect& rect, const Vector<WebPopupItem>
     process()->responsivenessTimer()->stop();
 #endif
 
-    m_activePopupMenu->showPopupMenu(rect, items, data, selectedIndex);
+    m_activePopupMenu->showPopupMenu(rect, static_cast<TextDirection>(textDirection), items, data, selectedIndex);
     m_activePopupMenu = 0;
 }
 

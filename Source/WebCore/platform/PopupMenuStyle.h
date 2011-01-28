@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2008, 2011 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@ namespace WebCore {
 
 class PopupMenuStyle {
 public:
-    PopupMenuStyle(const Color& foreground, const Color& background, const Font& font, bool visible, bool isDisplayNone, Length textIndent, TextDirection textDirection)
+    PopupMenuStyle(const Color& foreground, const Color& background, const Font& font, bool visible, bool isDisplayNone, Length textIndent, TextDirection textDirection, bool hasTextDirectionOverride)
         : m_foregroundColor(foreground)
         , m_backgroundColor(background)
         , m_font(font)
@@ -43,6 +43,7 @@ public:
         , m_isDisplayNone(isDisplayNone)
         , m_textIndent(textIndent)
         , m_textDirection(textDirection)
+        , m_hasTextDirectionOverride(hasTextDirectionOverride)
     {
     }
     
@@ -53,6 +54,7 @@ public:
     bool isDisplayNone() const { return m_isDisplayNone; }
     Length textIndent() const { return m_textIndent; }
     TextDirection textDirection() const { return m_textDirection; }
+    bool hasTextDirectionOverride() const { return m_hasTextDirectionOverride; }
 
 private:
     Color m_foregroundColor;
@@ -62,6 +64,7 @@ private:
     bool m_isDisplayNone;
     Length m_textIndent;
     TextDirection m_textDirection;
+    bool m_hasTextDirectionOverride;
 };
 
 } // namespace WebCore

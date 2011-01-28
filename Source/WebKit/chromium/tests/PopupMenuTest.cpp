@@ -76,7 +76,7 @@ public:
     virtual PopupMenuStyle itemStyle(unsigned listIndex) const
     {
         Font font(FontPlatformData(12.0, false, false), false);
-        return PopupMenuStyle(Color::black, Color::white, font, true, false, Length(), TextDirection());
+        return PopupMenuStyle(Color::black, Color::white, font, true, false, Length(), TextDirection(), false /* has text direction override */);
     }
     virtual PopupMenuStyle menuStyle() const { return itemStyle(0); }
     virtual int clientInsetLeft() const { return 0; }
