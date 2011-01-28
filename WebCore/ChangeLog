@@ -1,3 +1,23 @@
+2011-01-27  Mark Rowe  <mrowe@apple.com>
+
+        Merge r72304.
+
+    2010-11-16  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        REGRESSION (Safari 5.0.1): HTML5 videos on YouTube never start playing on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=44439
+        <rdar://problem/8342407>
+        
+        setUpCookiesForQuickTime() previously depended on having setFrameView() called first
+        in order to get a Frame, and when it wasn't set, the cookie-copy failed.  Now, 
+        setUpCookiesForQuickTime uses the MediaPlayerClient function mediaPlayerOwningDocument() 
+        to retrieve the document and subsequently, the Frame.
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::setUpCookiesForQuickTime):
+
 2010-10-19  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         <rdar://problem/8796252> Use WTF's StringBuffer.h.
