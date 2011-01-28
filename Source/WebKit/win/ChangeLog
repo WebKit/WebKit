@@ -1,3 +1,17 @@
+2011-01-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Fix scrollbars in Safari's Downloads window and Bookmarks view by
+        implementing two needed functions from ScrollableArea.
+
+        * WebScrollBar.cpp:
+        (WebScrollBar::horizontalScrollbar): Return the WebCore::Scrollbar if
+        we are a horizontal scrollbar.
+        (WebScrollBar::verticalScrollbar): Return the WebCore::Scrollbar if we
+        are a vertical scrollbar.
+        * WebScrollBar.h:
+
 2011-01-27  Adam Roben  <aroben@apple.com>
 
         Trim down #includes in WebView.h

@@ -275,3 +275,13 @@ void WebScrollBar::invalidateScrollbarRect(Scrollbar*, const IntRect& rect)
     RECT r = rect;
     ::InvalidateRect(m_containingWindow, &r, false);
 }
+
+Scrollbar* WebScrollBar::horizontalScrollbar() const
+{
+    return m_scrollBar->orientation() == HorizontalScrollbar ? m_scrollBar.get() : 0;
+}
+
+Scrollbar* WebScrollBar::verticalScrollbar() const
+{
+    return m_scrollBar->orientation() == VerticalScrollbar ? m_scrollBar.get() : 0;
+}

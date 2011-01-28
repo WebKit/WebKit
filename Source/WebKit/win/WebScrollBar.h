@@ -123,6 +123,9 @@ protected:
 
     virtual bool scrollbarCornerPresent() const { return false; }
 
+    virtual WebCore::Scrollbar* horizontalScrollbar() const; 
+    virtual WebCore::Scrollbar* verticalScrollbar() const; 
+
     ULONG m_refCount;
     HWND m_containingWindow;
     int m_currentPosition;
