@@ -1,5 +1,25 @@
 2011-01-28  Mark Rowe  <mrowe@apple.com>
 
+        Merge r70740.
+
+    2010-10-27  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Fix for Bug 48310 - SVG font-face-name without name attribute causes a crash
+        https://bugs.webkit.org/show_bug.cgi?id=48310
+
+        Test: svg/custom/font-face-name-without-name-attr.svg
+
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::rebuildFontFace): Don't create src
+        property if the src value list is empty.
+        * svg/SVGFontFaceSrcElement.cpp:
+        (WebCore::SVGFontFaceSrcElement::srcValue): Don't add empty src
+        values to the src value list.
+
+2011-01-28  Mark Rowe  <mrowe@apple.com>
+
         Merge r74779.
 
     2010-12-29  Justin Schuh  <jschuh@chromium.org>
