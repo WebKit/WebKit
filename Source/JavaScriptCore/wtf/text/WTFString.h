@@ -369,6 +369,9 @@ inline bool equalPossiblyIgnoringCase(const String& a, const String& b, bool ign
 
 inline bool equalIgnoringNullity(const String& a, const String& b) { return equalIgnoringNullity(a.impl(), b.impl()); }
 
+template<size_t inlineCapacity>
+inline bool equalIgnoringNullity(const Vector<UChar, inlineCapacity>& a, const String& b) { return equalIgnoringNullity(a, b.impl()); }
+
 inline bool operator!(const String& str) { return str.isNull(); }
 
 inline void swap(String& a, String& b) { a.swap(b); }

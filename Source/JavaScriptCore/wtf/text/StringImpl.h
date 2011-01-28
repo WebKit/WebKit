@@ -354,6 +354,16 @@ inline bool equalIgnoringCase(const char* a, const UChar* b, unsigned length) { 
 
 bool equalIgnoringNullity(StringImpl*, StringImpl*);
 
+template<size_t inlineCapacity>
+bool equalIgnoringNullity(const Vector<UChar, inlineCapacity>& a, StringImpl* b)
+{
+    if (!b)
+        return !a.size();
+    if (a.size() != b->length())
+        return false;
+    return !memcmp(a.data(), b->characters(), b->length());
+}
+
 int codePointCompare(const StringImpl*, const StringImpl*);
 
 static inline bool isSpaceOrNewline(UChar c)

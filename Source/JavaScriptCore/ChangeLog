@@ -1,3 +1,18 @@
+2011-01-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add WTFString method to compare equality with Vector<UChar>
+        https://bugs.webkit.org/show_bug.cgi?id=53266
+
+        I'm planning to use this method in the new XSS filter implementation,
+        but it seems generally useful.
+
+        * wtf/text/StringImpl.h:
+        (WTF::equalIgnoringNullity):
+        * wtf/text/WTFString.h:
+        (WTF::equalIgnoringNullity):
+
 2011-01-27  Michael Saboff  <msaboff@apple.com>
 
         Potentially Unsafe HashSet of RuntimeObject* in RootObject definition
