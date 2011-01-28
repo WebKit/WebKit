@@ -99,6 +99,8 @@ namespace WebCore {
         void addHTTPHeaderField(const AtomicString& name, const String& value);
         void addHTTPHeaderFields(const HTTPHeaderMap& headerFields);
         
+        void clearHTTPAuthorization();
+
         String httpContentType() const { return httpHeaderField("Content-Type");  }
         void setHTTPContentType(const String& httpContentType) { setHTTPHeaderField("Content-Type", httpContentType); }
         

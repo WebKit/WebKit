@@ -470,6 +470,8 @@ void ResourceHandle::willSendRequest(ResourceRequest& request, const ResourceRes
     d->m_pass = url.pass();
     d->m_lastHTTPMethod = request.httpMethod();
     request.removeCredentials();
+    if (!protocolHostAndPortAreEqual(request.url(), redirectResponse.url()))
+        request.clearHTTPAuthorization();
 
     client()->willSendRequest(this, request, redirectResponse);
 }

@@ -233,6 +233,16 @@ void ResourceRequestBase::setHTTPHeaderField(const char* name, const String& val
     setHTTPHeaderField(AtomicString(name), value);
 }
 
+void ResourceRequestBase::clearHTTPAuthorization()
+{
+    updateResourceRequest(); 
+
+    m_httpHeaderFields.remove("Authorization");
+
+    if (url().protocolInHTTPFamily())
+        m_platformRequestUpdated = false;
+}
+
 void ResourceRequestBase::clearHTTPReferrer()
 {
     updateResourceRequest(); 
