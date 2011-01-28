@@ -23,10 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
+#import "WebDragClient.h"
+
 #import "PasteboardTypes.h"
 #import "ShareableBitmap.h"
 #import "WebCoreArgumentCoders.h"
-#import "WebDragClient.h"
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
 #import <WebCore/CachedImage.h>

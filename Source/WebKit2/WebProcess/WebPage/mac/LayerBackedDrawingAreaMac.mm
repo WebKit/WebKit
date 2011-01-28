@@ -23,9 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if USE(ACCELERATED_COMPOSITING)
-
+#import "config.h"
 #import "LayerBackedDrawingArea.h"
+
+#if USE(ACCELERATED_COMPOSITING)
 
 #import "DrawingAreaProxyMessageKinds.h"
 #import "WebKitSystemInterface.h"

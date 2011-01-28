@@ -23,9 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(PLUGIN_PROCESS)
-
+#import "config.h"
 #import "PluginProcessProxy.h"
+
+#if ENABLE(PLUGIN_PROCESS)
 
 #import "PluginProcessCreationParameters.h"
 #import "WebKitSystemInterface.h"

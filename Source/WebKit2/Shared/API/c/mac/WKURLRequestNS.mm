@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
 #import "WKURLRequestNS.h"
 
 #import "WKAPICast.h"

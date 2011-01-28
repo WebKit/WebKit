@@ -23,9 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(WEB_PROCESS_SANDBOX)
-
+#import "config.h"
 #import "SandboxExtension.h"
+
+#if ENABLE(WEB_PROCESS_SANDBOX)
 
 #import "ArgumentDecoder.h"
 #import "ArgumentEncoder.h"

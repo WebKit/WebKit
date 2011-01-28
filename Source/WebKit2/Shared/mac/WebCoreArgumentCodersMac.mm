@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
 #import "WebCoreArgumentCoders.h"
 
 #import "ArgumentCodersCF.h"

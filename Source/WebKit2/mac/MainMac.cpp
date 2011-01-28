@@ -24,6 +24,9 @@
  */
 
 #include <dlfcn.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
 
 static void closeUnusedFileDescriptors()
 {

@@ -23,9 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(PLUGIN_PROCESS)
-
+#import "config.h"
 #import "PluginControllerProxy.h"
+
+#if ENABLE(PLUGIN_PROCESS)
 
 #import <QuartzCore/QuartzCore.h>
 #import "PluginProcess.h"

@@ -27,6 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
 #import "WebEditorClient.h"
 
 #define DISABLE_NOT_IMPLEMENTED_WARNINGS 1

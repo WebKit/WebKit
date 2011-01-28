@@ -23,7 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
 #import "PasteboardTypes.h"
+
 #import <wtf/RetainPtr.h>
 
 namespace WebKit {

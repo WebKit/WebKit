@@ -23,9 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(PLUGIN_PROCESS)
-
+#import "config.h"
 #import "PluginProcessMain.h"
+
+#if ENABLE(PLUGIN_PROCESS)
 
 #import "CommandLine.h"
 #import "PluginProcess.h"

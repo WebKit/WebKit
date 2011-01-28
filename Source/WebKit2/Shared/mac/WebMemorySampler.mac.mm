@@ -23,9 +23,10 @@
  *
  */
 
-#if ENABLE(MEMORY_SAMPLER)  
-
+#import "config.h"
 #import "WebMemorySampler.h"
+
+#if ENABLE(MEMORY_SAMPLER)  
 
 #import <JavaScriptCore/MemoryStatistics.h>
 #import <mach/mach.h>

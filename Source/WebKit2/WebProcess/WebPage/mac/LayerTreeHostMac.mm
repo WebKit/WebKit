@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "LayerTreeHost.h"
+#import "config.h"
+#import "LayerTreeHost.h"
 
 namespace WebKit {
 

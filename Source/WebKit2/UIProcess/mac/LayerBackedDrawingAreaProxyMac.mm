@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
 #import "LayerBackedDrawingAreaProxy.h"
 
 #import "DrawingAreaMessageKinds.h"

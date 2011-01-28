@@ -1,3 +1,17 @@
+2011-01-28  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Clean up the mess introduced when config.h was added to the project:
+
+        - Remove the contents of WebKit2Prefix.h that is now in config.h, to avoid including everything
+          twice in each file, probably slowing down compile time.
+
+        - Add config.h to all the files that were forgotten in order to keep the build from breaking.
+
+        - Added trap to ensure that config.h is included at the top of every implementation file. If this
+          had been added it would have caught the previous issue.
+
 2011-01-28  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Geoff Garen.

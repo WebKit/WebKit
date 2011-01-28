@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
 #import "NetscapePluginModule.h"
 
 #import <WebCore/WebCoreNSStringExtras.h>

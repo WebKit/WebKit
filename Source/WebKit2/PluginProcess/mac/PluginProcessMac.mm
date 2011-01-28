@@ -23,12 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
+#import "PluginProcess.h"
+
 #if ENABLE(PLUGIN_PROCESS)
 
 // FIXME (WebKit2) <rdar://problem/8728860> WebKit2 needs to be localized
 #define UI_STRING(__str, __desc) [NSString stringWithUTF8String:__str]
- 
-#import "PluginProcess.h"
 
 #import "NetscapePlugin.h"
 #import "PluginProcessShim.h"

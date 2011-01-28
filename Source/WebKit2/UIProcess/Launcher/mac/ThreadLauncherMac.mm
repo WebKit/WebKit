@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
 #import "ThreadLauncher.h"
 
 #import "RunLoop.h"

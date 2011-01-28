@@ -17,6 +17,7 @@
     Boston, MA 02110-1301, USA.
 */
 
+#import "config.h"
 #import "WebFrameNetworkingContext.h"
 
 #import <WebCore/Page.h>

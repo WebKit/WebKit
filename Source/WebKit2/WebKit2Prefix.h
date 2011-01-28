@@ -24,102 +24,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */ 
 
-#if defined (BUILDING_GTK__)
-#include <WebCore/config.h>
-#endif /* defined (BUILDING_GTK__) */
-
-#include <wtf/Platform.h>
-#include <wtf/DisallowCType.h>
-#ifdef __cplusplus
-#include <wtf/FastMalloc.h>
-#endif
-
-#ifdef __cplusplus
-#define EXTERN_C_BEGIN extern "C" {
-#define EXTERN_C_END }
-#else
-#define EXTERN_C_BEGIN
-#define EXTERN_C_END
-#endif
-
-// For defining getters to a static value, where the getters have internal linkage
-#define DEFINE_STATIC_GETTER(type, name, arguments) \
-static const type& name() \
-{ \
-    DEFINE_STATIC_LOCAL(type, name##Value, arguments); \
-    return name##Value; \
-}
-
-#if defined(BUILDING_QT__)
-
-#define WTF_USE_JSC 1
-#define WTF_USE_V8 0
-
-#define JS_EXPORTDATA
-#define JS_EXPORTCLASS
-
-// Disable notImplemented() warnings not to break layout tests.
-// FIXME: WebKit2 logging system should behave identical to WebKit1.
-#define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
-
-#elif defined(__APPLE__)
-
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-#define ENABLE_WEB_PROCESS_SANDBOX 1
-#endif
-
-#define ENABLE_PLUGIN_PROCESS 1
-
-#if PLATFORM(MAC)
-#define ENABLE_MEMORY_SAMPLER 1
-#endif
-
-#import <CoreGraphics/CoreGraphics.h>
-
 #ifdef __OBJC__
 #import <Cocoa/Cocoa.h>
 #endif
 
-/* WebKit has no way to pull settings from WebCore/config.h for now */
-/* so we assume WebKit is always being compiled on top of JavaScriptCore */
-#define WTF_USE_JSC 1
-#define WTF_USE_V8 0
-
-#define JS_EXPORTDATA
-#define JS_EXPORTCLASS
-#define WEBKIT_EXPORTDATA
-
-#include <WebCore/EmptyProtocolDefinitions.h>
-
-#elif defined(WIN32) || defined(_WIN32)
-
-#ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x0500
+#ifdef __cplusplus
+#define new ("if you use new/delete make sure to include config.h at the top of the file"()) 
+#define delete ("if you use new/delete make sure to include config.h at the top of the file"()) 
 #endif
-
-#ifndef WINVER
-#define WINVER 0x0500
-#endif
-
-/* If we don't define these, they get defined in windef.h. */
-/* We want to use std::min and std::max. */
-#ifndef max
-#define max max
-#endif
-#ifndef min
-#define min min
-#endif
-
-#ifndef _WINSOCKAPI_
-#define _WINSOCKAPI_ /* Prevent inclusion of winsock.h in windows.h */
-#endif
-
-#include <WebCore/config.h>
-#include <windows.h>
-
-#if PLATFORM(CG)
-#include <CoreGraphics/CoreGraphics.h>
-#endif
-
-#endif /* defined(WIN32) || defined(_WIN32) */
-

@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
 #import "PluginInfoStore.h"
 
 #import "NetscapePluginModule.h"

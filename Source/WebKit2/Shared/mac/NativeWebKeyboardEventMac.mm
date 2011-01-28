@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
 #import "NativeWebKeyboardEvent.h"
 
 #import "WebEventFactory.h"
