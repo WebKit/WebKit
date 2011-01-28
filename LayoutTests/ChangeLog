@@ -1,5 +1,58 @@
 2011-01-28  Mark Rowe  <mrowe@apple.com>
 
+        Merge r72802.
+
+    2010-11-29  W. James MacLean  <wjmaclean@chromium.org>
+
+        Reviewed by Dirk Schulze.
+
+        Large input numbers cause overflow during SVG parsing, leading to crash
+        https://bugs.webkit.org/show_bug.cgi?id=49546
+
+        Values outside the range supported by float lead to Infinity() or NaN()
+        during parsing, leading to subsequent crashes. Modified
+        parser to verify number is in the supported range, and return false if not.
+
+        * platform/chromium-linux/svg/custom/svg-parse-overflow-1-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/svg-parse-overflow-1-expected.png: Added.
+        * platform/chromium-linux/svg/custom/svg-parse-overflow-1-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/svg-parse-overflow-2-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/svg-parse-overflow-2-expected.png: Added.
+        * platform/chromium-linux/svg/custom/svg-parse-overflow-2-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/svg-parse-overflow-3-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/svg-parse-overflow-3-expected.png: Added.
+        * platform/chromium-linux/svg/custom/svg-parse-overflow-3-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/svg-parse-overflow-4-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/svg-parse-overflow-4-expected.png: Added.
+        * platform/chromium-linux/svg/custom/svg-parse-overflow-4-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/svg-parse-overflow-5-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/svg-parse-overflow-5-expected.png: Added.
+        * platform/chromium-linux/svg/custom/svg-parse-overflow-5-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/svg/custom/svg-parse-overflow-1-expected.checksum: Added.
+        * platform/mac/svg/custom/svg-parse-overflow-1-expected.png: Added.
+        * platform/mac/svg/custom/svg-parse-overflow-1-expected.txt: Added.
+        * platform/mac/svg/custom/svg-parse-overflow-2-expected.checksum: Added.
+        * platform/mac/svg/custom/svg-parse-overflow-2-expected.png: Added.
+        * platform/mac/svg/custom/svg-parse-overflow-2-expected.txt: Added.
+        * platform/mac/svg/custom/svg-parse-overflow-3-expected.checksum: Added.
+        * platform/mac/svg/custom/svg-parse-overflow-3-expected.png: Added.
+        * platform/mac/svg/custom/svg-parse-overflow-3-expected.txt: Added.
+        * platform/mac/svg/custom/svg-parse-overflow-4-expected.checksum: Added.
+        * platform/mac/svg/custom/svg-parse-overflow-4-expected.png: Added.
+        * platform/mac/svg/custom/svg-parse-overflow-4-expected.txt: Added.
+        * platform/mac/svg/custom/svg-parse-overflow-5-expected.checksum: Added.
+        * platform/mac/svg/custom/svg-parse-overflow-5-expected.png: Added.
+        * platform/mac/svg/custom/svg-parse-overflow-5-expected.txt: Added.
+        * platform/mac/test_expectations.txt:
+        * svg/custom/svg-parse-overflow-1.html: Added.
+        * svg/custom/svg-parse-overflow-2.html: Added.
+        * svg/custom/svg-parse-overflow-3.html: Added.
+        * svg/custom/svg-parse-overflow-4.html: Added.
+        * svg/custom/svg-parse-overflow-5.html: Added.
+
+2011-01-28  Mark Rowe  <mrowe@apple.com>
+
         Merge r70740.
 
     2010-10-27  Yuzo Fujishima  <yuzo@google.com>

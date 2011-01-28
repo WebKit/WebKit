@@ -873,6 +873,13 @@ BUG10286 LINUX : svg/W3C-SVG-1.1/animate-elem-02-t.svg = FAIL
 
 // Bug in Skia, see https://bugs.webkit.org/show_bug.cgi?id=24534 .
 
+// Some re-baselining will be needed.
+BUGWK49456 MAC WIN : svg/custom/svg-parse-overflow-1.html = FAIL
+BUGWK49456 MAC WIN : svg/custom/svg-parse-overflow-2.html = FAIL
+BUGWK49456 MAC WIN : svg/custom/svg-parse-overflow-3.html = FAIL
+BUGWK49456 MAC WIN : svg/custom/svg-parse-overflow-4.html = FAIL
+BUGWK49456 MAC WIN : svg/custom/svg-parse-overflow-5.html = FAIL
+
 // -----------------------------------------------------------------
 // End SVG Regressions
 // -----------------------------------------------------------------
