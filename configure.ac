@@ -408,7 +408,7 @@ AC_MSG_RESULT([$enable_dom_storage])
 # check whether to enable the indexed database API
 AC_MSG_CHECKING([whether to enable the indexed database API])
 AC_ARG_ENABLE(indexed_database,
-              AC_HELP_STRING([--enable-indexeddb],
+              AC_HELP_STRING([--enable-indexed-database],
                              [enable the indexed database API [default=no]]),
               [],[enable_indexed_database="no"])
 AC_MSG_RESULT([$enable_indexed_database])
