@@ -1,3 +1,19 @@
+2010-10-19  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        <rdar://problem/8796252> Use WTF's StringBuffer.h.
+
+        Reviewed by Aaron Golden.
+
+        * css/CSSParser.cpp:
+        * dom/Document.cpp:
+        * platform/Length.cpp:
+        * platform/text/StringBuffer.h: Removed.
+        * platform/text/StringBuilder.cpp:
+        * platform/text/TextCodecLatin1.cpp:
+        * platform/text/TextCodecUTF16.cpp:
+        * platform/text/TextCodecUserDefined.cpp:
+        * rendering/RenderText.cpp:
+
 2011-01-27  Mark Rowe  <mrowe@apple.com>
 
         Merge r68715.

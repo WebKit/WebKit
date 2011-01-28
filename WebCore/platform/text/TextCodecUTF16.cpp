@@ -27,7 +27,7 @@
 #include "TextCodecUTF16.h"
 
 #include "PlatformString.h"
-#include "StringBuffer.h"
+#include <wtf/text/StringBuffer.h>
 #include <wtf/text/CString.h>
 #include <wtf/PassOwnPtr.h>
 

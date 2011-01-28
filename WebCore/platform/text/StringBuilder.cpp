@@ -29,7 +29,7 @@
 #include "config.h"
 #include "StringBuilder.h"
 
-#include "StringBuffer.h"
+#include <wtf/text/StringBuffer.h>
 
 using namespace std;
 
