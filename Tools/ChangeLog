@@ -1,3 +1,38 @@
+2011-01-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add webkit-patch roll-chromium-deps
+        https://bugs.webkit.org/show_bug.cgi?id=53288
+
+        This command updates the Source/WebKit/chromium/DEPS file with the
+        last-known good revision of Chromium (or a revision specified on the
+        command line).  I'd eventually like to turn this into a SheriffBot
+        command, but this is the first step.
+
+        This patch somewhat sprawled because I needed to move a bunch of code
+        out of ChangeLog that should never have been there in the first place.
+        Also, I had to fix a bug in MockUser in order to test the new command.
+
+        * Scripts/webkitpy/common/checkout/api.py:
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+        * Scripts/webkitpy/common/checkout/deps.py: Added.
+        * Scripts/webkitpy/common/config/urls.py:
+        * Scripts/webkitpy/tool/commands/__init__.py:
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/commands/roll.py: Added.
+        * Scripts/webkitpy/tool/commands/roll_unittest.py: Added.
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/steps/__init__.py:
+        * Scripts/webkitpy/tool/steps/preparechangelogfordepsroll.py: Added.
+        * Scripts/webkitpy/tool/steps/preparechangelogforrevert.py:
+        * Scripts/webkitpy/tool/steps/preparechangelogforrevert_unittest.py: Added.
+        * Scripts/webkitpy/tool/steps/suggestreviewers_unittest.py:
+        * Scripts/webkitpy/tool/steps/updatechromiumdeps.py: Added.
+        * Scripts/webkitpy/tool/steps/validatechangelogs_unittest.py:
+
 2011-01-27  Greg Coletta  <greg.coletta@nokia.com>
 
         Reviewed by Laszlo Gombos.

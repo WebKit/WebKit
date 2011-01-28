@@ -45,9 +45,8 @@ class ValidateChangeLogsTest(unittest.TestCase):
         diff_file.lines = [(start_line, start_line, "foo")]
         expected_stdout = expected_stderr = ""
         if should_fail and not non_interactive:
-            expected_stdout = "OK to continue?\n"
-            expected_stderr = "The diff to mock/ChangeLog looks wrong.  Are you sure your ChangeLog entry is at the top of the file?\n"
-        result = OutputCapture().assert_outputs(self, step._check_changelog_diff, [diff_file], expected_stdout=expected_stdout, expected_stderr=expected_stderr)
+            expected_stderr = "The diff to mock/ChangeLog looks wrong.  Are you sure your ChangeLog entry is at the top of the file?\nOK to continue?\n"
+        result = OutputCapture().assert_outputs(self, step._check_changelog_diff, [diff_file], expected_stderr=expected_stderr)
         self.assertEqual(not result, should_fail)
 
     def test_check_changelog_diff(self):

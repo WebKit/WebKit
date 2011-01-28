@@ -1,4 +1,4 @@
-# Copyright (c) 2010, Google Inc. All rights reserved.
+# Copyright (c) 2011 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -26,14 +26,23 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCommand
 
-def view_source_url(local_path):
-    return "http://trac.webkit.org/browser/trunk/%s" % local_path
+import webkitpy.tool.steps as steps
 
 
-def view_revision_url(revision_number):
-    return "http://trac.webkit.org/changeset/%s" % revision_number
+class RollChromiumDEPS(AbstractSequencedCommand):
+    name = "roll-chromium-deps"
+    help_text = "Updates Chromium DEPS (defaults to the last-known good revision of Chromium)"
+    argument_names = "[CHROMIUM_REVISION]"
+    steps = [
+        steps.UpdateChromiumDEPS,
+        steps.PrepareChangeLogForDEPSRoll,
+        steps.ConfirmDiff,
+        steps.Commit,
+    ]
 
-chromium_lkgr_url = "http://chromium-status.appspot.com/lkgr"
-
-contribution_guidelines = "http://webkit.org/coding/contributing.html"
+    def _prepare_state(self, options, args, tool):
+        return {
+            "chromium_revision": (args and args[0]),
+        }

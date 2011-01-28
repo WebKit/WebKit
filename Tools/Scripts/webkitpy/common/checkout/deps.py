@@ -1,4 +1,4 @@
-# Copyright (c) 2010, Google Inc. All rights reserved.
+# Copyright (C) 2011, Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -25,15 +25,37 @@
 # THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# WebKit's Python module for parsing and modifying ChangeLog files
+
+import codecs
+import fileinput
+import os.path
+import re
+import textwrap
 
 
-def view_source_url(local_path):
-    return "http://trac.webkit.org/browser/trunk/%s" % local_path
+class DEPS(object):
 
+    _variable_regexp = r"\s+'%s':\s+'(?P<value>\d+)'"
 
-def view_revision_url(revision_number):
-    return "http://trac.webkit.org/changeset/%s" % revision_number
+    def __init__(self, path):
+        self._path = path
 
-chromium_lkgr_url = "http://chromium-status.appspot.com/lkgr"
+    def read_variable(self, name):
+        pattern = re.compile(self._variable_regexp % name)
+        for line in fileinput.FileInput(self._path):
+            match = pattern.match(line)
+            if match:
+                return int(match.group("value"))
 
-contribution_guidelines = "http://webkit.org/coding/contributing.html"
+    def write_variable(self, name, value):
+        pattern = re.compile(self._variable_regexp % name)
+        replacement_line = "  '%s': '%s'" % (name, value)
+        # inplace=1 creates a backup file and re-directs stdout to the file
+        for line in fileinput.FileInput(self._path, inplace=1):
+            if pattern.match(line):
+                print replacement_line
+                continue
+            # Trailing comma suppresses printing newline
+            print line,

@@ -495,6 +495,14 @@ class MockSCM(Mock):
             return 0
 
 
+class MockDEPS(object):
+    def read_variable(self, name):
+        return 6564
+
+    def write_variable(self, name, value):
+        log("MOCK: MockDEPS.write_variable(%s, %s)" % (name, value))
+
+
 class MockCheckout(object):
 
     _committer_list = CommitterList()
@@ -527,6 +535,9 @@ class MockCheckout(object):
         commit_message = Mock()
         commit_message.message = lambda:"This is a fake commit message that is at least 50 characters."
         return commit_message
+
+    def chromium_deps(self):
+        return MockDEPS()
 
     def apply_patch(self, patch, force=False):
         pass
@@ -561,7 +572,7 @@ class MockUser(object):
         pass
 
     def confirm(self, message=None, default='y'):
-        print message
+        log(message)
         return default == 'y'
 
     def can_open_url(self):

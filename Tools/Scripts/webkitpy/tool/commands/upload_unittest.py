@@ -61,12 +61,12 @@ class UploadCommandsTest(CommandsTest):
         options.suggest_reviewers = False
         expected_stderr = """Running check-webkit-style
 MOCK: user.open_url: file://...
+Was that diff correct?
 Obsoleting 2 old patches on bug 42
 MOCK add_patch_to_bug: bug_id=42, description=MOCK description, mark_for_review=True, mark_for_commit_queue=False, mark_for_landing=False
 MOCK: user.open_url: http://example.com/42
 """
-        expected_stdout = "Was that diff correct?\n"
-        self.assert_execute_outputs(Post(), [42], options=options, expected_stdout=expected_stdout, expected_stderr=expected_stderr)
+        self.assert_execute_outputs(Post(), [42], options=options, expected_stderr=expected_stderr)
 
     def test_land_safely(self):
         expected_stderr = "Obsoleting 2 old patches on bug 42\nMOCK add_patch_to_bug: bug_id=42, description=Patch for landing, mark_for_review=False, mark_for_commit_queue=False, mark_for_landing=True\n"
@@ -90,12 +90,12 @@ MOCK: user.open_url: http://example.com/42
         options.suggest_reviewers = False
         expected_stderr = """Running check-webkit-style
 MOCK: user.open_url: file://...
+Was that diff correct?
 Obsoleting 2 old patches on bug 42
 MOCK add_patch_to_bug: bug_id=42, description=MOCK description, mark_for_review=True, mark_for_commit_queue=False, mark_for_landing=False
 MOCK: user.open_url: http://example.com/42
 """
-        expected_stdout = "Was that diff correct?\n"
-        self.assert_execute_outputs(Upload(), [42], options=options, expected_stdout=expected_stdout, expected_stderr=expected_stderr)
+        self.assert_execute_outputs(Upload(), [42], options=options, expected_stderr=expected_stderr)
 
     def test_mark_bug_fixed(self):
         tool = MockTool()
@@ -106,6 +106,7 @@ MOCK: user.open_url: http://example.com/42
         expected_stderr = """Bug: <http://example.com/42> Bug with two r+'d and cq+'d patches, one of which has an invalid commit-queue setter.
 Revision: 9876
 MOCK: user.open_url: http://example.com/42
+Is this correct?
 Adding comment to Bug 42.
 MOCK bug comment: bug_id=42, cc=None
 --- Begin comment ---
@@ -115,8 +116,7 @@ Committed r9876: <http://trac.webkit.org/changeset/9876>
 --- End comment ---
 
 """
-        expected_stdout = "Is this correct?\n"
-        self.assert_execute_outputs(MarkBugFixed(), [], expected_stdout=expected_stdout, expected_stderr=expected_stderr, tool=tool, options=options)
+        self.assert_execute_outputs(MarkBugFixed(), [], expected_stderr=expected_stderr, tool=tool, options=options)
 
     def test_edit_changelog(self):
         self.assert_execute_outputs(EditChangeLogs(), [])

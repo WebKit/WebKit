@@ -41,5 +41,6 @@ class SuggestReviewersTest(unittest.TestCase):
     def test_basic(self):
         capture = OutputCapture()
         step = SuggestReviewers(MockTool(), MockOptions(suggest_reviewers=True, git_commit=None))
-        expected_stdout = "The following reviewers have recently modified files in your patch:\nFoo Bar\nWould you like to CC them?\n"
-        capture.assert_outputs(self, step.run, [{"bug_id": "123"}], expected_stdout=expected_stdout)
+        expected_stdout = "The following reviewers have recently modified files in your patch:\nFoo Bar\n"
+        expected_stderr = "Would you like to CC them?\n"
+        capture.assert_outputs(self, step.run, [{"bug_id": "123"}], expected_stdout=expected_stdout, expected_stderr=expected_stderr)

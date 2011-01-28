@@ -200,7 +200,13 @@ where ATTACHMENT_ID is the ID of this attachment.
         self.assert_execute_outputs(CreateRollout(), ["855 852 854", "Reason"], options=self._default_options(), expected_stderr=expected_stderr)
 
     def test_rollout(self):
-        expected_stderr = "Preparing rollout for bug 42.\nUpdating working directory\nRunning prepare-ChangeLog\nMOCK: user.open_url: file://...\nBuilding WebKit\nCommitted r49824: <http://trac.webkit.org/changeset/49824>\n"
-        expected_stdout = "Was that diff correct?\n"
-        self.assert_execute_outputs(Rollout(), [852, "Reason"], options=self._default_options(), expected_stdout=expected_stdout, expected_stderr=expected_stderr)
+        expected_stderr = """Preparing rollout for bug 42.
+Updating working directory
+Running prepare-ChangeLog
+MOCK: user.open_url: file://...
+Was that diff correct?
+Building WebKit
+Committed r49824: <http://trac.webkit.org/changeset/49824>
+"""
+        self.assert_execute_outputs(Rollout(), [852, "Reason"], options=self._default_options(), expected_stderr=expected_stderr)
 

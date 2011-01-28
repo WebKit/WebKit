@@ -33,6 +33,7 @@ from webkitpy.common.config import urls
 from webkitpy.common.checkout.changelog import ChangeLog
 from webkitpy.common.checkout.commitinfo import CommitInfo
 from webkitpy.common.checkout.scm import CommitMessage
+from webkitpy.common.checkout.deps import DEPS
 from webkitpy.common.memoized import memoized
 from webkitpy.common.net.bugzilla import parse_bug_id
 from webkitpy.common.system.executive import Executive, run_command, ScriptError
@@ -147,6 +148,9 @@ class Checkout(object):
             return parse_bug_id(self.commit_message_for_this_commit(git_commit, changed_files).message())
         except ScriptError, e:
             pass # We might not have ChangeLogs.
+
+    def chromium_deps(self):
+        return DEPS(os.path.join(self._scm.checkout_root, "Source", "WebKit", "chromium", "DEPS"))
 
     def apply_patch(self, patch, force=False):
         # It's possible that the patch was not made from the root directory.

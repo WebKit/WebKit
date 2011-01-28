@@ -1,16 +1,16 @@
-# Copyright (c) 2010, Google Inc. All rights reserved.
+# Copyright (C) 2011 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
 #
-#     * Redistributions of source code must retain the above copyright
+#    * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
-#     * Redistributions in binary form must reproduce the above
+#    * Redistributions in binary form must reproduce the above
 # copyright notice, this list of conditions and the following disclaimer
 # in the documentation and/or other materials provided with the
 # distribution.
-#     * Neither the name of Google Inc. nor the names of its
+#    * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
 #
@@ -26,14 +26,25 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from webkitpy.thirdparty.mock import Mock
+from webkitpy.tool.commands.commandtest import CommandsTest
+from webkitpy.tool.commands.roll import *
+from webkitpy.tool.mocktool import MockOptions, MockTool
 
-def view_source_url(local_path):
-    return "http://trac.webkit.org/browser/trunk/%s" % local_path
 
+class RollCommandsTest(CommandsTest):
+    def test_update_chromium_deps(self):
+        expected_stderr = """Updating Chromium DEPS to 6764
+MOCK: MockDEPS.write_variable(chromium_rev, 6764)
+Running prepare-ChangeLog
+MOCK: user.open_url: file://...
+Was that diff correct?
+Committed r49824: <http://trac.webkit.org/changeset/49824>
+"""
+        self.assert_execute_outputs(RollChromiumDEPS(), [6764], expected_stderr=expected_stderr)
 
-def view_revision_url(revision_number):
-    return "http://trac.webkit.org/changeset/%s" % revision_number
-
-chromium_lkgr_url = "http://chromium-status.appspot.com/lkgr"
-
-contribution_guidelines = "http://webkit.org/coding/contributing.html"
+    def test_update_chromium_deps_older_revision(self):
+        expected_stderr = """Current Chromium DEPS revision 6564 is newer than 5764.
+ERROR: Unable to update Chromium DEPS
+"""
+        self.assert_execute_outputs(RollChromiumDEPS(), [5764], expected_stderr=expected_stderr, expected_exception=SystemExit)

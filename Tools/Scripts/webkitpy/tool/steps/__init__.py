@@ -47,6 +47,7 @@ from webkitpy.tool.steps.options import Options
 from webkitpy.tool.steps.postdiff import PostDiff
 from webkitpy.tool.steps.postdiffforcommit import PostDiffForCommit
 from webkitpy.tool.steps.postdiffforrevert import PostDiffForRevert
+from webkitpy.tool.steps.preparechangelogfordepsroll import PrepareChangeLogForDEPSRoll
 from webkitpy.tool.steps.preparechangelogforrevert import PrepareChangeLogForRevert
 from webkitpy.tool.steps.preparechangelog import PrepareChangeLog
 from webkitpy.tool.steps.promptforbugortitle import PromptForBugOrTitle
@@ -55,6 +56,7 @@ from webkitpy.tool.steps.revertrevision import RevertRevision
 from webkitpy.tool.steps.runtests import RunTests
 from webkitpy.tool.steps.suggestreviewers import SuggestReviewers
 from webkitpy.tool.steps.updatechangelogswithreviewer import UpdateChangeLogsWithReviewer
+from webkitpy.tool.steps.updatechromiumdeps import UpdateChromiumDEPS
 from webkitpy.tool.steps.update import Update
 from webkitpy.tool.steps.validatechangelogs import ValidateChangeLogs
 from webkitpy.tool.steps.validatereviewer import ValidateReviewer
