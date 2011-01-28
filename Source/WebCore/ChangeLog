@@ -1,3 +1,15 @@
+2011-01-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Keyboard scrolling doesn’t work in WebKit2
+        <rdar://problem/8909672>
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[ScrollAnimationHelperDelegate convertSizeToBacking:]):
+        (-[ScrollAnimationHelperDelegate convertSizeFromBacking:]):
+        Add additional necessary delegate methods.
+
 2011-01-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

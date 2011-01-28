@@ -103,6 +103,16 @@ static NSSize abs(NSSize size)
     return abs(size);
 }
 
+- (NSSize)convertSizeToBacking:(NSSize)size
+{
+    return abs(size);
+}
+
+- (NSSize)convertSizeFromBacking:(NSSize)size
+{
+    return abs(size);
+}
+
 - (id)superview
 {
     return nil;
