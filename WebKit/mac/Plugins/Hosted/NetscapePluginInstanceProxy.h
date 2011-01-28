@@ -158,7 +158,7 @@ public:
     void invalidate();
     
     void willCallPluginFunction();
-    void didCallPluginFunction();
+    void didCallPluginFunction(bool& stopped);
     bool shouldStop();
     
     uint32_t nextRequestID();
@@ -267,8 +267,14 @@ public:
             ASSERT(reply->m_type == T::ReplyType);
         
         m_waitingForReply = false;
-        
-        didCallPluginFunction();
+
+        bool stopped = false;
+        didCallPluginFunction(stopped);
+        if (stopped) {
+            // The instance proxy may have been deleted from didCallPluginFunction(), so a null reply needs to be returned.
+            delete static_cast<T*>(reply);
+            return std::auto_ptr<T>();
+        }
 
         return std::auto_ptr<T>(static_cast<T*>(reply));
     }

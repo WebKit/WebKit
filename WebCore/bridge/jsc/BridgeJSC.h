@@ -85,8 +85,8 @@ public:
 
     virtual Class* getClass() const = 0;
     RuntimeObject* createRuntimeObject(ExecState*);
-    void willInvalidateRuntimeObject();
-    void willDestroyRuntimeObject();
+    void willInvalidateRuntimeObject(RuntimeObject*);
+    void willDestroyRuntimeObject(RuntimeObject*);
 
     // Returns false if the value was not set successfully.
     virtual bool setValueOfUndefinedField(ExecState*, const Identifier&, JSValue) { return false; }
@@ -122,7 +122,7 @@ protected:
     RefPtr<RootObject> m_rootObject;
 
 private:
-    RuntimeObject* m_runtimeObject;
+    WeakGCPtr<RuntimeObject> m_runtimeObject;
 };
 
 class Array : public Noncopyable {

@@ -1,5 +1,37 @@
 2011-01-27  Mark Rowe  <mrowe@apple.com>
 
+        Merge r71426.
+
+    2010-11-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49008
+        <rdar://problem/7906226> Frequent crashes on mail.yahoo.co.jp
+
+        Instance::m_runtimeObject used to be zeroed out by RuntimeObject destructor. But the
+        destructor may not be called immediately - GC first marks an object as dead, and only 
+        destroys it when its cell is overwritten. So, m_runtimeObject would keep pointing to a dead
+        object.
+
+        Functions in JSPluginElementFunctions.cpp put the RuntimeObject on stack for later use,
+        but if it's already dead, it can be overwritten before use.
+
+        The solution is of course to use WeakGCPtr, which returns 0 for dead objects.
+
+        * bridge/jsc/BridgeJSC.cpp:
+        (JSC::Bindings::Instance::Instance):
+        (JSC::Bindings::Instance::~Instance):
+        (JSC::Bindings::Instance::createRuntimeObject):
+        (JSC::Bindings::Instance::willDestroyRuntimeObject):
+        (JSC::Bindings::Instance::willInvalidateRuntimeObject):
+        * bridge/jsc/BridgeJSC.h:
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::RuntimeObject::~RuntimeObject):
+        (JSC::Bindings::RuntimeObject::invalidate):
+
+2011-01-27  Mark Rowe  <mrowe@apple.com>
+
         Merge r72114.
 
     2010-11-15  Darin Adler  <darin@apple.com>

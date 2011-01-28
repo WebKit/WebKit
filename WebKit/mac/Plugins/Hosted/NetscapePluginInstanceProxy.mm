@@ -1448,7 +1448,7 @@ void NetscapePluginInstanceProxy::willCallPluginFunction()
     m_pluginFunctionCallDepth++;
 }
     
-void NetscapePluginInstanceProxy::didCallPluginFunction()
+void NetscapePluginInstanceProxy::didCallPluginFunction(bool& stopped)
 {
     ASSERT(m_pluginFunctionCallDepth > 0);
     m_pluginFunctionCallDepth--;
@@ -1458,6 +1458,7 @@ void NetscapePluginInstanceProxy::didCallPluginFunction()
     if (!m_pluginFunctionCallDepth && m_shouldStopSoon) {
         m_shouldStopSoon = false;
         [m_pluginView stop];
+        stopped = true;
     }
 }
     
