@@ -73,7 +73,9 @@ void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)
         if (!last)
             last = lastChild();
         if (last && last->isAnonymous() && last->isTableCell()) {
-            last->addChild(child);
+            if (beforeChild == last)
+                beforeChild = last->firstChild();
+            last->addChild(child, beforeChild);
             return;
         }
 
