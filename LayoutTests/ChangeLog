@@ -1,5 +1,19 @@
 2011-01-27  Mark Rowe  <mrowe@apple.com>
 
+        Merge r74787.
+
+    2010-12-30  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Tests that we do not crash when trying to find video elements in the media document.
+        https://bugs.webkit.org/show_bug.cgi?id=51696
+
+        * media/video-element-other-namespace-crash-expected.txt: Added.
+        * media/video-element-other-namespace-crash.html: Added.
+
+2011-01-27  Mark Rowe  <mrowe@apple.com>
+
         Merge r75519.
 
     2011-01-11  Abhishek Arya  <inferno@chromium.org>

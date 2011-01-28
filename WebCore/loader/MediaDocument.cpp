@@ -150,47 +150,52 @@ Tokenizer* MediaDocument::createTokenizer()
     return new MediaTokenizer(this);
 }
 
+static inline HTMLVideoElement* descendentVideoElement(Node* node)
+{
+    ASSERT(node);
+
+    if (node->hasTagName(videoTag))
+        return static_cast<HTMLVideoElement*>(node);
+
+    RefPtr<NodeList> nodeList = node->getElementsByTagNameNS(videoTag.namespaceURI(), videoTag.localName());
+   
+    if (nodeList.get()->length() > 0)
+        return static_cast<HTMLVideoElement*>(nodeList.get()->item(0));
+
+    return 0;
+}
+
 void MediaDocument::defaultEventHandler(Event* event)
 {
     // Match the default Quicktime plugin behavior to allow 
     // clicking and double-clicking to pause and play the media.
     Node* targetNode = event->target()->toNode();
-    if (targetNode && targetNode->hasTagName(videoTag)) {
-        HTMLVideoElement* video = static_cast<HTMLVideoElement*>(targetNode);
-        if (event->type() == eventNames().clickEvent) {
-            if (!video->canPlay()) {
-                video->pause(event->fromUserGesture());
-                event->setDefaultHandled();
-            }
-        } else if (event->type() == eventNames().dblclickEvent) {
-            if (video->canPlay()) {
-                video->play(event->fromUserGesture());
-                event->setDefaultHandled();
-            }
-        }
-    }
+    if (!targetNode)
+        return;
 
-    if (event->type() == eventNames().keydownEvent && event->isKeyboardEvent()) {
-        HTMLVideoElement* video = 0;
-        if (targetNode) {
-            if (targetNode->hasTagName(videoTag))
-                video = static_cast<HTMLVideoElement*>(targetNode);
-            else {
-                RefPtr<NodeList> nodeList = targetNode->getElementsByTagName("video");
-                if (nodeList.get()->length() > 0)
-                    video = static_cast<HTMLVideoElement*>(nodeList.get()->item(0));
-            }
+    HTMLVideoElement* video = descendentVideoElement(targetNode);
+    if (!video)
+        return;
+
+    if (event->type() == eventNames().clickEvent) {
+        if (!video->canPlay()) {
+            video->pause(event->fromUserGesture());
+            event->setDefaultHandled();
         }
-        if (video) {
-            KeyboardEvent* keyboardEvent = static_cast<KeyboardEvent*>(event);
-            if (keyboardEvent->keyIdentifier() == "U+0020") { // space
-                if (video->paused()) {
-                    if (video->canPlay())
-                        video->play(event->fromUserGesture());
-                } else
-                    video->pause(event->fromUserGesture());
-                event->setDefaultHandled();
-            }
+    } else if (event->type() == eventNames().dblclickEvent) {
+        if (video->canPlay()) {
+            video->play(event->fromUserGesture());
+            event->setDefaultHandled();
+        }
+    } else if (event->type() == eventNames().keydownEvent && event->isKeyboardEvent()) {
+        KeyboardEvent* keyboardEvent = static_cast<KeyboardEvent*>(event);
+        if (keyboardEvent->keyIdentifier() == "U+0020") { // space
+            if (video->paused()) {
+                if (video->canPlay())
+                    video->play(event->fromUserGesture());
+            } else
+                video->pause(event->fromUserGesture());
+            event->setDefaultHandled();
         }
     }
 }
@@ -215,11 +220,7 @@ void MediaDocument::replaceMediaElementTimerFired(Timer<MediaDocument>*)
     htmlBody->setAttribute(marginwidthAttr, "0");
     htmlBody->setAttribute(marginheightAttr, "0");
 
-    RefPtr<NodeList> nodeList = htmlBody->getElementsByTagName("video");
-
-    if (nodeList.get()->length() > 0) {
-        HTMLVideoElement* videoElement = static_cast<HTMLVideoElement*>(nodeList.get()->item(0));
-
+    if (HTMLVideoElement* videoElement = descendentVideoElement(htmlBody)) {
         RefPtr<Element> element = Document::createElement(embedTag, false);
         HTMLEmbedElement* embedElement = static_cast<HTMLEmbedElement*>(element.get());
 
