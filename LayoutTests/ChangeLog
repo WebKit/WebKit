@@ -1,5 +1,20 @@
 2011-01-27  Mark Rowe  <mrowe@apple.com>
 
+        Merge r72644.
+
+    2010-11-23  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Tests that drag and drop is allowed across the same security origin object,
+        even if they are marked unique.
+
+        * http/tests/security/drag-drop-same-unique-origin-expected.txt: Added.
+        * http/tests/security/drag-drop-same-unique-origin.html: Added.
+        * http/tests/security/resources/drag-drop-allowed.html: Added.
+
+2011-01-27  Mark Rowe  <mrowe@apple.com>
+
         Merge r71925.
 
     2010-11-10  Abhishek Arya  <inferno@chromium.org>
