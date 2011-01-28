@@ -1,5 +1,0 @@
-FAIL: Timed out waiting for notifyDone to be called
-Test that audio element can use a data: url
-
-EVENT(loadstart)
-
