@@ -1,3 +1,13 @@
+2011-01-28  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: allow remote debugging with front-end
+        served from the cloud.
+        https://bugs.webkit.org/show_bug.cgi?id=53303
+
+        * inspector/front-end/inspector.js:
+
 2011-01-28  Aparna Nandyal  <aparna.nand@wipro.com>
 
         Reviewed by Andreas Kling.

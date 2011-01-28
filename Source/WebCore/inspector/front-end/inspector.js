@@ -475,7 +475,9 @@ WebInspector.PlatformFlavor = {
 WebInspector.loaded = function()
 {
     if ("page" in WebInspector.queryParamsObject) {
-        WebInspector.socket = new WebSocket("ws://" + window.location.host + "/devtools/page/" + WebInspector.queryParamsObject.page);
+        var page = WebInspector.queryParamsObject.page;
+        var host = "host" in WebInspector.queryParamsObject ? WebInspector.queryParamsObject.host : window.location.host;
+        WebInspector.socket = new WebSocket("ws://" + host + "/devtools/page/" + page);
         WebInspector.socket.onmessage = function(message) { InspectorBackend.dispatch(message.data); }
         WebInspector.socket.onerror = function(error) { console.error(error); }
         WebInspector.socket.onopen = function() {
