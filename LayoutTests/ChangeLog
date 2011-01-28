@@ -1,5 +1,19 @@
 2011-01-27  Mark Rowe  <mrowe@apple.com>
 
+        Merge r70473.
+
+    2010-10-25  Cris Neckar  <cdn@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Tests for a crash when an event with the type "mousedown" is not a MouseEvent.
+        https://bugs.webkit.org/show_bug.cgi?id=48159
+
+        * fast/events/keyboardevent-mousedown-crash-expected.txt: Added.
+        * fast/events/keyboardevent-mousedown-crash.html: Added.
+
+2011-01-27  Mark Rowe  <mrowe@apple.com>
+
         Merge r73623.
 
     2010-12-09  Michael Saboff  <msaboff@apple.com>
