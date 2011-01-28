@@ -1,3 +1,60 @@
+2011-01-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add basic rubber banding support
+        <rdar://problem/8219429>
+        https://bugs.webkit.org/show_bug.cgi?id=53277
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleGestureEvent):
+        Pass gesture events to the FrameView.
+
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::handleGestureEvent):
+        * platform/ScrollAnimator.h:
+        Add stubbed out implementation.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::ScrollView):
+        (WebCore::ScrollView::overhangAmount):
+        (WebCore::ScrollView::wheelEvent):
+        * platform/ScrollView.h:
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::ScrollableArea):
+        (WebCore::ScrollableArea::handleGestureEvent):
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::constrainsScrollingToContentEdge):
+        (WebCore::ScrollableArea::setConstrainsScrollingToContentEdge):
+        Move constrains scrolling bit to ScrollableArea from ScrollView.
+
+        (WebCore::ScrollableArea::contentsSize):
+        (WebCore::ScrollableArea::overhangAmount):
+        Add additional virtual functions for information needed by the animator.
+
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::ScrollAnimatorMac):
+        (WebCore::ScrollAnimatorMac::immediateScrollByDeltaX):
+        (WebCore::ScrollAnimatorMac::immediateScrollByDeltaY):
+        (WebCore::elasticDeltaForTimeDelta):
+        (WebCore::elasticDeltaForReboundDelta):
+        (WebCore::reboundDeltaForElasticDelta):
+        (WebCore::scrollWheelMultiplier):
+        (WebCore::ScrollAnimatorMac::handleWheelEvent):
+        (WebCore::ScrollAnimatorMac::handleGestureEvent):
+        (WebCore::ScrollAnimatorMac::pinnedInDirection):
+        (WebCore::ScrollAnimatorMac::allowsVerticalStretching):
+        (WebCore::ScrollAnimatorMac::allowsHorizontalStretching):
+        (WebCore::ScrollAnimatorMac::smoothScrollWithEvent):
+        (WebCore::ScrollAnimatorMac::beginScrollGesture):
+        (WebCore::ScrollAnimatorMac::endScrollGesture):
+        (WebCore::ScrollAnimatorMac::snapRubberBand):
+        (WebCore::roundTowardZero):
+        (WebCore::roundToDevicePixelTowardZero):
+        (WebCore::ScrollAnimatorMac::snapRubberBandTimerFired):
+        Implement basic rubber banding.
+
 2011-01-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.

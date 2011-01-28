@@ -605,6 +605,7 @@
 #endif
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 #define ENABLE_GESTURE_EVENTS 1
+#define ENABLE_RUBBER_BANDING 1
 #endif
 #if !defined(ENABLE_JAVA_BRIDGE)
 #define ENABLE_JAVA_BRIDGE 1

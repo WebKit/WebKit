@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,10 @@
 
 #if ENABLE(SMOOTH_SCROLLING)
 
+#include "FloatPoint.h"
+#include "FloatSize.h"
 #include "ScrollAnimator.h"
+#include "Timer.h"
 #include <wtf/RetainPtr.h>
 
 #ifdef __OBJC__
@@ -47,12 +50,46 @@ public:
     virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier);
     virtual void scrollToOffsetWithoutAnimation(const FloatPoint&);
 
-    // Called by the ScrollAnimationHelperDelegate.
+#if ENABLE(RUBBER_BANDING)
+    virtual void handleWheelEvent(PlatformWheelEvent&);
+#if ENABLE(GESTURE_EVENTS)
+    virtual void handleGestureEvent(const PlatformGestureEvent&);
+#endif
+#endif
+
     void immediateScrollToPoint(const FloatPoint& newPosition);
+    void immediateScrollByDeltaX(float deltaX);
+    void immediateScrollByDeltaY(float deltaY);
 
 private:
     RetainPtr<id> m_scrollAnimationHelper;
     RetainPtr<ScrollAnimationHelperDelegate> m_scrollAnimationHelperDelegate;
+
+#if ENABLE(RUBBER_BANDING)
+    bool allowsVerticalStretching() const;
+    bool allowsHorizontalStretching() const;
+    bool pinnedInDirection(float deltaX, float deltaY);
+    void snapRubberBand();
+    void snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*);
+    void smoothScrollWithEvent(PlatformWheelEvent&);
+    void beginScrollGesture();
+    void endScrollGesture();
+
+    bool m_inScrollGesture;
+    bool m_momentumScrollInProgress;
+    bool m_ignoreMomentumScrolls;
+    CFTimeInterval m_lastMomemtumScrollTimestamp;
+    FloatSize m_overflowScrollDelta;
+    FloatSize m_stretchScrollForce;
+    FloatSize m_momentumVelocity;
+
+    // Rubber band state.
+    CFTimeInterval m_startTime;
+    FloatSize m_startStretch;
+    FloatPoint m_origOrigin;
+    FloatSize m_origVelocity;
+    Timer<ScrollAnimatorMac> m_snapRubberBandTimer;
+#endif
 };
 
 } // namespace WebCore

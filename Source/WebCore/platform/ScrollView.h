@@ -51,7 +51,6 @@ class wxScrollWinEvent;
 namespace WebCore {
 
 class HostWindow;
-class PlatformWheelEvent;
 class Scrollbar;
 
 class ScrollView : public Widget, public ScrollableArea {
@@ -163,10 +162,6 @@ public:
     int contentsHeight() const { return contentsSize().height(); }
     virtual void setContentsSize(const IntSize&);
 
-    // Functions for controlling if you can scroll past the end of the document.
-    bool constrainsScrollingToContentEdge() const { return m_constrainsScrollingToContentEdge; }
-    void setConstrainsScrollingToContentEdge(bool constrainsScrollingToContentEdge) { m_constrainsScrollingToContentEdge = constrainsScrollingToContentEdge; }
-
     // Functions for querying the current scrolled position (both as a point, a size, or as individual X and Y values).
     IntPoint scrollPosition() const { return visibleContentRect().location(); }
     IntSize scrollOffset() const { return visibleContentRect().location() - IntPoint(); } // Gets the scrolled position as an IntSize. Convenient for adding to other sizes.
@@ -176,7 +171,9 @@ public:
     IntPoint adjustScrollPositionWithinRange(const IntPoint&) const; 
     int scrollX() const { return scrollPosition().x(); }
     int scrollY() const { return scrollPosition().y(); }
-    
+
+    IntSize overhangAmount() const;
+
     // Functions for scrolling the view.
     void setScrollPosition(const IntPoint&);
     void scrollBy(const IntSize& s) { return setScrollPosition(scrollPosition() + s); }
@@ -232,6 +229,9 @@ public:
     // On Mac the underlying NSScrollView just does the scrolling, but on other platforms
     // (like Windows), we need this function in order to do the scroll ourselves.
     void wheelEvent(PlatformWheelEvent&);
+#if ENABLE(GESTURE_EVENTS)
+    void gestureEvent(const PlatformGestureEvent&);
+#endif
 
     IntPoint convertChildToSelf(const Widget* child, const IntPoint& point) const
     {
@@ -338,8 +338,6 @@ private:
     bool m_paintsEntireContents;
     bool m_clipsRepaints;
     bool m_delegatesScrolling;
-
-    bool m_constrainsScrollingToContentEdge;
 
     // There are 8 possible combinations of writing mode and direction.  Scroll origin will be non-zero in the x or y axis
     // if there is any reversed direction or writing-mode.  The combinations are:

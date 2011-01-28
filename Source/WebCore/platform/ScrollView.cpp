@@ -55,7 +55,6 @@ ScrollView::ScrollView()
     , m_paintsEntireContents(false)
     , m_clipsRepaints(true)
     , m_delegatesScrolling(false)
-    , m_constrainsScrollingToContentEdge(true)
 {
     platformInit();
 }
@@ -399,6 +398,22 @@ bool ScrollView::logicalScroll(ScrollLogicalDirection direction, ScrollGranulari
     return scroll(logicalToPhysical(direction, isVerticalDocument(), isFlippedDocument()), granularity);
 }
 
+IntSize ScrollView::overhangAmount() const
+{
+    IntSize stretch;
+    if (scrollY() < 0)
+        stretch.setHeight(scrollY());
+    else if (scrollY() > contentsHeight() - visibleContentRect().height())
+        stretch.setHeight(scrollY() - (contentsHeight() - visibleContentRect().height()));
+
+    if (scrollX() < 0)
+        stretch.setWidth(scrollX());
+    else if (scrollX() > contentsWidth() - visibleContentRect().width())
+        stretch.setWidth(scrollX() - (contentsWidth() - visibleContentRect().width()));
+
+    return stretch;
+}
+
 void ScrollView::windowResizerRectChanged()
 {
     if (platformWidget())
@@ -737,6 +752,16 @@ void ScrollView::wheelEvent(PlatformWheelEvent& e)
 
     ScrollableArea::handleWheelEvent(e);
 }
+
+#if ENABLE(GESTURE_EVENTS)
+void ScrollView::gestureEvent(const PlatformGestureEvent& gestureEvent)
+{
+    if (platformWidget())
+        return;
+
+    ScrollableArea::handleGestureEvent(gestureEvent);
+}
+#endif
 
 void ScrollView::setFrameRect(const IntRect& newRect)
 {

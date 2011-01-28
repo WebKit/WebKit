@@ -40,6 +40,10 @@ class FloatPoint;
 class PlatformWheelEvent;
 class ScrollableArea;
 
+#if ENABLE(GESTURE_EVENTS)
+class PlatformGestureEvent;
+#endif
+
 class ScrollAnimator {
 public:
     static PassOwnPtr<ScrollAnimator> create(ScrollableArea*);
@@ -55,6 +59,9 @@ public:
     virtual void scrollToOffsetWithoutAnimation(const FloatPoint&);
 
     virtual void handleWheelEvent(PlatformWheelEvent&);
+#if ENABLE(GESTURE_EVENTS)
+    virtual void handleGestureEvent(const PlatformGestureEvent&);
+#endif
 
     FloatPoint currentPosition() const;
 

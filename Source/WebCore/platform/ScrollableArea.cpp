@@ -41,6 +41,7 @@ namespace WebCore {
 
 ScrollableArea::ScrollableArea()
     : m_scrollAnimator(ScrollAnimator::create(this))
+    , m_constrainsScrollingToContentEdge(true)
 {
 }
 
@@ -112,6 +113,13 @@ void ScrollableArea::handleWheelEvent(PlatformWheelEvent& wheelEvent)
 {
     m_scrollAnimator->handleWheelEvent(wheelEvent);
 }
+
+#if ENABLE(GESTURE_EVENTS)
+void ScrollableArea::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
+{
+    m_scrollAnimator->handleGestureEvent(gestureEvent);
+}
+#endif
 
 void ScrollableArea::setScrollOffsetFromAnimation(const IntPoint& offset)
 {

@@ -36,6 +36,10 @@ class FloatPoint;
 class PlatformWheelEvent;
 class ScrollAnimator;
 
+#if ENABLE(GESTURE_EVENTS)
+class PlatformGestureEvent;
+#endif
+
 class ScrollableArea {
 public:
     ScrollableArea();
@@ -48,6 +52,13 @@ public:
     void scrollToYOffsetWithoutAnimation(float x);
 
     void handleWheelEvent(PlatformWheelEvent&);
+#if ENABLE(GESTURE_EVENTS)
+    void handleGestureEvent(const PlatformGestureEvent&);
+#endif
+
+    // Functions for controlling if you can scroll past the end of the document.
+    bool constrainsScrollingToContentEdge() const { return m_constrainsScrollingToContentEdge; }
+    void setConstrainsScrollingToContentEdge(bool constrainsScrollingToContentEdge) { m_constrainsScrollingToContentEdge = constrainsScrollingToContentEdge; }
 
     virtual int scrollSize(ScrollbarOrientation) const = 0;
     virtual int scrollPosition(Scrollbar*) const = 0;
@@ -92,12 +103,17 @@ public:
     virtual int visibleHeight() const { ASSERT_NOT_REACHED(); return 0; }
     virtual int visibleWidth() const { ASSERT_NOT_REACHED(); return 0; }
 
+    virtual IntSize contentsSize() const { ASSERT_NOT_REACHED(); return IntSize(); }
+
+    virtual IntSize overhangAmount() const { ASSERT_NOT_REACHED(); return IntSize(); }
+
 private:
     // NOTE: Only called from the ScrollAnimator.
     friend class ScrollAnimator;
     void setScrollOffsetFromAnimation(const IntPoint&);
 
     OwnPtr<ScrollAnimator> m_scrollAnimator;
+    bool m_constrainsScrollingToContentEdge;
 };
 
 } // namespace WebCore

@@ -2040,9 +2040,18 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent* wheelEv
 }
 
 #if ENABLE(GESTURE_EVENTS)
-bool EventHandler::handleGestureEvent(const PlatformGestureEvent&)
+bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
 {
-    // FIXME: Handle gesture events.
+    // FIXME: This should hit test and go to the correct subframe rather than 
+    // always sending gestures to the main frame only. We should also ensure
+    // that if a frame gets a gesture begin gesture, it gets the corresponding
+    // end gesture as well.
+
+    FrameView* view = m_frame->view();
+    if (!view)
+        return false;
+
+    view->handleGestureEvent(gestureEvent);
     return true;
 }
 #endif
