@@ -11,7 +11,7 @@ var test = function()
 
     function step1()
     {
-        WebInspector.debuggerModel.queryScripts(function(script) { step2({ data: script.sourceID }) });
+        WebInspector.debuggerModel.queryScripts(function(script) { step2({ data: script }) });
         WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, step2);
     }
 
