@@ -1,3 +1,15 @@
+2011-01-28  Tom Sepez  <tsepez@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        NULL pointer crash in TextIterator::handleTextBox()
+        https://bugs.webkit.org/show_bug.cgi?id=53267
+
+        Test: fast/css/rtl-nth-child-first-letter-crash.html
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::handleTextBox):
+
 2011-01-28  Adrienne Walker  <enne@google.com>
 
         Reviewed by Kenneth Russell.
