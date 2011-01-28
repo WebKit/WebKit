@@ -1,5 +1,15 @@
 2011-01-27  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
+        Reviewed by Adam Barth.
+
+        Update the expected results for test-webkitpy after r76916.
+
+        Include "config.h" in the expected results as well.
+
+        * Scripts/webkit2/messages_unittest.py:
+
+2011-01-27  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
         Unreviewed buildfix for SnowLeopard Intel Debug.
 
         Fix macro redefinition by not including config.h.
