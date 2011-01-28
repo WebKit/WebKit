@@ -3121,5 +3121,3 @@ BUGCR71022 WIN LINUX : fast/text/justify-ideograph-complex.html = IMAGE+TEXT
 BUGCR71022 WIN LINUX : fast/text/justify-ideograph-simple.html = IMAGE+TEXT
 BUGCR71022 WIN : fast/text/justify-ideograph-vertical.html = IMAGE+TEXT
 
-BUGWK53260 MAC : fast/repaint/select-option-background-color.html = IMAGE
-BUGWK53260 WIN : fast/repaint/select-option-background-color.html = IMAGE+TEXT
