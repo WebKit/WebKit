@@ -23,6 +23,7 @@ CONFIG(standalone_package): DEFINES *= NDEBUG
 JAVASCRIPTCORE_INCLUDEPATH = \
     $$PWD \
     $$PWD/.. \
+    $$PWD/../ThirdParty \
     $$PWD/assembler \
     $$PWD/bytecode \
     $$PWD/bytecompiler \

@@ -1,3 +1,15 @@
+2011-01-29  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        Move wince/mt19937ar.c to ThirdParty and make it a policy choice
+        https://bugs.webkit.org/show_bug.cgi?id=53253
+
+        Move implementation of Mersenne Twister pseudorandom number generator to
+        ThirdParty since it is a third party library.
+
+        * Source/ThirdParty/mt19937ar.c: Copied from Source/JavaScriptCore/wtf/wince/mt19937ar.c.
+
 2011-01-29  Dan Winship  <danw@gnome.org>
 
         Reviewed by Xan Lopez.

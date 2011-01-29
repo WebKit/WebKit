@@ -1,3 +1,24 @@
+2011-01-29  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        Move wince/mt19937ar.c to ThirdParty and make it a policy choice
+        https://bugs.webkit.org/show_bug.cgi?id=53253
+
+        Make inclusion of MT19937 a policy decision.
+
+        Currently, we hardcoded to  use MT19937 when building for
+        Windows CE. Instead, we should make this a policy decision
+        with the Windows CE port using this by default.
+
+        * JavaScriptCore.pri: Append Source/ThirdParty to the end
+        of the list include directories.
+        * wtf/CMakeLists.txt: Ditto.
+        * wtf/Platform.h: Defined WTF_USE_MERSENNE_TWISTER_19937 when
+        building for Windows CE.
+        * wtf/RandomNumber.cpp:
+        (WTF::randomNumber): Substituted USE(MERSENNE_TWISTER_19937) for OS(WINCE).
+
 2011-01-29  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by David Kilzer.
