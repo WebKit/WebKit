@@ -2227,16 +2227,6 @@ BUGCR48668 MAC : svg/W3C-SVG-1.1/struct-use-01-t.svg = FAIL
 // These ietestcenter tests still don't pass. Careful before removing these
 // that the baselines aren't incorrect
 // (like in: https://bugs.webkit.org/show_bug.cgi?id=42215)
-BUGCR48737 WIN LINUX MAC : ietestcenter/Javascript/11.1.5_4-4-b-1.html = TEXT
-BUGCR48737 WIN LINUX MAC : ietestcenter/Javascript/11.1.5_4-4-b-2.html = TEXT
-BUGCR48737 WIN LINUX MAC : ietestcenter/Javascript/11.1.5_4-4-c-1.html = TEXT
-BUGCR48737 WIN LINUX MAC : ietestcenter/Javascript/11.1.5_4-4-c-2.html = TEXT
-BUGCR48737 WIN LINUX MAC : ietestcenter/Javascript/11.1.5_4-4-d-1.html = TEXT
-BUGCR48737 WIN LINUX MAC : ietestcenter/Javascript/11.1.5_4-4-d-2.html = TEXT
-BUGCR48737 WIN LINUX MAC : ietestcenter/Javascript/11.1.5_4-4-d-3.html = TEXT
-BUGCR48737 WIN LINUX MAC : ietestcenter/Javascript/11.1.5_4-4-d-4.html = TEXT
-BUGCR48737 WIN LINUX MAC : ietestcenter/Javascript/11.4.1-4.a-5.html = TEXT
-BUGCR48737 WIN LINUX MAC : ietestcenter/Javascript/11.4.1-4.a-7.html = TEXT
 BUGCR48737 WIN LINUX MAC : ietestcenter/Javascript/15.2.3.3-4-178.html = TEXT
 BUGCR48737 WIN LINUX MAC : ietestcenter/Javascript/15.2.3.3-4-179.html = TEXT
 BUGCR48737 WIN LINUX MAC : ietestcenter/Javascript/15.2.3.3-4-180.html = TEXT
@@ -2807,9 +2797,6 @@ BUG_DRT WIN MAC LINUX : http/tests/loading/preload-img-test.html = TEXT TIMEOUT 
 
 // Flaky since 2010-09-17?
 BUGCR57950 WIN : svg/batik/text/verticalText.svg = CRASH PASS
-
-// This is an error which test_shell can't find.
-BUGWK43960 WIN MAC LINUX : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
 
 // media/video-* flakyness
 BUGCR59665 MAC : media/video-aspect-ratio.html = CRASH TIMEOUT PASS

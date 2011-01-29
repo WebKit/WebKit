@@ -1,3 +1,12 @@
+2011-01-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed; removed Chromium test expectations for tests that have been steadily passing.
+
+        In particular, many ietestcenter tests have been passing since V8 is updated to
+        version 3.0.12 in Chromium r72940.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-28  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Maciej Stachowiak.
