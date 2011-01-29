@@ -1,3 +1,9 @@
+2011-01-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed; Fixed Chromium test expectation.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-28  Jessie Berlin  <jberlin@apple.com>
 
         [Windows 7 Release Tests] fast/repaint/select-option-background-color.html failing since

@@ -3112,4 +3112,4 @@ BUGCR71087 MAC DEBUG : media/video-currentTime.html = PASS TIMEOUT
 BUGWK53314 : media/controls-strict.html = IMAGE+TEXT
 BUGWK53314 : media/video-zoom-controls.html = IMAGE+TEXT
 
-BUGWK53347 SLOW WIN LINUX DEBUG : fast/repaint/4774354.html = PASS TIMEOUT
+BUGWK53347 SLOW WIN LINUX DEBUG : fast/repaint/4774354.html = PASS
