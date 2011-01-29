@@ -308,6 +308,11 @@ uint32_t WKCARemoteLayerClientGetClientId(WKCARemoteLayerClientRef);
 void WKCARemoteLayerClientSetLayer(WKCARemoteLayerClientRef, CALayer *);
 CALayer *WKCARemoteLayerClientGetLayer(WKCARemoteLayerClientRef);
 
+@class CARenderer;
+
+void WKCARendererAddChangeNotificationObserver(CARenderer *, void (*callback)(void*), void* context);
+void WKCARendererRemoveChangeNotificationObserver(CARenderer *, void (*callback)(void*), void* context);
+
 typedef struct __WKWindowBounceAnimationContext *WKWindowBounceAnimationContextRef;
 
 WKWindowBounceAnimationContextRef WKWindowBounceAnimationContextCreate(NSWindow *window);
@@ -382,6 +387,9 @@ WKSandboxExtensionRef WKSandboxExtensionCreateFromSerializedFormat(const char* s
 typedef struct __WKScrollbarPainter *WKScrollbarPainterRef;
 WKScrollbarPainterRef WKMakeScrollbarPainter(int controlSize, bool isHorizontal);
 void WKScrollbarPainterPaint(WKScrollbarPainterRef, bool enabled, double value, CGFloat proportion, CGRect frameRect);
+int WKScrollbarThickness(int controlSize);
+int WKScrollbarMinimumThumbLength(WKScrollbarPainterRef);
+int WKScrollbarMinimumTotalLengthNeededForThumb(WKScrollbarPainterRef);
 
 #endif
 
