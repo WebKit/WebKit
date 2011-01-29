@@ -1809,6 +1809,7 @@ fast/loader/crash-copying-backforwardlist.html
 http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html
 
 # WebKitTestRunner needs layoutTestController.setPopupBlockingEnabled
+/fast/events/popup-blocked-from-iframe-src.html
 fast/events/popup-allowed-from-gesture-initiated-event.html
 fast/events/popup-allowed-from-gesture-initiated-form-submit.html
 fast/events/popup-blocked-from-fake-button-click.html

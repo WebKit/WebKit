@@ -1,3 +1,12 @@
+2011-01-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Daniel Bates.
+
+        Skip a test that uses unimplemented DRT API
+        https://bugs.webkit.org/show_bug.cgi?id=53381
+
+        * platform/mac-wk2/Skipped:
+
 2011-01-29  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] REGRESSION:  http/tests/media/video-{cookie,referer}.html failing
