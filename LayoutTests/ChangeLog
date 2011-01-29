@@ -1,3 +1,18 @@
+2011-01-28  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Maciej Stachowiak.
+
+        Updated test results after r76983.
+
+        * platform/mac-leopard/fast/forms/select-writing-direction-natural-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/select-writing-direction-natural-expected.txt.
+        * platform/mac-leopard/fast/text/international/bidi-menulist-expected.txt: Copied from LayoutTests/platform/mac/fast/text/international/bidi-menulist-expected.txt.
+        * platform/mac/fast/forms/select-writing-direction-natural-expected.checksum:
+        * platform/mac/fast/forms/select-writing-direction-natural-expected.png:
+        * platform/mac/fast/forms/select-writing-direction-natural-expected.txt:
+        * platform/mac/fast/text/international/bidi-menulist-expected.checksum:
+        * platform/mac/fast/text/international/bidi-menulist-expected.png:
+        * platform/mac/fast/text/international/bidi-menulist-expected.txt:
+
 2011-01-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin Adler.
