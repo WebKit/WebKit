@@ -900,17 +900,14 @@ BUGCR10284 MAC : svg/custom/path-bad-data.svg = FAIL
 BUGCR52692 WIN LINUX : svg/W3C-SVG-1.1/animate-elem-80-t.svg = IMAGE+TEXT
 
 // New in WK r65880, some probably just need rebaselining, others have real diffs
-BUGWK44514 WIN LINUX : svg/clip-path/clip-in-mask-objectBoundingBox.svg = IMAGE
-BUGWK44514 WIN LINUX : svg/clip-path/clip-in-mask-userSpaceOnUse.svg = IMAGE
-BUGWK44514 WIN LINUX : svg/clip-path/clip-in-mask.svg = IMAGE
-BUGWK44514 WIN LINUX : svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg = IMAGE+TEXT
-BUGWK44514 WIN LINUX : svg/clip-path/deep-nested-clip-in-mask-panning.svg = IMAGE+TEXT
-BUGWK44514 WIN LINUX : svg/clip-path/deep-nested-clip-in-mask.svg = IMAGE+TEXT
-BUGWK44514 WIN LINUX : svg/clip-path/nested-clip-in-mask-image-based-clipping.svg = IMAGE
-BUGWK44514 WIN LINUX : svg/clip-path/nested-clip-in-mask-path-and-image-based-clipping.svg = IMAGE
-BUGWK44514 WIN LINUX : svg/clip-path/nested-clip-in-mask-path-based-clipping.svg = IMAGE
+BUGWK53378 WIN LINUX : svg/clip-path/clip-in-mask.svg = IMAGE
+BUGWK53378 WIN LINUX : svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg = IMAGE+TEXT
+BUGWK53378 WIN LINUX : svg/clip-path/deep-nested-clip-in-mask-panning.svg = IMAGE+TEXT
+BUGWK53378 WIN LINUX : svg/clip-path/deep-nested-clip-in-mask.svg = IMAGE+TEXT
+BUGWK53378 WIN LINUX : svg/clip-path/nested-clip-in-mask-image-based-clipping.svg = IMAGE
+BUGWK53378 WIN LINUX : svg/clip-path/nested-clip-in-mask-path-and-image-based-clipping.svg = IMAGE
+BUGWK53378 WIN LINUX : svg/clip-path/nested-clip-in-mask-path-based-clipping.svg = IMAGE
 // Rebaselined in WK r65874, Linux has missing lines
-BUGWK44514 LINUX WIN : svg/custom/missing-xlink.svg = TEXT
 // Also fail since WK roll 65859:65885
 BUGWK44514 MAC : fast/backgrounds/svg-as-background-6.html = IMAGE
 
@@ -1422,10 +1419,6 @@ BUGCR10418 WIN DEBUG : animations/change-keyframes-name.html = FAIL PASS
 // would let us differentiate test_shell and WebKit DumpTreeNode.
 BUGCR7482 LINUX MAC : http/tests/misc/timer-vs-loading.html = TIMEOUT
 BUGCR7482 WIN : http/tests/misc/timer-vs-loading.html = TIMEOUT PASS
-
-// Regressions from WebKit merge to 40864
-// Likely just needs a rebaseline.
-BUGCR10421 LINUX : fast/block/positioning/001.html = FAIL
 
 // Selection highlight colors are wrong.
 BUGCR10426 LINUX : fast/lists/drag-into-marker.html = FAIL

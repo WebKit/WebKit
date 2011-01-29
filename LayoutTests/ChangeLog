@@ -1,5 +1,22 @@
 2011-01-29  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed Chromium rebaselines.
+
+        * platform/chromium-linux/fast/block/positioning/001-expected.checksum: Added.
+        * platform/chromium-linux/fast/block/positioning/001-expected.png: Added.
+        * platform/chromium-linux/svg/clip-path/clip-in-mask-objectBoundingBox-expected.checksum: Added.
+        * platform/chromium-linux/svg/clip-path/clip-in-mask-objectBoundingBox-expected.png: Added.
+        * platform/chromium-linux/svg/clip-path/clip-in-mask-userSpaceOnUse-expected.checksum: Added.
+        * platform/chromium-linux/svg/clip-path/clip-in-mask-userSpaceOnUse-expected.png: Added.
+        * platform/chromium-win/svg/clip-path/clip-in-mask-objectBoundingBox-expected.checksum: Added.
+        * platform/chromium-win/svg/clip-path/clip-in-mask-objectBoundingBox-expected.png: Added.
+        * platform/chromium-win/svg/clip-path/clip-in-mask-userSpaceOnUse-expected.checksum: Added.
+        * platform/chromium-win/svg/clip-path/clip-in-mask-userSpaceOnUse-expected.png: Added.
+        * platform/chromium-win/svg/custom/missing-xlink-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
+2011-01-29  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed Chromium test expectation update; removed http/tests/appcache/online-whitelist.html
         from the test expectation, because it has been passing on Chromium Windows.
 
