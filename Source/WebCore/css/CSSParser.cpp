@@ -125,13 +125,6 @@ static bool hasPrefix(const char* string, unsigned length, const char* prefix)
     return false;
 }
 
-static int clampToSignedInteger(double d)
-{
-    const double minIntAsDouble = std::numeric_limits<int>::min();
-    const double maxIntAsDouble = std::numeric_limits<int>::max();
-    return static_cast<int>(max(minIntAsDouble, min(d, maxIntAsDouble)));
-}
-
 CSSParser::CSSParser(bool strictParsing)
     : m_strict(strictParsing)
     , m_important(false)
@@ -4628,7 +4621,7 @@ bool CSSParser::parseCounter(int propId, int defaultValue, bool important)
             case VAL: {
                 int i = defaultValue;
                 if (val && val->unit == CSSPrimitiveValue::CSS_NUMBER) {
-                    i = clampToSignedInteger(val->fValue);
+                    i = clampToInteger(val->fValue);
                     m_valueList->next();
                 }
 

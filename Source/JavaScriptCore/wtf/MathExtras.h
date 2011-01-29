@@ -26,8 +26,10 @@
 #ifndef WTF_MathExtras_h
 #define WTF_MathExtras_h
 
+#include <algorithm>
 #include <cmath>
 #include <float.h>
+#include <limits>
 #include <stdlib.h>
 
 #if OS(SOLARIS)
@@ -204,6 +206,32 @@ inline float turn2deg(float t) { return t * 360.0f; }
 inline float deg2turn(float d) { return d / 360.0f; }
 inline float rad2grad(float r) { return r * 200.0f / piFloat; }
 inline float grad2rad(float g) { return g * piFloat / 200.0f; }
+
+inline int clampToInteger(double d)
+{
+    const double minIntAsDouble = std::numeric_limits<int>::min();
+    const double maxIntAsDouble = std::numeric_limits<int>::max();
+    return static_cast<int>(std::max(std::min(d, maxIntAsDouble), minIntAsDouble));
+}
+
+inline int clampToPositiveInteger(double d)
+{
+    const double maxIntAsDouble = std::numeric_limits<int>::max();
+    return static_cast<int>(std::max<double>(std::min(d, maxIntAsDouble), 0));
+}
+
+inline int clampToInteger(float d)
+{
+    const float minIntAsFloat = std::numeric_limits<int>::min();
+    const float maxIntAsFloat = std::numeric_limits<int>::max();
+    return static_cast<int>(std::max(std::min(d, maxIntAsFloat), minIntAsFloat));
+}
+
+inline int clampToPositiveInteger(float d)
+{
+    const float maxIntAsFloat = std::numeric_limits<int>::max();
+    return static_cast<int>(std::max<float>(std::min(d, maxIntAsFloat), 0));
+}
 
 #if !COMPILER(MSVC) && !COMPILER(WINSCW) && !(COMPILER(RVCT) && (OS(SYMBIAN) || PLATFORM(BREWMP)))
 using std::isfinite;
