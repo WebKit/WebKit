@@ -220,9 +220,7 @@ private:
         void finished();
 
     private:
-        // Use a shared dummy document to avoid expensive Document creation.
-        // Hold a raw pointer to the document since there is no need to ref it.
-        HTMLDocument* m_dummyDocumentForFragmentParsing;
+        RefPtr<Document> m_dummyDocumentForFragmentParsing;
         DocumentFragment* m_fragment;
         Element* m_contextElement;
 
