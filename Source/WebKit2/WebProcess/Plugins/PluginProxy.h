@@ -33,8 +33,7 @@
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
-OBJC_CLASS NSPopUpButtonCell;
-OBJC_CLASS WKView;
+OBJC_CLASS CALayer;
 #endif
 
 namespace WebCore {

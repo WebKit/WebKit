@@ -34,8 +34,8 @@
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
 
-OBJC_CLASS NSPopUpButtonCell;
-OBJC_CLASS WKView;
+OBJC_CLASS NSURLDownload;
+OBJC_CLASS WKDownloadAsDelegate;
 #endif
 
 #if USE(CFNETWORK)

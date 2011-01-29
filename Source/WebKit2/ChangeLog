@@ -1,5 +1,12 @@
 2011-01-28  Anders Carlsson  <andersca@apple.com>
 
+        Yet another build fix (What was I thinking?)
+
+        * WebProcess/Downloads/Download.h:
+        * WebProcess/Plugins/PluginProxy.h:
+
+2011-01-28  Anders Carlsson  <andersca@apple.com>
+
         Fix Windows build.
 
         * Shared/PrintInfo.h:
