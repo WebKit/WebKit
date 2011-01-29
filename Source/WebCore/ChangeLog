@@ -2,6 +2,28 @@
 
         Reviewed by Daniel Bates.
 
+        Teach XSSFilter about <applet>
+        https://bugs.webkit.org/show_bug.cgi?id=53338
+
+        HTML5 is pretty light on information about how the <applet> tag works.
+        According to this site:
+
+        http://download.oracle.com/javase/1.4.2/docs/guide/misc/applet.html
+
+        The "code" and "object" attributes are the essential attributes for
+        determining which piece of Java to run.  We might need to expand to the
+        codebase and archive attributes at some point, but hopefully code and
+        object will be sufficient.
+
+        * html/parser/XSSFilter.cpp:
+        (WebCore::XSSFilter::filterToken):
+        (WebCore::XSSFilter::filterAppletToken):
+        * html/parser/XSSFilter.h:
+
+2011-01-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Daniel Bates.
+
         Teach the XSSFilter about object and embed tags
         https://bugs.webkit.org/show_bug.cgi?id=53336
 

@@ -116,6 +116,9 @@ void XSSFilter::filterToken(HTMLToken& token)
     if (hasName(token, embedTag))
         return filterEmbedToken(token);
 
+    if (hasName(token, appletTag))
+        return filterAppletToken(token);
+
     for (size_t i = 0; i < token.attributes().size(); ++i) {
         const HTMLToken::Attribute& attribute = token.attributes().at(i);
         if (!isNameOfScriptCarryingAttribute(attribute.m_name))
@@ -179,6 +182,16 @@ void XSSFilter::filterEmbedToken(HTMLToken& token)
 
     eraseAttributeIfInjected(token, srcAttr);
     eraseAttributeIfInjected(token, typeAttr);
+}
+
+void XSSFilter::filterAppletToken(HTMLToken& token)
+{
+    ASSERT(m_state == Initial);
+    ASSERT(token.type() == HTMLToken::StartTag);
+    ASSERT(hasName(token, appletTag));
+
+    eraseAttributeIfInjected(token, codeAttr);
+    eraseAttributeIfInjected(token, objectAttr);
 }
 
 bool XSSFilter::eraseAttributeIfInjected(HTMLToken& token, const QualifiedName& attributeName)

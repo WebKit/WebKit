@@ -49,6 +49,7 @@ private:
     void filterScriptToken(HTMLToken&);
     void filterObjectToken(HTMLToken&);
     void filterEmbedToken(HTMLToken&);
+    void filterAppletToken(HTMLToken&);
 
     bool eraseAttributeIfInjected(HTMLToken&, const QualifiedName&);
 
