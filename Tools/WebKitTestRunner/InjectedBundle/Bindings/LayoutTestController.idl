@@ -85,6 +85,8 @@ module WTR {
         void closeWebInspector();
         void evaluateInWebInspector(in long callID, in DOMString script);
         void setTimelineProfilingEnabled(in boolean enabled);
+
+        void setPOSIXLocale(in DOMString locale);
     };
 
 }

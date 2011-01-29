@@ -1,3 +1,19 @@
+2011-01-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKitTestRunner needs layoutTestController.setPOSIXLocale
+        https://bugs.webkit.org/show_bug.cgi?id=42682
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::resetLocalSettings):
+        (WTR::InjectedBundle::didReceiveMessage):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::setPOSIXLocale):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+
 2011-01-28  Dirk Pranke  <dpranke@chromium.org>
  
          Reviewed by Mihai Parparita.

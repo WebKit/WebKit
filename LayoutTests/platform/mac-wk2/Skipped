@@ -1572,11 +1572,6 @@ http/tests/security/local-user-CSS-from-remote.html
 # <https://bugs.webkit.org/show_bug.cgi?id=42679> 
 fast/loader/user-stylesheet-fast-path.html
 
-# WebKitTestRunner needs layoutTestController.setPOSIXLocale
-# <https://bugs.webkit.org/show_bug.cgi?id=42682>
-fast/css/opacity-float.html
-fast/js/navigator-language.html
-
 # WebKitTestRunner needs layoutTestController.setCacheModel
 # <https://bugs.webkit.org/show_bug.cgi?id=42684>
 fast/dom/HTMLScriptElement/nested-execution.html

@@ -118,6 +118,11 @@ InjectedBundlePage* InjectedBundle::page() const
     return m_pages[0].get();
 }
 
+void InjectedBundle::resetLocalSettings()
+{
+    setlocale(LC_ALL, "");
+}
+
 void InjectedBundle::didReceiveMessage(WKStringRef messageName, WKTypeRef messageBody)
 {
     if (WKStringIsEqualToUTF8CString(messageName, "BeginTest")) {
@@ -131,6 +136,9 @@ void InjectedBundle::didReceiveMessage(WKStringRef messageName, WKTypeRef messag
         return;
     } else if (WKStringIsEqualToUTF8CString(messageName, "Reset")) {
         m_state = Idle;
+
+        resetLocalSettings();
+
         return;
     }
 

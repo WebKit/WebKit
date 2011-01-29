@@ -371,4 +371,11 @@ void LayoutTestController::evaluateScriptInIsolatedWorld(JSContextRef context, u
     JSEvaluateScript(jsContext, script, 0, 0, 0, 0); 
 }
 
+void LayoutTestController::setPOSIXLocale(JSStringRef locale)
+{
+    char localeBuf[32];
+    JSStringGetUTF8CString(locale, localeBuf, sizeof(localeBuf));
+    setlocale(LC_ALL, localeBuf);
+}
+
 } // namespace WTR

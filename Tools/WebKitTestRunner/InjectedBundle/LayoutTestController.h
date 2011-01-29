@@ -131,6 +131,8 @@ public:
     void evaluateInWebInspector(long callId, JSStringRef script);
     void setTimelineProfilingEnabled(bool);
 
+    void setPOSIXLocale(JSStringRef);
+
 private:
     static const double waitToDumpWatchdogTimerInterval;
 
