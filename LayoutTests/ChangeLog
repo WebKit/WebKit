@@ -1,3 +1,12 @@
+2011-01-29  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] REGRESSION:  http/tests/media/video-{cookie,referer}.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=53379
+
+        Skip tests failing likely by the usage of a newer version of soup.
+
+        * platform/gtk/Skipped:
+
 2011-01-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed Chromium rebaselines.
