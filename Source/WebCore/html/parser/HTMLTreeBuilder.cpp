@@ -395,6 +395,50 @@ void HTMLTreeBuilder::detach()
     m_tree.detach();
 }
 
+// NOTE: HTML5 requires that we use a dummy document when parsing
+// document fragments.  However, creating a new Document element
+// for each fragment is very slow (Document() does too much work, and
+// innerHTML is a common call).  So we use a shared dummy document.
+// This sharing works because there can only ever be one fragment
+// parser at any time.  Fragment parsing is synchronous and done
+// only from the main thread.  It should be impossible for javascript
+// (or anything else) to ever hold a reference to the dummy document.
+// See https://bugs.webkit.org/show_bug.cgi?id=48719
+class DummyDocumentFactory {
+    WTF_MAKE_NONCOPYABLE(DummyDocumentFactory); WTF_MAKE_FAST_ALLOCATED;
+public:
+    // Use an explicit create/release here to ASSERT this sharing is safe.
+    static HTMLDocument* createDummyDocument();
+    static void releaseDocument(HTMLDocument*);
+
+private:
+    static HTMLDocument* s_sharedDummyDocument;
+    static int s_sharedDummyDocumentMutex;
+};
+
+HTMLDocument* DummyDocumentFactory::createDummyDocument()
+{
+    if (!s_sharedDummyDocument) {
+        s_sharedDummyDocument = HTMLDocument::create(0, KURL()).releaseRef();
+        s_sharedDummyDocumentMutex = 0;
+    }
+    ASSERT(!s_sharedDummyDocumentMutex);
+    ASSERT(!s_sharedDummyDocument->hasChildNodes());
+    s_sharedDummyDocumentMutex++;
+    return s_sharedDummyDocument;
+}
+
+void DummyDocumentFactory::releaseDocument(HTMLDocument* dummyDocument)
+{
+    ASSERT(s_sharedDummyDocument == dummyDocument);
+    s_sharedDummyDocumentMutex--;
+    ASSERT(!s_sharedDummyDocumentMutex);
+    dummyDocument->removeAllChildren();
+}
+
+HTMLDocument* DummyDocumentFactory::s_sharedDummyDocument = 0;
+int DummyDocumentFactory::s_sharedDummyDocumentMutex = 0;
+
 HTMLTreeBuilder::FragmentParsingContext::FragmentParsingContext()
     : m_fragment(0)
     , m_contextElement(0)
@@ -403,27 +447,33 @@ HTMLTreeBuilder::FragmentParsingContext::FragmentParsingContext()
 }
 
 HTMLTreeBuilder::FragmentParsingContext::FragmentParsingContext(DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission scriptingPermission)
-    : m_dummyDocumentForFragmentParsing(HTMLDocument::create(0, KURL(), fragment->document()->baseURI()))
+    : m_dummyDocumentForFragmentParsing(DummyDocumentFactory::createDummyDocument())
     , m_fragment(fragment)
     , m_contextElement(contextElement)
     , m_scriptingPermission(scriptingPermission)
 {
     m_dummyDocumentForFragmentParsing->setCompatibilityMode(fragment->document()->compatibilityMode());
+    // Setting the baseURL should work the same as it would have had we passed
+    // it during HTMLDocument() construction, since the new document is empty.
+    m_dummyDocumentForFragmentParsing->setURL(fragment->document()->baseURI());
 }
 
 Document* HTMLTreeBuilder::FragmentParsingContext::document() const
 {
     ASSERT(m_fragment);
-    return m_dummyDocumentForFragmentParsing.get();
+    return m_dummyDocumentForFragmentParsing;
 }
 
 void HTMLTreeBuilder::FragmentParsingContext::finished()
 {
     // Populate the DocumentFragment with the parsed content now that we're done.
-    ContainerNode* root = m_dummyDocumentForFragmentParsing.get();
+    ContainerNode* root = m_dummyDocumentForFragmentParsing;
     if (m_contextElement)
         root = m_dummyDocumentForFragmentParsing->documentElement();
     m_fragment->takeAllChildrenFrom(root);
+    ASSERT(!m_dummyDocumentForFragmentParsing->hasChildNodes());
+    DummyDocumentFactory::releaseDocument(m_dummyDocumentForFragmentParsing);
+    m_dummyDocumentForFragmentParsing = 0;
 }
 
 HTMLTreeBuilder::FragmentParsingContext::~FragmentParsingContext()

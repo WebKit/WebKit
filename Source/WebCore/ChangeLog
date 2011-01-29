@@ -1,3 +1,36 @@
+2011-01-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        HTML5 TreeBuilder regressed a Peacekeeper DOM test by 40%
+        https://bugs.webkit.org/show_bug.cgi?id=48719
+
+        It's unclear exactly what the Peacekeeper benchmark is testing,
+        because I haven't found a way to run it myself.
+
+        However, I constructed a benchmark which shows at least one possible slow point.
+        The HTML5 spec talks about creating a new document for every time we use
+        the fragment parsing algorithm.  Document() it turns out, it a huge bloated
+        mess, and the constructor and destructor do a huge amount of work.
+        To avoid constructing (or destructing) documents for each innerHTML call,
+        this patch adds a shared dummy document used by all innerHTML calls.
+
+        This patch brings us from 7x slower than Safari 5 on tiny-innerHTML
+        to only 1.5x slower than Safari 5.  I'm sure there is more work to do here.
+
+        Saving a shared Document like this is error prone.  Currently
+        DummyDocumentFactory::releaseDocument() calls removeAllChildren()
+        in an attempt to clear the Document's state. However it's possible
+        that that call is not sufficient and we'll have future bugs here.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::DummyDocumentFactory::createDummyDocument):
+        (WebCore::DummyDocumentFactory::releaseDocument):
+        (WebCore::HTMLTreeBuilder::FragmentParsingContext::FragmentParsingContext):
+        (WebCore::HTMLTreeBuilder::FragmentParsingContext::document):
+        (WebCore::HTMLTreeBuilder::FragmentParsingContext::finished):
+        * html/parser/HTMLTreeBuilder.h:
+
 2011-01-28  Johnny Ding  <jnd@chromium.org>
 
         Reviewed by Adam Barth.
