@@ -1,5 +1,21 @@
 2011-01-28  Mark Rowe  <mrowe@apple.com>
 
+        Merge r69476.
+
+    2010-10-10  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Tests that intruding floats get properly cleared in flexible box layout.
+        https://bugs.webkit.org/show_bug.cgi?id=47104
+
+        * fast/flexbox/overhanging-floats-removed-expected.checksum: Added.
+        * fast/flexbox/overhanging-floats-removed-expected.png: Added.
+        * fast/flexbox/overhanging-floats-removed-expected.txt: Added.
+        * fast/flexbox/overhanging-floats-removed.html: Added.
+
+2011-01-28  Mark Rowe  <mrowe@apple.com>
+
         Merge r68819.
 
     2010-09-30  Cris Neckar  <cdn@chromium.org>

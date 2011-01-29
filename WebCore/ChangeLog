@@ -1,5 +1,25 @@
 2011-01-28  Mark Rowe  <mrowe@apple.com>
 
+        Merge r69476.
+
+    2010-10-10  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Overhanging floats are not added to flexible boxes since they behave like
+        block formatting contexts. This causes the intruding floats added in siblings
+        to not get cleared. Enforce the float release by checking if the parent is a
+        flexible box and if yes, use that as the outermost block.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=47104
+
+        Test: fast/flexbox/overhanging-floats-removed.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::removeFloatingOrPositionedChildFromBlockLists):
+
+2011-01-28  Mark Rowe  <mrowe@apple.com>
+
         Merge r68819.
 
     2010-09-30  Cris Neckar  <cdn@chromium.org>
