@@ -258,6 +258,7 @@ RootInlineBox* RenderBlock::constructLine(unsigned runCount, BidiRun* firstRun, 
 {
     ASSERT(firstRun);
 
+    bool rootHasSelectedChildren = false;
     InlineFlowBox* parentBox = 0;
     for (BidiRun* r = firstRun; r; r = r->next()) {
         // Create a box for our object.
@@ -271,6 +272,9 @@ RootInlineBox* RenderBlock::constructLine(unsigned runCount, BidiRun* firstRun, 
         ASSERT(box);
         if (!box)
             continue;
+
+        if (!rootHasSelectedChildren && box->renderer()->selectionState() != RenderObject::SelectionNone)
+            rootHasSelectedChildren = true;
 
         // If we have no parent box yet, or if the run is not simply a sibling,
         // then we need to construct inline boxes as necessary to properly enclose the
@@ -296,6 +300,11 @@ RootInlineBox* RenderBlock::constructLine(unsigned runCount, BidiRun* firstRun, 
     // We should have a root inline box.  It should be unconstructed and
     // be the last continuation of our line list.
     ASSERT(lastLineBox() && !lastLineBox()->isConstructed());
+
+    // Set the m_selectedChildren flag on the root inline box if one of the leaf inline box
+    // from the bidi runs walk above has a selection state.
+    if (rootHasSelectedChildren)
+        lastLineBox()->root()->setHasSelectedChildren(true);
 
     // Set bits on our inline flow boxes that indicate which sides should
     // paint borders/margins/padding.  This knowledge will ultimately be used when

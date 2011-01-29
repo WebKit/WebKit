@@ -1,5 +1,26 @@
 2011-01-28  Mark Rowe  <mrowe@apple.com>
 
+        Merge r69345.
+
+    2010-10-07  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Set the m_selectedChildren flag on the root inline box if one of the leaf 
+        inline box from the bidi runs walk has a selection state. Remove the flag
+        setting logic from addToLine, since line boxes created in createLinesBoxes
+        should not be propagating selection state to root inline box.
+        https://bugs.webkit.org/show_bug.cgi?id=47201
+
+        Test: editing/selection/root-inlinebox-selected-children-crash.html
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::addToLine):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::constructLine):
+
+2011-01-28  Mark Rowe  <mrowe@apple.com>
+
         Merge r69735.
 
     2010-10-12  Abhishek Arya  <inferno@chromium.org>
