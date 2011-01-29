@@ -107,10 +107,14 @@ void XSSFilter::filterToken(HTMLToken& token)
     if (token.type() != HTMLToken::StartTag)
         return;
 
-    if (hasName(token, scriptTag)) {
-        filterScriptToken(token);
-        return;
-    }
+    if (hasName(token, scriptTag))
+        return filterScriptToken(token);
+
+    if (hasName(token, objectTag))
+        return filterObjectToken(token);
+
+    if (hasName(token, embedTag))
+        return filterEmbedToken(token);
 
     for (size_t i = 0; i < token.attributes().size(); ++i) {
         const HTMLToken::Attribute& attribute = token.attributes().at(i);
@@ -149,16 +153,44 @@ void XSSFilter::filterScriptToken(HTMLToken& token)
     ASSERT(token.type() == HTMLToken::StartTag);
     ASSERT(hasName(token, scriptTag));
 
-    size_t indexOfFirstSrcAttribute;
-    if (findAttributeWithName(token, srcAttr, indexOfFirstSrcAttribute)) {
-        const HTMLToken::Attribute& srcAttribute = token.attributes().at(indexOfFirstSrcAttribute);
-        if (isContainedInRequest(snippetForAttribute(token, srcAttribute)))
-            token.eraseValueOfAttribute(indexOfFirstSrcAttribute);
+    if (eraseAttributeIfInjected(token, srcAttr))
         return;
-    }
 
     m_state = AfterScriptStartTag;
     m_cachedSnippet = m_parser->sourceForToken(token);
+}
+
+void XSSFilter::filterObjectToken(HTMLToken& token)
+{
+    ASSERT(m_state == Initial);
+    ASSERT(token.type() == HTMLToken::StartTag);
+    ASSERT(hasName(token, objectTag));
+
+    eraseAttributeIfInjected(token, dataAttr);
+    eraseAttributeIfInjected(token, typeAttr);
+    eraseAttributeIfInjected(token, classidAttr);
+}
+
+void XSSFilter::filterEmbedToken(HTMLToken& token)
+{
+    ASSERT(m_state == Initial);
+    ASSERT(token.type() == HTMLToken::StartTag);
+    ASSERT(hasName(token, embedTag));
+
+    eraseAttributeIfInjected(token, srcAttr);
+    eraseAttributeIfInjected(token, typeAttr);
+}
+
+bool XSSFilter::eraseAttributeIfInjected(HTMLToken& token, const QualifiedName& attributeName)
+{
+    size_t indexOfAttribute;
+    if (findAttributeWithName(token, attributeName, indexOfAttribute)) {
+        const HTMLToken::Attribute& attribute = token.attributes().at(indexOfAttribute);
+        if (isContainedInRequest(snippetForAttribute(token, attribute)))
+            token.eraseValueOfAttribute(indexOfAttribute);
+        return true;
+    }
+    return false;
 }
 
 String XSSFilter::snippetForRange(const HTMLToken& token, int start, int end)

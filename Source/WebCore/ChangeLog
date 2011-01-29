@@ -1,3 +1,24 @@
+2011-01-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Daniel Bates.
+
+        Teach the XSSFilter about object and embed tags
+        https://bugs.webkit.org/show_bug.cgi?id=53336
+
+        For <object> and <embed>, we filter out attribute values that either
+        indicate which piece of media to load or which plugin to load.  In a
+        perfect world, we'd only need to filter out the URLs of the media, but
+        some plug-ins (like Flash) have lots of fun places you can hide the
+        URL (e.g., the "movie" <param>).
+
+        * html/parser/XSSFilter.cpp:
+        (WebCore::XSSFilter::filterToken):
+        (WebCore::XSSFilter::filterScriptToken):
+        (WebCore::XSSFilter::filterObjectToken):
+        (WebCore::XSSFilter::filterEmbedToken):
+        (WebCore::XSSFilter::eraseAttributeIfInjected):
+        * html/parser/XSSFilter.h:
+
 2011-01-28  Oliver Hunt  <oliver@apple.com>
 
         Fix Qt build.

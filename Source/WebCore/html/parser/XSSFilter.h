@@ -47,6 +47,10 @@ private:
 
     void filterTokenAfterScriptStartTag(HTMLToken&);
     void filterScriptToken(HTMLToken&);
+    void filterObjectToken(HTMLToken&);
+    void filterEmbedToken(HTMLToken&);
+
+    bool eraseAttributeIfInjected(HTMLToken&, const QualifiedName&);
 
     String snippetForRange(const HTMLToken&, int start, int end);
     String snippetForAttribute(const HTMLToken&, const HTMLToken::Attribute&);
