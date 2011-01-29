@@ -2,6 +2,18 @@
 
         Reviewed by Daniel Bates.
 
+        Wire up settings->xssAuditorEnabled to XSSFilter
+        https://bugs.webkit.org/show_bug.cgi?id=53345
+
+        * html/parser/XSSFilter.cpp:
+        (WebCore::XSSFilter::XSSFilter):
+        (WebCore::XSSFilter::filterToken):
+        * html/parser/XSSFilter.h:
+
+2011-01-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Daniel Bates.
+
         Teach XSSFilter about <meta> and <base> tags
         https://bugs.webkit.org/show_bug.cgi?id=53339
 

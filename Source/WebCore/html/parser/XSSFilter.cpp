@@ -27,8 +27,10 @@
 #include "XSSFilter.h"
 
 #include "Document.h"
+#include "Frame.h"
 #include "HTMLDocumentParser.h"
 #include "HTMLNames.h"
+#include "Settings.h"
 #include "TextEncoding.h"
 #include "TextResourceDecoder.h"
 #include <wtf/text/CString.h>
@@ -83,9 +85,14 @@ String decodeURL(const String& string, const TextEncoding& encoding)
 
 XSSFilter::XSSFilter(HTMLDocumentParser* parser)
     : m_parser(parser)
+    , m_isEnabled(false)
     , m_state(Initial)
 {
     ASSERT(m_parser);
+    if (Frame* frame = parser->document()->frame()) {
+        if (Settings* settings = frame->settings())
+            m_isEnabled = settings->xssAuditorEnabled();
+    }
 }
 
 void XSSFilter::filterToken(HTMLToken& token)
@@ -94,6 +101,9 @@ void XSSFilter::filterToken(HTMLToken& token)
     ASSERT_UNUSED(token, &token);
     return;
 #else
+    if (!m_isEnabled)
+        return;
+
     switch (m_state) {
     case Initial: 
         break;

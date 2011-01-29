@@ -61,6 +61,7 @@ private:
     bool isContainedInRequest(const String&);
 
     HTMLDocumentParser* m_parser;
+    bool m_isEnabled;
     State m_state;
     String m_cachedSnippet;
 };
