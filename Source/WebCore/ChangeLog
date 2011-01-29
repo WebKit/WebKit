@@ -2,6 +2,21 @@
 
         Reviewed by Daniel Bates.
 
+        XSSFilter should replace URLs with about:blank instead of the empty string
+        https://bugs.webkit.org/show_bug.cgi?id=53370
+
+        Using the empty string will make the URL complete to the current
+        document's URL, which isn't really what we want.  Instead, we want to
+        use about:blank, which is safe.
+
+        * html/parser/XSSFilter.cpp:
+        (WebCore::XSSFilter::filterObjectToken):
+        (WebCore::XSSFilter::filterEmbedToken):
+
+2011-01-29  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Daniel Bates.
+
         XSSFilter should pass xssAuditor/script-tag-addslashes*
         https://bugs.webkit.org/show_bug.cgi?id=53365
 

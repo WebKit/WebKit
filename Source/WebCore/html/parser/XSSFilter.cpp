@@ -238,7 +238,7 @@ bool XSSFilter::filterObjectToken(HTMLToken& token)
 
     bool didBlockScript = false;
 
-    didBlockScript |= eraseAttributeIfInjected(token, dataAttr);
+    didBlockScript |= eraseAttributeIfInjected(token, dataAttr, blankURL().string());
     didBlockScript |= eraseAttributeIfInjected(token, typeAttr);
     didBlockScript |= eraseAttributeIfInjected(token, classidAttr);
 
@@ -253,7 +253,7 @@ bool XSSFilter::filterEmbedToken(HTMLToken& token)
 
     bool didBlockScript = false;
 
-    didBlockScript |= eraseAttributeIfInjected(token, srcAttr);
+    didBlockScript |= eraseAttributeIfInjected(token, srcAttr, blankURL().string());
     didBlockScript |= eraseAttributeIfInjected(token, typeAttr);
 
     return didBlockScript;
