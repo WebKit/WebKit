@@ -220,6 +220,13 @@ public:
         m_currentAttribute->m_value.append(character);
     }
 
+    void appendToAttributeValue(size_t i, const String& value)
+    {
+        ASSERT(!value.isEmpty());
+        ASSERT(m_type == StartTag || m_type == EndTag);
+        m_attributes[i].m_value.append(value.characters(), value.length());
+    }
+
     Type type() const { return m_type; }
 
     bool selfClosing() const

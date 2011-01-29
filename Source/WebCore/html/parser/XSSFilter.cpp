@@ -179,7 +179,7 @@ bool XSSFilter::filterScriptToken(HTMLToken& token)
     ASSERT(token.type() == HTMLToken::StartTag);
     ASSERT(hasName(token, scriptTag));
 
-    if (eraseAttributeIfInjected(token, srcAttr))
+    if (eraseAttributeIfInjected(token, srcAttr, blankURL().string()))
         return true;
 
     m_state = AfterScriptStartTag;
@@ -263,14 +263,17 @@ bool XSSFilter::eraseInlineEventHandlersIfInjected(HTMLToken& token)
     return didBlockScript;
 }
 
-bool XSSFilter::eraseAttributeIfInjected(HTMLToken& token, const QualifiedName& attributeName)
+bool XSSFilter::eraseAttributeIfInjected(HTMLToken& token, const QualifiedName& attributeName, const String& replacementValue)
 {
     size_t indexOfAttribute;
     if (findAttributeWithName(token, attributeName, indexOfAttribute)) {
         const HTMLToken::Attribute& attribute = token.attributes().at(indexOfAttribute);
-        if (isContainedInRequest(snippetForAttribute(token, attribute)))
+        if (isContainedInRequest(snippetForAttribute(token, attribute))) {
             token.eraseValueOfAttribute(indexOfAttribute);
-        return true;
+            if (!replacementValue.isEmpty())
+                token.appendToAttributeValue(indexOfAttribute, replacementValue);
+            return true;
+        }
     }
     return false;
 }
