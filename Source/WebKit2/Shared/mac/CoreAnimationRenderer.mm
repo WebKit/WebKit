@@ -32,7 +32,7 @@
 
 // The CGLMacro.h header adds an implicit CGLContextObj parameter to all OpenGL calls,
 // which is good because it allows us to make OpenGL calls without saving and restoring the
-// current context. The context argument is named "cgl_ctx" by default, so we the macro
+// current context. The context argument is named "cgl_ctx" by default, so we use the macro
 // below to declare this variable.
 #define DECLARE_GL_CONTEXT_VARIABLE(name) \
     CGLContextObj cgl_ctx = (name)
