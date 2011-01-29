@@ -22,8 +22,10 @@
 #include "config.h"
 #include "CSSRuleList.h"
 
+#include "CSSMutableStyleDeclaration.h"
 #include "CSSRule.h"
 #include "StyleList.h"
+#include "WebKitCSSKeyframeRule.h"
 
 namespace WebCore {
 
@@ -74,6 +76,11 @@ void CSSRuleList::deleteRule(unsigned index)
     if (index >= m_lstCSSRules.size()) {
         // FIXME: Should we throw an INDEX_SIZE_ERR exception here?
         return;
+    }
+
+    if (m_lstCSSRules[index]->isKeyframeRule()) {
+        if (CSSMutableStyleDeclaration* style = static_cast<WebKitCSSKeyframeRule*>(m_lstCSSRules[index].get())->style())
+            style->setParent(0);
     }
 
     m_lstCSSRules[index]->setParent(0);
