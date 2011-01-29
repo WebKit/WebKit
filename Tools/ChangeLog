@@ -1,3 +1,18 @@
+2011-01-28  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, build fix.
+
+        Take two. The fix in 77023 didn't work, because we were
+        still calling path.abspath_to_uri, which calls _cygpath under
+        the covers, and it appears the cygpath on the bots does
+        something different than it does on my machine. This patch
+        removes the calls to path.abspath_to_uri, so it should be safe.
+        If it doesn't work, I'll roll it out along with r76982 and 77023.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53126
+
+        * Scripts/webkitpy/layout_tests/port/test.py:
+
 2011-01-28  David Kilzer  <ddkilzer@apple.com>
 
         <rdar://problem/8930699> build-webkit gives a bogus warning with newer versions of Xcode 

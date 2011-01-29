@@ -283,6 +283,65 @@ class TestPort(base.Port):
         }
         return name_map[test_platform_name]
 
+    # FIXME: These next two routines are copied from base.py with
+    # the calls to path.abspath_to_uri() removed. We shouldn't have
+    # to do this.
+    def filename_to_uri(self, filename):
+        """Convert a test file (which is an absolute path) to a URI."""
+        LAYOUTTEST_HTTP_DIR = "http/tests/"
+        LAYOUTTEST_WEBSOCKET_DIR = "http/tests/websocket/tests/"
+
+        relative_path = self.relative_test_filename(filename)
+        port = None
+        use_ssl = False
+
+        if (relative_path.startswith(LAYOUTTEST_WEBSOCKET_DIR)
+            or relative_path.startswith(LAYOUTTEST_HTTP_DIR)):
+            relative_path = relative_path[len(LAYOUTTEST_HTTP_DIR):]
+            port = 8000
+
+        # Make http/tests/local run as local files. This is to mimic the
+        # logic in run-webkit-tests.
+        #
+        # TODO(dpranke): remove the media reference and the SSL reference?
+        if (port and not relative_path.startswith("local/") and
+            not relative_path.startswith("media/")):
+            if relative_path.startswith("ssl/"):
+                port += 443
+                protocol = "https"
+            else:
+                protocol = "http"
+            return "%s://127.0.0.1:%u/%s" % (protocol, port, relative_path)
+
+        return "file://" + self._filesystem.abspath(filename)
+
+    def uri_to_test_name(self, uri):
+        """Return the base layout test name for a given URI.
+
+        This returns the test name for a given URI, e.g., if you passed in
+        "file:///src/LayoutTests/fast/html/keygen.html" it would return
+        "fast/html/keygen.html".
+
+        """
+        test = uri
+        if uri.startswith("file:///"):
+            prefix = "file://" + self.layout_tests_dir() + "/"
+            return test[len(prefix):]
+
+        if uri.startswith("http://127.0.0.1:8880/"):
+            # websocket tests
+            return test.replace('http://127.0.0.1:8880/', '')
+
+        if uri.startswith("http://"):
+            # regular HTTP test
+            return test.replace('http://127.0.0.1:8000/', 'http/tests/')
+
+        if uri.startswith("https://"):
+            return test.replace('https://127.0.0.1:8443/', 'http/tests/')
+
+        raise NotImplementedError('unknown url type: %s' % uri)
+
+
     def version(self):
         return ''
 
