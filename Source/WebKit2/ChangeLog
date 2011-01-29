@@ -1,5 +1,11 @@
 2011-01-28  Anders Carlsson  <andersca@apple.com>
 
+        Fix Windows build.
+
+        * Shared/PrintInfo.h:
+
+2011-01-28  Anders Carlsson  <andersca@apple.com>
+
         Fix tyop.
 
         * Shared/mac/CoreAnimationRenderer.mm:

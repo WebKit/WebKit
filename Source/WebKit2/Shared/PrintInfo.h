@@ -28,7 +28,12 @@
 
 #include <wtf/Platform.h>
 
+#if PLATFORM(MAC)
 OBJC_CLASS NSPrintInfo;
+#else
+// FIXME: This should use the windows equivalent.
+class NSPrintInfo;
+#endif
 
 namespace CoreIPC {
     class ArgumentDecoder;
