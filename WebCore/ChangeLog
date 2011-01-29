@@ -1,5 +1,23 @@
 2011-01-28  Mark Rowe  <mrowe@apple.com>
 
+        Merge r69735.
+
+    2010-10-12  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Prevent block logical height of a root inline box from overflowing by clamping it
+        at INT_MAX. Otherwise, we will not be able to properly dirty the set of lines during
+        removal a floating object.
+        https://bugs.webkit.org/show_bug.cgi?id=45611        
+
+        Test: fast/overflow/overflow-block-logical-height-crash.html
+
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::alignBoxesInBlockDirection):
+
+2011-01-28  Mark Rowe  <mrowe@apple.com>
+
         Merge r69476.
 
     2010-10-10  Abhishek Arya  <inferno@chromium.org>
