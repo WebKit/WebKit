@@ -1233,7 +1233,6 @@ BUGCR23496 MAC : tables/mozilla_expected_failures/core/captions2.html = IMAGE
 // are around either or both text or image may mismatch.
 BUGWK48651 LINUX MAC : http/tests/navigation/javascriptlink-frames.html = IMAGE IMAGE+TEXT
 BUGWK48651 LINUX MAC : http/tests/navigation/error404-goback.html = IMAGE IMAGE+TEXT TEXT
-BUGWK48651 LINUX : http/tests/navigation/postredirect-frames.html = IMAGE
 BUGWK48651 MAC : http/tests/navigation/error404-subframeload.html = IMAGE
 
 BUGCR26253 SLOW WIN RELEASE : http/tests/navigation/reload-subframe-object.html = PASS
@@ -1557,8 +1556,6 @@ BUGCR11483 LINUX : fast/forms/input-text-double-click.html = FAIL
 BUGCR11483 LINUX : svg/text/foreignObject-repaint.xml = FAIL
 
 // Regressions from WebKit merge 43242:43321.  These just need to re-baselining:
-BUGCR24229 LINUX : fast/forms/select-dirty-parent-pref-widths.html = FAIL
-BUGCR24229 LINUX : svg/transforms/animated-path-inside-transformed-html.xhtml = FAIL
 
 // Details for all of these are in the bugs.
 BUGCR12361 WIN : http/tests/cookies/double-quoted-value-with-semi-colon.html = FAIL
@@ -2466,9 +2463,6 @@ BUGCR54331 MAC : fast/forms/input-number-events.html = TEXT PASS
 BUGCR54333 WIN LINUX : fast/replaced/embed-display-none.html = PASS TIMEOUT
 BUGCR54348 LINUX : http/tests/security/xssAuditor/dom-write-innerHTML.html = PASS TEXT
 
-// New test in r66740
-BUGWK45193 LINUX : fast/text/decomposed-after-stacked-diacritics.html = TEXT CRASH
-
 // WebKit r67068
 BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-dom-azimuth-attr.html = IMAGE
 BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-dom-elevation-attr.html = IMAGE
@@ -3055,8 +3049,6 @@ BUGRNIWA SLOW LINUX : fast/text/large-text-composed-char-dos.html = PASS
 // Added by http://trac.webkit.org/changeset/76548
 BUGCR70686 MAC : fast/text/international/cjk-segmentation.html = TEXT
 
-// Added by http://trac.webkit.org/changeset/76674
-BUGCR70882 WIN LINUX : fast/text/offsetForPosition-complex-fallback.html = TEXT
 // Started failing at http://trac.webkit.org/changeset/76674
 BUGCR70882 MAC : fast/text/atsui-small-caps-punctuation-size.html = IMAGE
 BUGCR70882 MAC : fast/text/capitalize-boundaries.html = IMAGE
@@ -3099,4 +3091,4 @@ BUGCR71087 MAC DEBUG : media/video-currentTime.html = PASS TIMEOUT
 BUGWK53314 : media/controls-strict.html = IMAGE+TEXT
 BUGWK53314 : media/video-zoom-controls.html = IMAGE+TEXT
 
-BUGWK53347 SLOW WIN LINUX DEBUG : fast/repaint/4774354.html = PASS
+BUGWK53347 WIN LINUX DEBUG : fast/repaint/4774354.html = PASS TIMEOUT
