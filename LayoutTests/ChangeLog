@@ -1,5 +1,12 @@
 2011-01-29  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed Chromium test expectation update; removed http/tests/appcache/online-whitelist.html
+        from the test expectation, because it has been passing on Chromium Windows.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-01-29  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed Chromium test expectation update.
 
         * platform/chromium/test_expectations.txt:

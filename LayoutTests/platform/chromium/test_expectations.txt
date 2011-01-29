@@ -2949,7 +2949,6 @@ BUGWK51536 : fast/css/box-shadow.html = FAIL TIMEOUT
 BUGCR68067 LINUX DEBUG : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT PASS
 
 BUGWK51720 DEBUG : http/tests/incremental/split-hex-entities.pl = CRASH PASS
-BUGCR64371 WIN RELEASE : http/tests/appcache/online-whitelist.html = TEXT
 BUGWK51721 DEBUG SLOW: fast/encoding/parser-tests.html = PASS
 BUGCR67463 MAC : editing/selection/caret-mode-paragraph-keys-navigation.html = TEXT
 
