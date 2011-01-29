@@ -1,6 +1,7 @@
 2011-01-28  David Kilzer  <ddkilzer@apple.com>
 
         <rdar://problem/8930699> build-webkit gives a bogus warning with newer versions of Xcode 
+        <http://webkit.org/b/53353>
 
         Reviewed by Mark Rowe.
 
