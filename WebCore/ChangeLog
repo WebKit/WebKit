@@ -1,5 +1,26 @@
 2011-01-28  Mark Rowe  <mrowe@apple.com>
 
+        Merge r71642.
+
+    2010-11-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49197
+        <rdar://problem/8642746>
+        
+        When starting an accelerated transform animation on a renderer, check
+        that it's a RenderBox before allow transform animations (and before
+        calling borderBoxRect()), because transforms are currently disallowed
+        on inline elements.
+
+        Test: animations/animation-on-inline-crash.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::startAnimation):
+
+2011-01-28  Mark Rowe  <mrowe@apple.com>
+
         Merge r68860.
 
     2010-09-30  Abhishek Arya  <inferno@chromium.org>
