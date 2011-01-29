@@ -45,6 +45,23 @@ using namespace HTMLNames;
 
 namespace {
 
+bool isNonCanonicalCharacter(UChar c)
+{
+    // We remove all non-ASCII characters, including non-printable ASCII characters.
+    //
+    // Note, we don't remove backslashes like PHP stripslashes(), which among other things converts "\\0" to the \0 character.
+    // Instead, we remove backslashes and zeros (since the string "\\0" =(remove backslashes)=> "0"). However, this has the 
+    // adverse effect that we remove any legitimate zeros from a string.
+    //
+    // For instance: new String("http://localhost:8000") => new String("http://localhost:8").
+    return (c == '\\' || c == '0' || c == '\0' || c >= 127);
+}
+
+String canonicalize(const String& string)
+{
+    return string.removeCharacters(&isNonCanonicalCharacter);
+}
+
 bool hasName(const HTMLToken& token, const QualifiedName& name)
 {
     return equalIgnoringNullity(token.name(), static_cast<const String&>(name.localName()));
@@ -78,8 +95,8 @@ String decodeURL(const String& string, const TextEncoding& encoding)
     String decodedString = encoding.decode(workingStringUTF8.data(), workingStringUTF8.length());
     // FIXME: Is this check necessary?
     if (decodedString.isEmpty())
-        return workingString;
-    return decodedString;
+        return canonicalize(workingString);
+    return canonicalize(decodedString);
 }
 
 }
@@ -324,7 +341,9 @@ String XSSFilter::snippetForAttribute(const HTMLToken& token, const HTMLToken::A
 
 bool XSSFilter::isContainedInRequest(const String& snippet)
 {
-    return m_decodedURL.find(snippet, 0, false) != notFound || m_decodedHTTPBody.find(snippet, 0, false) != notFound;
+    String canonicalizedSnippet = canonicalize(snippet);
+    return m_decodedURL.find(canonicalizedSnippet, 0, false) != notFound
+        || m_decodedHTTPBody.find(canonicalizedSnippet, 0, false) != notFound;
 }
 
 bool XSSFilter::isSameOriginResource(const String& url)

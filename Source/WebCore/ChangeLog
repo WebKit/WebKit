@@ -2,6 +2,24 @@
 
         Reviewed by Daniel Bates.
 
+        XSSFilter should pass xssAuditor/script-tag-addslashes*
+        https://bugs.webkit.org/show_bug.cgi?id=53365
+
+        We need to canonicalize strings to avoid being tricked by addslashes.
+
+        * html/parser/XSSFilter.cpp:
+        (WebCore::HTMLNames::isNonCanonicalCharacter):
+            - This function is copied from the XSSAuditor (with some tweaks).
+              We'll eventually remove the XSSAuditor once we've got XSSFilter
+              working properly.
+        (WebCore::HTMLNames::canonicalize):
+        (WebCore::HTMLNames::decodeURL):
+        (WebCore::XSSFilter::isContainedInRequest):
+
+2011-01-29  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Daniel Bates.
+
         XSSFilter should pass xssAuditor/script-tag-with-source-same-host.html
         and xssAuditor/script-tag-post-*
         https://bugs.webkit.org/show_bug.cgi?id=53364
