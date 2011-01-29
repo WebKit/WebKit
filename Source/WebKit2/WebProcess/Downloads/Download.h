@@ -82,6 +82,11 @@ public:
     void didFinish();
     void didFail(const WebCore::ResourceError&, const CoreIPC::DataReference& resumeData);
     void didCancel(const CoreIPC::DataReference& resumeData);
+    void didDecideDestination(const String&, bool allowOverwrite);
+
+#if USE(CFNETWORK)
+    const String& destination() const { return m_destination; }
+#endif
 
 private:
     Download(uint64_t downloadID, const WebCore::ResourceRequest&);
@@ -98,6 +103,8 @@ private:
     RetainPtr<WKDownloadAsDelegate> m_delegate;
 #endif
 #if USE(CFNETWORK)
+    String m_destination;
+    String m_bundlePath;
     RetainPtr<CFURLDownloadRef> m_download;
 #endif
 };

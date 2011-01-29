@@ -52,4 +52,9 @@ void Download::platformInvalidate()
     notImplemented();
 }
 
+void Download::didDecideDestination(const String& destination, bool allowOverwrite)
+{
+    notImplemented();
+}
+
 } // namespace WebKit

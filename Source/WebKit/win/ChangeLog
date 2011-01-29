@@ -1,3 +1,26 @@
+2011-01-28  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Downloads in WK2 on Windows should write resume data to bundle
+        https://bugs.webkit.org/show_bug.cgi?id=53282
+        <rdar://problem/8753077>
+
+        Reviewed by Alice Liu.
+
+        * WebDownload.cpp:
+        (WebDownload::bundlePathForTargetPath):
+        Use the new WebCore::DownloadBundle function.
+        (WebDownload::request):
+
+        * WebDownload.h:
+        Removed declarations for functions that were moved to a new location.
+
+        * WebDownloadCFNet.cpp:
+        (WebDownload::initToResumeWithBundle):
+        Use the new WebCore::DownloadBundle function.
+        (WebDownload::cancelForResume):
+        Fix a leak of the resume data CFDataRef by using adoptCF(). Use the new
+        WebCore::DownloadBundle function.
+
 2011-01-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

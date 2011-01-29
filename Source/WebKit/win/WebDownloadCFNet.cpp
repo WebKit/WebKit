@@ -48,6 +48,7 @@
 #include <WebCore/AuthenticationCF.h>
 #include <WebCore/BString.h>
 #include <WebCore/CredentialStorage.h>
+#include <WebCore/DownloadBundle.h>
 #include <WebCore/LoaderRunLoopCF.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceHandle.h>
@@ -167,8 +168,8 @@ HRESULT STDMETHODCALLTYPE WebDownload::initToResumeWithBundle(
 {
     LOG(Download, "Attempting resume of download bundle %s", String(bundlePath, SysStringLen(bundlePath)).ascii().data());
 
-    RetainPtr<CFDataRef> resumeData(AdoptCF, extractResumeDataFromBundle(String(bundlePath, SysStringLen(bundlePath))));
-    
+    RetainPtr<CFDataRef> resumeData(AdoptCF, DownloadBundle::extractResumeData(String(bundlePath, SysStringLen(bundlePath))));
+
     if (!resumeData)
         return E_FAIL;
 
@@ -194,9 +195,9 @@ HRESULT STDMETHODCALLTYPE WebDownload::initToResumeWithBundle(
     m_bundlePath = String(bundlePath, SysStringLen(bundlePath));
     // Attempt to remove the ".download" extension from the bundle for the final file destination
     // Failing that, we clear m_destination and will ask the delegate later once the download starts
-    if (m_bundlePath.endsWith(bundleExtension(), false)) {
+    if (m_bundlePath.endsWith(DownloadBundle::fileExtension(), false)) {
         m_destination = m_bundlePath.threadsafeCopy();
-        m_destination.truncate(m_destination.length() - bundleExtension().length());
+        m_destination.truncate(m_destination.length() - DownloadBundle::fileExtension().length());
     } else
         m_destination = String();
     
@@ -249,14 +250,14 @@ HRESULT STDMETHODCALLTYPE WebDownload::cancelForResume()
     CFURLDownloadSetDeletesUponFailure(m_download.get(), false);
     CFURLDownloadCancel(m_download.get());
 
-    resumeData = CFURLDownloadCopyResumeData(m_download.get());
+    resumeData.adoptCF(CFURLDownloadCopyResumeData(m_download.get()));
     if (!resumeData) {
         LOG(Download, "WebDownload - Unable to create resume data for download (%p)", this);
         goto exit;
     }
 
-    appendResumeDataToBundle(resumeData.get(), m_bundlePath);
-   
+    DownloadBundle::appendResumeData(resumeData.get(), m_bundlePath);
+
 exit:
     m_download = 0;
     return hr;
@@ -288,7 +289,7 @@ HRESULT STDMETHODCALLTYPE WebDownload::setDestination(
         return E_FAIL;
 
     m_destination = String(path, SysStringLen(path));
-    m_bundlePath = m_destination + bundleExtension();
+    m_bundlePath = m_destination + DownloadBundle::fileExtension();
 
     CFURLRef pathURL = MarshallingHelpers::PathStringToFileCFURLRef(m_bundlePath);
     CFURLDownloadSetDestination(m_download.get(), pathURL, !!allowOverwrite);

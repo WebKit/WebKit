@@ -122,11 +122,6 @@ public:
 #endif
 
 protected:
-    static CFDataRef extractResumeDataFromBundle(const WTF::String&);
-    static HRESULT appendResumeDataToBundle(CFDataRef, const WTF::String&);
-    static const WTF::String& bundleExtension();
-    static UInt32 bundleMagicNumber();
-
     ULONG m_refCount;
 
     WTF::String m_destination;

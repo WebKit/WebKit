@@ -29336,6 +29336,10 @@
 						</FileConfiguration>
 					</File>
 					<File
+						RelativePath="..\platform\network\cf\DownloadBundle.h"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\network\cf\FormDataStreamCFNet.cpp"
 						>
 						<FileConfiguration
@@ -29627,6 +29631,10 @@
 				<Filter
 					Name="win"
 					>
+					<File
+						RelativePath="..\platform\network\win\DownloadBundleWin.cpp"
+						>
+					</File>
 					<File
 						RelativePath="..\platform\network\win\NetworkStateNotifierWin.cpp"
 						>

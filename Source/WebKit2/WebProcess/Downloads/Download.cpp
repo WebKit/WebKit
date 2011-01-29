@@ -95,6 +95,8 @@ String Download::decideDestinationWithSuggestedFilename(const String& filename, 
     if (m_sandboxExtension)
         m_sandboxExtension->consume();
 
+    didDecideDestination(destination, allowOverwrite);
+
     return destination;
 }
 
