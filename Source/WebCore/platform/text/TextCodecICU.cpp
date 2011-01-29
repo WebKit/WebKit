@@ -27,7 +27,6 @@
 #include "config.h"
 #include "TextCodecICU.h"
 
-#include "CharacterNames.h"
 #include "PlatformString.h"
 #include "ThreadGlobalData.h"
 #include <unicode/ucnv.h>
@@ -37,6 +36,7 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Threading.h>
+#include <wtf/unicode/CharacterNames.h>
 
 using std::min;
 

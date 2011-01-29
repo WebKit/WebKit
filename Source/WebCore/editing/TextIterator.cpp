@@ -27,7 +27,6 @@
 #include "config.h"
 #include "TextIterator.h"
 
-#include "CharacterNames.h"
 #include "Document.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
@@ -42,6 +41,7 @@
 #include "TextBreakIterator.h"
 #include "VisiblePosition.h"
 #include "visible_units.h"
+#include <wtf/unicode/CharacterNames.h>
 
 #if USE(ICU_UNICODE) && !UCONFIG_NO_COLLATION
 #include "TextBreakIteratorInternalICU.h"

@@ -26,11 +26,11 @@
 #ifndef htmlediting_h
 #define htmlediting_h
 
-#include "CharacterNames.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
 #include "Position.h"
 #include <wtf/Forward.h>
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 

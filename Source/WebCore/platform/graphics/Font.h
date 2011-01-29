@@ -25,7 +25,6 @@
 #ifndef Font_h
 #define Font_h
 
-#include "CharacterNames.h"
 #include "FontDescription.h"
 #include "FontFallbackList.h"
 #include "SimpleFontData.h"
@@ -34,6 +33,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/MathExtras.h>
+#include <wtf/unicode/CharacterNames.h>
 
 #if PLATFORM(QT)
 #include <QFont>

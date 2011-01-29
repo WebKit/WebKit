@@ -28,7 +28,6 @@
 #include "MarkupAccumulator.h"
 
 #include "CDATASection.h"
-#include "CharacterNames.h"
 #include "Comment.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
@@ -38,6 +37,7 @@
 #include "KURL.h"
 #include "ProcessingInstruction.h"
 #include "XMLNSNames.h"
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 

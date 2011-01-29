@@ -31,9 +31,9 @@
 #include "config.h"
 #include "FontTranscoder.h"
 
-#include "CharacterNames.h"
 #include "FontDescription.h"
 #include "TextEncoding.h"
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 

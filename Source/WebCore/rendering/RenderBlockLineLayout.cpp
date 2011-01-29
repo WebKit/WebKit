@@ -23,7 +23,6 @@
 #include "config.h"
 
 #include "BidiResolver.h"
-#include "CharacterNames.h"
 #include "Hyphenation.h"
 #include "InlineIterator.h"
 #include "InlineTextBox.h"
@@ -42,6 +41,7 @@
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
+#include <wtf/unicode/CharacterNames.h>
 
 #if ENABLE(SVG)
 #include "RenderSVGInlineText.h"

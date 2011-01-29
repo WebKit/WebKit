@@ -26,9 +26,9 @@
 #include "config.h"
 #include "break_lines.h"
 
-#include "CharacterNames.h"
 #include "TextBreakIterator.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/unicode/CharacterNames.h>
 
 #if PLATFORM(MAC)
 #include <CoreServices/CoreServices.h>

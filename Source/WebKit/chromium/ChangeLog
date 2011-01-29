@@ -1,3 +1,12 @@
+2011-01-29  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Move CharacterNames.h into WTF directory
+        https://bugs.webkit.org/show_bug.cgi?id=49618
+
+        * src/ChromeClientImpl.cpp:
+
 2011-01-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed; roll WebKit Chromium revision from 72894 to 73048.

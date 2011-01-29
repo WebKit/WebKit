@@ -95,6 +95,7 @@ SET(WTF_HEADERS
     text/StringImplBase.h
     text/WTFString.h
 
+    unicode/CharacterNames.h
     unicode/Collator.h
     unicode/UTF8.h
     unicode/Unicode.h

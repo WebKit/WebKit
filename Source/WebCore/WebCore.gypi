@@ -3313,7 +3313,6 @@
             'platform/text/BidiContext.cpp',
             'platform/text/BidiContext.h',
             'platform/text/BidiResolver.h',
-            'platform/text/CharacterNames.h',
             'platform/text/Hyphenation.cpp',
             'platform/text/Hyphenation.h',
             'platform/text/LineEnding.cpp',

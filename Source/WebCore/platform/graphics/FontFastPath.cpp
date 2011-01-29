@@ -23,7 +23,6 @@
 #include "config.h"
 #include "Font.h"
 
-#include "CharacterNames.h"
 #include "FloatRect.h"
 #include "FontCache.h"
 #include "FontFallbackList.h"
@@ -32,8 +31,8 @@
 #include "SimpleFontData.h"
 #include "TextRun.h"
 #include "WidthIterator.h"
-
 #include <wtf/MathExtras.h>
+#include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/Unicode.h>
 
 using namespace WTF;

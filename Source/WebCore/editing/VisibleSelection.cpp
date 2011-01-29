@@ -26,7 +26,6 @@
 #include "config.h"
 #include "VisibleSelection.h"
 
-#include "CharacterNames.h"
 #include "Document.h"
 #include "Element.h"
 #include "htmlediting.h"
@@ -34,10 +33,10 @@
 #include "VisiblePosition.h"
 #include "visible_units.h"
 #include "Range.h"
-
+#include <stdio.h>
 #include <wtf/Assertions.h>
 #include <wtf/text/CString.h>
-#include <stdio.h>
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 

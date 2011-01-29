@@ -28,7 +28,6 @@
 
 #include "AppendNodeCommand.h"
 #include "ApplyStyleCommand.h"
-#include "CharacterNames.h"
 #include "DeleteFromTextNodeCommand.h"
 #include "DeleteSelectionCommand.h"
 #include "Document.h"
@@ -63,6 +62,7 @@
 #include "htmlediting.h"
 #include "markup.h"
 #include "visible_units.h"
+#include <wtf/unicode/CharacterNames.h>
 
 using namespace std;
 

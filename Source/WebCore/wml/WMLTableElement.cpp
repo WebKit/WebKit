@@ -26,7 +26,6 @@
 #include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
-#include "CharacterNames.h"
 #include "Document.h"
 #include "HTMLNames.h"
 #include "NodeList.h"
@@ -34,6 +33,7 @@
 #include "Text.h"
 #include "WMLErrorHandling.h"
 #include "WMLNames.h"
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 

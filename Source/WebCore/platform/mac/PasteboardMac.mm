@@ -27,7 +27,6 @@
 #import "Pasteboard.h"
 
 #import "CachedResource.h"
-#import "CharacterNames.h"
 #import "DOMRangeInternal.h"
 #import "Document.h"
 #import "DocumentFragment.h"
@@ -49,10 +48,10 @@
 #import "Text.h"
 #import "WebCoreNSStringExtras.h"
 #import "markup.h"
-
 #import <wtf/StdLibExtras.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/UnusedParam.h>
+#import <wtf/unicode/CharacterNames.h>
 
 @interface NSAttributedString (AppKitSecretsIKnowAbout)
 - (id)_initWithDOMRange:(DOMRange *)domRange;

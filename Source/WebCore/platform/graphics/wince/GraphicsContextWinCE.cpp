@@ -23,7 +23,6 @@
 #include "GraphicsContext.h"
 
 #include "AffineTransform.h"
-#include "CharacterNames.h"
 #include "Font.h"
 #include "GDIExtras.h"
 #include "GlyphBuffer.h"
@@ -33,9 +32,9 @@
 #include "PlatformPathWinCE.h"
 #include "SharedBitmap.h"
 #include "SimpleFontData.h"
-#include <wtf/OwnPtr.h>
-
 #include <windows.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 

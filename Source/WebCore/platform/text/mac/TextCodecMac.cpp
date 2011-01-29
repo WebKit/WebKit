@@ -27,15 +27,15 @@
 #include "config.h"
 #include "TextCodecMac.h"
 
-#include "CharacterNames.h"
 #include "CharsetData.h"
 #include "PlatformString.h"
 #include "ThreadGlobalData.h"
 #include <wtf/Assertions.h>
-#include <wtf/text/CString.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Threading.h>
+#include <wtf/text/CString.h>
+#include <wtf/unicode/CharacterNames.h>
 
 using namespace std;
 

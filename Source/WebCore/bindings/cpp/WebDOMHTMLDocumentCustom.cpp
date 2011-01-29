@@ -20,12 +20,11 @@
 #include "config.h"
 #include "WebDOMHTMLDocument.h"
 
-#include "CharacterNames.h"
 #include "HTMLDocument.h"
 #include "SegmentedString.h"
 #include "WebExceptionHandler.h"
-
 #include <wtf/Forward.h>
+#include <wtf/unicode/CharacterNames.h>
 
 static inline void documentWrite(const WebDOMString& text, WebCore::HTMLDocument* document, bool addNewline)
 {

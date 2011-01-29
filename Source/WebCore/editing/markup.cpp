@@ -27,7 +27,6 @@
 #include "markup.h"
 
 #include "CDATASection.h"
-#include "CharacterNames.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSPrimitiveValue.h"
@@ -56,6 +55,7 @@
 #include "htmlediting.h"
 #include "visible_units.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/unicode/CharacterNames.h>
 
 using namespace std;
 

@@ -23,7 +23,6 @@
 #include "RenderTextControl.h"
 
 #include "AXObjectCache.h"
-#include "CharacterNames.h"
 #include "Editor.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -42,6 +41,7 @@
 #include "TextControlInnerElements.h"
 #include "TextIterator.h"
 #include "TextRun.h"
+#include <wtf/unicode/CharacterNames.h>
 
 using namespace std;
 

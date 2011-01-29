@@ -26,7 +26,6 @@
 #include "RenderText.h"
 
 #include "AXObjectCache.h"
-#include "CharacterNames.h"
 #include "EllipsisBox.h"
 #include "FloatQuad.h"
 #include "FontTranscoder.h"
@@ -45,6 +44,7 @@
 #include "break_lines.h"
 #include <wtf/AlwaysInline.h>
 #include <wtf/text/StringBuffer.h>
+#include <wtf/unicode/CharacterNames.h>
 
 using namespace std;
 using namespace WTF;

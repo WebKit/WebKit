@@ -36,7 +36,6 @@
 #include "CSSStyleSelector.h"
 #include "CSSValueKeywords.h"
 #include "CachedResourceLoader.h"
-#include "CharacterNames.h"
 #include "ClipboardEvent.h"
 #include "CompositionEvent.h"
 #include "CreateLinkCommand.h"
@@ -83,6 +82,7 @@
 #include "markup.h"
 #include "visible_units.h"
 #include <wtf/UnusedParam.h>
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 

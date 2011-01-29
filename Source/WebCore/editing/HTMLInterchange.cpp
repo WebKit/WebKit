@@ -26,10 +26,10 @@
 #include "config.h"
 #include "HTMLInterchange.h"
 
-#include "CharacterNames.h"
 #include "Text.h"
 #include "TextIterator.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 

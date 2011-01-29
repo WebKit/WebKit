@@ -482,6 +482,7 @@
             'wtf/text/TextPosition.h',
             'wtf/text/WTFString.cpp',
             'wtf/text/WTFString.h',
+            'wtf/unicode/CharacterNames.h',
             'wtf/unicode/Collator.h',
             'wtf/unicode/CollatorDefault.cpp',
             'wtf/unicode/glib/UnicodeGLib.cpp',

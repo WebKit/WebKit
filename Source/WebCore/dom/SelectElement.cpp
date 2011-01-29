@@ -22,7 +22,6 @@
 #include "SelectElement.h"
 
 #include "Attribute.h"
-#include "CharacterNames.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Element.h"
@@ -43,6 +42,7 @@
 #include "RenderMenuList.h"
 #include "SpatialNavigation.h"
 #include <wtf/Assertions.h>
+#include <wtf/unicode/CharacterNames.h>
 
 #if ENABLE(WML)
 #include "WMLNames.h"

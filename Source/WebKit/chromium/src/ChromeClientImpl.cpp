@@ -34,7 +34,6 @@
 
 #include "AXObjectCache.h"
 #include "AccessibilityObject.h"
-#include "CharacterNames.h"
 #include "Console.h"
 #include "Cursor.h"
 #include "DatabaseTracker.h"
@@ -87,6 +86,7 @@
 #include "WebWindowFeatures.h"
 #include "WindowFeatures.h"
 #include "WrappedResourceRequest.h"
+#include <wtf/unicode/CharacterNames.h>
 
 using namespace WebCore;
 

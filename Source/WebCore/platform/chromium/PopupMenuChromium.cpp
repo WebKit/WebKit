@@ -32,7 +32,6 @@
 #include "config.h"
 #include "PopupMenuChromium.h"
 
-#include "CharacterNames.h"
 #include "Chrome.h"
 #include "ChromeClientChromium.h"
 #include "Font.h"
@@ -56,8 +55,8 @@
 #include "SystemTime.h"
 #include "TextRun.h"
 #include "UserGestureIndicator.h"
-
 #include <wtf/CurrentTime.h>
+#include <wtf/unicode/CharacterNames.h>
 
 using namespace WTF;
 using namespace Unicode;

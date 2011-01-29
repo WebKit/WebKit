@@ -28,8 +28,8 @@
 
 #if ENABLE(MATHML)
 
-#include "CharacterNames.h"
 #include "RenderMathMLBlock.h"
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
     

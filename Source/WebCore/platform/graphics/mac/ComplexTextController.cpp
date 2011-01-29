@@ -25,14 +25,13 @@
 #include "config.h"
 #include "ComplexTextController.h"
 
-#include <ApplicationServices/ApplicationServices.h>
-#include "CharacterNames.h"
 #include "FloatSize.h"
 #include "Font.h"
 #include "TextBreakIterator.h"
 #include "TextRun.h"
-
+#include <ApplicationServices/ApplicationServices.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/unicode/CharacterNames.h>
 
 #if defined(BUILDING_ON_LEOPARD)
 // Undefined when compiling agains the 10.5 SDK.

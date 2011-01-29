@@ -26,7 +26,6 @@
 #include "config.h"
 #include "htmlediting.h"
 
-#include "CharacterNames.h"
 #include "Document.h"
 #include "EditingText.h"
 #include "HTMLBRElement.h"
@@ -46,6 +45,7 @@
 #include "VisiblePosition.h"
 #include "visible_units.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/unicode/CharacterNames.h>
 
 #if ENABLE(WML)
 #include "WMLNames.h"

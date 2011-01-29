@@ -26,7 +26,6 @@
 #if ENABLE(FTPDIR)
 #include "FTPDirectoryDocument.h"
 
-#include "CharacterNames.h"
 #include "HTMLDocumentParser.h"
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
@@ -37,11 +36,11 @@
 #include "Settings.h"
 #include "SharedBuffer.h"
 #include "Text.h"
-
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/unicode/CharacterNames.h>
 
 using namespace std;
 

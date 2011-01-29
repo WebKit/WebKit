@@ -26,7 +26,6 @@
 #include "config.h"
 #include "HTMLTreeBuilder.h"
 
-#include "CharacterNames.h"
 #include "Comment.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
@@ -50,6 +49,7 @@
 #include "XLinkNames.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 

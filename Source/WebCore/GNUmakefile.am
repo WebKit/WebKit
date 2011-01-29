@@ -2617,7 +2617,6 @@ webcore_sources += \
 	Source/WebCore/platform/text/BidiContext.cpp \
 	Source/WebCore/platform/text/BidiContext.h \
 	Source/WebCore/platform/text/BidiResolver.h \
-	Source/WebCore/platform/text/CharacterNames.h \
 	Source/WebCore/platform/text/Hyphenation.cpp \
 	Source/WebCore/platform/text/Hyphenation.h \
 	Source/WebCore/platform/text/LineEnding.cpp \

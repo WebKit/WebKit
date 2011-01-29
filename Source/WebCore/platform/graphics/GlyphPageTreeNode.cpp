@@ -29,12 +29,12 @@
 #include "config.h"
 #include "GlyphPageTreeNode.h"
 
-#include "CharacterNames.h"
 #include "PlatformString.h"
 #include "SegmentedFontData.h"
 #include "SimpleFontData.h"
 #include <stdio.h>
 #include <wtf/text/CString.h>
+#include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/Unicode.h>
 
 namespace WebCore {

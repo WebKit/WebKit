@@ -31,7 +31,6 @@
 
 #include "AXObjectCache.h"
 #include "AccessibilityRenderObject.h"
-#include "CharacterNames.h"
 #include "FloatRect.h"
 #include "FocusController.h"
 #include "Frame.h"
@@ -53,6 +52,7 @@
 #include "htmlediting.h"
 #include "visible_units.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/unicode/CharacterNames.h>
 
 using namespace std;
 

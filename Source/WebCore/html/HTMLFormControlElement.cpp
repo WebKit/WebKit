@@ -26,7 +26,6 @@
 #include "HTMLFormControlElement.h"
 
 #include "Attribute.h"
-#include "CharacterNames.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
@@ -49,6 +48,7 @@
 #include "ValidityState.h"
 #include <limits>
 #include <wtf/Vector.h>
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 

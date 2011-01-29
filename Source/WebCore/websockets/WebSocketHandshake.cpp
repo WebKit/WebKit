@@ -35,7 +35,6 @@
 
 #include "WebSocketHandshake.h"
 
-#include "CharacterNames.h"
 #include "Cookie.h"
 #include "CookieJar.h"
 #include "Document.h"
@@ -45,7 +44,6 @@
 #include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
-
 #include <wtf/MD5.h>
 #include <wtf/RandomNumber.h>
 #include <wtf/StdLibExtras.h>
@@ -55,6 +53,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenate.h>
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 

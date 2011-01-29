@@ -188,6 +188,7 @@
 		18BAB55410DAE066000D945B /* ThreadIdentifierDataPthreads.h in Headers */ = {isa = PBXBuildFile; fileRef = 18BAB52810DADFCD000D945B /* ThreadIdentifierDataPthreads.h */; };
 		1C61516C0EBAC7A00031376F /* ProfilerServer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C61516A0EBAC7A00031376F /* ProfilerServer.mm */; settings = {COMPILER_FLAGS = "-fno-strict-aliasing"; }; };
 		1C61516D0EBAC7A00031376F /* ProfilerServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C61516B0EBAC7A00031376F /* ProfilerServer.h */; };
+		2CFC5D1E12F45B48004914E2 /* CharacterNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CFC5B7A12F44714004914E2 /* CharacterNames.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41359CF30FDD89AD00206180 /* DateConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = D21202290AD4310C00ED79B6 /* DateConversion.h */; };
 		41359CF60FDD89CB00206180 /* DateMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41359CF40FDD89CB00206180 /* DateMath.cpp */; };
 		41359CF70FDD89CB00206180 /* DateMath.h in Headers */ = {isa = PBXBuildFile; fileRef = 41359CF50FDD89CB00206180 /* DateMath.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -773,6 +774,7 @@
 		1C9051450BA9E8A70081E9D0 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		1CAA8B4A0D32C39A0041BCFF /* JavaScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaScript.h; sourceTree = "<group>"; };
 		1CAA8B4B0D32C39A0041BCFF /* JavaScriptCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptCore.h; sourceTree = "<group>"; };
+		2CFC5B7A12F44714004914E2 /* CharacterNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharacterNames.h; sourceTree = "<group>"; };
 		41359CF40FDD89CB00206180 /* DateMath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateMath.cpp; sourceTree = "<group>"; };
 		41359CF50FDD89CB00206180 /* DateMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateMath.h; sourceTree = "<group>"; };
 		440B7AED0FAF7FCB0073323E /* OwnPtrCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OwnPtrCommon.h; sourceTree = "<group>"; };
@@ -2067,6 +2069,7 @@
 			isa = PBXGroup;
 			children = (
 				E195678E09E7CF1200B89D13 /* icu */,
+				2CFC5B7A12F44714004914E2 /* CharacterNames.h */,
 				E1A862AA0D7EBB7D001EC6AA /* Collator.h */,
 				E1A862D50D7F2B5C001EC6AA /* CollatorDefault.cpp */,
 				E195679409E7CF1200B89D13 /* Unicode.h */,
@@ -2136,6 +2139,7 @@
 				BC18C3ED0E16F5CD00B34460 /* CallData.h in Headers */,
 				1429D8DE0ED2205B00B89619 /* CallFrame.h in Headers */,
 				95E3BC050E1AE68200B2D1C1 /* CallIdentifier.h in Headers */,
+				2CFC5D1E12F45B48004914E2 /* CharacterNames.h in Headers */,
 				BC6AAAE50E1F426500AD87D8 /* ClassInfo.h in Headers */,
 				969A07970ED1D3AE00F1F681 /* CodeBlock.h in Headers */,
 				86E116B10FE75AC800B512BC /* CodeLocation.h in Headers */,

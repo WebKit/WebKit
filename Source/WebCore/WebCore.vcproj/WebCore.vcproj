@@ -30189,10 +30189,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\text\CharacterNames.h"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\text\Hyphenation.h"
 					>
 				</File>

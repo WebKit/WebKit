@@ -4431,7 +4431,6 @@
 		B2C3DA230D006C1D00EF6F26 /* BidiContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D9F20D006C1D00EF6F26 /* BidiContext.cpp */; };
 		B2C3DA240D006C1D00EF6F26 /* BidiContext.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3D9F30D006C1D00EF6F26 /* BidiContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA250D006C1D00EF6F26 /* BidiResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3D9F40D006C1D00EF6F26 /* BidiResolver.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		B2C3DA260D006C1D00EF6F26 /* CharacterNames.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3D9F50D006C1D00EF6F26 /* CharacterNames.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA2A0D006C1D00EF6F26 /* CharsetData.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3D9FA0D006C1D00EF6F26 /* CharsetData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA2B0D006C1D00EF6F26 /* PlatformString.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3D9FB0D006C1D00EF6F26 /* PlatformString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA2C0D006C1D00EF6F26 /* RegularExpression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D9FC0D006C1D00EF6F26 /* RegularExpression.cpp */; };
@@ -10723,7 +10722,6 @@
 		B2C3D9F20D006C1D00EF6F26 /* BidiContext.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BidiContext.cpp; sourceTree = "<group>"; };
 		B2C3D9F30D006C1D00EF6F26 /* BidiContext.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BidiContext.h; sourceTree = "<group>"; };
 		B2C3D9F40D006C1D00EF6F26 /* BidiResolver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BidiResolver.h; sourceTree = "<group>"; };
-		B2C3D9F50D006C1D00EF6F26 /* CharacterNames.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CharacterNames.h; sourceTree = "<group>"; };
 		B2C3D9FA0D006C1D00EF6F26 /* CharsetData.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CharsetData.h; sourceTree = "<group>"; };
 		B2C3D9FB0D006C1D00EF6F26 /* PlatformString.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlatformString.h; sourceTree = "<group>"; };
 		B2C3D9FC0D006C1D00EF6F26 /* RegularExpression.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RegularExpression.cpp; sourceTree = "<group>"; };
@@ -17577,7 +17575,6 @@
 				B2C3D9F20D006C1D00EF6F26 /* BidiContext.cpp */,
 				B2C3D9F30D006C1D00EF6F26 /* BidiContext.h */,
 				B2C3D9F40D006C1D00EF6F26 /* BidiResolver.h */,
-				B2C3D9F50D006C1D00EF6F26 /* CharacterNames.h */,
 				375CD231119D43C800A2A859 /* Hyphenation.h */,
 				89B5EA9F11E8003D00F2367E /* LineEnding.cpp */,
 				89B5EAA011E8003D00F2367E /* LineEnding.h */,
@@ -19605,7 +19602,6 @@
 				6550B69E099DF0270090D781 /* CDATASection.h in Headers */,
 				514185EE0CD65F0400763C99 /* ChangeVersionWrapper.h in Headers */,
 				6550B6A0099DF0270090D781 /* CharacterData.h in Headers */,
-				B2C3DA260D006C1D00EF6F26 /* CharacterNames.h in Headers */,
 				B2C3DA2A0D006C1D00EF6F26 /* CharsetData.h in Headers */,
 				F55B3DB21251F12D003EF269 /* CheckboxInputType.h in Headers */,
 				A00B721A11DE6428008AB9FF /* CheckedInt.h in Headers */,

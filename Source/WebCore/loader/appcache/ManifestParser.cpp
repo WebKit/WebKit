@@ -28,9 +28,9 @@
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 
-#include "CharacterNames.h"
 #include "KURL.h"
 #include "TextResourceDecoder.h"
+#include <wtf/unicode/CharacterNames.h>
 
 using namespace std;
 

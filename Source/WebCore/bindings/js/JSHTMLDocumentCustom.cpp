@@ -26,7 +26,6 @@
 #include "config.h"
 #include "JSHTMLDocument.h"
 
-#include "CharacterNames.h"
 #include "Frame.h"
 #include "HTMLAllCollection.h"
 #include "HTMLBodyElement.h"
@@ -43,6 +42,7 @@
 #include "DocumentParser.h"
 #include <runtime/Error.h>
 #include <runtime/JSCell.h>
+#include <wtf/unicode/CharacterNames.h>
 
 using namespace JSC;
 

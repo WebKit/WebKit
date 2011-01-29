@@ -26,7 +26,6 @@
 #include "config.h"
 #include "InsertTextCommand.h"
 
-#include "CharacterNames.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSPropertyNames.h"
@@ -41,6 +40,7 @@
 #include "TextIterator.h"
 #include "TypingCommand.h"
 #include "visible_units.h"
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 

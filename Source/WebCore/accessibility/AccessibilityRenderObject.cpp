@@ -32,7 +32,6 @@
 #include "AXObjectCache.h"
 #include "AccessibilityImageMapLink.h"
 #include "AccessibilityListBox.h"
-#include "CharacterNames.h"
 #include "EventNames.h"
 #include "FloatRect.h"
 #include "Frame.h"
@@ -77,6 +76,7 @@
 #include "htmlediting.h"
 #include "visible_units.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/unicode/CharacterNames.h>
 
 using namespace std;
 

@@ -26,15 +26,13 @@
 
 #include "config.h"
 #include "UTF8.h"
-#include <wtf/StringHasher.h>
 
 #include "ASCIICType.h"
+#include <wtf/StringHasher.h>
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WTF {
 namespace Unicode {
-
-// FIXME: Use definition from CharacterNames.h.
-static const UChar replacementCharacter = 0xFFFD;
 
 inline int inlineUTF8SequenceLengthNonASCII(char b0)
 {

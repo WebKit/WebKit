@@ -26,9 +26,10 @@
 #ifndef CharacterNames_h
 #define CharacterNames_h
 
-#include <wtf/unicode/Unicode.h>
+#include "Unicode.h"
 
-namespace WebCore {
+namespace WTF {
+namespace Unicode {
 
 // Names here are taken from the Unicode standard.
 
@@ -85,6 +86,57 @@ const UChar zeroWidthJoiner = 0x200D;
 const UChar zeroWidthNonJoiner = 0x200C;
 const UChar zeroWidthSpace = 0x200B;
 
-}
+} // namespace Unicode
+} // namespace WTF
+
+using WTF::Unicode::aegeanWordSeparatorLine;
+using WTF::Unicode::aegeanWordSeparatorDot;
+using WTF::Unicode::blackCircle;
+using WTF::Unicode::blackSquare;
+using WTF::Unicode::blackUpPointingTriangle;
+using WTF::Unicode::bullet;
+using WTF::Unicode::bullseye;
+using WTF::Unicode::carriageReturn;
+using WTF::Unicode::ethiopicPrefaceColon;
+using WTF::Unicode::ethiopicWordspace;
+using WTF::Unicode::fisheye;
+using WTF::Unicode::hebrewPunctuationGeresh;
+using WTF::Unicode::hebrewPunctuationGershayim;
+using WTF::Unicode::horizontalEllipsis;
+using WTF::Unicode::hyphen;
+using WTF::Unicode::hyphenMinus;
+using WTF::Unicode::ideographicComma;
+using WTF::Unicode::ideographicFullStop;
+using WTF::Unicode::ideographicSpace;
+using WTF::Unicode::leftDoubleQuotationMark;
+using WTF::Unicode::leftSingleQuotationMark;
+using WTF::Unicode::leftToRightEmbed;
+using WTF::Unicode::leftToRightMark;
+using WTF::Unicode::leftToRightOverride;
+using WTF::Unicode::minusSign;
+using WTF::Unicode::newlineCharacter;
+using WTF::Unicode::noBreakSpace;
+using WTF::Unicode::objectReplacementCharacter;
+using WTF::Unicode::popDirectionalFormatting;
+using WTF::Unicode::replacementCharacter;
+using WTF::Unicode::rightDoubleQuotationMark;
+using WTF::Unicode::rightSingleQuotationMark;
+using WTF::Unicode::rightToLeftEmbed;
+using WTF::Unicode::rightToLeftMark;
+using WTF::Unicode::rightToLeftOverride;
+using WTF::Unicode::sesameDot;
+using WTF::Unicode::softHyphen;
+using WTF::Unicode::space;
+using WTF::Unicode::tibetanMarkIntersyllabicTsheg;
+using WTF::Unicode::tibetanMarkDelimiterTshegBstar;
+using WTF::Unicode::ugariticWordDivider;
+using WTF::Unicode::whiteBullet;
+using WTF::Unicode::whiteCircle;
+using WTF::Unicode::whiteSesameDot;
+using WTF::Unicode::whiteUpPointingTriangle;
+using WTF::Unicode::yenSign;
+using WTF::Unicode::zeroWidthJoiner;
+using WTF::Unicode::zeroWidthNonJoiner;
+using WTF::Unicode::zeroWidthSpace;
 
 #endif // CharacterNames_h

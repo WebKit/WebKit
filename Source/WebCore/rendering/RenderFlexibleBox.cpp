@@ -25,11 +25,11 @@
 #include "config.h"
 #include "RenderFlexibleBox.h"
 
-#include "CharacterNames.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
 #include "TextRun.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/unicode/CharacterNames.h>
 
 using namespace std;
 

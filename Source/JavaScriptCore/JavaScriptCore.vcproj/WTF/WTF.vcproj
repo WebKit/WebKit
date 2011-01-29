@@ -400,6 +400,10 @@
 			Name="unicode"
 			>
 			<File
+				RelativePath="..\..\wtf\unicode\CharacterNames.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\wtf\unicode\Collator.h"
 				>
 			</File>

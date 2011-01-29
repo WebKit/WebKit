@@ -27,7 +27,6 @@
 #include "RenderTreeAsText.h"
 
 #include "CSSMutableStyleDeclaration.h"
-#include "CharacterNames.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -48,6 +47,7 @@
 #include "SelectionController.h"
 #include <wtf/UnusedParam.h>
 #include <wtf/Vector.h>
+#include <wtf/unicode/CharacterNames.h>
 
 #if ENABLE(SVG)
 #include "RenderSVGContainer.h"

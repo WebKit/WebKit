@@ -1,3 +1,58 @@
+2011-01-29  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Move CharacterNames.h into WTF directory
+        https://bugs.webkit.org/show_bug.cgi?id=49618
+
+        * ForwardingHeaders/wtf/unicode/CharacterNames.h: Added.
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AccessibilityObject.cpp:
+        * accessibility/AccessibilityRenderObject.cpp:
+        * bindings/cpp/WebDOMHTMLDocumentCustom.cpp:
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        * dom/Position.cpp:
+        * dom/SelectElement.cpp:
+        * editing/CompositeEditCommand.cpp:
+        * editing/Editor.cpp:
+        * editing/HTMLInterchange.cpp:
+        * editing/InsertTextCommand.cpp:
+        * editing/MarkupAccumulator.cpp:
+        * editing/TextIterator.cpp:
+        * editing/VisibleSelection.cpp:
+        * editing/htmlediting.cpp:
+        * editing/htmlediting.h:
+        * editing/markup.cpp:
+        * html/FTPDirectoryDocument.cpp:
+        * html/HTMLFormControlElement.cpp:
+        * html/parser/HTMLTreeBuilder.cpp:
+        * loader/appcache/ManifestParser.cpp:
+        * platform/chromium/PopupMenuChromium.cpp:
+        * platform/graphics/Font.h:
+        * platform/graphics/FontFastPath.cpp:
+        * platform/graphics/GlyphPageTreeNode.cpp:
+        * platform/graphics/StringTruncator.cpp:
+        * platform/graphics/mac/ComplexTextController.cpp:
+        * platform/graphics/mac/ComplexTextControllerATSUI.cpp:
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        * platform/mac/PasteboardMac.mm:
+        * platform/text/TextCodecICU.cpp:
+        * platform/text/mac/TextCodecMac.cpp:
+        * platform/text/transcoder/FontTranscoder.cpp:
+        * rendering/RenderBlockLineLayout.cpp:
+        * rendering/RenderFlexibleBox.cpp:
+        * rendering/RenderListMarker.cpp:
+        * rendering/RenderText.cpp:
+        * rendering/RenderTextControl.cpp:
+        * rendering/RenderTreeAsText.cpp:
+        * rendering/break_lines.cpp:
+        * rendering/mathml/RenderMathMLOperator.h:
+        * websockets/WebSocketHandshake.cpp:
+        * wml/WMLTableElement.cpp:
+
 2011-01-29  Dan Winship  <danw@gnome.org>
 
         Reviewed by Xan Lopez.

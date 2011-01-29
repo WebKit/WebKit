@@ -27,7 +27,6 @@
 #include "Position.h"
 
 #include "CSSComputedStyleDeclaration.h"
-#include "CharacterNames.h"
 #include "Logging.h"
 #include "PositionIterator.h"
 #include "RenderBlock.h"
@@ -38,6 +37,7 @@
 #include "visible_units.h"
 #include <stdio.h>
 #include <wtf/text/CString.h>
+#include <wtf/unicode/CharacterNames.h>
   
 namespace WebCore {
 
