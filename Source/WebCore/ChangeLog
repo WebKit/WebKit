@@ -2,6 +2,24 @@
 
         Reviewed by Daniel Bates.
 
+        Teach XSSFilter about <meta> and <base> tags
+        https://bugs.webkit.org/show_bug.cgi?id=53339
+
+        I'm not 100% sure we need to block <meta http-equiv>, but it seems
+        prudent given how powerful that attribute is.  We definitely need to
+        block injection of <base href> because that can redirect script tags
+        that use relative URLs.
+
+        * html/parser/XSSFilter.cpp:
+        (WebCore::XSSFilter::filterToken):
+        (WebCore::XSSFilter::filterMetaToken):
+        (WebCore::XSSFilter::filterBaseToken):
+        * html/parser/XSSFilter.h:
+
+2011-01-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Daniel Bates.
+
         Teach XSSFilter about <applet>
         https://bugs.webkit.org/show_bug.cgi?id=53338
 

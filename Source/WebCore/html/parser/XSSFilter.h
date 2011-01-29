@@ -50,6 +50,8 @@ private:
     void filterObjectToken(HTMLToken&);
     void filterEmbedToken(HTMLToken&);
     void filterAppletToken(HTMLToken&);
+    void filterMetaToken(HTMLToken&);
+    void filterBaseToken(HTMLToken&);
 
     bool eraseAttributeIfInjected(HTMLToken&, const QualifiedName&);
 
