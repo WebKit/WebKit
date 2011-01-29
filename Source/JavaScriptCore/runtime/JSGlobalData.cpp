@@ -166,11 +166,14 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     if (canUseJIT) {
         m_canUseJIT = kCFBooleanTrue == canUseJIT;
         CFRelease(canUseJIT);
-    } else
-        m_canUseJIT = !getenv("JavaScriptCoreUseJIT");
+    } else {
+      char* canUseJITString = getenv("JavaScriptCoreUseJIT");
+      m_canUseJIT = !canUseJITString || atoi(canUseJITString);
+    }
     CFRelease(canUseJITKey);
 #elif OS(UNIX)
-    m_canUseJIT = !getenv("JavaScriptCoreUseJIT");
+    char* canUseJITString = getenv("JavaScriptCoreUseJIT");
+    m_canUseJIT = !canUseJITString || atoi(canUseJITString);
 #else
     m_canUseJIT = true;
 #endif
