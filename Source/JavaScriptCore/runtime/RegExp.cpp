@@ -230,11 +230,12 @@ void RegExp::matchCompareWithInterpreter(const UString& s, int startOffset, int*
 #if ENABLE(YARR_JIT)
         Yarr::YarrCodeBlock& codeBlock = m_representation->m_regExpJITCode;
 
-        char jitAddr[20];
+        const size_t jitAddrSize = 20;
+        char jitAddr[jitAddrSize];
         if (m_state == JITCode)
-            sprintf(jitAddr, "fallback");
+            snprintf(jitAddr, jitAddrSize, "fallback");
         else
-            sprintf(jitAddr, "0x%014lx", reinterpret_cast<unsigned long int>(codeBlock.getAddr()));
+            snprintf(jitAddr, jitAddrSize, "0x%014lx", reinterpret_cast<unsigned long int>(codeBlock.getAddr()));
 #else
         const char* jitAddr = "JIT Off";
 #endif
