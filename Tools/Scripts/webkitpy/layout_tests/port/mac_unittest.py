@@ -35,26 +35,31 @@ import port_testcase
 
 
 class MacTest(port_testcase.PortTestCase):
-    def make_port(self, options=port_testcase.mock_options):
+    def make_port(self, port_name=None, options=port_testcase.mock_options):
         if sys.platform != 'darwin':
             return None
-        port_obj = mac.MacPort(options=options)
+        port_obj = mac.MacPort(port_name=port_name, options=options)
         port_obj._options.results_directory = port_obj.results_directory()
         port_obj._options.configuration = 'Release'
         return port_obj
 
-    # FIXME: This test does not appear to be correct. It seems to receive
-    # different answers on different platforms. We should consider re-enabling
-    # it once we've worked out how to make it correct.
-    def disabled_test_skipped_file_paths(self):
-        port = self.make_port()
+    def assert_skipped_files_for_version(self, port_name, expected_paths):
+        port = self.make_port(port_name)
         if not port:
             return
         skipped_paths = port._skipped_file_paths()
         # FIXME: _skipped_file_paths should return WebKit-relative paths.
         # So to make it unit testable, we strip the WebKit directory from the path.
         relative_paths = [path[len(port.path_from_webkit_base()):] for path in skipped_paths]
-        self.assertEqual(relative_paths, ['LayoutTests/platform/mac-leopard/Skipped', 'LayoutTests/platform/mac/Skipped'])
+        self.assertEqual(relative_paths, expected_paths)
+
+    def test_skipped_file_paths(self):
+        self.assert_skipped_files_for_version('mac',
+            ['/LayoutTests/platform/mac/Skipped'])
+        self.assert_skipped_files_for_version('mac-snowleopard',
+            ['/LayoutTests/platform/mac-snowleopard/Skipped', '/LayoutTests/platform/mac/Skipped'])
+        self.assert_skipped_files_for_version('mac-leopard',
+            ['/LayoutTests/platform/mac-leopard/Skipped', '/LayoutTests/platform/mac/Skipped'])
 
     example_skipped_file = u"""
 # <rdar://problem/5647952> fast/events/mouseout-on-window.html needs mac DRT to issue mouse out events
