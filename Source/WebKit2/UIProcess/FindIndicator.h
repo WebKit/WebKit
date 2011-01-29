@@ -42,12 +42,13 @@ class ShareableBitmap;
 
 class FindIndicator : public RefCounted<FindIndicator> {
 public:
-    static PassRefPtr<FindIndicator> create(const WebCore::FloatRect& selectionRect, const Vector<WebCore::FloatRect>& textRects, const SharedMemory::Handle& contentImageHandle);
+    static PassRefPtr<FindIndicator> create(const WebCore::FloatRect& selectionRectInWindowCoordinates, const Vector<WebCore::FloatRect>& textRectsInSelectionRectCoordinates, const SharedMemory::Handle& contentImageHandle);
     ~FindIndicator();
 
+    WebCore::FloatRect selectionRectInWindowCoordinates() const { return m_selectionRectInWindowCoordinates; }
     WebCore::FloatRect frameRect() const;
 
-    const Vector<WebCore::FloatRect>& textRects() const { return m_textRects; }
+    const Vector<WebCore::FloatRect>& textRects() const { return m_textRectsInSelectionRectCoordinates; }
 
     ShareableBitmap* contentImage() const { return m_contentImage.get(); }
 
@@ -56,8 +57,8 @@ public:
 private:
     FindIndicator(const WebCore::FloatRect& selectionRect, const Vector<WebCore::FloatRect>& textRects, PassRefPtr<ShareableBitmap> contentImage);
 
-    WebCore::FloatRect m_selectionRect;
-    Vector<WebCore::FloatRect> m_textRects;
+    WebCore::FloatRect m_selectionRectInWindowCoordinates;
+    Vector<WebCore::FloatRect> m_textRectsInSelectionRectCoordinates;
     RefPtr<ShareableBitmap> m_contentImage;
 };
 

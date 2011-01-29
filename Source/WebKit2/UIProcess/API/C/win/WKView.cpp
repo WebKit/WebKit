@@ -71,3 +71,13 @@ void WKViewSetInitialFocus(WKViewRef viewRef, bool forward)
 {
     toImpl(viewRef)->setInitialFocus(forward);
 }
+
+void WKViewSetFindIndicatorCallback(WKViewRef viewRef, WKViewFindIndicatorCallback callback, void* context)
+{
+    toImpl(viewRef)->setFindIndicatorCallback(callback, context);
+}
+
+WKViewFindIndicatorCallback WKViewGetFindIndicatorCallback(WKViewRef viewRef, void** context)
+{    
+    return toImpl(viewRef)->getFindIndicatorCallback(context);
+}

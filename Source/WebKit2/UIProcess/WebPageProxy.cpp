@@ -1840,9 +1840,9 @@ void WebPageProxy::didCountStringMatches(const String& string, uint32_t matchCou
     m_findClient.didCountStringMatches(this, string, matchCount);
 }
 
-void WebPageProxy::setFindIndicator(const FloatRect& selectionRect, const Vector<FloatRect>& textRects, const SharedMemory::Handle& contentImageHandle, bool fadeOut)
+void WebPageProxy::setFindIndicator(const FloatRect& selectionRectInWindowCoordinates, const Vector<FloatRect>& textRectsInSelectionRectCoordinates, const SharedMemory::Handle& contentImageHandle, bool fadeOut)
 {
-    RefPtr<FindIndicator> findIndicator = FindIndicator::create(selectionRect, textRects, contentImageHandle);
+    RefPtr<FindIndicator> findIndicator = FindIndicator::create(selectionRectInWindowCoordinates, textRectsInSelectionRectCoordinates, contentImageHandle);
     m_pageClient->setFindIndicator(findIndicator.release(), fadeOut);
 }
 

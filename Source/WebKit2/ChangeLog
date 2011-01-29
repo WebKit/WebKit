@@ -1,3 +1,36 @@
+2011-01-29  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Support find bouncy in WebKit2 on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=53329
+        <rdar://problem/8565843>
+        The Mac implements the find bouncy inside of WebKit in the UI process for WebKit2, but we need to do this inside Safari for WebKit2 on Windows.
+        Add infrastructure to call back into the app when the find indicator changes.
+
+        * UIProcess/API/C/win/WKView.cpp: Cleanup some code style violations.
+        (WKViewSetFindIndicatorCallback): Added.
+        (WKViewGetFindIndicatorCallback): Added.
+        * UIProcess/API/C/win/WKView.h: Cleanup some code style violations.
+        * UIProcess/FindIndicator.cpp:
+        (WebKit::FindIndicator::create):
+        (WebKit::FindIndicator::FindIndicator):
+        (WebKit::FindIndicator::frameRect):
+        (WebKit::FindIndicator::draw):
+        Rename m_selectionRect to m_selectionRectInWindowCoordinates and m_textRects to m_textRectsInSelectionRectCoordinates (along with similarly named local variables) to be more explict about the coordinate system.
+        * UIProcess/FindIndicator.h:
+        (WebKit::FindIndicator::selectionRectInWindowCoordinates): Added.
+        (WebKit::FindIndicator::textRects): Rename m_textRects to m_textRectsInSelectionRectCoordinates.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setFindIndicator): Rename selectionRect to selectionRectInWindowCoordinates and textRects to textRectsInSelectionRectCoordinates to be more explict about the coordinate system.
+        * UIProcess/WebPageProxy.h: Ditto.
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::WebView):
+        (WebKit::WebView::setFindIndicator): Added.
+        (WebKit::WebView::setFindIndicatorCallback): Added.
+        (WebKit::WebView::getFindIndicatorCallback): Added.
+        * UIProcess/win/WebView.h:
+
 2011-01-28  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.

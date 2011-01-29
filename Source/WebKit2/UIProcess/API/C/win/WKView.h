@@ -46,6 +46,10 @@ WK_EXPORT void WKViewWindowAncestryDidChange(WKViewRef view);
 WK_EXPORT void WKViewSetIsInWindow(WKViewRef view, bool isInWindow);
 WK_EXPORT void WKViewSetInitialFocus(WKViewRef view, bool forward);
 
+typedef void (*WKViewFindIndicatorCallback)(WKViewRef, HBITMAP selectionBitmap, RECT selectionRectInWindowCoordinates, bool fadeout, void*);
+WK_EXPORT void WKViewSetFindIndicatorCallback(WKViewRef view, WKViewFindIndicatorCallback callback, void* context);
+WK_EXPORT WKViewFindIndicatorCallback WKViewGetFindIndicatorCallback(WKViewRef view, void** context);
+
 #ifdef __cplusplus
 }
 #endif

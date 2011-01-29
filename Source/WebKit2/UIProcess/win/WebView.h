@@ -28,7 +28,9 @@
 
 #include "APIObject.h"
 #include "PageClient.h"
+#include "WKView.h"
 #include "WebPageProxy.h"
+#include <ShlObj.h>
 #include <WebCore/COMPtr.h>
 #include <WebCore/DragActions.h>
 #include <WebCore/DragData.h>
@@ -36,7 +38,6 @@
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
-#include <ShlObj.h>
 
 interface IDropTargetHelper;
 
@@ -58,8 +59,10 @@ public:
     void setParentWindow(HWND);
     void windowAncestryDidChange();
     void setIsInWindow(bool);
-    void setOverrideCursor(HCURSOR overrideCursor);
+    void setOverrideCursor(HCURSOR);
     void setInitialFocus(bool forward);
+    void setFindIndicatorCallback(WKViewFindIndicatorCallback, void*);
+    WKViewFindIndicatorCallback getFindIndicatorCallback(void**);
     void initialize();
 
     // IUnknown
@@ -186,6 +189,10 @@ private:
     RefPtr<WebPageProxy> m_page;
 
     unsigned m_inIMEComposition;
+
+    WKViewFindIndicatorCallback m_findIndicatorCallback;
+    void* m_findIndicatorCallbackContext;
+
     COMPtr<IDataObject> m_dragData;
     COMPtr<IDropTargetHelper> m_dropTargetHelper;
     // FIXME: This variable is part of a workaround. The drop effect (pdwEffect) passed to Drop is incorrect. 

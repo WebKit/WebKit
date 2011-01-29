@@ -77,18 +77,18 @@ static const int gradientLightAlpha = 255;
 
 namespace WebKit {
 
-PassRefPtr<FindIndicator> FindIndicator::create(const FloatRect& selectionRect, const Vector<FloatRect>& textRects, const SharedMemory::Handle& contentImageHandle)
+PassRefPtr<FindIndicator> FindIndicator::create(const FloatRect& selectionRectInWindowCoordinates, const Vector<FloatRect>& textRectsInSelectionRectCoordinates, const SharedMemory::Handle& contentImageHandle)
 {
-    RefPtr<ShareableBitmap> contentImage = ShareableBitmap::create(enclosingIntRect(selectionRect).size(), contentImageHandle);
+    RefPtr<ShareableBitmap> contentImage = ShareableBitmap::create(enclosingIntRect(selectionRectInWindowCoordinates).size(), contentImageHandle);
     if (!contentImage)
         return 0;
 
-    return adoptRef(new FindIndicator(selectionRect, textRects, contentImage.release()));
+    return adoptRef(new FindIndicator(selectionRectInWindowCoordinates, textRectsInSelectionRectCoordinates, contentImage.release()));
 }
 
-FindIndicator::FindIndicator(const WebCore::FloatRect& selectionRect, const Vector<WebCore::FloatRect>& textRects, PassRefPtr<ShareableBitmap> contentImage)
-    : m_selectionRect(selectionRect)
-    , m_textRects(textRects)
+FindIndicator::FindIndicator(const WebCore::FloatRect& selectionRectInWindowCoordinates, const Vector<WebCore::FloatRect>& textRectsInSelectionRectCoordinates, PassRefPtr<ShareableBitmap> contentImage)
+    : m_selectionRectInWindowCoordinates(selectionRectInWindowCoordinates)
+    , m_textRectsInSelectionRectCoordinates(textRectsInSelectionRectCoordinates)
     , m_contentImage(contentImage)
 {
 }
@@ -108,9 +108,9 @@ static FloatRect inflateRect(const FloatRect& rect, float inflateX, float inflat
 
 FloatRect FindIndicator::frameRect() const
 {
-    return FloatRect(m_selectionRect.x() - leftBorderThickness, m_selectionRect.y() - topBorderThickness,
-                     m_selectionRect.width() + rightBorderThickness + leftBorderThickness,
-                     m_selectionRect.height() + topBorderThickness + bottomBorderThickness);
+    return FloatRect(m_selectionRectInWindowCoordinates.x() - leftBorderThickness, m_selectionRectInWindowCoordinates.y() - topBorderThickness,
+                     m_selectionRectInWindowCoordinates.width() + rightBorderThickness + leftBorderThickness,
+                     m_selectionRectInWindowCoordinates.height() + topBorderThickness + bottomBorderThickness);
 }
 
 static Color lightBorderColor()
@@ -143,8 +143,8 @@ static Path pathWithRoundedRect(const FloatRect& pathRect, float radius)
     
 void FindIndicator::draw(GraphicsContext& graphicsContext, const IntRect& dirtyRect)
 {
-    for (size_t i = 0; i < m_textRects.size(); ++i) {
-        FloatRect textRect = m_textRects[i];
+    for (size_t i = 0; i < m_textRectsInSelectionRectCoordinates.size(); ++i) {
+        FloatRect textRect = m_textRectsInSelectionRectCoordinates[i];
         textRect.move(leftBorderThickness, topBorderThickness);
 
         graphicsContext.save();
