@@ -2517,7 +2517,7 @@ BUGWEBGL WIN DEBUG : fast/canvas/webgl/texture-complete.html = PASS TEXT
 BUGWEBGL : fast/canvas/webgl/read-pixels-test.html = TIMEOUT
 
 // These three failures are due to Mesa bugs
-BUGWEBGL : fast/canvas/webgl/gl-uniform-arrays.html = TEXT
+BUGWEBGL : fast/canvas/webgl/gl-uniform-arrays.html = TEXT TIMEOUT
 BUGWEBGL : fast/canvas/webgl/point-size.html = TEXT
 
 // Failing after r75175
@@ -2563,9 +2563,8 @@ BUGWK44406 : http/tests/appcache/foreign-fallback.html = PASS FAIL CRASH
 // This test starts to timeout during build bots were down between 68880:68920
 BUG_HCLAM WIN : fast/css/acid2-pixel.html = TIMEOUT PASS
 
-BUGCR62738 BUGCR60845 WIN RELEASE : media/video-size.html = PASS TIMEOUT
-BUGCR62738 BUGCR60845 WIN MAC DEBUG : media/video-size.html = CRASH PASS TIMEOUT
-BUGCR62738 BUGCR60845 BUGCR71087 LINUX : media/video-size.html = CRASH PASS TIMEOUT
+BUGCR62738 BUGCR60845 MAC DEBUG : media/video-size.html = CRASH PASS TIMEOUT
+BUGCR62738 BUGCR60845 BUGCR71087 WIN LINUX : media/video-size.html = CRASH PASS TIMEOUT
 
 // Unexpected timeout in these tests.
 BUG_HCLAM : http/tests/css/border-image-loading.html = TEXT TIMEOUT PASS
@@ -3112,3 +3111,5 @@ BUGCR71087 MAC DEBUG : media/video-currentTime.html = PASS TIMEOUT
 // due to changes in style propagation, fixing.
 BUGWK53314 : media/controls-strict.html = IMAGE+TEXT
 BUGWK53314 : media/video-zoom-controls.html = IMAGE+TEXT
+
+BUGWK53347 SLOW WIN LINUX DEBUG : fast/repaint/4774354.html = PASS TIMEOUT
