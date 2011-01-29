@@ -2888,11 +2888,10 @@ BUGCR66085 BUGCR71087 LINUX DEBUG : media/remove-from-document.html = CRASH PASS
 BUGCR66085 MAC : media/video-display-toggle.html = PASS TIMEOUT
 BUGCR66085 : media/video-play-pause-exception.html = PASS TIMEOUT
 BUGCR66085 WIN : media/video-source.html = PASS TIMEOUT
-BUGCR66085 LINUX RELEASE : media/video-source.html = PASS TIMEOUT
-BUGCR66085 LINUX DEBUG : media/video-source.html = CRASH PASS TIMEOUT
+BUGCR66085 LINUX : media/video-source.html = CRASH PASS TIMEOUT
 
 BUGCR66085 : media/video-source-type.html = PASS TIMEOUT
-BUGCR66085 LINUX DEBUG : media/video-src-source.html = CRASH PASS TIMEOUT
+BUGCR66085 LINUX : media/video-src-source.html = CRASH PASS TIMEOUT
 
 // Flaky failures
 BUGCR66087 WIN : fast/dom/Geolocation/timestamp.html = PASS TEXT
@@ -3049,6 +3048,8 @@ BUGRNIWA SLOW LINUX : fast/text/large-text-composed-char-dos.html = PASS
 // Added by http://trac.webkit.org/changeset/76548
 BUGCR70686 MAC : fast/text/international/cjk-segmentation.html = TEXT
 
+// Added by http://trac.webkit.org/changeset/76674
+BUGCR70882 WIN : fast/text/offsetForPosition-complex-fallback.html = TEXT
 // Started failing at http://trac.webkit.org/changeset/76674
 BUGCR70882 MAC : fast/text/atsui-small-caps-punctuation-size.html = IMAGE
 BUGCR70882 MAC : fast/text/capitalize-boundaries.html = IMAGE

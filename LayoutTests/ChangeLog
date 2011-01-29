@@ -1,5 +1,11 @@
 2011-01-29  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed Chromium test expectation update.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-01-29  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed rebaselines and test expectation updates for Chromium Linux.
 
         * platform/chromium-linux/fast/forms/select-dirty-parent-pref-widths-expected.checksum: Added.
