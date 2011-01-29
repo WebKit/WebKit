@@ -94,12 +94,8 @@ NSString * const NSPrintInfoDidChangeNotification = @"NSPrintInfoDidChange";
 - (BOOL)_isPrintingPreview
 {
     // <rdar://problem/8901041> Please add an API returning whether the current print operation is for preview.
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
-    return [_printOperation preferredRenderingQuality] == NSPrintRenderingQualityResponsive;
-#else
     // Assuming that if NSPrintOperation is allowed to spawn a thread for printing, it will. Print preview doesn't spawn a thread.
     return !_isPrintingFromSecondaryThread;
-#endif
 }
 
 - (void)_updatePreview
