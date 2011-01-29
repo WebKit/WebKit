@@ -45,6 +45,8 @@ private:
         AfterScriptStartTag,
     };
 
+    void init();
+
     bool filterTokenInitial(HTMLToken&);
     bool filterTokenAfterScriptStartTag(HTMLToken&);
 
@@ -62,9 +64,14 @@ private:
     String snippetForAttribute(const HTMLToken&, const HTMLToken::Attribute&);
 
     bool isContainedInRequest(const String&);
+    bool isSameOriginResource(const String& url);
 
     HTMLDocumentParser* m_parser;
     bool m_isEnabled;
+
+    String m_decodedURL;
+    String m_decodedHTTPBody;
+
     State m_state;
     String m_cachedSnippet;
 };

@@ -27,6 +27,7 @@
 #include "XSSFilter.h"
 
 #include "Document.h"
+#include "DocumentLoader.h"
 #include "Frame.h"
 #include "HTMLDocumentParser.h"
 #include "HTMLNames.h"
@@ -93,6 +94,28 @@ XSSFilter::XSSFilter(HTMLDocumentParser* parser)
         if (Settings* settings = frame->settings())
             m_isEnabled = settings->xssAuditorEnabled();
     }
+    // Although tempting to call init() at this point, the various objects
+    // we want to reference might not all have been constructed yet.
+}
+
+void XSSFilter::init()
+{
+    ASSERT(m_isEnabled);
+
+    const TextEncoding& encoding = m_parser->document()->decoder()->encoding();
+    String url = m_parser->document()->url().string();
+    m_decodedURL = decodeURL(url, encoding);
+
+    // In theory, the Document could have detached from the Frame after the
+    // XSSFilter was constructed.
+    if (!m_parser->document()->frame())
+        return;
+
+    if (DocumentLoader* documentLoader = m_parser->document()->frame()->loader()->documentLoader()) {
+        FormData* httpBody = documentLoader->originalRequest().httpBody();
+        if (httpBody && !httpBody->isEmpty())
+            m_decodedHTTPBody = decodeURL(httpBody->flattenToString(), encoding);
+    }
 }
 
 void XSSFilter::filterToken(HTMLToken& token)
@@ -103,6 +126,9 @@ void XSSFilter::filterToken(HTMLToken& token)
 #else
     if (!m_isEnabled)
         return;
+
+    if (m_decodedURL.isEmpty())
+        init();
 
     bool didBlockScript = false;
 
@@ -269,6 +295,8 @@ bool XSSFilter::eraseAttributeIfInjected(HTMLToken& token, const QualifiedName& 
     if (findAttributeWithName(token, attributeName, indexOfAttribute)) {
         const HTMLToken::Attribute& attribute = token.attributes().at(indexOfAttribute);
         if (isContainedInRequest(snippetForAttribute(token, attribute))) {
+            if (attributeName == srcAttr && isSameOriginResource(String(attribute.m_value.data(), attribute.m_value.size())))
+                return false;
             token.eraseValueOfAttribute(indexOfAttribute);
             if (!replacementValue.isEmpty())
                 token.appendToAttributeValue(indexOfAttribute, replacementValue);
@@ -296,12 +324,19 @@ String XSSFilter::snippetForAttribute(const HTMLToken& token, const HTMLToken::A
 
 bool XSSFilter::isContainedInRequest(const String& snippet)
 {
-    String url = m_parser->document()->url().string();
-    String decodedURL = decodeURL(url, m_parser->document()->decoder()->encoding());
-    if (decodedURL.find(snippet, 0, false) != notFound)
-        return true; // We've found the string in the GET data.
-    // FIXME: Look in form data.
-    return false;
+    return m_decodedURL.find(snippet, 0, false) != notFound || m_decodedHTTPBody.find(snippet, 0, false) != notFound;
+}
+
+bool XSSFilter::isSameOriginResource(const String& url)
+{
+    // If the resource is loaded from the same URL as the enclosing page, it's
+    // probably not an XSS attack, so we reduce false positives by allowing the
+    // request. If the resource has a query string, we're more suspicious,
+    // however, because that's pretty rare and the attacker might be able to
+    // trick a server-side script into doing something dangerous with the query
+    // string.
+    KURL resourceURL(m_parser->document()->url(), url);
+    return (m_parser->document()->url().host() == resourceURL.host() && resourceURL.query().isEmpty());
 }
 
 }

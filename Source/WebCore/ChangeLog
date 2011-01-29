@@ -2,6 +2,26 @@
 
         Reviewed by Daniel Bates.
 
+        XSSFilter should pass xssAuditor/script-tag-with-source-same-host.html
+        and xssAuditor/script-tag-post-*
+        https://bugs.webkit.org/show_bug.cgi?id=53364
+
+        We're supposed to allow loading same-origin resources even if they
+        appear as part of the request.
+
+        Also, we're supposed to look at the POST data too.  :)
+
+        * html/parser/XSSFilter.cpp:
+        (WebCore::XSSFilter::eraseAttributeIfInjected):
+        (WebCore::XSSFilter::isSameOriginResource):
+            - Copy/paste from XSSAuditor::isSameOriginResource.  We'll
+              eventually remove the XSSAuditor version when XSSFilter is done.
+        * html/parser/XSSFilter.h:
+
+2011-01-29  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Daniel Bates.
+
         XSSFilter should pass 16 of the xssAuditor/script-tag* tests
         https://bugs.webkit.org/show_bug.cgi?id=53362
 
