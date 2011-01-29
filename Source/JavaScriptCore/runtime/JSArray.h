@@ -27,7 +27,7 @@
 
 namespace JSC {
 
-    typedef HashMap<unsigned, WriteBarrier<Unknown> > SparseArrayValueMap;
+    typedef HashMap<unsigned, JSValue> SparseArrayValueMap;
 
     // This struct holds the actual data values of an array.  A JSArray object points to it's contained ArrayStorage
     // struct by pointing to m_vector.  To access the contained ArrayStorage struct, use the getStorage() and 
@@ -44,7 +44,7 @@ namespace JSC {
 #if CHECK_ARRAY_CONSISTENCY
         bool m_inCompactInitialization;
 #endif
-        WriteBarrier<Unknown> m_vector[1];
+        JSValue m_vector[1];
     };
 
     // The CreateCompact creation mode is used for fast construction of arrays
@@ -67,7 +67,7 @@ namespace JSC {
 
         explicit JSArray(NonNullPassRefPtr<Structure>);
         JSArray(NonNullPassRefPtr<Structure>, unsigned initialLength, ArrayCreationMode);
-        JSArray(JSGlobalData&, NonNullPassRefPtr<Structure>, const ArgList& initialValues);
+        JSArray(NonNullPassRefPtr<Structure>, const ArgList& initialValues);
         virtual ~JSArray();
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
@@ -94,32 +94,32 @@ namespace JSC {
         JSValue getIndex(unsigned i)
         {
             ASSERT(canGetIndex(i));
-            return m_storage->m_vector[i].get();
+            return m_storage->m_vector[i];
         }
 
         bool canSetIndex(unsigned i) { return i < m_vectorLength; }
-        void setIndex(JSGlobalData& globalData, unsigned i, JSValue v)
+        void setIndex(unsigned i, JSValue v)
         {
             ASSERT(canSetIndex(i));
             
-            WriteBarrier<Unknown>& x = m_storage->m_vector[i];
+            JSValue& x = m_storage->m_vector[i];
             if (!x) {
                 ArrayStorage *storage = m_storage;
                 ++storage->m_numValuesInVector;
                 if (i >= storage->m_length)
                     storage->m_length = i + 1;
             }
-            x.set(globalData, this, v);
+            x = v;
         }
         
-        void uncheckedSetIndex(JSGlobalData& globalData, unsigned i, JSValue v)
+        void uncheckedSetIndex(unsigned i, JSValue v)
         {
             ASSERT(canSetIndex(i));
             ArrayStorage *storage = m_storage;
 #if CHECK_ARRAY_CONSISTENCY
             ASSERT(storage->m_inCompactInitialization);
 #endif
-            storage->m_vector[i].set(globalData, this, v);
+            storage->m_vector[i] = v;
         }
 
         void fillArgList(ExecState*, MarkedArgumentBuffer&);
@@ -194,7 +194,7 @@ namespace JSC {
         if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
             SparseArrayValueMap::iterator end = map->end();
             for (SparseArrayValueMap::iterator it = map->begin(); it != end; ++it)
-                markStack.append(&it->second);
+                markStack.append(it->second);
         }
     }
 

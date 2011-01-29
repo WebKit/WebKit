@@ -58,10 +58,10 @@ NumberConstructor::NumberConstructor(ExecState* exec, JSGlobalObject* globalObje
     : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, numberPrototype->info.className))
 {
     // Number.Prototype
-    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().prototype, numberPrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(exec->propertyNames().prototype, numberPrototype, DontEnum | DontDelete | ReadOnly);
 
     // no. of arguments for constructor
-    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
+    putDirectWithoutTransition(exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
 }
 
 bool NumberConstructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
@@ -104,7 +104,7 @@ static EncodedJSValue JSC_HOST_CALL constructWithNumberConstructor(ExecState* ex
 {
     NumberObject* object = new (exec) NumberObject(exec->lexicalGlobalObject()->numberObjectStructure());
     double n = exec->argumentCount() ? exec->argument(0).toNumber(exec) : 0;
-    object->setInternalValue(exec->globalData(), jsNumber(n));
+    object->setInternalValue(jsNumber(n));
     return JSValue::encode(object);
 }
 

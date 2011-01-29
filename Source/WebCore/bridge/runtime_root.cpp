@@ -101,8 +101,8 @@ void RootObject::invalidate()
         return;
 
     {
-        WeakGCMap<RuntimeObject*, RuntimeObject>::iterator end = m_runtimeObjects.uncheckedEnd();
-        for (WeakGCMap<RuntimeObject*, RuntimeObject>::iterator it = m_runtimeObjects.uncheckedBegin(); it != end; ++it) {
+        WeakGCMap<RuntimeObject*, RuntimeObject*>::iterator end = m_runtimeObjects.uncheckedEnd();
+        for (WeakGCMap<RuntimeObject*, RuntimeObject*>::iterator it = m_runtimeObjects.uncheckedBegin(); it != end; ++it) {
             if (m_runtimeObjects.isValid(it))
                 it->second->invalidate();
         }

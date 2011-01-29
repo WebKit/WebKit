@@ -40,11 +40,11 @@ inline JSPropertyNameIterator::JSPropertyNameIterator(ExecState* exec, PropertyN
     , m_cachedStructure(0)
     , m_numCacheableSlots(numCacheableSlots)
     , m_jsStringsSize(propertyNameArrayData->propertyNameVector().size())
-    , m_jsStrings(new WriteBarrier<Unknown>[m_jsStringsSize])
+    , m_jsStrings(new JSValue[m_jsStringsSize])
 {
     PropertyNameArrayData::PropertyNameVector& propertyNameVector = propertyNameArrayData->propertyNameVector();
     for (size_t i = 0; i < m_jsStringsSize; ++i)
-        m_jsStrings[i].set(exec->globalData(), this, jsOwnedString(exec, propertyNameVector[i].ustring()));
+        m_jsStrings[i] = jsOwnedString(exec, propertyNameVector[i].ustring());
 }
 
 JSPropertyNameIterator::~JSPropertyNameIterator()
@@ -91,7 +91,7 @@ JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, JSObject
 
 JSValue JSPropertyNameIterator::get(ExecState* exec, JSObject* base, size_t i)
 {
-    JSValue identifier = m_jsStrings[i].get();
+    JSValue& identifier = m_jsStrings[i];
     if (m_cachedStructure == base->structure() && m_cachedPrototypeChain == base->structure()->prototypeChain(exec))
         return identifier;
 

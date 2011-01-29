@@ -66,7 +66,7 @@ namespace WebCore {
         virtual void handleEvent(ScriptExecutionContext*, Event*);
 
     private:
-        mutable JSC::WriteBarrier<JSC::JSObject> m_jsFunction;
+        mutable JSC::JSObject* m_jsFunction;
         mutable JSC::WeakGCPtr<JSC::JSObject> m_wrapper;
 
         bool m_isAttribute;
@@ -76,7 +76,7 @@ namespace WebCore {
     inline JSC::JSObject* JSEventListener::jsFunction(ScriptExecutionContext* scriptExecutionContext) const
     {
         if (!m_jsFunction)
-            m_jsFunction.set(*scriptExecutionContext->globalData(), m_wrapper.get(), initializeJSFunction(scriptExecutionContext));
+            m_jsFunction = initializeJSFunction(scriptExecutionContext);
 
         // Verify that we have a valid wrapper protecting our function from
         // garbage collection.
@@ -86,9 +86,9 @@ namespace WebCore {
 
         // Try to verify that m_jsFunction wasn't recycled. (Not exact, since an
         // event listener can be almost anything, but this makes test-writing easier).
-        ASSERT(!m_jsFunction || static_cast<JSC::JSCell*>(m_jsFunction.get())->isObject());
+        ASSERT(!m_jsFunction || static_cast<JSC::JSCell*>(m_jsFunction)->isObject());
 
-        return m_jsFunction.get();
+        return m_jsFunction;
     }
 
     inline void JSEventListener::invalidateJSFunction(JSC::JSObject* wrapper)

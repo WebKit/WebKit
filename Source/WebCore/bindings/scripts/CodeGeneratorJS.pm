@@ -1735,13 +1735,13 @@ sub GenerateImplementation
                             }
                             push(@implContent, "    // Shadowing a built-in constructor\n");
                             if ($interfaceName eq "DOMWindow" && $className eq "JSblah") {
-                                push(@implContent, "    static_cast<$className*>(thisObject)->putDirect(exec->globalData(), exec->propertyNames().constructor, value);\n");
+                                push(@implContent, "    static_cast<$className*>(thisObject)->putDirect(exec->propertyNames().constructor, value);\n");
                             } else {
-                                push(@implContent, "    static_cast<$className*>(thisObject)->putDirect(exec->globalData(), Identifier(exec, \"$name\"), value);\n");
+                                push(@implContent, "    static_cast<$className*>(thisObject)->putDirect(Identifier(exec, \"$name\"), value);\n");
                             }
                         } elsif ($attribute->signature->extendedAttributes->{"Replaceable"}) {
                             push(@implContent, "    // Shadowing a built-in object\n");
-                            push(@implContent, "    static_cast<$className*>(thisObject)->putDirect(exec->globalData(), Identifier(exec, \"$name\"), value);\n");
+                            push(@implContent, "    static_cast<$className*>(thisObject)->putDirect(Identifier(exec, \"$name\"), value);\n");
                         } else {
                             push(@implContent, "    $className* castedThis = static_cast<$className*>(thisObject);\n");
                             push(@implContent, "    $implType* imp = static_cast<$implType*>(castedThis->impl());\n");
@@ -1824,9 +1824,9 @@ sub GenerateImplementation
                 push(@implContent, "    // Shadowing a built-in constructor\n");
 
                 if ($interfaceName eq "DOMWindow") {
-                    push(@implContent, "    static_cast<$className*>(thisObject)->putDirect(exec->globalData(), exec->propertyNames().constructor, value);\n");
+                    push(@implContent, "    static_cast<$className*>(thisObject)->putDirect(exec->propertyNames().constructor, value);\n");
                 } else {
-                    push(@implContent, "    static_cast<$className*>(thisObject)->putDirect(exec->globalData(), Identifier(exec, \"$name\"), value);\n");
+                    push(@implContent, "    static_cast<$className*>(thisObject)->putDirect(Identifier(exec, \"$name\"), value);\n");
                 }
                 push(@implContent, "}\n");
                 push(@implContent, "\n");
@@ -2942,11 +2942,11 @@ sub GenerateConstructorDefinition
     push(@$outputArray, "    : DOMConstructorObject(${constructorClassName}::createStructure(globalObject->objectPrototype()), globalObject)\n");
     push(@$outputArray, "{\n");
     if ($interfaceName eq "DOMWindow") {
-        push(@$outputArray, "    putDirect(exec->globalData(), exec->propertyNames().prototype, globalObject->prototype(), DontDelete | ReadOnly);\n");
+        push(@$outputArray, "    putDirect(exec->propertyNames().prototype, globalObject->prototype(), DontDelete | ReadOnly);\n");
     } else {
-        push(@$outputArray, "    putDirect(exec->globalData(), exec->propertyNames().prototype, ${protoClassName}::self(exec, globalObject), DontDelete | ReadOnly);\n");
+        push(@$outputArray, "    putDirect(exec->propertyNames().prototype, ${protoClassName}::self(exec, globalObject), DontDelete | ReadOnly);\n");
     }
-    push(@$outputArray, "    putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(${numberOfconstructParameters}), ReadOnly | DontDelete | DontEnum);\n") if $numberOfconstructParameters;
+    push(@$outputArray, "    putDirect(exec->propertyNames().length, jsNumber(${numberOfconstructParameters}), ReadOnly | DontDelete | DontEnum);\n") if $numberOfconstructParameters;
     push(@$outputArray, "}\n\n");
 
     push(@$outputArray, "bool ${constructorClassName}::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n");

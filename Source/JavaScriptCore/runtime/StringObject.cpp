@@ -32,19 +32,19 @@ const ClassInfo StringObject::info = { "String", 0, 0, 0 };
 StringObject::StringObject(ExecState* exec, NonNullPassRefPtr<Structure> structure)
     : JSWrapperObject(structure)
 {
-    setInternalValue(exec->globalData(), jsEmptyString(exec));
+    setInternalValue(jsEmptyString(exec));
 }
 
-StringObject::StringObject(JSGlobalData& globalData, NonNullPassRefPtr<Structure> structure, JSString* string)
+StringObject::StringObject(NonNullPassRefPtr<Structure> structure, JSString* string)
     : JSWrapperObject(structure)
 {
-    setInternalValue(globalData, string);
+    setInternalValue(string);
 }
 
 StringObject::StringObject(ExecState* exec, NonNullPassRefPtr<Structure> structure, const UString& string)
     : JSWrapperObject(structure)
 {
-    setInternalValue(exec->globalData(), jsString(exec, string));
+    setInternalValue(jsString(exec, string));
 }
 
 bool StringObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

@@ -27,7 +27,6 @@
 #define MarkStack_h
 
 #include "JSValue.h"
-#include "WriteBarrier.h"
 #include <wtf/Vector.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OSAllocator.h>
@@ -50,23 +49,17 @@ namespace JSC {
 #endif
         {
         }
+
+        ALWAYS_INLINE void append(JSValue);
+        void append(JSCell*);
         
-        void deprecatedAppend(JSValue*);
-        void deprecatedAppend(JSCell**);
-        void deprecatedAppend(Register*);
-        template <typename T> void append(WriteBarrierBase<T>*);
-        template <typename T> void append(DeprecatedPtr<T>*);
-        
-        ALWAYS_INLINE void deprecatedAppendValues(Register* registers, size_t count, MarkSetProperties properties = NoNullValues)
+        ALWAYS_INLINE void appendValues(Register* values, size_t count, MarkSetProperties properties = NoNullValues)
         {
-            JSValue* values = reinterpret_cast<JSValue*>(registers);
-            if (count)
-                m_markSets.append(MarkSet(values, values + count, properties));
+            appendValues(reinterpret_cast<JSValue*>(values), count, properties);
         }
 
-        void appendValues(WriteBarrierBase<Unknown>* barriers, size_t count, MarkSetProperties properties = NoNullValues)
+        ALWAYS_INLINE void appendValues(JSValue* values, size_t count, MarkSetProperties properties = NoNullValues)
         {
-            JSValue* values = barriers->slot();
             if (count)
                 m_markSets.append(MarkSet(values, values + count, properties));
         }
@@ -81,8 +74,6 @@ namespace JSC {
         }
 
     private:
-        void internalAppend(JSCell*);
-        void internalAppend(JSValue);
         void markChildren(JSCell*);
 
         struct MarkSet {

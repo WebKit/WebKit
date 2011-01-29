@@ -48,17 +48,17 @@ void Arguments::markChildren(MarkStack& markStack)
     JSObject::markChildren(markStack);
 
     if (d->registerArray)
-        markStack.deprecatedAppendValues(d->registerArray.get(), d->numParameters);
+        markStack.appendValues(reinterpret_cast<JSValue*>(d->registerArray.get()), d->numParameters);
 
     if (d->extraArguments) {
         unsigned numExtraArguments = d->numArguments - d->numParameters;
-        markStack.deprecatedAppendValues(d->extraArguments, numExtraArguments);
+        markStack.appendValues(reinterpret_cast<JSValue*>(d->extraArguments), numExtraArguments);
     }
 
-    markStack.append(&d->callee);
+    markStack.append(d->callee);
 
     if (d->activation)
-        markStack.append(&d->activation);
+        markStack.append(d->activation);
 }
 
 void Arguments::copyToRegisters(ExecState* exec, Register* buffer, uint32_t maxSize)
@@ -197,7 +197,7 @@ bool Arguments::getOwnPropertySlot(ExecState* exec, const Identifier& propertyNa
 
     if (propertyName == exec->propertyNames().callee && LIKELY(!d->overrodeCallee)) {
         if (!d->isStrictMode) {
-            slot.setValue(d->callee.get());
+            slot.setValue(d->callee);
             return true;
         }
         createStrictModeCalleeIfNecessary(exec);
@@ -228,7 +228,7 @@ bool Arguments::getOwnPropertyDescriptor(ExecState* exec, const Identifier& prop
     
     if (propertyName == exec->propertyNames().callee && LIKELY(!d->overrodeCallee)) {
         if (!d->isStrictMode) {
-            descriptor.setDescriptor(d->callee.get(), DontEnum);
+            descriptor.setDescriptor(d->callee, DontEnum);
             return true;
         }
         createStrictModeCalleeIfNecessary(exec);
@@ -280,14 +280,14 @@ void Arguments::put(ExecState* exec, const Identifier& propertyName, JSValue val
 
     if (propertyName == exec->propertyNames().length && !d->overrodeLength) {
         d->overrodeLength = true;
-        putDirect(exec->globalData(), propertyName, value, DontEnum);
+        putDirect(propertyName, value, DontEnum);
         return;
     }
 
     if (propertyName == exec->propertyNames().callee && !d->overrodeCallee) {
         if (!d->isStrictMode) {
             d->overrodeCallee = true;
-            putDirect(exec->globalData(), propertyName, value, DontEnum);
+            putDirect(propertyName, value, DontEnum);
             return;
         }
         createStrictModeCalleeIfNecessary(exec);

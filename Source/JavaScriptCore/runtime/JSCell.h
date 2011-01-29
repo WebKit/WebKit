@@ -336,18 +336,8 @@ namespace JSC {
     {
         return isCell() ? asCell()->toThisObject(exec) : toThisObjectSlowCase(exec);
     }
-    
-    template <typename T> void MarkStack::append(DeprecatedPtr<T>* slot)
-    {
-        internalAppend(slot->get());
-    }
-    
-    template <typename T> void MarkStack::append(WriteBarrierBase<T>* slot)
-    {
-        internalAppend(slot->get());
-    }
 
-    ALWAYS_INLINE void MarkStack::internalAppend(JSCell* cell)
+    ALWAYS_INLINE void MarkStack::append(JSCell* cell)
     {
         ASSERT(!m_isCheckingForDefaultMarkViolation);
         ASSERT(cell);
@@ -357,29 +347,11 @@ namespace JSC {
             m_values.append(cell);
     }
 
-    ALWAYS_INLINE void MarkStack::deprecatedAppend(JSCell** value)
-    {
-        ASSERT(value);
-        internalAppend(*value);
-    }
-
-    ALWAYS_INLINE void MarkStack::deprecatedAppend(JSValue* value)
-    {
-        ASSERT(value);
-        internalAppend(*value);
-    }
-    
-    ALWAYS_INLINE void MarkStack::deprecatedAppend(Register* value)
-    {
-        ASSERT(value);
-        internalAppend(value->jsValue());
-    }
-
-    ALWAYS_INLINE void MarkStack::internalAppend(JSValue value)
+    ALWAYS_INLINE void MarkStack::append(JSValue value)
     {
         ASSERT(value);
         if (value.isCell())
-            internalAppend(value.asCell());
+            append(value.asCell());
     }
 
     inline Heap* Heap::heap(JSValue v)
