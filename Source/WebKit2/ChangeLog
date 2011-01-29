@@ -2,6 +2,37 @@
 
         Reviewed by Sam Weinig.
 
+        Add CoreAnimationRenderer class
+        https://bugs.webkit.org/show_bug.cgi?id=53343
+
+        * Shared/mac/CoreAnimationRenderer.h: Added.
+        * Shared/mac/CoreAnimationRenderer.mm: Added.
+
+        (WebKit::CoreAnimationRenderer::CoreAnimationRenderer):
+        Initialize the underlying CARenderer object and hook up a notification observer.
+
+        (WebKit::CoreAnimationRenderer::~CoreAnimationRenderer):
+        Assert that the client is null. It has been set to null by the call to invalidate().
+
+        (WebKit::CoreAnimationRenderer::setBounds):
+        Update the bounds on the CARenderer and the root layer.
+
+        (WebKit::CoreAnimationRenderer::render):
+        Ask the renderer to render and return the next frame time.
+
+        (WebKit::CoreAnimationRenderer::invalidate):
+        Remove the change observer and reset the client.
+
+        (WebKit::CoreAnimationRenderer::rendererDidChange):
+        Call the client member function.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+2011-01-28  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add an OBJC_CLASS macro for forward declaring an Objective-C class
         https://bugs.webkit.org/show_bug.cgi?id=53337
 
