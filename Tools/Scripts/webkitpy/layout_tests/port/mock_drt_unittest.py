@@ -96,6 +96,10 @@ class MockDRTTest(unittest.TestCase):
 
     def input_line(self, test_name, checksum=None):
         url = self._port.filename_to_uri(self.to_path(test_name))
+        # FIXME: we shouldn't have to work around platform-specific issues
+        # here.
+        if url.startswith('file:////'):
+            url = url[len('file:////') - 1:]
         if url.startswith('file:///'):
             url = url[len('file:///') - 1:]
 
