@@ -79,7 +79,7 @@ namespace WebCore {
         void setCursorElement(SVGCursorElement*);
         void cursorElementRemoved();
         void setCursorImageValue(CSSCursorImageValue*);
-        void cursorImageElementRemoved();
+        void cursorImageValueRemoved();
 
         virtual void updateAnimatedSVGAttribute(const QualifiedName&) const;
 
