@@ -1,3 +1,9 @@
+2011-01-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed; roll WebKit Chromium revision from 72894 to 73048.
+
+        * DEPS:
+
 2011-01-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
