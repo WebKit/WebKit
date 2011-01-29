@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.setCanOpenWindows();
+    layoutTestController.setPopupBlockingEnabled(true);
+    layoutTestController.setCloseRemainingWindowsWhenComplete(true);
+    layoutTestController.waitUntilDone();
+    // Record current window count.
+    window.windowCount = window.layoutTestController.windowCount();
+}
+function test() {
+    if (!window.layoutTestController)
+        return;
+    if (layoutTestController.windowCount() == window.windowCount)
+        document.getElementById("console").innerText = "PASSED";
+    layoutTestController.notifyDone();
+}
+</script>
+</head>
+<body onload="test();">
+<iframe src="javascript:window.open('about:blank','_blank', 'height=600,width=720')">popup</iframe><br>
+When running script to open a window without user gesture from SRC of the enclosing iframe, webkit should test out that the opening is not initiated by user. This is a test case for bug https://bugs.webkit.org/show_bug.cgi?id=53244.
+<div id="console">FAILED</div>
+</body>
+</html>
+

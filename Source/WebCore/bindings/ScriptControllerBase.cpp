@@ -90,7 +90,7 @@ bool ScriptController::executeIfJavaScriptURL(const KURL& url, ShouldReplaceDocu
     String decodedURL = decodeURLEscapeSequences(url.string());
     ScriptValue result;
     if (xssAuditor()->canEvaluateJavaScriptURL(decodedURL))
-        result = executeScript(decodedURL.substring(javascriptSchemeLength), processingUserGesture(), AllowXSS);
+        result = executeScript(decodedURL.substring(javascriptSchemeLength), false, AllowXSS);
 
     // If executing script caused this frame to be removed from the page, we
     // don't want to try to replace its document!
