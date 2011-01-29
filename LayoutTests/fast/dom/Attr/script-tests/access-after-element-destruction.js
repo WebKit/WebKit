@@ -25,7 +25,6 @@ shouldBe("attributes.item(0).name", "'a'");
 shouldBe("attributes.item(0).specified", "true");
 shouldBe("attributes.item(0).value", "'b'");
 shouldBe("attributes.item(0).ownerElement.tagName", "'P'");
-shouldBe("attributes.item(0).style", "null");
 
 attributes.item(0).value = 'c';
 
@@ -46,7 +45,6 @@ shouldBe("attr.name", "'a'");
 shouldBe("attr.specified", "true");
 shouldBe("attr.value", "'b'");
 shouldBe("attr.ownerElement.tagName", "'P'");
-shouldBe("attr.style", "null");
 
 attr.value = 'c';
 
