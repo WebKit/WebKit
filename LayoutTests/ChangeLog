@@ -1,5 +1,26 @@
 2011-01-28  Mark Rowe  <mrowe@apple.com>
 
+        Merge r71182.
+
+    2010-11-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Iframes nested inside a compositing layer don't repaint correctly
+        https://bugs.webkit.org/show_bug.cgi?id=48880
+        <rdar://problem/8194698>
+        
+        Test scrolling in a iframe in an iframe in a compositing layer.
+
+        * compositing/iframes/nested-iframe-scrolling-expected.checksum: Added.
+        * compositing/iframes/nested-iframe-scrolling-expected.png: Added.
+        * compositing/iframes/nested-iframe-scrolling-expected.txt: Added.
+        * compositing/iframes/nested-iframe-scrolling.html: Added.
+        * compositing/iframes/resources/nested-subframe.html: Added.
+        * compositing/iframes/resources/subsubframe.html: Added.
+
+2011-01-28  Mark Rowe  <mrowe@apple.com>
+
         Merge r74574.
 
     2010-12-23  Justin Schuh  <jschuh@chromium.org>

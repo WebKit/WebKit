@@ -1,5 +1,28 @@
 2011-01-28  Mark Rowe  <mrowe@apple.com>
 
+        Merge r71182.
+
+    2010-11-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Iframes nested inside a compositing layer don't repaint correctly
+        https://bugs.webkit.org/show_bug.cgi?id=48880
+        <rdar://problem/8194698>
+        
+        The isEnclosedInCompositingLayer() is used to modify the behavior of
+        -[WebClipView visibleRect:] in WebKit, so that scrolling-related repaints
+        are correct in composited iframes. Previously it only asked whether the
+        frame's renderer was in a compositing layer, but we actually need to
+        consult all ancestors.
+        
+        Test: compositing/iframes/nested-iframe-scrolling.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::isEnclosedInCompositingLayer):
+
+2011-01-28  Mark Rowe  <mrowe@apple.com>
+
         Merge r74574.
 
     2010-12-23  Justin Schuh  <jschuh@chromium.org>
