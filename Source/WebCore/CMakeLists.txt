@@ -80,7 +80,6 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/wtf/unicode"
     "${DERIVED_SOURCES_DIR}"
     "${CMAKE_SOURCE_DIR}"
-    "${CMAKE_SOURCE_DIR}/Source"
     "${CMAKE_BINARY_DIR}"
 )
 

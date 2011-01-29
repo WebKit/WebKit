@@ -1,3 +1,16 @@
+2011-01-29  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Remove reference to ${CMAKE_SOURCE_DIR}/Source in CMake files
+        https://bugs.webkit.org/show_bug.cgi?id=53382
+
+        Our file system hierarchy ensures that CMAKE_SOURCE_DIR is defined to be /Source.
+        So, ${CMAKE_SOURCE_DIR}/Source evaluates to the non-existent directory /Source/Source.
+        Therefore, we should remove such references.
+
+        * CMakeLists.txt:
+
 2011-01-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Jon Honeycutt.
