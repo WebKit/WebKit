@@ -450,7 +450,10 @@ void RenderObjectChildList::updateBeforeAfterContent(RenderObject* owner, Pseudo
                 generatedContentContainer->setStyle(pseudoElementStyle);
                 owner->addChild(generatedContentContainer, insertBefore);
             }
-            generatedContentContainer->addChild(renderer);
+            if (generatedContentContainer->isChildAllowed(renderer, pseudoElementStyle))
+                generatedContentContainer->addChild(renderer);
+            else
+                renderer->destroy();
         }
     }
 }
