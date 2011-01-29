@@ -1,5 +1,13 @@
 2011-01-29  Maciej Stachowiak  <mjs@apple.com>
 
+        Unreviewed fix for last commit.
+
+        Remove stray slash in previous commit.
+
+        * platform/mac-wk2/Skipped:
+
+2011-01-29  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Daniel Bates.
 
         Skip a test that uses unimplemented DRT API
