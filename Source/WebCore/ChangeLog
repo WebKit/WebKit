@@ -1,3 +1,15 @@
+2011-01-28  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        CSS styles are shared based on uninitialized property values
+        https://bugs.webkit.org/show_bug.cgi?id=53285
+        
+        Null test.
+
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::mappedMapsEquivalent):
+
 2011-01-27  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.
