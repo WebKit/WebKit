@@ -247,7 +247,7 @@ if test "$with_hildon" = "yes"; then
 fi
 
 # minimum base dependencies
-LIBSOUP_REQUIRED_VERSION=2.28.2
+LIBSOUP_REQUIRED_VERSION=2.33.4
 CAIRO_REQUIRED_VERSION=1.6
 FONTCONFIG_REQUIRED_VERSION=2.4
 FREETYPE2_REQUIRED_VERSION=9.0
@@ -270,16 +270,6 @@ ENCHANT_REQUIRED_VERSION=0.22
 #
 # todo: webcore gtk
 WEBKIT_CHECK_DEPENDENCIES([glib unicode])
-
-# Check if we can use GSettings
-PKG_CHECK_MODULES([GSETTINGS],
-                  [gio-2.0 >= 2.25.0],
-                  [have_gsettings=yes],
-                  [have_gsettings=no])
-if test "$have_gsettings" = "yes"; then
-   AC_DEFINE([HAVE_GSETTINGS], 1, [Whether we can use GSettings])
-   GLIB_GSETTINGS
-fi
 
 GETTEXT_PACKAGE=$PACKAGE-$GTK_API_VERSION
 AC_SUBST(GETTEXT_PACKAGE)
@@ -824,15 +814,6 @@ PKG_CHECK_MODULES([LIBSOUP],
 AC_SUBST([LIBSOUP_CFLAGS])
 AC_SUBST([LIBSOUP_LIBS])
 
-# check if we can use libSoup 2.29.90 features
-PKG_CHECK_MODULES([LIBSOUP_2_29_90],
-                  [libsoup-2.4 >= 2.29.90],
-                  [have_libsoup_2_29_90=yes],
-                  [have_libsoup_2_29_90=no])
-if test "$have_libsoup_2_29_90" = "yes"; then
-   AC_DEFINE([HAVE_LIBSOUP_2_29_90], 1, [Whether libSoup 2.29.90 features are available])
-fi
-
 # check if FreeType/FontConfig are available
 if test "$with_font_backend" = "freetype"; then
    if test "$with_target" = "directfb"; then
@@ -953,9 +934,6 @@ AM_CONDITIONAL([USE_GLIB_UNICODE], [test "$with_unicode_backend" = "glib"])
 # Font backend conditionals
 AM_CONDITIONAL([USE_FREETYPE], [test "$with_font_backend" = "freetype"])
 AM_CONDITIONAL([USE_PANGO], [test "$with_font_backend" = "pango"])
-
-# GLib/GIO feature conditionals
-AM_CONDITIONAL([USE_GSETTINGS], [test "$have_gsettings" = "yes"])
 
 # GStreamer feature conditional
 AM_CONDITIONAL([USE_GSTREAMER], [test "$have_gstreamer" = "yes"])

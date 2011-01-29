@@ -1,3 +1,18 @@
+2011-01-29  Dan Winship  <danw@gnome.org>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Remove HAVE_LIBSOUP_2_29_90 and HAVE_GSETTINGS conditionals;
+        we depend on glib 2.27.4 and libsoup 2.33.1 now.
+        https://bugs.webkit.org/show_bug.cgi?id=50675
+
+        * GNUmakefile.am:
+        * WebCoreSupport/InspectorClientGtk.cpp:
+        (WebKit::InspectorClient::storeSetting):
+        * webkit/webkitprivate.cpp:
+        (inspectorGSettings):
+        * webkit/webkitprivate.h:
+
 2011-01-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

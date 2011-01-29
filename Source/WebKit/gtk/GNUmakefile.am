@@ -349,10 +349,8 @@ $(GENSOURCES_WEBKIT)/webkitenumtypes.cpp: $(webkitgtk_h_api) $(WebKit)/GNUmakefi
 	&& rm -f xgen-gtc
 
 # GSettings
-if USE_GSETTINGS
 gsettings_SCHEMAS = $(top_builddir)/Source/WebKit/gtk/org.webkitgtk-@WEBKITGTK_API_VERSION@.gschema.xml
 @GSETTINGS_RULES@
-endif
 
 EXTRA_DIST += \
 	$(WebKit)/ChangeLog \

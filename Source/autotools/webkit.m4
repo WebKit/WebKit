@@ -108,24 +108,12 @@ AC_DEFUN_ONCE([_WEBKIT_CHECK_GLIB],
 [dnl
 dnl check for glib
 # Version requirements
-GLIB_REQUIRED_VERSION=2.24
-GOBJECT_REQUIRED_VERSION=2.0
-GTHREAD_REQUIRED_VERSION=2.0
-
-PKG_CHECK_MODULES([GLIB],
-                  [glib-2.0 >= $GLIB_REQUIRED_VERSION
-                  gobject-2.0 >= $GOBJECT_REQUIRED_VERSION
-                  gthread-2.0 >= $GTHREAD_REQUIRED_VERSION])
-AC_SUBST([GLIB_CFLAGS])
-AC_SUBST([GLIB_LIBS])
-
-# GTK+ port only
-# Check for glib-genmarshal and glib-mkenums
-AC_PATH_PROG([GLIB_GENMARSHAL], [glib-genmarshal])
-AC_PATH_PROG([GLIB_MKENUMS],[glib-mkenums])
+GLIB_REQUIRED_VERSION=2.27.90
+AM_PATH_GLIB_2_0($GLIB_REQUIRED_VERSION)
 if test -z "$GLIB_GENMARSHAL" || test -z "$GLIB_MKENUMS"; then
    AC_MSG_ERROR([You need the GLib dev tools in your path])
 fi
+GLIB_GSETTINGS
 ])
 
 AC_DEFUN_ONCE([_WEBKIT_CHECK_UNICODE],

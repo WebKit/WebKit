@@ -57,9 +57,7 @@ EAPI Eina_Bool ewk_cookies_file_set(const char *filename)
     if (!cookieJar)
         return EINA_FALSE;
 
-#ifdef HAVE_LIBSOUP_2_29_90
     soup_cookie_jar_set_accept_policy(cookieJar, SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY);
-#endif
 
     SoupSession* session = WebCore::ResourceHandle::defaultSession();
     SoupSessionFeature* oldjar = soup_session_get_feature(session, SOUP_TYPE_COOKIE_JAR);
@@ -187,7 +185,6 @@ EAPI void ewk_cookies_cookie_free(Ewk_Cookie *cookie)
 EAPI void ewk_cookies_policy_set(Ewk_Cookie_Policy p)
 {
 #ifdef WTF_USE_SOUP
-#ifdef HAVE_LIBSOUP_2_29_90
     SoupCookieJar* cookieJar = WebCore::defaultCookieJar();
     SoupCookieJarAcceptPolicy policy;
 
@@ -206,7 +203,6 @@ EAPI void ewk_cookies_policy_set(Ewk_Cookie_Policy p)
 
     soup_cookie_jar_set_accept_policy(cookieJar, policy);
 #endif
-#endif
 }
 
 /*
@@ -218,7 +214,6 @@ EAPI Ewk_Cookie_Policy ewk_cookies_policy_get()
 {
     Ewk_Cookie_Policy ewk_policy = EWK_COOKIE_JAR_ACCEPT_ALWAYS;
 #ifdef WTF_USE_SOUP
-#ifdef HAVE_LIBSOUP_2_29_90
     SoupCookieJar* cookieJar = WebCore::defaultCookieJar();
     SoupCookieJarAcceptPolicy policy;
 
@@ -234,7 +229,6 @@ EAPI Ewk_Cookie_Policy ewk_cookies_policy_get()
         ewk_policy = EWK_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY;
         break;
     }
-#endif
 #endif
 
     return ewk_policy;

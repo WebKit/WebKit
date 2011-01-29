@@ -1,3 +1,15 @@
+2011-01-29  Dan Winship  <danw@gnome.org>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Require the latest glib and libsoup, and remove conditional
+        support for older versions
+        https://bugs.webkit.org/show_bug.cgi?id=50675
+
+        * autotools/webkit.m4: use AM_PATH_GLIB_2_0 rather than doing
+        basically the same work by hand
+        * configure.ac:
+
 2011-01-28  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Build failure with --enable-indexed-database

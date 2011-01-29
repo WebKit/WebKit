@@ -46,13 +46,11 @@ void ResourceRequest::updateSoupMessage(SoupMessage* soupMessage) const
             soup_message_headers_append(soupHeaders, it->first.string().utf8().data(), it->second.utf8().data());
     }
 
-#ifdef HAVE_LIBSOUP_2_29_90
     String firstPartyString = firstPartyForCookies().string();
     if (!firstPartyString.isEmpty()) {
         GOwnPtr<SoupURI> firstParty(soup_uri_new(firstPartyString.utf8().data()));
         soup_message_set_first_party(soupMessage, firstParty.get());
     }
-#endif
 
     soup_message_set_flags(soupMessage, m_soupFlags);
 }
@@ -71,13 +69,11 @@ SoupMessage* ResourceRequest::toSoupMessage() const
             soup_message_headers_append(soupHeaders, it->first.string().utf8().data(), it->second.utf8().data());
     }
 
-#ifdef HAVE_LIBSOUP_2_29_90
     String firstPartyString = firstPartyForCookies().string();
     if (!firstPartyString.isEmpty()) {
         GOwnPtr<SoupURI> firstParty(soup_uri_new(firstPartyString.utf8().data()));
         soup_message_set_first_party(soupMessage, firstParty.get());
     }
-#endif
 
     soup_message_set_flags(soupMessage, m_soupFlags);
 
@@ -104,11 +100,9 @@ void ResourceRequest::updateFromSoupMessage(SoupMessage* soupMessage)
     if (soupMessage->request_body->data)
         m_httpBody = FormData::create(soupMessage->request_body->data, soupMessage->request_body->length);
 
-#ifdef HAVE_LIBSOUP_2_29_90
     SoupURI* firstParty = soup_message_get_first_party(soupMessage);
     if (firstParty)
         m_firstPartyForCookies = soupURIToKURL(firstParty);
-#endif
 
     m_soupFlags = soup_message_get_flags(soupMessage);
 

@@ -1,3 +1,16 @@
+2011-01-29  Dan Winship  <danw@gnome.org>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Remove HAVE_LIBSOUP_2_29_90 conditionals; we depend on
+        libsoup 2.33.1 now.
+        https://bugs.webkit.org/show_bug.cgi?id=50675
+
+        * ewk/ewk_cookies.cpp:
+        (ewk_cookies_file_set):
+        (ewk_cookies_policy_set):
+        (ewk_cookies_policy_get):
+
 2011-01-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
