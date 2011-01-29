@@ -1,3 +1,14 @@
+2011-01-28  Oliver Hunt  <oliver@apple.com>
+
+        Fix Qt build.
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::QtRuntimeMetaMethod::QtRuntimeMetaMethod):
+        (JSC::Bindings::QtRuntimeMetaMethod::markChildren):
+        (JSC::Bindings::QtRuntimeMetaMethod::connectGetter):
+        (JSC::Bindings::QtRuntimeMetaMethod::disconnectGetter):
+        * bridge/qt/qt_runtime.h:
+
 2011-01-28  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Simon Fraser.
