@@ -212,18 +212,18 @@ void ScrollAnimatorMac::immediateScrollByDeltaY(float deltaY)
 
 #if ENABLE(RUBBER_BANDING)
 
-static const double scrollVelocityZeroingTimeout = 0.10;
-static const double rubberbandStiffness = 20.0;
-static const double rubberbandDirectionLockStretchRatio = 1.0;
-static const double rubberbandMinimumRequiredDeltaBeforeStretch = 10.0;
-static const double rubberbandAmplitude = 0.31;
-static const double rubberbandPeriod = 1.6;
+static const float scrollVelocityZeroingTimeout = 0.10f;
+static const float rubberbandStiffness = 20.0f;
+static const float rubberbandDirectionLockStretchRatio = 1.0f;
+static const float rubberbandMinimumRequiredDeltaBeforeStretch = 10.0f;
+static const float rubberbandAmplitude = 0.31f;
+static const float rubberbandPeriod = 1.6f;
 
 static float elasticDeltaForTimeDelta(float initialPosition, float initialVelocity, float elapsedTime)
 {
     float amplitude = rubberbandAmplitude;
     float period = rubberbandPeriod;
-    float criticalDampeningFactor = exp((-elapsedTime * rubberbandStiffness) / period);
+    float criticalDampeningFactor = expf((-elapsedTime * rubberbandStiffness) / period);
              
     return (initialPosition + (-initialVelocity * elapsedTime * amplitude)) * criticalDampeningFactor;
 }
@@ -456,7 +456,7 @@ void ScrollAnimatorMac::smoothScrollWithEvent(PlatformWheelEvent& wheelEvent)
             m_stretchScrollForce.setWidth(m_stretchScrollForce.width() + deltaX);
             m_stretchScrollForce.setHeight(m_stretchScrollForce.height() + deltaY);
 
-            FloatSize dampedDelta(ceil(elasticDeltaForReboundDelta(m_stretchScrollForce.width())), ceil(elasticDeltaForReboundDelta(m_stretchScrollForce.height())));
+            FloatSize dampedDelta(ceilf(elasticDeltaForReboundDelta(m_stretchScrollForce.width())), ceilf(elasticDeltaForReboundDelta(m_stretchScrollForce.height())));
             FloatPoint origOrigin = m_scrollableArea->visibleContentRect().location() - stretchAmount;
             FloatPoint newOrigin = origOrigin + dampedDelta;
 
@@ -517,17 +517,16 @@ void ScrollAnimatorMac::snapRubberBand()
     m_snapRubberBandTimer.startRepeating(1.0/60.0);
 }
 
-static inline double roundTowardZero(double num)
+static inline float roundTowardZero(float num)
 {
-    return num > 0.0 ? ceil(num - 0.5) : floor(num + 0.5);
+    return num > 0.0 ? ceilf(num - 0.5) : floorf(num + 0.5);
 }
 
-static inline double roundToDevicePixelTowardZero(double num)
+static inline float roundToDevicePixelTowardZero(float num)
 {
-    double roundedNum = round(num);
-    if (fabs(num - roundedNum) < 0.125) {
+    float roundedNum = roundf(num);
+    if (fabs(num - roundedNum) < 0.125)
         num = roundedNum;
-    }
 
     return roundTowardZero(num);
 }
