@@ -26,17 +26,11 @@
 #include "config.h"
 #include "PerspectiveTransformOperation.h"
 
-#include <algorithm>
-#include <limits>
+#include <wtf/MathExtras.h>
 
 using namespace std;
 
 namespace WebCore {
-
-static int clampToPostiveInteger(double val)
-{
-    return static_cast<int>(max<double>(min<double>(val, numeric_limits<int>::max()), 0));
-}
 
 PassRefPtr<TransformOperation> PerspectiveTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
 {
@@ -46,7 +40,7 @@ PassRefPtr<TransformOperation> PerspectiveTransformOperation::blend(const Transf
     if (blendToIdentity) {
         double p = m_p.calcFloatValue(1);
         p = p + (1. - p) * progress; // FIXME: this seems wrong. https://bugs.webkit.org/show_bug.cgi?id=52700
-        return PerspectiveTransformOperation::create(Length(clampToPostiveInteger(p), Fixed));
+        return PerspectiveTransformOperation::create(Length(clampToPositiveInteger(p), Fixed));
     }
     
     const PerspectiveTransformOperation* fromOp = static_cast<const PerspectiveTransformOperation*>(from);
@@ -63,7 +57,7 @@ PassRefPtr<TransformOperation> PerspectiveTransformOperation::blend(const Transf
 
     if (decomp.perspectiveZ) {
         double val = -1.0 / decomp.perspectiveZ;
-        return PerspectiveTransformOperation::create(Length(clampToPostiveInteger(val), Fixed));
+        return PerspectiveTransformOperation::create(Length(clampToPositiveInteger(val), Fixed));
     }
     return PerspectiveTransformOperation::create(Length(0, Fixed));
 }

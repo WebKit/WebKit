@@ -4296,9 +4296,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         
         // FIXME: Should clamp all sorts of other integer properties too.
-        const double minIntAsDouble = INT_MIN;
-        const double maxIntAsDouble = INT_MAX;
-        m_style->setZIndex(static_cast<int>(max(minIntAsDouble, min(primitiveValue->getDoubleValue(), maxIntAsDouble))));
+        m_style->setZIndex(clampToInteger(primitiveValue->getDoubleValue()));
         return;
     }
     case CSSPropertyWidows:
@@ -7061,7 +7059,7 @@ bool CSSStyleSelector::createTransformOperations(CSSValue* inValue, RenderStyle*
                     // This is a quirk that should go away when 3d transforms are finalized.
                     double val = firstValue->getDoubleValue();
                     ok = val >= 0;
-                    val = min<double>(val, numeric_limits<int>::max());
+                    val = clampToPositiveInteger(val);
                     p = Length(static_cast<int>(val), Fixed);
                 }
                 
