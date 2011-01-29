@@ -1174,17 +1174,23 @@ void WebPageProxy::didRestoreFrameFromPageCache(uint64_t frameID, uint64_t paren
     parentFrame->appendChild(subframe);
 }
 
+
+// Always start progress at initialProgressValue. This helps provide feedback as
+// soon as a load starts.
+
+static const double initialProgressValue = 0.1;
+
 void WebPageProxy::didStartProgress()
 {
-    m_estimatedProgress = 0.0;
-    
+    m_estimatedProgress = initialProgressValue;
+
     m_loaderClient.didStartProgress(this);
 }
 
 void WebPageProxy::didChangeProgress(double value)
 {
     m_estimatedProgress = value;
-    
+
     m_loaderClient.didChangeProgress(this);
 }
 
