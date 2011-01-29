@@ -60,10 +60,10 @@ bool findAttributeWithName(const HTMLToken& token, const QualifiedName& name, si
     return false;
 }
 
-bool isNameOfScriptCarryingAttribute(const Vector<UChar, 32>& name)
+bool isNameOfInlineEventHandler(const Vector<UChar, 32>& name)
 {
-    const size_t lengthOfShortestScriptCarryingAttribute = 5; // To wit: oncut.
-    if (name.size() < lengthOfShortestScriptCarryingAttribute)
+    const size_t lengthOfShortestInlineEventHandlerName = 5; // To wit: oncut.
+    if (name.size() < lengthOfShortestInlineEventHandlerName)
         return false;
     return name[0] == 'o' && name[1] == 'n';
 }
@@ -104,56 +104,61 @@ void XSSFilter::filterToken(HTMLToken& token)
     if (!m_isEnabled)
         return;
 
+    bool didBlockScript = false;
+
     switch (m_state) {
     case Initial: 
+        didBlockScript = filterTokenInitial(token);
         break;
     case AfterScriptStartTag:
-        filterTokenAfterScriptStartTag(token);
+        didBlockScript = filterTokenAfterScriptStartTag(token);
         ASSERT(m_state == Initial);
         m_cachedSnippet = String();
-        return;
+        break;
     }
 
-    if (token.type() != HTMLToken::StartTag)
-        return;
-
-    if (hasName(token, scriptTag))
-        return filterScriptToken(token);
-
-    if (hasName(token, objectTag))
-        return filterObjectToken(token);
-
-    if (hasName(token, embedTag))
-        return filterEmbedToken(token);
-
-    if (hasName(token, appletTag))
-        return filterAppletToken(token);
-
-    if (hasName(token, metaTag))
-        return filterMetaToken(token);
-
-    if (hasName(token, baseTag))
-        return filterBaseToken(token);
-
-    for (size_t i = 0; i < token.attributes().size(); ++i) {
-        const HTMLToken::Attribute& attribute = token.attributes().at(i);
-        if (!isNameOfScriptCarryingAttribute(attribute.m_name))
-            continue;
-        if (!isContainedInRequest(snippetForAttribute(token, attribute)))
-            continue;
-        token.eraseValueOfAttribute(i);
+    if (didBlockScript) {
+        // FIXME: Consider using a more helpful console message.
+        DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute a JavaScript script. Source code of script found within request.\n"));
+        // FIXME: We should add the real line number to the console.
+        m_parser->document()->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage, 1, String());
     }
 #endif
 }
 
-void XSSFilter::filterTokenAfterScriptStartTag(HTMLToken& token)
+bool XSSFilter::filterTokenInitial(HTMLToken& token)
+{
+    ASSERT(m_state == Initial);
+
+    if (token.type() != HTMLToken::StartTag)
+        return false;
+
+    bool didBlockScript = eraseInlineEventHandlersIfInjected(token);
+
+    if (hasName(token, scriptTag))
+        didBlockScript |= filterScriptToken(token);
+    else if (hasName(token, objectTag))
+        didBlockScript |= filterObjectToken(token);
+    else if (hasName(token, embedTag))
+        didBlockScript |= filterEmbedToken(token);
+    else if (hasName(token, appletTag))
+        didBlockScript |= filterAppletToken(token);
+    else if (hasName(token, metaTag))
+        didBlockScript |= filterMetaToken(token);
+    else if (hasName(token, baseTag))
+        didBlockScript |= filterBaseToken(token);
+
+    return didBlockScript;
+}
+
+bool XSSFilter::filterTokenAfterScriptStartTag(HTMLToken& token)
 {
     ASSERT(m_state == AfterScriptStartTag);
     m_state = Initial;
 
     if (token.type() != HTMLToken::Character) {
         ASSERT(token.type() == HTMLToken::EndTag || token.type() == HTMLToken::EndOfFile);
-        return;
+        return false;
     }
 
     int start = 0;
@@ -163,69 +168,99 @@ void XSSFilter::filterTokenAfterScriptStartTag(HTMLToken& token)
     if (isContainedInRequest(m_cachedSnippet + snippetForRange(token, start, end))) {
         token.eraseCharacters();
         token.appendToCharacter(' '); // Technically, character tokens can't be empty.
+        return true;
     }
+    return false;
 }
 
-void XSSFilter::filterScriptToken(HTMLToken& token)
+bool XSSFilter::filterScriptToken(HTMLToken& token)
 {
     ASSERT(m_state == Initial);
     ASSERT(token.type() == HTMLToken::StartTag);
     ASSERT(hasName(token, scriptTag));
 
     if (eraseAttributeIfInjected(token, srcAttr))
-        return;
+        return true;
 
     m_state = AfterScriptStartTag;
     m_cachedSnippet = m_parser->sourceForToken(token);
+    return false;
 }
 
-void XSSFilter::filterObjectToken(HTMLToken& token)
+bool XSSFilter::filterObjectToken(HTMLToken& token)
 {
     ASSERT(m_state == Initial);
     ASSERT(token.type() == HTMLToken::StartTag);
     ASSERT(hasName(token, objectTag));
 
-    eraseAttributeIfInjected(token, dataAttr);
-    eraseAttributeIfInjected(token, typeAttr);
-    eraseAttributeIfInjected(token, classidAttr);
+    bool didBlockScript = false;
+
+    didBlockScript |= eraseAttributeIfInjected(token, dataAttr);
+    didBlockScript |= eraseAttributeIfInjected(token, typeAttr);
+    didBlockScript |= eraseAttributeIfInjected(token, classidAttr);
+
+    return didBlockScript;
 }
 
-void XSSFilter::filterEmbedToken(HTMLToken& token)
+bool XSSFilter::filterEmbedToken(HTMLToken& token)
 {
     ASSERT(m_state == Initial);
     ASSERT(token.type() == HTMLToken::StartTag);
     ASSERT(hasName(token, embedTag));
 
-    eraseAttributeIfInjected(token, srcAttr);
-    eraseAttributeIfInjected(token, typeAttr);
+    bool didBlockScript = false;
+
+    didBlockScript |= eraseAttributeIfInjected(token, srcAttr);
+    didBlockScript |= eraseAttributeIfInjected(token, typeAttr);
+
+    return didBlockScript;
 }
 
-void XSSFilter::filterAppletToken(HTMLToken& token)
+bool XSSFilter::filterAppletToken(HTMLToken& token)
 {
     ASSERT(m_state == Initial);
     ASSERT(token.type() == HTMLToken::StartTag);
     ASSERT(hasName(token, appletTag));
 
-    eraseAttributeIfInjected(token, codeAttr);
-    eraseAttributeIfInjected(token, objectAttr);
+    bool didBlockScript = false;
+
+    didBlockScript |= eraseAttributeIfInjected(token, codeAttr);
+    didBlockScript |= eraseAttributeIfInjected(token, objectAttr);
+
+    return didBlockScript;
 }
 
-void XSSFilter::filterMetaToken(HTMLToken& token)
+bool XSSFilter::filterMetaToken(HTMLToken& token)
 {
     ASSERT(m_state == Initial);
     ASSERT(token.type() == HTMLToken::StartTag);
     ASSERT(hasName(token, metaTag));
 
-    eraseAttributeIfInjected(token, http_equivAttr);
+    return eraseAttributeIfInjected(token, http_equivAttr);
 }
 
-void XSSFilter::filterBaseToken(HTMLToken& token)
+bool XSSFilter::filterBaseToken(HTMLToken& token)
 {
     ASSERT(m_state == Initial);
     ASSERT(token.type() == HTMLToken::StartTag);
     ASSERT(hasName(token, baseTag));
 
-    eraseAttributeIfInjected(token, hrefAttr);
+    return eraseAttributeIfInjected(token, hrefAttr);
+}
+
+bool XSSFilter::eraseInlineEventHandlersIfInjected(HTMLToken& token)
+{
+    bool didBlockScript = false;
+    for (size_t i = 0; i < token.attributes().size(); ++i) {
+        const HTMLToken::Attribute& attribute = token.attributes().at(i);
+        if (!isNameOfInlineEventHandler(attribute.m_name))
+            continue;
+        if (!isContainedInRequest(snippetForAttribute(token, attribute)))
+            continue;
+        token.eraseValueOfAttribute(i);
+        didBlockScript = true;
+    }
+    return didBlockScript;
 }
 
 bool XSSFilter::eraseAttributeIfInjected(HTMLToken& token, const QualifiedName& attributeName)

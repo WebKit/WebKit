@@ -1,5 +1,33 @@
 2011-01-28  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        XSSFilter should log to the console when it blocks something
+        https://bugs.webkit.org/show_bug.cgi?id=53354
+
+        This patch refactors a bunch of methods in XSSFilter to return a bool
+        indicating whether they blocked anything.  Using this bool, we decide
+        whether to log to the console.  We're using the same log message as the
+        XSSAuditor, but it seems likely we can improve this message in the
+        future (especially by piping in the correct line number, which is now
+        accessible via the parser).
+
+        * html/parser/XSSFilter.cpp:
+        (WebCore::HTMLNames::isNameOfInlineEventHandler):
+        (WebCore::XSSFilter::filterToken):
+        (WebCore::XSSFilter::filterTokenInitial):
+        (WebCore::XSSFilter::filterTokenAfterScriptStartTag):
+        (WebCore::XSSFilter::filterScriptToken):
+        (WebCore::XSSFilter::filterObjectToken):
+        (WebCore::XSSFilter::filterEmbedToken):
+        (WebCore::XSSFilter::filterAppletToken):
+        (WebCore::XSSFilter::filterMetaToken):
+        (WebCore::XSSFilter::filterBaseToken):
+        (WebCore::XSSFilter::eraseInlineEventHandlersIfInjected):
+        * html/parser/XSSFilter.h:
+
+2011-01-28  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Daniel Bates.
 
         Wire up settings->xssAuditorEnabled to XSSFilter

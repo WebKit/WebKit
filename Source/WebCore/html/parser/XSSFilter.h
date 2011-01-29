@@ -45,14 +45,17 @@ private:
         AfterScriptStartTag,
     };
 
-    void filterTokenAfterScriptStartTag(HTMLToken&);
-    void filterScriptToken(HTMLToken&);
-    void filterObjectToken(HTMLToken&);
-    void filterEmbedToken(HTMLToken&);
-    void filterAppletToken(HTMLToken&);
-    void filterMetaToken(HTMLToken&);
-    void filterBaseToken(HTMLToken&);
+    bool filterTokenInitial(HTMLToken&);
+    bool filterTokenAfterScriptStartTag(HTMLToken&);
 
+    bool filterScriptToken(HTMLToken&);
+    bool filterObjectToken(HTMLToken&);
+    bool filterEmbedToken(HTMLToken&);
+    bool filterAppletToken(HTMLToken&);
+    bool filterMetaToken(HTMLToken&);
+    bool filterBaseToken(HTMLToken&);
+
+    bool eraseInlineEventHandlersIfInjected(HTMLToken&);
     bool eraseAttributeIfInjected(HTMLToken&, const QualifiedName&);
 
     String snippetForRange(const HTMLToken&, int start, int end);
