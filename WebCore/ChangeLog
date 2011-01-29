@@ -1,5 +1,23 @@
 2011-01-28  Mark Rowe  <mrowe@apple.com>
 
+        Merge r70681.
+
+    2010-10-27  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Add a function to make sure child is allowed before adding to a
+        render view. 
+        https://bugs.webkit.org/show_bug.cgi?id=48328 
+
+        Test: fast/inline/inline-child-height-width-calc-crash.html
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::isChildAllowed):
+        * rendering/RenderView.h:
+
+2011-01-28  Mark Rowe  <mrowe@apple.com>
+
         Merge r69345.
 
     2010-10-07  Abhishek Arya  <inferno@chromium.org>

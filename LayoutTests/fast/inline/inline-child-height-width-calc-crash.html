@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <script>
+            if (window.layoutTestController)
+            {
+                layoutTestController.dumpAsText();
+                layoutTestController.waitUntilDone();
+            }
+
+            function runTest() {
+                brElement = document.getElementById('test');
+                document.open();
+                setTimeout(function () {
+                    document.appendChild(brElement);
+                    
+                    alert('PASS');
+                    if (window.layoutTestController)
+                        layoutTestController.notifyDone();
+                }, 0);
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <br id='test'>
+    </body>
+</html>
+

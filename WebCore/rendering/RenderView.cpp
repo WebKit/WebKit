@@ -102,6 +102,11 @@ void RenderView::calcPrefWidths()
     m_maxPrefWidth = m_minPrefWidth;
 }
 
+bool RenderView::isChildAllowed(RenderObject* child, RenderStyle*) const
+{
+    return child->isBox();
+}
+
 void RenderView::layout()
 {
     if (printing())
