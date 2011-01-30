@@ -1,3 +1,22 @@
+2011-01-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        CSS3 gradients with em-based stops fail to repaint when font size changes
+        https://bugs.webkit.org/show_bug.cgi?id=51845
+        
+        Mark as uncacheable gradidients whose color stops depend on font size,
+        and don't attempt to put these into CSSImageGeneratorValue's image cache.
+        This means we return a new gradient each time, which is fairly cheap, and
+        fixes repaint issues under changing font size.
+
+        Test: fast/repaint/gradients-em-stops-repaint.html
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::image):
+        (WebCore::CSSGradientValue::isCacheable):
+        * css/CSSGradientValue.h:
+
 2011-01-29  Geoffrey Garen  <ggaren@apple.com>
 
         Undo try to fix the Qt build.

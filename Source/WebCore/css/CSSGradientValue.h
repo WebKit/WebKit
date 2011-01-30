@@ -81,6 +81,8 @@ protected:
 
     // Resolve points/radii to front end values.
     FloatPoint computeEndPoint(CSSPrimitiveValue*, CSSPrimitiveValue*, RenderStyle*, RenderStyle* rootStyle, const IntSize&);
+    
+    bool isCacheable() const;
 
     // Points. Some of these may be null for linear gradients.
     RefPtr<CSSPrimitiveValue> m_firstX;

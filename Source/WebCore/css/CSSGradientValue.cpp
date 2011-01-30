@@ -43,22 +43,24 @@ namespace WebCore {
 
 PassRefPtr<Image> CSSGradientValue::image(RenderObject* renderer, const IntSize& size)
 {
-    if (!m_clients.contains(renderer))
-        return 0;
-
-    // Need to look up our size.  Create a string of width*height to use as a hash key.
-    // FIXME: hashing based only on size is not sufficient. Color stops may use context-sensitive units (like em)
-    // that should force the color stop positions to be recomputed.
-    Image* result = getImage(renderer, size);
-    if (result)
-        return result;
-
     if (size.isEmpty())
         return 0;
 
+    bool cacheable = isCacheable();
+    if (cacheable) {
+        if (!m_clients.contains(renderer))
+            return 0;
+
+        // Need to look up our size.  Create a string of width*height to use as a hash key.
+        Image* result = getImage(renderer, size);
+        if (result)
+            return result;
+    }
+    
     // We need to create an image.
     RefPtr<Image> newImage = GeneratedImage::create(createGradient(renderer, size), size);
-    putImage(size, newImage);
+    if (cacheable)
+        putImage(size, newImage);
 
     return newImage.release();
 }
@@ -403,6 +405,21 @@ FloatPoint CSSGradientValue::computeEndPoint(CSSPrimitiveValue* first, CSSPrimit
         result.setY(positionFromValue(second, style, rootStyle, size, false));
         
     return result;
+}
+
+bool CSSGradientValue::isCacheable() const
+{
+    for (size_t i = 0; i < m_stops.size(); ++i) {
+        const CSSGradientColorStop& stop = m_stops[i];
+        if (!stop.m_position)
+            continue;
+
+        unsigned short unitType = stop.m_position->primitiveType();
+        if (unitType == CSSPrimitiveValue::CSS_EMS || unitType == CSSPrimitiveValue::CSS_EXS || unitType == CSSPrimitiveValue::CSS_REMS)
+            return false;
+    }
+    
+    return true;
 }
 
 String CSSLinearGradientValue::cssText() const
