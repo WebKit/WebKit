@@ -1,6 +1,7 @@
 #ifndef qwkpage_h
 #define qwkpage_h
 
+#include "config.h"
 #include "qwebkitglobal.h"
 #include <QAction>
 #include <QObject>

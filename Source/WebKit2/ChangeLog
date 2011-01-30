@@ -1,3 +1,12 @@
+2011-01-30  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt][WK2] Buildfix.
+
+        * UIProcess/API/qt/qwkhistory.h:
+        * UIProcess/API/qt/qwkpage.h:
+
 2011-01-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoffrey Garen.

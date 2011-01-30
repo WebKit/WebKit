@@ -25,6 +25,7 @@
 #ifndef qwkhistory_h
 #define qwkhistory_h
 
+#include "config.h"
 #include "qwebkitglobal.h"
 #include <QObject>
 #include <QSharedData>
