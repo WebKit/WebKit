@@ -320,6 +320,8 @@ static void initializeSandboxExtensionHandle(const KURL& url, SandboxExtension::
 
 void WebPageProxy::loadURL(const String& url)
 {
+    setPendingAPIRequestURL(url);
+
     if (!isValid())
         reattachToWebProcess();
 
@@ -330,6 +332,8 @@ void WebPageProxy::loadURL(const String& url)
 
 void WebPageProxy::loadURLRequest(WebURLRequest* urlRequest)
 {
+    setPendingAPIRequestURL(urlRequest->resourceRequest().url());
+
     if (!isValid())
         reattachToWebProcess();
 
@@ -373,6 +377,8 @@ void WebPageProxy::stopLoading()
 
 void WebPageProxy::reload(bool reloadFromOrigin)
 {
+    setPendingAPIRequestURL(m_backForwardList->currentItem()->url());
+
     if (!isValid()) {
         reattachToWebProcessWithItem(m_backForwardList->currentItem());
         return;
@@ -383,13 +389,15 @@ void WebPageProxy::reload(bool reloadFromOrigin)
 
 void WebPageProxy::goForward()
 {
+    if (isValid() && !canGoForward())
+        return;
+
+    setPendingAPIRequestURL(m_backForwardList->forwardItem()->url());
+
     if (!isValid()) {
         reattachToWebProcessWithItem(m_backForwardList->forwardItem());
         return;
     }
-
-    if (!canGoForward())
-        return;
 
     process()->send(Messages::WebPage::GoForward(m_backForwardList->forwardItem()->itemID()), m_pageID);
 }
@@ -401,13 +409,15 @@ bool WebPageProxy::canGoForward() const
 
 void WebPageProxy::goBack()
 {
+    if (isValid() && !canGoBack())
+        return;
+
+    setPendingAPIRequestURL(m_backForwardList->backItem()->url());
+
     if (!isValid()) {
         reattachToWebProcessWithItem(m_backForwardList->backItem());
         return;
     }
-
-    if (!canGoBack())
-        return;
 
     process()->send(Messages::WebPage::GoBack(m_backForwardList->backItem()->itemID()), m_pageID);
 }
@@ -1180,6 +1190,13 @@ void WebPageProxy::didRestoreFrameFromPageCache(uint64_t frameID, uint64_t paren
 
 static const double initialProgressValue = 0.1;
 
+double WebPageProxy::estimatedProgress() const
+{
+    if (!pendingAPIRequestURL().isNull())
+        return initialProgressValue;
+    return m_estimatedProgress; 
+}
+
 void WebPageProxy::didStartProgress()
 {
     m_estimatedProgress = initialProgressValue;
@@ -1203,6 +1220,8 @@ void WebPageProxy::didFinishProgress()
 
 void WebPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, const String& url, bool loadingSubstituteDataForUnreachableURL, CoreIPC::ArgumentDecoder* arguments)
 {
+    clearPendingAPIRequestURL();
+
     RefPtr<APIObject> userData;
     WebContextUserMessageDecoder messageDecoder(userData, context());
     if (!arguments->decode(messageDecoder))
@@ -1429,6 +1448,9 @@ void WebPageProxy::frameDidBecomeFrameSet(uint64_t frameID, bool value)
 
 void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, uint32_t opaqueNavigationType, uint32_t opaqueModifiers, int32_t opaqueMouseButton, const String& url, uint64_t listenerID)
 {
+    if (url != pendingAPIRequestURL())
+        clearPendingAPIRequestURL();
+
     WebFrameProxy* frame = process()->webFrame(frameID);
     MESSAGE_CHECK(frame);
 

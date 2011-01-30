@@ -1,3 +1,36 @@
+2011-01-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Add WKPageCopyPendingAPIRequestURL API
+        https://bugs.webkit.org/show_bug.cgi?id=53383
+
+        This API returns the last URL requested for load via API, if neither that load nor any
+        other load subsequently reaches the provisional state.
+        
+        This is useful to be able to track loads initiated via the API
+        
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageCopyPendingAPIRequestURL): Retrieve the pending URL.
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadURL): Set pending URL.
+        (WebKit::WebPageProxy::loadURLRequest): ditto
+        (WebKit::WebPageProxy::reload): ditto
+        (WebKit::WebPageProxy::goForward): ditto
+        (WebKit::WebPageProxy::goBack): ditto
+        (WebKit::WebPageProxy::estimatedProgress): Assume the initial
+        progress value when there is a pending URL.
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrame): Clear
+        pending URL; clients should look at the provisional URL now.
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction): Clear
+        pending URL if it doesn't match the policy URL; this means we
+        were interrupted by another load.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::pendingAPIRequestURL): Helper function.
+        (WebKit::WebPageProxy::clearPendingAPIRequestURL): ditto
+        (WebKit::WebPageProxy::setPendingAPIRequestURL): ditto
+
 2011-01-28  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Downloads in WK2 on Windows should write resume data to bundle

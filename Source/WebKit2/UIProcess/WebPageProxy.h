@@ -240,7 +240,7 @@ public:
     void setCustomTextEncodingName(const String&);
     String customTextEncodingName() const { return m_customTextEncodingName; }
 
-    double estimatedProgress() const { return m_estimatedProgress; }
+    double estimatedProgress() const;
 
     void terminateProcess();
 
@@ -371,6 +371,8 @@ public:
     void drawRectToPDF(WebFrameProxy*, const WebCore::IntRect&, PassRefPtr<DataCallback>);
     void drawPagesToPDF(WebFrameProxy*, uint32_t first, uint32_t count, PassRefPtr<DataCallback>);
 #endif
+
+    const String& pendingAPIRequestURL() const { return m_pendingAPIRequestURL; }
 
 private:
     WebPageProxy(PageClient*, WebContext*, WebPageGroup*, uint64_t pageID);
@@ -544,6 +546,9 @@ private:
 
     static String standardUserAgent(const String& applicationName = String());
 
+    void clearPendingAPIRequestURL() { m_pendingAPIRequestURL = String(); }
+    void setPendingAPIRequestURL(const String& pendingAPIRequestURL) { m_pendingAPIRequestURL = pendingAPIRequestURL; }
+
     PageClient* m_pageClient;
     WebLoaderClient m_loaderClient;
     WebPolicyClient m_policyClient;
@@ -643,6 +648,8 @@ private:
 
     bool m_mainFrameHasCustomRepresentation;
     WebCore::DragOperation m_currentDragOperation;
+
+    String m_pendingAPIRequestURL;
 };
 
 } // namespace WebKit

@@ -344,6 +344,8 @@ WK_EXPORT void WKPageGetContentsAsString_b(WKPageRef page, WKPageGetContentsAsSt
 typedef void (*WKPageForceRepaintFunction)(WKErrorRef, void*);
 WK_EXPORT void WKPageForceRepaint(WKPageRef page, void* context, WKPageForceRepaintFunction function);
 
+WK_EXPORT WKURLRef WKPageCopyPendingAPIRequestURL(WKPageRef page);
+
 #ifdef __cplusplus
 }
 #endif

@@ -435,3 +435,10 @@ void WKPageForceRepaint(WKPageRef pageRef, void* context, WKPageForceRepaintFunc
 {
     toImpl(pageRef)->forceRepaint(VoidCallback::create(context, callback));
 }
+
+WK_EXPORT WKURLRef WKPageCopyPendingAPIRequestURL(WKPageRef pageRef)
+{
+    if (toImpl(pageRef)->pendingAPIRequestURL().isNull())
+        return 0;
+    return toCopiedURLAPI(toImpl(pageRef)->pendingAPIRequestURL());
+}
