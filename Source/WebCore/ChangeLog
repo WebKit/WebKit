@@ -1,3 +1,18 @@
+2011-01-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix fat build for both 32-bit and 64-bit under llvm-gcc 4.2
+        https://bugs.webkit.org/show_bug.cgi?id=53386
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::elasticDeltaForReboundDelta):
+        (WebCore::scrollWheelMultiplier):
+        (WebCore::ScrollAnimatorMac::smoothScrollWithEvent):
+        (WebCore::ScrollAnimatorMac::beginScrollGesture):
+        (WebCore::roundTowardZero):
+        (WebCore::ScrollAnimatorMac::snapRubberBandTimerFired):
+
 2011-01-29  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Maciej Stachowiak.
