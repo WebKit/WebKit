@@ -64,11 +64,6 @@ namespace JSC {
     class MarkedSpace {
         WTF_MAKE_NONCOPYABLE(MarkedSpace);
     public:
-        struct Statistics {
-            size_t size;
-            size_t free;
-        };
-
         static Heap* heap(JSCell*);
 
         static bool isCellMarked(const JSCell*);
@@ -88,8 +83,8 @@ namespace JSC {
         void sweep();
 
         size_t size() const;
+        size_t capacity() const;
         size_t objectCount() const;
-        Statistics statistics() const;
 
         bool contains(void*);
 
@@ -112,8 +107,6 @@ namespace JSC {
 
         void clearMarkBits(CollectorBlock*);
         size_t markedCells(size_t startBlock = 0, size_t startCell = 0) const;
-
-        void addToStatistics(Statistics&) const;
 
         CollectorHeap m_heap;
         JSGlobalData* m_globalData;

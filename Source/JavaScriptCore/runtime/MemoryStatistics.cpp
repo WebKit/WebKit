@@ -32,11 +32,6 @@
 
 namespace JSC {
 
-MarkedSpace::Statistics heapStatistics(JSGlobalData* commonGlobalData)
-{
-    return commonGlobalData->heap.statistics();
-}        
-
 GlobalMemoryStatistics globalMemoryStatistics() 
 {
     GlobalMemoryStatistics stats;

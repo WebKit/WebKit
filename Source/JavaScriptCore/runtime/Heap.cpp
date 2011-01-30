@@ -79,7 +79,7 @@ void Heap::destroy()
     m_globalData = 0;
 }
 
-void Heap::recordExtraCost(size_t cost)
+void Heap::reportExtraMemoryCostSlowCase(size_t cost)
 {
     // Our frequency of garbage collection tries to balance memory use against speed
     // by collecting based on the number of newly created values. However, for values
@@ -92,7 +92,7 @@ void Heap::recordExtraCost(size_t cost)
     // if a large value survives one garbage collection, there is not much point to
     // collecting more frequently as long as it stays alive.
 
-    if (m_extraCost > maxExtraCost && m_extraCost > m_markedSpace.size() / 2) {
+    if (m_extraCost > maxExtraCost && m_extraCost > m_markedSpace.capacity() / 2) {
         JAVASCRIPTCORE_GC_BEGIN();
 
         markRoots();
@@ -302,14 +302,14 @@ size_t Heap::objectCount() const
     return m_markedSpace.objectCount();
 }
 
-MarkedSpace::Statistics Heap::statistics() const
-{
-    return m_markedSpace.statistics();
-}
-
 size_t Heap::size() const
 {
     return m_markedSpace.size();
+}
+
+size_t Heap::capacity() const
+{
+    return m_markedSpace.capacity();
 }
 
 size_t Heap::globalObjectCount()

@@ -295,20 +295,12 @@ size_t MarkedSpace::objectCount() const
            - m_heap.usedBlocks; // 1 cell per block is a dummy sentinel
 }
 
-void MarkedSpace::addToStatistics(Statistics& statistics) const
-{
-    statistics.size += m_heap.usedBlocks * BLOCK_SIZE;
-    statistics.free += m_heap.usedBlocks * BLOCK_SIZE - (objectCount() * HeapConstants::cellSize);
-}
-
-MarkedSpace::Statistics MarkedSpace::statistics() const
-{
-    Statistics statistics = { 0, 0 };
-    addToStatistics(statistics);
-    return statistics;
-}
-
 size_t MarkedSpace::size() const
+{
+    return objectCount() * HeapConstants::cellSize;
+}
+
+size_t MarkedSpace::capacity() const
 {
     return m_heap.usedBlocks * BLOCK_SIZE;
 }

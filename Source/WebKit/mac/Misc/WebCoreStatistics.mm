@@ -197,15 +197,16 @@ using namespace WebCore;
     WTF::FastMallocStatistics fastMallocStatistics = WTF::fastMallocStatistics();
     
     JSLock lock(SilenceAssertionsOnly);
-    MarkedSpace::Statistics heapMemoryStats = heapStatistics(JSDOMWindow::commonJSGlobalData());
+    size_t heapSize = JSDOMWindow::commonJSGlobalData()->heap.size();
+    size_t heapFree = JSDOMWindow::commonJSGlobalData()->heap.capacity() - heapSize;
     GlobalMemoryStatistics globalMemoryStats = globalMemoryStatistics();
     
     return [NSDictionary dictionaryWithObjectsAndKeys:
                 [NSNumber numberWithInt:fastMallocStatistics.reservedVMBytes], @"FastMallocReservedVMBytes",
                 [NSNumber numberWithInt:fastMallocStatistics.committedVMBytes], @"FastMallocCommittedVMBytes",
                 [NSNumber numberWithInt:fastMallocStatistics.freeListBytes], @"FastMallocFreeListBytes",
-                [NSNumber numberWithInt:heapMemoryStats.size], @"JavaScriptHeapSize",
-                [NSNumber numberWithInt:heapMemoryStats.free], @"JavaScriptFreeSize",
+                [NSNumber numberWithInt:heapSize], @"JavaScriptHeapSize",
+                [NSNumber numberWithInt:heapFree], @"JavaScriptFreeSize",
                 [NSNumber numberWithUnsignedInt:(unsigned int)globalMemoryStats.stackBytes], @"JavaScriptStackSize",
                 [NSNumber numberWithUnsignedInt:(unsigned int)globalMemoryStats.JITBytes], @"JavaScriptJITSize",
             nil];

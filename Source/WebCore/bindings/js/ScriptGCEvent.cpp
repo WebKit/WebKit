@@ -45,9 +45,10 @@ using namespace JSC;
 void ScriptGCEvent::getHeapSize(size_t& usedHeapSize, size_t& totalHeapSize)
 {
     JSGlobalData* globalData = JSDOMWindow::commonJSGlobalData();
-    totalHeapSize = globalData->heap.size();
+    totalHeapSize = globalData->heap.capacity();
     usedHeapSize = totalHeapSize;
 }
+
 } // namespace WebCore
 
 #endif // !ENABLE(INSPECTOR)

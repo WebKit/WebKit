@@ -1,3 +1,15 @@
+2011-01-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Some more Heap cleanup.
+        https://bugs.webkit.org/show_bug.cgi?id=53357
+        
+        Updated for JavaScriptCore changes.
+
+        * bindings/js/ScriptGCEvent.cpp:
+        (WebCore::ScriptGCEvent::getHeapSize):
+
 2011-01-29  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Daniel Bates.

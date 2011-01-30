@@ -50,44 +50,43 @@ namespace JSC {
     class Heap {
         WTF_MAKE_NONCOPYABLE(Heap);
     public:
-        void destroy();
-
-        void* allocate(size_t);
-
-        bool isBusy(); // true if an allocation or collection is in progress
-        void collectAllGarbage();
-
-        GCActivityCallback* activityCallback();
-        void setActivityCallback(PassOwnPtr<GCActivityCallback>);
-
-        static const size_t minExtraCost = 256;
-        static const size_t maxExtraCost = 1024 * 1024;
-
-        void reportExtraMemoryCost(size_t cost);
-
-        size_t objectCount() const;
-        MarkedSpace::Statistics statistics() const;
-        size_t size() const;
-
-        void protect(JSValue);
-        // Returns true if the value is no longer protected by any protect pointers
-        // (though it may still be alive due to heap/stack references).
-        bool unprotect(JSValue);
-
         static Heap* heap(JSValue); // 0 for immediate values
         static Heap* heap(JSCell*);
-
-        size_t globalObjectCount();
-        size_t protectedObjectCount();
-        size_t protectedGlobalObjectCount();
-        HashCountedSet<const char*>* protectedObjectTypeCounts();
-        HashCountedSet<const char*>* objectTypeCounts();
 
         static bool isCellMarked(const JSCell*);
         static bool checkMarkCell(const JSCell*);
         static void markCell(JSCell*);
         
+        Heap(JSGlobalData*);
+        ~Heap();
+        void destroy(); // JSGlobalData must call destroy() before ~Heap().
+
+        JSGlobalData* globalData() const { return m_globalData; }
+        MarkedSpace& markedSpace() { return m_markedSpace; }
+        MachineStackMarker& machineStackMarker() { return m_machineStackMarker; }
+
+        GCActivityCallback* activityCallback();
+        void setActivityCallback(PassOwnPtr<GCActivityCallback>);
+
+        bool isBusy(); // true if an allocation or collection is in progress
+        void* allocate(size_t);
+        void collectAllGarbage();
+
+        void reportExtraMemoryCost(size_t cost);
+
+        void protect(JSValue);
+        bool unprotect(JSValue); // True when the protect count drops to 0.
+
         bool contains(void*);
+
+        size_t size() const;
+        size_t capacity() const;
+        size_t objectCount() const;
+        size_t globalObjectCount();
+        size_t protectedObjectCount();
+        size_t protectedGlobalObjectCount();
+        HashCountedSet<const char*>* protectedObjectTypeCounts();
+        HashCountedSet<const char*>* objectTypeCounts();
 
         WeakGCHandle* addWeakGCHandle(JSCell*);
 
@@ -96,21 +95,16 @@ namespace JSC {
 
         HashSet<MarkedArgumentBuffer*>& markListSet() { if (!m_markListSet) m_markListSet = new HashSet<MarkedArgumentBuffer*>; return *m_markListSet; }
 
-        JSGlobalData* globalData() const { return m_globalData; }
-        
         LiveObjectIterator primaryHeapBegin();
         LiveObjectIterator primaryHeapEnd();
         
-        MachineStackMarker& machineStackMarker() { return m_machineStackMarker; }
-
-        MarkedSpace& markedSpace() { return m_markedSpace; }
-
     private:
         friend class JSGlobalData;
-        Heap(JSGlobalData*);
-        ~Heap();
 
-        void recordExtraCost(size_t);
+        static const size_t minExtraCost = 256;
+        static const size_t maxExtraCost = 1024 * 1024;
+
+        void reportExtraMemoryCostSlowCase(size_t);
 
         void markRoots();
         void markProtectedObjects(MarkStack&);
@@ -163,7 +157,7 @@ namespace JSC {
     inline void Heap::reportExtraMemoryCost(size_t cost)
     {
         if (cost > minExtraCost) 
-            recordExtraCost(cost);
+            reportExtraMemoryCostSlowCase(cost);
     }
     
     inline WeakGCHandlePool* Heap::weakGCHandlePool(size_t index)

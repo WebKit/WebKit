@@ -1,3 +1,15 @@
+2011-01-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Some more Heap cleanup.
+        https://bugs.webkit.org/show_bug.cgi?id=53357
+
+        Updated for JavaScriptCore changes.
+
+        * Misc/WebCoreStatistics.mm:
+        (+[WebCoreStatistics memoryStatistics]):
+
 2011-01-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r77006 and r77020.

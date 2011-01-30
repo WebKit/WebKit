@@ -1,3 +1,38 @@
+2011-01-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Some more Heap cleanup.
+        https://bugs.webkit.org/show_bug.cgi?id=53357
+        
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Updated exported symbols.
+
+        * runtime/Heap.cpp:
+        (JSC::Heap::reportExtraMemoryCostSlowCase): Renamed recordExtraCost to 
+        reportExtraMemoryCostSlowCase to match our naming conventions.
+
+        (JSC::Heap::capacity): Renamed size to capacity because this function
+        returns the capacity of the heap, including unused portions.
+
+        * runtime/Heap.h:
+        (JSC::Heap::globalData):
+        (JSC::Heap::markedSpace):
+        (JSC::Heap::machineStackMarker):
+        (JSC::Heap::reportExtraMemoryCost): Moved statics to the top of the file.
+        Moved ctor and dtor to the beginning of the class definition. Grouped
+        functions by purpose.
+
+        * runtime/MarkedSpace.cpp:
+        (JSC::MarkedSpace::capacity): Renamed size to capacity because this
+        function returns the capacity of the heap, including unused portions.
+
+        * runtime/MarkedSpace.h: Removed statistics and the Statistics class because
+        the same information can be gotten just by calling size() and capacity().
+
+        * runtime/MemoryStatistics.cpp:
+        * runtime/MemoryStatistics.h: Ditto.
+
 2011-01-29  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Eric Seidel.
