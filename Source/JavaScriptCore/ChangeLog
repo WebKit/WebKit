@@ -1,5 +1,11 @@
 2011-01-29  Geoffrey Garen  <ggaren@apple.com>
 
+        Sorry Leopard bot -- I committed a change by accident.
+
+        * JavaScriptCore.exp: You may have your symbols back now.
+
+2011-01-29  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Cameron Zwarich.
 
         Simplified Heap iteration
