@@ -1,3 +1,28 @@
+2011-01-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Filter all Heap collection through a common reset function, in
+        preparation for adding features triggered by collection.
+        https://bugs.webkit.org/show_bug.cgi?id=53396
+        
+        SunSpider reports no change.
+
+        * runtime/Heap.cpp:
+        (JSC::Heap::reportExtraMemoryCostSlowCase): When we're over the extraCost
+        limit, just call collectAllGarbage() instead of rolling our own special
+        way of resetting the heap. In theory, this may be slower in some cases,
+        but it also fixes cases of pathological heap growth that we've seen,
+        where the only objects being allocated are temporary and huge
+        (<rdar://problem/8885843>).
+
+        (JSC::Heap::allocate):
+        (JSC::Heap::collectAllGarbage): Use the shared reset function.
+
+        (JSC::Heap::reset):
+        * runtime/Heap.h: Carved a new shared reset function out of the old
+        collectAllGarbage.
+
 2011-01-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r77025.

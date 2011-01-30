@@ -113,6 +113,9 @@ namespace JSC {
 
         void updateWeakGCHandles();
         WeakGCHandlePool* weakGCHandlePool(size_t index);
+        
+        enum SweepToggle { DoNotSweep, DoSweep };
+        void reset(SweepToggle);
 
         RegisterFile& registerFile();
 

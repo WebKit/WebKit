@@ -90,20 +90,8 @@ void Heap::reportExtraMemoryCostSlowCase(size_t cost)
     // if a large value survives one garbage collection, there is not much point to
     // collecting more frequently as long as it stays alive.
 
-    if (m_extraCost > maxExtraCost && m_extraCost > m_markedSpace.capacity() / 2) {
-        JAVASCRIPTCORE_GC_BEGIN();
-
-        markRoots();
-
-        JAVASCRIPTCORE_GC_MARKED();
-
-        m_markedSpace.reset();
-        m_extraCost = 0;
-
-        JAVASCRIPTCORE_GC_END();
-
-        (*m_activityCallback)();
-    }
+    if (m_extraCost > maxExtraCost && m_extraCost > m_markedSpace.capacity() / 2)
+        collectAllGarbage();
     m_extraCost += cost;
 }
 
@@ -123,25 +111,14 @@ void* Heap::allocate(size_t s)
     m_operationInProgress = Allocation;
     void* result = m_markedSpace.allocate(s);
     m_operationInProgress = NoOperation;
-
     if (!result) {
-        JAVASCRIPTCORE_GC_BEGIN();
-
-        markRoots();
-
-        JAVASCRIPTCORE_GC_MARKED();
-
-        m_markedSpace.reset();
-        m_extraCost = 0;
-
-        JAVASCRIPTCORE_GC_END();
-
-        (*m_activityCallback)();
+        reset(DoNotSweep);
 
         m_operationInProgress = Allocation;
         result = m_markedSpace.allocate(s);
         m_operationInProgress = NoOperation;
     }
+
     ASSERT(result);
     return result;
 }
@@ -389,6 +366,11 @@ bool Heap::isBusy()
 
 void Heap::collectAllGarbage()
 {
+    reset(DoSweep);
+}
+
+void Heap::reset(SweepToggle sweepToggle)
+{
     ASSERT(globalData()->identifierTable == wtfThreadData().currentIdentifierTable());
     JAVASCRIPTCORE_GC_BEGIN();
 
@@ -397,8 +379,10 @@ void Heap::collectAllGarbage()
     JAVASCRIPTCORE_GC_MARKED();
 
     m_markedSpace.reset();
-    m_markedSpace.sweep();
     m_extraCost = 0;
+
+    if (sweepToggle == DoSweep)
+        m_markedSpace.sweep();
 
     JAVASCRIPTCORE_GC_END();
 
