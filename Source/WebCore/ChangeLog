@@ -1,3 +1,20 @@
+2011-01-29  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Daniel Bates.
+
+        Fix XSSFilter crash when extracting the source for a token twice
+        https://bugs.webkit.org/show_bug.cgi?id=53368
+
+        Previously, it was unsafe to extract the source for the same token
+        twice because the HTMLSourceTracker would advance its internal
+        representation of the SegmentedString.  This patch introduces a cache
+        to make calling HTMLSourceTracker::sourceForToken multiple times safe.
+
+        * html/parser/HTMLSourceTracker.cpp:
+        (WebCore::HTMLSourceTracker::end):
+        (WebCore::HTMLSourceTracker::sourceForToken):
+        * html/parser/HTMLSourceTracker.h:
+
 2011-01-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dan Bernstein.

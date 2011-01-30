@@ -47,6 +47,7 @@ public:
 private:
     String m_sourceFromPreviousSegments;
     SegmentedString m_source;
+    String m_cachedSourceForToken;
 };
 
 }

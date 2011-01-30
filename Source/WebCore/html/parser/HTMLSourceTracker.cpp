@@ -41,6 +41,7 @@ void HTMLSourceTracker::start(const HTMLInputStream& input, HTMLToken& token)
 
 void HTMLSourceTracker::end(const HTMLInputStream& input, HTMLToken& token)
 {
+    m_cachedSourceForToken = String();
     // FIXME: This work should really be done by the HTMLTokenizer.
     token.end(input.current().numberOfCharactersConsumed());
 }
@@ -50,6 +51,9 @@ String HTMLSourceTracker::sourceForToken(const HTMLToken& token)
     if (token.type() == HTMLToken::EndOfFile)
         return String(); // Hides the null character we use to mark the end of file.
 
+    if (!m_cachedSourceForToken.isEmpty())
+        return m_cachedSourceForToken;
+
     ASSERT(!token.startIndex());
     UChar* data = 0;
     int length = token.endIndex() - token.startIndex() - m_sourceFromPreviousSegments.length();
@@ -58,7 +62,8 @@ String HTMLSourceTracker::sourceForToken(const HTMLToken& token)
         data[i] = *m_source;
         m_source.advance();
     }
-    return m_sourceFromPreviousSegments + source;
+    m_cachedSourceForToken = m_sourceFromPreviousSegments + source;
+    return m_cachedSourceForToken;
 }
 
 }
