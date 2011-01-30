@@ -38,7 +38,9 @@ namespace JSC {
     
     protected:
         CollectorHeapIterator(CollectorHeap&, size_t startBlock, size_t startCell);
-        void advance(size_t max);
+        void advance();
+        bool isValid();
+        bool isLive();
 
         CollectorHeap& m_heap;
         size_t m_block;
@@ -75,6 +77,18 @@ namespace JSC {
         return m_block != other.m_block || m_cell != other.m_cell;
     }
 
+    inline bool CollectorHeapIterator::isValid()
+    {
+        return m_block < m_heap.usedBlocks;
+    }
+
+    inline bool CollectorHeapIterator::isLive()
+    {
+        return m_block < m_heap.nextBlock
+            || (m_block == m_heap.nextBlock && m_cell < m_heap.nextCell)
+            || (m_block < m_heap.usedBlocks && m_heap.collectorBlock(m_block)->marked.get(m_cell));
+    }
+
     inline JSCell* CollectorHeapIterator::operator*() const
     {
         return reinterpret_cast<JSCell*>(&m_heap.collectorBlock(m_block)->cells[m_cell]);
@@ -82,56 +96,55 @@ namespace JSC {
     
     // Iterators advance up to the next-to-last -- and not the last -- cell in a
     // block, since the last cell is a dummy sentinel.
-    inline void CollectorHeapIterator::advance(size_t max)
+    inline void CollectorHeapIterator::advance()
     {
         ++m_cell;
-        if (m_cell == max) {
+        if (m_cell == HeapConstants::cellsPerBlock - 1) {
             m_cell = 0;
             ++m_block;
         }
     }
 
     inline LiveObjectIterator::LiveObjectIterator(CollectorHeap& heap, size_t startBlock, size_t startCell)
-        : CollectorHeapIterator(heap, startBlock, startCell - 1)
+        : CollectorHeapIterator(heap, startBlock, startCell)
     {
-        ++(*this);
+        if (isValid() && !isLive())
+            ++(*this);
     }
 
     inline LiveObjectIterator& LiveObjectIterator::operator++()
     {
-        advance(HeapConstants::cellsPerBlock - 1);
-        if (m_block < m_heap.nextBlock || (m_block == m_heap.nextBlock && m_cell < m_heap.nextCell))
-            return *this;
-
-        while (m_block < m_heap.usedBlocks && !m_heap.collectorBlock(m_block)->marked.get(m_cell))
-            advance(HeapConstants::cellsPerBlock - 1);
+        do {
+            advance();
+        } while (isValid() && !isLive());
         return *this;
     }
 
     inline DeadObjectIterator::DeadObjectIterator(CollectorHeap& heap, size_t startBlock, size_t startCell)
-        : CollectorHeapIterator(heap, startBlock, startCell - 1)
+        : CollectorHeapIterator(heap, startBlock, startCell)
     {
-        ++(*this);
+        if (isValid() && isLive())
+            ++(*this);
     }
 
     inline DeadObjectIterator& DeadObjectIterator::operator++()
     {
         do {
-            advance(HeapConstants::cellsPerBlock - 1);
-            ASSERT(m_block > m_heap.nextBlock || (m_block == m_heap.nextBlock && m_cell >= m_heap.nextCell));
-        } while (m_block < m_heap.usedBlocks && m_heap.collectorBlock(m_block)->marked.get(m_cell));
+            advance();
+        } while (isValid() && isLive());
         return *this;
     }
 
     inline ObjectIterator::ObjectIterator(CollectorHeap& heap, size_t startBlock, size_t startCell)
-        : CollectorHeapIterator(heap, startBlock, startCell - 1)
+        : CollectorHeapIterator(heap, startBlock, startCell)
     {
-        ++(*this);
+        if (isValid())
+            ++(*this);
     }
 
     inline ObjectIterator& ObjectIterator::operator++()
     {
-        advance(HeapConstants::cellsPerBlock - 1);
+        advance();
         return *this;
     }
 

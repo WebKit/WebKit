@@ -91,8 +91,8 @@ NEVER_INLINE CollectorBlock* MarkedSpace::allocateBlock()
 
 NEVER_INLINE void MarkedSpace::freeBlock(size_t block)
 {
-    ObjectIterator it(m_heap, block);
-    ObjectIterator end(m_heap, block + 1);
+    ObjectIterator it(m_heap, block, 0);
+    ObjectIterator end(m_heap, block + 1, 0);
     for ( ; it != end; ++it)
         (*it)->~JSCell();
     m_heap.blocks[block].deallocate();
@@ -251,8 +251,8 @@ void MarkedSpace::sweep()
     Structure* dummyMarkableCellStructure = globalData()->dummyMarkableCellStructure.get();
 #endif
 
-    DeadObjectIterator it(m_heap, m_heap.nextBlock, m_heap.nextCell);
-    DeadObjectIterator end(m_heap, m_heap.usedBlocks);
+    DeadObjectIterator it(m_heap, 0, 0);
+    DeadObjectIterator end(m_heap, m_heap.usedBlocks, 0);
     for ( ; it != end; ++it) {
         JSCell* cell = *it;
 #if ENABLE(JSC_ZOMBIES)
@@ -300,12 +300,12 @@ void MarkedSpace::reset()
 
 LiveObjectIterator MarkedSpace::primaryHeapBegin()
 {
-    return LiveObjectIterator(m_heap, 0);
+    return LiveObjectIterator(m_heap, 0, 0);
 }
 
 LiveObjectIterator MarkedSpace::primaryHeapEnd()
 {
-    return LiveObjectIterator(m_heap, m_heap.usedBlocks);
+    return LiveObjectIterator(m_heap, m_heap.usedBlocks, 0);
 }
 
 } // namespace JSC

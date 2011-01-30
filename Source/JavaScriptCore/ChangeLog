@@ -2,6 +2,35 @@
 
         Reviewed by Cameron Zwarich.
 
+        Simplified Heap iteration
+        https://bugs.webkit.org/show_bug.cgi?id=53393
+
+        * runtime/CollectorHeapIterator.h:
+        (JSC::CollectorHeapIterator::isValid):
+        (JSC::CollectorHeapIterator::isLive):
+        (JSC::CollectorHeapIterator::advance): Removed "max" argument to
+        advance because it's a constant.
+        (JSC::LiveObjectIterator::LiveObjectIterator):
+        (JSC::LiveObjectIterator::operator++):
+        (JSC::DeadObjectIterator::DeadObjectIterator):
+        (JSC::DeadObjectIterator::operator++):
+        (JSC::ObjectIterator::ObjectIterator):
+        (JSC::ObjectIterator::operator++): Factored out common checks into
+        two helper functions -- isValid() for "Am I past the end?" and isLive()
+        for "Is the cell I'm pointing to live?".
+
+        * runtime/MarkedSpace.cpp:
+        (JSC::MarkedSpace::freeBlock):
+        (JSC::MarkedSpace::sweep): Always sweep from the beginning of the heap
+        to the end, to avoid making sweep subtly reliant on internal Heap state.
+        (JSC::MarkedSpace::primaryHeapBegin):
+        (JSC::MarkedSpace::primaryHeapEnd): Always be explicit about where
+        iteration begins.
+
+2011-01-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
         Simplified heap destruction
         https://bugs.webkit.org/show_bug.cgi?id=53392
 
