@@ -72,9 +72,7 @@ void Heap::destroy()
     delete m_markListSet;
     m_markListSet = 0;
 
-    ProtectCountSet protectedValuesCopy = m_protectedValues;
-    m_markedSpace.destroy(protectedValuesCopy);
-    ASSERT(!protectedObjectCount());
+    m_markedSpace.destroy();
 
     m_globalData = 0;
 }

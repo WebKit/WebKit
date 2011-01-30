@@ -46,8 +46,6 @@ namespace JSC {
     const size_t BLOCK_SIZE = 256 * 1024; // 256k
 #endif
 
-    typedef HashCountedSet<JSCell*> ProtectCountSet;
-
     struct CollectorHeap {
         size_t nextBlock;
         size_t nextCell;
@@ -72,7 +70,7 @@ namespace JSC {
         static void markCell(JSCell*);
 
         MarkedSpace(JSGlobalData*);
-        void destroy(ProtectCountSet&);
+        void destroy();
 
         JSGlobalData* globalData() { return m_globalData; }
 

@@ -1,5 +1,24 @@
 2011-01-29  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Cameron Zwarich.
+
+        Simplified heap destruction
+        https://bugs.webkit.org/show_bug.cgi?id=53392
+
+        * JavaScriptCore.exp:
+        * runtime/Heap.cpp:
+        (JSC::Heap::destroy):
+        * runtime/Heap.h:
+        * runtime/MarkedSpace.cpp:
+        (JSC::MarkedSpace::destroy):
+        * runtime/MarkedSpace.h: Don't go out of our way to destroy GC-protected
+        cells last -- the difficult contortions required to do so just don't seem
+        justified. We make no guarantees about GC protection after the client
+        throws away JSGlobalData, and it doesn't seem like any meaningful
+        guarantee is even possible.
+
+2011-01-29  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Maciej Stachowiak.
 
         Switched heap to use the Bitmap class and removed CollectorBitmap

@@ -48,27 +48,10 @@ MarkedSpace::MarkedSpace(JSGlobalData* globalData)
     allocateBlock();
 }
 
-void MarkedSpace::destroy(ProtectCountSet& protectedValuesCopy)
+void MarkedSpace::destroy()
 {
-    clearMarkBits();
-    ProtectCountSet::iterator protectedValuesEnd = protectedValuesCopy.end();
-    for (ProtectCountSet::iterator it = protectedValuesCopy.begin(); it != protectedValuesEnd; ++it)
-        markCell(it->first);
-
-    m_heap.nextCell = 0;
-    m_heap.nextBlock = 0;
-    DeadObjectIterator it(m_heap, m_heap.nextBlock, m_heap.nextCell);
-    DeadObjectIterator end(m_heap, m_heap.usedBlocks);
-    for ( ; it != end; ++it)
-        (*it)->~JSCell();
-
-    protectedValuesEnd = protectedValuesCopy.end();
-    for (ProtectCountSet::iterator it = protectedValuesCopy.begin(); it != protectedValuesEnd; ++it)
-        it->first->~JSCell();
-
     for (size_t block = 0; block < m_heap.usedBlocks; ++block)
-        m_heap.blocks[block].deallocate();
-
+        freeBlock(block);
     fastFree(m_heap.blocks);
 
     memset(&m_heap, 0, sizeof(CollectorHeap));

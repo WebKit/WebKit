@@ -44,6 +44,7 @@ namespace JSC {
     class WeakGCHandlePool;
 
     typedef std::pair<JSValue, UString> ValueStringPair;
+    typedef HashCountedSet<JSCell*> ProtectCountSet;
 
     enum OperationInProgress { NoOperation, Allocation, Collection };
 
