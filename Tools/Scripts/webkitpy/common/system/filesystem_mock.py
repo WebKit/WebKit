@@ -58,7 +58,7 @@ class MockFileSystem(object):
         raise IOError(errno.ENOENT, path, os.strerror(errno.ENOENT))
 
     def _split(self, path):
-        return path.rsplit(self.sep, max=1)
+        return path.rsplit(self.sep, 1)
 
     def abspath(self, path):
         if path.endswith(self.sep):
