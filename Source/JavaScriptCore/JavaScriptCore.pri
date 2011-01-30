@@ -91,7 +91,8 @@ defineTest(addJavaScriptCoreLib) {
         QMAKE_LIBDIR = $$pathToJavaScriptCoreOutput $$QMAKE_LIBDIR
         webkit2 {
             # FIXME Workaround for undefined reference linking issues until the build system gets redesigned
-            LIBS += -Wl,-whole-archive -l$$JAVASCRIPTCORE_TARGET -Wl,-no-whole-archive
+            mac: LIBS += -Wl,-all_load -l$$JAVASCRIPTCORE_TARGET -WL,-noall_load 
+            else: LIBS += -Wl,-whole-archive -l$$JAVASCRIPTCORE_TARGET -Wl,-no-whole-archive
         } else {
             LIBS += -l$$JAVASCRIPTCORE_TARGET
         }
