@@ -1,3 +1,48 @@
+2011-01-30  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r77025.
+        http://trac.webkit.org/changeset/77025
+        https://bugs.webkit.org/show_bug.cgi?id=53401
+
+        It made js1_5/Regress/regress-159334.js fail on 64 bit Linux
+        (Requested by Ossy on #webkit).
+
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FreeListEntry::FreeListEntry):
+        (JSC::AVLTreeAbstractorForFreeList::get_less):
+        (JSC::AVLTreeAbstractorForFreeList::set_less):
+        (JSC::AVLTreeAbstractorForFreeList::get_greater):
+        (JSC::AVLTreeAbstractorForFreeList::set_greater):
+        (JSC::AVLTreeAbstractorForFreeList::get_balance_factor):
+        (JSC::AVLTreeAbstractorForFreeList::set_balance_factor):
+        (JSC::AVLTreeAbstractorForFreeList::null):
+        (JSC::AVLTreeAbstractorForFreeList::compare_key_key):
+        (JSC::AVLTreeAbstractorForFreeList::compare_key_node):
+        (JSC::AVLTreeAbstractorForFreeList::compare_node_node):
+        (JSC::reverseSortFreeListEntriesByPointer):
+        (JSC::reverseSortCommonSizedAllocations):
+        (JSC::FixedVMPoolAllocator::release):
+        (JSC::FixedVMPoolAllocator::reuse):
+        (JSC::FixedVMPoolAllocator::addToFreeList):
+        (JSC::FixedVMPoolAllocator::coalesceFreeSpace):
+        (JSC::FixedVMPoolAllocator::FixedVMPoolAllocator):
+        (JSC::FixedVMPoolAllocator::alloc):
+        (JSC::FixedVMPoolAllocator::free):
+        (JSC::FixedVMPoolAllocator::isValid):
+        (JSC::FixedVMPoolAllocator::allocInternal):
+        (JSC::FixedVMPoolAllocator::isWithinVMPool):
+        (JSC::FixedVMPoolAllocator::addToCommittedByteCount):
+        (JSC::ExecutableAllocator::committedByteCount):
+        (JSC::maybeModifyVMPoolSize):
+        (JSC::ExecutableAllocator::isValid):
+        (JSC::ExecutableAllocator::underMemoryPressure):
+        (JSC::ExecutablePool::systemAlloc):
+        (JSC::ExecutablePool::systemRelease):
+        * wtf/PageReservation.h:
+        (WTF::PageReservation::PageReservation):
+        (WTF::PageReservation::commit):
+        (WTF::PageReservation::decommit):
+
 2011-01-30  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         Reviewed by Daniel Bates.
