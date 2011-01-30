@@ -167,6 +167,19 @@ class FileSystemTest(unittest.TestCase):
         self.assertTrue(fs.remove('filename', remove_with_exception))
         self.assertEquals(-1, FileSystemTest._remove_failures)
 
+    def test_sep(self):
+        fs = FileSystem()
+
+        self.assertEquals(fs.sep, os.sep)
+        self.assertEquals(fs.join("foo", "bar"),
+                          os.path.join("foo", "bar"))
+
+    def test_sep__is_readonly(self):
+        def assign_sep():
+            fs.sep = ' '
+        fs = FileSystem()
+        self.assertRaises(AttributeError, assign_sep)
+
 
 if __name__ == '__main__':
     unittest.main()

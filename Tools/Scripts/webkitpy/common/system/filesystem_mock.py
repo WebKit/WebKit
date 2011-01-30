@@ -28,8 +28,10 @@
 
 import errno
 import os
-import path
 import re
+
+from webkitpy.common.system import path
+from webkitpy.common.system import ospath
 
 
 class MockFileSystem(object):
@@ -44,17 +46,23 @@ class MockFileSystem(object):
         """
         self.files = files or {}
         self.written_files = {}
-        self.sep = '/'
+        self._sep = '/'
         self.current_tmpno = 0
+
+    def _get_sep(self):
+        return self._sep
+
+    sep = property(_get_sep, doc="pathname separator")
 
     def _raise_not_found(self, path):
         raise IOError(errno.ENOENT, path, os.strerror(errno.ENOENT))
 
     def _split(self, path):
-        idx = path.rfind('/')
-        return (path[0:idx], path[idx + 1:])
+        return path.rsplit(self.sep, max=1)
 
     def abspath(self, path):
+        if path.endswith(self.sep):
+            return path[:-1]
         return path
 
     def basename(self, path):
@@ -91,10 +99,10 @@ class MockFileSystem(object):
         if self.basename(path) in dirs_to_skip:
             return []
 
-        if not path.endswith('/'):
-            path += '/'
+        if not path.endswith(self.sep):
+            path += self.sep
 
-        dir_substrings = ['/' + d + '/' for d in dirs_to_skip]
+        dir_substrings = [self.sep + d + self.sep for d in dirs_to_skip]
         for filename in self.files:
             if not filename.startswith(path):
                 continue
@@ -118,7 +126,7 @@ class MockFileSystem(object):
             return [f for f in self.files if f == path]
 
     def isabs(self, path):
-        return path.startswith('/')
+        return path.startswith(self.sep)
 
     def isfile(self, path):
         return path in self.files and self.files[path] is not None
@@ -126,8 +134,8 @@ class MockFileSystem(object):
     def isdir(self, path):
         if path in self.files:
             return False
-        if not path.endswith('/'):
-            path += '/'
+        if not path.endswith(self.sep):
+            path += self.sep
 
         # We need to use a copy of the keys here in order to avoid switching
         # to a different thread and potentially modifying the dict in
@@ -136,22 +144,24 @@ class MockFileSystem(object):
         return any(f.startswith(path) for f in files)
 
     def join(self, *comps):
-        return re.sub(re.escape(os.path.sep), '/', os.path.join(*comps))
+        # FIXME: might want tests for this and/or a better comment about how
+        # it works.
+        return re.sub(re.escape(os.path.sep), self.sep, os.path.join(*comps))
 
     def listdir(self, path):
         if not self.isdir(path):
             raise OSError("%s is not a directory" % path)
 
-        if not path.endswith('/'):
-            path += '/'
+        if not path.endswith(self.sep):
+            path += self.sep
 
         dirs = []
         files = []
         for f in self.files:
             if self.exists(f) and f.startswith(path):
                 remaining = f[len(path):]
-                if '/' in remaining:
-                    dir = remaining[:remaining.index('/')]
+                if self.sep in remaining:
+                    dir = remaining[:remaining.index(self.sep)]
                     if not dir in dirs:
                         dirs.append(dir)
                 else:
@@ -165,7 +175,7 @@ class MockFileSystem(object):
 
     def _mktemp(self, suffix='', prefix='tmp', dir=None, **kwargs):
         if dir is None:
-            dir = '/__im_tmp'
+            dir = self.sep + '__im_tmp'
         curno = self.current_tmpno
         self.current_tmpno += 1
         return self.join(dir, "%s_%u_%s" % (prefix, curno, suffix))
@@ -224,6 +234,9 @@ class MockFileSystem(object):
             self._raise_not_found(path)
         return self.files[path]
 
+    def relpath(self, path, start='.'):
+        return ospath.relpath(path, start, self.abspath, self.sep)
+
     def remove(self, path):
         if self.files[path] is None:
             self._raise_not_found(path)
@@ -231,8 +244,8 @@ class MockFileSystem(object):
         self.written_files[path] = None
 
     def rmtree(self, path):
-        if not path.endswith('/'):
-            path += '/'
+        if not path.endswith(self.sep):
+            path += self.sep
 
         for f in self.files:
             if f.startswith(path):

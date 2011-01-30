@@ -33,21 +33,27 @@ class ZipFileSet(object):
     """The set of files in a zip file that resides at a URL (local or remote)"""
     def __init__(self, zip_url, filesystem=None, zip_factory=None):
         self._zip_url = zip_url
+        self._temp_file = None
         self._zip_file = None
         self._filesystem = filesystem or FileSystem()
         self._zip_factory = zip_factory or self._retrieve_zip_file
 
     def _retrieve_zip_file(self, zip_url):
         temp_file = NetworkTransaction().run(lambda: urllib.urlretrieve(zip_url)[0])
-        return zipfile.ZipFile(temp_file)
+        return (temp_file, zipfile.ZipFile(temp_file))
 
     def _load(self):
         if self._zip_file is None:
-            self._zip_file = self._zip_factory(self._zip_url)
+            self._temp_file, self._zip_file = self._zip_factory(self._zip_url)
 
     def open(self, filename):
         self._load()
         return FileSetFileHandle(self, filename, self._filesystem)
+
+    def close(self):
+        if self._temp_file:
+            self._filesystem.remove(self._temp_file)
+            self._temp_file = None
 
     def namelist(self):
         self._load()

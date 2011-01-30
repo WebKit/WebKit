@@ -64,12 +64,16 @@ class ZipFileSetTest(unittest.TestCase):
         result = FakeZip(self._filesystem)
         result.add_file('some-file', 'contents')
         result.add_file('a/b/some-other-file', 'other contents')
-        return result
+        return (None, result)
 
     def test_open(self):
         file = self._zip.open('a/b/some-other-file')
         self.assertEquals('a/b/some-other-file', file.name())
         self.assertEquals('other contents', file.contents())
+
+    def test_close(self):
+        zipfileset = ZipFileSet('blah', self._filesystem, self.make_fake_zip)
+        zipfileset.close()
 
     def test_read(self):
         self.assertEquals('contents', self._zip.read('some-file'))

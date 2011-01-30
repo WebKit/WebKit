@@ -32,7 +32,7 @@ import os
 #
 # It should behave essentially the same as os.path.relpath(), except for
 # returning None on paths not contained in abs_start_path.
-def relpath(path, start_path, os_path_abspath=None):
+def relpath(path, start_path, os_path_abspath=None, sep=None):
     """Return a path relative to the given start path, or None.
 
     Returns None if the path is not contained in the directory start_path.
@@ -44,10 +44,12 @@ def relpath(path, start_path, os_path_abspath=None):
       os_path_abspath: A replacement function for unit testing.  This
                        function should strip trailing slashes just like
                        os.path.abspath().  Defaults to os.path.abspath.
+      sep: Path separator.  Defaults to os.path.sep
 
     """
     if os_path_abspath is None:
         os_path_abspath = os.path.abspath
+    sep = sep or os.sep
 
     # Since os_path_abspath() calls os.path.normpath()--
     #
@@ -67,11 +69,11 @@ def relpath(path, start_path, os_path_abspath=None):
     if not rel_path:
         # Then the paths are the same.
         pass
-    elif rel_path[0] == os.sep:
+    elif rel_path[0] == sep:
         # It is probably sufficient to remove just the first character
         # since os.path.normpath() collapses separators, but we use
         # lstrip() just to be sure.
-        rel_path = rel_path.lstrip(os.sep)
+        rel_path = rel_path.lstrip(sep)
     else:
         # We are in the case typified by the following example:
         #

@@ -21,14 +21,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import with_statement
-
-import os
-import shutil
-
 from webkitpy.common.system.fileset import FileSetFileHandle
 from webkitpy.common.system.filesystem import FileSystem
-import webkitpy.common.system.ospath as ospath
 
 
 class DirectoryFileSet(object):
@@ -36,8 +30,8 @@ class DirectoryFileSet(object):
     def __init__(self, path, filesystem=None):
         self._path = path
         self._filesystem = filesystem or FileSystem()
-        if not self._path.endswith(os.path.sep):
-            self._path += os.path.sep
+        if not self._path.endswith(self._filesystem.sep):
+            self._path += self._filesystem.sep
 
     def _full_path(self, filename):
         assert self._is_under(self._path, filename)
@@ -52,7 +46,7 @@ class DirectoryFileSet(object):
         return self._filesystem.files_under(self._path)
 
     def _is_under(self, dir, filename):
-        return bool(ospath.relpath(self._filesystem.join(dir, filename), dir))
+        return bool(self._filesystem.relpath(self._filesystem.join(dir, filename), dir))
 
     def open(self, filename):
         return FileSetFileHandle(self, filename, self._filesystem)
@@ -69,7 +63,7 @@ class DirectoryFileSet(object):
         dest = self._filesystem.join(path, filename)
         # As filename may have slashes in it, we must ensure that the same
         # directory hierarchy exists at the output path.
-        self._filesystem.maybe_make_directory(os.path.split(dest)[0])
+        self._filesystem.maybe_make_directory(self._filesystem.dirname(dest))
         self._filesystem.copyfile(src, dest)
 
     def delete(self, filename):

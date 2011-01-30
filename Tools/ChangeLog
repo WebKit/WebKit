@@ -1,3 +1,29 @@
+2011-01-30  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Clean up of the filesystem-related modules used in webkitpy.
+        I've added relpath() to the filesystem interface, modified
+        ospath.relpath() so that it could work with the filesystem
+        interface, and modified the fileset* routines to use the
+        filesystem interface consistently.
+
+        This patch also adds a close() routine to the fileset routines
+        to indicate that the caller is done with the fileset. This
+        allows zipfileset to clean up after itself when it creates
+        tempfiles to store downloads.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53326
+
+        * Scripts/webkitpy/common/system/directoryfileset.py:
+        * Scripts/webkitpy/common/system/fileset.py:
+        * Scripts/webkitpy/common/system/filesystem.py:
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        * Scripts/webkitpy/common/system/filesystem_unittest.py:
+        * Scripts/webkitpy/common/system/ospath.py:
+        * Scripts/webkitpy/common/system/zipfileset.py:
+        * Scripts/webkitpy/common/system/zipfileset_unittest.py:
+
 2011-01-30  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

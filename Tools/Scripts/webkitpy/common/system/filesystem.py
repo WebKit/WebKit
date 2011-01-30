@@ -39,13 +39,20 @@ import shutil
 import tempfile
 import time
 
+from webkitpy.common.system import ospath
+
 class FileSystem(object):
     """FileSystem interface for webkitpy.
 
     Unless otherwise noted, all paths are allowed to be either absolute
     or relative."""
     def __init__(self):
-        self.sep = os.sep
+        self._sep = os.sep
+
+    def _get_sep(self):
+        return self._sep
+
+    sep = property(_get_sep, doc="pathname separator")
 
     def abspath(self, path):
         return os.path.abspath(path)
@@ -199,6 +206,9 @@ class FileSystem(object):
         The file is read assuming it is a UTF-8 encoded file with no BOM."""
         with codecs.open(path, 'r', 'utf8') as f:
             return f.read()
+
+    def relpath(self, path, start='.'):
+        return ospath.relpath(path, start)
 
     class _WindowsError(exceptions.OSError):
         """Fake exception for Linux and Mac."""

@@ -22,7 +22,6 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import with_statement
-import os
 
 from webkitpy.common.system.filesystem import FileSystem
 
@@ -37,6 +36,9 @@ class FileSetFileHandle(object):
 
     def __str__(self):
         return "%s:%s" % (self._fileset, self._filename)
+
+    def close(self):
+        pass
 
     def contents(self):
         if self._contents is None:
@@ -61,4 +63,4 @@ class FileSetFileHandle(object):
         return self._filename
 
     def splitext(self):
-        return os.path.splitext(self.name())
+        return self._filesystem.splitext(self.name())
