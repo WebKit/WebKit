@@ -1,5 +1,13 @@
 2011-01-29  Geoffrey Garen  <ggaren@apple.com>
 
+        Undo try to fix the Qt build.
+        
+        My guess didn't work.
+
+        * WebCore.pro:
+
+2011-01-29  Geoffrey Garen  <ggaren@apple.com>
+
         Try to fix the Qt build.
 
         * WebCore.pro: Added platform/text/CharacterNames.h.
