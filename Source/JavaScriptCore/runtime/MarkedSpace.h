@@ -24,6 +24,7 @@
 
 #include "MachineStackMarker.h"
 #include "PageAllocationAligned.h"
+#include <wtf/Bitmap.h>
 #include <wtf/FixedArray.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/Noncopyable.h>
@@ -124,50 +125,6 @@ namespace JSC {
     const size_t CELL_ALIGN_MASK = ~CELL_MASK;
     const size_t CELLS_PER_BLOCK = (BLOCK_SIZE - sizeof(MarkedSpace*)) * 8 * CELL_SIZE / (8 * CELL_SIZE + 1) / CELL_SIZE; // one bitmap byte can represent 8 cells.
     
-    const size_t BITMAP_SIZE = (CELLS_PER_BLOCK + 7) / 8;
-    const size_t BITMAP_WORDS = (BITMAP_SIZE + 3) / sizeof(uint32_t);
-
-    struct CollectorBitmap {
-        FixedArray<uint32_t, BITMAP_WORDS> bits;
-        bool get(size_t n) const { return !!(bits[n >> 5] & (1 << (n & 0x1F))); } 
-        void set(size_t n) { bits[n >> 5] |= (1 << (n & 0x1F)); } 
-        bool getset(size_t n)
-        {
-            unsigned i = (1 << (n & 0x1F));
-            uint32_t& b = bits[n >> 5];
-            bool r = !!(b & i);
-            b |= i;
-            return r;
-        } 
-        void clear(size_t n) { bits[n >> 5] &= ~(1 << (n & 0x1F)); } 
-        void clearAll() { memset(bits.data(), 0, sizeof(bits)); }
-        ALWAYS_INLINE void advanceToNextPossibleFreeCell(size_t& startCell)
-        {
-            if (!~bits[startCell >> 5])
-                startCell = (startCell & (~0x1F)) + 32;
-            else
-                ++startCell;
-        }
-        size_t count(size_t startCell = 0)
-        {
-            size_t result = 0;
-            for ( ; (startCell & 0x1F) != 0; ++startCell) {
-                if (get(startCell))
-                    ++result;
-            }
-            for (size_t i = startCell >> 5; i < BITMAP_WORDS; ++i)
-                result += WTF::bitCount(bits[i]);
-            return result;
-        }
-        size_t isEmpty() // Much more efficient than testing count() == 0.
-        {
-            for (size_t i = 0; i < BITMAP_WORDS; ++i)
-                if (bits[i] != 0)
-                    return false;
-            return true;
-        }
-    };
-  
     struct CollectorCell {
         FixedArray<double, CELL_ARRAY_LENGTH> memory;
     };
@@ -175,7 +132,7 @@ namespace JSC {
     class CollectorBlock {
     public:
         FixedArray<CollectorCell, CELLS_PER_BLOCK> cells;
-        CollectorBitmap marked;
+        WTF::Bitmap<CELLS_PER_BLOCK> marked;
         Heap* heap;
     };
 
@@ -208,7 +165,7 @@ namespace JSC {
 
     inline bool MarkedSpace::checkMarkCell(const JSCell* cell)
     {
-        return cellBlock(cell)->marked.getset(cellOffset(cell));
+        return cellBlock(cell)->marked.testAndSet(cellOffset(cell));
     }
 
     inline void MarkedSpace::markCell(JSCell* cell)

@@ -1,3 +1,25 @@
+2011-01-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Switched heap to use the Bitmap class and removed CollectorBitmap
+        https://bugs.webkit.org/show_bug.cgi?id=53391
+        
+        SunSpider says 1.005x as fast. Seems like a fluke.
+
+        * runtime/MarkedSpace.cpp:
+        (JSC::MarkedSpace::allocate): Updated for rename and returning a value
+        rather than taking a value by reference.
+
+        * runtime/MarkedSpace.h: Code reuse is good.
+
+        * wtf/Bitmap.h:
+        (WTF::::testAndSet): Added, since this is the one thing Bitmap was missing
+        which CollectorBitmap had. (Renamed from the less conventional "getset".)
+
+        (WTF::::nextPossiblyUnset): Renamed and changed to return a value for
+        clarity. It's all the same with inlining.
+
 2011-01-28  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.

@@ -21,7 +21,6 @@
 
 #include "FixedArray.h"
 #include "StdLibExtras.h"
-
 #include <stdint.h>
 
 namespace WTF {
@@ -36,9 +35,10 @@ public:
 
     bool get(size_t) const;
     void set(size_t);
+    bool testAndSet(size_t);
+    size_t nextPossiblyUnset(size_t) const;
     void clear(size_t);
     void clearAll();
-    void advanceToNextFreeBit(size_t&) const;
     size_t count(size_t = 0) const;
     size_t isEmpty() const;
     size_t isFull() const;
@@ -76,6 +76,16 @@ inline void Bitmap<size>::set(size_t n)
 }
 
 template<size_t size>
+inline bool Bitmap<size>::testAndSet(size_t n)
+{
+    WordType mask = one << (n % wordSize);
+    size_t index = n / wordSize;
+    bool result = bits[index] & mask;
+    bits[index] |= mask;
+    return result;
+}
+
+template<size_t size>
 inline void Bitmap<size>::clear(size_t n)
 {
     bits[n / wordSize] &= ~(one << (n % wordSize));
@@ -88,12 +98,11 @@ inline void Bitmap<size>::clearAll()
 }
 
 template<size_t size>
-inline void Bitmap<size>::advanceToNextFreeBit(size_t& start) const
+inline size_t Bitmap<size>::nextPossiblyUnset(size_t start) const
 {
     if (!~bits[start / wordSize])
-        start = ((start / wordSize) + 1) * wordSize;
-    else
-        ++start;
+        return ((start / wordSize) + 1) * wordSize;
+    return start + 1;
 }
 
 template<size_t size>

@@ -150,7 +150,7 @@ void* MarkedSpace::allocate(size_t s)
                 ++m_heap.nextCell;
                 return cell;
             }
-            block->marked.advanceToNextPossibleFreeCell(m_heap.nextCell);
+            m_heap.nextCell = block->marked.nextPossiblyUnset(m_heap.nextCell);
         } while (m_heap.nextCell != HeapConstants::cellsPerBlock);
         m_heap.nextCell = 0;
     } while (++m_heap.nextBlock != m_heap.usedBlocks);
