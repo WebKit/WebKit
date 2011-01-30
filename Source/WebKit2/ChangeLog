@@ -1,3 +1,16 @@
+2011-01-30  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt][WK2]REGRESSION (r76991): Fix build errors
+        https://bugs.webkit.org/show_bug.cgi?id=53400
+
+        Revert the temporary build fix (http://trac.webkit.org/changeset/77088)
+        and remove WebKit2Prefix.h from the build.
+        * UIProcess/API/qt/qwkhistory.h:
+        * UIProcess/API/qt/qwkpage.h:
+        * WebKit2.pro:
+
 2011-01-30  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Dan Bernstein.

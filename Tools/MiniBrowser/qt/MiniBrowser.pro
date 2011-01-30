@@ -16,7 +16,6 @@ isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../../..
 include(../../../Source/WebKit.pri)
 
 INCLUDEPATH += \
-    $$PWD/../../../Source/JavaScriptCore \
     $$PWD/../../../Source/WebKit2/ \
     $$PWD/../../../Source/WebKit2/UIProcess/API/cpp \
     $$PWD/../../../Source/WebKit2/UIProcess/API/C \
