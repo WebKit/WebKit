@@ -160,6 +160,9 @@ bool FindController::updateFindIndicator(Frame* selectedFrame, bool isShowingOve
 
     // Create a backing store and paint the find indicator text into it.
     RefPtr<ShareableBitmap> findIndicatorTextBackingStore = ShareableBitmap::createShareable(selectionRectInWindowCoordinates.size());
+    if (!findIndicatorTextBackingStore)
+        return false;
+    
     OwnPtr<GraphicsContext> graphicsContext = findIndicatorTextBackingStore->createGraphicsContext();
 
     graphicsContext->translate(-selectionRectInWindowCoordinates.x(), -selectionRectInWindowCoordinates.y());

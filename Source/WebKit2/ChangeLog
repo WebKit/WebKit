@@ -1,3 +1,13 @@
+2011-01-30  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        FindController::updateFindIndicator() crashes if selection isn't visible
+        https://bugs.webkit.org/show_bug.cgi?id=53399
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindIndicator): Return false if ShareableBitmap::createShareable() returns null (typically because the selection rect is empty).
+
 2011-01-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
