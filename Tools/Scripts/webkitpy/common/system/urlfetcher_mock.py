@@ -1,17 +1,16 @@
-#!/usr/bin/env python
-# Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2011 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
 #
-#     * Redistributions of source code must retain the above copyright
+#    * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
-#     * Redistributions in binary form must reproduce the above
+#    * Redistributions in binary form must reproduce the above
 # copyright notice, this list of conditions and the following disclaimer
 # in the documentation and/or other materials provided with the
 # distribution.
-#     * Neither the name of Google Inc. nor the names of its
+#    * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
 #
@@ -27,18 +26,21 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Wrapper around webkitpy/layout_tests/rebaseline.py"""
-import os
-import sys
 
-scripts_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
-webkitpy_directory = os.path.join(scripts_directory, "webkitpy")
-sys.path.append(os.path.join(webkitpy_directory, "layout_tests"))
+def make_fetcher_cls(urls):
+    """UrlFetcher factory routine that simulates network access
+    using a dict of URLs -> contents."""
+    class MockFetcher(object):
+        def __init__(self, filesystem):
+            self._filesystem = filesystem
 
-# For simplejson
-sys.path.append(os.path.join(webkitpy_directory, "thirdparty"))
+        def fetch(self, url):
+            return urls[url]
 
-import rebaseline_chromium_webkit_tests
+        def fetch_into_file(self, url):
+            f, fn = self._filesystem.open_binary_tempfile('mockfetcher')
+            f.write(self.fetch(url))
+            f.close()
+            return fn
 
-if __name__ == '__main__':
-    rebaseline_chromium_webkit_tests.main(sys.argv[1:])
+    return MockFetcher

@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2011 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -27,18 +26,30 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Wrapper around webkitpy/layout_tests/rebaseline.py"""
-import os
-import sys
+"""Wrapper module for fetching URLs."""
 
-scripts_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
-webkitpy_directory = os.path.join(scripts_directory, "webkitpy")
-sys.path.append(os.path.join(webkitpy_directory, "layout_tests"))
+import urllib
 
-# For simplejson
-sys.path.append(os.path.join(webkitpy_directory, "thirdparty"))
 
-import rebaseline_chromium_webkit_tests
+class UrlFetcher(object):
+    """Class with restricted interface to fetch URLs (makes testing easier)"""
+    def __init__(self, filesystem):
+        self._filesystem = filesystem
 
-if __name__ == '__main__':
-    rebaseline_chromium_webkit_tests.main(sys.argv[1:])
+    def fetch(self, url):
+        """Fetches the contents of the URL as a string."""
+        file_object = urllib.urlopen(url)
+        content = file_object.read()
+        file_object.close()
+        return content
+
+    def fetch_into_file(self, url):
+        """Fetches the contents of the URL into a temporary file and return the filename.
+
+        This is the equivalent of urllib.retrieve() except that we don't return any headers.
+        """
+        file_object, filename = self._filesystem.open_binary_tempfile('-fetched')
+        contents = self.fetch(url)
+        file_object.write(contents)
+        file_object.close()
+        return filename

@@ -1,5 +1,23 @@
 2011-01-30  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Mihai Parparita.
+
+        Add more unit tests for rebaseline-chromium-webkit-tests. This
+        change involves restructuring a bunch of r-c-w-t code to make it
+        more testable as well. We also add wrapper classes for handling
+        testing zip files and fetching URLs.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53040
+
+        * Scripts/webkitpy/common/system/urlfetcher.py:
+        * Scripts/webkitpy/common/system/urlfetcher_mock.py:
+        * Scripts/webkitpy/common/system/zipfileset_mock.py:
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
+2011-01-30  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Eric Seidel.
 
         Clean up of the filesystem-related modules used in webkitpy.

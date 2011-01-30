@@ -464,6 +464,12 @@ class MockSCM(Mock):
         # os.getcwd() can't work here because other parts of the code assume that "checkout_root"
         # will actually be the root.  Since getcwd() is wrong, use a globally fake root for now.
         self.checkout_root = self.fake_checkout_root
+        self.added_paths = set()
+
+    def add(self, destination_path, return_exit_code=False):
+        self.added_paths.add(destination_path)
+        if return_exit_code:
+            return 0
 
     def changed_files(self, git_commit=None):
         return ["MockFile1"]
@@ -483,16 +489,18 @@ class MockSCM(Mock):
                 "https://bugs.example.org/show_bug.cgi?id=75\n")
         raise Exception("Bogus commit_id in commit_message_for_local_commit.")
 
+    def diff_for_file(self, path, log=None):
+        return path + '-diff'
+
     def diff_for_revision(self, revision):
         return "DiffForRevision%s\n" \
                "http://bugs.webkit.org/show_bug.cgi?id=12345" % revision
 
+    def show_head(self, path):
+        return path
+
     def svn_revision_from_commit_text(self, commit_text):
         return "49824"
-
-    def add(self, destination_path, return_exit_code=False):
-        if return_exit_code:
-            return 0
 
 
 class MockDEPS(object):

@@ -32,10 +32,14 @@
 import unittest
 
 from webkitpy.tool import mocktool
+from webkitpy.common.system import urlfetcher_mock
+from webkitpy.common.system import filesystem_mock
+from webkitpy.common.system import zipfileset_mock
+from webkitpy.common.system import outputcapture
 from webkitpy.common.system.executive import Executive, ScriptError
 
-import port
-import rebaseline_chromium_webkit_tests
+from webkitpy.layout_tests import port
+from webkitpy.layout_tests import rebaseline_chromium_webkit_tests
 
 
 class MockPort(object):
@@ -52,6 +56,57 @@ def get_mock_get(config_expectations):
     return mock_get
 
 
+ARCHIVE_URL = 'http://localhost/layout_test_results'
+
+
+def test_options():
+    return mocktool.MockOptions(configuration=None,
+                                backup=False,
+                                html_directory='/tmp',
+                                archive_url=ARCHIVE_URL,
+                                force_archive_url=None,
+                                webkit_canary=True,
+                                use_drt=False,
+                                target_platform='chromium',
+                                verbose=False,
+                                quiet=False,
+                                platforms='mac,win')
+
+
+def test_host_port_and_filesystem(options, expectations):
+    filesystem = port.unit_test_filesystem()
+    host_port_obj = port.get('test', options, filesystem=filesystem,
+                             user=mocktool.MockUser())
+
+    expectations_path = host_port_obj.path_to_test_expectations_file()
+    filesystem.write_text_file(expectations_path, expectations)
+    return (host_port_obj, filesystem)
+
+
+def test_url_fetcher(filesystem):
+    urls = {
+        ARCHIVE_URL + '/Webkit_Mac10_5/': '<a href="1/"><a href="2/">',
+        ARCHIVE_URL + '/Webkit_Win/': '<a href="1/">',
+    }
+    return urlfetcher_mock.make_fetcher_cls(urls)(filesystem)
+
+
+def test_zip_factory():
+    ziphashes = {
+        ARCHIVE_URL + '/Webkit_Mac10_5/2/layout-test-results.zip': {
+            'layout-test-results/failures/expected/image-actual.txt': 'new-image-txt',
+            'layout-test-results/failures/expected/image-actual.checksum': 'new-image-checksum',
+            'layout-test-results/failures/expected/image-actual.png': 'new-image-png',
+        },
+        ARCHIVE_URL + '/Webkit_Win/1/layout-test-results.zip': {
+            'layout-test-results/failures/expected/image-actual.txt': 'win-image-txt',
+            'layout-test-results/failures/expected/image-actual.checksum': 'win-image-checksum',
+            'layout-test-results/failures/expected/image-actual.png': 'win-image-png',
+        },
+    }
+    return zipfileset_mock.make_factory(ziphashes)
+
+
 class TestGetHostPortObject(unittest.TestCase):
     def assert_result(self, release_present, debug_present, valid_port_obj):
         # Tests whether we get a valid port object returned when we claim
@@ -59,9 +114,8 @@ class TestGetHostPortObject(unittest.TestCase):
         port.get = get_mock_get({'Release': release_present,
                                  'Debug': debug_present})
         options = mocktool.MockOptions(configuration=None,
-                                       html_directory=None)
-        port_obj = rebaseline_chromium_webkit_tests.get_host_port_object(
-            options)
+                                       html_directory='/tmp')
+        port_obj = rebaseline_chromium_webkit_tests.get_host_port_object(options)
         if valid_port_obj:
             self.assertNotEqual(port_obj, None)
         else:
@@ -83,18 +137,7 @@ class TestGetHostPortObject(unittest.TestCase):
         port.get = old_get
 
 
-class TestRebaseliner(unittest.TestCase):
-    def make_rebaseliner(self):
-        options = mocktool.MockOptions(configuration=None,
-                                       html_directory=None)
-        filesystem = port.unit_test_filesystem()
-        host_port_obj = port.get('test', options, filesystem=filesystem)
-        target_options = options
-        target_port_obj = port.get('test', target_options, filesystem=filesystem)
-        platform = target_port_obj.test_platform_name()
-        return rebaseline_chromium_webkit_tests.Rebaseliner(
-            host_port_obj, target_port_obj, platform, options)
-
+class TestOptions(unittest.TestCase):
     def test_parse_options(self):
         (options, target_options) = rebaseline_chromium_webkit_tests.parse_options([])
         self.assertTrue(target_options.chromium)
@@ -104,39 +147,106 @@ class TestRebaseliner(unittest.TestCase):
         self.assertFalse(hasattr(target_options, 'chromium'))
         self.assertEqual(options.tolerance, 0)
 
+
+class TestRebaseliner(unittest.TestCase):
+    def make_rebaseliner(self, expectations):
+        options = test_options()
+        host_port_obj, filesystem = test_host_port_and_filesystem(options, expectations)
+
+        target_options = options
+        target_port_obj = port.get('test', target_options,
+                                   filesystem=filesystem)
+        target_port_obj._expectations = expectations
+        platform = target_port_obj.test_platform_name()
+
+        url_fetcher = test_url_fetcher(filesystem)
+        zip_factory = test_zip_factory()
+        mock_scm = mocktool.MockSCM()
+        rebaseliner = rebaseline_chromium_webkit_tests.Rebaseliner(host_port_obj,
+            target_port_obj, platform, options, url_fetcher, zip_factory, mock_scm)
+        return rebaseliner, filesystem
+
     def test_noop(self):
         # this method tests that was can at least instantiate an object, even
         # if there is nothing to do.
-        rebaseliner = self.make_rebaseliner()
-        self.assertNotEqual(rebaseliner, None)
+        rebaseliner, filesystem = self.make_rebaseliner("")
+        rebaseliner.run(False)
+        self.assertEqual(len(filesystem.written_files), 1)
+
+    def test_one_platform(self):
+        rebaseliner, filesystem = self.make_rebaseliner(
+            "BUGX REBASELINE MAC : failures/expected/image.html = IMAGE")
+        rebaseliner.run(False)
+        # We expect to have written 12 files over the course of this rebaseline:
+        # *) 3 files in /__im_tmp for the extracted archive members
+        # *) 3 new baselines under '/test.checkout/LayoutTests'
+        # *) 1 updated test_expectations file
+        # *) 4 files in /tmp for the new and old baselines in the result file
+        # *) 1 text diff in /tmp for the result file
+        self.assertEqual(len(filesystem.written_files), 12)
+        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test/test_expectations.txt'], '')
+        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image-expected.checksum'], 'new-image-checksum')
+        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image-expected.png'], 'new-image-png')
+        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image-expected.txt'], 'new-image-txt')
+
+    def test_all_platforms(self):
+        rebaseliner, filesystem = self.make_rebaseliner(
+            "BUGX REBASELINE : failures/expected/image.html = IMAGE")
+        rebaseliner.run(False)
+        # See comment in test_one_platform for an explanation of the 12 written tests.
+        # Note that even though the rebaseline is marked for all platforms, each
+        # rebaseliner only ever does one.
+        self.assertEqual(len(filesystem.written_files), 12)
+        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test/test_expectations.txt'], 'BUGX REBASELINE WIN : failures/expected/image.html = IMAGE\n')
+        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image-expected.checksum'], 'new-image-checksum')
+        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image-expected.png'], 'new-image-png')
+        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image-expected.txt'], 'new-image-txt')
 
     def test_diff_baselines_txt(self):
-        rebaseliner = self.make_rebaseliner()
-        output = rebaseliner._port.expected_text(
-            rebaseliner._port._filesystem.join(rebaseliner._port.layout_tests_dir(),
-                                               'passes/text.html'))
+        rebaseliner, filesystem = self.make_rebaseliner("")
+        port = rebaseliner._port
+        output = port.expected_text(
+            port._filesystem.join(port.layout_tests_dir(), 'passes/text.html'))
         self.assertFalse(rebaseliner._diff_baselines(output, output,
                                                      is_image=False))
 
     def test_diff_baselines_png(self):
-        rebaseliner = self.make_rebaseliner()
-        image = rebaseliner._port.expected_image(
-            rebaseliner._port._filesystem.join(rebaseliner._port.layout_tests_dir(),
-                                               'passes/image.html'))
+        rebaseliner, filesystem = self.make_rebaseliner('')
+        port = rebaseliner._port
+        image = port.expected_image(
+            port._filesystem.join(port.layout_tests_dir(), 'passes/image.html'))
         self.assertFalse(rebaseliner._diff_baselines(image, image,
                                                      is_image=True))
+
+
+class TestRealMain(unittest.TestCase):
+    def test_all_platforms(self):
+        expectations = "BUGX REBASELINE : failures/expected/image.html = IMAGE"
+
+        options = test_options()
+
+        host_port_obj, filesystem = test_host_port_and_filesystem(options, expectations)
+        url_fetcher = test_url_fetcher(filesystem)
+        zip_factory = test_zip_factory()
+        mock_scm = mocktool.MockSCM()
+        oc = outputcapture.OutputCapture()
+        oc.capture_output()
+        rebaseline_chromium_webkit_tests.real_main(options, options, host_port_obj,
+            host_port_obj, url_fetcher, zip_factory, mock_scm)
+        oc.restore_output()
+
+        # We expect to have written 24 files over the course of this rebaseline:
+        # 2 * test_all_platforms, above
+        self.assertEqual(len(filesystem.written_files), 24)
+        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test/test_expectations.txt'], '')
 
 
 class TestHtmlGenerator(unittest.TestCase):
     def make_generator(self, files, tests):
         options = mocktool.MockOptions(configuration=None, html_directory='/tmp')
         host_port = port.get('test', options, filesystem=port.unit_test_filesystem(files))
-        generator = rebaseline_chromium_webkit_tests.HtmlGenerator(
-            host_port,
-            target_port=None,
-            options=options,
-            platforms=['mac'],
-            rebaselining_tests=tests)
+        generator = rebaseline_chromium_webkit_tests.HtmlGenerator(host_port,
+            target_port=None, options=options, platforms=['mac'], rebaselining_tests=tests)
         return generator, host_port
 
     def test_generate_baseline_links(self):

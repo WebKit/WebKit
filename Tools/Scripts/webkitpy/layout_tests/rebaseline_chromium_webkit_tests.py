@@ -47,18 +47,17 @@ import optparse
 import re
 import sys
 import time
-import urllib
-import zipfile
 
 from webkitpy.common.checkout import scm
+from webkitpy.common.system import zipfileset
 from webkitpy.common.system import path
+from webkitpy.common.system import urlfetcher
 from webkitpy.common.system.executive import ScriptError
 
-import port
-from layout_package import test_expectations
+from webkitpy.layout_tests import port
+from webkitpy.layout_tests.layout_package import test_expectations
 
-_log = logging.getLogger("webkitpy.layout_tests."
-                         "rebaseline_chromium_webkit_tests")
+_log = logging.getLogger(__name__)
 
 BASELINE_SUFFIXES = ['.txt', '.png', '.checksum']
 REBASELINE_PLATFORM_ORDER = ['mac', 'win', 'win-xp', 'win-vista', 'linux']
@@ -142,7 +141,7 @@ class Rebaseliner(object):
 
     REVISION_REGEX = r'<a href=\"(\d+)/\">'
 
-    def __init__(self, running_port, target_port, platform, options):
+    def __init__(self, running_port, target_port, platform, options, url_fetcher, zip_factory, scm):
         """
         Args:
             running_port: the Port the script is running on.
@@ -150,14 +149,19 @@ class Rebaseliner(object):
                 configuration information like the test_expectations.txt
                 file location and the list of test platforms.
             platform: the test platform to rebaseline
-            options: the command-line options object."""
+            options: the command-line options object.
+            url_fetcher: object that can fetch objects from URLs
+            zip_factory: optional object that can fetch zip files from URLs
+            scm: scm object for adding new baselines
+        """
         self._platform = platform
         self._options = options
         self._port = running_port
         self._filesystem = running_port._filesystem
         self._target_port = target_port
         self._rebaseline_port = port.get(
-            self._target_port.test_platform_name_to_name(platform), options)
+            self._target_port.test_platform_name_to_name(platform), options,
+            filesystem=self._filesystem)
         self._rebaselining_tests = []
         self._rebaselined_tests = []
 
@@ -173,7 +177,9 @@ class Rebaseliner(object):
                                                self._platform,
                                                False,
                                                False)
-        self._scm = scm.default_scm()
+        self._url_fetcher = url_fetcher
+        self._zip_factory = zip_factory
+        self._scm = scm
 
     def run(self, backup):
         """Run rebaseline process."""
@@ -192,7 +198,10 @@ class Rebaseliner(object):
         log_dashed_string('Extracting and adding new baselines',
                           self._platform)
         if not self._extract_and_add_new_baselines(archive_file):
+            archive_file.close()
             return False
+
+        archive_file.close()
 
         log_dashed_string('Updating rebaselined tests in file',
                           self._platform)
@@ -254,9 +263,7 @@ class Rebaseliner(object):
 
         _log.debug('Url to retrieve revision: "%s"', url)
 
-        f = urllib.urlopen(url)
-        content = f.read()
-        f.close()
+        content = self._url_fetcher.fetch(url)
 
         revisions = re.findall(self.REVISION_REGEX, content)
         if not revisions:
@@ -313,33 +320,24 @@ class Rebaseliner(object):
         return archive_url
 
     def _download_buildbot_archive(self):
-        """Download layout test archive file from buildbot.
-
-        Returns:
-          True if download succeeded or
-          False otherwise.
-        """
-
+        """Download layout test archive file from buildbot and return a handle to it."""
         url = self._get_archive_url()
         if url is None:
             return None
 
-        fn = urllib.urlretrieve(url)[0]
-        _log.info('Archive downloaded and saved to file: "%s"', fn)
-        return fn
+        archive_file = zipfileset.ZipFileSet(url, filesystem=self._filesystem,
+                                         zip_factory=self._zip_factory)
+        _log.info('Archive downloaded')
+        return archive_file
 
-    def _extract_and_add_new_baselines(self, archive_file):
-        """Extract new baselines from archive and add them to SVN repository.
-
-        Args:
-          archive_file: full path to the archive file.
+    def _extract_and_add_new_baselines(self, zip_file):
+        """Extract new baselines from the zip file and add them to SVN repository.
 
         Returns:
           List of tests that have been rebaselined or
           None on failure.
         """
 
-        zip_file = zipfile.ZipFile(archive_file, 'r')
         zip_namelist = zip_file.namelist()
 
         _log.debug('zip file namelist:')
@@ -419,7 +417,6 @@ class Rebaseliner(object):
             test_no += 1
 
         zip_file.close()
-        self._filesystem.remove(archive_file)
 
         return self._rebaselined_tests
 
@@ -857,18 +854,9 @@ def parse_options(args):
     return (options, target_options)
 
 
-def main():
-    """Main function to produce new baselines."""
-
-    (options, target_options) = parse_options(sys.argv[1:])
-
-    # We need to create three different Port objects over the life of this
-    # script. |target_port_obj| is used to determine configuration information:
-    # location of the expectations file, names of ports to rebaseline, etc.
-    # |port_obj| is used for runtime functionality like actually diffing
-    # Then we create a rebaselining port to actual find and manage the
-    # baselines.
-    target_port_obj = port.get(None, target_options)
+def main(args):
+    """Bootstrap function that sets up the object references we need and calls real_main()."""
+    options, target_options = parse_options(args)
 
     # Set up our logging format.
     log_level = logging.INFO
@@ -879,20 +867,53 @@ def main():
                                 '%(levelname)s %(message)s'),
                         datefmt='%y%m%d %H:%M:%S')
 
+    target_port_obj = port.get(None, target_options)
     host_port_obj = get_host_port_object(options)
-    if not host_port_obj:
-        sys.exit(1)
+    if not host_port_obj or not target_port_obj:
+        return 1
 
+    url_fetcher = urlfetcher.UrlFetcher(host_port_obj._filesystem)
+    scm_obj = scm.default_scm()
+
+    # We use the default zip factory method.
+    zip_factory = None
+
+    return real_main(options, target_options, host_port_obj, target_port_obj, url_fetcher,
+                     zip_factory, scm_obj)
+
+
+def real_main(options, target_options, host_port_obj, target_port_obj, url_fetcher,
+              zip_factory, scm_obj):
+    """Main function to produce new baselines. The Rebaseliner object uses two
+    different Port objects - one to represent the machine the object is running
+    on, and one to represent the port whose expectations are being updated.
+    E.g., you can run the script on a mac and rebaseline the 'win' port.
+
+    Args:
+        options: command-line argument used for the host_port_obj (see below)
+        target_options: command_line argument used for the target_port_obj.
+            This object may have slightly different values than |options|.
+        host_port_obj: a Port object for the platform the script is running
+            on. This is used to produce image and text diffs, mostly, and
+            is usually acquired from get_host_port_obj().
+        target_port_obj: a Port obj representing the port getting rebaselined.
+            This is used to find the expectations file, the baseline paths,
+            etc.
+        url_fetcher: object used to download the build archives from the bots
+        zip_factory: factory function used to create zip file objects for
+            the archives.
+        scm_obj: object used to add new baselines to the source control system.
+    """
     # Verify 'platforms' option is valid.
     if not options.platforms:
         _log.error('Invalid "platforms" option. --platforms must be '
                    'specified in order to rebaseline.')
-        sys.exit(1)
+        return 1
     platforms = [p.strip().lower() for p in options.platforms.split(',')]
     for platform in platforms:
         if not platform in REBASELINE_PLATFORM_ORDER:
             _log.error('Invalid platform: "%s"' % (platform))
-            sys.exit(1)
+            return 1
 
     # Adjust the platform order so rebaseline tool is running at the order of
     # 'mac', 'win' and 'linux'. This is in same order with layout test baseline
@@ -909,7 +930,8 @@ def main():
     backup = options.backup
     for platform in rebaseline_platforms:
         rebaseliner = Rebaseliner(host_port_obj, target_port_obj,
-                                  platform, options)
+                                  platform, options, url_fetcher, zip_factory,
+                                  scm_obj)
 
         _log.info('')
         log_dashed_string('Rebaseline started', platform)
@@ -934,7 +956,8 @@ def main():
         html_generator.show_html()
     log_dashed_string('Rebaselining result comparison done', None)
 
-    sys.exit(0)
+    return 0
+
 
 if '__main__' == __name__:
-    main()
+    sys.exit(main(sys.argv[1:]))
