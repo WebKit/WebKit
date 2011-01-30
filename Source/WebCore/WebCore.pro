@@ -2215,6 +2215,7 @@ HEADERS += \
     platform/sql/SQLValue.h \
     platform/text/Base64.h \
     platform/text/BidiContext.h \
+    platform/text/CharacterNames.h \
     platform/text/Hyphenation.h \
     platform/text/qt/TextCodecQt.h \
     platform/text/RegularExpression.h \
