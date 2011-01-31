@@ -34,6 +34,7 @@ var imgURLs = [
   'resources/zero-alpha.png',
   'resources/3x3.png',
   'resources/blue-1x1.jpg',
+  'resources/red-indexed.png',
   'resources/green-2x2-16bit.png',
   'resources/small-square-with-colorspin-profile.jpg',
   'resources/small-square-with-colorspin-profile.png',
@@ -43,10 +44,10 @@ var imgURLs = [
   'resources/small-square-with-smpte-c-profile.png',
   'resources/small-square-with-srgb-iec61966-2.1-profile.png'];
 
+
 wtu.loadImagesAsync(imgURLs, runTests);
 
 function runTests(imgs) {
-
   var loc = gl.getUniformLocation(program, "tex");
   gl.uniform1i(loc, 0);
 
@@ -202,44 +203,72 @@ function runTests(imgs) {
 
   debug("");
   debug("check pixels are UN pre-multiplied");
-  var canvas2d = document.createElement("canvas");
-  canvas2d.width = 256;
-  canvas2d.height = 1;
-  //canvas2d.style.height = "40px";
-  //var description = document.getElementById("description");
-  //description.appendChild(canvas2d);
-  var ctx = canvas2d.getContext("2d");
-  ctx.fillRect(0, 0, 256, 1);
-  ctx.drawImage(imgs['resources/gray-ramp-256-with-128-alpha.png'], 0, 0);
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, canvas2d);
-  glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors from setup.");
-  wtu.drawQuad(gl);
-  var ref = new Uint8Array(width * height * 4);
-  gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, ref);
-  var lt128Count = [0, 0, 0];
-  var ge128Count = [0, 0, 0];
-  for (var jj = 0; jj < width; ++jj) {
-    var off = jj * 4;
-    for (var cc = 0; cc < 3; ++cc) {
-      if (buf[off + cc] < 128) {
-        ++lt128Count[cc];
-      } else {
-        ++ge128Count[cc];
+  for (var ii = 0; ii < 2; ++ii) {
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    if (ii == 0) {
+      var canvas2d = document.createElement("canvas");
+      canvas2d.width = 256;
+      canvas2d.height = 1;
+      var ctx = canvas2d.getContext("2d");
+      ctx.drawImage(imgs['resources/gray-ramp-256-with-128-alpha.png'], 0, 0);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, canvas2d);
+    } else {
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE,
+                    imgs['resources/gray-ramp-256-with-128-alpha.png']);
+    }
+    glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors from setup.");
+    wtu.drawQuad(gl);
+    var buf = new Uint8Array(width * height * 4);
+    gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+    var lt128Count = [0, 0, 0];
+    var ge128Count = [0, 0, 0];
+    for (var jj = 0; jj < width; ++jj) {
+      var off = jj * 4;
+      for (var cc = 0; cc < 3; ++cc) {
+        if (buf[off + cc] < 128) {
+          ++lt128Count[cc];
+        } else {
+          ++ge128Count[cc];
+        }
       }
     }
+    // Not sure the exact count here because gamma does effect drawing into the
+    // canvas but it should be close to 50% so I'll pass 45%
+    for (var jj = 0; jj < 3; ++jj) {
+      assertMsg(ge128Count[jj] > 256 * 0.45,
+                "Half the pixels in channel " + jj +
+                " should be >= 128,128,128. found " +
+                ((ge128Count[jj] / 256) * 100).toFixed() + "%");
+      assertMsg(lt128Count[jj] > 256 * 0.45,
+                "Half the pixels in channel " + jj +
+                " should be < 128,128,128. found " +
+                ((lt128Count[jj] / 256) * 100).toFixed() + "%");
+    }
   }
-  // Not sure the exact count here because gamma does effect drawing into the
-  // canvas but it should be close to 50% so I'll pass 45%
-  for (var jj = 0; jj < 3; ++jj) {
-    assertMsg(ge128Count[jj] > 256 * 0.45,
-              "Half the pixels in channel " + jj +
-              " should be >= 128,128,128. found " +
-              ((ge128Count[jj] / 256) * 100).toFixed() + "%");
-    assertMsg(lt128Count[jj] > 256 * 0.45,
-              "Half the pixels in channel " + jj +
-              " should be < 128,128,128. found " +
-              ((lt128Count[jj] / 256) * 100).toFixed() + "%");
-  }
+
+  debug("");
+  debug("check canvas pixels are UN pre-multiplied");
+  var canvas2d = document.createElement("canvas");
+  canvas2d.width = 1;
+  canvas2d.height = 1;
+  var ctx = canvas2d.getContext("2d");
+  ctx.fillStyle ="rgba(255,255,255,0.5)";
+  ctx.fillRect(0, 0, 256, 1);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas2d);
+  wtu.drawQuad(gl);
+  gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+  glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors from setup.");
+  checkPixelRange(buf, 0, 0, [255, 255, 255, 127], 4);
+
+  debug("");
+  debug("check canvas pixels are pre-multiplied");
+  gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas2d);
+  wtu.drawQuad(gl);
+  gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+  glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors from setup.");
+  checkPixelRange(buf, 0, 0, [127, 127, 127, 127], 4);
+
 
   debug("");
   debug("check pixels are pre-multiplied");
@@ -349,6 +378,16 @@ function runTests(imgs) {
     }
     assertMsg(same, "uploading PNGs with same data but various ICC profiles should generate the same results");
   }
+
+  debug("");
+  debug("check uploading of indexed PNG images");
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE,
+                imgs['resources/red-indexed.png']);
+  glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors from setup");
+  wtu.drawQuad(gl);
+  gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+  // The image should be red.
+  checkPixelRange(buf, middle, center, [ 255, 0, 0, 255 ], 10);
 
   debug("");
   successfullyParsed = true;

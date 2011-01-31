@@ -1,3 +1,18 @@
+2011-01-28  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Chris Marrin.
+
+        WebGL shows PNG Textures with indexed colors too dark
+        https://bugs.webkit.org/show_bug.cgi?id=47477
+
+        Added test case for upload of indexed PNG images to
+        gl-teximage.html in the Khronos WebGL conformance tests.
+        Synchronized this test with the Khronos repository.
+
+        * fast/canvas/webgl/gl-teximage-expected.txt:
+        * fast/canvas/webgl/gl-teximage.html:
+        * fast/canvas/webgl/resources/red-indexed.png: Added.
+
 2011-01-23  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Eric Seidel.

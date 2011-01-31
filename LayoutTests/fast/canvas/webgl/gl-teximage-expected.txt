@@ -48,12 +48,27 @@ PASS pixels should be same regardless of gamma settings.
 
 check pixels are UN pre-multiplied
 PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS Half the pixels in channel 0 should be >= 128,128,128. found 49%
+PASS Half the pixels in channel 0 should be < 128,128,128. found 51%
+PASS Half the pixels in channel 1 should be >= 128,128,128. found 49%
+PASS Half the pixels in channel 1 should be < 128,128,128. found 51%
+PASS Half the pixels in channel 2 should be >= 128,128,128. found 49%
+PASS Half the pixels in channel 2 should be < 128,128,128. found 51%
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
 PASS Half the pixels in channel 0 should be >= 128,128,128. found 50%
 PASS Half the pixels in channel 0 should be < 128,128,128. found 50%
 PASS Half the pixels in channel 1 should be >= 128,128,128. found 50%
 PASS Half the pixels in channel 1 should be < 128,128,128. found 50%
 PASS Half the pixels in channel 2 should be >= 128,128,128. found 50%
 PASS Half the pixels in channel 2 should be < 128,128,128. found 50%
+
+check canvas pixels are UN pre-multiplied
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS pixel 0, 0 should be within 4 units of 255, 255, 255, 127 was 255, 255, 255, 127
+
+check canvas pixels are pre-multiplied
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS pixel 0, 0 should be within 4 units of 127, 127, 127, 127 was 127, 127, 127, 127
 
 check pixels are pre-multiplied
 PASS getError was expected value: NO_ERROR : Should be no errors from setup
@@ -101,6 +116,10 @@ PASS uploading PNGs with same data but various ICC profiles should generate the 
 PASS getError was expected value: NO_ERROR : Should be no errors from setup
 PASS getError was expected value: NO_ERROR : Should be no errors
 PASS uploading PNGs with same data but various ICC profiles should generate the same results
+
+check uploading of indexed PNG images
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS pixel 128, 8 should be within 10 units of 255, 0, 0, 255 was 253, 0, 0, 255
 
 PASS successfullyParsed is true
 

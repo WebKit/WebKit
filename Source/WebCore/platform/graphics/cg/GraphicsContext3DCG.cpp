@@ -116,6 +116,35 @@ bool GraphicsContext3D::getImageData(Image* image,
     size_t height = CGImageGetHeight(cgImage);
     if (!width || !height)
         return false;
+
+    // See whether the image is using an indexed color space, and if
+    // so, re-render it into an RGB color space. The image re-packing
+    // code requires color data, not color table indices, for the
+    // image data.
+    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGImageGetColorSpace(cgImage));
+    CGColorSpaceModel model = CGColorSpaceGetModel(colorSpace.get());
+    RetainPtr<CGContextRef> bitmapContext;
+    if (model == kCGColorSpaceModelIndexed) {
+        RetainPtr<CGColorSpaceRef> baseColorSpace(CGColorSpaceGetBaseColorSpace(colorSpace.get()));
+        // FIXME: we should probably manually convert the image by indexing into
+        // the color table, which would allow us to avoid premultiplying the
+        // alpha channel. Creation of a bitmap context with an alpha channel
+        // doesn't seem to work unless it's premultiplied.
+        bitmapContext.adoptCF(CGBitmapContextCreate(0, width, height, 8, width * 4,
+                                                    deviceRGBColorSpaceRef(),
+                                                    kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
+        if (!bitmapContext)
+            return false;
+
+        CGContextSetBlendMode(bitmapContext.get(), kCGBlendModeCopy);
+        CGContextSetInterpolationQuality(bitmapContext.get(), kCGInterpolationNone);
+        CGContextDrawImage(bitmapContext.get(), CGRectMake(0, 0, width, height), cgImage);
+
+        // Now discard the original CG image and replace it with a copy from the bitmap context.
+        decodedImage.adoptCF(CGBitmapContextCreateImage(bitmapContext.get()));
+        cgImage = decodedImage.get();
+    }
+
     size_t bitsPerComponent = CGImageGetBitsPerComponent(cgImage);
     size_t bitsPerPixel = CGImageGetBitsPerPixel(cgImage);
     if (bitsPerComponent != 8 && bitsPerComponent != 16)
@@ -168,10 +197,11 @@ bool GraphicsContext3D::getImageData(Image* image,
     AlphaFormat alphaFormat = AlphaFormatNone;
     switch (CGImageGetAlphaInfo(cgImage)) {
     case kCGImageAlphaPremultipliedFirst:
-        // This path is only accessible for MacOS earlier than 10.6.4.
         // This is a special case for texImage2D with HTMLCanvasElement input,
-        // in which case image->data() should be null.
-        ASSERT(!image->data());
+        // in which case image->data() should be null, or indexed color models,
+        // where we need premultiplied alpha to create the bitmap context
+        // successfully.
+        ASSERT(!image->data() || model == kCGColorSpaceModelIndexed);
         if (!premultiplyAlpha)
             neededAlphaOp = AlphaDoUnmultiply;
         alphaFormat = AlphaFormatFirst;

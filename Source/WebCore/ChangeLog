@@ -1,3 +1,17 @@
+2011-01-28  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Chris Marrin.
+
+        WebGL shows PNG Textures with indexed colors too dark
+        https://bugs.webkit.org/show_bug.cgi?id=47477
+
+        Properly handle indexed PNG images by re-rendering them as RGBA
+        images before upload. Verified with this layout test and the test
+        cases from bugs 47477 and 53269.
+
+        * platform/graphics/cg/GraphicsContext3DCG.cpp:
+        (WebCore::GraphicsContext3D::getImageData):
+
 2011-01-27  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.
