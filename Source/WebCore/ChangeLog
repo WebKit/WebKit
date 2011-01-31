@@ -1,3 +1,16 @@
+2011-01-31  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by James Robinson.
+
+        REGRESSION(r76951): Appearance of media controls changed slightly on Qt/Chromium ports
+        https://bugs.webkit.org/show_bug.cgi?id=53314
+
+        Fixes media/controls-strict.html on Chromium.
+
+        * css/mediaControlsChromium.css:
+        (audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline):
+            Added proper box-sizing to avoid differences between strict/quirks mode.
+
 2011-01-31  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
