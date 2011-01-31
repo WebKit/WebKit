@@ -198,10 +198,6 @@ public:
 #endif
 
     FontSelector* fontSelector() const;
-    bool loadingCustomFonts() const
-    {
-        return m_fontList && m_fontList->loadingCustomFonts();
-    }
 
     static bool treatAsSpace(UChar c) { return c == ' ' || c == '\t' || c == '\n' || c == 0x00A0; }
     static bool treatAsZeroWidthSpace(UChar c) { return c < 0x20 || (c >= 0x7F && c < 0xA0) || (c >= 0x200c && c <= 0x200f) || (c >= 0x202a && c <= 0x202e) || c == 0xFFFC; }
@@ -225,6 +221,11 @@ public:
 #endif
 
 private:
+    bool loadingCustomFonts() const
+    {
+        return m_fontList && m_fontList->loadingCustomFonts();
+    }
+
     FontDescription m_fontDescription;
     mutable RefPtr<FontFallbackList> m_fontList;
     short m_letterSpacing;
