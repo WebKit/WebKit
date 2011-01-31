@@ -32,7 +32,6 @@
 #include "WebPreferences.h"
 
 #pragma warning(push, 0)
-#include <WebCore/CharacterNames.h>
 #include <WebCore/Font.h>
 #include <WebCore/FontDescription.h>
 #include <WebCore/FontSelector.h>
@@ -40,6 +39,7 @@
 #include <WebCore/PlatformString.h>
 #include <WebCore/StringTruncator.h>
 #include <WebCore/WebCoreTextRenderer.h>
+#include <wtf/unicode/CharacterNames.h>
 
 #include <CoreGraphics/CoreGraphics.h>
 #pragma warning(pop)
@@ -105,7 +105,7 @@ void WebDrawText(WebTextRenderInfo* info)
         GraphicsContext context(info->cgContext);
         String drawString(info->text, info->length);
         if (info->drawAsPassword)
-            drawString = drawString.impl()->secure(WebCore::bullet);
+            drawString = drawString.impl()->secure(WTF::Unicode::bullet);
 
         context.save();
 

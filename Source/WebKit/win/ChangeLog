@@ -1,3 +1,12 @@
+2011-01-31  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Fix the clean Windows build.
+
+        * WebKitGraphics.cpp:
+        (WebDrawText):
+
 2011-01-28  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Downloads in WK2 on Windows should write resume data to bundle
