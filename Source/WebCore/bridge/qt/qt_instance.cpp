@@ -147,12 +147,12 @@ void QtInstance::put(JSObject* object, ExecState* exec, const Identifier& proper
 
 void QtInstance::removeCachedMethod(JSObject* method)
 {
-    if (m_defaultMethod == method)
+    if (m_defaultMethod.get() == method)
         m_defaultMethod.clear();
 
-    for (QHash<QByteArray, JSObject*>::Iterator it = m_methods.begin(),
+    for (QHash<QByteArray, DeprecatedPtr<JSObject> >::Iterator it = m_methods.begin(),
         end = m_methods.end(); it != end; ++it)
-        if (it.value() == method) {
+        if (it.value().get() == method) {
             m_methods.erase(it);
             return;
         }
@@ -188,7 +188,7 @@ void QtInstance::markAggregate(MarkStack& markStack)
 {
     if (m_defaultMethod)
         markStack.append(&m_defaultMethod);
-    foreach (DeprecatedPtr<JSObject>& val, m_methods.values()) {
+    foreach (DeprecatedPtr<JSObject> val, m_methods.values()) {
         if (val)
             markStack.append(&val);
     }

@@ -1,3 +1,11 @@
+2011-01-31  Andreas Kling  <kling@webkit.org>
+
+        Unbreak Qt build after r77151.
+
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtInstance::removeCachedMethod):
+        (JSC::Bindings::QtInstance::markAggregate):
+
 2011-01-31  takano takumi  <takano@apple.com>
 
         Reviewed by Dave Hyatt.
