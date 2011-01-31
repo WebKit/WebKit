@@ -1585,16 +1585,17 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
     RoundedIntRect border(tx, ty, w, h);
     bool hasBorderRadius = s->hasBorderRadius();
     bool isHorizontal = s->isHorizontalWritingMode();
-    if (hasBorderRadius && (includeLogicalLeftEdge || includeLogicalRightEdge)) {
-        RoundedIntRect::Radii radii = ((shadowStyle == Inset) ? s->getRoundedInnerBorderWithBorderWidths(border.rect(), borderTop(), borderBottom(), borderLeft(), borderRight()) : s->getRoundedBorderFor(border.rect())).radii();
-        border.includeLogicalEdges(radii, isHorizontal, includeLogicalLeftEdge, includeLogicalRightEdge);
-    }
-   
+
     if (shadowStyle == Inset)
         border.setRect(IntRect(border.rect().x() + (includeLogicalLeftEdge || !isHorizontal ? borderLeft() : 0),
                                border.rect().y() + (includeLogicalLeftEdge || isHorizontal ? borderTop() : 0),
                                border.rect().width() - ((includeLogicalLeftEdge || !isHorizontal) ? borderLeft() : 0) - ((includeLogicalRightEdge || !isHorizontal) ? borderRight() : 0),
                                border.rect().height() - ((includeLogicalLeftEdge || isHorizontal) ? borderTop() : 0) - ((includeLogicalRightEdge || isHorizontal) ? borderBottom() : 0)));
+
+    if (hasBorderRadius && (includeLogicalLeftEdge || includeLogicalRightEdge)) {
+        RoundedIntRect::Radii radii = ((shadowStyle == Inset) ? s->getRoundedInnerBorderWithBorderWidths(border.rect(), borderTop(), borderBottom(), borderLeft(), borderRight()) : s->getRoundedBorderFor(border.rect())).radii();
+        border.includeLogicalEdges(radii, isHorizontal, includeLogicalLeftEdge, includeLogicalRightEdge);
+    }
 
     bool hasOpaqueBackground = s->visitedDependentColor(CSSPropertyBackgroundColor).isValid() && s->visitedDependentColor(CSSPropertyBackgroundColor).alpha() == 255;
     for (const ShadowData* shadow = s->boxShadow(); shadow; shadow = shadow->next()) {

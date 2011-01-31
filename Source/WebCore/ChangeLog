@@ -1,3 +1,25 @@
+2011-01-23  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION: Inset shadow with too large border radius misses rounded corner.
+        https://bugs.webkit.org/show_bug.cgi?id=52800
+
+        The refactoring on r76083 broke the invariant between border
+        IntRect and its radii because RoundedIntRect::setRect() is called
+        after getRoundedInnerBorderWithBorderWidths(), which enforces the
+        invariant. Th rounded-rect clipping code verifies the invariant,
+        and discard the invalid radii, that results broken paintings.
+        
+        This change moved setRect() before
+        getRoundedInnerBorderWithBorderWidths() not to modify the valid
+        RoundedIntRect value.
+        
+        Test: fast/box-shadow/inset-with-extraordinary-radii-and-border.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+
 2011-01-30  Simon Fraser  <simon.fraser@apple.com>
 
         Attempt to fix Windows build by adding ShadowBlur.cpp/h to the
