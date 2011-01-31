@@ -60,6 +60,8 @@ static const char* linksWithInlineImages = "<html><head><style>a.http:before {co
 
 static const char* listsOfItems = "<html><body><ul><li>text only</li><li><a href='foo'>link only</a></li><li>text and a <a href='bar'>link</a></li></ul><ol><li>text only</li><li><a href='foo'>link only</a></li><li>text and a <a href='bar'>link</a></li></ol></body></html>";
 
+static const char* textForCaretBrowsing = "<html><body><h1>A text header</h1><p>A paragraph <a href='http://foo.bar.baz/'>with a link</a> in the middle</p><ol><li>A list item</li></ol><select><option selected value='foo'>An option in a combo box</option></select></body></html>";
+
 static const char* textForSelections = "<html><body><p>A paragraph with plain text</p><p>A paragraph with <a href='http://webkit.org'>a link</a> in the middle</p></body></html>";
 
 static const char* textWithAttributes = "<html><head><style>.st1 {font-family: monospace; color:rgb(120,121,122);} .st2 {text-decoration:underline; background-color:rgb(80,81,82);}</style></head><body><p style=\"font-size:14; text-align:right;\">This is the <i>first</i><b> sentence of this text.</b></p><p class=\"st1\">This sentence should have an style applied <span class=\"st2\">and this part should have another one</span>.</p><p>x<sub>1</sub><sup>2</sup>=x<sub>2</sub><sup>3</sup></p><p style=\"text-align:center;\">This sentence is the <strike>last</strike> one.</p></body></html>";
@@ -225,6 +227,107 @@ static void runGetTextTests(AtkText* textObject)
     /* ATK_TEXT_BOUNDARY_LINE_END */
     testGetTextFunction(textObject, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_END,
                         0, "This is a test. This is the second sentence. And this the third.", 0, 64);
+}
+
+static void testWebkitAtkCaretOffsets()
+{
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    g_object_ref_sink(webView);
+    GtkAllocation allocation = { 0, 0, 800, 600 };
+    gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
+    webkit_web_view_load_string(webView, textForCaretBrowsing, 0, 0, 0);
+
+    /* Wait for the accessible objects to be created. */
+    waitForAccessibleObjects();
+
+    AtkObject* object = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    g_assert(object);
+
+    AtkObject* header = atk_object_ref_accessible_child(object, 0);
+    g_assert(ATK_IS_TEXT(header));
+    gchar* text = atk_text_get_text(ATK_TEXT(header), 0, -1);
+    g_assert_cmpstr(text, ==, "A text header");
+    g_free (text);
+
+    /* It should be possible to place the caret inside a header. */
+    gboolean result = atk_text_set_caret_offset(ATK_TEXT(header), 5);
+    g_assert_cmpint(result, ==, TRUE);
+    gint offset = atk_text_get_caret_offset(ATK_TEXT(header));
+    g_assert_cmpint(offset, ==, 5);
+
+    AtkObject* paragraph = atk_object_ref_accessible_child(object, 1);
+    g_assert(ATK_IS_TEXT(paragraph));
+    text = atk_text_get_text(ATK_TEXT(paragraph), 0, -1);
+    g_assert_cmpstr(text, ==, "A paragraph with a link in the middle");
+    g_free (text);
+
+    /* It should be possible to place the caret inside a paragraph and a link. */
+    result = atk_text_set_caret_offset(ATK_TEXT(paragraph), 5);
+    g_assert_cmpint(result, ==, TRUE);
+    offset = atk_text_get_caret_offset(ATK_TEXT(paragraph));
+    g_assert_cmpint(offset, ==, 5);
+
+    result = atk_text_set_caret_offset(ATK_TEXT(paragraph), 20);
+    g_assert_cmpint(result, ==, TRUE);
+    offset = atk_text_get_caret_offset(ATK_TEXT(paragraph));
+    g_assert_cmpint(offset, ==, 20);
+
+    result = atk_text_set_caret_offset(ATK_TEXT(paragraph), 30);
+    g_assert_cmpint(result, ==, TRUE);
+    offset = atk_text_get_caret_offset(ATK_TEXT(paragraph));
+    g_assert_cmpint(offset, ==, 30);
+
+    AtkObject* list = atk_object_ref_accessible_child(object, 2);
+    g_assert(ATK_OBJECT(list));
+    g_assert(atk_object_get_role(list) == ATK_ROLE_LIST);
+    g_assert_cmpint(atk_object_get_n_accessible_children(list), ==, 1);
+
+    AtkObject* listItem = atk_object_ref_accessible_child(list, 0);
+    g_assert(ATK_IS_TEXT(listItem));
+    text = atk_text_get_text(ATK_TEXT(listItem), 0, -1);
+    g_assert_cmpstr(text, ==, "1. A list item");
+    g_free (text);
+
+    /* It's not possible to place the caret inside an item's marker. */
+    result = atk_text_set_caret_offset(ATK_TEXT(listItem), 1);
+    g_assert_cmpint(result, ==, FALSE);
+
+    /* TODO: Check here that it's possible to set the caret in the
+       middle of the text for a list item when fixing bug 53388.
+       https://bugs.webkit.org/show_bug.cgi?id=53388 */
+
+    AtkObject* panel = atk_object_ref_accessible_child(object, 3);
+    g_assert(ATK_IS_OBJECT(panel));
+    g_assert(atk_object_get_role(panel) == ATK_ROLE_PANEL);
+
+    AtkObject* comboBox = atk_object_ref_accessible_child(panel, 0);
+    g_assert(ATK_IS_OBJECT(comboBox));
+    g_assert(atk_object_get_role(comboBox) == ATK_ROLE_COMBO_BOX);
+
+    AtkObject* menuPopup = atk_object_ref_accessible_child(comboBox, 0);
+    g_assert(ATK_IS_OBJECT(menuPopup));
+    g_assert(atk_object_get_role(menuPopup) == ATK_ROLE_MENU);
+
+    AtkObject* comboBoxOption = atk_object_ref_accessible_child(menuPopup, 0);
+    g_assert(ATK_IS_OBJECT(comboBoxOption));
+    g_assert(atk_object_get_role(comboBoxOption) == ATK_ROLE_MENU_ITEM);
+    g_assert(ATK_IS_TEXT(comboBoxOption));
+    text = atk_text_get_text(ATK_TEXT(comboBoxOption), 0, -1);
+    g_assert_cmpstr(text, ==, "An option in a combo box");
+
+    /* It's not possible to place the caret inside an option for a combobox. */
+    result = atk_text_set_caret_offset(ATK_TEXT(comboBoxOption), 1);
+    g_assert_cmpint(result, ==, FALSE);
+
+    g_object_unref(header);
+    g_object_unref(paragraph);
+    g_object_unref(list);
+    g_object_unref(listItem);
+    g_object_unref(panel);
+    g_object_unref(comboBox);
+    g_object_unref(menuPopup);
+    g_object_unref(comboBoxOption);
+    g_object_unref(webView);
 }
 
 static void testWebkitAtkCaretOffsetsAndExtranousWhiteSpaces()
@@ -1393,6 +1496,7 @@ int main(int argc, char** argv)
     gtk_test_init(&argc, &argv, 0);
 
     g_test_bug_base("https://bugs.webkit.org/");
+    g_test_add_func("/webkit/atk/caretOffsets", testWebkitAtkCaretOffsets);
     g_test_add_func("/webkit/atk/caretOffsetsAndExtranousWhiteSpaces", testWebkitAtkCaretOffsetsAndExtranousWhiteSpaces);
     g_test_add_func("/webkit/atk/comboBox", testWebkitAtkComboBox);
     g_test_add_func("/webkit/atk/getTextAtOffset", testWebkitAtkGetTextAtOffset);

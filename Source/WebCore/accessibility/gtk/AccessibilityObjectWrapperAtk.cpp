@@ -1699,10 +1699,26 @@ static gboolean webkit_accessible_text_set_caret_offset(AtkText* text, gint offs
 {
     AccessibilityObject* coreObject = core(text);
 
+    if (!coreObject->isAccessibilityRenderObject())
+        return FALSE;
+
+    RenderObject* renderer = toAccessibilityRenderObject(coreObject)->renderer();
+    if (renderer && renderer->isListItem()) {
+        String markerText = toRenderListItem(renderer)->markerTextWithSuffix();
+        int markerLength = g_utf8_strlen(markerText.utf8().data(), -1);
+        if (offset < markerLength)
+            return FALSE;
+
+        // We need to adjust the offset for list items.
+        offset -= markerLength;
+    }
+
     PlainTextRange textRange(offset, 0);
     VisiblePositionRange range = coreObject->visiblePositionRangeForRange(textRange);
-    coreObject->setSelectedVisiblePositionRange(range);
+    if (range.isNull())
+        return FALSE;
 
+    coreObject->setSelectedVisiblePositionRange(range);
     return TRUE;
 }
 

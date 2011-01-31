@@ -1,3 +1,16 @@
+2011-01-31  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] atk_text_set_caret_offset returns True even when it is unsuccessful
+        https://bugs.webkit.org/show_bug.cgi?id=53389
+
+        Return FALSE when not able to set the caret at the specified offset.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_text_set_caret_offset): Return FALSE when the
+        range created is NULL and adjust offset to account for list markers.
+
 2011-01-28  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

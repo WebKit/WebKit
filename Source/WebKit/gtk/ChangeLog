@@ -1,3 +1,16 @@
+2011-01-31  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] atk_text_set_caret_offset returns True even when it is unsuccessful
+        https://bugs.webkit.org/show_bug.cgi?id=53389
+
+        New unit test to check the fix for this bug.
+
+        * tests/testatk.c:
+        (testWebkitAtkCaretOffsets): New.
+        (main): Add new test.
+
 2011-01-29  Dan Winship  <danw@gnome.org>
 
         Reviewed by Xan Lopez.
