@@ -2883,7 +2883,8 @@ BUGCR66085 : media/video-play-pause-exception.html = PASS TIMEOUT
 BUGCR66085 WIN : media/video-source.html = PASS TIMEOUT
 BUGCR66085 LINUX : media/video-source.html = CRASH PASS TIMEOUT
 
-BUGCR66085 : media/video-source-type.html = PASS TIMEOUT
+BUGCR66085 WIN MAC : media/video-source-type.html = PASS TIMEOUT
+BUGCR66085 BUGCR71087 LINUX : media/video-source-type.html = CRASH PASS TIMEOUT
 BUGCR66085 LINUX : media/video-src-source.html = CRASH PASS TIMEOUT
 
 // Flaky failures
