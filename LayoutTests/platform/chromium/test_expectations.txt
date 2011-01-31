@@ -2789,6 +2789,7 @@ BUGCR57950 WIN : svg/batik/text/verticalText.svg = CRASH PASS
 BUGCR59665 MAC : media/video-aspect-ratio.html = CRASH TIMEOUT PASS
 BUGCR59665 MAC : media/video-play-empty-events.html = CRASH TIMEOUT PASS
 BUGCR59665 MAC : media/video-src-change.html = CRASH TEXT PASS
+BUGCR71087 LINUX : media/video-src-change.html = CRASH PASS
 BUGCR59665 MAC : media/video-src.html = CRASH TIMEOUT PASS
 BUGCR59665 MAC : media/video-controls-rendering.html = CRASH FAIL TIMEOUT PASS
 BUGCR59665 MAC : media/video-layer-crash.html = CRASH TIMEOUT PASS IMAGE
