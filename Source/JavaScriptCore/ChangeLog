@@ -1,3 +1,10 @@
+2011-01-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Build fix the build fix. I assume Oliver meant m_cell, not m_value.
+
+        * runtime/WriteBarrier.h:
+        (JSC::WriteBarrierBase::clear):
+
 2011-01-30  Oliver Hunt  <oliver@apple.com>
 
         More Qt build fixes
