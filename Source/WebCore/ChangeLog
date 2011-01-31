@@ -1,3 +1,16 @@
+2011-01-31  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Validation message bubble shouldn't inherit text-security style
+        https://bugs.webkit.org/show_bug.cgi?id=53457
+
+        No new tests because the validation message feature depends on timers
+        and is enabled only in Chromium port.
+
+        * css/html.css:
+        (::-webkit-validation-bubble): Reset -webkit-text-security.
+
 2011-01-31  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Geoffrey Garen.

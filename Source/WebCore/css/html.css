@@ -587,6 +587,7 @@ output {
     position: absolute;
     opacity: 0.9;
     line-height: 0;
+    -webkit-text-security: none;
     -webkit-transition: opacity 05.5s ease;
 }
 
