@@ -142,6 +142,18 @@ void GraphicsContext::setShadow(const FloatSize& offset, float blur, const Color
     setPlatformShadow(offset, blur, color, colorSpace);
 }
 
+void GraphicsContext::setLegacyShadow(const FloatSize& offset, float blur, const Color& color, ColorSpace colorSpace)
+{
+    m_state.shadowOffset = offset;
+    m_state.shadowBlur = blur;
+    m_state.shadowColor = color;
+    m_state.shadowColorSpace = colorSpace;
+#if PLATFORM(CG)
+    m_state.shadowsUseLegacyRadius = true;
+#endif
+    setPlatformShadow(offset, blur, color, colorSpace);
+}
+
 void GraphicsContext::clearShadow()
 {
     m_state.shadowOffset = FloatSize();

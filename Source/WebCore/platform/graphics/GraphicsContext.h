@@ -168,6 +168,11 @@ namespace WebCore {
             , shouldSmoothFonts(true)
             , paintingDisabled(false)
             , shadowsIgnoreTransforms(false)
+#if PLATFORM(CG)
+            // Core Graphics incorrectly renders shadows with radius > 8px (<rdar://problem/8103442>),
+            // but we need to preserve this buggy behavior for canvas and -webkit-box-shadow.
+            , shadowsUseLegacyRadius(false)
+#endif
         {
         }
 
@@ -204,6 +209,9 @@ namespace WebCore {
         bool shouldSmoothFonts : 1;
         bool paintingDisabled : 1;
         bool shadowsIgnoreTransforms : 1;
+#if PLATFORM(CG)
+        bool shadowsUseLegacyRadius : 1;
+#endif
     };
 
     class GraphicsContext {
@@ -352,6 +360,10 @@ namespace WebCore {
 
         bool hasShadow() const;
         void setShadow(const FloatSize&, float blur, const Color&, ColorSpace);
+        // Legacy shadow blur radius is used for canvas, and -webkit-box-shadow.
+        // It has different treatment of radii > 8px.
+        void setLegacyShadow(const FloatSize&, float blur, const Color&, ColorSpace);
+
         bool getShadow(FloatSize&, float&, Color&, ColorSpace&) const;
         void clearShadow();
 

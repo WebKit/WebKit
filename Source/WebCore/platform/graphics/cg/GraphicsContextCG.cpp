@@ -35,6 +35,7 @@
 #include "KURL.h"
 #include "Path.h"
 #include "Pattern.h"
+#include "ShadowBlur.h"
 
 #include <CoreGraphics/CoreGraphics.h>
 #include <wtf/MathExtras.h>
@@ -616,6 +617,16 @@ void GraphicsContext::strokePath(const Path& path)
     CGContextStrokePath(context);
 }
 
+static float radiusToLegacyRadius(float radius)
+{
+    return radius > 8 ? 8 + 4 * sqrt((radius - 8) / 2) : radius;
+}
+
+static bool hasBlurredShadow(const GraphicsContextState& state)
+{
+    return state.shadowColor.isValid() && state.shadowColor.alpha() && state.shadowBlur;
+}
+
 void GraphicsContext::fillRect(const FloatRect& rect)
 {
     if (paintingDisabled())
@@ -648,7 +659,22 @@ void GraphicsContext::fillRect(const FloatRect& rect)
 
     if (m_state.fillPattern)
         applyFillPattern();
+
+    bool drawOwnShadow = hasBlurredShadow(m_state) && !m_state.shadowsIgnoreTransforms; // Don't use ShadowBlur for canvas yet.
+    if (drawOwnShadow) {
+        float shadowBlur = m_state.shadowsUseLegacyRadius ? radiusToLegacyRadius(m_state.shadowBlur) : m_state.shadowBlur;
+        // Turn off CG shadows.
+        CGContextSaveGState(context);
+        CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
+
+        ShadowBlur contextShadow(shadowBlur, m_state.shadowOffset, m_state.shadowColor, m_state.shadowColorSpace);
+        contextShadow.drawRectShadow(this, rect, RoundedIntRect::Radii());
+    }
+
     CGContextFillRect(context, rect);
+
+    if (drawOwnShadow)
+        CGContextRestoreGState(context);
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorSpace colorSpace)
@@ -663,7 +689,21 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorS
     if (oldFillColor != color || oldColorSpace != colorSpace)
         setCGFillColor(context, color, colorSpace);
 
+    bool drawOwnShadow = hasBlurredShadow(m_state) && !m_state.shadowsIgnoreTransforms; // Don't use ShadowBlur for canvas yet.
+    if (drawOwnShadow) {
+        float shadowBlur = m_state.shadowsUseLegacyRadius ? radiusToLegacyRadius(m_state.shadowBlur) : m_state.shadowBlur;
+        // Turn off CG shadows.
+        CGContextSaveGState(context);
+        CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
+
+        ShadowBlur contextShadow(shadowBlur, m_state.shadowOffset, m_state.shadowColor, m_state.shadowColorSpace);
+        contextShadow.drawRectShadow(this, rect, RoundedIntRect::Radii());
+    }
+
     CGContextFillRect(context, rect);
+    
+    if (drawOwnShadow)
+        CGContextRestoreGState(context);
 
     if (oldFillColor != color || oldColorSpace != colorSpace)
         setCGFillColor(context, oldFillColor, oldColorSpace);
@@ -683,7 +723,23 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLef
 
     Path path;
     path.addRoundedRect(rect, topLeft, topRight, bottomLeft, bottomRight);
+
+    bool drawOwnShadow = hasBlurredShadow(m_state) && !m_state.shadowsIgnoreTransforms; // Don't use ShadowBlur for canvas yet.
+    if (drawOwnShadow) {
+        float shadowBlur = m_state.shadowsUseLegacyRadius ? radiusToLegacyRadius(m_state.shadowBlur) : m_state.shadowBlur;
+
+        // Turn off CG shadows.
+        CGContextSaveGState(context);
+        CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
+
+        ShadowBlur contextShadow(shadowBlur, m_state.shadowOffset, m_state.shadowColor, m_state.shadowColorSpace);
+        contextShadow.drawRectShadow(this, rect, RoundedIntRect::Radii(topLeft, topRight, bottomLeft, bottomRight));
+    }
+
     fillPath(path);
+
+    if (drawOwnShadow)
+        CGContextRestoreGState(context);
 
     if (oldFillColor != color || oldColorSpace != colorSpace)
         setCGFillColor(context, oldFillColor, oldColorSpace);
@@ -776,6 +832,9 @@ void GraphicsContext::setPlatformShadow(const FloatSize& offset, float blur, con
 {
     if (paintingDisabled())
         return;
+    
+    // FIXME: we could avoid the shadow setup cost when we know we'll render the shadow ourselves.
+
     CGFloat xOffset = offset.width();
     CGFloat yOffset = offset.height();
     CGFloat blurRadius = blur;

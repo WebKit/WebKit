@@ -1,3 +1,53 @@
+2011-01-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        -webkit-box-shadow causes awful scroll/resize/redraw performance
+        https://bugs.webkit.org/show_bug.cgi?id=22102
+        
+        Use ShadowBlur for CG, whe rendering shadows on rects and
+        rounded rects outside of canvas.
+        
+        CG shadows with a radius of more than 8px do not render
+        correctly. We preserve this incorrect rendering by compensating
+        for it when rending -webkit-box-shadow. Calls that should use
+        this deprecated radius behavior now use setLegacyShadow().
+
+        Test: fast/box-shadow/box-shadow-transformed.html
+        
+        * html/canvas/CanvasRenderingContext2D.cpp: Use setLegacyShadow()
+        for canvas, to indicate that it should use the deprecated radius
+        behavior.
+        (WebCore::CanvasRenderingContext2D::setAllAttributesToDefault): Ditto.
+        (WebCore::CanvasRenderingContext2D::setShadow): Ditto.
+        (WebCore::CanvasRenderingContext2D::applyShadow): Ditto.
+        
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::setLegacyShadow): Set the m_state.shadowsUseLegacyRadius bit.
+        
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContextState::GraphicsContextState): Add a 
+        shadowsUseLegacyRadius bit to the state.
+        
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::radiusToLegacyRadius): Map from the actual radius to one
+        that approximates CG behavior.
+        (WebCore::hasBlurredShadow): Helper that returns true if we have a shadow
+        with a non-zero blur radius.
+        (WebCore::GraphicsContext::fillRect): Use ShadowBlur if not canvas.
+        (WebCore::GraphicsContext::fillRoundedRect): Ditto.
+        (WebCore::GraphicsContext::setPlatformShadow): Comment.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintBoxShadow): Call setLegacyShadow()
+        for -webkit-box-shadow.
+
+        * platform/graphics/ShadowBlur.cpp: 
+        (WebCore::ShadowBlur::calculateLayerBoundingRect): Fix some pixel crack issues
+        by rounding up the blur radius.
+        (WebCore::ShadowBlur::drawRectShadow): Ditto
+        (WebCore::ShadowBlur::drawRectShadowWithTiling): Ditto.
+
 2011-01-30  Oliver Hunt  <oliver@apple.com>
 
         Try to fix Qt build (again).

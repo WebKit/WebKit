@@ -256,6 +256,8 @@ void ShadowBlur::adjustBlurDistance(GraphicsContext* context)
 
 IntRect ShadowBlur::calculateLayerBoundingRect(GraphicsContext* context, const FloatRect& shadowedRect, const IntRect& clipRect)
 {
+    const float roundedRadius = ceilf(m_blurRadius);
+
     // Calculate the destination of the blurred and/or transformed layer.
     FloatRect layerFloatRect;
     float inflation = 0;
@@ -272,8 +274,8 @@ IntRect ShadowBlur::calculateLayerBoundingRect(GraphicsContext* context, const F
 
     // We expand the area by the blur radius to give extra space for the blur transition.
     if (m_type == BlurShadow) {
-        layerFloatRect.inflate(m_blurRadius);
-        inflation += m_blurRadius;
+        layerFloatRect.inflate(roundedRadius);
+        inflation += roundedRadius;
     }
 
     FloatRect unclippedLayerRect = layerFloatRect;
@@ -287,13 +289,13 @@ IntRect ShadowBlur::calculateLayerBoundingRect(GraphicsContext* context, const F
         // Pixels at the edges can be affected by pixels outside the buffer,
         // so intersect with the clip inflated by the blur.
         if (m_type == BlurShadow)
-            inflatedClip.inflate(m_blurRadius);
+            inflatedClip.inflate(roundedRadius);
         
         layerFloatRect.intersect(inflatedClip);
     }
 
     const int frameSize = inflation * 2;
-    m_sourceRect = IntRect(0, 0, shadowedRect.width() + frameSize, shadowedRect.height() + frameSize);
+    m_sourceRect = FloatRect(0, 0, shadowedRect.width() + frameSize, shadowedRect.height() + frameSize);
     m_layerOrigin = FloatPoint(layerFloatRect.x(), layerFloatRect.y());
     m_layerSize = layerFloatRect.size();
 
@@ -370,8 +372,10 @@ void ShadowBlur::drawRectShadow(GraphicsContext* graphicsContext, const FloatRec
         return;
     }
 
-    int templateSideLength = 1;
-    float twiceRadius = m_blurRadius * 2;
+    const float roundedRadius = ceilf(m_blurRadius);
+    const float twiceRadius = roundedRadius * 2;
+    
+    const int templateSideLength = 1;
     
     // Find the extra space needed from the curve of the corners.
     int extraWidthFromCornerRadii = twiceRadius + max(radii.topLeft().width(), radii.bottomLeft().width()) + twiceRadius + max(radii.topRight().width(), radii.bottomRight().width());
@@ -388,7 +392,7 @@ void ShadowBlur::drawRectShadow(GraphicsContext* graphicsContext, const FloatRec
 
     // Determine dimensions of shadow rect.
     FloatRect shadowRect = shadowedRect;
-    shadowRect.inflate(m_blurRadius); // FIXME: duplicating code with calculateLayerBoundingRect.
+    shadowRect.inflate(roundedRadius); // FIXME: duplicating code with calculateLayerBoundingRect.
 
     // Reduce the size of what we have to draw with the clip area.
     calculateLayerBoundingRect(graphicsContext, shadowedRect, graphicsContext->clipBounds());
@@ -453,13 +457,14 @@ void ShadowBlur::drawRectShadowWithoutTiling(GraphicsContext* graphicsContext, c
 
 void ShadowBlur::drawRectShadowWithTiling(GraphicsContext* graphicsContext, const FloatRect& shadowedRect, const RoundedIntRect::Radii& radii, float alpha, const IntSize& shadowTemplateSize)
 {
-    float twiceRadius = m_blurRadius * 2;
+    const float roundedRadius = ceilf(m_blurRadius);
+    const float twiceRadius = roundedRadius * 2;
 
     // Size of the tiling side.
-    int templateSideLength = 1;
+    const int templateSideLength = 1;
 
     FloatRect shadowRect = shadowedRect;
-    shadowRect.inflate(m_blurRadius); // FIXME: duplicating code with calculateLayerBoundingRect.
+    shadowRect.inflate(roundedRadius); // FIXME: duplicating code with calculateLayerBoundingRect.
 
     shadowRect.move(m_offset.width(), m_offset.height());
 
@@ -472,7 +477,7 @@ void ShadowBlur::drawRectShadowWithTiling(GraphicsContext* graphicsContext, cons
     shadowContext->clearRect(FloatRect(0, 0, shadowTemplateSize.width(), shadowTemplateSize.height()));
 
     // Draw the rectangle.
-    IntRect templateRect = IntRect(m_blurRadius, m_blurRadius, shadowTemplateSize.width() - twiceRadius, shadowTemplateSize.height() - twiceRadius);
+    FloatRect templateRect = FloatRect(roundedRadius, roundedRadius, shadowTemplateSize.width() - twiceRadius, shadowTemplateSize.height() - twiceRadius);
     Path path;
     path.addRoundedRect(templateRect, radii.topLeft(), radii.topRight(), radii.bottomLeft(), radii.bottomRight());
 
@@ -516,28 +521,28 @@ void ShadowBlur::drawRectShadowWithTiling(GraphicsContext* graphicsContext, cons
     FloatRect tileRect = FloatRect(twiceRadius + radii.topLeft().width(), 0, templateSideLength, twiceRadius);
     FloatRect destRect = tileRect;
     destRect.move(shadowRect.x(), shadowRect.y());
-    destRect.setWidth(shadowRect.width() - radii.topLeft().width() - radii.topRight().width() - m_blurRadius * 4);
+    destRect.setWidth(shadowRect.width() - radii.topLeft().width() - radii.topRight().width() - roundedRadius * 4);
     graphicsContext->drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
 
     // Draw the bottom side.
     tileRect = FloatRect(twiceRadius + radii.bottomLeft().width(), shadowTemplateSize.height() - twiceRadius, templateSideLength, twiceRadius);
     destRect = tileRect;
     destRect.move(shadowRect.x(), shadowRect.y() + twiceRadius + shadowedRect.height() - shadowTemplateSize.height());
-    destRect.setWidth(shadowRect.width() - radii.bottomLeft().width() - radii.bottomRight().width() - m_blurRadius * 4);
+    destRect.setWidth(shadowRect.width() - radii.bottomLeft().width() - radii.bottomRight().width() - roundedRadius * 4);
     graphicsContext->drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
 
     // Draw the right side.
     tileRect = FloatRect(shadowTemplateSize.width() - twiceRadius, twiceRadius + radii.topRight().height(), twiceRadius, templateSideLength);
     destRect = tileRect;
     destRect.move(shadowRect.x() + twiceRadius + shadowedRect.width() - shadowTemplateSize.width(), shadowRect.y());
-    destRect.setHeight(shadowRect.height() - radii.topRight().height() - radii.bottomRight().height() - m_blurRadius * 4);
+    destRect.setHeight(shadowRect.height() - radii.topRight().height() - radii.bottomRight().height() - roundedRadius * 4);
     graphicsContext->drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
 
     // Draw the left side.
     tileRect = FloatRect(0, twiceRadius + radii.topLeft().height(), twiceRadius, templateSideLength);
     destRect = tileRect;
     destRect.move(shadowRect.x(), shadowRect.y());
-    destRect.setHeight(shadowRect.height() - radii.topLeft().height() - radii.bottomLeft().height() - m_blurRadius * 4);
+    destRect.setHeight(shadowRect.height() - radii.topLeft().height() - radii.bottomLeft().height() - roundedRadius * 4);
     graphicsContext->drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
 
     // Draw the top left corner.

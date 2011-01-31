@@ -234,7 +234,7 @@ void CanvasRenderingContext2D::setAllAttributesToDefault()
     if (!context)
         return;
 
-    context->setShadow(FloatSize(), 0, Color::transparent, ColorSpaceDeviceRGB);
+    context->setLegacyShadow(FloatSize(), 0, Color::transparent, ColorSpaceDeviceRGB);
     context->setAlpha(1);
     context->setCompositeOperation(CompositeSourceOver);
 }
@@ -1000,7 +1000,7 @@ void CanvasRenderingContext2D::setShadow(float width, float height, float blur, 
     if (!c)
         return;
 
-    c->setShadow(IntSize(width, -height), state().m_shadowBlur, state().m_shadowColor, ColorSpaceDeviceRGB);
+    c->setLegacyShadow(FloatSize(width, -height), state().m_shadowBlur, state().m_shadowColor, ColorSpaceDeviceRGB);
 }
 
 void CanvasRenderingContext2D::setShadow(float width, float height, float blur, const String& color, float alpha)
@@ -1018,7 +1018,7 @@ void CanvasRenderingContext2D::setShadow(float width, float height, float blur, 
     if (!c)
         return;
 
-    c->setShadow(IntSize(width, -height), state().m_shadowBlur, state().m_shadowColor, ColorSpaceDeviceRGB);
+    c->setLegacyShadow(FloatSize(width, -height), state().m_shadowBlur, state().m_shadowColor, ColorSpaceDeviceRGB);
 }
 
 void CanvasRenderingContext2D::setShadow(float width, float height, float blur, float grayLevel, float alpha)
@@ -1031,7 +1031,7 @@ void CanvasRenderingContext2D::setShadow(float width, float height, float blur, 
     if (!c)
         return;
 
-    c->setShadow(IntSize(width, -height), state().m_shadowBlur, state().m_shadowColor, ColorSpaceDeviceRGB);
+    c->setLegacyShadow(FloatSize(width, -height), state().m_shadowBlur, state().m_shadowColor, ColorSpaceDeviceRGB);
 }
 
 void CanvasRenderingContext2D::setShadow(float width, float height, float blur, float r, float g, float b, float a)
@@ -1044,7 +1044,7 @@ void CanvasRenderingContext2D::setShadow(float width, float height, float blur, 
     if (!c)
         return;
 
-    c->setShadow(IntSize(width, -height), state().m_shadowBlur, state().m_shadowColor, ColorSpaceDeviceRGB);
+    c->setLegacyShadow(FloatSize(width, -height), state().m_shadowBlur, state().m_shadowColor, ColorSpaceDeviceRGB);
 }
 
 void CanvasRenderingContext2D::setShadow(float width, float height, float blur, float c, float m, float y, float k, float a)
@@ -1064,7 +1064,7 @@ void CanvasRenderingContext2D::setShadow(float width, float height, float blur, 
     CGContextSetShadowWithColor(dc->platformContext(), adjustedShadowSize(width, -height), blur, shadowColor);
     CGColorRelease(shadowColor);
 #else
-    dc->setShadow(IntSize(width, -height), blur, state().m_shadowColor, ColorSpaceDeviceRGB);
+    dc->setLegacyShadow(FloatSize(width, -height), blur, state().m_shadowColor, ColorSpaceDeviceRGB);
 #endif
 }
 
@@ -1084,7 +1084,7 @@ void CanvasRenderingContext2D::applyShadow()
 
     float width = state().m_shadowOffset.width();
     float height = state().m_shadowOffset.height();
-    c->setShadow(FloatSize(width, -height), state().m_shadowBlur, state().m_shadowColor, ColorSpaceDeviceRGB);
+    c->setLegacyShadow(FloatSize(width, -height), state().m_shadowBlur, state().m_shadowColor, ColorSpaceDeviceRGB);
 }
 
 static IntSize size(HTMLImageElement* image)

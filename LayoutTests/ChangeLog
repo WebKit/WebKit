@@ -1,3 +1,51 @@
+2011-01-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        -webkit-box-shadow causes awful scroll/resize/redraw performance
+        https://bugs.webkit.org/show_bug.cgi?id=22102
+
+        Update pixel results for slightly different shadow rendering, and change
+        in appearane of shadows on transformed elements.
+
+        * fast/box-shadow/box-shadow-transformed.html: Added.
+        * platform/gtk/fast/css/box-shadow-expected.checksum: Removed.
+        * platform/gtk/fast/css/box-shadow-expected.png: Removed.
+        * platform/gtk/fast/css/box-shadow-expected.txt: Removed.
+        * platform/mac/compositing/shadows/shadow-drawing-expected.checksum:
+        * platform/mac/compositing/shadows/shadow-drawing-expected.png:
+        * platform/mac/fast/borders/border-image-rotate-transform-expected.checksum:
+        * platform/mac/fast/borders/border-image-rotate-transform-expected.png:
+        * platform/mac/fast/borders/border-radius-split-inline-expected.checksum:
+        * platform/mac/fast/borders/border-radius-split-inline-expected.png:
+        * platform/mac/fast/box-shadow/basic-shadows-expected.checksum:
+        * platform/mac/fast/box-shadow/basic-shadows-expected.png:
+        * platform/mac/fast/box-shadow/box-shadow-radius-expected.checksum: Added.
+        * platform/mac/fast/box-shadow/box-shadow-radius-expected.png: Added.
+        * platform/mac/fast/box-shadow/box-shadow-radius-expected.txt: Added.
+        * platform/mac/fast/box-shadow/box-shadow-transformed-expected.checksum: Added.
+        * platform/mac/fast/box-shadow/box-shadow-transformed-expected.png: Added.
+        * platform/mac/fast/box-shadow/box-shadow-transformed-expected.txt: Added.
+        * platform/mac/fast/css/box-shadow-expected.checksum: Removed.
+        * platform/mac/fast/css/box-shadow-expected.png: Removed.
+        * platform/mac/fast/css/box-shadow-expected.txt: Removed.
+        * platform/mac/fast/repaint/box-shadow-h-expected.checksum:
+        * platform/mac/fast/repaint/box-shadow-h-expected.png:
+        * platform/mac/fast/repaint/box-shadow-v-expected.checksum:
+        * platform/mac/fast/repaint/box-shadow-v-expected.png:
+        * platform/mac/fast/repaint/shadow-multiple-horizontal-expected.checksum:
+        * platform/mac/fast/repaint/shadow-multiple-horizontal-expected.png:
+        * platform/mac/fast/repaint/shadow-multiple-strict-horizontal-expected.checksum:
+        * platform/mac/fast/repaint/shadow-multiple-strict-horizontal-expected.png:
+        * platform/mac/fast/repaint/shadow-multiple-strict-vertical-expected.checksum:
+        * platform/mac/fast/repaint/shadow-multiple-strict-vertical-expected.png:
+        * platform/mac/fast/repaint/shadow-multiple-vertical-expected.checksum:
+        * platform/mac/fast/repaint/shadow-multiple-vertical-expected.png:
+        * platform/mac/fast/repaint/transform-replaced-shadows-expected.checksum:
+        * platform/mac/fast/repaint/transform-replaced-shadows-expected.png:
+        * platform/mac/fast/transforms/shadows-expected.checksum:
+        * platform/mac/fast/transforms/shadows-expected.png:
+
 2011-01-29  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
