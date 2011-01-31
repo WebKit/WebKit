@@ -38,7 +38,7 @@ RenderTextControlMultiLine::RenderTextControlMultiLine(Node* node, bool placehol
 
 RenderTextControlMultiLine::~RenderTextControlMultiLine()
 {
-    if (node())
+    if (node() && node()->inDocument())
         static_cast<HTMLTextAreaElement*>(node())->rendererWillBeDestroyed();
 }
 

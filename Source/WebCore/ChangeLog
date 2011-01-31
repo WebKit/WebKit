@@ -1,3 +1,16 @@
+2011-01-31  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Check the textarea node still exists in document before casting
+        it to HTMLTextAreaElement.
+        https://bugs.webkit.org/show_bug.cgi?id=53429
+
+        Test: fast/forms/textarea-node-removed-from-document-crash.html
+
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::~RenderTextControlMultiLine):
+
 2011-01-27  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dave Hyatt.

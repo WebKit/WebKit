@@ -1,3 +1,14 @@
+2011-01-31  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Tests that we do not crash when destructing textarea renderer when its
+        node is already removed from document.
+        https://bugs.webkit.org/show_bug.cgi?id=53429
+
+        * fast/forms/textarea-node-removed-from-document-crash-expected.txt: Added.
+        * fast/forms/textarea-node-removed-from-document-crash.html: Added.
+
 2011-01-31  Dan Bernstein  <mitz@apple.com>
 
         Remove expected results in mac-wk2 and win that are equal to the mac results after r77138.
