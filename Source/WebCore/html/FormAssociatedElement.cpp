@@ -59,11 +59,24 @@ void FormAssociatedElement::willMoveToNewOwnerDocument()
         element->document()->unregisterFormElementWithFormAttribute(this);
 }
 
+void FormAssociatedElement::insertedIntoDocument()
+{
+    HTMLElement* element = toHTMLElement(this);
+    if (element->fastHasAttribute(formAttr))
+        element->document()->registerFormElementWithFormAttribute(this);
+}
+
+void FormAssociatedElement::removedFromDocument()
+{
+    HTMLElement* element = toHTMLElement(this);
+    if (element->fastHasAttribute(formAttr))
+        element->document()->unregisterFormElementWithFormAttribute(this);
+}
+
 void FormAssociatedElement::insertedIntoTree()
 {
     HTMLElement* element = toHTMLElement(this);
     if (element->fastHasAttribute(formAttr)) {
-        element->document()->registerFormElementWithFormAttribute(this);
         Element* formElement = element->document()->getElementById(element->fastGetAttribute(formAttr));
         if (formElement && formElement->hasTagName(formTag)) {
             if (m_form)
@@ -94,8 +107,6 @@ static inline Node* findRoot(Node* n)
 void FormAssociatedElement::removedFromTree()
 {
     HTMLElement* element = toHTMLElement(this);
-    if (element->fastHasAttribute(formAttr))
-        element->document()->unregisterFormElementWithFormAttribute(this);
 
     // If the form and element are both in the same tree, preserve the connection to the form.
     // Otherwise, null out our form and remove ourselves from the form's list of elements.

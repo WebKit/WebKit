@@ -1,0 +1,36 @@
+<html>
+  <script>
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    function gc() {
+        if (window.GCController)
+            return GCController.collect();
+        for (var i = 0; i < 10000; ++i)
+            var s = new String("foo");
+    }
+
+    function resetFormOwner() {
+        gc();
+        var form = document.createElement('form');
+        form.id = 'foo';
+        document.body.appendChild(form);
+        document.body.innerHTML += 'PASS';
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+
+    function test() {
+        var div = document.createElement('div');
+        var input = document.createElement('input');
+        input.setAttribute('form', 'foo');
+        div.appendChild(input);
+        setTimeout(resetFormOwner, 0);
+    }
+  </script>
+<body onload="test()">
+<p>Checks dangling form associated elements doesn't cause crash. WebKit should not crash when this page is loaded.</p>
+</body>
+</html>

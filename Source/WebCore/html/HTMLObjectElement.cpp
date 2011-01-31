@@ -318,6 +318,7 @@ void HTMLObjectElement::insertedIntoDocument()
     }
 
     HTMLPlugInImageElement::insertedIntoDocument();
+    FormAssociatedElement::insertedIntoDocument();
 }
 
 void HTMLObjectElement::removedFromDocument()
@@ -329,6 +330,7 @@ void HTMLObjectElement::removedFromDocument()
     }
 
     HTMLPlugInImageElement::removedFromDocument();
+    FormAssociatedElement::removedFromDocument();
 }
 
 void HTMLObjectElement::attributeChanged(Attribute* attr, bool preserveDecls)

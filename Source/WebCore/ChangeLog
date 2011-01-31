@@ -1,3 +1,34 @@
+2011-01-30  Kenichi Ishibashi  <bashi@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Dangling form associated elements should not be registered on the document
+        https://bugs.webkit.org/show_bug.cgi?id=53223
+
+        Adds insertedIntoDocument() and remvoedFromDocument() to
+        FormAssociatedElement class to register the element on the document
+        if and only if it actually inserted into (removed from) the document.
+
+        Test: fast/forms/dangling-form-element-crash.html
+
+        * html/FormAssociatedElement.cpp:
+        (WebCore::FormAssociatedElement::insertedIntoDocument): Added.
+        (WebCore::FormAssociatedElement::removedFromDocument): Ditto.
+        (WebCore::FormAssociatedElement::insertedIntoTree): Don't register
+        the element to a document.
+        (WebCore::FormAssociatedElement::removedFromTree): Don't unregister
+        the element from a document.
+        * html/FormAssociatedElement.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::insertedIntoDocument): Added.
+        (WebCore::HTMLFormControlElement::removedFromDocument): Ditto.
+        * html/HTMLFormControlElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::insertedIntoDocument): Calls
+        FormAssociatedElement::insertedIntoDocument().
+        (WebCore::HTMLObjectElement::removedFromDocument): Calls
+        FormAssociatedElement::removedFromDocument().
+
 2011-01-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed, rolling out r77098, r77099, r77100, r77109, and

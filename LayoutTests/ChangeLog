@@ -1,3 +1,16 @@
+2011-01-30  Kenichi Ishibashi  <bashi@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Dangling form associated elements should not be registered on the document
+        https://bugs.webkit.org/show_bug.cgi?id=53223
+
+        Adds a test that ensures dangling form associated elements are not
+        registered on the document.
+
+        * fast/forms/dangling-form-element-crash-expected.txt: Added.
+        * fast/forms/dangling-form-element-crash.html: Added.
+
 2011-01-30  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.

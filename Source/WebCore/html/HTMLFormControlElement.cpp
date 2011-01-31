@@ -165,6 +165,18 @@ void HTMLFormControlElement::removedFromTree(bool deep)
     HTMLElement::removedFromTree(deep);
 }
 
+void HTMLFormControlElement::insertedIntoDocument()
+{
+    HTMLElement::insertedIntoDocument();
+    FormAssociatedElement::insertedIntoDocument();
+}
+
+void HTMLFormControlElement::removedFromDocument()
+{
+    HTMLElement::removedFromDocument();
+    FormAssociatedElement::removedFromDocument();
+}
+
 const AtomicString& HTMLFormControlElement::formControlName() const
 {
     const AtomicString& name = fastGetAttribute(nameAttr);

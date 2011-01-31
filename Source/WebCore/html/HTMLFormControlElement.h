@@ -111,6 +111,8 @@ protected:
     virtual void attach();
     virtual void insertedIntoTree(bool deep);
     virtual void removedFromTree(bool deep);
+    virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
     virtual void willMoveToNewOwnerDocument();
 
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
