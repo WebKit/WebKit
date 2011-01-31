@@ -320,6 +320,8 @@ namespace WebCore {
         void clipPath(const Path&, WindRule);
         void clipConvexPolygon(size_t numPoints, const FloatPoint*, bool antialias = true);
         void clipToImageBuffer(ImageBuffer*, const FloatRect&);
+        
+        IntRect clipBounds() const;
 
         TextDrawingModeFlags textDrawingMode() const;
         void setTextDrawingMode(TextDrawingModeFlags);
@@ -373,7 +375,7 @@ namespace WebCore {
 
         // This clip function is used only by <canvas> code. It allows
         // implementations to handle clipping on the canvas differently since
-        // the disipline is different.
+        // the discipline is different.
         void canvasClip(const Path&);
         void clipOut(const Path&);
 

@@ -68,6 +68,8 @@ typedef void* PlatformContext;
 // This class should be copyable since GraphicsContextQt keeps a stack of
 // the shadow state for savePlatformState and restorePlatformState.
 
+// This class is Deprecated. Platforms should migrate to ShadowBlur.
+
 class ContextShadow {
 public:
     enum {

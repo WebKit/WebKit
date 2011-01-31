@@ -565,6 +565,14 @@ void GraphicsContext::clipToImageBuffer(ImageBuffer* buffer, const FloatRect& re
     buffer->clip(this, rect);
 }
 
+#if !PLATFORM(CG)
+IntRect GraphicsContext::clipBounds() const
+{
+    ASSERT_NOT_REACHED();
+    return IntRect();
+}
+#endif
+
 TextDrawingModeFlags GraphicsContext::textDrawingMode() const
 {
     return m_state.textDrawingMode;

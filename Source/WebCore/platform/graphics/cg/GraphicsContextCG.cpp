@@ -727,6 +727,11 @@ void GraphicsContext::clipPath(const Path& path, WindRule clipRule)
         CGContextClip(context);
 }
 
+IntRect GraphicsContext::clipBounds() const
+{
+    return enclosingIntRect(CGContextGetClipBoundingBox(platformContext()));
+}
+
 void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness)
 {
     if (paintingDisabled())
