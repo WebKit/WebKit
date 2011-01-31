@@ -57,13 +57,14 @@ private:
     void animationTimerFired(Timer<RenderProgress>*);
     void updateAnimationState();
 
+    ShadowBlockElement* valuePart() const;
+
     double m_position;
     double m_animationStartTime;
     double m_animationRepeatInterval;
     double m_animationDuration;
     bool m_animating;
     Timer<RenderProgress> m_animationTimer;
-    RefPtr<ShadowBlockElement> m_valuePart;
 };
 
 inline RenderProgress* toRenderProgress(RenderObject* object)
