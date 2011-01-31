@@ -261,18 +261,15 @@ IntSize RenderSVGRoot::borderOriginToContentBox() const
 
 AffineTransform RenderSVGRoot::localToRepaintContainerTransform(const IntPoint& parentOriginInContainer) const
 {
-    AffineTransform parentToContainer(localToParentTransform());
-    return parentToContainer.translateRight(parentOriginInContainer.x(), parentOriginInContainer.y());
+    return AffineTransform::translation(parentOriginInContainer.x(), parentOriginInContainer.y()) * localToParentTransform();
 }
 
 const AffineTransform& RenderSVGRoot::localToParentTransform() const
 {
     IntSize parentToBorderBoxOffset = parentOriginToBorderBox();
 
-    AffineTransform borderBoxOriginToParentOrigin(localToBorderBoxTransform());
-    borderBoxOriginToParentOrigin.translateRight(parentToBorderBoxOffset.width(), parentToBorderBoxOffset.height());
+    m_localToParentTransform = AffineTransform::translation(parentToBorderBoxOffset.width(), parentToBorderBoxOffset.height()) * localToBorderBoxTransform();
 
-    m_localToParentTransform = borderBoxOriginToParentOrigin;
     return m_localToParentTransform;
 }
 

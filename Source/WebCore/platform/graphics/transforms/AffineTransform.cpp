@@ -222,14 +222,6 @@ AffineTransform& AffineTransform::translate(double tx, double ty)
     return *this;
 }
 
-// *this = translation * *this
-AffineTransform& AffineTransform::translateRight(double tx, double ty)
-{
-    m_transform[4] += tx;
-    m_transform[5] += ty;
-    return *this;
-}
-
 AffineTransform& AffineTransform::scaleNonUniform(double sx, double sy)
 {
     return scale(sx, sy);

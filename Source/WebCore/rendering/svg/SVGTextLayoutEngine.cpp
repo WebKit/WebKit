@@ -310,7 +310,7 @@ void SVGTextLayoutEngine::finalizeTransformMatrices(Vector<SVGInlineTextBox*>& b
             SVGTextFragment& fragment = fragments.at(i);
             AffineTransform& transform = fragment.transform;
             if (!transform.isIdentity()) {
-                transform.translateRight(fragment.x, fragment.y);
+                transform = AffineTransform::translation(fragment.x, fragment.y) * transform;
                 transform.translate(-fragment.x, -fragment.y);
             }
 

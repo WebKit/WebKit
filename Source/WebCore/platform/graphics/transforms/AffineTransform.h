@@ -103,7 +103,6 @@ public:
     AffineTransform& rotate(double d);
     AffineTransform& rotateFromVector(double x, double y);
     AffineTransform& translate(double tx, double ty);
-    AffineTransform& translateRight(double tx, double ty);
     AffineTransform& shear(double sx, double sy);
     AffineTransform& flipX();
     AffineTransform& flipY();
@@ -171,6 +170,11 @@ public:
 #elif PLATFORM(WX) && USE(WXGC)
     operator wxGraphicsMatrix() const;
 #endif
+
+    static AffineTransform translation(double x, double y)
+    {
+        return AffineTransform(1, 0, 0, 1, x, y);
+    }
 
 private:
     void setMatrix(const Transform m)
