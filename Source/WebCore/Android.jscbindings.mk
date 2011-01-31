@@ -42,7 +42,6 @@ BINDING_C_INCLUDES := \
 	$(JAVASCRIPTCORE_PATH)/pcre \
 	$(JAVASCRIPTCORE_PATH)/profiler \
 	$(JAVASCRIPTCORE_PATH)/runtime \
-	$(JAVASCRIPTCORE_PATH)/wrec \
 	$(JAVASCRIPTCORE_PATH)/ForwardingHeaders \
 	\
 	$(base_intermediates)/Source/WebCore/bindings/js \

@@ -64409,14 +64409,6 @@
 					>
 				</File>
 			</Filter>
-			<Filter
-				Name="wrec"
-				>
-				<File
-					RelativePath="..\ForwardingHeaders\wrec\WREC.h"
-					>
-				</File>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="history"
