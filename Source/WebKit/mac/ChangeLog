@@ -1,3 +1,13 @@
+2011-01-30  Oliver Hunt  <oliver@apple.com>
+
+        Convert markstack to a slot visitor API
+        https://bugs.webkit.org/show_bug.cgi?id=53219
+
+        rolling r77006 and r77020 back in.
+
+        * WebView/WebScriptDebugDelegate.mm:
+        (-[WebScriptCallFrame scopeChain]):
+
 2011-01-28  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.

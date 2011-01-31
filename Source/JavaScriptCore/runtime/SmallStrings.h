@@ -27,6 +27,7 @@
 #define SmallStrings_h
 
 #include "UString.h"
+#include "WriteBarrier.h"
 #include <wtf/FixedArray.h>
 #include <wtf/OwnPtr.h>
 
@@ -47,13 +48,13 @@ namespace JSC {
         {
             if (!m_emptyString)
                 createEmptyString(globalData);
-            return m_emptyString;
+            return m_emptyString.get();
         }
         JSString* singleCharacterString(JSGlobalData* globalData, unsigned char character)
         {
             if (!m_singleCharacterStrings[character])
                 createSingleCharacterString(globalData, character);
-            return m_singleCharacterStrings[character];
+            return m_singleCharacterStrings[character].get();
         }
 
         StringImpl* singleCharacterStringRep(unsigned char character);
@@ -63,14 +64,14 @@ namespace JSC {
 
         unsigned count() const;
 #if ENABLE(JIT)
-        JSString** singleCharacterStrings() { return m_singleCharacterStrings.data(); }
+        JSCell** singleCharacterStrings() { return m_singleCharacterStrings[0].slot(); }
 #endif
     private:
         void createEmptyString(JSGlobalData*);
         void createSingleCharacterString(JSGlobalData*, unsigned char);
 
-        JSString* m_emptyString;
-        FixedArray<JSString*, 0x100> m_singleCharacterStrings;
+        DeprecatedPtr<JSString> m_emptyString;
+        FixedArray<DeprecatedPtr<JSString>, 0x100> m_singleCharacterStrings;
         OwnPtr<SmallStringsStorage> m_storage;
     };
 

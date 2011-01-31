@@ -21,6 +21,7 @@
 #ifndef ScopeChain_h
 #define ScopeChain_h
 
+#include "WriteBarrier.h"
 #include <wtf/FastAllocBase.h>
 
 namespace JSC {
@@ -52,7 +53,6 @@ namespace JSC {
         ~ScopeChainNode()
         {
             next = 0;
-            object = 0;
             globalData = 0;
             globalObject = 0;
             globalThis = 0;
@@ -60,7 +60,7 @@ namespace JSC {
 #endif
 
         ScopeChainNode* next;
-        JSObject* object;
+        DeprecatedPtr<JSObject> object;
         JSGlobalData* globalData;
         JSGlobalObject* globalObject;
         JSObject* globalThis;
@@ -131,8 +131,8 @@ namespace JSC {
         {
         }
 
-        JSObject* const & operator*() const { return m_node->object; }
-        JSObject* const * operator->() const { return &(operator*()); }
+        DeprecatedPtr<JSObject> const & operator*() const { return m_node->object; }
+        DeprecatedPtr<JSObject> const * operator->() const { return &(operator*()); }
     
         ScopeChainIterator& operator++() { m_node = m_node->next; return *this; }
 
@@ -195,7 +195,7 @@ namespace JSC {
 
         ScopeChainNode* node() const { return m_node; }
 
-        JSObject* top() const { return m_node->object; }
+        JSObject* top() const { return m_node->object.get(); }
 
         ScopeChainIterator begin() const { return m_node->begin(); }
         ScopeChainIterator end() const { return m_node->end(); }

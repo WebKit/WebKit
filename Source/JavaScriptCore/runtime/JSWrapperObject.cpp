@@ -30,7 +30,7 @@ void JSWrapperObject::markChildren(MarkStack& markStack)
 {
     JSObject::markChildren(markStack);
     if (m_internalValue)
-        markStack.append(m_internalValue);
+        markStack.append(&m_internalValue);
 }
 
 } // namespace JSC

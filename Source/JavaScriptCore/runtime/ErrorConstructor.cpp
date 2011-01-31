@@ -33,8 +33,8 @@ ErrorConstructor::ErrorConstructor(ExecState* exec, JSGlobalObject* globalObject
     : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, errorPrototype->classInfo()->className))
 {
     // ECMA 15.11.3.1 Error.prototype
-    putDirectWithoutTransition(exec->propertyNames().prototype, errorPrototype, DontEnum | DontDelete | ReadOnly);
-    putDirectWithoutTransition(exec->propertyNames().length, jsNumber(1), DontDelete | ReadOnly | DontEnum);
+    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().prototype, errorPrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(1), DontDelete | ReadOnly | DontEnum);
 }
 
 // ECMA 15.9.3

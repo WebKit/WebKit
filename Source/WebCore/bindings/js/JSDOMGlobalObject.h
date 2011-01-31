@@ -39,7 +39,7 @@ namespace WebCore {
     class ScriptExecutionContext;
 
     typedef HashMap<const JSC::ClassInfo*, RefPtr<JSC::Structure> > JSDOMStructureMap;
-    typedef HashMap<const JSC::ClassInfo*, JSC::JSObject*> JSDOMConstructorMap;
+    typedef HashMap<const JSC::ClassInfo*, JSC::WriteBarrier<JSC::JSObject> > JSDOMConstructorMap;
 
     class JSDOMGlobalObject : public JSC::JSGlobalObject {
         typedef JSC::JSGlobalObject Base;
@@ -76,7 +76,6 @@ namespace WebCore {
                 : JSGlobalObjectData(destructor)
                 , evt(0)
                 , m_world(world)
-                , m_injectedScript(0)
             {
             }
 
@@ -85,7 +84,7 @@ namespace WebCore {
 
             Event* evt;
             RefPtr<DOMWrapperWorld> m_world;
-            JSObject* m_injectedScript;
+            JSC::WriteBarrier<JSObject> m_injectedScript;
         };
 
     private:
@@ -97,11 +96,12 @@ namespace WebCore {
     template<class ConstructorClass>
     inline JSC::JSObject* getDOMConstructor(JSC::ExecState* exec, const JSDOMGlobalObject* globalObject)
     {
-        if (JSC::JSObject* constructor = globalObject->constructors().get(&ConstructorClass::s_info))
+        if (JSC::JSObject* constructor = globalObject->constructors().get(&ConstructorClass::s_info).get())
             return constructor;
         JSC::JSObject* constructor = new (exec) ConstructorClass(exec, const_cast<JSDOMGlobalObject*>(globalObject));
         ASSERT(!globalObject->constructors().contains(&ConstructorClass::s_info));
-        globalObject->constructors().set(&ConstructorClass::s_info, constructor);
+        JSC::WriteBarrier<JSC::JSObject> temp;
+        globalObject->constructors().add(&ConstructorClass::s_info, temp).first->second.set(exec->globalData(), globalObject, constructor);
         return constructor;
     }
 

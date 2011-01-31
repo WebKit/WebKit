@@ -62,7 +62,7 @@ static bool handleException(ScriptState* scriptState)
 bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, const ScriptObject& value)
 {
     JSLock lock(SilenceAssertionsOnly);
-    scriptState->lexicalGlobalObject()->putDirect(Identifier(scriptState, name), value.jsObject());
+    scriptState->lexicalGlobalObject()->putDirect(scriptState->globalData(), Identifier(scriptState, name), value.jsObject());
     return handleException(scriptState);
 }
 
@@ -71,7 +71,7 @@ bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, Inspect
 {
     JSLock lock(SilenceAssertionsOnly);
     JSDOMGlobalObject* globalObject = static_cast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
-    globalObject->putDirect(Identifier(scriptState, name), toJS(scriptState, globalObject, value));
+    globalObject->putDirect(scriptState->globalData(), Identifier(scriptState, name), toJS(scriptState, globalObject, value));
     return handleException(scriptState);
 }
 
@@ -79,7 +79,7 @@ bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, Injecte
 {
     JSLock lock(SilenceAssertionsOnly);
     JSDOMGlobalObject* globalObject = static_cast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
-    globalObject->putDirect(Identifier(scriptState, name), toJS(scriptState, globalObject, value));
+    globalObject->putDirect(scriptState->globalData(), Identifier(scriptState, name), toJS(scriptState, globalObject, value));
     return handleException(scriptState);
 }
 #endif // ENABLE(INSPECTOR)

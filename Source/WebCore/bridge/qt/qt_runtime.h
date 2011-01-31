@@ -129,8 +129,8 @@ class QtRuntimeMetaMethodData : public QtRuntimeMethodData {
         QByteArray m_signature;
         bool m_allowPrivate;
         int m_index;
-        QtRuntimeConnectionMethod *m_connect;
-        QtRuntimeConnectionMethod *m_disconnect;
+        WriteBarrier<QtRuntimeConnectionMethod> m_connect;
+        WriteBarrier<QtRuntimeConnectionMethod> m_disconnect;
 };
 
 class QtRuntimeConnectionMethodData : public QtRuntimeMethodData {

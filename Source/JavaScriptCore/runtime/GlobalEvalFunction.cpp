@@ -34,7 +34,7 @@ ASSERT_CLASS_FITS_IN_CELL(GlobalEvalFunction);
 
 GlobalEvalFunction::GlobalEvalFunction(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, int len, const Identifier& name, NativeFunction function, JSGlobalObject* cachedGlobalObject)
     : PrototypeFunction(exec, globalObject, structure, len, name, function)
-    , m_cachedGlobalObject(cachedGlobalObject)
+    , m_cachedGlobalObject(exec->globalData(), this, cachedGlobalObject)
 {
     ASSERT_ARG(cachedGlobalObject, cachedGlobalObject);
 }
@@ -42,7 +42,7 @@ GlobalEvalFunction::GlobalEvalFunction(ExecState* exec, JSGlobalObject* globalOb
 void GlobalEvalFunction::markChildren(MarkStack& markStack)
 {
     PrototypeFunction::markChildren(markStack);
-    markStack.append(m_cachedGlobalObject);
+    markStack.append(&m_cachedGlobalObject);
 }
 
 } // namespace JSC

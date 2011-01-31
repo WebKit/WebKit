@@ -34,9 +34,9 @@ ASSERT_CLASS_FITS_IN_CELL(NativeErrorPrototype);
 NativeErrorPrototype::NativeErrorPrototype(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, const UString& nameAndMessage, NativeErrorConstructor* constructor)
     : JSObjectWithGlobalObject(globalObject, structure)
 {
-    putDirect(exec->propertyNames().name, jsString(exec, nameAndMessage), 0);
-    putDirect(exec->propertyNames().message, jsString(exec, nameAndMessage), 0);
-    putDirect(exec->propertyNames().constructor, constructor, DontEnum);
+    putDirect(exec->globalData(), exec->propertyNames().name, jsString(exec, nameAndMessage), 0);
+    putDirect(exec->globalData(), exec->propertyNames().message, jsString(exec, nameAndMessage), 0);
+    putDirect(exec->globalData(), exec->propertyNames().constructor, constructor, DontEnum);
 }
 
 } // namespace JSC

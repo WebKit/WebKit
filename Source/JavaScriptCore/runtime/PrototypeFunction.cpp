@@ -37,7 +37,7 @@ PrototypeFunction::PrototypeFunction(ExecState* exec, JSGlobalObject* globalObje
     , m_function(function)
 {
     ASSERT_ARG(function, function);
-    putDirect(exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
+    putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
 }
 
 PrototypeFunction::PrototypeFunction(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> prototypeFunctionStructure, int length, const Identifier& name, NativeFunction function)
@@ -45,7 +45,7 @@ PrototypeFunction::PrototypeFunction(ExecState* exec, JSGlobalObject* globalObje
     , m_function(function)
 {
     ASSERT_ARG(function, function);
-    putDirect(exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
+    putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
 }
     
 CallType PrototypeFunction::getCallData(CallData& callData)

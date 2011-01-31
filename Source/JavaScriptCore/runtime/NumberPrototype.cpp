@@ -49,7 +49,7 @@ static EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState*);
 NumberPrototype::NumberPrototype(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, Structure* prototypeFunctionStructure)
     : NumberObject(structure)
 {
-    setInternalValue(jsNumber(0));
+    setInternalValue(exec->globalData(), jsNumber(0));
 
     // The constructor will be added later, after NumberConstructor has been constructed
 

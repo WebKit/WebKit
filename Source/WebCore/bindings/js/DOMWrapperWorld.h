@@ -32,8 +32,8 @@ namespace WebCore {
 
 class ScriptController;
 
-typedef JSC::WeakGCMap<void*, DOMObject*> DOMObjectWrapperMap;
-typedef JSC::WeakGCMap<StringImpl*, JSC::JSString*> JSStringCache; 
+typedef JSC::WeakGCMap<void*, DOMObject> DOMObjectWrapperMap;
+typedef JSC::WeakGCMap<StringImpl*, JSC::JSString> JSStringCache; 
 
 class DOMWrapperWorld : public RefCounted<DOMWrapperWorld> {
 public:
@@ -57,6 +57,8 @@ public:
     JSStringCache m_stringCache;
 
     bool isNormal() const { return m_isNormal; }
+
+    JSC::JSGlobalData* globalData() const { return m_globalData; }
 
 protected:
     DOMWrapperWorld(JSC::JSGlobalData*, bool isNormal);

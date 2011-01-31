@@ -312,7 +312,7 @@ void JSObject::defineGetter(ExecState* exec, const Identifier& propertyName, JSO
     JSValue object = getDirect(propertyName);
     if (object && object.isGetterSetter()) {
         ASSERT(m_structure->hasGetterSetterProperties());
-        asGetterSetter(object)->setGetter(getterFunction);
+        asGetterSetter(object)->setGetter(exec->globalData(), getterFunction);
         return;
     }
 
@@ -331,7 +331,7 @@ void JSObject::defineGetter(ExecState* exec, const Identifier& propertyName, JSO
     }
 
     m_structure->setHasGetterSetterProperties(true);
-    getterSetter->setGetter(getterFunction);
+    getterSetter->setGetter(exec->globalData(), getterFunction);
 }
 
 void JSObject::defineSetter(ExecState* exec, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes)
@@ -339,7 +339,7 @@ void JSObject::defineSetter(ExecState* exec, const Identifier& propertyName, JSO
     JSValue object = getDirect(propertyName);
     if (object && object.isGetterSetter()) {
         ASSERT(m_structure->hasGetterSetterProperties());
-        asGetterSetter(object)->setSetter(setterFunction);
+        asGetterSetter(object)->setSetter(exec->globalData(), setterFunction);
         return;
     }
 
@@ -358,7 +358,7 @@ void JSObject::defineSetter(ExecState* exec, const Identifier& propertyName, JSO
     }
 
     m_structure->setHasGetterSetterProperties(true);
-    getterSetter->setSetter(setterFunction);
+    getterSetter->setSetter(exec->globalData(), setterFunction);
 }
 
 JSValue JSObject::lookupGetter(ExecState*, const Identifier& propertyName)
@@ -512,34 +512,34 @@ void JSObject::removeDirect(const Identifier& propertyName)
     if (m_structure->isUncacheableDictionary()) {
         offset = m_structure->removePropertyWithoutTransition(propertyName);
         if (offset != WTF::notFound)
-            putDirectOffset(offset, jsUndefined());
+            putUndefinedAtDirectOffset(offset);
         return;
     }
 
     RefPtr<Structure> structure = Structure::removePropertyTransition(m_structure, propertyName, offset);
     setStructure(structure.release());
     if (offset != WTF::notFound)
-        putDirectOffset(offset, jsUndefined());
+        putUndefinedAtDirectOffset(offset);
 }
 
 void JSObject::putDirectFunction(ExecState* exec, InternalFunction* function, unsigned attr)
 {
-    putDirectFunction(Identifier(exec, function->name(exec)), function, attr);
+    putDirectFunction(exec->globalData(), Identifier(exec, function->name(exec)), function, attr);
 }
 
 void JSObject::putDirectFunction(ExecState* exec, JSFunction* function, unsigned attr)
 {
-    putDirectFunction(Identifier(exec, function->name(exec)), function, attr);
+    putDirectFunction(exec->globalData(), Identifier(exec, function->name(exec)), function, attr);
 }
 
 void JSObject::putDirectFunctionWithoutTransition(ExecState* exec, InternalFunction* function, unsigned attr)
 {
-    putDirectFunctionWithoutTransition(Identifier(exec, function->name(exec)), function, attr);
+    putDirectFunctionWithoutTransition(exec->globalData(), Identifier(exec, function->name(exec)), function, attr);
 }
 
 void JSObject::putDirectFunctionWithoutTransition(ExecState* exec, JSFunction* function, unsigned attr)
 {
-    putDirectFunctionWithoutTransition(Identifier(exec, function->name(exec)), function, attr);
+    putDirectFunctionWithoutTransition(exec->globalData(), Identifier(exec, function->name(exec)), function, attr);
 }
 
 NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, JSValue* location)
@@ -595,11 +595,11 @@ static bool putDescriptor(ExecState* exec, JSObject* target, const Identifier& p
             GetterSetter* accessor = new (exec) GetterSetter(exec);
             if (oldDescriptor.getter()) {
                 attributes |= Getter;
-                accessor->setGetter(asObject(oldDescriptor.getter()));
+                accessor->setGetter(exec->globalData(), asObject(oldDescriptor.getter()));
             }
             if (oldDescriptor.setter()) {
                 attributes |= Setter;
-                accessor->setSetter(asObject(oldDescriptor.setter()));
+                accessor->setSetter(exec->globalData(), asObject(oldDescriptor.setter()));
             }
             target->putWithAttributes(exec, propertyName, accessor, attributes);
             return true;
@@ -720,9 +720,9 @@ bool JSObject::defineOwnProperty(ExecState* exec, const Identifier& propertyName
     GetterSetter* getterSetter = asGetterSetter(accessor);
     if (current.attributesEqual(descriptor)) {
         if (descriptor.setter())
-            getterSetter->setSetter(asObject(descriptor.setter()));
+            getterSetter->setSetter(exec->globalData(), asObject(descriptor.setter()));
         if (descriptor.getter())
-            getterSetter->setGetter(asObject(descriptor.getter()));
+            getterSetter->setGetter(exec->globalData(), asObject(descriptor.getter()));
         return true;
     }
     deleteProperty(exec, propertyName);
@@ -731,7 +731,7 @@ bool JSObject::defineOwnProperty(ExecState* exec, const Identifier& propertyName
         attrs |= Setter;
     if (descriptor.getter())
         attrs |= Getter;
-    putDirect(propertyName, getterSetter, attrs);
+    putDirect(exec->globalData(), propertyName, getterSetter, attrs);
     return true;
 }
 

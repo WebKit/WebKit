@@ -136,7 +136,7 @@ StringPrototype::StringPrototype(ExecState* exec, JSGlobalObject* globalObject, 
 {
     putAnonymousValue(0, globalObject);
     // The constructor will be added later, after StringConstructor has been built
-    putDirectWithoutTransition(exec->propertyNames().length, jsNumber(0), DontDelete | ReadOnly | DontEnum);
+    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(0), DontDelete | ReadOnly | DontEnum);
 }
 
 bool StringPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)

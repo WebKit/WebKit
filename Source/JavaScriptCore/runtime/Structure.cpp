@@ -242,7 +242,7 @@ Structure::Structure(JSValue prototype, const TypeInfo& typeInfo, unsigned anony
     m_transitions.m_singleTransition = 0;
 
     ASSERT(m_prototype);
-    ASSERT(m_prototype.isObject() || m_prototype.isNull());
+    ASSERT(m_prototype->isObject() || m_prototype->isNull());
 
 #ifndef NDEBUG
 #if ENABLE(JSC_MULTIPLE_THREADS)
@@ -476,7 +476,7 @@ PassRefPtr<Structure> Structure::addPropertyTransition(Structure* structure, con
         return transition.release();
     }
 
-    RefPtr<Structure> transition = create(structure->m_prototype, structure->typeInfo(), structure->anonymousSlotCount());
+    RefPtr<Structure> transition = create(structure->m_prototype.get(), structure->typeInfo(), structure->anonymousSlotCount());
 
     transition->m_cachedPrototypeChain = structure->m_cachedPrototypeChain;
     transition->m_previous = structure;
@@ -595,7 +595,7 @@ PassRefPtr<Structure> Structure::toDictionaryTransition(Structure* structure, Di
 {
     ASSERT(!structure->isUncacheableDictionary());
     
-    RefPtr<Structure> transition = create(structure->m_prototype, structure->typeInfo(), structure->anonymousSlotCount());
+    RefPtr<Structure> transition = create(structure->m_prototype.get(), structure->typeInfo(), structure->anonymousSlotCount());
     transition->m_dictionaryKind = kind;
     transition->m_propertyStorageCapacity = structure->m_propertyStorageCapacity;
     transition->m_hasGetterSetterProperties = structure->m_hasGetterSetterProperties;
@@ -620,7 +620,7 @@ PassRefPtr<Structure> Structure::toUncacheableDictionaryTransition(Structure* st
     return toDictionaryTransition(structure, UncachedDictionaryKind);
 }
 
-PassRefPtr<Structure> Structure::flattenDictionaryStructure(JSObject* object)
+PassRefPtr<Structure> Structure::flattenDictionaryStructure(JSGlobalData& globalData, JSObject* object)
 {
     ASSERT(isDictionary());
     if (isUncacheableDictionary()) {
@@ -651,7 +651,7 @@ PassRefPtr<Structure> Structure::flattenDictionaryStructure(JSObject* object)
         
         // Copy the original property values into their final locations
         for (unsigned i = 0; i < propertyCount; i++)
-            object->putDirectOffset(anonymousSlotCount + i, values[i]);
+            object->putDirectOffset(globalData, anonymousSlotCount + i, values[i]);
 
         if (m_propertyTable->deletedOffsets) {
             delete m_propertyTable->deletedOffsets;

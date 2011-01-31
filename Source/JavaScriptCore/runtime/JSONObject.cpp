@@ -84,12 +84,13 @@ private:
     public:
         Holder(JSObject*);
 
-        JSObject* object() const { return m_object; }
+        JSObject* object() const { return m_object.get(); }
+        DeprecatedPtr<JSObject>* objectSlot() { return &m_object; }
 
         bool appendNextProperty(Stringifier&, UStringBuilder&);
 
     private:
-        JSObject* const m_object;
+        DeprecatedPtr<JSObject> m_object;
         const bool m_isArray;
         bool m_isJSArray;
         unsigned m_index;
@@ -258,7 +259,7 @@ void Stringifier::markAggregate(MarkStack& markStack)
     for (Stringifier* stringifier = this; stringifier; stringifier = stringifier->m_nextStringifierToMark) {
         size_t size = m_holderStack.size();
         for (size_t i = 0; i < size; ++i)
-            markStack.append(m_holderStack[i].object());
+            markStack.append(m_holderStack[i].objectSlot());
     }
 }
 
@@ -269,7 +270,7 @@ JSValue Stringifier::stringify(JSValue value)
         return jsNull();
 
     PropertyNameForFunctionCall emptyPropertyName(m_exec->globalData().propertyNames->emptyIdentifier);
-    object->putDirect(m_exec->globalData().propertyNames->emptyIdentifier, value);
+    object->putDirect(m_exec->globalData(), m_exec->globalData().propertyNames->emptyIdentifier, value);
 
     UStringBuilder result;
     if (appendStringifiedValue(result, value, object, emptyPropertyName) != StringifySucceeded)
@@ -499,7 +500,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, UStringBu
     // First time through, initialize.
     if (!m_index) {
         if (m_isArray) {
-            m_isJSArray = isJSArray(&exec->globalData(), m_object);
+            m_isJSArray = isJSArray(&exec->globalData(), m_object.get());
             m_size = m_object->get(exec, exec->globalData().propertyNames->length).toUInt32(exec);
             builder.append('[');
         } else {
@@ -532,10 +533,10 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, UStringBu
     if (m_isArray) {
         // Get the value.
         JSValue value;
-        if (m_isJSArray && asArray(m_object)->canGetIndex(index))
-            value = asArray(m_object)->getIndex(index);
+        if (m_isJSArray && asArray(m_object.get())->canGetIndex(index))
+            value = asArray(m_object.get())->getIndex(index);
         else {
-            PropertySlot slot(m_object);
+            PropertySlot slot(m_object.get());
             if (!m_object->getOwnPropertySlot(exec, index, slot))
                 slot.setUndefined();
             if (exec->hadException())
@@ -549,10 +550,10 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, UStringBu
         stringifier.startNewLine(builder);
 
         // Append the stringified value.
-        stringifyResult = stringifier.appendStringifiedValue(builder, value, m_object, index);
+        stringifyResult = stringifier.appendStringifiedValue(builder, value, m_object.get(), index);
     } else {
         // Get the value.
-        PropertySlot slot(m_object);
+        PropertySlot slot(m_object.get());
         Identifier& propertyName = m_propertyNames->propertyNameVector()[index];
         if (!m_object->getOwnPropertySlot(exec, propertyName, slot))
             return true;
@@ -574,7 +575,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, UStringBu
             builder.append(' ');
 
         // Append the stringified value.
-        stringifyResult = stringifier.appendStringifiedValue(builder, value, m_object, propertyName);
+        stringifyResult = stringifier.appendStringifiedValue(builder, value, m_object.get(), propertyName);
     }
 
     // From this point on, no access to the this pointer or to any members, because the
@@ -641,13 +642,13 @@ private:
     {
         JSValue args[] = { property, unfiltered };
         ArgList argList(args, 2);
-        return call(m_exec, m_function, m_callType, m_callData, thisObj, argList);
+        return call(m_exec, m_function.get(), m_callType, m_callData, thisObj, argList);
     }
 
     friend class Holder;
 
     ExecState* m_exec;
-    JSObject* m_function;
+    DeprecatedPtr<JSObject> m_function;
     CallType m_callType;
     CallData m_callData;
 };
@@ -726,7 +727,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                     array->deleteProperty(m_exec, indexStack.last());
                 else {
                     if (isJSArray(&m_exec->globalData(), array) && array->canSetIndex(indexStack.last()))
-                        array->setIndex(indexStack.last(), filteredValue);
+                        array->setIndex(m_exec->globalData(), indexStack.last(), filteredValue);
                     else
                         array->put(m_exec, indexStack.last(), filteredValue);
                 }

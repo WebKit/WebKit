@@ -845,7 +845,7 @@ NEVER_INLINE void JITThunks::tryCacheGetByID(CallFrame* callFrame, CodeBlock* co
         // Since we're accessing a prototype in a loop, it's a good bet that it
         // should not be treated as a dictionary.
         if (slotBaseObject->structure()->isDictionary()) {
-            slotBaseObject->flattenDictionaryObject();
+            slotBaseObject->flattenDictionaryObject(callFrame->globalData());
             offset = slotBaseObject->structure()->get(propertyName);
         }
         
@@ -942,17 +942,17 @@ static NEVER_INLINE void throwStackOverflowError(CallFrame* callFrame, JSGlobalD
 
 #define CHECK_FOR_EXCEPTION() \
     do { \
-        if (UNLIKELY(stackFrame.globalData->exception)) \
+        if (UNLIKELY(stackFrame.globalData->exception.get())) \
             VM_THROW_EXCEPTION(); \
     } while (0)
 #define CHECK_FOR_EXCEPTION_AT_END() \
     do { \
-        if (UNLIKELY(stackFrame.globalData->exception)) \
+        if (UNLIKELY(stackFrame.globalData->exception.get())) \
             VM_THROW_EXCEPTION_AT_END(); \
     } while (0)
 #define CHECK_FOR_EXCEPTION_VOID() \
     do { \
-        if (UNLIKELY(stackFrame.globalData->exception)) { \
+        if (UNLIKELY(stackFrame.globalData->exception.get())) { \
             VM_THROW_EXCEPTION_AT_END(); \
             return; \
         } \
@@ -1466,7 +1466,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_method_check)
         // Since we're accessing a prototype in a loop, it's a good bet that it
         // should not be treated as a dictionary.
         if (slotBaseObject->structure()->isDictionary())
-            slotBaseObject->flattenDictionaryObject();
+            slotBaseObject->flattenDictionaryObject(callFrame->globalData());
 
         // The result fetched should always be the callee!
         ASSERT(result == JSValue(callee));
@@ -1656,7 +1656,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_proto_list)
         // Since we're accessing a prototype in a loop, it's a good bet that it
         // should not be treated as a dictionary.
         if (slotBaseObject->structure()->isDictionary()) {
-            slotBaseObject->flattenDictionaryObject();
+            slotBaseObject->flattenDictionaryObject(callFrame->globalData());
             offset = slotBaseObject->structure()->get(propertyName);
         }
 
@@ -2147,7 +2147,7 @@ DEFINE_STUB_FUNCTION(void, op_tear_off_activation)
     activation->copyRegisters();
     if (JSValue v = stackFrame.args[1].jsValue()) {
         if (!stackFrame.callFrame->codeBlock()->isStrictMode())
-            asArguments(v)->setActivation(activation);
+            asArguments(v)->setActivation(*stackFrame.globalData, activation);
     }
 }
 
@@ -2204,7 +2204,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve)
 
     Identifier& ident = stackFrame.args[0].identifier();
     do {
-        JSObject* o = *iter;
+        JSObject* o = iter->get();
         PropertySlot slot(o);
         if (o->getPropertySlot(callFrame, ident, slot)) {
             JSValue result = slot.getValue(callFrame, ident);
@@ -2397,7 +2397,7 @@ DEFINE_STUB_FUNCTION(void, op_put_by_val)
         if (isJSArray(globalData, baseValue)) {
             JSArray* jsArray = asArray(baseValue);
             if (jsArray->canSetIndex(i))
-                jsArray->setIndex(i, value);
+                jsArray->setIndex(*globalData, i, value);
             else
                 jsArray->JSArray::put(callFrame, i, value);
         } else if (isJSByteArray(globalData, baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
@@ -2645,7 +2645,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_skip)
     }
     Identifier& ident = stackFrame.args[0].identifier();
     do {
-        JSObject* o = *iter;
+        JSObject* o = iter->get();
         PropertySlot slot(o);
         if (o->getPropertySlot(callFrame, ident, slot)) {
             JSValue result = slot.getValue(callFrame, ident);
@@ -2974,7 +2974,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_with_base)
     Identifier& ident = stackFrame.args[0].identifier();
     JSObject* base;
     do {
-        base = *iter;
+        base = iter->get();
         PropertySlot slot(base);
         if (base->getPropertySlot(callFrame, ident, slot)) {
             JSValue result = slot.getValue(callFrame, ident);
@@ -3480,7 +3480,7 @@ DEFINE_STUB_FUNCTION(void*, vm_throw)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
     JSGlobalData* globalData = stackFrame.globalData;
-    ExceptionHandler handler = jitThrow(globalData, stackFrame.callFrame, globalData->exception, globalData->exceptionLocation);
+    ExceptionHandler handler = jitThrow(globalData, stackFrame.callFrame, globalData->exception.get(), globalData->exceptionLocation);
     STUB_SET_RETURN_ADDRESS(handler.catchRoutine);
     return handler.callFrame;
 }

@@ -46,7 +46,7 @@ InternalFunction::InternalFunction(NonNullPassRefPtr<Structure> structure)
 InternalFunction::InternalFunction(JSGlobalData* globalData, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, const Identifier& name)
     : JSObjectWithGlobalObject(globalObject, structure)
 {
-    putDirect(globalData->propertyNames->name, jsString(globalData, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
+    putDirect(*globalData, globalData->propertyNames->name, jsString(globalData, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
 }
 
 const UString& InternalFunction::name(ExecState* exec)

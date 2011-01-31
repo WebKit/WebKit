@@ -73,26 +73,6 @@ namespace JSC {
                 , destructor(destructor)
                 , registerArraySize(0)
                 , globalScopeChain(NoScopeChain())
-                , regExpConstructor(0)
-                , errorConstructor(0)
-                , evalErrorConstructor(0)
-                , rangeErrorConstructor(0)
-                , referenceErrorConstructor(0)
-                , syntaxErrorConstructor(0)
-                , typeErrorConstructor(0)
-                , URIErrorConstructor(0)
-                , evalFunction(0)
-                , callFunction(0)
-                , applyFunction(0)
-                , objectPrototype(0)
-                , functionPrototype(0)
-                , arrayPrototype(0)
-                , booleanPrototype(0)
-                , stringPrototype(0)
-                , numberPrototype(0)
-                , datePrototype(0)
-                , regExpPrototype(0)
-                , methodCallDummy(0)
                 , weakRandom(static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
             {
             }
@@ -109,29 +89,29 @@ namespace JSC {
             ScopeChain globalScopeChain;
             Register globalCallFrame[RegisterFile::CallFrameHeaderSize];
 
-            RegExpConstructor* regExpConstructor;
-            ErrorConstructor* errorConstructor;
-            NativeErrorConstructor* evalErrorConstructor;
-            NativeErrorConstructor* rangeErrorConstructor;
-            NativeErrorConstructor* referenceErrorConstructor;
-            NativeErrorConstructor* syntaxErrorConstructor;
-            NativeErrorConstructor* typeErrorConstructor;
-            NativeErrorConstructor* URIErrorConstructor;
+            WriteBarrier<RegExpConstructor> regExpConstructor;
+            WriteBarrier<ErrorConstructor> errorConstructor;
+            WriteBarrier<NativeErrorConstructor> evalErrorConstructor;
+            WriteBarrier<NativeErrorConstructor> rangeErrorConstructor;
+            WriteBarrier<NativeErrorConstructor> referenceErrorConstructor;
+            WriteBarrier<NativeErrorConstructor> syntaxErrorConstructor;
+            WriteBarrier<NativeErrorConstructor> typeErrorConstructor;
+            WriteBarrier<NativeErrorConstructor> URIErrorConstructor;
 
-            GlobalEvalFunction* evalFunction;
-            NativeFunctionWrapper* callFunction;
-            NativeFunctionWrapper* applyFunction;
+            WriteBarrier<GlobalEvalFunction> evalFunction;
+            WriteBarrier<NativeFunctionWrapper> callFunction;
+            WriteBarrier<NativeFunctionWrapper> applyFunction;
 
-            ObjectPrototype* objectPrototype;
-            FunctionPrototype* functionPrototype;
-            ArrayPrototype* arrayPrototype;
-            BooleanPrototype* booleanPrototype;
-            StringPrototype* stringPrototype;
-            NumberPrototype* numberPrototype;
-            DatePrototype* datePrototype;
-            RegExpPrototype* regExpPrototype;
+            WriteBarrier<ObjectPrototype> objectPrototype;
+            WriteBarrier<FunctionPrototype> functionPrototype;
+            WriteBarrier<ArrayPrototype> arrayPrototype;
+            WriteBarrier<BooleanPrototype> booleanPrototype;
+            WriteBarrier<StringPrototype> stringPrototype;
+            WriteBarrier<NumberPrototype> numberPrototype;
+            WriteBarrier<DatePrototype> datePrototype;
+            WriteBarrier<RegExpPrototype> regExpPrototype;
 
-            JSObject* methodCallDummy;
+            WriteBarrier<JSObject> methodCallDummy;
 
             RefPtr<Structure> argumentsStructure;
             RefPtr<Structure> arrayStructure;
@@ -209,28 +189,28 @@ namespace JSC {
         // The following accessors return pristine values, even if a script 
         // replaces the global object's associated property.
 
-        RegExpConstructor* regExpConstructor() const { return d()->regExpConstructor; }
+        RegExpConstructor* regExpConstructor() const { return d()->regExpConstructor.get(); }
 
-        ErrorConstructor* errorConstructor() const { return d()->errorConstructor; }
-        NativeErrorConstructor* evalErrorConstructor() const { return d()->evalErrorConstructor; }
-        NativeErrorConstructor* rangeErrorConstructor() const { return d()->rangeErrorConstructor; }
-        NativeErrorConstructor* referenceErrorConstructor() const { return d()->referenceErrorConstructor; }
-        NativeErrorConstructor* syntaxErrorConstructor() const { return d()->syntaxErrorConstructor; }
-        NativeErrorConstructor* typeErrorConstructor() const { return d()->typeErrorConstructor; }
-        NativeErrorConstructor* URIErrorConstructor() const { return d()->URIErrorConstructor; }
+        ErrorConstructor* errorConstructor() const { return d()->errorConstructor.get(); }
+        NativeErrorConstructor* evalErrorConstructor() const { return d()->evalErrorConstructor.get(); }
+        NativeErrorConstructor* rangeErrorConstructor() const { return d()->rangeErrorConstructor.get(); }
+        NativeErrorConstructor* referenceErrorConstructor() const { return d()->referenceErrorConstructor.get(); }
+        NativeErrorConstructor* syntaxErrorConstructor() const { return d()->syntaxErrorConstructor.get(); }
+        NativeErrorConstructor* typeErrorConstructor() const { return d()->typeErrorConstructor.get(); }
+        NativeErrorConstructor* URIErrorConstructor() const { return d()->URIErrorConstructor.get(); }
 
-        GlobalEvalFunction* evalFunction() const { return d()->evalFunction; }
+        GlobalEvalFunction* evalFunction() const { return d()->evalFunction.get(); }
 
-        ObjectPrototype* objectPrototype() const { return d()->objectPrototype; }
-        FunctionPrototype* functionPrototype() const { return d()->functionPrototype; }
-        ArrayPrototype* arrayPrototype() const { return d()->arrayPrototype; }
-        BooleanPrototype* booleanPrototype() const { return d()->booleanPrototype; }
-        StringPrototype* stringPrototype() const { return d()->stringPrototype; }
-        NumberPrototype* numberPrototype() const { return d()->numberPrototype; }
-        DatePrototype* datePrototype() const { return d()->datePrototype; }
-        RegExpPrototype* regExpPrototype() const { return d()->regExpPrototype; }
+        ObjectPrototype* objectPrototype() const { return d()->objectPrototype.get(); }
+        FunctionPrototype* functionPrototype() const { return d()->functionPrototype.get(); }
+        ArrayPrototype* arrayPrototype() const { return d()->arrayPrototype.get(); }
+        BooleanPrototype* booleanPrototype() const { return d()->booleanPrototype.get(); }
+        StringPrototype* stringPrototype() const { return d()->stringPrototype.get(); }
+        NumberPrototype* numberPrototype() const { return d()->numberPrototype.get(); }
+        DatePrototype* datePrototype() const { return d()->datePrototype.get(); }
+        RegExpPrototype* regExpPrototype() const { return d()->regExpPrototype.get(); }
 
-        JSObject* methodCallDummy() const { return d()->methodCallDummy; }
+        JSObject* methodCallDummy() const { return d()->methodCallDummy.get(); }
 
         Structure* argumentsStructure() const { return d()->argumentsStructure.get(); }
         Structure* arrayStructure() const { return d()->arrayStructure.get(); }
@@ -385,7 +365,7 @@ namespace JSC {
     inline JSValue Structure::prototypeForLookup(ExecState* exec) const
     {
         if (typeInfo().type() == ObjectType)
-            return m_prototype;
+            return m_prototype.get();
 
         ASSERT(typeInfo().type() == StringType);
         return exec->lexicalGlobalObject()->stringPrototype();
@@ -457,12 +437,12 @@ namespace JSC {
     {
         MarkedArgumentBuffer values;
         values.append(singleItemValue);
-        return new (exec) JSArray(exec->lexicalGlobalObject()->arrayStructure(), values);
+        return new (exec) JSArray(exec->globalData(), exec->lexicalGlobalObject()->arrayStructure(), values);
     }
 
     inline JSArray* constructArray(ExecState* exec, const ArgList& values)
     {
-        return new (exec) JSArray(exec->lexicalGlobalObject()->arrayStructure(), values);
+        return new (exec) JSArray(exec->globalData(), exec->lexicalGlobalObject()->arrayStructure(), values);
     }
 
     class DynamicGlobalObjectScope {

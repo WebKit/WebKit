@@ -89,14 +89,14 @@ const ClassInfo MathObject::info = { "Math", 0, 0, ExecState::mathTable };
 MathObject::MathObject(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure)
     : JSObjectWithGlobalObject(globalObject, structure)
 {
-    putDirectWithoutTransition(Identifier(exec, "E"), jsNumber(exp(1.0)), DontDelete | DontEnum | ReadOnly);
-    putDirectWithoutTransition(Identifier(exec, "LN2"), jsNumber(log(2.0)), DontDelete | DontEnum | ReadOnly);
-    putDirectWithoutTransition(Identifier(exec, "LN10"), jsNumber(log(10.0)), DontDelete | DontEnum | ReadOnly);
-    putDirectWithoutTransition(Identifier(exec, "LOG2E"), jsNumber(1.0 / log(2.0)), DontDelete | DontEnum | ReadOnly);
-    putDirectWithoutTransition(Identifier(exec, "LOG10E"), jsNumber(1.0 / log(10.0)), DontDelete | DontEnum | ReadOnly);
-    putDirectWithoutTransition(Identifier(exec, "PI"), jsNumber(piDouble), DontDelete | DontEnum | ReadOnly);
-    putDirectWithoutTransition(Identifier(exec, "SQRT1_2"), jsNumber(sqrt(0.5)), DontDelete | DontEnum | ReadOnly);
-    putDirectWithoutTransition(Identifier(exec, "SQRT2"), jsNumber(sqrt(2.0)), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "E"), jsNumber(exp(1.0)), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "LN2"), jsNumber(log(2.0)), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "LN10"), jsNumber(log(10.0)), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "LOG2E"), jsNumber(1.0 / log(2.0)), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "LOG10E"), jsNumber(1.0 / log(10.0)), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "PI"), jsNumber(piDouble), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "SQRT1_2"), jsNumber(sqrt(0.5)), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "SQRT2"), jsNumber(sqrt(2.0)), DontDelete | DontEnum | ReadOnly);
 }
 
 // ECMA 15.8

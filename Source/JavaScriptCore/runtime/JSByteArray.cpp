@@ -40,7 +40,7 @@ JSByteArray::JSByteArray(ExecState* exec, NonNullPassRefPtr<Structure> structure
     , m_storage(storage)
     , m_classInfo(classInfo)
 {
-    putDirect(exec->globalData().propertyNames->length, jsNumber(m_storage->length()), ReadOnly | DontDelete);
+    putDirect(exec->globalData(), exec->globalData().propertyNames->length, jsNumber(m_storage->length()), ReadOnly | DontDelete);
 }
 
 #if !ASSERT_DISABLED

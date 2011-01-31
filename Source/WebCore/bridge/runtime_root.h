@@ -89,7 +89,7 @@ private:
     ProtectedPtr<JSGlobalObject> m_globalObject;
 
     ProtectCountSet m_protectCountSet;
-    WeakGCMap<RuntimeObject*, RuntimeObject*> m_runtimeObjects; // Really need a WeakGCSet, but this will do.
+    WeakGCMap<RuntimeObject*, RuntimeObject> m_runtimeObjects; // Really need a WeakGCSet, but this will do.
 
     HashSet<InvalidationCallback*> m_invalidationCallbacks;
 };

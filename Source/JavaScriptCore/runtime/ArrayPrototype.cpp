@@ -545,9 +545,9 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
 
     JSArray* resObj = new (exec) JSArray(exec->lexicalGlobalObject()->arrayStructure(), deleteCount, CreateCompact);
     JSValue result = resObj;
-
+    JSGlobalData& globalData = exec->globalData();
     for (unsigned k = 0; k < deleteCount; k++)
-        resObj->uncheckedSetIndex(k, getProperty(exec, thisObj, k + begin));
+        resObj->uncheckedSetIndex(globalData, k, getProperty(exec, thisObj, k + begin));
 
     resObj->setLength(deleteCount);
 
