@@ -2,6 +2,7 @@
 
 # Copyright (C) 2005, 2006, 2007 Apple Inc.  All rights reserved.
 # Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
+# Copyright (C) 2011 Research In Motion Limited. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -69,6 +70,7 @@ setConfiguration();
 my $productDir = productDir();
 chdirWebKit();
 my $testDirectory = File::Spec->catfile(getcwd(), "LayoutTests");
+$testDirectory = convertMsysPath($testDirectory) if isMsys();
 my $listen = "127.0.0.1:$httpdPort";
 $listen = "$httpdPort" if ($allInterfaces);
 
@@ -82,14 +84,16 @@ print "Press Ctrl+C to stop it.\n\n";
 
 my @args = (
     "-C", "Listen $listen",
-    "-c", "CustomLog |/usr/bin/tee common",
-    "-c", "ErrorLog |/usr/bin/tee",
-    # Run in single-process mode, do not detach from the controlling terminal.
-    "-X",
     # Disable Keep-Alive support. Makes testing in multiple browsers easier (no need to wait
     # for another browser's connection to expire).
     "-c", "KeepAlive 0"
 );
+push @args, (
+    "-c", "CustomLog |/usr/bin/tee common",
+    "-c", "ErrorLog |/usr/bin/tee",
+    # Run in single-process mode, do not detach from the controlling terminal.
+    "-X",
+) unless isMsys();
 
 my @defaultArgs = getDefaultConfigForTestDirectory($testDirectory);
 @args = (@defaultArgs, @args);

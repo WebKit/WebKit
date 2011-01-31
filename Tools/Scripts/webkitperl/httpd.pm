@@ -1,6 +1,7 @@
 # Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved
 # Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
 # Copyright (C) 2010 Andras Becsi (abecsi@inf.u-szeged.hu), University of Szeged
+# Copyright (C) 2011 Research In Motion Limited. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -58,6 +59,7 @@ BEGIN {
 }
 
 my $tmpDir = "/tmp";
+$tmpDir = convertMsysPath($tmpDir) if isMsys();
 my $httpdLockPrefix = "WebKitHttpd.lock.";
 my $myLockFile;
 my $exclusiveLockFile = File::Spec->catfile($tmpDir, "WebKit.lock");
@@ -76,6 +78,10 @@ sub getHTTPDPath
 {
     if (isDebianBased()) {
         $httpdPath = "/usr/sbin/apache2";
+    } elsif (isMsys()) {
+        # FIXME: We should write this without escaping the space character. Instead, the call
+        #        site should take responsibility for escaping the path.
+        $httpdPath = "/c/program\ files/apache\ software\ foundation/apache2.2/bin/httpd.exe";
     } else {
         $httpdPath = "/usr/sbin/httpd";
     }
@@ -100,12 +106,15 @@ sub getDefaultConfigForTestDirectory
         # Setup a link to where the js test templates are stored, use -c so that mod_alias will already be loaded.
         "-c", "Alias /js-test-resources \"$jsTestResourcesDirectory\"",
         "-c", "TypesConfig \"$typesConfig\"",
-        # Apache wouldn't run CGIs with permissions==700 otherwise
-        "-c", "User \"#$<\"",
-        "-c", "LockFile \"$httpdLockFile\"",
         "-c", "PidFile \"$httpdPidFile\"",
         "-c", "ScoreBoardFile \"$httpdScoreBoardFile\"",
     );
+
+    push @httpdArgs, (
+        # Apache wouldn't run CGIs with permissions==700 otherwise
+        "-c", "User \"#$<\"",
+        "-c", "LockFile \"$httpdLockFile\""
+    ) unless isMsys();
 
     # FIXME: Enable this on Windows once <rdar://problem/5345985> is fixed
     # The version of Apache we use with Cygwin does not support SSL
@@ -129,6 +138,8 @@ sub getHTTPDConfigPathForTestDirectory
             chmod(0755, "/usr/lib/apache/libphp4.dll");
         }
         $httpdConfig = "$windowsConfDirectory/cygwin-httpd.conf";
+    } elsif (isMsys()) {
+        $httpdConfig = "$testDirectory/http/conf/apache2-msys-httpd.conf";
     } elsif (isDebianBased()) {
         $httpdConfig = "$testDirectory/http/conf/apache2-debian-httpd.conf";
     } elsif (isFedoraBased()) {
@@ -318,4 +329,14 @@ sub getWaitTime
         $waitTime = $waitEndTime - $waitBeginTime;
     }
     return $waitTime;
+}
+
+sub convertMsysPath
+{
+    my ($path) = @_;
+    return unless isMsys();
+
+    $path = `cmd.exe //c echo $path`;
+    $path =~ s/\r\n$//;
+    return $path;
 }
