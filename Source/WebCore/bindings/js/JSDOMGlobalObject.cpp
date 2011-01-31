@@ -53,14 +53,14 @@ void JSDOMGlobalObject::markChildren(MarkStack& markStack)
 
     JSDOMStructureMap::iterator end = structures().end();
     for (JSDOMStructureMap::iterator it = structures().begin(); it != end; ++it)
-        markStack.append(it->second->storedPrototype());
+        markStack.append(it->second->storedPrototypeSlot());
 
     JSDOMConstructorMap::iterator end2 = constructors().end();
     for (JSDOMConstructorMap::iterator it2 = constructors().begin(); it2 != end2; ++it2)
-        markStack.append(it2->second);
+        markStack.append(&it2->second);
 
     if (d()->m_injectedScript)
-        markStack.append(d()->m_injectedScript);
+        markStack.append(&d()->m_injectedScript);
 }
 
 void JSDOMGlobalObject::setCurrentEvent(Event* evt)
@@ -75,12 +75,12 @@ Event* JSDOMGlobalObject::currentEvent() const
 
 void JSDOMGlobalObject::setInjectedScript(JSObject* injectedScript)
 {
-    d()->m_injectedScript = injectedScript;
+    d()->m_injectedScript.set(globalData(), this, injectedScript);
 }
 
 JSObject* JSDOMGlobalObject::injectedScript() const
 {
-    return d()->m_injectedScript;
+    return d()->m_injectedScript.get();
 }
 
 void JSDOMGlobalObject::destroyJSDOMGlobalObjectData(void* jsDOMGlobalObjectData)

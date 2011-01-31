@@ -74,7 +74,7 @@ JSValue QtClass::fallbackObject(ExecState* exec, Instance* inst, const Identifie
     const QByteArray name = QString(reinterpret_cast<const QChar*>(ustring.characters()), ustring.length()).toAscii();
 
     // First see if we have a cache hit
-    JSObject* val = qtinst->m_methods.value(name);
+    JSObject* val = qtinst->m_methods.value(name).get();
     if (val)
         return val;
 

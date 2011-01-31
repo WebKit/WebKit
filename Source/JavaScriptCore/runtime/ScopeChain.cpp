@@ -35,12 +35,12 @@ void ScopeChainNode::print() const
 {
     ScopeChainIterator scopeEnd = end();
     for (ScopeChainIterator scopeIter = begin(); scopeIter != scopeEnd; ++scopeIter) {
-        JSObject* o = *scopeIter;
+        DeprecatedPtr<JSObject> o = *scopeIter;
         PropertyNameArray propertyNames(globalObject->globalExec());
         o->getPropertyNames(globalObject->globalExec(), propertyNames);
         PropertyNameArray::const_iterator propEnd = propertyNames.end();
 
-        fprintf(stderr, "----- [scope %p] -----\n", o);
+        fprintf(stderr, "----- [scope %p] -----\n", o.get());
         for (PropertyNameArray::const_iterator propIter = propertyNames.begin(); propIter != propEnd; propIter++) {
             Identifier name = *propIter;
             fprintf(stderr, "%s, ", name.ustring().utf8().data());

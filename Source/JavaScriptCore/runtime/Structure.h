@@ -80,7 +80,7 @@ namespace JSC {
         static PassRefPtr<Structure> toCacheableDictionaryTransition(Structure*);
         static PassRefPtr<Structure> toUncacheableDictionaryTransition(Structure*);
 
-        PassRefPtr<Structure> flattenDictionaryStructure(JSObject*);
+        PassRefPtr<Structure> flattenDictionaryStructure(JSGlobalData&, JSObject*);
 
         ~Structure();
 
@@ -94,7 +94,8 @@ namespace JSC {
 
         const TypeInfo& typeInfo() const { return m_typeInfo; }
 
-        JSValue storedPrototype() const { return m_prototype; }
+        JSValue storedPrototype() const { return m_prototype.get(); }
+        DeprecatedPtr<Unknown>* storedPrototypeSlot() { return &m_prototype; }
         JSValue prototypeForLookup(ExecState*) const;
         StructureChain* prototypeChain(ExecState*) const;
 
@@ -206,7 +207,7 @@ namespace JSC {
 
         TypeInfo m_typeInfo;
 
-        JSValue m_prototype;
+        DeprecatedPtr<Unknown> m_prototype;
         mutable RefPtr<StructureChain> m_cachedPrototypeChain;
 
         RefPtr<Structure> m_previous;

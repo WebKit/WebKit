@@ -34,7 +34,7 @@ namespace JSC {
 
     class DebuggerActivation : public JSObject {
     public:
-        DebuggerActivation(JSObject*);
+        DebuggerActivation(JSGlobalData&, JSObject*);
 
         virtual void markChildren(MarkStack&);
         virtual UString className() const;
@@ -58,7 +58,7 @@ namespace JSC {
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesMarkChildren | JSObject::StructureFlags;
 
     private:
-        JSActivation* m_activation;
+        WriteBarrier<JSActivation> m_activation;
     };
 
 } // namespace JSC

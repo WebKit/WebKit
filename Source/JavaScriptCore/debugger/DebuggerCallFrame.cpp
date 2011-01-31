@@ -96,7 +96,7 @@ JSValue DebuggerCallFrame::evaluate(const UString& script, JSValue& exception) c
     JSGlobalData& globalData = m_callFrame->globalData();
     JSValue result = globalData.interpreter->execute(eval.get(), m_callFrame, thisObject(), m_callFrame->scopeChain());
     if (globalData.exception) {
-        exception = globalData.exception;
+        exception = globalData.exception.get();
         globalData.exception = JSValue();
     }
     ASSERT(result);

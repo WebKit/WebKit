@@ -1,3 +1,330 @@
+2011-01-31  Oliver Hunt  <oliver@apple.com>
+
+        Convert markstack to a slot visitor API
+        https://bugs.webkit.org/show_bug.cgi?id=53219
+
+        rolling r77098, r77099, r77100, r77109, and
+        r77111 back in, along with a few more Qt fix attempts.
+
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObjectData::setPrivateProperty):
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::getPrivateProperty):
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::setPrivateProperty):
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::markChildren):
+        (JSC::JSCallbackObject::setPrivateProperty):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::put):
+        (JSC::::staticFunctionGetter):
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeConstructor):
+        (JSObjectSetPrivateProperty):
+        * API/JSWeakObjectMapRefInternal.h:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::markAggregate):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::globalObject):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitJumpIfNotFunctionCall):
+        (JSC::BytecodeGenerator::emitJumpIfNotFunctionApply):
+        (JSC::BytecodeGenerator::findScopedProperty):
+        * debugger/Debugger.cpp:
+        (JSC::evaluateInGlobalCallFrame):
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::DebuggerActivation):
+        (JSC::DebuggerActivation::markChildren):
+        * debugger/DebuggerActivation.h:
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluate):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::exception):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::resolve):
+        (JSC::Interpreter::resolveSkip):
+        (JSC::Interpreter::resolveGlobal):
+        (JSC::Interpreter::resolveGlobalDynamic):
+        (JSC::Interpreter::resolveBaseAndProperty):
+        (JSC::Interpreter::unwindCallFrame):
+        (JSC::appendSourceToError):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::tryCacheGetByID):
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::tryCacheGetByID):
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jsc.cpp:
+        (GlobalObject::GlobalObject):
+        * runtime/ArgList.cpp:
+        (JSC::MarkedArgumentBuffer::markLists):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::markChildren):
+        (JSC::Arguments::getOwnPropertySlot):
+        (JSC::Arguments::getOwnPropertyDescriptor):
+        (JSC::Arguments::put):
+        * runtime/Arguments.h:
+        (JSC::Arguments::setActivation):
+        (JSC::Arguments::Arguments):
+        * runtime/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::ArrayConstructor):
+        (JSC::constructArrayWithSizeQuirk):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncSplice):
+        * runtime/BatchedTransitionOptimizer.h:
+        (JSC::BatchedTransitionOptimizer::BatchedTransitionOptimizer):
+        (JSC::BatchedTransitionOptimizer::~BatchedTransitionOptimizer):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::BooleanConstructor::BooleanConstructor):
+        (JSC::constructBoolean):
+        (JSC::constructBooleanFromImmediateBoolean):
+        * runtime/BooleanPrototype.cpp:
+        (JSC::BooleanPrototype::BooleanPrototype):
+        * runtime/ConservativeSet.cpp:
+        (JSC::ConservativeSet::grow):
+        * runtime/ConservativeSet.h:
+        (JSC::ConservativeSet::~ConservativeSet):
+        (JSC::ConservativeSet::mark):
+        * runtime/DateConstructor.cpp:
+        (JSC::DateConstructor::DateConstructor):
+        * runtime/DateInstance.cpp:
+        (JSC::DateInstance::DateInstance):
+        * runtime/DatePrototype.cpp:
+        (JSC::dateProtoFuncSetTime):
+        (JSC::setNewValueFromTimeArgs):
+        (JSC::setNewValueFromDateArgs):
+        (JSC::dateProtoFuncSetYear):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::ErrorConstructor::ErrorConstructor):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::ErrorInstance):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::ErrorPrototype::ErrorPrototype):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::FunctionConstructor::FunctionConstructor):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::FunctionPrototype):
+        * runtime/GetterSetter.cpp:
+        (JSC::GetterSetter::markChildren):
+        * runtime/GetterSetter.h:
+        (JSC::GetterSetter::GetterSetter):
+        (JSC::GetterSetter::getter):
+        (JSC::GetterSetter::setGetter):
+        (JSC::GetterSetter::setter):
+        (JSC::GetterSetter::setSetter):
+        * runtime/GlobalEvalFunction.cpp:
+        (JSC::GlobalEvalFunction::GlobalEvalFunction):
+        (JSC::GlobalEvalFunction::markChildren):
+        * runtime/GlobalEvalFunction.h:
+        (JSC::GlobalEvalFunction::cachedGlobalObject):
+        * runtime/Heap.cpp:
+        (JSC::Heap::markProtectedObjects):
+        (JSC::Heap::markTempSortVectors):
+        (JSC::Heap::markRoots):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::InternalFunction):
+        * runtime/JSAPIValueWrapper.h:
+        (JSC::JSAPIValueWrapper::value):
+        (JSC::JSAPIValueWrapper::JSAPIValueWrapper):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::markChildren):
+        (JSC::JSActivation::put):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::JSArray):
+        (JSC::JSArray::getOwnPropertySlot):
+        (JSC::JSArray::getOwnPropertyDescriptor):
+        (JSC::JSArray::put):
+        (JSC::JSArray::putSlowCase):
+        (JSC::JSArray::deleteProperty):
+        (JSC::JSArray::increaseVectorLength):
+        (JSC::JSArray::setLength):
+        (JSC::JSArray::pop):
+        (JSC::JSArray::push):
+        (JSC::JSArray::unshiftCount):
+        (JSC::JSArray::sort):
+        (JSC::JSArray::fillArgList):
+        (JSC::JSArray::copyToRegisters):
+        (JSC::JSArray::compactForSorting):
+        * runtime/JSArray.h:
+        (JSC::JSArray::getIndex):
+        (JSC::JSArray::setIndex):
+        (JSC::JSArray::uncheckedSetIndex):
+        (JSC::JSArray::markChildrenDirect):
+        * runtime/JSByteArray.cpp:
+        (JSC::JSByteArray::JSByteArray):
+        * runtime/JSCell.h:
+        (JSC::JSCell::MarkStack::append):
+        (JSC::JSCell::MarkStack::internalAppend):
+        (JSC::JSCell::MarkStack::deprecatedAppend):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction):
+        (JSC::JSFunction::getOwnPropertySlot):
+        * runtime/JSGlobalData.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::markIfNeeded):
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::resetPrototype):
+        (JSC::JSGlobalObject::markChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::JSGlobalObjectData::JSGlobalObjectData):
+        (JSC::JSGlobalObject::regExpConstructor):
+        (JSC::JSGlobalObject::errorConstructor):
+        (JSC::JSGlobalObject::evalErrorConstructor):
+        (JSC::JSGlobalObject::rangeErrorConstructor):
+        (JSC::JSGlobalObject::referenceErrorConstructor):
+        (JSC::JSGlobalObject::syntaxErrorConstructor):
+        (JSC::JSGlobalObject::typeErrorConstructor):
+        (JSC::JSGlobalObject::URIErrorConstructor):
+        (JSC::JSGlobalObject::evalFunction):
+        (JSC::JSGlobalObject::objectPrototype):
+        (JSC::JSGlobalObject::functionPrototype):
+        (JSC::JSGlobalObject::arrayPrototype):
+        (JSC::JSGlobalObject::booleanPrototype):
+        (JSC::JSGlobalObject::stringPrototype):
+        (JSC::JSGlobalObject::numberPrototype):
+        (JSC::JSGlobalObject::datePrototype):
+        (JSC::JSGlobalObject::regExpPrototype):
+        (JSC::JSGlobalObject::methodCallDummy):
+        (JSC::Structure::prototypeForLookup):
+        (JSC::constructArray):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Holder::object):
+        (JSC::Stringifier::Holder::objectSlot):
+        (JSC::Stringifier::markAggregate):
+        (JSC::Stringifier::stringify):
+        (JSC::Stringifier::Holder::appendNextProperty):
+        (JSC::Walker::callReviver):
+        (JSC::Walker::walk):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::defineGetter):
+        (JSC::JSObject::defineSetter):
+        (JSC::JSObject::removeDirect):
+        (JSC::JSObject::putDirectFunction):
+        (JSC::JSObject::putDirectFunctionWithoutTransition):
+        (JSC::putDescriptor):
+        (JSC::JSObject::defineOwnProperty):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getDirectOffset):
+        (JSC::JSObject::putDirectOffset):
+        (JSC::JSObject::putUndefinedAtDirectOffset):
+        (JSC::JSObject::flattenDictionaryObject):
+        (JSC::JSObject::putDirectInternal):
+        (JSC::JSObject::putDirect):
+        (JSC::JSObject::putDirectFunction):
+        (JSC::JSObject::putDirectWithoutTransition):
+        (JSC::JSObject::putDirectFunctionWithoutTransition):
+        (JSC::JSValue::putDirect):
+        (JSC::JSObject::allocatePropertyStorageInline):
+        (JSC::JSObject::markChildrenDirect):
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::JSPropertyNameIterator):
+        (JSC::JSPropertyNameIterator::get):
+        * runtime/JSPropertyNameIterator.h:
+        * runtime/JSStaticScopeObject.cpp:
+        (JSC::JSStaticScopeObject::markChildren):
+        * runtime/JSString.cpp:
+        (JSC::StringObject::create):
+        * runtime/JSValue.h:
+        * runtime/JSWrapperObject.cpp:
+        (JSC::JSWrapperObject::markChildren):
+        * runtime/JSWrapperObject.h:
+        (JSC::JSWrapperObject::internalValue):
+        (JSC::JSWrapperObject::setInternalValue):
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser::parse):
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticFunctionSlot):
+        * runtime/Lookup.h:
+        (JSC::lookupPut):
+        * runtime/MarkStack.h:
+        (JSC::MarkStack::MarkStack):
+        (JSC::MarkStack::deprecatedAppendValues):
+        (JSC::MarkStack::appendValues):
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::MathObject):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::NativeErrorConstructor):
+        * runtime/NativeErrorPrototype.cpp:
+        (JSC::NativeErrorPrototype::NativeErrorPrototype):
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::NumberConstructor):
+        (JSC::constructWithNumberConstructor):
+        * runtime/NumberObject.cpp:
+        (JSC::constructNumber):
+        * runtime/NumberPrototype.cpp:
+        (JSC::NumberPrototype::NumberPrototype):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::ObjectConstructor):
+        (JSC::objectConstructorGetOwnPropertyDescriptor):
+        * runtime/Operations.h:
+        (JSC::normalizePrototypeChain):
+        (JSC::resolveBase):
+        * runtime/PrototypeFunction.cpp:
+        (JSC::PrototypeFunction::PrototypeFunction):
+        * runtime/PutPropertySlot.h:
+        (JSC::PutPropertySlot::setExistingProperty):
+        (JSC::PutPropertySlot::setNewProperty):
+        (JSC::PutPropertySlot::base):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::RegExpConstructor):
+        * runtime/ScopeChain.cpp:
+        (JSC::ScopeChainNode::print):
+        * runtime/ScopeChain.h:
+        (JSC::ScopeChainNode::~ScopeChainNode):
+        (JSC::ScopeChainIterator::operator*):
+        (JSC::ScopeChainIterator::operator->):
+        (JSC::ScopeChain::top):
+        * runtime/ScopeChainMark.h:
+        (JSC::ScopeChain::markAggregate):
+        * runtime/SmallStrings.cpp:
+        (JSC::isMarked):
+        (JSC::SmallStrings::markChildren):
+        * runtime/SmallStrings.h:
+        (JSC::SmallStrings::emptyString):
+        (JSC::SmallStrings::singleCharacterString):
+        (JSC::SmallStrings::singleCharacterStrings):
+        * runtime/StringConstructor.cpp:
+        (JSC::StringConstructor::StringConstructor):
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::StringObject):
+        * runtime/StringObject.h:
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::StringPrototype):
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::toDictionaryTransition):
+        (JSC::Structure::flattenDictionaryStructure):
+        * runtime/Structure.h:
+        (JSC::Structure::storedPrototype):
+        (JSC::Structure::storedPrototypeSlot):
+        * runtime/WeakGCMap.h:
+        (JSC::WeakGCMap::uncheckedGet):
+        (JSC::WeakGCMap::uncheckedGetSlot):
+        (JSC::::get):
+        (JSC::::take):
+        (JSC::::set):
+        (JSC::::uncheckedRemove):
+        * runtime/WriteBarrier.h: Added.
+        (JSC::DeprecatedPtr::DeprecatedPtr):
+        (JSC::DeprecatedPtr::get):
+        (JSC::DeprecatedPtr::operator*):
+        (JSC::DeprecatedPtr::operator->):
+        (JSC::DeprecatedPtr::slot):
+        (JSC::DeprecatedPtr::operator UnspecifiedBoolType*):
+        (JSC::DeprecatedPtr::operator!):
+        (JSC::WriteBarrierBase::set):
+        (JSC::WriteBarrierBase::get):
+        (JSC::WriteBarrierBase::operator*):
+        (JSC::WriteBarrierBase::operator->):
+        (JSC::WriteBarrierBase::clear):
+        (JSC::WriteBarrierBase::slot):
+        (JSC::WriteBarrierBase::operator UnspecifiedBoolType*):
+        (JSC::WriteBarrierBase::operator!):
+        (JSC::WriteBarrier::WriteBarrier):
+        (JSC::operator==):
+
 2011-01-31  Dan Winship  <danw@gnome.org>
 
         Reviewed by Gustavo Noronha Silva.

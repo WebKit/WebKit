@@ -38,8 +38,8 @@ const ClassInfo JSOptionConstructor::s_info = { "OptionConstructor", 0, 0, 0 };
 JSOptionConstructor::JSOptionConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
     : DOMConstructorWithDocument(JSOptionConstructor::createStructure(globalObject->objectPrototype()), globalObject)
 {
-    putDirect(exec->propertyNames().prototype, JSHTMLOptionElementPrototype::self(exec, globalObject), None);
-    putDirect(exec->propertyNames().length, jsNumber(4), ReadOnly | DontDelete | DontEnum);
+    putDirect(exec->globalData(), exec->propertyNames().prototype, JSHTMLOptionElementPrototype::self(exec, globalObject), None);
+    putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(4), ReadOnly | DontDelete | DontEnum);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructHTMLOptionElement(ExecState* exec)

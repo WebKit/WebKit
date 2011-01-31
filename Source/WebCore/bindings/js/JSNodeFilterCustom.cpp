@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSNodeFilter.h"
 
+#include "JSDOMWindowBase.h"
 #include "JSNode.h"
 #include "JSNodeFilterCondition.h"
 #include "NodeFilter.h"

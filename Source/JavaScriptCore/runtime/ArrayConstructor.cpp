@@ -42,10 +42,10 @@ ArrayConstructor::ArrayConstructor(ExecState* exec, JSGlobalObject* globalObject
     : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, arrayPrototype->classInfo()->className))
 {
     // ECMA 15.4.3.1 Array.prototype
-    putDirectWithoutTransition(exec->propertyNames().prototype, arrayPrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().prototype, arrayPrototype, DontEnum | DontDelete | ReadOnly);
 
     // no. of arguments for constructor
-    putDirectWithoutTransition(exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
+    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
 
     // ES5
     putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, globalObject, prototypeFunctionStructure, 1, exec->propertyNames().isArray, arrayConstructorIsArray), DontEnum);
@@ -62,7 +62,7 @@ static inline JSObject* constructArrayWithSizeQuirk(ExecState* exec, const ArgLi
     }
 
     // otherwise the array is constructed with the arguments in it
-    return new (exec) JSArray(exec->lexicalGlobalObject()->arrayStructure(), args);
+    return new (exec) JSArray(exec->globalData(), exec->lexicalGlobalObject()->arrayStructure(), args);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWithArrayConstructor(ExecState* exec)

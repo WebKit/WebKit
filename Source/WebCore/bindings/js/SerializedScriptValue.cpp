@@ -1040,14 +1040,14 @@ private:
     void putProperty(JSArray* array, unsigned index, JSValue value)
     {
         if (array->canSetIndex(index))
-            array->setIndex(index, value);
+            array->setIndex(m_exec->globalData(), index, value);
         else
             array->put(m_exec, index, value);
     }
 
     void putProperty(JSObject* object, const Identifier& property, JSValue value)
     {
-        object->putDirect(property, value);
+        object->putDirect(m_exec->globalData(), property, value);
     }
 
     bool readFile(RefPtr<File>& file)

@@ -203,7 +203,7 @@ namespace JSC {
         Terminator terminator;
         Heap heap;
 
-        JSValue exception;
+        DeprecatedPtr<Unknown> exception;
 #if ENABLE(JIT)
         ReturnAddressPtr exceptionLocation;
 #endif

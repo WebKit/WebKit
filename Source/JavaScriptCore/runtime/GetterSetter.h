@@ -38,17 +38,15 @@ namespace JSC {
     public:
         GetterSetter(ExecState* exec)
             : JSCell(exec->globalData().getterSetterStructure.get())
-            , m_getter(0)
-            , m_setter(0)
         {
         }
 
         virtual void markChildren(MarkStack&);
 
-        JSObject* getter() const { return m_getter; }
-        void setGetter(JSObject* getter) { m_getter = getter; }
-        JSObject* setter() const { return m_setter; }
-        void setSetter(JSObject* setter) { m_setter = setter; }
+        JSObject* getter() const { return m_getter.get(); }
+        void setGetter(JSGlobalData& globalData, JSObject* getter) { m_getter.set(globalData, this, getter); }
+        JSObject* setter() const { return m_setter.get(); }
+        void setSetter(JSGlobalData& globalData, JSObject* setter) { m_setter.set(globalData, this, setter); }
         static PassRefPtr<Structure> createStructure(JSValue prototype)
         {
             return Structure::create(prototype, TypeInfo(GetterSetterType, OverridesMarkChildren), AnonymousSlotCount);
@@ -56,8 +54,8 @@ namespace JSC {
     private:
         virtual bool isGetterSetter() const;
 
-        JSObject* m_getter;
-        JSObject* m_setter;  
+        WriteBarrier<JSObject> m_getter;
+        WriteBarrier<JSObject> m_setter;  
     };
 
     GetterSetter* asGetterSetter(JSValue);

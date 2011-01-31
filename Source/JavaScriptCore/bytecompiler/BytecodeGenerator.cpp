@@ -251,7 +251,7 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, const ScopeChain&
     for (SymbolTable::iterator it = symbolTable->begin(); it != end; ++it)
         registerFor(it->second.getIndex()).setIndex(it->second.getIndex() + m_globalVarStorageOffset);
         
-    BatchedTransitionOptimizer optimizer(globalObject);
+    BatchedTransitionOptimizer optimizer(*m_globalData, globalObject);
 
     const VarStack& varStack = programNode->varStack();
     const FunctionStack& functionStack = programNode->functionStack();
@@ -903,7 +903,7 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfNotFunctionCall(RegisterID* cond,
 
     emitOpcode(op_jneq_ptr);
     instructions().append(cond->index());
-    instructions().append(m_scopeChain->globalObject()->d()->callFunction);
+    instructions().append(m_scopeChain->globalObject()->d()->callFunction.get());
     instructions().append(target->bind(begin, instructions().size()));
     return target;
 }
@@ -914,7 +914,7 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfNotFunctionApply(RegisterID* cond
 
     emitOpcode(op_jneq_ptr);
     instructions().append(cond->index());
-    instructions().append(m_scopeChain->globalObject()->d()->applyFunction);
+    instructions().append(m_scopeChain->globalObject()->d()->applyFunction.get());
     instructions().append(target->bind(begin, instructions().size()));
     return target;
 }
@@ -1117,7 +1117,7 @@ bool BytecodeGenerator::findScopedProperty(const Identifier& property, int& inde
 
         if (shouldOptimizeLocals() && m_codeType == GlobalCode) {
             ScopeChainIterator iter = m_scopeChain->begin();
-            globalObject = *iter;
+            globalObject = iter->get();
             ASSERT((++iter) == m_scopeChain->end());
         }
         return false;
@@ -1128,7 +1128,7 @@ bool BytecodeGenerator::findScopedProperty(const Identifier& property, int& inde
     ScopeChainIterator iter = m_scopeChain->begin();
     ScopeChainIterator end = m_scopeChain->end();
     for (; iter != end; ++iter, ++depth) {
-        JSObject* currentScope = *iter;
+        JSObject* currentScope = iter->get();
         if (!currentScope->isVariableObject())
             break;
         JSVariableObject* currentVariableObject = static_cast<JSVariableObject*>(currentScope);
@@ -1157,7 +1157,7 @@ bool BytecodeGenerator::findScopedProperty(const Identifier& property, int& inde
     // Can't locate the property but we're able to avoid a few lookups.
     stackDepth = depth + m_codeBlock->needsFullScopeChain();
     index = missingSymbolMarker();
-    JSObject* scope = *iter;
+    JSObject* scope = iter->get();
     if (++iter == end)
         globalObject = scope;
     return true;

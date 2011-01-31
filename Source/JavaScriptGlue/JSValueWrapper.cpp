@@ -194,15 +194,4 @@ CFTypeRef JSValueWrapper::JSObjectCopyCFValue(void *data)
 
 void JSValueWrapper::JSObjectMark(void *data)
 {
-    JSValueWrapper* ptr = (JSValueWrapper*)data;
-    if (ptr)
-    {
-        // This results in recursive marking but will be otherwise safe and correct.
-        // We claim the array vptr is 0 because we don't have access to it here, and
-        // claiming 0 is functionally harmless -- it merely means that we can't
-        // devirtualise marking of arrays when recursing from this point.
-        MarkStack markStack(0);
-        markStack.append(ptr->fValue.get());
-        markStack.drain();
-    }
 }

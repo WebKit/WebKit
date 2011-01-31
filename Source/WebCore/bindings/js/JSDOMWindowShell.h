@@ -43,11 +43,11 @@ namespace WebCore {
         JSDOMWindowShell(PassRefPtr<DOMWindow>, DOMWrapperWorld* world);
         virtual ~JSDOMWindowShell();
 
-        JSDOMWindow* window() const { return m_window; }
-        void setWindow(JSDOMWindow* window)
+        JSDOMWindow* window() const { return m_window.get(); }
+        void setWindow(JSC::JSGlobalData& globalData, JSDOMWindow* window)
         {
             ASSERT_ARG(window, window);
-            m_window = window;
+            m_window.set(globalData, this, window);
             setPrototype(window->prototype());
         }
         void setWindow(PassRefPtr<DOMWindow>);
@@ -85,7 +85,7 @@ namespace WebCore {
         virtual JSC::JSObject* unwrappedObject();
         virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
 
-        JSDOMWindow* m_window;
+        JSC::WriteBarrier<JSDOMWindow> m_window;
         RefPtr<DOMWrapperWorld> m_world;
     };
 

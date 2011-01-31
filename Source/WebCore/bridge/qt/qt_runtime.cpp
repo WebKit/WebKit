@@ -1401,8 +1401,6 @@ QtRuntimeMetaMethod::QtRuntimeMetaMethod(ExecState* exec, const Identifier& iden
     QW_D(QtRuntimeMetaMethod);
     d->m_signature = signature;
     d->m_index = index;
-    d->m_connect = 0;
-    d->m_disconnect = 0;
     d->m_allowPrivate = allowPrivate;
 }
 
@@ -1411,9 +1409,9 @@ void QtRuntimeMetaMethod::markChildren(MarkStack& markStack)
     QtRuntimeMethod::markChildren(markStack);
     QW_D(QtRuntimeMetaMethod);
     if (d->m_connect)
-        markStack.append(d->m_connect);
+        markStack.append(&d->m_connect);
     if (d->m_disconnect)
-        markStack.append(d->m_disconnect);
+        markStack.append(&d->m_disconnect);
 }
 
 EncodedJSValue QtRuntimeMetaMethod::call(ExecState* exec)
@@ -1523,8 +1521,8 @@ JSValue QtRuntimeMetaMethod::connectGetter(ExecState* exec, JSValue slotBase, co
     QW_DS(QtRuntimeMetaMethod, thisObj);
 
     if (!d->m_connect)
-        d->m_connect = new (exec) QtRuntimeConnectionMethod(exec, ident, true, d->m_instance, d->m_index, d->m_signature);
-    return d->m_connect;
+        d->m_connect.set(exec->globalData(), thisObj, new (exec) QtRuntimeConnectionMethod(exec, ident, true, d->m_instance, d->m_index, d->m_signature));
+    return d->m_connect.get();
 }
 
 JSValue QtRuntimeMetaMethod::disconnectGetter(ExecState* exec, JSValue slotBase, const Identifier& ident)
@@ -1533,8 +1531,8 @@ JSValue QtRuntimeMetaMethod::disconnectGetter(ExecState* exec, JSValue slotBase,
     QW_DS(QtRuntimeMetaMethod, thisObj);
 
     if (!d->m_disconnect)
-        d->m_disconnect = new (exec) QtRuntimeConnectionMethod(exec, ident, false, d->m_instance, d->m_index, d->m_signature);
-    return d->m_disconnect;
+        d->m_disconnect.set(exec->globalData(), thisObj, new (exec) QtRuntimeConnectionMethod(exec, ident, false, d->m_instance, d->m_index, d->m_signature));
+    return d->m_disconnect.get();
 }
 
 // ===============

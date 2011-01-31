@@ -37,7 +37,7 @@ class JSObject;
 
 typedef void (*JSWeakMapDestroyedCallback)(struct OpaqueJSWeakObjectMap*, void*);
 
-typedef JSC::WeakGCMap<void*, JSC::JSObject*> WeakMapType;
+typedef JSC::WeakGCMap<void*, JSC::JSObject> WeakMapType;
 
 struct OpaqueJSWeakObjectMap : public RefCounted<OpaqueJSWeakObjectMap> {
 public:

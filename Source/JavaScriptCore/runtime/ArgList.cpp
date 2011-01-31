@@ -42,7 +42,7 @@ void MarkedArgumentBuffer::markLists(MarkStack& markStack, ListSet& markSet)
     ListSet::iterator end = markSet.end();
     for (ListSet::iterator it = markSet.begin(); it != end; ++it) {
         MarkedArgumentBuffer* list = *it;
-        markStack.appendValues(reinterpret_cast<JSValue*>(list->m_buffer), list->m_size);
+        markStack.deprecatedAppendValues(list->m_buffer, list->m_size);
     }
 }
 

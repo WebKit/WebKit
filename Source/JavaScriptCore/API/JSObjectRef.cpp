@@ -108,7 +108,7 @@ JSObjectRef JSObjectMakeConstructor(JSContextRef ctx, JSClassRef jsClass, JSObje
         jsPrototype = exec->lexicalGlobalObject()->objectPrototype();
 
     JSCallbackConstructor* constructor = new (exec) JSCallbackConstructor(exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->callbackConstructorStructure(), jsClass, callAsConstructor);
-    constructor->putDirect(exec->propertyNames().prototype, jsPrototype, DontEnum | DontDelete | ReadOnly);
+    constructor->putDirect(exec->globalData(), exec->propertyNames().prototype, jsPrototype, DontEnum | DontDelete | ReadOnly);
     return toRef(constructor);
 }
 
@@ -385,11 +385,11 @@ bool JSObjectSetPrivateProperty(JSContextRef ctx, JSObjectRef object, JSStringRe
     JSValue jsValue = value ? toJS(exec, value) : JSValue();
     Identifier name(propertyName->identifier(&exec->globalData()));
     if (jsObject->inherits(&JSCallbackObject<JSGlobalObject>::info)) {
-        static_cast<JSCallbackObject<JSGlobalObject>*>(jsObject)->setPrivateProperty(name, jsValue);
+        static_cast<JSCallbackObject<JSGlobalObject>*>(jsObject)->setPrivateProperty(exec->globalData(), name, jsValue);
         return true;
     }
     if (jsObject->inherits(&JSCallbackObject<JSObjectWithGlobalObject>::info)) {
-        static_cast<JSCallbackObject<JSObjectWithGlobalObject>*>(jsObject)->setPrivateProperty(name, jsValue);
+        static_cast<JSCallbackObject<JSObjectWithGlobalObject>*>(jsObject)->setPrivateProperty(exec->globalData(), name, jsValue);
         return true;
     }
     return false;

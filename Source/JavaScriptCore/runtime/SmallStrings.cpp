@@ -35,7 +35,7 @@ namespace JSC {
 
 static const unsigned numCharactersToStore = 0x100;
 
-static inline bool isMarked(JSString* string)
+static inline bool isMarked(JSCell* string)
 {
     return string && Heap::isCellMarked(string);
 }
@@ -83,9 +83,9 @@ void SmallStrings::markChildren(MarkStack& markStack)
        so, it's probably reasonable to mark the rest. If not, we clear the cache.
      */
 
-    bool isAnyStringMarked = isMarked(m_emptyString);
+    bool isAnyStringMarked = isMarked(m_emptyString.get());
     for (unsigned i = 0; i < numCharactersToStore && !isAnyStringMarked; ++i)
-        isAnyStringMarked = isMarked(m_singleCharacterStrings[i]);
+        isAnyStringMarked = isMarked(m_singleCharacterStrings[i].get());
     
     if (!isAnyStringMarked) {
         clear();
@@ -93,10 +93,10 @@ void SmallStrings::markChildren(MarkStack& markStack)
     }
     
     if (m_emptyString)
-        markStack.append(m_emptyString);
+        markStack.append(&m_emptyString);
     for (unsigned i = 0; i < numCharactersToStore; ++i) {
         if (m_singleCharacterStrings[i])
-            markStack.append(m_singleCharacterStrings[i]);
+            markStack.append(&m_singleCharacterStrings[i]);
     }
 }
 

@@ -41,7 +41,7 @@ namespace WebCore {
         virtual short acceptNode(ScriptState*, Node*) const;
         virtual void markAggregate(JSC::MarkStack&);
 
-        mutable JSC::JSValue m_filter;
+        mutable JSC::DeprecatedPtr<JSC::Unknown> m_filter;
     };
 
 } // namespace WebCore

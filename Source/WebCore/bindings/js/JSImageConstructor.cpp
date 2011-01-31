@@ -37,7 +37,7 @@ const ClassInfo JSImageConstructor::s_info = { "ImageConstructor", 0, 0, 0 };
 JSImageConstructor::JSImageConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
     : DOMConstructorWithDocument(JSImageConstructor::createStructure(globalObject->objectPrototype()), globalObject)
 {
-    putDirect(exec->propertyNames().prototype, JSHTMLImageElementPrototype::self(exec, globalObject), None);
+    putDirect(exec->globalData(), exec->propertyNames().prototype, JSHTMLImageElementPrototype::self(exec, globalObject), None);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructImage(ExecState* exec)

@@ -53,7 +53,7 @@ StringConstructor::StringConstructor(ExecState* exec, JSGlobalObject* globalObje
     : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, stringPrototype->classInfo()->className))
 {
     // ECMA 15.5.3.1 String.prototype
-    putDirectWithoutTransition(exec->propertyNames().prototype, stringPrototype, ReadOnly | DontEnum | DontDelete);
+    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().prototype, stringPrototype, ReadOnly | DontEnum | DontDelete);
 
     // ECMA 15.5.3.2 fromCharCode()
 #if ENABLE(JIT) && ENABLE(JIT_OPTIMIZE_NATIVE_CALL)
@@ -62,7 +62,7 @@ StringConstructor::StringConstructor(ExecState* exec, JSGlobalObject* globalObje
     putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, globalObject, prototypeFunctionStructure, 1, exec->propertyNames().fromCharCode, stringFromCharCode), DontEnum);
 #endif
     // no. of arguments for constructor
-    putDirectWithoutTransition(exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
+    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
 }
 
 // ECMA 15.5.2

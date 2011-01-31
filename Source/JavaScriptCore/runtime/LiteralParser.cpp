@@ -373,7 +373,7 @@ JSValue LiteralParser::parse(ParserState initialState)
             }
             case DoParseObjectEndExpression:
             {
-                asObject(objectStack.last())->putDirect(identifierStack.last(), lastValue);
+                asObject(objectStack.last())->putDirect(m_exec->globalData(), identifierStack.last(), lastValue);
                 identifierStack.removeLast();
                 if (m_lexer.currentToken().type == TokComma)
                     goto doParseObjectStartExpression;

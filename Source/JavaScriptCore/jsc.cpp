@@ -169,7 +169,7 @@ GlobalObject::GlobalObject(const Vector<UString>& arguments)
     JSObject* array = constructEmptyArray(globalExec());
     for (size_t i = 0; i < arguments.size(); ++i)
         array->put(globalExec(), i, jsString(globalExec(), arguments[i]));
-    putDirect(Identifier(globalExec(), "arguments"), array);
+    putDirect(globalExec()->globalData(), Identifier(globalExec(), "arguments"), array);
 }
 
 EncodedJSValue JSC_HOST_CALL functionPrint(ExecState* exec)

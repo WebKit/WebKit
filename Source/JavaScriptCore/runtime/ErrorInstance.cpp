@@ -29,14 +29,14 @@ ErrorInstance::ErrorInstance(JSGlobalData* globalData, NonNullPassRefPtr<Structu
     : JSObject(structure)
     , m_appendSourceToMessage(false)
 {
-    putDirect(globalData->propertyNames->message, jsString(globalData, ""));
+    putDirect(*globalData, globalData->propertyNames->message, jsString(globalData, ""));
 }
 
 ErrorInstance::ErrorInstance(JSGlobalData* globalData, NonNullPassRefPtr<Structure> structure, const UString& message)
     : JSObject(structure)
     , m_appendSourceToMessage(false)
 {
-    putDirect(globalData->propertyNames->message, jsString(globalData, message));
+    putDirect(*globalData, globalData->propertyNames->message, jsString(globalData, message));
 }
 
 ErrorInstance* ErrorInstance::create(JSGlobalData* globalData, NonNullPassRefPtr<Structure> structure, const UString& message)

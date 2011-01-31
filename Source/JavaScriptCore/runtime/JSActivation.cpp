@@ -61,12 +61,12 @@ void JSActivation::markChildren(MarkStack& markStack)
     size_t numParametersMinusThis = d()->functionExecutable->parameterCount();
 
     size_t count = numParametersMinusThis;
-    markStack.appendValues(registerArray, count);
+    markStack.deprecatedAppendValues(registerArray, count);
 
     size_t numVars = d()->functionExecutable->capturedVariableCount();
 
     // Skip the call frame, which sits between the parameters and vars.
-    markStack.appendValues(registerArray + count + RegisterFile::CallFrameHeaderSize, numVars, MayContainNullValues);
+    markStack.deprecatedAppendValues(registerArray + count + RegisterFile::CallFrameHeaderSize, numVars, MayContainNullValues);
 }
 
 inline bool JSActivation::symbolTableGet(const Identifier& propertyName, PropertySlot& slot)
@@ -144,7 +144,7 @@ bool JSActivation::getOwnPropertySlot(ExecState* exec, const Identifier& propert
     return false;
 }
 
-void JSActivation::put(ExecState*, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void JSActivation::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
 
@@ -155,7 +155,7 @@ void JSActivation::put(ExecState*, const Identifier& propertyName, JSValue value
     // properties are non-standard extensions that other implementations do not
     // expose in the activation object.
     ASSERT(!hasGetterSetterProperties());
-    putDirect(propertyName, value, 0, true, slot);
+    putDirect(exec->globalData(), propertyName, value, 0, true, slot);
 }
 
 // FIXME: Make this function honor ReadOnly (const) and DontEnum

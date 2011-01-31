@@ -75,7 +75,7 @@ namespace JSC  {
         // But they're used in many places in legacy code, so they're not going away any time soon.
 
         void clearException() { globalData().exception = JSValue(); }
-        JSValue exception() const { return globalData().exception; }
+        JSValue exception() const { return globalData().exception.get(); }
         bool hadException() const { return globalData().exception; }
 
         const CommonIdentifiers& propertyNames() const { return *globalData().propertyNames; }

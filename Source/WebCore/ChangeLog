@@ -1,3 +1,87 @@
+2011-01-31  Oliver Hunt  <oliver@apple.com>
+
+        Convert markstack to a slot visitor API
+        https://bugs.webkit.org/show_bug.cgi?id=53219
+
+        rolling r77098, r77099, r77100, r77109, and
+        r77111 back in, along with a few more Qt fix attempts.
+
+        * ForwardingHeaders/runtime/WriteBarrier.h: Added.
+        * WebCore.exp.in:
+        * bindings/js/DOMWrapperWorld.h:
+        (WebCore::DOMWrapperWorld::globalData):
+        * bindings/js/JSAudioConstructor.cpp:
+        (WebCore::JSAudioConstructor::JSAudioConstructor):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::markDOMNodesForDocument):
+        (WebCore::markDOMObjectWrapper):
+        (WebCore::markDOMNodeWrapper):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::markChildren):
+        (WebCore::JSDOMGlobalObject::setInjectedScript):
+        (WebCore::JSDOMGlobalObject::injectedScript):
+        * bindings/js/JSDOMGlobalObject.h:
+        (WebCore::JSDOMGlobalObject::JSDOMGlobalObjectData::JSDOMGlobalObjectData):
+        (WebCore::getDOMConstructor):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::setLocation):
+        (WebCore::DialogHandler::dialogCreated):
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::JSDOMWindowShell):
+        (WebCore::JSDOMWindowShell::setWindow):
+        (WebCore::JSDOMWindowShell::markChildren):
+        (WebCore::JSDOMWindowShell::unwrappedObject):
+        * bindings/js/JSDOMWindowShell.h:
+        (WebCore::JSDOMWindowShell::window):
+        (WebCore::JSDOMWindowShell::setWindow):
+        * bindings/js/JSDeviceMotionEventCustom.cpp:
+        (WebCore::createAccelerationObject):
+        (WebCore::createRotationRateObject):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::JSEventListener):
+        (WebCore::JSEventListener::markJSFunction):
+        * bindings/js/JSEventListener.h:
+        (WebCore::JSEventListener::jsFunction):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::setAll):
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::JSImageConstructor::JSImageConstructor):
+        * bindings/js/JSImageDataCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSJavaScriptCallFrameCustom.cpp:
+        (WebCore::JSJavaScriptCallFrame::scopeChain):
+        (WebCore::JSJavaScriptCallFrame::scopeType):
+        * bindings/js/JSNodeFilterCondition.cpp:
+        (WebCore::JSNodeFilterCondition::markAggregate):
+        (WebCore::JSNodeFilterCondition::acceptNode):
+        * bindings/js/JSNodeFilterCondition.h:
+        * bindings/js/JSNodeFilterCustom.cpp:
+        * bindings/js/JSOptionConstructor.cpp:
+        (WebCore::JSOptionConstructor::JSOptionConstructor):
+        * bindings/js/JSSQLResultSetRowListCustom.cpp:
+        (WebCore::JSSQLResultSetRowList::item):
+        * bindings/js/ScriptCachedFrameData.cpp:
+        (WebCore::ScriptCachedFrameData::restore):
+        * bindings/js/ScriptObject.cpp:
+        (WebCore::ScriptGlobalObject::set):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::putProperty):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/qt/qt_class.cpp:
+        (JSC::Bindings::QtClass::fallbackObject):
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtInstance::QtInstance):
+        (JSC::Bindings::QtInstance::removeCachedMethod):
+        (JSC::Bindings::QtInstance::markAggregate):
+        * bridge/qt/qt_instance.h:
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::QtRuntimeMetaMethod::QtRuntimeMetaMethod):
+        (JSC::Bindings::QtRuntimeMetaMethod::markChildren):
+        (JSC::Bindings::QtRuntimeMetaMethod::connectGetter):
+        (JSC::Bindings::QtRuntimeMetaMethod::disconnectGetter):
+        * bridge/qt/qt_runtime.h:
+        * dom/Document.h:
+
 2011-01-31  Dan Winship  <danw@gnome.org>
 
         Reviewed by Gustavo Noronha Silva.

@@ -475,7 +475,7 @@ void JSDOMWindow::setLocation(ExecState* exec, JSValue value)
         if (Settings* settings = activeFrame->settings()) {
             if (settings->usesDashboardBackwardCompatibilityMode() && !activeFrame->tree()->parent()) {
                 if (allowsAccessFrom(exec))
-                    putDirect(Identifier(exec, "location"), value);
+                    putDirect(exec->globalData(), Identifier(exec, "location"), value);
                 return;
             }
         }
@@ -682,7 +682,7 @@ inline void DialogHandler::dialogCreated(DOMWindow* dialog)
     //        world if dialogArguments comes from an isolated world.
     m_globalObject = toJSDOMWindow(dialog->frame(), normalWorld(m_exec->globalData()));
     if (JSValue dialogArguments = m_exec->argument(1))
-        m_globalObject->putDirect(Identifier(m_exec, "dialogArguments"), dialogArguments);
+        m_globalObject->putDirect(m_exec->globalData(), Identifier(m_exec, "dialogArguments"), dialogArguments);
 }
 
 inline JSValue DialogHandler::returnValue() const
