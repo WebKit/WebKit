@@ -195,6 +195,7 @@ namespace WebCore {
 #endif
             PseudoInnerSpinButton,
             PseudoOuterSpinButton,
+            PseudoProgressBarValue,
             PseudoLeftPage,
             PseudoRightPage,
             PseudoFirstPage,

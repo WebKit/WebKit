@@ -26,8 +26,6 @@
 
 namespace WebCore {
 
-class ShadowBlockElement;
-
 class HTMLProgressElement : public HTMLFormControlElement {
 public:
     static PassRefPtr<HTMLProgressElement> create(const QualifiedName&, Document*, HTMLFormElement*);
@@ -40,7 +38,6 @@ public:
 
     double position() const;
 
-    ShadowBlockElement* valuePart();
 private:
     HTMLProgressElement(const QualifiedName&, Document*, HTMLFormElement*);
 
@@ -53,9 +50,6 @@ private:
     virtual void parseMappedAttribute(Attribute*);
 
     virtual void attach();
-
-    void didElementStateChange();
-    void createShadowSubtreeIfNeeded();
 };
 
 } // namespace

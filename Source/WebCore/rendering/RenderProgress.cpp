@@ -49,14 +49,22 @@ RenderProgress::RenderProgress(HTMLProgressElement* element)
 
 RenderProgress::~RenderProgress()
 {
+    if (m_valuePart)
+        m_valuePart->detach();
 }
 
 void RenderProgress::updateFromElement()
 {
+    if (!m_valuePart) {
+        m_valuePart = ShadowBlockElement::createForPart(static_cast<HTMLElement*>(node()), PROGRESS_BAR_VALUE);
+        if (m_valuePart->renderer())
+            addChild(m_valuePart->renderer());
+    }
+
     if (shouldHaveParts())
         style()->setAppearance(NoControlPart);
-    else if (valuePart()->renderer())
-        valuePart()->renderer()->style()->setVisibility(HIDDEN);
+    else if (m_valuePart->renderer())
+        m_valuePart->renderer()->style()->setVisibility(HIDDEN);
 
     HTMLProgressElement* element = progressElement();
     if (m_position == element->position())
@@ -94,7 +102,7 @@ void RenderProgress::paint(PaintInfo& paintInfo, int tx, int ty)
 
 void RenderProgress::layoutParts()
 {
-    valuePart()->layoutAsPart(valuePartRect());
+    m_valuePart->layoutAsPart(valuePartRect());
     updateAnimationState();
 }
 
@@ -102,7 +110,7 @@ bool RenderProgress::shouldHaveParts() const
 {
     if (!style()->hasAppearance())
         return true;
-    if (!(valuePart()->renderer() && valuePart()->renderer()->style()->hasAppearance()))
+    if (ShadowBlockElement::partShouldHaveStyle(this, PROGRESS_BAR_VALUE))
         return true;
     return false;
 }
@@ -136,11 +144,6 @@ HTMLProgressElement* RenderProgress::progressElement() const
 {
     return static_cast<HTMLProgressElement*>(node());
 }    
-
-ShadowBlockElement* RenderProgress::valuePart() const
-{
-    return progressElement()->valuePart();
-}
 
 } // namespace WebCore
 

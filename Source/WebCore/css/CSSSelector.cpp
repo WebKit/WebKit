@@ -168,6 +168,14 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
         return INNER_SPIN_BUTTON;
     case PseudoOuterSpinButton:
         return OUTER_SPIN_BUTTON;
+    case PseudoProgressBarValue:
+#if ENABLE(PROGRESS_TAG)
+        return PROGRESS_BAR_VALUE;
+#else
+        ASSERT_NOT_REACHED();
+        return NOPSEUDO;
+#endif
+
 #if ENABLE(METER_TAG)
     case PseudoMeterHorizontalBar:
         return METER_HORIZONTAL_BAR;
@@ -327,6 +335,10 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
     DEFINE_STATIC_LOCAL(AtomicString, onlyOfType, ("only-of-type"));
     DEFINE_STATIC_LOCAL(AtomicString, optional, ("optional"));
     DEFINE_STATIC_LOCAL(AtomicString, outerSpinButton, ("-webkit-outer-spin-button"));
+#if ENABLE(PROGRESS_TAG)
+    DEFINE_STATIC_LOCAL(AtomicString, progressBarValue, ("-webkit-progress-bar-value"));
+#endif
+
 #if ENABLE(METER_TAG)
     DEFINE_STATIC_LOCAL(AtomicString, meterHorizontalBar, ("-webkit-meter-horizontal-bar"));
     DEFINE_STATIC_LOCAL(AtomicString, meterHorizontalOptimumValue, ("-webkit-meter-horizontal-optimum-value"));
@@ -430,6 +442,9 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
         nameToPseudoType->set(nthLastChild.impl(), CSSSelector::PseudoNthLastChild);
         nameToPseudoType->set(nthLastOfType.impl(), CSSSelector::PseudoNthLastOfType);
         nameToPseudoType->set(outerSpinButton.impl(), CSSSelector::PseudoOuterSpinButton);
+#if ENABLE(PROGRESS_TAG)
+        nameToPseudoType->set(progressBarValue.impl(), CSSSelector::PseudoProgressBarValue);
+#endif
 #if ENABLE(METER_TAG)
         nameToPseudoType->set(meterHorizontalBar.impl(), CSSSelector::PseudoMeterHorizontalBar);
         nameToPseudoType->set(meterHorizontalOptimumValue.impl(), CSSSelector::PseudoMeterHorizontalOptimum);
@@ -529,6 +544,7 @@ void CSSSelector::extractPseudoType() const
     case PseudoMeterVerticalSuboptimal:
     case PseudoMeterVerticalEvenLessGood:
     case PseudoOuterSpinButton:
+    case PseudoProgressBarValue:
     case PseudoResizer:
     case PseudoScrollbar:
     case PseudoScrollbarCorner:
