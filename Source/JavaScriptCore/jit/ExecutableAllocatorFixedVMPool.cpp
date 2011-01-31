@@ -42,407 +42,453 @@
 #include <stdio.h>
 #endif
 
-static const unsigned vmPoolSizeOvercommit = 2u * 1024u * 1024u * 1024u; // 2Gb
-static const unsigned coalesceLimitOvercommit = 16u * 1024u * 1024u; // 16Mb
-
-static const unsigned vmPoolSizeNoOvercommit = 32u * 1024u * 1024u; // 32Mb
-static const unsigned coalesceLimitNoOvercommit = 4u * 1024u * 1024u; // 4Mb
-
-static const unsigned vmPoolSizeEmbedded = 16u * 1024u * 1024u; // 16Mb
-static const unsigned coalesceLimitEmbedded = 4u * 1024u * 1024u; // 4Mb
-
-#if CPU(X86_64) && !OS(LINUX)
-// These limits suitable on 64-bit platforms (particularly x86-64,
-// where we require all jumps to have a 2Gb max range). We don't
-// enable this by default on Linux, since it needs overcommit and
-// distros commonly disable that feature. We'll check the value
-// for the overcommit feature at runtime and re-assign the Generic
-// values if it's enabled.
-static unsigned vmPoolSize = vmPoolSizeOvercommit;
-static unsigned coalesceLimit = coalesceLimitOvercommit;
-#elif CPU(ARM)
-static unsigned vmPoolSize = vmPoolSizeEmbedded;
-static unsigned coalesceLimit = coalesceLimitEmbedded;
-#else
-static unsigned vmPoolSize = vmPoolSizeNoOvercommit;
-static unsigned coalesceLimit = coalesceLimitNoOvercommit;
-#endif
-
 using namespace WTF;
 
 namespace JSC {
     
-static size_t committedBytesCount = 0;  
-static SpinLock spinlock = SPINLOCK_INITIALIZER;
+#define TwoPow(n) (1ull << n)
 
-// FreeListEntry describes a free chunk of memory, stored in the freeList.
-struct FreeListEntry {
-    FreeListEntry(void* pointer, size_t size)
-        : pointer(pointer)
-        , size(size)
-        , nextEntry(0)
-        , less(0)
-        , greater(0)
-        , balanceFactor(0)
+class AllocationTableSizeClass {
+public:
+    AllocationTableSizeClass(size_t size, size_t blockSize, unsigned log2BlockSize)
+        : m_blockSize(blockSize)
+    {
+        ASSERT(blockSize == TwoPow(log2BlockSize));
+
+        // Calculate the number of blocks needed to hold size.
+        size_t blockMask = blockSize - 1;
+        m_blockCount = (size + blockMask) >> log2BlockSize;
+
+        // Align to the smallest power of two >= m_blockCount.
+        m_blockAlignment = 1;
+        while (m_blockAlignment < m_blockCount)
+            m_blockAlignment += m_blockAlignment;
+    }
+
+    size_t blockSize() const { return m_blockSize; }
+    size_t blockCount() const { return m_blockCount; }
+    size_t blockAlignment() const { return m_blockAlignment; }
+
+    size_t size()
+    {
+        return m_blockSize * m_blockCount;
+    }
+
+private:
+    size_t m_blockSize;
+    size_t m_blockCount;
+    size_t m_blockAlignment;
+};
+
+template<unsigned log2Entries>
+class AllocationTableLeaf {
+    typedef uint64_t BitField;
+
+public:
+    static const unsigned log2SubregionSize = 12; // 2^12 == pagesize
+    static const unsigned log2RegionSize = log2SubregionSize + log2Entries;
+
+    static const size_t subregionSize = TwoPow(log2SubregionSize);
+    static const size_t regionSize = TwoPow(log2RegionSize);
+    static const unsigned entries = TwoPow(log2Entries);
+    COMPILE_ASSERT(entries <= (sizeof(BitField) * 8), AllocationTableLeaf_entries_fit_in_BitField);
+
+    AllocationTableLeaf()
+        : m_allocated(0)
     {
     }
 
-    // All entries of the same size share a single entry
-    // in the AVLTree, and are linked together in a linked
-    // list, using nextEntry.
-    void* pointer;
-    size_t size;
-    FreeListEntry* nextEntry;
+    ~AllocationTableLeaf()
+    {
+        ASSERT(isEmpty());
+    }
 
-    // These fields are used by AVLTree.
-    FreeListEntry* less;
-    FreeListEntry* greater;
-    int balanceFactor;
+    size_t allocate(AllocationTableSizeClass& sizeClass)
+    {
+        ASSERT(sizeClass.blockSize() == subregionSize);
+        ASSERT(!isFull());
+
+        size_t alignment = sizeClass.blockAlignment();
+        size_t count = sizeClass.blockCount();
+        // Use this mask to check for spans of free blocks.
+        BitField mask = ((1ull << count) - 1) << (alignment - count);
+
+        // Step in units of alignment size.
+        for (unsigned i = 0; i < entries; i += alignment) {
+            if (!(m_allocated & mask)) {
+                m_allocated |= mask;
+                return (i + (alignment - count)) << log2SubregionSize;
+            }
+            mask <<= alignment;
+        }
+        return notFound;
+    }
+
+    void free(size_t location, AllocationTableSizeClass& sizeClass)
+    {
+        ASSERT(sizeClass.blockSize() == subregionSize);
+
+        size_t entry = location >> log2SubregionSize;
+        size_t count = sizeClass.blockCount();
+        BitField mask = ((1ull << count) - 1) << entry;
+
+        ASSERT((m_allocated & mask) == mask);
+        m_allocated &= ~mask;
+    }
+
+    bool isEmpty()
+    {
+        return !m_allocated;
+    }
+
+    bool isFull()
+    {
+        return !~m_allocated;
+    }
+
+    static size_t size()
+    {
+        return regionSize;
+    }
+
+    static AllocationTableSizeClass classForSize(size_t size)
+    {
+        return AllocationTableSizeClass(size, subregionSize, log2SubregionSize);
+    }
+
+#ifndef NDEBUG
+    void dump(size_t parentOffset = 0, unsigned indent = 0)
+    {
+        for (unsigned i = 0; i < indent; ++i)
+            fprintf(stderr, "    ");
+        fprintf(stderr, "%08x: [%016llx]\n", (int)parentOffset, m_allocated);
+    }
+#endif
+
+private:
+    BitField m_allocated;
 };
 
-// Abstractor class for use in AVLTree.
-// Nodes in the AVLTree are of type FreeListEntry, keyed on
-// (and thus sorted by) their size.
-struct AVLTreeAbstractorForFreeList {
-    typedef FreeListEntry* handle;
-    typedef int32_t size;
-    typedef size_t key;
 
-    handle get_less(handle h) { return h->less; }
-    void set_less(handle h, handle lh) { h->less = lh; }
-    handle get_greater(handle h) { return h->greater; }
-    void set_greater(handle h, handle gh) { h->greater = gh; }
-    int get_balance_factor(handle h) { return h->balanceFactor; }
-    void set_balance_factor(handle h, int bf) { h->balanceFactor = bf; }
+template<class NextLevel>
+class LazyAllocationTable {
+public:
+    static const unsigned log2RegionSize = NextLevel::log2RegionSize;
+    static const unsigned entries = NextLevel::entries;
 
-    static handle null() { return 0; }
+    LazyAllocationTable()
+        : m_ptr(0)
+    {
+    }
 
-    int compare_key_key(key va, key vb) { return va - vb; }
-    int compare_key_node(key k, handle h) { return compare_key_key(k, h->size); }
-    int compare_node_node(handle h1, handle h2) { return compare_key_key(h1->size, h2->size); }
+    ~LazyAllocationTable()
+    {
+        ASSERT(isEmpty());
+    }
+
+    size_t allocate(AllocationTableSizeClass& sizeClass)
+    {
+        if (!m_ptr)
+            m_ptr = new NextLevel();
+        return m_ptr->allocate(sizeClass);
+    }
+
+    void free(size_t location, AllocationTableSizeClass& sizeClass)
+    {
+        ASSERT(m_ptr);
+        m_ptr->free(location, sizeClass);
+        if (m_ptr->isEmpty()) {
+            delete m_ptr;
+            m_ptr = 0;
+        }
+    }
+
+    bool isEmpty()
+    {
+        return !m_ptr;
+    }
+
+    bool isFull()
+    {
+        return m_ptr && m_ptr->isFull();
+    }
+
+    static size_t size()
+    {
+        return NextLevel::size();
+    }
+
+#ifndef NDEBUG
+    void dump(size_t parentOffset = 0, unsigned indent = 0)
+    {
+        ASSERT(m_ptr);
+        m_ptr->dump(parentOffset, indent);
+    }
+#endif
+
+    static AllocationTableSizeClass classForSize(size_t size)
+    {
+        return NextLevel::classForSize(size);
+    }
+
+private:
+    NextLevel* m_ptr;
 };
 
-// Used to reverse sort an array of FreeListEntry pointers.
-static int reverseSortFreeListEntriesByPointer(const void* leftPtr, const void* rightPtr)
-{
-    FreeListEntry* left = *(FreeListEntry**)leftPtr;
-    FreeListEntry* right = *(FreeListEntry**)rightPtr;
+template<class NextLevel, unsigned log2Entries>
+class AllocationTableDirectory {
+    typedef uint64_t BitField;
 
-    return (intptr_t)(right->pointer) - (intptr_t)(left->pointer);
-}
+public:
+    static const unsigned log2SubregionSize = NextLevel::log2RegionSize;
+    static const unsigned log2RegionSize = log2SubregionSize + log2Entries;
 
-// Used to reverse sort an array of pointers.
-static int reverseSortCommonSizedAllocations(const void* leftPtr, const void* rightPtr)
-{
-    void* left = *(void**)leftPtr;
-    void* right = *(void**)rightPtr;
+    static const size_t subregionSize = TwoPow(log2SubregionSize);
+    static const size_t regionSize = TwoPow(log2RegionSize);
+    static const unsigned entries = TwoPow(log2Entries);
+    COMPILE_ASSERT(entries <= (sizeof(BitField) * 8), AllocationTableDirectory_entries_fit_in_BitField);
 
-    return (intptr_t)right - (intptr_t)left;
-}
+    AllocationTableDirectory()
+        : m_full(0)
+        , m_hasSuballocation(0)
+    {
+    }
+
+    ~AllocationTableDirectory()
+    {
+        ASSERT(isEmpty());
+    }
+
+    size_t allocate(AllocationTableSizeClass& sizeClass)
+    {
+        ASSERT(sizeClass.blockSize() <= subregionSize);
+        ASSERT(!isFull());
+
+        if (sizeClass.blockSize() < subregionSize) {
+            BitField bit = 1;
+            for (unsigned i = 0; i < entries; ++i, bit += bit) {
+                if (m_full & bit)
+                    continue;
+                size_t location = m_suballocations[i].allocate(sizeClass);
+                if (location != notFound) {
+                    // If this didn't already have a subregion, it does now!
+                    m_hasSuballocation |= bit;
+                    // Mirror the suballocation's full bit.
+                    if (m_suballocations[i].isFull())
+                        m_full |= bit;
+                    return (i * subregionSize) | location;
+                }
+            }
+            return notFound;
+        }
+
+        // A block is allocated if either it is fully allocated or contains suballocations.
+        BitField allocated = m_full | m_hasSuballocation;
+
+        size_t alignment = sizeClass.blockAlignment();
+        size_t count = sizeClass.blockCount();
+        // Use this mask to check for spans of free blocks.
+        BitField mask = ((1ull << count) - 1) << (alignment - count);
+
+        // Step in units of alignment size.
+        for (unsigned i = 0; i < entries; i += alignment) {
+            if (!(allocated & mask)) {
+                m_full |= mask;
+                return (i + (alignment - count)) << log2SubregionSize;
+            }
+            mask <<= alignment;
+        }
+        return notFound;
+    }
+
+    void free(size_t location, AllocationTableSizeClass& sizeClass)
+    {
+        ASSERT(sizeClass.blockSize() <= subregionSize);
+
+        size_t entry = location >> log2SubregionSize;
+
+        if (sizeClass.blockSize() < subregionSize) {
+            BitField bit = 1ull << entry;
+            m_suballocations[entry].free(location & (subregionSize - 1), sizeClass);
+            // Check if the suballocation is now empty.
+            if (m_suballocations[entry].isEmpty())
+                m_hasSuballocation &= ~bit;
+            // No need to check, it clearly isn't full any more!
+            m_full &= ~bit;
+        } else {
+            size_t count = sizeClass.blockCount();
+            BitField mask = ((1ull << count) - 1) << entry;
+            ASSERT((m_full & mask) == mask);
+            ASSERT(!(m_hasSuballocation & mask));
+            m_full &= ~mask;
+        }
+    }
+
+    bool isEmpty()
+    {
+        return !(m_full | m_hasSuballocation);
+    }
+
+    bool isFull()
+    {   
+        return !~m_full;
+    }
+
+    static size_t size()
+    {
+        return regionSize;
+    }
+
+    static AllocationTableSizeClass classForSize(size_t size)
+    {
+        if (size < subregionSize) {
+            AllocationTableSizeClass sizeClass = NextLevel::classForSize(size);
+            if (sizeClass.size() < NextLevel::size())
+                return sizeClass;
+        }
+        return AllocationTableSizeClass(size, subregionSize, log2SubregionSize);
+    }
+
+#ifndef NDEBUG
+    void dump(size_t parentOffset = 0, unsigned indent = 0)
+    {
+        for (unsigned i = 0; i < indent; ++i)
+            fprintf(stderr, "    ");
+        fprintf(stderr, "%08x: [", (int)parentOffset);
+        for (unsigned i = 0; i < entries; ++i) {
+            BitField bit = 1ull << i;
+            char c = m_hasSuballocation & bit
+                ? (m_full & bit ? 'N' : 'n')
+                : (m_full & bit ? 'F' : '-');
+            fprintf(stderr, "%c", c);
+        }
+        fprintf(stderr, "]\n");
+
+        for (unsigned i = 0; i < entries; ++i) {
+            BitField bit = 1ull << i;
+            size_t offset = parentOffset | (subregionSize * i);
+            if (m_hasSuballocation & bit)
+                m_suballocations[i].dump(offset, indent + 1);
+        }
+    }
+#endif
+
+private:
+    NextLevel m_suballocations[entries];
+    // Subregions exist in one of four states:
+    // (1) empty (both bits clear)
+    // (2) fully allocated as a single allocation (m_full set)
+    // (3) partially allocated through suballocations (m_hasSuballocation set)
+    // (4) fully allocated through suballocations (both bits set)
+    BitField m_full;
+    BitField m_hasSuballocation;
+};
+
+
+typedef AllocationTableLeaf<6> PageTables256KB;
+typedef AllocationTableDirectory<PageTables256KB, 6> PageTables16MB;
+typedef AllocationTableDirectory<LazyAllocationTable<PageTables16MB>, 1> PageTables32MB;
+typedef AllocationTableDirectory<LazyAllocationTable<PageTables16MB>, 6> PageTables1GB;
+
+#if CPU(ARM)
+typedef PageTables16MB FixedVMPoolPageTables;
+#elif CPU(X86_64)
+typedef PageTables1GB FixedVMPoolPageTables;
+#else
+typedef PageTables32MB FixedVMPoolPageTables;
+#endif
+
 
 class FixedVMPoolAllocator
 {
-    // The free list is stored in a sorted tree.
-    typedef AVLTree<AVLTreeAbstractorForFreeList, 40> SizeSortedFreeTree;
-
-    void release(void* position, size_t size)
-    {
-        m_allocation.decommit(position, size);
-        addToCommittedByteCount(-static_cast<long>(size));
-    }
-
-    void reuse(void* position, size_t size)
-    {
-        m_allocation.commit(position, size);
-        addToCommittedByteCount(static_cast<long>(size));
-    }
-
-    // All addition to the free list should go through this method, rather than
-    // calling insert directly, to avoid multiple entries being added with the
-    // same key.  All nodes being added should be singletons, they should not
-    // already be a part of a chain.
-    void addToFreeList(FreeListEntry* entry)
-    {
-        ASSERT(!entry->nextEntry);
-
-        if (entry->size == m_commonSize) {
-            m_commonSizedAllocations.append(entry->pointer);
-            delete entry;
-        } else if (FreeListEntry* entryInFreeList = m_freeList.search(entry->size, m_freeList.EQUAL)) {
-            // m_freeList already contain an entry for this size - insert this node into the chain.
-            entry->nextEntry = entryInFreeList->nextEntry;
-            entryInFreeList->nextEntry = entry;
-        } else
-            m_freeList.insert(entry);
-    }
-
-    // We do not attempt to coalesce addition, which may lead to fragmentation;
-    // instead we periodically perform a sweep to try to coalesce neighboring
-    // entries in m_freeList.  Presently this is triggered at the point 16MB
-    // of memory has been released.
-    void coalesceFreeSpace()
-    {
-        Vector<FreeListEntry*> freeListEntries;
-        SizeSortedFreeTree::Iterator iter;
-        iter.start_iter_least(m_freeList);
-
-        // Empty m_freeList into a Vector.
-        for (FreeListEntry* entry; (entry = *iter); ++iter) {
-            // Each entry in m_freeList might correspond to multiple
-            // free chunks of memory (of the same size).  Walk the chain
-            // (this is likely of course only be one entry long!) adding
-            // each entry to the Vector (at reseting the next in chain
-            // pointer to separate each node out).
-            FreeListEntry* next;
-            do {
-                next = entry->nextEntry;
-                entry->nextEntry = 0;
-                freeListEntries.append(entry);
-            } while ((entry = next));
-        }
-        // All entries are now in the Vector; purge the tree.
-        m_freeList.purge();
-
-        // Reverse-sort the freeListEntries and m_commonSizedAllocations Vectors.
-        // We reverse-sort so that we can logically work forwards through memory,
-        // whilst popping items off the end of the Vectors using last() and removeLast().
-        qsort(freeListEntries.begin(), freeListEntries.size(), sizeof(FreeListEntry*), reverseSortFreeListEntriesByPointer);
-        qsort(m_commonSizedAllocations.begin(), m_commonSizedAllocations.size(), sizeof(void*), reverseSortCommonSizedAllocations);
-
-        // The entries from m_commonSizedAllocations that cannot be
-        // coalesced into larger chunks will be temporarily stored here.
-        Vector<void*> newCommonSizedAllocations;
-
-        // Keep processing so long as entries remain in either of the vectors.
-        while (freeListEntries.size() || m_commonSizedAllocations.size()) {
-            // We're going to try to find a FreeListEntry node that we can coalesce onto.
-            FreeListEntry* coalescionEntry = 0;
-
-            // Is the lowest addressed chunk of free memory of common-size, or is it in the free list?
-            if (m_commonSizedAllocations.size() && (!freeListEntries.size() || (m_commonSizedAllocations.last() < freeListEntries.last()->pointer))) {
-                // Pop an item from the m_commonSizedAllocations vector - this is the lowest
-                // addressed free chunk.  Find out the begin and end addresses of the memory chunk.
-                void* begin = m_commonSizedAllocations.last();
-                void* end = (void*)((intptr_t)begin + m_commonSize);
-                m_commonSizedAllocations.removeLast();
-
-                // Try to find another free chunk abutting onto the end of the one we have already found.
-                if (freeListEntries.size() && (freeListEntries.last()->pointer == end)) {
-                    // There is an existing FreeListEntry for the next chunk of memory!
-                    // we can reuse this.  Pop it off the end of m_freeList.
-                    coalescionEntry = freeListEntries.last();
-                    freeListEntries.removeLast();
-                    // Update the existing node to include the common-sized chunk that we also found. 
-                    coalescionEntry->pointer = (void*)((intptr_t)coalescionEntry->pointer - m_commonSize);
-                    coalescionEntry->size += m_commonSize;
-                } else if (m_commonSizedAllocations.size() && (m_commonSizedAllocations.last() == end)) {
-                    // There is a second common-sized chunk that can be coalesced.
-                    // Allocate a new node.
-                    m_commonSizedAllocations.removeLast();
-                    coalescionEntry = new FreeListEntry(begin, 2 * m_commonSize);
-                } else {
-                    // Nope - this poor little guy is all on his own. :-(
-                    // Add him into the newCommonSizedAllocations vector for now, we're
-                    // going to end up adding him back into the m_commonSizedAllocations
-                    // list when we're done.
-                    newCommonSizedAllocations.append(begin);
-                    continue;
-                }
-            } else {
-                ASSERT(freeListEntries.size());
-                ASSERT(!m_commonSizedAllocations.size() || (freeListEntries.last()->pointer < m_commonSizedAllocations.last()));
-                // The lowest addressed item is from m_freeList; pop it from the Vector.
-                coalescionEntry = freeListEntries.last();
-                freeListEntries.removeLast();
-            }
-            
-            // Right, we have a FreeListEntry, we just need check if there is anything else
-            // to coalesce onto the end.
-            ASSERT(coalescionEntry);
-            while (true) {
-                // Calculate the end address of the chunk we have found so far.
-                void* end = (void*)((intptr_t)coalescionEntry->pointer - coalescionEntry->size);
-
-                // Is there another chunk adjacent to the one we already have?
-                if (freeListEntries.size() && (freeListEntries.last()->pointer == end)) {
-                    // Yes - another FreeListEntry -pop it from the list.
-                    FreeListEntry* coalescee = freeListEntries.last();
-                    freeListEntries.removeLast();
-                    // Add it's size onto our existing node.
-                    coalescionEntry->size += coalescee->size;
-                    delete coalescee;
-                } else if (m_commonSizedAllocations.size() && (m_commonSizedAllocations.last() == end)) {
-                    // We can coalesce the next common-sized chunk.
-                    m_commonSizedAllocations.removeLast();
-                    coalescionEntry->size += m_commonSize;
-                } else
-                    break; // Nope, nothing to be added - stop here.
-            }
-
-            // We've coalesced everything we can onto the current chunk.
-            // Add it back into m_freeList.
-            addToFreeList(coalescionEntry);
-        }
-
-        // All chunks of free memory larger than m_commonSize should be
-        // back in m_freeList by now.  All that remains to be done is to
-        // copy the contents on the newCommonSizedAllocations back into
-        // the m_commonSizedAllocations Vector.
-        ASSERT(m_commonSizedAllocations.size() == 0);
-        m_commonSizedAllocations.append(newCommonSizedAllocations);
-    }
-
 public:
-
-    FixedVMPoolAllocator(size_t commonSize, size_t totalHeapSize)
-        : m_commonSize(commonSize)
-        , m_countFreedSinceLastCoalesce(0)
+    FixedVMPoolAllocator()
     {
-        m_allocation = PageReservation::reserve(totalHeapSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
+        ASSERT(PageTables256KB::size() == 256 * 1024);
+        ASSERT(PageTables16MB::size() == 16 * 1024 * 1024);
+        ASSERT(PageTables32MB::size() == 32 * 1024 * 1024);
+        ASSERT(PageTables1GB::size() == 1024 * 1024 * 1024);
 
-        if (!!m_allocation)
-            m_freeList.insert(new FreeListEntry(m_allocation.base(), m_allocation.size()));
+        m_reservation = PageReservation::reserve(FixedVMPoolPageTables::size(), OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
 #if !ENABLE(INTERPRETER)
-        else
+        if (!isValid())
             CRASH();
 #endif
     }
-
-    ExecutablePool::Allocation alloc(size_t size)
+ 
+    ExecutablePool::Allocation alloc(size_t requestedSize)
     {
-        return ExecutablePool::Allocation(allocInternal(size), size);
+        ASSERT(requestedSize);
+        AllocationTableSizeClass sizeClass = classForSize(requestedSize);
+        size_t size = sizeClass.size();
+        ASSERT(size);
+
+        if (size >= FixedVMPoolPageTables::size())
+            CRASH();
+        if (m_pages.isFull())
+            CRASH();
+
+        size_t offset = m_pages.allocate(sizeClass);
+        if (offset == notFound)
+            CRASH();
+
+        void* pointer = offsetToPointer(offset);
+        m_reservation.commit(pointer, size);
+        return ExecutablePool::Allocation(pointer, size);
     }
 
     void free(ExecutablePool::Allocation allocation)
     {
         void* pointer = allocation.base();
         size_t size = allocation.size();
+        ASSERT(size);
 
-        ASSERT(!!m_allocation);
-        // Call release to report to the operating system that this
-        // memory is no longer in use, and need not be paged out.
-        ASSERT(isWithinVMPool(pointer, size));
-        release(pointer, size);
+        m_reservation.decommit(pointer, size);
 
-        // Common-sized allocations are stored in the m_commonSizedAllocations
-        // vector; all other freed chunks are added to m_freeList.
-        if (size == m_commonSize)
-            m_commonSizedAllocations.append(pointer);
-        else
-            addToFreeList(new FreeListEntry(pointer, size));
-
-        // Do some housekeeping.  Every time we reach a point that
-        // 16MB of allocations have been freed, sweep m_freeList
-        // coalescing any neighboring fragments.
-        m_countFreedSinceLastCoalesce += size;
-        if (m_countFreedSinceLastCoalesce >= coalesceLimit) {
-            m_countFreedSinceLastCoalesce = 0;
-            coalesceFreeSpace();
-        }
+        AllocationTableSizeClass sizeClass = classForSize(size);
+        ASSERT(sizeClass.size() == size);
+        m_pages.free(pointerToOffset(pointer), sizeClass);
     }
 
-    bool isValid() const { return !!m_allocation; }
+    size_t allocated()
+    {
+        return m_reservation.committed();
+    }
+
+    bool isValid() const
+    {
+        return !!m_reservation;
+    }
 
 private:
-    void* allocInternal(size_t size)
+    AllocationTableSizeClass classForSize(size_t size)
     {
-#if ENABLE(INTERPRETER)
-        if (!m_allocation)
-            return 0;
-#else
-        ASSERT(!!m_allocation);
-#endif
-        void* result;
-
-        // Freed allocations of the common size are not stored back into the main
-        // m_freeList, but are instead stored in a separate vector.  If the request
-        // is for a common sized allocation, check this list.
-        if ((size == m_commonSize) && m_commonSizedAllocations.size()) {
-            result = m_commonSizedAllocations.last();
-            m_commonSizedAllocations.removeLast();
-        } else {
-            // Search m_freeList for a suitable sized chunk to allocate memory from.
-            FreeListEntry* entry = m_freeList.search(size, m_freeList.GREATER_EQUAL);
-
-            // This would be bad news.
-            if (!entry) {
-                // Errk!  Lets take a last-ditch desperation attempt at defragmentation...
-                coalesceFreeSpace();
-                // Did that free up a large enough chunk?
-                entry = m_freeList.search(size, m_freeList.GREATER_EQUAL);
-                // No?...  *BOOM!*
-                if (!entry)
-                    CRASH();
-            }
-            ASSERT(entry->size != m_commonSize);
-
-            // Remove the entry from m_freeList.  But! -
-            // Each entry in the tree may represent a chain of multiple chunks of the
-            // same size, and we only want to remove one on them.  So, if this entry
-            // does have a chain, just remove the first-but-one item from the chain.
-            if (FreeListEntry* next = entry->nextEntry) {
-                // We're going to leave 'entry' in the tree; remove 'next' from its chain.
-                entry->nextEntry = next->nextEntry;
-                next->nextEntry = 0;
-                entry = next;
-            } else
-                m_freeList.remove(entry->size);
-
-            // Whoo!, we have a result!
-            ASSERT(entry->size >= size);
-            result = entry->pointer;
-
-            // If the allocation exactly fits the chunk we found in the,
-            // m_freeList then the FreeListEntry node is no longer needed.
-            if (entry->size == size)
-                delete entry;
-            else {
-                // There is memory left over, and it is not of the common size.
-                // We can reuse the existing FreeListEntry node to add this back
-                // into m_freeList.
-                entry->pointer = (void*)((intptr_t)entry->pointer + size);
-                entry->size -= size;
-                addToFreeList(entry);
-            }
-        }
-
-        // Call reuse to report to the operating system that this memory is in use.
-        ASSERT(isWithinVMPool(result, size));
-        reuse(result, size);
-        return result;
+        return FixedVMPoolPageTables::classForSize(size);
     }
 
-#ifndef NDEBUG
-    bool isWithinVMPool(void* pointer, size_t size)
+    void* offsetToPointer(size_t offset)
     {
-        return pointer >= m_allocation.base() && (reinterpret_cast<char*>(pointer) + size <= reinterpret_cast<char*>(m_allocation.base()) + m_allocation.size());
-    }
-#endif
-
-    void addToCommittedByteCount(long byteCount)
-    {
-        ASSERT(spinlock.IsHeld());
-        ASSERT(static_cast<long>(committedBytesCount) + byteCount > -1);
-        committedBytesCount += byteCount;
+        return reinterpret_cast<void*>(reinterpret_cast<intptr_t>(m_reservation.base()) + offset);
     }
 
-    // Freed space from the most common sized allocations will be held in this list, ...
-    const size_t m_commonSize;
-    Vector<void*> m_commonSizedAllocations;
+    size_t pointerToOffset(void* pointer)
+    {
+        return reinterpret_cast<intptr_t>(pointer) - reinterpret_cast<intptr_t>(m_reservation.base());
+    }
 
-    // ... and all other freed allocations are held in m_freeList.
-    SizeSortedFreeTree m_freeList;
-
-    // This is used for housekeeping, to trigger defragmentation of the freed lists.
-    size_t m_countFreedSinceLastCoalesce;
-
-    PageReservation m_allocation;
+    PageReservation m_reservation;
+    FixedVMPoolPageTables m_pages;
 };
+
+
+static SpinLock spinlock = SPINLOCK_INITIALIZER;
+static FixedVMPoolAllocator* allocator = 0;
+
 
 size_t ExecutableAllocator::committedByteCount()
 {
     SpinLockHolder lockHolder(&spinlock);
-    return committedBytesCount;
+    return allocator ? allocator->allocated() : 0;
 }   
 
 void ExecutableAllocator::intializePageSize()
@@ -450,37 +496,11 @@ void ExecutableAllocator::intializePageSize()
     ExecutableAllocator::pageSize = getpagesize();
 }
 
-static FixedVMPoolAllocator* allocator = 0;
-static size_t allocatedCount = 0;
-
-#if OS(LINUX)
-static void maybeModifyVMPoolSize()
-{
-    FILE* fp = fopen("/proc/sys/vm/overcommit_memory", "r");
-    if (!fp)
-        return;
-
-    unsigned overcommit = 0;
-    if (fscanf(fp, "%u", &overcommit) == 1) {
-        if (overcommit == 1) {
-            vmPoolSize = vmPoolSizeOvercommit;
-            coalesceLimit = coalesceLimitOvercommit;
-        }
-    }
-
-    fclose(fp);
-}
-#endif
-
 bool ExecutableAllocator::isValid() const
 {
     SpinLockHolder lock_holder(&spinlock);
-    if (!allocator) {
-#if OS(LINUX)
-        maybeModifyVMPoolSize();
-#endif
-        allocator = new FixedVMPoolAllocator(JIT_ALLOCATOR_LARGE_ALLOC_SIZE, vmPoolSize);
-    }
+    if (!allocator)
+        allocator = new FixedVMPoolAllocator();
     return allocator->isValid();
 }
 
@@ -488,14 +508,13 @@ bool ExecutableAllocator::underMemoryPressure()
 {
     // Technically we should take the spin lock here, but we don't care if we get stale data.
     // This is only really a heuristic anyway.
-    return allocatedCount > (vmPoolSize / 2);
+    return allocator && (allocator->allocated() > (FixedVMPoolPageTables::size() / 2));
 }
 
 ExecutablePool::Allocation ExecutablePool::systemAlloc(size_t size)
 {
     SpinLockHolder lock_holder(&spinlock);
     ASSERT(allocator);
-    allocatedCount += size;
     return allocator->alloc(size);
 }
 
@@ -503,7 +522,6 @@ void ExecutablePool::systemRelease(ExecutablePool::Allocation& allocation)
 {
     SpinLockHolder lock_holder(&spinlock);
     ASSERT(allocator);
-    allocatedCount -= allocation.size();
     allocator->free(allocation);
 }
 

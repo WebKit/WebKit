@@ -1,3 +1,65 @@
+2011-01-31  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53352
+        Heavy external fragmentation in FixedVMPoolAllocator can lead to a CRASH().
+
+        The FixedVMPoolAllocator currently uses a best fix policy -
+        switch to first fit, this is less prone to external fragmentation.
+
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::AllocationTableSizeClass::AllocationTableSizeClass):
+        (JSC::AllocationTableSizeClass::blockSize):
+        (JSC::AllocationTableSizeClass::blockCount):
+        (JSC::AllocationTableSizeClass::blockAlignment):
+        (JSC::AllocationTableSizeClass::size):
+        (JSC::AllocationTableLeaf::AllocationTableLeaf):
+        (JSC::AllocationTableLeaf::~AllocationTableLeaf):
+        (JSC::AllocationTableLeaf::allocate):
+        (JSC::AllocationTableLeaf::free):
+        (JSC::AllocationTableLeaf::isEmpty):
+        (JSC::AllocationTableLeaf::isFull):
+        (JSC::AllocationTableLeaf::size):
+        (JSC::AllocationTableLeaf::classForSize):
+        (JSC::AllocationTableLeaf::dump):
+        (JSC::LazyAllocationTable::LazyAllocationTable):
+        (JSC::LazyAllocationTable::~LazyAllocationTable):
+        (JSC::LazyAllocationTable::allocate):
+        (JSC::LazyAllocationTable::free):
+        (JSC::LazyAllocationTable::isEmpty):
+        (JSC::LazyAllocationTable::isFull):
+        (JSC::LazyAllocationTable::size):
+        (JSC::LazyAllocationTable::dump):
+        (JSC::LazyAllocationTable::classForSize):
+        (JSC::AllocationTableDirectory::AllocationTableDirectory):
+        (JSC::AllocationTableDirectory::~AllocationTableDirectory):
+        (JSC::AllocationTableDirectory::allocate):
+        (JSC::AllocationTableDirectory::free):
+        (JSC::AllocationTableDirectory::isEmpty):
+        (JSC::AllocationTableDirectory::isFull):
+        (JSC::AllocationTableDirectory::size):
+        (JSC::AllocationTableDirectory::classForSize):
+        (JSC::AllocationTableDirectory::dump):
+        (JSC::FixedVMPoolAllocator::FixedVMPoolAllocator):
+        (JSC::FixedVMPoolAllocator::alloc):
+        (JSC::FixedVMPoolAllocator::free):
+        (JSC::FixedVMPoolAllocator::allocated):
+        (JSC::FixedVMPoolAllocator::isValid):
+        (JSC::FixedVMPoolAllocator::classForSize):
+        (JSC::FixedVMPoolAllocator::offsetToPointer):
+        (JSC::FixedVMPoolAllocator::pointerToOffset):
+        (JSC::ExecutableAllocator::committedByteCount):
+        (JSC::ExecutableAllocator::isValid):
+        (JSC::ExecutableAllocator::underMemoryPressure):
+        (JSC::ExecutablePool::systemAlloc):
+        (JSC::ExecutablePool::systemRelease):
+        * wtf/PageReservation.h:
+        (WTF::PageReservation::PageReservation):
+        (WTF::PageReservation::commit):
+        (WTF::PageReservation::decommit):
+        (WTF::PageReservation::committed):
+
 2011-01-31  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r76969.
