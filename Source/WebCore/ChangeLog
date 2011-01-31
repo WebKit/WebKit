@@ -1,5 +1,13 @@
 2011-01-30  Oliver Hunt  <oliver@apple.com>
 
+        Try to fix Qt build (again).
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::QtRuntimeMetaMethod::connectGetter):
+        (JSC::Bindings::QtRuntimeMetaMethod::disconnectGetter):
+
+2011-01-30  Oliver Hunt  <oliver@apple.com>
+
         Try to fix Qt build.
 
         * bridge/qt/qt_instance.cpp:
