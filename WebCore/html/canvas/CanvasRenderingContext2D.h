@@ -190,6 +190,7 @@ namespace WebCore {
 
         String font() const;
         void setFont(const String&);
+        void updateFont();
         
         String textAlign() const;
         void setTextAlign(const String&);
