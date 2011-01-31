@@ -1020,13 +1020,13 @@ WebInspector.NetworkPanel.prototype = {
         var harArchive = {
             log: (new WebInspector.HARLog()).build()
         }
-        offerFileForDownload(JSON.stringify(harArchive));
+        InspectorFrontendHost.copyText(JSON.stringify(harArchive));
     },
 
     _exportResource: function(resource)
     {
         var har = (new WebInspector.HAREntry(resource)).build();
-        offerFileForDownload(JSON.stringify(har));
+        InspectorFrontendHost.copyText(JSON.stringify(har));
     },
 
     _updateOffscreenRows: function(e)

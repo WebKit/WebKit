@@ -1,3 +1,14 @@
+2011-01-28  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: copy HAR to clipboard instead of saving blob on export.
+        https://bugs.webkit.org/show_bug.cgi?id=53328
+
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkPanel.prototype._exportAll):
+        (WebInspector.NetworkPanel.prototype._exportResource):
+
 2011-01-30  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
