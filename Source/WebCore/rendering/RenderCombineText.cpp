@@ -25,7 +25,7 @@
 
 namespace WebCore {
 
-const float textCombineMargin = 1.1; // Allow em + 10% margin
+const float textCombineMargin = 1.1f; // Allow em + 10% margin
 
 RenderCombineText::RenderCombineText(Node* node, PassRefPtr<StringImpl> string)
      : RenderText(node, string)
