@@ -88,6 +88,7 @@ public:
     T* get() const { return reinterpret_cast<T*>(m_cell); }
     T* operator*() const { return static_cast<T*>(m_cell); }
     T* operator->() const { return static_cast<T*>(m_cell); }
+    void clear() { m_value = 0; }
     
     JSCell** slot() { return &m_cell; }
     
