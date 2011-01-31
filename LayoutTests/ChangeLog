@@ -1,3 +1,26 @@
+2011-01-31  Chang Shu  <chang.shu@nokia.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        Convert the test case to dumpAsText test so the expected result is cross-platform.
+        https://bugs.webkit.org/show_bug.cgi?id=53437
+
+        * editing/deleting/5168598-expected.txt: Added.
+        * editing/deleting/5168598.html:
+        * platform/chromium-linux/editing/deleting/5168598-expected.checksum: Removed.
+        * platform/chromium-linux/editing/deleting/5168598-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/5168598-expected.checksum: Removed.
+        * platform/chromium-win/editing/deleting/5168598-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/5168598-expected.txt: Removed.
+        * platform/mac-leopard/editing/deleting/5168598-expected.checksum: Removed.
+        * platform/mac-leopard/editing/deleting/5168598-expected.png: Removed.
+        * platform/mac/editing/deleting/5168598-expected.checksum: Removed.
+        * platform/mac/editing/deleting/5168598-expected.png: Removed.
+        * platform/mac/editing/deleting/5168598-expected.txt: Removed.
+        * platform/qt/editing/deleting/5168598-expected.checksum: Removed.
+        * platform/qt/editing/deleting/5168598-expected.png: Removed.
+        * platform/qt/editing/deleting/5168598-expected.txt: Removed.
+
 2011-01-31  takano takumi  <takano@apple.com>
 
         Reviewed by Dave Hyatt.
