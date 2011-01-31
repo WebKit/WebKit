@@ -41,6 +41,9 @@
 #define __GTK_XTBIN_H__
 
 #include <gtk/gtk.h>
+#ifndef GTK_API_VERSION_2
+#include <gtk/gtkx.h>
+#endif
 #include <X11/Intrinsic.h>
 #include <X11/Xutil.h>
 #include <X11/Xlib.h>

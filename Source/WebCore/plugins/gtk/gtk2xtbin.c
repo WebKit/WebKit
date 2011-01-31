@@ -46,7 +46,9 @@
 #include "xembed.h"
 #include "gtk2xtbin.h"
 #include <gtk/gtk.h>
+#ifdef GTK_API_VERSION_2
 #include <gdk/gdkx.h>
+#endif
 #include <glib.h>
 #include <assert.h>
 #include <sys/time.h>

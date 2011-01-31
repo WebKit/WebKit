@@ -1,3 +1,10 @@
+2011-01-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed, fix the build with current GTK+ 3.x.
+
+        * plugins/gtk/gtk2xtbin.c:
+        * plugins/gtk/gtk2xtbin.h:
+
 2011-01-30  Kenichi Ishibashi  <bashi@google.com>
 
         Reviewed by Kent Tamura.
