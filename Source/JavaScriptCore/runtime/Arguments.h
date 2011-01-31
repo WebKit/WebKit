@@ -37,7 +37,7 @@ namespace JSC {
         WTF_MAKE_NONCOPYABLE(ArgumentsData); WTF_MAKE_FAST_ALLOCATED;
     public:
         ArgumentsData() { }
-        WriteBarrier<JSActivation> activation;
+        JSActivation* activation;
 
         unsigned numParameters;
         ptrdiff_t firstParameterIndex;
@@ -50,7 +50,7 @@ namespace JSC {
         OwnArrayPtr<bool> deletedArguments;
         Register extraArgumentsFixedBuffer[4];
 
-        WriteBarrier<JSFunction> callee;
+        JSFunction* callee;
         bool overrodeLength : 1;
         bool overrodeCallee : 1;
         bool overrodeCaller : 1;
@@ -86,9 +86,9 @@ namespace JSC {
         void copyToRegisters(ExecState* exec, Register* buffer, uint32_t maxSize);
         void copyRegisters();
         bool isTornOff() const { return d->registerArray; }
-        void setActivation(JSGlobalData& globalData, JSActivation* activation)
+        void setActivation(JSActivation* activation)
         {
-            d->activation.set(globalData, this, activation);
+            d->activation = activation;
             d->registers = &activation->registerAt(0);
         }
 
@@ -158,6 +158,7 @@ namespace JSC {
         d->firstParameterIndex = firstParameterIndex;
         d->numArguments = numArguments;
 
+        d->activation = 0;
         d->registers = callFrame->registers();
 
         Register* extraArguments;
@@ -175,7 +176,7 @@ namespace JSC {
 
         d->extraArguments = extraArguments;
 
-        d->callee.set(callFrame->globalData(), this, callee);
+        d->callee = callee;
         d->overrodeLength = false;
         d->overrodeCallee = false;
         d->overrodeCaller = false;
@@ -194,6 +195,7 @@ namespace JSC {
 
         d->numParameters = 0;
         d->numArguments = numArguments;
+        d->activation = 0;
 
         Register* extraArguments;
         if (numArguments > sizeof(d->extraArgumentsFixedBuffer) / sizeof(Register))
@@ -207,7 +209,7 @@ namespace JSC {
 
         d->extraArguments = extraArguments;
 
-        d->callee.set(callFrame->globalData(), this, asFunction(callFrame->callee()));
+        d->callee = asFunction(callFrame->callee());
         d->overrodeLength = false;
         d->overrodeCallee = false;
         d->overrodeCaller = false;

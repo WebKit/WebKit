@@ -312,9 +312,9 @@ namespace JSC {
 
         if (entry->attributes() & Function) { // function: put as override property
             if (LIKELY(value.isCell()))
-                thisObj->putDirectFunction(exec->globalData(), propertyName, value.asCell());
+                thisObj->putDirectFunction(propertyName, value.asCell());
             else
-                thisObj->putDirect(exec->globalData(), propertyName, value);
+                thisObj->putDirect(propertyName, value);
         } else if (!(entry->attributes() & ReadOnly))
             entry->propertyPutter()(exec, thisObj, value);
 

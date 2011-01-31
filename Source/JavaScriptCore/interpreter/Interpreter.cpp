@@ -103,11 +103,11 @@ NEVER_INLINE bool Interpreter::resolve(CallFrame* callFrame, Instruction* vPC, J
     CodeBlock* codeBlock = callFrame->codeBlock();
     Identifier& ident = codeBlock->identifier(property);
     do {
-        JSObject* o = iter->get();
+        JSObject* o = *iter;
         PropertySlot slot(o);
         if (o->getPropertySlot(callFrame, ident, slot)) {
             JSValue result = slot.getValue(callFrame, ident);
-            exceptionValue = callFrame->globalData().exception.get();
+            exceptionValue = callFrame->globalData().exception;
             if (exceptionValue)
                 return false;
             callFrame->uncheckedR(dst) = JSValue(result);
@@ -142,11 +142,11 @@ NEVER_INLINE bool Interpreter::resolveSkip(CallFrame* callFrame, Instruction* vP
     }
     Identifier& ident = codeBlock->identifier(property);
     do {
-        JSObject* o = iter->get();
+        JSObject* o = *iter;
         PropertySlot slot(o);
         if (o->getPropertySlot(callFrame, ident, slot)) {
             JSValue result = slot.getValue(callFrame, ident);
-            exceptionValue = callFrame->globalData().exception.get();
+            exceptionValue = callFrame->globalData().exception;
             if (exceptionValue)
                 return false;
             ASSERT(result);
@@ -187,7 +187,7 @@ NEVER_INLINE bool Interpreter::resolveGlobal(CallFrame* callFrame, Instruction* 
             return true;
         }
 
-        exceptionValue = callFrame->globalData().exception.get();
+        exceptionValue = callFrame->globalData().exception;
         if (exceptionValue)
             return false;
         callFrame->uncheckedR(dst) = JSValue(result);
@@ -220,14 +220,14 @@ NEVER_INLINE bool Interpreter::resolveGlobalDynamic(CallFrame* callFrame, Instru
             ++iter;
     }
     while (skip--) {
-        JSObject* o = iter->get();
+        JSObject* o = *iter;
         if (o->hasCustomProperties()) {
             Identifier& ident = codeBlock->identifier(property);
             do {
                 PropertySlot slot(o);
                 if (o->getPropertySlot(callFrame, ident, slot)) {
                     JSValue result = slot.getValue(callFrame, ident);
-                    exceptionValue = callFrame->globalData().exception.get();
+                    exceptionValue = callFrame->globalData().exception;
                     if (exceptionValue)
                         return false;
                     ASSERT(result);
@@ -236,7 +236,7 @@ NEVER_INLINE bool Interpreter::resolveGlobalDynamic(CallFrame* callFrame, Instru
                 }
                 if (iter == end)
                     break;
-                o = iter->get();
+                o = *iter;
                 ++iter;
             } while (true);
             exceptionValue = createUndefinedVariableError(callFrame, ident);
@@ -266,7 +266,7 @@ NEVER_INLINE bool Interpreter::resolveGlobalDynamic(CallFrame* callFrame, Instru
             return true;
         }
         
-        exceptionValue = callFrame->globalData().exception.get();
+        exceptionValue = callFrame->globalData().exception;
         if (exceptionValue)
             return false;
         ASSERT(result);
@@ -310,11 +310,11 @@ NEVER_INLINE bool Interpreter::resolveBaseAndProperty(CallFrame* callFrame, Inst
     Identifier& ident = codeBlock->identifier(property);
     JSObject* base;
     do {
-        base = iter->get();
+        base = *iter;
         PropertySlot slot(base);
         if (base->getPropertySlot(callFrame, ident, slot)) {
             JSValue result = slot.getValue(callFrame, ident);
-            exceptionValue = callFrame->globalData().exception.get();
+            exceptionValue = callFrame->globalData().exception;
             if (exceptionValue)
                 return false;
             callFrame->uncheckedR(propDst) = JSValue(result);
@@ -566,11 +566,11 @@ NEVER_INLINE bool Interpreter::unwindCallFrame(CallFrame*& callFrame, JSValue ex
         }
         while (!scopeChain->object->inherits(&JSActivation::info))
             scopeChain = scopeChain->pop();
-        JSActivation* activation = asActivation(scopeChain->object.get());
+        JSActivation* activation = asActivation(scopeChain->object);
         activation->copyRegisters();
         if (JSValue arguments = callFrame->uncheckedR(unmodifiedArgumentsRegister(oldCodeBlock->argumentsRegister())).jsValue()) {
             if (!oldCodeBlock->isStrictMode())
-                asArguments(arguments)->setActivation(callFrame->globalData(), activation);
+                asArguments(arguments)->setActivation(activation);
         }
     } else if (oldCodeBlock->usesArguments() && !oldCodeBlock->isStrictMode()) {
         if (JSValue arguments = callFrame->uncheckedR(unmodifiedArgumentsRegister(oldCodeBlock->argumentsRegister())).jsValue())
@@ -648,7 +648,7 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
         message = makeUString(message, " (near '...", codeBlock->source()->getRange(start, stop), "...')");
     }
 
-    exception->putDirect(*globalData, globalData->propertyNames->message, jsString(globalData, message));
+    exception->putDirect(globalData->propertyNames->message, jsString(globalData, message));
 }
 
 NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSValue& exceptionValue, unsigned bytecodeOffset)
@@ -1085,7 +1085,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObjec
     for (ScopeChainNode* node = scopeChain; ; node = node->next) {
         ASSERT(node);
         if (node->object->isVariableObject()) {
-            variableObject = static_cast<JSVariableObject*>(node->object.get());
+            variableObject = static_cast<JSVariableObject*>(node->object);
             break;
         }
     }
@@ -1100,7 +1100,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObjec
             pushedScope = true;
         }
         // Scope for BatchedTransitionOptimizer
-        BatchedTransitionOptimizer optimizer(callFrame->globalData(), variableObject);
+        BatchedTransitionOptimizer optimizer(variableObject);
 
         for (unsigned i = 0; i < numVariables; ++i) {
             const Identifier& ident = codeBlock->variable(i);
@@ -1371,7 +1371,7 @@ NEVER_INLINE void Interpreter::tryCacheGetByID(CallFrame* callFrame, CodeBlock* 
         // Since we're accessing a prototype in a loop, it's a good bet that it
         // should not be treated as a dictionary.
         if (baseObject->structure()->isDictionary()) {
-            baseObject->flattenDictionaryObject(callFrame->globalData());
+            baseObject->flattenDictionaryObject();
             offset = baseObject->structure()->get(propertyName);
         }
 
@@ -1475,8 +1475,8 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
 
 #define CHECK_FOR_EXCEPTION() \
     do { \
-        if (UNLIKELY(globalData->exception.get() != JSValue())) { \
-            exceptionValue = globalData->exception.get(); \
+        if (UNLIKELY(globalData->exception != JSValue())) { \
+            exceptionValue = globalData->exception; \
             goto vm_throw; \
         } \
     } while (0)
@@ -2408,7 +2408,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
             ASSERT(iter != end);
         }
         ASSERT((*iter)->isVariableObject());
-        JSVariableObject* scope = static_cast<JSVariableObject*>(iter->get());
+        JSVariableObject* scope = static_cast<JSVariableObject*>(*iter);
         callFrame->uncheckedR(dst) = scope->registerAt(index);
         ASSERT(callFrame->r(dst).jsValue());
         vPC += OPCODE_LENGTH(op_get_scoped_var);
@@ -2439,7 +2439,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         }
 
         ASSERT((*iter)->isVariableObject());
-        JSVariableObject* scope = static_cast<JSVariableObject*>(iter->get());
+        JSVariableObject* scope = static_cast<JSVariableObject*>(*iter);
         ASSERT(callFrame->r(value).jsValue());
         scope->registerAt(index) = JSValue(callFrame->r(value).jsValue());
         vPC += OPCODE_LENGTH(op_put_scoped_var);
@@ -3080,7 +3080,7 @@ skip_id_custom_self:
                 int value = vPC[3].u.operand;
                 unsigned offset = vPC[7].u.operand;
                 ASSERT(baseObject->offsetForLocation(baseObject->getDirectLocation(codeBlock->identifier(vPC[2].u.operand))) == offset);
-                baseObject->putDirectOffset(callFrame->globalData(), offset, callFrame->r(value).jsValue());
+                baseObject->putDirectOffset(offset, callFrame->r(value).jsValue());
 
                 vPC += OPCODE_LENGTH(op_put_by_id_transition);
                 NEXT_INSTRUCTION();
@@ -3115,7 +3115,7 @@ skip_id_custom_self:
                 unsigned offset = vPC[5].u.operand;
                 
                 ASSERT(baseObject->offsetForLocation(baseObject->getDirectLocation(codeBlock->identifier(vPC[2].u.operand))) == offset);
-                baseObject->putDirectOffset(callFrame->globalData(), offset, callFrame->r(value).jsValue());
+                baseObject->putDirectOffset(offset, callFrame->r(value).jsValue());
 
                 vPC += OPCODE_LENGTH(op_put_by_id_replace);
                 NEXT_INSTRUCTION();
@@ -3309,7 +3309,7 @@ skip_id_custom_self:
             if (isJSArray(globalData, baseValue)) {
                 JSArray* jsArray = asArray(baseValue);
                 if (jsArray->canSetIndex(i))
-                    jsArray->setIndex(*globalData, i, callFrame->r(value).jsValue());
+                    jsArray->setIndex(i, callFrame->r(value).jsValue());
                 else
                     jsArray->JSArray::put(callFrame, i, callFrame->r(value).jsValue());
             } else if (isJSByteArray(globalData, baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
@@ -3835,7 +3835,7 @@ skip_id_custom_self:
 
         if (thisValue == globalObject && funcVal == globalObject->evalFunction()) {
             JSValue result = callEval(callFrame, registerFile, argv, argCount, registerOffset);
-            if ((exceptionValue = globalData->exception.get()))
+            if ((exceptionValue = globalData->exception))
                 goto vm_throw;
             functionReturnValue = result;
 
@@ -4103,7 +4103,7 @@ skip_id_custom_self:
 
             if (JSValue argumentsValue = callFrame->r(unmodifiedArgumentsRegister(arguments)).jsValue()) {
                 if (!codeBlock->isStrictMode())
-                    asArguments(argumentsValue)->setActivation(*globalData, asActivation(activationValue));
+                    asArguments(argumentsValue)->setActivation(asActivation(activationValue));
             }
         } else if (JSValue argumentsValue = callFrame->r(unmodifiedArgumentsRegister(arguments)).jsValue()) {
             if (!codeBlock->isStrictMode())

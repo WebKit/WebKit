@@ -71,8 +71,8 @@ JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, NonNullPas
     , m_executable(thunk)
     , m_scopeChain(globalObject->globalScopeChain())
 {
-    putDirect(exec->globalData(), exec->globalData().propertyNames->name, jsString(exec, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
-    putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
+    putDirect(exec->globalData().propertyNames->name, jsString(exec, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
+    putDirect(exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
 }
 #endif
 
@@ -83,9 +83,9 @@ JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, NonNullPas
 #endif
     , m_scopeChain(globalObject->globalScopeChain())
 {
-    putDirect(exec->globalData(), exec->globalData().propertyNames->name, jsString(exec, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
+    putDirect(exec->globalData().propertyNames->name, jsString(exec, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
 #if ENABLE(JIT)
-    putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
+    putDirect(exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
 #else
     UNUSED_PARAM(length);
     UNUSED_PARAM(func);
@@ -99,7 +99,7 @@ JSFunction::JSFunction(ExecState* exec, NonNullPassRefPtr<FunctionExecutable> ex
     , m_scopeChain(scopeChainNode)
 {
     const Identifier& name = static_cast<FunctionExecutable*>(m_executable.get())->name();
-    putDirect(exec->globalData(), exec->globalData().propertyNames->name, jsString(exec, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
+    putDirect(exec->globalData().propertyNames->name, jsString(exec, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
 }
 
 JSFunction::~JSFunction()
@@ -207,8 +207,8 @@ bool JSFunction::getOwnPropertySlot(ExecState* exec, const Identifier& propertyN
 
         if (!location) {
             JSObject* prototype = new (exec) JSObject(scope().globalObject()->emptyObjectStructure());
-            prototype->putDirect(exec->globalData(), exec->propertyNames().constructor, this, DontEnum);
-            putDirect(exec->globalData(), exec->propertyNames().prototype, prototype, DontDelete | DontEnum);
+            prototype->putDirect(exec->propertyNames().constructor, this, DontEnum);
+            putDirect(exec->propertyNames().prototype, prototype, DontDelete | DontEnum);
             location = getDirectLocation(propertyName);
         }
 

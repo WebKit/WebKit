@@ -33,8 +33,8 @@ namespace JSC {
         explicit JSWrapperObject(NonNullPassRefPtr<Structure>);
 
     public:
-        JSValue internalValue() const { return m_internalValue.get(); }
-        void setInternalValue(JSGlobalData&, JSValue);
+        JSValue internalValue() const { return m_internalValue; }
+        void setInternalValue(JSValue);
 
         static PassRefPtr<Structure> createStructure(JSValue prototype) 
         { 
@@ -47,7 +47,7 @@ namespace JSC {
     private:
         virtual void markChildren(MarkStack&);
         
-        WriteBarrier<Unknown> m_internalValue;
+        JSValue m_internalValue;
     };
 
     inline JSWrapperObject::JSWrapperObject(NonNullPassRefPtr<Structure> structure)
@@ -56,11 +56,11 @@ namespace JSC {
         putAnonymousValue(0, jsNull());
     }
 
-    inline void JSWrapperObject::setInternalValue(JSGlobalData& globalData, JSValue value)
+    inline void JSWrapperObject::setInternalValue(JSValue value)
     {
         ASSERT(value);
         ASSERT(!value.isObject());
-        m_internalValue.set(globalData, this, value);
+        m_internalValue = value;
         putAnonymousValue(0, value);
     }
 

@@ -49,10 +49,10 @@ private:
     void grow();
 
     Heap* m_heap;
-    DeprecatedPtr<JSCell>* m_set;
+    JSCell** m_set;
     size_t m_size;
     size_t m_capacity;
-    DeprecatedPtr<JSCell> m_inlineSet[inlineCapacity];
+    JSCell* m_inlineSet[inlineCapacity];
 };
 
 inline ConservativeSet::ConservativeSet(Heap* heap)
@@ -66,13 +66,13 @@ inline ConservativeSet::ConservativeSet(Heap* heap)
 inline ConservativeSet::~ConservativeSet()
 {
     if (m_set != m_inlineSet)
-        OSAllocator::decommitAndRelease(m_set, m_capacity * sizeof(DeprecatedPtr<JSCell>*));
+        OSAllocator::decommitAndRelease(m_set, m_capacity * sizeof(JSCell*));
 }
 
 inline void ConservativeSet::mark(MarkStack& markStack)
 {
     for (size_t i = 0; i < m_size; ++i)
-        markStack.append(&m_set[i]);
+        markStack.append(m_set[i]);
 }
 
 } // namespace JSC

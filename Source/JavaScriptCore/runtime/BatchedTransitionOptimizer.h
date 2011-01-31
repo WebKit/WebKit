@@ -34,9 +34,8 @@ namespace JSC {
     class BatchedTransitionOptimizer {
         WTF_MAKE_NONCOPYABLE(BatchedTransitionOptimizer);
     public:
-        BatchedTransitionOptimizer(JSGlobalData& globalData, JSObject* object)
-            : m_globalData(&globalData)
-            , m_object(object)
+        BatchedTransitionOptimizer(JSObject* object)
+            : m_object(object)
         {
             if (!m_object->structure()->isDictionary())
                 m_object->setStructure(Structure::toCacheableDictionaryTransition(m_object->structure()));
@@ -44,11 +43,10 @@ namespace JSC {
 
         ~BatchedTransitionOptimizer()
         {
-            m_object->flattenDictionaryObject(*m_globalData);
+            m_object->flattenDictionaryObject();
         }
 
     private:
-        JSGlobalData* m_globalData;
         JSObject* m_object;
     };
 

@@ -940,7 +940,7 @@ public:
     virtual void postTask(PassOwnPtr<Task>); // Executes the task on context's thread asynchronously.
 
 #if USE(JSC)
-    typedef JSC::WeakGCMap<WebCore::Node*, JSNode> JSWrapperCache;
+    typedef JSC::WeakGCMap<WebCore::Node*, JSNode*> JSWrapperCache;
     typedef HashMap<DOMWrapperWorld*, JSWrapperCache*> JSWrapperCacheMap;
     JSWrapperCacheMap& wrapperCacheMap() { return m_wrapperCacheMap; }
     JSWrapperCache* getWrapperCache(DOMWrapperWorld* world);

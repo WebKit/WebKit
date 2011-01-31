@@ -179,7 +179,7 @@ void Heap::markProtectedObjects(MarkStack& markStack)
 {
     ProtectCountSet::iterator end = m_protectedValues.end();
     for (ProtectCountSet::iterator it = m_protectedValues.begin(); it != end; ++it)
-        markStack.deprecatedAppend(&it->first);
+        markStack.append(it->first);
 }
 
 void Heap::pushTempSortVector(Vector<ValueStringPair>* tempVector)
@@ -204,7 +204,7 @@ void Heap::markTempSortVectors(MarkStack& markStack)
         Vector<ValueStringPair>::iterator vectorEnd = tempSortingVector->end();
         for (Vector<ValueStringPair>::iterator vectorIt = tempSortingVector->begin(); vectorIt != vectorEnd; ++vectorIt) {
             if (vectorIt->first)
-                markStack.deprecatedAppend(&vectorIt->first);
+                markStack.append(vectorIt->first);
         }
     }
 }
@@ -255,7 +255,7 @@ void Heap::markRoots()
     if (m_markListSet && m_markListSet->size())
         MarkedArgumentBuffer::markLists(markStack, *m_markListSet);
     if (m_globalData->exception)
-        markStack.append(&m_globalData->exception);
+        markStack.append(m_globalData->exception);
     if (m_globalData->firstStringifierToMark)
         JSONObject::markStringifiers(markStack, m_globalData->firstStringifierToMark);
     markStack.drain();

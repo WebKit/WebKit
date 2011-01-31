@@ -373,7 +373,6 @@
 		A7C1E8E4112E72EF00A37F98 /* JITPropertyAccess32_64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7C1E8C8112E701C00A37F98 /* JITPropertyAccess32_64.cpp */; };
 		A7C530E4102A3813005BC741 /* MarkStackPosix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7C530E3102A3813005BC741 /* MarkStackPosix.cpp */; };
 		A7D649AA1015224E009B2E1B /* PossiblyNull.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D649A91015224E009B2E1B /* PossiblyNull.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A7DCB97312E5193F00911940 /* WriteBarrier.h in Headers */ = {isa = PBXBuildFile; fileRef = A7DCB77912E3D90500911940 /* WriteBarrier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7E2EA6B0FB460CF00601F06 /* LiteralParser.h in Headers */ = {isa = PBXBuildFile; fileRef = A7E2EA690FB460CF00601F06 /* LiteralParser.h */; };
 		A7E2EA6C0FB460CF00601F06 /* LiteralParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7E2EA6A0FB460CF00601F06 /* LiteralParser.cpp */; };
 		A7F19ECE11DD490900931E70 /* FixedArray.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F19ECD11DD490900931E70 /* FixedArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1045,7 +1044,6 @@
 		A7C1E8C8112E701C00A37F98 /* JITPropertyAccess32_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITPropertyAccess32_64.cpp; sourceTree = "<group>"; };
 		A7C530E3102A3813005BC741 /* MarkStackPosix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkStackPosix.cpp; sourceTree = "<group>"; };
 		A7D649A91015224E009B2E1B /* PossiblyNull.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PossiblyNull.h; sourceTree = "<group>"; };
-		A7DCB77912E3D90500911940 /* WriteBarrier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WriteBarrier.h; sourceTree = "<group>"; };
 		A7E2EA690FB460CF00601F06 /* LiteralParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiteralParser.h; sourceTree = "<group>"; };
 		A7E2EA6A0FB460CF00601F06 /* LiteralParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LiteralParser.cpp; sourceTree = "<group>"; };
 		A7E42C180E3938830065A544 /* JSStaticScopeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStaticScopeObject.h; sourceTree = "<group>"; };
@@ -1908,7 +1906,6 @@
 				14BFCE6810CDB1FC00364CCE /* WeakGCMap.h */,
 				14035DB010DBFB2A00FFFFE7 /* WeakGCPtr.h */,
 				1420BE7A10AA6DDB00F455D2 /* WeakRandom.h */,
-				A7DCB77912E3D90500911940 /* WriteBarrier.h */,
 			);
 			path = runtime;
 			sourceTree = "<group>";
@@ -2434,7 +2431,6 @@
 				86704B4312DB8A8100A9FE7B /* YarrSyntaxChecker.h in Headers */,
 				5DE6E5B30E1728EC00180407 /* create_hash_table in Headers */,
 				451539B912DC994500EF7AC4 /* Yarr.h in Headers */,
-				A7DCB97312E5193F00911940 /* WriteBarrier.h in Headers */,
 				E49DC16C12EF294E00184A1F /* SourceProviderCache.h in Headers */,
 				E49DC16D12EF295300184A1F /* SourceProviderCacheItem.h in Headers */,
 			);

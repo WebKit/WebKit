@@ -429,7 +429,7 @@ namespace JSC {
             // Since we're accessing a prototype in a loop, it's a good bet that it
             // should not be treated as a dictionary.
             if (cell->structure()->isDictionary()) {
-                asObject(cell)->flattenDictionaryObject(callFrame->globalData());
+                asObject(cell)->flattenDictionaryObject();
                 if (slotBase == cell)
                     slotOffset = cell->structure()->get(propertyName); 
             }
@@ -454,7 +454,7 @@ namespace JSC {
             // Since we're accessing a prototype in a loop, it's a good bet that it
             // should not be treated as a dictionary.
             if (base->structure()->isDictionary())
-                asObject(base)->flattenDictionaryObject(callFrame->globalData());
+                asObject(base)->flattenDictionaryObject();
 
             ++count;
         }
@@ -471,7 +471,7 @@ namespace JSC {
         PropertySlot slot;
         JSObject* base;
         while (true) {
-            base = iter->get();
+            base = *iter;
             if (next == end)
                 return isStrictPut ? JSValue() : base;
             if (base->getPropertySlot(callFrame, property, slot))

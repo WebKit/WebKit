@@ -33,7 +33,7 @@ namespace JSC {
     class GlobalEvalFunction : public PrototypeFunction {
     public:
         GlobalEvalFunction(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, int len, const Identifier&, NativeFunction, JSGlobalObject* expectedThisObject);
-        JSGlobalObject* cachedGlobalObject() const { return m_cachedGlobalObject.get(); }
+        JSGlobalObject* cachedGlobalObject() const { return m_cachedGlobalObject; }
 
         static PassRefPtr<Structure> createStructure(JSValue prototype) 
         { 
@@ -46,7 +46,7 @@ namespace JSC {
     private:
         virtual void markChildren(MarkStack&);
 
-        WriteBarrier<JSGlobalObject> m_cachedGlobalObject;
+        JSGlobalObject* m_cachedGlobalObject;
     };
 
 } // namespace JSC

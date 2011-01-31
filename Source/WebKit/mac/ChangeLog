@@ -1,3 +1,19 @@
+2011-01-30  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, rolling out r77098, r77099, r77100, r77109, and
+        r77111.
+        http://trac.webkit.org/changeset/77098
+        http://trac.webkit.org/changeset/77099
+        http://trac.webkit.org/changeset/77100
+        http://trac.webkit.org/changeset/77109
+        http://trac.webkit.org/changeset/77111
+        https://bugs.webkit.org/show_bug.cgi?id=53219
+
+        Qt build is broken
+
+        * WebView/WebScriptDebugDelegate.mm:
+        (-[WebScriptCallFrame scopeChain]):
+
 2011-01-30  Oliver Hunt  <oliver@apple.com>
 
         Convert markstack to a slot visitor API

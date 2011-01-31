@@ -45,6 +45,7 @@ const ClassInfo JSDOMWindowShell::s_info = { "JSDOMWindowShell", 0, 0, 0 };
 
 JSDOMWindowShell::JSDOMWindowShell(PassRefPtr<DOMWindow> window, DOMWrapperWorld* world)
     : Base(JSDOMWindowShell::createStructure(jsNull()))
+    , m_window(0)
     , m_world(world)
 {
     setWindow(window);
@@ -65,7 +66,7 @@ void JSDOMWindowShell::setWindow(PassRefPtr<DOMWindow> domWindow)
     RefPtr<Structure> structure = JSDOMWindow::createStructure(prototype);
     JSDOMWindow* jsDOMWindow = new (JSDOMWindow::commonJSGlobalData()) JSDOMWindow(structure.release(), domWindow, this);
     prototype->putAnonymousValue(0, jsDOMWindow);
-    setWindow(*JSDOMWindow::commonJSGlobalData(), jsDOMWindow);
+    setWindow(jsDOMWindow);
 }
 
 // ----
@@ -76,7 +77,7 @@ void JSDOMWindowShell::markChildren(MarkStack& markStack)
 {
     Base::markChildren(markStack);
     if (m_window)
-        markStack.append(&m_window);
+        markStack.append(m_window);
 }
 
 UString JSDOMWindowShell::className() const
@@ -146,7 +147,7 @@ JSValue JSDOMWindowShell::lookupSetter(ExecState* exec, const Identifier& proper
 
 JSObject* JSDOMWindowShell::unwrappedObject()
 {
-    return m_window.get();
+    return m_window;
 }
 
 // ----

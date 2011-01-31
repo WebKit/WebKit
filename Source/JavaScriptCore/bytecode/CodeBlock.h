@@ -248,7 +248,7 @@ namespace JSC {
     protected:
         CodeBlock(ScriptExecutable* ownerExecutable, CodeType, JSGlobalObject*, PassRefPtr<SourceProvider>, unsigned sourceOffset, SymbolTable* symbolTable, bool isConstructor);
 
-        DeprecatedPtr<JSGlobalObject> m_globalObject;
+        JSGlobalObject* m_globalObject;
 
     public:
         virtual ~CodeBlock();
@@ -485,7 +485,7 @@ namespace JSC {
         unsigned addRegExp(RegExp* r) { createRareDataIfNecessary(); unsigned size = m_rareData->m_regexps.size(); m_rareData->m_regexps.append(r); return size; }
         RegExp* regexp(int index) const { ASSERT(m_rareData); return m_rareData->m_regexps[index].get(); }
 
-        JSGlobalObject* globalObject() { return m_globalObject.get(); }
+        JSGlobalObject* globalObject() { return m_globalObject; }
 
         // Jump Tables
 
