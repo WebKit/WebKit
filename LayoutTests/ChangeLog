@@ -1,5 +1,15 @@
 2011-01-31  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed Chromium Mac rebaselines for r77153; also rebaseline Kusa-Makura-background-canvas.html
+
+        * platform/chromium-mac/fast/blockflow/Kusa-Makura-background-canvas-expected.checksum: Added.
+        * platform/chromium-mac/fast/blockflow/Kusa-Makura-background-canvas-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/text-combine-image-test-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/text-combine-image-test-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-01-31  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed Chromium test expectation update.
 
         * platform/chromium/test_expectations.txt:
