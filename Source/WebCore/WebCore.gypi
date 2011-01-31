@@ -2964,6 +2964,8 @@
             'platform/graphics/RoundedIntRect.h',
             'platform/graphics/SegmentedFontData.cpp',
             'platform/graphics/SegmentedFontData.h',
+            'platform/graphics/ShadowBlur.cpp',
+            'platform/graphics/ShadowBlur.h',
             'platform/graphics/SimpleFontData.cpp',
             'platform/graphics/SimpleFontData.h',
             'platform/graphics/StringTruncator.cpp',
