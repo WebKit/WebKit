@@ -24,11 +24,24 @@
  */
 
 #import "config.h"
-#import "LayerTreeHost.h"
+#import "LayerTreeHostMac.h"
+
+using namespace WebCore;
 
 namespace WebKit {
 
-void LayerTreeHost::scheduleLayerFlush()
+LayerTreeHostMac::LayerTreeHostMac(WebPage* webPage, GraphicsLayer* graphicsLayer)
+    : LayerTreeHost(webPage)
+{
+}
+
+LayerTreeHostMac::~LayerTreeHostMac()
+{
+    if (m_flushPendingLayerChangesRunLoopObserver)
+        CFRunLoopObserverInvalidate(m_flushPendingLayerChangesRunLoopObserver.get());
+}
+
+void LayerTreeHostMac::scheduleLayerFlush()
 {
     CFRunLoopRef currentRunLoop = CFRunLoopGetCurrent();
     
@@ -46,18 +59,12 @@ void LayerTreeHost::scheduleLayerFlush()
     CFRunLoopAddObserver(currentRunLoop, m_flushPendingLayerChangesRunLoopObserver.get(), kCFRunLoopCommonModes);
 }
 
-void LayerTreeHost::platformInvalidate()
+void LayerTreeHostMac::flushPendingLayerChangesRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void* context)
 {
-    if (m_flushPendingLayerChangesRunLoopObserver)
-        CFRunLoopObserverInvalidate(m_flushPendingLayerChangesRunLoopObserver.get());
+    static_cast<LayerTreeHostMac*>(context)->flushPendingLayerChangesRunLoopObserverCallback();
 }
 
-void LayerTreeHost::flushPendingLayerChangesRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void* context)
-{
-    static_cast<LayerTreeHost*>(context)->flushPendingLayerChangesRunLoopObserverCallback();
-}
-
-void LayerTreeHost::flushPendingLayerChangesRunLoopObserverCallback()
+void LayerTreeHostMac::flushPendingLayerChangesRunLoopObserverCallback()
 {
     if (!flushPendingLayerChanges())
         return;

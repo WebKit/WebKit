@@ -23,45 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef LayerTreeHostMac_h
+#define LayerTreeHostMac_h
+
 #include "LayerTreeHost.h"
-
-#include <WebCore/Frame.h>
-#include <WebCore/FrameView.h>
-#include <WebCore/Page.h>
-#include "WebPage.h"
-
-#if PLATFORM(MAC)
-#include "LayerTreeHostMac.h"
-#else
-#error "This class is not ready for use by other ports yet."
-#endif
-
-using namespace WebCore;
+#include <wtf/RetainPtr.h>
 
 namespace WebKit {
 
-PassOwnPtr<LayerTreeHost> LayerTreeHost::create(WebPage* webPage, GraphicsLayer* graphicsLayer)
-{
-#if PLATFORM(MAC)
-    return adoptPtr(static_cast<LayerTreeHost*>(new LayerTreeHostMac(webPage, graphicsLayer)));
-#endif
+class LayerTreeHostMac : public LayerTreeHost {
+private:
+    friend class LayerTreeHost;
+    
+    explicit LayerTreeHostMac(WebPage*, WebCore::GraphicsLayer*);
+    ~LayerTreeHostMac();
 
-    return 0;
-}
+    // LayerTreeHost.
+    virtual void scheduleLayerFlush();
 
-LayerTreeHost::LayerTreeHost(WebPage* webPage)
-    : m_webPage(webPage)
-{
-}
-
-LayerTreeHost::~LayerTreeHost()
-{
-}
-
-bool LayerTreeHost::flushPendingLayerChanges()
-{
-    return m_webPage->corePage()->mainFrame()->view()->syncCompositingStateIncludingSubframes();
-}
+    static void flushPendingLayerChangesRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void*);
+    void flushPendingLayerChangesRunLoopObserverCallback();
+    
+    RetainPtr<CFRunLoopObserverRef> m_flushPendingLayerChangesRunLoopObserver;
+};
 
 } // namespace WebKit
+
+#endif // LayerTreeHostMac_h

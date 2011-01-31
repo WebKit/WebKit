@@ -27,6 +27,7 @@
 #define LayerTreeHost_h
 
 #include <wtf/Noncopyable.h>
+#include <wtf/PassOwnPtr.h>
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
@@ -44,25 +45,17 @@ class LayerTreeHost {
     WTF_MAKE_NONCOPYABLE(LayerTreeHost);
 
 public:
+    static PassOwnPtr<LayerTreeHost> create(WebPage*, WebCore::GraphicsLayer*);
+    virtual ~LayerTreeHost();
+
+    virtual void scheduleLayerFlush() = 0;
+
+protected:
     explicit LayerTreeHost(WebPage*);
-    ~LayerTreeHost();
-
-    void attachRootCompositingLayer(WebCore::GraphicsLayer*);
-    void detachRootCompositingLayer();
-
-    void scheduleLayerFlush();
+    bool flushPendingLayerChanges();
 
 private:
     void platformInvalidate();
-
-    bool flushPendingLayerChanges();
-
-#if PLATFORM(MAC)
-    static void flushPendingLayerChangesRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void*);
-    void flushPendingLayerChangesRunLoopObserverCallback();
-    
-    RetainPtr<CFRunLoopObserverRef> m_flushPendingLayerChangesRunLoopObserver;
-#endif
 
     WebPage* m_webPage;
 };
