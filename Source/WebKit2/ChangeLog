@@ -1,5 +1,20 @@
 2011-01-30  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        [Take 2!]
+        Fixed crash on window close (maybe crash on launch?) due to missing frame null checks
+        https://bugs.webkit.org/show_bug.cgi?id=53408
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::didNavigateWithNavigationData):
+        (WebKit::WebContext::didPerformClientRedirect):
+        (WebKit::WebContext::didPerformServerRedirect):
+        (WebKit::WebContext::didUpdateHistoryTitle): Use MESSAGE_CHECK because
+        we don't think we should be able to reach this state under normal conditions.
+
+2011-01-30  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Maciej Stachowiak.
 
         Fixed crash on window close (maybe crash on launch?) due to missing
