@@ -61,6 +61,7 @@ protected slots:
     void zoomOut();
     void resetZoom();
     void toggleZoomTextOnly(bool on);
+    void screenshot();
 
     void showUserAgentDialog();
 

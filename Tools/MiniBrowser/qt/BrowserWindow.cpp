@@ -68,6 +68,8 @@ BrowserWindow::BrowserWindow(QWKContext* context)
     QAction* zoomText = viewMenu->addAction("Zoom Text Only", this, SLOT(toggleZoomTextOnly(bool)));
     zoomText->setCheckable(true);
     zoomText->setChecked(false);
+    viewMenu->addSeparator();
+    viewMenu->addAction("Take Screen Shot...", this, SLOT(screenshot()));
 
     zoomIn->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Plus));
     zoomOut->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Minus));
@@ -175,6 +177,35 @@ void BrowserWindow::openFile()
         QString selectedFile = fileDialog.selectedFiles()[0];
         if (!selectedFile.isEmpty())
             load(selectedFile);
+    }
+#endif
+}
+
+void BrowserWindow::screenshot()
+{
+    QPixmap pixmap = QPixmap::grabWidget(m_browser);
+    QLabel* label = 0;
+#if !defined(Q_OS_SYMBIAN)
+    label = new QLabel;
+    label->setAttribute(Qt::WA_DeleteOnClose);
+    label->setWindowTitle("Screenshot - Preview");
+    label->setPixmap(pixmap);
+    label->show();
+#endif
+
+#ifndef QT_NO_FILEDIALOG
+    QString fileName = QFileDialog::getSaveFileName(label, "Screenshot", QString(), QString("PNG File (.png)"));
+    if (!fileName.isEmpty()) {
+        QRegExp rx("*.png");
+        rx.setCaseSensitivity(Qt::CaseInsensitive);
+        rx.setPatternSyntax(QRegExp::Wildcard);
+
+        if (!rx.exactMatch(fileName))
+            fileName += ".png";
+
+        pixmap.save(fileName, "png");
+        if (label)
+            label->setWindowTitle(QString("Screenshot - Saved at %1").arg(fileName));
     }
 #endif
 }
