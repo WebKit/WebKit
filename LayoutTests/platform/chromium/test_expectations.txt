@@ -3061,8 +3061,7 @@ BUGCR70882 MAC : fast/text/international/hindi-whitespace.html = IMAGE
 BUGCR70882 MAC : fast/text/international/thai-baht-space.html = IMAGE
 BUGCR70882 MAC : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE
 
-BUGCR70941 LINUX RELEASE : userscripts/user-script-image-document.html = PASS TIMEOUT
-BUGCR70941 BUGCR71087 LINUX DEBUG : userscripts/user-script-image-document.html = CRASH PASS TIMEOUT
+BUGCR70941 BUGCR71087 LINUX : userscripts/user-script-image-document.html = CRASH PASS
 BUGCR70942 LINUX : editing/execCommand/break-out-of-empty-list-item.html = PASS TIMEOUT
 BUGRNIWA SLOW WIN : editing/execCommand/4786404-1.html = PASS
 
@@ -3089,3 +3088,5 @@ BUGCR71418 MAC : fast/repaint/box-shadow-v.html = IMAGE PASS
 BUGCR71418 MAC : fast/transforms/shadows.html = IMAGE PASS
 
 BUGWK53446 WIN LINUX DEBUG : http/tests/navigation/forward-and-cancel.html = PASS TEXT
+
+BUGWK53459 WIN LINUX : editing/pasteboard/3976872.html = PASS TIMEOUT
