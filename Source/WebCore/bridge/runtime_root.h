@@ -31,8 +31,8 @@
 #endif
 #include <runtime/Protect.h>
 
+#include <runtime/WeakGCMap.h>
 #include <wtf/Forward.h>
-#include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -89,7 +89,7 @@ private:
     ProtectedPtr<JSGlobalObject> m_globalObject;
 
     ProtectCountSet m_protectCountSet;
-    HashSet<RuntimeObject*> m_runtimeObjects;    
+    WeakGCMap<RuntimeObject*, RuntimeObject> m_runtimeObjects; // Really need a WeakGCSet, but this will do.
 
     HashSet<InvalidationCallback*> m_invalidationCallbacks;
 };
