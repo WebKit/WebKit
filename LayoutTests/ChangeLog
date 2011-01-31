@@ -1,3 +1,14 @@
+2011-01-27  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Tests that we do not crash when adding a child in a table
+        where the before child is not a table section.
+        https://bugs.webkit.org/show_bug.cgi?id=53276
+
+        * fast/table/before-child-non-table-section-add-table-crash-expected.txt: Added.
+        * fast/table/before-child-non-table-section-add-table-crash.html: Added.
+
 2011-01-31  Tony Chang  <tony@chromium.org>
 
         Reviewed by Eric Seidel.
