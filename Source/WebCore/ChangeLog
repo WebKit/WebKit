@@ -1,3 +1,15 @@
+2011-01-31  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        WebInspector: Change button title from "Clear CPU profiles" to "Clear all profiles".
+
+        https://bugs.webkit.org/show_bug.cgi?id=53309
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel):
+
 2011-01-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed, fix the build with current GTK+ 3.x.
