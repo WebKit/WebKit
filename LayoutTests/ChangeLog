@@ -1,3 +1,9 @@
+2011-01-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed Chromium test expectation update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-31  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed added new expected results for GTK+.

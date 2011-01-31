@@ -3089,3 +3089,5 @@ BUGCR71418 MAC : fast/borders/border-radius-split-inline.html = IMAGE PASS
 BUGCR71418 MAC : fast/repaint/box-shadow-h.html = IMAGE PASS
 BUGCR71418 MAC : fast/repaint/box-shadow-v.html = IMAGE PASS
 BUGCR71418 MAC : fast/transforms/shadows.html = IMAGE PASS
+
+BUGWK53446 WIN LINUX DEBUG : http/tests/navigation/forward-and-cancel.html = PASS TEXT
