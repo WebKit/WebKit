@@ -1707,9 +1707,9 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
 
             Path path;
             if (hasBorderRadius) {
+                Path path;
                 path.addRoundedRect(border.rect(), border.radii().topLeft(), border.radii().topRight(), border.radii().bottomLeft(), border.radii().bottomRight());
                 context->clip(path);
-                path.clear();
             } else
                 context->clip(border.rect());
 
@@ -1717,24 +1717,16 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
             context->translate(extraOffset.width(), extraOffset.height());
             shadowOffset -= extraOffset;
 
-            path.addRect(outerRect);
-
-            if (hasBorderRadius) {
-                if (shadowSpread > 0)
-                    border.shrinkRadii(shadowSpread);
-                path.addRoundedRect(holeRect, border.radii().topLeft(), border.radii().topRight(), border.radii().bottomLeft(), border.radii().bottomRight());
-            } else
-                path.addRect(holeRect);
-
-            context->setFillRule(RULE_EVENODD);
-            context->setFillColor(fillColor, s->colorSpace());
-
+            if (hasBorderRadius && shadowSpread > 0)
+                border.shrinkRadii(shadowSpread);
+            
             if (shadow->isWebkitBoxShadow())
                 context->setLegacyShadow(shadowOffset, shadowBlur, shadowColor, s->colorSpace());
             else
                 context->setShadow(shadowOffset, shadowBlur, shadowColor, s->colorSpace());
 
-            context->fillPath(path);
+            RoundedIntRect roundedHole(holeRect, border.radii());
+            context->fillRectWithRoundedHole(outerRect, roundedHole, fillColor, s->colorSpace());
 
             context->restore();
         }

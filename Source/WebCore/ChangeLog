@@ -1,3 +1,20 @@
+2011-01-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Ariya Hidayat.
+
+        Enhance ShadowBlur to render inset box shadows; Part 1.
+        https://bugs.webkit.org/show_bug.cgi?id=51567
+        
+        Add a new method to GraphicsContext to render a rect with a rounded hole,
+        for use by inset box-shadow code. Knowledge that we're rendering a rounded
+        hole will enable ShadowBlur to be used here in future.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::fillRectWithRoundedHole):
+        * platform/graphics/GraphicsContext.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+
 2011-01-23  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Eric Seidel.
