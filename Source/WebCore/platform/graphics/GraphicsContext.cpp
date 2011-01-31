@@ -610,6 +610,7 @@ void GraphicsContext::fillRoundedRect(const RoundedIntRect& rect, const Color& c
     fillRoundedRect(rect.rect(), rect.radii().topLeft(), rect.radii().topRight(), rect.radii().bottomLeft(), rect.radii().bottomRight(), color, colorSpace);
 }
 
+#if !PLATFORM(CG)
 void GraphicsContext::fillRectWithRoundedHole(const IntRect& rect, const RoundedIntRect& roundedHoleRect, const Color& color, ColorSpace colorSpace)
 {
     if (paintingDisabled())
@@ -635,6 +636,7 @@ void GraphicsContext::fillRectWithRoundedHole(const IntRect& rect, const Rounded
     setFillRule(oldFillRule);
     setFillColor(oldFillColor, oldFillColorSpace);
 }
+#endif
 
 void GraphicsContext::setCompositeOperation(CompositeOperator compositeOperation)
 {

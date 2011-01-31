@@ -1,3 +1,28 @@
+2011-01-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Enhance ShadowBlur to render inset box shadows
+        https://bugs.webkit.org/show_bug.cgi?id=51567
+        
+        Use ShadowBlur for inset box-shadows with CG. It 
+        currently lacks a tiled version, but is still much
+        faster than CG shadows.
+
+        Test: fast/box-shadow/inset-box-shadow-radius.html
+
+        * platform/graphics/ShadowBlur.cpp:
+        * platform/graphics/ShadowBlur.h: New method for inset
+        shadows.
+        (WebCore::ShadowBlur::drawInsetShadow): 
+
+        * platform/graphics/GraphicsContext.cpp: #ifdef out
+        fillRectWithRoundedHole() for CG.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::fillRectWithRoundedHole): If there's
+        a shadow with a radius > 0, use ShadowBlur.
+
 2011-01-28  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Chris Marrin.

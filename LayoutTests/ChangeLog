@@ -1,3 +1,22 @@
+2011-01-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Enhance ShadowBlur to render inset box shadows
+        https://bugs.webkit.org/show_bug.cgi?id=51567
+        
+        New test for inset shadow radius, and pixel results updated on tests
+        whose results are affected by using ShadowBlur rather than CG.
+
+        * fast/box-shadow/inset-box-shadow-radius.html: Added.
+        * platform/mac/fast/box-shadow/inset-box-shadow-radius-expected.checksum: Added.
+        * platform/mac/fast/box-shadow/inset-box-shadow-radius-expected.png: Added.
+        * platform/mac/fast/box-shadow/inset-box-shadow-radius-expected.txt: Added.
+        * platform/mac/fast/box-shadow/inset-expected.checksum:
+        * platform/mac/fast/box-shadow/inset-expected.png:
+        * platform/mac/fast/css/shadow-multiple-expected.checksum:
+        * platform/mac/fast/css/shadow-multiple-expected.png:
+
 2011-01-28  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Chris Marrin.

@@ -49,6 +49,7 @@ public:
     bool shadowsIgnoreTransforms() const { return m_shadowsIgnoreTransforms; }
 
     void drawRectShadow(GraphicsContext*, const FloatRect&, const RoundedIntRect::Radii&);
+    void drawInsetShadow(GraphicsContext*, const FloatRect&, const FloatRect& holeRect, const RoundedIntRect::Radii& holeRadii);
 
 private:
     GraphicsContext* beginShadowLayer(GraphicsContext*, const FloatRect& layerArea);

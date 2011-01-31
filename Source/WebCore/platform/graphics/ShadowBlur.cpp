@@ -407,6 +407,24 @@ void ShadowBlur::drawRectShadow(GraphicsContext* graphicsContext, const FloatRec
     drawRectShadowWithTiling(graphicsContext, shadowedRect, radii, 1, shadowTemplateSize);
 }
 
+void ShadowBlur::drawInsetShadow(GraphicsContext* graphicsContext, const FloatRect& rect, const FloatRect& holeRect, const RoundedIntRect::Radii& holeRadii)
+{
+    // FIXME: add a tiling code path here.
+    GraphicsContext* shadowContext = beginShadowLayer(graphicsContext, rect);
+    if (!shadowContext)
+        return;
+
+    Path path;
+    path.addRect(rect);
+    path.addRoundedRect(holeRect, holeRadii.topLeft(), holeRadii.topRight(), holeRadii.bottomLeft(), holeRadii.bottomRight());
+
+    shadowContext->setFillRule(RULE_EVENODD);
+    shadowContext->setFillColor(Color(.0f, .0f, .0f, 1.f), ColorSpaceDeviceRGB);
+    shadowContext->fillPath(path);
+    
+    endShadowLayer(graphicsContext);
+}
+
 void ShadowBlur::drawRectShadowWithoutTiling(GraphicsContext* graphicsContext, const FloatRect& shadowedRect, const RoundedIntRect::Radii& radii, float alpha)
 {
     GraphicsContext* shadowContext = beginShadowLayer(graphicsContext, shadowedRect);

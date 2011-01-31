@@ -745,6 +745,50 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLef
         setCGFillColor(context, oldFillColor, oldColorSpace);
 }
 
+void GraphicsContext::fillRectWithRoundedHole(const IntRect& rect, const RoundedIntRect& roundedHoleRect, const Color& color, ColorSpace colorSpace)
+{
+    if (paintingDisabled())
+        return;
+
+    CGContextRef context = platformContext();
+
+    Path path;
+    path.addRect(rect);
+
+    if (!roundedHoleRect.radii().isZero())
+        path.addRoundedRect(roundedHoleRect.rect(), roundedHoleRect.radii().topLeft(), roundedHoleRect.radii().topRight(), roundedHoleRect.radii().bottomLeft(), roundedHoleRect.radii().bottomRight());
+    else
+        path.addRect(roundedHoleRect.rect());
+
+    WindRule oldFillRule = fillRule();
+    Color oldFillColor = fillColor();
+    ColorSpace oldFillColorSpace = fillColorSpace();
+    
+    setFillRule(RULE_EVENODD);
+    setFillColor(color, colorSpace);
+
+    // fillRectWithRoundedHole() assumes that the edges of rect are clipped out, so we only care about shadows cast around inside the hole.
+    bool drawOwnShadow = hasBlurredShadow(m_state) && !m_state.shadowsIgnoreTransforms;
+    if (drawOwnShadow) {
+        float shadowBlur = m_state.shadowsUseLegacyRadius ? radiusToLegacyRadius(m_state.shadowBlur) : m_state.shadowBlur;
+
+        // Turn off CG shadows.
+        CGContextSaveGState(context);
+        CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
+
+        ShadowBlur contextShadow(shadowBlur, m_state.shadowOffset, m_state.shadowColor, m_state.shadowColorSpace);
+        contextShadow.drawInsetShadow(this, rect, roundedHoleRect.rect(), roundedHoleRect.radii());
+    }
+
+    fillPath(path);
+
+    if (drawOwnShadow)
+        CGContextRestoreGState(context);
+    
+    setFillRule(oldFillRule);
+    setFillColor(oldFillColor, oldFillColorSpace);
+}
+
 void GraphicsContext::clip(const FloatRect& rect)
 {
     if (paintingDisabled())
