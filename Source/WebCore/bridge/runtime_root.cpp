@@ -101,15 +101,13 @@ void RootObject::invalidate()
         return;
 
     {
-        WeakGCMap<RuntimeObject*, RuntimeObject*>::iterator end = m_runtimeObjects.uncheckedEnd();
-        for (WeakGCMap<RuntimeObject*, RuntimeObject*>::iterator it = m_runtimeObjects.uncheckedBegin(); it != end; ++it) {
-            if (m_runtimeObjects.isValid(it))
-                it->second->invalidate();
-        }
-
+        HashSet<RuntimeObject*>::iterator end = m_runtimeObjects.end();
+        for (HashSet<RuntimeObject*>::iterator it = m_runtimeObjects.begin(); it != end; ++it)
+            (*it)->invalidate();
+        
         m_runtimeObjects.clear();
     }
-
+    
     m_isValid = false;
 
     m_nativeHandle = 0;
@@ -178,17 +176,17 @@ void RootObject::updateGlobalObject(JSGlobalObject* globalObject)
 void RootObject::addRuntimeObject(RuntimeObject* object)
 {
     ASSERT(m_isValid);
-    ASSERT(!m_runtimeObjects.get(object));
-
-    m_runtimeObjects.set(object, object);
-}
-
+    ASSERT(!m_runtimeObjects.contains(object));
+    
+    m_runtimeObjects.add(object);
+}        
+    
 void RootObject::removeRuntimeObject(RuntimeObject* object)
 {
     ASSERT(m_isValid);
-    ASSERT(m_runtimeObjects.uncheckedGet(object));
-
-    m_runtimeObjects.take(object);
+    ASSERT(m_runtimeObjects.contains(object));
+    
+    m_runtimeObjects.remove(object);
 }
 
 } } // namespace JSC::Bindings
