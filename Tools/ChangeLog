@@ -1,3 +1,18 @@
+2011-01-31  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] REGRESSION:  http/tests/media/video-{cookie,referer}.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=53379
+
+        Remove left over #ifdef's. I thought all of the conditional code
+        had been freed from the condition, but I forgot to check DRT.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setAlwaysAcceptCookies):
+
 2011-01-30  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, build fix.
