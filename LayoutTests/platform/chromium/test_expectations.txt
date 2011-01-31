@@ -2746,8 +2746,8 @@ BUGCR64952 LINUX : fast/ruby/nested-ruby.html = IMAGE
 BUGCR64938 : editing/selection/5354455-1.html = TEXT
 
 // New test in r73423.
-// Mac: Some image differences, and the message "scrolled to 3999,0" is missing.
-BUG_YUTAK MAC SLOW : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE+TEXT
+// Mac: Some image differences.
+BUG_YUTAK MAC SLOW : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE
 
 // Regressed at r73423. All areas are painted green.
 BUGWK50734 : fast/repaint/positioned-document-element.html = IMAGE
@@ -3065,9 +3065,6 @@ BUGCR70941 LINUX RELEASE : userscripts/user-script-image-document.html = PASS TI
 BUGCR70941 BUGCR71087 LINUX DEBUG : userscripts/user-script-image-document.html = CRASH PASS TIMEOUT
 BUGCR70942 LINUX : editing/execCommand/break-out-of-empty-list-item.html = PASS TIMEOUT
 BUGRNIWA SLOW WIN : editing/execCommand/4786404-1.html = PASS
-
-// Started failing at http://trac.webkit.org/changeset/76726
-BUGCR71009 MAC : fast/multicol/vertical-rl/float-paginate-complex.html = TEXT
 
 // Added by and started crashing at http://trac.webkit.org/changeset/76743
 BUGCR71013 LINUX : fast/text/justify-ideograph-vertical.html = CRASH IMAGE+TEXT

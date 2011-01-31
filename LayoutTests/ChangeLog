@@ -1,3 +1,11 @@
+2011-01-31  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, update chromium mac layout test results after r77138.
+        fast/blockflow/Kusa-Makura-background-canvas.html and fast/multicol/vertical-rl/float-paginate-complex.html
+        match upstream text results now.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-31  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dimitri Glazkov.
