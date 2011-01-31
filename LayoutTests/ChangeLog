@@ -1,3 +1,12 @@
+2011-01-31  Jessie Berlin  <jberlin@apple.com>
+
+        [Windows 7 Release Tests] fast/forms/select-writing-direction-natural.html failing since r77046
+        https://bugs.webkit.org/show_bug.cgi?id=53443
+
+        Checking in failing expected results for Windows to get the bots green. Ureviewed.
+
+        * platform/win/fast/forms/select-writing-direction-natural-expected.txt: Added.
+
 2011-01-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another unreviewed Chromium test expectation update.
