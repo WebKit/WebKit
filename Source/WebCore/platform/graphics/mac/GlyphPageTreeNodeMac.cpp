@@ -39,8 +39,8 @@ namespace WebCore {
 #ifndef BUILDING_ON_TIGER
 static bool shouldUseCoreText(UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
 {
-    if (fontData->orientation() == Vertical && !fontData->isBrokenIdeographFont()) {
-        // Ideographs don't have a vertical variant.
+    if (fontData->platformData().widthVariant() != RegularWidth || (fontData->orientation() == Vertical && !fontData->isBrokenIdeographFont())) {
+        // Ideographs don't have a vertical variant or width variants.
         for (unsigned i = 0; i < bufferLength; ++i) {
             if (!Font::isCJKIdeograph(buffer[i]))
                 return true;

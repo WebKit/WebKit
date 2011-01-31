@@ -123,6 +123,7 @@ public:
 
     bool italic() const { return m_fontDescription.italic(); }
     FontWeight weight() const { return m_fontDescription.weight(); }
+    FontWidthVariant widthVariant() const { return m_fontDescription.widthVariant(); }
 
     bool isPlatformFont() const { return m_isPlatformFont; }
 

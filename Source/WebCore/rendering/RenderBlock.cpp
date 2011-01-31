@@ -36,6 +36,7 @@
 #include "HitTestResult.h"
 #include "InlineTextBox.h"
 #include "PaintInfo.h"
+#include "RenderCombineText.h"
 #include "RenderFlexibleBox.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
@@ -4793,6 +4794,9 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                     inlineMin = 0;
                     continue;
                 }
+
+                if (t->style()->hasTextCombine())
+                    toRenderCombineText(t)->combineText();
 
                 // Determine if we have a breakable character.  Pass in
                 // whether or not we should ignore any spaces at the front

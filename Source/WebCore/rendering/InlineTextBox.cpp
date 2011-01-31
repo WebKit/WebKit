@@ -36,6 +36,7 @@
 #include "PaintInfo.h"
 #include "RenderArena.h"
 #include "RenderBlock.h"
+#include "RenderCombineText.h"
 #include "RenderRubyRun.h"
 #include "RenderRubyText.h"
 #include "RenderTheme.h"
@@ -486,7 +487,9 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
     IntRect boxRect(boxOrigin, IntSize(logicalWidth(), logicalHeight()));
     IntPoint textOrigin = IntPoint(boxOrigin.x(), boxOrigin.y() + styleToUse->fontMetrics().ascent());
 
-    if (!isHorizontal()) {
+    RenderCombineText* combinedText = styleToUse->hasTextCombine() ? toRenderCombineText(textRenderer()) : 0;
+    bool shouldRotate = !isHorizontal() && (!combinedText || !combinedText->isCombined());
+    if (shouldRotate) {
         context->save();
         context->translate(boxRect.x(), boxRect.bottom());
         context->rotate(static_cast<float>(deg2rad(90.)));
@@ -501,6 +504,9 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
     // Set our font.
     int d = styleToUse->textDecorationsInEffect();
     const Font& font = styleToUse->font();
+
+    if (combinedText)
+        combinedText->adjustTextOrigin(textOrigin, boxRect);
 
     // 1. Paint backgrounds behind text if needed. Examples of such backgrounds include selection
     // and composition underlines.
@@ -601,8 +607,13 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
         }
     }
 
-    const UChar* characters = textRenderer()->text()->characters() + m_start;
     int length = m_len;
+    const UChar* characters;
+    if (!combinedText)
+        characters = textRenderer()->text()->characters() + m_start;
+    else
+        combinedText->charactersToRender(m_start, characters, length);
+
     BufferForAppendingHyphen charactersWithHyphen;
     if (hasHyphen())
         adjustCharactersAndLengthForHyphen(charactersWithHyphen, styleToUse, characters, length);
@@ -703,7 +714,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
         }
     }
     
-    if (!isHorizontal())
+    if (shouldRotate)
         context->restore();
 }
 

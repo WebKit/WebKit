@@ -25,6 +25,7 @@
 #define FontPlatformData_h
 
 #include "FontOrientation.h"
+#include "FontWidthVariant.h"
 #include <wtf/text/StringImpl.h>
 
 #ifdef __OBJC__
@@ -59,11 +60,12 @@ inline CTFontRef toCTFontRef(NSFont *nsFont) { return reinterpret_cast<CTFontRef
 
 class FontPlatformData {
   public:
-    FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation = Horizontal)
+    FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation = Horizontal, FontWidthVariant widthVariant = RegularWidth)
         : m_syntheticBold(syntheticBold)
         , m_syntheticOblique(syntheticOblique)
         , m_orientation(orientation)
         , m_size(size)
+        , m_widthVariant(widthVariant)
         , m_font(0)
 #ifdef BUILDING_ON_TIGER
         , m_cgFont(0)
@@ -72,13 +74,14 @@ class FontPlatformData {
     {
     }
 
-    FontPlatformData(NSFont *nsFont, float size, bool syntheticBold = false, bool syntheticOblique = false, FontOrientation = Horizontal);
+    FontPlatformData(NSFont*, float size, bool syntheticBold = false, bool syntheticOblique = false, FontOrientation = Horizontal, FontWidthVariant = RegularWidth);
     
-    FontPlatformData(CGFontRef cgFont, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation)
+    FontPlatformData(CGFontRef cgFont, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant)
         : m_syntheticBold(syntheticBold)
         , m_syntheticOblique(syntheticOblique)
         , m_orientation(orientation)
         , m_size(size)
+        , m_widthVariant(widthVariant)
         , m_font(0)
         , m_cgFont(cgFont)
         , m_isColorBitmapFont(false)
@@ -96,17 +99,20 @@ class FontPlatformData {
     bool syntheticBold() const { return m_syntheticBold; }
     bool syntheticOblique() const { return m_syntheticOblique; }
     FontOrientation orientation() const { return m_orientation; }
+    FontWidthVariant widthVariant() const { return m_widthVariant; }
 
     bool m_syntheticBold;
     bool m_syntheticOblique;
     FontOrientation m_orientation;
 
     float m_size;
+    
+    FontWidthVariant m_widthVariant;
 
     unsigned hash() const
     {
         ASSERT(m_font != 0 || m_cgFont == 0);
-        uintptr_t hashCodes[2] = { (uintptr_t)m_font, m_orientation << 2 | m_syntheticBold << 1 | m_syntheticOblique };
+        uintptr_t hashCodes[3] = { (uintptr_t)m_font, m_widthVariant, m_orientation << 2 | m_syntheticBold << 1 | m_syntheticOblique };
         return WTF::StringHasher::createBlobHash<sizeof(hashCodes)>(hashCodes);
     }
 
@@ -115,7 +121,7 @@ class FontPlatformData {
     bool operator==(const FontPlatformData& other) const
     { 
         return m_font == other.m_font && m_syntheticBold == other.m_syntheticBold && m_syntheticOblique == other.m_syntheticOblique && 
-               m_cgFont == other.m_cgFont && m_size == other.m_size && m_orientation == other.m_orientation;
+               m_cgFont == other.m_cgFont && m_size == other.m_size && m_orientation == other.m_orientation && m_widthVariant == other.m_widthVariant;
     }
 
     NSFont *font() const { return m_font; }

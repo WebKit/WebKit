@@ -668,6 +668,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	rendering/RenderBox.cpp \
 	rendering/RenderBoxModelObject.cpp \
 	rendering/RenderButton.cpp \
+	rendering/RenderCombineText.cpp \
 	rendering/RenderCounter.cpp \
 	rendering/RenderEmbeddedObject.cpp \
 	rendering/RenderFieldset.cpp \

@@ -3825,6 +3825,8 @@
             'rendering/RenderBoxModelObject.h',
             'rendering/RenderButton.cpp',
             'rendering/RenderButton.h',
+            'rendering/RenderCombineText.cpp',
+            'rendering/RenderCombineText.h',
             'rendering/RenderCounter.cpp',
             'rendering/RenderCounter.h',
             'rendering/RenderDataGrid.cpp',

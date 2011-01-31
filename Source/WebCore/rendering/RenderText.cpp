@@ -34,6 +34,7 @@
 #include "Range.h"
 #include "RenderArena.h"
 #include "RenderBlock.h"
+#include "RenderCombineText.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
 #include "Text.h"
@@ -561,6 +562,12 @@ IntRect RenderText::localCaretRect(InlineBox* inlineBox, int caretOffset, int* e
 
 ALWAYS_INLINE int RenderText::widthFromCache(const Font& f, int start, int len, int xPos, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
+    if (style()->hasTextCombine()) {
+        const RenderCombineText* combineText = toRenderCombineText(this);
+        if (combineText->isCombined())
+            return combineText->combinedTextWidth(f);
+    }
+
     if (f.isFixedPitch() && !f.isSmallCaps() && m_isAllASCII) {
         int monospaceCharacterWidth = f.spaceWidth();
         int tabWidth = allowTabs() ? monospaceCharacterWidth * 8 : 0;

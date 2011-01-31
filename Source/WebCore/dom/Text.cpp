@@ -23,6 +23,7 @@
 #include "Text.h"
 
 #include "ExceptionCode.h"
+#include "RenderCombineText.h"
 #include "RenderText.h"
 #include "TextBreakIterator.h"
 #include <wtf/text/CString.h>
@@ -237,7 +238,7 @@ bool Text::rendererIsNeeded(RenderStyle *style)
     return true;
 }
 
-RenderObject* Text::createRenderer(RenderArena* arena, RenderStyle*)
+RenderObject* Text::createRenderer(RenderArena* arena, RenderStyle* style)
 {
 #if ENABLE(SVG)
     Node* parentOrHost = parentOrHostNode();
@@ -248,7 +249,10 @@ RenderObject* Text::createRenderer(RenderArena* arena, RenderStyle*)
     )
         return new (arena) RenderSVGInlineText(this, dataImpl());
 #endif
-    
+
+    if (style->hasTextCombine())
+        return new (arena) RenderCombineText(this, dataImpl());
+
     return new (arena) RenderText(this, dataImpl());
 }
 

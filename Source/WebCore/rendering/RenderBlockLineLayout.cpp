@@ -28,6 +28,7 @@
 #include "InlineTextBox.h"
 #include "Logging.h"
 #include "RenderArena.h"
+#include "RenderCombineText.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderListMarker.h"
@@ -1383,7 +1384,7 @@ void RenderBlock::fitBelowFloats(int widthToFit, bool firstLine, int& availableW
 
 static inline unsigned textWidth(RenderText* text, unsigned from, unsigned len, const Font& font, int xPos, bool isFixedPitch, bool collapseWhiteSpace)
 {
-    if (isFixedPitch || (!from && len == text->textLength()))
+    if (isFixedPitch || (!from && len == text->textLength()) || text->style()->hasTextCombine())
         return text->width(from, len, font, xPos);
     return font.width(TextRun(text->characters() + from, len, !collapseWhiteSpace, xPos));
 }
@@ -1635,11 +1636,14 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
             bool isSVGText = t->isSVGInlineText();
 #endif
 
+            RenderStyle* style = t->style(firstLine);
+            if (style->hasTextCombine())
+                toRenderCombineText(o)->combineText();
+
             int strlen = t->textLength();
             int len = strlen - pos;
             const UChar* str = t->characters();
 
-            RenderStyle* style = t->style(firstLine);
             const Font& f = style->font();
             bool isFixedPitch = f.isFixedPitch();
             bool canHyphenate = style->hyphens() == HyphensAuto && WebCore::canHyphenate(style->hyphenationLocale());

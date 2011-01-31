@@ -1470,6 +1470,7 @@ SET(WebCore_SOURCES
     rendering/RenderBox.cpp
     rendering/RenderBoxModelObject.cpp
     rendering/RenderButton.cpp
+    rendering/RenderCombineText.cpp
     rendering/RenderCounter.cpp
     rendering/RenderDataGrid.cpp
     rendering/RenderDetails.cpp

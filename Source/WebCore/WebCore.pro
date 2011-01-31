@@ -1308,6 +1308,7 @@ SOURCES += \
     rendering/RenderBoxModelObject.cpp \
     rendering/RenderBR.cpp \
     rendering/RenderButton.cpp \
+    rendering/RenderCombineText.cpp \
     rendering/RenderCounter.cpp \
     rendering/RenderDataGrid.cpp \
     rendering/RenderDetails.cpp \
@@ -2278,6 +2279,7 @@ HEADERS += \
     rendering/RenderBoxModelObject.h \
     rendering/RenderBR.h \
     rendering/RenderButton.h \
+    rendering/RenderCombineText.h \
     rendering/RenderCounter.h \
     rendering/RenderDataGrid.h \
     rendering/RenderDetails.h \

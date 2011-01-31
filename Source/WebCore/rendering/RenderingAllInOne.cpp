@@ -45,6 +45,7 @@
 #include "RenderBox.cpp"
 #include "RenderBoxModelObject.cpp"
 #include "RenderButton.cpp"
+#include "RenderCombineText.cpp"
 #include "RenderCounter.cpp"
 #include "RenderDataGrid.cpp"
 #include "RenderDetails.cpp"

@@ -1,3 +1,166 @@
+2011-01-31  takano takumi  <takano@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Implement text-combine rendering code
+        https://bugs.webkit.org/show_bug.cgi?id=50621
+
+        Test: fast/text/international/text-combine-image-test.html
+
+        * Android.mk: Added RenderCombineText.cpp/h
+        * CMakeLists.txt: Added RenderCombineText.cpp/h
+        * GNUmakefile.am: Added RenderCombineText.cpp/h
+        * WebCore.exp.in:
+        * WebCore.gypi: Added RenderCombineText.cpp/h
+        * WebCore.pro: Added RenderCombineText.cpp/h
+        * WebCore.vcproj/WebCore.vcproj: Added RenderCombineText.cpp/h
+        * WebCore.xcodeproj/project.pbxproj: Added RenderCombineText.cpp/h
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData):
+        - Added fontDescription.widthVariant to SimpleFontData creation.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        - Changed to set "Unique" flag to RenderStyle in case of TextCombine.
+        * dom/Text.cpp:
+        (WebCore::Text::createRenderer):
+        - Changed to create RenderCombineText in case of TextCombine.
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::platformDataFromCustomData):
+        - Added FontWidthVariant as an argument for FontPlatformData creation.
+        * loader/cache/CachedFont.h:
+        - Ditto.
+        * platform/graphics/Font.h:
+        (WebCore::Font::widthVariant):
+        - The accessor to FontWidthVariant member variable.
+        * platform/graphics/FontCache.cpp:
+        - Made cache to incorporate FontWidthVariant value.
+        (WebCore::FontPlatformDataCacheKey::FontPlatformDataCacheKey):
+        (WebCore::FontPlatformDataCacheKey::operator==):
+        (WebCore::computeHash):
+        (WebCore::FontCache::getCachedFontPlatformData):
+        * platform/graphics/FontDescription.h:
+        - Add a member variable that holds a width variant - none, half-width, third-width, and quarter-width.
+        (WebCore::FontDescription::FontDescription):
+        (WebCore::FontDescription::widthVariant):
+        (WebCore::FontDescription::setWidthVariant):
+        (WebCore::FontDescription::operator==):
+        * platform/graphics/FontWidthVariant.h: Added.
+        * platform/graphics/cairo/FontCustomPlatformData.h:
+        - Changed to carry FontWidthVariant value.
+        * platform/graphics/cocoa/FontPlatformData.h:
+        - Changed to carry FontWidthVariant value.
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::widthVariant):
+        (WebCore::FontPlatformData::hash):
+        (WebCore::FontPlatformData::operator==):
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::FontPlatformData):
+        - Changed to carry FontWidthVariant value.
+        (WebCore::FontPlatformData::operator=):
+        - Ditto.
+        (WebCore::mapFontWidthVariantToCTFeatureSelector):
+        - A function to map a FontWidthVariant value to a CoreText's text spacing feature selector.
+        (WebCore::FontPlatformData::ctFont):
+        - Changed to create CTFont with text spacing variant based on FontWidthVariant.
+        * platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        - Changed to carry FontWidthVariant value.
+        * platform/graphics/haiku/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        - Changed to carry FontWidthVariant value.
+        * platform/graphics/haiku/FontCustomPlatformData.h:
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::FontCache::createFontPlatformData):
+        - Changed to carry FontWidthVariant value.
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        - Changed to carry FontWidthVariant value.
+        * platform/graphics/mac/FontCustomPlatformData.h:
+        - Ditto.
+        * platform/graphics/mac/GlyphPageTreeNodeMac.cpp:
+        (WebCore::shouldUseCoreText):
+        - Changed to skip CT path when width variant is specified.
+        * platform/graphics/pango/FontCustomPlatformDataPango.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        - Ditto.
+        * platform/graphics/qt/FontCustomPlatformData.h:
+        - Ditto.
+        * platform/graphics/qt/FontCustomPlatformDataQt.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        - Ditto.
+        * platform/graphics/skia/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        - Ditto.
+        * platform/graphics/skia/FontCustomPlatformData.h:
+        - Ditto.
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        - Ditto.
+        * platform/graphics/win/FontCustomPlatformData.h:
+        - Ditto.
+        * platform/graphics/win/FontCustomPlatformDataCairo.cpp:
+        - Ditto.
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        - Ditto.
+        * platform/graphics/win/FontCustomPlatformDataCairo.h:
+        - Ditto.
+        * platform/graphics/wince/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        - Ditto.
+        * platform/graphics/wince/FontCustomPlatformData.h:
+        - Ditto.
+        * platform/graphics/wx/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        - Ditto.
+        * platform/graphics/wx/FontCustomPlatformData.h:
+        - Ditto.
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        - In case of RenderCombineText, we don't rotate text even in vertical writing. Also, we render original text
+        instead of text returned from text().
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeInlinePreferredLogicalWidths):
+        - Made to call RenderCombinedText's prepareTextCombine() here.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::textWidth):
+        - Made to always use the render object's width() in case of TextCombine.
+        (WebCore::RenderBlock::findNextLineBreak):
+        - Made to call RenderCombinedText's prepareTextCombine() here.
+        * rendering/RenderCombineText.cpp: Added. A subclass of RenderText.
+        (WebCore::RenderCombineText::RenderCombineText):
+        (WebCore::RenderCombineText::styleDidChange):
+        - Clear the flag that indicated the font has been prepared for combining. The font will be reinitialized in
+        the next call of RenderBlock::findNextLineBreak().
+        (WebCore::RenderCombineText::setTextInternal):
+        - Ditto.
+        (WebCore::RenderCombineText::width):
+        - Returns 1-em width in case of font combine.
+        (WebCore::RenderCombineText::adjustTextOrigin):
+        - Adjust drawing origin point in case of font combine.
+        (WebCore::RenderCombineText::charactersToRender):
+        - Return original text instead of current text in case of font combine.
+        (WebCore::RenderCombineText::combineText):
+        - This function tries to pack passed text with; 1) the current font as is, 2) the font created
+        from the descriptor with half-width variant specified, 3) the font with third-width variant, 4) the font
+        with quarter-width variant.
+        - If a suitable font successfully found, replace the current font with the new font. If no appropriate font found,
+        we give up text-combine as the CSS spec describes.
+        - If a new font found, we replace the text with 0xFFFC. This is needed for a combined text block to be able to
+        behave like a single character against text decorations.
+        * rendering/RenderCombineText.h: Added.
+        (WebCore::RenderCombineText::isCombined):
+        (WebCore::RenderCombineText::combinedTextWidth):
+        - Returns 1-em width in case of font combine.
+        (WebCore::RenderCombineText::renderName):
+        (WebCore::toRenderCombineText):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::widthFromCache):
+        - Made to call RenderCombineText's combinedTextWidth when the text is combined.
+        * rendering/RenderingAllInOne.cpp: Added RenderCombineText.cpp
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::hasTextCombine):
+        - Added for a quick test of TextCombine.
+
 2011-01-31  Oliver Hunt  <oliver@apple.com>
 
         Convert markstack to a slot visitor API

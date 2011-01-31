@@ -1,3 +1,15 @@
+2011-01-31  takano takumi  <takano@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Implement text-combine rendering code
+        https://bugs.webkit.org/show_bug.cgi?id=50621
+
+        * fast/text/international/text-combine-image-test.html: Added.
+        * platform/mac/fast/text/international/text-combine-image-test-expected.checksum: Added.
+        * platform/mac/fast/text/international/text-combine-image-test-expected.png: Added.
+        * platform/mac/fast/text/international/text-combine-image-test-expected.txt: Added.
+
 2011-01-31  Jessie Berlin  <jberlin@apple.com>
 
         [Windows 7 Release Tests] fast/forms/select-writing-direction-natural.html failing since r77046

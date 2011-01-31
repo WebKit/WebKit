@@ -728,6 +728,7 @@ public:
     bool hasMask() const { return rareNonInheritedData->m_mask.hasImage() || rareNonInheritedData->m_maskBoxImage.hasImage(); }
 
     TextCombine textCombine() const { return static_cast<TextCombine>(rareNonInheritedData->m_textCombine); }
+    bool hasTextCombine() const { return textCombine() != TextCombineNone; }
     // End CSS3 Getters
 
     // Apple-specific property getter methods

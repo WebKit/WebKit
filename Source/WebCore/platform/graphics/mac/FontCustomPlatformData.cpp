@@ -38,9 +38,9 @@ FontCustomPlatformData::~FontCustomPlatformData()
     CGFontRelease(m_cgFont);
 }
 
-FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, bool italic, FontOrientation orientation, FontRenderingMode)
+FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, bool italic, FontOrientation orientation, FontWidthVariant widthVariant, FontRenderingMode)
 {
-    return FontPlatformData(m_cgFont, size, bold, italic, orientation);
+    return FontPlatformData(m_cgFont, size, bold, italic, orientation, widthVariant);
 }
 
 FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)

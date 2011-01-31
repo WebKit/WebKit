@@ -30,6 +30,9 @@
 
 namespace WebCore {
 
+// These CoreText Text Spacing feature selectors are not defined in CoreText.
+enum TextSpacingCTFeatureSelector { TextSpacingProportional, TextSpacingFullWidth, TextSpacingHalfWidth, TextSpacingThirdWidth, TextSpacingQuarterWidth };
+
 #if PLATFORM(MAC)
 void FontPlatformData::loadFont(NSFont* nsFont, float, NSFont*& outNSFont, CGFontRef& cgFont)
 {
@@ -42,10 +45,11 @@ void FontPlatformData::loadFont(NSFont* nsFont, float, NSFont*& outNSFont, CGFon
 }
 #endif  // PLATFORM(MAC)
 
-FontPlatformData::FontPlatformData(NSFont *nsFont, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation)
+FontPlatformData::FontPlatformData(NSFont *nsFont, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant)
     : m_syntheticBold(syntheticBold)
     , m_syntheticOblique(syntheticOblique)
     , m_size(size)
+    , m_widthVariant(widthVariant)
     , m_font(nsFont)
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     // FIXME: Chromium: The following code isn't correct for the Chromium port since the sandbox might
@@ -79,6 +83,7 @@ FontPlatformData::FontPlatformData(const FontPlatformData& f)
     m_syntheticBold = f.m_syntheticBold;
     m_syntheticOblique = f.m_syntheticOblique;
     m_size = f.m_size;
+    m_widthVariant = f.m_widthVariant;
     m_cgFont = f.m_cgFont;
     m_isColorBitmapFont = f.m_isColorBitmapFont;
     m_orientation = f.m_orientation;
@@ -99,6 +104,7 @@ const FontPlatformData& FontPlatformData::operator=(const FontPlatformData& f)
     m_syntheticBold = f.m_syntheticBold;
     m_syntheticOblique = f.m_syntheticOblique;
     m_size = f.m_size;
+    m_widthVariant = f.m_widthVariant;
     m_cgFont = f.m_cgFont;
     if (m_font == f.m_font)
         return *this;
@@ -165,12 +171,48 @@ bool FontPlatformData::allowsLigatures() const
     return ![[m_font coveredCharacterSet] characterIsMember:'a'];
 }
 
+inline int mapFontWidthVariantToCTFeatureSelector(FontWidthVariant variant)
+{
+    switch(variant) {
+    case RegularWidth:
+        return TextSpacingProportional;
+
+    case HalfWidth:
+        return TextSpacingHalfWidth;
+
+    case ThirdWidth:
+        return TextSpacingThirdWidth;
+
+    case QuarterWidth:
+        return TextSpacingQuarterWidth;
+    }
+
+    ASSERT_NOT_REACHED();
+    return TextSpacingProportional;
+}
+
 CTFontRef FontPlatformData::ctFont() const
 {
-    if (m_font)
-        return toCTFontRef(m_font);
-    if (!m_CTFont)
-        m_CTFont.adoptCF(CTFontCreateWithGraphicsFont(m_cgFont.get(), m_size, 0, 0));
+    if (m_widthVariant == RegularWidth) {
+        if (m_font)
+            return toCTFontRef(m_font);
+        if (!m_CTFont)
+            m_CTFont.adoptCF(CTFontCreateWithGraphicsFont(m_cgFont.get(), m_size, 0, 0));
+        return m_CTFont.get();
+    }
+    
+    if (!m_CTFont) {
+        int featureTypeValue = kTextSpacingType;
+        int featureSelectorValue = mapFontWidthVariantToCTFeatureSelector(m_widthVariant);
+        RetainPtr<CTFontRef> sourceFont(AdoptCF, CTFontCreateWithGraphicsFont(m_cgFont.get(), m_size, 0, 0));
+        RetainPtr<CTFontDescriptorRef> sourceDescriptor(AdoptCF, CTFontCopyFontDescriptor(sourceFont.get()));
+        RetainPtr<CFNumberRef> featureType(AdoptCF, CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &featureTypeValue));
+        RetainPtr<CFNumberRef> featureSelector(AdoptCF, CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &featureSelectorValue));
+        RetainPtr<CTFontDescriptorRef> newDescriptor(AdoptCF, CTFontDescriptorCreateCopyWithFeature(sourceDescriptor.get(), featureType.get(), featureSelector.get()));
+        RetainPtr<CTFontRef> newFont(AdoptCF, CTFontCreateWithFontDescriptor(newDescriptor.get(), m_size, 0));
+
+        m_CTFont = newFont.get() ? newFont : sourceFont;
+    }
     return m_CTFont.get();
 }
 

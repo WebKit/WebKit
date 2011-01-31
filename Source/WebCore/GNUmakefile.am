@@ -2743,6 +2743,8 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderBR.h \
 	Source/WebCore/rendering/RenderButton.cpp \
 	Source/WebCore/rendering/RenderButton.h \
+	Source/WebCore/rendering/RenderCombineText.cpp \
+	Source/WebCore/rendering/RenderCombineText.h \
 	Source/WebCore/rendering/RenderCounter.cpp \
 	Source/WebCore/rendering/RenderCounter.h \
 	Source/WebCore/rendering/RenderDataGrid.cpp \

@@ -57,7 +57,7 @@ struct FontPlatformDataCacheKey {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     FontPlatformDataCacheKey(const AtomicString& family = AtomicString(), unsigned size = 0, unsigned weight = 0, bool italic = false,
-                             bool isPrinterFont = false, FontRenderingMode renderingMode = NormalRenderingMode, FontOrientation orientation = Horizontal)
+                             bool isPrinterFont = false, FontRenderingMode renderingMode = NormalRenderingMode, FontOrientation orientation = Horizontal, FontWidthVariant widthVariant = RegularWidth)
         : m_size(size)
         , m_weight(weight)
         , m_family(family)
@@ -65,6 +65,7 @@ public:
         , m_printerFont(isPrinterFont)
         , m_renderingMode(renderingMode)
         , m_orientation(orientation)
+        , m_widthVariant(widthVariant)
     {
     }
 
@@ -75,7 +76,7 @@ public:
     {
         return equalIgnoringCase(m_family, other.m_family) && m_size == other.m_size && 
                m_weight == other.m_weight && m_italic == other.m_italic && m_printerFont == other.m_printerFont &&
-               m_renderingMode == other.m_renderingMode && m_orientation == other.m_orientation;
+               m_renderingMode == other.m_renderingMode && m_orientation == other.m_orientation && m_widthVariant == other.m_widthVariant;
     }
 
     unsigned m_size;
@@ -85,6 +86,7 @@ public:
     bool m_printerFont;
     FontRenderingMode m_renderingMode;
     FontOrientation m_orientation;
+    FontWidthVariant m_widthVariant;
 
 private:
     static unsigned hashTableDeletedSize() { return 0xFFFFFFFFU; }
@@ -92,10 +94,11 @@ private:
 
 inline unsigned computeHash(const FontPlatformDataCacheKey& fontKey)
 {
-    unsigned hashCodes[4] = {
+    unsigned hashCodes[5] = {
         CaseFoldingHash::hash(fontKey.m_family),
         fontKey.m_size,
         fontKey.m_weight,
+        fontKey.m_widthVariant,
         static_cast<unsigned>(fontKey.m_orientation) << 3 | static_cast<unsigned>(fontKey.m_italic) << 2 | static_cast<unsigned>(fontKey.m_printerFont) << 1 | static_cast<unsigned>(fontKey.m_renderingMode)
     };
     return WTF::StringHasher::createBlobHash<sizeof(hashCodes)>(hashCodes);
@@ -195,7 +198,7 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
     }
 
     FontPlatformDataCacheKey key(familyName, fontDescription.computedPixelSize(), fontDescription.weight(), fontDescription.italic(),
-                                 fontDescription.usePrinterFont(), fontDescription.renderingMode(), fontDescription.orientation());
+                                 fontDescription.usePrinterFont(), fontDescription.renderingMode(), fontDescription.orientation(), fontDescription.widthVariant());
     FontPlatformData* result = 0;
     bool foundResult;
     FontPlatformDataCache::iterator it = gFontPlatformDataCache->find(key);
