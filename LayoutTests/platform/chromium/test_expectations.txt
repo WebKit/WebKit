@@ -3085,3 +3085,8 @@ BUGWK53314 : media/controls-strict.html = IMAGE+TEXT
 BUGWK53314 : media/video-zoom-controls.html = IMAGE+TEXT
 
 BUGWK53347 WIN LINUX DEBUG : fast/repaint/4774354.html = PASS TIMEOUT
+
+BUGCR71418 MAC : fast/borders/border-radius-split-inline.html = IMAGE PASS
+BUGCR71418 MAC : fast/repaint/box-shadow-h.html = IMAGE PASS
+BUGCR71418 MAC : fast/repaint/box-shadow-v.html = IMAGE PASS
+BUGCR71418 MAC : fast/transforms/shadows.html = IMAGE PASS
