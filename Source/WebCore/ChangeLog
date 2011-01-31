@@ -1,5 +1,12 @@
 2011-01-30  Simon Fraser  <simon.fraser@apple.com>
 
+        Attempt to fix Windows build by adding ShadowBlur.cpp/h to the
+        vcproj.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
+2011-01-30  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein.
 
         -webkit-box-shadow causes awful scroll/resize/redraw performance

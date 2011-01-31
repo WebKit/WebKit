@@ -26769,6 +26769,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\ShadowBlur.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\ShadowBlur.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\SimpleFontData.cpp"
 					>
 				</File>
