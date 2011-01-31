@@ -1,3 +1,30 @@
+2011-01-31  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Update Chromium test expectations.
+
+        * platform/chromium-mac/fast/blockflow/box-shadow-horizontal-bt-expected.checksum: Added.
+        * platform/chromium-mac/fast/blockflow/box-shadow-horizontal-bt-expected.png: Added.
+        * platform/chromium-mac/fast/blockflow/box-shadow-vertical-lr-expected.checksum: Added.
+        * platform/chromium-mac/fast/blockflow/box-shadow-vertical-lr-expected.png: Added.
+        * platform/chromium-mac/fast/blockflow/box-shadow-vertical-rl-expected.checksum: Added.
+        * platform/chromium-mac/fast/blockflow/box-shadow-vertical-rl-expected.png: Added.
+        * platform/chromium-mac/fast/borders/border-radius-split-inline-expected.checksum: Added.
+        * platform/chromium-mac/fast/borders/border-radius-split-inline-expected.png: Added.
+        * platform/chromium-mac/fast/box-shadow/box-shadow-transformed-expected.checksum: Added.
+        * platform/chromium-mac/fast/box-shadow/box-shadow-transformed-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/box-shadow-h-expected.checksum:
+        * platform/chromium-mac/fast/repaint/box-shadow-h-expected.png:
+        * platform/chromium-mac/fast/repaint/box-shadow-v-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/box-shadow-v-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/gradients-em-stops-repaint-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/gradients-em-stops-repaint-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-strict-horizontal-expected.checksum: Removed.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-strict-horizontal-expected.png: Removed.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-strict-vertical-expected.checksum: Removed.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-strict-vertical-expected.png: Removed.
+        * platform/chromium-mac/fast/transforms/shadows-expected.checksum: Added.
+        * platform/chromium-mac/fast/transforms/shadows-expected.png: Added.
+
 2011-01-31  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.
