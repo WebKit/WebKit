@@ -41,10 +41,15 @@ using namespace WebKit;
 namespace WebCore {
 
 // Buffer size that the Chromium audio system will call us back with.
+#if OS(DARWIN)
+// For Mac OS X the chromium audio backend uses a low-latency CoreAudio API, so a low buffer size is possible.
+const unsigned callbackBufferSize = 128;
+#else
 // This value may need to be tuned based on the OS.
 // FIXME: It may be possible to reduce this value once real-time threads
 // and other Chromium audio improvements are made.
 const unsigned callbackBufferSize = 2048;
+#endif
 
 // Buffer size at which the web audio engine will render.
 const unsigned renderBufferSize = 128;
