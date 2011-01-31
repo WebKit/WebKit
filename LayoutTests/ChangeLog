@@ -1,3 +1,14 @@
+2011-01-31  Dan Bernstein  <mitz@apple.com>
+
+        Remove expected results in mac-wk2 and win that are equal to the mac results after r77138.
+
+        * platform/mac-wk2/fast/blockflow/Kusa-Makura-background-canvas-expected.txt: Removed.
+        * platform/mac-wk2/fast/multicol/vertical-rl/column-break-with-balancing-expected.txt: Removed.
+        * platform/mac-wk2/fast/multicol/vertical-rl/float-paginate-complex-expected.txt: Removed.
+        * platform/win/fast/block/basic/truncation-rtl-expected.txt: Removed.
+        * platform/win/fast/multicol/vertical-rl/column-break-with-balancing-expected.txt: Removed.
+        * platform/win/fast/multicol/vertical-rl/float-paginate-complex-expected.txt: Removed.
+
 2011-01-31  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by Eric Seidel.
