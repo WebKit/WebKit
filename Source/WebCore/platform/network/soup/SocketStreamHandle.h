@@ -60,7 +60,7 @@ namespace WebCore {
     private:
         GRefPtr<GSocketConnection> m_socketConnection;
         GRefPtr<GInputStream> m_inputStream;
-        GRefPtr<GOutputStream> m_outputStream;
+        GRefPtr<GPollableOutputStream> m_outputStream;
         GRefPtr<GSource> m_writeReadySource;
         char* m_readBuffer;
         void* m_id;

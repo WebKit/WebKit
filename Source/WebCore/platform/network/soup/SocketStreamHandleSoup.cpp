@@ -50,7 +50,7 @@ namespace WebCore {
 // These functions immediately call the similarly named SocketStreamHandle methods.
 static void connectedCallback(GSocketClient*, GAsyncResult*, void*);
 static void readReadyCallback(GInputStream*, GAsyncResult*, void*);
-static gboolean writeReadyCallback(GSocket*, GIOCondition, void*);
+static gboolean writeReadyCallback(GPollableOutputStream*, void*);
 
 // Having a list of active handles means that we do not have to worry about WebCore
 // reference counting in GLib callbacks. Once the handle is off the active handles list
@@ -82,13 +82,12 @@ SocketStreamHandle::SocketStreamHandle(const KURL& url, SocketStreamHandleClient
     : SocketStreamHandleBase(url, client)
     , m_readBuffer(0)
 {
-    // No support for SSL sockets yet.
-    if (url.protocolIs("wss"))
-        return;
-    unsigned int port = url.hasPort() ? url.port() : 80;
+    unsigned int port = url.hasPort() ? url.port() : (url.protocolIs("wss") ? 443 : 80);
 
     m_id = activateHandle(this);
     GRefPtr<GSocketClient> socketClient = adoptGRef(g_socket_client_new());
+    if (url.protocolIs("wss"))
+        g_socket_client_set_tls(socketClient.get(), TRUE);
     g_socket_client_connect_to_host_async(socketClient.get(), url.host().utf8().data(), port, 0,
         reinterpret_cast<GAsyncReadyCallback>(connectedCallback), m_id);
 }
@@ -108,7 +107,7 @@ void SocketStreamHandle::connected(GSocketConnection* socketConnection, GError* 
     }
 
     m_socketConnection = adoptGRef(socketConnection);
-    m_outputStream = g_io_stream_get_output_stream(G_IO_STREAM(m_socketConnection.get()));
+    m_outputStream = G_POLLABLE_OUTPUT_STREAM(g_io_stream_get_output_stream(G_IO_STREAM(m_socketConnection.get())));
     m_inputStream = g_io_stream_get_input_stream(G_IO_STREAM(m_socketConnection.get()));
 
     m_readBuffer = new char[READ_BUFFER_SIZE];
@@ -156,14 +155,14 @@ void SocketStreamHandle::writeReady()
 
 int SocketStreamHandle::platformSend(const char* data, int length)
 {
-    if (!g_socket_condition_check(g_socket_connection_get_socket(m_socketConnection.get()), G_IO_OUT)) {
+    if (!g_pollable_output_stream_is_writable(m_outputStream.get())) {
         beginWaitingForSocketWritability();
         return 0;
     }
 
     GOwnPtr<GError> error;
-    gssize written = g_output_stream_write(m_outputStream.get(), data, length, 0, &error.outPtr());
-    if (error) {
+    gssize written = g_pollable_output_stream_write_nonblocking(m_outputStream.get(), data, length, 0, &error.outPtr());
+    if (error && !g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_WOULD_BLOCK)) {
         m_client->didFail(this, SocketStreamError(error->code)); // FIXME: Provide a sensible error.
         return 0;
     }
@@ -222,8 +221,7 @@ void SocketStreamHandle::beginWaitingForSocketWritability()
     if (m_writeReadySource) // Already waiting.
         return;
 
-    m_writeReadySource = adoptGRef(g_socket_create_source(
-        g_socket_connection_get_socket(m_socketConnection.get()), static_cast<GIOCondition>(G_IO_OUT), 0));
+    m_writeReadySource = adoptGRef(g_pollable_output_stream_create_source(m_outputStream.get(), 0));
     g_source_set_callback(m_writeReadySource.get(), reinterpret_cast<GSourceFunc>(writeReadyCallback), m_id, 0);
     g_source_attach(m_writeReadySource.get(), 0);
 }
@@ -266,24 +264,13 @@ static void readReadyCallback(GInputStream* stream, GAsyncResult* result, void* 
     handle->readBytes(bytesRead, error.get());
 }
 
-static gboolean writeReadyCallback(GSocket*, GIOCondition condition, void* id)
+static gboolean writeReadyCallback(GPollableOutputStream*, void* id)
 {
     SocketStreamHandle* handle = getHandleFromId(id);
     if (!handle)
         return FALSE;
 
-    // G_IO_HUP and G_IO_ERR are are always active. See:
-    // http://library.gnome.org/devel/gio/stable/GSocket.html#g-socket-create-source
-    if (condition & G_IO_HUP) {
-        handle->close();
-        return FALSE;
-    }
-    if (condition & G_IO_ERR) {
-        handle->client()->didFail(handle, SocketStreamError(0)); // FIXME: Provide a sensible error.
-        return FALSE;
-    }
-    if (condition & G_IO_OUT)
-        handle->writeReady();
+    handle->writeReady();
     return TRUE;
 }
 

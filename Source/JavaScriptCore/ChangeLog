@@ -1,3 +1,14 @@
+2011-01-31  Dan Winship  <danw@gnome.org>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        wss (websockets ssl) support for gtk via new gio TLS support
+        https://bugs.webkit.org/show_bug.cgi?id=50344
+
+        Add a GPollableOutputStream typedef for TLS WebSockets support
+
+        * wtf/gobject/GTypedefs.h:
+
 2011-01-31  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.
