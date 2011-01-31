@@ -1,3 +1,24 @@
+2011-01-31  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Update Chromium test expectations after r77101
+
+        * platform/chromium-linux/fast/box-shadow/box-shadow-transformed-expected.checksum: Added.
+        * platform/chromium-linux/fast/box-shadow/box-shadow-transformed-expected.png: Added.
+        * platform/chromium-linux/fast/box-shadow/inset-with-extraordinary-radii-and-border-expected.checksum: Added.
+        * platform/chromium-linux/fast/box-shadow/inset-with-extraordinary-radii-and-border-expected.png: Added.
+        * platform/chromium-win/fast/box-shadow/box-shadow-radius-expected.checksum: Added.
+        * platform/chromium-win/fast/box-shadow/box-shadow-radius-expected.png: Added.
+        * platform/chromium-win/fast/box-shadow/box-shadow-radius-expected.txt: Added.
+        * platform/chromium-win/fast/box-shadow/box-shadow-transformed-expected.checksum: Added.
+        * platform/chromium-win/fast/box-shadow/box-shadow-transformed-expected.png: Added.
+        * platform/chromium-win/fast/box-shadow/box-shadow-transformed-expected.txt: Added.
+        * platform/chromium-win/fast/box-shadow/inset-box-shadow-radius-expected.checksum: Added.
+        * platform/chromium-win/fast/box-shadow/inset-box-shadow-radius-expected.png: Added.
+        * platform/chromium-win/fast/box-shadow/inset-box-shadow-radius-expected.txt: Added.
+        * platform/chromium-win/fast/box-shadow/inset-with-extraordinary-radii-and-border-expected.checksum: Added.
+        * platform/chromium-win/fast/box-shadow/inset-with-extraordinary-radii-and-border-expected.png: Added.
+        * platform/chromium-win/fast/repaint/gradients-em-stops-repaint-expected.txt: Added.
+
 2011-01-30  Kenichi Ishibashi  <bashi@google.com>
 
         Reviewed by Kent Tamura.
