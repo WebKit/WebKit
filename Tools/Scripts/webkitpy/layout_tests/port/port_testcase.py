@@ -88,3 +88,15 @@ class PortTestCase(unittest.TestCase):
             return
         port.start_websocket_server()
         port.stop_websocket_server()
+
+    def test_test_configuration(self):
+        port = self.make_port()
+        if not port:
+            return
+        self.assertTrue(port.test_configuration())
+
+    def test_all_test_configurations(self):
+        port = self.make_port()
+        if not port:
+            return
+        self.assertTrue(len(port.all_test_configurations()) > 0)

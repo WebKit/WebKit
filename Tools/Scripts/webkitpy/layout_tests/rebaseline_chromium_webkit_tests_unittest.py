@@ -70,7 +70,7 @@ def test_options():
                                 target_platform='chromium',
                                 verbose=False,
                                 quiet=False,
-                                platforms='mac,win')
+                                platforms='mac,win,win-xp')
 
 
 def test_host_port_and_filesystem(options, expectations):
@@ -180,9 +180,11 @@ class TestRebaseliner(unittest.TestCase):
         # We expect to have written 12 files over the course of this rebaseline:
         # *) 3 files in /__im_tmp for the extracted archive members
         # *) 3 new baselines under '/test.checkout/LayoutTests'
-        # *) 1 updated test_expectations file
         # *) 4 files in /tmp for the new and old baselines in the result file
-        # *) 1 text diff in /tmp for the result file
+        #    (-{old,new}.{txt,png}
+        # *) 1 text diff in /tmp for the result file (-diff.txt). We don't
+        #    create image diffs (FIXME?) and don't display the checksums.
+        # *) 1 updated test_expectations file
         self.assertEqual(len(filesystem.written_files), 12)
         self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test/test_expectations.txt'], '')
         self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image-expected.checksum'], 'new-image-checksum')
@@ -197,7 +199,9 @@ class TestRebaseliner(unittest.TestCase):
         # Note that even though the rebaseline is marked for all platforms, each
         # rebaseliner only ever does one.
         self.assertEqual(len(filesystem.written_files), 12)
-        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test/test_expectations.txt'], 'BUGX REBASELINE WIN : failures/expected/image.html = IMAGE\n')
+        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test/test_expectations.txt'],
+            'BUGX REBASELINE WIN : failures/expected/image.html = IMAGE\n'
+            'BUGX REBASELINE WIN-XP : failures/expected/image.html = IMAGE\n')
         self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image-expected.checksum'], 'new-image-checksum')
         self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image-expected.png'], 'new-image-png')
         self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image-expected.txt'], 'new-image-txt')
@@ -235,9 +239,12 @@ class TestRealMain(unittest.TestCase):
             host_port_obj, url_fetcher, zip_factory, mock_scm)
         oc.restore_output()
 
-        # We expect to have written 24 files over the course of this rebaseline:
-        # 2 * test_all_platforms, above
-        self.assertEqual(len(filesystem.written_files), 24)
+        # We expect to have written 35 files over the course of this rebaseline:
+        # *) 11 files * 3 ports for the new baselines and the diffs (see breakdown
+        #    under test_one_platform, above)
+        # *) the updated test_expectations file
+        # *) the rebaseline results html file
+        self.assertEqual(len(filesystem.written_files), 35)
         self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test/test_expectations.txt'], '')
 
 

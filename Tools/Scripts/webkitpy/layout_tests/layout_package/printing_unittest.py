@@ -144,7 +144,7 @@ class  Testprinter(unittest.TestCase):
                       test in tests]
         expectations = test_expectations.TestExpectations(
             self._port, test_paths, expectations_str,
-            self._port.test_platform_name(), is_debug_mode=False,
+            self._port.test_configuration(),
             is_lint_mode=False)
 
         rs = result_summary.ResultSummary(expectations, test_paths)
@@ -363,7 +363,7 @@ class  Testprinter(unittest.TestCase):
     def test_print_progress__detailed(self):
         tests = ['passes/text.html', 'failures/expected/timeout.html',
                  'failures/expected/crash.html']
-        expectations = 'failures/expected/timeout.html = TIMEOUT'
+        expectations = 'BUGX : failures/expected/timeout.html = TIMEOUT'
 
         # first, test that it is disabled properly
         # should still print one-line-progress
@@ -569,8 +569,8 @@ class  Testprinter(unittest.TestCase):
         self.assertFalse(out.empty())
 
         expectations = """
-failures/expected/crash.html = CRASH
-failures/expected/timeout.html = TIMEOUT
+BUGX : failures/expected/crash.html = CRASH
+BUGX : failures/expected/timeout.html = TIMEOUT
 """
         err.reset()
         out.reset()

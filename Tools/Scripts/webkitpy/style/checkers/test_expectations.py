@@ -75,7 +75,6 @@ class TestExpectationsChecker(object):
                       "Using 'test' port, but platform-specific expectations "
                       "will fail the check." % self._file_path)
             self._port_obj = port.get('test')
-        self._port_to_check = self._port_obj.test_platform_name()
         # Suppress error messages of test_expectations module since they will be
         # reported later.
         log = logging.getLogger("webkitpy.layout_tests.layout_package."
@@ -91,7 +90,7 @@ class TestExpectationsChecker(object):
         try:
             expectations = test_expectations.TestExpectationsFile(
                 port=self._port_obj, expectations=expectations_str, full_test_list=tests,
-                test_platform_name=self._port_to_check, is_debug_mode=False,
+                test_config=self._port_obj.test_configuration(),
                 is_lint_mode=True, overrides=overrides)
         except test_expectations.ParseError, error:
             err = error

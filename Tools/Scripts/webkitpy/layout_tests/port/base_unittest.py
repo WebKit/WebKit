@@ -250,7 +250,6 @@ class VirtualTest(unittest.TestCase):
         self.assertVirtual(port.test_platform_name)
         self.assertVirtual(port.results_directory)
         self.assertVirtual(port.test_expectations)
-        self.assertVirtual(port.test_base_platform_names)
         self.assertVirtual(port.test_platform_name)
         self.assertVirtual(port.test_platforms)
         self.assertVirtual(port.test_platform_name_to_name, None)

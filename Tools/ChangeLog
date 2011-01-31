@@ -1,3 +1,48 @@
+2011-01-31  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        The current modifier parsing code in test_expectations is
+        fragile and hard-coded, so it's not easy to understand the logic
+        or easily add new types of modifiers (like GPU vs. CPU testing
+        for graphics tests, or 32-bit vs. 64-bit differences).
+
+        This is the first of two patches that will add in more generic
+        support and then eliminate the GPU-specific test expectations
+        files for Chromium.
+
+        This patch adds two standalone objects for handling modifiers. The
+        rules for interpreting modifiers, precedence, and conflicts are
+        given in the docstring to the ModifierMatcher class, which
+        returns ModifierMatchResult objects.
+        
+        This patch also adds routines to the Port interface and a
+        default set of values in the base object, in order to obtain the
+        values needed on a given test run. These values are then passed
+        to the expectation parser. This also allows us to clean up the
+        logic used to lint all of the different configurations in a
+        single test_expectations.txt file.
+
+        The next patch will merge in the separate GPU expectations file.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51222
+
+        * Scripts/webkitpy/layout_tests/layout_package/printing_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_runner.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests_unittest.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Tools/Scripts/webkitpy/style/checkers/test_expectations.py:
+        * Tools/Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+
 2011-01-31  Scott Cameron  <sccameron@rim.com>
 
         Reviewed by Daniel Bates.

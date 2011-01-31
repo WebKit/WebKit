@@ -241,9 +241,6 @@ class ChromiumPort(base.Port):
             # http://bugs.python.org/issue1731717
             self._helper.wait()
 
-    def test_base_platform_names(self):
-        return ('linux', 'mac', 'win')
-
     def test_expectations(self):
         """Returns the test expectations for this port.
 
@@ -273,15 +270,14 @@ class ChromiumPort(base.Port):
             all_test_files.update(extra_test_files)
 
         expectations = test_expectations.TestExpectations(
-            self, all_test_files, expectations_str, test_platform_name,
-            is_debug_mode, is_lint_mode=False, overrides=overrides_str)
+            self, all_test_files, expectations_str, self.test_configuration(),
+            is_lint_mode=False, overrides=overrides_str)
         tests_dir = self.layout_tests_dir()
         return [self.relative_test_filename(test)
                 for test in expectations.get_tests_with_result_type(test_expectations.SKIP)]
 
     def test_platform_names(self):
-        return self.test_base_platform_names() + ('win-xp',
-            'win-vista', 'win-7')
+        return ('mac', 'win', 'linux', 'win-xp', 'win-vista', 'win-7')
 
     def test_platform_name_to_name(self, test_platform_name):
         if test_platform_name in self.test_platform_names():

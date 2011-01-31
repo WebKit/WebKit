@@ -215,14 +215,17 @@ class TestPort(base.Port):
         return 'junk'
 
     def baseline_path(self):
-        return self._filesystem.join(self.layout_tests_dir(), 'platform',
-                                     self.name() + self.version())
+        # We don't bother with a fallback path.
+        return self._filesystem.join(self.layout_tests_dir(), 'platform', self.name())
 
     def baseline_search_path(self):
         return [self.baseline_path()]
 
     def check_build(self, needs_http):
         return True
+
+    def default_configuration(self):
+        return 'Release'
 
     def diff_image(self, expected_contents, actual_contents,
                    diff_filename=None):
@@ -262,24 +265,25 @@ class TestPort(base.Port):
     def stop_websocket_server(self):
         pass
 
-    def test_base_platform_names(self):
-        return ('mac', 'win')
-
     def path_to_test_expectations_file(self):
         return self._expectations_path
 
     def test_platform_name(self):
-        if self._name == 'test-win':
-            return 'win'
-        return 'mac'
+        name_map = {
+            'test-mac': 'mac',
+            'test-win': 'win',
+            'test-win-xp': 'win-xp',
+        }
+        return name_map[self._name]
 
     def test_platform_names(self):
-        return self.test_base_platform_names()
+        return ('mac', 'win', 'win-xp')
 
     def test_platform_name_to_name(self, test_platform_name):
         name_map = {
             'mac': 'test-mac',
             'win': 'test-win',
+            'win-xp': 'test-win-xp',
         }
         return name_map[test_platform_name]
 
@@ -341,9 +345,18 @@ class TestPort(base.Port):
 
         raise NotImplementedError('unknown url type: %s' % uri)
 
-
     def version(self):
-        return ''
+        version_map = {
+            'test-win-xp': '-xp',
+            'test-win': '-7',
+            'test-mac': '-leopard',
+        }
+        return version_map[self._name]
+
+    def test_configuration(self):
+        if not self._test_configuration:
+            self._test_configuration = TestTestConfiguration(self)
+        return self._test_configuration
 
 
 class TestDriver(base.Driver):
@@ -378,3 +391,10 @@ class TestDriver(base.Driver):
 
     def stop(self):
         pass
+
+
+class TestTestConfiguration(base.TestConfiguration):
+    def all_systems(self):
+        return (('mac', 'leopard', 'x86'),
+                ('win', 'xp', 'x86'),
+                ('win', 'win7', 'x86'))

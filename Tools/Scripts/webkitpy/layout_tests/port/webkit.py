@@ -180,11 +180,6 @@ class WebKitPort(base.Port):
     def create_driver(self, worker_number):
         return WebKitDriver(self, worker_number)
 
-    def test_base_platform_names(self):
-        # At the moment we don't use test platform names, but we have
-        # to return something.
-        return ('mac', 'win')
-
     def _tests_for_other_platforms(self):
         raise NotImplementedError('WebKitPort._tests_for_other_platforms')
         # The original run-webkit-tests builds up a "whitelist" of tests to
@@ -337,8 +332,7 @@ class WebKitPort(base.Port):
         return self._name + self.version()
 
     def test_platform_names(self):
-        return self.test_base_platform_names() + (
-            'mac-tiger', 'mac-leopard', 'mac-snowleopard')
+        return ('mac', 'win', 'mac-tiger', 'mac-leopard', 'mac-snowleopard')
 
     def _build_path(self, *comps):
         return self._filesystem.join(self._config.build_directory(

@@ -159,6 +159,7 @@ class Rebaseliner(object):
         self._port = running_port
         self._filesystem = running_port._filesystem
         self._target_port = target_port
+
         self._rebaseline_port = port.get(
             self._target_port.test_platform_name_to_name(platform), options,
             filesystem=self._filesystem)
@@ -174,8 +175,7 @@ class Rebaseliner(object):
             test_expectations.TestExpectations(self._rebaseline_port,
                                                None,
                                                expectations_str,
-                                               self._platform,
-                                               False,
+                                               self._rebaseline_port.test_configuration(),
                                                False)
         self._url_fetcher = url_fetcher
         self._zip_factory = zip_factory
