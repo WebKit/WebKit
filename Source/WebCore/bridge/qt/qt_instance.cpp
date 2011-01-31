@@ -82,7 +82,6 @@ QtInstance::QtInstance(QObject* o, PassRefPtr<RootObject> rootObject, QScriptEng
     , m_class(0)
     , m_object(o)
     , m_hashkey(o)
-    , m_defaultMethod(0)
     , m_ownership(ownership)
 {
 }
@@ -149,7 +148,7 @@ void QtInstance::put(JSObject* object, ExecState* exec, const Identifier& proper
 void QtInstance::removeCachedMethod(JSObject* method)
 {
     if (m_defaultMethod == method)
-        m_defaultMethod = 0;
+        m_defaultMethod.clear();
 
     for (QHash<QByteArray, JSObject*>::Iterator it = m_methods.begin(),
         end = m_methods.end(); it != end; ++it)
@@ -188,10 +187,10 @@ RuntimeObject* QtInstance::newRuntimeObject(ExecState* exec)
 void QtInstance::markAggregate(MarkStack& markStack)
 {
     if (m_defaultMethod)
-        markStack.append(m_defaultMethod);
-    foreach (JSObject* val, m_methods.values()) {
+        markStack.append(&m_defaultMethod);
+    foreach (DeprecatedPtr<JSObject>& val, m_methods.values()) {
         if (val)
-            markStack.append(val);
+            markStack.append(&val);
     }
 }
 

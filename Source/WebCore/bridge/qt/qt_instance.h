@@ -83,9 +83,9 @@ private:
     mutable QtClass* m_class;
     QPointer<QObject> m_object;
     QObject* m_hashkey;
-    mutable QHash<QByteArray, JSObject*> m_methods;
+    mutable QHash<QByteArray, DeprecatedPtr<JSObject> > m_methods;
     mutable QHash<QString, QtField*> m_fields;
-    mutable QtRuntimeMetaMethod* m_defaultMethod;
+    mutable WriteBarrier<QtRuntimeMetaMethod> m_defaultMethod;
     QScriptEngine::ValueOwnership m_ownership;
 };
 

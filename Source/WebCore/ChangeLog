@@ -1,5 +1,15 @@
 2011-01-30  Oliver Hunt  <oliver@apple.com>
 
+        Try to fix Qt build.
+
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtInstance::QtInstance):
+        (JSC::Bindings::QtInstance::removeCachedMethod):
+        (JSC::Bindings::QtInstance::markAggregate):
+        * bridge/qt/qt_instance.h:
+
+2011-01-30  Oliver Hunt  <oliver@apple.com>
+
         Convert markstack to a slot visitor API
         https://bugs.webkit.org/show_bug.cgi?id=53219
 
