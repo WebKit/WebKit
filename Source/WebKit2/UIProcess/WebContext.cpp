@@ -299,7 +299,7 @@ void WebContext::didReceiveSynchronousMessageFromInjectedBundle(const String& me
 void WebContext::didNavigateWithNavigationData(uint64_t pageID, const WebNavigationDataStore& store, uint64_t frameID) 
 {
     WebFrameProxy* frame = m_process->webFrame(frameID);
-    if (!frame->page())
+    if (!frame || !frame->page())
         return;
     
     m_historyClient.didNavigateWithNavigationData(this, frame->page(), store, frame);
@@ -308,7 +308,7 @@ void WebContext::didNavigateWithNavigationData(uint64_t pageID, const WebNavigat
 void WebContext::didPerformClientRedirect(uint64_t pageID, const String& sourceURLString, const String& destinationURLString, uint64_t frameID)
 {
     WebFrameProxy* frame = m_process->webFrame(frameID);
-    if (!frame->page())
+    if (!frame || !frame->page())
         return;
     
     m_historyClient.didPerformClientRedirect(this, frame->page(), sourceURLString, destinationURLString, frame);
@@ -317,7 +317,7 @@ void WebContext::didPerformClientRedirect(uint64_t pageID, const String& sourceU
 void WebContext::didPerformServerRedirect(uint64_t pageID, const String& sourceURLString, const String& destinationURLString, uint64_t frameID)
 {
     WebFrameProxy* frame = m_process->webFrame(frameID);
-    if (!frame->page())
+    if (!frame || !frame->page())
         return;
     
     m_historyClient.didPerformServerRedirect(this, frame->page(), sourceURLString, destinationURLString, frame);
@@ -326,7 +326,7 @@ void WebContext::didPerformServerRedirect(uint64_t pageID, const String& sourceU
 void WebContext::didUpdateHistoryTitle(uint64_t pageID, const String& title, const String& url, uint64_t frameID)
 {
     WebFrameProxy* frame = m_process->webFrame(frameID);
-    if (!frame->page())
+    if (!frame || !frame->page())
         return;
 
     m_historyClient.didUpdateHistoryTitle(this, frame->page(), title, url, frame);
