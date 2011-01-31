@@ -597,7 +597,7 @@ void ShadowBlur::drawRectShadowWithTiling(GraphicsContext* graphicsContext, cons
     ScratchBuffer::shared().scheduleScratchBufferPurge();
 }
 
-#if !PLATFORM(CG)
+#if !PLATFORM(CG) && !PLATFORM(CHROMIUM)
 IntRect ShadowBlur::clipBounds(GraphicsContext*)
 {
     // FIXME: add clipBounds() to GraphicsContext.
