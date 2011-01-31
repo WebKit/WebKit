@@ -103,7 +103,7 @@ WebInspector.NetworkPanel.prototype = {
 
     elementsToRestoreScrollPositionsFor: function()
     {
-        return [this.containerElement];
+        return [this.containerElement, this._dataGrid.scrollContainer];
     },
 
     resize: function()
@@ -158,6 +158,7 @@ WebInspector.NetworkPanel.prototype = {
             this._dataGrid.element.style.bottom = 0;
             this._sortItems();
         }
+        this._updateOffscreenRows();
     },
 
     _resetSummaryBar: function()
@@ -214,6 +215,7 @@ WebInspector.NetworkPanel.prototype = {
         this.containerElement.appendChild(this._dataGrid.element);
         this._dataGrid.addEventListener("sorting changed", this._sortItems, this);
         this._dataGrid.addEventListener("width changed", this._updateDividersIfNeeded, this);
+        this._dataGrid.scrollContainer.addEventListener("scroll", this._updateOffscreenRows.bind(this));
 
         this._patchTimelineHeader();
     },
@@ -1025,6 +1027,36 @@ WebInspector.NetworkPanel.prototype = {
     {
         var har = (new WebInspector.HAREntry(resource)).build();
         offerFileForDownload(JSON.stringify(har));
+    },
+
+    _updateOffscreenRows: function(e)
+    {
+        var dataTableBody = this._dataGrid.dataTableBody;
+        var rows = dataTableBody.children;
+        var recordsCount = rows.length;
+        if (recordsCount < 2)
+            return;  // Filler row only.
+
+        var visibleTop = this._dataGrid.scrollContainer.scrollTop;
+        var visibleBottom = visibleTop + this._dataGrid.scrollContainer.offsetHeight;
+
+        var rowHeight = rows[0].offsetHeight;
+
+        // Filler is at recordsCount - 1.
+        for (var i = 0; i < recordsCount - 1; ++i) {
+            var row = rows[i];
+            // Don't touch summaty - quit instead.
+            if (row === this._summaryBarRowNode)
+                break;
+            var rowIsVisible = i * rowHeight < visibleBottom && (i + 1) * rowHeight > visibleTop;
+            if (rowIsVisible !== row.rowIsVisible) {
+                if (rowIsVisible)
+                    row.removeStyleClass("offscreen");
+                else
+                    row.addStyleClass("offscreen");
+                row.rowIsVisible = rowIsVisible;
+            }
+        }
     }
 }
 

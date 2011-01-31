@@ -65,6 +65,18 @@
     font-weight: bold;
 }
 
+.network-sidebar .data-grid.small tr.offscreen {
+    height: 21px;
+}
+
+.network-sidebar .data-grid tr.offscreen {
+    height: 41px;
+}
+
+.network-sidebar .data-grid tr.offscreen td {
+    display: none;
+}
+
 .network-sidebar .data-grid tr.filler {
     background-color: white;
 }

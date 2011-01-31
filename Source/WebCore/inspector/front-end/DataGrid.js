@@ -493,6 +493,11 @@ WebInspector.DataGrid.prototype = {
         this._columnWidthsInitialized = false;
     },
 
+    get scrollContainer()
+    {
+        return this._scrollContainer;        
+    },
+
     isScrolledToLastRow: function()
     {
         return this._scrollContainer.isScrolledToBottom();
