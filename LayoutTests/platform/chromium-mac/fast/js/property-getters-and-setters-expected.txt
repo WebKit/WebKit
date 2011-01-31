@@ -10,7 +10,7 @@ __defineGetter__ and __defineSetter__
 PASS o2.b is 8
 PASS o2.b is 11
 Setting a value without having a setter
-PASS o3.x = 10; threw exception TypeError: Cannot set property x of #<an Object> which has only a getter.
+PASS o3.x = 10; threw exception TypeError: Cannot set property x of #<Object> which has only a getter.
 Getting a value without having a getter
 PASS o4.x is undefined.
 __lookupGetter__ and __lookupSetter__
