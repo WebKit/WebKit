@@ -85,11 +85,7 @@ function runTests(imgs) {
               color[0] + ", " +
               color[1] + ", " +
               color[2] + ", " +
-              color[3] + " was " +
-              buf[off + 0] + ", " +
-              buf[off + 1] + ", " +
-              buf[off + 2] + ", " +
-              buf[off + 3];
+              color[3];
 
     for (var ii = 0; ii < 4; ++ii) {
       if (Math.abs(buf[off + ii] - color[ii]) > allowedRange) {
