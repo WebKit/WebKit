@@ -1,3 +1,17 @@
+2011-01-31  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bogus callframe during stack unwinding
+        https://bugs.webkit.org/show_bug.cgi?id=53454
+
+        Add test
+
+        * fast/js/invalid-callframe-during-unwind-expected.txt: Added.
+        * fast/js/invalid-callframe-during-unwind.html: Added.
+        * fast/js/script-tests/invalid-callframe-during-unwind.js: Added.
+        (testUnwind):
+
 2011-01-31  Scott Cameron  <sccameron@rim.com>
 
         Reviewed by Daniel Bates.

@@ -566,6 +566,8 @@ NEVER_INLINE bool Interpreter::unwindCallFrame(CallFrame*& callFrame, JSValue ex
         }
         while (!scopeChain->object->inherits(&JSActivation::info))
             scopeChain = scopeChain->pop();
+
+        callFrame->setScopeChain(scopeChain);
         JSActivation* activation = asActivation(scopeChain->object.get());
         activation->copyRegisters();
         if (JSValue arguments = callFrame->uncheckedR(unmodifiedArgumentsRegister(oldCodeBlock->argumentsRegister())).jsValue()) {

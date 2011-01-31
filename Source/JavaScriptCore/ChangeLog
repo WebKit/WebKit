@@ -1,3 +1,20 @@
+2011-01-31  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bogus callframe during stack unwinding
+        https://bugs.webkit.org/show_bug.cgi?id=53454
+
+        Trying to access a callframe's globalData after destroying its
+        ScopeChain is not a good thing.  While we could access the
+        globalData directly through the (known valid) scopechain we're
+        holding on to, it feels fragile.  Instead we push the valid
+        ScopeChain onto the callframe again to ensure that the callframe
+        itself remains valid.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::unwindCallFrame):
+
 2011-01-31  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Geoffrey Garen.
