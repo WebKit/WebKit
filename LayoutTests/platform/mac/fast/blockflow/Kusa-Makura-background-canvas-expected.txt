@@ -2912,4 +2912,3 @@ layer at (-4339,0) size 5139x585 backgroundClip at (0,0) size 5139x585 clip at (
             text run at (1974,71) width 387: "\x{306B}\x{3001}\x{3059}\x{3079}\x{3066}\x{3092}\x{5FD8}\x{5374}\x{3057}\x{3066}\x{3050}\x{3063}\x{3059}\x{308A}\x{5BDD}\x{8FBC}\x{3080}\x{3088}\x{3046}\x{306A}\x{529F}\x{5FB3}\x{3067}\x{3042}"
             text run at (1998,0) width 33: "\x{308B}\x{3002}"
           RenderBR {BR} at (1998,33) size 18x0
-scrolled to 4339,0

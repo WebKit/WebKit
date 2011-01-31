@@ -1,3 +1,13 @@
+2011-01-31  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        mac DRT should report RTL scroll offset relative to top right corner
+        https://bugs.webkit.org/show_bug.cgi?id=53324
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpFrameScrollPosition):
+
 2011-01-31  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Andreas Kling.

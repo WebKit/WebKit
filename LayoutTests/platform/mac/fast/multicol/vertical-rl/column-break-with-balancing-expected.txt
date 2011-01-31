@@ -161,4 +161,3 @@ layer at (0,8) size 388x569
       RenderText {#text} at (360,0) size 18x110
         text run at (360,0) width 110: "This is some text."
       RenderBR {BR} at (374,110) size 0x0
-scrolled to 8,0

@@ -28,4 +28,3 @@ layer at (0,0) size 800x222
           text run at (51,91) width 950: "a, molestie at mi. Nulla blandit, mi et euismod imperdiet, augue arcu ornare felis, nec viverra lacus ligula ut metus. Proin ut leo ante, at consectetur sem."
           text run at (617,109) width 4 RTL: "."
           text run at (621,109) width 380: "Nullam non nunc ligula. Proin sed ante sem, id rutrum purus"
-scrolled to 210,0

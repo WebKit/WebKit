@@ -256,4 +256,3 @@ layer at (-47,8) size 404x1200 backgroundClip at (0,0) size 1680x1208 clip at (0
       RenderText {#text} at (586,0) size 18x110
         text run at (586,0) width 110: "This is some text."
       RenderBR {BR} at (600,110) size 0x0
-scrolled to 895,0

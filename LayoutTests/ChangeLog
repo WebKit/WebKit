@@ -1,3 +1,17 @@
+2011-01-31  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        mac DRT should report RTL scroll offset relative to top right corner
+        https://bugs.webkit.org/show_bug.cgi?id=53324
+
+        Remove scroll offsets since these are at the origin.
+
+        * platform/mac/fast/block/basic/truncation-rtl-expected.txt:
+        * platform/mac/fast/blockflow/Kusa-Makura-background-canvas-expected.txt:
+        * platform/mac/fast/multicol/vertical-rl/column-break-with-balancing-expected.txt:
+        * platform/mac/fast/multicol/vertical-rl/float-paginate-complex-expected.txt:
+
 2011-01-31  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Mark some tests as having wrong image results on Mac.
