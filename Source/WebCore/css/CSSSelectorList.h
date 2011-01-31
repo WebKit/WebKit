@@ -58,7 +58,7 @@ private:
 
 inline CSSSelector* CSSSelectorList::next(CSSSelector* current)
 {
-    // Skip subparts of combound selectors.
+    // Skip subparts of compound selectors.
     while (!current->isLastInTagHistory())
         current++;
     return current->isLastInSelectorList() ? 0 : current + 1;
