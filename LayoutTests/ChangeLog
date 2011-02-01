@@ -1,5 +1,11 @@
 2011-02-01  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Added more flakiness expectations from bots.
+
+        * platform/chromium/test_expectations.txt: Another one bites or doesn't bite the dust.
+
+2011-02-01  Dimitri Glazkov  <dglazkov@chromium.org>
+
         https://bugs.webkit.org/show_bug.cgi?id=53516
         Test introduced in r77262 is crashing.
 
