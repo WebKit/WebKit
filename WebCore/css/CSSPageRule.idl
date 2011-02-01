@@ -21,7 +21,7 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface CSSPageRule : CSSRule {
+    interface [CustomMarkFunction] CSSPageRule : CSSRule {
 
                  attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString selectorText
                      setter raises(DOMException);

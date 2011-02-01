@@ -1,5 +1,53 @@
 2011-01-31  Mark Rowe  <mrowe@apple.com>
 
+        Merge r72590.
+
+    2010-11-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49860
+        CSS style rules don't GC protect objects reachable as their properties
+
+        Test: fast/dom/StyleSheet/gc-rule-children-wrappers.html
+
+        * Android.jscbindings.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        Added new files, sorted appropriate sections for easier adding.
+
+        * bindings/js/JSCSSFontFaceRuleCustom.cpp: Added.
+        (WebCore::JSCSSFontFaceRule::markChildren):
+        * bindings/js/JSCSSImportRuleCustom.cpp: Added.
+        (WebCore::JSCSSImportRule::markChildren):
+        * bindings/js/JSCSSMediaRuleCustom.cpp: Added.
+        (WebCore::JSCSSMediaRule::markChildren):
+        * bindings/js/JSCSSPageRuleCustom.cpp: Added.
+        (WebCore::JSCSSPageRule::markChildren):
+        * bindings/js/JSCSSStyleRuleCustom.cpp: Added.
+        (WebCore::JSCSSStyleRule::markChildren):
+        * bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp: Added.
+        (WebCore::JSWebKitCSSKeyframeRule::markChildren):
+        * bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp: Added.
+        (WebCore::JSWebKitCSSKeyframesRule::markChildren):
+        Mark objects reachable through these ones.
+
+        * css/CSSFontFaceRule.idl:
+        * css/CSSImportRule.idl:
+        * css/CSSMediaRule.idl:
+        * css/CSSPageRule.idl:
+        * css/CSSStyleRule.idl:
+        * css/WebKitCSSKeyframeRule.idl:
+        * css/WebKitCSSKeyframesRule.idl:
+        Added CustomMarkFunction IDL attribute.
+
+2011-01-31  Mark Rowe  <mrowe@apple.com>
+
         Merge r72348.
 
     2010-11-18  Alexey Proskuryakov  <ap@apple.com>

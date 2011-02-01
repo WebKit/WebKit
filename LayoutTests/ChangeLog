@@ -1,5 +1,19 @@
 2011-01-31  Mark Rowe  <mrowe@apple.com>
 
+        Merge r72590.
+
+    2010-11-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49860
+        CSS style rules don't GC protect objects reachable as their properties
+
+        * fast/dom/StyleSheet/gc-rule-children-wrappers-expected.txt: Added.
+        * fast/dom/StyleSheet/gc-rule-children-wrappers.html: Added.
+
+2011-01-31  Mark Rowe  <mrowe@apple.com>
+
         Merge r72353.
 
     2010-11-18  Alexey Proskuryakov  <ap@apple.com>

@@ -21,7 +21,7 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface CSSMediaRule : CSSRule {
+    interface [CustomMarkFunction] CSSMediaRule : CSSRule {
         readonly attribute stylesheets::MediaList media;
         readonly attribute CSSRuleList cssRules;
         
