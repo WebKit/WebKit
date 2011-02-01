@@ -1,3 +1,9 @@
+2011-01-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed Chromium GPU test expectation update.
+
+        * platform/chromium-gpu/test_expectations.txt:
+
 2011-01-31  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Darin Adler.
@@ -10,12 +16,6 @@
 
         * fast/dom/HTMLSelectElement/selected-false-expected.txt: Added.
         * fast/dom/HTMLSelectElement/selected-false.html: Added.
-
-2011-01-31  Ryosuke Niwa  <rniwa@webkit.org>
-
-        Unreviewed Chromium GPU test expectation update.
-
-        * platform/chromium-gpu/test_expectations.txt:
 
 2011-01-31  Ryosuke Niwa  <rniwa@webkit.org>
 
