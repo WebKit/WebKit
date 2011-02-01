@@ -89,7 +89,11 @@ function runTests(imgs) {
 
     for (var ii = 0; ii < 4; ++ii) {
       if (Math.abs(buf[off + ii] - color[ii]) > allowedRange) {
-        testFailed(msg);
+        testFailed(msg + " was " +
+            buf[off + 0] + ", " +
+            buf[off + 1] + ", " +
+            buf[off + 2] + ", " +
+            buf[off + 3]);
         return;
       }
     }
