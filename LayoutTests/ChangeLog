@@ -1,5 +1,25 @@
 2011-01-31  Mark Rowe  <mrowe@apple.com>
 
+        Merge r72166.
+
+    2010-11-16  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31223
+        Make primitive values immutable.
+        
+        Update test cases for behavior change and test computed style too. Note that there are some
+        failures in the results demonstrating unrelated bugs in CSSPrimitiveValues.
+
+        * fast/dom/script-tests/setPrimitiveValue-exceptions.js:
+        (checkThrows):
+        * fast/dom/setPrimitiveValue.html:
+        * fast/dom/setPrimitiveValue-exceptions-expected.txt
+        * fast/dom/setPrimitiveValue-expected.txt
+
+2011-01-31  Mark Rowe  <mrowe@apple.com>
+
         Merge r74716.
 
     2010-12-28  Abhishek Arya  <inferno@chromium.org>
