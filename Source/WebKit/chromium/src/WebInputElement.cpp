@@ -179,7 +179,7 @@ WebInputElement* toWebInputElement(WebElement* webElement)
     if (!inputElement)
         return 0;
 
-    ASSERT(inputElement->isHTMLElement());
+    ASSERT(webElement->unwrap<Element>()->isHTMLElement());
 
     return static_cast<WebInputElement*>(webElement);
 }

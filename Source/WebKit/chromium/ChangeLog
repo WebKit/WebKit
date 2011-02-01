@@ -1,3 +1,13 @@
+2011-02-01  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Fix Chromium Debug compilation broken by r77228.
+
+        [Chromium] Autofill should work with HTML5 form elements
+        https://bugs.webkit.org/show_bug.cgi?id=51809
+
+        * src/WebInputElement.cpp:
+        (WebKit::toWebInputElement):
+
 2011-02-01  Naoki Takano  <takano.naoki@gmail.com>
 
         Reviewed by Darin Fisher.
