@@ -661,21 +661,26 @@ public:
         set32Compare32(cond, left, right, dest);
     }
 
-    void set32Test32(Condition cond, Address address, Imm32 mask, RegisterID dest)
+    void set32Test32(Condition cond, RegisterID reg, Imm32 mask, RegisterID dest)
     {
-        load32(address, ARMRegisters::S1);
         if (mask.m_value == -1)
-            m_assembler.cmp_r(0, ARMRegisters::S1);
+            m_assembler.cmp_r(0, reg);
         else
-            m_assembler.tst_r(ARMRegisters::S1, m_assembler.getImm(mask.m_value, ARMRegisters::S0));
+            m_assembler.tst_r(reg, m_assembler.getImm(mask.m_value, ARMRegisters::S0));
         m_assembler.mov_r(dest, ARMAssembler::getOp2(0));
         m_assembler.mov_r(dest, ARMAssembler::getOp2(1), ARMCondition(cond));
     }
 
+    void set32Test32(Condition cond, Address address, Imm32 mask, RegisterID dest)
+    {
+        load32(address, ARMRegisters::S1);
+        set32Test32(cond, ARMRegisters::S1, mask, dest);
+    }
+
     void set32Test8(Condition cond, Address address, Imm32 mask, RegisterID dest)
     {
-        // ARM doesn't have byte registers
-        set32Test32(cond, address, mask, dest);
+        load8(address, ARMRegisters::S1);
+        set32Test32(cond, ARMRegisters::S1, mask, dest);
     }
 
     void add32(Imm32 imm, RegisterID src, RegisterID dest)
