@@ -109,7 +109,7 @@ void PopupMenuQt::show(const IntRect& rect, FrameView* view, int index)
 
     if (QtFallbackWebPopup* fallback = qobject_cast<QtFallbackWebPopup*>(m_popup)) {
         QRect geometry(rect);
-        geometry.moveTopLeft(view->contentsToWindow(rect.topLeft()));
+        geometry.moveTopLeft(view->contentsToWindow(rect.location()));
         fallback->setGeometry(geometry);
         fallback->setFont(m_popupClient->menuStyle().font().font());
     }

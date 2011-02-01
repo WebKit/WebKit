@@ -74,7 +74,7 @@ void ChunkedUpdateDrawingAreaProxy::drawUpdateChunkIntoBackingStore(UpdateChunk*
     const IntRect& updateChunkRect = updateChunk->rect();
 
     QPainter painter(&m_backingStoreImage);
-    painter.drawImage(updateChunkRect.topLeft(), image);
+    painter.drawImage(updateChunkRect.location(), image);
 
     m_webView->update(QRect(updateChunkRect));
 }

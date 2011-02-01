@@ -1,3 +1,13 @@
+2011-02-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed Qt buildfix after r77286.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53520 
+        Remove the physical terminology from IntRect and FloatRect.
+
+        * UIProcess/qt/ChunkedUpdateDrawingAreaProxyQt.cpp:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::drawUpdateChunkIntoBackingStore):
+
 2011-02-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

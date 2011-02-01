@@ -229,7 +229,7 @@ void TiledBackingStore::createTiles()
     Vector<Tile::Coordinate> tilesToCreate;
     unsigned requiredTileCount = 0;
     Tile::Coordinate topLeft = tileCoordinateForPoint(coverRect.location());
-    Tile::Coordinate bottomRight = tileCoordinateForPoint(IntPoint(coverRect.maxX(), dirtyRect.maxY()));
+    Tile::Coordinate bottomRight = tileCoordinateForPoint(IntPoint(coverRect.maxX(), coverRect.maxY()));
     for (unsigned yCoordinate = topLeft.y(); yCoordinate < bottomRight.y(); ++yCoordinate) {
         for (unsigned xCoordinate = topLeft.x(); xCoordinate < bottomRight.x(); ++xCoordinate) {
             Tile::Coordinate currentCoordinate(xCoordinate, yCoordinate);

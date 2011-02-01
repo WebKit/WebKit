@@ -1,3 +1,13 @@
+2011-02-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed Qt buildfix after r77286.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53520 
+        Remove the physical terminology from IntRect and FloatRect.
+
+        * platform/graphics/TiledBackingStore.cpp:
+        (WebCore::TiledBackingStore::createTiles):
+
 2011-02-01  Sam Weinig  <sam@webkit.org>
 
         Fix Mac production builds.
