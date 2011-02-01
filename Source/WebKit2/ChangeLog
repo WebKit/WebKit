@@ -1,3 +1,34 @@
+2011-01-31  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53466
+        Move WebKit2 to printing via API methods
+
+        Also fixes <rdar://problem/8933724> REGRESSION: Wrong pages are printed when not printing from page 1
+
+        Also fixes horizontal tiling (no bug filed).
+
+        The main idea here is that we don't force AppKit to use a different scaling factor when
+        a Web view can't be resized to exact page size, and scale when drawing instead.
+
+        * UIProcess/API/mac/WKPrintingView.mm:
+        (-[WKPrintingView _firstPrintedPageNumber]): Factored out into a separate method.
+        (-[WKPrintingView _lastPrintedPageNumber]): Ditto.
+        (pageDidDrawToPDF): Avoid crashing if data is null.
+        (-[WKPrintingView _preparePDFDataForPrintingOnSecondaryThread]): Use -_firstPrintedPageNumber
+        and -_lastPrintedPageNumber.
+        (pageDidComputePageRects): Set frame size to what it would have been for a normal NSView
+        that's been asked to resize.
+        (-[WKPrintingView _pageForRect:]): Check x(), because several pages can be at the same y()
+        when tiling horizontally.
+        (-[WKPrintingView _drawPDFDocument:page:atPoint:]): Point to draw at and frame size are
+        now using different units, translate as appropriate.
+        (-[WKPrintingView _drawPreview:]): Scale the rect to WebCore units.
+        (-[WKPrintingView drawRect:]): Correctly calculate page number when the first page to print
+        isn't page 1.
+        (-[WKPrintingView rectForPage:]): Scale the rect to AppKit units.
+
 2011-01-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele Peterson.

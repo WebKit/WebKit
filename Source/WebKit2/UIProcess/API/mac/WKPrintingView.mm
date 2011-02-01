@@ -31,10 +31,6 @@
 #import "WebData.h"
 #import "WebPageProxy.h"
 
-@interface NSView (WebNSViewDetails)
-- (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView;
-@end
-
 using namespace WebKit;
 using namespace WebCore;
 
@@ -112,6 +108,24 @@ NSString * const NSPrintInfoDidChangeNotification = @"NSPrintInfoDidChange";
     return !_printingPageRects.isEmpty();
 }
 
+- (NSUInteger)_firstPrintedPageNumber
+{
+    // Need to directly access the dictionary because -[NSPrintOperation pageRange] verifies pagination, potentially causing recursion.
+    return [[[[_printOperation printInfo] dictionary] objectForKey:NSPrintFirstPage] unsignedIntegerValue];
+}
+
+- (NSUInteger)_lastPrintedPageNumber
+{
+    ASSERT([self _hasPageRects]);
+
+    // Need to directly access the dictionary because -[NSPrintOperation pageRange] verifies pagination, potentially causing recursion.
+    NSUInteger firstPage = [[[[_printOperation printInfo] dictionary] objectForKey:NSPrintFirstPage] unsignedIntegerValue];
+    NSUInteger lastPage = [[[[_printOperation printInfo] dictionary] objectForKey:NSPrintLastPage] unsignedIntegerValue];
+    if (lastPage - firstPage >= _printingPageRects.size())
+        return _printingPageRects.size();
+    return lastPage;
+}
+
 - (uint64_t)_expectedPreviewCallbackForRect:(const IntRect&)rect
 {
     for (HashMap<uint64_t, WebCore::IntRect>::iterator iter = _expectedPreviewCallbacks.begin(); iter != _expectedPreviewCallbacks.end(); ++iter) {
@@ -149,9 +163,10 @@ static void pageDidDrawToPDF(WKDataRef dataRef, WKErrorRef, void* untypedContext
         if (iter != view->_expectedPreviewCallbacks.end()) {
             ASSERT([view _isPrintingPreview]);
 
-            pair<HashMap<WebCore::IntRect, Vector<uint8_t> >::iterator, bool> entry = view->_pagePreviews.add(iter->second, Vector<uint8_t>());
-            entry.first->second.append(data->bytes(), data->size());
-
+            if (data) {
+                pair<HashMap<WebCore::IntRect, Vector<uint8_t> >::iterator, bool> entry = view->_pagePreviews.add(iter->second, Vector<uint8_t>());
+                entry.first->second.append(data->bytes(), data->size());
+            }
             bool receivedResponseToLatestRequest = view->_latestExpectedPreviewCallback == context->callbackID;
             view->_latestExpectedPreviewCallback = 0;
             view->_expectedPreviewCallbacks.remove(context->callbackID);
@@ -177,10 +192,8 @@ static void pageDidDrawToPDF(WKDataRef dataRef, WKErrorRef, void* untypedContext
     ASSERT(!_printedPagesPDFDocument);
     ASSERT(!_expectedPrintCallback);
 
-    unsigned firstPage = [[[[_printOperation printInfo] dictionary] objectForKey:NSPrintFirstPage] unsignedIntValue];
-    unsigned lastPage = [[[[_printOperation printInfo] dictionary] objectForKey:NSPrintLastPage] unsignedIntValue];
-    if (lastPage > _printingPageRects.size()) // Last page is NSIntegerMax if not set by the user.
-        lastPage = _printingPageRects.size();
+    NSUInteger firstPage = [self _firstPrintedPageNumber];
+    NSUInteger lastPage = [self _lastPrintedPageNumber];
 
     ASSERT(firstPage > 0);
     ASSERT(firstPage <= lastPage);
@@ -217,6 +230,13 @@ static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, d
 
         view->_printingPageRects = pageRects;
         view->_totalScaleFactorForPrinting = totalScaleFactorForPrinting;
+
+        const IntRect& lastPrintingPageRect = view->_printingPageRects[view->_printingPageRects.size() - 1];
+        NSRect newFrameSize = NSMakeRect(0, 0, 
+            ceil(lastPrintingPageRect.right() * view->_totalScaleFactorForPrinting), 
+            ceil(lastPrintingPageRect.bottom() * view->_totalScaleFactorForPrinting));
+        LOG(View, "WKPrintingView setting frame size to x:%g y:%g width:%g height:%g", newFrameSize.origin.x, newFrameSize.origin.y, newFrameSize.size.width, newFrameSize.size.height);
+        [view setFrame:newFrameSize];
 
         if ([view _isPrintingPreview]) {
             // Show page count, and ask for an actual image to replace placeholder.
@@ -301,9 +321,12 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
 {
     // Assuming that rect exactly matches one of the pages.
     for (size_t i = 0; i < _printingPageRects.size(); ++i) {
-        if (rect.origin.y == _printingPageRects[i].y())
+        IntRect currentRect(_printingPageRects[i]);
+        currentRect.scale(_totalScaleFactorForPrinting);
+        if (rect.origin.y == currentRect.y() && rect.origin.x == currentRect.x())
             return i + 1;
     }
+    ASSERT_NOT_REACHED();
     return 0; // Invalid page number.
 }
 
@@ -324,9 +347,9 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
     CGContextRef context = static_cast<CGContextRef>([nsGraphicsContext graphicsPort]);
 
     CGContextSaveGState(context);
-    // Flip the destination.
-    CGContextScaleCTM(context, 1, -1);
-    CGContextTranslateCTM(context, point.x, -point.y -CGPDFPageGetBoxRect(pdfPage, kCGPDFMediaBox).size.height);
+    CGContextTranslateCTM(context, point.x, point.y);
+    CGContextScaleCTM(context, _totalScaleFactorForPrinting, -_totalScaleFactorForPrinting);
+    CGContextTranslateCTM(context, 0, -CGPDFPageGetBoxRect(pdfPage, kCGPDFMediaBox).size.height);
     CGContextDrawPDFPage(context, pdfPage);
     CGContextRestoreGState(context);
 }
@@ -336,6 +359,7 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
     ASSERT(isMainThread());
 
     IntRect rect(nsRect);
+    rect.scale(1 / _totalScaleFactorForPrinting);
     HashMap<WebCore::IntRect, Vector<uint8_t> >::iterator pagePreviewIterator = _pagePreviews.find(rect);
     if (pagePreviewIterator == _pagePreviews.end())  {
         // It's too early to ask for page preview if we don't even know page size and scale.
@@ -376,13 +400,11 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
     [self _drawPDFDocument:pdfDocument.get() page:1 atPoint:NSMakePoint(nsRect.origin.x, nsRect.origin.y)];
 }
 
-// Take over printing. AppKit applies incorrect clipping, and doesn't print pages beyond the first one.
-- (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)nsRect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView
+- (void)drawRect:(NSRect)nsRect
 {
-    LOG(View, "WKPrintingView printing rect x:%g, y:%g, width:%g, height:%g", nsRect.origin.x, nsRect.origin.y, nsRect.size.width, nsRect.size.height);
+    LOG(View, "WKPrintingView printing rect x:%g, y:%g, width:%g, height:%g%s", nsRect.origin.x, nsRect.origin.y, nsRect.size.width, nsRect.size.height, [self _isPrintingPreview] ? " for preview" : "");
 
     ASSERT(_printOperation == [NSPrintOperation currentOperation]);
-    ASSERT(self == visibleView);
 
     if (!_webFrame->page())
         return;
@@ -400,7 +422,8 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
         _printedPagesPDFDocument.adoptCF(CGPDFDocumentCreateWithProvider(pdfDataProvider.get()));
     }
 
-    [self _drawPDFDocument:_printedPagesPDFDocument.get() page:[self _pageForRect:nsRect] atPoint:NSMakePoint(nsRect.origin.x, nsRect.origin.y)];
+    unsigned printedPageNumber = [self _pageForRect:nsRect] - [self _firstPrintedPageNumber] + 1;
+    [self _drawPDFDocument:_printedPagesPDFDocument.get() page:printedPageNumber atPoint:NSMakePoint(nsRect.origin.x, nsRect.origin.y)];
 }
 
 - (void)_drawPageBorderWithSizeOnMainThread:(NSSize)borderSize
@@ -459,16 +482,6 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
     [currentContext restoreGraphicsState];
 }
 
-// FIXME 3491344: This is an AppKit-internal method that we need to override in order
-// to get our shrink-to-fit to work with a custom pagination scheme. We can do this better
-// if AppKit makes it SPI/API.
-- (CGFloat)_provideTotalScaleFactorForPrintOperation:(NSPrintOperation *)printOperation 
-{
-    ASSERT(_printOperation == printOperation);
-    return _totalScaleFactorForPrinting;
-}
-
-// Return the drawing rectangle for a particular page number
 - (NSRect)rectForPage:(NSInteger)page
 {
     ASSERT(_printOperation == [NSPrintOperation currentOperation]);
@@ -478,8 +491,11 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
         ASSERT(_expectedComputedPagesCallback);
         return NSMakeRect(0, 0, 1, 1);
     }
-    LOG(View, "-[WKPrintingView rectForPage:%d] -> x %d, y %d, width %d, height %d", (int)page, _printingPageRects[page - 1].x(), _printingPageRects[page - 1].y(), _printingPageRects[page - 1].width(), _printingPageRects[page - 1].height());
-    return _printingPageRects[page - 1];
+
+    IntRect rect = _printingPageRects[page - 1];
+    rect.scale(_totalScaleFactorForPrinting);
+    LOG(View, "-[WKPrintingView rectForPage:%d] -> x %d, y %d, width %d, height %d", (int)page, rect.x(), rect.y(), rect.width(), rect.height());
+    return rect;
 }
 
 - (void)endDocument
