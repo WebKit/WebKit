@@ -838,7 +838,6 @@ SET(WebCore_SOURCES
     dom/DocumentMarkerController.cpp
     dom/DocumentFragment.cpp
     dom/DocumentParser.cpp
-    dom/DocumentOrderedMap.cpp
     dom/DocumentType.cpp
     dom/DOMImplementation.cpp
     dom/DOMStringList.cpp

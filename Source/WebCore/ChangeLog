@@ -1,3 +1,35 @@
+2011-02-01  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Unreviewed, rolling out r77229.
+        http://trac.webkit.org/changeset/77229
+        https://bugs.webkit.org/show_bug.cgi?id=53289
+
+        revert mysterious build breakage
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp:
+        * dom/Document.cpp:
+        (WebCore::Document::DocumentOrderedMap::clear):
+        (WebCore::Document::DocumentOrderedMap::add):
+        (WebCore::Document::DocumentOrderedMap::remove):
+        (WebCore::Document::DocumentOrderedMap::get):
+        (WebCore::keyMatchesId):
+        (WebCore::Document::getElementById):
+        (WebCore::keyMatchesMapName):
+        (WebCore::keyMatchesLowercasedMapName):
+        (WebCore::Document::getImageMap):
+        * dom/Document.h:
+        (WebCore::Document::DocumentOrderedMap::contains):
+        (WebCore::Document::DocumentOrderedMap::containsMultiple):
+        * dom/DocumentOrderedMap.cpp: Removed.
+        * dom/DocumentOrderedMap.h: Removed.
+
 2011-02-01  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by James Robinson.

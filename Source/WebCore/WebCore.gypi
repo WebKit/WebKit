@@ -1220,8 +1220,6 @@
             'dom/DocumentMarker.h',
             'dom/DocumentMarkerController.cpp',
             'dom/DocumentMarkerController.h',
-            'dom/DocumentOrderedMap.cpp',
-            'dom/DocumentOrderedMap.h',
             'dom/DocumentParser.cpp',
             'dom/DocumentParser.h',
             'dom/DocumentTiming.h',

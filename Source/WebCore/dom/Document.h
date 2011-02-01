@@ -33,16 +33,15 @@
 #include "Color.h"
 #include "ContainerNode.h"
 #include "DOMTimeStamp.h"
-#include "DocumentOrderedMap.h"
 #include "DocumentTiming.h"
 #include "QualifiedName.h"
 #include "ScriptExecutionContext.h"
 #include "Timer.h"
 #include "ViewportArguments.h"
 #include <wtf/FixedArray.h>
+#include <wtf/HashCountedSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
-#include <wtf/PassRefPtr.h>
 
 #if USE(JSC)
 #include <runtime/WeakGCMap.h>
@@ -1095,6 +1094,28 @@ protected:
     void clearXMLVersion() { m_xmlVersion = String(); }
 
 private:
+    class DocumentOrderedMap {
+    public:
+        void add(AtomicStringImpl*, Element*);
+        void remove(AtomicStringImpl*, Element*);
+        void clear();
+
+        bool contains(AtomicStringImpl*) const;
+        bool containsMultiple(AtomicStringImpl*) const;
+        template<bool keyMatches(AtomicStringImpl*, Element*)> Element* get(AtomicStringImpl*, const Document*) const;
+
+        void checkConsistency() const;
+
+    private:
+        typedef HashMap<AtomicStringImpl*, Element*> Map;
+
+        // We maintain the invariant that m_duplicateCounts is the count of all elements with a given key
+        // excluding the one referenced in m_map, if any. This means it one less than the total count
+        // when the first node with a given key is cached, otherwise the same as the total count.
+        mutable Map m_map;
+        mutable HashCountedSet<AtomicStringImpl*> m_duplicateCounts;
+    };
+
     friend class IgnoreDestructiveWriteCountIncrementer;
 
     void detachParser();
@@ -1389,6 +1410,16 @@ private:
     int m_nextRequestAnimationFrameCallbackId;
 #endif
 };
+
+inline bool Document::DocumentOrderedMap::contains(AtomicStringImpl* id) const
+{
+    return m_map.contains(id) || m_duplicateCounts.contains(id);
+}
+
+inline bool Document::DocumentOrderedMap::containsMultiple(AtomicStringImpl* id) const
+{
+    return m_duplicateCounts.contains(id);
+}
 
 inline bool Document::hasElementWithId(AtomicStringImpl* id) const
 {
