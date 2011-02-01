@@ -314,33 +314,25 @@ ConversionResult convertUTF8ToUTF16(
     return result;
 }
 
-static inline unsigned calculateStringHashAndLengthFromUTF8Internal(const char* data, const char* dataEnd, unsigned& dataLength, unsigned& utf16Length)
+unsigned calculateStringHashFromUTF8(const char* data, const char* dataEnd, unsigned& utf16Length)
 {
     if (!data)
         return 0;
 
     WTF::StringHasher stringHasher;
-    dataLength = 0;
     utf16Length = 0;
 
-    while (data < dataEnd || (!dataEnd && *data)) {
+    while (data < dataEnd) {
         if (isASCII(*data)) {
             stringHasher.addCharacter(*data++);
-            dataLength++;
             utf16Length++;
             continue;
         }
 
         int utf8SequenceLength = inlineUTF8SequenceLengthNonASCII(*data);
-        dataLength += utf8SequenceLength;
 
-        if (!dataEnd) {
-            for (int i = 1; i < utf8SequenceLength; ++i) {
-                if (!data[i])
-                    return 0;
-            }
-        } else if (dataEnd - data < utf8SequenceLength)
-            return 0;
+        if (dataEnd - data < utf8SequenceLength)
+            return false;
 
         if (!isLegalUTF8(reinterpret_cast<const unsigned char*>(data), utf8SequenceLength))
             return 0;
@@ -363,17 +355,6 @@ static inline unsigned calculateStringHashAndLengthFromUTF8Internal(const char* 
     }
 
     return stringHasher.hash();
-}
-
-unsigned calculateStringHashFromUTF8(const char* data, const char* dataEnd, unsigned& utf16Length)
-{
-    unsigned dataLength;
-    return calculateStringHashAndLengthFromUTF8Internal(data, dataEnd, dataLength, utf16Length);
-}
-
-unsigned calculateStringHashAndLengthFromUTF8(const char* data, unsigned& dataLength, unsigned& utf16Length)
-{
-    return calculateStringHashAndLengthFromUTF8Internal(data, 0, dataLength, utf16Length);
 }
 
 bool equalUTF16WithUTF8(const UChar* a, const UChar* aEnd, const char* b, const char* bEnd)
