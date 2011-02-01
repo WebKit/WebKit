@@ -226,11 +226,6 @@ using namespace HTMLNames;
 // for dual G5s. :)
 static const int cLayoutScheduleThreshold = 250;
 
-// These functions can't have internal linkage because they are used as template arguments.
-bool keyMatchesId(AtomicStringImpl*, Element*);
-bool keyMatchesMapName(AtomicStringImpl*, Element*);
-bool keyMatchesLowercasedMapName(AtomicStringImpl*, Element*);
-
 // DOM Level 2 says (letters added):
 //
 // a) Name start characters must have one of the categories Ll, Lu, Lo, Lt, Nl.
@@ -505,12 +500,6 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML, con
 #if ENABLE(XHTMLMP)
     m_shouldProcessNoScriptElement = !(m_frame && m_frame->script()->canExecuteScripts(NotAboutToExecuteScript));
 #endif
-}
-
-inline void Document::DocumentOrderedMap::clear()
-{
-    m_map.clear();
-    m_duplicateCounts.clear();
 }
 
 void Document::removedLastRef()
@@ -995,87 +984,11 @@ PassRefPtr<Element> Document::createElementNS(const String& namespaceURI, const 
     return createElement(qName, false);
 }
 
-inline void Document::DocumentOrderedMap::add(AtomicStringImpl* key, Element* element)
-{
-    ASSERT(key);
-    ASSERT(element);
-
-    if (!m_duplicateCounts.contains(key)) {
-        // Fast path. The key is not already in m_duplicateCounts, so we assume that it's
-        // also not already in m_map and try to add it. If that add succeeds, we're done.
-        pair<Map::iterator, bool> addResult = m_map.add(key, element);
-        if (addResult.second)
-            return;
-
-        // The add failed, so this key was already cached in m_map.
-        // There are multiple elements with this key. Remove the m_map
-        // cache for this key so get searches for it next time it is called.
-        m_map.remove(addResult.first);
-        m_duplicateCounts.add(key);
-    } else {
-        // There are multiple elements with this key. Remove the m_map
-        // cache for this key so get will search for it next time it is called.
-        Map::iterator cachedItem = m_map.find(key);
-        if (cachedItem != m_map.end()) {
-            m_map.remove(cachedItem);
-            m_duplicateCounts.add(key);
-        }
-    }
-
-    m_duplicateCounts.add(key);
-}
-
-inline void Document::DocumentOrderedMap::remove(AtomicStringImpl* key, Element* element)
-{
-    ASSERT(key);
-    ASSERT(element);
-
-    m_map.checkConsistency();
-    Map::iterator cachedItem = m_map.find(key);
-    if (cachedItem != m_map.end() && cachedItem->second == element)
-        m_map.remove(cachedItem);
-    else
-        m_duplicateCounts.remove(key);
-}
-
-template<bool keyMatches(AtomicStringImpl*, Element*)> inline Element* Document::DocumentOrderedMap::get(AtomicStringImpl* key, const Document* document) const
-{
-    ASSERT(key);
-
-    m_map.checkConsistency();
-
-    Element* element = m_map.get(key);
-    if (element)
-        return element;
-
-    if (m_duplicateCounts.contains(key)) {
-        // We know there's at least one node that matches; iterate to find the first one.
-        for (Node* node = document->firstChild(); node; node = node->traverseNextNode()) {
-            if (!node->isElementNode())
-                continue;
-            element = static_cast<Element*>(node);
-            if (!keyMatches(key, element))
-                continue;
-            m_duplicateCounts.remove(key);
-            m_map.set(key, element);
-            return element;
-        }
-        ASSERT_NOT_REACHED();
-    }
-
-    return 0;
-}
-
-inline bool keyMatchesId(AtomicStringImpl* key, Element* element)
-{
-    return element->hasID() && element->getIdAttribute().impl() == key;
-}
-
 Element* Document::getElementById(const AtomicString& elementId) const
 {
     if (elementId.isEmpty())
         return 0;
-    return m_elementsById.get<keyMatchesId>(elementId.impl(), this);
+    return m_elementsById.getElementById(elementId.impl(), this);
 }
 
 String Document::readyState() const
@@ -3900,16 +3813,6 @@ void Document::removeImageMap(HTMLMapElement* imageMap)
     m_imageMapsByName.remove(name, imageMap);
 }
 
-inline bool keyMatchesMapName(AtomicStringImpl* key, Element* element)
-{
-    return element->hasTagName(mapTag) && static_cast<HTMLMapElement*>(element)->getName().impl() == key;
-}
-
-inline bool keyMatchesLowercasedMapName(AtomicStringImpl* key, Element* element)
-{
-    return element->hasTagName(mapTag) && static_cast<HTMLMapElement*>(element)->getName().lower().impl() == key;
-}
-
 HTMLMapElement* Document::getImageMap(const String& url) const
 {
     if (url.isNull())
@@ -3917,8 +3820,8 @@ HTMLMapElement* Document::getImageMap(const String& url) const
     size_t hashPos = url.find('#');
     String name = (hashPos == notFound ? url : url.substring(hashPos + 1)).impl();
     if (isHTMLDocument())
-        return static_cast<HTMLMapElement*>(m_imageMapsByName.get<keyMatchesLowercasedMapName>(AtomicString(name.lower()).impl(), this));
-    return static_cast<HTMLMapElement*>(m_imageMapsByName.get<keyMatchesMapName>(AtomicString(name).impl(), this));
+        return static_cast<HTMLMapElement*>(m_imageMapsByName.getElementByLowercasedMapName(AtomicString(name.lower()).impl(), this));
+    return static_cast<HTMLMapElement*>(m_imageMapsByName.getElementByMapName(AtomicString(name).impl(), this));
 }
 
 void Document::setDecoder(PassRefPtr<TextResourceDecoder> decoder)

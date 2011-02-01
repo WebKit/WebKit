@@ -1,3 +1,42 @@
+2011-02-01  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Bug 53289 - DOM: Move DocumentOrderedMap from Document into separate files
+        https://bugs.webkit.org/show_bug.cgi?id=53289
+
+        Moving the nested class DocumentOrderedMap from Document into separate files,
+        updating code where necessary.
+
+        No new tests. (refactoring)
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUMakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::getElementById):
+        (WebCore::Document::getImageMap):
+        * dom/Document.h:
+        * dom/DocumentOrderedMap.cpp: Added.
+        (WebCore::keyMatchesId):
+        (WebCore::keyMatchesMapName):
+        (WebCore::keyMatchesLowercasedMapName):
+        (WebCore::DocumentOrderedMap::clear):
+        (WebCore::DocumentOrderedMap::add):
+        (WebCore::DocumentOrderedMap::remove):
+        (WebCore::DocumentOrderedMap::get):
+        (WebCore::DocumentOrderedMap::getElementById):
+        (WebCore::DocumentOrderedMap::getElementByMapName):
+        (WebCore::DocumentOrderedMap::getElementByLowercasedMapName):
+        * dom/DocumentOrderedMap.h: Added.
+        (WebCore::DocumentOrderedMap::contains):
+        (WebCore::DocumentOrderedMap::containsMultiple):
+        * dom/DOMAllInOne.cpp:
+
 2011-02-01  Naoki Takano  <takano.naoki@gmail.com>
 
         Reviewed by Darin Fisher.

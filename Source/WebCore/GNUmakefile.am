@@ -1167,6 +1167,8 @@ webcore_sources += \
 	Source/WebCore/dom/DocumentMarkerController.cpp \
 	Source/WebCore/dom/DocumentMarkerController.h \
 	Source/WebCore/dom/DocumentMarker.h \
+	Source/WebCore/dom/DocumentOrderedMap.cpp \
+	Source/WebCore/dom/DocumentOrderedMap.h \
 	Source/WebCore/dom/DocumentParser.cpp \
 	Source/WebCore/dom/DocumentParser.h \
 	Source/WebCore/dom/DocumentTiming.h \

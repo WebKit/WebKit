@@ -121,6 +121,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	dom/DocumentFragment.cpp \
 	dom/DocumentMarkerController.cpp \
 	dom/DocumentParser.cpp \
+	dom/DocumentOrderedMap.cpp \
 	dom/DocumentType.cpp \
 	dom/DynamicNodeList.cpp \
 	dom/EditingText.cpp \
