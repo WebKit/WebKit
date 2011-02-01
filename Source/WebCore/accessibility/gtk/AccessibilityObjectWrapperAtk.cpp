@@ -63,6 +63,7 @@
 #include "TextEncoding.h"
 #include "TextIterator.h"
 #include "WebKitAccessibleHyperlink.h"
+#include "visible_units.h"
 
 #include <atk/atk.h>
 #include <glib.h>
@@ -2489,8 +2490,19 @@ AccessibilityObject* objectAndOffsetUnignored(AccessibilityObject* coreObject, i
 
     Node* node = realObject->node();
     if (node) {
-        RefPtr<Range> range = Range::create(node->document(), firstPositionInNode(node), realObject->selection().end());
-        offset = TextIterator::rangeLength(range.get());
+        VisiblePosition startPosition = VisiblePosition(node, 0, DOWNSTREAM);
+        VisiblePosition endPosition = realObject->selection().visibleEnd();
+
+        if (startPosition == endPosition)
+            offset = 0;
+        else if (!isStartOfLine(endPosition)) {
+            RefPtr<Range> range = makeRange(startPosition, endPosition.previous());
+            offset = TextIterator::rangeLength(range.get()) + 1;
+        } else {
+            RefPtr<Range> range = makeRange(startPosition, endPosition);
+            offset = TextIterator::rangeLength(range.get());
+        }
+
     }
 
     return realObject;

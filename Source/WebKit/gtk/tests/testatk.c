@@ -368,6 +368,12 @@ static void testWebkitAtkCaretOffsetsAndExtranousWhiteSpaces()
     gint caretOffset = atk_text_get_caret_offset(textObject);
     g_assert_cmpint(caretOffset, ==, characterCount - 1);
 
+    result = atk_text_set_caret_offset(textObject, characterCount);
+    g_assert_cmpint(result, ==, TRUE);
+
+    caretOffset = atk_text_get_caret_offset(textObject);
+    g_assert_cmpint(caretOffset, ==, characterCount);
+
     g_object_unref(webView);
 }
 

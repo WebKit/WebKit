@@ -1,3 +1,18 @@
+2011-02-01  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Caret Offset is one off at the end of wrapped lines
+        https://bugs.webkit.org/show_bug.cgi?id=53300
+
+        Consider linebreaks as special cases.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (objectAndOffsetUnignored): In order to avoid getting wrong values
+        when around linebreaks, we need to workaround this by explicitly
+        avoiding those '\n' text nodes from affecting the result of
+        calling to TextIterator:rangeLength().
+
 2011-02-01  Roland Steiner  <rolandsteiner@chromium.org>
 
         Unreviewed, rolling out r77229.
