@@ -551,8 +551,6 @@ void handleLinkClick(Event* event, Document* document, const String& url, const 
     Frame* frame = document->frame();
     if (!frame)
         return;
-    // FIXME: This seems wrong.  Why are we manufactuing a user gesture?
-    UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
     frame->loader()->urlSelected(document->completeURL(url), target, event, false, false, hideReferrer ? NoReferrer : SendReferrer);
 }
 

@@ -1,0 +1,32 @@
+<html> 
+    <head>
+        <link rel="stylesheet" href="../js/resources/js-test-style.css">
+        <script src="../js/resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <a id=test href="javascript:popup()">test</a>
+        <div id="console"></div>
+        <script> 
+            var win;
+            function popup() {
+                win = window.open('about:blank','blank','height=200,width=200');
+                shouldBeUndefined("win");
+            }
+
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.setCanOpenWindows();
+                layoutTestController.setPopupBlockingEnabled(true);
+                layoutTestController.setCloseRemainingWindowsWhenComplete(true);
+                layoutTestController.waitUntilDone();
+            }
+
+            clickEvent = document.createEvent("MouseEvents");
+            clickEvent.initEvent("click", true, true, document.defaultView, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+            document.getElementById("test").dispatchEvent(clickEvent);
+
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        </script> 
+    </body> 
+</html>
