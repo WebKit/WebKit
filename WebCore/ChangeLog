@@ -1,5 +1,26 @@
 2011-01-31  Mark Rowe  <mrowe@apple.com>
 
+        Merge r71724.
+
+    2010-11-09  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fieldsets avoid floats. Legend elements are expected to have their parent
+        as fieldset. When this not the case, floats get added incorrectly added to the
+        legend blocks. This patch tries to prevent those floats addition.
+        https://bugs.webkit.org/show_bug.cgi?id=49214
+
+        Test: fast/blockflow/overhanging-float-legend-crash.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::avoidsFloats):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::isLegend):
+        * rendering/RenderObject.h:
+
+2011-01-31  Mark Rowe  <mrowe@apple.com>
+
         Merge r71686.
 
     2010-11-09  Abhishek Arya  <inferno@chromium.org>

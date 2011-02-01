@@ -2832,7 +2832,7 @@ bool RenderBox::shrinkToAvoidFloats() const
 
 bool RenderBox::avoidsFloats() const
 {
-    return isReplaced() || hasOverflowClip() || isHR();
+    return isReplaced() || hasOverflowClip() || isHR() || isLegend();
 }
 
 void RenderBox::addShadowOverflow()

@@ -310,6 +310,7 @@ public:
     bool isRoot() const { return document()->documentElement() == m_node; }
     bool isBody() const;
     bool isHR() const;
+    bool isLegend() const;
 
     bool isHTMLMarquee() const;
 
