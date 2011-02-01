@@ -40,6 +40,7 @@ public:
     void setDisabled(bool disabled) { m_disabled = disabled; styleSheetChanged(); }
 
     Node* ownerNode() const { return m_parentNode; }
+    void clearOwnerNode() { m_parentNode = 0; }
     StyleSheet *parentStyleSheet() const;
 
     // Note that href is the URL that started the redirect chain that led to

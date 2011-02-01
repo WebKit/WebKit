@@ -31,6 +31,9 @@ namespace WebCore {
 class HTMLStyleElement : public HTMLElement, public StyleElement {
 public:
     HTMLStyleElement(const QualifiedName&, Document*, bool createdByParser);
+    virtual ~HTMLStyleElement();
+
+    using StyleElement::sheet;
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 1; }
@@ -55,8 +58,6 @@ public:
 
     virtual const AtomicString& type() const;
     void setType(const AtomicString&);
-
-    StyleSheet* sheet();
 
     virtual void setLoading(bool loading) { m_loading = loading; }
 

@@ -43,6 +43,12 @@ SVGStyleElement::SVGStyleElement(const QualifiedName& tagName, Document* doc, bo
 {
 }
 
+SVGStyleElement::~SVGStyleElement()
+{
+    if (m_sheet)
+        m_sheet->clearOwnerNode();
+}
+
 const AtomicString& SVGStyleElement::type() const
 {
     DEFINE_STATIC_LOCAL(const AtomicString, defaultValue, ("text/css"));
@@ -115,11 +121,6 @@ void SVGStyleElement::childrenChanged(bool changedByParser, Node* beforeChange, 
 {
     SVGElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
     StyleElement::process(this);
-}
-
-StyleSheet* SVGStyleElement::sheet()
-{
-    return StyleElement::sheet(this);
 }
 
 bool SVGStyleElement::sheetLoaded()

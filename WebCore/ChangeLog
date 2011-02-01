@@ -1,5 +1,68 @@
 2011-02-01  Mark Rowe  <mrowe@apple.com>
 
+        Merge r71767.
+
+    2010-11-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45205
+        <rdar://problem/8391455> Detached elements shouldn't have style sheets.
+
+        Tests: fast/dom/StyleSheet/detached-style-2.html
+               fast/dom/StyleSheet/detached-style-pi.xhtml
+               fast/dom/StyleSheet/detached-style.html
+               fast/dom/StyleSheet/detached-style-pi-2.xhtml
+
+        * bindings/js/JSStyleSheetCustom.cpp: (WebCore::JSStyleSheet::markChildren):
+        There is no longer a need to mark owner nodes - StyleSheet->ownerNode() is only non-null when
+        the node is in document.
+
+        * css/StyleSheet.cpp: (WebCore::StyleSheet::StyleSheet): Added an assertion checking that
+        all nodes that can be StyleSheet parents have been verified.
+
+        * css/StyleSheet.h: (WebCore::StyleSheet::clearOwnerNode): Added.
+
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::~ProcessingInstruction): Clear stylesheet's owner node. This
+        shouldn't have observable effect, since a processing instruction that is in document can only
+        be destroyed with document, and a reachable stylsheet keeps document alive.
+        (WebCore::ProcessingInstruction::removedFromDocument): Clear the relationship between node and style sheet when removed.
+        (WebCore::ProcessingInstruction::setCSSStyleSheet): If the element was removed during load, we still
+        don't want to create a style sheet.
+
+        * dom/StyleElement.cpp:
+        (WebCore::StyleElement::sheet): There is no reason for lazy creation. It was a wrong fix for
+        bug 14462, whose regression test still passes.
+        (WebCore::StyleElement::removedFromDocument): Clear the relationship between node and style sheet when removed.
+        (WebCore::StyleElement::finishParsingChildren): Don't call sheet(), it doens't have side effects any more.
+        (WebCore::StyleElement::createSheet): Assert that the element is in document. We never want
+        to create a style sheet for an element that isn't.
+
+        * dom/StyleElement.h: (WebCore::StyleElement::sheet): Made implementation inline, now that
+        it's a simple getter.
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::~HTMLLinkElement): Clear stylesheet's owner node.
+        (WebCore::HTMLLinkElement::process): Assert that there is no style sheet lingering for any reason.
+        (WebCore::HTMLLinkElement::removedFromDocument): Clear the relationship between node and style sheet when removed.
+        (WebCore::HTMLLinkElement::setCSSStyleSheet): If the element was removed during load, we still
+        don't want to create a style sheet.
+
+        * html/HTMLStyleElement.cpp: (WebCore::HTMLStyleElement::~HTMLStyleElement):
+        * html/HTMLStyleElement.h:
+        * svg/SVGStyleElement.cpp: (WebCore::SVGStyleElement::~SVGStyleElement):
+        * svg/SVGStyleElement.h:
+        Clear stylesheet's owner node. As above, this shouldn't have observable effect.
+
+        * xml/XSLTProcessor.h:
+        * xml/XSLTProcessor.cpp: (WebCore::XSLTProcessor::~XSLTProcessor):
+        * dom/Document.cpp: (WebCore::Document::~Document):
+        * css/CSSParser.cpp: (WebCore::CSSParser::parseSelector):
+        Assert that stylesheet won't outlive its owner node. We don't really use refcounting here.
+
+2011-02-01  Mark Rowe  <mrowe@apple.com>
+
         Merge r73620.
 
     2010-12-09  Abhishek Arya  <inferno@chromium.org>

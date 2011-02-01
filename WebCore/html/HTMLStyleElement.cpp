@@ -40,6 +40,12 @@ HTMLStyleElement::HTMLStyleElement(const QualifiedName& tagName, Document* doc, 
     ASSERT(hasTagName(styleTag));
 }
 
+HTMLStyleElement::~HTMLStyleElement()
+{
+    if (m_sheet)
+        m_sheet->clearOwnerNode();
+}
+
 // other stuff...
 void HTMLStyleElement::parseMappedAttribute(MappedAttribute *attr)
 {
@@ -80,11 +86,6 @@ void HTMLStyleElement::childrenChanged(bool changedByParser, Node* beforeChange,
     if (!changedByParser)
         StyleElement::process(this);
     HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
-}
-
-StyleSheet* HTMLStyleElement::sheet()
-{
-    return StyleElement::sheet(this);
 }
 
 bool HTMLStyleElement::isLoading() const

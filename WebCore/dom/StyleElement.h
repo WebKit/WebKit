@@ -32,7 +32,7 @@ public:
     virtual ~StyleElement() {}
 
 protected:
-    StyleSheet* sheet(Element*);
+    StyleSheet* sheet() { return m_sheet.get(); }
 
     virtual void setLoading(bool) {}
 
