@@ -20,7 +20,7 @@
 
 module core {
 
-    interface ProcessingInstruction : Node {
+    interface [CustomMarkFunction] ProcessingInstruction : Node {
 
         // DOM Level 1
 

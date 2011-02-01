@@ -36,8 +36,10 @@
 #include "HTMLCanvasElement.h"
 #include "HTMLFrameElementBase.h"
 #include "HTMLImageElement.h"
+#include "HTMLLinkElement.h"
 #include "HTMLNames.h"
 #include "HTMLScriptElement.h"
+#include "HTMLStyleElement.h"
 #include "JSDOMCoreException.h"
 #include "JSDOMWindowCustom.h"
 #include "JSDebugWrapperSet.h"
@@ -48,6 +50,7 @@
 #include "JSXMLHttpRequestException.h"
 #include "KURL.h"
 #include "MessagePort.h"
+#include "ProcessingInstruction.h"
 #include "RangeException.h"
 #include "ScriptCachedFrameData.h"
 #include "ScriptController.h"
@@ -219,7 +222,7 @@ void cacheDOMNodeWrapper(JSC::ExecState* exec, Document* document, Node* node, J
 
 static inline bool isObservableThroughDOM(JSNode* jsNode, DOMWrapperWorld* world)
 {
-    // Certain conditions implicitly make a JS DOM node wrapper observable
+    // Certain conditions implicitly make existence of a JS DOM node wrapper observable
     // through the DOM, even if no explicit reference to it remains.
 
     Node* node = jsNode->impl();
@@ -241,19 +244,22 @@ static inline bool isObservableThroughDOM(JSNode* jsNode, DOMWrapperWorld* world
         // those objects through the DOM must reflect those properties.
         // FIXME: It would be better if this logic could be in the node next to
         // the custom markChildren functions rather than here.
+        // Note that for some compound objects like stylesheets and CSSStyleDeclarations,
+        // we don't descend to check children for custom properties, and just conservatively
+        // keep the node wrappers protecting them alive.
         if (node->isElementNode()) {
             if (NamedNodeMap* attributes = static_cast<Element*>(node)->attributeMap()) {
                 if (DOMObject* wrapper = world->m_wrappers.uncheckedGet(attributes)) {
+                    // FIXME: This check seems insufficient, because NamedNodeMap items can have custom properties themselves.
+                    // Maybe it would be OK to just keep the wrapper alive, as it is done for CSSOM objects below.
                     if (wrapper->hasCustomProperties())
                         return true;
                 }
             }
             if (node->isStyledElement()) {
                 if (CSSMutableStyleDeclaration* style = static_cast<StyledElement*>(node)->inlineStyleDecl()) {
-                    if (DOMObject* wrapper = world->m_wrappers.uncheckedGet(style)) {
-                        if (wrapper->hasCustomProperties())
-                            return true;
-                    }
+                    if (world->m_wrappers.uncheckedGet(style))
+                        return true;
                 }
             }
             if (static_cast<Element*>(node)->hasTagName(canvasTag)) {
@@ -263,6 +269,21 @@ static inline bool isObservableThroughDOM(JSNode* jsNode, DOMWrapperWorld* world
                             return true;
                     }
                 }
+            } else if (static_cast<Element*>(node)->hasTagName(linkTag)) {
+                if (StyleSheet* sheet = static_cast<HTMLLinkElement*>(node)->sheet()) {
+                    if (world->m_wrappers.uncheckedGet(sheet))
+                        return true;
+                }
+            } else if (static_cast<Element*>(node)->hasTagName(styleTag)) {
+                if (StyleSheet* sheet = static_cast<HTMLStyleElement*>(node)->sheet()) {
+                    if (world->m_wrappers.uncheckedGet(sheet))
+                        return true;
+                }
+            }
+        } else if (node->nodeType() == Node::PROCESSING_INSTRUCTION_NODE) {
+            if (StyleSheet* sheet = static_cast<ProcessingInstruction*>(node)->sheet()) {
+                if (world->m_wrappers.uncheckedGet(sheet))
+                    return true;
             }
         }
     } else {

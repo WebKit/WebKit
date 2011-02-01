@@ -1,5 +1,53 @@
 2011-01-31  Mark Rowe  <mrowe@apple.com>
 
+        Merge r72344.
+
+    2010-11-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49762
+        Stylesheet wrappers are not GC protected
+
+        Tests: fast/dom/StyleSheet/gc-inline-style-cssvalues.html
+               fast/dom/StyleSheet/gc-styleheet-wrapper.xhtml
+
+        * Android.jscbindings.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        Added the new custom bindings files.
+
+        * WebCore.xcodeproj/project.pbxproj: Added the new custom bindings files. Also, added some
+        existing headers.
+
+        * bindings/js/JSDOMBinding.cpp: (WebCore::isObservableThroughDOM): If a node has a stylesheet
+        with a wrapper, it may be the only thing having the stylesheet's wrapper alive, so its own
+        wrapper has to stay alive, too.
+        While at it, also fixed the same issue with inline style declarations.
+        Also, added a FIXME comment about one with attribute nodes. We implement a less conservative
+        approach for nodes, so perhaps fixing this is not as easy as removing a hasCustomProperties()
+        check.
+
+        * bindings/js/JSHTMLLinkElementCustom.cpp: Added.
+        (WebCore::JSHTMLLinkElement::markChildren):
+        * bindings/js/JSHTMLStyleElementCustom.cpp: Added.
+        (WebCore::JSHTMLStyleElement::markChildren):
+        * bindings/js/JSProcessingInstructionCustom.cpp: Added.
+        (WebCore::JSProcessingInstruction::markChildren):
+        Mark stylesheets owned by these nodes. As always in markChildren() functions, we do it
+        conservatively, without checking whether the stylesheet or any of its children have custom
+        properties.
+
+        * dom/ProcessingInstruction.idl:
+        * html/HTMLLinkElement.idl:
+        * html/HTMLStyleElement.idl:
+        These have custom mark functions now.
+
+2011-01-31  Mark Rowe  <mrowe@apple.com>
+
         Merge r72301.
 
     2010-11-18  Alexey Proskuryakov  <ap@apple.com>

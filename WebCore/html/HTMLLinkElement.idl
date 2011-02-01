@@ -20,7 +20,7 @@
 
 module html {
 
-    interface HTMLLinkElement : HTMLElement {
+    interface [CustomMarkFunction] HTMLLinkElement : HTMLElement {
         attribute  boolean              disabled;
         attribute  [ConvertNullToNullString] DOMString            charset;
         attribute  [ConvertNullToNullString] DOMString            href;

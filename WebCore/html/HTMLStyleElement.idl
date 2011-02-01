@@ -20,7 +20,7 @@
 
 module html {
 
-    interface HTMLStyleElement : HTMLElement {
+    interface [CustomMarkFunction] HTMLStyleElement : HTMLElement {
         attribute  boolean              disabled;
         attribute  [ConvertNullToNullString] DOMString            media;
         attribute  [ConvertNullToNullString] DOMString            type;
