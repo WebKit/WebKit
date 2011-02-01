@@ -685,14 +685,14 @@ void WebFrameImpl::forms(WebVector<WebFormElement>& results) const
     }
 
     WebVector<WebFormElement> temp(formCount);
-    unsigned i = 0;
-    for (size_t sourceIndex = 0; i < forms->length(); ++sourceIndex) {
+    size_t j = 0;
+    for (size_t sourceIndex = 0; j < forms->length(); ++sourceIndex) {
         Node* node = forms->item(sourceIndex);
         // Strange but true, sometimes item can be 0.
         if (node && node->isHTMLElement())
-            temp[i++] = static_cast<HTMLFormElement*>(node);
+            temp[j++] = static_cast<HTMLFormElement*>(node);
     }
-    ASSERT(i == formCount);
+    ASSERT(j == formCount);
     results.swap(temp);
 }
 

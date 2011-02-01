@@ -222,14 +222,14 @@ inline int clampToPositiveInteger(double d)
 
 inline int clampToInteger(float d)
 {
-    const float minIntAsFloat = std::numeric_limits<int>::min();
-    const float maxIntAsFloat = std::numeric_limits<int>::max();
+    const float minIntAsFloat = static_cast<float>(std::numeric_limits<int>::min());
+    const float maxIntAsFloat = static_cast<float>(std::numeric_limits<int>::max());
     return static_cast<int>(std::max(std::min(d, maxIntAsFloat), minIntAsFloat));
 }
 
 inline int clampToPositiveInteger(float d)
 {
-    const float maxIntAsFloat = std::numeric_limits<int>::max();
+    const float maxIntAsFloat = static_cast<float>(std::numeric_limits<int>::max());
     return static_cast<int>(std::max<float>(std::min(d, maxIntAsFloat), 0));
 }
 

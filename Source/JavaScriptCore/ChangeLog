@@ -1,3 +1,16 @@
+2011-02-01  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix some Visual Studio compiler warnings.
+        https://bugs.webkit.org/show_bug.cgi?id=53476
+
+        * wtf/MathExtras.h:
+        (clampToInteger):
+        (clampToPositiveInteger):
+        * wtf/ThreadingWin.cpp:
+        (WTF::absoluteTimeToWaitTimeoutInterval):
+
 2011-01-31  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam Weinig.

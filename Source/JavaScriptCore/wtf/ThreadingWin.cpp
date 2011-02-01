@@ -491,7 +491,7 @@ DWORD absoluteTimeToWaitTimeoutInterval(double absoluteTime)
     if (absoluteTime - currentTime > static_cast<double>(INT_MAX) / 1000.0)
         return INFINITE;
 
-    return (absoluteTime - currentTime) * 1000;
+    return static_cast<DWORD>((absoluteTime - currentTime) * 1000.0);
 }
 
 } // namespace WTF

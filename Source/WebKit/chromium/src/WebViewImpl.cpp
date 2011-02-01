@@ -1033,7 +1033,7 @@ void WebViewImpl::doPixelReadbackToCanvas(WebCanvas* canvas, const IntRect& rect
         m_layerRenderer->getFramebufferPixels(pixelArray->data(), invertRect);
         imageBuffer->putPremultipliedImageData(pixelArray.get(), rect.size(), IntRect(IntPoint(), rect.size()), IntPoint());
         gc.save();
-        gc.translate(FloatSize(0.0f, bitmapHeight));
+        gc.translate(IntSize(0, bitmapHeight));
         gc.scale(FloatSize(1.0f, -1.0f));
         // Use invertRect in next line, so that transform above inverts it back to
         // desired destination rect.
@@ -1616,7 +1616,7 @@ double WebViewImpl::setZoomLevel(bool textOnly, double zoomLevel)
     if (pluginContainer)
         pluginContainer->plugin()->setZoomLevel(m_zoomLevel, textOnly);
     else {
-        double zoomFactor = zoomLevelToZoomFactor(m_zoomLevel);
+        float zoomFactor = static_cast<float>(zoomLevelToZoomFactor(m_zoomLevel));
         if (textOnly)
             frame->setPageAndTextZoomFactors(1, zoomFactor);
         else
@@ -2373,7 +2373,7 @@ public:
             return;
         FrameView* view = page->mainFrame()->view();
 
-        context.translate(view->scrollX(), view->scrollY());
+        context.translate(static_cast<float>(view->scrollX()), static_cast<float>(view->scrollY()));
         IntRect windowRect = view->contentsToWindow(contentRect);
         view->paintScrollbars(&context, windowRect);
     }

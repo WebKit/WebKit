@@ -95,7 +95,7 @@ int WebScrollbarImpl::value() const
 
 void WebScrollbarImpl::setValue(int position)
 {
-    WebCore::ScrollableArea::scrollToOffsetWithoutAnimation(m_scrollbar->orientation(), position);
+    WebCore::ScrollableArea::scrollToOffsetWithoutAnimation(m_scrollbar->orientation(), static_cast<float>(position));
 }
 
 void WebScrollbarImpl::setDocumentSize(int size)
