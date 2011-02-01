@@ -1,5 +1,15 @@
 2011-02-01  Mark Rowe  <mrowe@apple.com>
 
+        Merge r71769.
+
+    2010-11-10  Alexey Proskuryakov  <ap@apple.com>
+
+        Release build fix.
+
+        * css/StyleSheet.cpp: isAcceptableStyleSheetParent() is a debug-only function.
+
+2011-02-01  Mark Rowe  <mrowe@apple.com>
+
         Merge r71767.
 
     2010-11-08  Alexey Proskuryakov  <ap@apple.com>
