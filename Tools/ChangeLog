@@ -1,3 +1,15 @@
+2011-02-01  Scott Cameron  <sccameron@rim.com>
+
+        Reviewed by Daniel Bates.
+
+        Use Windows format for MinGW HTTPD path.
+        https://bugs.webkit.org/show_bug.cgi?id=53503
+
+        * Scripts/webkitperl/httpd.pm:
+          - Use single-quotes around MySys value for $httpdPath in getHTTPDPath()
+            so that we don't have to escape the space characters in the path. Also,
+            changed path to Windows-style path and removed FIXME comment.
+
 2011-02-01  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Andreas Kling.

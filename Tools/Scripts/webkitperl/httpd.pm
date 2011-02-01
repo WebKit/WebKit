@@ -79,9 +79,7 @@ sub getHTTPDPath
     if (isDebianBased()) {
         $httpdPath = "/usr/sbin/apache2";
     } elsif (isMsys()) {
-        # FIXME: We should write this without escaping the space character. Instead, the call
-        #        site should take responsibility for escaping the path.
-        $httpdPath = "/c/program\ files/apache\ software\ foundation/apache2.2/bin/httpd.exe";
+        $httpdPath = 'c:\program files\apache software foundation\apache2.2\bin\httpd.exe';
     } else {
         $httpdPath = "/usr/sbin/httpd";
     }
