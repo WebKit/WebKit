@@ -1,3 +1,10 @@
+2011-02-01  Adam Roben  <aroben@apple.com>
+
+        Fix linker warnings in Release_LTCG builds
+
+        * WebCore.vcproj/WebCore.vcproj: Exclude EventNames.cpp and EventTarget.cpp from all
+        configurations, since they get pulled in via DOMAllInOne.cpp.
+
 2011-02-01  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
