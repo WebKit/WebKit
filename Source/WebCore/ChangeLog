@@ -1,3 +1,16 @@
+2011-02-01  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Do not add a node in the document's stylesheet candidate node list if the
+        node is already removed from document.
+        https://bugs.webkit.org/show_bug.cgi?id=53441
+
+        Test: fast/css/stylesheet-candidate-nodes-crash.xhtml
+
+        * dom/Document.cpp:
+        (WebCore::Document::addStyleSheetCandidateNode):
+
 2011-02-01  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Darin Adler.

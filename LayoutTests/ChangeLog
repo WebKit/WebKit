@@ -1,3 +1,14 @@
+2011-01-31  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Tests that a removed svg style element is not accessed again in document's
+        style recalc code and does not result in crash.
+        https://bugs.webkit.org/show_bug.cgi?id=53441
+
+        * fast/css/stylesheet-candidate-nodes-crash-expected.txt: Added.
+        * fast/css/stylesheet-candidate-nodes-crash.xhtml: Added.
+
 2011-02-01  Dimitri Glazkov  <dglazkov@chromium.org>
 
         More flakiness updates.

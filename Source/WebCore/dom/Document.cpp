@@ -2893,6 +2893,9 @@ void Document::styleSelectorChanged(StyleSelectorUpdateFlag updateFlag)
 
 void Document::addStyleSheetCandidateNode(Node* node, bool createdByParser)
 {
+    if (!node->inDocument())
+        return;
+    
     // Until the <body> exists, we have no choice but to compare document positions,
     // since styles outside of the body and head continue to be shunted into the head
     // (and thus can shift to end up before dynamically added DOM content that is also
