@@ -76,7 +76,7 @@ WebScrollbarImpl::~WebScrollbarImpl()
 
 void WebScrollbarImpl::setLocation(const WebRect& rect)
 {
-    WebCore::IntRect oldRect = m_scrollbar->frameRect();
+    IntRect oldRect = m_scrollbar->frameRect();
     m_scrollbar->setFrameRect(rect);
     if (WebRect(oldRect) != rect)
       m_scrollbar->invalidate();
@@ -95,7 +95,7 @@ int WebScrollbarImpl::value() const
 
 void WebScrollbarImpl::setValue(int position)
 {
-    WebCore::ScrollableArea::scrollToOffsetWithoutAnimation(m_scrollbar->orientation(), static_cast<float>(position));
+    ScrollableArea::scrollToOffsetWithoutAnimation(m_scrollbar->orientation(), static_cast<float>(position));
 }
 
 void WebScrollbarImpl::setDocumentSize(int size)
@@ -220,7 +220,7 @@ bool WebScrollbarImpl::onMouseWheel(const WebInputEvent& event)
             if (negative)
                 delta *= -1;
         }
-        WebCore::ScrollableArea::scroll((m_scrollbar->orientation() == HorizontalScrollbar) ? WebCore::ScrollLeft : WebCore::ScrollUp, WebCore::ScrollByPixel, delta);
+        ScrollableArea::scroll((m_scrollbar->orientation() == HorizontalScrollbar) ? WebCore::ScrollLeft : WebCore::ScrollUp, WebCore::ScrollByPixel, delta);
         return true;
     }
 
@@ -259,7 +259,7 @@ bool WebScrollbarImpl::onKeyDown(const WebInputEvent& event)
     WebCore::ScrollGranularity scrollGranularity;
     if (WebViewImpl::mapKeyCodeForScroll(keyCode, &scrollDirection, &scrollGranularity)) {
         // Will return false if scroll direction wasn't compatible with this scrollbar.
-        return WebCore::ScrollableArea::scroll(scrollDirection, scrollGranularity);
+        return ScrollableArea::scroll(scrollDirection, scrollGranularity);
     }
     return false;
 }
@@ -269,12 +269,12 @@ int WebScrollbarImpl::scrollSize(WebCore::ScrollbarOrientation orientation) cons
     return (orientation == m_scrollbar->orientation()) ? (m_scrollbar->totalSize() - m_scrollbar->visibleSize()) : 0;
 }
 
-int WebScrollbarImpl::scrollPosition(WebCore::Scrollbar*) const
+int WebScrollbarImpl::scrollPosition(Scrollbar*) const
 {
     return m_scrollOffset;
 }
 
-void WebScrollbarImpl::setScrollOffset(const WebCore::IntPoint& offset)
+void WebScrollbarImpl::setScrollOffset(const IntPoint& offset)
 {
     if (m_scrollbar->orientation() == HorizontalScrollbar)
         m_scrollOffset = offset.x();
@@ -284,7 +284,7 @@ void WebScrollbarImpl::setScrollOffset(const WebCore::IntPoint& offset)
     m_client->valueChanged(this);
 }
 
-void WebScrollbarImpl::invalidateScrollbarRect(WebCore::Scrollbar*, const WebCore::IntRect& rect)
+void WebScrollbarImpl::invalidateScrollbarRect(Scrollbar*, const IntRect& rect)
 {
     WebRect webrect(rect);
     webrect.x += m_scrollbar->x();
@@ -302,7 +302,7 @@ bool WebScrollbarImpl::scrollbarCornerPresent() const
     return false;
 }
 
-void WebScrollbarImpl::getTickmarks(Vector<WebCore::IntRect>& tickmarks) const
+void WebScrollbarImpl::getTickmarks(Vector<IntRect>& tickmarks) const
 {
     WebVector<WebRect> ticks;
     m_client->getTickmarks(const_cast<WebScrollbarImpl*>(this), &ticks);

@@ -141,13 +141,13 @@ void WebPopupMenuImpl::resize(const WebSize& newSize)
     m_size = newSize;
 
     if (m_widget) {
-      IntRect newGeometry(0, 0, m_size.width, m_size.height);
-      m_widget->setFrameRect(newGeometry);
+        IntRect newGeometry(0, 0, m_size.width, m_size.height);
+        m_widget->setFrameRect(newGeometry);
     }
 
     if (m_client) {
-      WebRect damagedRect(0, 0, m_size.width, m_size.height);
-      m_client->didInvalidateRect(damagedRect);
+        WebRect damagedRect(0, 0, m_size.width, m_size.height);
+        m_client->didInvalidateRect(damagedRect);
     }
 }
 

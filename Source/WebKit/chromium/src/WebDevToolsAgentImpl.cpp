@@ -64,23 +64,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 
-using WebCore::DocumentLoader;
-using WebCore::FrameLoader;
-using WebCore::InjectedScriptHost;
-using WebCore::InspectorArray;
-using WebCore::InspectorBackendDispatcher;
-using WebCore::InspectorController;
-using WebCore::InspectorInstrumentation;
-using WebCore::InspectorInstrumentationCookie;
-using WebCore::Node;
-using WebCore::Page;
-using WebCore::ResourceError;
-using WebCore::ResourceRequest;
-using WebCore::ResourceResponse;
-using WTF::String;
-using WebCore::V8DOMWrapper;
-using WebCore::V8Node;
-using WebCore::V8Proxy;
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -89,14 +73,14 @@ namespace {
 static const char kFrontendConnectedFeatureName[] = "frontend-connected";
 static const char kInspectorStateFeatureName[] = "inspector-state";
 
-class ClientMessageLoopAdapter : public WebCore::ScriptDebugServer::ClientMessageLoop {
+class ClientMessageLoopAdapter : public ScriptDebugServer::ClientMessageLoop {
 public:
     static void ensureClientMessageLoopCreated(WebDevToolsAgentClient* client)
     {
         if (s_instance)
             return;
         s_instance = new ClientMessageLoopAdapter(client->createClientMessageLoop());
-        WebCore::ScriptDebugServer::shared().setClientMessageLoop(s_instance);
+        ScriptDebugServer::shared().setClientMessageLoop(s_instance);
     }
 
     static void inspectedViewClosed(WebViewImpl* view)
@@ -109,7 +93,7 @@ public:
     {
         // Release render thread if necessary.
         if (s_instance && s_instance->m_running)
-            WebCore::ScriptDebugServer::shared().continueProgram();
+            ScriptDebugServer::shared().continueProgram();
     }
 
 private:
@@ -204,8 +188,8 @@ void WebDevToolsAgentImpl::attach()
     m_debuggerAgentImpl.set(
         new DebuggerAgentImpl(m_webViewImpl, this, m_client));
     WebCString debuggerScriptJs = m_client->debuggerScriptSource();
-    WebCore::ScriptDebugServer::shared().setDebuggerScriptSource(
-        WTF::String(debuggerScriptJs.data(), debuggerScriptJs.length()));
+    ScriptDebugServer::shared().setDebuggerScriptSource(
+        String(debuggerScriptJs.data(), debuggerScriptJs.length()));
     m_attached = true;
 }
 
@@ -249,7 +233,7 @@ void WebDevToolsAgentImpl::inspectElementAt(const WebPoint& point)
 void WebDevToolsAgentImpl::inspectNode(v8::Handle<v8::Value> node)
 {
     if (!V8Node::HasInstance(node))
-        V8Proxy::setDOMException(WebCore::TYPE_MISMATCH_ERR);
+        V8Proxy::setDOMException(TYPE_MISMATCH_ERR);
     else
         inspectorController()->inspect(V8Node::toNative(v8::Handle<v8::Object>::Cast(node)));
 }
@@ -262,14 +246,14 @@ void WebDevToolsAgentImpl::setRuntimeProperty(const WebString& name, const WebSt
     }
 }
 
-WebCore::InspectorController* WebDevToolsAgentImpl::inspectorController()
+InspectorController* WebDevToolsAgentImpl::inspectorController()
 {
     if (Page* page = m_webViewImpl->page())
         return page->inspectorController();
     return 0;
 }
 
-WebCore::Frame* WebDevToolsAgentImpl::mainFrame()
+Frame* WebDevToolsAgentImpl::mainFrame()
 {
     if (Page* page = m_webViewImpl->page())
         return page->mainFrame();
@@ -284,7 +268,7 @@ void WebDevToolsAgentImpl::identifierForInitialRequest(
     const WebURLRequest& request)
 {
     WebFrameImpl* webFrameImpl = static_cast<WebFrameImpl*>(webFrame);
-    WebCore::Frame* frame = webFrameImpl->frame();
+    Frame* frame = webFrameImpl->frame();
     DocumentLoader* loader = frame->loader()->activeDocumentLoader();
     InspectorInstrumentation::identifierForInitialRequest(frame, resourceId, loader, request.toResourceRequest());
 }
@@ -360,7 +344,7 @@ void WebDevToolsAgentImpl::storeSetting(const String& key, const String& value)
     m_webViewImpl->setInspectorSetting(key, value);
 }
 
-bool WebDevToolsAgentImpl::sendMessageToFrontend(const WTF::String& message)
+bool WebDevToolsAgentImpl::sendMessageToFrontend(const String& message)
 {
     WebDevToolsAgentImpl* devToolsAgent = static_cast<WebDevToolsAgentImpl*>(m_webViewImpl->devToolsAgent());
     if (!devToolsAgent)
@@ -370,7 +354,7 @@ bool WebDevToolsAgentImpl::sendMessageToFrontend(const WTF::String& message)
     return true;
 }
 
-void WebDevToolsAgentImpl::updateInspectorStateCookie(const WTF::String& state)
+void WebDevToolsAgentImpl::updateInspectorStateCookie(const String& state)
 {
     m_client->runtimePropertyChanged(kInspectorStateFeatureName, state);
 }
@@ -402,7 +386,7 @@ void WebDevToolsAgent::debuggerPauseScript()
 
 void WebDevToolsAgent::interruptAndDispatch(MessageDescriptor* d)
 {
-    class DebuggerTask : public WebCore::ScriptDebugServer::Task {
+    class DebuggerTask : public ScriptDebugServer::Task {
     public:
         DebuggerTask(WebDevToolsAgent::MessageDescriptor* descriptor) : m_descriptor(descriptor) { }
         virtual ~DebuggerTask() { }
@@ -414,7 +398,7 @@ void WebDevToolsAgent::interruptAndDispatch(MessageDescriptor* d)
     private:
         OwnPtr<WebDevToolsAgent::MessageDescriptor> m_descriptor;
     };
-    WebCore::ScriptDebugServer::interruptAndRun(new DebuggerTask(d));
+    ScriptDebugServer::interruptAndRun(new DebuggerTask(d));
 }
 
 bool WebDevToolsAgent::shouldInterruptForMessage(const WebString& message)
@@ -434,7 +418,7 @@ bool WebDevToolsAgent::shouldInterruptForMessage(const WebString& message)
 
 void WebDevToolsAgent::processPendingMessages()
 {
-    WebCore::ScriptDebugServer::shared().runPendingTasks();
+    ScriptDebugServer::shared().runPendingTasks();
 }
 
 void WebDevToolsAgent::setMessageLoopDispatchHandler(MessageLoopDispatchHandler handler)
