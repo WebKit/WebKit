@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div tabindex="0" id="text1">text</div>
+<img src='resources/cake.png' width=5000 height=5000>
+<br>
+<div tabindex="0" id="text2">text</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the WebKit generated scroll areas are correct.");
+
+    if (window.accessibilityController) {
+        
+        // Cause scroll position to be at the top.
+        document.getElementById("text1").focus();
+
+        var scroll = accessibilityController.rootElement;
+        var web = scroll.childAtIndex(0);
+        shouldBe("scroll.role", "'AXRole: AXScrollArea'");
+        shouldBe("web.role", "'AXRole: AXWebArea'");
+
+        var initialScrollY = scroll.y;
+
+        // Cause focus to scroll down.
+        document.getElementById("text2").focus();
+
+        // Since focus() should have scrolled down, the scroll.y should be greater than web.x
+        // and it should be greater than the initial scroll.y position.
+        shouldBeTrue("scroll.y > web.y");
+        shouldBeTrue("scroll.y > initialScrollY");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

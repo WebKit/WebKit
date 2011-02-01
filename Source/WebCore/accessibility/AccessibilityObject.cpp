@@ -718,6 +718,15 @@ unsigned AccessibilityObject::doAXLineForIndex(unsigned index)
 {
     return lineForPosition(visiblePositionForIndex(index, false));
 }
+    
+Document* AccessibilityObject::document() const
+{
+    FrameView* frameView = documentFrameView();
+    if (!frameView)
+        return 0;
+    
+    return frameView->frame()->document();
+}
 
 FrameView* AccessibilityObject::documentFrameView() const 
 { 

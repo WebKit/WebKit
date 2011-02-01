@@ -1,3 +1,13 @@
+2011-02-01  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: AXPosition of AXScrollArea is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=53511
+
+        * platform/mac/accessibility/webkit-scrollarea-position-expected.txt: Added.
+        * platform/mac/accessibility/webkit-scrollarea-position.html: Added.
+
 2011-02-01  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Added yet another expectations of flakiness.

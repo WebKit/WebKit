@@ -136,19 +136,19 @@ AccessibilityObject* AccessibilityScrollView::accessibilityHitTest(const IntPoin
     
     return webArea->accessibilityHitTest(point);
 }
-    
-Document* AccessibilityScrollView::document() const
-{
-    if (!m_scrollView->isFrameView())
-        return 0;
-    
-    return static_cast<FrameView*>(m_scrollView.get())->frame()->document();
-}
 
 IntRect AccessibilityScrollView::elementRect() const
 {
     return m_scrollView->frameRect();
 }
+
+FrameView* AccessibilityScrollView::documentFrameView() const
+{
+    if (!m_scrollView->isFrameView())
+        return 0;
+    
+    return static_cast<FrameView*>(m_scrollView.get());
+}    
 
 AccessibilityObject* AccessibilityScrollView::parentObject() const
 {

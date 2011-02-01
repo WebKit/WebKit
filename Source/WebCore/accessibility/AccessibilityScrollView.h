@@ -47,11 +47,11 @@ private:
     virtual bool isAccessibilityScrollView() const { return true; }
     virtual AccessibilityObject* scrollBar(AccessibilityOrientation) const;
     virtual void addChildren();
-    virtual Document* document() const;
     virtual AccessibilityObject* accessibilityHitTest(const IntPoint&) const;
     virtual const AccessibilityChildrenVector& children();
     virtual void updateChildrenIfNecessary();
     
+    virtual FrameView* documentFrameView() const;
     virtual IntRect elementRect() const;
     virtual AccessibilityObject* parentObject() const;
     
