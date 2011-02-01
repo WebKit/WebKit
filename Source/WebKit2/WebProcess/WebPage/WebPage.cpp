@@ -1837,7 +1837,7 @@ void WebPage::computePagesForPrinting(uint64_t frameID, const PrintInfo& printIn
 
     if (m_printContext) {
         resultPageRects = m_printContext->pageRects();
-        resultTotalScaleFactorForPrinting = m_printContext->computeAutomaticScaleFactor(printInfo.availablePaperWidth) * printInfo.pageSetupScaleFactor;
+        resultTotalScaleFactorForPrinting = m_printContext->computeAutomaticScaleFactor(FloatSize(printInfo.availablePaperWidth, printInfo.availablePaperHeight)) * printInfo.pageSetupScaleFactor;
     }
 
     // If we're asked to print, we should actually print at least a blank page.
