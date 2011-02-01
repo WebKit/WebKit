@@ -1,3 +1,16 @@
+2011-02-01  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by David Hyatt.
+
+        layoutTestController.counterValueForElementById does not return the correct value
+        https://bugs.webkit.org/show_bug.cgi?id=53037
+
+        * fast/css/counters/deep-before-expected.txt: Added.
+        * fast/css/counters/deep-before.html: Added.
+        This tests whether DumpRenderTree properly retrieves counters and
+        whether counters are properly set when the before pseudo element's
+        renderer is not a direct child of the generating element's renderer.
+
 2011-02-01  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Added more flakiness expectations from bots.

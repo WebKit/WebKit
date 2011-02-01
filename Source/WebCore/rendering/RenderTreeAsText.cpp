@@ -769,13 +769,12 @@ String counterValueForElement(Element* element)
     element->document()->updateLayout();
     TextStream stream;
     bool isFirstCounter = true;
-    // The counter renderers should be children of anonymous children
-    // (i.e., :before or :after pseudo-elements).
+    // The counter renderers should be children of :before or :after pseudo-elements.
     if (RenderObject* renderer = element->renderer()) {
-        for (RenderObject* child = renderer->firstChild(); child; child = child->nextSibling()) {
-            if (child->isAnonymous())
-                writeCounterValuesFromChildren(stream, child, isFirstCounter);
-        }
+        if (RenderObject* pseudoElement = renderer->beforePseudoElementRenderer())
+            writeCounterValuesFromChildren(stream, pseudoElement, isFirstCounter);
+        if (RenderObject* pseudoElement = renderer->afterPseudoElementRenderer())
+            writeCounterValuesFromChildren(stream, pseudoElement, isFirstCounter);
     }
     return stream.release();
 }
