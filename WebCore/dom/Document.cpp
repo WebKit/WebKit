@@ -1328,6 +1328,11 @@ void Document::unscheduleStyleRecalc()
     m_styleRecalcTimer.stop();
 }
 
+bool Document::isPendingStyleRecalc() const
+{
+    return m_styleRecalcTimer.isActive() && !m_inStyleRecalc;
+}
+
 void Document::styleRecalcTimerFired(Timer<Document>*)
 {
     updateStyleIfNeeded();

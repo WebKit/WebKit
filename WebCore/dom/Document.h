@@ -611,6 +611,7 @@ public:
     
     void scheduleStyleRecalc();
     void unscheduleStyleRecalc();
+    bool isPendingStyleRecalc() const;
     void styleRecalcTimerFired(Timer<Document>*);
 
     void attachNodeIterator(NodeIterator*);

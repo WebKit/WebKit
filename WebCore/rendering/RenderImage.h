@@ -55,6 +55,8 @@ protected:
     virtual Image* image(int /* width */ = 0, int /* height */ = 0) { return m_cachedImage ? m_cachedImage->image() : nullImage(); }
     virtual bool errorOccurred() const { return m_cachedImage && m_cachedImage->errorOccurred(); }
 
+    virtual void styleDidChange(StyleDifference, const RenderStyle*);
+
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
     virtual void paintIntoRect(GraphicsContext*, const IntRect&);
@@ -91,6 +93,9 @@ private:
     virtual IntSize imageSize(float multiplier) const { return m_cachedImage ? m_cachedImage->imageSize(multiplier) : IntSize(); }
     virtual WrappedImagePtr imagePtr() const { return m_cachedImage.get(); }
 
+    IntSize imageSizeForError(CachedImage*) const;
+    void imageDimensionsChanged(bool imageSizeChanged, const IntRect* = 0);
+
     int calcAspectRatioWidth() const;
     int calcAspectRatioHeight() const;
 
@@ -101,6 +106,7 @@ protected:
 private:
     // Text to display as long as the image isn't available.
     String m_altText;
+    bool m_needsToSetSizeForAltText;
 
     static Image* nullImage();
     
