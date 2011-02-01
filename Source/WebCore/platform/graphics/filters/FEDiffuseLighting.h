@@ -36,19 +36,19 @@ public:
     virtual ~FEDiffuseLighting();
 
     Color lightingColor() const;
-    void setLightingColor(const Color&);
+    bool setLightingColor(const Color&);
 
     float surfaceScale() const;
-    void setSurfaceScale(float);
+    bool setSurfaceScale(float);
 
     float diffuseConstant() const;
-    void setDiffuseConstant(float);
+    bool setDiffuseConstant(float);
 
     float kernelUnitLengthX() const;
-    void setKernelUnitLengthX(float);
+    bool setKernelUnitLengthX(float);
 
     float kernelUnitLengthY() const;
-    void setKernelUnitLengthY(float);
+    bool setKernelUnitLengthY(float);
 
     const LightSource* lightSource() const;
     void setLightSource(PassRefPtr<LightSource>);

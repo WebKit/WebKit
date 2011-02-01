@@ -37,10 +37,18 @@ public:
     }
 
     const FloatPoint3D& position() const { return m_position; }
+    bool setX(float);
+    bool setY(float);
+    bool setZ(float);
     const FloatPoint3D& direction() const { return m_direction; }
+    bool setPointsAtX(float);
+    bool setPointsAtY(float);
+    bool setPointsAtZ(float);
 
     float specularExponent() const { return m_specularExponent; }
+    bool setSpecularExponent(float);
     float limitingConeAngle() const { return m_limitingConeAngle; }
+    bool setLimitingConeAngle(float);
 
     virtual void initPaintingData(PaintingData&);
     virtual void updatePaintingData(PaintingData&, int x, int y, float z);

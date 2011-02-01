@@ -27,7 +27,9 @@
 #include "Attribute.h"
 #include "RenderObject.h"
 #include "RenderSVGResource.h"
+#include "SVGFEDiffuseLightingElement.h"
 #include "SVGFilterElement.h"
+#include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGNames.h"
 
 namespace WebCore {
@@ -91,11 +93,21 @@ void SVGFELightElement::svgAttributeChanged(const QualifiedName& attrName)
         || attrName == SVGNames::pointsAtZAttr
         || attrName == SVGNames::specularExponentAttr
         || attrName == SVGNames::limitingConeAngleAttr) {
-        if (ContainerNode* parent = parentNode()) {
-            RenderObject* renderer = parent->renderer();
-            if (renderer && renderer->isSVGResourceFilterPrimitive())
-                RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
+        ContainerNode* parent = parentNode();
+        if (!parent)
+            return;
+
+        RenderObject* renderer = parent->renderer();
+        if (!renderer || !renderer->isSVGResourceFilterPrimitive())
+            return;
+
+        if (parent->hasTagName(SVGNames::feDiffuseLightingTag)) {
+            SVGFEDiffuseLightingElement* diffuseLighting = static_cast<SVGFEDiffuseLightingElement*>(parent);
+            diffuseLighting->lightElementAttributeChanged(this, attrName);
+            return;
         }
+        // Handler for SpecularLighting has not implemented yet.
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
     }
 }
 

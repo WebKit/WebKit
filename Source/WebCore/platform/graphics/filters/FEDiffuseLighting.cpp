@@ -52,9 +52,12 @@ Color FEDiffuseLighting::lightingColor() const
     return m_lightingColor;
 }
 
-void FEDiffuseLighting::setLightingColor(const Color& lightingColor)
+bool FEDiffuseLighting::setLightingColor(const Color& lightingColor)
 {
+    if (m_lightingColor == lightingColor)
+        return false;
     m_lightingColor = lightingColor;
+    return true;
 }
 
 float FEDiffuseLighting::surfaceScale() const 
@@ -62,9 +65,12 @@ float FEDiffuseLighting::surfaceScale() const
     return m_surfaceScale;
 }
 
-void FEDiffuseLighting::setSurfaceScale(float surfaceScale)
+bool FEDiffuseLighting::setSurfaceScale(float surfaceScale)
 {
+    if (m_surfaceScale == surfaceScale)
+        return false;
     m_surfaceScale = surfaceScale;
+    return true;
 }
 
 float FEDiffuseLighting::diffuseConstant() const
@@ -72,9 +78,12 @@ float FEDiffuseLighting::diffuseConstant() const
     return m_diffuseConstant;
 }
 
-void FEDiffuseLighting::setDiffuseConstant(float diffuseConstant)
+bool FEDiffuseLighting::setDiffuseConstant(float diffuseConstant)
 {
+    if (m_diffuseConstant == diffuseConstant)
+        return false;
     m_diffuseConstant = diffuseConstant;
+    return true;
 }
 
 float FEDiffuseLighting::kernelUnitLengthX() const
@@ -82,9 +91,12 @@ float FEDiffuseLighting::kernelUnitLengthX() const
     return m_kernelUnitLengthX;
 }
 
-void FEDiffuseLighting::setKernelUnitLengthX(float kernelUnitLengthX)
+bool FEDiffuseLighting::setKernelUnitLengthX(float kernelUnitLengthX)
 {
+    if (m_kernelUnitLengthX == kernelUnitLengthX)
+        return false;
     m_kernelUnitLengthX = kernelUnitLengthX;
+    return true;
 }
 
 float FEDiffuseLighting::kernelUnitLengthY() const
@@ -92,9 +104,12 @@ float FEDiffuseLighting::kernelUnitLengthY() const
     return m_kernelUnitLengthY;
 }
 
-void FEDiffuseLighting::setKernelUnitLengthY(float kernelUnitLengthY)
+bool FEDiffuseLighting::setKernelUnitLengthY(float kernelUnitLengthY)
 {
+    if (m_kernelUnitLengthY == kernelUnitLengthY)
+        return false;
     m_kernelUnitLengthY = kernelUnitLengthY;
+    return true;
 }
 
 const LightSource* FEDiffuseLighting::lightSource() const

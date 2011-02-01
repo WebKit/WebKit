@@ -34,16 +34,16 @@
 
 <defs>
 <filter id="filt" filterUnits="objectBoundingBox" x="0" y="0" width="100%" height="100%">
-    <feTurbulence id="turb" baseFrequency="0.03" numOctaves="4" seed="67" result="turb"/>
-    <feGaussianBlur in="SourceGraphic" primitiveUnits="objectBoundingBox" id="blur" stdDeviation="1" result="blur"/>
+    <feTurbulence baseFrequency="0.03" numOctaves="4" seed="67" result="turb"/>
+    <feGaussianBlur in="SourceGraphic" primitiveUnits="objectBoundingBox" stdDeviation="1" result="blur"/>
     <feComposite in="turb" in2="blur" operator="arithmetic" k2="0.3" k3="1" result="comp"/>
-    <feDiffuseLighting in="comp" primitiveUnits="objectBoundingBox" id="diff" diffuseConstant="1" lighting-color="white" surfaceScale="10" result="light" >
+    <feDiffuseLighting in="comp" primitiveUnits="objectBoundingBox" diffuseConstant="1" lighting-color="white" surfaceScale="10" result="light" >
         <feSpotLight id="light" x="0" y="300" z="200" pointsAtX="-200" pointsAtY="100" pointsAtZ="0" limitingConeAngle="90" specularExponent="20" />
     </feDiffuseLighting>
-    <feSpecularLighting in="comp" primitiveUnits="objectBoundingBox" id="diff" diffuseConstant="1" lighting-color="#A66102" surfaceScale="10" result="ambient" >
-        <feDistantLight id="light" azimuth="0" elevation="90" />
+    <feSpecularLighting in="comp" primitiveUnits="objectBoundingBox" diffuseConstant="1" lighting-color="#A66102" surfaceScale="10" result="ambient" >
+        <feDistantLight azimuth="0" elevation="90" />
     </feSpecularLighting>
-        <feComposite in="light" in2="ambient" operator="arithmetic" k2="1.2" k3=".8"/>
+    <feComposite in="light" in2="ambient" operator="arithmetic" k2="1.2" k3=".8"/>
 </filter>
 </defs>
 

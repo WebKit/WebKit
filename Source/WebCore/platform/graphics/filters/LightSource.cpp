@@ -45,6 +45,30 @@ void PointLightSource::updatePaintingData(PaintingData& paintingData, int x, int
     paintingData.lightVectorLength = paintingData.lightVector.length();
 }
 
+bool PointLightSource::setX(float x)
+{
+    if (m_position.x() == x)
+        return false;
+    m_position.setX(x);
+    return true;
+}
+
+bool PointLightSource::setY(float y)
+{
+    if (m_position.y() == y)
+        return false;
+    m_position.setY(y);
+    return true;
+}
+
+bool PointLightSource::setZ(float z)
+{
+    if (m_position.z() == z)
+        return false;
+    m_position.setZ(z);
+    return true;
+}
+
 // spot-light edge darkening depends on an absolute treshold
 // according to the SVG 1.1 SE light regression tests
 static const float antiAliasTreshold = 0.016f;
@@ -120,6 +144,70 @@ void SpotLightSource::updatePaintingData(PaintingData& paintingData, int x, int 
     paintingData.colorVector.setZ(paintingData.privateColorVector.z() * lightStrength);
 }
 
+bool SpotLightSource::setX(float x)
+{
+    if (m_position.x() == x)
+        return false;
+    m_position.setX(x);
+    return true;
+}
+
+bool SpotLightSource::setY(float y)
+{
+    if (m_position.y() == y)
+        return false;
+    m_position.setY(y);
+    return true;
+}
+
+bool SpotLightSource::setZ(float z)
+{
+    if (m_position.z() == z)
+        return false;
+    m_position.setZ(z);
+    return true;
+}
+
+bool SpotLightSource::setPointsAtX(float pointsAtX)
+{
+    if (m_direction.x() == pointsAtX)
+        return false;
+    m_direction.setX(pointsAtX);
+    return true;
+}
+
+bool SpotLightSource::setPointsAtY(float pointsAtY)
+{
+    if (m_direction.y() == pointsAtY)
+        return false;
+    m_direction.setY(pointsAtY);
+    return true;
+}
+
+bool SpotLightSource::setPointsAtZ(float pointsAtZ)
+{
+    if (m_direction.z() == pointsAtZ)
+        return false;
+    m_direction.setZ(pointsAtZ);
+    return true;
+}
+
+bool SpotLightSource::setSpecularExponent(float specularExponent)
+{
+    if (m_specularExponent == specularExponent)
+        return false;
+    m_specularExponent = specularExponent;
+    return true;
+}
+
+bool SpotLightSource::setLimitingConeAngle(float limitingConeAngle)
+{
+    if (m_limitingConeAngle == limitingConeAngle)
+        return false;
+    m_limitingConeAngle = limitingConeAngle;
+    return true;
+}
+
 void DistantLightSource::initPaintingData(PaintingData& paintingData)
 {
     float azimuth = deg2rad(m_azimuth);
@@ -132,6 +220,98 @@ void DistantLightSource::initPaintingData(PaintingData& paintingData)
 
 void DistantLightSource::updatePaintingData(PaintingData&, int, int, float)
 {
+}
+
+bool DistantLightSource::setAzimuth(float azimuth)
+{
+    if (m_azimuth == azimuth)
+        return false;
+    m_azimuth = azimuth;
+    return true;
+}
+
+bool DistantLightSource::setElevation(float elevation)
+{
+    if (m_elevation == elevation)
+        return false;
+    m_elevation = elevation;
+    return true;
+}
+
+bool LightSource::setAzimuth(float azimuth)
+{
+    if (m_type == LS_DISTANT)
+        return static_cast<DistantLightSource*>(this)->setAzimuth(azimuth);
+    return false;
+}
+
+bool LightSource::setElevation(float elevation)
+{
+    if (m_type == LS_DISTANT)
+        return static_cast<DistantLightSource*>(this)->setElevation(elevation);
+    return false;
+}
+
+bool LightSource::setX(float x)
+{
+    if (m_type == LS_SPOT)
+        return static_cast<SpotLightSource*>(this)->setX(x);
+    if (m_type == LS_POINT)
+        return static_cast<PointLightSource*>(this)->setX(x);
+    return false;
+}
+
+bool LightSource::setY(float y)
+{
+    if (m_type == LS_SPOT)
+        return static_cast<SpotLightSource*>(this)->setY(y);
+    if (m_type == LS_POINT)
+        return static_cast<PointLightSource*>(this)->setY(y);
+    return false;
+}
+
+bool LightSource::setZ(float z)
+{
+    if (m_type == LS_SPOT)
+        return static_cast<SpotLightSource*>(this)->setZ(z);
+    if (m_type == LS_POINT)
+        return static_cast<PointLightSource*>(this)->setZ(z);
+    return false;
+}
+
+bool LightSource::setPointsAtX(float pointsAtX)
+{
+    if (m_type == LS_SPOT)
+        return static_cast<SpotLightSource*>(this)->setPointsAtX(pointsAtX);
+    return false;
+}
+
+bool LightSource::setPointsAtY(float pointsAtY)
+{
+    if (m_type == LS_SPOT)
+        return static_cast<SpotLightSource*>(this)->setPointsAtY(pointsAtY);
+    return false;
+}
+
+bool LightSource::setPointsAtZ(float pointsAtZ)
+{
+    if (m_type == LS_SPOT)
+        return static_cast<SpotLightSource*>(this)->setPointsAtZ(pointsAtZ);
+    return false;
+}
+
+bool LightSource::setSpecularExponent(float specularExponent)
+{
+    if (m_type == LS_SPOT)
+        return static_cast<SpotLightSource*>(this)->setSpecularExponent(specularExponent);
+    return false;
+}
+
+bool LightSource::setLimitingConeAngle(float limitingConeAngle)
+{
+    if (m_type == LS_SPOT)
+        return static_cast<SpotLightSource*>(this)->setLimitingConeAngle(limitingConeAngle);
+    return false;
 }
 
 static TextStream& operator<<(TextStream& ts, const FloatPoint3D& p)

@@ -342,7 +342,10 @@ void RenderSVGResourceFilter::primitiveAttributeChanged(RenderObject* object, co
         FilterEffect* effect = builder->effectByRenderer(object);
         if (!effect)
             continue;
-        primitve->setFilterEffectAttribute(effect, attribute);
+        // Since all effects shares the same attribute value, all
+        // or none of them will be changed.
+        if (!primitve->setFilterEffectAttribute(effect, attribute))
+            return;
         builder->clearResultsRecursive(effect);
 
         // Repaint the image on the screen.

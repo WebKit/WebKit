@@ -1,3 +1,72 @@
+2011-02-01  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Dirk Schulze.
+
+        LightElement changes does not require relayout.
+        https://bugs.webkit.org/show_bug.cgi?id=53232
+
+        When an attribute of a LightElement changes, it
+        send an update message to the lighting filters
+        to update its corresponding LightSource objects,
+        and repaint the filters.
+
+        Duplicated 'id' attributes removed from svg-filter-animation.svg.
+
+        Existing dynamic-update tests covers this feature.
+
+        5x speedup on manual-tests/svg-filter-animation.svg
+
+        * manual-tests/svg-filter-animation.svg:
+        * platform/graphics/filters/DistantLightSource.h:
+        * platform/graphics/filters/FEDiffuseLighting.cpp:
+        (WebCore::FEDiffuseLighting::setLightingColor):
+        (WebCore::FEDiffuseLighting::setSurfaceScale):
+        (WebCore::FEDiffuseLighting::setDiffuseConstant):
+        (WebCore::FEDiffuseLighting::setKernelUnitLengthX):
+        (WebCore::FEDiffuseLighting::setKernelUnitLengthY):
+        * platform/graphics/filters/FEDiffuseLighting.h:
+        * platform/graphics/filters/LightSource.cpp:
+        (WebCore::PointLightSource::setX):
+        (WebCore::PointLightSource::setY):
+        (WebCore::PointLightSource::setZ):
+        (WebCore::SpotLightSource::setX):
+        (WebCore::SpotLightSource::setY):
+        (WebCore::SpotLightSource::setZ):
+        (WebCore::SpotLightSource::setPointsAtX):
+        (WebCore::SpotLightSource::setPointsAtY):
+        (WebCore::SpotLightSource::setPointsAtZ):
+        (WebCore::SpotLightSource::setSpecularExponent):
+        (WebCore::SpotLightSource::setLimitingConeAngle):
+        (WebCore::DistantLightSource::setAzimuth):
+        (WebCore::DistantLightSource::setElevation):
+        (WebCore::LightSource::setAzimuth):
+        (WebCore::LightSource::setElevation):
+        (WebCore::LightSource::setX):
+        (WebCore::LightSource::setY):
+        (WebCore::LightSource::setZ):
+        (WebCore::LightSource::setPointsAtX):
+        (WebCore::LightSource::setPointsAtY):
+        (WebCore::LightSource::setPointsAtZ):
+        (WebCore::LightSource::setSpecularExponent):
+        (WebCore::LightSource::setLimitingConeAngle):
+        * platform/graphics/filters/LightSource.h:
+        * platform/graphics/filters/PointLightSource.h:
+        * platform/graphics/filters/SpotLightSource.h:
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::primitiveAttributeChanged):
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::setFilterEffectAttribute):
+        (WebCore::SVGFEDiffuseLightingElement::lightElementAttributeChanged):
+        (WebCore::SVGFEDiffuseLightingElement::build):
+        (WebCore::SVGFEDiffuseLightingElement::findLightElement):
+        (WebCore::SVGFEDiffuseLightingElement::findLight):
+        * svg/SVGFEDiffuseLightingElement.h:
+        * svg/SVGFELightElement.cpp:
+        (WebCore::SVGFELightElement::svgAttributeChanged):
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::setFilterEffectAttribute):
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+
 2011-02-01  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Dimitri Glazkov.

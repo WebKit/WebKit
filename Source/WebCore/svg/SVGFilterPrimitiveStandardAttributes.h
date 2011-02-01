@@ -42,7 +42,8 @@ public:
     void setStandardAttributes(bool, FilterEffect*) const;
 
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter* filter) = 0;
-    virtual void setFilterEffectAttribute(FilterEffect*, const QualifiedName&);
+    // Returns true, if the new value is different from the old one.
+    virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&);
 
 protected:
     SVGFilterPrimitiveStandardAttributes(const QualifiedName&, Document*);

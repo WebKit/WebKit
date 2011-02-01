@@ -34,12 +34,13 @@ class SVGColor;
 class SVGFEDiffuseLightingElement : public SVGFilterPrimitiveStandardAttributes {
 public:
     static PassRefPtr<SVGFEDiffuseLightingElement> create(const QualifiedName&, Document*);
+    void lightElementAttributeChanged(const SVGFELightElement*, const QualifiedName&);
 
 private:
     SVGFEDiffuseLightingElement(const QualifiedName&, Document*);
 
     virtual void parseMappedAttribute(Attribute*);
-    virtual void setFilterEffectAttribute(FilterEffect*, const QualifiedName&);
+    virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&);
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual void synchronizeProperty(const QualifiedName&);
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
@@ -54,7 +55,8 @@ private:
     DECLARE_ANIMATED_NUMBER(KernelUnitLengthX, kernelUnitLengthX)
     DECLARE_ANIMATED_NUMBER(KernelUnitLengthY, kernelUnitLengthY)
 
-    PassRefPtr<LightSource> findLights() const;
+    SVGFELightElement* findLightElement() const;
+    PassRefPtr<LightSource> findLight() const;
 };
 
 } // namespace WebCore
