@@ -61,6 +61,7 @@ public:
 
     bool isNull() const { return m_deepPosition.isNull(); }
     bool isNotNull() const { return m_deepPosition.isNotNull(); }
+    bool isOrphan() const { return m_deepPosition.isOrphan(); }
 
     Position deepEquivalent() const { return m_deepPosition; }
     EAffinity affinity() const { ASSERT(m_affinity == UPSTREAM || m_affinity == DOWNSTREAM); return m_affinity; }

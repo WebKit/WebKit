@@ -1,5 +1,19 @@
 2011-02-01  Mark Rowe  <mrowe@apple.com>
 
+        Merge r71431.
+
+    2010-11-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Re-enabled editing/style/iframe-onload-crash.html on Chromium, Qt, and Windows platforms.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
+2011-02-01  Mark Rowe  <mrowe@apple.com>
+
         Merge r70792.
 
     2010-10-28  Chris Fleizach  <cfleizach@apple.com>
