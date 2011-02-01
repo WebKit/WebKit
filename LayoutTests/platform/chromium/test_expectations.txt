@@ -3087,3 +3087,4 @@ BUGWK53446 WIN LINUX DEBUG : http/tests/navigation/forward-and-cancel.html = PAS
 BUGWK53459 WIN LINUX : editing/pasteboard/3976872.html = PASS TIMEOUT
 BUGWK53505 WIN DEBUG : inspector/console-eval.html = PASS CRASH
 BUGWK53505 WIN DEBUG : inspector/console-dir.html = PASS CRASH
+BUGWK53505 WIN DEBUG : inspector/cpu-profiler-profiling.html = PASS CRASH

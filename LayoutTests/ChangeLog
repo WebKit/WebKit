@@ -1,5 +1,11 @@
 2011-02-01  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        More flakiness updates.
+
+        * platform/chromium/test_expectations.txt: Moar flakiness recorded.
+
+2011-02-01  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Updated flaky test expectations according to build bot results.
 
         * platform/chromium/test_expectations.txt: Flakiness recorded.
