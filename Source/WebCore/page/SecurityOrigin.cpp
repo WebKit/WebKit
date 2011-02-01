@@ -178,6 +178,9 @@ bool SecurityOrigin::canAccess(const SecurityOrigin* other) const
     if (m_universalAccess)
         return true;
 
+    if (this == other)
+        return true;
+
     if (isUnique() || other->isUnique())
         return false;
 
