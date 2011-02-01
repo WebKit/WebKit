@@ -115,7 +115,7 @@ ShadowBlur::ShadowBlur(float radius, const FloatSize& offset, const Color& color
     if (!m_color.isValid() || !color.alpha()) {
         // Can't paint the shadow with invalid or invisible color.
         m_type = NoShadow;
-    } else if (radius > 0) {
+    } else if (m_blurRadius > 0) {
         // Shadow is always blurred, even the offset is zero.
         m_type = BlurShadow;
     } else if (!m_offset.width() && !m_offset.height()) {
@@ -221,7 +221,7 @@ void ShadowBlur::blurLayerImage(unsigned char* imageData, const IntSize& size, i
     }
 }
 
-void ShadowBlur::adjustBlurDistance(GraphicsContext* context)
+void ShadowBlur::adjustBlurRadius(GraphicsContext* context)
 {
     if (!m_shadowsIgnoreTransforms)
         return;
@@ -259,30 +259,30 @@ IntRect ShadowBlur::calculateLayerBoundingRect(GraphicsContext* context, const F
     const float roundedRadius = ceilf(m_blurRadius);
 
     // Calculate the destination of the blurred and/or transformed layer.
-    FloatRect layerFloatRect;
+    FloatRect layerRect;
     float inflation = 0;
 
     const AffineTransform transform = context->getCTM();
     if (m_shadowsIgnoreTransforms && !transform.isIdentity()) {
         FloatQuad transformedPolygon = transform.mapQuad(FloatQuad(shadowedRect));
         transformedPolygon.move(m_offset);
-        layerFloatRect = transform.inverse().mapQuad(transformedPolygon).boundingBox();
+        layerRect = transform.inverse().mapQuad(transformedPolygon).boundingBox();
     } else {
-        layerFloatRect = shadowedRect;
-        layerFloatRect.move(m_offset);
+        layerRect = shadowedRect;
+        layerRect.move(m_offset);
     }
 
     // We expand the area by the blur radius to give extra space for the blur transition.
     if (m_type == BlurShadow) {
-        layerFloatRect.inflate(roundedRadius);
-        inflation += roundedRadius;
+        layerRect.inflate(roundedRadius);
+        inflation = roundedRadius;
     }
 
-    FloatRect unclippedLayerRect = layerFloatRect;
+    FloatRect unclippedLayerRect = layerRect;
 
-    if (!clipRect.contains(enclosingIntRect(layerFloatRect))) {
+    if (!clipRect.contains(enclosingIntRect(layerRect))) {
         // If we are totally outside the clip region, we aren't painting at all.
-        if (intersection(layerFloatRect, clipRect).isEmpty())
+        if (intersection(layerRect, clipRect).isEmpty())
             return IntRect();
 
         IntRect inflatedClip = clipRect;
@@ -291,13 +291,13 @@ IntRect ShadowBlur::calculateLayerBoundingRect(GraphicsContext* context, const F
         if (m_type == BlurShadow)
             inflatedClip.inflate(roundedRadius);
         
-        layerFloatRect.intersect(inflatedClip);
+        layerRect.intersect(inflatedClip);
     }
 
-    const int frameSize = inflation * 2;
+    const float frameSize = inflation * 2;
     m_sourceRect = FloatRect(0, 0, shadowedRect.width() + frameSize, shadowedRect.height() + frameSize);
-    m_layerOrigin = FloatPoint(layerFloatRect.x(), layerFloatRect.y());
-    m_layerSize = layerFloatRect.size();
+    m_layerOrigin = FloatPoint(layerRect.x(), layerRect.y());
+    m_layerSize = layerRect.size();
 
     const FloatPoint unclippedLayerOrigin = FloatPoint(unclippedLayerRect.x(), unclippedLayerRect.y());
     const FloatSize clippedOut = unclippedLayerOrigin - m_layerOrigin;
@@ -308,14 +308,13 @@ IntRect ShadowBlur::calculateLayerBoundingRect(GraphicsContext* context, const F
     float translationY = -shadowedRect.y() + inflation - fabsf(clippedOut.height());
     m_layerContextTranslation = FloatSize(translationX, translationY);
 
-    return enclosingIntRect(layerFloatRect);
+    return enclosingIntRect(layerRect);
 }
 
-GraphicsContext* ShadowBlur::beginShadowLayer(GraphicsContext* graphicsContext, const FloatRect& shadowedRect)
+GraphicsContext* ShadowBlur::beginShadowLayer(GraphicsContext* graphicsContext, const IntRect& layerRect)
 {
-    adjustBlurDistance(graphicsContext);
+    adjustBlurRadius(graphicsContext);
 
-    IntRect layerRect = calculateLayerBoundingRect(graphicsContext, shadowedRect, graphicsContext->clipBounds());
     // Don't paint if we are totally outside the clip region.
     if (layerRect.isEmpty())
         return 0;
@@ -365,10 +364,12 @@ void ShadowBlur::endShadowLayer(GraphicsContext* graphicsContext)
 
 void ShadowBlur::drawRectShadow(GraphicsContext* graphicsContext, const FloatRect& shadowedRect, const RoundedIntRect::Radii& radii)
 {
+    IntRect layerRect = calculateLayerBoundingRect(graphicsContext, shadowedRect, graphicsContext->clipBounds());
+
     // drawShadowedRect does not work with rotations.
     // https://bugs.webkit.org/show_bug.cgi?id=45042
     if (!graphicsContext->getCTM().isIdentityOrTranslationOrFlipped() || m_type != BlurShadow) {
-        drawRectShadowWithoutTiling(graphicsContext, shadowedRect, radii, 1);
+        drawRectShadowWithoutTiling(graphicsContext, shadowedRect, radii, layerRect);
         return;
     }
 
@@ -385,32 +386,21 @@ void ShadowBlur::drawRectShadow(GraphicsContext* graphicsContext, const FloatRec
     // the radii of the corners, and then 1 pixel to draw the side tiles.
     IntSize shadowTemplateSize = IntSize(templateSideLength + extraWidthFromCornerRadii, templateSideLength + extraHeightFromCornerRadii);
 
-    if (shadowTemplateSize.width() > shadowedRect.width() || shadowTemplateSize.height() > shadowedRect.height()) {
-        drawRectShadowWithoutTiling(graphicsContext, shadowedRect, radii, 1);
+    if (shadowTemplateSize.width() > shadowedRect.width() || shadowTemplateSize.height() > shadowedRect.height()
+        || (shadowTemplateSize.width() * shadowTemplateSize.height() > m_sourceRect.width() * m_sourceRect.height())) {
+        drawRectShadowWithoutTiling(graphicsContext, shadowedRect, radii, layerRect);
         return;
     }
 
-    // Determine dimensions of shadow rect.
-    FloatRect shadowRect = shadowedRect;
-    shadowRect.inflate(roundedRadius); // FIXME: duplicating code with calculateLayerBoundingRect.
-
-    // Reduce the size of what we have to draw with the clip area.
-    calculateLayerBoundingRect(graphicsContext, shadowedRect, graphicsContext->clipBounds());
-
-    // If the template area ends up being larger than the area to be blurred, use the simple case.
-    // FIXME: when does this happen?
-    if ((shadowTemplateSize.width() * shadowTemplateSize.height() > m_sourceRect.width() * m_sourceRect.height())) {
-        drawRectShadowWithoutTiling(graphicsContext, shadowedRect, radii, 1);
-        return;
-    }
-    
-    drawRectShadowWithTiling(graphicsContext, shadowedRect, radii, 1, shadowTemplateSize);
+    drawRectShadowWithTiling(graphicsContext, shadowedRect, radii, shadowTemplateSize);
 }
 
 void ShadowBlur::drawInsetShadow(GraphicsContext* graphicsContext, const FloatRect& rect, const FloatRect& holeRect, const RoundedIntRect::Radii& holeRadii)
 {
     // FIXME: add a tiling code path here.
-    GraphicsContext* shadowContext = beginShadowLayer(graphicsContext, rect);
+    IntRect layerRect = calculateLayerBoundingRect(graphicsContext, rect, graphicsContext->clipBounds());
+
+    GraphicsContext* shadowContext = beginShadowLayer(graphicsContext, layerRect);
     if (!shadowContext)
         return;
 
@@ -425,16 +415,16 @@ void ShadowBlur::drawInsetShadow(GraphicsContext* graphicsContext, const FloatRe
     endShadowLayer(graphicsContext);
 }
 
-void ShadowBlur::drawRectShadowWithoutTiling(GraphicsContext* graphicsContext, const FloatRect& shadowedRect, const RoundedIntRect::Radii& radii, float alpha)
+void ShadowBlur::drawRectShadowWithoutTiling(GraphicsContext* graphicsContext, const FloatRect& shadowedRect, const RoundedIntRect::Radii& radii, const IntRect& layerRect)
 {
-    GraphicsContext* shadowContext = beginShadowLayer(graphicsContext, shadowedRect);
+    GraphicsContext* shadowContext = beginShadowLayer(graphicsContext, layerRect);
     if (!shadowContext)
         return;
 
     Path path;
     path.addRoundedRect(shadowedRect, radii.topLeft(), radii.topRight(), radii.bottomLeft(), radii.bottomRight());
 
-    shadowContext->setFillColor(Color(.0f, .0f, .0f, alpha), ColorSpaceDeviceRGB);
+    shadowContext->setFillColor(Color(.0f, .0f, .0f, 1.f), ColorSpaceDeviceRGB);
     shadowContext->fillPath(path);
 
     endShadowLayer(graphicsContext);
@@ -473,18 +463,13 @@ void ShadowBlur::drawRectShadowWithoutTiling(GraphicsContext* graphicsContext, c
      shadow.
  */
 
-void ShadowBlur::drawRectShadowWithTiling(GraphicsContext* graphicsContext, const FloatRect& shadowedRect, const RoundedIntRect::Radii& radii, float alpha, const IntSize& shadowTemplateSize)
+void ShadowBlur::drawRectShadowWithTiling(GraphicsContext* graphicsContext, const FloatRect& shadowedRect, const RoundedIntRect::Radii& radii, const IntSize& shadowTemplateSize)
 {
     const float roundedRadius = ceilf(m_blurRadius);
     const float twiceRadius = roundedRadius * 2;
 
     // Size of the tiling side.
     const int templateSideLength = 1;
-
-    FloatRect shadowRect = shadowedRect;
-    shadowRect.inflate(roundedRadius); // FIXME: duplicating code with calculateLayerBoundingRect.
-
-    shadowRect.move(m_offset.width(), m_offset.height());
 
     m_layerImage = ScratchBuffer::shared().getScratchBuffer(shadowTemplateSize);
 
@@ -499,7 +484,7 @@ void ShadowBlur::drawRectShadowWithTiling(GraphicsContext* graphicsContext, cons
     Path path;
     path.addRoundedRect(templateRect, radii.topLeft(), radii.topRight(), radii.bottomLeft(), radii.bottomRight());
 
-    shadowContext->setFillColor(Color(.0f, .0f, .0f, alpha), ColorSpaceDeviceRGB);
+    shadowContext->setFillColor(Color(.0f, .0f, .0f, 1.f), ColorSpaceDeviceRGB);
     shadowContext->fillPath(path);
 
     // Blur the image.
@@ -516,6 +501,10 @@ void ShadowBlur::drawRectShadowWithTiling(GraphicsContext* graphicsContext, cons
     shadowContext->fillRect(FloatRect(0, 0, shadowTemplateSize.width(), shadowTemplateSize.height()));
     
     shadowContext->restore();
+
+    FloatRect shadowRect = shadowedRect;
+    shadowRect.inflate(roundedRadius); // FIXME: duplicating code with calculateLayerBoundingRect.
+    shadowRect.move(m_offset.width(), m_offset.height());
 
     // Fill the internal part of the shadow.
     shadowRect.inflate(-twiceRadius);
@@ -596,14 +585,5 @@ void ShadowBlur::drawRectShadowWithTiling(GraphicsContext* graphicsContext, cons
     // Schedule a purge of the scratch buffer.
     ScratchBuffer::shared().scheduleScratchBufferPurge();
 }
-
-#if !PLATFORM(CG) && !PLATFORM(CHROMIUM)
-IntRect ShadowBlur::clipBounds(GraphicsContext*)
-{
-    // FIXME: add clipBounds() to GraphicsContext.
-    ASSERT_NOT_REACHED();
-    return IntRect();
-}
-#endif
 
 } // namespace WebCore

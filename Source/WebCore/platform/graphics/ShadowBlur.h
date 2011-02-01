@@ -53,15 +53,15 @@ public:
     void drawInsetShadow(GraphicsContext*, const FloatRect&, const FloatRect& holeRect, const RoundedIntRect::Radii& holeRadii);
 
 private:
-    GraphicsContext* beginShadowLayer(GraphicsContext*, const FloatRect& layerArea);
+    GraphicsContext* beginShadowLayer(GraphicsContext*, const IntRect& layerRect);
     void endShadowLayer(GraphicsContext*);
 
-    void adjustBlurDistance(GraphicsContext*);
+    void adjustBlurRadius(GraphicsContext*);
     void blurLayerImage(unsigned char*, const IntSize&, int stride);
     IntRect calculateLayerBoundingRect(GraphicsContext*, const FloatRect& layerArea, const IntRect& clipRect);
 
-    void drawRectShadowWithoutTiling(GraphicsContext*, const FloatRect&, const RoundedIntRect::Radii&, float alpha);
-    void drawRectShadowWithTiling(GraphicsContext*, const FloatRect&, const RoundedIntRect::Radii&, float alpha, const IntSize& shadowTemplateSize);
+    void drawRectShadowWithoutTiling(GraphicsContext*, const FloatRect&, const RoundedIntRect::Radii&, const IntRect& layerRect);
+    void drawRectShadowWithTiling(GraphicsContext*, const FloatRect&, const RoundedIntRect::Radii&, const IntSize& shadowTemplateSize);
     
     enum ShadowType {
         NoShadow,
