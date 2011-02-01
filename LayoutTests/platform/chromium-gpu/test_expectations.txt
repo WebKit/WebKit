@@ -390,3 +390,5 @@ BUGWK52341 : fast/canvas/canvas-large-dimensions.html = TEXT
 // These will need to rebaselined after the new path drawing lands. 
 BUG_SENORBLANCO WIN LINUX : fast/canvas/canvas-composite.html = IMAGE 
 BUG_SENORBLANCO WIN LINUX : fast/canvas/canvas-transform-skewed.html = IMAGE 
+
+BUGWK53469 MAC : compositing/scroll-painted-composited-content.html = CRASH PASS

@@ -13,6 +13,12 @@
 
 2011-01-31  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed Chromium GPU test expectation update.
+
+        * platform/chromium-gpu/test_expectations.txt:
+
+2011-01-31  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed Chromium rebaselines for r77173.
 
         * platform/chromium-mac/fast/text/justify-ideograph-complex-expected.checksum:
