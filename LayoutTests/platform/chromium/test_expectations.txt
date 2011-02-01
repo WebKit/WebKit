@@ -2844,7 +2844,6 @@ BUG_DRT : platform/gtk/fast/forms/menulist-typeahead-find.html = CRASH TEXT
 BUG_DRT : storage/domstorage/quota.html = TEXT
 BUG_DRT LINUX : svg/carto.net/selectionlist.svg = IMAGE PASS
 BUG_DRT WIN LINUX : svg/custom/use-instanceRoot-event-bubbling.xhtml = TIMEOUT PASS
-BUG_DRT MAC : svg/custom/clip-path-referencing-use2.svg = TEXT
 BUG_DRT : svg/custom/selectSubString.html = TIMEOUT
 BUG_DRT MAC : transforms/2d/zoom-menulist.html = IMAGE
 
@@ -2868,9 +2867,6 @@ BUGCR66085 LINUX : fast/dom/Geolocation/disconnected-frame-permission-denied.htm
 BUGCR66085 WIN LINUX : fast/events/5056619.html = PASS TIMEOUT
 BUGCR66085 LINUX : fast/js/cyclic-proto.html = PASS TIMEOUT
 BUGCR66085 WIN LINUX : fast/replaced/css-content-and-webkit-mask-box-image-crash.html = PASS TIMEOUT
-BUGCR66085 WIN LINUX RELEASE : http/tests/media/reload-after-dialog.html = PASS TIMEOUT
-BUGCR66085 WIN DEBUG : http/tests/media/reload-after-dialog.html = PASS TIMEOUT
-BUGCR66085 LINUX DEBUG : http/tests/media/reload-after-dialog.html = CRASH
 BUGCR66085 LINUX : http/tests/media/video-cancel-load.html = PASS TIMEOUT
 BUGCR66085 LINUX : http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html = PASS TIMEOUT
 BUGCR66085 LINUX : media/constructors.html = PASS TIMEOUT
@@ -3077,7 +3073,6 @@ BUGCR71087 WIN LINUX DEBUG : media/video-currentTime.html = CRASH PASS TIMEOUT
 BUGCR71087 MAC DEBUG : media/video-currentTime.html = PASS TIMEOUT
 
 // due to changes in style propagation, fixing.
-BUGWK53314 : media/controls-strict.html = IMAGE+TEXT
 BUGWK53314 : media/video-zoom-controls.html = IMAGE+TEXT
 
 BUGWK53347 WIN LINUX DEBUG : fast/repaint/4774354.html = PASS TIMEOUT
