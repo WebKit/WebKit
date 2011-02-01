@@ -1305,7 +1305,7 @@ QPoint QWebFrame::pos() const
     if (!d->frame->view())
         return QPoint();
 
-    return d->frame->view()->frameRect().topLeft();
+    return d->frame->view()->frameRect().location();
 }
 
 /*!
