@@ -116,10 +116,11 @@ void CachedCSSStyleSheet::checkNotify()
         c->setCSSStyleSheet(m_url, m_response.url(), m_decoder->encoding().name(), this);
 }
 
-void CachedCSSStyleSheet::error()
+void CachedCSSStyleSheet::error(CachedResource::Status status)
 {
+    setStatus(status);
+    ASSERT(errorOccurred());
     setLoading(false);
-    setErrorOccurred(true);
     checkNotify();
 }
 

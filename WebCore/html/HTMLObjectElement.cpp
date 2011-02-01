@@ -242,7 +242,7 @@ void HTMLObjectElement::renderFallbackContent()
         return;
 
     // Before we give up and use fallback content, check to see if this is a MIME type issue.
-    if (m_imageLoader && m_imageLoader->image()) {
+    if (m_imageLoader && m_imageLoader->image() && m_imageLoader->image()->status() != CachedResource::LoadError) {
         m_serviceType = m_imageLoader->image()->response().mimeType();
         if (!isImageType()) {
             // If we don't think we have an image type anymore, then ditch the image loader.

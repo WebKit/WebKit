@@ -53,7 +53,7 @@ public:
 
     virtual void didAddClient(CachedResourceClient*);
     virtual void data(PassRefPtr<SharedBuffer> data, bool allDataReceived);
-    virtual void error();
+    virtual void error(CachedResource::Status);
 
     virtual void allClientsRemoved();
 
