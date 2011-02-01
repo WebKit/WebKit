@@ -74,7 +74,7 @@ void setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* 
     ASSERT(thisObj->structure()->anonymousSlotCount() > 0);
     ASSERT(thisObj->getAnonymousValue(0).isCell() && asObject(thisObj->getAnonymousValue(0).asCell())->isGlobalObject());
     ASSERT(entry->attributes() & Function);
-    JSValue* location = thisObj->getDirectLocation(propertyName);
+    WriteBarrierBase<Unknown>* location = thisObj->getDirectLocation(propertyName);
 
     if (!location) {
         NativeFunctionWrapper* function;
@@ -90,7 +90,7 @@ void setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* 
         location = thisObj->getDirectLocation(propertyName);
     }
 
-    slot.setValueSlot(thisObj, location, thisObj->offsetForLocation(location));
+    slot.setValue(thisObj, location->get(), thisObj->offsetForLocation(location));
 }
 
 } // namespace JSC

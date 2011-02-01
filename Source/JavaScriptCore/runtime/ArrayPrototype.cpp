@@ -117,7 +117,7 @@ const ClassInfo ArrayPrototype::info = {"Array", &JSArray::info, 0, ExecState::a
 ArrayPrototype::ArrayPrototype(JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure)
     : JSArray(structure)
 {
-    putAnonymousValue(0, globalObject);
+    putAnonymousValue(globalObject->globalData(), 0, globalObject);
 }
 
 bool ArrayPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

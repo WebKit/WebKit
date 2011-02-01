@@ -203,7 +203,7 @@ bool JSFunction::getOwnPropertySlot(ExecState* exec, const Identifier& propertyN
         return Base::getOwnPropertySlot(exec, propertyName, slot);
 
     if (propertyName == exec->propertyNames().prototype) {
-        JSValue* location = getDirectLocation(propertyName);
+        WriteBarrierBase<Unknown>* location = getDirectLocation(propertyName);
 
         if (!location) {
             JSObject* prototype = new (exec) JSObject(scope().globalObject()->emptyObjectStructure());
@@ -212,7 +212,7 @@ bool JSFunction::getOwnPropertySlot(ExecState* exec, const Identifier& propertyN
             location = getDirectLocation(propertyName);
         }
 
-        slot.setValueSlot(this, location, offsetForLocation(location));
+        slot.setValue(this, location->get(), offsetForLocation(location));
     }
 
     if (propertyName == exec->propertyNames().arguments) {

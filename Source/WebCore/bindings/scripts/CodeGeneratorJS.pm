@@ -1434,7 +1434,7 @@ sub GenerateImplementation
     push(@implContent, "{\n");
     if ($numCachedAttributes > 0) {
         push(@implContent, "    for (unsigned i = Base::AnonymousSlotCount; i < AnonymousSlotCount; i++)\n");
-        push(@implContent, "        putAnonymousValue(i, JSValue());\n");
+        push(@implContent, "        putAnonymousValue(globalObject->globalData(), i, JSValue());\n");
     }
     push(@implContent, "}\n\n");
 
@@ -1602,7 +1602,7 @@ sub GenerateImplementation
                         }
                     }
                     
-                    push(@implContent, "    castedThis->putAnonymousValue(" . $className . "::" . $attribute->signature->name . "Slot, result);\n") if ($attribute->signature->extendedAttributes->{"CachedAttribute"});
+                    push(@implContent, "    castedThis->putAnonymousValue(exec->globalData(), " . $className . "::" . $attribute->signature->name . "Slot, result);\n") if ($attribute->signature->extendedAttributes->{"CachedAttribute"});
                     push(@implContent, "    return result;\n");
 
                 } else {

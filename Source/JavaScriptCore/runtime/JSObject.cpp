@@ -542,9 +542,9 @@ void JSObject::putDirectFunctionWithoutTransition(ExecState* exec, JSFunction* f
     putDirectFunctionWithoutTransition(exec->globalData(), Identifier(exec, function->name(exec)), function, attr);
 }
 
-NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, JSValue* location)
+NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, WriteBarrierBase<Unknown>* location)
 {
-    if (JSObject* getterFunction = asGetterSetter(*location)->getter()) {
+    if (JSObject* getterFunction = asGetterSetter(location->get())->getter()) {
         if (!structure()->isDictionary())
             slot.setCacheableGetterSlot(this, getterFunction, offsetForLocation(location));
         else

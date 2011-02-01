@@ -27,7 +27,7 @@ namespace JSC {
 
     class NumberObject : public JSWrapperObject {
     public:
-        explicit NumberObject(NonNullPassRefPtr<Structure>);
+        explicit NumberObject(JSGlobalData&, NonNullPassRefPtr<Structure>);
 
         static const ClassInfo info;
 

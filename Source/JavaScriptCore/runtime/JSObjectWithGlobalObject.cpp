@@ -35,7 +35,10 @@ JSObjectWithGlobalObject::JSObjectWithGlobalObject(JSGlobalObject* globalObject,
 {
     COMPILE_ASSERT(AnonymousSlotCount == 1, AnonymousSlotCount_must_be_one);
     ASSERT(!globalObject || globalObject->isGlobalObject());
-    putAnonymousValue(GlobalObjectSlot, globalObject);
+    if (!globalObject)
+        clearAnonymousValue(GlobalObjectSlot);
+    else
+        putAnonymousValue(globalObject->globalData(), GlobalObjectSlot, globalObject);
 }
 
 JSGlobalObject* JSObjectWithGlobalObject::globalObject() const

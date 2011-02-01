@@ -147,7 +147,7 @@ namespace JSC {
             : JSVariableObject(JSGlobalObject::createStructure(jsNull()), new JSGlobalObjectData(destroyJSGlobalObjectData))
         {
             COMPILE_ASSERT(JSGlobalObject::AnonymousSlotCount == 1, JSGlobalObject_has_only_a_single_slot);
-            putAnonymousValue(0, this);
+            putThisToAnonymousValue(0);
             init(this);
         }
         
@@ -155,7 +155,7 @@ namespace JSC {
             : JSVariableObject(structure, new JSGlobalObjectData(destroyJSGlobalObjectData))
         {
             COMPILE_ASSERT(JSGlobalObject::AnonymousSlotCount == 1, JSGlobalObject_has_only_a_single_slot);
-            putAnonymousValue(0, this);
+            putThisToAnonymousValue(0);
             init(this);
         }
 
@@ -164,7 +164,7 @@ namespace JSC {
             : JSVariableObject(structure, data)
         {
             COMPILE_ASSERT(JSGlobalObject::AnonymousSlotCount == 1, JSGlobalObject_has_only_a_single_slot);
-            putAnonymousValue(0, this);
+            putThisToAnonymousValue(0);
             init(thisValue);
         }
 

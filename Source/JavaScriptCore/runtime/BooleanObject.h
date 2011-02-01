@@ -27,7 +27,7 @@ namespace JSC {
 
     class BooleanObject : public JSWrapperObject {
     public:
-        explicit BooleanObject(NonNullPassRefPtr<Structure>);
+        explicit BooleanObject(JSGlobalData& globalData, NonNullPassRefPtr<Structure>);
 
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;

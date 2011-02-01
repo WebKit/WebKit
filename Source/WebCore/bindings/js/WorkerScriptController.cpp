@@ -80,8 +80,8 @@ void WorkerScriptController::initScript()
         RefPtr<Structure> structure = JSDedicatedWorkerContext::createStructure(dedicatedContextPrototype);
 
         m_workerContextWrapper = new (m_globalData.get()) JSDedicatedWorkerContext(structure.release(), m_workerContext->toDedicatedWorkerContext());
-        workerContextPrototype->putAnonymousValue(0, m_workerContextWrapper);
-        dedicatedContextPrototype->putAnonymousValue(0, m_workerContextWrapper);
+        workerContextPrototype->putAnonymousValue(*m_globalData, 0, m_workerContextWrapper);
+        dedicatedContextPrototype->putAnonymousValue(*m_globalData, 0, m_workerContextWrapper);
 #if ENABLE(SHARED_WORKERS)
     } else {
         ASSERT(m_workerContext->isSharedWorkerContext());
@@ -90,8 +90,8 @@ void WorkerScriptController::initScript()
         RefPtr<Structure> structure = JSSharedWorkerContext::createStructure(sharedContextPrototype);
 
         m_workerContextWrapper = new (m_globalData.get()) JSSharedWorkerContext(structure.release(), m_workerContext->toSharedWorkerContext());
-        workerContextPrototype->putAnonymousValue(0, m_workerContextWrapper);
-        sharedContextPrototype->putAnonymousValue(0, m_workerContextWrapper);
+        workerContextPrototype->putAnonymousValue(*m_globalData, 0, m_workerContextWrapper);
+        sharedContextPrototype->putAnonymousValue(*m_globalData, 0, m_workerContextWrapper);
 #endif
     }
 }

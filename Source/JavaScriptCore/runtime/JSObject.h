@@ -155,22 +155,22 @@ namespace JSC {
             return offset != WTF::notFound ? getDirectOffset(offset) : JSValue();
         }
 
-        JSValue* getDirectLocation(const Identifier& propertyName)
+        WriteBarrierBase<Unknown>* getDirectLocation(const Identifier& propertyName)
         {
             size_t offset = m_structure->get(propertyName);
             return offset != WTF::notFound ? locationForOffset(offset) : 0;
         }
 
-        JSValue* getDirectLocation(const Identifier& propertyName, unsigned& attributes)
+        WriteBarrierBase<Unknown>* getDirectLocation(const Identifier& propertyName, unsigned& attributes)
         {
             JSCell* specificFunction;
             size_t offset = m_structure->get(propertyName, attributes, specificFunction);
             return offset != WTF::notFound ? locationForOffset(offset) : 0;
         }
 
-        size_t offsetForLocation(JSValue* location) const
+        size_t offsetForLocation(WriteBarrierBase<Unknown>* location) const
         {
-            return location - reinterpret_cast<const JSValue*>(propertyStorage());
+            return location - propertyStorage();
         }
 
         void transitionTo(Structure*);
@@ -198,7 +198,7 @@ namespace JSC {
         void putDirectOffset(JSGlobalData& globalData, size_t offset, JSValue value) { propertyStorage()[offset].set(globalData, this, value); }
         void putUndefinedAtDirectOffset(size_t offset) { propertyStorage()[offset].setUndefined(); }
 
-        void fillGetterPropertySlot(PropertySlot&, JSValue* location);
+        void fillGetterPropertySlot(PropertySlot&, WriteBarrierBase<Unknown>* location);
 
         virtual void defineGetter(ExecState*, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes = 0);
         virtual void defineSetter(ExecState*, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes = 0);
@@ -231,19 +231,29 @@ namespace JSC {
             m_structure->flattenDictionaryStructure(globalData, this);
         }
 
-        void putAnonymousValue(unsigned index, JSValue value)
+        void putAnonymousValue(JSGlobalData& globalData, unsigned index, JSValue value)
         {
             ASSERT(index < m_structure->anonymousSlotCount());
-            *locationForOffset(index) = value;
+            locationForOffset(index)->set(globalData, this, value);
+        }
+        void clearAnonymousValue(unsigned index)
+        {
+            ASSERT(index < m_structure->anonymousSlotCount());
+            locationForOffset(index)->clear();
         }
         JSValue getAnonymousValue(unsigned index) const
         {
             ASSERT(index < m_structure->anonymousSlotCount());
-            return *locationForOffset(index);
+            return locationForOffset(index)->get();
         }
         
     protected:
         static const unsigned StructureFlags = 0;
+        
+        void putThisToAnonymousValue(unsigned index)
+        {
+            locationForOffset(index)->setWithoutWriteBarrier(this);
+        }
         
     private:
         // Nobody should ever ask any of these questions on something already known to be a JSObject.
@@ -254,18 +264,18 @@ namespace JSC {
         void getString(ExecState* exec);
         void isObject();
         void isString();
-
+        
         ConstPropertyStorage propertyStorage() const { return (isUsingInlineStorage() ? m_inlineStorage : m_externalStorage); }
         PropertyStorage propertyStorage() { return (isUsingInlineStorage() ? m_inlineStorage : m_externalStorage); }
 
-        const JSValue* locationForOffset(size_t offset) const
+        const WriteBarrierBase<Unknown>* locationForOffset(size_t offset) const
         {
-            return reinterpret_cast<const JSValue*>(&propertyStorage()[offset]);
+            return &propertyStorage()[offset];
         }
 
-        JSValue* locationForOffset(size_t offset)
+        WriteBarrierBase<Unknown>* locationForOffset(size_t offset)
         {
-            return reinterpret_cast<JSValue*>(&propertyStorage()[offset]);
+            return &propertyStorage()[offset];
         }
 
         bool putDirectInternal(JSGlobalData&, const Identifier& propertyName, JSValue, unsigned attr, bool checkReadOnly, PutPropertySlot&, JSCell*);
@@ -373,11 +383,11 @@ inline bool JSValue::inherits(const ClassInfo* classInfo) const
 
 ALWAYS_INLINE bool JSObject::inlineGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    if (JSValue* location = getDirectLocation(propertyName)) {
-        if (m_structure->hasGetterSetterProperties() && location[0].isGetterSetter())
+    if (WriteBarrierBase<Unknown>* location = getDirectLocation(propertyName)) {
+        if (m_structure->hasGetterSetterProperties() && location->isGetterSetter())
             fillGetterPropertySlot(slot, location);
         else
-            slot.setValueSlot(this, location, offsetForLocation(location));
+            slot.setValue(this, location->get(), offsetForLocation(location));
         return true;
     }
 

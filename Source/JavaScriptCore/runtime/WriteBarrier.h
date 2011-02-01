@@ -97,6 +97,8 @@ public:
     
     bool operator!() const { return !m_cell; }
 
+    void setWithoutWriteBarrier(T* value) { this->m_cell = reinterpret_cast<JSCell*>(value); }
+
 protected:
     JSCell* m_cell;
 };
@@ -119,6 +121,8 @@ public:
     void clear() { m_value = JSValue::encode(JSValue()); }
     void setUndefined() { m_value = JSValue::encode(jsUndefined()); }
     bool isNumber() const { return get().isNumber(); }
+    bool isGetterSetter() const { return get().isGetterSetter(); }
+    
     JSValue* slot()
     { 
         union {

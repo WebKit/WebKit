@@ -64,7 +64,7 @@ void JSDOMWindowShell::setWindow(PassRefPtr<DOMWindow> domWindow)
 
     RefPtr<Structure> structure = JSDOMWindow::createStructure(prototype);
     JSDOMWindow* jsDOMWindow = new (JSDOMWindow::commonJSGlobalData()) JSDOMWindow(structure.release(), domWindow, this);
-    prototype->putAnonymousValue(0, jsDOMWindow);
+    prototype->putAnonymousValue(*JSDOMWindow::commonJSGlobalData(), 0, jsDOMWindow);
     setWindow(*JSDOMWindow::commonJSGlobalData(), jsDOMWindow);
 }
 

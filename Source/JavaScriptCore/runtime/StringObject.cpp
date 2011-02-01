@@ -30,19 +30,19 @@ ASSERT_CLASS_FITS_IN_CELL(StringObject);
 const ClassInfo StringObject::info = { "String", 0, 0, 0 };
 
 StringObject::StringObject(ExecState* exec, NonNullPassRefPtr<Structure> structure)
-    : JSWrapperObject(structure)
+    : JSWrapperObject(exec->globalData(), structure)
 {
     setInternalValue(exec->globalData(), jsEmptyString(exec));
 }
 
 StringObject::StringObject(JSGlobalData& globalData, NonNullPassRefPtr<Structure> structure, JSString* string)
-    : JSWrapperObject(structure)
+    : JSWrapperObject(globalData, structure)
 {
     setInternalValue(globalData, string);
 }
 
 StringObject::StringObject(ExecState* exec, NonNullPassRefPtr<Structure> structure, const UString& string)
-    : JSWrapperObject(structure)
+    : JSWrapperObject(exec->globalData(), structure)
 {
     setInternalValue(exec->globalData(), jsString(exec, string));
 }

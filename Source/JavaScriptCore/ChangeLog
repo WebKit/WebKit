@@ -1,3 +1,74 @@
+2011-01-31  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Update JSObject storage for new marking API
+        https://bugs.webkit.org/show_bug.cgi?id=53467
+
+        JSObject no longer uses EncodedJSValue for its property storage.
+        This produces a stream of mechanical changes to PropertySlot and
+        anonymous storage APIs.
+
+        * JavaScriptCore.exp:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::ArrayPrototype):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::constructBoolean):
+        (JSC::constructBooleanFromImmediateBoolean):
+        * runtime/BooleanObject.cpp:
+        (JSC::BooleanObject::BooleanObject):
+        * runtime/BooleanObject.h:
+        * runtime/BooleanPrototype.cpp:
+        (JSC::BooleanPrototype::BooleanPrototype):
+        * runtime/DateInstance.cpp:
+        (JSC::DateInstance::DateInstance):
+        * runtime/DatePrototype.cpp:
+        (JSC::DatePrototype::DatePrototype):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::getOwnPropertySlot):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::getOwnPropertySlot):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertySlot):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::fillGetterPropertySlot):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getDirectLocation):
+        (JSC::JSObject::offsetForLocation):
+        (JSC::JSObject::putAnonymousValue):
+        (JSC::JSObject::clearAnonymousValue):
+        (JSC::JSObject::getAnonymousValue):
+        (JSC::JSObject::putThisToAnonymousValue):
+        (JSC::JSObject::locationForOffset):
+        (JSC::JSObject::inlineGetOwnPropertySlot):
+        * runtime/JSObjectWithGlobalObject.cpp:
+        (JSC::JSObjectWithGlobalObject::JSObjectWithGlobalObject):
+        * runtime/JSWrapperObject.h:
+        (JSC::JSWrapperObject::JSWrapperObject):
+        (JSC::JSWrapperObject::setInternalValue):
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticFunctionSlot):
+        * runtime/NumberConstructor.cpp:
+        (JSC::constructWithNumberConstructor):
+        * runtime/NumberObject.cpp:
+        (JSC::NumberObject::NumberObject):
+        (JSC::constructNumber):
+        * runtime/NumberObject.h:
+        * runtime/NumberPrototype.cpp:
+        (JSC::NumberPrototype::NumberPrototype):
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::getValue):
+        (JSC::PropertySlot::setValue):
+        (JSC::PropertySlot::setRegisterSlot):
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::StringObject):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::StringPrototype):
+        * runtime/WriteBarrier.h:
+        (JSC::WriteBarrierBase::setWithoutWriteBarrier):
+
 2011-02-01  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Antonio Gomes.

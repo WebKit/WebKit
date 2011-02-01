@@ -39,7 +39,7 @@ static EncodedJSValue JSC_HOST_CALL booleanProtoFuncValueOf(ExecState*);
 // ECMA 15.6.4
 
 BooleanPrototype::BooleanPrototype(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, Structure* prototypeFunctionStructure)
-    : BooleanObject(structure)
+    : BooleanObject(exec->globalData(), structure)
 {
     setInternalValue(exec->globalData(), jsBoolean(false));
 

@@ -47,7 +47,7 @@ static EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState*);
 // ECMA 15.7.4
 
 NumberPrototype::NumberPrototype(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, Structure* prototypeFunctionStructure)
-    : NumberObject(structure)
+    : NumberObject(exec->globalData(), structure)
 {
     setInternalValue(exec->globalData(), jsNumber(0));
 

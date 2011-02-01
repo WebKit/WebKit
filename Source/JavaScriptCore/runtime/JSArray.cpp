@@ -257,16 +257,16 @@ bool JSArray::getOwnPropertySlot(ExecState* exec, unsigned i, PropertySlot& slot
     }
 
     if (i < m_vectorLength) {
-        WriteBarrier<Unknown>& valueSlot = storage->m_vector[i];
-        if (valueSlot) {
-            slot.setValueSlot(valueSlot.slot());
+        JSValue value = storage->m_vector[i].get();
+        if (value) {
+            slot.setValue(value);
             return true;
         }
     } else if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
         if (i >= MIN_SPARSE_ARRAY_INDEX) {
             SparseArrayValueMap::iterator it = map->find(i);
             if (it != map->end()) {
-                slot.setValueSlot(it->second.slot());
+                slot.setValue(it->second.get());
                 return true;
             }
         }

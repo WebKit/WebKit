@@ -156,7 +156,7 @@ EXPORTS
     ?fastRealloc@WTF@@YAPAXPAXI@Z
     ?fastStrDup@WTF@@YAPADPBD@Z
     ?fastZeroedMalloc@WTF@@YAPAXI@Z
-    ?fillGetterPropertySlot@JSObject@JSC@@QAEXAAVPropertySlot@2@PAVJSValue@2@@Z
+    ?fillGetterPropertySlot@JSObject@JSC@@QAEXAAVPropertySlot@2@PAV?$WriteBarrierBase@W4Unknown@JSC@@@2@@Z
     ?focus@Profile@JSC@@QAEXPBVProfileNode@2@@Z
     ?free@WeakGCHandlePool@JSC@@QAEXPAVWeakGCHandle@2@@Z
     ?from@Identifier@JSC@@SA?AV12@PAVExecState@2@H@Z
