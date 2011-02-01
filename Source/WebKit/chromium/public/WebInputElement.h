@@ -89,6 +89,13 @@ namespace WebKit {
 #endif
     };
 
+    WEBKIT_API WebInputElement* toWebInputElement(WebElement*);
+
+    inline const WebInputElement* toWebInputElement(const WebElement* element)
+    {
+        return toWebInputElement(const_cast<WebElement*>(element));
+    }
+
 } // namespace WebKit
 
 #endif

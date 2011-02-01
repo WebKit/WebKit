@@ -45,12 +45,6 @@ const AtomicString& TextInputType::formControlType() const
     return InputTypeNames::text();
 }
 
-bool TextInputType::canSetSuggestedValue()
-{
-    // FIXME: Should this really be restricted to plain text? What about search, for example?
-    return true;
-}
-
 bool TextInputType::shouldRespectSpeechAttribute()
 {
     return true;

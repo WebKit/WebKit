@@ -40,6 +40,7 @@ namespace WebCore {
 class TextFieldInputType : public InputType {
 protected:
     TextFieldInputType(HTMLInputElement* element) : InputType(element) { }
+    virtual bool canSetSuggestedValue();
     virtual void handleKeydownEvent(KeyboardEvent*);
     void handleKeydownEventForSpinButton(KeyboardEvent*);
     void handleWheelEventForSpinButton(WheelEvent*);

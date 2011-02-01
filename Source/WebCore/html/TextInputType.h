@@ -42,7 +42,6 @@ public:
 private:
     TextInputType(HTMLInputElement* element) : BaseTextInputType(element) { }
     virtual const AtomicString& formControlType() const;
-    virtual bool canSetSuggestedValue();
     virtual bool shouldRespectSpeechAttribute();
 };
 

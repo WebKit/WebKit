@@ -52,6 +52,11 @@ bool TextFieldInputType::valueMissing(const String& value) const
     return value.isEmpty();
 }
 
+bool TextFieldInputType::canSetSuggestedValue()
+{
+    return true;
+}
+
 void TextFieldInputType::handleKeydownEvent(KeyboardEvent* event)
 {
     if (!element()->focused())

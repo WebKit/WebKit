@@ -173,4 +173,15 @@ WebInputElement::operator PassRefPtr<HTMLInputElement>() const
     return static_cast<HTMLInputElement*>(m_private.get());
 }
 
+WebInputElement* toWebInputElement(WebElement* webElement)
+{
+    InputElement* inputElement = toInputElement(webElement->unwrap<Element>());
+    if (!inputElement)
+        return 0;
+
+    ASSERT(inputElement->isHTMLElement());
+
+    return static_cast<WebInputElement*>(webElement);
+}
+
 } // namespace WebKit

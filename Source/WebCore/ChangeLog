@@ -1,3 +1,20 @@
+2011-02-01  Naoki Takano  <takano.naoki@gmail.com>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Autofill should work with HTML5 form elements
+        https://bugs.webkit.org/show_bug.cgi?id=51809
+        http://crbug.com/65654
+
+        No new tests, because this fix is for Chromium project and hard to test only in WebKit project.
+
+        * html/InputType.h: Insert comment for canSetSuggestedValue().
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::canSetSuggestedValue): Implemented to return always true for that all text filed inputs can be completed.
+        * html/TextFieldInputType.h: Declare canSetSuggestedValue().
+        * html/TextInputType.cpp: Delete canSetSuggestedValue() not to return true anymore.
+        * html/TextInputType.h: Delete canSetSuggestedValue() not to return true anymore.
+
 2011-02-01  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dan Bernstein.
