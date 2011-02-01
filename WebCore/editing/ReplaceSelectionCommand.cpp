@@ -51,8 +51,11 @@
 #include "markup.h"
 #include "visible_units.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
+
+typedef Vector<RefPtr<Node> > NodeVector;
 
 using namespace HTMLNames;
 
@@ -707,7 +710,12 @@ void ReplaceSelectionCommand::handleStyleSpans()
 void ReplaceSelectionCommand::copyStyleToChildren(Node* parentNode, const CSSMutableStyleDeclaration* parentStyle)
 {
     ASSERT(parentNode->hasTagName(spanTag));
-    for (Node* childNode = parentNode->firstChild(); childNode; childNode = childNode->nextSibling()) {
+    NodeVector childNodes;
+    for (RefPtr<Node> childNode = parentNode->firstChild(); childNode; childNode = childNode->nextSibling())
+        childNodes.append(childNode);
+        
+    for (NodeVector::const_iterator it = childNodes.begin(); it != childNodes.end(); it++) {
+        Node* childNode = it->get();
         if (childNode->isTextNode() || !isBlock(childNode) || childNode->hasTagName(preTag)) {
             // In this case, put a span tag around the child node.
             RefPtr<Node> newSpan = parentNode->cloneNode(false);
@@ -867,6 +875,10 @@ void ReplaceSelectionCommand::doApply()
     
     // Inserting content could cause whitespace to collapse, e.g. inserting <div>foo</div> into hello^ world.
     prepareWhitespaceAtPositionForSplit(insertionPos);
+
+    // If the downstream node has been removed there's no point in continuing.
+    if (!insertionPos.downstream().node())
+      return;
     
     // NOTE: This would be an incorrect usage of downstream() if downstream() were changed to mean the last position after 
     // p that maps to the same visible position as p (since in the case where a br is at the end of a block and collapsed 
@@ -945,8 +957,8 @@ void ReplaceSelectionCommand::doApply()
     bool plainTextFragment = isPlainTextMarkup(refNode.get());
 
     while (node) {
-        Node* next = node->nextSibling();
-        fragment.removeNode(node);
+        RefPtr<Node> next = node->nextSibling();
+        fragment.removeNode(node.get());
         insertNodeAfterAndUpdateNodesInserted(node, refNode.get());
 
         // Mutation events (bug 22634) may have already removed the inserted content

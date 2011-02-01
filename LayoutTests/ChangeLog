@@ -1,5 +1,18 @@
 2011-02-01  Mark Rowe  <mrowe@apple.com>
 
+        Merge r73801.
+
+    2010-12-10  Emil Eklund  <eae@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add testcase for ReplaceSelectionCommand crash.
+        https://bugs.webkit.org/show_bug.cgi?id=50840
+
+        * editing/execCommand/insertHTML-mutation-crash.html: Added.
+
+2011-02-01  Mark Rowe  <mrowe@apple.com>
+
         Merge r74788.
 
     2010-12-30  Justin Schuh  <jschuh@chromium.org>
