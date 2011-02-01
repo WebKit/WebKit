@@ -568,7 +568,7 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
     return YES;
 }
 
-- (void)setScrollOrigin:(NSPoint)scrollOrigin updatePosition:(BOOL)updatePosition
+- (void)setScrollOrigin:(NSPoint)scrollOrigin updatePositionAtAll:(BOOL)updatePositionAtAll immediately:(BOOL)updatePositionSynchronously
 {
     // The cross-platform ScrollView call already checked to see if the old/new scroll origins were the same or not
     // so we don't have to check for equivalence here.
@@ -579,12 +579,13 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
 
     [docView setBoundsOrigin:NSMakePoint(-scrollOrigin.x, -scrollOrigin.y)];
 
-    _private->scrollOriginChanged = true;
+    if (updatePositionAtAll)
+        _private->scrollOriginChanged = true;
 
     // Maintain our original position in the presence of the new scroll origin.
     _private->scrollPositionExcludingOrigin = NSMakePoint(visibleRect.origin.x + scrollOrigin.x, visibleRect.origin.y + scrollOrigin.y);
 
-    if (updatePosition) // Otherwise we'll just let the snap happen when we update for the resize.
+    if (updatePositionAtAll && updatePositionSynchronously) // Otherwise we'll just let the snap happen when we update for the resize.
         [self adjustForScrollOriginChange];
 }
 

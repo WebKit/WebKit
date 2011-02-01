@@ -105,7 +105,7 @@ void RenderView::layout()
         setPageLogicalHeight(0);
 
     if (printing())
-        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = width();
+        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = logicalWidth();
 
     // Use calcWidth/Height to get the new width/height, since this will take the full page zoom factor into account.
     bool relayoutChildren = !printing() && (!m_frameView || width() != viewWidth() || height() != viewHeight());

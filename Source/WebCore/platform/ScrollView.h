@@ -296,7 +296,7 @@ protected:
     // Scroll the content by invalidating everything.
     virtual void scrollContentsSlowPath(const IntRect& updateRect);
 
-    void setScrollOrigin(const IntPoint&, bool updatePosition);
+    void setScrollOrigin(const IntPoint&, bool updatePositionAtAll, bool updatePositionSynchronously);
     IntPoint scrollOrigin() { return m_scrollOrigin; }
 
     // Subclassed by FrameView to check the writing-mode of the document.
@@ -383,7 +383,7 @@ private:
     void platformRepaintContentRectangle(const IntRect&, bool now);
     bool platformIsOffscreen() const;
    
-    void platformSetScrollOrigin(const IntPoint&, bool updatePosition);
+    void platformSetScrollOrigin(const IntPoint&, bool updatePositionAtAll, bool updatePositionSynchronously);
 
 #if PLATFORM(MAC) && defined __OBJC__
 public:

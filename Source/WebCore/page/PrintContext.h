@@ -54,7 +54,7 @@ public:
     const IntRect& pageRect(size_t pageNumber) const;
     const Vector<IntRect>& pageRects() const { return m_pageRects; }
 
-    float computeAutomaticScaleFactor(float availablePaperWidth);
+    float computeAutomaticScaleFactor(const FloatSize& availablePaperSize);
 
     // Enter print mode, updating layout for new page size.
     // This function can be called multiple times to apply new print options without going back to screen mode.

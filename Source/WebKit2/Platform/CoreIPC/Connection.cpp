@@ -275,14 +275,15 @@ void Connection::processIncomingMessage(MessageID messageID, PassOwnPtr<Argument
     // Check if this is a sync reply.
     if (messageID == MessageID(CoreIPCMessage::SyncMessageReply)) {
         MutexLocker locker(m_syncReplyStateMutex);
-        ASSERT(!m_pendingSyncReplies.isEmpty());
+        if (!m_pendingSyncReplies.isEmpty()) {
+            ASSERT(!m_pendingSyncReplies.isEmpty());
 
-        PendingSyncReply& pendingSyncReply = m_pendingSyncReplies.last();
-        ASSERT(pendingSyncReply.syncRequestID == arguments->destinationID());
+            PendingSyncReply& pendingSyncReply = m_pendingSyncReplies.last();
+            ASSERT(pendingSyncReply.syncRequestID == arguments->destinationID());
 
-        pendingSyncReply.replyDecoder = arguments.leakPtr();
-        pendingSyncReply.didReceiveReply = true;
-
+            pendingSyncReply.replyDecoder = arguments.leakPtr();
+            pendingSyncReply.didReceiveReply = true;
+        }
         m_waitForSyncReplySemaphore.signal();
         return;
     }

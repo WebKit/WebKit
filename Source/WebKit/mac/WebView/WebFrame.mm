@@ -587,16 +587,11 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 }
 
 // Used by pagination code called from AppKit when a standalone web page is printed.
-- (NSArray*)_computePageRectsWithPrintWidthScaleFactor:(float)printWidthScaleFactor printHeight:(float)printHeight
+- (NSArray*)_computePageRectsWithPrintScaleFactor:(float)printScaleFactor pageSize:(NSSize)pageSize
 {
     NSMutableArray* pages = [NSMutableArray arrayWithCapacity:5];
-    if (printWidthScaleFactor <= 0) {
-        LOG_ERROR("printWidthScaleFactor has bad value %.2f", printWidthScaleFactor);
-        return pages;
-    }
-    
-    if (printHeight <= 0) {
-        LOG_ERROR("printHeight has bad value %.2f", printHeight);
+    if (printScaleFactor <= 0) {
+        LOG_ERROR("printScaleFactor has bad value %.2f", printScaleFactor);
         return pages;
     }
 
@@ -612,8 +607,11 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (!documentView)
         return pages;
 
-    float docWidth = root->layer()->width();
-    float printWidth = docWidth / printWidthScaleFactor;
+    float docWidth = root->docWidth();
+    float docHeight = root->docHeight();
+
+    float printWidth = root->style()->isHorizontalWritingMode() ? docWidth / printScaleFactor : pageSize.width;
+    float printHeight = root->style()->isHorizontalWritingMode() ? pageSize.height : docHeight / printScaleFactor;
 
     PrintContext printContext(_private->coreFrame);
     printContext.computePageRectsWithPageSize(FloatSize(printWidth, printHeight), true);

@@ -104,6 +104,7 @@
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderWidget.h>
+#import <WebCore/RenderView.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SelectionController.h>
 #import <WebCore/SharedBuffer.h>
@@ -428,7 +429,7 @@ static CachedResourceClient* promisedDataClient()
 #endif
 
 @interface WebHTMLView (WebForwardDeclaration) // FIXME: Put this in a normal category and stop doing the forward declaration trick.
-- (void)_setPrinting:(BOOL)printing minimumPageWidth:(float)minPageWidth height:(float)minPageHeight maximumPageWidth:(float)maxPageWidth adjustViewSize:(BOOL)adjustViewSize paginateScreenContent:(BOOL)paginateScreenContent;
+- (void)_setPrinting:(BOOL)printing minimumPageLogicalWidth:(float)minPageWidth logicalHeight:(float)minPageHeight maximumPageLogicalWidth:(float)maxPageWidth adjustViewSize:(BOOL)adjustViewSize paginateScreenContent:(BOOL)paginateScreenContent;
 @end
 
 @class NSTextInputContext;
@@ -1080,7 +1081,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 
 - (void)_web_setPrintingModeRecursive
 {
-    [self _setPrinting:YES minimumPageWidth:0 height:0 maximumPageWidth:0 adjustViewSize:NO paginateScreenContent:[self _isInScreenPaginationMode]];
+    [self _setPrinting:YES minimumPageLogicalWidth:0 logicalHeight:0 maximumPageLogicalWidth:0 adjustViewSize:NO paginateScreenContent:[self _isInScreenPaginationMode]];
 
 #ifndef NDEBUG
     _private->enumeratingSubviews = YES;
@@ -1092,7 +1093,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 
     unsigned count = [descendantWebHTMLViews count];
     for (unsigned i = 0; i < count; ++i)
-        [[descendantWebHTMLViews objectAtIndex:i] _setPrinting:YES minimumPageWidth:0 height:0 maximumPageWidth:0 adjustViewSize:NO paginateScreenContent:[self _isInScreenPaginationMode]];
+        [[descendantWebHTMLViews objectAtIndex:i] _setPrinting:YES minimumPageLogicalWidth:0 logicalHeight:0 maximumPageLogicalWidth:0 adjustViewSize:NO paginateScreenContent:[self _isInScreenPaginationMode]];
 
     [descendantWebHTMLViews release];
 
@@ -1103,7 +1104,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 
 - (void)_web_clearPrintingModeRecursive
 {
-    [self _setPrinting:NO minimumPageWidth:0 height:0 maximumPageWidth:0 adjustViewSize:NO paginateScreenContent:[self _isInScreenPaginationMode]];
+    [self _setPrinting:NO minimumPageLogicalWidth:0 logicalHeight:0 maximumPageLogicalWidth:0 adjustViewSize:NO paginateScreenContent:[self _isInScreenPaginationMode]];
 
 #ifndef NDEBUG
     _private->enumeratingSubviews = YES;
@@ -1115,7 +1116,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 
     unsigned count = [descendantWebHTMLViews count];
     for (unsigned i = 0; i < count; ++i)
-        [[descendantWebHTMLViews objectAtIndex:i] _setPrinting:NO minimumPageWidth:0 height:0 maximumPageWidth:0 adjustViewSize:NO paginateScreenContent:[self _isInScreenPaginationMode]];
+        [[descendantWebHTMLViews objectAtIndex:i] _setPrinting:NO minimumPageLogicalWidth:0 logicalHeight:0 maximumPageLogicalWidth:0 adjustViewSize:NO paginateScreenContent:[self _isInScreenPaginationMode]];
 
     [descendantWebHTMLViews release];
 
@@ -1126,7 +1127,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 
 - (void)_web_setPrintingModeRecursiveAndAdjustViewSize
 {
-    [self _setPrinting:YES minimumPageWidth:0 height:0 maximumPageWidth:0 adjustViewSize:YES paginateScreenContent:[self _isInScreenPaginationMode]];
+    [self _setPrinting:YES minimumPageLogicalWidth:0 logicalHeight:0 maximumPageLogicalWidth:0 adjustViewSize:YES paginateScreenContent:[self _isInScreenPaginationMode]];
 
 #ifndef NDEBUG
     _private->enumeratingSubviews = YES;
@@ -1138,7 +1139,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 
     unsigned count = [descendantWebHTMLViews count];
     for (unsigned i = 0; i < count; ++i)
-        [[descendantWebHTMLViews objectAtIndex:i] _setPrinting:YES minimumPageWidth:0 height:0 maximumPageWidth:0 adjustViewSize:YES paginateScreenContent:[self _isInScreenPaginationMode]];
+        [[descendantWebHTMLViews objectAtIndex:i] _setPrinting:YES minimumPageLogicalWidth:0 logicalHeight:0 maximumPageLogicalWidth:0 adjustViewSize:YES paginateScreenContent:[self _isInScreenPaginationMode]];
 
     [descendantWebHTMLViews release];
 
@@ -2201,7 +2202,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
         maximumPageWidth = 0;
     }
 
-    [self _setPrinting:YES minimumPageWidth:minimumPageWidth height:minimumPageHeight maximumPageWidth:maximumPageWidth adjustViewSize:YES paginateScreenContent:[self _isInScreenPaginationMode]];
+    [self _setPrinting:YES minimumPageLogicalWidth:minimumPageWidth logicalHeight:minimumPageHeight maximumPageLogicalWidth:maximumPageWidth adjustViewSize:YES paginateScreenContent:[self _isInScreenPaginationMode]];
     return YES;
 }
 
@@ -2211,25 +2212,28 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     if (!frame)
         return NO;
 
-    float minLayoutWidth = 0;
-    float minLayoutHeight = 0;
-    float maxLayoutWidth = 0;
+    Document* document = frame->document();
+    bool isHorizontal = !document || !document->renderView() || document->renderView()->style()->isHorizontalWritingMode();
+
+    float minLayoutLogicalWidth = isHorizontal ? pageWidth : pageHeight;
+    float minLayoutLogicalHeight = isHorizontal ? pageHeight : pageWidth;
+    float maxLayoutLogicalWidth = minLayoutLogicalWidth;
 
     // If we are a frameset just print with the layout we have onscreen, otherwise relayout
     // according to the page width.
-    if (!frame->document() || !frame->document()->isFrameSet()) {
-        minLayoutWidth = shrinkToFit ? pageWidth * _WebHTMLViewPrintingMinimumShrinkFactor : pageWidth;
-        minLayoutHeight = shrinkToFit ? pageHeight * _WebHTMLViewPrintingMinimumShrinkFactor : pageHeight;
-        maxLayoutWidth = shrinkToFit ? pageWidth * _WebHTMLViewPrintingMaximumShrinkFactor : pageWidth;
+    if (shrinkToFit && (!frame->document() || !frame->document()->isFrameSet())) {
+        minLayoutLogicalWidth *= _WebHTMLViewPrintingMinimumShrinkFactor;
+        minLayoutLogicalHeight *= _WebHTMLViewPrintingMinimumShrinkFactor;
+        maxLayoutLogicalWidth *= _WebHTMLViewPrintingMaximumShrinkFactor;
     }
-    [self _setPrinting:YES minimumPageWidth:minLayoutWidth height:minLayoutHeight maximumPageWidth:maxLayoutWidth adjustViewSize:YES paginateScreenContent:[self _isInScreenPaginationMode]];
+    [self _setPrinting:YES minimumPageLogicalWidth:minLayoutLogicalWidth logicalHeight:minLayoutLogicalHeight maximumPageLogicalWidth:maxLayoutLogicalWidth adjustViewSize:YES paginateScreenContent:[self _isInScreenPaginationMode]];
 
     return YES;
 }
 
 - (void)_endPrintMode
 {
-    [self _setPrinting:NO minimumPageWidth:0 height:0 maximumPageWidth:0 adjustViewSize:YES paginateScreenContent:[self _isInScreenPaginationMode]];
+    [self _setPrinting:NO minimumPageLogicalWidth:0 logicalHeight:0 maximumPageLogicalWidth:0 adjustViewSize:YES paginateScreenContent:[self _isInScreenPaginationMode]];
 }
 
 - (BOOL)_isInScreenPaginationMode
@@ -2243,25 +2247,28 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     if (!frame)
         return NO;
 
-    CGFloat minLayoutWidth = 0;
-    CGFloat minLayoutHeight = 0;
-    CGFloat maxLayoutWidth = 0;
+    Document* document = frame->document();
+    bool isHorizontal = !document || !document->renderView() || document->renderView()->style()->isHorizontalWritingMode();
 
-    // If we are a frameset just print with the layout we have on the screen. Otherwise do a relayout
+    float minLayoutLogicalWidth = isHorizontal ? pageSize.width : pageSize.height;
+    float minLayoutLogicalHeight = isHorizontal ? pageSize.height : pageSize.width;
+    float maxLayoutLogicalWidth = minLayoutLogicalWidth;
+
+    // If we are a frameset just print with the layout we have onscreen, otherwise relayout
     // according to the page width.
-    if (!frame->document() || !frame->document()->isFrameSet()) {
-        minLayoutWidth = shrinkToFit ? pageSize.width * _WebHTMLViewPrintingMinimumShrinkFactor : pageSize.width;
-        minLayoutHeight = shrinkToFit ? pageSize.height * _WebHTMLViewPrintingMinimumShrinkFactor : pageSize.height;
-        maxLayoutWidth = shrinkToFit ? pageSize.width * _WebHTMLViewPrintingMaximumShrinkFactor : pageSize.width;
+    if (shrinkToFit && (!frame->document() || !frame->document()->isFrameSet())) {
+        minLayoutLogicalWidth *= _WebHTMLViewPrintingMinimumShrinkFactor;
+        minLayoutLogicalHeight *= _WebHTMLViewPrintingMinimumShrinkFactor;
+        maxLayoutLogicalWidth *= _WebHTMLViewPrintingMaximumShrinkFactor;
     }
-    [self _setPrinting:[self _isInPrintMode] minimumPageWidth:minLayoutWidth height:minLayoutHeight maximumPageWidth:maxLayoutWidth adjustViewSize:YES paginateScreenContent:YES];
+    [self _setPrinting:[self _isInPrintMode] minimumPageLogicalWidth:minLayoutLogicalWidth logicalHeight:minLayoutLogicalHeight maximumPageLogicalWidth:maxLayoutLogicalWidth adjustViewSize:YES paginateScreenContent:YES];
 
     return YES;
 }
 
 - (void)_endScreenPaginationMode
 {
-    [self _setPrinting:[self _isInPrintMode] minimumPageWidth:0 height:0 maximumPageWidth:0 adjustViewSize:YES paginateScreenContent:NO];
+    [self _setPrinting:[self _isInPrintMode] minimumPageLogicalWidth:0 logicalHeight:0 maximumPageLogicalWidth:0 adjustViewSize:YES paginateScreenContent:NO];
 }
 
 - (CGFloat)_adjustedBottomOfPageWithTop:(CGFloat)top bottom:(CGFloat)bottom limit:(CGFloat)bottomLimit
@@ -3117,7 +3124,7 @@ WEBCORE_COMMAND(yankAndSelect)
 
 // Do a layout, but set up a new fixed width for the purposes of doing printing layout.
 // minPageWidth==0 implies a non-printing layout
-- (void)layoutToMinimumPageWidth:(float)minPageWidth height:(float)minPageHeight maximumPageWidth:(float)maxPageWidth adjustingViewSize:(BOOL)adjustViewSize
+- (void)layoutToMinimumPageWidth:(float)minPageLogicalWidth height:(float)minPageLogicalHeight maximumPageWidth:(float)maxPageLogicalWidth adjustingViewSize:(BOOL)adjustViewSize
 {    
     if (![self _needsLayout])
         return;
@@ -3133,9 +3140,12 @@ WEBCORE_COMMAND(yankAndSelect)
         return;
 
     if (FrameView* coreView = coreFrame->view()) {
-        if (minPageWidth > 0.0)
-            coreView->forceLayoutForPagination(FloatSize(minPageWidth, minPageHeight), maxPageWidth / minPageWidth, adjustViewSize ? Frame::AdjustViewSize : Frame::DoNotAdjustViewSize);
-        else {
+        if (minPageLogicalWidth > 0.0) {
+            FloatSize pageSize(minPageLogicalWidth, minPageLogicalHeight);
+            if (coreFrame->document() && coreFrame->document()->renderView() && !coreFrame->document()->renderView()->style()->isHorizontalWritingMode())
+                pageSize = FloatSize(minPageLogicalHeight, minPageLogicalWidth);
+            coreView->forceLayoutForPagination(pageSize, maxPageLogicalWidth / minPageLogicalWidth, adjustViewSize ? Frame::AdjustViewSize : Frame::DoNotAdjustViewSize);
+        } else {
             coreView->forceLayout(!adjustViewSize);
             if (adjustViewSize)
                 coreView->adjustViewSize();
@@ -3877,7 +3887,7 @@ static BOOL isInPasswordField(Frame* coreFrame)
 
 // Does setNeedsDisplay:NO as a side effect when printing is ending.
 // pageWidth != 0 implies we will relayout to a new width
-- (void)_setPrinting:(BOOL)printing minimumPageWidth:(float)minPageWidth height:(float)minPageHeight maximumPageWidth:(float)maxPageWidth adjustViewSize:(BOOL)adjustViewSize paginateScreenContent:(BOOL)paginateScreenContent
+- (void)_setPrinting:(BOOL)printing minimumPageLogicalWidth:(float)minPageLogicalWidth logicalHeight:(float)minPageLogicalHeight maximumPageLogicalWidth:(float)maxPageLogicalWidth adjustViewSize:(BOOL)adjustViewSize paginateScreenContent:(BOOL)paginateScreenContent
 {
     if (printing == _private->printing && paginateScreenContent == _private->paginateScreenContent)
         return;
@@ -3890,7 +3900,7 @@ static BOOL isInPasswordField(Frame* coreFrame)
         WebFrame *subframe = [subframes objectAtIndex:i];
         WebFrameView *frameView = [subframe frameView];
         if ([[subframe _dataSource] _isDocumentHTML]) {
-            [(WebHTMLView *)[frameView documentView] _setPrinting:printing minimumPageWidth:0 height:0 maximumPageWidth:0 adjustViewSize:adjustViewSize paginateScreenContent:paginateScreenContent];
+            [(WebHTMLView *)[frameView documentView] _setPrinting:printing minimumPageLogicalWidth:0 logicalHeight:0 maximumPageLogicalWidth:0 adjustViewSize:adjustViewSize paginateScreenContent:paginateScreenContent];
         }
     }
 
@@ -3911,7 +3921,7 @@ static BOOL isInPasswordField(Frame* coreFrame)
     }
 
     [self setNeedsLayout:YES];
-    [self layoutToMinimumPageWidth:minPageWidth height:minPageHeight maximumPageWidth:maxPageWidth adjustingViewSize:adjustViewSize];
+    [self layoutToMinimumPageWidth:minPageLogicalWidth height:minPageLogicalHeight maximumPageWidth:maxPageLogicalWidth adjustingViewSize:adjustViewSize];
     if (!printing) {
         // Can't do this when starting printing or nested printing won't work, see 3491427.
         [self setNeedsDisplay:NO];
@@ -3931,7 +3941,7 @@ static BOOL isInPasswordField(Frame* coreFrame)
     // If the WebHTMLView itself is what we're printing, then we will never have to do this.
     BOOL wasInPrintingMode = _private->printing;
     if (!wasInPrintingMode)
-        [self _setPrinting:YES minimumPageWidth:0 height:0 maximumPageWidth:0 adjustViewSize:NO paginateScreenContent:[self _isInScreenPaginationMode]];
+        [self _setPrinting:YES minimumPageLogicalWidth:0 logicalHeight:0 maximumPageLogicalWidth:0 adjustViewSize:NO paginateScreenContent:[self _isInScreenPaginationMode]];
 
     *newBottom = [self _adjustedBottomOfPageWithTop:oldTop bottom:oldBottom limit:bottomLimit];
 
@@ -3942,21 +3952,29 @@ static BOOL isInPasswordField(Frame* coreFrame)
             [self performSelector:@selector(_delayedEndPrintMode:) withObject:currenPrintOperation afterDelay:0];
         else
             // not sure if this is actually ever invoked, it probably shouldn't be
-            [self _setPrinting:NO minimumPageWidth:0 height:0 maximumPageWidth:0 adjustViewSize:NO paginateScreenContent:[self _isInScreenPaginationMode]];
+            [self _setPrinting:NO minimumPageLogicalWidth:0 logicalHeight:0 maximumPageLogicalWidth:0 adjustViewSize:NO paginateScreenContent:[self _isInScreenPaginationMode]];
     }
 }
 
 - (float)_scaleFactorForPrintOperation:(NSPrintOperation *)printOperation
 {
-    float viewWidth = NSWidth([self bounds]);
-    if (viewWidth < 1) {
-        LOG_ERROR("%@ has no width when printing", self);
+    bool useViewWidth = true;
+    Frame* coreFrame = core([self _frame]);
+    if (coreFrame) {
+        Document* document = coreFrame->document();
+        if (document && document->renderView())
+            useViewWidth = document->renderView()->style()->isHorizontalWritingMode();
+    }
+
+    float viewLogicalWidth = useViewWidth ? NSWidth([self bounds]) : NSHeight([self bounds]);
+    if (viewLogicalWidth < 1) {
+        LOG_ERROR("%@ has no logical width when printing", self);
         return 1.0f;
     }
 
     float userScaleFactor = [printOperation _web_pageSetupScaleFactor];
     float maxShrinkToFitScaleFactor = 1.0f / _WebHTMLViewPrintingMaximumShrinkFactor;
-    float shrinkToFitScaleFactor = [printOperation _web_availablePaperWidth] / viewWidth;
+    float shrinkToFitScaleFactor = (useViewWidth ? [printOperation _web_availablePaperWidth] :  [printOperation _web_availablePaperHeight]) / viewLogicalWidth;
     return userScaleFactor * max(maxShrinkToFitScaleFactor, shrinkToFitScaleFactor);
 }
 
@@ -3971,8 +3989,8 @@ static BOOL isInPasswordField(Frame* coreFrame)
 // This is used for Carbon printing. At some point we might want to make this public API.
 - (void)setPageWidthForPrinting:(float)pageWidth
 {
-    [self _setPrinting:NO minimumPageWidth:0 height:0 maximumPageWidth:0 adjustViewSize:NO paginateScreenContent:[self _isInScreenPaginationMode]];
-    [self _setPrinting:YES minimumPageWidth:pageWidth height:0 maximumPageWidth:pageWidth adjustViewSize:YES paginateScreenContent:[self _isInScreenPaginationMode]];
+    [self _setPrinting:NO minimumPageLogicalWidth:0 logicalHeight:0 maximumPageLogicalWidth:0 adjustViewSize:NO paginateScreenContent:[self _isInScreenPaginationMode]];
+    [self _setPrinting:YES minimumPageLogicalWidth:pageWidth logicalHeight:0 maximumPageLogicalWidth:pageWidth adjustViewSize:YES paginateScreenContent:[self _isInScreenPaginationMode]];
 }
 
 - (void)_endPrintModeAndRestoreWindowAutodisplay
@@ -4036,9 +4054,10 @@ static BOOL isInPasswordField(Frame* coreFrame)
     float totalScaleFactor = [self _scaleFactorForPrintOperation:printOperation];
     float userScaleFactor = [printOperation _web_pageSetupScaleFactor];
     [_private->pageRects release];
+    float fullPageWidth = floorf([printOperation _web_availablePaperWidth] / totalScaleFactor);
     float fullPageHeight = floorf([printOperation _web_availablePaperHeight] / totalScaleFactor);
     WebFrame *frame = [self _frame];
-    NSArray *newPageRects = [frame _computePageRectsWithPrintWidthScaleFactor:userScaleFactor printHeight:fullPageHeight];
+    NSArray *newPageRects = [frame _computePageRectsWithPrintScaleFactor:userScaleFactor pageSize:NSMakeSize(fullPageWidth, fullPageHeight)];
     
     // AppKit gets all messed up if you give it a zero-length page count (see 3576334), so if we
     // hit that case we'll pass along a degenerate 1 pixel square to print. This will print

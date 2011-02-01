@@ -1094,7 +1094,7 @@ void ScrollView::removePanScrollIcon()
     hostWindow()->invalidateContentsAndWindow(IntRect(m_panScrollIconPoint, IntSize(panIconSizeLength, panIconSizeLength)), true /*immediate*/);
 }
 
-void ScrollView::setScrollOrigin(const IntPoint& origin, bool updatePosition)
+void ScrollView::setScrollOrigin(const IntPoint& origin, bool updatePositionAtAll, bool updatePositionSynchronously)
 {
     if (m_scrollOrigin == origin)
         return;
@@ -1102,12 +1102,12 @@ void ScrollView::setScrollOrigin(const IntPoint& origin, bool updatePosition)
     m_scrollOrigin = origin;
 
     if (platformWidget()) {
-        platformSetScrollOrigin(origin, updatePosition);
+        platformSetScrollOrigin(origin, updatePositionAtAll, updatePositionSynchronously);
         return;
     }
     
     // Update if the scroll origin changes, since our position will be different if the content size did not change.
-    if (updatePosition)
+    if (updatePositionAtAll && updatePositionSynchronously)
         updateScrollbars(scrollOffset());
 }
 
@@ -1141,7 +1141,7 @@ void ScrollView::platformSetScrollbarsSuppressed(bool)
 {
 }
 
-void ScrollView::platformSetScrollOrigin(const IntPoint&, bool updatePosition)
+void ScrollView::platformSetScrollOrigin(const IntPoint&, bool updatePositionAtAll, bool updatePositionSynchronously)
 {
 }
 
