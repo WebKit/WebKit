@@ -1,3 +1,14 @@
+2011-02-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        fast/loader/onload-policy-ignore-for-frame.html fails on Qt bot
+        https://bugs.webkit.org/show_bug.cgi?id=53490
+
+        Add Qt specific expected result.
+
+        * platform/qt/fast/loader/onload-policy-ignore-for-frame-expected.txt: Copied from LayoutTests/fast/loader/onload-policy-ignore-for-frame-expected.txt.
+
 2011-02-01  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Rollout r77230 which caused many layout tests
