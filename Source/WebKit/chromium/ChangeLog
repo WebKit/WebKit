@@ -1,3 +1,13 @@
+2011-02-01  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed roll of Chromium deps to r73306. This picks up a fix to get
+        the WebKit root dir correctly after the move to Source/. This allows 
+        tests like http/tests/security/frame-loading-via-document-write.html
+        (which use LayoutTestController.pathToLocalResource) to pass with the
+        Chromium DRT.
+
+        * DEPS:
+
 2011-02-01  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
