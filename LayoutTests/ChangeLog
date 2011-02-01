@@ -2,6 +2,21 @@
 
         Unreviewed.
 
+        Rebaseline after r77267.
+
+        * platform/chromium-linux/fast/dom/34176-expected.checksum: Added.
+        * platform/chromium-linux/fast/dom/34176-expected.png: Added.
+        * platform/chromium-mac/fast/dom/34176-expected.checksum: Added.
+        * platform/chromium-mac/fast/dom/34176-expected.png: Added.
+        * platform/chromium-win/fast/dom/34176-expected.checksum: Added.
+        * platform/chromium-win/fast/dom/34176-expected.png: Added.
+        * platform/chromium-win/fast/dom/34176-expected.txt: Added.
+        * platform/win/fast/dom/34176-expected.txt: Added.
+
+2011-02-01  Xiaomei Ji  <xji@chromium.org>
+
+        Unreviewed.
+
         * fast/dom/34176.html: Removed properties svn:executable and svn:mime-type.
 
 2011-02-01  Dimitri Glazkov  <dglazkov@chromium.org>
