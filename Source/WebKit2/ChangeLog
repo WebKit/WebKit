@@ -1,3 +1,38 @@
+2011-02-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Send messages when entering/exiting accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=53534
+
+        * Shared/LayerTreeContext.h: Added.
+        * Shared/mac/LayerTreeContextMac.mm: Added.
+        Add new LayerTreeContext which holds all information needed to enter
+        accelerated compositing mode.
+
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::enterAcceleratedCompositingMode):
+        (WebKit::DrawingAreaProxy::exitAcceleratedCompositingMode):
+        Add empty stubs.
+
+        * UIProcess/DrawingAreaProxy.messages.in:
+        Add new messgaes.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::enterAcceleratedCompositingMode):
+        (WebKit::DrawingAreaProxyImpl::exitAcceleratedCompositingMode):
+        * UIProcess/DrawingAreaProxyImpl.h:
+        Add empty stubs.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/WebPage/mac/LayerTreeHostMac.h:
+        * WebProcess/WebPage/mac/LayerTreeHostMac.mm:
+        (WebKit::LayerTreeHostMac::LayerTreeHostMac):
+        (WebKit::LayerTreeHostMac::invalidate):
+        Send messages.
+
 2011-02-01  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein and Darin Adler.

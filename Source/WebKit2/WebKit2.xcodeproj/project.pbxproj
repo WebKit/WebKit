@@ -175,6 +175,8 @@
 		1A910072126675C4001842F5 /* FindIndicator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A910070126675C4001842F5 /* FindIndicator.cpp */; };
 		1A91010A1268C8CA001842F5 /* FindIndicatorWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9101081268C8CA001842F5 /* FindIndicatorWindow.h */; };
 		1A91010B1268C8CA001842F5 /* FindIndicatorWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A9101091268C8CA001842F5 /* FindIndicatorWindow.mm */; };
+		1A92DC1112F8BA460017AF65 /* LayerTreeContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A92DC1012F8BA460017AF65 /* LayerTreeContext.h */; };
+		1A92DC1312F8BAB90017AF65 /* LayerTreeContextMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A92DC1212F8BAB90017AF65 /* LayerTreeContextMac.mm */; };
 		1A9636BC12F348490078A062 /* ShareableSurface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9636BA12F348490078A062 /* ShareableSurface.cpp */; };
 		1A9636BD12F348490078A062 /* ShareableSurface.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9636BB12F348490078A062 /* ShareableSurface.h */; };
 		1A9639F712F38ECD0078A062 /* CoreAnimationRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9639F512F38ECD0078A062 /* CoreAnimationRenderer.h */; };
@@ -924,6 +926,8 @@
 		1A910070126675C4001842F5 /* FindIndicator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FindIndicator.cpp; sourceTree = "<group>"; };
 		1A9101081268C8CA001842F5 /* FindIndicatorWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FindIndicatorWindow.h; sourceTree = "<group>"; };
 		1A9101091268C8CA001842F5 /* FindIndicatorWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FindIndicatorWindow.mm; sourceTree = "<group>"; };
+		1A92DC1012F8BA460017AF65 /* LayerTreeContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerTreeContext.h; sourceTree = "<group>"; };
+		1A92DC1212F8BAB90017AF65 /* LayerTreeContextMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LayerTreeContextMac.mm; sourceTree = "<group>"; };
 		1A9636BA12F348490078A062 /* ShareableSurface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShareableSurface.cpp; sourceTree = "<group>"; };
 		1A9636BB12F348490078A062 /* ShareableSurface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareableSurface.h; sourceTree = "<group>"; };
 		1A9639F512F38ECD0078A062 /* CoreAnimationRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreAnimationRenderer.h; sourceTree = "<group>"; };
@@ -1791,6 +1795,7 @@
 				BC64696E11DBE603006455B0 /* ImmutableArray.h */,
 				BCBCB0CC1215E33A00DE59CA /* ImmutableDictionary.cpp */,
 				BCBCB0CA1215E32100DE59CA /* ImmutableDictionary.h */,
+				1A92DC1012F8BA460017AF65 /* LayerTreeContext.h */,
 				BCC8049D122F0D6B00103529 /* MutableArray.cpp */,
 				BCC8049E122F0D6B00103529 /* MutableArray.h */,
 				BCB0AEE8122F53E300B1341E /* MutableDictionary.cpp */,
@@ -2367,6 +2372,7 @@
 				1A6F9FB611E1408500DB1371 /* CommandLineMac.cpp */,
 				1A9639F512F38ECD0078A062 /* CoreAnimationRenderer.h */,
 				1A9639F612F38ECD0078A062 /* CoreAnimationRenderer.mm */,
+				1A92DC1212F8BAB90017AF65 /* LayerTreeContextMac.mm */,
 				C02BFF1D1251502E009CCBEA /* NativeWebKeyboardEventMac.mm */,
 				C574A57F12E66681002DFE98 /* PasteboardTypes.h */,
 				C574A58012E66681002DFE98 /* PasteboardTypes.mm */,
@@ -3119,6 +3125,7 @@
 				1A9636BD12F348490078A062 /* ShareableSurface.h in Headers */,
 				1A9639F712F38ECD0078A062 /* CoreAnimationRenderer.h in Headers */,
 				1A690D1712F39E3300ECD289 /* LayerTreeHostMac.h in Headers */,
+				1A92DC1112F8BA460017AF65 /* LayerTreeContext.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3588,6 +3595,7 @@
 				6501BD1A12F1243400E9F248 /* WKBundleInspector.cpp in Sources */,
 				1A9636BC12F348490078A062 /* ShareableSurface.cpp in Sources */,
 				1A9639F812F38ECD0078A062 /* CoreAnimationRenderer.mm in Sources */,
+				1A92DC1312F8BAB90017AF65 /* LayerTreeContextMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

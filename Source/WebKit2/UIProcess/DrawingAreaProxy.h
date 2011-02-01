@@ -35,6 +35,10 @@ class QPainter;
 
 namespace WebKit {
 
+#if USE(ACCELERATED_COMPOSITING)
+class LayerTreeContext;
+#endif
+
 class UpdateInfo;
 class WebPageProxy;
 
@@ -94,6 +98,10 @@ private:
     // FIXME: These should be pure virtual.
     virtual void update(const UpdateInfo&) { }
     virtual void didSetSize(const UpdateInfo&) { }
+#if USE(ACCELERATED_COMPOSITING)
+    virtual void enterAcceleratedCompositingMode(const LayerTreeContext&) { }
+    virtual void exitAcceleratedCompositingMode() { }
+#endif
 };
 
 } // namespace WebKit

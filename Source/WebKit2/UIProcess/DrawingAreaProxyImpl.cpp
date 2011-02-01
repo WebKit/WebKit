@@ -28,6 +28,7 @@
 
 #include "DrawingAreaMessages.h"
 #include "DrawingAreaProxyMessages.h"
+#include "LayerTreeContext.h"
 #include "Region.h"
 #include "UpdateInfo.h"
 #include "WebPageProxy.h"
@@ -144,6 +145,16 @@ void DrawingAreaProxyImpl::didSetSize(const UpdateInfo& updateInfo)
     m_backingStore = nullptr;
 
     incorporateUpdate(updateInfo);
+}
+
+void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(const LayerTreeContext& context)
+{
+    // FIXME: Implement.
+}
+
+void DrawingAreaProxyImpl::exitAcceleratedCompositingMode()
+{
+    // FIXME: Implement.
 }
 
 void DrawingAreaProxyImpl::incorporateUpdate(const UpdateInfo& updateInfo)

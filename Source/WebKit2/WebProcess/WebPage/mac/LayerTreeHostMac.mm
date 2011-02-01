@@ -26,10 +26,14 @@
 #import "config.h"
 #import "LayerTreeHostMac.h"
 
+#import "DrawingAreaProxyMessages.h"
+#import "LayerTreeContext.h"
+#import "WebPage.h"
+#import "WebProcess.h"
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/Page.h>
-#import "WebPage.h"
+#import <WebKitSystemInterface.h>
 
 using namespace WebCore;
 
@@ -44,12 +48,27 @@ LayerTreeHostMac::LayerTreeHostMac(WebPage* webPage, GraphicsLayer* graphicsLaye
     : LayerTreeHost(webPage)
     , m_isValid(true)
 {
+    mach_port_t serverPort = WebProcess::shared().compositingRenderServerPort();
+
+    m_remoteLayerClient = WKCARemoteLayerClientMakeWithServerPort(serverPort);
+
+    // FIXME: Create a real layer instead of just a placeholder.
+    CALayer *layer = [CALayer layer];
+
+    WKCARemoteLayerClientSetLayer(m_remoteLayerClient.get(), layer);
+
+    LayerTreeContext layerTreeContext;
+    layerTreeContext.contextID = WKCARemoteLayerClientGetClientId(m_remoteLayerClient.get());
+
+    // FIXME: Don't send this if we enter accelerated compositing as a result of setSize.
+    m_webPage->send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(layerTreeContext));
 }
 
 LayerTreeHostMac::~LayerTreeHostMac()
 {
     ASSERT(!m_isValid);
     ASSERT(!m_flushPendingLayerChangesRunLoopObserver);
+    ASSERT(!m_remoteLayerClient);
 }
 
 void LayerTreeHostMac::scheduleLayerFlush()
@@ -79,7 +98,13 @@ void LayerTreeHostMac::invalidate()
         m_flushPendingLayerChangesRunLoopObserver = nullptr;
     }
 
+    WKCARemoteLayerClientInvalidate(m_remoteLayerClient.get());
+    m_remoteLayerClient = nullptr;
+
     m_isValid = false;
+
+    // FIXME: Don't send this if we enter accelerated compositing as a result of setSize.
+    m_webPage->send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode());
 }
 
 void LayerTreeHostMac::flushPendingLayerChangesRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void* context)

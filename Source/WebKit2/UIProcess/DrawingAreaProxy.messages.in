@@ -23,4 +23,9 @@
 messages -> DrawingAreaProxy {
     Update(WebKit::UpdateInfo updateInfo)
     DidSetSize(WebKit::UpdateInfo updateInfo)
+
+#if USE(ACCELERATED_COMPOSITING)
+    EnterAcceleratedCompositingMode(WebKit::LayerTreeContext context)
+    ExitAcceleratedCompositingMode()
+#endif
 }

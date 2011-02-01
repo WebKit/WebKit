@@ -23,38 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LayerTreeHostMac_h
-#define LayerTreeHostMac_h
+#ifndef LayerTreeContext_h
+#define LayerTreeContext_h
 
-#include "LayerTreeHost.h"
-#include <wtf/RetainPtr.h>
+#if USE(ACCELERATED_COMPOSITING)
 
-typedef struct __WKCARemoteLayerClientRef* WKCARemoteLayerClientRef;
+namespace CoreIPC {
+    class ArgumentDecoder;
+    class ArgumentEncoder;
+}
 
 namespace WebKit {
 
-class LayerTreeHostMac : public LayerTreeHost {
+class LayerTreeContext {
 public:
-    static PassRefPtr<LayerTreeHostMac> create(WebPage*, WebCore::GraphicsLayer*);
-    ~LayerTreeHostMac();
-    
-private:
-    explicit LayerTreeHostMac(WebPage*, WebCore::GraphicsLayer*);
+    LayerTreeContext();
+    ~LayerTreeContext();
 
-    // LayerTreeHost.
-    virtual void scheduleLayerFlush();
-    virtual void invalidate();
+    void encode(CoreIPC::ArgumentEncoder*) const;
+    static bool decode(CoreIPC::ArgumentDecoder*, LayerTreeContext&);
 
-    static void flushPendingLayerChangesRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void*);
-    void flushPendingLayerChangesRunLoopObserverCallback();
-    bool flushPendingLayerChanges();
+    bool isEmpty() const;
 
-    bool m_isValid;
-
-    RetainPtr<WKCARemoteLayerClientRef> m_remoteLayerClient;
-    RetainPtr<CFRunLoopObserverRef> m_flushPendingLayerChangesRunLoopObserver;
+#if PLATFORM(MAC)
+    uint32_t contextID;
+#endif
 };
 
-} // namespace WebKit
+};
 
-#endif // LayerTreeHostMac_h
+#endif // USE(ACCELERATED_COMPOSITING)
+
+#endif // LayerTreeContext_h

@@ -23,38 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LayerTreeHostMac_h
-#define LayerTreeHostMac_h
+#include "config.h"
+#include "LayerTreeContext.h"
 
-#include "LayerTreeHost.h"
-#include <wtf/RetainPtr.h>
-
-typedef struct __WKCARemoteLayerClientRef* WKCARemoteLayerClientRef;
+#include "ArgumentDecoder.h"
+#include "ArgumentEncoder.h"
 
 namespace WebKit {
 
-class LayerTreeHostMac : public LayerTreeHost {
-public:
-    static PassRefPtr<LayerTreeHostMac> create(WebPage*, WebCore::GraphicsLayer*);
-    ~LayerTreeHostMac();
-    
-private:
-    explicit LayerTreeHostMac(WebPage*, WebCore::GraphicsLayer*);
+LayerTreeContext::LayerTreeContext()
+    : contextID(0)
+{
+}
 
-    // LayerTreeHost.
-    virtual void scheduleLayerFlush();
-    virtual void invalidate();
+LayerTreeContext::~LayerTreeContext()
+{
+}
 
-    static void flushPendingLayerChangesRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void*);
-    void flushPendingLayerChangesRunLoopObserverCallback();
-    bool flushPendingLayerChanges();
+void LayerTreeContext::encode(CoreIPC::ArgumentEncoder* encoder) const
+{
+    encoder->encode(contextID);
+}
 
-    bool m_isValid;
+bool LayerTreeContext::decode(CoreIPC::ArgumentDecoder* decoder, LayerTreeContext& result)
+{
+    return decoder->decode(result.contextID);
+}
 
-    RetainPtr<WKCARemoteLayerClientRef> m_remoteLayerClient;
-    RetainPtr<CFRunLoopObserverRef> m_flushPendingLayerChangesRunLoopObserver;
-};
+bool LayerTreeContext::isEmpty() const
+{
+    return !contextID;
+}
 
 } // namespace WebKit
-
-#endif // LayerTreeHostMac_h

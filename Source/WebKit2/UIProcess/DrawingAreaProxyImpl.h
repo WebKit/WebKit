@@ -56,7 +56,9 @@ private:
     // CoreIPC message handlers
     virtual void update(const UpdateInfo&);
     virtual void didSetSize(const UpdateInfo&);
-    
+    virtual void enterAcceleratedCompositingMode(const LayerTreeContext&);
+    virtual void exitAcceleratedCompositingMode();
+
     void incorporateUpdate(const UpdateInfo&);
     void sendSetSize();
 
