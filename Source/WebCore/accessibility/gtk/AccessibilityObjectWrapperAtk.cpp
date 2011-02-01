@@ -1544,7 +1544,7 @@ static void webkit_accessible_text_get_character_extents(AtkText* text, gint off
 
 static void webkit_accessible_text_get_range_extents(AtkText* text, gint startOffset, gint endOffset, AtkCoordType coords, AtkTextRectangle* rect)
 {
-    IntRect extents = textExtents(text, startOffset, endOffset - startOffset + 1, coords);
+    IntRect extents = textExtents(text, startOffset, endOffset - startOffset, coords);
     rect->x = extents.x();
     rect->y = extents.y();
     rect->width = extents.width();

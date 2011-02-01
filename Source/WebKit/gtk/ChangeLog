@@ -2,6 +2,19 @@
 
         Reviewed by Martin Robinson.
 
+        [GTK] character range extents is off when the end of a wrapped line is included
+        https://bugs.webkit.org/show_bug.cgi?id=53323
+
+        Update unit test to check the fix for this bug.
+
+        * tests/testatk.c:
+        (testWebkitAtkGetExtents): Check that the extent for a full line
+        are the same height than for a partial section of the same line.
+
+2011-02-01  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         [GTK] Caret Offset is one off at the end of wrapped lines
         https://bugs.webkit.org/show_bug.cgi?id=53300
 

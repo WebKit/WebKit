@@ -1193,6 +1193,21 @@ static void testWebkitAtkGetExtents()
     g_assert_cmpint(y, ==, mline_window.y + mline_window.height - height);
     g_assert_cmpint(height, <=, mline_window.height);
 
+    /* Check that extent for a full line are the same height than for
+       a partial section of the same line */
+    gint startOffset;
+    gint endOffset;
+    gchar* text = atk_text_get_text_at_offset(multilineText, 0, ATK_TEXT_BOUNDARY_LINE_START, &startOffset, &endOffset);
+    g_free(text);
+
+    AtkTextRectangle fline_window;
+    AtkTextRectangle afline_window;
+    atk_text_get_range_extents(multilineText, startOffset, endOffset, ATK_XY_WINDOW, &fline_window);
+    atk_text_get_range_extents(multilineText, startOffset, endOffset - 1, ATK_XY_WINDOW, &afline_window);
+    g_assert_cmpint(fline_window.x, ==, afline_window.x);
+    g_assert_cmpint(fline_window.y, ==, afline_window.y);
+    g_assert_cmpint(fline_window.height, ==, afline_window.height);
+
     g_object_unref(shortText1);
     g_object_unref(shortText2);
     g_object_unref(longText);
