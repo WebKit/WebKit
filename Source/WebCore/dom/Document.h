@@ -348,7 +348,6 @@ public:
 
     String defaultCharset() const;
     
-    // Synonyms backing similar DOM attributes. Use Document::encoding() to avoid virtual dispatch.
     String inputEncoding() const { return Document::encoding(); }
     String charset() const { return Document::encoding(); }
     String characterSet() const { return Document::encoding(); }
