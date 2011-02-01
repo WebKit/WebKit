@@ -1,5 +1,11 @@
 2011-02-01  Sam Weinig  <sam@webkit.org>
 
+        Fix Mac production builds.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2011-02-01  Sam Weinig  <sam@webkit.org>
+
         Try to fix the windows build.
 
         * DerivedSources.make:

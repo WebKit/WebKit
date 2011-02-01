@@ -1,3 +1,12 @@
+2011-02-01  Sam Weinig  <sam@webkit.org>
+
+        Fix Mac production builds.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollbarThemeMac.h:
+
 2011-02-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris Fleizach.

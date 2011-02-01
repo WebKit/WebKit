@@ -30,10 +30,10 @@
 
 #include "FloatPoint.h"
 #include "FloatSize.h"
+#include "HeaderDetection.h"
 #include "ScrollAnimator.h"
 #include "Timer.h"
 #include "WebCoreSystemInterface.h"
-#include <JavaScriptCore/HeaderDetection.h>
 #include <wtf/RetainPtr.h>
 
 #ifdef __OBJC__

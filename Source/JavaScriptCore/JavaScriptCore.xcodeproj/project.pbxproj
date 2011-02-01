@@ -534,7 +534,6 @@
 		BC6AAAE50E1F426500AD87D8 /* ClassInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6AAAE40E1F426500AD87D8 /* ClassInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC756FC90E2031B200DE7D12 /* JSGlobalObjectFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = BC756FC70E2031B200DE7D12 /* JSGlobalObjectFunctions.h */; };
 		BC7F8FB90E19D1C3008632C0 /* JSNumberCell.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7F8FB80E19D1C3008632C0 /* JSNumberCell.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC8149EF12F8A1AE007B2C32 /* HeaderDetection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8149AF12F89F53007B2C32 /* HeaderDetection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC87CDB910712AD4000614CF /* JSONObject.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC87CDB810712ACA000614CF /* JSONObject.lut.h */; };
 		BC9041480EB9250900FE26FA /* StructureTransitionTable.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9041470EB9250900FE26FA /* StructureTransitionTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC95437D0EBA70FD0072B6D3 /* PropertyMapHashTable.h in Headers */ = {isa = PBXBuildFile; fileRef = BC95437C0EBA70FD0072B6D3 /* PropertyMapHashTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2440,7 +2439,6 @@
 				A7DCB97312E5193F00911940 /* WriteBarrier.h in Headers */,
 				E49DC16C12EF294E00184A1F /* SourceProviderCache.h in Headers */,
 				E49DC16D12EF295300184A1F /* SourceProviderCacheItem.h in Headers */,
-				BC8149EF12F8A1AE007B2C32 /* HeaderDetection.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

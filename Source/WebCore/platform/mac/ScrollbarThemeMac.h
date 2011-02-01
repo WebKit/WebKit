@@ -26,9 +26,9 @@
 #ifndef ScrollbarThemeMac_h
 #define ScrollbarThemeMac_h
 
+#include "HeaderDetection.h"
 #include "ScrollbarThemeComposite.h"
 #include "WebCoreSystemInterface.h"
-#include <JavaScriptCore/HeaderDetection.h>
 
 namespace WebCore {
 
