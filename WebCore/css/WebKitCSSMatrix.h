@@ -28,23 +28,13 @@
 
 #include "ExceptionCode.h"
 #include "PlatformString.h"
-#include "StyleBase.h"
 #include "TransformationMatrix.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class WebKitCSSMatrix : public StyleBase {
+class WebKitCSSMatrix : public RefCounted<WebKitCSSMatrix> {
 public:
-    static PassRefPtr<WebKitCSSMatrix> create()
-    {
-        return adoptRef(new WebKitCSSMatrix());
-    }
-    static PassRefPtr<WebKitCSSMatrix> create(const WebKitCSSMatrix& m)
-    {
-        return adoptRef(new WebKitCSSMatrix(m));
-    }
     static PassRefPtr<WebKitCSSMatrix> create(const TransformationMatrix& m)
     {
         return adoptRef(new WebKitCSSMatrix(m));
@@ -104,7 +94,7 @@ public:
     void setM43(double f) { m_matrix.setM43(f); }
     void setM44(double f) { m_matrix.setM44(f); }
  
-    void setMatrixValue(const String& string, ExceptionCode&);
+    void setMatrixValue(const String&, ExceptionCode&);
     
     // The following math function return a new matrix with the 
     // specified operation applied. The this value is not modified.
@@ -146,8 +136,6 @@ public:
     String toString() const;
     
 protected:
-    WebKitCSSMatrix();
-    WebKitCSSMatrix(const WebKitCSSMatrix&);
     WebKitCSSMatrix(const TransformationMatrix&);
     WebKitCSSMatrix(const String&, ExceptionCode&);
 

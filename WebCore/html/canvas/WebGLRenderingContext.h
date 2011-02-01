@@ -50,7 +50,6 @@ class WebGLUniformLocation;
 class HTMLImageElement;
 class HTMLVideoElement;
 class ImageData;
-class WebKitCSSMatrix;
 
     class WebGLRenderingContext : public CanvasRenderingContext {
     public:

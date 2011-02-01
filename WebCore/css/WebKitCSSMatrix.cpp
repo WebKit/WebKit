@@ -36,25 +36,12 @@
 
 namespace WebCore {
 
-WebKitCSSMatrix::WebKitCSSMatrix()
-    : StyleBase(0)
-{
-}
-
-WebKitCSSMatrix::WebKitCSSMatrix(const WebKitCSSMatrix& m)
-    : StyleBase(0)
-    , m_matrix(m.m_matrix)
-{
-}
-
 WebKitCSSMatrix::WebKitCSSMatrix(const TransformationMatrix& m)
-    : StyleBase(0)
-    , m_matrix(m)
+    : m_matrix(m)
 {
 }
 
 WebKitCSSMatrix::WebKitCSSMatrix(const String& s, ExceptionCode& ec) 
-    : StyleBase(0)
 {
     setMatrixValue(s, ec);
 }
@@ -65,7 +52,7 @@ WebKitCSSMatrix::~WebKitCSSMatrix()
 
 void WebKitCSSMatrix::setMatrixValue(const String& string, ExceptionCode& ec)
 {
-    CSSParser p(useStrictParsing());
+    CSSParser p(true);
     RefPtr<CSSMutableStyleDeclaration> styleDeclaration = CSSMutableStyleDeclaration::create();
     if (p.parseValue(styleDeclaration.get(), CSSPropertyWebkitTransform, string, true)) {
         // Convert to TransformOperations. This can fail if a property 
