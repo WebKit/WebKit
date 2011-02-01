@@ -436,8 +436,8 @@ void TiledDrawingAreaProxy::createTiles()
     Vector<TiledDrawingAreaTile::Coordinate> tilesToCreate;
     unsigned requiredTileCount = 0;
     bool hasVisibleCheckers = false;
-    TiledDrawingAreaTile::Coordinate topLeft = tileCoordinateForPoint(dirtyRect.location());
-    TiledDrawingAreaTile::Coordinate bottomRight = tileCoordinateForPoint(IntPoint(dirtyRect.maxX(), dirtyRect.maxY()));
+    TiledDrawingAreaTile::Coordinate topLeft = tileCoordinateForPoint(visibleRect.location());
+    TiledDrawingAreaTile::Coordinate bottomRight = tileCoordinateForPoint(IntPoint(visibleRect.maxX(), visibleRect.maxY()));
     for (unsigned yCoordinate = topLeft.y(); yCoordinate < bottomRight.y(); ++yCoordinate) {
         for (unsigned xCoordinate = topLeft.x(); xCoordinate < bottomRight.x(); ++xCoordinate) {
             TiledDrawingAreaTile::Coordinate currentCoordinate(xCoordinate, yCoordinate);
