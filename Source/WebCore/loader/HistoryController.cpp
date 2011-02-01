@@ -620,6 +620,18 @@ void HistoryController::recursiveSetProvisionalItem(HistoryItem* item, HistoryIt
         const HistoryItemVector& childItems = item->children();
 
         int size = childItems.size();
+
+        // Sanity checks for http://webkit.org/b/52819.
+        if (size > 0) {
+            // fromItem should have same number of children according to hasSameFrames,
+            // but crash dumps suggest it might have 0.
+            if (!fromItem->children().size())
+                CRASH();
+            // itemsAreClones checked fromItem->hasSameFrames(item). Check vice versa.
+            if (!item->hasSameFrames(fromItem))
+                CRASH();
+        }
+
         for (int i = 0; i < size; ++i) {
             String childFrameName = childItems[i]->target();
             HistoryItem* fromChildItem = fromItem->childItemWithTarget(childFrameName);
