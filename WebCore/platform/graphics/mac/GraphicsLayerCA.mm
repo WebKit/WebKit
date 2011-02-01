@@ -1292,10 +1292,21 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
     
     // Set properties of m_layer to their default values, since these are expressed on on the structural layer.
     CGPoint point = CGPointMake(m_size.width() / 2.0f, m_size.height() / 2.0f);
+    CGPoint anchorPoint = CGPointMake(0.5f, 0.5f);
     [m_layer.get() setPosition:point];
-    [m_layer.get() setAnchorPoint:CGPointMake(0.5f, 0.5f)];
+    [m_layer.get() setAnchorPoint:anchorPoint];
     [m_layer.get() setTransform:CATransform3DIdentity];
     [m_layer.get() setOpacity:1];
+    if (m_layerClones) {
+        LayerMap::const_iterator end = m_layerClones->end();
+        for (LayerMap::const_iterator it = m_layerClones->begin(); it != end; ++it) {
+            CALayer* currLayer = it->second.get();
+            [currLayer setPosition:point];
+            [currLayer setAnchorPoint:anchorPoint];
+            [currLayer setTransform:CATransform3DIdentity];
+            [currLayer setOpacity:1];
+        }
+    }
 
     // Move this layer to be a child of the transform layer.
     [[m_layer.get() superlayer] replaceSublayer:m_layer.get() with:m_structuralLayer.get()];
