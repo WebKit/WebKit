@@ -1260,9 +1260,9 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
         marker = marker.transposedRect();
         marker.move(box.x(), box.y() - logicalHeight());
         context->save();
-        context->translate(marker.x(), marker.bottom());
+        context->translate(marker.x(), marker.maxY());
         context->rotate(static_cast<float>(deg2rad(90.)));
-        context->translate(-marker.x(), -marker.bottom());
+        context->translate(-marker.x(), -marker.maxY());
     }
 
     IntPoint textOrigin = IntPoint(marker.x(), marker.y() + style()->fontMetrics().ascent());

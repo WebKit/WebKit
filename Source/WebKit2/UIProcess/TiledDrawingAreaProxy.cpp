@@ -240,15 +240,15 @@ void TiledDrawingAreaProxy::invalidate(const IntRect& contentsDirtyRect)
 {
     IntRect dirtyRect(mapFromContents(contentsDirtyRect));
 
-    TiledDrawingAreaTile::Coordinate topLeft = tileCoordinateForPoint(dirtyRect.topLeft());
-    TiledDrawingAreaTile::Coordinate bottomRight = tileCoordinateForPoint(dirtyRect.bottomRight());
+    TiledDrawingAreaTile::Coordinate topLeft = tileCoordinateForPoint(dirtyRect.location());
+    TiledDrawingAreaTile::Coordinate bottomRight = tileCoordinateForPoint(IntPoint(dirtyRect.maxX(), dirtyRect.maxY()));
 
     IntRect coverRect = calculateCoverRect(m_previousVisibleRect);
 
     Vector<TiledDrawingAreaTile::Coordinate> tilesToRemove;
 
-    for (unsigned yCoordinate = topLeft.y(); yCoordinate <= bottomRight.y(); ++yCoordinate) {
-        for (unsigned xCoordinate = topLeft.x(); xCoordinate <= bottomRight.x(); ++xCoordinate) {
+    for (unsigned yCoordinate = topLeft.y(); yCoordinate < bottomRight.y(); ++yCoordinate) {
+        for (unsigned xCoordinate = topLeft.x(); xCoordinate < bottomRight.x(); ++xCoordinate) {
             RefPtr<TiledDrawingAreaTile> currentTile = tileAt(TiledDrawingAreaTile::Coordinate(xCoordinate, yCoordinate));
             if (!currentTile)
                 continue;
@@ -338,11 +338,11 @@ bool TiledDrawingAreaProxy::paint(const IntRect& rect, PlatformDrawingContext co
 
     IntRect dirtyRect = mapFromContents(rect);
 
-    TiledDrawingAreaTile::Coordinate topLeft = tileCoordinateForPoint(dirtyRect.topLeft());
-    TiledDrawingAreaTile::Coordinate bottomRight = tileCoordinateForPoint(dirtyRect.bottomRight());
+    TiledDrawingAreaTile::Coordinate topLeft = tileCoordinateForPoint(dirtyRect.location());
+    TiledDrawingAreaTile::Coordinate bottomRight = tileCoordinateForPoint(IntPoint(dirtyRect.maxX(), dirtyRect.maxY()));
 
-    for (unsigned yCoordinate = topLeft.y(); yCoordinate <= bottomRight.y(); ++yCoordinate) {
-        for (unsigned xCoordinate = topLeft.x(); xCoordinate <= bottomRight.x(); ++xCoordinate) {
+    for (unsigned yCoordinate = topLeft.y(); yCoordinate < bottomRight.y(); ++yCoordinate) {
+        for (unsigned xCoordinate = topLeft.x(); xCoordinate < bottomRight.x(); ++xCoordinate) {
             TiledDrawingAreaTile::Coordinate currentCoordinate(xCoordinate, yCoordinate);
             RefPtr<TiledDrawingAreaTile> currentTile = tileAt(currentCoordinate);
             if (currentTile && currentTile->isReadyToPaint())
@@ -436,10 +436,10 @@ void TiledDrawingAreaProxy::createTiles()
     Vector<TiledDrawingAreaTile::Coordinate> tilesToCreate;
     unsigned requiredTileCount = 0;
     bool hasVisibleCheckers = false;
-    TiledDrawingAreaTile::Coordinate topLeft = tileCoordinateForPoint(coverRect.topLeft());
-    TiledDrawingAreaTile::Coordinate bottomRight = tileCoordinateForPoint(coverRect.bottomRight());
-    for (unsigned yCoordinate = topLeft.y(); yCoordinate <= bottomRight.y(); ++yCoordinate) {
-        for (unsigned xCoordinate = topLeft.x(); xCoordinate <= bottomRight.x(); ++xCoordinate) {
+    TiledDrawingAreaTile::Coordinate topLeft = tileCoordinateForPoint(dirtyRect.location());
+    TiledDrawingAreaTile::Coordinate bottomRight = tileCoordinateForPoint(IntPoint(dirtyRect.maxX(), dirtyRect.maxY()));
+    for (unsigned yCoordinate = topLeft.y(); yCoordinate < bottomRight.y(); ++yCoordinate) {
+        for (unsigned xCoordinate = topLeft.x(); xCoordinate < bottomRight.x(); ++xCoordinate) {
             TiledDrawingAreaTile::Coordinate currentCoordinate(xCoordinate, yCoordinate);
             // Distance is 0 for all currently visible tiles.
             double distance = tileDistance(visibleRect, currentCoordinate);

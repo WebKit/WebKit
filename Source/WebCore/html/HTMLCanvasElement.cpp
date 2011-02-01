@@ -344,10 +344,10 @@ String HTMLCanvasElement::toDataURL(const String& mimeType, const double* qualit
 
 IntRect HTMLCanvasElement::convertLogicalToDevice(const FloatRect& logicalRect) const
 {
-    float left = floorf(logicalRect.left() * m_pageScaleFactor);
-    float top = floorf(logicalRect.top() * m_pageScaleFactor);
-    float right = ceilf(logicalRect.right() * m_pageScaleFactor);
-    float bottom = ceilf(logicalRect.bottom() * m_pageScaleFactor);
+    float left = floorf(logicalRect.x() * m_pageScaleFactor);
+    float top = floorf(logicalRect.y() * m_pageScaleFactor);
+    float right = ceilf(logicalRect.maxX() * m_pageScaleFactor);
+    float bottom = ceilf(logicalRect.maxY() * m_pageScaleFactor);
     
     return IntRect(IntPoint(left, top), convertToValidDeviceSize(right - left, bottom - top));
 }

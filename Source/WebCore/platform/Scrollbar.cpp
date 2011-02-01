@@ -393,14 +393,14 @@ void Scrollbar::setFrameRect(const IntRect& rect)
         IntRect resizerRect = view->convertFromContainingWindow(view->windowResizerRect());
         if (rect.intersects(resizerRect)) {
             if (orientation() == HorizontalScrollbar) {
-                int overlap = rect.right() - resizerRect.x();
-                if (overlap > 0 && resizerRect.right() >= rect.right()) {
+                int overlap = rect.maxX() - resizerRect.x();
+                if (overlap > 0 && resizerRect.maxX() >= rect.maxX()) {
                     adjustedRect.setWidth(rect.width() - overlap);
                     overlapsResizer = true;
                 }
             } else {
-                int overlap = rect.bottom() - resizerRect.y();
-                if (overlap > 0 && resizerRect.bottom() >= rect.bottom()) {
+                int overlap = rect.maxY() - resizerRect.y();
+                if (overlap > 0 && resizerRect.maxY() >= rect.maxY()) {
                     adjustedRect.setHeight(rect.height() - overlap);
                     overlapsResizer = true;
                 }

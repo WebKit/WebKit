@@ -803,8 +803,8 @@ void RenderTableCell::paint(PaintInfo& paintInfo, int tx, int ty)
         tx += x();
         ty += y();
         int os = 2 * maximalOutlineSize(paintInfo.phase);
-        if (ty - table()->outerBorderTop() < paintInfo.rect.bottom() + os &&
-            ty + height() + table()->outerBorderBottom() > paintInfo.rect.y() - os)
+        if (ty - table()->outerBorderTop() < paintInfo.rect.maxY() + os
+            && ty + height() + table()->outerBorderBottom() > paintInfo.rect.y() - os)
             paintCollapsedBorder(paintInfo.context, tx, ty, width(), height());
         return;
     } 

@@ -1274,7 +1274,7 @@ void InspectorAgent::drawElementTitle(GraphicsContext& context, const IntRect& b
     font.update(0);
 
     TextRun nodeTitleRun(nodeTitle);
-    IntPoint titleBasePoint = boundingBox.bottomLeft();
+    IntPoint titleBasePoint = IntPoint(boundingBox.x(), boundingBox.maxY() - 1);
     titleBasePoint.move(rectInflatePx, rectInflatePx);
     IntRect titleRect = enclosingIntRect(font.selectionRectForText(nodeTitleRun, titleBasePoint, fontHeightPx));
     titleRect.inflate(rectInflatePx);
@@ -1284,19 +1284,19 @@ void InspectorAgent::drawElementTitle(GraphicsContext& context, const IntRect& b
     int dy = borderWidthPx;
 
     // If the tip sticks beyond the right of overlayRect, right-align the tip with the said boundary.
-    if (titleRect.right() > overlayRect.right())
-        dx = overlayRect.right() - titleRect.right();
+    if (titleRect.maxX() > overlayRect.maxX())
+        dx = overlayRect.maxX() - titleRect.maxX();
 
     // If the tip sticks beyond the left of overlayRect, left-align the tip with the said boundary.
     if (titleRect.x() + dx < overlayRect.x())
         dx = overlayRect.x() - titleRect.x() - borderWidthPx;
 
     // If the tip sticks beyond the bottom of overlayRect, show the tip at top of bounding box.
-    if (titleRect.bottom() > overlayRect.bottom()) {
-        dy = boundingBox.y() - titleRect.bottom() - borderWidthPx;
+    if (titleRect.maxY() > overlayRect.maxY()) {
+        dy = boundingBox.y() - titleRect.maxY() - borderWidthPx;
         // If the tip still sticks beyond the bottom of overlayRect, bottom-align the tip with the said boundary.
-        if (titleRect.bottom() + dy > overlayRect.bottom())
-            dy = overlayRect.bottom() - titleRect.bottom();
+        if (titleRect.maxY() + dy > overlayRect.maxY())
+            dy = overlayRect.maxY() - titleRect.maxY();
     }
 
     // If the tip sticks beyond the top of overlayRect, show the tip at top of overlayRect.

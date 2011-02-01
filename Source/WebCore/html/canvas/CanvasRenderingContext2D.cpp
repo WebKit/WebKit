@@ -1105,8 +1105,8 @@ static IntSize size(HTMLVideoElement* video)
 
 static inline FloatRect normalizeRect(const FloatRect& rect)
 {
-    return FloatRect(min(rect.x(), rect.right()),
-        min(rect.y(), rect.bottom()),
+    return FloatRect(min(rect.x(), rect.maxX()),
+        min(rect.y(), rect.maxY()),
         max(rect.width(), -rect.width()),
         max(rect.height(), -rect.height()));
 }

@@ -312,7 +312,7 @@ static void setNeedsDisplayInRect(NSView *self, SEL cmd, NSRect invalidRect)
     NSRect invalidRectInWebFrameViewCoordinates = [enclosingWebFrameView convertRect:invalidRect fromView:self];
     IntRect invalidRectInFrameViewCoordinates(invalidRectInWebFrameViewCoordinates);
     if (![enclosingWebFrameView isFlipped])
-        invalidRectInFrameViewCoordinates.setY(frameView->frameRect().size().height() - invalidRectInFrameViewCoordinates.bottom());
+        invalidRectInFrameViewCoordinates.setY(frameView->frameRect().size().height() - invalidRectInFrameViewCoordinates.maxY());
 
     frameView->invalidateRect(invalidRectInFrameViewCoordinates);
 }

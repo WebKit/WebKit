@@ -316,9 +316,9 @@ FloatRect AffineTransform::mapRect(const FloatRect& rect) const
 
     FloatQuad result;
     result.setP1(mapPoint(rect.location()));
-    result.setP2(mapPoint(FloatPoint(rect.right(), rect.y())));
-    result.setP3(mapPoint(FloatPoint(rect.right(), rect.bottom())));
-    result.setP4(mapPoint(FloatPoint(rect.x(), rect.bottom())));
+    result.setP2(mapPoint(FloatPoint(rect.maxX(), rect.y())));
+    result.setP3(mapPoint(FloatPoint(rect.maxX(), rect.maxY())));
+    result.setP4(mapPoint(FloatPoint(rect.x(), rect.maxY())));
     return result.boundingBox();
 }
 

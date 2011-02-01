@@ -1378,11 +1378,11 @@ bool RenderObject::repaintAfterLayoutIfNeeded(RenderBoxModelObject* repaintConta
     else if (deltaLeft < 0)
         repaintUsingContainer(repaintContainer, IntRect(newBounds.x(), newBounds.y(), -deltaLeft, newBounds.height()));
 
-    int deltaRight = newBounds.right() - oldBounds.right();
+    int deltaRight = newBounds.maxX() - oldBounds.maxX();
     if (deltaRight > 0)
-        repaintUsingContainer(repaintContainer, IntRect(oldBounds.right(), newBounds.y(), deltaRight, newBounds.height()));
+        repaintUsingContainer(repaintContainer, IntRect(oldBounds.maxX(), newBounds.y(), deltaRight, newBounds.height()));
     else if (deltaRight < 0)
-        repaintUsingContainer(repaintContainer, IntRect(newBounds.right(), oldBounds.y(), -deltaRight, oldBounds.height()));
+        repaintUsingContainer(repaintContainer, IntRect(newBounds.maxX(), oldBounds.y(), -deltaRight, oldBounds.height()));
 
     int deltaTop = newBounds.y() - oldBounds.y();
     if (deltaTop > 0)
@@ -1390,11 +1390,11 @@ bool RenderObject::repaintAfterLayoutIfNeeded(RenderBoxModelObject* repaintConta
     else if (deltaTop < 0)
         repaintUsingContainer(repaintContainer, IntRect(newBounds.x(), newBounds.y(), newBounds.width(), -deltaTop));
 
-    int deltaBottom = newBounds.bottom() - oldBounds.bottom();
+    int deltaBottom = newBounds.maxY() - oldBounds.maxY();
     if (deltaBottom > 0)
-        repaintUsingContainer(repaintContainer, IntRect(newBounds.x(), oldBounds.bottom(), newBounds.width(), deltaBottom));
+        repaintUsingContainer(repaintContainer, IntRect(newBounds.x(), oldBounds.maxY(), newBounds.width(), deltaBottom));
     else if (deltaBottom < 0)
-        repaintUsingContainer(repaintContainer, IntRect(oldBounds.x(), newBounds.bottom(), oldBounds.width(), -deltaBottom));
+        repaintUsingContainer(repaintContainer, IntRect(oldBounds.x(), newBounds.maxY(), oldBounds.width(), -deltaBottom));
 
     if (newOutlineBox == oldOutlineBox)
         return false;
@@ -1416,7 +1416,7 @@ bool RenderObject::repaintAfterLayoutIfNeeded(RenderBoxModelObject* repaintConta
             newOutlineBox.y(),
             width + borderWidth,
             max(newOutlineBox.height(), oldOutlineBox.height()));
-        int right = min(newBounds.right(), oldBounds.right());
+        int right = min(newBounds.maxX(), oldBounds.maxX());
         if (rightRect.x() < right) {
             rightRect.setWidth(min(rightRect.width(), right - rightRect.x()));
             repaintUsingContainer(repaintContainer, rightRect);
@@ -1432,10 +1432,10 @@ bool RenderObject::repaintAfterLayoutIfNeeded(RenderBoxModelObject* repaintConta
         int boxHeight = isBox() ? toRenderBox(this)->height() : 0;
         int borderHeight = max(-outlineStyle->outlineOffset(), max(borderBottom, max(style()->borderBottomLeftRadius().height().calcValue(boxHeight), style()->borderBottomRightRadius().height().calcValue(boxHeight)))) + max(ow, shadowBottom);
         IntRect bottomRect(newOutlineBox.x(),
-            min(newOutlineBox.bottom(), oldOutlineBox.bottom()) - borderHeight,
+            min(newOutlineBox.maxY(), oldOutlineBox.maxY()) - borderHeight,
             max(newOutlineBox.width(), oldOutlineBox.width()),
             height + borderHeight);
-        int bottom = min(newBounds.bottom(), oldBounds.bottom());
+        int bottom = min(newBounds.maxY(), oldBounds.maxY());
         if (bottomRect.y() < bottom) {
             bottomRect.setHeight(min(bottomRect.height(), bottom - bottomRect.y()));
             repaintUsingContainer(repaintContainer, bottomRect);

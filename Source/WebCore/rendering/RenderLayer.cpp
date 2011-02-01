@@ -1516,7 +1516,7 @@ IntRect RenderLayer::getRectToExpose(const IntRect &visibleRect, const IntRect &
         scrollX = ScrollAlignment::getHiddenBehavior(alignX);
     // If we're trying to align to the closest edge, and the exposeRect is further right
     // than the visibleRect, and not bigger than the visible area, then align with the right.
-    if (scrollX == alignToClosestEdge && exposeRect.right() > visibleRect.right() && exposeRect.width() < visibleRect.width())
+    if (scrollX == alignToClosestEdge && exposeRect.maxX() > visibleRect.maxX() && exposeRect.width() < visibleRect.width())
         scrollX = alignRight;
 
     // Given the X behavior, compute the X coordinate.
@@ -1524,7 +1524,7 @@ IntRect RenderLayer::getRectToExpose(const IntRect &visibleRect, const IntRect &
     if (scrollX == noScroll) 
         x = visibleRect.x();
     else if (scrollX == alignRight)
-        x = exposeRect.right() - visibleRect.width();
+        x = exposeRect.maxX() - visibleRect.width();
     else if (scrollX == alignCenter)
         x = exposeRect.x() + (exposeRect.width() - visibleRect.width()) / 2;
     else
@@ -1549,7 +1549,7 @@ IntRect RenderLayer::getRectToExpose(const IntRect &visibleRect, const IntRect &
         scrollY = ScrollAlignment::getHiddenBehavior(alignY);
     // If we're trying to align to the closest edge, and the exposeRect is further down
     // than the visibleRect, and not bigger than the visible area, then align with the bottom.
-    if (scrollY == alignToClosestEdge && exposeRect.bottom() > visibleRect.bottom() && exposeRect.height() < visibleRect.height())
+    if (scrollY == alignToClosestEdge && exposeRect.maxY() > visibleRect.maxY() && exposeRect.height() < visibleRect.height())
         scrollY = alignBottom;
 
     // Given the Y behavior, compute the Y coordinate.
@@ -1557,7 +1557,7 @@ IntRect RenderLayer::getRectToExpose(const IntRect &visibleRect, const IntRect &
     if (scrollY == noScroll) 
         y = visibleRect.y();
     else if (scrollY == alignBottom)
-        y = exposeRect.bottom() - visibleRect.height();
+        y = exposeRect.maxY() - visibleRect.height();
     else if (scrollY == alignCenter)
         y = exposeRect.y() + (exposeRect.height() - visibleRect.height()) / 2;
     else
@@ -1694,8 +1694,8 @@ static IntRect cornerRect(const RenderLayer* layer, const IntRect& bounds)
         horizontalThickness = layer->verticalScrollbar()->width();
         verticalThickness = layer->horizontalScrollbar()->height();
     }
-    return IntRect(bounds.right() - horizontalThickness - layer->renderer()->style()->borderRightWidth(), 
-                   bounds.bottom() - verticalThickness - layer->renderer()->style()->borderBottomWidth(),
+    return IntRect(bounds.maxX() - horizontalThickness - layer->renderer()->style()->borderRightWidth(), 
+                   bounds.maxY() - verticalThickness - layer->renderer()->style()->borderBottomWidth(),
                    horizontalThickness, verticalThickness);
 }
 
@@ -1911,14 +1911,14 @@ void RenderLayer::positionOverflowControls(int tx, int ty)
     IntRect scrollCorner(scrollCornerRect(this, borderBox));
     IntRect absBounds(borderBox.x() + tx, borderBox.y() + ty, borderBox.width(), borderBox.height());
     if (m_vBar)
-        m_vBar->setFrameRect(IntRect(absBounds.right() - box->borderRight() - m_vBar->width(),
+        m_vBar->setFrameRect(IntRect(absBounds.maxX() - box->borderRight() - m_vBar->width(),
                                      absBounds.y() + box->borderTop(),
                                      m_vBar->width(),
                                      absBounds.height() - (box->borderTop() + box->borderBottom()) - scrollCorner.height()));
 
     if (m_hBar)
         m_hBar->setFrameRect(IntRect(absBounds.x() + box->borderLeft(),
-                                     absBounds.bottom() - box->borderBottom() - m_hBar->height(),
+                                     absBounds.maxY() - box->borderBottom() - m_hBar->height(),
                                      absBounds.width() - (box->borderLeft() + box->borderRight()) - scrollCorner.width(),
                                      m_hBar->height()));
     
@@ -1955,7 +1955,7 @@ int RenderLayer::overflowBottom() const
     RenderBox* box = renderBox();
     IntRect overflowRect(box->layoutOverflowRect());
     box->flipForWritingMode(overflowRect);
-    return overflowRect.bottom();
+    return overflowRect.maxY();
 }
 
 int RenderLayer::overflowLeft() const
@@ -1971,7 +1971,7 @@ int RenderLayer::overflowRight() const
     RenderBox* box = renderBox();
     IntRect overflowRect(box->layoutOverflowRect());
     box->flipForWritingMode(overflowRect);
-    return overflowRect.right();
+    return overflowRect.maxX();
 }
 
 void RenderLayer::computeScrollDimensions(bool* needHBar, bool* needVBar)
@@ -2197,7 +2197,7 @@ void RenderLayer::paintResizer(GraphicsContext* context, int tx, int ty, const I
 
     // Paint the resizer control.
     DEFINE_STATIC_LOCAL(RefPtr<Image>, resizeCornerImage, (Image::loadPlatformResource("textAreaResizeCorner")));
-    IntPoint imagePoint(absRect.right() - resizeCornerImage->width(), absRect.bottom() - resizeCornerImage->height());
+    IntPoint imagePoint(absRect.maxX() - resizeCornerImage->width(), absRect.maxY() - resizeCornerImage->height());
     context->drawImage(resizeCornerImage.get(), box->style()->colorSpace(), imagePoint);
 
     // Draw a frame around the resizer (1px grey line) if there are any scrollbars present.

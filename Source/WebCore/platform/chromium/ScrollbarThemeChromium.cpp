@@ -128,7 +128,7 @@ void ScrollbarThemeChromium::paintTickmarks(GraphicsContext* context, Scrollbar*
         const float percent = static_cast<float>(i->y()) / scrollbar->totalSize();
 
         // Calculate how far down (in pixels) the tick-mark should appear.
-        const int yPos = rect.topLeft().y() + (rect.height() * percent);
+        const int yPos = rect.y() + (rect.height() * percent);
 
         IntPoint tick(scrollbar->x(), yPos);
         context->drawImage(dash.get(), ColorSpaceDeviceRGB, tick);

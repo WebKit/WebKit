@@ -2132,12 +2132,12 @@ bool EventHandler::sendContextMenuEventForKey()
         RefPtr<Range> selection = selectionController->toNormalizedRange();
         IntRect firstRect = m_frame->editor()->firstRectForRange(selection.get());
 
-        int x = rightAligned ? firstRect.right() : firstRect.x();
-        location = IntPoint(x, firstRect.bottom());
+        int x = rightAligned ? firstRect.maxX() : firstRect.x();
+        location = IntPoint(x, firstRect.maxY());
     } else if (focusedNode) {
         RenderBoxModelObject* box = focusedNode->renderBoxModelObject();
         IntRect clippedRect = box->absoluteClippedOverflowRect();
-        location = clippedRect.bottomLeft();
+        location = IntPoint(clippedRect.x(), clippedRect.maxY() - 1);
     } else {
         location = IntPoint(
             rightAligned ? view->contentsWidth() - kContextMenuMargin : kContextMenuMargin,

@@ -157,7 +157,7 @@ void FindIndicator::draw(GraphicsContext& graphicsContext, const IntRect& dirtyR
         graphicsContext.save();
         FloatRect innerPathRect = inflateRect(textRect, horizontalPaddingInsideLightBorder, verticalPaddingInsideLightBorder);
         graphicsContext.clip(pathWithRoundedRect(innerPathRect, cornerRadius));
-        RefPtr<Gradient> gradient = Gradient::create(FloatPoint(innerPathRect.x(), innerPathRect.y()), FloatPoint(innerPathRect.x(), innerPathRect.bottom()));
+        RefPtr<Gradient> gradient = Gradient::create(FloatPoint(innerPathRect.x(), innerPathRect.y()), FloatPoint(innerPathRect.x(), innerPathRect.maxY()));
         gradient->addColorStop(0, gradientLightColor());
         gradient->addColorStop(1, gradientDarkColor());
         graphicsContext.setFillGradient(gradient);

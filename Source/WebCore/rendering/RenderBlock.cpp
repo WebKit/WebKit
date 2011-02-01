@@ -1325,13 +1325,13 @@ void RenderBlock::addOverflowFromChildren()
             IntRect lastRect = columnRectAt(colInfo, columnCount(colInfo) - 1);
             if (style()->isHorizontalWritingMode()) {
                 int overflowLeft = !style()->isLeftToRightDirection() ? min(0, lastRect.x()) : 0;
-                int overflowRight = style()->isLeftToRightDirection() ? max(width(), lastRect.right()) : 0;
+                int overflowRight = style()->isLeftToRightDirection() ? max(width(), lastRect.maxX()) : 0;
                 int overflowHeight = borderBefore() + paddingBefore() + colInfo->columnHeight();
                 addLayoutOverflow(IntRect(overflowLeft, 0, overflowRight - overflowLeft, overflowHeight));
             } else {
                 IntRect lastRect = columnRectAt(colInfo, columnCount(colInfo) - 1);
                 int overflowTop = !style()->isLeftToRightDirection() ? min(0, lastRect.y()) : 0;
-                int overflowBottom = style()->isLeftToRightDirection() ? max(height(), lastRect.bottom()) : 0;
+                int overflowBottom = style()->isLeftToRightDirection() ? max(height(), lastRect.maxY()) : 0;
                 int overflowWidth = borderBefore() + paddingBefore() + colInfo->columnHeight();
                 addLayoutOverflow(IntRect(0, overflowTop, overflowWidth, overflowBottom - overflowTop));
             }
@@ -2347,14 +2347,14 @@ void RenderBlock::paintChildren(PaintInfo& paintInfo, int tx, int ty)
         bool checkBeforeAlways = !childrenInline() && (usePrintRect && child->style()->pageBreakBefore() == PBALWAYS);
         if (checkBeforeAlways
             && (ty + child->y()) > paintInfo.rect.y()
-            && (ty + child->y()) < paintInfo.rect.bottom()) {
+            && (ty + child->y()) < paintInfo.rect.maxY()) {
             view()->setBestTruncatedAt(ty + child->y(), this, true);
             return;
         }
 
         if (!child->isFloating() && child->isReplaced() && usePrintRect && child->height() <= renderView->printRect().height()) {
             // Paginate block-level replaced elements.
-            if (ty + child->y() + child->height() > renderView->printRect().bottom()) {
+            if (ty + child->y() + child->height() > renderView->printRect().maxY()) {
                 if (ty + child->y() < renderView->truncatedAt())
                     renderView->setBestTruncatedAt(ty + child->y(), child);
                 // If we were able to truncate, don't paint.
@@ -2371,7 +2371,7 @@ void RenderBlock::paintChildren(PaintInfo& paintInfo, int tx, int ty)
         bool checkAfterAlways = !childrenInline() && (usePrintRect && child->style()->pageBreakAfter() == PBALWAYS);
         if (checkAfterAlways
             && (ty + child->y() + child->height()) > paintInfo.rect.y()
-            && (ty + child->y() + child->height()) < paintInfo.rect.bottom()) {
+            && (ty + child->y() + child->height()) < paintInfo.rect.maxY()) {
             view()->setBestTruncatedAt(ty + child->y() + child->height() + max(0, child->collapsedMarginAfter()), this, true);
             return;
         }
@@ -2537,7 +2537,7 @@ void RenderBlock::paintEllipsisBoxes(PaintInfo& paintInfo, int tx, int ty)
         // intersect.
         int yPos = ty + firstLineBox()->y();
         int h = lastLineBox()->y() + lastLineBox()->logicalHeight() - firstLineBox()->y();
-        if (yPos >= paintInfo.rect.bottom() || yPos + h <= paintInfo.rect.y())
+        if (yPos >= paintInfo.rect.maxY() || yPos + h <= paintInfo.rect.y())
             return;
 
         // See if our boxes intersect with the dirty rect.  If so, then we paint
@@ -2546,7 +2546,7 @@ void RenderBlock::paintEllipsisBoxes(PaintInfo& paintInfo, int tx, int ty)
         for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
             yPos = ty + curr->y();
             h = curr->logicalHeight();
-            if (curr->ellipsisBox() && yPos < paintInfo.rect.bottom() && yPos + h > paintInfo.rect.y())
+            if (curr->ellipsisBox() && yPos < paintInfo.rect.maxY() && yPos + h > paintInfo.rect.y())
                 curr->paintEllipsisBox(paintInfo, tx, ty);
         }
     }
@@ -2816,8 +2816,8 @@ GapRects RenderBlock::inlineSelectionGaps(RenderBlock* rootBlock, const IntPoint
         IntRect logicalRect(curr->logicalLeft(), selTop, curr->logicalWidth(), selTop + selHeight);
         logicalRect.move(style()->isHorizontalWritingMode() ? offsetFromRootBlock : IntSize(offsetFromRootBlock.height(), offsetFromRootBlock.width()));
         IntRect physicalRect = rootBlock->logicalRectToPhysicalRect(rootBlockPhysicalPosition, logicalRect);
-        if (!paintInfo || (style()->isHorizontalWritingMode() && physicalRect.y() < paintInfo->rect.bottom() && physicalRect.bottom() > paintInfo->rect.y())
-            || (!style()->isHorizontalWritingMode() && physicalRect.x() < paintInfo->rect.right() && physicalRect.right() > paintInfo->rect.x()))
+        if (!paintInfo || (style()->isHorizontalWritingMode() && physicalRect.y() < paintInfo->rect.maxY() && physicalRect.maxY() > paintInfo->rect.y())
+            || (!style()->isHorizontalWritingMode() && physicalRect.x() < paintInfo->rect.maxX() && physicalRect.maxX() > paintInfo->rect.x()))
             result.unite(curr->lineSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, selTop, selHeight, paintInfo));
 
         lastSelectedLine = curr;
@@ -4322,7 +4322,7 @@ void RenderBlock::adjustPointToColumnContents(IntPoint& point) const
         IntRect colRect = columnRectAt(colInfo, i);
         if (style()->isHorizontalWritingMode()) {
             IntRect gapAndColumnRect(colRect.x() - halfColGap, colRect.y(), colRect.width() + colGap, colRect.height());
-            if (point.x() >= gapAndColumnRect.x() && point.x() < gapAndColumnRect.right()) {
+            if (point.x() >= gapAndColumnRect.x() && point.x() < gapAndColumnRect.maxX()) {
                 // FIXME: The clamping that follows is not completely right for right-to-left
                 // content.
                 // Clamp everything above the column to its top left.
@@ -4330,7 +4330,7 @@ void RenderBlock::adjustPointToColumnContents(IntPoint& point) const
                     point = gapAndColumnRect.location();
                 // Clamp everything below the column to the next column's top left. If there is
                 // no next column, this still maps to just after this column.
-                else if (point.y() >= gapAndColumnRect.bottom()) {
+                else if (point.y() >= gapAndColumnRect.maxY()) {
                     point = gapAndColumnRect.location();
                     point.move(0, gapAndColumnRect.height());
                 }
@@ -4344,7 +4344,7 @@ void RenderBlock::adjustPointToColumnContents(IntPoint& point) const
             logicalOffset += colRect.height();
         } else {
             IntRect gapAndColumnRect(colRect.x(), colRect.y() - halfColGap, colRect.width(), colRect.height() + colGap);
-            if (point.y() >= gapAndColumnRect.y() && point.y() < gapAndColumnRect.bottom()) {
+            if (point.y() >= gapAndColumnRect.y() && point.y() < gapAndColumnRect.maxY()) {
                 // FIXME: The clamping that follows is not completely right for right-to-left
                 // content.
                 // Clamp everything above the column to its top left.
@@ -4352,7 +4352,7 @@ void RenderBlock::adjustPointToColumnContents(IntPoint& point) const
                     point = gapAndColumnRect.location();
                 // Clamp everything below the column to the next column's top left. If there is
                 // no next column, this still maps to just after this column.
-                else if (point.x() >= gapAndColumnRect.right()) {
+                else if (point.x() >= gapAndColumnRect.maxX()) {
                     point = gapAndColumnRect.location();
                     point.move(gapAndColumnRect.width(), 0);
                 }
@@ -4429,9 +4429,9 @@ void RenderBlock::flipForWritingModeIncludingColumns(IntRect& rect) const
     int columnLogicalHeight = colInfo->columnHeight();
     int expandedLogicalHeight = borderBefore() + paddingBefore() + columnCount(colInfo) * columnLogicalHeight + borderAfter() + paddingAfter() + scrollbarLogicalHeight();
     if (style()->isHorizontalWritingMode())
-        rect.setY(expandedLogicalHeight - rect.bottom());
+        rect.setY(expandedLogicalHeight - rect.maxY());
     else
-        rect.setX(expandedLogicalHeight - rect.right());
+        rect.setX(expandedLogicalHeight - rect.maxX());
 }
 
 void RenderBlock::adjustForColumns(IntSize& offset, const IntPoint& point) const
@@ -4459,12 +4459,12 @@ void RenderBlock::adjustForColumns(IntSize& offset, const IntPoint& point) const
 
         // Now we're in the same coordinate space as the point.  See if it is inside the rectangle.
         if (style()->isHorizontalWritingMode()) {
-            if (point.y() >= sliceRect.y() && point.y() < sliceRect.bottom()) {
+            if (point.y() >= sliceRect.y() && point.y() < sliceRect.maxY()) {
                 offset.expand(columnRectAt(colInfo, i).x() - logicalLeft, -logicalOffset);
                 return;
             }
         } else {
-            if (point.x() >= sliceRect.x() && point.x() < sliceRect.right()) {
+            if (point.x() >= sliceRect.x() && point.x() < sliceRect.maxX()) {
                 offset.expand(-logicalOffset, columnRectAt(colInfo, i).y() - logicalLeft);
                 return;
             }

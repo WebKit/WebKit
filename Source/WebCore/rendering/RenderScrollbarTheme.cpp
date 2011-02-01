@@ -98,10 +98,10 @@ IntRect RenderScrollbarTheme::constrainTrackRectToTrackPieces(Scrollbar* scrollb
     IntRect result = rect;
     if (scrollbar->orientation() == HorizontalScrollbar) {
         result.setX(backRect.x());
-        result.setWidth(forwardRect.right() - backRect.x());
+        result.setWidth(forwardRect.maxX() - backRect.x());
     } else {
         result.setY(backRect.y());
-        result.setHeight(forwardRect.bottom() - backRect.y());
+        result.setHeight(forwardRect.maxY() - backRect.y());
     }
     return result;
 }

@@ -477,13 +477,13 @@ FloatRect SimpleFontData::platformBoundsForGlyph(Glyph glyph) const
 #ifndef BUILDING_ON_TIGER
     boundingBox = CTFontGetBoundingRectsForGlyphs(m_platformData.ctFont(),
                     orientation() == Vertical ? kCTFontVerticalOrientation : kCTFontHorizontalOrientation, &glyph, 0, 1);
-    boundingBox.setY(-boundingBox.bottom());
+    boundingBox.setY(-boundingBox.maxY());
 #else
     // FIXME: Custom fonts don't have NSFonts, so this function doesn't compute correct bounds for these on Tiger.
     if (!m_platformData.font())
         return boundingBox;
     boundingBox = [m_platformData.font() boundingRectForGlyph:glyph];
-    boundingBox.setY(-boundingBox.bottom());
+    boundingBox.setY(-boundingBox.maxY());
 #endif
     if (m_syntheticBoldOffset)
         boundingBox.setWidth(boundingBox.width() + m_syntheticBoldOffset);

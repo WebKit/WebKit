@@ -398,9 +398,9 @@ private:
         void setIsPlaced(bool placed = true) { m_isPlaced = placed; }
 
         int left() const { ASSERT(isPlaced()); return m_frameRect.x(); }
-        int right() const { ASSERT(isPlaced()); return m_frameRect.right(); }
+        int right() const { ASSERT(isPlaced()); return m_frameRect.maxX(); }
         int top() const { ASSERT(isPlaced()); return m_frameRect.y(); }
-        int bottom() const { ASSERT(isPlaced()); return m_frameRect.bottom(); }
+        int bottom() const { ASSERT(isPlaced()); return m_frameRect.maxY(); }
         int width() const { return m_frameRect.width(); }
         int height() const { return m_frameRect.height(); }
 

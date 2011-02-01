@@ -548,16 +548,16 @@ IntRect RenderBox::reflectedRect(const IntRect& r) const
     IntRect result = r;
     switch (style()->boxReflect()->direction()) {
         case ReflectionBelow:
-            result.setY(box.bottom() + reflectionOffset() + (box.bottom() - r.bottom()));
+            result.setY(box.maxY() + reflectionOffset() + (box.maxY() - r.maxY()));
             break;
         case ReflectionAbove:
-            result.setY(box.y() - reflectionOffset() - box.height() + (box.bottom() - r.bottom()));
+            result.setY(box.y() - reflectionOffset() - box.height() + (box.maxY() - r.maxY()));
             break;
         case ReflectionLeft:
-            result.setX(box.x() - reflectionOffset() - box.width() + (box.right() - r.right()));
+            result.setX(box.x() - reflectionOffset() - box.width() + (box.maxX() - r.maxX()));
             break;
         case ReflectionRight:
-            result.setX(box.right() + reflectionOffset() + (box.right() - r.right()));
+            result.setX(box.maxX() + reflectionOffset() + (box.maxX() - r.maxX()));
             break;
     }
     return result;
@@ -2987,7 +2987,7 @@ IntRect RenderBox::localCaretRect(InlineBox* box, int caretOffset, int* extraWid
         rect.setHeight(fontHeight);
 
     if (extraWidthToEndOfLine)
-        *extraWidthToEndOfLine = x() + width() - rect.right();
+        *extraWidthToEndOfLine = x() + width() - rect.maxX();
 
     // Move to local coords
     rect.move(-x(), -y());
@@ -3108,9 +3108,9 @@ void RenderBox::addShadowOverflow()
     style()->getBoxShadowExtent(shadowTop, shadowRight, shadowBottom, shadowLeft);
     IntRect borderBox = borderBoxRect();
     int overflowLeft = borderBox.x() + shadowLeft;
-    int overflowRight = borderBox.right() + shadowRight;
+    int overflowRight = borderBox.maxX() + shadowRight;
     int overflowTop = borderBox.y() + shadowTop;
-    int overflowBottom = borderBox.bottom() + shadowBottom;
+    int overflowBottom = borderBox.maxY() + shadowBottom;
     addVisualOverflow(IntRect(overflowLeft, overflowTop, overflowRight - overflowLeft, overflowBottom - overflowTop));
 }
 
@@ -3149,13 +3149,13 @@ void RenderBox::addLayoutOverflow(const IntRect& rect)
         bool hasLeftOverflow = !style()->isLeftToRightDirection() && style()->isHorizontalWritingMode();
         
         if (!hasTopOverflow)
-            overflowRect.shiftTopEdgeTo(max(overflowRect.y(), clientBox.y()));
+            overflowRect.shiftYEdgeTo(max(overflowRect.y(), clientBox.y()));
         else
-            overflowRect.shiftBottomEdgeTo(min(overflowRect.bottom(), clientBox.bottom()));
+            overflowRect.shiftMaxYEdgeTo(min(overflowRect.maxY(), clientBox.maxY()));
         if (!hasLeftOverflow)
-            overflowRect.shiftLeftEdgeTo(max(overflowRect.x(), clientBox.x()));
+            overflowRect.shiftXEdgeTo(max(overflowRect.x(), clientBox.x()));
         else
-            overflowRect.shiftRightEdgeTo(min(overflowRect.right(), clientBox.right()));
+            overflowRect.shiftMaxXEdgeTo(min(overflowRect.maxX(), clientBox.maxX()));
         
         // Now re-test with the adjusted rectangle and see if it has become unreachable or fully
         // contained.
@@ -3244,9 +3244,9 @@ IntRect RenderBox::visualOverflowRectForPropagation(RenderStyle* parentStyle) co
     // We are putting ourselves into our parent's coordinate space.  If there is a flipped block mismatch
     // in a particular axis, then we have to flip the rect along that axis.
     if (style()->writingMode() == RightToLeftWritingMode || parentStyle->writingMode() == RightToLeftWritingMode)
-        rect.setX(width() - rect.right());
+        rect.setX(width() - rect.maxX());
     else if (style()->writingMode() == BottomToTopWritingMode || parentStyle->writingMode() == BottomToTopWritingMode)
-        rect.setY(height() - rect.bottom());
+        rect.setY(height() - rect.maxY());
 
     return rect;
 }
@@ -3290,9 +3290,9 @@ IntRect RenderBox::layoutOverflowRectForPropagation(RenderStyle* parentStyle) co
     // We are putting ourselves into our parent's coordinate space.  If there is a flipped block mismatch
     // in a particular axis, then we have to flip the rect along that axis.
     if (style()->writingMode() == RightToLeftWritingMode || parentStyle->writingMode() == RightToLeftWritingMode)
-        rect.setX(width() - rect.right());
+        rect.setX(width() - rect.maxX());
     else if (style()->writingMode() == BottomToTopWritingMode || parentStyle->writingMode() == BottomToTopWritingMode)
-        rect.setY(height() - rect.bottom());
+        rect.setY(height() - rect.maxY());
 
     return rect;
 }
@@ -3315,9 +3315,9 @@ void RenderBox::flipForWritingMode(IntRect& rect) const
         return;
 
     if (style()->isHorizontalWritingMode())
-        rect.setY(height() - rect.bottom());
+        rect.setY(height() - rect.maxY());
     else
-        rect.setX(width() - rect.right());
+        rect.setX(width() - rect.maxX());
 }
 
 int RenderBox::flipForWritingMode(int position) const

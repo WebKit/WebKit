@@ -255,9 +255,9 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
         lastRoundingWidth = width - oldWidth;
 
         if (m_accountForGlyphBounds) {
-            m_maxGlyphBoundingBoxY = max(m_maxGlyphBoundingBoxY, bounds.bottom());
+            m_maxGlyphBoundingBoxY = max(m_maxGlyphBoundingBoxY, bounds.maxY());
             m_minGlyphBoundingBoxY = min(m_minGlyphBoundingBoxY, bounds.y());
-            m_lastGlyphOverflow = max<float>(0, bounds.right() - width);
+            m_lastGlyphOverflow = max<float>(0, bounds.maxX() - width);
         }
     }
 

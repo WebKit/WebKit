@@ -304,9 +304,9 @@ void RenderView::computeRectForRepaint(RenderBoxModelObject* repaintContainer, I
         // We have to flip by hand since the view's logical height has not been determined.  We
         // can use the viewport width and height.
         if (style()->isHorizontalWritingMode())
-            rect.setY(viewHeight() - rect.bottom());
+            rect.setY(viewHeight() - rect.maxY());
         else
-            rect.setX(viewWidth() - rect.right());
+            rect.setX(viewWidth() - rect.maxX());
     }
 
     if (fixed && m_frameView)
@@ -664,7 +664,7 @@ int RenderView::docBottom() const
     flipForWritingMode(overflowRect);
     if (hasTransform())
         overflowRect = layer()->currentTransform().mapRect(overflowRect);
-    return overflowRect.bottom();
+    return overflowRect.maxY();
 }
 
 int RenderView::docLeft() const
@@ -682,7 +682,7 @@ int RenderView::docRight() const
     flipForWritingMode(overflowRect);
     if (hasTransform())
         overflowRect = layer()->currentTransform().mapRect(overflowRect);
-    return overflowRect.right();
+    return overflowRect.maxX();
 }
 
 int RenderView::viewHeight() const

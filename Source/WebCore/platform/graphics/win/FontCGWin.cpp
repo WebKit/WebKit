@@ -292,7 +292,7 @@ static void drawGDIGlyphs(GraphicsContext* graphicsContext, const SimpleFontData
             buffer[i + 2] = fillColor.red();
             buffer[i + 3] = alpha;
         }
-        graphicsContext->drawWindowsBitmap(bitmap.get(), textRect.topLeft());
+        graphicsContext->drawWindowsBitmap(bitmap.get(), textRect.location());
     } else
         graphicsContext->releaseWindowsContext(hdc, textRect, true, false);
 }

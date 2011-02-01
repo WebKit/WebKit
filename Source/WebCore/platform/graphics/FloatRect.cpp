@@ -51,22 +51,22 @@ bool FloatRect::intersects(const FloatRect& other) const
 {
     // Checking emptiness handles negative widths as well as zero.
     return !isEmpty() && !other.isEmpty()
-        && x() < other.right() && other.x() < right()
-        && y() < other.bottom() && other.y() < bottom();
+        && x() < other.maxX() && other.x() < maxX()
+        && y() < other.maxY() && other.y() < maxY();
 }
 
 bool FloatRect::contains(const FloatRect& other) const
 {
-    return x() <= other.x() && right() >= other.right()
-        && y() <= other.y() && bottom() >= other.bottom();
+    return x() <= other.x() && maxX() >= other.maxX()
+        && y() <= other.y() && maxY() >= other.maxY();
 }
 
 void FloatRect::intersect(const FloatRect& other)
 {
     float l = max(x(), other.x());
     float t = max(y(), other.y());
-    float r = min(right(), other.right());
-    float b = min(bottom(), other.bottom());
+    float r = min(maxX(), other.maxX());
+    float b = min(maxY(), other.maxY());
 
     // Return a clean empty rectangle for non-intersecting cases.
     if (l >= r || t >= b) {
@@ -91,8 +91,8 @@ void FloatRect::unite(const FloatRect& other)
 
     float l = min(x(), other.x());
     float t = min(y(), other.y());
-    float r = max(right(), other.right());
-    float b = max(bottom(), other.bottom());
+    float r = max(maxX(), other.maxX());
+    float b = max(maxY(), other.maxY());
 
     setLocationAndSizeFromEdges(l, t, r, b);
 }
@@ -180,8 +180,8 @@ IntRect enclosingIntRect(const FloatRect& rect)
 {
     float left = floorf(rect.x());
     float top = floorf(rect.y());
-    float width = ceilf(rect.right()) - left;
-    float height = ceilf(rect.bottom()) - top;
+    float width = ceilf(rect.maxX()) - left;
+    float height = ceilf(rect.maxY()) - top;
     return IntRect(safeFloatToInt(left), safeFloatToInt(top), 
                    safeFloatToInt(width), safeFloatToInt(height));
 }

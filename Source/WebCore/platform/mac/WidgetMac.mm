@@ -252,7 +252,7 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
         IntRect dirtyRect = r;
         dirtyRect.move(-transformOrigin.x(), -transformOrigin.y());
         if (![view isFlipped])
-            dirtyRect.setY([view bounds].size.height - dirtyRect.bottom());
+            dirtyRect.setY([view bounds].size.height - dirtyRect.maxY());
 
         [view displayRectIgnoringOpacity:dirtyRect];
 
@@ -296,7 +296,7 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
         IntRect dirtyRect = r;
         dirtyRect.move(-transformOrigin.x(), -transformOrigin.y());
         if (![view isFlipped])
-            dirtyRect.setY([view bounds].size.height - dirtyRect.bottom());
+            dirtyRect.setY([view bounds].size.height - dirtyRect.maxY());
 
         BEGIN_BLOCK_OBJC_EXCEPTIONS;
         {

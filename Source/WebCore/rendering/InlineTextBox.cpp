@@ -169,7 +169,7 @@ IntRect InlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos)
     int logicalWidth = r.width();
     if (r.x() > m_logicalWidth)
         logicalWidth  = 0;
-    else if (r.right() > m_logicalWidth)
+    else if (r.maxX() > m_logicalWidth)
         logicalWidth = m_logicalWidth - r.x();
     
     IntPoint topPoint = isHorizontal() ? IntPoint(tx + m_x + r.x(), ty + selTop) : IntPoint(tx + selTop, ty + m_y + r.x());
@@ -442,7 +442,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
     int logicalStart = logicalLeft() - logicalLeftOverflow + (isHorizontal() ? tx : ty);
     int logicalExtent = logicalWidth() + logicalLeftOverflow + logicalRightOverflow;
     
-    int paintEnd = isHorizontal() ? paintInfo.rect.right() : paintInfo.rect.bottom();
+    int paintEnd = isHorizontal() ? paintInfo.rect.maxX() : paintInfo.rect.maxY();
     int paintStart = isHorizontal() ? paintInfo.rect.x() : paintInfo.rect.y();
     
     if (logicalStart >= paintEnd || logicalStart + logicalExtent <= paintStart)
@@ -491,9 +491,9 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
     bool shouldRotate = !isHorizontal() && (!combinedText || !combinedText->isCombined());
     if (shouldRotate) {
         context->save();
-        context->translate(boxRect.x(), boxRect.bottom());
+        context->translate(boxRect.x(), boxRect.maxY());
         context->rotate(static_cast<float>(deg2rad(90.)));
-        context->translate(-boxRect.x(), -boxRect.bottom());
+        context->translate(-boxRect.x(), -boxRect.maxY());
     }
     
     
@@ -1216,7 +1216,7 @@ int InlineTextBox::positionForOffset(int offset) const
     int to = !isLeftToRightDirection() ? m_len : offset - m_start;
     // FIXME: Do we need to add rightBearing here?
     return enclosingIntRect(f.selectionRectForText(TextRun(text->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_expansion, trailingExpansionBehavior(), !isLeftToRightDirection(), m_dirOverride),
-                                                   IntPoint(logicalLeft(), 0), 0, from, to)).right();
+                                                   IntPoint(logicalLeft(), 0), 0, from, to)).maxX();
 }
 
 bool InlineTextBox::containsCaretOffset(int offset) const

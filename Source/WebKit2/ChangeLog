@@ -1,3 +1,33 @@
+2011-02-01  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53520
+        
+        Remove the physical terminology from IntRect and FloatRect.
+        
+        Now that we have flipped RenderBlocks for vertical-rl and horizontal-bt writing modes,
+        we need to update our terminology to be more accurate.
+
+        I'm borrowing a page from AppKit here (which also supports flipped NSViews) and
+        renaming right() and bottom() to maxX() and maxY().  These terms remain accurate
+        even for flipped rectangles.
+
+        * Platform/Region.cpp:
+        (WebKit::Region::Shape::Shape):
+        * UIProcess/API/mac/WKPrintingView.mm:
+        (pageDidComputePageRects):
+        * UIProcess/FindIndicator.cpp:
+        (WebKit::FindIndicator::draw):
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        (WebKit::TiledDrawingAreaProxy::invalidate):
+        (WebKit::TiledDrawingAreaProxy::paint):
+        (WebKit::TiledDrawingAreaProxy::createTiles):
+        * UIProcess/mac/ChunkedUpdateDrawingAreaProxyMac.mm:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::drawUpdateChunkIntoBackingStore):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::callSetWindow):
+
 2011-02-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

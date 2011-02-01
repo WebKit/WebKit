@@ -297,12 +297,12 @@ void RenderListItem::positionListMarker()
             for (InlineFlowBox* box = m_marker->inlineBoxWrapper()->parent(); box; box = box->parent()) {
                 IntRect newLogicalVisualOverflowRect = box->logicalVisualOverflowRect();
                 IntRect newLogicalLayoutOverflowRect = box->logicalLayoutOverflowRect();
-                if (markerLogicalLeft + m_marker->logicalWidth() > newLogicalVisualOverflowRect.right() && !hitSelfPaintingLayer) {
+                if (markerLogicalLeft + m_marker->logicalWidth() > newLogicalVisualOverflowRect.maxX() && !hitSelfPaintingLayer) {
                     newLogicalVisualOverflowRect.setWidth(markerLogicalLeft + m_marker->logicalWidth() - box->logicalLeftVisualOverflow());
                     if (box == root)
                         adjustOverflow = true;
                 }
-                if (markerLogicalLeft + m_marker->logicalWidth() > newLogicalLayoutOverflowRect.right()) {
+                if (markerLogicalLeft + m_marker->logicalWidth() > newLogicalLayoutOverflowRect.maxX()) {
                     newLogicalLayoutOverflowRect.setWidth(markerLogicalLeft + m_marker->logicalWidth() - box->logicalLeftLayoutOverflow());
                     if (box == root)
                         adjustOverflow = true;

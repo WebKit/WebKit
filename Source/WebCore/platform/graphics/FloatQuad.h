@@ -54,9 +54,9 @@ public:
 
     FloatQuad(const FloatRect& inRect)
         : m_p1(inRect.location())
-        , m_p2(inRect.right(), inRect.y())
-        , m_p3(inRect.right(), inRect.bottom())
-        , m_p4(inRect.x(), inRect.bottom())
+        , m_p2(inRect.maxX(), inRect.y())
+        , m_p3(inRect.maxX(), inRect.maxY())
+        , m_p4(inRect.x(), inRect.maxY())
     {
     }
 

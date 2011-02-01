@@ -544,14 +544,14 @@ IntRect RootInlineBox::paddedLayoutOverflowRect(int endPadding) const
     
     if (isHorizontal()) {
         if (isLeftToRightDirection())
-            lineLayoutOverflow.shiftRightEdgeTo(max(lineLayoutOverflow.right(), logicalRight() + endPadding));
+            lineLayoutOverflow.shiftMaxXEdgeTo(max(lineLayoutOverflow.maxX(), logicalRight() + endPadding));
         else
-            lineLayoutOverflow.shiftLeftEdgeTo(min(lineLayoutOverflow.x(), logicalLeft() - endPadding));
+            lineLayoutOverflow.shiftXEdgeTo(min(lineLayoutOverflow.x(), logicalLeft() - endPadding));
     } else {
         if (isLeftToRightDirection())
-            lineLayoutOverflow.shiftBottomEdgeTo(max(lineLayoutOverflow.bottom(), logicalRight() + endPadding));
+            lineLayoutOverflow.shiftMaxYEdgeTo(max(lineLayoutOverflow.maxY(), logicalRight() + endPadding));
         else
-            lineLayoutOverflow.shiftTopEdgeTo(min(lineLayoutOverflow.y(), logicalRight() - endPadding));
+            lineLayoutOverflow.shiftYEdgeTo(min(lineLayoutOverflow.y(), logicalRight() - endPadding));
     }
     
     return lineLayoutOverflow;

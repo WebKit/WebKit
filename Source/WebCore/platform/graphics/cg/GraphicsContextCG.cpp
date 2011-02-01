@@ -166,9 +166,9 @@ void GraphicsContext::drawRect(const IntRect& rect)
             setCGFillColor(context, strokeColor(), strokeColorSpace());
         CGRect rects[4] = {
             FloatRect(rect.x(), rect.y(), rect.width(), 1),
-            FloatRect(rect.x(), rect.bottom() - 1, rect.width(), 1),
+            FloatRect(rect.x(), rect.maxY() - 1, rect.width(), 1),
             FloatRect(rect.x(), rect.y() + 1, 1, rect.height() - 2),
-            FloatRect(rect.right() - 1, rect.y() + 1, 1, rect.height() - 2)
+            FloatRect(rect.maxX() - 1, rect.y() + 1, 1, rect.height() - 2)
         };
         CGContextFillRects(context, rects, 4);
         if (oldFillColor != strokeColor())
@@ -564,7 +564,7 @@ void GraphicsContext::fillPath(const Path& path)
                 CGContextClip(layerContext);
 
             m_state.fillGradient->paint(layerContext);
-            CGContextDrawLayerAtPoint(context, CGPointMake(rect.left(), rect.top()), layer);
+            CGContextDrawLayerAtPoint(context, CGPointMake(rect.x(), rect.y()), layer);
             CGLayerRelease(layer);
         } else {
             CGContextBeginPath(context);
@@ -646,7 +646,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
 
             CGContextConcatCTM(layerContext, m_state.fillGradient->gradientSpaceTransform());
             m_state.fillGradient->paint(layerContext);
-            CGContextDrawLayerAtPoint(context, CGPointMake(rect.left(), rect.top()), layer);
+            CGContextDrawLayerAtPoint(context, CGPointMake(rect.x(), rect.y()), layer);
             CGLayerRelease(layer);
         } else {
             CGContextClipToRect(context, rect);

@@ -44,22 +44,22 @@ bool IntRect::intersects(const IntRect& other) const
 {
     // Checking emptiness handles negative widths as well as zero.
     return !isEmpty() && !other.isEmpty()
-        && x() < other.right() && other.x() < right()
-        && y() < other.bottom() && other.y() < bottom();
+        && x() < other.maxX() && other.x() < maxX()
+        && y() < other.maxY() && other.y() < maxY();
 }
 
 bool IntRect::contains(const IntRect& other) const
 {
-    return x() <= other.x() && right() >= other.right()
-        && y() <= other.y() && bottom() >= other.bottom();
+    return x() <= other.x() && maxX() >= other.maxX()
+        && y() <= other.y() && maxY() >= other.maxY();
 }
 
 void IntRect::intersect(const IntRect& other)
 {
     int l = max(x(), other.x());
     int t = max(y(), other.y());
-    int r = min(right(), other.right());
-    int b = min(bottom(), other.bottom());
+    int r = min(maxX(), other.maxX());
+    int b = min(maxY(), other.maxY());
 
     // Return a clean empty rectangle for non-intersecting cases.
     if (l >= r || t >= b) {
@@ -87,8 +87,8 @@ void IntRect::unite(const IntRect& other)
 
     int l = min(x(), other.x());
     int t = min(y(), other.y());
-    int r = max(right(), other.right());
-    int b = max(bottom(), other.bottom());
+    int r = max(maxX(), other.maxX());
+    int b = max(maxY(), other.maxY());
 
     m_location.setX(l);
     m_location.setY(t);

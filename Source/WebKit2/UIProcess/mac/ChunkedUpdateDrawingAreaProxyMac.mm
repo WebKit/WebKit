@@ -97,7 +97,7 @@ void ChunkedUpdateDrawingAreaProxy::drawUpdateChunkIntoBackingStore(UpdateChunk*
 
     // Flip the destination.
     CGContextScaleCTM(m_bitmapContext.get(), 1, -1);
-    CGContextTranslateCTM(m_bitmapContext.get(), 0, -(updateChunkRect.y() + updateChunkRect.bottom()));
+    CGContextTranslateCTM(m_bitmapContext.get(), 0, -(updateChunkRect.y() + updateChunkRect.maxY()));
 
     CGContextDrawImage(m_bitmapContext.get(), updateChunkRect, image.get());
 

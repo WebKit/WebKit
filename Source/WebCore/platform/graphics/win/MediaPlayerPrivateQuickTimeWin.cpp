@@ -622,7 +622,7 @@ void MediaPlayerPrivate::paint(GraphicsContext* p, const IntRect& r)
 
     m_qtGWorld->paint(hdc, r.x(), r.y());
     if (usingTempBitmap)
-        p->drawWindowsBitmap(bitmap.get(), r.topLeft());
+        p->drawWindowsBitmap(bitmap.get(), r.location());
     else
         p->releaseWindowsContext(hdc, r);
 

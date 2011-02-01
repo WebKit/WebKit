@@ -348,9 +348,9 @@ void RenderText::absoluteQuads(Vector<FloatQuad>& quads, ClippingOption option)
         IntRect ellipsisRect = (option == ClipToEllipsis) ? ellipsisRectForBox(box, 0, textLength()) : IntRect();
         if (!ellipsisRect.isEmpty()) {
             if (style()->isHorizontalWritingMode())
-                boundaries.setWidth(ellipsisRect.right() - boundaries.x());
+                boundaries.setWidth(ellipsisRect.maxX() - boundaries.x());
             else
-                boundaries.setHeight(ellipsisRect.bottom() - boundaries.y());
+                boundaries.setHeight(ellipsisRect.maxY() - boundaries.y());
         }
         quads.append(localToAbsoluteQuad(FloatRect(boundaries)));
     }

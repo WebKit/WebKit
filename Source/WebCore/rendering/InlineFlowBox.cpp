@@ -718,14 +718,14 @@ void InlineFlowBox::addBoxShadowVisualOverflow(IntRect& logicalVisualOverflow)
     renderer()->style(m_firstLine)->getBoxShadowBlockDirectionExtent(boxShadowLogicalTop, boxShadowLogicalBottom);
     
     int logicalTopVisualOverflow = min(logicalTop() + boxShadowLogicalTop, logicalVisualOverflow.y());
-    int logicalBottomVisualOverflow = max(logicalBottom() + boxShadowLogicalBottom, logicalVisualOverflow.bottom());
+    int logicalBottomVisualOverflow = max(logicalBottom() + boxShadowLogicalBottom, logicalVisualOverflow.maxY());
     
     int boxShadowLogicalLeft;
     int boxShadowLogicalRight;
     renderer()->style(m_firstLine)->getBoxShadowInlineDirectionExtent(boxShadowLogicalLeft, boxShadowLogicalRight);
 
     int logicalLeftVisualOverflow = min(logicalLeft() + boxShadowLogicalLeft, logicalVisualOverflow.x());
-    int logicalRightVisualOverflow = max(logicalRight() + boxShadowLogicalRight, logicalVisualOverflow.right());
+    int logicalRightVisualOverflow = max(logicalRight() + boxShadowLogicalRight, logicalVisualOverflow.maxX());
     
     logicalVisualOverflow = IntRect(logicalLeftVisualOverflow, logicalTopVisualOverflow,
                                     logicalRightVisualOverflow - logicalLeftVisualOverflow, logicalBottomVisualOverflow - logicalTopVisualOverflow);
@@ -780,9 +780,9 @@ void InlineFlowBox::addTextBoxVisualOverflow(const InlineTextBox* textBox, Glyph
     int childOverflowLogicalRight = max(textShadowLogicalRight + rightGlyphOverflow, rightGlyphOverflow);
 
     int logicalTopVisualOverflow = min(textBox->logicalTop() + childOverflowLogicalTop, logicalVisualOverflow.y());
-    int logicalBottomVisualOverflow = max(textBox->logicalBottom() + childOverflowLogicalBottom, logicalVisualOverflow.bottom());
+    int logicalBottomVisualOverflow = max(textBox->logicalBottom() + childOverflowLogicalBottom, logicalVisualOverflow.maxY());
     int logicalLeftVisualOverflow = min(textBox->logicalLeft() + childOverflowLogicalLeft, logicalVisualOverflow.x());
-    int logicalRightVisualOverflow = max(textBox->logicalRight() + childOverflowLogicalRight, logicalVisualOverflow.right());
+    int logicalRightVisualOverflow = max(textBox->logicalRight() + childOverflowLogicalRight, logicalVisualOverflow.maxX());
     
     logicalVisualOverflow = IntRect(logicalLeftVisualOverflow, logicalTopVisualOverflow,
                                     logicalRightVisualOverflow - logicalLeftVisualOverflow, logicalBottomVisualOverflow - logicalTopVisualOverflow);

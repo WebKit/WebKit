@@ -73,8 +73,8 @@ Region::Shape::Shape(const IntRect& rect)
 {
     appendSpan(rect.y());
     appendSegment(rect.x());
-    appendSegment(rect.right());
-    appendSpan(rect.bottom());
+    appendSegment(rect.maxX());
+    appendSpan(rect.maxY());
 }
 
 void Region::Shape::appendSpan(int y)

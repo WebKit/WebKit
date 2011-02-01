@@ -1125,7 +1125,7 @@ static NSMutableArray* convertToNSArray(const AccessibilityObject::Accessibility
         point.y = screenHeight - (point.y + remotePosition.y + rect.height() - scrollPosition.y);
     } else {
         // The Cocoa accessibility API wants the lower-left corner.
-        point = NSMakePoint(rect.x(), rect.bottom());
+        point = NSMakePoint(rect.x(), rect.maxY());
         
         if (frameView) {
             NSView* view = frameView->documentView();

@@ -258,7 +258,7 @@ static IntPoint centerRectVerticallyInParentInputElement(RenderObject* object, c
 {
     Node* input = object->node()->shadowAncestorNode(); // Get the renderer of <input> element.
     if (!input->renderer()->isBox())
-        return rect.topLeft();
+        return rect.location();
 
     // If possible center the y-coordinate of the rect vertically in the parent input element.
     // We also add one pixel here to ensure that the y coordinate is rounded up for box heights

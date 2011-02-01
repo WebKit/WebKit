@@ -1,3 +1,192 @@
+2011-02-01  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53520
+        
+        Remove the physical terminology from IntRect and FloatRect.
+        
+        Now that we have flipped RenderBlocks for vertical-rl and horizontal-bt writing modes,
+        we need to update our terminology to be more accurate.
+
+        I'm borrowing a page from AppKit here (which also supports flipped NSViews) and
+        renaming right() and bottom() to maxX() and maxY().  These terms remain accurate
+        even for flipped rectangles.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::boundsForVisiblePositionRange):
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper position]):
+        * dom/ClientRect.h:
+        (WebCore::ClientRect::right):
+        (WebCore::ClientRect::bottom):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::convertLogicalToDevice):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::normalizeRect):
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::drawElementTitle):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::adjustWindowRect):
+        * page/DragController.cpp:
+        (WebCore::dragLocForSelectionDrag):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::sendContextMenuEventForKey):
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::computePageRectsWithPageSizeInternal):
+        (WebCore::PrintContext::pageNumberForElement):
+        * page/SpatialNavigation.cpp:
+        (WebCore::end):
+        (WebCore::areRectsFullyAligned):
+        (WebCore::areRectsMoreThanFullScreenApart):
+        (WebCore::below):
+        (WebCore::rightOf):
+        (WebCore::isRectInDirection):
+        (WebCore::entryAndExitPointsForDirection):
+        (WebCore::virtualRectForDirection):
+        * page/WindowFeatures.cpp:
+        (WebCore::WindowFeatures::WindowFeatures):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::wheelEvent):
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::setFrameRect):
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::ScrollbarThemeComposite::splitTrack):
+        * platform/chromium/ScrollbarThemeChromium.cpp:
+        (WebCore::ScrollbarThemeChromium::paintTickmarks):
+        * platform/graphics/FloatQuad.h:
+        (WebCore::FloatQuad::FloatQuad):
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::FloatRect::intersects):
+        (WebCore::FloatRect::contains):
+        (WebCore::FloatRect::intersect):
+        (WebCore::FloatRect::unite):
+        (WebCore::enclosingIntRect):
+        * platform/graphics/FloatRect.h:
+        (WebCore::FloatRect::maxX):
+        (WebCore::FloatRect::maxY):
+        (WebCore::FloatRect::contains):
+        * platform/graphics/IntRect.cpp:
+        (WebCore::IntRect::intersects):
+        (WebCore::IntRect::contains):
+        (WebCore::IntRect::intersect):
+        (WebCore::IntRect::unite):
+        * platform/graphics/IntRect.h:
+        (WebCore::IntRect::maxX):
+        (WebCore::IntRect::maxY):
+        (WebCore::IntRect::shiftXEdgeTo):
+        (WebCore::IntRect::shiftMaxXEdgeTo):
+        (WebCore::IntRect::shiftYEdgeTo):
+        (WebCore::IntRect::shiftMaxYEdgeTo):
+        (WebCore::IntRect::contains):
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advance):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::fillRect):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::getImageData):
+        (WebCore::putImageData):
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::copyImageBytes):
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances):
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformBoundsForGlyph):
+        * platform/graphics/transforms/AffineTransform.cpp:
+        (WebCore::AffineTransform::mapRect):
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::drawGDIGlyphs):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::MediaPlayerPrivate::paint):
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::centerRectVerticallyInParentInputElement):
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::paint):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::addBoxShadowVisualOverflow):
+        (WebCore::InlineFlowBox::addTextBoxVisualOverflow):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionRect):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::positionForOffset):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addOverflowFromChildren):
+        (WebCore::RenderBlock::paintChildren):
+        (WebCore::RenderBlock::paintEllipsisBoxes):
+        (WebCore::RenderBlock::inlineSelectionGaps):
+        (WebCore::RenderBlock::adjustPointToColumnContents):
+        (WebCore::RenderBlock::flipForWritingModeIncludingColumns):
+        (WebCore::RenderBlock::adjustForColumns):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::FloatingObject::right):
+        (WebCore::RenderBlock::FloatingObject::bottom):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::reflectedRect):
+        (WebCore::RenderBox::localCaretRect):
+        (WebCore::RenderBox::addShadowOverflow):
+        (WebCore::RenderBox::addLayoutOverflow):
+        (WebCore::RenderBox::visualOverflowRectForPropagation):
+        (WebCore::RenderBox::layoutOverflowRectForPropagation):
+        (WebCore::RenderBox::flipForWritingMode):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::paintColumnBorder):
+        (WebCore::RenderFrameSet::paintRowBorder):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::paintOutlineForLine):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::getRectToExpose):
+        (WebCore::cornerRect):
+        (WebCore::RenderLayer::positionOverflowControls):
+        (WebCore::RenderLayer::overflowBottom):
+        (WebCore::RenderLayer::overflowRight):
+        (WebCore::RenderLayer::paintResizer):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::rangeIntersectsRect):
+        (WebCore::RenderLineBoxList::paint):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::positionListMarker):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded):
+        * rendering/RenderOverflow.h:
+        (WebCore::RenderOverflow::RenderOverflow):
+        (WebCore::RenderOverflow::addLayoutOverflow):
+        (WebCore::RenderOverflow::addVisualOverflow):
+        (WebCore::RenderOverflow::setLayoutOverflow):
+        (WebCore::RenderOverflow::setVisualOverflow):
+        (WebCore::RenderOverflow::resetLayoutOverflow):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::shouldPaint):
+        * rendering/RenderScrollbarTheme.cpp:
+        (WebCore::RenderScrollbarTheme::constrainTrackRectToTrackPieces):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paint):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paint):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::paintObject):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::absoluteQuads):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::forwardEvent):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMenuListButtonGradients):
+        (WebCore::RenderThemeMac::paintMenuListButton):
+        (WebCore::RenderThemeMac::paintSliderTrack):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::computeRectForRepaint):
+        (WebCore::RenderView::docBottom):
+        (WebCore::RenderView::docRight):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::paddedLayoutOverflowRect):
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::localCaretRect):
+
 2011-02-01  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.

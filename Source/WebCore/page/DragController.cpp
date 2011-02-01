@@ -644,9 +644,9 @@ static IntPoint dragLocForDHTMLDrag(const IntPoint& mouseDraggedPoint, const Int
 static IntPoint dragLocForSelectionDrag(Frame* src)
 {
     IntRect draggingRect = enclosingIntRect(src->selection()->bounds());
-    int xpos = draggingRect.right();
+    int xpos = draggingRect.maxX();
     xpos = draggingRect.x() < xpos ? draggingRect.x() : xpos;
-    int ypos = draggingRect.bottom();
+    int ypos = draggingRect.maxY();
 #if PLATFORM(MAC)
     // Deal with flipped coordinates on Mac
     ypos = draggingRect.y() > ypos ? draggingRect.y() : ypos;

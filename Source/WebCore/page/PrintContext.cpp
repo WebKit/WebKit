@@ -135,24 +135,24 @@ void PrintContext::computePageRectsWithPageSizeInternal(const FloatSize& pageSiz
     int blockDirectionEnd;
     if (isHorizontal) {
         if (view->style()->isFlippedBlocksWritingMode()) {
-            blockDirectionStart = docRect.bottom();
+            blockDirectionStart = docRect.maxY();
             blockDirectionEnd = docRect.y();
         } else {
             blockDirectionStart = docRect.y();
-            blockDirectionEnd = docRect.bottom();
+            blockDirectionEnd = docRect.maxY();
         }
-        inlineDirectionStart = view->style()->isLeftToRightDirection() ? docRect.x() : docRect.right();
-        inlineDirectionEnd = view->style()->isLeftToRightDirection() ? docRect.right() : docRect.x();
+        inlineDirectionStart = view->style()->isLeftToRightDirection() ? docRect.x() : docRect.maxX();
+        inlineDirectionEnd = view->style()->isLeftToRightDirection() ? docRect.maxX() : docRect.x();
     } else {
         if (view->style()->isFlippedBlocksWritingMode()) {
-            blockDirectionStart = docRect.right();
+            blockDirectionStart = docRect.maxX();
             blockDirectionEnd = docRect.x();
         } else {
             blockDirectionStart = docRect.x();
-            blockDirectionEnd = docRect.right();
+            blockDirectionEnd = docRect.maxX();
         }
-        inlineDirectionStart = view->style()->isLeftToRightDirection() ? docRect.y() : docRect.bottom();
-        inlineDirectionEnd = view->style()->isLeftToRightDirection() ? docRect.bottom() : docRect.y();
+        inlineDirectionStart = view->style()->isLeftToRightDirection() ? docRect.y() : docRect.maxY();
+        inlineDirectionEnd = view->style()->isLeftToRightDirection() ? docRect.maxY() : docRect.y();
     }
 
     unsigned pageCount = ceilf((float)docLogicalHeight / pageLogicalHeight);
@@ -274,7 +274,7 @@ int PrintContext::pageNumberForElement(Element* element, const FloatSize& pageSi
     size_t pageNumber = 0;
     for (; pageNumber < printContext.pageCount(); pageNumber++) {
         const IntRect& page = printContext.pageRect(pageNumber);
-        if (page.x() <= left && left < page.right() && page.y() <= top && top < page.bottom())
+        if (page.x() <= left && left < page.maxX() && page.y() <= top && top < page.maxY())
             return pageNumber;
     }
     return -1;

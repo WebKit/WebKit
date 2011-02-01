@@ -454,9 +454,9 @@ void RenderTable::paint(PaintInfo& paintInfo, int tx, int ty)
     PaintPhase paintPhase = paintInfo.phase;
 
     int os = 2 * maximalOutlineSize(paintPhase);
-    if (ty + topVisualOverflow() >= paintInfo.rect.bottom() + os || ty + bottomVisualOverflow() <= paintInfo.rect.y() - os)
+    if (ty + topVisualOverflow() >= paintInfo.rect.maxY() + os || ty + bottomVisualOverflow() <= paintInfo.rect.y() - os)
         return;
-    if (tx + leftVisualOverflow() >= paintInfo.rect.right() + os || tx + rightVisualOverflow() <= paintInfo.rect.x() - os)
+    if (tx + leftVisualOverflow() >= paintInfo.rect.maxX() + os || tx + rightVisualOverflow() <= paintInfo.rect.x() - os)
         return;
 
     bool pushedClip = pushContentsClip(paintInfo, tx, ty);    

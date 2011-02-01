@@ -342,8 +342,8 @@ void DOMWindow::adjustWindowRect(const FloatRect& screen, FloatRect& window, con
     window.setHeight(min(max(100.0f, window.height()), screen.height()));
     
     // Constrain the window position to the screen.
-    window.setX(max(screen.x(), min(window.x(), screen.right() - window.width())));
-    window.setY(max(screen.y(), min(window.y(), screen.bottom() - window.height())));
+    window.setX(max(screen.x(), min(window.x(), screen.maxX() - window.width())));
+    window.setY(max(screen.y(), min(window.y(), screen.maxY() - window.height())));
 }
 
 // FIXME: We can remove this function once V8 showModalDialog is changed to use DOMWindow.

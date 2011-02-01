@@ -127,7 +127,7 @@ static inline int middle(FocusDirection direction, const IntRect& rect)
 
 static inline int end(FocusDirection direction, const IntRect& rect)
 {
-    return isHorizontalMove(direction) ? rect.bottom() : rect.right();
+    return isHorizontalMove(direction) ? rect.maxY() : rect.maxX();
 }
 
 // This method checks if rects |a| and |b| are fully aligned either vertically or
@@ -144,11 +144,11 @@ static bool areRectsFullyAligned(FocusDirection direction, const IntRect& a, con
     switch (direction) {
     case FocusDirectionLeft:
         aStart = a.x();
-        bEnd = b.right();
+        bEnd = b.maxX();
         break;
     case FocusDirectionRight:
         aStart = b.x();
-        bEnd = a.right();
+        bEnd = a.maxX();
         break;
     case FocusDirectionUp:
         aStart = a.y();
@@ -245,13 +245,13 @@ static bool areRectsMoreThanFullScreenApart(FocusDirection direction, const IntR
 
     switch (direction) {
     case FocusDirectionLeft:
-        return curRect.x() - targetRect.right() > viewSize.width();
+        return curRect.x() - targetRect.maxX() > viewSize.width();
     case FocusDirectionRight:
-        return targetRect.x() - curRect.right() > viewSize.width();
+        return targetRect.x() - curRect.maxX() > viewSize.width();
     case FocusDirectionUp:
-        return curRect.y() - targetRect.bottom() > viewSize.height();
+        return curRect.y() - targetRect.maxY() > viewSize.height();
     case FocusDirectionDown:
-        return targetRect.y() - curRect.bottom() > viewSize.height();
+        return targetRect.y() - curRect.maxY() > viewSize.height();
     default:
         ASSERT_NOT_REACHED();
         return true;
@@ -261,26 +261,26 @@ static bool areRectsMoreThanFullScreenApart(FocusDirection direction, const IntR
 // Return true if rect |a| is below |b|. False otherwise.
 static inline bool below(const IntRect& a, const IntRect& b)
 {
-    return a.y() > b.bottom();
+    return a.y() > b.maxY();
 }
 
 // Return true if rect |a| is on the right of |b|. False otherwise.
 static inline bool rightOf(const IntRect& a, const IntRect& b)
 {
-    return a.x() > b.right();
+    return a.x() > b.maxX();
 }
 
 static bool isRectInDirection(FocusDirection direction, const IntRect& curRect, const IntRect& targetRect)
 {
     switch (direction) {
     case FocusDirectionLeft:
-        return targetRect.right() <= curRect.x();
+        return targetRect.maxX() <= curRect.x();
     case FocusDirectionRight:
-        return targetRect.x() >= curRect.right();
+        return targetRect.x() >= curRect.maxX();
     case FocusDirectionUp:
-        return targetRect.bottom() <= curRect.y();
+        return targetRect.maxY() <= curRect.y();
     case FocusDirectionDown:
-        return targetRect.y() >= curRect.bottom();
+        return targetRect.y() >= curRect.maxY();
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -544,18 +544,18 @@ void entryAndExitPointsForDirection(FocusDirection direction, const IntRect& sta
     switch (direction) {
     case FocusDirectionLeft:
         exitPoint.setX(startingRect.x());
-        entryPoint.setX(potentialRect.right());
+        entryPoint.setX(potentialRect.maxX());
         break;
     case FocusDirectionUp:
         exitPoint.setY(startingRect.y());
-        entryPoint.setY(potentialRect.bottom());
+        entryPoint.setY(potentialRect.maxY());
         break;
     case FocusDirectionRight:
-        exitPoint.setX(startingRect.right());
+        exitPoint.setX(startingRect.maxX());
         entryPoint.setX(potentialRect.x());
         break;
     case FocusDirectionDown:
-        exitPoint.setY(startingRect.bottom());
+        exitPoint.setY(startingRect.maxY());
         entryPoint.setY(potentialRect.y());
         break;
     default:
@@ -567,9 +567,9 @@ void entryAndExitPointsForDirection(FocusDirection direction, const IntRect& sta
     case FocusDirectionRight:
         if (below(startingRect, potentialRect)) {
             exitPoint.setY(startingRect.y());
-            entryPoint.setY(potentialRect.bottom());
+            entryPoint.setY(potentialRect.maxY());
         } else if (below(potentialRect, startingRect)) {
-            exitPoint.setY(startingRect.bottom());
+            exitPoint.setY(startingRect.maxY());
             entryPoint.setY(potentialRect.y());
         } else {
             exitPoint.setY(max(startingRect.y(), potentialRect.y()));
@@ -580,9 +580,9 @@ void entryAndExitPointsForDirection(FocusDirection direction, const IntRect& sta
     case FocusDirectionDown:
         if (rightOf(startingRect, potentialRect)) {
             exitPoint.setX(startingRect.x());
-            entryPoint.setX(potentialRect.right());
+            entryPoint.setX(potentialRect.maxX());
         } else if (rightOf(potentialRect, startingRect)) {
-            exitPoint.setX(startingRect.right());
+            exitPoint.setX(startingRect.maxX());
             entryPoint.setX(potentialRect.x());
         } else {
             exitPoint.setX(max(startingRect.x(), potentialRect.x()));
@@ -675,11 +675,11 @@ IntRect virtualRectForDirection(FocusDirection direction, const IntRect& startin
     IntRect virtualStartingRect = startingRect;
     switch (direction) {
     case FocusDirectionLeft:
-        virtualStartingRect.setX(virtualStartingRect.right() - width);
+        virtualStartingRect.setX(virtualStartingRect.maxX() - width);
         virtualStartingRect.setWidth(width);
         break;
     case FocusDirectionUp:
-        virtualStartingRect.setY(virtualStartingRect.bottom() - width);
+        virtualStartingRect.setY(virtualStartingRect.maxY() - width);
         virtualStartingRect.setHeight(width);
         break;
     case FocusDirectionRight:

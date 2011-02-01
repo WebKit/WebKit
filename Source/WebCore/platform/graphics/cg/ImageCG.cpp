@@ -204,7 +204,7 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const F
             adjustedDestRect.setHeight(subimageRect.height() / yScale);
 
             image.adoptCF(CGImageCreateWithImageInRect(image.get(), subimageRect));
-            if (currHeight < srcRect.bottom()) {
+            if (currHeight < srcRect.maxY()) {
                 ASSERT(CGImageGetHeight(image.get()) == currHeight - CGRectIntegral(srcRect).origin.y);
                 adjustedDestRect.setHeight(CGImageGetHeight(image.get()) / yScale);
             }
@@ -224,7 +224,7 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const F
 
     // Flip the coords.
     CGContextScaleCTM(context, 1, -1);
-    adjustedDestRect.setY(-adjustedDestRect.bottom());
+    adjustedDestRect.setY(-adjustedDestRect.maxY());
 
     // Adjust the color space.
     image = imageWithColorSpace(image.get(), styleColorSpace);

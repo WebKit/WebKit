@@ -182,9 +182,9 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, int& tx, int& ty)
     }
     
     int os = 2 * maximalOutlineSize(paintInfo.phase);
-    if (currentTX + leftVisualOverflow() >= paintInfo.rect.right() + os || currentTX + rightVisualOverflow() <= paintInfo.rect.x() - os)
+    if (currentTX + leftVisualOverflow() >= paintInfo.rect.maxX() + os || currentTX + rightVisualOverflow() <= paintInfo.rect.x() - os)
         return false;
-    if (top >= paintInfo.rect.bottom() + os || bottom <= paintInfo.rect.y() - os)
+    if (top >= paintInfo.rect.maxY() + os || bottom <= paintInfo.rect.y() - os)
         return false;
 
     return true;

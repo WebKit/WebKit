@@ -160,11 +160,11 @@ bool RenderLineBoxList::rangeIntersectsRect(RenderBoxModelObject* renderer, int 
     
     if (renderer->style()->isHorizontalWritingMode()) {
         physicalStart += ty;
-        if (physicalStart >= rect.bottom() || physicalStart + physicalExtent <= rect.y())
+        if (physicalStart >= rect.maxY() || physicalStart + physicalExtent <= rect.y())
             return false;
     } else {
         physicalStart += tx;
-        if (physicalStart >= rect.right() || physicalStart + physicalExtent <= rect.x())
+        if (physicalStart >= rect.maxX() || physicalStart + physicalExtent <= rect.x())
             return false;
     }
     
@@ -239,11 +239,11 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
                 bottomForPaginationCheck = max(bottomForPaginationCheck, curr->root()->lineBottom());
             }
             if (bottomForPaginationCheck - topForPaginationCheck <= v->printRect().height()) {
-                if (ty + bottomForPaginationCheck > v->printRect().bottom()) {
+                if (ty + bottomForPaginationCheck > v->printRect().maxY()) {
                     if (RootInlineBox* nextRootBox = curr->root()->nextRootBox())
                         bottomForPaginationCheck = min(bottomForPaginationCheck, min(nextRootBox->topVisualOverflow(), nextRootBox->lineTop()));
                 }
-                if (ty + bottomForPaginationCheck > v->printRect().bottom()) {
+                if (ty + bottomForPaginationCheck > v->printRect().maxY()) {
                     if (ty + topForPaginationCheck < v->truncatedAt())
                         v->setBestTruncatedAt(ty + topForPaginationCheck, renderer);
                     // If we were able to truncate, don't paint.

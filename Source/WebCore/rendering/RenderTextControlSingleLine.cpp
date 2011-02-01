@@ -393,7 +393,7 @@ void RenderTextControlSingleLine::forwardEvent(Event* event)
 #endif
 
     FloatPoint localPoint = innerTextRenderer->absoluteToLocal(static_cast<MouseEvent*>(event)->absoluteLocation(), false, true);
-    int textRight = innerTextRenderer->borderBoxRect().right();
+    int textRight = innerTextRenderer->borderBoxRect().maxX();
 
     if (m_resultsButton && localPoint.x() < innerTextRenderer->borderBoxRect().x())
         m_resultsButton->defaultEventHandler(event);

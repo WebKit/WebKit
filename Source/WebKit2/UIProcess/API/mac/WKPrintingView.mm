@@ -233,8 +233,8 @@ static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, d
 
         const IntRect& lastPrintingPageRect = view->_printingPageRects[view->_printingPageRects.size() - 1];
         NSRect newFrameSize = NSMakeRect(0, 0, 
-            ceil(lastPrintingPageRect.right() * view->_totalScaleFactorForPrinting), 
-            ceil(lastPrintingPageRect.bottom() * view->_totalScaleFactorForPrinting));
+            ceil(lastPrintingPageRect.maxX() * view->_totalScaleFactorForPrinting), 
+            ceil(lastPrintingPageRect.maxY() * view->_totalScaleFactorForPrinting));
         LOG(View, "WKPrintingView setting frame size to x:%g y:%g width:%g height:%g", newFrameSize.origin.x, newFrameSize.origin.y, newFrameSize.size.width, newFrameSize.size.height);
         [view setFrame:newFrameSize];
 

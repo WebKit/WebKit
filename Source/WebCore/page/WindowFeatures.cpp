@@ -186,9 +186,9 @@ WindowFeatures::WindowFeatures(const String& dialogFeaturesString, const FloatRe
     width = floatFeature(features, "dialogwidth", 100, screenAvailableRect.width(), 620); // default here came from frame size of dialog in MacIE
     height = floatFeature(features, "dialogheight", 100, screenAvailableRect.height(), 450); // default here came from frame size of dialog in MacIE
 
-    x = floatFeature(features, "dialogleft", screenAvailableRect.x(), screenAvailableRect.right() - width, -1);
+    x = floatFeature(features, "dialogleft", screenAvailableRect.x(), screenAvailableRect.maxX() - width, -1);
     xSet = x > 0;
-    y = floatFeature(features, "dialogtop", screenAvailableRect.y(), screenAvailableRect.bottom() - height, -1);
+    y = floatFeature(features, "dialogtop", screenAvailableRect.y(), screenAvailableRect.maxY() - height, -1);
     ySet = y > 0;
 
     if (boolFeature(features, "center", true)) {
