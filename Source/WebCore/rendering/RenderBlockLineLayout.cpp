@@ -184,6 +184,16 @@ static inline void dirtyLineBoxesForRenderer(RenderObject* o, bool fullLayout)
         toRenderInline(o)->dirtyLineBoxes(fullLayout);
 }
 
+static bool parentIsConstructedOrHaveNext(InlineFlowBox* parentBox)
+{
+    do {
+        if (parentBox->isConstructed() || parentBox->nextOnLine())
+            return true;
+        parentBox = parentBox->parent();
+    } while (parentBox);
+    return false;
+}
+
 InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj, bool firstLine)
 {
     // See if we have an unconstructed line box for this object that is also
@@ -198,13 +208,13 @@ InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj, bool firstLine)
         // Get the last box we made for this render object.
         parentBox = obj->isRenderInline() ? toRenderInline(obj)->lastLineBox() : toRenderBlock(obj)->lastLineBox();
 
-        // If this box is constructed then it is from a previous line, and we need
-        // to make a new box for our line.  If this box is unconstructed but it has
+        // If this box or its ancestor is constructed then it is from a previous line, and we need
+        // to make a new box for our line.  If this box or its ancestor is unconstructed but it has
         // something following it on the line, then we know we have to make a new box
         // as well.  In this situation our inline has actually been split in two on
         // the same line (this can happen with very fancy language mixtures).
         bool constructedNewBox = false;
-        if (!parentBox || parentBox->isConstructed() || parentBox->nextOnLine()) {
+        if (!parentBox || parentIsConstructedOrHaveNext(parentBox)) {
             // We need to make a new box for this render object.  Once
             // made, we need to place it at the end of the current line.
             InlineBox* newBox = createInlineBoxForRenderer(obj, obj == this);

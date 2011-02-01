@@ -1,3 +1,38 @@
+2011-02-01  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Fix a text rendering problem when enclosing block is RTL and text runs
+        are in different directionality.
+        https://bugs.webkit.org/show_bug.cgi?id=34176
+
+        The problem happens in the following example scenario (ABC represents 
+        Hebrew characters):
+        <div dir=rtl>this is a <span><span>test <span>ABC</span></span></span></div>
+
+        The line consists of 3 text runs -- TextRun1 TextRun2 TextRun3. In which
+        TextRun1 and TextRun2's bidi level are 2, and TextRun3's bidi level is 1.
+        TextRun2 and TextRun3's least common ancestor is not a sibling of TextRun1.
+
+        The visual bidi run order of the text runs is TextRun3 TextRun1 TextRun2.
+
+        Inside RenderBlock::constructLine(), when RenderBlock::createLineBoxes()
+        creates InlineFlowBox for TextRun2, it should check an InlineFlowBox for
+        the run's render object's ancestor (not only its parent) has already 
+        been constructed or has something following it on the line, in which 
+        case, create a new box for TextRun2 instead of sharing the same box with
+        TextRun3.
+
+        In other words, the following 2 div should render the same results
+        (ABC represents Hebrew characters).
+        <div dir=rtl>this is a <span><span>test <span>ABC</span></span></span></div>
+        <div dir=rtl>this is a <span>Test <span>ABC</span></span></div>
+
+        * fast/dom/34176.html: Added.
+        * platform/mac/fast/dom/34176-expected.checksum: Added.
+        * platform/mac/fast/dom/34176-expected.png: Added.
+        * platform/mac/fast/dom/34176-expected.txt: Added.
+
 2011-02-01  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed. Include actual values in fast/canvas/webgl/gl-teximage.html
