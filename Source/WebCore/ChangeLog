@@ -1,3 +1,19 @@
+2011-01-31  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Inter-ideograph justification should apply to hiragana and katakana as well
+        https://bugs.webkit.org/show_bug.cgi?id=53464
+
+        Changed the test for expansion opportunities from isCJKIdeograph() to isCJKIdeographOrSymbol().
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::expansionOpportunityCount):
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advance):
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances):
+
 2011-01-31  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by James Robinson.

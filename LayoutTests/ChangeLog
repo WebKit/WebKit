@@ -1,3 +1,17 @@
+2011-01-31  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Inter-ideograph justification should apply to hiragana and katakana as well
+        https://bugs.webkit.org/show_bug.cgi?id=53464
+
+        * platform/mac/fast/text/justify-ideograph-complex-expected.checksum:
+        * platform/mac/fast/text/justify-ideograph-complex-expected.png:
+        * platform/mac/fast/text/justify-ideograph-simple-expected.checksum:
+        * platform/mac/fast/text/justify-ideograph-simple-expected.png:
+        * platform/mac/fast/text/justify-ideograph-vertical-expected.checksum:
+        * platform/mac/fast/text/justify-ideograph-vertical-expected.png:
+
 2011-01-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed Chromium test expectation update.

@@ -474,7 +474,7 @@ unsigned Font::expansionOpportunityCount(const UChar* characters, size_t length,
                 character = U16_GET_SUPPLEMENTARY(character, characters[i + 1]);
                 i++;
             }
-            if (expandAroundIdeographs && isCJKIdeograph(character)) {
+            if (expandAroundIdeographs && isCJKIdeographOrSymbol(character)) {
                 if (!isAfterExpansion)
                     count++;
                 count++;
@@ -495,7 +495,7 @@ unsigned Font::expansionOpportunityCount(const UChar* characters, size_t length,
                 character = U16_GET_SUPPLEMENTARY(characters[i - 2], character);
                 i--;
             }
-            if (expandAroundIdeographs && isCJKIdeograph(character)) {
+            if (expandAroundIdeographs && isCJKIdeographOrSymbol(character)) {
                 if (!isAfterExpansion)
                     count++;
                 count++;

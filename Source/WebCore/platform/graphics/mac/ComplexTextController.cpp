@@ -489,7 +489,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                     advance.width += m_font.letterSpacing();
 
                 // Handle justification and word-spacing.
-                if (treatAsSpace || Font::isCJKIdeograph(ch)) {
+                if (treatAsSpace || Font::isCJKIdeographOrSymbol(ch)) {
                     // Distribute the run's total expansion evenly over all expansion opportunities in the run.
                     if (m_expansion && (!lastGlyph || m_run.allowsTrailingExpansion())) {
                         float previousExpansion = m_expansion;
