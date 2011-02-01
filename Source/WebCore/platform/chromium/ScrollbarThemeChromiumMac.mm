@@ -450,11 +450,11 @@ bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* con
               continue;
 
             // Calculate how far down (in pixels) the tick-mark should appear.
-            const int yPos = static_cast<int>((thumbArea.topLeft().y() + (thumbArea.height() * percent))) & ~1;
+            const int yPos = static_cast<int>((thumbArea.y() + (thumbArea.height() * percent))) & ~1;
 
             // Paint.
             const int indent = 2;
-            FloatRect tickRect(thumbArea.topLeft().x() + indent, yPos, thumbArea.width() - 2 * indent - 1, 2);
+            FloatRect tickRect(thumbArea.x() + indent, yPos, thumbArea.width() - 2 * indent - 1, 2);
             drawingContext->fillRect(tickRect);
             drawingContext->strokeRect(tickRect, 1);
         }

@@ -1,3 +1,10 @@
+2011-02-01  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        One more Chromium build fix after r77286.
+
+        * platform/chromium/ScrollbarThemeChromiumMac.mm:
+        (WebCore::ScrollbarThemeChromiumMac::paint): Changed to not use topLeft().
+
 2011-02-01  Sam Weinig  <sam@webkit.org>
 
         Fix the build for Beth.
