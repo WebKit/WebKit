@@ -89,6 +89,18 @@ WebInspector.UIString = function(string)
 };
 
 
+/*
+ * This label must be kept consistent with that in English.lproj/localizedStrings.js
+ *
+ * http://code.google.com/p/chromium/issues/detail?id=61302 requires a custom label for Chromium,
+ * since its behavior is different.
+ */
+WebInspector.openLinkExternallyLabel = function()
+{
+    return WebInspector.UIString("Open Link in New Tab");
+};
+
+
 /** Pending WebKit upstream by apavlov). Fixes iframe vs drag problem. */
 (function()
 {

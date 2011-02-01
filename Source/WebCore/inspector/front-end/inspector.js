@@ -449,6 +449,11 @@ var WebInspector = {
     resourceForURL: function(url)
     {
         return this.resourceTreeModel.resourceForURL(url);
+    },
+
+    openLinkExternallyLabel: function()
+    {
+        return WebInspector.UIString("Open Link in New Window");
     }
 }
 
