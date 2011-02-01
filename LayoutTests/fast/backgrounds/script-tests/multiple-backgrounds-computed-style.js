@@ -35,6 +35,10 @@ shouldBe('test("backgroundPositionY", "background-position-y: 20px, 10%, bottom,
 // mask shorthands
 shouldBe('test("webkitMaskImage", "-webkit-mask: none 10px 10px, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4%2F58BAAT%2FAf9jgNErAAAAAElFTkSuQmCC) 20px 20px;")', '"none, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4%2F58BAAT%2FAf9jgNErAAAAAElFTkSuQmCC)"');
 shouldBe('test("webkitMaskPosition", "-webkit-mask: none 10px 10px, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4%2F58BAAT%2FAf9jgNErAAAAAElFTkSuQmCC) 20px 20px;")', '"10px 10px, 20px 20px"');
+shouldBe('test("webkitMaskClip", "-webkit-mask: center url() content-box ")', '"content-box"');
+shouldBe('test("webkitMaskClip", "-webkit-mask: content-box padding-box")', '"padding-box"');
+shouldBe('test("webkitMaskClip", "-webkit-mask: border-box url() content-box")', '"content-box"');
+shouldBe('test("webkitMaskClip", "-webkit-mask: url() repeat-x content-box border-box scroll ")', '"border-box"');
 
 // mask longhands
 shouldBe('test("webkitMaskImage", "-webkit-mask-image: none, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4%2F58BAAT%2FAf9jgNErAAAAAElFTkSuQmCC);")', '"none, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4%2F58BAAT%2FAf9jgNErAAAAAElFTkSuQmCC)"');

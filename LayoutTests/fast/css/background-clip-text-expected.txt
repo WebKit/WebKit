@@ -14,8 +14,13 @@ PASS test("-webkit-background-clip: -webkit-text", "background-clip") is null
 PASS test("-webkit-background-clip: -webkit-text", "-webkit-background-clip") is "-webkit-text"
 PASS test("-webkit-background-clip: text", "background-clip") is null
 PASS test("-webkit-background-clip: text", "-webkit-background-clip") is "text"
-PASS test("background: url() padding-box", "background-clip") is "padding-box"
 PASS test("background: url() padding-box", "-webkit-background-clip") is null
+PASS test("-webkit-mask: url() ", "background-clip") is null
+PASS test("background: url() ", "background-clip") is "initial"
+PASS test("background: url() padding-box", "background-clip") is "padding-box"
+PASS test("background: url() padding-box border-box", "background-clip") is "border-box"
+PASS test("background: repeat content-box border-box url() ", "background-clip") is "border-box"
+PASS test("background: padding-box blue content-box url() repeat scroll ", "background-clip") is "content-box"
 PASS successfullyParsed is true
 
 TEST COMPLETE

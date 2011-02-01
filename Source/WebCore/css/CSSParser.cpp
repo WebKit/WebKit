@@ -1613,14 +1613,14 @@ bool CSSParser::parseValue(int propId, bool important)
         // FIXME: Add CSSPropertyBackgroundSize to the shorthand.
         const int properties[] = { CSSPropertyBackgroundImage, CSSPropertyBackgroundRepeat,
                                    CSSPropertyBackgroundAttachment, CSSPropertyBackgroundPosition, CSSPropertyBackgroundOrigin,
-                                   CSSPropertyBackgroundColor };
-        return parseFillShorthand(propId, properties, 6, important);
+                                   CSSPropertyBackgroundClip, CSSPropertyBackgroundColor };
+        return parseFillShorthand(propId, properties, 7, important);
     }
     case CSSPropertyWebkitMask: {
         const int properties[] = { CSSPropertyWebkitMaskImage, CSSPropertyWebkitMaskRepeat,
                                    CSSPropertyWebkitMaskAttachment, CSSPropertyWebkitMaskPosition,
-                                   CSSPropertyWebkitMaskOrigin };
-        return parseFillShorthand(propId, properties, 5, important);
+                                   CSSPropertyWebkitMaskOrigin, CSSPropertyWebkitMaskClip };
+        return parseFillShorthand(propId, properties, 6, important);
     }
     case CSSPropertyBorder:
         // [ 'border-width' || 'border-style' || <color> ] | inherit
@@ -1887,6 +1887,7 @@ bool CSSParser::parseFillShorthand(int propId, const int* properties, int numPro
     RefPtr<CSSValue> clipValue;
     RefPtr<CSSValue> positionYValue;
     RefPtr<CSSValue> repeatYValue;
+    bool foundClip = false;
     int i;
 
     while (m_valueList->current()) {
@@ -1909,7 +1910,7 @@ bool CSSParser::parseFillShorthand(int propId, const int* properties, int numPro
                     if ((properties[i] == CSSPropertyBackgroundOrigin || properties[i] == CSSPropertyWebkitMaskOrigin) && !parsedProperty[i]) {
                         // If background-origin wasn't present, then reset background-clip also.
                         addFillValue(clipValue, CSSInitialValue::createImplicit());
-                    }
+                    }                    
                 }
                 parsedProperty[i] = false;
             }
@@ -1937,6 +1938,11 @@ bool CSSParser::parseFillShorthand(int propId, const int* properties, int numPro
                             addFillValue(clipValue, val1.release()); // The property parsed successfully.
                         else
                             addFillValue(clipValue, CSSInitialValue::createImplicit()); // Some value was used for origin that is not supported by clip. Just reset clip instead.
+                    }
+                    if (properties[i] == CSSPropertyBackgroundClip || properties[i] == CSSPropertyWebkitMaskClip) {
+                        // Update clipValue
+                        addFillValue(clipValue, val1.release());
+                        foundClip = true;
                     }
                 }
             }
@@ -1981,13 +1987,16 @@ bool CSSParser::parseFillShorthand(int propId, const int* properties, int numPro
             addProperty(CSSPropertyWebkitMaskRepeatX, values[i].release(), important);
             // it's OK to call repeatYValue.release() since we only see CSSPropertyBackgroundPosition once
             addProperty(CSSPropertyWebkitMaskRepeatY, repeatYValue.release(), important);
-        } else
+        } else if ((properties[i] == CSSPropertyBackgroundClip || properties[i] == CSSPropertyWebkitMaskClip) && !foundClip)
+            // Value is already set while updating origin
+            continue;
+        else
             addProperty(properties[i], values[i].release(), important);
 
         // Add in clip values when we hit the corresponding origin property.
-        if (properties[i] == CSSPropertyBackgroundOrigin)
+        if (properties[i] == CSSPropertyBackgroundOrigin && !foundClip)
             addProperty(CSSPropertyBackgroundClip, clipValue.release(), important);
-        else  if (properties[i] == CSSPropertyWebkitMaskOrigin)
+        else if (properties[i] == CSSPropertyWebkitMaskOrigin && !foundClip)
             addProperty(CSSPropertyWebkitMaskClip, clipValue.release(), important);
     }
 
