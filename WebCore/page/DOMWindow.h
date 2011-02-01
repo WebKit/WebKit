@@ -133,7 +133,7 @@ namespace WebCore {
 
         void focus();
         void blur();
-        void close();
+        void close(ScriptExecutionContext* = 0);
         void print();
         void stop();
 
