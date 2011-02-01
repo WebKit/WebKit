@@ -20,50 +20,8 @@ PASS document.getElementById('divSpanFirst').innerText is document.getElementByI
 PASS document.getElementById('invisiblePre').innerText is ''
 PASS document.getElementById('invisiblePreFirst').innerText is 't\n'
 PASS document.getElementById('invisible').innerText is 'test\n'
+PASS document.getElementById('floatDt').innerText is 'Ab Cd E'
 PASS successfullyParsed is true
 
 TEST COMPLETE
-div
-div
-pre
-pre
-abc
-abc
- abc
- abc
-test
-  abc
-test
-  abc
-test
-abc
-test
-abc
-test
-test
-
-test
-
-test
-foo
-abc
-foo
-abc
-abc
-def
-abc
-def
-foo
-abc
-foo
-abc
-foo
-| abc
-foo
-| abc
-12
-12
-t
-test
-Results
 

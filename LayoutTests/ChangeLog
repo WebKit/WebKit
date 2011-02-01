@@ -1,3 +1,15 @@
+2011-02-01  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION (r65062): Safari loops forever under WebCore::plainTextToMallocAllocatedBuffer()
+        https://bugs.webkit.org/show_bug.cgi?id=53272
+
+        * fast/dom/inner-text-first-letter.html:
+          - Add a new test case reproducing the bug.
+          - Remove unnecessary text output.
+        * fast/dom/inner-text-first-letter-expected.txt:
+
 2011-01-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed Chromium test expectation updates.

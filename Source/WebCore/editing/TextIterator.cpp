@@ -551,7 +551,7 @@ void TextIterator::handleTextBox()
                 unsigned spaceRunStart = runStart - 1;
                 while (spaceRunStart > 0 && str[spaceRunStart - 1] == ' ')
                     --spaceRunStart;
-                emitText(m_node, spaceRunStart, spaceRunStart + 1);
+                emitText(m_node, renderer, spaceRunStart, spaceRunStart + 1);
             } else
                 emitCharacter(' ', m_node, 0, runStart, runStart);
             return;

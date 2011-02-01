@@ -19,11 +19,18 @@
 .preWrap {
   white-space: pre-wrap;
 }
+.left {
+  float: left;
+}
+.left:first-letter {
+  text-transform: capitalize;
+}
 </style>
 </head>
 <body>
 <p id="description"></p>
 <div id="console"></div>
+<div id="tests">
 <div id="divFirst" class="first">div</div>
 <div id="divNormal">div</div>
 <pre id="pFirst" class="first">pre</pre>
@@ -63,7 +70,9 @@ abc</div></div>
 <pre>
 Results
 </pre>
+<div id="floatDt"><dl><dt class=left> ab<dt class=left> cd<dt class=left> e</dl></div>
 </div>
+
 <script>
 description("This tests a letter with :first-letter applied is present in innerText.");
 shouldBe("document.getElementById('divFirst').innerText", "document.getElementById('divNormal').innerText");
@@ -83,6 +92,9 @@ shouldBe("document.getElementById('divSpanFirst').innerText", "document.getEleme
 shouldBe("document.getElementById('invisiblePre').innerText", "''");
 shouldBe("document.getElementById('invisiblePreFirst').innerText", "'t\\n'");
 shouldBe("document.getElementById('invisible').innerText", "'test\\n'");
+shouldBe("document.getElementById('floatDt').innerText", "'Ab Cd E'");
+document.getElementById('tests').innerHTML = "";
+
 var successfullyParsed = true;
 </script>
 <script src="../js/resources/js-test-post.js"></script>
