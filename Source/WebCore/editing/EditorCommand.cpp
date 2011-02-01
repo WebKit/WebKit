@@ -930,6 +930,26 @@ static bool executeRemoveFormat(Frame* frame, Event*, EditorCommandSource, const
     return true;
 }
 
+static bool executeScrollPageBackward(Frame* frame, Event*, EditorCommandSource, const String&)
+{
+    return frame->eventHandler()->logicalScrollRecursively(ScrollBlockDirectionBackward, ScrollByPage);
+}
+
+static bool executeScrollPageForward(Frame* frame, Event*, EditorCommandSource, const String&)
+{
+    return frame->eventHandler()->logicalScrollRecursively(ScrollBlockDirectionForward, ScrollByPage);
+}
+
+static bool executeScrollToBeginningOfDocument(Frame* frame, Event*, EditorCommandSource, const String&)
+{
+    return frame->eventHandler()->logicalScrollRecursively(ScrollBlockDirectionBackward, ScrollByDocument);
+}
+
+static bool executeScrollToEndOfDocument(Frame* frame, Event*, EditorCommandSource, const String&)
+{
+    return frame->eventHandler()->logicalScrollRecursively(ScrollBlockDirectionForward, ScrollByDocument);
+}
+
 static bool executeSelectAll(Frame* frame, Event*, EditorCommandSource, const String&)
 {
     frame->selection()->selectAll();
@@ -1477,6 +1497,10 @@ static const CommandMap& createCommandMap()
         { "Print", { executePrint, supported, enabled, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "Redo", { executeRedo, supported, enabledRedo, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "RemoveFormat", { executeRemoveFormat, supported, enabledRangeInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+        { "ScrollPageBackward", { executeScrollPageBackward, supportedFromMenuOrKeyBinding, enabled, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+        { "ScrollPageForward", { executeScrollPageForward, supportedFromMenuOrKeyBinding, enabled, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+        { "ScrollToBeginningOfDocument", { executeScrollToBeginningOfDocument, supportedFromMenuOrKeyBinding, enabled, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+        { "ScrollToEndOfDocument", { executeScrollToEndOfDocument, supportedFromMenuOrKeyBinding, enabled, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "SelectAll", { executeSelectAll, supported, enabled, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "SelectLine", { executeSelectLine, supportedFromMenuOrKeyBinding, enabledVisibleSelection, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "SelectParagraph", { executeSelectParagraph, supportedFromMenuOrKeyBinding, enabledVisibleSelection, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },

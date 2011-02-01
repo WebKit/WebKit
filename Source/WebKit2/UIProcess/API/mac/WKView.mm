@@ -338,6 +338,8 @@ static const SelectorNameMap* createSelectorExceptionMap()
     map->add(@selector(pageDownAndModifySelection:), "MovePageDownAndModifySelection");
     map->add(@selector(pageUp:), "MovePageUp");
     map->add(@selector(pageUpAndModifySelection:), "MovePageUpAndModifySelection");
+    map->add(@selector(scrollPageDown:), "ScrollPageForward");
+    map->add(@selector(scrollPageUp:), "ScrollPageBackward");
     
     return map;
 }
@@ -364,15 +366,142 @@ static String commandNameForSelector(SEL selector)
 
 #define WEBCORE_COMMAND(command) - (void)command:(id)sender { _data->_page->executeEditCommand(commandNameForSelector(_cmd)); }
 
+WEBCORE_COMMAND(alignCenter)
+WEBCORE_COMMAND(alignJustified)
+WEBCORE_COMMAND(alignLeft)
+WEBCORE_COMMAND(alignRight)
 WEBCORE_COMMAND(copy)
 WEBCORE_COMMAND(cut)
-WEBCORE_COMMAND(paste)
 WEBCORE_COMMAND(delete)
+WEBCORE_COMMAND(deleteBackward)
+WEBCORE_COMMAND(deleteBackwardByDecomposingPreviousCharacter)
+WEBCORE_COMMAND(deleteForward)
+WEBCORE_COMMAND(deleteToBeginningOfLine)
+WEBCORE_COMMAND(deleteToBeginningOfParagraph)
+WEBCORE_COMMAND(deleteToEndOfLine)
+WEBCORE_COMMAND(deleteToEndOfParagraph)
+WEBCORE_COMMAND(deleteToMark)
+WEBCORE_COMMAND(deleteWordBackward)
+WEBCORE_COMMAND(deleteWordForward)
+WEBCORE_COMMAND(ignoreSpelling)
+WEBCORE_COMMAND(indent)
+WEBCORE_COMMAND(insertBacktab)
+WEBCORE_COMMAND(insertLineBreak)
+WEBCORE_COMMAND(insertNewline)
+WEBCORE_COMMAND(insertNewlineIgnoringFieldEditor)
+WEBCORE_COMMAND(insertParagraphSeparator)
+WEBCORE_COMMAND(insertTab)
+WEBCORE_COMMAND(insertTabIgnoringFieldEditor)
+WEBCORE_COMMAND(makeTextWritingDirectionLeftToRight)
+WEBCORE_COMMAND(makeTextWritingDirectionNatural)
+WEBCORE_COMMAND(makeTextWritingDirectionRightToLeft)
+WEBCORE_COMMAND(moveBackward)
+WEBCORE_COMMAND(moveBackwardAndModifySelection)
+WEBCORE_COMMAND(moveDown)
+WEBCORE_COMMAND(moveDownAndModifySelection)
+WEBCORE_COMMAND(moveForward)
+WEBCORE_COMMAND(moveForwardAndModifySelection)
+WEBCORE_COMMAND(moveLeft)
+WEBCORE_COMMAND(moveLeftAndModifySelection)
+WEBCORE_COMMAND(moveParagraphBackwardAndModifySelection)
+WEBCORE_COMMAND(moveParagraphForwardAndModifySelection)
+WEBCORE_COMMAND(moveRight)
+WEBCORE_COMMAND(moveRightAndModifySelection)
+WEBCORE_COMMAND(moveToBeginningOfDocument)
+WEBCORE_COMMAND(moveToBeginningOfDocumentAndModifySelection)
+WEBCORE_COMMAND(moveToBeginningOfLine)
+WEBCORE_COMMAND(moveToBeginningOfLineAndModifySelection)
+WEBCORE_COMMAND(moveToBeginningOfParagraph)
+WEBCORE_COMMAND(moveToBeginningOfParagraphAndModifySelection)
+WEBCORE_COMMAND(moveToBeginningOfSentence)
+WEBCORE_COMMAND(moveToBeginningOfSentenceAndModifySelection)
+WEBCORE_COMMAND(moveToEndOfDocument)
+WEBCORE_COMMAND(moveToEndOfDocumentAndModifySelection)
+WEBCORE_COMMAND(moveToEndOfLine)
+WEBCORE_COMMAND(moveToEndOfLineAndModifySelection)
+WEBCORE_COMMAND(moveToEndOfParagraph)
+WEBCORE_COMMAND(moveToEndOfParagraphAndModifySelection)
+WEBCORE_COMMAND(moveToEndOfSentence)
+WEBCORE_COMMAND(moveToEndOfSentenceAndModifySelection)
+WEBCORE_COMMAND(moveToLeftEndOfLine)
+WEBCORE_COMMAND(moveToLeftEndOfLineAndModifySelection)
+WEBCORE_COMMAND(moveToRightEndOfLine)
+WEBCORE_COMMAND(moveToRightEndOfLineAndModifySelection)
+WEBCORE_COMMAND(moveUp)
+WEBCORE_COMMAND(moveUpAndModifySelection)
+WEBCORE_COMMAND(moveWordBackward)
+WEBCORE_COMMAND(moveWordBackwardAndModifySelection)
+WEBCORE_COMMAND(moveWordForward)
+WEBCORE_COMMAND(moveWordForwardAndModifySelection)
+WEBCORE_COMMAND(moveWordLeft)
+WEBCORE_COMMAND(moveWordLeftAndModifySelection)
+WEBCORE_COMMAND(moveWordRight)
+WEBCORE_COMMAND(moveWordRightAndModifySelection)
+WEBCORE_COMMAND(outdent)
+WEBCORE_COMMAND(pageDown)
+WEBCORE_COMMAND(pageDownAndModifySelection)
+WEBCORE_COMMAND(pageUp)
+WEBCORE_COMMAND(pageUpAndModifySelection)
+WEBCORE_COMMAND(paste)
 WEBCORE_COMMAND(pasteAsPlainText)
+WEBCORE_COMMAND(scrollPageDown)
+WEBCORE_COMMAND(scrollPageUp)
+WEBCORE_COMMAND(scrollToBeginningOfDocument)
+WEBCORE_COMMAND(scrollToEndOfDocument)
 WEBCORE_COMMAND(selectAll)
+WEBCORE_COMMAND(selectLine)
+WEBCORE_COMMAND(selectParagraph)
+WEBCORE_COMMAND(selectSentence)
+WEBCORE_COMMAND(selectToMark)
+WEBCORE_COMMAND(selectWord)
+WEBCORE_COMMAND(setMark)
+WEBCORE_COMMAND(subscript)
+WEBCORE_COMMAND(superscript)
+WEBCORE_COMMAND(swapWithMark)
 WEBCORE_COMMAND(takeFindStringFromSelection)
+WEBCORE_COMMAND(transpose)
+WEBCORE_COMMAND(underline)
+WEBCORE_COMMAND(unscript)
+WEBCORE_COMMAND(yank)
+WEBCORE_COMMAND(yankAndSelect)
 
 #undef WEBCORE_COMMAND
+
+/*
+
+When possible, editing-related methods should be implemented in WebCore with the
+EditorCommand mechanism and invoked via WEBCORE_COMMAND, rather than implementing
+individual methods here with Mac-specific code.
+
+Editing-related methods still unimplemented that are implemented in WebKit1:
+
+- (void)capitalizeWord:(id)sender;
+- (void)centerSelectionInVisibleArea:(id)sender;
+- (void)changeFont:(id)sender;
+- (void)complete:(id)sender;
+- (void)copyFont:(id)sender;
+- (void)lowercaseWord:(id)sender;
+- (void)makeBaseWritingDirectionLeftToRight:(id)sender;
+- (void)makeBaseWritingDirectionNatural:(id)sender;
+- (void)makeBaseWritingDirectionRightToLeft:(id)sender;
+- (void)pasteFont:(id)sender;
+- (void)scrollLineDown:(id)sender;
+- (void)scrollLineUp:(id)sender;
+- (void)showGuessPanel:(id)sender;
+- (void)uppercaseWord:(id)sender;
+
+Some other editing-related methods still unimplemented:
+
+- (void)changeCaseOfLetter:(id)sender;
+- (void)copyRuler:(id)sender;
+- (void)insertContainerBreak:(id)sender;
+- (void)insertDoubleQuoteIgnoringSubstitution:(id)sender;
+- (void)insertSingleQuoteIgnoringSubstitution:(id)sender;
+- (void)pasteRuler:(id)sender;
+- (void)toggleRuler:(id)sender;
+- (void)transposeWords:(id)sender;
+
+*/
 
 // Menu items validation
 
@@ -1813,7 +1942,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
         return;
     
     _data->_page->drawingArea()->setSize(IntSize(size));
-}    
+}
 
 @end
 

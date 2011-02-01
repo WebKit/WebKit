@@ -1,3 +1,18 @@
+2011-01-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        WKView should support scrollPageDown:, scrollPageUp:, scrollToBeg and other similar selectors
+        https://bugs.webkit.org/show_bug.cgi?id=53460
+
+        * UIProcess/API/mac/WKView.mm: Added WEBCORE_COMMAND macro for lots of editor commands that
+        are implemented in WebCore so they will get forwarded. Many of these will probably work without
+        any further changes required. Added comments about the methods that we do not yet forward.
+        (createSelectorExceptionMap): Map scrollPageDown: to ScrollPageForward and
+        scrollPageUp: to ScrollPageBackward because we want the page up and page down
+        keys to follow the document logical order, not physical order. This is equivalent
+        to what we do in WebPage::performDefaultBehaviorForKeyEvent.
+
 2011-01-31  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Steve Falkenburg.
