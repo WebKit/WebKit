@@ -1,3 +1,15 @@
+2011-02-01  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        getUniform should support SAMPLER_2D or SAMPLER_CUBE
+        https://bugs.webkit.org/show_bug.cgi?id=52190
+
+        * fast/canvas/webgl/gl-object-get-calls-expected.txt:
+        * fast/canvas/webgl/gl-object-get-calls.html: Test getUniform with sampler2D and samplerCube uniforms.
+        * fast/canvas/webgl/resources/noopUniformShader.vert: Added.
+        * fast/canvas/webgl/resources/samplerUniformShader.frag: Added.
+
 2011-02-01  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

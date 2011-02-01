@@ -2318,9 +2318,13 @@ WebGLGetInfo WebGLRenderingContext::getUniform(WebGLProgram* program, const WebG
                     baseType = GraphicsContext3D::FLOAT;
                     length = 16;
                     break;
+                case GraphicsContext3D::SAMPLER_2D:
+                case GraphicsContext3D::SAMPLER_CUBE:
+                    baseType = GraphicsContext3D::INT;
+                    length = 1;
+                    break;
                 default:
                     // Can't handle this type
-                    // FIXME: what to do about samplers?
                     m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
                     return WebGLGetInfo();
                 }

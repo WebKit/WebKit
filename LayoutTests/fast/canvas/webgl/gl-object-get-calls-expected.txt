@@ -62,6 +62,10 @@ PASS gl.getUniform(floatProgram, fvalLoc) is 11
 PASS gl.getUniform(floatProgram, fval2Loc) is [12, 13]
 PASS gl.getUniform(floatProgram, fval3Loc) is [14, 15, 16]
 PASS gl.getUniform(floatProgram, fval4Loc) is [17, 18, 19, 20]
+PASS gl.getProgramParameter(samplerProgram, gl.LINK_STATUS) is true
+PASS getError was expected value: NO_ERROR : 
+PASS gl.getUniform(samplerProgram, s2DValLoc) is 0
+PASS gl.getUniform(samplerProgram, sCubeValLoc) is 1
 PASS gl.getProgramParameter(matProgram, gl.LINK_STATUS) is true
 PASS getError was expected value: NO_ERROR : 
 PASS gl.getUniform(matProgram, mval2Loc) is [1, 2, 3, 4]

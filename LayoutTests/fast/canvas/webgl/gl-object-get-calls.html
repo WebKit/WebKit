@@ -182,6 +182,17 @@ shouldBe('gl.getUniform(floatProgram, fvalLoc)', '11');
 shouldBe('gl.getUniform(floatProgram, fval2Loc)', '[12, 13]');
 shouldBe('gl.getUniform(floatProgram, fval3Loc)', '[14, 15, 16]');
 shouldBe('gl.getUniform(floatProgram, fval4Loc)', '[17, 18, 19, 20]');
+// Sampler uniform variables
+var samplerProgram = loadProgram(gl, "resources/noopUniformShader.vert", "resources/samplerUniformShader.frag");
+shouldBe('gl.getProgramParameter(samplerProgram, gl.LINK_STATUS)', 'true');
+var s2DValLoc = gl.getUniformLocation(samplerProgram, "s2D");
+var sCubeValLoc = gl.getUniformLocation(samplerProgram, "sCube");
+gl.useProgram(samplerProgram);
+gl.uniform1i(s2DValLoc, 0);
+gl.uniform1i(sCubeValLoc, 1);
+glErrorShouldBe(gl, gl.NO_ERROR);
+shouldBe('gl.getUniform(samplerProgram, s2DValLoc)', '0');
+shouldBe('gl.getUniform(samplerProgram, sCubeValLoc)', '1');
 // Matrix uniform variables
 var matProgram = loadProgram(gl, "resources/matUniformShader.vert", "resources/noopUniformShader.frag");
 shouldBe('gl.getProgramParameter(matProgram, gl.LINK_STATUS)', 'true');

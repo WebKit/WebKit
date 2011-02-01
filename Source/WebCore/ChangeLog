@@ -28,6 +28,16 @@
 
 2011-02-01  Zhenyao Mo  <zmo@google.com>
 
+        Reviewed by Kenneth Russell.
+
+        getUniform should support SAMPLER_2D or SAMPLER_CUBE
+        https://bugs.webkit.org/show_bug.cgi?id=52190
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getUniform):
+
+2011-02-01  Zhenyao Mo  <zmo@google.com>
+
         Reviewed by Darin Adler.
 
         Fix the incorrect usage of RetainPtr cases in GraphicsContext3DCG.cpp
