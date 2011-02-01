@@ -85,10 +85,15 @@ JavaScriptCore.JSVALUE32_64.exp: JavaScriptCore.exp JavaScriptCore.JSVALUE32_64o
 JavaScriptCore.JSVALUE64.exp: JavaScriptCore.exp JavaScriptCore.JSVALUE64only.exp
 	cat $^ > $@
 
+
 # header detection
+
+ifeq ($(OS),MACOS)
 
 HeaderDetection.h : DerivedSources.make /System/Library/CoreServices/SystemVersion.plist
 	rm -f $@
 	echo "/* This is a generated file. Do not edit. */" > $@
 	if [ -f $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders/pthread_machdep.h ]; then echo "#define HAVE_PTHREAD_MACHDEP_H 1" >> $@; else echo >> $@; fi
 	if [ -f $(SDKROOT)/System/Library/Frameworks/AppKit.framework/PrivateHeaders/NSScrollerImpPair_Private.h ]; then echo "#define USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER 1" >> $@; else echo >> $@; fi
+
+endif
