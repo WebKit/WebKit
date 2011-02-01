@@ -1,5 +1,36 @@
 2011-02-01  Mark Rowe  <mrowe@apple.com>
 
+        Merge r70335.
+
+    2010-10-22  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Tests that cross origin bypass does not work with getMatchedCSSRules. Rebaseline existing tests
+        that try to access non-author stylesheets. This functionality is no longer supported. So, css rules
+        should return null for those cases.
+        https://bugs.webkit.org/show_bug.cgi?id=46853
+
+        * fast/backgrounds/repeat/background-repeat-shorthand-expected.txt:
+        * fast/backgrounds/repeat/margin-shorthand-expected.txt:
+        * fast/backgrounds/repeat/resources/background-repeat-shorthand.js:
+        * fast/backgrounds/repeat/resources/margin-shorthand.js:
+        * fast/css/disabled-author-styles.html:
+        * fast/css/modify-ua-rules-from-javascript-expected.txt:
+        * fast/css/modify-ua-rules-from-javascript.html:
+        * fast/css/word-break-user-modify-allowed-values.html:
+        * http/tests/security/cross-frame-access-call-expected.txt:
+        * http/tests/security/cross-frame-access-call.html:
+        * http/tests/security/cross-origin-getMatchedCSSRules-expected.txt: Added.
+        * http/tests/security/cross-origin-getMatchedCSSRules.html: Added.
+        * http/tests/security/cross-origin-getMatchedCSSRules2-expected.txt: Added.
+        * http/tests/security/cross-origin-getMatchedCSSRules2.html: Added.
+        * http/tests/security/resources/cross-origin-getMatchedCSSRules-frame.html: Added.
+        * platform/chromium/http/tests/security/cross-frame-access-call-expected.txt:
+        * platform/qt/http/tests/security/cross-frame-access-call-expected.txt:
+
+2011-02-01  Mark Rowe  <mrowe@apple.com>
+
         Merge r68541.
 
     2010-09-28  Chris Fleizach  <cfleizach@apple.com>

@@ -706,6 +706,8 @@ void CSSStyleSelector::matchRulesForList(CSSRuleDataList* rules, int& firstRuleI
 
     for (CSSRuleData* d = rules->first(); d; d = d->next()) {
         CSSStyleRule* rule = d->rule();
+        if (m_checker.m_sameOriginOnly && !m_checker.m_document->securityOrigin()->canRequest(rule->baseURL()))
+            continue; 
         if (checkSelector(d->selector())) {
             // If the rule has no properties to apply, then ignore it.
             CSSMutableStyleDeclaration* decl = rule->declaration();
@@ -886,6 +888,7 @@ CSSStyleSelector::SelectorChecker::SelectorChecker(Document* document, bool stri
     : m_document(document)
     , m_strictParsing(strictParsing)
     , m_collectRulesOnly(false)
+    , m_sameOriginOnly(false)
     , m_pseudoStyle(NOPSEUDO)
     , m_documentIsHTML(document->isHTMLDocument())
     , m_matchVisitedPseudoClass(false)
@@ -1789,12 +1792,11 @@ void CSSStyleSelector::cacheBorderAndBackground()
     }
 }
 
-PassRefPtr<CSSRuleList> CSSStyleSelector::styleRulesForElement(Element* e, bool authorOnly)
+PassRefPtr<CSSRuleList> CSSStyleSelector::styleRulesForElement(Element* e, bool authorOnly, CSSRuleFilter filter)
 {
-    return pseudoStyleRulesForElement(e, NOPSEUDO, authorOnly);
+    return pseudoStyleRulesForElement(e, NOPSEUDO, authorOnly, filter);
 }
-
-PassRefPtr<CSSRuleList> CSSStyleSelector::pseudoStyleRulesForElement(Element* e, PseudoId pseudoId, bool authorOnly)
+PassRefPtr<CSSRuleList> CSSStyleSelector::pseudoStyleRulesForElement(Element* e, PseudoId pseudoId, bool authorOnly, CSSRuleFilter filter)
 {
     if (!e || !e->document()->haveStylesheetsLoaded())
         return 0;
@@ -1817,13 +1819,17 @@ PassRefPtr<CSSRuleList> CSSStyleSelector::pseudoStyleRulesForElement(Element* e,
     }
 
     if (m_matchAuthorAndUserStyles) {
+        m_checker.m_sameOriginOnly = (filter == SameOriginCSSRulesOnly);
+
         // Check the rules in author sheets.
         int firstAuthorRule = -1, lastAuthorRule = -1;
         matchRules(m_authorStyle, firstAuthorRule, lastAuthorRule);
+
+        m_checker.m_sameOriginOnly = false;
     }
 
     m_checker.m_collectRulesOnly = false;
-    
+
     return m_ruleList.release();
 }
 
