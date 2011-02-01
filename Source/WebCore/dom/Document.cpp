@@ -408,7 +408,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML, con
     , m_normalWorldWrapperCache(0)
 #endif
     , m_usingGeolocation(false)
-    , m_eventQueue(adoptPtr(new EventQueue))
+    , m_eventQueue(EventQueue::create(this))
 #if ENABLE(WML)
     , m_containsWMLContent(false)
 #endif

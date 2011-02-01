@@ -28,14 +28,31 @@
 #include "EventQueue.h"
 
 #include "DOMWindow.h"
-#include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "ScriptExecutionContext.h"
+#include "SuspendableTimer.h"
 
 namespace WebCore {
 
-EventQueue::EventQueue()
-    : m_pendingEventTimer(this, &EventQueue::pendingEventTimerFired)
+class EventQueueTimer : public SuspendableTimer {
+    WTF_MAKE_NONCOPYABLE(EventQueueTimer);
+public:
+    EventQueueTimer(EventQueue* eventQueue, ScriptExecutionContext* context)
+        : SuspendableTimer(context)
+        , m_eventQueue(eventQueue) { }
+
+private:
+    virtual void fired() { m_eventQueue->pendingEventTimerFired(); }
+    EventQueue* m_eventQueue;    
+};
+
+EventQueue::EventQueue(ScriptExecutionContext* context)
+    : m_pendingEventTimer(adoptPtr(new EventQueueTimer(this, context)))
+{
+}
+
+EventQueue::~EventQueue()
 {
 }
 
@@ -44,8 +61,8 @@ void EventQueue::enqueueEvent(PassRefPtr<Event> event)
     ASSERT(event->target()->toNode() || event->target()->toDOMWindow());
     m_queuedEvents.append(event);
     
-    if (!m_pendingEventTimer.isActive())
-        m_pendingEventTimer.startOneShot(0);
+    if (!m_pendingEventTimer->isActive())
+        m_pendingEventTimer->startOneShot(0);
 }
 
 void EventQueue::enqueueScrollEvent(PassRefPtr<Node> target, ScrollEventTargetType targetType)
@@ -60,9 +77,9 @@ void EventQueue::enqueueScrollEvent(PassRefPtr<Node> target, ScrollEventTargetTy
     enqueueEvent(scrollEvent.release());
 }
 
-void EventQueue::pendingEventTimerFired(Timer<EventQueue>*)
+void EventQueue::pendingEventTimerFired()
 {
-    ASSERT(!m_pendingEventTimer.isActive());
+    ASSERT(!m_pendingEventTimer->isActive());
 
     Vector<RefPtr<Event> > queuedEvents;
     queuedEvents.swap(m_queuedEvents);
