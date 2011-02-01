@@ -1,3 +1,15 @@
+2011-02-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Mihai Parparita.
+
+        Using Control-C to cancel webkit-patch or other python tools causes
+        unpleasant traceback console spew
+        https://bugs.webkit.org/show_bug.cgi?id=53462
+
+        Catch the exception and don't print the stack trace.
+
+        * Scripts/webkit-patch:
+
 2011-02-01  Scott Cameron  <sccameron@rim.com>
 
         Reviewed by Daniel Bates.

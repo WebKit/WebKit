@@ -33,6 +33,7 @@
 
 import logging
 import os
+import signal
 import sys
 
 from webkitpy.common.system.logutils import configure_logging
@@ -66,5 +67,7 @@ def main():
 
 
 if __name__ == "__main__":
-
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        sys.exit(signal.SIGINT + 128)
