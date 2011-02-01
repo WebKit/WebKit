@@ -618,6 +618,21 @@ void MediaPlayerPrivateQt::paint(GraphicsContext* context, const IntRect& rect)
     m_videoScene->render(painter, QRectF(QRect(rect)), m_videoItem->sceneBoundingRect());
 }
 
+void MediaPlayerPrivateQt::paintCurrentFrameInContext(GraphicsContext* context, const IntRect& rect)
+{
+    if (context->paintingDisabled())
+        return;
+
+    if (!m_isVisible)
+        return;
+
+    // Grab the painter and widget
+    QPainter* painter = context->platformContext();
+
+    // Render the video, using the item as it might not be in the scene
+    m_videoItem->paint(painter, 0, 0);
+}
+
 void MediaPlayerPrivateQt::repaint()
 {
     m_webCorePlayer->repaint();

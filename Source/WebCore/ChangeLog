@@ -1,3 +1,19 @@
+2011-01-31  Kalle Vahlman  <kalle.vahlman@movial.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] canvas.drawImage(HTMLVideoElement) doesn't work with Qt Multimedia backend
+        https://bugs.webkit.org/show_bug.cgi?id=53325
+
+        Reimplement paintCurrentFrameInContext() rather than delegate the
+        rendering to paint() to make sure we really do get the video frame
+        content into the GraphicsContext, regardless of accelerated
+        compositing and the video scene state.
+
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        (WebCore::MediaPlayerPrivateQt::paintCurrentFrameInContext):
+        * platform/graphics/qt/MediaPlayerPrivateQt.h:
+
 2011-01-31  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Darin Adler.

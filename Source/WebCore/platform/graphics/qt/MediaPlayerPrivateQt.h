@@ -89,6 +89,8 @@ public:
     void setSize(const IntSize&);
 
     void paint(GraphicsContext*, const IntRect&);
+    // reimplemented for canvas drawImage(HTMLVideoElement)
+    void paintCurrentFrameInContext(GraphicsContext*, const IntRect&);
 
     bool supportsFullscreen() const { return true; }
 
