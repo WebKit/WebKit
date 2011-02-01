@@ -105,7 +105,7 @@ void AccessibilityObject::setWrapper(AccessibilityObjectWrapper* wrapper)
 
 bool AccessibilityObject::allowsTextRanges() const
 {
-    return isTextControl() || isWebArea() || isGroup() || isLink() || isHeading();
+    return isTextControl() || isWebArea() || isGroup() || isLink() || isHeading() || isListItem();
 }
 
 unsigned AccessibilityObject::getLengthForTextRange() const

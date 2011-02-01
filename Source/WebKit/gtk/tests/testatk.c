@@ -292,9 +292,13 @@ static void testWebkitAtkCaretOffsets()
     result = atk_text_set_caret_offset(ATK_TEXT(listItem), 1);
     g_assert_cmpint(result, ==, FALSE);
 
-    /* TODO: Check here that it's possible to set the caret in the
-       middle of the text for a list item when fixing bug 53388.
-       https://bugs.webkit.org/show_bug.cgi?id=53388 */
+    /* It should be possible to place the caret inside an item's text. */
+    result = atk_text_set_caret_offset(ATK_TEXT(listItem), 5);
+    g_assert_cmpint(result, ==, TRUE);
+
+    /* Uncomment the following two lines when fixing bug 53436. */
+    /* offset = atk_text_get_caret_offset(ATK_TEXT(listItem)); */
+    /* g_assert_cmpint(offset, ==, 5); */
 
     AtkObject* panel = atk_object_ref_accessible_child(object, 3);
     g_assert(ATK_IS_OBJECT(panel));

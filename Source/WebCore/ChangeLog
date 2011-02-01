@@ -2,6 +2,19 @@
 
         Reviewed by Martin Robinson.
 
+        [Gtk] atk_text_set_caret_offset fails for list items
+        https://bugs.webkit.org/show_bug.cgi?id=53388
+
+        Allow using text ranges across list items.
+
+        * accessibility/gtk/AccessibilityObjectAtk.cpp:
+        (WebCore::AccessibilityObject::allowsTextRanges): Add list items
+        to the list of accessibility objects supporting text ranges.
+
+2011-02-01  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         [GTK] character range extents is off when the end of a wrapped line is included
         https://bugs.webkit.org/show_bug.cgi?id=53323
 
