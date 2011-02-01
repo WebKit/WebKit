@@ -1,3 +1,13 @@
+2011-02-01  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed.
+
+        Rebaseline my test for QT, Leopard from r77262 due
+        to minor comment error differences.
+
+        * platform/mac-leopard/fast/css/stylesheet-candidate-nodes-crash-expected.txt: Added.
+        * platform/qt/fast/css/stylesheet-candidate-nodes-crash-expected.txt: Added.
+
 2011-02-01  Xiaomei Ji  <xji@chromium.org>
 
         Unreviewed.
