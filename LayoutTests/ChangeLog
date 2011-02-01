@@ -1,3 +1,14 @@
+2011-02-01  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Rollout r77230 which caused many layout tests
+        crashes on Chromium Debug bots.
+
+        Async event handlers should not fire within a modal dialog
+        https://bugs.webkit.org/show_bug.cgi?id=53202
+
+        * fast/events/scroll-event-during-modal-dialog-expected.txt: Removed.
+        * fast/events/scroll-event-during-modal-dialog.html: Removed.
+
 2011-02-01  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by James Robinson.

@@ -27,51 +27,38 @@
 #ifndef EventQueue_h
 #define EventQueue_h
 
+#include "Timer.h"
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class Event;
-class EventQueueTimer;
 class Node;
-class ScriptExecutionContext;
 
 class EventQueue {
     WTF_MAKE_NONCOPYABLE(EventQueue);
 
-    
 public:
     enum ScrollEventTargetType {
         ScrollEventDocumentTarget,
         ScrollEventElementTarget
     };
 
-    static PassOwnPtr<EventQueue> create(ScriptExecutionContext* context)
-    {
-        return adoptPtr(new EventQueue(context));
-    }
-
-    ~EventQueue();
+    EventQueue();
 
     void enqueueEvent(PassRefPtr<Event>);
     void enqueueScrollEvent(PassRefPtr<Node>, ScrollEventTargetType);
 
 private:
-    explicit EventQueue(ScriptExecutionContext*);
-
-    void pendingEventTimerFired();
+    void pendingEventTimerFired(Timer<EventQueue>*);
     void dispatchEvent(PassRefPtr<Event>);
 
-    OwnPtr<EventQueueTimer> m_pendingEventTimer;
+    Timer<EventQueue> m_pendingEventTimer;
     Vector<RefPtr<Event> > m_queuedEvents;
     HashSet<Node*> m_nodesWithQueuedScrollEvents;
-    
-    friend class EventQueueTimer;    
 };
 
 }

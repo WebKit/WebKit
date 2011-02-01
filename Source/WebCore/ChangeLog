@@ -1,3 +1,19 @@
+2011-02-01  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Rollout r77230 which caused many layout tests
+        crashes on Chromium Debug bots.
+
+        Async event handlers should not fire within a modal dialog
+        https://bugs.webkit.org/show_bug.cgi?id=53202
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/EventQueue.cpp:
+        (WebCore::EventQueue::EventQueue):
+        (WebCore::EventQueue::enqueueEvent):
+        (WebCore::EventQueue::pendingEventTimerFired):
+        * dom/EventQueue.h:
+
 2011-02-01  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Dirk Schulze.
