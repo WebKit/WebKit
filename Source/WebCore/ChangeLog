@@ -1,5 +1,13 @@
 2011-01-31  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix according to reviewer comments: can just use Color::black now.
+
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ShadowBlur::drawInsetShadow):
+        (WebCore::ShadowBlur::drawRectShadowWithoutTiling):
+
+2011-01-31  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Sam Weinig.
 
         Clean up ShadowBlur

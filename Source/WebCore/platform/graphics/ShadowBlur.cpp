@@ -409,7 +409,7 @@ void ShadowBlur::drawInsetShadow(GraphicsContext* graphicsContext, const FloatRe
     path.addRoundedRect(holeRect, holeRadii.topLeft(), holeRadii.topRight(), holeRadii.bottomLeft(), holeRadii.bottomRight());
 
     shadowContext->setFillRule(RULE_EVENODD);
-    shadowContext->setFillColor(Color(.0f, .0f, .0f, 1.f), ColorSpaceDeviceRGB);
+    shadowContext->setFillColor(Color::black, ColorSpaceDeviceRGB);
     shadowContext->fillPath(path);
     
     endShadowLayer(graphicsContext);
@@ -424,7 +424,7 @@ void ShadowBlur::drawRectShadowWithoutTiling(GraphicsContext* graphicsContext, c
     Path path;
     path.addRoundedRect(shadowedRect, radii.topLeft(), radii.topRight(), radii.bottomLeft(), radii.bottomRight());
 
-    shadowContext->setFillColor(Color(.0f, .0f, .0f, 1.f), ColorSpaceDeviceRGB);
+    shadowContext->setFillColor(Color::black, ColorSpaceDeviceRGB);
     shadowContext->fillPath(path);
 
     endShadowLayer(graphicsContext);
