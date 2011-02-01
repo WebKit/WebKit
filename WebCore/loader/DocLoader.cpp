@@ -338,18 +338,8 @@ void DocLoader::setLoadInProgress(bool load)
 void DocLoader::checkCacheObjectStatus(CachedResource* resource)
 {
     // Return from the function for objects that we didn't load from the cache or if we don't have a frame.
-    if (!resource || !frame())
+    if (!resource || !frame() || resource->status() != CachedResource::Cached)
         return;
-
-    switch (resource->status()) {
-        case CachedResource::Cached:
-            break;
-        case CachedResource::NotCached:
-        case CachedResource::Unknown:
-        case CachedResource::New:
-        case CachedResource::Pending:
-            return;
-    }
 
     // FIXME: If the WebKit client changes or cancels the request, WebCore does not respect this and continues the load.
     frame()->loader()->loadedResourceFromMemoryCache(resource);
