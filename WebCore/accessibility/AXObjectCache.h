@@ -100,9 +100,14 @@ public:
     AXID platformGenerateAXID() const;
     AccessibilityObject* objectFromAXID(AXID id) const { return m_objects.get(id).get(); }
 
+    // This is a weak reference cache for knowing if Nodes used by TextMarkers are valid.
+    void setNodeInUse(Node* n) { m_textMarkerNodes.add(n); }
+    void removeNodeForUse(Node* n) { m_textMarkerNodes.remove(n); }
+    bool isNodeInUse(Node* n) { return m_textMarkerNodes.contains(n); }
+    
     // Text marker utilities.
-    static void textMarkerDataForVisiblePosition(TextMarkerData&, const VisiblePosition&);
-    static VisiblePosition visiblePositionForTextMarkerData(TextMarkerData&);
+    void textMarkerDataForVisiblePosition(TextMarkerData&, const VisiblePosition&);
+    VisiblePosition visiblePositionForTextMarkerData(TextMarkerData&);
 
     enum AXNotification {
         AXActiveDescendantChanged,
@@ -129,6 +134,7 @@ protected:
 private:
     HashMap<AXID, RefPtr<AccessibilityObject> > m_objects;
     HashMap<RenderObject*, AXID> m_renderObjectMapping;
+    HashSet<Node*> m_textMarkerNodes;
     static bool gAccessibilityEnabled;
     static bool gAccessibilityEnhancedUserInterfaceEnabled;
     

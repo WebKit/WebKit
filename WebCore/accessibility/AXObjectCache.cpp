@@ -474,9 +474,12 @@ void AXObjectCache::handleAriaRoleChanged(RenderObject* renderer)
         static_cast<AccessibilityRenderObject*>(obj)->updateAccessibilityRole();
 }
 #endif
-    
+
 VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(TextMarkerData& textMarkerData)
 {
+    if (!isNodeInUse(textMarkerData.node))
+        return VisiblePosition();
+    
     VisiblePosition visiblePos = VisiblePosition(textMarkerData.node, textMarkerData.offset, textMarkerData.affinity);
     Position deepPos = visiblePos.deepEquivalent();
     if (deepPos.isNull())
@@ -528,7 +531,9 @@ void AXObjectCache::textMarkerDataForVisiblePosition(TextMarkerData& textMarkerD
     textMarkerData.axID = obj.get()->axObjectID();
     textMarkerData.node = domNode;
     textMarkerData.offset = deepPos.deprecatedEditingOffset();
-    textMarkerData.affinity = visiblePos.affinity();    
+    textMarkerData.affinity = visiblePos.affinity();   
+    
+    cache->setNodeInUse(domNode);
 }
     
 } // namespace WebCore
