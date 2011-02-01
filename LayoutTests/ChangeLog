@@ -1,3 +1,15 @@
+2011-02-01  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed.
+
+        Test not crashing on chromium, was crashing earlier because of
+        some build issues. Also, rebaselining chromium mac since it matches
+        rest of chromium and is not same as mac leopard.
+        https://bugs.webkit.org/show_bug.cgi?id=53516
+
+        * platform/chromium-mac/fast/css/stylesheet-candidate-nodes-crash-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-02-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris Fleizach.
