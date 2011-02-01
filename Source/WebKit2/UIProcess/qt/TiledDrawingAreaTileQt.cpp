@@ -89,11 +89,11 @@ void TiledDrawingAreaTile::invalidate(const IntRect& dirtyRect)
 void TiledDrawingAreaTile::resize(const IntSize& newSize)
 {
     IntRect oldRect = m_rect;
-    m_rect = IntRect(m_rect.topLeft(), newSize);
-    if (m_rect.right() > oldRect.right())
-        invalidate(IntRect(oldRect.right(), oldRect.y(), m_rect.right() - oldRect.right(), m_rect.height()));
-    if (m_rect.bottom() > oldRect.bottom())
-        invalidate(IntRect(oldRect.x(), oldRect.bottom(), m_rect.width(), m_rect.bottom() - oldRect.bottom()));
+    m_rect = IntRect(m_rect.location(), newSize);
+    if (m_rect.maxX() > oldRect.maxX())
+        invalidate(IntRect(oldRect.maxX(), oldRect.y(), m_rect.maxX() - oldRect.maxX(), m_rect.height()));
+    if (m_rect.maxY() > oldRect.maxY())
+        invalidate(IntRect(oldRect.x(), oldRect.maxY(), m_rect.width(), m_rect.maxY() - oldRect.maxY()));
 }
 
 void TiledDrawingAreaTile::swapBackBufferToFront()
@@ -132,7 +132,7 @@ void TiledDrawingAreaTile::updateFromChunk(UpdateChunk* updateChunk, float)
         if (m_backBuffer.isNull())
             m_backBuffer = m_buffer.isNull() ? QPixmap(m_proxy->tileSize()) : m_buffer;
         QPainter painter(&m_backBuffer);
-        IntSize drawPoint = updateChunkRect.topLeft() - m_rect.topLeft();
+        IntSize drawPoint = updateChunkRect.location() - m_rect.location();
         painter.drawImage(QPoint(drawPoint.width(), drawPoint.height()), image);
     }
     m_hasUpdatePending = false;
