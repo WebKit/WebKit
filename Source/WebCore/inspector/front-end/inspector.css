@@ -685,6 +685,7 @@ body.platform-linux .monospace, body.platform-linux .source-code {
 
 .console-message-url {
     float: right;
+    margin-left: 4px;
 }
 
 .console-group-messages .section {

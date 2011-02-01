@@ -1,3 +1,13 @@
+2011-01-31  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Console source references need a left-margin
+        https://bugs.webkit.org/show_bug.cgi?id=53308
+
+        * inspector/front-end/inspector.css:
+        (.console-message-url): Added a 4px margin on the left.
+
 2011-01-31  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by David Hyatt.
