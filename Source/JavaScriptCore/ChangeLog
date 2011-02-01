@@ -1,3 +1,26 @@
+2011-02-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        REGRESSION(77082): GC-related crashes seen: on WebKit2 bot; on GTK 32bit
+        bot; loading trac pages; typing in search field
+        https://bugs.webkit.org/show_bug.cgi?id=53519
+        
+        The crashes were all caused by failure to run an object's destructor.
+
+        * runtime/CollectorHeapIterator.h:
+        (JSC::ObjectIterator::ObjectIterator): Don't skip forward upon
+        construction. The iterator class used to do that when it was designed
+        for prior-to-beginning initialization. I forgot to remove this line
+        of code when I changed the iterator to normal initialization.
+        
+        Skipping forward upon construction was causing the heap to skip running
+        the destructor for the very first object in a block when destroying the
+        block. This usually did not crash, since block destruction is rare and
+        most objects have pretty trivial destructors. However, in the rare case
+        when the heap would destroy a block whose first object was a global
+        object or a DOM node, BOOM.
+
 2011-01-31  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

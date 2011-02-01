@@ -138,8 +138,6 @@ namespace JSC {
     inline ObjectIterator::ObjectIterator(CollectorHeap& heap, size_t startBlock, size_t startCell)
         : CollectorHeapIterator(heap, startBlock, startCell)
     {
-        if (isValid())
-            ++(*this);
     }
 
     inline ObjectIterator& ObjectIterator::operator++()
