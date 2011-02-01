@@ -217,7 +217,7 @@ void XMLTokenizer::end()
         insertErrorMessageBlock();
     else {
         exitText();
-        m_doc->updateStyleSelector();
+        m_doc->styleSelectorChanged(RecalcStyleImmediately);
     }
     
     clearCurrentNodeStack();

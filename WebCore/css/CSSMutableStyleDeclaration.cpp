@@ -480,13 +480,12 @@ void CSSMutableStyleDeclaration::setNeedsStyleRecalc()
         return;
     }
 
-    // FIXME: quick&dirty hack for KDE 3.0... make this MUCH better! (Dirk)
     StyleBase* root = this;
     while (StyleBase* parent = root->parent())
         root = parent;
     if (root->isCSSStyleSheet())
         if (Document* doc = static_cast<CSSStyleSheet*>(root)->doc())
-            doc->updateStyleSelector();
+            doc->styleSelectorChanged(DeferRecalcStyle);
 }
 
 bool CSSMutableStyleDeclaration::getPropertyPriority(int propertyID) const

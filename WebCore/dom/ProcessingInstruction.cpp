@@ -274,9 +274,8 @@ void ProcessingInstruction::removedFromDocument()
 
     document()->removeStyleSheetCandidateNode(this);
 
-    // FIXME: It's terrible to do a synchronous update of the style selector just because a <style> or <link> element got removed.
     if (m_cachedSheet)
-        document()->updateStyleSelector();
+        document()->styleSelectorChanged(DeferRecalcStyle);
 }
 
 void ProcessingInstruction::finishParsingChildren()

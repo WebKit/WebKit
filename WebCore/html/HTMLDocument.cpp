@@ -401,7 +401,7 @@ void HTMLDocument::determineParseMode()
     if (inCompatMode() != wasInCompatMode) {
         clearPageUserSheet();
         clearPageGroupUserSheets();
-        updateStyleSelector();
+        styleSelectorChanged(RecalcStyleImmediately);
     }
 }
 
