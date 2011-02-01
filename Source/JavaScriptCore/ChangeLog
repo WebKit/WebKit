@@ -1,3 +1,24 @@
+2011-02-01  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Avoid strlen() in AtomicString::fromUTF8
+        https://bugs.webkit.org/show_bug.cgi?id=50516
+
+        Add an overload to calculateStringHashFromUTF8 to get
+        strlen() of the input data with only one call.
+
+        This change shows about 3% performance win on the xml-parser benchmark.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * wtf/text/AtomicString.cpp:
+        (WTF::AtomicString::fromUTF8):
+        * wtf/unicode/UTF8.cpp:
+        (WTF::Unicode::calculateStringHashAndLengthFromUTF8Internal):
+        (WTF::Unicode::calculateStringHashFromUTF8):
+        (WTF::Unicode::calculateStringHashAndLengthFromUTF8):
+        * wtf/unicode/UTF8.h:
+
 2011-02-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Beth Dakin.

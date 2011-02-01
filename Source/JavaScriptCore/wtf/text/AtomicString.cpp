@@ -376,7 +376,17 @@ AtomicString AtomicString::fromUTF8(const char* characters)
 {
     if (!characters)
         return AtomicString();
-    return fromUTF8(characters, strlen(characters));
+
+    HashAndUTF8Characters buffer;
+    buffer.characters = characters;
+    buffer.hash = calculateStringHashAndLengthFromUTF8(characters, buffer.length, buffer.utf16Length);
+
+    if (!buffer.hash)
+        return AtomicString();
+
+    AtomicString atomicString;
+    atomicString.m_string = addToStringTable<HashAndUTF8Characters, HashAndUTF8CharactersTranslator>(buffer);
+    return atomicString;
 }
 
 } // namespace WTF
