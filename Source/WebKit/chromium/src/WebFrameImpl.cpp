@@ -2135,7 +2135,7 @@ void WebFrameImpl::invalidateArea(AreaToInvalidate area)
             IntRect contentArea(
                 view->x(), view->y(), view->visibleWidth(), view->visibleHeight());
             IntRect frameRect = view->frameRect();
-            contentArea.move(-frameRect.topLeft().x(), -frameRect.topLeft().y());
+            contentArea.move(-frameRect.x(), -frameRect.y());
             view->invalidateRect(contentArea);
         }
 
@@ -2146,7 +2146,7 @@ void WebFrameImpl::invalidateArea(AreaToInvalidate area)
                 ScrollbarTheme::nativeTheme()->scrollbarThickness(),
                 view->visibleHeight());
             IntRect frameRect = view->frameRect();
-            scrollBarVert.move(-frameRect.topLeft().x(), -frameRect.topLeft().y());
+            scrollBarVert.move(-frameRect.x(), -frameRect.y());
             view->invalidateRect(scrollBarVert);
         }
     }
