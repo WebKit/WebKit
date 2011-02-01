@@ -38,11 +38,16 @@ int main(int argc, char** argv) {
     QStringList args = QApplication::arguments();
     args.removeAt(0);
 
-    QGraphicsWKView::BackingStoreType backingStoreTypeToUse = QGraphicsWKView::Simple;
     int indexOfTiledOption;
-    if ((indexOfTiledOption = args.indexOf(QRegExp(QLatin1String("-tiled")))) != -1) {
-        backingStoreTypeToUse = QGraphicsWKView::Tiled;
+    if ((indexOfTiledOption = args.indexOf(QString::fromLatin1("-tiled"))) != -1) {
+        BrowserWindow::backingStoreTypeForNewWindow = QGraphicsWKView::Tiled;
         args.removeAt(indexOfTiledOption);
+    }
+
+    int indexOfSeparateWebProcessOption;
+    if ((indexOfSeparateWebProcessOption = args.indexOf(QString::fromLatin1("-separate-web-process-per-window"))) != -1) {
+        BrowserWindow::useSeparateWebProcessPerWindow = true;
+        args.removeAt(indexOfSeparateWebProcessOption);
     }
 
     if (args.isEmpty()) {
@@ -53,8 +58,11 @@ int main(int argc, char** argv) {
             args.append("http://www.google.com");
     }
 
-    BrowserWindow::backingStoreTypeForNewWindow = backingStoreTypeToUse;
-    BrowserWindow* window = new BrowserWindow;
+    QWKContext* context = new QWKContext;
+    BrowserWindow* window = new BrowserWindow(context);
+    if (BrowserWindow::useSeparateWebProcessPerWindow)
+        context->setParent(window);
+
     window->load(args[0]);
 
     for (int i = 1; i < args.size(); ++i)

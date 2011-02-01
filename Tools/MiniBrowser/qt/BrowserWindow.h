@@ -38,13 +38,14 @@ class BrowserWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    BrowserWindow(QWKContext* = 0);
+    BrowserWindow(QWKContext*);
     ~BrowserWindow();
     void load(const QString& url);
 
     QWKPage* page();
 
     static QGraphicsWKView::BackingStoreType backingStoreTypeForNewWindow;
+    static bool useSeparateWebProcessPerWindow;
 
 public slots:
     BrowserWindow* newWindow(const QString& url = "about:blank");
@@ -83,6 +84,7 @@ private:
     bool m_isZoomTextOnly;
     qreal m_currentZoom;
 
+    QWKContext* m_context;
     BrowserView* m_browser;
     QLineEdit* m_addressBar;
     QStringList m_userAgentList;

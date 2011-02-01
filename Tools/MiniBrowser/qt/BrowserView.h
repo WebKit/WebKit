@@ -48,7 +48,6 @@ protected:
 
 private:
     QGraphicsWKView* m_item;
-    QWKContext* m_context;
 };
 
 #endif

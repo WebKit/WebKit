@@ -1,3 +1,27 @@
+2011-02-01  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt][WK2] Add a way to use shared process model in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=53090
+
+        * MiniBrowser/qt/BrowserView.cpp:
+        (BrowserView::BrowserView): Removed the m_context member.
+        From now the context is guaranteed to be non-null and we
+        don't need to store that in the object.
+        * MiniBrowser/qt/BrowserView.h:
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        Added static bool to determine that new windows need to be
+        created with their own context or not. Use the same context
+        and web process by default to be inilne with the other ports.
+        (BrowserWindow::BrowserWindow):
+        (BrowserWindow::newWindow):
+        * MiniBrowser/qt/BrowserWindow.h:
+        * MiniBrowser/qt/main.cpp:
+        (main): Added command line switch to be able to use the
+        non-shared process model. Simplify the handling of the command line
+        switches a little bit.
+
 2011-02-01  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Andreas Kling.
