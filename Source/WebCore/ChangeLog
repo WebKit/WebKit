@@ -2,6 +2,17 @@
 
         Reviewed by Pavel Feldman.
 
+        Web Inspector: Fix profiles reset to avoid clearing heap profiles in Chromium.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53500
+
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::resetFrontendProfiles):
+
+2011-02-01  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
         Web Inspector: [Chromium] Landing detailed heap snapshots, part 1.
 
         https://bugs.webkit.org/show_bug.cgi?id=53173
