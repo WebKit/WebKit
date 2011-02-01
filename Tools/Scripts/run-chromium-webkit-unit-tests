@@ -41,9 +41,9 @@ setConfiguration();
 
 my $pathToBinary;
 if (isDarwin()) {
-    $pathToBinary = "WebKit/chromium/xcodebuild/" . configuration() . "/webkit_unit_tests";
+    $pathToBinary = "Source/WebKit/chromium/xcodebuild/" . configuration() . "/webkit_unit_tests";
 } elsif (isCygwin() || isWindows()) {
-    $pathToBinary = "WebKit/chromium/" . configuration() . "/webkit_unit_tests.exe";
+    $pathToBinary = "Source/WebKit/chromium/" . configuration() . "/webkit_unit_tests.exe";
 } elsif (isLinux()) {
     $pathToBinary = "out/" . configuration() . "/webkit_unit_tests";
 }
