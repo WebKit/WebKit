@@ -78,7 +78,8 @@ public:
 
     void paint(GraphicsContext*, const IntRect&);
 
-    void setObserver(CanvasObserver* observer) { m_observer = observer; }
+    void addObserver(CanvasObserver* observer);
+    void removeObserver(CanvasObserver* observer);
 
     CanvasRenderingContext* renderingContext() const { return m_context.get(); }
 
@@ -107,7 +108,7 @@ private:
     bool m_rendererIsCanvas;
 
     OwnPtr<CanvasRenderingContext> m_context;
-    CanvasObserver* m_observer;
+    HashSet<CanvasObserver*> m_observers;
 
     bool m_ignoreReset;
     FloatRect m_dirtyRect;

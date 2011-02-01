@@ -57,7 +57,6 @@ using namespace HTMLNames;
 HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document* doc)
     : HTMLElement(tagName, doc)
     , CanvasSurface(doc->frame() ? doc->frame()->page()->chrome()->scaleFactor() : 1)
-    , m_observer(0)
     , m_ignoreReset(false)
 {
     ASSERT(hasTagName(canvasTag));
@@ -65,8 +64,9 @@ HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document* doc
 
 HTMLCanvasElement::~HTMLCanvasElement()
 {
-    if (m_observer)
-        m_observer->canvasDestroyed(this);
+    HashSet<CanvasObserver*>::iterator end = m_observers.end();
+    for (HashSet<CanvasObserver*>::iterator it = m_observers.begin(); it != end; ++it)
+        (*it)->canvasDestroyed(this);
 }
 
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -109,6 +109,17 @@ RenderObject* HTMLCanvasElement::createRenderer(RenderArena* arena, RenderStyle*
 
     m_rendererIsCanvas = false;
     return HTMLElement::createRenderer(arena, style);
+}
+
+
+void HTMLCanvasElement::addObserver(CanvasObserver* observer)
+{
+    m_observers.add(observer);
+}
+
+void HTMLCanvasElement::removeObserver(CanvasObserver* observer)
+{
+    m_observers.remove(observer);
 }
 
 void HTMLCanvasElement::setHeight(int value)
@@ -183,9 +194,10 @@ void HTMLCanvasElement::willDraw(const FloatRect& rect)
         m_dirtyRect.unite(r);
         ro->repaintRectangle(enclosingIntRect(m_dirtyRect));
     }
-    
-    if (m_observer)
-        m_observer->canvasChanged(this, rect);
+
+    HashSet<CanvasObserver*>::iterator end = m_observers.end();
+    for (HashSet<CanvasObserver*>::iterator it = m_observers.begin(); it != end; ++it)
+        (*it)->canvasChanged(this, rect);
 }
 
 void HTMLCanvasElement::reset()
@@ -222,8 +234,9 @@ void HTMLCanvasElement::reset()
         }
     }
 
-    if (m_observer)
-        m_observer->canvasResized(this);
+    HashSet<CanvasObserver*>::iterator end = m_observers.end();
+    for (HashSet<CanvasObserver*>::iterator it = m_observers.begin(); it != end; ++it)
+        (*it)->canvasResized(this);
 }
 
 void HTMLCanvasElement::paint(GraphicsContext* context, const IntRect& r)
