@@ -1,3 +1,13 @@
+2011-02-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein and Darin Adler.
+
+        <rdar://problem/8830594> Printed page is sometimes shifted down, making footer invisible
+
+        * UIProcess/API/mac/WKPrintingView.mm: (-[WKPrintingView locationOfPrintRect:]): Instead of
+        letting AppKit compute content position on page, make the view provide it. We can do this
+        because WK(Printing)Views are always printed on their own, not as part of other views.
+
 2011-02-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

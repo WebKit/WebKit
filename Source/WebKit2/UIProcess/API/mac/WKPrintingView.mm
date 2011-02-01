@@ -498,6 +498,13 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
     return rect;
 }
 
+// Temporary workaround for <rdar://problem/8944535>. Force correct printout positioning.
+- (NSPoint)locationOfPrintRect:(NSRect)aRect
+{
+    ASSERT(_printOperation == [NSPrintOperation currentOperation]);
+    return NSMakePoint([[_printOperation printInfo] leftMargin], [[_printOperation printInfo] bottomMargin]);
+}
+
 - (void)endDocument
 {
     ASSERT(_printOperation == [NSPrintOperation currentOperation]);
