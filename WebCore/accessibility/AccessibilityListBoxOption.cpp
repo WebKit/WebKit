@@ -189,7 +189,9 @@ void AccessibilityListBoxOption::setSelected(bool selected)
     if ((isOptionSelected && selected) || (!isOptionSelected && !selected))
         return;
     
-    selectElement->accessKeySetSelectedIndex(listBoxOptionIndex());
+    // Convert from the entire list index to the option index.
+    int optionIndex = static_cast<SelectElement*>(selectElement)->listToOptionIndex(listBoxOptionIndex());
+    selectElement->accessKeySetSelectedIndex(optionIndex);
 }
 
 HTMLSelectElement* AccessibilityListBoxOption::listBoxOptionParentNode() const
