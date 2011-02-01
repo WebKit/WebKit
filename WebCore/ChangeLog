@@ -1,5 +1,22 @@
 2011-01-31  Mark Rowe  <mrowe@apple.com>
 
+        Merge r75548.
+
+    2011-01-11  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        RefPtr the FrameView to prevent scrollbar from getting deleted inside
+        its scroll event.
+        https://bugs.webkit.org/show_bug.cgi?id=52238
+
+        Test: scrollbars/scrollable-iframe-remove-crash.html
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::scrollTo):
+
+2011-01-31  Mark Rowe  <mrowe@apple.com>
+
         Merge r67634.
 
     2010-09-16  Andreas Kling  <andreas.kling@nokia.com>

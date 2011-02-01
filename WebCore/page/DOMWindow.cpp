@@ -1236,7 +1236,7 @@ void DOMWindow::scrollTo(int x, int y) const
 
     m_frame->document()->updateLayoutIgnorePendingStylesheets();
 
-    FrameView* view = m_frame->view();
+    RefPtr<FrameView> view = m_frame->view();
     if (!view)
         return;
 

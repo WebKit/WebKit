@@ -1,5 +1,20 @@
 2011-01-31  Mark Rowe  <mrowe@apple.com>
 
+        Merge r75548.
+
+    2011-01-11  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Tests that we do not crash when we remove scrollable iframe when executing
+        inside its scroll event.
+        https://bugs.webkit.org/show_bug.cgi?id=52238
+
+        * scrollbars/scrollable-iframe-remove-crash-expected.txt: Added.
+        * scrollbars/scrollable-iframe-remove-crash.html: Added.
+
+2011-01-31  Mark Rowe  <mrowe@apple.com>
+
         Merge r70594.
 
     2010-10-26  Ryosuke Niwa  <rniwa@webkit.org>
