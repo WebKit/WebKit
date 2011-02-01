@@ -1854,13 +1854,6 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
     }
 #endif
 
-    ASSERT(!m_isPainting);
-        
-    m_isPainting = true;
-        
-    // m_nodeToDraw is used to draw only one element (and its descendants)
-    RenderObject* eltRenderer = m_nodeToDraw ? m_nodeToDraw->renderer() : 0;
-
     PaintBehavior oldPaintBehavior = m_paintBehavior;
     if (m_paintBehavior == PaintBehaviorNormal)
         document->invalidateRenderedRectsForMarkersInRect(rect);
@@ -1868,11 +1861,25 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
     if (document->printing())
         m_paintBehavior |= PaintBehaviorFlattenCompositingLayers;
 
+    bool flatteningPaint = m_paintBehavior & PaintBehaviorFlattenCompositingLayers;
+    bool isRootFrame = !document->ownerElement();
+    if (flatteningPaint && isRootFrame)
+        notifyWidgetsInAllFrames(WillPaintFlattened);
+
+    ASSERT(!m_isPainting);
+    m_isPainting = true;
+
+    // m_nodeToDraw is used to draw only one element (and its descendants)
+    RenderObject* eltRenderer = m_nodeToDraw ? m_nodeToDraw->renderer() : 0;
+
     contentRenderer->layer()->paint(p, rect, m_paintBehavior, eltRenderer);
-    
-    m_paintBehavior = oldPaintBehavior;
-    
+
     m_isPainting = false;
+
+    if (flatteningPaint && isRootFrame)
+        notifyWidgetsInAllFrames(DidPaintFlattened);
+
+    m_paintBehavior = oldPaintBehavior;
     m_lastPaintTime = currentTime();
 
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -2137,6 +2144,14 @@ IntPoint FrameView::convertFromContainingView(const IntPoint& parentPoint) const
     }
     
     return parentPoint;
+}
+
+void FrameView::notifyWidgetsInAllFrames(WidgetNotification notification)
+{
+    for (Frame* frame = m_frame.get(); frame; frame = frame->tree()->traverseNext(m_frame.get())) {
+        if (RenderView* root = frame->contentRenderer())
+            root->notifyWidgets(notification);
+    }
 }
 
 } // namespace WebCore

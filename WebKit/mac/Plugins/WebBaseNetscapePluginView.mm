@@ -594,6 +594,23 @@ String WebHaltablePlugin::pluginName() const
     return CFStringCompare((CFStringRef)versionString, knownGoodFlash10dot1Release, kCFCompareNumerically) != kCFCompareLessThan;
 }
 
+- (void)cacheSnapshot
+{
+    NSImage *snapshot = [[NSImage alloc] initWithSize: [self bounds].size];
+    _snapshotting = YES;
+    [snapshot lockFocus];
+    [self drawRect:[self bounds]];
+    [snapshot unlockFocus];
+    _snapshotting = NO;
+    
+    _cachedSnapshot.adoptNS(snapshot);
+}
+
+- (void)clearCachedSnapshot
+{
+    _cachedSnapshot.clear();
+}
+
 - (BOOL)hasBeenHalted
 {
     return _hasBeenHalted;

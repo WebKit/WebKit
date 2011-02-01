@@ -107,6 +107,8 @@ public:
     void updateWidgetPositions();
     void addWidget(RenderWidget*);
     void removeWidget(RenderWidget*);
+    
+    void notifyWidgets(WidgetNotification);
 
     // layoutDelta is used transiently during layout to store how far an object has moved from its
     // last layout location, in order to repaint correctly.
@@ -173,7 +175,10 @@ protected:
 
 private:
     bool shouldRepaint(const IntRect& r) const;
-        
+
+    size_t getRetainedWidgets(Vector<RenderWidget*>&);
+    void releaseWidgets(Vector<RenderWidget*>&);
+
     int docHeight() const;
     int docWidth() const;
 

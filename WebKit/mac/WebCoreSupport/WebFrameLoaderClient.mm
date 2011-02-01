@@ -1524,7 +1524,25 @@ public:
         else if (event->type() == eventNames().mouseoutEvent)
             [(WebBaseNetscapePluginView *)platformWidget() handleMouseExited:currentNSEvent];
     }
-    
+
+private:
+    virtual void notifyWidget(WidgetNotification notification)
+    {
+        switch (notification) {
+        case WillPaintFlattened: {
+            BEGIN_BLOCK_OBJC_EXCEPTIONS;
+            [(WebBaseNetscapePluginView *)platformWidget() cacheSnapshot];
+            END_BLOCK_OBJC_EXCEPTIONS;
+            break;
+        }
+        case DidPaintFlattened: {
+            BEGIN_BLOCK_OBJC_EXCEPTIONS;
+            [(WebBaseNetscapePluginView *)platformWidget() clearCachedSnapshot];
+            END_BLOCK_OBJC_EXCEPTIONS;
+            break;
+        }
+        }
+    }
 };
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)

@@ -73,11 +73,13 @@ class WebHaltablePlugin;
     BOOL _isPrivateBrowsingEnabled;
     BOOL _isHalted;
     BOOL _hasBeenHalted;
+    BOOL _snapshotting;
     
     RefPtr<WebCore::HTMLPlugInElement> _element;
     RetainPtr<NSString> _MIMEType;
     RetainPtr<NSURL> _baseURL;
     RetainPtr<NSURL> _sourceURL;
+    RetainPtr<NSImage> _cachedSnapshot;
     
     OwnPtr<WebHaltablePlugin> _haltable;
     
@@ -132,7 +134,10 @@ class WebHaltablePlugin;
 - (void)removeWindowObservers;
 - (BOOL)shouldClipOutPlugin;
 - (BOOL)inFlatteningPaint;
+
 - (BOOL)supportsSnapshotting;
+- (void)cacheSnapshot;
+- (void)clearCachedSnapshot;
 
 - (BOOL)convertFromX:(double)sourceX andY:(double)sourceY space:(NPCoordinateSpace)sourceSpace
                  toX:(double *)destX andY:(double *)destY space:(NPCoordinateSpace)destSpace;

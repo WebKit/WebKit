@@ -24,10 +24,9 @@
 
 #include "OverlapTestRequestClient.h"
 #include "RenderReplaced.h"
+#include "Widget.h"
 
 namespace WebCore {
-
-class Widget;
 
 class RenderWidget : public RenderReplaced, private OverlapTestRequestClient {
 public:
@@ -44,6 +43,8 @@ public:
 
     void showSubstituteImage(PassRefPtr<Image>);
 
+    void notifyWidget(WidgetNotification);
+    
     static void suspendWidgetHierarchyUpdates();
     static void resumeWidgetHierarchyUpdates();
 

@@ -1416,7 +1416,13 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (void)drawRect:(NSRect)rect
 {
-    if (drawingModel == NPDrawingModelCoreAnimation && (![self inFlatteningPaint] || ![self supportsSnapshotting]))
+    if (_cachedSnapshot) {
+        NSRect sourceRect = { NSZeroPoint, [_cachedSnapshot.get() size] };
+        [_cachedSnapshot.get() drawInRect:[self bounds] fromRect:sourceRect operation:NSCompositeSourceOver fraction:1];
+        return;
+    }
+    
+    if (drawingModel == NPDrawingModelCoreAnimation && (!_snapshotting || ![self supportsSnapshotting]))
         return;
 
     if (!_isStarted)

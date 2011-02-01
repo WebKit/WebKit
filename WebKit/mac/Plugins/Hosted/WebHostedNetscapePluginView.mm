@@ -396,6 +396,12 @@ extern "C" {
 
 - (void)drawRect:(NSRect)rect
 {
+    if (_cachedSnapshot) {
+        NSRect sourceRect = { NSZeroPoint, [_cachedSnapshot.get() size] };
+        [_cachedSnapshot.get() drawInRect:[self bounds] fromRect:sourceRect operation:NSCompositeSourceOver fraction:1];
+        return;
+    }
+
     if (_proxy) {
         if (_softwareRenderer) {
             if ([NSGraphicsContext currentContextDrawingToScreen]) {
@@ -403,7 +409,7 @@ extern "C" {
                 _proxy->didDraw();
             } else
                 _proxy->print(reinterpret_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]), [self bounds].size.width, [self bounds].size.height);
-        } else if ([self inFlatteningPaint] && [self supportsSnapshotting]) {
+        } else if (_snapshotting && [self supportsSnapshotting]) {
             _proxy->snapshot(reinterpret_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]), [self bounds].size.width, [self bounds].size.height);
         }
 
