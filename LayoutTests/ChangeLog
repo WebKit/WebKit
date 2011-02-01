@@ -1,3 +1,9 @@
+2011-02-01  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Remove expectations of failure for passing tests.
+
+        * platform/chromium/test_expectations.txt: Fewer fails.
+
 2011-02-01  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by David Hyatt.
