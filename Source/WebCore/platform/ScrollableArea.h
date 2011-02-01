@@ -60,6 +60,8 @@ public:
     bool constrainsScrollingToContentEdge() const { return m_constrainsScrollingToContentEdge; }
     void setConstrainsScrollingToContentEdge(bool constrainsScrollingToContentEdge) { m_constrainsScrollingToContentEdge = constrainsScrollingToContentEdge; }
 
+    ScrollAnimator* scrollAnimator() const { return m_scrollAnimator.get(); }
+    
     virtual int scrollSize(ScrollbarOrientation) const = 0;
     virtual int scrollPosition(Scrollbar*) const = 0;
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&) = 0;
@@ -104,8 +106,13 @@ public:
     virtual int visibleWidth() const { ASSERT_NOT_REACHED(); return 0; }
 
     virtual IntSize contentsSize() const { ASSERT_NOT_REACHED(); return IntSize(); }
-
     virtual IntSize overhangAmount() const { ASSERT_NOT_REACHED(); return IntSize(); }
+
+    virtual IntPoint currentMousePosition() const { return IntPoint(); }
+
+    virtual bool inLiveResize() const { return m_inLiveResize; }
+    virtual void willStartLiveResize();
+    virtual void willEndLiveResize();
 
 private:
     // NOTE: Only called from the ScrollAnimator.
@@ -114,6 +121,8 @@ private:
 
     OwnPtr<ScrollAnimator> m_scrollAnimator;
     bool m_constrainsScrollingToContentEdge;
+
+    bool m_inLiveResize;
 };
 
 } // namespace WebCore

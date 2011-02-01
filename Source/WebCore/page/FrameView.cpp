@@ -56,6 +56,7 @@
 #include "RenderScrollbarPart.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "ScrollAnimator.h"
 #include "Settings.h"
 #include "TextResourceDecoder.h"
 #include <wtf/CurrentTime.h>
@@ -431,7 +432,8 @@ void FrameView::setContentsSize(const IntSize& size)
     m_deferSetNeedsLayouts++;
 
     ScrollView::setContentsSize(size);
-
+    scrollAnimator()->contentsResized();
+    
     Page* page = frame() ? frame()->page() : 0;
     if (!page)
         return;
@@ -702,6 +704,7 @@ void FrameView::didMoveOnscreen()
     RenderView* view = m_frame->contentRenderer();
     if (view)
         view->didMoveOnscreen();
+    scrollAnimator()->contentAreaDidShow();
 }
 
 void FrameView::willMoveOffscreen()
@@ -709,6 +712,7 @@ void FrameView::willMoveOffscreen()
     RenderView* view = m_frame->contentRenderer();
     if (view)
         view->willMoveOffscreen();
+    scrollAnimator()->contentAreaDidHide();
 }
 
 RenderObject* FrameView::layoutRoot(bool onlyDuringLayout) const
@@ -1074,6 +1078,11 @@ void FrameView::removeFixedObject()
         updateCanBlitOnScrollRecursively();
 }
 
+IntPoint FrameView::currentMousePosition() const
+{
+    return m_frame ? m_frame->eventHandler()->currentMousePosition() : IntPoint();
+}
+
 bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
 {
     const size_t fixedObjectThreshold = 5;
@@ -1389,6 +1398,12 @@ void FrameView::repaintContentRectangle(const IntRect& r, bool immediate)
     }
 #endif
     ScrollView::repaintContentRectangle(r, immediate);
+}
+
+void FrameView::contentsResized()
+{
+    scrollAnimator()->contentsResized();
+    setNeedsLayout();
 }
 
 void FrameView::visibleContentsResized()

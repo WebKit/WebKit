@@ -97,10 +97,34 @@ void InitWebCoreSystemInterface(void)
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
         INIT(CreateCTTypesetterWithUniCharProviderAndOptions);
         INIT(MakeScrollbarPainter);
+        INIT(ScrollbarPainterSetDelegate);
         INIT(ScrollbarPainterPaint);
         INIT(ScrollbarThickness);
         INIT(ScrollbarMinimumThumbLength);
         INIT(ScrollbarMinimumTotalLengthNeededForThumb);
+        INIT(ScrollbarPainterKnobAlpha);
+        INIT(SetScrollbarPainterKnobAlpha);
+        INIT(ScrollbarPainterIsHorizontal);
+        INIT(ScrollbarPainterSetOverlayState);
+        INIT(MakeScrollbarReplacementPainter);
+#if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
+        INIT(MakeScrollbarPainterController);
+        INIT(SetPainterForPainterController);
+        INIT(VerticalScrollbarPainterForController);
+        INIT(HorizontalScrollbarPainterForController);
+        INIT(SetScrollbarPainterControllerStyle);
+        INIT(ContentAreaScrolled);
+        INIT(ContentAreaWillPaint);
+        INIT(MouseEnteredContentArea);
+        INIT(MouseExitedContentArea);
+        INIT(MouseMovedInContentArea);
+        INIT(WillStartLiveResize);
+        INIT(ContentAreaResized);
+        INIT(WillEndLiveResize);
+        INIT(ContentAreaDidShow);
+        INIT(ContentAreaDidHide);
+#endif
+        INIT(ScrollbarPainterUsesOverlayScrollers);
 #else
         INIT(GetHyphenationLocationBeforeIndex);
 #endif

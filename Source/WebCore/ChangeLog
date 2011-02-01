@@ -1,3 +1,122 @@
+2011-02-01  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix for <rdar://problem/8492788> Adopt WKScrollbarPainterController
+
+        Lots of new WebCoreSystemInterface functions to export.
+        * WebCore.exp.in:
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
+        Let the scrollAnimator know when the mouse has
+        moved anywhere inside the page, and when the mouse 
+        has moved in or out of the window. 
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::mouseMoved):
+        (WebCore::EventHandler::updateMouseEventTargetNode):
+
+        Let the scrollAnimator know when the window has become
+        active or inactive.
+        * page/FocusController.cpp:
+        (WebCore::FocusController::setActive):
+        
+        Let the scrollAnimator know when all of these things
+        are happening.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setContentsSize):
+        (WebCore::FrameView::didMoveOnscreen):
+        (WebCore::FrameView::willMoveOffscreen):
+        (WebCore::FrameView::currentMousePosition):
+        (WebCore::FrameView::contentsResized):
+        
+        New functions called through WebKit2 that allow the
+        scrollAnimator to know when a live resize starts and ends.
+        (WebCore::FrameView::willStartLiveResize):
+        (WebCore::FrameView::willEndLiveResize):
+        * page/FrameView.h:
+        
+        New functions on ScrollAnimator that pass information
+        to the WKPainterController when we're using one.
+        * platform/ScrollAnimator.h:
+        (WebCore::ScrollAnimator::scrollableArea):
+        (WebCore::ScrollAnimator::contentAreaWillPaint):
+        (WebCore::ScrollAnimator::mouseEnteredContentArea):
+        (WebCore::ScrollAnimator::mouseExitedContentArea):
+        (WebCore::ScrollAnimator::mouseMovedInContentArea):
+        (WebCore::ScrollAnimator::willStartLiveResize):
+        (WebCore::ScrollAnimator::contentsResized):
+        (WebCore::ScrollAnimator::willEndLiveResize):
+        (WebCore::ScrollAnimator::contentAreaDidShow):
+        (WebCore::ScrollAnimator::contentAreaDidHide):
+        (WebCore::ScrollAnimatorMac::ScrollAnimatorMac):
+        (WebCore::ScrollAnimatorMac::scrollbarPainterDelegate):
+        (WebCore::ScrollAnimatorMac::setPainterForPainterController):
+        (WebCore::ScrollAnimatorMac::removePainterFromPainterController):
+        (WebCore::ScrollAnimatorMac::notityPositionChanged):
+        (WebCore::ScrollAnimatorMac::contentAreaWillPaint):
+        (WebCore::ScrollAnimatorMac::mouseEnteredContentArea):
+        (WebCore::ScrollAnimatorMac::mouseExitedContentArea):
+        (WebCore::ScrollAnimatorMac::mouseMovedInContentArea):
+        (WebCore::ScrollAnimatorMac::willStartLiveResize):
+        (WebCore::ScrollAnimatorMac::contentsResized):
+        (WebCore::ScrollAnimatorMac::willEndLiveResize):
+        (WebCore::ScrollAnimatorMac::contentAreaDidShow):
+        (WebCore::ScrollAnimatorMac::contentAreaDidHide):
+        
+        Let the scrollAnimator know when this is happening.
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::paint):
+        
+        New function lets the scrollAnimator get the current 
+        mouse position.
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::currentMousePosition):
+        
+        New function that returns the scrollAnimator when needed.
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::scrollAnimator):
+        
+        Keep track of if we're in a live resize using a new memeber
+        variable.
+        * platform/mac/ScrollAnimatorMac.h:
+        (WebCore::ScrollAnimatorMac::inLiveResize):
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::view):
+        
+        New delegates for the WKPainter and WKPainterController
+        (-[ScrollbarPainterControllerDelegate initWithScrollAnimator:WebCore::]):
+        (-[ScrollbarPainterControllerDelegate contentAreaRectForScrollerImpPair:]):
+        (-[ScrollbarPainterControllerDelegate inLiveResizeForScrollerImpPair:]):
+        (-[ScrollbarPainterControllerDelegate mouseLocationInContentAreaForScrollerImpPair:]):
+        (-[ScrollbarPainterControllerDelegate scrollerImpPair:convertContentPoint:toScrollerImp:]):
+        (-[ScrollbarPainterControllerDelegate scrollerImpPair:setContentAreaNeedsDisplayInRect:]):
+        (-[ScrollbarPainterControllerDelegate scrollerImpPair:updateScrollerStyleForNewRecommendedScrollerStyle:]):
+        (-[ScrollKnobAnimation initWithScrollbarPainter:forScrollAnimator:WebCore::animateKnobAlphaTo:duration:]):
+        (-[ScrollKnobAnimation setCurrentProgress:]):
+        (-[ScrollbarPainterDelegate initWithScrollAnimator:WebCore::]):
+        (-[ScrollbarPainterDelegate convertRectToBacking:]):
+        (-[ScrollbarPainterDelegate convertRectFromBacking:]):
+        (-[ScrollbarPainterDelegate layer]):
+        (-[ScrollbarPainterDelegate setUpAnimation:scrollerPainter:animateKnobAlphaTo:duration:]):
+        (-[ScrollbarPainterDelegate scrollerImp:animateKnobAlphaTo:duration:]):
+        (-[ScrollbarPainterDelegate scrollerImp:animateTrackAlphaTo:duration:]):
+        (-[ScrollbarPainterDelegate scrollerImp:overlayScrollerStateChangedTo:]):
+
+        Get the WKScrollbarPainterRefs to synch up with the 
+        WKScrollbarPainterControllerRefs when appropriate
+        * platform/mac/ScrollbarThemeMac.h:
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::registerScrollbar):
+        (WebCore::ScrollbarThemeMac::unregisterScrollbar):
+        (WebCore::ScrollbarThemeMac::setNewPainterForScrollbar):
+        (WebCore::ScrollbarThemeMac::usesOverlayScrollbars):
+
+        Implement ScrollableArea's virtual function contentsSize() for access
+        through the scrollAnimator.
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::contentsSize):
+
 2011-02-01  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by David Hyatt.

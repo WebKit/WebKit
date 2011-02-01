@@ -481,6 +481,16 @@ void WebPageProxy::setDrawsTransparentBackground(bool drawsTransparentBackground
         process()->send(Messages::WebPage::SetDrawsTransparentBackground(drawsTransparentBackground), m_pageID);
 }
 
+void WebPageProxy::viewWillStartLiveResize()
+{
+    process()->send(Messages::WebPage::ViewWillStartLiveResize(), m_pageID);
+}
+
+void WebPageProxy::viewWillEndLiveResize()
+{
+    process()->send(Messages::WebPage::ViewWillEndLiveResize(), m_pageID);
+}
+
 void WebPageProxy::setViewNeedsDisplay(const IntRect& rect)
 {
     m_pageClient->setViewNeedsDisplay(rect);

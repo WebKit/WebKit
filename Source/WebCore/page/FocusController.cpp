@@ -50,6 +50,7 @@
 #include "RenderLayer.h"
 #include "RenderObject.h"
 #include "RenderWidget.h"
+#include "ScrollAnimator.h"
 #include "SelectionController.h"
 #include "Settings.h"
 #include "SpatialNavigation.h"
@@ -407,6 +408,11 @@ void FocusController::setActive(bool active)
             view->updateLayoutAndStyleIfNeededRecursive();
             view->updateControlTints();
         }
+        // FIXME: This should propogate to all ScrollableAreas.
+        if (!active)
+            view->scrollAnimator()->contentAreaDidHide();
+        else
+            view->scrollAnimator()->contentAreaDidShow();
     }
 
     focusedOrMainFrame()->selection()->pageActivationChanged();

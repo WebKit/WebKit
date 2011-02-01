@@ -65,6 +65,7 @@
 #include "RenderTextControlSingleLine.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "ScrollAnimator.h"
 #include "Scrollbar.h"
 #include "SelectionController.h"
 #include "Settings.h"
@@ -1447,6 +1448,9 @@ bool EventHandler::mouseMoved(const PlatformMouseEvent& event)
     if (!page)
         return result;
 
+    if (FrameView* frameView = m_frame->view())
+        frameView->scrollAnimator()->mouseMovedInContentArea();  
+
     hoveredNode.setToNonShadowAncestor();
     page->chrome()->mouseDidMoveOverElement(hoveredNode, event.modifierFlags());
     page->chrome()->setToolTip(hoveredNode);
@@ -1854,6 +1858,23 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
 
     // Fire mouseout/mouseover if the mouse has shifted to a different node.
     if (fireMouseOverOut) {
+        // FIXME: This code will only correctly handle transitions between frames with scrollbars,
+        // not transitions between overflow regions, or transitions between two frames
+        // that don't have scrollbars contained within a frame that does.
+        if (m_lastNodeUnderMouse && (!m_nodeUnderMouse || m_nodeUnderMouse->document() != m_frame->document())) {
+            if (Frame* frame = m_lastNodeUnderMouse->document()->frame()) {
+                if (FrameView* frameView = frame->view())
+                    frameView->scrollAnimator()->mouseExitedContentArea();
+            }
+        }
+        
+        if (m_nodeUnderMouse && (!m_lastNodeUnderMouse || m_lastNodeUnderMouse->document() != m_frame->document())) {
+            if (Frame* frame = m_nodeUnderMouse->document()->frame()) {
+                if (FrameView* frameView = frame->view())
+                    frameView->scrollAnimator()->mouseEnteredContentArea();
+            }
+        }
+        
         if (m_lastNodeUnderMouse && m_lastNodeUnderMouse->document() != m_frame->document()) {
             m_lastNodeUnderMouse = 0;
             m_lastScrollbarUnderMouse = 0;

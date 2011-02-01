@@ -254,6 +254,8 @@ public:
     // On each repaint the delay increses by this amount
     static void setRepaintThrottlingDeferredRepaintDelayIncrementDuringLoading(double p);
 
+    virtual IntPoint currentMousePosition() const;
+
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
     virtual void scrollContentsSlowPath(const IntRect& updateRect);
@@ -284,7 +286,7 @@ private:
     void performPostLayoutTasks();
 
     virtual void repaintContentRectangle(const IntRect&, bool immediate);
-    virtual void contentsResized() { setNeedsLayout(); }
+    virtual void contentsResized();
     virtual void visibleContentsResized();
 
     // Override ScrollView methods to do point conversion via renderers, in order to

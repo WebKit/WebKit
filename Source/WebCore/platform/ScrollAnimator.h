@@ -58,6 +58,8 @@ public:
 
     virtual void scrollToOffsetWithoutAnimation(const FloatPoint&);
 
+    ScrollableArea* scrollableArea() const { return m_scrollableArea; }
+
     virtual void handleWheelEvent(PlatformWheelEvent&);
 #if ENABLE(GESTURE_EVENTS)
     virtual void handleGestureEvent(const PlatformGestureEvent&);
@@ -65,10 +67,20 @@ public:
 
     FloatPoint currentPosition() const;
 
+    virtual void contentAreaWillPaint() const { }
+    virtual void mouseEnteredContentArea() const { }
+    virtual void mouseExitedContentArea() const { }
+    virtual void mouseMovedInContentArea() const { }
+    virtual void willStartLiveResize() { }
+    virtual void contentsResized() const { }
+    virtual void willEndLiveResize() { }
+    virtual void contentAreaDidShow() const { }
+    virtual void contentAreaDidHide() const { }
+
 protected:
     ScrollAnimator(ScrollableArea*);
 
-    void notityPositionChanged();
+    virtual void notityPositionChanged();
 
     ScrollableArea* m_scrollableArea;
     float m_currentPosX; // We avoid using a FloatPoint in order to reduce

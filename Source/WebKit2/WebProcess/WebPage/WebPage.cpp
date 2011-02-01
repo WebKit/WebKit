@@ -1051,6 +1051,30 @@ void WebPage::setDrawsTransparentBackground(bool drawsTransparentBackground)
     m_drawingArea->setNeedsDisplay(IntRect(IntPoint(0, 0), m_viewSize));
 }
 
+void WebPage::viewWillStartLiveResize()
+{
+    if (!m_page)
+        return;
+
+    // FIXME: This should propagate to all ScrollableAreas.
+    if (Frame* frame = m_page->focusController()->focusedOrMainFrame()) {
+        if (FrameView* view = frame->view())
+            view->willStartLiveResize();
+    }
+}
+
+void WebPage::viewWillEndLiveResize()
+{
+    if (!m_page)
+        return;
+
+    // FIXME: This should propagate to all ScrollableAreas.
+    if (Frame* frame = m_page->focusController()->focusedOrMainFrame()) {
+        if (FrameView* view = frame->view())
+            view->willEndLiveResize();
+    }
+}
+
 void WebPage::setFocused(bool isFocused)
 {
     m_page->focusController()->setFocused(isFocused);

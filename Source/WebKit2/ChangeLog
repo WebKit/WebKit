@@ -1,3 +1,29 @@
+2011-02-01  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix for <rdar://problem/8492788> Adopt WKScrollbarPainterController
+
+        Implement NSView's viewWillStartLiveResize and
+        viewDidEndLiveResize and propagate the messages down
+        to WebCore.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView viewWillStartLiveResize]):
+        (-[WKView viewDidEndLiveResize]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::viewWillStartLiveResize):
+        (WebKit::WebPageProxy::viewWillEndLiveResize):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::viewWillStartLiveResize):
+        (WebKit::WebPage::viewWillEndLiveResize):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        A bunch of new WebKitSystemInterface functions.
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2011-02-01  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Darin Adler.

@@ -129,8 +129,34 @@ CGContextRef (*wkIOSurfaceContextCreate)(IOSurfaceRef surface, unsigned width, u
 CGImageRef (*wkIOSurfaceContextCreateImage)(CGContextRef context);
 
 WKScrollbarPainterRef (*wkMakeScrollbarPainter)(int controlSize, bool isHorizontal);
+WKScrollbarPainterRef (*wkMakeScrollbarReplacementPainter)(WKScrollbarPainterRef oldPainter, int newStyle, int controlSize, bool isHorizontal);
+void (*wkScrollbarPainterSetDelegate)(WKScrollbarPainterRef, id scrollbarPainterDelegate);
 void (*wkScrollbarPainterPaint)(WKScrollbarPainterRef, bool enabled, double value, CGFloat proportion, CGRect frameRect);
 int (*wkScrollbarThickness)(int controlSize);
 int (*wkScrollbarMinimumThumbLength)(WKScrollbarPainterRef);
 int (*wkScrollbarMinimumTotalLengthNeededForThumb)(WKScrollbarPainterRef);
+CGFloat (*wkScrollbarPainterKnobAlpha)(WKScrollbarPainterRef);
+void (*wkSetScrollbarPainterKnobAlpha)(WKScrollbarPainterRef, CGFloat);
+bool (*wkScrollbarPainterIsHorizontal)(WKScrollbarPainterRef);
+void (*wkScrollbarPainterSetOverlayState)(WKScrollbarPainterRef, int overlayScrollerState);
+
+#if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
+WKScrollbarPainterControllerRef (*wkMakeScrollbarPainterController)(id painterControllerDelegate);
+void (*wkSetPainterForPainterController)(WKScrollbarPainterControllerRef, WKScrollbarPainterRef, bool isHorizontal);
+WKScrollbarPainterRef (*wkVerticalScrollbarPainterForController)(WKScrollbarPainterControllerRef);
+WKScrollbarPainterRef (*wkHorizontalScrollbarPainterForController)(WKScrollbarPainterControllerRef);
+void (*wkSetScrollbarPainterControllerStyle)(WKScrollbarPainterControllerRef, int newStyle);
+void (*wkContentAreaScrolled)(WKScrollbarPainterControllerRef);
+void (*wkContentAreaWillPaint)(WKScrollbarPainterControllerRef);
+void (*wkMouseEnteredContentArea)(WKScrollbarPainterControllerRef);
+void (*wkMouseExitedContentArea)(WKScrollbarPainterControllerRef);
+void (*wkMouseMovedInContentArea)(WKScrollbarPainterControllerRef);
+void (*wkWillStartLiveResize)(WKScrollbarPainterControllerRef);
+void (*wkContentAreaResized)(WKScrollbarPainterControllerRef);
+void (*wkWillEndLiveResize)(WKScrollbarPainterControllerRef);
+void (*wkContentAreaDidShow)(WKScrollbarPainterControllerRef);
+void (*wkContentAreaDidHide)(WKScrollbarPainterControllerRef);
+#endif
+
+bool (*wkScrollbarPainterUsesOverlayScrollers)(void);
 #endif

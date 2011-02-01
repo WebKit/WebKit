@@ -378,6 +378,9 @@ private:
     void setDrawsBackground(bool);
     void setDrawsTransparentBackground(bool);
 
+    void viewWillStartLiveResize();
+    void viewWillEndLiveResize();
+
     void getContentsAsString(uint64_t callbackID);
     void getMainResourceDataOfFrame(uint64_t frameID, uint64_t callbackID);
     void getResourceDataFromFrame(uint64_t frameID, const String& resourceURL, uint64_t callbackID);

@@ -42,6 +42,7 @@ namespace WebCore {
 ScrollableArea::ScrollableArea()
     : m_scrollAnimator(ScrollAnimator::create(this))
     , m_constrainsScrollingToContentEdge(true)
+    , m_inLiveResize(false)
 {
 }
 
@@ -132,5 +133,21 @@ void ScrollableArea::setScrollOffsetFromAnimation(const IntPoint& offset)
     if (Scrollbar* verticalScrollbar = this->verticalScrollbar())
         verticalScrollbar->offsetDidChange();
 }
+
+void ScrollableArea::willStartLiveResize()
+{
+    if (m_inLiveResize)
+        return;
+    m_inLiveResize = true;
+    scrollAnimator()->willStartLiveResize();
+}
+
+void ScrollableArea::willEndLiveResize()
+{
+    if (!m_inLiveResize)
+        return;
+    m_inLiveResize = false;
+    scrollAnimator()->willEndLiveResize();
+}    
 
 } // namespace WebCore

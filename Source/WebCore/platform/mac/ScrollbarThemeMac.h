@@ -27,6 +27,7 @@
 #define ScrollbarThemeMac_h
 
 #include "ScrollbarThemeComposite.h"
+#include "WebCoreSystemInterface.h"
 
 namespace WebCore {
 
@@ -49,6 +50,10 @@ public:
 
     virtual void registerScrollbar(Scrollbar*);
     virtual void unregisterScrollbar(Scrollbar*);
+
+#if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
+    void setNewPainterForScrollbar(Scrollbar*, WKScrollbarPainterRef);
+#endif
 
 protected:
     virtual bool hasButtons(Scrollbar*);

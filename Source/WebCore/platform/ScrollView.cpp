@@ -31,6 +31,7 @@
 #include "HostWindow.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
+#include "ScrollAnimator.h"
 #include "Scrollbar.h"
 #include "ScrollbarTheme.h"
 #include <wtf/StdLibExtras.h>
@@ -870,6 +871,8 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
     if (context->paintingDisabled() && !context->updatingControlTints())
         return;
 
+    scrollAnimator()->contentAreaWillPaint();
+    
     IntRect documentDirtyRect = rect;
     documentDirtyRect.intersect(frameRect());
 

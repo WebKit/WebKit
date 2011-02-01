@@ -29,8 +29,8 @@
 #include "ImageBuffer.h"
 #include "LocalCurrentGraphicsContext.h"
 #include "PlatformMouseEvent.h"
+#include "ScrollAnimatorMac.h"
 #include "ScrollView.h"
-#include "WebCoreSystemInterface.h"
 #include <Carbon/Carbon.h>
 #include <wtf/HashMap.h>
 #include <wtf/StdLibExtras.h>
@@ -161,9 +161,15 @@ static void updateArrowPlacement()
 void ScrollbarThemeMac::registerScrollbar(Scrollbar* scrollbar)
 {
 #if defined(USE_WK_SCROLLBAR_PAINTER)
-    WKScrollbarPainterRef scrollbarPainter = wkMakeScrollbarPainter(scrollbar->controlSize(),
-        scrollbar->orientation() == HorizontalScrollbar);
+    bool isHorizontal = scrollbar->orientation() == HorizontalScrollbar;
+    WKScrollbarPainterRef scrollbarPainter = wkMakeScrollbarPainter(scrollbar->controlSize(), isHorizontal);
     scrollbarMap()->add(scrollbar, scrollbarPainter);
+
+#if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
+    ScrollAnimatorMac* animator = static_cast<ScrollAnimatorMac*>(scrollbar->scrollableArea()->scrollAnimator());
+    wkScrollbarPainterSetDelegate(scrollbarPainter, animator->scrollbarPainterDelegate());
+    animator->setPainterForPainterController(scrollbarPainter, isHorizontal);
+#endif
 #else
     scrollbarMap()->add(scrollbar);
 #endif
@@ -171,8 +177,20 @@ void ScrollbarThemeMac::registerScrollbar(Scrollbar* scrollbar)
 
 void ScrollbarThemeMac::unregisterScrollbar(Scrollbar* scrollbar)
 {
+#if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
+    ScrollAnimatorMac* animator = static_cast<ScrollAnimatorMac*>(scrollbar->scrollableArea()->scrollAnimator());
+    animator->removePainterFromPainterController(scrollbar->orientation());
+#endif
+
     scrollbarMap()->remove(scrollbar);
 }
+
+#if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
+void ScrollbarThemeMac::setNewPainterForScrollbar(Scrollbar* scrollbar, WKScrollbarPainterRef newPainter)
+{
+    scrollbarMap()->set(scrollbar, newPainter);
+}
+#endif
 
 ScrollbarThemeMac::ScrollbarThemeMac()
 {
@@ -209,8 +227,11 @@ int ScrollbarThemeMac::scrollbarThickness(ScrollbarControlSize controlSize)
 
 bool ScrollbarThemeMac::usesOverlayScrollbars() const
 {
-    // FIXME: This should be enabled when <rdar://problem/8492788> is resolved.
+#if defined(USE_WK_SCROLLBAR_PAINTER)
+    return wkScrollbarPainterUsesOverlayScrollers();
+#else
     return false;
+#endif
 }
 
 double ScrollbarThemeMac::initialAutoscrollTimerDelay()

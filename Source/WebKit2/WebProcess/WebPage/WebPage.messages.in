@@ -29,6 +29,9 @@ messages -> WebPage {
     SetDrawsBackground(bool drawsBackground)
     SetDrawsTransparentBackground(bool drawsTransparentBackground)
 
+    ViewWillStartLiveResize()
+    ViewWillEndLiveResize()
+
     KeyEvent(WebKit::WebKeyboardEvent event)
     MouseEvent(WebKit::WebMouseEvent event)
     WheelEvent(WebKit::WebWheelEvent event)

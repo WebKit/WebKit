@@ -32,20 +32,34 @@
 #include "FloatSize.h"
 #include "ScrollAnimator.h"
 #include "Timer.h"
+#include "WebCoreSystemInterface.h"
 #include <wtf/RetainPtr.h>
 
 #ifdef __OBJC__
 @class ScrollAnimationHelperDelegate;
+@class ScrollbarPainterDelegate;
+@class ScrollbarPainterControllerDelegate;
+@class ScrollbarPainterDelegate;
 #else
 class ScrollAnimationHelperDelegate;
+class ScrollbarPainterDelegate;
+class ScrollbarPainterControllerDelegate;
+class ScrollbarPainterDelegate;
 #endif
 
 namespace WebCore {
+
+class Scrollbar;
 
 class ScrollAnimatorMac : public ScrollAnimator {
 public:
     ScrollAnimatorMac(ScrollableArea*);
     virtual ~ScrollAnimatorMac();
+
+#if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
+    void setPainterForPainterController(WKScrollbarPainterRef, bool isHorizontal);
+    void removePainterFromPainterController(ScrollbarOrientation orientation);
+#endif
 
     virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier);
     virtual void scrollToOffsetWithoutAnimation(const FloatPoint&);
@@ -61,9 +75,28 @@ public:
     void immediateScrollByDeltaX(float deltaX);
     void immediateScrollByDeltaY(float deltaY);
 
+    id scrollbarPainterDelegate();
+    
 private:
     RetainPtr<id> m_scrollAnimationHelper;
     RetainPtr<ScrollAnimationHelperDelegate> m_scrollAnimationHelperDelegate;
+
+#if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
+    RetainPtr<WKScrollbarPainterControllerRef> m_scrollbarPainterController;
+    RetainPtr<ScrollbarPainterControllerDelegate> m_scrollbarPainterControllerDelegate;
+    RetainPtr<id> m_scrollbarPainterDelegate;
+#endif
+    
+    virtual void notityPositionChanged();
+    virtual void contentAreaWillPaint() const;
+    virtual void mouseEnteredContentArea() const;
+    virtual void mouseExitedContentArea() const;
+    virtual void mouseMovedInContentArea() const;
+    virtual void willStartLiveResize();
+    virtual void contentsResized() const;
+    virtual void willEndLiveResize();
+    virtual void contentAreaDidShow() const;
+    virtual void contentAreaDidHide() const;
 
 #if ENABLE(RUBBER_BANDING)
     bool allowsVerticalStretching() const;

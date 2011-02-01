@@ -279,6 +279,16 @@ static bool useNewDrawingArea()
     return YES;
 }
 
+- (void)viewWillStartLiveResize
+{
+    _data->_page->viewWillStartLiveResize();
+}
+
+- (void)viewDidEndLiveResize
+{
+    _data->_page->viewWillEndLiveResize();
+}
+
 - (BOOL)isFlipped
 {
     return YES;

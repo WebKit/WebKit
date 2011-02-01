@@ -172,6 +172,9 @@ public:
     bool drawsTransparentBackground() const { return m_drawsTransparentBackground; }
     void setDrawsTransparentBackground(bool);
 
+    void viewWillStartLiveResize();
+    void viewWillEndLiveResize();
+
     void setInitialFocus(bool);
     void setWindowResizerSize(const WebCore::IntSize&);
 
