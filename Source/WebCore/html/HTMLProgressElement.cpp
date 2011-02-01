@@ -30,11 +30,43 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "RenderProgress.h"
+#include "ShadowElement.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
+
+class ProgressBarValueElement : public ShadowBlockElement {
+public:
+    ProgressBarValueElement(HTMLElement* shadowParent) 
+        : ShadowBlockElement(shadowParent)
+    {
+    }
+
+    virtual const AtomicString& shadowPseudoId() const
+    {
+        DEFINE_STATIC_LOCAL(AtomicString, pseudId, ("-webkit-progress-bar-value"));
+        return pseudId;
+    }
+
+    virtual void detach()
+    {
+        // Instead of using setShadowHost() like ShadowBlockElement does,
+        // this class uses setShadowRoot() to unlink mutual shadow-host references.
+        // Note that ShadowBlockElement::detach() should be removed when the
+        // shadow model transition is over. (Bug 53417)
+        if (Element* host = shadowHost())
+            host->setShadowRoot(0);
+        ShadowBlockElement::setShadowHost(0);
+    }
+
+    static PassRefPtr<ProgressBarValueElement> create(HTMLElement* shadowParent)
+    {
+        return adoptRef(new ProgressBarValueElement(shadowParent));
+    }
+
+};
 
 HTMLProgressElement::HTMLProgressElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
     : HTMLFormControlElement(tagName, document, form)
@@ -60,21 +92,19 @@ const AtomicString& HTMLProgressElement::formControlType() const
 
 void HTMLProgressElement::parseMappedAttribute(Attribute* attribute)
 {
-    if (attribute->name() == valueAttr) {
-        if (renderer())
-            renderer()->updateFromElement();
-    } else if (attribute->name() == maxAttr) {
-        if (renderer())
-            renderer()->updateFromElement();
-    } else
+    if (attribute->name() == valueAttr)
+        didElementStateChange();
+    else if (attribute->name() == maxAttr)
+        didElementStateChange();
+    else
         HTMLFormControlElement::parseMappedAttribute(attribute);
 }
 
 void HTMLProgressElement::attach()
 {
+    createShadowSubtreeIfNeeded();
     HTMLFormControlElement::attach();
-    if (renderer())
-        renderer()->updateFromElement();
+    didElementStateChange();
 }
 
 double HTMLProgressElement::value() const
@@ -119,6 +149,24 @@ double HTMLProgressElement::position() const
     if (!hasAttribute(valueAttr))
         return -1;
     return value() / max();
+}
+
+ShadowBlockElement* HTMLProgressElement::valuePart()
+{
+    return static_cast<ShadowBlockElement*>(shadowRoot());
+}
+
+void HTMLProgressElement::didElementStateChange()
+{
+    if (renderer())
+        renderer()->updateFromElement();
+}
+
+void HTMLProgressElement::createShadowSubtreeIfNeeded()
+{
+    if (shadowRoot())
+        return;
+    setShadowRoot(ProgressBarValueElement::create(this).get());
 }
 
 } // namespace
