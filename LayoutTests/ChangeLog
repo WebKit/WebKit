@@ -1,5 +1,21 @@
 2011-01-31  Mark Rowe  <mrowe@apple.com>
 
+        Merge r72924.
+
+    2010-11-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler and Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44152
+        <rdar://problem/8324423> CSSOM should match DOM in discarding wrapper-less parents.
+
+        * fast/dom/StyleSheet/detached-parent-rule-without-wrapper-expected.txt: Added.
+        * fast/dom/StyleSheet/detached-parent-rule-without-wrapper.html: Added.
+        * fast/dom/StyleSheet/detached-stylesheet-without-wrapper-expected.txt: Added.
+        * fast/dom/StyleSheet/detached-stylesheet-without-wrapper.html: Added.
+
+2011-01-31  Mark Rowe  <mrowe@apple.com>
+
         Merge r72819.
 
     2010-11-29  Alexey Proskuryakov  <ap@apple.com>
