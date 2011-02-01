@@ -1,3 +1,20 @@
+2011-02-01  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Add Toggle Frame Flattening, Auto Load Images and Disable JavaScript actions to MiniBrowser.
+        https://bugs.webkit.org/show_bug.cgi?id=53489
+
+        Add Toggle Frame Flattening action to Develop menu. Add Auto Load Images and Disable JavaScript actions
+        to Settings menu.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::BrowserWindow):
+        (BrowserWindow::toggleFrameFlattening):
+        (BrowserWindow::toggleDisableJavaScript):
+        (BrowserWindow::toggleAutoLoadImages):
+        * MiniBrowser/qt/BrowserWindow.h:
+
 2011-01-31  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Tony Chang.

@@ -63,7 +63,11 @@ protected slots:
     void toggleZoomTextOnly(bool on);
     void screenshot();
 
+    void toggleFrameFlattening(bool);
     void showUserAgentDialog();
+
+    void toggleAutoLoadImages(bool);
+    void toggleDisableJavaScript(bool);
 
 private:
     void updateUserAgentList();

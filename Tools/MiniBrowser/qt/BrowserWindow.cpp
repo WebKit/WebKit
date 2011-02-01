@@ -28,6 +28,8 @@
 
 #include "BrowserWindow.h"
 
+#include "qwkpreferences.h"
+
 static QWKPage* newPageFunction(QWKPage* page)
 {
     BrowserWindow* window = new BrowserWindow(page->context());
@@ -76,7 +78,19 @@ BrowserWindow::BrowserWindow(QWKContext* context)
     resetZoom->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_0));
 
     QMenu* toolsMenu = menuBar()->addMenu("&Develop");
+    QAction* toggleFrameFlattening = toolsMenu->addAction("Toggle Frame Flattening", this, SLOT(toggleFrameFlattening(bool)));
+    toggleFrameFlattening->setCheckable(true);
+    toggleFrameFlattening->setChecked(false);
+    toolsMenu->addSeparator();
     toolsMenu->addAction("Change User Agent", this, SLOT(showUserAgentDialog()));
+
+    QMenu* settingsMenu = menuBar()->addMenu("&Settings");
+    QAction* toggleAutoLoadImages = settingsMenu->addAction("Disable Auto Load Images", this, SLOT(toggleAutoLoadImages(bool)));
+    toggleAutoLoadImages->setCheckable(true);
+    toggleAutoLoadImages->setChecked(false);
+    QAction* toggleDisableJavaScript = settingsMenu->addAction("Disable JavaScript", this, SLOT(toggleDisableJavaScript(bool)));
+    toggleDisableJavaScript->setCheckable(true);
+    toggleDisableJavaScript->setChecked(false);
 
     m_addressBar = new QLineEdit();
     connect(m_addressBar, SIGNAL(returnPressed()), SLOT(changeLocation()));
@@ -251,6 +265,13 @@ void BrowserWindow::toggleZoomTextOnly(bool b)
     m_isZoomTextOnly = b;
 }
 
+
+void BrowserWindow::toggleFrameFlattening(bool toggle)
+{
+    page()->preferences()->setAttribute(QWKPreferences::FrameFlatteningEnabled, toggle);
+}
+
+
 void BrowserWindow::showUserAgentDialog()
 {
     updateUserAgentList();
@@ -278,6 +299,16 @@ void BrowserWindow::showUserAgentDialog()
 
     if (dialog.exec() && !combo->currentText().isEmpty())
         page()->setCustomUserAgent(combo->currentText());
+}
+
+void BrowserWindow::toggleDisableJavaScript(bool enable)
+{
+    page()->preferences()->setAttribute(QWKPreferences::JavascriptEnabled, !enable);
+}
+
+void BrowserWindow::toggleAutoLoadImages(bool enable)
+{
+    page()->preferences()->setAttribute(QWKPreferences::AutoLoadImages, !enable);
 }
 
 void BrowserWindow::updateUserAgentList()
