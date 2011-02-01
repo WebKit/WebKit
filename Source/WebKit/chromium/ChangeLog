@@ -1,3 +1,14 @@
+2011-02-01  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Chromium: remove WebIDBCallbacks::onSucces()
+        https://bugs.webkit.org/show_bug.cgi?id=53415
+
+        Remove un-used function.
+
+        * public/WebIDBCallbacks.h:
+
 2011-02-01  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Fix Chromium Debug compilation broken by r77228.
