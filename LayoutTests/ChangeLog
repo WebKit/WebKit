@@ -1,3 +1,10 @@
+2011-02-01  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Added yet another expectations of flakiness.
+        https://bugs.webkit.org/show_bug.cgi?id=53527
+
+        * platform/chromium/test_expectations.txt: Flakiness abound.
+
 2011-02-01  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed.

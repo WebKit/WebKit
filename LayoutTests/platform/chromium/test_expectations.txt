@@ -3083,3 +3083,4 @@ BUGWK53505 WIN DEBUG : inspector/console-dir.html = PASS CRASH
 BUGWK53505 WIN DEBUG : inspector/cpu-profiler-profiling.html = PASS CRASH
 
 BUGWK53516 : fast/css/stylesheet-candidate-nodes-crash.xhtml = CRASH PASS
+BUGWK53527 DEBUG : fast/frames/iframe-reparenting-new-page.html = CRASH PASS
