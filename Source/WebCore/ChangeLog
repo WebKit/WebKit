@@ -1,5 +1,12 @@
 2011-02-01  Sam Weinig  <sam@webkit.org>
 
+        Fix the build for Beth.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[ScrollbarPainterControllerDelegate inLiveResizeForScrollerImpPair:]):
+
+2011-02-01  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Beth Dakin.
 
         Part 2 for <rdar://problem/8492788>

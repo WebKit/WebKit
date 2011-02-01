@@ -178,7 +178,7 @@ static NSSize abs(NSSize size)
 - (BOOL)inLiveResizeForScrollerImpPair:(id)scrollerImpPair
 {
     UNUSED_PARAM(scrollerImpPair);
-    return _animator->inLiveResize();
+    return _animator->scrollableArea()->inLiveResize();
 }
 
 - (NSPoint)mouseLocationInContentAreaForScrollerImpPair:(id)scrollerImpPair
