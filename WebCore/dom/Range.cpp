@@ -41,6 +41,7 @@
 #include <stdio.h>
 #include <wtf/text/CString.h>
 #include <wtf/RefCountedLeakCounter.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -585,8 +586,7 @@ bool Range::intersectsNode(Node* refNode, ExceptionCode& ec)
 
 PassRefPtr<DocumentFragment> Range::processContents(ActionType action, ExceptionCode& ec)
 {
-    // FIXME: To work properly with mutation events, we will have to take into account
-    // situations where the tree is being transformed while we work on it - ugh!
+    typedef Vector<RefPtr<Node> > NodeVector;
 
     RefPtr<DocumentFragment> fragment;
     if (action == EXTRACT_CONTENTS || action == CLONE_CONTENTS)
@@ -645,21 +645,20 @@ PassRefPtr<DocumentFragment> Range::processContents(ActionType action, Exception
                 pi->setData(data, ec);
             }
         } else {
-            Node* n = m_start.container()->firstChild();
+            RefPtr<Node> n = m_start.container()->firstChild();
             int i;
             for (i = 0; n && i < m_start.offset(); i++) // skip until start offset
                 n = n->nextSibling();
             int endOffset = m_end.offset();
-            while (n && i < endOffset) { // delete until end offset
-                Node* next = n->nextSibling();
+            RefPtr<Node> next;
+            for (; n && i < endOffset; n = next, i++) { // delete until end offset
+                next = n->nextSibling();
                 if (action == EXTRACT_CONTENTS)
                     fragment->appendChild(n, ec); // will remove n from its parent
                 else if (action == CLONE_CONTENTS)
                     fragment->appendChild(n->cloneNode(true), ec);
                 else
-                    m_start.container()->removeChild(n, ec);
-                n = next;
-                i++;
+                    m_start.container()->removeChild(n.get(), ec);
             }
         }
         return fragment.release();
@@ -710,39 +709,47 @@ PassRefPtr<DocumentFragment> Range::processContents(ActionType action, Exception
         } else {
             if (action == EXTRACT_CONTENTS || action == CLONE_CONTENTS)
                 leftContents = m_start.container()->cloneNode(false);
+            NodeVector nodes;
             Node* n = m_start.container()->firstChild();
-            for (int i = 0; n && i < m_start.offset(); i++) // skip until start offset
-                n = n->nextSibling();
-            while (n) { // process until end
-                Node* next = n->nextSibling();
+            for (int i = 0; n; n = n->nextSibling(), i++) {
+                if (i < m_start.offset())
+                    continue; // Skip until start offset.
+                nodes.append(n);
+            }
+            for (NodeVector::const_iterator it = nodes.begin(); it != nodes.end(); it++) {
+                Node* n = it->get();
                 if (action == EXTRACT_CONTENTS)
                     leftContents->appendChild(n, ec); // will remove n from start container
                 else if (action == CLONE_CONTENTS)
                     leftContents->appendChild(n->cloneNode(true), ec);
                 else
                     m_start.container()->removeChild(n, ec);
-                n = next;
             }
         }
 
-        Node* leftParent = m_start.container()->parentNode();
-        Node* n = m_start.container()->nextSibling();
-        for (; leftParent != commonRoot; leftParent = leftParent->parentNode()) {
+        NodeVector ancestorNodes;
+        for (Node* n = m_start.container()->parentNode(); n && n != commonRoot; n = n->parentNode())
+            ancestorNodes.append(n);
+        RefPtr<Node> n = m_start.container()->nextSibling();
+        for (NodeVector::const_iterator it = ancestorNodes.begin(); it != ancestorNodes.end(); it++) {
+            Node* leftParent = it->get();
             if (action == EXTRACT_CONTENTS || action == CLONE_CONTENTS) {
                 RefPtr<Node> leftContentsParent = leftParent->cloneNode(false);
-                leftContentsParent->appendChild(leftContents, ec);
-                leftContents = leftContentsParent;
+                if (leftContentsParent) { // Might have been removed already during mutation event.
+                    leftContentsParent->appendChild(leftContents, ec);
+                    leftContents = leftContentsParent;
+                }
             }
 
-            Node* next;
+            RefPtr<Node> next;
             for (; n; n = next) {
                 next = n->nextSibling();
                 if (action == EXTRACT_CONTENTS)
-                    leftContents->appendChild(n, ec); // will remove n from leftParent
+                    leftContents->appendChild(n.get(), ec); // will remove n from leftParent
                 else if (action == CLONE_CONTENTS)
                     leftContents->appendChild(n->cloneNode(true), ec);
                 else
-                    leftParent->removeChild(n, ec);
+                    leftParent->removeChild(n.get(), ec);
             }
             n = leftParent->nextSibling();
         }
@@ -776,15 +783,16 @@ PassRefPtr<DocumentFragment> Range::processContents(ActionType action, Exception
                 rightContents = m_end.container()->cloneNode(false);
             Node* n = m_end.container()->firstChild();
             if (n && m_end.offset()) {
-                for (int i = 0; i + 1 < m_end.offset(); i++) { // skip to end.offset()
-                    Node* next = n->nextSibling();
-                    if (!next)
+                NodeVector nodes;
+                int i = 0;
+                do {
+                    nodes.append(n);
+                    if (!n->nextSibling())
                         break;
-                    n = next;
-                }
-                Node* prev;
-                for (; n; n = prev) {
-                    prev = n->previousSibling();
+                    n = n->nextSibling();
+                } while (i + 1 < m_end.offset());
+                for (int i = nodes.size() - 1; i >= 0; i--) {
+                    n = nodes[i].get();
                     if (action == EXTRACT_CONTENTS)
                         rightContents->insertBefore(n, rightContents->firstChild(), ec); // will remove n from its parent
                     else if (action == CLONE_CONTENTS)
@@ -858,11 +866,12 @@ PassRefPtr<DocumentFragment> Range::processContents(ActionType action, Exception
     if ((action == EXTRACT_CONTENTS || action == CLONE_CONTENTS) && leftContents)
         fragment->appendChild(leftContents, ec);
 
-    Node* next;
-    Node* n;
     if (processStart) {
-        for (n = processStart; n && n != processEnd; n = next) {
-            next = n->nextSibling();
+        NodeVector nodes;
+        for (Node* n = processStart; n && n != processEnd; n = n->nextSibling())
+            nodes.append(n);
+        for (NodeVector::const_iterator it = nodes.begin(); it != nodes.end(); it++) {
+            Node* n = it->get();
             if (action == EXTRACT_CONTENTS)
                 fragment->appendChild(n, ec); // will remove from commonRoot
             else if (action == CLONE_CONTENTS)
