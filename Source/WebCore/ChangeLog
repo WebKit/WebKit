@@ -1,3 +1,15 @@
+2011-02-01  Anton Muhin  <antonm@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Propagate parent document security origin to newly create Document XML response
+        https://bugs.webkit.org/show_bug.cgi?id=53444
+
+        Covered by the existing tests.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::responseXML):
+
 2011-02-01  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Rollout r77230 which caused many layout tests

@@ -249,6 +249,7 @@ Document* XMLHttpRequest::responseXML(ExceptionCode& ec)
             m_responseXML = Document::create(0, m_url);
             // FIXME: Set Last-Modified.
             m_responseXML->setContent(m_responseBuilder.toStringPreserveCapacity());
+            m_responseXML->setSecurityOrigin(document()->securityOrigin());
             if (!m_responseXML->wellFormed())
                 m_responseXML = 0;
         }
