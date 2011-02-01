@@ -1312,7 +1312,6 @@ _wkScrollbarThickness
 _wkSetScrollbarPainterKnobAlpha
 _wkMakeScrollbarPainter
 _wkMakeScrollbarReplacementPainter
-#if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
 _wkContentAreaDidHide
 _wkContentAreaDidShow
 _wkContentAreaResized
@@ -1328,7 +1327,6 @@ _wkSetScrollbarPainterControllerStyle
 _wkVerticalScrollbarPainterForController
 _wkWillEndLiveResize
 _wkWillStartLiveResize
-#endif
 #endif
 
 #if ENABLE(3D_RENDERING)

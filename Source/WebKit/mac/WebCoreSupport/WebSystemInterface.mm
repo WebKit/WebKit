@@ -133,7 +133,6 @@ void InitWebCoreSystemInterface(void)
     INIT(SetScrollbarPainterKnobAlpha);
     INIT(ScrollbarPainterIsHorizontal);
     INIT(ScrollbarPainterSetOverlayState);
-#if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
     INIT(MakeScrollbarPainterController);
     INIT(MakeScrollbarReplacementPainter);
     INIT(SetPainterForPainterController);
@@ -150,7 +149,6 @@ void InitWebCoreSystemInterface(void)
     INIT(WillEndLiveResize);
     INIT(ContentAreaDidShow);
     INIT(ContentAreaDidHide);
-#endif
     INIT(ScrollbarPainterUsesOverlayScrollers);
 #endif
 

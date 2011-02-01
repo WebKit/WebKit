@@ -28,6 +28,7 @@
 
 #include "ScrollbarThemeComposite.h"
 #include "WebCoreSystemInterface.h"
+#include <JavaScriptCore/HeaderDetection.h>
 
 namespace WebCore {
 

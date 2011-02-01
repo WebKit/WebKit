@@ -1,3 +1,18 @@
+2011-02-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Beth Dakin.
+
+        Part 2 for <rdar://problem/8492788>
+        Adopt WKScrollbarPainterController
+
+        Use header detection to define scrollbar painting controller #define.
+
+        * WebCore.exp.in:
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollbarThemeMac.h:
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2011-02-01  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Oliver Hunt.

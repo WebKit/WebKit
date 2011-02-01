@@ -202,7 +202,6 @@ extern void (*wkSetScrollbarPainterKnobAlpha)(WKScrollbarPainterRef, CGFloat);
 extern bool (*wkScrollbarPainterIsHorizontal)(WKScrollbarPainterRef);
 extern void (*wkScrollbarPainterSetOverlayState)(WKScrollbarPainterRef, int overlayScrollerState);
 
-#if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
 typedef struct __WKScrollbarPainterController *WKScrollbarPainterControllerRef;
 extern WKScrollbarPainterControllerRef (*wkMakeScrollbarPainterController)(id painterControllerDelegate);
 extern void (*wkSetPainterForPainterController)(WKScrollbarPainterControllerRef, WKScrollbarPainterRef, bool isHorizontal);
@@ -219,7 +218,6 @@ extern void (*wkContentAreaResized)(WKScrollbarPainterControllerRef);
 extern void (*wkWillEndLiveResize)(WKScrollbarPainterControllerRef);
 extern void (*wkContentAreaDidShow)(WKScrollbarPainterControllerRef);
 extern void (*wkContentAreaDidHide)(WKScrollbarPainterControllerRef);
-#endif
 
 extern bool (*wkScrollbarPainterUsesOverlayScrollers)(void);
 #endif

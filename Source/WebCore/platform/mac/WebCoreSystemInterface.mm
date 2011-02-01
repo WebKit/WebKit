@@ -140,7 +140,6 @@ void (*wkSetScrollbarPainterKnobAlpha)(WKScrollbarPainterRef, CGFloat);
 bool (*wkScrollbarPainterIsHorizontal)(WKScrollbarPainterRef);
 void (*wkScrollbarPainterSetOverlayState)(WKScrollbarPainterRef, int overlayScrollerState);
 
-#if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
 WKScrollbarPainterControllerRef (*wkMakeScrollbarPainterController)(id painterControllerDelegate);
 void (*wkSetPainterForPainterController)(WKScrollbarPainterControllerRef, WKScrollbarPainterRef, bool isHorizontal);
 WKScrollbarPainterRef (*wkVerticalScrollbarPainterForController)(WKScrollbarPainterControllerRef);
@@ -156,7 +155,6 @@ void (*wkContentAreaResized)(WKScrollbarPainterControllerRef);
 void (*wkWillEndLiveResize)(WKScrollbarPainterControllerRef);
 void (*wkContentAreaDidShow)(WKScrollbarPainterControllerRef);
 void (*wkContentAreaDidHide)(WKScrollbarPainterControllerRef);
-#endif
 
 bool (*wkScrollbarPainterUsesOverlayScrollers)(void);
 #endif
