@@ -1,5 +1,21 @@
 2011-01-31  Mark Rowe  <mrowe@apple.com>
 
+        Merge r72301.
+
+    2010-11-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49700
+        XSLTProcessor.importNode is only tested with document nodes, and hits an assertion
+
+        Added test coverage - we only tried to import a whole document before.
+
+        * fast/xsl/import-non-document-node-expected.txt: Added.
+        * fast/xsl/import-non-document-node.xhtml: Added.
+
+2011-01-31  Mark Rowe  <mrowe@apple.com>
+
         Merge r72924.
 
     2010-11-30  Alexey Proskuryakov  <ap@apple.com>

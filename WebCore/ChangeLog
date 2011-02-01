@@ -1,5 +1,25 @@
 2011-01-31  Mark Rowe  <mrowe@apple.com>
 
+        Merge r72301.
+
+    2010-11-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49700
+        XSLTProcessor.importNode is only tested with document nodes, and hits an assertion
+
+        Test: fast/xsl/import-non-document-node.xhtml
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::isAcceptableCSSStyleSheetParent):
+        (WebCore::CSSStyleSheet::CSSStyleSheet):
+        * css/StyleSheet.cpp:
+        (WebCore::StyleSheet::StyleSheet):
+        Moved the assertion - hopefully, it's valid for CSS stylesheets.
+
+2011-01-31  Mark Rowe  <mrowe@apple.com>
+
         Merge r71947.
 
     2010-11-12  Alexey Proskuryakov  <ap@apple.com>

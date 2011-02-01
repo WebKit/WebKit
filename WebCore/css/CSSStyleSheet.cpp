@@ -27,14 +27,31 @@
 #include "CSSRuleList.h"
 #include "Document.h"
 #include "ExceptionCode.h"
+#include "HTMLNames.h"
 #include "Node.h"
 #include "Page.h"
+#include "SVGNames.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "TextEncoding.h"
 #include <wtf/Deque.h>
 
 namespace WebCore {
+
+#if !ASSERT_DISABLED
+static bool isAcceptableCSSStyleSheetParent(Node* parentNode)
+{
+    // Only these nodes can be parents of StyleSheets, and they need to call clearOwnerNode() when moved out of document.
+    return !parentNode
+        || parentNode->isDocumentNode()
+        || parentNode->hasTagName(HTMLNames::linkTag)
+        || parentNode->hasTagName(HTMLNames::styleTag)
+#if ENABLE(SVG)
+        || parentNode->hasTagName(SVGNames::styleTag)
+#endif    
+        || parentNode->nodeType() == Node::PROCESSING_INSTRUCTION_NODE;
+}
+#endif
 
 CSSStyleSheet::CSSStyleSheet(CSSStyleSheet* parentSheet, const String& href, const KURL& baseURL, const String& charset)
     : StyleSheet(parentSheet, href, baseURL)
@@ -58,6 +75,7 @@ CSSStyleSheet::CSSStyleSheet(Node* parentNode, const String& href, const KURL& b
     , m_isUserStyleSheet(false)
     , m_hasSyntacticallyValidCSSHeader(true)
 {
+    ASSERT(isAcceptableCSSStyleSheetParent(parentNode));
 }
 
 CSSStyleSheet::CSSStyleSheet(CSSRule* ownerRule, const String& href, const KURL& baseURL, const String& charset)
