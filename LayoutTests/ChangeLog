@@ -1,3 +1,11 @@
+2011-02-01  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        https://bugs.webkit.org/show_bug.cgi?id=53516
+        Test introduced in r77262 is crashing.
+
+        * platform/chromium/test_expectations.txt: Added expectation to crash
+            while the fix is worked on.
+
 2011-02-01  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by David Hyatt.
