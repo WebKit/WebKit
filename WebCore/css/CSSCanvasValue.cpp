@@ -62,7 +62,8 @@ void CSSCanvasValue::canvasResized(HTMLCanvasElement*)
 void CSSCanvasValue::canvasDestroyed(HTMLCanvasElement* element)
 {
     ASSERT(element == m_element);
-    m_element = 0;
+    if (element == m_element)
+        m_element = 0;
 }
 
 IntSize CSSCanvasValue::fixedSize(const RenderObject* renderer)
