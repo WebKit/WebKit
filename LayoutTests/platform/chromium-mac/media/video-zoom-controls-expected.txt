@@ -16,7 +16,7 @@ layer at (67,227) size 27x28
   RenderButton {INPUT} at (10,10) size 27x28
 layer at (102,217) size 144x48
   RenderFlexibleBox (positioned) {DIV} at (45,0) size 144x48 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
-    RenderSlider {INPUT} at (10,11) size 124x26 [color=#328CDF] [bgcolor=#FFFFFF14] [border: (1px solid #FFFFFF33)]
+    RenderSlider {INPUT} at (10,10) size 124x27 [color=#328CDF] [bgcolor=#FFFFFF14] [border: (1px solid #FFFFFF33)]
       RenderBlock {DIV} at (1,-8) size 13x43
 layer at (246,217) size 51x48
   RenderButton {INPUT} at (189,0) size 51x48
@@ -30,7 +30,7 @@ layer at (67,452) size 27x28
   RenderButton {INPUT} at (10,10) size 27x28
 layer at (102,442) size 144x48
   RenderFlexibleBox (positioned) {DIV} at (45,0) size 144x48 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
-    RenderSlider {INPUT} at (10,11) size 124x26 [color=#328CDF] [bgcolor=#FFFFFF14] [border: (1px solid #FFFFFF33)]
+    RenderSlider {INPUT} at (10,10) size 124x27 [color=#328CDF] [bgcolor=#FFFFFF14] [border: (1px solid #FFFFFF33)]
       RenderBlock {DIV} at (1,-8) size 13x43
 layer at (246,442) size 51x48
   RenderButton {INPUT} at (189,0) size 51x48

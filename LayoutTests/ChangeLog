@@ -1,3 +1,19 @@
+2011-02-01  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Updated baselines after switching input-derived parts of HTMLMediaElement
+        to use shadow DOM.
+        https://bugs.webkit.org/show_bug.cgi?id=53314
+        
+        * platform/chromium-linux/media/video-zoom-controls-expected.checksum: Updated.
+        * platform/chromium-linux/media/video-zoom-controls-expected.png: Updated.
+        * platform/chromium-mac/media/video-zoom-controls-expected.checksum: Updated.
+        * platform/chromium-mac/media/video-zoom-controls-expected.png: Updated.
+        * platform/chromium-mac/media/video-zoom-controls-expected.txt: Updated.
+        * platform/chromium-win/media/video-zoom-controls-expected.checksum: Updated.
+        * platform/chromium-win/media/video-zoom-controls-expected.png: Updated.
+        * platform/chromium-win/media/video-zoom-controls-expected.txt: Updated.
+        * platform/chromium/test_expectations.txt: Expectation of failure removed.
+
 2011-02-01  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed.
