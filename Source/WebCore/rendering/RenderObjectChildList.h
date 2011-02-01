@@ -55,8 +55,10 @@ public:
     void appendChildNode(RenderObject* owner, RenderObject*, bool fullAppend = true);
     void insertChildNode(RenderObject* owner, RenderObject* child, RenderObject* before, bool fullInsert = true);
 
-    void updateBeforeAfterContent(RenderObject* owner, PseudoId type, RenderObject* styledObject = 0);
-    void invalidateCounters(RenderObject* owner, const AtomicString& identifier);
+    void updateBeforeAfterContent(RenderObject* owner, PseudoId type, const RenderObject* styledObject = 0);
+    RenderObject* beforePseudoElementRenderer(const RenderObject* owner) const;
+    RenderObject* afterPseudoElementRenderer(const RenderObject* owner) const;
+    void invalidateCounters(const RenderObject* owner, const AtomicString& identifier);
 
 private:
     RenderObject* m_firstChild;

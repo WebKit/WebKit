@@ -247,59 +247,6 @@ void RenderObjectChildList::insertChildNode(RenderObject* owner, RenderObject* c
         owner->document()->axObjectCache()->childrenChanged(owner);
 }
 
-static RenderObject* beforeAfterContainer(RenderObject* container, PseudoId type)
-{
-    if (type == BEFORE) {
-        // An anonymous (generated) inline run-in that has PseudoId BEFORE must come from a grandparent.
-        // Therefore we should skip these generated run-ins when checking our immediate children.
-        // If we don't find our :before child immediately, then we should check if we own a
-        // generated inline run-in in the next level of children.
-        RenderObject* first = container;
-        do {
-            // Skip list markers and generated run-ins
-            first = first->firstChild();
-            while (first && (first->isListMarker() || (first->isRenderInline() && first->isRunIn() && first->isAnonymous())))
-                first = first->nextSibling();
-        } while (first && first->isAnonymous() && first->style()->styleType() == NOPSEUDO);
-
-        if (!first)
-            return 0;
-
-        if (first->style()->styleType() == type)
-            return first;
-
-        // Check for a possible generated run-in, using run-in positioning rules.
-        // Skip inlines and floating / positioned blocks, and place as the first child.
-        first = container->firstChild();
-        if (!first->isRenderBlock())
-            return 0;
-        while (first && first->isFloatingOrPositioned())
-            first = first->nextSibling();
-        if (first) {
-            first = first->firstChild();
-            // We still need to skip any list markers that could exist before the run-in.
-            while (first && first->isListMarker())
-                first = first->nextSibling();
-            if (first && first->style()->styleType() == type && first->isRenderInline() && first->isRunIn() && first->isAnonymous())
-                return first;
-        }
-        return 0;
-    }
-
-    if (type == AFTER) {
-        RenderObject* last = container;
-        do {
-            last = last->lastChild();
-        } while (last && last->isAnonymous() && last->style()->styleType() == NOPSEUDO && !last->isListMarker());
-        if (last && last->style()->styleType() != type)
-            return 0;
-        return last;
-    }
-
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
 static RenderObject* findBeforeAfterParent(RenderObject* object)
 {
     // Only table parts need to search for the :before or :after parent
@@ -330,14 +277,63 @@ static void invalidateCountersInContainer(RenderObject* container, const AtomicS
     }
 }
 
-void RenderObjectChildList::invalidateCounters(RenderObject* owner, const AtomicString& identifier)
+void RenderObjectChildList::invalidateCounters(const RenderObject* owner, const AtomicString& identifier)
 {
     ASSERT(!owner->documentBeingDestroyed());
-    invalidateCountersInContainer(beforeAfterContainer(owner, BEFORE), identifier);
-    invalidateCountersInContainer(beforeAfterContainer(owner, AFTER), identifier);
+    invalidateCountersInContainer(beforePseudoElementRenderer(owner), identifier);
+    invalidateCountersInContainer(afterPseudoElementRenderer(owner), identifier);
 }
 
-void RenderObjectChildList::updateBeforeAfterContent(RenderObject* owner, PseudoId type, RenderObject* styledObject)
+RenderObject* RenderObjectChildList::beforePseudoElementRenderer(const RenderObject* owner) const
+{
+    // An anonymous (generated) inline run-in that has PseudoId BEFORE must come from a grandparent.
+    // Therefore we should skip these generated run-ins when checking our immediate children.
+    // If we don't find our :before child immediately, then we should check if we own a
+    // generated inline run-in in the next level of children.
+    RenderObject* first = const_cast<RenderObject*>(owner);
+    do {
+        // Skip list markers and generated run-ins
+        first = first->firstChild();
+        while (first && (first->isListMarker() || (first->isRenderInline() && first->isRunIn() && first->isAnonymous())))
+            first = first->nextSibling();
+    } while (first && first->isAnonymous() && first->style()->styleType() == NOPSEUDO);
+
+    if (!first)
+        return 0;
+
+    if (first->style()->styleType() == BEFORE)
+        return first;
+
+    // Check for a possible generated run-in, using run-in positioning rules.
+    // Skip inlines and floating / positioned blocks, and place as the first child.
+    first = owner->firstChild();
+    if (!first->isRenderBlock())
+        return 0;
+    while (first && first->isFloatingOrPositioned())
+        first = first->nextSibling();
+    if (first) {
+        first = first->firstChild();
+        // We still need to skip any list markers that could exist before the run-in.
+        while (first && first->isListMarker())
+            first = first->nextSibling();
+        if (first && first->style()->styleType() == BEFORE && first->isRenderInline() && first->isRunIn() && first->isAnonymous())
+            return first;
+    }
+    return 0;
+}
+
+RenderObject* RenderObjectChildList::afterPseudoElementRenderer(const RenderObject* owner) const
+{
+    RenderObject* last = const_cast<RenderObject*>(owner);
+    do {
+        last = last->lastChild();
+    } while (last && last->isAnonymous() && last->style()->styleType() == NOPSEUDO && !last->isListMarker());
+    if (last && last->style()->styleType() != AFTER)
+        return 0;
+    return last;
+}
+
+void RenderObjectChildList::updateBeforeAfterContent(RenderObject* owner, PseudoId type, const RenderObject* styledObject)
 {
     // Double check that the document did in fact use generated content rules.  Otherwise we should not have been called.
     ASSERT(owner->document()->usesBeforeAfterRules());
@@ -350,7 +346,18 @@ void RenderObjectChildList::updateBeforeAfterContent(RenderObject* owner, Pseudo
         styledObject = owner;
 
     RenderStyle* pseudoElementStyle = styledObject->getCachedPseudoStyle(type);
-    RenderObject* child = beforeAfterContainer(owner, type);
+    RenderObject* child;
+    switch (type) {
+    case BEFORE:
+        child = beforePseudoElementRenderer(owner);
+        break;
+    case AFTER:
+        child = afterPseudoElementRenderer(owner);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        return;
+    }
 
     // Whether or not we currently have generated content attached.
     bool oldContentPresent = child;
@@ -464,6 +471,8 @@ void RenderObjectChildList::updateBeforeAfterContent(RenderObject* owner, Pseudo
                 // Make a generated box that might be any display type now that we are able to drill down into children
                 // to find the original content properly.
                 generatedContentContainer = RenderObject::createObject(owner->document(), pseudoElementStyle);
+                ASSERT(styledObject->node()); // The styled object cannot be anonymous or else it could not have ':before' or ':after' pseudo elements.
+                generatedContentContainer->setNode(styledObject->node()); // This allows access to the generatingNode.
                 generatedContentContainer->setStyle(pseudoElementStyle);
                 owner->addChild(generatedContentContainer, insertBefore);
             }
