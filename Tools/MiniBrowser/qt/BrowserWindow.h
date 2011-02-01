@@ -50,6 +50,9 @@ public slots:
     BrowserWindow* newWindow(const QString& url = "about:blank");
     void openLocation();
 
+signals:
+    void enteredFullScreenMode(bool on);
+
 protected slots:
     void changeLocation();
     void loadProgress(int progress);
@@ -62,6 +65,8 @@ protected slots:
     void resetZoom();
     void toggleZoomTextOnly(bool on);
     void screenshot();
+
+    void toggleFullScreenMode(bool enable);
 
     void toggleFrameFlattening(bool);
     void showUserAgentDialog();

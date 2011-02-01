@@ -77,6 +77,16 @@ BrowserWindow::BrowserWindow(QWKContext* context)
     zoomOut->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Minus));
     resetZoom->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_0));
 
+    QMenu* windowMenu = menuBar()->addMenu("&Window");
+    QAction* toggleFullScreen = windowMenu->addAction("Toggle FullScreen", this, SIGNAL(enteredFullScreenMode(bool)));
+    toggleFullScreen->setShortcut(Qt::Key_F11);
+    toggleFullScreen->setCheckable(true);
+    toggleFullScreen->setChecked(false);
+    // When exit fullscreen mode by clicking on the exit area (bottom right corner) we must
+    // uncheck the Toggle FullScreen action.
+    toggleFullScreen->connect(this, SIGNAL(enteredFullScreenMode(bool)), SLOT(setChecked(bool)));
+    connect(this, SIGNAL(enteredFullScreenMode(bool)), this, SLOT(toggleFullScreenMode(bool)));
+
     QMenu* toolsMenu = menuBar()->addMenu("&Develop");
     QAction* toggleFrameFlattening = toolsMenu->addAction("Toggle Frame Flattening", this, SLOT(toggleFrameFlattening(bool)));
     toggleFrameFlattening->setCheckable(true);
@@ -265,6 +275,13 @@ void BrowserWindow::toggleZoomTextOnly(bool b)
     m_isZoomTextOnly = b;
 }
 
+void BrowserWindow::toggleFullScreenMode(bool enable)
+{
+    if (enable)
+        setWindowState(Qt::WindowFullScreen);
+    else
+        setWindowState(Qt::WindowNoState);
+}
 
 void BrowserWindow::toggleFrameFlattening(bool toggle)
 {
