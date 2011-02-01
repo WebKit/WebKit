@@ -117,6 +117,9 @@ void IndentOutdentCommand::indentIntoBlockquote(const VisiblePosition& endOfCurr
     else
         nodeToSplitTo = editableRootForPosition(start);
 
+    if (!nodeToSplitTo)
+        return;
+
     RefPtr<Node> outerBlock = splitTreeToNode(start.node(), nodeToSplitTo);
 
     if (!targetBlockquote) {

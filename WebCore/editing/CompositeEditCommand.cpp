@@ -1183,6 +1183,8 @@ PassRefPtr<Node> CompositeEditCommand::splitTreeToNode(Node* start, Node* end, b
 
     RefPtr<Node> node;
     for (node = start; node && node->parent() != end; node = node->parent()) {
+        if (!node->parent()->isElementNode())
+            break;
         VisiblePosition positionInParent(Position(node->parent(), 0), DOWNSTREAM);
         VisiblePosition positionInNode(Position(node, 0), DOWNSTREAM);
         if (positionInParent != positionInNode)
