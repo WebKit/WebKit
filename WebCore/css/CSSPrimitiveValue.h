@@ -38,6 +38,15 @@ class StringImpl;
 
 struct Length;
 
+template<typename T, T max, T min> inline T roundForImpreciseConversion(double value)
+{
+    // Dimension calculations are imprecise, often resulting in values of e.g.
+    // 44.99998.  We need to go ahead and round if we're really close to the
+    // next integer value.
+    value += (value < 0) ? -0.01 : +0.01;
+    return ((value > max) || (value < min)) ? 0 : static_cast<T>(value);
+}
+
 class CSSPrimitiveValue : public CSSValue {
 public:
     enum UnitTypes {

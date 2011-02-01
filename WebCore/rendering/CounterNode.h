@@ -23,6 +23,7 @@
 #define CounterNode_h
 
 #include <wtf/Noncopyable.h>
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 // This implements a counter tree that is used for finding parents in counters() lookup,

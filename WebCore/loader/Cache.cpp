@@ -114,7 +114,6 @@ CachedResource* Cache::requestResource(DocLoader* docLoader, CachedResource::Typ
     }
 
     if (resource && resource->type() != type) {
-        LOG(ResourceLoading, "Cache::requestResource found a cache resource with matching url but different type, evicting and loading with new type.");
         evict(resource);
         resource = 0;
     }
