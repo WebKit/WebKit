@@ -2873,7 +2873,7 @@ BUGCR66085 LINUX : media/constructors.html = PASS TIMEOUT
 BUGCR66085 WIN MAC : media/remove-from-document.html = PASS TIMEOUT
 BUGCR66085 LINUX RELEASE : media/remove-from-document.html = PASS TIMEOUT
 BUGCR66085 BUGCR71087 LINUX DEBUG : media/remove-from-document.html = CRASH PASS TIMEOUT
-BUGCR66085 MAC : media/video-display-toggle.html = PASS TIMEOUT
+BUGCR66085 BUGCR71087 MAC : media/video-display-toggle.html = PASS TIMEOUT CRASH
 BUGCR66085 : media/video-play-pause-exception.html = PASS TIMEOUT
 BUGCR66085 WIN : media/video-source.html = PASS TIMEOUT
 BUGCR66085 LINUX : media/video-source.html = CRASH PASS TIMEOUT
@@ -3022,7 +3022,7 @@ BUGCR69639 : http/tests/loading/cross-origin-XHR-willLoadRequest.html = TEXT
 BUGDIMICH : fast/loader/stateobjects/pushstate-object-types.html = TEXT
 BUGDIMICH : fast/regex/cross-frame-callable.html = TEXT
 
-BUGTHAKIS LINUX WIN : media/video-display-toggle.html = IMAGE
+BUGTHAKIS BUGCR71087 LINUX WIN : media/video-display-toggle.html = IMAGE CRASH
 
 // New test that was non-deterministic.
 BUGYURYS SLOW DEBUG : userscripts/window-onerror-for-isolated-world-1.html = PASS
@@ -3085,3 +3085,5 @@ BUGCR71418 MAC : fast/transforms/shadows.html = IMAGE PASS
 BUGWK53446 WIN LINUX DEBUG : http/tests/navigation/forward-and-cancel.html = PASS TEXT
 
 BUGWK53459 WIN LINUX : editing/pasteboard/3976872.html = PASS TIMEOUT
+BUGWK53505 WIN DEBUG : inspector/console-eval.html = PASS CRASH
+BUGWK53505 WIN DEBUG : inspector/console-dir.html = PASS CRASH

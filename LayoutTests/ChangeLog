@@ -1,3 +1,9 @@
+2011-02-01  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Updated flaky test expectations according to build bot results.
+
+        * platform/chromium/test_expectations.txt: Flakiness recorded.
+
 2011-02-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
