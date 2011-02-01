@@ -44,6 +44,7 @@
 #include "SVGSymbolElement.h"
 #include "XLinkNames.h"
 #include "XMLSerializer.h"
+#include "XMLTokenizer.h"
 
 // Dump SVGElementInstance object tree - useful to debug instanceRoot problems
 // #define DUMP_INSTANCE_TREE
@@ -121,14 +122,14 @@ void SVGUseElement::insertedIntoDocument()
 {
     // This functions exists to assure assumptions made in the code regarding SVGElementInstance creation/destruction are satisfied.
     SVGElement::insertedIntoDocument();
-    ASSERT(!m_targetElementInstance);
+    ASSERT(!m_targetElementInstance || ((document()->isSVGDocument() || document()->isXHTMLDocument()) && !static_cast<XMLTokenizer*>(document()->tokenizer())->wellFormed()));
     ASSERT(!m_isPendingResource);
 }
 
 void SVGUseElement::removedFromDocument()
 {
-    detachInstance();
     SVGStyledTransformableElement::removedFromDocument();
+    detachInstance();
 }
 
 void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
@@ -582,8 +583,8 @@ void SVGUseElement::attach()
 
 void SVGUseElement::detach()
 {
-    detachInstance();
     SVGStyledTransformableElement::detach();
+    detachInstance();
 }
 
 static bool isDirectReference(Node* n)
