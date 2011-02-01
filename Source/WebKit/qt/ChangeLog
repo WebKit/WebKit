@@ -1,3 +1,18 @@
+2011-01-31  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] QWebElements example from QtWebKit Bridge documentation does not work at all
+        https://bugs.webkit.org/show_bug.cgi?id=46748
+
+        Problem was that we need to register QWebElement's variant-type to Qt's meta type system at some point.
+        This wasn't caught by previous tests inside tst_QWebFrame because it only appears when there's also a QWebElement property.
+        Added a regression test to tst_QWebFrame.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+        (MyWebElementSlotOnlyObject::doSomethingWithWebElement):
+        (MyWebElementSlotOnlyObject::tagName):
+
 2011-01-31  Srikumar Bonda  <srikumar.b@gmail.com>
 
         Reviewed by Andreas Kling.

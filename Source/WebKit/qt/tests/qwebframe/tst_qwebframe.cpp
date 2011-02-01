@@ -514,6 +514,24 @@ private:
     QVariantList m_actuals;
 };
 
+class MyWebElementSlotOnlyObject : public QObject {
+    Q_OBJECT
+    Q_PROPERTY(QString tagName READ tagName)
+public slots:
+    void doSomethingWithWebElement(const QWebElement& element)
+    {
+        m_tagName = element.tagName();
+    }
+
+public:
+    QString tagName() const
+    {
+        return m_tagName;
+    }
+private:
+    QString m_tagName;
+};
+
 class MyOtherQObject : public MyQObject
 {
 public:
@@ -584,6 +602,7 @@ private slots:
     void findChild();
     void findChildren();
     void overloadedSlots();
+    void webElementSlotOnly();
     void enumerate_data();
     void enumerate();
     void objectDeleted();
@@ -3255,6 +3274,15 @@ void tst_QWebFrame::setCacheLoadControlAttribute()
     request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferNetwork);
     frame->load(request);
     QCOMPARE(manager->lastCacheLoad(), QNetworkRequest::PreferNetwork);
+}
+
+void tst_QWebFrame::webElementSlotOnly()
+{
+    MyWebElementSlotOnlyObject object;
+    m_page->mainFrame()->setHtml("<html><head><body></body></html>");
+    m_page->mainFrame()->addToJavaScriptWindowObject("myWebElementSlotObject", &object);
+    evalJS("myWebElementSlotObject.doSomethingWithWebElement(document.body)");
+    QCOMPARE(evalJS("myWebElementSlotObject.tagName"), QString("BODY"));
 }
 
 QTEST_MAIN(tst_QWebFrame)
