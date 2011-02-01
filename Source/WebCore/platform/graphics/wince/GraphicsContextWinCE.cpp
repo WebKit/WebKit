@@ -502,7 +502,7 @@ TransparentLayerDC::TransparentLayerDC(GraphicsContextPlatformPrivate* data, Int
             m_rotation.m_postShiftX -= m_origRect.x();
             m_rotation.m_postShiftY -= m_origRect.y();
 
-            FloatPoint topLeft = m_data->m_transform.mapPoint(FloatPoint(rectBeforeTransform->topLeft()));
+            FloatPoint topLeft = m_data->m_transform.mapPoint(FloatPoint(rectBeforeTransform->location()));
             FloatPoint topRight(rectBeforeTransform->right() - 1, rectBeforeTransform->y());
             topRight = m_data->m_transform.mapPoint(topRight);
             FloatPoint bottomLeft(rectBeforeTransform->x(), rectBeforeTransform->bottom() - 1);
