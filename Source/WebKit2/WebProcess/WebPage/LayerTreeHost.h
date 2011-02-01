@@ -52,10 +52,6 @@ public:
 
 protected:
     explicit LayerTreeHost(WebPage*);
-    bool flushPendingLayerChanges();
-
-private:
-    void platformInvalidate();
 
     WebPage* m_webPage;
 };

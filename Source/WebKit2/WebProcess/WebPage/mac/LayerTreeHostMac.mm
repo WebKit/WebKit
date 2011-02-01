@@ -26,6 +26,11 @@
 #import "config.h"
 #import "LayerTreeHostMac.h"
 
+#import <WebCore/Frame.h>
+#import <WebCore/FrameView.h>
+#import <WebCore/Page.h>
+#import "WebPage.h"
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -75,4 +80,10 @@ void LayerTreeHostMac::flushPendingLayerChangesRunLoopObserverCallback()
     m_flushPendingLayerChangesRunLoopObserver = 0;
 }
 
+bool LayerTreeHostMac::flushPendingLayerChanges()
+{
+    return m_webPage->corePage()->mainFrame()->view()->syncCompositingStateIncludingSubframes();
+}
+
+    
 } // namespace WebKit

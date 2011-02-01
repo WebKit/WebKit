@@ -43,7 +43,8 @@ private:
 
     static void flushPendingLayerChangesRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void*);
     void flushPendingLayerChangesRunLoopObserverCallback();
-    
+    bool flushPendingLayerChanges();
+
     RetainPtr<CFRunLoopObserverRef> m_flushPendingLayerChangesRunLoopObserver;
 };
 

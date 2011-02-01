@@ -26,11 +26,6 @@
 #include "config.h"
 #include "LayerTreeHost.h"
 
-#include <WebCore/Frame.h>
-#include <WebCore/FrameView.h>
-#include <WebCore/Page.h>
-#include "WebPage.h"
-
 #if PLATFORM(MAC)
 #include "LayerTreeHostMac.h"
 #else
@@ -57,11 +52,6 @@ LayerTreeHost::LayerTreeHost(WebPage* webPage)
 
 LayerTreeHost::~LayerTreeHost()
 {
-}
-
-bool LayerTreeHost::flushPendingLayerChanges()
-{
-    return m_webPage->corePage()->mainFrame()->view()->syncCompositingStateIncludingSubframes();
 }
 
 } // namespace WebKit
