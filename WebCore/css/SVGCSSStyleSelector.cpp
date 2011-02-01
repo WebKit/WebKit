@@ -161,7 +161,8 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
         case CSSPropertyKerning:
         {
             HANDLE_INHERIT_AND_INITIAL(kerning, Kerning);
-            svgstyle->setKerning(primitiveValue);
+            if (primitiveValue)
+                svgstyle->setKerning(primitiveValue);
             break;
         }
         case CSSPropertyDominantBaseline:
@@ -253,8 +254,22 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
         case CSSPropertyStrokeDasharray:
         {
             HANDLE_INHERIT_AND_INITIAL(strokeDashArray, StrokeDashArray)
-            if (value->isValueList())
-                svgstyle->setStrokeDashArray(static_cast<CSSValueList*>(value));
+            if (!value->isValueList())
+                break;
+
+            CSSValueList* dashes = static_cast<CSSValueList*>(value);
+
+            RefPtr<CSSValueList> array = CSSValueList::createCommaSeparated();
+            size_t length = dashes->length();
+            for (size_t i = 0; i < length; ++i) {
+                CSSValue* currValue = dashes->itemWithoutBoundsCheck(i);
+                if (!currValue->isPrimitiveValue())
+                    continue;
+
+                array->append(currValue);
+            }
+
+            svgstyle->setStrokeDashArray(array.release());
             break;
         }
         case CSSPropertyStrokeDashoffset:
@@ -535,8 +550,13 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
                 return;
 
             CSSValueList *list = static_cast<CSSValueList*>(value);
-            ASSERT(list->length() == 1);
-            ShadowValue* item = static_cast<ShadowValue*>(list->itemWithoutBoundsCheck(0));
+            if (!list->length())
+                return;
+
+            CSSValue* firstValue = list->itemWithoutBoundsCheck(0);
+            if (!firstValue->isShadowValue())
+                return;
+            ShadowValue* item = static_cast<ShadowValue*>(firstValue);
             int x = item->x->computeLengthInt(style(), m_rootElementStyle);
             int y = item->y->computeLengthInt(style(), m_rootElementStyle);
             int blur = item->blur ? item->blur->computeLengthInt(style(), m_rootElementStyle) : 0;

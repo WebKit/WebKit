@@ -53,11 +53,16 @@ public:
     virtual String cssText() const = 0;
     void setCssText(const String&, ExceptionCode&) { } // FIXME: Not implemented.
 
+    virtual bool isBorderImageValue() const { return false; }
+    virtual bool isCursorImageValue() const { return false; }
+    virtual bool isFontFamilyValue() const { return false; }
     virtual bool isFontValue() const { return false; }
     virtual bool isImageGeneratorValue() const { return false; }
     virtual bool isImageValue() const { return false; }
     virtual bool isImplicitInitialValue() const { return false; }
     virtual bool isPrimitiveValue() const { return false; }
+    virtual bool isReflectValue() const { return false; }
+    virtual bool isShadowValue() const { return false; }
     virtual bool isTimingFunctionValue() const { return false; }
     virtual bool isValueList() const { return false; }
     virtual bool isWebKitCSSTransformValue() const { return false; }

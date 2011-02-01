@@ -57,6 +57,11 @@ public:
         return false;
     }
     
+    void clear()
+    {
+        m_operations.clear();
+    }
+    
     Vector<RefPtr<TransformOperation> >& operations() { return m_operations; }
     const Vector<RefPtr<TransformOperation> >& operations() const { return m_operations; }
 

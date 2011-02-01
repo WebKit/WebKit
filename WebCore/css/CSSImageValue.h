@@ -38,8 +38,6 @@ public:
 
     virtual StyleCachedImage* cachedImage(DocLoader*);
     
-    virtual bool isImageValue() const { return true; }
-
 protected:
     CSSImageValue(const String& url);
 
@@ -49,6 +47,7 @@ protected:
 
 private:
     CSSImageValue();
+    virtual bool isImageValue() const { return true; }
 
     RefPtr<StyleCachedImage> m_image;
     bool m_accessedImage;

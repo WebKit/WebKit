@@ -1,5 +1,58 @@
 2011-01-31  Mark Rowe  <mrowe@apple.com>
 
+        Merge r71641.
+
+    2010-11-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49204
+        <rdar://problem/8643412>
+        
+        Add checks to the CSSStyleSelector code to ensure that the
+        casts to the various CSSValue types are safe, and do more
+        rigorous checking of the lengths of CSSValueLists, and
+        non-null members of Pair in some cases.
+
+        * css/CSSBorderImageValue.h:
+        (WebCore::CSSBorderImageValue::isBorderImageValue):
+        * css/CSSCursorImageValue.h:
+        (WebCore::CSSCursorImageValue::isCursorImageValue):
+        * css/CSSImageValue.h:
+        (WebCore::CSSImageValue::isImageValue):
+        * css/CSSReflectValue.h:
+        (WebCore::CSSReflectValue::isReflectValue):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::resolveVariablesForDeclaration):
+        (WebCore::CSSRuleSet::addRulesFromSheet):
+        (WebCore::CSSRuleSet::addStyleRule):
+        (WebCore::applyCounterList):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::mapFillSize):
+        (WebCore::CSSStyleSelector::mapAnimationDelay):
+        (WebCore::CSSStyleSelector::mapAnimationDirection):
+        (WebCore::CSSStyleSelector::mapAnimationFillMode):
+        (WebCore::CSSStyleSelector::mapAnimationName):
+        (WebCore::CSSStyleSelector::mapAnimationPlayState):
+        (WebCore::CSSStyleSelector::mapNinePieceImage):
+        (WebCore::CSSStyleSelector::createTransformOperations):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isBorderImageValue):
+        (WebCore::CSSValue::isCursorImageValue):
+        (WebCore::CSSValue::isFontFamilyValue):
+        (WebCore::CSSValue::isReflectValue):
+        (WebCore::CSSValue::isShadowValue):
+        * css/FontFamilyValue.h:
+        (WebCore::FontFamilyValue::isFontFamilyValue):
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty):
+        * css/ShadowValue.h:
+        (WebCore::ShadowValue::isShadowValue):
+        * platform/graphics/transforms/TransformOperations.h:
+        (WebCore::TransformOperations::clear):
+
+2011-01-31  Mark Rowe  <mrowe@apple.com>
+
         Merge r73937.
 
     2010-12-13  Justin Schuh  <jschuh@chromium.org>
