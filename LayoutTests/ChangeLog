@@ -1,5 +1,22 @@
 2011-01-31  Mark Rowe  <mrowe@apple.com>
 
+        Merge r67568.
+
+    2010-09-14  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        getComputedStyle() returns different values for different zoom levels
+        https://bugs.webkit.org/show_bug.cgi?id=32230
+
+        * fast/css/getComputedStyle/computed-style-with-zoom-expected.txt: Added.
+        * fast/css/getComputedStyle/computed-style-with-zoom.html: Added.
+        * fast/css/getComputedStyle/script-tests/computed-style-with-zoom.js: Added.
+        (testProperty):
+        (testPropertyValue):
+
+2011-01-31  Mark Rowe  <mrowe@apple.com>
+
         Merge r72639.
 
     2010-11-23  Cris Neckar  <cdn@chromium.org>
