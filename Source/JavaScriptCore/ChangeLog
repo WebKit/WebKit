@@ -1,3 +1,18 @@
+2011-02-01  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Antonio Gomes.
+
+        Modify RandomNumberSeed.h to use USE(MERSENNE_TWISTER_19937)
+        https://bugs.webkit.org/show_bug.cgi?id=53506
+
+        Currently, use of the Mersenne Twister pseudorandom number generator
+        is hardcoded to the Windows CE port. With the passing of bug #53253,
+        we can generalize support for this PRNG to all ports that use srand(3)
+        and rand(3), including Windows CE.
+
+        * wtf/RandomNumberSeed.h:
+        (WTF::initializeRandomNumberGenerator):
+
 2011-02-01  Dave Tapuska  <dtapuska@rim.com>
 
         Reviewed by Gavin Barraclough.

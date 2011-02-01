@@ -38,7 +38,7 @@
 #include <unistd.h>
 #endif
 
-#if OS(WINCE)
+#if USE(MERSENNE_TWISTER_19937)
 extern "C" {
 void init_by_array(unsigned long init_key[],int key_length);
 }
@@ -54,14 +54,6 @@ inline void initializeRandomNumberGenerator()
 #elif OS(WINCE)
     // initialize rand()
     srand(GetTickCount());
-
-    // use rand() to initialize the real RNG
-    unsigned long initializationBuffer[4];
-    initializationBuffer[0] = (rand() << 16) | rand();
-    initializationBuffer[1] = (rand() << 16) | rand();
-    initializationBuffer[2] = (rand() << 16) | rand();
-    initializationBuffer[3] = (rand() << 16) | rand();
-    init_by_array(initializationBuffer, 4);
 #elif COMPILER(MSVC) && defined(_CRT_RAND_S)
     // On Windows we use rand_s which initialises itself
 #elif PLATFORM(BREWMP)
@@ -73,6 +65,16 @@ inline void initializeRandomNumberGenerator()
     srandom(static_cast<unsigned>(time.tv_usec * getpid()));
 #else
     srand(static_cast<unsigned>(time(0)));
+#endif
+
+#if USE(MERSENNE_TWISTER_19937)
+    // use rand() to initialize the Mersenne Twister random number generator.
+    unsigned long initializationBuffer[4];
+    initializationBuffer[0] = (rand() << 16) | rand();
+    initializationBuffer[1] = (rand() << 16) | rand();
+    initializationBuffer[2] = (rand() << 16) | rand();
+    initializationBuffer[3] = (rand() << 16) | rand();
+    init_by_array(initializationBuffer, 4);
 #endif
 }
 
