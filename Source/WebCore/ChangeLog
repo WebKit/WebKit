@@ -1,3 +1,15 @@
+2011-02-01  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Darin Adler.
+
+        Fix the incorrect usage of RetainPtr cases in GraphicsContext3DCG.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=53531
+
+        With this fix, running WebGL conformance tests should no longer crash randomly.
+
+        * platform/graphics/cg/GraphicsContext3DCG.cpp:
+        (WebCore::GraphicsContext3D::getImageData):
+
 2011-02-01  Dimitri Glazkov  <dglazkov@chromium.org>
 
         One more Chromium build fix after r77286.

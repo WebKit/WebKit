@@ -105,7 +105,7 @@ bool GraphicsContext3D::getImageData(Image* image,
         decoder.setData(image->data(), true);
         if (!decoder.frameCount())
             return false;
-        decodedImage = decoder.createFrameAtIndex(0);
+        decodedImage.adoptCF(decoder.createFrameAtIndex(0));
         cgImage = decodedImage.get();
     } else
         cgImage = image->nativeImageForCurrentFrame();
@@ -121,11 +121,10 @@ bool GraphicsContext3D::getImageData(Image* image,
     // so, re-render it into an RGB color space. The image re-packing
     // code requires color data, not color table indices, for the
     // image data.
-    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGImageGetColorSpace(cgImage));
-    CGColorSpaceModel model = CGColorSpaceGetModel(colorSpace.get());
-    RetainPtr<CGContextRef> bitmapContext;
+    CGColorSpaceRef colorSpace = CGImageGetColorSpace(cgImage);
+    CGColorSpaceModel model = CGColorSpaceGetModel(colorSpace);
     if (model == kCGColorSpaceModelIndexed) {
-        RetainPtr<CGColorSpaceRef> baseColorSpace(CGColorSpaceGetBaseColorSpace(colorSpace.get()));
+        RetainPtr<CGContextRef> bitmapContext;
         // FIXME: we should probably manually convert the image by indexing into
         // the color table, which would allow us to avoid premultiplying the
         // alpha channel. Creation of a bitmap context with an alpha channel
