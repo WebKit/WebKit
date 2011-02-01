@@ -730,6 +730,7 @@ SOURCES += \
     dom/Document.cpp \
     dom/DocumentFragment.cpp \
     dom/DocumentMarkerController.cpp \
+    dom/DocumentOrderedMap.cpp \
     dom/DocumentParser.cpp \
     dom/DocumentType.cpp \
     dom/DOMImplementation.cpp \
@@ -1664,6 +1665,7 @@ HEADERS += \
     dom/DocumentFragment.h \
     dom/DocumentMarker.h \
     dom/DocumentMarkerController.h \
+    dom/DocumentOrderedMap.h \
     dom/DocumentType.h \
     dom/DOMImplementation.h \
     dom/DOMStringList.h \
