@@ -254,7 +254,7 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed)
     sortByPriority(toAnimate, elapsed);
     
     // Calculate animation contributions.
-    typedef HashMap<ElementAttributePair, SVGSMILElement*> ResultElementMap;
+    typedef HashMap<ElementAttributePair, RefPtr<SVGSMILElement> > ResultElementMap;
     ResultElementMap resultsElements;
     for (unsigned n = 0; n < toAnimate.size(); ++n) {
         SVGSMILElement* animation = toAnimate[n];
@@ -273,7 +273,7 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed)
         
         // Results are accumulated to the first animation that animates a particular element/attribute pair.
         ElementAttributePair key(targetElement, attributeName); 
-        SVGSMILElement* resultElement = resultsElements.get(key);
+        SVGSMILElement* resultElement = resultsElements.get(key).get();
         if (!resultElement) {
             resultElement = animation;
             resultElement->resetToBaseValue(baseValueFor(key));
@@ -296,7 +296,7 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed)
     Vector<SVGSMILElement*> animationsToApply;
     ResultElementMap::iterator end = resultsElements.end();
     for (ResultElementMap::iterator it = resultsElements.begin(); it != end; ++it)
-        animationsToApply.append(it->second);
+        animationsToApply.append(it->second.get());
 
     // Sort <animateTranform> to be the last one to be applied. <animate> may change transform attribute as
     // well (directly or indirectly by modifying <use> x/y) and this way transforms combine properly.
