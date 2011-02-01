@@ -516,7 +516,7 @@ static PassRefPtr<CSSValue> getTimingFunctionValue(const AnimationList* animList
         }
     } else {
         // Note that initialAnimationTimingFunction() is used for both transitions and animations
-        const TimingFunction& tf = Animation::initialAnimationTimingFunction();
+        const TimingFunction tf = Animation::initialAnimationTimingFunction();
         list->append(CSSTimingFunctionValue::create(tf.x1(), tf.y1(), tf.x2(), tf.y2()));
     }
     return list.release();
