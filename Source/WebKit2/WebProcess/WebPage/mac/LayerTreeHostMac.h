@@ -32,19 +32,22 @@
 namespace WebKit {
 
 class LayerTreeHostMac : public LayerTreeHost {
-private:
-    friend class LayerTreeHost;
-    
-    explicit LayerTreeHostMac(WebPage*, WebCore::GraphicsLayer*);
+public:
+    static PassRefPtr<LayerTreeHostMac> create(WebPage*, WebCore::GraphicsLayer*);
     ~LayerTreeHostMac();
+    
+private:
+    explicit LayerTreeHostMac(WebPage*, WebCore::GraphicsLayer*);
 
     // LayerTreeHost.
     virtual void scheduleLayerFlush();
+    virtual void invalidate();
 
     static void flushPendingLayerChangesRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void*);
     void flushPendingLayerChangesRunLoopObserverCallback();
     bool flushPendingLayerChanges();
 
+    bool m_isValid;
     RetainPtr<CFRunLoopObserverRef> m_flushPendingLayerChangesRunLoopObserver;
 };
 

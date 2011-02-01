@@ -35,15 +35,21 @@ using namespace WebCore;
 
 namespace WebKit {
 
+PassRefPtr<LayerTreeHostMac> LayerTreeHostMac::create(WebPage* webPage, GraphicsLayer* graphicsLayer)
+{
+    return adoptRef(new LayerTreeHostMac(webPage, graphicsLayer));
+}
+
 LayerTreeHostMac::LayerTreeHostMac(WebPage* webPage, GraphicsLayer* graphicsLayer)
     : LayerTreeHost(webPage)
+    , m_isValid(true)
 {
 }
 
 LayerTreeHostMac::~LayerTreeHostMac()
 {
-    if (m_flushPendingLayerChangesRunLoopObserver)
-        CFRunLoopObserverInvalidate(m_flushPendingLayerChangesRunLoopObserver.get());
+    ASSERT(!m_isValid);
+    ASSERT(!m_flushPendingLayerChangesRunLoopObserver);
 }
 
 void LayerTreeHostMac::scheduleLayerFlush()
@@ -62,6 +68,18 @@ void LayerTreeHostMac::scheduleLayerFlush()
     m_flushPendingLayerChangesRunLoopObserver.adoptCF(CFRunLoopObserverCreate(0, kCFRunLoopBeforeWaiting | kCFRunLoopExit, true, runLoopOrder, flushPendingLayerChangesRunLoopObserverCallback, &context));
 
     CFRunLoopAddObserver(currentRunLoop, m_flushPendingLayerChangesRunLoopObserver.get(), kCFRunLoopCommonModes);
+}
+
+void LayerTreeHostMac::invalidate()
+{
+    ASSERT(m_isValid);
+
+    if (m_flushPendingLayerChangesRunLoopObserver) {
+        CFRunLoopObserverInvalidate(m_flushPendingLayerChangesRunLoopObserver.get());
+        m_flushPendingLayerChangesRunLoopObserver = nullptr;
+    }
+
+    m_isValid = false;
 }
 
 void LayerTreeHostMac::flushPendingLayerChangesRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void* context)

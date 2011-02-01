@@ -26,12 +26,8 @@
 #ifndef LayerTreeHost_h
 #define LayerTreeHost_h
 
-#include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
-
-#if PLATFORM(MAC)
-#include <wtf/RetainPtr.h>
-#endif
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
     class GraphicsLayer;
@@ -41,14 +37,13 @@ namespace WebKit {
 
 class WebPage;
 
-class LayerTreeHost {
-    WTF_MAKE_NONCOPYABLE(LayerTreeHost);
-
+class LayerTreeHost : public RefCounted<LayerTreeHost> {
 public:
-    static PassOwnPtr<LayerTreeHost> create(WebPage*, WebCore::GraphicsLayer*);
+    static PassRefPtr<LayerTreeHost> create(WebPage*, WebCore::GraphicsLayer*);
     virtual ~LayerTreeHost();
 
     virtual void scheduleLayerFlush() = 0;
+    virtual void invalidate() = 0;
 
 protected:
     explicit LayerTreeHost(WebPage*);

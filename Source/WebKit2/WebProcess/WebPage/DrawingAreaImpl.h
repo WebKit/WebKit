@@ -79,7 +79,7 @@ private:
     RunLoop::Timer<DrawingAreaImpl> m_displayTimer;
 
     // The layer tree host that handles accelerated compositing.
-    OwnPtr<LayerTreeHost> m_layerTreeHost;
+    RefPtr<LayerTreeHost> m_layerTreeHost;
 };
 
 } // namespace WebKit

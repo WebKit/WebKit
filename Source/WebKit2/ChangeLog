@@ -1,3 +1,28 @@
+2011-02-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Make LayerTreeHost ref counted
+        https://bugs.webkit.org/show_bug.cgi?id=53530
+
+        LayerTreeHostMac will soon be able to trigger layout, which could cause
+        the page to leave accelerated compositing mode and free the LayerTreeHostMac object.
+
+        Making LayerTreeHost ref counted will let LayerTreeHostMac protect itself while triggering layout.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::setRootCompositingLayer):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        * WebProcess/WebPage/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::create):
+        * WebProcess/WebPage/LayerTreeHost.h:
+        * WebProcess/WebPage/mac/LayerTreeHostMac.h:
+        * WebProcess/WebPage/mac/LayerTreeHostMac.mm:
+        (WebKit::LayerTreeHostMac::create):
+        (WebKit::LayerTreeHostMac::LayerTreeHostMac):
+        (WebKit::LayerTreeHostMac::~LayerTreeHostMac):
+        (WebKit::LayerTreeHostMac::invalidate):
+
 2011-02-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Beth Dakin.

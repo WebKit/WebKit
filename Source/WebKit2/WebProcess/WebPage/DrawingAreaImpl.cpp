@@ -128,8 +128,10 @@ void DrawingAreaImpl::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
 {
     if (graphicsLayer)
         m_layerTreeHost = LayerTreeHost::create(m_webPage, graphicsLayer);
-    else
+    else {
+        m_layerTreeHost->invalidate();
         m_layerTreeHost = nullptr;
+    }
 }
 
 void DrawingAreaImpl::scheduleCompositingLayerSync()
