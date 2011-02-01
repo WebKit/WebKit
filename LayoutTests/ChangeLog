@@ -1,3 +1,9 @@
+2011-02-01  Xiaomei Ji  <xji@chromium.org>
+
+        Unreviewed.
+
+        * fast/dom/34176.html: Removed properties svn:executable and svn:mime-type.
+
 2011-02-01  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Remove expectations of failure for passing tests.
