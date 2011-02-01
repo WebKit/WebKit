@@ -1,5 +1,29 @@
 2011-01-31  Mark Rowe  <mrowe@apple.com>
 
+        Merge r72163.
+
+    2010-11-16  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31223
+        Make primitive values immutable.
+        
+        Make CSSPrimitiveValue setFloatValue and setStringValue always throw NO_MODIFICATION_ALLOWED exception.
+    
+        Reasoning:
+        - these setters never worked correctly, style was not invalidated so changing values would have no effect on rendering
+        - computed style is immutable in all cases, and it wasn't
+        - no other engine seems to support mutable primitives, as a result there is no content using these APIs
+        - mutable primitive values are pointless, the usual way to change the value of a propertly is to replace it with a new value
+        - allowing mutation of primitive values makes optimizations harder
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::setFloatValue):
+        (WebCore::CSSPrimitiveValue::setStringValue):
+
+2011-01-31  Mark Rowe  <mrowe@apple.com>
+
         Merge r74759.
 
     2010-12-29  Dan Bernstein  <mitz@apple.com>

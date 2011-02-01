@@ -422,19 +422,12 @@ double CSSPrimitiveValue::computeLengthDouble(RenderStyle* style, RenderStyle* r
     return zoomedResult;
 }
 
-void CSSPrimitiveValue::setFloatValue(unsigned short unitType, double floatValue, ExceptionCode& ec)
+void CSSPrimitiveValue::setFloatValue(unsigned short, double, ExceptionCode& ec)
 {
-    ec = 0;
-
-    if (m_type < CSS_NUMBER || m_type > CSS_DIMENSION || unitType < CSS_NUMBER || unitType > CSS_DIMENSION) {
-        ec = INVALID_ACCESS_ERR;
-        return;
-    }
-
-    cleanup();
-
-    m_value.num = floatValue;
-    m_type = unitType;
+    // Keeping values immutable makes optimizations easier and allows sharing of the primitive value objects. 
+    // No other engine supports mutating style through this API. Computed style is always read-only anyway.
+    // Supporting setter would require making primitive value copy-on-write and taking care of style invalidation.
+    ec = NO_MODIFICATION_ALLOWED_ERR;
 }
 
 static double scaleFactorForConversion(unsigned short unitType)
@@ -511,23 +504,12 @@ double CSSPrimitiveValue::getDoubleValue(unsigned short unitType)
 }
 
 
-void CSSPrimitiveValue::setStringValue(unsigned short stringType, const String& stringValue, ExceptionCode& ec)
+void CSSPrimitiveValue::setStringValue(unsigned short, const String&, ExceptionCode& ec)
 {
-    ec = 0;
-
-    if (m_type < CSS_STRING || m_type > CSS_ATTR || stringType < CSS_STRING || stringType > CSS_ATTR) {
-        ec = INVALID_ACCESS_ERR;
-        return;
-    }
-
-    cleanup();
-
-    if (stringType != CSS_IDENT) {
-        m_value.string = stringValue.impl();
-        m_value.string->ref();
-        m_type = stringType;
-    }
-    // FIXME: parse ident
+    // Keeping values immutable makes optimizations easier and allows sharing of the primitive value objects. 
+    // No other engine supports mutating style through this API. Computed style is always read-only anyway.
+    // Supporting setter would require making primitive value copy-on-write and taking care of style invalidation.
+    ec = NO_MODIFICATION_ALLOWED_ERR;
 }
 
 String CSSPrimitiveValue::getStringValue(ExceptionCode& ec) const
