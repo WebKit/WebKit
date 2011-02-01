@@ -382,17 +382,20 @@ WebInspector.HeapSnapshotView.prototype = {
     {
         var snapshot = new WebInspector.HeapSnapshot(loadedSnapshot);
         var result = {lowlevels: {}, entries: {}, children: {}};
-        for (var rootEdges = snapshot.rootEdges; !rootEdges.done; rootEdges.next()) {
-            var node = rootEdges.node;
+        var rootEdgesIter = snapshot.rootNode.edges;
+        for (var iter = rootEdgesIter; iter.hasNext(); iter.next()) {
+            var node = iter.edge.node;
             if (node.isHidden)
                 result.lowlevels[node.name] = {count: node.instancesCount, size: node.selfSize, type: node.name};
             else if (node.instancesCount)
                 result.entries[node.name] = {constructorName: node.name, count: node.instancesCount, size: node.selfSize};
             else {
                 var entry = {constructorName: node.name};
-                for (var edges = node.edges; !edges.done; edges.next())
-                    entry[edges.nodeIndex] = {constructorName: edges.node.name, count: edges.name};
-                result.children[rootEdges.nodeIndex] = entry;
+                for (var innerIter = node.edges; innerIter.hasNext(); innerIter.next()) {
+                    var edge = innerIter.edge;
+                    entry[edge.nodeIndex] = {constructorName: edge.node.name, count: edge.name};
+                }
+                result.children[rootEdgesIter.edge.nodeIndex] = entry;
             }
         }
         return result;

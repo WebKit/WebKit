@@ -1,3 +1,29 @@
+2011-02-01  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Chromium] Landing detailed heap snapshots, part 1.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53173
+
+        Adding code for accessing heap snapshot data and
+        performing graph calculations.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshotArraySlice): Helper class to avoid array contents copying.
+        (WebInspector.HeapSnapshotEdge): Wrapper for accessing graph edge properties.
+        (WebInspector.HeapSnapshotEdgeIterator):
+        (WebInspector.HeapSnapshotNode): Wrapper for accessing graph node properties.
+        (WebInspector.HeapSnapshotNodeIterator):
+        (WebInspector.HeapSnapshot): Wrapper for the heap snapshot.
+        (WebInspector.HeapSnapshotFilteredOrderedIterator):
+        (WebInspector.HeapSnapshotEdgesProvider):
+        (WebInspector.HeapSnapshotNodesProvider):
+        (WebInspector.HeapSnapshotPathFinder):
+        * inspector/front-end/HeapSnapshotView.js:
+        (WebInspector.HeapSnapshotView.prototype._convertSnapshot):
+
 2011-02-01  Adam Roben  <aroben@apple.com>
 
         Fix linker warnings in Release_LTCG builds
