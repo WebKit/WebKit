@@ -315,10 +315,13 @@ int SelectElement::selectedIndex(const SelectElementData& data, const Element* e
 
 void SelectElement::setSelectedIndex(SelectElementData& data, Element* element, int optionIndex, bool deselect, bool fireOnChangeNow, bool userDrivenChange)
 {
-    const Vector<Element*>& items = data.listItems(element);
-    int listIndex = optionToListIndex(data, element, optionIndex);
+    if (optionIndex == -1 && !deselect && !data.multiple())
+        optionIndex = nextSelectableListIndex(data, element, -1);
     if (!data.multiple())
         deselect = true;
+
+    const Vector<Element*>& items = data.listItems(element);
+    int listIndex = optionToListIndex(data, element, optionIndex);
 
     Element* excludeElement = 0;
     if (OptionElement* optionElement = (listIndex >= 0 ? toOptionElement(items[listIndex]) : 0)) {
