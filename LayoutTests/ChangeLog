@@ -1,3 +1,13 @@
+2011-02-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris Fleizach.
+
+        REGRESSION: Removing focus from area element causes unwanted scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=50169
+
+        * fast/images/imagemap-scroll-expected.txt: Added.
+        * fast/images/imagemap-scroll.html: Added.
+
 2011-02-01  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

@@ -1,3 +1,38 @@
+2011-02-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris Fleizach.
+
+        REGRESSION: Removing focus from area element causes unwanted scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=50169
+
+        Test: fast/images/imagemap-scroll.html
+
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::setFocus): Added override. Calls the new
+        RenderImage::areaElementFocusChanged function.
+        (WebCore::HTMLAreaElement::updateFocusAppearance): Removed the code
+        here that calls setNeedsLayout on the image's renderer. This was an
+        attempt to cause repaint of the renderer, but this function does not
+        need to do that. Also changed this to use the imageElement function
+        to avoid repeating code.
+
+        * html/HTMLAreaElement.h: Updated for above changes.
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paint): Updated for name change.
+        (WebCore::RenderImage::paintAreaElementFocusRing): Renamed this from
+        paintFocusRing, because it only paints area focus rings, and should
+        not be confused with paintFocusRing functions in other classes. Also
+        removed the unused style argument. Removed the code that used an
+        HTMLCollection to see if the focused area element is for this image
+        and instead just call imageElement on the area element.
+        (WebCore::RenderImage::areaElementFocusChanged): Added. Calls repaint.
+
+        * rendering/RenderImage.h: Added a public areaElementFocusChanged
+        function for HTMLAreaElement to call. Made the paintFocusRing function
+        private, renamed it to paintAreaElementFocusRing, and removed its
+        unused style argument.
+
 2011-02-01  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed WinCE build fix for r77286.

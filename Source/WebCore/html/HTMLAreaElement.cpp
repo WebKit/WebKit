@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2009, 2011 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,7 +30,7 @@
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "Path.h"
-#include "RenderObject.h"
+#include "RenderImage.h"
 
 using namespace std;
 
@@ -196,33 +196,34 @@ bool HTMLAreaElement::isFocusable() const
     return supportsFocus() && Element::tabIndex() >= 0;
 }
     
-void HTMLAreaElement::dispatchBlurEvent()
+void HTMLAreaElement::setFocus(bool shouldBeFocused)
 {
-    HTMLAnchorElement::dispatchBlurEvent();
-    
-    // On a blur, we might need to remove our focus rings by repainting.
-    updateFocusAppearance(false);
+    if (focused() == shouldBeFocused)
+        return;
+
+    HTMLAnchorElement::setFocus(shouldBeFocused);
+
+    HTMLImageElement* imageElement = this->imageElement();
+    if (!imageElement)
+        return;
+
+    RenderObject* renderer = imageElement->renderer();
+    if (!renderer || !renderer->isImage())
+        return;
+
+    toRenderImage(renderer)->areaElementFocusChanged(this);
 }
     
 void HTMLAreaElement::updateFocusAppearance(bool restorePreviousSelection)
 {
     if (!isFocusable())
         return;
-    
-    ContainerNode* parent = parentNode();
-    if (!parent || !parent->hasTagName(mapTag))
-        return;
-    
-    HTMLImageElement* imageElement = static_cast<HTMLMapElement*>(parent)->imageElement();
+
+    HTMLImageElement* imageElement = this->imageElement();
     if (!imageElement)
         return;
-    
-    // This will handle scrolling to the image if necessary.
+
     imageElement->updateFocusAppearance(restorePreviousSelection);
-    
-    RenderObject* imageRenderer = imageElement->renderer();
-    if (imageRenderer)
-        imageRenderer->setNeedsLayout(true);
 }
     
 bool HTMLAreaElement::supportsFocus() const

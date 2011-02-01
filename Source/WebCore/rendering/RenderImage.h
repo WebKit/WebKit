@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2006 Allan Sandfeld Jensen (kde@carewolf.com) 
  *           (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2004, 2005, 2006, 2007, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2009, 2010, 2011 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,6 +30,7 @@
 
 namespace WebCore {
 
+class HTMLAreaElement;
 class HTMLMapElement;
 
 class RenderImage : public RenderReplaced {
@@ -48,6 +49,7 @@ public:
     void updateAltText();
 
     HTMLMapElement* imageMap() const;
+    void areaElementFocusChanged(HTMLAreaElement*);
 
     void highQualityRepaintTimerFired(Timer<RenderImage>*);
 
@@ -57,7 +59,6 @@ protected:
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
     virtual void paintIntoRect(GraphicsContext*, const IntRect&);
-    void paintFocusRing(PaintInfo&, const RenderStyle*);
     virtual void paint(PaintInfo&, int tx, int ty);
 
     bool isLogicalWidthSpecified() const;
@@ -90,6 +91,8 @@ private:
 
     int calcAspectRatioLogicalWidth() const;
     int calcAspectRatioLogicalHeight() const;
+
+    void paintAreaElementFocusRing(PaintInfo&);
 
     // Text to display as long as the image isn't available.
     String m_altText;
