@@ -1,3 +1,16 @@
+2011-01-31  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [Chromium] Switch chromium-mac to use ChromiumDriver
+        https://bugs.webkit.org/show_bug.cgi?id=53461
+        
+        For the sake of consistency with the other Chromium platforms (and so
+        that chromium-mac picks up special flags like --enable-hardware-gpu),
+        switch chromium-mac from the WebKitDriver to ChromiumDriver.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+
 2011-01-31  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Mihai Parparita.

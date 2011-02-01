@@ -45,11 +45,6 @@ from webkitpy.layout_tests.layout_package import test_output
 
 import base
 import http_server
-
-# Chromium DRT on OSX uses WebKitDriver.
-if sys.platform == 'darwin':
-    import webkit
-
 import websocket_server
 
 _log = logging.getLogger("webkitpy.layout_tests.port.chromium")
@@ -217,8 +212,6 @@ class ChromiumPort(base.Port):
 
     def create_driver(self, worker_number):
         """Starts a new Driver and returns a handle to it."""
-        if not self.get_option('use_test_shell') and sys.platform == 'darwin':
-            return webkit.WebKitDriver(self, worker_number)
         return ChromiumDriver(self, worker_number)
 
     def start_helper(self):
