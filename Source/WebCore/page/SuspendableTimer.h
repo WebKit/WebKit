@@ -34,7 +34,7 @@ namespace WebCore {
 
 class SuspendableTimer : public TimerBase, public ActiveDOMObject {
 public:
-    SuspendableTimer(ScriptExecutionContext*);
+    explicit SuspendableTimer(ScriptExecutionContext*);
     virtual ~SuspendableTimer();
 
     // ActiveDOMObject
@@ -49,6 +49,7 @@ private:
 
     double m_nextFireInterval;
     double m_repeatInterval;
+    bool m_active;
 #if !ASSERT_DISABLED
     bool m_suspended;
 #endif

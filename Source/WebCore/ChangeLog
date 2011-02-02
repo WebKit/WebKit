@@ -1,3 +1,33 @@
+2011-02-01  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Async event handlers should not fire within a modal dialog
+        https://bugs.webkit.org/show_bug.cgi?id=53202
+
+        Asychronous events that use EventQueue would currently fire while a
+        modal dialog (e.g. window.alert()) was up. Change EventQueue to use a
+        SuspendableTimer (which automatically gets suspended while dialogs are
+        up and in other cases where JS execution is not allowed).
+        
+        Test: fast/events/scroll-event-during-modal-dialog.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/EventQueue.cpp:
+        (WebCore::EventQueueTimer::EventQueueTimer):
+        (WebCore::EventQueueTimer::fired):
+        (WebCore::EventQueue::EventQueue):
+        (WebCore::EventQueue::enqueueEvent):
+        (WebCore::EventQueue::pendingEventTimerFired):
+        * dom/EventQueue.h:
+        (WebCore::EventQueue::create):
+        * page/SuspendableTimer.cpp:
+        (WebCore::SuspendableTimer::SuspendableTimer):
+        (WebCore::SuspendableTimer::suspend):
+        (WebCore::SuspendableTimer::resume):
+        * page/SuspendableTimer.h:
+
 2011-02-01  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Andreas Kling.

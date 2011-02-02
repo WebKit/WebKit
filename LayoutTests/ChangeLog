@@ -1,3 +1,16 @@
+2011-02-01  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Async event handlers should not fire within a modal dialog
+        https://bugs.webkit.org/show_bug.cgi?id=53202
+        
+        Add tests for a scroll event triggered right before a modal dialog is
+        shown.
+
+        * fast/events/scroll-event-during-modal-dialog-expected.txt: Added.
+        * fast/events/scroll-event-during-modal-dialog.html: Added.
+
 2011-02-01  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Tony Chang.
