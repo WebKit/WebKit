@@ -116,7 +116,7 @@ bool WEBPImageDecoder::decode(bool onlySize)
     }
     buffer.setStatus(ImageFrame::FrameComplete);
     buffer.setHasAlpha(false);
-    buffer.setRect(IntRect(IntPoint(), size()));
+    buffer.setOriginalFrameRect(IntRect(IntPoint(), size()));
     return true;
 }
 

@@ -1,5 +1,25 @@
 2011-02-02  Peter Kasting  <pkasting@google.com>
 
+        Not reviewed, build fix.
+
+        Fix compile after r77427.
+        https://bugs.webkit.org/show_bug.cgi?id=53455
+
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::internalHandleCurrentImage):
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::ImageFrame::operator=):
+        * platform/image-decoders/bmp/BMPImageReader.cpp:
+        (WebCore::BMPImageReader::decodeBMP):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageDecoder::outputScanlines):
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::rowAvailable):
+        * platform/image-decoders/webp/WEBPImageDecoder.cpp:
+        (WebCore::WEBPImageDecoder::decode):
+
+2011-02-02  Peter Kasting  <pkasting@google.com>
+
         Reviewed by David Levin.
 
         Clean up ImageDecoder's comments (remove/trim/clarify).

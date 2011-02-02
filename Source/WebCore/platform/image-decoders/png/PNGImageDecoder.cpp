@@ -341,7 +341,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
         buffer.setColorProfile(m_colorProfile);
 
         // For PNGs, the frame always fills the entire image.
-        buffer.setRect(IntRect(IntPoint(), size()));
+        buffer.setOriginalFrameRect(IntRect(IntPoint(), size()));
 
         if (m_reader->pngPtr()->interlaced)
             m_reader->createInterlaceBuffer((m_reader->hasAlpha() ? 4 : 3) * size().width() * size().height());

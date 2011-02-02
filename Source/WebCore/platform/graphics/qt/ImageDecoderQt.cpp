@@ -213,7 +213,7 @@ bool ImageDecoderQt::internalHandleCurrentImage(size_t frameIndex)
 
     // now into the ImageFrame - even if the image is not
     ImageFrame* const buffer = &m_frameBufferCache[frameIndex];
-    buffer->setRect(m_reader->currentImageRect());
+    buffer->setOriginalFrameRect(m_reader->currentImageRect());
     buffer->setStatus(ImageFrame::FrameComplete);
     buffer->setDuration(m_reader->nextImageDelay());
     buffer->setPixmap(pixmap);

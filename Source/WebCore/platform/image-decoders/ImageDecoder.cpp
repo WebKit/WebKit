@@ -142,7 +142,7 @@ ImageFrame& ImageFrame::operator=(const ImageFrame& other)
         return *this;
 
     copyReferenceToBitmapData(other);
-    setRect(other.rect());
+    setOriginalFrameRect(other.originalFrameRect());
     setStatus(other.status());
     setDuration(other.duration());
     setDisposalMethod(other.disposalMethod());

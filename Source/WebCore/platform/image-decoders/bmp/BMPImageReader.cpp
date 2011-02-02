@@ -87,7 +87,7 @@ bool BMPImageReader::decodeBMP(bool onlySize)
         m_buffer->setHasAlpha(false);
 
         // For BMPs, the frame always fills the entire image.
-        m_buffer->setRect(IntRect(IntPoint(), m_parent->size()));
+        m_buffer->setOriginalFrameRect(IntRect(IntPoint(), m_parent->size()));
 
         if (!m_isTopDown)
             m_coord.setY(m_parent->size().height() - 1);

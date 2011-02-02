@@ -462,7 +462,7 @@ bool JPEGImageDecoder::outputScanlines()
         buffer.setColorProfile(m_colorProfile);
 
         // For JPEGs, the frame always fills the entire image.
-        buffer.setRect(IntRect(IntPoint(), size()));
+        buffer.setOriginalFrameRect(IntRect(IntPoint(), size()));
     }
 
     jpeg_decompress_struct* info = m_reader->info();
