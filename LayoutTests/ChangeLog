@@ -1,3 +1,9 @@
+2011-02-01  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Updated text expectations to avoid conflict.
+
+        * platform/chromium/test_expectations.txt: Tweaked.
+
 2011-02-01  Johnny Ding  <jnd@chromium.org>
 
         Reviewed by Darin Adler.

@@ -2496,13 +2496,13 @@ BUGWEBGL : fast/canvas/webgl/read-pixels-test.html = TIMEOUT
 // These three failures are due to Mesa bugs
 BUGWEBGL : fast/canvas/webgl/gl-uniform-arrays.html = TEXT TIMEOUT
 BUGWEBGL : fast/canvas/webgl/point-size.html = TEXT
-BUGWEBGL : fast/canvas/webgl/gl-object-get-calls.html = TEXT
+BUGWEBGL MAC LINUX : fast/canvas/webgl/gl-object-get-calls.html = TEXT
 
 // Failing after r75175
 BUGWEBGL : fast/canvas/webgl/glsl-conformance.html = CRASH
 
 // These were not fixed by the Mesa 7.9 upgrade. Need to investigate.
-BUGCR60651 WIN : fast/canvas/webgl/gl-object-get-calls.html = TIMEOUT PASS
+BUGCR60651 WIN : fast/canvas/webgl/gl-object-get-calls.html = TIMEOUT PASS TEXT
 // BUGCR60651 WIN : fast/canvas/webgl/glsl-conformance.html = TIMEOUT FAIL
 BUGCR60651 WIN : fast/canvas/webgl/uniform-location.html = TIMEOUT CRASH
 BUGCR60651 LINUX MAC : fast/canvas/webgl/uniform-location.html = TEXT
