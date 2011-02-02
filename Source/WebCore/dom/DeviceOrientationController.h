@@ -55,9 +55,9 @@ private:
 
     Page* m_page;
     DeviceOrientationClient* m_client;
-    typedef HashCountedSet<DOMWindow*> ListenersCountedSet;
+    typedef HashCountedSet<RefPtr<DOMWindow> > ListenersCountedSet;
     ListenersCountedSet m_listeners;
-    typedef HashSet<DOMWindow*> ListenersSet;
+    typedef HashSet<RefPtr<DOMWindow> > ListenersSet;
     ListenersSet m_newListeners;
     Timer<DeviceOrientationController> m_timer;
 };

@@ -54,7 +54,7 @@ void DeviceOrientationController::timerFired(Timer<DeviceOrientationController>*
     RefPtr<DeviceOrientation> orientation = m_client->lastOrientation();
     RefPtr<DeviceOrientationEvent> event = DeviceOrientationEvent::create(eventNames().deviceorientationEvent, orientation.get());
 
-    Vector<DOMWindow*> listenersVector;
+    Vector<RefPtr<DOMWindow> > listenersVector;
     copyToVector(m_newListeners, listenersVector);
     m_newListeners.clear();
     for (size_t i = 0; i < listenersVector.size(); ++i)
@@ -102,7 +102,7 @@ void DeviceOrientationController::removeAllListeners(DOMWindow* window)
 void DeviceOrientationController::didChangeDeviceOrientation(DeviceOrientation* orientation)
 {
     RefPtr<DeviceOrientationEvent> event = DeviceOrientationEvent::create(eventNames().deviceorientationEvent, orientation);
-    Vector<DOMWindow*> listenersVector;
+    Vector<RefPtr<DOMWindow> > listenersVector;
     copyToVector(m_listeners, listenersVector);
     for (size_t i = 0; i < listenersVector.size(); ++i)
         listenersVector[i]->dispatchEvent(event);

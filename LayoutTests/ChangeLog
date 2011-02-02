@@ -1,3 +1,13 @@
+2011-02-02  Cris Neckar  <cdn@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Tests for crash when a domwindow is removed within a device orientation event.
+        https://bugs.webkit.org/show_bug.cgi?id=53623
+
+        * fast/events/device-orientation-crash-expected.txt: Added.
+        * fast/events/device-orientation-crash.html: Added.
+
 2011-02-02  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
