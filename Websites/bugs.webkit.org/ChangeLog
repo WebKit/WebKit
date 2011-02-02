@@ -1,5 +1,14 @@
 2011-02-01  Ojan Vafai  <ojan@chromium.org>
 
+        Reviewed by Adam Barth.
+
+        avoid jitter when loading the comments to a patch
+        https://bugs.webkit.org/show_bug.cgi?id=53570
+
+        * code-review.js:
+
+2011-02-01  Ojan Vafai  <ojan@chromium.org>
+
         Reviewed by Mihai Parparita.
 
         [codereviewtool] extra space at the beginning of lines in side-by-side view

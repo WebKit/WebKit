@@ -374,16 +374,14 @@ var CODE_REVIEW_UNITTEST;
       });
     }
 
-    var help_text = 'Scroll though diffs with the "j" and "k" keys.';
     if (comments.length == 0) {
-      $('#message .commentStatus').text(help_text);
       return;
     }
 
     descriptor = comments.length + ' comment';
     if (comments.length > 1)
       descriptor += 's';
-    $('#message .commentStatus').text('This patch has ' + descriptor + '.  Scroll through them with the "n" and "p" keys. ' + help_text);
+    $('.help').append(' This patch has ' + descriptor + '.  Scroll through them with the "n" and "p" keys.');
   }
 
   function scanForStyleQueueComments(text) {
@@ -997,10 +995,9 @@ var CODE_REVIEW_UNITTEST;
     crawlDiff();
     fetchHistory();
     $(document.body).prepend('<div id="message">' +
-        '<div class="help">Select line numbers to add a comment.' +
+        '<div class="help">Select line numbers to add a comment. Scroll though diffs with the "j" and "k" keys.' +
           '<div class="DiffLinks LinkContainer">' + diffLinksHtml() + '</div>' +
         '</div>' +
-        '<div class="commentStatus"></div>' +
         '</div>');
     $(document.body).append('<div id="toolbar">' +
         '<div class="overallComments">' +
