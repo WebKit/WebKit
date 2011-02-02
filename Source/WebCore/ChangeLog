@@ -1,3 +1,9 @@
+2011-02-02  Sam Weinig  <sam@webkit.org>
+
+        Fix windows clean build.
+
+        * DerivedSources.make:
+
 2011-02-02  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -943,4 +943,9 @@ HeaderDetection.h : DerivedSources.make /System/Library/CoreServices/SystemVersi
 	echo "/* This is a generated file. Do not edit. */" > $@
 	if [ -f $(SDKROOT)/System/Library/Frameworks/AppKit.framework/PrivateHeaders/NSScrollerImpPair_Private.h ]; then echo "#define USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER 1" >> $@; else echo >> $@; fi
 
+else
+
+HeaderDetection.h :
+	echo > $@
+
 endif
