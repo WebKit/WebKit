@@ -21,6 +21,7 @@
 #include "config.h"
 #include "Heap.h"
 
+#include "CodeBlock.h"
 #include "CollectorHeapIterator.h"
 #include "ConservativeSet.h"
 #include "GCActivityCallback.h"
@@ -250,6 +251,11 @@ void Heap::markRoots()
     // Mark temporary vector for Array sorting
     markTempSortVectors(markStack);
     markStack.drain();
+    
+    HashSet<GlobalCodeBlock*>::const_iterator end = m_codeBlocks.end();
+    for (HashSet<GlobalCodeBlock*>::const_iterator it = m_codeBlocks.begin(); it != end; ++it)
+        (*it)->markAggregate(markStack);
+    markStack.drain();
 
     // Mark misc. other roots.
     if (m_markListSet && m_markListSet->size())
@@ -289,27 +295,18 @@ size_t Heap::capacity() const
 
 size_t Heap::globalObjectCount()
 {
-    size_t count = 0;
-    if (JSGlobalObject* head = m_globalData->head) {
-        JSGlobalObject* o = head;
-        do {
-            ++count;
-            o = o->next();
-        } while (o != head);
-    }
-    return count;
+    return m_globalData->globalObjects.uncheckedSize();
 }
 
 size_t Heap::protectedGlobalObjectCount()
 {
     size_t count = 0;
-    if (JSGlobalObject* head = m_globalData->head) {
-        JSGlobalObject* o = head;
-        do {
-            if (m_protectedValues.contains(o))
-                ++count;
-            o = o->next();
-        } while (o != head);
+
+    GlobalObjectMap& map = m_globalData->globalObjects;
+    GlobalObjectMap::iterator end = map.uncheckedEnd();
+    for (GlobalObjectMap::iterator it = map.uncheckedBegin(); it != end; ++it) {
+        if (map.isValid(it) && m_protectedValues.contains(it->second.get()))
+            ++count;
     }
 
     return count;

@@ -104,18 +104,8 @@ JSGlobalObject::~JSGlobalObject()
         (*profiler)->stopProfiling(globalExec(), UString());
     }
 
-    d()->next->d()->prev = d()->prev;
-    d()->prev->d()->next = d()->next;
-    JSGlobalObject*& headObject = head();
-    if (headObject == this)
-        headObject = d()->next;
-    if (headObject == this)
-        headObject = 0;
+    d()->globalData->globalObjects.take(this);
 
-    HashSet<GlobalCodeBlock*>::const_iterator end = codeBlocks().end();
-    for (HashSet<GlobalCodeBlock*>::const_iterator it = codeBlocks().begin(); it != end; ++it)
-        (*it)->clearGlobalObject();
-        
     RegisterFile& registerFile = globalData().interpreter->registerFile();
     if (registerFile.clearGlobalObject(this))
         registerFile.setNumGlobals(0);
@@ -125,21 +115,14 @@ JSGlobalObject::~JSGlobalObject()
 void JSGlobalObject::init(JSObject* thisValue)
 {
     ASSERT(JSLock::currentThreadIsHoldingLock());
-
+    
     structure()->disableSpecificFunctionTracking();
 
     d()->globalData = Heap::heap(this)->globalData();
+    d()->globalData->globalObjects.set(this, this);
     d()->globalScopeChain = ScopeChain(this, d()->globalData.get(), this, thisValue);
 
     JSGlobalObject::globalExec()->init(0, 0, d()->globalScopeChain.node(), CallFrame::noCaller(), 0, 0);
-
-    if (JSGlobalObject*& headObject = head()) {
-        d()->prev = headObject;
-        d()->next = headObject->d()->next;
-        headObject->d()->next->d()->prev = this;
-        headObject->d()->next = this;
-    } else
-        headObject = d()->next = d()->prev = this;
 
     d()->debugger = 0;
 
@@ -345,10 +328,6 @@ void JSGlobalObject::markChildren(MarkStack& markStack)
 {
     JSVariableObject::markChildren(markStack);
     
-    HashSet<GlobalCodeBlock*>::const_iterator end = codeBlocks().end();
-    for (HashSet<GlobalCodeBlock*>::const_iterator it = codeBlocks().begin(); it != end; ++it)
-        (*it)->markAggregate(markStack);
-
     markIfNeeded(markStack, &d()->regExpConstructor);
     markIfNeeded(markStack, &d()->errorConstructor);
     markIfNeeded(markStack, &d()->evalErrorConstructor);

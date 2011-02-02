@@ -59,6 +59,8 @@ public:
     // These unchecked functions provide access to a value even if the value's
     // mark bit is not set. This is used, among other things, to retrieve values
     // during the GC mark phase, which begins by clearing all mark bits.
+    
+    size_t uncheckedSize() { return m_map.size(); }
 
     MappedType* uncheckedGet(const KeyType& key) const { return m_map.get(key).get(); }
     DeprecatedPtr<MappedType>* uncheckedGetSlot(const KeyType& key)

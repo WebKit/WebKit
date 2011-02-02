@@ -32,6 +32,7 @@
 namespace JSC {
 
     class GCActivityCallback;
+    class GlobalCodeBlock;
     class JSCell;
     class JSGlobalData;
     class JSValue;
@@ -91,8 +92,10 @@ namespace JSC {
 
         WeakGCHandle* addWeakGCHandle(JSCell*);
 
-        void pushTempSortVector(WTF::Vector<ValueStringPair>*);
-        void popTempSortVector(WTF::Vector<ValueStringPair>*);        
+        void pushTempSortVector(Vector<ValueStringPair>*);
+        void popTempSortVector(Vector<ValueStringPair>*);
+        
+        HashSet<GlobalCodeBlock*>& codeBlocks() { return m_codeBlocks; }
 
         HashSet<MarkedArgumentBuffer*>& markListSet() { if (!m_markListSet) m_markListSet = new HashSet<MarkedArgumentBuffer*>; return *m_markListSet; }
 
@@ -123,8 +126,9 @@ namespace JSC {
         OperationInProgress m_operationInProgress;
 
         ProtectCountSet m_protectedValues;
-        WTF::Vector<PageAllocationAligned> m_weakGCHandlePools;
-        WTF::Vector<WTF::Vector<ValueStringPair>* > m_tempSortingVectors;
+        Vector<PageAllocationAligned> m_weakGCHandlePools;
+        Vector<Vector<ValueStringPair>* > m_tempSortingVectors;
+        HashSet<GlobalCodeBlock*> m_codeBlocks;
 
         HashSet<MarkedArgumentBuffer*>* m_markListSet;
 

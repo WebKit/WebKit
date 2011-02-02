@@ -62,6 +62,51 @@
 
         Reviewed by Oliver Hunt.
 
+        Refactor JSGlobalObject-related tear-down
+        https://bugs.webkit.org/show_bug.cgi?id=53478
+        
+        While investigating crashes caused by r77082, I noticed some strange
+        destructor-time behaviors. This patch makes them less strange.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::markAggregate):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::globalObject):
+        (JSC::GlobalCodeBlock::GlobalCodeBlock):
+        (JSC::GlobalCodeBlock::~GlobalCodeBlock): Store the set of global code
+        blocks on the Heap, instead of on independent global objects. The heap
+        is guaranteed to outlast any GC-owned data structure. The heap is also
+        a natural place to store objects that needs out-of-band marking, since
+        the heap is responsible for marking all roots.
+
+        * runtime/Heap.cpp:
+        (JSC::Heap::markRoots):
+        (JSC::Heap::globalObjectCount):
+        (JSC::Heap::protectedGlobalObjectCount):
+        * runtime/Heap.h:
+        (JSC::Heap::codeBlocks):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::~JSGlobalObject):
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::markChildren):
+        * runtime/JSGlobalObject.h:
+        * runtime/MarkedSpace.cpp: Store the set of global objects in a weak map
+        owned by JSGlobalData, instead of an instrusive circular linked list.
+        This is simpler, and it avoids destructor-time access between garbage
+        collected objects, which is hard to get right.
+
+        (JSC::MarkedSpace::destroy): Make sure to clear mark bits before tearing
+        everything down. Otherwise, weak data structures will incorrectly report
+        that objects pending destruction are still alive.
+
+2011-02-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
         REGRESSION(77082): GC-related crashes seen: on WebKit2 bot; on GTK 32bit
         bot; loading trac pages; typing in search field
         https://bugs.webkit.org/show_bug.cgi?id=53519

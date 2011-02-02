@@ -1361,6 +1361,7 @@ void CodeBlock::dumpStatistics()
 
 CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlobalObject *globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, SymbolTable* symTab, bool isConstructor)
     : m_globalObject(globalObject)
+    , m_heap(&m_globalObject->globalData().heap)
     , m_numCalleeRegisters(0)
     , m_numVars(0)
     , m_numParameters(0)
@@ -1534,7 +1535,6 @@ void CodeBlock::markAggregate(MarkStack& markStack)
         m_functionExprs[i]->markAggregate(markStack);
     for (size_t i = 0; i < m_functionDecls.size(); ++i)
         m_functionDecls[i]->markAggregate(markStack);
-    markStack.append(&m_globalObject);
 }
 
 HandlerInfo* CodeBlock::handlerForBytecodeOffset(unsigned bytecodeOffset)

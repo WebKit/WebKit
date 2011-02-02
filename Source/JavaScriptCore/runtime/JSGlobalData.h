@@ -39,6 +39,7 @@
 #include "SmallStrings.h"
 #include "Terminator.h"
 #include "TimeoutChecker.h"
+#include "WeakGCMap.h"
 #include "WeakRandom.h"
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/Forward.h>
@@ -72,7 +73,9 @@ namespace JSC {
 #endif
 
     struct HashTable;
-    struct Instruction;    
+    struct Instruction;
+
+    typedef WeakGCMap<JSGlobalObject*, JSGlobalObject> GlobalObjectMap; // FIXME: Would be nice to use a WeakGCSet here.
 
     struct DSTOffsetCache {
         DSTOffsetCache()
@@ -210,7 +213,7 @@ namespace JSC {
 
         HashMap<OpaqueJSClass*, OpaqueJSClassContextData*> opaqueJSClassData;
 
-        JSGlobalObject* head;
+        GlobalObjectMap globalObjects;
         JSGlobalObject* dynamicGlobalObject;
 
         HashSet<JSObject*> stringRecursionCheckVisitedObjects;

@@ -50,6 +50,8 @@ MarkedSpace::MarkedSpace(JSGlobalData* globalData)
 
 void MarkedSpace::destroy()
 {
+    clearMarkBits(); // Make sure weak pointers appear dead during destruction.
+
     for (size_t block = 0; block < m_heap.usedBlocks; ++block)
         freeBlock(block);
     fastFree(m_heap.blocks);

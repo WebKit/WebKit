@@ -249,6 +249,7 @@ namespace JSC {
         CodeBlock(ScriptExecutable* ownerExecutable, CodeType, JSGlobalObject*, PassRefPtr<SourceProvider>, unsigned sourceOffset, SymbolTable* symbolTable, bool isConstructor);
 
         DeprecatedPtr<JSGlobalObject> m_globalObject;
+        Heap* m_heap;
 
     public:
         virtual ~CodeBlock();
@@ -616,16 +617,13 @@ namespace JSC {
         GlobalCodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset)
             : CodeBlock(ownerExecutable, codeType, globalObject, sourceProvider, sourceOffset, &m_unsharedSymbolTable, false)
         {
-            m_globalObject->codeBlocks().add(this);
+            m_heap->codeBlocks().add(this);
         }
 
         ~GlobalCodeBlock()
         {
-            if (m_globalObject)
-                m_globalObject->codeBlocks().remove(this);
+            m_heap->codeBlocks().remove(this);
         }
-
-        void clearGlobalObject() { m_globalObject = 0; }
 
     private:
         SymbolTable m_unsharedSymbolTable;
