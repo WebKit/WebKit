@@ -55,6 +55,11 @@ public:
     FloatPoint contentRectCenter() const { return FloatRect(m_contentRect).center(); }
     IntRect contentRect() const { return m_contentRect; }
 
+    // Returns the rect that encloses the RenderSurface including any reflection.
+    FloatRect drawableContentRect() const;
+
+    TransformationMatrix drawTransform() const { return m_drawTransform; }
+
     // Stores values that are shared between instances of this class that are
     // associated with the same LayerRendererChromium (and hence the same GL
     // context).
@@ -91,6 +96,7 @@ public:
 
 private:
     LayerRendererChromium* layerRenderer();
+    void drawSurface(LayerChromium* maskLayer, const TransformationMatrix& drawTransform);
 
     LayerChromium* m_owningLayer;
     LayerChromium* m_maskLayer;
@@ -100,6 +106,7 @@ private:
     OwnPtr<LayerTexture> m_contentsTexture;
     float m_drawOpacity;
     TransformationMatrix m_drawTransform;
+    TransformationMatrix m_replicaDrawTransform;
     TransformationMatrix m_originTransform;
     IntRect m_scissorRect;
     Vector<LayerChromium*> m_layerList;

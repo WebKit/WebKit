@@ -75,6 +75,8 @@ public:
     virtual void setContentsOpaque(bool);
     virtual void setBackfaceVisibility(bool);
 
+    virtual void setReplicatedByLayer(GraphicsLayer*);
+
     virtual void setOpacity(float);
 
     virtual void setNeedsDisplay();

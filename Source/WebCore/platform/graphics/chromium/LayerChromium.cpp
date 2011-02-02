@@ -163,6 +163,7 @@ LayerChromium::LayerChromium(GraphicsLayerChromium* owner)
     , m_drawDepth(0)
     , m_layerRenderer(0)
     , m_renderSurface(0)
+    , m_replicaLayer(0)
 {
 }
 

@@ -148,6 +148,17 @@ LayerRendererChromium* RenderSurfaceChromium::layerRenderer()
     return m_owningLayer->layerRenderer();
 }
 
+FloatRect RenderSurfaceChromium::drawableContentRect() const
+{
+    FloatRect localContentRect(-0.5 * m_contentRect.width(), -0.5 * m_contentRect.height(),
+                               m_contentRect.width(), m_contentRect.height());
+    FloatRect drawableContentRect = m_drawTransform.mapRect(localContentRect);
+    if (m_owningLayer->replicaLayer())
+        drawableContentRect.unite(m_replicaDrawTransform.mapRect(localContentRect));
+
+    return drawableContentRect;
+}
+
 bool RenderSurfaceChromium::prepareContentsTexture()
 {
     IntSize requiredSize(m_contentRect.size());
@@ -168,26 +179,24 @@ bool RenderSurfaceChromium::prepareContentsTexture()
     return true;
 }
 
-void RenderSurfaceChromium::draw()
+void RenderSurfaceChromium::drawSurface(LayerChromium* maskLayer, const TransformationMatrix& drawTransform)
 {
-    if (m_skipsDraw || !m_contentsTexture)
-        return;
-
     GraphicsContext3D* context3D = layerRenderer()->context();
+
     int shaderMatrixLocation = -1;
     int shaderAlphaLocation = -1;
     const RenderSurfaceChromium::SharedValues* sv = layerRenderer()->renderSurfaceSharedValues();
     ASSERT(sv && sv->initialized());
     bool useMask = false;
-    if (m_maskLayer && m_maskLayer->drawsContent()) {
-        m_maskLayer->updateContentsIfDirty();
-        if (!m_maskLayer->bounds().isEmpty()) {
+    if (maskLayer && maskLayer->drawsContent()) {
+        maskLayer->updateContentsIfDirty();
+        if (!maskLayer->bounds().isEmpty()) {
             context3D->makeContextCurrent();
             layerRenderer()->useShader(sv->maskShaderProgram());
             GLC(context3D, context3D->activeTexture(GraphicsContext3D::TEXTURE0));
             m_contentsTexture->bindTexture();
             GLC(context3D, context3D->activeTexture(GraphicsContext3D::TEXTURE1));
-            m_maskLayer->bindContentsTexture();
+            maskLayer->bindContentsTexture();
             GLC(context3D, context3D->activeTexture(GraphicsContext3D::TEXTURE0));
             shaderMatrixLocation = sv->maskShaderMatrixLocation();
             shaderAlphaLocation = sv->maskShaderAlphaLocation();
@@ -201,16 +210,38 @@ void RenderSurfaceChromium::draw()
         shaderMatrixLocation = sv->shaderMatrixLocation();
         shaderAlphaLocation = sv->shaderAlphaLocation();
     }
+    
+    LayerChromium::drawTexturedQuad(layerRenderer()->context(), layerRenderer()->projectionMatrix(), drawTransform,
+                                        m_contentRect.width(), m_contentRect.height(), m_drawOpacity,
+                                        shaderMatrixLocation, shaderAlphaLocation);
+
+    m_contentsTexture->unreserve();
+
+    if (maskLayer)
+        maskLayer->unreserveContentsTexture();
+}
+
+void RenderSurfaceChromium::draw()
+{
+    if (m_skipsDraw || !m_contentsTexture)
+        return;
+    // FIXME: By using the same RenderSurface for both the content and its reflection,
+    // it's currently not possible to apply a separate mask to the reflection layer
+    // or correctly handle opacity in reflections (opacity must be applied after drawing
+    // both the layer and its reflection). The solution is to introduce yet another RenderSurface
+    // to draw the layer and its reflection in. For now we only apply a separate reflection
+    // mask if the contents don't have a mask of their own.
+    LayerChromium* replicaMaskLayer = m_maskLayer;
+    if (!m_maskLayer && m_owningLayer->replicaLayer())
+        replicaMaskLayer = m_owningLayer->replicaLayer()->maskLayer();
 
     layerRenderer()->setScissorToRect(m_scissorRect);
 
-    LayerChromium::drawTexturedQuad(layerRenderer()->context(), layerRenderer()->projectionMatrix(), m_drawTransform,
-                                    m_contentRect.width(), m_contentRect.height(), m_drawOpacity,
-                                    shaderMatrixLocation, shaderAlphaLocation);
+    // Reflection draws before the layer.
+    if (m_owningLayer->replicaLayer()) 
+        drawSurface(replicaMaskLayer, m_replicaDrawTransform);
 
-    m_contentsTexture->unreserve();
-    if (m_maskLayer)
-        m_maskLayer->unreserveContentsTexture();
+    drawSurface(m_maskLayer, m_drawTransform);
 }
 
 }

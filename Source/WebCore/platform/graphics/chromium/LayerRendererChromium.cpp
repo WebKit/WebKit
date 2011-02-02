@@ -452,14 +452,17 @@ void LayerRendererChromium::updateLayersRecursive(LayerChromium* layer, const Tr
     // these conditions hold:
     // 1. The layer clips its descendants and its transform is not a simple translation.
     // 2. If the layer has opacity != 1 and does not have a preserves-3d transform style.
+    // 3. The layer uses a mask
+    // 4. The layer has a replica (used for reflections)
     // If a layer preserves-3d then we don't create a RenderSurface for it to avoid flattening
     // out its children. The opacity value of the children layers is multiplied by the opacity
     // of their parent.
     bool useSurfaceForClipping = layer->masksToBounds() && !isScaleOrTranslation(combinedTransform);
     bool useSurfaceForOpacity = layer->opacity() != 1 && !layer->preserves3D();
     bool useSurfaceForMasking = layer->maskLayer();
+    bool useSurfaceForReflection = layer->replicaLayer();
     if (((useSurfaceForClipping || useSurfaceForOpacity) && layer->descendantsDrawContent())
-        || useSurfaceForMasking) {
+        || useSurfaceForMasking || useSurfaceForReflection) {
         RenderSurfaceChromium* renderSurface = layer->m_renderSurface.get();
         if (!renderSurface)
             renderSurface = layer->createRenderSurface();
@@ -499,6 +502,11 @@ void LayerRendererChromium::updateLayersRecursive(LayerChromium* layer, const Tr
             layer->maskLayer()->m_targetRenderSurface = renderSurface;
         } else
             renderSurface->m_maskLayer = 0;
+
+        if (layer->replicaLayer() && layer->replicaLayer()->maskLayer()) {
+            layer->replicaLayer()->maskLayer()->setLayerRenderer(this);
+            layer->replicaLayer()->maskLayer()->m_targetRenderSurface = renderSurface;
+        }
 
         renderSurfaceLayerList.append(layer);
     } else {
@@ -571,10 +579,7 @@ void LayerRendererChromium::updateLayersRecursive(LayerChromium* layer, const Tr
 
         if (sublayer->m_renderSurface) {
             RenderSurfaceChromium* sublayerRenderSurface = sublayer->m_renderSurface.get();
-            const IntRect& contentRect = sublayerRenderSurface->contentRect();
-            FloatRect sublayerRect(-0.5 * contentRect.width(), -0.5 * contentRect.height(),
-                                   contentRect.width(), contentRect.height());
-            layer->m_drawableContentRect.unite(enclosingIntRect(sublayerRenderSurface->m_drawTransform.mapRect(sublayerRect)));
+            layer->m_drawableContentRect.unite(enclosingIntRect(sublayerRenderSurface->drawableContentRect()));
             descendants.append(sublayer);
         } else
             layer->m_drawableContentRect.unite(sublayer->m_drawableContentRect);
@@ -590,9 +595,13 @@ void LayerRendererChromium::updateLayersRecursive(LayerChromium* layer, const Tr
 
         // Restrict the RenderSurface size to the portion that's visible.
         FloatSize centerOffsetDueToClipping;
-        renderSurface->m_contentRect.intersect(layer->m_scissorRect);
-        FloatPoint clippedSurfaceCenter = renderSurface->contentRectCenter();
-        centerOffsetDueToClipping = clippedSurfaceCenter - surfaceCenter;
+        // Don't clip if the layer is reflected as the reflection shouldn't be
+        // clipped.
+        if (!layer->replicaLayer()) {
+            renderSurface->m_contentRect.intersect(layer->m_scissorRect);
+            FloatPoint clippedSurfaceCenter = renderSurface->contentRectCenter();
+            centerOffsetDueToClipping = clippedSurfaceCenter - surfaceCenter;
+        }
 
         // The RenderSurface backing texture cannot exceed the maximum supported
         // texture size.
@@ -609,6 +618,15 @@ void LayerRendererChromium::updateLayersRecursive(LayerChromium* layer, const Tr
         // Adjust the origin of the transform to be the center of the render surface.
         renderSurface->m_drawTransform = renderSurface->m_originTransform;
         renderSurface->m_drawTransform.translate3d(surfaceCenter.x() + centerOffsetDueToClipping.width(), surfaceCenter.y() + centerOffsetDueToClipping.height(), 0);
+
+        // Compute the transformation matrix used to draw the replica of the render
+        // surface.
+        if (layer->replicaLayer()) {
+            renderSurface->m_replicaDrawTransform = renderSurface->m_originTransform;
+            renderSurface->m_replicaDrawTransform.translate3d(layer->replicaLayer()->position().x(), layer->replicaLayer()->position().y(), 0);
+            renderSurface->m_replicaDrawTransform.multiply(layer->replicaLayer()->transform());
+            renderSurface->m_replicaDrawTransform.translate3d(surfaceCenter.x() - anchorPoint.x() * bounds.width(), surfaceCenter.y() - anchorPoint.y() * bounds.height(), 0);
+        }
     }
 
     // Compute the depth value of the center of the layer which will be used when
@@ -695,10 +713,9 @@ void LayerRendererChromium::drawLayer(LayerChromium* layer, RenderSurfaceChromiu
     if (!isLayerVisible)
         return;
 
-    // FIXME: Need to take into account the transform of the containing
-    // RenderSurface here, otherwise single-sided layers that draw on
-    // transformed surfaces won't always be culled properly.
-    if (!layer->doubleSided() && layer->m_drawTransform.m33() < 0)
+    // FIXME: Need to take into account the commulative render surface transforms all the way from
+    //        the default render surface in order to determine visibility.
+    if (!layer->doubleSided() && layer->m_renderSurface->drawTransform().multiply(layer->m_drawTransform).m33() < 0)
          return;
 
     if (layer->drawsContent()) {

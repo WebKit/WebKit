@@ -155,6 +155,9 @@ public:
 
     void setOwner(GraphicsLayerChromium* owner) { m_owner = owner; }
 
+    void setReplicaLayer(LayerChromium* layer) { m_replicaLayer = layer; }
+    LayerChromium* replicaLayer() { return m_replicaLayer; }
+
     // Returns the rect containtaining this layer in the current view's coordinate system.
     const IntRect getDrawRect() const;
 
@@ -304,6 +307,9 @@ private:
 
     // Hierarchical bounding rect containing the layer and its descendants.
     IntRect m_drawableContentRect;
+
+    // Replica layer used for reflections.
+    LayerChromium* m_replicaLayer;
 
     String m_name;
 };

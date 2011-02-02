@@ -294,6 +294,15 @@ void GraphicsLayerChromium::setOpacity(float opacity)
     primaryLayer()->setOpacity(opacity);
 }
 
+void GraphicsLayerChromium::setReplicatedByLayer(GraphicsLayer* layer)
+{
+    GraphicsLayerChromium* layerChromium = static_cast<GraphicsLayerChromium*>(layer);
+    GraphicsLayer::setReplicatedByLayer(layer);
+    LayerChromium* replicaLayer = layerChromium ? layerChromium->primaryLayer() : 0;
+    primaryLayer()->setReplicaLayer(replicaLayer);
+}
+
+
 void GraphicsLayerChromium::setContentsNeedsDisplay()
 {
     if (m_contentsLayer)
@@ -505,6 +514,7 @@ void GraphicsLayerChromium::updateAnchorPoint()
 {
     primaryLayer()->setAnchorPoint(FloatPoint(m_anchorPoint.x(), m_anchorPoint.y()));
     primaryLayer()->setAnchorPointZ(m_anchorPoint.z());
+
     updateLayerPosition();
 }
 
