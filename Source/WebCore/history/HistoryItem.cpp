@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-const uint32_t backForwardTreeEncodingVersion = 1;
+const uint32_t backForwardTreeEncodingVersion = 2;
 
 static long long generateSequenceNumber()
 {

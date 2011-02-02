@@ -1,3 +1,29 @@
+2011-02-02  Adam Roben  <aroben@apple.com>
+
+        Encode/decode FormData and FormDataElement objects consistently
+
+        Fixes <http://webkit.org/b/53615> <rdar://problem/8943346> WebKit2: Restoring session state
+        that contains form data fails (asserts in Debug build)
+
+        To prevent this from interfering with WebKit2 testing, it's useful to get this into a build
+        now, even though we don't have an automated test for it yet. Writing a test is covered by
+        <http://webkit.org/b/53616>.
+
+        Reviewed by Darin Adler.
+
+        * history/HistoryItem.cpp: Bump the encoding version, since this patch changes how we encode
+        FormData objects.
+
+        * platform/network/FormData.cpp:
+        (WebCore::decode): Decode the type from the Decoder, rather than getting it from the
+        default-constructed FormDataElement. Failing to do this meant that all future uses of the
+        Decoder would be reading from an unexpected part of the buffer (i.e., the next decode would
+        start by reading the uint32_t that we forgot to decode here, and so on). We already had code
+        to correctly set the FormDataElement's type based on this decoded type later in the
+        function.
+        (WebCore::FormData::encodeForBackForward): Encode m_identifier as an int64_t, since that
+        matches its type and how we decode it.
+
 2011-02-02  Dan Winship  <danw@gnome.org>
 
         Reviewed by Martin Robinson.

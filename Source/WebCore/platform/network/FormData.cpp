@@ -364,7 +364,9 @@ static void encode(Encoder& encoder, const FormDataElement& element)
 
 static bool decode(Decoder& decoder, FormDataElement& element)
 {
-    uint32_t type = element.m_type;
+    uint32_t type;
+    if (!decoder.decodeUInt32(type))
+        return false;
 
     switch (type) {
     case FormDataElement::data: {
@@ -432,7 +434,7 @@ void FormData::encodeForBackForward(Encoder& encoder) const
 
     encoder.encodeBool(m_hasGeneratedFiles);
 
-    encoder.encodeBool(m_identifier);
+    encoder.encodeInt64(m_identifier);
 }
 
 PassRefPtr<FormData> FormData::decodeForBackForward(Decoder& decoder)
