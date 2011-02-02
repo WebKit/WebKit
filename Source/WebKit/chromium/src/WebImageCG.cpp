@@ -49,20 +49,38 @@ namespace WebKit {
 
 WebImage WebImage::fromData(const WebData& data, const WebSize& desiredSize)
 {
-    // FIXME: Do something like what WebImageSkia.cpp does to enumerate frames.
-    // Not sure whether the CG decoder uses the same frame ordering rules (if so
-    // we can just use the same logic).
-
     ImageSource source;
     source.setData(PassRefPtr<SharedBuffer>(data).get(), true);
     if (!source.isSizeAvailable())
         return WebImage();
 
-    RetainPtr<CGImageRef> frame0(AdoptCF, source.createFrameAtIndex(0));
-    if (!frame0)
+    // Frames are arranged by decreasing size, then decreasing bit depth.
+    // Pick the frame closest to |desiredSize|'s area without being smaller,
+    // which has the highest bit depth.
+    const size_t frameCount = source.frameCount();
+    size_t index = 0; // Default to first frame if none are large enough.
+    int frameAreaAtIndex = 0;
+    for (size_t i = 0; i < frameCount; ++i) {
+        const IntSize frameSize = source.frameSizeAtIndex(i);
+        if (WebSize(frameSize) == desiredSize) {
+            index = i;
+            break; // Perfect match.
+        }
+        const int frameArea = frameSize.width() * frameSize.height();
+        if (frameArea < (desiredSize.width * desiredSize.height))
+            break; // No more frames that are large enough.
+
+        if (!i || (frameArea < frameAreaAtIndex)) {
+            index = i; // Closer to desired area than previous best match.
+            frameAreaAtIndex = frameArea;
+        }
+    }
+
+    RetainPtr<CGImageRef> frame(AdoptCF, source.createFrameAtIndex(index));
+    if (!frame)
         return WebImage();
 
-    return WebImage(frame0.get());
+    return WebImage(frame.get());
 }
 
 void WebImage::reset()

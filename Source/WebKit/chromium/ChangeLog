@@ -1,3 +1,13 @@
+2011-02-02  Matthew Vosburgh  <maf@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Some favicons not correctly decoded by Chromium/Mac
+        https://bugs.webkit.org/show_bug.cgi?id=53448
+
+        * src/WebImageCG.cpp:
+        (WebKit::WebImage::fromData):
+
 2011-02-02  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Dave Hyatt.
