@@ -1,3 +1,17 @@
+2011-02-01  chris reiss  <christopher.reiss@nokia.com>
+
+        Reviewed by Adam Barth.
+
+        Self-replicating code makes Safari hang and eventually crash
+        https://bugs.webkit.org/show_bug.cgi?id=15123
+
+        * fast/dom/Document/document-close-iframe-load-expected.txt: Added.
+        * fast/dom/Document/document-close-iframe-load.html: Added.
+        * fast/dom/Document/document-close-nested-iframe-load-expected.txt: Added.
+        * fast/dom/Document/document-close-nested-iframe-load.html: Added.
+        * fast/dom/Document/document-write-recursion-expected.txt: Added.
+        * fast/dom/Document/document-write-recursion.html: Added.
+
 2011-02-01  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Updated text expectations to avoid conflict.

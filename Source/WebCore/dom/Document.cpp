@@ -102,6 +102,7 @@
 #include "MouseEventWithHitTestResults.h"
 #include "MutationEvent.h"
 #include "NameNodeList.h"
+#include "NestingLevelIncrementer.h"
 #include "NodeFilter.h"
 #include "NodeIterator.h"
 #include "NodeWithIndex.h"
@@ -220,6 +221,8 @@ namespace WebCore {
 using namespace HTMLNames;
 
 // #define INSTRUMENT_LAYOUT_SCHEDULING 1
+
+static const unsigned cMaxWriteRecursionDepth = 21;
 
 // This amount of time must have elapsed before we will even consider scheduling a layout without a delay.
 // FIXME: For faster machines this value can really be lowered to 200.  250 is adequate, but a little high
@@ -424,6 +427,8 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML, con
     , m_loadEventDelayTimer(this, &Document::loadEventDelayTimerFired)
     , m_directionSetOnDocumentElement(false)
     , m_writingModeSetOnDocumentElement(false)
+    , m_writeRecursionIsTooDeep(false)
+    , m_writeRecursionDepth(0)
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     , m_nextRequestAnimationFrameCallbackId(0)
 #endif
@@ -2166,6 +2171,14 @@ int Document::elapsedTime() const
 
 void Document::write(const SegmentedString& text, Document* ownerDocument)
 {
+    NestingLevelIncrementer nestingLevelIncrementer(m_writeRecursionDepth);
+
+    m_writeRecursionIsTooDeep = (m_writeRecursionDepth > 1) && m_writeRecursionIsTooDeep;
+    m_writeRecursionIsTooDeep = (m_writeRecursionDepth > cMaxWriteRecursionDepth) || m_writeRecursionIsTooDeep;
+
+    if (m_writeRecursionIsTooDeep)
+       return;
+
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!ownerElement())
         printf("Beginning a document.write at %d\n", elapsedTime());

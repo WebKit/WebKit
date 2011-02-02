@@ -1382,6 +1382,8 @@ private:
 
     DocumentTiming m_documentTiming;
     RefPtr<MediaQueryMatcher> m_mediaQueryMatcher;
+    bool m_writeRecursionIsTooDeep;
+    unsigned m_writeRecursionDepth;
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     typedef Vector<RefPtr<RequestAnimationFrameCallback> > RequestAnimationFrameCallbackList;
