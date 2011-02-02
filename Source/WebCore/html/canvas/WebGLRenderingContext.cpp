@@ -714,6 +714,10 @@ void WebGLRenderingContext::bufferData(GC3Denum target, GC3Dsizeiptr size, GC3De
     WebGLBuffer* buffer = validateBufferDataParameters(target, usage);
     if (!buffer)
         return;
+    if (size < 0) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+        return;
+    }
     if (!isErrorGeneratedOnOutOfBoundsAccesses()) {
         if (!buffer->associateBufferData(size)) {
             m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
@@ -779,6 +783,10 @@ void WebGLRenderingContext::bufferSubData(GC3Denum target, GC3Dintptr offset, Ar
     WebGLBuffer* buffer = validateBufferDataParameters(target, GraphicsContext3D::STATIC_DRAW);
     if (!buffer)
         return;
+    if (offset < 0) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+        return;
+    }
     if (!data)
         return;
     if (!isErrorGeneratedOnOutOfBoundsAccesses()) {
@@ -800,6 +808,10 @@ void WebGLRenderingContext::bufferSubData(GC3Denum target, GC3Dintptr offset, Ar
     WebGLBuffer* buffer = validateBufferDataParameters(target, GraphicsContext3D::STATIC_DRAW);
     if (!buffer)
         return;
+    if (offset < 0) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+        return;
+    }
     if (!data)
         return;
     if (!isErrorGeneratedOnOutOfBoundsAccesses()) {

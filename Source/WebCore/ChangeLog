@@ -1,3 +1,14 @@
+2011-02-02  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        bufferData and bufferSubData should generate INVALID_VALUE with negative input
+        https://bugs.webkit.org/show_bug.cgi?id=53626
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::bufferData):
+        (WebCore::WebGLRenderingContext::bufferSubData):
+
 2011-02-02  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Darin Adler and Steve Falkenburg.
