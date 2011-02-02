@@ -428,6 +428,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/WeakGCMap.h \
 	Source/JavaScriptCore/runtime/WeakGCPtr.h \
 	Source/JavaScriptCore/runtime/WeakRandom.h \
+	Source/JavaScriptCore/runtime/WriteBarrier.h \
 	Source/JavaScriptCore/wtf/AlwaysInline.h \
 	Source/JavaScriptCore/wtf/ASCIICType.h \
 	Source/JavaScriptCore/wtf/Assertions.cpp \

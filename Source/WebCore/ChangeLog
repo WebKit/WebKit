@@ -1,3 +1,13 @@
+2011-02-02  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Fix dist compilation
+        https://bugs.webkit.org/show_bug.cgi?id=53579
+
+        * GNUmakefile.am: Added FontWidthVariant.h to the sources, it was
+        added in r77153.
+
 2011-02-02  Dai Mikurube  <dmikurube@google.com>
 
         Reviewed by David Levin.

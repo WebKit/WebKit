@@ -2417,6 +2417,7 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/FontSelector.h \
 	Source/WebCore/platform/graphics/FontSmoothingMode.h \
 	Source/WebCore/platform/graphics/FontTraitsMask.h \
+	Source/WebCore/platform/graphics/FontWidthVariant.h \
 	Source/WebCore/platform/graphics/GeneratedImage.cpp \
 	Source/WebCore/platform/graphics/GeneratedImage.h \
 	Source/WebCore/platform/graphics/Generator.h \
