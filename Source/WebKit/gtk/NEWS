@@ -1,4 +1,17 @@
 =================
+WebKitGTK+ 1.3.11
+=================
+
+What's new in WebKitGTK+ 1.3.11?
+
+  - Add a beginDragWithFiles implementation for the GTK+ event sender.
+  - ResourceHandleSoup do not wait for streams to close to issue
+    didFinishLoading.
+  - Move the request/cache code to libsoup.
+  - A11y bugfixes.
+  - Many other bugfixes.
+
+=================
 WebKitGTK+ 1.3.10
 =================
 
