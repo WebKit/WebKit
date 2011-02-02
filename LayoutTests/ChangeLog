@@ -1,3 +1,12 @@
+2011-02-02  Martin Robinson  <mrobinson@igalia.com>
+
+        Unskip a test that just needs platform-specific results. Re-classify
+        two other failures with more pertinent information.
+
+        * platform/gtk/Skipped: Organize the skipped list a bit. Unskip a test.
+        Remove obsolete comments.
+        * platform/gtk/editing/inserting/5994480-2-expected.txt: Added.
+
 2011-02-01  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
