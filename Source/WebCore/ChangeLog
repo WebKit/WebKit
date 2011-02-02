@@ -1,3 +1,15 @@
+2011-02-01  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] GObject DOM bindings do no support the CallWith attribute
+        https://bugs.webkit.org/show_bug.cgi?id=53331
+
+        Disable building GObject DOM bindings for IndexedDB because we do not support
+        the CallWith attribute at this time.
+
+        * bindings/gobject/GNUmakefile.am: Disable building bindings for the IndexedDB API.
+
 2011-02-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Brady Eidson.
