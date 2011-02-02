@@ -738,7 +738,7 @@ class TestExpectationsFile:
         """Sets the expected state for a given test.
 
         This routine assumes the test has not been added before. If it has,
-        use _ClearExpectationsForTest() to reset the state prior to
+        use _clear_expectations_for_test() to reset the state prior to
         calling this.
 
         Args:
@@ -783,12 +783,11 @@ class TestExpectationsFile:
         than a previous listing.
         """
         if test in self._test_list_paths:
-            base_path = self._test_list_paths[test][0]
-            self._test_to_expectations.pop(base_path, '')
-            self._remove_from_sets(base_path, self._expectation_to_tests)
-            self._remove_from_sets(base_path, self._modifier_to_tests)
-            self._remove_from_sets(base_path, self._timeline_to_tests)
-            self._remove_from_sets(base_path, self._result_type_to_tests)
+            self._test_to_expectations.pop(test, '')
+            self._remove_from_sets(test, self._expectation_to_tests)
+            self._remove_from_sets(test, self._modifier_to_tests)
+            self._remove_from_sets(test, self._timeline_to_tests)
+            self._remove_from_sets(test, self._result_type_to_tests)
 
         self._test_list_paths[test] = self._fs.normpath(test_list_path)
 

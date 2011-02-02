@@ -242,6 +242,13 @@ BUG_OVERRIDE : failures/expected/text.html = CRASH
         self.assertTrue(match('failures/expected/crash.html', SKIP, False))
         self.assertTrue(match('passes/text.html', PASS, False))
 
+    def test_more_specific_override_resets_skip(self):
+        self.parse_exp("BUGX SKIP : failures/expected = TEXT\n"
+                       "BUGX : failures/expected/text.html = IMAGE\n")
+        self.assert_exp('failures/expected/text.html', IMAGE)
+        self.assertFalse(self._port._filesystem.join(self._port.layout_tests_dir(),
+                                                     'failures/expected/text.html') in
+                         self._exp.get_tests_with_result_type(SKIP))
 
 class ExpectationSyntaxTests(Base):
     def test_missing_expectation(self):

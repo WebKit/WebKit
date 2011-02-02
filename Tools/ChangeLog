@@ -1,5 +1,20 @@
 2011-02-01  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Mihai Parparita.
+
+        new-run-webkit-tests: stop skipping so many tests
+
+        r77163 introduced a regression where we weren't resetting test
+        expectations properly and were skipping too many tests as a
+        result. This patch fixes that and adds a test for it.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53551
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations_unittest.py:
+
+2011-02-01  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Tony Chang.
 
         new-run-webkit-tests: add first stub of test_runner2. This
