@@ -1,5 +1,16 @@
 2011-02-01  Ojan Vafai  <ojan@chromium.org>
 
+        Reviewed by Mihai Parparita.
+
+        [codereviewtool] extra space at the beginning of lines in side-by-side view
+        https://bugs.webkit.org/show_bug.cgi?id=53550
+
+        The newline between the spans turns into user-visible space in side-by-side mode.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2011-02-01  Ojan Vafai  <ojan@chromium.org>
+
         Increment version number to cache-bust code-review.js.
 
         * PrettyPatch/PrettyPatch.rb:

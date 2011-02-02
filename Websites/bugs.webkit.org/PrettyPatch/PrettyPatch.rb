@@ -417,7 +417,7 @@ body {
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
-<script src="code-review.js?version=30"></script>
+<script src="code-review.js?version=31"></script>
 EOF
 
     def self.revisionOrDescription(string)
@@ -759,7 +759,7 @@ END
         def to_html
             markedUpText = self.text_as_html
             str = "<div class='%s'>\n" % self.classes.join(' ')
-            str += "<span class='from lineNumber'>%s</span><span class='to lineNumber'>%s</span>\n" %
+            str += "<span class='from lineNumber'>%s</span><span class='to lineNumber'>%s</span>" %
                    [@fromLineNumber.nil? ? '&nbsp;' : @fromLineNumber,
                     @toLineNumber.nil? ? '&nbsp;' : @toLineNumber] unless @fromLineNumber.nil? and @toLineNumber.nil?
             str += "<span class='text'>%s</span>\n" % markedUpText
