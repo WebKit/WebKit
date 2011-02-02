@@ -107,8 +107,11 @@ typedef HashMap<String, ValidationVector> ValidationMap;
     id _trackingRectOwner;
     void* _trackingRectUserData;
 
+    RetainPtr<NSView> _layerHostingView;
+
+    // FIXME: Remove _oldLayerHostingView.
 #if USE(ACCELERATED_COMPOSITING)
-    NSView *_layerHostingView;
+    NSView *_oldLayerHostingView;
 #endif
 
     RetainPtr<id> _remoteAccessibilityChild;
@@ -1501,8 +1504,11 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 - (NSView *)hitTest:(NSPoint)point
 {
     NSView *hitView = [super hitTest:point];
-#if USE(ACCELERATED_COMPOSITING)
     if (hitView && _data && hitView == _data->_layerHostingView)
+        hitView = self;
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (hitView && _data && hitView == _data->_oldLayerHostingView)
         hitView = self;
 #endif
     return hitView;
@@ -1767,7 +1773,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 #if USE(ACCELERATED_COMPOSITING)
 - (void)_startAcceleratedCompositing:(CALayer *)rootLayer
 {
-    if (!_data->_layerHostingView) {
+    if (!_data->_oldLayerHostingView) {
         NSView *hostingView = [[NSView alloc] initWithFrame:[self bounds]];
 #if !defined(BUILDING_ON_LEOPARD)
         [hostingView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
@@ -1775,7 +1781,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
         
         [self addSubview:hostingView];
         [hostingView release];
-        _data->_layerHostingView = hostingView;
+        _data->_oldLayerHostingView = hostingView;
     }
 
     // Make a container layer, which will get sized/positioned by AppKit and CA.
@@ -1809,8 +1815,8 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     [viewLayer setTransform:CATransform3DMakeScale(scaleFactor, scaleFactor, 1)];
 #endif
 
-    [_data->_layerHostingView setLayer:viewLayer];
-    [_data->_layerHostingView setWantsLayer:YES];
+    [_data->_oldLayerHostingView setLayer:viewLayer];
+    [_data->_oldLayerHostingView setWantsLayer:YES];
     
     // Parent our root layer in the container layer
     [viewLayer addSublayer:rootLayer];
@@ -1818,11 +1824,11 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (void)_stopAcceleratedCompositing
 {
-    if (_data->_layerHostingView) {
-        [_data->_layerHostingView setLayer:nil];
-        [_data->_layerHostingView setWantsLayer:NO];
-        [_data->_layerHostingView removeFromSuperview];
-        _data->_layerHostingView = nil;
+    if (_data->_oldLayerHostingView) {
+        [_data->_oldLayerHostingView setLayer:nil];
+        [_data->_oldLayerHostingView setWantsLayer:NO];
+        [_data->_oldLayerHostingView removeFromSuperview];
+        _data->_oldLayerHostingView = nil;
     }
 }
 
@@ -1855,12 +1861,32 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (void)_enterAcceleratedCompositingMode:(const LayerTreeContext&)layerTreeContext
 {
-    // FIXME: Implement.
+    ASSERT(!_data->_layerHostingView);
+
+    // Create an NSView that will host our layer tree.
+    _data->_layerHostingView.adoptNS([[NSView alloc] initWithFrame:[self bounds]]);
+    [_data->_layerHostingView.get() setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    [self addSubview:_data->_layerHostingView.get()];
+
+    // Create a root layer that will back the NSView.
+    CALayer *rootLayer = [CALayer layer];
+#ifndef NDEBUG
+    [rootLayer setName:@"Hosting root layer"];
+#endif
+
+    [_data->_layerHostingView.get() setLayer:rootLayer];
+    [_data->_layerHostingView.get() setWantsLayer:YES];
 }
 
 - (void)_exitAcceleratedCompositingMode
 {
-    // FIXME: Implement.
+    ASSERT(_data->_layerHostingView);
+
+    [_data->_layerHostingView.get() setLayer:nil];
+    [_data->_layerHostingView.get() setWantsLayer:NO];
+    [_data->_layerHostingView.get() removeFromSuperview];
+    
+    _data->_layerHostingView = nullptr;
 }
 
 - (void)_pageDidEnterAcceleratedCompositing
