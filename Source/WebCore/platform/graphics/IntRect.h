@@ -103,9 +103,6 @@ public:
 
     bool isEmpty() const { return m_size.isEmpty(); }
 
-    int right() const { return x() + width(); }
-    int bottom() const { return y() + height(); }
-
     // NOTE: The result is rounded to integer values, and thus may be not the exact
     // center point.
     IntPoint center() const { return IntPoint(x() + width() / 2, y() + height() / 2); }

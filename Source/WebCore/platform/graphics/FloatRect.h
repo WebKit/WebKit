@@ -102,11 +102,6 @@ public:
 
     bool isEmpty() const { return m_size.isEmpty(); }
 
-    float left() const { return x(); }
-    float right() const { return x() + width(); }
-    float top() const { return y(); }
-    float bottom() const { return y() + height(); }
-
     FloatPoint center() const { return FloatPoint(x() + width() / 2, y() + height() / 2); }
 
     void move(const FloatSize& delta) { m_location += delta; } 
@@ -123,7 +118,6 @@ public:
     bool contains(float px, float py) const
         { return px >= x() && px <= maxX() && py >= y() && py <= maxY(); }
     bool contains(const FloatPoint& point) const { return contains(point.x(), point.y()); }
-
 
     void inflateX(float dx) {
         m_location.setX(m_location.x() - dx);
