@@ -182,7 +182,7 @@ class ChromiumPort(base.Port):
             if offset == -1:
                 self._chromium_base_dir = self._filesystem.join(
                     abspath[0:abspath.find('Tools')],
-                    'WebKit', 'chromium')
+                    'Source', 'WebKit', 'chromium')
             else:
                 self._chromium_base_dir = abspath[0:offset]
         return self._filesystem.join(self._chromium_base_dir, *comps)

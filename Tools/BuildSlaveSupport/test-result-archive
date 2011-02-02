@@ -46,7 +46,7 @@ def main():
     if options.platform == 'chromium':
         # See results_directory() in webkitpy/layout_tests/port/chromium.py.
         layoutTestResultsDir = os.path.abspath(os.path.join(sourceRootDirectory,
-            "WebKit", "chromium", "webkit", options.configuration.capitalize(),
+            "Source", "WebKit", "chromium", "webkit", options.configuration.capitalize(),
             "layout-test-results"))
 
     return archiveTestResults(options.configuration, options.platform, layoutTestResultsDir)

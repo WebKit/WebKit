@@ -1,3 +1,13 @@
+2011-02-02  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Update new-run-webkit-tests --chromium to put output under Source/...
+        https://bugs.webkit.org/show_bug.cgi?id=53612
+
+        * BuildSlaveSupport/test-result-archive:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+
 2011-01-28  Tony Chang  <tony@chromium.org>
 
         Reviewed by Eric Seidel.
