@@ -1,3 +1,20 @@
+2011-01-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        HTML5 TreeBuilder regressed a Peacekeeper DOM test by 40%
+        https://bugs.webkit.org/show_bug.cgi?id=48719
+
+        It's unclear exactly what the Peacekeeper benchmark is testing,
+        because I haven't found a way to run it myself.
+
+        However, I constructed a benchmark which shows at least one possible slow point.
+        The HTML5 spec talks about creating a new document for every time we use
+        the fragment parsing algorithm.  Document() it turns out, it a huge bloated
+        mess, and the constructor and destructor do a huge amount of work.
+
+        * benchmarks/parser/tiny-innerHTML.html: Added.
+
 2011-01-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r77050.
