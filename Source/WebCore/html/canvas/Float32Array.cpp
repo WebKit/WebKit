@@ -52,14 +52,14 @@ Float32Array::Float32Array(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, 
 {
 }
 
-PassRefPtr<Float32Array> Float32Array::subset(int start) const
+PassRefPtr<Float32Array> Float32Array::subarray(int start) const
 {
-    return subset(start, length());
+    return subarray(start, length());
 }
 
-PassRefPtr<Float32Array> Float32Array::subset(int start, int end) const
+PassRefPtr<Float32Array> Float32Array::subarray(int start, int end) const
 {
-    return subsetImpl<Float32Array>(start, end);
+    return subarrayImpl<Float32Array>(start, end);
 }
 
 }

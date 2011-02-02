@@ -52,14 +52,14 @@ Uint16Array::Uint16Array(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, un
 {
 }
 
-PassRefPtr<Uint16Array> Uint16Array::subset(int start) const
+PassRefPtr<Uint16Array> Uint16Array::subarray(int start) const
 {
-    return subset(start, length());
+    return subarray(start, length());
 }
 
-PassRefPtr<Uint16Array> Uint16Array::subset(int start, int end) const
+PassRefPtr<Uint16Array> Uint16Array::subarray(int start, int end) const
 {
-    return subsetImpl<Uint16Array>(start, end);
+    return subarrayImpl<Uint16Array>(start, end);
 }
 
 }

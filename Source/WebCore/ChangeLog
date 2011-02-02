@@ -1,3 +1,41 @@
+2011-02-02  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        Rename Typed Array subset to subarray
+        https://bugs.webkit.org/show_bug.cgi?id=53618
+
+        * html/canvas/Float32Array.cpp:
+        (WebCore::Float32Array::subarray):
+        * html/canvas/Float32Array.h:
+        * html/canvas/Float32Array.idl:
+        * html/canvas/Int16Array.cpp:
+        (WebCore::Int16Array::subarray):
+        * html/canvas/Int16Array.h:
+        * html/canvas/Int16Array.idl:
+        * html/canvas/Int32Array.cpp:
+        (WebCore::Int32Array::subarray):
+        * html/canvas/Int32Array.h:
+        * html/canvas/Int32Array.idl:
+        * html/canvas/Int8Array.cpp:
+        (WebCore::Int8Array::subarray):
+        * html/canvas/Int8Array.h:
+        * html/canvas/Int8Array.idl:
+        * html/canvas/TypedArrayBase.h:
+        (WebCore::TypedArrayBase::subarrayImpl):
+        * html/canvas/Uint16Array.cpp:
+        (WebCore::Uint16Array::subarray):
+        * html/canvas/Uint16Array.h:
+        * html/canvas/Uint16Array.idl:
+        * html/canvas/Uint32Array.cpp:
+        (WebCore::Uint32Array::subarray):
+        * html/canvas/Uint32Array.h:
+        * html/canvas/Uint32Array.idl:
+        * html/canvas/Uint8Array.cpp:
+        (WebCore::Uint8Array::subarray):
+        * html/canvas/Uint8Array.h:
+        * html/canvas/Uint8Array.idl:
+
 2011-02-02  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

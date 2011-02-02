@@ -1,3 +1,18 @@
+2011-02-02  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        Rename Typed Array subset to subarray
+        https://bugs.webkit.org/show_bug.cgi?id=53618
+
+        * fast/canvas/webgl/array-setters.html:
+        * fast/canvas/webgl/array-unit-tests-expected.txt:
+        * fast/canvas/webgl/array-unit-tests.html:
+        * fast/canvas/webgl/draw-elements-out-of-bounds-expected.txt:
+        * fast/canvas/webgl/draw-elements-out-of-bounds.html:
+        * fast/canvas/webgl/webgl-array-invalid-ranges-expected.txt:
+        * fast/canvas/webgl/webgl-array-invalid-ranges.html:
+
 2011-02-02  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Added GPU fails from bots.

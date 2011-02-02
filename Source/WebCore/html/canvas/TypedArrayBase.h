@@ -104,7 +104,7 @@ protected:
     }
 
     template <class Subclass>
-    PassRefPtr<Subclass> subsetImpl(int start, int end) const
+    PassRefPtr<Subclass> subarrayImpl(int start, int end) const
     {
         unsigned offset, length;
         calculateOffsetAndLength(start, end, m_length, &offset, &length);

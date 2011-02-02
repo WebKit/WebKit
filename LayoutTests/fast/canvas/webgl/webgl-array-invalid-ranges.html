@@ -62,18 +62,18 @@ function testConstructionOfHugeArray(type, name, sz) {
 var array;
 var typeSize;
 
-function testSlicingWithOutOfRangeValues(type, name, sz) {
-    debug("Testing slicing of " + name);
+function testSubarrayWithOutOfRangeValues(type, name, sz) {
+    debug("Testing subarray of " + name);
     try {
         var buffer = new ArrayBuffer(32);
         array = new type(buffer);
         typeSize = sz;
         shouldBe("array.length", "32 / typeSize");
         try {
-            shouldBe("array.subset(4, 0x3FFFFFFF).length", "(32 / typeSize) - 4");
-            shouldBe("array.subset(4, -2147483648).length", "0");
+            shouldBe("array.subarray(4, 0x3FFFFFFF).length", "(32 / typeSize) - 4");
+            shouldBe("array.subarray(4, -2147483648).length", "0");
         } catch (e) {
-            testFailed("Slicing of " + name + " threw exception");
+            testFailed("Subarray of " + name + " threw exception");
         }
     } catch (e) {
         testFailed("Exception: " + e);
@@ -140,7 +140,7 @@ for (var i = 0; i < typeNames.length; i++) {
         testConstructionWithOutOfRangeValues(type, name);
         testConstructionWithNegativeOutOfRangeValues(type, name);
         testConstructionOfHugeArray(type, name, typeSizes[i]);
-        testSlicingWithOutOfRangeValues(type, name, typeSizes[i]);
+        testSubarrayWithOutOfRangeValues(type, name, typeSizes[i]);
         testSettingFromArrayWithOutOfRangeOffset(type, name);
         testSettingFromFakeArrayWithOutOfRangeLength(type, name);
         testSettingFromWebGLArrayWithOutOfRangeOffset(type, name);

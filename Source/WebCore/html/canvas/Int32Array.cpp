@@ -52,14 +52,14 @@ Int32Array::Int32Array(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsi
 {
 }
 
-PassRefPtr<Int32Array> Int32Array::subset(int start) const
+PassRefPtr<Int32Array> Int32Array::subarray(int start) const
 {
-    return subset(start, length());
+    return subarray(start, length());
 }
 
-PassRefPtr<Int32Array> Int32Array::subset(int start, int end) const
+PassRefPtr<Int32Array> Int32Array::subarray(int start, int end) const
 {
-    return subsetImpl<Int32Array>(start, end);
+    return subarrayImpl<Int32Array>(start, end);
 }
 
 }

@@ -284,19 +284,19 @@ function negativeTestSetFromArray(type, name) {
   }
 }
 
-function testSubset(type, name) {
-  running('test ' + name + ' Subset');
+function testSubarray(type, name) {
+  running('test ' + name + ' Subarray');
   try {
     var array = new type([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
-    var subset = array.subset(0, 5);
-    assertEq('subset.length', 5, subset.length);
+    var subarray = array.subarray(0, 5);
+    assertEq('subarray.length', 5, subarray.length);
     for (var i = 0; i < 5; i++) {
-      assertEq('Element ' + i, i, subset[i]);
+      assertEq('Element ' + i, i, subarray[i]);
     }
-    subset = array.subset(4, 10);
-    assertEq('subset.length', 6, subset.length);
+    subarray = array.subarray(4, 10);
+    assertEq('subarray.length', 6, subarray.length);
     for (var i = 0; i < 6; i++) {
-      assertEq('Element ' + i, 4 + i, subset[i]);
+      assertEq('Element ' + i, 4 + i, subarray[i]);
     }
     pass();
   } catch (e) {
@@ -304,17 +304,17 @@ function testSubset(type, name) {
   }
 }
 
-function negativeTestSubset(type, name) {
-  running('negativeTest ' + name + ' Subset');
+function negativeTestSubarray(type, name) {
+  running('negativeTest ' + name + ' Subarray');
   try {
     var array = new type([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
-    subset = array.subset(5, 11);
-    if (subset.length != 5) {
+    subarray = array.subarray(5, 11);
+    if (subarray.length != 5) {
       fail();
       return;
     }
-    subset = array.subset(10, 10);
-    if (subset.length != 0) {
+    subarray = array.subarray(10, 10);
+    if (subarray.length != 0) {
       fail();
       return;
     }
@@ -446,48 +446,48 @@ function testConstructionWithBothArrayBufferAndLength(type, name, elementSizeInB
 var array;
 var typeSize;
 
-function testSubsettingWithOutOfRangeValues(type, name, sz) {
-    debug("Testing subsetting of " + name);
+function testSubarrayWithOutOfRangeValues(type, name, sz) {
+    debug("Testing subarray of " + name);
     try {
         var buffer = new ArrayBuffer(32);
         array = new type(buffer);
         typeSize = sz;
         shouldBe("array.length", "32 / typeSize");
         try {
-            shouldBe("array.subset(4, 0x3FFFFFFF).length", "(32 / typeSize) - 4");
-            shouldBe("array.subset(4, -2147483648).length", "0");
-            // Test subset() against overflows.
-            array = array.subset(2);
+            shouldBe("array.subarray(4, 0x3FFFFFFF).length", "(32 / typeSize) - 4");
+            shouldBe("array.subarray(4, -2147483648).length", "0");
+            // Test subarray() against overflows.
+            array = array.subarray(2);
             if (sz > 1) {
                 // Full byte offset is +1 larger than the maximum unsigned long int.
-                // Make sure subset() still handles it correctly.  Otherwise overflow would happen and
+                // Make sure subarray() still handles it correctly.  Otherwise overflow would happen and
                 // offset would be 0, and array.length array.length would incorrectly be 1.
                 var start = 4294967296 / sz - 2;
-                array = array.subset(start, start + 1);
+                array = array.subarray(start, start + 1);
                 shouldBe("array.length", "0");
             }
         } catch (e) {
-            testFailed("Subsetting of " + name + " threw exception");
+            testFailed("Subarray of " + name + " threw exception");
         }
     } catch (e) {
         testFailed("Exception: " + e);
     }
 }
 
-function testSubsettingWithDefaultValues(type, name, sz) {
-    debug("Testing subsetting with default inputs of " + name);
+function testSubarrayWithDefaultValues(type, name, sz) {
+    debug("Testing subarray with default inputs of " + name);
     try {
         var buffer = new ArrayBuffer(32);
         array = new type(buffer);
         typeSize = sz;
         shouldBe("array.length", "32 / typeSize");
         try {
-            shouldBe("array.subset(0).length", "(32 / typeSize)");
-            shouldBe("array.subset(2).length", "(32 / typeSize) - 2");
-            shouldBe("array.subset(-2).length", "2");
-            shouldBe("array.subset(-2147483648).length", "(32 / typeSize)");
+            shouldBe("array.subarray(0).length", "(32 / typeSize)");
+            shouldBe("array.subarray(2).length", "(32 / typeSize) - 2");
+            shouldBe("array.subarray(-2).length", "2");
+            shouldBe("array.subarray(-2147483648).length", "(32 / typeSize)");
         } catch (e) {
-            testFailed("Subsetting of " + name + " threw exception");
+            testFailed("Subarray of " + name + " threw exception");
         }
     } catch (e) {
         testFailed("Exception: " + e);
@@ -713,8 +713,8 @@ function runTests() {
     negativeTestSetFromTypedArray(type, name);
     testSetFromArray(type, name);
     negativeTestSetFromArray(type, name);
-    testSubset(type, name);
-    negativeTestSubset(type, name);
+    testSubarray(type, name);
+    negativeTestSubarray(type, name);
     testBoundaryConditions(type,
                            name,
                            testCase.low,
@@ -728,8 +728,8 @@ function runTests() {
     testConstructionWithUnalignedLength(type, name, testCase.elementSizeInBytes);
     testConstructionOfHugeArray(type, name, testCase.elementSizeInBytes);
     testConstructionWithBothArrayBufferAndLength(type, name, testCase.elementSizeInBytes);
-    testSubsettingWithOutOfRangeValues(type, name, testCase.elementSizeInBytes);
-    testSubsettingWithDefaultValues(type, name, testCase.elementSizeInBytes);
+    testSubarrayWithOutOfRangeValues(type, name, testCase.elementSizeInBytes);
+    testSubarrayWithDefaultValues(type, name, testCase.elementSizeInBytes);
     testSettingFromArrayWithOutOfRangeOffset(type, name);
     testSettingFromFakeArrayWithOutOfRangeLength(type, name);
     testSettingFromTypedArrayWithOutOfRangeOffset(type, name);

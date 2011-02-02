@@ -52,14 +52,14 @@ Uint8Array::Uint8Array(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsi
 {
 }
 
-PassRefPtr<Uint8Array> Uint8Array::subset(int start) const
+PassRefPtr<Uint8Array> Uint8Array::subarray(int start) const
 {
-    return subset(start, length());
+    return subarray(start, length());
 }
 
-PassRefPtr<Uint8Array> Uint8Array::subset(int start, int end) const
+PassRefPtr<Uint8Array> Uint8Array::subarray(int start, int end) const
 {
-    return subsetImpl<Uint8Array>(start, end);
+    return subarrayImpl<Uint8Array>(start, end);
 }
 
 }
