@@ -1,3 +1,13 @@
+2011-02-01  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [Chromium] Roll Chromium revision for the WebKitWeightWatcher change
+        https://bugs.webkit.org/show_bug.cgi?id=53563
+
+        * platform/chromium/test_expectations.txt:
+          fast/css/font-weight-1.html is expected to fail.
+
 2011-02-01  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Marking test, added in r77333 as skipped, because it is

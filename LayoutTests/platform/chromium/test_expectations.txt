@@ -2852,6 +2852,9 @@ BUG_DRT MAC : transforms/2d/zoom-menulist.html = IMAGE
 // It looks like we are missing the WebKit "WeightWatcher" fonts,
 // checked in as part of http://trac.webkit.org/changeset/34771.
 BUGCR10370 LINUX WIN : fast/css/font-weight-1.html = IMAGE+TEXT
+// Registering the fonts for this test causes other processes (Adium, Firefox)
+// to spin and become unresponsive or crash.
+BUGWK50709 MAC : fast/css/font-weight-1.html = IMAGE+TEXT
 
 // End DRT failures
 /////////////////////////////////////////////////////////////////////////////

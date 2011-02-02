@@ -1,3 +1,12 @@
+2011-02-01  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [Chromium] Roll Chromium revision for the WebKitWeightWatcher change
+        https://bugs.webkit.org/show_bug.cgi?id=53563
+
+        * DEPS: Roll to crrev.com/73378 to have the WebKitWeightWatcher change of webkit_support.
+
 2011-02-01  Darin Fisher  <darin@chromium.org>
 
         Reviewed by David Levin.
