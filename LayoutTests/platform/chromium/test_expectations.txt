@@ -3018,13 +3018,6 @@ BUGDIMICH : fast/regex/cross-frame-callable.html = TEXT
 
 BUGTHAKIS BUGCR71087 LINUX WIN : media/video-display-toggle.html = IMAGE CRASH
 
-// New test that was non-deterministic.
-BUGYURYS SLOW DEBUG : userscripts/window-onerror-for-isolated-world-1.html = PASS
-BUGYURYS SLOW DEBUG : userscripts/window-onerror-for-isolated-world-2.html = PASS
-BUGYURYS : http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write.html = PASS TEXT
-BUGYURYS : http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html = PASS TEXT
-BUGYURYS : http/tests/security/xss-DENIED-frame-name.html = PASS TEXT
-
 BUGRNIWA SLOW LINUX : fast/text/large-text-composed-char-dos.html = PASS
 
 // Added by http://trac.webkit.org/changeset/76548
