@@ -1,3 +1,9 @@
+2011-02-02  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed Efl buildfix after r77399.
+
+        * CMakeListsEfl.txt:
+
 2011-02-02  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.

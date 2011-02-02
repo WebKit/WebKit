@@ -131,16 +131,6 @@ IF (WTF_USE_SOUP)
     platform/network/soup/ResourceResponseSoup.cpp
     platform/network/soup/SocketStreamHandleSoup.cpp
     platform/network/soup/SoupURIUtils.cpp
-
-    platform/network/soup/cache/soup-directory-input-stream.c
-    platform/network/soup/cache/soup-http-input-stream.c
-    platform/network/soup/cache/soup-request-data.c
-    platform/network/soup/cache/soup-request-file.c
-    platform/network/soup/cache/soup-request-http.c
-    platform/network/soup/cache/soup-request.c
-    platform/network/soup/cache/soup-requester.c
-
-    platform/network/soup/cache/webkit/soup-cache.c
   )
 ENDIF ()
 
