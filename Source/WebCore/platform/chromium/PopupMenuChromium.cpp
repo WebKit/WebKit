@@ -1351,14 +1351,14 @@ void PopupListBox::layout()
     int contentWidth;
     if (m_settings.restrictWidthOfListBox) {
         windowWidth = m_baseWidth;
-        contentWidth = m_baseWidth - scrollbarWidth - paddingWidth;
+        contentWidth = m_baseWidth - scrollbarWidth;
     } else {
         windowWidth = baseWidth + scrollbarWidth + paddingWidth;
-        contentWidth = baseWidth;
+        contentWidth = baseWidth + paddingWidth;
 
         if (windowWidth < m_baseWidth) {
             windowWidth = m_baseWidth;
-            contentWidth = m_baseWidth - scrollbarWidth - paddingWidth;
+            contentWidth = m_baseWidth - scrollbarWidth;
         } else
             m_baseWidth = baseWidth;
     }
