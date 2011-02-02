@@ -1,3 +1,9 @@
+2011-02-01  Ojan Vafai  <ojan@chromium.org>
+
+        Increment version number to cache-bust code-review.js.
+
+        * PrettyPatch/PrettyPatch.rb:
+
 2011-01-31  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.
