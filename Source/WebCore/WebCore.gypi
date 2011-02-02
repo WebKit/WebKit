@@ -2273,6 +2273,8 @@
             'page/ChromeClient.h',
             'page/Console.cpp',
             'page/Console.h',
+            'page/ContentSecurityPolicy.cpp',
+            'page/ContentSecurityPolicy.h',
             'page/ContextMenuClient.h',
             'page/ContextMenuController.cpp',
             'page/ContextMenuController.h',

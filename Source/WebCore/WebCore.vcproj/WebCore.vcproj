@@ -24394,6 +24394,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\ContentSecurityPolicy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\ContentSecurityPolicy.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\ContextMenuClient.h"
 				>
 			</File>

@@ -1128,6 +1128,7 @@ SOURCES += \
     page/BarInfo.cpp \
     page/Chrome.cpp \
     page/Console.cpp \
+    page/ContentSecurityPolicy.cpp \
     page/ContextMenuController.cpp \
     page/DOMSelection.cpp \
     page/DOMTimer.cpp \
