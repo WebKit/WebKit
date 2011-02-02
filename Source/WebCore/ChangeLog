@@ -1,3 +1,15 @@
+2011-02-01  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [v8] Increase V8 native->js recursion limit to match document.write() recursion limit
+        https://bugs.webkit.org/show_bug.cgi?id=53566
+
+        A recursion limit of 22 is necessary to pass fast/dom/Document/document-write-recursion.html.
+        Other than being large enough for this one test case, this limit is arbitrary.
+
+        * bindings/v8/V8Proxy.h:
+
 2011-02-01  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Andreas Kling.

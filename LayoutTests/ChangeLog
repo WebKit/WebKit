@@ -1,3 +1,14 @@
+2011-02-01  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [v8] Increase V8 native->js recursion limit to match document.write() recursion limit
+        https://bugs.webkit.org/show_bug.cgi?id=53566
+
+        Unskip test that we now pass.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-01  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change.

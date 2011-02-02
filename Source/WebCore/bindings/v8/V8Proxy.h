@@ -116,7 +116,7 @@ namespace WebCore {
                                  const BatchedCallback*, 
                                  size_t callbackCount);
 
-    const int kMaxRecursionDepth = 20;
+    const int kMaxRecursionDepth = 22;
 
     // The list of extensions that are registered for use with V8.
     typedef WTF::Vector<v8::Extension*> V8Extensions;
