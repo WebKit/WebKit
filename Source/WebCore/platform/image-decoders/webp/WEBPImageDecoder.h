@@ -42,7 +42,6 @@ public:
     virtual String filenameExtension() const { return "vp8"; }
     virtual bool isSizeAvailable();
     virtual ImageFrame* frameBufferAtIndex(size_t index);
-    virtual bool supportsAlpha() const { return false; }
 
 private:
     // Returns false in case of decoding failure.

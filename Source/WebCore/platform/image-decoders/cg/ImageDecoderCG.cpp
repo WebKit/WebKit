@@ -72,7 +72,7 @@ bool ImageFrame::setSize(int newWidth, int newHeight)
     m_bytes = reinterpret_cast<PixelData*>(CFDataGetMutableBytePtr(m_backingStore.get()));
     m_size = IntSize(newWidth, newHeight);
 
-    zeroFill();
+    zeroFillPixelData();
     return true;
 }
 

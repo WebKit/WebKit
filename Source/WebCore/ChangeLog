@@ -1,3 +1,49 @@
+2011-02-02  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by David Levin.
+
+        Clean up ImageDecoder's comments (remove/trim/clarify).
+        https://bugs.webkit.org/show_bug.cgi?id=53455
+
+        This also renames or eliminates a couple of functions for clarity, and
+        switches a couple erroneous strncmp() calls to memcmp().
+
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::ImageDecoder::create):
+        (WebCore::ImageFrame::clearPixelData):
+        (WebCore::ImageFrame::zeroFillPixelData):
+        (WebCore::ImageFrame::setSize):
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageFrame::originalFrameRect):
+        (WebCore::ImageFrame::setOriginalFrameRect):
+        (WebCore::ImageDecoder::ImageDecoder):
+        (WebCore::ImageDecoder::~ImageDecoder):
+        (WebCore::ImageDecoder::isSizeAvailable):
+        (WebCore::ImageDecoder::size):
+        (WebCore::ImageDecoder::setIgnoreGammaAndColorProfile):
+        (WebCore::ImageDecoder::clearFrameBufferCache):
+        (WebCore::ImageDecoder::isOverSize):
+        * platform/image-decoders/bmp/BMPImageReader.cpp:
+        (WebCore::BMPImageReader::processNonRLEData):
+        * platform/image-decoders/cg/ImageDecoderCG.cpp:
+        (WebCore::ImageFrame::setSize):
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::clearFrameBufferCache):
+        (WebCore::GIFImageDecoder::frameComplete):
+        (WebCore::GIFImageDecoder::initFrameBuffer):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h:
+        * platform/image-decoders/qt/ImageFrameQt.cpp:
+        (WebCore::ImageFrame::operator=):
+        (WebCore::ImageFrame::clearPixelData):
+        (WebCore::ImageFrame::zeroFillPixelData):
+        (WebCore::ImageFrame::setSize):
+        * platform/image-decoders/skia/ImageDecoderSkia.cpp:
+        (WebCore::ImageFrame::operator=):
+        (WebCore::ImageFrame::clearPixelData):
+        (WebCore::ImageFrame::zeroFillPixelData):
+        (WebCore::ImageFrame::setSize):
+        * platform/image-decoders/webp/WEBPImageDecoder.h:
+
 2011-02-02  Vangelis Kokkevis  <vangelis@chromium.org>
 
         [chromium] Adding support for reflections to the accelerated

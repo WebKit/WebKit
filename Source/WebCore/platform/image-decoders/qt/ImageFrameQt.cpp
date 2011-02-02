@@ -50,14 +50,14 @@ ImageFrame& ImageFrame::operator=(const ImageFrame& other)
         return *this;
 
     copyBitmapData(other);
-    setRect(other.rect());
+    setOriginalFrameRect(other.originalFrameRect());
     setStatus(other.status());
     setDuration(other.duration());
     setDisposalMethod(other.disposalMethod());
     return *this;
 }
 
-void ImageFrame::clear()
+void ImageFrame::clearPixelData()
 {
     m_pixmap = QPixmap();
     m_image = QImage();
@@ -68,7 +68,7 @@ void ImageFrame::clear()
     // other metadata out of this frame later.
 }
 
-void ImageFrame::zeroFill()
+void ImageFrame::zeroFillPixelData()
 {
     if (m_pixmap.isNull() && !m_image.isNull()) {
         m_pixmap = QPixmap(m_image.width(), m_image.height());
@@ -101,8 +101,7 @@ bool ImageFrame::setSize(int newWidth, int newHeight)
     if (m_pixmap.isNull())
         return false;
 
-    // Zero the image.
-    zeroFill();
+    zeroFillPixelData();
 
     return true;
 }

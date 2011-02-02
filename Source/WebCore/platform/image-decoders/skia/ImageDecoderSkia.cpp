@@ -48,7 +48,7 @@ ImageFrame& ImageFrame::operator=(const ImageFrame& other)
     // Keep the pixels locked since we will be writing directly into the
     // bitmap throughout this object's lifetime.
     m_bitmap.lockPixels();
-    setRect(other.rect());
+    setOriginalFrameRect(other.originalFrameRect());
     setStatus(other.status());
     setDuration(other.duration());
     setDisposalMethod(other.disposalMethod());
@@ -56,7 +56,7 @@ ImageFrame& ImageFrame::operator=(const ImageFrame& other)
     return *this;
 }
 
-void ImageFrame::clear()
+void ImageFrame::clearPixelData()
 {
     m_bitmap.reset();
     m_status = FrameEmpty;
@@ -66,7 +66,7 @@ void ImageFrame::clear()
     // other metadata out of this frame later.
 }
 
-void ImageFrame::zeroFill()
+void ImageFrame::zeroFillPixelData()
 {
     m_bitmap.eraseARGB(0, 0, 0, 0);
 }
@@ -90,8 +90,7 @@ bool ImageFrame::setSize(int newWidth, int newHeight)
     if (!m_bitmap.allocPixels())
         return false;
 
-    // Zero the image.
-    zeroFill();
+    zeroFillPixelData();
 
     return true;
 }

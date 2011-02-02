@@ -38,7 +38,9 @@ using namespace std;
 
 namespace WebCore {
 
-static unsigned copyFromSharedBuffer(char* buffer, unsigned bufferLength, const SharedBuffer& sharedBuffer, unsigned offset)
+namespace {
+
+unsigned copyFromSharedBuffer(char* buffer, unsigned bufferLength, const SharedBuffer& sharedBuffer, unsigned offset)
 {
     unsigned bytesExtracted = 0;
     const char* moreData;
@@ -53,51 +55,73 @@ static unsigned copyFromSharedBuffer(char* buffer, unsigned bufferLength, const 
     return bytesExtracted;
 }
 
+bool matchesGIFSignature(char* contents)
+{
+    return !memcmp(contents, "GIF8", 4);
+}
+
+bool matchesPNGSignature(char* contents)
+{
+    return !memcmp(contents, "\x89\x50\x4E\x47", 4);
+}
+
+bool matchesJPEGSignature(char* contents)
+{
+    return !memcmp(contents, "\xFF\xD8\xFF", 3);
+}
+
+#if USE(WEBP)
+bool matchesWebPSignature(char* contents)
+{
+    return !memcmp(contents, "RIFF", 4) && !memcmp(contents + 8, "WEBPVP", 6);
+}
+#endif
+
+bool matchesBMPSignature(char* contents)
+{
+    return !memcmp(contents, "BM", 2);
+}
+
+bool matchesICOSignature(char* contents)
+{
+    return !memcmp(contents, "\x00\x00\x01\x00", 4);
+}
+
+bool matchesCURSignature(char* contents)
+{
+    return !memcmp(contents, "\x00\x00\x02\x00", 4);
+}
+
+}
+
 ImageDecoder* ImageDecoder::create(const SharedBuffer& data, ImageSource::AlphaOption alphaOption, ImageSource::GammaAndColorProfileOption gammaAndColorProfileOption)
 {
-    // We need at least 4 bytes to figure out what kind of image we're dealing
-    // with.
-    static const unsigned maxMarkerLength = 4;
-    char contents[maxMarkerLength];
-    unsigned length = copyFromSharedBuffer(contents, maxMarkerLength, data, 0);
-    if (length < maxMarkerLength)
+    static const unsigned lengthOfLongestSignature = 14; // To wit: "RIFF????WEBPVP"
+    char contents[lengthOfLongestSignature];
+    unsigned length = copyFromSharedBuffer(contents, lengthOfLongestSignature, data, 0);
+    if (length < lengthOfLongestSignature)
         return 0;
 
-    // GIFs begin with GIF8(7 or 9).
-    if (strncmp(contents, "GIF8", 4) == 0)
+    if (matchesGIFSignature(contents))
         return new GIFImageDecoder(alphaOption, gammaAndColorProfileOption);
 
-    // Test for PNG.
-    if (!memcmp(contents, "\x89\x50\x4E\x47", 4))
+    if (matchesPNGSignature(contents))
         return new PNGImageDecoder(alphaOption, gammaAndColorProfileOption);
 
-    // JPEG
-    if (!memcmp(contents, "\xFF\xD8\xFF", 3))
+    if (matchesJPEGSignature(contents))
         return new JPEGImageDecoder(alphaOption, gammaAndColorProfileOption);
 
 #if USE(WEBP)
-    if (!memcmp(contents, "RIFF", 4)) {
-        static const unsigned webpExtraMarker = 6;
-        static const unsigned webpExtraMarkeroffset = 8;
-        char header[webpExtraMarker];
-        unsigned length = copyFromSharedBuffer(header, webpExtraMarker, data, webpExtraMarkeroffset);
-        if (length >= webpExtraMarker) {
-            if (!memcmp(header, "WEBPVP", webpExtraMarker))
-                return new WEBPImageDecoder(alphaOption, gammaAndColorProfileOption);
-        }
-    }
+    if (matchesWebPSignature(contents))
+        return new WEBPImageDecoder(alphaOption, gammaAndColorProfileOption);
 #endif
 
-    // BMP
-    if (strncmp(contents, "BM", 2) == 0)
+    if (matchesBMPSignature(contents))
         return new BMPImageDecoder(alphaOption, gammaAndColorProfileOption);
 
-    // ICOs always begin with a 2-byte 0 followed by a 2-byte 1.
-    // CURs begin with 2-byte 0 followed by 2-byte 2.
-    if (!memcmp(contents, "\x00\x00\x01\x00", 4) || !memcmp(contents, "\x00\x00\x02\x00", 4))
+    if (matchesICOSignature(contents) || matchesCURSignature(contents))
         return new ICOImageDecoder(alphaOption, gammaAndColorProfileOption);
 
-    // Give up. We don't know what the heck this is.
     return 0;
 }
 
@@ -126,7 +150,7 @@ ImageFrame& ImageFrame::operator=(const ImageFrame& other)
     return *this;
 }
 
-void ImageFrame::clear()
+void ImageFrame::clearPixelData()
 {
     m_backingStore.clear();
     m_bytes = 0;
@@ -137,7 +161,7 @@ void ImageFrame::clear()
     // later.
 }
 
-void ImageFrame::zeroFill()
+void ImageFrame::zeroFillPixelData()
 {
     memset(m_bytes, 0, m_size.width() * m_size.height() * sizeof(PixelData));
     m_hasAlpha = true;
@@ -171,8 +195,7 @@ bool ImageFrame::setSize(int newWidth, int newHeight)
     m_bytes = m_backingStore.data();
     m_size = IntSize(newWidth, newHeight);
 
-    // Zero the image.
-    zeroFill();
+    zeroFillPixelData();
 
     return true;
 }

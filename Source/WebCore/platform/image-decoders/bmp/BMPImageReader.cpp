@@ -707,7 +707,7 @@ BMPImageReader::ProcessingResult BMPImageReader::processNonRLEData(bool inRLE, i
                 } else {
                     m_seenNonZeroAlphaPixel = true;
                     if (m_seenZeroAlphaPixel) {
-                        m_buffer->zeroFill();
+                        m_buffer->zeroFillPixelData();
                         m_seenZeroAlphaPixel = false;
                     } else if (alpha != 255)
                         m_buffer->setHasAlpha(true);

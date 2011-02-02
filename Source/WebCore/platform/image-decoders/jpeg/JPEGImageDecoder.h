@@ -45,7 +45,6 @@ namespace WebCore {
         virtual bool isSizeAvailable();
         virtual bool setSize(unsigned width, unsigned height);
         virtual ImageFrame* frameBufferAtIndex(size_t index);
-        virtual bool supportsAlpha() const { return false; }
         // CAUTION: setFailed() deletes |m_reader|.  Be careful to avoid
         // accessing deleted memory, especially when calling this from inside
         // JPEGImageReader!
