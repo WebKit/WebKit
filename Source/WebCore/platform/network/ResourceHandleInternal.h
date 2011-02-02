@@ -46,8 +46,9 @@
 #endif
 
 #if USE(SOUP)
-#include "soup-requester.h"
 #include <GRefPtr.h>
+#define LIBSOUP_USE_UNSTABLE_REQUEST_API
+#include <libsoup/soup-request.h>
 #include <libsoup/soup.h>
 class Frame;
 #endif
@@ -132,9 +133,6 @@ namespace WebCore {
             m_user = url.user();
             m_pass = url.pass();
             m_firstRequest.removeCredentials();
-#if USE(SOUP)
-            m_requester = adoptGRef(webkit_soup_requester_new());
-#endif
         }
         
         ~ResourceHandleInternal();
@@ -190,8 +188,7 @@ namespace WebCore {
         GRefPtr<SoupMessage> m_soupMessage;
         ResourceResponse m_response;
         bool m_cancelled;
-        GRefPtr<WebKitSoupRequest> m_soupRequest;
-        GRefPtr<WebKitSoupRequester> m_requester;
+        GRefPtr<SoupRequest> m_soupRequest;
         GRefPtr<GInputStream> m_inputStream;
         GRefPtr<GCancellable> m_cancellable;
         char* m_buffer;

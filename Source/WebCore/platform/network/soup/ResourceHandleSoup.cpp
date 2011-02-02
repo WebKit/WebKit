@@ -45,12 +45,14 @@
 #include "ResourceHandleInternal.h"
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
-#include "soup-request-http.h"
 #include "TextEncoding.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <gio/gio.h>
 #include <glib.h>
+#define LIBSOUP_USE_UNSTABLE_REQUEST_API
+#include <libsoup/soup-request-http.h>
+#include <libsoup/soup-requester.h>
 #include <libsoup/soup.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -143,6 +145,42 @@ ResourceHandleInternal::~ResourceHandleInternal()
 ResourceHandle::~ResourceHandle()
 {
     cleanupSoupRequestOperation(this, true);
+}
+
+static void ensureSessionIsInitialized(SoupSession* session)
+{
+    // Values taken from http://stevesouders.com/ua/index.php following
+    // the rule "Do What Every Other Modern Browser Is Doing". They seem
+    // to significantly improve page loading time compared to soup's
+    // default values.
+    static const int maxConnections = 60;
+    static const int maxConnectionsPerHost = 6;
+
+    if (g_object_get_data(G_OBJECT(session), "webkit-init"))
+        return;
+
+    SoupCookieJar* jar = SOUP_COOKIE_JAR(soup_session_get_feature(session, SOUP_TYPE_COOKIE_JAR));
+    if (!jar)
+        soup_session_add_feature(session, SOUP_SESSION_FEATURE(defaultCookieJar()));
+    else
+        setDefaultCookieJar(jar);
+
+    if (!soup_session_get_feature(session, SOUP_TYPE_LOGGER) && LogNetwork.state == WTFLogChannelOn) {
+        SoupLogger* logger = soup_logger_new(static_cast<SoupLoggerLogLevel>(SOUP_LOGGER_LOG_BODY), -1);
+        soup_session_add_feature(session, SOUP_SESSION_FEATURE(logger));
+        g_object_unref(logger);
+    }
+
+    SoupRequester* requester = soup_requester_new();
+    soup_session_add_feature(session, SOUP_SESSION_FEATURE(requester));
+    g_object_unref(requester);
+
+    g_object_set(session,
+                 SOUP_SESSION_MAX_CONNS, maxConnections,
+                 SOUP_SESSION_MAX_CONNS_PER_HOST, maxConnectionsPerHost,
+                 NULL);
+
+    g_object_set_data(G_OBJECT(session), "webkit-init", reinterpret_cast<void*>(0xdeadbeef));
 }
 
 void ResourceHandle::prepareForURL(const KURL &url)
@@ -360,15 +398,17 @@ static gboolean parseDataUrl(gpointer callbackData)
         return false;
 
     SoupSession* session = handle->defaultSession();
+    ensureSessionIsInitialized(session);
+    SoupRequester* requester = SOUP_REQUESTER(soup_session_get_feature(session, SOUP_TYPE_REQUESTER));
     GOwnPtr<GError> error;
-    d->m_soupRequest = adoptGRef(webkit_soup_requester_request(d->m_requester.get(), handle->firstRequest().url().string().utf8().data(), session, &error.outPtr()));
+    d->m_soupRequest = adoptGRef(soup_requester_request(requester, handle->firstRequest().url().string().utf8().data(), &error.outPtr()));
     if (error) {
         d->m_soupRequest = 0;
         client->didFinishLoading(handle, 0);
         return false;
     }
 
-    d->m_inputStream = adoptGRef(webkit_soup_request_send(d->m_soupRequest.get(), 0, &error.outPtr()));
+    d->m_inputStream = adoptGRef(soup_request_send(d->m_soupRequest.get(), 0, &error.outPtr()));
     if (error) {
         d->m_inputStream = 0;
         client->didFinishLoading(handle, 0);
@@ -404,38 +444,6 @@ static bool startData(ResourceHandle* handle, String urlString)
 static SoupSession* createSoupSession()
 {
     return soup_session_async_new();
-}
-
-// Values taken from http://stevesouders.com/ua/index.php following
-// the rule "Do What Every Other Modern Browser Is Doing". They seem
-// to significantly improve page loading time compared to soup's
-// default values.
-#define MAX_CONNECTIONS          60
-#define MAX_CONNECTIONS_PER_HOST 6
-
-static void ensureSessionIsInitialized(SoupSession* session)
-{
-    if (g_object_get_data(G_OBJECT(session), "webkit-init"))
-        return;
-
-    SoupCookieJar* jar = reinterpret_cast<SoupCookieJar*>(soup_session_get_feature(session, SOUP_TYPE_COOKIE_JAR));
-    if (!jar)
-        soup_session_add_feature(session, SOUP_SESSION_FEATURE(defaultCookieJar()));
-    else
-        setDefaultCookieJar(jar);
-
-    if (!soup_session_get_feature(session, SOUP_TYPE_LOGGER) && LogNetwork.state == WTFLogChannelOn) {
-        SoupLogger* logger = soup_logger_new(static_cast<SoupLoggerLogLevel>(SOUP_LOGGER_LOG_BODY), -1);
-        soup_logger_attach(logger, session);
-        g_object_unref(logger);
-    }
-
-    g_object_set(session,
-                 SOUP_SESSION_MAX_CONNS, MAX_CONNECTIONS,
-                 SOUP_SESSION_MAX_CONNS_PER_HOST, MAX_CONNECTIONS_PER_HOST,
-                 NULL);
-
-    g_object_set_data(G_OBJECT(session), "webkit-init", reinterpret_cast<void*>(0xdeadbeef));
 }
 
 static void cleanupSoupRequestOperation(ResourceHandle* handle, bool isDestroying = false)
@@ -491,14 +499,14 @@ static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer use
     }
 
     GOwnPtr<GError> error;
-    GInputStream* in = webkit_soup_request_send_finish(d->m_soupRequest.get(), res, &error.outPtr());
+    GInputStream* in = soup_request_send_finish(d->m_soupRequest.get(), res, &error.outPtr());
 
     if (error) {
         SoupMessage* soupMsg = d->m_soupMessage.get();
         gboolean isTransportError = d->m_soupMessage && SOUP_STATUS_IS_TRANSPORT_ERROR(soupMsg->status_code);
 
         if (isTransportError || (error->domain == G_IO_ERROR)) {
-            SoupURI* uri = webkit_soup_request_get_uri(d->m_soupRequest.get());
+            SoupURI* uri = soup_request_get_uri(d->m_soupRequest.get());
             GOwnPtr<char> uriStr(soup_uri_to_string(uri, false));
             gint errorCode = isTransportError ? static_cast<gint>(soupMsg->status_code) : error->code;
             const gchar* errorMsg = isTransportError ? soupMsg->reason_phrase : error->message;
@@ -551,8 +559,8 @@ static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer use
     // (e.g. file and GIO based protocol).
     if (!handle->shouldContentSniff() && d->m_response.isNull()) {
         d->m_response.setURL(handle->firstRequest().url());
-        d->m_response.setMimeType(webkit_soup_request_get_content_type(d->m_soupRequest.get()));
-        d->m_response.setExpectedContentLength(webkit_soup_request_get_content_length(d->m_soupRequest.get()));
+        d->m_response.setMimeType(soup_request_get_content_type(d->m_soupRequest.get()));
+        d->m_response.setExpectedContentLength(soup_request_get_content_length(d->m_soupRequest.get()));
         client->didReceiveResponse(handle.get(), d->m_response);
 
         if (d->m_cancelled) {
@@ -574,6 +582,7 @@ static bool startHttp(ResourceHandle* handle)
 
     SoupSession* session = handle->defaultSession();
     ensureSessionIsInitialized(session);
+    SoupRequester* requester = SOUP_REQUESTER(soup_session_get_feature(session, SOUP_TYPE_REQUESTER));
 
     ResourceHandleInternal* d = handle->getInternal();
 
@@ -583,7 +592,7 @@ static bool startHttp(ResourceHandle* handle)
     request.setURL(url);
 
     GOwnPtr<GError> error;
-    d->m_soupRequest = adoptGRef(webkit_soup_requester_request(d->m_requester.get(), url.string().utf8().data(), session, &error.outPtr()));
+    d->m_soupRequest = adoptGRef(soup_requester_request(requester, url.string().utf8().data(), &error.outPtr()));
     if (error) {
         d->m_soupRequest = 0;
         return false;
@@ -591,7 +600,7 @@ static bool startHttp(ResourceHandle* handle)
 
     g_object_set_data(G_OBJECT(d->m_soupRequest.get()), "webkit-resource", handle);
 
-    d->m_soupMessage = adoptGRef(webkit_soup_request_http_get_message(WEBKIT_SOUP_REQUEST_HTTP(d->m_soupRequest.get())));
+    d->m_soupMessage = adoptGRef(soup_request_http_get_message(SOUP_REQUEST_HTTP(d->m_soupRequest.get())));
     if (!d->m_soupMessage)
         return false;
 
@@ -675,7 +684,7 @@ static bool startHttp(ResourceHandle* handle)
     // Send the request only if it's not been explicitely deferred.
     if (!d->m_defersLoading) {
         d->m_cancellable = adoptGRef(g_cancellable_new());
-        webkit_soup_request_send_async(d->m_soupRequest.get(), d->m_cancellable.get(), sendRequestCallback, 0);
+        soup_request_send_async(d->m_soupRequest.get(), d->m_cancellable.get(), sendRequestCallback, 0);
     }
 
     return true;
@@ -758,7 +767,7 @@ void ResourceHandle::platformSetDefersLoading(bool defersLoading)
 
     if (!defersLoading && !d->m_cancellable && d->m_soupRequest.get()) {
         d->m_cancellable = adoptGRef(g_cancellable_new());
-        webkit_soup_request_send_async(d->m_soupRequest.get(), d->m_cancellable.get(), sendRequestCallback, 0);
+        soup_request_send_async(d->m_soupRequest.get(), d->m_cancellable.get(), sendRequestCallback, 0);
         return;
     }
 
@@ -830,7 +839,7 @@ static void readCallback(GObject* source, GAsyncResult* asyncResult, gpointer da
 
     gssize bytesRead = g_input_stream_read_finish(d->m_inputStream.get(), asyncResult, &error.outPtr());
     if (error) {
-        SoupURI* uri = webkit_soup_request_get_uri(d->m_soupRequest.get());
+        SoupURI* uri = soup_request_get_uri(d->m_soupRequest.get());
         GOwnPtr<char> uriStr(soup_uri_to_string(uri, false));
         ResourceError resourceError(g_quark_to_string(G_IO_ERROR), error->code, uriStr.get(),
                                     error ? String::fromUTF8(error->message) : String());
@@ -879,6 +888,8 @@ static bool startGio(ResourceHandle* handle, KURL url)
         return false;
 
     SoupSession* session = handle->defaultSession();
+    ensureSessionIsInitialized(session);
+    SoupRequester* requester = SOUP_REQUESTER(soup_session_get_feature(session, SOUP_TYPE_REQUESTER));
     ResourceHandleInternal* d = handle->getInternal();
 
     // GIO doesn't know how to handle refs and queries, so remove them
@@ -890,7 +901,7 @@ static bool startGio(ResourceHandle* handle, KURL url)
     CString urlStr = url.string().utf8();
 
     GOwnPtr<GError> error;
-    d->m_soupRequest = adoptGRef(webkit_soup_requester_request(d->m_requester.get(), urlStr.data(), session, &error.outPtr()));
+    d->m_soupRequest = adoptGRef(soup_requester_request(requester, urlStr.data(), &error.outPtr()));
     if (error) {
         d->m_soupRequest = 0;
         return false;
@@ -902,7 +913,7 @@ static bool startGio(ResourceHandle* handle, KURL url)
     handle->ref();
 
     d->m_cancellable = adoptGRef(g_cancellable_new());
-    webkit_soup_request_send_async(d->m_soupRequest.get(), d->m_cancellable.get(), sendRequestCallback, 0);
+    soup_request_send_async(d->m_soupRequest.get(), d->m_cancellable.get(), sendRequestCallback, 0);
 
     return true;
 }

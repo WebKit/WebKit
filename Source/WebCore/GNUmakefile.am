@@ -87,9 +87,7 @@ webcoregtk_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/graphics/gstreamer \
 	-I$(srcdir)/Source/WebCore/platform/graphics/gtk \
 	-I$(srcdir)/Source/WebCore/platform/gtk \
-	-I$(srcdir)/Source/WebCore/platform/network/soup \
-	-I$(srcdir)/Source/WebCore/platform/network/soup/cache \
-	-I$(srcdir)/Source/WebCore/platform/network/soup/cache/webkit
+	-I$(srcdir)/Source/WebCore/platform/network/soup
 
 webcore_built_nosources += \
 	DerivedSources/WebCore/tokenizer.cpp
@@ -3813,23 +3811,6 @@ webcoregtk_sources += \
 	Source/WebCore/platform/network/soup/SocketStreamHandleSoup.cpp \
 	Source/WebCore/platform/network/soup/SoupURIUtils.cpp \
 	Source/WebCore/platform/network/soup/SoupURIUtils.h \
-	Source/WebCore/platform/network/soup/cache/soup-directory-input-stream.c \
-	Source/WebCore/platform/network/soup/cache/soup-directory-input-stream.h \
-	Source/WebCore/platform/network/soup/cache/soup-http-input-stream.c \
-	Source/WebCore/platform/network/soup/cache/soup-http-input-stream.h \
-	Source/WebCore/platform/network/soup/cache/soup-request-data.c \
-	Source/WebCore/platform/network/soup/cache/soup-request-data.h \
-	Source/WebCore/platform/network/soup/cache/soup-request-file.c \
-	Source/WebCore/platform/network/soup/cache/soup-request-file.h \
-	Source/WebCore/platform/network/soup/cache/soup-request-http.c \
-	Source/WebCore/platform/network/soup/cache/soup-request-http.h \
-	Source/WebCore/platform/network/soup/cache/soup-request.c \
-	Source/WebCore/platform/network/soup/cache/soup-request.h \
-	Source/WebCore/platform/network/soup/cache/soup-requester.c \
-	Source/WebCore/platform/network/soup/cache/soup-requester.h \
-	Source/WebCore/platform/network/soup/cache/webkit/soup-cache.c \
-	Source/WebCore/platform/network/soup/cache/webkit/soup-cache.h \
-	Source/WebCore/platform/network/soup/cache/webkit/soup-cache-private.h \
 	Source/WebCore/plugins/gtk/PluginDataGtk.cpp \
 	Source/WebCore/plugins/gtk/PluginPackageGtk.cpp \
 	Source/WebCore/plugins/gtk/PluginViewGtk.cpp

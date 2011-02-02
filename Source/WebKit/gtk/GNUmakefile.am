@@ -98,7 +98,6 @@ libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LIBA
 	$(OLE32_LIBS)
 
 webkitgtk_static_h_api += \
-	$(srcdir)/Source/WebCore/platform/network/soup/cache/webkit/soup-cache.h \
 	$(srcdir)/Source/WebKit/gtk/webkit/webkit.h \
 	$(srcdir)/Source/WebKit/gtk/webkit/webkitdefines.h \
 	$(srcdir)/Source/WebKit/gtk/webkit/webkitdownload.h \
@@ -261,7 +260,6 @@ $(WEBKIT_GIRSOURCES): $(G_IR_SCANNER) $(JSCORE_GIRSOURCES) libwebkitgtk-@WEBKITG
 	     --add-include-path=$(WebKit) \
 	     --add-include-path=$(top_builddir) \
 	     -I$(srcdir)/Source \
-	     -I$(top_srcdir)/Source/WebCore/platform/network/soup/cache \
 	     -I$(WebKit) \
 	     -I$(GENSOURCES) \
 	     -I$(GENSOURCES_WEBKIT) \
@@ -377,7 +375,6 @@ noinst_PROGRAMS += $(TEST_PROGS)
 webkit_tests_cflags = \
 	-fno-strict-aliasing \
 	-I$(srcdir)/Source/JavaScriptCore/ForwardingHeaders \
-	-I$(WebCore)/platform/network/soup/cache \
 	-I$(WebKit) \
 	-I$(GENSOURCES) \
 	-I$(top_builddir)/Source/WebKit/gtk \

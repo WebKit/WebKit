@@ -1,3 +1,47 @@
+2011-02-02  Dan Winship  <danw@gnome.org>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] drop soup cache stuff, which has been moved to libsoup
+        https://bugs.webkit.org/show_bug.cgi?id=50747
+
+        Use libsoup-based cache/requester API and remove the WebCore version
+        of this functionality. This has been pushed upstream fully.
+
+        No new tests because this should not change functionality.
+
+        * GNUmakefile.am: Update for removed files.
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal): Update
+        type names, drop m_requester.
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ensureSessionIsInitialized): Add a SoupRequester to the
+        session.
+        (WebCore::parseDataUrl):
+        (WebCore::startHttp): Get the requester from the session rather
+        than using m_requester.
+        (WebCore::sendRequestCallback):
+        (WebCore::ResourceHandle::platformSetDefersLoading):
+        (WebCore::readCallback):
+        (WebCore::startGio): Update type names.
+        * platform/network/soup/cache/soup-directory-input-stream.c: Removed.
+        * platform/network/soup/cache/soup-directory-input-stream.h: Removed.
+        * platform/network/soup/cache/soup-http-input-stream.c: Removed.
+        * platform/network/soup/cache/soup-http-input-stream.h: Removed.
+        * platform/network/soup/cache/soup-request-data.c: Removed.
+        * platform/network/soup/cache/soup-request-data.h: Removed.
+        * platform/network/soup/cache/soup-request-file.c: Removed.
+        * platform/network/soup/cache/soup-request-file.h: Removed.
+        * platform/network/soup/cache/soup-request-http.c: Removed.
+        * platform/network/soup/cache/soup-request-http.h: Removed.
+        * platform/network/soup/cache/soup-request.c: Removed.
+        * platform/network/soup/cache/soup-request.h: Removed.
+        * platform/network/soup/cache/soup-requester.c: Removed.
+        * platform/network/soup/cache/soup-requester.h: Removed.
+        * platform/network/soup/cache/webkit/soup-cache-private.h: Removed.
+        * platform/network/soup/cache/webkit/soup-cache.c: Removed.
+        * platform/network/soup/cache/webkit/soup-cache.h: Removed.
+
 2011-02-02  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Darin Adler.

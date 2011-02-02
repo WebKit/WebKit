@@ -1,3 +1,12 @@
+2011-02-02  Dan Winship  <danw@gnome.org>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] drop soup cache stuff, which has been moved to libsoup
+        https://bugs.webkit.org/show_bug.cgi?id=50747
+
+        * GNUmakefile.am: Remove old cache files.
+
 2011-02-02  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Darin Adler.
