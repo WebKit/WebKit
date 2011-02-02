@@ -172,7 +172,7 @@ static NSSize abs(NSSize size)
 {
     UNUSED_PARAM(scrollerImpPair);
     WebCore::IntSize contentsSize = _animator->scrollableArea()->contentsSize();
-    return CGRectMake(0, 0, contentsSize.width(), contentsSize.height());
+    return NSMakeRect(0, 0, contentsSize.width(), contentsSize.height());
 }
 
 - (BOOL)inLiveResizeForScrollerImpPair:(id)scrollerImpPair
