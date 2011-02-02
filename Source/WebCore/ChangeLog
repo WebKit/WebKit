@@ -1,3 +1,17 @@
+2011-02-01  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        [WebTiming] Remove asserts that verify timestamp order
+        https://bugs.webkit.org/show_bug.cgi?id=53548
+
+        Covered by existing tests.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading): Remove assert.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::dispatchTimedEvent): Ditto.
+
 2011-02-01  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Add the 'default_targets' enclosure to the flags.

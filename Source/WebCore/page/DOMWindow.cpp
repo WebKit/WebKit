@@ -1553,7 +1553,6 @@ void DOMWindow::dispatchTimedEvent(PassRefPtr<Event> event, Document* target, do
     *startTime = currentTime();
     dispatchEvent(event, target);
     *endTime = currentTime();
-    ASSERT(*endTime >= *startTime);
 }
 
 void DOMWindow::removeAllEventListeners()

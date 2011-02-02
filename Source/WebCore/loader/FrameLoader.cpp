@@ -385,7 +385,6 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy, DatabasePolic
                             DocumentLoadTiming* timing = documentLoader->timing();
                             ASSERT(timing->navigationStart);
                             m_frame->domWindow()->dispatchTimedEvent(unloadEvent, m_frame->domWindow()->document(), &timing->unloadEventStart, &timing->unloadEventEnd);
-                            ASSERT(timing->unloadEventStart >= timing->navigationStart);
                         } else
                             m_frame->domWindow()->dispatchEvent(unloadEvent, m_frame->domWindow()->document());
                     }
