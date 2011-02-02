@@ -166,9 +166,11 @@ void ScrollbarThemeMac::registerScrollbar(Scrollbar* scrollbar)
     scrollbarMap()->add(scrollbar, scrollbarPainter);
 
 #if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
-    ScrollAnimatorMac* animator = static_cast<ScrollAnimatorMac*>(scrollbar->scrollableArea()->scrollAnimator());
-    wkScrollbarPainterSetDelegate(scrollbarPainter, animator->scrollbarPainterDelegate());
-    animator->setPainterForPainterController(scrollbarPainter, isHorizontal);
+    if (ScrollableArea* scrollableArea = scrollbar->scrollableArea()) {
+        ScrollAnimatorMac* animator = static_cast<ScrollAnimatorMac*>(scrollableArea->scrollAnimator());
+        wkScrollbarPainterSetDelegate(scrollbarPainter, animator->scrollbarPainterDelegate());
+        animator->setPainterForPainterController(scrollbarPainter, isHorizontal);
+    }
 #endif
 #else
     scrollbarMap()->add(scrollbar);
@@ -178,8 +180,10 @@ void ScrollbarThemeMac::registerScrollbar(Scrollbar* scrollbar)
 void ScrollbarThemeMac::unregisterScrollbar(Scrollbar* scrollbar)
 {
 #if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
-    ScrollAnimatorMac* animator = static_cast<ScrollAnimatorMac*>(scrollbar->scrollableArea()->scrollAnimator());
-    animator->removePainterFromPainterController(scrollbar->orientation());
+    if (ScrollableArea* scrollableArea = scrollbar->scrollableArea()) {
+        ScrollAnimatorMac* animator = static_cast<ScrollAnimatorMac*>(scrollableArea->scrollAnimator());
+        animator->removePainterFromPainterController(scrollbar->orientation());
+    }
 #endif
 
     scrollbarMap()->remove(scrollbar);
