@@ -1,3 +1,13 @@
+2011-02-02  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Darin Adler.
+
+        More right()/bottom() to maxX()/maxY() conversion.
+
+        * page/chromium/FrameChromium.cpp:
+        (WebCore::Frame::nodeImage):
+        (WebCore::Frame::dragImageForSelection):
+
 2011-02-02  Sam Weinig  <sam@webkit.org>
 
         Fix windows clean build.

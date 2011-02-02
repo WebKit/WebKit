@@ -85,7 +85,7 @@ DragImageRef Frame::nodeImage(Node* node)
     if (!buffer)
         return 0;
     buffer->context()->translate(-paintingRect.x(), -paintingRect.y());
-    buffer->context()->clip(FloatRect(0, 0, paintingRect.right(), paintingRect.bottom()));
+    buffer->context()->clip(FloatRect(0, 0, paintingRect.maxX(), paintingRect.maxY()));
 
     m_view->paintContents(buffer->context(), paintingRect);
 
@@ -108,7 +108,7 @@ DragImageRef Frame::dragImageForSelection()
     if (!buffer)
         return 0;
     buffer->context()->translate(-paintingRect.x(), -paintingRect.y());
-    buffer->context()->clip(FloatRect(0, 0, paintingRect.right(), paintingRect.bottom()));
+    buffer->context()->clip(FloatRect(0, 0, paintingRect.maxX(), paintingRect.maxY()));
 
     m_view->paintContents(buffer->context(), paintingRect);
 
