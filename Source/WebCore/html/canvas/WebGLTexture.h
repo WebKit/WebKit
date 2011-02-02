@@ -44,6 +44,8 @@ public:
     void setParameteri(GC3Denum pname, GC3Dint param);
     void setParameterf(GC3Denum pname, GC3Dfloat param);
 
+    GC3Denum getTarget() const { return m_target; }
+
     int getMinFilter() const { return m_minFilter; }
 
     void setLevelInfo(GC3Denum target, GC3Dint level, GC3Denum internalFormat, GC3Dsizei width, GC3Dsizei height, GC3Denum type);

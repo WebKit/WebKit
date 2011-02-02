@@ -1,3 +1,13 @@
+2011-02-02  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        A deleted object should never been bound again
+        https://bugs.webkit.org/show_bug.cgi?id=53604
+
+        * fast/canvas/webgl/object-deletion-behaviour-expected.txt:
+        * fast/canvas/webgl/object-deletion-behaviour.html: Add test cases for object binding and deletion.
+
 2011-02-02  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.

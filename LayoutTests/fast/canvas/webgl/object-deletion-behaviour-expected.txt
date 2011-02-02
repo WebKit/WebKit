@@ -29,19 +29,59 @@ PASS gl.isShader(fragmentShader) is false
 texture deletion
 PASS gl.bindFramebuffer(gl.FRAMEBUFFER, fbo) was expected value: NO_ERROR.
 PASS gl.bindTexture(gl.TEXTURE_2D, tex) was expected value: NO_ERROR.
+PASS gl.getParameter(gl.TEXTURE_BINDING_2D) is tex
 PASS gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0) was expected value: NO_ERROR.
 PASS gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is tex
 PASS gl.deleteTexture(tex) was expected value: NO_ERROR.
 PASS gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is null
 PASS gl.isTexture(tex) is false
+PASS gl.getParameter(gl.TEXTURE_BINDING_2D) is null
+PASS gl.bindTexture(gl.TEXTURE_2D, tex) was expected value: NO_ERROR.
+PASS gl.getParameter(gl.TEXTURE_BINDING_2D) is null
+PASS gl.bindTexture(gl.TEXTURE_CUBE_MAP, texCubeMap) was expected value: NO_ERROR.
+PASS gl.getParameter(gl.TEXTURE_BINDING_CUBE_MAP) is texCubeMap
+PASS gl.deleteTexture(texCubeMap) was expected value: NO_ERROR.
+PASS gl.isTexture(texCubeMap) is false
+PASS gl.getParameter(gl.TEXTURE_BINDING_CUBE_MAP) is null
+PASS gl.bindTexture(gl.TEXTURE_CUBE_MAP, texCubeMap) was expected value: NO_ERROR.
+PASS gl.getParameter(gl.TEXTURE_BINDING_CUBE_MAP) is null
 
 renderbuffer deletion
 PASS gl.bindRenderbuffer(gl.RENDERBUFFER, rbo) was expected value: NO_ERROR.
+PASS gl.getParameter(gl.RENDERBUFFER_BINDING) is rbo
 PASS gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, rbo) was expected value: NO_ERROR.
 PASS gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is rbo
 PASS gl.deleteRenderbuffer(rbo) was expected value: NO_ERROR.
 PASS gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is null
 PASS gl.isRenderbuffer(rbo) is false
+PASS gl.getParameter(gl.RENDERBUFFER_BINDING) is null
+PASS gl.bindRenderbuffer(gl.RENDERBUFFER, rbo) was expected value: NO_ERROR.
+PASS gl.getParameter(gl.RENDERBUFFER_BINDING) is null
+
+buffer deletion
+PASS gl.bindBuffer(gl.ARRAY_BUFFER, buffer) was expected value: NO_ERROR.
+PASS gl.getParameter(gl.ARRAY_BUFFER_BINDING) is buffer
+PASS gl.deleteBuffer(buffer) was expected value: NO_ERROR.
+PASS gl.isBuffer(buffer) is false
+PASS gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+PASS gl.bindBuffer(gl.ARRAY_BUFFER, buffer) was expected value: NO_ERROR.
+PASS gl.getParameter(gl.ARRAY_BUFFER_BINDING) is null
+PASS gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, bufferElement) was expected value: NO_ERROR.
+PASS gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is bufferElement
+PASS gl.deleteBuffer(bufferElement) was expected value: NO_ERROR.
+PASS gl.isBuffer(bufferElement) is false
+PASS gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+PASS gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, bufferElement) was expected value: NO_ERROR.
+PASS gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) is null
+
+framebuffer deletion
+PASS gl.bindFramebuffer(gl.FRAMEBUFFER, fbo) was expected value: NO_ERROR.
+PASS gl.getParameter(gl.FRAMEBUFFER_BINDING) is fbo
+PASS gl.deleteFramebuffer(fbo) was expected value: NO_ERROR.
+PASS gl.isFramebuffer(fbo) is false
+PASS gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
+PASS gl.bindFramebuffer(gl.FRAMEBUFFER, fbo) was expected value: NO_ERROR.
+PASS gl.getParameter(gl.FRAMEBUFFER_BINDING) is null
 PASS successfullyParsed is true
 
 TEST COMPLETE

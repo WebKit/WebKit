@@ -546,20 +546,33 @@ void WebGLRenderingContext::bindAttribLocation(WebGLProgram* program, GC3Duint i
     cleanupAfterGraphicsCall(false);
 }
 
+bool WebGLRenderingContext::checkObjectToBeBound(WebGLObject* object, bool& deleted)
+{
+    deleted = false;
+    if (isContextLost())
+        return false;
+    if (object) {
+        if (object->context() != this) {
+            m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+            return false;
+        }
+        deleted = !object->object();
+    }
+    return true;
+}
+
 void WebGLRenderingContext::bindBuffer(GC3Denum target, WebGLBuffer* buffer, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
-    if (isContextLost())
+    bool deleted;
+    if (!checkObjectToBeBound(buffer, deleted))
         return;
-    if (buffer && buffer->context() != this) {
-        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
-        return;
-    }
+    if (deleted)
+        buffer = 0;
     if (buffer && buffer->getTarget() && buffer->getTarget() != target) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return;
     }
-
     if (target == GraphicsContext3D::ARRAY_BUFFER)
         m_boundArrayBuffer = buffer;
     else if (target == GraphicsContext3D::ELEMENT_ARRAY_BUFFER)
@@ -578,12 +591,11 @@ void WebGLRenderingContext::bindBuffer(GC3Denum target, WebGLBuffer* buffer, Exc
 void WebGLRenderingContext::bindFramebuffer(GC3Denum target, WebGLFramebuffer* buffer, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
-    if (isContextLost())
+    bool deleted;
+    if (!checkObjectToBeBound(buffer, deleted))
         return;
-    if (buffer && buffer->context() != this) {
-        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
-        return;
-    }
+    if (deleted)
+        buffer = 0;
     if (target != GraphicsContext3D::FRAMEBUFFER) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
         return;
@@ -598,12 +610,11 @@ void WebGLRenderingContext::bindFramebuffer(GC3Denum target, WebGLFramebuffer* b
 void WebGLRenderingContext::bindRenderbuffer(GC3Denum target, WebGLRenderbuffer* renderBuffer, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
-    if (isContextLost())
+    bool deleted;
+    if (!checkObjectToBeBound(renderBuffer, deleted))
         return;
-    if (renderBuffer && renderBuffer->context() != this) {
-        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
-        return;
-    }
+    if (deleted)
+        renderBuffer = 0;
     if (target != GraphicsContext3D::RENDERBUFFER) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
         return;
@@ -618,9 +629,12 @@ void WebGLRenderingContext::bindRenderbuffer(GC3Denum target, WebGLRenderbuffer*
 void WebGLRenderingContext::bindTexture(GC3Denum target, WebGLTexture* texture, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
-    if (isContextLost())
+    bool deleted;
+    if (!checkObjectToBeBound(texture, deleted))
         return;
-    if (texture && texture->context() != this) {
+    if (deleted)
+        texture = 0;
+    if (texture && texture->getTarget() && texture->getTarget() != target) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return;
     }
@@ -1047,13 +1061,27 @@ void WebGLRenderingContext::cullFace(GC3Denum mode)
     cleanupAfterGraphicsCall(false);
 }
 
+bool WebGLRenderingContext::deleteObject(WebGLObject* object)
+{
+    if (isContextLost() || !object)
+        return false;
+    if (object->context() != this) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+        return false;
+    }
+    if (object->object())
+        object->deleteObject();
+    return true;
+}
+
 void WebGLRenderingContext::deleteBuffer(WebGLBuffer* buffer)
 {
-    if (isContextLost() || !buffer)
+    if (!deleteObject(buffer))
         return;
-
-    buffer->deleteObject();
-
+    if (m_boundArrayBuffer == buffer)
+        m_boundArrayBuffer = 0;
+    if (m_boundElementArrayBuffer == buffer)
+        m_boundElementArrayBuffer = 0;
     if (!isGLES2Compliant()) {
         VertexAttribState& state = m_vertexAttribState[0];
         if (buffer == state.bufferBinding) {
@@ -1071,54 +1099,47 @@ void WebGLRenderingContext::deleteBuffer(WebGLBuffer* buffer)
 
 void WebGLRenderingContext::deleteFramebuffer(WebGLFramebuffer* framebuffer)
 {
-    if (isContextLost() || !framebuffer)
+    if (!deleteObject(framebuffer))
         return;
     if (framebuffer == m_framebufferBinding) {
         m_framebufferBinding = 0;
         // Have to call bindFramebuffer here to bind back to internal fbo.
         m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0);
     }
-    framebuffer->deleteObject();
 }
 
 void WebGLRenderingContext::deleteProgram(WebGLProgram* program)
 {
-    if (isContextLost() || !program)
-        return;
-    if (program->context() != this) {
-        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
-        return;
-    }
-    if (!program->object())
-        return;
-    program->deleteObject();
+    deleteObject(program);
+    // We don't reset m_currentProgram to 0 here because the deletion of the
+    // current program is delayed.
 }
 
 void WebGLRenderingContext::deleteRenderbuffer(WebGLRenderbuffer* renderbuffer)
 {
-    if (isContextLost() || !renderbuffer)
+    if (!deleteObject(renderbuffer))
         return;
     if (renderbuffer == m_renderbufferBinding)
         m_renderbufferBinding = 0;
-    renderbuffer->deleteObject();
     if (m_framebufferBinding)
         m_framebufferBinding->removeAttachment(renderbuffer);
 }
 
 void WebGLRenderingContext::deleteShader(WebGLShader* shader)
 {
-    if (isContextLost() || !shader)
-        return;
-
-    shader->deleteObject();
+    deleteObject(shader);
 }
 
 void WebGLRenderingContext::deleteTexture(WebGLTexture* texture)
 {
-    if (isContextLost() || !texture)
+    if (!deleteObject(texture))
         return;
-
-    texture->deleteObject();
+    for (size_t i = 0; i < m_textureUnits.size(); ++i) {
+        if (texture == m_textureUnits[i].m_texture2DBinding)
+            m_textureUnits[i].m_texture2DBinding = 0;
+        if (texture == m_textureUnits[i].m_textureCubeMapBinding)
+            m_textureUnits[i].m_textureCubeMapBinding = 0;
+    }
     if (m_framebufferBinding)
         m_framebufferBinding->removeAttachment(texture);
 }
@@ -3526,13 +3547,12 @@ void WebGLRenderingContext::uniformMatrix4fv(const WebGLUniformLocation* locatio
 void WebGLRenderingContext::useProgram(WebGLProgram* program, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
-    if (isContextLost())
+    bool deleted;
+    if (!checkObjectToBeBound(program, deleted))
         return;
-    if (program && program->context() != this) {
-        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
-        return;
-    }
-    if (program && program->object() && !program->getLinkStatus()) {
+    if (deleted)
+        program = 0;
+    if (program && !program->getLinkStatus()) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         cleanupAfterGraphicsCall(false);
         return;
@@ -3542,7 +3562,7 @@ void WebGLRenderingContext::useProgram(WebGLProgram* program, ExceptionCode& ec)
             m_currentProgram->onDetached();
         m_currentProgram = program;
         m_context->useProgram(objectOrZero(program));
-        if (program && program->object())
+        if (program)
             program->onAttached();
     }
     cleanupAfterGraphicsCall(false);

@@ -577,6 +577,15 @@ public:
     void vertexAttribfvImpl(GC3Duint index, Float32Array*, GC3Dsizei expectedSize);
     void vertexAttribfvImpl(GC3Duint index, GC3Dfloat*, GC3Dsizei size, GC3Dsizei expectedSize);
 
+    // Helper function for delete* (deleteBuffer, deleteProgram, etc) functions.
+    // Return false if caller should return without further processing.
+    bool deleteObject(WebGLObject*);
+
+    // Helper function for bind* (bindBuffer, bindTexture, etc) and useProgram.
+    // If the object has already been deleted, set deleted to true upon return.
+    // Return false if caller should return without further processing.
+    bool checkObjectToBeBound(WebGLObject*, bool& deleted);
+
     // Helpers for simulating vertexAttrib0
     void initVertexAttrib0();
     bool simulateVertexAttrib0(GC3Dsizei numVertex);

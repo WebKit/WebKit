@@ -53,6 +53,7 @@ shouldGenerateGLError(gl, gl.NO_ERROR, "gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)"
 
 var tex = gl.createTexture();
 shouldGenerateGLError(gl, gl.NO_ERROR, "gl.bindTexture(gl.TEXTURE_2D, tex)");
+shouldBe("gl.getParameter(gl.TEXTURE_BINDING_2D)", "tex");
 shouldGenerateGLError(gl, gl.NO_ERROR, "gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0)");
 shouldBe("gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME)", "tex");
 shouldGenerateGLError(gl, gl.NO_ERROR, "gl.deleteTexture(tex)");
@@ -60,12 +61,25 @@ shouldGenerateGLError(gl, gl.NO_ERROR, "gl.deleteTexture(tex)");
 // detaching the textue from fbo first, then delete the texture.
 shouldBeNull("gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME)");
 shouldBeFalse("gl.isTexture(tex)");
+shouldBeNull("gl.getParameter(gl.TEXTURE_BINDING_2D)");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.bindTexture(gl.TEXTURE_2D, tex)");
+shouldBeNull("gl.getParameter(gl.TEXTURE_BINDING_2D)");
+
+var texCubeMap = gl.createTexture();
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.bindTexture(gl.TEXTURE_CUBE_MAP, texCubeMap)");
+shouldBe("gl.getParameter(gl.TEXTURE_BINDING_CUBE_MAP)", "texCubeMap");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.deleteTexture(texCubeMap)");
+shouldBeFalse("gl.isTexture(texCubeMap)");
+shouldBeNull("gl.getParameter(gl.TEXTURE_BINDING_CUBE_MAP)");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.bindTexture(gl.TEXTURE_CUBE_MAP, texCubeMap)");
+shouldBeNull("gl.getParameter(gl.TEXTURE_BINDING_CUBE_MAP)");
 
 debug("");
 debug("renderbuffer deletion");
 
 var rbo = gl.createRenderbuffer();
 shouldGenerateGLError(gl, gl.NO_ERROR, "gl.bindRenderbuffer(gl.RENDERBUFFER, rbo)");
+shouldBe("gl.getParameter(gl.RENDERBUFFER_BINDING)", "rbo");
 shouldGenerateGLError(gl, gl.NO_ERROR, "gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, rbo)");
 shouldBe("gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME)", "rbo");
 shouldGenerateGLError(gl, gl.NO_ERROR, "gl.deleteRenderbuffer(rbo)");
@@ -73,6 +87,41 @@ shouldGenerateGLError(gl, gl.NO_ERROR, "gl.deleteRenderbuffer(rbo)");
 // detaching the renderbuffer from fbo first, then delete the renderbuffer.
 shouldBeNull("gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME)");
 shouldBeFalse("gl.isRenderbuffer(rbo)");
+shouldBeNull("gl.getParameter(gl.RENDERBUFFER_BINDING)");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.bindRenderbuffer(gl.RENDERBUFFER, rbo)");
+shouldBeNull("gl.getParameter(gl.RENDERBUFFER_BINDING)");
+
+debug("");
+debug("buffer deletion");
+
+var buffer = gl.createBuffer();
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.bindBuffer(gl.ARRAY_BUFFER, buffer)");
+shouldBe("gl.getParameter(gl.ARRAY_BUFFER_BINDING)", "buffer");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.deleteBuffer(buffer)");
+shouldBeFalse("gl.isBuffer(buffer)");
+shouldBeNull("gl.getParameter(gl.ARRAY_BUFFER_BINDING)");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.bindBuffer(gl.ARRAY_BUFFER, buffer)");
+shouldBeNull("gl.getParameter(gl.ARRAY_BUFFER_BINDING)");
+
+var bufferElement = gl.createBuffer();
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, bufferElement)");
+shouldBe("gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING)", "bufferElement");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.deleteBuffer(bufferElement)");
+shouldBeFalse("gl.isBuffer(bufferElement)");
+shouldBeNull("gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING)");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, bufferElement)");
+shouldBeNull("gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING)");
+
+debug("");
+debug("framebuffer deletion");
+
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)");
+shouldBe("gl.getParameter(gl.FRAMEBUFFER_BINDING)", "fbo");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.deleteFramebuffer(fbo)");
+shouldBeFalse("gl.isFramebuffer(fbo)");
+shouldBeNull("gl.getParameter(gl.FRAMEBUFFER_BINDING)");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.bindFramebuffer(gl.FRAMEBUFFER, fbo)");
+shouldBeNull("gl.getParameter(gl.FRAMEBUFFER_BINDING)");
 
 successfullyParsed = true;
 </script>
