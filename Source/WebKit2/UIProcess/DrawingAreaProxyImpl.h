@@ -66,6 +66,9 @@ private:
     // Used to throttle SetSize messages so we don't send them faster than the Web process can handle.
     bool m_isWaitingForDidSetSize;
 
+    // Whether we're in accelerated compositing mode or not.
+    bool m_isInAcceleratedCompositingMode;
+
     OwnPtr<BackingStore> m_backingStore;
 };
 

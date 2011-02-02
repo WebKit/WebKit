@@ -50,6 +50,7 @@ PassOwnPtr<DrawingAreaProxyImpl> DrawingAreaProxyImpl::create(WebPageProxy* webP
 DrawingAreaProxyImpl::DrawingAreaProxyImpl(WebPageProxy* webPageProxy)
     : DrawingAreaProxy(DrawingAreaInfo::Impl, webPageProxy)
     , m_isWaitingForDidSetSize(false)
+    , m_isInAcceleratedCompositingMode(false)
 {
 }
 
@@ -63,6 +64,8 @@ void DrawingAreaProxyImpl::paint(BackingStore::PlatformGraphicsContext context, 
 
     if (!m_backingStore)
         return;
+
+    ASSERT(!m_isInAcceleratedCompositingMode);
 
     if (m_isWaitingForDidSetSize) {
         if (!m_webPageProxy->isValid())
@@ -142,23 +145,34 @@ void DrawingAreaProxyImpl::didSetSize(const UpdateInfo& updateInfo)
     if (m_size != updateInfo.viewSize)
         sendSetSize();
 
-    m_backingStore = nullptr;
+    if (m_isInAcceleratedCompositingMode)
+        return;
 
+    m_backingStore = nullptr;
     incorporateUpdate(updateInfo);
 }
 
 void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {
+    ASSERT(!m_isInAcceleratedCompositingMode);
+    m_isInAcceleratedCompositingMode = true;
+
+    m_backingStore = nullptr;
     m_webPageProxy->enterAcceleratedCompositingMode(layerTreeContext);
 }
 
 void DrawingAreaProxyImpl::exitAcceleratedCompositingMode()
 {
+    ASSERT(m_isInAcceleratedCompositingMode);
+    m_isInAcceleratedCompositingMode = false;
+
     m_webPageProxy->exitAcceleratedCompositingMode();
 }
 
 void DrawingAreaProxyImpl::incorporateUpdate(const UpdateInfo& updateInfo)
 {
+    ASSERT(!m_isInAcceleratedCompositingMode);
+
     if (updateInfo.updateRectBounds.isEmpty())
         return;
 

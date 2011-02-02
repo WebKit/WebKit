@@ -1,3 +1,31 @@
+2011-02-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        The drawing area proxy should keep track of the accelerated compositing state
+        https://bugs.webkit.org/show_bug.cgi?id=53624
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::DrawingAreaProxyImpl):
+        Initialize m_isInAcceleratedCompositingMode to false.
+
+        (WebKit::DrawingAreaProxyImpl::paint):
+        Don't try to paint if we're in accelerated compositing mode.
+
+        (WebKit::DrawingAreaProxyImpl::didSetSize):
+        Bail if we're in accelerated compositing mode.
+
+        (WebKit::DrawingAreaProxyImpl::enterAcceleratedCompositingMode):
+        Set m_isInAcceleratedCompositingMode to true, null out the backing store.
+
+        (WebKit::DrawingAreaProxyImpl::exitAcceleratedCompositingMode):
+        Set m_isInAcceleratedCompositingMode back to false.
+
+        (WebKit::DrawingAreaProxyImpl::incorporateUpdate):
+        Assert that we're not in accelerated compositing mode.
+
+        * UIProcess/DrawingAreaProxyImpl.h:
+
 2011-02-02  Timothy Hatcher  <timothy@apple.com>
 
         Give the Web Process access to the Safari RSS preferences.
