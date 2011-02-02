@@ -29,12 +29,17 @@ namespace WebCore {
 class HTMLImageLoader;
 class FrameLoader;
 
+enum PluginCreationOption {
+    CreateAnyWidgetType,
+    CreateOnlyNonNetscapePlugins,
+};
+
 // Base class for HTMLObjectElement and HTMLEmbedElement
 class HTMLPlugInImageElement : public HTMLPlugInElement {
 public:
     RenderEmbeddedObject* renderEmbeddedObject() const;
 
-    virtual void updateWidget(bool onlyCreateNonNetscapePlugins) = 0;
+    virtual void updateWidget(PluginCreationOption) = 0;
 
     const String& serviceType() const { return m_serviceType; }
     const String& url() const { return m_url; }

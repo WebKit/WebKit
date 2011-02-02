@@ -47,7 +47,7 @@ private:
 
     virtual RenderWidget* renderWidgetForJSBindings() const;
 
-    virtual void updateWidget(bool onlyCreateNonNetscapePlugins);
+    virtual void updateWidget(PluginCreationOption);
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 

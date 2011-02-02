@@ -138,7 +138,7 @@ void HTMLEmbedElement::parametersForPlugin(Vector<String>& paramNames, Vector<St
 
 // FIXME: This should be unified with HTMLObjectElement::updateWidget and
 // moved down into HTMLPluginImageElement.cpp
-void HTMLEmbedElement::updateWidget(bool onlyCreateNonNetscapePlugins)
+void HTMLEmbedElement::updateWidget(PluginCreationOption pluginCreationOption)
 {
     ASSERT(!renderEmbeddedObject()->pluginCrashedOrWasMissing());
     // FIXME: We should ASSERT(needsWidgetUpdate()), but currently
@@ -153,7 +153,10 @@ void HTMLEmbedElement::updateWidget(bool onlyCreateNonNetscapePlugins)
     // <object> which modifies url and serviceType before calling these.
     if (!allowedToLoadFrameURL(m_url))
         return;
-    if (onlyCreateNonNetscapePlugins && wouldLoadAsNetscapePlugin(m_url, m_serviceType))
+    // FIXME: It's sadness that we have this special case here.
+    //        See http://trac.webkit.org/changeset/25128 and
+    //        plugins/netscape-plugin-setwindow-size.html
+    if (pluginCreationOption == CreateOnlyNonNetscapePlugins && wouldLoadAsNetscapePlugin(m_url, m_serviceType))
         return;
 
     // FIXME: These should be joined into a PluginParameters class.

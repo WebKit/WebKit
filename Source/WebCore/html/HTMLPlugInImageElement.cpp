@@ -166,7 +166,7 @@ void HTMLPlugInImageElement::updateWidgetIfNecessary()
     if (!renderEmbeddedObject() || renderEmbeddedObject()->pluginCrashedOrWasMissing())
         return;
 
-    updateWidget(true);
+    updateWidget(CreateOnlyNonNetscapePlugins);
 }
 
 void HTMLPlugInImageElement::finishParsingChildren()

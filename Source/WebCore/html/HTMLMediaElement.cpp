@@ -2392,7 +2392,7 @@ void HTMLMediaElement::createMediaPlayerProxy()
         m_needWidgetUpdate = false;
 }
 
-void HTMLMediaElement::updateWidget(bool)
+void HTMLMediaElement::updateWidget(PluginCreationOption)
 {
     mediaElement->setNeedWidgetUpdate(false);
 

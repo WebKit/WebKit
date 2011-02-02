@@ -1,3 +1,27 @@
+2011-02-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Improve readability of updateWidget by converting bool parameter to an enum
+        https://bugs.webkit.org/show_bug.cgi?id=53576
+
+        As requested on webkit-dev.
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::updateWidget):
+        * html/HTMLEmbedElement.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updateWidget):
+        * html/HTMLMediaElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::updateWidget):
+        * html/HTMLObjectElement.h:
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::updateWidgetIfNecessary):
+        * html/HTMLPlugInImageElement.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateWidget):
+
 2011-02-01  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Adam Barth.

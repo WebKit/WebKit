@@ -152,7 +152,7 @@ public:
     void getPluginProxyParams(KURL& url, Vector<String>& names, Vector<String>& values);
     virtual void finishParsingChildren();
     void createMediaPlayerProxy();
-    void updateWidget(bool onlyCreateNonNetscapePlugins);
+    void updateWidget(PluginCreationOption);
 #endif
 
     bool hasSingleSecurityOrigin() const { return !m_player || m_player->hasSingleSecurityOrigin(); }

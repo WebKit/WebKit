@@ -251,7 +251,7 @@ inline bool HTMLObjectElement::hasValidClassId()
 
 // FIXME: This should be unified with HTMLEmbedElement::updateWidget and
 // moved down into HTMLPluginImageElement.cpp
-void HTMLObjectElement::updateWidget(bool onlyCreateNonNetscapePlugins)
+void HTMLObjectElement::updateWidget(PluginCreationOption pluginCreationOption)
 {
     ASSERT(!renderEmbeddedObject()->pluginCrashedOrWasMissing());
     // FIXME: We should ASSERT(needsWidgetUpdate()), but currently
@@ -277,7 +277,7 @@ void HTMLObjectElement::updateWidget(bool onlyCreateNonNetscapePlugins)
     bool fallbackContent = hasFallbackContent();
     renderEmbeddedObject()->setHasFallbackContent(fallbackContent);
 
-    if (onlyCreateNonNetscapePlugins && wouldLoadAsNetscapePlugin(url, serviceType))
+    if (pluginCreationOption == CreateOnlyNonNetscapePlugins && wouldLoadAsNetscapePlugin(url, serviceType))
         return;
 
     ASSERT(!m_inBeforeLoadEventHandler);

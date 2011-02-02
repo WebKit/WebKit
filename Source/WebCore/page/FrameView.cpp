@@ -1793,11 +1793,11 @@ void FrameView::updateWidget(RenderEmbeddedObject* object)
     // FIXME: This could turn into a real virtual dispatch if we defined
     // updateWidget(bool) on HTMLElement.
     if (ownerElement->hasTagName(objectTag) || ownerElement->hasTagName(embedTag))
-        static_cast<HTMLPlugInImageElement*>(ownerElement)->updateWidget(false);
+        static_cast<HTMLPlugInImageElement*>(ownerElement)->updateWidget(CreateAnyWidgetType);
     // FIXME: It is not clear that Media elements need or want this updateWidget() call.
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     else if (ownerElement->hasTagName(videoTag) || ownerElement->hasTagName(audioTag))
-        static_cast<HTMLMediaElement*>(ownerElement)->updateWidget(false);
+        static_cast<HTMLMediaElement*>(ownerElement)->updateWidget(CreateAnyWidgetType);
 #endif
     else
         ASSERT_NOT_REACHED();
