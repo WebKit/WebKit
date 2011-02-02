@@ -365,6 +365,16 @@ void PageClientImpl::setComplexTextInputEnabled(uint64_t pluginComplexTextInputI
     [m_wkView _setComplexTextInputEnabled:complexTextInputEnabled pluginComplexTextInputIdentifier:pluginComplexTextInputIdentifier];
 }
 
+void PageClientImpl::setAutodisplay(bool newState)
+{
+    if (!newState && [[m_wkView window] isAutodisplay])
+        [m_wkView displayIfNeeded];
+    else
+        [m_wkView setNeedsDisplay:NO];
+    
+    [[m_wkView window] setAutodisplay:newState];
+}
+
 CGContextRef PageClientImpl::containingWindowGraphicsContext()
 {
     return static_cast<CGContextRef>([[[m_wkView window] graphicsContext] graphicsPort]);

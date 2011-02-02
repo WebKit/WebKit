@@ -1,3 +1,30 @@
+2011-02-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53561
+        <rdar://problem/8900228> Stepping through print previews in WebKit2 mode steps in and out of
+        printing mode a lot
+
+        Disable NSView autodisplay, so that -[WKView drawRect:] isn't called (other than when
+        resizing the window), so that we don't have to switch modes all the time.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::setAutodisplay):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setAutodisplay):
+        * UIProcess/WebPageProxy.h:
+        Pipe the call from WKPrintingView down to WKView.
+
+        * UIProcess/API/mac/WKPrintingView.mm:
+        (-[WKPrintingView beginDocument]): Added. We don't want to autodisplay WKView while printing,
+        because layout is changed to print at the time, and drawing to screen requires relayout.
+        
+        (-[WKPrintingView endDocument]): When not printing, turn autodisplay back on. Also, call
+        -[super endDocument] for unknown but definitive good (oops!).
+
 2011-02-02  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Darin Adler.

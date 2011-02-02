@@ -505,6 +505,19 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
     return NSMakePoint([[_printOperation printInfo] leftMargin], [[_printOperation printInfo] bottomMargin]);
 }
 
+- (void)beginDocument
+{
+    ASSERT(_printOperation == [NSPrintOperation currentOperation]);
+
+    // Forcing preview update gets us here, but page setup hasn't actually changed.
+    if (_isForcingPreviewUpdate)
+        return;
+
+    [super beginDocument];
+
+    _webFrame->page()->setAutodisplay(false);
+}
+
 - (void)endDocument
 {
     ASSERT(_printOperation == [NSPrintOperation currentOperation]);
@@ -525,5 +538,9 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
     _expectedPreviewCallbacks.clear();
     _latestExpectedPreviewCallback = 0;
     _expectedPrintCallback = 0;
+
+    _webFrame->page()->setAutodisplay(true);
+
+    [super endDocument];
 }
 @end

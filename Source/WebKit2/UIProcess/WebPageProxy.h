@@ -292,6 +292,10 @@ public:
     void drawHeader(WebFrameProxy*, const WebCore::FloatRect&);
     void drawFooter(WebFrameProxy*, const WebCore::FloatRect&);
 
+#if PLATFORM(MAC)
+    void setAutodisplay(bool);
+#endif
+
     void receivedPolicyDecision(WebCore::PolicyAction, WebFrameProxy*, uint64_t listenerID);
 
     void backForwardRemovedItem(uint64_t itemID);

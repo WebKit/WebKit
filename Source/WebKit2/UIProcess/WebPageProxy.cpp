@@ -2507,6 +2507,11 @@ void WebPageProxy::setComplexTextInputEnabled(uint64_t pluginComplexTextInputIde
 {
     m_pageClient->setComplexTextInputEnabled(pluginComplexTextInputIdentifier, complexTextInputEnabled);
 }
+
+void WebPageProxy::setAutodisplay(bool newState)
+{
+    m_pageClient->setAutodisplay(newState);
+}
 #endif
 
 void WebPageProxy::backForwardRemovedItem(uint64_t itemID)

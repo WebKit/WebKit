@@ -130,6 +130,7 @@ public:
 
 #if PLATFORM(MAC)
     virtual void setComplexTextInputEnabled(uint64_t pluginComplexTextInputIdentifier, bool complexTextInputEnabled) = 0;
+    virtual void setAutodisplay(bool) = 0;
 
     virtual CGContextRef containingWindowGraphicsContext() = 0;
 #endif
