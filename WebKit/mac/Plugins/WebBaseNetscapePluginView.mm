@@ -608,7 +608,7 @@ String WebHaltablePlugin::pluginName() const
 
 - (void)clearCachedSnapshot
 {
-    _cachedSnapshot.clear();
+    _cachedSnapshot = 0;
 }
 
 - (BOOL)hasBeenHalted

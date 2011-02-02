@@ -60,7 +60,6 @@ void HTMLStyleElement::parseMappedAttribute(MappedAttribute *attr)
 void HTMLStyleElement::finishParsingChildren()
 {
     StyleElement::process(this);
-    StyleElement::sheet(this);
     m_createdByParser = false;
     HTMLElement::finishParsingChildren();
 }

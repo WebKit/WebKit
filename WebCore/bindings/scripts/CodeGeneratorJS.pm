@@ -1799,6 +1799,11 @@ sub GenerateImplementation
                             $callWithArg = "dynamicFrame";
                         } elsif ($callWith eq "ScriptState") {
                             $callWithArg = "exec";
+                        } elsif ($callWith eq "ScriptExecutionContext") {
+                            push(@implContent, "    ScriptExecutionContext* scriptContext = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();\n");
+                            push(@implContent, "    if (!scriptContext)\n");
+                            push(@implContent, "        return jsUndefined();\n");
+                            $callWithArg = "scriptContext"; 
                         }
                         $functionString .= ", " if $paramIndex;
                         $functionString .= $callWithArg;

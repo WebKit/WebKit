@@ -96,7 +96,6 @@ void SVGStyleElement::parseMappedAttribute(MappedAttribute* attr)
 
 void SVGStyleElement::finishParsingChildren()
 {
-    StyleElement::sheet(this);
     m_createdByParser = false;
     SVGElement::finishParsingChildren();
 }

@@ -41,7 +41,6 @@ void StyleElement::insertedIntoDocument(Document*, Element* element)
 void StyleElement::removedFromDocument(Document* document)
 {
     if (m_sheet) {
-        ASSERT(m_sheet->ownerNode() == element);
         m_sheet->clearOwnerNode();
         m_sheet = 0;
     }
