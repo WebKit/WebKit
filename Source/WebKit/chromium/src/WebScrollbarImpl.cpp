@@ -33,7 +33,7 @@
 
 #include "GraphicsContext.h"
 #include "KeyboardCodes.h"
-#include "PlatformContextSkia.h"
+#include "painting/GraphicsContextBuilder.h"
 #include "Scrollbar.h"
 #include "ScrollbarTheme.h"
 #include "ScrollTypes.h"
@@ -119,18 +119,7 @@ void WebScrollbarImpl::scroll(ScrollDirection direction, ScrollGranularity granu
 
 void WebScrollbarImpl::paint(WebCanvas* canvas, const WebRect& rect)
 {
-#if WEBKIT_USING_CG
-    GraphicsContext gc(canvas);
-#elif WEBKIT_USING_SKIA
-    PlatformContextSkia context(canvas);
-
-    // PlatformGraphicsContext is actually a pointer to PlatformContextSkia
-    GraphicsContext gc(reinterpret_cast<PlatformGraphicsContext*>(&context));
-#else
-    notImplemented();
-#endif
-
-    m_scrollbar->paint(&gc, rect);
+    m_scrollbar->paint(&GraphicsContextBuilder(canvas).context(), rect);
 }
 
 bool WebScrollbarImpl::handleInputEvent(const WebInputEvent& event)

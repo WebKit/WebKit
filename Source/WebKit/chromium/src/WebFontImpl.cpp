@@ -34,7 +34,7 @@
 #include "Font.h"
 #include "FontDescription.h"
 #include "GraphicsContext.h"
-#include "PlatformContextSkia.h"
+#include "painting/GraphicsContextBuilder.h"
 #include "TextRun.h"
 #include "WebFloatPoint.h"
 #include "WebFloatRect.h"
@@ -94,15 +94,9 @@ void WebFontImpl::drawText(WebCanvas* canvas, const WebTextRun& run, const WebFl
     // FIXME hook canvasIsOpaque up to the platform-specific indicators for
     // whether subpixel AA can be used for this draw. On Windows, this is
     // PlatformContextSkia::setDrawingToImageBuffer.
-#if WEBKIT_USING_CG
-    GraphicsContext gc(canvas);
-#elif WEBKIT_USING_SKIA
-    PlatformContextSkia context(canvas);
-    // PlatformGraphicsContext is actually a pointer to PlatformContextSkia.
-    GraphicsContext gc(reinterpret_cast<PlatformGraphicsContext*>(&context));
-#else
-    notImplemented();
-#endif
+
+    GraphicsContextBuilder builder(canvas);
+    GraphicsContext& gc = builder.context();
 
     gc.save();
     gc.setFillColor(color, ColorSpaceDeviceRGB);

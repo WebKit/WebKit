@@ -90,7 +90,6 @@
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "FrameView.h"
-#include "GraphicsContext.h"
 #include "HTMLCollection.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameOwnerElement.h"
@@ -101,9 +100,9 @@
 #include "HistoryItem.h"
 #include "InspectorController.h"
 #include "Page.h"
+#include "painting/GraphicsContextBuilder.h"
 #include "Performance.h"
 #include "PlatformBridge.h"
-#include "PlatformContextSkia.h"
 #include "PluginDocument.h"
 #include "PrintContext.h"
 #include "RenderFrame.h"
@@ -154,10 +153,6 @@
 
 #include <algorithm>
 #include <wtf/CurrentTime.h>
-
-#if OS(DARWIN)
-#include "LocalCurrentGraphicsContext.h"
-#endif
 
 #if OS(LINUX) || OS(FREEBSD)
 #include <gdk/gdk.h>
@@ -1351,15 +1346,7 @@ float WebFrameImpl::printPage(int page, WebCanvas* canvas)
         return 0;
     }
 
-#if OS(WINDOWS) || OS(LINUX) || OS(FREEBSD) || OS(SOLARIS)
-    PlatformContextSkia context(canvas);
-    GraphicsContext spool(&context);
-#elif OS(DARWIN)
-    GraphicsContext spool(canvas);
-    LocalCurrentGraphicsContext localContext(&spool);
-#endif
-
-    return m_printContext->spoolPage(spool, page);
+    return m_printContext->spoolPage(GraphicsContextBuilder(canvas).context(), page);
 }
 
 void WebFrameImpl::printEnd()
@@ -1934,18 +1921,7 @@ void WebFrameImpl::paint(WebCanvas* canvas, const WebRect& rect)
 {
     if (rect.isEmpty())
         return;
-#if WEBKIT_USING_CG
-    GraphicsContext gc(canvas);
-    LocalCurrentGraphicsContext localContext(&gc);
-#elif WEBKIT_USING_SKIA
-    PlatformContextSkia context(canvas);
-
-    // PlatformGraphicsContext is actually a pointer to PlatformContextSkia
-    GraphicsContext gc(reinterpret_cast<PlatformGraphicsContext*>(&context));
-#else
-    notImplemented();
-#endif
-    paintWithContext(gc, rect);
+    paintWithContext(GraphicsContextBuilder(canvas).context(), rect);
 }
 
 void WebFrameImpl::createFrameView()

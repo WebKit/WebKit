@@ -384,6 +384,7 @@
                 'src/MediaPlayerPrivateChromium.cpp',
                 'src/NotificationPresenterImpl.h',
                 'src/NotificationPresenterImpl.cpp',
+                'src/painting/GraphicsContextBuilder.h',
                 'src/PlatformBridge.cpp',
                 'src/PlatformMessagePortChannel.cpp',
                 'src/PlatformMessagePortChannel.h',
