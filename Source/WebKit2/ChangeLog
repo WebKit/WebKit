@@ -1,3 +1,16 @@
+2011-02-02  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Conversion of right()/bottom() to maxX()/maxY() as part of the removal of those accessors.
+
+        * UIProcess/win/WebPopupMenuProxyWin.cpp:
+        (WebKit::WebPopupMenuProxyWin::calculatePositionAndSize):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::prepareCandidateWindow):
+        * WebProcess/Plugins/Netscape/win/NetscapePluginWin.cpp:
+        (WebKit::NetscapePlugin::platformGeometryDidChange):
+
 2011-02-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders Carlsson.

@@ -127,7 +127,7 @@ void NetscapePlugin::platformGeometryDidChange()
     IntRect clipRectInPluginWindowCoordinates = m_clipRect;
     clipRectInPluginWindowCoordinates.move(-m_frameRect.x(), -m_frameRect.y());
 
-    OwnPtr<HRGN> clipRegion = adoptPtr(::CreateRectRgn(clipRectInPluginWindowCoordinates.x(), clipRectInPluginWindowCoordinates.y(), clipRectInPluginWindowCoordinates.right(), clipRectInPluginWindowCoordinates.bottom()));
+    OwnPtr<HRGN> clipRegion = adoptPtr(::CreateRectRgn(clipRectInPluginWindowCoordinates.x(), clipRectInPluginWindowCoordinates.y(), clipRectInPluginWindowCoordinates.maxX(), clipRectInPluginWindowCoordinates.maxY()));
     setWindowRegion(m_window, clipRegion.release(), Redraw);
 
     // FIXME: We should only update the size here and let the UI process update our position so

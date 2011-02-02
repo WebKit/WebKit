@@ -373,7 +373,7 @@ void WebPopupMenuProxyWin::calculatePositionAndSize(const IntRect& rect)
     // Always left-align items in the popup.  This matches popup menus on the mac.
     int popupX = rectInScreenCoords.x() + m_data.m_clientInsetLeft;
 
-    IntRect popupRect(popupX, rectInScreenCoords.bottom(), popupWidth, popupHeight);
+    IntRect popupRect(popupX, rectInScreenCoords.maxY(), popupWidth, popupHeight);
 
     // The popup needs to stay within the bounds of the screen and not overlap any toolbars
     HMONITOR monitor = ::MonitorFromWindow(m_webView->window(), MONITOR_DEFAULTTOPRIMARY);
@@ -383,7 +383,7 @@ void WebPopupMenuProxyWin::calculatePositionAndSize(const IntRect& rect)
     FloatRect screen = monitorInfo.rcWork;
 
     // Check that we don't go off the screen vertically
-    if (popupRect.bottom() > screen.height()) {
+    if (popupRect.maxY() > screen.height()) {
         // The popup will go off the screen, so try placing it above the client
         if (rectInScreenCoords.y() - popupRect.height() < 0) {
             // The popup won't fit above, either, so place it whereever's bigger and resize it to fit
