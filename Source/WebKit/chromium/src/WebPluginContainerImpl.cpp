@@ -69,6 +69,7 @@
 #include "Page.h"
 #include "RenderBox.h"
 #include "ScrollView.h"
+#include "UserGestureIndicator.h"
 #include "WheelEvent.h"
 
 #if WEBKIT_USING_SKIA
@@ -367,6 +368,9 @@ void WebPluginContainerImpl::loadFrameRequest(
 
     FrameLoadRequest frameRequest(frame->document()->securityOrigin(),
         request.toResourceRequest(), target);
+
+    UserGestureIndicator gestureIndicator(request.hasUserGesture() ?
+        DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
 
     frame->loader()->loadFrameRequest(
         frameRequest,

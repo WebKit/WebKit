@@ -1,3 +1,13 @@
+2011-02-02  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [Chromium] Propagate the accurate gesture status when calling into FrameLoader
+        https://bugs.webkit.org/show_bug.cgi?id=53571
+
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::loadFrameRequest): FrameLoader might decide the target is a new window, so make such the UserGestureIndicator is fully accurate before calling into it.
+
 2011-02-01  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Tony Chang.
