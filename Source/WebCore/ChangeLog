@@ -1,3 +1,13 @@
+2011-02-02  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Update more references to right() and bottom() in Chromium Win.
+
+        * platform/graphics/chromium/TransparencyWin.cpp:
+        (WebCore::TransparencyWin::compositeOpaqueComposite): Replaced bottom/right with maxY/maxX.
+        (WebCore::TransparencyWin::compositeTextComposite): Ditto.
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::RenderThemeChromiumWin::paintMenuList): Ditto.
+
 2011-02-02  Adam Roben  <aroben@apple.com>
 
         Encode/decode FormData and FormDataElement objects consistently

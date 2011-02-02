@@ -446,9 +446,9 @@ void TransparencyWin::compositeOpaqueComposite()
         identity.reset();
         destCanvas->setMatrix(identity);
 
-        destRect.set(m_transformedSourceRect.x(), m_transformedSourceRect.y(), m_transformedSourceRect.right(), m_transformedSourceRect.bottom());
+        destRect.set(m_transformedSourceRect.x(), m_transformedSourceRect.y(), m_transformedSourceRect.maxX(), m_transformedSourceRect.maxY());
     } else
-        destRect.set(m_sourceRect.x(), m_sourceRect.y(), m_sourceRect.right(), m_sourceRect.bottom());
+        destRect.set(m_sourceRect.x(), m_sourceRect.y(), m_sourceRect.maxX(), m_sourceRect.maxY());
 
     SkPaint paint;
     paint.setFilterBitmap(true);
@@ -487,7 +487,7 @@ void TransparencyWin::compositeTextComposite()
     SkMatrix identity;
     identity.reset();
     destCanvas->setMatrix(identity);
-    SkRect destRect = { m_transformedSourceRect.x(), m_transformedSourceRect.y(), m_transformedSourceRect.right(), m_transformedSourceRect.bottom() };
+    SkRect destRect = { m_transformedSourceRect.x(), m_transformedSourceRect.y(), m_transformedSourceRect.maxX(), m_transformedSourceRect.maxY() };
 
     // Note that we need to specify the source layer subset, since the bitmap
     // may have been cached and it could be larger than what we're using.

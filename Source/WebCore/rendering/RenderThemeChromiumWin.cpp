@@ -479,15 +479,15 @@ bool RenderThemeChromiumWin::paintMenuList(RenderObject* o, const PaintInfo& i, 
     int spacingBottom = borderBottom + box->paddingBottom();
 
     int buttonX;
-    if (r.right() - r.x() < buttonWidth)
+    if (r.maxX() - r.x() < buttonWidth)
         buttonX = r.x();
     else
-        buttonX = o->style()->direction() == LTR ? r.right() - spacingRight - buttonWidth : r.x() + spacingLeft;
+        buttonX = o->style()->direction() == LTR ? r.maxX() - spacingRight - buttonWidth : r.x() + spacingLeft;
 
     // Compute the rectangle of the button in the destination image.
     IntRect rect(buttonX,
                  r.y() + spacingTop,
-                 std::min(buttonWidth, r.right() - r.x()),
+                 std::min(buttonWidth, r.maxX() - r.x()),
                  r.height() - (spacingTop + spacingBottom));
 
     // Get the correct theme data for a textfield and paint the menu.

@@ -552,8 +552,8 @@ TEST(TransparencyWin, Scale)
         EXPECT_TRUE(helper.context()->getCTM().isIdentity());
         EXPECT_EQ(2, helper.drawRect().x());
         EXPECT_EQ(2, helper.drawRect().y());
-        EXPECT_EQ(8, helper.drawRect().right());
-        EXPECT_EQ(8, helper.drawRect().bottom());
+        EXPECT_EQ(8, helper.drawRect().maxX());
+        EXPECT_EQ(8, helper.drawRect().maxY());
 
         // Set the pixel at (2, 2) to be transparent. This should be fixed when
         // the helper goes out of scope. We don't want to call

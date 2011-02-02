@@ -1,3 +1,10 @@
+2011-02-02  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Update more references to right() and bottom() in Chromium Win.
+
+        * tests/TransparencyWinTest.cpp:
+        (WebCore::TEST): Replaced bottom/right with maxY/maxX.
+
 2011-02-02  Matthew Vosburgh  <maf@chromium.org>
 
         Reviewed by Kenneth Russell.
