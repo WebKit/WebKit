@@ -21,6 +21,7 @@
 // LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
+var CODE_REVIEW_UNITTEST;
 
 (function() {
   /**
@@ -54,7 +55,7 @@
   if (window.top != window)
     return;
 
-  if (!window.location.search.match(/action=review/)
+  if (!CODE_REVIEW_UNITTEST && !window.location.search.match(/action=review/)
       && !window.location.toString().match(/bugs\.webkit\.org\/PrettyPatch/))
     return;
 
@@ -68,6 +69,7 @@
   var patched_file_contents = {};
   var WEBKIT_BASE_DIR = "http://svn.webkit.org/repository/webkit/trunk/";
   var SIDE_BY_SIDE_DIFFS_KEY = 'sidebysidediffs';
+  var g_displayed_draft_comments = false;
 
   function idForLine(number) {
     return 'line' + number;
@@ -97,7 +99,7 @@
   }
 
   function fileDiffFor(line) {
-    return line.parents('.FileDiff');
+    return $(line).parents('.FileDiff');
   }
 
   function activeCommentFor(line) {
@@ -129,7 +131,185 @@
     findCommentPositionFor(line).after(block);
   }
 
-  function addCommentFor(line) {
+  function addDraftComment(start_line_id, end_line_id, contents) {
+    var line = $('#' + end_line_id);
+    var start = numberFrom(start_line_id);
+    var end = numberFrom(end_line_id);
+    for (var i = start; i <= end; i++) {
+      var line = $('#line' + i);
+      line.addClass('commentContext');
+      addDataCommentBaseLine(line, end_line_id);
+    }
+
+    var comment_block = createCommentFor(line);
+    $(comment_block).children('textarea').val(contents);
+    freezeComment(comment_block);
+  }
+
+  function ensureDraftCommentsDisplayed() {
+    if (g_displayed_draft_comments)
+      return;
+    g_displayed_draft_comments = true;
+
+    var comments = g_draftCommentSaver.saved_comments();
+    $(comments).each(function() {
+      addDraftComment(this.start_line_id, this.end_line_id, this.contents);
+    });
+  }
+
+  function DraftCommentSaver(opt_attachment_id, opt_localStorage) {
+    this._attachment_id = opt_attachment_id || attachment_id;
+    this._localStorage = opt_localStorage || localStorage;
+    this._save_comments = true;
+  }
+
+  if (CODE_REVIEW_UNITTEST)
+    window['DraftCommentSaver'] = DraftCommentSaver;
+  
+  DraftCommentSaver.prototype._json = function() {
+    var comments = $('.comment');
+    var comment_store = [];
+    comments.each(function () {
+      var file_diff = fileDiffFor(this);
+      var textarea = $('textarea', this);
+
+      var contents = textarea.val().trim();
+      if (!contents)
+        return;
+
+      var comment_base_line = textarea.attr('data-comment-for');
+      var lines = contextLinesFor(comment_base_line, file_diff);
+
+      comment_store.push({
+        start_line_id: lines.first().attr('id'),
+        end_line_id: comment_base_line,
+        contents: contents
+      });
+    });
+
+    return JSON.stringify({'born-on': Date.now(), 'comments': comment_store});
+  }
+  
+  DraftCommentSaver.prototype.saved_comments = function() {
+    var serialized_comments = this._localStorage.getItem(DraftCommentSaver._keyPrefix + this._attachment_id);
+    if (!serialized_comments)
+      return [];
+
+    var comments = [];
+    try {
+      comments = JSON.parse(serialized_comments).comments;
+    } catch (e) {
+      this._erase_corrupt_comments();
+      return [];
+    }
+    
+    if (comments && !comments.length)
+      return comments;
+    
+    // Sanity check comments are as expected.
+    if (!comments || !comments[0].contents) {
+      this._erase_corrupt_comments();
+      return [];
+    }
+    
+    return comments;
+  }
+  
+  DraftCommentSaver.prototype._erase_corrupt_comments = function() {
+    // FIXME: Show an error to the user instead of logging.
+    console.log('Draft comments were corrupted. Erasing comments.');
+    this.erase();
+  }
+  
+  DraftCommentSaver.prototype.save = function() {
+    if (!this._save_comments)
+      return;
+
+    var key = DraftCommentSaver._keyPrefix + this._attachment_id;
+    var value = this._json();
+
+    if (this._attemptToWrite(key, value))
+      return;
+
+    this._eraseOldCommentsForAllReviews();
+    if (this._attemptToWrite(key, value))
+      return;
+
+    var remove_comments = this._should_remove_comments();
+    if (!remove_comments) {
+      this._save_comments = false;
+      return;
+    }
+
+    this._eraseCommentsForAllReviews();
+    if (this._attemptToWrite(key, value))
+      return;
+
+    this._save_comments = false;
+    // FIXME: Show an error to the user.
+  }
+
+  DraftCommentSaver.prototype._should_remove_comments = function(message) {
+    return prompt('Local storage quota is full. Remove draft comments from all previous reviews to make room?');
+  }
+
+  DraftCommentSaver.prototype._attemptToWrite = function(key, value) {
+    try {
+      this._localStorage.setItem(key, value);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  DraftCommentSaver._keyPrefix = 'draft-comments-for-attachment-';
+
+  DraftCommentSaver.prototype.erase = function() {
+    this._localStorage.removeItem(DraftCommentSaver._keyPrefix + this._attachment_id);
+  }
+
+  DraftCommentSaver.prototype._eraseOldCommentsForAllReviews = function() {
+    this._eraseComments(true);
+  }
+  DraftCommentSaver.prototype._eraseCommentsForAllReviews = function() {
+    this._eraseComments(false);
+  }
+
+  var MONTH_IN_MS = 1000 * 60 * 60 * 24 * 30;
+
+  DraftCommentSaver.prototype._eraseComments = function(only_old_reviews) {
+    var length = this._localStorage.length;
+    var keys_to_delete = [];
+    for (var i = 0; i < length; i++) {
+      var key = this._localStorage.key(i);
+      if (key.indexOf(DraftCommentSaver._keyPrefix) != 0)
+        continue;
+        
+      if (only_old_reviews) {
+        try {
+          var born_on = JSON.parse(this._localStorage.getItem(key))['born-on'];
+          if (Date.now() - born_on < MONTH_IN_MS)
+            continue;
+        } catch (e) {
+          console.log('Deleting JSON. JSON for code review is corrupt: ' + key);
+        }        
+      }
+      keys_to_delete.push(key);
+    }
+
+    for (var i = 0; i < keys_to_delete.length; i++) {
+      this._localStorage.removeItem(keys_to_delete[i]);
+    }
+  }
+  
+  var g_draftCommentSaver = new DraftCommentSaver();
+
+  function saveDraftComments() {
+    ensureDraftCommentsDisplayed();
+    g_draftCommentSaver.save();
+  }
+
+  function createCommentFor(line) {
     if (line.attr('data-has-comment')) {
       // FIXME: This query is overly complex because we place comment blocks
       // after Lines.  Instead, comment blocks should be children of Lines.
@@ -141,6 +321,11 @@
 
     var comment_block = $('<div class="comment"><textarea data-comment-for="' + line.attr('id') + '"></textarea><div class="actions"><button class="ok">OK</button><button class="discard">Discard</button></div></div>');
     insertCommentFor(line, comment_block);
+    return comment_block;
+  }
+
+  function addCommentFor(line) {
+    var comment_block = createCommentFor(line);
     comment_block.hide().slideDown('fast', function() {
       $(this).children('textarea').focus();
     });
@@ -327,6 +512,7 @@
             $.merge(comments, scanForStyleQueueComments(text));
         });
         displayPreviousComments(comments);
+        ensureDraftCommentsDisplayed();
       });
 
       var details = $(data);
@@ -806,6 +992,7 @@
       '<a href="javascript:" class="side-by-side-link">side-by-side</a>';
   }
 
+
   $(document).ready(function() {
     crawlDiff();
     fetchHistory();
@@ -833,6 +1020,7 @@
     $('.overallComments textarea').bind('click', openOverallComments);
 
     $(document.body).prepend('<div id="comment_form" class="inactive"><div class="winter"></div><div class="lightbox"><iframe id="reviewform" src="attachment.cgi?id=' + attachment_id + '&action=reviewform"></iframe></div></div>');
+    $('#reviewform').bind('load', handleReviewFormLoad);
 
     // Create a dummy iframe and monitor resizes in it's contentWindow to detect when the top document's body changes size.
     // FIXME: Should we setTimeout throttle these?
@@ -843,6 +1031,15 @@
     updateToolbarAnchorState();
     loadDiffState();
   });
+
+  function handleReviewFormLoad() {
+    var form = $('#reviewform').contents().find('form')[0];
+    form.addEventListener('submit', eraseDraftComments);
+  }
+  
+  function eraseDraftComments() {
+    g_draftCommentSaver.erase();
+  }
 
   function loadDiffState() {
     var diffstate = localStorage.getItem('code-review-diffstate');
@@ -1005,13 +1202,14 @@
     return fragment;
   }
 
-  function discardComment() {
-    var line_id = $(this).parentsUntil('.comment').parent().find('textarea').attr('data-comment-for');
+  function discardComment(comment_block) {
+    var line_id = comment_block.find('textarea').attr('data-comment-for');
     var line = $('#' + line_id)
     findCommentBlockFor(line).slideUp('fast', function() {
       $(this).remove();
       line.removeAttr('data-has-comment');
       trimCommentContextToBefore(line, line.attr('data-comment-base-line'));
+      saveDraftComments();
     });
   }
 
@@ -1028,24 +1226,34 @@
     $('.LinkContainer', this).each(function() { this.style.opacity = 0; });
   }
 
+  function handleDiscardComment() {
+    discardComment($(this).parents('.comment'));
+  }
+  
+  function handleAcceptComment() {
+    freezeComment($(this).parents('.comment'));
+    saveDraftComments();
+  }
+
   $('.FileDiff').live('mouseenter', showFileDiffLinks);
   $('.FileDiff').live('mouseleave', hideFileDiffLinks);
   $('.side-by-side-link').live('click', handleSideBySideLinkClick);
   $('.unify-link').live('click', handleUnifyLinkClick);
   $('.ExpandLink').live('click', handleExpandLinkClick);
-  $('.comment .discard').live('click', discardComment);
   $('.frozenComment').live('click', unfreezeComment);
+  $('.comment .discard').live('click', handleDiscardComment);
+  $('.comment .ok').live('click', handleAcceptComment);
 
-  $('.comment .ok').live('click', function() {
-    var comment_textarea = $(this).parentsUntil('.comment').parent().find('textarea');
+  function freezeComment(comment_block) {
+    var comment_textarea = comment_block.find('textarea');
     if (comment_textarea.val().trim() == '') {
-      discardComment.call(this);
+      discardComment(comment_block);
       return;
     }
     var line_id = comment_textarea.attr('data-comment-for');
     var line = $('#' + line_id)
     findCommentBlockFor(line).hide().after($('<div class="frozenComment"></div>').text(comment_textarea.val()));
-  });
+  }
 
   function focusOn(node) {
     $('.focused').removeClass('focused');
@@ -1205,6 +1413,8 @@
     selected.each(function() {
       addDataCommentBaseLine(this, comment_base_line);
     });
+
+    saveDraftComments();
   });
 
   function addDataCommentBaseLine(line, id) {
@@ -1332,6 +1542,7 @@
 
   $('#post_comments').live('click', function() {
     fillInReviewForm();
+    eraseDraftComments();
     $('#reviewform').contents().find('form').submit();
   });
 })();
