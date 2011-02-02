@@ -1,3 +1,10 @@
+2011-02-01  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Marking test, added in r77333 as skipped, because it is
+        reaching V8 recursion limits faster than those on Document.
+
+        * platform/chromium/test_expectations.txt: See above.
+
 2011-01-25  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
