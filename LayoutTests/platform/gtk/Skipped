@@ -4725,8 +4725,10 @@ fast/forms/input-appearance-spinbutton-disabled-readonly.html
 fast/forms/input-number-events.html
 fast/forms/input-spinbutton-capturing.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=35350
+# Tests that user modal dialogs fail in the DRT for some reason.
+# https://bugs.webkit.org/show_bug.cgi?id=53600
 fast/events/show-modal-dialog-onblur-onfocus.html
+fast/events/scroll-event-during-modal-dialog.html
 fast/harness/show-modal-dialog.html
 fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T10.html
 fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T11.html
