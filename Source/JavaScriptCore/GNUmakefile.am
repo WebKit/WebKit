@@ -242,6 +242,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/CallData.cpp \
 	Source/JavaScriptCore/runtime/CallData.h \
 	Source/JavaScriptCore/runtime/ClassInfo.h \
+	Source/JavaScriptCore/runtime/MarkedBlock.cpp \
+	Source/JavaScriptCore/runtime/MarkedBlock.h \
 	Source/JavaScriptCore/runtime/MarkedSpace.cpp \
 	Source/JavaScriptCore/runtime/MarkedSpace.h \
 	Source/JavaScriptCore/runtime/Heap.cpp \

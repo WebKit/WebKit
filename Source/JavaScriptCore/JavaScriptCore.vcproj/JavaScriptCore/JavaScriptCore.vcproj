@@ -594,6 +594,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\MarkedBlock.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\MarkedBlock.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\MarkedSpace.cpp"
 				>
 			</File>

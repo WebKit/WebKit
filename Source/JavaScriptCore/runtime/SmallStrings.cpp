@@ -37,7 +37,7 @@ static const unsigned numCharactersToStore = 0x100;
 
 static inline bool isMarked(JSCell* string)
 {
-    return string && Heap::isCellMarked(string);
+    return string && Heap::isMarked(string);
 }
 
 class SmallStringsStorage {

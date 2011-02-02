@@ -78,8 +78,8 @@ public:
     const_iterator uncheckedBegin() const { return m_map.begin(); }
     const_iterator uncheckedEnd() const { return m_map.end(); }
 
-    bool isValid(iterator it) const { return Heap::isCellMarked(it->second.get()); }
-    bool isValid(const_iterator it) const { return Heap::isCellMarked(it->second.get()); }
+    bool isValid(iterator it) const { return Heap::isMarked(it->second.get()); }
+    bool isValid(const_iterator it) const { return Heap::isMarked(it->second.get()); }
 
 private:
     HashMap<KeyType, DeprecatedPtr<MappedType> > m_map;
@@ -91,7 +91,7 @@ inline MappedType* WeakGCMap<KeyType, MappedType>::get(const KeyType& key) const
     MappedType* result = m_map.get(key).get();
     if (result == HashTraits<MappedType*>::emptyValue())
         return result;
-    if (!Heap::isCellMarked(result))
+    if (!Heap::isMarked(result))
         return HashTraits<MappedType*>::emptyValue();
     return result;
 }
@@ -102,7 +102,7 @@ MappedType* WeakGCMap<KeyType, MappedType>::take(const KeyType& key)
     MappedType* result = m_map.take(key).get();
     if (result == HashTraits<MappedType*>::emptyValue())
         return result;
-    if (!Heap::isCellMarked(result))
+    if (!Heap::isMarked(result))
         return HashTraits<MappedType*>::emptyValue();
     return result;
 }
@@ -110,10 +110,10 @@ MappedType* WeakGCMap<KeyType, MappedType>::take(const KeyType& key)
 template<typename KeyType, typename MappedType>
 pair<typename WeakGCMap<KeyType, MappedType>::iterator, bool> WeakGCMap<KeyType, MappedType>::set(const KeyType& key, MappedType* value)
 {
-    Heap::markCell(value); // If value is newly allocated, it's not marked, so mark it now.
+    Heap::setMarked(value); // If value is newly allocated, it's not marked, so mark it now.
     pair<iterator, bool> result = m_map.add(key, value);
     if (!result.second) { // pre-existing entry
-        result.second = !Heap::isCellMarked(result.first->second.get());
+        result.second = !Heap::isMarked(result.first->second.get());
         result.first->second = value;
     }
     return result;

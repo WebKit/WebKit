@@ -135,7 +135,7 @@ void WeakGCHandlePool::update()
     for (unsigned i = 1; i < WeakGCHandlePool::numPoolEntries; ++i) {
         if (m_entries[i].isValidPtr()) {
             JSCell* cell = m_entries[i].get();
-            if (!cell || !Heap::isCellMarked(cell))
+            if (!cell || !Heap::isMarked(cell))
                 m_entries[i].invalidate();
         }
     }

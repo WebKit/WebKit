@@ -1,3 +1,60 @@
+2011-02-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        A little more Heap refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=53577
+        
+        SunSpider reports no change.
+        
+        Split out MarkedBlock into its own file / class.
+        
+        Did the following renames:
+            isCellMarked => isMarked
+            checkMarkCell => testAndSetMarked
+            markCell => setMarked
+            cellOffset => cellNumber
+            collectorBlock => blockFor
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/Heap.cpp:
+        (JSC::WeakGCHandlePool::update):
+        * runtime/Heap.h:
+        (JSC::Heap::isMarked):
+        (JSC::Heap::testAndSetMarked):
+        (JSC::Heap::setMarked):
+        * runtime/JSArray.h:
+        (JSC::MarkStack::markChildren):
+        (JSC::MarkStack::drain):
+        * runtime/JSCell.h:
+        (JSC::JSCell::MarkStack::internalAppend):
+        * runtime/MarkedBlock.cpp: Added.
+        * runtime/MarkedBlock.h: Added.
+        (JSC::MarkedBlock::blockFor):
+        (JSC::MarkedBlock::cellNumber):
+        (JSC::MarkedBlock::isMarked):
+        (JSC::MarkedBlock::testAndSetMarked):
+        (JSC::MarkedBlock::setMarked):
+        (JSC::MarkedBlock::isCellAligned):
+        (JSC::MarkedBlock::isPossibleCell):
+        * runtime/MarkedSpace.h:
+        (JSC::MarkedSpace::isMarked):
+        (JSC::MarkedSpace::testAndSetMarked):
+        (JSC::MarkedSpace::setMarked):
+        * runtime/SmallStrings.cpp:
+        (JSC::isMarked):
+        * runtime/WeakGCMap.h:
+        (JSC::WeakGCMap::isValid):
+        (JSC::::get):
+        (JSC::::take):
+        (JSC::::set):
+
 2011-02-02  Sam Weinig  <sam@webkit.org>
 
         Fix windows clean build.

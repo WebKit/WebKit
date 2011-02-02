@@ -55,9 +55,9 @@ namespace JSC {
         static Heap* heap(JSValue); // 0 for immediate values
         static Heap* heap(JSCell*);
 
-        static bool isCellMarked(const JSCell*);
-        static bool checkMarkCell(const JSCell*);
-        static void markCell(JSCell*);
+        static bool isMarked(const JSCell*);
+        static bool testAndSetMarked(const JSCell*);
+        static void setMarked(JSCell*);
         
         Heap(JSGlobalData*);
         ~Heap();
@@ -142,19 +142,19 @@ namespace JSC {
         size_t m_extraCost;
     };
 
-    inline bool Heap::isCellMarked(const JSCell* cell)
+    inline bool Heap::isMarked(const JSCell* cell)
     {
-        return MarkedSpace::isCellMarked(cell);
+        return MarkedSpace::isMarked(cell);
     }
 
-    inline bool Heap::checkMarkCell(const JSCell* cell)
+    inline bool Heap::testAndSetMarked(const JSCell* cell)
     {
-        return MarkedSpace::checkMarkCell(cell);
+        return MarkedSpace::testAndSetMarked(cell);
     }
 
-    inline void Heap::markCell(JSCell* cell)
+    inline void Heap::setMarked(JSCell* cell)
     {
-        MarkedSpace::markCell(cell);
+        MarkedSpace::setMarked(cell);
     }
 
     inline bool Heap::contains(void* p)

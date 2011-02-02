@@ -200,7 +200,7 @@ namespace JSC {
 
     inline void MarkStack::markChildren(JSCell* cell)
     {
-        ASSERT(Heap::isCellMarked(cell));
+        ASSERT(Heap::isMarked(cell));
         if (!cell->structure()->typeInfo().overridesMarkChildren()) {
 #ifdef NDEBUG
             asObject(cell)->markChildrenDirect(*this);
@@ -240,7 +240,7 @@ namespace JSC {
                 current.m_values++;
 
                 JSCell* cell;
-                if (!value || !value.isCell() || Heap::checkMarkCell(cell = value.asCell())) {
+                if (!value || !value.isCell() || Heap::testAndSetMarked(cell = value.asCell())) {
                     if (current.m_values == end) {
                         m_markSets.removeLast();
                         continue;

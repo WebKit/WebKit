@@ -65,9 +65,9 @@ namespace JSC {
     public:
         static Heap* heap(JSCell*);
 
-        static bool isCellMarked(const JSCell*);
-        static bool checkMarkCell(const JSCell*);
-        static void markCell(JSCell*);
+        static bool isMarked(const JSCell*);
+        static bool testAndSetMarked(const JSCell*);
+        static void setMarked(JSCell*);
 
         MarkedSpace(JSGlobalData*);
         void destroy();
@@ -156,17 +156,17 @@ namespace JSC {
         return cellBlock(cell)->heap;
     }
 
-    inline bool MarkedSpace::isCellMarked(const JSCell* cell)
+    inline bool MarkedSpace::isMarked(const JSCell* cell)
     {
         return cellBlock(cell)->marked.get(cellOffset(cell));
     }
 
-    inline bool MarkedSpace::checkMarkCell(const JSCell* cell)
+    inline bool MarkedSpace::testAndSetMarked(const JSCell* cell)
     {
         return cellBlock(cell)->marked.testAndSet(cellOffset(cell));
     }
 
-    inline void MarkedSpace::markCell(JSCell* cell)
+    inline void MarkedSpace::setMarked(JSCell* cell)
     {
         cellBlock(cell)->marked.set(cellOffset(cell));
     }

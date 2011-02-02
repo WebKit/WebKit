@@ -88,6 +88,7 @@ SET(JavaScriptCore_SOURCES
     runtime/BooleanObject.cpp
     runtime/BooleanPrototype.cpp
     runtime/CallData.cpp
+    runtime/MarkedBlock.cpp
     runtime/MarkedSpace.cpp
     runtime/Heap.cpp
     runtime/CommonIdentifiers.cpp
