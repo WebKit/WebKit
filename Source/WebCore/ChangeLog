@@ -1,3 +1,10 @@
+2011-02-02  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Update even more references to right() and bottom() in Chromium. Sheesh.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::getFramebufferPixels): Replaced bottom/right with maxY/maxX.
+
 2011-02-02  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed Gtk3 buildfix after r77286.

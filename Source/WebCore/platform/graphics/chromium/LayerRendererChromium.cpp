@@ -350,8 +350,8 @@ void LayerRendererChromium::setRootLayer(PassRefPtr<LayerChromium> layer)
 
 void LayerRendererChromium::getFramebufferPixels(void *pixels, const IntRect& rect)
 {
-    ASSERT(rect.right() <= rootLayerTextureSize().width()
-           && rect.bottom() <= rootLayerTextureSize().height());
+    ASSERT(rect.maxX() <= rootLayerTextureSize().width()
+           && rect.maxY() <= rootLayerTextureSize().height());
 
     if (!pixels)
         return;
