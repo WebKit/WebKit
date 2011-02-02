@@ -1,3 +1,9 @@
+2011-02-01  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Add the 'default_targets' enclosure to the flags.
+
+        * WebCore.gyp/WebCore.gyp: Did it.
+
 2011-02-01  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by James Robinson.

@@ -107,7 +107,9 @@
     ['OS=="linux" and target_arch=="arm"', {
       # Due to a bug in gcc arm, we get warnings about uninitialized timesNewRoman.unstatic.3258
       # and colorTransparent.unstatic.4879.
-      'cflags': ['-Wno-uninitialized'],
+      'target_defaults': {
+        'cflags': ['-Wno-uninitialized'],
+      },
     }],
   ],  # conditions
 
