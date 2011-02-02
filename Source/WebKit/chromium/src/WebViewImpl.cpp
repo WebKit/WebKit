@@ -1009,8 +1009,8 @@ void WebViewImpl::layout()
 #if USE(ACCELERATED_COMPOSITING)
 void WebViewImpl::doPixelReadbackToCanvas(WebCanvas* canvas, const IntRect& rect)
 {
-    ASSERT(rect.right() <= m_layerRenderer->rootLayerTextureSize().width()
-           && rect.bottom() <= m_layerRenderer->rootLayerTextureSize().height());
+    ASSERT(rect.maxX() <= m_layerRenderer->rootLayerTextureSize().width()
+           && rect.maxY() <= m_layerRenderer->rootLayerTextureSize().height());
 
 #if PLATFORM(SKIA)
     PlatformContextSkia context(canvas);

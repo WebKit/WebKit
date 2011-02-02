@@ -1,5 +1,12 @@
 2011-02-02  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Update more references to right() and bottom() in Chromium.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::doPixelReadbackToCanvas): Replaced bottom/right with maxY/maxX.
+
+2011-02-02  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Update more references to right() and bottom() in Chromium Win.
 
         * tests/TransparencyWinTest.cpp:
