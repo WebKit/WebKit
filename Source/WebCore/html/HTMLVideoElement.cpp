@@ -263,6 +263,24 @@ void HTMLVideoElement::willMoveToNewOwnerDocument()
     HTMLMediaElement::willMoveToNewOwnerDocument();
 }
 
+#if ENABLE(MEDIA_STATISTICS)
+unsigned long HTMLVideoElement::webkitDecodedFrames() const
+{
+    if (!player())
+        return 0;
+
+    return player()->decodedFrames();
+}
+
+unsigned long HTMLVideoElement::webkitDroppedFrames() const
+{
+    if (!player())
+        return 0;
+
+    return player()->droppedFrames();
+}
+#endif
+
 }
 
 #endif

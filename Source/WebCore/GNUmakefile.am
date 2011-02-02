@@ -4184,6 +4184,16 @@ endif # END USE_GSTREAMER
 endif # END ENABLE_VIDEO
 
 # ----
+# Media Statistics Support
+# ----
+if ENABLE_MEDIA_STATISTICS
+FEATURE_DEFINES += ENABLE_MEDIA_STATISTICS=1
+webcore_cppflags += -DENABLE_MEDIA_STATISTICS=1
+else
+webcore_cppflags += -DENABLE_MEDIA_STATISTICS=0
+endif # END ENABLE_MEDIA_STATISTICS
+
+# ----
 # Javascript Fullscreen Support
 # ----
 if ENABLE_FULLSCREEN_API

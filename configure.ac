@@ -467,6 +467,14 @@ AC_ARG_ENABLE(video,
               [],[enable_video="yes"])
 AC_MSG_RESULT([$enable_video])
 
+# check whether to enable media statistics support
+AC_MSG_CHECKING([whether to enable media statistics support])
+AC_ARG_ENABLE(media_statistics,
+              AC_HELP_STRING([--enable-media-statistics],
+                             [enable support for media statistics [default=no]]),
+              [], [enable_media_statistics="no"])
+AC_MSG_RESULT([$enable_media_statistics])
+
 # check whether to enable Javascript Fullscreen API support
 AC_MSG_CHECKING([whether to enable Fullscreen API support])
 AC_ARG_ENABLE(fullscreen_api,
@@ -964,6 +972,7 @@ AM_CONDITIONAL([ENABLE_FILTERS],[test "$enable_filters" = "yes"])
 AM_CONDITIONAL([ENABLE_GEOLOCATION], [test "$enable_geolocation" = "yes"])
 AM_CONDITIONAL([ENABLE_MATHML], [test "$enable_mathml" = "yes"])
 AM_CONDITIONAL([ENABLE_VIDEO],[test "$enable_video" = "yes"])
+AM_CONDITIONAL([ENABLE_MEDIA_STATISTICS],[test "$enable_media_statistics" = "yes"])
 AM_CONDITIONAL([ENABLE_FULLSCREEN_API],[test "$enable_fullscreen_api" = "yes"])
 AM_CONDITIONAL([ENABLE_NOTIFICATIONS],[test "$enable_notifications" = "yes"])
 AM_CONDITIONAL([ENABLE_ORIENTATION_EVENTS],[test "$enable_orientation_events" = "yes"])
@@ -1039,6 +1048,7 @@ Features:
  Geolocation support                                      : $enable_geolocation
  JavaScript debugger/profiler support                     : $enable_javascript_debugger
  MathML support                                           : $enable_mathml
+ Media statistics                                         : $enable_media_statistics
  HTML5 offline web applications support                   : $enable_offline_web_applications
  HTML5 channel messaging support                          : $enable_channel_messaging
  HTML5 client-side session and persistent storage support : $enable_dom_storage

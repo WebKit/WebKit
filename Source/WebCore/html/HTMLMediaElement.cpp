@@ -2484,6 +2484,22 @@ bool HTMLMediaElement::webkitHasClosedCaptions() const
     return hasClosedCaptions();
 }
 
+#if ENABLE(MEDIA_STATISTICS)
+unsigned long HTMLMediaElement::webkitAudioBytesDecoded() const
+{
+    if (!m_player)
+        return 0;
+    return m_player->audioBytesDecoded();
+}
+
+unsigned long HTMLMediaElement::webkitVideoBytesDecoded() const
+{
+    if (!m_player)
+        return 0;
+    return m_player->videoBytesDecoded();
+}
+#endif
+
 void HTMLMediaElement::mediaCanStart()
 {
     LOG(Media, "HTMLMediaElement::mediaCanStart");

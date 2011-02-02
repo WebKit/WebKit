@@ -136,6 +136,10 @@ public:
     // it is OK to calculate movie time before refreshing the cached time.
     virtual double maximumDurationToCacheMediaTime() const { return 0; }
 
+    virtual unsigned long decodedFrames() const { return 0; }
+    virtual unsigned long droppedFrames() const { return 0; }
+    virtual unsigned long audioBytesDecoded() const { return 0; }
+    virtual unsigned long videoBytesDecoded() const { return 0; }
 };
 
 }

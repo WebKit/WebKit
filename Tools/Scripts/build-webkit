@@ -85,6 +85,7 @@ my (
     $javaScriptDebuggerSupport,
     $linkPrefetchSupport,
     $mathmlSupport,
+    $mediaStatisticsSupport,
     $meterTagSupport,
     $netscapePluginSupport,
     $notificationsSupport,
@@ -193,6 +194,9 @@ my @features = (
 
     { option => "mathml", desc => "Toggle MathML support",
       define => "ENABLE_MATHML", default => 1, value => \$mathmlSupport },
+
+    { option => "media-statistics", desc => "Toggle Media Statistics support",
+      define => "ENABLE_MEDIA_STATISTICS", default => 0, value => \$mediaStatisticsSupport },
 
     { option => "meter-tag", desc => "Meter Tag support",
       define => "ENABLE_METER_TAG", default => !isGtk() && !isAppleWinWebKit(), value => \$meterTagSupport },

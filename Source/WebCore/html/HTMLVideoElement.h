@@ -55,6 +55,12 @@ public:
     void webkitEnterFullScreen(bool isUserGesture, ExceptionCode& ec) { webkitEnterFullscreen(isUserGesture, ec); }
     void webkitExitFullScreen() { webkitExitFullscreen(); }
 
+#if ENABLE(MEDIA_STATISTICS)
+    // Statistics
+    unsigned long webkitDecodedFrames() const;
+    unsigned long webkitDroppedFrames() const;
+#endif
+
     // Used by canvas to gain raw pixel access
     void paintCurrentFrameInContext(GraphicsContext*, const IntRect&);
 

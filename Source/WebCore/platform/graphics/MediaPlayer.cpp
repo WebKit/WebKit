@@ -692,6 +692,26 @@ double MediaPlayer::maximumDurationToCacheMediaTime() const
     return m_private->maximumDurationToCacheMediaTime();
 }
 
+unsigned long MediaPlayer::decodedFrames() const
+{
+    return m_private->decodedFrames();
+}
+
+unsigned long MediaPlayer::droppedFrames() const
+{
+    return m_private->droppedFrames();
+}
+
+unsigned long MediaPlayer::audioBytesDecoded() const
+{
+    return m_private->audioBytesDecoded();
+}
+
+unsigned long MediaPlayer::videoBytesDecoded() const
+{
+    return m_private->videoBytesDecoded();
+}
+
 void MediaPlayer::reloadTimerFired(Timer<MediaPlayer>*)
 {
     m_private->cancelLoad();

@@ -282,6 +282,11 @@ public:
 
     double maximumDurationToCacheMediaTime() const;
 
+    unsigned long decodedFrames() const;
+    unsigned long droppedFrames() const;
+    unsigned long audioBytesDecoded() const;
+    unsigned long videoBytesDecoded() const;
+
 private:
     MediaPlayer(MediaPlayerClient*);
     void loadWithNextMediaEngine(MediaPlayerFactory*);

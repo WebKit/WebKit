@@ -129,6 +129,12 @@ public:
     bool webkitClosedCaptionsVisible() const;
     void setWebkitClosedCaptionsVisible(bool);
 
+#if ENABLE(MEDIA_STATISTICS)
+// Statistics
+    unsigned long webkitAudioBytesDecoded() const;
+    unsigned long webkitVideoBytesDecoded() const;
+#endif
+
 // controls
     bool controls() const;
     void setControls(bool);
