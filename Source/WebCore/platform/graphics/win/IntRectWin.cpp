@@ -38,7 +38,7 @@ IntRect::IntRect(const RECT& r)
 
 IntRect::operator RECT() const
 {
-    RECT rect = { x(), y(), right(), bottom() };
+    RECT rect = { x(), y(), maxX(), maxY() };
     return rect;
 }
 

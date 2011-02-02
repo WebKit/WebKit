@@ -177,8 +177,8 @@ PassRefPtr<ByteArray> getImageData(const IntRect& rect, const SkBitmap& bitmap,
 
     if (rect.x() < 0
         || rect.y() < 0
-        || rect.right() > size.width()
-        || rect.bottom() > size.height())
+        || rect.maxX() > size.width()
+        || rect.maxY() > size.height())
         memset(data, 0, result->length());
 
     int originX = rect.x();
@@ -187,7 +187,7 @@ PassRefPtr<ByteArray> getImageData(const IntRect& rect, const SkBitmap& bitmap,
         destX = -originX;
         originX = 0;
     }
-    int endX = rect.right();
+    int endX = rect.maxX();
     if (endX > size.width())
         endX = size.width();
     int numColumns = endX - originX;
@@ -201,7 +201,7 @@ PassRefPtr<ByteArray> getImageData(const IntRect& rect, const SkBitmap& bitmap,
         destY = -originY;
         originY = 0;
     }
-    int endY = rect.bottom();
+    int endY = rect.maxY();
     if (endY > size.height())
         endY = size.height();
     int numRows = endY - originY;
@@ -265,9 +265,9 @@ void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& 
     ASSERT(destX >= 0);
     ASSERT(destX < size.width());
     ASSERT(originX >= 0);
-    ASSERT(originX < sourceRect.right());
+    ASSERT(originX < sourceRect.maxX());
 
-    int endX = destPoint.x() + sourceRect.right();
+    int endX = destPoint.x() + sourceRect.maxX();
     ASSERT(endX <= size.width());
 
     int numColumns = endX - destX;
@@ -277,9 +277,9 @@ void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& 
     ASSERT(destY >= 0);
     ASSERT(destY < size.height());
     ASSERT(originY >= 0);
-    ASSERT(originY < sourceRect.bottom());
+    ASSERT(originY < sourceRect.maxY());
 
-    int endY = destPoint.y() + sourceRect.bottom();
+    int endY = destPoint.y() + sourceRect.maxY();
     ASSERT(endY <= size.height());
     int numRows = endY - destY;
 

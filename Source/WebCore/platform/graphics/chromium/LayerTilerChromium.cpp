@@ -145,8 +145,8 @@ void LayerTilerChromium::contentRectToTileIndices(const IntRect& contentRect, in
 
     left = layerRect.x() / m_tileSize.width();
     top = layerRect.y() / m_tileSize.height();
-    right = (layerRect.right() - 1) / m_tileSize.width();
-    bottom = (layerRect.bottom() - 1) / m_tileSize.height();
+    right = (layerRect.maxX() - 1) / m_tileSize.width();
+    bottom = (layerRect.maxY() - 1) / m_tileSize.height();
 }
 
 IntRect LayerTilerChromium::contentRectToLayerRect(const IntRect& contentRect) const
@@ -427,7 +427,7 @@ void LayerTilerChromium::growLayerToContain(const IntRect& contentRect)
 {
     // Grow the tile array to contain this content rect.
     IntRect layerRect = contentRectToLayerRect(contentRect);
-    IntSize layerSize = IntSize(layerRect.right(), layerRect.bottom());
+    IntSize layerSize = IntSize(layerRect.maxX(), layerRect.maxY());
 
     IntSize newSize = layerSize.expandedTo(m_layerSize);
     resizeLayer(newSize);

@@ -352,7 +352,7 @@ IntRect PopupContainer::layoutAndCalculateWidgetRect(int targetControlHeight, in
         // Use this::x() for location because RTL position is considered
         // in layout().
         widgetRect = chromeClient->windowToScreen(IntRect(x(), popupInitialY, targetSize.width(), targetSize.height()));
-        if (widgetRect.bottom() > static_cast<int>(screen.bottom())) {
+        if (widgetRect.maxY() > static_cast<int>(screen.maxY())) {
             if (widgetRect.y() - widgetRect.height() - targetControlHeight > 0) {
                 // There is enough room to open upwards.
                 widgetRect.move(0, -(widgetRect.height() + targetControlHeight));
@@ -360,7 +360,7 @@ IntRect PopupContainer::layoutAndCalculateWidgetRect(int targetControlHeight, in
                 // Figure whether upwards or downwards has more room and set the
                 // maximum number of items.
                 int spaceAbove = widgetRect.y() - targetControlHeight;
-                int spaceBelow = screen.bottom() - widgetRect.y();
+                int spaceBelow = screen.maxY() - widgetRect.y();
                 if (spaceAbove > spaceBelow)
                     m_listBox->setMaxHeight(spaceAbove);
                 else
@@ -1155,9 +1155,9 @@ void PopupListBox::scrollToRevealRow(int index)
     if (rowRect.y() < scrollY()) {
         // Row is above current scroll position, scroll up.
         ScrollView::setScrollPosition(IntPoint(0, rowRect.y()));
-    } else if (rowRect.bottom() > scrollY() + visibleHeight()) {
+    } else if (rowRect.maxY() > scrollY() + visibleHeight()) {
         // Row is below current scroll position, scroll down.
-        ScrollView::setScrollPosition(IntPoint(0, rowRect.bottom() - visibleHeight()));
+        ScrollView::setScrollPosition(IntPoint(0, rowRect.maxY() - visibleHeight()));
     }
 }
 
@@ -1364,7 +1364,7 @@ void PopupListBox::layout()
     }
 
     resize(windowWidth, windowHeight);
-    setContentsSize(IntSize(contentWidth, getRowBounds(numItems() - 1).bottom()));
+    setContentsSize(IntSize(contentWidth, getRowBounds(numItems() - 1).maxY()));
 
     if (hostWindow())
         scrollToRevealSelection();

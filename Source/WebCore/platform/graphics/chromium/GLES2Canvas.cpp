@@ -322,8 +322,8 @@ void GLES2Canvas::drawTexturedRect(Texture* texture, const FloatRect& srcRect, c
     m_context->useQuadVertices();
     m_context->setActiveTexture(GraphicsContext3D::TEXTURE0);
 
-    for (int y = tileIdxRect.y(); y <= tileIdxRect.bottom(); y++) {
-        for (int x = tileIdxRect.x(); x <= tileIdxRect.right(); x++)
+    for (int y = tileIdxRect.y(); y <= tileIdxRect.maxY(); y++) {
+        for (int x = tileIdxRect.x(); x <= tileIdxRect.maxX(); x++)
             drawTexturedRectTile(texture, tiles.tileIndex(x, y), srcRect, dstRect, transform, alpha);
     }
 }

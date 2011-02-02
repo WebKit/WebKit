@@ -694,7 +694,7 @@ bool RenderThemeWin::paintInnerSpinButton(RenderObject* o, const PaintInfo& i, c
     IntRect upRect(r);
     upRect.setHeight(r.height() / 2);
     IntRect downRect(r);
-    downRect.setY(upRect.bottom());
+    downRect.setY(upRect.maxY());
     downRect.setHeight(r.height() - upRect.height());
     drawControl(i.context, o, spinButtonTheme(), getThemeData(o, SpinButtonUp), upRect);
     drawControl(i.context, o, spinButtonTheme(), getThemeData(o, SpinButtonDown), downRect);
@@ -788,7 +788,7 @@ bool RenderThemeWin::paintMenuListButton(RenderObject* o, const PaintInfo& i, co
     IntRect buttonRect(r);
     buttonRect.inflate(-borderThickness);
     if (o->style()->direction() == LTR)
-        buttonRect.setX(buttonRect.right() - dropDownButtonWidth);
+        buttonRect.setX(buttonRect.maxX() - dropDownButtonWidth);
     buttonRect.setWidth(dropDownButtonWidth);
 
     if (isRunningOnVistaOrLater()) {

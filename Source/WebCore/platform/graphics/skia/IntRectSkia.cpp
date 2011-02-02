@@ -37,14 +37,14 @@ namespace WebCore {
 
 IntRect::operator SkIRect() const
 {
-    SkIRect rect = { x(), y(), right(), bottom() };
+    SkIRect rect = { x(), y(), maxX(), maxY() };
     return rect;
 }
 
 IntRect::operator SkRect() const
 {
     SkRect rect;
-    rect.set(SkIntToScalar(x()), SkIntToScalar(y()), SkIntToScalar(right()), SkIntToScalar(bottom()));
+    rect.set(SkIntToScalar(x()), SkIntToScalar(y()), SkIntToScalar(maxX()), SkIntToScalar(maxY()));
     return rect;
 }
 

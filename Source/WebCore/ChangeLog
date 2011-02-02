@@ -1,3 +1,76 @@
+2011-02-02  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Removal of right()/bottom().  Replace with maxX() and maxY().  Still converting.  Haven't removed yet.
+
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupContainer::layoutAndCalculateWidgetRect):
+        (WebCore::PopupListBox::scrollToRevealRow):
+        (WebCore::PopupListBox::layout):
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/IntRect.h:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::getImageData):
+        (WebCore::putImageData):
+        * platform/graphics/chromium/GLES2Canvas.cpp:
+        (WebCore::GLES2Canvas::drawTexturedRect):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::verticalScrollbarRect):
+        (WebCore::LayerRendererChromium::horizontalScrollbarRect):
+        (WebCore::LayerRendererChromium::setScissorToRect):
+        (WebCore::LayerRendererChromium::setDrawViewportRect):
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::contentRectToTileIndices):
+        (WebCore::LayerTilerChromium::growLayerToContain):
+        * platform/graphics/gpu/TilingData.cpp:
+        (WebCore::TilingData::tileBoundsWithBorder):
+        (WebCore::TilingData::overlappedTileIndices):
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::getImageData):
+        (WebCore::putImageData):
+        * platform/graphics/skia/FloatRectSkia.cpp:
+        (WebCore::FloatRect::operator SkRect):
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::getImageData):
+        (WebCore::putImageData):
+        * platform/graphics/skia/IntRectSkia.cpp:
+        (WebCore::IntRect::operator SkIRect):
+        (WebCore::IntRect::operator SkRect):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::beginLayerClippedToImage):
+        * platform/graphics/win/GraphicsContextWin.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::clip):
+        * platform/graphics/win/IntRectWin.cpp:
+        (WebCore::IntRect::operator RECT):
+        * platform/graphics/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::shapeAndPlaceItem):
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::roundRect):
+        (WebCore::mapRect):
+        (WebCore::TransparentLayerDC::TransparentLayerDC):
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::GraphicsContext::drawEllipse):
+        (WebCore::GraphicsContext::strokeArc):
+        (WebCore::GraphicsContext::clip):
+        (WebCore::GraphicsContext::clipOut):
+        (WebCore::GraphicsContext::strokeRect):
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::initFrameBuffer):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::calculatePositionAndSize):
+        (WebCore::PopupMenuWin::paint):
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+        (WebCore::PluginView::invalidateRect):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::paintMenuListButtonGradients):
+        (WebCore::RenderThemeSafari::paintMenuListButton):
+        (WebCore::RenderThemeSafari::paintSliderTrack):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::paintInnerSpinButton):
+        (WebCore::RenderThemeWin::paintMenuListButton):
+
 2011-02-02  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej Stachowiak.

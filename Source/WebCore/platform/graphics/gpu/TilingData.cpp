@@ -89,9 +89,9 @@ IntRect TilingData::tileBoundsWithBorder(int tile) const
 
     if (m_borderTexels) {
         int x1 = bounds.x();
-        int x2 = bounds.right();
+        int x2 = bounds.maxX();
         int y1 = bounds.y();
-        int y2 = bounds.bottom();
+        int y2 = bounds.maxY();
 
         if (tileXIndex(tile) > 0)
             x1--;
@@ -182,8 +182,8 @@ IntRect TilingData::overlappedTileIndices(const WebCore::IntRect &srcRect) const
 {
     int x = tileXIndexFromSrcCoord(srcRect.x());
     int y = tileYIndexFromSrcCoord(srcRect.y());
-    int r = tileXIndexFromSrcCoord(srcRect.right());
-    int b = tileYIndexFromSrcCoord(srcRect.bottom());
+    int r = tileXIndexFromSrcCoord(srcRect.maxX());
+    int b = tileYIndexFromSrcCoord(srcRect.maxY());
     return IntRect(x, y, r - x, b - y);
 }
 

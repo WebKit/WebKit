@@ -61,7 +61,7 @@ static inline int stableRound(double d)
 // Unlike enclosingIntRect(), this function does strict rounding.
 static inline IntRect roundRect(const FloatRect& r)
 {
-    return IntRect(stableRound(r.x()), stableRound(r.y()), stableRound(r.right()) - stableRound(r.x()), stableRound(r.bottom()) - stableRound(r.y()));
+    return IntRect(stableRound(r.x()), stableRound(r.y()), stableRound(r.maxX()) - stableRound(r.x()), stableRound(r.maxY()) - stableRound(r.y()));
 }
 
 // Rotation transformation
@@ -128,8 +128,8 @@ template<class Transform, class Rect, class Value> static inline Rect mapRect(co
 {
     Value x[4], y[4];
     Value l, t, r, b;
-    r = rect.right() - 1;
-    b = rect.bottom() - 1;
+    r = rect.maxX() - 1;
+    b = rect.maxY() - 1;
     transform.map(rect.x(), rect.y(), x, y);
     transform.map(rect.x(), b, x + 1, y + 1);
     transform.map(r, b, x + 2, y + 2);
@@ -503,9 +503,9 @@ TransparentLayerDC::TransparentLayerDC(GraphicsContextPlatformPrivate* data, Int
             m_rotation.m_postShiftY -= m_origRect.y();
 
             FloatPoint topLeft = m_data->m_transform.mapPoint(FloatPoint(rectBeforeTransform->location()));
-            FloatPoint topRight(rectBeforeTransform->right() - 1, rectBeforeTransform->y());
+            FloatPoint topRight(rectBeforeTransform->maxX() - 1, rectBeforeTransform->y());
             topRight = m_data->m_transform.mapPoint(topRight);
-            FloatPoint bottomLeft(rectBeforeTransform->x(), rectBeforeTransform->bottom() - 1);
+            FloatPoint bottomLeft(rectBeforeTransform->x(), rectBeforeTransform->maxY() - 1);
             bottomLeft = m_data->m_transform.mapPoint(bottomLeft);
             FloatSize sideTop = topRight - topLeft;
             FloatSize sideLeft = bottomLeft - topLeft;
@@ -655,7 +655,7 @@ void GraphicsContext::drawRect(const IntRect& rect)
         if (trRect.height() <= 0)
             trRect.setHeight(1);
 
-        Rectangle(dc, trRect.x(), trRect.y(), trRect.right(), trRect.bottom());
+        Rectangle(dc, trRect.x(), trRect.y(), trRect.maxX(), trRect.maxY());
     }
 
     SelectObject(dc, oldPen);
@@ -725,7 +725,7 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
         oldPen = SelectObject(dc, GetStockObject(NULL_PEN));
 
     if (brush || pen)
-        Ellipse(dc, trRect.x(), trRect.y(), trRect.right(), trRect.bottom());
+        Ellipse(dc, trRect.x(), trRect.y(), trRect.maxX(), trRect.maxY());
 
     SelectObject(dc, oldPen);
     SelectObject(dc, oldBrush);
@@ -838,7 +838,7 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
     }
 
     HGDIOBJ oldBrush = SelectObject(dc, GetStockObject(NULL_BRUSH));
-    Ellipse(dc, trRect.x(), trRect.y(), trRect.right(), trRect.bottom());
+    Ellipse(dc, trRect.x(), trRect.y(), trRect.maxX(), trRect.maxY());
     SelectObject(dc, oldBrush);
 
     if (newClip)
@@ -959,9 +959,9 @@ void GraphicsContext::clip(const FloatRect& rect)
 
     OwnPtr<HRGN> clipRgn(CreateRectRgn(0, 0, 0, 0));
     if (GetClipRgn(m_data->m_dc, clipRgn.get()) > 0)
-        IntersectClipRect(m_data->m_dc, trRect.x(), trRect.y(), trRect.right(), trRect.bottom());
+        IntersectClipRect(m_data->m_dc, trRect.x(), trRect.y(), trRect.maxX(), trRect.maxY());
     else {
-        clipRgn.set(CreateRectRgn(trRect.x(), trRect.y(), trRect.right(), trRect.bottom()));
+        clipRgn.set(CreateRectRgn(trRect.x(), trRect.y(), trRect.maxX(), trRect.maxY()));
         SelectClipRgn(m_data->m_dc, clipRgn.get());
     }
 }
@@ -976,7 +976,7 @@ void GraphicsContext::clipOut(const IntRect& rect)
 
     IntRect trRect = m_data->mapRect(rect);
 
-    ExcludeClipRect(m_data->m_dc, trRect.x(), trRect.y(), trRect.right(), trRect.bottom());
+    ExcludeClipRect(m_data->m_dc, trRect.x(), trRect.y(), trRect.maxX(), trRect.maxY());
 }
 
 void GraphicsContext::drawFocusRing(const Path& path, int width, int offset, const Color& color)
@@ -1092,8 +1092,8 @@ void GraphicsContext::strokeRect(const FloatRect& rect, float width)
     OwnPtr<HPEN> pen = createPen(strokeColor(), strokeThickness(), strokeStyle());
     HGDIOBJ oldPen = SelectObject(dc, pen.get());
 
-    int right = trRect.right() - 1;
-    int bottom = trRect.bottom() - 1;
+    int right = trRect.maxX() - 1;
+    int bottom = trRect.maxY() - 1;
     const POINT intPoints[5] =
     {
         { trRect.x(), trRect.y() },

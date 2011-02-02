@@ -448,7 +448,7 @@ void PluginView::updatePluginWidget()
             rgn = ::CreateRectRgn(0, 0, 0, 0);
             ::SetWindowRgn(platformPluginWidget(), rgn, FALSE);
         } else {
-            rgn = ::CreateRectRgn(m_clipRect.x(), m_clipRect.y(), m_clipRect.right(), m_clipRect.bottom());
+            rgn = ::CreateRectRgn(m_clipRect.x(), m_clipRect.y(), m_clipRect.maxX(), m_clipRect.maxY());
             ::SetWindowRgn(platformPluginWidget(), rgn, TRUE);
         }
 
@@ -456,7 +456,7 @@ void PluginView::updatePluginWidget()
             ::MoveWindow(platformPluginWidget(), m_windowRect.x(), m_windowRect.y(), m_windowRect.width(), m_windowRect.height(), TRUE);
 
         if (clipToZeroRect) {
-            rgn = ::CreateRectRgn(m_clipRect.x(), m_clipRect.y(), m_clipRect.right(), m_clipRect.bottom());
+            rgn = ::CreateRectRgn(m_clipRect.x(), m_clipRect.y(), m_clipRect.maxX(), m_clipRect.maxY());
             ::SetWindowRgn(platformPluginWidget(), rgn, TRUE);
         }
 
@@ -896,7 +896,7 @@ bool PluginView::platformGetValue(NPNVariable variable, void* value, NPError* re
 void PluginView::invalidateRect(const IntRect& rect)
 {
     if (m_isWindowed) {
-        RECT invalidRect = { rect.x(), rect.y(), rect.right(), rect.bottom() };
+        RECT invalidRect = { rect.x(), rect.y(), rect.maxX(), rect.maxY() };
         ::InvalidateRect(platformPluginWidget(), &invalidRect, false);
         return;
     }
@@ -914,7 +914,7 @@ void PluginView::invalidateRect(NPRect* rect)
     IntRect r(rect->left, rect->top, rect->right - rect->left, rect->bottom - rect->top);
 
     if (m_isWindowed) {
-        RECT invalidRect = { r.x(), r.y(), r.right(), r.bottom() };
+        RECT invalidRect = { r.x(), r.y(), r.maxX(), r.maxY() };
         InvalidateRect(platformPluginWidget(), &invalidRect, FALSE);
     } else {
         if (m_plugin->quirks().contains(PluginQuirkThrottleInvalidate)) {

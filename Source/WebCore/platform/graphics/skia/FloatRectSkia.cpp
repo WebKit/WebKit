@@ -43,7 +43,7 @@ FloatRect::FloatRect(const SkRect& r)
 
 FloatRect::operator SkRect() const
 {
-    SkRect rect = { x(), y(), right(), bottom() };
+    SkRect rect = { x(), y(), maxX(), maxY() };
     return rect;
 }
 

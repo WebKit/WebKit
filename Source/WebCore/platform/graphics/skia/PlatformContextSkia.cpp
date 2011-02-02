@@ -266,7 +266,7 @@ void PlatformContextSkia::beginLayerClippedToImage(const FloatRect& rect,
     // create the resulting image.
     m_state->m_clip = rect;
     SkRect bounds = { SkFloatToScalar(rect.x()), SkFloatToScalar(rect.y()),
-                      SkFloatToScalar(rect.right()), SkFloatToScalar(rect.bottom()) };
+                      SkFloatToScalar(rect.maxX()), SkFloatToScalar(rect.maxY()) };
 
     canvas()->clipRect(bounds);
     canvas()->saveLayerAlpha(&bounds, 255,

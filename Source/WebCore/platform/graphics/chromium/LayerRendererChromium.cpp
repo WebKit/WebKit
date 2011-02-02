@@ -143,13 +143,13 @@ void LayerRendererChromium::useShader(unsigned programId)
 
 IntRect LayerRendererChromium::verticalScrollbarRect(const IntRect& visibleRect, const IntRect& contentRect)
 {
-    IntRect verticalScrollbar(IntPoint(contentRect.right(), contentRect.y()), IntSize(visibleRect.width() - contentRect.width(), visibleRect.height()));
+    IntRect verticalScrollbar(IntPoint(contentRect.maxX(), contentRect.y()), IntSize(visibleRect.width() - contentRect.width(), visibleRect.height()));
     return verticalScrollbar;
 }
 
 IntRect LayerRendererChromium::horizontalScrollbarRect(const IntRect& visibleRect, const IntRect& contentRect)
 {
-    IntRect horizontalScrollbar(IntPoint(contentRect.x(), contentRect.bottom()), IntSize(visibleRect.width(), visibleRect.height() - contentRect.height()));
+    IntRect horizontalScrollbar(IntPoint(contentRect.x(), contentRect.maxY()), IntSize(visibleRect.width(), visibleRect.height() - contentRect.height()));
     return horizontalScrollbar;
 }
 
@@ -724,7 +724,7 @@ void LayerRendererChromium::setScissorToRect(const IntRect& scissorRect)
     // But, if rendering to offscreen texture, we reverse our sense of 'upside down'.
     int scissorY;
     if (m_currentRenderSurface == m_defaultRenderSurface && !m_compositeOffscreen)
-        scissorY = m_currentRenderSurface->m_contentRect.height() - (scissorRect.bottom() - m_currentRenderSurface->m_contentRect.y());
+        scissorY = m_currentRenderSurface->m_contentRect.height() - (scissorRect.maxY() - m_currentRenderSurface->m_contentRect.y());
     else
         scissorY = scissorRect.y() - m_currentRenderSurface->m_contentRect.y();
     GLC(m_context.get(), m_context->scissor(scissorX, scissorY, scissorRect.width(), scissorRect.height()));
@@ -750,9 +750,9 @@ bool LayerRendererChromium::checkTextureSize(const IntSize& textureSize)
 void LayerRendererChromium::setDrawViewportRect(const IntRect& drawRect, bool flipY)
 {
     if (flipY)
-        m_projectionMatrix = orthoMatrix(drawRect.x(), drawRect.right(), drawRect.bottom(), drawRect.y());
+        m_projectionMatrix = orthoMatrix(drawRect.x(), drawRect.maxX(), drawRect.maxY(), drawRect.y());
     else
-        m_projectionMatrix = orthoMatrix(drawRect.x(), drawRect.right(), drawRect.y(), drawRect.bottom());
+        m_projectionMatrix = orthoMatrix(drawRect.x(), drawRect.maxX(), drawRect.y(), drawRect.maxY());
     GLC(m_context.get(), m_context->viewport(0, 0, drawRect.width(), drawRect.height()));
 }
 

@@ -327,16 +327,16 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
     IntRect frameRect(frameReader->x_offset, frameReader->y_offset, frameReader->width, frameReader->height);
 
     // Make sure the frameRect doesn't extend outside the buffer.
-    if (frameRect.right() > size().width())
+    if (frameRect.maxX() > size().width())
         frameRect.setWidth(size().width() - frameReader->x_offset);
-    if (frameRect.bottom() > size().height())
+    if (frameRect.maxY() > size().height())
         frameRect.setHeight(size().height() - frameReader->y_offset);
 
     ImageFrame* const buffer = &m_frameBufferCache[frameIndex];
     int left = upperBoundScaledX(frameRect.x());
-    int right = lowerBoundScaledX(frameRect.right(), left);
+    int right = lowerBoundScaledX(frameRect.maxX(), left);
     int top = upperBoundScaledY(frameRect.y());
-    int bottom = lowerBoundScaledY(frameRect.bottom(), top);
+    int bottom = lowerBoundScaledY(frameRect.maxY(), top);
     buffer->setRect(IntRect(left, top, right - left, bottom - top));
     
     if (!frameIndex) {
@@ -378,8 +378,8 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
               // Copy the whole previous buffer, then clear just its frame.
               if (!buffer->copyBitmapData(*prevBuffer))
                   return setFailed();
-              for (int y = prevRect.y(); y < prevRect.bottom(); ++y) {
-                  for (int x = prevRect.x(); x < prevRect.right(); ++x)
+              for (int y = prevRect.y(); y < prevRect.maxY(); ++y) {
+                  for (int x = prevRect.x(); x < prevRect.maxX(); ++x)
                       buffer->setRGBA(x, y, 0, 0, 0, 0);
               }
               if ((prevRect.width() > 0) && (prevRect.height() > 0))

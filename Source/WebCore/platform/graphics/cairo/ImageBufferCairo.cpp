@@ -173,7 +173,7 @@ PassRefPtr<ByteArray> getImageData(const IntRect& rect, const ImageBufferData& d
         destx = -originx;
         originx = 0;
     }
-    int endx = rect.right();
+    int endx = rect.maxX();
     if (endx > size.width())
         endx = size.width();
     int numColumns = endx - originx;
@@ -184,7 +184,7 @@ PassRefPtr<ByteArray> getImageData(const IntRect& rect, const ImageBufferData& d
         desty = -originy;
         originy = 0;
     }
-    int endy = rect.bottom();
+    int endy = rect.maxY();
     if (endy > size.height())
         endy = size.height();
     int numRows = endy - originy;
@@ -239,9 +239,9 @@ void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& 
     ASSERT(destx >= 0);
     ASSERT(destx < size.width());
     ASSERT(originx >= 0);
-    ASSERT(originx <= sourceRect.right());
+    ASSERT(originx <= sourceRect.maxX());
 
-    int endx = destPoint.x() + sourceRect.right();
+    int endx = destPoint.x() + sourceRect.maxX();
     ASSERT(endx <= size.width());
 
     int numColumns = endx - destx;
@@ -251,9 +251,9 @@ void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& 
     ASSERT(desty >= 0);
     ASSERT(desty < size.height());
     ASSERT(originy >= 0);
-    ASSERT(originy <= sourceRect.bottom());
+    ASSERT(originy <= sourceRect.maxY());
 
-    int endy = destPoint.y() + sourceRect.bottom();
+    int endy = destPoint.y() + sourceRect.maxY();
     ASSERT(endy <= size.height());
     int numRows = endy - desty;
 

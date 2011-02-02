@@ -394,9 +394,9 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const S
         FloatRect glyphBounds = fontData->boundsForGlyph(glyph);
         glyphBounds.move(m_glyphOrigin.x(), m_glyphOrigin.y());
         m_minGlyphBoundingBoxX = min(m_minGlyphBoundingBoxX, glyphBounds.x());
-        m_maxGlyphBoundingBoxX = max(m_maxGlyphBoundingBoxX, glyphBounds.right());
+        m_maxGlyphBoundingBoxX = max(m_maxGlyphBoundingBoxX, glyphBounds.maxX());
         m_minGlyphBoundingBoxY = min(m_minGlyphBoundingBoxY, glyphBounds.y());
-        m_maxGlyphBoundingBoxY = max(m_maxGlyphBoundingBoxY, glyphBounds.bottom());
+        m_maxGlyphBoundingBoxY = max(m_maxGlyphBoundingBoxY, glyphBounds.maxY());
         m_glyphOrigin.move(advance + offsetX, -offsetY);
 
         // Mutate the glyph array to contain our altered advances.
