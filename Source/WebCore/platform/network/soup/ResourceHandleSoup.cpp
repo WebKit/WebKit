@@ -789,11 +789,9 @@ bool ResourceHandle::willLoadFromCache(ResourceRequest&, Frame*)
 void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials /*storedCredentials*/, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     WebCoreSynchronousLoader syncLoader(error, response, data);
-    // FIXME: we should use the ResourceHandle::create method here,
-    // but it makes us timeout in a couple of tests. See
-    // https://bugs.webkit.org/show_bug.cgi?id=41823
-    RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(request, &syncLoader, false /*defersLoading*/, false /*shouldContentSniff*/));
-    handle->start(context);
+    RefPtr<ResourceHandle> handle = create(context, request, &syncLoader, false /*defersLoading*/, false /*shouldContentSniff*/);
+    if (!handle)
+        return;
 
     // If the request has already failed, do not run the main loop, or else we'll block indefinitely.
     if (handle->d->m_scheduledFailureType != NoFailure)

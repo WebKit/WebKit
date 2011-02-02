@@ -5086,12 +5086,6 @@ http/tests/security/local-user-CSS-from-remote.html
 # See https://bugs.webkit.org/show_bug.cgi?id=53056
 media/unsupported-rtsp.html
 
-# These two crash after r76555.
-# https://bugs.webkit.org/show_bug.cgi?id=53057
-http/tests/xmlhttprequest/simple-cross-origin-denied-events-sync.html
-http/tests/xmlhttprequest/simple-cross-origin-denied-events.html
-http/tests/xmlhttprequest/simple-cross-origin-denied-events-post-sync.html
-
 # This media test fails; possibly because the AAC codec is not installed on the test bots:
 # https://bugs.webkit.org/show_bug.cgi?id=53125
 media/audio-mpeg4-supported.html

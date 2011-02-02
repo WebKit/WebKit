@@ -1,3 +1,17 @@
+2011-01-25  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Two tests crash after r76555
+        https://bugs.webkit.org/show_bug.cgi?id=53057
+
+        Instead of creating synchronous ResourceHandles manually, use the ::create factory.
+        This ensures that ::start() is not called when there is a scheduled failure and also
+        reduces code duplication.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::loadResourceSynchronously): Use the ::create factory method.
+
 2011-02-01  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Eric Seidel.

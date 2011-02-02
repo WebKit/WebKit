@@ -1,3 +1,12 @@
+2011-01-25  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Two tests crash after r76555
+        https://bugs.webkit.org/show_bug.cgi?id=53057
+
+        * platform/gtk/Skipped: Unskip tests which are no longer crashing.
+
 2011-02-01  chris reiss  <christopher.reiss@nokia.com>
 
         Reviewed by Adam Barth.
