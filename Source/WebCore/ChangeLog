@@ -1,3 +1,30 @@
+2011-02-02  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Chromium] Landing detailed heap snapshots, part 2.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53606
+
+        Display progress while taking a snapshot, and hints while loading
+        and parsing. This is needed because taking detailed heap snapshots
+        takes time.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.DetailedHeapshotProfileType.prototype.buttonClicked):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype._reset):
+        (WebInspector.ProfilesPanel.prototype._addProfileHeader):
+        (WebInspector.ProfilesPanel.prototype.getProfiles):
+        (WebInspector.ProfilesPanel.prototype.loadHeapSnapshot):
+        (WebInspector.ProfilesPanel.prototype._finishHeapSnapshot.doParse):
+        (WebInspector.ProfilesPanel.prototype._finishHeapSnapshot):
+        (WebInspector.ProfilesPanel.prototype.takeHeapSnapshot):
+        (WebInspector.ProfilesPanel.prototype._reportHeapSnapshotProgress):
+        * inspector/front-end/SidebarTreeElement.js:
+        (WebInspector.SidebarTreeElement.prototype.refreshTitles):
+
 2011-02-02  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Darin Adler.

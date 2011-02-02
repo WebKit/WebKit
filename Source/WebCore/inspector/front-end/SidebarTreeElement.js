@@ -164,8 +164,10 @@ WebInspector.SidebarTreeElement.prototype = {
             if (this.subtitleElement.textContent !== subtitle)
                 this.subtitleElement.textContent = subtitle;
             this.titlesElement.removeStyleClass("no-subtitle");
-        } else
+        } else {
+            this.subtitleElement.textContent = "";
             this.titlesElement.addStyleClass("no-subtitle");
+        }
     },
 
     isEventWithinDisclosureTriangle: function(event)

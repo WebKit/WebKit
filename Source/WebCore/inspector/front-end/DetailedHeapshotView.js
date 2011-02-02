@@ -70,7 +70,7 @@ WebInspector.DetailedHeapshotProfileType.prototype = {
 
     buttonClicked: function()
     {
-        InspectorBackend.takeHeapSnapshot(true);
+        WebInspector.panels.profiles.takeHeapSnapshot(true);
     },
 
     get welcomeMessage()
