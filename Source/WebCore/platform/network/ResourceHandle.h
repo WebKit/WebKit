@@ -41,7 +41,7 @@ typedef struct _SoupSession SoupSession;
 typedef const struct __CFData * CFDataRef;
 #endif
 
-#if PLATFORM(WIN)
+#if USE(WININET)
 typedef unsigned long DWORD;
 typedef unsigned long DWORD_PTR;
 typedef void* LPVOID;
