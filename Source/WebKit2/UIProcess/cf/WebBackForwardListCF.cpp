@@ -52,6 +52,8 @@ DEFINE_STATIC_GETTER(CFStringRef, SessionHistoryEntryDataKey, (CFSTR("SessionHis
 
 CFDictionaryRef WebBackForwardList::createCFDictionaryRepresentation(WebPageProxy::WebPageProxySessionStateFilterCallback filter, void* context) const
 {
+    ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
+
     RetainPtr<CFNumberRef> currentIndex(AdoptCF, CFNumberCreate(0, kCFNumberIntType, &m_current));    
     RetainPtr<CFMutableArrayRef> entries(AdoptCF, CFArrayCreateMutable(0, m_entries.size(), &kCFTypeArrayCallBacks));
     
@@ -139,6 +141,9 @@ bool WebBackForwardList::restoreFromCFDictionaryRepresentation(CFDictionaryRef d
     
     m_current = currentIndex;
     m_entries = newEntries;
+
+    ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
+
     return true;
 }
 

@@ -1,3 +1,34 @@
+2011-02-02  Adam Roben  <aroben@apple.com>
+
+        Assert WebBackForwardList's current index is valid to help catch errors
+
+        Hopefully this will help catch a crash I saw once but haven't yet been able to reproduce.
+
+        Fixes <http://webkit.org/b/53622>.
+
+        Reviewed by Brady Eidson.
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::WebBackForwardList):
+        (WebKit::WebBackForwardList::addItem):
+        (WebKit::WebBackForwardList::goToItem):
+        (WebKit::WebBackForwardList::currentItem):
+        (WebKit::WebBackForwardList::backItem):
+        (WebKit::WebBackForwardList::forwardItem):
+        (WebKit::WebBackForwardList::itemAtIndex):
+        (WebKit::WebBackForwardList::backListCount):
+        (WebKit::WebBackForwardList::forwardListCount):
+        (WebKit::WebBackForwardList::backListAsImmutableArrayWithLimit):
+        (WebKit::WebBackForwardList::forwardListAsImmutableArrayWithLimit):
+        (WebKit::WebBackForwardList::clear):
+        * UIProcess/cf/WebBackForwardListCF.cpp:
+        (WebKit::WebBackForwardList::createCFDictionaryRepresentation):
+        (WebKit::WebBackForwardList::restoreFromCFDictionaryRepresentation):
+        Assert that m_current is valid.
+
+        * UIProcess/WebBackForwardList.h: Moved the NoCurrentItemIndex to a static data member so
+        that it can be used from WebBackForwardListCF.cpp.
+
 2011-02-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

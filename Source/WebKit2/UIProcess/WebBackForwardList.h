@@ -83,6 +83,8 @@ public:
 #endif
 
 private:
+    static const unsigned NoCurrentItemIndex = UINT_MAX;
+
     WebBackForwardList(WebPageProxy*);
 
     virtual Type type() const { return APIType; }

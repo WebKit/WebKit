@@ -31,7 +31,6 @@
 namespace WebKit {
 
 static const unsigned DefaultCapacity = 100;
-static const unsigned NoCurrentItemIndex = UINT_MAX;
 
 WebBackForwardList::WebBackForwardList(WebPageProxy* page)
     : m_page(page)
@@ -40,6 +39,7 @@ WebBackForwardList::WebBackForwardList(WebPageProxy* page)
     , m_closed(true)
     , m_enabled(true)
 {
+    ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
 }
 
 WebBackForwardList::~WebBackForwardList()
@@ -59,6 +59,8 @@ void WebBackForwardList::pageClosed()
 
 void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
 {
+    ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
+
     if (m_capacity == 0 || !m_enabled)
         return;
 
@@ -86,10 +88,14 @@ void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
 
     if (m_page)
         m_page->didChangeBackForwardList();
+
+    ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
 }
 
 void WebBackForwardList::goToItem(WebBackForwardListItem* item)
 {
+    ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
+
     if (!m_entries.size() || !item)
         return;
         
@@ -107,6 +113,8 @@ void WebBackForwardList::goToItem(WebBackForwardListItem* item)
 
 WebBackForwardListItem* WebBackForwardList::currentItem()
 {
+    ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
+
     if (m_current != NoCurrentItemIndex)
         return m_entries[m_current].get();
     return 0;
@@ -114,6 +122,8 @@ WebBackForwardListItem* WebBackForwardList::currentItem()
 
 WebBackForwardListItem* WebBackForwardList::backItem()
 {
+    ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
+
     if (m_current && m_current != NoCurrentItemIndex)
         return m_entries[m_current - 1].get();
     return 0;
@@ -121,6 +131,8 @@ WebBackForwardListItem* WebBackForwardList::backItem()
 
 WebBackForwardListItem* WebBackForwardList::forwardItem()
 {
+    ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
+
     if (m_entries.size() && m_current < m_entries.size() - 1)
         return m_entries[m_current + 1].get();
     return 0;
@@ -128,6 +140,8 @@ WebBackForwardListItem* WebBackForwardList::forwardItem()
 
 WebBackForwardListItem* WebBackForwardList::itemAtIndex(int index)
 {
+    ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
+
     // Do range checks without doing math on index to avoid overflow.
     if (index < -static_cast<int>(m_current))
         return 0;
@@ -140,16 +154,22 @@ WebBackForwardListItem* WebBackForwardList::itemAtIndex(int index)
 
 int WebBackForwardList::backListCount()
 {
+    ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
+
     return m_current == NoCurrentItemIndex ? 0 : m_current;
 }
 
 int WebBackForwardList::forwardListCount()
 {
+    ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
+
     return m_current == NoCurrentItemIndex ? 0 : static_cast<int>(m_entries.size()) - (m_current + 1);
 }
 
 PassRefPtr<ImmutableArray> WebBackForwardList::backListAsImmutableArrayWithLimit(unsigned limit)
 {
+    ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
+
     unsigned backListSize = static_cast<unsigned>(backListCount());
     unsigned size = std::min(backListSize, limit);
     if (!size)
@@ -167,6 +187,8 @@ PassRefPtr<ImmutableArray> WebBackForwardList::backListAsImmutableArrayWithLimit
 
 PassRefPtr<ImmutableArray> WebBackForwardList::forwardListAsImmutableArrayWithLimit(unsigned limit)
 {
+    ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
+
     unsigned size = std::min(static_cast<unsigned>(forwardListCount()), limit);
     if (!size)
         return ImmutableArray::create();
@@ -184,6 +206,8 @@ PassRefPtr<ImmutableArray> WebBackForwardList::forwardListAsImmutableArrayWithLi
 
 void WebBackForwardList::clear()
 {
+    ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
+
     size_t size = m_entries.size();
     if (size <= 1)
         return;
