@@ -194,7 +194,7 @@ private:
     void paintBorder(GraphicsContext*, const IntRect&);
 
     // Layout and calculate popup widget size and location and returns it as IntRect.
-    IntRect layoutAndCalculateWidgetRect(int targetControlHeight, const IntPoint& popupInitialCoordinate);
+    IntRect layoutAndCalculateWidgetRect(int targetControlHeight, int popupInitialY);
 
     // Returns the ChromeClient of the page this popup is associated with.
     ChromeClientChromium* chromeClientChromium();

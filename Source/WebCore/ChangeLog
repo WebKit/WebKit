@@ -1,3 +1,20 @@
+2011-02-02  Naoki Takano  <takano.naoki@gmail.com>
+
+        Reviewed by Kent Tamura.
+
+        Fix popup menu RTL bug introduced by Changeset 75982.
+        https://bugs.webkit.org/show_bug.cgi?id=53567
+
+        PopupMenuChromium::layout() calculates X position according to RTL or not. So Change the X position calculation in layoutAndCalculateWidgetRect().
+
+        No new tests. However we can check manually with select_dropdown_box_alignment.html, autofill_alignment.html, select_alignment.html, select_dropdown_box_alignment.html, autofill-popup-width-and-item-direction.html
+
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupContainer::layoutAndCalculateWidgetRect): Fix calculation of x position, because layout() considers RTL. And change the parameter from both X and Y positions to only Y position.
+        (WebCore::PopupContainer::showPopup): Change the passing parameter.
+        (WebCore::PopupContainer::refresh): Change the passing parameter.
+        * platform/chromium/PopupMenuChromium.h: Change the parameter declaration.
+
 2011-02-02  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.

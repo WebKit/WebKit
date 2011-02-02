@@ -329,7 +329,7 @@ PopupContainer::~PopupContainer()
         removeChild(m_listBox.get());
 }
 
-IntRect PopupContainer::layoutAndCalculateWidgetRect(int targetControlHeight, const IntPoint& popupInitialCoordinate)
+IntRect PopupContainer::layoutAndCalculateWidgetRect(int targetControlHeight, int popupInitialY)
 {
     // Reset the max height to its default value, it will be recomputed below
     // if necessary.
@@ -349,7 +349,9 @@ IntRect PopupContainer::layoutAndCalculateWidgetRect(int targetControlHeight, co
         // If the popup would extend past the bottom of the screen, open upwards
         // instead.
         FloatRect screen = screenAvailableRect(m_frameView.get());
-        widgetRect = chromeClient->windowToScreen(IntRect(popupInitialCoordinate, targetSize));
+        // Use this::x() for location because RTL position is considered
+        // in layout().
+        widgetRect = chromeClient->windowToScreen(IntRect(x(), popupInitialY, targetSize.width(), targetSize.height()));
         if (widgetRect.bottom() > static_cast<int>(screen.bottom())) {
             if (widgetRect.y() - widgetRect.height() - targetControlHeight > 0) {
                 // There is enough room to open upwards.
@@ -382,7 +384,7 @@ void PopupContainer::showPopup(FrameView* view)
     ChromeClientChromium* chromeClient = chromeClientChromium();
     if (chromeClient) {
         IntRect popupRect = frameRect();
-        chromeClient->popupOpened(this, layoutAndCalculateWidgetRect(popupRect.height(), popupRect.location()), false);
+        chromeClient->popupOpened(this, layoutAndCalculateWidgetRect(popupRect.height(), popupRect.y()), false);
         m_popupOpen = true;
     }
 
@@ -580,7 +582,7 @@ void PopupContainer::refresh(const IntRect& targetControlRect)
     listBox()->updateFromElement();
     // Store the original height to check if we need to request the location.
     int originalHeight = height();
-    IntRect widgetRect = layoutAndCalculateWidgetRect(targetControlRect.height(), location);
+    IntRect widgetRect = layoutAndCalculateWidgetRect(targetControlRect.height(), location.y());
     if (originalHeight != widgetRect.height())
         setFrameRect(widgetRect);
 
