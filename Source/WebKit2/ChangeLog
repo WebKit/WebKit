@@ -1,3 +1,17 @@
+2011-02-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Make sure that we don't try to call display() when in accelerated compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=53629
+
+        When in accelerated compositing mode, the layer tree host should handle all painting, so make sure that display() is never called.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::setNeedsDisplay):
+        (WebKit::DrawingAreaImpl::setRootCompositingLayer):
+        (WebKit::DrawingAreaImpl::display):
+
 2011-02-02  Adam Roben  <aroben@apple.com>
 
         Assert WebBackForwardList's current index is valid to help catch errors

@@ -64,6 +64,13 @@ void DrawingAreaImpl::setNeedsDisplay(const IntRect& rect)
     if (rect.isEmpty())
         return;
 
+    if (m_layerTreeHost) {
+        ASSERT(m_dirtyRegion.isEmpty());
+
+        // FIXME: Ask the layer tree host to repaint non-composited content.
+        return;
+    }
+    
     m_dirtyRegion.unite(rect);
     scheduleDisplay();
 }
@@ -126,9 +133,15 @@ void DrawingAreaImpl::detachCompositingContext()
 
 void DrawingAreaImpl::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
 {
-    if (graphicsLayer)
+    if (graphicsLayer) {
         m_layerTreeHost = LayerTreeHost::create(m_webPage, graphicsLayer);
-    else {
+
+        // Non-composited content will now be handled exclusively by the layer tree host.
+        m_dirtyRegion = Region();
+        m_scrollRect = IntRect();
+        m_scrollOffset = IntSize();
+        m_displayTimer.stop();
+    } else {
         m_layerTreeHost->invalidate();
         m_layerTreeHost = nullptr;
     }
@@ -212,6 +225,7 @@ void DrawingAreaImpl::scheduleDisplay()
 
 void DrawingAreaImpl::display()
 {
+    ASSERT(!m_layerTreeHost);
     ASSERT(!m_isWaitingForDidUpdate);
 
     if (m_isPaintingSuspended)
@@ -251,6 +265,7 @@ static bool shouldPaintBoundsRect(const IntRect& bounds, const Vector<IntRect>& 
 void DrawingAreaImpl::display(UpdateInfo& updateInfo)
 {
     ASSERT(!m_isPaintingSuspended);
+    ASSERT(!m_layerTreeHost);
 
     // FIXME: It would be better if we could avoid painting altogether when there is a custom representation.
     if (m_webPage->mainFrameHasCustomRepresentation())
