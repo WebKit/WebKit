@@ -27,13 +27,15 @@
 #define LayerTreeHostMac_h
 
 #include "LayerTreeHost.h"
+#include <WebCore/GraphicsLayerClient.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/RetainPtr.h>
 
 typedef struct __WKCARemoteLayerClientRef* WKCARemoteLayerClientRef;
 
 namespace WebKit {
 
-class LayerTreeHostMac : public LayerTreeHost {
+class LayerTreeHostMac : public LayerTreeHost, WebCore::GraphicsLayerClient {
 public:
     static PassRefPtr<LayerTreeHostMac> create(WebPage*, WebCore::GraphicsLayer*);
     ~LayerTreeHostMac();
@@ -45,11 +47,21 @@ private:
     virtual void scheduleLayerFlush();
     virtual void invalidate();
 
+    // GraphicsLayerClient
+    virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time);
+    virtual void notifySyncRequired(const WebCore::GraphicsLayer*);
+    virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& clipRect);
+    virtual bool showDebugBorders() const;
+    virtual bool showRepaintCounter() const;
+
     static void flushPendingLayerChangesRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void*);
     void flushPendingLayerChangesRunLoopObserverCallback();
     bool flushPendingLayerChanges();
 
     bool m_isValid;
+
+    // The root layer.
+    OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
 
     RetainPtr<WKCARemoteLayerClientRef> m_remoteLayerClient;
     RetainPtr<CFRunLoopObserverRef> m_flushPendingLayerChangesRunLoopObserver;

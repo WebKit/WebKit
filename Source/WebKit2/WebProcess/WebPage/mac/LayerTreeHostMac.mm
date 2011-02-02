@@ -33,6 +33,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/Page.h>
+#import <WebCore/Settings.h>
 #import <WebKitSystemInterface.h>
 
 using namespace WebCore;
@@ -49,13 +50,22 @@ LayerTreeHostMac::LayerTreeHostMac(WebPage* webPage, GraphicsLayer* graphicsLaye
     , m_isValid(true)
 {
     mach_port_t serverPort = WebProcess::shared().compositingRenderServerPort();
-
     m_remoteLayerClient = WKCARemoteLayerClientMakeWithServerPort(serverPort);
 
-    // FIXME: Create a real layer instead of just a placeholder.
-    CALayer *layer = [CALayer layer];
+    // Create a root layer.
+    m_rootLayer = GraphicsLayer::create(this);
+#ifndef NDEBUG
+    m_rootLayer->setName("LayerTreeHost root layer");
+#endif
+    m_rootLayer->setDrawsContent(false);
+    m_rootLayer->setSize(webPage->size());
 
-    WKCARemoteLayerClientSetLayer(m_remoteLayerClient.get(), layer);
+    // Add the accelerated layer tree hierarchy.
+    m_rootLayer->addChild(graphicsLayer);
+    
+    WKCARemoteLayerClientSetLayer(m_remoteLayerClient.get(), m_rootLayer->platformLayer());
+
+    scheduleLayerFlush();
 
     LayerTreeContext layerTreeContext;
     layerTreeContext.contextID = WKCARemoteLayerClientGetClientId(m_remoteLayerClient.get());
@@ -69,6 +79,7 @@ LayerTreeHostMac::~LayerTreeHostMac()
     ASSERT(!m_isValid);
     ASSERT(!m_flushPendingLayerChangesRunLoopObserver);
     ASSERT(!m_remoteLayerClient);
+    ASSERT(!m_rootLayer);
 }
 
 void LayerTreeHostMac::scheduleLayerFlush()
@@ -100,11 +111,33 @@ void LayerTreeHostMac::invalidate()
 
     WKCARemoteLayerClientInvalidate(m_remoteLayerClient.get());
     m_remoteLayerClient = nullptr;
-
+    m_rootLayer = nullptr;
     m_isValid = false;
 
     // FIXME: Don't send this if we enter accelerated compositing as a result of setSize.
     m_webPage->send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode());
+}
+
+void LayerTreeHostMac::notifyAnimationStarted(const WebCore::GraphicsLayer*, double time)
+{
+}
+
+void LayerTreeHostMac::notifySyncRequired(const WebCore::GraphicsLayer*)
+{
+}
+
+void LayerTreeHostMac::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const IntRect& clipRect)
+{
+}
+
+bool LayerTreeHostMac::showDebugBorders() const
+{
+    return m_webPage->corePage()->settings()->showDebugBorders();
+}
+
+bool LayerTreeHostMac::showRepaintCounter() const
+{
+    return m_webPage->corePage()->settings()->showRepaintCounter();
 }
 
 void LayerTreeHostMac::flushPendingLayerChangesRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void* context)
@@ -125,6 +158,8 @@ void LayerTreeHostMac::flushPendingLayerChangesRunLoopObserverCallback()
 
 bool LayerTreeHostMac::flushPendingLayerChanges()
 {
+    m_rootLayer->syncCompositingStateForThisLayerOnly();
+
     return m_webPage->corePage()->mainFrame()->view()->syncCompositingStateIncludingSubframes();
 }
 

@@ -1,5 +1,41 @@
 2011-02-01  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Attach the layer tree in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=53560
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _enterAcceleratedCompositingMode:]):
+        Make a render layer and add it as a sublayer of our root layer.
+
+        * WebProcess/WebPage/mac/LayerTreeHostMac.h:
+        Make LayerTreeHostMac a GraphicsLayerClient.
+
+        * WebProcess/WebPage/mac/LayerTreeHostMac.mm:
+        (WebKit::LayerTreeHostMac::LayerTreeHostMac):
+        Create a root layer, add the layer subtree as a child of the root layer.
+
+        (WebKit::LayerTreeHostMac::~LayerTreeHostMac):
+        Assert that m_rootLayer is null.
+
+        (WebKit::LayerTreeHostMac::invalidate):
+        Null out m_rootLayer.
+
+        (WebKit::LayerTreeHostMac::notifyAnimationStarted):
+        (WebKit::LayerTreeHostMac::notifySyncRequired):
+        (WebKit::LayerTreeHostMac::paintContents):
+        Add stubs.
+
+        (WebKit::LayerTreeHostMac::showDebugBorders):
+        (WebKit::LayerTreeHostMac::showRepaintCounter):
+        Return the correct settings.
+
+        (WebKit::LayerTreeHostMac::flushPendingLayerChanges):
+        Flush the root layer changes.
+
+2011-02-01  Anders Carlsson  <andersca@apple.com>
+
         Fix Windows build.
 
         * UIProcess/win/WebView.cpp:
