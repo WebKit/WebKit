@@ -113,7 +113,7 @@ class ChromiumWinPort(chromium.ChromiumPort):
         if self._filesystem.exists(p):
             return p
         p = self.path_from_chromium_base('chrome', *comps)
-        if self._filesystem.exists(p) or self.get_option('use_test_shell'):
+        if self._filesystem.exists(p):
             return p
         return self._filesystem.join(self.path_from_webkit_base(), 'WebKit', 'chromium', *comps)
 
@@ -141,20 +141,14 @@ class ChromiumWinPort(chromium.ChromiumPort):
         if not configuration:
             configuration = self.get_option('configuration')
         binary_name = 'DumpRenderTree.exe'
-        if self.get_option('use_test_shell'):
-            binary_name = 'test_shell.exe'
         return self._build_path(configuration, binary_name)
 
     def _path_to_helper(self):
         binary_name = 'LayoutTestHelper.exe'
-        if self.get_option('use_test_shell'):
-            binary_name = 'layout_test_helper.exe'
         return self._build_path(self.get_option('configuration'), binary_name)
 
     def _path_to_image_diff(self):
         binary_name = 'ImageDiff.exe'
-        if self.get_option('use_test_shell'):
-            binary_name = 'image_diff.exe'
         return self._build_path(self.get_option('configuration'), binary_name)
 
     def _path_to_wdiff(self):

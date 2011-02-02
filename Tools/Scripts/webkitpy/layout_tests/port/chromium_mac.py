@@ -81,9 +81,6 @@ class ChromiumMacPort(chromium.ChromiumPort):
         return chromium.ChromiumPort.default_child_processes(self)
 
     def driver_name(self):
-        """name for this port's equivalent of DumpRenderTree."""
-        if self.get_option('use_test_shell'):
-            return "TestShell"
         return "DumpRenderTree"
 
     def test_platform_name(self):
@@ -113,7 +110,7 @@ class ChromiumMacPort(chromium.ChromiumPort):
                                          *comps)
 
         path = self.path_from_chromium_base('xcodebuild', *comps)
-        if self._filesystem.exists(path) or self.get_option('use_test_shell'):
+        if self._filesystem.exists(path):
             return path
         return self.path_from_webkit_base(
             'Source', 'WebKit', 'chromium', 'xcodebuild', *comps)
@@ -157,8 +154,6 @@ class ChromiumMacPort(chromium.ChromiumPort):
 
     def _path_to_helper(self):
         binary_name = 'LayoutTestHelper'
-        if self.get_option('use_test_shell'):
-            binary_name = 'layout_test_helper'
         return self._build_path(self.get_option('configuration'), binary_name)
 
     def _path_to_wdiff(self):

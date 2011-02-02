@@ -171,8 +171,6 @@ class ChromiumPort(base.Port):
         return result
 
     def driver_name(self):
-        if self._options.use_test_shell:
-            return "test_shell"
         return "DumpRenderTree"
 
     def path_from_chromium_base(self, *comps):
@@ -329,13 +327,11 @@ class ChromiumPort(base.Port):
 
     def _path_to_image_diff(self):
         binary_name = 'ImageDiff'
-        if self.get_option('use_test_shell'):
-            binary_name = 'image_diff'
         return self._build_path(self.get_option('configuration'), binary_name)
 
 
 class ChromiumDriver(base.Driver):
-    """Abstract interface for test_shell."""
+    """Abstract interface for DRT."""
 
     def __init__(self, port, worker_number):
         self._port = port
@@ -354,10 +350,7 @@ class ChromiumDriver(base.Driver):
             cmd.append("--pixel-tests=" +
                        self._port._convert_path(self._image_path))
 
-        if self._port.get_option('use_test_shell'):
-            cmd.append('--layout-tests')
-        else:
-            cmd.append('--test-shell')
+        cmd.append('--test-shell')
 
         if self._port.get_option('startup_dialog'):
             cmd.append('--testshell-startup-dialog')
@@ -374,14 +367,12 @@ class ChromiumDriver(base.Driver):
         if self._port.get_option('stress_deopt'):
             cmd.append('--stress-deopt')
 
-        # test_shell does not support accelerated compositing.
-        if not self._port.get_option("use_test_shell"):
-            if self._port.get_option('accelerated_compositing'):
-                cmd.append('--enable-accelerated-compositing')
-            if self._port.get_option('accelerated_2d_canvas'):
-                cmd.append('--enable-accelerated-2d-canvas')
-            if self._port.get_option('enable_hardware_gpu'):
-                cmd.append('--enable-hardware-gpu')
+        if self._port.get_option('accelerated_compositing'):
+            cmd.append('--enable-accelerated-compositing')
+        if self._port.get_option('accelerated_2d_canvas'):
+            cmd.append('--enable-accelerated-2d-canvas')
+        if self._port.get_option('enable_hardware_gpu'):
+            cmd.append('--enable-hardware-gpu')
         return cmd
 
     def start(self):
@@ -409,17 +400,17 @@ class ChromiumDriver(base.Driver):
         try:
             if input:
                 if isinstance(input, unicode):
-                    # TestShell expects utf-8
+                    # DRT expects utf-8
                     input = input.encode("utf-8")
                 self._proc.stdin.write(input)
             # DumpRenderTree text output is always UTF-8.  However some tests
             # (e.g. webarchive) may spit out binary data instead of text so we
-            # don't bother to decode the output (for either DRT or test_shell).
+            # don't bother to decode the output.
             line = self._proc.stdout.readline()
             # We could assert() here that line correctly decodes as UTF-8.
             return (line, False)
         except IOError, e:
-            _log.error("IOError communicating w/ test_shell: " + str(e))
+            _log.error("IOError communicating w/ DRT: " + str(e))
             return (None, True)
 
     def _test_shell_command(self, uri, timeoutms, checksum):
@@ -474,7 +465,7 @@ class ChromiumDriver(base.Driver):
             if line == '' and self.poll() is not None:
                 # This is hex code 0xc000001d, which is used for abrupt
                 # termination. This happens if we hit ctrl+c from the prompt
-                # and we happen to be waiting on test_shell.
+                # and we happen to be waiting on DRT.
                 # sdoyon: Not sure for which OS and in what circumstances the
                 # above code is valid. What works for me under Linux to detect
                 # ctrl+c is for the subprocess returncode to be negative
@@ -521,8 +512,8 @@ class ChromiumDriver(base.Driver):
             if sys.platform not in ('win32', 'cygwin'):
                 # Closing stdin/stdout/stderr hangs sometimes on OS X,
                 # (see __init__(), above), and anyway we don't want to hang
-                # the harness if test_shell is buggy, so we wait a couple
-                # seconds to give test_shell a chance to clean up, but then
+                # the harness if DRT is buggy, so we wait a couple
+                # seconds to give DRT a chance to clean up, but then
                 # force-kill the process if necessary.
                 KILL_TIMEOUT = 3.0
                 timeout = time.time() + KILL_TIMEOUT
