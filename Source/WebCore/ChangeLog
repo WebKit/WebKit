@@ -1,3 +1,37 @@
+2011-02-02  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53619
+
+        Floats should not use physical terminology for their rects. Replace left/top with x/y and right/bottom
+        with maxX/maxY.  This matches IntRect.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addOverflowFromFloats):
+        (WebCore::RenderBlock::flipFloatForWritingMode):
+        (WebCore::RenderBlock::paintFloats):
+        (WebCore::RenderBlock::selectionGaps):
+        (WebCore::RenderBlock::addOverhangingFloats):
+        (WebCore::RenderBlock::addIntrudingFloats):
+        (WebCore::RenderBlock::hitTestFloats):
+        (WebCore::RenderBlock::adjustForBorderFit):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::FloatingObject::x):
+        (WebCore::RenderBlock::FloatingObject::maxX):
+        (WebCore::RenderBlock::FloatingObject::y):
+        (WebCore::RenderBlock::FloatingObject::maxY):
+        (WebCore::RenderBlock::FloatingObject::setX):
+        (WebCore::RenderBlock::FloatingObject::setY):
+        (WebCore::RenderBlock::logicalTopForFloat):
+        (WebCore::RenderBlock::logicalBottomForFloat):
+        (WebCore::RenderBlock::logicalLeftForFloat):
+        (WebCore::RenderBlock::logicalRightForFloat):
+        (WebCore::RenderBlock::setLogicalTopForFloat):
+        (WebCore::RenderBlock::setLogicalLeftForFloat):
+        (WebCore::RenderBlock::xPositionForFloatIncludingMargin):
+        (WebCore::RenderBlock::yPositionForFloatIncludingMargin):
+
 2011-02-02  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Update more references to right() and bottom() in Chromium Win.

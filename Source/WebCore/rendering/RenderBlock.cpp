@@ -1384,7 +1384,7 @@ void RenderBlock::addOverflowFromFloats()
     DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for (; (r = it.current()); ++it) {
         if (r->m_isDescendant)
-            addOverflowFromChild(r->m_renderer, IntSize(leftForFloatIncludingMargin(r), topForFloatIncludingMargin(r)));
+            addOverflowFromChild(r->m_renderer, IntSize(xPositionForFloatIncludingMargin(r), yPositionForFloatIncludingMargin(r)));
     }
     return;
 }
@@ -2495,8 +2495,8 @@ IntPoint RenderBlock::flipFloatForWritingMode(const FloatingObject* child, const
     // it's going to get added back in.  We hide this complication here so that the calling code looks normal for the unflipped
     // case.
     if (style()->isHorizontalWritingMode())
-        return IntPoint(point.x(), point.y() + height() - child->renderer()->height() - 2 * topForFloatIncludingMargin(child));
-    return IntPoint(point.x() + width() - child->width() - 2 * leftForFloatIncludingMargin(child), point.y());
+        return IntPoint(point.x(), point.y() + height() - child->renderer()->height() - 2 * yPositionForFloatIncludingMargin(child));
+    return IntPoint(point.x() + width() - child->width() - 2 * xPositionForFloatIncludingMargin(child), point.y());
 }
 
 void RenderBlock::paintFloats(PaintInfo& paintInfo, int tx, int ty, bool preservePhase)
@@ -2511,7 +2511,7 @@ void RenderBlock::paintFloats(PaintInfo& paintInfo, int tx, int ty, bool preserv
         if (r->m_shouldPaint && !r->m_renderer->hasSelfPaintingLayer()) {
             PaintInfo currentPaintInfo(paintInfo);
             currentPaintInfo.phase = preservePhase ? paintInfo.phase : PaintPhaseBlockBackground;
-            IntPoint childPoint = flipFloatForWritingMode(r, IntPoint(tx + leftForFloatIncludingMargin(r) - r->m_renderer->x(), ty + topForFloatIncludingMargin(r) - r->m_renderer->y()));
+            IntPoint childPoint = flipFloatForWritingMode(r, IntPoint(tx + xPositionForFloatIncludingMargin(r) - r->m_renderer->x(), ty + yPositionForFloatIncludingMargin(r) - r->m_renderer->y()));
             r->m_renderer->paint(currentPaintInfo, childPoint.x(), childPoint.y());
             if (!preservePhase) {
                 currentPaintInfo.phase = PaintPhaseChildBlockBackgrounds;
@@ -2745,8 +2745,8 @@ GapRects RenderBlock::selectionGaps(RenderBlock* rootBlock, const IntPoint& root
         if (m_floatingObjects) {
             for (DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects); it.current(); ++it) {
                 FloatingObject* r = it.current();
-                IntRect floatBox = IntRect(offsetFromRootBlock.width() + leftForFloatIncludingMargin(r),
-                                           offsetFromRootBlock.height() + topForFloatIncludingMargin(r),
+                IntRect floatBox = IntRect(offsetFromRootBlock.width() + xPositionForFloatIncludingMargin(r),
+                                           offsetFromRootBlock.height() + yPositionForFloatIncludingMargin(r),
                                            r->m_renderer->width(), r->m_renderer->height());
                 rootBlock->flipForWritingMode(floatBox);
                 floatBox.move(rootBlockPhysicalPosition.x(), rootBlockPhysicalPosition.y());
@@ -3599,7 +3599,7 @@ int RenderBlock::addOverhangingFloats(RenderBlock* child, int logicalLeftOffset,
             if (!containsFloat(r->m_renderer)) {
                 int leftOffset = style()->isHorizontalWritingMode() ? logicalLeftOffset : logicalTopOffset;
                 int topOffset = style()->isHorizontalWritingMode() ? logicalTopOffset : logicalLeftOffset;
-                FloatingObject* floatingObj = new FloatingObject(r->type(), IntRect(r->left() - leftOffset, r->top() - topOffset, r->width(), r->height()));
+                FloatingObject* floatingObj = new FloatingObject(r->type(), IntRect(r->x() - leftOffset, r->y() - topOffset, r->width(), r->height()));
                 floatingObj->m_renderer = r->m_renderer;
 
                 // The nearest enclosing layer always paints the float (so that zindex and stacking
@@ -3634,7 +3634,7 @@ int RenderBlock::addOverhangingFloats(RenderBlock* child, int logicalLeftOffset,
             // Since the float doesn't overhang, it didn't get put into our list.  We need to go ahead and add its overflow in to the
             // child now.
             if (r->m_isDescendant)
-                child->addOverflowFromChild(r->m_renderer, IntSize(leftForFloatIncludingMargin(r), topForFloatIncludingMargin(r)));
+                child->addOverflowFromChild(r->m_renderer, IntSize(xPositionForFloatIncludingMargin(r), yPositionForFloatIncludingMargin(r)));
         }
     }
     return lowestFloatLogicalBottom;
@@ -3666,7 +3666,7 @@ void RenderBlock::addIntrudingFloats(RenderBlock* prev, int logicalLeftOffset, i
                 int leftOffset = style()->isHorizontalWritingMode() ? logicalLeftOffset : logicalTopOffset;
                 int topOffset = style()->isHorizontalWritingMode() ? logicalTopOffset : logicalLeftOffset;
                 
-                FloatingObject* floatingObj = new FloatingObject(r->type(), IntRect(r->left() - leftOffset, r->top() - topOffset, r->width(), r->height()));
+                FloatingObject* floatingObj = new FloatingObject(r->type(), IntRect(r->x() - leftOffset, r->y() - topOffset, r->width(), r->height()));
 
                 // Applying the child's margin makes no sense in the case where the child was passed in.
                 // since this margin was added already through the modification of the |logicalLeftOffset| variable
@@ -3675,9 +3675,9 @@ void RenderBlock::addIntrudingFloats(RenderBlock* prev, int logicalLeftOffset, i
                 // will get applied twice.
                 if (prev != parent()) {
                     if (style()->isHorizontalWritingMode())
-                        floatingObj->setLeft(floatingObj->left() + prev->marginLeft());
+                        floatingObj->setX(floatingObj->x() + prev->marginLeft());
                     else
-                        floatingObj->setTop(floatingObj->top() + prev->marginTop());
+                        floatingObj->setY(floatingObj->y() + prev->marginTop());
                 }
                
                 floatingObj->m_shouldPaint = false;  // We are not in the direct inheritance chain for this float. We will never paint it.
@@ -3872,8 +3872,8 @@ bool RenderBlock::hitTestFloats(const HitTestRequest& request, HitTestResult& re
     DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for (it.toLast(); (floatingObject = it.current()); --it) {
         if (floatingObject->m_shouldPaint && !floatingObject->m_renderer->hasSelfPaintingLayer()) {
-            int xOffset = leftForFloatIncludingMargin(floatingObject) - floatingObject->m_renderer->x();
-            int yOffset = topForFloatIncludingMargin(floatingObject) - floatingObject->m_renderer->y();
+            int xOffset = xPositionForFloatIncludingMargin(floatingObject) - floatingObject->m_renderer->x();
+            int yOffset = yPositionForFloatIncludingMargin(floatingObject) - floatingObject->m_renderer->y();
             IntPoint childPoint = flipFloatForWritingMode(floatingObject, IntPoint(tx + xOffset, ty + yOffset));
             if (floatingObject->m_renderer->hitTest(request, result, IntPoint(x, y), childPoint.x(), childPoint.y())) {
                 updateHitTestResult(result, IntPoint(x - childPoint.x(), y - childPoint.y()));
@@ -5482,7 +5482,7 @@ void RenderBlock::adjustForBorderFit(int x, int& left, int& right) const
             for (; (r = it.current()); ++it) {
                 // Only examine the object if our m_shouldPaint flag is set.
                 if (r->m_shouldPaint) {
-                    int floatLeft = leftForFloatIncludingMargin(r) - r->m_renderer->x();
+                    int floatLeft = xPositionForFloatIncludingMargin(r) - r->m_renderer->x();
                     int floatRight = floatLeft + r->m_renderer->width();
                     left = min(left, floatLeft);
                     right = max(right, floatRight);

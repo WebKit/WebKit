@@ -397,15 +397,15 @@ private:
         bool isPlaced() const { return m_isPlaced; }
         void setIsPlaced(bool placed = true) { m_isPlaced = placed; }
 
-        int left() const { ASSERT(isPlaced()); return m_frameRect.x(); }
-        int right() const { ASSERT(isPlaced()); return m_frameRect.maxX(); }
-        int top() const { ASSERT(isPlaced()); return m_frameRect.y(); }
-        int bottom() const { ASSERT(isPlaced()); return m_frameRect.maxY(); }
+        int x() const { ASSERT(isPlaced()); return m_frameRect.x(); }
+        int maxX() const { ASSERT(isPlaced()); return m_frameRect.maxX(); }
+        int y() const { ASSERT(isPlaced()); return m_frameRect.y(); }
+        int maxY() const { ASSERT(isPlaced()); return m_frameRect.maxY(); }
         int width() const { return m_frameRect.width(); }
         int height() const { return m_frameRect.height(); }
 
-        void setLeft(int left) { m_frameRect.setX(left); }
-        void setTop(int top) { m_frameRect.setY(top); }
+        void setX(int x) { m_frameRect.setX(x); }
+        void setY(int y) { m_frameRect.setY(y); }
         void setWidth(int width) { m_frameRect.setWidth(width); }
         void setHeight(int height) { m_frameRect.setHeight(height); }
 
@@ -423,24 +423,24 @@ private:
 
     IntPoint flipFloatForWritingMode(const FloatingObject*, const IntPoint&) const;
 
-    int logicalTopForFloat(const FloatingObject* child) const { return style()->isHorizontalWritingMode() ? child->top() : child->left(); }
-    int logicalBottomForFloat(const FloatingObject* child) const { return style()->isHorizontalWritingMode() ? child->bottom() : child->right(); }
-    int logicalLeftForFloat(const FloatingObject* child) const { return style()->isHorizontalWritingMode() ? child->left() : child->top(); }
-    int logicalRightForFloat(const FloatingObject* child) const { return style()->isHorizontalWritingMode() ? child->right() : child->bottom(); }
+    int logicalTopForFloat(const FloatingObject* child) const { return style()->isHorizontalWritingMode() ? child->y() : child->x(); }
+    int logicalBottomForFloat(const FloatingObject* child) const { return style()->isHorizontalWritingMode() ? child->maxY() : child->maxX(); }
+    int logicalLeftForFloat(const FloatingObject* child) const { return style()->isHorizontalWritingMode() ? child->x() : child->y(); }
+    int logicalRightForFloat(const FloatingObject* child) const { return style()->isHorizontalWritingMode() ? child->maxX() : child->maxY(); }
     int logicalWidthForFloat(const FloatingObject* child) const { return style()->isHorizontalWritingMode() ? child->width() : child->height(); }
     void setLogicalTopForFloat(FloatingObject* child, int logicalTop)
     {
         if (style()->isHorizontalWritingMode())
-            child->setTop(logicalTop);
+            child->setY(logicalTop);
         else
-            child->setLeft(logicalTop);
+            child->setX(logicalTop);
     }
     void setLogicalLeftForFloat(FloatingObject* child, int logicalLeft)
     {
         if (style()->isHorizontalWritingMode())
-            child->setLeft(logicalLeft);
+            child->setX(logicalLeft);
         else
-            child->setTop(logicalLeft);
+            child->setY(logicalLeft);
     }
     void setLogicalHeightForFloat(FloatingObject* child, int logicalHeight)
     {
@@ -457,20 +457,20 @@ private:
             child->setHeight(logicalWidth);
     }
 
-    int leftForFloatIncludingMargin(const FloatingObject* child) const
+    int xPositionForFloatIncludingMargin(const FloatingObject* child) const
     {
         if (style()->isHorizontalWritingMode())
-            return child->left() + child->renderer()->marginLeft();
+            return child->x() + child->renderer()->marginLeft();
         else
-            return child->left() + marginBeforeForChild(child->renderer());
+            return child->x() + marginBeforeForChild(child->renderer());
     }
         
-    int topForFloatIncludingMargin(const FloatingObject* child) const
+    int yPositionForFloatIncludingMargin(const FloatingObject* child) const
     {
         if (style()->isHorizontalWritingMode())
-            return child->top() + marginBeforeForChild(child->renderer());
+            return child->y() + marginBeforeForChild(child->renderer());
         else
-            return child->top() + child->renderer()->marginTop();
+            return child->y() + child->renderer()->marginTop();
     }
 
     // The following functions' implementations are in RenderBlockLineLayout.cpp.
