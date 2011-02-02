@@ -42,10 +42,7 @@ class CSSProperty;
 class CSSFontFace;
 class CSSFontFaceRule;
 class CSSImageValue;
-class CSSRuleData;
-class CSSRuleDataList;
 class CSSRuleList;
-class CSSRuleSet;
 class CSSSelector;
 class CSSStyleRule;
 class CSSStyleSheet;
@@ -61,6 +58,8 @@ class KeyframeList;
 class KeyframeValue;
 class MediaQueryEvaluator;
 class Node;
+class RuleData;
+class RuleSet;
 class Settings;
 class StyleImage;
 class StyleSheet;
@@ -182,27 +181,27 @@ public:
 
         void adjustRenderStyle(RenderStyle* styleToAdjust, RenderStyle* parentStyle, Element*);
 
-        void addMatchedRule(CSSRuleData* rule) { m_matchedRules.append(rule); }
+        void addMatchedRule(const RuleData* rule) { m_matchedRules.append(rule); }
         void addMatchedDeclaration(CSSMutableStyleDeclaration* decl);
 
-        void matchRules(CSSRuleSet*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
-        void matchRulesForList(CSSRuleDataList*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
+        void matchRules(RuleSet*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
+        void matchRulesForList(const Vector<RuleData>*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
         void sortMatchedRules(unsigned start, unsigned end);
 
         template <bool firstPass>
         void applyDeclarations(bool important, int startIndex, int endIndex);
 
-        void matchPageRules(CSSRuleSet*, bool isLeftPage, bool isFirstPage, const String& pageName);
-        void matchPageRulesForList(CSSRuleDataList*, bool isLeftPage, bool isFirstPage, const String& pageName);
+        void matchPageRules(RuleSet*, bool isLeftPage, bool isFirstPage, const String& pageName);
+        void matchPageRulesForList(const Vector<RuleData>*, bool isLeftPage, bool isFirstPage, const String& pageName);
         bool isLeftPage(int pageIndex) const;
         bool isRightPage(int pageIndex) const { return !isLeftPage(pageIndex); }
         bool isFirstPage(int pageIndex) const;
         String pageName(int pageIndex) const;
         
-        OwnPtr<CSSRuleSet> m_authorStyle;
-        OwnPtr<CSSRuleSet> m_userStyle;
+        OwnPtr<RuleSet> m_authorStyle;
+        OwnPtr<RuleSet> m_userStyle;
         
-        OwnPtr<CSSRuleSet> m_siblingRules;
+        OwnPtr<RuleSet> m_siblingRules;
         HashSet<AtomicStringImpl*> m_idsInRules;
 
         bool m_hasUAAppearance;
@@ -293,7 +292,7 @@ public:
 
         // A buffer used to hold the set of matched rules for an element, and a temporary buffer used for
         // merge sorting.
-        Vector<CSSRuleData*, 32> m_matchedRules;
+        Vector<const RuleData*, 32> m_matchedRules;
 
         RefPtr<CSSRuleList> m_ruleList;
         

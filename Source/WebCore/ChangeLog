@@ -1,3 +1,55 @@
+2011-02-02  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Use Vector instead of a linked list for rules in CSSStyleSelector
+        https://bugs.webkit.org/show_bug.cgi?id=53581
+        
+        - eliminate CSSRuleDataList, replace with Vector<RuleData>
+        - rename CSSRuleData -> RuleData and CSSRuleSet -> RuleSet 
+          (these are selector internal classes, CSS prefix is better reserved for public ones).
+        - constify a bit
+        - shrink the vectors to fit after collecting the rules
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::RuleData::RuleData):
+        (WebCore::RuleData::position):
+        (WebCore::RuleData::rule):
+        (WebCore::RuleData::selector):
+        (WebCore::RuleSet::disableAutoShrinkToFit):
+        (WebCore::RuleSet::getIDRules):
+        (WebCore::RuleSet::getClassRules):
+        (WebCore::RuleSet::getTagRules):
+        (WebCore::RuleSet::getPseudoRules):
+        (WebCore::RuleSet::getUniversalRules):
+        (WebCore::RuleSet::getPageRules):
+        (WebCore::collectSiblingRulesInDefaultStyle):
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::loadFullDefaultStyle):
+        (WebCore::loadSimpleDefaultStyle):
+        (WebCore::loadViewSourceStyle):
+        (WebCore::CSSStyleSelector::matchRules):
+        (WebCore::CSSStyleSelector::matchRulesForList):
+        (WebCore::operator >):
+        (WebCore::operator <=):
+        (WebCore::CSSStyleSelector::sortMatchedRules):
+        (WebCore::CSSStyleSelector::matchUARules):
+        (WebCore::RuleSet::RuleSet):
+        (WebCore::RuleSet::~RuleSet):
+        (WebCore::RuleSet::addToRuleSet):
+        (WebCore::RuleSet::addRule):
+        (WebCore::RuleSet::addPageRule):
+        (WebCore::RuleSet::addRulesFromSheet):
+        (WebCore::RuleSet::addStyleRule):
+        (WebCore::collectIdsAndSiblingRulesFromList):
+        (WebCore::RuleSet::collectIdsAndSiblingRules):
+        (WebCore::shrinkMapVectorsToFit):
+        (WebCore::RuleSet::shrinkToFit):
+        (WebCore::CSSStyleSelector::matchPageRules):
+        (WebCore::CSSStyleSelector::matchPageRulesForList):
+        * css/CSSStyleSelector.h:
+        (WebCore::CSSStyleSelector::addMatchedRule):
+
 2011-02-02  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Pavel Feldman.

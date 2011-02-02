@@ -352,73 +352,31 @@ if (id == propID) { \
     return; \
 }
 
-class CSSRuleData {
-    WTF_MAKE_NONCOPYABLE(CSSRuleData);
+class RuleData {
 public:
-    CSSRuleData(unsigned pos, CSSStyleRule* r, CSSSelector* sel, CSSRuleData* prev = 0)
-        : m_position(pos)
-        , m_rule(r)
-        , m_selector(sel)
-        , m_next(0)
-    {
-        if (prev)
-            prev->m_next = this;
-    }
-
-    ~CSSRuleData()
+    RuleData(CSSStyleRule* rule, CSSSelector* selector, unsigned position)
+        : m_rule(rule)
+        , m_selector(selector)
+        , m_position(position)
     {
     }
-
-    unsigned position() { return m_position; }
-    CSSStyleRule* rule() { return m_rule; }
-    CSSSelector* selector() { return m_selector; }
-    CSSRuleData* next() { return m_next; }
+    unsigned position() const { return m_position; }
+    CSSStyleRule* rule() const { return m_rule; }
+    CSSSelector* selector() const { return m_selector; }
 
 private:
-    unsigned m_position;
     CSSStyleRule* m_rule;
     CSSSelector* m_selector;
-    CSSRuleData* m_next;
+    unsigned m_position;
 };
 
-class CSSRuleDataList {
-    WTF_MAKE_NONCOPYABLE(CSSRuleDataList);
+class RuleSet {
+    WTF_MAKE_NONCOPYABLE(RuleSet);
 public:
-    CSSRuleDataList(unsigned pos, CSSStyleRule* rule, CSSSelector* sel)
-        : m_first(new CSSRuleData(pos, rule, sel))
-        , m_last(m_first)
-    {
-    }
-
-    ~CSSRuleDataList()
-    {
-        CSSRuleData* ptr;
-        CSSRuleData* next;
-        ptr = m_first;
-        while (ptr) {
-            next = ptr->next();
-            delete ptr;
-            ptr = next;
-        }
-    }
-
-    CSSRuleData* first() const { return m_first; }
-    CSSRuleData* last() const { return m_last; }
-
-    void append(unsigned pos, CSSStyleRule* rule, CSSSelector* sel) { m_last = new CSSRuleData(pos, rule, sel, m_last); }
-
-private:
-    CSSRuleData* m_first;
-    CSSRuleData* m_last;
-};
-
-class CSSRuleSet {
-    WTF_MAKE_NONCOPYABLE(CSSRuleSet);
-public:
-    CSSRuleSet();
-    ~CSSRuleSet();
+    RuleSet();
+    ~RuleSet();
     
-    typedef HashMap<AtomicStringImpl*, CSSRuleDataList*> AtomRuleMap;
+    typedef HashMap<AtomicStringImpl*, Vector<RuleData>*> AtomRuleMap;
     
     void addRulesFromSheet(CSSStyleSheet*, const MediaQueryEvaluator&, CSSStyleSelector* = 0);
 
@@ -427,34 +385,36 @@ public:
     void addPageRule(CSSStyleRule* rule, CSSSelector* sel);
     void addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map,
                       CSSStyleRule* rule, CSSSelector* sel);
+    void shrinkToFit();
+    void disableAutoShrinkToFit() { m_autoShrinkToFitEnabled = false; }
     
-    void collectIdsAndSiblingRules(HashSet<AtomicStringImpl*>& ids, OwnPtr<CSSRuleSet>& siblingRules) const;
+    void collectIdsAndSiblingRules(HashSet<AtomicStringImpl*>& ids, OwnPtr<RuleSet>& siblingRules) const;
     
-    CSSRuleDataList* getIDRules(AtomicStringImpl* key) { return m_idRules.get(key); }
-    CSSRuleDataList* getClassRules(AtomicStringImpl* key) { return m_classRules.get(key); }
-    CSSRuleDataList* getTagRules(AtomicStringImpl* key) { return m_tagRules.get(key); }
-    CSSRuleDataList* getPseudoRules(AtomicStringImpl* key) { return m_pseudoRules.get(key); }
-    CSSRuleDataList* getUniversalRules() { return m_universalRules.get(); }
-    CSSRuleDataList* getPageRules() { return m_pageRules.get(); }
+    const Vector<RuleData>* getIDRules(AtomicStringImpl* key) const { return m_idRules.get(key); }
+    const Vector<RuleData>* getClassRules(AtomicStringImpl* key) const { return m_classRules.get(key); }
+    const Vector<RuleData>* getTagRules(AtomicStringImpl* key) const { return m_tagRules.get(key); }
+    const Vector<RuleData>* getPseudoRules(AtomicStringImpl* key) const { return m_pseudoRules.get(key); }
+    const Vector<RuleData>* getUniversalRules() const { return &m_universalRules; }
+    const Vector<RuleData>* getPageRules() const { return &m_pageRules; }
     
 public:
     AtomRuleMap m_idRules;
     AtomRuleMap m_classRules;
     AtomRuleMap m_tagRules;
     AtomRuleMap m_pseudoRules;
-    OwnPtr<CSSRuleDataList> m_universalRules;
-    OwnPtr<CSSRuleDataList> m_pageRules;
+    Vector<RuleData> m_universalRules;
+    Vector<RuleData> m_pageRules;
     unsigned m_ruleCount;
-    unsigned m_pageRuleCount;
+    bool m_autoShrinkToFitEnabled;
 };
 
-static CSSRuleSet* defaultStyle;
-static CSSRuleSet* defaultQuirksStyle;
-static CSSRuleSet* defaultPrintStyle;
-static CSSRuleSet* defaultViewSourceStyle;
+static RuleSet* defaultStyle;
+static RuleSet* defaultQuirksStyle;
+static RuleSet* defaultPrintStyle;
+static RuleSet* defaultViewSourceStyle;
 static CSSStyleSheet* simpleDefaultStyleSheet;
     
-static CSSRuleSet* siblingRulesInDefaultStyle;
+static RuleSet* siblingRulesInDefaultStyle;
 
 RenderStyle* CSSStyleSelector::s_styleNotYetAvailable;
 
@@ -473,7 +433,7 @@ static inline bool elementCanUseSimpleDefaultStyle(Element* e)
 
 static inline void collectSiblingRulesInDefaultStyle()
 {
-    OwnPtr<CSSRuleSet> siblingRules;
+    OwnPtr<RuleSet> siblingRules;
     HashSet<AtomicStringImpl*> ids;
     defaultStyle->collectIdsAndSiblingRules(ids, siblingRules);
     ASSERT(ids.isEmpty());
@@ -546,10 +506,12 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
     if (m_rootDefaultStyle && view)
         m_medium = adoptPtr(new MediaQueryEvaluator(view->mediaType(), view->frame(), m_rootDefaultStyle.get()));
 
-    m_authorStyle = adoptPtr(new CSSRuleSet);
+    m_authorStyle = adoptPtr(new RuleSet);
+    // Adding rules from multiple sheets, shrink at the end.
+    m_authorStyle->disableAutoShrinkToFit();
 
     // FIXME: This sucks! The user sheet is reparsed every time!
-    OwnPtr<CSSRuleSet> tempUserStyle = adoptPtr(new CSSRuleSet);
+    OwnPtr<RuleSet> tempUserStyle = adoptPtr(new RuleSet);
     if (pageUserSheet)
         tempUserStyle->addRulesFromSheet(pageUserSheet, *m_medium, this);
     if (pageGroupUserSheets) {
@@ -562,7 +524,7 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
         }
     }
 
-    if (tempUserStyle->m_ruleCount > 0 || tempUserStyle->m_pageRuleCount > 0)
+    if (tempUserStyle->m_ruleCount > 0 || tempUserStyle->m_pageRules.size() > 0)
         m_userStyle = tempUserStyle.release();
 
     // Add rules from elements like SVG's <font-face>
@@ -575,8 +537,7 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
         StyleSheet* sheet = styleSheets->item(i);
         if (sheet->isCSSStyleSheet() && !sheet->disabled())
             m_authorStyle->addRulesFromSheet(static_cast<CSSStyleSheet*>(sheet), *m_medium, this);
-    }
-    
+    }    
     // Collect all ids and rules using sibling selectors (:first-child and similar)
     // in the current set of stylesheets. Style sharing code uses this information to reject
     // sharing candidates.
@@ -586,6 +547,10 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
     m_authorStyle->collectIdsAndSiblingRules(m_idsInRules, m_siblingRules);
     if (m_userStyle)
         m_userStyle->collectIdsAndSiblingRules(m_idsInRules, m_siblingRules);
+
+    m_authorStyle->shrinkToFit();
+    if (m_siblingRules)
+        m_siblingRules->shrinkToFit();
 
     if (document->renderer() && document->renderer()->style())
         document->renderer()->style()->font().update(fontSelector());
@@ -622,13 +587,13 @@ static void loadFullDefaultStyle()
         ASSERT(defaultStyle);
         delete defaultStyle;
         simpleDefaultStyleSheet->deref();
-        defaultStyle = new CSSRuleSet;
+        defaultStyle = new RuleSet;
         simpleDefaultStyleSheet = 0;
     } else {
         ASSERT(!defaultStyle);
-        defaultStyle = new CSSRuleSet;
-        defaultPrintStyle = new CSSRuleSet;
-        defaultQuirksStyle = new CSSRuleSet;
+        defaultStyle = new RuleSet;
+        defaultPrintStyle = new RuleSet;
+        defaultQuirksStyle = new RuleSet;
     }
 
     // Strict-mode rules.
@@ -661,9 +626,9 @@ static void loadSimpleDefaultStyle()
     ASSERT(!defaultStyle);
     ASSERT(!simpleDefaultStyleSheet);
     
-    defaultStyle = new CSSRuleSet;
-    defaultPrintStyle = new CSSRuleSet;
-    defaultQuirksStyle = new CSSRuleSet;
+    defaultStyle = new RuleSet;
+    defaultPrintStyle = new RuleSet;
+    defaultQuirksStyle = new RuleSet;
 
     simpleDefaultStyleSheet = parseUASheet(simpleUserAgentStyleSheet, strlen(simpleUserAgentStyleSheet));
     defaultStyle->addRulesFromSheet(simpleDefaultStyleSheet, screenEval());
@@ -674,7 +639,7 @@ static void loadSimpleDefaultStyle()
 static void loadViewSourceStyle()
 {
     ASSERT(!defaultViewSourceStyle);
-    defaultViewSourceStyle = new CSSRuleSet;
+    defaultViewSourceStyle = new RuleSet;
     defaultViewSourceStyle->addRulesFromSheet(parseUASheet(sourceUserAgentStyleSheet, sizeof(sourceUserAgentStyleSheet)), screenEval());
 }
 
@@ -683,7 +648,7 @@ void CSSStyleSelector::addMatchedDeclaration(CSSMutableStyleDeclaration* decl)
     m_matchedDecls.append(decl);
 }
 
-void CSSStyleSelector::matchRules(CSSRuleSet* rules, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules)
+void CSSStyleSelector::matchRules(RuleSet* rules, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules)
 {
     m_matchedRules.clear();
 
@@ -728,16 +693,17 @@ void CSSStyleSelector::matchRules(CSSRuleSet* rules, int& firstRuleIndex, int& l
     }
 }
 
-void CSSStyleSelector::matchRulesForList(CSSRuleDataList* rules, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules)
+void CSSStyleSelector::matchRulesForList(const Vector<RuleData>* rules, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules)
 {
     if (!rules)
         return;
-
-    for (CSSRuleData* d = rules->first(); d; d = d->next()) {
-        CSSStyleRule* rule = d->rule();
+    unsigned size = rules->size();
+    for (unsigned i = 0; i < size; ++i) {
+        const RuleData& ruleData = rules->at(i);
+        CSSStyleRule* rule = ruleData.rule();
         if (m_checker.m_sameOriginOnly && !m_checker.m_document->securityOrigin()->canRequest(rule->baseURL()))
             continue; 
-        if (checkSelector(d->selector())) {
+        if (checkSelector(ruleData.selector())) {
             // If the rule has no properties to apply, then ignore it in the non-debug mode.
             CSSMutableStyleDeclaration* decl = rule->declaration();
             if (!decl || (!decl->length() && !includeEmptyRules))
@@ -757,20 +723,20 @@ void CSSStyleSelector::matchRulesForList(CSSRuleDataList* rules, int& firstRuleI
                     firstRuleIndex = lastRuleIndex;
 
                 // Add this rule to our list of matched rules.
-                addMatchedRule(d);
+                addMatchedRule(&ruleData);
             }
         }
     }
 }
 
-static bool operator >(CSSRuleData& r1, CSSRuleData& r2)
+static bool operator >(const RuleData& r1, const RuleData& r2)
 {
     int spec1 = r1.selector()->specificity();
     int spec2 = r2.selector()->specificity();
     return (spec1 == spec2) ? r1.position() > r2.position() : spec1 > spec2; 
 }
     
-static bool operator <=(CSSRuleData& r1, CSSRuleData& r2)
+static bool operator <=(const RuleData& r1, const RuleData& r2)
 {
     return !(r1 > r2);
 }
@@ -785,8 +751,8 @@ void CSSStyleSelector::sortMatchedRules(unsigned start, unsigned end)
         for (unsigned i = end - 1; i > start; i--) {
             bool sorted = true;
             for (unsigned j = start; j < i; j++) {
-                CSSRuleData* elt = m_matchedRules[j];
-                CSSRuleData* elt2 = m_matchedRules[j + 1];
+                const RuleData* elt = m_matchedRules[j];
+                const RuleData* elt2 = m_matchedRules[j + 1];
                 if (*elt > *elt2) {
                     sorted = false;
                     m_matchedRules[j] = elt2;
@@ -804,8 +770,8 @@ void CSSStyleSelector::sortMatchedRules(unsigned start, unsigned end)
     sortMatchedRules(start, mid);
     sortMatchedRules(mid, end);
     
-    CSSRuleData* elt = m_matchedRules[mid - 1];
-    CSSRuleData* elt2 = m_matchedRules[mid];
+    const RuleData* elt = m_matchedRules[mid - 1];
+    const RuleData* elt2 = m_matchedRules[mid];
     
     // Handle the fast common case (of equal specificity).  The list may already
     // be completely sorted.
@@ -814,7 +780,7 @@ void CSSStyleSelector::sortMatchedRules(unsigned start, unsigned end)
     
     // We have to merge sort.  Ensure our merge buffer is big enough to hold
     // all the items.
-    Vector<CSSRuleData*> rulesMergeBuffer;
+    Vector<const RuleData*> rulesMergeBuffer;
     rulesMergeBuffer.reserveInitialCapacity(end - start); 
 
     unsigned i1 = start;
@@ -1160,7 +1126,7 @@ ALWAYS_INLINE RenderStyle* CSSStyleSelector::locateSharedStyle()
 void CSSStyleSelector::matchUARules(int& firstUARule, int& lastUARule)
 {
     // First we match rules from the user agent sheet.
-    CSSRuleSet* userAgentStyleSheet = m_medium->mediaTypeMatchSpecific("print")
+    RuleSet* userAgentStyleSheet = m_medium->mediaTypeMatchSpecific("print")
         ? defaultPrintStyle : defaultStyle;
     matchRules(userAgentStyleSheet, firstUARule, lastUARule, false);
 
@@ -2875,13 +2841,13 @@ bool CSSStyleSelector::SelectorChecker::checkScrollbarPseudoClass(CSSSelector* s
 
 // -----------------------------------------------------------------
 
-CSSRuleSet::CSSRuleSet()
+RuleSet::RuleSet()
     : m_ruleCount(0)
-    , m_pageRuleCount(0)
+    , m_autoShrinkToFitEnabled(true)
 {
 }
 
-CSSRuleSet::~CSSRuleSet()
+RuleSet::~RuleSet()
 { 
     deleteAllValues(m_idRules);
     deleteAllValues(m_classRules);
@@ -2890,19 +2856,19 @@ CSSRuleSet::~CSSRuleSet()
 }
 
 
-void CSSRuleSet::addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map,
+void RuleSet::addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map,
                               CSSStyleRule* rule, CSSSelector* sel)
 {
     if (!key) return;
-    CSSRuleDataList* rules = map.get(key);
+    Vector<RuleData>* rules = map.get(key);
     if (!rules) {
-        rules = new CSSRuleDataList(m_ruleCount++, rule, sel);
+        rules = new Vector<RuleData>;
         map.set(key, rules);
-    } else
-        rules->append(m_ruleCount++, rule, sel);
+    }
+    rules->append(RuleData(rule, sel, m_ruleCount++));
 }
 
-void CSSRuleSet::addRule(CSSStyleRule* rule, CSSSelector* sel)
+void RuleSet::addRule(CSSStyleRule* rule, CSSSelector* sel)
 {
     if (sel->m_match == CSSSelector::Id) {
         addToRuleSet(sel->value().impl(), m_idRules, rule, sel);
@@ -2924,22 +2890,15 @@ void CSSRuleSet::addRule(CSSStyleRule* rule, CSSSelector* sel)
         return;
     }
 
-    // Just put it in the universal rule set.
-    if (!m_universalRules)
-        m_universalRules = adoptPtr(new CSSRuleDataList(m_ruleCount++, rule, sel));
-    else
-        m_universalRules->append(m_ruleCount++, rule, sel);
+    m_universalRules.append(RuleData(rule, sel, m_ruleCount++));
 }
 
-void CSSRuleSet::addPageRule(CSSStyleRule* rule, CSSSelector* sel)
+void RuleSet::addPageRule(CSSStyleRule* rule, CSSSelector* sel)
 {
-    if (!m_pageRules)
-        m_pageRules = adoptPtr(new CSSRuleDataList(m_pageRuleCount++, rule, sel));
-    else
-        m_pageRules->append(m_pageRuleCount++, rule, sel);
+    m_pageRules.append(RuleData(rule, sel, m_pageRules.size()));
 }
 
-void CSSRuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator& medium, CSSStyleSelector* styleSelector)
+void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator& medium, CSSStyleSelector* styleSelector)
 {
     if (!sheet)
         return;
@@ -2988,9 +2947,11 @@ void CSSRuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluat
         } else if (item->isKeyframesRule())
             styleSelector->addKeyframeStyle(static_cast<WebKitCSSKeyframesRule*>(item));
     }
+    if (m_autoShrinkToFitEnabled)
+        shrinkToFit();
 }
 
-void CSSRuleSet::addStyleRule(CSSStyleRule* rule)
+void RuleSet::addStyleRule(CSSStyleRule* rule)
 {
     if (rule->isPageRule()) {
         CSSPageRule* pageRule = static_cast<CSSPageRule*>(rule);
@@ -3001,11 +2962,13 @@ void CSSRuleSet::addStyleRule(CSSStyleRule* rule)
     }
 }
 
-static void collectIdsAndSiblingRulesFromList(HashSet<AtomicStringImpl*>& ids, OwnPtr<CSSRuleSet>& siblingRules, const CSSRuleDataList* rules)
+static void collectIdsAndSiblingRulesFromList(HashSet<AtomicStringImpl*>& ids, OwnPtr<RuleSet>& siblingRules, const Vector<RuleData>& rules)
 {
-    for (CSSRuleData* data = rules->first(); data; data = data->next()) {
+    unsigned size = rules.size();
+    for (unsigned i = 0; i < size; ++i) {
+        const RuleData& ruleData = rules[i];
         bool foundSiblingSelector = false;
-        for (CSSSelector* selector = data->selector(); selector; selector = selector->tagHistory()) {
+        for (CSSSelector* selector = ruleData.selector(); selector; selector = selector->tagHistory()) {
             if (selector->m_match == CSSSelector::Id && !selector->value().isEmpty())
                 ids.add(selector->value().impl());
             if (CSSSelector* simpleSelector = selector->simpleSelector()) {
@@ -3018,28 +2981,44 @@ static void collectIdsAndSiblingRulesFromList(HashSet<AtomicStringImpl*>& ids, O
         }
         if (foundSiblingSelector) {
             if (!siblingRules)
-                siblingRules = adoptPtr(new CSSRuleSet);
-            siblingRules->addRule(data->rule(), data->selector());   
+                siblingRules = adoptPtr(new RuleSet);
+            siblingRules->addRule(ruleData.rule(), ruleData.selector());   
         }
     }
 }
 
-void CSSRuleSet::collectIdsAndSiblingRules(HashSet<AtomicStringImpl*>& ids, OwnPtr<CSSRuleSet>& siblingRules) const
+void RuleSet::collectIdsAndSiblingRules(HashSet<AtomicStringImpl*>& ids, OwnPtr<RuleSet>& siblingRules) const
 {
     AtomRuleMap::const_iterator end = m_idRules.end();
     for (AtomRuleMap::const_iterator it = m_idRules.begin(); it != end; ++it)
-        collectIdsAndSiblingRulesFromList(ids, siblingRules, it->second);
+        collectIdsAndSiblingRulesFromList(ids, siblingRules, *it->second);
     end = m_classRules.end();
     for (AtomRuleMap::const_iterator it = m_classRules.begin(); it != end; ++it)
-        collectIdsAndSiblingRulesFromList(ids, siblingRules, it->second);
+        collectIdsAndSiblingRulesFromList(ids, siblingRules, *it->second);
     end = m_tagRules.end();
     for (AtomRuleMap::const_iterator it = m_tagRules.begin(); it != end; ++it)
-        collectIdsAndSiblingRulesFromList(ids, siblingRules, it->second);
+        collectIdsAndSiblingRulesFromList(ids, siblingRules, *it->second);
     end = m_pseudoRules.end();
     for (AtomRuleMap::const_iterator it = m_pseudoRules.begin(); it != end; ++it)
-        collectIdsAndSiblingRulesFromList(ids, siblingRules, it->second);
-    if (m_universalRules)
-        collectIdsAndSiblingRulesFromList(ids, siblingRules, m_universalRules.get());
+        collectIdsAndSiblingRulesFromList(ids, siblingRules, *it->second);
+    collectIdsAndSiblingRulesFromList(ids, siblingRules, m_universalRules);
+}
+    
+static inline void shrinkMapVectorsToFit(RuleSet::AtomRuleMap& map)
+{
+    RuleSet::AtomRuleMap::iterator end = map.end();
+    for (RuleSet::AtomRuleMap::iterator it = map.begin(); it != end; ++it)
+        it->second->shrinkToFit();
+}
+    
+void RuleSet::shrinkToFit()
+{
+    shrinkMapVectorsToFit(m_idRules);
+    shrinkMapVectorsToFit(m_classRules);
+    shrinkMapVectorsToFit(m_tagRules);
+    shrinkMapVectorsToFit(m_pseudoRules);
+    m_universalRules.shrinkToFit();
+    m_pageRules.shrinkToFit();
 }
 
 // -------------------------------------------------------------------------------------
@@ -3108,7 +3087,7 @@ void CSSStyleSelector::applyDeclarations(bool isImportant, int startIndex, int e
     }
 }
 
-void CSSStyleSelector::matchPageRules(CSSRuleSet* rules, bool isLeftPage, bool isFirstPage, const String& pageName)
+void CSSStyleSelector::matchPageRules(RuleSet* rules, bool isLeftPage, bool isFirstPage, const String& pageName)
 {
     m_matchedRules.clear();
 
@@ -3129,17 +3108,19 @@ void CSSStyleSelector::matchPageRules(CSSRuleSet* rules, bool isLeftPage, bool i
         addMatchedDeclaration(m_matchedRules[i]->rule()->declaration());
 }
 
-void CSSStyleSelector::matchPageRulesForList(CSSRuleDataList* rules, bool isLeftPage, bool isFirstPage, const String& pageName)
+void CSSStyleSelector::matchPageRulesForList(const Vector<RuleData>* rules, bool isLeftPage, bool isFirstPage, const String& pageName)
 {
     if (!rules)
         return;
 
-    for (CSSRuleData* d = rules->first(); d; d = d->next()) {
-        CSSStyleRule* rule = d->rule();
-        const AtomicString& selectorLocalName = d->selector()->tag().localName();
+    unsigned size = rules->size();
+    for (unsigned i = 0; i < size; ++i) {
+        const RuleData& ruleData = rules->at(i);
+        CSSStyleRule* rule = ruleData.rule();
+        const AtomicString& selectorLocalName = ruleData.selector()->tag().localName();
         if (selectorLocalName != starAtom && selectorLocalName != pageName)
             continue;
-        CSSSelector::PseudoType pseudoType = d->selector()->pseudoType();
+        CSSSelector::PseudoType pseudoType = ruleData.selector()->pseudoType();
         if ((pseudoType == CSSSelector::PseudoLeftPage && !isLeftPage)
             || (pseudoType == CSSSelector::PseudoRightPage && isLeftPage)
             || (pseudoType == CSSSelector::PseudoFirstPage && !isFirstPage))
@@ -3151,7 +3132,7 @@ void CSSStyleSelector::matchPageRulesForList(CSSRuleDataList* rules, bool isLeft
             continue;
 
         // Add this rule to our list of matched rules.
-        addMatchedRule(d);
+        addMatchedRule(&ruleData);
     }
 }
 
