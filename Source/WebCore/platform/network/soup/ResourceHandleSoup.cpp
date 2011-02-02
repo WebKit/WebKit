@@ -129,7 +129,7 @@ static void cleanupSoupRequestOperation(ResourceHandle*, bool isDestroying);
 static void sendRequestCallback(GObject*, GAsyncResult*, gpointer);
 static void readCallback(GObject*, GAsyncResult*, gpointer);
 static void closeCallback(GObject*, GAsyncResult*, gpointer);
-static bool startGio(ResourceHandle*, KURL);
+static bool startNonHTTPRequest(ResourceHandle*, KURL);
 
 ResourceHandleInternal::~ResourceHandleInternal()
 {
@@ -297,7 +297,7 @@ static void gotHeadersCallback(SoupMessage* msg, gpointer data)
     client->didReceiveResponse(handle.get(), d->m_response);
 }
 
-// This callback will not be called if the content sniffer is disabled in startHttp.
+// This callback will not be called if the content sniffer is disabled in startHTTPRequest.
 static void contentSniffedCallback(SoupMessage* msg, const char* sniffedType, GHashTable *params, gpointer data)
 {
     if (sniffedType) {
@@ -344,101 +344,6 @@ static void gotChunkCallback(SoupMessage* msg, SoupBuffer* chunk, gpointer data)
     ASSERT(!d->m_response.isNull());
 
     client->didReceiveData(handle.get(), chunk->data, chunk->length, false);
-}
-
-static gboolean parseDataUrl(gpointer callbackData)
-{
-    ResourceHandle* handle = static_cast<ResourceHandle*>(callbackData);
-    ResourceHandleClient* client = handle->client();
-    ResourceHandleInternal* d = handle->getInternal();
-    if (d->m_cancelled)
-        return false;
-
-    d->m_idleHandler = 0;
-
-    ASSERT(client);
-    if (!client)
-        return false;
-
-    String url = handle->firstRequest().url().string();
-    ASSERT(url.startsWith("data:", false));
-
-    int index = url.find(',');
-    if (index == -1) {
-        client->cannotShowURL(handle);
-        return false;
-    }
-
-    String mediaType = url.substring(5, index - 5);
-
-    bool isBase64 = mediaType.endsWith(";base64", false);
-    if (isBase64)
-        mediaType = mediaType.left(mediaType.length() - 7);
-
-    if (mediaType.isEmpty())
-        mediaType = "text/plain;charset=US-ASCII";
-
-    String mimeType = extractMIMETypeFromMediaType(mediaType);
-    String charset = extractCharsetFromMediaType(mediaType);
-
-    ASSERT(d->m_response.isNull());
-
-    d->m_response.setURL(handle->firstRequest().url());
-    d->m_response.setMimeType(mimeType);
-
-    // For non base64 encoded data we have to convert to UTF-16 early
-    // due to limitations in KURL
-    d->m_response.setTextEncodingName(isBase64 ? charset : "UTF-16");
-    client->didReceiveResponse(handle, d->m_response);
-
-    // The load may be cancelled, and the client may be destroyed
-    // by any of the client reporting calls, so we check, and bail
-    // out in either of those cases.
-    if (d->m_cancelled || !handle->client())
-        return false;
-
-    SoupSession* session = handle->defaultSession();
-    ensureSessionIsInitialized(session);
-    SoupRequester* requester = SOUP_REQUESTER(soup_session_get_feature(session, SOUP_TYPE_REQUESTER));
-    GOwnPtr<GError> error;
-    d->m_soupRequest = adoptGRef(soup_requester_request(requester, handle->firstRequest().url().string().utf8().data(), &error.outPtr()));
-    if (error) {
-        d->m_soupRequest = 0;
-        client->didFinishLoading(handle, 0);
-        return false;
-    }
-
-    d->m_inputStream = adoptGRef(soup_request_send(d->m_soupRequest.get(), 0, &error.outPtr()));
-    if (error) {
-        d->m_inputStream = 0;
-        client->didFinishLoading(handle, 0);
-        return false;
-    }
-
-    d->m_buffer = static_cast<char*>(g_slice_alloc0(READ_BUFFER_SIZE));
-    d->m_total = 0;
-
-    g_object_set_data(G_OBJECT(d->m_inputStream.get()), "webkit-resource", handle);
-    // balanced by a deref() in cleanupSoupRequestOperation, which should always run
-    handle->ref();
-
-    d->m_cancellable = adoptGRef(g_cancellable_new());
-    g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, READ_BUFFER_SIZE, G_PRIORITY_DEFAULT,
-                              d->m_cancellable.get(), readCallback, GINT_TO_POINTER(!isBase64));
-
-    return false;
-}
-
-static bool startData(ResourceHandle* handle, String urlString)
-{
-    ASSERT(handle);
-
-    ResourceHandleInternal* d = handle->getInternal();
-
-    // If parseDataUrl is called synchronously the job is not yet effectively started
-    // and webkit won't never know that the data has been parsed even didFinishLoading is called.
-    d->m_idleHandler = g_timeout_add(0, parseDataUrl, handle);
-    return true;
 }
 
 static SoupSession* createSoupSession()
@@ -554,12 +459,13 @@ static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer use
     // readCallback needs it
     g_object_set_data(G_OBJECT(d->m_inputStream.get()), "webkit-resource", handle.get());
 
-    // Ensure a response is sent for any protocols that don't explicitly support responses
-    // through got-headers signal or content sniffing.
-    // (e.g. file and GIO based protocol).
-    if (!handle->shouldContentSniff() && d->m_response.isNull()) {
+    // If not using SoupMessage we need to call didReceiveResponse now.
+    // (This will change later when SoupRequest supports content sniffing.)
+    if (!d->m_soupMessage) {
         d->m_response.setURL(handle->firstRequest().url());
-        d->m_response.setMimeType(soup_request_get_content_type(d->m_soupRequest.get()));
+        const gchar* contentType = soup_request_get_content_type(d->m_soupRequest.get());
+        d->m_response.setMimeType(extractMIMETypeFromMediaType(contentType));
+        d->m_response.setTextEncodingName(extractCharsetFromMediaType(contentType));
         d->m_response.setExpectedContentLength(soup_request_get_content_length(d->m_soupRequest.get()));
         client->didReceiveResponse(handle.get(), d->m_response);
 
@@ -576,7 +482,7 @@ static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer use
                               G_PRIORITY_DEFAULT, d->m_cancellable.get(), readCallback, 0);
 }
 
-static bool startHttp(ResourceHandle* handle)
+static bool startHTTPRequest(ResourceHandle* handle)
 {
     ASSERT(handle);
 
@@ -718,19 +624,13 @@ bool ResourceHandle::start(NetworkingContext* context)
     // Used to set the authentication dialog toplevel; may be NULL
     d->m_context = context;
 
-    if (equalIgnoringCase(protocol, "data"))
-        return startData(this, urlString);
-
     if (equalIgnoringCase(protocol, "http") || equalIgnoringCase(protocol, "https")) {
-        if (startHttp(this))
+        if (startHTTPRequest(this))
             return true;
     }
 
-    if (equalIgnoringCase(protocol, "file") || equalIgnoringCase(protocol, "ftp") || equalIgnoringCase(protocol, "ftps")) {
-        // FIXME: should we be doing any other protocols here?
-        if (startGio(this, url))
-            return true;
-    }
+    if (startNonHTTPRequest(this, url))
+        return true;
 
     // Error must not be reported immediately
     this->scheduleFailure(InvalidURLFailure);
@@ -880,7 +780,7 @@ static void readCallback(GObject* source, GAsyncResult* asyncResult, gpointer da
                               d->m_cancellable.get(), readCallback, data);
 }
 
-static bool startGio(ResourceHandle* handle, KURL url)
+static bool startNonHTTPRequest(ResourceHandle* handle, KURL url)
 {
     ASSERT(handle);
 
@@ -892,12 +792,6 @@ static bool startGio(ResourceHandle* handle, KURL url)
     SoupRequester* requester = SOUP_REQUESTER(soup_session_get_feature(session, SOUP_TYPE_REQUESTER));
     ResourceHandleInternal* d = handle->getInternal();
 
-    // GIO doesn't know how to handle refs and queries, so remove them
-    // TODO: use KURL.fileSystemPath after KURLGtk and FileSystemGtk are
-    // using GIO internally, and providing URIs instead of file paths
-    url.removeFragmentIdentifier();
-    url.setQuery(String());
-    url.removePort();
     CString urlStr = url.string().utf8();
 
     GOwnPtr<GError> error;

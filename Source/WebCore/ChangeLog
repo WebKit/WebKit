@@ -1,3 +1,22 @@
+2011-02-02  Dan Winship  <danw@gnome.org>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] remove old data: URI handler, fix the SoupRequest-based one
+        to pass tests
+        https://bugs.webkit.org/show_bug.cgi?id=50885
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::sendRequestCallback): Do content-type sniffing here for
+        non-HTTP requests.
+        (WebCore::startHTTPRequest): Rename to match WebKit style.
+        (WebCore::ResourceHandle::start): Pass everything except HTTP to
+        startNonHTTPRequest, letting the SoupRequester decide whether it's
+        supported or not.
+        (WebCore::startNonHTTPRequest): Remove some old pre-SoupRequester
+        code that was a no-op for file: URIs, but would break some data:
+        URIs.
+
 2011-02-02  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Update even more references to right() and bottom() in Chromium. Sheesh.
