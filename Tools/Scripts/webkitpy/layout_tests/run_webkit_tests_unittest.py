@@ -452,10 +452,25 @@ class MainTest(unittest.TestCase):
         self.assertEqual(None, test_port.tolerance_used_for_diff_image)
 
     def test_worker_model__inline(self):
+        self.assertTrue(passing_run(['--worker-model', 'inline']))
+
+    def test_worker_model__old_inline_with_child_processes(self):
+        res, out, err, user = logging_run(['--worker-model', 'old-inline',
+                                           '--child-processes', '2'])
+        self.assertEqual(res, 0)
+        self.assertTrue('--worker-model=old-inline overrides --child-processes\n' in err.get())
+
+    def test_worker_model__old_inline(self):
         self.assertTrue(passing_run(['--worker-model', 'old-inline']))
 
-    def test_worker_model__threads(self):
+    def test_worker_model__old_threads(self):
         self.assertTrue(passing_run(['--worker-model', 'old-threads']))
+
+    def test_worker_model__processes(self):
+        self.assertRaises(ValueError, logging_run, ['--worker-model', 'processes'])
+
+    def test_worker_model__threads(self):
+        self.assertTrue(passing_run(['--worker-model', 'threads']))
 
     def test_worker_model__unknown(self):
         self.assertRaises(ValueError, logging_run,
