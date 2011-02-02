@@ -1,3 +1,14 @@
+2011-02-02  Timothy Hatcher  <timothy@apple.com>
+
+        Give the Web Process access to the Safari RSS preferences.
+
+        <rdar://problem/8916870> Sandbox violation related to RSS during initial
+        page load with WebKit2 (prevents RSS from working)
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/com.apple.WebProcess.sb:
+
 2011-02-02  Steve Lacey  <sjl@chromium.org>
 
         Reviewed by Eric Carlson.
