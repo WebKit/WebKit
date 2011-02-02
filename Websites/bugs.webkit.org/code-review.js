@@ -1259,11 +1259,12 @@ var CODE_REVIEW_UNITTEST;
     $(document).scrollTop(node.addClass('focused').position().top - window.innerHeight / 2);
   }
 
-  function focusNext(className, is_backward) {
-    var focusable_nodes = $('.previousComment,.DiffBlock').filter(function() {
-      return ($(this).hasClass('previousComment') || $('.add,.remove', this).size());
+  function focusNext(filter, direction) {
+    var focusable_nodes = $('.frozenComment,.previousComment,.DiffBlock').filter(function() {
+      return ($(this).hasClass('frozenComment') || $(this).hasClass('previousComment') || $('.add,.remove', this).size());
     });
 
+    var is_backward = direction == DIRECTION.BACKWARD;
     var index = focusable_nodes.index($('.focused'));
     if (index == -1 && is_backward)
       index = focusable_nodes.length;
@@ -1272,17 +1273,27 @@ var CODE_REVIEW_UNITTEST;
     var end = is_backward ? -1 : focusable_nodes.size();
     for (var i = index + offset; i != end; i = i + offset) {
       var node = $(focusable_nodes[i]);
-      if (node.hasClass(className)) {
+      if (filter(node)) {
         focusOn(node);
         return;
       }
     }
   }
 
+  var DIRECTION = {FORWARD: 1, BACKWARD: 2};
+
   var kCharCodeForN = 'n'.charCodeAt(0);
   var kCharCodeForP = 'p'.charCodeAt(0);
   var kCharCodeForJ = 'j'.charCodeAt(0);
   var kCharCodeForK = 'k'.charCodeAt(0);
+
+  function isComment(node) {
+    return node.hasClass('frozenComment') || node.hasClass('previousComment');
+  }
+  
+  function isDiffBlock(node) {
+    return node.hasClass('DiffBlock');
+  }
 
   $('body').live('keypress', function() {
     // FIXME: There's got to be a better way to avoid seeing these keypress
@@ -1292,19 +1303,19 @@ var CODE_REVIEW_UNITTEST;
 
     switch (event.charCode) {
     case kCharCodeForN:
-      focusNext('previousComment', false);
+      focusNext(isComment, DIRECTION.FORWARD);
       break;
 
     case kCharCodeForP:
-      focusNext('previousComment', true);
+      focusNext(isComment, DIRECTION.BACKWARD);
       break;
 
     case kCharCodeForJ:
-      focusNext('DiffBlock', false);
+      focusNext(isDiffBlock, DIRECTION.FORWARD);
       break;
 
     case kCharCodeForK:
-      focusNext('DiffBlock', true);
+      focusNext(isDiffBlock, DIRECTION.BACKWARD);
       break;
     }
   });
