@@ -183,19 +183,18 @@ public:
     void checkConsistency() const;
     void setHasBadChildList();
 
-    // Line visual and layout overflow are in the coordinate space of the block.  This means that - unlike other unprefixed uses of the words
-    // top/right/bottom/left in the code - these aren't purely physical directions.  For horizontal-tb and vertical-lr they will match physical
-    // directions, but for horizontal-bt and vertical-rl, the top/bottom and left/right respectively are inverted when compared to
-    // their physical counterparts.
-    int topLayoutOverflow() const { return m_overflow ? m_overflow->topLayoutOverflow() : m_y; }
-    int bottomLayoutOverflow() const { return m_overflow ? m_overflow->bottomLayoutOverflow() : m_y + height(); }
-    int leftLayoutOverflow() const { return m_overflow ? m_overflow->leftLayoutOverflow() : m_x; }
-    int rightLayoutOverflow() const { return m_overflow ? m_overflow->rightLayoutOverflow() : m_x + width(); }
+    // Line visual and layout overflow are in the coordinate space of the block.  This means that they aren't purely physical directions.
+    // For horizontal-tb and vertical-lr they will match physical directions, but for horizontal-bt and vertical-rl, the top/bottom and left/right
+    // respectively are flipped when compared to their physical counterparts.  For example minX is on the left in vertical-lr, but it is on the right in vertical-rl.
+    int minYLayoutOverflow() const { return m_overflow ? m_overflow->minYLayoutOverflow() : m_y; }
+    int maxYLayoutOverflow() const { return m_overflow ? m_overflow->maxYLayoutOverflow() : m_y + height(); }
+    int minXLayoutOverflow() const { return m_overflow ? m_overflow->minXLayoutOverflow() : m_x; }
+    int maxXLayoutOverflow() const { return m_overflow ? m_overflow->maxXLayoutOverflow() : m_x + width(); }
     IntRect layoutOverflowRect() const { return m_overflow ? m_overflow->layoutOverflowRect() : IntRect(m_x, m_y, width(), height()); }
-    int logicalLeftLayoutOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? leftLayoutOverflow() : topLayoutOverflow(); }
-    int logicalRightLayoutOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? rightLayoutOverflow() : bottomLayoutOverflow(); }
-    int logicalTopLayoutOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? topVisualOverflow() : leftVisualOverflow(); }
-    int logicalBottomLayoutOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? bottomLayoutOverflow() : rightLayoutOverflow(); }
+    int logicalLeftLayoutOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? minXLayoutOverflow() : minYLayoutOverflow(); }
+    int logicalRightLayoutOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? maxXLayoutOverflow() : maxYLayoutOverflow(); }
+    int logicalTopLayoutOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? minYVisualOverflow() : minXVisualOverflow(); }
+    int logicalBottomLayoutOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? maxYLayoutOverflow() : maxXLayoutOverflow(); }
     IntRect logicalLayoutOverflowRect() const
     {
         IntRect result = layoutOverflowRect();
@@ -204,15 +203,15 @@ public:
         return result;
     }
 
-    int topVisualOverflow() const { return m_overflow ? m_overflow->topVisualOverflow() : m_y; }
-    int bottomVisualOverflow() const { return m_overflow ? m_overflow->bottomVisualOverflow() : m_y + height(); }
-    int leftVisualOverflow() const { return m_overflow ? m_overflow->leftVisualOverflow() : m_x; }
-    int rightVisualOverflow() const { return m_overflow ? m_overflow->rightVisualOverflow() : m_x + width(); }
+    int minYVisualOverflow() const { return m_overflow ? m_overflow->minYVisualOverflow() : m_y; }
+    int maxYVisualOverflow() const { return m_overflow ? m_overflow->maxYVisualOverflow() : m_y + height(); }
+    int minXVisualOverflow() const { return m_overflow ? m_overflow->minXVisualOverflow() : m_x; }
+    int maxXVisualOverflow() const { return m_overflow ? m_overflow->maxXVisualOverflow() : m_x + width(); }
     IntRect visualOverflowRect() const { return m_overflow ? m_overflow->visualOverflowRect() : IntRect(m_x, m_y, width(), height()); }
-    int logicalLeftVisualOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? leftVisualOverflow() : topVisualOverflow(); }
-    int logicalRightVisualOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? rightVisualOverflow() : bottomVisualOverflow(); }
-    int logicalTopVisualOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? topVisualOverflow() : leftVisualOverflow(); }
-    int logicalBottomVisualOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? bottomVisualOverflow() : rightVisualOverflow(); }
+    int logicalLeftVisualOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? minXVisualOverflow() : minYVisualOverflow(); }
+    int logicalRightVisualOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? maxXVisualOverflow() : maxYVisualOverflow(); }
+    int logicalTopVisualOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? minYVisualOverflow() : minXVisualOverflow(); }
+    int logicalBottomVisualOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? maxYVisualOverflow() : maxXVisualOverflow(); }
     IntRect logicalVisualOverflowRect() const
     {
         IntRect result = visualOverflowRect();

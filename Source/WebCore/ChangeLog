@@ -1,3 +1,92 @@
+2011-02-02  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53614
+
+        Remove physical terminology from overflow.  Replace with minX/maxX/minY/maxY.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::addBoxShadowVisualOverflow):
+        (WebCore::InlineFlowBox::addTextBoxVisualOverflow):
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::minYLayoutOverflow):
+        (WebCore::InlineFlowBox::maxYLayoutOverflow):
+        (WebCore::InlineFlowBox::minXLayoutOverflow):
+        (WebCore::InlineFlowBox::maxXLayoutOverflow):
+        (WebCore::InlineFlowBox::logicalLeftLayoutOverflow):
+        (WebCore::InlineFlowBox::logicalRightLayoutOverflow):
+        (WebCore::InlineFlowBox::logicalTopLayoutOverflow):
+        (WebCore::InlineFlowBox::logicalBottomLayoutOverflow):
+        (WebCore::InlineFlowBox::minYVisualOverflow):
+        (WebCore::InlineFlowBox::maxYVisualOverflow):
+        (WebCore::InlineFlowBox::minXVisualOverflow):
+        (WebCore::InlineFlowBox::maxXVisualOverflow):
+        (WebCore::InlineFlowBox::logicalLeftVisualOverflow):
+        (WebCore::InlineFlowBox::logicalRightVisualOverflow):
+        (WebCore::InlineFlowBox::logicalminYVisualOverflow):
+        (WebCore::InlineFlowBox::logicalmaxYVisualOverflow):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::adjustLinePositionForPagination):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::beforeSideVisualOverflowForLine):
+        (WebCore::RenderBlock::afterSideVisualOverflowForLine):
+        (WebCore::RenderBlock::beforeSideLayoutOverflowForLine):
+        (WebCore::RenderBlock::afterSideLayoutOverflowForLine):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::scrollWidth):
+        (WebCore::RenderBox::scrollHeight):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::minYLayoutOverflow):
+        (WebCore::RenderBox::maxYLayoutOverflow):
+        (WebCore::RenderBox::minXLayoutOverflow):
+        (WebCore::RenderBox::maxXLayoutOverflow):
+        (WebCore::RenderBox::logicalLeftLayoutOverflow):
+        (WebCore::RenderBox::logicalRightLayoutOverflow):
+        (WebCore::RenderBox::minYVisualOverflow):
+        (WebCore::RenderBox::maxYVisualOverflow):
+        (WebCore::RenderBox::minXVisualOverflow):
+        (WebCore::RenderBox::maxXVisualOverflow):
+        (WebCore::RenderBox::logicalLeftVisualOverflow):
+        (WebCore::RenderBox::logicalRightVisualOverflow):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::linesVisualOverflowBoundingBox):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::ensureRootPlatformLayer):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::anyLineIntersectsRect):
+        (WebCore::RenderLineBoxList::lineIntersectsDirtyRect):
+        (WebCore::RenderLineBoxList::paint):
+        (WebCore::RenderLineBoxList::hitTest):
+        * rendering/RenderMarquee.cpp:
+        (WebCore::RenderMarquee::computePosition):
+        * rendering/RenderOverflow.h:
+        (WebCore::RenderOverflow::RenderOverflow):
+        (WebCore::RenderOverflow::minYLayoutOverflow):
+        (WebCore::RenderOverflow::maxYLayoutOverflow):
+        (WebCore::RenderOverflow::minXLayoutOverflow):
+        (WebCore::RenderOverflow::maxXLayoutOverflow):
+        (WebCore::RenderOverflow::minYVisualOverflow):
+        (WebCore::RenderOverflow::maxYVisualOverflow):
+        (WebCore::RenderOverflow::minXVisualOverflow):
+        (WebCore::RenderOverflow::maxXVisualOverflow):
+        (WebCore::RenderOverflow::setminYVisualOverflow):
+        (WebCore::RenderOverflow::visualOverflowRect):
+        (WebCore::RenderOverflow::move):
+        (WebCore::RenderOverflow::addVisualOverflow):
+        (WebCore::RenderOverflow::setVisualOverflow):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::shouldPaint):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        (WebCore::RenderTable::paint):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::clippedOverflowRectForRepaint):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeLayers):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::docTop):
+
 2011-02-02  Steve Lacey  <sjl@chromium.org>
 
         Reviewed by Eric Carlson.

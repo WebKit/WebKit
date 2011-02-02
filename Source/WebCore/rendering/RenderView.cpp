@@ -651,7 +651,7 @@ IntRect RenderView::viewRect() const
 
 int RenderView::docTop() const
 {
-    IntRect overflowRect(0, topLayoutOverflow(), 0, bottomLayoutOverflow() - topLayoutOverflow());
+    IntRect overflowRect(0, minYLayoutOverflow(), 0, maxYLayoutOverflow() - minYLayoutOverflow());
     flipForWritingMode(overflowRect);
     if (hasTransform())
         overflowRect = layer()->currentTransform().mapRect(overflowRect);

@@ -360,7 +360,7 @@ void RenderTable::layout()
     while (section) {
         if (!sectionMoved && section->logicalTop() != logicalHeight()) {
             sectionMoved = true;
-            movedSectionLogicalTop = min(logicalHeight(), section->logicalTop()) + (style()->isHorizontalWritingMode() ? section->topVisualOverflow() : section->leftVisualOverflow());
+            movedSectionLogicalTop = min(logicalHeight(), section->logicalTop()) + (style()->isHorizontalWritingMode() ? section->minYVisualOverflow() : section->minXVisualOverflow());
         }
         section->setLogicalLocation(sectionLogicalLeft, logicalHeight());
 
@@ -400,9 +400,9 @@ void RenderTable::layout()
     // Repaint with our new bounds if they are different from our old bounds.
     if (!didFullRepaint && sectionMoved) {
         if (style()->isHorizontalWritingMode())
-            repaintRectangle(IntRect(leftVisualOverflow(), movedSectionLogicalTop, rightVisualOverflow() - leftVisualOverflow(), bottomVisualOverflow() - movedSectionLogicalTop));
+            repaintRectangle(IntRect(minXVisualOverflow(), movedSectionLogicalTop, maxXVisualOverflow() - minXVisualOverflow(), maxYVisualOverflow() - movedSectionLogicalTop));
         else
-            repaintRectangle(IntRect(movedSectionLogicalTop, topVisualOverflow(), rightVisualOverflow() - movedSectionLogicalTop, bottomVisualOverflow() - topVisualOverflow()));
+            repaintRectangle(IntRect(movedSectionLogicalTop, minYVisualOverflow(), maxXVisualOverflow() - movedSectionLogicalTop, maxYVisualOverflow() - minYVisualOverflow()));
     }
 
     setNeedsLayout(false);
@@ -454,9 +454,9 @@ void RenderTable::paint(PaintInfo& paintInfo, int tx, int ty)
     PaintPhase paintPhase = paintInfo.phase;
 
     int os = 2 * maximalOutlineSize(paintPhase);
-    if (ty + topVisualOverflow() >= paintInfo.rect.maxY() + os || ty + bottomVisualOverflow() <= paintInfo.rect.y() - os)
+    if (ty + minYVisualOverflow() >= paintInfo.rect.maxY() + os || ty + maxYVisualOverflow() <= paintInfo.rect.y() - os)
         return;
-    if (tx + leftVisualOverflow() >= paintInfo.rect.maxX() + os || tx + rightVisualOverflow() <= paintInfo.rect.x() - os)
+    if (tx + minXVisualOverflow() >= paintInfo.rect.maxX() + os || tx + maxXVisualOverflow() <= paintInfo.rect.x() - os)
         return;
 
     bool pushedClip = pushContentsClip(paintInfo, tx, ty);    

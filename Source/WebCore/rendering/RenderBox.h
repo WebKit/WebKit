@@ -127,21 +127,25 @@ public:
     RenderBox* nextSiblingBox() const;
     RenderBox* parentBox() const;
 
+    // Visual and layout overflow are in the coordinate space of the box.  This means that they aren't purely physical directions.
+    // For horizontal-tb and vertical-lr they will match physical directions, but for horizontal-bt and vertical-rl, the top/bottom and left/right
+    // respectively are flipped when compared to their physical counterparts.  For example minX is on the left in vertical-lr,
+    // but it is on the right in vertical-rl.
     IntRect layoutOverflowRect() const { return m_overflow ? m_overflow->layoutOverflowRect() : clientBoxRect(); }
-    int topLayoutOverflow() const { return m_overflow? m_overflow->topLayoutOverflow() : borderTop(); }
-    int bottomLayoutOverflow() const { return m_overflow ? m_overflow->bottomLayoutOverflow() : borderTop() + clientHeight(); }
-    int leftLayoutOverflow() const { return m_overflow ? m_overflow->leftLayoutOverflow() : borderLeft(); }
-    int rightLayoutOverflow() const { return m_overflow ? m_overflow->rightLayoutOverflow() : borderLeft() + clientWidth(); }
-    int logicalLeftLayoutOverflow() const { return style()->isHorizontalWritingMode() ? leftLayoutOverflow() : topLayoutOverflow(); }
-    int logicalRightLayoutOverflow() const { return style()->isHorizontalWritingMode() ? rightLayoutOverflow() : bottomLayoutOverflow(); }
+    int minYLayoutOverflow() const { return m_overflow? m_overflow->minYLayoutOverflow() : borderTop(); }
+    int maxYLayoutOverflow() const { return m_overflow ? m_overflow->maxYLayoutOverflow() : borderTop() + clientHeight(); }
+    int minXLayoutOverflow() const { return m_overflow ? m_overflow->minXLayoutOverflow() : borderLeft(); }
+    int maxXLayoutOverflow() const { return m_overflow ? m_overflow->maxXLayoutOverflow() : borderLeft() + clientWidth(); }
+    int logicalLeftLayoutOverflow() const { return style()->isHorizontalWritingMode() ? minXLayoutOverflow() : minYLayoutOverflow(); }
+    int logicalRightLayoutOverflow() const { return style()->isHorizontalWritingMode() ? maxXLayoutOverflow() : maxYLayoutOverflow(); }
     
     IntRect visualOverflowRect() const { return m_overflow ? m_overflow->visualOverflowRect() : borderBoxRect(); }
-    int topVisualOverflow() const { return m_overflow? m_overflow->topVisualOverflow() : 0; }
-    int bottomVisualOverflow() const { return m_overflow ? m_overflow->bottomVisualOverflow() : height(); }
-    int leftVisualOverflow() const { return m_overflow ? m_overflow->leftVisualOverflow() : 0; }
-    int rightVisualOverflow() const { return m_overflow ? m_overflow->rightVisualOverflow() : width(); }
-    int logicalLeftVisualOverflow() const { return style()->isHorizontalWritingMode() ? leftVisualOverflow() : topVisualOverflow(); }
-    int logicalRightVisualOverflow() const { return style()->isHorizontalWritingMode() ? rightVisualOverflow() : bottomVisualOverflow(); }
+    int minYVisualOverflow() const { return m_overflow? m_overflow->minYVisualOverflow() : 0; }
+    int maxYVisualOverflow() const { return m_overflow ? m_overflow->maxYVisualOverflow() : height(); }
+    int minXVisualOverflow() const { return m_overflow ? m_overflow->minXVisualOverflow() : 0; }
+    int maxXVisualOverflow() const { return m_overflow ? m_overflow->maxXVisualOverflow() : width(); }
+    int logicalLeftVisualOverflow() const { return style()->isHorizontalWritingMode() ? minXVisualOverflow() : minYVisualOverflow(); }
+    int logicalRightVisualOverflow() const { return style()->isHorizontalWritingMode() ? maxXVisualOverflow() : maxYVisualOverflow(); }
     
     void addLayoutOverflow(const IntRect&);
     void addVisualOverflow(const IntRect&);

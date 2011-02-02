@@ -414,8 +414,8 @@ int RenderBox::scrollWidth() const
     // For objects with visible overflow, this matches IE.
     // FIXME: Need to work right with writing modes.
     if (style()->isLeftToRightDirection())
-        return max(clientWidth(), rightLayoutOverflow() - borderLeft());
-    return clientWidth() - min(0, leftLayoutOverflow() - borderLeft());
+        return max(clientWidth(), maxXLayoutOverflow() - borderLeft());
+    return clientWidth() - min(0, minXLayoutOverflow() - borderLeft());
 }
 
 int RenderBox::scrollHeight() const
@@ -424,7 +424,7 @@ int RenderBox::scrollHeight() const
         return layer()->scrollHeight();
     // For objects with visible overflow, this matches IE.
     // FIXME: Need to work right with writing modes.
-    return max(clientHeight(), bottomLayoutOverflow() - borderTop());
+    return max(clientHeight(), maxYLayoutOverflow() - borderTop());
 }
 
 int RenderBox::scrollLeft() const

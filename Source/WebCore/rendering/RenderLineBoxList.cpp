@@ -231,8 +231,8 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
             // FIXME: This is the deprecated pagination model that is still needed
             // for embedded views inside AppKit.  AppKit is incapable of paginating vertical
             // text pages, so we don't have to deal with vertical lines at all here.
-            int topForPaginationCheck = curr->topVisualOverflow();
-            int bottomForPaginationCheck = curr->bottomVisualOverflow();
+            int topForPaginationCheck = curr->minYVisualOverflow();
+            int bottomForPaginationCheck = curr->maxYVisualOverflow();
             if (!curr->parent()) {
                 // We're a root box.  Use lineTop and lineBottom as well here.
                 topForPaginationCheck = min(topForPaginationCheck, curr->root()->lineTop());
@@ -241,7 +241,7 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
             if (bottomForPaginationCheck - topForPaginationCheck <= v->printRect().height()) {
                 if (ty + bottomForPaginationCheck > v->printRect().maxY()) {
                     if (RootInlineBox* nextRootBox = curr->root()->nextRootBox())
-                        bottomForPaginationCheck = min(bottomForPaginationCheck, min(nextRootBox->topVisualOverflow(), nextRootBox->lineTop()));
+                        bottomForPaginationCheck = min(bottomForPaginationCheck, min(nextRootBox->minYVisualOverflow(), nextRootBox->lineTop()));
                 }
                 if (ty + bottomForPaginationCheck > v->printRect().maxY()) {
                     if (ty + topForPaginationCheck < v->truncatedAt())

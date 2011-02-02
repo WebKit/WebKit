@@ -41,38 +41,38 @@ class RenderOverflow {
     WTF_MAKE_NONCOPYABLE(RenderOverflow); WTF_MAKE_FAST_ALLOCATED;
 public:
     RenderOverflow(const IntRect& layoutRect, const IntRect& visualRect) 
-        : m_topLayoutOverflow(layoutRect.y())
-        , m_bottomLayoutOverflow(layoutRect.maxY())
-        , m_leftLayoutOverflow(layoutRect.x())
-        , m_rightLayoutOverflow(layoutRect.maxX())
-        , m_topVisualOverflow(visualRect.y())
-        , m_bottomVisualOverflow(visualRect.maxY())
-        , m_leftVisualOverflow(visualRect.x())
-        , m_rightVisualOverflow(visualRect.maxX())
+        : m_minYLayoutOverflow(layoutRect.y())
+        , m_maxYLayoutOverflow(layoutRect.maxY())
+        , m_minXLayoutOverflow(layoutRect.x())
+        , m_maxXLayoutOverflow(layoutRect.maxX())
+        , m_minYVisualOverflow(visualRect.y())
+        , m_maxYVisualOverflow(visualRect.maxY())
+        , m_minXVisualOverflow(visualRect.x())
+        , m_maxXVisualOverflow(visualRect.maxX())
     {
     }
    
-    int topLayoutOverflow() const { return m_topLayoutOverflow; }
-    int bottomLayoutOverflow() const { return m_bottomLayoutOverflow; }
-    int leftLayoutOverflow() const { return m_leftLayoutOverflow; }
-    int rightLayoutOverflow() const { return m_rightLayoutOverflow; }
+    int minYLayoutOverflow() const { return m_minYLayoutOverflow; }
+    int maxYLayoutOverflow() const { return m_maxYLayoutOverflow; }
+    int minXLayoutOverflow() const { return m_minXLayoutOverflow; }
+    int maxXLayoutOverflow() const { return m_maxXLayoutOverflow; }
     IntRect layoutOverflowRect() const;
 
-    int topVisualOverflow() const { return m_topVisualOverflow; }
-    int bottomVisualOverflow() const { return m_bottomVisualOverflow; }
-    int leftVisualOverflow() const { return m_leftVisualOverflow; }
-    int rightVisualOverflow() const { return m_rightVisualOverflow; }
+    int minYVisualOverflow() const { return m_minYVisualOverflow; }
+    int maxYVisualOverflow() const { return m_maxYVisualOverflow; }
+    int minXVisualOverflow() const { return m_minXVisualOverflow; }
+    int maxXVisualOverflow() const { return m_maxXVisualOverflow; }
     IntRect visualOverflowRect() const;
 
-    void setTopLayoutOverflow(int overflow) { m_topLayoutOverflow = overflow; }
-    void setBottomLayoutOverflow(int overflow) { m_bottomLayoutOverflow = overflow; }
-    void setLeftLayoutOverflow(int overflow) { m_leftLayoutOverflow = overflow; }
-    void setRightLayoutOverflow(int overflow) { m_rightLayoutOverflow = overflow; }
+    void setMinYLayoutOverflow(int overflow) { m_minYLayoutOverflow = overflow; }
+    void setMaxYLayoutOverflow(int overflow) { m_maxYLayoutOverflow = overflow; }
+    void setMinXLayoutOverflow(int overflow) { m_minXLayoutOverflow = overflow; }
+    void setMaxXLayoutOverflow(int overflow) { m_maxXLayoutOverflow = overflow; }
     
-    void setTopVisualOverflow(int overflow) { m_topVisualOverflow = overflow; }
-    void setBottomVisualOverflow(int overflow) { m_bottomVisualOverflow = overflow; }
-    void setLeftVisualOverflow(int overflow) { m_leftVisualOverflow = overflow; }
-    void setRightVisualOverflow(int overflow) { m_rightVisualOverflow = overflow; }
+    void setMinYVisualOverflow(int overflow) { m_minYVisualOverflow = overflow; }
+    void setMaxYVisualOverflow(int overflow) { m_maxYVisualOverflow = overflow; }
+    void setMinXVisualOverflow(int overflow) { m_minXVisualOverflow = overflow; }
+    void setMaxXVisualOverflow(int overflow) { m_maxXVisualOverflow = overflow; }
     
     void move(int dx, int dy);
     
@@ -85,78 +85,78 @@ public:
     void resetLayoutOverflow(const IntRect& defaultRect);
 
 private:
-    int m_topLayoutOverflow;
-    int m_bottomLayoutOverflow;
-    int m_leftLayoutOverflow;
-    int m_rightLayoutOverflow;
+    int m_minYLayoutOverflow;
+    int m_maxYLayoutOverflow;
+    int m_minXLayoutOverflow;
+    int m_maxXLayoutOverflow;
 
-    int m_topVisualOverflow;
-    int m_bottomVisualOverflow;
-    int m_leftVisualOverflow;
-    int m_rightVisualOverflow;
+    int m_minYVisualOverflow;
+    int m_maxYVisualOverflow;
+    int m_minXVisualOverflow;
+    int m_maxXVisualOverflow;
 };
 
 inline IntRect RenderOverflow::layoutOverflowRect() const
 {
-    return IntRect(m_leftLayoutOverflow, m_topLayoutOverflow, m_rightLayoutOverflow - m_leftLayoutOverflow, m_bottomLayoutOverflow - m_topLayoutOverflow);
+    return IntRect(m_minXLayoutOverflow, m_minYLayoutOverflow, m_maxXLayoutOverflow - m_minXLayoutOverflow, m_maxYLayoutOverflow - m_minYLayoutOverflow);
 }
 
 inline IntRect RenderOverflow::visualOverflowRect() const
 {
-    return IntRect(m_leftVisualOverflow, m_topVisualOverflow, m_rightVisualOverflow - m_leftVisualOverflow, m_bottomVisualOverflow - m_topVisualOverflow);
+    return IntRect(m_minXVisualOverflow, m_minYVisualOverflow, m_maxXVisualOverflow - m_minXVisualOverflow, m_maxYVisualOverflow - m_minYVisualOverflow);
 }
 
 inline void RenderOverflow::move(int dx, int dy)
 {
-    m_topLayoutOverflow += dy;
-    m_bottomLayoutOverflow += dy;
-    m_leftLayoutOverflow += dx;
-    m_rightLayoutOverflow += dx;
+    m_minYLayoutOverflow += dy;
+    m_maxYLayoutOverflow += dy;
+    m_minXLayoutOverflow += dx;
+    m_maxXLayoutOverflow += dx;
     
-    m_topVisualOverflow += dy;
-    m_bottomVisualOverflow += dy;
-    m_leftVisualOverflow += dx;
-    m_rightVisualOverflow += dx;
+    m_minYVisualOverflow += dy;
+    m_maxYVisualOverflow += dy;
+    m_minXVisualOverflow += dx;
+    m_maxXVisualOverflow += dx;
 }
 
 inline void RenderOverflow::addLayoutOverflow(const IntRect& rect)
 {
-    m_topLayoutOverflow = std::min(rect.y(), m_topLayoutOverflow);
-    m_bottomLayoutOverflow = std::max(rect.maxY(), m_bottomLayoutOverflow);
-    m_leftLayoutOverflow = std::min(rect.x(), m_leftLayoutOverflow);
-    m_rightLayoutOverflow = std::max(rect.maxX(), m_rightLayoutOverflow);
+    m_minYLayoutOverflow = std::min(rect.y(), m_minYLayoutOverflow);
+    m_maxYLayoutOverflow = std::max(rect.maxY(), m_maxYLayoutOverflow);
+    m_minXLayoutOverflow = std::min(rect.x(), m_minXLayoutOverflow);
+    m_maxXLayoutOverflow = std::max(rect.maxX(), m_maxXLayoutOverflow);
 }
 
 inline void RenderOverflow::addVisualOverflow(const IntRect& rect)
 {
-    m_topVisualOverflow = std::min(rect.y(), m_topVisualOverflow);
-    m_bottomVisualOverflow = std::max(rect.maxY(), m_bottomVisualOverflow);
-    m_leftVisualOverflow = std::min(rect.x(), m_leftVisualOverflow);
-    m_rightVisualOverflow = std::max(rect.maxX(), m_rightVisualOverflow);
+    m_minYVisualOverflow = std::min(rect.y(), m_minYVisualOverflow);
+    m_maxYVisualOverflow = std::max(rect.maxY(), m_maxYVisualOverflow);
+    m_minXVisualOverflow = std::min(rect.x(), m_minXVisualOverflow);
+    m_maxXVisualOverflow = std::max(rect.maxX(), m_maxXVisualOverflow);
 }
 
 inline void RenderOverflow::setLayoutOverflow(const IntRect& rect)
 {
-    m_topLayoutOverflow = rect.y();
-    m_bottomLayoutOverflow = rect.maxY();
-    m_leftLayoutOverflow = rect.x();
-    m_rightLayoutOverflow = rect.maxX();
+    m_minYLayoutOverflow = rect.y();
+    m_maxYLayoutOverflow = rect.maxY();
+    m_minXLayoutOverflow = rect.x();
+    m_maxXLayoutOverflow = rect.maxX();
 }
 
 inline void RenderOverflow::setVisualOverflow(const IntRect& rect)
 {
-    m_topVisualOverflow = rect.y();
-    m_bottomVisualOverflow = rect.maxY();
-    m_leftVisualOverflow = rect.x();
-    m_rightVisualOverflow = rect.maxX();
+    m_minYVisualOverflow = rect.y();
+    m_maxYVisualOverflow = rect.maxY();
+    m_minXVisualOverflow = rect.x();
+    m_maxXVisualOverflow = rect.maxX();
 }
 
 inline void RenderOverflow::resetLayoutOverflow(const IntRect& rect)
 {
-    m_topLayoutOverflow = rect.y();
-    m_bottomLayoutOverflow = rect.maxY();
-    m_leftLayoutOverflow = rect.x();
-    m_rightLayoutOverflow = rect.maxX();
+    m_minYLayoutOverflow = rect.y();
+    m_maxYLayoutOverflow = rect.maxY();
+    m_minXLayoutOverflow = rect.x();
+    m_maxXLayoutOverflow = rect.maxX();
 }
 
 } // namespace WebCore

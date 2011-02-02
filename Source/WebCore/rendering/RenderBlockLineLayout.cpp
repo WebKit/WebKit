@@ -2066,38 +2066,34 @@ void RenderBlock::addOverflowFromInlineChildren()
 
 int RenderBlock::beforeSideVisualOverflowForLine(RootInlineBox* line) const
 {
-    // Overflow is in the block's coordinate space, which means it isn't purely physical.  For flipped blocks (rl and bt),
-    // we continue to use top and left overflow even though physically it's bottom and right.
+    // Overflow is in the block's coordinate space, which means it isn't purely physical.
     if (style()->isHorizontalWritingMode())
-        return line->topVisualOverflow();
-    return line->leftVisualOverflow();
+        return line->minYVisualOverflow();
+    return line->minXVisualOverflow();
 }
 
 int RenderBlock::afterSideVisualOverflowForLine(RootInlineBox* line) const
 {
-    // Overflow is in the block's coordinate space, which means it isn't purely physical.  For flipped blocks (rl and bt),
-    // we continue to use bottom and right overflow even though physically it's top and left.
+    // Overflow is in the block's coordinate space, which means it isn't purely physical.
     if (style()->isHorizontalWritingMode())
-        return line->bottomVisualOverflow();
-    return line->rightVisualOverflow();
+        return line->maxYVisualOverflow();
+    return line->maxXVisualOverflow();
 }
 
 int RenderBlock::beforeSideLayoutOverflowForLine(RootInlineBox* line) const
 {
-    // Overflow is in the block's coordinate space, which means it isn't purely physical.  For flipped blocks (rl and bt),
-    // we continue to use top and left overflow even though physically it's bottom and right.
+    // Overflow is in the block's coordinate space, which means it isn't purely physical.
     if (style()->isHorizontalWritingMode())
-        return line->topLayoutOverflow();
-    return line->leftLayoutOverflow();
+        return line->minYLayoutOverflow();
+    return line->minXLayoutOverflow();
 }
 
 int RenderBlock::afterSideLayoutOverflowForLine(RootInlineBox* line) const
 {
-    // Overflow is in the block's coordinate space, which means it isn't purely physical.  For flipped blocks (rl and bt),
-    // we continue to use bottom and right overflow even though physically it's top and left.
+    // Overflow is in the block's coordinate space, which means it isn't purely physical.
     if (style()->isHorizontalWritingMode())
-        return line->bottomLayoutOverflow();
-    return line->rightLayoutOverflow();
+        return line->maxYLayoutOverflow();
+    return line->maxXLayoutOverflow();
 }
 
 void RenderBlock::deleteEllipsisLineBoxes()

@@ -595,10 +595,10 @@ IntRect RenderInline::linesVisualOverflowBoundingBox() const
 
     bool isHorizontal = style()->isHorizontalWritingMode();
         
-    int x = isHorizontal ? logicalLeftSide : firstLineBox()->leftVisualOverflow();
-    int y = isHorizontal ? firstLineBox()->topVisualOverflow() : logicalLeftSide;
-    int width = isHorizontal ? logicalRightSide - logicalLeftSide : lastLineBox()->rightVisualOverflow() - firstLineBox()->leftVisualOverflow();
-    int height = isHorizontal ? lastLineBox()->bottomVisualOverflow() - firstLineBox()->topVisualOverflow() : logicalRightSide - logicalLeftSide;
+    int x = isHorizontal ? logicalLeftSide : firstLineBox()->minXVisualOverflow();
+    int y = isHorizontal ? firstLineBox()->minYVisualOverflow() : logicalLeftSide;
+    int width = isHorizontal ? logicalRightSide - logicalLeftSide : lastLineBox()->maxXVisualOverflow() - firstLineBox()->minXVisualOverflow();
+    int height = isHorizontal ? lastLineBox()->maxYVisualOverflow() - firstLineBox()->minYVisualOverflow() : logicalRightSide - logicalLeftSide;
     return IntRect(x, y, width, height);
 }
 

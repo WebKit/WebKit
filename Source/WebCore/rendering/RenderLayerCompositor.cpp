@@ -1394,7 +1394,7 @@ void RenderLayerCompositor::ensureRootPlatformLayer()
 #ifndef NDEBUG
         m_rootPlatformLayer->setName("Root platform");
 #endif
-        m_rootPlatformLayer->setSize(FloatSize(m_renderView->rightLayoutOverflow(), m_renderView->bottomLayoutOverflow()));
+        m_rootPlatformLayer->setSize(FloatSize(m_renderView->maxXLayoutOverflow(), m_renderView->maxYLayoutOverflow()));
         m_rootPlatformLayer->setPosition(FloatPoint());
 
         // Need to clip to prevent transformed content showing outside this frame
