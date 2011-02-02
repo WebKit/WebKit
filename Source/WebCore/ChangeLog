@@ -1,3 +1,18 @@
+2011-02-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        Remove useless comment
+        https://bugs.webkit.org/show_bug.cgi?id=53549
+
+        The reason for this parameter is captured in
+        plugins/netscape-plugin-setwindow-size.html, which is a better place to
+        capture it than in this comment (which otherwise just re-iterates the
+        name of the parameter).
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::updateWidgetIfNecessary):
+
 2011-02-01  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Tony Gentilcore.

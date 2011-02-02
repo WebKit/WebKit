@@ -166,7 +166,6 @@ void HTMLPlugInImageElement::updateWidgetIfNecessary()
     if (!renderEmbeddedObject() || renderEmbeddedObject()->pluginCrashedOrWasMissing())
         return;
 
-    // True indicates that this code path should only create non-netscape plugins (no clue why).
     updateWidget(true);
 }
 
