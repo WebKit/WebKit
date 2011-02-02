@@ -2066,8 +2066,8 @@ const Vector<WebCore::IntRect>& WebFrame::computePageRects(HDC printDC)
     IntRect adjustedRect = IntRect(
         pageRect.x() + marginRect.x(),
         pageRect.y() + marginRect.y(),
-        pageRect.width() - marginRect.x() - marginRect.right(),
-        pageRect.height() - marginRect.y() - marginRect.bottom());
+        pageRect.width() - marginRect.x() - marginRect.maxX(),
+        pageRect.height() - marginRect.y() - marginRect.maxY());
 
     computePageRectsForFrame(coreFrame, adjustedRect, headerHeight, footerHeight, 1.0,m_pageRects, m_pageHeight);
     

@@ -802,7 +802,7 @@ void WebView::addToDirtyRegion(const IntRect& dirtyRect)
 #endif
 
     HRGN newRegion = ::CreateRectRgn(dirtyRect.x(), dirtyRect.y(),
-                                     dirtyRect.right(), dirtyRect.bottom());
+                                     dirtyRect.maxX(), dirtyRect.maxY());
     addToDirtyRegion(newRegion);
 }
 
@@ -4980,8 +4980,8 @@ HRESULT STDMETHODCALLTYPE WebView::visibleContentRect(
     FloatRect visibleContent = m_page->mainFrame()->view()->visibleContentRect();
     rect->left = (LONG) visibleContent.x();
     rect->top = (LONG) visibleContent.y();
-    rect->right = (LONG) visibleContent.right();
-    rect->bottom = (LONG) visibleContent.bottom();
+    rect->right = (LONG) visibleContent.maxX();
+    rect->bottom = (LONG) visibleContent.maxY();
     return S_OK;
 }
 
@@ -5345,9 +5345,9 @@ void WebView::prepareCandidateWindow(Frame* targetFrame, HIMC hInputContext)
     form.ptCurrentPos.x = caret.x();
     form.ptCurrentPos.y = caret.y() + caret.height();
     form.rcArea.top = caret.y();
-    form.rcArea.bottom = caret.bottom();
+    form.rcArea.bottom = caret.maxY();
     form.rcArea.left = caret.x();
-    form.rcArea.right = caret.right();
+    form.rcArea.right = caret.maxX();
     IMMDict::dict().setCandidateWindow(hInputContext, &form);
 }
 

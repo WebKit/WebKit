@@ -1314,8 +1314,8 @@ HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::rectOnScreen(
     IntRect coreRect = view->contentsToScreen(renderer->absoluteBoundingBoxRect());
     rect->left = coreRect.x();
     rect->top = coreRect.y();
-    rect->right = coreRect.right();
-    rect->bottom = coreRect.bottom();
+    rect->right = coreRect.maxX();
+    rect->bottom = coreRect.maxY();
 
     return S_OK;
 }

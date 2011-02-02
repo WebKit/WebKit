@@ -1,3 +1,12 @@
+2011-02-02  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Removal of right()/bottom(), converting to maxX()/maxY().
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_popup_menu_handler):
+
 2011-02-01  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Martin Robinson.

@@ -174,9 +174,9 @@ HRESULT STDMETHODCALLTYPE WebScrollBar::frameRect(
         return E_POINTER;
     IntRect rect = m_scrollBar->frameRect();
     bounds->left = rect.x();
-    bounds->right = rect.right();
+    bounds->right = rect.maxX();
     bounds->top = rect.y();
-    bounds->bottom = rect.bottom();
+    bounds->bottom = rect.maxY();
     return S_OK;
 }
 

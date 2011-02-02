@@ -402,7 +402,7 @@ static gboolean webkit_web_view_popup_menu_handler(GtkWidget* widget)
         // If there's a focused elment, use its location.
         if (Node* focusedNode = getFocusedNode(frame)) {
             IntRect focusedNodeRect = focusedNode->getRect();
-            location = IntPoint(rightAligned ? focusedNodeRect.right() : focusedNodeRect.x(), focusedNodeRect.bottom());
+            location = IntPoint(rightAligned ? focusedNodeRect.maxX() : focusedNodeRect.x(), focusedNodeRect.maxY());
         } else
             location = IntPoint(rightAligned ? view->contentsWidth() - contextMenuMargin : contextMenuMargin, contextMenuMargin);
     } else {
@@ -440,7 +440,7 @@ static gboolean webkit_web_view_popup_menu_handler(GtkWidget* widget)
                                 startCaretRect.width() + extraWidthToEndOfLine,
                                 startCaretRect.height());
 
-        location = IntPoint(rightAligned ? firstRect.right() : firstRect.x(), firstRect.bottom());
+        location = IntPoint(rightAligned ? firstRect.maxX() : firstRect.x(), firstRect.maxY());
     }
 
     // FIXME: The IntSize(0, -1) is a hack to get the hit-testing to result in the selected element.

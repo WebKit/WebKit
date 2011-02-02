@@ -120,7 +120,7 @@ void EmbeddedWidget::frameRectsChanged()
         rgn = ::CreateRectRgn(0, 0, 0, 0);
         ::SetWindowRgn(m_window, rgn, FALSE);
     } else {
-        rgn = ::CreateRectRgn(m_clipRect.x(), m_clipRect.y(), m_clipRect.right(), m_clipRect.bottom());
+        rgn = ::CreateRectRgn(m_clipRect.x(), m_clipRect.y(), m_clipRect.maxX(), m_clipRect.maxY());
         ::SetWindowRgn(m_window, rgn, TRUE);
      }
 
@@ -128,7 +128,7 @@ void EmbeddedWidget::frameRectsChanged()
         ::MoveWindow(m_window, m_windowRect.x(), m_windowRect.y(), m_windowRect.width(), m_windowRect.height(), TRUE);
 
      if (clipToZeroRect) {
-        rgn = ::CreateRectRgn(m_clipRect.x(), m_clipRect.y(), m_clipRect.right(), m_clipRect.bottom());
+        rgn = ::CreateRectRgn(m_clipRect.x(), m_clipRect.y(), m_clipRect.maxX(), m_clipRect.maxY());
         ::SetWindowRgn(m_window, rgn, TRUE);
     }
 }
