@@ -1,0 +1,279 @@
+Test IndexedDB's cursor update.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+webkitIndexedDB.open('name')
+PASS 'onsuccess' in result is true
+PASS 'onerror' in result is true
+PASS 'readyState' in result is true
+An event should fire shortly...
+
+Success event fired:
+PASS 'result' in event is true
+PASS 'code' in event is false
+PASS 'message' in event is false
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+db = event.result
+db.setVersion('new version')
+PASS 'onsuccess' in result is true
+PASS 'onerror' in result is true
+PASS 'readyState' in result is true
+An event should fire shortly...
+
+setVersionSuccess():
+Success event fired:
+PASS 'result' in event is true
+PASS 'code' in event is false
+PASS 'message' in event is false
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+trans = event.result
+PASS trans !== null is true
+Deleted all object stores.
+createAndPopulateObjectStore():
+objectStore = db.createObjectStore('basicStore')
+objectStore.add('myValue1', 'myKey1').onerror = unexpectedErrorCallback
+objectStore.add('myValue2', 'myKey2').onerror = unexpectedErrorCallback
+objectStore.add('myValue3', 'myKey3').onerror = unexpectedErrorCallback
+objectStore.add('myValue4', 'myKey4').onerror = unexpectedErrorCallback
+objectStore = db.createObjectStore('autoIncrementStore', {autoIncrement: true})
+objectStore.add('foo1').onerror = unexpectedErrorCallback
+objectStore.add('foo2').onerror = unexpectedErrorCallback
+objectStore.add('foo3').onerror = unexpectedErrorCallback
+objectStore.add('foo4').onerror = unexpectedErrorCallback
+objectStore = db.createObjectStore('keyPathStore', {keyPath: 'id'})
+objectStore.createIndex('numberIndex', 'number')
+objectStore.add({number: 1, id: 1}).onerror = unexpectedErrorCallback
+objectStore.add({number: 2, id: 2}).onerror = unexpectedErrorCallback
+objectStore.add({number: 3, id: 3}).onerror = unexpectedErrorCallback
+objectStore.add({number: 4, id: 4}).onerror = unexpectedErrorCallback
+openBasicCursor()
+trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
+trans.objectStore('basicStore').openCursor(keyRange)
+PASS 'onsuccess' in result is true
+PASS 'onerror' in result is true
+PASS 'readyState' in result is true
+An event should fire shortly...
+
+basicUpdateCursor()
+event.result.update('myUpdatedValue' + counter++)
+event.source.continue()
+basicUpdateCursor()
+event.result.update('myUpdatedValue' + counter++)
+event.source.continue()
+basicUpdateCursor()
+event.result.update('myUpdatedValue' + counter++)
+event.source.continue()
+basicUpdateCursor()
+event.result.update('myUpdatedValue' + counter++)
+event.source.continue()
+basicUpdateCursor()
+PASS counter is 5
+trans.objectStore('basicStore').openCursor(keyRange)
+PASS 'onsuccess' in result is true
+PASS 'onerror' in result is true
+PASS 'readyState' in result is true
+An event should fire shortly...
+
+basicCheckCursor()
+PASS event.result.key is "myKey1"
+PASS event.result.value is "myUpdatedValue1"
+event.result.continue()
+basicCheckCursor()
+PASS event.result.key is "myKey2"
+PASS event.result.value is "myUpdatedValue2"
+event.result.continue()
+basicCheckCursor()
+PASS event.result.key is "myKey3"
+PASS event.result.value is "myUpdatedValue3"
+event.result.continue()
+basicCheckCursor()
+PASS event.result.key is "myKey4"
+PASS event.result.value is "myUpdatedValue4"
+event.result.continue()
+basicCheckCursor()
+PASS counter is 5
+trans.objectStore('autoIncrementStore').openCursor(keyRange)
+PASS 'onsuccess' in result is true
+PASS 'onerror' in result is true
+PASS 'readyState' in result is true
+An event should fire shortly...
+
+autoIncrementUpdateCursor()
+event.result.update('myUpdatedFoo' + counter++)
+event.source.continue()
+autoIncrementUpdateCursor()
+event.result.update('myUpdatedFoo' + counter++)
+event.source.continue()
+autoIncrementUpdateCursor()
+event.result.update('myUpdatedFoo' + counter++)
+event.source.continue()
+autoIncrementUpdateCursor()
+event.result.update('myUpdatedFoo' + counter++)
+event.source.continue()
+autoIncrementUpdateCursor()
+PASS counter is 5
+trans.objectStore('autoIncrementStore').openCursor(keyRange)
+PASS 'onsuccess' in result is true
+PASS 'onerror' in result is true
+PASS 'readyState' in result is true
+An event should fire shortly...
+
+autoIncrementCheckCursor()
+PASS event.result.key is counter
+PASS event.result.value is "myUpdatedFoo1"
+event.result.continue()
+autoIncrementCheckCursor()
+PASS event.result.key is counter
+PASS event.result.value is "myUpdatedFoo2"
+event.result.continue()
+autoIncrementCheckCursor()
+PASS event.result.key is counter
+PASS event.result.value is "myUpdatedFoo3"
+event.result.continue()
+autoIncrementCheckCursor()
+PASS event.result.key is counter
+PASS event.result.value is "myUpdatedFoo4"
+event.result.continue()
+autoIncrementCheckCursor()
+PASS counter is 5
+trans.objectStore('keyPathStore').openCursor(keyRange)
+PASS 'onsuccess' in result is true
+PASS 'onerror' in result is true
+PASS 'readyState' in result is true
+An event should fire shortly...
+
+keyPathUpdateCursor()
+event.result.update({id: 100 + counter, number: 100 + counter})
+Error event fired:
+PASS 'result' in event is false
+PASS 'code' in event is true
+PASS 'message' in event is true
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+PASS event.code is webkitIDBDatabaseException.DATA_ERR
+event.source.update({id: counter, number: 100 + counter++})
+event.source.continue()
+keyPathUpdateCursor()
+event.result.update({id: 100 + counter, number: 100 + counter})
+Error event fired:
+PASS 'result' in event is false
+PASS 'code' in event is true
+PASS 'message' in event is true
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+PASS event.code is webkitIDBDatabaseException.DATA_ERR
+event.source.update({id: counter, number: 100 + counter++})
+event.source.continue()
+keyPathUpdateCursor()
+event.result.update({id: 100 + counter, number: 100 + counter})
+Error event fired:
+PASS 'result' in event is false
+PASS 'code' in event is true
+PASS 'message' in event is true
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+PASS event.code is webkitIDBDatabaseException.DATA_ERR
+event.source.update({id: counter, number: 100 + counter++})
+event.source.continue()
+keyPathUpdateCursor()
+event.result.update({id: 100 + counter, number: 100 + counter})
+Error event fired:
+PASS 'result' in event is false
+PASS 'code' in event is true
+PASS 'message' in event is true
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+PASS event.code is webkitIDBDatabaseException.DATA_ERR
+event.source.update({id: counter, number: 100 + counter++})
+event.source.continue()
+keyPathUpdateCursor()
+PASS counter is 5
+trans.objectStore('keyPathStore').openCursor(keyRange)
+PASS 'onsuccess' in result is true
+PASS 'onerror' in result is true
+PASS 'readyState' in result is true
+An event should fire shortly...
+
+keyPathCheckCursor()
+PASS event.result.key is counter
+PASS event.result.value.id is counter
+PASS event.result.value.number is 101
+event.result.continue()
+keyPathCheckCursor()
+PASS event.result.key is counter
+PASS event.result.value.id is counter
+PASS event.result.value.number is 102
+event.result.continue()
+keyPathCheckCursor()
+PASS event.result.key is counter
+PASS event.result.value.id is counter
+PASS event.result.value.number is 103
+event.result.continue()
+keyPathCheckCursor()
+PASS event.result.key is counter
+PASS event.result.value.id is counter
+PASS event.result.value.number is 104
+event.result.continue()
+keyPathCheckCursor()
+PASS counter is 5
+trans.objectStore('keyPathStore').index('numberIndex').openKeyCursor(keyRange)
+keyCursor()
+PASS event.result.key is counter + 100
+PASS event.result.value is counter
+event.result.update({id: counter, number: counter + 200})
+PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+keyCursor()
+PASS event.result.key is counter + 100
+PASS event.result.value is counter
+event.result.update({id: counter, number: counter + 200})
+PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+keyCursor()
+PASS event.result.key is counter + 100
+PASS event.result.value is counter
+event.result.update({id: counter, number: counter + 200})
+PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+keyCursor()
+PASS event.result.key is counter + 100
+PASS event.result.value is counter
+event.result.update({id: counter, number: counter + 200})
+PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+keyCursor()
+PASS counter is 5
+transactionComplete()
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

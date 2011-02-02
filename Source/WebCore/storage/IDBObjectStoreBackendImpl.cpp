@@ -179,7 +179,7 @@ static bool putIndexData(SQLiteDatabase& db, IDBKey* key, int64_t indexId, int64
     return putQuery.step() == SQLResultDone;
 }
 
-void IDBObjectStoreBackendImpl::put(PassRefPtr<SerializedScriptValue> prpValue, PassRefPtr<IDBKey> prpKey, bool addOnly, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
+void IDBObjectStoreBackendImpl::put(PassRefPtr<SerializedScriptValue> prpValue, PassRefPtr<IDBKey> prpKey, PutMode putMode, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
 {
     if (transactionPtr->mode() == IDBTransaction::READ_ONLY) {
         ec = IDBDatabaseException::READ_ONLY_ERR;
@@ -193,26 +193,29 @@ void IDBObjectStoreBackendImpl::put(PassRefPtr<SerializedScriptValue> prpValue, 
     RefPtr<IDBTransactionBackendInterface> transaction = transactionPtr;
     // FIXME: This should throw a SERIAL_ERR on structured clone problems.
     // FIXME: This should throw a DATA_ERR when the wrong key/keyPath data is supplied.
-    if (!transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::putInternal, objectStore, value, key, addOnly, callbacks, transaction)))
+    if (!transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::putInternal, objectStore, value, key, putMode, callbacks, transaction)))
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
 }
 
-void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<SerializedScriptValue> prpValue, PassRefPtr<IDBKey> prpKey, bool addOnly, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendInterface> transaction)
+void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<SerializedScriptValue> prpValue, PassRefPtr<IDBKey> prpKey, PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendInterface> transaction)
 {
     RefPtr<SerializedScriptValue> value = prpValue;
     RefPtr<IDBKey> key = prpKey;
 
-    if (!objectStore->m_keyPath.isNull() && key) {
+    if (putMode == CursorUpdate)
+        ASSERT(key);
+
+    if (!objectStore->m_keyPath.isNull() && key && putMode != CursorUpdate) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "A key was supplied for an objectStore that has a keyPath."));
         return;
     }
 
-    if (objectStore->autoIncrement() && key) {
+    if (objectStore->autoIncrement() && key && putMode != CursorUpdate) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "A key was supplied for an objectStore that is using auto increment."));
         return;
     }
 
-    if (objectStore->autoIncrement()) {
+    if (objectStore->autoIncrement() && putMode != CursorUpdate) {
         key = objectStore->genAutoIncrementKey();
 
         if (!objectStore->m_keyPath.isNull()) {
@@ -221,12 +224,19 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
             return;
         }
     } else if (!objectStore->m_keyPath.isNull()) {
-        key = fetchKeyFromKeyPath(value.get(), objectStore->m_keyPath);
+        RefPtr<IDBKey> keyPathKey = fetchKeyFromKeyPath(value.get(), objectStore->m_keyPath);
 
-        if (!key) {
+        if (!keyPathKey) {
             callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "The key could not be fetched from the keyPath."));
             return;
         }
+
+        if (putMode == CursorUpdate && !keyPathKey->isEqual(key.get())) {
+            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "The key fetched from the keyPath does not match the key of the cursor."));
+            return;
+        }
+
+        key = keyPathKey;
     } else if (!key) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "No key supplied."));
         return;
@@ -261,7 +271,7 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
 
     bindWhereClause(getQuery, objectStore->id(), key.get());
     bool isExistingValue = getQuery.step() == SQLResultRow;
-    if (addOnly && isExistingValue) {
+    if (putMode == AddOnly && isExistingValue) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::CONSTRAINT_ERR, "Key already exists in the object store."));
         return;
     }

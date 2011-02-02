@@ -37,9 +37,8 @@ module storage {
         readonly attribute IDBKey key;
         readonly attribute IDBAny value;
 
-        // FIXME: Implement.
-        //[CallWith=ScriptExecutionContext] IDBRequest update(in SerializedScriptValue value)
-        //    raises (IDBDatabaseException);
+        [CallWith=ScriptExecutionContext] IDBRequest update(in SerializedScriptValue value)
+            raises (IDBDatabaseException);
         [ImplementationFunction=continueFunction] void continue(in [Optional] IDBKey key)
             raises (IDBDatabaseException);
         [CallWith=ScriptExecutionContext, ImplementationFunction=deleteFunction] IDBRequest delete()

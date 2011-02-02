@@ -1,0 +1,247 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test IndexedDB's cursor update.");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+test();
+
+function test()
+{
+    result = evalAndLog("webkitIndexedDB.open('name')");
+    verifyResult(result);
+    result.onsuccess = openSuccess;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    verifySuccessEvent(event);
+    var db = evalAndLog("db = event.result");
+
+    result = evalAndLog("db.setVersion('new version')");
+    verifyResult(result);
+    result.onsuccess = setVersionSuccess;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function setVersionSuccess()
+{
+    debug("setVersionSuccess():");
+    verifySuccessEvent(event);
+    window.trans = evalAndLog("trans = event.result");
+    shouldBeTrue("trans !== null");
+    trans.onabort = unexpectedAbortCallback;
+    trans.oncomplete = openBasicCursor;
+
+    deleteAllObjectStores(db, createAndPopulateObjectStore);
+}
+
+function createAndPopulateObjectStore()
+{
+    debug("createAndPopulateObjectStore():");
+    var objectStore = evalAndLog("objectStore = db.createObjectStore('basicStore')");
+    evalAndLog("objectStore.add('myValue1', 'myKey1').onerror = unexpectedErrorCallback");
+    evalAndLog("objectStore.add('myValue2', 'myKey2').onerror = unexpectedErrorCallback");
+    evalAndLog("objectStore.add('myValue3', 'myKey3').onerror = unexpectedErrorCallback");
+    evalAndLog("objectStore.add('myValue4', 'myKey4').onerror = unexpectedErrorCallback");
+
+    var objectStore = evalAndLog("objectStore = db.createObjectStore('autoIncrementStore', {autoIncrement: true})");
+    evalAndLog("objectStore.add('foo1').onerror = unexpectedErrorCallback");
+    evalAndLog("objectStore.add('foo2').onerror = unexpectedErrorCallback");
+    evalAndLog("objectStore.add('foo3').onerror = unexpectedErrorCallback");
+    evalAndLog("objectStore.add('foo4').onerror = unexpectedErrorCallback");
+
+    var objectStore = evalAndLog("objectStore = db.createObjectStore('keyPathStore', {keyPath: 'id'})");
+    evalAndLog("objectStore.createIndex('numberIndex', 'number')");
+    evalAndLog("objectStore.add({number: 1, id: 1}).onerror = unexpectedErrorCallback");
+    evalAndLog("objectStore.add({number: 2, id: 2}).onerror = unexpectedErrorCallback");
+    evalAndLog("objectStore.add({number: 3, id: 3}).onerror = unexpectedErrorCallback");
+    evalAndLog("objectStore.add({number: 4, id: 4}).onerror = unexpectedErrorCallback");
+}
+
+function openBasicCursor()
+{
+    debug("openBasicCursor()");
+    evalAndLog("trans = db.transaction([], webkitIDBTransaction.READ_WRITE)");
+    trans.onabort = unexpectedAbortCallback;
+    trans.oncomplete = transactionComplete;
+
+    keyRange = webkitIDBKeyRange.lowerBound("myKey1");
+    result = evalAndLog("trans.objectStore('basicStore').openCursor(keyRange)");
+    verifyResult(result);
+    result.onsuccess = basicUpdateCursor;
+    result.onerror = unexpectedErrorCallback;
+    counter = 1;
+}
+
+function basicUpdateCursor()
+{
+    debug("basicUpdateCursor()");
+    if (event.result == null) {
+        shouldBe("counter", "5");
+        counter = 1;
+
+        result = evalAndLog("trans.objectStore('basicStore').openCursor(keyRange)");
+        verifyResult(result);
+        result.onsuccess = basicCheckCursor;
+        result.onerror = unexpectedErrorCallback;
+        return;
+    }
+
+    result = evalAndLog("event.result.update('myUpdatedValue' + counter++)");
+    result.onsuccess = function() { evalAndLog("event.source.continue()"); }
+    result.onerror = unexpectedErrorCallback;
+}
+
+function basicCheckCursor()
+{
+    debug("basicCheckCursor()");
+    if (event.result == null) {
+        shouldBe("counter", "5");
+        counter = 1;
+
+        keyRange = webkitIDBKeyRange.lowerBound(1);
+        result = evalAndLog("trans.objectStore('autoIncrementStore').openCursor(keyRange)");
+        verifyResult(result);
+        result.onsuccess = autoIncrementUpdateCursor;
+        result.onerror = unexpectedErrorCallback;
+        return;
+    }
+
+    shouldBeEqualToString("event.result.key", "myKey" + counter);
+    shouldBeEqualToString("event.result.value", "myUpdatedValue" + counter++);
+    evalAndLog("event.result.continue()");
+}
+
+function autoIncrementUpdateCursor()
+{
+    debug("autoIncrementUpdateCursor()");
+    if (event.result == null) {
+        shouldBe("counter", "5");
+        counter = 1;
+
+        result = evalAndLog("trans.objectStore('autoIncrementStore').openCursor(keyRange)");
+        verifyResult(result);
+        result.onsuccess = autoIncrementCheckCursor;
+        result.onerror = unexpectedErrorCallback;
+        return;
+    }
+
+    result = evalAndLog("event.result.update('myUpdatedFoo' + counter++)");
+    result.onsuccess = function() { evalAndLog("event.source.continue()"); }
+    result.onerror = unexpectedErrorCallback;
+}
+
+function autoIncrementCheckCursor()
+{
+    debug("autoIncrementCheckCursor()");
+    if (event.result == null) {
+        shouldBe("counter", "5");
+        counter = 1;
+
+        keyRange = webkitIDBKeyRange.lowerBound(1);
+        result = evalAndLog("trans.objectStore('keyPathStore').openCursor(keyRange)");
+        verifyResult(result);
+        result.onsuccess = keyPathUpdateCursor;
+        result.onerror = unexpectedErrorCallback;
+        return;
+    }
+
+    shouldBe("event.result.key", "counter");
+    shouldBeEqualToString("event.result.value", "myUpdatedFoo" + counter++);
+    evalAndLog("event.result.continue()");
+}
+
+function keyPathUpdateCursor()
+{
+    debug("keyPathUpdateCursor()");
+    if (event.result == null) {
+        shouldBe("counter", "5");
+        counter = 1;
+
+        result = evalAndLog("trans.objectStore('keyPathStore').openCursor(keyRange)");
+        verifyResult(result);
+        result.onsuccess = keyPathCheckCursor;
+        result.onerror = unexpectedErrorCallback;
+        return;
+    }
+
+    result = evalAndLog("event.result.update({id: 100 + counter, number: 100 + counter})");
+    result.onsuccess = unexpectedSuccessCallback;
+    result.onerror = function() {
+        verifyErrorEvent(event);
+        shouldBe("event.code", "webkitIDBDatabaseException.DATA_ERR");
+
+        result = evalAndLog("event.source.update({id: counter, number: 100 + counter++})");
+        result.onsuccess = function() { evalAndLog("event.source.continue()") };
+        result.onerror = unexpectedErrorCallback;
+    }
+}
+
+function keyPathCheckCursor()
+{
+    debug("keyPathCheckCursor()");
+    if (event.result == null) {
+        shouldBe("counter", "5");
+        counter = 1;
+
+        keyRange = webkitIDBKeyRange.lowerBound(101);
+        result = evalAndLog("trans.objectStore('keyPathStore').index('numberIndex').openKeyCursor(keyRange)");
+        result.onsuccess = keyCursor;
+        result.onerror = unexpectedErrorCallback;
+        return;
+    }
+
+    shouldBe("event.result.key", "counter");
+    shouldBe("event.result.value.id", "counter");
+    shouldBe("event.result.value.number", (counter + 100).toString());
+    counter++;
+    evalAndLog("event.result.continue()");
+}
+
+function keyCursor()
+{
+    debug("keyCursor()");
+    if (event.result == null) {
+        shouldBe("counter", "5");
+        return;
+    }
+
+    shouldBe("event.result.key", "counter + 100");
+    shouldBe("event.result.value", "counter");
+
+    try {
+        debug("event.result.update({id: counter, number: counter + 200})");
+        event.result.update({id: counter, number: counter + 200});
+        testFailed("Expected exception.");
+    } catch (e) {
+        code = e.code;
+        shouldBe("code", "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
+    }
+
+    counter++;
+    event.result.continue();
+}
+
+function transactionComplete()
+{
+    debug("transactionComplete()");
+    done();
+}
+
+var successfullyParsed = true;
+
+</script>
+</body>
+</html>

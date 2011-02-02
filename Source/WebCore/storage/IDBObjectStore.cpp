@@ -79,7 +79,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context, Pass
 PassRefPtr<IDBRequest> IDBObjectStore::add(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    m_objectStore->put(value, key, true, request, m_transaction.get(), ec);
+    m_objectStore->put(value, key, IDBObjectStoreBackendInterface::AddOnly, request, m_transaction.get(), ec);
     if (ec)
         return 0;
     return request;
@@ -88,7 +88,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::add(ScriptExecutionContext* context, Pass
 PassRefPtr<IDBRequest> IDBObjectStore::put(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    m_objectStore->put(value, key, false, request, m_transaction.get(), ec);
+    m_objectStore->put(value, key, IDBObjectStoreBackendInterface::AddOrUpdate, request, m_transaction.get(), ec);
     if (ec)
         return 0;
     return request;

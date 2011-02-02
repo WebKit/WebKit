@@ -68,7 +68,6 @@ private:
     void loadCurrentRow();
     SQLiteDatabase& database() const;
 
-    static void updateInternal(ScriptExecutionContext*, PassRefPtr<IDBCursorBackendImpl>, PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBCallbacks>);
     static void continueFunctionInternal(ScriptExecutionContext*, PassRefPtr<IDBCursorBackendImpl>, PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>);
 
     static const int64_t InvalidId = -1;
@@ -80,11 +79,15 @@ private:
     OwnPtr<SQLiteStatement> m_query;
     bool m_isSerializedScriptValueCursor;
     int64_t m_currentId;
+
+    // The key in the objectStore or index that this cursor iterates over.
     RefPtr<IDBKey> m_currentKey;
 
     // m_isSerializedScriptValueCursor will only be available for object cursors.
     RefPtr<SerializedScriptValue> m_currentSerializedScriptValue;
+
     // FIXME: make the primary key available via script for all types of cursors.
+    // For cursors on indices, this is the key in the objectstore that corresponds to the current entry in the index.
     RefPtr<IDBKey> m_currentIDBKeyValue;
 
     RefPtr<IDBTransactionBackendInterface> m_transaction;

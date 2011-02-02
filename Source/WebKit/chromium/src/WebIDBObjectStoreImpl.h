@@ -48,7 +48,7 @@ public:
     WebDOMStringList indexNames() const;
 
     void get(const WebIDBKey& key, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
-    void put(const WebSerializedScriptValue&, const WebIDBKey& key, bool addOnly, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
+    void put(const WebSerializedScriptValue&, const WebIDBKey&, PutMode, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
     void deleteFunction(const WebIDBKey& key, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
 
     WebIDBIndex* createIndex(const WebString& name, const WebString& keyPath, bool unique, const WebIDBTransaction&, WebExceptionCode&);

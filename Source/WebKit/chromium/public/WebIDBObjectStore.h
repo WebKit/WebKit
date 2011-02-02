@@ -60,7 +60,25 @@ public:
     }
 
     virtual void get(const WebIDBKey&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void put(const WebSerializedScriptValue&, const WebIDBKey&, bool addOnly, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
+
+    enum PutMode {
+        AddOrUpdate,
+        AddOnly,
+        CursorUpdate
+    };
+
+    // FIXME: Remove once Chromium side is updated to call the new put function.
+    virtual void put(const WebSerializedScriptValue& value, const WebIDBKey& key, bool addOnly, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode& ec)
+    {
+        put(value, key, addOnly ? AddOnly : AddOrUpdate, callbacks, transaction, ec);
+    }
+
+    // FIXME: Assert not reached once Chromium side overrides this properly.
+    virtual void put(const WebSerializedScriptValue& value, const WebIDBKey& key, PutMode putMode, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode& ec)
+    {
+        put(value, key, putMode == AddOnly, callbacks, transaction, ec);
+    }
+
     virtual void deleteFunction(const WebIDBKey& key, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode& ec) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual WebIDBIndex* createIndex(const WebString& name, const WebString& keyPath, bool unique, const WebIDBTransaction&, WebExceptionCode&)
     {

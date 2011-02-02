@@ -1,3 +1,32 @@
+2011-02-02  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        IndexedDB: Implement support for cursor updates
+        https://bugs.webkit.org/show_bug.cgi?id=53421
+
+        Implement support for cursor updates using the same pattern as cursor
+        deletes: forward the calls to the IDBObjectStoreBackend::put().
+        The put() function's signature needs to be changed to allow for a
+        "cursor update mode". This makes the signature more clear anyway,
+        since it replaces the boolean parameter.
+
+        Test: storage/indexeddb/cursor-update.html
+
+        * storage/IDBCursor.idl:
+        * storage/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::key):
+        (WebCore::IDBCursorBackendImpl::update):
+        * storage/IDBCursorBackendImpl.h:
+        * storage/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::add):
+        (WebCore::IDBObjectStore::put):
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::put):
+        (WebCore::IDBObjectStoreBackendImpl::putInternal):
+        * storage/IDBObjectStoreBackendImpl.h:
+        * storage/IDBObjectStoreBackendInterface.h:
+
 2011-02-02  Naoki Takano  <takano.naoki@gmail.com>
 
         Reviewed by Kent Tamura.
