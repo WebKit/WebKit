@@ -347,13 +347,13 @@ void PopupMenuWin::calculatePositionAndSize(const IntRect& r, FrameView* v)
     // Always left-align items in the popup.  This matches popup menus on the mac.
     int popupX = rScreenCoords.x() + client()->clientInsetLeft();
 
-    IntRect popupRect(popupX, rScreenCoords.bottom(), popupWidth, popupHeight);
+    IntRect popupRect(popupX, rScreenCoords.maxY(), popupWidth, popupHeight);
 
     // The popup needs to stay within the bounds of the screen and not overlap any toolbars
     FloatRect screen = screenAvailableRect(v);
 
     // Check that we don't go off the screen vertically
-    if (popupRect.bottom() > screen.height()) {
+    if (popupRect.maxY() > screen.height()) {
         // The popup will go off the screen, so try placing it above the client
         if (rScreenCoords.y() - popupRect.height() < 0) {
             // The popup won't fit above, either, so place it whereever's bigger and resize it to fit
@@ -602,7 +602,7 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
     IntRect listRect = damageRect;
     listRect.move(IntSize(0, m_scrollOffset * m_itemHeight));
 
-    for (int y = listRect.y(); y < listRect.bottom(); y += m_itemHeight) {
+    for (int y = listRect.y(); y < listRect.maxY(); y += m_itemHeight) {
         int index = y / m_itemHeight;
 
         Color optionBackgroundColor, optionTextColor;

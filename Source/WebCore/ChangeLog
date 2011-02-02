@@ -2,6 +2,16 @@
 
         Reviewed by Darin Adler.
 
+        More conversion from right()/bottom() to maxX()/maxY().
+
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::calculatePositionAndSize):
+        (WebCore::PopupMenuWin::paint):
+
+2011-02-02  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Darin Adler.
+
         Removal of right()/bottom().  Replace with maxX() and maxY().  Still converting.  Haven't removed yet.
 
         * platform/chromium/PopupMenuChromium.cpp:
