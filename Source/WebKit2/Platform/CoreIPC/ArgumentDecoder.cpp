@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,13 +69,15 @@ void ArgumentDecoder::initialize(const uint8_t* buffer, size_t bufferSize)
 
 static inline uint8_t* roundUpToAlignment(uint8_t* ptr, unsigned alignment)
 {
-    return (uint8_t*)(((uintptr_t)ptr + alignment - 1) & ~(uintptr_t)(alignment - 1));
+    ASSERT(alignment);
+    uintptr_t alignmentMask = alignment - 1;
+    return reinterpret_cast<uint8_t*>((reinterpret_cast<uintptr_t>(ptr) + alignmentMask) & ~alignmentMask);
 }
 
 bool ArgumentDecoder::alignBufferPosition(unsigned alignment, size_t size)
 {
     uint8_t* buffer = roundUpToAlignment(m_bufferPos, alignment);
-    if (buffer + size > m_bufferEnd) {
+    if (static_cast<size_t>(m_bufferEnd - buffer) < size) {
         // We've walked off the end of this buffer.
         markInvalid();
         return false;
@@ -87,7 +89,7 @@ bool ArgumentDecoder::alignBufferPosition(unsigned alignment, size_t size)
 
 bool ArgumentDecoder::bufferIsLargeEnoughToContain(unsigned alignment, size_t size) const
 {
-    return roundUpToAlignment(m_bufferPos, alignment) + size <= m_bufferEnd;
+    return static_cast<size_t>(m_bufferEnd - roundUpToAlignment(m_bufferPos, alignment)) >= size;
 }
 
 bool ArgumentDecoder::decodeBytes(Vector<uint8_t>& buffer)

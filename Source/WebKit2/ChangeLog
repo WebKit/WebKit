@@ -1,3 +1,17 @@
+2011-02-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Overflow in WebKit2 argument decoder buffer checking
+        https://bugs.webkit.org/show_bug.cgi?id=53536
+
+        * Platform/CoreIPC/ArgumentDecoder.cpp:
+        (CoreIPC::roundUpToAlignment): Tweak code a bit for clarity and to replace
+        C casts with C++ casts.
+        (CoreIPC::ArgumentDecoder::alignBufferPosition): Rearrange buffer calculation
+        so we don't do any math with the passed-in size, because that could overflow.
+        (CoreIPC::ArgumentDecoder::bufferIsLargeEnoughToContain): Ditto.
+
 2011-02-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
