@@ -785,8 +785,8 @@ static Rect computeFakeWindowBoundsRect(const WebCore::IntRect& windowFrameInScr
     // Carbon global coordinates has the origin set at the top left corner of the main viewing screen, so we want to flip the y coordinate.
     CGFloat maxY = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]);
 
-    int flippedWindowFrameYCoordinate = maxY - windowFrameInScreenCoordinates.bottom();
-    int flippedViewFrameYCoordinate = windowFrameInScreenCoordinates.height() - viewFrameInWindowCoordinates.bottom();
+    int flippedWindowFrameYCoordinate = maxY - windowFrameInScreenCoordinates.maxY();
+    int flippedViewFrameYCoordinate = windowFrameInScreenCoordinates.height() - viewFrameInWindowCoordinates.maxY();
 
     Rect bounds;
     
