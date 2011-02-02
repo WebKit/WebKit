@@ -33,7 +33,7 @@ include_paths = [
             os.path.join(wk_root, 'Source', 'JavaScriptCore'),
             os.path.join(wk_root, 'Source', 'WebCore', 'bindings', 'cpp'),
             os.path.join(wk_root, 'Source', 'WebCore', 'DerivedSources'),
-            os.path.join(wk_root, 'WebKit', 'wx'),
+            os.path.join(wk_root, 'Source', 'WebKit', 'wx'),
             os.path.join(wx_root, 'wxPython', 'include'),
             os.path.join(wx_root, '..', 'wxPython', 'include'),
             ]

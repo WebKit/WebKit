@@ -31,6 +31,7 @@
 #include "GraphicsContext.h"
 #include "HostWindow.h"
 #include "NotImplemented.h"
+#include "PaintInfo.h"
 #include "RenderView.h"
 
 #include <wx/defs.h>

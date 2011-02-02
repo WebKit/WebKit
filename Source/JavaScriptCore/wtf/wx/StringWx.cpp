@@ -24,10 +24,10 @@
  */
 
 #include "config.h"
-#include "PlatformString.h"
 
-#include <unicode/ustring.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
+
 #include <wx/defs.h>
 #include <wx/string.h>
 
@@ -39,7 +39,7 @@ String::String(const wxString& wxstr)
     #error "This code only works in Unicode build of wxWidgets"
 #endif
 
-#if SIZEOF_WCHAR_T == sizeof(UChar)
+#if SIZEOF_WCHAR_T == U_SIZEOF_UCHAR
 
     m_impl = StringImpl::create(wxstr.wc_str(), wxstr.length());
 
@@ -61,8 +61,8 @@ String::String(const wxString& wxstr)
     UChar* data;
     wxMBConvUTF16 conv;
     unsigned utf16Length = conv.FromWChar(0, 0, wideString, wideLength);
-    m_impl = StringImpl::createUninitialized(utf16Length, data)
-    conv.FromWChar(data, utf16Length, wideString, wideLength);
+    m_impl = StringImpl::createUninitialized(utf16Length, data);
+    conv.FromWChar((char*)data, utf16Length, wideString, wideLength);
 
 #endif // SIZEOF_WCHAR_T == 4
 }

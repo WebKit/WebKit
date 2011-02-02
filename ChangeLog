@@ -1,3 +1,9 @@
+2011-02-02  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fixes for wxWebKit.
+
+        * wscript:
+
 2010-01-28  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed.  Test commit for commit-queue@webkit.org.

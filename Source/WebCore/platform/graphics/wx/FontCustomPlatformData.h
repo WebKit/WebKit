@@ -25,6 +25,7 @@
 #include "FontRenderingMode.h"
 #include "FontWidthVariant.h"
 #include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 

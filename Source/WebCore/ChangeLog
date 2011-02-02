@@ -1,3 +1,23 @@
+2011-02-02  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fixes for wxWebKit.
+
+        * bindings/cpp/WebDOMHTMLDocumentCustom.cpp:
+        (documentWrite):
+        * bindings/scripts/CodeGeneratorCPP.pm:
+        * page/wx/DragControllerWx.cpp:
+        (WebCore::DragController::dragOperation):
+        * platform/graphics/wx/FontCustomPlatformData.h:
+        * platform/graphics/wx/FontPlatformData.h:
+        (WebCore::FontPlatformData::widthVariant):
+        * platform/graphics/wx/FontPlatformDataWx.cpp:
+        (WebCore::FontPlatformData::computeHash):
+        * platform/graphics/wx/FontWx.cpp:
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        * platform/wx/RenderThemeWx.cpp:
+
 2011-02-02  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Darin Adler.

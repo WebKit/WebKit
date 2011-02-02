@@ -61,8 +61,11 @@ windows_deps = [
 webcore_sources = {}
 
 if build_port == "wx":
-    webcore_sources['wx'] = ['Source/WebCore/platform/KillRingNone.cpp',
-                             'Source/WebCore/bindings/cpp/WebDOMEventTarget.cpp']  
+    webcore_sources['wx'] = [
+        'Source/WebCore/bindings/cpp/WebDOMEventTarget.cpp',
+        'Source/WebCore/platform/KillRingNone.cpp',                     
+        'Source/WebCore/platform/text/LocalizedNumberNone.cpp'
+    ]  
 
     if building_on_win32:
         # make sure platform/wx comes after this so we get the right
@@ -195,7 +198,7 @@ def build(bld):
     global wk_includes
 
     # FIXME: Does this need to be Source/JavaScriptCore?
-    bld.add_subdirs('JavaScriptCore')
+    bld.add_subdirs('Source/JavaScriptCore')
 
     if sys.platform.startswith('darwin'):
         TaskGen.task_gen.mappings['.mm'] = TaskGen.task_gen.mappings['.cxx']
@@ -223,6 +226,7 @@ def build(bld):
         if os.path.isdir(fullpath) and not item == "os-win32" and not item == 'icu':
             wk_includes.append(fullpath)
 
+    wk_includes.append('Source')
     wk_includes.append(os.path.join(jscore_dir, 'wtf', 'unicode'))
     wk_includes.append(os.path.join(jscore_dir, 'wtf', 'unicode', 'icu'))
     wk_includes += common_includes + full_dirs

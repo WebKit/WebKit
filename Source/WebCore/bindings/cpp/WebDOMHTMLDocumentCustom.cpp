@@ -30,7 +30,7 @@ static inline void documentWrite(const WebDOMString& text, WebCore::HTMLDocument
 {
     WebCore::SegmentedString segmentedString = WTF::String(text);
     if (addNewline)
-        segmentedString.append(WebCore::SegmentedString(WTF::String(&WebCore::newlineCharacter)));
+        segmentedString.append(WebCore::SegmentedString(WTF::String(&WTF::Unicode::newlineCharacter)));
     document->write(segmentedString);
 }
 

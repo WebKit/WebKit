@@ -1,3 +1,9 @@
+2011-02-02  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fixes for wxWebKit.
+
+        * bindings/python/wscript:
+
 2011-01-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

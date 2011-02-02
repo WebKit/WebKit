@@ -544,3 +544,8 @@ bool LayoutTestController::findString(JSContextRef context, JSStringRef target, 
     // FIXME: Implement
     return false;
 }
+
+void LayoutTestController::setSerializeHTTPLoads(bool)
+{
+    // FIXME: Implement.
+}

@@ -32,6 +32,7 @@
 #include "IntRect.h"
 #include "NotImplemented.h"
 #include "SimpleFontData.h"
+#include "TextRun.h"
 
 #if OS(WINDOWS)
 #include "UniscribeController.h"

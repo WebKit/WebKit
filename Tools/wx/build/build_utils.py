@@ -120,7 +120,7 @@ def update_wx_deps(conf, wk_root, msvc_version='msvc2008'):
         sys.exit(1)
 
     # since this module is still experimental
-    wxpy_dir = os.path.join(wk_root, 'WebKit', 'wx', 'bindings', 'python')
+    wxpy_dir = os.path.join(wk_root, 'Source', 'WebKit', 'wx', 'bindings', 'python')
     swig_module = download_if_newer('http://wxwebkit.wxcommunity.com/downloads/deps/swig.py.txt', wxpy_dir)
     if swig_module:
         shutil.copy(os.path.join(wxpy_dir, 'swig.py.txt'), os.path.join(wxpy_dir, 'swig.py'))

@@ -233,6 +233,7 @@ sub GetCPPType
     return "int" if $type eq "long";
     return "unsigned" if $name eq "unsigned long";
     return "unsigned short" if $type eq "CompareHow";
+    return "double" if $name eq "Date";
 
     if ($codeGenerator->IsStringType($type)) {
         if ($useConstReference) {

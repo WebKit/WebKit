@@ -30,6 +30,7 @@
 #define FontPlatformData_h
 
 #include "FontDescription.h"
+#include "FontWidthVariant.h"
 #include "FontOrientation.h"
 #include "StringImpl.h"
 #include <wtf/Forward.h>
@@ -149,6 +150,9 @@ public:
     bool allowsLigatures() const { return false; }
     
     FontOrientation orientation() const { return Horizontal; } // FIXME: Implement.
+
+    // We don't support this yet, so just return the default value for now.
+    FontWidthVariant widthVariant() const { return RegularWidth; }
 
 #if OS(WINDOWS)
     bool useGDI() const;

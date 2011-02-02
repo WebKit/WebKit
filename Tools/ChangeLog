@@ -1,3 +1,13 @@
+2011-02-02  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fixes for wxWebKit.
+
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::setSerializeHTTPLoads):
+        * wx/browser/wscript:
+        * wx/build/build_utils.py:
+        * wx/build/settings.py:
+
 2011-02-01  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Mihai Parparita.
