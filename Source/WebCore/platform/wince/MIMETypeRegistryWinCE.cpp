@@ -27,7 +27,9 @@
 #include "config.h"
 #include "MIMETypeRegistry.h"
 
+#include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
+#include <wtf/MainThread.h>
 #include <windows.h>
 #include <winreg.h>
 
@@ -119,6 +121,8 @@ String MIMETypeRegistry::getPreferredExtensionForMIMEType(const String& type)
 
 String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
 {
+    ASSERT(isMainThread());
+
     if (ext.isEmpty())
         return String();
 

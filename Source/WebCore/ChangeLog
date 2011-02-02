@@ -1,3 +1,46 @@
+2011-02-02  Dai Mikurube  <dmikurube@google.com>
+
+        Reviewed by David Levin.
+
+        Make mime type lookup in File::create(path) thread-safe
+        https://bugs.webkit.org/show_bug.cgi?id=47700
+
+        This patch introduces a new function MIMETypeRegistry::getMIMETypeForExtensionThreadSafe().
+        The function is to be called as a thread-safe version of getMIMETypeForExtension() when
+        both FILE_SYSTEM and WORKERS are enabled.
+
+        No tests for this patch. This patch itself doesn't change the behaviors.
+        For Chromium, it runs in the same way with getMIMETypeForExtensionThreadSafe().
+        For the other platforms, it causes compilation error in case of enabled FILE_SYSTEM and WORKERS.
+        The compilation error would be a signal to implement getMIMETypeForExtensionThreadSafe() in these
+        platforms. Currently it doesn't happen since FILE_SYSTEM is not available in the other platforms.
+
+        * platform/MIMETypeRegistry.cpp: Defined generic getMIMETypeForExtension() calling getMIMETypeForExtensionThreadSafe() for enabled FILE_SYSTEM and WORKERS.
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        * platform/MIMETypeRegistry.h: Declared getMIMETypeForExtensionThreadSafe() which should be implemented for each platform.
+        * platform/android/TemporaryLinkStubs.cpp:
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        * platform/brew/MIMETypeRegistryBrew.cpp:
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        * platform/chromium/MIMETypeRegistryChromium.cpp: Defined getMIMETypeForExtensionThreadSafe() for the case when FILE_SYSTEM and WORKERS are enabled.
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtensionThreadSafe):
+        * platform/efl/MIMETypeRegistryEfl.cpp:
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        * platform/gtk/MIMETypeRegistryGtk.cpp:
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        * platform/haiku/MIMETypeRegistryHaiku.cpp:
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        * platform/mac/MIMETypeRegistryMac.mm:
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        * platform/qt/MIMETypeRegistryQt.cpp:
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        * platform/win/MIMETypeRegistryWin.cpp:
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        * platform/wince/MIMETypeRegistryWinCE.cpp:
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        * platform/wx/MimeTypeRegistryWx.cpp:
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+
 2011-02-01  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

@@ -77,6 +77,8 @@
 #include "Widget.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <wtf/Assertions.h>
+#include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
 
 #if USE(JSC)
@@ -306,6 +308,7 @@ void* WebCore::Frame::dragImageForSelection()
 
 WTF::String WebCore::MIMETypeRegistry::getMIMETypeForExtension(WTF::String const&)
 {
+    ASSERT(isMainThread());
     return WTF::String();
 }
 

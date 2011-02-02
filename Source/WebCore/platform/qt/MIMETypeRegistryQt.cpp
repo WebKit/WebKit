@@ -29,6 +29,9 @@
 #include "config.h"
 #include "MIMETypeRegistry.h"
 
+#include <wtf/Assertions.h>
+#include <wtf/MainThread.h>
+
 namespace WebCore {
 
 struct ExtensionMap {
@@ -70,6 +73,8 @@ static const ExtensionMap extensionMap[] = {
 
 String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
 {
+    ASSERT(isMainThread());
+
     String s = ext.lower();
 
     const ExtensionMap *e = extensionMap;

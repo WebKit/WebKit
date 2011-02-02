@@ -27,7 +27,9 @@
 #include "MIMETypeRegistry.h"
 
 #include <shlwapi.h>
+#include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
+#include <wtf/MainThread.h>
 
 namespace WebCore 
 {
@@ -64,6 +66,8 @@ String MIMETypeRegistry::getPreferredExtensionForMIMEType(const String& type)
 
 String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
 {
+    ASSERT(isMainThread());
+
     if (ext.isEmpty())
         return String();
 

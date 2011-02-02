@@ -343,6 +343,13 @@ static MediaMIMETypeMap& mediaMIMETypeMap()
     return mediaMIMETypeForExtensionMap;
 }
 
+#if ENABLE(FILE_SYSTEM) && ENABLE(WORKERS)
+String MIMETypeRegistry::getMIMETypeForExtension(const String& extension)
+{
+    return getMIMETypeForExtensionThreadSafe(extension);
+}
+#endif
+
 String MIMETypeRegistry::getMediaMIMETypeForExtension(const String& ext)
 {
     // Look in the system-specific registry first.

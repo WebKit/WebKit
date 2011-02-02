@@ -31,6 +31,8 @@
 
 #include "PlatformString.h"
 #include <MimeType.h>
+#include <wtf/Assertions.h>
+#include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -62,6 +64,8 @@ static const ExtensionMap extensionMap[] = {
 
 String MIMETypeRegistry::getMIMETypeForExtension(const String& ext)
 {
+    ASSERT(isMainThread());
+
     String str = ext.lower();
 
     // Try WebCore built-in types.

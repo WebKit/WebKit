@@ -28,12 +28,15 @@
 #include "MIMETypeRegistry.h"
 
 #include "WebCoreSystemInterface.h"
+#include <wtf/Assertions.h>
+#include <wtf/MainThread.h>
 
 namespace WebCore 
 {
 
 String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
 {
+    ASSERT(isMainThread());
     return wkGetMIMETypeForExtension(ext);
 }
 

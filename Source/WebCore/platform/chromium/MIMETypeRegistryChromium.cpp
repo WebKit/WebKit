@@ -42,6 +42,17 @@
 
 namespace WebCore {
 
+#if ENABLE(FILE_SYSTEM) && ENABLE(WORKERS)
+String MIMETypeRegistry::getMIMETypeForExtensionThreadSafe(const String &ext)
+{
+    return PlatformBridge::mimeTypeForExtension(ext);
+}
+#endif
+
+// NOTE: We have to define getMIMETypeForExtension() here though the shared
+// implementation has getMIMETypeForExtension() since we don't use the shared
+// implementation bits in MIMETypeRegistry.cpp.
+
 String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
 {
     return PlatformBridge::mimeTypeForExtension(ext);
