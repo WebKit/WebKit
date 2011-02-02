@@ -185,6 +185,16 @@ bool QWKPagePrivate::isViewInWindow()
     return true;
 }
 
+void QWKPagePrivate::enterAcceleratedCompositingMode(const LayerTreeContext&)
+{
+    // FIXME: Implement.
+}
+
+void QWKPagePrivate::exitAcceleratedCompositingMode()
+{
+    // FIXME: Implement.
+}
+
 void QWKPagePrivate::pageDidRequestScroll(const IntSize& delta)
 {
     emit q->scrollRequested(delta.width(), delta.height());

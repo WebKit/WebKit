@@ -22,6 +22,7 @@
 #define qwkpage_p_h
 
 #include "DrawingAreaProxy.h"
+#include "LayerTreeContext.h"
 #include "PageClient.h"
 #include "qwkpage.h"
 #include "qgraphicswkview.h"
@@ -34,6 +35,8 @@
 
 class QGraphicsWKView;
 class QWKPreferences;
+
+using namespace WebKit;
 
 class QWKPagePrivate : WebKit::PageClient {
 public:
@@ -57,6 +60,8 @@ public:
     virtual bool isViewInWindow();
 
 #if USE(ACCELERATED_COMPOSITING)
+    virtual void enterAcceleratedCompositingMode(const LayerTreeContext&);
+    virtual void exitAcceleratedCompositingMode();
     void pageDidEnterAcceleratedCompositing() { }
     void pageDidLeaveAcceleratedCompositing() { }
 #endif // USE(ACCELERATED_COMPOSITING)

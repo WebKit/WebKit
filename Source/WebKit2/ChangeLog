@@ -1,3 +1,14 @@
+2011-02-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        Fix Qt build after r77339.
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::enterAcceleratedCompositingMode):
+        (QWKPagePrivate::exitAcceleratedCompositingMode):
+        * UIProcess/API/qt/qwkpage_p.h:
+
 2011-02-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
