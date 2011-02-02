@@ -83,6 +83,9 @@ private:
 
     void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut);
 
+    virtual void enterAcceleratedCompositingMode(const LayerTreeContext&);
+    virtual void exitAcceleratedCompositingMode();
+
 #if USE(ACCELERATED_COMPOSITING)
     virtual void pageDidEnterAcceleratedCompositing();
     virtual void pageDidLeaveAcceleratedCompositing();

@@ -2408,6 +2408,15 @@ WebPageCreationParameters WebPageProxy::creationParameters() const
 }
 
 #if USE(ACCELERATED_COMPOSITING)
+void WebPageProxy::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
+{
+    m_pageClient->enterAcceleratedCompositingMode(layerTreeContext);
+}
+
+void WebPageProxy::exitAcceleratedCompositingMode()
+{
+    m_pageClient->exitAcceleratedCompositingMode();
+}
 
 void WebPageProxy::didEnterAcceleratedCompositing()
 {

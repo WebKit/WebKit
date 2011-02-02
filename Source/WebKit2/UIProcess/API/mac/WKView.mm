@@ -32,6 +32,7 @@
 #import "FindIndicator.h"
 #import "FindIndicatorWindow.h"
 #import "LayerBackedDrawingAreaProxy.h"
+#import "LayerTreeContext.h"
 #import "Logging.h"
 #import "NativeWebKeyboardEvent.h"
 #import "PDFViewController.h"
@@ -1850,6 +1851,16 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
     _data->_page->drawingArea()->detachCompositingContext();
     _data->_page->setDrawingArea(newDrawingArea.release());
+}
+
+- (void)_enterAcceleratedCompositingMode:(const LayerTreeContext&)layerTreeContext
+{
+    // FIXME: Implement.
+}
+
+- (void)_exitAcceleratedCompositingMode
+{
+    // FIXME: Implement.
 }
 
 - (void)_pageDidEnterAcceleratedCompositing

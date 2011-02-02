@@ -147,14 +147,14 @@ void DrawingAreaProxyImpl::didSetSize(const UpdateInfo& updateInfo)
     incorporateUpdate(updateInfo);
 }
 
-void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(const LayerTreeContext& context)
+void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {
-    // FIXME: Implement.
+    m_webPageProxy->enterAcceleratedCompositingMode(layerTreeContext);
 }
 
 void DrawingAreaProxyImpl::exitAcceleratedCompositingMode()
 {
-    // FIXME: Implement.
+    m_webPageProxy->exitAcceleratedCompositingMode();
 }
 
 void DrawingAreaProxyImpl::incorporateUpdate(const UpdateInfo& updateInfo)

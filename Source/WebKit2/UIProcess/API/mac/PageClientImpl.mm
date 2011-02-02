@@ -339,6 +339,16 @@ void PageClientImpl::accessibilityChildTokenReceived(const CoreIPC::DataReferenc
 }
     
 #if USE(ACCELERATED_COMPOSITING)
+void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
+{
+    [m_wkView _enterAcceleratedCompositingMode:layerTreeContext];
+}
+
+void PageClientImpl::exitAcceleratedCompositingMode()
+{
+    [m_wkView _exitAcceleratedCompositingMode];
+}
+
 void PageClientImpl::pageDidEnterAcceleratedCompositing()
 {
     [m_wkView _pageDidEnterAcceleratedCompositing];

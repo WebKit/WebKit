@@ -1,3 +1,27 @@
+2011-02-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Pass enter/exit accelerated compositing mode to the WKView
+        https://bugs.webkit.org/show_bug.cgi?id=53552
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::enterAcceleratedCompositingMode):
+        (WebKit::PageClientImpl::exitAcceleratedCompositingMode):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _enterAcceleratedCompositingMode:]):
+        (-[WKView _exitAcceleratedCompositingMode]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::enterAcceleratedCompositingMode):
+        (WebKit::DrawingAreaProxyImpl::exitAcceleratedCompositingMode):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::enterAcceleratedCompositingMode):
+        (WebKit::WebPageProxy::exitAcceleratedCompositingMode):
+        * UIProcess/WebPageProxy.h:
+
 2011-02-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed Qt buildfix after r77286.

@@ -311,6 +311,11 @@ public:
     void processDidCrash();
 
 #if USE(ACCELERATED_COMPOSITING)
+    virtual void enterAcceleratedCompositingMode(const LayerTreeContext&);
+    virtual void exitAcceleratedCompositingMode();
+#endif
+    
+#if USE(ACCELERATED_COMPOSITING)
     void didEnterAcceleratedCompositing();
     void didLeaveAcceleratedCompositing();
 #endif
