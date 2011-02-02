@@ -52,7 +52,7 @@ DragImageRef Frame::dragImageForSelection()
 
     GraphicsContext* context = buffer->context();
     context->translate(-paintingRect.x(), -paintingRect.y());
-    context->clip(FloatRect(0, 0, paintingRect.right(), paintingRect.bottom()));
+    context->clip(FloatRect(0, 0, paintingRect.maxX(), paintingRect.maxY()));
 
     PaintBehavior previousPaintBehavior = m_view->paintBehavior();
     m_view->setPaintBehavior(PaintBehaviorSelectionOnly);

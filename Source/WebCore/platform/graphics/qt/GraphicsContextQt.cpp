@@ -893,7 +893,7 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& frect)
     qreal deviceScaleY = sqrtf(deviceTransform.m21() * deviceTransform.m21() + deviceTransform.m22() * deviceTransform.m22());
 
     QPoint deviceOrigin(frect.x() * deviceScaleX, frect.y() * deviceScaleY);
-    QPoint deviceLowerRight(frect.right() * deviceScaleX, frect.bottom() * deviceScaleY);
+    QPoint deviceLowerRight(frect.maxX() * deviceScaleX, frect.maxY() * deviceScaleY);
 
     // Don't let the height or width round to 0 unless either was originally 0
     if (deviceOrigin.y() == deviceLowerRight.y() && frect.height())

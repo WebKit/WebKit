@@ -1,3 +1,14 @@
+2011-02-02  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by David Hyatt.
+
+        More conversion from right()/bottom() to maxX()/maxY().
+
+        * page/qt/FrameQt.cpp:
+        (WebCore::Frame::dragImageForSelection):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::roundToDevicePixels):
+
 2011-02-02  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fixes for wxWebKit.
