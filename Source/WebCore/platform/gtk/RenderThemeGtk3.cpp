@@ -545,7 +545,7 @@ bool RenderThemeGtk::paintMenuList(RenderObject* renderObject, const PaintInfo& 
         cairo_clip(cairoContext);
         gtk_render_line(separatorStyleContext, cairoContext,
                         separatorPosition.x(), separatorPosition.y(),
-                        separatorPosition.x(), innerRect.bottom());
+                        separatorPosition.x(), innerRect.maxY());
         cairo_restore(cairoContext);
     }
 
