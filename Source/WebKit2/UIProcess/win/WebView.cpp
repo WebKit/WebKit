@@ -1093,6 +1093,16 @@ void WebView::setIsInWindow(bool isInWindow)
 
 #if USE(ACCELERATED_COMPOSITING)
 
+void WebView::enterAcceleratedCompositingMode(const LayerTreeContext&)
+{
+    // FIXME: Implement.
+}
+
+void WebView::exitAcceleratedCompositingMode()
+{
+    // FIXME: Implement.
+}
+
 void WebView::pageDidEnterAcceleratedCompositing()
 {
     switchToDrawingAreaTypeIfNecessary(DrawingAreaInfo::LayerBacked);
