@@ -1,3 +1,12 @@
+2011-02-02  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Darin Adler and Steve Falkenburg.
+
+        Add DerivedSources.make to some Visual Studio projects
+        https://bugs.webkit.org/show_bug.cgi?id=53607
+
+        * WebCore.vcproj/WebCoreGenerated.vcproj: Add DerivedSources.make.
+
 2011-02-02  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by James Robinson.

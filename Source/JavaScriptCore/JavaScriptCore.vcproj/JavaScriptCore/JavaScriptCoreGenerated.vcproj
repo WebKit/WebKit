@@ -87,6 +87,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\DerivedSources.make"
+			>
+		</File>
+		<File
 			RelativePath=".\JavaScriptCoreGenerated.make"
 			>
 		</File>

@@ -85,6 +85,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\DerivedSources.make"
+			>
+		</File>
+		<File
 			RelativePath=".\migrate-scripts.sh"
 			>
 		</File>
