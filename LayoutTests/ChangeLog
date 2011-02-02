@@ -1,3 +1,12 @@
+2011-02-01  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
+        fast/css/box-shadow.html was removed in r77101 but there was
+        still a reference to it in the expectations file.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-01  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by James Robinson.

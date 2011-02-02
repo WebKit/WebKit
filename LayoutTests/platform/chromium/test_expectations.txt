@@ -2935,9 +2935,6 @@ BUGCR68173 WIN LINUX DEBUG : http/tests/inspector/extensions-resources-redirect.
 
 BUGCR67442 WIN LINUX : fast/canvas/fillText-shadow.html = TEXT
 
-// WebKit roll 74534:74545
-BUGWK51536 : fast/css/box-shadow.html = FAIL TIMEOUT
-
 // WebKit roll 74667:74679
 BUGCR68067 LINUX DEBUG : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT PASS
 
