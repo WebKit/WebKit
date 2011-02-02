@@ -1,0 +1,47 @@
+<html>
+<head>
+<script src="inspector-test2.js"></script>
+<script type="text/javascript">
+
+function sendXHR(url, forcePreflight)
+{
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", url, false);
+    xhr.setRequestHeader("Content-Type", forcePreflight ? "application/xml" : "text/plain");
+    try {
+        xhr.send("<xml></xml>");  // Denied requests will cause exceptions.
+    } catch (e) {
+    }
+}
+
+function doCrossOriginXHR()
+{
+    var targetURL = "http://localhost:8000/inspector/resources/cors-target.php";
+    // Failed POSTs with no preflight check should result in a POST request being logged
+    sendXHR(targetURL + "?deny=yes", false);
+    // Failed POSTs with preflight check should result in an OPTIONS request being logged
+    sendXHR(targetURL + "?deny=yes", true);
+    // Successful POSTs with preflight check should result in an OPTIONS request followed by POST request being logged
+    // Generate request name based on timestamp to defeat caching (this is only relevant for repeated invocations of the test in signle instance of DRT)
+    sendXHR(targetURL + "?date=" + Date.now(), true);
+}
+
+var test = function()
+{
+    function onResource(event)
+    {
+        var resource = event.data;
+        InspectorTest.addResult(resource.requestMethod + " " +  resource.url.replace(/[&?]date=\d+/, ""));
+        if (resource.requestMethod === "POST" && !/\?deny=yes/.test(resource.url))
+            InspectorTest.completeTest();
+    }
+    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, onResource);
+    InspectorTest.evaluateInPage("doCrossOriginXHR();");
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that preflight OPTIONS requests appear in Network resources</p>
+</body>
+</html>

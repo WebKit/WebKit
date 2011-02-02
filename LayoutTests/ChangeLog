@@ -1,3 +1,14 @@
+2011-02-01  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: add test for OPTIONS requests caused by CORS preflight checking to appear in Network panel
+        https://bugs.webkit.org/show_bug.cgi?id=53501
+
+        * http/tests/inspector/network-preflight-options-expected.txt: Added.
+        * http/tests/inspector/network-preflight-options.html: Added.
+        * http/tests/inspector/resources/cors-target.php: Added.
+
 2011-02-02  Martin Robinson  <mrobinson@igalia.com>
 
         Skip another test that uses modal dialogs.

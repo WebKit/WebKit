@@ -31,7 +31,6 @@ WebInspector.Resource = function(identifier, url)
     this.url = url;
     this._startTime = -1;
     this._endTime = -1;
-    this._requestMethod = "";
     this._category = WebInspector.resourceCategories.other;
     this._pendingContentCallbacks = [];
     this._responseHeadersSize = 0;
