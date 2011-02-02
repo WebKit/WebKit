@@ -1,3 +1,10 @@
+2011-02-02  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::pinnedInDirection):
+
 2011-02-02  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

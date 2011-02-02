@@ -615,7 +615,7 @@ bool ScrollAnimatorMac::pinnedInDirection(float deltaX, float deltaY)
             limitDelta.setHeight(m_scrollableArea->visibleContentRect().y());
         } else {
             // We are trying to scroll down.  Make sure we are not pinned to the bottom
-            limitDelta.setHeight(m_scrollableArea->contentsSize().height() - m_scrollableArea->visibleContentRect().bottom());
+            limitDelta.setHeight(m_scrollableArea->contentsSize().height() - m_scrollableArea->visibleContentRect().maxY());
         }
     } else if (deltaX != 0) {
         if (deltaX < 0) {
@@ -623,7 +623,7 @@ bool ScrollAnimatorMac::pinnedInDirection(float deltaX, float deltaY)
             limitDelta.setWidth(m_scrollableArea->visibleContentRect().x());
         } else {
             // We are trying to scroll right.  Make sure we are not pinned to the right
-            limitDelta.setWidth(m_scrollableArea->contentsSize().width() - m_scrollableArea->visibleContentRect().right());
+            limitDelta.setWidth(m_scrollableArea->contentsSize().width() - m_scrollableArea->visibleContentRect().maxX());
         }
     }
     
