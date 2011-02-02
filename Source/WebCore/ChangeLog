@@ -1,3 +1,17 @@
+2011-02-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        Fix a couple loose ends from the back/forward tree encode/decode work
+        https://bugs.webkit.org/show_bug.cgi?id=53537
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::encodeBackForwardTreeNode): Remove extra copy of
+        original URL string; no need to encode it twice.
+        (WebCore::HistoryItem::decodeBackForwardTree): Ditto.
+        * history/HistoryItem.h: Removed declaration for function that is no
+        longer defined nor used.
+
 2011-02-01  Tony Chang  <tony@chromium.org>
 
         Reviewed by Kent Tamura.

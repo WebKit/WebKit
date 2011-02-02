@@ -716,8 +716,6 @@ void HistoryItem::encodeBackForwardTreeNode(Encoder& encoder) const
 
     encoder.encodeInt64(m_itemSequenceNumber);
 
-    encoder.encodeString(m_originalURLString);
-
     encoder.encodeString(m_referrer);
 
     encoder.encodeInt32(m_scrollPoint.x());
@@ -818,9 +816,6 @@ resume:
     }
 
     if (!decoder.decodeInt64(node->m_itemSequenceNumber))
-        return 0;
-
-    if (!decoder.decodeString(node->m_originalURLString))
         return 0;
 
     if (!decoder.decodeString(node->m_referrer))
