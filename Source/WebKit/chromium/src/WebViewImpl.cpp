@@ -1025,7 +1025,7 @@ void WebViewImpl::doPixelReadbackToCanvas(WebCanvas* canvas, const IntRect& rect
     notImplemented();
 #endif
     // Compute rect to sample from inverted GPU buffer.
-    IntRect invertRect(rect.x(), bitmapHeight - rect.bottom(), rect.width(), rect.height());
+    IntRect invertRect(rect.x(), bitmapHeight - rect.maxY(), rect.width(), rect.height());
 
     OwnPtr<ImageBuffer> imageBuffer(ImageBuffer::create(rect.size()));
     RefPtr<ByteArray> pixelArray(ByteArray::create(rect.width() * rect.height() * 4));

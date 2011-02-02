@@ -43,12 +43,12 @@ static IntSize distanceToRect(const IntPoint& point, const IntRect& rect)
     int dx = 0, dy = 0;
     if (point.x() < rect.x())
         dx = point.x() - rect.x();
-    else if (rect.right() < point.x())
-        dx = point.x() - rect.right();
+    else if (rect.maxX() < point.x())
+        dx = point.x() - rect.maxX();
     if (point.y() < rect.y())
         dy = point.y() - rect.y();
-    else if (rect.bottom() < point.y())
-        dy = point.y() - rect.bottom();
+    else if (rect.maxY() < point.y())
+        dy = point.y() - rect.maxY();
     return IntSize(dx, dy);
 }
 
