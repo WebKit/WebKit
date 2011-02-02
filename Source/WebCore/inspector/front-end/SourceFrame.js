@@ -208,9 +208,6 @@ WebInspector.SourceFrame.prototype = {
         this._textViewer.endUpdates();
 
         WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.BreakpointAdded, this._breakpointAdded, this);
-
-        if (this._canEditScripts)
-            this._textViewer.editCallback = this._editLine.bind(this);
     },
 
     _setTextViewerDecorations: function()
@@ -526,7 +523,7 @@ WebInspector.SourceFrame.prototype = {
         var target = event.target.enclosingNodeOrSelfWithClass("webkit-line-number");
         if (!target)
             return;
-        var textViewerLineNumber = target.parentElement.lineNumber;
+        var textViewerLineNumber = target.lineNumber;
         var originalLineNumber = this._formatter.formattedLineNumberToOriginalLineNumber(textViewerLineNumber);
 
         var contextMenu = new WebInspector.ContextMenu();
@@ -592,7 +589,7 @@ WebInspector.SourceFrame.prototype = {
         var target = event.target.enclosingNodeOrSelfWithClass("webkit-line-number");
         if (!target)
             return;
-        var originalLineNumber = this._formatter.formattedLineNumberToOriginalLineNumber(target.parentElement.lineNumber);
+        var originalLineNumber = this._formatter.formattedLineNumberToOriginalLineNumber(target.lineNumber);
 
         var breakpoint = this._findBreakpoint(originalLineNumber);
         if (breakpoint) {
@@ -855,11 +852,10 @@ WebInspector.SourceFrame.prototype = {
         if (!Preferences.canEditScriptSource || !this._isScript)
             return;
 
-        var target = event.target.enclosingNodeOrSelfWithNodeName("TD");
-        if (!target || target.parentElement.firstChild === target)
+        var lineRow = event.target.enclosingNodeOrSelfWithClass("webkit-line-content");
+        if (!lineRow)
             return;  // Do not trigger editing from line numbers.
 
-        var lineRow = target.parentElement;
         var lineNumber = lineRow.lineNumber;
         var sourceID = this._sourceIDForLine(lineNumber);
         if (!sourceID)

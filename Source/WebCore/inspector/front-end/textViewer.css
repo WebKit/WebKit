@@ -9,10 +9,32 @@
 }
 
 .text-editor-lines {
-    border: 0;
-    -webkit-border-horizontal-spacing: 0;
-    -webkit-border-vertical-spacing: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    overflow: hidden;
+    -webkit-user-select: none;
+}
+
+.text-editor-contents {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
     -webkit-user-select: text;
+}
+
+.text-editor-editable {
+    -webkit-user-modify: read-write-plaintext-only;
+}
+
+.webkit-line-decorations {
+    pointer-events: none;
+    -webkit-user-select: none;
+    -webkit-user-modify: read-only;
 }
 
 .webkit-html-message-bubble {
@@ -63,7 +85,6 @@
     text-align: right;
     vertical-align: top;
     word-break: normal;
-    -webkit-user-select: none;
     padding-right: 4px;
     padding-left: 6px;
 }
@@ -83,12 +104,6 @@
 
 .webkit-breakpoint .webkit-line-number-inner, .webkit-breakpoint-conditional .webkit-line-number-inner, .webkit-execution-line .webkit-line-number-inner {
     margin-right: -10px;
-}
-
-.webkit-line-content {
-    width: 100%;
-    padding-left: 2px;
-    vertical-align: top;
 }
 
 .webkit-breakpoint .webkit-line-number-outer {
@@ -136,21 +151,21 @@
     opacity: 0.3;
 }
 
-.webkit-execution-line .webkit-line-content {
+.webkit-execution-line.webkit-line-content {
     background-color: rgb(171, 191, 254);
     outline: 1px solid rgb(64, 115, 244);
 }
 
-.diff-container .webkit-added-line .webkit-line-content {
+.diff-container .webkit-added-line.webkit-line-content {
     background-color: rgb(220, 255, 220);
 }
 
-.diff-container .webkit-removed-line .webkit-line-content {
+.diff-container .webkit-removed-line.webkit-line-content {
     background-color: rgb(255, 220, 220);
     text-decoration: line-through;
 }
 
-.diff-container .webkit-changed-line .webkit-line-content {
+.diff-container .webkit-changed-line.webkit-line-content {
     background-color: rgb(220, 220, 255);
 }
 
@@ -164,7 +179,7 @@
     color: black;
 }
 
-.webkit-highlighted-line .webkit-line-content {
+.webkit-highlighted-line.webkit-line-content {
     -webkit-animation: "fadeout" 2s 0s;
 }
 

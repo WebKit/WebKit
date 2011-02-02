@@ -1,3 +1,98 @@
+2011-02-02  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Use DIVs instead of TABLE in TextViewer
+        https://bugs.webkit.org/show_bug.cgi?id=53299
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._createTextViewer):
+        (WebInspector.SourceFrame.prototype._mouseDown):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer):
+        (WebInspector.TextViewer.prototype.set mimeType):
+        (WebInspector.TextViewer.prototype.revealLine):
+        (WebInspector.TextViewer.prototype.addDecoration):
+        (WebInspector.TextViewer.prototype.removeDecoration):
+        (WebInspector.TextViewer.prototype.markAndRevealRange):
+        (WebInspector.TextViewer.prototype.highlightLine):
+        (WebInspector.TextViewer.prototype.clearLineHighlight):
+        (WebInspector.TextViewer.prototype.freeCachedElements):
+        (WebInspector.TextViewer.prototype._handleKeyDown):
+        (WebInspector.TextViewer.prototype.editLine.finishEditing):
+        (WebInspector.TextViewer.prototype.editLine):
+        (WebInspector.TextViewer.prototype.beginUpdates):
+        (WebInspector.TextViewer.prototype.endUpdates):
+        (WebInspector.TextViewer.prototype.resize):
+        (WebInspector.TextViewer.prototype._textChanged):
+        (WebInspector.TextViewer.prototype._updatePanelOffsets):
+        (WebInspector.TextViewer.prototype._syncScroll):
+        (WebInspector.TextViewer.prototype._syncDecorationsForLine):
+        (WebInspector.TextEditorChunkedPanel):
+        (WebInspector.TextEditorChunkedPanel.prototype.set syncScrollListener):
+        (WebInspector.TextEditorChunkedPanel.prototype.get textModel):
+        (WebInspector.TextEditorChunkedPanel.prototype.addDecoration):
+        (WebInspector.TextEditorChunkedPanel.prototype.removeDecoration):
+        (WebInspector.TextEditorChunkedPanel.prototype.revealLine):
+        (WebInspector.TextEditorChunkedPanel.prototype.makeLineAChunk):
+        (WebInspector.TextEditorChunkedPanel.prototype.textChanged):
+        (WebInspector.TextEditorChunkedPanel.prototype.beginUpdates):
+        (WebInspector.TextEditorChunkedPanel.prototype.endUpdates):
+        (WebInspector.TextEditorChunkedPanel.prototype.resize):
+        (WebInspector.TextEditorChunkedPanel.prototype._scroll):
+        (WebInspector.TextEditorChunkedPanel.prototype._scheduleRepaintAll):
+        (WebInspector.TextEditorChunkedPanel.prototype._buildChunks):
+        (WebInspector.TextEditorChunkedPanel.prototype._repaintAll):
+        (WebInspector.TextEditorChunkedPanel.prototype._chunkNumberForLine):
+        (WebInspector.TextEditorChunkedPanel.prototype._chunkForLine):
+        (WebInspector.TextEditorGutterPanel):
+        (WebInspector.TextEditorGutterPanel.prototype.freeCachedElements):
+        (WebInspector.TextEditorGutterPanel.prototype._createNewChunk):
+        (WebInspector.TextEditorGutterPanel.prototype._expandChunks):
+        (WebInspector.TextEditorGutterChunk):
+        (WebInspector.TextEditorGutterChunk.prototype.get expanded):
+        (WebInspector.TextEditorGutterChunk.prototype.set expanded):
+        (WebInspector.TextEditorGutterChunk.prototype.get height):
+        (WebInspector.TextEditorGutterChunk.prototype._createRow):
+        (WebInspector.TextEditorMainPanel):
+        (WebInspector.TextEditorMainPanel.prototype.set syncDecorationsForLine):
+        (WebInspector.TextEditorMainPanel.prototype.set mimeType):
+        (WebInspector.TextEditorMainPanel.prototype.markAndRevealRange):
+        (WebInspector.TextEditorMainPanel.prototype.highlightLine):
+        (WebInspector.TextEditorMainPanel.prototype.clearLineHighlight):
+        (WebInspector.TextEditorMainPanel.prototype.freeCachedElements):
+        (WebInspector.TextEditorMainPanel.prototype._buildChunks):
+        (WebInspector.TextEditorMainPanel.prototype._createNewChunk):
+        (WebInspector.TextEditorMainPanel.prototype._expandChunks):
+        (WebInspector.TextEditorMainPanel.prototype._highlightDataReady):
+        (WebInspector.TextEditorMainPanel.prototype._paintLines):
+        (WebInspector.TextEditorMainPanel.prototype._paintLine):
+        (WebInspector.TextEditorMainPanel.prototype._releaseLinesHighlight):
+        (WebInspector.TextEditorMainPanel.prototype._getSelection):
+        (WebInspector.TextEditorMainPanel.prototype._restoreSelection):
+        (WebInspector.TextEditorMainPanel.prototype._selectionToPosition):
+        (WebInspector.TextEditorMainPanel.prototype._positionToSelection):
+        (WebInspector.TextEditorMainPanel.prototype._appendTextNode):
+        (WebInspector.TextEditorMainPanel.prototype._handleDomUpdates):
+        (WebInspector.TextEditorMainChunk):
+        (WebInspector.TextEditorMainChunk.prototype.addDecoration):
+        (WebInspector.TextEditorMainChunk.prototype.set expanded):
+        (WebInspector.TextEditorMainChunk.prototype.get height):
+        (WebInspector.TextEditorMainChunk.prototype.getExpandedLineRow):
+        (WebInspector.TextEditorMainChunk.prototype._createRow):
+        (WebInspector):
+        * inspector/front-end/textViewer.css:
+        (.text-editor-lines):
+        (.text-editor-contents):
+        (.text-editor-editable):
+        (.webkit-line-decorations):
+        (.webkit-line-number):
+        (.webkit-execution-line.webkit-line-content):
+        (.diff-container .webkit-added-line.webkit-line-content):
+        (.diff-container .webkit-removed-line.webkit-line-content):
+        (.diff-container .webkit-changed-line.webkit-line-content):
+        (.webkit-highlighted-line.webkit-line-content):
+
 2011-02-02  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Jeremy Orlow.
