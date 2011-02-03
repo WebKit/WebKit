@@ -1,3 +1,9 @@
+2011-02-03  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix one GTK+ skipped list entry that referred to the wrong test file.
+
+        * platform/gtk/Skipped: Fix skipped list entry.
+
 2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Removed the checksum that is out of place.
