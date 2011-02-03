@@ -1,3 +1,19 @@
+2011-02-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] fast/dynamic/unicode-bidi.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=53456
+
+        Add Qt specific expected files.
+
+        * platform/qt/fast/dynamic/unicode-bidi-expected.checksum: Added.
+        * platform/qt/fast/dynamic/unicode-bidi-expected.png: Added.
+        * platform/qt/fast/dynamic/unicode-bidi-expected.txt: Copied from LayoutTests/fast/dynamic/unicode-bidi-expected.txt.
+        * platform/qt/fast/text/bidi-embedding-pop-and-push-same-2-expected.checksum: Added.
+        * platform/qt/fast/text/bidi-embedding-pop-and-push-same-2-expected.png: Added.
+        * platform/qt/fast/text/bidi-embedding-pop-and-push-same-2-expected.txt: Copied from LayoutTests/fast/text/bidi-embedding-pop-and-push-same-2-expected.txt.
+
 2011-02-03  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK baselines for 2 new tests added in r77267 and r77153.
