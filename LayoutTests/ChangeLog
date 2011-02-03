@@ -1,3 +1,13 @@
+2011-02-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/8948788> Text emphasis marks have wrong orientation for vertical text
+        https://bugs.webkit.org/show_bug.cgi?id=53709
+
+        * platform/mac/fast/text/emphasis-vertical-expected.checksum:
+        * platform/mac/fast/text/emphasis-vertical-expected.png:
+
 2011-02-03  Martin Robinson  <mrobinson@igalia.com>
 
         Fix one GTK+ skipped list entry that referred to the wrong test file.

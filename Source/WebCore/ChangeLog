@@ -1,3 +1,16 @@
+2011-02-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/8948788> Text emphasis marks have wrong orientation for vertical text
+        https://bugs.webkit.org/show_bug.cgi?id=53709
+
+        Covered by rendering of fast/text/emphasis-vertical.html
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::scaledFontData): Give the scaled font the same orientation this font
+        has.
+
 2011-02-02  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Ryosuke Niwa.

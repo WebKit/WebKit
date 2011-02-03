@@ -394,7 +394,7 @@ SimpleFontData* SimpleFontData::scaledFontData(const FontDescription& fontDescri
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     float size = m_platformData.size() * scaleFactor;
-    FontPlatformData scaledFontData([[NSFontManager sharedFontManager] convertFont:m_platformData.font() toSize:size], size);
+    FontPlatformData scaledFontData([[NSFontManager sharedFontManager] convertFont:m_platformData.font() toSize:size], size, false, false, m_platformData.orientation());
 
     // AppKit resets the type information (screen/printer) when you convert a font to a different size.
     // We have to fix up the font that we're handed back.
