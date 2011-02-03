@@ -1,3 +1,49 @@
+2011-02-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        ShadowBlur radius for CSS shadows is slightly too big
+        https://bugs.webkit.org/show_bug.cgi?id=53660
+        
+        Updated pixel results.
+
+        * platform/mac/compositing/shadows/shadow-drawing-expected.checksum:
+        * platform/mac/compositing/shadows/shadow-drawing-expected.png:
+        * platform/mac/fast/borders/border-radius-split-inline-expected.checksum:
+        * platform/mac/fast/borders/border-radius-split-inline-expected.png:
+        * platform/mac/fast/box-shadow/basic-shadows-expected.checksum:
+        * platform/mac/fast/box-shadow/basic-shadows-expected.png:
+        * platform/mac/fast/box-shadow/box-shadow-radius-expected.checksum:
+        * platform/mac/fast/box-shadow/box-shadow-radius-expected.png:
+        * platform/mac/fast/box-shadow/box-shadow-transformed-expected.checksum:
+        * platform/mac/fast/box-shadow/box-shadow-transformed-expected.png:
+        * platform/mac/fast/box-shadow/inset-box-shadow-radius-expected.checksum:
+        * platform/mac/fast/box-shadow/inset-box-shadow-radius-expected.png:
+        * platform/mac/fast/box-shadow/inset-expected.checksum:
+        * platform/mac/fast/box-shadow/inset-expected.png:
+        * platform/mac/fast/css/color-correction-on-box-shadow-expected.checksum:
+        * platform/mac/fast/css/color-correction-on-box-shadow-expected.png:
+        * platform/mac/fast/css/shadow-multiple-expected.checksum:
+        * platform/mac/fast/css/shadow-multiple-expected.png:
+        * platform/mac/fast/repaint/box-shadow-h-expected.checksum:
+        * platform/mac/fast/repaint/box-shadow-h-expected.png:
+        * platform/mac/fast/repaint/box-shadow-v-expected.checksum:
+        * platform/mac/fast/repaint/box-shadow-v-expected.png:
+        * platform/mac/fast/repaint/shadow-multiple-horizontal-expected.checksum:
+        * platform/mac/fast/repaint/shadow-multiple-horizontal-expected.png:
+        * platform/mac/fast/repaint/shadow-multiple-strict-horizontal-expected.checksum:
+        * platform/mac/fast/repaint/shadow-multiple-strict-horizontal-expected.png:
+        * platform/mac/fast/repaint/shadow-multiple-strict-vertical-expected.checksum:
+        * platform/mac/fast/repaint/shadow-multiple-strict-vertical-expected.png:
+        * platform/mac/fast/repaint/shadow-multiple-vertical-expected.checksum:
+        * platform/mac/fast/repaint/shadow-multiple-vertical-expected.png:
+        * platform/mac/fast/repaint/transform-replaced-shadows-expected.checksum:
+        * platform/mac/fast/repaint/transform-replaced-shadows-expected.png:
+        * platform/mac/fast/transforms/shadows-expected.checksum:
+        * platform/mac/fast/transforms/shadows-expected.png:
+        * platform/mac/svg/css/composite-shadow-text-expected.checksum:
+        * platform/mac/svg/css/composite-shadow-text-expected.png:
+
 2011-02-03  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, rebaseline GTK svg tests after r77485.

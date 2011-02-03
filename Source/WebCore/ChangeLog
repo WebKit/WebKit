@@ -1,3 +1,25 @@
+2011-02-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        ShadowBlur radius for CSS shadows is slightly too big
+        https://bugs.webkit.org/show_bug.cgi?id=53660
+        
+        If we follow SVG gaussian blur for CSS shadows, we can end up rendering
+        shadows that extend further than the CSS "blur radius", which results
+        in the shadows being truncated.
+        
+        Fix with a small fudge factor to reduce the kernel diameter slightly
+        for CSS shadows.
+        
+        Also more closely follow the algorithm described in the SVG spec
+        for computing the kernel size for different diameters, and clean up
+        some variable naming relating to the shadow bounds.
+
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ShadowBlur::blurLayerImage):
+        (WebCore::ShadowBlur::drawRectShadowWithTiling):
+
 2011-02-01  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
