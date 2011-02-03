@@ -3,17 +3,9 @@ EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldDeleteDOMRange:range from 8 of #text > DIV > DIV > BODY > HTML > #document to 23 of #text > DIV > DIV > BODY > HTML > #document
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 8 of #text > DIV > DIV > BODY > HTML > #document to 8 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 8 of #text > DIV > DIV > BODY > HTML > #document to 8 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > DIV > BODY > HTML > #document to 23 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 3 of #text > DIV > DIV > BODY > HTML > #document to 3 of #text > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 4 of #text > B > SPAN > DIV > DIV > BODY > HTML > #document to 4 of #text > B > SPAN > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
@@ -33,19 +25,8 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (0,28) size 0x28
           RenderText {#text} at (0,56) size 222x28
             text run at (0,56) width 222: "one two three four five"
-      RenderBlock {DIV} at (0,208) size 784x64
+      RenderBlock {DIV} at (0,208) size 784x32
         RenderBlock {DIV} at (0,0) size 784x32 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,2) size 35x28
-            text run at (2,2) width 35: "one"
-          RenderInline {SPAN} at (0,0) size 137x19
-            RenderInline {B} at (0,0) size 137x19
-              RenderText {#text} at (37,9) size 137x19
-                text run at (37,9) width 137: "This is a paragraph."
-        RenderBlock {DIV} at (0,32) size 784x32 [border: (2px solid #FF0000)]
-          RenderInline {SPAN} at (0,0) size 30x19
-            RenderInline {B} at (0,0) size 30x19
-              RenderText {#text} at (2,9) size 30x19
-                text run at (2,9) width 30: "This"
-          RenderText {#text} at (32,2) size 44x28
-            text run at (32,2) width 44: " five"
-caret: position 4 of child 0 {#text} of child 0 {B} of child 0 {SPAN} of child 2 {DIV} of child 3 {DIV} of body
+          RenderText {#text} at (2,2) size 222x28
+            text run at (2,2) width 222: "one five two three four"
+caret: position 23 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

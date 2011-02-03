@@ -1,3 +1,12 @@
+2011-02-02  Martin Robinson  <mrobinson@igalia.com>
+
+        Rebaseline two tests after import of editing test results for GTK+.
+        Also remove a platform-specific baseline for a test which is now passing.
+
+        * platform/gtk/editing/pasteboard/emacs-ctrl-a-k-y-expected.txt:
+        * platform/gtk/editing/selection/find-yensign-and-backslash-expected.txt: Removed.
+        * platform/gtk/fast/dom/52776-expected.txt:
+
 2011-02-02  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

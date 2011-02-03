@@ -124,9 +124,9 @@ layer at (0,0) size 781x1747
             text run at (747,0) width 0 RTL: "\x{202C}"
             text run at (747,0) width 18: "\x{660}\x{661}"
         RenderBlock {DIV} at (0,756) size 765x19
-          RenderText {#text} at (745,0) size 20x19
-            text run at (745,0) width 0 RTL: "\x{202A}"
-            text run at (745,0) width 20 RTL: "\x{683}\x{684}\x{202C}"
+          RenderText {#text} at (728,0) size 37x19
+            text run at (728,0) width 0 RTL: "\x{202A}"
+            text run at (728,0) width 37 RTL: "\x{683}\x{684}\x{202C}"
         RenderBlock {DIV} at (0,775) size 765x19
           RenderText {#text} at (765,0) size 0x19
             text run at (765,0) width 0 RTL: "\x{202A}"
