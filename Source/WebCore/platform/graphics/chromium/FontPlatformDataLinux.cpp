@@ -36,6 +36,7 @@
 #include "PlatformBridge.h"
 #include "PlatformString.h"
 
+#include "SkAdvancedTypefaceMetrics.h"
 #include "SkPaint.h"
 #include "SkTypeface.h"
 
@@ -71,6 +72,7 @@ FontPlatformData::FontPlatformData(const FontPlatformData& src)
     : m_typeface(src.m_typeface)
     , m_family(src.m_family)
     , m_textSize(src.m_textSize)
+    , m_emSizeInFontUnits(src.m_emSizeInFontUnits)
     , m_fakeBold(src.m_fakeBold)
     , m_fakeItalic(src.m_fakeItalic)
     , m_orientation(src.m_orientation)
@@ -84,6 +86,7 @@ FontPlatformData::FontPlatformData(SkTypeface* tf, const char* family, float tex
     : m_typeface(tf)
     , m_family(family)
     , m_textSize(textSize)
+    , m_emSizeInFontUnits(0)
     , m_fakeBold(fakeBold)
     , m_fakeItalic(fakeItalic)
     , m_orientation(orientation)
@@ -96,6 +99,7 @@ FontPlatformData::FontPlatformData(const FontPlatformData& src, float textSize)
     : m_typeface(src.m_typeface)
     , m_family(src.m_family)
     , m_textSize(textSize)
+    , m_emSizeInFontUnits(src.m_emSizeInFontUnits)
     , m_fakeBold(src.m_fakeBold)
     , m_fakeItalic(src.m_fakeItalic)
     , m_harfbuzzFace(src.m_harfbuzzFace)
@@ -109,6 +113,17 @@ FontPlatformData::~FontPlatformData()
     SkSafeUnref(m_typeface);
 }
 
+int FontPlatformData::emSizeInFontUnits() const
+{
+    if (m_emSizeInFontUnits)
+        return m_emSizeInFontUnits;
+
+    SkAdvancedTypefaceMetrics* metrics = m_typeface->getAdvancedTypefaceMetrics(false);
+    m_emSizeInFontUnits = metrics->fEmSize;
+    metrics->unref();
+    return m_emSizeInFontUnits;
+}
+
 FontPlatformData& FontPlatformData::operator=(const FontPlatformData& src)
 {
     SkRefCnt_SafeAssign(m_typeface, src.m_typeface);
@@ -120,6 +135,7 @@ FontPlatformData& FontPlatformData::operator=(const FontPlatformData& src)
     m_harfbuzzFace = src.m_harfbuzzFace;
     m_orientation = src.m_orientation;
     m_style = src.m_style;
+    m_emSizeInFontUnits = src.m_emSizeInFontUnits;
 
     return *this;
 }

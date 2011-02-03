@@ -1,3 +1,25 @@
+2011-02-02  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] complex joining characters positioned in wrong place
+        https://bugs.webkit.org/show_bug.cgi?id=53637
+
+        Provide the correct font metrics to Harfbuzz related to the font design space.
+        There are used in some fonts for GPOS positioning.
+
+        Test: platform/chromium-linux/fast/text/international/complex-joining-using-gpos.html
+
+        * platform/graphics/chromium/ComplexTextControllerLinux.cpp:
+        (WebCore::ComplexTextController::setupFontForScriptRun):
+        (WebCore::ComplexTextController::allocHarfbuzzFont):
+        * platform/graphics/chromium/FontPlatformDataLinux.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::emSizeInFontUnits):
+        (WebCore::FontPlatformData::operator=):
+        * platform/graphics/chromium/FontPlatformDataLinux.h:
+        (WebCore::FontPlatformData::FontPlatformData):
+
 2011-02-02  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Kent Tamura.

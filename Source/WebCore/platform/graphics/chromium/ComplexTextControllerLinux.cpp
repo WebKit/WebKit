@@ -204,6 +204,16 @@ void ComplexTextController::setupFontForScriptRun()
     m_item.face = platformData.harfbuzzFace();
     void* opaquePlatformData = const_cast<FontPlatformData*>(&platformData);
     m_item.font->userData = opaquePlatformData;
+
+    int size = platformData.size();
+    m_item.font->x_ppem = size;
+    m_item.font->y_ppem = size;
+    // x_ and y_scale are the conversion factors from font design space (fEmSize) to 1/64th of device pixels in 16.16 format.
+    const int devicePixelFraction = 64;
+    const int multiplyFor16Dot16 = 1 << 16;
+    int scale = devicePixelFraction * size * multiplyFor16Dot16 / platformData.emSizeInFontUnits();
+    m_item.font->x_scale = scale;
+    m_item.font->y_scale = scale;
 }
 
 HB_FontRec* ComplexTextController::allocHarfbuzzFont()
@@ -212,13 +222,6 @@ HB_FontRec* ComplexTextController::allocHarfbuzzFont()
     memset(font, 0, sizeof(HB_FontRec));
     font->klass = &harfbuzzSkiaClass;
     font->userData = 0;
-    // The values which harfbuzzSkiaClass returns are already scaled to
-    // pixel units, so we just set all these to one to disable further
-    // scaling.
-    font->x_ppem = 1;
-    font->y_ppem = 1;
-    font->x_scale = 1;
-    font->y_scale = 1;
 
     return font;
 }

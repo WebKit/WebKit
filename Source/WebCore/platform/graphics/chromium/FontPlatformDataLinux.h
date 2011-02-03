@@ -63,6 +63,7 @@ public:
     FontPlatformData(WTF::HashTableDeletedValueType)
         : m_typeface(hashTableDeletedFontValue())
         , m_textSize(0)
+        , m_emSizeInFontUnits(0)
         , m_fakeBold(false)
         , m_fakeItalic(false)
         { }
@@ -70,6 +71,7 @@ public:
     FontPlatformData()
         : m_typeface(0)
         , m_textSize(0)
+        , m_emSizeInFontUnits(0)
         , m_fakeBold(false)
         , m_fakeItalic(false)
         , m_orientation(Horizontal)
@@ -78,6 +80,7 @@ public:
     FontPlatformData(float textSize, bool fakeBold, bool fakeItalic)
         : m_typeface(0)
         , m_textSize(textSize)
+        , m_emSizeInFontUnits(0)
         , m_fakeBold(fakeBold)
         , m_fakeItalic(fakeItalic)
         , m_orientation(Horizontal)
@@ -107,6 +110,7 @@ public:
 
     unsigned hash() const;
     float size() const { return m_textSize; }
+    int emSizeInFontUnits() const;
 
     FontOrientation orientation() const { return m_orientation; }
 
@@ -153,6 +157,7 @@ private:
     SkTypeface* m_typeface;
     CString m_family;
     float m_textSize;
+    mutable int m_emSizeInFontUnits;
     bool m_fakeBold;
     bool m_fakeItalic;
     FontOrientation m_orientation;

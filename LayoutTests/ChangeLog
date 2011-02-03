@@ -1,3 +1,18 @@
+2011-02-02  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] complex joining characters positioned in wrong place
+        https://bugs.webkit.org/show_bug.cgi?id=53637
+
+        Add a test that includes some characters that exhibited the problem.
+        Unfortunately it's purely a rendering issue, so it is a pixel test.
+
+        * platform/chromium-linux/fast/text/international/complex-joining-using-gpos-expected.checksum: Added.
+        * platform/chromium-linux/fast/text/international/complex-joining-using-gpos-expected.png: Added.
+        * platform/chromium-linux/fast/text/international/complex-joining-using-gpos-expected.txt: Added.
+        * platform/chromium-linux/fast/text/international/complex-joining-using-gpos.html: Added.
+
 2011-02-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed; remove the line I intended to remove.
