@@ -208,6 +208,15 @@ shouldBe("regexp46.exec('pk')", "['pk',undefined,undefined]");
 shouldBe("regexp46.exec('Xw555')", "['w555','w',undefined]");
 shouldBe("regexp46.exec('Xw55pk5')", "['w','w','']");
 
+var regexp47 = /(.*?)(?:(?:\?(.*?)?)?)(?:(?:#)?)$/;
+shouldBe("regexp47.exec('/www.acme.com/this/is/a/path/file.txt')", "['/www.acme.com/this/is/a/path/file.txt','/www.acme.com/this/is/a/path/file.txt',undefined]");
+
+var regexp48 = /^(?:(\w+):\/*([\w\.\-\d]+)(?::(\d+)|)(?=(?:\/|$))|)(?:$|\/?(.*?)(?:\?(.*?)?|)(?:#(.*)|)$)/;
+shouldBe("regexp48.exec('http://www.acme.com/this/is/a/path/file.txt')", "['http://www.acme.com/this/is/a/path/file.txt','http','www.acme.com',undefined,'this/is/a/path/file.txt',undefined,undefined]");
+
+var regexp49 = /(?:([^:]*?)(?:(?:\?(.*?)?)?)(?:(?:#)?)$)|(?:^(?:(\w+):\/*([\w\.\-\d]+)(?::(\d+)|)(?=(?:\/|$))|)(?:$|\/?(.*?)(?:\?(.*?)?|)(?:#(.*)|)$))/;
+shouldBe("regexp49.exec('http://www.acme.com/this/is/a/path/file.txt')", "['http://www.acme.com/this/is/a/path/file.txt',undefined,undefined,'http','www.acme.com',undefined,'this/is/a/path/file.txt',undefined,undefined]");
+
 shouldBe("'Hi Bob'.match(/(Rob)|(Bob)|(Robert)|(Bobby)/)", "['Bob',undefined,'Bob',undefined,undefined]");
 
 var successfullyParsed = true;

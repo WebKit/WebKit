@@ -407,9 +407,9 @@ class YarrGenerator : private MacroAssembler {
             --m_parenNestingLevel;
         }
 
-        ParenthesesTail* addParenthesesTail(PatternTerm& term, ParenthesesTail* nextOuterParenTail)
+        ParenthesesTail* addParenthesesTail(PatternTerm& term, JumpList* jumpListToPriorParen)
         {
-            ParenthesesTail* parenthesesTail = new ParenthesesTail(term, m_parenNestingLevel, nextOuterParenTail);
+            ParenthesesTail* parenthesesTail = new ParenthesesTail(term, m_parenNestingLevel, jumpListToPriorParen);
             m_parenTails.append(parenthesesTail);
             m_parenTailsForIteration.append(parenthesesTail);
 
@@ -815,7 +815,7 @@ class YarrGenerator : private MacroAssembler {
             , checkedTotal(checkedTotal)
             , m_subParenNum(0)
             , m_linkedBacktrack(0)
-            , m_parenthesesTail(0)
+            , m_jumpList(0)
         {
         }
 
@@ -876,14 +876,14 @@ class YarrGenerator : private MacroAssembler {
             return !disjunction->m_parent;
         }
 
-        void setParenthesesTail(ParenthesesTail* parenthesesTail)
+        void setJumpListToPriorParen(JumpList* jumpList)
         {
-            m_parenthesesTail = parenthesesTail;
+            m_jumpList = jumpList;
         }
 
-        ParenthesesTail* getParenthesesTail()
+        JumpList* getJumpListToPriorParen()
         {
-            return m_parenthesesTail;
+            return m_jumpList;
         }
 
         PatternTerm& lookaheadTerm()
@@ -1018,15 +1018,15 @@ class YarrGenerator : private MacroAssembler {
         unsigned m_subParenNum;
         BacktrackDestination m_backtrack;
         BacktrackDestination* m_linkedBacktrack;
-        ParenthesesTail* m_parenthesesTail;
+        JumpList* m_jumpList;
     };
 
     struct ParenthesesTail {
-        ParenthesesTail(PatternTerm& term, int nestingLevel, ParenthesesTail* nextOuterParenTail)
+        ParenthesesTail(PatternTerm& term, int nestingLevel, JumpList* jumpListToPriorParen)
             : m_term(term)
             , m_nestingLevel(nestingLevel)
             , m_subParenIndex(0)
-            , m_nextOuterParenTail(nextOuterParenTail)
+            , m_jumpListToPriorParen(jumpListToPriorParen)
         {
         }
 
@@ -1052,7 +1052,7 @@ class YarrGenerator : private MacroAssembler {
             if (m_doDirectBacktrack)
                 state.propagateBacktrackingFrom(generator, m_parenBacktrack, false);
             else {
-                stateBacktrack.setBacktrackJumpList(&m_pattBacktrackJumps);
+                stateBacktrack.setBacktrackJumpList(&m_afterBacktrackJumps);
                 stateBacktrack.setBacktrackSourceLabel(&m_backtrackFromAfterParens);
             }
         }
@@ -1065,7 +1065,7 @@ class YarrGenerator : private MacroAssembler {
 
         void addAfterParenJump(Jump jump)
         {
-            m_pattBacktrackJumps.append(jump);
+            m_afterBacktrackJumps.append(jump);
         }
 
         bool generateCode(YarrGenerator* generator, JumpList& jumpsToNext, bool priorBackTrackFallThrough, bool nextBacktrackFallThrough)
@@ -1091,12 +1091,9 @@ class YarrGenerator : private MacroAssembler {
                 if (m_backtrackToLabel.isSet()) {
                     m_backtrack.setLabel(m_backtrackToLabel);
                     nextBacktrackFallThrough = false;
-                } else if (!m_subParenIndex && m_nextOuterParenTail) {
-                    // If we don't have a destination and we are the first term of a nested paren, go
-                    // back to the outer paren.
-                    // There is an optimization if the next outer paren is the next paren to be emitted.
-                    // In that case we really want the else clause.
-                    m_backtrack.setBacktrackJumpList(&m_nextOuterParenTail->m_withinBacktrackJumps);
+                } else if (m_jumpListToPriorParen) {
+                    // If we don't have a destination, go back to either the prior paren or the next outer paren.
+                    m_backtrack.setBacktrackJumpList(m_jumpListToPriorParen);
                     nextBacktrackFallThrough = false;
                 } else
                     m_backtrack.setBacktrackJumpList(&jumpsToNext);
@@ -1109,7 +1106,7 @@ class YarrGenerator : private MacroAssembler {
             if (m_dataAfterLabelPtr.isSet())
                 generator->m_expressionState.m_backtrackRecords.append(AlternativeBacktrackRecord(m_dataAfterLabelPtr, m_backtrackFromAfterParens));
 
-            m_pattBacktrackJumps.link(generator);
+            m_afterBacktrackJumps.link(generator);
 
             if (m_term.quantityType == QuantifierGreedy) {
                 // If this is -1 we have now tested with both with and without the parens.
@@ -1149,14 +1146,14 @@ class YarrGenerator : private MacroAssembler {
         PatternTerm& m_term;
         int m_nestingLevel;
         unsigned m_subParenIndex;
-        ParenthesesTail* m_nextOuterParenTail;
+        JumpList* m_jumpListToPriorParen;
         Label m_nonGreedyTryParentheses;
         Label m_fallThrough;
         Label m_backtrackToLabel;
         Label m_backtrackFromAfterParens;
         DataLabelPtr m_dataAfterLabelPtr;
-        JumpList m_pattBacktrackJumps;
         JumpList m_withinBacktrackJumps;
+        JumpList m_afterBacktrackJumps;
         BacktrackDestination m_parenBacktrack;
         BacktrackDestination m_backtrack;
         bool m_doDirectBacktrack;
@@ -1581,8 +1578,10 @@ class YarrGenerator : private MacroAssembler {
             JumpList successes;
             bool propogateBacktrack = false;
 
-            for (state.resetAlternative(); state.alternativeValid(); state.nextAlternative()) {
+            // Save current state's paren jump list for use with each alternative 
+            JumpList* outerJumpList = state.getJumpListToPriorParen();
 
+            for (state.resetAlternative(); state.alternativeValid(); state.nextAlternative(), state.setJumpListToPriorParen(outerJumpList)) {
                 PatternAlternative* alternative = state.alternative();
                 optimizeAlternative(alternative);
 
@@ -1649,9 +1648,9 @@ class YarrGenerator : private MacroAssembler {
             m_expressionState.incrementParenNestingLevel();
 
             TermGenerationState parenthesesState(disjunction, state.checkedTotal);
-            
-            // Use the current paren Tail to connect the nested parentheses.
-            parenthesesState.setParenthesesTail(state.getParenthesesTail());
+
+            // Use the current state's jump list for the nested parentheses.
+            parenthesesState.setJumpListToPriorParen(state.getJumpListToPriorParen());
 
             generateParenthesesDisjunction(state.term(), parenthesesState, alternativeFrameLocation);
             // this expects that any backtracks back out of the parentheses will be in the
@@ -1662,6 +1661,8 @@ class YarrGenerator : private MacroAssembler {
 
             state.propagateBacktrackingFrom(this, parenthesesBacktrack);
             stateBacktrack.propagateBacktrackToLabel(parenthesesBacktrack);
+
+            state.setJumpListToPriorParen(parenthesesState.getJumpListToPriorParen());
 
             m_expressionState.decrementParenNestingLevel();
         } else {
@@ -1687,14 +1688,14 @@ class YarrGenerator : private MacroAssembler {
                     store32(index, Address(output, (term.parentheses.subpatternId << 1) * sizeof(int)));
             }
 
-            ParenthesesTail* parenthesesTail = m_expressionState.addParenthesesTail(term, state.getParenthesesTail());
+            ParenthesesTail* parenthesesTail = m_expressionState.addParenthesesTail(term, state.getJumpListToPriorParen());
 
             m_expressionState.incrementParenNestingLevel();
 
             TermGenerationState parenthesesState(disjunction, state.checkedTotal);
 
             // Save the parenthesesTail for backtracking from nested parens to this one.
-            parenthesesState.setParenthesesTail(parenthesesTail);
+            parenthesesState.setJumpListToPriorParen(&parenthesesTail->m_withinBacktrackJumps);
 
             // generate the body of the parentheses
             generateParenthesesDisjunction(state.term(), parenthesesState, alternativeFrameLocation);
@@ -1718,6 +1719,8 @@ class YarrGenerator : private MacroAssembler {
 
             parenthesesTail->processBacktracks(this, state, parenthesesState, nonGreedyTryParentheses, label());
 
+            state.setJumpListToPriorParen(&parenthesesTail->m_afterBacktrackJumps);
+            
             parenthesesState.getBacktrackDestination().clear();
 
             if (term.quantityType == QuantifierNonGreedy)
@@ -1977,6 +1980,7 @@ class YarrGenerator : private MacroAssembler {
 
             // if there are any more alternatives, plant the check for input before looping.
             if (state.alternativeValid()) {
+                state.setJumpListToPriorParen(0);
                 PatternAlternative* nextAlternative = state.alternative();
                 if (!setRepeatAlternativeLabels && !nextAlternative->onceThrough()) {
                     // We have handled non-repeating alternatives, jump to next iteration 

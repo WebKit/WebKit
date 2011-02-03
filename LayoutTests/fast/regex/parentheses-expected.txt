@@ -79,6 +79,9 @@ PASS regexp46.exec('5') is null
 PASS regexp46.exec('pk') is ['pk',undefined,undefined]
 PASS regexp46.exec('Xw555') is ['w555','w',undefined]
 PASS regexp46.exec('Xw55pk5') is ['w','w','']
+PASS regexp47.exec('/www.acme.com/this/is/a/path/file.txt') is ['/www.acme.com/this/is/a/path/file.txt','/www.acme.com/this/is/a/path/file.txt',undefined]
+PASS regexp48.exec('http://www.acme.com/this/is/a/path/file.txt') is ['http://www.acme.com/this/is/a/path/file.txt','http','www.acme.com',undefined,'this/is/a/path/file.txt',undefined,undefined]
+PASS regexp49.exec('http://www.acme.com/this/is/a/path/file.txt') is ['http://www.acme.com/this/is/a/path/file.txt',undefined,undefined,'http','www.acme.com',undefined,'this/is/a/path/file.txt',undefined,undefined]
 PASS 'Hi Bob'.match(/(Rob)|(Bob)|(Robert)|(Bobby)/) is ['Bob',undefined,'Bob',undefined,undefined]
 PASS successfullyParsed is true
 

@@ -1,3 +1,15 @@
+2011-02-02  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Improper backtrack of nested non-capturing greedy paren to prior paren
+        https://bugs.webkit.org/show_bug.cgi?id=53261
+
+        New tests to validate change.
+
+        * fast/regex/parentheses-expected.txt:
+        * fast/regex/script-tests/parentheses.js:
+
 2011-02-02  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Mihai Parparita.

@@ -1,3 +1,27 @@
+2011-02-02  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Improper backtrack of nested non-capturing greedy paren to prior paren
+        https://bugs.webkit.org/show_bug.cgi?id=53261
+
+        A paren that follows a non-capturing greedy paren nested within a 
+        non-capturing fixed paren was back tracking to the last paren 
+        processed instead of the immediately prior paren.
+        Refactored default backtracking of parens to prior paren to work for
+        both nested (within) and immediately prior (after) parens.
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::GenerationState::addParenthesesTail):
+        (JSC::Yarr::YarrGenerator::TermGenerationState::TermGenerationState):
+        (JSC::Yarr::YarrGenerator::TermGenerationState::setJumpListToPriorParen):
+        (JSC::Yarr::YarrGenerator::TermGenerationState::getJumpListToPriorParen):
+        (JSC::Yarr::YarrGenerator::ParenthesesTail::ParenthesesTail):
+        (JSC::Yarr::YarrGenerator::ParenthesesTail::generateCode):
+        (JSC::Yarr::YarrGenerator::generateParenthesesDisjunction):
+        (JSC::Yarr::YarrGenerator::generateParenthesesSingle):
+        (JSC::Yarr::YarrGenerator::generateDisjunction):
+
 2011-02-02  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Darin Adler and Steve Falkenburg.
