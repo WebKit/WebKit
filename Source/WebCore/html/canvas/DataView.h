@@ -75,7 +75,7 @@ private:
     DataView(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned byteLength);
 
     template<typename T>
-    inline bool beyondRange(unsigned byteOffset) const { return byteOffset + sizeof(T) > m_byteLength; }
+    inline bool beyondRange(unsigned byteOffset) const { return byteOffset >= m_byteLength || byteOffset + sizeof(T) > m_byteLength; }
 
     template<typename T>
     T getData(unsigned byteOffset, bool littleEndian, ExceptionCode&) const;

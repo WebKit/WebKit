@@ -147,7 +147,7 @@ PASS view.getFloat64(3, false) is -NaN
 PASS view.getFloat64(7, false) is -NaN
 PASS view.getFloat64(10, false) is -NaN
 
-Test for get methods that might read beyound range
+Test for get methods that might read beyond range
 PASS view.getInt8(0) is 0
 PASS view.getInt8(8) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
 PASS view.getInt8(15) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
@@ -270,6 +270,30 @@ PASS view.getFloat64(0, false) is -NaN
 PASS view.getFloat64(3, false) is -NaN
 PASS view.getFloat64(7, false) is -NaN
 PASS view.getFloat64(10, false) is -NaN
+
+Test for get methods that read from negative index
+PASS view.getInt8(-1) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.getInt8(-2) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.getUint8(-1) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.getUint8(-2) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.getInt16(-1) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.getInt16(-2) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.getInt16(-3) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.getUint16(-1) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.getUint16(-2) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.getUint16(-3) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.getInt32(-1) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.getInt32(-3) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.getInt32(-5) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.getUint32(-1) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.getUint32(-3) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.getUint32(-5) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.getFloat32(-1) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.getFloat32(-3) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.getFloat32(-5) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.getFloat64(-1) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.getFloat64(-5) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.getFloat64(-9) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
 
 Test for wrong arguments passed to get methods
 PASS view.getInt8() threw exception SyntaxError: Not enough arguments.
@@ -737,7 +761,31 @@ PASS view.getFloat64(7, false) is -NaN
 PASS view.setFloat64(10, -NaN, false) is undefined.
 PASS view.getFloat64(10, false) is -NaN
 
-Test for wrong arguments passed to get methods
+Test for set methods that write to negative index
+PASS view.setInt8(-1, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.setInt8(-2, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.setUint8(-1, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.setUint8(-2, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.setInt16(-1, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.setInt16(-2, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.setInt16(-3, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.setUint16(-1, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.setUint16(-2, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.setUint16(-3, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.setInt32(-1, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.setInt32(-3, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.setInt32(-5, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.setUint32(-1, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.setUint32(-3, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.setUint32(-5, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.setFloat32(-1, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.setFloat32(-3, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.setFloat32(-5, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.setFloat64(-1, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.setFloat64(-5, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view.setFloat64(-9, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+
+Test for wrong arguments passed to set methods
 PASS view.setInt8() threw exception SyntaxError: Not enough arguments.
 PASS view.setUint8() threw exception SyntaxError: Not enough arguments.
 PASS view.setInt16() threw exception SyntaxError: Not enough arguments.
