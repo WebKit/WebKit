@@ -58,4 +58,9 @@ bool LayerTreeContext::isEmpty() const
     return !contextID;
 }
 
+bool operator==(const LayerTreeContext& a, const LayerTreeContext& b)
+{
+    return a.contextID == b.contextID;
+}
+
 } // namespace WebKit

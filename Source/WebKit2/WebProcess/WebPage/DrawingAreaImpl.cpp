@@ -183,13 +183,17 @@ void DrawingAreaImpl::setSize(const IntSize& size)
     m_webPage->layoutIfNeeded();
 
     UpdateInfo updateInfo;
+    LayerTreeContext layerTreeContext;
+
+    if (m_layerTreeHost)
+        layerTreeContext = m_layerTreeHost->layerTreeContext();
 
     if (m_isPaintingSuspended || m_layerTreeHost) {
         updateInfo.viewSize = m_webPage->size();
     } else
         display(updateInfo);
 
-    m_webPage->send(Messages::DrawingAreaProxy::DidSetSize(generateSequenceNumber(), updateInfo));
+    m_webPage->send(Messages::DrawingAreaProxy::DidSetSize(generateSequenceNumber(), updateInfo, layerTreeContext));
 
     m_inSetSize = false;
 }

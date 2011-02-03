@@ -2,6 +2,48 @@
 
         Reviewed by Dan Bernstein.
 
+        Change DidSetSize to take a LayerTreeContext parameter
+        https://bugs.webkit.org/show_bug.cgi?id=53724
+
+        Since SetSize can cause layout to happen, we need to pass along a layer tree context to 
+        the DidSetSize message so the UI process can enter/exit accelerated compositing mode appropriately.
+        
+        * Shared/LayerTreeContext.h:
+        * Shared/mac/LayerTreeContextMac.mm:
+        Add equality operators to LayerTreeContext.
+
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::didSetSize):
+        This now takes a LayerTreeContext parameter.
+        
+        * UIProcess/DrawingAreaProxy.messages.in:
+        Add LayerTreeContext parameter.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        Get rid of m_isInAcceleratedCompositingMode and use the current layer context instead.
+
+        (WebKit::DrawingAreaProxyImpl::paint):
+        Bail if the call to DidSetSize ended up entering accelerated compositing mode.
+
+        (WebKit::DrawingAreaProxyImpl::didSetSize):
+        If the new layer tree context is different, enter/exit accelerated compositing mode accordingly.
+
+        (WebKit::DrawingAreaProxyImpl::enterAcceleratedCompositingMode):
+        (WebKit::DrawingAreaProxyImpl::exitAcceleratedCompositingMode):
+        Update the layer tree context.
+
+        * UIProcess/DrawingAreaProxyImpl.h:
+        (WebKit::DrawingAreaProxyImpl::isInAcceleratedCompositingMode):
+        Add simple getter.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::setSize):
+        Pass along the layer tree context.
+
+2011-02-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         Get rid of LayerTreeContext::seed on Mac.
         Add sequence checks to enterAcceleratedCompositingMode and exitAcceleratedCompositingMode and
         have them call newly added overloads that don't have the checks.

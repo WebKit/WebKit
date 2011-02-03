@@ -28,6 +28,7 @@
 
 #include "BackingStore.h"
 #include "DrawingAreaProxy.h"
+#include "LayerTreeContext.h"
 
 namespace WebKit {
 
@@ -55,7 +56,7 @@ private:
 
     // CoreIPC message handlers
     virtual void update(uint64_t sequenceNumber, const UpdateInfo&);
-    virtual void didSetSize(uint64_t sequenceNumber, const UpdateInfo&);
+    virtual void didSetSize(uint64_t sequenceNumber, const UpdateInfo&, const LayerTreeContext&);
     virtual void enterAcceleratedCompositingMode(uint64_t sequenceNumber, const LayerTreeContext&);
     virtual void exitAcceleratedCompositingMode(uint64_t sequenceNumber);
 
@@ -65,12 +66,14 @@ private:
     void enterAcceleratedCompositingMode(const LayerTreeContext&);
     void exitAcceleratedCompositingMode();
 
+    bool isInAcceleratedCompositingMode() const { return !m_layerTreeContext.isEmpty(); }
+
+    // The current layer tree context.
+    LayerTreeContext m_layerTreeContext;
+    
     // Whether we've sent a SetSize message and are now waiting for a DidSetSize message.
     // Used to throttle SetSize messages so we don't send them faster than the Web process can handle.
     bool m_isWaitingForDidSetSize;
-
-    // Whether we're in accelerated compositing mode or not.
-    bool m_isInAcceleratedCompositingMode;
 
     // The sequence number of the last DidSetSize message
     uint64_t m_lastDidSetSizeSequenceNumber;

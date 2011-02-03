@@ -50,6 +50,13 @@ public:
 #endif
 };
 
+bool operator==(const LayerTreeContext&, const LayerTreeContext&);
+
+inline bool operator!=(const LayerTreeContext& a, const LayerTreeContext& b)
+{
+    return !(a == b);
+}
+
 };
 
 #endif // USE(ACCELERATED_COMPOSITING)

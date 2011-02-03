@@ -22,7 +22,7 @@
 
 messages -> DrawingAreaProxy {
     Update(uint64_t sequenceNumber, WebKit::UpdateInfo updateInfo)
-    DidSetSize(uint64_t sequenceNumber, WebKit::UpdateInfo updateInfo)
+    DidSetSize(uint64_t sequenceNumber, WebKit::UpdateInfo updateInfo, WebKit::LayerTreeContext context)
 
 #if USE(ACCELERATED_COMPOSITING)
     EnterAcceleratedCompositingMode(uint64_t sequenceNumber, WebKit::LayerTreeContext context)
