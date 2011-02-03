@@ -71,6 +71,7 @@ namespace Unicode {
                     char** targetStart, char* targetEnd, bool strict = true);
 
     unsigned calculateStringHashFromUTF8(const char* data, const char* dataEnd, unsigned& utf16Length);
+    unsigned calculateStringHashAndLengthFromUTF8(const char* data, unsigned& dataLength, unsigned& utf16Length);
 
     bool equalUTF16WithUTF8(const UChar* a, const UChar* aEnd, const char* b, const char* bEnd);
 

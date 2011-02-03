@@ -64,6 +64,7 @@ EXPORTS
     ?byteSize@SourceProviderCache@JSC@@QBEIXZ
     ?calculateDSTOffset@WTF@@YANNN@Z
     ?calculateStringHashFromUTF8@Unicode@WTF@@YAIPBD0AAI@Z
+    ?calculateStringHashAndLengthFromUTF8@Unicode@WTF@@YAIPBDAAI1@Z
     ?calculateUTCOffset@WTF@@YAHXZ
     ?calculatedFunctionName@DebuggerCallFrame@JSC@@QBE?AVUString@2@XZ
     ?call@JSC@@YA?AVJSValue@1@PAVExecState@1@V21@W4CallType@1@ABTCallData@1@1ABVArgList@1@@Z
