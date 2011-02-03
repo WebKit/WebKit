@@ -429,6 +429,10 @@ void InputType::srcAttributeChanged()
 {
 }
 
+void InputType::valueChanged()
+{
+}
+
 void InputType::willMoveToNewOwnerDocument()
 {
 }

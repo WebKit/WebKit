@@ -239,6 +239,11 @@ void RangeInputType::minOrMaxAttributeChanged()
     element()->setNeedsStyleRecalc();
 }
 
+void RangeInputType::valueChanged()
+{
+    element()->shadowRoot()->setNeedsStyleRecalc();
+}
+
 String RangeInputType::fallbackValue()
 {
     return serializeForNumberType(StepRange(element()).defaultValue());

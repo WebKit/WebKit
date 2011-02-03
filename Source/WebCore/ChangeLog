@@ -1,3 +1,22 @@
+2011-02-02  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        REGRESSION(r76147): Slider thumb position is not updated when value attribute is changed.
+        https://bugs.webkit.org/show_bug.cgi?id=53634
+
+        Test: fast/dom/HTMLInputElement/input-slider-update.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setValue): Added a call to InputType::valueChanged.
+        * html/InputType.cpp:
+        (WebCore::InputType::valueChanged): Added empty implementation.
+        * html/InputType.h: Added def.
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::valueChanged): Added implementation that dirties layout
+            bit on the thumb.
+        * html/RangeInputType.h: Added def.
+
 2011-02-02  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

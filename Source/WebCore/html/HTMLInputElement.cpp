@@ -887,6 +887,7 @@ void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
             cacheSelection(max, max);
         m_data.setSuggestedValue(String());
     }
+    m_inputType->valueChanged();
 
     // Don't dispatch the change event when focused, it will be dispatched
     // when the control loses focus.

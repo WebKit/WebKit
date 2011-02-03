@@ -1,3 +1,15 @@
+2011-02-02  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        REGRESSION(r76147): Slider thumb position is not updated when value attribute is changed.
+        https://bugs.webkit.org/show_bug.cgi?id=53634
+
+        * fast/dom/HTMLInputElement/input-slider-update.html: Added.
+        * platform/mac/fast/dom/HTMLInputElement/input-slider-update-expected.checksum: Added.
+        * platform/mac/fast/dom/HTMLInputElement/input-slider-update-expected.png: Added.
+        * platform/mac/fast/dom/HTMLInputElement/input-slider-update-expected.txt: Added.
+
 2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Update SVG baselines after r77485 for Windows.

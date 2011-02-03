@@ -63,6 +63,7 @@ private:
     virtual String serialize(double) const;
     virtual void accessKeyAction(bool sendToAnyElement);
     virtual void minOrMaxAttributeChanged();
+    virtual void valueChanged();
     virtual String fallbackValue();
     virtual String sanitizeValue(const String& proposedValue);
     virtual bool shouldRespectListAttribute();
