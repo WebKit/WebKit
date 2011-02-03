@@ -161,7 +161,7 @@ public :
     MidpointState<Iterator>& midpointState() { return m_midpointState; }
 
     void embed(WTF::Unicode::Direction);
-    void commitExplicitEmbedding();
+    bool commitExplicitEmbedding();
 
     void createBidiRunsForLine(const Iterator& end, bool visualOrder = false, bool hardLineBreak = false);
 
@@ -400,7 +400,7 @@ void BidiResolver<Iterator, Run>::raiseExplicitEmbeddingLevel(WTF::Unicode::Dire
 }
 
 template <class Iterator, class Run>
-void BidiResolver<Iterator, Run>::commitExplicitEmbedding()
+bool BidiResolver<Iterator, Run>::commitExplicitEmbedding()
 {
     using namespace WTF::Unicode;
 
@@ -440,6 +440,8 @@ void BidiResolver<Iterator, Run>::commitExplicitEmbedding()
     setContext(toContext);
 
     m_currentExplicitEmbeddingSequence.clear();
+
+    return fromLevel != toLevel;
 }
 
 template <class Iterator, class Run>
@@ -881,8 +883,8 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, boo
 
         increment();
         if (!m_currentExplicitEmbeddingSequence.isEmpty()) {
-            commitExplicitEmbedding();
-            if (pastEnd) {
+            bool committed = commitExplicitEmbedding();
+            if (committed && pastEnd) {
                 current = end;
                 m_status = stateAtEnd.m_status;
                 sor = stateAtEnd.sor; 

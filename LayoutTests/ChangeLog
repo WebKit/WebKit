@@ -1,3 +1,15 @@
+2011-02-02  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8380506> REGRESSION (r61921): RTL text in <b> tag doesn't display in WebKit under certain conditions
+        https://bugs.webkit.org/show_bug.cgi?id=44942
+
+        * fast/text/bidi-embedding-pop-and-push-same-2-expected.checksum: Added.
+        * fast/text/bidi-embedding-pop-and-push-same-2-expected.png: Added.
+        * fast/text/bidi-embedding-pop-and-push-same-2-expected.txt: Added.
+        * fast/text/bidi-embedding-pop-and-push-same-2.html: Added.
+
 2011-02-02  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Mihai Parparita.

@@ -1,3 +1,18 @@
+2011-02-02  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8380506> REGRESSION (r61921): RTL text in <b> tag doesn't display in WebKit under certain conditions
+        https://bugs.webkit.org/show_bug.cgi?id=44942
+
+        Test: fast/text/bidi-embedding-pop-and-push-same-2.html
+
+        * platform/text/BidiResolver.h:
+        (WebCore::::commitExplicitEmbedding): Changed to return a boolean indicating whether there was
+        a change to embedding levels.
+        (WebCore::::createBidiRunsForLine): If embedding levels did not change as a result of committing
+        the explicit embedding sequence, then runs were not added, and we should continue normally.
+
 2011-02-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
