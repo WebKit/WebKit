@@ -1,5 +1,11 @@
 2011-02-02  Martin Robinson  <mrobinson@igalia.com>
 
+        Unskip the last batch of editing tests needing GTK+ results.
+
+        * platform/gtk/Skipped: Unskip last batch of tests.
+
+2011-02-02  Martin Robinson  <mrobinson@igalia.com>
+
         Add one more set of missing editing layout test results for GTK.
 
         * platform/gtk/Skipped: Unskip more editing tests.

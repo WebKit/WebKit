@@ -1,0 +1,15 @@
+For Bug 40092: Spell checking for pasted text.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+FAIL INPUT should have a marker on for 'foo bar'
+FAIL INPUT should have a marker on for 'fo<b>o ba</b>r'
+FAIL TEXTAREA should have a marker on for 'foo bar'
+FAIL TEXTAREA should have a marker on for 'fo<b>o ba</b>r'
+FAIL DIV should have a marker on for 'foo bar'
+FAIL DIV should have a marker on for 'fo<b>o ba</b>r'
+

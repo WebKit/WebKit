@@ -1,0 +1,44 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of SPAN > BODY > HTML > #document to 3 of SPAN > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of SPAN > BODY > HTML > #document to 0 of SPAN > BODY > HTML > #document toDOMRange:range from 1 of #text > SPAN > BODY > HTML > #document to 30 of #text > SPAN > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of SPAN > BODY > HTML > #document to 3 of SPAN > BODY > HTML > #document
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of SPAN > BODY > HTML > #document to 0 of SPAN > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of SPAN > BODY > HTML > #document to 0 of SPAN > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of SPAN > BODY > HTML > #document to 0 of SPAN > BODY > HTML > #document toDOMRange:range from 29 of #text > SPAN > BODY > HTML > #document to 29 of #text > SPAN > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 507x19
+          text run at (0,0) width 102: "This tests copy. "
+          text run at (102,0) width 405: "Non-inheritable styles should be brought down from stylesheets."
+      RenderBlock {SPAN} at (0,35) size 784x57
+        RenderBlock (anonymous) at (0,0) size 784x19
+          RenderText {#text} at (0,0) size 183x19
+            text run at (0,0) width 183: "This shouldn't have a border."
+        RenderBlock {DIV} at (0,19) size 784x19
+          RenderText {#text} at (0,0) size 289x19
+            text run at (0,0) width 289: "This should have blue border when its pasted."
+        RenderBlock (anonymous) at (0,38) size 784x19
+          RenderText {#text} at (0,0) size 183x19
+            text run at (0,0) width 183: "This shouldn't have a border."
+      RenderBlock {SPAN} at (0,92) size 784x59
+        RenderBlock (anonymous) at (0,0) size 784x19
+          RenderText {#text} at (0,0) size 183x19
+            text run at (0,0) width 183: "This shouldn't have a border."
+        RenderBlock {DIV} at (0,19) size 784x21 [border: (1px solid #0000FF)]
+          RenderText {#text} at (1,1) size 289x19
+            text run at (1,1) width 289: "This should have blue border when its pasted."
+        RenderBlock (anonymous) at (0,40) size 784x19
+          RenderText {#text} at (0,0) size 183x19
+            text run at (0,0) width 183: "This shouldn't have a border."
+caret: position 29 of child 2 {#text} of child 5 {SPAN} of body
