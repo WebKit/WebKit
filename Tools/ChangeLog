@@ -1,3 +1,11 @@
+2011-02-03  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        Unreviewed.
+
+        Adding myself to committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-02-03  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Csaba Osztrogonác.
