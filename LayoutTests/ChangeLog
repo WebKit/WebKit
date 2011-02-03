@@ -1,3 +1,7 @@
+2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Update SVG baselines after r77485 for Linux.
+
 2011-02-03  Adam Roben  <aroben@apple.com>
 
         Skip fast/canvas/set-colors.html on Windows

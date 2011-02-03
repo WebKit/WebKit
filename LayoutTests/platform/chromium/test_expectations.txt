@@ -2126,7 +2126,6 @@ BUGWK39655 : fast/dom/prototype-property.html = FAIL
 // These SVG tests have been flaky on Win from quite some time.
 // Hard to pin down which roll introduced the flakiness.
 BUGCR45106 WIN : svg/clip-path/clip-path-evenodd-nonzero.svg = PASS CRASH
-//BUGCR45106 WIN : svg/text/text-text-05-t.svg = PASS CRASH
 
 BUGCR45720 WIN LINUX : http/tests/websocket/tests/reload-crash.html = PASS CRASH
 
@@ -2136,8 +2135,6 @@ BUGWK42798 SKIP : fast/notifications/notifications-cancel-request-permission.htm
 
 // HTML5 Geolocation API does not use window.clientInformation.
 BUGCR11246 SKIP : fast/dom/Window/window-properties-geolocation.html = TEXT
-
-//BUGWK40740 MAC LINUX : svg/W3C-SVG-1.1/fonts-glyph-02-t.svg = CRASH PASS
 
 BUGCR46603 : fast/frames/lots-of-iframes.html = PASS TIMEOUT
 BUGCR46603 : fast/frames/lots-of-objects.html = PASS TIMEOUT
@@ -2554,7 +2551,6 @@ BUGCR57934 WIN : http/tests/appcache/fail-on-update-2.html = PASS TEXT TIMEOUT
 
 // Failing since r69181. Verified as legitimate by looking at the results
 // of the SVG rendering.
-BUGCR58194 LINUX : svg/filters/sourceAlpha.svg = IMAGE
 BUGCR58195 WIN LINUX : svg/filters/feDisplacementMap.svg = IMAGE
 
 // Issues starting from
@@ -3063,4 +3059,3 @@ BUGWK53527 DEBUG : fast/frames/iframe-reparenting-new-page.html = CRASH PASS
 // * platform/ScrollView.cpp: 
 //   (WebCore::ScrollView::calculateOverhangAreasForPainting): 
 BUGCR71783 : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
-
