@@ -1,3 +1,10 @@
+2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Two more updated SVG baselines after r77485 for Linux.
+
+        * platform/chromium-linux/svg/batik/text/verticalText-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/js-late-pattern-and-object-creation-expected.txt: Added.
+
 2011-02-02  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Ryosuke Niwa.
