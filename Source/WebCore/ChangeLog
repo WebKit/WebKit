@@ -1,3 +1,30 @@
+2011-02-02  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        IDBTransaction and IDBRequest can be deleted while ScriptExecutionContext is iterating....which is bad
+        https://bugs.webkit.org/show_bug.cgi?id=52722
+
+        The solution is to change ScriptExecutionContext's destructor to iterate over
+        the list in a way that handles the mutations. This new method is destructive,
+        but that's OK since the object is going away. I've also added a several asserts.
+
+        There should be no behavior change.
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::ScriptExecutionContext):
+        (WebCore::ScriptExecutionContext::~ScriptExecutionContext):
+        (WebCore::ScriptExecutionContext::canSuspendActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::suspendActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::resumeActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::stopActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::createdActiveDOMObject):
+        (WebCore::ScriptExecutionContext::destroyedActiveDOMObject):
+        * dom/ScriptExecutionContext.h:
+        * storage/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::contextDestroyed):
+        * storage/IDBTransaction.h:
+
 2011-02-02  Mark Rowe  <mrowe@apple.com>
 
         Build fix.

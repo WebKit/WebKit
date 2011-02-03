@@ -77,7 +77,7 @@ public:
     // ActiveDOMObject
     virtual ScriptExecutionContext* scriptExecutionContext() const;
     virtual bool canSuspend() const;
-    virtual void stop();
+    virtual void contextDestroyed();
 
     using RefCounted<IDBTransactionCallbacks>::ref;
     using RefCounted<IDBTransactionCallbacks>::deref;

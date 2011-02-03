@@ -84,7 +84,9 @@ public:
 };
 
 ScriptExecutionContext::ScriptExecutionContext()
-    : m_inDispatchErrorEvent(false)
+    : m_iteratingActiveDOMObjects(false)
+    , m_inDestructor(false)
+    , m_inDispatchErrorEvent(false)
 #if ENABLE(DATABASE)
     , m_hasOpenDatabases(false)
 #endif
@@ -93,10 +95,12 @@ ScriptExecutionContext::ScriptExecutionContext()
 
 ScriptExecutionContext::~ScriptExecutionContext()
 {
-    HashMap<ActiveDOMObject*, void*>::iterator activeObjectsEnd = m_activeDOMObjects.end();
-    for (HashMap<ActiveDOMObject*, void*>::iterator iter = m_activeDOMObjects.begin(); iter != activeObjectsEnd; ++iter) {
-        ASSERT(iter->first->scriptExecutionContext() == this);
-        iter->first->contextDestroyed();
+    m_inDestructor = true;
+    for (HashMap<ActiveDOMObject*, void*>::iterator iter = m_activeDOMObjects.begin(); iter != m_activeDOMObjects.end(); iter = m_activeDOMObjects.begin()) {
+        ActiveDOMObject* object = iter->first;
+        m_activeDOMObjects.remove(iter);
+        ASSERT(object->scriptExecutionContext() == this);
+        object->contextDestroyed();
     }
 
     HashSet<MessagePort*>::iterator messagePortsEnd = m_messagePorts.end();
@@ -218,43 +222,53 @@ void ScriptExecutionContext::destroyedDomUrl(DOMURL* url)
 bool ScriptExecutionContext::canSuspendActiveDOMObjects()
 {
     // No protection against m_activeDOMObjects changing during iteration: canSuspend() shouldn't execute arbitrary JS.
+    m_iteratingActiveDOMObjects = true;
     HashMap<ActiveDOMObject*, void*>::iterator activeObjectsEnd = m_activeDOMObjects.end();
     for (HashMap<ActiveDOMObject*, void*>::iterator iter = m_activeDOMObjects.begin(); iter != activeObjectsEnd; ++iter) {
         ASSERT(iter->first->scriptExecutionContext() == this);
-        if (!iter->first->canSuspend())
+        if (!iter->first->canSuspend()) {
+            m_iteratingActiveDOMObjects = false;
             return false;
-    }
+        }
+    }    
+    m_iteratingActiveDOMObjects = false;
     return true;
 }
 
 void ScriptExecutionContext::suspendActiveDOMObjects(ActiveDOMObject::ReasonForSuspension why)
 {
     // No protection against m_activeDOMObjects changing during iteration: suspend() shouldn't execute arbitrary JS.
+    m_iteratingActiveDOMObjects = true;
     HashMap<ActiveDOMObject*, void*>::iterator activeObjectsEnd = m_activeDOMObjects.end();
     for (HashMap<ActiveDOMObject*, void*>::iterator iter = m_activeDOMObjects.begin(); iter != activeObjectsEnd; ++iter) {
         ASSERT(iter->first->scriptExecutionContext() == this);
         iter->first->suspend(why);
     }
+    m_iteratingActiveDOMObjects = false;
 }
 
 void ScriptExecutionContext::resumeActiveDOMObjects()
 {
     // No protection against m_activeDOMObjects changing during iteration: resume() shouldn't execute arbitrary JS.
+    m_iteratingActiveDOMObjects = true;
     HashMap<ActiveDOMObject*, void*>::iterator activeObjectsEnd = m_activeDOMObjects.end();
     for (HashMap<ActiveDOMObject*, void*>::iterator iter = m_activeDOMObjects.begin(); iter != activeObjectsEnd; ++iter) {
         ASSERT(iter->first->scriptExecutionContext() == this);
         iter->first->resume();
     }
+    m_iteratingActiveDOMObjects = false;
 }
 
 void ScriptExecutionContext::stopActiveDOMObjects()
 {
     // No protection against m_activeDOMObjects changing during iteration: stop() shouldn't execute arbitrary JS.
+    m_iteratingActiveDOMObjects = true;
     HashMap<ActiveDOMObject*, void*>::iterator activeObjectsEnd = m_activeDOMObjects.end();
     for (HashMap<ActiveDOMObject*, void*>::iterator iter = m_activeDOMObjects.begin(); iter != activeObjectsEnd; ++iter) {
         ASSERT(iter->first->scriptExecutionContext() == this);
         iter->first->stop();
     }
+    m_iteratingActiveDOMObjects = false;
 
     // Also close MessagePorts. If they were ActiveDOMObjects (they could be) then they could be stopped instead.
     closeMessagePorts();
@@ -264,12 +278,17 @@ void ScriptExecutionContext::createdActiveDOMObject(ActiveDOMObject* object, voi
 {
     ASSERT(object);
     ASSERT(upcastPointer);
+    ASSERT(!m_inDestructor);
+    if (m_iteratingActiveDOMObjects)
+        CRASH();
     m_activeDOMObjects.add(object, upcastPointer);
 }
 
 void ScriptExecutionContext::destroyedActiveDOMObject(ActiveDOMObject* object)
 {
     ASSERT(object);
+    if (m_iteratingActiveDOMObjects)
+        CRASH();
     m_activeDOMObjects.remove(object);
 }
 

@@ -172,6 +172,8 @@ namespace WebCore {
         HashSet<MessagePort*> m_messagePorts;
 
         HashMap<ActiveDOMObject*, void*> m_activeDOMObjects;
+        bool m_iteratingActiveDOMObjects;
+        bool m_inDestructor;
 
         HashMap<int, DOMTimer*> m_timeouts;
 

@@ -132,8 +132,9 @@ bool IDBTransaction::canSuspend() const
     return false;
 }
 
-void IDBTransaction::stop()
+void IDBTransaction::contextDestroyed()
 {
+    ActiveDOMObject::contextDestroyed();
     if (m_backend)
         m_backend->abort();
 }
