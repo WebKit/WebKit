@@ -1,3 +1,10 @@
+2011-02-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed. Update Qt specific expected results after r77495.
+
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-properties-performance-expected.txt: Copied from LayoutTests/fast/dom/Window/window-properties-performance-expected.txt.
+
 2011-02-02  Evan Martin  <evan@chromium.org>
 
         Reviewed by Tony Chang.
