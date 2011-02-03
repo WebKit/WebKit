@@ -1,5 +1,13 @@
 2011-02-03  Adam Roben  <aroben@apple.com>
 
+        Check in expected failure results for an RTL <select> test
+
+        The failure is covered by <http://webkit.org/b/53443>.
+
+        * platform/win/fast/text/international/bidi-menulist-expected.txt: Added.
+
+2011-02-03  Adam Roben  <aroben@apple.com>
+
         Add Windows results for test added in r77153
 
         * platform/win/fast/text/international/text-combine-image-test-expected.checksum: Added.
