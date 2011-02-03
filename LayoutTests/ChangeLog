@@ -1,5 +1,11 @@
 2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Update expectations after r77495.
+
+        * fast/dom/Window/window-properties-performance-expected.txt: Updated.
+
+2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Add expectations for r77500.
 
         * platform/chromium-mac/fast/dom/HTMLInputElement/input-slider-update-expected.checksum: Added.

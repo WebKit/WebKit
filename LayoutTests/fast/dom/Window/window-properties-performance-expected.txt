@@ -2,6 +2,7 @@ This test dumps all of the properties that are reachable from the window.perform
 
 window.performance [object Performance]
 window.performance.memory [object MemoryInfo]
+window.performance.memory.jsHeapSizeLimit [number]
 window.performance.memory.totalJSHeapSize [number]
 window.performance.memory.usedJSHeapSize [number]
 window.performance.navigation [object PerformanceNavigation]
