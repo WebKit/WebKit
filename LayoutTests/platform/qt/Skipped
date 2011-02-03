@@ -5013,3 +5013,7 @@ http/tests/navigation/go-back-to-error-page.html
 # [Qt] LayoutTests/media/video-currentTime-delay.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=52859
 media/video-currentTime-delay.html
+
+# [Qt]REGRESSION(r76951): media/controls-without-preload.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=53674
+media/controls-without-preload.html
