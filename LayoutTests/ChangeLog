@@ -1,3 +1,13 @@
+2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Updated baselines that are specific to Leopard.
+
+        * platform/chromium-mac-leopard/svg/custom/linking-a-03-b-preserveAspectRatio-expected.txt:
+        * platform/chromium-mac-leopard/svg/custom/linking-a-03-b-viewTarget-expected.txt:
+        * platform/chromium-mac-leopard/svg/custom/linking-a-03-b-zoomAndPan-expected.txt:
+        * platform/chromium-mac-leopard/svg/custom/stroked-pattern-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/stroked-pattern-expected.txt:
+
 2011-02-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.
