@@ -396,6 +396,7 @@ ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea* scrollableArea)
 
 ScrollAnimatorMac::~ScrollAnimatorMac()
 {
+    [(id)m_scrollbarPainterController.get() setDelegate:nil];
 }
 
 id ScrollAnimatorMac::scrollbarPainterDelegate()
