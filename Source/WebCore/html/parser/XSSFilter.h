@@ -27,6 +27,7 @@
 #define XSSFilter_h
 
 #include "HTMLToken.h"
+#include "HTTPParsers.h"
 
 namespace WebCore {
 
@@ -68,6 +69,7 @@ private:
 
     HTMLDocumentParser* m_parser;
     bool m_isEnabled;
+    XSSProtectionDisposition m_xssProtection;
 
     String m_decodedURL;
     String m_decodedHTTPBody;

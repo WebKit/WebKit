@@ -122,6 +122,7 @@ String decodeURL(const String& string, const TextEncoding& encoding)
 XSSFilter::XSSFilter(HTMLDocumentParser* parser)
     : m_parser(parser)
     , m_isEnabled(false)
+    , m_xssProtection(XSSProtectionEnabled)
     , m_state(Initial)
 {
     ASSERT(m_parser);
@@ -147,6 +148,9 @@ void XSSFilter::init()
         return;
 
     if (DocumentLoader* documentLoader = m_parser->document()->frame()->loader()->documentLoader()) {
+        DEFINE_STATIC_LOCAL(String, XSSProtectionHeader, ("X-XSS-Protection"));
+        m_xssProtection = parseXSSProtectionHeader(documentLoader->response().httpHeaderField(XSSProtectionHeader));
+
         FormData* httpBody = documentLoader->originalRequest().httpBody();
         if (httpBody && !httpBody->isEmpty())
             m_decodedHTTPBody = decodeURL(httpBody->flattenToString(), encoding);
@@ -159,7 +163,7 @@ void XSSFilter::filterToken(HTMLToken& token)
     ASSERT_UNUSED(token, &token);
     return;
 #else
-    if (!m_isEnabled)
+    if (!m_isEnabled || m_xssProtection == XSSProtectionDisabled)
         return;
 
     if (m_decodedURL.isEmpty())
@@ -183,6 +187,11 @@ void XSSFilter::filterToken(HTMLToken& token)
         DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute a JavaScript script. Source code of script found within request.\n"));
         // FIXME: We should add the real line number to the console.
         m_parser->document()->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage, 1, String());
+
+        if (m_xssProtection == XSSProtectionBlockEnabled) {
+            m_parser->document()->frame()->loader()->stopAllLoaders();
+            m_parser->document()->frame()->navigationScheduler()->scheduleLocationChange(m_parser->document()->securityOrigin(), blankURL(), String());
+        }
     }
 #endif
 }
