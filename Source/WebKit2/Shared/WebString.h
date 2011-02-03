@@ -55,6 +55,7 @@ public:
         return adoptRef(new WebString(String::fromUTF8(string)));
     }
 
+    bool isNull() const { return m_string.isNull(); }
     bool isEmpty() const { return m_string.isEmpty(); }
 
     size_t maximumUTF8CStringSize() const { return m_string.length() * 3 + 1; }
@@ -80,9 +81,8 @@ public:
 
 private:
     WebString(const String& string)
-        : m_string(string)
+        : m_string(!string.impl() ? String(StringImpl::empty()) : string)
     {
-        ASSERT(!string.isNull());
     }
 
     virtual Type type() const { return APIType; }
