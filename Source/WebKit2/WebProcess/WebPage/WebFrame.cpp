@@ -458,6 +458,56 @@ JSGlobalContextRef WebFrame::jsContextForWorld(InjectedBundleScriptWorld* world)
     return toGlobalRef(m_coreFrame->script()->globalObject(world->coreWorld())->globalExec());
 }
 
+IntRect WebFrame::contentBounds() const
+{    
+    if (!m_coreFrame)
+        return IntRect();
+    
+    FrameView* view = m_coreFrame->view();
+    if (!view)
+        return IntRect();
+    
+    return IntRect(0, 0, view->contentsWidth(), view->contentsHeight());
+}
+
+IntRect WebFrame::visibleContentBounds() const
+{
+    if (!m_coreFrame)
+        return IntRect();
+    
+    FrameView* view = m_coreFrame->view();
+    if (!view)
+        return IntRect();
+    
+    IntRect contentRect = view->visibleContentRect(true);
+    return IntRect(0, 0, contentRect.width(), contentRect.height());
+}
+
+IntRect WebFrame::visibleContentBoundsExcludingScrollbars() const
+{
+    if (!m_coreFrame)
+        return IntRect();
+    
+    FrameView* view = m_coreFrame->view();
+    if (!view)
+        return IntRect();
+    
+    IntRect contentRect = view->visibleContentRect(false);
+    return IntRect(0, 0, contentRect.width(), contentRect.height());
+}
+
+IntSize WebFrame::scrollOffset() const
+{
+    if (!m_coreFrame)
+        return IntSize();
+    
+    FrameView* view = m_coreFrame->view();
+    if (!view)
+        return IntSize();
+
+    return view->scrollOffset();
+}
+
 WebFrame* WebFrame::frameForContext(JSContextRef context)
 {
     JSObjectRef globalObjectRef = JSContextGetGlobalObject(context);

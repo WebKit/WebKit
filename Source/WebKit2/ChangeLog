@@ -1,3 +1,24 @@
+2011-02-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Add WKBundleFrameGetVisibleContentBoundsExcludingScrollbars API for WebKit2.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameGetContentBounds):
+        (WKBundleFrameGetVisibleContentBounds):
+        (WKBundleFrameGetVisibleContentBoundsExcludingScrollbars):
+        (WKBundleFrameGetScrollOffset):
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::contentBounds):
+        (WebKit::WebFrame::visibleContentBounds):
+        (WebKit::WebFrame::visibleContentBoundsExcludingScrollbars):
+        (WebKit::WebFrame::scrollOffset):
+        * WebProcess/WebPage/WebFrame.h:
+        Move implementation of frame geometry to the implementation file
+        instead of keeping it in the API file.
+
 2011-02-02  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Geoff Garen.

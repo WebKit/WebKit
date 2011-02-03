@@ -176,55 +176,22 @@ bool WKBundleFrameAllowsFollowingLink(WKBundleFrameRef frameRef, WKURLRef urlRef
 
 WKRect WKBundleFrameGetContentBounds(WKBundleFrameRef frameRef)
 {
-    WKRect contentBounds = { { 0, 0 }, { 0, 0 } };
-    
-    Frame* coreFrame = toImpl(frameRef)->coreFrame();
-    if (!coreFrame)
-        return contentBounds;
-    
-    FrameView* view = coreFrame->view();
-    if (!view)
-        return contentBounds;
-    
-    contentBounds.size.width = view->contentsWidth();
-    contentBounds.size.height = view->contentsHeight();
-    
-    return contentBounds;
+    return toAPI(toImpl(frameRef)->contentBounds());
 }
 
 WKRect WKBundleFrameGetVisibleContentBounds(WKBundleFrameRef frameRef)
 {
-    WKRect visibleContentBounds = { { 0, 0 }, { 0, 0 } };
-    
-    Frame* coreFrame = toImpl(frameRef)->coreFrame();
-    if (!coreFrame)
-        return visibleContentBounds;
-    
-    FrameView* view = coreFrame->view();
-    if (!view)
-        return visibleContentBounds;
-    
-    FloatRect bounds = view->visibleContentRect(true);
-
-    visibleContentBounds.size.width = bounds.width();
-    visibleContentBounds.size.height = bounds.height();
-    
-    return visibleContentBounds;
+    return toAPI(toImpl(frameRef)->visibleContentBounds());
 }
 
-WK_EXPORT WKSize WKBundleFrameGetScrollOffset(WKBundleFrameRef frameRef)
+WKRect WKBundleFrameGetVisibleContentBoundsExcludingScrollbars(WKBundleFrameRef frameRef)
 {
-    WKSize scrollOffset = { 0, 0 };
-    
-    Frame* coreFrame = toImpl(frameRef)->coreFrame();
-    if (!coreFrame)
-        return scrollOffset;
-    
-    FrameView* view = coreFrame->view();
-    if (!view)
-        return scrollOffset;
-    
-    return toAPI(view->scrollOffset());
+    return toAPI(toImpl(frameRef)->visibleContentBoundsExcludingScrollbars());
+}
+
+WKSize WKBundleFrameGetScrollOffset(WKBundleFrameRef frameRef)
+{
+    return toAPI(toImpl(frameRef)->scrollOffset());
 }
 
 WKStringRef WKBundleFrameCopySuggestedFilenameForResourceWithURL(WKBundleFrameRef frameRef, WKURLRef urlRef)

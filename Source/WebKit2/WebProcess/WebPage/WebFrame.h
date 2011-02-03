@@ -89,6 +89,10 @@ public:
     JSValueRef computedStyleIncludingVisitedInfo(JSObjectRef element);
     JSGlobalContextRef jsContext();
     JSGlobalContextRef jsContextForWorld(InjectedBundleScriptWorld*);
+    WebCore::IntRect contentBounds() const;
+    WebCore::IntRect visibleContentBounds() const;
+    WebCore::IntRect visibleContentBoundsExcludingScrollbars() const;
+    WebCore::IntSize scrollOffset() const;
 
     static WebFrame* frameForContext(JSContextRef);
 
