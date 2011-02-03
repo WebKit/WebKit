@@ -93,6 +93,7 @@ _WTFLogVerbose
 _WTFReportArgumentAssertionFailure
 _WTFReportAssertionFailure
 _WTFReportAssertionFailureWithMessage
+_WTFReportBacktrace
 _WTFReportError
 _WTFReportFatalError
 __Z12jsRegExpFreeP8JSRegExp

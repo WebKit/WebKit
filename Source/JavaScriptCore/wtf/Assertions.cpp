@@ -54,6 +54,12 @@
 #include <wtf/Vector.h>
 #endif
 
+#if PLATFORM(MAC)
+#include <cxxabi.h>
+#include <dlfcn.h>
+#include <execinfo.h>
+#endif
+
 extern "C" {
 
 #if PLATFORM(BREWMP)
@@ -196,6 +202,34 @@ void WTFReportArgumentAssertionFailure(const char* file, int line, const char* f
 {
     printf_stderr_common("ARGUMENT BAD: %s, %s\n", argName, assertion);
     printCallSite(file, line, function);
+}
+
+void WTFReportBacktrace()
+{
+#if PLATFORM(MAC) && !defined(NDEBUG)
+    static const int maxFrames = 32;
+    void* samples[maxFrames];
+    int frames = backtrace(samples, MaxFrames);
+
+    for (int i = 1; i < frames; ++i) {
+        void* pointer = samples[i];
+
+        // Try to get a symbol name from the dynamic linker.
+        Dl_info info;
+        if (dladdr(pointer, &info) && info.dli_sname) {
+            const char* mangledName = info.dli_sname;
+
+            // Assume c++ & try to demangle the name.
+            char* demangledName = abi::__cxa_demangle(mangledName, 0, 0, 0);
+            if (demangledName) {
+                fprintf(stderr, " -> %s\n", demangledName);
+                free(demangledName);
+            } else
+                fprintf(stderr, " -> %s\n", mangledName);
+        } else
+            fprintf(stderr, " -> %p\n", pointer);
+    }
+#endif
 }
 
 void WTFReportFatalError(const char* file, int line, const char* function, const char* format, ...)

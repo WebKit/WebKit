@@ -1,3 +1,16 @@
+2011-02-02  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 53650 - Add a BACKTRACE macro to Assertions.h
+
+        Add a BACKTRACE macro to Assertions.h, which will print a backtrace on
+        debug Mac builds, make CRASH (and thus ASSERT) automatically call this.
+
+        * JavaScriptCore.exp:
+        * wtf/Assertions.cpp:
+        * wtf/Assertions.h:
+
 2011-02-02  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Gavin Barraclough.

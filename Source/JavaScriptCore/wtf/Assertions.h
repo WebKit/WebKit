@@ -145,6 +145,7 @@ typedef struct {
 void WTFReportAssertionFailure(const char* file, int line, const char* function, const char* assertion);
 void WTFReportAssertionFailureWithMessage(const char* file, int line, const char* function, const char* assertion, const char* format, ...) WTF_ATTRIBUTE_PRINTF(5, 6);
 void WTFReportArgumentAssertionFailure(const char* file, int line, const char* function, const char* argName, const char* assertion);
+void WTFReportBacktrace();
 void WTFReportFatalError(const char* file, int line, const char* function, const char* format, ...) WTF_ATTRIBUTE_PRINTF(4, 5);
 void WTFReportError(const char* file, int line, const char* function, const char* format, ...) WTF_ATTRIBUTE_PRINTF(4, 5);
 void WTFLog(WTFLogChannel* channel, const char* format, ...) WTF_ATTRIBUTE_PRINTF(2, 3);
@@ -176,10 +177,21 @@ void WTFLogVerbose(const char* file, int line, const char* function, WTFLogChann
 } while(false)
 #else
 #define CRASH() do { \
+    WTFReportBacktrace(); \
     *(int *)(uintptr_t)0xbbadbeef = 0; \
     ((void(*)())0)(); /* More reliable, but doesn't say BBADBEEF */ \
 } while(false)
 #endif
+#endif
+
+/* BACKTRACE
+
+  Print a backtrace to the same location as ASSERT messages.
+*/
+#ifndef BACKTRACE
+#define BACKTRACE() do { \
+    WTFReportBacktrace(); \
+} while(false)
 #endif
 
 /* ASSERT, ASSERT_NOT_REACHED, ASSERT_UNUSED
