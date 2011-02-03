@@ -1,3 +1,16 @@
+2011-02-02  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Mihai Parparita.
+
+        gl-teximage.html failing on some WebKit bots
+        https://bugs.webkit.org/show_bug.cgi?id=53633
+
+        * fast/canvas/webgl/gl-teximage.html:
+          - Synced with upstream test; detect when running in DRT and
+            avoid printing the specific pixel value when the test will pass.
+        * fast/canvas/webgl/resources/red-indexed.png:
+          - Stripped gamma and other colorspace information.
+
 2011-02-02  Martin Robinson  <mrobinson@igalia.com>
 
         Unskip the last batch of editing tests needing GTK+ results.

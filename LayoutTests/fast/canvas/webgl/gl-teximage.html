@@ -86,18 +86,22 @@ function runTests(imgs) {
               color[1] + ", " +
               color[2] + ", " +
               color[3];
-
+    var subMsg = " was " +
+              buf[off + 0] + ", " +
+              buf[off + 1] + ", " +
+              buf[off + 2] + ", " +
+              buf[off + 3];
+    // When running in WebKit's test harness, we don't want to print the
+    // pixel value when the test passes, because different machines might
+    // have different results and we record the text output.
+    var inDumpRenderTree = window.layoutTestController;
     for (var ii = 0; ii < 4; ++ii) {
       if (Math.abs(buf[off + ii] - color[ii]) > allowedRange) {
-        testFailed(msg + " was " +
-            buf[off + 0] + ", " +
-            buf[off + 1] + ", " +
-            buf[off + 2] + ", " +
-            buf[off + 3]);
+        testFailed(msg + subMsg);
         return;
       }
     }
-    testPassed(msg);
+    testPassed(msg + (inDumpRenderTree ? "" : subMsg));
   }
 
   var tex = gl.createTexture();
