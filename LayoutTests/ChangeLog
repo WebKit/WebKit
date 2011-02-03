@@ -1,3 +1,36 @@
+2011-02-03  Adam Roben  <aroben@apple.com>
+
+        Update Windows results after r77485
+
+        Windows used to match Mac on these tests, but now it doesn't. Presumably this is because
+        r77485 increased the precision of ascent/descent calculations, making differences in
+        Windows/Mac font metrics matter more.
+
+        One test (svg/W3C-SVG-1.1-SE/types-dom-01-b.svg) is still failing, but it passes when run on
+        its own, so warrants more investigation.
+
+        * platform/win/svg/W3C-SVG-1.1/extend-namespace-01-f-expected.checksum: Added.
+        * platform/win/svg/W3C-SVG-1.1/extend-namespace-01-f-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1/extend-namespace-01-f-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/text-align-06-b-expected.checksum: Added.
+        * platform/win/svg/W3C-SVG-1.1/text-align-06-b-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1/text-align-06-b-expected.txt: Added.
+        * platform/win/svg/batik/text/textGlyphOrientationHorizontal-expected.checksum: Added.
+        * platform/win/svg/batik/text/textGlyphOrientationHorizontal-expected.png: Added.
+        * platform/win/svg/batik/text/textGlyphOrientationHorizontal-expected.txt: Added.
+        * platform/win/svg/carto.net/scrollbar-expected.checksum: Added.
+        * platform/win/svg/carto.net/scrollbar-expected.png: Added.
+        * platform/win/svg/carto.net/scrollbar-expected.txt: Added.
+        * platform/win/svg/text/font-size-below-point-five-expected.checksum: Added.
+        * platform/win/svg/text/font-size-below-point-five-expected.png: Added.
+        * platform/win/svg/text/font-size-below-point-five-expected.txt: Added.
+        * platform/win/svg/text/text-align-06-b-expected.checksum: Added.
+        * platform/win/svg/text/text-align-06-b-expected.png: Added.
+        * platform/win/svg/text/text-align-06-b-expected.txt: Added.
+        * platform/win/svg/zoom/page/zoom-mask-with-percentages-expected.checksum: Added.
+        * platform/win/svg/zoom/page/zoom-mask-with-percentages-expected.png: Added.
+        * platform/win/svg/zoom/page/zoom-mask-with-percentages-expected.txt:
+
 2011-02-03  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed.
