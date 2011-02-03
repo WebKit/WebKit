@@ -1,5 +1,11 @@
 2011-02-02  Martin Robinson  <mrobinson@igalia.com>
 
+        Continue importing new editing layout test results for GTK.
+
+        * platform/gtk/Skipped: Unskip more editing tests.
+
+2011-02-02  Martin Robinson  <mrobinson@igalia.com>
+
         Begin importing missing editing directory test results.
 
         * platform/gtk/Skipped: Unskip tests with results and classify failures.
