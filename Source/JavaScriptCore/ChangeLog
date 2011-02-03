@@ -1,5 +1,11 @@
 2011-02-02  Gavin Barraclough  <barraclough@apple.com>
 
+        oops, build fix!
+
+        * wtf/Assertions.cpp:
+
+2011-02-02  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Sam Weinig.
 
         Bug 53650 - Add a BACKTRACE macro to Assertions.h

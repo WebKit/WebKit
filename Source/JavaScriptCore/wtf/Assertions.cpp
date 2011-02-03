@@ -209,7 +209,7 @@ void WTFReportBacktrace()
 #if PLATFORM(MAC) && !defined(NDEBUG)
     static const int maxFrames = 32;
     void* samples[maxFrames];
-    int frames = backtrace(samples, MaxFrames);
+    int frames = backtrace(samples, maxFrames);
 
     for (int i = 1; i < frames; ++i) {
         void* pointer = samples[i];
