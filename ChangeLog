@@ -1,3 +1,11 @@
+2011-02-03  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix GTK+ WebGL build after r76600.
+
+        * configure.ac: Make sure to respect configure.ac conventions 
+        consistently when it comes to capitalization. Remove an old
+        reference to enable_3d_canvas.
+
 2011-02-02  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.
