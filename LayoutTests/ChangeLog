@@ -1,5 +1,17 @@
 2011-02-03  Adam Roben  <aroben@apple.com>
 
+        Skip a new showModalDialog test on Windows
+
+        showModalDialog support is now covered by <http://webkit.org/b/53675>.
+
+        I also sorted some sputnik tests that fail when showModalDialog is unsupported, and filed a
+        new bug (<http://webkit.org/b/53676>) about those failures, since it seems like those tests
+        should pass even when showModalDialog is unsupported.
+
+        * platform/win/Skipped:
+
+2011-02-03  Adam Roben  <aroben@apple.com>
+
         Check in expected failure results for an RTL <select> test
 
         The failure is covered by <http://webkit.org/b/53443>.
