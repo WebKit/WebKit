@@ -395,6 +395,9 @@ svg/custom/clip-path-referencing-use2.svg
 # Assertion failure http://webkit.org/b/52913
 transitions/transition-end-event-destroy-iframe.html
 
+# Fails on some bots. Maybe sensitive to display color depth? http://webkit.org/b/53677
+fast/canvas/set-colors.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################

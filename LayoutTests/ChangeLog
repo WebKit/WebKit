@@ -1,5 +1,14 @@
 2011-02-03  Adam Roben  <aroben@apple.com>
 
+        Skip fast/canvas/set-colors.html on Windows
+        
+        It currently fails on some bots but not others.  <http://webkit.org/b/53677> tracks the
+        investigation.
+
+        * platform/win/Skipped:
+
+2011-02-03  Adam Roben  <aroben@apple.com>
+
         Update Windows results after r77485
 
         Windows used to match Mac on these tests, but now it doesn't. Presumably this is because
