@@ -1,3 +1,19 @@
+2011-02-02  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Moving cursor down in table cycles at the end of a row
+        https://bugs.webkit.org/show_bug.cgi?id=50012
+
+        Avoids a caret cycling issue with certain content (e.g. tables) found at the very
+        end of a document due to a bug in nextLeafWithSameEditability.
+
+        Test: editing/selection/move-by-line-cycles-in-table.html
+
+        * editing/visible_units.cpp:
+        (WebCore::nextLeafWithSameEditability): Properly avoid descending back into the
+        original leaf node.
+
 2011-02-03  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

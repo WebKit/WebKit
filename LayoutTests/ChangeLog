@@ -1,3 +1,15 @@
+2011-02-02  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Moving cursor down in table cycles at the end of a row
+        https://bugs.webkit.org/show_bug.cgi?id=50012
+        
+        Tests downward caret-navigation for tables at the end of a document.
+
+        * editing/selection/move-by-line-cycles-in-table-expected.txt: Added.
+        * editing/selection/move-by-line-cycles-in-table.html: Added.
+
 2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] One more update SVG baselines after r77485 for Linux.

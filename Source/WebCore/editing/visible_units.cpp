@@ -583,7 +583,7 @@ static Node* nextLeafWithSameEditability(Node* node, int offset)
     bool editable = node->isContentEditable();
     ASSERT(offset >= 0);
     Node* child = node->childNode(offset);
-    Node* n = child ? child->nextLeafNode() : node->nextLeafNode();
+    Node* n = child ? child->nextLeafNode() : node->lastDescendant()->nextLeafNode();
     while (n) {
         if (editable == n->isContentEditable())
             return n;
