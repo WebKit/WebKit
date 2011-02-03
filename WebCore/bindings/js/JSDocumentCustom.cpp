@@ -82,14 +82,15 @@ void JSDocument::setLocation(ExecState* exec, JSValue value)
 
     String str = ustringToString(value.toString(exec));
 
+    Frame* lexicalFrame = asJSDOMWindow(exec->lexicalGlobalObject())->impl()->frame();
+
     // IE and Mozilla both resolve the URL relative to the source frame,
     // not the target frame.
     Frame* activeFrame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
-    if (activeFrame)
-        str = activeFrame->document()->completeURL(str).string();
+    str = activeFrame->document()->completeURL(str).string();
 
     bool userGesture = activeFrame->script()->processingUserGesture(currentWorld(exec));
-    frame->redirectScheduler()->scheduleLocationChange(str, activeFrame->loader()->outgoingReferrer(), !activeFrame->script()->anyPageIsProcessingUserGesture(), false, userGesture);
+    frame->redirectScheduler()->scheduleLocationChange(lexicalFrame->document()->securityOrigin(), str, activeFrame->loader()->outgoingReferrer(), !activeFrame->script()->anyPageIsProcessingUserGesture(), false, userGesture);
 }
 
 JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Document* document)

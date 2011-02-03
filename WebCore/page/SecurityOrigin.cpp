@@ -348,6 +348,18 @@ bool SecurityOrigin::canLoad(const KURL& url, const String& referrer, Document* 
     return false;
 }
 
+bool SecurityOrigin::canDisplay(const KURL& url) const
+{
+    if (!shouldTreatURLAsLocal(url.string()))
+        return true;
+
+    // First check if the access has been white listed.
+    // Then we let its local file policy dictate the result.
+    if (isAccessWhiteListed(SecurityOrigin::create(url).get()))
+        return true;
+    return canLoadLocalResources();
+}
+
 void SecurityOrigin::grantLoadLocalResources()
 {
     // This function exists only to support backwards compatibility with older

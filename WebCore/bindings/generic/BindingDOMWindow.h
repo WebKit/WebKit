@@ -107,9 +107,9 @@ Frame* BindingDOMWindow<Binding>::createWindow(State<Binding>* state,
         bool userGesture = processingUserGesture();
 
         if (created)
-            newFrame->loader()->changeLocation(completedUrl, referrer, false, false, userGesture);
+            newFrame->loader()->changeLocation(callingFrame->document()->securityOrigin(), completedUrl, referrer, false, false, userGesture);
         else if (!url.isEmpty())
-            newFrame->redirectScheduler()->scheduleLocationChange(completedUrl.string(), referrer, false, userGesture);
+            newFrame->redirectScheduler()->scheduleLocationChange(callingFrame->document()->securityOrigin(), completedUrl.string(), referrer, false, userGesture);
     }
 
     return newFrame;

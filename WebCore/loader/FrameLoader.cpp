@@ -328,38 +328,36 @@ bool FrameLoader::canHandleRequest(const ResourceRequest& request)
     return m_client->canHandleRequest(request);
 }
 
-void FrameLoader::changeLocation(const KURL& url, const String& referrer, bool lockHistory, bool lockBackForwardList, bool userGesture, bool refresh)
+void FrameLoader::changeLocation(PassRefPtr<SecurityOrigin> securityOrigin, const KURL& url, const String& referrer, bool lockHistory, bool lockBackForwardList, bool userGesture, bool refresh)
 {
     RefPtr<Frame> protect(m_frame);
-
-    ResourceRequest request(url, referrer, refresh ? ReloadIgnoringCacheData : UseProtocolCachePolicy);
-    
-    urlSelected(request, "_self", 0, lockHistory, lockBackForwardList, userGesture, SendReferrer, ReplaceDocumentIfJavaScriptURL);
+    urlSelected(FrameLoadRequest(securityOrigin, ResourceRequest(url, referrer, refresh ? ReloadIgnoringCacheData : UseProtocolCachePolicy), "_self"),
+                0, lockHistory, lockBackForwardList, userGesture, SendReferrer, ReplaceDocumentIfJavaScriptURL);
 }
 
-void FrameLoader::urlSelected(const ResourceRequest& request, const String& passedTarget, PassRefPtr<Event> triggeringEvent, bool lockHistory, bool lockBackForwardList, bool userGesture, ReferrerPolicy referrerPolicy)
+void FrameLoader::urlSelected(const KURL& url, const String& passedTarget, PassRefPtr<Event> triggeringEvent, bool lockHistory, bool lockBackForwardList, bool userGesture, ReferrerPolicy referrerPolicy)
 {
-    urlSelected(request, passedTarget, triggeringEvent, lockHistory, lockBackForwardList, userGesture, referrerPolicy, DoNotReplaceDocumentIfJavaScriptURL);
+    urlSelected(FrameLoadRequest(m_frame->document()->securityOrigin(), ResourceRequest(url), passedTarget),
+                triggeringEvent, lockHistory, lockBackForwardList, userGesture, referrerPolicy, DoNotReplaceDocumentIfJavaScriptURL);
 }
 
-// This overload will go away when the FIXME to eliminate the shouldReplaceDocumentIfJavaScriptURL
-// parameter from ScriptController::executeIfJavaScriptURL() is addressed.
-void FrameLoader::urlSelected(const ResourceRequest& request, const String& passedTarget, PassRefPtr<Event> triggeringEvent, bool lockHistory, bool lockBackForwardList, bool userGesture, ReferrerPolicy referrerPolicy, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL)
+// The shouldReplaceDocumentIfJavaScriptURL parameter will go away when the FIXME to eliminate the
+// corresponding parameter from ScriptController::executeIfJavaScriptURL() is addressed.
+void FrameLoader::urlSelected(const FrameLoadRequest& passedRequest, PassRefPtr<Event> triggeringEvent, bool lockHistory, bool lockBackForwardList, bool userGesture, ReferrerPolicy referrerPolicy, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL)
 {
     ASSERT(!m_suppressOpenerInNewFrame);
 
-    if (m_frame->script()->executeIfJavaScriptURL(request.url(), userGesture, shouldReplaceDocumentIfJavaScriptURL))
+    FrameLoadRequest frameRequest(passedRequest);
+
+    if (m_frame->script()->executeIfJavaScriptURL(frameRequest.resourceRequest().url(), userGesture, shouldReplaceDocumentIfJavaScriptURL))
         return;
 
-    String target = passedTarget;
-    if (target.isEmpty())
-        target = m_frame->document()->baseTarget();
-
-    FrameLoadRequest frameRequest(request, target);
+    if (frameRequest.frameName().isEmpty())
+        frameRequest.setFrameName(m_frame->document()->baseTarget());
 
     if (referrerPolicy == NoReferrer)
         m_suppressOpenerInNewFrame = true;
-    else if (frameRequest.resourceRequest().httpReferrer().isEmpty())
+    if (frameRequest.resourceRequest().httpReferrer().isEmpty())
         frameRequest.resourceRequest().setHTTPReferrer(m_outgoingReferrer);
     addHTTPOriginIfNeeded(frameRequest.resourceRequest(), outgoingOrigin());
 
@@ -393,7 +391,7 @@ Frame* FrameLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement* ownerElement, 
 {
     Frame* frame = ownerElement->contentFrame();
     if (frame)
-        frame->redirectScheduler()->scheduleLocationChange(url.string(), m_outgoingReferrer, lockHistory, lockBackForwardList, isProcessingUserGesture());
+        frame->redirectScheduler()->scheduleLocationChange(frame->document()->securityOrigin(), url.string(), m_outgoingReferrer, lockHistory, lockBackForwardList, isProcessingUserGesture());
     else
         frame = loadSubframe(ownerElement, url, frameName, m_outgoingReferrer);
     return frame;
@@ -481,7 +479,7 @@ void FrameLoader::submitForm(const char* action, const String& url, PassRefPtr<F
         return;
     }
 
-    FrameLoadRequest frameRequest;
+    FrameLoadRequest frameRequest(m_frame->document()->securityOrigin());
 
     String targetOrBaseTarget = target.isEmpty() ? m_frame->document()->baseTarget() : target;
     Frame* targetFrame = m_frame->tree()->find(targetOrBaseTarget);
@@ -1770,20 +1768,19 @@ void FrameLoader::loadFrameRequest(const FrameLoadRequest& request, bool lockHis
 {    
     KURL url = request.resourceRequest().url();
 
+    ASSERT(m_frame->document());
+    // FIXME: Should we move the isFeedWithNestedProtocolInHTTPFamily logic inside SecurityOrigin::canDisplay?
+    if (SecurityOrigin::shouldTreatURLAsLocal(url.string()) && !isFeedWithNestedProtocolInHTTPFamily(url) && !request.requester()->canDisplay(url)) {
+        reportLocalLoadFailed(m_frame, url.string());
+        return;
+    }
+
     String referrer;
     String argsReferrer = request.resourceRequest().httpReferrer();
     if (!argsReferrer.isEmpty())
         referrer = argsReferrer;
     else
         referrer = m_outgoingReferrer;
-
-    ASSERT(frame()->document());
-    if (SecurityOrigin::shouldTreatURLAsLocal(url.string()) && !isFeedWithNestedProtocolInHTTPFamily(url)) {
-        if (!SecurityOrigin::canLoad(url, String(), frame()->document()) && !SecurityOrigin::canLoad(url, referrer, 0)) {
-            FrameLoader::reportLocalLoadFailed(m_frame, url.string());
-            return;
-        }
-    }
 
     if (SecurityOrigin::shouldHideReferrer(url, referrer) || referrerPolicy == NoReferrer)
         referrer = String();

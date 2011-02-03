@@ -191,7 +191,7 @@ static void navigateIfAllowed(ExecState* exec, Frame* frame, const KURL& url, bo
         return;
 
     if (!protocolIsJavaScript(url) || allowsAccessFromFrame(exec, frame))
-        frame->redirectScheduler()->scheduleLocationChange(url.string(), lexicalFrame->loader()->outgoingReferrer(), lockHistory, lockBackForwardList, processingUserGesture(exec));
+        frame->redirectScheduler()->scheduleLocationChange(lexicalFrame->document()->securityOrigin(), url.string(), lexicalFrame->loader()->outgoingReferrer(), lockHistory, lockBackForwardList, processingUserGesture(exec));
 }
 
 void JSLocation::setHref(ExecState* exec, JSValue value)

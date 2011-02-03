@@ -517,7 +517,7 @@ void JSDOMWindow::setLocation(ExecState* exec, JSValue value)
 
     if (!protocolIsJavaScript(url) || allowsAccessFrom(exec)) {
         // We want a new history item if this JS was called via a user gesture
-        frame->redirectScheduler()->scheduleLocationChange(url, lexicalFrame->loader()->outgoingReferrer(), !lexicalFrame->script()->anyPageIsProcessingUserGesture(), false, processingUserGesture(exec));
+        frame->redirectScheduler()->scheduleLocationChange(lexicalFrame->document()->securityOrigin(), url, lexicalFrame->loader()->outgoingReferrer(), !lexicalFrame->script()->anyPageIsProcessingUserGesture(), false, processingUserGesture(exec));
     }
 }
 
@@ -663,9 +663,8 @@ JSValue JSDOMWindow::webSocket(ExecState* exec) const
 // Custom functions
 
 // Helper for window.open() and window.showModalDialog()
-static Frame* createWindow(ExecState* exec, Frame* lexicalFrame, Frame* dynamicFrame,
-                           Frame* openerFrame, const String& url, const String& frameName, 
-                           const WindowFeatures& windowFeatures, JSValue dialogArgs)
+static Frame* createWindow(ExecState* exec, Frame* lexicalFrame, Frame* dynamicFrame, Frame* openerFrame,
+    const String& url, const String& frameName, const WindowFeatures& windowFeatures, JSValue dialogArgs)
 {
     ASSERT(lexicalFrame);
     ASSERT(dynamicFrame);
@@ -673,11 +672,11 @@ static Frame* createWindow(ExecState* exec, Frame* lexicalFrame, Frame* dynamicF
     ResourceRequest request;
 
     // For whatever reason, Firefox uses the dynamicGlobalObject to determine
-    // the outgoingReferrer.  We replicate that behavior here.
+    // the outgoingReferrer. We replicate that behavior here.
     String referrer = dynamicFrame->loader()->outgoingReferrer();
     request.setHTTPReferrer(referrer);
     FrameLoader::addHTTPOriginIfNeeded(request, dynamicFrame->loader()->outgoingOrigin());
-    FrameLoadRequest frameRequest(request, frameName);
+    FrameLoadRequest frameRequest(lexicalFrame->document()->securityOrigin(), request, frameName);
 
     // FIXME: It's much better for client API if a new window starts with a URL, here where we
     // know what URL we are going to open. Unfortunately, this code passes the empty string
@@ -708,9 +707,9 @@ static Frame* createWindow(ExecState* exec, Frame* lexicalFrame, Frame* dynamicF
         bool userGesture = processingUserGesture(exec);
 
         if (created)
-            newFrame->loader()->changeLocation(completedURL, referrer, false, false, userGesture);
+            newFrame->loader()->changeLocation(lexicalFrame->document()->securityOrigin(), completedURL, referrer, false, false, userGesture);
         else if (!url.isEmpty())
-            newFrame->redirectScheduler()->scheduleLocationChange(completedURL.string(), referrer, !lexicalFrame->script()->anyPageIsProcessingUserGesture(), false, userGesture);
+            newFrame->redirectScheduler()->scheduleLocationChange(lexicalFrame->document()->securityOrigin(), completedURL.string(), referrer, !lexicalFrame->script()->anyPageIsProcessingUserGesture(), false, userGesture);
     }
 
     return newFrame;
@@ -771,11 +770,10 @@ JSValue JSDOMWindow::open(ExecState* exec, const ArgList& args)
             bool userGesture = processingUserGesture(exec);
 
             // For whatever reason, Firefox uses the dynamicGlobalObject to
-            // determine the outgoingReferrer.  We replicate that behavior
-            // here.
+            // determine the outgoing referrer. We replicate that behavior here.
             String referrer = dynamicFrame->loader()->outgoingReferrer();
 
-            frame->redirectScheduler()->scheduleLocationChange(completedURL, referrer, !lexicalFrame->script()->anyPageIsProcessingUserGesture(), false, userGesture);
+            frame->redirectScheduler()->scheduleLocationChange(lexicalFrame->document()->securityOrigin(), completedURL, referrer, !lexicalFrame->script()->anyPageIsProcessingUserGesture(), false, userGesture);
         }
         return toJS(exec, frame->domWindow());
     }

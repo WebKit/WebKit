@@ -137,8 +137,9 @@ void ContextMenuController::showContextMenu(Event* event)
 static void openNewWindow(const KURL& urlToLoad, Frame* frame)
 {
     if (Page* oldPage = frame->page()) {
+        FrameLoadRequest request(frame->document()->securityOrigin(), ResourceRequest(urlToLoad, frame->loader()->outgoingReferrer()));
         WindowFeatures features;
-        if (Page* newPage = oldPage->chrome()->createWindow(frame, FrameLoadRequest(ResourceRequest(urlToLoad, frame->loader()->outgoingReferrer())), features))
+        if (Page* newPage = oldPage->chrome()->createWindow(frame, request, features))
             newPage->chrome()->show();
     }
 }
@@ -249,7 +250,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         break;
     case ContextMenuItemTagOpenLink:
         if (Frame* targetFrame = result.targetFrame())
-            targetFrame->loader()->loadFrameRequest(FrameLoadRequest(ResourceRequest(result.absoluteLinkURL(), frame->loader()->outgoingReferrer())), false, false, 0, 0, SendReferrer);
+            targetFrame->loader()->loadFrameRequest(FrameLoadRequest(frame->document()->securityOrigin(), ResourceRequest(result.absoluteLinkURL(), frame->loader()->outgoingReferrer())), false, false, 0, 0, SendReferrer);
         else
             openNewWindow(result.absoluteLinkURL(), frame);
         break;

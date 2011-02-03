@@ -140,7 +140,7 @@ void WebContextMenuClient::searchWithGoogle(const Frame* frame)
     url.append(encoded);
     url.append("&ie=UTF-8&oe=UTF-8");
 
-    ResourceRequest request = ResourceRequest(url);
+    FrameLoadRequest request(page->mainFrame()->document()->securityOrigin(), ResourceRequest(url));
     if (Page* page = frame->page())
         page->mainFrame()->loader()->urlSelected(request, String(), 0, false, false, true, SendReferrer);
 }

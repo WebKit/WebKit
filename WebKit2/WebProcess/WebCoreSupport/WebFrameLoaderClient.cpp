@@ -310,7 +310,7 @@ Frame* WebFrameLoaderClient::dispatchCreatePage()
         return 0;
 
     // Just call through to the chrome client.
-    Page* newPage = webPage->corePage()->chrome()->createWindow(m_frame->coreFrame(), FrameLoadRequest(), WindowFeatures());
+    Page* newPage = webPage->corePage()->chrome()->createWindow(m_frame->coreFrame(), FrameLoadRequest(m_frame->coreFrame()->document()->securityOrigin()), WindowFeatures());
     if (!newPage)
         return 0;
     
