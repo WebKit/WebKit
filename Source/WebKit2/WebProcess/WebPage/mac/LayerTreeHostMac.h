@@ -26,6 +26,7 @@
 #ifndef LayerTreeHostMac_h
 #define LayerTreeHostMac_h
 
+#include "LayerTreeContext.h"
 #include "LayerTreeHost.h"
 #include <WebCore/GraphicsLayerClient.h>
 #include <wtf/OwnPtr.h>
@@ -58,7 +59,11 @@ private:
     void flushPendingLayerChangesRunLoopObserverCallback();
     bool flushPendingLayerChanges();
 
-    bool m_isValid;
+    // The context for this layer tree.
+    LayerTreeContext m_layerTreeContext;
+
+    // Whether the layer tree host is valid or not.
+    bool m_isValid;    
 
     // The root layer.
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;

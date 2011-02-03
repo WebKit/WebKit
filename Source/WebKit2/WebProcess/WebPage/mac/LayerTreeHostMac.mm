@@ -27,7 +27,6 @@
 #import "LayerTreeHostMac.h"
 
 #import "DrawingAreaProxyMessages.h"
-#import "LayerTreeContext.h"
 #import "WebPage.h"
 #import "WebProcess.h"
 #import <WebCore/Frame.h>
@@ -47,6 +46,7 @@ PassRefPtr<LayerTreeHostMac> LayerTreeHostMac::create(WebPage* webPage, Graphics
 
 LayerTreeHostMac::LayerTreeHostMac(WebPage* webPage, GraphicsLayer* graphicsLayer)
     : LayerTreeHost(webPage)
+    , m_layerTreeContext(LayerTreeContext::makeWithSeed())
     , m_isValid(true)
 {
     mach_port_t serverPort = WebProcess::shared().compositingRenderServerPort();
@@ -67,11 +67,10 @@ LayerTreeHostMac::LayerTreeHostMac(WebPage* webPage, GraphicsLayer* graphicsLaye
 
     scheduleLayerFlush();
 
-    LayerTreeContext layerTreeContext;
-    layerTreeContext.contextID = WKCARemoteLayerClientGetClientId(m_remoteLayerClient.get());
+    m_layerTreeContext.contextID = WKCARemoteLayerClientGetClientId(m_remoteLayerClient.get());
 
     // FIXME: Don't send this if we enter accelerated compositing as a result of setSize.
-    m_webPage->send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(layerTreeContext));
+    m_webPage->send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(m_layerTreeContext));
 }
 
 LayerTreeHostMac::~LayerTreeHostMac()

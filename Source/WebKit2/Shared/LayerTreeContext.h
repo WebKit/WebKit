@@ -40,12 +40,15 @@ public:
     LayerTreeContext();
     ~LayerTreeContext();
 
+    static LayerTreeContext makeWithSeed();
+
     void encode(CoreIPC::ArgumentEncoder*) const;
     static bool decode(CoreIPC::ArgumentDecoder*, LayerTreeContext&);
 
     bool isEmpty() const;
 
 #if PLATFORM(MAC)
+    uint64_t seed;
     uint32_t contextID;
 #endif
 };

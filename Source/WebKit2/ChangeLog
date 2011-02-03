@@ -1,3 +1,28 @@
+2011-02-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Make the layer tree host keep track of the layer tree context
+        https://bugs.webkit.org/show_bug.cgi?id=53698
+
+        Add a LayerTreeContext member variable to the LayerTreeHost object,
+        and also add a seed count to the LayerTreeContext so we can keep track of 
+        how layer tree contexts relate to each other.
+
+        * Shared/LayerTreeContext.h:
+        * Shared/mac/LayerTreeContextMac.mm:
+        (WebKit::LayerTreeContext::LayerTreeContext):
+        (WebKit::LayerTreeContext::makeWithSeed):
+        (WebKit::LayerTreeContext::encode):
+        (WebKit::LayerTreeContext::decode):
+
+        * WebProcess/WebPage/mac/LayerTreeHostMac.h:
+        Add the layer tree context as a member variable.
+
+        * WebProcess/WebPage/mac/LayerTreeHostMac.mm:
+        (WebKit::LayerTreeHostMac::LayerTreeHostMac):
+        Initialize the layer tree context.
+
 2011-02-03  Sam Weinig  <sam@webkit.org>
 
         Fix Qt build.
