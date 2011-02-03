@@ -1,3 +1,11 @@
+2011-02-03  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip flaky test
+        fast/files/workers/worker-read-blob-async.html on GTK
+        https://bugs.webkit.org/show_bug.cgi?id=53673
+
+        * platform/gtk/Skipped:
+
 2011-02-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.

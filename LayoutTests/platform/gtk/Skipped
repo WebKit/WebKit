@@ -4713,3 +4713,6 @@ editing/selection/doubleclick-whitespace.html
 # Need an implementation of PlainTextController
 # https://bugs.webkit.org/show_bug.cgi?id=53605
 editing/text-iterator/basic-iteration.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=53673
+fast/files/workers/worker-read-blob-async.html
