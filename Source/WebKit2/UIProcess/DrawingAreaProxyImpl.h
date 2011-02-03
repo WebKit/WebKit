@@ -62,6 +62,9 @@ private:
     void incorporateUpdate(const UpdateInfo&);
     void sendSetSize();
 
+    void enterAcceleratedCompositingMode(const LayerTreeContext&);
+    void exitAcceleratedCompositingMode();
+
     // Whether we've sent a SetSize message and are now waiting for a DidSetSize message.
     // Used to throttle SetSize messages so we don't send them faster than the Web process can handle.
     bool m_isWaitingForDidSetSize;

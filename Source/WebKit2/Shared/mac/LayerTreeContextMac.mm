@@ -32,8 +32,7 @@
 namespace WebKit {
 
 LayerTreeContext::LayerTreeContext()
-    : seed(0)
-    , contextID(0)
+    : contextID(0)
 {
 }
 
@@ -41,29 +40,17 @@ LayerTreeContext::~LayerTreeContext()
 {
 }
 
-LayerTreeContext LayerTreeContext::makeWithSeed()
-{
-    static uint64_t seed;
-
-    LayerTreeContext layerTreeContext;
-    layerTreeContext.seed = ++seed;
-    ASSERT(layerTreeContext.seed);
-
-    return layerTreeContext;
-}
-
 void LayerTreeContext::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    encoder->encode(seed);
     encoder->encode(contextID);
 }
 
 bool LayerTreeContext::decode(CoreIPC::ArgumentDecoder* decoder, LayerTreeContext& result)
 {
-    if (!decoder->decode(result.seed))
+    if (!decoder->decode(result.contextID))
         return false;
 
-    return decoder->decode(result.contextID);
+    return true;
 }
 
 bool LayerTreeContext::isEmpty() const

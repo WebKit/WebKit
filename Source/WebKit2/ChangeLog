@@ -2,6 +2,26 @@
 
         Reviewed by Dan Bernstein.
 
+        Get rid of LayerTreeContext::seed on Mac.
+        Add sequence checks to enterAcceleratedCompositingMode and exitAcceleratedCompositingMode and
+        have them call newly added overloads that don't have the checks.
+
+        * Shared/LayerTreeContext.h:
+        * Shared/mac/LayerTreeContextMac.mm:
+        (WebKit::LayerTreeContext::LayerTreeContext):
+        (WebKit::LayerTreeContext::encode):
+        (WebKit::LayerTreeContext::decode):
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::enterAcceleratedCompositingMode):
+        (WebKit::DrawingAreaProxyImpl::exitAcceleratedCompositingMode):
+        * UIProcess/DrawingAreaProxyImpl.h:
+        * WebProcess/WebPage/mac/LayerTreeHostMac.mm:
+        (WebKit::LayerTreeHostMac::LayerTreeHostMac):
+
+2011-02-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         Get rid of timestamps in UpdateInfo
         https://bugs.webkit.org/show_bug.cgi?id=53713
 

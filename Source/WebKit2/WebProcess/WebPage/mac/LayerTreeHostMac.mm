@@ -45,7 +45,6 @@ PassRefPtr<LayerTreeHostMac> LayerTreeHostMac::create(WebPage* webPage, Graphics
 
 LayerTreeHostMac::LayerTreeHostMac(WebPage* webPage, GraphicsLayer* graphicsLayer)
     : LayerTreeHost(webPage)
-    , m_layerTreeContext(LayerTreeContext::makeWithSeed())
     , m_isValid(true)
 {
     mach_port_t serverPort = WebProcess::shared().compositingRenderServerPort();

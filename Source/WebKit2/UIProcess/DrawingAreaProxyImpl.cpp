@@ -163,19 +163,18 @@ void DrawingAreaProxyImpl::didSetSize(uint64_t sequenceNumber, const UpdateInfo&
 
 void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(uint64_t sequenceNumber, const LayerTreeContext& layerTreeContext)
 {
-    ASSERT(!m_isInAcceleratedCompositingMode);
-    m_isInAcceleratedCompositingMode = true;
+    if (sequenceNumber < m_lastDidSetSizeSequenceNumber)
+        return;
 
-    m_backingStore = nullptr;
-    m_webPageProxy->enterAcceleratedCompositingMode(layerTreeContext);
+    enterAcceleratedCompositingMode(layerTreeContext);
 }
 
 void DrawingAreaProxyImpl::exitAcceleratedCompositingMode(uint64_t sequenceNumber)
 {
-    ASSERT(m_isInAcceleratedCompositingMode);
-    m_isInAcceleratedCompositingMode = false;
+    if (sequenceNumber < m_lastDidSetSizeSequenceNumber)
+        return;
 
-    m_webPageProxy->exitAcceleratedCompositingMode();
+    exitAcceleratedCompositingMode();
 }
 
 void DrawingAreaProxyImpl::incorporateUpdate(const UpdateInfo& updateInfo)
@@ -212,6 +211,23 @@ void DrawingAreaProxyImpl::sendSetSize()
 
     m_isWaitingForDidSetSize = true;
     m_webPageProxy->process()->send(Messages::DrawingArea::SetSize(m_size), m_webPageProxy->pageID());
+}
+
+void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
+{
+    ASSERT(!m_isInAcceleratedCompositingMode);
+    m_isInAcceleratedCompositingMode = true;
+    
+    m_backingStore = nullptr;
+    m_webPageProxy->enterAcceleratedCompositingMode(layerTreeContext);
+}
+
+void DrawingAreaProxyImpl::exitAcceleratedCompositingMode()
+{
+    ASSERT(m_isInAcceleratedCompositingMode);
+    m_isInAcceleratedCompositingMode = false;
+    
+    m_webPageProxy->exitAcceleratedCompositingMode();
 }
 
 } // namespace WebKit
