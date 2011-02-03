@@ -1,5 +1,12 @@
 2011-02-02  Patrick Gansterer  <paroga@webkit.org>
 
+        Unreviewed WinCE build fix for r77397.
+
+        * page/wince/FrameWinCE.cpp:
+        (WebCore::computePageRectsForFrame):
+
+2011-02-02  Patrick Gansterer  <paroga@webkit.org>
+
         Unreviewed WinCE build fix for r77398.
 
         * platform/graphics/wince/PlatformPathWinCE.cpp:

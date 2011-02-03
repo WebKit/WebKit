@@ -76,7 +76,7 @@ void computePageRectsForFrame(Frame* frame, const IntRect& printRect, float head
 
     float ratio = (float)printRect.height() / (float)printRect.width();
 
-    float pageWidth  = (float) root->rightLayoutOverflow();
+    float pageWidth  = (float) root->maxXLayoutOverflow();
     float pageHeight = pageWidth * ratio;
     outPageHeight = (int) pageHeight;   // this is the height of the page adjusted by margins
     pageHeight -= (headerHeight + footerHeight);
