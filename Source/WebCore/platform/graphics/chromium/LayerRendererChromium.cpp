@@ -715,7 +715,8 @@ void LayerRendererChromium::drawLayer(LayerChromium* layer, RenderSurfaceChromiu
 
     // FIXME: Need to take into account the commulative render surface transforms all the way from
     //        the default render surface in order to determine visibility.
-    if (!layer->doubleSided() && layer->m_renderSurface->drawTransform().multiply(layer->m_drawTransform).m33() < 0)
+    TransformationMatrix combinedDrawMatrix = (layer->m_renderSurface ? layer->m_renderSurface->drawTransform().multiply(layer->m_drawTransform) : layer->m_drawTransform);
+    if (!layer->doubleSided() && combinedDrawMatrix.m33() < 0)
          return;
 
     if (layer->drawsContent()) {

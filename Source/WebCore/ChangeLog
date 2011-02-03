@@ -1,3 +1,18 @@
+2011-02-03  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Fixing a compositor crash occurring on layers
+        without an associated RenderSurface.
+        https://bugs.webkit.org/show_bug.cgi?id=53679
+        Regression was introduced by in r77425 
+
+        Test: http://webkit.org/blog/386/3d-transforms/ doesn't crash
+        anymore.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawLayer):
+
 2011-02-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.
