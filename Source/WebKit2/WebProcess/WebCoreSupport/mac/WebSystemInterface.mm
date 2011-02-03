@@ -95,6 +95,8 @@ void InitWebCoreSystemInterface(void)
         INIT(SignalCFReadStreamHasBytes);
 
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
+        INIT(IOSurfaceContextCreate);
+        INIT(IOSurfaceContextCreateImage);
         INIT(CreateCTTypesetterWithUniCharProviderAndOptions);
         INIT(MakeScrollbarPainter);
         INIT(ScrollbarPainterSetDelegate);
@@ -106,8 +108,8 @@ void InitWebCoreSystemInterface(void)
         INIT(SetScrollbarPainterKnobAlpha);
         INIT(ScrollbarPainterIsHorizontal);
         INIT(ScrollbarPainterSetOverlayState);
-        INIT(MakeScrollbarReplacementPainter);
         INIT(MakeScrollbarPainterController);
+        INIT(MakeScrollbarReplacementPainter);
         INIT(SetPainterForPainterController);
         INIT(VerticalScrollbarPainterForController);
         INIT(HorizontalScrollbarPainterForController);

@@ -122,6 +122,8 @@ void InitWebCoreSystemInterface(void)
 
     INIT(CreateCTLineWithUniCharProvider);
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    INIT(IOSurfaceContextCreate);
+    INIT(IOSurfaceContextCreateImage);
     INIT(CreateCTTypesetterWithUniCharProviderAndOptions);
     INIT(MakeScrollbarPainter);
     INIT(ScrollbarPainterSetDelegate);

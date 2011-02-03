@@ -1,3 +1,12 @@
+2011-02-02  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        <rdar://problem/8928367> Crash when loading canvas pages inside HTMLCanvasElement::createImageBuffer().
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Add some missing initializers.
+
 2011-02-02  Steve Lacey  <sjl@chromium.org>
 
         Reviewed by Eric Carlson.
