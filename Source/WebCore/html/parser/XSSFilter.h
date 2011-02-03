@@ -57,7 +57,7 @@ private:
     bool filterMetaToken(HTMLToken&);
     bool filterBaseToken(HTMLToken&);
 
-    bool eraseInlineEventHandlersIfInjected(HTMLToken&);
+    bool eraseDangerousAttributesIfInjected(HTMLToken&);
     bool eraseAttributeIfInjected(HTMLToken&, const QualifiedName&, const String& replacementValue = String());
 
     String snippetForRange(const HTMLToken&, int start, int end);

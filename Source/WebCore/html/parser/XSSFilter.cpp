@@ -31,6 +31,7 @@
 #include "Frame.h"
 #include "HTMLDocumentParser.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "Settings.h"
 #include "TextEncoding.h"
 #include "TextResourceDecoder.h"
@@ -84,6 +85,23 @@ bool isNameOfInlineEventHandler(const Vector<UChar, 32>& name)
     if (name.size() < lengthOfShortestInlineEventHandlerName)
         return false;
     return name[0] == 'o' && name[1] == 'n';
+}
+
+bool containsJavaScriptURL(const Vector<UChar, 32>& value)
+{
+    static const char javaScriptScheme[] = "javascript:";
+    static const size_t lengthOfJavaScriptScheme = sizeof(javaScriptScheme) - 1;
+
+    size_t i = 0;
+    while (i < value.size()) {
+        if (!isHTMLSpace(value[i]))
+            break;
+    }
+
+    if (value.size() - i < lengthOfJavaScriptScheme)
+        return false;
+
+    return equalIgnoringCase(value.data() + i, javaScriptScheme, lengthOfJavaScriptScheme);
 }
 
 String decodeURL(const String& string, const TextEncoding& encoding)
@@ -176,7 +194,7 @@ bool XSSFilter::filterTokenInitial(HTMLToken& token)
     if (token.type() != HTMLToken::StartTag)
         return false;
 
-    bool didBlockScript = eraseInlineEventHandlersIfInjected(token);
+    bool didBlockScript = eraseDangerousAttributesIfInjected(token);
 
     if (hasName(token, scriptTag))
         didBlockScript |= filterScriptToken(token);
@@ -291,12 +309,12 @@ bool XSSFilter::filterBaseToken(HTMLToken& token)
     return eraseAttributeIfInjected(token, hrefAttr);
 }
 
-bool XSSFilter::eraseInlineEventHandlersIfInjected(HTMLToken& token)
+bool XSSFilter::eraseDangerousAttributesIfInjected(HTMLToken& token)
 {
     bool didBlockScript = false;
     for (size_t i = 0; i < token.attributes().size(); ++i) {
         const HTMLToken::Attribute& attribute = token.attributes().at(i);
-        if (!isNameOfInlineEventHandler(attribute.m_name))
+        if (!isNameOfInlineEventHandler(attribute.m_name) && !containsJavaScriptURL(attribute.m_value))
             continue;
         if (!isContainedInRequest(snippetForAttribute(token, attribute)))
             continue;

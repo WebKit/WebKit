@@ -1,3 +1,25 @@
+2011-02-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Daniel Bates.
+
+        Teach XSSFilter about JavaScript URLs
+        https://bugs.webkit.org/show_bug.cgi?id=53635
+
+        This patch teaches the XSSFilter to check for JavaScript URLs in
+        attribute values.  If this approach has too many false positives, we
+        can restrict which attribute names we examine.
+
+        Fixes these tests:
+            http/tests/security/xssAuditor/anchor-url-dom-write-location-javascript-URL.html
+            http/tests/security/xssAuditor/dom-write-location-javascript-URL.html
+            http/tests/security/xssAuditor/iframe-javascript-url*
+
+        * html/parser/XSSFilter.cpp:
+        (WebCore::HTMLNames::containsJavaScriptURL):
+        (WebCore::XSSFilter::filterTokenInitial):
+        (WebCore::XSSFilter::eraseDangerousAttributesIfInjected):
+        * html/parser/XSSFilter.h:
+
 2011-02-02  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig, even though this is just a...
