@@ -5,7 +5,7 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (151,10) size 178x19 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 178x19
         chunk 1 (middle anchor) text run 1 at (151.00,25.00) startOffset 0 endOffset 29 width 178.00: "<animate> of x/y/width/height"
-    RenderSVGContainer {g} at (10,40) size 464x249
+    RenderSVGContainer {g} at (10,42) size 464x247
       RenderSVGContainer {g} at (20,54) size 80x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,90.00)}]
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
           RenderSVGPath {rect} at (57,87) size 6x6 [fill={[type=SOLID] [color=#000000]}] [x=-3.00] [y=-3.00] [width=6.00] [height=6.00]
@@ -88,10 +88,10 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (-41,45) size 82x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 82x19
             chunk 1 (middle anchor) text run 1 at (-41.00,60.00) startOffset 0 endOffset 13 width 82.00: "x/y on <rect>"
-      RenderSVGContainer {g} at (379,40) size 95x114 [transform={m=((1.00,0.00)(0.00,1.00)) t=(420.00,90.00)}]
+      RenderSVGContainer {g} at (379,42) size 95x112 [transform={m=((1.00,0.00)(0.00,1.00)) t=(420.00,90.00)}]
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-        RenderSVGText {text} at (-15,-49) size 68x42 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 68x42
+        RenderSVGText {text} at (-15,-47) size 68x40 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 68x40
             chunk 1 text run 1 at (-15.00,-15.00) startOffset 0 endOffset 3 width 67.40: "123"
         RenderSVGContainer {use} at (401,71) size 38x38
           RenderSVGContainer {g} at (401,71) size 38x38
@@ -107,7 +107,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (-41,45) size 82x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 82x19
             chunk 1 (middle anchor) text run 1 at (-41.00,60.00) startOffset 0 endOffset 13 width 82.00: "x/y on <rect>"
-      RenderSVGContainer {g} at (10,160) size 100x114 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,210.00)}]
+      RenderSVGContainer {g} at (10,162) size 100x112 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,210.00)}]
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
           RenderSVGContainer {g} at (41,191) size 38x38
             RenderSVGContainer {use} at (41,191) size 8x8
@@ -122,8 +122,8 @@ layer at (0,0) size 480x360
             RenderSVGContainer {use} at (41,221) size 8x8
               RenderSVGContainer {g} at (41,221) size 8x8 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-15.00,15.00)}]
                 RenderSVGPath {rect} at (41,221) size 8x8 [stroke={[type=SOLID] [color=#FFB400]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-3.00] [y=-3.00] [width=6.00] [height=6.00]
-        RenderSVGText {text} at (-35,-49) size 64x42 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 64x42
+        RenderSVGText {text} at (-35,-47) size 64x40 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 64x40
             chunk 1 text run 1 at (-35.00,-15.00) startOffset 0 endOffset 1 width 22.32: "1"
             chunk 1 text run 1 at (5.00,-15.00) startOffset 0 endOffset 1 width 23.40: "2"
         RenderSVGContainer {use} at (21,191) size 38x38
@@ -173,7 +173,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (-30,60) size 60x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 60x19
             chunk 1 (middle anchor) text run 1 at (-30.00,75.00) startOffset 0 endOffset 9 width 60.00: "on <rect>"
-    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 261x47
+    RenderSVGText {text} at (10,304) size 261x46 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.8 $"
     RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

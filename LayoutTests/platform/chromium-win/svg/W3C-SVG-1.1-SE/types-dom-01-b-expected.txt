@@ -3,15 +3,15 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (10,8) size 365x295
-      RenderSVGContainer {g} at (10,8) size 365x295
-        RenderSVGContainer {g} at (17,8) size 358x156 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,-60.00)}]
-          RenderSVGText {text} at (30,131) size 342x23 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 342x23
-              chunk 1 text run 1 at (30.00,150.00) startOffset 0 endOffset 37 width 342.00: "Rotated Text for testing SVGLocatable"
-          RenderSVGText {text} at (100,111) size 299x23 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 299x23
-              chunk 1 text run 1 at (100.00,130.00) startOffset 0 endOffset 35 width 299.00: "Some other text with id 'otherText'"
+    RenderSVGContainer {g} at (10,7) size 365x296
+      RenderSVGContainer {g} at (10,7) size 365x296
+        RenderSVGContainer {g} at (16,7) size 359x158 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,-60.00)}]
+          RenderSVGText {text} at (30,130) size 344x25 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 344x25
+              chunk 1 text run 1 at (30.00,150.00) startOffset 0 endOffset 37 width 343.33: "Rotated Text for testing SVGLocatable"
+          RenderSVGText {text} at (100,111) size 303x24 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 303x24
+              chunk 1 text run 1 at (100.00,130.00) startOffset 0 endOffset 35 width 302.86: "Some other text with id 'otherText'"
           RenderSVGViewportContainer {svg} at (275,45) size 100x100
             RenderSVGPath {circle} at (275,45) size 100x100 [fill={[type=SOLID] [color=#0000FF]}] [cx=0.00] [cy=0.00] [r=50.00]
         RenderSVGText {text} at (10,188) size 279x15 contains 1 chunk(s)

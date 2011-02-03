@@ -32,7 +32,7 @@ layer at (0,0) size 480x360
           chunk 1 (middle anchor) text run 1 at (181.50,228.00) startOffset 0 endOffset 8 width 47.00: "outlined"
       RenderSVGContainer {g} at (189,234) size 38x38 [transform={m=((0.20,0.00)(0.00,0.20)) t=(190.00,235.00)}]
         RenderSVGPath {path} at (189,234) size 38x38 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00]}] [data="M 60 0 L 120 0 L 180 60 L 180 120 L 120 180 L 60 180 L 0 120 L 0 60 Z"]
-    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 261x47
+    RenderSVGText {text} at (10,304) size 261x46 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.9 $"
     RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

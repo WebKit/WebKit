@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (9,5) size 353x449
+  RenderSVGRoot {svg} at (9,7) size 353x447
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceLinearGradient {linearGradient} [id="gradient"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
         RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
@@ -9,15 +9,15 @@ layer at (0,0) size 800x600
       RenderSVGResourcePattern {pattern} [id="pattern"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
         RenderSVGPath {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
         RenderSVGPath {rect} at (0,10) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=10.00] [width=10.00] [height=10.00]
-    RenderSVGContainer {g} at (9,5) size 245x428
-      RenderSVGText {text} at (10,6) size 183x116 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 183x116
+    RenderSVGContainer {g} at (9,7) size 245x426
+      RenderSVGText {text} at (10,8) size 183x114 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 183x114
           chunk 1 text run 1 at (10.00,100.00) startOffset 0 endOffset 4 width 183.00: "Test"
-      RenderSVGText {text} at (10,131) size 183x116 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 183x116
+      RenderSVGText {text} at (10,133) size 183x114 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 183x114
           chunk 1 text run 1 at (10.00,225.00) startOffset 0 endOffset 4 width 183.00: "Test"
-      RenderSVGText {text} at (10,256) size 183x116 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 183x116
+      RenderSVGText {text} at (10,258) size 183x114 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 183x114
           chunk 1 text run 1 at (10.00,350.00) startOffset 0 endOffset 4 width 183.00: "Test"
     RenderSVGText {text} at (38,435) size 324x19 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 324x19

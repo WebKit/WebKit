@@ -17,9 +17,9 @@ layer at (0,0) size 480x360
         RenderSVGPath {rect} at (108,124) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=60.00] [y=69.00] [width=4.00] [height=4.00]
         RenderSVGPath {rect} at (176,244) size 10x10 [fill={[type=SOLID] [color=#00C000]}] [x=98.97] [y=136.50] [width=4.00] [height=4.00]
         RenderSVGPath {rect} at (37,244) size 10x10 [fill={[type=SOLID] [color=#00C000]}] [x=21.03] [y=136.50] [width=4.00] [height=4.00]
-        RenderSVGText {text} at (42,150) size 41x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 41x15
-            chunk 1 text run 1 at (42.00,162.00) startOffset 0 endOffset 7 width 41.00: "stroked"
+        RenderSVGText {text} at (42,150) size 40x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 40x15
+            chunk 1 text run 1 at (42.00,162.00) startOffset 0 endOffset 7 width 39.44: "stroked"
         RenderSVGPath {path} at (225,100) size 188x163 [fill={[type=SOLID] [color=#FF0000] [fill rule=EVEN-ODD]}] [data="M 177 56 L 228.962 146 L 125.038 146 L 177 56 Z M 177 71 L 215.971 138.5 L 138.029 138.5 L 177 71 Z"]
         RenderSVGPath {rect} at (315,97) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=175.00] [y=54.00] [width=4.00] [height=4.00]
         RenderSVGPath {rect} at (406,259) size 10x8 [fill={[type=SOLID] [color=#00C000]}] [x=226.96] [y=144.00] [width=4.00] [height=4.00]
@@ -27,10 +27,10 @@ layer at (0,0) size 480x360
         RenderSVGPath {rect} at (315,124) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=175.00] [y=69.00] [width=4.00] [height=4.00]
         RenderSVGPath {rect} at (383,244) size 10x10 [fill={[type=SOLID] [color=#00C000]}] [x=213.97] [y=136.50] [width=4.00] [height=4.00]
         RenderSVGPath {rect} at (244,244) size 10x10 [fill={[type=SOLID] [color=#00C000]}] [x=136.03] [y=136.50] [width=4.00] [height=4.00]
-        RenderSVGText {text} at (162,150) size 26x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 26x15
-            chunk 1 text run 1 at (162.00,162.00) startOffset 0 endOffset 6 width 26.00: "filled"
-    RenderSVGText {text} at (10,303) size 281x47 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 281x47
+        RenderSVGText {text} at (162,150) size 25x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 25x15
+            chunk 1 text run 1 at (162.00,162.00) startOffset 0 endOffset 6 width 24.44: "filled"
+    RenderSVGText {text} at (10,304) size 281x46 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 281x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 281.00: "$Revision: 1.11 $"
     RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

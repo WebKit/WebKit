@@ -1,3 +1,7 @@
+2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Update SVG baselines after r77485 for Windows.
+
 2011-02-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed, rebaseline Qt svg tests after r77485.
