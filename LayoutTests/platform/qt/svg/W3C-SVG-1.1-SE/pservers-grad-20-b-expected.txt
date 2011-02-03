@@ -34,8 +34,8 @@ layer at (0,0) size 480x360
           chunk 1 (middle anchor) text run 3 at (312.45,250.00) startOffset 3 endOffset 9 width 45.04: "hout f"
           chunk 1 (middle anchor) text run 4 at (357.33,250.00) startOffset 9 endOffset 15 width 47.02: "allbac"
           chunk 1 (middle anchor) text run 5 at (404.47,250.00) startOffset 15 endOffset 16 width 9.00: "k"
-    RenderSVGContainer {g} at (10,313) size 227x33
-      RenderSVGText {text} at (10,313) size 227x33 contains 1 chunk(s)
+    RenderSVGContainer {g} at (10,314) size 227x33
+      RenderSVGText {text} at (10,314) size 227x33 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 227x33
           chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 2 width 40.90: "$R"
           chunk 1 text run 2 at (50.51,340.00) startOffset 2 endOffset 3 width 17.79: "e"

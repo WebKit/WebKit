@@ -1,3 +1,104 @@
+2011-02-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, rebaseline Qt svg tests after r77485.
+
+        * platform/qt/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.checksum:
+        * platform/qt/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.checksum:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.checksum:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.checksum:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.checksum:
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.checksum:
+        * platform/qt/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.txt:
+        * platform/qt/svg/custom/stroke-width-large-expected.checksum:
+        * platform/qt/svg/custom/stroke-width-large-expected.png:
+        * platform/qt/svg/custom/stroke-width-large-expected.txt:
+        * platform/qt/svg/custom/text-rotated-gradient-expected.checksum:
+        * platform/qt/svg/custom/text-rotated-gradient-expected.png:
+        * platform/qt/svg/custom/text-rotated-gradient-expected.txt:
+        * platform/qt/svg/foreignObject/text-tref-02-b-expected.checksum:
+        * platform/qt/svg/foreignObject/text-tref-02-b-expected.png:
+        * platform/qt/svg/foreignObject/text-tref-02-b-expected.txt:
+        * platform/qt/svg/text/lengthAdjust-text-metrics-expected.checksum: Added.
+        * platform/qt/svg/text/lengthAdjust-text-metrics-expected.png: Added.
+        * platform/qt/svg/text/lengthAdjust-text-metrics-expected.txt:
+        * platform/qt/svg/text/select-textLength-spacing-squeeze-1-expected.checksum:
+        * platform/qt/svg/text/select-textLength-spacing-squeeze-1-expected.png:
+        * platform/qt/svg/text/select-textLength-spacing-squeeze-1-expected.txt:
+        * platform/qt/svg/text/select-textLength-spacing-squeeze-2-expected.checksum:
+        * platform/qt/svg/text/select-textLength-spacing-squeeze-2-expected.png:
+        * platform/qt/svg/text/select-textLength-spacing-squeeze-2-expected.txt:
+        * platform/qt/svg/text/select-textLength-spacing-squeeze-3-expected.checksum:
+        * platform/qt/svg/text/select-textLength-spacing-squeeze-3-expected.png:
+        * platform/qt/svg/text/select-textLength-spacing-squeeze-3-expected.txt:
+        * platform/qt/svg/text/select-textLength-spacing-squeeze-4-expected.checksum:
+        * platform/qt/svg/text/select-textLength-spacing-squeeze-4-expected.png:
+        * platform/qt/svg/text/select-textLength-spacing-squeeze-4-expected.txt:
+        * platform/qt/svg/text/select-textLength-spacing-stretch-1-expected.checksum:
+        * platform/qt/svg/text/select-textLength-spacing-stretch-1-expected.png:
+        * platform/qt/svg/text/select-textLength-spacing-stretch-1-expected.txt:
+        * platform/qt/svg/text/select-textLength-spacing-stretch-2-expected.checksum:
+        * platform/qt/svg/text/select-textLength-spacing-stretch-2-expected.png:
+        * platform/qt/svg/text/select-textLength-spacing-stretch-2-expected.txt:
+        * platform/qt/svg/text/select-textLength-spacing-stretch-3-expected.checksum:
+        * platform/qt/svg/text/select-textLength-spacing-stretch-3-expected.png:
+        * platform/qt/svg/text/select-textLength-spacing-stretch-3-expected.txt:
+        * platform/qt/svg/text/select-textLength-spacing-stretch-4-expected.checksum:
+        * platform/qt/svg/text/select-textLength-spacing-stretch-4-expected.png:
+        * platform/qt/svg/text/select-textLength-spacing-stretch-4-expected.txt:
+        * platform/qt/svg/text/select-textLength-spacingAndGlyphs-stretch-4-expected.checksum:
+        * platform/qt/svg/text/select-textLength-spacingAndGlyphs-stretch-4-expected.png:
+        * platform/qt/svg/text/select-textLength-spacingAndGlyphs-stretch-4-expected.txt:
+        * platform/qt/svg/text/select-x-list-1-expected.checksum:
+        * platform/qt/svg/text/select-x-list-1-expected.png:
+        * platform/qt/svg/text/select-x-list-1-expected.txt:
+        * platform/qt/svg/text/select-x-list-2-expected.checksum:
+        * platform/qt/svg/text/select-x-list-2-expected.png:
+        * platform/qt/svg/text/select-x-list-2-expected.txt:
+        * platform/qt/svg/text/select-x-list-3-expected.checksum:
+        * platform/qt/svg/text/select-x-list-3-expected.png:
+        * platform/qt/svg/text/select-x-list-3-expected.txt:
+        * platform/qt/svg/text/select-x-list-4-expected.checksum:
+        * platform/qt/svg/text/select-x-list-4-expected.png:
+        * platform/qt/svg/text/select-x-list-4-expected.txt:
+        * platform/qt/svg/text/select-x-list-with-tspans-1-expected.checksum:
+        * platform/qt/svg/text/select-x-list-with-tspans-1-expected.png:
+        * platform/qt/svg/text/select-x-list-with-tspans-1-expected.txt:
+        * platform/qt/svg/text/select-x-list-with-tspans-2-expected.checksum:
+        * platform/qt/svg/text/select-x-list-with-tspans-2-expected.png:
+        * platform/qt/svg/text/select-x-list-with-tspans-2-expected.txt:
+        * platform/qt/svg/text/select-x-list-with-tspans-3-expected.checksum:
+        * platform/qt/svg/text/select-x-list-with-tspans-3-expected.png:
+        * platform/qt/svg/text/select-x-list-with-tspans-3-expected.txt:
+        * platform/qt/svg/text/select-x-list-with-tspans-4-expected.checksum:
+        * platform/qt/svg/text/select-x-list-with-tspans-4-expected.png:
+        * platform/qt/svg/text/select-x-list-with-tspans-4-expected.txt:
+        * platform/qt/svg/text/selection-doubleclick-expected.checksum:
+        * platform/qt/svg/text/selection-doubleclick-expected.png:
+        * platform/qt/svg/text/selection-doubleclick-expected.txt:
+        * platform/qt/svg/text/selection-tripleclick-expected.checksum:
+        * platform/qt/svg/text/selection-tripleclick-expected.png:
+        * platform/qt/svg/text/selection-tripleclick-expected.txt:
+        * platform/qt/svg/transforms/text-with-mask-with-svg-transform-expected.checksum:
+        * platform/qt/svg/transforms/text-with-mask-with-svg-transform-expected.png:
+        * platform/qt/svg/transforms/text-with-mask-with-svg-transform-expected.txt:
+        * platform/qt/svg/zoom/page/zoom-coords-viewattr-01-b-expected.checksum: Added.
+        * platform/qt/svg/zoom/page/zoom-coords-viewattr-01-b-expected.png: Added.
+        * platform/qt/svg/zoom/page/zoom-coords-viewattr-01-b-expected.txt:
+        * platform/qt/svg/zoom/page/zoom-mask-with-percentages-expected.checksum:
+        * platform/qt/svg/zoom/page/zoom-mask-with-percentages-expected.png:
+        * platform/qt/svg/zoom/page/zoom-mask-with-percentages-expected.txt:
+
 2011-01-27  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.
