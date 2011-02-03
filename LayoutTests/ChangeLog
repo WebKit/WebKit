@@ -1,5 +1,11 @@
 2011-02-03  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed; remove the line I intended to remove.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-02-03  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed Chromium test expectation update for
         http://src.chromium.org/viewvc/chrome?view=rev&revision=73469
 
