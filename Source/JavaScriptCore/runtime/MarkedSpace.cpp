@@ -59,10 +59,10 @@ void MarkedSpace::destroy()
     memset(&m_heap, 0, sizeof(CollectorHeap));
 }
 
-NEVER_INLINE CollectorBlock* MarkedSpace::allocateBlock()
+NEVER_INLINE MarkedBlock* MarkedSpace::allocateBlock()
 {
     PageAllocationAligned allocation = PageAllocationAligned::allocate(BLOCK_SIZE, BLOCK_SIZE, OSAllocator::JSGCHeapPages);
-    CollectorBlock* block = static_cast<CollectorBlock*>(allocation.base());
+    MarkedBlock* block = static_cast<MarkedBlock*>(allocation.base());
     if (!block)
         CRASH();
 
@@ -185,7 +185,7 @@ void MarkedSpace::shrinkBlocks(size_t neededBlocks)
         m_heap.collectorBlock(i)->marked.set(HeapConstants::cellsPerBlock - 1);
 }
 
-bool MarkedSpace::containsSlowCase(void* x)
+bool MarkedSpace::containsSlowCase(const void* x)
 {
     uintptr_t xAsBits = reinterpret_cast<uintptr_t>(x);
     xAsBits &= CELL_ALIGN_MASK;
@@ -195,7 +195,7 @@ bool MarkedSpace::containsSlowCase(void* x)
     if (offset > lastCellOffset)
         return false;
 
-    CollectorBlock* blockAddr = reinterpret_cast<CollectorBlock*>(xAsBits - offset);
+    MarkedBlock* blockAddr = reinterpret_cast<MarkedBlock*>(xAsBits - offset);
     size_t usedBlocks = m_heap.usedBlocks;
     for (size_t block = 0; block < usedBlocks; block++) {
         if (m_heap.collectorBlock(block) != blockAddr)
@@ -224,7 +224,7 @@ void MarkedSpace::clearMarkBits()
         clearMarkBits(m_heap.collectorBlock(i));
 }
 
-void MarkedSpace::clearMarkBits(CollectorBlock* block)
+void MarkedSpace::clearMarkBits(MarkedBlock* block)
 {
     // allocate assumes that the last cell in every block is marked.
     block->marked.clearAll();

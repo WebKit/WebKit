@@ -1,3 +1,32 @@
+2011-02-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Start using MarkedBlock instead of CollectorBlock
+        https://bugs.webkit.org/show_bug.cgi?id=53693
+        
+        SunSpider reports no change.
+        
+        * runtime/MarkedBlock.h:
+        (JSC::MarkedBlock::blockFor):
+        (JSC::MarkedBlock::setMarked):
+        (JSC::MarkedBlock::isCellAligned):
+        (JSC::MarkedBlock::isPossibleCell): Updated for const-ness.
+
+        * runtime/MarkedSpace.cpp:
+        (JSC::MarkedSpace::allocateBlock):
+        (JSC::MarkedSpace::containsSlowCase):
+        (JSC::MarkedSpace::clearMarkBits): Updated for const-ness.
+
+        * runtime/MarkedSpace.h:
+        (JSC::CollectorHeap::collectorBlock):
+        (JSC::MarkedSpace::heap):
+        (JSC::MarkedSpace::isMarked):
+        (JSC::MarkedSpace::testAndSetMarked):
+        (JSC::MarkedSpace::setMarked):
+        (JSC::MarkedSpace::contains): Switched from CollectorBlock to MarkedBlock,
+        and deleted dead CollectorBlock-related code.
+
 2011-02-03  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Darin Adler.

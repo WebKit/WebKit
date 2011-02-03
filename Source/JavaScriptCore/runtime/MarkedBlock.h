@@ -55,14 +55,14 @@ namespace JSC {
 
     class MarkedBlock {
     public:
-        static bool isCellAligned(void*);
-        static bool isPossibleCell(void*);
-        static MarkedBlock* blockFor(void*);
+        static bool isCellAligned(const void*);
+        static bool isPossibleCell(const void*);
+        static MarkedBlock* blockFor(const void*);
 
         size_t cellNumber(const JSCell*);
         bool isMarked(const JSCell*);
         bool testAndSetMarked(const JSCell*);
-        void setMarked(JSCell* cell);
+        void setMarked(const JSCell*);
 
         FixedArray<CollectorCell, CELLS_PER_BLOCK> cells;
         WTF::Bitmap<CELLS_PER_BLOCK> marked;
@@ -76,7 +76,7 @@ namespace JSC {
         typedef MarkedBlock Block;
     };
 
-    inline MarkedBlock* MarkedBlock::blockFor(void* p)
+    inline MarkedBlock* MarkedBlock::blockFor(const void* p)
     {
         return reinterpret_cast<MarkedBlock*>(reinterpret_cast<uintptr_t>(p) & BLOCK_MASK);
     }
@@ -96,17 +96,17 @@ namespace JSC {
         return marked.testAndSet(cellNumber(cell));
     }
 
-    inline void MarkedBlock::setMarked(JSCell* cell)
+    inline void MarkedBlock::setMarked(const JSCell* cell)
     {
         marked.set(cellNumber(cell));
     }
 
-    inline bool MarkedBlock::isCellAligned(void* p)
+    inline bool MarkedBlock::isCellAligned(const void* p)
     {
         return !((intptr_t)(p) & CELL_MASK);
     }
 
-    inline bool MarkedBlock::isPossibleCell(void* p)
+    inline bool MarkedBlock::isPossibleCell(const void* p)
     {
         return isCellAligned(p) && p;
     }
