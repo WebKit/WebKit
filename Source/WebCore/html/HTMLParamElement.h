@@ -34,6 +34,8 @@ public:
     String name() const { return m_name; }
     String value() const { return m_value; }
 
+    static bool isURLParameter(const String&);
+
 private:
     HTMLParamElement(const QualifiedName&, Document*);
 

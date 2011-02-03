@@ -53,6 +53,7 @@ private:
 
     bool filterScriptToken(HTMLToken&);
     bool filterObjectToken(HTMLToken&);
+    bool filterParamToken(HTMLToken&);
     bool filterEmbedToken(HTMLToken&);
     bool filterAppletToken(HTMLToken&);
     bool filterMetaToken(HTMLToken&);

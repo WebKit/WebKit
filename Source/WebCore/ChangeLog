@@ -1,3 +1,30 @@
+2011-02-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Daniel Bates.
+
+        Teach XSSFilter that <param> elements can contain URLs
+        https://bugs.webkit.org/show_bug.cgi?id=53652
+
+        When loading plugins for the <object> tag, we're "smart" enough to
+        reach into the <param> elements and pull out the URL in some cases.
+        This patch teaches the XSSFilter how to block injections into those
+        sorts of param elements.
+
+        Fixes:
+            http/tests/security/xssAuditor/object-*
+
+        * html/HTMLParamElement.cpp:
+        (WebCore::HTMLParamElement::isURLParameter):
+        (WebCore::HTMLParamElement::isURLAttribute):
+        (WebCore::HTMLParamElement::addSubresourceAttributeURLs):
+        * html/HTMLParamElement.h:
+            - Add a helper function so that HTMLParamElement can share the
+              ground truth for these names with the XSSFilter.
+        * html/parser/XSSFilter.cpp:
+        (WebCore::XSSFilter::filterTokenInitial):
+        (WebCore::XSSFilter::filterParamToken):
+        * html/parser/XSSFilter.h:
+
 2011-02-02  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by David Levin.

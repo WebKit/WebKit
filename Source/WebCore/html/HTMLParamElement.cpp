@@ -42,6 +42,11 @@ PassRefPtr<HTMLParamElement> HTMLParamElement::create(const QualifiedName& tagNa
     return adoptRef(new HTMLParamElement(tagName, document));
 }
 
+bool HTMLParamElement::isURLParameter(const String& name)
+{
+    return equalIgnoringCase(name, "data") || equalIgnoringCase(name, "movie") || equalIgnoringCase(name, "src");
+}
+
 void HTMLParamElement::parseMappedAttribute(Attribute* attr)
 {
     if (isIdAttributeName(attr->name())) {
@@ -64,7 +69,7 @@ bool HTMLParamElement::isURLAttribute(Attribute* attr) const
         Attribute* attr = attributes()->getAttributeItem(nameAttr);
         if (attr) {
             const AtomicString& value = attr->value();
-            if (equalIgnoringCase(value, "data") || equalIgnoringCase(value, "movie") || equalIgnoringCase(value, "src"))
+            if (isURLParameter(value))
                 return true;
         }
     }
@@ -75,11 +80,9 @@ void HTMLParamElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) cons
 {
     HTMLElement::addSubresourceAttributeURLs(urls);
 
-    if (!equalIgnoringCase(name(), "data") &&
-        !equalIgnoringCase(name(), "movie") &&
-        !equalIgnoringCase(name(), "src"))
+    if (!isURLParameter(name()))
         return;
-    
+
     addSubresourceURL(urls, document()->completeURL(value()));
 }
 

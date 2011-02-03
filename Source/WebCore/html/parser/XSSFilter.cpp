@@ -31,6 +31,7 @@
 #include "Frame.h"
 #include "HTMLDocumentParser.h"
 #include "HTMLNames.h"
+#include "HTMLParamElement.h"
 #include "HTMLParserIdioms.h"
 #include "Settings.h"
 #include "TextEncoding.h"
@@ -209,6 +210,8 @@ bool XSSFilter::filterTokenInitial(HTMLToken& token)
         didBlockScript |= filterScriptToken(token);
     else if (hasName(token, objectTag))
         didBlockScript |= filterObjectToken(token);
+    else if (hasName(token, paramTag))
+        didBlockScript |= filterParamToken(token);
     else if (hasName(token, embedTag))
         didBlockScript |= filterEmbedToken(token);
     else if (hasName(token, appletTag))
@@ -270,6 +273,25 @@ bool XSSFilter::filterObjectToken(HTMLToken& token)
     didBlockScript |= eraseAttributeIfInjected(token, classidAttr);
 
     return didBlockScript;
+}
+
+bool XSSFilter::filterParamToken(HTMLToken& token)
+{
+    ASSERT(m_state == Initial);
+    ASSERT(token.type() == HTMLToken::StartTag);
+    ASSERT(hasName(token, paramTag));
+
+    size_t indexOfNameAttribute;
+    if (!findAttributeWithName(token, nameAttr, indexOfNameAttribute))
+        return false;
+
+    const HTMLToken::Attribute& nameAttribute = token.attributes().at(indexOfNameAttribute);
+    String name = String(nameAttribute.m_value.data(), nameAttribute.m_value.size());
+
+    if (!HTMLParamElement::isURLParameter(name))
+        return false;
+
+    return eraseAttributeIfInjected(token, valueAttr, blankURL().string());
 }
 
 bool XSSFilter::filterEmbedToken(HTMLToken& token)
