@@ -184,7 +184,6 @@ WONTFIX SKIP : java/lc3 = TEXT
 // TODO: move to platform/chromium-linux/.
 WONTFIX SKIP MAC WIN : platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle.html = FAIL
 
-
 // -----------------------------------------------------------------
 // WONTFIX TESTS
 // -----------------------------------------------------------------
@@ -266,6 +265,7 @@ WONTFIX : platform/qt = FAIL PASS
 WONTFIX SKIP : platform/qt/plugins/qt-qwidget-plugin.html = FAIL
 WONTFIX SKIP : platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment.html = PASS
 
+WONTFIX MAC WIN : platform/chromium-linux = FAIL
 WONTFIX LINUX MAC : platform/win = FAIL PASS
 
 // This is a Safari specific test to make WebKit behave like AppKit on the Mac.

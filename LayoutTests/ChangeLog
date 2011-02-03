@@ -1,5 +1,11 @@
 2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] Explicitly mark platform/chromium-linux as failing for other platforms.
+
+        * platform/chromium/test_expectations.txt: Added expectation of failure.
+
+2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Update expectations after r77495.
 
         * fast/dom/Window/window-properties-performance-expected.txt: Updated.
