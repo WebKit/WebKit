@@ -1,3 +1,21 @@
+2011-02-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Make null WTF::String objects turn into 0 pointers for WKStringRef and WKURLRef.
+        rdar://problem/8948688
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toAPI): Return 0 if the passed in string is 0.
+        (WebKit::toCopiedAPI): Ditto.
+        (WebKit::toURLRef): Ditto. Old code was trying to do this but was missing a return.
+        (WebKit::toCopiedURLAPI): Ditto. Old code was trying to do this but had incorrect
+        nll check.
+
+        * Shared/WebString.h: Removed isNull function. It can never return true.
+        Removed constructor code that turns the null string into the empty string.
+        Instead assert that the passed in string is not null.
+
 2011-02-02  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Beth Dakin.

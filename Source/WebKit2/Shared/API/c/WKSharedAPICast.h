@@ -131,28 +131,30 @@ inline typename ImplTypeInfo<T>::APIType toAPI(T t)
 
 inline ProxyingRefPtr<WebString> toAPI(StringImpl* string)
 {
+    if (!string)
+        return ProxyingRefPtr<WebString>(0);
     return ProxyingRefPtr<WebString>(WebString::create(string));
 }
 
 inline WKStringRef toCopiedAPI(const String& string)
 {
-    RefPtr<WebString> webString = WebString::create(string);
-    return toAPI(webString.release().releaseRef());
+    if (string.isNull())
+        return 0;
+    return toAPI(WebString::create(string).leakRef());
 }
 
 inline ProxyingRefPtr<WebURL> toURLRef(StringImpl* string)
 {
     if (!string)
-        ProxyingRefPtr<WebURL>(0);
-    return ProxyingRefPtr<WebURL>(WebURL::create(String(string)));
+        return ProxyingRefPtr<WebURL>(0);
+    return ProxyingRefPtr<WebURL>(WebURL::create(string));
 }
 
 inline WKURLRef toCopiedURLAPI(const String& string)
 {
-    if (!string)
+    if (string.isNull())
         return 0;
-    RefPtr<WebURL> webURL = WebURL::create(string);
-    return toAPI(webURL.release().releaseRef());
+    return toAPI(WebURL::create(string).leakRef());
 }
 
 inline String toWTFString(WKStringRef stringRef)
