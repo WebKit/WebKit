@@ -1,3 +1,9 @@
+2011-02-03  Alexander Pavlov  <apavlov@chromium.org>
+
+        Unreviewed, fix build after r77478.
+
+        * inspector/styles-source-lines-inline.html: Roll back inadvertent function rename.
+
 2011-02-03  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip flaky test
