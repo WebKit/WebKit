@@ -1,3 +1,14 @@
+2011-02-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix miscalculation of the overhang area used for painting. We were
+        not correctly accounting for scrollbars resulting in an non-negative
+        overhang even when we weren't over the edge.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::calculateOverhangAreasForPainting):
+
 2011-02-02  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Nate Chapin.
