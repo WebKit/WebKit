@@ -1,5 +1,26 @@
 2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] Moved XP/Vista-specific baselines to their proper places.
+
+        * platform/chromium-win-vista/svg/text/text-fonts-01-t-expected.checksum:
+        * platform/chromium-win-vista/svg/text/text-fonts-01-t-expected.png:
+        * platform/chromium-win-xp/svg/batik/text/verticalText-expected.checksum:
+        * platform/chromium-win-xp/svg/batik/text/verticalText-expected.png:
+        * platform/chromium-win-xp/svg/custom/js-late-pattern-and-object-creation-expected.checksum:
+        * platform/chromium-win-xp/svg/custom/js-late-pattern-and-object-creation-expected.png:
+        * platform/chromium-win-xp/svg/text/text-intro-05-t-expected.checksum:
+        * platform/chromium-win-xp/svg/text/text-intro-05-t-expected.png:
+        * platform/chromium-win/svg/batik/text/verticalText-expected.checksum: Removed.
+        * platform/chromium-win/svg/batik/text/verticalText-expected.png: Removed.
+        * platform/chromium-win/svg/custom/js-late-pattern-and-object-creation-expected.checksum: Removed.
+        * platform/chromium-win/svg/custom/js-late-pattern-and-object-creation-expected.png: Removed.
+        * platform/chromium-win/svg/text/text-fonts-01-t-expected.checksum: Removed.
+        * platform/chromium-win/svg/text/text-fonts-01-t-expected.png: Removed.
+        * platform/chromium-win/svg/text/text-intro-05-t-expected.checksum: Removed.
+        * platform/chromium-win/svg/text/text-intro-05-t-expected.png: Removed.
+
+2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Update expectations after r77495.
 
         * fast/dom/Window/window-properties-expected.txt: Updated.
