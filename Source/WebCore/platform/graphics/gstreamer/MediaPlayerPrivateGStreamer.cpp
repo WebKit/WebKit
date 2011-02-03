@@ -1384,11 +1384,15 @@ static HashSet<String> mimeTypeCache()
 
                 // These formats are supported by GStreamer, but not
                 // correctly advertised.
-                if (g_str_equal(name, "video/x-h264")
-                    || g_str_equal(name, "audio/x-m4a")) {
+                if (g_str_equal(name, "video/x-h264")) {
                     cache.add(String("video/mp4"));
+                    cached = true;
+                }
+
+                if (g_str_equal(name, "audio/x-m4a")) {
                     cache.add(String("audio/aac"));
                     cache.add(String("audio/mp4"));
+                    cache.add(String("audio/x-m4a"));
                     cached = true;
                 }
 
@@ -1466,6 +1470,15 @@ static HashSet<String> mimeTypeCache()
                     for (int index = 0; extensions[index]; index++) {
                         if (g_str_equal(extensions[index], "m4v"))
                             cache.add(String("video/x-m4v"));
+
+                        // Workaround for
+                        // https://bugzilla.gnome.org/show_bug.cgi?id=640709.
+                        // typefindfunctions <= 0.10.32 doesn't
+                        // register the H264 typefinder correctly so
+                        // as a workaround we check the registered
+                        // file extensions for it.
+                        if (g_str_equal(extensions[index], "h264"))
+                            cache.add(String("video/mp4"));
                     }
                 }
             }
