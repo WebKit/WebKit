@@ -480,7 +480,8 @@ QWKPage::QWKPage(QWKContext* context)
         0,  /* drawHeader */
         0,  /* drawFooter */
         0,  /* printFrame */
-        0   /* runModal */
+        0,  /* runModal */
+        0   /* didCompleteRubberBandForMainFrame */
     };
     WKPageSetPageUIClient(pageRef(), &uiClient);
 }
