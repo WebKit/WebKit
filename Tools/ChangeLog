@@ -1,5 +1,28 @@
 2011-02-03  Adam Roben  <aroben@apple.com>
 
+        Add links to Windows crash logs in results.html
+
+        Fixes <http://webkit.org/b/53718> run-webkit-tests should link to Windows crash logs in
+        results.html
+
+        Reviewed by David Kilzer.
+
+        * Scripts/old-run-webkit-tests:
+        (top level): Added $crashLogTag and $windowsCrashLogFilePrefix (which came from
+        createDebuggerCommandFile).
+        (testCrashedOrTimedOut): If the test crashed, capture any saved crash log after the dump
+        tool has exited.
+        (captureSavedCrashLog): Added. Finds the crash log for the test that just crashed and moves
+        it into the test results directory tree. Only implemented for Cygwin currently.
+        (findNewestFileMatchingGlob): Added. Does what it says.
+        (htmlForResultsSection): Only link to files that exist.
+        (linksForErrorTest): Add a link to the crash log.
+        (deleteExpectedAndActualResults): Delete any old crash log for this test.
+        (createDebuggerCommandFile): Use the new $windowsCrashLogFilePrefix constant instead of
+        hardcoding it here.
+
+2011-02-03  Adam Roben  <aroben@apple.com>
+
         Tell the debugger the path to the WebKit source tree when saving a crash log
 
         This allows the debugger to include the crashing line of code in the log.

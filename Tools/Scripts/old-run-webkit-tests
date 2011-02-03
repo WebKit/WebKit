@@ -77,6 +77,7 @@ use POSIX;
 
 sub buildPlatformResultHierarchy();
 sub buildPlatformTestHierarchy(@);
+sub captureSavedCrashLog($);
 sub checkPythonVersion();
 sub closeCygpaths();
 sub closeDumpTool();
@@ -89,6 +90,7 @@ sub dumpToolDidCrash();
 sub epiloguesAndPrologues($$);
 sub expectedDirectoryForTest($;$;$);
 sub fileNameWithNumber($$);
+sub findNewestFileMatchingGlob($);
 sub htmlForResultsSection(\@$&);
 sub isTextOnlyTest($);
 sub launchWithEnv(\@\%);
@@ -189,6 +191,9 @@ my $actualTag = "actual";
 my $prettyDiffTag = "pretty-diff";
 my $diffsTag = "diffs";
 my $errorTag = "stderr";
+my $crashLogTag = "crash-log";
+
+my $windowsCrashLogFilePrefix = "CrashLog";
 
 # These are defined here instead of closer to where they are used so that they
 # will always be accessible from the END block that uses them, even if the user
@@ -1731,12 +1736,43 @@ sub testCrashedOrTimedOut($$$$$$)
     kill 9, $dumpToolPID unless $didCrash;
 
     closeDumpTool();
-    
+
+    captureSavedCrashLog($base) if $didCrash;
+
     return unless isCygwin() && !$didCrash && $base =~ /^http/;
     # On Cygwin, http tests timing out can be a symptom of a non-responsive httpd.
     # If we timed out running an http test, try restarting httpd.
     $isHttpdOpen = !closeHTTPD();
     configureAndOpenHTTPDIfNeeded();
+}
+
+sub captureSavedCrashLog($)
+{
+    my ($base) = @_;
+
+    my $crashLog;
+    if (isCygwin()) {
+        # We assume that the newest crash log in $testResultsDirectory is the one that corresponds to the crash that just occurred.
+        my $newestCrashLog = findNewestFileMatchingGlob(File::Spec->catfile($testResultsDirectory, $windowsCrashLogFilePrefix . "*.txt"));
+
+        # The crash log must have been created after this script started running.
+        $crashLog = $newestCrashLog if -M $newestCrashLog < 0;
+    }
+    return unless $crashLog;
+
+    move($crashLog, File::Spec->catfile($testResultsDirectory, "$base-$crashLogTag.txt"));
+}
+
+sub findNewestFileMatchingGlob($)
+{
+    my ($glob) = @_;
+
+    my @paths = glob $glob;
+    return unless @paths;
+
+    my @pathsAndTimes = map { [$_, -M $_] } @paths;
+    @pathsAndTimes = sort { $b->[1] <=> $a->[1] } @pathsAndTimes;
+    return $pathsAndTimes[$#pathsAndTimes]->[0];
 }
 
 sub printFailureMessageForTest($$)
@@ -1865,7 +1901,9 @@ sub htmlForResultsSection(\@$&)
         push @html, "<tr>";
         push @html, "<td><a href=\"" . toURL("$testDirectory/$test") . "\">$test</a></td>";
         foreach my $link (@{&{$linkGetter}($test)}) {
-            push @html, "<td><a href=\"$link->{href}\">$link->{text}</a></td>";
+            push @html, "<td>";
+            push @html, "<a href=\"$link->{href}\">$link->{text}</a>" if -f File::Spec->catfile($testResultsDirectory, $link->{href});
+            push @html, "</td>";
         }
         push @html, "</tr>";
     }
@@ -1921,6 +1959,7 @@ sub linksForErrorTest
 
     push @links, @{linksForExpectedAndActualResults($base)};
     push @links, { href => "$base-$errorTag.txt", text => "stderr" };
+    push @links, { href => "$base-$crashLogTag.txt", text => "crash log" };
 
     return \@links;
 }
@@ -1951,6 +1990,7 @@ sub deleteExpectedAndActualResults($)
     unlink "$testResultsDirectory/$base-$actualTag.txt";
     unlink "$testResultsDirectory/$base-$diffsTag.txt";
     unlink "$testResultsDirectory/$base-$errorTag.txt";
+    unlink "$testResultsDirectory/$base-$crashLogTag.txt";
 }
 
 sub recordActualResultsAndDiff($$)
@@ -2458,7 +2498,7 @@ sub createDebuggerCommandFile()
     return unless isCygwin();
 
     my @commands = (
-        '.logopen /t "' . toWindowsPath($testResultsDirectory) . '\CrashLog.txt"',
+        '.logopen /t "' . toWindowsPath($testResultsDirectory) . "\\" . $windowsCrashLogFilePrefix . '.txt"',
         '.srcpath "' . toWindowsPath(sourceDir()) . '"',
         '!analyze -vv',
         '~*kpn',
