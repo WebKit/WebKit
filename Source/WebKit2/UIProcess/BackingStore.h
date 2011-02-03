@@ -68,7 +68,6 @@ private:
 
     WebCore::IntSize m_size;
     WebPageProxy* m_webPageProxy;
-    double m_latestUpdateTimestamp;
 
 #if PLATFORM(MAC)
     CGContextRef backingStoreContext();

@@ -43,6 +43,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static uint64_t generateSequenceNumber()
+{
+    static uint64_t sequenceNumber;
+    return ++sequenceNumber;
+}
+
 PassRefPtr<DrawingAreaImpl> DrawingAreaImpl::create(WebPage* webPage, const WebPageCreationParameters& parameters)
 {
     return adoptRef(new DrawingAreaImpl(webPage, parameters));
@@ -179,12 +185,11 @@ void DrawingAreaImpl::setSize(const IntSize& size)
     UpdateInfo updateInfo;
 
     if (m_isPaintingSuspended || m_layerTreeHost) {
-        updateInfo.timestamp = currentTime();
         updateInfo.viewSize = m_webPage->size();
     } else
         display(updateInfo);
 
-    m_webPage->send(Messages::DrawingAreaProxy::DidSetSize(updateInfo));
+    m_webPage->send(Messages::DrawingAreaProxy::DidSetSize(generateSequenceNumber(), updateInfo));
 
     m_inSetSize = false;
 }
@@ -233,7 +238,7 @@ void DrawingAreaImpl::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLay
     m_isWaitingForDidUpdate = false;
 
     if (!m_inSetSize)
-        m_webPage->send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(m_layerTreeHost->layerTreeContext()));
+        m_webPage->send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(generateSequenceNumber(), m_layerTreeHost->layerTreeContext()));
 }
 
 void DrawingAreaImpl::exitAcceleratedCompositingMode()
@@ -242,7 +247,7 @@ void DrawingAreaImpl::exitAcceleratedCompositingMode()
     m_layerTreeHost = nullptr;
     
     if (!m_inSetSize)
-        m_webPage->send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode());
+        m_webPage->send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode(generateSequenceNumber()));
 }
 
 void DrawingAreaImpl::scheduleDisplay()
@@ -276,7 +281,7 @@ void DrawingAreaImpl::display()
     UpdateInfo updateInfo;
     display(updateInfo);
 
-    m_webPage->send(Messages::DrawingAreaProxy::Update(updateInfo));
+    m_webPage->send(Messages::DrawingAreaProxy::Update(generateSequenceNumber(), updateInfo));
     m_isWaitingForDidUpdate = true;
 }
 
@@ -333,7 +338,6 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
 
     m_webPage->layoutIfNeeded();
     
-    updateInfo.timestamp = currentTime();
     updateInfo.viewSize = m_webPage->size();
     updateInfo.updateRectBounds = bounds;
 

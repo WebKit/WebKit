@@ -41,13 +41,10 @@ class UpdateInfo {
     WTF_MAKE_NONCOPYABLE(UpdateInfo);
 
 public:
-    UpdateInfo() : timestamp(0) { }
+    UpdateInfo() { }
 
     void encode(CoreIPC::ArgumentEncoder*) const;
     static bool decode(CoreIPC::ArgumentDecoder*, UpdateInfo&);
-
-    // The timestamp of this update.
-    double timestamp;
 
     // The size of the web view.
     WebCore::IntSize viewSize;

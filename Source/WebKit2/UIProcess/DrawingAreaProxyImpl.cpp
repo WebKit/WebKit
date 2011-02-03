@@ -51,6 +51,7 @@ DrawingAreaProxyImpl::DrawingAreaProxyImpl(WebPageProxy* webPageProxy)
     : DrawingAreaProxy(DrawingAreaInfo::Impl, webPageProxy)
     , m_isWaitingForDidSetSize(false)
     , m_isInAcceleratedCompositingMode(false)
+    , m_lastDidSetSizeSequenceNumber(0)
 {
 }
 
@@ -129,16 +130,22 @@ void DrawingAreaProxyImpl::detachCompositingContext()
     ASSERT_NOT_REACHED();
 }
 
-void DrawingAreaProxyImpl::update(const UpdateInfo& updateInfo)
+void DrawingAreaProxyImpl::update(uint64_t sequenceNumber, const UpdateInfo& updateInfo)
 {
+    if (sequenceNumber < m_lastDidSetSizeSequenceNumber)
+        return;
+
     // FIXME: Handle the case where the view is hidden.
 
     incorporateUpdate(updateInfo);
     m_webPageProxy->process()->send(Messages::DrawingArea::DidUpdate(), m_webPageProxy->pageID());
 }
 
-void DrawingAreaProxyImpl::didSetSize(const UpdateInfo& updateInfo)
+void DrawingAreaProxyImpl::didSetSize(uint64_t sequenceNumber, const UpdateInfo& updateInfo)
 {
+    ASSERT(sequenceNumber > m_lastDidSetSizeSequenceNumber);
+    m_lastDidSetSizeSequenceNumber = sequenceNumber;
+
     ASSERT(m_isWaitingForDidSetSize);
     m_isWaitingForDidSetSize = false;
 
@@ -154,7 +161,7 @@ void DrawingAreaProxyImpl::didSetSize(const UpdateInfo& updateInfo)
     incorporateUpdate(updateInfo);
 }
 
-void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
+void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(uint64_t sequenceNumber, const LayerTreeContext& layerTreeContext)
 {
     ASSERT(!m_isInAcceleratedCompositingMode);
     m_isInAcceleratedCompositingMode = true;
@@ -163,7 +170,7 @@ void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(const LayerTreeContex
     m_webPageProxy->enterAcceleratedCompositingMode(layerTreeContext);
 }
 
-void DrawingAreaProxyImpl::exitAcceleratedCompositingMode()
+void DrawingAreaProxyImpl::exitAcceleratedCompositingMode(uint64_t sequenceNumber)
 {
     ASSERT(m_isInAcceleratedCompositingMode);
     m_isInAcceleratedCompositingMode = false;

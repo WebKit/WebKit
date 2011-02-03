@@ -96,11 +96,11 @@ protected:
 private:
     // CoreIPC message handlers.
     // FIXME: These should be pure virtual.
-    virtual void update(const UpdateInfo&) { }
-    virtual void didSetSize(const UpdateInfo&) { }
+    virtual void update(uint64_t sequenceNumber, const UpdateInfo&) { }
+    virtual void didSetSize(uint64_t sequenceNumber, const UpdateInfo&) { }
 #if USE(ACCELERATED_COMPOSITING)
-    virtual void enterAcceleratedCompositingMode(const LayerTreeContext&) { }
-    virtual void exitAcceleratedCompositingMode() { }
+    virtual void enterAcceleratedCompositingMode(uint64_t sequenceNumber, const LayerTreeContext&) { }
+    virtual void exitAcceleratedCompositingMode(uint64_t sequenceNumber) { }
 #endif
 };
 

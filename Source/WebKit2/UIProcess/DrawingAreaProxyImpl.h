@@ -54,10 +54,10 @@ private:
     virtual void detachCompositingContext();
 
     // CoreIPC message handlers
-    virtual void update(const UpdateInfo&);
-    virtual void didSetSize(const UpdateInfo&);
-    virtual void enterAcceleratedCompositingMode(const LayerTreeContext&);
-    virtual void exitAcceleratedCompositingMode();
+    virtual void update(uint64_t sequenceNumber, const UpdateInfo&);
+    virtual void didSetSize(uint64_t sequenceNumber, const UpdateInfo&);
+    virtual void enterAcceleratedCompositingMode(uint64_t sequenceNumber, const LayerTreeContext&);
+    virtual void exitAcceleratedCompositingMode(uint64_t sequenceNumber);
 
     void incorporateUpdate(const UpdateInfo&);
     void sendSetSize();
@@ -68,6 +68,9 @@ private:
 
     // Whether we're in accelerated compositing mode or not.
     bool m_isInAcceleratedCompositingMode;
+
+    // The sequence number of the last DidSetSize message
+    uint64_t m_lastDidSetSizeSequenceNumber;
 
     OwnPtr<BackingStore> m_backingStore;
 };
