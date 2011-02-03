@@ -1,3 +1,9 @@
+2011-02-02  Evan Martin  <evan@chromium.org>
+
+        Unreviewed, DEPS change.
+
+        * DEPS: update to pick up newer Skia.
+
 2011-02-02  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Update more references to right() and bottom() in Chromium.
