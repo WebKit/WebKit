@@ -1,3 +1,10 @@
+2011-02-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix 32-bit builds.
+
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ShadowBlur::blurLayerImage):
+
 2011-02-03  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.
