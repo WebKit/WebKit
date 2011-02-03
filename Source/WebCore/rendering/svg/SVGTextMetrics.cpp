@@ -34,16 +34,21 @@ SVGTextMetrics::SVGTextMetrics()
 {
 }
 
-SVGTextMetrics::SVGTextMetrics(const Font& font, const TextRun& run, unsigned position, unsigned textLength)
-    : m_width(0)
-    , m_height(0)
-    , m_length(0)
+SVGTextMetrics::SVGTextMetrics(RenderSVGInlineText* textRenderer, const TextRun& run, unsigned position, unsigned textLength)
 {
+    ASSERT(textRenderer);
+
+    float scalingFactor = textRenderer->scalingFactor();
+    ASSERT(scalingFactor);
+
+    const Font& scaledFont = textRenderer->scaledFont();
+
     int extraCharsAvailable = textLength - (position + run.length());
     int length = 0;
 
-    m_width = font.floatWidth(run, extraCharsAvailable, length, m_glyph.name);
-    m_height = font.fontMetrics().height();
+    // Calculate width/height using the scaled font, divide this result by the scalingFactor afterwards.
+    m_width = scaledFont.floatWidth(run, extraCharsAvailable, length, m_glyph.name) / scalingFactor;
+    m_height = scaledFont.fontMetrics().floatHeight() / scalingFactor;
     m_glyph.unicodeString = String(run.characters(), length);
     m_glyph.isValid = true;
 
@@ -71,8 +76,7 @@ static TextRun constructTextRun(RenderSVGInlineText* text, const UChar* characte
     TextRun run(characters + position, length);
 
 #if ENABLE(SVG_FONTS)
-    ASSERT(text->parent());
-    run.setReferencingRenderObject(text->parent());
+    run.setReferencingRenderObject(text);
 #endif
 
     // Disable any word/character rounding.
@@ -86,18 +90,13 @@ static TextRun constructTextRun(RenderSVGInlineText* text, const UChar* characte
 SVGTextMetrics SVGTextMetrics::measureCharacterRange(RenderSVGInlineText* text, unsigned position, unsigned length)
 {
     ASSERT(text);
-    ASSERT(text->style());
-
     TextRun run(constructTextRun(text, text->characters(), position, length));
-    return SVGTextMetrics(text->style()->font(), run, position, text->textLength());
+    return SVGTextMetrics(text, run, position, text->textLength());
 }
 
 void SVGTextMetrics::measureAllCharactersIndividually(RenderSVGInlineText* text, Vector<SVGTextMetrics>& allMetrics)
 {
     ASSERT(text);
-    ASSERT(text->style());
-
-    const Font& font = text->style()->font();
     const UChar* characters = text->characters();
     unsigned length = text->textLength();
 
@@ -105,7 +104,7 @@ void SVGTextMetrics::measureAllCharactersIndividually(RenderSVGInlineText* text,
     for (unsigned position = 0; position < length; ) {
         run.setText(characters + position, 1);
 
-        SVGTextMetrics metrics(font, run, position, text->textLength());
+        SVGTextMetrics metrics(text, run, position, text->textLength());
         allMetrics.append(metrics);
         position += metrics.length();
     }

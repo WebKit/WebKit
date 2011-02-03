@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
-  RenderSVGRoot {svg} at (49,6) size 352x488
-    RenderSVGText {text} at (144,6) size 162x17 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 162x17
+  RenderSVGRoot {svg} at (49,5) size 352x489
+    RenderSVGText {text} at (144,5) size 162x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 162x19
         chunk 1 (middle anchor) text run 1 at (144.00,20.00) startOffset 0 endOffset 22 width 162.00: "textLength with Anchor"
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGContainer {g} at (200,3) size 50x24

@@ -472,7 +472,10 @@ struct ExtentOfCharacterData : SVGTextQuery::Data {
 
 static inline void calculateGlyphBoundaries(SVGTextQuery::Data* queryData, const SVGTextFragment& fragment, int startPosition, FloatRect& extent)
 {
-    extent.setLocation(FloatPoint(fragment.x, fragment.y - queryData->textRenderer->style()->fontMetrics().ascent()));
+    float scalingFactor = queryData->textRenderer->scalingFactor();
+    ASSERT(scalingFactor);
+
+    extent.setLocation(FloatPoint(fragment.x, fragment.y - queryData->textRenderer->scaledFont().fontMetrics().floatAscent() / scalingFactor));
 
     if (startPosition) {
         SVGTextMetrics metrics = SVGTextMetrics::measureCharacterRange(queryData->textRenderer, fragment.positionListOffset, startPosition);

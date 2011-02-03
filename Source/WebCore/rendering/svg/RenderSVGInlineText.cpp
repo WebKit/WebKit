@@ -26,11 +26,14 @@
 #if ENABLE(SVG)
 #include "RenderSVGInlineText.h"
 
+#include "CSSStyleSelector.h"
 #include "FloatConversion.h"
 #include "FloatQuad.h"
 #include "RenderBlock.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
+#include "Settings.h"
+#include "SVGImageBufferTools.h"
 #include "SVGInlineTextBox.h"
 #include "SVGRootInlineBox.h"
 #include "VisiblePosition.h"
@@ -63,6 +66,7 @@ static PassRefPtr<StringImpl> applySVGWhitespaceRules(PassRefPtr<StringImpl> str
 
 RenderSVGInlineText::RenderSVGInlineText(Node* n, PassRefPtr<StringImpl> string)
     : RenderText(n, applySVGWhitespaceRules(string, false))
+    , m_scalingFactor(1)
 {
 }
 
@@ -74,6 +78,8 @@ void RenderSVGInlineText::styleDidChange(StyleDifference diff, const RenderStyle
         // The text metrics may be influenced by style changes.
         if (RenderSVGText* textRenderer = RenderSVGText::locateRenderSVGTextAncestor(this))
             textRenderer->setNeedsPositioningValuesUpdate();
+
+        updateScaledFont();
     }
 
     const RenderStyle* newStyle = style();
@@ -159,9 +165,7 @@ VisiblePosition RenderSVGInlineText::positionForPoint(const IntPoint& point)
     if (!firstTextBox() || !textLength())
         return createVisiblePosition(0, DOWNSTREAM);
 
-    RenderStyle* style = this->style();
-    ASSERT(style);
-    int baseline = style->fontMetrics().ascent();
+    float baseline = m_scaledFont.fontMetrics().floatAscent();
 
     RenderBlock* containingBlock = this->containingBlock();
     ASSERT(containingBlock);
@@ -204,6 +208,39 @@ VisiblePosition RenderSVGInlineText::positionForPoint(const IntPoint& point)
 
     int offset = closestDistanceBox->offsetForPositionInFragment(*closestDistanceFragment, absolutePoint.x() - closestDistancePosition, true);
     return createVisiblePosition(offset + closestDistanceBox->start(), offset > 0 ? VP_UPSTREAM_IF_POSSIBLE : DOWNSTREAM);
+}
+
+void RenderSVGInlineText::updateScaledFont()
+{
+    computeNewScaledFontForStyle(this, style(), m_scalingFactor, m_scaledFont);
+}
+
+void RenderSVGInlineText::computeNewScaledFontForStyle(RenderObject* renderer, const RenderStyle* style, float& scalingFactor, Font& scaledFont)
+{
+    ASSERT(style);
+    ASSERT(renderer);
+
+    Document* document = renderer->document();
+    ASSERT(document);
+
+    CSSStyleSelector* styleSelector = document->styleSelector();
+    ASSERT(styleSelector);
+
+    // Alter font-size to the right on-screen value, to avoid scaling the glyphs themselves.
+    AffineTransform ctm;
+    SVGImageBufferTools::calculateTransformationToOutermostSVGCoordinateSystem(renderer, ctm);
+    scalingFactor = narrowPrecisionToFloat(sqrt((pow(ctm.xScale(), 2) + pow(ctm.yScale(), 2)) / 2));
+    if (scalingFactor == 1 || !scalingFactor) {
+        scalingFactor = 1;
+        scaledFont = style->font();
+        return;
+    }
+
+    FontDescription fontDescription(style->fontDescription());
+    fontDescription.setComputedSize(fontDescription.computedSize() * scalingFactor);
+
+    scaledFont = Font(fontDescription, 0, 0);
+    scaledFont.update(styleSelector->fontSelector());
 }
 
 }

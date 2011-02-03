@@ -40,8 +40,6 @@ protected:
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual void synchronizeProperty(const QualifiedName&);
 
-    virtual bool selfHasRelativeLengths() const;
-
     // Animated property declarations
     DECLARE_ANIMATED_LENGTH_LIST(X, x)
     DECLARE_ANIMATED_LENGTH_LIST(Y, y)

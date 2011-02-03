@@ -33,7 +33,7 @@
 #include "GraphicsContext.h"
 #include "HitTestRequest.h"
 #include "PointerEventsHitRules.h"
-#include "RenderLayer.h"
+#include "RenderSVGInlineText.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGRoot.h"
 #include "SVGLengthList.h"
@@ -91,6 +91,18 @@ void RenderSVGText::mapLocalToContainer(RenderBoxModelObject* repaintContainer, 
     SVGRenderSupport::mapLocalToContainer(this, repaintContainer, fixed, useTransforms, transformState);
 }
 
+static inline void recursiveUpdateScaledFont(RenderObject* start)
+{
+    for (RenderObject* child = start->firstChild(); child; child = child->nextSibling()) {
+        if (child->isSVGInlineText()) {
+            toRenderSVGInlineText(child)->updateScaledFont();
+            continue;
+        }
+
+        recursiveUpdateScaledFont(child);
+    }
+}
+
 void RenderSVGText::layout()
 {
     ASSERT(needsLayout());
@@ -101,6 +113,13 @@ void RenderSVGText::layout()
         SVGTextElement* text = static_cast<SVGTextElement*>(node());
         m_localTransform = text->animatedLocalTransform();
         m_needsTransformUpdate = false;
+        updateCachedBoundariesInParents = true;
+    }
+
+    // If the root layout size changed (eg. window size changes) or the positioning values change, recompute the on-screen font size.
+    if (m_needsPositioningValuesUpdate || SVGRenderSupport::findTreeRootObject(this)->isLayoutSizeChanged()) {
+        recursiveUpdateScaledFont(this);
+        m_needsPositioningValuesUpdate = true;
         updateCachedBoundariesInParents = true;
     }
 

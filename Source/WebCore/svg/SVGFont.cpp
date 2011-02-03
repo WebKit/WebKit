@@ -26,6 +26,7 @@
 #include "CSSFontSelector.h"
 #include "GraphicsContext.h"
 #include "RenderObject.h"
+#include "RenderSVGInlineText.h"
 #include "RenderSVGResourceSolidColor.h"
 #include "SVGAltGlyphElement.h"
 #include "SVGFontData.h"
@@ -254,8 +255,10 @@ struct SVGTextRunWalker {
         bool haveAltGlyph = false;
         SVGGlyphIdentifier altGlyphIdentifier;
         if (RenderObject* renderObject = run.referencingRenderObject()) {
-            if (renderObject->node() && renderObject->node()->hasTagName(SVGNames::altGlyphTag)) {
-                SVGGlyphElement* glyphElement = static_cast<SVGAltGlyphElement*>(renderObject->node())->glyphElement();
+            RenderObject* parentRenderer = renderObject->parent();
+            ASSERT(parentRenderer);
+            if (parentRenderer->node() && parentRenderer->node()->hasTagName(SVGNames::altGlyphTag)) {
+                SVGGlyphElement* glyphElement = static_cast<SVGAltGlyphElement*>(parentRenderer->node())->glyphElement();
                 if (glyphElement) {
                     haveAltGlyph = true;
                     altGlyphIdentifier = glyphElement->buildGlyphIdentifier();
@@ -407,9 +410,11 @@ static float floatWidthOfSubStringUsingSVGFont(const Font* font, const TextRun& 
 
         // TODO: language matching & svg glyphs should be possible for HTML text, too.
         if (RenderObject* renderObject = run.referencingRenderObject()) {
-            isVerticalText = isVerticalWritingMode(renderObject->style()->svgStyle());
+            RenderObject* parentRenderer = renderObject->parent();
+            ASSERT(parentRenderer);
+            isVerticalText = isVerticalWritingMode(parentRenderer->style()->svgStyle());
 
-            if (SVGElement* element = static_cast<SVGElement*>(renderObject->node()))
+            if (SVGElement* element = static_cast<SVGElement*>(parentRenderer->node()))
                 language = element->getAttribute(XMLNames::langAttr);
         }
 
@@ -495,10 +500,15 @@ void Font::drawTextUsingSVGFont(GraphicsContext* context, const TextRun& run,
         String language;
 
         // TODO: language matching & svg glyphs should be possible for HTML text, too.
-        if (run.referencingRenderObject()) {
-            isVerticalText = isVerticalWritingMode(run.referencingRenderObject()->style()->svgStyle());    
+        RenderObject* referencingRenderObject = run.referencingRenderObject();
+        RenderObject* referencingRenderObjectParent = referencingRenderObject ? referencingRenderObject->parent() : 0;
+        RenderStyle* referencingRenderObjectParentStyle = 0;
+        if (referencingRenderObject) {
+            ASSERT(referencingRenderObjectParent);
+            referencingRenderObjectParentStyle = referencingRenderObjectParent->style();
 
-            if (SVGElement* element = static_cast<SVGElement*>(run.referencingRenderObject()->node()))
+            isVerticalText = isVerticalWritingMode(referencingRenderObjectParentStyle->svgStyle());    
+            if (SVGElement* element = static_cast<SVGElement*>(referencingRenderObjectParent->node()))
                 language = element->getAttribute(XMLNames::langAttr);
         }
 
@@ -536,9 +546,13 @@ void Font::drawTextUsingSVGFont(GraphicsContext* context, const TextRun& run,
                     Path glyphPath = identifier.pathData;
                     glyphPath.transform(glyphPathTransform);
 
-                    RenderStyle* style = run.referencingRenderObject() ? run.referencingRenderObject()->style() : 0;
-                    if (activePaintingResource->applyResource(run.referencingRenderObject(), style, context, resourceMode))
-                        activePaintingResource->postApplyResource(run.referencingRenderObject(), context, resourceMode, &glyphPath);
+                    if (activePaintingResource->applyResource(referencingRenderObjectParent, referencingRenderObjectParentStyle, context, resourceMode)) {
+                        if (referencingRenderObject) {
+                            RenderSVGInlineText* textRenderer = toRenderSVGInlineText(referencingRenderObject);
+                            context->setStrokeThickness(context->strokeThickness() * textRenderer->scalingFactor());
+                        }
+                        activePaintingResource->postApplyResource(referencingRenderObjectParent, context, resourceMode, &glyphPath);
+                    }
 
                     context->restore();
                 }

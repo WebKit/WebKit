@@ -25,7 +25,6 @@
 
 namespace WebCore {
 
-class Font;
 class RenderSVGInlineText;
 class TextRun;
 
@@ -64,7 +63,7 @@ public:
 
 private:
     SVGTextMetrics();
-    SVGTextMetrics(const Font&, const TextRun&, unsigned position, unsigned textLength);
+    SVGTextMetrics(RenderSVGInlineText*, const TextRun&, unsigned position, unsigned textLength);
 
     float m_width;
     float m_height;

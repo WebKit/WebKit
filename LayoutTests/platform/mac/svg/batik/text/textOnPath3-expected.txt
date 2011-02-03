@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
-  RenderSVGRoot {svg} at (29,26) size 392x455
-    RenderSVGText {text} at (101,26) size 248x17 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 248x17
+  RenderSVGRoot {svg} at (29,25) size 392x456
+    RenderSVGText {text} at (101,25) size 248x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 248x19
         chunk 1 (middle anchor) text run 1 at (101.50,40.00) startOffset 0 endOffset 38 width 247.00: "Text on Path with for text with an 'x'"
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGPath {path} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]

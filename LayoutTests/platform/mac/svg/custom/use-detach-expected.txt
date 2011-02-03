@@ -4,32 +4,32 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (112,12) size 688x236
     RenderSVGContainer {g} at (112,12) size 240x120 [transform={m=((1.00,0.00)(0.00,1.00)) t=(5.00,5.00)}]
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-        RenderSVGText {text} at (42,20) size 16x14 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 16x14
-            chunk 1 (middle anchor) text run 1 at (42.00,31.00) startOffset 0 endOffset 3 width 16.00: "use"
+        RenderSVGText {text} at (41,20) size 18x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 18x15
+            chunk 1 (middle anchor) text run 1 at (41.88,31.00) startOffset 0 endOffset 3 width 16.25: "use"
         RenderSVGPath {circle} at (220,96) size 24x24 [fill={[type=SOLID] [color=#FF0000]}] [cx=50.00] [cy=40.00] [r=5.00]
-      RenderSVGContainer {g} at (210,57) size 44x66
-        RenderSVGContainer {use} at (210,57) size 44x39
-          RenderSVGContainer {g} at (210,57) size 44x39
-            RenderSVGText {text} at (42,20) size 16x14 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 16x14
-                chunk 1 (middle anchor) text run 1 at (42.00,31.00) startOffset 0 endOffset 3 width 16.00: "use"
+      RenderSVGContainer {g} at (208,57) size 48x66
+        RenderSVGContainer {use} at (208,57) size 48x42
+          RenderSVGContainer {g} at (208,57) size 48x42
+            RenderSVGText {text} at (41,20) size 18x15 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 18x15
+                chunk 1 (middle anchor) text run 1 at (41.88,31.00) startOffset 0 endOffset 3 width 16.25: "use"
         RenderSVGContainer {use} at (217,93) size 30x30
           RenderSVGContainer {g} at (217,93) size 30x30
             RenderSVGPath {circle} at (217,93) size 30x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [cx=50.00] [cy=40.00] [r=5.00]
       RenderSVGPath {rect} at (112,12) size 240x120 [opacity=0.20] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
     RenderSVGContainer {g} at (124,141) size 676x107 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,70.00)}]
-      RenderSVGText {text} at (0,-11) size 287x44 contains 1 chunk(s)
-        RenderSVGTSpan {tspan} at (0,0) size 280x14
-          RenderSVGInlineText {#text} at (0,0) size 280x14
-            chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 40 width 280.00: "For this test case to be successful, the"
-        RenderSVGInlineText {#text} at (280,0) size 7x14
-          chunk 1 text run 1 at (280.00,0.00) startOffset 0 endOffset 1 width 7.00: " "
-        RenderSVGTSpan {tspan} at (0,0) size 273x14
-          RenderSVGInlineText {#text} at (0,15) size 273x14
-            chunk 1 text run 1 at (0.00,15.00) startOffset 0 endOffset 39 width 273.00: "box above must show text and a circle. "
+      RenderSVGText {text} at (0,-11) size 291x44 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 284x14
+          RenderSVGInlineText {#text} at (0,0) size 284x14
+            chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 40 width 283.33: "For this test case to be successful, the"
+        RenderSVGInlineText {#text} at (283,0) size 8x14
+          chunk 1 text run 1 at (283.33,0.00) startOffset 0 endOffset 1 width 7.08: " "
+        RenderSVGTSpan {tspan} at (0,0) size 277x14
+          RenderSVGInlineText {#text} at (0,15) size 277x14
+            chunk 1 text run 1 at (0.00,15.00) startOffset 0 endOffset 39 width 276.25: "box above must show text and a circle. "
         RenderSVGInlineText {#text} at (0,0) size 0x0
-        RenderSVGTSpan {tspan} at (0,0) size 63x14
-          RenderSVGInlineText {#text} at (0,30) size 63x14
-            chunk 1 text run 1 at (0.00,30.00) startOffset 0 endOffset 9 width 63.00: "Bug 14927"
+        RenderSVGTSpan {tspan} at (0,0) size 64x14
+          RenderSVGInlineText {#text} at (0,30) size 64x14
+            chunk 1 text run 1 at (0.00,30.00) startOffset 0 endOffset 9 width 63.75: "Bug 14927"
         RenderSVGInlineText {#text} at (0,0) size 0x0

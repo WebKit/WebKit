@@ -1,3 +1,82 @@
+2011-02-03  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        small text which is scaled to be large renders pixelated
+        https://bugs.webkit.org/show_bug.cgi?id=12448
+
+        SVG <text> with font-size smaller or equal to 1 does not paint correctly
+        https://bugs.webkit.org/show_bug.cgi?id=14242
+
+        misplaced text in SVG
+        https://bugs.webkit.org/show_bug.cgi?id=17053
+
+        Don't render very small (but zoomed) text inside SVG
+        https://bugs.webkit.org/show_bug.cgi?id=19393
+
+        Tiny fonts scaled up end up too large in Safari
+        https://bugs.webkit.org/show_bug.cgi?id=20192
+
+        Stretched SVG Text has awful glyph spacing 
+        https://bugs.webkit.org/show_bug.cgi?id=21774
+
+        REGRESSION (r72141?): svg/batik/text/smallFonts.svg failing on Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=49846
+
+        [Gtk] Text height in zoomed SVG is 1px too high
+        https://bugs.webkit.org/show_bug.cgi?id=50313
+
+        SVG text smaller than 0.5px not displayed properly
+        https://bugs.webkit.org/show_bug.cgi?id=50528
+
+        When rendering text, we're selecting a font with a size, as specified in the markup.
+        This can lead to problems, if the context, where the text is rendered upon, is scaled. If a parent
+        element of the <text> defines a transform=".." or the outermost <svg> containing a viewBox the
+        problem becomes apparent.
+
+        Consider following two snippets, which should render exactly the same:
+        <svg viewBox="0 0 100 100"><text x="25" y="50" font-size="25">test</text></svg>
+        <svg viewBox="0 0 1 1"><text x="0.25" y="0.5" font-size="0.25">test</text></svg>
+
+        When selecting a font size below 0.5, FontCacheMac would request a font with size 0,
+        which AppKit turns into 12. This lead to huge text rendering, instead of small text on Mac.
+        Other platforms have different problems (Qt simply scales the font, leading to pixelation etc.)
+
+        To fix this in a cross-platform fashion, we now always compute the final font size on screen,
+        remove any scaling from the context, draw the text using the scaled font size, then reapply
+        the context scale. This makes the example snippets above render exactly the same and fixes
+        numerous of bugs, present since years. As we're now heavily using floating-point font sizes
+        internally, depending on the scale of the document, it's very important to use the new
+        floating-point text metrics information (floatAscent/floatDescent/floatHeight) everywhere in SVG.
+
+        Fixes existing tests: css3/zoom-coords.xhtml (cross-platform inconsistencies should be gone, mac now reports floatHeight values for SVG text height)
+                              svg/hixie/text/003.html (no more pixelation)
+                              svg/batik/text/smallFonts.svg (small fonts aren't rendered huge anymore on mac)
+                              svg/hixie/viewbox/preserveAspectRatio/001.xml (bug 21774, no more awful spacing)
+                              svg/zoom/page/zoom-zoom-coords.xhtml (cross-platform inconsistencies should be gone, inspired by bug 50313)
+
+        Tests: svg/text/font-size-below-point-five-2.svg (reduction from bug 50528)
+               svg/text/font-size-below-point-five.svg (reduction from bug 50528)
+               svg/text/scaled-font.svg (reduction from bug 12448)
+               svg/text/small-fonts-2.svg (reduction from bug 14242)
+               svg/text/small-fonts-3.svg (reduction from bug 17053)
+               svg/text/small-fonts-in-html5.html (reduction from bug 19393)
+               svg/text/small-fonts.svg (reduction from bug 20192))
+
+        * rendering/svg/RenderSVGInlineText.cpp: Cache 'float scalingFactor' & 'Font scaledFont', whenever the on-screen representation changes.
+        * rendering/svg/RenderSVGInlineText.h:
+        * rendering/svg/RenderSVGText.cpp: Update scalingFactor/scaledFont, if necessary.
+        * rendering/svg/SVGInlineTextBox.cpp: Switch to new font rendering strategy. Always use scaledFont, and remove any context scale before drawing.
+        * rendering/svg/SVGInlineTextBox.h:
+        * rendering/svg/SVGTextLayoutEngineBaseline.cpp: Use floating-point metrics everywhere.
+        * rendering/svg/SVGTextMetrics.cpp: Ditto.
+        * rendering/svg/SVGTextMetrics.h: Ditto.
+        * rendering/svg/SVGTextQuery.cpp: Ditto.
+        * svg/SVGFont.cpp: Adjust stroke thickness, when drawing SVGFonts into a normalized context (no more scale).
+        * svg/SVGTextContentElement.cpp: Make <text> elements always dependant on window size changes in combination with viewBox set.
+        * svg/SVGTextPositioningElement.cpp: Remove now unnecessary code to determine wheter relative lengths are used as text attributes.
+        * svg/SVGTextPositioningElement.h: 
+
 2011-02-03  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

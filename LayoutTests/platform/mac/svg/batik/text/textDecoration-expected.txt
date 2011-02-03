@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
-  RenderSVGRoot {svg} at (49,26) size 329x439
+  RenderSVGRoot {svg} at (49,25) size 329x440
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourcePattern {pattern} [id="svgPattern"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
         RenderSVGContainer {g} at (0,0) size 10x10
@@ -10,9 +10,9 @@ layer at (0,0) size 450x500
         RenderSVGContainer {g} at (0,0) size 10x10
           RenderSVGPath {rect} at (0,5) size 5x5 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=5.00] [width=5.00] [height=5.00]
           RenderSVGPath {rect} at (5,0) size 5x5 [fill={[type=SOLID] [color=#000000]}] [x=5.00] [y=0.00] [width=5.00] [height=5.00]
-    RenderSVGContainer {g} at (49,26) size 329x439
-      RenderSVGText {text} at (155,26) size 140x17 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 140x17
+    RenderSVGContainer {g} at (49,25) size 329x440
+      RenderSVGText {text} at (155,25) size 140x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 140x19
           chunk 1 (middle anchor) text run 1 at (155.50,40.00) startOffset 0 endOffset 20 width 139.00: "Text decoration test"
       RenderSVGContainer {g} at (49,82) size 329x383
         RenderSVGContainer {g} at (50,82) size 327x23

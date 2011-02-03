@@ -61,10 +61,10 @@ shouldBeEqualToString("pointToString(svgText.getEndPositionOfChar(2))", "(179.2,
 shouldBeEqualToString("pointToString(svgText.getEndPositionOfChar(3))", "(210.0,20.0)");
 
 debug("\nTest getExtentOfChar() API");
-shouldBeEqualToString("rectToString(svgText.getExtentOfChar(0))", "(10.0,2.0)-(61.5x22.0)");
-shouldBeEqualToString("rectToString(svgText.getExtentOfChar(1))", "(71.5,2.0)-(56.4x22.0)");
-shouldBeEqualToString("rectToString(svgText.getExtentOfChar(2))", "(127.9,2.0)-(51.3x22.0)");
-shouldBeEqualToString("rectToString(svgText.getExtentOfChar(3))", "(179.2,2.0)-(30.8x22.0)");
+shouldBeEqualToString("rectToString(svgText.getExtentOfChar(0))", "(10.0,1.9)-(61.5x22.3)");
+shouldBeEqualToString("rectToString(svgText.getExtentOfChar(1))", "(71.5,1.9)-(56.4x22.3)");
+shouldBeEqualToString("rectToString(svgText.getExtentOfChar(2))", "(127.9,1.9)-(51.3x22.3)");
+shouldBeEqualToString("rectToString(svgText.getExtentOfChar(3))", "(179.2,1.9)-(30.8x22.3)");
 
 debug("\nTest getRotationOfChar() API");
 shouldBeEqualToString("svgText.getRotationOfChar(0).toFixed(1)", "0.0");

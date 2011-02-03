@@ -66,10 +66,10 @@ public:
 private:
     TextRun constructTextRun(RenderStyle*, const SVGTextFragment&) const;
 
-    bool acquirePaintingResource(GraphicsContext*&, RenderObject*, RenderStyle*);
+    bool acquirePaintingResource(GraphicsContext*&, float scalingFactor, RenderObject*, RenderStyle*);
     void releasePaintingResource(GraphicsContext*&, const Path*);
 
-    bool prepareGraphicsContextForTextPainting(GraphicsContext*&, TextRun&, RenderStyle*);
+    bool prepareGraphicsContextForTextPainting(GraphicsContext*&, float scalingFactor, TextRun&, RenderStyle*);
     void restoreGraphicsContextAfterTextPainting(GraphicsContext*&, TextRun&);
 
     void paintDecoration(GraphicsContext*, ETextDecoration, const SVGTextFragment&);

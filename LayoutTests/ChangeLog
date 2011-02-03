@@ -1,3 +1,567 @@
+2011-02-03  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        small text which is scaled to be large renders pixelated
+        https://bugs.webkit.org/show_bug.cgi?id=12448
+
+        Update SVG test results after fixing small font size support. Land new mac/mac-leopard baseline, as text looks slightly different
+        in each testcase, as the font-size used for on-screen rendering has changed, this results in hinting differences, inter-glyph
+        space changes, etc. This commit only includes the textual result changes, the pixel test baseline will land in chunks in follow-up commits.
+
+        To those who have to rebaseline their platforms: Some of the svg/text pixel test results may look questionable on first sight,
+        - svg/text/select-* tests:
+          These tests render a certain string 'Foobar' and query the metrics using SVG Text DOM API (getExtentOfChar(firstChar) and getExtentOfChar(lastChar)).
+          A red rectangle is drawn, to represent the size of the string, which gives precise results using floating-point accurancy.
+          Using eventSender, a selection is simulated, by clicking the first char, holding down, and moving towards the last character.
+          The blue selection rect which is drawn, should in theory be equal to the red rectangle.
+          In practice it is not, as the selection rect is aligned to integer boundaries (see floor calls in Font::selectionRect...).
+          Since we switched to use floating-point precision metrics, the actual drawn selection may exceed the red rectangle up to 1px.
+
+        - svg/text/selection-(doubleclick|tripleclick).svg:
+          These tests use DRTs dumpSelectionRect() which draws a red rectangle, highlighting the SelectionController::bounds() obtained through RenderView.
+          In theory this red rectangle, should be equal to the drawn blue selection rect. Again it isn't, as the bounds() methods uses selectionRectForRepaint()
+          of RenderText, which returns an enclosingIntRect of the actual selection. The drawn selection starts at y=0.93 in the first testcase, the selectionRectForRepaint()
+          call returns an IntRect, which starts at y=0. That explains why the red rectangle starts slightly higher as it should be. Again this is no problem, the repaint
+          rect may be 1px larger, if it would be smaller, we had a problem. The only way to fix this, would be to pass around FloatRect as repaint rects, but that's not worth it.
+
+        - css3/zoom-coords.* / svg/zoom/page/zoom-zoom-coords*:
+          These tests have different expectations now, as we're using the floatAscent/floatDesent/floatHeight FontMetrics methods instead of
+          the integer variants ascent/descent/height - hopefully we'll see consistent results across platforms for these tests now, if not please comment in the bug report.
+
+        * css3/zoom-coords-expected.txt:
+        * css3/zoom-coords.xhtml:
+        * platform/mac-leopard/Skipped:
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.checksum: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.png: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.txt: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.checksum: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.png: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.txt: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.txt: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.txt: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.txt: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.checksum: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.png: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.txt: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.txt: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.txt: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.txt: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.checksum: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.png: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.txt: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.txt: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.txt: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.txt: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.txt: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.txt: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.txt: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.txt: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-84-t-expected.checksum: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-84-t-expected.png: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-84-t-expected.txt: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/paths-data-04-t-expected.checksum: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/paths-data-04-t-expected.png: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/paths-data-04-t-expected.txt: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/paths-data-05-t-expected.checksum: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/paths-data-05-t-expected.png: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/paths-data-05-t-expected.txt: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/paths-data-06-t-expected.checksum: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/paths-data-06-t-expected.png: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/paths-data-06-t-expected.txt: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/paths-data-07-t-expected.checksum: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/paths-data-07-t-expected.png: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/paths-data-07-t-expected.txt: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/paths-data-08-t-expected.checksum: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/paths-data-08-t-expected.png: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/paths-data-08-t-expected.txt: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/text-text-01-b-expected.checksum: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/text-text-01-b-expected.png: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/text-text-01-b-expected.txt: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/text-text-03-b-expected.checksum: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/text-text-03-b-expected.png: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/text-text-03-b-expected.txt: Added.
+        * platform/mac-leopard/svg/batik/masking/maskRegions-expected.txt:
+        * platform/mac-leopard/svg/batik/text/smallFonts-expected.txt:
+        * platform/mac-leopard/svg/carto.net/button-expected.checksum: Added.
+        * platform/mac-leopard/svg/carto.net/button-expected.png: Added.
+        * platform/mac-leopard/svg/carto.net/button-expected.txt: Added.
+        * platform/mac-leopard/svg/carto.net/combobox-expected.checksum: Added.
+        * platform/mac-leopard/svg/carto.net/combobox-expected.png: Added.
+        * platform/mac-leopard/svg/carto.net/combobox-expected.txt: Added.
+        * platform/mac-leopard/svg/carto.net/textbox-expected.checksum: Added.
+        * platform/mac-leopard/svg/carto.net/textbox-expected.png: Added.
+        * platform/mac-leopard/svg/carto.net/textbox-expected.txt: Added.
+        * platform/mac-leopard/svg/carto.net/window-expected.checksum: Added.
+        * platform/mac-leopard/svg/carto.net/window-expected.png: Added.
+        * platform/mac-leopard/svg/carto.net/window-expected.txt: Added.
+        * platform/mac-leopard/svg/custom/js-late-clipPath-and-object-creation-expected.checksum: Added.
+        * platform/mac-leopard/svg/custom/js-late-clipPath-and-object-creation-expected.png: Added.
+        * platform/mac-leopard/svg/custom/js-late-clipPath-and-object-creation-expected.txt: Added.
+        * platform/mac-leopard/svg/custom/js-late-clipPath-creation-expected.checksum: Added.
+        * platform/mac-leopard/svg/custom/js-late-clipPath-creation-expected.png: Added.
+        * platform/mac-leopard/svg/custom/js-late-clipPath-creation-expected.txt: Added.
+        * platform/mac-leopard/svg/custom/marker-default-width-height-expected.checksum: Added.
+        * platform/mac-leopard/svg/custom/marker-default-width-height-expected.png: Added.
+        * platform/mac-leopard/svg/custom/marker-default-width-height-expected.txt: Added.
+        * platform/mac-leopard/svg/custom/path-textPath-simulation-expected.checksum: Added.
+        * platform/mac-leopard/svg/custom/path-textPath-simulation-expected.png: Added.
+        * platform/mac-leopard/svg/custom/path-textPath-simulation-expected.txt: Added.
+        * platform/mac-leopard/svg/custom/stroke-width-large-expected.checksum: Added.
+        * platform/mac-leopard/svg/custom/stroke-width-large-expected.png: Added.
+        * platform/mac-leopard/svg/custom/stroke-width-large-expected.txt: Added.
+        * platform/mac-leopard/svg/custom/tref-update-expected.checksum: Added.
+        * platform/mac-leopard/svg/custom/tref-update-expected.png: Added.
+        * platform/mac-leopard/svg/custom/tref-update-expected.txt: Added.
+        * platform/mac-leopard/svg/custom/use-referencing-nonexisting-symbol-expected.checksum: Added.
+        * platform/mac-leopard/svg/custom/use-referencing-nonexisting-symbol-expected.png: Added.
+        * platform/mac-leopard/svg/custom/use-referencing-nonexisting-symbol-expected.txt: Added.
+        * platform/mac-leopard/svg/foreignObject/text-tref-02-b-expected.checksum: Added.
+        * platform/mac-leopard/svg/foreignObject/text-tref-02-b-expected.png: Added.
+        * platform/mac-leopard/svg/foreignObject/text-tref-02-b-expected.txt: Added.
+        * platform/mac-leopard/svg/hixie/viewbox: Added.
+        * platform/mac-leopard/svg/hixie/viewbox/preserveAspectRatio: Added.
+        * platform/mac-leopard/svg/hixie/viewbox/preserveAspectRatio/001-expected.checksum: Added.
+        * platform/mac-leopard/svg/hixie/viewbox/preserveAspectRatio/001-expected.png: Added.
+        * platform/mac-leopard/svg/hixie/viewbox/preserveAspectRatio/001-expected.txt: Added.
+        * platform/mac-leopard/svg/hixie/viewbox/preserveAspectRatio/002-expected.checksum: Added.
+        * platform/mac-leopard/svg/hixie/viewbox/preserveAspectRatio/002-expected.png: Added.
+        * platform/mac-leopard/svg/hixie/viewbox/preserveAspectRatio/002-expected.txt: Added.
+        * platform/mac-leopard/svg/text/font-size-below-point-five-2-expected.checksum: Added.
+        * platform/mac-leopard/svg/text/font-size-below-point-five-2-expected.png: Added.
+        * platform/mac-leopard/svg/text/font-size-below-point-five-2-expected.txt: Added.
+        * platform/mac-leopard/svg/text/scaled-font-expected.checksum: Added.
+        * platform/mac-leopard/svg/text/scaled-font-expected.png: Added.
+        * platform/mac-leopard/svg/text/scaled-font-expected.txt: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacing-squeeze-1-expected.checksum: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacing-squeeze-1-expected.png: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacing-squeeze-1-expected.txt: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacing-squeeze-2-expected.checksum: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacing-squeeze-2-expected.png: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacing-squeeze-2-expected.txt: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacing-squeeze-3-expected.checksum: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacing-squeeze-3-expected.png: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacing-squeeze-3-expected.txt: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacing-squeeze-4-expected.checksum: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacing-squeeze-4-expected.png: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacing-squeeze-4-expected.txt: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacing-stretch-1-expected.checksum: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacing-stretch-1-expected.png: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacing-stretch-1-expected.txt: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacing-stretch-2-expected.checksum: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacing-stretch-2-expected.png: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacing-stretch-2-expected.txt: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacing-stretch-3-expected.checksum: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacing-stretch-3-expected.png: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacing-stretch-3-expected.txt: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacing-stretch-4-expected.checksum: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacing-stretch-4-expected.png: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacing-stretch-4-expected.txt: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacingAndGlyphs-stretch-1-expected.checksum: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacingAndGlyphs-stretch-1-expected.png: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacingAndGlyphs-stretch-1-expected.txt: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacingAndGlyphs-stretch-2-expected.checksum: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacingAndGlyphs-stretch-2-expected.png: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacingAndGlyphs-stretch-2-expected.txt: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacingAndGlyphs-stretch-3-expected.checksum: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacingAndGlyphs-stretch-3-expected.png: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacingAndGlyphs-stretch-3-expected.txt: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacingAndGlyphs-stretch-4-expected.checksum: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacingAndGlyphs-stretch-4-expected.png: Added.
+        * platform/mac-leopard/svg/text/select-textLength-spacingAndGlyphs-stretch-4-expected.txt: Added.
+        * platform/mac-leopard/svg/text/select-x-list-3-expected.checksum: Added.
+        * platform/mac-leopard/svg/text/select-x-list-3-expected.png: Added.
+        * platform/mac-leopard/svg/text/select-x-list-3-expected.txt: Added.
+        * platform/mac-leopard/svg/text/small-fonts-2-expected.checksum: Added.
+        * platform/mac-leopard/svg/text/small-fonts-2-expected.png: Added.
+        * platform/mac-leopard/svg/text/small-fonts-2-expected.txt: Added.
+        * platform/mac-leopard/svg/text/small-fonts-3-expected.checksum: Added.
+        * platform/mac-leopard/svg/text/small-fonts-3-expected.png: Added.
+        * platform/mac-leopard/svg/text/small-fonts-3-expected.txt: Added.
+        * platform/mac-leopard/svg/text/small-fonts-expected.checksum: Added.
+        * platform/mac-leopard/svg/text/small-fonts-expected.png: Added.
+        * platform/mac-leopard/svg/text/small-fonts-expected.txt: Added.
+        * platform/mac-leopard/svg/text/small-fonts-in-html5-expected.checksum: Added.
+        * platform/mac-leopard/svg/text/small-fonts-in-html5-expected.png: Added.
+        * platform/mac-leopard/svg/text/small-fonts-in-html5-expected.txt: Added.
+        * platform/mac-leopard/svg/text/text-intro-05-t-expected.txt:
+        * platform/mac-leopard/svg/text/text-text-01-b-expected.checksum: Added.
+        * platform/mac-leopard/svg/text/text-text-01-b-expected.png: Added.
+        * platform/mac-leopard/svg/text/text-text-01-b-expected.txt: Added.
+        * platform/mac-leopard/svg/zoom/page/zoom-mask-with-percentages-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-04-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-05-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-06-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-07-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-09-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-10-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-11-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-12-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-13-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-14-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-15-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-16-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-17-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-18-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-19-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-22-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-23-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-24-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-26-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-27-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-32-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-33-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-36-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-40-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-46-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-77-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-84-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/coords-trans-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/coords-trans-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/coords-trans-04-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/coords-trans-05-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/coords-trans-06-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/coords-units-02-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/coords-units-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/coords-viewattr-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/extend-namespace-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-blend-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-color-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-composite-02-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-example-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-light-04-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-tile-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-turb-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-turb-02-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-desc-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-01-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-04-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-05-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-06-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-07-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-04-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/interact-events-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/interact-order-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/interact-order-02-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/interact-order-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/interact-zoom-01-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/masking-mask-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/masking-opacity-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/masking-path-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/masking-path-02-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/masking-path-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/masking-path-04-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/metadata-example-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/painting-fill-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/painting-marker-02-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/painting-render-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/painting-stroke-01-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/painting-stroke-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/painting-stroke-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/painting-stroke-04-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-04-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-05-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-06-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-07-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-08-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-09-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-10-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-02-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-04-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-07-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-09-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-10-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-12-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-pattern-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-elems-06-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-elems-07-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-elems-08-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-groups-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-groups-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/shapes-intro-01-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-cond-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-frag-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-frag-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-image-06-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-use-01-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/styling-css-04-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-02-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-04-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-05-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-06-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-altglyph-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-deco-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-fonts-01-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-path-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-spacing-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-04-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-05-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-06-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-07-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-08-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-tselect-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-tspan-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-ws-01-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-ws-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/types-basicDOM-01-b-expected.txt:
+        * platform/mac/svg/batik/filters/filterRegions-expected.txt:
+        * platform/mac/svg/batik/masking/maskRegions-expected.txt:
+        * platform/mac/svg/batik/paints/gradientLimit-expected.txt:
+        * platform/mac/svg/batik/paints/patternPreserveAspectRatioA-expected.txt:
+        * platform/mac/svg/batik/paints/patternRegionA-expected.txt:
+        * platform/mac/svg/batik/paints/patternRegions-expected.txt:
+        * platform/mac/svg/batik/paints/patternRegions-positioned-objects-expected.txt:
+        * platform/mac/svg/batik/text/longTextOnPath-expected.txt:
+        * platform/mac/svg/batik/text/smallFonts-expected.txt:
+        * platform/mac/svg/batik/text/textAnchor-expected.txt:
+        * platform/mac/svg/batik/text/textAnchor2-expected.txt:
+        * platform/mac/svg/batik/text/textAnchor3-expected.txt:
+        * platform/mac/svg/batik/text/textDecoration-expected.txt:
+        * platform/mac/svg/batik/text/textDecoration2-expected.txt:
+        * platform/mac/svg/batik/text/textEffect-expected.txt:
+        * platform/mac/svg/batik/text/textEffect2-expected.txt:
+        * platform/mac/svg/batik/text/textEffect3-expected.txt:
+        * platform/mac/svg/batik/text/textFeatures-expected.txt:
+        * platform/mac/svg/batik/text/textGlyphOrientationHorizontal-expected.txt:
+        * platform/mac/svg/batik/text/textLayout-expected.txt:
+        * platform/mac/svg/batik/text/textLayout2-expected.txt:
+        * platform/mac/svg/batik/text/textLength-expected.txt:
+        * platform/mac/svg/batik/text/textOnPath-expected.txt:
+        * platform/mac/svg/batik/text/textOnPath2-expected.txt:
+        * platform/mac/svg/batik/text/textOnPath3-expected.txt:
+        * platform/mac/svg/batik/text/textOnPathSpaces-expected.txt:
+        * platform/mac/svg/batik/text/textPCDATA-expected.txt:
+        * platform/mac/svg/batik/text/textPosition-expected.txt:
+        * platform/mac/svg/batik/text/textPosition2-expected.txt:
+        * platform/mac/svg/batik/text/textProperties-expected.txt:
+        * platform/mac/svg/batik/text/textProperties2-expected.txt:
+        * platform/mac/svg/batik/text/textStyles-expected.txt:
+        * platform/mac/svg/batik/text/verticalText-expected.txt:
+        * platform/mac/svg/batik/text/verticalTextOnPath-expected.txt:
+        * platform/mac/svg/batik/text/xmlSpace-expected.txt:
+        * platform/mac/svg/carto.net/button-expected.txt:
+        * platform/mac/svg/carto.net/colourpicker-expected.txt:
+        * platform/mac/svg/carto.net/combobox-expected.txt:
+        * platform/mac/svg/carto.net/scrollbar-expected.txt:
+        * platform/mac/svg/carto.net/selectionlist-expected.txt:
+        * platform/mac/svg/carto.net/slider-expected.txt:
+        * platform/mac/svg/carto.net/tabgroup-expected.txt:
+        * platform/mac/svg/carto.net/textbox-expected.txt:
+        * platform/mac/svg/carto.net/window-expected.txt:
+        * platform/mac/svg/css/group-with-shadow-expected.txt:
+        * platform/mac/svg/css/shadow-changes-expected.txt:
+        * platform/mac/svg/css/text-shadow-multiple-expected.txt:
+        * platform/mac/svg/custom/SVGPoint-matrixTransform-expected.txt:
+        * platform/mac/svg/custom/alignment-baseline-modes-expected.txt:
+        * platform/mac/svg/custom/altglyph-expected.txt:
+        * platform/mac/svg/custom/coords-relative-units-transforms-expected.txt:
+        * platform/mac/svg/custom/dominant-baseline-modes-expected.txt:
+        * platform/mac/svg/custom/feComponentTransfer-Discrete-expected.txt:
+        * platform/mac/svg/custom/feComponentTransfer-Gamma-expected.txt:
+        * platform/mac/svg/custom/feComponentTransfer-Linear-expected.txt:
+        * platform/mac/svg/custom/feComponentTransfer-Table-expected.txt:
+        * platform/mac/svg/custom/font-face-simple-expected.txt:
+        * platform/mac/svg/custom/getTransformToElement-expected.txt:
+        * platform/mac/svg/custom/glyph-selection-lang-attribute-expected.txt:
+        * platform/mac/svg/custom/image-small-width-height-expected.txt:
+        * platform/mac/svg/custom/invalid-css-expected.txt:
+        * platform/mac/svg/custom/js-late-clipPath-and-object-creation-expected.txt:
+        * platform/mac/svg/custom/js-late-clipPath-creation-expected.txt:
+        * platform/mac/svg/custom/js-late-gradient-and-object-creation-expected.txt:
+        * platform/mac/svg/custom/js-late-gradient-creation-expected.txt:
+        * platform/mac/svg/custom/js-late-pattern-and-object-creation-expected.txt:
+        * platform/mac/svg/custom/js-late-pattern-creation-expected.txt:
+        * platform/mac/svg/custom/linking-a-03-b-all-expected.txt:
+        * platform/mac/svg/custom/linking-a-03-b-preserveAspectRatio-expected.txt:
+        * platform/mac/svg/custom/linking-a-03-b-transform-expected.txt:
+        * platform/mac/svg/custom/linking-a-03-b-viewBox-expected.txt:
+        * platform/mac/svg/custom/linking-a-03-b-viewBox-transform-expected.txt:
+        * platform/mac/svg/custom/linking-a-03-b-viewTarget-expected.txt:
+        * platform/mac/svg/custom/linking-a-03-b-zoomAndPan-expected.txt:
+        * platform/mac/svg/custom/marker-default-width-height-expected.txt:
+        * platform/mac/svg/custom/path-textPath-simulation-expected.txt:
+        * platform/mac/svg/custom/pattern-rotate-expected.txt:
+        * platform/mac/svg/custom/preserve-aspect-ratio-syntax-expected.txt:
+        * platform/mac/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt:
+        * platform/mac/svg/custom/shapes-supporting-markers-expected.txt:
+        * platform/mac/svg/custom/stroke-width-large-expected.txt:
+        * platform/mac/svg/custom/stroked-pattern-expected.txt:
+        * platform/mac/svg/custom/struct-use-09-b-expected.txt:
+        * platform/mac/svg/custom/style-attribute-font-size-expected.txt:
+        * platform/mac/svg/custom/text-clip-expected.txt:
+        * platform/mac/svg/custom/text-ctm-expected.txt:
+        * platform/mac/svg/custom/text-dom-01-f-expected.txt:
+        * platform/mac/svg/custom/text-filter-expected.txt:
+        * platform/mac/svg/custom/text-hit-test-expected.txt:
+        * platform/mac/svg/custom/text-letter-spacing-expected.txt:
+        * platform/mac/svg/custom/text-rotated-gradient-expected.txt:
+        * platform/mac/svg/custom/text-rotation-expected.txt:
+        * platform/mac/svg/custom/text-whitespace-handling-expected.txt:
+        * platform/mac/svg/custom/text-x-dx-lists-expected.txt:
+        * platform/mac/svg/custom/text-x-override-in-tspan-child-expected.txt:
+        * platform/mac/svg/custom/tref-update-expected.txt:
+        * platform/mac/svg/custom/use-detach-expected.txt:
+        * platform/mac/svg/custom/use-dynamic-append-expected.txt:
+        * platform/mac/svg/custom/use-instanceRoot-modifications-expected.txt:
+        * platform/mac/svg/custom/use-modify-container-in-target-expected.txt:
+        * platform/mac/svg/custom/use-modify-target-container-expected.txt:
+        * platform/mac/svg/custom/use-modify-target-symbol-expected.txt:
+        * platform/mac/svg/custom/use-on-g-containing-symbol-expected.txt:
+        * platform/mac/svg/custom/use-on-g-containing-use-expected.txt:
+        * platform/mac/svg/custom/use-on-g-expected.txt:
+        * platform/mac/svg/custom/use-on-rect-expected.txt:
+        * platform/mac/svg/custom/use-on-symbol-expected.txt:
+        * platform/mac/svg/custom/use-on-text-expected.txt:
+        * platform/mac/svg/custom/use-on-use-expected.txt:
+        * platform/mac/svg/custom/use-recursion-1-expected.txt:
+        * platform/mac/svg/custom/use-recursion-2-expected.txt:
+        * platform/mac/svg/custom/use-recursion-3-expected.txt:
+        * platform/mac/svg/custom/use-recursion-4-expected.txt:
+        * platform/mac/svg/custom/use-referencing-nonexisting-symbol-expected.txt:
+        * platform/mac/svg/custom/use-transform-expected.txt:
+        * platform/mac/svg/custom/viewbox-syntax-expected.txt:
+        * platform/mac/svg/foreignObject/text-tref-02-b-expected.txt:
+        * platform/mac/svg/hixie/perf/003-expected.txt:
+        * platform/mac/svg/hixie/perf/004-expected.txt:
+        * platform/mac/svg/hixie/perf/005-expected.txt:
+        * platform/mac/svg/hixie/perf/006-expected.txt:
+        * platform/mac/svg/hixie/text/003-expected.txt:
+        * platform/mac/svg/hixie/text/003a-expected.txt:
+        * platform/mac/svg/hixie/text/003b-expected.txt:
+        * platform/mac/svg/hixie/viewbox/002-expected.txt:
+        * platform/mac/svg/hixie/viewbox/003-expected.txt:
+        * platform/mac/svg/hixie/viewbox/preserveAspectRatio/001-expected.txt:
+        * platform/mac/svg/hixie/viewbox/preserveAspectRatio/002-expected.txt:
+        * platform/mac/svg/text/font-size-below-point-five-2-expected.checksum: Added.
+        * platform/mac/svg/text/font-size-below-point-five-2-expected.png: Added.
+        * platform/mac/svg/text/font-size-below-point-five-2-expected.txt: Added.
+        * platform/mac/svg/text/font-size-below-point-five-expected.checksum: Added.
+        * platform/mac/svg/text/font-size-below-point-five-expected.png: Added.
+        * platform/mac/svg/text/font-size-below-point-five-expected.txt: Added.
+        * platform/mac/svg/text/kerning-expected.txt:
+        * platform/mac/svg/text/multichar-glyph-expected.txt:
+        * platform/mac/svg/text/scaled-font-expected.checksum: Added.
+        * platform/mac/svg/text/scaled-font-expected.png: Added.
+        * platform/mac/svg/text/scaled-font-expected.txt: Added.
+        * platform/mac/svg/text/select-textLength-spacing-squeeze-1-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacing-squeeze-2-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacing-squeeze-3-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacing-squeeze-4-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacing-stretch-1-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacing-stretch-2-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacing-stretch-3-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacing-stretch-4-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-squeeze-1-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-squeeze-2-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-squeeze-3-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-squeeze-4-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-stretch-1-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-stretch-2-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-stretch-3-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-stretch-4-expected.txt:
+        * platform/mac/svg/text/select-x-list-1-expected.txt:
+        * platform/mac/svg/text/select-x-list-2-expected.txt:
+        * platform/mac/svg/text/select-x-list-3-expected.txt:
+        * platform/mac/svg/text/select-x-list-4-expected.txt:
+        * platform/mac/svg/text/select-x-list-with-tspans-1-expected.txt:
+        * platform/mac/svg/text/select-x-list-with-tspans-2-expected.txt:
+        * platform/mac/svg/text/select-x-list-with-tspans-3-expected.txt:
+        * platform/mac/svg/text/select-x-list-with-tspans-4-expected.txt:
+        * platform/mac/svg/text/selection-doubleclick-expected.txt:
+        * platform/mac/svg/text/selection-tripleclick-expected.txt:
+        * platform/mac/svg/text/small-fonts-2-expected.checksum: Added.
+        * platform/mac/svg/text/small-fonts-2-expected.png: Added.
+        * platform/mac/svg/text/small-fonts-2-expected.txt: Added.
+        * platform/mac/svg/text/small-fonts-3-expected.checksum: Added.
+        * platform/mac/svg/text/small-fonts-3-expected.png: Added.
+        * platform/mac/svg/text/small-fonts-3-expected.txt: Added.
+        * platform/mac/svg/text/small-fonts-expected.checksum: Added.
+        * platform/mac/svg/text/small-fonts-expected.png: Added.
+        * platform/mac/svg/text/small-fonts-expected.txt: Added.
+        * platform/mac/svg/text/small-fonts-in-html5-expected.checksum: Added.
+        * platform/mac/svg/text/small-fonts-in-html5-expected.png: Added.
+        * platform/mac/svg/text/small-fonts-in-html5-expected.txt: Added.
+        * platform/mac/svg/text/text-align-01-b-expected.txt:
+        * platform/mac/svg/text/text-align-02-b-expected.txt:
+        * platform/mac/svg/text/text-align-03-b-expected.txt:
+        * platform/mac/svg/text/text-align-04-b-expected.txt:
+        * platform/mac/svg/text/text-align-05-b-expected.txt:
+        * platform/mac/svg/text/text-align-06-b-expected.txt:
+        * platform/mac/svg/text/text-altglyph-01-b-expected.txt:
+        * platform/mac/svg/text/text-deco-01-b-expected.txt:
+        * platform/mac/svg/text/text-fonts-01-t-expected.txt:
+        * platform/mac/svg/text/text-fonts-02-t-expected.txt:
+        * platform/mac/svg/text/text-intro-05-t-expected.txt:
+        * platform/mac/svg/text/text-path-01-b-expected.txt:
+        * platform/mac/svg/text/text-spacing-01-b-expected.txt:
+        * platform/mac/svg/text/text-text-01-b-expected.txt:
+        * platform/mac/svg/text/text-text-03-b-expected.txt:
+        * platform/mac/svg/text/text-text-04-t-expected.txt:
+        * platform/mac/svg/text/text-text-05-t-expected.txt:
+        * platform/mac/svg/text/text-text-06-t-expected.txt:
+        * platform/mac/svg/text/text-text-07-t-expected.txt:
+        * platform/mac/svg/text/text-text-08-b-expected.txt:
+        * platform/mac/svg/text/text-tref-01-b-expected.txt:
+        * platform/mac/svg/text/text-tselect-01-b-expected.txt:
+        * platform/mac/svg/text/text-tselect-02-f-expected.txt:
+        * platform/mac/svg/text/text-tspan-01-b-expected.txt:
+        * platform/mac/svg/text/text-ws-01-t-expected.txt:
+        * platform/mac/svg/text/text-ws-02-t-expected.txt:
+        * platform/mac/svg/transforms/animated-path-inside-transformed-html-expected.txt:
+        * platform/mac/svg/transforms/text-with-mask-with-svg-transform-expected.txt:
+        * platform/mac/svg/transforms/text-with-pattern-inside-transformed-html-expected.txt:
+        * platform/mac/svg/transforms/text-with-pattern-with-svg-transform-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-coords-viewattr-01-b-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-mask-with-percentages-expected.txt:
+        * platform/mac/svg/zoom/text/zoom-coords-viewattr-01-b-expected.txt:
+        * svg/custom/glyph-setting-d-attribute-expected.txt:
+        * svg/custom/glyph-transformation-with-hkern-expected.txt:
+        * svg/text/font-size-below-point-five-2.svg: Added.
+        * svg/text/font-size-below-point-five.svg: Added.
+        * svg/text/lengthAdjust-text-metrics-expected.txt:
+        * svg/text/scaled-font.svg: Added.
+        * svg/text/script-tests/lengthAdjust-text-metrics.js:
+        * svg/text/small-fonts-2.svg: Added.
+        * svg/text/small-fonts-3.svg: Added.
+        * svg/text/small-fonts-in-html5.html: Added.
+        * svg/text/small-fonts.svg: Added.
+        * svg/zoom/page/zoom-zoom-coords-expected.txt:
+        * svg/zoom/page/zoom-zoom-coords.xhtml:
+
 2011-02-03  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed.

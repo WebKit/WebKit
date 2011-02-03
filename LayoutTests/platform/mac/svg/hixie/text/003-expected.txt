@@ -11,16 +11,16 @@ layer at (0,0) size 800x402
           layer at (0,0) size 300x150
             RenderView at (0,0) size 300x150
           layer at (0,0) size 300x150
-            RenderSVGRoot {svg} at (0,0) size 180x105
-              RenderSVGText {text} at (0,-1) size 3x2 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 3x2
-                  chunk 1 text run 1 at (0.00,0.80) startOffset 0 endOffset 4 width 2.39: "PASS"
+            RenderSVGRoot {svg} at (0,0) size 180x150
+              RenderSVGText {text} at (0,-1) size 3x3 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 3x3
+                  chunk 1 text run 1 at (0.00,0.80) startOffset 0 endOffset 4 width 2.37: "PASS"
       RenderBlock {P} at (0,210) size 784x160
         RenderEmbeddedObject {OBJECT} at (0,0) size 306x156 [border: (3px inset #000080)]
           layer at (0,0) size 300x150
             RenderView at (0,0) size 300x150
           layer at (0,0) size 300x150
-            RenderSVGRoot {svg} at (0,39) size 144x69
-              RenderSVGText {text} at (0,-100) size 2390x1150 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 2390x1150
-                  chunk 1 text run 1 at (0.00,800.00) startOffset 0 endOffset 4 width 2390.00: "PASS"
+            RenderSVGRoot {svg} at (0,39) size 143x69
+              RenderSVGText {text} at (0,-100) size 2367x1150 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 2367x1150
+                  chunk 1 text run 1 at (0.00,800.00) startOffset 0 endOffset 4 width 2366.67: "PASS"

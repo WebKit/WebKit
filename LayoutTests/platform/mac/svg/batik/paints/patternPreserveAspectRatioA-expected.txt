@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
-  RenderSVGRoot {svg} at (49,16) size 342x465
-    RenderSVGText {text} at (118,16) size 214x17 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 214x17
+  RenderSVGRoot {svg} at (49,15) size 342x466
+    RenderSVGText {text} at (118,15) size 214x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 214x19
         chunk 1 (middle anchor) text run 1 at (118.00,30.00) startOffset 0 endOffset 29 width 214.00: "patterns, preserveAspectRatio"
     RenderSVGContainer {g} at (49,59) size 342x422
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0

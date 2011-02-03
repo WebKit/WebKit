@@ -40,6 +40,11 @@ public:
     const SVGTextLayoutAttributes& layoutAttributes() const { return m_attributes; }
     void storeLayoutAttributes(const SVGTextLayoutAttributes& attributes) { m_attributes = attributes; }
 
+    float scalingFactor() const { return m_scalingFactor; }
+    const Font& scaledFont() const { return m_scaledFont; }
+    void updateScaledFont();
+    static void computeNewScaledFontForStyle(RenderObject*, const RenderStyle*, float& scalingFactor, Font& scaledFont);
+
 private:
     virtual const char* renderName() const { return "RenderSVGInlineText"; }
 
@@ -57,6 +62,8 @@ private:
     virtual IntRect linesBoundingBox() const;
     virtual InlineTextBox* createTextBox();
 
+    float m_scalingFactor;
+    Font m_scaledFont;
     SVGTextLayoutAttributes m_attributes;
 };
 

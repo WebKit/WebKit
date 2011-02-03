@@ -161,33 +161,6 @@ void SVGTextPositioningElement::synchronizeProperty(const QualifiedName& attrNam
         synchronizeRotate();
 }
 
-static inline bool listContainsRelativeValue(const SVGLengthList& list)
-{
-    unsigned size = list.size();
-    for (unsigned i = 0; i < size; ++i) {
-        const SVGLength& length = list.at(i);
-        if (length.isRelative())
-            return true;
-    }
-
-    return false;
-}
-
-bool SVGTextPositioningElement::selfHasRelativeLengths() const
-{
-    if (SVGTextContentElement::selfHasRelativeLengths())
-        return true;
-    if (listContainsRelativeValue(x()))
-        return true;
-    if (listContainsRelativeValue(y()))
-        return true;
-    if (listContainsRelativeValue(dx()))
-        return true;
-    if (listContainsRelativeValue(dy()))
-        return true;
-    return false;
-}
-
 SVGTextPositioningElement* SVGTextPositioningElement::elementFromRenderer(RenderObject* renderer)
 {
     if (!renderer)
