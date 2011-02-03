@@ -127,10 +127,20 @@ PassRefPtr<CSSPrimitiveValue> CSSPrimitiveValue::createColor(unsigned rgbValue)
     // These are the empty and deleted values of the hash table.
     if (rgbValue == Color::transparent) {
         static CSSPrimitiveValue* colorTransparent = createUncachedColor(Color::transparent).releaseRef();
+#if CPU(ARM) && OS(LINUX)
+         // A workaround for gcc bug on ARM.
+        if (!colorTransparent)
+            return 0;
+#endif
         return colorTransparent;
     }
     if (rgbValue == Color::white) {
         static CSSPrimitiveValue* colorWhite = createUncachedColor(Color::white).releaseRef();
+#if CPU(ARM) && OS(LINUX)
+        // A workaround for gcc bug on ARM.
+        if (!colorWhite)
+            return 0;
+#endif
         return colorWhite;
     }
     RefPtr<CSSPrimitiveValue> primitiveValue = colorValueCache->get(rgbValue);

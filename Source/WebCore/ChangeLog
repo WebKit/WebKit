@@ -1,3 +1,20 @@
+2011-02-02  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by David Levin.
+
+        GCC compiler on ARM issues bogus warnings and fails to compile.
+        https://bugs.webkit.org/show_bug.cgi?id=53620
+
+        Despite warnings explicitly being disallowed (-Wno-uninitialized),
+        gcc (Ubuntu 4.4.3-4ubuntu5) 4.4.3 throws up the warnings like:
+
+        "error: 'colorTransparent.unstatic.4909' may be used uninitialized in this function"
+
+        The fix is to add an extra condition, which somehow pacifies the compiler.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::createColor): Added workaround conditions.
+
 2011-02-02  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Daniel Bates.
