@@ -3769,6 +3769,9 @@ fast/events/pageshow-pagehide.html
 # https://bugs.webkit.org/show_bug.cgi?id=30724
 fast/loader/opaque-base-url.html 
 
+# https://bugs.webkit.org/show_bug.cgi?id=53667
+fast/history/timed-refresh-in-cached-frame.html
+
 # No TextInputController support
 # https://bugs.webkit.org/show_bug.cgi?id=52997
 fast/forms/input-maxlength-ime-completed.html

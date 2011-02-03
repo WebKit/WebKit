@@ -1,3 +1,11 @@
+2011-02-03  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip failing test
+        fast/history/timed-refresh-in-cached-frame.html on GTK
+        https://bugs.webkit.org/show_bug.cgi?id=53667
+
+        * platform/gtk/Skipped:
+
 2011-02-03  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Ryosuke Niwa.
