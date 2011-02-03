@@ -250,7 +250,7 @@ bool RenderThemeWinCE::paintMenuList(RenderObject* o, const PaintInfo& i, const 
 
 bool RenderThemeWinCE::paintMenuListButton(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
-    IntRect buttonRect(r.right() - dropDownButtonWidth - 1, r.y(), dropDownButtonWidth, r.height());
+    IntRect buttonRect(r.maxX() - dropDownButtonWidth - 1, r.y(), dropDownButtonWidth, r.height());
     buttonRect.inflateY(-1);
     i.context->drawFrameControl(buttonRect, DFC_SCROLL, DFCS_SCROLLCOMBOBOX | determineClassicState(o));
     return true;
@@ -386,7 +386,7 @@ bool RenderThemeWinCE::paintSearchFieldCancelButton(RenderObject* o, const Paint
     IntRect xBounds(cancelBounds.location() + IntSize(3, 3), xSize);
     paintInfo.context->setStrokeColor(Color::white, ColorSpaceDeviceRGB);
     paintInfo.context->drawLine(xBounds.location(),  xBounds.location() + xBounds.size());
-    paintInfo.context->drawLine(IntPoint(xBounds.right(), xBounds.y()),  IntPoint(xBounds.x(), xBounds.bottom()));
+    paintInfo.context->drawLine(IntPoint(xBounds.maxX(), xBounds.y()),  IntPoint(xBounds.x(), xBounds.maxY()));
 
     paintInfo.context->restore();
     return false;
@@ -489,7 +489,7 @@ static HTMLMediaElement* mediaElementParent(Node* node)
 bool RenderThemeWinCE::paintSliderTrack(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     bool rc = RenderTheme::paintSliderTrack(o, i, r);
-    IntPoint left = IntPoint(r.x() + 2, (r.y() + r.bottom()) / 2);
+    IntPoint left = IntPoint(r.x() + 2, (r.y() + r.maxY()) / 2);
     i.context->save();
     i.context->setStrokeColor(Color::gray, ColorSpaceDeviceRGB);
     i.context->setFillColor(Color::gray, ColorSpaceDeviceRGB);
@@ -498,13 +498,13 @@ bool RenderThemeWinCE::paintSliderTrack(RenderObject* o, const PaintInfo& i, con
     HTMLMediaElement* mediaElement = mediaElementParent(o->node());
     if (mediaElement) {
         i.context->setStrokeColor(Color(0, 0xff, 0));
-        IntPoint right = IntPoint(left.x() + mediaElement->percentLoaded() * (r.right() - r.x() - 4), (r.y() + r.bottom()) / 2);
+        IntPoint right = IntPoint(left.x() + mediaElement->percentLoaded() * (r.maxX() - r.x() - 4), (r.y() + r.maxY()) / 2);
         i.context->drawLine(left, right);
         left = right;
     }
 #endif
     i.context->setStrokeColor(Color::black, ColorSpaceDeviceRGB);
-    i.context->drawLine(left, IntPoint(r.right() - 2, left.y()));
+    i.context->drawLine(left, IntPoint(r.maxX() - 2, left.y()));
     i.context->restore();
     return rc;
 }
@@ -566,14 +566,14 @@ bool RenderThemeWinCE::paintMediaMuteButton(RenderObject* o, const PaintInfo& pa
     FloatPoint pts[6] = {
         FloatPoint(imRect.x() + 1, imRect.y() + imRect.height() / 3.0),
         FloatPoint(imRect.x() + 1 + imRect.width() / 2.0, imRect.y() + imRect.height() / 3.0),
-        FloatPoint(imRect.right() - 1, imRect.y()),
-        FloatPoint(imRect.right() - 1, imRect.bottom()),
+        FloatPoint(imRect.maxX() - 1, imRect.y()),
+        FloatPoint(imRect.maxX() - 1, imRect.maxY()),
         FloatPoint(imRect.x() + 1 + imRect.width() / 2.0, imRect.y() + 2.0 * imRect.height() / 3.0),
         FloatPoint(imRect.x() + 1, imRect.y() + 2.0 * imRect.height() / 3.0)
     };
     paintInfo.context->drawConvexPolygon(6, pts);
     if (muted)
-        paintInfo.context->drawLine(IntPoint(imRect.right(), imRect.y()), IntPoint(imRect.x(), imRect.bottom()));
+        paintInfo.context->drawLine(IntPoint(imRect.maxX(), imRect.y()), IntPoint(imRect.x(), imRect.maxY()));
     paintInfo.context->restore();
     return rc;
 }
@@ -595,7 +595,7 @@ bool RenderThemeWinCE::paintMediaPlayButton(RenderObject* o, const PaintInfo& pa
         imRect.move(2.0 * width / 3.0, 0);
         paintInfo.context->fillRect(imRect);
     } else {
-        FloatPoint pts[3] = { FloatPoint(imRect.x(), imRect.y()), FloatPoint(imRect.right(), (imRect.y() + imRect.bottom()) / 2.0), FloatPoint(imRect.x(), imRect.bottom()) };
+        FloatPoint pts[3] = { FloatPoint(imRect.x(), imRect.y()), FloatPoint(imRect.maxX(), (imRect.y() + imRect.maxY()) / 2.0), FloatPoint(imRect.x(), imRect.maxY()) };
         paintInfo.context->drawConvexPolygon(3, pts);
     }
     paintInfo.context->restore();
@@ -607,8 +607,8 @@ bool RenderThemeWinCE::paintMediaSeekBackButton(RenderObject* o, const PaintInfo
     bool rc = paintButton(o, paintInfo, r);
     FloatRect imRect = r;
     imRect.inflate(-3);
-    FloatPoint pts[3] = { FloatPoint((imRect.x() + imRect.right()) / 2.0, imRect.y()), FloatPoint(imRect.x(), (imRect.y() + imRect.bottom()) / 2.0), FloatPoint((imRect.x() + imRect.right()) / 2.0, imRect.bottom()) };
-    FloatPoint pts2[3] = { FloatPoint(imRect.right(), imRect.y()), FloatPoint((imRect.x() + imRect.right()) / 2.0, (imRect.y() + imRect.bottom()) / 2.0), FloatPoint(imRect.right(), imRect.bottom()) };
+    FloatPoint pts[3] = { FloatPoint((imRect.x() + imRect.maxX()) / 2.0, imRect.y()), FloatPoint(imRect.x(), (imRect.y() + imRect.maxY()) / 2.0), FloatPoint((imRect.x() + imRect.maxX()) / 2.0, imRect.maxY()) };
+    FloatPoint pts2[3] = { FloatPoint(imRect.maxX(), imRect.y()), FloatPoint((imRect.x() + imRect.maxX()) / 2.0, (imRect.y() + imRect.maxY()) / 2.0), FloatPoint(imRect.maxX(), imRect.maxY()) };
     paintInfo.context->save();
     paintInfo.context->setStrokeColor(Color::black);
     paintInfo.context->setFillColor(Color::black);
@@ -623,8 +623,8 @@ bool RenderThemeWinCE::paintMediaSeekForwardButton(RenderObject* o, const PaintI
     bool rc = paintButton(o, paintInfo, r);
     FloatRect imRect = r;
     imRect.inflate(-3);
-    FloatPoint pts[3] = { FloatPoint(imRect.x(), imRect.y()), FloatPoint((imRect.x() + imRect.right()) / 2.0, (imRect.y() + imRect.bottom()) / 2.0), FloatPoint(imRect.x(), imRect.bottom()) };
-    FloatPoint pts2[3] = { FloatPoint((imRect.x() + imRect.right()) / 2.0, imRect.y()), FloatPoint(imRect.right(), (imRect.y() + imRect.bottom()) / 2.0), FloatPoint((imRect.x() + imRect.right()) / 2.0, imRect.bottom()) };
+    FloatPoint pts[3] = { FloatPoint(imRect.x(), imRect.y()), FloatPoint((imRect.x() + imRect.maxX()) / 2.0, (imRect.y() + imRect.maxY()) / 2.0), FloatPoint(imRect.x(), imRect.maxY()) };
+    FloatPoint pts2[3] = { FloatPoint((imRect.x() + imRect.maxX()) / 2.0, imRect.y()), FloatPoint(imRect.maxX(), (imRect.y() + imRect.maxY()) / 2.0), FloatPoint((imRect.x() + imRect.maxX()) / 2.0, imRect.maxY()) };
     paintInfo.context->save();
     paintInfo.context->setStrokeColor(Color::black);
     paintInfo.context->setFillColor(Color::black);

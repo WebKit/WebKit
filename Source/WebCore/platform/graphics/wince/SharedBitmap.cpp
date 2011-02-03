@@ -481,8 +481,8 @@ void SharedBitmap::drawPattern(HDC hdc, const AffineTransform& transform, const 
     RECT dstRectWin = {
         stableRound(trRect.x()),
         stableRound(trRect.y()),
-        stableRound(trRect.right()),
-        stableRound(trRect.bottom()),
+        stableRound(trRect.maxX()),
+        stableRound(trRect.maxY()),
     };
     if (dstRectWin.right <= dstRectWin.left || dstRectWin.bottom <= dstRectWin.top)
         return;
@@ -497,8 +497,8 @@ void SharedBitmap::drawPattern(HDC hdc, const AffineTransform& transform, const 
     RECT srcRectWin = {
         0,
         0,
-        stableRound(visibleDstRect.right()) - stableRound(visibleDstRect.x()),
-        stableRound(visibleDstRect.bottom()) - stableRound(visibleDstRect.y())
+        stableRound(visibleDstRect.maxX()) - stableRound(visibleDstRect.x()),
+        stableRound(visibleDstRect.maxY()) - stableRound(visibleDstRect.y())
     };
     if (srcRectWin.right <= 0 || srcRectWin.bottom <= 0)
         return;

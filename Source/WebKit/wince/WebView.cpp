@@ -236,7 +236,7 @@ void WebView::paint(HDC hDC, const IntRect& clipRect)
     if (!frameView)
         return;
 
-    OwnPtr<HRGN> clipRgn(CreateRectRgn(clipRect.x(), clipRect.y(), clipRect.right(), clipRect.bottom()));
+    OwnPtr<HRGN> clipRgn(CreateRectRgn(clipRect.x(), clipRect.y(), clipRect.maxX(), clipRect.maxY()));
     SelectClipRgn(hDC, clipRgn.get());
 
     frameView->updateLayoutAndStyleIfNeededRecursive();

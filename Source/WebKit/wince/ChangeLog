@@ -1,3 +1,10 @@
+2011-02-02  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed WinCE build fix for r77398.
+
+        * WebView.cpp:
+        (WebView::paint):
+
 2011-01-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

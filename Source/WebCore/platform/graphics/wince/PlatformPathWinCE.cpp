@@ -119,7 +119,7 @@ static inline void bezier(int segments, Vector<PathPoint>& pts, const PathPoint*
 
 static bool containsPoint(const FloatRect& r, const FloatPoint& p)
 {
-    return p.x() >= r.x() && p.y() >= r.y() && p.x() < r.right() && p.y() < r.bottom();
+    return p.x() >= r.x() && p.y() >= r.y() && p.x() < r.maxX() && p.y() < r.maxY();
 }
 
 static void normalizeAngle(float& angle)
@@ -146,7 +146,7 @@ static void inflateRectToContainPoint(FloatRect& r, float x, float y)
         return;
     }
     if (x < r.x()) {
-        r.setWidth(r.right() - x);
+        r.setWidth(r.maxX() - x);
         r.setX(x);
     } else {
         float w = x - r.x() + 1;
@@ -154,7 +154,7 @@ static void inflateRectToContainPoint(FloatRect& r, float x, float y)
             r.setWidth(w);
     }
     if (y < r.y()) {
-        r.setHeight(r.bottom() - y);
+        r.setHeight(r.maxY() - y);
         r.setY(y);
     } else {
         float h =  y - r.y() + 1;
@@ -740,8 +740,8 @@ void PlatformPath::addRect(const FloatRect& r)
 {
     moveTo(r.location());
 
-    float right = r.right() - 1;
-    float bottom = r.bottom() - 1;
+    float right = r.maxX() - 1;
+    float bottom = r.maxY() - 1;
     addLineTo(FloatPoint(right, r.y()));
     addLineTo(FloatPoint(right, bottom));
     addLineTo(FloatPoint(r.x(), bottom));
