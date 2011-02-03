@@ -30,6 +30,7 @@ import chromium_linux
 import chromium_mac
 import chromium_win
 
+from webkitpy.layout_tests.port import test_files
 
 def get(**kwargs):
     """Some tests have slightly different results when run while using
@@ -47,6 +48,7 @@ def get(**kwargs):
             raise NotImplementedError('unsupported platform: %s' %
                                       sys.platform)
 
+    # FIXME: handle version-specific variants.
     if port_name == 'chromium-gpu-linux':
         return ChromiumGpuLinuxPort(**kwargs)
 
@@ -58,6 +60,8 @@ def get(**kwargs):
 
     raise NotImplementedError('unsupported port: %s' % port_name)
 
+
+# FIXME: These should really be a mixin class.
 
 def _set_gpu_options(options):
     if options:
@@ -83,6 +87,16 @@ def _gpu_overrides(port):
     return port._filesystem.read_text_file(overrides_path)
 
 
+def _tests(port, paths):
+    if not paths:
+        paths = ['compositing', 'platform/chromium/compositing']
+        if not port.name().startswith('chromium-gpu-mac'):
+            # Canvas is not yet accelerated on the Mac, so there's no point
+            # in running the tests there.
+            paths += ['fast/canvas', 'canvas/philip']
+    return test_files.find(port, paths)
+
+
 class ChromiumGpuLinuxPort(chromium_linux.ChromiumLinuxPort):
     def __init__(self, **kwargs):
         kwargs.setdefault('port_name', 'chromium-gpu-linux')
@@ -100,6 +114,9 @@ class ChromiumGpuLinuxPort(chromium_linux.ChromiumLinuxPort):
     def path_to_test_expectations_file(self):
         return self.path_from_webkit_base('LayoutTests', 'platform',
             'chromium-gpu', 'test_expectations.txt')
+
+    def tests(self, paths):
+        return _tests(self, paths)
 
     def test_expectations_overrides(self):
         return _gpu_overrides(self)
@@ -122,6 +139,9 @@ class ChromiumGpuMacPort(chromium_mac.ChromiumMacPort):
         return self.path_from_webkit_base('LayoutTests', 'platform',
             'chromium-gpu', 'test_expectations.txt')
 
+    def tests(self, paths):
+        return _tests(self, paths)
+
     def test_expectations_overrides(self):
         return _gpu_overrides(self)
 
@@ -142,6 +162,9 @@ class ChromiumGpuWinPort(chromium_win.ChromiumWinPort):
     def path_to_test_expectations_file(self):
         return self.path_from_webkit_base('LayoutTests', 'platform',
             'chromium-gpu', 'test_expectations.txt')
+
+    def tests(self, paths):
+        return _tests(self, paths)
 
     def test_expectations_overrides(self):
         return _gpu_overrides(self)

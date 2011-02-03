@@ -1,3 +1,23 @@
+2011-02-02  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        new-run-webkit-tests: hardcode the directories to scan for tests
+        for GPU bots instead of SKIPping them. See bug 53562 for some
+        context, but we will now hard-code the list of directories to
+        use by default instead of skipping over directories in the
+        expectations file. We do this so that we will be able to merge
+        the expectations files without getting conflicting SKIP
+        directives. Note that this change will reduce the # of tests
+        being run on the Mac GPU bots, because we're accidentally
+        including some today.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53631
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu_unittest.py:
+
 2011-02-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Beth Dakin.
