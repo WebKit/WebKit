@@ -1,5 +1,11 @@
 2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] Removed the checksum that is out of place.
+
+        * platform/chromium-win-xp/svg/text/text-fonts-01-t-expected.checksum: Removed.
+
+2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Updated SVG baselines after r77485 for Mac and added expectations
         of failure while waiting for platform/mac pixel results to land.
 
