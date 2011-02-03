@@ -1,3 +1,11 @@
+2011-02-03  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip flaky test
+        fast/frames/sandboxed-iframe-scripting.html on GTK
+        https://bugs.webkit.org/show_bug.cgi?id=53680
+
+        * platform/gtk/Skipped:
+
 2011-02-03  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
