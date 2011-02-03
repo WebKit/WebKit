@@ -1,5 +1,15 @@
 2011-02-02  Sam Weinig  <sam@webkit.org>
 
+        Fix license block issues pointed out by Daniel Bates.
+
+        * Shared/API/c/WKGraphicsContext.cpp:
+        * Shared/API/c/WKGraphicsContext.h:
+        * Shared/API/c/cg/WKGraphicsContextCG.cpp:
+        * Shared/API/c/cg/WKGraphicsContextCG.h:
+        * Shared/WebGraphicsContext.cpp:
+
+2011-02-02  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Dan Bernstein.
 
         Add WKBundleFrameGetVisibleContentBoundsExcludingScrollbars API for WebKit2.
