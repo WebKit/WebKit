@@ -1,5 +1,9 @@
 2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Updated platform/mac-leopard baselines for fast/backgrounds after r77485.
+
+2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Move Leopard result to the right spot, put back the original result.
 
         * platform/mac-leopard/svg/text/font-size-below-point-five-expected.txt: 
