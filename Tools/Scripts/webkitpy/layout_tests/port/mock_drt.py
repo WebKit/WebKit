@@ -37,6 +37,8 @@ import optparse
 import os
 import sys
 
+from webkitpy.common.system import filesystem
+
 from webkitpy.layout_tests.port import base
 from webkitpy.layout_tests.port import factory
 
@@ -81,7 +83,6 @@ class MockDRTPort(object):
         # method that splices in the mock_drt path and command line arguments
         # in place of the actual path to the driver binary.
 
-        # FIXME: This doesn't yet work for Chromium test_shell ports.
         def overriding_cmd_line():
             cmd = self.__original_driver_cmd_line()
             index = cmd.index(self.__delegate._path_to_driver())
@@ -113,34 +114,65 @@ class MockDRTPort(object):
         pass
 
 
-def main(argv, stdin, stdout, stderr):
+def main(argv, fs, stdin, stdout, stderr):
     """Run the tests."""
 
     options, args = parse_options(argv)
-    drt = MockDRT(options, args, stdin, stdout, stderr)
+    if options.chromium:
+        drt = MockChromiumDRT(options, args, fs, stdin, stdout, stderr)
+    else:
+        drt = MockDRT(options, args, fs, stdin, stdout, stderr)
     return drt.run()
 
 
 def parse_options(argv):
-    # FIXME: We need to figure out how to handle variants that have
-    # different command-line conventions.
-    option_list = [
-        optparse.make_option('--platform', action='store',
-                             help='platform to emulate'),
-        optparse.make_option('--layout-tests', action='store_true',
-                             default=True, help='run layout tests'),
-        optparse.make_option('--pixel-tests', action='store_true',
-                             default=False,
-                             help='output image for pixel tests'),
-    ]
-    option_parser = optparse.OptionParser(option_list=option_list)
-    return option_parser.parse_args(argv)
+    # FIXME: We have to do custom arg parsing instead of using the optparse
+    # module.  First, Chromium and non-Chromium DRTs have a different argument
+    # syntax.  Chromium uses --pixel-tests=<path>, and non-Chromium uses
+    # --pixel-tests as a boolean flag. Second, we don't want to have to list
+    # every command line flag DRT accepts, but optparse complains about
+    # unrecognized flags. At some point it might be good to share a common
+    # DRT options class between this file and webkit.py and chromium.py
+    # just to get better type checking.
+    platform_index = argv.index('--platform')
+    platform = argv[platform_index + 1]
+
+    pixel_tests = False
+    pixel_path = None
+    chromium = False
+    if platform.startswith('chromium'):
+        chromium = True
+        for arg in argv:
+            if arg.startswith('--pixel-tests'):
+                pixel_tests = True
+                pixel_path = arg[len('--pixel-tests='):]
+    else:
+        pixel_tests = '--pixel-tests' in argv
+    options = base.DummyOptions(chromium=chromium,
+                                platform=platform,
+                                pixel_tests=pixel_tests,
+                                pixel_path=pixel_path)
+    return (options, [])
+
+
+# FIXME: Should probably change this to use DriverInput after
+# https://bugs.webkit.org/show_bug.cgi?id=53004 lands.
+class _DRTInput(object):
+    def __init__(self, line):
+        vals = line.strip().split("'")
+        if len(vals) == 1:
+            self.uri = vals[0]
+            self.checksum = None
+        else:
+            self.uri = vals[0]
+            self.checksum = vals[1]
 
 
 class MockDRT(object):
-    def __init__(self, options, args, stdin, stdout, stderr):
+    def __init__(self, options, args, filesystem, stdin, stdout, stderr):
         self._options = options
         self._args = args
+        self._filesystem = filesystem
         self._stdout = stdout
         self._stdin = stdin
         self._stderr = stderr
@@ -148,57 +180,98 @@ class MockDRT(object):
         port_name = None
         if options.platform:
             port_name = options.platform
-        self._port = factory.get(port_name, options=options)
+        self._port = factory.get(port_name, options=options, filesystem=filesystem)
 
     def run(self):
         while True:
             line = self._stdin.readline()
             if not line:
                 break
-
-            url, expected_checksum = self.parse_input(line)
-            self.run_one_test(url, expected_checksum)
+            self.run_one_test(self.parse_input(line))
         return 0
 
     def parse_input(self, line):
-        line = line.strip()
-        if "'" in line:
-            return line.split("'", 1)
-        return (line, None)
+        return _DRTInput(line)
 
-    def raw_bytes(self, unicode_str):
-        return unicode_str.encode('utf-8')
-
-    def run_one_test(self, url, expected_checksum):
+    def run_one_test(self, test_input):
         port = self._port
-        if url.startswith('http'):
-            test_name = port.uri_to_test_name(url)
-            test_path = port._filesystem.join(port.layout_tests_dir(), test_name)
+        if test_input.uri.startswith('http'):
+            test_name = port.uri_to_test_name(test_input.uri)
+            test_path = self._filesystem.join(port.layout_tests_dir(), test_name)
         else:
-            test_path = url
+            test_path = test_input.uri
 
-        actual_text_bytes = self.raw_bytes(port.expected_text(test_path))
-        if self._options.pixel_tests and expected_checksum:
-            actual_checksum_bytes = self.raw_bytes(port.expected_checksum(test_path))
-            actual_image_bytes = port.expected_image(test_path)
+        actual_text = port.expected_text(test_path)
+        if self._options.pixel_tests and test_input.checksum:
+            actual_checksum = port.expected_checksum(test_path)
+            actual_image = port.expected_image(test_path)
 
         self._stdout.write('Content-Type: text/plain\n')
-        self._stdout.write(actual_text_bytes)
+
+        # FIXME: Note that we don't ensure there is a trailing newline!
+        # This mirrors actual (Mac) DRT behavior but is a bug.
+        self._stdout.write(actual_text)
         self._stdout.write('#EOF\n')
 
-        if self._options.pixel_tests and expected_checksum:
-            expected_checksum_bytes = self.raw_bytes(expected_checksum)
+        if self._options.pixel_tests and test_input.checksum:
             self._stdout.write('\n')
-            self._stdout.write('ActualHash: %s\n' % actual_checksum_bytes)
-            self._stdout.write('ExpectedHash: %s\n' % expected_checksum_bytes)
-            if actual_checksum_bytes != expected_checksum_bytes:
+            self._stdout.write('ActualHash: %s\n' % actual_checksum)
+            self._stdout.write('ExpectedHash: %s\n' % test_input.checksum)
+            if actual_checksum != test_input.checksum:
                 self._stdout.write('Content-Type: image/png\n')
-                self._stdout.write('Content-Length: %s\n\n' % len(actual_image_bytes))
-                self._stdout.write(actual_image_bytes)
+                self._stdout.write('Content-Length: %s\n\n' % len(actual_image))
+                self._stdout.write(actual_image)
         self._stdout.write('#EOF\n')
         self._stdout.flush()
         self._stderr.flush()
 
 
+# FIXME: Should probably change this to use DriverInput after
+# https://bugs.webkit.org/show_bug.cgi?id=53004 lands.
+class _ChromiumDRTInput(_DRTInput):
+    def __init__(self, line):
+        vals = line.strip().split()
+        if len(vals) == 3:
+            self.uri, self.timeout, self.checksum = vals
+        else:
+            self.uri = vals[0]
+            self.timeout = vals[1]
+            self.checksum = None
+
+
+class MockChromiumDRT(MockDRT):
+    def parse_input(self, line):
+        return _ChromiumDRTInput(line)
+
+    def run_one_test(self, test_input):
+        port = self._port
+        test_name = self._port.uri_to_test_name(test_input.uri)
+        test_path = self._filesystem.join(port.layout_tests_dir(), test_name)
+
+        actual_text = port.expected_text(test_path)
+        actual_image = ''
+        actual_checksum = ''
+        if self._options.pixel_tests and test_input.checksum:
+            actual_checksum = port.expected_checksum(test_path)
+            if actual_checksum != test_input.checksum:
+                actual_image = port.expected_image(test_path)
+
+        self._stdout.write("#URL:%s\n" % test_input.uri)
+        if self._options.pixel_tests and test_input.checksum:
+            self._stdout.write("#MD5:%s\n" % actual_checksum)
+            self._filesystem.write_binary_file(self._options.pixel_path,
+                                               actual_image)
+        self._stdout.write(actual_text)
+
+        # FIXME: (See above FIXME as well). Chromium DRT appears to always
+        # ensure the text output has a trailing newline. Mac DRT does not.
+        if not actual_text.endswith('\n'):
+            self._stdout.write('\n')
+        self._stdout.write('#EOF\n')
+        self._stdout.flush()
+
+
+
 if __name__ == '__main__':
-    sys.exit(main(sys.argv[1:], sys.stdin, sys.stdout, sys.stderr))
+    fs = filesystem.FileSystem()
+    sys.exit(main(sys.argv[1:], fs, sys.stdin, sys.stdout, sys.stderr))

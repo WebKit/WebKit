@@ -1,3 +1,14 @@
+2011-02-02  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        new-run-webkit-tests: support chromium code paths in mock_drt
+
+        https://bugs.webkit.org/show_bug.cgi?id=53471
+
+        * Scripts/webkitpy/layout_tests/port/mock_drt.py:
+        * Scripts/webkitpy/layout_tests/port/mock_drt_unittest.py:
+
 2011-02-02  Adam Klein  <adamk@chromium.org>
 
         Reviewed by Tony Chang.

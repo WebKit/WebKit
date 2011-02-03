@@ -36,6 +36,7 @@ from webkitpy.common import newstringio
 from webkitpy.layout_tests.port import mock_drt
 from webkitpy.layout_tests.port import factory
 from webkitpy.layout_tests.port import port_testcase
+from webkitpy.layout_tests.port import test
 
 
 class MockDRTPortTest(port_testcase.PortTestCase):
@@ -87,15 +88,11 @@ class MockDRTPortTest(port_testcase.PortTestCase):
 
 
 class MockDRTTest(unittest.TestCase):
-    def setUp(self):
-        self._port = factory.get('test')
-        self._layout_tests_dir = self._port.layout_tests_dir()
+    def to_path(self, port, test_name):
+        return port._filesystem.join(port.layout_tests_dir(), test_name)
 
-    def to_path(self, test_name):
-        return self._port._filesystem.join(self._layout_tests_dir, test_name)
-
-    def input_line(self, test_name, checksum=None):
-        url = self._port.filename_to_uri(self.to_path(test_name))
+    def input_line(self, port, test_name, checksum=None):
+        url = port.filename_to_uri(self.to_path(port, test_name))
         # FIXME: we shouldn't have to work around platform-specific issues
         # here.
         if url.startswith('file:////'):
@@ -107,54 +104,61 @@ class MockDRTTest(unittest.TestCase):
             return url + "'" + checksum + '\n'
         return url + '\n'
 
-    def make_drt(self, input_string, extra_args=None):
-        args = ['--platform', 'test', '-']
-        extra_args = extra_args or []
-        args += extra_args
-        stdin = newstringio.StringIO(input_string)
+    def extra_args(self, pixel_tests):
+        if pixel_tests:
+            return ['--pixel-tests', '-']
+        return ['-']
+
+    def make_drt(self, options, args, filesystem, stdin, stdout, stderr):
+        return mock_drt.MockDRT(options, args, filesystem, stdin, stdout, stderr)
+
+    def make_input_output(self, port, test_name, pixel_tests,
+                          expected_checksum, drt_output, drt_input=None):
+        path = self.to_path(port, test_name)
+        if pixel_tests:
+            if not expected_checksum:
+                expected_checksum = port.expected_checksum(path)
+        if not drt_input:
+            drt_input = self.input_line(port, test_name, expected_checksum)
+        text_output = port.expected_text(path)
+
+        if not drt_output:
+            drt_output = self.expected_output(port, test_name, pixel_tests,
+                                              text_output, expected_checksum)
+        return (drt_input, drt_output)
+
+    def expected_output(self, port, test_name, pixel_tests, text_output, expected_checksum):
+        if pixel_tests and expected_checksum:
+            return ['Content-Type: text/plain\n',
+                    text_output,
+                    '#EOF\n',
+                    '\n',
+                    'ActualHash: %s\n' % expected_checksum,
+                    'ExpectedHash: %s\n' % expected_checksum,
+                    '#EOF\n']
+        else:
+            return ['Content-Type: text/plain\n',
+                    text_output,
+                    '#EOF\n',
+                    '#EOF\n']
+
+    def assertTest(self, test_name, pixel_tests, expected_checksum=None,
+                   drt_output=None, filesystem=None):
+        platform = 'test'
+        filesystem = filesystem or test.unit_test_filesystem()
+        port = factory.get(platform, filesystem=filesystem)
+        drt_input, drt_output = self.make_input_output(port, test_name,
+            pixel_tests, expected_checksum, drt_output)
+
+        args = ['--platform', 'test'] + self.extra_args(pixel_tests)
+        stdin = newstringio.StringIO(drt_input)
         stdout = newstringio.StringIO()
         stderr = newstringio.StringIO()
         options, args = mock_drt.parse_options(args)
-        drt = mock_drt.MockDRT(options, args, stdin, stdout, stderr)
-        return (drt, stdout, stderr)
 
-    def make_input_output(self, test_name, pixel_tests, expected_checksum,
-                          drt_output, drt_input=None):
-        path = self.to_path(test_name)
-        if pixel_tests:
-            if not expected_checksum:
-                expected_checksum = self._port.expected_checksum(path)
-        if not drt_input:
-            drt_input = self.input_line(test_name, expected_checksum)
-        text_output = self._port.expected_text(path)
-
-        if not drt_output:
-            if pixel_tests:
-                drt_output = [
-                    'Content-Type: text/plain\n',
-                    text_output.encode('utf-8'),
-                    '#EOF\n',
-                    '\n',
-                    'ActualHash: %s\n' % expected_checksum.encode('utf-8'),
-                    'ExpectedHash: %s\n' % expected_checksum.encode('utf-8'),
-                    '#EOF\n']
-            else:
-                drt_output = [
-                    'Content-Type: text/plain\n',
-                    text_output.encode('utf-8'),
-                    '#EOF\n',
-                    '#EOF\n']
-
-        return (drt_input, drt_output)
-
-    def assertTest(self, test_name, pixel_tests, expected_checksum=None, drt_output=None):
-        drt_input, drt_output = self.make_input_output(test_name, pixel_tests,
-            expected_checksum, drt_output)
-        extra_args = []
-        if pixel_tests:
-            extra_args = ['--pixel-tests']
-        drt, stdout, stderr = self.make_drt(drt_input, extra_args)
+        drt = self.make_drt(options, args, filesystem, stdin, stdout, stderr)
         res = drt.run()
+
         self.assertEqual(res, 0)
 
         # We use the StringIO.buflist here instead of getvalue() because
@@ -163,13 +167,16 @@ class MockDRTTest(unittest.TestCase):
         self.assertEqual(stderr.getvalue(), '')
 
     def test_main(self):
+        filesystem = test.unit_test_filesystem()
         stdin = newstringio.StringIO()
         stdout = newstringio.StringIO()
         stderr = newstringio.StringIO()
-        res = mock_drt.main(['--platform', 'test', '-'], stdin, stdout, stderr)
+        res = mock_drt.main(['--platform', 'test'] + self.extra_args(False),
+                            filesystem, stdin, stdout, stderr)
         self.assertEqual(res, 0)
         self.assertEqual(stdout.getvalue(), '')
         self.assertEqual(stderr.getvalue(), '')
+        self.assertEqual(filesystem.written_files, {})
 
     def test_pixeltest_passes(self):
         # This also tests that we handle HTTP: test URLs properly.
@@ -191,6 +198,63 @@ class MockDRTTest(unittest.TestCase):
 
     def test_textonly(self):
         self.assertTest('passes/image.html', False)
+
+
+class MockChromiumDRTTest(MockDRTTest):
+    def extra_args(self, pixel_tests):
+        if pixel_tests:
+            return ['--pixel-tests=/tmp/png_result0.png']
+        return []
+
+    def make_drt(self, options, args, filesystem, stdin, stdout, stderr):
+        options.chromium = True
+
+        # We have to set these by hand because --platform test won't trigger
+        # the Chromium code paths.
+        options.pixel_path = '/tmp/png_result0.png'
+        options.pixel_tests = True
+
+        return mock_drt.MockChromiumDRT(options, args, filesystem, stdin, stdout, stderr)
+
+    def input_line(self, port, test_name, checksum=None):
+        url = port.filename_to_uri(self.to_path(port, test_name))
+        if checksum:
+            return url + ' 6000 ' + checksum + '\n'
+        return url + ' 6000\n'
+
+    def expected_output(self, port, test_name, pixel_tests, text_output, expected_checksum):
+        url = port.filename_to_uri(self.to_path(port, test_name))
+        if pixel_tests and expected_checksum:
+            return ['#URL:%s\n' % url,
+                    '#MD5:%s\n' % expected_checksum,
+                    text_output,
+                    '\n',
+                    '#EOF\n']
+        else:
+            return ['#URL:%s\n' % url,
+                    text_output,
+                    '\n',
+                    '#EOF\n']
+
+    def test_pixeltest__fails(self):
+        filesystem = test.unit_test_filesystem()
+        self.assertTest('failures/expected/checksum.html', pixel_tests=True,
+            expected_checksum='wrong-checksum',
+            drt_output=['#URL:file:///test.checkout/LayoutTests/failures/expected/checksum.html\n',
+                        '#MD5:checksum-checksum\n',
+                        'checksum-txt',
+                        '\n',
+                        '#EOF\n'],
+            filesystem=filesystem)
+        self.assertEquals(filesystem.written_files,
+            {'/tmp/png_result0.png': 'checksum\x8a-png'})
+
+    def test_chromium_parse_options(self):
+        options, args = mock_drt.parse_options(['--platform', 'chromium-mac',
+            '--pixel-tests=/tmp/png_result0.png'])
+        self.assertTrue(options.chromium)
+        self.assertTrue(options.pixel_tests)
+        self.assertEquals(options.pixel_path, '/tmp/png_result0.png')
 
 
 if __name__ == '__main__':
