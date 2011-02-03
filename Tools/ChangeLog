@@ -1,3 +1,26 @@
+2011-02-03  Adam Roben  <aroben@apple.com>
+
+        Tell the debugger the path to the WebKit source tree when saving a crash log
+
+        This allows the debugger to include the crashing line of code in the log.
+
+        Fixes <http://webkit.org/b/53678> Crash logs from buildslaves don't show the crashing line
+        of code
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/old-run-webkit-tests:
+        (createDebuggerCommandFile): Added. Saves commands that we'd like the debugger to run to a
+        file and returns the path to that file. The commands we pass came from
+        setUpWindowsCrashLogSaving, but I've added a .srcpath command to tell the debugger where the
+        WebKit source code lives.
+        (setUpWindowsCrashLogSaving): Instead of specifying the commands directly on the command
+        line using -c, save them to a file and specify the path to that file using -cf. This works
+        around what is presumably a bug in Windows's command line parsing, where having multiple
+        quoted paths in the debugger commands causes the post-mortem debugger not to be invoked at
+        all. Also pulled the options we pass to the debugger out into a list that is then join()ed
+        together to make them easier to modify in the future.
+
 2011-02-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

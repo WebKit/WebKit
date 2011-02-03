@@ -2450,6 +2450,37 @@ sub stopRunningTestsEarlyIfNeeded()
     return 0;
 }
 
+# Store this at global scope so it won't be GCed (and thus unlinked) until the program exits.
+my $debuggerTempDirectory;
+
+sub createDebuggerCommandFile()
+{
+    return unless isCygwin();
+
+    my @commands = (
+        '.logopen /t "' . toWindowsPath($testResultsDirectory) . '\CrashLog.txt"',
+        '.srcpath "' . toWindowsPath(sourceDir()) . '"',
+        '!analyze -vv',
+        '~*kpn',
+        'q',
+    );
+
+    $debuggerTempDirectory = File::Temp->newdir;
+
+    my $commandFile = File::Spec->catfile($debuggerTempDirectory, "debugger-commands.txt");
+    unless (open COMMANDS, '>', $commandFile) {
+        print "Failed to open $commandFile. Crash logs will not be saved.\n";
+        return;
+    }
+    print COMMANDS join("\n", @commands), "\n";
+    unless (close COMMANDS) {
+        print "Failed to write to $commandFile. Crash logs will not be saved.\n";
+        return;
+    }
+
+    return $commandFile;
+}
+
 sub setUpWindowsCrashLogSaving()
 {
     return unless isCygwin();
@@ -2468,8 +2499,23 @@ sub setUpWindowsCrashLogSaving()
         }
     }
 
+    # If we used -c (instead of -cf) we could pass the commands directly on the command line. But
+    # when the commands include multiple quoted paths (e.g., for .logopen and .srcpath), Windows
+    # fails to invoke the post-mortem debugger at all (perhaps due to a bug in Windows's command
+    # line parsing). So we save the commands to a file instead and tell the debugger to execute them
+    # using -cf.
+    my $commandFile = createDebuggerCommandFile() or return;
+
+    my @options = (
+        '-p %ld',
+        '-e %ld',
+        '-g',
+        '-lines',
+        '-cf "' . toWindowsPath($commandFile) . '"',
+    );
+
     my %values = (
-        Debugger => '"' . toWindowsPath($ntsdPath) . '" -p %ld -e %ld -g -lines -c ".logopen /t \"' . toWindowsPath($testResultsDirectory) . '\CrashLog.txt\";!analyze -vv;~*kpn;q"',
+        Debugger => '"' . toWindowsPath($ntsdPath) . '" ' . join(' ', @options),
         Auto => 1
     );
 
