@@ -1,3 +1,21 @@
+2011-02-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Daniel Bates.
+
+        When XSSFilter blocks JavaScript URLs, use a safe JavaScript URL
+        instead of the empty string
+        https://bugs.webkit.org/show_bug.cgi?id=53643
+
+        In a URL context, the empty string completes to the URL of the current
+        page, which causes these tests to go into an infinite loop.  Instead,
+        we should use a "safe" JavaScript URL that does nothing.
+
+        Fixes:
+            http/tests/security/xssAuditor/javascript-link*
+
+        * html/parser/XSSFilter.cpp:
+        (WebCore::XSSFilter::eraseDangerousAttributesIfInjected):
+
 2011-02-02  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

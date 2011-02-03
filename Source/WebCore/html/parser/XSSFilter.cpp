@@ -311,14 +311,20 @@ bool XSSFilter::filterBaseToken(HTMLToken& token)
 
 bool XSSFilter::eraseDangerousAttributesIfInjected(HTMLToken& token)
 {
+    DEFINE_STATIC_LOCAL(String, safeJavaScriptURL, ("javascript:void(0)"));
+
     bool didBlockScript = false;
     for (size_t i = 0; i < token.attributes().size(); ++i) {
         const HTMLToken::Attribute& attribute = token.attributes().at(i);
-        if (!isNameOfInlineEventHandler(attribute.m_name) && !containsJavaScriptURL(attribute.m_value))
+        bool isInlineEventHandler = isNameOfInlineEventHandler(attribute.m_name);
+        bool valueContainsJavaScriptURL = isInlineEventHandler ? false : containsJavaScriptURL(attribute.m_value);
+        if (!isInlineEventHandler && !valueContainsJavaScriptURL)
             continue;
         if (!isContainedInRequest(snippetForAttribute(token, attribute)))
             continue;
         token.eraseValueOfAttribute(i);
+        if (valueContainsJavaScriptURL)
+            token.appendToAttributeValue(i, safeJavaScriptURL);
         didBlockScript = true;
     }
     return didBlockScript;
