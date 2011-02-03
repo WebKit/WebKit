@@ -1,3 +1,9 @@
+2011-02-02  Martin Robinson  <mrobinson@igalia.com>
+
+        Begin importing missing editing directory test results.
+
+        * platform/gtk/Skipped: Unskip tests with results and classify failures.
+
 2011-02-02  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Gavin Barraclough.
