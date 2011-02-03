@@ -1,0 +1,17 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 5 of BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 6 of #text > A > BODY > HTML > #document to 6 of #text > A > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 65x19
+        text run at (0,0) width 65: "This is an "
+      RenderInline {A} at (0,0) size 77x19 [color=#0000EE]
+        RenderText {#text} at (65,0) size 77x19
+          text run at (65,0) width 77: "editable link"
+      RenderText {#text} at (142,0) size 4x19
+        text run at (142,0) width 4: "."
+caret: position 6 of child 0 {#text} of child 3 {A} of body
