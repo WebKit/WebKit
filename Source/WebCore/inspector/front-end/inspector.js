@@ -348,53 +348,6 @@ var WebInspector = {
             errorWarningElement.title = null;
     },
 
-    get styleChanges()
-    {
-        return this._styleChanges;
-    },
-
-    set styleChanges(x)
-    {
-        x = Math.max(x, 0);
-
-        if (this._styleChanges === x)
-            return;
-        this._styleChanges = x;
-        this._updateChangesCount();
-    },
-
-    _updateChangesCount: function()
-    {
-        // TODO: Remove immediate return when enabling the Changes Panel
-        return;
-
-        var changesElement = document.getElementById("changes-count");
-        if (!changesElement)
-            return;
-
-        if (!this.styleChanges) {
-            changesElement.addStyleClass("hidden");
-            return;
-        }
-
-        changesElement.removeStyleClass("hidden");
-        changesElement.removeChildren();
-
-        if (this.styleChanges) {
-            var styleChangesElement = document.createElement("span");
-            styleChangesElement.id = "style-changes-count";
-            styleChangesElement.textContent = this.styleChanges;
-            changesElement.appendChild(styleChangesElement);
-        }
-
-        if (this.styleChanges) {
-            if (this.styleChanges === 1)
-                changesElement.title = WebInspector.UIString("%d style change", this.styleChanges);
-            else
-                changesElement.title = WebInspector.UIString("%d style changes", this.styleChanges);
-        }
-    },
-
     highlightDOMNode: function(nodeId)
     {
         if ("_hideDOMNodeHighlightTimeout" in this) {
@@ -517,9 +470,6 @@ WebInspector.doLoadedDone = function()
 
     this.drawer = new WebInspector.Drawer();
     this.console = new WebInspector.ConsoleView(this.drawer);
-    // TODO: Uncomment when enabling the Changes Panel
-    // this.changes = new WebInspector.ChangesView(this.drawer);
-    // TODO: Remove class="hidden" from inspector.html on button#changes-status-bar-item
     this.drawer.visibleView = this.console;
     this.resourceTreeModel = new WebInspector.ResourceTreeModel();
     this.networkManager = new WebInspector.NetworkManager(this.resourceTreeModel);
@@ -583,12 +533,6 @@ WebInspector.doLoadedDone = function()
     var errorWarningCount = document.getElementById("error-warning-count");
     errorWarningCount.addEventListener("click", this.showConsole.bind(this), false);
     this._updateErrorAndWarningCounts();
-
-    this.styleChanges = 0;
-    // TODO: Uncomment when enabling the Changes Panel
-    // var changesElement = document.getElementById("changes-count");
-    // changesElement.addEventListener("click", this.showChanges.bind(this), false);
-    // this._updateErrorAndWarningCounts();
 
     var searchField = document.getElementById("search");
     searchField.addEventListener("search", this.performSearch.bind(this), false); // when the search is emptied
@@ -1163,11 +1107,6 @@ WebInspector.toggleSearchingForNode = function()
 WebInspector.showConsole = function()
 {
     this.drawer.showView(this.console);
-}
-
-WebInspector.showChanges = function()
-{
-    this.drawer.showView(this.changes);
 }
 
 WebInspector.showPanel = function(panel)

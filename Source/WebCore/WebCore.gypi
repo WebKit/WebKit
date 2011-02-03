@@ -4660,7 +4660,6 @@
             'inspector/front-end/BreakpointManager.js',
             'inspector/front-end/BreakpointsSidebarPane.js',
             'inspector/front-end/CallStackSidebarPane.js',
-            'inspector/front-end/ChangesView.js',
             'inspector/front-end/Checkbox.js',
             'inspector/front-end/Color.js',
             'inspector/front-end/ConsolePanel.js',

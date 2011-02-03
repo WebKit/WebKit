@@ -13,7 +13,6 @@
     <file>BreakpointManager.js</file>
     <file>BreakpointsSidebarPane.js</file>
     <file>CallStackSidebarPane.js</file>
-    <file>ChangesView.js</file>
     <file>Checkbox.js</file>
     <file>Color.js</file>
     <file>ConsolePanel.js</file>

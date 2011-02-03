@@ -428,10 +428,6 @@ body.port-qt #dock-status-bar-item {
     -webkit-mask-image: url(Images/clearConsoleButtonGlyph.png);
 }
 
-#changes-status-bar-item .glyph {
-    -webkit-mask-image: url(Images/consoleButtonGlyph.png); /* TODO: Needs Image for Changes Toggle Button */
-}
-
 #counters {
     position: absolute;
     right: 16px;
@@ -442,20 +438,12 @@ body.port-qt #dock-status-bar-item {
     height: 19px;
 }
 
-#changes-count, #error-warning-count {
+#error-warning-count {
     display: inline;
 }
 
-#error-warning-count:hover, #changes-count:hover {
+#error-warning-count:hover {
     border-bottom: 1px solid rgb(96, 96, 96);
-}
-
-#style-changes-count::before {
-    content: url(Images/styleIcon.png); /* TODO: Needs Image for Style Changes Icon */
-    width: 10px;
-    height: 10px;
-    vertical-align: -1px;
-    margin-right: 2px;
 }
 
 #error-count::before {
@@ -466,7 +454,7 @@ body.port-qt #dock-status-bar-item {
     margin-right: 2px;
 }
     
-#changes-count + #error-warning-count, #error-count + #warning-count {
+#error-count + #warning-count {
     margin-left: 6px;
 }
 
