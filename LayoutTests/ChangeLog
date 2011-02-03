@@ -1,3 +1,10 @@
+2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Move Leopard result to the right spot, put back the original result.
+
+        * platform/mac-leopard/svg/text/font-size-below-point-five-expected.txt: 
+            Renamed from LayoutTests/platform/mac/svg/text/font-size-below-point-five-expected.txt.
+
 2011-02-03  Adam Roben  <aroben@apple.com>
 
         Skip an SVG test that fails depending on what other tests came before it
