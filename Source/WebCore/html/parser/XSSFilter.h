@@ -42,6 +42,7 @@ public:
 
 private:
     enum State {
+        Uninitialized,
         Initial,
         AfterScriptStartTag,
     };

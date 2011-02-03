@@ -64,6 +64,11 @@ String canonicalize(const String& string)
     return string.removeCharacters(&isNonCanonicalCharacter);
 }
 
+bool isRequiredForInjection(UChar c)
+{
+    return (c == '\'' || c == '"' || c == '<' || c == '>');
+}
+
 bool hasName(const HTMLToken& token, const QualifiedName& name)
 {
     return equalIgnoringNullity(token.name(), static_cast<const String&>(name.localName()));
@@ -124,7 +129,7 @@ XSSFilter::XSSFilter(HTMLDocumentParser* parser)
     : m_parser(parser)
     , m_isEnabled(false)
     , m_xssProtection(XSSProtectionEnabled)
-    , m_state(Initial)
+    , m_state(Uninitialized)
 {
     ASSERT(m_parser);
     if (Frame* frame = parser->document()->frame()) {
@@ -137,7 +142,18 @@ XSSFilter::XSSFilter(HTMLDocumentParser* parser)
 
 void XSSFilter::init()
 {
-    ASSERT(m_isEnabled);
+    ASSERT(m_state == Uninitialized);
+    m_state = Initial;
+
+    if (!m_isEnabled)
+        return;
+    
+    // In theory, the Document could have detached from the Frame after the
+    // XSSFilter was constructed.
+    if (!m_parser->document()->frame()) {
+        m_isEnabled = false;
+        return;
+    }
 
     const TextEncoding& encoding = m_parser->document()->decoder()->encoding();
     const KURL& url = m_parser->document()->url();
@@ -146,20 +162,23 @@ void XSSFilter::init()
         return;
     }
     m_decodedURL = decodeURL(url.string(), encoding);
-
-    // In theory, the Document could have detached from the Frame after the
-    // XSSFilter was constructed.
-    if (!m_parser->document()->frame())
-        return;
+    if (m_decodedURL.find(isRequiredForInjection, 0) == notFound)
+        m_decodedURL = String();
 
     if (DocumentLoader* documentLoader = m_parser->document()->frame()->loader()->documentLoader()) {
         DEFINE_STATIC_LOCAL(String, XSSProtectionHeader, ("X-XSS-Protection"));
         m_xssProtection = parseXSSProtectionHeader(documentLoader->response().httpHeaderField(XSSProtectionHeader));
 
         FormData* httpBody = documentLoader->originalRequest().httpBody();
-        if (httpBody && !httpBody->isEmpty())
+        if (httpBody && !httpBody->isEmpty()) {
             m_decodedHTTPBody = decodeURL(httpBody->flattenToString(), encoding);
+            if (m_decodedHTTPBody.find(isRequiredForInjection, 0) == notFound)
+                m_decodedHTTPBody = String();
+        }
     }
+
+    if (m_decodedURL.isEmpty() && m_decodedHTTPBody.isEmpty())
+        m_isEnabled = false;
 }
 
 void XSSFilter::filterToken(HTMLToken& token)
@@ -168,8 +187,10 @@ void XSSFilter::filterToken(HTMLToken& token)
     ASSERT_UNUSED(token, &token);
     return;
 #else
-    if (m_isEnabled && m_decodedURL.isEmpty())
+    if (m_state == Uninitialized) {
         init();
+        ASSERT(m_state == Initial);
+    }
 
     if (!m_isEnabled || m_xssProtection == XSSProtectionDisabled)
         return;
@@ -177,6 +198,9 @@ void XSSFilter::filterToken(HTMLToken& token)
     bool didBlockScript = false;
 
     switch (m_state) {
+    case Uninitialized:
+        ASSERT_NOT_REACHED();
+        break;
     case Initial: 
         didBlockScript = filterTokenInitial(token);
         break;
@@ -400,7 +424,9 @@ String XSSFilter::snippetForAttribute(const HTMLToken& token, const HTMLToken::A
 
 bool XSSFilter::isContainedInRequest(const String& snippet)
 {
+    ASSERT(!snippet.isEmpty());
     String canonicalizedSnippet = canonicalize(snippet);
+    ASSERT(!canonicalizedSnippet.isEmpty());
     return m_decodedURL.find(canonicalizedSnippet, 0, false) != notFound
         || m_decodedHTTPBody.find(canonicalizedSnippet, 0, false) != notFound;
 }

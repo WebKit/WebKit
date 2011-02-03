@@ -1,3 +1,26 @@
+2011-02-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Daniel Bates.
+
+        XSSFilter shouldn't bother to analyze pages without "injection"
+        characters in the request
+        https://bugs.webkit.org/show_bug.cgi?id=53664
+
+        If the request lacks these "injection" characters, then it's unlikely
+        that there's a reflective XSS attack happening.  This hueristic lets us
+        avoid analyzing the vast majority of responses for XSS.  Of course, the
+        hueristic isn't perfect.  Because of this huerstic, we miss out on
+        injections into unquoted attributes.  However, it's a trade-off that's
+        worked well in the XSSAuditor.
+
+        * html/parser/XSSFilter.cpp:
+        (WebCore::HTMLNames::isRequiredForInjection):
+        (WebCore::XSSFilter::XSSFilter):
+        (WebCore::XSSFilter::init):
+        (WebCore::XSSFilter::filterToken):
+        (WebCore::XSSFilter::isContainedInRequest):
+        * html/parser/XSSFilter.h:
+
 2011-02-03  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Kenneth Russell.
