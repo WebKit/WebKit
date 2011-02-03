@@ -1,3 +1,10 @@
+2011-02-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed Chromium test expectation update for
+        http://src.chromium.org/viewvc/chrome?view=rev&revision=73469
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-02  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Kent Tamura.

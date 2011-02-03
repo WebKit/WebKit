@@ -2541,8 +2541,7 @@ BUGWK44406 : http/tests/appcache/foreign-fallback.html = PASS FAIL CRASH
 // This test starts to timeout during build bots were down between 68880:68920
 BUG_HCLAM WIN : fast/css/acid2-pixel.html = TIMEOUT PASS
 
-BUGCR62738 BUGCR60845 MAC DEBUG : media/video-size.html = CRASH PASS TIMEOUT
-BUGCR62738 BUGCR60845 BUGCR71087 WIN LINUX : media/video-size.html = CRASH PASS TIMEOUT
+BUGCR60845 MAC DEBUG : media/video-size.html = CRASH PASS TIMEOUT
 
 // Unexpected timeout in these tests.
 BUG_HCLAM : http/tests/css/border-image-loading.html = TEXT TIMEOUT PASS
@@ -2787,8 +2786,6 @@ BUGCR57950 WIN : svg/batik/text/verticalText.svg = CRASH PASS
 // media/video-* flakyness
 BUGCR59665 MAC : media/video-aspect-ratio.html = CRASH TIMEOUT PASS
 BUGCR59665 MAC : media/video-play-empty-events.html = CRASH TIMEOUT PASS
-BUGCR59665 MAC : media/video-src-change.html = CRASH TEXT PASS
-BUGCR71087 LINUX : media/video-src-change.html = CRASH PASS
 BUGCR59665 MAC : media/video-src.html = CRASH TIMEOUT PASS
 BUGCR59665 MAC : media/video-controls-rendering.html = CRASH FAIL TIMEOUT PASS
 BUGCR59665 MAC : media/video-layer-crash.html = CRASH TIMEOUT PASS IMAGE
@@ -2874,17 +2871,7 @@ BUGCR66085 WIN LINUX : fast/replaced/css-content-and-webkit-mask-box-image-crash
 BUGCR66085 LINUX : http/tests/media/video-cancel-load.html = PASS TIMEOUT
 BUGCR66085 LINUX : http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html = PASS TIMEOUT
 BUGCR66085 LINUX : media/constructors.html = PASS TIMEOUT
-BUGCR66085 WIN MAC : media/remove-from-document.html = PASS TIMEOUT
-BUGCR66085 LINUX RELEASE : media/remove-from-document.html = PASS TIMEOUT
-BUGCR66085 BUGCR71087 LINUX DEBUG : media/remove-from-document.html = CRASH PASS TIMEOUT
-BUGCR66085 BUGCR71087 MAC : media/video-display-toggle.html = PASS TIMEOUT CRASH
 BUGCR66085 : media/video-play-pause-exception.html = PASS TIMEOUT
-BUGCR66085 WIN : media/video-source.html = PASS TIMEOUT
-BUGCR66085 LINUX : media/video-source.html = CRASH PASS TIMEOUT
-
-BUGCR66085 WIN MAC : media/video-source-type.html = PASS TIMEOUT
-BUGCR66085 BUGCR71087 LINUX : media/video-source-type.html = CRASH PASS TIMEOUT
-BUGCR66085 LINUX : media/video-src-source.html = CRASH PASS TIMEOUT
 
 // Flaky failures
 BUGCR66087 WIN : fast/dom/Geolocation/timestamp.html = PASS TEXT
@@ -3016,7 +3003,7 @@ BUGCR69639 : http/tests/loading/cross-origin-XHR-willLoadRequest.html = TEXT
 BUGDIMICH : fast/loader/stateobjects/pushstate-object-types.html = TEXT
 BUGDIMICH : fast/regex/cross-frame-callable.html = TEXT
 
-BUGTHAKIS BUGCR71087 LINUX WIN : media/video-display-toggle.html = IMAGE CRASH
+BUGTHAKIS LINUX WIN : media/video-display-toggle.html = IMAGE
 
 BUGRNIWA SLOW LINUX : fast/text/large-text-composed-char-dos.html = PASS
 
@@ -3044,7 +3031,6 @@ BUGCR70882 MAC : fast/text/international/hindi-whitespace.html = IMAGE
 BUGCR70882 MAC : fast/text/international/thai-baht-space.html = IMAGE
 BUGCR70882 MAC : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE
 
-BUGCR70941 BUGCR71087 LINUX : userscripts/user-script-image-document.html = CRASH PASS
 BUGCR70942 LINUX : editing/execCommand/break-out-of-empty-list-item.html = PASS TIMEOUT
 BUGRNIWA SLOW WIN : editing/execCommand/4786404-1.html = PASS
 
@@ -3055,9 +3041,6 @@ BUGCR71013 LINUX : fast/text/justify-ideograph-vertical.html = CRASH IMAGE+TEXT
 BUGCR71022 WIN LINUX : fast/text/justify-ideograph-complex.html = IMAGE+TEXT
 BUGCR71022 WIN LINUX : fast/text/justify-ideograph-simple.html = IMAGE+TEXT
 BUGCR71022 WIN : fast/text/justify-ideograph-vertical.html = IMAGE+TEXT
-
-BUGCR71087 WIN LINUX DEBUG : media/video-currentTime.html = CRASH PASS TIMEOUT
-BUGCR71087 MAC DEBUG : media/video-currentTime.html = PASS TIMEOUT
 
 BUGWK53347 WIN LINUX DEBUG : fast/repaint/4774354.html = PASS TIMEOUT
 
