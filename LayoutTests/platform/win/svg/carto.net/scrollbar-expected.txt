@@ -24,7 +24,7 @@ layer at (0,0) size 800x600
               chunk 1 (middle anchor) text run 1 at (589.38,79.80) startOffset 0 endOffset 13 width 91.25: "Zervreilahorn"
           RenderSVGText {text} at (765,99) size 80x17 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 80x17
-              chunk 1 (middle anchor) text run 1 at (765.62,112.80) startOffset 0 endOffset 11 width 78.75: "Plattenberg"
+              chunk 1 (middle anchor) text run 1 at (765.63,112.80) startOffset 0 endOffset 11 width 78.75: "Plattenberg"
           RenderSVGText {text} at (2192,165) size 58x17 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 58x17
               chunk 1 (middle anchor) text run 1 at (2192.15,178.80) startOffset 0 endOffset 8 width 57.50: "Piz Fess"

@@ -1,3 +1,29 @@
+2011-02-03  Adam Roben  <aroben@apple.com>
+
+        Check in the results I really meant to commit in r77507
+
+        A flub on the command-line meant that many of the results added in r77507 were identical to
+        the Mac results, rather than matching what happens on Windows.
+
+        * platform/win/svg/W3C-SVG-1.1/text-align-06-b-expected.checksum:
+        * platform/win/svg/W3C-SVG-1.1/text-align-06-b-expected.png:
+        * platform/win/svg/W3C-SVG-1.1/text-align-06-b-expected.txt:
+        * platform/win/svg/batik/masking/maskRegions-expected.checksum: Added.
+        * platform/win/svg/batik/masking/maskRegions-expected.png: Added.
+        * platform/win/svg/batik/masking/maskRegions-expected.txt:
+        * platform/win/svg/batik/text/textGlyphOrientationHorizontal-expected.checksum:
+        * platform/win/svg/batik/text/textGlyphOrientationHorizontal-expected.png:
+        * platform/win/svg/batik/text/textGlyphOrientationHorizontal-expected.txt:
+        * platform/win/svg/carto.net/scrollbar-expected.checksum:
+        * platform/win/svg/carto.net/scrollbar-expected.png:
+        * platform/win/svg/carto.net/scrollbar-expected.txt:
+        * platform/win/svg/text/font-size-below-point-five-expected.checksum:
+        * platform/win/svg/text/font-size-below-point-five-expected.png:
+        * platform/win/svg/text/font-size-below-point-five-expected.txt:
+        * platform/win/svg/text/text-align-06-b-expected.checksum:
+        * platform/win/svg/text/text-align-06-b-expected.png:
+        * platform/win/svg/text/text-align-06-b-expected.txt:
+
 2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Two more updated SVG baselines after r77485 for Linux.
