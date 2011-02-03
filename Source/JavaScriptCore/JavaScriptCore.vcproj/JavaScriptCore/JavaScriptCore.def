@@ -362,4 +362,5 @@ EXPORTS
     WTFReportArgumentAssertionFailure
     WTFReportAssertionFailure
     WTFReportAssertionFailureWithMessage
+    WTFReportBacktrace
     WTFReportError
