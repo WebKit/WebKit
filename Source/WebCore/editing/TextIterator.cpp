@@ -1922,6 +1922,11 @@ inline SearchBuffer::SearchBuffer(const String& target, FindOptions options)
 
 inline SearchBuffer::~SearchBuffer()
 {
+    // Leave the static object pointing to a valid string.
+    UErrorCode status = U_ZERO_ERROR;
+    usearch_setPattern(WebCore::searcher(), &newlineCharacter, 1, &status);
+    ASSERT(status == U_ZERO_ERROR);
+
     unlockSearcher();
 }
 

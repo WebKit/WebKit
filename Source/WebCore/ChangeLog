@@ -1,3 +1,18 @@
+2011-02-02  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        window.find() can fail when switching case sensitivity
+        https://bugs.webkit.org/show_bug.cgi?id=53654
+
+        Reset the pattern to a safe one when done, to avoid usearch_reset()
+        indirectly touching the old, stale text pointer.
+
+        Test: fast/text/find-window.html
+
+        * editing/TextIterator.cpp:
+        (WebCore::SearchBuffer::~SearchBuffer): leave a safe pattern buffer when done.
+
 2011-02-02  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Daniel Bates.

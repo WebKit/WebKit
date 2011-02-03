@@ -1,3 +1,16 @@
+2011-02-02  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        window.find() can fail when switching case sensitivity
+        https://bugs.webkit.org/show_bug.cgi?id=53654
+
+        The test coverage for this area is very poor, so I took the liberty
+        of adding a more general test than is needed.
+
+        * fast/text/find-window.html: Added.
+        * fast/text/find-window-expected.txt: Added.
+
 2011-02-02  Martin Robinson  <mrobinson@igalia.com>
 
         Rebaseline two tests after import of editing test results for GTK+.
