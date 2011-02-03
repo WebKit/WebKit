@@ -1,3 +1,82 @@
+2011-02-03  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
+        small text which is scaled to be large renders pixelated
+        https://bugs.webkit.org/show_bug.cgi?id=12448
+
+        First chunk of mac SVG pixel test updates after r77485.
+
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-02-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-04-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-04-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-05-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-05-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-06-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-06-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-07-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-07-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-09-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-10-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-11-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-12-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-13-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-14-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-15-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-16-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-17-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-18-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-19-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-20-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-21-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-22-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-23-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-25-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-27-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-32-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-33-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-33-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-84-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-84-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-85-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/color-prof-01-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/color-prop-02-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/color-prop-03-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/coords-coord-01-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/coords-coord-02-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/coords-trans-02-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/coords-trans-02-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/coords-trans-03-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/coords-trans-03-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/coords-trans-04-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/coords-trans-04-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/coords-trans-05-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/coords-trans-05-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/coords-trans-06-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/coords-trans-06-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/extend-namespace-01-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-blend-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-blend-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-color-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-color-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-composite-02-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-composite-02-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-example-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-example-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-felem-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-light-04-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-desc-02-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-03-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-04-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/interact-dom-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/interact-events-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/interact-order-03-b-expected.png:
+
 2011-02-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed. Update Qt specific expected results after r77495.
