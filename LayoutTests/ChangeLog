@@ -1,3 +1,12 @@
+2011-02-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        Skip some tests that fail in WebKit2 due to missing DRT functionality
+        https://bugs.webkit.org/show_bug.cgi?id=53666
+
+        * platform/mac-wk2/Skipped:
+
 2011-02-03  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Daniel Bates.
