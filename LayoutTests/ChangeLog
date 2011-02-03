@@ -1,5 +1,9 @@
 2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Updated platform/mac and platform/mac-leopard baselines for svg/ after r77485.
+
+2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Updated baselines that are specific to Leopard.
 
         * platform/chromium-mac-leopard/svg/custom/linking-a-03-b-preserveAspectRatio-expected.txt:
