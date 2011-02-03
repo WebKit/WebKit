@@ -383,7 +383,7 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
                 WebInspector.CSSStyleSheet.createForId(styleSheetIds[i], styleSheetCallback.bind(null, styleSheets, i == styleSheetIds.length - 1 ? evalCallback : null));
         }
 
-        InspectorBackend.getAllStyles2(allStylesCallback);
+        InspectorBackend.getAllStyles(allStylesCallback);
     }
 }
 

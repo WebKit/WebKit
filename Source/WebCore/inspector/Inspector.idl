@@ -208,17 +208,17 @@ module core {
         // CSS API
         ///////////////////////////////////////////////////////////////////////
 
-        [domain=CSS] void getStylesForNode2(in long nodeId, out Value styles);
-        [domain=CSS] void getComputedStyleForNode2(in long nodeId, out Value style);
-        [domain=CSS] void getInlineStyleForNode2(in long nodeId, out Value style);
-        [domain=CSS] void getAllStyles2(out Array styleSheetIds);
-        [domain=CSS] void getStyleSheet2(in String styleSheetId, out Value styleSheet);
-        [domain=CSS] void getStyleSheetText2(in String styleSheetId, out String url, out String text);
-        [domain=CSS] void setStyleSheetText2(in String styleSheetId, in String text, out boolean success);
-        [domain=CSS] void setPropertyText2(in Object styleId, in long propertyIndex, in String text, in boolean overwrite, out Value style);
-        [domain=CSS] void toggleProperty2(in Object styleId, in long propertyIndex, in boolean disable, out Value style);
-        [domain=CSS] void setRuleSelector2(in Object ruleId, in String selector, out Value rule);
-        [domain=CSS] void addRule2(in long contextNodeId, in String selector, out Value rule);
+        [domain=CSS] void getStylesForNode(in long nodeId, out Value styles);
+        [domain=CSS] void getComputedStyleForNode(in long nodeId, out Value style);
+        [domain=CSS] void getInlineStyleForNode(in long nodeId, out Value style);
+        [domain=CSS] void getAllStyles(out Array styleSheetIds);
+        [domain=CSS] void getStyleSheet(in String styleSheetId, out Value styleSheet);
+        [domain=CSS] void getStyleSheetText(in String styleSheetId, out String url, out String text);
+        [domain=CSS] void setStyleSheetText(in String styleSheetId, in String text, out boolean success);
+        [domain=CSS] void setPropertyText(in Object styleId, in long propertyIndex, in String text, in boolean overwrite, out Value style);
+        [domain=CSS] void toggleProperty(in Object styleId, in long propertyIndex, in boolean disable, out Value style);
+        [domain=CSS] void setRuleSelector(in Object ruleId, in String selector, out Value rule);
+        [domain=CSS] void addRule(in long contextNodeId, in String selector, out Value rule);
         [domain=CSS] void getSupportedCSSProperties(out Array cssProperties);
         [domain=CSS] void querySelectorAll(in long documentId, in String selector, out Array result);
 

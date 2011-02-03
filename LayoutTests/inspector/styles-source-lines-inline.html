@@ -36,7 +36,7 @@ function frontend_selectElementContinuation(testController)
     frontend_selectElementAndRun(testController, "foo", frontend_selectElementContinuation2);
 }
 
-function frontend_selectElementContinuation2(testController)
+function frontend_selectElementContinuation(testController)
 {
     var result = frontend_getSelectedElementStyles(true);
     testController.notifyDone(result);

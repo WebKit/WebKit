@@ -46,7 +46,7 @@ function frontend_dumpStylesContinuation(testController)
         mainStyles = styles;
     }
 
-    InspectorBackend.getStylesForNode2(body.id, mainFrameCallback);
+    InspectorBackend.getStylesForNode(body.id, mainFrameCallback);
 
     // 2. Find iframe node
     var innerMapping = WebInspector.domAgent._idToDOMNode;
@@ -67,7 +67,7 @@ function frontend_dumpStylesContinuation(testController)
         testController.notifyDone([mainStyles, styles]);
     }
 
-    InspectorBackend.getStylesForNode2(iframeBody.id, iframeCallback);
+    InspectorBackend.getStylesForNode(iframeBody.id, iframeCallback);
 }
 
 </script>

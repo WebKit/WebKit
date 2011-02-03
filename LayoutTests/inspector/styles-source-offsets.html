@@ -37,7 +37,7 @@ function frontend_runTest(testController)
             }
             frontend_dumpStyleData(testController, styles.inlineStyle, true);
         }
-        InspectorBackend.getStylesForNode2(WebInspector.domAgent.document.body.id, stylesCallback.bind(null, testController));
+        InspectorBackend.getStylesForNode(WebInspector.domAgent.document.body.id, stylesCallback.bind(null, testController));
     });
 }
 

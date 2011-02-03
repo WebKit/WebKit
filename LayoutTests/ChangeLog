@@ -1,3 +1,16 @@
+2011-02-01  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Remove the *2 suffix from the CSS style-related protocol methods
+        https://bugs.webkit.org/show_bug.cgi?id=53492
+
+        * inspector/styles-iframe.html:
+        * inspector/styles-new-API.html:
+        * inspector/styles-source-lines-inline.html:
+        * inspector/styles-source-lines.html:
+        * inspector/styles-source-offsets.html:
+
 2011-02-03  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip flaky test

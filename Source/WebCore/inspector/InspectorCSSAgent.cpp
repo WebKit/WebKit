@@ -173,7 +173,7 @@ void InspectorCSSAgent::reset()
     m_documentToInspectorStyleSheet.clear();
 }
 
-void InspectorCSSAgent::getStylesForNode2(long nodeId, RefPtr<InspectorValue>* result)
+void InspectorCSSAgent::getStylesForNode(long nodeId, RefPtr<InspectorValue>* result)
 {
     Element* element = elementForId(nodeId);
     if (!element)
@@ -228,7 +228,7 @@ void InspectorCSSAgent::getStylesForNode2(long nodeId, RefPtr<InspectorValue>* r
     *result = resultObject.release();
 }
 
-void InspectorCSSAgent::getInlineStyleForNode2(long nodeId, RefPtr<InspectorValue>* style)
+void InspectorCSSAgent::getInlineStyleForNode(long nodeId, RefPtr<InspectorValue>* style)
 {
     Element* element = elementForId(nodeId);
     if (!element)
@@ -241,7 +241,7 @@ void InspectorCSSAgent::getInlineStyleForNode2(long nodeId, RefPtr<InspectorValu
     *style = styleSheet->buildObjectForStyle(element->style());
 }
 
-void InspectorCSSAgent::getComputedStyleForNode2(long nodeId, RefPtr<InspectorValue>* style)
+void InspectorCSSAgent::getComputedStyleForNode(long nodeId, RefPtr<InspectorValue>* style)
 {
     Element* element = elementForId(nodeId);
     if (!element)
@@ -252,7 +252,7 @@ void InspectorCSSAgent::getComputedStyleForNode2(long nodeId, RefPtr<InspectorVa
     *style = inspectorStyle->buildObjectForStyle();
 }
 
-void InspectorCSSAgent::getAllStyles2(RefPtr<InspectorArray>* styles)
+void InspectorCSSAgent::getAllStyles(RefPtr<InspectorArray>* styles)
 {
     const ListHashSet<RefPtr<Document> >& documents = m_domAgent->documents();
     for (ListHashSet<RefPtr<Document> >::const_iterator it = documents.begin(); it != documents.end(); ++it) {
@@ -267,7 +267,7 @@ void InspectorCSSAgent::getAllStyles2(RefPtr<InspectorArray>* styles)
     }
 }
 
-void InspectorCSSAgent::getStyleSheet2(const String& styleSheetId, RefPtr<InspectorValue>* styleSheetObject)
+void InspectorCSSAgent::getStyleSheet(const String& styleSheetId, RefPtr<InspectorValue>* styleSheetObject)
 {
     InspectorStyleSheet* inspectorStyleSheet = styleSheetForId(styleSheetId);
     if (!inspectorStyleSheet)
@@ -276,7 +276,7 @@ void InspectorCSSAgent::getStyleSheet2(const String& styleSheetId, RefPtr<Inspec
     *styleSheetObject = inspectorStyleSheet->buildObjectForStyleSheet();
 }
 
-void InspectorCSSAgent::getStyleSheetText2(const String& styleSheetId, String* url, String* result)
+void InspectorCSSAgent::getStyleSheetText(const String& styleSheetId, String* url, String* result)
 {
     InspectorStyleSheet* inspectorStyleSheet = styleSheetForId(styleSheetId);
     if (!inspectorStyleSheet)
@@ -285,7 +285,7 @@ void InspectorCSSAgent::getStyleSheetText2(const String& styleSheetId, String* u
     inspectorStyleSheet->text(result);
 }
 
-void InspectorCSSAgent::setStyleSheetText2(const String& styleSheetId, const String& text, bool* success)
+void InspectorCSSAgent::setStyleSheetText(const String& styleSheetId, const String& text, bool* success)
 {
     InspectorStyleSheet* inspectorStyleSheet = styleSheetForId(styleSheetId);
     if (!inspectorStyleSheet) {
@@ -298,7 +298,7 @@ void InspectorCSSAgent::setStyleSheetText2(const String& styleSheetId, const Str
         inspectorStyleSheet->reparseStyleSheet(text);
 }
 
-void InspectorCSSAgent::setPropertyText2(const RefPtr<InspectorObject>& fullStyleId, long propertyIndex, const String& text, bool overwrite, RefPtr<InspectorValue>* result)
+void InspectorCSSAgent::setPropertyText(const RefPtr<InspectorObject>& fullStyleId, long propertyIndex, const String& text, bool overwrite, RefPtr<InspectorValue>* result)
 {
     InspectorCSSId compoundId(fullStyleId);
     ASSERT(!compoundId.isEmpty());
@@ -312,7 +312,7 @@ void InspectorCSSAgent::setPropertyText2(const RefPtr<InspectorObject>& fullStyl
         *result = inspectorStyleSheet->buildObjectForStyle(inspectorStyleSheet->styleForId(compoundId));
 }
 
-void InspectorCSSAgent::toggleProperty2(const RefPtr<InspectorObject>& fullStyleId, long propertyIndex, bool disable, RefPtr<InspectorValue>* result)
+void InspectorCSSAgent::toggleProperty(const RefPtr<InspectorObject>& fullStyleId, long propertyIndex, bool disable, RefPtr<InspectorValue>* result)
 {
     InspectorCSSId compoundId(fullStyleId);
     ASSERT(!compoundId.isEmpty());
@@ -326,7 +326,7 @@ void InspectorCSSAgent::toggleProperty2(const RefPtr<InspectorObject>& fullStyle
         *result = inspectorStyleSheet->buildObjectForStyle(inspectorStyleSheet->styleForId(compoundId));
 }
 
-void InspectorCSSAgent::setRuleSelector2(const RefPtr<InspectorObject>& fullRuleId, const String& selector, RefPtr<InspectorValue>* result)
+void InspectorCSSAgent::setRuleSelector(const RefPtr<InspectorObject>& fullRuleId, const String& selector, RefPtr<InspectorValue>* result)
 {
     InspectorCSSId compoundId(fullRuleId);
     ASSERT(!compoundId.isEmpty());
@@ -342,7 +342,7 @@ void InspectorCSSAgent::setRuleSelector2(const RefPtr<InspectorObject>& fullRule
     *result = inspectorStyleSheet->buildObjectForRule(inspectorStyleSheet->ruleForId(compoundId));
 }
 
-void InspectorCSSAgent::addRule2(const long contextNodeId, const String& selector, RefPtr<InspectorValue>* result)
+void InspectorCSSAgent::addRule(const long contextNodeId, const String& selector, RefPtr<InspectorValue>* result)
 {
     Node* node = m_domAgent->nodeForId(contextNodeId);
     if (!node)

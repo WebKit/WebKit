@@ -1,3 +1,40 @@
+2011-02-01  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Remove the *2 suffix from the CSS style-related protocol methods
+        https://bugs.webkit.org/show_bug.cgi?id=53492
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getStylesForNode):
+        (WebCore::InspectorCSSAgent::getInlineStyleForNode):
+        (WebCore::InspectorCSSAgent::getComputedStyleForNode):
+        (WebCore::InspectorCSSAgent::getAllStyles):
+        (WebCore::InspectorCSSAgent::getStyleSheet):
+        (WebCore::InspectorCSSAgent::getStyleSheetText):
+        (WebCore::InspectorCSSAgent::setStyleSheetText):
+        (WebCore::InspectorCSSAgent::setPropertyText):
+        (WebCore::InspectorCSSAgent::toggleProperty):
+        (WebCore::InspectorCSSAgent::setRuleSelector):
+        (WebCore::InspectorCSSAgent::addRule):
+        * inspector/InspectorCSSAgent.h:
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel.prototype.getStylesAsync):
+        (WebInspector.CSSStyleModel.prototype.getComputedStyleAsync):
+        (WebInspector.CSSStyleModel.prototype.getInlineStyleAsync):
+        (WebInspector.CSSStyleModel.prototype.setRuleSelector):
+        (WebInspector.CSSStyleModel.prototype.addRule):
+        (WebInspector.CSSStyleModel.prototype._styleSheetChanged):
+        (WebInspector.CSSStyleModel.prototype._onRevert):
+        (WebInspector.CSSStyleDeclaration.prototype.insertPropertyAt):
+        (WebInspector.CSSProperty.prototype.setText):
+        (WebInspector.CSSProperty.prototype.setDisabled):
+        (WebInspector.CSSStyleSheet.createForId):
+        (WebInspector.CSSStyleSheet.prototype.setText):
+
 2011-02-03  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Daniel Bates.
