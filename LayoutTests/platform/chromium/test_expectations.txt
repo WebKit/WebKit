@@ -3074,3 +3074,12 @@ BUGWK53505 WIN DEBUG : inspector/console-dir.html = PASS CRASH
 BUGWK53505 WIN DEBUG : inspector/cpu-profiler-profiling.html = PASS CRASH
 
 BUGWK53527 DEBUG : fast/frames/iframe-reparenting-new-page.html = CRASH PASS
+
+// It is failing since r77459.
+// Fix miscalculation of the overhang area used for painting. We were 
+// not correctly accounting for scrollbars resulting in an non-negative 
+// overhang even when we weren't over the edge. 
+// * platform/ScrollView.cpp: 
+//   (WebCore::ScrollView::calculateOverhangAreasForPainting): 
+BUGCR71783 : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
+
