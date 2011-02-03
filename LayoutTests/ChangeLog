@@ -1,3 +1,15 @@
+2011-02-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Daniel Bates.
+
+        Teach XSSFilter about data URLs
+        https://bugs.webkit.org/show_bug.cgi?id=53662
+
+        Tests that the XSS filter doesn't block script in data URLs.
+
+        * http/tests/security/xssAuditor/data-urls-work-expected.txt: Added.
+        * http/tests/security/xssAuditor/data-urls-work.html: Added.
+
 2011-02-02  Chris Evans  <cevans@chromium.org>
 
         Reviewed by Darin Fisher.

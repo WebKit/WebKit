@@ -1,3 +1,19 @@
+2011-02-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Daniel Bates.
+
+        Teach XSSFilter about data URLs
+        https://bugs.webkit.org/show_bug.cgi?id=53662
+
+        The XSS filter doesn't really make sense for data URLs because
+        everything in a "response" from a data URL was part of the request.
+
+        Test: http/tests/security/xssAuditor/data-urls-work.html
+
+        * html/parser/XSSFilter.cpp:
+        (WebCore::XSSFilter::init):
+        (WebCore::XSSFilter::filterToken):
+
 2011-02-02  Chris Evans  <cevans@chromium.org>
 
         Reviewed by Darin Fisher.

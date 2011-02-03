@@ -140,8 +140,12 @@ void XSSFilter::init()
     ASSERT(m_isEnabled);
 
     const TextEncoding& encoding = m_parser->document()->decoder()->encoding();
-    String url = m_parser->document()->url().string();
-    m_decodedURL = decodeURL(url, encoding);
+    const KURL& url = m_parser->document()->url();
+    if (url.protocolIsData()) {
+        m_isEnabled = false;
+        return;
+    }
+    m_decodedURL = decodeURL(url.string(), encoding);
 
     // In theory, the Document could have detached from the Frame after the
     // XSSFilter was constructed.
@@ -164,11 +168,11 @@ void XSSFilter::filterToken(HTMLToken& token)
     ASSERT_UNUSED(token, &token);
     return;
 #else
+    if (m_isEnabled && m_decodedURL.isEmpty())
+        init();
+
     if (!m_isEnabled || m_xssProtection == XSSProtectionDisabled)
         return;
-
-    if (m_decodedURL.isEmpty())
-        init();
 
     bool didBlockScript = false;
 
