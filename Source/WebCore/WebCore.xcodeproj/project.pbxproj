@@ -3143,6 +3143,7 @@
 		9FA37EFB1172FDA600C4CD55 /* JSScriptProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FA37EF71172FD9300C4CD55 /* JSScriptProfile.h */; };
 		9FA37EFC1172FDA600C4CD55 /* JSScriptProfileNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FA37EF81172FD9300C4CD55 /* JSScriptProfileNode.cpp */; };
 		9FA37EFD1172FDA600C4CD55 /* JSScriptProfileNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FA37EF91172FD9300C4CD55 /* JSScriptProfileNode.h */; };
+		9FDC8FF212FAB0060099AB1C /* JSMemoryInfoCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FDC8FF112FAB0060099AB1C /* JSMemoryInfoCustom.cpp */; };
 		9FFE3E7A11B59C5D0037874E /* MemoryInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FFE3E7811B59C5D0037874E /* MemoryInfo.cpp */; };
 		9FFE3E7B11B59C5D0037874E /* MemoryInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FFE3E7911B59C5D0037874E /* MemoryInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9FFE3EA511B5A4390037874E /* JSMemoryInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FFE3EA311B5A4390037874E /* JSMemoryInfo.cpp */; };
@@ -9545,6 +9546,7 @@
 		9FA37EF71172FD9300C4CD55 /* JSScriptProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScriptProfile.h; sourceTree = "<group>"; };
 		9FA37EF81172FD9300C4CD55 /* JSScriptProfileNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSScriptProfileNode.cpp; sourceTree = "<group>"; };
 		9FA37EF91172FD9300C4CD55 /* JSScriptProfileNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScriptProfileNode.h; sourceTree = "<group>"; };
+		9FDC8FF112FAB0060099AB1C /* JSMemoryInfoCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMemoryInfoCustom.cpp; sourceTree = "<group>"; };
 		9FFE3E7811B59C5D0037874E /* MemoryInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryInfo.cpp; sourceTree = "<group>"; };
 		9FFE3E7911B59C5D0037874E /* MemoryInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryInfo.h; sourceTree = "<group>"; };
 		9FFE3E7C11B59C6E0037874E /* MemoryInfo.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MemoryInfo.idl; sourceTree = "<group>"; };
@@ -17784,6 +17786,7 @@
 				3314ACEA10892086000F0E56 /* JSExceptionBase.h */,
 				8F934D841189F1EE00508D5D /* JSMainThreadExecState.cpp */,
 				8F934D831189F1EE00508D5D /* JSMainThreadExecState.h */,
+				9FDC8FF112FAB0060099AB1C /* JSMemoryInfoCustom.cpp */,
 				93B70D4F09EB0C7C009D8468 /* JSPluginElementFunctions.cpp */,
 				93B70D5009EB0C7C009D8468 /* JSPluginElementFunctions.h */,
 				14CD8D81106B529000A46D23 /* JSSharedWorkerCustom.cpp */,
@@ -25186,6 +25189,7 @@
 				BCE4413312F748E2009B84B8 /* RenderCombineText.cpp in Sources */,
 				14947FFD12F80CD200A0F631 /* DocumentOrderedMap.cpp in Sources */,
 				97C471DB12F925BD0086354B /* ContentSecurityPolicy.cpp in Sources */,
+				9FDC8FF212FAB0060099AB1C /* JSMemoryInfoCustom.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

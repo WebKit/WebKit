@@ -677,6 +677,7 @@
             'bindings/js/JSLocationCustom.h',
             'bindings/js/JSMainThreadExecState.cpp',
             'bindings/js/JSMainThreadExecState.h',
+            'bindings/js/JSMemoryInfoCustom.cpp',
             'bindings/js/JSMessageChannelCustom.cpp',
             'bindings/js/JSMessageEventCustom.cpp',
             'bindings/js/JSMessagePortCustom.cpp',

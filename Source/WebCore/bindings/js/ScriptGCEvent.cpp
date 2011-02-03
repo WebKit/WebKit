@@ -42,11 +42,12 @@ namespace WebCore {
 
 using namespace JSC;
 
-void ScriptGCEvent::getHeapSize(size_t& usedHeapSize, size_t& totalHeapSize)
+void ScriptGCEvent::getHeapSize(size_t& usedHeapSize, size_t& totalHeapSize, size_t& heapSizeLimit)
 {
     JSGlobalData* globalData = JSDOMWindow::commonJSGlobalData();
     totalHeapSize = globalData->heap.capacity();
-    usedHeapSize = totalHeapSize;
+    usedHeapSize = globalData->heap.size();
+    heapSizeLimit = 0;
 }
 
 } // namespace WebCore

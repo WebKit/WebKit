@@ -66,12 +66,13 @@ void ScriptGCEvent::removeEventListener(ScriptGCEventListener* eventListener)
     }
 }
 
-void ScriptGCEvent::getHeapSize(size_t& usedHeapSize, size_t& totalHeapSize)
+void ScriptGCEvent::getHeapSize(size_t& usedHeapSize, size_t& totalHeapSize, size_t& heapSizeLimit)
 {
     v8::HeapStatistics heapStatistics;
     v8::V8::GetHeapStatistics(&heapStatistics);
     usedHeapSize = heapStatistics.used_heap_size();
     totalHeapSize = heapStatistics.total_heap_size();
+    heapSizeLimit = heapStatistics.heap_size_limit();
 }
 
 size_t ScriptGCEvent::getUsedHeapSize()

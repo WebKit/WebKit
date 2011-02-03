@@ -44,12 +44,14 @@ public:
 
     size_t totalJSHeapSize() const { return m_totalJSHeapSize; }
     size_t usedJSHeapSize() const { return m_usedJSHeapSize; }
+    size_t jsHeapSizeLimit() const { return m_jsHeapSizeLimit; }
 
 private:
     MemoryInfo(Frame*);
 
     size_t m_totalJSHeapSize;
     size_t m_usedJSHeapSize;
+    size_t m_jsHeapSizeLimit;
 };
 
 } // namespace WebCore

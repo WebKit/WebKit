@@ -105,6 +105,7 @@
 #include "JSLazyEventListener.cpp"
 #include "JSLocationCustom.cpp"
 #include "JSMainThreadExecState.cpp"
+#include "JSMemoryInfoCustom.cpp"
 #include "JSMessageChannelCustom.cpp"
 #include "JSMessageEventCustom.cpp"
 #include "JSMessagePortCustom.cpp"

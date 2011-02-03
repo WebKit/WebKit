@@ -301,7 +301,8 @@ void InspectorTimelineAgent::setHeapSizeStatistic(InspectorObject* record)
 {
     size_t usedHeapSize = 0;
     size_t totalHeapSize = 0;
-    ScriptGCEvent::getHeapSize(usedHeapSize, totalHeapSize);
+    size_t heapSizeLimit = 0;
+    ScriptGCEvent::getHeapSize(usedHeapSize, totalHeapSize, heapSizeLimit);
     record->setNumber("usedHeapSize", usedHeapSize);
     record->setNumber("totalHeapSize", totalHeapSize);
 }

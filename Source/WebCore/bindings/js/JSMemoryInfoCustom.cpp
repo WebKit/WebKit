@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,14 +28,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module window {
+#include "config.h"
 
-    interface [OmitConstructor] MemoryInfo {
+#include "JSMemoryInfo.h"
 
-        readonly attribute unsigned long totalJSHeapSize;
-        readonly attribute unsigned long usedJSHeapSize;
-        readonly attribute [JSCCustomGetter] unsigned long jsHeapSizeLimit;
+using namespace JSC;
 
-    };
+namespace WebCore {
 
+JSValue JSMemoryInfo::jsHeapSizeLimit(ExecState*) const
+{
+    return jsUndefined();
 }
+
+} // namespace WebCore

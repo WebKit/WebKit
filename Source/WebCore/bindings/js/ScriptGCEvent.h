@@ -42,7 +42,7 @@ class ScriptGCEvent
 public:
     static void addEventListener(ScriptGCEventListener*) { }
     static void removeEventListener(ScriptGCEventListener*) { }
-    static void getHeapSize(size_t& usedHeapSize, size_t& totalHeapSize);
+    static void getHeapSize(size_t& usedHeapSize, size_t& totalHeapSize, size_t& heapSizeLimit);
 };
 
 } // namespace WebCore
