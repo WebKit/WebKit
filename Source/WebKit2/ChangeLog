@@ -1,3 +1,16 @@
+2011-02-02  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53361
+        <rdar://problem/8921729> REGRESSION: Membuster accumulates 1GB+ memory due to autorelease 
+        pools not being drained.
+        Call into AppKit to add observers that push and pop autorelease pools on entry 
+        and exit from the CFRunLoop.  This will prevent memory from accumulating.
+
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMain):
+
 2011-02-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

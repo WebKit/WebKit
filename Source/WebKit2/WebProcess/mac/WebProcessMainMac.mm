@@ -46,6 +46,10 @@
 // FIXME: We should be doing this another way.
 extern "C" kern_return_t bootstrap_look_up2(mach_port_t, const name_t, mach_port_t*, pid_t, uint64_t);
 
+@interface NSApplication (WebNSApplicationDetails)
+-(void)_installAutoreleasePoolsOnCurrentThreadIfNecessary;
+@end
+
 #define SHOW_CRASH_REPORTER 1
 
 using namespace WebCore;
@@ -88,6 +92,10 @@ int WebProcessMain(const CommandLine& commandLine)
 
      // Initialize AppKit.
     [NSApplication sharedApplication];
+
+    // Installs autorelease pools on the current CFRunLoop which prevents memory from accumulating between user events.
+    // FIXME: Remove when <rdar://problem/8929426> is fixed.
+    [[NSApplication sharedApplication] _installAutoreleasePoolsOnCurrentThreadIfNecessary];
 
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
     WKAXRegisterRemoteApp();
