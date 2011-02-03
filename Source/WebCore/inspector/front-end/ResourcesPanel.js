@@ -105,6 +105,16 @@ WebInspector.ResourcesPanel.prototype = {
         if (this.visibleView && this.visibleView.resource)
             this._showResourceView(this.visibleView.resource);
 
+        this._initDefaultSelection();
+    },
+
+    loadEventFired: function()
+    {
+        this._initDefaultSelection();
+    },
+
+    _initDefaultSelection: function()
+    {
         if (this._initializedDefaultSelection)
             return;
 
@@ -119,17 +129,14 @@ WebInspector.ResourcesPanel.prototype = {
                 }
             }
         }
-        this._initDefaultSelection();
-    },
 
-    _initDefaultSelection: function()
-    {
         if (WebInspector.mainResource && this.resourcesListTreeElement && this.resourcesListTreeElement.expanded)
             this.showResource(WebInspector.mainResource);
     },
 
     reset: function()
     {
+        delete this._initializedDefaultSelection;
         this._origins = {};
         this._domains = {};
         for (var i = 0; i < this._databases.length; ++i) {
@@ -170,6 +177,7 @@ WebInspector.ResourcesPanel.prototype = {
     clear: function()
     {
         this.resourcesListTreeElement.removeChildren();
+        this._treeElementForFrameId = {};
         this.reset();
     },
 

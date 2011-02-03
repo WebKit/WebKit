@@ -1189,8 +1189,8 @@ WebInspector.domContentEventFired = function(time)
 WebInspector.loadEventFired = function(time)
 {
     this.panels.audits.mainResourceLoadTime = time;
-    if (this.panels.network)
-        this.panels.network.mainResourceLoadTime = time;
+    this.panels.network.mainResourceLoadTime = time;
+    this.panels.resources.loadEventFired();
     this.extensionServer.notifyPageLoaded((time - WebInspector.mainResource.startTime) * 1000);
     this.mainResourceLoadTime = time;
 }
