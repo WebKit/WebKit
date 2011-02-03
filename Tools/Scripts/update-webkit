@@ -50,9 +50,6 @@ determineIsChromium();
 
 chdirWebKit();
 
-my $isGit = isGit();
-my $isSVN = isSVN();
-
 my $getOptionsResult = GetOptions(
     'h|help'  => \$showHelp,
     'q|quiet' => \$quiet,
@@ -77,14 +74,14 @@ push @svnOptions, '-q' if $quiet;
 push @svnOptions, qw(--accept postpone) if isSVNVersion16OrNewer();
 
 print "Updating OpenSource\n" unless $quiet;
-runSvnUpdate() if $isSVN;
-runGitUpdate() if $isGit;
+runSvnUpdate() if isSVN();
+runGitUpdate() if isGit();
 
 if (-d "../Internal") {
     chdir("../Internal");
     print "Updating Internal\n" unless $quiet;
-    runSvnUpdate() if $isSVN;
-    runGitUpdate() if $isGit;
+    runSvnUpdate() if isSVN();
+    runGitUpdate() if isGit();
 } elsif (isChromium()) {
     # Workaround for https://bugs.webkit.org/show_bug.cgi?id=38926
     # We should remove the following "if" block when we find a right fix.

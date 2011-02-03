@@ -1,3 +1,13 @@
+2011-02-02  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        'update-webkit' should handle OpenSource and Internal using different
+        VCSs.
+
+        * Scripts/update-webkit: Re-check the VCS type when updating Apple's
+        Internal directory.
+
 2011-02-02  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Mihai Parparita.
