@@ -109,7 +109,6 @@ WebInspector.ResourceView.recreateResourceView = function(resource)
     if (scrollTop)
         newView.scrollTop = scrollTop;
 
-    WebInspector.panels.scripts.viewRecreated(oldView, newView);
     return newView;
 }
 

@@ -255,18 +255,22 @@ WebInspector.ScriptsPanel.prototype = {
         var sourceID = event.data.sourceID;
         var oldSource = event.data.oldSource;
 
+        var oldView, newView;
         var script = WebInspector.debuggerModel.scriptForSourceID(sourceID);
         if (script.resource) {
-            delete script._sourceFrame;
-            delete script.resource._sourceFrame;
+            oldView = this._urlToSourceFrame[script.resource.url];
+            delete this._urlToSourceFrame[script.resource.url];
+            newView = this._sourceFrameForResource(script.resource);
             var revertHandle = WebInspector.debuggerModel.editScriptSource.bind(WebInspector.debuggerModel, sourceID, oldSource);
             script.resource.setContent(script.source, revertHandle);
         } else {
             var oldView = script._sourceFrame;
             delete script._sourceFrame;
-            if (oldView)
-                this.viewRecreated(oldView, this._sourceFrameForScriptOrResource(script));
+            newView = this._sourceFrameForScript(script);
         }
+
+        if (this.visibleView === oldView)
+            this.visibleView = newView;
 
         var callFrames = WebInspector.debuggerModel.callFrames;
         if (callFrames.length)
@@ -306,6 +310,21 @@ WebInspector.ScriptsPanel.prototype = {
         // Adding first script will add resource.
         this._addScriptToFilesMenu(resource._scriptsPendingResourceLoad[0]);
         delete resource._scriptsPendingResourceLoad;
+    },
+
+    addConsoleMessage: function(message)
+    {
+        this._messages.push(message);
+        var sourceFrame = this._urlToSourceFrame[message.url];
+        if (sourceFrame)
+            sourceFrame.addMessage(message);
+    },
+
+    clearConsoleMessages: function()
+    {
+        this._messages = [];
+        for (var url in this._urlToSourceFrame)
+            this._urlToSourceFrame[url].clearMessages();
     },
 
     selectedCallFrameId: function()
@@ -396,6 +415,8 @@ WebInspector.ScriptsPanel.prototype = {
         this._currentBackForwardIndex = -1;
         this._updateBackAndForwardButtons();
 
+        this._urlToSourceFrame = {};
+        this._messages = [];
         this._resourceForURLInFilesSelect = {};
         this.filesSelectElement.removeChildren();
         this.functionsSelectElement.removeChildren();
@@ -423,12 +444,6 @@ WebInspector.ScriptsPanel.prototype = {
 
         if (x)
             x.show(this.viewsContainerElement);
-    },
-
-    viewRecreated: function(oldView, newView)
-    {
-        if (this.visibleView === oldView)
-            this.visibleView = newView;
     },
 
     canShowSourceLine: function(url, line)
@@ -477,15 +492,35 @@ WebInspector.ScriptsPanel.prototype = {
 
     _sourceFrameForScriptOrResource: function(scriptOrResource)
     {
-        if (scriptOrResource._sourceFrame)
-            return scriptOrResource._sourceFrame;
         if (scriptOrResource instanceof WebInspector.Resource)
-            scriptOrResource._sourceFrame = WebInspector.ResourceView.resourceViewForResource(scriptOrResource);
-        else if (scriptOrResource instanceof WebInspector.Script) {
-            var contentProvider = new WebInspector.SourceFrameContentProviderForScript(scriptOrResource);
-            scriptOrResource._sourceFrame = new WebInspector.SourceFrame(contentProvider, scriptOrResource.sourceURL, true);
+            return this._sourceFrameForResource(scriptOrResource);
+        return this._sourceFrameForScript(scriptOrResource);
+    },
+
+    _sourceFrameForResource: function(resource)
+    {
+        var sourceFrame = this._urlToSourceFrame[resource.url];
+        if (sourceFrame)
+            return sourceFrame;
+        var contentProvider = new WebInspector.SourceFrameContentProviderForResource(resource);
+        var isScript = resource.type === WebInspector.Resource.Type.Script;
+        sourceFrame = new WebInspector.SourceFrame(contentProvider, resource.url, isScript);
+        for (var i = 0; i < this._messages.length; ++i) {
+            var message = this._messages[i];
+            if (this._messages[i].url === resource.url)
+                sourceFrame.addMessage(message);
         }
-        return scriptOrResource._sourceFrame;
+        this._urlToSourceFrame[resource.url] = sourceFrame;
+        return sourceFrame;
+    },
+
+    _sourceFrameForScript: function(script)
+    {
+        if (script._sourceFrame)
+            return script._sourceFrame;
+        var contentProvider = new WebInspector.SourceFrameContentProviderForScript(script);
+        script._sourceFrame = new WebInspector.SourceFrame(contentProvider, script.sourceURL, true);
+        return script._sourceFrame;
     },
 
     _showScriptOrResource: function(scriptOrResource, options)

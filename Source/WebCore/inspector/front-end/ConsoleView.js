@@ -273,6 +273,7 @@ WebInspector.ConsoleView.prototype = {
         if (msg instanceof WebInspector.ConsoleMessage && !(msg instanceof WebInspector.ConsoleCommandResult)) {
             this._incrementErrorWarningCount(msg);
             WebInspector.resourceTreeModel.addConsoleMessage(msg);
+            WebInspector.panels.scripts.addConsoleMessage(msg);
             this.commandSincePreviousMessage = false;
             this.previousMessage = msg;
         } else if (msg instanceof WebInspector.ConsoleCommand) {
@@ -321,6 +322,7 @@ WebInspector.ConsoleView.prototype = {
     clearMessages: function()
     {
         WebInspector.resourceTreeModel.clearConsoleMessages();
+        WebInspector.panels.scripts.clearConsoleMessages();
 
         this.messages = [];
 
