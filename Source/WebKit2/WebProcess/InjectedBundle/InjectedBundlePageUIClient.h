@@ -32,7 +32,9 @@
 #include <wtf/Forward.h>
 
 namespace WebCore {
+    class GraphicsContext;
     class HitTestResult;
+    class IntRect;
 }
 
 namespace WebKit {
@@ -50,6 +52,9 @@ public:
     void willRunJavaScriptPrompt(WebPage*, const String&, const String&, WebFrame*);
     void mouseDidMoveOverElement(WebPage*, const WebCore::HitTestResult&, WebEvent::Modifiers, RefPtr<APIObject>& userData);
     void pageDidScroll(WebPage*);
+
+    bool shouldPaintCustomOverhangArea();
+    void paintCustomOverhangArea(WebPage*, WebCore::GraphicsContext*, const WebCore::IntRect&, const WebCore::IntRect&, const WebCore::IntRect&);
 };
 
 } // namespace WebKit

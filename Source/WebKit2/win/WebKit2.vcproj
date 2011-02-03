@@ -607,6 +607,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\WebGraphicsContext.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\WebGraphicsContext.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\WebImage.cpp"
 				>
 			</File>
@@ -803,6 +811,14 @@
 				</File>
 				<File
 					RelativePath="..\Shared\API\c\WKGeometry.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKGraphicsContext.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKGraphicsContext.h"
 					>
 				</File>
 				<File
@@ -1010,6 +1026,30 @@
 					</File>
 					<File
 						RelativePath="..\Shared\API\c\cg\WKImageCG.h"
+						>
+					</File>
+					<File
+						RelativePath="..\Shared\API\c\cg\WKGraphicsContextCG.cpp"
+						>
+						<FileConfiguration
+							Name="Debug_Cairo_CFLite|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo_CFLite|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\Shared\API\c\cg\WKGraphicsContextCG.h"
 						>
 					</File>
 				</Filter>

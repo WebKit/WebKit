@@ -2244,6 +2244,20 @@ void FrameView::setNodeToDraw(Node* node)
     m_nodeToDraw = node;
 }
 
+void FrameView::paintOverhangAreas(GraphicsContext* context, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect)
+{
+    if (context->paintingDisabled())
+        return;
+
+    Page* page = m_frame->page();
+    if (page->mainFrame() == m_frame) {
+        if (page->chrome()->client()->paintCustomOverhangArea(context, horizontalOverhangArea, verticalOverhangArea, dirtyRect))
+            return;
+    }
+
+    return ScrollView::paintOverhangAreas(context, horizontalOverhangArea, verticalOverhangArea, dirtyRect);
+}
+
 void FrameView::updateLayoutAndStyleIfNeededRecursive()
 {
     // We have to crawl our entire tree looking for any FrameViews that need

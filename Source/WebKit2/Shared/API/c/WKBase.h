@@ -49,6 +49,7 @@ typedef const struct OpaqueWKContextMenuItem* WKContextMenuItemRef;
 typedef const struct OpaqueWKData* WKDataRef;
 typedef const struct OpaqueWKDouble* WKDoubleRef;
 typedef const struct OpaqueWKError* WKErrorRef;
+typedef const struct OpaqueWKGraphicsContext* WKGraphicsContextRef;
 typedef const struct OpaqueWKImage* WKImageRef;
 typedef const struct OpaqueWKSecurityOrigin* WKSecurityOriginRef;
 typedef const struct OpaqueWKSerializedScriptValue* WKSerializedScriptValueRef;

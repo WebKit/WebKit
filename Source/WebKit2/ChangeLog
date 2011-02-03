@@ -1,3 +1,45 @@
+2011-02-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Beth Dakin.
+
+        Add ChromeClient function to paint custom overhang areas.
+        https://bugs.webkit.org/show_bug.cgi?id=53639
+
+        * Shared/API/c/WKBase.h:
+        * Shared/API/c/WKGraphicsContext.cpp: Added.
+        (WKGraphicsContextGetTypeID):
+        * Shared/API/c/WKGraphicsContext.h: Added.
+        * Shared/API/c/WKSharedAPICast.h:
+        * Shared/API/c/cg/WKGraphicsContextCG.cpp: Added.
+        (WKGraphicsContextGetCGContext):
+        * Shared/API/c/cg/WKGraphicsContextCG.h: Added.
+        * Shared/APIObject.h:
+        * Shared/WebGraphicsContext.cpp: Added.
+        (WebKit::WebGraphicsContext::WebGraphicsContext):
+        * Shared/WebGraphicsContext.h: Added.
+        (WebKit::WebGraphicsContext::create):
+        (WebKit::WebGraphicsContext::platformContext):
+        (WebKit::WebGraphicsContext::type):
+        Add WebGraphicsContext API type.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp:
+        (WebKit::InjectedBundlePageUIClient::pageDidScroll):
+        (WebKit::InjectedBundlePageUIClient::shouldPaintCustomOverhangArea):
+        (WebKit::InjectedBundlePageUIClient::paintCustomOverhangArea):
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::paintCustomOverhangArea):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        Pipe paintCustomOverhangArea to the InjectedBundlePageUIClient.
+
+        * UIProcess/API/C/WebKit2.h:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.make:
+        Add new files.
+
 2011-02-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

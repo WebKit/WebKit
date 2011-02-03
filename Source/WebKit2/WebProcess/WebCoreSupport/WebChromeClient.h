@@ -154,7 +154,9 @@ private:
                                       WebCore::ScrollbarControlState, WebCore::ScrollbarPart pressedPart, bool vertical,
                                       float value, float proportion, WebCore::ScrollbarControlPartMask);
     virtual bool paintCustomScrollCorner(WebCore::GraphicsContext*, const WebCore::FloatRect&);
-    
+
+    virtual bool paintCustomOverhangArea(WebCore::GraphicsContext*, const WebCore::IntRect&, const WebCore::IntRect&, const WebCore::IntRect&);
+
     // This is an asynchronous call. The ChromeClient can display UI asking the user for permission
     // to use Geolococation. The ChromeClient must call Geolocation::setShouldClearCache() appropriately.
     virtual void requestGeolocationPermissionForFrame(WebCore::Frame*, WebCore::Geolocation*);

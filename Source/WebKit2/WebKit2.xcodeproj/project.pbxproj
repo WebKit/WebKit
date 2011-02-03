@@ -551,6 +551,12 @@
 		BCA0EF8012331E78007D3CFB /* WebEditCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA0EF7E12331E78007D3CFB /* WebEditCommand.cpp */; };
 		BCA0EF9F12332642007D3CFB /* WebEditCommandProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA0EF9D12332642007D3CFB /* WebEditCommandProxy.h */; };
 		BCA0EFA012332642007D3CFB /* WebEditCommandProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA0EF9E12332642007D3CFB /* WebEditCommandProxy.cpp */; };
+		BCA56A1C12F9028E00C566C7 /* WebGraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA56A1A12F9028E00C566C7 /* WebGraphicsContext.h */; };
+		BCA56A1D12F9028E00C566C7 /* WebGraphicsContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA56A1B12F9028E00C566C7 /* WebGraphicsContext.cpp */; };
+		BCA56A6512F9C8F900C566C7 /* WKGraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA56A6312F9C8F900C566C7 /* WKGraphicsContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BCA56A6612F9C8F900C566C7 /* WKGraphicsContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA56A6412F9C8F900C566C7 /* WKGraphicsContext.cpp */; };
+		BCA56A6912F9C9AD00C566C7 /* WKGraphicsContextCG.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA56A6712F9C9AD00C566C7 /* WKGraphicsContextCG.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BCA56A6A12F9C9AD00C566C7 /* WKGraphicsContextCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA56A6812F9C9AD00C566C7 /* WKGraphicsContextCG.cpp */; };
 		BCA8C6A811E3BA5F00812FB7 /* InjectedBundlePageLoaderClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA8C6A611E3BA5F00812FB7 /* InjectedBundlePageLoaderClient.cpp */; };
 		BCA8C6A911E3BA5F00812FB7 /* InjectedBundlePageLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA8C6A711E3BA5F00812FB7 /* InjectedBundlePageLoaderClient.h */; };
 		BCA8C6AF11E3C08700812FB7 /* InjectedBundlePageUIClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA8C6AD11E3C08700812FB7 /* InjectedBundlePageUIClient.cpp */; };
@@ -1316,6 +1322,12 @@
 		BCA0EF7E12331E78007D3CFB /* WebEditCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebEditCommand.cpp; sourceTree = "<group>"; };
 		BCA0EF9D12332642007D3CFB /* WebEditCommandProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebEditCommandProxy.h; sourceTree = "<group>"; };
 		BCA0EF9E12332642007D3CFB /* WebEditCommandProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebEditCommandProxy.cpp; sourceTree = "<group>"; };
+		BCA56A1A12F9028E00C566C7 /* WebGraphicsContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGraphicsContext.h; sourceTree = "<group>"; };
+		BCA56A1B12F9028E00C566C7 /* WebGraphicsContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGraphicsContext.cpp; sourceTree = "<group>"; };
+		BCA56A6312F9C8F900C566C7 /* WKGraphicsContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKGraphicsContext.h; sourceTree = "<group>"; };
+		BCA56A6412F9C8F900C566C7 /* WKGraphicsContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKGraphicsContext.cpp; sourceTree = "<group>"; };
+		BCA56A6712F9C9AD00C566C7 /* WKGraphicsContextCG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKGraphicsContextCG.h; sourceTree = "<group>"; };
+		BCA56A6812F9C9AD00C566C7 /* WKGraphicsContextCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKGraphicsContextCG.cpp; sourceTree = "<group>"; };
 		BCA8C6A611E3BA5F00812FB7 /* InjectedBundlePageLoaderClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageLoaderClient.cpp; sourceTree = "<group>"; };
 		BCA8C6A711E3BA5F00812FB7 /* InjectedBundlePageLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageLoaderClient.h; sourceTree = "<group>"; };
 		BCA8C6AD11E3C08700812FB7 /* InjectedBundlePageUIClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageUIClient.cpp; sourceTree = "<group>"; };
@@ -1839,6 +1851,8 @@
 				1A90C1ED1264FD50003E44D4 /* WebFindOptions.h */,
 				BC0E607212D6BC200012A72A /* WebGeolocationPosition.cpp */,
 				BC0E607112D6BC200012A72A /* WebGeolocationPosition.h */,
+				BCA56A1B12F9028E00C566C7 /* WebGraphicsContext.cpp */,
+				BCA56A1A12F9028E00C566C7 /* WebGraphicsContext.h */,
 				BCCF6ABA12C91EF9008F9C35 /* WebImage.cpp */,
 				BCCF6ABB12C91EF9008F9C35 /* WebImage.h */,
 				C0337DD2127A2A0E008FF4F4 /* WebKeyboardEvent.cpp */,
@@ -2622,6 +2636,8 @@
 		BCCF6AC412C91F3B008F9C35 /* cg */ = {
 			isa = PBXGroup;
 			children = (
+				BCA56A6812F9C9AD00C566C7 /* WKGraphicsContextCG.cpp */,
+				BCA56A6712F9C9AD00C566C7 /* WKGraphicsContextCG.h */,
 				BCCF6AC712C91F59008F9C35 /* WKImageCG.cpp */,
 				BCCF6AC812C91F59008F9C35 /* WKImageCG.h */,
 			);
@@ -2659,6 +2675,8 @@
 				BC40783C1250FADD0068F20A /* WKEvent.h */,
 				37F623B712A57B6200E3FDF6 /* WKFindOptions.h */,
 				BCC8B373125FB69000DE46A4 /* WKGeometry.h */,
+				BCA56A6412F9C8F900C566C7 /* WKGraphicsContext.cpp */,
+				BCA56A6312F9C8F900C566C7 /* WKGraphicsContext.h */,
 				BCCF6AC012C91F34008F9C35 /* WKImage.cpp */,
 				BCCF6AC112C91F34008F9C35 /* WKImage.h */,
 				BC4075E1124FF0270068F20A /* WKMutableArray.cpp */,
@@ -3126,6 +3144,9 @@
 				1A9639F712F38ECD0078A062 /* CoreAnimationRenderer.h in Headers */,
 				1A690D1712F39E3300ECD289 /* LayerTreeHostMac.h in Headers */,
 				1A92DC1112F8BA460017AF65 /* LayerTreeContext.h in Headers */,
+				BCA56A1C12F9028E00C566C7 /* WebGraphicsContext.h in Headers */,
+				BCA56A6512F9C8F900C566C7 /* WKGraphicsContext.h in Headers */,
+				BCA56A6912F9C9AD00C566C7 /* WKGraphicsContextCG.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3596,6 +3617,9 @@
 				1A9636BC12F348490078A062 /* ShareableSurface.cpp in Sources */,
 				1A9639F812F38ECD0078A062 /* CoreAnimationRenderer.mm in Sources */,
 				1A92DC1312F8BAB90017AF65 /* LayerTreeContextMac.mm in Sources */,
+				BCA56A1D12F9028E00C566C7 /* WebGraphicsContext.cpp in Sources */,
+				BCA56A6612F9C8F900C566C7 /* WKGraphicsContext.cpp in Sources */,
+				BCA56A6A12F9C9AD00C566C7 /* WKGraphicsContextCG.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -28,6 +28,7 @@
 
 #include "InjectedBundleHitTestResult.h"
 #include "WKAPICast.h"
+#include "WebGraphicsContext.h"
 #include "WKBundleAPICast.h"
 #include <wtf/text/WTFString.h>
 
@@ -79,8 +80,23 @@ void InjectedBundlePageUIClient::mouseDidMoveOverElement(WebPage* page, const Hi
 
 void InjectedBundlePageUIClient::pageDidScroll(WebPage* page)
 {
-    if (m_client.pageDidScroll)
-        m_client.pageDidScroll(toAPI(page), m_client.clientInfo);
+    if (!m_client.pageDidScroll)
+        return;
+
+    m_client.pageDidScroll(toAPI(page), m_client.clientInfo);
+}
+
+bool InjectedBundlePageUIClient::shouldPaintCustomOverhangArea()
+{
+    return m_client.paintCustomOverhangArea;
+}
+
+void InjectedBundlePageUIClient::paintCustomOverhangArea(WebPage* page, GraphicsContext* graphicsContext, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect)
+{
+    ASSERT(shouldPaintCustomOverhangArea());
+
+    RefPtr<WebGraphicsContext> context = WebGraphicsContext::create(graphicsContext);
+    m_client.paintCustomOverhangArea(toAPI(page), toAPI(context.get()), toAPI(horizontalOverhangArea), toAPI(verticalOverhangArea), toAPI(dirtyRect), m_client.clientInfo);
 }
 
 } // namespace WebKit

@@ -551,6 +551,15 @@ bool WebChromeClient::paintCustomScrollCorner(GraphicsContext*, const FloatRect&
     return false;
 }
 
+bool WebChromeClient::paintCustomOverhangArea(GraphicsContext* context, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect)
+{
+    if (!m_page->injectedBundleUIClient().shouldPaintCustomOverhangArea())
+        return false;
+
+    m_page->injectedBundleUIClient().paintCustomOverhangArea(m_page, context, horizontalOverhangArea, verticalOverhangArea, dirtyRect);
+    return true;
+}
+
 void WebChromeClient::requestGeolocationPermissionForFrame(Frame*, Geolocation*)
 {
     notImplemented();

@@ -202,6 +202,8 @@ public:
     bool isPainting() const;
     void setNodeToDraw(Node*);
 
+    virtual void paintOverhangAreas(GraphicsContext*, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect);
+
     static double currentPaintTimeStamp() { return sCurrentPaintTimeStamp; } // returns 0 if not painting
     
     void updateLayoutAndStyleIfNeededRecursive();

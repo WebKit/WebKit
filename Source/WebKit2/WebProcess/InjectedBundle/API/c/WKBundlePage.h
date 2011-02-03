@@ -125,6 +125,7 @@ typedef void (*WKBundlePageWillRunJavaScriptConfirmCallback)(WKBundlePageRef pag
 typedef void (*WKBundlePageWillRunJavaScriptPromptCallback)(WKBundlePageRef page, WKStringRef message, WKStringRef defaultValue, WKBundleFrameRef frame, const void *clientInfo);
 typedef void (*WKBundlePageMouseDidMoveOverElementCallback)(WKBundlePageRef page, WKBundleHitTestResultRef hitTestResult, WKEventModifiers modifiers, WKTypeRef* userData, const void *clientInfo);
 typedef void (*WKBundlePageDidScrollCallback)(WKBundlePageRef page, const void *clientInfo);
+typedef void (*WKBundlePagePaintCustomOverhangAreaCallback)(WKBundlePageRef page, WKGraphicsContextRef graphicsContext, WKRect horizontalOverhang, WKRect verticalOverhang, WKRect dirtyRect, const void* clientInfo);
 
 struct WKBundlePageUIClient {
     int                                                                 version;
@@ -136,6 +137,7 @@ struct WKBundlePageUIClient {
     WKBundlePageWillRunJavaScriptPromptCallback                         willRunJavaScriptPrompt;
     WKBundlePageMouseDidMoveOverElementCallback                         mouseDidMoveOverElement;
     WKBundlePageDidScrollCallback                                       pageDidScroll;
+    WKBundlePagePaintCustomOverhangAreaCallback                         paintCustomOverhangArea;
 };
 typedef struct WKBundlePageUIClient WKBundlePageUIClient;
 

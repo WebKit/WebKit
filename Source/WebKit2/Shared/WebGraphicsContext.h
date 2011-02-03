@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,44 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKit2_h
-#define WebKit2_h
+#ifndef WebGraphicsContext_h
+#define WebGraphicsContext_h
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKType.h>
+#include "APIObject.h"
+#include <WebCore/GraphicsContext.h>
+#include <wtf/PassRefPtr.h>
 
-#include <WebKit2/WKArray.h>
-#include <WebKit2/WKBackForwardList.h>
-#include <WebKit2/WKBackForwardListItem.h>
-#include <WebKit2/WKContext.h>
-#include <WebKit2/WKData.h>
-#include <WebKit2/WKDictionary.h>
-#include <WebKit2/WKError.h>
-#include <WebKit2/WKFormSubmissionListener.h>
-#include <WebKit2/WKFrame.h>
-#include <WebKit2/WKFramePolicyListener.h>
-#include <WebKit2/WKGeolocationManager.h>
-#include <WebKit2/WKGeolocationPermissionRequest.h>
-#include <WebKit2/WKGeolocationPosition.h>
-#include <WebKit2/WKGraphicsContext.h>
-#include <WebKit2/WKMutableArray.h>
-#include <WebKit2/WKMutableDictionary.h>
-#include <WebKit2/WKNavigationData.h>
-#include <WebKit2/WKNumber.h>
-#include <WebKit2/WKOpenPanelParameters.h>
-#include <WebKit2/WKOpenPanelResultListener.h>
-#include <WebKit2/WKPage.h>
-#include <WebKit2/WKPageGroup.h>
-#include <WebKit2/WKPreferences.h>
-#include <WebKit2/WKString.h>
-#include <WebKit2/WKURL.h>
-#include <WebKit2/WKURLRequest.h>
-#include <WebKit2/WKURLResponse.h>
-
-#if defined(__OBJC__) && __OBJC__
-#import <WebKit2/WKView.h>
-#elif !(defined(__APPLE__) && __APPLE__)
-#include <WebKit2/WKView.h>
+#if PLATFORM(CG)
+#include <wtf/RetainPtr.h>
 #endif
 
-#endif /* WebKit2_h */
+namespace WebKit {
+
+class WebGraphicsContext : public APIObject {
+public:
+    static const Type APIType = TypeGraphicsContext;
+
+    static PassRefPtr<WebGraphicsContext> create(WebCore::GraphicsContext* graphicsContext)
+    {
+        return adoptRef(new WebGraphicsContext(graphicsContext));
+    }
+
+#if PLATFORM(CG)
+    CGContextRef platformContext() { return m_platformContext.get(); }
+#endif
+
+private:
+    explicit WebGraphicsContext(WebCore::GraphicsContext*);
+
+    virtual Type type() const { return APIType; }
+
+#if PLATFORM(CG)
+    RetainPtr<CGContextRef> m_platformContext;
+#endif
+};
+
+} // namespace WebKit
+
+#endif // WebGraphicsContext_h

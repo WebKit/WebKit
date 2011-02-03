@@ -280,6 +280,9 @@ protected:
     virtual void repaintContentRectangle(const IntRect&, bool now = false);
     virtual void paintContents(GraphicsContext*, const IntRect& damageRect) = 0;
 
+    void calculateOverhangAreasForPainting(IntRect& horizontalOverhangRect, IntRect& verticalOverhangRect);
+    virtual void paintOverhangAreas(GraphicsContext*, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect);
+
     virtual void contentsResized() = 0;
     virtual void visibleContentsResized() = 0;
 
@@ -360,9 +363,6 @@ private:
 
     // Called when the scroll position within this view changes.  FrameView overrides this to generate repaint invalidations.
     virtual void repaintFixedElementsAfterScrolling() {}
-
-    void calculateOverhangAreasForPainting(IntRect& horizontalOverhangRect, IntRect& verticalOverhangRect);
-    void paintOverhangAreas(GraphicsContext*, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea);
 
     void platformInit();
     void platformDestroy();

@@ -503,6 +503,11 @@ bool ChromeClient::paintCustomScrollCorner(GraphicsContext*, const FloatRect&)
     return false;
 }
 
+bool ChromeClient::paintCustomOverhangArea(GraphicsContext*, const IntRect&, const IntRect&, const IntRect&)
+{
+    return false;
+}
+
 bool Chrome::selectItemWritingDirectionIsNatural()
 {
     return m_client->selectItemWritingDirectionIsNatural();

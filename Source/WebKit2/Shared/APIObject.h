@@ -44,6 +44,7 @@ public:
         TypeData,
         TypeDictionary,
         TypeError,
+        TypeGraphicsContext,
         TypeImage,
         TypeProtectionSpace,
         TypeSecurityOrigin,

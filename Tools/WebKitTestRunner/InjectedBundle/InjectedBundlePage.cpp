@@ -204,6 +204,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         willRunJavaScriptPrompt,
         0, /*mouseDidMoveOverElement*/
         0, /*pageDidScroll*/
+        0, /*paintCustomOverhangArea*/
     };
     WKBundlePageSetUIClient(m_page, &uiClient);
 

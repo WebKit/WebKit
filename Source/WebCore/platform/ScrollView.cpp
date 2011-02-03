@@ -897,7 +897,7 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
     calculateOverhangAreasForPainting(horizontalOverhangRect, verticalOverhangRect);
 
     if (!horizontalOverhangRect.isEmpty() || !verticalOverhangRect.isEmpty())
-        paintOverhangAreas(context, horizontalOverhangRect, verticalOverhangRect);
+        paintOverhangAreas(context, horizontalOverhangRect, verticalOverhangRect, rect);
 
     // Now paint the scrollbars.
     if (!m_scrollbarsSuppressed && (m_horizontalScrollbar || m_verticalScrollbar)) {
@@ -949,7 +949,7 @@ void ScrollView::calculateOverhangAreasForPainting(IntRect& horizontalOverhangRe
     }
 }
 
-void ScrollView::paintOverhangAreas(GraphicsContext* context, const IntRect& horizontalOverhangRect, const IntRect& verticalOverhangRect)
+void ScrollView::paintOverhangAreas(GraphicsContext* context, const IntRect& horizontalOverhangRect, const IntRect& verticalOverhangRect, const IntRect&)
 {
     // FIXME: This should be checking the dirty rect.
 

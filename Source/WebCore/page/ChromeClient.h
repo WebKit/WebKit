@@ -211,6 +211,8 @@ namespace WebCore {
                                           float value, float proportion, ScrollbarControlPartMask);
         virtual bool paintCustomScrollCorner(GraphicsContext*, const FloatRect&);
 
+        virtual bool paintCustomOverhangArea(GraphicsContext*, const IntRect&, const IntRect&, const IntRect&);
+
         // FIXME: Remove once all ports are using client-based geolocation. https://bugs.webkit.org/show_bug.cgi?id=40373
         // For client-based geolocation, these two methods have moved to GeolocationClient. https://bugs.webkit.org/show_bug.cgi?id=50061
         // This can be either a synchronous or asynchronous call. The ChromeClient can display UI asking the user for permission

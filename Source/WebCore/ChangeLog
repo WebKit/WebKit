@@ -1,3 +1,26 @@
+2011-02-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Beth Dakin.
+
+        Add ChromeClient function to paint custom overhang areas.
+        https://bugs.webkit.org/show_bug.cgi?id=53639
+
+        * page/Chrome.cpp:
+        (WebCore::ChromeClient::paintCustomOverhangArea):
+        * page/ChromeClient.h:
+        Add ChromeClient function.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintOverhangAreas):
+        * page/FrameView.h:
+        Call out the the ChromeClient, call ScrollView base implementation
+        if the ChromeClient returns false.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::paintOverhangAreas):
+        * platform/ScrollView.h:
+        Add dirty rect for use when painting overhang areas.
+
 2011-02-02  Peter Kasting  <pkasting@google.com>
 
         Not reviewed, build fix.

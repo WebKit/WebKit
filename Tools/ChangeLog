@@ -1,3 +1,14 @@
+2011-02-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Beth Dakin.
+
+        Add ChromeClient function to paint custom overhang areas.
+        https://bugs.webkit.org/show_bug.cgi?id=53639
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+        Stub out new callback.
+
 2011-02-02  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.
