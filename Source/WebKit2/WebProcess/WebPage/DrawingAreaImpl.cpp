@@ -77,6 +77,15 @@ void DrawingAreaImpl::setNeedsDisplay(const IntRect& rect)
 
 void DrawingAreaImpl::scroll(const IntRect& scrollRect, const IntSize& scrollOffset)
 {
+    if (m_layerTreeHost) {
+        ASSERT(m_scrollRect.isEmpty());
+        ASSERT(m_scrollOffset.isEmpty());
+        ASSERT(m_dirtyRegion.isEmpty());
+
+        // FIXME: Ask the layer tree host to do the scroll.
+        return;
+    }
+
     if (!m_scrollRect.isEmpty() && scrollRect != m_scrollRect) {
         unsigned scrollArea = scrollRect.width() * scrollRect.height();
         unsigned currentScrollArea = m_scrollRect.width() * m_scrollRect.height();
@@ -141,6 +150,7 @@ void DrawingAreaImpl::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
         m_scrollRect = IntRect();
         m_scrollOffset = IntSize();
         m_displayTimer.stop();
+        m_isWaitingForDidUpdate = false;
     } else {
         m_layerTreeHost->invalidate();
         m_layerTreeHost = nullptr;
@@ -172,7 +182,7 @@ void DrawingAreaImpl::setSize(const IntSize& size)
 
     UpdateInfo updateInfo;
 
-    if (m_isPaintingSuspended) {
+    if (m_isPaintingSuspended || m_layerTreeHost) {
         updateInfo.timestamp = currentTime();
         updateInfo.viewSize = m_webPage->size();
     } else
@@ -183,6 +193,11 @@ void DrawingAreaImpl::setSize(const IntSize& size)
 
 void DrawingAreaImpl::didUpdate()
 {
+    // We might get didUpdate messages from the UI process even after we've
+    // entered accelerated compositing mode. Ignore them.
+    if (m_layerTreeHost)
+        return;
+
     m_isWaitingForDidUpdate = false;
 
     // Display if needed.

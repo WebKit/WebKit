@@ -1,3 +1,19 @@
+2011-02-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Work towards making the layer tree host be in charge of all painting
+        https://bugs.webkit.org/show_bug.cgi?id=53636
+
+        Make sure that DrawingAreaImpl::display is never called when in accelerated compositing mode,
+        since the layer tree host is supposed to handle all drawing in that case.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::scroll):
+        (WebKit::DrawingAreaImpl::setRootCompositingLayer):
+        (WebKit::DrawingAreaImpl::setSize):
+        (WebKit::DrawingAreaImpl::didUpdate):
+
 2011-02-02  Mark Rowe  <mrowe@apple.com>
 
         Fix the 32-bit build.
