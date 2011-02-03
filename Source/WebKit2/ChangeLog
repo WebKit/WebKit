@@ -1,3 +1,25 @@
+2011-02-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add notification of the end of a rubber band.
+        <rdar://problem/8940648>
+
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::drawHeader):
+        (WebKit::WebPageProxy::drawFooter):
+        (WebKit::WebPageProxy::didCompleteRubberBandForMainFrame):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::didCompleteRubberBandForMainFrame):
+        * UIProcess/WebUIClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::didCompleteRubberBandForMainFrame):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        Pipe the notification up to the WKUIClient.
+
 2011-02-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r77449.

@@ -1,3 +1,35 @@
+2011-02-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add notification of the end of a rubber band.
+        <rdar://problem/8940648>
+
+        * WebCore.exp.in:
+        Add additional exprots.
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::didCompleteRubberBandForMainFrame):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::didCompleteRubberBand):
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::didCompleteRubberBand):
+        * platform/ScrollView.h:
+        Add hook.
+
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::inLiveResize):
+        (WebCore::ScrollableArea::maximumScrollPosition):
+        (WebCore::ScrollableArea::visibleWidth):
+        (WebCore::ScrollableArea::overhangAmount):
+        (WebCore::ScrollableArea::didCompleteRubberBand):
+        Reorganize and de-virtualize live resize notifications.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::snapRubberBandTimerFired):
+        Call the new hook when the rubberband ends.
+
 2011-02-02  Evan Martin  <evan@chromium.org>
 
         Reviewed by Tony Chang.

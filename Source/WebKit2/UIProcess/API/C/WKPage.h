@@ -167,6 +167,7 @@ typedef float (*WKPageFooterHeightCallback)(WKPageRef page, WKFrameRef frame, co
 typedef void (*WKPageDrawHeaderCallback)(WKPageRef page, WKFrameRef frame, WKRect rect, const void* clientInfo);
 typedef void (*WKPageDrawFooterCallback)(WKPageRef page, WKFrameRef frame, WKRect rect, const void* clientInfo);
 typedef void (*WKPagePrintFrameCallback)(WKPageRef page, WKFrameRef frame, const void* clientInfo);
+typedef void (*WKPageDidCompleteRubberBandForMainFrameCallback)(WKPageRef page, WKSize initialOverhang, const void* clientInfo);
 
 struct WKPageUIClient {
     int                                                                 version;
@@ -203,6 +204,7 @@ struct WKPageUIClient {
     WKPageDrawFooterCallback                                            drawFooter;
     WKPagePrintFrameCallback                                            printFrame;
     WKPageCallback                                                      runModal;
+    WKPageDidCompleteRubberBandForMainFrameCallback                     didCompleteRubberBandForMainFrame;
 };
 typedef struct WKPageUIClient WKPageUIClient;
 

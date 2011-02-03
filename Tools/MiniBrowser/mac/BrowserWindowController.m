@@ -645,6 +645,7 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         0, // drawFooter
         0, // printFrame
         0, // showModal
+        0, // didCompleteRubberBandForMainFrame
     };
     WKPageSetPageUIClient(_webView.pageRef, &uiClient);
 }

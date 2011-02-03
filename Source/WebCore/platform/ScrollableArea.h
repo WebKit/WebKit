@@ -60,8 +60,12 @@ public:
     bool constrainsScrollingToContentEdge() const { return m_constrainsScrollingToContentEdge; }
     void setConstrainsScrollingToContentEdge(bool constrainsScrollingToContentEdge) { m_constrainsScrollingToContentEdge = constrainsScrollingToContentEdge; }
 
+    bool inLiveResize() const { return m_inLiveResize; }
+    void willStartLiveResize();
+    void willEndLiveResize();
+
     ScrollAnimator* scrollAnimator() const { return m_scrollAnimator.get(); }
-    
+
     virtual int scrollSize(ScrollbarOrientation) const = 0;
     virtual int scrollPosition(Scrollbar*) const = 0;
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&) = 0;
@@ -100,19 +104,13 @@ public:
     virtual IntPoint scrollPosition() const { ASSERT_NOT_REACHED(); return IntPoint(); }
     virtual IntPoint minimumScrollPosition() const { ASSERT_NOT_REACHED(); return IntPoint(); }
     virtual IntPoint maximumScrollPosition() const { ASSERT_NOT_REACHED(); return IntPoint(); }
-
     virtual IntRect visibleContentRect(bool = false) const { ASSERT_NOT_REACHED(); return IntRect(); }
     virtual int visibleHeight() const { ASSERT_NOT_REACHED(); return 0; }
     virtual int visibleWidth() const { ASSERT_NOT_REACHED(); return 0; }
-
     virtual IntSize contentsSize() const { ASSERT_NOT_REACHED(); return IntSize(); }
     virtual IntSize overhangAmount() const { ASSERT_NOT_REACHED(); return IntSize(); }
-
     virtual IntPoint currentMousePosition() const { return IntPoint(); }
-
-    virtual bool inLiveResize() const { return m_inLiveResize; }
-    virtual void willStartLiveResize();
-    virtual void willEndLiveResize();
+    virtual void didCompleteRubberBand(const IntSize&) const { ASSERT_NOT_REACHED(); }
 
 private:
     // NOTE: Only called from the ScrollAnimator.

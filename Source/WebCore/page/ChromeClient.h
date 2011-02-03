@@ -304,6 +304,8 @@ namespace WebCore {
 
         virtual void postAccessibilityNotification(AccessibilityObject*, AXObjectCache::AXNotification) { }
 
+        virtual void didCompleteRubberBandForMainFrame(const IntSize&) const { }
+
     protected:
         virtual ~ChromeClient() { }
     };

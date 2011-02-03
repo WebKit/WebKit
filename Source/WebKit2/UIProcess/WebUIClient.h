@@ -96,6 +96,8 @@ public:
 
     bool canRunModal() const;
     void runModal(WebPageProxy*);
+
+    void didCompleteRubberBandForMainFrame(WebPageProxy*, const WebCore::IntSize&);
 };
 
 } // namespace WebKit

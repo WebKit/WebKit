@@ -2487,14 +2487,19 @@ float WebPageProxy::footerHeight(WebFrameProxy* frame)
     return m_uiClient.footerHeight(this, frame);
 }
 
-void WebPageProxy::drawHeader(WebFrameProxy* frame, const WebCore::FloatRect& rect)
+void WebPageProxy::drawHeader(WebFrameProxy* frame, const FloatRect& rect)
 {
     m_uiClient.drawHeader(this, frame, rect);
 }
 
-void WebPageProxy::drawFooter(WebFrameProxy* frame, const WebCore::FloatRect& rect)
+void WebPageProxy::drawFooter(WebFrameProxy* frame, const FloatRect& rect)
 {
     m_uiClient.drawFooter(this, frame, rect);
+}
+
+void WebPageProxy::didCompleteRubberBandForMainFrame(const IntSize& initialOverhang)
+{
+    m_uiClient.didCompleteRubberBandForMainFrame(this, initialOverhang);
 }
 
 void WebPageProxy::didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference& dataReference)

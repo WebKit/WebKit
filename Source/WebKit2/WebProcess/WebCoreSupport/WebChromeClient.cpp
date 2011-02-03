@@ -698,4 +698,9 @@ void WebChromeClient::dispatchViewportDataDidChange(const ViewportArguments& arg
     m_page->send(Messages::WebPageProxy::DidChangeViewportData(args));
 }
 
+void WebChromeClient::didCompleteRubberBandForMainFrame(const IntSize& initialOverhang) const
+{
+    m_page->send(Messages::WebPageProxy::DidCompleteRubberBandForMainFrame(initialOverhang));
+}
+
 } // namespace WebKit

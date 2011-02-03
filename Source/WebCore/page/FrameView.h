@@ -302,8 +302,8 @@ private:
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);
     virtual bool isActive() const;
     virtual void getTickmarks(Vector<IntRect>&) const;
-
     virtual void scrollTo(const IntSize&);
+    virtual void didCompleteRubberBand(const IntSize&) const;
 
     void deferredRepaintTimerFired(Timer<FrameView>*);
     void doDeferredRepaints();

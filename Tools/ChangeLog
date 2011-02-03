@@ -1,3 +1,17 @@
+2011-02-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add notification of the end of a rubber band.
+        <rdar://problem/8940648>
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController awakeFromNib]):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::initialize):
+        Stub out the new WKUIClient function.
+
 2011-02-03  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         Unreviewed.

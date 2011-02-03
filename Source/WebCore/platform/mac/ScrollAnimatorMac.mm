@@ -916,6 +916,8 @@ void ScrollAnimatorMac::snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*)
         } else {
             immediateScrollToPoint(m_origOrigin);
 
+            m_scrollableArea->didCompleteRubberBand(roundedIntSize(m_startStretch));
+
             m_snapRubberBandTimer.stop();
             m_stretchScrollForce = FloatSize();
             

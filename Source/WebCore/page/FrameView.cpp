@@ -2002,6 +2002,14 @@ IntRect FrameView::windowResizerRect() const
     return page->chrome()->windowResizerRect();
 }
 
+void FrameView::didCompleteRubberBand(const IntSize& initialOverhang) const
+{
+    Page* page = m_frame->page();
+    if (page->mainFrame() != m_frame)
+        return;
+    return page->chrome()->client()->didCompleteRubberBandForMainFrame(initialOverhang);
+}
+
 #if ENABLE(DASHBOARD_SUPPORT)
 void FrameView::updateDashboardRegions()
 {
