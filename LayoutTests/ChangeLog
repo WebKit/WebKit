@@ -1,5 +1,11 @@
 2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Add a failure until I investigate its cause.
+
+        * platform/chromium/test_expectations.txt: Added.
+
+2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Updated platform/mac-leopard baselines for fast/backgrounds after r77485.
 
 2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>

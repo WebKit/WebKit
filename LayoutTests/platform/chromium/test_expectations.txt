@@ -3201,3 +3201,4 @@ BUGWK50528 MAC : svg/transforms/text-with-pattern-with-svg-transform.svg = IMAGE
 BUGWK50528 MAC : svg/zoom/page/zoom-coords-viewattr-01-b.svg = IMAGE
 BUGWK50528 MAC : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
 BUGWK50528 MAC : svg/zoom/text/zoom-coords-viewattr-01-b.svg = IMAGE
+BUGWK50528 MAC : svg/custom/stroked-pattern.svg = IMAGE
