@@ -1,6 +1,6 @@
 function log(text) {
-    document.getElementById("log").innerText += text + "\n";
-    window.scrollTo(document.body.height);
+    document.getElementById("log").innerHTML += text + "\n";
+    window.scrollTo(0, document.body.height);
 }
 
 function loadFile(path) {

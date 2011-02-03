@@ -1,3 +1,15 @@
+2011-02-02  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Just fixing an exception seen in Firefox.
+
+        HTML5 TreeBuilder regressed a Peacekeeper DOM test by 40%
+        https://bugs.webkit.org/show_bug.cgi?id=48719
+
+        Make the benchmarks work in Firefox/Opera.
+
+        * resources/runner.js:
+        (log):
+
 2011-01-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin Adler.
