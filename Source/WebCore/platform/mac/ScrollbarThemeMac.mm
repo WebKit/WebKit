@@ -182,7 +182,7 @@ void ScrollbarThemeMac::unregisterScrollbar(Scrollbar* scrollbar)
 #if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
     if (ScrollableArea* scrollableArea = scrollbar->scrollableArea()) {
         ScrollAnimatorMac* animator = static_cast<ScrollAnimatorMac*>(scrollableArea->scrollAnimator());
-        wkScrollbarPainterSetDelegate(scrollbarPainter, nil);
+        wkScrollbarPainterSetDelegate(scrollbarMap()->get(scrollbar).get(), nil);
         animator->removePainterFromPainterController(scrollbar->orientation());
     }
 #endif
