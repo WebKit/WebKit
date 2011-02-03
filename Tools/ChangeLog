@@ -1,3 +1,14 @@
+2011-02-03  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt][WK2] MiniBrowser's window size should be 800x600
+        https://bugs.webkit.org/show_bug.cgi?id=53670
+
+        Make layout test failure debugging easier.
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::BrowserWindow):
+
 2011-02-02  Andy Estes  <aestes@apple.com>
 
         Reviewed by Mark Rowe.

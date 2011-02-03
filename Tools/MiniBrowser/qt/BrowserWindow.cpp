@@ -126,7 +126,7 @@ BrowserWindow::BrowserWindow(QWKContext* context)
         m_zoomLevels << 1.1 << 1.2 << 1.33 << 1.5 << 1.7 << 2 << 2.4 << 3;
     }
 
-    resize(960, 640);
+    resize(800, 600);
     show();
 }
 
