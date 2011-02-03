@@ -177,7 +177,7 @@
 		14BFCE6910CDB1FC00364CCE /* WeakGCMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 14BFCE6810CDB1FC00364CCE /* WeakGCMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14C5242B0F5355E900BA3D04 /* JITStubs.h in Headers */ = {isa = PBXBuildFile; fileRef = 14A6581A0F4E36F4000150FD /* JITStubs.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14C824AB12F7C77E008F35E0 /* MarkedBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14C824AA12F7C77E008F35E0 /* MarkedBlock.cpp */; };
-		14C824AD12F7C785008F35E0 /* MarkedBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 14C824AC12F7C785008F35E0 /* MarkedBlock.h */; };
+		14C824AD12F7C785008F35E0 /* MarkedBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 14C824AC12F7C785008F35E0 /* MarkedBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14E9D17B107EC469004DDA21 /* JSGlobalObjectFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC756FC60E2031B200DE7D12 /* JSGlobalObjectFunctions.cpp */; };
 		14F3488F0E95EF8A003648BC /* CollectorHeapIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 14F3488E0E95EF8A003648BC /* CollectorHeapIterator.h */; settings = {ATTRIBUTES = (); }; };
 		14F8BA3E107EC886009892DC /* FastMalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E217B908E7EECC0023E5F6 /* FastMalloc.cpp */; };
