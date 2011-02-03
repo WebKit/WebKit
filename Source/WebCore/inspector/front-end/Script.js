@@ -78,7 +78,7 @@ WebInspector.Script.prototype = {
     {
         function extractSourceLine()
         {
-            lineNumber -= this.startingLine;
+            lineNumber -= this.lineOffset;
             callback(this._source.substring(this._lineEndings[lineNumber - 1], this._lineEndings[lineNumber]));
         }
 

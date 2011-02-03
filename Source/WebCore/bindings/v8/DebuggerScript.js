@@ -91,17 +91,15 @@ DebuggerScript._formatScript = function(script)
 
 DebuggerScript.setBreakpoint = function(execState, args)
 {
-    var lineNumber = DebuggerScript._webkitToV8LineNumber(args.lineNumber);
-    var columnNumber = DebuggerScript._webkitToV8LineNumber(args.columnNumber);
-    var breakId = Debug.setScriptBreakPointById(args.scriptId, lineNumber, columnNumber, args.condition);
+    var breakId = Debug.setScriptBreakPointById(args.scriptId, args.lineNumber, args.columnNumber, args.condition);
     if (!args.enabled)
         Debug.disableScriptBreakPoint(breakId);
 
     var locations = Debug.findBreakPointActualLocations(breakId);
     if (!locations.length)
         return undefined;
-    args.lineNumber = DebuggerScript._v8ToWebkitLineNumber(locations[0].line);
-    args.columnNumber = DebuggerScript._v8ToWebkitLineNumber(locations[0].column);
+    args.lineNumber = locations[0].line;
+    args.columnNumber = locations[0].column;
     return breakId.toString();
 }
 
@@ -264,11 +262,6 @@ DebuggerScript._frameMirrorToJSCallFrame = function(frameMirror, callerFrame)
         "caller": callerFrame
     };
 }
-
-DebuggerScript._webkitToV8LineNumber = function(line)
-{
-    return line - 1;
-};
 
 DebuggerScript._v8ToWebkitLineNumber = function(line)
 {

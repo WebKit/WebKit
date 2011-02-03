@@ -35,7 +35,11 @@
 namespace WebCore {
 
 struct ScriptBreakpoint {
-    ScriptBreakpoint(long lineNumber, long columnNumber, const String& condition, bool enabled)
+    ScriptBreakpoint()
+    {
+    }
+
+    ScriptBreakpoint(int lineNumber, int columnNumber, const String& condition, bool enabled)
         : lineNumber(lineNumber)
         , columnNumber(columnNumber)
         , condition(condition)
@@ -43,12 +47,8 @@ struct ScriptBreakpoint {
     {
     }
 
-    ScriptBreakpoint()
-    {
-    }
-
-    long lineNumber;
-    long columnNumber;
+    int lineNumber;
+    int columnNumber;
     String condition;
     bool enabled;
 };

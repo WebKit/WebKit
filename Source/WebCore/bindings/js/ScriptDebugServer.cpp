@@ -124,7 +124,7 @@ bool ScriptDebugServer::hasListenersInterestedInPage(Page* page)
     return m_pageListenersMap.contains(page);
 }
 
-String ScriptDebugServer::setBreakpoint(const String& sourceID, const ScriptBreakpoint& scriptBreakpoint, long* actualLineNumber, long* actualColumnNumber)
+String ScriptDebugServer::setBreakpoint(const String& sourceID, const ScriptBreakpoint& scriptBreakpoint, int* actualLineNumber, int* actualColumnNumber)
 {
     intptr_t sourceIDValue = sourceID.toIntPtr();
     if (!sourceIDValue)
@@ -132,12 +132,12 @@ String ScriptDebugServer::setBreakpoint(const String& sourceID, const ScriptBrea
     SourceIdToBreakpointsMap::iterator it = m_sourceIdToBreakpoints.find(sourceIDValue);
     if (it == m_sourceIdToBreakpoints.end())
         it = m_sourceIdToBreakpoints.set(sourceIDValue, LineToBreakpointMap()).first;
-    if (it->second.contains(scriptBreakpoint.lineNumber))
+    if (it->second.contains(scriptBreakpoint.lineNumber + 1))
         return "";
-    it->second.set(scriptBreakpoint.lineNumber, scriptBreakpoint);
+    it->second.set(scriptBreakpoint.lineNumber + 1, scriptBreakpoint);
     *actualLineNumber = scriptBreakpoint.lineNumber;
     // FIXME(WK53003): implement setting breakpoints by line:column.
-    *actualColumnNumber = 1;
+    *actualColumnNumber = 0;
     return makeString(sourceID, ":", String::number(scriptBreakpoint.lineNumber));
 }
 
@@ -156,7 +156,7 @@ void ScriptDebugServer::removeBreakpoint(const String& breakpointId)
         return;
     SourceIdToBreakpointsMap::iterator it = m_sourceIdToBreakpoints.find(sourceIDValue);
     if (it != m_sourceIdToBreakpoints.end())
-        it->second.remove(lineNumber);
+        it->second.remove(lineNumber + 1);
 }
 
 bool ScriptDebugServer::hasBreakpoint(intptr_t sourceID, unsigned lineNumber) const

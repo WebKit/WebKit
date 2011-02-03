@@ -29,54 +29,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Breakpoint = function(debuggerModel, breakpointId, data)
+WebInspector.Breakpoint = function(id, url, sourceID, lineNumber, columnNumber, condition, enabled)
 {
-    this.id = breakpointId;
-    this.sourceID = data.sourceID;
-    this.line = data.lineNumber;
-    this.column = data.columnNumber;
-    this._condition = data.condition;
-    this._enabled = data.enabled;
-    this._debuggerModel = debuggerModel;
+    this.id = id;
+    this.url = url;
+    this.sourceID = sourceID;
+    this.lineNumber = lineNumber;
+    this.columnNumber = columnNumber;
+    this.condition = condition;
+    this.enabled = enabled;
+    this.locations = [];
 }
 
 WebInspector.Breakpoint.prototype = {
-    get enabled()
+    addLocation: function(sourceID, lineNumber, columnNumber)
     {
-        return this._enabled;
-    },
-
-    set enabled(enabled)
-    {
-        if (this._enabled === enabled)
-            return;
-        this.remove();
-        WebInspector.debuggerModel.setBreakpoint(this.sourceID, this.line, enabled, this.condition);
-    },
-
-    get condition()
-    {
-        return this._condition;
-    },
-
-    get url()
-    {
-        if (!this._url)
-            this._url = this._debuggerModel.scriptForSourceID(this.sourceID).sourceURL;
-        return this._url;
-    },
-
-    get data()
-    {
-        return { id: this.id, url: this.url, sourceID: this.sourceID, lineNumber: this.line, condition: this.condition };
-    },
-
-    remove: function()
-    {
-        this._debuggerModel.removeBreakpoint(this.id);
-        this.removeAllListeners();
-        delete this._debuggerModel;
+        this.locations.push({ sourceID: sourceID, lineNumber: lineNumber, columnNumber: columnNumber });
     }
 }
-
-WebInspector.Breakpoint.prototype.__proto__ = WebInspector.Object.prototype;

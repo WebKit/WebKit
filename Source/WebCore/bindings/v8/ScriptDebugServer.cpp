@@ -143,7 +143,7 @@ void ScriptDebugServer::removeListener(ScriptDebugListener* listener, Page* page
     // FIXME: Remove all breakpoints set by the agent.
 }
 
-String ScriptDebugServer::setBreakpoint(const String& sourceID, const ScriptBreakpoint& scriptBreakpoint, long* actualLineNumber, long* actualColumnNumber)
+String ScriptDebugServer::setBreakpoint(const String& sourceID, const ScriptBreakpoint& scriptBreakpoint, int* actualLineNumber, int* actualColumnNumber)
 {
     v8::HandleScope scope;
     v8::Local<v8::Context> debuggerContext = v8::Debug::GetDebugContext();

@@ -71,8 +71,8 @@ WebInspector.Settings = function()
     this.installApplicationSetting("showInheritedComputedStyleProperties", false);
     this.installApplicationSetting("showUserAgentStyles", true);
     this.installApplicationSetting("watchExpressions", []);
+    this.installApplicationSetting("breakpoints", []);
 
-    this.installProjectSetting("breakpoints", {});
     this.installProjectSetting("nativeBreakpoints", []);
 }
 

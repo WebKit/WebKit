@@ -214,7 +214,7 @@ void InspectorAgent::restoreInspectorStateFromCookie(const String& inspectorStat
         startTimelineProfiler();
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    restoreDebugger();
+    restoreDebugger(false);
     restoreProfiler(ProfilerRestoreResetAgent);
     if (m_state->getBoolean(InspectorState::userInitiatedProfiling))
         startUserInitiatedProfiling();
@@ -535,7 +535,7 @@ void InspectorAgent::populateScriptObjects()
         m_frontend->evaluateForTestInFrontend((*it).first, (*it).second);
     m_pendingEvaluateTestCommands.clear();
 
-    restoreDebugger();
+    restoreDebugger(true);
     restoreProfiler(ProfilerRestoreNoAction);
 }
 
@@ -562,12 +562,12 @@ void InspectorAgent::pushDataCollectedOffline()
 #endif
 }
 
-void InspectorAgent::restoreDebugger()
+void InspectorAgent::restoreDebugger(bool eraseStickyBreakpoints)
 {
     ASSERT(m_frontend);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     if (m_state->getBoolean(InspectorState::debuggerEnabled))
-        enableDebugger();
+        enableDebugger(eraseStickyBreakpoints);
 #endif
 }
 
@@ -1006,15 +1006,20 @@ void InspectorAgent::showAndEnableDebugger()
         m_state->setBoolean(InspectorState::debuggerEnabled, true);
         showPanel(ScriptsPanel);
     } else
-        enableDebugger();
+        enableDebugger(true);
 }
 
-void InspectorAgent::enableDebugger()
+void InspectorAgent::enableDebugger(bool eraseStickyBreakpoints)
 {
     if (debuggerEnabled())
         return;
     m_state->setBoolean(InspectorState::debuggerEnabled, true);
     ASSERT(m_inspectedPage);
+
+    if (eraseStickyBreakpoints) {
+        m_state->setObject(InspectorState::javaScriptBreakpoints, InspectorObject::create());
+        m_state->setObject(InspectorState::browserBreakpoints, InspectorObject::create());
+    }
 
     m_debuggerAgent = InspectorDebuggerAgent::create(this, m_frontend.get());
     m_browserDebuggerAgent = InspectorBrowserDebuggerAgent::create(this);

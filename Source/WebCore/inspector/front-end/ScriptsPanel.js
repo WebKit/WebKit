@@ -803,10 +803,10 @@ WebInspector.ScriptsPanel.prototype = {
 
         if (this._debuggerEnabled) {
             WebInspector.settings.debuggerEnabled = false;
-            InspectorBackend.disableDebugger();
+            WebInspector.debuggerModel.disableDebugger();
         } else {
             WebInspector.settings.debuggerEnabled = !!optionalAlways;
-            InspectorBackend.enableDebugger();
+            WebInspector.debuggerModel.enableDebugger();
         }
     },
 

@@ -250,9 +250,11 @@ module core {
         [domain=Debugger] void activateBreakpoints();
         [domain=Debugger] void deactivateBreakpoints();
 
-        [domain=Debugger] void setAllJavaScriptBreakpoints(in Object breakpoints);
-        [domain=Debugger] void setBreakpoint(in Object breakpoint, out String breakpointId, out long actualLineNumber, out long actualColumnNumber);
-        [domain=Debugger] void removeBreakpoint(in String breakpointId);
+        [domain=Debugger] void setJavaScriptBreakpoint(in String url, in int lineNumber, in int columnNumber, in String condition, in boolean enabled, out String breakpointId, out Array locations);
+        [domain=Debugger] void setJavaScriptBreakpointBySourceId(in String sourceId, in int lineNumber, in int columnNumber, in String condition, in boolean enabled, out String breakpointId, out int actualLineNumber, out int actualColumnNumber);
+        [domain=Debugger] void removeJavaScriptBreakpoint(in String breakpointId);
+        [notify, domain=Debugger] void breakpointResolved(out String breakpointId, out String sourceId, out int lineNumber, out int columnNumber);
+        [domain=Debugger] void continueToLocation(in String sourceId, in int lineNumber, in int columnNumber);
 
         [domain=BrowserDebugger] void setAllBrowserBreakpoints(in Object breakpoints);
         [domain=BrowserDebugger] void setDOMBreakpoint(in long nodeId, in long type);
@@ -277,8 +279,6 @@ module core {
 
         [domain=Debugger] void evaluateOnCallFrame(in Object callFrameId, in String expression, in String objectGroup, in boolean includeCommandLineAPI, out Value result);
         [domain=Debugger] void getCompletionsOnCallFrame(in Object callFrameId, in String expression, in boolean includeCommandLineAPI, out Value result);
-
-        [notify, domain=Debugger] void breakpointResolved(out String breakpointId, out Object breakpoint);
 
 #if defined(ENABLE_WORKERS) && ENABLE_WORKERS
         [notify, domain=Debugger] void didCreateWorker(out long id, out String url, out boolean isShared);

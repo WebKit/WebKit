@@ -60,15 +60,17 @@ public:
     static PassOwnPtr<InspectorDebuggerAgent> create(InspectorAgent*, InspectorFrontend*);
     virtual ~InspectorDebuggerAgent();
 
-    void setAllJavaScriptBreakpoints(PassRefPtr<InspectorObject>);
     void inspectedURLChanged(const String& url);
 
     // Part of the protocol.
     void activateBreakpoints();
     void deactivateBreakpoints();
-    void setStickyBreakpoint(const String& url, const WebCore::ScriptBreakpoint&);
-    void setBreakpoint(PassRefPtr<InspectorObject> breakpoint, String* breakpointId, long* actualLineNumber, long* actualColumnNumber);
-    void removeBreakpoint(const String& breakpointId);
+
+    void setJavaScriptBreakpoint(const String& url, int lineNumber, int columnNumber, const String& condition, bool enabled, String* breakpointId, RefPtr<InspectorArray>* locations);
+    void setJavaScriptBreakpointBySourceId(const String& sourceId, int lineNumber, int columnNumber, const String& condition, bool enabled, String* breakpointId, int* actualLineNumber, int* actualColumnNumber);
+    void removeJavaScriptBreakpoint(const String& breakpointId);
+    void continueToLocation(const String& sourceId, int lineNumber, int columnNumber);
+
     void editScriptSource(const String& sourceID, const String& newContent, bool* success, String* result, RefPtr<InspectorValue>* newCallFrames);
     void getScriptSource(const String& sourceID, String* scriptSource);
     void schedulePauseOnNextStatement(DebuggerEventType type, PassRefPtr<InspectorValue> data);
@@ -93,23 +95,44 @@ private:
     virtual void didPause(ScriptState*);
     virtual void didContinue();
 
-    void restoreBreakpoints(const String& inspectedURL);
-    void restoreBreakpoint(const String& sourceID, const ScriptBreakpoint&);
+    bool resolveBreakpoint(const String& breakpointId, const String& sourceId, const ScriptBreakpoint&, int* actualLineNumber, int* actualColumnNumber);
 
-    typedef HashMap<String, Vector<String> > URLToSourceIDsMap;
-    typedef std::pair<long, long> Location;
-    typedef HashMap<Location, ScriptBreakpoint> LocationToBreakpointMap;
-    typedef HashMap<String, LocationToBreakpointMap> InspectedURLToBreakpointsMap;
+    class Script {
+    public:
+        Script()
+            : lineOffset(0)
+            , columnOffset(0)
+            , linesCount(0)
+        {
+        }
+
+        Script(const String& url, const String& data, int lineOffset, int columnOffset)
+            : url(url)
+            , data(data)
+            , lineOffset(lineOffset)
+            , columnOffset(columnOffset)
+            , linesCount(0)
+        {
+        }
+
+        String url;
+        String data;
+        int lineOffset;
+        int columnOffset;
+        int linesCount;
+    };
+
+    typedef HashMap<String, Script> ScriptsMap;
+    typedef HashMap<String, Vector<String> > BreakpointIdToDebugServerBreakpointIdsMap;
 
     InspectorAgent* m_inspectorAgent;
     InspectorFrontend* m_frontend;
     ScriptState* m_pausedScriptState;
-    HashMap<String, String> m_scriptIDToContent;
-    URLToSourceIDsMap m_urlToSourceIDs;
-    InspectedURLToBreakpointsMap m_stickyBreakpoints;
+    ScriptsMap m_scripts;
+    BreakpointIdToDebugServerBreakpointIdsMap m_breakpointIdToDebugServerBreakpointIds;
+    String m_continueToLocationBreakpointId;
     RefPtr<InspectorObject> m_breakProgramDetails;
     bool m_javaScriptPauseScheduled;
-    bool m_breakpointsRestored;
 };
 
 } // namespace WebCore

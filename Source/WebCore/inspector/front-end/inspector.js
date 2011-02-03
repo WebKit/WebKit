@@ -609,7 +609,7 @@ WebInspector.doLoadedDone = function()
     InspectorBackend.populateScriptObjects(onPopulateScriptObjects);
 
     if (Preferences.debuggerAlwaysEnabled || WebInspector.settings.debuggerEnabled)
-        InspectorBackend.enableDebugger();
+        this.debuggerModel.enableDebugger();
     if (Preferences.profilerAlwaysEnabled || WebInspector.settings.profilerEnabled)
         InspectorBackend.enableProfiler();
     if (WebInspector.settings.monitoringXHREnabled)

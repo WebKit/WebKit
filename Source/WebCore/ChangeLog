@@ -1,3 +1,77 @@
+2011-02-01  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: introduce new api for managing JavaScript breakpoints.
+        https://bugs.webkit.org/show_bug.cgi?id=53235
+
+        Single protocol breakpoint (e.g. set by url) is mapped on zero or more VM breakpoints (set by sourceID).
+        removeJavaScriptBreakpoint(breakpointId) removes breakpoint and all linked VM breakpoints.
+        Since UI uses VM breakpoint location rather then protocol breakpoint location, all resolved breakpoints locations are passed to frontend.
+
+        SourceFrame is now aware of whether breakpoint is resolved or not and may display it accordingly.
+        JavaScriptBreakpointsSidebarPane filters out breakpoints set on nonexistent scripts to avoid UI cluttering.
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setBreakpoint):
+        (WebCore::ScriptDebugServer::removeBreakpoint):
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/v8/DebuggerScript.js:
+        ():
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setBreakpoint):
+        * bindings/v8/ScriptDebugServer.h:
+        * inspector/Inspector.idl:
+        * inspector/InspectorAgent.cpp: clear breakpoints from inspector state when new frontend is created
+        (WebCore::InspectorAgent::restoreInspectorStateFromCookie):
+        (WebCore::InspectorAgent::populateScriptObjects):
+        (WebCore::InspectorAgent::restoreDebugger):
+        (WebCore::InspectorAgent::showAndEnableDebugger):
+        (WebCore::InspectorAgent::enableDebugger):
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorDebuggerAgent.cpp: manage relations between protocol breakpoints and VM breakpoints
+        (WebCore::InspectorDebuggerAgent::InspectorDebuggerAgent):
+        (WebCore::InspectorDebuggerAgent::inspectedURLChanged):
+        (WebCore::InspectorDebuggerAgent::setJavaScriptBreakpoint):
+        (WebCore::InspectorDebuggerAgent::setJavaScriptBreakpointBySourceId):
+        (WebCore::InspectorDebuggerAgent::removeJavaScriptBreakpoint):
+        (WebCore::InspectorDebuggerAgent::continueToLocation):
+        (WebCore::InspectorDebuggerAgent::resolveBreakpoint):
+        (WebCore::InspectorDebuggerAgent::getScriptSource):
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+        (WebCore::InspectorDebuggerAgent::didPause):
+        * inspector/InspectorDebuggerAgent.h:
+        (WebCore::InspectorDebuggerAgent::Script::Script):
+        * inspector/InspectorValues.cpp:
+        (WebCore::InspectorValue::asNumber):
+        (WebCore::InspectorBasicValue::asNumber):
+        (WebCore::InspectorObject::remove):
+        * inspector/InspectorValues.h:
+        (WebCore::InspectorObject::getNumber):
+        (WebCore::InspectorObject::find):
+        * inspector/ScriptBreakpoint.h:
+        (WebCore::ScriptBreakpoint::ScriptBreakpoint):
+        * inspector/front-end/Breakpoint.js:
+        (WebInspector.Breakpoint):
+        (WebInspector.Breakpoint.prototype.addLocation):
+        * inspector/front-end/BreakpointManager.js: remove all stuff related to JavaScript breakpoints from here
+        (WebInspector.BreakpointManager):
+        (WebInspector.BreakpointManager.prototype._projectChanged):
+        (WebInspector.BreakpointManager.prototype._saveBreakpoints):
+        (WebInspector.BreakpointManager.prototype._validateBreakpoints):
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.JavaScriptBreakpointsSidebarPane): filter breakpoints set on nonexistent scripts to avoid ui cluttering
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel): pull all JavaScript from localStorage and push them to fronted when debugger is enabled, save resolved breakpoints data
+        * inspector/front-end/Script.js:
+        (WebInspector.Script.prototype.sourceLine):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._toggleDebugging):
+        * inspector/front-end/Settings.js:
+        (WebInspector.Settings):
+        * inspector/front-end/SourceFrame.js: handle resolved and unresolved breakpoints differently
+        * inspector/front-end/inspector.js:
+
 2011-02-03  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

@@ -407,8 +407,8 @@ bool WebDevToolsAgent::shouldInterruptForMessage(const WebString& message)
     if (!InspectorBackendDispatcher::getCommandName(message, &commandName))
         return false;
     return commandName == InspectorBackendDispatcher::pauseCmd
-        || commandName == InspectorBackendDispatcher::setBreakpointCmd
-        || commandName == InspectorBackendDispatcher::removeBreakpointCmd
+        || commandName == InspectorBackendDispatcher::setJavaScriptBreakpointCmd
+        || commandName == InspectorBackendDispatcher::removeJavaScriptBreakpointCmd
         || commandName == InspectorBackendDispatcher::activateBreakpointsCmd
         || commandName == InspectorBackendDispatcher::deactivateBreakpointsCmd
         || commandName == InspectorBackendDispatcher::startProfilingCmd

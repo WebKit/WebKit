@@ -37,18 +37,14 @@ WebInspector.BreakpointManager = function()
 
     this._breakpoints = {};
     this._domBreakpointsRestored = false;
-    this._scriptBreakpoints = {};
 
     WebInspector.settings.addEventListener(WebInspector.Settings.Events.ProjectChanged, this._projectChanged, this);
-    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.BreakpointAdded, this._scriptBreakpointAdded, this);
-    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.BreakpointRemoved, this._scriptBreakpointRemoved, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerPaused, this._debuggerPaused, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerResumed, this._debuggerResumed, this);
 }
 
 WebInspector.BreakpointManager.BreakpointTypes = {
     DOM: "DOM",
-    JS: "JS",
     EventListener: "EventListener",
     XHR: "XHR"
 }
@@ -101,38 +97,6 @@ WebInspector.BreakpointManager.prototype = {
 
         breakpoint.view = new WebInspector.EventListenerBreakpointView(this, breakpointId, enabled, eventName);
         this.dispatchEventToListeners(WebInspector.BreakpointManager.Events.EventListenerBreakpointAdded, breakpoint.view);
-    },
-
-    _createJavaScriptBreakpoint: function(url, lineNumber, condition, enabled, restored)
-    {
-        var breakpointId = this._createJavaScriptBreakpointId(url, lineNumber);
-        if (breakpointId in this._breakpoints)
-            return;
-
-        var breakpoint = new WebInspector.JavaScriptBreakpoint(url, lineNumber, condition);
-        this._setBreakpoint(breakpointId, breakpoint, enabled, restored);
-    },
-
-    _scriptBreakpointAdded: function(event)
-    {
-        var scriptBreakpoint = event.data;
-
-        if (!scriptBreakpoint.url)
-            return;
-
-        if (!scriptBreakpoint.restored)
-            this._createJavaScriptBreakpoint(scriptBreakpoint.url, scriptBreakpoint.originalLineNumber, scriptBreakpoint.condition, scriptBreakpoint.enabled, false);
-        var breakpointId = this._createJavaScriptBreakpointId(scriptBreakpoint.url, scriptBreakpoint.originalLineNumber);
-        this._scriptBreakpoints[scriptBreakpoint.id] = breakpointId;
-    },
-
-    _scriptBreakpointRemoved: function(event)
-    {
-        var scriptBreakpointId = event.data;
-        var breakpointId = this._scriptBreakpoints[scriptBreakpointId];
-        delete this._scriptBreakpoints[scriptBreakpointId];
-        if (breakpointId in this._breakpoints)
-            this._removeBreakpoint(breakpointId);
     },
 
     createXHRBreakpoint: function(url)
@@ -231,7 +195,6 @@ WebInspector.BreakpointManager.prototype = {
     {
         this._breakpoints = {};
         this._domBreakpointsRestored = false;
-        this._scriptBreakpoints = {};
         this.dispatchEventToListeners(WebInspector.BreakpointManager.Events.ProjectChanged);
 
         var breakpoints = this._stickyBreakpoints[WebInspector.settings.projectId] || [];
@@ -239,14 +202,12 @@ WebInspector.BreakpointManager.prototype = {
             var breakpoint = breakpoints[i];
             if (breakpoint.type === WebInspector.BreakpointManager.BreakpointTypes.EventListener)
                 this._createEventListenerBreakpoint(breakpoint.condition.eventName, breakpoint.enabled, true);
-            else if (breakpoint.type === WebInspector.BreakpointManager.BreakpointTypes.JS)
-                this._createJavaScriptBreakpoint(breakpoint.condition.url, breakpoint.condition.lineNumber, breakpoint.condition.condition, breakpoint.enabled, true);
             else if (breakpoint.type === WebInspector.BreakpointManager.BreakpointTypes.XHR)
                 this._createXHRBreakpoint(breakpoint.condition.url, breakpoint.enabled, true);
         }
 
         if (!this._breakpointsPushedToFrontend) {
-            this._pushBreakpointsToBackend();
+            InspectorBackend.setAllBrowserBreakpoints(this._stickyBreakpoints);
             this._breakpointsPushedToFrontend = true;
         }
     },
@@ -307,34 +268,7 @@ WebInspector.BreakpointManager.prototype = {
         WebInspector.settings.nativeBreakpoints = breakpoints;
 
         this._stickyBreakpoints[WebInspector.settings.projectId] = breakpoints;
-        this._pushBreakpointsToBackend();
-    },
-
-    _pushBreakpointsToBackend: function()
-    {
-        var allJavaScriptBreakpoints = {};
-        var allBrowserBreakpoints = {};
-        for (var projectId in this._stickyBreakpoints) {
-            var breakpoints = this._stickyBreakpoints[projectId];
-            var javaScriptBreakpoints = [];
-            var browserBreakpoints = [];
-            for (var i = 0; i < breakpoints.length; ++i) {
-                if (breakpoints[i].type == WebInspector.BreakpointManager.BreakpointTypes.JS) {
-                    var data = {};
-                    data.enabled = breakpoints[i].enabled;
-                    for (var p in breakpoints[i].condition)
-                        data[p] = breakpoints[i].condition[p];
-                    javaScriptBreakpoints.push(data);
-                } else
-                    browserBreakpoints.push(breakpoints[i]);
-            }
-            if (javaScriptBreakpoints.length)
-                allJavaScriptBreakpoints[projectId] = javaScriptBreakpoints;
-            if (browserBreakpoints.length)
-                allBrowserBreakpoints[projectId] = browserBreakpoints;
-        }
-        InspectorBackend.setAllJavaScriptBreakpoints(allJavaScriptBreakpoints);
-        InspectorBackend.setAllBrowserBreakpoints(allBrowserBreakpoints);
+        InspectorBackend.setAllBrowserBreakpoints(this._stickyBreakpoints);
     },
 
     _validateBreakpoints: function(persistentBreakpoints)
@@ -355,15 +289,12 @@ WebInspector.BreakpointManager.prototype = {
                 if (typeof condition.eventName !== "string")
                     continue;
                 id += condition.eventName;
-            } else if (breakpoint.type === WebInspector.BreakpointManager.BreakpointTypes.JS) {
-                if (typeof condition.url !== "string" || typeof condition.lineNumber !== "number" || typeof condition.condition !== "string")
-                    continue;
-                id += condition.url + ":" + condition.lineNumber;
             } else if (breakpoint.type === WebInspector.BreakpointManager.BreakpointTypes.XHR) {
                 if (typeof condition.url !== "string")
                     continue;
                 id += condition.url;
-            }
+            } else
+                continue;
             if (id in breakpointsSet)
                 continue;
             breakpointsSet[id] = true;
@@ -375,11 +306,6 @@ WebInspector.BreakpointManager.prototype = {
     _createDOMBreakpointId: function(nodeId, type)
     {
         return "dom:" + nodeId + ":" + type;
-    },
-
-    _createJavaScriptBreakpointId: function(url, lineNumber)
-    {
-        return "js:" + url + ":" + lineNumber;
     },
 
     _createEventListenerBreakpointId: function(eventName)
@@ -417,29 +343,6 @@ WebInspector.DOMBreakpoint.prototype = {
     {
         var type = WebInspector.BreakpointManager.BreakpointTypes.DOM;
         return { type: type, condition: { path: this._path, type: this._type } };
-    }
-}
-
-WebInspector.JavaScriptBreakpoint = function(url, lineNumber, condition)
-{
-    this._url = url;
-    this._lineNumber = lineNumber;
-    this._condition = condition;
-}
-
-WebInspector.JavaScriptBreakpoint.prototype = {
-    _enable: function()
-    {
-    },
-
-    _disable: function()
-    {
-    },
-
-    _serializeToJSON: function()
-    {
-        var type = WebInspector.BreakpointManager.BreakpointTypes.JS;
-        return { type: type, condition: { url: this._url, lineNumber: this._lineNumber, columnNumber: 1, condition: this._condition } };
     }
 }
 

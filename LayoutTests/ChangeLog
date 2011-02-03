@@ -1,3 +1,12 @@
+2011-02-01  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: introduce new api for managing JavaScript breakpoints.
+        https://bugs.webkit.org/show_bug.cgi?id=53235
+
+        * inspector/report-protocol-errors.html:
+
 2011-02-03  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip flaky websocket tests on GTK

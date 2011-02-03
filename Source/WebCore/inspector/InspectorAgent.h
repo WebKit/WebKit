@@ -241,7 +241,8 @@ public:
     bool profilerEnabled() const;
 
     void showAndEnableDebugger();
-    void enableDebugger();
+    void enableDebugger() { enableDebugger(false); }
+    void enableDebugger(bool eraseStickyBreakpoints);
     void disableDebugger();
     bool debuggerEnabled() const { return m_debuggerAgent; }
     void resume();
@@ -271,7 +272,7 @@ public:
 
 private:
     void pushDataCollectedOffline();
-    void restoreDebugger();
+    void restoreDebugger(bool eraseStickyBreakpoints);
     enum ProfilerRestoreAction {
         ProfilerRestoreNoAction = 0,
         ProfilerRestoreResetAgent = 1

@@ -72,6 +72,7 @@ public:
     virtual bool asBoolean(bool* output) const;
     virtual bool asNumber(double* output) const;
     virtual bool asNumber(long* output) const;
+    virtual bool asNumber(int* output) const;
     virtual bool asNumber(unsigned long* output) const;
     virtual bool asNumber(unsigned int* output) const;
     virtual bool asString(String* output) const;
@@ -114,6 +115,7 @@ public:
     virtual bool asBoolean(bool* output) const;
     virtual bool asNumber(double* output) const;
     virtual bool asNumber(long* output) const;
+    virtual bool asNumber(int* output) const;
     virtual bool asNumber(unsigned long* output) const;
     virtual bool asNumber(unsigned int* output) const;
 
@@ -178,14 +180,22 @@ public:
     void setObject(const String& name, PassRefPtr<InspectorObject>);
     void setArray(const String& name, PassRefPtr<InspectorArray>);
 
+    iterator find(const String& name);
     const_iterator find(const String& name) const;
     bool getBoolean(const String& name, bool* output) const;
-    bool getNumber(const String& name, long* output) const;
-    bool getNumber(const String& name, double* output) const;
+    template<class T> bool getNumber(const String& name, T* output) const
+    {
+        RefPtr<InspectorValue> value = get(name);
+        if (!value)
+            return false;
+        return value->asNumber(output);
+    }
     bool getString(const String& name, String* output) const;
     PassRefPtr<InspectorObject> getObject(const String& name) const;
     PassRefPtr<InspectorArray> getArray(const String& name) const;
     PassRefPtr<InspectorValue> get(const String& name) const;
+
+    void remove(const String& name);
 
     virtual void writeJSON(Vector<UChar>* output) const;
 
@@ -227,6 +237,11 @@ private:
     InspectorArray();
     Vector<RefPtr<InspectorValue> > m_data;
 };
+
+inline InspectorObject::iterator InspectorObject::find(const String& name)
+{
+    return m_data.find(name);
+}
 
 inline InspectorObject::const_iterator InspectorObject::find(const String& name) const
 {

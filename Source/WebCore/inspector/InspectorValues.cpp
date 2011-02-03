@@ -491,6 +491,11 @@ bool InspectorValue::asNumber(long*) const
     return false;
 }
 
+bool InspectorValue::asNumber(int*) const
+{
+    return false;
+}
+
 bool InspectorValue::asNumber(unsigned long*) const
 {
     return false;
@@ -581,6 +586,14 @@ bool InspectorBasicValue::asNumber(long* output) const
     return true;
 }
 
+bool InspectorBasicValue::asNumber(int* output) const
+{
+    if (type() != TypeNumber)
+        return false;
+    *output = static_cast<int>(m_doubleValue);
+    return true;
+}
+
 bool InspectorBasicValue::asNumber(unsigned long* output) const
 {
     if (type() != TypeNumber)
@@ -647,22 +660,6 @@ bool InspectorObject::getBoolean(const String& name, bool* output) const
     return value->asBoolean(output);
 }
 
-bool InspectorObject::getNumber(const String& name, long* output) const
-{
-    RefPtr<InspectorValue> value = get(name);
-    if (!value)
-        return false;
-    return value->asNumber(output);
-}
-
-bool InspectorObject::getNumber(const String& name, double* output) const
-{
-    RefPtr<InspectorValue> value = get(name);
-    if (!value)
-        return false;
-    return value->asNumber(output);
-}
-
 bool InspectorObject::getString(const String& name, String* output) const
 {
     RefPtr<InspectorValue> value = get(name);
@@ -693,6 +690,17 @@ PassRefPtr<InspectorValue> InspectorObject::get(const String& name) const
     if (it == m_data.end())
         return 0;
     return it->second;
+}
+
+void InspectorObject::remove(const String& name)
+{
+    m_data.remove(name);
+    for (size_t i = 0; i < m_order.size(); ++i) {
+        if (m_order[i] == name) {
+            m_order.remove(i);
+            break;
+        }
+    }
 }
 
 void InspectorObject::writeJSON(Vector<UChar>* output) const
