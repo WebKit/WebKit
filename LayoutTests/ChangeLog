@@ -1,5 +1,9 @@
 2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] One more update SVG baselines after r77485 for Linux.
+
+2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Moved XP/Vista-specific baselines to their proper places.
 
         * platform/chromium-win-vista/svg/text/text-fonts-01-t-expected.checksum:
