@@ -1,3 +1,14 @@
+2011-02-03  Adam Roben  <aroben@apple.com>
+
+        Skip an SVG test that fails depending on what other tests came before it
+
+        Running any other SVG test before this one causes it to fail. If we were to check in new
+        failing results, it might start passing again if some more tests are added before it that
+        make it the first test that is run for a particular invocation of DumpRenderTree. So the
+        safest thing to do for now is to skip it. <http://webkit.org/b/35700> tracks this failure.
+
+        * platform/win/Skipped: Added svg/W3C-SVG-1.1-SE/types-dom-01-b.svg.
+
 2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Updated platform/mac and platform/mac-leopard baselines for svg/ after r77485.
