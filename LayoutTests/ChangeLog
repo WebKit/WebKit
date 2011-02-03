@@ -1,3 +1,10 @@
+2011-02-03  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skipping 2 more websocket tests on GTK, see bug 53683.
+
+        * platform/gtk/Skipped: skip http/tests/websocket/tests/simple.html
+        and http/tests/websocket/tests/cross-origin.html
+
 2011-02-03  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.

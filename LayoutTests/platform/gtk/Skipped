@@ -4723,3 +4723,5 @@ fast/frames/sandboxed-iframe-scripting.html
 # https://bugs.webkit.org/show_bug.cgi?id=53683
 http/tests/websocket/tests/url-with-credential.html
 http/tests/websocket/tests/url-with-empty-query.html
+http/tests/websocket/tests/simple.html
+http/tests/websocket/tests/cross-origin.html
