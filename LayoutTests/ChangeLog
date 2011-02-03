@@ -1,3 +1,11 @@
+2011-02-03  Adam Roben  <aroben@apple.com>
+
+        Add Windows results for test added in r77153
+
+        * platform/win/fast/text/international/text-combine-image-test-expected.checksum: Added.
+        * platform/win/fast/text/international/text-combine-image-test-expected.png: Added.
+        * platform/win/fast/text/international/text-combine-image-test-expected.txt: Added.
+
 2011-02-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
