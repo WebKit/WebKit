@@ -26,7 +26,6 @@
 #import "config.h"
 #import "LayerTreeHostMac.h"
 
-#import "DrawingAreaProxyMessages.h"
 #import "WebPage.h"
 #import "WebProcess.h"
 #import <WebCore/Frame.h>
@@ -68,9 +67,6 @@ LayerTreeHostMac::LayerTreeHostMac(WebPage* webPage, GraphicsLayer* graphicsLaye
     scheduleLayerFlush();
 
     m_layerTreeContext.contextID = WKCARemoteLayerClientGetClientId(m_remoteLayerClient.get());
-
-    // FIXME: Don't send this if we enter accelerated compositing as a result of setSize.
-    m_webPage->send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(m_layerTreeContext));
 }
 
 LayerTreeHostMac::~LayerTreeHostMac()
@@ -79,6 +75,11 @@ LayerTreeHostMac::~LayerTreeHostMac()
     ASSERT(!m_flushPendingLayerChangesRunLoopObserver);
     ASSERT(!m_remoteLayerClient);
     ASSERT(!m_rootLayer);
+}
+
+const LayerTreeContext& LayerTreeHostMac::layerTreeContext()
+{
+    return m_layerTreeContext;
 }
 
 void LayerTreeHostMac::scheduleLayerFlush()
@@ -112,9 +113,6 @@ void LayerTreeHostMac::invalidate()
     m_remoteLayerClient = nullptr;
     m_rootLayer = nullptr;
     m_isValid = false;
-
-    // FIXME: Don't send this if we enter accelerated compositing as a result of setSize.
-    m_webPage->send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode());
 }
 
 void LayerTreeHostMac::notifyAnimationStarted(const WebCore::GraphicsLayer*, double time)

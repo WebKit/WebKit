@@ -45,6 +45,7 @@ private:
     explicit LayerTreeHostMac(WebPage*, WebCore::GraphicsLayer*);
 
     // LayerTreeHost.
+    virtual const LayerTreeContext& layerTreeContext();
     virtual void scheduleLayerFlush();
     virtual void invalidate();
 

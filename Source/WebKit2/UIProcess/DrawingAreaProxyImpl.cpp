@@ -145,8 +145,10 @@ void DrawingAreaProxyImpl::didSetSize(const UpdateInfo& updateInfo)
     if (m_size != updateInfo.viewSize)
         sendSetSize();
 
-    if (m_isInAcceleratedCompositingMode)
+    if (m_isInAcceleratedCompositingMode) {
+        ASSERT(!m_backingStore);
         return;
+    }
 
     m_backingStore = nullptr;
     incorporateUpdate(updateInfo);

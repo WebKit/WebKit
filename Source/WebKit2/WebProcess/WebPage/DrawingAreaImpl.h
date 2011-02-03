@@ -60,6 +60,9 @@ private:
     virtual void suspendPainting();
     virtual void resumePainting();
 
+    void enterAcceleratedCompositingMode(WebCore::GraphicsLayer*);
+    void exitAcceleratedCompositingMode();
+
     void scheduleDisplay();
     void display();
     void display(UpdateInfo&);
@@ -67,7 +70,10 @@ private:
     Region m_dirtyRegion;
     WebCore::IntRect m_scrollRect;
     WebCore::IntSize m_scrollOffset;
-    
+
+    // Whether we're currently processing a setSize message.
+    bool m_inSetSize;
+
     // Whether we're waiting for a DidUpdate message. Used for throttling paints so that the 
     // web process won't paint more frequent than the UI process can handle.
     bool m_isWaitingForDidUpdate;

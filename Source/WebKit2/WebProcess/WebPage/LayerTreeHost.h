@@ -35,6 +35,7 @@ namespace WebCore {
 
 namespace WebKit {
 
+class LayerTreeContext;
 class WebPage;
 
 class LayerTreeHost : public RefCounted<LayerTreeHost> {
@@ -42,6 +43,7 @@ public:
     static PassRefPtr<LayerTreeHost> create(WebPage*, WebCore::GraphicsLayer*);
     virtual ~LayerTreeHost();
 
+    virtual const LayerTreeContext& layerTreeContext() = 0;
     virtual void scheduleLayerFlush() = 0;
     virtual void invalidate() = 0;
 

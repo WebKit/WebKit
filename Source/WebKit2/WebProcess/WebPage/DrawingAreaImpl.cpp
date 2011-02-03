@@ -27,6 +27,7 @@
 #include "DrawingAreaImpl.h"
 
 #include "DrawingAreaProxyMessages.h"
+#include "LayerTreeContext.h"
 #include "ShareableBitmap.h"
 #include "UpdateInfo.h"
 #include "WebPage.h"
@@ -53,6 +54,7 @@ DrawingAreaImpl::~DrawingAreaImpl()
 
 DrawingAreaImpl::DrawingAreaImpl(WebPage* webPage, const WebPageCreationParameters& parameters)
     : DrawingArea(DrawingAreaInfo::Impl, parameters.drawingAreaInfo.identifier, webPage)
+    , m_inSetSize(false)
     , m_isWaitingForDidUpdate(false)
     , m_isPaintingSuspended(!parameters.isVisible)
     , m_displayTimer(WebProcess::shared().runLoop(), this, &DrawingAreaImpl::display)
@@ -142,19 +144,10 @@ void DrawingAreaImpl::detachCompositingContext()
 
 void DrawingAreaImpl::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
 {
-    if (graphicsLayer) {
-        m_layerTreeHost = LayerTreeHost::create(m_webPage, graphicsLayer);
-
-        // Non-composited content will now be handled exclusively by the layer tree host.
-        m_dirtyRegion = Region();
-        m_scrollRect = IntRect();
-        m_scrollOffset = IntSize();
-        m_displayTimer.stop();
-        m_isWaitingForDidUpdate = false;
-    } else {
-        m_layerTreeHost->invalidate();
-        m_layerTreeHost = nullptr;
-    }
+    if (graphicsLayer)
+        enterAcceleratedCompositingMode(graphicsLayer);
+    else
+        exitAcceleratedCompositingMode();
 }
 
 void DrawingAreaImpl::scheduleCompositingLayerSync()
@@ -174,6 +167,9 @@ void DrawingAreaImpl::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID
 
 void DrawingAreaImpl::setSize(const IntSize& size)
 {
+    ASSERT(!m_inSetSize);
+    m_inSetSize = true;
+
     // Set this to false since we're about to call display().
     m_isWaitingForDidUpdate = false;
 
@@ -189,6 +185,8 @@ void DrawingAreaImpl::setSize(const IntSize& size)
         display(updateInfo);
 
     m_webPage->send(Messages::DrawingAreaProxy::DidSetSize(updateInfo));
+
+    m_inSetSize = false;
 }
 
 void DrawingAreaImpl::didUpdate()
@@ -219,6 +217,32 @@ void DrawingAreaImpl::resumePainting()
     m_isPaintingSuspended = false;
 
     // FIXME: Repaint if needed.
+}
+
+void DrawingAreaImpl::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLayer)
+{
+    ASSERT(!m_layerTreeHost);
+
+    m_layerTreeHost = LayerTreeHost::create(m_webPage, graphicsLayer);
+    
+    // Non-composited content will now be handled exclusively by the layer tree host.
+    m_dirtyRegion = Region();
+    m_scrollRect = IntRect();
+    m_scrollOffset = IntSize();
+    m_displayTimer.stop();
+    m_isWaitingForDidUpdate = false;
+
+    if (!m_inSetSize)
+        m_webPage->send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(m_layerTreeHost->layerTreeContext()));
+}
+
+void DrawingAreaImpl::exitAcceleratedCompositingMode()
+{
+    m_layerTreeHost->invalidate();
+    m_layerTreeHost = nullptr;
+    
+    if (!m_inSetSize)
+        m_webPage->send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode());
 }
 
 void DrawingAreaImpl::scheduleDisplay()

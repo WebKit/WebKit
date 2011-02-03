@@ -1,5 +1,52 @@
 2011-02-03  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Don't send enter/exit accelerated compositing mode messages when handling setSize
+        https://bugs.webkit.org/show_bug.cgi?id=53706
+
+        Don't send EnterAcceleratedCompositingMode/ExitAcceleratedCompositing mode when
+        the mode changes happen as a result of relayout in setSize, since an updated state
+        is going to be sent back in the DidSetSize message.
+        
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::didSetSize):
+        Add an assert.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::DrawingAreaImpl):
+        Initialize m_inSetSize.
+
+        (WebKit::DrawingAreaImpl::setRootCompositingLayer):
+        Factor out code into enterAcceleratedCompositingMode and exitAcceleratedCompositingMode.
+
+        (WebKit::DrawingAreaImpl::setSize):
+        Set m_inSetSize to true while handling setSize.
+
+        (WebKit::DrawingAreaImpl::enterAcceleratedCompositingMode):
+        (WebKit::DrawingAreaImpl::exitAcceleratedCompositingMode):
+        Take over the message sending responsibility from LayerTreeHostMac, and don't send messages
+        if we're currently handling a SetSize message.
+
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        Add m_inSetSize.
+
+        * WebProcess/WebPage/LayerTreeHost.h:
+        Add layerTreeHost getter.
+
+        * WebProcess/WebPage/mac/LayerTreeHostMac.h:
+        * WebProcess/WebPage/mac/LayerTreeHostMac.mm:
+        (WebKit::LayerTreeHostMac::LayerTreeHostMac):
+        Don't send EnterAcceleratedCompositingMode messages.
+
+        (WebKit::LayerTreeHostMac::layerTreeContext):
+        Add getter for the current layer tree context.
+
+        (WebKit::LayerTreeHostMac::invalidate):
+        Don't send ExitAcceleratedCompositingMode messages.
+
+2011-02-03  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Make the layer tree host keep track of the layer tree context
