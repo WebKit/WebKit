@@ -24,8 +24,13 @@ worker.onerror = function(error)
     }
     properties.sort();
     log(properties);
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+
+    if (window.layoutTestController) {
+        // Allow the console message to be dumped out.
+        setTimeout(function() {
+            layoutTestController.notifyDone();
+        }, 0);
+    }
 }
 </script>
 </body>

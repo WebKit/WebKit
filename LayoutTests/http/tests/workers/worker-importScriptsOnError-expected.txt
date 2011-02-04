@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 2: Error: Script error.
 Test importScripts with error.
 
 

@@ -91,6 +91,16 @@
 
         Reviewed by Adam Barth.
 
+        worker-importScriptsOnError needs to allow for the console error to
+        flush out before calling notifyDone.
+
+        * http/tests/workers/worker-importScriptsOnError-expected.txt:
+        * http/tests/workers/worker-importScriptsOnError.html:
+
+2011-02-03  David Levin  <levin@chromium.org>
+
+        Reviewed by Adam Barth.
+
         Worker.importScript() should clean errors for cross origin imports.
         https://bugs.webkit.org/show_bug.cgi?id=52871
 
