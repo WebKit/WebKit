@@ -1,3 +1,12 @@
+2011-02-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Daniel Bates.
+
+        Skip a test for WebKit2 that uses missing DRT API
+        https://bugs.webkit.org/show_bug.cgi?id=53748
+
+        * platform/mac-wk2/Skipped:
+
 2011-02-03  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed, simple qt test baseline.

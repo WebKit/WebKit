@@ -1002,6 +1002,7 @@ svg/zoom/text/zoom-coords-viewattr-01-b.svg
 
 # WebKit2 needs layoutTestController.overridePreference
 # <https://bugs.webkit.org/show_bug.cgi?id=42197>
+fast/events/pagehide-timeout.html
 fast/canvas/webgl/gl-getshadersource.html
 fast/canvas/webgl/tex-sub-image-2d-bad-args.html
 http/tests/navigation/go-back-to-error-page.html
