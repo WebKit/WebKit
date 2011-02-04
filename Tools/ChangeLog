@@ -1,5 +1,33 @@
 2011-02-04  Adam Roben  <aroben@apple.com>
 
+        Add a test case for encode/decode of FormData/FormDataElement
+
+        If the fix made in r77401 is broken, this new test will crash.
+
+        Fixes <http://webkit.org/b/53616> <rdar://problem/8949883>.
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Test.h: Moved the bulk of TEST_ASSERT into a new _TEST_ASSERT_HELPER macro.
+        Added a new TEST_ASSERT_RETURN macro that can be used in functions with a return value.
+
+        * TestWebKitAPI/Tests/WebKit2/RestoreSessionStateContainingFormData.cpp: Added.
+        (TestWebKitAPI::didFinishLoadForFrame): Record that the load is finished.
+        (TestWebKitAPI::setPageLoaderClient): Hook up the loader client.
+        (TestWebKitAPI::createSessionStateContainingFormData): Load simple-form.html, submit the
+        form, an return the session state data.
+        (TestWebKitAPI::TEST): Create some session state that contains form data from one WKPage,
+        and restore it into another WKPage.
+
+        * TestWebKitAPI/Tests/WebKit2/simple-form.html: Added.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+        * TestWebKitAPI/win/copy-resources.cmd:
+        Added new files.
+
+2011-02-04  Adam Roben  <aroben@apple.com>
+
         Move code to run JavaScript tests into its own files
 
         This will allow other tests to use this mechanism.

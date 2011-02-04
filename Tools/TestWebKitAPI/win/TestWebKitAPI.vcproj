@@ -456,6 +456,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Tests\WebKit2\RestoreSessionStateContainingFormData.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Tests\WebKit2\simple-form.html"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WebKit2\simple.html"
 					>
 				</File>

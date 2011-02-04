@@ -79,7 +79,9 @@ protected:
     \
     void TEST_CLASS_NAME(testSuite, testCaseName)::run()
 
-#define TEST_ASSERT(expression) do { if (!(expression)) { TestsController::shared().testFailed(__FILE__, __LINE__, #expression); return; } } while (0)
+#define _TEST_ASSERT_HELPER(expression, returnStatement) do { if (!(expression)) { TestsController::shared().testFailed(__FILE__, __LINE__, #expression); returnStatement; } } while (0)
+#define TEST_ASSERT(expression) _TEST_ASSERT_HELPER(expression, return)
+#define TEST_ASSERT_RETURN(expression, returnValue) _TEST_ASSERT_HELPER(expression, return (returnValue))
 
 } // namespace TestWebKitAPI
 

@@ -1,3 +1,15 @@
+2011-02-04  Adam Roben  <aroben@apple.com>
+
+        Allow passing a null filter callback to WKPageCopySessionState
+
+        WebKit2 part of <http://webkit.org/b/53616> <rdar://problem/8949883>.
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/cf/WebBackForwardListCF.cpp:
+        (WebKit::WebBackForwardList::createCFDictionaryRepresentation): Check if the filter is null
+        before calling it.
+
 2011-02-04  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by John Sullivan.

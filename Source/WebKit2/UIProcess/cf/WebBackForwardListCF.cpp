@@ -64,7 +64,7 @@ CFDictionaryRef WebBackForwardList::createCFDictionaryRepresentation(WebPageProx
 
     for (size_t i = 0; i < m_entries.size(); ++i) {
         RefPtr<WebURL> webURL = WebURL::create(m_entries[i]->url());
-        if (!filter(toAPI(m_page), WKPageGetSessionHistoryURLValueType(), toURLRef(m_entries[i]->originalURL().impl()), context))
+        if (filter && !filter(toAPI(m_page), WKPageGetSessionHistoryURLValueType(), toURLRef(m_entries[i]->originalURL().impl()), context))
             continue;
         
         RetainPtr<CFStringRef> url(AdoptCF, m_entries[i]->url().createCFString());

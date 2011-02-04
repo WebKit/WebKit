@@ -12,6 +12,7 @@ for %%f in (
     ..\Tests\WebKit2\find.html
     ..\Tests\WebKit2\icon.png
     ..\Tests\WebKit2\simple.html
+    ..\Tests\WebKit2\simple-form.html
     ..\Tests\WebKit2\spacebar-scrolling.html
 ) do (
     xcopy /y /d %%f "%ResourcesDirectory%"
