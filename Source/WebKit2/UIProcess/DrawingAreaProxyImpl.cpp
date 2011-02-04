@@ -56,6 +56,9 @@ DrawingAreaProxyImpl::DrawingAreaProxyImpl(WebPageProxy* webPageProxy)
 
 DrawingAreaProxyImpl::~DrawingAreaProxyImpl()
 {
+    // Make sure to exit accelerated compositing mode.
+    if (isInAcceleratedCompositingMode())
+        exitAcceleratedCompositingMode();
 }
 
 void DrawingAreaProxyImpl::paint(BackingStore::PlatformGraphicsContext context, const IntRect& rect, Region& unpaintedRegion)

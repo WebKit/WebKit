@@ -1,3 +1,15 @@
+2011-02-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Go out of accelerated compositing mode when the drawing area is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=53788
+
+        This fixes a crash in the UI process if a web process crashes while in accelerated compositing mode.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::~DrawingAreaProxyImpl):
+
 2011-02-03  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
