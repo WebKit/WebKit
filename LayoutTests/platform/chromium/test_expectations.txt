@@ -150,7 +150,7 @@ WONTFIX SKIP : http/tests/websocket/tests/workers/ = PASS TIMEOUT FAIL
 // on which renderer process to use for each of them.
 WONTFIX SKIP BUGCR19635 : fast/harness/use-page-cache.html = TIMEOUT FAIL
 WONTFIX SKIP BUGCR19635 : fast/dom/Window/timer-resume-on-navigation-back.html = TIMEOUT FAIL
-// Depends on page cache, as far as I can tell.
+WONTFIX SKIP BUGCR19635 : fast/events/pagehide-timeout.html = TIMEOUT
 WONTFIX SKIP BUGCR19635 : fast/events/pageshow-pagehide-on-back-cached.html = TIMEOUT FAIL
 WONTFIX SKIP BUGCR19635 : fast/events/pageshow-pagehide-on-back-cached-with-frames.html = TIMEOUT
 WONTFIX SKIP BUGCR19635 : media/restore-from-page-cache.html = TIMEOUT

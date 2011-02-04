@@ -135,10 +135,6 @@ CachedFrame::CachedFrame(Frame* frame)
     if (frame->page()->focusController()->focusedFrame() == frame)
         frame->page()->focusController()->setFocusedFrame(frame->page()->mainFrame());
 
-    // Active DOM objects must be suspended before we cached the frame script data
-    m_document->suspendActiveDOMObjects(ActiveDOMObject::DocumentWillBecomeInactive);
-    m_cachedFrameScriptData = adoptPtr(new ScriptCachedFrameData(frame));
-    
     // Custom scrollbar renderers will get reattached when the document comes out of the page cache
     m_view->detachCustomScrollbars();
 
@@ -146,12 +142,20 @@ CachedFrame::CachedFrame(Frame* frame)
     frame->clearTimers();
     m_document->setInPageCache(true);
     frame->loader()->stopLoading(UnloadEventPolicyUnloadAndPageHide);
-    
-    frame->loader()->client()->savePlatformDataToCachedFrame(this);
 
     // Create the CachedFrames for all Frames in the FrameTree.
     for (Frame* child = frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
         m_childFrames.append(CachedFrame::create(child));
+
+    // Active DOM objects must be suspended before we cache the frame script data,
+    // but after we've fired the pagehide event, in case that creates more objects.
+    // Suspending must also happen after we've recursed over child frames, in case
+    // those create more objects.
+    // FIXME: It's still possible to have objects created after suspending in some cases, see http://webkit.org/b/53733 for more details.
+    m_document->suspendActiveDOMObjects(ActiveDOMObject::DocumentWillBecomeInactive);
+    m_cachedFrameScriptData = adoptPtr(new ScriptCachedFrameData(frame));
+
+    frame->loader()->client()->savePlatformDataToCachedFrame(this);
 
     // Deconstruct the FrameTree, to restore it later.
     // We do this for two reasons:

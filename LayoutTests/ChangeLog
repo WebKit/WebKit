@@ -1,3 +1,20 @@
+2011-02-03  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        REGRESSION (r77355): Page cache layout tests crash
+        https://bugs.webkit.org/show_bug.cgi?id=53648
+        
+        Add test that calls setTimeout during a pagehide event handler (the
+        timeout should not fire while the document is in the page cache).
+        
+        Skipped for Chromium since it doesn't use the page cache.
+
+        * fast/events/pagehide-timeout-expected.txt: Added.
+        * fast/events/pagehide-timeout.html: Added.
+        * fast/events/resources/pagehide-timeout-go-back.html: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Added SL-specific result for the test and put back the original result that
