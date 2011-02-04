@@ -1,3 +1,10 @@
+2011-02-03  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed, qt build fix.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeFloatingObject):
+
 2011-02-03  Brian Salomon  <bsalomon@google.com>
 
         Reviewed by James Robinson.
