@@ -1,3 +1,12 @@
+2011-02-04  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed GTK expectations update.
+        
+        Unskip fast/history/timed-refresh-in-cached-frame.html, it should pass
+        with http://trac.webkit.org/changeset/77559.
+
+        * platform/gtk/Skipped:
+
 2011-02-04  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Mihai Parparita.
