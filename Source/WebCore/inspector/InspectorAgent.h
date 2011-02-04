@@ -270,6 +270,9 @@ public:
     // InspectorInstrumentation API
     void willSendRequest(ResourceRequest&);
 
+    void setUserAgentOverride(const String& userAgent);
+    String userAgentOverride() const;
+
 private:
     void pushDataCollectedOffline();
     void restoreDebugger(bool eraseStickyBreakpoints);
@@ -349,6 +352,7 @@ private:
     OwnPtr<InspectorProfilerAgent> m_profilerAgent;
 #endif
     OwnPtr<HTTPHeaderMap> m_extraHeaders;
+    String m_userAgentOverride;
 #if ENABLE(WORKERS)
     typedef HashMap<intptr_t, RefPtr<InspectorWorkerResource> > WorkersMap;
 

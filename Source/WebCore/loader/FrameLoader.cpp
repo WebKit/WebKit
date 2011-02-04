@@ -2555,6 +2555,13 @@ int FrameLoader::numPendingOrLoadingRequests(bool recurse) const
 
 String FrameLoader::userAgent(const KURL& url) const
 {
+#if ENABLE(INSPECTOR)
+    if (Page* page = m_frame->page()) {
+        String userAgentOverride = page->inspectorController()->userAgentOverride();
+        if (!userAgentOverride.isEmpty())
+            return userAgentOverride;
+    }
+#endif
     return m_client->userAgent(url);
 }
 
@@ -3078,7 +3085,7 @@ void FrameLoader::loadedResourceFromMemoryCache(const CachedResource* resource)
 
 void FrameLoader::applyUserAgent(ResourceRequest& request)
 {
-    String userAgent = client()->userAgent(request.url());
+    String userAgent = this->userAgent(request.url());
     ASSERT(!userAgent.isNull());
     request.setHTTPUserAgent(userAgent);
 }

@@ -63,6 +63,7 @@ module core {
         [notify, domain=Inspector] void updateFocusedNode(out long nodeId);
 
         [domain=Inspector] void setExtraHeaders(in Object headers);
+        [domain=Inspector] void setUserAgentOverride(in String userAgent);
 
         [domain=Inspector] void getCookies(out Array cookies, out String cookiesString);
         [domain=Inspector] void deleteCookie(in String cookieName, in String domain);

@@ -465,6 +465,7 @@ void InspectorAgent::disconnectFrontend()
     releaseFrontendLifetimeAgents();
     m_timelineAgent.clear();
     m_extraHeaders.clear();
+    m_userAgentOverride = "";
 }
 
 InspectorResourceAgent* InspectorAgent::resourceAgent()
@@ -679,6 +680,16 @@ void InspectorAgent::mainResourceFiredLoadEvent(DocumentLoader* loader, const KU
 bool InspectorAgent::isMainResourceLoader(DocumentLoader* loader, const KURL& requestUrl)
 {
     return loader->frame() == m_inspectedPage->mainFrame() && requestUrl == loader->requestURL();
+}
+
+void InspectorAgent::setUserAgentOverride(const String& userAgent)
+{
+    m_userAgentOverride = userAgent;
+}
+
+String InspectorAgent::userAgentOverride() const
+{
+    return m_userAgentOverride;
 }
 
 void InspectorAgent::willSendRequest(ResourceRequest& request)

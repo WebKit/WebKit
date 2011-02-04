@@ -387,9 +387,9 @@ function InspectedWindow()
 }
 
 InspectedWindow.prototype = {
-    reload: function()
+    reload: function(userAgent)
     {
-        return extensionServer.sendRequest({ command: "reload" });
+        return extensionServer.sendRequest({ command: "reload", userAgent: userAgent });
     },
 
     eval: function(expression, callback)

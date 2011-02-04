@@ -1,3 +1,26 @@
+2011-02-04  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: support overriding user agent strings
+        https://bugs.webkit.org/show_bug.cgi?id=51485
+
+        Test: http/tests/inspector/extensions-useragent.html
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::disconnectFrontend):
+        (WebCore::InspectorController::setUserAgentOverride):
+        (WebCore::InspectorController::userAgentOverride):
+        * inspector/InspectorController.h:
+        * inspector/front-end/ExtensionAPI.js:
+        (WebInspector.injectedExtensionAPI.InspectedWindow.prototype.reload):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._onReload):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::userAgent):
+        (WebCore::FrameLoader::applyUserAgent):
+
 2011-02-04  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
