@@ -1,3 +1,13 @@
+2011-02-03  Andrew Wason  <rectalogic@rectalogic.com>
+
+        Reviewed by Kenneth Russell.
+
+        Change ENABLE_3D_CANVAS to ENABLE_WEBGL
+        https://bugs.webkit.org/show_bug.cgi?id=53714
+
+        * Scripts/build-webkit: change --3d-canvas build option
+          to set ENABLE_WEBGL
+
 2011-02-03  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Tony Chang.
