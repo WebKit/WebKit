@@ -65861,6 +65861,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\PleaseWaitMessage.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\popover.css"
 					>
 				</File>
@@ -65958,6 +65962,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\ShortcutsHelp.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\ShowMoreDataGridNode.js"
 					>
 				</File>
 				<File

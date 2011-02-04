@@ -1,3 +1,30 @@
+2011-02-04  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Add "show more" data grid node and waiting message UI components.
+        https://bugs.webkit.org/show_bug.cgi?id=53763
+
+        - "show more" data grid node is used for on-demand population of
+        data grid contents (similar to DOM tree capability for limiting
+        displayed nodes count);
+
+        - waiting message is used for informing user about long lasting
+        operations (with a possibility to cancel them).
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/PleaseWaitMessage.js: Added.
+        (WebInspector.PleaseWaitMessage):
+        * inspector/front-end/ShowMoreDataGridNode.js: Added.
+        (WebInspector.ShowMoreDataGridNode):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        (.data-grid button):
+        (.please-wait-msg):
+        * inspector/front-end/inspector.html:
+
 2011-02-04  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dan Bernstein.

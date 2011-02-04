@@ -2085,6 +2085,10 @@ li.selected .base-storage-tree-element-subtitle {
     content: url(Images/treeDownTriangleBlack.png);
 }
 
+.data-grid button {
+    line-height: 19px;
+}
+
 body.inactive .data-grid th.sort-ascending, body.inactive .data-grid th.sort-descending {
     background-image: url(Images/glossyHeader.png);
     border-right: 1px solid rgb(179, 179, 179);
@@ -4308,4 +4312,18 @@ a.worker-item:hover {
 
 .cursor-auto {
     cursor: auto;
+}
+
+.please-wait-msg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    border: 4px black solid;
+    border-radius: 4px;
+    background-color: black;
+    opacity: 0.85;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    z-index: 10000;
 }

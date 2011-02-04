@@ -65,6 +65,7 @@
     <file>Panel.js</file>
     <file>PanelEnablerView.js</file>
     <file>Placard.js</file>
+    <file>PleaseWaitMessage.js</file>
     <file>Popover.js</file>
     <file>ProfileDataGridTree.js</file>
     <file>ProfilesPanel.js</file>
@@ -88,6 +89,7 @@
     <file>Section.js</file>
     <file>Settings.js</file>
     <file>ShortcutsHelp.js</file>
+    <file>ShowMoreDataGridNode.js</file>
     <file>SidebarPane.js</file>
     <file>SidebarTreeElement.js</file>
     <file>SourceCSSTokenizer.js</file>
