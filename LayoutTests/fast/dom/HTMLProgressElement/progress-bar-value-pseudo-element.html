@@ -2,13 +2,13 @@
 <head><script>
 window.onload = function() {
     document.getElementById("toChangeStyle").setAttribute("style", "border:3px red dotted; background-color:cyan;");
-    document.getElementById("toAddStyle").setAttribute("style", "border:3px red dotted; background-color:cyan;");
+    document.getElementById("toAddStyle").setAttribute("style", "border:3px red dotted; background-color:cyan; -webkit-appearance: none;");
 }
 </script>
 <style>
-.styled::-webkit-progress-bar-value {background-color: lightgray;}
+.styled { -webkit-appearance: none; }
+.styled::-webkit-progress-bar-value { background-color: lightgray; }
 #toAddStyle::-webkit-progress-bar-value {background-color:darkblue;}
-.no-appearance {-webkit-appearance: none;}
 </style>
 </head>
 <body>

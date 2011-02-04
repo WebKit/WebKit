@@ -25,11 +25,50 @@
 #include "RenderIndicator.h"
 
 #include "RenderTheme.h"
-#include "ShadowElement.h"
+#include "RenderView.h"
 
 using namespace std;
 
 namespace WebCore {
+
+RenderIndicatorPart::RenderIndicatorPart(Node* node)
+    : RenderBlock(node)
+    , m_originalVisibility(HIDDEN)
+{
+}
+
+RenderIndicatorPart::~RenderIndicatorPart()
+{
+}
+
+void RenderIndicatorPart::layout()
+{
+    RenderBox* parentRenderer = toRenderBox(parent());
+    IntRect oldRect = frameRect();
+    IntRect newRect = preferredFrameRect();
+
+    LayoutStateMaintainer statePusher(parentRenderer->view(), parentRenderer, parentRenderer->size(), parentRenderer->style()->isFlippedBlocksWritingMode());
+
+    if (oldRect.size() != newRect.size())
+        setChildNeedsLayout(true, false);
+    if (needsLayout())
+        RenderBlock::layout();
+    setFrameRect(newRect);
+
+    if (checkForRepaintDuringLayout())
+        repaintDuringLayoutIfMoved(oldRect);
+        
+    statePusher.pop();
+    parentRenderer->addOverflowFromChild(this);
+    style()->setVisibility(shouldBeHidden() ? HIDDEN : originalVisibility());
+}
+
+void RenderIndicatorPart::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    m_originalVisibility = style()->visibility();
+    RenderBlock::styleDidChange(diff, oldStyle);
+}
+
 
 RenderIndicator::RenderIndicator(Node* node)
     : RenderBlock(node)

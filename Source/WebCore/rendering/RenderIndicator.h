@@ -26,6 +26,24 @@
 
 namespace WebCore {
 
+class RenderIndicatorPart : public RenderBlock {
+public:
+    RenderIndicatorPart(Node*);
+    virtual ~RenderIndicatorPart();
+
+protected:
+    EVisibility originalVisibility() const { return m_originalVisibility; }
+    virtual IntRect preferredFrameRect() = 0;
+    virtual bool shouldBeHidden() = 0;
+private:
+    virtual void layout();
+    virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
+    virtual bool canHaveChildren() const { return false; }
+    virtual void styleDidChange(StyleDifference, const RenderStyle*);
+
+    EVisibility m_originalVisibility;
+};
+
 class RenderIndicator : public RenderBlock {
 public:
     RenderIndicator(Node*);

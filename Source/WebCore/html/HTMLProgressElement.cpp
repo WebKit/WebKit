@@ -26,47 +26,17 @@
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "FormDataList.h"
+#include "HTMLDivElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "ProgressBarValueElement.h"
 #include "RenderProgress.h"
-#include "ShadowElement.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
-
-class ProgressBarValueElement : public ShadowBlockElement {
-public:
-    ProgressBarValueElement(HTMLElement* shadowParent) 
-        : ShadowBlockElement(shadowParent)
-    {
-    }
-
-    virtual const AtomicString& shadowPseudoId() const
-    {
-        DEFINE_STATIC_LOCAL(AtomicString, pseudId, ("-webkit-progress-bar-value"));
-        return pseudId;
-    }
-
-    virtual void detach()
-    {
-        // Instead of using setShadowHost() like ShadowBlockElement does,
-        // this class uses setShadowRoot() to unlink mutual shadow-host references.
-        // Note that ShadowBlockElement::detach() should be removed when the
-        // shadow model transition is over. (Bug 53417)
-        if (Element* host = shadowHost())
-            host->setShadowRoot(0);
-        ShadowBlockElement::setShadowHost(0);
-    }
-
-    static PassRefPtr<ProgressBarValueElement> create(HTMLElement* shadowParent)
-    {
-        return adoptRef(new ProgressBarValueElement(shadowParent));
-    }
-
-};
 
 HTMLProgressElement::HTMLProgressElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
     : HTMLFormControlElement(tagName, document, form)
@@ -151,11 +121,6 @@ double HTMLProgressElement::position() const
     return value() / max();
 }
 
-ShadowBlockElement* HTMLProgressElement::valuePart()
-{
-    return static_cast<ShadowBlockElement*>(shadowRoot());
-}
-
 void HTMLProgressElement::didElementStateChange()
 {
     if (renderer())
@@ -166,7 +131,7 @@ void HTMLProgressElement::createShadowSubtreeIfNeeded()
 {
     if (shadowRoot())
         return;
-    setShadowRoot(ProgressBarValueElement::create(this).get());
+    setShadowRoot(ProgressBarValueElement::create(document()).get());
 }
 
 } // namespace

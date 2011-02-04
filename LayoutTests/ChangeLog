@@ -1,3 +1,14 @@
+2011-02-02  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Refactoring: <progress> should not use ShadowElement
+        https://bugs.webkit.org/show_bug.cgi?id=53583
+
+        Updated to catch the change on -webkit-progress-bar-value interpretation.
+
+        * fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element.html:
+
 2011-02-03  Jia Pu  <jpu@apple.com>
 
         Reversion should not be marked as misspelled.

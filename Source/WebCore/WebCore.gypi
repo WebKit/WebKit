@@ -2008,6 +2008,7 @@
             'html/parser/XSSFilter.h',
             'html/shadow/MediaControls.cpp',
             'html/shadow/MediaControls.h',
+            'html/shadow/ProgressBarValueElement.h',
             'html/shadow/SliderThumbElement.cpp',
             'html/shadow/SliderThumbElement.h',
             'inspector/ConsoleMessage.cpp',

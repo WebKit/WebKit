@@ -1,3 +1,47 @@
+2011-02-02  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Refactoring: <progress> should not use ShadowElement
+        https://bugs.webkit.org/show_bug.cgi?id=53583
+
+        - Introduced RenderIndicatorPart and RenderProgressBarValuePart
+          to be responsible for bar-part layout,
+          which adopted layout logic from ShadowBlockElement.
+        - ProgressBarValueElement is no longer a subclass of ShadowBlockElement.
+        - Remove dependency from RenderProgress to HTMLProgressElement and
+          ShadowBlockElement.
+        - The shadow tree is no longer removed on detach(). It becomes persistent.
+          This is now possible because the ShadowBlockElement dependency is gone.
+        - ::-webkit-appearance for -webkit-progress-bar-value is no longer referred.
+          That didn't make sense.
+
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::createShadowSubtreeIfNeeded):
+        * html/HTMLProgressElement.h:
+        * html/shadow/ProgressBarValueElement.h: Added.
+        (WebCore::ProgressBarValueElement::ProgressBarValueElement):
+        (WebCore::ProgressBarValueElement::shadowPseudoId):
+        (WebCore::ProgressBarValueElement::createRenderer):
+        (WebCore::ProgressBarValueElement::create):
+        * rendering/RenderIndicator.cpp:
+        (WebCore::RenderIndicatorPart::RenderIndicatorPart):
+        (WebCore::RenderIndicatorPart::~RenderIndicatorPart):
+        (WebCore::RenderIndicatorPart::layout):
+        (WebCore::RenderIndicatorPart::styleDidChange):
+        * rendering/RenderIndicator.h: Added RenderIndicatorPart class
+        (WebCore::RenderIndicatorPart::originalVisibility):
+        (WebCore::RenderIndicatorPart::requiresForcedStyleRecalcPropagation):
+        (WebCore::RenderIndicatorPart::canHaveChildren):
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgressBarValuePart::preferredFrameRect):
+        (WebCore::RenderProgressBarValuePart::shouldBeHidden):
+        (WebCore::RenderProgress::updateFromElement):
+        (WebCore::RenderProgress::layoutParts):
+        (WebCore::RenderProgress::shouldHaveParts):
+        * rendering/RenderProgress.h:
+        (WebCore::RenderProgressBarValuePart::RenderProgressBarValuePart):
+
 2011-02-03  Jia Pu  <jpu@apple.com>
 
         Reversion should not be marked as misspelled.

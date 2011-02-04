@@ -55689,6 +55689,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\html\shadow\ProgressBarValueElement.h"
+					>
+				</File>
+				<File
 					RelativePath="..\html\shadow\SliderThumbElement.cpp"
 					>
 				</File>
