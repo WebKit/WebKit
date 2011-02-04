@@ -1,3 +1,29 @@
+2011-02-03  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        SerializedScriptValue should not require v8 to create undefined and null values
+        https://bugs.webkit.org/show_bug.cgi?id=53730
+
+        Instead of creating a v8 type and passing that into the constructor, just use
+        the writer class directly. While I was at it, I cleaned up the code a bit too
+        by getting rid of the WireData/StringValue enum as I found that personally
+        confusing.
+
+        This is necessary because these methods are called by IndexedDB in the browser
+        process where v8 is not spun up.
+
+        No functionality changed and not possible to test.
+
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::createFromWire):
+        (WebCore::SerializedScriptValue::create):
+        (WebCore::SerializedScriptValue::nullValue):
+        (WebCore::SerializedScriptValue::undefinedValue):
+        (WebCore::SerializedScriptValue::release):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        * bindings/v8/SerializedScriptValue.h:
+
 2011-02-03  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.

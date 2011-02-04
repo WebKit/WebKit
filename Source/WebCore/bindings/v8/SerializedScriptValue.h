@@ -72,7 +72,7 @@ private:
 
     SerializedScriptValue();
     SerializedScriptValue(v8::Handle<v8::Value>, bool& didThrow);
-    SerializedScriptValue(String data, StringDataMode mode);
+    explicit SerializedScriptValue(String wireData);
 
     String m_data;
 };

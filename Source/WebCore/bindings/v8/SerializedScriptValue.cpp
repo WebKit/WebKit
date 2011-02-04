@@ -1118,12 +1118,15 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(v8::Handle<v8::V
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::createFromWire(String data)
 {
-    return adoptRef(new SerializedScriptValue(data, WireData));
+    return adoptRef(new SerializedScriptValue(data));
 }
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(String data)
 {
-    return adoptRef(new SerializedScriptValue(data, StringValue));
+    Writer writer;
+    writer.writeWebCoreString(data);
+    String wireData = StringImpl::adopt(writer.data());
+    return adoptRef(new SerializedScriptValue(wireData));
 }
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::create()
@@ -1133,19 +1136,31 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::create()
 
 SerializedScriptValue* SerializedScriptValue::nullValue()
 {
-    DEFINE_STATIC_LOCAL(RefPtr<SerializedScriptValue>, nullValue, (SerializedScriptValue::create()));
+    DEFINE_STATIC_LOCAL(RefPtr<SerializedScriptValue>, nullValue, (0));
+    if (!nullValue) {
+        Writer writer;
+        writer.writeNull();
+        String wireData = StringImpl::adopt(writer.data());
+        nullValue = adoptRef(new SerializedScriptValue(wireData));
+    }
     return nullValue.get();
 }
 
 SerializedScriptValue* SerializedScriptValue::undefinedValue()
 {
-    DEFINE_STATIC_LOCAL(RefPtr<SerializedScriptValue>, undefinedValue, (SerializedScriptValue::create(v8::Undefined())));
+    DEFINE_STATIC_LOCAL(RefPtr<SerializedScriptValue>, undefinedValue, (0));
+    if (!undefinedValue) {
+        Writer writer;
+        writer.writeUndefined();
+        String wireData = StringImpl::adopt(writer.data());
+        undefinedValue = adoptRef(new SerializedScriptValue(wireData));
+    }
     return undefinedValue.get();
 }
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::release()
 {
-    RefPtr<SerializedScriptValue> result = adoptRef(new SerializedScriptValue(m_data, WireData));
+    RefPtr<SerializedScriptValue> result = adoptRef(new SerializedScriptValue(m_data));
     m_data = String().crossThreadString();
     return result.release();
 }
@@ -1167,16 +1182,9 @@ SerializedScriptValue::SerializedScriptValue(v8::Handle<v8::Value> value, bool& 
     m_data = String(StringImpl::adopt(writer.data())).crossThreadString();
 }
 
-SerializedScriptValue::SerializedScriptValue(String data, StringDataMode mode)
+SerializedScriptValue::SerializedScriptValue(String wireData)
 {
-    if (mode == WireData)
-        m_data = data.crossThreadString();
-    else {
-        ASSERT(mode == StringValue);
-        Writer writer;
-        writer.writeWebCoreString(data);
-        m_data = String(StringImpl::adopt(writer.data())).crossThreadString();
-    }
+    m_data = wireData.crossThreadString();
 }
 
 v8::Handle<v8::Value> SerializedScriptValue::deserialize()
