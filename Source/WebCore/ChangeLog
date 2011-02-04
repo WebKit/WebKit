@@ -1,3 +1,9 @@
+2011-02-03  Adam Barth  <abarth@webkit.org>
+
+        Attempt to fix Chromium build.
+
+        * html/parser/XSSFilter.cpp:
+
 2011-02-03  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, rolling out r77562.
