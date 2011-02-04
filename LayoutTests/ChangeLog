@@ -1,3 +1,11 @@
+2011-02-04  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
+        Merge in some GPU expectations that got dropped in r77666, get lint to pass.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Add Leopard-specific pixel results for fast/ruby.
