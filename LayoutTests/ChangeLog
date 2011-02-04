@@ -1,3 +1,86 @@
+2011-02-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler and Dave Hyatt.
+
+        <rdar://problem/8902704> Make ruby text size 50% by default
+        https://bugs.webkit.org/show_bug.cgi?id=53723
+
+        * fast/text/emphasis-avoid-ruby-expected.checksum:
+        * fast/text/emphasis-avoid-ruby-expected.png:
+        * fast/text/emphasis-avoid-ruby-expected.txt:
+        * platform/mac/fast/blockflow/Kusa-Makura-background-canvas-expected.checksum:
+        * platform/mac/fast/blockflow/Kusa-Makura-background-canvas-expected.png:
+        * platform/mac/fast/blockflow/Kusa-Makura-background-canvas-expected.txt:
+        * platform/mac/fast/blockflow/box-shadow-horizontal-bt-expected.checksum:
+        * platform/mac/fast/blockflow/box-shadow-horizontal-bt-expected.png:
+        * platform/mac/fast/blockflow/box-shadow-vertical-lr-expected.checksum:
+        * platform/mac/fast/blockflow/box-shadow-vertical-lr-expected.png:
+        * platform/mac/fast/blockflow/box-shadow-vertical-rl-expected.checksum:
+        * platform/mac/fast/blockflow/box-shadow-vertical-rl-expected.png:
+        * platform/mac/fast/blockflow/japanese-ruby-horizontal-bt-expected.checksum:
+        * platform/mac/fast/blockflow/japanese-ruby-horizontal-bt-expected.png:
+        * platform/mac/fast/blockflow/japanese-ruby-horizontal-bt-expected.txt:
+        * platform/mac/fast/blockflow/japanese-ruby-vertical-lr-expected.checksum:
+        * platform/mac/fast/blockflow/japanese-ruby-vertical-lr-expected.png:
+        * platform/mac/fast/blockflow/japanese-ruby-vertical-lr-expected.txt:
+        * platform/mac/fast/blockflow/japanese-ruby-vertical-rl-expected.checksum:
+        * platform/mac/fast/blockflow/japanese-ruby-vertical-rl-expected.png:
+        * platform/mac/fast/blockflow/japanese-ruby-vertical-rl-expected.txt:
+        * platform/mac/fast/ruby/nested-ruby-expected.checksum:
+        * platform/mac/fast/ruby/nested-ruby-expected.png:
+        * platform/mac/fast/ruby/nested-ruby-expected.txt:
+        * platform/mac/fast/ruby/ruby-beforeafter-expected.checksum:
+        * platform/mac/fast/ruby/ruby-beforeafter-expected.png:
+        * platform/mac/fast/ruby/ruby-beforeafter-expected.txt:
+        * platform/mac/fast/ruby/ruby-empty-rt-expected.checksum:
+        * platform/mac/fast/ruby/ruby-empty-rt-expected.png:
+        * platform/mac/fast/ruby/ruby-empty-rt-expected.txt:
+        * platform/mac/fast/ruby/ruby-length-expected.checksum:
+        * platform/mac/fast/ruby/ruby-length-expected.png:
+        * platform/mac/fast/ruby/ruby-length-expected.txt:
+        * platform/mac/fast/ruby/ruby-run-break-expected.checksum:
+        * platform/mac/fast/ruby/ruby-run-break-expected.png:
+        * platform/mac/fast/ruby/ruby-run-break-expected.txt:
+        * platform/mac/fast/ruby/ruby-runs-expected.checksum:
+        * platform/mac/fast/ruby/ruby-runs-expected.png:
+        * platform/mac/fast/ruby/ruby-runs-expected.txt:
+        * platform/mac/fast/ruby/ruby-runs-spans-expected.checksum:
+        * platform/mac/fast/ruby/ruby-runs-spans-expected.png:
+        * platform/mac/fast/ruby/ruby-runs-spans-expected.txt:
+        * platform/mac/fast/ruby/ruby-simple-expected.checksum:
+        * platform/mac/fast/ruby/ruby-simple-expected.png:
+        * platform/mac/fast/ruby/ruby-simple-expected.txt:
+        * platform/mac/fast/ruby/ruby-simple-rp-expected.checksum:
+        * platform/mac/fast/ruby/ruby-simple-rp-expected.png:
+        * platform/mac/fast/ruby/ruby-simple-rp-expected.txt:
+        * platform/mac/fast/ruby/ruby-trailing-expected.checksum:
+        * platform/mac/fast/ruby/ruby-trailing-expected.png:
+        * platform/mac/fast/ruby/ruby-trailing-expected.txt:
+        * platform/mac/fast/ruby/rubyDOM-insert-rt-expected.checksum:
+        * platform/mac/fast/ruby/rubyDOM-insert-rt-expected.png:
+        * platform/mac/fast/ruby/rubyDOM-insert-rt-expected.txt:
+        * platform/mac/fast/ruby/rubyDOM-insert-text1-expected.checksum:
+        * platform/mac/fast/ruby/rubyDOM-insert-text1-expected.png:
+        * platform/mac/fast/ruby/rubyDOM-insert-text1-expected.txt:
+        * platform/mac/fast/ruby/rubyDOM-insert-text2-expected.checksum:
+        * platform/mac/fast/ruby/rubyDOM-insert-text2-expected.png:
+        * platform/mac/fast/ruby/rubyDOM-insert-text2-expected.txt:
+        * platform/mac/fast/ruby/rubyDOM-insert-text3-expected.checksum:
+        * platform/mac/fast/ruby/rubyDOM-insert-text3-expected.png:
+        * platform/mac/fast/ruby/rubyDOM-insert-text3-expected.txt:
+        * platform/mac/fast/ruby/rubyDOM-remove-rt1-expected.checksum:
+        * platform/mac/fast/ruby/rubyDOM-remove-rt1-expected.png:
+        * platform/mac/fast/ruby/rubyDOM-remove-rt1-expected.txt:
+        * platform/mac/fast/ruby/rubyDOM-remove-rt2-expected.checksum:
+        * platform/mac/fast/ruby/rubyDOM-remove-rt2-expected.png:
+        * platform/mac/fast/ruby/rubyDOM-remove-rt2-expected.txt:
+        * platform/mac/fast/ruby/rubyDOM-remove-text1-expected.checksum:
+        * platform/mac/fast/ruby/rubyDOM-remove-text1-expected.png:
+        * platform/mac/fast/ruby/rubyDOM-remove-text1-expected.txt:
+        * platform/mac/fast/ruby/rubyDOM-remove-text2-expected.checksum:
+        * platform/mac/fast/ruby/rubyDOM-remove-text2-expected.png:
+        * platform/mac/fast/ruby/rubyDOM-remove-text2-expected.txt:
+
 2011-02-04  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Dimitri Glazkov.

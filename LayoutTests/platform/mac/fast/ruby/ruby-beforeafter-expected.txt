@@ -7,62 +7,62 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 509x18
           text run at (0,0) width 509: "Tests that CSS-generated :before or :after content doesn't intrude into ruby bases."
       RenderBlock {P} at (0,34) size 784x0
-      RenderBlock (anonymous) at (0,34) size 784x31
-        RenderText {#text} at (0,13) size 29x18
-          text run at (0,13) width 29: "Foo "
-        RenderRuby (inline) {RUBY} at (0,0) size 86x18
+      RenderBlock (anonymous) at (0,34) size 784x28
+        RenderText {#text} at (0,10) size 29x18
+          text run at (0,10) width 29: "Foo "
+        RenderRuby (inline) {RUBY} at (0,0) size 85x18
           RenderInline (generated) at (0,0) size 50x18
-            RenderText at (29,13) size 50x18
-              text run at (29,13) width 50: "[before]"
-          RenderRubyRun (anonymous) at (79,13) size 36x18
-            RenderRubyText {RT} at (0,-13) size 36x13
-              RenderText {#text} at (0,0) size 36x13
-                text run at (0,0) width 36: "long text"
-            RenderRubyBase (anonymous) at (0,0) size 36x18
-              RenderText {#text} at (14,0) size 8x18
-                text run at (14,0) width 8: "b"
-        RenderText {#text} at (115,13) size 27x18
-          text run at (115,13) width 27: " Bar"
-        RenderBR {BR} at (142,27) size 0x0
-      RenderBlock {P} at (0,81) size 784x0
-      RenderBlock {P} at (0,81) size 784x0
-      RenderBlock (anonymous) at (0,81) size 784x31
-        RenderText {#text} at (0,13) size 29x18
-          text run at (0,13) width 29: "Foo "
-        RenderRuby (inline) {RUBY} at (0,0) size 74x18
-          RenderRubyRun (anonymous) at (29,13) size 36x18
-            RenderRubyText {RT} at (0,-13) size 36x13
-              RenderText {#text} at (0,0) size 36x13
-                text run at (0,0) width 36: "long text"
-            RenderRubyBase (anonymous) at (0,0) size 36x18
-              RenderText {#text} at (14,0) size 8x18
-                text run at (14,0) width 8: "b"
+            RenderText at (29,10) size 50x18
+              text run at (29,10) width 50: "[before]"
+          RenderRubyRun (anonymous) at (79,10) size 35x18
+            RenderRubyText {RT} at (0,-10) size 35x10
+              RenderText {#text} at (0,0) size 35x10
+                text run at (0,0) width 35: "long text"
+            RenderRubyBase (anonymous) at (0,0) size 35x18
+              RenderText {#text} at (13,0) size 8x18
+                text run at (13,0) width 8: "b"
+        RenderText {#text} at (114,10) size 27x18
+          text run at (114,10) width 27: " Bar"
+        RenderBR {BR} at (141,24) size 0x0
+      RenderBlock {P} at (0,78) size 784x0
+      RenderBlock {P} at (0,78) size 784x0
+      RenderBlock (anonymous) at (0,78) size 784x28
+        RenderText {#text} at (0,10) size 29x18
+          text run at (0,10) width 29: "Foo "
+        RenderRuby (inline) {RUBY} at (0,0) size 73x18
+          RenderRubyRun (anonymous) at (29,10) size 35x18
+            RenderRubyText {RT} at (0,-10) size 35x10
+              RenderText {#text} at (0,0) size 35x10
+                text run at (0,0) width 35: "long text"
+            RenderRubyBase (anonymous) at (0,0) size 35x18
+              RenderText {#text} at (13,0) size 8x18
+                text run at (13,0) width 8: "b"
           RenderInline (generated) at (0,0) size 38x18
-            RenderText at (65,13) size 38x18
-              text run at (65,13) width 38: "[after]"
-        RenderText {#text} at (103,13) size 27x18
-          text run at (103,13) width 27: " Bar"
-        RenderBR {BR} at (130,27) size 0x0
-      RenderBlock {P} at (0,128) size 784x0
-      RenderBlock {P} at (0,128) size 784x0
-      RenderBlock (anonymous) at (0,128) size 784x31
-        RenderText {#text} at (0,13) size 29x18
-          text run at (0,13) width 29: "Foo "
-        RenderRuby (inline) {RUBY} at (0,0) size 124x18
+            RenderText at (64,10) size 38x18
+              text run at (64,10) width 38: "[after]"
+        RenderText {#text} at (102,10) size 27x18
+          text run at (102,10) width 27: " Bar"
+        RenderBR {BR} at (129,24) size 0x0
+      RenderBlock {P} at (0,122) size 784x0
+      RenderBlock {P} at (0,122) size 784x0
+      RenderBlock (anonymous) at (0,122) size 784x28
+        RenderText {#text} at (0,10) size 29x18
+          text run at (0,10) width 29: "Foo "
+        RenderRuby (inline) {RUBY} at (0,0) size 123x18
           RenderInline (generated) at (0,0) size 50x18
-            RenderText at (29,13) size 50x18
-              text run at (29,13) width 50: "[before]"
-          RenderRubyRun (anonymous) at (79,13) size 36x18
-            RenderRubyText {RT} at (0,-13) size 36x13
-              RenderText {#text} at (0,0) size 36x13
-                text run at (0,0) width 36: "long text"
-            RenderRubyBase (anonymous) at (0,0) size 36x18
-              RenderText {#text} at (14,0) size 8x18
-                text run at (14,0) width 8: "b"
+            RenderText at (29,10) size 50x18
+              text run at (29,10) width 50: "[before]"
+          RenderRubyRun (anonymous) at (79,10) size 35x18
+            RenderRubyText {RT} at (0,-10) size 35x10
+              RenderText {#text} at (0,0) size 35x10
+                text run at (0,0) width 35: "long text"
+            RenderRubyBase (anonymous) at (0,0) size 35x18
+              RenderText {#text} at (13,0) size 8x18
+                text run at (13,0) width 8: "b"
           RenderInline (generated) at (0,0) size 38x18
-            RenderText at (115,13) size 38x18
-              text run at (115,13) width 38: "[after]"
-        RenderText {#text} at (153,13) size 27x18
-          text run at (153,13) width 27: " Bar"
-        RenderBR {BR} at (180,27) size 0x0
-      RenderBlock {P} at (0,175) size 784x0
+            RenderText at (114,10) size 38x18
+              text run at (114,10) width 38: "[after]"
+        RenderText {#text} at (152,10) size 27x18
+          text run at (152,10) width 27: " Bar"
+        RenderBR {BR} at (179,24) size 0x0
+      RenderBlock {P} at (0,166) size 784x0

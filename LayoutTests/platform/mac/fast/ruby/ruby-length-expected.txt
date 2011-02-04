@@ -9,25 +9,25 @@ layer at (0,0) size 800x600
         text run at (36,18) width 291: "and one with a ruby text longer than the base. "
       RenderBR {BR} at (327,32) size 0x0
       RenderBR {BR} at (0,36) size 0x18
-      RenderText {#text} at (0,67) size 155x18
-        text run at (0,67) width 155: "<ruby> is defined in the "
+      RenderText {#text} at (0,64) size 155x18
+        text run at (0,64) width 155: "<ruby> is defined in the "
       RenderRuby (inline) {RUBY} at (0,0) size 184x18
-        RenderRubyRun (anonymous) at (155,67) size 184x18
-          RenderRubyText {RT} at (0,-13) size 184x13
-            RenderText {#text} at (75,0) size 33x13
-              text run at (75,0) width 33: "HTML5"
+        RenderRubyRun (anonymous) at (155,64) size 184x18
+          RenderRubyText {RT} at (0,-10) size 184x10
+            RenderText {#text} at (77,0) size 29x10
+              text run at (77,0) width 29: "HTML5"
           RenderRubyBase (anonymous) at (0,0) size 184x18
             RenderText {#text} at (0,0) size 184x18
               text run at (0,0) width 184: "Hypertext Markup Language"
-      RenderText {#text} at (339,67) size 31x18
-        text run at (339,67) width 31: " and "
-      RenderRuby (inline) {RUBY} at (0,0) size 94x18
-        RenderRubyRun (anonymous) at (370,67) size 94x18
-          RenderRubyText {RT} at (0,-13) size 94x13
-            RenderText {#text} at (0,0) size 94x13
-              text run at (0,0) width 94: "Cascading Style Sheets"
-          RenderRubyBase (anonymous) at (0,0) size 94x18
-            RenderText {#text} at (28,0) size 37x18
-              text run at (28,0) width 37: "CSS3"
-      RenderText {#text} at (464,67) size 42x18
-        text run at (464,67) width 42: " specs."
+      RenderText {#text} at (339,64) size 31x18
+        text run at (339,64) width 31: " and "
+      RenderRuby (inline) {RUBY} at (0,0) size 89x18
+        RenderRubyRun (anonymous) at (370,64) size 89x18
+          RenderRubyText {RT} at (0,-10) size 89x10
+            RenderText {#text} at (0,0) size 89x10
+              text run at (0,0) width 89: "Cascading Style Sheets"
+          RenderRubyBase (anonymous) at (0,0) size 89x18
+            RenderText {#text} at (26,0) size 37x18
+              text run at (26,0) width 37: "CSS3"
+      RenderText {#text} at (459,64) size 42x18
+        text run at (459,64) width 42: " specs."

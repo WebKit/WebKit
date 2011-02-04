@@ -824,7 +824,7 @@ rt {
 
 ruby > rt {
     display: block;
-    font-size: 60%; /* make slightly larger than 50% for better readability */
+    font-size: 50%;
     text-align: center;
 }
 

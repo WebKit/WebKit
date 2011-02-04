@@ -1,3 +1,13 @@
+2011-02-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler and Dave Hyatt.
+
+        <rdar://problem/8902704> Make ruby text size 50% by default
+        https://bugs.webkit.org/show_bug.cgi?id=53723
+
+        * css/html.css:
+        (ruby > rt): Changed the font-size from 60% to 50%.
+
 2011-02-04  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Dimitri Glazkov.
