@@ -84,7 +84,6 @@ class TestThread(threading.Thread):
 
     def next_timeout(self):
         if self._timeout:
-            self._timeout_queue.put('done')
             return time.time() - 10
         return time.time()
 
