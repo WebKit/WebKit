@@ -1,3 +1,18 @@
+2011-02-04  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Assertion failure in WebInspectorProxy::platformClose closing main window when inspecting a popup 
+        window, or when running regression tests.
+        https://bugs.webkit.org/show_bug.cgi?id=53798
+        <rdar://problem/8814364>
+        
+        Only assert about the state of m_inspectorWindow and m_inspectorView if the inspector is visible.
+        Also, only call ::DestroyWindow if the HWND is non-null, just to be safe.
+
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::platformClose):
+
 2011-02-04  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

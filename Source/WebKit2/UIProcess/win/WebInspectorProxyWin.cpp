@@ -172,10 +172,13 @@ void WebInspectorProxy::platformOpen()
 
 void WebInspectorProxy::platformClose()
 {
-    ASSERT(m_inspectorWindow);
-    ASSERT(m_inspectorView);
+    ASSERT(!m_isVisible || m_inspectorWindow);
+    ASSERT(!m_isVisible || m_inspectorView);
 
-    ::DestroyWindow(m_inspectorWindow);
+    if (m_inspectorWindow) {
+        ASSERT(::IsWindow(m_inspectorWindow));
+        ::DestroyWindow(m_inspectorWindow);
+    }
 
     m_inspectorWindow = 0;
     m_inspectorView = 0;
