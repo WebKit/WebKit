@@ -93,8 +93,12 @@ void SVGDocumentExtensions::startAnimations()
     // FIXME: Eventually every "Time Container" will need a way to latch on to some global timer
     // starting animations for a document will do this "latching"
 #if ENABLE(SVG_ANIMATION)    
-    HashSet<SVGSVGElement*>::iterator end = m_timeContainers.end();
-    for (HashSet<SVGSVGElement*>::iterator itr = m_timeContainers.begin(); itr != end; ++itr)
+    // FIXME: We hold a ref pointers to prevent a shadow tree from getting removed out from underneath us.
+    // In the future we should refactor the use-element to avoid this. See https://webkit.org/b/53704
+    Vector<RefPtr<SVGSVGElement> > timeContainers;
+    timeContainers.appendRange(m_timeContainers.begin(), m_timeContainers.end());
+    Vector<RefPtr<SVGSVGElement> >::iterator end = timeContainers.end();
+    for (Vector<RefPtr<SVGSVGElement> >::iterator itr = timeContainers.begin(); itr != end; ++itr)
         (*itr)->timeContainer()->begin();
 #endif
 }

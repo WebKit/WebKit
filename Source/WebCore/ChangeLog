@@ -1,3 +1,15 @@
+2011-02-03  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Dirk Schulze.
+
+        startAnimations should use a local, RefCounted Vector.
+        https://bugs.webkit.org/show_bug.cgi?id=53458
+
+        Test: svg/custom/use-animation-in-fill.html
+
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::startAnimations):
+
 2011-02-03  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Daniel Bates.
