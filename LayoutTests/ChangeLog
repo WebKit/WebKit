@@ -1,3 +1,21 @@
+2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Update Leopard baselines for fast/blockflow, this time correctly.
+
+        * platform/mac-leopard/fast/blockflow/Kusa-Makura-background-canvas-expected.checksum:
+        * platform/mac-leopard/fast/blockflow/Kusa-Makura-background-canvas-expected.png:
+        * platform/mac-leopard/fast/blockflow/Kusa-Makura-background-canvas-expected.txt: Removed.
+        * platform/mac-leopard/fast/blockflow/fieldsets-expected.png:
+        * platform/mac-leopard/fast/blockflow/japanese-ruby-horizontal-bt-expected.checksum: Removed.
+        * platform/mac-leopard/fast/blockflow/japanese-ruby-horizontal-bt-expected.png: Removed.
+        * platform/mac-leopard/fast/blockflow/japanese-ruby-horizontal-bt-expected.txt: Removed.
+        * platform/mac-leopard/fast/blockflow/japanese-ruby-vertical-lr-expected.checksum:
+        * platform/mac-leopard/fast/blockflow/japanese-ruby-vertical-lr-expected.png:
+        * platform/mac-leopard/fast/blockflow/japanese-ruby-vertical-lr-expected.txt: Removed.
+        * platform/mac-leopard/fast/blockflow/japanese-ruby-vertical-rl-expected.checksum:
+        * platform/mac-leopard/fast/blockflow/japanese-ruby-vertical-rl-expected.png:
+        * platform/mac-leopard/fast/blockflow/japanese-ruby-vertical-rl-expected.txt: Removed.
+
 2011-02-04  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change.
