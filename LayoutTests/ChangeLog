@@ -1,3 +1,9 @@
+2011-02-03  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed, simple qt test baseline.
+
+        * platform/qt/fast/overflow/overflow-height-float-not-removed-crash-expected.txt: Added.
+
 2011-02-02  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.
