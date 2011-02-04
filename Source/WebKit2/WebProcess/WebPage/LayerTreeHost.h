@@ -30,6 +30,8 @@
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
+    class IntRect;
+    class IntSize;
     class GraphicsLayer;
 }
 
@@ -47,6 +49,10 @@ public:
     virtual void scheduleLayerFlush() = 0;
     virtual void invalidate() = 0;
 
+    virtual void setNonCompositedContentsNeedDisplayInRect(const WebCore::IntRect&) = 0;
+    virtual void scrollNonCompositedContents(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset) = 0;
+    virtual void sizeDidChange(const WebCore::IntSize& newSize) = 0;
+    
 protected:
     explicit LayerTreeHost(WebPage*);
 

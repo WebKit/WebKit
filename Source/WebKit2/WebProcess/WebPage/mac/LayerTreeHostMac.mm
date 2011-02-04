@@ -28,11 +28,16 @@
 
 #import "WebPage.h"
 #import "WebProcess.h"
+#import <QuartzCore/CATransaction.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/Page.h>
 #import <WebCore/Settings.h>
 #import <WebKitSystemInterface.h>
+
+@interface CATransaction (Details)
++ (void)synchronize;
+@end
 
 using namespace WebCore;
 
@@ -58,8 +63,20 @@ LayerTreeHostMac::LayerTreeHostMac(WebPage* webPage, GraphicsLayer* graphicsLaye
     m_rootLayer->setDrawsContent(false);
     m_rootLayer->setSize(webPage->size());
 
+    [m_rootLayer->platformLayer() setGeometryFlipped:YES];
+
+    m_nonCompositedContentLayer = GraphicsLayer::create(this);
+#ifndef NDEBUG
+    m_nonCompositedContentLayer->setName("LayerTreeHost non-composited content");
+#endif
+    m_nonCompositedContentLayer->setDrawsContent(true);
+    m_nonCompositedContentLayer->setContentsOpaque(m_webPage->drawsBackground() && !m_webPage->drawsTransparentBackground());
+    m_nonCompositedContentLayer->setSize(webPage->size());
+
+    m_rootLayer->addChild(m_nonCompositedContentLayer.get());
+
     // Add the accelerated layer tree hierarchy.
-    m_rootLayer->addChild(graphicsLayer);
+    m_nonCompositedContentLayer->addChild(graphicsLayer);
     
     WKCARemoteLayerClientSetLayer(m_remoteLayerClient.get(), m_rootLayer->platformLayer());
 
@@ -114,6 +131,29 @@ void LayerTreeHostMac::invalidate()
     m_isValid = false;
 }
 
+void LayerTreeHostMac::setNonCompositedContentsNeedDisplayInRect(const IntRect& rect)
+{
+    m_nonCompositedContentLayer->setNeedsDisplayInRect(rect);
+    scheduleLayerFlush();
+}
+
+void LayerTreeHostMac::scrollNonCompositedContents(const IntRect& scrollRect, const IntSize& scrollOffset)
+{
+    setNonCompositedContentsNeedDisplayInRect(scrollRect);
+}
+
+void LayerTreeHostMac::sizeDidChange(const IntSize& newSize)
+{
+    m_rootLayer->setSize(newSize);
+    m_nonCompositedContentLayer->setSize(newSize);
+
+    scheduleLayerFlush();
+    flushPendingLayerChanges();
+
+    [CATransaction flush];
+    [CATransaction synchronize];
+}
+
 void LayerTreeHostMac::notifyAnimationStarted(const WebCore::GraphicsLayer*, double time)
 {
 }
@@ -124,6 +164,8 @@ void LayerTreeHostMac::notifySyncRequired(const WebCore::GraphicsLayer*)
 
 void LayerTreeHostMac::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const IntRect& clipRect)
 {
+    ASSERT(graphicsLayer == m_nonCompositedContentLayer);
+    m_webPage->drawRect(graphicsContext, clipRect);
 }
 
 bool LayerTreeHostMac::showDebugBorders() const
@@ -143,6 +185,14 @@ void LayerTreeHostMac::flushPendingLayerChangesRunLoopObserverCallback(CFRunLoop
 
 void LayerTreeHostMac::flushPendingLayerChangesRunLoopObserverCallback()
 {
+    {
+        RefPtr<LayerTreeHostMac> protect(this);
+        m_webPage->layoutIfNeeded();
+
+        if (!m_isValid)
+            return;
+    }
+
     if (!flushPendingLayerChanges())
         return;
 
@@ -155,6 +205,7 @@ void LayerTreeHostMac::flushPendingLayerChangesRunLoopObserverCallback()
 bool LayerTreeHostMac::flushPendingLayerChanges()
 {
     m_rootLayer->syncCompositingStateForThisLayerOnly();
+    m_nonCompositedContentLayer->syncCompositingStateForThisLayerOnly();
 
     return m_webPage->corePage()->mainFrame()->view()->syncCompositingStateIncludingSubframes();
 }

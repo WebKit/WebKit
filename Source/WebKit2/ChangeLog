@@ -2,6 +2,48 @@
 
         Reviewed by Sam Weinig.
 
+        Paint non-composited contents in a layer
+        https://bugs.webkit.org/show_bug.cgi?id=53742
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::setNeedsDisplay):
+        Call LayerTreeHost::setNonCompositedContentsNeedDisplayInRect.
+
+        (WebKit::DrawingAreaImpl::scroll):
+        Call LayerTreeHost::scrollNonCompositedContents.
+
+        (WebKit::DrawingAreaImpl::setSize):
+        Call LayerTreeHost::sizeDidChange.
+
+        * WebProcess/WebPage/LayerTreeHost.h:
+        Add new pure virtual member functions.
+
+        * WebProcess/WebPage/mac/LayerTreeHostMac.mm:
+        (WebKit::LayerTreeHostMac::LayerTreeHostMac):
+        Create the non-composited content layer.
+
+        (WebKit::LayerTreeHostMac::setNonCompositedContentsNeedDisplayInRect):
+        Call setNeedsDisplay on the GraphicsLayer.
+
+        (WebKit::LayerTreeHostMac::scrollNonCompositedContents):
+        Just call setNonCompositedContentsNeedDisplayInRect.
+
+        (WebKit::LayerTreeHostMac::sizeDidChange):
+        Resize the layers and flush any changes.
+        
+        (WebKit::LayerTreeHostMac::paintContents):
+        Call WebPage::drawRect.
+
+        (WebKit::LayerTreeHostMac::flushPendingLayerChangesRunLoopObserverCallback):
+        Lay out the web page.
+
+        (WebKit::LayerTreeHostMac::flushPendingLayerChanges):
+        Call syncCompositingStateForThisLayerOnly on the non-composited content layer.
+
+2011-02-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         When in accelerated compositing mode, wait for DidSetSize messages
         https://bugs.webkit.org/show_bug.cgi?id=53736
 

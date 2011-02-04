@@ -49,6 +49,10 @@ private:
     virtual void scheduleLayerFlush();
     virtual void invalidate();
 
+    virtual void setNonCompositedContentsNeedDisplayInRect(const WebCore::IntRect&);
+    virtual void scrollNonCompositedContents(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
+    virtual void sizeDidChange(const WebCore::IntSize& newSize);
+
     // GraphicsLayerClient
     virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time);
     virtual void notifySyncRequired(const WebCore::GraphicsLayer*);
@@ -68,6 +72,9 @@ private:
 
     // The root layer.
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
+
+    // The layer which contains all non-composited content.
+    OwnPtr<WebCore::GraphicsLayer> m_nonCompositedContentLayer;
 
     RetainPtr<WKCARemoteLayerClientRef> m_remoteLayerClient;
     RetainPtr<CFRunLoopObserverRef> m_flushPendingLayerChangesRunLoopObserver;

@@ -75,7 +75,7 @@ void DrawingAreaImpl::setNeedsDisplay(const IntRect& rect)
     if (m_layerTreeHost) {
         ASSERT(m_dirtyRegion.isEmpty());
 
-        // FIXME: Ask the layer tree host to repaint non-composited content.
+        m_layerTreeHost->setNonCompositedContentsNeedDisplayInRect(rect);
         return;
     }
     
@@ -90,7 +90,7 @@ void DrawingAreaImpl::scroll(const IntRect& scrollRect, const IntSize& scrollOff
         ASSERT(m_scrollOffset.isEmpty());
         ASSERT(m_dirtyRegion.isEmpty());
 
-        // FIXME: Ask the layer tree host to do the scroll.
+        m_layerTreeHost->scrollNonCompositedContents(scrollRect, scrollOffset);
         return;
     }
 
@@ -185,8 +185,10 @@ void DrawingAreaImpl::setSize(const IntSize& size)
     UpdateInfo updateInfo;
     LayerTreeContext layerTreeContext;
 
-    if (m_layerTreeHost)
+    if (m_layerTreeHost) {
+        m_layerTreeHost->sizeDidChange(size);
         layerTreeContext = m_layerTreeHost->layerTreeContext();
+    }
 
     if (m_isPaintingSuspended || m_layerTreeHost) {
         updateInfo.viewSize = m_webPage->size();
