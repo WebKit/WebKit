@@ -68,14 +68,9 @@ void DrawingAreaProxyImpl::paint(BackingStore::PlatformGraphicsContext context, 
     ASSERT(!isInAcceleratedCompositingMode());
 
     if (m_isWaitingForDidSetSize) {
-        if (!m_webPageProxy->isValid())
-            return;
-        if (m_webPageProxy->process()->isLaunching())
-            return;
-
-        // The timeout, in seconds, we use when waiting for a DidSetSize message when we're asked to paint.
-        static const double didSetSizeTimeout = 0.5;
-        m_webPageProxy->process()->connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidSetSize>(m_webPageProxy->pageID(), didSetSizeTimeout);
+        // Wait for a DidSetSize message that contains the new bits before we paint
+        // what's currently in the backing store.
+        waitForAndDispatchDidSetSize();
     }
 
     // Dispatching DidSetSize could change the compositing mode, return if that happens.
@@ -228,6 +223,26 @@ void DrawingAreaProxyImpl::sendSetSize()
 
     m_isWaitingForDidSetSize = true;
     m_webPageProxy->process()->send(Messages::DrawingArea::SetSize(m_size), m_webPageProxy->pageID());
+
+    if (!m_layerTreeContext.isEmpty()) {
+        // Wait for the DidSetSize message. Normally we don this in DrawingAreaProxyImpl::paint, but that
+        // function is never called when in accelerated compositing mode.
+        waitForAndDispatchDidSetSize();
+    }
+}
+
+void DrawingAreaProxyImpl::waitForAndDispatchDidSetSize()
+{
+    ASSERT(m_isWaitingForDidSetSize);
+
+    if (!m_webPageProxy->isValid())
+        return;
+    if (m_webPageProxy->process()->isLaunching())
+        return;
+    
+    // The timeout, in seconds, we use when waiting for a DidSetSize message when we're asked to paint.
+    static const double didSetSizeTimeout = 0.5;
+    m_webPageProxy->process()->connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidSetSize>(m_webPageProxy->pageID(), didSetSizeTimeout);
 }
 
 void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)

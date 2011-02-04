@@ -62,6 +62,7 @@ private:
 
     void incorporateUpdate(const UpdateInfo&);
     void sendSetSize();
+    void waitForAndDispatchDidSetSize();
 
     void enterAcceleratedCompositingMode(const LayerTreeContext&);
     void exitAcceleratedCompositingMode();
