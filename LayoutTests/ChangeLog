@@ -1,3 +1,11 @@
+2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Added SL-specific result for the test and put back the original result that
+        I've neglected to do in r77539.
+
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.txt: Added.
+        * platform/mac/svg/text/font-size-below-point-five-expected.txt: Added.
+
 2011-02-03  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Dirk Schulze.
