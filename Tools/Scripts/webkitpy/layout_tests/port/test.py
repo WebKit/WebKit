@@ -184,6 +184,9 @@ WONTFIX SKIP : failures/expected/keyboard.html = CRASH
 WONTFIX SKIP : failures/expected/exception.html = CRASH
 """
 
+    # Add in a file should be ignored by test_files.find().
+    files[LAYOUT_TEST_DIR + 'userscripts/resources/iframe.html'] = 'iframe'
+
     fs = filesystem_mock.MockFileSystem(files)
     fs._tests = test_list
     return fs

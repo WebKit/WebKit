@@ -26,50 +26,75 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import sys
 import unittest
 
-import base
+from webkitpy.layout_tests.port import test
 import test_files
-
 
 class TestFilesTest(unittest.TestCase):
     def test_find_no_paths_specified(self):
-        port = base.Port()
+        port = test.TestPort()
         layout_tests_dir = port.layout_tests_dir()
-        port.layout_tests_dir = lambda: port._filesystem.join(layout_tests_dir,
-                                                              'fast', 'html')
         tests = test_files.find(port, [])
-        self.assertNotEqual(tests, 0)
+        self.assertNotEqual(len(tests), 0)
 
     def test_find_one_test(self):
-        port = base.Port()
-        # This is just a test picked at random but known to exist.
-        tests = test_files.find(port, ['fast/html/keygen.html'])
+        port = test.TestPort()
+        tests = test_files.find(port, ['failures/expected/image.html'])
         self.assertEqual(len(tests), 1)
 
     def test_find_glob(self):
-        port = base.Port()
-        tests = test_files.find(port, ['fast/html/key*'])
-        self.assertEqual(len(tests), 1)
+        port = test.TestPort()
+        tests = test_files.find(port, ['failures/expected/im*'])
+        self.assertEqual(len(tests), 2)
 
     def test_find_with_skipped_directories(self):
-        port = base.Port()
+        port = test.TestPort()
         tests = port.tests('userscripts')
-        self.assertTrue('userscripts/resources/frame1.html' not in tests)
+        self.assertTrue('userscripts/resources/iframe.html' not in tests)
 
     def test_find_with_skipped_directories_2(self):
-        port = base.Port()
+        port = test.TestPort()
         tests = test_files.find(port, ['userscripts/resources'])
         self.assertEqual(tests, set([]))
 
     def test_is_test_file(self):
-        port = base.Port()
+        port = test.TestPort()
         fs = port._filesystem
         self.assertTrue(test_files._is_test_file(fs, '', 'foo.html'))
         self.assertTrue(test_files._is_test_file(fs, '', 'foo.shtml'))
         self.assertFalse(test_files._is_test_file(fs, '', 'foo.png'))
         self.assertFalse(test_files._is_test_file(fs, '', 'foo-expected.html'))
         self.assertFalse(test_files._is_test_file(fs, '', 'foo-expected-mismatch.html'))
+
+
+class MockWinFileSystem(object):
+    def join(self, *paths):
+        return '\\'.join(paths)
+
+    def normpath(self, path):
+        return path.replace('/', '\\')
+
+
+class TestWinNormalize(unittest.TestCase):
+    def assert_filesystem_normalizes(self, filesystem):
+        self.assertEquals(test_files.normalize(filesystem, "c:\\foo",
+            ['fast/html', 'fast/canvas/*', 'compositing/foo.html']),
+            ['c:\\foo\\fast\html', 'c:\\foo\\fast\canvas\*', 'c:\\foo\compositing\\foo.html'])
+
+    def test_mocked_win(self):
+        # This tests test_files.normalize, using portable behavior emulating
+        # what we think Windows is supposed to do. This test will run on all
+        # platforms.
+        self.assert_filesystem_normalizes(MockWinFileSystem())
+
+    def test_win(self):
+        # This tests the actual windows platform, to ensure we get the same
+        # results that we get in test_forward_subpath().
+        if sys.platform != 'win':
+            return
+        self.assert_filesystem_normalizes(FileSystem())
 
 
 if __name__ == '__main__':

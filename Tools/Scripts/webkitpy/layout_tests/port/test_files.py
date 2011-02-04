@@ -49,37 +49,47 @@ _supported_file_extensions = set(['.html', '.shtml', '.xml', '.xhtml', '.xhtmlmp
 _skipped_directories = set(['.svn', '_svn', 'resources', 'script-tests'])
 
 
-def find(port, paths):
-    """Finds the set of tests under port.layout_tests_dir().
+def find(port, paths=None):
+    """Finds the set of tests under a given list of sub-paths.
 
     Args:
-      paths: a list of command line paths relative to the layout_tests_dir()
-          to limit the search to. glob patterns are ok.
+      paths: a list of path expressions relative to port.layout_tests_dir()
+          to search. Glob patterns are ok, as are path expressions with
+          forward slashes on Windows. If paths is empty, we look at
+          everything under the layout_tests_dir().
     """
+    paths = paths or ['*']
     fs = port._filesystem
+    return normalized_find(fs, normalize(fs, port.layout_tests_dir(), paths))
+
+
+def normalize(fs, base_dir, paths):
+    return [fs.normpath(fs.join(base_dir, path)) for path in paths]
+
+
+def normalized_find(filesystem, paths):
+    """Finds the set of tests under the list of paths.
+
+    Args:
+      paths: a list of absolute path expressions to search.
+          Glob patterns are ok.
+    """
     gather_start_time = time.time()
     paths_to_walk = set()
 
-    # if paths is empty, provide a pre-defined list.
-    if paths:
-        _log.debug("Gathering tests from: %s relative to %s" % (paths, port.layout_tests_dir()))
-        for path in paths:
-            # If there's an * in the name, assume it's a glob pattern.
-            path = fs.join(port.layout_tests_dir(), path)
-            if path.find('*') > -1:
-                filenames = fs.glob(path)
-                paths_to_walk.update(filenames)
-            else:
-                paths_to_walk.add(path)
-    else:
-        _log.debug("Gathering tests from: %s" % port.layout_tests_dir())
-        paths_to_walk.add(port.layout_tests_dir())
+    for path in paths:
+        # If there's an * in the name, assume it's a glob pattern.
+        if path.find('*') > -1:
+            filenames = filesystem.glob(path)
+            paths_to_walk.update(filenames)
+        else:
+            paths_to_walk.add(path)
 
     # FIXME: I'm not sure there's much point in this being a set. A list would
     # probably be faster.
     test_files = set()
     for path in paths_to_walk:
-        files = fs.files_under(path, _skipped_directories, _is_test_file)
+        files = filesystem.files_under(path, _skipped_directories, _is_test_file)
         test_files.update(set(files))
 
     gather_time = time.time() - gather_start_time

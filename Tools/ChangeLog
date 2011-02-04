@@ -1,3 +1,25 @@
+2011-02-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        new-run-webkit-tests: fix normalization of paths on windows when gathering files
+
+        r77434 introduced a bug that was causing the test expectations
+        for the GPU ports to not be treated properly. It turns out that
+        when we gathered the list of test files on Windows, we would
+        return paths of the form "c:\LayoutTests/fast/canvas", and the
+        mixture of backslashes and forward slashes was confusing things.
+
+        This patch normalizes all of the filenames returned from
+        test_files.find(), and adds better tests for this (fixing a
+        couple of other bugs found in the meantime).
+
+        https://bugs.webkit.org/show_bug.cgi?id=53720
+
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/port/test_files.py:
+        * Scripts/webkitpy/layout_tests/port/test_files_unittest.py:
+
 2011-02-03  Adam Roben  <aroben@apple.com>
 
         Add links to Windows crash logs in results.html
