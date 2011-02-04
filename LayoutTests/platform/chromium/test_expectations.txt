@@ -2732,10 +2732,6 @@ BUGCR50282 MAC : fast/images/imagemap-focus-ring-outline-color-not-inherited-fro
 BUGCR50282 WIN LINUX : fast/images/imagemap-focus-ring-outline-color.html = IMAGE+TEXT
 BUGCR50282 MAC : fast/images/imagemap-focus-ring-outline-color.html = IMAGE
 
-// Started to flake since http://src.chromium.org/viewvc/chrome?view=rev&revision=66937
-// (72440; 72514] range
-BUGCR64952 LINUX : fast/ruby/nested-ruby.html = IMAGE
-
 // Selection is wrong.
 BUGCR64938 : editing/selection/5354455-1.html = TEXT
 
@@ -2805,7 +2801,7 @@ BUGWK49406 MAC : svg/animations/animVal-basics.html = TIMEOUT
 
 // Not investigated.
 BUG_DRT LINUX : animations/suspend-resume-animation-events.html = CRASH PASS
-BUG_DRT MAC LINUX : fast/css/line-height-determined-by-primary-font.html = IMAGE
+BUG_DRT MAC : fast/css/line-height-determined-by-primary-font.html = IMAGE
 BUG_DRT MAC : fast/dom/Window/Plug-ins.html = TIMEOUT PASS
 BUG_DRT MAC : fast/dom/Window/alert-undefined.html = TIMEOUT PASS
 BUG_DRT MAC : fast/dom/beforeload/script-before-load-dynamic.html = TIMEOUT PASS
@@ -2828,7 +2824,6 @@ BUG_DRT LINUX : fast/text/justification-padding-mid-word.html = PASS CRASH
 BUG_DRT MAC LINUX : http/tests/plugins/post-url-file.html = TIMEOUT
 BUG_DRT BUGCR8729 MAC LINUX : http/tests/multipart/invalid-image-data.html = IMAGE PASS
 BUG_DRT MAC : media/video-poster.html = TEXT PASS
-BUG_DRT LINUX : platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle.html = IMAGE+TEXT
 // Crashes with DRT and is a text failure with TestShell
 BUG_DRT : platform/gtk/fast/forms/menulist-typeahead-find.html = CRASH TEXT
 BUG_DRT : storage/domstorage/quota.html = TEXT
@@ -2976,9 +2971,6 @@ BUGCR69181 : fast/js/large-expressions.html = FAIL
 
 // Flaky on Linux since r75250
 BUGCR69300 LINUX : svg/batik/text/textOnPath.svg = IMAGE PASS
-
-// Test added in r75567
-BUGWK52266 WIN : plugins/no-mime-with-valid-extension.html = TEXT
 
 // Flaky since r75548; transformed character is occasionally corrupt
 BUGCR69411 LINUX : svg/custom/linking-a-03-b-transform.svg = IMAGE PASS
