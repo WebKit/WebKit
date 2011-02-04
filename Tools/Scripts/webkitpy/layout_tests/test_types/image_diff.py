@@ -85,7 +85,7 @@ class ImageDiff(test_type_base.TestTypeBase):
                                              self.FILENAME_SUFFIX_COMPARE)
         return port.diff_image(actual_image, expected_image, diff_filename)
 
-    def compare_output(self, port, filename, test_args, actual_driver_output,
+    def compare_output(self, port, filename, options, actual_driver_output,
                        expected_driver_output):
         """Implementation of CompareOutput that checks the output image and
         checksum against the expected files from the LayoutTest directory.
@@ -97,10 +97,10 @@ class ImageDiff(test_type_base.TestTypeBase):
             return failures
 
         # If we're generating a new baseline, we pass.
-        if test_args.new_baseline or test_args.reset_results:
+        if options.new_baseline or options.reset_results:
             self._save_baseline_files(filename, actual_driver_output.image,
                                       actual_driver_output.image_hash,
-                                      test_args.new_baseline)
+                                      options.new_baseline)
             return failures
 
         if not expected_driver_output.image:

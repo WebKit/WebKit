@@ -82,7 +82,7 @@ class SingleTestThread(threading.Thread):
     """Thread wrapper for running a single test file."""
 
     def __init__(self, port, options, worker_number, worker_name,
-                 test_input, test_types, test_args):
+                 test_input, test_types):
         """
         Args:
           port: object implementing port-specific hooks
@@ -92,7 +92,6 @@ class SingleTestThread(threading.Thread):
           test_input: Object containing the test filename and timeout
           test_types: A list of TestType objects to run the test output
               against.
-          test_args: A TestArguments object to pass to each TestType.
         """
 
         threading.Thread.__init__(self)
@@ -100,7 +99,6 @@ class SingleTestThread(threading.Thread):
         self._options = options
         self._test_input = test_input
         self._test_types = test_types
-        self._test_args = test_args
         self._driver = None
         self._worker_number = worker_number
         self._name = worker_name
@@ -115,7 +113,7 @@ class SingleTestThread(threading.Thread):
         self._driver.start()
         self._test_result = single_test_runner.run_single_test(
             self._port, self._options, self._test_input, self._driver,
-            self._name, self._test_types, self._test_args)
+            self._name, self._test_type)
         self._driver.stop()
 
     def get_test_result(self):
@@ -194,7 +192,6 @@ class TestShellThread(WatchableThread):
         for cls in self._get_test_type_classes():
             self._test_types.append(cls(self._port,
                                         self._options.results_directory))
-        self._test_args = self._get_test_args(worker_number)
 
         # Current group of tests we're running.
         self._current_group = None
@@ -202,14 +199,6 @@ class TestShellThread(WatchableThread):
         self._num_tests_in_current_group = None
         # Time at which we started running tests from self._current_group.
         self._current_group_start_time = None
-
-    def _get_test_args(self, worker_number):
-        """Returns the tuple of arguments for tests and for DumpRenderTree."""
-        test_args = test_type_base.TestArguments()
-        test_args.new_baseline = self._options.new_baseline
-        test_args.reset_results = self._options.reset_results
-
-        return test_args
 
     def _get_test_type_classes(self):
         classes = [text_diff.TestTextDiff]
@@ -389,8 +378,7 @@ class TestShellThread(WatchableThread):
                                   self._worker_number,
                                   self._name,
                                   test_input,
-                                  self._test_types,
-                                  self._test_args)
+                                  self._test_types)
 
         worker.start()
 
@@ -435,7 +423,7 @@ class TestShellThread(WatchableThread):
         self._next_timeout = time.time() + thread_timeout
         test_result = single_test_runner.run_single_test(
             self._port, self._options, test_input, self._driver, self._name,
-            self._test_types, self._test_args)
+            self._test_types)
         self._test_results.append(test_result)
         return test_result
 

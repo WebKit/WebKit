@@ -39,9 +39,9 @@ from webkitpy.layout_tests.layout_package.test_results import TestResult
 _log = logging.getLogger(__name__)
 
 
-def run_single_test(port, options, test_input, driver, worker_name, test_types, test_args):
+def run_single_test(port, options, test_input, driver, worker_name, test_types):
     # FIXME: Pull this into TestShellThread._run().
-    runner = SingleTestRunner(options, port, driver, test_input, worker_name, test_types, test_args)
+    runner = SingleTestRunner(options, port, driver, test_input, worker_name, test_types)
     return runner.run()
 
 
@@ -55,7 +55,7 @@ class ExpectedDriverOutput:
 
 class SingleTestRunner:
 
-    def __init__(self, options, port, driver, test_input, worker_name, test_types, test_args):
+    def __init__(self, options, port, driver, test_input, worker_name, test_types):
         self._options = options
         self._port = port
         self._driver = driver
@@ -63,7 +63,6 @@ class SingleTestRunner:
         self._timeout = test_input.timeout
         self._worker_name = worker_name
         self._test_types = test_types
-        self._test_args = test_args
         self._testname = port.relative_test_filename(test_input.filename)
 
     def _expected_driver_output(self):
@@ -123,9 +122,9 @@ class SingleTestRunner:
         time_for_diffs = {}
         for test_type in self._test_types:
             start_diff_time = time.time()
-            new_failures = test_type.compare_output(self._port, self._filename,
-                                                    self._test_args, driver_output,
-                                                    expected_driver_output)
+            new_failures = test_type.compare_output(
+                self._port, self._filename, self._options, driver_output,
+                expected_driver_output)
             # Don't add any more failures if we already have a crash, so we don't
             # double-report those tests. We do double-report for timeouts since
             # we still want to see the text and image output.

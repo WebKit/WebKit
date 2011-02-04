@@ -40,7 +40,7 @@ class Test(unittest.TestCase):
         test_type = test_type_base.TestTypeBase(None, None)
         self.assertRaises(NotImplementedError, test_type.compare_output,
                           None, "foo.txt", '',
-                          test_type_base.TestArguments(), 'Debug')
+                          {}, 'Debug')
 
 
 if __name__ == '__main__':
