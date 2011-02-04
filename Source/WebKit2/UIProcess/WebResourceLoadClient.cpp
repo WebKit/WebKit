@@ -34,13 +34,13 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void WebResourceLoadClient::didInitiateLoadForResource(WebPageProxy* page, WebFrameProxy* frame, uint64_t resourceIdentifier, const ResourceRequest& resourceRequest)
+void WebResourceLoadClient::didInitiateLoadForResource(WebPageProxy* page, WebFrameProxy* frame, uint64_t resourceIdentifier, const ResourceRequest& resourceRequest, bool pageIsProvisionallyLoading)
 {
     if (!m_client.didInitiateLoadForResource)
         return;
 
     RefPtr<WebURLRequest> request = WebURLRequest::create(resourceRequest);
-    return m_client.didInitiateLoadForResource(toAPI(page), toAPI(frame), resourceIdentifier, toAPI(request.get()), m_client.clientInfo);
+    return m_client.didInitiateLoadForResource(toAPI(page), toAPI(frame), resourceIdentifier, toAPI(request.get()), pageIsProvisionallyLoading, m_client.clientInfo);
 }
 
 void WebResourceLoadClient::didSendRequestForResource(WebPageProxy* page, WebFrameProxy* frame, uint64_t resourceIdentifier, const ResourceRequest& resourceRequest, const ResourceResponse& redirectResourceResponse)

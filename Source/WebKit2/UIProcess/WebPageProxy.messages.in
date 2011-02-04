@@ -100,7 +100,7 @@ messages -> WebPageProxy {
     FrameDidBecomeFrameSet(uint64_t frameID, bool value)
 
     # Resource load messages
-    DidInitiateLoadForResource(uint64_t frameID, uint64_t resourceIdentifier, WebCore::ResourceRequest request)
+    DidInitiateLoadForResource(uint64_t frameID, uint64_t resourceIdentifier, WebCore::ResourceRequest request, bool pageIsProvisionallyLoading)
     DidSendRequestForResource(uint64_t frameID, uint64_t resourceIdentifier, WebCore::ResourceRequest request, WebCore::ResourceResponse redirectResponse)
     DidReceiveResponseForResource(uint64_t frameID, uint64_t resourceIdentifier, WebCore::ResourceResponse response)
     DidReceiveContentLengthForResource(uint64_t frameID, uint64_t resourceIdentifier, uint64_t contentLength)

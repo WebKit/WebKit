@@ -43,7 +43,7 @@ class WebPageProxy;
 
 class WebResourceLoadClient : public APIClient<WKPageResourceLoadClient> {
 public:
-    void didInitiateLoadForResource(WebPageProxy*, WebFrameProxy*, uint64_t resourceIdentifier, const WebCore::ResourceRequest&);
+    void didInitiateLoadForResource(WebPageProxy*, WebFrameProxy*, uint64_t resourceIdentifier, const WebCore::ResourceRequest&, bool pageIsProvisionallyLoading);
     void didSendRequestForResource(WebPageProxy*, WebFrameProxy*, uint64_t resourceIdentifier, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
     void didReceiveResponseForResource(WebPageProxy*, WebFrameProxy*, uint64_t resourceIdentifier, const WebCore::ResourceResponse&);
     void didReceiveContentLengthForResource(WebPageProxy*, WebFrameProxy*, uint64_t resourceIdentifier, uint64_t contentLength);
