@@ -1,5 +1,15 @@
 2011-02-04  David Kilzer  <ddkilzer@apple.com>
 
+        BUILD FIX: REALLY remove the last vestiges of JSVALUE32!
+
+        <rdar://problem/8957409> Remove last vestiges of JSVALUE32
+        <http://webkit.org/b/53779>
+
+        * DerivedSources.make: Removed dependency on
+        JavaScriptCore.JSVALUE32.exp.
+
+2011-02-04  David Kilzer  <ddkilzer@apple.com>
+
         <rdar://problem/8957409> Remove last vestiges of JSVALUE32
         <http://webkit.org/b/53779>
 

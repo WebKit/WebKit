@@ -40,7 +40,6 @@ all : \
     DatePrototype.lut.h \
     HeaderDetection.h \
     JSONObject.lut.h \
-    JavaScriptCore.JSVALUE32.exp \
     JavaScriptCore.JSVALUE32_64.exp \
     JavaScriptCore.JSVALUE64.exp \
     Lexer.lut.h \
