@@ -1,3 +1,11 @@
+2011-02-03  Ivan Krstić  <ike@apple.com>
+
+        Unreviewed.
+
+        Adding myself to committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-02-03  James Kozianski  <koz@chromium.org>
 
         Reviewed by Dimitri Glazkov.
