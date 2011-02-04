@@ -126,6 +126,7 @@ function deleteObject()
 function verifyObjectDeleted()
 {
     verifyErrorEvent(event);
+    evalAndLog("event.preventDefault()");
     done();
 }
 

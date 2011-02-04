@@ -128,6 +128,7 @@ PASS 'onerror' in event.target is true
 PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
+event.preventDefault()
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,0 +1,127 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Verify that a transaction with an error aborts unless preventDefault() is called.");
+if (window.layoutTestController) 
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    result = evalAndLog("webkitIndexedDB.open('name')");
+    verifyResult(result);
+    result.onsuccess = setVersion;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function setVersion()
+{
+    verifySuccessEvent(event);
+    db = evalAndLog("db = event.result");
+
+    result = evalAndLog("db.setVersion('new version')");
+    verifyResult(result);
+    result.onsuccess = deleteExisting;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function deleteExisting()
+{
+    debug("setVersionSuccess():");
+    verifySuccessEvent(event);
+    window.trans = evalAndLog("trans = event.result");
+    shouldBeTrue("trans !== null");
+    trans.onabort = unexpectedAbortCallback;
+    evalAndLog("trans.oncomplete = addData");
+
+    deleteAllObjectStores(db, createObjectStore);
+}
+
+function createObjectStore()
+{
+    evalAndLog("db.createObjectStore('storeName', null)");
+}
+
+function addData()
+{
+    trans = evalAndLog("trans = db.transaction([], webkitIDBTransaction.READ_WRITE)");
+    evalAndLog("trans.onabort = unexpectedAbortCallback");
+    evalAndLog("trans.oncomplete = transactionCompleted");
+    store = evalAndLog("store = trans.objectStore('storeName')");
+    result = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key')");
+    verifyResult(result);
+    result.onsuccess = addMore;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function addMore()
+{
+    verifySuccessEvent(event);
+
+    result = evalAndLog("event.source.add({x: 'value', y: 'zzz'}, 'key')");
+    verifyResult(result);
+    result.onsuccess = unexpectedSuccessCallback;
+    result.addEventListener("error", preventTheDefault);
+}
+
+function preventTheDefault()
+{
+    evalAndLog("event.preventDefault()");
+}
+
+function transactionCompleted()
+{
+    testPassed("Transaction completed");
+    debug("");
+    debug("");
+    trans = evalAndLog("trans = db.transaction([], webkitIDBTransaction.READ_WRITE)");
+    evalAndLog("trans.onabort = transactionAborted1");
+    evalAndLog("trans.oncomplete = unexpectedCompleteCallback");
+    store = evalAndLog("store = trans.objectStore('storeName')");
+    result = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key')");
+    verifyResult(result);
+    result.onsuccess = unexpectedSuccessCallback;
+    result.onerror = allowDefault;
+}
+
+function allowDefault()
+{
+    debug("Doing nothing to prevent the default action...");
+}
+
+function transactionAborted1()
+{
+    testPassed("Transaction aborted");
+    debug("");
+    debug("");
+    trans = evalAndLog("trans = db.transaction([], webkitIDBTransaction.READ_WRITE)");
+    evalAndLog("trans.onabort = transactionAborted2");
+    evalAndLog("trans.oncomplete = unexpectedCompleteCallback");
+    store = evalAndLog("store = trans.objectStore('storeName')");
+    result = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key')");
+    verifyResult(result);
+    result.onsuccess = unexpectedSuccessCallback;
+    debug("Omitting an onerror handler");
+}
+
+function transactionAborted2()
+{
+    testPassed("Transaction aborted");
+    done();
+}
+
+test();
+
+var successfullyParsed = true;
+
+</script>
+</body>
+</html>

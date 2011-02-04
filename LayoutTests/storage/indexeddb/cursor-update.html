@@ -183,6 +183,8 @@ function keyPathUpdateCursor()
         verifyErrorEvent(event);
         shouldBe("event.code", "webkitIDBDatabaseException.DATA_ERR");
 
+        evalAndLog("event.preventDefault()");
+
         result = evalAndLog("event.source.update({id: counter, number: 100 + counter++})");
         result.onsuccess = function() { evalAndLog("event.source.continue()") };
         result.onerror = unexpectedErrorCallback;

@@ -40,14 +40,14 @@ namespace WebCore {
 
 class IDBCompleteEvent : public IDBEvent {
 public:
-    static PassRefPtr<IDBCompleteEvent> create();
+    static PassRefPtr<IDBCompleteEvent> create(PassRefPtr<IDBAny> source);
     // FIXME: Need to allow creation of these events from JS.
     virtual ~IDBCompleteEvent();
 
     virtual bool isIDBCompleteEvent() const { return true; }
 
 private:
-    IDBCompleteEvent();
+    IDBCompleteEvent(PassRefPtr<IDBAny> source);
 };
 
 } // namespace WebCore

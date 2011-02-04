@@ -1,3 +1,50 @@
+2011-02-04  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        First step towards event propogation within IndexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=53795
+
+        This is the first step towards implementing
+        http://www.w3.org/Bugs/Public/show_bug.cgi?id=11348
+        within IndexedDB. I've created a method that knows how
+        to capture and bubble (based on Node's dispatchGenericEvent).
+        I've then changed IDBRequest to use it.
+
+        The only functional change is that preventDefault now must
+        be called in error events to prevent the transaction from
+        being aborted. The tests reflect this change and there's one
+        specific test to look at this behavior.
+
+        Test: storage/indexeddb/error-causes-abort-by-default.html
+
+        * storage/IDBAbortEvent.cpp:
+        (WebCore::IDBAbortEvent::create):
+        (WebCore::IDBAbortEvent::IDBAbortEvent):
+        * storage/IDBAbortEvent.h:
+        * storage/IDBCompleteEvent.cpp:
+        (WebCore::IDBCompleteEvent::create):
+        (WebCore::IDBCompleteEvent::IDBCompleteEvent):
+        * storage/IDBCompleteEvent.h:
+        * storage/IDBErrorEvent.cpp:
+        (WebCore::IDBErrorEvent::IDBErrorEvent):
+        * storage/IDBEvent.cpp:
+        (WebCore::IDBEvent::IDBEvent):
+        (WebCore::IDBEvent::dispatch):
+        * storage/IDBEvent.h:
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::dispatchEvent):
+        * storage/IDBRequest.h:
+        * storage/IDBSuccessEvent.cpp:
+        (WebCore::IDBSuccessEvent::IDBSuccessEvent):
+        * storage/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::onAbort):
+        (WebCore::IDBTransaction::onComplete):
+        * storage/IDBTransaction.h:
+        (WebCore::IDBTransaction::backend):
+        * storage/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::taskTimerFired):
+
 2011-02-04  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Dmitry Titov.

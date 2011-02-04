@@ -35,8 +35,8 @@
 
 namespace WebCore {
 
-IDBEvent::IDBEvent(const AtomicString& type, PassRefPtr<IDBAny> source)
-    : Event(type, false, false)
+IDBEvent::IDBEvent(const AtomicString& type, PassRefPtr<IDBAny> source, bool canBubble)
+    : Event(type, canBubble, true)
     , m_source(source)
 {
 }
@@ -48,6 +48,57 @@ IDBEvent::~IDBEvent()
 PassRefPtr<IDBAny> IDBEvent::source()
 {
     return m_source;
+}
+
+bool IDBEvent::dispatch(Vector<RefPtr<EventTarget> >& eventTargets)
+{
+    size_t size = eventTargets.size();
+    ASSERT(size);
+
+    setEventPhase(Event::CAPTURING_PHASE);
+    for (size_t i = size - 1; i; --i) { // Don't do the first element.
+        setCurrentTarget(eventTargets[i].get());
+        eventTargets[i]->fireEventListeners(this);
+        if (propagationStopped())
+            goto doneDispatching;
+    }
+
+    setEventPhase(Event::AT_TARGET);
+    setCurrentTarget(eventTargets[0].get());
+    eventTargets[0]->fireEventListeners(this);
+    if (propagationStopped() || !bubbles() || cancelBubble())
+        goto doneDispatching;
+
+    setEventPhase(Event::BUBBLING_PHASE);
+    for (size_t i = 1; i < size; ++i) { // Don't do the first element.
+        setCurrentTarget(eventTargets[i].get());
+        eventTargets[i]->fireEventListeners(this);
+        if (propagationStopped() || cancelBubble())
+            goto doneDispatching;
+    }
+
+    // FIXME: "...However, we also wanted to integrate the window.onerror feature in
+    //        HTML5. So after we've fired an "error" event, if .preventDefault() was
+    //        never called on the event, we fire an error event on the window (can't
+    //        remember if this happens before or after we abort the transaction).
+    //        This is a separate event, which for example means that even if you
+    //        attach a capturing "error" handler on window, you won't see any events
+    //        unless an error really went unhandled. And you also can't call
+    //        .preventDefault on the error event fired on the window in order to
+    //        prevent the transaction from being aborted. It's purely there for
+    //        error reporting and distinctly different from the event propagating to
+    //        the window.
+    //        
+    //        This is similar to how "error" events are handled in workers.
+    //        
+    //        (I think that so far webkit hasn't implemented the window.onerror
+    //        feature yet, so you probably don't want to fire the separate error
+    //        event on the window until that has been implemented)."
+
+doneDispatching:
+    setCurrentTarget(0);
+    setEventPhase(0);
+    return !defaultPrevented();
 }
 
 } // namespace WebCore

@@ -111,6 +111,8 @@ function getObjectDataFail()
     verifyErrorEvent(event);
     shouldBe("event.code", "webkitIDBDatabaseException.NOT_FOUND_ERR");
 
+    evalAndLog("event.preventDefault()");
+
     result = evalAndLog("indexObject.get('does not exist')");
     verifyResult(result);
     result.onsuccess = unexpectedSuccessCallback;
@@ -121,6 +123,8 @@ function openKeyCursor()
 {
     verifyErrorEvent(event);
     shouldBe("event.code", "webkitIDBDatabaseException.NOT_FOUND_ERR");
+
+    evalAndLog("event.preventDefault()");
 
     window.result = evalAndLog("indexObject.openKeyCursor()");
     verifyResult(result);
