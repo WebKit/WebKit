@@ -862,7 +862,7 @@ bool ChromeClientImpl::selectItemWritingDirectionIsNatural()
 
 bool ChromeClientImpl::selectItemAlignmentFollowsMenuWritingDirection()
 {
-    return false;
+    return true;
 }
 
 PassRefPtr<PopupMenu> ChromeClientImpl::createPopupMenu(PopupMenuClient* client) const

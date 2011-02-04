@@ -97,22 +97,6 @@ struct PopupContainerSettings {
     // Whether we should restrict the width of the PopupListBox or not.
     // Autocomplete popups are restricted, combo-boxes (select tags) aren't.
     bool restrictWidthOfListBox;
-
-    // A hint on the display directionality of the item text in popup menu.
-    //
-    // We could either display the items in the drop-down using its DOM element's
-    // directionality, or we could display the items in the drop-down using heuristics:
-    // such as in its first strong directionality character's direction.
-    // Please refer to the discussion (especially comment #7 and #10) in
-    // https://bugs.webkit.org/show_bug.cgi?id=27889 for details.
-    enum DirectionalityHint {
-        // Use the DOM element's directionality to display the item text in popup menu.
-        DOMElementDirection,
-        // Use the item text's first strong-directional character's directionality
-        // to display the item text in popup menu.
-        FirstStrongDirectionalCharacterDirection,
-    };
-    DirectionalityHint itemTextDirectionalityHint;
 };
 
 class PopupContainer : public FramelessScrollView {

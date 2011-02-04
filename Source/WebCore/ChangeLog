@@ -1,3 +1,20 @@
+2011-02-04  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by David Levin.
+
+        Implement "<option> should implement the dir attribute" for chromium port after r76983.
+        https://bugs.webkit.org/show_bug.cgi?id=50969
+
+        Use manual test Source/WebCore/manual-tests/pop-up-alignment-and-direction.html
+        added in r76983.
+
+        * platform/chromium/PopupMenuChromium.cpp: Remove directionality hint from
+        <select> drop-down setting.
+        (WebCore::PopupListBox::paintRow): Use <option>'s directionality to paint
+        items in drop-down and pass-in bidi override flag when creating text run.
+        * platform/chromium/PopupMenuChromium.h: Remove directionalityHint from
+        PopupContainerSettings.
+
 2011-02-04  Jeremy Orlow  <jorlow@chromium.org>
 
         Build fix from merge mistake.

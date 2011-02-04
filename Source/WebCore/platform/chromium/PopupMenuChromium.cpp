@@ -78,12 +78,10 @@ static const TimeStamp kTypeAheadTimeoutMs = 1000;
 // The settings used for the drop down menu.
 // This is the delegate used if none is provided.
 static const PopupContainerSettings dropDownSettings = {
-    true,   // setTextOnIndexChange
-    true,   // acceptOnAbandon
-    false,  // loopSelectionNavigation
-    false,  // restrictWidthOfListBox
-    // display item text in its first strong directional character's directionality.
-    PopupContainerSettings::FirstStrongDirectionalCharacterDirection,
+    true, // setTextOnIndexChange
+    true, // acceptOnAbandon
+    false, // loopSelectionNavigation
+    false // restrictWidthOfListBox
 };
 
 // This class uses WebCore code to paint and handle events for a drop-down list
@@ -968,13 +966,8 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
     }
 
     // Prepare the directionality to draw text.
-    bool rtl = false;
-    if (m_settings.itemTextDirectionalityHint == PopupContainerSettings::DOMElementDirection)
-        rtl = style.textDirection() == RTL;
-    else if (m_settings.itemTextDirectionalityHint ==
-             PopupContainerSettings::FirstStrongDirectionalCharacterDirection)
-        rtl = itemText.defaultWritingDirection() == WTF::Unicode::RightToLeft;
-    TextRun textRun(itemText.characters(), itemText.length(), false, 0, 0, TextRun::AllowTrailingExpansion, rtl);
+    bool rtl = style.textDirection() == RTL;
+    TextRun textRun(itemText.characters(), itemText.length(), false, 0, 0, TextRun::AllowTrailingExpansion, rtl, style.hasTextDirectionOverride());
     // If the text is right-to-left, make it right-aligned by adjusting its
     // beginning position.
     if (rightAligned)
@@ -1002,7 +995,7 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
     // Draw the the label if applicable.
     if (itemLabel.isEmpty())
         return;
-    TextRun labelTextRun(itemLabel.characters(), itemLabel.length(), false, 0, 0, TextRun::AllowTrailingExpansion, rtl);
+    TextRun labelTextRun(itemLabel.characters(), itemLabel.length(), false, 0, 0, TextRun::AllowTrailingExpansion, rtl, style.hasTextDirectionOverride());
     if (rightAligned)
         textX = max(0, m_popupClient->clientPaddingLeft() - m_popupClient->clientInsetLeft());
     else
