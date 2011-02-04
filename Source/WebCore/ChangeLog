@@ -1,3 +1,18 @@
+2011-02-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Make XSSFilter go fast by adding a SuffixTree
+        https://bugs.webkit.org/show_bug.cgi?id=53665
+
+        The SuffixTree lets us quickly reject snippets if the POST data is
+        large (because we can avoid a linear scan over the POST data).
+
+        * html/parser/XSSFilter.cpp:
+        (WebCore::XSSFilter::init):
+        (WebCore::XSSFilter::isContainedInRequest):
+        * html/parser/XSSFilter.h:
+
 2011-02-03  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

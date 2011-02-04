@@ -142,6 +142,9 @@ XSSFilter::XSSFilter(HTMLDocumentParser* parser)
 
 void XSSFilter::init()
 {
+    const size_t miniumLengthForSuffixTree = 512; // FIXME: Tune this parameter.
+    const int suffixTreeDepth = 5;
+
     ASSERT(m_state == Uninitialized);
     m_state = Initial;
 
@@ -174,6 +177,8 @@ void XSSFilter::init()
             m_decodedHTTPBody = decodeURL(httpBody->flattenToString(), encoding);
             if (m_decodedHTTPBody.find(isRequiredForInjection, 0) == notFound)
                 m_decodedHTTPBody = String();
+            if (m_decodedHTTPBody.length() >= miniumLengthForSuffixTree)
+                m_decodedHTTPBodySuffixTree = adoptPtr(new SuffixTree<ASCIICodebook>(m_decodedHTTPBody, suffixTreeDepth));
         }
     }
 
@@ -427,8 +432,11 @@ bool XSSFilter::isContainedInRequest(const String& snippet)
     ASSERT(!snippet.isEmpty());
     String canonicalizedSnippet = canonicalize(snippet);
     ASSERT(!canonicalizedSnippet.isEmpty());
-    return m_decodedURL.find(canonicalizedSnippet, 0, false) != notFound
-        || m_decodedHTTPBody.find(canonicalizedSnippet, 0, false) != notFound;
+    if (m_decodedURL.find(canonicalizedSnippet, 0, false) != notFound)
+        return true;
+    if (m_decodedHTTPBodySuffixTree && !m_decodedHTTPBodySuffixTree->mightContain(canonicalizedSnippet))
+        return false;
+    return m_decodedHTTPBody.find(canonicalizedSnippet, 0, false) != notFound;
 }
 
 bool XSSFilter::isSameOriginResource(const String& url)
