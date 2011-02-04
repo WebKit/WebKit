@@ -47,6 +47,9 @@ namespace JSC {
         
         size_t numBlocks;
         size_t usedBlocks;
+        
+        size_t waterMark;
+        size_t highWaterMark;
 
         MarkedBlock* collectorBlock(size_t index) const
         {
@@ -68,12 +71,16 @@ namespace JSC {
 
         JSGlobalData* globalData() { return m_globalData; }
 
+        size_t highWaterMark() { return m_heap.highWaterMark; }
+        void setHighWaterMark(size_t highWaterMark) { m_heap.highWaterMark = highWaterMark; }
+
         void* allocate(size_t);
 
         void clearMarkBits();
         void markRoots();
         void reset();
         void sweep();
+        size_t markedCells(size_t startBlock = 0, size_t startCell = 0) const;
 
         size_t size() const;
         size_t capacity() const;
@@ -94,7 +101,6 @@ namespace JSC {
         void shrinkBlocks(size_t neededBlocks);
 
         void clearMarkBits(MarkedBlock*);
-        size_t markedCells(size_t startBlock = 0, size_t startCell = 0) const;
 
         CollectorHeap m_heap;
         JSGlobalData* m_globalData;

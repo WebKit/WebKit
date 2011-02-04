@@ -1,3 +1,31 @@
+2011-02-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Changed MarkedSpace to delegate grow/shrink decisions to Heap
+        https://bugs.webkit.org/show_bug.cgi?id=53759
+        
+        SunSpider reports no change.
+        
+        * runtime/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::reset):
+        * runtime/Heap.h: Reorganized a few data members for better cache locality.
+        Added a grow policy.
+        
+        * runtime/MarkedSpace.cpp:
+        (JSC::MarkedSpace::allocate):
+        (JSC::MarkedSpace::sweep):
+        (JSC::MarkedSpace::reset): Don't shrink automatically. Instead, wait for
+        the heap to make an explicit sweep call.
+
+        * runtime/MarkedSpace.h:
+        (JSC::MarkedSpace::highWaterMark):
+        (JSC::MarkedSpace::setHighWaterMark): Use a watermark to determine how
+        many bytes to allocate before failing and giving the heap an opportunity
+        to collect garbage. This also means that we allocate blocks on demand,
+        instead of ahead of time.
+
 2011-02-03  James Kozianski  <koz@chromium.org>
 
         Reviewed by Dimitri Glazkov.
