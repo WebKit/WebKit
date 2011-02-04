@@ -1,3 +1,12 @@
+2011-02-04  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed.
+
+        Skipping fast/events/pagehide-timeout.html that is failing on GTK
+        bots. See https://bugs.webkit.org/show_bug.cgi?id=53733
+
+        * platform/gtk/Skipped: skip fast/events/pagehide-timeout.html
+
 2011-02-03  James Kozianski  <koz@chromium.org>
 
         Reviewed by Dimitri Glazkov.
