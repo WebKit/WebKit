@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,40 +26,31 @@
 #include "config.h"
 #include "Download.h"
 
-#include "NotImplemented.h"
-
 using namespace WebCore;
 
 namespace WebKit {
 
-void Download::start(WebPage* initiatingWebPage)
-{
-    notImplemented();
-}
-
-void Download::startWithHandle(WebPage* initiatingPage, ResourceHandle*, const ResourceRequest& initialRequest, const ResourceResponse&)
-{
-    notImplemented();
-}
-
-void Download::cancel()
-{
-    notImplemented();
-}
-
-void Download::platformInvalidate()
-{
-    notImplemented();
-}
-
-void Download::didDecideDestination(const String& destination, bool allowOverwrite)
-{
-    notImplemented();
-}
-
 void Download::platformDidFinish()
 {
-    notImplemented();
+    ASSERT(!m_bundlePath.isEmpty());
+    ASSERT(!m_destination.isEmpty());
+
+    // Try to move the bundle to the final filename.
+    DWORD flags = MOVEFILE_COPY_ALLOWED | (m_allowOverwrite ? MOVEFILE_REPLACE_EXISTING : 0);
+    if (::MoveFileExW(m_bundlePath.charactersWithNullTermination(), m_destination.charactersWithNullTermination(), flags))
+        return;
+
+    // The move failed. Give the client one more chance to choose the final filename.
+    m_destination = retrieveDestinationWithSuggestedFilename(m_destination, m_allowOverwrite);
+    if (m_destination.isEmpty())
+        return;
+
+    // We either need to report our final filename as the bundle filename or the updated destination filename.
+    flags = MOVEFILE_COPY_ALLOWED | (m_allowOverwrite ? MOVEFILE_REPLACE_EXISTING : 0);
+    if (::MoveFileExW(m_bundlePath.charactersWithNullTermination(), m_destination.charactersWithNullTermination(), flags))
+        didCreateDestination(m_destination);
+    else
+        didCreateDestination(m_bundlePath);
 }
 
 } // namespace WebKit

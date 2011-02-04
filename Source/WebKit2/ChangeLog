@@ -1,3 +1,59 @@
+2011-02-03  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Download bundles should be moved to their final destination when they
+        finish.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53668
+
+        Reviewed by Adam Roben.
+
+        * WebProcess/Downloads/Download.cpp:
+        (WebKit::Download::Download):
+        Initialize m_allowOverwrite.
+        (WebKit::Download::retrieveDestinationWithSuggestedFilename):
+        Return the result of requesting the destination filename from the UI
+        process.
+        (WebKit::Download::decideDestinationWithSuggestedFilename):
+        Call retrieveDestinationWithSuggestedFilename().
+        (WebKit::Download::didFinish):
+        Call platformDidFinish().
+
+        * WebProcess/Downloads/Download.h:
+        Declare retrieveDestinationWithSuggestedFilename() and
+        platformDidFinish(). Add a member variable to store whether the UI
+        process would like us to overwrite existing files.
+
+        * WebProcess/Downloads/cf/DownloadCFNet.cpp:
+        (WebKit::willResumeWithResponseCallback):
+        Remove some trailing whitespace.
+
+        * WebProcess/Downloads/curl/DownloadCurl.cpp:
+        (WebKit::Download::platformDidFinish):
+        Stubbed.
+
+        * WebProcess/Downloads/mac/DownloadMac.mm:
+        (WebKit::Download::platformDidFinish):
+        Stubbed.
+
+        * WebProcess/Downloads/qt/DownloadQt.cpp:
+        (WebKit::Download::platformDidFinish):
+        Stubbed.
+
+        * WebProcess/Downloads/cf/win/DownloadCFNetWin.cpp:
+        (WebKit::Download::didDecideDestination):
+        Store whether the UI process would like us to overwrite existing files.
+        (WebKit::Download::platformDidFinish):
+        Try to move the bundle to the final destination. If that fails, ask the
+        UI process for a new destination. If we receive one, try again to move
+        the bundle. Call didCreateDestination() to report the updated path of
+        file whether it's the bundle that we failed to move, or the new final
+        destination.
+
+        This is similar to what is done by WebKit 1's CFNetwork port.
+
+        * win/WebKit2.vcproj:
+        Add DownloadWin.cpp.
+
 2011-02-01  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Small clean-up in DownloadCFNet.cpp.

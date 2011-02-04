@@ -1664,6 +1664,14 @@
 							/>
 						</FileConfiguration>
 					</File>
+					<Filter
+						Name="win"
+						>
+						<File
+							RelativePath="..\WebProcess\Downloads\cf\win\DownloadCFNetWin.cpp"
+							>
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="curl"

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,6 +46,9 @@ PassOwnPtr<Download> Download::create(uint64_t downloadID, const ResourceRequest
 Download::Download(uint64_t downloadID, const ResourceRequest& request)
     : m_downloadID(downloadID)
     , m_request(request)
+#if USE(CFNETWORK)
+    , m_allowOverwrite(false)
+#endif
 {
     ASSERT(m_downloadID);
 }
@@ -84,7 +87,7 @@ bool Download::shouldDecodeSourceDataOfMIMEType(const String& mimeType)
     return result;
 }
 
-String Download::decideDestinationWithSuggestedFilename(const String& filename, bool& allowOverwrite)
+String Download::retrieveDestinationWithSuggestedFilename(const String& filename, bool& allowOverwrite)
 {
     String destination;
     SandboxExtension::Handle sandboxExtensionHandle;
@@ -94,6 +97,13 @@ String Download::decideDestinationWithSuggestedFilename(const String& filename, 
     m_sandboxExtension = SandboxExtension::create(sandboxExtensionHandle);
     if (m_sandboxExtension)
         m_sandboxExtension->consume();
+
+    return destination;
+}
+
+String Download::decideDestinationWithSuggestedFilename(const String& filename, bool& allowOverwrite)
+{
+    String destination = retrieveDestinationWithSuggestedFilename(filename, allowOverwrite);
 
     didDecideDestination(destination, allowOverwrite);
 
@@ -107,6 +117,8 @@ void Download::didCreateDestination(const String& path)
 
 void Download::didFinish()
 {
+    platformDidFinish();
+
     send(Messages::DownloadProxy::DidFinish());
 
     if (m_sandboxExtension)

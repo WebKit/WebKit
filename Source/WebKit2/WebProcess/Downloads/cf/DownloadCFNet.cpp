@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -125,6 +125,7 @@ void Download::didDecideDestination(const String& destination, bool allowOverwri
     if (destination.isEmpty())
         return;
 
+    m_allowOverwrite = allowOverwrite;
     m_destination = destination;
     m_bundlePath = destination + DownloadBundle::fileExtension();
 
@@ -163,7 +164,7 @@ void didReceiveResponseCallback(CFURLDownloadRef, CFURLResponseRef response, con
 }
 
 void willResumeWithResponseCallback(CFURLDownloadRef, CFURLResponseRef response, UInt64 startingByte, const void* clientInfo)
-{ 
+{
     // FIXME: implement.
     notImplemented();
 }

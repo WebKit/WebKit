@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -80,6 +80,7 @@ public:
     String decideDestinationWithSuggestedFilename(const String& filename, bool& allowOverwrite);
     void didCreateDestination(const String& path);
     void didFinish();
+    void platformDidFinish();
     void didFail(const WebCore::ResourceError&, const CoreIPC::DataReference& resumeData);
     void didCancel(const CoreIPC::DataReference& resumeData);
     void didDecideDestination(const String&, bool allowOverwrite);
@@ -93,6 +94,8 @@ private:
 
     void platformInvalidate();
 
+    String retrieveDestinationWithSuggestedFilename(const String& filename, bool& allowOverwrite);
+
     uint64_t m_downloadID;
     WebCore::ResourceRequest m_request;
 
@@ -103,6 +106,7 @@ private:
     RetainPtr<WKDownloadAsDelegate> m_delegate;
 #endif
 #if USE(CFNETWORK)
+    bool m_allowOverwrite;
     String m_destination;
     String m_bundlePath;
     RetainPtr<CFURLDownloadRef> m_download;
