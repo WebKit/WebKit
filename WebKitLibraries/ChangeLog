@@ -1,3 +1,12 @@
+2011-02-04  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Bump Windows minimum system requirement to XPSP2
+        https://bugs.webkit.org/show_bug.cgi?id=53807
+
+        * win/tools/vsprops/common.vsprops:
+
 2011-02-03  James Kozianski  <koz@chromium.org>
 
         Reviewed by Dimitri Glazkov.
