@@ -1,5 +1,44 @@
 2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Add Leopard-specific pixel results for fast/blockflow.
+
+        * platform/mac-leopard/fast/blockflow/Kusa-Makura-background-canvas-expected.checksum: Added.
+        * platform/mac-leopard/fast/blockflow/Kusa-Makura-background-canvas-expected.png: Added.
+        * platform/mac-leopard/fast/blockflow/Kusa-Makura-background-canvas-expected.txt: Added.
+        * platform/mac-leopard/fast/blockflow/block-level-images-expected.checksum: Added.
+        * platform/mac-leopard/fast/blockflow/block-level-images-expected.png: Added.
+        * platform/mac-leopard/fast/blockflow/border-vertical-lr-expected.checksum: Added.
+        * platform/mac-leopard/fast/blockflow/border-vertical-lr-expected.png: Added.
+        * platform/mac-leopard/fast/blockflow/english-bt-text-expected.checksum: Added.
+        * platform/mac-leopard/fast/blockflow/english-bt-text-expected.png: Added.
+        * platform/mac-leopard/fast/blockflow/english-lr-text-expected.checksum: Added.
+        * platform/mac-leopard/fast/blockflow/english-lr-text-expected.png: Added.
+        * platform/mac-leopard/fast/blockflow/japanese-lr-selection-expected.checksum: Added.
+        * platform/mac-leopard/fast/blockflow/japanese-lr-selection-expected.png: Added.
+        * platform/mac-leopard/fast/blockflow/japanese-lr-text-expected.checksum: Added.
+        * platform/mac-leopard/fast/blockflow/japanese-lr-text-expected.png: Added.
+        * platform/mac-leopard/fast/blockflow/japanese-rl-selection-expected.checksum: Added.
+        * platform/mac-leopard/fast/blockflow/japanese-rl-selection-expected.png: Added.
+        * platform/mac-leopard/fast/blockflow/japanese-rl-text-expected.checksum: Added.
+        * platform/mac-leopard/fast/blockflow/japanese-rl-text-expected.png: Added.
+        * platform/mac-leopard/fast/blockflow/japanese-ruby-horizontal-bt-expected.checksum: Added.
+        * platform/mac-leopard/fast/blockflow/japanese-ruby-horizontal-bt-expected.png: Added.
+        * platform/mac-leopard/fast/blockflow/japanese-ruby-horizontal-bt-expected.txt: Added.
+        * platform/mac-leopard/fast/blockflow/japanese-ruby-vertical-lr-expected.checksum: Added.
+        * platform/mac-leopard/fast/blockflow/japanese-ruby-vertical-lr-expected.png: Added.
+        * platform/mac-leopard/fast/blockflow/japanese-ruby-vertical-lr-expected.txt: Added.
+        * platform/mac-leopard/fast/blockflow/japanese-ruby-vertical-rl-expected.checksum: Added.
+        * platform/mac-leopard/fast/blockflow/japanese-ruby-vertical-rl-expected.png: Added.
+        * platform/mac-leopard/fast/blockflow/japanese-ruby-vertical-rl-expected.txt: Added.
+        * platform/mac-leopard/fast/blockflow/vertical-align-table-baseline-expected.checksum: Added.
+        * platform/mac-leopard/fast/blockflow/vertical-align-table-baseline-expected.png: Added.
+        * platform/mac-leopard/fast/blockflow/vertical-baseline-alignment-expected.checksum: Added.
+        * platform/mac-leopard/fast/blockflow/vertical-baseline-alignment-expected.png: Added.
+        * platform/mac-leopard/fast/blockflow/vertical-font-fallback-expected.checksum: Added.
+        * platform/mac-leopard/fast/blockflow/vertical-font-fallback-expected.png: Added.
+
+2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Remove platform-specific baselines, since we match platform/mac here.
 
         * platform/chromium-mac/fast/blockflow/box-shadow-horizontal-bt-expected.checksum: Removed.
