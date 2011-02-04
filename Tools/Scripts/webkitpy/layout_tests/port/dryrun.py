@@ -50,8 +50,6 @@ import os
 import sys
 import time
 
-from webkitpy.layout_tests.layout_package import test_output
-
 import base
 import factory
 
@@ -118,18 +116,18 @@ class DryrunDriver(base.Driver):
     def poll(self):
         return None
 
-    def run_test(self, test_input):
+    def run_test(self, driver_input):
         start_time = time.time()
-        text_output = self._port.expected_text(test_input.filename)
+        text_output = self._port.expected_text(driver_input.filename)
 
-        if test_input.image_hash is not None:
-            image = self._port.expected_image(test_input.filename)
-            hash = self._port.expected_checksum(test_input.filename)
+        if driver_input.image_hash is not None:
+            image = self._port.expected_image(driver_input.filename)
+            hash = self._port.expected_checksum(driver_input.filename)
         else:
             image = None
             hash = None
-        return test_output.TestOutput(text_output, image, hash, False,
-                                      time.time() - start_time, False, None)
+        return base.DriverOutput(text_output, image, hash, False,
+                                 time.time() - start_time, False, '')
 
     def start(self):
         pass

@@ -53,8 +53,8 @@ class TestTextDiff(test_type_base.TestTypeBase):
         # the normalized text expectation files.
         return output.replace("\r\r\n", "\r\n").replace("\r\n", "\n")
 
-    def compare_output(self, port, filename, test_args, actual_test_output,
-                        expected_test_output):
+    def compare_output(self, port, filename, test_args, actual_driver_output,
+                        expected_driver_output):
         """Implementation of CompareOutput that checks the output text against
         the expected text from the LayoutTest directory."""
         failures = []
@@ -64,15 +64,15 @@ class TestTextDiff(test_type_base.TestTypeBase):
             # Although all DumpRenderTree output should be utf-8, we do not
             # ever decode it inside run-webkit-tests.  For some tests
             # DumpRenderTree may not output utf-8 text (e.g.  webarchives).
-            self._save_baseline_data(filename, actual_test_output.text,
+            self._save_baseline_data(filename, actual_driver_output.text,
                                      ".txt", encoding=None,
                                      generate_new_baseline=test_args.new_baseline)
             return failures
 
         # Normalize text to diff
-        actual_text = self._get_normalized_output_text(actual_test_output.text)
+        actual_text = self._get_normalized_output_text(actual_driver_output.text)
         # Assuming expected_text is already normalized.
-        expected_text = expected_test_output.text
+        expected_text = expected_driver_output.text
 
         # Write output files for new tests, too.
         if port.compare_text(actual_text, expected_text):

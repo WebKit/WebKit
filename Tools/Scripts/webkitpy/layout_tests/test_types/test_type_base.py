@@ -139,8 +139,8 @@ class TestTypeBase(object):
             self._port.relative_test_filename(filename))
         return fs.splitext(output_filename)[0] + modifier
 
-    def compare_output(self, port, filename, test_args, actual_test_output,
-                        expected_test_output):
+    def compare_output(self, port, filename, test_args, actual_driver_output,
+                        expected_driver_output):
         """Method that compares the output from the test with the
         expected value.
 
@@ -151,10 +151,10 @@ class TestTypeBase(object):
           filename: absolute filename to test file
           test_args: a TestArguments object holding optional additional
               arguments
-          actual_test_output: a TestOutput object which represents actual test
+          actual_driver_output: a DriverOutput object which represents actual test
               output
-          expected_test_output: a TestOutput object which represents a expected
-              test output
+          expected_driver_output: a ExpectedDriverOutput object which represents a
+              expected test output
 
         Return:
           a list of TestFailure objects, empty if the test passes

@@ -51,78 +51,12 @@ from webkitpy.layout_tests.test_types import image_diff
 from webkitpy.layout_tests.test_types import test_type_base
 from webkitpy.layout_tests.test_types import text_diff
 
+import single_test_runner
 import test_failures
-import test_output
 import test_results
 
 _log = logging.getLogger("webkitpy.layout_tests.layout_package."
                          "dump_render_tree_thread")
-
-
-def _expected_test_output(port, filename):
-    """Returns an expected TestOutput object."""
-    return test_output.TestOutput(port.expected_text(filename),
-                                  port.expected_image(filename),
-                                  port.expected_checksum(filename))
-
-def _process_output(port, options, test_input, test_types, test_args,
-                    test_output, worker_name):
-    """Receives the output from a DumpRenderTree process, subjects it to a
-    number of tests, and returns a list of failure types the test produced.
-
-    Args:
-      port: port-specific hooks
-      options: command line options argument from optparse
-      proc: an active DumpRenderTree process
-      test_input: Object containing the test filename and timeout
-      test_types: list of test types to subject the output to
-      test_args: arguments to be passed to each test
-      test_output: a TestOutput object containing the output of the test
-      worker_name: worker name for logging
-
-    Returns: a TestResult object
-    """
-    failures = []
-    fs = port._filesystem
-
-    if test_output.crash:
-        failures.append(test_failures.FailureCrash())
-    if test_output.timeout:
-        failures.append(test_failures.FailureTimeout())
-
-    test_name = port.relative_test_filename(test_input.filename)
-    if test_output.crash:
-        _log.debug("%s Stacktrace for %s:\n%s" % (worker_name, test_name,
-                                                  test_output.error))
-        filename = fs.join(options.results_directory, test_name)
-        filename = fs.splitext(filename)[0] + "-stack.txt"
-        fs.maybe_make_directory(fs.dirname(filename))
-        fs.write_text_file(filename, test_output.error)
-    elif test_output.error:
-        _log.debug("%s %s output stderr lines:\n%s" % (worker_name, test_name,
-                                                       test_output.error))
-
-    expected_test_output = _expected_test_output(port, test_input.filename)
-
-    # Check the output and save the results.
-    start_time = time.time()
-    time_for_diffs = {}
-    for test_type in test_types:
-        start_diff_time = time.time()
-        new_failures = test_type.compare_output(port, test_input.filename,
-                                                test_args, test_output,
-                                                expected_test_output)
-        # Don't add any more failures if we already have a crash, so we don't
-        # double-report those tests. We do double-report for timeouts since
-        # we still want to see the text and image output.
-        if not test_output.crash:
-            failures.extend(new_failures)
-        time_for_diffs[test_type.__class__.__name__] = (
-            time.time() - start_diff_time)
-
-    total_time_for_all_diffs = time.time() - start_diff_time
-    return test_results.TestResult(test_input.filename, failures, test_output.test_time,
-                                   total_time_for_all_diffs, time_for_diffs)
 
 
 def _pad_timeout(timeout):
@@ -142,20 +76,6 @@ def _milliseconds_to_seconds(msecs):
 
 def _should_fetch_expected_checksum(options):
     return options.pixel_tests and not (options.new_baseline or options.reset_results)
-
-
-def _run_single_test(port, options, test_input, test_types, test_args, driver, worker_name):
-    # FIXME: Pull this into TestShellThread._run().
-
-    # The image hash is used to avoid doing an image dump if the
-    # checksums match, so it should be set to a blank value if we
-    # are generating a new baseline.  (Otherwise, an image from a
-    # previous run will be copied into the baseline."""
-    if _should_fetch_expected_checksum(options):
-        test_input.image_hash = port.expected_checksum(test_input.filename)
-    test_output = driver.run_test(test_input)
-    return _process_output(port, options, test_input, test_types, test_args,
-                           test_output, worker_name)
 
 
 class SingleTestThread(threading.Thread):
@@ -193,10 +113,9 @@ class SingleTestThread(threading.Thread):
         # in coverage: see http://bitbucket.org/ned/coveragepy/issue/85.
         self._driver = self._port.create_driver(self._worker_number)
         self._driver.start()
-        self._test_result = _run_single_test(self._port, self._options,
-                                             self._test_input, self._test_types,
-                                             self._test_args, self._driver,
-                                             self._name)
+        self._test_result = single_test_runner.run_single_test(
+            self._port, self._options, self._test_input, self._driver,
+            self._name, self._test_types, self._test_args)
         self._driver.stop()
 
     def get_test_result(self):
@@ -514,9 +433,9 @@ class TestShellThread(WatchableThread):
         thread_timeout = _milliseconds_to_seconds(
              _pad_timeout(int(test_input.timeout)))
         self._next_timeout = time.time() + thread_timeout
-        test_result = _run_single_test(self._port, self._options, test_input,
-                                       self._test_types, self._test_args,
-                                       self._driver, self._name)
+        test_result = single_test_runner.run_single_test(
+            self._port, self._options, test_input, self._driver, self._name,
+            self._test_types, self._test_args)
         self._test_results.append(test_result)
         return test_result
 

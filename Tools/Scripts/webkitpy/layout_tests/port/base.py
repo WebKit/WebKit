@@ -821,6 +821,48 @@ class Port(object):
                                      platform)
 
 
+class DriverInput(object):
+    """Holds the input parameters for a driver."""
+
+    def __init__(self, filename, timeout, image_hash):
+        """Initializes a DriverInput object.
+
+        Args:
+          filename: Full path to the test.
+          timeout: Timeout in msecs the driver should use while running the test
+          image_hash: A image checksum which is used to avoid doing an image dump if
+                     the checksums match.
+        """
+        self.filename = filename
+        self.timeout = timeout
+        self.image_hash = image_hash
+
+
+class DriverOutput(object):
+    """Groups information about a output from driver for easy passing of data."""
+
+    def __init__(self, text, image, image_hash,
+                 crash=False, test_time=None, timeout=False, error=''):
+        """Initializes a TestOutput object.
+
+        Args:
+          text: a text output
+          image: an image output
+          image_hash: a string containing the checksum of the image
+          crash: a boolean indicating whether the driver crashed on the test
+          test_time: a time which the test has taken
+          timeout: a boolean indicating whehter the test timed out
+          error: any unexpected or additional (or error) text output
+        """
+        self.text = text
+        self.image = image
+        self.image_hash = image_hash
+        self.crash = crash
+        self.test_time = test_time
+        self.timeout = timeout
+        self.error = error
+
+
 class Driver:
     """Abstract interface for the DumpRenderTree interface."""
 
@@ -835,7 +877,7 @@ class Driver:
         """
         raise NotImplementedError('Driver.__init__')
 
-    def run_test(self, test_input):
+    def run_test(self, driver_input):
         """Run a single test and return the results.
 
         Note that it is okay if a test times out or crashes and leaves
@@ -843,9 +885,9 @@ class Driver:
         are responsible for cleaning up and ensuring things are okay.
 
         Args:
-          test_input: a TestInput object
+          driver_input: a DriverInput object
 
-        Returns a TestOutput object.
+        Returns a DriverOutput object.
         """
         raise NotImplementedError('Driver.run_test')
 

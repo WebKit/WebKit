@@ -85,54 +85,54 @@ class ImageDiff(test_type_base.TestTypeBase):
                                              self.FILENAME_SUFFIX_COMPARE)
         return port.diff_image(actual_image, expected_image, diff_filename)
 
-    def compare_output(self, port, filename, test_args, actual_test_output,
-                       expected_test_output):
+    def compare_output(self, port, filename, test_args, actual_driver_output,
+                       expected_driver_output):
         """Implementation of CompareOutput that checks the output image and
         checksum against the expected files from the LayoutTest directory.
         """
         failures = []
 
         # If we didn't produce a hash file, this test must be text-only.
-        if actual_test_output.image_hash is None:
+        if actual_driver_output.image_hash is None:
             return failures
 
         # If we're generating a new baseline, we pass.
         if test_args.new_baseline or test_args.reset_results:
-            self._save_baseline_files(filename, actual_test_output.image,
-                                      actual_test_output.image_hash,
+            self._save_baseline_files(filename, actual_driver_output.image,
+                                      actual_driver_output.image_hash,
                                       test_args.new_baseline)
             return failures
 
-        if not expected_test_output.image:
+        if not expected_driver_output.image:
             # Report a missing expected PNG file.
-            self._copy_image(filename, actual_test_output.image, expected_image=None)
-            self._copy_image_hash(filename, actual_test_output.image_hash,
-                                  expected_test_output.image_hash)
+            self._copy_image(filename, actual_driver_output.image, expected_image=None)
+            self._copy_image_hash(filename, actual_driver_output.image_hash,
+                                  expected_driver_output.image_hash)
             failures.append(test_failures.FailureMissingImage())
             return failures
-        if not expected_test_output.image_hash:
+        if not expected_driver_output.image_hash:
             # Report a missing expected checksum file.
-            self._copy_image(filename, actual_test_output.image,
-                             expected_test_output.image)
-            self._copy_image_hash(filename, actual_test_output.image_hash,
+            self._copy_image(filename, actual_driver_output.image,
+                             expected_driver_output.image)
+            self._copy_image_hash(filename, actual_driver_output.image_hash,
                                   expected_image_hash=None)
             failures.append(test_failures.FailureMissingImageHash())
             return failures
 
-        if actual_test_output.image_hash == expected_test_output.image_hash:
+        if actual_driver_output.image_hash == expected_driver_output.image_hash:
             # Hash matched (no diff needed, okay to return).
             return failures
 
-        self._copy_image(filename, actual_test_output.image,
-                         expected_test_output.image)
-        self._copy_image_hash(filename, actual_test_output.image_hash,
-                              expected_test_output.image_hash)
+        self._copy_image(filename, actual_driver_output.image,
+                         expected_driver_output.image)
+        self._copy_image_hash(filename, actual_driver_output.image_hash,
+                              expected_driver_output.image_hash)
 
         # Even though we only use the result in one codepath below but we
         # still need to call CreateImageDiff for other codepaths.
         images_are_different = self._create_diff_image(port, filename,
-                                                       actual_test_output.image,
-                                                       expected_test_output.image)
+                                                       actual_driver_output.image,
+                                                       expected_driver_output.image)
         if not images_are_different:
             failures.append(test_failures.FailureImageHashIncorrect())
         else:

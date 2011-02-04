@@ -41,7 +41,6 @@ import time
 import webbrowser
 
 import webkitpy.common.system.ospath as ospath
-import webkitpy.layout_tests.layout_package.test_output as test_output
 import webkitpy.layout_tests.port.base as base
 import webkitpy.layout_tests.port.server_process as server_process
 
@@ -405,15 +404,15 @@ class WebKitDriver(base.Driver):
         return
 
     # FIXME: This function is huge.
-    def run_test(self, test_input):
-        uri = self._port.filename_to_uri(test_input.filename)
+    def run_test(self, driver_input):
+        uri = self._port.filename_to_uri(driver_input.filename)
         if uri.startswith("file:///"):
             command = uri[7:]
         else:
             command = uri
 
-        if test_input.image_hash:
-            command += "'" + test_input.image_hash
+        if driver_input.image_hash:
+            command += "'" + driver_input.image_hash
         command += "\n"
 
         start_time = time.time()
@@ -424,7 +423,7 @@ class WebKitDriver(base.Driver):
         output = str()  # Use a byte array for output, even though it should be UTF-8.
         image = str()
 
-        timeout = int(test_input.timeout) / 1000.0
+        timeout = int(driver_input.timeout) / 1000.0
         deadline = time.time() + timeout
         line = self._server_process.read_line(timeout)
         while (not self._server_process.timed_out
@@ -471,11 +470,11 @@ class WebKitDriver(base.Driver):
         # FIXME: This seems like the wrong section of code to be doing
         # this reset in.
         self._server_process.error = ""
-        return test_output.TestOutput(output, image, actual_image_hash,
-                                      self._server_process.crashed,
-                                      time.time() - start_time,
-                                      self._server_process.timed_out,
-                                      error)
+        return base.DriverOutput(output, image, actual_image_hash,
+                                 self._server_process.crashed,
+                                 time.time() - start_time,
+                                 self._server_process.timed_out,
+                                 error)
 
     def stop(self):
         if self._server_process:

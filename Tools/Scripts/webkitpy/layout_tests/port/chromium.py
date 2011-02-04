@@ -41,7 +41,6 @@ import webbrowser
 from webkitpy.common.system import executive
 from webkitpy.common.system.path import cygpath
 from webkitpy.layout_tests.layout_package import test_expectations
-from webkitpy.layout_tests.layout_package import test_output
 
 import base
 import http_server
@@ -445,7 +444,7 @@ class ChromiumDriver(base.Driver):
                     raise e
         return self._output_image()
 
-    def run_test(self, test_input):
+    def run_test(self, driver_input):
         output = []
         error = []
         crash = False
@@ -455,9 +454,9 @@ class ChromiumDriver(base.Driver):
 
         start_time = time.time()
 
-        uri = self._port.filename_to_uri(test_input.filename)
-        cmd = self._test_shell_command(uri, test_input.timeout,
-                                       test_input.image_hash)
+        uri = self._port.filename_to_uri(driver_input.filename)
+        cmd = self._test_shell_command(uri, driver_input.timeout,
+                                       driver_input.image_hash)
         (line, crash) = self._write_command_and_read_line(input=cmd)
 
         while not crash and line.rstrip() != "#EOF":
@@ -499,7 +498,7 @@ class ChromiumDriver(base.Driver):
             (line, crash) = self._write_command_and_read_line(input=None)
 
         run_time = time.time() - start_time
-        return test_output.TestOutput(
+        return base.DriverOutput(
             ''.join(output), self._output_image_with_retry(), actual_checksum,
             crash, run_time, timeout, ''.join(error))
 

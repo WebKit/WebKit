@@ -41,7 +41,3 @@ class TestInput:
         # FIXME: filename should really be test_name as a relative path.
         self.filename = filename
         self.timeout = timeout
-        # The image_hash is used to avoid doing an image dump if the
-        # checksums match. The image_hash is set later, and only if it is needed
-        # for the test.
-        self.image_hash = None

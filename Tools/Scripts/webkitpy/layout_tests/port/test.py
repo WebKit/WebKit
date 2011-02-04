@@ -35,8 +35,6 @@ import time
 from webkitpy.common.system import filesystem_mock
 from webkitpy.tool import mocktool
 
-from webkitpy.layout_tests.layout_package import test_output
-
 import base
 
 
@@ -384,10 +382,10 @@ class TestDriver(base.Driver):
             raise ValueError('exception from ' + test_name)
         if test.hang:
             time.sleep((float(test_input.timeout) * 4) / 1000.0)
-        return test_output.TestOutput(test.actual_text, test.actual_image,
-                                      test.actual_checksum, test.crash,
-                                      time.time() - start_time, test.timeout,
-                                      test.error)
+        return base.DriverOutput(test.actual_text, test.actual_image,
+                                 test.actual_checksum, test.crash,
+                                 time.time() - start_time, test.timeout,
+                                 test.error)
 
     def start(self):
         pass
