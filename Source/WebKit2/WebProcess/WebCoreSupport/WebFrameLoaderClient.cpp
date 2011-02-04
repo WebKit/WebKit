@@ -679,8 +679,15 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFu
     uint32_t navigationType = static_cast<uint32_t>(navigationAction.type());
     uint32_t modifiers = modifiersForNavigationAction(navigationAction);
     int32_t mouseButton = mouseButtonForNavigationAction(navigationAction);
+    
+    bool receivedPolicyAction;
+    uint64_t policyAction;
+    if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationAction(m_frame->frameID(), navigationType, modifiers, mouseButton, url, listenerID), Messages::WebPageProxy::DecidePolicyForNavigationAction::Reply(receivedPolicyAction, policyAction)))
+        return;
 
-    webPage->send(Messages::WebPageProxy::DecidePolicyForNavigationAction(m_frame->frameID(), navigationType, modifiers, mouseButton, url, listenerID));
+    // We call this synchronously because WebCore cannot gracefully handle a frame load without a synchronous navigation policy reply.
+    if (receivedPolicyAction)
+        m_frame->didReceivePolicyDecision(listenerID, static_cast<PolicyAction>(policyAction), 0);
 }
 
 void WebFrameLoaderClient::cancelPolicyCheck()

@@ -118,6 +118,9 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, WebContext* context, WebPageG
     , m_syncMimeTypePolicyActionIsValid(false)
     , m_syncMimeTypePolicyAction(PolicyUse)
     , m_syncMimeTypePolicyDownloadID(0)
+    , m_inDecidePolicyForNavigationAction(false)
+    , m_syncNavigationActionPolicyActionIsValid(false)
+    , m_syncNavigationActionPolicyAction(PolicyUse)
     , m_processingWheelEvent(false)
     , m_processingMouseMoveEvent(false)
     , m_pageID(pageID)
@@ -771,6 +774,14 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* fr
         return;
     }
 
+    // If we received a policy decision while in decidePolicyForNavigationAction the decision will 
+    // be sent back to the web process by decidePolicyForNavigationAction. 
+    if (m_inDecidePolicyForNavigationAction) {
+        m_syncNavigationActionPolicyActionIsValid = true;
+        m_syncNavigationActionPolicyAction = action;
+        return;
+    }
+    
     process()->send(Messages::WebPage::DidReceivePolicyDecision(frame->frameID(), listenerID, action, downloadID), m_pageID);
 }
 
@@ -1455,8 +1466,7 @@ void WebPageProxy::frameDidBecomeFrameSet(uint64_t frameID, bool value)
 }
 
 // PolicyClient
-
-void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, uint32_t opaqueNavigationType, uint32_t opaqueModifiers, int32_t opaqueMouseButton, const String& url, uint64_t listenerID)
+void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, uint32_t opaqueNavigationType, uint32_t opaqueModifiers, int32_t opaqueMouseButton, const String& url, uint64_t listenerID, bool& receivedPolicyAction, uint64_t& policyAction)
 {
     if (url != pendingAPIRequestURL())
         clearPendingAPIRequestURL();
@@ -1469,8 +1479,22 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, uint32_t op
     WebMouseEvent::Button mouseButton = static_cast<WebMouseEvent::Button>(opaqueMouseButton);
     
     RefPtr<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID);
+
+    ASSERT(!m_inDecidePolicyForNavigationAction);
+
+    m_inDecidePolicyForNavigationAction = true;
+    m_syncNavigationActionPolicyActionIsValid = false;
+    
     if (!m_policyClient.decidePolicyForNavigationAction(this, navigationType, modifiers, mouseButton, url, frame, listener.get()))
         listener->use();
+
+    m_inDecidePolicyForNavigationAction = false;
+
+    // Check if we received a policy decision already. If we did, we can just pass it back.
+    if (m_syncNavigationActionPolicyActionIsValid) {
+        receivedPolicyAction = true;
+        policyAction = m_syncNavigationActionPolicyAction;
+    }
 }
 
 void WebPageProxy::decidePolicyForNewWindowAction(uint64_t frameID, uint32_t opaqueNavigationType, uint32_t opaqueModifiers, int32_t opaqueMouseButton, const String& url, uint64_t listenerID)

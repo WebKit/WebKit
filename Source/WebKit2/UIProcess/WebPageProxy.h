@@ -424,7 +424,7 @@ private:
     void didFinishProgress();
     void didReceiveAccessibilityPageToken(const CoreIPC::DataReference&);
     
-    void decidePolicyForNavigationAction(uint64_t frameID, uint32_t navigationType, uint32_t modifiers, int32_t mouseButton, const String& url, uint64_t listenerID);
+    void decidePolicyForNavigationAction(uint64_t frameID, uint32_t navigationType, uint32_t modifiers, int32_t mouseButton, const String& url, uint64_t listenerID, bool& receivedPolicyAction, uint64_t& policyAction);
     void decidePolicyForNewWindowAction(uint64_t frameID, uint32_t navigationType, uint32_t modifiers, int32_t mouseButton, const String& url, uint64_t listenerID);
     void decidePolicyForMIMEType(uint64_t frameID, const String& MIMEType, const String& url, uint64_t listenerID, bool& receivedPolicyAction, uint64_t& policyAction, uint64_t& downloadID);
 
@@ -642,6 +642,10 @@ private:
     WebCore::PolicyAction m_syncMimeTypePolicyAction;
     uint64_t m_syncMimeTypePolicyDownloadID;
 
+    bool m_inDecidePolicyForNavigationAction;
+    bool m_syncNavigationActionPolicyActionIsValid;
+    WebCore::PolicyAction m_syncNavigationActionPolicyAction;
+    
     Deque<NativeWebKeyboardEvent> m_keyEventQueue;
     bool m_processingWheelEvent;
     OwnPtr<WebWheelEvent> m_nextWheelEvent;

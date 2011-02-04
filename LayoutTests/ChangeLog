@@ -1,3 +1,13 @@
+2011-02-04  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/8636239> and https://bugs.webkit.org/show_bug.cgi?id=53785
+        WebKit2: Pages with dynamically inserted iframes can add extraneous back/forward items.
+
+        * fast/loader/dynamic-iframe-extra-back-forward-item-expected.txt: Added.
+        * fast/loader/dynamic-iframe-extra-back-forward-item.html: Added.
+
 2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Add platform/mac-leopard baselines for tests added in r77639. The text rendering is
