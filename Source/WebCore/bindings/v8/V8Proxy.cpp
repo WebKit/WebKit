@@ -407,6 +407,8 @@ v8::Local<v8::Value> V8Proxy::runScript(v8::Handle<v8::Script> script, bool isIn
 
     // Run the script and keep track of the current recursion depth.
     v8::Local<v8::Value> result;
+    v8::TryCatch tryCatch;
+    tryCatch.SetVerbose(true);
     {
         // See comment in V8Proxy::callFunction.
         m_frame->keepAlive();
@@ -423,6 +425,11 @@ v8::Local<v8::Value> V8Proxy::runScript(v8::Handle<v8::Script> script, bool isIn
         ASSERT(result.IsEmpty());
 
     // Handle V8 internal error situation (Out-of-memory).
+    if (tryCatch.HasCaught()) {
+        ASSERT(result.IsEmpty());
+        return notHandledByInterceptor();
+    }
+
     if (result.IsEmpty())
         return notHandledByInterceptor();
 

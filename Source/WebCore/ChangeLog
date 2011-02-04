@@ -1,3 +1,23 @@
+2011-02-03  Anton Muhin  <antonm@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [v8] frame several more JS code invocations into v8::TryCatch
+        https://bugs.webkit.org/show_bug.cgi?id=53594
+
+        This patch is preemptive and adjusts v8 bindings code to forthcoming small change
+        in v8::ThrowException---currently sometimes exceptions thrown by this method
+        do not reach surrounding v8::TryCatch handler (see
+        http://code.google.com/p/v8/issues/detail?id=1072 and
+        http://codereview.chromium.org/6397011/).  Therefore the goal of this patch
+        is to make forthcoming v8 roll as smooth as possible (alas, we'll still need
+        one rebaseline as of now.)
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::runScript): Do not rely on empty handle as a signal of exception, wrap into v8::TryCatch instead
+        * bindings/v8/V8WindowErrorHandler.cpp:
+        (WebCore::V8WindowErrorHandler::callListenerFunction): Ditto
+
 2011-02-03  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dan Bernstein.
