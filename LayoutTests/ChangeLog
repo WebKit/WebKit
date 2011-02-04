@@ -1,5 +1,25 @@
 2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Update mac baselines. They pixel-rotted.
+
+        * platform/mac-leopard/fast/backgrounds/background-clip-text-expected.png:
+        * platform/mac-leopard/fast/backgrounds/quirks-mode-line-box-backgrounds-expected.png:
+        * platform/mac-leopard/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.checksum:
+        * platform/mac-leopard/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.png:
+        * platform/mac-leopard/fast/backgrounds/size/backgroundSize15-expected.png:
+        * platform/mac-leopard/fast/backgrounds/size/backgroundSize22-expected.checksum:
+        * platform/mac-leopard/fast/backgrounds/size/backgroundSize22-expected.png:
+        * platform/mac/fast/backgrounds/animated-svg-as-background-expected.checksum:
+        * platform/mac/fast/backgrounds/animated-svg-as-background-expected.png:
+        * platform/mac/fast/backgrounds/animated-svg-as-mask-expected.checksum:
+        * platform/mac/fast/backgrounds/animated-svg-as-mask-expected.png:
+        * platform/mac/fast/backgrounds/size/contain-and-cover-expected.checksum:
+        * platform/mac/fast/backgrounds/size/contain-and-cover-expected.png:
+        * platform/mac/fast/backgrounds/svg-as-background-4-expected.checksum:
+        * platform/mac/fast/backgrounds/svg-as-background-4-expected.png:
+
+2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Tweak expectations for passing tests.
 
         * platform/chromium/test_expectations.txt: More tweakage.
