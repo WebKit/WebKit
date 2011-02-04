@@ -1,3 +1,22 @@
+2011-02-04  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Frame accurate seeking isn't always accurate
+        https://bugs.webkit.org/show_bug.cgi?id=52697
+
+        Test: media/video-frame-accurate-seek.html
+
+        Make seeking slightly more accurate by rounding instead of truncating
+        when converting from seconds-in-float to time/timeScale.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::createQTTime):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::mediaTimeForTimeValue):
+        * platform/graphics/win/QTMovie.cpp:
+        (QTMovie::setCurrentTime):
+
 2011-02-04  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Nate Chapin.

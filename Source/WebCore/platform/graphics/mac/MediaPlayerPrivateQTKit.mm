@@ -616,7 +616,7 @@ QTTime MediaPlayerPrivateQTKit::createQTTime(float time) const
     if (!metaDataAvailable())
         return QTMakeTime(0, 600);
     long timeScale = [[m_qtMovie.get() attributeForKey:QTMovieTimeScaleAttribute] longValue];
-    return QTMakeTime(time * timeScale, timeScale);
+    return QTMakeTime(lroundf(time * timeScale), timeScale);
 }
 
 void MediaPlayerPrivateQTKit::resumeLoad()

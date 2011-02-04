@@ -35,6 +35,7 @@
 #include <QuickTimeComponents.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/Assertions.h>
+#include <wtf/MathExtras.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
@@ -375,10 +376,10 @@ void QTMovie::setCurrentTime(float time) const
     m_private->m_seeking = true;
     TimeScale scale = GetMovieTimeScale(m_private->m_movie);
     if (m_private->m_movieController) {
-        QTRestartAtTimeRecord restart = { time * scale , 0 };
+        QTRestartAtTimeRecord restart = { lroundf(time * scale) , 0 };
         MCDoAction(m_private->m_movieController, mcActionRestartAtTime, (void *)&restart);
     } else
-        SetMovieTimeValue(m_private->m_movie, TimeValue(time * scale));
+        SetMovieTimeValue(m_private->m_movie, TimeValue(lroundf(time * scale)));
     QTMovieTask::sharedTask()->updateTaskTimer();
 }
 

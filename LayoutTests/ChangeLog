@@ -1,3 +1,19 @@
+2011-02-04  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Frame accurate seeking isn't always accurate
+        https://bugs.webkit.org/show_bug.cgi?id=52697
+
+        New pixel test that seeks to specific currentTimes and records the rendered frame.
+
+        * media/content/test-25fps.mp4: Added.
+        * media/content/test-25fps.ogv: Added.
+        * media/video-frame-accurate-seek-expected.txt: Added.
+        * media/video-frame-accurate-seek.html: Added.
+        * platform/mac/media/video-frame-accurate-seek-expected.checksum: Added.
+        * platform/mac/media/video-frame-accurate-seek-expected.png: Added.
+
 2011-02-04  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Nate Chapin.

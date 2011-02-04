@@ -1059,7 +1059,7 @@ float MediaPlayerPrivateQuickTimeVisualContext::mediaTimeForTimeValue(float time
     if (m_readyState < MediaPlayer::HaveMetadata || !(timeScale = m_movie->timeScale()))
         return timeValue;
 
-    long mediaTimeValue = static_cast<long>(timeValue * timeScale);
+    long mediaTimeValue = lroundf(timeValue * timeScale);
     return static_cast<float>(mediaTimeValue) / timeScale;
 }
 
