@@ -1,5 +1,17 @@
 2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Remove platform-specific baselines, since we match platform/mac here.
+
+        * platform/chromium-mac/fast/blockflow/box-shadow-horizontal-bt-expected.checksum: Removed.
+        * platform/chromium-mac/fast/blockflow/box-shadow-horizontal-bt-expected.png: Removed.
+        * platform/chromium-mac/fast/blockflow/box-shadow-vertical-lr-expected.checksum: Removed.
+        * platform/chromium-mac/fast/blockflow/box-shadow-vertical-lr-expected.png: Removed.
+        * platform/chromium-mac/fast/blockflow/box-shadow-vertical-rl-expected.checksum: Removed.
+        * platform/chromium-mac/fast/blockflow/box-shadow-vertical-rl-expected.png: Removed.
+        * platform/chromium/test_expectations.txt:
+
+2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Update mac expectations.
 
         * platform/chromium/test_expectations.txt: Updated.

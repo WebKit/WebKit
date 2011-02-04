@@ -3049,9 +3049,6 @@ BUGWK53527 DEBUG : fast/frames/iframe-reparenting-new-page.html = CRASH PASS
 BUGCR71783 : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
 
 // These are waiting for platform/mac pixel baselines to be updated.
-BUGWK50528 MAC : fast/blockflow/box-shadow-horizontal-bt.html = IMAGE
-BUGWK50528 MAC : fast/blockflow/box-shadow-vertical-lr.html = IMAGE
-BUGWK50528 MAC : fast/blockflow/box-shadow-vertical-rl.html = IMAGE
 BUGWK50528 MAC : fast/box-shadow/box-shadow-transformed.html = IMAGE
 BUGWK50528 MAC : fast/css/color-correction-on-box-shadow.html = IMAGE
 BUGWK50528 MAC : svg/W3C-SVG-1.1/animate-elem-33-t.svg = IMAGE
