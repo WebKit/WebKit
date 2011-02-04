@@ -2,6 +2,21 @@
 
         Unreviewed.
 
+        Rebaseline. The problem was introduced at r77601.
+
+        * platform/chromium-mac/fast/repaint/shadow-multiple-horizontal-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-horizontal-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-strict-horizontal-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-strict-horizontal-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-strict-vertical-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-strict-vertical-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-vertical-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-vertical-expected.png: Added.
+
+2011-02-04  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed.
+
         Rebaseline image for fast/box-shadow/shadow-tiling-artifact.html
         The problem was introduced at r77601.
 
