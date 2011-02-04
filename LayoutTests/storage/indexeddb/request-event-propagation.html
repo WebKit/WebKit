@@ -1,0 +1,194 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test event propogation on IDBRequest.");
+if (window.layoutTestController) 
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    result = evalAndLog("webkitIndexedDB.open('name')");
+    verifyResult(result);
+    result.onsuccess = setVersion;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function setVersion()
+{
+    verifySuccessEvent(event);
+    db = evalAndLog("db = event.result");
+
+    result = evalAndLog("db.setVersion('new version')");
+    verifyResult(result);
+    result.onsuccess = deleteExisting;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function deleteExisting()
+{
+    debug("setVersionSuccess():");
+    verifySuccessEvent(event);
+    window.trans = evalAndLog("trans = event.result");
+    shouldBeTrue("trans !== null");
+    trans.onabort = unexpectedAbortCallback;
+    evalAndLog("trans.oncomplete = startTest");
+
+    deleteAllObjectStores(db, createObjectStore);
+}
+
+function createObjectStore()
+{
+    store = evalAndLog("store = db.createObjectStore('storeName', null)");
+    result = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key')");
+    result.onerror = unexpectedErrorCallback;
+}
+
+function startTest()
+{
+    debug("Verify that handler fires and that not preventing default will result in an abort");
+    trans = evalAndLog("trans = db.transaction([], webkitIDBTransaction.READ_WRITE)");
+    evalAndLog("trans.onabort = transactionAborted");
+    evalAndLog("trans.oncomplete = unexpectedCompleteCallback");
+    evalAndLog("trans.onerror = allowDefault");
+    store = evalAndLog("store = trans.objectStore('storeName')");
+    result = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key')");
+    result.onsuccess = unexpectedSuccessCallback;
+    handlerFired = false;
+}
+
+function allowDefault()
+{
+    testPassed("Event handler fired");
+    debug("Doing nothing to prevent the default action...");
+    handlerFired = true;
+}
+
+function transactionAborted()
+{
+    shouldBeTrue("handlerFired");
+    debug("");
+    debug("Verifing error");
+    trans = evalAndLog("trans = db.transaction([], webkitIDBTransaction.READ_WRITE)");
+    evalAndLog("trans.onabort = transactionAborted2");
+    evalAndLog("trans.oncomplete = unexpectedAbortCallback");
+    evalAndLog("trans.addEventListener('error', errorCaptureCallback, true)");
+    evalAndLog("trans.addEventListener('error', errorBubbleCallback, false)");
+    store = evalAndLog("store = trans.objectStore('storeName')");
+    result = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key')");
+    result.onsuccess = unexpectedSuccessCallback;
+    result.onerror = errorFiredCallback;
+    captureFired = false;
+    requestFired = false;
+    bubbleFired = false;
+}
+
+function errorCaptureCallback()
+{
+    debug("");
+    debug("In IDBTransaction error capture");
+    shouldBeFalse("captureFired");
+    shouldBeFalse("requestFired");
+    shouldBeFalse("bubbleFired");
+    captureFired = true;
+}
+
+function errorFiredCallback()
+{
+    debug("");
+    debug("In IDBRequest handler");
+    shouldBeTrue("captureFired");
+    shouldBeFalse("requestFired");
+    shouldBeFalse("bubbleFired");
+    requestFired = true;
+}
+
+function errorBubbleCallback()
+{
+    debug("");
+    debug("In IDBTransaction error bubble");
+    shouldBeTrue("captureFired");
+    shouldBeTrue("requestFired");
+    shouldBeFalse("bubbleFired");
+    bubbleFired = true;
+}
+
+function transactionAborted2()
+{
+    debug("");
+    debug("Transaction aborted");
+    shouldBeTrue("captureFired");
+    shouldBeTrue("requestFired");
+    shouldBeTrue("bubbleFired");
+    debug("");
+    debug("Verifing success.");
+    trans = evalAndLog("trans = db.transaction([], webkitIDBTransaction.READ_WRITE)");
+    evalAndLog("trans.oncomplete = transactionComplete");
+    evalAndLog("trans.onabort = unexpectedAbortCallback");
+    evalAndLog("trans.addEventListener('success', successCaptureCallback, true)");
+    evalAndLog("trans.addEventListener('success', successBubbleCallback, false)");
+    store = evalAndLog("store = trans.objectStore('storeName')");
+    result = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key2')");
+    result.onerror = unexpectedErrorCallback;
+    result.onsuccess = successFiredCallback;
+    captureFired = false;
+    requestFired = false;
+    bubbleFired = false;
+}
+
+function successCaptureCallback()
+{
+    debug("");
+    debug("In IDBTransaction success capture");
+    shouldBeFalse("captureFired");
+    shouldBeFalse("requestFired");
+    shouldBeFalse("bubbleFired");
+    captureFired = true;
+}
+
+function successFiredCallback()
+{
+    debug("");
+    debug("In IDBRequest handler");
+    shouldBeTrue("captureFired");
+    shouldBeFalse("requestFired");
+    shouldBeFalse("bubbleFired");
+    requestFired = true;
+}
+
+function successBubbleCallback()
+{
+    debug("");
+    debug("In IDBTransaction success bubble");
+    testFailed("Success capture callback should NOT fire");
+    bubbleFired = true;
+}
+
+function transactionComplete()
+{
+    debug("");
+    debug("Transaction completed");
+    shouldBeTrue("captureFired");
+    shouldBeTrue("requestFired");
+    shouldBeFalse("bubbleFired");
+    debug("");
+
+    done();
+    return;
+}
+
+test();
+
+var successfullyParsed = true;
+
+</script>
+</body>
+</html>

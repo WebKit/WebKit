@@ -52,7 +52,7 @@ public:
     }
     ~IDBDatabase();
 
-    void setSetVersionTransaction(IDBTransactionBackendInterface*);
+    void setSetVersionTransaction(IDBTransaction*);
 
     // Implement the IDL
     String name() const { return m_backend->name(); }
@@ -74,7 +74,7 @@ private:
     IDBDatabase(PassRefPtr<IDBDatabaseBackendInterface>);
 
     RefPtr<IDBDatabaseBackendInterface> m_backend;
-    RefPtr<IDBTransactionBackendInterface> m_setVersionTransaction;
+    RefPtr<IDBTransaction> m_setVersionTransaction;
 
     bool m_noNewTransactions;
 };

@@ -45,11 +45,10 @@ namespace WebCore {
 
 class DOMStringList;
 class IDBAny;
-class IDBTransactionBackendInterface;
 
 class IDBObjectStore : public RefCounted<IDBObjectStore> {
 public:
-    static PassRefPtr<IDBObjectStore> create(PassRefPtr<IDBObjectStoreBackendInterface> idbObjectStore, IDBTransactionBackendInterface* transaction)
+    static PassRefPtr<IDBObjectStore> create(PassRefPtr<IDBObjectStoreBackendInterface> idbObjectStore, IDBTransaction* transaction)
     {
         return adoptRef(new IDBObjectStore(idbObjectStore, transaction));
     }
@@ -78,11 +77,11 @@ public:
     PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, unsigned short direction, ExceptionCode&); 
 
 private:
-    IDBObjectStore(PassRefPtr<IDBObjectStoreBackendInterface>, IDBTransactionBackendInterface* transaction);
+    IDBObjectStore(PassRefPtr<IDBObjectStoreBackendInterface>, IDBTransaction*);
     void removeTransactionFromPendingList();
 
     RefPtr<IDBObjectStoreBackendInterface> m_objectStore;
-    RefPtr<IDBTransactionBackendInterface> m_transaction;
+    RefPtr<IDBTransaction> m_transaction;
 };
 
 } // namespace WebCore

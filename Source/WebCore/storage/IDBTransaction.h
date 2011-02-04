@@ -62,6 +62,7 @@ public:
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(abort);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(complete);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
 
     // IDBTransactionCallbacks
     virtual void onAbort();
@@ -92,6 +93,7 @@ private:
     RefPtr<IDBTransactionBackendInterface> m_backend;
     RefPtr<IDBDatabase> m_database;
     unsigned short m_mode;
+    bool m_finished;
 
     EventTargetData m_eventTargetData;
 };

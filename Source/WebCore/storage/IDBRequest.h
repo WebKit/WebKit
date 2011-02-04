@@ -42,11 +42,11 @@
 namespace WebCore {
 
 class IDBEvent;
-class IDBTransactionBackendInterface;
+class IDBTransaction;
 
 class IDBRequest : public IDBCallbacks, public EventTarget, public ActiveDOMObject {
 public:
-    static PassRefPtr<IDBRequest> create(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBTransactionBackendInterface*);
+    static PassRefPtr<IDBRequest> create(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBTransaction*);
     virtual ~IDBRequest();
 
     // Defined in the IDL
@@ -58,7 +58,7 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(success);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
 
-    bool resetReadyState(IDBTransactionBackendInterface*);
+    bool resetReadyState(IDBTransaction*);
 
     // IDBCallbacks
     virtual void onError(PassRefPtr<IDBDatabaseError>);
@@ -80,7 +80,7 @@ public:
     using ThreadSafeShared<IDBCallbacks>::deref;
 
 private:
-    IDBRequest(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBTransactionBackendInterface* transaction);
+    IDBRequest(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBTransaction*);
 
     void enqueueEvent(PassRefPtr<Event>);
 
@@ -91,7 +91,7 @@ private:
     virtual EventTargetData* ensureEventTargetData();
 
     RefPtr<IDBAny> m_source;
-    RefPtr<IDBTransactionBackendInterface> m_transaction;
+    RefPtr<IDBTransaction> m_transaction;
 
     ReadyState m_readyState;
 

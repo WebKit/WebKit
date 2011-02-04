@@ -46,26 +46,26 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBRequest> IDBRequest::create(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, IDBTransactionBackendInterface* transaction)
+PassRefPtr<IDBRequest> IDBRequest::create(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, IDBTransaction* transaction)
 {
     return adoptRef(new IDBRequest(context, source, transaction));
 }
 
-IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, IDBTransactionBackendInterface* transaction)
+IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, IDBTransaction* transaction)
     : ActiveDOMObject(context, this)
     , m_source(source)
     , m_transaction(transaction)
     , m_readyState(LOADING)
 {
     if (m_transaction)
-        IDBPendingTransactionMonitor::removePendingTransaction(m_transaction.get());
+        IDBPendingTransactionMonitor::removePendingTransaction(m_transaction->backend());
 }
 
 IDBRequest::~IDBRequest()
 {
 }
 
-bool IDBRequest::resetReadyState(IDBTransactionBackendInterface* transaction)
+bool IDBRequest::resetReadyState(IDBTransaction* transaction)
 {
     ASSERT(scriptExecutionContext());
     if (m_readyState != DONE)
@@ -74,7 +74,7 @@ bool IDBRequest::resetReadyState(IDBTransactionBackendInterface* transaction)
     m_transaction = transaction;
     m_readyState = LOADING;
 
-    IDBPendingTransactionMonitor::removePendingTransaction(m_transaction.get());
+    IDBPendingTransactionMonitor::removePendingTransaction(m_transaction->backend());
 
     return true;
 }
@@ -115,12 +115,14 @@ void IDBRequest::onSuccess(PassRefPtr<IDBTransactionBackendInterface> prpBackend
         return;
 
     RefPtr<IDBTransactionBackendInterface> backend = prpBackend;
-    // This is only used by setVersion which will always have a source that's an IDBDatabase.
-    m_source->idbDatabase()->setSetVersionTransaction(backend.get());
     RefPtr<IDBTransaction> frontend = IDBTransaction::create(scriptExecutionContext(), backend, m_source->idbDatabase().get());
     backend->setCallbacks(frontend.get());
-    m_transaction = backend;
-    IDBPendingTransactionMonitor::removePendingTransaction(m_transaction.get());
+    m_transaction = frontend;
+
+    ASSERT(m_source->type() == IDBAny::IDBDatabaseType);
+    m_source->idbDatabase()->setSetVersionTransaction(frontend.get());
+
+    IDBPendingTransactionMonitor::removePendingTransaction(m_transaction->backend());
     enqueueEvent(IDBSuccessEvent::create(m_source, IDBAny::create(frontend.release())));
 }
 
@@ -142,15 +144,17 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
     Vector<RefPtr<EventTarget> > targets;
     targets.append(this);
     ASSERT(event->target() == this);
+    if (m_transaction)
+        targets.append(m_transaction);
+
     ASSERT(event->isIDBErrorEvent() || event->isIDBSuccessEvent());
     bool dontPreventDefault = static_cast<IDBEvent*>(event.get())->dispatch(targets);
 
     if (m_transaction) {
         if (dontPreventDefault && event->isIDBErrorEvent())
-            m_transaction->abort();
-        m_transaction->didCompleteTaskEvents();
+            m_transaction->backend()->abort();
+        m_transaction->backend()->didCompleteTaskEvents();
     }
-
     return dontPreventDefault;
 }
 

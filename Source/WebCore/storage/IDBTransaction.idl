@@ -44,6 +44,7 @@ module storage {
         // Events
         attribute EventListener onabort;
         attribute EventListener oncomplete;
+        attribute EventListener onerror;
         // EventTarget interface
         void addEventListener(in DOMString type,
                               in EventListener listener,

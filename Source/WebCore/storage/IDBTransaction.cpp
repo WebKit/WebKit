@@ -52,7 +52,9 @@ IDBTransaction::IDBTransaction(ScriptExecutionContext* context, PassRefPtr<IDBTr
     , m_backend(backend)
     , m_database(db)
     , m_mode(m_backend->mode())
+    , m_finished(false)
 {
+    ASSERT(m_backend);
     IDBPendingTransactionMonitor::addPendingTransaction(m_backend.get());
 }
 
@@ -73,7 +75,7 @@ IDBDatabase* IDBTransaction::db()
 PassRefPtr<IDBObjectStore> IDBTransaction::objectStore(const String& name, ExceptionCode& ec)
 {
     // FIXME: It'd be better (because it's more deterministic) if we didn't start throwing this until the complete or abort event fires.
-    if (!m_backend) {
+    if (m_finished) {
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
         return 0;
     }
@@ -82,7 +84,7 @@ PassRefPtr<IDBObjectStore> IDBTransaction::objectStore(const String& name, Excep
         ASSERT(ec);
         return 0;
     }
-    RefPtr<IDBObjectStore> objectStore = IDBObjectStore::create(objectStoreBackend, m_backend.get());
+    RefPtr<IDBObjectStore> objectStore = IDBObjectStore::create(objectStoreBackend, this);
     return objectStore.release();
 }
 
@@ -120,7 +122,8 @@ void IDBTransaction::contextDestroyed()
     RefPtr<IDBTransaction> selfRef = this;
     if (m_backend)
         m_backend->abort();
-    m_backend.clear();
+
+    m_finished = true;
 }
 
 void IDBTransaction::enqueueEvent(PassRefPtr<Event> event)
@@ -128,9 +131,9 @@ void IDBTransaction::enqueueEvent(PassRefPtr<Event> event)
     if (!scriptExecutionContext())
         return;
 
-    ASSERT(m_backend);
-    m_backend.clear();
-    
+    ASSERT(!m_finished);
+    m_finished = true;
+
     ASSERT(scriptExecutionContext()->isDocument());
     EventQueue* eventQueue = static_cast<Document*>(scriptExecutionContext())->eventQueue();
     event->setTarget(this);

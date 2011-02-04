@@ -40,9 +40,9 @@ class IDBCallbacks;
 class IDBCursorBackendInterface;
 class IDBKey;
 class IDBRequest;
+class IDBTransaction;
 class ScriptExecutionContext;
 class SerializedScriptValue;
-class IDBTransactionBackendInterface;
 
 class IDBCursor : public RefCounted<IDBCursor> {
 public:
@@ -52,7 +52,7 @@ public:
         PREV = 2,
         PREV_NO_DUPLICATE = 3,
     };
-    static PassRefPtr<IDBCursor> create(PassRefPtr<IDBCursorBackendInterface> backend, IDBRequest* request, IDBTransactionBackendInterface* transaction)
+    static PassRefPtr<IDBCursor> create(PassRefPtr<IDBCursorBackendInterface> backend, IDBRequest* request, IDBTransaction* transaction)
     {
         return adoptRef(new IDBCursor(backend, request, transaction));
     }
@@ -70,11 +70,11 @@ public:
     PassRefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, ExceptionCode&);
 
 private:
-    explicit IDBCursor(PassRefPtr<IDBCursorBackendInterface>, IDBRequest*, IDBTransactionBackendInterface*);
+    explicit IDBCursor(PassRefPtr<IDBCursorBackendInterface>, IDBRequest*, IDBTransaction*);
 
     RefPtr<IDBCursorBackendInterface> m_backend;
     RefPtr<IDBRequest> m_request;
-    RefPtr<IDBTransactionBackendInterface> m_transaction;
+    RefPtr<IDBTransaction> m_transaction;
 };
 
 } // namespace WebCore

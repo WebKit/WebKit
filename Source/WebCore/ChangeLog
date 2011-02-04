@@ -2,6 +2,62 @@
 
         Reviewed by Nate Chapin.
 
+        Second IndexedDB events overhaul patch
+        https://bugs.webkit.org/show_bug.cgi?id=53813
+
+        If an IDBRequest has a IDBTransaction, it should propogate
+        events through it. In order to do this, IDBRequest needs to
+        hold a transaction frontend object rather than a backend one.
+
+        Test: storage/indexeddb/request-event-propagation.html
+
+        * storage/IDBCursor.cpp:
+        (WebCore::IDBCursor::IDBCursor):
+        * storage/IDBCursor.h:
+        (WebCore::IDBCursor::create):
+        * storage/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::setSetVersionTransaction):
+        (WebCore::IDBDatabase::createObjectStore):
+        (WebCore::IDBDatabase::deleteObjectStore):
+        * storage/IDBDatabase.h:
+        * storage/IDBIndex.cpp:
+        (WebCore::IDBIndex::IDBIndex):
+        (WebCore::IDBIndex::openCursor):
+        (WebCore::IDBIndex::openKeyCursor):
+        (WebCore::IDBIndex::get):
+        (WebCore::IDBIndex::getKey):
+        * storage/IDBIndex.h:
+        (WebCore::IDBIndex::create):
+        * storage/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::IDBObjectStore):
+        (WebCore::IDBObjectStore::get):
+        (WebCore::IDBObjectStore::add):
+        (WebCore::IDBObjectStore::put):
+        (WebCore::IDBObjectStore::deleteFunction):
+        (WebCore::IDBObjectStore::createIndex):
+        (WebCore::IDBObjectStore::deleteIndex):
+        (WebCore::IDBObjectStore::openCursor):
+        * storage/IDBObjectStore.h:
+        (WebCore::IDBObjectStore::create):
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::create):
+        (WebCore::IDBRequest::IDBRequest):
+        (WebCore::IDBRequest::resetReadyState):
+        (WebCore::IDBRequest::onSuccess):
+        (WebCore::IDBRequest::dispatchEvent):
+        * storage/IDBRequest.h:
+        * storage/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::IDBTransaction):
+        (WebCore::IDBTransaction::objectStore):
+        (WebCore::IDBTransaction::contextDestroyed):
+        (WebCore::IDBTransaction::enqueueEvent):
+        * storage/IDBTransaction.h:
+        * storage/IDBTransaction.idl:
+
+2011-02-04  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
         First step towards event propogation within IndexedDB
         https://bugs.webkit.org/show_bug.cgi?id=53795
 

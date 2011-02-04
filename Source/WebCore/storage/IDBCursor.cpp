@@ -33,13 +33,13 @@
 #include "IDBCursorBackendInterface.h"
 #include "IDBKey.h"
 #include "IDBRequest.h"
-#include "IDBTransactionBackendInterface.h"
+#include "IDBTransaction.h"
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
 
 namespace WebCore {
 
-IDBCursor::IDBCursor(PassRefPtr<IDBCursorBackendInterface> backend, IDBRequest* request, IDBTransactionBackendInterface* transaction)
+IDBCursor::IDBCursor(PassRefPtr<IDBCursorBackendInterface> backend, IDBRequest* request, IDBTransaction* transaction)
     : m_backend(backend)
     , m_request(request)
     , m_transaction(transaction)

@@ -1,0 +1,115 @@
+Test event propogation on IDBRequest.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+webkitIndexedDB.open('name')
+PASS 'onsuccess' in result is true
+PASS 'onerror' in result is true
+PASS 'readyState' in result is true
+An event should fire shortly...
+
+Success event fired:
+PASS 'result' in event is true
+PASS 'code' in event is false
+PASS 'message' in event is false
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+db = event.result
+db.setVersion('new version')
+PASS 'onsuccess' in result is true
+PASS 'onerror' in result is true
+PASS 'readyState' in result is true
+An event should fire shortly...
+
+setVersionSuccess():
+Success event fired:
+PASS 'result' in event is true
+PASS 'code' in event is false
+PASS 'message' in event is false
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+trans = event.result
+PASS trans !== null is true
+trans.oncomplete = startTest
+Deleted all object stores.
+store = db.createObjectStore('storeName', null)
+store.add({x: 'value', y: 'zzz'}, 'key')
+Verify that handler fires and that not preventing default will result in an abort
+trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
+trans.onabort = transactionAborted
+trans.oncomplete = unexpectedCompleteCallback
+trans.onerror = allowDefault
+store = trans.objectStore('storeName')
+store.add({x: 'value', y: 'zzz'}, 'key')
+PASS Event handler fired
+Doing nothing to prevent the default action...
+PASS handlerFired is true
+
+Verifing error
+trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
+trans.onabort = transactionAborted2
+trans.oncomplete = unexpectedAbortCallback
+trans.addEventListener('error', errorCaptureCallback, true)
+trans.addEventListener('error', errorBubbleCallback, false)
+store = trans.objectStore('storeName')
+store.add({x: 'value', y: 'zzz'}, 'key')
+
+In IDBTransaction error capture
+PASS captureFired is false
+PASS requestFired is false
+PASS bubbleFired is false
+
+In IDBRequest handler
+PASS captureFired is true
+PASS requestFired is false
+PASS bubbleFired is false
+
+In IDBTransaction error bubble
+PASS captureFired is true
+PASS requestFired is true
+PASS bubbleFired is false
+
+Transaction aborted
+PASS captureFired is true
+PASS requestFired is true
+PASS bubbleFired is true
+
+Verifing success.
+trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
+trans.oncomplete = transactionComplete
+trans.onabort = unexpectedAbortCallback
+trans.addEventListener('success', successCaptureCallback, true)
+trans.addEventListener('success', successBubbleCallback, false)
+store = trans.objectStore('storeName')
+store.add({x: 'value', y: 'zzz'}, 'key2')
+
+In IDBTransaction success capture
+PASS captureFired is false
+PASS requestFired is false
+PASS bubbleFired is false
+
+In IDBRequest handler
+PASS captureFired is true
+PASS requestFired is false
+PASS bubbleFired is false
+
+Transaction completed
+PASS captureFired is true
+PASS requestFired is true
+PASS bubbleFired is false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

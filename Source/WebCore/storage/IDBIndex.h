@@ -39,7 +39,7 @@ namespace WebCore {
 
 class IDBIndex : public RefCounted<IDBIndex> {
 public:
-    static PassRefPtr<IDBIndex> create(PassRefPtr<IDBIndexBackendInterface> backend, IDBTransactionBackendInterface* transaction)
+    static PassRefPtr<IDBIndex> create(PassRefPtr<IDBIndexBackendInterface> backend, IDBTransaction* transaction)
     {
         return adoptRef(new IDBIndex(backend, transaction));
     }
@@ -64,10 +64,10 @@ public:
     PassRefPtr<IDBRequest> getKey(ScriptExecutionContext*, PassRefPtr<IDBKey>, ExceptionCode&);
 
 private:
-    IDBIndex(PassRefPtr<IDBIndexBackendInterface>, IDBTransactionBackendInterface* transaction);
+    IDBIndex(PassRefPtr<IDBIndexBackendInterface>, IDBTransaction*);
 
     RefPtr<IDBIndexBackendInterface> m_backend;
-    RefPtr<IDBTransactionBackendInterface> m_transaction;
+    RefPtr<IDBTransaction> m_transaction;
 };
 
 } // namespace WebCore
