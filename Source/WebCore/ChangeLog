@@ -1,3 +1,10 @@
+2011-02-04  Jeremy Orlow  <jorlow@chromium.org>
+
+        Build fix from merge mistake.
+
+        * storage/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::ensureEventTargetData):
+
 2011-02-04  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Darin Adler.

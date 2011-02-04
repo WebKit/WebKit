@@ -142,6 +142,11 @@ EventTargetData* IDBTransaction::eventTargetData()
     return &m_eventTargetData;
 }
 
+EventTargetData* IDBTransaction::ensureEventTargetData()
+{
+    return &m_eventTargetData;
+}
+
 }
 
 #endif // ENABLE(INDEXED_DATABASE)
