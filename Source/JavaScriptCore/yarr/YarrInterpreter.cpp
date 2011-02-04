@@ -203,7 +203,7 @@ public:
         int readChecked(int position)
         {
             ASSERT(position < 0);
-            ASSERT((unsigned)-position <= pos);
+            ASSERT(static_cast<unsigned>(-position) <= pos);
             unsigned p = pos + position;
             ASSERT(p < length);
             return input[p];
@@ -248,8 +248,8 @@ public:
             if ((pos + count) <= length) {
                 pos += count;
                 return true;
-            } else
-                return false;
+            }
+            return false;
         }
 
         void uncheckInput(int count)
@@ -356,8 +356,8 @@ public:
     {
         if (term.inputPosition)
             return (input.atEnd(term.inputPosition)) || (pattern->m_multiline && testCharacterClass(pattern->newlineCharacterClass, input.readChecked(term.inputPosition)));
-        else
-            return (input.atEnd()) || (pattern->m_multiline && testCharacterClass(pattern->newlineCharacterClass, input.read()));
+
+        return (input.atEnd()) || (pattern->m_multiline && testCharacterClass(pattern->newlineCharacterClass, input.read()));
     }
 
     bool matchAssertionWordBoundary(ByteTerm& term)
@@ -577,8 +577,8 @@ public:
             if ((backTrack->matchAmount < term.atom.quantityCount) && tryConsumeBackReference(matchBegin, matchEnd, term.inputPosition)) {
                 ++backTrack->matchAmount;
                 return true;
-            } else
-                input.setPos(backTrack->begin);
+            }
+            input.setPos(backTrack->begin);
             break;
         }
 
@@ -1412,7 +1412,7 @@ public:
     }
 
 private:
-    BytecodePattern *pattern;
+    BytecodePattern* pattern;
     int* output;
     InputStream input;
     BumpPointerPool* allocatorPool;
@@ -1847,7 +1847,7 @@ public:
                 case PatternTerm::TypeParentheticalAssertion: {
                     unsigned alternativeFrameLocation = term.frameLocation + YarrStackSpaceForBackTrackInfoParentheticalAssertion;
 
-                    ASSERT(currentCountAlreadyChecked >= (unsigned)term.inputPosition);
+                    ASSERT(currentCountAlreadyChecked >= static_cast<unsigned>(term.inputPosition));
                     int positiveInputOffset = currentCountAlreadyChecked - term.inputPosition;
 
                     atomParentheticalAssertionBegin(term.parentheses.subpatternId, term.invert(), term.frameLocation, alternativeFrameLocation);
