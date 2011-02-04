@@ -533,6 +533,7 @@ BUGCR20404 : editing/execCommand/copy-without-selection.html = FAIL
 BUGCR30536 WIN SKIP : http/tests/xmlhttprequest/methods-lower-case.html = TIMEOUT CRASH
 BUGCR30536 WIN : http/tests/xmlhttprequest/methods-async.html = TIMEOUT
 BUGCR30536 WIN SLOW : http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-invalidation-by-method.html = FAIL
+BUGCR30536 WIN : http/tests/xmlhttprequest/cross-origin-preflight-get.html = TEXT
 // LightTPD doesn't accept unknown HTTP methods and passes CGIs a Content-Type
 // even when a request didn't send the header.
 BUGCR30536 WIN SLOW : http/tests/xmlhttprequest/methods.html = FAIL

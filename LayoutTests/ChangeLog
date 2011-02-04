@@ -1,5 +1,11 @@
 2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] Marked test, added in r77680 as failing due to lighttpd.
+
+        * platform/chromium/test_expectations.txt: Marked.
+
+2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Update Leopard baselines for fast/blockflow, this time correctly.
 
         * platform/mac-leopard/fast/blockflow/Kusa-Makura-background-canvas-expected.checksum:
