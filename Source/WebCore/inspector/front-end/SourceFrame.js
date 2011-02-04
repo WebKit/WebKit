@@ -694,7 +694,7 @@ WebInspector.SourceFrame.prototype = {
         if (!WebInspector.panels.scripts || !WebInspector.panels.scripts.paused)
             return;
 
-        var lineRow = element.enclosingNodeOrSelfWithNodeName("tr");
+        var lineRow = element.enclosingNodeOrSelfWithClass("webkit-line-content");
         if (!lineRow)
             return;
 

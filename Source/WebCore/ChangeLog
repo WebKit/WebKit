@@ -1,3 +1,13 @@
+2011-02-04  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: evaluate on hover does not work on a breakpoint.
+        https://bugs.webkit.org/show_bug.cgi?id=53768
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._mouseHover):
+
 2011-02-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r77625 and r77626.
