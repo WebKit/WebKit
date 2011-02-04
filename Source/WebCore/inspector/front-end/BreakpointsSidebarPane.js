@@ -232,7 +232,7 @@ WebInspector.JavaScriptBreakpointsSidebarPane.prototype = {
         }
 
         element.addStyleClass("cursor-pointer");
-        var clickHandler = WebInspector.panels.scripts.showSourceLine.bind(WebInspector.panels.scripts, data.url, data.lineNumber + 1);
+        var clickHandler = WebInspector.panels.scripts.showSourceLine.bind(WebInspector.panels.scripts, data.url, lineNumber + 1);
         element.addEventListener("click", clickHandler, false);
     },
 
