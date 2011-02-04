@@ -59,12 +59,12 @@ def find(port, paths=None):
           everything under the layout_tests_dir().
     """
     paths = paths or ['*']
-    fs = port._filesystem
-    return normalized_find(fs, normalize(fs, port.layout_tests_dir(), paths))
+    filesystem = port._filesystem
+    return normalized_find(filesystem, normalize(filesystem, port.layout_tests_dir(), paths))
 
 
-def normalize(fs, base_dir, paths):
-    return [fs.normpath(fs.join(base_dir, path)) for path in paths]
+def normalize(filesystem, base_dir, paths):
+    return [filesystem.normpath(filesystem.join(base_dir, path)) for path in paths]
 
 
 def normalized_find(filesystem, paths):
@@ -98,10 +98,10 @@ def normalized_find(filesystem, paths):
     return test_files
 
 
-def _has_supported_extension(fs, filename):
+def _has_supported_extension(filesystem, filename):
     """Return true if filename is one of the file extensions we want to run a
     test on."""
-    extension = fs.splitext(filename)[1]
+    extension = filesystem.splitext(filename)[1]
     return extension in _supported_file_extensions
 
 
@@ -114,7 +114,7 @@ def _is_reference_html_file(filename):
     return False
 
 
-def _is_test_file(fs, dirname, filename):
+def _is_test_file(filesystem, dirname, filename):
     """Return true if the filename points to a test file."""
-    return (_has_supported_extension(fs, filename) and
+    return (_has_supported_extension(filesystem, filename) and
             not _is_reference_html_file(filename))
