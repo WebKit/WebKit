@@ -84,7 +84,7 @@ void IDBCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
     if (m_request->resetReadyState(m_transaction.get()))
         m_backend->continueFunction(key, m_request, ec);
     else
-        ASSERT_NOT_REACHED();
+        ec = IDBDatabaseException::NOT_ALLOWED_ERR;
 }
 
 PassRefPtr<IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext* context, ExceptionCode& ec)

@@ -28,8 +28,9 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "Event.h"
+#include "Document.h"
 #include "EventException.h"
+#include "EventQueue.h"
 #include "IDBAbortEvent.h"
 #include "IDBCompleteEvent.h"
 #include "IDBDatabase.h"
@@ -38,17 +39,19 @@
 #include "IDBObjectStore.h"
 #include "IDBObjectStoreBackendInterface.h"
 #include "IDBPendingTransactionMonitor.h"
-#include "ScriptExecutionContext.h"
 
 namespace WebCore {
+
+PassRefPtr<IDBTransaction> IDBTransaction::create(ScriptExecutionContext* context, PassRefPtr<IDBTransactionBackendInterface> backend, IDBDatabase* db)
+{ 
+    return adoptRef(new IDBTransaction(context, backend, db));
+}
 
 IDBTransaction::IDBTransaction(ScriptExecutionContext* context, PassRefPtr<IDBTransactionBackendInterface> backend, IDBDatabase* db)
     : ActiveDOMObject(context, this)
     , m_backend(backend)
     , m_database(db)
     , m_mode(m_backend->mode())
-    , m_onAbortTimer(this, &IDBTransaction::onAbortTimerFired)
-    , m_onCompleteTimer(this, &IDBTransaction::onCompleteTimerFired)
 {
     IDBPendingTransactionMonitor::addPendingTransaction(m_backend.get());
 }
@@ -69,6 +72,7 @@ IDBDatabase* IDBTransaction::db()
 
 PassRefPtr<IDBObjectStore> IDBTransaction::objectStore(const String& name, ExceptionCode& ec)
 {
+    // FIXME: It'd be better (because it's more deterministic) if we didn't start throwing this until the complete or abort event fires.
     if (!m_backend) {
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
         return 0;
@@ -84,6 +88,7 @@ PassRefPtr<IDBObjectStore> IDBTransaction::objectStore(const String& name, Excep
 
 void IDBTransaction::abort()
 {
+    RefPtr<IDBTransaction> selfRef = this;
     if (m_backend)
         m_backend->abort();
 }
@@ -95,58 +100,46 @@ ScriptExecutionContext* IDBTransaction::scriptExecutionContext() const
 
 void IDBTransaction::onAbort()
 {
-    ASSERT(!m_onAbortTimer.isActive());
-    ASSERT(!m_onCompleteTimer.isActive());
-    m_selfRef = this;
-    m_onAbortTimer.startOneShot(0);
-    m_backend.clear(); // Release the backend as it holds a (circular) reference back to us.
+    enqueueEvent(IDBAbortEvent::create());
 }
 
 void IDBTransaction::onComplete()
 {
-    ASSERT(!m_onAbortTimer.isActive());
-    ASSERT(!m_onCompleteTimer.isActive());
-    m_selfRef = this;
-    m_onCompleteTimer.startOneShot(0);
-    m_backend.clear(); // Release the backend as it holds a (circular) reference back to us.
+    enqueueEvent(IDBCompleteEvent::create());
 }
 
 bool IDBTransaction::canSuspend() const
 {
-    // We may be in the middle of a transaction so we cannot suspend our object.
-    // Instead, we simply don't allow the owner page to go into the back/forward cache.
-    return false;
+    return !m_backend;
 }
 
 void IDBTransaction::contextDestroyed()
 {
     ActiveDOMObject::contextDestroyed();
+
+    RefPtr<IDBTransaction> selfRef = this;
     if (m_backend)
         m_backend->abort();
+    m_backend.clear();
+}
+
+void IDBTransaction::enqueueEvent(PassRefPtr<Event> event)
+{
+    if (!scriptExecutionContext())
+        return;
+
+    ASSERT(m_backend);
+    m_backend.clear();
+    
+    ASSERT(scriptExecutionContext()->isDocument());
+    EventQueue* eventQueue = static_cast<Document*>(scriptExecutionContext())->eventQueue();
+    event->setTarget(this);
+    eventQueue->enqueueEvent(event);
 }
 
 EventTargetData* IDBTransaction::eventTargetData()
 {
     return &m_eventTargetData;
-}
-
-EventTargetData* IDBTransaction::ensureEventTargetData()
-{
-    return &m_eventTargetData;
-}
-
-void IDBTransaction::onAbortTimerFired(Timer<IDBTransaction>* transaction)
-{
-    ASSERT(m_selfRef);
-    RefPtr<IDBTransaction> selfRef = m_selfRef.release();
-    dispatchEvent(IDBAbortEvent::create());
-}
-
-void IDBTransaction::onCompleteTimerFired(Timer<IDBTransaction>* transaction)
-{
-    ASSERT(m_selfRef);
-    RefPtr<IDBTransaction> selfRef = m_selfRef.release();
-    dispatchEvent(IDBCompleteEvent::create());
 }
 
 }

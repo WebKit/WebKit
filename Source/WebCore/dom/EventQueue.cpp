@@ -58,7 +58,7 @@ EventQueue::~EventQueue()
 
 void EventQueue::enqueueEvent(PassRefPtr<Event> event)
 {
-    ASSERT(event->target()->toNode() || event->target()->toDOMWindow());
+    ASSERT(event->target());
     m_queuedEvents.append(event);
     
     if (!m_pendingEventTimer->isActive())
@@ -98,7 +98,7 @@ void EventQueue::dispatchEvent(PassRefPtr<Event> event)
     else if (eventTarget->toDOMWindow())
         eventTarget->toDOMWindow()->dispatchEvent(event, 0);
     else
-        ASSERT_NOT_REACHED();
+        eventTarget->dispatchEvent(event);
 }
 
 }

@@ -2565,6 +2565,7 @@ sub IsActiveDomType
     return 1 if $type eq "Worker";
     return 1 if $type eq "SharedWorker";
     return 1 if $type eq "IDBRequest";
+    return 1 if $type eq "IDBTransaction";
     return 1 if $type eq "FileReader";
     return 1 if $type eq "FileWriter";
     return 0;

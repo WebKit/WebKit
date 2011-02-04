@@ -35,7 +35,6 @@
 #include "EventTarget.h"
 #include "IDBTransactionBackendInterface.h"
 #include "IDBTransactionCallbacks.h"
-#include "Timer.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -45,10 +44,7 @@ class IDBObjectStore;
 
 class IDBTransaction : public IDBTransactionCallbacks, public EventTarget, public ActiveDOMObject {
 public:
-    static PassRefPtr<IDBTransaction> create(ScriptExecutionContext* context, PassRefPtr<IDBTransactionBackendInterface> backend, IDBDatabase* db)
-    { 
-        return adoptRef(new IDBTransaction(context, backend, db)); 
-    }
+    static PassRefPtr<IDBTransaction> create(ScriptExecutionContext*, PassRefPtr<IDBTransactionBackendInterface>, IDBDatabase*);
     virtual ~IDBTransaction();
 
     enum Mode {
@@ -71,9 +67,9 @@ public:
 
     // EventTarget
     virtual IDBTransaction* toIDBTransaction() { return this; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const;
 
     // ActiveDOMObject
-    virtual ScriptExecutionContext* scriptExecutionContext() const;
     virtual bool canSuspend() const;
     virtual void contextDestroyed();
 
@@ -83,23 +79,19 @@ public:
 private:
     IDBTransaction(ScriptExecutionContext*, PassRefPtr<IDBTransactionBackendInterface>, IDBDatabase*);
 
+    void enqueueEvent(PassRefPtr<Event>);
+
     // EventTarget
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }
     virtual EventTargetData* eventTargetData();
     virtual EventTargetData* ensureEventTargetData();
 
-    void onAbortTimerFired(Timer<IDBTransaction>*);
-    void onCompleteTimerFired(Timer<IDBTransaction>*);
-
-    EventTargetData m_eventTargetData;
     RefPtr<IDBTransactionBackendInterface> m_backend;
     RefPtr<IDBDatabase> m_database;
     unsigned short m_mode;
 
-    Timer<IDBTransaction> m_onAbortTimer;
-    Timer<IDBTransaction> m_onCompleteTimer;
-    RefPtr<IDBTransaction> m_selfRef; // This is set to us iff there's an event pending.
+    EventTargetData m_eventTargetData;
 };
 
 } // namespace WebCore

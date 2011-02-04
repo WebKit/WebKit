@@ -32,13 +32,12 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "ActiveDOMObject.h"
+#include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventTarget.h"
 #include "IDBAny.h"
 #include "IDBCallbacks.h"
-#include "Timer.h"
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -46,7 +45,7 @@ class IDBTransactionBackendInterface;
 
 class IDBRequest : public IDBCallbacks, public EventTarget, public ActiveDOMObject {
 public:
-    static PassRefPtr<IDBRequest> create(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, IDBTransactionBackendInterface* transaction) { return adoptRef(new IDBRequest(context, source, transaction)); }
+    static PassRefPtr<IDBRequest> create(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBTransactionBackendInterface*);
     virtual ~IDBRequest();
 
     // Defined in the IDL
@@ -72,10 +71,9 @@ public:
 
     // EventTarget
     virtual IDBRequest* toIDBRequest() { return this; }
-
-    // ActiveDOMObject
     virtual ScriptExecutionContext* scriptExecutionContext() const;
-    virtual bool canSuspend() const;
+    virtual bool dispatchEvent(PassRefPtr<Event>);
+    bool dispatchEvent(PassRefPtr<Event> event, ExceptionCode& ec) { return EventTarget::dispatchEvent(event, ec); }
 
     using ThreadSafeShared<IDBCallbacks>::ref;
     using ThreadSafeShared<IDBCallbacks>::deref;
@@ -83,8 +81,7 @@ public:
 private:
     IDBRequest(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBTransactionBackendInterface* transaction);
 
-    void timerFired(Timer<IDBRequest>*);
-    void scheduleEvent(PassRefPtr<IDBAny> result, PassRefPtr<IDBDatabaseError>);
+    void enqueueEvent(PassRefPtr<Event>);
 
     // EventTarget
     virtual void refEventTarget() { ref(); }
@@ -95,17 +92,8 @@ private:
     RefPtr<IDBAny> m_source;
     RefPtr<IDBTransactionBackendInterface> m_transaction;
 
-    struct PendingEvent {
-        RefPtr<IDBAny> m_result;
-        RefPtr<IDBDatabaseError> m_error;
-    };
-    Vector<PendingEvent> m_pendingEvents;
-
-    // Used to fire events asynchronously.
-    Timer<IDBRequest> m_timer;
-    RefPtr<IDBRequest> m_selfRef; // This is set to us iff there's an event pending.
-
     ReadyState m_readyState;
+
     EventTargetData m_eventTargetData;
 };
 
