@@ -1,3 +1,9 @@
+2011-02-04  Jessie Berlin  <jberlin@apple.com>
+
+        Windows build fix. Unreviewed.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make:
+
 2011-02-04  Peter Varga  <pvarga@webkit.org>
 
         Reviewed by Gavin Barraclough.

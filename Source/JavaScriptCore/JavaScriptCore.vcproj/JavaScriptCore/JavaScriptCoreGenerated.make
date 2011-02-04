@@ -42,6 +42,7 @@ all:
     xcopy /y /d "..\..\wtf\text\StringBuilder.cpp" "%ConfigurationBuildDir%\include\private\JavaScriptCore"
     xcopy /y /d "..\..\wtf\text\StringImpl.cpp" "%ConfigurationBuildDir%\include\private\JavaScriptCore"
     xcopy /y /d "..\..\wtf\text\WTFString.cpp" "%ConfigurationBuildDir%\include\private\JavaScriptCore"
+    xcopy /y /d "..\..\yarr\*.h" "%ConfigurationBuildDir%\include\private\JavaScriptCore"
 
 
     -mkdir 2>NUL "%ConfigurationBuildDir%\bin\JavaScriptCore.resources"
