@@ -35,15 +35,14 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBTransactionBackendImpl> IDBTransactionBackendImpl::create(DOMStringList* objectStores, unsigned short mode, unsigned long timeout, IDBDatabaseBackendImpl* database)
+PassRefPtr<IDBTransactionBackendImpl> IDBTransactionBackendImpl::create(DOMStringList* objectStores, unsigned short mode, IDBDatabaseBackendImpl* database)
 {
-    return adoptRef(new IDBTransactionBackendImpl(objectStores, mode, timeout, database));
+    return adoptRef(new IDBTransactionBackendImpl(objectStores, mode, database));
 }
 
-IDBTransactionBackendImpl::IDBTransactionBackendImpl(DOMStringList* objectStores, unsigned short mode, unsigned long timeout, IDBDatabaseBackendImpl* database)
+IDBTransactionBackendImpl::IDBTransactionBackendImpl(DOMStringList* objectStores, unsigned short mode, IDBDatabaseBackendImpl* database)
     : m_objectStoreNames(objectStores)
     , m_mode(mode)
-    , m_timeout(timeout) // FIXME: Implement timeout.
     , m_state(Unused)
     , m_database(database)
     , m_transaction(new SQLiteTransaction(database->sqliteDatabase()))

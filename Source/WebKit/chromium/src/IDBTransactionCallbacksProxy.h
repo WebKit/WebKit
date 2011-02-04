@@ -47,7 +47,6 @@ public:
 
     virtual void onAbort();
     virtual void onComplete();
-    virtual void onTimeout();
 
 private:
     IDBTransactionCallbacksProxy(PassOwnPtr<WebKit::WebIDBTransactionCallbacks>);

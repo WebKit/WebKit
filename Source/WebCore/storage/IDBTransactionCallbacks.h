@@ -42,7 +42,6 @@ public:
 
     virtual void onAbort() = 0;
     virtual void onComplete() = 0;
-    virtual void onTimeout() = 0;
 };
 
 } // namespace WebCore

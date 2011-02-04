@@ -52,7 +52,7 @@ public:
     virtual WebIDBObjectStore* createObjectStore(const WebString& name, const WebString& keyPath, bool autoIncrement, const WebIDBTransaction&, WebExceptionCode&);
     virtual void deleteObjectStore(const WebString& name, const WebIDBTransaction&, WebExceptionCode&);
     virtual void setVersion(const WebString& version, WebIDBCallbacks* callbacks, WebExceptionCode&);
-    virtual WebIDBTransaction* transaction(const WebDOMStringList& names, unsigned short mode, unsigned long timeout, WebExceptionCode&);
+    virtual WebIDBTransaction* transaction(const WebDOMStringList& names, unsigned short mode, WebExceptionCode&);
     virtual void close();
 
 private:

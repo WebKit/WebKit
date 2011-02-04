@@ -4066,8 +4066,6 @@
             'storage/IDBSQLiteDatabase.h',
             'storage/IDBSuccessEvent.cpp',
             'storage/IDBSuccessEvent.h',
-            'storage/IDBTimeoutEvent.cpp',
-            'storage/IDBTimeoutEvent.h',
             'storage/IDBTransaction.cpp',
             'storage/IDBTransaction.h',
             'storage/IDBTransactionBackendImpl.cpp',

@@ -59,11 +59,6 @@ void IDBTransactionCallbacksProxy::onComplete()
     m_callbacks->onComplete();
 }
 
-void IDBTransactionCallbacksProxy::onTimeout()
-{
-    m_callbacks->onTimeout();
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

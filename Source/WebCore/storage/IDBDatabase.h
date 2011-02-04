@@ -62,9 +62,8 @@ public:
     // FIXME: Try to modify the code generator so this is unneeded.
     PassRefPtr<IDBObjectStore> createObjectStore(const String& name, ExceptionCode& ec) { return createObjectStore(name, OptionsObject(), ec); }
     PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext* context, ExceptionCode& ec) { return transaction(context, 0, ec); }
-    PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext* context, PassRefPtr<DOMStringList> storeNames, ExceptionCode& ec) { return transaction(context, storeNames, IDBTransaction::READ_ONLY, ec); } 
-    PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext* context, PassRefPtr<DOMStringList> storeNames, unsigned short mode, ExceptionCode& ec) { return transaction(context, storeNames, mode, 0, ec); }
-    PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext*, PassRefPtr<DOMStringList>, unsigned short mode, unsigned long timeout, ExceptionCode&);
+    PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext* context, PassRefPtr<DOMStringList> storeNames, ExceptionCode& ec) { return transaction(context, storeNames, IDBTransaction::READ_ONLY, ec); }
+    PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext*, PassRefPtr<DOMStringList>, unsigned short mode, ExceptionCode&);
 
     PassRefPtr<IDBObjectStore> createObjectStore(const String& name, const OptionsObject&, ExceptionCode&);
     void deleteObjectStore(const String& name, ExceptionCode&);

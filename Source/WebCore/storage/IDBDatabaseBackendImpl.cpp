@@ -214,7 +214,7 @@ void IDBDatabaseBackendImpl::setVersion(const String& version, PassRefPtr<IDBCal
     RefPtr<IDBDatabaseBackendImpl> database = this;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     RefPtr<DOMStringList> objectStoreNames = DOMStringList::create();
-    RefPtr<IDBTransactionBackendInterface> transaction = IDBTransactionBackendImpl::create(objectStoreNames.get(), IDBTransaction::VERSION_CHANGE, 0, this);
+    RefPtr<IDBTransactionBackendInterface> transaction = IDBTransactionBackendImpl::create(objectStoreNames.get(), IDBTransaction::VERSION_CHANGE, this);
     if (!transaction->scheduleTask(createCallbackTask(&IDBDatabaseBackendImpl::setVersionInternal, database, version, callbacks, transaction),
                                    createCallbackTask(&IDBDatabaseBackendImpl::resetVersion, database, m_version))) {
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
@@ -234,7 +234,7 @@ void IDBDatabaseBackendImpl::setVersionInternal(ScriptExecutionContext*, PassRef
     callbacks->onSuccess(transaction);
 }
 
-PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::transaction(DOMStringList* objectStoreNames, unsigned short mode, unsigned long timeout, ExceptionCode& ec)
+PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::transaction(DOMStringList* objectStoreNames, unsigned short mode, ExceptionCode& ec)
 {
     for (size_t i = 0; i < objectStoreNames->length(); ++i) {
         if (!m_objectStores.contains(objectStoreNames->item(i))) {
@@ -244,7 +244,7 @@ PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::transaction(D
     }
 
     // FIXME: Return not allowed err if close has been called.
-    return IDBTransactionBackendImpl::create(objectStoreNames, mode, timeout, this);
+    return IDBTransactionBackendImpl::create(objectStoreNames, mode, this);
 }
 
 void IDBDatabaseBackendImpl::close()

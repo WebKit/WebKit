@@ -49,7 +49,7 @@ public:
     virtual PassRefPtr<IDBObjectStoreBackendInterface> createObjectStore(const String& name, const String& keyPath, bool autoIncrement, IDBTransactionBackendInterface*, ExceptionCode&);
     virtual void deleteObjectStore(const String& name, IDBTransactionBackendInterface*, ExceptionCode&);
     virtual void setVersion(const String& version, PassRefPtr<IDBCallbacks>, ExceptionCode&);
-    virtual PassRefPtr<IDBTransactionBackendInterface> transaction(DOMStringList* storeNames, unsigned short mode, unsigned long timeout, ExceptionCode&);
+    virtual PassRefPtr<IDBTransactionBackendInterface> transaction(DOMStringList* storeNames, unsigned short mode, ExceptionCode&);
     virtual void close();
 
 private:

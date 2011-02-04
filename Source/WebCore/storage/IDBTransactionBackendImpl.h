@@ -42,7 +42,7 @@ class IDBDatabaseBackendImpl;
 
 class IDBTransactionBackendImpl : public IDBTransactionBackendInterface {
 public:
-    static PassRefPtr<IDBTransactionBackendImpl> create(DOMStringList* objectStores, unsigned short mode, unsigned long timeout, IDBDatabaseBackendImpl*);
+    static PassRefPtr<IDBTransactionBackendImpl> create(DOMStringList* objectStores, unsigned short mode, IDBDatabaseBackendImpl*);
     virtual ~IDBTransactionBackendImpl();
 
     virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name, ExceptionCode&);
@@ -55,7 +55,7 @@ public:
     void run();
 
 private:
-    IDBTransactionBackendImpl(DOMStringList* objectStores, unsigned short mode, unsigned long timeout, IDBDatabaseBackendImpl*);
+    IDBTransactionBackendImpl(DOMStringList* objectStores, unsigned short mode, IDBDatabaseBackendImpl*);
 
     enum State {
         Unused, // Created, but no tasks yet.
@@ -72,7 +72,6 @@ private:
 
     RefPtr<DOMStringList> m_objectStoreNames;
     unsigned short m_mode;
-    unsigned long m_timeout;
 
     State m_state;
     RefPtr<IDBTransactionCallbacks> m_callbacks;

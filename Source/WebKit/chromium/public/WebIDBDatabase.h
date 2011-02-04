@@ -65,10 +65,14 @@ public:
     virtual void deleteObjectStore(const WebString& name, const WebIDBTransaction& transaction, WebExceptionCode& ec) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void setVersion(const WebString& version, WebIDBCallbacks* callbacks, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     // Transfers ownership of the WebIDBTransaction to the caller.
-    virtual WebIDBTransaction* transaction(const WebDOMStringList& names, unsigned short mode, unsigned long timeout, WebExceptionCode&)
+    virtual WebIDBTransaction* transaction(const WebDOMStringList& names, unsigned short mode, WebExceptionCode& ec)
     {
-        WEBKIT_ASSERT_NOT_REACHED();
-        return 0;
+        return transaction(names, mode, 0, ec);
+    }
+    // FIXME: Remove.
+    virtual WebIDBTransaction* transaction(const WebDOMStringList& names, unsigned short mode, unsigned long, WebExceptionCode& ec)
+    {
+        return transaction(names, mode, ec);
     }
     virtual void close() { WEBKIT_ASSERT_NOT_REACHED(); }
 

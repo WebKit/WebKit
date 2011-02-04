@@ -38,7 +38,6 @@
 #include "IDBObjectStore.h"
 #include "IDBObjectStoreBackendInterface.h"
 #include "IDBPendingTransactionMonitor.h"
-#include "IDBTimeoutEvent.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {
@@ -50,7 +49,6 @@ IDBTransaction::IDBTransaction(ScriptExecutionContext* context, PassRefPtr<IDBTr
     , m_mode(m_backend->mode())
     , m_onAbortTimer(this, &IDBTransaction::onAbortTimerFired)
     , m_onCompleteTimer(this, &IDBTransaction::onCompleteTimerFired)
-    , m_onTimeoutTimer(this, &IDBTransaction::onTimeoutTimerFired)
 {
     IDBPendingTransactionMonitor::addPendingTransaction(m_backend.get());
 }
@@ -99,7 +97,6 @@ void IDBTransaction::onAbort()
 {
     ASSERT(!m_onAbortTimer.isActive());
     ASSERT(!m_onCompleteTimer.isActive());
-    ASSERT(!m_onTimeoutTimer.isActive());
     m_selfRef = this;
     m_onAbortTimer.startOneShot(0);
     m_backend.clear(); // Release the backend as it holds a (circular) reference back to us.
@@ -109,19 +106,8 @@ void IDBTransaction::onComplete()
 {
     ASSERT(!m_onAbortTimer.isActive());
     ASSERT(!m_onCompleteTimer.isActive());
-    ASSERT(!m_onTimeoutTimer.isActive());
     m_selfRef = this;
     m_onCompleteTimer.startOneShot(0);
-    m_backend.clear(); // Release the backend as it holds a (circular) reference back to us.
-}
-
-void IDBTransaction::onTimeout()
-{
-    ASSERT(!m_onAbortTimer.isActive());
-    ASSERT(!m_onCompleteTimer.isActive());
-    ASSERT(!m_onTimeoutTimer.isActive());
-    m_selfRef = this;
-    m_onTimeoutTimer.startOneShot(0);
     m_backend.clear(); // Release the backend as it holds a (circular) reference back to us.
 }
 
@@ -161,14 +147,6 @@ void IDBTransaction::onCompleteTimerFired(Timer<IDBTransaction>* transaction)
     ASSERT(m_selfRef);
     RefPtr<IDBTransaction> selfRef = m_selfRef.release();
     dispatchEvent(IDBCompleteEvent::create());
-}
-
-
-void IDBTransaction::onTimeoutTimerFired(Timer<IDBTransaction>* transaction)
-{
-    ASSERT(m_selfRef);
-    RefPtr<IDBTransaction> selfRef = m_selfRef.release();
-    dispatchEvent(IDBTimeoutEvent::create());
 }
 
 }

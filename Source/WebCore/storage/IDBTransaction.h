@@ -64,12 +64,10 @@ public:
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(abort);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(complete);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(timeout);
 
     // IDBTransactionCallbacks
     virtual void onAbort();
     virtual void onComplete();
-    virtual void onTimeout();
 
     // EventTarget
     virtual IDBTransaction* toIDBTransaction() { return this; }
@@ -93,7 +91,6 @@ private:
 
     void onAbortTimerFired(Timer<IDBTransaction>*);
     void onCompleteTimerFired(Timer<IDBTransaction>*);
-    void onTimeoutTimerFired(Timer<IDBTransaction>*);
 
     EventTargetData m_eventTargetData;
     RefPtr<IDBTransactionBackendInterface> m_backend;
@@ -102,7 +99,6 @@ private:
 
     Timer<IDBTransaction> m_onAbortTimer;
     Timer<IDBTransaction> m_onCompleteTimer;
-    Timer<IDBTransaction> m_onTimeoutTimer;
     RefPtr<IDBTransaction> m_selfRef; // This is set to us iff there's an event pending.
 };
 

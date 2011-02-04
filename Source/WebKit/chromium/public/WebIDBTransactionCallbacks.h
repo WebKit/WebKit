@@ -35,6 +35,8 @@ public:
 
     virtual void onAbort() { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onComplete() { WEBKIT_ASSERT_NOT_REACHED(); }
+
+    // FIXME: Remove.
     virtual void onTimeout() { WEBKIT_ASSERT_NOT_REACHED(); }
 };
 

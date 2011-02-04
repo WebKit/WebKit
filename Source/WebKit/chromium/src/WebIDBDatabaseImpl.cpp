@@ -84,10 +84,10 @@ void WebIDBDatabaseImpl::setVersion(const WebString& version, WebIDBCallbacks* c
     m_databaseBackend->setVersion(version, IDBCallbacksProxy::create(callbacks), ec);
 }
 
-WebIDBTransaction* WebIDBDatabaseImpl::transaction(const WebDOMStringList& names, unsigned short mode, unsigned long timeout, WebExceptionCode& ec)
+WebIDBTransaction* WebIDBDatabaseImpl::transaction(const WebDOMStringList& names, unsigned short mode, WebExceptionCode& ec)
 {
     RefPtr<DOMStringList> nameList = PassRefPtr<DOMStringList>(names);
-    RefPtr<IDBTransactionBackendInterface> transaction = m_databaseBackend->transaction(nameList.get(), mode, timeout, ec);
+    RefPtr<IDBTransactionBackendInterface> transaction = m_databaseBackend->transaction(nameList.get(), mode, ec);
     if (!transaction) {
         ASSERT(ec);
         return 0;

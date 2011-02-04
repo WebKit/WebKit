@@ -43,7 +43,6 @@ public:
 
     virtual void onAbort();
     virtual void onComplete();
-    virtual void onTimeout();
 
 private:
     RefPtr<IDBTransactionCallbacks> m_callbacks;

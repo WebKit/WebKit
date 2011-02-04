@@ -95,10 +95,10 @@ void IDBDatabaseProxy::setVersion(const String& version, PassRefPtr<IDBCallbacks
     m_webIDBDatabase->setVersion(version, new WebIDBCallbacksImpl(callbacks), ec);
 }
 
-PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseProxy::transaction(DOMStringList* storeNames, unsigned short mode, unsigned long timeout, ExceptionCode& ec)
+PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseProxy::transaction(DOMStringList* storeNames, unsigned short mode, ExceptionCode& ec)
 {
     WebKit::WebDOMStringList names(storeNames);
-    WebKit::WebIDBTransaction* transaction = m_webIDBDatabase->transaction(names, mode, timeout, ec);
+    WebKit::WebIDBTransaction* transaction = m_webIDBDatabase->transaction(names, mode, ec);
     if (!transaction) {
         ASSERT(ec);
         return 0;

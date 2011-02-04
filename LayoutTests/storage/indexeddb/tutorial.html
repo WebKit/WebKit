@@ -114,7 +114,7 @@ function onSetVersion()
 {
     // We are now in a setVersion transaction. Such a transaction is the only place where one
     // can add or delete indexes and objectStores. The result (property of event) is an
-    // IDBTransaction object that has "complete", "abort", and "timeout" event handlers which tell
+    // IDBTransaction object that has "complete" and "abort" event handlers which tell
     // us when the transaction has committed, aborted, or timed out.
     window.currentTransaction = event.result;
     currentTransaction.oncomplete = onSetVersionComplete;
@@ -218,11 +218,7 @@ function onSetVersionComplete()
     // Next is "mode" which specifies the locking mode. The default is READ_ONLY (i.e. a shared lock).
     // That's fine for this case, but later we'll ask for IDBTransaction.READ_WRITE. At the moment,
     // Chromium/WebKit pretends every transaction is READ_WRITE, which is kind of bad.
-    //
-    // Last is "timeout" which is measured in seconds. At the moment, Chromium/WebKit defaults to 0 which
-    // means never, but it's possible we'll change this in the future and other implementations may
-    // use something different, so set it if you really care.
-    window.currentTransaction = db.transaction([], IDBTransaction.READ_WRITE, 0);
+    window.currentTransaction = db.transaction([], IDBTransaction.READ_WRITE);
     currentTransaction.oncomplete = unexpectedComplete;
     currentTransaction.onabort = onTransactionAborted;
 

@@ -51,11 +51,6 @@ void WebIDBTransactionCallbacksImpl::onComplete()
     m_callbacks->onComplete();
 }
 
-void WebIDBTransactionCallbacksImpl::onTimeout()
-{
-    m_callbacks->onTimeout();
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

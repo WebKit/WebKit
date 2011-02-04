@@ -1,3 +1,37 @@
+2011-02-01  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Remove the timeout event from IndexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=53521
+
+        Remove timeout and ontimeout from IDBTransaction per the spec.
+
+        * WebCore.gypi:
+        * storage/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::transaction):
+        * storage/IDBDatabase.h:
+        (WebCore::IDBDatabase::transaction):
+        * storage/IDBDatabase.idl:
+        * storage/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::setVersion):
+        (WebCore::IDBDatabaseBackendImpl::transaction):
+        * storage/IDBDatabaseBackendImpl.h:
+        * storage/IDBDatabaseBackendInterface.h:
+        * storage/IDBTimeoutEvent.cpp: Removed.
+        * storage/IDBTimeoutEvent.h: Removed.
+        * storage/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::IDBTransaction):
+        (WebCore::IDBTransaction::onAbort):
+        (WebCore::IDBTransaction::onComplete):
+        * storage/IDBTransaction.h:
+        * storage/IDBTransaction.idl:
+        * storage/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::create):
+        (WebCore::IDBTransactionBackendImpl::IDBTransactionBackendImpl):
+        * storage/IDBTransactionBackendImpl.h:
+        * storage/IDBTransactionCallbacks.h:
+
 2011-02-04  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

@@ -41,9 +41,6 @@
 
 namespace WebCore {
 
-// FIXME: We need to spec this differently.
-const unsigned long defaultTimeout = 0; // Infinite.
-
 IDBDatabase::IDBDatabase(PassRefPtr<IDBDatabaseBackendInterface> backend)
     : m_backend(backend)
     , m_noNewTransactions(false)
@@ -99,7 +96,7 @@ PassRefPtr<IDBRequest> IDBDatabase::setVersion(ScriptExecutionContext* context, 
     return request;
 }
 
-PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* context, PassRefPtr<DOMStringList> prpStoreNames, unsigned short mode, unsigned long timeout, ExceptionCode& ec)
+PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* context, PassRefPtr<DOMStringList> prpStoreNames, unsigned short mode, ExceptionCode& ec)
 {
     RefPtr<DOMStringList> storeNames = prpStoreNames;
     if (!storeNames)
@@ -119,7 +116,7 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
     // can be queued against the transaction at any point. They will start executing as soon as the
     // appropriate locks have been acquired.
     // Also note that each backend object corresponds to exactly one IDBTransaction object.
-    RefPtr<IDBTransactionBackendInterface> transactionBackend = m_backend->transaction(storeNames.get(), mode, timeout, ec);
+    RefPtr<IDBTransactionBackendInterface> transactionBackend = m_backend->transaction(storeNames.get(), mode, ec);
     if (!transactionBackend) {
         ASSERT(ec);
         return 0;
