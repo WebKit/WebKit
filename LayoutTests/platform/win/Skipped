@@ -401,6 +401,9 @@ fast/canvas/set-colors.html
 # Fails when run after other SVG tests http://webkit.org/b/53700
 svg/W3C-SVG-1.1-SE/types-dom-01-b.svg
 
+# Flakey http://webkit.org/b/53332
+transitions/transition-end-event-multiple-04.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################

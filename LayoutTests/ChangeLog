@@ -1,3 +1,12 @@
+2011-02-04  Jessie Berlin  <jberlin@apple.com>
+
+        [Windows 7 Release Tests] transitions/transition-end-event-multiple-04.html flakey 
+        https://bugs.webkit.org/show_bug.cgi?id=53332
+
+        Unreviewed, attempt to get the Windows 7 Release bots uniformly green.
+
+        * platform/win/Skipped:
+
 2011-02-04  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed.
