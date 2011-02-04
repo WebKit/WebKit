@@ -1,3 +1,18 @@
+2011-02-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Daniel Bates.
+
+        XSS Auditor severely affects loading performance after submitting a large form
+        https://bugs.webkit.org/show_bug.cgi?id=49845
+
+        Switch over from the XSSAuditor to the XSSFilter, improving performance
+        on this example.
+
+        * html/parser/XSSFilter.cpp:
+        (WebCore::XSSFilter::filterToken):
+        * page/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::isEnabled):
+
 2011-02-03  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, rolling out r77567.

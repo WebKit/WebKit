@@ -113,8 +113,8 @@ XSSAuditor::~XSSAuditor()
 
 bool XSSAuditor::isEnabled() const
 {
-    Settings* settings = m_frame->settings();
-    return (settings && settings->xssAuditorEnabled());
+    // FIXME: Remove this class if the transition to XSSFilter goes smoothly.
+    return false;
 }
 
 bool XSSAuditor::canEvaluate(const String& code) const

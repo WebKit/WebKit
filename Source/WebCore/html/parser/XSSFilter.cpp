@@ -38,9 +38,6 @@
 #include "TextResourceDecoder.h"
 #include <wtf/text/CString.h>
 
-// This preprocesssor macro is a temporary scaffold while this code is still an experiment.
-#define XSS_DETECTOR_ENABLED 0
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -188,10 +185,6 @@ void XSSFilter::init()
 
 void XSSFilter::filterToken(HTMLToken& token)
 {
-#if !XSS_DETECTOR_ENABLED
-    ASSERT_UNUSED(token, &token);
-    return;
-#else
     if (m_state == Uninitialized) {
         init();
         ASSERT(m_state == Initial);
@@ -227,7 +220,6 @@ void XSSFilter::filterToken(HTMLToken& token)
             m_parser->document()->frame()->navigationScheduler()->scheduleLocationChange(m_parser->document()->securityOrigin(), blankURL(), String());
         }
     }
-#endif
 }
 
 bool XSSFilter::filterTokenInitial(HTMLToken& token)
