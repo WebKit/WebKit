@@ -91,6 +91,7 @@ namespace WebCore {
 
         SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
 
+        bool sanitizeScriptError(String& errorMessage, int& lineNumber, String& sourceURL);
         void reportException(const String& errorMessage, int lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack>);
         virtual void addMessage(MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack>) = 0;
 

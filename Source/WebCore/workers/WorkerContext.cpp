@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Inc. All Rights Reserved.
- * Copyright (C) 2009 Google Inc. All Rights Reserved.
+ * Copyright (C) 2009, 2011 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -249,7 +249,7 @@ void WorkerContext::importScripts(const Vector<String>& urls, ExceptionCode& ec)
        InspectorInstrumentation::scriptImported(scriptExecutionContext(), scriptLoader.identifier(), scriptLoader.script());
 
         ScriptValue exception;
-        m_script->evaluate(ScriptSourceCode(scriptLoader.script(), *it), &exception);
+        m_script->evaluate(ScriptSourceCode(scriptLoader.script(), scriptLoader.responseURL()), &exception);
         if (!exception.hasNoValue()) {
             m_script->setException(exception);
             return;

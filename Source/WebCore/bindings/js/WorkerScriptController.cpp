@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2011 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -131,8 +132,15 @@ ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode,
     if (comp.complType() == Normal || comp.complType() == ReturnValue)
         return comp.value();
 
-    if (comp.complType() == Throw)
-        *exception = comp.value();
+    if (comp.complType() == Throw) {
+        String errorMessage;
+        int lineNumber = 0;
+        String sourceURL = sourceCode.url().string();
+        if (m_workerContext->sanitizeScriptError(errorMessage, lineNumber, sourceURL))
+            *exception = ScriptValue(throwError(exec, createError(exec, errorMessage.impl())));
+        else
+            *exception = comp.value();
+    }
     return JSValue();
 }
 

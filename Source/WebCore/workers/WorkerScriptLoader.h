@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Apple Inc. All Rights Reserved.
- * Copyright (C) 2009 Google Inc. All Rights Reserved.
+ * Copyright (C) 2009, 2011 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,6 +53,7 @@ namespace WebCore {
 
         const String& script() const { return m_script; }
         const KURL& url() const { return m_url; }
+        const KURL& responseURL() const;
         bool failed() const { return m_failed; }
         unsigned long identifier() const { return m_identifier; }
 
@@ -73,6 +74,7 @@ namespace WebCore {
         RefPtr<TextResourceDecoder> m_decoder;
         String m_script;
         KURL m_url;
+        KURL m_responseURL;
         bool m_failed;
         unsigned long m_identifier;
         ResourceRequestBase::TargetType m_targetType;

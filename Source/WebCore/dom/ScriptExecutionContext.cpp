@@ -305,6 +305,17 @@ void ScriptExecutionContext::setSecurityOrigin(PassRefPtr<SecurityOrigin> securi
     m_securityOrigin = securityOrigin;
 }
 
+bool ScriptExecutionContext::sanitizeScriptError(String& errorMessage, int& lineNumber, String& sourceURL)
+{
+    KURL targetURL = completeURL(sourceURL);
+    if (securityOrigin()->canRequest(targetURL))
+        return false;
+    errorMessage = "Script error.";
+    sourceURL = String();
+    lineNumber = 0;
+    return true;
+}
+
 void ScriptExecutionContext::reportException(const String& errorMessage, int lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack> callStack)
 {
     if (m_inDispatchErrorEvent) {
@@ -334,19 +345,10 @@ bool ScriptExecutionContext::dispatchErrorEvent(const String& errorMessage, int 
     if (!target)
         return false;
 
-    String message;
-    int line;
-    String sourceName;
-    KURL targetUrl = completeURL(sourceURL);
-    if (securityOrigin()->canRequest(targetUrl)) {
-        message = errorMessage;
-        line = lineNumber;
-        sourceName = sourceURL;
-    } else {
-        message = "Script error.";
-        sourceName = String();
-        line = 0;
-    }
+    String message = errorMessage;
+    int line = lineNumber;
+    String sourceName = sourceURL;
+    sanitizeScriptError(message, line, sourceName);
 
     ASSERT(!m_inDispatchErrorEvent);
     m_inDispatchErrorEvent = true;

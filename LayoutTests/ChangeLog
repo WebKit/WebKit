@@ -1,3 +1,14 @@
+2011-02-03  David Levin  <levin@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Worker.importScript() should clean errors for cross origin imports.
+        https://bugs.webkit.org/show_bug.cgi?id=52871
+
+        * http/tests/workers/resources/worker-importScripts-error.js: Added.
+        * http/tests/workers/resources/worker-importScripts-throw.js: Added.
+        * http/tests/workers/worker-importScriptsOnError.html: Added.
+
 2011-02-03  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

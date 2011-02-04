@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -205,10 +205,14 @@ ScriptValue WorkerContextExecutionProxy::evaluate(const String& script, const St
     if (exceptionCatcher.HasCaught()) {
         v8::Local<v8::Message> message = exceptionCatcher.Message();
         state->hadException = true;
-        state->exception = ScriptValue(exceptionCatcher.Exception());
         state->errorMessage = toWebCoreString(message->Get());
         state->lineNumber = message->GetLineNumber();
         state->sourceURL = toWebCoreString(message->GetScriptResourceName());
+        if (m_workerContext->sanitizeScriptError(state->errorMessage, state->lineNumber, state->sourceURL))
+            state->exception = V8Proxy::throwError(V8Proxy::GeneralError, state->errorMessage.utf8().data());
+        else
+            state->exception = ScriptValue(exceptionCatcher.Exception());
+
         exceptionCatcher.Reset();
     } else
         state->hadException = false;

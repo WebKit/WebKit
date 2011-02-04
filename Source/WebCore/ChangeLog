@@ -1,3 +1,33 @@
+2011-02-03  David Levin  <levin@chromium.org>
+
+        Reviewed by Adam Barth and Oliver Hunt.
+
+        Worker.importScript() should clean errors for cross origin imports.
+        https://bugs.webkit.org/show_bug.cgi?id=52871
+
+        Test: http/tests/workers/worker-importScriptsOnError.html
+
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::evaluate): Use sanitizeScriptError
+        to determine when to create a clean exception.
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::evaluate): Ditto.
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::sanitizeScriptError): Figure out
+        if the error needs to be cleaned up.
+        (WebCore::ScriptExecutionContext::dispatchErrorEvent): Extracted
+        sanitizeScriptError for use by other places.
+        * dom/ScriptExecutionContext.h:
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::importScripts): Use the reponse url when
+        telling the evaluate where the script came fro.
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::responseURL): Expose the url that
+        the script was loaded from (which may be different from url() due
+        to redirects).
+        (WebCore::WorkerScriptLoader::didReceiveResponse): Capture the reponse url.
+        * workers/WorkerScriptLoader.h:
+
 2011-02-03  Mark Mentovai  <mark@chromium.org>
 
         Reviewed by Dimitri Glazkov.
