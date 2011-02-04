@@ -1,3 +1,12 @@
+2011-02-04  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: fix processing Unicode literals from .js sources in check-inspector-strings.
+        https://bugs.webkit.org/show_bug.cgi?id=53781
+
+        * Scripts/check-inspector-strings:
+
 2011-02-04  Adam Roben  <aroben@apple.com>
 
         Include the crashing function in the link to a crash log on Mac

@@ -54,6 +54,9 @@ class StringsExtractor(ProcessorBase):
     def should_process(self, file_path):
         return file_path.endswith(".js") and (not file_path.endswith("InjectedScript.js"))
 
+    def decode_unicode_escapes(self, s):
+        return eval("ur\"" + s + "\"")
+
     def process(self, lines, file_path, line_numbers=None):
         for line in lines:
             comment_start = line.find("//")
@@ -63,7 +66,7 @@ class StringsExtractor(ProcessorBase):
             for pattern in self._patterns:
                 line_strings = re.findall(pattern, line)
                 for string in line_strings:
-                    self.strings[index].append(string)
+                    self.strings[index].append(self.decode_unicode_escapes(string))
                 index += 1
 
 class LocalizedStringsExtractor:
