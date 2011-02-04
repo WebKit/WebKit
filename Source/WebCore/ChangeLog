@@ -1,3 +1,30 @@
+2011-02-03  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix for <rdar://problem/8944544> Ability to animate track
+        for WKPainter scrollers
+
+        Two new WebKitSystemInterface functions.
+        * WebCore.exp.in:
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
+        Use Scrollbar::convertFromContainingView() to return the right point.
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[ScrollbarPainterControllerDelegate scrollerImpPair:convertContentPoint:toScrollerImp:]):
+        
+        ScrollKnobAnimation is now ScrollbarPartAnimation. It can
+        now be used to animate the knob or the track.
+        (-[ScrollbarPartAnimation initWithScrollbarPainter:part:WebCore::scrollAnimator:WebCore::animateAlphaTo:duration:]):
+        (-[ScrollbarPartAnimation setCurrentProgress:]):
+        (-[ScrollbarPainterDelegate setUpAnimation:scrollerPainter:part:WebCore::animateAlphaTo:duration:]):
+        (-[ScrollbarPainterDelegate scrollerImp:animateKnobAlphaTo:duration:]):
+        (-[ScrollbarPainterDelegate scrollerImp:animateTrackAlphaTo:duration:]):
+
+        Scrollbars need invalodating after the overlay state changes. 
+        (-[ScrollbarPainterDelegate scrollerImp:overlayScrollerStateChangedTo:]):
+
 2011-02-03  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Beth Dakin.

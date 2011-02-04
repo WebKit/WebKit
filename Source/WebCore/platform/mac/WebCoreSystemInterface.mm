@@ -137,6 +137,8 @@ int (*wkScrollbarMinimumThumbLength)(WKScrollbarPainterRef);
 int (*wkScrollbarMinimumTotalLengthNeededForThumb)(WKScrollbarPainterRef);
 CGFloat (*wkScrollbarPainterKnobAlpha)(WKScrollbarPainterRef);
 void (*wkSetScrollbarPainterKnobAlpha)(WKScrollbarPainterRef, CGFloat);
+CGFloat (*wkScrollbarPainterTrackAlpha)(WKScrollbarPainterRef);
+void (*wkSetScrollbarPainterTrackAlpha)(WKScrollbarPainterRef, CGFloat);
 bool (*wkScrollbarPainterIsHorizontal)(WKScrollbarPainterRef);
 void (*wkScrollbarPainterSetOverlayState)(WKScrollbarPainterRef, int overlayScrollerState);
 

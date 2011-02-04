@@ -133,6 +133,8 @@ void InitWebCoreSystemInterface(void)
     INIT(ScrollbarMinimumTotalLengthNeededForThumb);
     INIT(ScrollbarPainterKnobAlpha);
     INIT(SetScrollbarPainterKnobAlpha);
+    INIT(ScrollbarPainterTrackAlpha);
+    INIT(SetScrollbarPainterTrackAlpha);
     INIT(ScrollbarPainterIsHorizontal);
     INIT(ScrollbarPainterSetOverlayState);
     INIT(MakeScrollbarPainterController);

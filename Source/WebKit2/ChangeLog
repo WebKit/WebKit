@@ -1,3 +1,13 @@
+2011-02-03  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix for <rdar://problem/8944544> Ability to animate track
+        for WKPainter scrollers
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2011-02-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
