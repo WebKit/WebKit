@@ -3049,9 +3049,6 @@ BUGWK53527 DEBUG : fast/frames/iframe-reparenting-new-page.html = CRASH PASS
 BUGCR71783 : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
 
 // These are waiting for platform/mac pixel baselines to be updated.
-BUGWK50528 MAC : fast/backgrounds/animated-svg-as-background.html = IMAGE
-BUGWK50528 MAC : fast/backgrounds/animated-svg-as-mask.html = IMAGE
-BUGWK50528 MAC : fast/backgrounds/svg-as-background-4.html = IMAGE
 BUGWK50528 MAC : fast/blockflow/box-shadow-horizontal-bt.html = IMAGE
 BUGWK50528 MAC : fast/blockflow/box-shadow-vertical-lr.html = IMAGE
 BUGWK50528 MAC : fast/blockflow/box-shadow-vertical-rl.html = IMAGE
@@ -3118,11 +3115,8 @@ BUGWK50528 MAC : svg/custom/image-small-width-height.svg = IMAGE
 
 // Need to start looking in platform/mac-snowleopard in order to see
 // the correct baselines for these tests.
-BUGWK53740 MAC : fast/forms/textarea-placeholder-visibility-1.html = IMAGE+TEXT
-BUGWK53740 MAC : fast/forms/textarea-placeholder-visibility-2.html = IMAGE+TEXT
-BUGWK53740 MAC : fast/forms/input-placeholder-visibility-1.html = IMAGE
-BUGWK53740 MAC : fast/forms/input-placeholder-visibility-2.html = IMAGE
-BUGWK53740 MAC : fast/forms/input-placeholder-visibility-3.html = IMAGE
+BUGWK53740 MAC : fast/forms/textarea-placeholder-visibility-1.html = TEXT
+BUGWK53740 MAC : fast/forms/textarea-placeholder-visibility-2.html = TEXT
 
 //
 // GPU

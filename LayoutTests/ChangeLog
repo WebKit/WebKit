@@ -1,5 +1,11 @@
 2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] Update mac expectations.
+
+        * platform/chromium/test_expectations.txt: Updated.
+
+2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Reviewed by Csaba Osztrogonác.
 
         [Qt]REGRESSION(r76951): media/controls-without-preload.html fails
