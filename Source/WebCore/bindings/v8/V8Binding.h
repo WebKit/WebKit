@@ -236,6 +236,14 @@ namespace WebCore {
                 return false;
             }
 
+            // This path is unexpected.  However there is hypothesis that it
+            // might be combination of v8 and v8 bindings bugs.  For now
+            // just bailout as we'll crash if attempt to convert empty handle into a string.
+            if (m_v8Object.IsEmpty()) {
+                ASSERT_NOT_REACHED();
+                return false;
+            }
+
             return true;
         }
 

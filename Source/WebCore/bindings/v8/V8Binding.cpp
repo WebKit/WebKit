@@ -413,6 +413,13 @@ String v8NonStringValueToWebCoreString(v8::Handle<v8::Value> object)
         throwError(block.Exception());
         return StringImpl::empty();
     }
+    // This path is unexpected.  However there is hypothesis that it
+    // might be combination of v8 and v8 bindings bugs.  For now
+    // just bailout as we'll crash if attempt to convert empty handle into a string.
+    if (v8String.IsEmpty()) {
+        ASSERT_NOT_REACHED();
+        return StringImpl::empty();
+    }
     return v8StringToWebCoreString<String>(v8String, DoNotExternalize);
 }
 
