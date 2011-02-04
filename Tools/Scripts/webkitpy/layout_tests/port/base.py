@@ -507,8 +507,7 @@ class Port(object):
     def abspath_for_test(self, test_name):
         """Returns the full path to the file for a given test name. This is the
         inverse of relative_test_filename()."""
-        # FIXME: Is this handling windows-style abspaths correctly?
-        return self._filesystem.join(self.layout_tests_dir(), test_name)
+        return self._filesystem.normpath(self._filesystem.join(self.layout_tests_dir(), test_name))
 
     def results_directory(self):
         """Absolute path to the place to store the test results."""

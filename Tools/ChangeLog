@@ -2,6 +2,26 @@
 
         Reviewed by Mihai Parparita.
 
+        new-run-webkit-tests: Fix bug introduced in r77434 that was
+        causing us to run the canvas GPU tests on the Mac GPU port. This
+        bug revealed that we were not setting the port.name() field
+        properly in many cases, so I've cleaned up all of that code, and
+        removed a few comments about "version-specific" GPU ports that
+        don't exist and just confused things.
+
+        Testing also revealed that port.abspath_for_test() wasn't
+        normalizing paths on Windows properly, so I fixed that as well.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53719
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu_unittest.py:
+
+2011-02-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
         new-run-webkit-tests: fix normalization of paths on windows when gathering files
 
         r77434 introduced a bug that was causing the test expectations

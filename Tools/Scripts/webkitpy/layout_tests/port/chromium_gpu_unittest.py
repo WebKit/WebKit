@@ -40,20 +40,34 @@ class ChromiumGpuTest(unittest.TestCase):
     def test_get_chromium_gpu_win(self):
         self.assertOverridesWorked('chromium-gpu-win')
 
-    def assertOverridesWorked(self, port_name):
+    def test_get_chromium_gpu__on_linux(self):
+        self.assertOverridesWorked('chromium-gpu-linux', 'chromium-gpu', 'linux2')
+
+    def test_get_chromium_gpu__on_mac(self):
+        self.assertOverridesWorked('chromium-gpu-mac', 'chromium-gpu', 'darwin')
+
+    def test_get_chromium_gpu__on_win(self):
+        self.assertOverridesWorked('chromium-gpu-win', 'chromium-gpu', 'win32')
+        self.assertOverridesWorked('chromium-gpu-win', 'chromium-gpu', 'cygwin')
+
+    def assertOverridesWorked(self, port_name, input_name=None, platform=None):
         # test that we got the right port
         mock_options = mocktool.MockOptions(accelerated_compositing=None,
                                             accelerated_2d_canvas=None,
                                             builder_name='foo',
                                             child_processes=None)
-        port = chromium_gpu.get(port_name=port_name, options=mock_options)
+        if input_name and platform:
+            port = chromium_gpu.get(platform=platform, port_name=input_name,
+                                    options=mock_options)
+        else:
+            port = chromium_gpu.get(port_name=port_name, options=mock_options)
         self.assertTrue(port._options.accelerated_compositing)
         self.assertTrue(port._options.accelerated_2d_canvas)
         self.assertEqual(port.default_child_processes(), 1)
         self.assertEqual(port._options.builder_name, 'foo - GPU')
 
-        # we use startswith() instead of Equal to gloss over platform versions.
-        self.assertTrue(port.name().startswith(port_name))
+        # We don't support platform-specific versions of the GPU port yet.
+        self.assertEqual(port.name(), port_name)
 
         # test that it has the right directories in front of the search path.
         paths = port.baseline_search_path()
