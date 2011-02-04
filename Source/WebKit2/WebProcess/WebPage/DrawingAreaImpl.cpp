@@ -250,8 +250,21 @@ void DrawingAreaImpl::exitAcceleratedCompositingMode()
     m_layerTreeHost->invalidate();
     m_layerTreeHost = nullptr;
     
+    if (m_inSetSize)
+        return;
+
+    UpdateInfo updateInfo;
+    if (m_isPaintingSuspended)
+        updateInfo.viewSize = m_webPage->size();
+    else {
+        m_dirtyRegion = IntRect(IntPoint(), m_webPage->size());
+        display(updateInfo);
+    }
+
+    // Send along a complete update of the page so we can paint the contents right after we exit the
+    // accelerated compositing mode, eliminiating flicker.
     if (!m_inSetSize)
-        m_webPage->send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode(generateSequenceNumber()));
+        m_webPage->send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode(generateSequenceNumber(), updateInfo));
 }
 
 void DrawingAreaImpl::scheduleDisplay()

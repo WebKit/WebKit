@@ -26,6 +26,6 @@ messages -> DrawingAreaProxy {
 
 #if USE(ACCELERATED_COMPOSITING)
     EnterAcceleratedCompositingMode(uint64_t sequenceNumber, WebKit::LayerTreeContext context)
-    ExitAcceleratedCompositingMode(uint64_t sequenceNumber)
+    ExitAcceleratedCompositingMode(uint64_t sequenceNumber, WebKit::UpdateInfo updateInfo)
 #endif
 }

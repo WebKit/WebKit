@@ -184,12 +184,14 @@ void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(uint64_t sequenceNumb
     enterAcceleratedCompositingMode(layerTreeContext);
 }
 
-void DrawingAreaProxyImpl::exitAcceleratedCompositingMode(uint64_t sequenceNumber)
+void DrawingAreaProxyImpl::exitAcceleratedCompositingMode(uint64_t sequenceNumber, const UpdateInfo& updateInfo)
 {
     if (sequenceNumber < m_lastDidSetSizeSequenceNumber)
         return;
 
     exitAcceleratedCompositingMode();
+
+    incorporateUpdate(updateInfo);
 }
 
 void DrawingAreaProxyImpl::incorporateUpdate(const UpdateInfo& updateInfo)

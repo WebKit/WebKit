@@ -58,7 +58,7 @@ private:
     virtual void update(uint64_t sequenceNumber, const UpdateInfo&);
     virtual void didSetSize(uint64_t sequenceNumber, const UpdateInfo&, const LayerTreeContext&);
     virtual void enterAcceleratedCompositingMode(uint64_t sequenceNumber, const LayerTreeContext&);
-    virtual void exitAcceleratedCompositingMode(uint64_t sequenceNumber);
+    virtual void exitAcceleratedCompositingMode(uint64_t sequenceNumber, const UpdateInfo&);
 
     void incorporateUpdate(const UpdateInfo&);
     void sendSetSize();

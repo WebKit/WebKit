@@ -1,3 +1,26 @@
+2011-02-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Pass along an UpdateInfo object to the ExitAcceleratedCompositingMode message
+        https://bugs.webkit.org/show_bug.cgi?id=53734
+
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::exitAcceleratedCompositingMode):
+        Add an UpdateInfo parameter.
+
+        * UIProcess/DrawingAreaProxy.messages.in:
+        Add an UpdateInfo parameter to the ExitAcceleratedCompositingMode message.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::exitAcceleratedCompositingMode):
+        Incorporate the passed in update.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::exitAcceleratedCompositingMode):
+        Create a new UpdateInfo object, paint into it and pass it along as a parameter
+        to the ExitAcceleratedCompositingMode message.
+
 2011-02-03  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.

@@ -100,7 +100,7 @@ private:
     virtual void didSetSize(uint64_t sequenceNumber, const UpdateInfo&, const LayerTreeContext&) { }
 #if USE(ACCELERATED_COMPOSITING)
     virtual void enterAcceleratedCompositingMode(uint64_t sequenceNumber, const LayerTreeContext&) { }
-    virtual void exitAcceleratedCompositingMode(uint64_t sequenceNumber) { }
+    virtual void exitAcceleratedCompositingMode(uint64_t sequenceNumber, const UpdateInfo&) { }
 #endif
 };
 
