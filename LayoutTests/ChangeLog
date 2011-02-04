@@ -1,3 +1,9 @@
+2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Removed passing tests.
+
+        * platform/chromium/test_expectations.txt: Passages removed.
+
 2011-02-04  Jessie Berlin  <jberlin@apple.com>
 
         [Windows 7 Release Tests] transitions/transition-end-event-multiple-04.html flakey 
