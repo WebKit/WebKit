@@ -1,5 +1,11 @@
 2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] Tweak expectations for passing tests.
+
+        * platform/chromium/test_expectations.txt: More tweakage.
+
+2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Remove more passing tests.
 
         * platform/chromium/test_expectations.txt: Even more passages removed.
