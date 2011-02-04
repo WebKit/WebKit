@@ -3592,6 +3592,8 @@
             'plugins/DOMPlugin.h',
             'plugins/DOMPluginArray.cpp',
             'plugins/DOMPluginArray.h',
+            'plugins/IFrameShimSupport.cpp',
+            'plugins/IFrameShimSupport.h',
             'plugins/PluginData.cpp',
             'plugins/PluginData.h',
             'plugins/PluginDatabase.cpp',

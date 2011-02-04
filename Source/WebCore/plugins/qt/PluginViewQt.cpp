@@ -47,6 +47,7 @@
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
 #include "HostWindow.h"
+#include "IFrameShimSupport.h"
 #include "Image.h"
 #if USE(JSC)
 #include "JSDOMBinding.h"
@@ -627,10 +628,19 @@ void PluginView::setNPWindowIfNeeded()
 
     if (m_isWindowed) {
         platformPluginWidget()->setGeometry(m_windowRect);
+
+        // Cut out areas of the plugin occluded by iframe shims
+        Vector<IntRect> cutOutRects;
+        QRegion clipRegion = QRegion(m_clipRect);
+        getPluginOcclusions(m_element, this->parent(), frameRect(), cutOutRects);
+        for (size_t i = 0; i < cutOutRects.size(); i++) {
+            cutOutRects[i].move(-frameRect().x(), -frameRect().y());
+            clipRegion = clipRegion.subtracted(QRegion(cutOutRects[i]));
+        }
         // if setMask is set with an empty QRegion, no clipping will
         // be performed, so in that case we hide the plugin view
-        platformPluginWidget()->setVisible(!m_clipRect.isEmpty());
-        platformPluginWidget()->setMask(QRegion(m_clipRect));
+        platformPluginWidget()->setVisible(!clipRegion.isEmpty());
+        platformPluginWidget()->setMask(clipRegion);
 
         m_npWindow.x = m_windowRect.x();
         m_npWindow.y = m_windowRect.y();

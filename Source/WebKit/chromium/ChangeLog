@@ -1,3 +1,12 @@
+2011-02-04  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Darin Fisher.
+
+        Move chromium iframe shim code to cross-platform file
+        https://bugs.webkit.org/show_bug.cgi?id=52594
+
+        * src/WebPluginContainerImpl.cpp: Move code to WebCore/plugin/IFrameShimSupport.cpp
+
 2011-02-04  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by David Levin.

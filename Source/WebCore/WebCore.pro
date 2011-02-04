@@ -1287,6 +1287,7 @@ SOURCES += \
     platform/Widget.cpp \
     platform/PlatformStrategies.cpp \
     platform/LocalizedStrings.cpp \
+    plugins/IFrameShimSupport.cpp \
     plugins/PluginDatabase.cpp \
     plugins/PluginDebug.cpp \
     plugins/PluginPackage.cpp \
@@ -2247,6 +2248,7 @@ HEADERS += \
     plugins/PluginData.h \
     plugins/PluginDebug.h \
     plugins/DOMPlugin.h \
+    plugins/IFrameShimSupport.h \
     plugins/PluginMainThreadScheduler.h \
     plugins/PluginPackage.h \
     plugins/PluginStream.h \
