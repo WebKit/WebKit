@@ -380,7 +380,8 @@ void WebPageProxy::stopLoading()
 
 void WebPageProxy::reload(bool reloadFromOrigin)
 {
-    setPendingAPIRequestURL(m_backForwardList->currentItem()->url());
+    if (m_backForwardList->currentItem())
+        setPendingAPIRequestURL(m_backForwardList->currentItem()->url());
 
     if (!isValid()) {
         reattachToWebProcessWithItem(m_backForwardList->currentItem());
