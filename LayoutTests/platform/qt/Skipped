@@ -5010,10 +5010,6 @@ http/tests/navigation/go-back-to-error-page.html
 # https://bugs.webkit.org/show_bug.cgi?id=52859
 media/video-currentTime-delay.html
 
-# [Qt]REGRESSION(r76951): media/controls-without-preload.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=53674
-media/controls-without-preload.html
-
 # small text which is scaled to be large renders pixelated
 # https://bugs.webkit.org/show_bug.cgi?id=12448
 css3/zoom-coords.xhtml

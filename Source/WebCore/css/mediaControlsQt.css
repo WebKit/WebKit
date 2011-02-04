@@ -245,3 +245,11 @@ video::-webkit-media-controls-toggle-closed-captions-button {
     display: none;
 }
 
+::-webkit-media-controls-mute-button,
+::-webkit-media-controls-play-button,
+::-webkit-media-controls-timeline,
+::-webkit-media-controls-volume-slider,
+::-webkit-media-controls-fullscreen-button
+{
+    box-sizing: content-box !important;
+}

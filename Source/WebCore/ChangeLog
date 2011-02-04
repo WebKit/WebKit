@@ -1,3 +1,12 @@
+2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt]REGRESSION(r76951): media/controls-without-preload.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=53674
+
+        * css/mediaControlsQt.css:
+
 2011-02-04  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler and Dave Hyatt.
