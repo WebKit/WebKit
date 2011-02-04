@@ -1,3 +1,16 @@
+2011-02-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add PerformanceTest for XSSFilter
+        https://bugs.webkit.org/show_bug.cgi?id=53741
+
+        This performance tests covers the case of a large POST data and many
+        small event handlers.
+
+        * XSSFilter: Added.
+        * XSSFilter/large-post-many-events.html: Added.
+
 2011-02-02  Adam Barth  <abarth@webkit.org>
 
         Rubber-stamped by Eric Seidel.
