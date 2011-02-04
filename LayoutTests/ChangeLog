@@ -1,3 +1,20 @@
+2011-02-04  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53610
+        Regression: adjacent sibling selector not working as expected
+        <rdar://problem/8960033>
+        
+        https://bugs.webkit.org/show_bug.cgi?id=53574
+        REGRESSION (r76012): :last-child:after not working as expected
+        <rdar://problem/8948643>
+
+        * fast/selectors/style-sharing-adjacent-selector-expected.txt: Added.
+        * fast/selectors/style-sharing-adjacent-selector.html: Added.
+        * fast/selectors/style-sharing-last-child-expected.txt: Added.
+        * fast/selectors/style-sharing-last-child.html: Added.
+
 2011-02-04  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Darin Fisher.

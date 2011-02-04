@@ -1095,6 +1095,14 @@ inline Node* CSSStyleSelector::findSiblingForStyleSharing(Node* node, unsigned& 
     return node;
 }
 
+static inline bool parentStylePreventsSharing(const RenderStyle* parentStyle)
+{
+    return parentStyle->childrenAffectedByPositionalRules() 
+        || parentStyle->childrenAffectedByFirstChildRules()
+        || parentStyle->childrenAffectedByLastChildRules() 
+        || parentStyle->childrenAffectedByDirectAdjacentRules();
+}
+
 ALWAYS_INLINE RenderStyle* CSSStyleSelector::locateSharedStyle()
 {
     if (!m_styledElement || !m_parentStyle)
@@ -1104,6 +1112,8 @@ ALWAYS_INLINE RenderStyle* CSSStyleSelector::locateSharedStyle()
         return 0;
     // Ids stop style sharing if they show up in the stylesheets.
     if (m_styledElement->hasID() && m_idsInRules.contains(m_styledElement->idForStyleResolution().impl()))
+        return 0;
+    if (parentStylePreventsSharing(m_parentStyle))
         return 0;
     // Check previous siblings.
     unsigned count = 0;
@@ -1118,7 +1128,7 @@ ALWAYS_INLINE RenderStyle* CSSStyleSelector::locateSharedStyle()
     if (matchesSiblingRules())
         return 0;
     // Tracking child index requires unique style for each node. This may get set by the sibling rule match above.
-    if (m_parentStyle->childrenAffectedByPositionalRules())
+    if (parentStylePreventsSharing(m_parentStyle))
         return 0;
     return shareNode->renderStyle();
 }
