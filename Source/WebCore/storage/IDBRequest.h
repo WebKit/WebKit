@@ -41,6 +41,7 @@
 
 namespace WebCore {
 
+class IDBEvent;
 class IDBTransactionBackendInterface;
 
 class IDBRequest : public IDBCallbacks, public EventTarget, public ActiveDOMObject {

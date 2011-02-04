@@ -107,6 +107,7 @@ function logError()
 {
     debug("Error function called: (" + event.code + ") " + event.message);
     verifyErrorEvent(event);
+    evalAndLog("event.preventDefault()");
 }
 
 function testComplete()

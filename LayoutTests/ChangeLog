@@ -1,3 +1,36 @@
+2011-02-04  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        First step towards event propogation within IndexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=53795
+
+        This is the first step towards implementing
+        http://www.w3.org/Bugs/Public/show_bug.cgi?id=11348
+        within IndexedDB. I've created a method that knows how
+        to capture and bubble (based on Node's dispatchGenericEvent).
+        I've then changed IDBRequest to use it.
+
+        The only functional change is that preventDefault now must
+        be called in error events to prevent the transaction from
+        being aborted. The tests reflect this change and there's one
+        specific test to look at this behavior.
+
+        * storage/indexeddb/cursor-index-delete-expected.txt:
+        * storage/indexeddb/cursor-index-delete.html:
+        * storage/indexeddb/database-quota-expected.txt:
+        * storage/indexeddb/database-quota.html:
+        * storage/indexeddb/duplicates-expected.txt:
+        * storage/indexeddb/duplicates.html:
+        * storage/indexeddb/error-causes-abort-by-default-expected.txt: Copied from LayoutTests/storage/indexeddb/cursor-index-delete-expected.txt.
+        * storage/indexeddb/error-causes-abort-by-default.html: Added.
+        * storage/indexeddb/index-basics-expected.txt:
+        * storage/indexeddb/index-basics.html:
+        * storage/indexeddb/objectstore-autoincrement-expected.txt:
+        * storage/indexeddb/objectstore-autoincrement.html:
+        * storage/indexeddb/objectstore-basics-expected.txt:
+        * storage/indexeddb/objectstore-basics.html:
+
 2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Updated Win and Linux baselines after r77665.

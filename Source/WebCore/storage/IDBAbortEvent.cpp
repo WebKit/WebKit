@@ -36,13 +36,13 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBAbortEvent> IDBAbortEvent::create()
+PassRefPtr<IDBAbortEvent> IDBAbortEvent::create(PassRefPtr<IDBAny> source)
 {
-    return adoptRef(new IDBAbortEvent());
+    return adoptRef(new IDBAbortEvent(source));
 }
 
-IDBAbortEvent::IDBAbortEvent()
-    : IDBEvent(eventNames().abortEvent, 0) // FIXME: set the source to the transaction
+IDBAbortEvent::IDBAbortEvent(PassRefPtr<IDBAny> source)
+    : IDBEvent(eventNames().abortEvent, source, true)
 {
 }
 

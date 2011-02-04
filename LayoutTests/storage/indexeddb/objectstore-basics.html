@@ -189,6 +189,8 @@ function addAgainFailure()
     // FIXME: This error code needs to be specced.
     shouldBe("event.code", "webkitIDBDatabaseException.UNKNOWN_ERR");
 
+    evalAndLog("event.preventDefault()");
+
     transaction = evalAndLog("db.transaction([], webkitIDBTransaction.READ_WRITE)");
     transaction.onabort = unexpectedErrorCallback;
     var store = evalAndLog("store = transaction.objectStore('storeName')");
@@ -205,6 +207,8 @@ function addWithNullKeyFailure()
     verifyErrorEvent(event);
     shouldBe("event.code", "webkitIDBDatabaseException.DATA_ERR");
 
+    evalAndLog("event.preventDefault()");
+
     transaction = evalAndLog("db.transaction([], webkitIDBTransaction.READ_WRITE)");
     transaction.onabort = unexpectedErrorCallback;
     var store = evalAndLog("store = transaction.objectStore('storeName')");
@@ -220,6 +224,8 @@ function addWithNullIndexFailure()
     debug("addWithNullIndexFailure():");
     verifyErrorEvent(event);
     shouldBe("event.code", "webkitIDBDatabaseException.DATA_ERR");
+
+    evalAndLog("event.preventDefault()");
 
     transaction = evalAndLog("db.transaction([], webkitIDBTransaction.READ_WRITE)");
     transaction.onabort = unexpectedErrorCallback;
