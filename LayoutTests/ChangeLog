@@ -1,5 +1,17 @@
 2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] Add baselines for tests, added in r77644.
+
+        * platform/chromium-linux/fast/repaint/slider-thumb-drag-release-expected.checksum: Added.
+        * platform/chromium-linux/fast/repaint/slider-thumb-drag-release-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/slider-thumb-drag-release-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/slider-thumb-drag-release-expected.png: Added.
+        * platform/chromium-win/fast/repaint/slider-thumb-drag-release-expected.checksum: Added.
+        * platform/chromium-win/fast/repaint/slider-thumb-drag-release-expected.png: Added.
+        * platform/chromium-win/fast/repaint/slider-thumb-drag-release-expected.txt: Added.
+
+2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Temporarily add tests added in r77639 as failing, because
         we can't see the baselines for these tests (they are in platform/mac-snowleopard).
 
