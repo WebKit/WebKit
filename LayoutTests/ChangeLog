@@ -1,3 +1,14 @@
+2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Remove Chromium-specific baselines that we no longer need.
+
+        * platform/chromium-mac-leopard/fast/ruby/nested-ruby-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/ruby/nested-ruby-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/ruby/ruby-beforeafter-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/ruby/ruby-beforeafter-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/ruby/ruby-run-break-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/ruby/ruby-run-break-expected.png: Removed.
+
 2011-02-04  Jeremy Orlow  <jorlow@chromium.org>
 
         Revert https://bugs.webkit.org/show_bug.cgi?id=53795
