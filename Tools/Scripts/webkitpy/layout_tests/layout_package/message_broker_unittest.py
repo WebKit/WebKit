@@ -91,6 +91,7 @@ class TestThread(threading.Thread):
     def clear_next_timeout(self):
         self._next_timeout = None
 
+
 class TestHandler(logging.Handler):
     def __init__(self, astream):
         logging.Handler.__init__(self)
@@ -125,7 +126,12 @@ class MultiThreadedBrokerTest(unittest.TestCase):
         child_thread.start()
         started_msg = starting_queue.get()
         stopping_queue.put(msg)
-        return broker.run_message_loop()
+        res = broker.run_message_loop()
+        if msg == 'Timeout':
+            child_thread._timeout_queue.put('done')
+        child_thread.join(1.0)
+        self.assertFalse(child_thread.isAlive())
+        return res
 
     def test_basic(self):
         interrupted = self.run_one_thread('')
@@ -135,17 +141,23 @@ class MultiThreadedBrokerTest(unittest.TestCase):
         self.assertRaises(KeyboardInterrupt, self.run_one_thread, 'KeyboardInterrupt')
 
     def test_timeout(self):
+        # Because the timeout shows up as a wedged thread, this also tests
+        # log_wedged_worker().
         oc = outputcapture.OutputCapture()
-        oc.capture_output()
+        stdout, stderr = oc.capture_output()
+        logger = message_broker._log
+        astream = array_stream.ArrayStream()
+        handler = TestHandler(astream)
+        logger.addHandler(handler)
         interrupted = self.run_one_thread('Timeout')
+        stdout, stderr = oc.restore_output()
         self.assertFalse(interrupted)
-        oc.restore_output()
+        logger.handlers.remove(handler)
+        self.assertTrue('All remaining threads are wedged, bailing out.' in astream.get())
 
     def test_exception(self):
         self.assertRaises(ValueError, self.run_one_thread, 'Exception')
 
-
-class Test(unittest.TestCase):
     def test_find_thread_stack_found(self):
         id, stack = sys._current_frames().items()[0]
         found_stack = message_broker._find_thread_stack(id)
@@ -154,29 +166,6 @@ class Test(unittest.TestCase):
     def test_find_thread_stack_not_found(self):
         found_stack = message_broker._find_thread_stack(0)
         self.assertEqual(found_stack, None)
-
-    def test_log_wedged_worker(self):
-        oc = outputcapture.OutputCapture()
-        oc.capture_output()
-        logger = message_broker._log
-        astream = array_stream.ArrayStream()
-        handler = TestHandler(astream)
-        logger.addHandler(handler)
-
-        starting_queue = Queue.Queue()
-        stopping_queue = Queue.Queue()
-        child_thread = TestThread(starting_queue, stopping_queue)
-        child_thread.start()
-        msg = starting_queue.get()
-
-        message_broker.log_wedged_worker(child_thread.getName(),
-                                         child_thread.id())
-        stopping_queue.put('')
-        child_thread.join(timeout=1.0)
-
-        self.assertFalse(astream.empty())
-        self.assertFalse(child_thread.isAlive())
-        oc.restore_output()
 
 
 if __name__ == '__main__':

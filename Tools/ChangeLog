@@ -1,3 +1,16 @@
+2011-02-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Update, resubmit change to bug 51572. I think the race that was
+        fixed in r76703 caused the hang that caused us to roll this
+        patch out before, so I'd like to try again.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51572
+
+        * Scripts/webkitpy/layout_tests/layout_package/message_broker.py:
+        * Scripts/webkitpy/layout_tests/layout_package/message_broker_unittest.py:
+
 2011-02-03  Daniel Cheng  <dcheng@chromium.org>
 
         Unreviewed.

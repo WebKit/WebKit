@@ -137,6 +137,7 @@ class MultiThreadedBroker(WorkerMessageBroker):
 
     def run_message_loop(self):
         threads = self._threads()
+        wedged_threads = set()
 
         # Loop through all the threads waiting for them to finish.
         some_thread_is_alive = True
@@ -145,11 +146,15 @@ class MultiThreadedBroker(WorkerMessageBroker):
             t = time.time()
             for thread in threads:
                 if thread.isAlive():
+                    if thread in wedged_threads:
+                        continue
+
                     some_thread_is_alive = True
                     next_timeout = thread.next_timeout()
                     if next_timeout and t > next_timeout:
                         log_wedged_worker(thread.getName(), thread.id())
                         thread.clear_next_timeout()
+                        wedged_threads.add(thread)
 
                 exception_info = thread.exception_info()
                 if exception_info is not None:
@@ -163,6 +168,9 @@ class MultiThreadedBroker(WorkerMessageBroker):
 
             if some_thread_is_alive:
                 time.sleep(0.01)
+
+        if wedged_threads:
+            _log.warning("All remaining threads are wedged, bailing out.")
 
     def cancel_workers(self):
         threads = self._threads()
