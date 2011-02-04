@@ -10,6 +10,6 @@
 	/>
 	<Tool
 		Name="VCLinkerTool"
-		AdditionalDependencies="WebKit$(WebKitDLLConfigSuffix).lib"
+		AdditionalDependencies="Shlwapi.lib"
 	/>
 </VisualStudioPropertySheet>

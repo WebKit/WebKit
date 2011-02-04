@@ -1,3 +1,20 @@
+2011-02-04  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2 clients fail to launch on Windows if client exe is in a different directory from WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=53810
+        <rdar://problem/8946085>
+        
+        If WebKit2WebProcess.exe is in a different directory from the client process, and that
+        client process uses CreateProcess to launch WebKit2WebProcess, the DLL search path may
+        end up excluding the directory containing WebKit. To address this, we use SetDllDirectory
+        to explicitly include the WebKit directory in the DLL search path.
+
+        * win/MainWin.cpp:
+        (wWinMain): Use SetDllDirectory and LoadLibrary to load WebKit.dll from WebKit2WebProcess.exe
+        * win/WebKit2WebProcessCommon.vsprops: Don't link directly to WebKit. Link against shlwapi.
+
 2011-02-04  Adam Roben  <aroben@apple.com>
 
         Allow passing a null filter callback to WKPageCopySessionState
