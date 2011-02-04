@@ -201,6 +201,8 @@ namespace WebKit {
         // Plugin view to redirect data to
         WebCore::PluginView* m_pluginView;
         bool m_hasSentResponseToPlugin;
+
+        bool m_hasRepresentation;
     };
 
 }

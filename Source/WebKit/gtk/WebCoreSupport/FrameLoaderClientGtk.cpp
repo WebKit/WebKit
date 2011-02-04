@@ -97,6 +97,7 @@ FrameLoaderClient::FrameLoaderClient(WebKitWebFrame* frame)
     , m_policyDecision(0)
     , m_loadingErrorPage(false)
     , m_pluginView(0)
+    , m_hasRepresentation(false)
     , m_hasSentResponseToPlugin(false)
 {
     ASSERT(m_frame);
@@ -780,7 +781,7 @@ void FrameLoaderClient::didRunInsecureContent(SecurityOrigin*)
 
 void FrameLoaderClient::makeRepresentation(WebCore::DocumentLoader*)
 {
-    notImplemented();
+    m_hasRepresentation = true;
 }
 
 void FrameLoaderClient::forceLayout()
@@ -980,7 +981,7 @@ void FrameLoaderClient::dispatchDidLoadMainResource(WebCore::DocumentLoader*)
 
 void FrameLoaderClient::revertToProvisionalState(WebCore::DocumentLoader*)
 {
-    notImplemented();
+    m_hasRepresentation = true;
 }
 
 void FrameLoaderClient::willChangeTitle(WebCore::DocumentLoader*)
@@ -1028,8 +1029,10 @@ String FrameLoaderClient::generatedMIMETypeForURLScheme(const String&) const
 void FrameLoaderClient::finishedLoading(WebCore::DocumentLoader* documentLoader)
 {
     if (!m_pluginView) {
-        FrameLoader* loader = documentLoader->frameLoader();
-        loader->writer()->setEncoding(m_response.textEncodingName(), false);
+        // This is necessary to create an empty document,
+        // but it has to be skipped in the provisional phase.
+        if (m_hasRepresentation)
+            documentLoader->frameLoader()->writer()->setEncoding("", false);
     } else {
         m_pluginView->didFinishLoading();
         m_pluginView = 0;

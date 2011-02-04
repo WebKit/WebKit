@@ -1,3 +1,29 @@
+2011-02-03  Joone Hur  <joone.hur@collabora.co.uk>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] No need to set text encoding in the provisional phase
+        https://bugs.webkit.org/show_bug.cgi?id=53487
+
+        According to changeset 67253, setEncoding could be called multiple times from 
+        committedLoad, finishedLoading, dispatchDidFailLoading, and setMainDocumentError 
+        in FrameLoaderClient. To fix this, the relevant code was removed from 
+        FrameLoaderClient and moved to DocumentLoader::commitData. However, that 
+        code was not removed from FrameLoaderClient::finishedLoading in WebKitGtk+.
+
+        Due to this reason, after loading a html document, other ports initialize the 
+        text encoding from FrameLoaderClient::finishedLoading, but WebKitGtk+ sets 
+        the same encoding again, even tries to set encoding in the provisional phase. 
+        This causes unnecessary encoding setting.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::FrameLoaderClient): Set m_hasRepresentation to false.
+        (WebKit::FrameLoaderClient::makeRepresentation): Set m_hasRepresentation to true.
+        (WebKit::FrameLoaderClient::revertToProvisionalState): Set m_hasRepresentation to true.
+        (WebKit::FrameLoaderClient::finishedLoading): Skip the encoding setting when 
+        m_hasRepresentation is false.
+        * WebCoreSupport/FrameLoaderClientGtk.h: Added m_hasRepresentation.
+
 2011-02-02  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.
