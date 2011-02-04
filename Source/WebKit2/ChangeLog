@@ -1,3 +1,15 @@
+2011-02-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix a shared memory leak
+        https://bugs.webkit.org/show_bug.cgi?id=53800
+
+        Move the send right representing the shared memory.
+
+        * Platform/mac/SharedMemoryMac.cpp:
+        (WebKit::SharedMemory::Handle::encode):
+
 2011-02-04  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders Carlsson.
