@@ -2731,6 +2731,11 @@ static RenderObject* rendererForView(NSView* view)
     return [super accessibilityAttributeValue:attribute forParameter:parameter];
 }
 
+- (BOOL)accessibilitySupportsOverriddenAttributes
+{
+    return YES;
+}
+
 - (BOOL)accessibilityShouldUseUniqueId
 {
     return m_object->accessibilityShouldUseUniqueId();

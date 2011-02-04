@@ -1,3 +1,18 @@
+2011-02-04  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: Can't set accessibility overridden attributes on web objects
+        https://bugs.webkit.org/show_bug.cgi?id=53725
+
+        accessibilitySetOverriddenValue does not work on AX objects from WebCore because 
+        the right method needed to be overridden (accessibilitySupportsOverriddenAttributes).
+        Unfortunately, there's no way to test this from DRT, since AppKit returns the overridden
+        attribute only when an AX client asks for it through the AX frameworks.
+
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilitySupportsOverriddenAttributes]):
+
 2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Kent Tamura.
