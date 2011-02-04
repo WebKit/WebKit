@@ -299,10 +299,16 @@ WebInspector.ScriptsPanel.prototype = {
     _resourceLoadingFinished: function(e)
     {
         var resource = e.target;
+
+        var visible = false;
+        var select = this.filesSelectElement;
         for (var i = 0; i < resource._scriptsPendingResourceLoad.length; ++i) {
             // Bind script to resource.
             var script = resource._scriptsPendingResourceLoad[i];
             script.resource = resource;
+
+            if (select.options[select.selectedIndex] === script.filesSelectOption)
+                visible = true;
 
             // Remove script from the files list.
             script.filesSelectOption.parentElement.removeChild(script.filesSelectOption);
@@ -310,6 +316,9 @@ WebInspector.ScriptsPanel.prototype = {
         // Adding first script will add resource.
         this._addScriptToFilesMenu(resource._scriptsPendingResourceLoad[0]);
         delete resource._scriptsPendingResourceLoad;
+
+        if (visible)
+            this._showScriptOrResource(resource, { initialLoad: true });
     },
 
     addConsoleMessage: function(message)

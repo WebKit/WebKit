@@ -1,3 +1,13 @@
+2011-02-04  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: scripts panel displays wrong file name after reload.
+        https://bugs.webkit.org/show_bug.cgi?id=53761
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._resourceLoadingFinished):
+
 2011-02-03  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
