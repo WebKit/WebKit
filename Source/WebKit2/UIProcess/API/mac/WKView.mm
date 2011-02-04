@@ -157,11 +157,10 @@ typedef HashMap<String, ValidationVector> ValidationMap;
 
 @implementation WKView
 
+// FIXME: Remove this once we no longer want to be able to go back to the old drawing area.
 static bool useNewDrawingArea()
 {
-    static bool useNewDrawingArea = getenv("USE_NEW_DRAWING_AREA");
-
-    return useNewDrawingArea;
+    return true;
 }
 
 - (id)initWithFrame:(NSRect)frame

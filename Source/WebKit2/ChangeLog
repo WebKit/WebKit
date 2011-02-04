@@ -1,3 +1,22 @@
+2011-02-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Mac WebKit2 should use the new drawing area
+        https://bugs.webkit.org/show_bug.cgi?id=53802
+        <rdar://problem/7881419>
+        <rdar://problem/7881447>
+        <rdar://problem/8252632>
+        <rdar://problem/8479422>
+        <rdar://problem/8633813>
+        <rdar://problem/8734512>
+        <rdar://problem/8787660>
+
+        * UIProcess/API/mac/WKView.mm:
+        (useNewDrawingArea):
+        Return true. Eventually this function should be removed, but let's keep it for now so
+        we can go back to the old drawing area if necessary.
+
 2011-02-04  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders Carlsson.
