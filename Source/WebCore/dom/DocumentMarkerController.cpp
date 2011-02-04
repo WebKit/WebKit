@@ -57,21 +57,16 @@ void DocumentMarkerController::addMarker(Range* range, DocumentMarker::MarkerTyp
     }
 }
 
-void DocumentMarkerController::removeMarkers(Range* range, DocumentMarker::MarkerType markerType)
+void DocumentMarkerController::removeMarkers(Range* range, DocumentMarker::MarkerTypes markerTypes, RemovePartiallyOverlappingMarkerOrNot shouldRemovePartiallyOverlappingMarker)
 {
     if (m_markers.isEmpty())
         return;
 
-    ExceptionCode ec = 0;
-    Node* startContainer = range->startContainer(ec);
-    Node* endContainer = range->endContainer(ec);
-
-    Node* pastLastNode = range->pastLastNode();
-    for (Node* node = range->firstNode(); node != pastLastNode; node = node->traverseNextNode()) {
-        int startOffset = node == startContainer ? range->startOffset(ec) : 0;
-        int endOffset = node == endContainer ? range->endOffset(ec) : INT_MAX;
-        int length = endOffset - startOffset;
-        removeMarkers(node, startOffset, length, markerType);
+    for (TextIterator markedText(range); !markedText.atEnd(); markedText.advance()) {
+        RefPtr<Range> textPiece = markedText.range();
+        int startOffset = textPiece->startOffset();
+        int endOffset = textPiece->endOffset();
+        removeMarkers(textPiece->startContainer(), startOffset, endOffset - startOffset, markerTypes, shouldRemovePartiallyOverlappingMarker);
     }
 }
 
@@ -185,7 +180,7 @@ void DocumentMarkerController::copyMarkers(Node* srcNode, unsigned startOffset, 
         dstNode->renderer()->repaint();
 }
 
-void DocumentMarkerController::removeMarkers(Node* node, unsigned startOffset, int length, DocumentMarker::MarkerType markerType)
+void DocumentMarkerController::removeMarkers(Node* node, unsigned startOffset, int length, DocumentMarker::MarkerTypes markerTypes, RemovePartiallyOverlappingMarkerOrNot shouldRemovePartiallyOverlappingMarker)
 {
     if (length <= 0)
         return;
@@ -207,7 +202,7 @@ void DocumentMarkerController::removeMarkers(Node* node, unsigned startOffset, i
             break;
 
         // skip marker that is wrong type or before target
-        if (marker.endOffset < startOffset || (marker.type != markerType && markerType != DocumentMarker::AllMarkers)) {
+        if (marker.endOffset <= startOffset || !(marker.type & markerTypes)) {
             i++;
             continue;
         }
@@ -218,6 +213,10 @@ void DocumentMarkerController::removeMarkers(Node* node, unsigned startOffset, i
         // pitch the old marker and any associated rect
         markers.remove(i);
         rects.remove(i);
+
+        if (shouldRemovePartiallyOverlappingMarker)
+            // Stop here. Don't add resulting slices back.
+            continue;
 
         // add either of the resulting slices that are left after removing target
         if (startOffset > marker.startOffset) {
@@ -321,14 +320,14 @@ Vector<IntRect> DocumentMarkerController::renderedRectsForMarkers(DocumentMarker
     return result;
 }
 
-void DocumentMarkerController::removeMarkers(Node* node, DocumentMarker::MarkerType markerType)
+void DocumentMarkerController::removeMarkers(Node* node, DocumentMarker::MarkerTypes markerTypes)
 {
     MarkerMap::iterator iterator = m_markers.find(node);
     if (iterator != m_markers.end())
-        removeMarkersFromMarkerMapVectorPair(node, iterator->second, markerType);
+        removeMarkersFromMarkerMapVectorPair(node, iterator->second, markerTypes);
 }
 
-void DocumentMarkerController::removeMarkers(DocumentMarker::MarkerType markerType)
+void DocumentMarkerController::removeMarkers(DocumentMarker::MarkerTypes markerTypes)
 {
     // outer loop: process each markered node in the document
     MarkerMap markerMapCopy = m_markers;
@@ -336,14 +335,14 @@ void DocumentMarkerController::removeMarkers(DocumentMarker::MarkerType markerTy
     for (MarkerMap::iterator i = markerMapCopy.begin(); i != end; ++i) {
         Node* node = i->first.get();
         MarkerMapVectorPair* vectorPair = i->second;
-        removeMarkersFromMarkerMapVectorPair(node, vectorPair, markerType);
+        removeMarkersFromMarkerMapVectorPair(node, vectorPair, markerTypes);
     }
 }
 
 // This function may release node and vectorPair.
-void DocumentMarkerController::removeMarkersFromMarkerMapVectorPair(Node* node, MarkerMapVectorPair* vectorPair, DocumentMarker::MarkerType markerType)
+void DocumentMarkerController::removeMarkersFromMarkerMapVectorPair(Node* node, MarkerMapVectorPair* vectorPair, DocumentMarker::MarkerTypes markerTypes)
 {
-    if (markerType == DocumentMarker::AllMarkers) {
+    if (!~(markerTypes & DocumentMarker::AllMarkers)) {
         delete vectorPair;
         m_markers.remove(node);
         if (RenderObject* renderer = node->renderer())
@@ -357,7 +356,7 @@ void DocumentMarkerController::removeMarkersFromMarkerMapVectorPair(Node* node, 
             DocumentMarker marker = markers[i];
 
             // skip nodes that are not of the specified type
-            if (marker.type != markerType) {
+            if (!(marker.type & markerTypes)) {
                 ++i;
                 continue;
             }
@@ -566,7 +565,6 @@ bool DocumentMarkerController::hasMarkers(Range* range, DocumentMarker::MarkerTy
     }
     return false;
 }
-
 #ifndef NDEBUG
 void DocumentMarkerController::showMarkers() const
 {

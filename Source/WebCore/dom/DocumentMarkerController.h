@@ -49,10 +49,16 @@ public:
     void addMarker(Node*, DocumentMarker);
     void copyMarkers(Node* srcNode, unsigned startOffset, int length, Node* dstNode, int delta, DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
     bool hasMarkers(Range*, DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers);
-    void removeMarkers(Range*, DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
-    void removeMarkers(Node*, unsigned startOffset, int length, DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
-    void removeMarkers(DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
-    void removeMarkers(Node*, DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
+
+    // When a marker partially overlaps with range, if removePartiallyOverlappingMarkers is true, we completely
+    // remove the marker. If the argument is false, we will adjust the span of the marker so that it retains
+    // the portion that is outside of the range.
+    enum RemovePartiallyOverlappingMarkerOrNot { DoNotRemovePartiallyOverlappingMarker, RemovePartiallyOverlappingMarker };
+    void removeMarkers(Range*, DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers, RemovePartiallyOverlappingMarkerOrNot = DoNotRemovePartiallyOverlappingMarker);
+    void removeMarkers(Node*, unsigned startOffset, int length, DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers,  RemovePartiallyOverlappingMarkerOrNot = DoNotRemovePartiallyOverlappingMarker);
+
+    void removeMarkers(DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers);
+    void removeMarkers(Node*, DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers);
     void repaintMarkers(DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
     void setRenderedRectForMarker(Node*, const DocumentMarker&, const IntRect&);
     void invalidateRenderedRectsForMarkersInRect(const IntRect&);
@@ -72,7 +78,7 @@ private:
     typedef std::pair<Vector<DocumentMarker>, Vector<IntRect> > MarkerMapVectorPair;
     typedef HashMap<RefPtr<Node>, MarkerMapVectorPair*> MarkerMap;
     MarkerMap m_markers;
-    void removeMarkersFromMarkerMapVectorPair(Node*, MarkerMapVectorPair*, DocumentMarker::MarkerType);
+    void removeMarkersFromMarkerMapVectorPair(Node*, MarkerMapVectorPair*, DocumentMarker::MarkerTypes);
 };
 
 } // namespace WebCore

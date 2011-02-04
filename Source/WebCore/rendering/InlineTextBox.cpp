@@ -1056,9 +1056,7 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, const IntPoint& bo
         switch (marker.type) {
             case DocumentMarker::Grammar:
             case DocumentMarker::Spelling:
-            case DocumentMarker::Replacement:
             case DocumentMarker::CorrectionIndicator:
-            case DocumentMarker::RejectedCorrection:
                 if (background)
                     continue;
                 break;
@@ -1066,9 +1064,8 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, const IntPoint& bo
                 if (!background)
                     continue;
                 break;
-            
             default:
-                ASSERT_NOT_REACHED();
+                continue;
         }
 
         if (marker.endOffset <= start())
@@ -1094,9 +1091,6 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, const IntPoint& bo
             case DocumentMarker::CorrectionIndicator:
                 computeRectForReplacementMarker(marker, style, font);
                 paintSpellingOrGrammarMarker(pt, boxOrigin, marker, style, font, false);
-                break;
-            case DocumentMarker::Replacement:
-            case DocumentMarker::RejectedCorrection:
                 break;
             default:
                 ASSERT_NOT_REACHED();

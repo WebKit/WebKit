@@ -1,3 +1,25 @@
+2011-02-03  Jia Pu  <jpu@apple.com>
+
+        Reversion should not be marked as misspelled.
+        https://bugs.webkit.org/show_bug.cgi?id=53255
+
+        Rebaselined tests broken by https://bugs.webkit.org/show_bug.cgi?id=51389
+
+        * platform/mac/editing/spelling/autocorrection-contraction-expected.png:
+        * platform/mac/editing/spelling/autocorrection-contraction-expected.txt:
+        * platform/mac/editing/spelling/autocorrection-delete-expected.png:
+        * platform/mac/editing/spelling/autocorrection-delete-expected.txt:
+        * platform/mac/editing/spelling/autocorrection-removing-underline-after-paste-expected.png:
+        * platform/mac/editing/spelling/autocorrection-removing-underline-after-paste-expected.txt:
+        * platform/mac/editing/spelling/autocorrection-removing-underline-expected.png:
+        * platform/mac/editing/spelling/autocorrection-removing-underline-expected.txt:
+        * platform/mac/editing/spelling/autocorrection-simple-expected.checksum:
+        * platform/mac/editing/spelling/autocorrection-simple-expected.png:
+        * platform/mac/editing/spelling/autocorrection-simple-expected.txt:
+        * platform/mac/editing/spelling/autocorrection-simple.html:
+        * platform/mac/editing/spelling/delete-autocorrected-word-1-expected.png:
+        * platform/mac/editing/spelling/delete-autocorrected-word-1-expected.txt:
+
 2011-02-03  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by James Robinson.

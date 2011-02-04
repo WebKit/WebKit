@@ -1,3 +1,98 @@
+2011-02-03  Jia Pu  <jpu@apple.com>
+
+        Reversion should not be marked as misspelled.
+        https://bugs.webkit.org/show_bug.cgi?id=53255
+
+        This patch includes fix for reported bug, and also some housekeeping changes.
+
+        To implement desired behavior, we need:
+        1. Add a new marker type, SpellCheckingExemption, since now we distingusish between text
+           that shouldn't be spellchecked and text shouldn't be autocorrected.
+        2. Make sure that there is no pending correction panel when we enter markAllMisspellingsAndBadGrammarInRanges().
+           Otherwise the spell checking code in that function may interfere with autocorrection. This
+           is achieved by explicitly applying pending correction when user types space, line break or
+           paragraph break.
+
+        Housekeeping code changes include:
+        1. Change manual-tests that were broken by relocated WebCore directory.
+        2. Use TextIterator in various DocumentMarkerController functions instead of using
+           Node::traverseNextNode() directly.
+        3. Allow passing multiple marker types into DocumentMarkerController::removeMarkers() and
+           DocumentMarkerController::hasMarkers() to improve clarity and efficiency.
+        4. Fixes of minor bugs that were exposed previously.
+
+        * WebCore.exp.in: Change signature of DocumentMarkerController::removeMarkers().
+
+        * dom/DocumentMarker.h: Added new marker type SpellCheckingExemption.
+
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::removeMarkers): Use TextIterator to scan the range to be
+           consistent with addMarker() function. Allow passing in multiple marker types in one call.
+           Added a boolean argument to specify the behavior when removing markers that partially
+           overlap the specified range.
+        (WebCore::DocumentMarkerController::removeMarkersFromMarkerMapVectorPair): Allow passing in
+           multiple marker types in one call.
+        (WebCore::DocumentMarkerController::hasMarkers): Use TextIterator to scan the range to be
+           consistent with addMarker() function. Allow passing in multiple marker types in one call.
+
+        * dom/DocumentMarkerController.h: Allow passing in multiple marker types to removeMarkers()
+           and hasMarkers(). Added a boolean argument to removeMarkers() to specify the behavior when
+           removing markers that partially overlap the specified range.
+
+        * editing/Editor.cpp:
+        (WebCore::markerTypesForAutocorrection): Add SpellCheckingExemption marker when apply correction.
+        (WebCore::markerTypesForReplacement): Ditto.
+        (WebCore::Editor::respondToChangedSelection): Reordered call to dismissCorrectionPanel() and
+           setSelection() to make sure there is no pending correction when entering
+           markAllMisspellingsAndBadGrammarInRanges().
+        (WebCore::Editor::appliedEditing): Only remove CorrectionIndicator markers when the command
+           is a top level command to improve efficiency.
+        (WebCore::Editor::insertTextWithoutSendingTextEvent): Added code to applying pending correction.
+        (WebCore::Editor::insertLineBreak): Ditto.
+        (WebCore::Editor::insertParagraphSeparator): Ditto.
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges): Don't mark mispelling if the
+           text carries SpellCheckingExemption marker.
+        (WebCore::Editor::correctionPanelTimerFired): Reset correction panel if the returned suggestion
+           from spellchecker is an empty string.
+        (WebCore::Editor::removeSpellAndCorrectionMarkersFromWordsToBeEdited):
+           Use new DocumentMarkerController::removeMarkers() to replace custom implemenation to improve
+           efficiency and readability.
+        (WebCore::Editor::applyCorrectionPanelInfo): Remove the code that set caret position after
+           applying correction, since it's unnecessary. Also, store pre-correction string together with
+           the marker for reversion panel to use.
+        (WebCore::Editor::applyAutocorrectionBeforeTypingIfAppropriate): Apply pending correction.
+        (WebCore::Editor::changeSelectionAfterCommand): Moved marker removal code to Editor::appliedEditing()
+           where we have access to EditCommand object.
+
+        * editing/Editor.h: Added new function applyAutocorrectionAfterTypingIfAppropriate().
+
+        * manual-tests/autocorrection/autocorrection-cancelled-by-ESC.html: Change manual-tests that
+           were broken by relocated WebCore directory.
+
+        * manual-tests/autocorrection/autocorrection-cancelled-by-typing-1.html: Ditto.
+
+        * manual-tests/autocorrection/autocorrection-contraction.html: Ditto.
+
+        * manual-tests/autocorrection/continue-typing-to-dismiss-reversion.html: Ditto.
+
+        * manual-tests/autocorrection/delete-to-dismiss-reversion.html: Ditto.
+
+        * manual-tests/autocorrection/delete-to-end-of-word-to-show-reversion.html: Ditto.
+
+        * manual-tests/autocorrection/dismiss-multiple-guesses.html: Ditto.
+
+        * manual-tests/autocorrection/move-to-end-of-word-to-show-reversion.html: Ditto.
+
+        * manual-tests/autocorrection/select-from-multiple-guesses.html: Ditto.
+
+        * manual-tests/autocorrection/spell-checking-after-reversion.html: Added.
+
+        * manual-tests/autocorrection/type-whitespace-to-dismiss-reversion.html: Change manual-tests that
+           were broken by relocated WebCore directory.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintDocumentMarkers): Code clean-up to be more concise.
+
 2011-02-03  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed, qt build fix.
@@ -9,7 +104,7 @@
 
         Reviewed by James Robinson.
 
-        NHandle non-raster backed images in getUnmultipliedImageData()
+        Handle non-raster backed images in getUnmultipliedImageData()
         https://bugs.webkit.org/show_bug.cgi?id=53468
 
         No new tests. Existing canvas tests sufficient
