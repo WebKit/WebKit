@@ -139,19 +139,12 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
     ASSERT(m_readyState < DONE);
     m_readyState = DONE;
 
-    Vector<RefPtr<EventTarget> > targets;
-    targets.append(this);
-    ASSERT(event->target() == this);
-    ASSERT(event->isIDBErrorEvent() || event->isIDBSuccessEvent());
-    bool dontPreventDefault = static_cast<IDBEvent*>(event.get())->dispatch(targets);
+    bool ret = EventTarget::dispatchEvent(event);
 
-    if (m_transaction) {
-        if (dontPreventDefault && event->isIDBErrorEvent())
-            m_transaction->abort();
+    if (m_transaction)
         m_transaction->didCompleteTaskEvents();
-    }
 
-    return dontPreventDefault;
+    return ret;
 }
 
 void IDBRequest::enqueueEvent(PassRefPtr<Event> event)

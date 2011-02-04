@@ -179,12 +179,12 @@ void IDBTransactionBackendImpl::taskTimerFired(Timer<IDBTransactionBackendImpl>*
     if (m_state == StartPending) {
         m_transaction->begin();
         m_state = Running;
-    }
+    } else
+        ASSERT(m_state == Running);
 
     TaskQueue queue;
     queue.swap(m_taskQueue);
     while (!queue.isEmpty() && m_state != Finished) {
-        ASSERT(m_state == Running);
         OwnPtr<ScriptExecutionContext::Task> task(queue.first().release());
         queue.removeFirst();
         m_pendingEvents++;

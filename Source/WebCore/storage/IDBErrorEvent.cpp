@@ -43,7 +43,7 @@ PassRefPtr<IDBErrorEvent> IDBErrorEvent::create(PassRefPtr<IDBAny> source, const
 }
 
 IDBErrorEvent::IDBErrorEvent(PassRefPtr<IDBAny> source, const IDBDatabaseError& error)
-    : IDBEvent(eventNames().errorEvent, source, true)
+    : IDBEvent(eventNames().errorEvent, source)
     , m_code(error.code())
     , m_message(error.message())
 {

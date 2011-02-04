@@ -87,8 +87,6 @@ function addLincolnError()
     // FIXME: This should be implemented, but we make it an error for now.
     shouldBe("event.code", "webkitIDBDatabaseException.UNKNOWN_ERR");
 
-    evalAndLog("event.preventDefault()");
-
     window.store = evalAndLog("store = trans.objectStore('StoreWithAutoIncrement')");
     debug("Insert into object store with key gen using explicit key");
     result = evalAndLog("store.add({name: 'Lincoln'}, 1)");
@@ -101,8 +99,6 @@ function addWithExplicitKeyError()
     debug("addWithExplicitKeyError():");
     verifyErrorEvent(event);
     shouldBe("event.code", "webkitIDBDatabaseException.DATA_ERR");
-
-    evalAndLog("event.preventDefault()");
 
     debug("Insert into object store with key gen and no key path");
     result = evalAndLog("store.add({name: 'Lincoln', number: '7012'})");
@@ -163,8 +159,6 @@ function addAdamError()
     debug("addAdamError():");
     verifyErrorEvent(event);
     shouldBe("event.code", "webkitIDBDatabaseException.DATA_ERR");
-
-    evalAndLog("event.preventDefault()");
 
     result = evalAndLog("store.add({name: 'Adam'}, 1)");
     result.onsuccess = addAdamSuccess;

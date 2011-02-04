@@ -100,12 +100,12 @@ ScriptExecutionContext* IDBTransaction::scriptExecutionContext() const
 
 void IDBTransaction::onAbort()
 {
-    enqueueEvent(IDBAbortEvent::create(IDBAny::create(this)));
+    enqueueEvent(IDBAbortEvent::create());
 }
 
 void IDBTransaction::onComplete()
 {
-    enqueueEvent(IDBCompleteEvent::create(IDBAny::create(this)));
+    enqueueEvent(IDBCompleteEvent::create());
 }
 
 bool IDBTransaction::canSuspend() const

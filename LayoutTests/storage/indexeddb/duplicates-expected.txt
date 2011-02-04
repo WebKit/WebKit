@@ -133,7 +133,6 @@ PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
 PASS event.code is webkitIDBDatabaseException.NOT_FOUND_ERR
-event.preventDefault()
 indexObject.get('does not exist')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
@@ -152,7 +151,6 @@ PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
 PASS event.code is webkitIDBDatabaseException.NOT_FOUND_ERR
-event.preventDefault()
 indexObject.openKeyCursor()
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
@@ -401,7 +399,6 @@ PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
 PASS event.code is webkitIDBDatabaseException.NOT_FOUND_ERR
-event.preventDefault()
 indexObject.get('does not exist')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
@@ -420,7 +417,6 @@ PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
 PASS event.code is webkitIDBDatabaseException.NOT_FOUND_ERR
-event.preventDefault()
 indexObject.openKeyCursor()
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true

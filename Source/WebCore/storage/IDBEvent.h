@@ -32,10 +32,8 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "Event.h"
-#include "EventTarget.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -46,10 +44,9 @@ public:
     virtual ~IDBEvent();
 
     PassRefPtr<IDBAny> source();
-    bool dispatch(Vector<RefPtr<EventTarget> >&); // The target first and then its ancestors in order of how the event bubbles.
 
 protected:
-    IDBEvent(const AtomicString& type, PassRefPtr<IDBAny> source, bool canBubble);
+    IDBEvent(const AtomicString& type, PassRefPtr<IDBAny> source);
 
 private:
     RefPtr<IDBAny> m_source;

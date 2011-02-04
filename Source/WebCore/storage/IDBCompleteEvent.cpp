@@ -36,13 +36,13 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBCompleteEvent> IDBCompleteEvent::create(PassRefPtr<IDBAny> source)
+PassRefPtr<IDBCompleteEvent> IDBCompleteEvent::create()
 {
-    return adoptRef(new IDBCompleteEvent(source));
+    return adoptRef(new IDBCompleteEvent());
 }
 
-IDBCompleteEvent::IDBCompleteEvent(PassRefPtr<IDBAny> source)
-    : IDBEvent(eventNames().completeEvent, source, false)
+IDBCompleteEvent::IDBCompleteEvent()
+    : IDBEvent(eventNames().completeEvent, 0) // FIXME: set the source to the transaction
 {
 }
 

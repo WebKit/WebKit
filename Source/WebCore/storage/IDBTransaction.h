@@ -53,8 +53,6 @@ public:
         VERSION_CHANGE = 2
     };
 
-    IDBTransactionBackendInterface* backend() const { return m_backend.get(); }
-
     unsigned short mode() const;
     IDBDatabase* db();
     PassRefPtr<IDBObjectStore> objectStore(const String& name, ExceptionCode&);

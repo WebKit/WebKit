@@ -169,7 +169,6 @@ PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
 PASS event.code is webkitIDBDatabaseException.DATA_ERR
-event.preventDefault()
 event.source.update({id: counter, number: 100 + counter++})
 event.source.continue()
 keyPathUpdateCursor()
@@ -186,7 +185,6 @@ PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
 PASS event.code is webkitIDBDatabaseException.DATA_ERR
-event.preventDefault()
 event.source.update({id: counter, number: 100 + counter++})
 event.source.continue()
 keyPathUpdateCursor()
@@ -203,7 +201,6 @@ PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
 PASS event.code is webkitIDBDatabaseException.DATA_ERR
-event.preventDefault()
 event.source.update({id: counter, number: 100 + counter++})
 event.source.continue()
 keyPathUpdateCursor()
@@ -220,7 +217,6 @@ PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
 PASS event.code is webkitIDBDatabaseException.DATA_ERR
-event.preventDefault()
 event.source.update({id: counter, number: 100 + counter++})
 event.source.continue()
 keyPathUpdateCursor()

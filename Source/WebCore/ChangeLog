@@ -1,3 +1,32 @@
+2011-02-04  Jeremy Orlow  <jorlow@chromium.org>
+
+        Revert https://bugs.webkit.org/show_bug.cgi?id=53795
+
+        * storage/IDBAbortEvent.cpp:
+        (WebCore::IDBAbortEvent::create):
+        (WebCore::IDBAbortEvent::IDBAbortEvent):
+        * storage/IDBAbortEvent.h:
+        * storage/IDBCompleteEvent.cpp:
+        (WebCore::IDBCompleteEvent::create):
+        (WebCore::IDBCompleteEvent::IDBCompleteEvent):
+        * storage/IDBCompleteEvent.h:
+        * storage/IDBErrorEvent.cpp:
+        (WebCore::IDBErrorEvent::IDBErrorEvent):
+        * storage/IDBEvent.cpp:
+        (WebCore::IDBEvent::IDBEvent):
+        * storage/IDBEvent.h:
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::dispatchEvent):
+        * storage/IDBRequest.h:
+        * storage/IDBSuccessEvent.cpp:
+        (WebCore::IDBSuccessEvent::IDBSuccessEvent):
+        * storage/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::onAbort):
+        (WebCore::IDBTransaction::onComplete):
+        * storage/IDBTransaction.h:
+        * storage/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::taskTimerFired):
+
 2011-02-04  Martin Galpin  <martin@66laps.com>
 
         Reviewed by David Levin.

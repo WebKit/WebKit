@@ -80,7 +80,6 @@ PASS 'onerror' in event.target is true
 PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
-event.preventDefault()
 PASS Adding data failed due to quota error. Data added was about 5 MB
 PASS successfullyParsed is true
 
