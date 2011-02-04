@@ -52,8 +52,8 @@ void MarkedSpace::destroy()
 {
     clearMarkBits(); // Make sure weak pointers appear dead during destruction.
 
-    for (size_t block = 0; block < m_heap.usedBlocks; ++block)
-        freeBlock(block);
+    while (m_heap.usedBlocks)
+        freeBlock(0);
     fastFree(m_heap.blocks);
 
     memset(&m_heap, 0, sizeof(CollectorHeap));
