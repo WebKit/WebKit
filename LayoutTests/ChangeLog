@@ -1,3 +1,34 @@
+2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Add baselines for tests, added in r77639.
+
+        * platform/chromium-linux/fast/forms/input-placeholder-visibility-1-expected.checksum: Added.
+        * platform/chromium-linux/fast/forms/input-placeholder-visibility-1-expected.png: Added.
+        * platform/chromium-linux/fast/forms/input-placeholder-visibility-2-expected.checksum: Added.
+        * platform/chromium-linux/fast/forms/input-placeholder-visibility-2-expected.png: Added.
+        * platform/chromium-linux/fast/forms/input-placeholder-visibility-3-expected.checksum: Added.
+        * platform/chromium-linux/fast/forms/input-placeholder-visibility-3-expected.png: Added.
+        * platform/chromium-linux/fast/forms/textarea-placeholder-visibility-1-expected.checksum: Added.
+        * platform/chromium-linux/fast/forms/textarea-placeholder-visibility-1-expected.png: Added.
+        * platform/chromium-linux/fast/forms/textarea-placeholder-visibility-2-expected.checksum: Added.
+        * platform/chromium-linux/fast/forms/textarea-placeholder-visibility-2-expected.png: Added.
+        * platform/chromium-win/fast/forms/input-placeholder-visibility-1-expected.checksum: Added.
+        * platform/chromium-win/fast/forms/input-placeholder-visibility-1-expected.png: Added.
+        * platform/chromium-win/fast/forms/input-placeholder-visibility-1-expected.txt: Added.
+        * platform/chromium-win/fast/forms/input-placeholder-visibility-2-expected.checksum: Added.
+        * platform/chromium-win/fast/forms/input-placeholder-visibility-2-expected.png: Added.
+        * platform/chromium-win/fast/forms/input-placeholder-visibility-2-expected.txt: Added.
+        * platform/chromium-win/fast/forms/input-placeholder-visibility-3-expected.checksum: Added.
+        * platform/chromium-win/fast/forms/input-placeholder-visibility-3-expected.png: Added.
+        * platform/chromium-win/fast/forms/input-placeholder-visibility-3-expected.txt: Added.
+        * platform/chromium-win/fast/forms/textarea-placeholder-visibility-1-expected.checksum: Added.
+        * platform/chromium-win/fast/forms/textarea-placeholder-visibility-1-expected.png: Added.
+        * platform/chromium-win/fast/forms/textarea-placeholder-visibility-1-expected.txt: Added.
+        * platform/chromium-win/fast/forms/textarea-placeholder-visibility-2-expected.checksum: Added.
+        * platform/chromium-win/fast/forms/textarea-placeholder-visibility-2-expected.png: Added.
+        * platform/chromium-win/fast/forms/textarea-placeholder-visibility-2-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Kent Tamura.
