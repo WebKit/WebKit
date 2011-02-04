@@ -1,3 +1,32 @@
+2011-02-03  Mark Mentovai  <mark@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Chromium GYP build fix.
+
+        When various settings were moved to webcore_prerequisites in r66364,
+        things that should have been direct_dependent_settings were not marked
+        as such. GYP 'defines', for example, make no sense on a 'none'-type
+        target such as webcore_prerequisites. It appears that it was intended
+        for these settings to be pushed to direct dependents, which would make
+        direct_dependent_settings correct.
+
+        Losing the ChromiumWebCoreObjC defines on the Mac, for example, caused
+        http://crbug.com/71537, which at best causes Mac console log spew, and
+        at worst may result in Chromium's copy of WebCore using system
+        definitions of certain Objective-C classes at runtime, or vice-versa.
+
+        The build now includes a postbuild step to prevent
+        http://crbug.com/71537 from regressing again. The build will fail upon
+        regression.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53630
+
+        * WebCore.gyp/WebCore.gyp: Move things in webcore_prerequisites into
+          direct_dependent_settings as needed, add the check_objc_rename
+          postbuild step.
+        * WebCore.gyp/mac/check_objc_rename.sh: Added.
+
 2011-02-03  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
