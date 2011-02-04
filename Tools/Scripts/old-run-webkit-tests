@@ -1949,6 +1949,37 @@ sub linksForMismatchTest
     return \@links;
 }
 
+sub crashLocation($)
+{
+    my ($base) = @_;
+
+    return unless isCygwin();
+
+    my $crashLogFile = File::Spec->catfile($testResultsDirectory, "$base-$crashLogTag.txt");
+
+    # We're looking for the following text:
+    #
+    # FOLLOWUP_IP:
+    # module!function+offset [file:line]
+    #
+    # The second contains the function that crashed (or the function that ended up jumping to a bad
+    # address, as in the case of a null function pointer).
+
+    open LOG, "<", $crashLogFile or return;
+    while (my $line = <LOG>) {
+        last if $line =~ /^FOLLOWUP_IP:/;
+    }
+    my $desiredLine = <LOG>;
+    close LOG;
+
+    return unless $desiredLine;
+
+    # Just take everything up to the first space (which is where the file/line information should
+    # start).
+    $desiredLine =~ /^(\S+)/;
+    return $1;
+}
+
 sub linksForErrorTest
 {
     my ($test) = @_;
@@ -1957,9 +1988,14 @@ sub linksForErrorTest
 
     my $base = stripExtension($test);
 
+    my $crashLogText = "crash log";
+    if (my $crashLocation = crashLocation($base)) {
+        $crashLogText .= " (<code>" . $crashLocation . "</code>)";
+    }
+
     push @links, @{linksForExpectedAndActualResults($base)};
     push @links, { href => "$base-$errorTag.txt", text => "stderr" };
-    push @links, { href => "$base-$crashLogTag.txt", text => "crash log" };
+    push @links, { href => "$base-$crashLogTag.txt", text => $crashLogText };
 
     return \@links;
 }

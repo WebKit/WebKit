@@ -1,3 +1,17 @@
+2011-02-03  Adam Roben  <aroben@apple.com>
+
+        Include the crashing function in the link to a crash log
+
+        Fixes <http://webkit.org/b/53739> Crash log links in results.html should include the
+        function that crashed
+
+        Reviewed by David Kilzer.
+
+        * Scripts/old-run-webkit-tests:
+        (crashLocation): Added. Returns the location of the crash.
+        (linksForErrorTest): Include the crash location in the link text for the crash log, if one
+        could be determined.
+
 2011-02-03  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, build fix.
