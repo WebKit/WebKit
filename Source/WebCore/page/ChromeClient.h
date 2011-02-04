@@ -136,6 +136,10 @@ namespace WebCore {
         virtual bool shouldInterruptJavaScript() = 0;
         virtual bool tabsToLinks() const = 0;
 
+#if ENABLE(REGISTER_PROTOCOL_HANDLER)
+        virtual void registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title) = 0;
+#endif
+
         virtual IntRect windowResizerRect() const = 0;
 
         // Methods used by HostWindow.

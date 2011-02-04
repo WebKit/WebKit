@@ -92,6 +92,7 @@ my (
     $offlineWebApplicationSupport,
     $orientationEventsSupport,
     $progressTagSupport,
+    $registerProtocolHandlerSupport,
     $sharedWorkersSupport,
     $svgSupport,
     $svgAnimationSupport,
@@ -215,6 +216,9 @@ my @features = (
 
     { option => "progress-tag", desc => "Progress Tag support",
       define => "ENABLE_PROGRESS_TAG", default => 1, value => \$progressTagSupport },
+
+    { option => "register-protocol-handler", desc => "Register Protocol Handler support",
+      define => "ENABLE_REGISTER_PROTOCOL_HANDLER", default => 0, value => \$registerProtocolHandlerSupport },
 
     { option => "system-malloc", desc => "Toggle system allocator instead of TCmalloc",
       define => "USE_SYSTEM_MALLOC", default => 0, value => \$systemMallocSupport },

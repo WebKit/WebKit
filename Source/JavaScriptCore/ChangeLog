@@ -1,3 +1,12 @@
+2011-02-03  James Kozianski  <koz@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add navigator.registerProtocolHandler behind a flag.
+        https://bugs.webkit.org/show_bug.cgi?id=52609
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2011-02-03  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -327,6 +327,12 @@ public:
     // action that wasn't initiated by the client.
     virtual void zoomLevelChanged() { }
 
+    // Registers a new URL handler for the given protocol.
+    virtual void registerProtocolHandler(const WebString& scheme,
+                                         const WebString& baseUrl,
+                                         const WebString& url,
+                                         const WebString& title) { }
+
 protected:
     ~WebViewClient() { }
 };

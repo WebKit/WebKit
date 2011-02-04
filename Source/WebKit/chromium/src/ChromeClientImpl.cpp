@@ -502,6 +502,13 @@ IntRect ChromeClientImpl::windowResizerRect() const
     return result;
 }
 
+#if ENABLE(REGISTER_PROTOCOL_HANDLER)
+void ChromeClientImpl::registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title)
+{
+    notImplemented();
+}
+#endif
+
 void ChromeClientImpl::invalidateWindow(const IntRect&, bool)
 {
     notImplemented();

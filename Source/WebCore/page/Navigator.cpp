@@ -27,10 +27,12 @@
 #include "CookieJar.h"
 #include "DOMMimeTypeArray.h"
 #include "DOMPluginArray.h"
+#include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "Geolocation.h"
+#include "KURL.h"
 #include "Language.h"
 #include "Page.h"
 #include "PageGroup.h"
@@ -39,6 +41,7 @@
 #include "ScriptController.h"
 #include "Settings.h"
 #include "StorageNamespace.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -167,6 +170,69 @@ void Navigator::getStorageUpdates()
     StorageNamespace* localStorage = page->group().localStorage();
     if (localStorage)
         localStorage->unlock();
+}
+#endif
+
+#if ENABLE(REGISTER_PROTOCOL_HANDLER)
+static bool verifyCustomHandlerURL(const String& baseURL, const String& url, ExceptionCode& ec)
+{
+    // The specification requires that it is a SYNTAX_ERR if the "%s" token is
+    // not present.
+    static const char token[] = "%s";
+    int index = url.find(token);
+    if (-1 == index) {
+        ec = SYNTAX_ERR;
+        return false;
+    }
+
+    // It is also a SYNTAX_ERR if the custom handler URL, as created by removing
+    // the "%s" token and prepending the base url, does not resolve.
+    String newURL = url;
+    newURL.remove(index, WTF_ARRAY_LENGTH(token) - 1);
+
+    KURL base(ParsedURLString, baseURL);
+    KURL kurl(base, newURL);
+
+    if (kurl.isEmpty() || !kurl.isValid()) {
+        ec = SYNTAX_ERR;
+        return false;
+    }
+
+    return true;
+}
+
+static bool verifyProtocolHandlerScheme(const String& scheme, ExceptionCode& ec)
+{
+    // It is a SECURITY_ERR for these schemes to be handled by a custom handler.
+    if (equalIgnoringCase(scheme, "http") || equalIgnoringCase(scheme, "https") || equalIgnoringCase(scheme, "file")) {
+        ec = SECURITY_ERR;
+        return false;
+    }
+    return true;
+}
+
+void Navigator::registerProtocolHandler(const String& scheme, const String& url, const String& title, ExceptionCode& ec)
+{
+    if (!verifyProtocolHandlerScheme(scheme, ec))
+        return;
+
+    if (!m_frame)
+        return;
+
+    Document* document = m_frame->document();
+    if (!document)
+        return;
+
+    String baseURL = document->baseURL().baseAsString();
+
+    if (!verifyCustomHandlerURL(baseURL, url, ec))
+        return;
+
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+
+    page->chrome()->registerProtocolHandler(scheme, baseURL, url, m_frame->displayStringModifiedByEncoding(title));
 }
 #endif
 

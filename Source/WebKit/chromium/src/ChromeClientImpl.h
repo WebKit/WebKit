@@ -102,6 +102,9 @@ public:
     virtual bool shouldInterruptJavaScript();
     virtual bool tabsToLinks() const;
     virtual WebCore::IntRect windowResizerRect() const;
+#if ENABLE(REGISTER_PROTOCOL_HANDLER)
+    virtual void registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title);
+#endif
     virtual void invalidateWindow(const WebCore::IntRect&, bool);
     virtual void invalidateContentsAndWindow(const WebCore::IntRect&, bool);
     virtual void invalidateContentsForSlowScroll(const WebCore::IntRect&, bool);

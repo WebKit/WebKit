@@ -330,6 +330,13 @@ bool Chrome::shouldInterruptJavaScript()
     return m_client->shouldInterruptJavaScript();
 }
 
+#if ENABLE(REGISTER_PROTOCOL_HANDLER)
+void Chrome::registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title) 
+{
+    m_client->registerProtocolHandler(scheme, baseURL, url, title);
+}
+#endif
+
 IntRect Chrome::windowResizerRect() const
 {
     return m_client->windowResizerRect();

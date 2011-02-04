@@ -1,0 +1,64 @@
+<html>
+<body>
+<p>This test makes sure that navigator.registerProtocolHandler throws the proper exceptions and has no-op default implementation.</p>
+<pre id="console"></pre>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function debug(str)
+{
+    var c = document.getElementById('console')
+    c.appendChild(document.createTextNode(str + '\n'));
+}
+
+if (window.navigator.registerProtocolHandler)
+    debug('Pass: window.navigator.registerProtocolHandler is defined.');
+else
+    debug('Fail: window.navigator.registerProtocolHandler is not defined.');
+
+var invalid_protocols = ['http', 'https', 'file'];
+invalid_protocols.forEach(function (protocol) {
+    var succeeded = false;
+    try {
+        window.navigator.registerProtocolHandler(protocol, "invalid protocol %s", "title");
+    } catch (e) {
+        succeeded = 'SECURITY_ERR' == e.name;
+    }
+
+    if (succeeded)
+        debug('Pass: Invalid protocol "' + protocol + '" threw SECURITY_ERR exception.');
+    else
+        debug('Fail: Invalid protocol "' + protocol + '" allowed.');
+});
+
+var invalid_urls = ["", "%S"];
+invalid_urls.forEach(function (url) {
+   var succeeded = false;
+   try {
+        window.navigator.registerProtocolHandler('myprotocol', url, 'title');
+    } catch (e) {
+        succeeded = 'SYNTAX_ERR' == e.name;
+    }
+
+    if (succeeded)
+        debug('Pass: Invalid url "' + url + '" threw SYNTAX_ERR exception.');
+    else
+        debug('Fail: Invalid url "' + url + '" allowed.');
+});
+
+// Test that the API has default no-op implementation.
+var succeeded = true;
+try {
+    window.navigator.registerProtocolHandler('myprotocol', "%s", "title");
+} catch (e) {
+    succeeded = false;
+}
+
+if (succeeded)
+    debug('Pass: Valid call succeeded.');
+else
+    debug('Fail: Invalid call did not succeed.');
+</script>
+</body>
+</html>

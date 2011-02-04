@@ -1,3 +1,16 @@
+2011-02-03  James Kozianski  <koz@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add navigator.registerProtocolHandler behind a flag.
+        https://bugs.webkit.org/show_bug.cgi?id=52609
+
+        * features.gypi:
+        * public/WebViewClient.h:
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::registerProtocolHandler):
+        * src/ChromeClientImpl.h:
+
 2011-02-03  Brian Ryner  <bryner@chromium.org>
 
         Reviewed by Darin Fisher.

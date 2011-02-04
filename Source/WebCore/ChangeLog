@@ -1,3 +1,32 @@
+2011-02-03  James Kozianski  <koz@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add navigator.registerProtocolHandler behind a flag.
+        https://bugs.webkit.org/show_bug.cgi?id=52609
+
+        This method is described in the HTML5 specification here,
+        http://dev.w3.org/html5/spec/Overview.html#dom-navigator-registerprotocolhandler
+
+        This change is largely cribbed from B. Green's 29651 patches. It is
+        behind a flag so as not to break JS feature detection.
+
+        New layout test fast/dom/registerProtocolHandler.html.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::registerProtocolHandler):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::registerProtocolHandler):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * page/Navigator.cpp:
+        (WebCore::verifyCustomHandlerURL):
+        (WebCore::verifyProtocolHandlerScheme):
+        (WebCore::Navigator::registerProtocolHandler):
+        * page/Navigator.h:
+        * page/Navigator.idl:
+
 2011-02-03  Brian Ryner  <bryner@chromium.org>
 
         Reviewed by Darin Fisher.
