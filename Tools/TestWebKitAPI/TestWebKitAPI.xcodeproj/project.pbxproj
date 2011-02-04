@@ -45,6 +45,7 @@
 		C01A23F21266156700C9ED55 /* spacebar-scrolling.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C02B7882126615410026BF0F /* spacebar-scrolling.html */; };
 		C02B77F2126612140026BF0F /* SpacebarScrolling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C02B77F1126612140026BF0F /* SpacebarScrolling.cpp */; };
 		C02B7854126613AE0026BF0F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C02B7853126613AE0026BF0F /* Carbon.framework */; };
+		C0ADBE7C12FCA4D000D2C129 /* JavaScriptTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0ADBE7A12FCA4D000D2C129 /* JavaScriptTest.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -132,6 +133,8 @@
 		C02B77F1126612140026BF0F /* SpacebarScrolling.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpacebarScrolling.cpp; sourceTree = "<group>"; };
 		C02B7853126613AE0026BF0F /* Carbon.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = Carbon.framework; sourceTree = SDKROOT; };
 		C02B7882126615410026BF0F /* spacebar-scrolling.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "spacebar-scrolling.html"; sourceTree = "<group>"; };
+		C0ADBE7A12FCA4D000D2C129 /* JavaScriptTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JavaScriptTest.cpp; sourceTree = "<group>"; };
+		C0ADBE7B12FCA4D000D2C129 /* JavaScriptTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptTest.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -177,6 +180,8 @@
 			children = (
 				BCA61C3A11700B9400460D1E /* mac */,
 				BC575944126E733C006F0F12 /* InjectedBundle */,
+				C0ADBE7A12FCA4D000D2C129 /* JavaScriptTest.cpp */,
+				C0ADBE7B12FCA4D000D2C129 /* JavaScriptTest.h */,
 				BC131A9E1171317C00B69727 /* TestWebKitAPIPrefix.h */,
 				BC575BBF126F5752006F0F12 /* PlatformUtilities.cpp */,
 				BC131883117114A800B69727 /* PlatformUtilities.h */,
@@ -393,6 +398,7 @@
 				333B9CE21277F23100FEFCE3 /* PreventEmptyUserAgent.cpp in Sources */,
 				BC7B61AA129A038700D174A4 /* WKPreferences.cpp in Sources */,
 				BC2D004912A9FDFA00E732A3 /* PageLoadDidChangeLocationWithinPageForFrame.cpp in Sources */,
+				C0ADBE7C12FCA4D000D2C129 /* JavaScriptTest.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -502,6 +502,14 @@
 			</Filter>
 		</Filter>
 		<File
+			RelativePath="..\JavaScriptTest.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\JavaScriptTest.h"
+			>
+		</File>
+		<File
 			RelativePath="..\PlatformUtilities.cpp"
 			>
 		</File>

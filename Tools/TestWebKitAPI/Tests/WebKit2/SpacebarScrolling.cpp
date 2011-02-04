@@ -25,19 +25,12 @@
 
 #include "Test.h"
 
+#include "JavaScriptTest.h"
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 #include <WebKit2/WKRetainPtr.h>
 
 namespace TestWebKitAPI {
-
-struct JavaScriptCallbackContext {
-    JavaScriptCallbackContext(const char* expectedString) : didFinish(false), expectedString(expectedString), didMatchExpectedString(false) { }
-
-    bool didFinish;
-    const char* expectedString;
-    bool didMatchExpectedString;
-};
 
 static bool didFinishLoad;
 static bool didNotHandleKeyDownEvent;
@@ -51,29 +44,6 @@ static void didNotHandleKeyEventCallback(WKPageRef, WKNativeEventPtr event, cons
 {
     if (Util::isKeyDown(event))
         didNotHandleKeyDownEvent = true;
-}
-
-static void javaScriptCallback(WKStringRef string, WKErrorRef error, void* ctx)
-{
-    JavaScriptCallbackContext* context = static_cast<JavaScriptCallbackContext*>(ctx);
-
-    context->didFinish = true;
-    context->didMatchExpectedString = WKStringIsEqualToUTF8CString(string, context->expectedString);
-
-    TEST_ASSERT(!error);
-}
-
-static WKRetainPtr<WKStringRef> wk(const char* utf8String)
-{
-    return WKRetainPtr<WKStringRef>(AdoptWK, WKStringCreateWithUTF8CString(utf8String));
-}
-
-static bool runJSTest(WKPageRef page, const char* script, const char* expectedResult)
-{
-    JavaScriptCallbackContext context(expectedResult);
-    WKPageRunJavaScriptInMainFrame(page, wk(script).get(), &context, javaScriptCallback);
-    Util::run(&context.didFinish);
-    return context.didMatchExpectedString;
 }
 
 TEST(WebKit2, SpacebarScrolling)

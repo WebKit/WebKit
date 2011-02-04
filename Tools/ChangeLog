@@ -1,3 +1,24 @@
+2011-02-04  Adam Roben  <aroben@apple.com>
+
+        Move code to run JavaScript tests into its own files
+
+        This will allow other tests to use this mechanism.
+
+        Fixes <http://webkit.org/b/53806> SpacebarScrolling should share its JavaScript-fu with the
+        world
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/JavaScriptTest.cpp: Added.
+        * TestWebKitAPI/JavaScriptTest.h: Added.
+        Moved code here...
+
+        * TestWebKitAPI/Tests/WebKit2/SpacebarScrolling.cpp: ...from here.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+        Added the new files.
+
 2011-02-04  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Mihai Parparita.
