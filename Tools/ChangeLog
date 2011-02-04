@@ -1,5 +1,19 @@
 2011-02-04  Adam Roben  <aroben@apple.com>
 
+        Include the crashing function in the link to a crash log on Mac
+
+        Fixes <http://webkit.org/b/53780> Crash log links in results.html should include the
+        function that crashed on Mac
+
+        Reviewed by David Kilzer.
+
+        * Scripts/old-run-webkit-tests:
+        (crashLocation): Moved all the Windows code inside an if instead of using an early return,
+        but didn't otherwise change it. Added an if for Mac that parses the crashing function out of
+        the crash log.
+
+2011-02-04  Adam Roben  <aroben@apple.com>
+
         Link to Mac crash logs from results.html
 
         Fixes <http://webkit.org/b/14861> run-webkit-tests should link to Mac crash logs in

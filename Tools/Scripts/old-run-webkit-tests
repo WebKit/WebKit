@@ -1969,31 +1969,57 @@ sub crashLocation($)
 {
     my ($base) = @_;
 
-    return unless isCygwin();
-
     my $crashLogFile = File::Spec->catfile($testResultsDirectory, "$base-$crashLogTag.txt");
 
-    # We're looking for the following text:
-    #
-    # FOLLOWUP_IP:
-    # module!function+offset [file:line]
-    #
-    # The second contains the function that crashed (or the function that ended up jumping to a bad
-    # address, as in the case of a null function pointer).
+    if (isCygwin()) {
+        # We're looking for the following text:
+        #
+        # FOLLOWUP_IP:
+        # module!function+offset [file:line]
+        #
+        # The second contains the function that crashed (or the function that ended up jumping to a bad
+        # address, as in the case of a null function pointer).
 
-    open LOG, "<", $crashLogFile or return;
-    while (my $line = <LOG>) {
-        last if $line =~ /^FOLLOWUP_IP:/;
+        open LOG, "<", $crashLogFile or return;
+        while (my $line = <LOG>) {
+            last if $line =~ /^FOLLOWUP_IP:/;
+        }
+        my $desiredLine = <LOG>;
+        close LOG;
+
+        return unless $desiredLine;
+
+        # Just take everything up to the first space (which is where the file/line information should
+        # start).
+        $desiredLine =~ /^(\S+)/;
+        return $1;
     }
-    my $desiredLine = <LOG>;
-    close LOG;
 
-    return unless $desiredLine;
+    if (isAppleMacWebKit()) {
+        # We're looking for the following text:
+        #
+        # Thread M Crashed:
+        # N   module                              address function + offset (file:line)
+        #
+        # Some lines might have a module of "???" if we've jumped to a bad address. We should skip
+        # past those.
 
-    # Just take everything up to the first space (which is where the file/line information should
-    # start).
-    $desiredLine =~ /^(\S+)/;
-    return $1;
+        open LOG, "<", $crashLogFile or return;
+        while (my $line = <LOG>) {
+            last if $line =~ /^Thread \d+ Crashed:/;
+        }
+        my $location;
+        while (my $line = <LOG>) {
+            $line =~ /^\d+\s+(\S+)\s+\S+ (.* \+ \d+)/ or next;
+            my $module = $1;
+            my $functionAndOffset = $2;
+            next if $module eq "???";
+            $location = "$module: $functionAndOffset";
+            last;
+        }
+        close LOG;
+        return $location;
+    }
 }
 
 sub linksForErrorTest
