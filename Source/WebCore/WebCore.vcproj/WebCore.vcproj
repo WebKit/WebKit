@@ -64570,10 +64570,18 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="pcre"
+				Name="yarr"
 				>
 				<File
-					RelativePath="..\ForwardingHeaders\pcre\pcre.h"
+					RelativePath="..\ForwardingHeaders\yarr\Yarr.h"
+					>
+				</File>
+				<File
+					RelativePath="..\ForwardingHeaders\yarr\YarrInterpreter.h"
+					>
+				</File>
+				<File
+					RelativePath="..\ForwardingHeaders\yarr\YarrPattern.h"
 					>
 				</File>
 			</Filter>

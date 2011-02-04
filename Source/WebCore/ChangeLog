@@ -1,3 +1,29 @@
+2011-02-04  Peter Varga  <pvarga@webkit.org>
+
+
+        Reviewed by Gavin Barraclough.
+
+        Replace PCRE with Yarr in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=53496
+
+        No new tests needed.
+
+        * Android.jscbindings.mk:
+        * CMakeLists.txt:
+        * ForwardingHeaders/pcre/pcre.h: Removed.
+        * ForwardingHeaders/yarr/Yarr.h: Added.
+        * ForwardingHeaders/yarr/YarrInterpreter.h: Added.
+        * ForwardingHeaders/yarr/YarrPattern.h: Added.
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/copyForwardingHeaders.cmd:
+        * platform/text/RegularExpression.cpp:
+        (WebCore::RegularExpression::Private::create):
+        (WebCore::RegularExpression::Private::Private):
+        (WebCore::RegularExpression::Private::compile):
+        (WebCore::RegularExpression::match):
+
 2011-02-04  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

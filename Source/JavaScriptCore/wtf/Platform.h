@@ -1032,7 +1032,10 @@
 #define ENABLE_REGEXP_TRACING 0
 
 /* Yet Another Regex Runtime - turned on by default for JIT enabled ports. */
-#if ENABLE(JIT) && !defined(ENABLE_YARR_JIT)
+#if PLATFORM(CHROMIUM)
+#define ENABLE_YARR_JIT 0
+
+#elif ENABLE(JIT) && !defined(ENABLE_YARR_JIT)
 #define ENABLE_YARR_JIT 1
 
 /* Setting this flag compares JIT results with interpreter results. */
