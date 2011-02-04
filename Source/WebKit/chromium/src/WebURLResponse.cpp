@@ -384,6 +384,16 @@ void WebURLResponse::setDownloadFilePath(const WebString& downloadFilePath)
     m_private->m_downloadFilePath = downloadFilePath;
 }
 
+WebString WebURLResponse::socketAddress() const
+{
+    return m_private->m_resourceResponse->socketAddress();
+}
+
+void WebURLResponse::setSocketAddress(const WebString& socketAddress)
+{
+    m_private->m_resourceResponse->setSocketAddress(socketAddress);
+}
+
 void WebURLResponse::assign(WebURLResponsePrivate* p)
 {
     // Subclasses may call this directly so a self-assignment check is needed

@@ -1,3 +1,19 @@
+2011-02-03  Brian Ryner  <bryner@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add a field to the ResourceResponse for tracking the socket address
+        of the host that the resource was fetched from.  Patch was originally
+        by Paul Marks.
+        https://bugs.webkit.org/show_bug.cgi?id=53699
+
+        * platform/network/chromium/ResourceResponse.cpp:
+        (WebCore::ResourceResponse::doPlatformCopyData):
+        (WebCore::ResourceResponse::doPlatformAdopt):
+        * platform/network/chromium/ResourceResponse.h:
+        (WebCore::ResourceResponse::socketAddress):
+        (WebCore::ResourceResponse::setSocketAddress):
+
 2011-02-03  Adam Langley  <agl@chromium.org>
 
         Reviewed by Adam Barth.
