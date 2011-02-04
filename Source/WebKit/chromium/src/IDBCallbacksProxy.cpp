@@ -62,49 +62,41 @@ IDBCallbacksProxy::~IDBCallbacksProxy()
 void IDBCallbacksProxy::onError(PassRefPtr<IDBDatabaseError> idbDatabaseError)
 {
     m_callbacks->onError(WebKit::WebIDBDatabaseError(idbDatabaseError));
-    m_callbacks.clear();
 }
 
 void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBCursorBackendInterface> idbCursorBackend)
 {
     m_callbacks->onSuccess(new WebKit::WebIDBCursorImpl(idbCursorBackend));
-    m_callbacks.clear();
 }
 
 void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBDatabaseBackendInterface> backend)
 {
     m_callbacks->onSuccess(new WebKit::WebIDBDatabaseImpl(backend));
-    m_callbacks.clear();
 }
 
 void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBIndexBackendInterface> backend)
 {
     m_callbacks->onSuccess(new WebKit::WebIDBIndexImpl(backend));
-    m_callbacks.clear();
 }
 
 void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBKey> idbKey)
 {
     m_callbacks->onSuccess(WebKit::WebIDBKey(idbKey));
-    m_callbacks.clear();
 }
 
 void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBObjectStoreBackendInterface> backend)
 {
     m_callbacks->onSuccess(new WebKit::WebIDBObjectStoreImpl(backend));
-    m_callbacks.clear();
 }
 
 void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBTransactionBackendInterface> backend)
 {
     m_callbacks->onSuccess(new WebKit::WebIDBTransactionImpl(backend));
-    m_callbacks.clear();
 }
 
 void IDBCallbacksProxy::onSuccess(PassRefPtr<SerializedScriptValue> serializedScriptValue)
 {
     m_callbacks->onSuccess(WebKit::WebSerializedScriptValue(serializedScriptValue));
-    m_callbacks.clear();
 }
 
 } // namespace WebCore
