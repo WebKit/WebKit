@@ -3115,3 +3115,11 @@ BUGWK50528 MAC : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
 BUGWK50528 MAC : svg/zoom/text/zoom-coords-viewattr-01-b.svg = IMAGE
 BUGWK50528 MAC : svg/custom/stroked-pattern.svg = IMAGE
 BUGWK50528 MAC : svg/custom/image-small-width-height.svg = IMAGE
+
+// Need to start looking in platform/mac-snowleopard in order to see
+// the correct baselines for these tests.
+BUGWK53740 MAC : fast/forms/textarea-placeholder-visibility-1.html = IMAGE+TEXT
+BUGWK53740 MAC : fast/forms/textarea-placeholder-visibility-2.html = IMAGE+TEXT
+BUGWK53740 MAC : fast/forms/input-placeholder-visibility-1.html = IMAGE
+BUGWK53740 MAC : fast/forms/input-placeholder-visibility-2.html = IMAGE
+BUGWK53740 MAC : fast/forms/input-placeholder-visibility-3.html = IMAGE
