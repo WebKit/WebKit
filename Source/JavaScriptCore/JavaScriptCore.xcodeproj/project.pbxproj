@@ -875,7 +875,6 @@
 		86704B8212DBA33700A9FE7B /* YarrPattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = YarrPattern.cpp; path = yarr/YarrPattern.cpp; sourceTree = "<group>"; };
 		86704B8312DBA33700A9FE7B /* YarrPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YarrPattern.h; path = yarr/YarrPattern.h; sourceTree = "<group>"; };
 		867FC35F11B763950025105E /* JavaScriptCore.JSVALUE32_64only.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = JavaScriptCore.JSVALUE32_64only.exp; sourceTree = "<group>"; };
-		867FC36011B763950025105E /* JavaScriptCore.JSVALUE32only.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = JavaScriptCore.JSVALUE32only.exp; sourceTree = "<group>"; };
 		867FC36111B763950025105E /* JavaScriptCore.JSVALUE64only.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = JavaScriptCore.JSVALUE64only.exp; sourceTree = "<group>"; };
 		868BFA00117CEFD100B908B1 /* AtomicString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AtomicString.cpp; path = text/AtomicString.cpp; sourceTree = "<group>"; };
 		868BFA01117CEFD100B908B1 /* AtomicString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AtomicString.h; path = text/AtomicString.h; sourceTree = "<group>"; };
@@ -1306,7 +1305,6 @@
 				937B63CC09E766D200A671DD /* DerivedSources.make */,
 				F692A8540255597D01FF60F7 /* create_hash_table */,
 				14B8ECA60A5653980062BE54 /* JavaScriptCore.exp */,
-				867FC36011B763950025105E /* JavaScriptCore.JSVALUE32only.exp */,
 				867FC35F11B763950025105E /* JavaScriptCore.JSVALUE32_64only.exp */,
 				867FC36111B763950025105E /* JavaScriptCore.JSVALUE64only.exp */,
 				F5C290E60284F98E018635CA /* JavaScriptCorePrefix.h */,

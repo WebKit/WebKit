@@ -1,5 +1,23 @@
 2011-02-04  David Kilzer  <ddkilzer@apple.com>
 
+        <rdar://problem/8957409> Remove last vestiges of JSVALUE32
+        <http://webkit.org/b/53779>
+
+        Reviewed by Darin Adler.
+
+        Support for JSVALUE32 was originaly removed in r70111.
+
+        * Configurations/JavaScriptCore.xcconfig: Changed armv6 to use
+        JavaScriptCore.JSVALUE32_64.exp and ppc64 to use
+        JavaScriptCore.JSVALUE64.exp to match Platform.h.
+        * DerivedSources.make: Removed rule for
+        JavaScriptCore.JSVALUE32.exp.
+        * JavaScriptCore.JSVALUE32only.exp: Removed.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Removed references
+        to JavaScriptCore.JSVALUE32only.exp.
+
+2011-02-04  David Kilzer  <ddkilzer@apple.com>
+
         Use static_cast and other style cleanup in YarrInterpreter.cpp
         <http://webkit.org/b/53772>
 

@@ -76,9 +76,6 @@ RegExpJitTables.h: create_regex_tables
 
 # export files
 
-JavaScriptCore.JSVALUE32.exp: JavaScriptCore.exp JavaScriptCore.JSVALUE32only.exp
-	cat $^ > $@
-
 JavaScriptCore.JSVALUE32_64.exp: JavaScriptCore.exp JavaScriptCore.JSVALUE32_64only.exp
 	cat $^ > $@
 
