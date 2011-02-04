@@ -1,5 +1,19 @@
 2011-02-03  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Daniel Bates.
+
+        Add another XSSFilter PerformanceTest
+        https://bugs.webkit.org/show_bug.cgi?id=53750
+
+        This PerformanceTest tests the case that was slow in
+        https://bugs.webkit.org/show_bug.cgi?id=49845
+
+        * XSSFilter/large-post-many-inline-scripts-and-events.html: Added.
+        * XSSFilter/resources: Added.
+        * XSSFilter/resources/target-for-large-post-many-inline-scripts-and-events.html: Added.
+
+2011-02-03  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Add PerformanceTest for XSSFilter
