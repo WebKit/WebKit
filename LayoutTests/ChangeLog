@@ -1,3 +1,44 @@
+2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Add Leopard-specific pixel results for fast/ruby.
+
+        * platform/mac-leopard/fast/ruby/nested-ruby-expected.checksum: Added.
+        * platform/mac-leopard/fast/ruby/nested-ruby-expected.png: Added.
+        * platform/mac-leopard/fast/ruby/ruby-beforeafter-expected.checksum: Added.
+        * platform/mac-leopard/fast/ruby/ruby-beforeafter-expected.png: Added.
+        * platform/mac-leopard/fast/ruby/ruby-empty-rt-expected.checksum:
+        * platform/mac-leopard/fast/ruby/ruby-empty-rt-expected.png:
+        * platform/mac-leopard/fast/ruby/ruby-length-expected.checksum:
+        * platform/mac-leopard/fast/ruby/ruby-length-expected.png:
+        * platform/mac-leopard/fast/ruby/ruby-run-break-expected.checksum:
+        * platform/mac-leopard/fast/ruby/ruby-run-break-expected.png:
+        * platform/mac-leopard/fast/ruby/ruby-runs-expected.checksum:
+        * platform/mac-leopard/fast/ruby/ruby-runs-expected.png:
+        * platform/mac-leopard/fast/ruby/ruby-runs-spans-expected.checksum:
+        * platform/mac-leopard/fast/ruby/ruby-runs-spans-expected.png:
+        * platform/mac-leopard/fast/ruby/ruby-simple-expected.checksum:
+        * platform/mac-leopard/fast/ruby/ruby-simple-expected.png:
+        * platform/mac-leopard/fast/ruby/ruby-simple-rp-expected.checksum:
+        * platform/mac-leopard/fast/ruby/ruby-simple-rp-expected.png:
+        * platform/mac-leopard/fast/ruby/ruby-trailing-expected.checksum:
+        * platform/mac-leopard/fast/ruby/ruby-trailing-expected.png:
+        * platform/mac-leopard/fast/ruby/rubyDOM-insert-rt-expected.checksum:
+        * platform/mac-leopard/fast/ruby/rubyDOM-insert-rt-expected.png:
+        * platform/mac-leopard/fast/ruby/rubyDOM-insert-text1-expected.checksum:
+        * platform/mac-leopard/fast/ruby/rubyDOM-insert-text1-expected.png:
+        * platform/mac-leopard/fast/ruby/rubyDOM-insert-text2-expected.checksum:
+        * platform/mac-leopard/fast/ruby/rubyDOM-insert-text2-expected.png:
+        * platform/mac-leopard/fast/ruby/rubyDOM-insert-text3-expected.checksum:
+        * platform/mac-leopard/fast/ruby/rubyDOM-insert-text3-expected.png:
+        * platform/mac-leopard/fast/ruby/rubyDOM-remove-rt1-expected.checksum:
+        * platform/mac-leopard/fast/ruby/rubyDOM-remove-rt1-expected.png:
+        * platform/mac-leopard/fast/ruby/rubyDOM-remove-rt2-expected.checksum:
+        * platform/mac-leopard/fast/ruby/rubyDOM-remove-rt2-expected.png:
+        * platform/mac-leopard/fast/ruby/rubyDOM-remove-text1-expected.checksum:
+        * platform/mac-leopard/fast/ruby/rubyDOM-remove-text1-expected.png:
+        * platform/mac-leopard/fast/ruby/rubyDOM-remove-text2-expected.checksum:
+        * platform/mac-leopard/fast/ruby/rubyDOM-remove-text2-expected.png:
+
 2011-02-04  Martin Galpin  <martin@66laps.com>
 
         Reviewed by David Levin.
