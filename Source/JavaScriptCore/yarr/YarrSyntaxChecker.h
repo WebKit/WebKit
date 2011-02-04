@@ -26,7 +26,7 @@
 #ifndef YarrSyntaxChecker_h
 #define YarrSyntaxChecker_h
 
-#include <runtime/UString.h>
+#include <UString.h>
 
 namespace JSC { namespace Yarr {
 

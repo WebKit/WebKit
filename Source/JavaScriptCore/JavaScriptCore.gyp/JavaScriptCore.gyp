@@ -170,7 +170,7 @@
       ],
     },
     {
-      'target_name': 'yarr',
+      'target_name': 'pcre',
       'type': '<(library)',
       'dependencies': [
         'wtf',
@@ -183,19 +183,18 @@
       'msvs_guid': '49909552-0B0C-4C14-8CF6-DB8A2ADE0934',
       'actions': [
         {
-          'action_name': 'retgen',
+          'action_name': 'dftables',
           'inputs': [
-            '../create_regex_tables',
+            '../pcre/dftables',
           ],
           'outputs': [
-            '<(INTERMEDIATE_DIR)/RegExpJitTables.h',
+            '<(INTERMEDIATE_DIR)/chartables.c',
           ],
-          'action': ['python', '<@(_inputs)', '<@(_outputs)'],
+          'action': ['perl', '-w', '<@(_inputs)', '<@(_outputs)'],
         },
       ],
       'include_dirs': [
         '<(INTERMEDIATE_DIR)',
-        '../runtime',
       ],
       'sources': [
         '<@(javascriptcore_files)',
@@ -204,9 +203,10 @@
         # First exclude everything ...
         ['exclude', '../'],
         # ... Then include what we want.
-        ['include', '../yarr/'],
-        # The Yarr JIT isn't used in WebCore.
-        ['exclude', '../yarr/YarrJIT\\.(h|cpp)$'],
+        ['include', '../pcre/'],
+        # ucptable.cpp is #included by pcre_ucp_searchfunchs.cpp and is not
+        # intended to be compiled directly.
+        ['exclude', '../pcre/ucptable.cpp$'],
       ],
       'export_dependent_settings': [
         'wtf',

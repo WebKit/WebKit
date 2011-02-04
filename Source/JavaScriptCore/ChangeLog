@@ -1,3 +1,28 @@
+2011-02-04  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r77625 and r77626.
+        http://trac.webkit.org/changeset/77625
+        http://trac.webkit.org/changeset/77626
+        https://bugs.webkit.org/show_bug.cgi?id=53765
+
+        It broke Windows builds (Requested by Ossy_ on #webkit).
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.gyp/JavaScriptCore.gyp:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * create_regex_tables:
+        * runtime/RegExp.cpp:
+        * wtf/Platform.h:
+        * yarr/Yarr.h:
+        * yarr/YarrJIT.cpp:
+        * yarr/YarrJIT.h:
+        * yarr/YarrParser.h:
+        * yarr/YarrPattern.h:
+        * yarr/YarrSyntaxChecker.h:
+        * yarr/yarr.pri: Removed.
+
 2011-02-04  Jessie Berlin  <jberlin@apple.com>
 
         Windows build fix. Unreviewed.

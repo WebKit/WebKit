@@ -28,10 +28,8 @@
 
 #if ENABLE(YARR_JIT)
 
-#include "JSGlobalData.h"
 #include "MacroAssembler.h"
 #include "UString.h"
-#include "YarrPattern.h"
 
 #if CPU(X86) && !COMPILER(MSVC)
 #define YARR_CALL __attribute__ ((regparm (3)))
@@ -76,9 +74,6 @@ private:
     MacroAssembler::CodeRef m_ref;
     bool m_needFallBack;
 };
-
-void jitCompile(YarrPattern&, JSGlobalData*, YarrCodeBlock& jitObject);
-int execute(YarrCodeBlock& jitObject, const UChar* input, unsigned start, unsigned length, int* output);
 
 } } // namespace JSC::Yarr
 

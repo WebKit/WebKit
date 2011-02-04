@@ -27,9 +27,10 @@
 #ifndef YarrPattern_h
 #define YarrPattern_h
 
-#include <runtime/UString.h>
 #include <wtf/Vector.h>
 #include <wtf/unicode/Unicode.h>
+
+#include <UString.h>
 
 namespace JSC { namespace Yarr {
 

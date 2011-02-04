@@ -755,7 +755,7 @@
         'webcore_bindings_sources',
         'inspector_protocol_sources',
         'injected_script_source',
-        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:yarr',
+        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:pcre',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
         '<(chromium_src_dir)/skia/skia.gyp:skia',
@@ -879,7 +879,7 @@
       'type': 'none',
       'dependencies': [
         'webcore_bindings',
-        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:yarr',
+        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:pcre',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
         '<(chromium_src_dir)/skia/skia.gyp:skia',
@@ -896,7 +896,7 @@
       ],
       'export_dependent_settings': [
         'webcore_bindings',
-        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:yarr',
+        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:pcre',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
         '<(chromium_src_dir)/skia/skia.gyp:skia',

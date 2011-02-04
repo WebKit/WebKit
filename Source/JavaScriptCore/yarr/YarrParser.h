@@ -26,7 +26,7 @@
 #ifndef YarrParser_h
 #define YarrParser_h
 
-#include <runtime/UString.h>
+#include "UString.h"
 #include "Yarr.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/unicode/Unicode.h>

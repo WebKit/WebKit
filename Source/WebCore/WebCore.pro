@@ -339,7 +339,7 @@ SOURCES += \
     bindings/generic/RuntimeEnabledFeatures.cpp
 
 v8 {
-    include($$PWD/../JavaScriptCore/yarr/yarr.pri)
+    include($$PWD/../JavaScriptCore/pcre/pcre.pri)
     include($$PWD/../JavaScriptCore/wtf/wtf.pri)
 
     SOURCES += \

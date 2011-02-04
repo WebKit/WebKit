@@ -1,3 +1,30 @@
+2011-02-04  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r77625 and r77626.
+        http://trac.webkit.org/changeset/77625
+        http://trac.webkit.org/changeset/77626
+        https://bugs.webkit.org/show_bug.cgi?id=53765
+
+        It broke Windows builds (Requested by Ossy_ on #webkit).
+
+        * Android.jscbindings.mk:
+        * CMakeLists.txt:
+        * ForwardingHeaders/pcre/pcre.h: Added.
+        * ForwardingHeaders/yarr/Yarr.h: Removed.
+        * ForwardingHeaders/yarr/YarrInterpreter.h: Removed.
+        * ForwardingHeaders/yarr/YarrPattern.h: Removed.
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/copyForwardingHeaders.cmd:
+        * platform/text/RegularExpression.cpp:
+        (WebCore::RegularExpression::Private::regexp):
+        (WebCore::RegularExpression::Private::compile):
+        (WebCore::RegularExpression::Private::Private):
+        (WebCore::RegularExpression::Private::create):
+        (WebCore::RegularExpression::Private::~Private):
+        (WebCore::RegularExpression::match):
+
 2011-02-04  Peter Varga  <pvarga@webkit.org>
 
         Rubber-stamped by Csaba Osztrogonác.

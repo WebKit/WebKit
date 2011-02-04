@@ -25,7 +25,6 @@
 
 #include "Lexer.h"
 #include "yarr/Yarr.h"
-#include "yarr/YarrJIT.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

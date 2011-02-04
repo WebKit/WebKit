@@ -65,7 +65,7 @@ wince* {
     SOURCES += $$QT_SOURCE_TREE/src/3rdparty/ce-compat/ce_time.c
 }
 
-include(yarr/yarr.pri)
+include(pcre/pcre.pri)
 include(wtf/wtf.pri)
 
 INSTALLDEPS += all
@@ -213,7 +213,10 @@ SOURCES += \
     runtime/Structure.cpp \
     runtime/TimeoutChecker.cpp \
     runtime/UString.cpp \
+    yarr/YarrPattern.cpp \
+    yarr/YarrInterpreter.cpp \
     yarr/YarrJIT.cpp \
+    yarr/YarrSyntaxChecker.cpp
 
 # Generated files, simply list them for JavaScriptCore
 
