@@ -1,3 +1,14 @@
+2011-02-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, rolling out r77562.
+        http://trac.webkit.org/changeset/77562
+        https://bugs.webkit.org/show_bug.cgi?id=53630
+
+        broke chromium mac build
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gyp/mac/check_objc_rename.sh: Removed.
+
 2011-02-03  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Daniel Bates.
