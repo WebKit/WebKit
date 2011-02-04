@@ -1,5 +1,21 @@
 2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Add platform/mac-leopard baselines for tests added in r77639. The text rendering is
+        different enough for them to be different from mac-snowleopard.
+
+        * platform/mac-leopard/fast/forms/input-placeholder-visibility-1-expected.checksum: Added.
+        * platform/mac-leopard/fast/forms/input-placeholder-visibility-1-expected.png: Added.
+        * platform/mac-leopard/fast/forms/input-placeholder-visibility-2-expected.checksum: Added.
+        * platform/mac-leopard/fast/forms/input-placeholder-visibility-2-expected.png: Added.
+        * platform/mac-leopard/fast/forms/input-placeholder-visibility-3-expected.checksum: Added.
+        * platform/mac-leopard/fast/forms/input-placeholder-visibility-3-expected.png: Added.
+        * platform/mac-leopard/fast/forms/textarea-placeholder-visibility-1-expected.checksum: Added.
+        * platform/mac-leopard/fast/forms/textarea-placeholder-visibility-1-expected.png: Added.
+        * platform/mac-leopard/fast/forms/textarea-placeholder-visibility-2-expected.checksum: Added.
+        * platform/mac-leopard/fast/forms/textarea-placeholder-visibility-2-expected.png: Added.
+
+2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Add baselines for tests, added in r77644.
 
         * platform/chromium-linux/fast/repaint/slider-thumb-drag-release-expected.checksum: Added.
