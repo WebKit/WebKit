@@ -1,3 +1,15 @@
+2011-02-04  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed.
+
+        Rebaseline image for fast/box-shadow/shadow-tiling-artifact.html
+        The problem was introduced at r77601.
+
+        * platform/chromium-linux/fast/box-shadow/shadow-tiling-artifact-expected.checksum: Added.
+        * platform/chromium-linux/fast/box-shadow/shadow-tiling-artifact-expected.png: Added.
+        * platform/chromium-win/fast/box-shadow/shadow-tiling-artifact-expected.checksum: Added.
+        * platform/chromium-win/fast/box-shadow/shadow-tiling-artifact-expected.png: Added.
+
 2011-02-04  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed.
