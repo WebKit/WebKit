@@ -1,3 +1,14 @@
+2011-02-03  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Tests that we do not crash when overflowing the height of a root
+        inline box.        
+        https://bugs.webkit.org/show_bug.cgi?id=53729
+
+        * fast/overflow/overflow-height-float-not-removed-crash-expected.txt: Added.
+        * fast/overflow/overflow-height-float-not-removed-crash.html: Added.
+
 2011-02-03  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Barth.

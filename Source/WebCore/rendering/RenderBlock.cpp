@@ -3106,7 +3106,7 @@ void RenderBlock::removeFloatingObject(RenderBox* o)
                     // Special-case zero- and less-than-zero-height floats: those don't touch
                     // the line that they're on, but it still needs to be dirtied. This is
                     // accomplished by pretending they have a height of 1.
-                    logicalBottom = max(logicalBottom, logicalTop + 1);
+                    logicalBottom = max(logicalBottom, max(logicalTop + 1, logicalTop));
                     markLinesDirtyInBlockRange(0, logicalBottom);
                 }
                 m_floatingObjects->removeRef(it.current());
@@ -3468,7 +3468,7 @@ void RenderBlock::markLinesDirtyInBlockRange(int logicalTop, int logicalBottom, 
 
     RootInlineBox* lowestDirtyLine = lastRootBox();
     RootInlineBox* afterLowest = lowestDirtyLine;
-    while (lowestDirtyLine && lowestDirtyLine->blockLogicalHeight() >= logicalBottom) {
+    while (lowestDirtyLine && lowestDirtyLine->blockLogicalHeight() >= logicalBottom && logicalBottom < numeric_limits<int>::max()) {
         afterLowest = lowestDirtyLine;
         lowestDirtyLine = lowestDirtyLine->prevRootBox();
     }

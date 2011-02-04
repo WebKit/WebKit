@@ -1,3 +1,19 @@
+2011-02-03  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Enforce more limits on root inline boxes height calculations.
+        https://bugs.webkit.org/show_bug.cgi?id=53729
+
+        Test: fast/overflow/overflow-height-float-not-removed-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeFloatingObject): prevent logicalBottom to
+        become negative when logicalTop is INT_MAX.
+        (WebCore::RenderBlock::markLinesDirtyInBlockRange): when logicalBottom
+        is INT_MAX, we should dirty everything. So, we bail out to make
+        afterLowest equal to the lastRootBox() or lowestDirstLine.
+
 2011-02-03  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Barth and Oliver Hunt.
