@@ -1,3 +1,14 @@
+2011-02-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Beth Dakin.
+
+        Scroll thumb jumps to top when resizing horizontally.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::updateScrollbars): Add call to update
+        the scrollbar's offset in the case where we may have created
+        a new scrollbar but have not changed the current position.
+
 2011-02-03  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Dirk Schulze.
