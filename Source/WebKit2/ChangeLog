@@ -1,3 +1,15 @@
+2011-02-03  Ivan Krstić  <ike@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Make WebProcess pass explicit homedir parameter to the sandbox
+        <rdar://problem/8405760>
+        <https://webkit.org/b/53558>
+
+        * WebProcess/com.apple.WebProcess.sb:
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::initializeSandbox):
+
 2011-02-03  James Kozianski  <koz@chromium.org>
 
         Reviewed by Dimitri Glazkov.

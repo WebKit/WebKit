@@ -121,10 +121,16 @@ static void initializeSandbox(const WebProcessCreationParameters& parameters)
     char* errorBuf;
     char tmpPath[PATH_MAX];
     char tmpRealPath[PATH_MAX];
+    char homeRealPath[PATH_MAX];
     char cachePath[PATH_MAX];
     char cacheRealPath[PATH_MAX];
     const char* frameworkPath = [[[[NSBundle bundleForClass:NSClassFromString(@"WKView")] bundlePath] stringByDeletingLastPathComponent] UTF8String];
     const char* profilePath = [[[NSBundle mainBundle] pathForResource:@"com.apple.WebProcess" ofType:@"sb"] UTF8String];
+
+    if (!realpath([NSHomeDirectory() UTF8String], homeRealPath)) {
+        fprintf(stderr, "WebProcess: couldn't determine home directory when initializing sandbox");
+        exit(EX_CONFIG);
+    }
 
     if (confstr(_CS_DARWIN_USER_TEMP_DIR, tmpPath, PATH_MAX) <= 0 || !realpath(tmpPath, tmpRealPath))
         tmpRealPath[0] = '\0';
@@ -133,6 +139,7 @@ static void initializeSandbox(const WebProcessCreationParameters& parameters)
         cacheRealPath[0] = '\0';
 
     const char* const sandboxParam[] = {
+        "HOME_DIR", (const char*)homeRealPath,
         "WEBKIT2_FRAMEWORK_DIR", frameworkPath,
         "DARWIN_USER_TEMP_DIR", (const char*)tmpRealPath,
         "DARWIN_USER_CACHE_DIR", (const char*)cacheRealPath,

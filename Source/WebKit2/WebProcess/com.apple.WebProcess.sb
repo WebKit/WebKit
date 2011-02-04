@@ -15,20 +15,20 @@
 
    ;; Plugins
    (subpath "/Library/Internet Plug-Ins")
-   (subpath (string-append (param "_HOME") "/Library/Internet Plug-Ins"))
+   (subpath (string-append (param "HOME_DIR") "/Library/Internet Plug-Ins"))
 
    ;; System and user preferences
    (literal "/Library/Preferences/.GlobalPreferences.plist")
    (literal "/Library/Preferences/com.apple.security.plist")
-   (literal (string-append (param "_HOME") "/Library/Preferences/.GlobalPreferences.plist"))
-   (regex (string-append "^" (param "_HOME") "/Library/Preferences/ByHost/\.GlobalPreferences\."))
-   (literal (string-append (param "_HOME") "/Library/Preferences/com.apple.ATS.plist"))
-   (literal (string-append (param "_HOME") "/Library/Preferences/com.apple.HIToolbox.plist"))
-   (literal (string-append (param "_HOME") "/Library/Preferences/com.apple.LaunchServices.plist"))
-   (literal (string-append (param "_HOME") "/Library/Preferences/com.apple.WebFoundation.plist"))
-   (literal (string-append (param "_HOME") "/Library/Preferences/com.apple.security.plist"))
-   (literal (string-append (param "_HOME") "/Library/Preferences/com.apple.security.revocation.plist"))
-   (subpath (string-append (param "_HOME") "/Library/Keychains"))
+   (literal (string-append (param "HOME_DIR") "/Library/Preferences/.GlobalPreferences.plist"))
+   (regex (string-append "^" (param "HOME_DIR") "/Library/Preferences/ByHost/\.GlobalPreferences\."))
+   (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.ATS.plist"))
+   (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.HIToolbox.plist"))
+   (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.LaunchServices.plist"))
+   (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.WebFoundation.plist"))
+   (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.security.plist"))
+   (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.security.revocation.plist"))
+   (subpath (string-append (param "HOME_DIR") "/Library/Keychains"))
 
    ;; On-disk WebKit2 framework location, to account for debug installations
    ;; outside of /System/Library/Frameworks
@@ -45,9 +45,9 @@
 
 ;; Writable preferences and temporary files
 (allow file*
-   (subpath (string-append (param "_HOME") "/Library/Caches/com.apple.WebProcess"))
-   (regex (string-append "^" (param "_HOME") "/Library/Preferences/ByHost/com\.apple\.HIToolbox\."))
-   (regex (string-append "^" (param "_HOME") "/Library/Preferences/com\.apple\.WebProcess\."))
+   (subpath (string-append (param "HOME_DIR") "/Library/Caches/com.apple.WebProcess"))
+   (regex (string-append "^" (param "HOME_DIR") "/Library/Preferences/ByHost/com\.apple\.HIToolbox\."))
+   (regex (string-append "^" (param "HOME_DIR") "/Library/Preferences/com\.apple\.WebProcess\."))
 )
 
 ;; Darwin temporary files and caches, if present
@@ -111,8 +111,8 @@
 
 ;; FIXME: These rules are required until plug-ins are moved out of the web process.
 (allow file-read*
-   (regex (string-append "^" (param "_HOME") "/Library/Preferences/ByHost/com\.apple\.ist\."))
-   (literal (string-append (param "_HOME") "/Library/Preferences/edu.mit.Kerberos"))
+   (regex (string-append "^" (param "HOME_DIR") "/Library/Preferences/ByHost/com\.apple\.ist\."))
+   (literal (string-append (param "HOME_DIR") "/Library/Preferences/edu.mit.Kerberos"))
    (literal "/Library/Preferences/edu.mit.Kerberos")
 )
 
