@@ -298,6 +298,8 @@ void DocumentThreadableLoader::preflightSuccess()
     OwnPtr<ResourceRequest> actualRequest;
     actualRequest.swap(m_actualRequest);
 
+    actualRequest->setHTTPOrigin(m_document->securityOrigin()->toString());
+
     // It should be ok to skip the security check since we already asked about the preflight request.
     loadRequest(*actualRequest, SkipSecurityCheck);
 }
