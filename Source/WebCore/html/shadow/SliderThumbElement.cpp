@@ -147,6 +147,8 @@ void SliderThumbElement::stopDragging()
     if (Frame* frame = document()->frame())
         frame->eventHandler()->setCapturingMouseEventsNode(0);
     m_inDragMode = false;
+    if (renderer())
+        renderer()->setNeedsLayout(true);
 }
 
 void SliderThumbElement::defaultEventHandler(Event* event)

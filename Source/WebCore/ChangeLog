@@ -1,3 +1,16 @@
+2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        REGRESSION(r76147): Slider thumb is not repainted when let go outside of the slider track.
+        https://bugs.webkit.org/show_bug.cgi?id=53691
+
+        Test: fast/repaint/slider-thumb-drag-release.html
+
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::stopDragging): Added dirtying the layout bit to ensure
+            that the thumb is repainted.
+
 2011-02-04  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

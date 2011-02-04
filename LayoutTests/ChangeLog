@@ -1,3 +1,15 @@
+2011-02-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        REGRESSION(r76147): Slider thumb is not repainted when let go outside of the slider track.
+        https://bugs.webkit.org/show_bug.cgi?id=53691
+
+        * fast/repaint/slider-thumb-drag-release.html: Added.
+        * platform/mac/fast/repaint/slider-thumb-drag-release-expected.checksum: Added.
+        * platform/mac/fast/repaint/slider-thumb-drag-release-expected.png: Added.
+        * platform/mac/fast/repaint/slider-thumb-drag-release-expected.txt: Added.
+
 2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Update mac baselines. They pixel-rotted.
