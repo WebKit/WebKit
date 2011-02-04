@@ -70,6 +70,7 @@ public:
         int rgbaAlphaLocation() const { return m_rgbaAlphaLocation; }
         int rgbaTextureLocation() const { return m_rgbaTextureLocation; }
         int ccMatrixLocation() const { return m_ccMatrixLocation; }
+        int signAdjLocation() const { return m_signAdjLocation; }
         bool initialized() const { return m_initialized; }
     private:
         GraphicsContext3D* m_context;
@@ -80,6 +81,7 @@ public:
         int m_rgbaShaderMatrixLocation;
         int m_rgbaWidthScaleFactorLocation;
         int m_ccMatrixLocation;
+        int m_signAdjLocation;
         int m_yTextureLocation;
         int m_uTextureLocation;
         int m_vTextureLocation;

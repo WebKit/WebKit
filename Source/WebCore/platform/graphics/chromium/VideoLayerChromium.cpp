@@ -60,6 +60,7 @@ VideoLayerChromium::SharedValues::SharedValues(GraphicsContext3D* context)
     , m_rgbaShaderMatrixLocation(0)
     , m_rgbaWidthScaleFactorLocation(0)
     , m_ccMatrixLocation(0)
+    , m_signAdjLocation(0)
     , m_yTextureLocation(0)
     , m_uTextureLocation(0)
     , m_vTextureLocation(0)
@@ -96,14 +97,15 @@ VideoLayerChromium::SharedValues::SharedValues(GraphicsContext3D* context)
         "uniform sampler2D u_texture;                         \n"
         "uniform sampler2D v_texture;                         \n"
         "uniform float alpha;                                 \n"
+        "uniform float adj;                                   \n"
         "uniform mat3 cc_matrix;                              \n"
         "void main()                                          \n"
         "{                                                    \n"
         "  float y = texture2D(y_texture, v_texCoord).x;      \n"
-        "  float u = texture2D(u_texture, v_texCoord).r - .5; \n"
-        "  float v = texture2D(v_texture, v_texCoord).r - .5; \n"
+        "  float u = texture2D(u_texture, v_texCoord).x - adj; \n"
+        "  float v = texture2D(v_texture, v_texCoord).x - adj; \n"
         "  vec3 rgb = cc_matrix * vec3(y, u, v);              \n"
-        "  gl_FragColor = vec4(rgb.x, rgb.y, rgb.z, 1.0) * alpha; \n"
+        "  gl_FragColor = vec4(rgb, float(1)) * alpha;        \n"
         "}                                                    \n";
 
     char rgbaFragmentShaderString[] =
@@ -113,7 +115,7 @@ VideoLayerChromium::SharedValues::SharedValues(GraphicsContext3D* context)
         "uniform float alpha;                                 \n"
         "void main()                                          \n"
         "{                                                    \n"
-        "  vec4 texColor = texture2D(rgba_texture, vec2(v_texCoord.x, 1.0 - v_texCoord.y)); \n"
+        "  vec4 texColor = texture2D(rgba_texture, vec2(v_texCoord.x, float(1) - v_texCoord.y)); \n"
         "  gl_FragColor = vec4(texColor.x, texColor.y, texColor.z, texColor.w) * alpha; \n"
         "}                                                    \n";
 
@@ -135,6 +137,7 @@ VideoLayerChromium::SharedValues::SharedValues(GraphicsContext3D* context)
     m_uTextureLocation = m_context->getUniformLocation(m_yuvShaderProgram, "u_texture");
     m_vTextureLocation = m_context->getUniformLocation(m_yuvShaderProgram, "v_texture");
     m_ccMatrixLocation = m_context->getUniformLocation(m_yuvShaderProgram, "cc_matrix");
+    m_signAdjLocation = m_context->getUniformLocation(m_yuvShaderProgram, "adj");
     m_yuvAlphaLocation = m_context->getUniformLocation(m_yuvShaderProgram, "alpha");
 
     ASSERT(m_yuvShaderMatrixLocation != -1);
@@ -143,6 +146,7 @@ VideoLayerChromium::SharedValues::SharedValues(GraphicsContext3D* context)
     ASSERT(m_uTextureLocation != -1);
     ASSERT(m_vTextureLocation != -1);
     ASSERT(m_ccMatrixLocation != -1);
+    ASSERT(m_signAdjLocation != -1);
     ASSERT(m_yuvAlphaLocation != -1);
 
     m_rgbaShaderMatrixLocation = m_context->getUniformLocation(m_rgbaShaderProgram, "matrix");
@@ -374,6 +378,12 @@ void VideoLayerChromium::drawYUV(const SharedValues* sv)
     GLC(context, context->uniform1i(sv->yTextureLocation(), 1));
     GLC(context, context->uniform1i(sv->uTextureLocation(), 2));
     GLC(context, context->uniform1i(sv->vTextureLocation(), 3));
+
+    // This value of 0.5 maps to 128. It is used in the YUV to RGB conversion
+    // formula to turn unsigned u and v values to signed u and v values.
+    // This is loaded as a uniform because certain drivers have problems
+    // reading literal float values.
+    GLC(context, context->uniform1f(sv->signAdjLocation(), 0.5));
 
     GLC(context, context->uniformMatrix3fv(sv->ccMatrixLocation(), 0, const_cast<float*>(yuv2RGB), 1));
 
