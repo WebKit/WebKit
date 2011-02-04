@@ -29,8 +29,8 @@
 #include "RegularExpression.h"
 
 #include <wtf/BumpPointerAllocator.h>
+#include <yarr/Yarr.h>
 #include "Logging.h"
-#include "yarr/Yarr.h"
 
 namespace WebCore {
 
