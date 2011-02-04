@@ -91,7 +91,7 @@ PassRefPtr<ClipboardChromium> ClipboardChromium::create(ClipboardType clipboardT
     RefPtr<ChromiumDataObject> dataObject =
         policy == ClipboardWritable ?
         ChromiumDataObject::createWritable(clipboardType) :
-        ChromiumDataObject::createReadable(clipboardType);
+        ChromiumDataObject::createReadable(frame, clipboardType);
     return adoptRef(new ClipboardChromium(clipboardType, dataObject, policy, frame));
 }
 

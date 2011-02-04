@@ -41,6 +41,7 @@ namespace WebKit {
 
 class WebApplicationCacheHost;
 class WebApplicationCacheHostClient;
+class WebClipboard;
 class WebCookieJar;
 class WebDataSource;
 class WebFormElement;
@@ -87,6 +88,10 @@ public:
     // A frame specific cookie jar.  May return null, in which case
     // WebKitClient::cookieJar() will be called to access cookies.
     virtual WebCookieJar* cookieJar(WebFrame*) { return 0; }
+
+    // A frame specific clipboard. May return null, in which case the caller
+    // should assume there is no data in the clipboard.
+    virtual WebClipboard* clipboard() { return 0; }
 
 
     // General notifications -----------------------------------------------

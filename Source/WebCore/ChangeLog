@@ -1,3 +1,36 @@
+2011-02-04  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Clone WebClipboard to be frame-specific.
+        https://bugs.webkit.org/show_bug.cgi?id=53727
+
+        For drop operations, Chrome currently snapshots the data and copies it
+        into the renderer process. As we add more supported drag data types, the
+        copy will become increasingly expensive. Instead, we'd like to snapshot
+        data in the browser to reduce the amount of data copied and to support
+        Blob in DataTransferItem. In order to allow this, we associated
+        WebClipboard with a frame so it can correctly route its IPCs to the
+        corresponding Chromium host.
+
+        No new tests because no new functionality.
+
+        * platform/chromium/ChromiumDataObject.cpp:
+        (WebCore::ChromiumDataObject::createReadable):
+        * platform/chromium/ChromiumDataObject.h:
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::ClipboardChromium::create):
+        * platform/chromium/PlatformBridge.h:
+        * platform/chromium/ReadableDataObject.cpp:
+        (WebCore::ReadableDataObject::create):
+        (WebCore::ReadableDataObject::ReadableDataObject):
+        (WebCore::ReadableDataObject::getData):
+        (WebCore::ReadableDataObject::urlTitle):
+        (WebCore::ReadableDataObject::htmlBaseUrl):
+        (WebCore::ReadableDataObject::filenames):
+        (WebCore::ReadableDataObject::ensureTypeCacheInitialized):
+        * platform/chromium/ReadableDataObject.h:
+
 2011-02-04  Jeremy Orlow  <jorlow@chromium.org>
 
         Revert https://bugs.webkit.org/show_bug.cgi?id=53795
