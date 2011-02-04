@@ -1,5 +1,16 @@
 2011-02-03  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Tony Chang.
+
+        nrwt: handle "broken pipe" notifications from DRT more cleanly.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52927
+
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        * Scripts/webkitpy/layout_tests/port/server_process_unittest.py:
+
+2011-02-03  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Kenneth Russell.
 
         Update, resubmit change to bug 51572. I think the race that was

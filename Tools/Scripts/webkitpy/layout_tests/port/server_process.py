@@ -115,7 +115,11 @@ class ServerProcess:
         if is not already running."""
         if not self._proc:
             self._start()
-        self._proc.stdin.write(input)
+        try:
+            self._proc.stdin.write(input)
+        except IOError, e:
+            self.stop()
+            self.crashed = True
 
     def read_line(self, timeout):
         """Read a single line from the subprocess, waiting until the deadline.
