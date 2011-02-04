@@ -314,6 +314,7 @@ WebInspector.NetworkPanel.prototype = {
 
         this._dataGrid.sortNodes(sortingFunction, this._dataGrid.sortOrder === "descending");
         this._timelineSortSelector.selectedIndex = 0;
+        this._updateOffscreenRows();
     },
 
     _sortByTimeline: function()
@@ -332,6 +333,7 @@ WebInspector.NetworkPanel.prototype = {
         else
             this._timelineGrid.showEventDividers();
         this._dataGrid.markColumnAsSortedBy("timeline", "ascending");
+        this._updateOffscreenRows();
     },
 
     _createFilterStatusBarItems: function()
@@ -490,6 +492,7 @@ WebInspector.NetworkPanel.prototype = {
             target.addStyleClass("selected");
             this._showCategory(target.category);
         }
+        this._updateOffscreenRows();
     },
 
     _scheduleRefresh: function()
@@ -1040,15 +1043,26 @@ WebInspector.NetworkPanel.prototype = {
         var visibleTop = this._dataGrid.scrollContainer.scrollTop;
         var visibleBottom = visibleTop + this._dataGrid.scrollContainer.offsetHeight;
 
-        var rowHeight = rows[0].offsetHeight;
+        var rowHeight = 0;
 
         // Filler is at recordsCount - 1.
+        var unfilteredRowIndex = 0;
         for (var i = 0; i < recordsCount - 1; ++i) {
             var row = rows[i];
             // Don't touch summaty - quit instead.
-            if (row === this._summaryBarRowNode)
+            if (this._summaryBarRowNode && row === this._summaryBarRowNode.element)
                 break;
-            var rowIsVisible = i * rowHeight < visibleBottom && (i + 1) * rowHeight > visibleTop;
+
+            var dataGridNode = this._dataGrid.dataGridNodeFromNode(row);
+            if (dataGridNode.isFilteredOut()) {
+                row.removeStyleClass("offscreen");
+                continue;
+            }
+
+            if (!rowHeight)
+                rowHeight = row.offsetHeight;
+
+            var rowIsVisible = unfilteredRowIndex * rowHeight < visibleBottom && (unfilteredRowIndex + 1) * rowHeight > visibleTop;
             if (rowIsVisible !== row.rowIsVisible) {
                 if (rowIsVisible)
                     row.removeStyleClass("offscreen");
@@ -1056,6 +1070,7 @@ WebInspector.NetworkPanel.prototype = {
                     row.addStyleClass("offscreen");
                 row.rowIsVisible = rowIsVisible;
             }
+            unfilteredRowIndex++;
         }
     }
 }
@@ -1364,6 +1379,13 @@ WebInspector.NetworkDataGridNode.prototype = {
         this._nameCell.addEventListener("click", this.select.bind(this), false);
     },
 
+    isFilteredOut: function()
+    {
+        if (!this._panel._hiddenCategories.all)
+            return false;
+        return this._resource.category.name in this._panel._hiddenCategories;
+    },
+
     select: function()
     {
         this._panel._showResource(this._resource);
@@ -1374,11 +1396,7 @@ WebInspector.NetworkDataGridNode.prototype = {
     {
         if (!this._panel._viewingResourceMode)
             return false;
-        if (!this._panel._hiddenCategories.all)
-            return true;
-        if (this._panel._hiddenCategories[this._resource.category.name])
-            return false;
-        return true;
+        return !this.isFilteredOut();
     },
 
     _createDivInTD: function(columnIdentifier)
@@ -1695,6 +1713,16 @@ WebInspector.NetworkTotalGridNode = function(element)
 }
 
 WebInspector.NetworkTotalGridNode.prototype = {
+    isFilteredOut: function()
+    {
+        return false;
+    },
+
+    get selectable()
+    {
+        return false;
+    },
+
     createCells: function()
     {
         var td = document.createElement("td");
