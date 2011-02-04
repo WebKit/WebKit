@@ -138,12 +138,8 @@ void* MarkedSpace::allocate(size_t s)
             m_heap.nextCell = block->marked.nextPossiblyUnset(m_heap.nextCell);
         } while (m_heap.nextCell != HeapConstants::cellsPerBlock);
         m_heap.nextCell = 0;
-        m_heap.waterMark += BLOCK_SIZE;
     } while (++m_heap.nextBlock != m_heap.usedBlocks);
-
-    if (m_heap.waterMark < m_heap.highWaterMark)
-        return &allocateBlock()->cells[m_heap.nextCell++];
-
+    
     return 0;
 }
 
@@ -274,8 +270,6 @@ void MarkedSpace::sweep()
         new (cell) JSCell(dummyMarkableCellStructure);
 #endif
     }
-    
-    shrinkBlocks(0);
 }
 
 size_t MarkedSpace::objectCount() const
@@ -300,10 +294,10 @@ void MarkedSpace::reset()
 {
     m_heap.nextCell = 0;
     m_heap.nextBlock = 0;
-    m_heap.waterMark = 0;
 #if ENABLE(JSC_ZOMBIES)
     sweep();
 #endif
+    resizeBlocks();
 }
 
 LiveObjectIterator MarkedSpace::primaryHeapBegin()

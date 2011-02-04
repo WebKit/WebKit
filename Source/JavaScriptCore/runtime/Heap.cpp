@@ -32,19 +32,14 @@
 #include "JSLock.h"
 #include "JSONObject.h"
 #include "Tracing.h"
-#include <algorithm>
 
 #define COLLECT_ON_EVERY_ALLOCATION 0
 
-using namespace std;
-
 namespace JSC {
 
-const size_t minBytesPerCycle = 512 * 1024;
-
 Heap::Heap(JSGlobalData* globalData)
-    : m_operationInProgress(NoOperation)
-    , m_markedSpace(globalData)
+    : m_markedSpace(globalData)
+    , m_operationInProgress(NoOperation)
     , m_markListSet(0)
     , m_activityCallback(DefaultGCActivityCallback::create(this))
     , m_globalData(globalData)
@@ -385,10 +380,6 @@ void Heap::reset(SweepToggle sweepToggle)
 
     if (sweepToggle == DoSweep)
         m_markedSpace.sweep();
-
-    size_t usedCellCount = m_markedSpace.markedCells();
-    size_t proportionalBytes = static_cast<size_t>(usedCellCount * 1.5 * HeapConstants::cellSize);
-    m_markedSpace.setHighWaterMark(max(proportionalBytes, minBytesPerCycle));
 
     JAVASCRIPTCORE_GC_END();
 

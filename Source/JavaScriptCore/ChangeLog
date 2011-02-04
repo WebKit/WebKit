@@ -1,3 +1,19 @@
+2011-02-04  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed rollout two patches r77614 and r77612.
+
+        REGRESSION: Snow Leopard Intell Release anumber of failing tests.
+
+        * runtime/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::reset):
+        * runtime/Heap.h:
+        * runtime/MarkedSpace.cpp:
+        (JSC::MarkedSpace::allocate):
+        (JSC::MarkedSpace::sweep):
+        (JSC::MarkedSpace::reset):
+        * runtime/MarkedSpace.h:
+
 2011-02-04  Geoffrey Garen  <ggaren@apple.com>
 
         Try to fix 32bit build.
