@@ -1,3 +1,16 @@
+2011-02-03  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Chromium: Remove deprecated WebIDBObjectStore::put() function
+        https://bugs.webkit.org/show_bug.cgi?id=53669
+
+        Remove deprecated put() function. Chromium side code now overrides
+        the new version.
+
+        * public/WebIDBObjectStore.h:
+        (WebKit::WebIDBObjectStore::put):
+
 2011-02-01  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
