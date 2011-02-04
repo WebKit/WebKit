@@ -194,6 +194,8 @@ public:
     virtual IntSize meterSizeForBounds(const RenderMeter*, const IntRect&) const;
     virtual bool supportsMeter(ControlPart, bool isHorizontal) const;
 #endif
+    
+    virtual bool shouldShowPlaceholderWhenFocused() const { return false; }
 
 protected:
     // The platform selection color.

@@ -277,6 +277,7 @@ void HTMLTextAreaElement::updateValue() const
     const_cast<HTMLTextAreaElement*>(this)->setFormControlValueMatchesRenderer(true);
     notifyFormStateChanged(this);
     m_isDirty = true;
+    const_cast<HTMLTextAreaElement*>(this)->updatePlaceholderVisibility(false);
 }
 
 String HTMLTextAreaElement::value() const

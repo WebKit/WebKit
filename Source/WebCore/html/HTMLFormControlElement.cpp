@@ -582,8 +582,8 @@ bool HTMLTextFormControlElement::placeholderShouldBeVisible() const
 {
     return supportsPlaceholder()
         && isEmptyValue()
-        && document()->focusedNode() != this
-        && !isPlaceholderEmpty();
+        && !isPlaceholderEmpty()
+        && (document()->focusedNode() != this || (renderer() && renderer()->theme()->shouldShowPlaceholderWhenFocused()));
 }
 
 void HTMLTextFormControlElement::updatePlaceholderVisibility(bool placeholderValueChanged)

@@ -1994,6 +1994,15 @@ IntPoint RenderThemeMac::volumeSliderOffsetFromMuteButton(Node* muteButton, cons
     return IntPoint(xOffset * zoomLevel, y);
 }
 
+bool RenderThemeMac::shouldShowPlaceholderWhenFocused() const
+{
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    return true;
+#else
+    return false;
+#endif
+}
+
 #endif // ENABLE(VIDEO)
 
 NSPopUpButtonCell* RenderThemeMac::popupButton() const

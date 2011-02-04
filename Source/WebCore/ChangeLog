@@ -1,3 +1,27 @@
+2011-02-04  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=53740
+        <rdar://problem/8503629> Allow platforms to specify if the placeholder should be visible when text controls are focused
+
+        Tests:
+        fast/forms/textarea-placeholder-visibility-1.html
+        fast/forms/textarea-placeholder-visibility-2.html
+        fast/forms/input-placeholder-visibility-1.html
+        fast/forms/input-placeholder-visibility-2.html
+        fast/forms/input-placeholder-visibility-3.html
+
+        * html/HTMLFormControlElement.cpp: (WebCore::HTMLTextFormControlElement::placeholderShouldBeVisible):
+        Add a check for shouldShowPlaceholderWhenFocused.
+        * html/HTMLTextAreaElement.cpp: (WebCore::HTMLTextAreaElement::updateValue):
+        Whenever the value is updated, we should also update placeholder visibility.
+        * rendering/RenderTheme.h: (WebCore::RenderTheme::shouldShowPlaceholderWhenFocused):
+        Make the default the same as the existing behavior.
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm: (WebCore::RenderThemeMac::shouldShowPlaceholderWhenFocused):
+        Show placeholder when appropriate. 
+
 2011-02-04  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
