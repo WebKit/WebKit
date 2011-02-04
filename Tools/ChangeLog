@@ -1,3 +1,11 @@
+2011-02-03  Daniel Cheng  <dcheng@chromium.org>
+
+        Unreviewed.
+
+        Adding myself to committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-02-03  Adam Roben  <aroben@apple.com>
 
         Include the crashing function in the link to a crash log

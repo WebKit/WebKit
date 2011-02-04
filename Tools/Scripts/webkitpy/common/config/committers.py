@@ -97,6 +97,7 @@ committers_unable_to_review = [
     Committer("Chris Rogers", "crogers@google.com", "crogers"),
     Committer("Christian Dywan", ["christian@twotoasts.de", "christian@webkit.org"]),
     Committer("Collin Jackson", "collinj@webkit.org"),
+    Committer("Daniel Cheng", "dcheng@chromium.org", "dcheng"),
     Committer("David Smith", ["catfish.man@gmail.com", "dsmith@webkit.org"], "catfishman"),
     Committer("Dean Jackson", "dino@apple.com", "dino"),
     Committer("Diego Gonzalez", ["diegohcg@webkit.org", "diego.gonzalez@openbossa.org"], "diegohcg"),
