@@ -1,3 +1,22 @@
+2011-02-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        XSS Auditor is spinning inside decodeURLEscapeSequences() if there are
+        percent signs in large posted data
+        https://bugs.webkit.org/show_bug.cgi?id=53405
+
+        If the input string contains many non-% characters followed by a %
+        character that is not a valid URL escape sequence, then the old
+        algorithm would only advance the initial search by one character
+        (instead of jumping to just after the % character).  That would cause
+        the algorithm to take N^2 time (in the number of characters before the
+        first % character).  This patch just advances the search past the first
+        % character so we can start looking for next % character sooner.
+
+        * platform/KURL.cpp:
+        (WebCore::decodeURLEscapeSequences):
+
 2011-02-03  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

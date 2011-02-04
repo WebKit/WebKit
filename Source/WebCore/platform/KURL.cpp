@@ -921,11 +921,11 @@ String decodeURLEscapeSequences(const String& str, const TextEncoding& encoding)
                 && isASCIIHexDigit(str[encodedRunEnd + 1])
                 && isASCIIHexDigit(str[encodedRunEnd + 2]))
             encodedRunEnd += 3;
+        searchPosition = encodedRunEnd;
         if (encodedRunEnd == encodedRunPosition) {
             ++searchPosition;
             continue;
         }
-        searchPosition = encodedRunEnd;
 
         // Decode the %-escapes into bytes.
         unsigned runLength = (encodedRunEnd - encodedRunPosition) / 3;
