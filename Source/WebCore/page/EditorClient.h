@@ -119,8 +119,6 @@ public:
     virtual bool shouldChangeSelectedRange(Range* fromRange, Range* toRange, EAffinity, bool stillSelecting) = 0;
     
     virtual bool shouldApplyStyle(CSSStyleDeclaration*, Range*) = 0;
-//  virtual bool shouldChangeTypingStyle(CSSStyleDeclaration* fromStyle, CSSStyleDeclaration* toStyle) = 0;
-//  virtual bool doCommandBySelector(SEL selector) = 0;
     virtual bool shouldMoveRangeAfterDelete(Range*, Range*) = 0;
 
     virtual void didBeginEditing() = 0;
@@ -129,9 +127,6 @@ public:
     virtual void didEndEditing() = 0;
     virtual void didWriteSelectionToPasteboard() = 0;
     virtual void didSetSelectionTypesForPasteboard() = 0;
-//  virtual void didChangeTypingStyle:(NSNotification *)notification = 0;
-//  virtual void didChangeSelection:(NSNotification *)notification = 0;
-//  virtual NSUndoManager* undoManager:(WebView *)webView = 0;
     
     virtual void registerCommandForUndo(PassRefPtr<EditCommand>) = 0;
     virtual void registerCommandForRedo(PassRefPtr<EditCommand>) = 0;
