@@ -13,20 +13,20 @@ layer at (0,0) size 800x600
       RenderRuby (inline) {RUBY} at (0,0) size 175x19
         RenderRubyRun (anonymous) at (146,71) size 175x20
           RenderRubyText {RT} at (0,-12) size 175x12
-            RenderText {#text} at (70,0) size 34x12
-              text run at (70,0) width 34: "HTML5"
+            RenderText {#text} at (72,0) size 31x12
+              text run at (72,0) width 31: "HTML5"
           RenderRubyBase (anonymous) at (0,0) size 175x20
             RenderText {#text} at (0,0) size 175x19
               text run at (0,0) width 175: "Hypertext Markup Language"
       RenderText {#text} at (321,71) size 30x19
         text run at (321,71) width 30: " and "
-      RenderRuby (inline) {RUBY} at (0,0) size 94x19
-        RenderRubyRun (anonymous) at (351,71) size 94x20
-          RenderRubyText {RT} at (0,-12) size 94x12
-            RenderText {#text} at (0,0) size 94x12
-              text run at (0,0) width 94: "Cascading Style Sheets"
-          RenderRubyBase (anonymous) at (0,0) size 94x20
-            RenderText {#text} at (28,0) size 37x19
-              text run at (28,0) width 37: "CSS3"
-      RenderText {#text} at (445,71) size 42x19
-        text run at (445,71) width 42: " specs."
+      RenderRuby (inline) {RUBY} at (0,0) size 89x19
+        RenderRubyRun (anonymous) at (351,71) size 89x20
+          RenderRubyText {RT} at (0,-12) size 89x12
+            RenderText {#text} at (0,0) size 89x12
+              text run at (0,0) width 89: "Cascading Style Sheets"
+          RenderRubyBase (anonymous) at (0,0) size 89x20
+            RenderText {#text} at (26,0) size 37x19
+              text run at (26,0) width 37: "CSS3"
+      RenderText {#text} at (440,71) size 42x19
+        text run at (440,71) width 42: " specs."
