@@ -190,7 +190,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         didCancelClientRedirectForFrame,
         willPerformClientRedirectForFrame,
         didHandleOnloadEventsForFrame,
-        shouldLoadResourceForFrame
+        willSendRequestForFrame
     };
     WKBundlePageSetLoaderClient(m_page, &loaderClient);
 
@@ -322,11 +322,10 @@ void InjectedBundlePage::didRunInsecureContentForFrame(WKBundlePageRef page, WKB
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didRunInsecureContentForFrame(frame);
 }
 
-bool InjectedBundlePage::shouldLoadResourceForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKStringRef, const void* clientInfo)
+WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t identifier, WKURLRequestRef request, WKURLResponseRef redirectResponse, const void* clientInfo)
 {
-    return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->shouldLoadResourceForFrame(frame);
+    return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->willSendRequestForFrame(page, frame, identifier, request, redirectResponse);
 }
-
 
 void InjectedBundlePage::didStartProvisionalLoadForFrame(WKBundleFrameRef frame)
 {
@@ -575,9 +574,9 @@ void InjectedBundlePage::didRunInsecureContentForFrame(WKBundleFrameRef frame)
 {
 }
 
-bool InjectedBundlePage::shouldLoadResourceForFrame(WKBundleFrameRef frame)
+WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef, WKBundleFrameRef, uint64_t, WKURLRequestRef request, WKURLResponseRef)
 {
-    return true;
+    return request;
 }
 
 // UI Client Callbacks

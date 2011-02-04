@@ -1,3 +1,16 @@
+2011-02-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        WebKit2: Need WebKit2 equivalent of WebResourceLoadDelegate::willSendRequest in the Bundle
+        https://bugs.webkit.org/show_bug.cgi?id=52897
+        <rdar://problem/8898294>
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+        (WTR::InjectedBundlePage::willSendRequestForFrame):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+
 2011-02-03  Ivan Krstić  <ike@apple.com>
 
         Unreviewed.

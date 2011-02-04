@@ -41,6 +41,8 @@
 #include "WebNumber.h"
 #include "WebString.h"
 #include "WebURL.h"
+#include "WebURLRequest.h"
+#include "WebURLResponse.h"
 #include <WebCore/ContextMenuItem.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FrameLoaderTypes.h>
@@ -172,6 +174,16 @@ inline String toWTFString(WKURLRef urlRef)
 inline ProxyingRefPtr<WebError> toAPI(const WebCore::ResourceError& error)
 {
     return ProxyingRefPtr<WebError>(WebError::create(error));
+}
+
+inline ProxyingRefPtr<WebURLRequest> toAPI(const WebCore::ResourceRequest& request)
+{
+    return ProxyingRefPtr<WebURLRequest>(WebURLRequest::create(request));
+}
+
+inline ProxyingRefPtr<WebURLResponse> toAPI(const WebCore::ResourceResponse& response)
+{
+    return ProxyingRefPtr<WebURLResponse>(WebURLResponse::create(response));
 }
 
 /* Geometry conversions */

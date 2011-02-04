@@ -158,8 +158,9 @@ void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader*, unsigned lon
     if (!webPage)
         return;
 
-    if (!webPage->injectedBundleLoaderClient().shouldLoadResourceForFrame(webPage, m_frame, request.url().string())) {
-        request = ResourceRequest();
+    webPage->injectedBundleLoaderClient().willSendRequestForFrame(webPage, m_frame, identifier, request, redirectResponse);
+
+    if (request.isNull()) {
         // FIXME: We should probably send a message saying we cancelled the request for the resource.
         return;
     }

@@ -63,7 +63,7 @@ private:
     static void didHandleOnloadEventsForFrame(WKBundlePageRef, WKBundleFrameRef, const void*);
     static void didDisplayInsecureContentForFrame(WKBundlePageRef, WKBundleFrameRef, WKTypeRef*, const void*);
     static void didRunInsecureContentForFrame(WKBundlePageRef, WKBundleFrameRef, WKTypeRef*, const void*);
-    static bool shouldLoadResourceForFrame(WKBundlePageRef, WKBundleFrameRef, WKStringRef, const void*);
+    static WKURLRequestRef willSendRequestForFrame(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef, WKURLResponseRef, const void*);
     void didStartProvisionalLoadForFrame(WKBundleFrameRef);
     void didReceiveServerRedirectForProvisionalLoadForFrame(WKBundleFrameRef);
     void didFailProvisionalLoadWithErrorForFrame(WKBundleFrameRef, WKErrorRef);
@@ -79,7 +79,7 @@ private:
     void didHandleOnloadEventsForFrame(WKBundleFrameRef);
     void didDisplayInsecureContentForFrame(WKBundleFrameRef);
     void didRunInsecureContentForFrame(WKBundleFrameRef);
-    bool shouldLoadResourceForFrame(WKBundleFrameRef);
+    WKURLRequestRef willSendRequestForFrame(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef, WKURLResponseRef);
 
     // UI Client
     static void willAddMessageToConsole(WKBundlePageRef, WKStringRef message, uint32_t lineNumber, const void* clientInfo);
