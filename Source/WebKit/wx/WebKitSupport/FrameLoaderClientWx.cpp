@@ -595,7 +595,7 @@ void FrameLoaderClientWx::didDisplayInsecureContent()
     notImplemented();
 }
 
-void FrameLoaderClientWx::didRunInsecureContent(WebCore::SecurityOrigin*)
+void FrameLoaderClientWx::didRunInsecureContent(WebCore::SecurityOrigin*, const KURL&)
 {
     notImplemented();
 }

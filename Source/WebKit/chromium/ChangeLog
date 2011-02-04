@@ -1,3 +1,18 @@
+2011-02-03  Adam Langley  <agl@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Plumb mixed script URL to FrameLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=52384
+
+        Regressions covered by http/tests/security/mixedContent/*
+
+        * public/WebFrameClient.h:
+        (WebKit::WebFrameClient::didRunInsecureContent):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::didRunInsecureContent):
+        * src/FrameLoaderClientImpl.h:
+
 2011-02-03  Victoria Kirst  <vrk@google.com>
 
         Reviewed by James Robinson.

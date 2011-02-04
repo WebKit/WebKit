@@ -140,7 +140,7 @@ public:
     virtual void dispatchDidChangeBackForwardIndex() const;
 
     virtual void didDisplayInsecureContent();
-    virtual void didRunInsecureContent(WebCore::SecurityOrigin*);
+    virtual void didRunInsecureContent(WebCore::SecurityOrigin*, const WebCore::KURL&);
 
     virtual WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&);
     virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&);

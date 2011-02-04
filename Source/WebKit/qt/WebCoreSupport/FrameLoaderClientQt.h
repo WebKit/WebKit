@@ -158,7 +158,7 @@ public:
     virtual void dispatchDidRemoveBackForwardItem(HistoryItem*) const;
     virtual void dispatchDidChangeBackForwardIndex() const;
     virtual void didDisplayInsecureContent();
-    virtual void didRunInsecureContent(SecurityOrigin*);
+    virtual void didRunInsecureContent(SecurityOrigin*, const KURL&);
 
     virtual ResourceError cancelledError(const ResourceRequest&);
     virtual ResourceError blockedError(const ResourceRequest&);

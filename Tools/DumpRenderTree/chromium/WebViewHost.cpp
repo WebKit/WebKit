@@ -1094,7 +1094,7 @@ void WebViewHost::didDisplayInsecureContent(WebFrame*)
         fputs("didDisplayInsecureContent\n", stdout);
 }
 
-void WebViewHost::didRunInsecureContent(WebFrame*, const WebSecurityOrigin& origin)
+void WebViewHost::didRunInsecureContent(WebFrame*, const WebSecurityOrigin& origin, const WebURL& insecureURL)
 {
     if (m_shell->shouldDumpFrameLoadCallbacks())
         fputs("didRunInsecureContent\n", stdout);

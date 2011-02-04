@@ -911,7 +911,7 @@ void WebFrameLoaderClient::didDisplayInsecureContent()
     webPage->send(Messages::WebPageProxy::DidDisplayInsecureContentForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())));
 }
 
-void WebFrameLoaderClient::didRunInsecureContent(SecurityOrigin*)
+void WebFrameLoaderClient::didRunInsecureContent(SecurityOrigin*, const KURL&)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)

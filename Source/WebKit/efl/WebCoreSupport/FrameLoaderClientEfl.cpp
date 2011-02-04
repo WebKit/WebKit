@@ -515,7 +515,7 @@ void FrameLoaderClientEfl::didDisplayInsecureContent()
     notImplemented();
 }
 
-void FrameLoaderClientEfl::didRunInsecureContent(SecurityOrigin*)
+void FrameLoaderClientEfl::didRunInsecureContent(SecurityOrigin*, const KURL&)
 {
     notImplemented();
 }

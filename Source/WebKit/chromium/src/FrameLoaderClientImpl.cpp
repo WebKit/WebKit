@@ -1153,10 +1153,10 @@ void FrameLoaderClientImpl::didDisplayInsecureContent()
         m_webFrame->client()->didDisplayInsecureContent(m_webFrame);
 }
 
-void FrameLoaderClientImpl::didRunInsecureContent(SecurityOrigin* origin)
+void FrameLoaderClientImpl::didRunInsecureContent(SecurityOrigin* origin, const KURL& insecureURL)
 {
     if (m_webFrame->client())
-        m_webFrame->client()->didRunInsecureContent(m_webFrame, WebSecurityOrigin(origin));
+        m_webFrame->client()->didRunInsecureContent(m_webFrame, WebSecurityOrigin(origin), insecureURL);
 }
 
 ResourceError FrameLoaderClientImpl::blockedError(const ResourceRequest&)

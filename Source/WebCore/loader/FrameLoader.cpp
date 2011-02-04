@@ -1033,7 +1033,7 @@ void FrameLoader::checkIfRunInsecureContent(SecurityOrigin* context, const KURL&
     String message = makeString("The page at ", m_frame->document()->url().string(), " ran insecure content from ", url.string(), ".\n");
     m_frame->domWindow()->console()->addMessage(HTMLMessageSource, LogMessageType, WarningMessageLevel, message, 1, String());
 
-    m_client->didRunInsecureContent(context);
+    m_client->didRunInsecureContent(context, url);
 }
 
 Frame* FrameLoader::opener()

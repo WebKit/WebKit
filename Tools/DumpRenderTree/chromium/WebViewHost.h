@@ -202,7 +202,7 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void didFinishResourceLoad(WebKit::WebFrame*, unsigned identifier);
     virtual void didFailResourceLoad(WebKit::WebFrame*, unsigned identifier, const WebKit::WebURLError&);
     virtual void didDisplayInsecureContent(WebKit::WebFrame*);
-    virtual void didRunInsecureContent(WebKit::WebFrame*, const WebKit::WebSecurityOrigin&);
+    virtual void didRunInsecureContent(WebKit::WebFrame*, const WebKit::WebSecurityOrigin&, const WebKit::WebURL&);
     virtual bool allowScript(WebKit::WebFrame*, bool enabledPerSettings);
     virtual void openFileSystem(WebKit::WebFrame*, WebKit::WebFileSystem::Type, long long size, bool create, WebKit::WebFileSystemCallbacks*);
 

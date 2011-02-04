@@ -167,7 +167,7 @@ namespace WebCore {
         virtual bool canCachePage() const;
         
         virtual void didDisplayInsecureContent();
-        virtual void didRunInsecureContent(SecurityOrigin*);
+        virtual void didRunInsecureContent(SecurityOrigin*, const KURL&);
 
         virtual void setMainDocumentError(DocumentLoader*, const ResourceError&);
         virtual void committedLoad(DocumentLoader*, const char*, int);

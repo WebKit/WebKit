@@ -265,7 +265,7 @@ void FrameLoaderClientWinCE::didDisplayInsecureContent()
     notImplemented();
 }
 
-void FrameLoaderClientWinCE::didRunInsecureContent(SecurityOrigin*)
+void FrameLoaderClientWinCE::didRunInsecureContent(SecurityOrigin*, const KURL&)
 {
     notImplemented();
 }
