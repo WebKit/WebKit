@@ -532,82 +532,73 @@ void ShadowBlur::drawRectShadowWithTiling(GraphicsContext* graphicsContext, cons
 
     FloatRect shadowBounds = shadowedRect;
     shadowBounds.move(m_offset.width(), m_offset.height());
+    shadowBounds.inflate(roundedRadius);
+
+    int leftOffset = twiceRadius + max(radii.topLeft().width(), radii.bottomLeft().width()); 
+    int rightOffset = twiceRadius + max(radii.topRight().width(), radii.bottomRight().width()); 
+
+    int topOffset = twiceRadius + max(radii.topLeft().height(), radii.topRight().height());
+    int bottomOffset = twiceRadius + max(radii.bottomLeft().height(), radii.bottomRight().height());
+
+    int centerWidth = shadowBounds.width() - leftOffset - rightOffset;
+    int centerHeight = shadowBounds.height() - topOffset - bottomOffset;
 
     // Fill the internal part of the shadow.
-    FloatRect shadowInterior = shadowBounds;
-    shadowInterior.inflate(-roundedRadius);
+    FloatRect shadowInterior(shadowBounds.x() + leftOffset, shadowBounds.y() + topOffset, centerWidth, centerHeight);
     if (!shadowInterior.isEmpty()) {
         graphicsContext->save();
         
-        path.clear();
-        path.addRoundedRect(shadowInterior, radii.topLeft(), radii.topRight(), radii.bottomLeft(), radii.bottomRight());
-
         graphicsContext->setFillColor(m_color, m_colorSpace);
-        graphicsContext->fillPath(path);
+        graphicsContext->fillRect(shadowInterior);
         
         graphicsContext->restore();
     }
 
-    shadowBounds.inflate(roundedRadius);
-
     // Note that drawing the ImageBuffer is faster than creating a Image and drawing that,
     // because ImageBuffer::draw() knows that it doesn't have to copy the image bits.
-        
-    // Draw top side.
-    FloatRect tileRect = FloatRect(twiceRadius + radii.topLeft().width(), 0, templateSideLength, twiceRadius);
-    FloatRect destRect = tileRect;
-    destRect.move(shadowBounds.x(), shadowBounds.y());
-    destRect.setWidth(shadowBounds.width() - radii.topLeft().width() - radii.topRight().width() - roundedRadius * 4);
+    
+    // Top side.
+    FloatRect tileRect = FloatRect(leftOffset, 0, templateSideLength, topOffset);
+    FloatRect destRect = FloatRect(shadowBounds.x() + leftOffset, shadowBounds.y(), centerWidth, topOffset);
     graphicsContext->drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
 
     // Draw the bottom side.
-    tileRect = FloatRect(twiceRadius + radii.bottomLeft().width(), shadowTemplateSize.height() - twiceRadius, templateSideLength, twiceRadius);
-    destRect = tileRect;
-    destRect.move(shadowBounds.x(), shadowBounds.y() + twiceRadius + shadowedRect.height() - shadowTemplateSize.height());
-    destRect.setWidth(shadowBounds.width() - radii.bottomLeft().width() - radii.bottomRight().width() - roundedRadius * 4);
+    tileRect.setY(shadowTemplateSize.height() - bottomOffset);
+    tileRect.setHeight(bottomOffset);
+    destRect.setY(shadowBounds.maxY() - bottomOffset);
+    destRect.setHeight(bottomOffset);
     graphicsContext->drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
 
-    // Draw the right side.
-    tileRect = FloatRect(shadowTemplateSize.width() - twiceRadius, twiceRadius + radii.topRight().height(), twiceRadius, templateSideLength);
-    destRect = tileRect;
-    destRect.move(shadowBounds.x() + twiceRadius + shadowedRect.width() - shadowTemplateSize.width(), shadowBounds.y());
-    destRect.setHeight(shadowBounds.height() - radii.topRight().height() - radii.bottomRight().height() - roundedRadius * 4);
+    // Left side.
+    tileRect = FloatRect(0, topOffset, leftOffset, templateSideLength);
+    destRect = FloatRect(shadowBounds.x(), shadowBounds.y() + topOffset, leftOffset, centerHeight);
     graphicsContext->drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
 
-    // Draw the left side.
-    tileRect = FloatRect(0, twiceRadius + radii.topLeft().height(), twiceRadius, templateSideLength);
-    destRect = tileRect;
-    destRect.move(shadowBounds.x(), shadowBounds.y());
-    destRect.setHeight(shadowBounds.height() - radii.topLeft().height() - radii.bottomLeft().height() - roundedRadius * 4);
+    // Right side.
+    tileRect.setX(shadowTemplateSize.width() - rightOffset);
+    tileRect.setWidth(rightOffset);
+    destRect.setX(shadowBounds.maxX() - rightOffset);
+    destRect.setWidth(rightOffset);
     graphicsContext->drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
 
-    // Draw the top left corner.
-    tileRect = FloatRect(0, 0, twiceRadius + radii.topLeft().width(), twiceRadius + radii.topLeft().height());
-    destRect = tileRect;
-    destRect.move(shadowBounds.x(), shadowBounds.y());
+    // Top left corner.
+    tileRect = FloatRect(0, 0, leftOffset, topOffset);
+    destRect = FloatRect(shadowBounds.x(), shadowBounds.y(), leftOffset, topOffset);
     graphicsContext->drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
 
-    // Draw the top right corner.
-    tileRect = FloatRect(shadowTemplateSize.width() - twiceRadius - radii.topRight().width(), 0, twiceRadius + radii.topRight().width(),
-                         twiceRadius + radii.topRight().height());
-    destRect = tileRect;
-    destRect.move(shadowBounds.x() + shadowedRect.width() - shadowTemplateSize.width() + twiceRadius, shadowBounds.y());
+    // Top right corner.
+    tileRect = FloatRect(shadowTemplateSize.width() - rightOffset, 0, rightOffset, topOffset);
+    destRect = FloatRect(shadowBounds.maxX() - rightOffset, shadowBounds.y(), rightOffset, topOffset);
     graphicsContext->drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
 
-    // Draw the bottom right corner.
-    tileRect = FloatRect(shadowTemplateSize.width() - twiceRadius - radii.bottomRight().width(),
-                         shadowTemplateSize.height() - twiceRadius - radii.bottomRight().height(),
-                         twiceRadius + radii.bottomRight().width(), twiceRadius + radii.bottomRight().height());
-    destRect = tileRect;
-    destRect.move(shadowBounds.x() + shadowedRect.width() - shadowTemplateSize.width() + twiceRadius,
-                  shadowBounds.y() + shadowedRect.height() - shadowTemplateSize.height() + twiceRadius);
+    // Bottom right corner.
+    tileRect = FloatRect(shadowTemplateSize.width() - rightOffset, shadowTemplateSize.height() - bottomOffset, rightOffset, bottomOffset);
+    destRect = FloatRect(shadowBounds.maxX() - rightOffset, shadowBounds.maxY() - bottomOffset, rightOffset, bottomOffset);
     graphicsContext->drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
 
-    // Draw the bottom left corner.
-    tileRect = FloatRect(0, shadowTemplateSize.height() - twiceRadius - radii.bottomLeft().height(),
-                         twiceRadius + radii.bottomLeft().width(), twiceRadius + radii.bottomLeft().height());
-    destRect = tileRect;
-    destRect.move(shadowBounds.x(), shadowBounds.y() + shadowedRect.height() - shadowTemplateSize.height() + twiceRadius);
+    // Bottom left corner.
+    tileRect = FloatRect(0, shadowTemplateSize.height() - bottomOffset, leftOffset, bottomOffset);
+    destRect = FloatRect(shadowBounds.x(), shadowBounds.maxY() - bottomOffset, leftOffset, bottomOffset);
     graphicsContext->drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
 
     m_layerImage = 0;

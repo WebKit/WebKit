@@ -1,3 +1,18 @@
+2011-02-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION: Artifacts on box-shadow corners in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=53731
+        
+        Test with translucent shadow on a box with various corner radii, to exercise the
+        shadow tiling code.
+
+        * fast/box-shadow/shadow-tiling-artifact.html: Added.
+        * platform/mac/fast/box-shadow/shadow-tiling-artifact-expected.checksum: Added.
+        * platform/mac/fast/box-shadow/shadow-tiling-artifact-expected.png: Added.
+        * platform/mac/fast/box-shadow/shadow-tiling-artifact-expected.txt: Added.
+
 2011-02-03  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Daniel Bates.

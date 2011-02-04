@@ -1,3 +1,21 @@
+2011-02-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION: Artifacts on box-shadow corners in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=53731
+
+        Fix overdrawing artifacts in ShadowBlur's tiling code path,
+        which show up in shadows using a color with alpha.
+        
+        Test: fast/box-shadow/shadow-tiling-artifact.html
+
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ShadowBlur::drawRectShadowWithTiling): Ensure
+        that the inner rect that gets filled does not overlap with any
+        of the eight tiled areas by having the corner and side dimensions
+        be the same for contiguous areas.
+
 2011-02-03  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
