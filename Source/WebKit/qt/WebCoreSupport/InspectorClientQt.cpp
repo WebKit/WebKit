@@ -55,9 +55,6 @@ namespace WebCore {
 static const QLatin1String settingStoragePrefix("Qt/QtWebKit/QWebInspector/");
 static const QLatin1String settingStorageTypeSuffix(".type");
 
-static String variantToSetting(const QVariant& qvariant);
-static QVariant settingToVariant(const String& value);
-
 class InspectorClientWebPage : public QWebPage {
     Q_OBJECT
     friend class InspectorClientQt;
@@ -96,6 +93,85 @@ public slots:
 #endif
     }
 };
+
+namespace {
+
+#if ENABLE(INSPECTOR)
+class InspectorFrontendSettingsQt : public InspectorFrontendClientLocal::Settings {
+public:
+    virtual ~InspectorFrontendSettingsQt() { }
+    virtual String getProperty(const String& name)
+    {
+#ifdef QT_NO_SETTINGS
+        Q_UNUSED(name)
+        Q_UNUSED(value)
+        qWarning("QWebInspector: QSettings is not supported by Qt.");
+        return String();
+#else
+        QSettings qsettings;
+        if (qsettings.status() == QSettings::AccessError) {
+            // QCoreApplication::setOrganizationName and QCoreApplication::setApplicationName haven't been called
+            qWarning("QWebInspector: QSettings couldn't read configuration setting [%s].",
+                     qPrintable(static_cast<QString>(name)));
+            return String();
+        }
+
+        QString settingKey(settingStoragePrefix + QString(name));
+        QString storedValueType = qsettings.value(settingKey + settingStorageTypeSuffix).toString();
+        QVariant storedValue = qsettings.value(settingKey);
+        storedValue.convert(QVariant::nameToType(storedValueType.toAscii().data()));
+        return variantToSetting(storedValue);
+#endif // QT_NO_SETTINGS
+    }
+
+    virtual void setProperty(const String& name, const String& value)
+    {
+#ifdef QT_NO_SETTINGS
+        Q_UNUSED(name)
+        Q_UNUSED(value)
+        qWarning("QWebInspector: QSettings is not supported by Qt.");
+#else
+        QSettings qsettings;
+        if (qsettings.status() == QSettings::AccessError) {
+            qWarning("QWebInspector: QSettings couldn't persist configuration setting [%s].",
+                     qPrintable(static_cast<QString>(name)));
+            return;
+        }
+
+        QVariant valueToStore = settingToVariant(value);
+        QString settingKey(settingStoragePrefix + QString(name));
+        qsettings.setValue(settingKey, valueToStore);
+        qsettings.setValue(settingKey + settingStorageTypeSuffix, QVariant::typeToName(valueToStore.type()));
+#endif // QT_NO_SETTINGS
+    }
+
+private:
+    static String variantToSetting(const QVariant& qvariant)
+    {
+        String retVal;
+
+        switch (qvariant.type()) {
+        case QVariant::Bool:
+            retVal = qvariant.toBool() ? "true" : "false";
+        case QVariant::String:
+            retVal = qvariant.toString();
+        default:
+            break;
+        }
+
+        return retVal;
+    }
+
+    static QVariant settingToVariant(const String& setting)
+    {
+        QVariant retVal;
+        retVal.setValue(static_cast<QString>(setting));
+        return retVal;
+    }
+};
+#endif // ENABLE(INSPECTOR)
+
+}
 
 #if USE(V8)
 static void ensureDebuggerScriptLoaded()
@@ -213,50 +289,6 @@ void InspectorClientQt::hideHighlight()
     notImplemented();
 }
 
-void InspectorClientQt::populateSetting(const String& key, String* setting)
-{
-#ifdef QT_NO_SETTINGS
-    Q_UNUSED(key)
-    Q_UNUSED(setting)
-    qWarning("QWebInspector: QSettings is not supported by Qt.");
-#else
-    QSettings qsettings;
-    if (qsettings.status() == QSettings::AccessError) {
-        // QCoreApplication::setOrganizationName and QCoreApplication::setApplicationName haven't been called
-        qWarning("QWebInspector: QSettings couldn't read configuration setting [%s].",
-                 qPrintable(static_cast<QString>(key)));
-        return;
-    }
-
-    QString settingKey(settingStoragePrefix + QString(key));
-    QString storedValueType = qsettings.value(settingKey + settingStorageTypeSuffix).toString();
-    QVariant storedValue = qsettings.value(settingKey);
-    storedValue.convert(QVariant::nameToType(storedValueType.toAscii().data()));
-    *setting = variantToSetting(storedValue);
-#endif // QT_NO_SETTINGS
-}
-
-void InspectorClientQt::storeSetting(const String& key, const String& setting)
-{
-#ifdef QT_NO_SETTINGS
-    Q_UNUSED(key)
-    Q_UNUSED(setting)
-    qWarning("QWebInspector: QSettings is not supported by Qt.");
-#else
-    QSettings qsettings;
-    if (qsettings.status() == QSettings::AccessError) {
-        qWarning("QWebInspector: QSettings couldn't persist configuration setting [%s].",
-                 qPrintable(static_cast<QString>(key)));
-        return;
-    }
-
-    QVariant valueToStore = settingToVariant(setting);
-    QString settingKey(settingStoragePrefix + QString(key));
-    qsettings.setValue(settingKey, valueToStore);
-    qsettings.setValue(settingKey + settingStorageTypeSuffix, QVariant::typeToName(valueToStore.type()));
-#endif // QT_NO_SETTINGS
-}
-
 bool InspectorClientQt::sendMessageToFrontend(const String& message)
 {
 #if ENABLE(INSPECTOR)
@@ -276,32 +308,9 @@ bool InspectorClientQt::sendMessageToFrontend(const String& message)
 #endif
 }
 
-static String variantToSetting(const QVariant& qvariant)
-{
-    String retVal;
-
-    switch (qvariant.type()) {
-    case QVariant::Bool:
-        retVal = qvariant.toBool() ? "true" : "false";
-    case QVariant::String:
-        retVal = qvariant.toString();
-    default:
-        break;
-    }
-
-    return retVal;
-}
-
-static QVariant settingToVariant(const String& setting)
-{
-    QVariant retVal;
-    retVal.setValue(static_cast<QString>(setting));
-    return retVal;
-}
-
 #if ENABLE(INSPECTOR)
 InspectorFrontendClientQt::InspectorFrontendClientQt(QWebPage* inspectedWebPage, PassOwnPtr<QWebView> inspectorView, InspectorClientQt* inspectorClient)
-    : InspectorFrontendClientLocal(inspectedWebPage->d->page->inspectorController(), inspectorView->page()->d->page) 
+    : InspectorFrontendClientLocal(inspectedWebPage->d->page->inspectorController(), inspectorView->page()->d->page, new InspectorFrontendSettingsQt())
     , m_inspectedWebPage(inspectedWebPage)
     , m_inspectorView(inspectorView)
     , m_destroyingInspectorView(false)

@@ -81,18 +81,6 @@ void InspectorClientImpl::hideHighlight()
         agent->hideHighlight();
 }
 
-void InspectorClientImpl::populateSetting(const String& key, String* value)
-{
-    if (WebDevToolsAgentImpl* agent = devToolsAgent())
-        agent->populateSetting(key, value);
-}
-
-void InspectorClientImpl::storeSetting(const String& key, const String& value)
-{
-    if (WebDevToolsAgentImpl* agent = devToolsAgent())
-        agent->storeSetting(key, value);
-}
-
 bool InspectorClientImpl::sendMessageToFrontend(const WTF::String& message)
 {
     if (WebDevToolsAgentImpl* agent = devToolsAgent())

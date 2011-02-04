@@ -462,7 +462,7 @@ sub generateArgumentGetters
     my $return  = $typeTransform{$type}{"return"} ? $typeTransform{$type}{"return"} : $typeTransform{$type}{"param"};
 
     my $typeString = camelCase($type);
-    push(@backendConstantDeclarations, "$return get$typeString(InspectorObject* object, const String& name, InspectorArray* protocolErrors);");
+    push(@backendConstantDeclarations, "    $return get$typeString(InspectorObject* object, const String& name, InspectorArray* protocolErrors);");
     my $getterBody = << "EOF";
 
 $return InspectorBackendDispatcher::get$typeString(InspectorObject* object, const String& name, InspectorArray* protocolErrors)

@@ -38,7 +38,6 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "InspectorBackendDispatcher.h"
-#include "InspectorClient.h"
 #include "InspectorController.h"
 #include "InspectorFrontendHost.h"
 #include "Page.h"
@@ -53,10 +52,20 @@ static const unsigned defaultAttachedHeight = 300;
 static const float minimumAttachedHeight = 250.0f;
 static const float maximumAttachedHeightRatio = 0.75f;
 
-InspectorFrontendClientLocal::InspectorFrontendClientLocal(InspectorController* inspectorController, Page* frontendPage)
+String InspectorFrontendClientLocal::Settings::getProperty(const String&)
+{
+    return String();
+}
+
+void InspectorFrontendClientLocal::Settings::setProperty(const String&, const String&)
+{
+}
+
+InspectorFrontendClientLocal::InspectorFrontendClientLocal(InspectorController* inspectorController, Page* frontendPage, PassOwnPtr<Settings> settings)
     : m_inspectorController(inspectorController)
     , m_frontendPage(frontendPage)
     , m_frontendScriptState(0)
+    , m_settings(settings)
 {
 }
 
@@ -109,7 +118,7 @@ void InspectorFrontendClientLocal::changeAttachedWindowHeight(unsigned height)
 {
     unsigned totalHeight = m_frontendPage->mainFrame()->view()->visibleHeight() + m_inspectorController->inspectedPage()->mainFrame()->view()->visibleHeight();
     unsigned attachedHeight = constrainedAttachedWindowHeight(height, totalHeight);
-    m_inspectorController->inspectorClient()->storeSetting(inspectorAttachedHeightSetting, String::number(attachedHeight));
+    m_settings->setProperty(inspectorAttachedHeightSetting, String::number(attachedHeight));
     setAttachedWindowHeight(attachedHeight);
 }
 
@@ -135,8 +144,7 @@ void InspectorFrontendClientLocal::setAttachedWindow(bool attached)
 void InspectorFrontendClientLocal::restoreAttachedWindowHeight()
 {
     unsigned inspectedPageHeight = m_inspectorController->inspectedPage()->mainFrame()->view()->visibleHeight();
-    String value;
-    m_inspectorController->inspectorClient()->populateSetting(inspectorAttachedHeightSetting, &value);
+    String value = m_settings->getProperty(inspectorAttachedHeightSetting);
     unsigned preferredHeight = value.isEmpty() ? defaultAttachedHeight : value.toUInt();
     
     // This call might not go through (if the window starts out detached), but if the window is initially created attached,

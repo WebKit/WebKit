@@ -332,18 +332,6 @@ void WebDevToolsAgentImpl::hideHighlight()
         m_webViewImpl->client()->didInvalidateRect(damagedRect);
 }
 
-void WebDevToolsAgentImpl::populateSetting(const String& key, String* value)
-{
-    WebString string;
-    m_webViewImpl->inspectorSetting(key, &string);
-    *value = string;
-}
-
-void WebDevToolsAgentImpl::storeSetting(const String& key, const String& value)
-{
-    m_webViewImpl->setInspectorSetting(key, value);
-}
-
 bool WebDevToolsAgentImpl::sendMessageToFrontend(const String& message)
 {
     WebDevToolsAgentImpl* devToolsAgent = static_cast<WebDevToolsAgentImpl*>(m_webViewImpl->devToolsAgent());

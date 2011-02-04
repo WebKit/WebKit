@@ -102,7 +102,7 @@ void WebInspectorClient::openInspectorFrontend(InspectorController* inspectorCon
     [windowController.get() setInspectorClient:this];
 
     m_frontendPage = core([windowController.get() webView]);
-    WebInspectorFrontendClient* frontendClient = new WebInspectorFrontendClient(m_webView, windowController.get(), inspectorController, m_frontendPage);
+    WebInspectorFrontendClient* frontendClient = new WebInspectorFrontendClient(m_webView, windowController.get(), inspectorController, m_frontendPage, createFrontendSettings());
     m_frontendPage->inspectorController()->setInspectorFrontendClient(frontendClient);
 
     [[m_webView inspector] setFrontend:[[WebInspectorFrontend alloc] initWithFrontendClient:frontendClient]];
@@ -118,8 +118,8 @@ void WebInspectorClient::hideHighlight()
     [m_highlighter.get() hideHighlight];
 }
 
-WebInspectorFrontendClient::WebInspectorFrontendClient(WebView* inspectedWebView, WebInspectorWindowController* windowController, InspectorController* inspectorController, Page* frontendPage)
-    : InspectorFrontendClientLocal(inspectorController,  frontendPage)
+WebInspectorFrontendClient::WebInspectorFrontendClient(WebView* inspectedWebView, WebInspectorWindowController* windowController, InspectorController* inspectorController, Page* frontendPage, WTF::PassOwnPtr<Settings> settings)
+    : InspectorFrontendClientLocal(inspectorController,  frontendPage, settings)
     , m_inspectedWebView(inspectedWebView)
     , m_windowController(windowController)
 {

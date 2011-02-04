@@ -93,8 +93,6 @@ public:
     virtual void openInspectorFrontend(WebCore::InspectorController*);
     virtual void highlight(WebCore::Node*);
     virtual void hideHighlight();
-    virtual void populateSetting(const WTF::String& key, WTF::String* value);
-    virtual void storeSetting(const WTF::String& key, const WTF::String& value);
     virtual void updateInspectorStateCookie(const WTF::String&);
     virtual bool sendMessageToFrontend(const WTF::String&);
 

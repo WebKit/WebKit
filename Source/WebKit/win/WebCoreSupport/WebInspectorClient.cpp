@@ -173,7 +173,7 @@ void WebInspectorClient::openInspectorFrontend(InspectorController* inspectorCon
         return;
 
     m_frontendPage = core(frontendWebView.get());
-    WebInspectorFrontendClient* frontendClient = new WebInspectorFrontendClient(m_inspectedWebView, m_inspectedWebViewHwnd, frontendHwnd, frontendWebView, frontendWebViewHwnd, this);
+    WebInspectorFrontendClient* frontendClient = new WebInspectorFrontendClient(m_inspectedWebView, m_inspectedWebViewHwnd, frontendHwnd, frontendWebView, frontendWebViewHwnd, this, createFrontendSettings());
     m_frontendPage->inspectorController()->setInspectorFrontendClient(frontendClient);
     m_frontendHwnd = frontendHwnd;
 }
@@ -206,8 +206,8 @@ void WebInspectorClient::updateHighlight()
         m_highlight->update();
 }
 
-WebInspectorFrontendClient::WebInspectorFrontendClient(WebView* inspectedWebView, HWND inspectedWebViewHwnd, HWND frontendHwnd, const COMPtr<WebView>& frontendWebView, HWND frontendWebViewHwnd, WebInspectorClient* inspectorClient)
-    : InspectorFrontendClientLocal(inspectedWebView->page()->inspectorController(),  core(frontendWebView.get()))
+WebInspectorFrontendClient::WebInspectorFrontendClient(WebView* inspectedWebView, HWND inspectedWebViewHwnd, HWND frontendHwnd, const COMPtr<WebView>& frontendWebView, HWND frontendWebViewHwnd, WebInspectorClient* inspectorClient, PassOwnPtr<Settings> settings)
+    : InspectorFrontendClientLocal(inspectedWebView->page()->inspectorController(),  core(frontendWebView.get()), settings)
     , m_inspectedWebView(inspectedWebView)
     , m_inspectedWebViewHwnd(inspectedWebViewHwnd)
     , m_inspectorClient(inspectorClient)

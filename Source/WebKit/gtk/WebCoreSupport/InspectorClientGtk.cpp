@@ -40,6 +40,64 @@ static void notifyWebViewDestroyed(WebKitWebView* webView, InspectorFrontendClie
     inspectorFrontendClient->destroyInspectorWindow(true);
 }
 
+namespace {
+
+class InspectorFrontendSettingsGtk : public InspectorFrontendClientLocal::Settings {
+private:
+    virtual ~InspectorFrontendSettingsGtk() { }
+#ifdef HAVE_GSETTINGS
+    static bool shouldIgnoreSetting(const String& key)
+    {
+        // GSettings considers trying to fetch or set a setting that is
+        // not backed by a schema as programmer error, and aborts the
+        // program's execution. We check here to avoid having an unhandled
+        // setting as a fatal error.
+        LOG_VERBOSE(NotYetImplemented, "Unknown key ignored: %s", key.ascii().data());
+        return true;
+    }
+
+    virtual String getProperty(const String& name)
+    {
+        if (shouldIgnoreSetting(name))
+            return String();
+
+        GSettings* settings = inspectorGSettings();
+        if (!settings)
+            return String();
+
+        GRefPtr<GVariant> variant = adoptGRef(g_settings_get_value(settings, name.utf8().data()));
+        return String(g_variant_get_string(variant.get(), 0));
+    }
+
+    virtual void setProperty(const String& name, const String& value)
+    {
+        // Avoid setting unknown keys to avoid aborting the execution.
+        if (shouldIgnoreSetting(name))
+            return;
+
+        GSettings* settings = inspectorGSettings();
+        if (!settings)
+            return;
+
+        GRefPtr<GVariant> variant = adoptGRef(g_variant_new_string(value.utf8().data()));
+        g_settings_set_value(settings, name.utf8().data(), variant.get());
+    }
+#else
+    virtual String getProperty(const String&)
+    {
+        notImplemented();
+        return String();
+    }
+
+    virtual void setProperty(const String&, const String&)
+    {
+        notImplemented();
+    }
+#endif // HAVE_GSETTINGS
+};
+
+} // namespace
+
 InspectorClient::InspectorClient(WebKitWebView* webView)
     : m_inspectedWebView(webView)
     , m_frontendPage(0)
@@ -113,117 +171,6 @@ void InspectorClient::hideHighlight()
     gtk_widget_queue_draw(GTK_WIDGET(m_inspectedWebView));
 }
 
-#ifdef HAVE_GSETTINGS
-static String toGSettingName(String inspectorSettingName)
-{
-    if (inspectorSettingName == "resourceTrackingEnabled")
-        return String("resource-tracking-enabled");
-
-    if (inspectorSettingName == "xhrMonitor")
-        return String("xhr-monitor-enabled");
-
-    if (inspectorSettingName == "frontendSettings")
-        return String("frontend-settings");
-
-    if (inspectorSettingName == "debuggerEnabled")
-        return String("debugger-enabled");
-
-    if (inspectorSettingName == "profilerEnabled")
-        return String("profiler-enabled");
-
-    return inspectorSettingName;
-}
-
-static String truthStringFromVariant(GVariant* variant)
-{
-    if (g_variant_get_boolean(variant))
-        return String("true");
-
-    return String("false");
-}
-
-static GVariant* variantFromTruthString(const String& truth)
-{
-    if (truth == "true")
-        return g_variant_new_boolean(TRUE);
-
-    return g_variant_new_boolean(FALSE);
-}
-
-static bool shouldIgnoreSetting(const String& key)
-{
-    // Ignore this setting for now, it doesn't seem to be used for
-    // anything right now.
-    if (key == "lastActivePanel")
-        return true;
-
-    // GSettings considers trying to fetch or set a setting that is
-    // not backed by a schema as programmer error, and aborts the
-    // program's execution. We check here to avoid having an unhandled
-    // setting as a fatal error.
-    if (key == "resourceTrackingEnabled" || key == "xhrMonitor"
-        || key == "frontendSettings" || key == "debuggerEnabled"
-        || key == "profilerEnabled")
-        return false;
-
-    LOG_VERBOSE(NotYetImplemented, "Unknown key ignored: %s", key.ascii().data());
-    return true;
-}
-
-void InspectorClient::populateSetting(const String& key, String* value)
-{
-    if (shouldIgnoreSetting(key))
-        return;
-
-    GSettings* settings = inspectorGSettings();
-    if (!settings)
-        return;
-
-    GRefPtr<GVariant> variant = adoptGRef(g_settings_get_value(settings, toGSettingName(key).utf8().data()));
-
-    if (key == "resourceTrackingEnabled" || key == "xhrMonitor"
-        || key == "debuggerEnabled" || key == "profilerEnabled")
-        *value = truthStringFromVariant(variant.get());
-    else if (key == "frontendSettings")
-        *value = String(g_variant_get_string(variant.get(), 0));
-}
-
-void InspectorClient::storeSetting(const String& key, const String& value)
-{
-    if (shouldIgnoreSetting(key))
-        return;
-
-    GSettings* settings = inspectorGSettings();
-    if (!settings)
-        return;
-
-    GRefPtr<GVariant> variant(0);
-
-    // Set the key with the appropriate type, and also avoid setting
-    // unknown keys to avoid aborting the execution.
-    if (key == "resourceTrackingEnabled" || key == "xhrMonitor"
-        || key == "debuggerEnabled" || key == "profilerEnabled")
-        variant = adoptGRef(variantFromTruthString(value));
-    else if (key == "frontendSettings")
-        variant = adoptGRef(g_variant_new_string(value.utf8().data()));
-
-    if (!variant)
-        return;
-
-    g_settings_set_value(settings, toGSettingName(key).utf8().data(), variant.get());
-}
-#else
-void InspectorClient::populateSetting(const String&, String*)
-{
-    notImplemented();
-}
-
-void InspectorClient::storeSetting(const String&, const String&)
-{
-    notImplemented();
-}
-#endif // HAVE_GSETTINGS
-
 bool InspectorClient::sendMessageToFrontend(const String& message)
 {
     return doDispatchMessageOnFrontendPage(m_frontendPage, message);
@@ -244,7 +191,7 @@ const char* InspectorClient::inspectorFilesPath()
 }
 
 InspectorFrontendClient::InspectorFrontendClient(WebKitWebView* inspectedWebView, WebKitWebView* inspectorWebView, WebKitWebInspector* webInspector, Page* inspectorPage, InspectorClient* inspectorClient)
-    : InspectorFrontendClientLocal(core(inspectedWebView)->inspectorController(), inspectorPage)
+    : InspectorFrontendClientLocal(core(inspectedWebView)->inspectorController(), inspectorPage, new InspectorFrontendSettingsGtk())
     , m_inspectorWebView(inspectorWebView)
     , m_inspectedWebView(inspectedWebView)
     , m_webInspector(webInspector)

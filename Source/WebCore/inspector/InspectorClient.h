@@ -45,9 +45,6 @@ public:
     virtual void highlight(Node*) = 0;
     virtual void hideHighlight() = 0;
 
-    virtual void populateSetting(const String& key, String* value) = 0;
-    virtual void storeSetting(const String& key, const String& value) = 0;
-
     virtual bool sendMessageToFrontend(const String& message) = 0;
 
     // Navigation can cause some WebKit implementations to change the view / page / inspector controller instance.

@@ -57,9 +57,11 @@
 #include <CoreFoundation/CoreFoundation.h>
 
 #include <WebCore/Frame.h>
+#include <WebCore/InspectorFrontendClientLocal.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformString.h>
 
+#include <wtf/PassOwnPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
@@ -73,7 +75,7 @@ static inline CFStringRef createKeyForPreferences(const String& key)
     return CFStringCreateWithFormat(0, 0, CFSTR("WebKit Web Inspector Setting - %@"), keyCFString.get());
 }
 
-void WebInspectorClient::populateSetting(const String& key, String* setting)
+static void populateSetting(const String& key, String* setting)
 {
     RetainPtr<CFStringRef> preferencesKey(AdoptCF, createKeyForPreferences(key));
     RetainPtr<CFPropertyListRef> value(AdoptCF, CFPreferencesCopyAppValue(preferencesKey.get(), kCFPreferencesCurrentApplication));
@@ -90,7 +92,7 @@ void WebInspectorClient::populateSetting(const String& key, String* setting)
         *setting = "";
 }
 
-void WebInspectorClient::storeSetting(const String& key, const String& setting)
+static void storeSetting(const String& key, const String& setting)
 {
     RetainPtr<CFPropertyListRef> objectToStore;
     objectToStore.adoptCF(setting.createCFString());
@@ -122,4 +124,24 @@ void WebInspectorClient::setInspectorStartsAttached(bool attached)
 void WebInspectorClient::releaseFrontendPage()
 {
     m_frontendPage = 0;
+}
+
+WTF::PassOwnPtr<WebCore::InspectorFrontendClientLocal::Settings> WebInspectorClient::createFrontendSettings()
+{
+    class InspectorFrontendSettingsCF : public WebCore::InspectorFrontendClientLocal::Settings {
+    public:
+        virtual ~InspectorFrontendSettingsCF() { }
+        virtual String getProperty(const String& name)
+        {
+            String value;
+            populateSetting(name, &value);
+            return value;
+        }
+
+        virtual void setProperty(const String& name, const String& value)
+        {
+            storeSetting(name, value);
+        }
+    };
+    return adoptPtr<WebCore::InspectorFrontendClientLocal::Settings>(new InspectorFrontendSettingsCF());
 }

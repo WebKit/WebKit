@@ -33,6 +33,7 @@
 
 #include "InspectorFrontendClient.h"
 #include "ScriptState.h"
+#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -44,7 +45,15 @@ class Page;
 class InspectorFrontendClientLocal : public InspectorFrontendClient {
     WTF_MAKE_NONCOPYABLE(InspectorFrontendClientLocal); WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorFrontendClientLocal(InspectorController*, Page*);
+    class Settings {
+    public:
+        Settings() { }
+        virtual ~Settings() { }
+        virtual String getProperty(const String& name);
+        virtual void setProperty(const String& name, const String& value);
+    };
+
+    InspectorFrontendClientLocal(InspectorController*, Page*, PassOwnPtr<Settings>);
     virtual ~InspectorFrontendClientLocal();
     
     virtual void windowObjectCleared();
@@ -76,6 +85,7 @@ private:
     ScriptState* m_frontendScriptState;
     // TODO(yurys): this ref shouldn't be needed.
     RefPtr<InspectorFrontendHost> m_frontendHost;
+    OwnPtr<InspectorFrontendClientLocal::Settings> m_settings;
 };
 
 } // namespace WebCore

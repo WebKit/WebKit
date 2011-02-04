@@ -53,9 +53,6 @@ public:
     virtual void highlight(WebCore::Node*);
     virtual void hideHighlight();
 
-    virtual void populateSetting(const WTF::String& key, WTF::String* value);
-    virtual void storeSetting(const WTF::String& key, const WTF::String& value);
-
     virtual bool sendMessageToFrontend(const WTF::String&);
 
     virtual void updateInspectorStateCookie(const WTF::String&);
