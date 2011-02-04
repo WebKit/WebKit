@@ -119,6 +119,20 @@ void Download::platformInvalidate()
     m_download = nullptr;
 }
 
+void Download::didDecideDestination(const String& destination, bool allowOverwrite)
+{
+    ASSERT(!destination.isEmpty());
+    if (destination.isEmpty())
+        return;
+
+    m_destination = destination;
+    m_bundlePath = destination + DownloadBundle::fileExtension();
+
+    RetainPtr<CFStringRef> bundlePath(AdoptCF, CFStringCreateWithCharactersNoCopy(0, reinterpret_cast<const UniChar*>(m_bundlePath.characters()), m_bundlePath.length(), kCFAllocatorNull));
+    RetainPtr<CFURLRef> bundlePathURL(AdoptCF, CFURLCreateWithFileSystemPath(0, bundlePath.get(), kCFURLWindowsPathStyle, false));
+    CFURLDownloadSetDestination(m_download.get(), bundlePathURL.get(), allowOverwrite);
+}
+
 // CFURLDownload Callbacks ----------------------------------------------------------------
 static Download* downloadFromClientInfo(const void* clientInfo)
 {
@@ -178,20 +192,6 @@ void didCreateDestinationCallback(CFURLDownloadRef, CFURLRef, const void* client
 
     Download* download = downloadFromClientInfo(clientInfo);
     download->didCreateDestination(download->destination());
-}
-
-void Download::didDecideDestination(const String& destination, bool allowOverwrite)
-{
-    ASSERT(!destination.isEmpty());
-    if (destination.isEmpty())
-        return;
-
-    m_destination = destination;
-    m_bundlePath = destination + DownloadBundle::fileExtension();
-
-    RetainPtr<CFStringRef> bundlePath(AdoptCF, CFStringCreateWithCharactersNoCopy(0, reinterpret_cast<const UniChar*>(m_bundlePath.characters()), m_bundlePath.length(), kCFAllocatorNull));
-    RetainPtr<CFURLRef> bundlePathURL(AdoptCF, CFURLCreateWithFileSystemPath(0, bundlePath.get(), kCFURLWindowsPathStyle, false));
-    CFURLDownloadSetDestination(m_download.get(), bundlePathURL.get(), allowOverwrite);
 }
 
 void didFinishCallback(CFURLDownloadRef, const void* clientInfo)

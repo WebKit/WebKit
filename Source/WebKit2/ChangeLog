@@ -1,3 +1,14 @@
+2011-02-01  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Small clean-up in DownloadCFNet.cpp.
+
+        Rubber-stamped by Mark Rowe.
+
+        * WebProcess/Downloads/cf/DownloadCFNet.cpp:
+        (WebKit::Download::didDecideDestination):
+        Moved out of the section labeled "CFURLDownload callbacks" and up near
+        the other member functions.
+
 2011-02-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
