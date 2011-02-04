@@ -78,9 +78,6 @@ class ChromiumGpuTest(unittest.TestCase):
         else:
             self.assertEqual(port._webkit_baseline_path('chromium-gpu'), paths[1])
 
-        # Test that we have the right expectations file.
-        self.assertTrue('chromium-gpu' in
-                        port.path_to_test_expectations_file())
 
         # Test that we're limiting to the correct directories.
         # These two tests are picked mostly at random, but we make sure they

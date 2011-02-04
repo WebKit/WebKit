@@ -1,3 +1,18 @@
+2011-02-04  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        merge test expectations for chromium, chromium-gpu. From
+        now on, we will track GPU-specific expectations with the
+        "GPU" modifier in the main file, rather than in a separate
+        file (and non-GPU-specific expectations with the "CPU"
+        modifier.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53562
+
+        * platform/chromium-gpu/test_expectations.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-02-04  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler and Dave Hyatt.

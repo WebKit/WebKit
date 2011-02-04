@@ -843,6 +843,7 @@ class TestRunner:
         """Prints the configuration for the test run."""
         p = self._printer
         p.print_config("Using port '%s'" % self._port.name())
+        p.print_config("Test configuration: %s" % self._port.test_configuration())
         p.print_config("Placing test results in %s" %
                        self._options.results_directory)
         if self._options.new_baseline:

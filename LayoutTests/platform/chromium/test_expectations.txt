@@ -251,10 +251,10 @@ BUGCR10395 WONTFIX SKIP : svg/webarchive = FAIL PASS
 BUGCR10395 WONTFIX SKIP : svg/custom/image-with-prefix-in-webarchive.svg = FAIL PASS
 BUGCR10395 WONTFIX SKIP : http/tests/webarchive = FAIL PASS
 
-// Compositing tests are run separately on machines with GPUs; see
-// LayoutTests/platform/chromium-gpu.
-BUGCR15733 WONTFIX SKIP : compositing = FAIL PASS TIMEOUT
-BUGCR15733 WONTFIX SKIP : platform/chromium/compositing = FAIL PASS TIMEOUT
+// Compositing tests will never pass in the non-accelerated GPU code
+// paths.
+BUGCR15733 WONTFIX CPU SKIP : compositing = FAIL PASS TIMEOUT
+BUGCR15733 WONTFIX CPU SKIP : platform/chromium/compositing = FAIL PASS TIMEOUT
 
 // Run the Mac-specific platform tests, but only to check for crashes.
 WONTFIX : platform/gtk = FAIL PASS
@@ -3123,3 +3123,168 @@ BUGWK53740 MAC : fast/forms/textarea-placeholder-visibility-2.html = IMAGE+TEXT
 BUGWK53740 MAC : fast/forms/input-placeholder-visibility-1.html = IMAGE
 BUGWK53740 MAC : fast/forms/input-placeholder-visibility-2.html = IMAGE
 BUGWK53740 MAC : fast/forms/input-placeholder-visibility-3.html = IMAGE
+
+//
+// GPU
+//
+
+// FIXME: remove the FAIL from the following line.
+BUGNONE GPU : compositing = PASS FAIL
+
+// All (?) video-related compositor tests are failing in
+// DumpRenderTree right now.
+BUGWK47231 GPU SKIP : compositing/geometry/clipped-video-controller.html = TIMEOUT
+BUGWK47231 GPU SKIP : compositing/geometry/video-fixed-scrolling.html = TIMEOUT
+BUGWK47231 GPU SKIP : compositing/geometry/video-opacity-overlay.html = TIMEOUT
+BUGWK47231 GPU SKIP : compositing/layers-inside-overflow-scroll.html = TIMEOUT
+BUGWK47231 GPU SKIP : compositing/overflow/overflow-compositing-descendant.html = TIMEOUT
+BUGWK47231 GPU SKIP : compositing/overflow/scroll-ancestor-update.html = TIMEOUT
+BUGWK47231 GPU SKIP : compositing/reflections/load-video-in-reflection.html = TIMEOUT
+BUGWK47231 GPU SKIP : compositing/self-painting-layers.html = TIMEOUT
+BUGWK47231 GPU SKIP : compositing/self-painting-layers2.html = TIMEOUT
+BUGWK47231 GPU SKIP : compositing/video/video-background-color.html = TIMEOUT
+BUGWK47231 GPU SKIP : compositing/video/video-poster.html = TIMEOUT
+
+// The following compositor tests are currently timing out. Need to
+// investigate why.
+BUGWK47923 GPU SKIP : compositing/checkerboard.html = TIMEOUT
+BUGWK47923 GPU SKIP : compositing/color-matching/image-color-matching.html = TIMEOUT
+BUGWK47923 GPU SKIP : compositing/geometry/abs-position-inside-opacity.html = TIMEOUT
+BUGWK47923 GPU SKIP : compositing/iframes/become-overlapped-iframe.html = TIMEOUT
+BUGWK47923 GPU SKIP : compositing/masks/direct-image-mask.html = TIMEOUT
+BUGWK47923 GPU SKIP : compositing/overflow/ancestor-overflow.html = TIMEOUT
+BUGWK47923 GPU SKIP : compositing/repaint/composited-document-element.html = TIMEOUT
+BUGWK47923 GPU SKIP : compositing/shadows/shadow-drawing.html = TIMEOUT
+BUGWK47923 GPU SKIP : compositing/tiling/constrained-layer-size.html = TIMEOUT
+BUGWK47923 GPU SKIP : compositing/z-order/negative-z-index.html = TIMEOUT
+BUGWK47923 GPU SKIP : compositing/geometry/limit-layer-bounds-opacity-transition.html = TIMEOUT
+
+// The following test is flaky; it occasionally times out, but not always.
+BUGWK47924 GPU WIN LINUX : compositing/iframes/composited-iframe-alignment.html = TIMEOUT PASS
+BUGWK47924 GPU MAC : compositing/iframes/composited-iframe-alignment.html = TIMEOUT IMAGE
+
+// Chromium does not support PDF content in <img> tags.
+WONTFIX GPU : compositing/color-matching/pdf-image-match.html = FAIL
+WONTFIX GPU : compositing/images/direct-pdf-image.html = FAIL
+
+// Chromium does not support PDF or plugin content in layers right now.
+BUGWK47925 GPU WIN LINUX : compositing/plugins/composited-plugin.html = FAIL
+BUGWK47925 GPU MAC : compositing/plugins/composited-plugin.html = CRASH
+BUGWK47925 GPU MAC : compositing/plugins/small-to-large-composited-plugin.html = CRASH
+BUGWK47925 GPU MAC : compositing/plugins/1x1-composited-plugin.html = CRASH
+BUGWK47925 GPU MAC : compositing/plugins/large-to-small-composited-plugin.html = CRASH
+
+// The word "compositing" appears in Chromium's pixel results and not
+// in Safari's; this should probably be fixed.
+BUGWK47926 GPU : compositing/geometry/composited-html-size.html = FAIL
+
+// These tests are missing an entire layer in the layer tree output.
+BUGWK47927 GPU WIN LINUX : compositing/geometry/limit-layer-bounds-clipping-ancestor.html = TEXT
+
+// The following failure seems suspicious because it does not contain
+// any text; it seems that the layer tree should precisely match
+// Safari's.
+BUGWK47944 GPU WIN LINUX : compositing/geometry/limit-layer-bounds-overflow-root.html = TEXT
+
+// The following failure is missing a tiled layer where Safari has
+// one, in addition to having a layer positioned differently than in
+// Safari.
+BUGWK47946 GPU : compositing/geometry/limit-layer-bounds-transformed-overflow.html = TIMEOUT TEXT
+
+// All of the tests involving masks appear to be failing right now.
+BUGWK47947 GPU LINUX WIN : compositing/masks/masked-ancestor.html = FAIL
+BUGWK47947 GPU LINUX WIN : compositing/masks/multiple-masks.html = FAIL
+BUGWK47947 GPU LINUX WIN : compositing/masks/simple-composited-mask.html = FAIL
+
+// Nearly all tests involving reflections are failing right now.
+BUGWK47949 GPU : compositing/reflections/animation-inside-reflection.html = FAIL
+BUGWK47949 GPU : compositing/reflections/compositing-change-inside-reflection.html = FAIL
+BUGWK47949 GPU : compositing/reflections/deeply-nested-reflections.html = FAIL
+BUGWK47949 GPU : compositing/reflections/masked-reflection-on-composited.html = FAIL
+BUGWK47949 GPU : compositing/reflections/nested-reflection-anchor-point.html = FAIL
+BUGWK47949 GPU : compositing/reflections/nested-reflection-animated.html = FAIL
+BUGWK47949 GPU : compositing/reflections/nested-reflection-mask-change.html = FAIL
+BUGWK47949 GPU : compositing/reflections/nested-reflection-on-overflow.html = FAIL
+BUGWK47949 GPU : compositing/reflections/nested-reflection-opacity.html = FAIL
+BUGWK47949 GPU : compositing/reflections/nested-reflection-size-change.html = FAIL
+BUGWK47949 GPU : compositing/reflections/nested-reflection-transformed.html = FAIL
+BUGWK47949 GPU : compositing/reflections/nested-reflection-transformed2.html = FAIL
+BUGWK47949 GPU : compositing/reflections/nested-reflection-transition.html = FAIL
+BUGWK47949 GPU : compositing/reflections/nested-reflection.html = FAIL
+BUGWK47949 GPU : compositing/reflections/reflection-on-composited.html = FAIL
+BUGWK47949 GPU : compositing/reflections/reflection-opacity.html = FAIL
+BUGWK47949 GPU : compositing/reflections/reflection-ordering.html = FAIL
+BUGWK47949 GPU : compositing/reflections/reflection-positioning.html = FAIL
+BUGWK47949 GPU : compositing/reflections/reflection-positioning2.html = FAIL
+BUGWK47949 GPU : compositing/reflections/simple-composited-reflections.html = FAIL
+BUGWK47949 GPU : compositing/reflections/transform-inside-reflection.html = FAIL
+
+// Most of the tiling tests are misbehaving in Chrome even though the
+// DRT output looks similar to Safari's. These need to be investigated.
+BUGWK47951 GPU : compositing/tiling/huge-layer-add-remove-child.html = FAIL
+BUGWK47951 GPU : compositing/tiling/huge-layer-with-layer-children.html = FAIL
+BUGWK47951 GPU : compositing/tiling/huge-layer.html = FAIL
+
+// These tests are flaky on Linux.
+BUGWK48012 GPU LINUX : compositing/tiling/huge-layer-with-layer-children-resize.html = FAIL PASS
+BUGWK48012 GPU LINUX : compositing/repaint/opacity-between-absolute2.html = FAIL PASS
+BUGWK48012 GPU LINUX : compositing/overflow/overflow-scroll.html = FAIL PASS
+
+BUGWK47952 GPU : compositing/transitions/scale-transition-no-start.html = FAIL
+
+// These compositor WebGL tests fail.
+BUGWK47953 GPU : compositing/webgl/webgl-background-color.html = FAIL
+BUGWK47953 GPU : compositing/webgl/webgl-reflection.html = FAIL
+
+// These tests are failing on Linux because the layers are differently
+// sized than on Windows. It is unclear why this is happening and it
+// needs to be investigated.
+// Became flaky on all platforms after the switch to DRT.
+BUGWK48016 GPU : compositing/geometry/limit-layer-bounds-positioned-transition.html = TEXT PASS
+BUGWK48016 GPU LINUX : compositing/geometry/vertical-scroll-composited.html = FAIL
+
+// This test causes an assertion failure in DRT, but apparently not
+// when DRT is run manually.
+BUGWK48018 GPU LINUX DEBUG : compositing/geometry/outline-change.html = FAIL PASS
+
+// The following tests are failing on Mac.
+//BUGWK48029 GPU MAC : compositing/plugins/small-to-large-composited-plugin.html = TEXT
+BUGWK48029 GPU MAC : compositing/tiling/crash-reparent-tiled-layer.html = TEXT
+BUGWK48029 GPU MAC : compositing/tiling/huge-layer-img.html = TEXT
+BUGWK48029 GPU WIN DEBUG : compositing/tiling/huge-layer-img.html = TEXT TIMEOUT
+BUGWK48029 GPU MAC : compositing/tiling/huge-layer-resize.html = TEXT
+BUGWK48029 GPU MAC : compositing/tiling/huge-layer-with-layer-children-resize.html = TEXT
+
+// New test, needs windows and mac specific baselines.
+BUGJAMESR GPU WIN MAC : compositing/text-on-large-layer.html = PASS FAIL
+
+// These tests are too slow with our MESA backend.  We can re-enable when we have
+// bots running tests on real hardware.
+BUGWK49629 GPU SKIP : platform/chromium/compositing/lots-of-img-layers.html = PASS
+BUGWK49629 GPU SKIP : platform/chromium/compositing/lots-of-img-layers-with-opacity.html = PASS
+
+BUGCR57431 GPU WIN LINUX : fast/canvas/canvas-strokeRect.html = TEXT
+BUGCR58534 GPU WIN LINUX : canvas/philip/tests/2d.composite.globalAlpha.fill.html = TEXT
+BUGCR58536 GPU WIN LINUX : canvas/philip/tests/2d.imageData.put.alpha.html = TEXT
+BUGCR60965 GPU WIN LINUX : fast/canvas/setWidthResetAfterForcedRender.html = IMAGE+TEXT
+
+// Has been timing out on win debug for a while.
+BUGWEBGL GPU WIN DEBUG : fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html = TIMEOUT
+
+// Started failing after r75648 on everything except Snow Leopard
+BUGWK52341 GPU : fast/canvas/canvas-large-dimensions.html = TEXT
+
+// These will need to rebaselined after the new path drawing lands. 
+BUG_SENORBLANCO GPU WIN LINUX : fast/canvas/canvas-composite.html = IMAGE 
+BUG_SENORBLANCO GPU WIN LINUX : fast/canvas/canvas-transform-skewed.html = IMAGE 
+
+BUGWK53469 GPU MAC : compositing/scroll-painted-composited-content.html = CRASH PASS
+
+// Shadow offset tests crash occasionally on Mac and Linux debug.
+BUGCR67732 GPU MAC LINUX DEBUG : fast/canvas/shadow-offset-1.html = PASS IMAGE+TEXT CRASH
+BUGCR67732 GPU MAC LINUX DEBUG : fast/canvas/shadow-offset-2.html = PASS IMAGE+TEXT CRASH
+BUGCR67732 GPU MAC LINUX DEBUG : fast/canvas/shadow-offset-3.html = PASS IMAGE+TEXT CRASH
+BUGCR67732 GPU MAC LINUX DEBUG : fast/canvas/shadow-offset-4.html = PASS IMAGE+TEXT CRASH
+BUGCR67732 GPU MAC LINUX DEBUG : fast/canvas/shadow-offset-5.html = PASS IMAGE+TEXT CRASH
+BUGCR67732 GPU MAC LINUX DEBUG : fast/canvas/shadow-offset-6.html = PASS IMAGE+TEXT CRASH
+BUGCR67732 GPU MAC LINUX DEBUG : fast/canvas/shadow-offset-7.html = PASS IMAGE+TEXT CRASH

@@ -71,17 +71,6 @@ def _set_gpu_options(port):
         port._options.builder_name += ' - GPU'
 
 
-def _gpu_overrides(port):
-    try:
-        overrides_path = port.path_from_chromium_base('webkit', 'tools',
-            'layout_tests', 'test_expectations_gpu.txt')
-    except AssertionError:
-        return None
-    if not port._filesystem.exists(overrides_path):
-        return None
-    return port._filesystem.read_text_file(overrides_path)
-
-
 def _tests(port, paths):
     if not paths:
         paths = ['compositing', 'platform/chromium/compositing']
@@ -105,15 +94,12 @@ class ChromiumGpuLinuxPort(chromium_linux.ChromiumLinuxPort):
     def default_child_processes(self):
         return 1
 
-    def path_to_test_expectations_file(self):
-        return self.path_from_webkit_base('LayoutTests', 'platform',
-            'chromium-gpu', 'test_expectations.txt')
+    def graphics_type(self):
+        return 'gpu'
 
     def tests(self, paths):
         return _tests(self, paths)
 
-    def test_expectations_overrides(self):
-        return _gpu_overrides(self)
 
 
 class ChromiumGpuMacPort(chromium_mac.ChromiumMacPort):
@@ -128,15 +114,12 @@ class ChromiumGpuMacPort(chromium_mac.ChromiumMacPort):
     def default_child_processes(self):
         return 1
 
-    def path_to_test_expectations_file(self):
-        return self.path_from_webkit_base('LayoutTests', 'platform',
-            'chromium-gpu', 'test_expectations.txt')
+    def graphics_type(self):
+        return 'gpu'
 
     def tests(self, paths):
         return _tests(self, paths)
 
-    def test_expectations_overrides(self):
-        return _gpu_overrides(self)
 
 
 class ChromiumGpuWinPort(chromium_win.ChromiumWinPort):
@@ -151,12 +134,8 @@ class ChromiumGpuWinPort(chromium_win.ChromiumWinPort):
     def default_child_processes(self):
         return 1
 
-    def path_to_test_expectations_file(self):
-        return self.path_from_webkit_base('LayoutTests', 'platform',
-            'chromium-gpu', 'test_expectations.txt')
+    def graphics_type(self):
+        return 'gpu'
 
     def tests(self, paths):
         return _tests(self, paths)
-
-    def test_expectations_overrides(self):
-        return _gpu_overrides(self)

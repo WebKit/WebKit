@@ -468,6 +468,11 @@ class Port(object):
         may be different (e.g., 'win-xp' instead of 'chromium-win-xp'."""
         return self._name
 
+    def graphics_type(self):
+        """Returns whether the port uses accelerated graphics ('gpu') or not
+        ('cpu')."""
+        return 'cpu'
+
     def get_option(self, name, default_value=None):
         # FIXME: Eventually we should not have to do a test for
         # hasattr(), and we should be able to just do
@@ -933,7 +938,7 @@ class TestConfiguration(object):
         self.version = version or port_version[1:]
         self.architecture = architecture or 'x86'
         self.build_type = build_type or port._options.configuration.lower()
-        self.graphics_type = graphics_type or 'cpu'
+        self.graphics_type = graphics_type or port.graphics_type()
 
     def items(self):
         return self.__dict__.items()
@@ -942,7 +947,7 @@ class TestConfiguration(object):
         return self.__dict__.keys()
 
     def __str__(self):
-        return ("<%(version)s, %(build_type)s, %(graphics_type)s>" %
+        return ("<%(os)s, %(version)s, %(build_type)s, %(graphics_type)s>" %
                 self.__dict__)
 
     def __repr__(self):
