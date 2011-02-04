@@ -111,6 +111,7 @@ public:
     virtual unsigned bytesLoaded() const;
     virtual void setSize(const WebCore::IntSize&);
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect&);
+    virtual void paintCurrentFrameInContext(WebCore::GraphicsContext*, const WebCore::IntRect&);
     virtual bool hasSingleSecurityOrigin() const;
     virtual WebCore::MediaPlayer::MovieLoadType movieLoadType() const;
 #if USE(ACCELERATED_COMPOSITING)
@@ -128,6 +129,9 @@ private:
     static void getSupportedTypes(WTF::HashSet<WTF::String>&);
     static WebCore::MediaPlayer::SupportsType supportsType(
         const WTF::String& type, const WTF::String& codecs);
+#if USE(ACCELERATED_COMPOSITING)
+    bool acceleratedRenderingInUse();
+#endif
 
     WebCore::MediaPlayer* m_mediaPlayer;
     OwnPtr<WebMediaPlayer> m_webMediaPlayer;
