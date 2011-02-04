@@ -387,7 +387,7 @@ void Heap::reset(SweepToggle sweepToggle)
         m_markedSpace.sweep();
 
     size_t usedCellCount = m_markedSpace.markedCells();
-    size_t proportionalBytes = usedCellCount * 1.5 * HeapConstants::cellSize;
+    size_t proportionalBytes = static_cast<size_t>(usedCellCount * 1.5 * HeapConstants::cellSize);
     m_markedSpace.setHighWaterMark(max(proportionalBytes, minBytesPerCycle));
 
     JAVASCRIPTCORE_GC_END();

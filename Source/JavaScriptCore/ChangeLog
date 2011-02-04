@@ -1,3 +1,11 @@
+2011-02-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Try to fix 32bit build.
+
+        * runtime/Heap.cpp:
+        (JSC::Heap::reset): Use an explicit cast to avoid shortening warnings,
+        since 1.5 is double (64bit), and the result is size_t (32bit).
+
 2011-02-03  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Cameron Zwarich.
