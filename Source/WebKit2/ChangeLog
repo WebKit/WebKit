@@ -1,3 +1,10 @@
+2011-02-04  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+        Correct prebuild build-stopping rule to allow project only rebuilds.
+
+        * win/WebKit2WebProcessPreBuild.cmd:
+
 2011-02-04  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.
