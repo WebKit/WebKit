@@ -31,9 +31,9 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (105,35) size 0x0
         RenderMenuList {SELECT} at (0,42) size 200x20 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
           RenderBlock (anonymous) at (1,1) size 198x18
-            RenderText at (116,1) size 63x16
-              text run at (116,1) width 21: "abc"
-              text run at (137,1) width 42 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
+            RenderText at (4,1) size 63x16
+              text run at (4,1) width 21: "abc"
+              text run at (25,1) width 42 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
         RenderBR {BR} at (200,57) size 0x0
       RenderBlock {DIV} at (0,204) size 200x20
         RenderText {#text} at (0,0) size 69x19
