@@ -1751,13 +1751,29 @@ sub captureSavedCrashLog($)
     my ($base) = @_;
 
     my $crashLog;
-    if (isCygwin()) {
-        # We assume that the newest crash log in $testResultsDirectory is the one that corresponds to the crash that just occurred.
-        my $newestCrashLog = findNewestFileMatchingGlob(File::Spec->catfile($testResultsDirectory, $windowsCrashLogFilePrefix . "*.txt"));
 
+    my $glob;
+    if (isCygwin()) {
+        $glob = File::Spec->catfile($testResultsDirectory, $windowsCrashLogFilePrefix . "*.txt");
+    } elsif (isAppleMacWebKit()) {
+        $glob = File::Spec->catfile("~", "Library", "Logs", "CrashReporter", $dumpToolName . "_*.crash");
+
+        # Even though the dump tool has exited, CrashReporter might still be running. We need to
+        # wait for it to exit to ensure it has saved its crash log to disk. For simplicitly, we'll
+        # assume that the ReportCrash process with the highest PID is the one we want.
+        if (my @reportCrashPIDs = sort map { /^\s*(\d+)/; $1 } grep { /ReportCrash/ } `/bin/ps x`) {
+            my $reportCrashPID = $reportCrashPIDs[$#reportCrashPIDs];
+            # We use kill instead of waitpid because ReportCrash is not one of our child processes.
+            usleep(250000) while kill(0, $reportCrashPID) > 0;
+        }
+    }
+
+    # We assume that the newest crash log in matching the glob is the one that corresponds to the crash that just occurred.
+    if (my $newestCrashLog = findNewestFileMatchingGlob($glob)) {
         # The crash log must have been created after this script started running.
         $crashLog = $newestCrashLog if -M $newestCrashLog < 0;
     }
+
     return unless $crashLog;
 
     move($crashLog, File::Spec->catfile($testResultsDirectory, "$base-$crashLogTag.txt"));

@@ -1,3 +1,16 @@
+2011-02-04  Adam Roben  <aroben@apple.com>
+
+        Link to Mac crash logs from results.html
+
+        Fixes <http://webkit.org/b/14861> run-webkit-tests should link to Mac crash logs in
+        results.html
+
+        Reviewed by David Kilzer.
+
+        * Scripts/old-run-webkit-tests:
+        (captureSavedCrashLog): Added a case for Apple's Mac port. We get the crash log out of
+        ~/Library/Logs/CrashReporter, and wait for ReportCrash to exit before trying to get the log.
+
 2011-02-03  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dan Bernstein.
