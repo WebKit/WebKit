@@ -34,6 +34,9 @@
    ;; outside of /System/Library/Frameworks
    (subpath (param "WEBKIT2_FRAMEWORK_DIR"))
 
+   ;; FIXME: This should be removed when <rdar://problem/8957845> is fixed.
+   (subpath (string-append (param "HOME_DIR") "/Library/Fonts"))
+
    ;; Extensions from UIProcess
    (extension)
 )
