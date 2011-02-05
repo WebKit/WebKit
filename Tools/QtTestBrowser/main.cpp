@@ -164,18 +164,18 @@ void LauncherApplication::handleUserOptions()
     }
     
     if (args.contains("-local-storage-enabled"))
-        windowOptions.useLocalStorage = true;
+        QWebSettings::globalSettings()->setAttribute(QWebSettings::LocalStorageEnabled, true);
         
     if (args.contains("-offline-storage-database-enabled"))
-        windowOptions.useOfflineStorageDatabase = true;
+        QWebSettings::globalSettings()->setAttribute(QWebSettings::OfflineStorageDatabaseEnabled, true);
         
     if (args.contains("-offline-web-application-cache-enabled"))   
-        windowOptions.useOfflineWebApplicationCache = true;
+        QWebSettings::globalSettings()->setAttribute(QWebSettings::OfflineWebApplicationCacheEnabled, true);
     
     int setOfflineStorageDefaultQuotaIndex = args.indexOf("-set-offline-storage-default-quota");
     if (setOfflineStorageDefaultQuotaIndex != -1) {
-        unsigned int maxSize = takeOptionValue(&args, setOfflineStorageDefaultQuotaIndex).toUInt();
-        windowOptions.offlineStorageDefaultQuotaSize = maxSize;
+        int maxSize = takeOptionValue(&args, setOfflineStorageDefaultQuotaIndex).toInt();
+        QWebSettings::globalSettings()->setOfflineStorageDefaultQuota(maxSize);
     }   
     
     if (defaultForAnimations)
