@@ -10,6 +10,8 @@
     <style type="text/css">
         @import "css-charset-inherit-iso-8859-5.css?4";
     </style>
+    <script>document.charset = "koi8-r";</script>
+    <link rel="stylesheet" type="text/css" href="css-charset-inherit-koi-8.css?2"/>
 </head>
 <body onload="test()">
 <p>Test for <a href="http://bugs.webkit.org/show_bug.cgi?id=11011">bug 11011</a>:
@@ -19,6 +21,7 @@ External CSS is parsed as iso-8859-1 even though the main document is utf-8.</p>
 <p id="res2">Stylesheet 2 (inherit document charset using link): </p>
 <p id="res3">Stylesheet 3 (inherit referring stylesheet charset): </p>
 <p id="res4">Stylesheet 4 (inherit referring inline stylesheet charset): </p>
+<p id="res5">Stylesheet 5 (inherit document charset using link after document.charset was set): </p>
 
 <script type="text/javascript">
 if (window.layoutTestController)
@@ -33,6 +36,8 @@ function test() {
     document.getElementById("res3").innerHTML += document.styleSheets[2].cssRules[1].styleSheet.cssRules[0].style.content;
 
     document.getElementById("res4").innerHTML += document.styleSheets[3].cssRules[0].styleSheet.cssRules[0].style.content;
+
+    document.getElementById("res5").innerHTML += document.styleSheets[4].cssRules[0].style.content;
   } catch (ex) {
     alert(ex.toString());
   }

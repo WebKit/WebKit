@@ -1,3 +1,20 @@
+2011-02-05  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add addition test for inherited encoding
+        https://bugs.webkit.org/show_bug.cgi?id=53398
+
+        Check if the right encoding is used, after document.charset was set.
+
+        * fast/dom/Document/document-charset.html: Added doctype to make it pass in IE9 out of the box.
+        * fast/encoding/css-charset-default-expected.txt:
+        * fast/encoding/css-charset-default.xhtml:
+        * fast/encoding/external-script-charset-expected.txt:
+        * fast/encoding/external-script-charset-koi-8.js: Added.
+        * fast/encoding/external-script-charset.js:
+        * fast/encoding/external-script-charset.xhtml:
+
 2011-02-05  Martin Robinson  <mrobinson@igalia.com>
 
         JSC::Bindings m_rootObject->isValid() assert fails when running layout tests

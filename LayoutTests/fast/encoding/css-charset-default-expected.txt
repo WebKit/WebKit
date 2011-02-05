@@ -7,3 +7,5 @@ Stylesheet 2 (inherit document charset using link): SUССЕSS
 Stylesheet 3 (inherit referring stylesheet charset): SUССЕSS
 
 Stylesheet 4 (inherit referring inline stylesheet charset): SUССЕSS
+
+Stylesheet 5 (inherit document charset using link after document.charset was set): SUССЕSS
