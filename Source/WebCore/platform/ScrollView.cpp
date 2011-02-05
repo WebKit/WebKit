@@ -594,6 +594,14 @@ void ScrollView::scrollContents(const IntSize& scrollDelta)
     // with the clip rect every time to keep it smooth.
     IntRect clipRect = windowClipRect();
     IntRect scrollViewRect = convertToContainingWindow(IntRect(0, 0, visibleWidth(), visibleHeight()));
+    if (ScrollbarTheme::nativeTheme()->usesOverlayScrollbars()) {
+        int verticalScrollbarWidth = verticalScrollbar() ? verticalScrollbar()->width() : 0;
+        int horizontalScrollbarHeight = horizontalScrollbar() ? horizontalScrollbar()->height() : 0;
+
+        scrollViewRect.setWidth(scrollViewRect.width() - verticalScrollbarWidth);
+        scrollViewRect.setHeight(scrollViewRect.height() - horizontalScrollbarHeight);
+    }
+    
     IntRect updateRect = clipRect;
     updateRect.intersect(scrollViewRect);
 

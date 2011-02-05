@@ -35,6 +35,7 @@
 #include "FloatPoint.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollAnimator.h"
+#include "ScrollbarTheme.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -127,11 +128,19 @@ void ScrollableArea::setScrollOffsetFromAnimation(const IntPoint& offset)
     // Tell the derived class to scroll its contents.
     setScrollOffset(offset);
 
+    bool hasOverlayScrollbars = ScrollbarTheme::nativeTheme()->usesOverlayScrollbars();
+
     // Tell the scrollbars to update their thumb postions.
-    if (Scrollbar* horizontalScrollbar = this->horizontalScrollbar())
+    if (Scrollbar* horizontalScrollbar = this->horizontalScrollbar()) {
         horizontalScrollbar->offsetDidChange();
-    if (Scrollbar* verticalScrollbar = this->verticalScrollbar())
+        if (hasOverlayScrollbars)
+            horizontalScrollbar->invalidate();
+    }
+    if (Scrollbar* verticalScrollbar = this->verticalScrollbar()) {
         verticalScrollbar->offsetDidChange();
+        if (hasOverlayScrollbars)
+            verticalScrollbar->invalidate();
+    }
 }
 
 void ScrollableArea::willStartLiveResize()

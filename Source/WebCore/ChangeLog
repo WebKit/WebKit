@@ -1,3 +1,18 @@
+2011-02-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig and Beth Dakin.
+
+        REGRESSION: Horizontal scrollbar thumbs leave artifacts over page content when scrolling vertically
+        <rdar://problem/8962457>
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollContents):
+        Subtract scrollbars from the scroll view rect if overlay scrollers are enabled.
+        
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::setScrollOffsetFromAnimation):
+        Make sure to invalidate both scrollbars if overlay scrollers are enabled.
+
 2011-02-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
