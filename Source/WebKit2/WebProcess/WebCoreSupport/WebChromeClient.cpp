@@ -355,11 +355,15 @@ void WebChromeClient::invalidateWindow(const IntRect&, bool)
 
 void WebChromeClient::invalidateContentsAndWindow(const IntRect& rect, bool)
 {
+    if (m_page->corePage()->mainFrame()->document()->printing())
+        return;
     m_page->drawingArea()->setNeedsDisplay(rect);
 }
 
 void WebChromeClient::invalidateContentsForSlowScroll(const IntRect& rect, bool)
 {
+    if (m_page->corePage()->mainFrame()->document()->printing())
+        return;
     m_page->pageDidScroll();
     m_page->drawingArea()->setNeedsDisplay(rect);
 }

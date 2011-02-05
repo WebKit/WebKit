@@ -57,6 +57,36 @@ NSString * const NSPrintInfoDidChangeNotification = @"NSPrintInfoDidChange";
     return YES;
 }
 
+- (void)_suspendAutodisplay
+{
+    // A drawRect: call on WKView causes a switch to screen mode, which is slow due to relayout, and we want to avoid that.
+    // Disabling autodisplay will prevent random updates from causing this, but resizing the window will still work.
+    if (_autodisplayResumeTimer) {
+        [_autodisplayResumeTimer invalidate];
+        _autodisplayResumeTimer = nil;
+    } else
+        _webFrame->page()->setAutodisplay(false);
+}
+
+- (void)_delayedResumeAutodisplayTimerFired
+{
+    ASSERT(isMainThread());
+    
+    _autodisplayResumeTimer = nil;
+    _webFrame->page()->setAutodisplay(true);
+}
+
+- (void)_delayedResumeAutodisplay
+{
+    // AppKit calls endDocument/beginDocument when print option change. We don't want to switch between print and screen mode just for that,
+    // and enabling autodisplay may result in switching into screen mode. So, autodisplay is only resumed on next run loop iteration.
+    if (!_autodisplayResumeTimer) {
+        _autodisplayResumeTimer = [NSTimer timerWithTimeInterval:0 target:self selector:@selector(_delayedResumeAutodisplayTimerFired) userInfo:nil repeats:NO];
+        // The timer must be scheduled on main thread, because printing thread may finish before it fires.
+        [[NSRunLoop mainRunLoop] addTimer:_autodisplayResumeTimer forMode:NSDefaultRunLoopMode];
+    }
+}
+
 - (void)_adjustPrintingMarginsForHeaderAndFooter
 {
     NSPrintInfo *info = [_printOperation printInfo];
@@ -297,6 +327,8 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
     if (!isMainThread())
         _isPrintingFromSecondaryThread = YES;
 
+    [self _suspendAutodisplay];
+    
     [self _adjustPrintingMarginsForHeaderAndFooter];
 
     if ([self _hasPageRects])
@@ -513,9 +545,11 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
     if (_isForcingPreviewUpdate)
         return;
 
+    LOG(View, "-[WKPrintingView beginDocument]");
+
     [super beginDocument];
 
-    _webFrame->page()->setAutodisplay(false);
+    [self _suspendAutodisplay];
 }
 
 - (void)endDocument
@@ -539,8 +573,8 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
     _latestExpectedPreviewCallback = 0;
     _expectedPrintCallback = 0;
 
-    _webFrame->page()->setAutodisplay(true);
-
+    [self _delayedResumeAutodisplay];
+    
     [super endDocument];
 }
 @end

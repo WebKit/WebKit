@@ -53,6 +53,8 @@ namespace WebKit {
     BOOL _isPrintingFromSecondaryThread;
     Mutex _printingCallbackMutex;
     ThreadCondition _printingCallbackCondition;
+
+    NSTimer *_autodisplayResumeTimer;
 }
 
 - (id)initWithFrameProxy:(WebKit::WebFrameProxy*)frame;

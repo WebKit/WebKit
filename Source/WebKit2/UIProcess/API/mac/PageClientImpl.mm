@@ -373,8 +373,6 @@ void PageClientImpl::setAutodisplay(bool newState)
 {
     if (!newState && [[m_wkView window] isAutodisplay])
         [m_wkView displayIfNeeded];
-    else
-        [m_wkView setNeedsDisplay:NO];
     
     [[m_wkView window] setAutodisplay:newState];
 }
