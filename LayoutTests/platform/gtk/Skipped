@@ -4711,7 +4711,3 @@ http/tests/websocket/tests/url-with-credential.html
 http/tests/websocket/tests/url-with-empty-query.html
 http/tests/websocket/tests/simple.html
 http/tests/websocket/tests/cross-origin.html
-
-# The plugin doesn't seem to load at all...  Not sure what's going on.
-# https://bugs.webkit.org/show_bug.cgi?id=53833
-plugins/plugin-document-back-forward.html

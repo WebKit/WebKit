@@ -79,6 +79,9 @@ webkit_test_plugin_new_instance(NPMIMEType mimetype,
             else if (strcasecmp(argn[i], "src") == 0 &&
                      strcasecmp(argv[i], "data:application/x-webkit-test-netscape,returnerrorfromnewstream") == 0)
                 obj->returnErrorFromNewStream = TRUE;
+            else if (!strcasecmp(argn[i], "src")
+                     && !strcasecmp(argv[i], "data:application/x-webkit-test-netscape,alertwhenloaded"))
+                executeScript(obj, "alert('Plugin Loaded!')");
             else if (strcasecmp(argn[i], "logfirstsetwindow") == 0)
                 obj->logSetWindow = TRUE;
             else if (strcasecmp(argn[i], "testnpruntime") == 0)

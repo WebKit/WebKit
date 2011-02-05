@@ -1,3 +1,12 @@
+2011-02-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Adam Barth.
+
+        [GTK] plugins/plugin-document-back-forward.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=53833
+
+        * platform/gtk/Skipped: Unskip test which is now passing.
+
 2011-02-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

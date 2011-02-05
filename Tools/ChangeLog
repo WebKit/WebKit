@@ -1,3 +1,16 @@
+2011-02-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Adam Barth.
+
+        [GTK] plugins/plugin-document-back-forward.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=53833
+
+        Add the new "alert on load" functionality for the Unix version of the
+        test plugin. This functionality was originally introduced in r77706.
+
+        * DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp:
+        (webkit_test_plugin_new_instance): Add new plugin fuctionality.
+
 2011-02-04  Kundu Suchismita  <suchi.kundu@nokia.com>
 
         Reviewed by Andreas Kling.
