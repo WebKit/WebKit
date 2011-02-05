@@ -1,3 +1,12 @@
+2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Update Leopard pixel results for fast/box-shadow.
+
+        * platform/mac-leopard/fast/box-shadow/basic-shadows-expected.checksum:
+        * platform/mac-leopard/fast/box-shadow/basic-shadows-expected.png:
+        * platform/mac-leopard/fast/box-shadow/inset-expected.checksum:
+        * platform/mac-leopard/fast/box-shadow/inset-expected.png:
+
 2011-02-04  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.
