@@ -263,7 +263,7 @@ static void showTreeAndMark(const CounterNode* node)
 
 #ifndef NDEBUG
 
-void showTree(const WebCore::CounterNode* counter)
+void showCounterTree(const WebCore::CounterNode* counter)
 {
     if (counter)
         showTreeAndMark(counter);

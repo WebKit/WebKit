@@ -67,4 +67,9 @@ void toRenderCounter(const RenderCounter*);
 
 } // namespace WebCore
 
+#ifndef NDEBUG
+// Outside the WebCore namespace for ease of invocation from gdb.
+void showCounterRendererTree(const WebCore::RenderObject*, const char* counterName = 0);
+#endif
+
 #endif // RenderCounter_h

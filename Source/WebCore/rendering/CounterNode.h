@@ -94,7 +94,7 @@ private:
 
 #ifndef NDEBUG
 // Outside the WebCore namespace for ease of invocation from gdb.
-void showTree(const WebCore::CounterNode*);
+void showCounterTree(const WebCore::CounterNode*);
 #endif
 
 #endif // CounterNode_h

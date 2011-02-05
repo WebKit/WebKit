@@ -1,3 +1,40 @@
+2011-02-04  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by David Hyatt.
+
+        Code Changes.
+
+        CSS 2.1 failure: content-*
+        https://bugs.webkit.org/show_bug.cgi?id=52126
+
+        Test: fast/css/counters/content-021.html
+
+        * rendering/CounterNode.cpp:
+        (showCounterTree):
+        Made parameter const because it is supposed to be so.
+        * rendering/RenderCounter.cpp:
+        (WebCore::previousInPreOrder):
+        (WebCore::previousSiblingOrParent):
+        (WebCore::parentElement):
+        (WebCore::areRenderersElementsSiblings):
+        (WebCore::nextInPreOrder):
+        Added these local helper functions to help navigate the DOM tree
+        enriched with :before and :after pseudo elements.
+        (WebCore::planCounter):
+        Fixed bug that would create a repeat counter for second and
+        subsequent renderers associated with the same DOM element.
+        (WebCore::findPlaceForCounter):
+        (WebCore::makeCounterNode):
+        Changed to use the new tree navigation functions described above
+        instead of the Renderer Tree navigation functions.
+        (WebCore::RenderCounter::rendererSubtreeAttached):
+        (WebCore::RenderCounter::rendererStyleChanged):
+        Optimized to not bother about counters until the renderers are
+        finally attached.
+        (showRendererTree):
+        (showNodeTree):
+        Debug helper functions used to debug Counter bugs.
+
 2011-02-04  Dan Bernstein  <mitz@apple.com>
 
         Typo fix.
