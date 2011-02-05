@@ -53,11 +53,18 @@ class ScratchBuffer {
 public:
     ScratchBuffer()
         : m_purgeTimer(this, &ScratchBuffer::timerFired)
+#if !ASSERT_DISABLED
+        , m_bufferInUse(false)
+#endif
     {
     }
     
     ImageBuffer* getScratchBuffer(const IntSize& size)
     {
+        ASSERT(!m_bufferInUse);
+#if !ASSERT_DISABLED
+        m_bufferInUse = true;
+#endif
         // We do not need to recreate the buffer if the current buffer is large enough.
         if (m_imageBuffer && m_imageBuffer->width() >= size.width() && m_imageBuffer->height() >= size.height())
             return m_imageBuffer.get();
@@ -71,6 +78,9 @@ public:
 
     void scheduleScratchBufferPurge()
     {
+#if !ASSERT_DISABLED
+        m_bufferInUse = false;
+#endif
         if (m_purgeTimer.isActive())
             m_purgeTimer.stop();
 
@@ -93,6 +103,9 @@ private:
 
     OwnPtr<ImageBuffer> m_imageBuffer;
     Timer<ScratchBuffer> m_purgeTimer;
+#if !ASSERT_DISABLED
+    bool m_bufferInUse;
+#endif
 };
 
 ScratchBuffer& ScratchBuffer::shared()
@@ -106,6 +119,7 @@ ShadowBlur::ShadowBlur(float radius, const FloatSize& offset, const Color& color
     , m_colorSpace(colorSpace)
     , m_blurRadius(radius)
     , m_offset(offset)
+    , m_layerImage(0)
     , m_shadowsIgnoreTransforms(false)
 {
     // Limit blur radius to 128 to avoid lots of very expensive blurring.
@@ -493,6 +507,9 @@ void ShadowBlur::drawRectShadowWithoutTiling(GraphicsContext* graphicsContext, c
 
 void ShadowBlur::drawRectShadowWithTiling(GraphicsContext* graphicsContext, const FloatRect& shadowedRect, const RoundedIntRect::Radii& radii, const IntSize& shadowTemplateSize)
 {
+    graphicsContext->save();
+    graphicsContext->clearShadow();
+
     const float roundedRadius = ceilf(m_blurRadius);
     const float twiceRadius = roundedRadius * 2;
 
@@ -600,6 +617,8 @@ void ShadowBlur::drawRectShadowWithTiling(GraphicsContext* graphicsContext, cons
     tileRect = FloatRect(0, shadowTemplateSize.height() - bottomOffset, leftOffset, bottomOffset);
     destRect = FloatRect(shadowBounds.x(), shadowBounds.maxY() - bottomOffset, leftOffset, bottomOffset);
     graphicsContext->drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
+
+    graphicsContext->restore();
 
     m_layerImage = 0;
     // Schedule a purge of the scratch buffer.

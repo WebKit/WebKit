@@ -1,3 +1,32 @@
+2011-02-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Crashes in ShadowBlur via WebKit2 FindController
+        https://bugs.webkit.org/show_bug.cgi?id=53830
+        
+        Fix a crash cause by re-entering ShadowBlur, and add assertions to
+        detect when it happens.
+        
+        The re-entrancy occurred when drawRectShadowWithTiling() filled
+        the interior of the shadow with fillRect() on the context
+        which still had the shadow state set. This would make another ShadowBlur
+        on the stack and call into the code again, potentially blowing away
+        the image buffer.
+        
+        Fix by turning off shadows in the destination context while we're
+        drawing the tiled shadow. The non-tiled code path already did this.
+
+        Not testable because CSS shadows clip out the inside of the rect
+        being shadowed, and SVG uses fillPath, even for rects.
+
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ScratchBuffer::ScratchBuffer):
+        (WebCore::ScratchBuffer::getScratchBuffer):
+        (WebCore::ScratchBuffer::scheduleScratchBufferPurge):
+        (WebCore::ShadowBlur::ShadowBlur):
+        (WebCore::ShadowBlur::drawRectShadowWithTiling):
+
 2011-02-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
