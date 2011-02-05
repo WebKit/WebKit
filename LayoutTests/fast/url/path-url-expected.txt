@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS canonicalize('javascript:') is 'javascript:'
-FAIL canonicalize('JavaScript:Foo') should be javascript:Foo. Was JavaScript:Foo.
+PASS canonicalize('JavaScript:Foo') is 'javascript:Foo'
 PASS successfullyParsed is true
 
 TEST COMPLETE

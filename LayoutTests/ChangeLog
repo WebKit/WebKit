@@ -1,3 +1,18 @@
+2011-02-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Safari should lowercase schemes in cannonicalized urls to match every other browser
+        https://bugs.webkit.org/show_bug.cgi?id=53848
+
+        Update our results now that we pass more tests.
+
+        * fast/url/file-expected.txt:
+        * fast/url/file-http-base-expected.txt:
+        * fast/url/path-url-expected.txt:
+        * fast/url/relative-expected.txt:
+        * fast/url/scheme-expected.txt:
+
 2011-02-04  Jer Noble  <jer.noble@apple.com>
 
         Adding test to Qt Skipped list.

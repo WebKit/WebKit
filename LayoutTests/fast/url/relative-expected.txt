@@ -14,7 +14,7 @@ PASS canonicalize(' 	 ') is 'http://foo/bar'
 PASS canonicalize('http:path') is 'http://host/path'
 PASS canonicalize('http:path') is 'http://host/a/path'
 FAIL canonicalize('http:/path') should be http://host/path. Was http:/path.
-FAIL canonicalize('HTTP:/path') should be http://host/path. Was HTTP:/path.
+FAIL canonicalize('HTTP:/path') should be http://host/path. Was http:/path.
 FAIL canonicalize('https:host2') should be https://host2/. Was https:host2.
 PASS canonicalize('htto:/host2') is 'htto:/host2'
 PASS canonicalize('/b/c/d') is 'http://host/b/c/d'

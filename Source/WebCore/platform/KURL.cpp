@@ -1246,7 +1246,7 @@ void KURL::parse(const char* url, const String* originalString)
     // copy in the scheme
     const char *schemeEndPtr = url + schemeEnd;
     while (strPtr < schemeEndPtr)
-        *p++ = *strPtr++;
+        *p++ = toASCIILower(*strPtr++);
     m_schemeEnd = p - buffer.data();
 
     bool hostIsLocalHost = portEnd - userStart == 9

@@ -1,3 +1,17 @@
+2011-02-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Safari should lowercase schemes in cannonicalized urls to match every other browser
+        https://bugs.webkit.org/show_bug.cgi?id=53848
+
+        We're clearly the odd man out here.  See results from every browser at:
+        https://github.com/abarth/url-spec/blob/master/tests/gurl-results/by-browser.txt
+
+        * platform/KURL.cpp:
+        (WebCore::KURL::parse):
+         - Just lowercase the scheme when copying.
+
 2011-02-05  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Dave Hyatt.
