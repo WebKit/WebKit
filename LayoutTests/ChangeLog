@@ -1,3 +1,20 @@
+2011-02-04  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Move canvas layout test expectations into more appropriate locations
+        https://bugs.webkit.org/show_bug.cgi?id=53145
+
+        * platform/mac-snowleopard/canvas/philip/tests/2d.drawImage.broken-expected.txt: Removed.
+        * ...
+        * platform/mac-snowleopard/canvas/philip/tests/type.prototype-expected.txt: Removed.
+        * platform/mac/canvas: Added.
+        * platform/mac/canvas/philip: Added.
+        * platform/mac/canvas/philip/tests: Added.
+        * platform/mac/canvas/philip/tests/2d.drawImage.broken-expected.txt: Copied from platform/mac-snowleopard/canvas/philip/tests/2d.drawImage.broken-expected.txt.
+        * ...
+        * platform/mac/canvas/philip/tests/type.prototype-expected.txt: Copied from platform/mac-snowleopard/canvas/philip/tests/type.prototype-expected.txt.
+
 2011-02-04  Jessie Berlin  <jberlin@apple.com>
 
         [Windows 7 Release Tests] plugins/plugin-document-back-forward.html failing since
