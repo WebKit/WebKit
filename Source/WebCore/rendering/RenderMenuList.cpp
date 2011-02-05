@@ -486,7 +486,7 @@ int RenderMenuList::clientInsetRight() const
 
 int RenderMenuList::clientPaddingLeft() const
 {
-    return paddingLeft();
+    return paddingLeft() + m_innerBlock->paddingLeft();
 }
 
 const int endOfLinePadding = 2;
@@ -502,7 +502,7 @@ int RenderMenuList::clientPaddingRight() const
 
     // If the appearance isn't MenulistPart, then the select is styled (non-native), so
     // we want to return the user specified padding.
-    return paddingRight();
+    return paddingRight() + m_innerBlock->paddingRight();
 }
 
 int RenderMenuList::listSize() const

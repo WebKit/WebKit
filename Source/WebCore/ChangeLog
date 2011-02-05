@@ -1,3 +1,18 @@
+2011-02-04  Xiyuan Xia  <xiyuan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [Chromium] Option text in select popup does not align with menulist button text
+        https://bugs.webkit.org/show_bug.cgi?id=53632
+
+        This makes clientPaddingLeft and  clientPaddingRight return
+        the additional m_innerBlock's padding so that the popup item text
+        aligns with the menulist button text.
+
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::clientPaddingLeft):
+        (WebCore::RenderMenuList::clientPaddingRight):
+
 2011-02-04  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig and Beth Dakin.
