@@ -1,3 +1,13 @@
+2011-02-04  Adam Barth  <abarth@webkit.org>
+
+        [GTK] plugins/plugin-document-back-forward.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=53833
+
+        Add plugins/plugin-document-back-forward.html to skipped list while we
+        investigate the issue.
+
+        * platform/gtk/Skipped:
+
 2011-02-04  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Dan Bernstein.
