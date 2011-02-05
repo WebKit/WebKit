@@ -27,6 +27,7 @@
 #define KURL_h
 
 #include "PlatformString.h"
+#include "URLString.h"
 #include <wtf/HashMap.h>
 
 #if PLATFORM(CF)
@@ -74,6 +75,7 @@ public:
     // It is usually best to avoid repeatedly parsing a string, unless memory saving outweigh the possible slow-downs.
     KURL(ParsedURLStringTag, const char*);
     KURL(ParsedURLStringTag, const String&);
+    KURL(ParsedURLStringTag, const URLString&);
 
     // Resolves the relative URL with the given base URL. If provided, the
     // TextEncoding is used to encode non-ASCII characers. The base URL can be
@@ -117,11 +119,13 @@ public:
     bool canSetHostOrPort() const { return isHierarchical(); }
 
     bool canSetPathname() const { return isHierarchical(); }
-    
+
 #if USE(GOOGLEURL)
     const String& string() const { return m_url.string(); }
+    URLString urlString() const { return URLString(m_url.string()); }
 #else
     const String& string() const { return m_string; }
+    URLString urlString() const { return URLString(m_string); }
 #endif
 
     String protocol() const;

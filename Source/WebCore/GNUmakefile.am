@@ -2669,6 +2669,7 @@ webcore_sources += \
 	Source/WebCore/platform/Timer.cpp \
 	Source/WebCore/platform/Timer.h \
 	Source/WebCore/platform/TreeShared.h \
+	Source/WebCore/platform/URLString.h \
 	Source/WebCore/platform/UUID.cpp \
 	Source/WebCore/platform/UUID.h \
 	Source/WebCore/platform/Widget.cpp \

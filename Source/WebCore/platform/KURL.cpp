@@ -322,6 +322,12 @@ KURL::KURL(ParsedURLStringTag, const String& url)
     ASSERT(url == m_string);
 }
 
+KURL::KURL(ParsedURLStringTag, const URLString& url)
+{
+    parse(url.string());
+    ASSERT(url.string() == m_string);
+}
+
 KURL::KURL(const KURL& base, const String& relative)
 {
     init(base, relative, UTF8Encoding());

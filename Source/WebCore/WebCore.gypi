@@ -3557,6 +3557,7 @@
             'platform/Timer.cpp',
             'platform/Timer.h',
             'platform/TreeShared.h',
+            'platform/URLString.h',
             'platform/UUID.cpp',
             'platform/UUID.h',
             'platform/Widget.cpp',

@@ -1,3 +1,22 @@
+2011-02-05  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Introduce URLString to represent a canonicalized URL represented by a string
+        https://bugs.webkit.org/show_bug.cgi?id=53847
+
+        Instead of using String all over the codebase to represent a URL,
+        instead we should have a type to represent a canonicalized URL in the
+        form of a string.  This patch introduces that type.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/KURL.cpp:
+        (WebCore::KURL::KURL):
+        * platform/KURL.h:
+        (WebCore::KURL::urlString):
+
 2011-02-05  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Antonio Gomes.
