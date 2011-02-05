@@ -1,5 +1,14 @@
 2011-02-04  Martin Robinson  <mrobinson@igalia.com>
 
+        Reviewed by Xan Lopez.
+
+        [GTK] WebKitWebFrame can return a stale frame name when calling webkit_web_frame_get_name
+        https://bugs.webkit.org/show_bug.cgi?id=53797
+
+        * platform/gtk/Skipped: Unskip a test which is now passing.
+
+2011-02-04  Martin Robinson  <mrobinson@igalia.com>
+
         Rebaseline a few tests after r77665 and add a GTK-specific baseline
         after r77690.
 

@@ -474,23 +474,24 @@ WebKitWebView* webkit_web_frame_get_web_view(WebKitWebFrame* frame)
  *
  * Returns the @frame's name
  *
- * Return value: the name of @frame
+ * Return value: the name of @frame. This method will return NULL if
+ * the #WebKitWebFrame is invalid or an empty string if it is not backed
+ * by a live WebCore frame.
  */
 G_CONST_RETURN gchar* webkit_web_frame_get_name(WebKitWebFrame* frame)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), 0);
-
-    WebKitWebFramePrivate* priv = frame->priv;
-
-    if (priv->name)
-        return priv->name;
-
     Frame* coreFrame = core(frame);
     if (!coreFrame)
         return "";
 
-    String string = coreFrame->tree()->uniqueName();
-    priv->name = g_strdup(string.utf8().data());
+    WebKitWebFramePrivate* priv = frame->priv;
+    CString frameName = coreFrame->tree()->uniqueName().string().utf8();
+    if (!g_strcmp0(frameName.data(), priv->name))
+        return priv->name;
+
+    g_free(priv->name);
+    priv->name = g_strdup(frameName.data());
     return priv->name;
 }
 

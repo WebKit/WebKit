@@ -1,5 +1,21 @@
 2011-02-04  Martin Robinson  <mrobinson@igalia.com>
 
+        Reviewed by Xan Lopez.
+
+        [GTK] WebKitWebFrame can return a stale frame name when calling webkit_web_frame_get_name
+        https://bugs.webkit.org/show_bug.cgi?id=53797
+
+        When the frame name changes between different calls to webkit_web_frame_get_name
+        on the same frame, return the new frame name instead of the one valid during the
+        previous call.
+
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_init): Initialize the frame name to 0.
+        (webkit_web_frame_get_name): Check the current frame name first before
+        returning the cached value.
+
+2011-02-04  Martin Robinson  <mrobinson@igalia.com>
+
         Reviewed by Gustavo Noronha Silva.
 
         [GTK] fast/events/pagehide-timeout.html fails
