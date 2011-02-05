@@ -156,13 +156,15 @@ void XSSFilter::init()
         return;
     }
 
-    const TextEncoding& encoding = m_parser->document()->decoder()->encoding();
     const KURL& url = m_parser->document()->url();
+
     if (url.protocolIsData()) {
         m_isEnabled = false;
         return;
     }
-    m_decodedURL = decodeURL(url.string(), encoding);
+
+    TextResourceDecoder* decoder = m_parser->document()->decoder();
+    m_decodedURL = decoder ? decodeURL(url.string(), decoder->encoding()) : url.string();
     if (m_decodedURL.find(isRequiredForInjection, 0) == notFound)
         m_decodedURL = String();
 
@@ -172,7 +174,8 @@ void XSSFilter::init()
 
         FormData* httpBody = documentLoader->originalRequest().httpBody();
         if (httpBody && !httpBody->isEmpty()) {
-            m_decodedHTTPBody = decodeURL(httpBody->flattenToString(), encoding);
+            String httpBodyAsString = httpBody->flattenToString();
+            m_decodedHTTPBody = decoder ? decodeURL(httpBodyAsString, decoder->encoding()) : httpBodyAsString;
             if (m_decodedHTTPBody.find(isRequiredForInjection, 0) == notFound)
                 m_decodedHTTPBody = String();
             if (m_decodedHTTPBody.length() >= miniumLengthForSuffixTree)

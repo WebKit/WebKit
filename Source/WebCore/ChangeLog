@@ -1,3 +1,17 @@
+2011-02-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Crash in WebCore::TextEncoding::decode below XSSFilter::init
+        https://bugs.webkit.org/show_bug.cgi?id=53837
+
+        Add missing null check.
+
+        Test: http/tests/security/xssAuditor/non-block-javascript-url-frame.html
+
+        * html/parser/XSSFilter.cpp:
+        (WebCore::XSSFilter::init):
+
 2011-02-04  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

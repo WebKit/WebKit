@@ -1,3 +1,16 @@
+2011-02-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Crash in WebCore::TextEncoding::decode below XSSFilter::init
+        https://bugs.webkit.org/show_bug.cgi?id=53837
+
+        Test that we can successfully execute a JavaScript URL when it isn't
+        blocked by the filter.
+
+        * http/tests/security/xssAuditor/non-block-javascript-url-frame-expected.txt: Added.
+        * http/tests/security/xssAuditor/non-block-javascript-url-frame.html: Added.
+
 2011-02-04  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adam Barth.
