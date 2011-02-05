@@ -39,7 +39,6 @@
 #include "DocumentParser.h"
 #include "V8AbstractEventListener.h"
 #include "V8Binding.h"
-#include "XSSAuditor.h"
 
 namespace WebCore {
 
@@ -58,11 +57,6 @@ PassRefPtr<V8LazyEventListener> createAttributeEventListener(Node* node, Attribu
         ScriptController* scriptController = frame->script();
         if (!scriptController->canExecuteScripts(AboutToExecuteScript))
             return 0;
-
-        if (!scriptController->xssAuditor()->canCreateInlineEventListener(attr->localName().string(), attr->value())) {
-            // This script is not safe to execute.
-            return 0;
-        }
 
         position = scriptController->eventHandlerPosition();
         sourceURL = node->document()->url().string();
@@ -83,11 +77,6 @@ PassRefPtr<V8LazyEventListener> createAttributeEventListener(Frame* frame, Attri
     ScriptController* scriptController = frame->script();
     if (!scriptController->canExecuteScripts(AboutToExecuteScript))
         return 0;
-
-    if (!scriptController->xssAuditor()->canCreateInlineEventListener(attr->localName().string(), attr->value())) {
-        // This script is not safe to execute.
-        return 0;
-    }
 
     TextPosition0 position = scriptController->eventHandlerPosition();
     String sourceURL = frame->document()->url().string();

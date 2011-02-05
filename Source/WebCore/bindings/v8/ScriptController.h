@@ -61,7 +61,6 @@ class Frame;
 class HTMLPlugInElement;
 class ScriptSourceCode;
 class Widget;
-class XSSAuditor;
 
 class ScriptController {
 public:
@@ -105,8 +104,6 @@ public:
     // with what JSC does as well.
     ScriptController* windowShell(DOMWrapperWorld*) { return this; }
     ScriptController* existingWindowShell(DOMWrapperWorld*) { return this; }
-
-    XSSAuditor* xssAuditor() { return m_XSSAuditor.get(); }
 
     void collectGarbage();
 
@@ -215,8 +212,6 @@ private:
 #if ENABLE(NETSCAPE_PLUGIN_API)
     NPObject* m_windowScriptNPObject;
 #endif
-    // The XSSAuditor associated with this ScriptController.
-    OwnPtr<XSSAuditor> m_XSSAuditor;
 };
 
 } // namespace WebCore

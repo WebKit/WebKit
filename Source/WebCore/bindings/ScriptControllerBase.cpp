@@ -27,7 +27,6 @@
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "Settings.h"
-#include "XSSAuditor.h"
 
 namespace WebCore {
 
@@ -88,9 +87,7 @@ bool ScriptController::executeIfJavaScriptURL(const KURL& url, ShouldReplaceDocu
     const int javascriptSchemeLength = sizeof("javascript:") - 1;
 
     String decodedURL = decodeURLEscapeSequences(url.string());
-    ScriptValue result;
-    if (xssAuditor()->canEvaluateJavaScriptURL(decodedURL))
-        result = executeScript(decodedURL.substring(javascriptSchemeLength), false, AllowXSS);
+    ScriptValue result = executeScript(decodedURL.substring(javascriptSchemeLength), false, AllowXSS);
 
     // If executing script caused this frame to be removed from the page, we
     // don't want to try to replace its document!

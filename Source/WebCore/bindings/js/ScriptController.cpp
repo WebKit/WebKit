@@ -40,7 +40,6 @@
 #include "StorageNamespace.h"
 #include "UserGestureIndicator.h"
 #include "WebCoreJSClientData.h"
-#include "XSSAuditor.h"
 #include "npruntime_impl.h"
 #include "runtime_root.h"
 #include <debugger/Debugger.h>
@@ -72,7 +71,6 @@ ScriptController::ScriptController(Frame* frame)
 #if PLATFORM(MAC)
     , m_windowScriptObject(0)
 #endif
-    , m_XSSAuditor(new XSSAuditor(frame))
 {
 #if PLATFORM(MAC) && ENABLE(JAVA_BRIDGE)
     static bool initializedJavaJSBindings;
@@ -116,15 +114,10 @@ JSDOMWindowShell* ScriptController::createWindowShell(DOMWrapperWorld* world)
     return windowShell;
 }
 
-ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode, DOMWrapperWorld* world, ShouldAllowXSS shouldAllowXSS)
+ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode, DOMWrapperWorld* world, ShouldAllowXSS)
 {
     const SourceCode& jsSourceCode = sourceCode.jsSourceCode();
     String sourceURL = ustringToString(jsSourceCode.provider()->url());
-
-    if (shouldAllowXSS == DoNotAllowXSS && !m_XSSAuditor->canEvaluate(sourceCode.source())) {
-        // This script is not safe to be evaluated.
-        return JSValue();
-    }
 
     // evaluate code. Returns the JS return value or 0
     // if there was none, an error occurred or the type couldn't be converted.

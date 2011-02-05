@@ -2387,8 +2387,6 @@
             'page/WindowFeatures.h',
             'page/WorkerNavigator.cpp',
             'page/WorkerNavigator.h',
-            'page/XSSAuditor.cpp',
-            'page/XSSAuditor.h',
             'platform/audio/AudioArray.h',
             'platform/audio/AudioBus.h',
             'platform/audio/AudioBus.cpp',

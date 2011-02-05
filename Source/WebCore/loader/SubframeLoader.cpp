@@ -46,7 +46,6 @@
 #include "RenderEmbeddedObject.h"
 #include "RenderView.h"
 #include "Settings.h"
-#include "XSSAuditor.h"
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 #include "HTMLMediaElement.h"
@@ -103,11 +102,6 @@ bool SubframeLoader::requestObject(HTMLPlugInImageElement* ownerElement, const S
 {
     if (url.isEmpty() && mimeType.isEmpty())
         return false;
-    
-    if (!m_frame->script()->xssAuditor()->canLoadObject(url)) {
-        // It is unsafe to honor the request for this object.
-        return false;
-    }
 
     // FIXME: None of this code should use renderers!
     RenderEmbeddedObject* renderer = ownerElement->renderEmbeddedObject();
@@ -149,9 +143,6 @@ PassRefPtr<Widget> SubframeLoader::loadMediaPlayerProxyPlugin(Node* node, const 
     const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
     ASSERT(node->hasTagName(videoTag) || node->hasTagName(audioTag));
-
-    if (!m_frame->script()->xssAuditor()->canLoadObject(url.string()))
-        return 0;
 
     KURL completedURL;
     if (!url.isEmpty())

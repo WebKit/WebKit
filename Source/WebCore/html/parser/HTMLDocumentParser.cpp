@@ -39,7 +39,6 @@
 #include "InspectorInstrumentation.h"
 #include "NestingLevelIncrementer.h"
 #include "Settings.h"
-#include "XSSAuditor.h"
 #include <wtf/CurrentTime.h>
 
 namespace WebCore {
@@ -456,11 +455,10 @@ void HTMLDocumentParser::stopWatchingForLoad(CachedResource* cachedScript)
     cachedScript->removeClient(this);
 }
 
-bool HTMLDocumentParser::shouldLoadExternalScriptFromSrc(const AtomicString& srcValue)
+bool HTMLDocumentParser::shouldLoadExternalScriptFromSrc(const AtomicString&)
 {
-    if (!xssAuditor())
-        return true;
-    return xssAuditor()->canLoadExternalScriptFromSrc(srcValue);
+    // FIXME: Add Content-Security-Policy hook here.
+    return true;
 }
 
 void HTMLDocumentParser::notifyFinished(CachedResource* cachedResource)

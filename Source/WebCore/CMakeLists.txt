@@ -1288,7 +1288,6 @@ SET(WebCore_SOURCES
     page/UserContentURLPattern.cpp
     page/WindowFeatures.cpp
     page/WorkerNavigator.cpp
-    page/XSSAuditor.cpp
 
     page/animation/AnimationBase.cpp
     page/animation/AnimationController.cpp

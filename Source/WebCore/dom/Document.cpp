@@ -144,7 +144,6 @@
 #include "XMLHttpRequest.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
-#include "XSSAuditor.h"
 #include "htmlediting.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/HashFunctions.h>
@@ -1952,10 +1951,6 @@ void Document::implicitOpen()
     setParsing(true);
     setReadyState(Loading);
 
-    ScriptableDocumentParser* parser = scriptableDocumentParser();
-    if (m_frame && parser)
-        parser->setXSSAuditor(m_frame->script()->xssAuditor());
-
     // If we reload, the animation controller sticks around and has
     // a stale animation time. We need to update it here.
     if (m_frame && m_frame->animation())
@@ -2303,7 +2298,7 @@ void Document::processBaseElement()
     KURL baseElementURL;
     if (href) {
         String strippedHref = stripLeadingAndTrailingHTMLSpaces(*href);
-        if (!strippedHref.isEmpty() && (!frame() || frame()->script()->xssAuditor()->canSetBaseElementURL(*href)))
+        if (!strippedHref.isEmpty())
             baseElementURL = KURL(url(), strippedHref);
     }
     if (m_baseElementURL != baseElementURL) {

@@ -31,8 +31,6 @@
 
 namespace WebCore {
 
-class XSSAuditor;
-
 class ScriptableDocumentParser : public DecodedDataDocumentParser {
 public:
     // Only used by Document::open for deciding if its safe to act on a
@@ -49,17 +47,11 @@ public:
     virtual int lineNumber() const = 0;
     virtual TextPosition0 textPosition() const = 0;
 
-    XSSAuditor* xssAuditor() const { return m_xssAuditor; }
-    void setXSSAuditor(XSSAuditor* auditor) { m_xssAuditor = auditor; }
-
 protected:
     explicit ScriptableDocumentParser(Document*);
 
 private:
     virtual ScriptableDocumentParser* asScriptableDocumentParser() { return this; }
-
-    // The XSSAuditor associated with this document parser.
-    XSSAuditor* m_xssAuditor;
 };
 
 }

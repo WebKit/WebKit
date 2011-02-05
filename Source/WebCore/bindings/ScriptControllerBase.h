@@ -37,7 +37,7 @@ enum ReasonForCallingCanExecuteScripts {
     NotAboutToExecuteScript
 };
 
-// Whether to call the XSSAuditor to audit a script before passing it to the JavaScript engine.
+// FIXME: Remove this enum and all references to it.
 enum ShouldAllowXSS {
     AllowXSS,
     DoNotAllowXSS

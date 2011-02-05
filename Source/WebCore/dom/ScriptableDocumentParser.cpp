@@ -30,7 +30,6 @@ namespace WebCore {
 
 ScriptableDocumentParser::ScriptableDocumentParser(Document* document)
     : DecodedDataDocumentParser(document)
-    , m_xssAuditor(0)
 {
 }
 

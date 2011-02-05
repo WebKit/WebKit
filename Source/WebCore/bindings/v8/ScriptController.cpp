@@ -61,7 +61,6 @@
 #include "V8NPObject.h"
 #include "V8Proxy.h"
 #include "Widget.h"
-#include "XSSAuditor.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 
@@ -117,7 +116,6 @@ ScriptController::ScriptController(Frame* frame)
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , m_windowScriptNPObject(0)
 #endif
-    , m_XSSAuditor(new XSSAuditor(frame))
 {
 }
 
@@ -219,16 +217,11 @@ void ScriptController::evaluateInIsolatedWorld(unsigned worldID, const Vector<Sc
 }
 
 // Evaluate a script file in the environment of this proxy.
-ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode, ShouldAllowXSS shouldAllowXSS)
+ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode, ShouldAllowXSS)
 {
     String sourceURL = sourceCode.url();
     const String* savedSourceURL = m_sourceURL;
     m_sourceURL = &sourceURL;
-
-    if (shouldAllowXSS == DoNotAllowXSS && !m_XSSAuditor->canEvaluate(sourceCode.source())) {
-        // This script is not safe to be evaluated.
-        return ScriptValue();
-    }
 
     v8::HandleScope handleScope;
     v8::Handle<v8::Context> v8Context = V8Proxy::mainWorldContext(m_proxy->frame());

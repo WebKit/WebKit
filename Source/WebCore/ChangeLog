@@ -1,3 +1,48 @@
+2011-02-05  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Delete XSSAuditor
+        https://bugs.webkit.org/show_bug.cgi?id=53859
+
+        The job of the XSSAuditor is now done by the XSSFilter.  In the future,
+        we might rename XSSFilter to XSSAuditor.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/ScriptControllerBase.cpp:
+        (WebCore::ScriptController::executeIfJavaScriptURL):
+        * bindings/ScriptControllerBase.h:
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::ScriptController):
+        (WebCore::ScriptController::evaluateInWorld):
+        * bindings/js/ScriptController.h:
+        * bindings/js/ScriptEventListener.cpp:
+        (WebCore::createAttributeEventListener):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::ScriptController):
+        (WebCore::ScriptController::evaluate):
+        * bindings/v8/ScriptController.h:
+        * bindings/v8/ScriptEventListener.cpp:
+        (WebCore::createAttributeEventListener):
+        * dom/Document.cpp:
+        (WebCore::Document::implicitOpen):
+        (WebCore::Document::processBaseElement):
+        * dom/ScriptableDocumentParser.cpp:
+        (WebCore::ScriptableDocumentParser::ScriptableDocumentParser):
+        * dom/ScriptableDocumentParser.h:
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::shouldLoadExternalScriptFromSrc):
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::requestObject):
+        (WebCore::SubframeLoader::loadMediaPlayerProxyPlugin):
+        * page/XSSAuditor.cpp: Removed.
+        * page/XSSAuditor.h: Removed.
+
 2011-02-05  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

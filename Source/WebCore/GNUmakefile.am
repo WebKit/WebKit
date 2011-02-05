@@ -2294,8 +2294,6 @@ webcore_sources += \
 	Source/WebCore/page/WindowFeatures.h \
 	Source/WebCore/page/WorkerNavigator.cpp \
 	Source/WebCore/page/WorkerNavigator.h \
-	Source/WebCore/page/XSSAuditor.cpp \
-	Source/WebCore/page/XSSAuditor.h \
 	Source/WebCore/platform/animation/Animation.cpp \
 	Source/WebCore/platform/animation/Animation.h \
 	Source/WebCore/platform/animation/AnimationList.cpp \

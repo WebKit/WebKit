@@ -36,7 +36,6 @@
 #include "EventListener.h"
 #include "JSNode.h"
 #include "Frame.h"
-#include "XSSAuditor.h"
 #include <runtime/JSLock.h>
 
 using namespace JSC;
@@ -66,11 +65,6 @@ PassRefPtr<JSLazyEventListener> createAttributeEventListener(Node* node, Attribu
         if (!scriptController->canExecuteScripts(AboutToExecuteScript))
             return 0;
 
-        if (!scriptController->xssAuditor()->canCreateInlineEventListener(attr->localName().string(), attr->value())) {
-            // This script is not safe to execute.
-            return 0;
-        }
-
         lineNumber = scriptController->eventHandlerLineNumber();
         sourceURL = node->document()->url().string();
     }
@@ -93,11 +87,6 @@ PassRefPtr<JSLazyEventListener> createAttributeEventListener(Frame* frame, Attri
     ScriptController* scriptController = frame->script();
     if (!scriptController->canExecuteScripts(AboutToExecuteScript))
         return 0;
-
-    if (!scriptController->xssAuditor()->canCreateInlineEventListener(attr->localName().string(), attr->value())) {
-        // This script is not safe to execute.
-        return 0;
-    }
 
     lineNumber = scriptController->eventHandlerLineNumber();
     sourceURL = frame->document()->url().string();
