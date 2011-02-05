@@ -97,8 +97,8 @@ FrameLoaderClient::FrameLoaderClient(WebKitWebFrame* frame)
     , m_policyDecision(0)
     , m_loadingErrorPage(false)
     , m_pluginView(0)
-    , m_hasRepresentation(false)
     , m_hasSentResponseToPlugin(false)
+    , m_hasRepresentation(false)
 {
     ASSERT(m_frame);
 }

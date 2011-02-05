@@ -1,3 +1,13 @@
+2011-02-04  Joone Hur  <joone.hur@collabora.co.uk>
+
+        Unreviewed, Fix compilation warning.
+
+        Constructor initialization list should follow the declaration order.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::FrameLoaderClient): m_hasRepresentation is moved to 
+        the last position in the initialization list.
+
 2011-02-04  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
