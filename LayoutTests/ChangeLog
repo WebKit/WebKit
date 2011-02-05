@@ -1,3 +1,12 @@
+2011-02-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Skip a new test that uses EventSender
+        https://bugs.webkit.org/show_bug.cgi?id=53841
+
+        * platform/mac-wk2/Skipped:
+
 2011-02-04  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Adam Barth.
