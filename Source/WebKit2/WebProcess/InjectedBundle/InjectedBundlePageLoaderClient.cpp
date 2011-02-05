@@ -181,7 +181,11 @@ void InjectedBundlePageLoaderClient::willSendRequestForFrame(WebPage* page, WebF
     if (!m_client.willSendRequestForFrame)
         return;
 
-    request = toImpl(m_client.willSendRequestForFrame(toAPI(page), toAPI(frame), identifier, toAPI(request), toAPI(redirectResponse), m_client.clientInfo))->resourceRequest();
+    RefPtr<WebURLRequest> returnedRequest = toImpl(m_client.willSendRequestForFrame(toAPI(page), toAPI(frame), identifier, toAPI(request), toAPI(redirectResponse), m_client.clientInfo));
+    if (returnedRequest)
+        request = returnedRequest->resourceRequest();
+    else
+        request = ResourceRequest();
 }
 
 void InjectedBundlePageLoaderClient::didClearWindowObjectForFrame(WebPage* page, WebFrame* frame, DOMWrapperWorld* world)

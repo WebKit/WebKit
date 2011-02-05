@@ -1,3 +1,16 @@
+2011-02-04  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        WebKit2: Crash when InjectedBundlePageLoaderClient::willSendRequestForFrame returns a null WKURLRequestRef
+        https://bugs.webkit.org/show_bug.cgi?id=53829
+        
+        Store the result of m_client.willSendRequestForFrame in a RefPtr, and null check it before
+        calling resourceRequest() on it.
+
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::willSendRequestForFrame):
+
 2011-02-04  Anders Carlsson  <andersca@apple.com>
 
         Fix build.
