@@ -94,10 +94,7 @@ TextEncoding FormDataBuilder::encodingFromAcceptCharset(const String& acceptChar
             return encoding;
     }
 
-    if (Frame* frame = document->frame())
-        return frame->loader()->writer()->encoding();
-
-    return Latin1Encoding();
+    return document->inputEncoding();
 }
 
 Vector<char> FormDataBuilder::generateUniqueBoundaryString()

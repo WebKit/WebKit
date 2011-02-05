@@ -229,7 +229,7 @@ void HTMLLinkElement::process()
         
         String charset = getAttribute(charsetAttr);
         if (charset.isEmpty() && document()->frame())
-            charset = document()->frame()->loader()->writer()->encoding();
+            charset = document()->charset();
         
         if (m_cachedSheet) {
             removePendingSheet();

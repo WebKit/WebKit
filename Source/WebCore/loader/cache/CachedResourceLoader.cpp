@@ -618,7 +618,7 @@ void CachedResourceLoader::requestPreload(CachedResource::Type type, const Strin
 {
     String encoding;
     if (type == CachedResource::Script || type == CachedResource::CSSStyleSheet)
-        encoding = charset.isEmpty() ? m_document->frame()->loader()->writer()->encoding() : charset;
+        encoding = charset.isEmpty() ? m_document->charset() : charset;
 
     CachedResource* resource = requestResource(type, url, encoding, ResourceLoadPriorityUnresolved, true);
     if (!resource || (m_preloads && m_preloads->contains(resource)))

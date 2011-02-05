@@ -1,3 +1,24 @@
+2011-02-05  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Use Document::encoding() instead of DocumentWriter::encoding()
+        https://bugs.webkit.org/show_bug.cgi?id=53398
+
+        This change makes the code more readable, when a subresource
+        inherits the character encoding of the document.
+
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::scriptCharset):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestPreload):
+        * platform/network/FormDataBuilder.cpp:
+        (WebCore::FormDataBuilder::encodingFromAcceptCharset):
+
 2011-02-05  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

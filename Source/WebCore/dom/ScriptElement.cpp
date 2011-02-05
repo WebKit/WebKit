@@ -292,10 +292,8 @@ String ScriptElement::scriptCharset() const
     String charset = charsetAttributeValue().stripWhiteSpace();
 
     // If charset has not been declared in script tag, fall back to frame encoding.
-    if (charset.isEmpty()) {
-        if (Frame* frame = m_element->document()->frame())
-            charset = frame->loader()->writer()->encoding();
-    }
+    if (charset.isEmpty())
+        charset = m_element->document()->charset();
 
     return charset;
 }
