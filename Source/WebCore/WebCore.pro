@@ -1167,7 +1167,6 @@ SOURCES += \
     page/SuspendableTimer.cpp \
     page/UserContentURLPattern.cpp \
     page/WindowFeatures.cpp \
-    page/XSSAuditor.cpp \
     plugins/PluginData.cpp \
     plugins/DOMPluginArray.cpp \
     plugins/DOMPlugin.cpp \
@@ -2077,7 +2076,6 @@ HEADERS += \
     page/SpeechInputResultList.h \
     page/WindowFeatures.h \
     page/WorkerNavigator.h \
-    page/XSSAuditor.h \
     platform/animation/Animation.h \
     platform/animation/AnimationList.h \
     platform/Arena.h \

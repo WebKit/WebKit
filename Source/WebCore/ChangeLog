@@ -1,5 +1,11 @@
 2011-02-05  Adam Barth  <abarth@webkit.org>
 
+        Fix Qt build.
+
+        * WebCore.pro:
+
+2011-02-05  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Delete XSSAuditor
