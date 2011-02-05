@@ -200,6 +200,9 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc
         else if (strcasecmp(argn[i], "src") == 0 &&
                  strcasecmp(argv[i], "data:application/x-webkit-test-netscape,returnerrorfromnewstream") == 0)
             obj->returnErrorFromNewStream = TRUE;
+        else if (strcasecmp(argn[i], "src") == 0 &&
+                 strcasecmp(argv[i], "data:application/x-webkit-test-netscape,alertwhenloaded") == 0)
+            executeScript(obj, "alert('Plugin Loaded!')");
         else if (strcasecmp(argn[i], "onSetWindow") == 0 && !obj->onSetWindow)
             obj->onSetWindow = strdup(argv[i]);
         else if (strcasecmp(argn[i], "onNew") == 0 && !onNewScript)

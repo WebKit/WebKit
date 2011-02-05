@@ -1835,7 +1835,16 @@ bool FrameView::updateWidgets()
     
     return m_widgetUpdateSet->isEmpty();
 }
-    
+
+void FrameView::flushAnyPendingPostLayoutTasks()
+{
+    if (!m_hasPendingPostLayoutTasks)
+        return;
+
+    m_postLayoutTasksTimer.stop();
+    performPostLayoutTasks();
+}
+
 void FrameView::performPostLayoutTasks()
 {
     m_hasPendingPostLayoutTasks = false;

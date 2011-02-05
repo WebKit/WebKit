@@ -1,3 +1,15 @@
+2011-02-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        PluginDocuments don't create widgets for plugins on back/forward
+        https://bugs.webkit.org/show_bug.cgi?id=53474
+
+        Test that plugin loads when in a plugin document on back-forward.
+
+        * plugins/plugin-document-back-forward-expected.txt: Added.
+        * plugins/plugin-document-back-forward.html: Added.
+
 2011-02-04  Charlie Reis  <creis@chromium.org>
 
         Reviewed by Mihai Parparita.

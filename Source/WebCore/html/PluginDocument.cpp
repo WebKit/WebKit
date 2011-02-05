@@ -28,6 +28,7 @@
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
+#include "FrameView.h"
 #include "HTMLEmbedElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
@@ -114,6 +115,13 @@ void PluginDocumentParser::appendBytes(DocumentWriter*, const char*, int, bool)
         return;
 
     document()->updateLayout();
+
+    // Below we assume that renderer->widget() to have been created by
+    // document()->updateLayout(). However, in some cases, updateLayout() will 
+    // recurse too many times and delay its post-layout tasks (such as creating
+    // the widget). Here we kick off the pending post-layout tasks so that we
+    // can synchronously redirect data to the plugin.
+    frame->view()->flushAnyPendingPostLayoutTasks();
 
     if (RenderPart* renderer = m_embedElement->renderPart()) {
         if (Widget* widget = renderer->widget()) {

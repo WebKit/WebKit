@@ -258,6 +258,9 @@ public:
 
     virtual IntPoint currentMousePosition() const;
 
+    // FIXME: Remove this method once plugin loading is decoupled from layout.
+    void flushAnyPendingPostLayoutTasks();
+
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
     virtual void scrollContentsSlowPath(const IntRect& updateRect);
