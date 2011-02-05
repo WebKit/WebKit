@@ -110,6 +110,7 @@ void WebProcess::platformClearResourceCaches()
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
 }
 
+#if ENABLE(WEB_PROCESS_SANDBOX)
 static void appendSandboxParameterPath(Vector<const char*>& vector, const char* name, const char* path)
 {
     char normalizedPath[PATH_MAX];
@@ -128,6 +129,7 @@ static void appendSandboxParameterConfPath(Vector<const char*>& vector, const ch
 
     appendSandboxParameterPath(vector, name, path);
 }
+#endif
 
 static void initializeSandbox(const WebProcessCreationParameters& parameters)
 {
