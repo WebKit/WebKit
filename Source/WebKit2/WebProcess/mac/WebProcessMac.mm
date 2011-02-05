@@ -76,7 +76,7 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
 {
     RetainPtr<NSString> nsurlCacheDirectory(AdoptNS, (NSString *)WKCopyFoundationCacheDirectory());
     if (!nsurlCacheDirectory)
-        nsurlCacheDirectory.adoptNS(NSHomeDirectory());
+        nsurlCacheDirectory = NSHomeDirectory();
 
     // As a fudge factor, use 1000 instead of 1024, in case the reported byte 
     // count doesn't align exactly to a megabyte boundary.
@@ -110,6 +110,25 @@ void WebProcess::platformClearResourceCaches()
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
 }
 
+static void appendSandboxParameterPath(Vector<const char*>& vector, const char* name, const char* path)
+{
+    char normalizedPath[PATH_MAX];
+    if (!realpath(path, normalizedPath))
+        normalizedPath[0] = '\0';
+
+    vector.append(name);
+    vector.append(fastStrDup(normalizedPath));
+}
+
+static void appendSandboxParameterConfPath(Vector<const char*>& vector, const char* name, int confID)
+{
+    char path[PATH_MAX];
+    if (confstr(confID, path, PATH_MAX) <= 0)
+        path[0] = '\0';
+
+    appendSandboxParameterPath(vector, name, path);
+}
+
 static void initializeSandbox(const WebProcessCreationParameters& parameters)
 {
 #if ENABLE(WEB_PROCESS_SANDBOX)
@@ -118,41 +137,29 @@ static void initializeSandbox(const WebProcessCreationParameters& parameters)
         return;
     }
 
+    Vector<const char*> sandboxParameters;
+
+    appendSandboxParameterPath(sandboxParameters, "HOME_DIR", [NSHomeDirectory() fileSystemRepresentation]);
+    appendSandboxParameterPath(sandboxParameters, "WEBKIT2_FRAMEWORK_DIR", [[[[NSBundle bundleForClass:NSClassFromString(@"WKView")] bundlePath] stringByDeletingLastPathComponent] fileSystemRepresentation]);
+    appendSandboxParameterConfPath(sandboxParameters, "DARWIN_USER_TEMP_DIR", _CS_DARWIN_USER_TEMP_DIR);
+    appendSandboxParameterConfPath(sandboxParameters, "DARWIN_USER_CACHE_DIR", _CS_DARWIN_USER_CACHE_DIR);
+    appendSandboxParameterPath(sandboxParameters, "WEBKIT_DATABASE_DIR", [(NSString *)parameters.databaseDirectory fileSystemRepresentation]);
+    appendSandboxParameterPath(sandboxParameters, "NSURL_CACHE_DIR", parameters.nsURLCachePath.data());
+    appendSandboxParameterPath(sandboxParameters, "UI_PROCESS_BUNDLE_RESOURCE_DIR", parameters.uiProcessBundleResourcePath.data());
+    sandboxParameters.append(static_cast<const char*>(0));
+
+    const char* profilePath = [[[NSBundle mainBundle] pathForResource:@"com.apple.WebProcess" ofType:@"sb"] fileSystemRepresentation];
+
     char* errorBuf;
-    char tmpPath[PATH_MAX];
-    char tmpRealPath[PATH_MAX];
-    char homeRealPath[PATH_MAX];
-    char cachePath[PATH_MAX];
-    char cacheRealPath[PATH_MAX];
-    const char* frameworkPath = [[[[NSBundle bundleForClass:NSClassFromString(@"WKView")] bundlePath] stringByDeletingLastPathComponent] UTF8String];
-    const char* profilePath = [[[NSBundle mainBundle] pathForResource:@"com.apple.WebProcess" ofType:@"sb"] UTF8String];
-
-    if (!realpath([NSHomeDirectory() UTF8String], homeRealPath)) {
-        fprintf(stderr, "WebProcess: couldn't determine home directory when initializing sandbox");
-        exit(EX_CONFIG);
-    }
-
-    if (confstr(_CS_DARWIN_USER_TEMP_DIR, tmpPath, PATH_MAX) <= 0 || !realpath(tmpPath, tmpRealPath))
-        tmpRealPath[0] = '\0';
-
-    if (confstr(_CS_DARWIN_USER_CACHE_DIR, cachePath, PATH_MAX) <= 0 || !realpath(cachePath, cacheRealPath))
-        cacheRealPath[0] = '\0';
-
-    const char* const sandboxParam[] = {
-        "HOME_DIR", (const char*)homeRealPath,
-        "WEBKIT2_FRAMEWORK_DIR", frameworkPath,
-        "DARWIN_USER_TEMP_DIR", (const char*)tmpRealPath,
-        "DARWIN_USER_CACHE_DIR", (const char*)cacheRealPath,
-        "WEBKIT_DATABASE_DIR", (const char*)[(NSString *)parameters.databaseDirectory fileSystemRepresentation],
-        "NSURL_CACHE_DIR", (const char*)parameters.nsURLCachePath.data(),
-        "UI_PROCESS_BUNDLE_RESOURCE_DIR", (const char*)parameters.uiProcessBundleResourcePath.data(),
-        NULL
-    };
-
-    if (sandbox_init_with_parameters(profilePath, SANDBOX_NAMED_EXTERNAL, sandboxParam, &errorBuf)) {
-        fprintf(stderr, "WebProcess: couldn't initialize sandbox profile [%s] with framework path [%s], tmp path [%s], cache path [%s]: %s\n", profilePath, frameworkPath, tmpRealPath, cacheRealPath, errorBuf);
+    if (sandbox_init_with_parameters(profilePath, SANDBOX_NAMED_EXTERNAL, sandboxParameters.data(), &errorBuf)) {
+        fprintf(stderr, "WebProcess: couldn't initialize sandbox profile [%s]\n", profilePath);
+        for (size_t i = 0; sandboxParameters[i]; i += 2)
+            fprintf(stderr, "%s=%s\n", sandboxParameters[i], sandboxParameters[i + 1]);
         exit(EX_NOPERM);
     }
+
+    for (size_t i = 0; sandboxParameters[i]; i += 2)
+        fastFree(const_cast<char*>(sandboxParameters[i + 1]));
 #endif
 }
 

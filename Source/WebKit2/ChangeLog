@@ -1,3 +1,18 @@
+2011-02-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix <rdar://problem/8961227> WebKit2 does not work with symlinked home directories.
+
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformSetCacheModel):
+        Don't adopt an autoreleased pointer, this would lead to a crash.
+
+        (WebKit::appendSandboxParameterPath):
+        (WebKit::appendSandboxParameterConfPath):
+        (WebKit::initializeSandbox):
+        Clean up the sandbox parameter code and make sure that realpath is called for all parameters.
+
 2011-02-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
