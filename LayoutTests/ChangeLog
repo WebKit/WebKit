@@ -1,3 +1,12 @@
+2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Add expectations for the test, added in r77690.
+
+        * platform/chromium-win/media/video-frame-accurate-seek-expected.checksum: Added.
+        * platform/chromium-win/media/video-frame-accurate-seek-expected.png: Added.
+        * platform/chromium-win/media/video-frame-accurate-seek-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-02-04  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by David Hyatt.

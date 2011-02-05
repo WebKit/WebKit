@@ -3284,3 +3284,4 @@ BUG_SENORBLANCO GPU WIN LINUX : fast/canvas/canvas-composite.html = IMAGE
 BUG_SENORBLANCO GPU WIN LINUX : fast/canvas/canvas-transform-skewed.html = IMAGE 
 
 BUGWK53469 GPU MAC : compositing/scroll-painted-composited-content.html = CRASH PASS
+BUGWK53825 LINUX : media/video-frame-accurate-seek.html = IMAGE
