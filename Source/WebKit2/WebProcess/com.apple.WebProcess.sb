@@ -6,51 +6,53 @@
 
 ;; Read-only preferences and data
 (allow file-read*
-   ;; Basic system paths
-   (subpath "/Library/Fonts")
-   (subpath "/Library/Frameworks")
-   (subpath "/Library/Keychains")
-   (subpath "/private/var/db/mds")
-   (regex #"^/private/etc/(hosts|group|passwd)$")
+    ;; Basic system paths
+    (subpath "/Library/Fonts")
+    (subpath "/Library/Frameworks")
+    (subpath "/Library/Keychains")
+    (subpath "/private/var/db/mds")
+    (subpath "/private/var/db/DetachedSignatures")
+    (regex #"^/private/etc/(hosts|group|passwd)$")
 
-   ;; Plugins
-   (subpath "/Library/Internet Plug-Ins")
-   (subpath (string-append (param "HOME_DIR") "/Library/Internet Plug-Ins"))
+    ;; Plugins
+    (subpath "/Library/Internet Plug-Ins")
+    (subpath (string-append (param "HOME_DIR") "/Library/Internet Plug-Ins"))
 
-   ;; System and user preferences
-   (literal "/Library/Preferences/.GlobalPreferences.plist")
-   (literal "/Library/Preferences/com.apple.security.plist")
-   (literal (string-append (param "HOME_DIR") "/Library/Preferences/.GlobalPreferences.plist"))
-   (regex (string-append "^" (param "HOME_DIR") "/Library/Preferences/ByHost/\.GlobalPreferences\."))
-   (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.ATS.plist"))
-   (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.HIToolbox.plist"))
-   (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.LaunchServices.plist"))
-   (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.WebFoundation.plist"))
-   (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.security.plist"))
-   (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.security.revocation.plist"))
-   (subpath (string-append (param "HOME_DIR") "/Library/Keychains"))
+    ;; System and user preferences
+    (literal "/Library/Preferences/.GlobalPreferences.plist")
+    (literal "/Library/Preferences/com.apple.security.plist")
+    (literal (string-append (param "HOME_DIR") "/Library/Preferences/.GlobalPreferences.plist"))
+    (regex (string-append "^" (param "HOME_DIR") "/Library/Preferences/ByHost/\.GlobalPreferences\."))
+    (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.ATS.plist"))
+    (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.HIToolbox.plist"))
+    (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.LaunchServices.plist"))
+    (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.WebFoundation.plist"))
+    (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.security.plist"))
+    (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.security.revocation.plist"))
+    (literal (string-append (param "HOME_DIR") "/Library/Application Support/SyncServices/Local/ClientsWithChanges/com.apple.Keychain"))
 
-   ;; On-disk WebKit2 framework location, to account for debug installations
-   ;; outside of /System/Library/Frameworks
-   (subpath (param "WEBKIT2_FRAMEWORK_DIR"))
+    ;; On-disk WebKit2 framework location, to account for debug installations
+    ;; outside of /System/Library/Frameworks
+    (subpath (param "WEBKIT2_FRAMEWORK_DIR"))
 
-   ;; FIXME: This should be removed when <rdar://problem/8957845> is fixed.
-   (subpath (string-append (param "HOME_DIR") "/Library/Fonts"))
+    ;; FIXME: This should be removed when <rdar://problem/8957845> is fixed.
+    (subpath (string-append (param "HOME_DIR") "/Library/Fonts"))
 
-   ;; Extensions from UIProcess
-   (extension)
+    ;; Extensions from UIProcess
+    (extension)
 )
 
 (allow file-write*
-   ;; Extensions from UIProcess
-   (extension)
+    ;; Extensions from UIProcess
+    (extension)
 )
 
 ;; Writable preferences and temporary files
 (allow file*
-   (subpath (string-append (param "HOME_DIR") "/Library/Caches/com.apple.WebProcess"))
-   (regex (string-append "^" (param "HOME_DIR") "/Library/Preferences/ByHost/com\.apple\.HIToolbox\."))
-   (regex (string-append "^" (param "HOME_DIR") "/Library/Preferences/com\.apple\.WebProcess\."))
+    (subpath (string-append (param "HOME_DIR") "/Library/Caches/com.apple.WebProcess"))
+    (regex (string-append "^" (param "HOME_DIR") "/Library/Preferences/ByHost/com\.apple\.HIToolbox\."))
+    (regex (string-append "^" (param "HOME_DIR") "/Library/Preferences/com\.apple\.WebProcess\."))
+    (subpath (string-append (param "HOME_DIR") "/Library/Keychains"))
 )
 
 ;; Darwin temporary files and caches, if present
