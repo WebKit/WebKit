@@ -236,7 +236,7 @@ void HistoryController::goToItem(HistoryItem* targetItem, FrameLoadType type)
     // Set the BF cursor before commit, which lets the user quickly click back/forward again.
     // - plus, it only makes sense for the top level of the operation through the frametree,
     // as opposed to happening for some/one of the page commits that might happen soon
-    HistoryItem* currentItem = page->backForward()->currentItem();    
+    RefPtr<HistoryItem> currentItem = page->backForward()->currentItem();
     page->backForward()->setCurrentItem(targetItem);
     Settings* settings = m_frame->settings();
     page->setGlobalHistoryItem((!settings || settings->privateBrowsingEnabled()) ? 0 : targetItem);
@@ -245,9 +245,9 @@ void HistoryController::goToItem(HistoryItem* targetItem, FrameLoadType type)
     // This must be done before trying to navigate the desired frame, because some
     // navigations can commit immediately (such as about:blank).  We must be sure that
     // all frames have provisional items set before the commit.
-    recursiveSetProvisionalItem(targetItem, currentItem, type);
+    recursiveSetProvisionalItem(targetItem, currentItem.get(), type);
     // Now that all other frames have provisional items, do the actual navigation.
-    recursiveGoToItem(targetItem, currentItem, type);
+    recursiveGoToItem(targetItem, currentItem.get(), type);
 }
 
 void HistoryController::updateForBackForwardNavigation()
@@ -402,8 +402,9 @@ void HistoryController::updateForCommit()
         LOG(History, "WebCoreHistory: Updating History for commit in frame %s", frameLoader->documentLoader()->title().utf8().data());
 #endif
     FrameLoadType type = frameLoader->loadType();
-    if (isBackForwardLoadType(type) ||
-        ((type == FrameLoadTypeReload || type == FrameLoadTypeReloadFromOrigin) && !frameLoader->provisionalDocumentLoader()->unreachableURL().isEmpty())) {
+    if (isBackForwardLoadType(type)
+        || isReplaceLoadTypeWithProvisionalItem(type)
+        || ((type == FrameLoadTypeReload || type == FrameLoadTypeReloadFromOrigin) && !frameLoader->provisionalDocumentLoader()->unreachableURL().isEmpty())) {
         // Once committed, we want to use current item for saving DocState, and
         // the provisional item for restoring state.
         // Note previousItem must be set before we close the URL, which will
@@ -421,6 +422,13 @@ void HistoryController::updateForCommit()
         ASSERT(page);
         page->mainFrame()->loader()->history()->recursiveUpdateForCommit();
     }
+}
+
+bool HistoryController::isReplaceLoadTypeWithProvisionalItem(FrameLoadType type)
+{
+    // Going back to an error page in a subframe can trigger a FrameLoadTypeReplace
+    // while m_provisionalItem is set, so we need to commit it.
+    return type == FrameLoadTypeReplace && m_provisionalItem;
 }
 
 void HistoryController::recursiveUpdateForCommit()
@@ -471,6 +479,25 @@ void HistoryController::updateForSameDocumentNavigation()
         return;
 
     addVisitedLink(page, m_frame->document()->url());
+    page->mainFrame()->loader()->history()->recursiveUpdateForSameDocumentNavigation();
+}
+
+void HistoryController::recursiveUpdateForSameDocumentNavigation()
+{
+    // The frame that navigated will now have a null provisional item.
+    // Ignore it and its children.
+    if (!m_provisionalItem)
+        return;
+
+    // Commit the provisional item.
+    m_frameLoadComplete = false;
+    m_previousItem = m_currentItem;
+    m_currentItem = m_provisionalItem;
+    m_provisionalItem = 0;
+
+    // Iterate over the rest of the tree.
+    for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
+        child->loader()->history()->recursiveUpdateForSameDocumentNavigation();
 }
 
 void HistoryController::updateForFrameLoadCompleted()
@@ -621,17 +648,6 @@ void HistoryController::recursiveSetProvisionalItem(HistoryItem* item, HistoryIt
 
         int size = childItems.size();
 
-        // Sanity checks for http://webkit.org/b/52819.
-        if (size > 0) {
-            // fromItem should have same number of children according to hasSameFrames,
-            // but crash dumps suggest it might have 0.
-            if (!fromItem->children().size())
-                CRASH();
-            // itemsAreClones checked fromItem->hasSameFrames(item). Check vice versa.
-            if (!item->hasSameFrames(fromItem))
-                CRASH();
-        }
-
         for (int i = 0; i < size; ++i) {
             String childFrameName = childItems[i]->target();
             HistoryItem* fromChildItem = fromItem->childItemWithTarget(childFrameName);
@@ -670,14 +686,6 @@ void HistoryController::recursiveGoToItem(HistoryItem* item, HistoryItem* fromIt
 
 bool HistoryController::itemsAreClones(HistoryItem* item1, HistoryItem* item2) const
 {
-    // It appears that one of the items can be null in release builds, leading
-    // to the crashes seen in http://webkit.org/b/52819.  For now, try to
-    // narrow it down with a more specific crash.
-    if (!item1)
-        CRASH();
-    if (!item2)
-        CRASH();
-
     // If the item we're going to is a clone of the item we're at, then we do
     // not need to load it again.  The current frame tree and the frame tree
     // snapshot in the item have to match.

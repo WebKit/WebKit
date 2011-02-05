@@ -91,7 +91,9 @@ private:
 
     void recursiveSetProvisionalItem(HistoryItem*, HistoryItem*, FrameLoadType);
     void recursiveGoToItem(HistoryItem*, HistoryItem*, FrameLoadType);
+    bool isReplaceLoadTypeWithProvisionalItem(FrameLoadType);
     void recursiveUpdateForCommit();
+    void recursiveUpdateForSameDocumentNavigation();
     bool itemsAreClones(HistoryItem*, HistoryItem*) const;
     bool currentFramesMatchItem(HistoryItem*) const;
     void updateBackForwardListClippedAtTarget(bool doClip);

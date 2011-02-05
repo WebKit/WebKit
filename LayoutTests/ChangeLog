@@ -1,3 +1,15 @@
+2011-02-04  Charlie Reis  <creis@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        Crash in WebCore::HistoryController::itemsAreClones
+        https://bugs.webkit.org/show_bug.cgi?id=52819
+
+        Tests that navigating back and forward between hash items works.
+
+        * fast/history/history-back-forward-within-subframe-hash.html: Added.
+        * fast/history/history-back-forward-within-subframe-hash-expected.txt: Added.
+
 2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Add expectations for the test, added in r77690.

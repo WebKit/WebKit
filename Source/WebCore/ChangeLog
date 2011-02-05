@@ -1,3 +1,18 @@
+2011-02-04  Charlie Reis  <creis@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        Crash in WebCore::HistoryController::itemsAreClones
+        https://bugs.webkit.org/show_bug.cgi?id=52819
+
+        Avoids deleting the current HistoryItem while it is still in use.
+        Ensures that provisional items are committed for same document navigations.
+        Ensures that error pages are committed on back/forward navigations.
+        Also removes unneeded sanity checks used for diagnosing the problem.
+
+        * loader/HistoryController.cpp:
+        * loader/HistoryController.h:
+
 2011-02-04  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by David Hyatt.
