@@ -1,3 +1,27 @@
+2011-02-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Rolled back in r77612 with ASSERT/crash fixed.
+        https://bugs.webkit.org/show_bug.cgi?id=53759
+        
+        Don't shrink the heap to 0 unconditionally. Instead, shrink to 1 if
+        necessary. For now, the heap assumes that it always has at least one
+        block live.
+
+        * runtime/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::reset):
+        * runtime/Heap.h:
+        * runtime/MarkedSpace.cpp:
+        (JSC::MarkedSpace::allocate):
+        (JSC::MarkedSpace::shrinkBlocks):
+        (JSC::MarkedSpace::sweep):
+        (JSC::MarkedSpace::reset):
+        * runtime/MarkedSpace.h:
+        (JSC::MarkedSpace::highWaterMark):
+        (JSC::MarkedSpace::setHighWaterMark):
+
 2011-02-04  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX: REALLY remove the last vestiges of JSVALUE32!

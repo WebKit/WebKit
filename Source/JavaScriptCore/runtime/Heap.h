@@ -122,8 +122,8 @@ namespace JSC {
 
         RegisterFile& registerFile();
 
-        MarkedSpace m_markedSpace;
         OperationInProgress m_operationInProgress;
+        MarkedSpace m_markedSpace;
 
         ProtectCountSet m_protectedValues;
         Vector<PageAllocationAligned> m_weakGCHandlePools;
