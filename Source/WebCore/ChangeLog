@@ -1,3 +1,20 @@
+2011-02-04  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [chromium] JPEG corruption
+        https://bugs.webkit.org/show_bug.cgi?id=53250
+
+        Same as gray-scale JPEGs, we convert the colors of CMYK JPEGs with color
+        profiles from CMYK to RGB twice and it causes color corruption. This
+        change suppresses the color profiles for CMYK JPEGs same as gray-scale
+        ones.
+
+        Test: fast/images/cmyk-jpeg-with-color-profile.html
+
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageReader::decode):
+
 2011-02-04  Xiyuan Xia  <xiyuan@chromium.org>
 
         Reviewed by Tony Chang.

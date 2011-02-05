@@ -1,3 +1,19 @@
+2011-02-04  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [chromium] JPEG corruption
+        https://bugs.webkit.org/show_bug.cgi?id=53250
+
+        This change adds a new script test that we can render a CMYK JPEG with a
+        color profile correctly, i.e. we can render it without color corruption.
+
+        * fast/images/cmyk-jpeg-with-color-profile-expected.txt: Added.
+        * fast/images/cmyk-jpeg-with-color-profile.html: Added.
+        * fast/images/resources/cmyk-jpeg.jpg: Added.
+        * fast/images/script-tests/cmyk-jpeg-with-color-profile.js: Added.
+        (image.onload):
+
 2011-02-04  Martin Robinson  <mrobinson@igalia.com>
 
         Update pixel results for the fast/forms directory in preparation for landing
