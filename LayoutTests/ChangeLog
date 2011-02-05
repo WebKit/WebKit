@@ -1,3 +1,27 @@
+2011-02-04  Jessie Berlin  <jberlin@apple.com>
+
+        [Windows 7 Release Tests] 5 ruby tests failing on Windows after r77665
+        https://bugs.webkit.org/show_bug.cgi?id=53820
+
+        Unreviewed. Landing expected results that are probably correct (given that the change in
+        77665 was to make the default ruby text size smaller by default).
+
+        * platform/win/fast/blockflow/Kusa-Makura-background-canvas-expected.checksum:
+        * platform/win/fast/blockflow/Kusa-Makura-background-canvas-expected.png:
+        * platform/win/fast/blockflow/Kusa-Makura-background-canvas-expected.txt:
+        * platform/win/fast/blockflow/japanese-ruby-horizontal-bt-expected.checksum:
+        * platform/win/fast/blockflow/japanese-ruby-horizontal-bt-expected.png:
+        * platform/win/fast/blockflow/japanese-ruby-horizontal-bt-expected.txt:
+        * platform/win/fast/blockflow/japanese-ruby-vertical-lr-expected.checksum:
+        * platform/win/fast/blockflow/japanese-ruby-vertical-lr-expected.png:
+        * platform/win/fast/blockflow/japanese-ruby-vertical-lr-expected.txt:
+        * platform/win/fast/blockflow/japanese-ruby-vertical-rl-expected.checksum:
+        * platform/win/fast/blockflow/japanese-ruby-vertical-rl-expected.png:
+        * platform/win/fast/blockflow/japanese-ruby-vertical-rl-expected.txt:
+        * platform/win/fast/ruby/nested-ruby-expected.checksum:
+        * platform/win/fast/ruby/nested-ruby-expected.png:
+        * platform/win/fast/ruby/nested-ruby-expected.txt:
+
 2011-02-04  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
