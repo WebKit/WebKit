@@ -1,3 +1,17 @@
+2011-02-04  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        get test-webkitpy running on win32 python
+        https://bugs.webkit.org/show_bug.cgi?id=53822
+
+        The test harness crashes with a WindowsError because it can't find
+        'svn' when using subprocess.Popen.  This gets us past the error
+        so we can see the failing tests on the Chromium Win Release Tests
+        bot.
+
+        * Scripts/webkitpy/common/system/executive.py:
+
 2011-02-04  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

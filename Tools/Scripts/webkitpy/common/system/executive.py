@@ -111,6 +111,11 @@ class Executive(object):
         # shows up on Mac and Linux.
         return sys.platform not in ('win32', 'cygwin')
 
+    def _should_use_shell(self):
+        # On Windows, if we don't use the shell, we don't search %PATH% to
+        # find the command-- an absolute path is required.
+        return sys.platform.startswith('win')
+
     def _run_command_with_teed_output(self, args, teed_output):
         args = map(unicode, args)  # Popen will throw an exception if args are non-strings (like int())
         args = map(self._encode_argument_if_needed, args)
@@ -118,7 +123,8 @@ class Executive(object):
         child_process = subprocess.Popen(args,
                                          stdout=subprocess.PIPE,
                                          stderr=subprocess.STDOUT,
-                                         close_fds=self._should_close_fds())
+                                         close_fds=self._should_close_fds(),
+                                         shell=self._should_use_shell())
 
         # Use our own custom wait loop because Popen ignores a tee'd
         # stderr/stdout.
@@ -351,7 +357,8 @@ class Executive(object):
                                    stdout=subprocess.PIPE,
                                    stderr=stderr,
                                    cwd=cwd,
-                                   close_fds=self._should_close_fds())
+                                   close_fds=self._should_close_fds(),
+                                   shell=self._should_use_shell())
         output = process.communicate(string_to_communicate)[0]
 
         # run_command automatically decodes to unicode() unless explicitly told not to.
