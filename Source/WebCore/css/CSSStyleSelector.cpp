@@ -359,15 +359,23 @@ public:
         , m_selector(selector)
         , m_position(position)
     {
+        collectDescendantSelectorIdentifierHashes();
     }
+    void collectDescendantSelectorIdentifierHashes();
     unsigned position() const { return m_position; }
     CSSStyleRule* rule() const { return m_rule; }
     CSSSelector* selector() const { return m_selector; }
+    
+    // Try to balance between memory usage (there can be lots of RuleData objects) and good filtering performance.
+    static const unsigned maximumIdentifierCount = 4;
+    const unsigned* descendantSelectorIdentifierHashes() const { return m_descendantSelectorIdentifierHashes; }
 
 private:
     CSSStyleRule* m_rule;
     CSSSelector* m_selector;
     unsigned m_position;
+    // Use plain array instead of a Vector to minimize memory overhead.
+    unsigned m_descendantSelectorIdentifierHashes[maximumIdentifierCount];
 };
 
 class RuleSet {
@@ -642,6 +650,56 @@ static void loadViewSourceStyle()
     defaultViewSourceStyle = new RuleSet;
     defaultViewSourceStyle->addRulesFromSheet(parseUASheet(sourceUserAgentStyleSheet, sizeof(sourceUserAgentStyleSheet)), screenEval());
 }
+    
+static inline void collectElementIdentifierHashes(Element* element, Vector<unsigned, 4>& identifierHashes)
+{
+    identifierHashes.append(element->localName().impl()->existingHash());
+    if (element->hasID())
+        identifierHashes.append(element->idForStyleResolution().impl()->existingHash());
+    StyledElement* styledElement = element->isStyledElement() ? static_cast<StyledElement*>(element) : 0;
+    if (styledElement && styledElement->hasClass()) {
+        const SpaceSplitString& classNames = static_cast<StyledElement*>(element)->classNames();
+        size_t count = classNames.size();
+        for (size_t i = 0; i < count; ++i)
+            identifierHashes.append(classNames[i].impl()->existingHash());
+    }
+}
+    
+void CSSStyleSelector::pushParent(Element* parent)
+{
+    // If we are not invoked consistently for each parent, just pause maintaining the stack.
+    // There are all kinds of wacky special cases where the style recalc may temporarily branch to some random elements.
+    // FIXME: Perhaps we should fix up the stack instead? There is some danger of getting into O(n^2) situations doing that.
+    if (m_parentStack.isEmpty()) {
+        ASSERT(m_ancestorIdentifierFilter.isEmpty());
+        // We must start from the root.
+        if (parent->parentElement())
+            return;
+    } else if (m_parentStack.last().element != parent->parentElement())
+        return;
+
+    m_parentStack.append(ParentStackFrame(parent));
+    ParentStackFrame& parentFrame = m_parentStack.last();
+    // Mix tags, class names and ids into some sort of weird bouillabaisse.
+    // The filter is used for fast rejection of child and descendant selectors.
+    collectElementIdentifierHashes(parent, parentFrame.identifierHashes);
+    size_t count = parentFrame.identifierHashes.size();
+    for (size_t i = 0; i < count; ++i)
+        m_ancestorIdentifierFilter.add(parentFrame.identifierHashes[i]);
+}
+
+void CSSStyleSelector::popParent(Element* parent)
+{
+    if (m_parentStack.isEmpty() || m_parentStack.last().element != parent)
+        return;
+
+    const ParentStackFrame& parentFrame = m_parentStack.last();
+    size_t count = parentFrame.identifierHashes.size();
+    for (size_t i = 0; i < count; ++i)
+        m_ancestorIdentifierFilter.remove(parentFrame.identifierHashes[i]);
+    m_parentStack.removeLast();
+    ASSERT(!m_parentStack.isEmpty() || m_ancestorIdentifierFilter.isEmpty());
+}
 
 void CSSStyleSelector::addMatchedDeclaration(CSSMutableStyleDeclaration* decl)
 {
@@ -693,22 +751,37 @@ void CSSStyleSelector::matchRules(RuleSet* rules, int& firstRuleIndex, int& last
     }
 }
 
+inline bool CSSStyleSelector::fastRejectSelector(const RuleData& ruleData) const
+{
+    const unsigned* descendantSelectorIdentifierHashes = ruleData.descendantSelectorIdentifierHashes();
+    for (unsigned n = 0; n < RuleData::maximumIdentifierCount && descendantSelectorIdentifierHashes[n]; ++n) {
+        if (!m_ancestorIdentifierFilter.contains(descendantSelectorIdentifierHashes[n]))
+            return true;
+    }
+    return false;
+}
+
 void CSSStyleSelector::matchRulesForList(const Vector<RuleData>* rules, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules)
 {
     if (!rules)
         return;
+    // In some cases we may end up looking up style for random elements in the middle of a recursive tree resolve.
+    // Ancestor identifier filter won't be up-to-date in that case and we can't use the fast path.
+    bool canUseFastReject = !m_parentStack.isEmpty() && m_parentStack.last().element == m_parentNode;
+
     unsigned size = rules->size();
     for (unsigned i = 0; i < size; ++i) {
         const RuleData& ruleData = rules->at(i);
         CSSStyleRule* rule = ruleData.rule();
-        if (m_checker.m_sameOriginOnly && !m_checker.m_document->securityOrigin()->canRequest(rule->baseURL()))
-            continue; 
+        if (canUseFastReject && fastRejectSelector(ruleData))
+            continue;
         if (checkSelector(ruleData.selector())) {
             // If the rule has no properties to apply, then ignore it in the non-debug mode.
             CSSMutableStyleDeclaration* decl = rule->declaration();
             if (!decl || (!decl->length() && !includeEmptyRules))
                 continue;
-            
+            if (m_checker.m_sameOriginOnly && !m_checker.m_document->securityOrigin()->canRequest(rule->baseURL()))
+                continue; 
             // If we're matching normal rules, set a pseudo bit if 
             // we really just matched a pseudo-element.
             if (m_dynamicPseudo != NOPSEUDO && m_checker.m_pseudoStyle == NOPSEUDO) {
@@ -2850,6 +2923,36 @@ bool CSSStyleSelector::SelectorChecker::checkScrollbarPseudoClass(CSSSelector* s
 }
 
 // -----------------------------------------------------------------
+
+inline void RuleData::collectDescendantSelectorIdentifierHashes()
+{
+    unsigned identifierCount = 0;
+    CSSSelector::Relation relation = m_selector->relation();
+    CSSSelector* selector = m_selector->tagHistory();
+    // Skip the topmost selector. It is handled quickly by the rule hashes.
+    for (; selector; selector = selector->tagHistory()) {
+        if (relation != CSSSelector::SubSelector)
+            break;
+        relation = selector->relation();
+    }
+    for (; selector; selector = selector->tagHistory()) {
+        // Only collect identifiers that match direct ancestors.
+        // FIXME: Intead of just stopping, this should skip over sibling selectors.
+        if (relation != CSSSelector::Descendant && relation != CSSSelector::Child && relation != CSSSelector::SubSelector)
+            break;
+        if ((selector->m_match == CSSSelector::Id || selector->m_match == CSSSelector::Class) && !selector->value().isEmpty())
+            m_descendantSelectorIdentifierHashes[identifierCount++] = selector->value().impl()->existingHash();
+        if (identifierCount == maximumIdentifierCount)
+            return;
+        const AtomicString& localName = selector->tag().localName();
+        if (localName != starAtom)
+            m_descendantSelectorIdentifierHashes[identifierCount++] = localName.impl()->existingHash();
+        if (identifierCount == maximumIdentifierCount)
+            return;
+        relation = selector->relation();
+    }
+    m_descendantSelectorIdentifierHashes[identifierCount] = 0;
+}
 
 RuleSet::RuleSet()
     : m_ruleCount(0)

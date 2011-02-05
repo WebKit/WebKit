@@ -68,6 +68,33 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace XMLNames;
     
+class StyleSelectorParentPusher {
+public:
+    StyleSelectorParentPusher(CSSStyleSelector* styleSelector, Element* parent)
+        : m_styleSelector(styleSelector)
+        , m_parent(parent)
+        , m_didPush(false) 
+    {
+    }
+    void push()
+    {
+        if (m_didPush)
+            return;
+        m_styleSelector->pushParent(m_parent);
+        m_didPush = true;
+    }
+    ~StyleSelectorParentPusher() 
+    {
+        if (m_didPush)
+            m_styleSelector->popParent(m_parent); 
+    }
+
+private:
+    CSSStyleSelector* m_styleSelector;
+    Element* m_parent;
+    bool m_didPush;
+};
+    
 PassRefPtr<Element> Element::create(const QualifiedName& tagName, Document* document)
 {
     return adoptRef(new Element(tagName, document, CreateElement));
@@ -917,9 +944,15 @@ void Element::attach()
     RenderWidget::suspendWidgetHierarchyUpdates();
 
     createRendererIfNeeded();
+    
+    StyleSelectorParentPusher parentPusher(document()->styleSelector(), this);
+    if (firstChild())
+        parentPusher.push();
     ContainerNode::attach();
-    if (Node* shadow = shadowRoot())
+    if (Node* shadow = shadowRoot()) {
+        parentPusher.push();
         shadow->attach();
+    }
     if (hasRareData()) {   
         ElementRareData* data = rareData();
         if (data->needsFocusAppearanceUpdateSoonAfterAttach()) {
@@ -1059,7 +1092,7 @@ void Element::recalcStyle(StyleChange change)
                 change = ch;
         }
     }
-
+    StyleSelectorParentPusher parentPusher(document()->styleSelector(), this);
     // FIXME: This check is good enough for :hover + foo, but it is not good enough for :hover + foo + bar.
     // For now we will just worry about the common case, since it's a lot trickier to get the second case right
     // without doing way too much re-resolution.
@@ -1068,15 +1101,19 @@ void Element::recalcStyle(StyleChange change)
         bool childRulesChanged = n->needsStyleRecalc() && n->styleChangeType() == FullStyleChange;
         if (forceCheckOfNextElementSibling && n->isElementNode())
             n->setNeedsStyleRecalc();
-        if (change >= Inherit || n->isTextNode() || n->childNeedsStyleRecalc() || n->needsStyleRecalc())
+        if (change >= Inherit || n->isTextNode() || n->childNeedsStyleRecalc() || n->needsStyleRecalc()) {
+            parentPusher.push();
             n->recalcStyle(change);
+        }
         if (n->isElementNode())
             forceCheckOfNextElementSibling = childRulesChanged && hasDirectAdjacentRules;
     }
     // FIXME: This does not care about sibling combinators. Will be necessary in XBL2 world.
     if (Node* shadow = shadowRoot()) {
-        if (change >= Inherit || shadow->isTextNode() || shadow->childNeedsStyleRecalc() || shadow->needsStyleRecalc())
+        if (change >= Inherit || shadow->isTextNode() || shadow->childNeedsStyleRecalc() || shadow->needsStyleRecalc()) {
+            parentPusher.push();
             shadow->recalcStyle(change);
+        }
     }
 
     clearNeedsStyleRecalc();

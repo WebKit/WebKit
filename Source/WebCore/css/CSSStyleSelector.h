@@ -27,6 +27,7 @@
 #include "LinkHash.h"
 #include "MediaQueryExp.h"
 #include "RenderStyle.h"
+#include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
@@ -89,6 +90,10 @@ public:
                          CSSStyleSheet* pageUserSheet, const Vector<RefPtr<CSSStyleSheet> >* pageGroupUserSheets,
                          bool strictParsing, bool matchAuthorAndUserStyles);
         ~CSSStyleSelector();
+        
+        // Using these during tree walk will allow style selector to optimize child and descendant selector lookups.
+        void pushParent(Element* parent);
+        void popParent(Element* parent);
 
         PassRefPtr<RenderStyle> styleForElement(Element* e, RenderStyle* parentStyle = 0, bool allowSharing = true, bool resolveForRootDefault = false, bool matchVisitedPseudoClass = false);
         
@@ -186,6 +191,7 @@ public:
 
         void matchRules(RuleSet*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
         void matchRulesForList(const Vector<RuleData>*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
+        bool fastRejectSelector(const RuleData&) const;
         void sortMatchedRules(unsigned start, unsigned end);
 
         template <bool firstPass>
@@ -203,6 +209,15 @@ public:
         
         OwnPtr<RuleSet> m_siblingRules;
         HashSet<AtomicStringImpl*> m_idsInRules;
+        
+        struct ParentStackFrame {
+            ParentStackFrame(Element* element) : element(element) {}
+            Element* element;
+            Vector<unsigned, 4> identifierHashes;
+        };
+        Vector<ParentStackFrame> m_parentStack;
+        // FIXME: Replace this with a bloom filter.
+        HashCountedSet<unsigned, AlreadyHashed> m_ancestorIdentifierFilter;
 
         bool m_hasUAAppearance;
         BorderData m_borderData;
