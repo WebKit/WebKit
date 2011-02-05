@@ -1,5 +1,16 @@
 2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] Removed Chromium-specific baselines that are no longer necessary.
+
+        * platform/chromium-mac-leopard/fast/blockflow/japanese-ruby-vertical-lr-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/blockflow/japanese-ruby-vertical-lr-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/blockflow/japanese-ruby-vertical-rl-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/blockflow/japanese-ruby-vertical-rl-expected.png: Removed.
+        * platform/chromium-mac/fast/blockflow/Kusa-Makura-background-canvas-expected.checksum: Removed.
+        * platform/chromium-mac/fast/blockflow/Kusa-Makura-background-canvas-expected.png: Removed.
+
+2011-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Update Leopard pixel results for fast/box-shadow.
 
         * platform/mac-leopard/fast/box-shadow/basic-shadows-expected.checksum:
