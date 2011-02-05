@@ -1,5 +1,15 @@
 2011-02-04  Adam Barth  <abarth@webkit.org>
 
+        [Windows 7 Release Tests] plugins/plugin-document-back-forward.html failing since introduction in r77706
+        https://bugs.webkit.org/show_bug.cgi?id=53831
+
+        Stop dumping the child frames because that's not needed for this test
+        and cause extra output on Windows.
+
+        * plugins/plugin-document-back-forward.html:
+
+2011-02-04  Adam Barth  <abarth@webkit.org>
+
         [GTK] plugins/plugin-document-back-forward.html fails
         https://bugs.webkit.org/show_bug.cgi?id=53833
 
