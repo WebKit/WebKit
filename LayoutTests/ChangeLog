@@ -1,3 +1,26 @@
+2011-02-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Update pixel results for the fast/forms directory in preparation for landing
+        fixes to input type=search icon sizing. Also add some missing results. These
+        results are out of date because of changes to font hinting some time ago.
+
+        * platform/gtk/fast/forms/
+        * platform/gtk/fast/forms/input-placeholder-visibility-1-expected.checksum: Added.
+        * platform/gtk/fast/forms/input-placeholder-visibility-1-expected.png: Added.
+        * platform/gtk/fast/forms/input-placeholder-visibility-1-expected.txt: Added.
+        * platform/gtk/fast/forms/input-placeholder-visibility-2-expected.checksum: Added.
+        * platform/gtk/fast/forms/input-placeholder-visibility-2-expected.png: Added.
+        * platform/gtk/fast/forms/input-placeholder-visibility-2-expected.txt: Added.
+        * platform/gtk/fast/forms/input-placeholder-visibility-3-expected.checksum: Added.
+        * platform/gtk/fast/forms/input-placeholder-visibility-3-expected.png: Added.
+        * platform/gtk/fast/forms/input-placeholder-visibility-3-expected.txt: Added.
+        * platform/gtk/fast/forms/textarea-placeholder-visibility-1-expected.checksum: Added.
+        * platform/gtk/fast/forms/textarea-placeholder-visibility-1-expected.png: Added.
+        * platform/gtk/fast/forms/textarea-placeholder-visibility-1-expected.txt: Added.
+        * platform/gtk/fast/forms/textarea-placeholder-visibility-2-expected.checksum: Added.
+        * platform/gtk/fast/forms/textarea-placeholder-visibility-2-expected.png: Added.
+        * platform/gtk/fast/forms/textarea-placeholder-visibility-2-expected.txt: Added.
+
 2011-02-04  Adam Barth  <abarth@webkit.org>
 
         [Windows 7 Release Tests] plugins/plugin-document-back-forward.html failing since introduction in r77706
