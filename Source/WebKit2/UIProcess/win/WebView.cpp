@@ -434,7 +434,7 @@ LRESULT WebView::onSizeEvent(HWND, UINT, WPARAM, LPARAM lParam, bool& handled)
     int height = HIWORD(lParam);
 
     if (m_page->drawingArea())
-        m_page->drawingArea()->setSize(IntSize(width, height));
+        m_page->drawingArea()->setSize(IntSize(width, height), IntSize());
 
     handled = true;
     return 0;
@@ -1133,7 +1133,7 @@ void WebView::switchToDrawingAreaTypeIfNecessary(DrawingAreaInfo::Type type)
     }
 
     if (m_page->drawingArea())
-        newDrawingArea->setSize(m_page->drawingArea()->size());
+        newDrawingArea->setSize(m_page->drawingArea()->size(), IntSize());
 
     m_page->drawingArea()->detachCompositingContext();
     m_page->setDrawingArea(newDrawingArea.release());

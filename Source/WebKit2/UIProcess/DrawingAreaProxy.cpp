@@ -48,12 +48,13 @@ DrawingAreaInfo::Identifier DrawingAreaProxy::nextIdentifier()
     return ++nextID;
 }
 
-void DrawingAreaProxy::setSize(const IntSize& size)
+void DrawingAreaProxy::setSize(const IntSize& size, const IntSize& scrollOffset)
 { 
-    if (m_size == size)
+    if (m_size == size && scrollOffset.isZero())
         return;
 
     m_size = size;
+    m_scrollOffset += scrollOffset;
     sizeDidChange();
 }
 

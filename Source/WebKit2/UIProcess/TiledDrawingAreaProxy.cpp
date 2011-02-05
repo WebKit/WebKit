@@ -115,7 +115,7 @@ void TiledDrawingAreaProxy::didSetSize(const IntSize& viewSize)
     m_isWaitingForDidSetFrameNotification = false;
 
     if (viewSize != m_lastSetViewSize)
-        setSize(m_lastSetViewSize);
+        setSize(m_lastSetViewSize, IntSize());
 
     WebPageProxy* page = this->page();
     page->process()->responsivenessTimer()->stop();

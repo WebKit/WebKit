@@ -644,7 +644,7 @@ QString QWKPage::title() const
 void QWKPage::setViewportSize(const QSize& size)
 {
     if (d->page->drawingArea())
-        d->page->drawingArea()->setSize(IntSize(size));
+        d->page->drawingArea()->setSize(IntSize(size), IntSize());
 }
 
 qreal QWKPage::textZoomFactor() const

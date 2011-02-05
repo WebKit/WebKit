@@ -40,6 +40,8 @@ WK_EXPORT
 - (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(WKFrameRef)frameRef;
 - (BOOL)canChangeFrameLayout:(WKFrameRef)frameRef;
 
+- (void)setFrame:(NSRect)rect andScrollBy:(NSSize)offset;
+
 @property(readonly) WKPageRef pageRef;
 
 @property BOOL drawsBackground;

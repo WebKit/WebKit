@@ -225,7 +225,8 @@ void DrawingAreaProxyImpl::sendSetSize()
         return;
 
     m_isWaitingForDidSetSize = true;
-    m_webPageProxy->process()->send(Messages::DrawingArea::SetSize(m_size), m_webPageProxy->pageID());
+    m_webPageProxy->process()->send(Messages::DrawingArea::SetSize(m_size, m_scrollOffset), m_webPageProxy->pageID());
+    m_scrollOffset = IntSize();
 
     if (!m_layerTreeContext.isEmpty()) {
         // Wait for the DidSetSize message. Normally we don this in DrawingAreaProxyImpl::paint, but that

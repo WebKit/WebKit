@@ -128,6 +128,8 @@ typedef HashMap<String, ValidationVector> ValidationMap;
     NSEvent *_keyDownEventBeingResent;
     Vector<KeypressCommand> _commandsList;
 
+    NSSize _resizeScrollOffset;
+
     // The identifier of the plug-in we want to send complex text input to, or 0 if there is none.
     uint64_t _pluginComplexTextInputIdentifier;
 
@@ -302,6 +304,14 @@ static bool useNewDrawingArea()
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
     WKAXInitializeRemoteElementWithWindow(_data->_remoteAccessibilityChild.get(), window);    
 #endif
+}
+
+- (void)setFrame:(NSRect)rect andScrollBy:(NSSize)offset
+{
+    ASSERT(NSEqualSizes(_data->_resizeScrollOffset, NSZeroSize));
+
+    _data->_resizeScrollOffset = offset;
+    [self setFrame:rect];
 }
 
 - (void)setFrameSize:(NSSize)size
@@ -1852,7 +1862,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
         }
     }
 
-    newDrawingArea->setSize(IntSize([self frame].size));
+    newDrawingArea->setSize(IntSize([self frame].size), IntSize());
 
     _data->_page->drawingArea()->detachCompositingContext();
     _data->_page->setDrawingArea(newDrawingArea.release());
@@ -1991,7 +2001,8 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     if (!_data->_page->drawingArea())
         return;
     
-    _data->_page->drawingArea()->setSize(IntSize(size));
+    _data->_page->drawingArea()->setSize(IntSize(size), IntSize(_data->_resizeScrollOffset));
+    _data->_resizeScrollOffset = NSZeroSize;
 }
 
 @end

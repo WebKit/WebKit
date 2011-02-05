@@ -1,3 +1,58 @@
+2011-02-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Need a way to resize and scroll the page at the same time
+        https://bugs.webkit.org/show_bug.cgi?id=53814
+        <rdar://problem/8498008>
+
+        Add -[WKView setFrame:andScrollBy:].
+
+        * UIProcess/API/mac/WKView.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView setFrame:andScrollBy:]):
+        Stash away the scroll offset and call setFrame:.
+
+        (-[WKView _switchToDrawingAreaTypeIfNecessary:DrawingAreaInfo::]):
+        (-[WKView _setDrawingAreaSize:]):
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::setViewportSize):
+        DrawingAreaProxy::setSize now takes a scroll offset.
+
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::setSize):
+        This now takes a scroll offset and stores it in m_scrollOffset.
+
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::sendSetSize):
+        Send along the scroll offset and set it back to zero.
+
+        * UIProcess/LayerBackedDrawingAreaProxy.cpp:
+        (WebKit::LayerBackedDrawingAreaProxy::didSetSize):
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        (WebKit::TiledDrawingAreaProxy::didSetSize):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::onSizeEvent):
+        (WebKit::WebView::switchToDrawingAreaTypeIfNecessary):
+        DrawingAreaProxy::setSize now takes a scroll offset.
+        
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::setSize):
+        Add a scrollOffset parameter.
+
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        Add a scroll offset parameter to the SetSize message.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::setSize):
+        Call WebPage::scrollMainFrameIfNotAtMaxScrollPosition.
+
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::scrollMainFrameIfNotAtMaxScrollPosition):
+        Compute a scroll offset and call setScrollPosition on the main frame view.
+
 2011-02-04  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Maciej Stachowiak.

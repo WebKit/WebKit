@@ -560,6 +560,27 @@ void WebPage::resizeToContentsIfNeeded()
 }
 #endif
 
+void WebPage::scrollMainFrameIfNotAtMaxScrollPosition(const IntSize& scrollOffset)
+{
+    Frame* frame = m_page->mainFrame();
+
+    IntPoint scrollPosition = frame->view()->scrollPosition();
+    IntPoint maximumScrollPosition = frame->view()->maximumScrollPosition();
+
+    // If the current scroll position in a direction is the max scroll position 
+    // we don't want to scroll at all.
+    IntSize newScrollOffset;
+    if (scrollPosition.x() < maximumScrollPosition.x())
+        newScrollOffset.setWidth(scrollOffset.width());
+    if (scrollPosition.y() < maximumScrollPosition.y())
+        newScrollOffset.setHeight(scrollOffset.height());
+
+    if (newScrollOffset.isZero())
+        return;
+
+    frame->view()->setScrollPosition(frame->view()->scrollPosition() + newScrollOffset);
+}
+
 void WebPage::drawRect(GraphicsContext& graphicsContext, const IntRect& rect)
 {
     graphicsContext.save();

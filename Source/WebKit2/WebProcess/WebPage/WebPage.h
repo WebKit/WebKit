@@ -129,6 +129,8 @@ public:
 
     WebPageGroupProxy* pageGroup() const { return m_pageGroup.get(); }
 
+    void scrollMainFrameIfNotAtMaxScrollPosition(const WebCore::IntSize& scrollOffset);
+
 #if ENABLE(INSPECTOR)
     WebInspector* inspector();
 #endif

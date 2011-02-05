@@ -118,7 +118,7 @@ void LayerBackedDrawingAreaProxy::didSetSize(const IntSize& size)
     m_isWaitingForDidSetFrameNotification = false;
 
     if (size != m_lastSetViewSize)
-        setSize(m_lastSetViewSize);
+        setSize(m_lastSetViewSize, IntSize());
 }
 
 void LayerBackedDrawingAreaProxy::update()

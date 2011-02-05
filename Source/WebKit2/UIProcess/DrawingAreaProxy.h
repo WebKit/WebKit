@@ -83,7 +83,7 @@ public:
     const DrawingAreaInfo& info() const { return m_info; }
 
     const WebCore::IntSize& size() const { return m_size; }
-    void setSize(const WebCore::IntSize&);
+    void setSize(const WebCore::IntSize&, const WebCore::IntSize& scrollOffset);
 
 protected:
     explicit DrawingAreaProxy(DrawingAreaInfo::Type, WebPageProxy*);
@@ -92,6 +92,7 @@ protected:
     WebPageProxy* m_webPageProxy;
 
     WebCore::IntSize m_size;
+    WebCore::IntSize m_scrollOffset;
 
 private:
     // CoreIPC message handlers.

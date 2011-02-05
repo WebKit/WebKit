@@ -171,7 +171,7 @@ void DrawingAreaImpl::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID
 {
 }
 
-void DrawingAreaImpl::setSize(const IntSize& size)
+void DrawingAreaImpl::setSize(const WebCore::IntSize& size, const WebCore::IntSize& scrollOffset)
 {
     ASSERT(!m_inSetSize);
     m_inSetSize = true;
@@ -181,6 +181,7 @@ void DrawingAreaImpl::setSize(const IntSize& size)
 
     m_webPage->setSize(size);
     m_webPage->layoutIfNeeded();
+    m_webPage->scrollMainFrameIfNotAtMaxScrollPosition(scrollOffset);
 
     UpdateInfo updateInfo;
     LayerTreeContext layerTreeContext;

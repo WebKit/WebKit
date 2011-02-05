@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> DrawingArea {
-    SetSize(WebCore::IntSize size)
+    SetSize(WebCore::IntSize size, WebCore::IntSize scrollOffset)
     DidUpdate()
     SuspendPainting()
     ResumePainting()
