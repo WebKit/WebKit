@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<body>
+<pre id="log"></pre>
+<script src="resources/runner.js"></script>
+<script>
+var urls = loadFile("resources/final-url-en").split("\n");
+var anchor = document.createElement("a");
+
+start(20, function() {
+    for (var x = 0; x < urls.length; x++) {
+        anchor.href = urls[x];
+    }
+});
+</script>
+</body>

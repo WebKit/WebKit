@@ -1,3 +1,33 @@
+2011-02-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add performance tests for URL parsing
+        https://bugs.webkit.org/show_bug.cgi?id=53845
+
+        The final-url-en URL corpus is from:
+        http://corpus.leeds.ac.uk/internet.html
+
+        There are also other language corpuses which we may want to use in the future.
+
+        The usage instructions were as follows:
+        "URL lists and other resources: you can freely use them in your research
+        provided that you supply a link to this website: http://corpus.leeds.ac.uk/."
+        Done.
+
+        * Parser/simple-url.html: Added.
+         On my machine:
+         Firefox: 255ms
+         TOT WebKit: 378ms
+         Chrome: 286ms
+         Opera: 2830ms (no, that is not a typo)
+        * Parser/url-parser.html: Added.
+         Firefox: 381ms
+         TOT WebKit: 216ms
+         Chrome: 131ms
+         Opera: 1383ms (again, not a typo)
+        * Parser/resources/final-url-en: Added.
+
 2011-02-03  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Daniel Bates.
