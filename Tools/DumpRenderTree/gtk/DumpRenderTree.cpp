@@ -419,6 +419,7 @@ static void resetDefaultsToConsistentValues()
                  "enable-fullscreen", TRUE,
                  NULL);
     webkit_web_view_set_settings(webView, settings);
+    webkit_set_cache_model(WEBKIT_CACHE_MODEL_DOCUMENT_BROWSER);
 
     DumpRenderTreeSupportGtk::clearMainFrameName(mainFrame);
 

@@ -1,3 +1,12 @@
+2011-02-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] fast/events/pagehide-timeout.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=53771
+
+        * platform/gtk/Skipped: Unskip a test which is now passing.
+
 2011-02-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

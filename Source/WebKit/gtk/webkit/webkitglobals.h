@@ -35,16 +35,21 @@ G_BEGIN_DECLS
  *   WEBKIT_CACHE_MODEL_WEB_BROWSER.
  * @WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER: Disable the cache completely, which
  *   substantially reduces memory usage. Useful for applications that only
- *   access local files.
+ *   access a single local file, with no navigation to other pages. No remote
+ *   resources will be cached.
+ * @WEBKIT_CACHE_MODEL_DOCUMENT_BROWSER: A cache model optimized for viewing
+ *   a series of local files -- for example, a documentation viewer or a website
+ *   designer. WebKit will cache a moderate number of resources.
  * @WEBKIT_CACHE_MODEL_WEB_BROWSER: Improve document load speed substantially
- *   by caching previously viewed content.
+ *   by caching a very large number of resources and previously viewed content.
  *
  * Enum values used for determining the webview cache model.
  */
 typedef enum {
     WEBKIT_CACHE_MODEL_DEFAULT,
     WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER,
-    WEBKIT_CACHE_MODEL_WEB_BROWSER
+    WEBKIT_CACHE_MODEL_WEB_BROWSER,
+    WEBKIT_CACHE_MODEL_DOCUMENT_BROWSER,
 } WebKitCacheModel;
 
 WEBKIT_API SoupSession*

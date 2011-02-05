@@ -563,10 +563,20 @@ bool LayoutTestController::isCommandEnabled(JSStringRef name)
 
 void LayoutTestController::setCacheModel(int cacheModel)
 {
-    if (!cacheModel) // WebCacheModelDocumentViewer
-        webkit_set_cache_model(WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER); 
-    else 
-        webkit_set_cache_model(WEBKIT_CACHE_MODEL_WEB_BROWSER); 
+    // These constants are derived from the Mac cache model enum in Source/WebKit/mac/WebView/WebPreferences.h.
+    switch (cacheModel) {
+    case 0:
+        webkit_set_cache_model(WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER);
+        break;
+    case 1:
+        webkit_set_cache_model(WEBKIT_CACHE_MODEL_DOCUMENT_BROWSER);
+        break;
+    case 3:
+        webkit_set_cache_model(WEBKIT_CACHE_MODEL_DOCUMENT_BROWSER);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
 }
 
 void LayoutTestController::setPersistentUserStyleSheetLocation(JSStringRef jsURL)

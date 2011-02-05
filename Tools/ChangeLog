@@ -1,3 +1,21 @@
+2011-02-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] fast/events/pagehide-timeout.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=53771
+
+        Add knowledge of the document browser cache model the DRT. When resetting
+        WebKit settings to consistent values between tests, default to the document
+        browser cache model.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues): Reset the cache model to the document browser
+        cache model between tests.
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setCacheModel): An int value of 2 here corresponds to the
+        document browser cache model.
+
 2011-02-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
