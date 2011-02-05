@@ -58,7 +58,7 @@ namespace WebCore {
                 ec = SYNTAX_ERR;
                 return 0;
             }
-            return Notification::create(m_scriptExecutionContext->completeURL(URI), context(), ec, this);
+            return Notification::create(scriptExecutionContext()->completeURL(URI), scriptExecutionContext(), ec, this);
         }
 
         PassRefPtr<Notification> createNotification(const String& iconURI, const String& title, const String& body, ExceptionCode& ec)
@@ -67,11 +67,10 @@ namespace WebCore {
                 ec = INVALID_STATE_ERR;
                 return 0;
             }
-            NotificationContents contents(iconURI.isEmpty() ? KURL() : m_scriptExecutionContext->completeURL(iconURI), title, body);
-            return Notification::create(contents, context(), ec, this);
+            NotificationContents contents(iconURI.isEmpty() ? KURL() : scriptExecutionContext()->completeURL(iconURI), title, body);
+            return Notification::create(contents, scriptExecutionContext(), ec, this);
         }
 
-        ScriptExecutionContext* context() const { return m_scriptExecutionContext; }
         NotificationPresenter* presenter() const { return m_notificationPresenter; }
 
         int checkPermission();
@@ -82,7 +81,6 @@ namespace WebCore {
     private:
         NotificationCenter(ScriptExecutionContext*, NotificationPresenter*);
 
-        ScriptExecutionContext* m_scriptExecutionContext;
         NotificationPresenter* m_notificationPresenter;
     };
 

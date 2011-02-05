@@ -47,7 +47,7 @@ namespace WebCore {
 
 JSValue JSNotificationCenter::requestPermission(ExecState* exec)
 {
-    ScriptExecutionContext* context = impl()->context();
+    ScriptExecutionContext* context = impl()->scriptExecutionContext();
 
     // Make sure that script execution context is valid.
     if (!context) {

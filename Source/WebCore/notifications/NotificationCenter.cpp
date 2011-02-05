@@ -42,21 +42,20 @@ namespace WebCore {
 
 NotificationCenter::NotificationCenter(ScriptExecutionContext* context, NotificationPresenter* presenter)
     : ActiveDOMObject(context, this)
-    , m_scriptExecutionContext(context)
     , m_notificationPresenter(presenter) {}
 
 int NotificationCenter::checkPermission()
 {
-    if (!presenter())
+    if (!presenter() || !scriptExecutionContext())
         return NotificationPresenter::PermissionDenied;
-    return m_notificationPresenter->checkPermission(m_scriptExecutionContext);
+    return m_notificationPresenter->checkPermission(scriptExecutionContext());
 }
 
 void NotificationCenter::requestPermission(PassRefPtr<VoidCallback> callback)
 {
-    if (!presenter())
+    if (!presenter() || !scriptExecutionContext())
         return;
-    m_notificationPresenter->requestPermission(m_scriptExecutionContext, callback);
+    m_notificationPresenter->requestPermission(scriptExecutionContext(), callback);
 }
 
 void NotificationCenter::disconnectFrame()
@@ -66,9 +65,8 @@ void NotificationCenter::disconnectFrame()
     ASSERT(m_notificationPresenter);
     if (!m_notificationPresenter)
         return;
-    m_notificationPresenter->cancelRequestsForPermission(m_scriptExecutionContext);
+    m_notificationPresenter->cancelRequestsForPermission(scriptExecutionContext());
     m_notificationPresenter = 0;
-    m_scriptExecutionContext = 0;
 }
 
 } // namespace WebCore

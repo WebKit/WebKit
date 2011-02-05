@@ -1,3 +1,24 @@
+2011-02-05  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Refactor: NotificationCenter shouldn't hold its own copy of the ScriptExecutionContext*
+        when it inherits one from ActiveDOMObject.
+        https://bugs.webkit.org/show_bug.cgi?id=53815
+
+        * bindings/js/JSDesktopNotificationsCustom.cpp:
+        (WebCore::JSNotificationCenter::requestPermission):
+        * bindings/v8/custom/V8NotificationCenterCustom.cpp:
+        (WebCore::V8NotificationCenter::requestPermissionCallback):
+        * notifications/NotificationCenter.cpp:
+        (WebCore::NotificationCenter::NotificationCenter):
+        (WebCore::NotificationCenter::checkPermission):
+        (WebCore::NotificationCenter::requestPermission):
+        (WebCore::NotificationCenter::disconnectFrame):
+        * notifications/NotificationCenter.h:
+        (WebCore::NotificationCenter::createHTMLNotification):
+        (WebCore::NotificationCenter::createNotification):
+
 2011-02-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Maciej Stachowiak.

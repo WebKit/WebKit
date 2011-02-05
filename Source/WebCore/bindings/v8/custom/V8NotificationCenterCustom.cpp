@@ -81,7 +81,7 @@ v8::Handle<v8::Value> V8NotificationCenter::requestPermissionCallback(const v8::
 {
     INC_STATS(L"DOM.NotificationCenter.RequestPermission()");
     NotificationCenter* notificationCenter = V8NotificationCenter::toNative(args.Holder());
-    ScriptExecutionContext* context = notificationCenter->context();
+    ScriptExecutionContext* context = notificationCenter->scriptExecutionContext();
 
     // Make sure that script execution context is valid.
     if (!context)
