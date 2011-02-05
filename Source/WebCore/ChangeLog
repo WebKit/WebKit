@@ -1,5 +1,12 @@
 2011-02-04  Dan Bernstein  <mitz@apple.com>
 
+        Typo fix.
+
+        * html/parser/XSSFilter.cpp:
+        (WebCore::HTMLNames::containsJavaScriptURL):
+
+2011-02-04  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Anders Carlsson.
 
         Make an infinite loop introduced in r77454 finite.

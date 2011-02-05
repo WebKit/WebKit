@@ -96,7 +96,7 @@ bool containsJavaScriptURL(const Vector<UChar, 32>& value)
     static const char javaScriptScheme[] = "javascript:";
     static const size_t lengthOfJavaScriptScheme = sizeof(javaScriptScheme) - 1;
 
-    size_t i;;
+    size_t i;
     for (i = 0; i < value.size(); ++i) {
         if (!isHTMLSpace(value[i]))
             break;
