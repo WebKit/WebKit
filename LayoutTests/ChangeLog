@@ -1,5 +1,17 @@
 2011-02-05  Eric Seidel  <eric@webkit.org>
 
+        Unreviewed.
+
+        Safari should lowercase schemes in cannonicalized urls to match every other browser
+        https://bugs.webkit.org/show_bug.cgi?id=53848
+
+        Checkin results I forgot to update in my previous commit. All progressions.
+
+        * fast/dom/anchor-origin-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase-expected.txt:
+
+2011-02-05  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Adam Barth.
 
         Safari should lowercase schemes in cannonicalized urls to match every other browser
