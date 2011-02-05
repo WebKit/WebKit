@@ -1003,11 +1003,12 @@ bool WebView::onIMESetContext(WPARAM wparam, LPARAM)
     return false;
 }
 
-void WebView::didNotHandleKeyEvent(const NativeWebKeyboardEvent& event)
+void WebView::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool wasEventHandled)
 {
     // Calling ::DefWindowProcW will ensure that pressing the Alt key will generate a WM_SYSCOMMAND
     // event, e.g. See <http://webkit.org/b/47671>.
-    ::DefWindowProcW(event.nativeEvent()->hwnd, event.nativeEvent()->message, event.nativeEvent()->wParam, event.nativeEvent()->lParam);
+    if (!wasEventHandled)
+        ::DefWindowProcW(event.nativeEvent()->hwnd, event.nativeEvent()->message, event.nativeEvent()->wParam, event.nativeEvent()->lParam);
 }
 
 PassRefPtr<WebPopupMenuProxy> WebView::createPopupMenuProxy(WebPageProxy* page)

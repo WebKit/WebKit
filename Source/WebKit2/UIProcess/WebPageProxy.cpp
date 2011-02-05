@@ -2237,10 +2237,11 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
 
         m_keyEventQueue.removeFirst();
 
+        m_pageClient->doneWithKeyEvent(event, handled);
+
         if (handled)
             break;
 
-        m_pageClient->didNotHandleKeyEvent(event);
         m_uiClient.didNotHandleKeyEvent(this, event);
         break;
     }

@@ -79,7 +79,7 @@ public:
     virtual void clearAllEditCommands();
     virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&);
     virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&);
-    virtual void didNotHandleKeyEvent(const WebKit::NativeWebKeyboardEvent&);
+    virtual void doneWithKeyEvent(const WebKit::NativeWebKeyboardEvent&, bool wasEventHandled);
     virtual void selectionChanged(bool, bool, bool, bool);
     virtual PassRefPtr<WebKit::WebPopupMenuProxy> createPopupMenuProxy(WebKit::WebPageProxy*);
     virtual PassRefPtr<WebKit::WebContextMenuProxy> createContextMenuProxy(WebKit::WebPageProxy*);

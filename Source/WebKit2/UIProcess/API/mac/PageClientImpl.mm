@@ -308,10 +308,14 @@ FloatRect PageClientImpl::convertToUserSpace(const FloatRect& rect)
     return [m_wkView _convertToUserSpace:rect];
 }
 
-void PageClientImpl::didNotHandleKeyEvent(const NativeWebKeyboardEvent& event)
+void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool wasEventHandled)
 {
     NSEvent* nativeEvent = event.nativeEvent();
-    if ([nativeEvent type] == NSKeyDown) {
+    if ([nativeEvent type] != NSKeyDown)
+        return;
+    if (wasEventHandled)
+        [NSCursor setHiddenUntilMouseMoves:YES];
+    else {
         [m_wkView _setEventBeingResent:nativeEvent];
         [[NSApplication sharedApplication] sendEvent:nativeEvent];
     }

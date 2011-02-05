@@ -1,3 +1,29 @@
+2011-02-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        WebKit2 doesn't hide mouse pointer on keypress
+        https://bugs.webkit.org/show_bug.cgi?id=53821
+        rdar://problem/8630895
+
+        * UIProcess/PageClient.h: Renamed didNotHandleKeyEvent to
+        doneWithKeyEvent and added a bool wasEventHandled argument.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveEvent): Changed code to call
+        doneWithKeyEvent and call even if event was handled.
+
+        * UIProcess/API/mac/PageClientImpl.h: Updated for above change.
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::doneWithKeyEvent): Ditto. But also
+        call [NSCursor setHiddenUntilMouseMoves:YES] when a key down
+        event was handled. This matches what -[WebHTMLView keyDown:] does.
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::doneWithKeyEvent): Ditto.
+        * UIProcess/API/qt/qwkpage_p.h: Ditto.
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::doneWithKeyEvent): Ditto.
+        * UIProcess/win/WebView.h: Ditto.
+
 2011-02-04  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.

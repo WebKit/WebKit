@@ -232,7 +232,7 @@ void QWKPagePrivate::selectionChanged(bool, bool, bool, bool)
 {
 }
 
-void QWKPagePrivate::didNotHandleKeyEvent(const NativeWebKeyboardEvent&)
+void QWKPagePrivate::doneWithKeyEvent(const NativeWebKeyboardEvent&, bool)
 {
 }
 
