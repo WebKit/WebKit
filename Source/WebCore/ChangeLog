@@ -1,3 +1,19 @@
+2011-02-05  Jochen Eisinger  <jochen@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add ContentSecurityPolicy object to Document and pass the X-WebKit-CSP header from the MainResourceLoader.
+        https://bugs.webkit.org/show_bug.cgi?id=53685
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.h:
+        (WebCore::Document::contentSecurityPolicy):
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::didReceiveResponse):
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::didReceiveHeader):
+        * page/ContentSecurityPolicy.h:
+
 2011-02-05  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

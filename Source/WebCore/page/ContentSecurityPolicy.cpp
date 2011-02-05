@@ -32,4 +32,9 @@ ContentSecurityPolicy::ContentSecurityPolicy()
 {
 }
 
+void ContentSecurityPolicy::didReceiveHeader(const String& header)
+{
+    m_header = header;
+}
+
 }

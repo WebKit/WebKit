@@ -34,6 +34,11 @@ class ContentSecurityPolicy {
     WTF_MAKE_NONCOPYABLE(ContentSecurityPolicy);
 public:
     ContentSecurityPolicy();
+
+    void didReceiveHeader(const String&);
+
+private:
+    String m_header;
 };
 
 }

@@ -3116,7 +3116,7 @@
 		97BC84B412371180000C6161 /* TextDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC84B212371180000C6161 /* TextDocument.h */; };
 		97C078501165D5BE003A32EF /* SuffixTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 97C0784F1165D5BE003A32EF /* SuffixTree.h */; };
 		97C471DB12F925BD0086354B /* ContentSecurityPolicy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97C471D912F925BC0086354B /* ContentSecurityPolicy.cpp */; };
-		97C471DC12F925BD0086354B /* ContentSecurityPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 97C471DA12F925BD0086354B /* ContentSecurityPolicy.h */; };
+		97C471DC12F925BD0086354B /* ContentSecurityPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 97C471DA12F925BD0086354B /* ContentSecurityPolicy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97DCE20110807C750057D394 /* HistoryController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97DCE1FF10807C750057D394 /* HistoryController.cpp */; };
 		97DCE20210807C750057D394 /* HistoryController.h in Headers */ = {isa = PBXBuildFile; fileRef = 97DCE20010807C750057D394 /* HistoryController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97DD4D840FDF4D6D00ECF9A4 /* XSSAuditor.cpp */; };

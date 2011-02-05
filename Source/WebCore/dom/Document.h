@@ -32,6 +32,7 @@
 #include "CollectionType.h"
 #include "Color.h"
 #include "ContainerNode.h"
+#include "ContentSecurityPolicy.h"
 #include "DOMTimeStamp.h"
 #include "DocumentOrderedMap.h"
 #include "DocumentTiming.h"
@@ -1089,6 +1090,8 @@ public:
 
     void initDNSPrefetch();
 
+    ContentSecurityPolicy* contentSecurityPolicy() { return &m_contentSecurityPolicy; }
+
 protected:
     Document(Frame*, const KURL& url, bool isXHTML, bool isHTML, const KURL& baseURL = KURL());
 
@@ -1390,6 +1393,8 @@ private:
     OwnPtr<RequestAnimationFrameCallbackList> m_requestAnimationFrameCallbacks;
     int m_nextRequestAnimationFrameCallbackId;
 #endif
+
+    ContentSecurityPolicy m_contentSecurityPolicy;
 };
 
 inline bool Document::hasElementWithId(AtomicStringImpl* id) const
