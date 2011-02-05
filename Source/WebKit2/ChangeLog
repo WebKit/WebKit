@@ -1,5 +1,17 @@
 2011-02-04  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Mark Rowe.
+
+        Link opened in background tab fails to paint when activated if it completes loading before tab is selected
+        https://bugs.webkit.org/show_bug.cgi?id=53827
+        <rdar://problem/8962355>
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::resumePainting):
+        Invalidate the entire page.
+
+2011-02-04  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Fix <rdar://problem/8961227> WebKit2 does not work with symlinked home directories.

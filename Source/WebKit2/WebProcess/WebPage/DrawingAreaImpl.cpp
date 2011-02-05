@@ -227,7 +227,8 @@ void DrawingAreaImpl::resumePainting()
 
     m_isPaintingSuspended = false;
 
-    // FIXME: Repaint if needed.
+    // FIXME: We shouldn't always repaint everything here.
+    setNeedsDisplay(IntRect(IntPoint(), m_webPage->size()));
 }
 
 void DrawingAreaImpl::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLayer)
