@@ -243,7 +243,7 @@ inline bool HTMLObjectElement::hasValidClassId()
     // WebKit supports no classids, with the exception of Qt plug-ins, which use
     // classid to specify which QObject to load.
 #if PLATFORM(QT)
-    return classId().isEmpty() || equalIgnoringCase(serviceType(), "application/x-qt-plugin");
+    return classId().isEmpty() || equalIgnoringCase(serviceType(), "application/x-qt-plugin") || equalIgnoringCase(serviceType(), "application/x-qt-styled-widget");
 #else
     return classId().isEmpty();
 #endif

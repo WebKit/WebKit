@@ -1,3 +1,13 @@
+2011-02-05  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Style widgets not rendering
+        https://bugs.webkit.org/show_bug.cgi?id=53849
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::hasValidClassId): x-qt-styled-widget is a valid class id too
+
 2011-02-05  Jochen Eisinger  <jochen@chromium.org>
 
         Reviewed by Adam Barth.
