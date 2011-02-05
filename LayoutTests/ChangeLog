@@ -1,5 +1,11 @@
 2011-02-04  Martin Robinson  <mrobinson@igalia.com>
 
+        Unskip some tests which should now be passing.
+
+        * platform/gtk/Skipped: Unskip tests.
+
+2011-02-04  Martin Robinson  <mrobinson@igalia.com>
+
         Reviewed by Xan Lopez.
 
         [GTK] WebKitWebFrame can return a stale frame name when calling webkit_web_frame_get_name
