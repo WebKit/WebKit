@@ -1,3 +1,16 @@
+2011-02-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Rebaseline a few tests after r77665 and add a GTK-specific baseline
+        after r77690.
+
+        * platform/gtk/fast/blockflow/Kusa-Makura-background-canvas-expected.txt:
+        * platform/gtk/fast/blockflow/japanese-ruby-horizontal-bt-expected.txt:
+        * platform/gtk/fast/blockflow/japanese-ruby-vertical-lr-expected.txt:
+        * platform/gtk/fast/blockflow/japanese-ruby-vertical-rl-expected.txt:
+        * platform/gtk/fast/ruby/nested-ruby-expected.txt:
+        * platform/gtk/fast/text/emphasis-avoid-ruby-expected.txt:
+        * platform/gtk/media/video-frame-accurate-seek-expected.txt: Added.
+
 2011-02-04  Jessie Berlin  <jberlin@apple.com>
 
         [Windows 7 Release Tests] 5 ruby tests failing on Windows after r77665
