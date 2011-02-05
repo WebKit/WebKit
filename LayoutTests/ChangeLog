@@ -1,3 +1,12 @@
+2011-02-04  Jer Noble  <jer.noble@apple.com>
+
+        Adding test to Qt Skipped list.
+
+        [Qt] media/video-frame-accurate-seek.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=53843
+
+        * platform/qt/Skipped:
+
 2011-02-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Maciej Stachowiak.

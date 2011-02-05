@@ -5014,3 +5014,7 @@ media/video-currentTime-delay.html
 # https://bugs.webkit.org/show_bug.cgi?id=12448
 css3/zoom-coords.xhtml
 svg/zoom/page/zoom-zoom-coords.xhtml
+
+# [Qt] media/video-frame-accurate-seek.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=53843
+media/video-frame-accurate-seek.html
