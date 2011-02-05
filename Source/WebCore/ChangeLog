@@ -1,3 +1,25 @@
+2011-02-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Don't use a fixed size for search field icons
+        https://bugs.webkit.org/show_bug.cgi?id=50624
+
+        Use the parent input content box to make sure the icon fits in the
+        search field, scaling it down when needed.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::paintGdkPixbuf):
+        (WebCore::getIconSizeForPixelSize):
+        (WebCore::adjustSearchFieldIconStyle):
+        (WebCore::RenderThemeGtk::adjustSearchFieldResultsDecorationStyle):
+        (WebCore::centerRectVerticallyInParentInputElement):
+        (WebCore::RenderThemeGtk::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeGtk::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeGtk::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeGtk::paintCapsLockIndicator):
+        (WebCore::RenderThemeGtk::paintMediaButton):
+
 2011-02-04  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Adam Barth.

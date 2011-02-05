@@ -1,3 +1,24 @@
+2011-02-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        Update expected results reflecting the change to search icon rendering.
+
+        * platform/gtk/fast/css/input-search-padding-expected.checksum:
+        * platform/gtk/fast/css/input-search-padding-expected.png:
+        * platform/gtk/fast/css/input-search-padding-expected.txt:
+        * platform/gtk/fast/forms/search-styled-expected.checksum:
+        * platform/gtk/fast/forms/search-styled-expected.png:
+        * platform/gtk/fast/forms/search-styled-expected.txt:
+        * platform/gtk/fast/forms/search-vertical-alignment-expected.checksum:
+        * platform/gtk/fast/forms/search-vertical-alignment-expected.png:
+        * platform/gtk/fast/forms/search-zoomed-expected.checksum:
+        * platform/gtk/fast/forms/search-zoomed-expected.png:
+        * platform/gtk/fast/forms/search-zoomed-expected.txt:
+        * platform/gtk/fast/forms/searchfield-heights-expected.checksum:
+        * platform/gtk/fast/forms/searchfield-heights-expected.png:
+        * platform/gtk/fast/forms/searchfield-heights-expected.txt:
+
 2011-02-04  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Adam Barth.

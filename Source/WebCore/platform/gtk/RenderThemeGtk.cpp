@@ -224,13 +224,45 @@ bool RenderThemeGtk::paintTextArea(RenderObject* o, const PaintInfo& i, const In
     return paintTextField(o, i, r);
 }
 
-static void paintGdkPixbuf(GraphicsContext* context, const GdkPixbuf* icon, const IntPoint& iconPoint)
+static void paintGdkPixbuf(GraphicsContext* context, const GdkPixbuf* icon, const IntRect& iconRect)
 {
+    IntSize iconSize(gdk_pixbuf_get_width(icon), gdk_pixbuf_get_height(icon));
+    if (iconRect.size() != iconSize) {
+        // We could use cairo_scale() here but cairo/pixman downscale quality is quite bad.
+        GRefPtr<GdkPixbuf> scaledIcon = gdk_pixbuf_scale_simple(icon, iconRect.width(), iconRect.height(),
+                                                                GDK_INTERP_BILINEAR);
+        icon = scaledIcon.get();
+    }
+
     cairo_t* cr = context->platformContext();
     cairo_save(cr);
-    gdk_cairo_set_source_pixbuf(cr, icon, iconPoint.x(), iconPoint.y());
+    gdk_cairo_set_source_pixbuf(cr, icon, iconRect.x(), iconRect.y());
     cairo_paint(cr);
     cairo_restore(cr);
+}
+
+// Defined in GTK+ (gtk/gtkiconfactory.c)
+static const gint gtkIconSizeMenu = 16;
+static const gint gtkIconSizeSmallToolbar = 18;
+static const gint gtkIconSizeButton = 20;
+static const gint gtkIconSizeLargeToolbar = 24;
+static const gint gtkIconSizeDnd = 32;
+static const gint gtkIconSizeDialog = 48;
+
+static GtkIconSize getIconSizeForPixelSize(gint pixelSize)
+{
+    if (pixelSize < gtkIconSizeSmallToolbar)
+        return GTK_ICON_SIZE_MENU;
+    if (pixelSize >= gtkIconSizeSmallToolbar && pixelSize < gtkIconSizeButton)
+        return GTK_ICON_SIZE_SMALL_TOOLBAR;
+    if (pixelSize >= gtkIconSizeButton && pixelSize < gtkIconSizeLargeToolbar)
+        return GTK_ICON_SIZE_BUTTON;
+    if (pixelSize >= gtkIconSizeLargeToolbar && pixelSize < gtkIconSizeDnd)
+        return GTK_ICON_SIZE_LARGE_TOOLBAR;
+    if (pixelSize >= gtkIconSizeDnd && pixelSize < gtkIconSizeDialog)
+        return GTK_ICON_SIZE_DND;
+
+    return GTK_ICON_SIZE_DIALOG;
 }
 
 void RenderThemeGtk::adjustSearchFieldResultsButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
@@ -243,57 +275,77 @@ bool RenderThemeGtk::paintSearchFieldResultsButton(RenderObject* o, const PaintI
     return paintSearchFieldResultsDecoration(o, i, rect);
 }
 
-void RenderThemeGtk::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+static void adjustSearchFieldIconStyle(RenderStyle* style)
 {
     style->resetBorder();
     style->resetPadding();
 
+    // Get the icon size based on the font size.
+    int fontSize = style->fontSize();
+    if (fontSize < gtkIconSizeMenu) {
+        style->setWidth(Length(fontSize, Fixed));
+        style->setHeight(Length(fontSize, Fixed));
+        return;
+    }
     gint width = 0, height = 0;
-    gtk_icon_size_lookup(GTK_ICON_SIZE_MENU, &width, &height);
+    gtk_icon_size_lookup(getIconSizeForPixelSize(fontSize), &width, &height);
     style->setWidth(Length(width, Fixed));
     style->setHeight(Length(height, Fixed));
 }
 
-static IntPoint centerRectVerticallyInParentInputElement(RenderObject* object, const IntRect& rect)
+void RenderThemeGtk::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
-    Node* input = object->node()->shadowAncestorNode(); // Get the renderer of <input> element.
+    adjustSearchFieldIconStyle(style);
+}
+
+static IntRect centerRectVerticallyInParentInputElement(RenderObject* renderObject, const IntRect& rect)
+{
+    // Get the renderer of <input> element.
+    Node* input = renderObject->node()->shadowAncestorNode();
     if (!input->renderer()->isBox())
-        return rect.location();
+        return IntRect();
 
     // If possible center the y-coordinate of the rect vertically in the parent input element.
     // We also add one pixel here to ensure that the y coordinate is rounded up for box heights
     // that are even, which looks in relation to the box text.
     IntRect inputContentBox = toRenderBox(input->renderer())->absoluteContentBox();
 
-    return IntPoint(rect.x(), inputContentBox.y() + (inputContentBox.height() - rect.height() + 1) / 2);
+    // Make sure the scaled decoration stays square and will fit in its parent's box.
+    int iconSize = std::min(inputContentBox.width(), std::min(inputContentBox.height(), rect.height()));
+    IntRect scaledRect(rect.x(), inputContentBox.y() + (inputContentBox.height() - iconSize + 1) / 2, iconSize, iconSize);
+    return scaledRect;
 }
 
 bool RenderThemeGtk::paintSearchFieldResultsDecoration(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
+    IntRect iconRect = centerRectVerticallyInParentInputElement(renderObject, rect);
+    if (iconRect.isEmpty())
+        return false;
+
     GRefPtr<GdkPixbuf> icon = getStockIcon(GTK_TYPE_ENTRY, GTK_STOCK_FIND,
                                            gtkTextDirection(renderObject->style()->direction()),
-                                           gtkIconState(this, renderObject), GTK_ICON_SIZE_MENU);
-    paintGdkPixbuf(paintInfo.context, icon.get(), centerRectVerticallyInParentInputElement(renderObject, rect));
+                                           gtkIconState(this, renderObject),
+                                           getIconSizeForPixelSize(rect.height()));
+    paintGdkPixbuf(paintInfo.context, icon.get(), iconRect);
     return false;
 }
 
 void RenderThemeGtk::adjustSearchFieldCancelButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
-    style->resetBorder();
-    style->resetPadding();
-
-    gint width = 0, height = 0;
-    gtk_icon_size_lookup(GTK_ICON_SIZE_MENU, &width, &height);
-    style->setWidth(Length(width, Fixed));
-    style->setHeight(Length(height, Fixed));
+    adjustSearchFieldIconStyle(style);
 }
 
 bool RenderThemeGtk::paintSearchFieldCancelButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
+    IntRect iconRect = centerRectVerticallyInParentInputElement(renderObject, rect);
+    if (iconRect.isEmpty())
+        return false;
+
     GRefPtr<GdkPixbuf> icon = getStockIcon(GTK_TYPE_ENTRY, GTK_STOCK_CLEAR,
                                            gtkTextDirection(renderObject->style()->direction()),
-                                           gtkIconState(this, renderObject), GTK_ICON_SIZE_MENU);
-    paintGdkPixbuf(paintInfo.context, icon.get(), centerRectVerticallyInParentInputElement(renderObject, rect));
+                                           gtkIconState(this, renderObject),
+                                           getIconSizeForPixelSize(rect.height()));
+    paintGdkPixbuf(paintInfo.context, icon.get(), iconRect);
     return false;
 }
 
@@ -316,14 +368,21 @@ bool RenderThemeGtk::paintCapsLockIndicator(RenderObject* renderObject, const Pa
     if (paintInfo.context->paintingDisabled())
         return true;
 
+    int iconSize = std::min(rect.width(), rect.height());
     GRefPtr<GdkPixbuf> icon = getStockIcon(GTK_TYPE_ENTRY, GTK_STOCK_CAPS_LOCK_WARNING,
                                            gtkTextDirection(renderObject->style()->direction()),
-                                           gtkIconState(this, renderObject), GTK_ICON_SIZE_MENU);
+                                           0, getIconSizeForPixelSize(iconSize));
+
+    // Only re-scale the icon when it's smaller than the minimum icon size.
+    if (iconSize >= gtkIconSizeMenu)
+        iconSize = gdk_pixbuf_get_height(icon.get());
 
     // GTK+ locates the icon right aligned in the entry. The given rectangle is already
     // centered vertically by RenderTextControlSingleLine.
-    IntPoint iconPosition(rect.x() + rect.width() - gdk_pixbuf_get_width(icon.get()), rect.y());
-    paintGdkPixbuf(paintInfo.context, icon.get(), iconPosition);
+    IntRect iconRect(rect.x() + rect.width() - iconSize,
+                     rect.y() + (rect.height() - iconSize) / 2,
+                     iconSize, iconSize);
+    paintGdkPixbuf(paintInfo.context, icon.get(), iconRect);
     return true;
 }
 
@@ -421,10 +480,11 @@ bool RenderThemeGtk::paintMediaButton(RenderObject* renderObject, GraphicsContex
                                            gtkTextDirection(renderObject->style()->direction()),
                                            gtkIconState(this, renderObject),
                                            getMediaButtonIconSize(m_mediaIconSize));
-    IntPoint iconPoint(rect.x() + (rect.width() - m_mediaIconSize) / 2,
-                       rect.y() + (rect.height() - m_mediaIconSize) / 2);
+    IntRect iconRect(rect.x() + (rect.width() - m_mediaIconSize) / 2,
+                     rect.y() + (rect.height() - m_mediaIconSize) / 2,
+                     m_mediaIconSize, m_mediaIconSize);
     context->fillRect(FloatRect(rect), m_panelColor, ColorSpaceDeviceRGB);
-    paintGdkPixbuf(context, icon.get(), iconPoint);
+    paintGdkPixbuf(context, icon.get(), iconRect);
     return false;
 }
 
