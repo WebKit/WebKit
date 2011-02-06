@@ -1,3 +1,16 @@
+2011-02-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        media/video-document-types.html sometimes crashes the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=53884
+
+        No new tests. Already covered by media/video-document-types.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::userCancelledLoad): Stop the load timer
+        when cancelling the load.
+
 2011-02-06  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Roben.
