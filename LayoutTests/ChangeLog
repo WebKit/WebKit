@@ -1,3 +1,19 @@
+2011-02-06  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Remove empty svg test
+        https://bugs.webkit.org/show_bug.cgi?id=53887
+
+        This files are empty.  Empty tests are pretty useless.
+
+        * platform/chromium-win/svg/custom/use-infinite-recursion-expected.png: Removed.
+        * platform/mac/svg/custom/use-infinite-recursion-expected.checksum: Removed.
+        * platform/mac/svg/custom/use-infinite-recursion-expected.png: Removed.
+        * platform/mac/svg/custom/use-infinite-recursion-expected.txt: Removed.
+        * platform/qt/svg/custom/use-infinite-recursion-expected.txt: Removed.
+        * svg/custom/use-infinite-recursion.svg: Removed.
+
 2011-02-06  Martin Robinson  <mrobinson@igalia.com>
 
         Reclassify a failing test and unskip another which should be passing now.
