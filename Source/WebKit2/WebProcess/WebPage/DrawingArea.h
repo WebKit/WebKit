@@ -48,7 +48,7 @@ public:
     static PassRefPtr<DrawingArea> create(WebPage*, const WebPageCreationParameters&);
     virtual ~DrawingArea();
     
-#ifdef __APPLE__
+#if PLATFORM(MAC)
     void didReceiveDrawingAreaMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 #endif
 

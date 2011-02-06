@@ -50,7 +50,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
 #include <wtf/text/WTFString.h>
-#if defined Q_OS_UNIX
+#if defined Q_OS_LINUX
 #include <sys/prctl.h>
 #include <signal.h>
 #endif
@@ -74,7 +74,7 @@ protected:
 
 void QtWebProcess::setupChildProcess()
 {
-#if defined Q_OS_UNIX
+#if defined Q_OS_LINUX
     prctl(PR_SET_PDEATHSIG, SIGKILL);
 #endif
 }

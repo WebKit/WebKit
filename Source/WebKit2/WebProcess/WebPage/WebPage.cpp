@@ -1677,7 +1677,7 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
         return;
     }
 
-#ifdef __APPLE__
+#if PLATFORM(MAC)
     if (messageID.is<CoreIPC::MessageClassDrawingArea>()) {
         if (m_drawingArea)
             m_drawingArea->didReceiveDrawingAreaMessage(connection, messageID, arguments);

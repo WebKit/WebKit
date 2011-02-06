@@ -58,7 +58,7 @@ public:
 
     virtual ~DrawingAreaProxy();
 
-#ifdef __APPLE__
+#if PLATFORM(MAC)
     void didReceiveDrawingAreaProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 #endif
 

@@ -1,3 +1,31 @@
+2011-02-06  Benjamin Poulain  <ikipou@gmail.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] WebKit does not build on Mac with WebKit 2
+        https://bugs.webkit.org/show_bug.cgi?id=53380
+
+        * Platform/CoreIPC/qt/ConnectionQt.cpp: Use fcntl() to set close on exec so
+        we do not rely on recent kernel.
+        (CoreIPC::Connection::readyReadHandler):
+        * Platform/qt/SharedMemoryQt.cpp: ditto
+        (WebKit::SharedMemory::create):
+        (WebKit::SharedMemory::createHandle):
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp: Guard prctl() since it is
+        a Linux specific function.
+        (WebKit::QtWebProcess::setupChildProcess):
+        * UIProcess/DrawingAreaProxy.h: Differentiate between building on Mac
+        and the Mac port.
+        * UIProcess/DrawingAreaProxyImpl.cpp: ditto
+        * UIProcess/WebPageProxy.cpp: ditto
+        (WebKit::WebPageProxy::didReceiveMessage):
+        * WebProcess/WebPage/DrawingArea.cpp: ditto
+        (WebKit::DrawingArea::create):
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp: ditto
+        * WebProcess/WebPage/WebPage.cpp: ditto
+        (WebKit::WebPage::didReceiveMessage):
+
 2011-02-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dan Bernstein.

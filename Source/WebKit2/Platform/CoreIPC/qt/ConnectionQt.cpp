@@ -165,7 +165,7 @@ void Connection::readyReadHandler()
 
 
     int messageLength = 0;
-    while ((messageLength = recvmsg(m_socketDescriptor, &message, MSG_CMSG_CLOEXEC)) == -1) {
+    while ((messageLength = recvmsg(m_socketDescriptor, &message, 0)) == -1) {
         if (errno != EINTR)
             return;
     }
@@ -196,6 +196,15 @@ void Connection::readyReadHandler()
 
             if (messageInfo.isMessageBodyOOL())
                 attachmentCount--;
+
+            for (int i = 0; i < attachmentCount; ++i) {
+                while (fcntl(fileDescriptors[i], F_SETFL, FD_CLOEXEC) == -1) {
+                    if (errno != EINTR) {
+                        ASSERT_NOT_REACHED();
+                        return;
+                    }
+                }
+            }
 
             for (int i = 0; i < attachmentCount; ++i)
                 attachments.append(Attachment(fileDescriptors[i], attachmentSizes[i]));

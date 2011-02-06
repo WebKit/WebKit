@@ -106,9 +106,16 @@ PassRefPtr<SharedMemory> SharedMemory::create(size_t size)
     char* tempNameC = tempNameCSTR.data();
 
     int fileDescriptor;
-    while ((fileDescriptor = mkostemp(tempNameC, O_CREAT | O_CLOEXEC | O_RDWR)) == -1) {
+    while ((fileDescriptor = mkstemp(tempNameC)) == -1) {
         if (errno != EINTR)
             return 0;
+    }
+    while (fcntl(fileDescriptor, F_SETFD, FD_CLOEXEC) == -1) {
+        if (errno != EINTR) {
+            while (close(fileDescriptor) == -1 && errno == EINTR) { }
+            unlink(tempNameC);
+            return 0;
+        }
     }
 
     while (ftruncate(fileDescriptor, size) == -1) {
@@ -196,7 +203,7 @@ bool SharedMemory::createHandle(Handle& handle, Protection protection)
         }
     }
 
-    while ((fcntl(duplicatedHandle, F_SETFD,  O_CLOEXEC | accessModeFile(protection)) == -1)) {
+    while ((fcntl(duplicatedHandle, F_SETFD, FD_CLOEXEC | accessModeFile(protection)) == -1)) {
         if (errno != EINTR) {
             ASSERT_NOT_REACHED();
             while (close(duplicatedHandle) == -1 && errno == EINTR) { }

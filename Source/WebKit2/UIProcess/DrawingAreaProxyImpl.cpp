@@ -34,7 +34,7 @@
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 
-#ifndef __APPLE__
+#if !PLATFORM(MAC)
 #error "This drawing area is not ready for use by other ports yet."
 #endif
 
