@@ -2,6 +2,16 @@
 
         Reviewed by Andreas Kling.
 
+        [Qt] Remove unnecessary QRect assignment
+        https://bugs.webkit.org/show_bug.cgi?id=53873
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::renderRelativeCoords):
+
+2011-02-06  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Andreas Kling.
+
         [Qt] Clear page's groupName even when not in DRT
         https://bugs.webkit.org/show_bug.cgi?id=53874
 

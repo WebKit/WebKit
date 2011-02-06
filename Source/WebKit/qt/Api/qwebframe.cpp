@@ -360,7 +360,7 @@ void QWebFramePrivate::renderRelativeCoords(GraphicsContext* context, QWebFrame:
         for (int i = 0; i < vector.size(); ++i) {
             const QRect& clipRect = vector.at(i);
 
-            QRect intersectedRect = clipRect.intersected(view->frameRect());
+            QRect rect = clipRect.intersected(view->frameRect());
 
             context->save();
             painter->setClipRect(clipRect, Qt::IntersectClip);
@@ -371,7 +371,6 @@ void QWebFramePrivate::renderRelativeCoords(GraphicsContext* context, QWebFrame:
             int scrollX = view->scrollX();
             int scrollY = view->scrollY();
 
-            QRect rect = intersectedRect;
             context->translate(x, y);
             rect.translate(-x, -y);
             context->translate(-scrollX, -scrollY);
