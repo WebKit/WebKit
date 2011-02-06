@@ -307,6 +307,7 @@ bool ChromeClientQt::runBeforeUnloadConfirmPanel(const String& message, Frame* f
 
 void ChromeClientQt::closeWindowSoon()
 {
+    m_webPage->d->page->setGroupName(String());
     m_webPage->mainFrame()->d->frame->loader()->stopAllLoaders();
     emit m_webPage->windowCloseRequested();
 }

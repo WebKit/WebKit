@@ -1,3 +1,13 @@
+2011-02-06  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Clear page's groupName even when not in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=53874
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::windowCloseRequested):
+
 2011-02-06  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Andreas Kling.

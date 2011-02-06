@@ -1,3 +1,15 @@
+2011-02-06  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Clear page's groupName even when not in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=53874
+
+        Matches behaviour of other ports.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::closeWindowSoon):
+
 2011-02-03  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -1084,9 +1084,6 @@ void DumpRenderTree::windowCloseRequested()
     QWebPage* page = qobject_cast<QWebPage*>(sender());
     QObject* container = page->parent();
     windows.removeAll(container);
-    // Our use of container->deleteLater() means we need to remove closed pages
-    // from the org.webkit.qt.DumpRenderTree group explicitly.
-    DumpRenderTreeSupportQt::webPageSetGroupName(page, "");
     container->deleteLater();
 }
 
