@@ -50,7 +50,7 @@ BrowserWindow::BrowserWindow(QWKContext* context)
     setAttribute(Qt::WA_DeleteOnClose);
 
     connect(m_browser->view(), SIGNAL(loadProgress(int)), SLOT(loadProgress(int)));
-    connect(m_browser->view(), SIGNAL(titleChanged(const QString&)), SLOT(titleChanged(const QString&)));
+    connect(m_browser->view(), SIGNAL(titleChanged(const QString&)), SLOT(setWindowTitle(const QString&)));
     connect(m_browser->view(), SIGNAL(urlChanged(const QUrl&)), SLOT(urlChanged(const QUrl&)));
 
     this->setCentralWidget(m_browser);
@@ -184,11 +184,6 @@ void BrowserWindow::loadProgress(int progress)
         pallete.setBrush(QPalette::Base, gradient);
     }
     m_addressBar->setPalette(pallete);
-}
-
-void BrowserWindow::titleChanged(const QString& title)
-{
-    setWindowTitle(title);
 }
 
 void BrowserWindow::urlChanged(const QUrl& url)

@@ -41,8 +41,6 @@ BrowserView::BrowserView(QGraphicsWKView::BackingStoreType backingStoreType, QWK
     setFrameShape(QFrame::NoFrame);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-    connect(m_item, SIGNAL(titleChanged(QString)), this, SLOT(setWindowTitle(QString)));
 }
 
 void BrowserView::resizeEvent(QResizeEvent* event)

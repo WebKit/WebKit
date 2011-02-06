@@ -57,7 +57,6 @@ signals:
 protected slots:
     void changeLocation();
     void loadProgress(int progress);
-    void titleChanged(const QString&);
     void urlChanged(const QUrl&);
     void openFile();
 

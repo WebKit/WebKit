@@ -1,3 +1,16 @@
+2011-02-06  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] MiniBrowser: Clean up handling of titleChanged() signal
+        https://bugs.webkit.org/show_bug.cgi?id=53869
+
+        * MiniBrowser/qt/BrowserView.cpp:
+        (BrowserView::BrowserView): Remove unnecessary titleChanged() handling.
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::BrowserWindow): Connect titleChanged() directly to setWindowTitle().
+        * MiniBrowser/qt/BrowserWindow.h:
+
 2011-02-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dan Bernstein.
