@@ -50,9 +50,6 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace std;
 
-static const double numberDefaultMinimum = -FLT_MAX;
-static const double numberDefaultMaximum = FLT_MAX;
-
 static const double numberDefaultStep = 1.0;
 static const double numberStepScaleFactor = 1.0;
 
@@ -85,11 +82,11 @@ double NumberInputType::valueAsNumber() const
 
 void NumberInputType::setValueAsNumber(double newValue, ExceptionCode& ec) const
 {
-    if (newValue < numberDefaultMinimum) {
+    if (newValue < -numeric_limits<float>::max()) {
         ec = INVALID_STATE_ERR;
         return;
     }
-    if (newValue > numberDefaultMaximum) {
+    if (newValue > numeric_limits<float>::max()) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -128,12 +125,12 @@ bool NumberInputType::supportsRangeLimitation() const
 
 double NumberInputType::minimum() const
 {
-    return parseToDouble(element()->fastGetAttribute(minAttr), numberDefaultMinimum);
+    return parseToDouble(element()->fastGetAttribute(minAttr), -numeric_limits<float>::max());
 }
 
 double NumberInputType::maximum() const
 {
-    return parseToDouble(element()->fastGetAttribute(maxAttr), numberDefaultMaximum);
+    return parseToDouble(element()->fastGetAttribute(maxAttr), numeric_limits<float>::max());
 }
 
 bool NumberInputType::stepMismatch(const String& value, double step) const

@@ -1646,7 +1646,7 @@ void GraphicsLayerCA::setupAnimation(PlatformCAAnimation* propertyAnim, const An
 
     float repeatCount = anim->iterationCount();
     if (repeatCount == Animation::IterationCountInfinite)
-        repeatCount = FLT_MAX;
+        repeatCount = numeric_limits<float>::max();
     else if (anim->direction() == Animation::AnimationDirectionAlternate)
         repeatCount /= 2;
 

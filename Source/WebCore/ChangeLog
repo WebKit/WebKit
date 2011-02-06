@@ -2,6 +2,30 @@
 
         Reviewed by Andreas Kling.
 
+        Replace FLT_MAX with std::numeric_limits
+        https://bugs.webkit.org/show_bug.cgi?id=53861
+
+        Also move EFL's userIdleTime from TemporaryLinkStubs into SystemTimeEfl.
+
+        * html/NumberInputType.cpp:
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::parseToDoubleForNumberType):
+        * platform/brew/SystemTimeBrew.cpp:
+        (WebCore::userIdleTime):
+        * platform/efl/SystemTimeEfl.cpp:
+        (WebCore::userIdleTime):
+        * platform/efl/TemporaryLinkStubs.cpp:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setupAnimation):
+        * platform/win/SystemTimeWin.cpp:
+        (WebCore::userIdleTime):
+        * platform/wx/SystemTimeWx.cpp:
+        (WebCore::userIdleTime):
+
+2011-02-06  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Andreas Kling.
+
         [CMake] Add dependencies for Visual Studio projects
         https://bugs.webkit.org/show_bug.cgi?id=53773
 

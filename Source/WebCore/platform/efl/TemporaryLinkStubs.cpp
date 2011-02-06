@@ -56,12 +56,6 @@ String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String &ch
     return String();
 }
 
-float userIdleTime()
-{
-    notImplemented();
-    return FLT_MAX;
-}
-
 void setCookieStoragePrivateBrowsingEnabled(bool)
 {
     notImplemented();

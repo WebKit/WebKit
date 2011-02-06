@@ -25,6 +25,7 @@
 #include "config.h"
 #include "HTMLParserIdioms.h"
 
+#include <limits>
 #include <wtf/MathExtras.h>
 #include <wtf/dtoa.h>
 #include <wtf/text/AtomicString.h>
@@ -85,7 +86,7 @@ bool parseToDoubleForNumberType(const String& string, double* result)
 
     // Numbers are considered finite IEEE 754 single-precision floating point values.
     // See HTML5 2.4.4.3 `Real numbers.'
-    if (-FLT_MAX > value || value > FLT_MAX)
+    if (-std::numeric_limits<float>::max() > value || value > std::numeric_limits<float>::max())
         return false;
 
     if (result) {

@@ -26,12 +26,8 @@
 #include "config.h"
 #include "SystemTime.h"
 
+#include <limits>
 #include <windows.h>
-
-#if COMPILER(MINGW) || (PLATFORM(QT) && COMPILER(MSVC))
-#include <float.h>
-#define FLOAT_MAX FLT_MAX
-#endif
 
 namespace WebCore {
 
@@ -43,7 +39,8 @@ float userIdleTime()
     if (::GetLastInputInfo(&lastInputInfo))
         return (GetTickCount() - lastInputInfo.dwTime) * 0.001; // ::GetTickCount returns ms of uptime valid for up to 49.7 days.
 #endif
-    return FLT_MAX; // return an arbitrarily high userIdleTime so that releasing pages from the page cache isn't postponed. 
+    // Return an arbitrarily high userIdleTime so that releasing pages from the page cache isn't postponed.
+    return std::numeric_limits<float>::max();
 }
 
-}
+} // namespace WebCore
