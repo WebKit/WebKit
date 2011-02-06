@@ -1,5 +1,11 @@
 2011-02-05  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Remove passing tests whose results match mac/ and mac-leopard. 
+
+        * platform/chromium/test_expectations.txt: Removed passing tests.
+
+2011-02-05  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Remove results for failing SVG tests. I will add the new ones after the
         bots tell me which ones aren't matching mac/ or mac-leopard/.
 
