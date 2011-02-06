@@ -31,7 +31,6 @@
 #include "FrameView.h"
 #include "Node.h"
 #include "NotImplemented.h"
-#include <tchar.h>
 #include <windows.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>

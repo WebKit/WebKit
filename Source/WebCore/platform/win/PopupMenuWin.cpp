@@ -42,7 +42,6 @@
 #include "SimpleFontData.h"
 #include "TextRun.h"
 #include "WebCoreInstanceHandle.h"
-#include <tchar.h>
 #include <windows.h>
 #include <windowsx.h>
 #if OS(WINCE)
@@ -64,7 +63,7 @@ static const int maxPopupHeight = 320;
 const int optionSpacingMiddle = 1;
 const int popupWindowBorderWidth = 1;
 
-static LPCTSTR kPopupWindowClassName = _T("PopupWindowClass");
+static LPCWSTR kPopupWindowClassName = L"PopupWindowClass";
 
 // This is used from within our custom message pump when we want to send a
 // message to the web view and not have our message stolen and sent to
@@ -121,7 +120,7 @@ void PopupMenuWin::disconnectClient()
     m_popupClient = 0;
 }
 
-LPCTSTR PopupMenuWin::popupClassName()
+LPCWSTR PopupMenuWin::popupClassName()
 {
     return kPopupWindowClassName;
 }
@@ -145,7 +144,7 @@ void PopupMenuWin::show(const IntRect& r, FrameView* view, int index)
 
         DWORD exStyle = WS_EX_LTRREADING;
 
-        m_popup = ::CreateWindowEx(exStyle, kPopupWindowClassName, _T("PopupMenu"),
+        m_popup = ::CreateWindowExW(exStyle, kPopupWindowClassName, L"PopupMenu",
             WS_POPUP | WS_BORDER,
             m_windowRect.x(), m_windowRect.y(), m_windowRect.width(), m_windowRect.height(),
             hostWindow, 0, WebCore::instanceHandle(), this);

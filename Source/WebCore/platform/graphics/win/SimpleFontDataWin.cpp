@@ -29,16 +29,15 @@
 #include "config.h"
 #include "SimpleFontData.h"
 
-#include <winsock2.h>
 #include "Font.h"
 #include "FontCache.h"
 #include "FloatRect.h"
 #include "FontDescription.h"
-#include <wtf/MathExtras.h>
+#include <mlang.h>
 #include <unicode/uchar.h>
 #include <unicode/unorm.h>
-#include <mlang.h>
-#include <tchar.h>
+#include <winsock2.h>
+#include <wtf/MathExtras.h>
 
 #if PLATFORM(CG)
 #include <ApplicationServices/ApplicationServices.h>

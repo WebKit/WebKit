@@ -27,7 +27,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #include "config.h"
 #include "SimpleFontData.h"
 
@@ -35,9 +34,8 @@
 #include "Font.h"
 #include "FontCache.h"
 #include "FontDescription.h"
-#include <wtf/MathExtras.h>
 #include <mlang.h>
-#include <tchar.h>
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 

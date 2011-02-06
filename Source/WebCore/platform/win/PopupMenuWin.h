@@ -49,7 +49,7 @@ public:
     virtual void updateFromElement();
     virtual void disconnectClient();
 
-    static LPCTSTR popupClassName();
+    static LPCWSTR popupClassName();
 
 private:
     PopupMenuClient* client() const { return m_popupClient; }

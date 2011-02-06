@@ -29,20 +29,19 @@
 #include "config.h"
 #include "SimpleFontData.h"
 
-#include <winsock2.h>
 #include "Font.h"
 #include "FontCache.h"
 #include "FloatRect.h"
 #include "FontDescription.h"
 #include "PlatformString.h"
-#include <wtf/MathExtras.h>
-#include <wtf/RetainPtr.h>
-#include <unicode/uchar.h>
-#include <unicode/unorm.h>
 #include <ApplicationServices/ApplicationServices.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <mlang.h>
-#include <tchar.h>
+#include <unicode/uchar.h>
+#include <unicode/unorm.h>
+#include <winsock2.h>
+#include <wtf/MathExtras.h>
+#include <wtf/RetainPtr.h>
 
 namespace WebCore {
 
@@ -74,9 +73,9 @@ void SimpleFontData::platformInit()
         HDC dc = GetDC(0);
         HGDIOBJ oldFont = SelectObject(dc, m_platformData.hfont());
         int faceLength = GetTextFace(dc, 0, 0);
-        Vector<TCHAR> faceName(faceLength);
+        Vector<WCHAR> faceName(faceLength);
         GetTextFace(dc, faceLength, faceName.data());
-        m_isSystemFont = !_tcscmp(faceName.data(), _T("Lucida Grande"));
+        m_isSystemFont = !wcscmp(faceName.data(), L"Lucida Grande");
         SelectObject(dc, oldFont);
         ReleaseDC(0, dc);
 
@@ -88,7 +87,7 @@ void SimpleFontData::platformInit()
             // web standard. The AppKit adjustment of 20% is too big and is
             // incorrectly added to line spacing, so we use a 15% adjustment instead
             // and add it to the ascent.
-            if (!_tcscmp(faceName.data(), _T("Times")) || !_tcscmp(faceName.data(), _T("Helvetica")) || !_tcscmp(faceName.data(), _T("Courier")))
+            if (!wcscmp(faceName.data(), L"Times") || !wcscmp(faceName.data(), L"Helvetica") || !wcscmp(faceName.data(), L"Courier"))
                 fAscent += floorf(((fAscent + fDescent) * 0.15f) + 0.5f);
         }
     }

@@ -25,7 +25,6 @@
 #include "GraphicsContext.h"
 #include "LocalWindowsContext.h"
 #include "PlatformString.h"
-#include <tchar.h>
 #include <windows.h>
 
 #if OS(WINCE)
@@ -68,16 +67,16 @@ PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
 #if OS(WINCE)
     return 0;
 #else
-    TCHAR buffer[MAX_PATH];    
-    UINT length = ::GetSystemDirectory(buffer, WTF_ARRAY_LENGTH(buffer));
+    WCHAR buffer[MAX_PATH];
+    UINT length = ::GetSystemDirectoryW(buffer, WTF_ARRAY_LENGTH(buffer));
     if (!length)
         return 0;
-    
-    if (_tcscat_s(buffer, TEXT("\\shell32.dll")))
+
+    if (wcscat_s(buffer, L"\\shell32.dll"))
         return 0;
 
     HICON hIcon;
-    if (!::ExtractIconEx(buffer, shell32MultipleFileIconIndex, 0, &hIcon, 1))
+    if (!::ExtractIconExW(buffer, shell32MultipleFileIconIndex, 0, &hIcon, 1))
         return 0;
     return adoptRef(new Icon(hIcon));
 #endif

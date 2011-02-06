@@ -123,9 +123,9 @@ static PassRefPtr<SharedCursor> createSharedCursor(Image* img, const IntPoint& h
     return impl.release();
 }
 
-static PassRefPtr<SharedCursor> loadSharedCursor(HINSTANCE hInstance, LPCTSTR lpCursorName)
+static PassRefPtr<SharedCursor> loadSharedCursor(HINSTANCE hInstance, LPCWSTR lpCursorName)
 {
-    return SharedCursor::create(::LoadCursor(hInstance, lpCursorName));
+    return SharedCursor::create(::LoadCursorW(hInstance, lpCursorName));
 }
 
 static PassRefPtr<SharedCursor> loadCursorByName(char* name, int x, int y)

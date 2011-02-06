@@ -48,7 +48,6 @@ static const long subTitleTrackType = 'sbtl';
 static const long mpeg4ObjectDescriptionTrackType = 'odsm';
 static const long mpeg4SceneDescriptionTrackType = 'sdsm';
 static const long closedCaptionDisplayPropertyID = 'disp';
-static LPCTSTR fullscreenQTMoviePointerProp = TEXT("fullscreenQTMoviePointer");
 
 // Resizing GWorlds is slow, give them a minimum size so size of small 
 // videos can be animated smoothly

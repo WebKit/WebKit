@@ -115,7 +115,7 @@ static inline void pathRemoveBadFSCharacters(PWSTR psz, size_t length)
 }
 #endif
 
-static String filesystemPathFromUrlOrTitle(const String& url, const String& title, TCHAR* extension, bool isLink)
+static String filesystemPathFromUrlOrTitle(const String& url, const String& title, const UChar* extension, bool isLink)
 {
 #if OS(WINCE)
     notImplemented();
@@ -163,7 +163,7 @@ static String filesystemPathFromUrlOrTitle(const String& url, const String& titl
     }
 
     String result(static_cast<UChar*>(fsPathBuffer));
-    result += String(static_cast<UChar*>(extension));
+    result += String(extension);
     return result;
 #endif
 }
@@ -195,7 +195,7 @@ static HGLOBAL createGlobalHDropContent(const KURL& url, String& fileName, Share
         // windows does not enjoy a leading slash on paths
         if (localPath[0] == '/')
             localPath = localPath.substring(1);
-        LPCTSTR localPathStr = localPath.charactersWithNullTermination();
+        LPCWSTR localPathStr = localPath.charactersWithNullTermination();
         if (wcslen(localPathStr) + 1 < MAX_PATH)
             wcscpy_s(filePath, MAX_PATH, localPathStr);
         else
@@ -277,7 +277,7 @@ static HGLOBAL createGlobalImageFileDescriptor(const String& url, const String& 
         return 0;
     }
     extension.insert(".", 0);
-    fsPath = filesystemPathFromUrlOrTitle(url, preferredTitle, (TCHAR*)extension.charactersWithNullTermination(), false);
+    fsPath = filesystemPathFromUrlOrTitle(url, preferredTitle, extension.charactersWithNullTermination(), false);
 
     if (fsPath.length() <= 0) {
         GlobalUnlock(memObj);

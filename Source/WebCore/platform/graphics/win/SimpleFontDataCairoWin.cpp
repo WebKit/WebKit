@@ -37,7 +37,6 @@
 #include <cairo.h>
 #include <cairo-win32.h>
 #include <mlang.h>
-#include <tchar.h>
 #include <wtf/MathExtras.h>
 
 namespace WebCore {

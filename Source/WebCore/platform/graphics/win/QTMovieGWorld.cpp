@@ -40,7 +40,7 @@ using namespace std;
 
 static const long minimumQuickTimeVersion = 0x07300000; // 7.3
 
-static LPCTSTR fullscreenQTMovieGWorldPointerProp = TEXT("fullscreenQTMovieGWorldPointer");
+static LPCWSTR fullscreenQTMovieGWorldPointerProp = L"fullscreenQTMovieGWorldPointer";
 
 // Resizing GWorlds is slow, give them a minimum size so size of small 
 // videos can be animated smoothly
@@ -378,10 +378,10 @@ bool QTMovieGWorld::isDisabled() const
 
 LRESULT QTMovieGWorld::fullscreenWndProc(HWND wnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    QTMovieGWorld* movie = static_cast<QTMovieGWorld*>(GetProp(wnd, fullscreenQTMovieGWorldPointerProp));
+    QTMovieGWorld* movie = static_cast<QTMovieGWorld*>(GetPropW(wnd, fullscreenQTMovieGWorldPointerProp));
 
     if (message == WM_DESTROY)
-        RemoveProp(wnd, fullscreenQTMovieGWorldPointerProp);
+        RemovePropW(wnd, fullscreenQTMovieGWorldPointerProp);
 
     if (!movie)
         return DefWindowProc(wnd, message, wParam, lParam);
@@ -423,7 +423,7 @@ HWND QTMovieGWorld::enterFullscreen(QTMovieGWorldFullscreenClient* client)
 
     // Set the 'this' pointer on the HWND
     HWND wnd = static_cast<HWND>(GetPortNativeWindow(m_private->m_fullscreenWindow));
-    SetProp(wnd, fullscreenQTMovieGWorldPointerProp, static_cast<HANDLE>(this));
+    SetPropW(wnd, fullscreenQTMovieGWorldPointerProp, static_cast<HANDLE>(this));
 
     return wnd;
 }
