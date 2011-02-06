@@ -244,7 +244,7 @@ struct SVGTextRunWalker {
     {
         ASSERT(0 <= from && from <= to && to - from <= run.length());
 
-        const String text = Font::normalizeSpaces(String(run.data(from), run.length()));
+        const String text = Font::normalizeSpaces(String(run.data(from), to - from));
         Vector<SVGGlyphIdentifier::ArabicForm> chars(charactersWithArabicForm(text, run.rtl()));
 
         SVGGlyphIdentifier identifier;

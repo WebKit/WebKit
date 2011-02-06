@@ -1,3 +1,16 @@
+2011-02-06  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Dirk Schulze.
+
+        Fix potential buffer overrun in SVGTextRunWalker::walk()
+        https://bugs.webkit.org/show_bug.cgi?id=53870
+
+        A new String was created from a UChar* with a 'length' argument
+        that could be greater than the number of UChars available.
+
+        * svg/SVGFont.cpp:
+        (WebCore::SVGTextRunWalker::walk):
+
 2011-02-05  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
