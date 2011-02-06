@@ -1,3 +1,18 @@
+2011-02-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION: New drawing area is causing some WebProcess crashes in layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=53865
+        <rdar://problem/8963148>
+        
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::enterAcceleratedCompositingMode): Handle the case
+        where this is called repeatedly without exiting accelerated composting mode
+        first.
+        (WebKit::DrawingAreaImpl::exitAcceleratedCompositingMode): Handle the case
+        of being called more than once.
+
 2011-02-05  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

@@ -234,7 +234,8 @@ void DrawingAreaImpl::resumePainting()
 
 void DrawingAreaImpl::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLayer)
 {
-    ASSERT(!m_layerTreeHost);
+    if (m_layerTreeHost)
+        m_layerTreeHost->invalidate();
 
     m_layerTreeHost = LayerTreeHost::create(m_webPage, graphicsLayer);
     
@@ -251,9 +252,11 @@ void DrawingAreaImpl::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLay
 
 void DrawingAreaImpl::exitAcceleratedCompositingMode()
 {
-    m_layerTreeHost->invalidate();
-    m_layerTreeHost = nullptr;
-    
+    if (m_layerTreeHost) {
+        m_layerTreeHost->invalidate();
+        m_layerTreeHost = nullptr;
+    }
+
     if (m_inSetSize)
         return;
 
