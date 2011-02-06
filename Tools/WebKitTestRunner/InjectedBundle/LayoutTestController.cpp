@@ -97,6 +97,7 @@ LayoutTestController::LayoutTestController()
     , m_waitToDump(false)
     , m_testRepaint(false)
     , m_testRepaintSweepHorizontally(false)
+    , m_willSendRequestReturnsNull(false)
 {
     platformInitialize();
 }

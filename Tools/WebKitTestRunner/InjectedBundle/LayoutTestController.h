@@ -133,6 +133,9 @@ public:
 
     void setPOSIXLocale(JSStringRef);
 
+    bool willSendRequestReturnsNull() { return m_willSendRequestReturnsNull; }
+    void setWillSendRequestReturnsNull(bool f) { m_willSendRequestReturnsNull = f; }
+
 private:
     static const double waitToDumpWatchdogTimerInterval;
 
@@ -154,6 +157,8 @@ private:
     bool m_waitToDump; // True if waitUntilDone() has been called, but notifyDone() has not yet been called.
     bool m_testRepaint;
     bool m_testRepaintSweepHorizontally;
+
+    bool m_willSendRequestReturnsNull;
 
     PlatformTimerRef m_waitToDumpWatchdogTimer;
 };

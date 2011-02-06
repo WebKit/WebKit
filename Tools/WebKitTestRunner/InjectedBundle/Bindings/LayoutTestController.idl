@@ -87,6 +87,8 @@ module WTR {
         void setTimelineProfilingEnabled(in boolean enabled);
 
         void setPOSIXLocale(in DOMString locale);
+
+        void setWillSendRequestReturnsNull(in boolean flag);
     };
 
 }

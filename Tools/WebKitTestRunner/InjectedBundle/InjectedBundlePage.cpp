@@ -576,6 +576,9 @@ void InjectedBundlePage::didRunInsecureContentForFrame(WKBundleFrameRef frame)
 
 WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef, WKBundleFrameRef, uint64_t, WKURLRequestRef request, WKURLResponseRef)
 {
+    if (InjectedBundle::shared().isTestRunning() && InjectedBundle::shared().layoutTestController()->willSendRequestReturnsNull())
+        return 0;
+
     return request;
 }
 

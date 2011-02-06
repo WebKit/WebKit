@@ -51,11 +51,13 @@ class LayoutTestResults(object):
     timeout_key = u'Tests that timed out:'
     crash_key = u'Tests that caused the DumpRenderTree tool to crash:'
     missing_key = u'Tests that had no expected results (probably new):'
+    webprocess_crash_key = u'Tests that caused the Web process to crash:'
 
     expected_keys = [
         stderr_key,
         fail_key,
         crash_key,
+        webprocess_crash_key,
         timeout_key,
         missing_key,
     ]
@@ -86,6 +88,8 @@ class LayoutTestResults(object):
         if table_title == cls.fail_key:
             return cls._failures_from_fail_row(row)
         if table_title == cls.crash_key:
+            return [test_failures.FailureCrash()]
+        if table_title == cls.webprocess_crash_key:
             return [test_failures.FailureCrash()]
         if table_title == cls.timeout_key:
             return [test_failures.FailureTimeout()]
