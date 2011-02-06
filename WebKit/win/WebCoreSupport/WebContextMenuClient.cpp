@@ -141,7 +141,7 @@ void WebContextMenuClient::searchWithGoogle(const Frame* frame)
     url.append("&ie=UTF-8&oe=UTF-8");
 
     if (Page* page = frame->page())
-        page->mainFrame()->loader()->urlSelected(url, String(), 0, false, false, true, SendReferrer);
+        page->mainFrame()->loader()->urlSelected(KURL(ParsedURLString, url), String(), 0, false, false, true, SendReferrer);
 }
 
 void WebContextMenuClient::lookUpInDictionary(Frame*)
