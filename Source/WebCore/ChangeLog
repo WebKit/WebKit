@@ -2,6 +2,34 @@
 
         Reviewed by Dirk Schulze.
 
+        Refactor Font::normalizeSpaces() to avoid an extra String copy.
+        https://bugs.webkit.org/show_bug.cgi?id=53871
+
+        Have normalizeSpaces() take UChar*,length arguments instead of a
+        String, since all call sites were creating temporaries from these
+        components anyway.
+
+        Font::normalizeSpaces() now always makes 1 String copy,
+        instead of 1 in the best case and 2 in the worst case.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::normalizeSpaces):
+        * platform/graphics/Font.h:
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::drawTextCommon):
+        (WebCore::Font::floatWidthForSimpleText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::Font::offsetForPositionForSimpleText):
+        (WebCore::Font::offsetForPositionForComplexText):
+        (WebCore::Font::selectionRectForSimpleText):
+        (WebCore::Font::selectionRectForComplexText):
+        * svg/SVGFont.cpp:
+        (WebCore::SVGTextRunWalker::walk):
+
+2011-02-06  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Dirk Schulze.
+
         Fix potential buffer overrun in SVGTextRunWalker::walk()
         https://bugs.webkit.org/show_bug.cgi?id=53870
 

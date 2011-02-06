@@ -223,7 +223,7 @@ public:
         return character;
     }
 
-    static String normalizeSpaces(const String&);
+    static String normalizeSpaces(const UChar*, unsigned length);
 
 #if ENABLE(SVG_FONTS)
     bool isSVGFont() const;

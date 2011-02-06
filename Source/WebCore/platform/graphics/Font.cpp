@@ -247,21 +247,15 @@ bool Font::isSVGFont() const
 }
 #endif
 
-String Font::normalizeSpaces(const String& string)
+String Font::normalizeSpaces(const UChar* characters, unsigned length)
 {
-    const UChar* characters = string.characters();
-    unsigned length = string.length();
-    Vector<UChar, 256> buffer(length);
-    bool didReplacement = false;
+    UChar* buffer;
+    String normalized = String::createUninitialized(length, buffer);
 
-    for (unsigned i = 0; i < length; ++i) {
-        UChar originalCharacter = characters[i];
-        buffer[i] = normalizeSpaces(originalCharacter);
-        if (buffer[i] != originalCharacter)
-            didReplacement = true;
-    }
+    for (unsigned i = 0; i < length; ++i)
+        buffer[i] = normalizeSpaces(characters[i]);
 
-    return didReplacement ? String(buffer.data(), length) : string;
+    return normalized;
 }
 
 static bool shouldUseFontSmoothing = true;
