@@ -1,3 +1,17 @@
+2011-02-06  Benjamin Poulain  <ikipou@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Fix coding style errors in ClipboardQt.h
+        https://bugs.webkit.org/show_bug.cgi?id=43520
+
+        Fix coding style: order of header and indentation.
+
+        * platform/qt/ClipboardQt.h:
+        (WebCore::ClipboardQt::create):
+        (WebCore::ClipboardQt::clipboardData):
+        (WebCore::ClipboardQt::invalidateWritableData):
+
 2011-02-06  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej Stachowiak.
