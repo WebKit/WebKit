@@ -368,6 +368,7 @@
             'wtf/Atomics.h',
             'wtf/AVLTree.h',
             'wtf/Bitmap.h',
+            'wtf/BloomFilter.h',
             'wtf/ByteArray.cpp',
             'wtf/ByteArray.h',
             'wtf/chromium/ChromiumThreading.h',

@@ -651,32 +651,36 @@ static void loadViewSourceStyle()
     defaultViewSourceStyle->addRulesFromSheet(parseUASheet(sourceUserAgentStyleSheet, sizeof(sourceUserAgentStyleSheet)), screenEval());
 }
     
-static inline void collectElementIdentifierHashes(Element* element, Vector<unsigned, 4>& identifierHashes)
+static inline void collectElementIdentifierHashes(const Element* element, Vector<unsigned, 4>& identifierHashes)
 {
     identifierHashes.append(element->localName().impl()->existingHash());
     if (element->hasID())
         identifierHashes.append(element->idForStyleResolution().impl()->existingHash());
-    StyledElement* styledElement = element->isStyledElement() ? static_cast<StyledElement*>(element) : 0;
+    const StyledElement* styledElement = element->isStyledElement() ? static_cast<const StyledElement*>(element) : 0;
     if (styledElement && styledElement->hasClass()) {
-        const SpaceSplitString& classNames = static_cast<StyledElement*>(element)->classNames();
+        const SpaceSplitString& classNames = styledElement->classNames();
         size_t count = classNames.size();
         for (size_t i = 0; i < count; ++i)
             identifierHashes.append(classNames[i].impl()->existingHash());
     }
 }
-    
+
 void CSSStyleSelector::pushParent(Element* parent)
 {
     // If we are not invoked consistently for each parent, just pause maintaining the stack.
     // There are all kinds of wacky special cases where the style recalc may temporarily branch to some random elements.
     // FIXME: Perhaps we should fix up the stack instead? There is some danger of getting into O(n^2) situations doing that.
     if (m_parentStack.isEmpty()) {
-        ASSERT(m_ancestorIdentifierFilter.isEmpty());
+        ASSERT(!m_ancestorIdentifierFilter);
         // We must start from the root.
         if (parent->parentElement())
             return;
-    } else if (m_parentStack.last().element != parent->parentElement())
-        return;
+        m_ancestorIdentifierFilter = adoptPtr(new BloomFilter<bloomFilterKeyBits>);
+    } else {
+        ASSERT(m_ancestorIdentifierFilter);
+        if (m_parentStack.last().element != parent->parentElement())
+            return;
+    }
 
     m_parentStack.append(ParentStackFrame(parent));
     ParentStackFrame& parentFrame = m_parentStack.last();
@@ -685,20 +689,24 @@ void CSSStyleSelector::pushParent(Element* parent)
     collectElementIdentifierHashes(parent, parentFrame.identifierHashes);
     size_t count = parentFrame.identifierHashes.size();
     for (size_t i = 0; i < count; ++i)
-        m_ancestorIdentifierFilter.add(parentFrame.identifierHashes[i]);
+        m_ancestorIdentifierFilter->add(parentFrame.identifierHashes[i]);
 }
 
 void CSSStyleSelector::popParent(Element* parent)
 {
     if (m_parentStack.isEmpty() || m_parentStack.last().element != parent)
         return;
+    ASSERT(m_ancestorIdentifierFilter);
 
     const ParentStackFrame& parentFrame = m_parentStack.last();
     size_t count = parentFrame.identifierHashes.size();
     for (size_t i = 0; i < count; ++i)
-        m_ancestorIdentifierFilter.remove(parentFrame.identifierHashes[i]);
+        m_ancestorIdentifierFilter->remove(parentFrame.identifierHashes[i]);
     m_parentStack.removeLast();
-    ASSERT(!m_parentStack.isEmpty() || m_ancestorIdentifierFilter.isEmpty());
+    if (m_parentStack.isEmpty()) {
+        ASSERT(m_ancestorIdentifierFilter->likelyEmpty());
+        m_ancestorIdentifierFilter.clear();
+    }
 }
 
 void CSSStyleSelector::addMatchedDeclaration(CSSMutableStyleDeclaration* decl)
@@ -753,9 +761,10 @@ void CSSStyleSelector::matchRules(RuleSet* rules, int& firstRuleIndex, int& last
 
 inline bool CSSStyleSelector::fastRejectSelector(const RuleData& ruleData) const
 {
+    ASSERT(m_ancestorIdentifierFilter);
     const unsigned* descendantSelectorIdentifierHashes = ruleData.descendantSelectorIdentifierHashes();
     for (unsigned n = 0; n < RuleData::maximumIdentifierCount && descendantSelectorIdentifierHashes[n]; ++n) {
-        if (!m_ancestorIdentifierFilter.contains(descendantSelectorIdentifierHashes[n]))
+        if (!m_ancestorIdentifierFilter->mayContain(descendantSelectorIdentifierHashes[n]))
             return true;
     }
     return false;
@@ -2937,7 +2946,7 @@ inline void RuleData::collectDescendantSelectorIdentifierHashes()
     }
     for (; selector; selector = selector->tagHistory()) {
         // Only collect identifiers that match direct ancestors.
-        // FIXME: Intead of just stopping, this should skip over sibling selectors.
+        // FIXME: Instead of just stopping, this should skip over sibling selectors.
         if (relation != CSSSelector::Descendant && relation != CSSSelector::Child && relation != CSSSelector::SubSelector)
             break;
         if ((selector->m_match == CSSSelector::Id || selector->m_match == CSSSelector::Class) && !selector->value().isEmpty())

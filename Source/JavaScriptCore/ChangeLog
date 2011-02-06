@@ -1,3 +1,30 @@
+2011-02-06  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Use bloom filter for descendant selector filtering
+        https://bugs.webkit.org/show_bug.cgi?id=53880
+        
+        Implement a bloom filter with k=2 and 8 bit counting.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/BloomFilter.h: Added.
+        (WTF::BloomFilter::maximumCount):
+        (WTF::BloomFilter::BloomFilter):
+        (WTF::BloomFilter::mayContain):
+        (WTF::BloomFilter::add):
+        (WTF::BloomFilter::remove):
+        (WTF::BloomFilter::firstSlot):
+        (WTF::BloomFilter::secondSlot):
+        (WTF::::add):
+        (WTF::::remove):
+        (WTF::::clear):
+        (WTF::::likelyEmpty):
+        (WTF::::isClear):
+
 2011-02-04  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

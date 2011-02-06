@@ -27,7 +27,7 @@
 #include "LinkHash.h"
 #include "MediaQueryExp.h"
 #include "RenderStyle.h"
-#include <wtf/HashCountedSet.h>
+#include <wtf/BloomFilter.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
@@ -216,8 +216,10 @@ public:
             Vector<unsigned, 4> identifierHashes;
         };
         Vector<ParentStackFrame> m_parentStack;
-        // FIXME: Replace this with a bloom filter.
-        HashCountedSet<unsigned, AlreadyHashed> m_ancestorIdentifierFilter;
+        
+        // With 100 unique strings in the filter, 2^12 slot table has false positive rate of ~0.2%.
+        static const unsigned bloomFilterKeyBits = 12;
+        OwnPtr<BloomFilter<bloomFilterKeyBits> > m_ancestorIdentifierFilter;
 
         bool m_hasUAAppearance;
         BorderData m_borderData;

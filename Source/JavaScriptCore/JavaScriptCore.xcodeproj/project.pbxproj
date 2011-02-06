@@ -578,6 +578,7 @@
 		E49DC16B12EF293E00184A1F /* SourceProviderCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E49DC15512EF277200184A1F /* SourceProviderCache.cpp */; };
 		E49DC16C12EF294E00184A1F /* SourceProviderCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E49DC15112EF272200184A1F /* SourceProviderCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E49DC16D12EF295300184A1F /* SourceProviderCacheItem.h in Headers */ = {isa = PBXBuildFile; fileRef = E49DC14912EF261A00184A1F /* SourceProviderCacheItem.h */; };
+		E4D8CEFB12FC439600BC9F5A /* BloomFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = E4D8CE9B12FC42E100BC9F5A /* BloomFilter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F3BD31ED126735770065467F /* TextPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = F3BD31D0126730180065467F /* TextPosition.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FDA15C1E12B0305C003A583A /* Complex.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15C1612B03028003A583A /* Complex.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE1B447A0ECCD73B004F4DD1 /* StdLibExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1B44790ECCD73B004F4DD1 /* StdLibExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1197,6 +1198,7 @@
 		E49DC14912EF261A00184A1F /* SourceProviderCacheItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceProviderCacheItem.h; sourceTree = "<group>"; };
 		E49DC15112EF272200184A1F /* SourceProviderCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceProviderCache.h; sourceTree = "<group>"; };
 		E49DC15512EF277200184A1F /* SourceProviderCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SourceProviderCache.cpp; sourceTree = "<group>"; };
+		E4D8CE9B12FC42E100BC9F5A /* BloomFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BloomFilter.h; sourceTree = "<group>"; };
 		F3BD31D0126730180065467F /* TextPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextPosition.h; path = text/TextPosition.h; sourceTree = "<group>"; };
 		F5BB2BC5030F772101FCFE1D /* Completion.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Completion.h; sourceTree = "<group>"; tabWidth = 8; };
 		F5C290E60284F98E018635CA /* JavaScriptCorePrefix.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptCorePrefix.h; sourceTree = "<group>"; tabWidth = 8; };
@@ -1595,6 +1597,7 @@
 				6580F795094070560082C219 /* PassRefPtr.h */,
 				65D6D87E09B5A32E0002E4D7 /* Platform.h */,
 				A7D649A91015224E009B2E1B /* PossiblyNull.h */,
+				E4D8CE9B12FC42E100BC9F5A /* BloomFilter.h */,
 				088FA5B90EF76D4300578E6F /* RandomNumber.cpp */,
 				088FA5BA0EF76D4300578E6F /* RandomNumber.h */,
 				08E279E80EF83B10007DB523 /* RandomNumberSeed.h */,
@@ -2444,6 +2447,7 @@
 				E49DC16C12EF294E00184A1F /* SourceProviderCache.h in Headers */,
 				E49DC16D12EF295300184A1F /* SourceProviderCacheItem.h in Headers */,
 				14C824AD12F7C785008F35E0 /* MarkedBlock.h in Headers */,
+				E4D8CEFB12FC439600BC9F5A /* BloomFilter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

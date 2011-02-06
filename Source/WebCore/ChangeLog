@@ -1,3 +1,24 @@
+2011-02-06  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Use bloom filter for descendant selector filtering
+        https://bugs.webkit.org/show_bug.cgi?id=53880
+        
+        Bloom filter is faster than a hash set in this kind of use.
+        
+        Shark thinks this speeds up style matching by ~30% on sites
+        with lots of descendant selectors.
+
+        * ForwardingHeaders/wtf/BloomFilter.h: Added.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::collectElementIdentifierHashes):
+        (WebCore::CSSStyleSelector::pushParent):
+        (WebCore::CSSStyleSelector::popParent):
+        (WebCore::CSSStyleSelector::fastRejectSelector):
+        (WebCore::RuleData::collectDescendantSelectorIdentifierHashes):
+        * css/CSSStyleSelector.h:
+
 2011-02-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Antti Koivisto.

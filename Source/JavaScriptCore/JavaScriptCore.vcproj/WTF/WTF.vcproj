@@ -537,6 +537,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\BloomFilter.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\BumpPointerAllocator.h"
 			>
 		</File>
