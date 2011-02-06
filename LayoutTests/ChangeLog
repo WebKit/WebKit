@@ -1,3 +1,9 @@
+2011-02-06  Martin Robinson  <mrobinson@igalia.com>
+
+        Reclassify a failing test and unskip another which should be passing now.
+
+        * platform/gtk/Skipped: Update the skipped list.
+
 2011-02-06  Robert Hogan  <robert@webkit.org>
 
         Unreviewed, skip failing test on Qt bot.
