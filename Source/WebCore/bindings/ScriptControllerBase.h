@@ -37,12 +37,6 @@ enum ReasonForCallingCanExecuteScripts {
     NotAboutToExecuteScript
 };
 
-// FIXME: Remove this enum and all references to it.
-enum ShouldAllowXSS {
-    AllowXSS,
-    DoNotAllowXSS
-};
+}
 
-} // namespace WebCore
-
-#endif // ScriptControllerBase_h
+#endif

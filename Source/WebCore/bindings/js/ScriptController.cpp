@@ -114,7 +114,7 @@ JSDOMWindowShell* ScriptController::createWindowShell(DOMWrapperWorld* world)
     return windowShell;
 }
 
-ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode, DOMWrapperWorld* world, ShouldAllowXSS)
+ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode, DOMWrapperWorld* world)
 {
     const SourceCode& jsSourceCode = sourceCode.jsSourceCode();
     String sourceURL = ustringToString(jsSourceCode.provider()->url());
@@ -159,9 +159,9 @@ ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode
     return JSValue();
 }
 
-ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode, ShouldAllowXSS shouldAllowXSS) 
+ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode) 
 {
-    return evaluateInWorld(sourceCode, mainThreadNormalWorld(), shouldAllowXSS);
+    return evaluateInWorld(sourceCode, mainThreadNormalWorld());
 }
 
 PassRefPtr<DOMWrapperWorld> ScriptController::createWorld()
@@ -490,7 +490,7 @@ void ScriptController::clearScriptObjects()
 #endif
 }
 
-ScriptValue ScriptController::executeScriptInWorld(DOMWrapperWorld* world, const String& script, bool forceUserGesture, ShouldAllowXSS shouldAllowXSS)
+ScriptValue ScriptController::executeScriptInWorld(DOMWrapperWorld* world, const String& script, bool forceUserGesture)
 {
     ScriptSourceCode sourceCode(script, forceUserGesture ? KURL() : m_frame->document()->url());
 
@@ -500,7 +500,7 @@ ScriptValue ScriptController::executeScriptInWorld(DOMWrapperWorld* world, const
     bool wasInExecuteScript = m_inExecuteScript;
     m_inExecuteScript = true;
 
-    ScriptValue result = evaluateInWorld(sourceCode, world, shouldAllowXSS);
+    ScriptValue result = evaluateInWorld(sourceCode, world);
 
     if (!wasInExecuteScript) {
         m_inExecuteScript = false;

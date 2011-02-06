@@ -217,7 +217,7 @@ void ScriptController::evaluateInIsolatedWorld(unsigned worldID, const Vector<Sc
 }
 
 // Evaluate a script file in the environment of this proxy.
-ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode, ShouldAllowXSS)
+ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode)
 {
     String sourceURL = sourceCode.url();
     const String* savedSourceURL = m_sourceURL;
