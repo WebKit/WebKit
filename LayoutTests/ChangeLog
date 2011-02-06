@@ -1,5 +1,12 @@
 2011-02-05  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] Add baselines for the test added in r77690.
+
+        * platform/chromium-mac/media/video-frame-accurate-seek-expected.checksum: Added.
+        * platform/chromium-mac/media/video-frame-accurate-seek-expected.png: Added.
+
+2011-02-05  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Remove passing canvas tests from expectations.
 
         * platform/chromium/test_expectations.txt: Removed passing tests.
