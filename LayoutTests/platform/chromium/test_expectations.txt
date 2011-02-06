@@ -2007,8 +2007,8 @@ BUGCR44150 LINUX : fast/forms/input-text-paste-maxlength.html = CRASH PASS
 
 // The following tests fail on all platforms and need further investigation.
 // Many of these are skipped on the Mac platform
-BUGWK45991 : canvas/philip/tests/2d.drawImage.broken.html = TEXT
-BUGWK45991 MAC WIN : canvas/philip/tests/2d.gradient.radial.cone.top.html = TEXT
+BUGWK45991 WIN LINUX : canvas/philip/tests/2d.drawImage.broken.html = TEXT
+BUGWK45991 WIN : canvas/philip/tests/2d.gradient.radial.cone.top.html = TEXT
 BUGWK45991 LINUX RELEASE : canvas/philip/tests/2d.gradient.radial.cone.top.html = TEXT
 BUGWK45991 LINUX DEBUG : canvas/philip/tests/2d.gradient.radial.cone.top.html = TEXT TIMEOUT
 BUGWK39212 : canvas/philip/tests/2d.imageData.create1.type.html = TEXT
@@ -2017,20 +2017,20 @@ BUGWK39212 : canvas/philip/tests/2d.imageData.get.type.html = TEXT
 BUGWK40272 : canvas/philip/tests/2d.imageData.object.round.html = TEXT
 BUGWK40272 : canvas/philip/tests/2d.imageData.object.wrap.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.missingargs.html = TEXT
-BUGWK45991 : canvas/philip/tests/2d.pattern.image.broken.html = TEXT
-BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.ideographic.html = TEXT
+BUGWK45991 WIN LINUX : canvas/philip/tests/2d.pattern.image.broken.html = TEXT
+BUGWK45991 WIN LINUX : canvas/philip/tests/2d.text.draw.baseline.ideographic.html = TEXT
 BUGWK48579 : canvas/philip/tests/type.prototype.html = TEXT
-BUGWK50797 : canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6.html = TEXT
+BUGWK50797 WIN LINUX : canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6.html = TEXT
 BUGWK40147 MAC : canvas/philip/tests/toDataURL.jpeg.alpha.html = TEXT
 BUGCR61824 : canvas/philip/tests/2d.pattern.image.string.html = TEXT
 
 // Update canvas/philip in WK r71481
-BUGCR62301 : canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html = TEXT
-BUGCR62301 : canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html = TEXT
-BUGCR62301 : canvas/philip/tests/2d.fillStyle.parse.rgba-eof.html = TEXT
-BUGCR62301 : canvas/philip/tests/2d.imageData.put.wrongtype.html = TEXT
-BUGCR62301 : canvas/philip/tests/2d.pattern.image.incomplete.empty.html = TEXT
-BUGCR62301 : canvas/philip/tests/2d.pattern.image.incomplete.omitted.html = TEXT
+BUGCR62301 WIN LINUX : canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html = TEXT
+BUGCR62301 WIN LINUX : canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html = TEXT
+BUGCR62301 WIN LINUX : canvas/philip/tests/2d.fillStyle.parse.rgba-eof.html = TEXT
+BUGCR62301 WIN LINUX : canvas/philip/tests/2d.imageData.put.wrongtype.html = TEXT
+BUGCR62301 WIN LINUX : canvas/philip/tests/2d.pattern.image.incomplete.empty.html = TEXT
+BUGCR62301 WIN LINUX : canvas/philip/tests/2d.pattern.image.incomplete.omitted.html = TEXT
 
 BUGWK48288 : canvas/philip/tests/2d.composite.operation.clear.html = TEXT
 BUGWK48289 : canvas/philip/tests/2d.composite.operation.darker.html = TEXT
@@ -2050,25 +2050,25 @@ BUGWK39177 : canvas/philip/tests/2d.composite.uncovered.pattern.destination-atop
 BUGWK39177 : canvas/philip/tests/2d.composite.uncovered.pattern.destination-in.html = TEXT
 BUGWK39177 : canvas/philip/tests/2d.composite.uncovered.pattern.source-in.html = TEXT
 BUGWK39177 : canvas/philip/tests/2d.composite.uncovered.pattern.source-out.html = TEXT
-BUGWK39168 : canvas/philip/tests/2d.fillStyle.parse.system.html = TEXT
+BUGWK39168 WIN LINUX : canvas/philip/tests/2d.fillStyle.parse.system.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.pattern.image.undefined.html = TEXT
-BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.bottom.html = TEXT
-BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.hanging.html = TEXT
-BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.middle.html = TEXT
-BUGWK38463 : canvas/philip/tests/2d.text.draw.baseline.top.html = TEXT
-BUGWK20867 : canvas/philip/tests/2d.text.draw.fill.maxWidth.fontface.html = TEXT
-BUGWK45991 : canvas/philip/tests/2d.text.draw.space.collapse.end.html = TEXT
-BUGWK45991 : canvas/philip/tests/2d.text.draw.space.collapse.nonspace.html = TEXT
-BUGWK45991 : canvas/philip/tests/2d.text.draw.space.collapse.other.html = TEXT
-BUGWK45991 : canvas/philip/tests/2d.text.draw.space.collapse.space.html = TEXT
-BUGWK45991 : canvas/philip/tests/2d.text.draw.space.collapse.start.html = TEXT
-BUGWK50859 : canvas/philip/tests/2d.text.font.parse.basic.html = TEXT
-BUGWK50859 : canvas/philip/tests/2d.text.font.parse.complex.html = TEXT
-BUGWK50859 : canvas/philip/tests/2d.text.font.parse.invalid.html = TEXT
-BUGWK50859 : canvas/philip/tests/2d.text.font.parse.size.percentage.default.html = TEXT
-BUGWK50859 : canvas/philip/tests/2d.text.font.parse.size.percentage.html = TEXT
-BUGWK50859 : canvas/philip/tests/2d.text.font.parse.system.html = TEXT
-BUGWK45991 : canvas/philip/tests/2d.text.measure.width.space.html = TEXT
+BUGWK45991 WIN LINUX : canvas/philip/tests/2d.text.draw.baseline.bottom.html = TEXT
+BUGWK45991 WIN LINUX : canvas/philip/tests/2d.text.draw.baseline.hanging.html = TEXT
+BUGWK45991 WIN LINUX : canvas/philip/tests/2d.text.draw.baseline.middle.html = TEXT
+BUGWK38463 WIN LINUX : canvas/philip/tests/2d.text.draw.baseline.top.html = TEXT
+BUGWK20867 WIN LINUX : canvas/philip/tests/2d.text.draw.fill.maxWidth.fontface.html = TEXT
+BUGWK45991 WIN LINUX : canvas/philip/tests/2d.text.draw.space.collapse.end.html = TEXT
+BUGWK45991 WIN LINUX : canvas/philip/tests/2d.text.draw.space.collapse.nonspace.html = TEXT
+BUGWK45991 WIN LINUX : canvas/philip/tests/2d.text.draw.space.collapse.other.html = TEXT
+BUGWK45991 WIN LINUX : canvas/philip/tests/2d.text.draw.space.collapse.space.html = TEXT
+BUGWK45991 WIN LINUX : canvas/philip/tests/2d.text.draw.space.collapse.start.html = TEXT
+BUGWK50859 WIN LINUX : canvas/philip/tests/2d.text.font.parse.basic.html = TEXT
+BUGWK50859 WIN LINUX : canvas/philip/tests/2d.text.font.parse.complex.html = TEXT
+BUGWK50859 WIN LINUX : canvas/philip/tests/2d.text.font.parse.invalid.html = TEXT
+BUGWK50859 WIN LINUX : canvas/philip/tests/2d.text.font.parse.size.percentage.default.html = TEXT
+BUGWK50859 WIN LINUX : canvas/philip/tests/2d.text.font.parse.size.percentage.html = TEXT
+BUGWK50859 WIN LINUX : canvas/philip/tests/2d.text.font.parse.system.html = TEXT
+BUGWK45991 WIN LINUX : canvas/philip/tests/2d.text.measure.width.space.html = TEXT
 
 // These tests fail everywhere we use skia and are most likely skia bugs
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.object.update.html = TEXT
@@ -2108,18 +2108,6 @@ BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.pattern.transparent.2.html 
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
 
-BUGWK45991 MAC : canvas/philip/tests/2d.gradient.radial.cone.front.html = TEXT
-BUGWK45991 MAC : canvas/philip/tests/2d.gradient.radial.inside2.html = TEXT
-BUGWK45991 MAC : canvas/philip/tests/2d.gradient.radial.inside3.html = TEXT
-BUGWK45991 MAC : canvas/philip/tests/2d.gradient.radial.outside1.html = TEXT
-BUGWK45991 MAC : canvas/philip/tests/2d.line.cap.closed.html = TEXT
-BUGWK45991 MAC : canvas/philip/tests/2d.line.join.parallel.html = TEXT
-BUGWK45991 MAC : canvas/philip/tests/2d.line.miter.lineedge.html = TEXT
-BUGWK45991 MAC : canvas/philip/tests/2d.path.rect.winding.html = TEXT
-BUGWK45991 MAC : canvas/philip/tests/2d.shadow.enable.blur.html = TEXT
-BUGWK45991 MAC : canvas/philip/tests/2d.shadow.enable.x.html = TEXT
-BUGWK45991 MAC : canvas/philip/tests/2d.shadow.enable.y.html = TEXT
-BUGWK45991 MAC : canvas/philip/tests/2d.strokeRect.zero.4.html = TEXT
 BUGWK45991 WIN : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
 
 // Flaky tests
