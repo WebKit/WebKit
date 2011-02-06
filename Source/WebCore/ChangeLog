@@ -2,6 +2,18 @@
 
         Reviewed by Andreas Kling.
 
+        [CMake] Add dependencies for Visual Studio projects
+        https://bugs.webkit.org/show_bug.cgi?id=53773
+
+        Add a JavaScriptCore dependecy to WebCore, so CMake can 
+        generate the correct build order for the solution.
+
+        * CMakeLists.txt:
+
+2011-02-06  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Andreas Kling.
+
         [CMake] Unify ENABLE_SVG sections
         https://bugs.webkit.org/show_bug.cgi?id=53778
 
