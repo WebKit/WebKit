@@ -194,7 +194,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         if (this.property.value.type)
             this.valueElement.addStyleClass("console-formatted-" + this.property.value.type);
         if (this.property.value.type === "node")
-            this.valueElement.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), true);
+            this.valueElement.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), false);
 
         this.listItemElement.removeChildren();
 
@@ -209,8 +209,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         function selectNode(nodeId)
         {
             if (nodeId) {
-                WebInspector.currentPanel = WebInspector.panels.elements;
-                WebInspector.panels.elements.focusedDOMNode = WebInspector.domAgent.nodeForId(nodeId);
+                WebInspector.panels.elements.switchToAndFocus(WebInspector.domAgent.nodeForId(nodeId));
             }
         }
 

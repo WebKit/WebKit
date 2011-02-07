@@ -44,6 +44,7 @@ WebInspector.ContextMenu.prototype = {
             WebInspector._contextMenu = this;
             InspectorFrontendHost.showContextMenu(event, this._items);
         }
+        event.stopPropagation();
     },
 
     appendItem: function(label, handler, disabled)

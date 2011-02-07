@@ -1545,6 +1545,12 @@ WebInspector.performSearch = function(event)
     this.doPerformSearch(event.target.value, forceSearch, event.shiftKey, false);
 }
 
+WebInspector.cancelSearch = function()
+{
+    document.getElementById("search").value = "";
+    this.doPerformSearch("");
+}
+
 WebInspector.doPerformSearch = function(query, forceSearch, isBackwardSearch, repeatSearch)
 {
     var isShortSearch = (query.length < 3);

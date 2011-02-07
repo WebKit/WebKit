@@ -261,6 +261,14 @@ WebInspector.ElementsPanel.prototype = {
         return true;
     },
 
+    switchToAndFocus: function(node)
+    {
+        // Reset search restore.
+        WebInspector.cancelSearch();
+        WebInspector.currentPanel = this;
+        this.focusedDOMNode = node;
+    },
+
     _updateMatchesCount: function()
     {
         WebInspector.updateSearchMatchesCount(this._searchResults.length, this);

@@ -89,7 +89,7 @@ WebInspector.ConsoleView = function(drawer)
     this.filter(this.allElement, false);
     this._registerShortcuts();
 
-    this.messagesElement.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), true);
+    this.messagesElement.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), false);
 
     this._customFormatters = {
         "object": this._formatobject,
