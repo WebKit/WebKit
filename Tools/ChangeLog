@@ -1,3 +1,12 @@
+2011-02-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed.
+
+        Fix WebKitTestRunner build on the SL bot.
+
+        * WebKitTestRunner/Configurations/Base.xcconfig: Look for the JSC copy
+        of ICU headers.
+
 2011-02-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
