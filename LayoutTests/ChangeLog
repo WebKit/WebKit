@@ -1,3 +1,103 @@
+2011-02-07  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
+        small text which is scaled to be large renders pixelated
+        https://bugs.webkit.org/show_bug.cgi?id=12448
+
+        Update Snow Leopard SVG pixel test baseline after r77485.
+
+        * platform/mac/svg/batik/paints/gradientLimit-expected.png:
+        * platform/mac/svg/batik/paints/patternRegionA-expected.png:
+        * platform/mac/svg/batik/text/longTextOnPath-expected.png:
+        * platform/mac/svg/batik/text/smallFonts-expected.checksum:
+        * platform/mac/svg/batik/text/smallFonts-expected.png:
+        * platform/mac/svg/batik/text/textAnchor-expected.checksum:
+        * platform/mac/svg/batik/text/textAnchor-expected.png:
+        * platform/mac/svg/batik/text/textDecoration2-expected.png:
+        * platform/mac/svg/batik/text/textEffect-expected.checksum:
+        * platform/mac/svg/batik/text/textEffect-expected.png:
+        * platform/mac/svg/batik/text/textEffect3-expected.checksum:
+        * platform/mac/svg/batik/text/textEffect3-expected.png:
+        * platform/mac/svg/batik/text/textFeatures-expected.checksum:
+        * platform/mac/svg/batik/text/textFeatures-expected.png:
+        * platform/mac/svg/batik/text/textGlyphOrientationHorizontal-expected.png:
+        * platform/mac/svg/batik/text/textLayout2-expected.checksum:
+        * platform/mac/svg/batik/text/textLayout2-expected.png:
+        * platform/mac/svg/batik/text/textOnPath-expected.checksum:
+        * platform/mac/svg/batik/text/textOnPath-expected.png:
+        * platform/mac/svg/batik/text/textPosition-expected.png:
+        * platform/mac/svg/batik/text/textPosition2-expected.png:
+        * platform/mac/svg/batik/text/textProperties2-expected.checksum:
+        * platform/mac/svg/batik/text/textProperties2-expected.png:
+        * platform/mac/svg/batik/text/textStyles-expected.checksum:
+        * platform/mac/svg/batik/text/textStyles-expected.png:
+        * platform/mac/svg/batik/text/verticalText-expected.checksum:
+        * platform/mac/svg/batik/text/verticalText-expected.png:
+        * platform/mac/svg/batik/text/verticalTextOnPath-expected.checksum:
+        * platform/mac/svg/batik/text/verticalTextOnPath-expected.png:
+        * platform/mac/svg/carto.net/button-expected.checksum:
+        * platform/mac/svg/carto.net/button-expected.png:
+        * platform/mac/svg/carto.net/colourpicker-expected.checksum:
+        * platform/mac/svg/carto.net/colourpicker-expected.png:
+        * platform/mac/svg/carto.net/combobox-expected.checksum:
+        * platform/mac/svg/carto.net/combobox-expected.png:
+        * platform/mac/svg/carto.net/scrollbar-expected.checksum:
+        * platform/mac/svg/carto.net/scrollbar-expected.png:
+        * platform/mac/svg/carto.net/selectionlist-expected.checksum:
+        * platform/mac/svg/carto.net/selectionlist-expected.png:
+        * platform/mac/svg/carto.net/slider-expected.checksum:
+        * platform/mac/svg/carto.net/slider-expected.png:
+        * platform/mac/svg/carto.net/tabgroup-expected.png:
+        * platform/mac/svg/carto.net/textbox-expected.checksum:
+        * platform/mac/svg/carto.net/textbox-expected.png:
+        * platform/mac/svg/carto.net/window-expected.checksum:
+        * platform/mac/svg/carto.net/window-expected.png:
+        * platform/mac/svg/clip-path/clip-path-clipped-evenodd-twice-expected.png:
+        * platform/mac/svg/clip-path/clip-path-clipped-no-content-expected.png:
+        * platform/mac/svg/clip-path/clip-path-evenodd-expected.png:
+        * platform/mac/svg/clip-path/clip-path-evenodd-nonzero-expected.png:
+        * platform/mac/svg/clip-path/clip-path-nonzero-evenodd-expected.png:
+        * platform/mac/svg/clip-path/clip-path-nonzero-expected.png:
+        * platform/mac/svg/clip-path/clip-path-recursive-call-by-child-expected.png:
+        * platform/mac/svg/clip-path/clip-path-recursive-call-expected.png:
+        * platform/mac/svg/clip-path/clip-path-text-and-shape-expected.png:
+        * platform/mac/svg/clip-path/clip-path-text-and-stroke-expected.png:
+        * platform/mac/svg/clip-path/clip-path-text-expected.png:
+        * platform/mac/svg/clip-path/clip-path-use-as-child5-expected.png:
+        * platform/mac/svg/clip-path/clip-path-userSpaceOnUse-expected.png:
+        * platform/mac/svg/clip-path/clip-path-with-container-expected.png:
+        * platform/mac/svg/clip-path/clip-path-with-different-unittypes-expected.png:
+        * platform/mac/svg/clip-path/clip-path-with-different-unittypes2-expected.png:
+        * platform/mac/svg/clip-path/clip-path-with-invisibile-child-expected.png:
+        * platform/mac/svg/clip-path/clip-path-with-text-clipped-expected.png:
+        * platform/mac/svg/css/arrow-with-shadow-expected.png:
+        * platform/mac/svg/css/background-image-svg-expected.png:
+        * platform/mac/svg/css/clippath-with-shadow-expected.png:
+        * platform/mac/svg/css/group-with-shadow-expected.checksum:
+        * platform/mac/svg/css/group-with-shadow-expected.png:
+        * platform/mac/svg/css/path-with-shadow-expected.png:
+        * platform/mac/svg/css/shadow-and-opacity-expected.png:
+        * platform/mac/svg/css/shadow-changes-expected.png:
+        * platform/mac/svg/css/shadow-with-large-radius-expected.png:
+        * platform/mac/svg/css/shadow-with-negative-offset-expected.png:
+        * platform/mac/svg/css/stars-with-shadow-expected.png:
+        * platform/mac/svg/css/text-shadow-multiple-expected.checksum:
+        * platform/mac/svg/css/text-shadow-multiple-expected.png:
+        * platform/mac/svg/custom/SVGNumber-interface-expected.png:
+        * platform/mac/svg/custom/SVGPoint-interface-expected.png:
+        * platform/mac/svg/custom/SVGPoint-matrixTransform-expected.png:
+        * platform/mac/svg/custom/SVGRect-interface-expected.png:
+        * platform/mac/svg/custom/alignment-baseline-modes-expected.png:
+        * platform/mac/svg/custom/animate-path-discrete-expected.png:
+        * platform/mac/svg/custom/animate-path-morphing-expected.png:
+        * platform/mac/svg/custom/animation-currentColor-expected.png:
+        * platform/mac/svg/custom/attribute-namespace-check-expected.png:
+        * platform/mac/svg/custom/broken-internal-references-expected.png:
+        * platform/mac/svg/custom/circular-marker-reference-1-expected.png:
+        * platform/mac/svg/custom/circular-marker-reference-3-expected.png:
+        * platform/mac/svg/custom/circular-marker-reference-4-expected.png:
+
 2011-02-07  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed, added new results for the slider-thumb-drag-release
