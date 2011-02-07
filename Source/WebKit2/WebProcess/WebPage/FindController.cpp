@@ -263,7 +263,6 @@ static Color overlayBackgroundColor()
 void FindController::drawRect(PageOverlay*, GraphicsContext& graphicsContext, const IntRect& dirtyRect)
 {
     Vector<IntRect> rects = rectsForTextMatches();
-    ASSERT(!rects.isEmpty());
 
     // Draw the background.
     graphicsContext.fillRect(dirtyRect, overlayBackgroundColor(), ColorSpaceSRGB);

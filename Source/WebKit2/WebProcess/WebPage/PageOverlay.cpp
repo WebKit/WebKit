@@ -75,10 +75,10 @@ void PageOverlay::setPage(WebPage* webPage)
     m_client->didMoveToWebPage(this, webPage);
 }
 
-void PageOverlay::setNeedsDisplay(const WebCore::IntRect& dirtyRect)
+void PageOverlay::setNeedsDisplay(const IntRect& dirtyRect)
 {
     if (m_webPage)
-        m_webPage->drawingArea()->setNeedsDisplay(dirtyRect);
+        m_webPage->drawingArea()->setPageOverlayNeedsDisplay(dirtyRect);
 }
 
 void PageOverlay::setNeedsDisplay()

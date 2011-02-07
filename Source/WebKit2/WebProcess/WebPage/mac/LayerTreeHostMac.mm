@@ -80,6 +80,9 @@ LayerTreeHostMac::LayerTreeHostMac(WebPage* webPage, GraphicsLayer* graphicsLaye
     
     WKCARemoteLayerClientSetLayer(m_remoteLayerClient.get(), m_rootLayer->platformLayer());
 
+    if (m_webPage->hasPageOverlay())
+        createPageOverlayLayer();
+
     scheduleLayerFlush();
 
     m_layerTreeContext.contextID = WKCARemoteLayerClientGetClientId(m_remoteLayerClient.get());
@@ -134,6 +137,9 @@ void LayerTreeHostMac::invalidate()
 void LayerTreeHostMac::setNonCompositedContentsNeedDisplay(const IntRect& rect)
 {
     m_nonCompositedContentLayer->setNeedsDisplayInRect(rect);
+    if (m_pageOverlayLayer)
+        m_pageOverlayLayer->setNeedsDisplayInRect(rect);
+
     scheduleLayerFlush();
 }
 
@@ -147,11 +153,33 @@ void LayerTreeHostMac::sizeDidChange(const IntSize& newSize)
     m_rootLayer->setSize(newSize);
     m_nonCompositedContentLayer->setSize(newSize);
 
+    if (m_pageOverlayLayer)
+        m_pageOverlayLayer->setSize(newSize);
+
     scheduleLayerFlush();
     flushPendingLayerChanges();
 
     [CATransaction flush];
     [CATransaction synchronize];
+}
+
+void LayerTreeHostMac::didInstallPageOverlay()
+{
+    createPageOverlayLayer();
+    scheduleLayerFlush();
+}
+
+void LayerTreeHostMac::didUninstallPageOverlay()
+{
+    destroyPageOverlayLayer();
+    scheduleLayerFlush();
+}
+
+void LayerTreeHostMac::setPageOverlayNeedsDisplay(const IntRect& rect)
+{
+    ASSERT(m_pageOverlayLayer);
+    m_pageOverlayLayer->setNeedsDisplayInRect(rect);
+    scheduleLayerFlush();
 }
 
 void LayerTreeHostMac::notifyAnimationStarted(const WebCore::GraphicsLayer*, double time)
@@ -164,8 +192,15 @@ void LayerTreeHostMac::notifySyncRequired(const WebCore::GraphicsLayer*)
 
 void LayerTreeHostMac::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const IntRect& clipRect)
 {
-    ASSERT(graphicsLayer == m_nonCompositedContentLayer);
-    m_webPage->drawRect(graphicsContext, clipRect);
+    if (graphicsLayer == m_nonCompositedContentLayer) {
+        m_webPage->drawRect(graphicsContext, clipRect);
+        return;
+    }
+
+    if (graphicsLayer == m_pageOverlayLayer) {
+        m_webPage->drawPageOverlay(graphicsContext, clipRect);
+        return;
+    }
 }
 
 bool LayerTreeHostMac::showDebugBorders() const
@@ -206,9 +241,32 @@ bool LayerTreeHostMac::flushPendingLayerChanges()
 {
     m_rootLayer->syncCompositingStateForThisLayerOnly();
     m_nonCompositedContentLayer->syncCompositingStateForThisLayerOnly();
+    if (m_pageOverlayLayer)
+        m_pageOverlayLayer->syncCompositingStateForThisLayerOnly();
 
     return m_webPage->corePage()->mainFrame()->view()->syncCompositingStateIncludingSubframes();
 }
 
-    
+void LayerTreeHostMac::createPageOverlayLayer()
+{
+    ASSERT(!m_pageOverlayLayer);
+
+    m_pageOverlayLayer = GraphicsLayer::create(this);
+#ifndef NDEBUG
+    m_pageOverlayLayer->setName("LayerTreeHost page overlay content");
+#endif
+
+    m_pageOverlayLayer->setDrawsContent(true);
+    m_pageOverlayLayer->setSize(m_webPage->size());
+
+    m_rootLayer->addChild(m_pageOverlayLayer.get());
+}
+
+void LayerTreeHostMac::destroyPageOverlayLayer()
+{
+    ASSERT(m_pageOverlayLayer);
+    m_pageOverlayLayer->removeFromParent();
+    m_pageOverlayLayer = nullptr;
+}
+
 } // namespace WebKit

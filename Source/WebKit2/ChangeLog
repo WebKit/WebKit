@@ -1,3 +1,67 @@
+2011-02-07  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Some content is not covered by Find-on-page overlay
+        https://bugs.webkit.org/show_bug.cgi?id=53937
+        <rdar://problem/8711353>
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::didInstallPageOverlay):
+        Call LayerTreeHost::didInstallPageOverlay.
+
+        (WebKit::DrawingAreaImpl::didUninstallPageOverlay):
+        Call LayerTreeHost::didUninstallPageOverlay.
+
+        (WebKit::DrawingAreaImpl::setPageOverlayNeedsDisplay):
+        Call LayerTreeHost::setPageOverlayNeedsDisplay.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::drawRect):
+        Remove a bogus assertion.
+
+        * WebProcess/WebPage/LayerTreeHost.h:
+        Add new pure virtual member functions.
+
+        * WebProcess/WebPage/PageOverlay.cpp:
+        (WebKit::PageOverlay::setNeedsDisplay):
+        Call DrawingArea::setPageOverlayNeedsDisplay.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::installPageOverlay):
+        Make sure to call PageOverlay::setNeedsDisplay after the page overlay has been installed.
+    
+        * WebProcess/WebPage/mac/LayerTreeHostMac.mm:
+        (WebKit::LayerTreeHostMac::LayerTreeHostMac):
+        Create the page overlay layer if needed.
+
+        (WebKit::LayerTreeHostMac::setNonCompositedContentsNeedDisplay):
+        Invalidate the page overlay layer as well.
+
+        (WebKit::LayerTreeHostMac::sizeDidChange):
+        Resize the page overlay layer.
+
+        (WebKit::LayerTreeHostMac::didInstallPageOverlay):
+        Create the page overlay layer.
+
+        (WebKit::LayerTreeHostMac::didUninstallPageOverlay):
+        Destroy the page overlay layer.
+
+        (WebKit::LayerTreeHostMac::setPageOverlayNeedsDisplay):
+        Call setNeedsDisplay on the page overlay layer.
+
+        (WebKit::LayerTreeHostMac::paintContents):
+        Handle painting the page overlay layer.
+
+        (WebKit::LayerTreeHostMac::flushPendingLayerChanges):
+        Flush the page overlay layer changes as well.
+
+        (WebKit::LayerTreeHostMac::createPageOverlayLayer):
+        Create a layer and add it as a sublayer of the root layer.
+
+        (WebKit::LayerTreeHostMac::destroyPageOverlayLayer):
+        Destroy the page overlay layer.
+
 2011-02-06  Adam Roben  <aroben@apple.com>
 
         Make it possible to use DrawingAreaProxyImpl on Windows

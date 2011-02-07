@@ -142,15 +142,25 @@ void DrawingAreaImpl::forceRepaint()
 
 void DrawingAreaImpl::didInstallPageOverlay()
 {
+    if (m_layerTreeHost)
+        m_layerTreeHost->didInstallPageOverlay();
 }
 
 void DrawingAreaImpl::didUninstallPageOverlay()
 {
+    if (m_layerTreeHost)
+        m_layerTreeHost->didUninstallPageOverlay();
+
     setNeedsDisplay(m_webPage->bounds());
 }
 
 void DrawingAreaImpl::setPageOverlayNeedsDisplay(const IntRect& rect)
 {
+    if (m_layerTreeHost) {
+        m_layerTreeHost->setPageOverlayNeedsDisplay(rect);
+        return;
+    }
+
     setNeedsDisplay(rect);
 }
 

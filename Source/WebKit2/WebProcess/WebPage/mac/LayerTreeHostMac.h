@@ -53,6 +53,10 @@ private:
     virtual void scrollNonCompositedContents(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
     virtual void sizeDidChange(const WebCore::IntSize& newSize);
 
+    virtual void didInstallPageOverlay();
+    virtual void didUninstallPageOverlay();
+    virtual void setPageOverlayNeedsDisplay(const WebCore::IntRect&);
+
     // GraphicsLayerClient
     virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time);
     virtual void notifySyncRequired(const WebCore::GraphicsLayer*);
@@ -63,6 +67,9 @@ private:
     static void flushPendingLayerChangesRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void*);
     void flushPendingLayerChangesRunLoopObserverCallback();
     bool flushPendingLayerChanges();
+
+    void createPageOverlayLayer();
+    void destroyPageOverlayLayer();
 
     // The context for this layer tree.
     LayerTreeContext m_layerTreeContext;
@@ -75,6 +82,9 @@ private:
 
     // The layer which contains all non-composited content.
     OwnPtr<WebCore::GraphicsLayer> m_nonCompositedContentLayer;
+
+    // The page overlay layer. Will be null if there's no page overlay.
+    OwnPtr<WebCore::GraphicsLayer> m_pageOverlayLayer;
 
     RetainPtr<WKCARemoteLayerClientRef> m_remoteLayerClient;
     RetainPtr<CFRunLoopObserverRef> m_flushPendingLayerChangesRunLoopObserver;
