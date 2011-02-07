@@ -448,6 +448,7 @@ static void resetDefaultsToConsistentValues()
     [preferences setDeveloperExtrasEnabled:NO];
     [preferences setLoadsImagesAutomatically:YES];
     [preferences setFrameFlatteningEnabled:NO];
+    [preferences setSpatialNavigationEnabled:NO];
     [preferences setEditingBehavior:WebKitEditingMacBehavior];
     if (persistentUserStyleSheetLocation) {
         [preferences setUserStyleSheetLocation:[NSURL URLWithString:(NSString *)(persistentUserStyleSheetLocation.get())]];
