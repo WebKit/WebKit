@@ -1,3 +1,22 @@
+2011-02-06  James Kozianski  <koz@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Add classes for representing test outputs.
+        https://bugs.webkit.org/show_bug.cgi?id=52136
+
+        These classes will make it easier to write scripts that deal with test
+        outputs such as rebaselining and deduping scripts. The intent is that
+        eventually we will be have buildbot return TestOutputs for a
+        particular build which can be compared with TestOutputs derived from a
+        local LayoutTests directory.
+
+        * Scripts/webkitpy/common/net/testoutput.py: Added.
+        * Scripts/webkitpy/common/net/testoutput_unittest.py: Added.
+        * Scripts/webkitpy/common/net/testoutputset.py: Added.
+        * Scripts/webkitpy/common/net/testoutputset_unittest.py: Added.
+        * Scripts/webkitpy/common/system/zip_mock.py: Added.
+
 2011-02-06  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Andreas Kling.
