@@ -274,6 +274,7 @@ class BuildBotTest(unittest.TestCase):
             {'name': u'Leopard Intel Debug (Tests)', },
             {'name': u'SnowLeopard Intel Release (Build)', },
             {'name': u'SnowLeopard Intel Release (Tests)', },
+            {'name': u'SnowLeopard Intel Release (WebKit2 Tests)', },
             {'name': u'Windows Release (Build)', },
             {'name': u'Windows Debug (Build)', },
             {'name': u'GTK Linux 32-bit Release', },

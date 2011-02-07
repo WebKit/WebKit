@@ -1,5 +1,14 @@
 2011-02-06  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Daniel Bates.
+
+        Add WebKit2 bot to list of expected builders in Python regression test results.
+        https://bugs.webkit.org/show_bug.cgi?id=53905
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+
+2011-02-06  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Ryosuke Niwa.
 
         Update test expectations for new core builder
