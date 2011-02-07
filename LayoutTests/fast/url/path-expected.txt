@@ -17,7 +17,10 @@ PASS canonicalize('http://example.com/foo/../../../ton') is 'http://example.com/
 FAIL canonicalize('http://example.com/foo/%2e') should be http://example.com/foo/. Was http://example.com/foo/%2e.
 FAIL canonicalize('http://example.com/foo/%2e%2') should be http://example.com/foo/.%2. Was http://example.com/foo/%2e%2.
 FAIL canonicalize('http://example.com/foo/%2e./%2e%2e/.%2e/%2e.bar') should be http://example.com/..bar. Was http://example.com/foo/%2e./%2e%2e/.%2e/%2e.bar.
-FAIL canonicalize('http://example.com////../..') should be http://example.com//. Was http://example.com/.
+PASS canonicalize('http://example.com////../..') is 'http://example.com//'
+PASS canonicalize('http://example.com/foo/bar//../..') is 'http://example.com/foo/'
+PASS canonicalize('http://example.com/foo/bar//..') is 'http://example.com/foo/bar/'
+PASS canonicalize('http://example.com/foo/bar/..') is 'http://example.com/foo/'
 PASS canonicalize('http://example.com/foo') is 'http://example.com/foo'
 PASS canonicalize('http://example.com/%20foo') is 'http://example.com/%20foo'
 PASS canonicalize('http://example.com/foo%') is 'http://example.com/foo%'

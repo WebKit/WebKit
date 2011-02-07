@@ -23,6 +23,9 @@ cases = [
   // Multiple slashes in a row should be preserved and treated like empty
   // directory names.
   ["////../..", "//"],
+  ["/foo/bar//../..", "/foo/"],
+  ["/foo/bar//..", "/foo/bar/"],
+  ["/foo/bar/..", "/foo/"],
 
   // ----- escaping tests -----
   ["/foo", "/foo"],

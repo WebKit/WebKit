@@ -1,3 +1,15 @@
+2011-02-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Relative .. in URL paths shouldn't skip adjacent / characters
+        https://bugs.webkit.org/show_bug.cgi?id=53907
+
+        Our new behavior matches Firefox, Chrome, and IE.
+
+        * platform/KURL.cpp:
+        (WebCore::copyPathRemovingDots):
+
 2011-02-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Antti Koivisto.
