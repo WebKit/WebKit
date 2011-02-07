@@ -543,7 +543,7 @@ void MediaPlayerPrivateQt::updateStates()
         m_readyState = MediaPlayer::HaveCurrentData;
     } else if (currentStatus == QMediaPlayer::BufferedMedia
                || currentStatus == QMediaPlayer::EndOfMedia) {
-        m_networkState = MediaPlayer::Idle;
+        m_networkState = MediaPlayer::Loaded;
         m_readyState = MediaPlayer::HaveEnoughData;
     } else if (currentStatus == QMediaPlayer::InvalidMedia) {
         m_networkState = MediaPlayer::NetworkError;
