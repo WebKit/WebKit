@@ -1,3 +1,11 @@
+2011-02-07  Alexander Pavlov  <apavlov@chromium.org>
+
+        Unreviewed. Add Web Inspector style editing screenshots.
+
+        * blog-files/inspector-css-as-authored.png: Added.
+        * blog-files/inspector-css-autocomplete.png: Added.
+        * blog-files/inspector-unknown-css-properties.png: Added.
+
 2011-01-21  David Levin  <levin@chromium.org>
 
         Reviewed by Darin Adler.
