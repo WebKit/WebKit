@@ -1,3 +1,27 @@
+2011-02-07  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Andreas Kling.
+
+        REGRESSION(r77740): CSSStyleSelector accessing deleted memory for svg/dom/use-transform.svg
+        https://bugs.webkit.org/show_bug.cgi?id=53900
+        
+        Ignore link elements in shadow trees.
+
+        * dom/Element.cpp:
+        (WebCore::StyleSelectorParentPusher::StyleSelectorParentPusher):
+        (WebCore::StyleSelectorParentPusher::~StyleSelectorParentPusher):
+                
+            Some asserts to catch cases like this.
+
+        (WebCore::Element::attach):
+        (WebCore::Element::recalcStyle):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::HTMLLinkElement):
+        (WebCore::HTMLLinkElement::process):
+        (WebCore::HTMLLinkElement::insertedIntoDocument):
+        (WebCore::HTMLLinkElement::removedFromDocument):
+        * html/HTMLLinkElement.h:
+
 2011-02-07  Darin Adler  <darin@apple.com>
 
         Turn UTF-8 decoder off for now so we can look into failing tests

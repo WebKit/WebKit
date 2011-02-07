@@ -135,6 +135,7 @@ private:
     RelAttribute m_relAttribute;
     bool m_loading;
     bool m_createdByParser;
+    bool m_isInShadowTree;
     
     PendingSheetType m_pendingSheetType;
 };

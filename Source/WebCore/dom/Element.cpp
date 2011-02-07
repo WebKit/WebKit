@@ -70,31 +70,32 @@ using namespace XMLNames;
     
 class StyleSelectorParentPusher {
 public:
-    StyleSelectorParentPusher(CSSStyleSelector* styleSelector, Element* parent)
-        : m_styleSelector(styleSelector)
-        , m_parent(parent)
-        , m_didPush(false) 
+    StyleSelectorParentPusher(Element* parent)
+        : m_parent(parent)
+        , m_pushedStyleSelector(0)
     {
     }
     void push()
     {
-        if (m_didPush)
+        if (m_pushedStyleSelector)
             return;
-        m_styleSelector->pushParent(m_parent);
-        m_didPush = true;
+        m_pushedStyleSelector = m_parent->document()->styleSelector();
+        m_pushedStyleSelector->pushParent(m_parent);
     }
     ~StyleSelectorParentPusher() 
     {
-        if (m_didPush)
-            m_styleSelector->popParent(m_parent); 
+
+        if (!m_pushedStyleSelector)
+            return;
+        ASSERT(m_pushedStyleSelector == m_parent->document()->styleSelector());
+        m_pushedStyleSelector->popParent(m_parent); 
     }
 
 private:
-    CSSStyleSelector* m_styleSelector;
     Element* m_parent;
-    bool m_didPush;
+    CSSStyleSelector* m_pushedStyleSelector;
 };
-    
+
 PassRefPtr<Element> Element::create(const QualifiedName& tagName, Document* document)
 {
     return adoptRef(new Element(tagName, document, CreateElement));
@@ -945,7 +946,7 @@ void Element::attach()
 
     createRendererIfNeeded();
     
-    StyleSelectorParentPusher parentPusher(document()->styleSelector(), this);
+    StyleSelectorParentPusher parentPusher(this);
     if (firstChild())
         parentPusher.push();
     ContainerNode::attach();
@@ -1092,7 +1093,7 @@ void Element::recalcStyle(StyleChange change)
                 change = ch;
         }
     }
-    StyleSelectorParentPusher parentPusher(document()->styleSelector(), this);
+    StyleSelectorParentPusher parentPusher(this);
     // FIXME: This check is good enough for :hover + foo, but it is not good enough for :hover + foo + bar.
     // For now we will just worry about the common case, since it's a lot trickier to get the second case right
     // without doing way too much re-resolution.

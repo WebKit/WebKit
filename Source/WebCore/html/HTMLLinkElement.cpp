@@ -56,6 +56,7 @@ inline HTMLLinkElement::HTMLLinkElement(const QualifiedName& tagName, Document* 
     , m_disabledState(Unset)
     , m_loading(false)
     , m_createdByParser(createdByParser)
+    , m_isInShadowTree(false)
     , m_pendingSheetType(None)
 {
     ASSERT(hasTagName(linkTag));
@@ -194,7 +195,7 @@ void HTMLLinkElement::tokenizeRelAttribute(const AtomicString& rel, RelAttribute
 
 void HTMLLinkElement::process()
 {
-    if (!inDocument()) {
+    if (!inDocument() || m_isInShadowTree) {
         ASSERT(!m_sheet);
         return;
     }
@@ -280,6 +281,11 @@ void HTMLLinkElement::process()
 void HTMLLinkElement::insertedIntoDocument()
 {
     HTMLElement::insertedIntoDocument();
+
+    m_isInShadowTree = isInShadowTree();
+    if (m_isInShadowTree)
+        return;
+
     document()->addStyleSheetCandidateNode(this, m_createdByParser);
 
     process();
@@ -289,6 +295,10 @@ void HTMLLinkElement::removedFromDocument()
 {
     HTMLElement::removedFromDocument();
 
+    if (m_isInShadowTree) {
+        ASSERT(!m_sheet);
+        return;
+    }
     document()->removeStyleSheetCandidateNode(this);
 
     if (m_sheet) {
