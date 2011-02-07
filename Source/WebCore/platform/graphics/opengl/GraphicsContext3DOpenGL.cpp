@@ -83,7 +83,7 @@ void GraphicsContext3D::paintRenderingResultsToCanvas(CanvasRenderingContext* co
     int rowBytes = m_currentWidth * 4;
     int totalBytes = rowBytes * m_currentHeight;
 
-    OwnArrayPtr<unsigned char> pixels(new unsigned char[totalBytes]);
+    OwnArrayPtr<unsigned char> pixels = adoptArrayPtr(new unsigned char[totalBytes]);
     if (!pixels)
         return;
 

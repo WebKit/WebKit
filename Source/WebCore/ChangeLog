@@ -1,3 +1,63 @@
+2011-02-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        OwnArraryPtr.h uses deleteOwnedPtr but doesn’t include OwnPtrCommon.h
+        https://bugs.webkit.org/show_bug.cgi?id=52867
+
+        * ForwardingHeaders/wtf/OwnArrayPtrCommon.h: Removed.
+        * bindings/v8/NPV8Object.cpp:
+        (WebCore::createValueListFromVariantArgs): Returns PassOwnArrayPtr<v8::Handle<v8::Value>> instead of
+        v8::Handle<v8::Value>*.
+        (_NPN_Invoke): Calls createValueListFromVariantArgs.
+        (_NPN_InvokeDefault): createValueListFromVariantArgs.
+        (_NPN_Construct): createValueListFromVariantArgs.
+        * bindings/v8/ScriptFunctionCall.cpp:
+        (WebCore::ScriptFunctionCall::call): Calls adoptArrayPtr.
+        (WebCore::ScriptFunctionCall::construct): Ditto.
+        (WebCore::ScriptCallback::call):
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::createNewContext): Ditto.
+        * bindings/v8/V8NPObject.cpp:
+        (WebCore::npObjectInvokeImpl): Ditto
+        * bindings/v8/V8NodeFilterCondition.cpp:
+        (WebCore::V8NodeFilterCondition::acceptNode): Ditto,
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::parseMappedAttribute): Calls newCoordsArray.
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::parseMappedAttribute): Calls newLengthArray.
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getAttachedShaders): Calls adoptArraYptr.
+        (WebCore::WebGLRenderingContext::simulateVertexAttrib0): Ditto.
+        (WebCore::WebGLRenderingContext::LRUImageBufferCache::LRUImageBufferCache): Dito.
+        * platform/Length.cpp:
+        (WebCore::newCoordsArray): Returns PassOwnArrayPtr<Length> instead of Length*.
+        (WebCore::newLengthArray): Returns PassOwnArrayPtr<Length> instead of Length*.
+        * platform/Length.h: Prototype changes.
+        * platform/graphics/ANGLEWebKitBridge.cpp:
+        (WebCore::ANGLEWebKitBridge::validateShaderSource): Calls adoptArrayPtr.
+        * platform/graphics/ca/win/CACFLayerTreeHost.cpp:
+        (WebCore::getDirtyRects): Ditto.
+        * platform/graphics/chromium/ComplexTextControllerLinux.cpp:
+        (WebCore::ComplexTextController::getNormalizedTextRun): Ditto.
+        * platform/graphics/chromium/HarfbuzzSkia.cpp:
+        (WebCore::glyphsToAdvances): Ditto.
+        (WebCore::canRender): Ditto.
+        * platform/graphics/gpu/Texture.cpp:
+        (WebCore::Texture::updateSubRect): Ditto.
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::paintRenderingResultsToCanvas): Ditto.
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::readbackHardwareToSoftware): Ditto.
+        * platform/graphics/wince/SharedBitmap.cpp:
+        (WebCore::SharedBitmap::to16bit): Ditto.
+        * platform/win/ContextMenuWin.cpp:
+        (WebCore::ContextMenu::getContextMenuItems): Ditto.
+        * platform/win/LoggingWin.cpp:
+        (WebCore::initializeWithUserDefault): Ditto.
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackage::fetchInfo): Ditto.
+
 2011-02-06  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed.

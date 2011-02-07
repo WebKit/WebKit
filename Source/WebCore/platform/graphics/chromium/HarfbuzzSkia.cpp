@@ -94,7 +94,7 @@ static void glyphsToAdvances(HB_Font hbFont, const HB_Glyph* glyphs, hb_uint32 n
     font->setupPaint(&paint);
     paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
 
-    OwnArrayPtr<uint16_t> glyphs16(new uint16_t[numGlyphs]);
+    OwnArrayPtr<uint16_t> glyphs16 = adoptArrayPtr(new uint16_t[numGlyphs]);
     if (!glyphs16.get())
         return;
     for (unsigned i = 0; i < numGlyphs; ++i)
@@ -120,7 +120,7 @@ static HB_Bool canRender(HB_Font hbFont, const HB_UChar16* characters, hb_uint32
     font->setupPaint(&paint);
     paint.setTextEncoding(SkPaint::kUTF16_TextEncoding);
 
-    OwnArrayPtr<uint16_t> glyphs16(new uint16_t[length]);
+    OwnArrayPtr<uint16_t> glyphs16 = adoptArrayPtr(new uint16_t[length]);
     if (!glyphs16.get())
         return 0;
     int numGlyphs = paint.textToGlyphs(characters, length * sizeof(uint16_t), glyphs16.get());

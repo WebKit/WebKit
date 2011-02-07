@@ -358,7 +358,7 @@ v8::Persistent<v8::Context> V8DOMWindowShell::createNewContext(v8::Handle<v8::Ob
 
     // Dynamically tell v8 about our extensions now.
     const V8Extensions& extensions = V8Proxy::extensions();
-    OwnArrayPtr<const char*> extensionNames(new const char*[extensions.size()]);
+    OwnArrayPtr<const char*> extensionNames = adoptArrayPtr(new const char*[extensions.size()]);
     int index = 0;
     for (size_t i = 0; i < extensions.size(); ++i) {
         // Ensure our date extension is always allowed.

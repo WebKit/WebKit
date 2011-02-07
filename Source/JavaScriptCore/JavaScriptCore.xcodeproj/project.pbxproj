@@ -552,7 +552,6 @@
 		BCDE3B430E6C832D001453A7 /* Structure.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCDE3AB00E6C82CF001453A7 /* Structure.cpp */; };
 		BCF605140E203EF800B9A64D /* ArgList.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF605120E203EF800B9A64D /* ArgList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCFBE696122560E800309E9D /* PassOwnArrayPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFBE695122560E800309E9D /* PassOwnArrayPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BCFBE698122561D200309E9D /* OwnArrayPtrCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFBE697122561D200309E9D /* OwnArrayPtrCommon.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCFD8C920EEB2EE700283848 /* JumpTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCFD8C900EEB2EE700283848 /* JumpTable.cpp */; };
 		BCFD8C930EEB2EE700283848 /* JumpTable.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFD8C910EEB2EE700283848 /* JumpTable.h */; };
 		C0A272630E50A06300E96E15 /* NotFound.h in Headers */ = {isa = PBXBuildFile; fileRef = C0A2723F0E509F1E00E96E15 /* NotFound.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1162,7 +1161,6 @@
 		BCF605120E203EF800B9A64D /* ArgList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgList.h; sourceTree = "<group>"; };
 		BCF6553B0A2048DE0038A194 /* MathExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MathExtras.h; sourceTree = "<group>"; };
 		BCFBE695122560E800309E9D /* PassOwnArrayPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PassOwnArrayPtr.h; sourceTree = "<group>"; };
-		BCFBE697122561D200309E9D /* OwnArrayPtrCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OwnArrayPtrCommon.h; sourceTree = "<group>"; };
 		BCFD8C900EEB2EE700283848 /* JumpTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JumpTable.cpp; sourceTree = "<group>"; };
 		BCFD8C910EEB2EE700283848 /* JumpTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JumpTable.h; sourceTree = "<group>"; };
 		C0A2723F0E509F1E00E96E15 /* NotFound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotFound.h; sourceTree = "<group>"; };
@@ -1582,7 +1580,6 @@
 				1400067612A6F7830064D123 /* OSAllocator.h */,
 				1400069212A6F9E10064D123 /* OSAllocatorPosix.cpp */,
 				9303F5A409911A5800AD71B8 /* OwnArrayPtr.h */,
-				BCFBE697122561D200309E9D /* OwnArrayPtrCommon.h */,
 				0BDFFAD10FC616EC00D69EF4 /* OwnFastMallocPtr.h */,
 				9303F567099118FA00AD71B8 /* OwnPtr.h */,
 				440B7AED0FAF7FCB0073323E /* OwnPtrCommon.h */,
@@ -2316,7 +2313,6 @@
 				BC18C4480E16F5CD00B34460 /* Operations.h in Headers */,
 				1400067712A6F7830064D123 /* OSAllocator.h in Headers */,
 				BC18C4490E16F5CD00B34460 /* OwnArrayPtr.h in Headers */,
-				BCFBE698122561D200309E9D /* OwnArrayPtrCommon.h in Headers */,
 				0BDFFAE10FC6193100D69EF4 /* OwnFastMallocPtr.h in Headers */,
 				BC18C44A0E16F5CD00B34460 /* OwnPtr.h in Headers */,
 				4409D8470FAF80A200523B87 /* OwnPtrCommon.h in Headers */,

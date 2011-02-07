@@ -303,7 +303,7 @@ bool Arguments::deleteProperty(ExecState* exec, unsigned i)
 {
     if (i < d->numArguments) {
         if (!d->deletedArguments) {
-            d->deletedArguments.set(new bool[d->numArguments]);
+            d->deletedArguments = adoptArrayPtr(new bool[d->numArguments]);
             memset(d->deletedArguments.get(), 0, sizeof(bool) * d->numArguments);
         }
         if (!d->deletedArguments[i]) {
@@ -321,7 +321,7 @@ bool Arguments::deleteProperty(ExecState* exec, const Identifier& propertyName)
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex && i < d->numArguments) {
         if (!d->deletedArguments) {
-            d->deletedArguments.set(new bool[d->numArguments]);
+            d->deletedArguments = adoptArrayPtr(new bool[d->numArguments]);
             memset(d->deletedArguments.get(), 0, sizeof(bool) * d->numArguments);
         }
         if (!d->deletedArguments[i]) {

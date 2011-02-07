@@ -101,7 +101,7 @@ static v8::Handle<v8::Value> npObjectInvokeImpl(const v8::Arguments& args, Invok
 
     // Wrap up parameters.
     int numArgs = args.Length();
-    OwnArrayPtr<NPVariant> npArgs(new NPVariant[numArgs]);
+    OwnArrayPtr<NPVariant> npArgs = adoptArrayPtr(new NPVariant[numArgs]);
 
     for (int i = 0; i < numArgs; i++)
         convertV8ObjectToNPVariant(args[i], npObject, &npArgs[i]);

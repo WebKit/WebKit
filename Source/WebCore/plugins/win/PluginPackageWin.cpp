@@ -168,7 +168,7 @@ bool PluginPackage::fetchInfo()
     if (versionInfoSize == 0)
         return false;
 
-    OwnArrayPtr<char> versionInfoData(new char[versionInfoSize]);
+    OwnArrayPtr<char> versionInfoData = adoptArrayPtr(new char[versionInfoSize]);
 
     if (!GetFileVersionInfoW(const_cast<UChar*>(m_path.charactersWithNullTermination()),
             0, versionInfoSize, versionInfoData.get()))

@@ -160,7 +160,7 @@ namespace JSC {
     inline void JSVariableObject::setRegisters(Register* registers, Register* registerArray)
     {
         ASSERT(registerArray != d->registerArray.get());
-        d->registerArray.set(registerArray);
+        d->registerArray = adoptArrayPtr(registerArray);
         d->registers = registers;
     }
 

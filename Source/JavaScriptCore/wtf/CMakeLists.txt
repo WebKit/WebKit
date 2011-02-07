@@ -42,7 +42,6 @@ SET(WTF_HEADERS
     NullPtr.h
     OSAllocator.h
     OwnArrayPtr.h
-    OwnArrayPtrCommon.h
     OwnFastMallocPtr.h
     OwnPtr.h
     OwnPtrCommon.h

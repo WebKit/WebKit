@@ -135,7 +135,7 @@ bool SharedBitmap::to16bit()
     int width = newBmpInfo.width();
     int paddedWidth = newBmpInfo.paddedWidth();
     int bufferSize = paddedWidth * newBmpInfo.height();
-    OwnArrayPtr<unsigned> newPixelData(new unsigned[bufferSize / 2]);
+    OwnArrayPtr<unsigned> newPixelData = adoptArrayPtr(new unsigned[bufferSize / 2]);
     void* newPixels = newPixelData.get();
 
     if (!newPixels)

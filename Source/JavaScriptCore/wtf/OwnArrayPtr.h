@@ -24,12 +24,8 @@
 #include "Assertions.h"
 #include "Noncopyable.h"
 #include "NullPtr.h"
-#include "OwnPtrCommon.h"
-#include "OwnArrayPtrCommon.h"
+#include "PassOwnArrayPtr.h"
 #include <algorithm>
-
-// Remove this once we make all WebKit code compatible with stricter rules about OwnArrayPtr.
-#define LOOSE_OWN_ARRAY_PTR
 
 namespace WTF {
 
@@ -114,16 +110,6 @@ template<typename T> inline typename OwnArrayPtr<T>::PtrType OwnArrayPtr<T>::lea
     m_ptr = 0;
     return ptr;
 }
-
-#ifdef LOOSE_OWN_ARRAY_PTR
-template<typename T> inline void OwnArrayPtr<T>::set(PtrType ptr)
-{
-    ASSERT(!ptr || m_ptr != ptr);
-    PtrType oldPtr = m_ptr;
-    m_ptr = ptr;
-    deleteOwnedPtr(oldPtr);
-}
-#endif
 
 template<typename T> inline OwnArrayPtr<T>& OwnArrayPtr<T>::operator=(const PassOwnArrayPtr<T>& o)
 {

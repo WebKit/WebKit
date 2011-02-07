@@ -38,7 +38,7 @@ StructureChain::StructureChain(Structure* head)
     for (Structure* current = head; current; current = current->storedPrototype().isNull() ? 0 : asObject(current->storedPrototype())->structure())
         ++size;
     
-    m_vector.set(new RefPtr<Structure>[size + 1]);
+    m_vector = adoptArrayPtr(new RefPtr<Structure>[size + 1]);
 
     size_t i = 0;
     for (Structure* current = head; current; current = current->storedPrototype().isNull() ? 0 : asObject(current->storedPrototype())->structure())

@@ -493,7 +493,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/OSAllocator.h \
 	Source/JavaScriptCore/wtf/OwnArrayPtr.h \
 	Source/JavaScriptCore/wtf/OwnFastMallocPtr.h \
-	Source/JavaScriptCore/wtf/OwnArrayPtrCommon.h \
 	Source/JavaScriptCore/wtf/OwnPtrCommon.h \
 	Source/JavaScriptCore/wtf/OwnPtr.h \
 	Source/JavaScriptCore/wtf/PageAllocation.h \

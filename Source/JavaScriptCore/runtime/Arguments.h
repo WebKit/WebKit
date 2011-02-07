@@ -226,10 +226,10 @@ namespace JSC {
         int registerOffset = d->numParameters + RegisterFile::CallFrameHeaderSize;
         size_t registerArraySize = d->numParameters;
 
-        Register* registerArray = new Register[registerArraySize];
-        memcpy(registerArray, d->registers - registerOffset, registerArraySize * sizeof(Register));
-        d->registerArray.set(registerArray);
-        d->registers = registerArray + registerOffset;
+        OwnArrayPtr<Register> registerArray = adoptArrayPtr(new Register[registerArraySize]);
+        memcpy(registerArray.get(), d->registers - registerOffset, registerArraySize * sizeof(Register));
+        d->registers = registerArray.get() + registerOffset;
+        d->registerArray = registerArray.release();
     }
 
     // This JSActivation function is defined here so it can get at Arguments::setRegisters.

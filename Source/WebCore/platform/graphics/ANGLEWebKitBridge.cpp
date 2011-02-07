@@ -93,7 +93,7 @@ bool ANGLEWebKitBridge::validateShaderSource(const char* shaderSource, ANGLEShad
         int logSize = 0;
         ShGetInfo(compiler, SH_INFO_LOG_LENGTH, &logSize);
         if (logSize > 1) {
-            OwnArrayPtr<char> logBuffer(new char[logSize]);
+            OwnArrayPtr<char> logBuffer = adoptArrayPtr(new char[logSize]);
             if (logBuffer) {
                 ShGetInfoLog(compiler, logBuffer.get());
                 shaderValidationLog = logBuffer.get();
@@ -105,7 +105,7 @@ bool ANGLEWebKitBridge::validateShaderSource(const char* shaderSource, ANGLEShad
     int translationLength = 0;
     ShGetInfo(compiler, SH_OBJECT_CODE_LENGTH, &translationLength);
     if (translationLength > 1) {
-        OwnArrayPtr<char> translationBuffer(new char[translationLength]);
+        OwnArrayPtr<char> translationBuffer = adoptArrayPtr(new char[translationLength]);
         if (!translationBuffer)
             return false;
         ShGetObjectCode(compiler, translationBuffer.get());

@@ -1,3 +1,15 @@
+2011-02-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        OwnArraryPtr.h uses deleteOwnedPtr but doesn’t include OwnPtrCommon.h
+        https://bugs.webkit.org/show_bug.cgi?id=52867
+
+        * WebHistory.cpp:
+        (WebHistory::orderedLastVisitedDays): Calls adoptArrayPtr.
+        * WebPreferences.cpp:
+        (WebPreferences::copyWebKitPreferencesToCFPreferences): Ditto.
+
 2011-02-03  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

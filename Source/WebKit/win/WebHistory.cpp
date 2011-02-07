@@ -476,7 +476,7 @@ HRESULT STDMETHODCALLTYPE WebHistory::orderedLastVisitedDays(
 
     *count = dateCount;
     if (!m_orderedLastVisitedDays) {
-        m_orderedLastVisitedDays.set(new DATE[dateCount]);
+        m_orderedLastVisitedDays = adoptArrayPtr(new DATE[dateCount]);
         DateToEntriesMap::const_iterator::Keys end = m_entriesByDate.end().keys();
         int i = 0;
         for (DateToEntriesMap::const_iterator::Keys it = m_entriesByDate.begin().keys(); it != end; ++it, ++i)

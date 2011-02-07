@@ -28,6 +28,7 @@
 #include "PlatformString.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>
+#include <wtf/OwnArrayPtr.h>
 #include <wtf/text/StringBuffer.h>
 
 using namespace WTF;
@@ -83,7 +84,7 @@ static int countCharacter(const UChar* data, unsigned length, UChar character)
     return count;
 }
 
-Length* newCoordsArray(const String& string, int& len)
+PassOwnArrayPtr<Length> newCoordsArray(const String& string, int& len)
 {
     unsigned length = string.length();
     const UChar* data = string.characters();
@@ -100,7 +101,7 @@ Length* newCoordsArray(const String& string, int& len)
     str = str->simplifyWhiteSpace();
 
     len = countCharacter(str->characters(), str->length(), ' ') + 1;
-    Length* r = new Length[len];
+    OwnArrayPtr<Length> r = adoptArrayPtr(new Length[len]);
 
     int i = 0;
     unsigned pos = 0;
@@ -114,10 +115,10 @@ Length* newCoordsArray(const String& string, int& len)
 
     ASSERT(i == len - 1);
 
-    return r;
+    return r.release();
 }
 
-Length* newLengthArray(const String& string, int& len)
+PassOwnArrayPtr<Length> newLengthArray(const String& string, int& len)
 {
     RefPtr<StringImpl> str = string.impl()->simplifyWhiteSpace();
     if (!str->length()) {
@@ -126,7 +127,7 @@ Length* newLengthArray(const String& string, int& len)
     }
 
     len = countCharacter(str->characters(), str->length(), ',') + 1;
-    Length* r = new Length[len];
+    OwnArrayPtr<Length> r = adoptArrayPtr(new Length[len]);
 
     int i = 0;
     unsigned pos = 0;
@@ -145,7 +146,7 @@ Length* newLengthArray(const String& string, int& len)
     else
         len--;
 
-    return r;
+    return r.release();
 }
 
 } // namespace WebCore

@@ -25,6 +25,7 @@
 #include <wtf/FastAllocBase.h>
 #include <wtf/Forward.h>
 #include <wtf/MathExtras.h>
+#include <wtf/PassOwnArrayPtr.h>
 
 namespace WebCore {
 
@@ -193,8 +194,8 @@ private:
     int m_value;
 };
 
-Length* newCoordsArray(const String&, int& len);
-Length* newLengthArray(const String&, int& len);
+PassOwnArrayPtr<Length> newCoordsArray(const String&, int& len);
+PassOwnArrayPtr<Length> newLengthArray(const String&, int& len);
 
 } // namespace WebCore
 

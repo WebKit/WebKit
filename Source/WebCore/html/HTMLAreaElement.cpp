@@ -64,7 +64,7 @@ void HTMLAreaElement::parseMappedAttribute(Attribute* attr)
         else if (equalIgnoringCase(attr->value(), "rect"))
             m_shape = Rect;
     } else if (attr->name() == coordsAttr) {
-        m_coords.set(newCoordsArray(attr->value().string(), m_coordsLen));
+        m_coords = newCoordsArray(attr->value().string(), m_coordsLen);
     } else if (attr->name() == altAttr || attr->name() == accesskeyAttr) {
         // Do nothing.
     } else

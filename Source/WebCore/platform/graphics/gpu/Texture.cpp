@@ -166,7 +166,7 @@ void Texture::updateSubRect(void* pixels, const IntRect& updateRect)
     int tempBuffSize = // Temporary buffer size is the smaller of the max texture size or the updateRectSanitized
         min(m_tiles.maxTextureSize(), m_tiles.borderTexels() + updateRectSanitized.width()) *
         min(m_tiles.maxTextureSize(), m_tiles.borderTexels() + updateRectSanitized.height());
-    OwnArrayPtr<uint32_t> tempBuff(new uint32_t[tempBuffSize]);
+    OwnArrayPtr<uint32_t> tempBuff = adoptArrayPtr(new uint32_t[tempBuffSize]);
 
     for (int tile = 0; tile < m_tiles.numTiles(); tile++) {
         // Intersect with tile

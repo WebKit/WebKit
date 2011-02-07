@@ -1735,7 +1735,7 @@ bool WebGLRenderingContext::getAttachedShaders(WebGLProgram* program, Vector<Web
     GC3Dint numShaders = 0;
     m_context->getProgramiv(objectOrZero(program), GraphicsContext3D::ATTACHED_SHADERS, &numShaders);
     if (numShaders) {
-        OwnArrayPtr<Platform3DObject> shaders(new Platform3DObject[numShaders]);
+        OwnArrayPtr<Platform3DObject> shaders = adoptArrayPtr(new Platform3DObject[numShaders]);
         GC3Dsizei count = 0;
         m_context->getAttachedShaders(objectOrZero(program), numShaders, &count, shaders.get());
         if (count != numShaders)
@@ -4577,7 +4577,7 @@ bool WebGLRenderingContext::simulateVertexAttrib0(GC3Dsizei numVertex)
         || state.value[1] != m_vertexAttrib0BufferValue[1]
         || state.value[2] != m_vertexAttrib0BufferValue[2]
         || state.value[3] != m_vertexAttrib0BufferValue[3]) {
-        OwnArrayPtr<GC3Dfloat> bufferData(new GC3Dfloat[(numVertex + 1) * 4]);
+        OwnArrayPtr<GC3Dfloat> bufferData = adoptArrayPtr(new GC3Dfloat[(numVertex + 1) * 4]);
         for (GC3Dsizei ii = 0; ii < numVertex + 1; ++ii) {
             bufferData[ii * 4] = state.value[0];
             bufferData[ii * 4 + 1] = state.value[1];
@@ -4632,7 +4632,7 @@ WebGLExtension* WebGLRenderingContext::getExtensionNumber(int i)
 }
 
 WebGLRenderingContext::LRUImageBufferCache::LRUImageBufferCache(int capacity)
-    : m_buffers(new OwnPtr<ImageBuffer>[capacity])
+    : m_buffers(adoptArrayPtr(new OwnPtr<ImageBuffer>[capacity]))
     , m_capacity(capacity)
 {
 }

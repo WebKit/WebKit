@@ -28,7 +28,6 @@
 
 #include "Assertions.h"
 #include "NullPtr.h"
-#include "OwnArrayPtrCommon.h"
 #include "TypeTraits.h"
 
 // Remove this once we make all WebKit code compatible with stricter rules about PassOwnArrayPtr.
@@ -39,6 +38,7 @@ namespace WTF {
 template<typename T> class OwnArrayPtr;
 template<typename T> class PassOwnArrayPtr;
 template<typename T> PassOwnArrayPtr<T> adoptArrayPtr(T*);
+template<typename T> void deleteOwnedArrayPtr(T* ptr);
 
 template<typename T> class PassOwnArrayPtr {
 public:
@@ -192,6 +192,13 @@ template<typename T, typename U> inline bool operator!=(T* a, const PassOwnArray
 template<typename T> inline PassOwnArrayPtr<T> adoptArrayPtr(T* ptr)
 {
     return PassOwnArrayPtr<T>(ptr);
+}
+
+template<typename T> inline void deleteOwnedArrayPtr(T* ptr)
+{
+    typedef char known[sizeof(T) ? 1 : -1];
+    if (sizeof(known))
+        delete [] ptr;
 }
 
 template<typename T, typename U> inline PassOwnArrayPtr<T> static_pointer_cast(const PassOwnArrayPtr<U>& p) 

@@ -37,7 +37,7 @@ static inline void initializeWithUserDefault(WTFLogChannel& channel)
     if (!length)
         return;
 
-    OwnArrayPtr<char> buffer(new char[length]);
+    OwnArrayPtr<char> buffer = adoptArrayPtr(new char[length]);
 
     if (!GetEnvironmentVariableA(channel.defaultName, buffer.get(), length))
         return;

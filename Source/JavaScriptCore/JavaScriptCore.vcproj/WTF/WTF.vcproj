@@ -757,10 +757,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\wtf\OwnArrayPtrCommon.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\wtf\OwnFastMallocPtr.h"
 			>
 		</File>

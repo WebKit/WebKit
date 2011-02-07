@@ -839,7 +839,7 @@ void PlatformContextSkia::readbackHardwareToSoftware() const
     const SkBitmap& bitmap = m_canvas->getDevice()->accessBitmap(true);
     SkAutoLockPixels lock(bitmap);
     int width = bitmap.width(), height = bitmap.height();
-    OwnArrayPtr<uint32_t> buf(new uint32_t[width]);
+    OwnArrayPtr<uint32_t> buf = adoptArrayPtr(new uint32_t[width]);
     SharedGraphicsContext3D* context = m_gpuCanvas->context();
     m_gpuCanvas->bindFramebuffer();
     // Flips the image vertically.

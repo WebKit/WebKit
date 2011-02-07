@@ -463,8 +463,8 @@ void WebPreferences::copyWebKitPreferencesToCFPreferences(CFDictionaryRef dict)
     CFStringRef didRemoveDefaultsKey = CFSTR(WebKitDidMigrateDefaultSettingsFromSafari3BetaPreferenceKey);
     bool omitDefaults = !booleanValueForPreferencesValue(CFDictionaryGetValue(dict, didRemoveDefaultsKey));
 
-    OwnArrayPtr<CFTypeRef> keys(new CFTypeRef[count]);
-    OwnArrayPtr<CFTypeRef> values(new CFTypeRef[count]);
+    OwnArrayPtr<CFTypeRef> keys = adoptArrayPtr(new CFTypeRef[count]);
+    OwnArrayPtr<CFTypeRef> values = adoptArrayPtr(new CFTypeRef[count]);
     CFDictionaryGetKeysAndValues(dict, keys.get(), values.get());
 
     for (int i = 0; i < count; ++i) {

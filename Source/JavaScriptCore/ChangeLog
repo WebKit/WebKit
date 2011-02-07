@@ -1,3 +1,44 @@
+2011-02-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        OwnArraryPtr.h uses deleteOwnedPtr but doesn’t include OwnPtrCommon.h
+        https://bugs.webkit.org/show_bug.cgi?id=52867
+
+        Removed LOOSE_OWN_ARRAY_PTR and OwnArrayPtr<T>::set. Replaced all calls to OwnArrayPtr::set
+        and loose instantiation of OwnArrayPtr by calls to operator= and adoptArrayPtr. Also removed
+        OwnArrayPtrCommon.h since PassOwnArrayPtr.h needs to include OwnArrayPtr.h and there is
+        no point in putting deleteOwnedArrayPtr into a separate header.
+        
+        Note: if this patch breaks build, the code is either instiantiating OwnArrayPtr
+        without calling adoptArrayPtr or calling set on ArrayOwnPtr instead of operator=.
+
+        No tests are added since this is a refactoring.
+
+        * API/JSStringRefCF.cpp:
+        (JSStringCreateWithCFString): Calls adoptArrayPtr.
+        * GNUmakefile.am: Removed OwnArrayPtrCommon.h
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj: Ditto.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Ditto.
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::deleteProperty): Calls adoptArrayPtr.
+        * runtime/Arguments.h:
+        (JSC::Arguments::copyRegisters): Ditto.
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::JSPropertyNameIterator): Ditto.
+        * runtime/JSVariableObject.h:
+        (JSC::JSVariableObject::setRegisters): Calls operator= instead of set.
+        * runtime/StructureChain.cpp:
+        (JSC::StructureChain::StructureChain): Ditto.
+        * wtf/CMakeLists.txt:
+        * wtf/DateMath.h:
+        (JSC::GregorianDateTime::GregorianDateTime): No longer instnatiates OwnArrayPtr
+        with a null pointer.
+        * wtf/OwnArrayPtr.h:
+        * wtf/OwnArrayPtrCommon.h: Removed.
+        * wtf/PassOwnArrayPtr.h: No longer includes OwnArrayCommon.h
+        (WTF::deleteOwnedArrayPtr): Moved from OwnArrayPtrCommon.h
+
 2011-02-06  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej Stachowiak.

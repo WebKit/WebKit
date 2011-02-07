@@ -80,7 +80,7 @@ short V8NodeFilterCondition::acceptNode(ScriptState* state, Node* node) const
     }
 
     v8::Handle<v8::Object> object = v8::Context::GetCurrent()->Global();
-    OwnArrayPtr<v8::Handle<v8::Value> > args(new v8::Handle<v8::Value>[1]);
+    OwnArrayPtr<v8::Handle<v8::Value> > args = adoptArrayPtr(new v8::Handle<v8::Value>[1]);
     args[0] = toV8(node);
 
     v8::Handle<v8::Value> result = V8Proxy::callFunctionWithoutFrame(callback, object, 1, args.get());

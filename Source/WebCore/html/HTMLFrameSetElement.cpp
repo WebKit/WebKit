@@ -75,12 +75,12 @@ void HTMLFrameSetElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == rowsAttr) {
         if (!attr->isNull()) {
-            m_rowLengths.set(newLengthArray(attr->value().string(), m_totalRows));
+            m_rowLengths = newLengthArray(attr->value().string(), m_totalRows);
             setNeedsStyleRecalc();
         }
     } else if (attr->name() == colsAttr) {
         if (!attr->isNull()) {
-            m_colLengths.set(newLengthArray(attr->value().string(), m_totalCols));
+            m_colLengths = newLengthArray(attr->value().string(), m_totalCols);
             setNeedsStyleRecalc();
         }
     } else if (attr->name() == frameborderAttr) {

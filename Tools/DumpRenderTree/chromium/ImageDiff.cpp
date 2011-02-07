@@ -88,7 +88,7 @@ public:
         if (!byteLength)
             return false;
 
-        OwnArrayPtr<unsigned char> source(new unsigned char[byteLength]);
+        OwnArrayPtr<unsigned char> source = adoptArrayPtr(new unsigned char[byteLength]);
         if (fread(source.get(), 1, byteLength, stdin) != byteLength)
             return false;
 

@@ -1,3 +1,13 @@
+2011-02-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        OwnArraryPtr.h uses deleteOwnedPtr but doesn’t include OwnPtrCommon.h
+        https://bugs.webkit.org/show_bug.cgi?id=52867
+
+        * DumpRenderTree/chromium/ImageDiff.cpp:
+        (Image::craeteFromStdin): Call adoptArrayPtr.
+
 2011-02-06  James Kozianski  <koz@chromium.org>
 
         Reviewed by Ojan Vafai.

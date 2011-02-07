@@ -253,7 +253,7 @@ static void getDirtyRects(HWND window, Vector<CGRect>& outRects)
     }
 
     DWORD dataSize = GetRegionData(region.get(), 0, 0);
-    OwnArrayPtr<unsigned char> regionDataBuffer(new unsigned char[dataSize]);
+    OwnArrayPtr<unsigned char> regionDataBuffer = adoptArrayPtr(new unsigned char[dataSize]);
     RGNDATA* regionData = reinterpret_cast<RGNDATA*>(regionDataBuffer.get());
     if (!GetRegionData(region.get(), dataSize, regionData))
         return;

@@ -40,7 +40,7 @@ inline JSPropertyNameIterator::JSPropertyNameIterator(ExecState* exec, PropertyN
     , m_cachedStructure(0)
     , m_numCacheableSlots(numCacheableSlots)
     , m_jsStringsSize(propertyNameArrayData->propertyNameVector().size())
-    , m_jsStrings(new WriteBarrier<Unknown>[m_jsStringsSize])
+    , m_jsStrings(adoptArrayPtr(new WriteBarrier<Unknown>[m_jsStringsSize]))
 {
     PropertyNameArrayData::PropertyNameVector& propertyNameVector = propertyNameArrayData->propertyNameVector();
     for (size_t i = 0; i < m_jsStringsSize; ++i)

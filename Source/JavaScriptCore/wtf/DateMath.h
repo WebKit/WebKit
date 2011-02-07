@@ -135,7 +135,6 @@ public:
         , year(0)
         , isDST(0)
         , utcOffset(0)
-        , timeZone(0)
     {
     }
 

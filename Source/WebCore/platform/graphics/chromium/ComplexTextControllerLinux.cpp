@@ -387,7 +387,7 @@ const TextRun& ComplexTextController::getNormalizedTextRun(const TextRun& origin
         sourceText = normalizedString.getBuffer();
     }
 
-    normalizedBuffer.set(new UChar[normalizedBufferLength + 1]);
+    normalizedBuffer = adoptArrayPtr(new UChar[normalizedBufferLength + 1]);
 
     normalizeSpacesAndMirrorChars(sourceText, originalRun.rtl(), normalizedBuffer.get(), normalizedBufferLength);
 
