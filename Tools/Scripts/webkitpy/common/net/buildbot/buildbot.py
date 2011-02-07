@@ -266,7 +266,8 @@ class BuildBot(object):
         # See https://bugs.webkit.org/show_bug.cgi?id=33296 and related bugs.
         self.core_builder_names_regexps = [
             "SnowLeopard.*Build",
-            "SnowLeopard.*\(Test",  # Exclude WebKit2 for now.
+            "SnowLeopard.*\(Test",
+            "SnowLeopard.*\(WebKit2 Test",
             "Leopard",
             "Tiger",
             "Windows.*Build",
