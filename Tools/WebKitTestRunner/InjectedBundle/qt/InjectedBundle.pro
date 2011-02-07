@@ -56,6 +56,8 @@ INCLUDEPATH += \
     $$PWD/../Bindings \
     $$PWD/../../../../Source/JavaScriptCore \
     $$PWD/../../../../Source/JavaScriptCore/wtf \
+    $$PWD/../../../../Source/WebCore \
+    $$PWD/../../../../Source/WebCore/platform/text \
     $$PWD/../../../../Source/WebKit2 \
     $$PWD/../../../../Source/WebKit2/Shared \
     $$GENERATED_SOURCES_DIR
