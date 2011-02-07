@@ -1,3 +1,31 @@
+2011-02-07  Adam Roben  <aroben@apple.com>
+
+        Delete precompiled headers whenever any .vsprops file changes
+
+        Precompiled headers need to be rebuilt if, e.g., an ENABLE_* macro is changed in one of our
+        .vsprops files. Unfortunately, Visual Studio isn't smart enough to figure this out, so we
+        give it some assistance by deleting the precompiled headers whenever any .vsprops file
+        changes.
+
+        I also made some drive-by fixes while I was in the area.
+
+        Fixes <http://webkit.org/b/53826> react-to-vsprops-changes.py doesn't force precompiled
+        headers to be rebuilt, but should
+
+        Reviewed by David Kilzer.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make: Stop ignoring the
+        return code from react-to-vsprops-changes.py so we will notice when errors are introduced.
+        But skip the script entirely in production builds, where it is both unnecessary and can't
+        function correctly (due to not having the entire source tree available to it).
+
+        * JavaScriptCore.vcproj/JavaScriptCore/react-to-vsprops-changes.py:
+        (main): Removed an extra '*' in the glob for finding manifest files. The extra '*' was
+        leftover from before we rearranged WebKitBuild in r75138. Moved code to delete an old file
+        to the new delete_if_older_than function. Added code to delete any precompiled headers older
+        than the newest .vsprops file.
+        (delete_if_older_than): Added. Code came from main.
+
 2011-02-07  Antti Koivisto  <antti@apple.com>
 
         Not reviewed.

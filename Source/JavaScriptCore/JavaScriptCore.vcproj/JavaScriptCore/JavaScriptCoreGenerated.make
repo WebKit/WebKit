@@ -1,7 +1,9 @@
 all:
     touch "%ConfigurationBuildDir%\buildfailed"
     bash build-generated-files.sh "%ConfigurationBuildDir%" "$(WEBKITLIBRARIESDIR)"
-    -bash -c "python react-to-vsprops-changes.py"
+!IF "$(PRODUCTION)"!="1"
+    bash -c "python react-to-vsprops-changes.py"
+!ENDIF
     -mkdir 2>NUL "%ConfigurationBuildDir%\include\JavaScriptCore"
     xcopy /y /d "..\..\API\APICast.h" "%ConfigurationBuildDir%\include\JavaScriptCore"
     xcopy /y /d "..\..\API\JavaScript.h" "%ConfigurationBuildDir%\include\JavaScriptCore"
