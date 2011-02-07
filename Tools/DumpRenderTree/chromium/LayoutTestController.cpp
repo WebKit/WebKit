@@ -803,7 +803,7 @@ void LayoutTestController::pathToLocalResource(const CppArgumentList& arguments,
         DWORD tempLength = ::GetTempPathW(bufferSize, tempPath.get());
         if (tempLength + url.length() - tempPrefixLength + 1 > bufferSize) {
             bufferSize = tempLength + url.length() - tempPrefixLength + 1;
-            tempPath.set(new WCHAR[bufferSize]);
+            tempPath = adoptArrayPtr(new WCHAR[bufferSize]);
             tempLength = GetTempPathW(bufferSize, tempPath.get());
             ASSERT(tempLength < bufferSize);
         }
