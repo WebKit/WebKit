@@ -1,3 +1,12 @@
+2011-02-07  Darin Adler  <darin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=53939
+        fast/css/text-overflow-ellipsis.html failure after r77818/77819
+
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::registerExtendedEncodingNames):
+        Add back the "utf8" synonym for "UTF-8".
+
 2011-02-07  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
