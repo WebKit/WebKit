@@ -194,6 +194,11 @@ WKSize WKBundleFrameGetScrollOffset(WKBundleFrameRef frameRef)
     return toAPI(toImpl(frameRef)->scrollOffset());
 }
 
+bool WKBundleFrameGetDocumentBackgroundColor(WKBundleFrameRef frameRef, double* red, double* green, double* blue, double* alpha)
+{
+    return toImpl(frameRef)->getDocumentBackgroundColor(red, green, blue, alpha);
+}
+
 WKStringRef WKBundleFrameCopySuggestedFilenameForResourceWithURL(WKBundleFrameRef frameRef, WKURLRef urlRef)
 {
     return toCopiedAPI(toImpl(frameRef)->suggestedFilenameForResourceWithURL(WebCore::KURL(WebCore::KURL(), toImpl(urlRef)->string())));
