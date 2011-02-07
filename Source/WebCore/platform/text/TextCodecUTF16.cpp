@@ -71,6 +71,8 @@ String TextCodecUTF16::decode(const char* bytes, size_t length, bool, bool, bool
     if (!length)
         return String();
 
+    // FIXME: This should generate an error if there is an unpaired surrogate.
+
     const unsigned char* p = reinterpret_cast<const unsigned char*>(bytes);
     size_t numBytes = length + m_haveBufferedByte;
     size_t numChars = numBytes / 2;

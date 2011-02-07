@@ -43,23 +43,13 @@ static PassOwnPtr<TextCodec> newTextCodecBrew(const TextEncoding& encoding, cons
     return new TextCodecBrew(encoding);
 }
 
-void TextCodecBrew::registerBaseEncodingNames(EncodingNameRegistrar registrar)
-{
-    registrar("UTF-8", "UTF-8");
-}
-
-void TextCodecBrew::registerBaseCodecs(TextCodecRegistrar registrar)
-{
-    registrar("UTF-8", newTextCodecBrew, 0);
-}
-
-void TextCodecBrew::registerExtendedEncodingNames(EncodingNameRegistrar registrar)
+void TextCodecBrew::registerEncodingNames(EncodingNameRegistrar registrar)
 {
     // FIXME: Not sure how to enumerate all available encodings.
     notImplemented();
 }
 
-void TextCodecBrew::registerExtendedCodecs(TextCodecRegistrar registrar)
+void TextCodecBrew::registerCodecs(TextCodecRegistrar registrar)
 {
     notImplemented();
 }

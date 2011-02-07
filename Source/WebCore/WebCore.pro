@@ -1273,6 +1273,7 @@ SOURCES += \
     platform/text/TextCodecLatin1.cpp \
     platform/text/TextCodecUserDefined.cpp \
     platform/text/TextCodecUTF16.cpp \
+    platform/text/TextCodecUTF8.cpp \
     platform/text/TextEncoding.cpp \
     platform/text/TextEncodingDetectorNone.cpp \
     platform/text/TextEncodingRegistry.cpp \
@@ -2228,6 +2229,7 @@ HEADERS += \
     platform/text/TextCodecLatin1.h \
     platform/text/TextCodecUserDefined.h \
     platform/text/TextCodecUTF16.h \
+    platform/text/TextCodecUTF8.h \
     platform/text/TextEncoding.h \
     platform/text/TextEncodingRegistry.h \
     platform/text/TextStream.h \

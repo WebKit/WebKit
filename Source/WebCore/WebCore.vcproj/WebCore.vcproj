@@ -30369,6 +30369,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\text\TextCodecUTF8.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\text\TextCodecUTF8.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\text\TextCodecUTF16.h"
 					>
 				</File>

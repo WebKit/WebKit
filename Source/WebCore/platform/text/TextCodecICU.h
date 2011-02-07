@@ -38,11 +38,8 @@ namespace WebCore {
 
     class TextCodecICU : public TextCodec {
     public:
-        static void registerBaseEncodingNames(EncodingNameRegistrar);
-        static void registerBaseCodecs(TextCodecRegistrar);
-
-        static void registerExtendedEncodingNames(EncodingNameRegistrar);
-        static void registerExtendedCodecs(TextCodecRegistrar);
+        static void registerEncodingNames(EncodingNameRegistrar);
+        static void registerCodecs(TextCodecRegistrar);
 
         TextCodecICU(const TextEncoding&);
         virtual ~TextCodecICU();

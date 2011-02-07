@@ -27,14 +27,12 @@
 #include "config.h"
 #include "TextEncodingRegistry.h"
 
-#include "PlatformString.h"
 #include "TextCodecLatin1.h"
 #include "TextCodecUserDefined.h"
 #include "TextCodecUTF16.h"
+#include "TextCodecUTF8.h"
 #include "TextEncoding.h"
 #include <wtf/ASCIICType.h>
-#include <wtf/Assertions.h>
-#include <wtf/HashFunctions.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
@@ -53,9 +51,6 @@
 #if USE(GLIB_UNICODE)
 #include "gtk/TextCodecGtk.h"
 #endif
-#if USE(BREWMP_UNICODE)
-#include "brew/TextCodecBrew.h"
-#endif
 #if OS(WINCE) && !PLATFORM(QT)
 #include "TextCodecWinCE.h"
 #endif
@@ -68,7 +63,6 @@ const size_t maxEncodingNameLength = 63;
 
 // Hash for all-ASCII strings that does case folding.
 struct TextEncodingNameHash {
-
     static bool equal(const char* s1, const char* s2)
     {
         char c1;
@@ -129,9 +123,7 @@ static bool didExtendTextCodecMaps;
 static HashSet<const char*>* japaneseEncodings;
 static HashSet<const char*>* nonBackslashEncodings;
 
-static const char* const textEncodingNameBlacklist[] = {
-    "UTF-7"
-};
+static const char* const textEncodingNameBlacklist[] = { "UTF-7" };
 
 #if ERROR_DISABLED
 
@@ -225,30 +217,18 @@ static void buildBaseTextCodecMaps()
     TextCodecLatin1::registerEncodingNames(addToTextEncodingNameMap);
     TextCodecLatin1::registerCodecs(addToTextCodecMap);
 
+    TextCodecUTF8::registerEncodingNames(addToTextEncodingNameMap);
+    TextCodecUTF8::registerCodecs(addToTextCodecMap);
+
     TextCodecUTF16::registerEncodingNames(addToTextEncodingNameMap);
     TextCodecUTF16::registerCodecs(addToTextCodecMap);
 
     TextCodecUserDefined::registerEncodingNames(addToTextEncodingNameMap);
     TextCodecUserDefined::registerCodecs(addToTextCodecMap);
 
-#if USE(ICU_UNICODE)
-    TextCodecICU::registerBaseEncodingNames(addToTextEncodingNameMap);
-    TextCodecICU::registerBaseCodecs(addToTextCodecMap);
-#endif
-
 #if USE(GLIB_UNICODE)
     TextCodecGtk::registerBaseEncodingNames(addToTextEncodingNameMap);
     TextCodecGtk::registerBaseCodecs(addToTextCodecMap);
-#endif
-
-#if USE(BREWMP_UNICODE)
-    TextCodecBrew::registerBaseEncodingNames(addToTextEncodingNameMap);
-    TextCodecBrew::registerBaseCodecs(addToTextCodecMap);
-#endif
-
-#if OS(WINCE) && !PLATFORM(QT)
-    TextCodecWinCE::registerBaseEncodingNames(addToTextEncodingNameMap);
-    TextCodecWinCE::registerBaseCodecs(addToTextCodecMap);
 #endif
 }
 
@@ -268,7 +248,7 @@ static void buildQuirksSets()
     ASSERT(!japaneseEncodings);
     ASSERT(!nonBackslashEncodings);
 
-    japaneseEncodings = new HashSet<const char*>();
+    japaneseEncodings = new HashSet<const char*>;
     addEncodingName(japaneseEncodings, "EUC-JP");
     addEncodingName(japaneseEncodings, "ISO-2022-JP");
     addEncodingName(japaneseEncodings, "ISO-2022-JP-1");
@@ -284,7 +264,7 @@ static void buildQuirksSets()
     addEncodingName(japaneseEncodings, "cp932");
     addEncodingName(japaneseEncodings, "x-mac-japanese");
 
-    nonBackslashEncodings = new HashSet<const char*>();
+    nonBackslashEncodings = new HashSet<const char*>;
     // The text encodings below treat backslash as a currency symbol for IE compatibility.
     // See http://blogs.msdn.com/michkap/archive/2005/09/17/469941.aspx for more information.
     addEncodingName(nonBackslashEncodings, "x-mac-japanese");
@@ -308,8 +288,8 @@ bool shouldShowBackslashAsCurrencySymbolIn(const char* canonicalEncodingName)
 static void extendTextCodecMaps()
 {
 #if USE(ICU_UNICODE)
-    TextCodecICU::registerExtendedEncodingNames(addToTextEncodingNameMap);
-    TextCodecICU::registerExtendedCodecs(addToTextCodecMap);
+    TextCodecICU::registerEncodingNames(addToTextEncodingNameMap);
+    TextCodecICU::registerCodecs(addToTextCodecMap);
 #endif
 
 #if USE(QT4_UNICODE)
@@ -328,8 +308,8 @@ static void extendTextCodecMaps()
 #endif
 
 #if OS(WINCE) && !PLATFORM(QT)
-    TextCodecWinCE::registerExtendedEncodingNames(addToTextEncodingNameMap);
-    TextCodecWinCE::registerExtendedCodecs(addToTextCodecMap);
+    TextCodecWinCE::registerEncodingNames(addToTextEncodingNameMap);
+    TextCodecWinCE::registerCodecs(addToTextCodecMap);
 #endif
 
     pruneBlacklistedCodecs();

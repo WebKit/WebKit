@@ -2645,6 +2645,8 @@ webcore_sources += \
 	Source/WebCore/platform/text/TextCodecUserDefined.h \
 	Source/WebCore/platform/text/TextCodecUTF16.cpp \
 	Source/WebCore/platform/text/TextCodecUTF16.h \
+	Source/WebCore/platform/text/TextCodecUTF8.cpp \
+	Source/WebCore/platform/text/TextCodecUTF8.h \
 	Source/WebCore/platform/text/TextDirection.h \
 	Source/WebCore/platform/text/TextEncoding.cpp \
 	Source/WebCore/platform/text/TextEncodingDetector.h \

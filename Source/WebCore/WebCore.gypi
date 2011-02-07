@@ -3348,6 +3348,8 @@
             'platform/text/TextCodecLatin1.h',
             'platform/text/TextCodecUTF16.cpp',
             'platform/text/TextCodecUTF16.h',
+            'platform/text/TextCodecUTF8.cpp',
+            'platform/text/TextCodecUTF8.h',
             'platform/text/TextCodecUserDefined.cpp',
             'platform/text/TextCodecUserDefined.h',
             'platform/text/TextDirection.h',

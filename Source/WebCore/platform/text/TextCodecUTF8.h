@@ -1,8 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
- * Copyright (C) 2006 Alexey Proskuryakov <ap@nypop.com>
- * Copyright (C) 2007-2009 Torch Mobile, Inc.
- * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,45 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TextCodecWinCE_h
-#define TextCodecWinCE_h
+#ifndef TextCodecUTF8_h
+#define TextCodecUTF8_h
 
-#include "PlatformString.h"
 #include "TextCodec.h"
-#include "TextEncoding.h"
-#include <wtf/Vector.h>
-#include <windows.h>
 
 namespace WebCore {
 
-class TextCodecWinCE : public TextCodec {
+class TextCodecUTF8 : public TextCodec {
 public:
     static void registerEncodingNames(EncodingNameRegistrar);
     static void registerCodecs(TextCodecRegistrar);
 
-    TextCodecWinCE(UINT codePage);
-    virtual ~TextCodecWinCE();
-
     virtual String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError);
     virtual CString encode(const UChar*, size_t length, UnencodableHandling);
 
-    struct EncodingInfo {
-        String m_encoding;
-        String m_friendlyName;
-    };
-
-    struct EncodingReceiver {
-        // Return false to stop enumerating.
-        virtual bool receive(const char* encoding, const wchar_t* friendlyName, unsigned int codePage) = 0;
-    };
-
-    static void enumerateSupportedEncodings(EncodingReceiver& receiver);
-
 private:
-    UINT m_codePage;
-    Vector<char> m_decodeBuffer;
+    static PassOwnPtr<TextCodec> create(const TextEncoding&, const void*);
+    TextCodecUTF8() : m_partialSequenceSize(0) { }
+
+    int m_partialSequenceSize;
+    char m_partialSequence[U8_MAX_LENGTH - 1];
+    
 };
 
 } // namespace WebCore
 
-#endif // TextCodecWinCE_h
+#endif // TextCodecUTF8_h

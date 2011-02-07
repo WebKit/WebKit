@@ -628,6 +628,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	platform/text/TextCodecICU.cpp \
 	platform/text/TextCodecLatin1.cpp \
 	platform/text/TextCodecUTF16.cpp \
+	platform/text/TextCodecUTF8.cpp \
 	platform/text/TextCodecUserDefined.cpp \
 	platform/text/TextEncoding.cpp \
 	platform/text/TextEncodingDetectorICU.cpp \
