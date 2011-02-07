@@ -1,25 +1,5 @@
 /*
  *  Copyright (C) 1999-2004, International Business Machines Corporation and others.  All Rights Reserved.
- *  Copyright (C) 2006 George Staikos <staikos@kde.org>
- *  Copyright (C) 2006 Alexey Proskuryakov <ap@nypop.com>
- *  Copyright (C) 2007 Apple Computer, Inc. All rights reserved.
- *  Copyright (C) 2008 Jürg Billeter <j@bitron.ch>
- *  Copyright (C) 2008 Dominik Röttsches <dominik.roettsches@access-company.com>
- *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Library General Public
- *  License as published by the Free Software Foundation; either
- *  version 2 of the License, or (at your option) any later version.
- *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  Library General Public License for more details.
- *
- *  You should have received a copy of the GNU Library General Public License
- *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA 02110-1301, USA.
  *
  */
 
@@ -97,4 +77,24 @@
 
 #define U_MASK(x) ((uint32_t)1<<(x))
 
+#define U8_MAX_LENGTH 4
+
+#define U8_APPEND_UNSAFE(s, i, c) { \
+    if((uint32_t)(c)<=0x7f) { \
+        (s)[(i)++]=(uint8_t)(c); \
+    } else { \
+        if((uint32_t)(c)<=0x7ff) { \
+            (s)[(i)++]=(uint8_t)(((c)>>6)|0xc0); \
+        } else { \
+            if((uint32_t)(c)<=0xffff) { \
+                (s)[(i)++]=(uint8_t)(((c)>>12)|0xe0); \
+            } else { \
+                (s)[(i)++]=(uint8_t)(((c)>>18)|0xf0); \
+                (s)[(i)++]=(uint8_t)((((c)>>12)&0x3f)|0x80); \
+            } \
+            (s)[(i)++]=(uint8_t)((((c)>>6)&0x3f)|0x80); \
+        } \
+        (s)[(i)++]=(uint8_t)(((c)&0x3f)|0x80); \
+    } \
+}
 #endif

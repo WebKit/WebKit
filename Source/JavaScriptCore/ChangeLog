@@ -1,3 +1,13 @@
+2011-02-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        Add built-in decoder for UTF-8 for improved performance
+        https://bugs.webkit.org/show_bug.cgi?id=53898
+
+        * wtf/unicode/UnicodeMacrosFromICU.h: Added U8_MAX_LENGTH and
+        U8_APPEND_UNSAFE. Also fixed header.
+
 2011-02-07  Adam Roben  <aroben@apple.com>
 
         Delete precompiled headers whenever any .vsprops file changes
