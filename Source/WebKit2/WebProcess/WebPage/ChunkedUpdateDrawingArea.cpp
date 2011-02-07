@@ -168,7 +168,7 @@ void ChunkedUpdateDrawingArea::resumePainting(bool forceRepaint)
 
     if (forceRepaint) {
         // Just set the dirty rect to the entire page size.
-        m_dirtyRect = IntRect(IntPoint(0, 0), m_webPage->size());
+        m_dirtyRect = m_webPage->bounds();
     }
 
     // Schedule a display.

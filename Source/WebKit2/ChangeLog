@@ -1,5 +1,20 @@
 2011-02-07  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Add WebPage::bounds and use it
+        https://bugs.webkit.org/show_bug.cgi?id=53926
+
+        * WebProcess/WebPage/ChunkedUpdateDrawingArea.cpp:
+        (WebKit::ChunkedUpdateDrawingArea::resumePainting):
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::resumePainting):
+        (WebKit::DrawingAreaImpl::exitAcceleratedCompositingMode):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::bounds):
+
+2011-02-07  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Maciej Stachowiak.
 
         Don't exclude overlay scrollers from the page overlay bounds

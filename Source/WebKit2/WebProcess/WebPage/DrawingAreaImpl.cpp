@@ -229,7 +229,7 @@ void DrawingAreaImpl::resumePainting()
     m_isPaintingSuspended = false;
 
     // FIXME: We shouldn't always repaint everything here.
-    setNeedsDisplay(IntRect(IntPoint(), m_webPage->size()));
+    setNeedsDisplay(m_webPage->bounds());
 }
 
 void DrawingAreaImpl::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLayer)
@@ -264,7 +264,7 @@ void DrawingAreaImpl::exitAcceleratedCompositingMode()
     if (m_isPaintingSuspended)
         updateInfo.viewSize = m_webPage->size();
     else {
-        m_dirtyRegion = IntRect(IntPoint(), m_webPage->size());
+        m_dirtyRegion = m_webPage->bounds();
         display(updateInfo);
     }
 
