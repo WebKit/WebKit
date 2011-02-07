@@ -50,6 +50,7 @@
 #include <WebCore/FileChooser.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
+#include <WebCore/FrameView.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLPlugInImageElement.h>
 #include <WebCore/Page.h>
@@ -418,7 +419,21 @@ void WebChromeClient::contentsSizeChanged(Frame* frame, const IntSize& size) con
     WebFrame* largestFrame = findLargestFrameInFrameSet(m_page);
     if (largestFrame != m_cachedFrameSetLargestFrame.get()) {
         m_cachedFrameSetLargestFrame = largestFrame;
-        WebProcess::shared().connection()->send(Messages::WebPageProxy::FrameSetLargestFrameChanged(largestFrame ? largestFrame->frameID() : 0), m_page->pageID());
+        m_page->send(Messages::WebPageProxy::FrameSetLargestFrameChanged(largestFrame ? largestFrame->frameID() : 0));
+    }
+
+    FrameView* frameView = frame->view();
+    if (!frameView)
+        return;
+
+    bool hasHorizontalScrollbar = frameView->horizontalScrollbar();
+    bool hasVecticalScrollbar = frameView->verticalScrollbar();
+
+    if (hasHorizontalScrollbar != m_cachedHasHorizontalScrollbar || hasVecticalScrollbar != m_cachedHasVerticalScrollbar) {
+        m_page->send(Messages::WebPageProxy::DidChangeScrollbarsForMainFrame(hasHorizontalScrollbar, hasVecticalScrollbar));
+        
+        m_cachedHasHorizontalScrollbar = hasHorizontalScrollbar;
+        m_cachedHasVerticalScrollbar = hasVecticalScrollbar;
     }
 }
 

@@ -266,6 +266,9 @@ public:
     bool useFixedLayout() const { return m_useFixedLayout; };
     const WebCore::IntSize& fixedLayoutSize() const { return m_fixedLayoutSize; };
 
+    bool hasHorizontalScrollbar() const { return m_mainFrameHasHorizontalScrollbar; }
+    bool hasVerticalScrollbar() const { return m_mainFrameHasVerticalScrollbar; }
+
 #if PLATFORM(MAC)
     void sendAccessibilityPresenterToken(const CoreIPC::DataReference&);
 #endif
@@ -468,6 +471,7 @@ private:
     void requestGeolocationPermissionForFrame(uint64_t geolocationID, uint64_t frameID, String originIdentifier);
     void runModal() { m_uiClient.runModal(this); }
     void didCompleteRubberBandForMainFrame(const WebCore::IntSize&);
+    void didChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVecticalScrollbar);
 
     void reattachToWebProcess();
     void reattachToWebProcessWithItem(WebBackForwardListItem*);
@@ -667,6 +671,9 @@ private:
     WebCore::DragOperation m_currentDragOperation;
 
     String m_pendingAPIRequestURL;
+
+    bool m_mainFrameHasHorizontalScrollbar;
+    bool m_mainFrameHasVerticalScrollbar;
 };
 
 } // namespace WebKit

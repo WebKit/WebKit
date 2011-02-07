@@ -307,8 +307,11 @@ WK_EXPORT double WKPageGetScaleFactor(WKPageRef page);
 
 WK_EXPORT void WKPageSetUseFixedLayout(WKPageRef page, bool fixed);
 WK_EXPORT void WKPageSetFixedLayoutSize(WKPageRef page, WKSize size);
-WK_EXPORT bool WKPageUseFixedLayout(WKPageRef pageRef);
-WK_EXPORT WKSize WKPageFixedLayoutSize(WKPageRef pageRef);
+WK_EXPORT bool WKPageUseFixedLayout(WKPageRef page);
+WK_EXPORT WKSize WKPageFixedLayoutSize(WKPageRef page);
+
+WK_EXPORT bool WKPageHasHorizontalScrollbar(WKPageRef page);
+WK_EXPORT bool WKPageHasVerticalScrollbar(WKPageRef page);
 
 WK_EXPORT void WKPageFindString(WKPageRef page, WKStringRef string, WKFindOptions findOptions, unsigned maxMatchCount);
 WK_EXPORT void WKPageHideFindUI(WKPageRef page);

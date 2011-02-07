@@ -56,6 +56,7 @@ messages -> WebPageProxy {
     PrintFrame(uint64_t frameID) -> ()
     RunModal()
     DidCompleteRubberBandForMainFrame(WebCore::IntSize initialOverhang)
+    DidChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar)
 
 #if ENABLE(TILED_BACKING_STORE)
     PageDidRequestScroll(WebCore::IntSize delta)

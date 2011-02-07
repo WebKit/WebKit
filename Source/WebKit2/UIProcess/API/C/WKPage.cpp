@@ -291,6 +291,16 @@ WKSize WKPageFixedLayoutSize(WKPageRef pageRef)
     return toAPI(toImpl(pageRef)->fixedLayoutSize());
 }
 
+bool WKPageHasHorizontalScrollbar(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->hasHorizontalScrollbar();
+}
+
+bool WKPageHasVerticalScrollbar(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->hasVerticalScrollbar();
+}
+
 void WKPageFindString(WKPageRef pageRef, WKStringRef string, WKFindOptions options, unsigned maxMatchCount)
 {
     toImpl(pageRef)->findString(toImpl(string)->string(), toFindOptions(options), maxMatchCount);

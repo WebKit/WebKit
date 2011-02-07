@@ -132,6 +132,8 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, WebContext* context, WebPageG
     , m_pendingLearnOrIgnoreWordMessageCount(0)
     , m_mainFrameHasCustomRepresentation(false)
     , m_currentDragOperation(DragOperationNone)
+    , m_mainFrameHasHorizontalScrollbar(false)
+    , m_mainFrameHasVerticalScrollbar(false)
 {
 #ifndef NDEBUG
     webPageProxyCounter.increment();
@@ -278,6 +280,9 @@ void WebPageProxy::close()
     m_geolocationPermissionRequestManager.invalidateRequests();
 
     m_toolTip = String();
+
+    m_mainFrameHasHorizontalScrollbar = false;
+    m_mainFrameHasVerticalScrollbar = false;
 
     invalidateCallbackMap(m_voidCallbacks);
     invalidateCallbackMap(m_dataCallbacks);
@@ -2379,6 +2384,9 @@ void WebPageProxy::processDidCrash()
 
     m_toolTip = String();
 
+    m_mainFrameHasHorizontalScrollbar = false;
+    m_mainFrameHasVerticalScrollbar = false;
+
     invalidateCallbackMap(m_voidCallbacks);
     invalidateCallbackMap(m_dataCallbacks);
     invalidateCallbackMap(m_stringCallbacks);
@@ -2526,6 +2534,12 @@ void WebPageProxy::drawFooter(WebFrameProxy* frame, const FloatRect& rect)
 void WebPageProxy::didCompleteRubberBandForMainFrame(const IntSize& initialOverhang)
 {
     m_uiClient.didCompleteRubberBandForMainFrame(this, initialOverhang);
+}
+
+void WebPageProxy::didChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVecticalScrollbar)
+{
+    m_mainFrameHasHorizontalScrollbar = hasHorizontalScrollbar;
+    m_mainFrameHasVerticalScrollbar = hasVecticalScrollbar;
 }
 
 void WebPageProxy::didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference& dataReference)

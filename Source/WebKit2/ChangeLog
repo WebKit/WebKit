@@ -1,3 +1,34 @@
+2011-02-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Inform the UIProcess when main frame scrollbars change
+        <rdar://problem/8967496>
+        https://bugs.webkit.org/show_bug.cgi?id=53941
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageHasHorizontalScrollbar):
+        (WKPageHasVerticalScrollbar):
+        * UIProcess/API/C/WKPage.h:
+        Add API to query whether the main frame has scrollbars.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::processDidCrash):
+        (WebKit::WebPageProxy::didChangeScrollbarsForMainFrame):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::hasHorizontalScrollbar):
+        (WebKit::WebPageProxy::hasVerticalScrollbar):
+        Store/update main frame scrollbar state.
+
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::contentsSizeChanged):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        (WebKit::WebChromeClient::WebChromeClient):
+        Post message when main frame scrollbar state changes.
+
 2011-02-07  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
