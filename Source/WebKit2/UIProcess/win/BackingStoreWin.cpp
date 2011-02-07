@@ -23,62 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BackingStore_h
-#define BackingStore_h
+#include "config.h"
+#include "BackingStore.h"
 
-#include <WebCore/IntSize.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
+#include "NotImplemented.h"
 
-#if PLATFORM(MAC)
-#include <wtf/RetainPtr.h>
-#endif
-
-namespace WebCore {
-    class IntRect;
-}
+using namespace WebCore;
 
 namespace WebKit {
 
-class ShareableBitmap;
-class UpdateInfo;
-class WebPageProxy;
+void BackingStore::paint(HDC, const IntRect&)
+{
+    notImplemented();
+}
 
-class BackingStore {
-    WTF_MAKE_NONCOPYABLE(BackingStore);
+void BackingStore::incorporateUpdate(ShareableBitmap*, const UpdateInfo&)
+{
+    notImplemented();
+}
 
-public:
-    static PassOwnPtr<BackingStore> create(const WebCore::IntSize&, WebPageProxy*);
-    ~BackingStore();
-
-    const WebCore::IntSize& size() const { return m_size; }
-
-#if PLATFORM(MAC)
-    typedef CGContextRef PlatformGraphicsContext;
-#elif PLATFORM(WIN)
-    typedef HDC PlatformGraphicsContext;
-#endif
-
-    void paint(PlatformGraphicsContext, const WebCore::IntRect&);
-    void incorporateUpdate(const UpdateInfo&);
-
-private:
-    BackingStore(const WebCore::IntSize&, WebPageProxy*);
-
-    void incorporateUpdate(ShareableBitmap*, const UpdateInfo&);
-    void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
-
-    WebCore::IntSize m_size;
-    WebPageProxy* m_webPageProxy;
-
-#if PLATFORM(MAC)
-    CGContextRef backingStoreContext();
-
-    RetainPtr<CGLayerRef> m_cgLayer;
-    RetainPtr<CGContextRef> m_bitmapContext;
-#endif
-};
+void BackingStore::scroll(const IntRect&, const IntSize&)
+{
+    notImplemented();
+}
 
 } // namespace WebKit
-
-#endif // BackingStore_h

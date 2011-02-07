@@ -23,62 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BackingStore_h
-#define BackingStore_h
+#include "config.h"
+#include "LayerTreeContext.h"
 
-#include <WebCore/IntSize.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
-
-#if PLATFORM(MAC)
-#include <wtf/RetainPtr.h>
-#endif
-
-namespace WebCore {
-    class IntRect;
-}
+#include "NotImplemented.h"
 
 namespace WebKit {
 
-class ShareableBitmap;
-class UpdateInfo;
-class WebPageProxy;
+LayerTreeContext::LayerTreeContext()
+{
+    notImplemented();
+}
 
-class BackingStore {
-    WTF_MAKE_NONCOPYABLE(BackingStore);
+LayerTreeContext::~LayerTreeContext()
+{
+    notImplemented();
+}
 
-public:
-    static PassOwnPtr<BackingStore> create(const WebCore::IntSize&, WebPageProxy*);
-    ~BackingStore();
+void LayerTreeContext::encode(CoreIPC::ArgumentEncoder*) const
+{
+    notImplemented();
+}
 
-    const WebCore::IntSize& size() const { return m_size; }
+bool LayerTreeContext::decode(CoreIPC::ArgumentDecoder*, LayerTreeContext&)
+{
+    notImplemented();
+    return true;
+}
 
-#if PLATFORM(MAC)
-    typedef CGContextRef PlatformGraphicsContext;
-#elif PLATFORM(WIN)
-    typedef HDC PlatformGraphicsContext;
-#endif
+bool LayerTreeContext::isEmpty() const
+{
+    notImplemented();
+    return true;
+}
 
-    void paint(PlatformGraphicsContext, const WebCore::IntRect&);
-    void incorporateUpdate(const UpdateInfo&);
-
-private:
-    BackingStore(const WebCore::IntSize&, WebPageProxy*);
-
-    void incorporateUpdate(ShareableBitmap*, const UpdateInfo&);
-    void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
-
-    WebCore::IntSize m_size;
-    WebPageProxy* m_webPageProxy;
-
-#if PLATFORM(MAC)
-    CGContextRef backingStoreContext();
-
-    RetainPtr<CGLayerRef> m_cgLayer;
-    RetainPtr<CGContextRef> m_bitmapContext;
-#endif
-};
+bool operator==(const LayerTreeContext&, const LayerTreeContext&)
+{
+    notImplemented();
+    return true;
+}
 
 } // namespace WebKit
-
-#endif // BackingStore_h

@@ -1,3 +1,41 @@
+2011-02-07  Adam Roben  <aroben@apple.com>
+
+        Start compiling DrawingArea[Proxy]Impl and dependencies on Windows
+
+        Fixes <http://webkit.org/b/53875> WebKit2 on Windows should build DrawingArea[Proxy]Impl
+
+        Reviewed by Sam Weinig and Darin Adler.
+
+        * Platform/Region.cpp:
+        (WebKit::Region::Shape::shapeOperation): Initialize variable to avoid a bogus "potentially
+        uninitialized variable" warning.
+
+        * UIProcess/BackingStore.cpp: Removed #error for non-Mac platforms.
+
+        * UIProcess/BackingStore.h: Added a PlatformGraphicsContext typedef for Windows.
+
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessage):
+        Allow Windows to compile the new drawing area code.
+
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create): Allow creating a DrawingAreaImpl on Windows, too.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        * WebProcess/WebPage/LayerTreeHost.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didReceiveMessage):
+        Allow Windows to compile the new drawing area code.
+
+        * Shared/win/LayerTreeContextWin.cpp: Added.
+        * UIProcess/win/BackingStoreWin.cpp: Added.
+        Stubbed out these files.
+
+        * win/WebKit2.vcproj: Added new files.
+
 2011-02-07  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

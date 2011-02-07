@@ -443,6 +443,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\LayerTreeContext.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\MutableArray.cpp"
 				>
 			</File>
@@ -520,6 +524,14 @@
 			</File>
 			<File
 				RelativePath="..\Shared\TextCheckerState.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\UpdateInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\UpdateInfo.h"
 				>
 			</File>
 			<File
@@ -1005,30 +1017,6 @@
 					Name="cg"
 					>
 					<File
-						RelativePath="..\Shared\API\c\cg\WKImageCG.cpp"
-						>
-						<FileConfiguration
-							Name="Debug_Cairo_CFLite|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release_Cairo_CFLite|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\Shared\API\c\cg\WKImageCG.h"
-						>
-					</File>
-					<File
 						RelativePath="..\Shared\API\c\cg\WKGraphicsContextCG.cpp"
 						>
 						<FileConfiguration
@@ -1050,6 +1038,30 @@
 					</File>
 					<File
 						RelativePath="..\Shared\API\c\cg\WKGraphicsContextCG.h"
+						>
+					</File>
+					<File
+						RelativePath="..\Shared\API\c\cg\WKImageCG.cpp"
+						>
+						<FileConfiguration
+							Name="Debug_Cairo_CFLite|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo_CFLite|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\Shared\API\c\cg\WKImageCG.h"
 						>
 					</File>
 				</Filter>
@@ -1099,6 +1111,10 @@
 				>
 				<File
 					RelativePath="..\Shared\win\CommandLineWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\win\LayerTreeContextWin.cpp"
 					>
 				</File>
 				<File
@@ -1486,6 +1502,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\WebProcess\WebPage\DrawingAreaImpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebPage\DrawingAreaImpl.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\WebPage\EncoderAdapter.cpp"
 					>
 				</File>
@@ -1507,6 +1531,14 @@
 				</File>
 				<File
 					RelativePath="..\WebProcess\WebPage\LayerBackedDrawingArea.h"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebPage\LayerTreeHost.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebPage\LayerTreeHost.h"
 					>
 				</File>
 				<File
@@ -2071,6 +2103,14 @@
 			Name="UIProcess"
 			>
 			<File
+				RelativePath="..\UIProcess\BackingStore.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\BackingStore.h"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\ChunkedUpdateDrawingAreaProxy.cpp"
 				>
 			</File>
@@ -2084,6 +2124,14 @@
 			</File>
 			<File
 				RelativePath="..\UIProcess\DrawingAreaProxy.h"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\DrawingAreaProxyImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\DrawingAreaProxyImpl.h"
 				>
 			</File>
 			<File
@@ -2778,6 +2826,10 @@
 				Name="win"
 				>
 				<File
+					RelativePath="..\UIProcess\win\BackingStoreWin.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\UIProcess\win\ChunkedUpdateDrawingAreaProxyWin.cpp"
 					>
 				</File>
@@ -2868,6 +2920,14 @@
 			</File>
 			<File
 				RelativePath="..\Platform\PlatformProcessIdentifier.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Platform\Region.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Platform\Region.h"
 				>
 			</File>
 			<File
@@ -3164,6 +3224,22 @@
 			</File>
 			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\DownloadProxyMessages.h"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\DrawingAreaMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\DrawingAreaMessages.h"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\DrawingAreaProxyMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\DrawingAreaProxyMessages.h"
 				>
 			</File>
 			<File

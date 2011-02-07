@@ -48,7 +48,7 @@ public:
     static PassRefPtr<DrawingArea> create(WebPage*, const WebPageCreationParameters&);
     virtual ~DrawingArea();
     
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(WIN)
     void didReceiveDrawingAreaMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 #endif
 

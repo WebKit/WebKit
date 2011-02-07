@@ -31,7 +31,7 @@
 
 using namespace WebCore;
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(MAC) && !PLATFORM(WIN)
 #error "This class is not ready for use by other ports yet."
 #endif
 

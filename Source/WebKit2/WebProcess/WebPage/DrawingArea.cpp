@@ -29,7 +29,7 @@
 // Subclasses
 #include "ChunkedUpdateDrawingArea.h"
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(WIN)
 #include "DrawingAreaImpl.h"
 #endif
 
@@ -53,7 +53,7 @@ PassRefPtr<DrawingArea> DrawingArea::create(WebPage* webPage, const WebPageCreat
             break;
 
         case DrawingAreaInfo::Impl:
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(WIN)
             return DrawingAreaImpl::create(webPage, parameters);
 #else
             return 0;

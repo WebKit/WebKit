@@ -255,7 +255,7 @@ Region::Shape Region::Shape::shapeOperation(const Shape& shape1, const Shape& sh
 
     // Iterate over all spans.
     while (spans1 != spans1End && spans2 != spans2End) {
-        int y;
+        int y = 0;
         int test = spans1->y - spans2->y;
 
         if (test <= 0) {

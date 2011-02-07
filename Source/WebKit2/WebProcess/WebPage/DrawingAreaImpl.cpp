@@ -35,7 +35,7 @@
 #include "WebProcess.h"
 #include <WebCore/GraphicsContext.h>
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(MAC) && !PLATFORM(WIN)
 #error "This drawing area is not ready for use by other ports yet."
 #endif
 

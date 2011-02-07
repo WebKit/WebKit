@@ -28,7 +28,9 @@
 
 #if PLATFORM(MAC)
 #include "LayerTreeHostMac.h"
-#else
+#endif
+
+#if !PLATFORM(MAC) && !PLATFORM(WIN)
 #error "This class is not ready for use by other ports yet."
 #endif
 
