@@ -1,3 +1,9 @@
+2011-02-06  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, unskip the html5lib test again which fails for another reason. (See Bug 53030)
+
+        * platform/qt/Skipped:
+
 2011-02-06  Dominic Cooney  <dominicc@google.com>
 
         Reviewed by Dimitri Glazkov.
