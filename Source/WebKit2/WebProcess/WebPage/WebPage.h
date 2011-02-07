@@ -139,6 +139,7 @@ public:
     // -- Called by the DrawingArea.
     // FIXME: We could genericize these into a DrawingArea client interface. Would that be beneficial?
     void drawRect(WebCore::GraphicsContext&, const WebCore::IntRect&);
+    void drawPageOverlay(WebCore::GraphicsContext&, const WebCore::IntRect&);
     void layoutIfNeeded();
 
     // -- Called from WebCore clients.
@@ -228,6 +229,7 @@ public:
 
     void installPageOverlay(PassRefPtr<PageOverlay>);
     void uninstallPageOverlay(PageOverlay*);
+    bool hasPageOverlay() const { return m_pageOverlay; }
 
     PassRefPtr<WebImage> snapshotInViewCoordinates(const WebCore::IntRect&, ImageOptions);
     PassRefPtr<WebImage> snapshotInDocumentCoordinates(const WebCore::IntRect&, ImageOptions);

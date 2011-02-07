@@ -140,6 +140,20 @@ void DrawingAreaImpl::forceRepaint()
     display();
 }
 
+void DrawingAreaImpl::didInstallPageOverlay()
+{
+}
+
+void DrawingAreaImpl::didUninstallPageOverlay()
+{
+    setNeedsDisplay(m_webPage->bounds());
+}
+
+void DrawingAreaImpl::setOverlayNeedsDisplay(const IntRect& rect)
+{
+    setNeedsDisplay(rect);
+}
+
 void DrawingAreaImpl::attachCompositingContext()
 {
 }
@@ -369,9 +383,11 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
 
     for (size_t i = 0; i < rects.size(); ++i) {
         m_webPage->drawRect(*graphicsContext, rects[i]);
+        if (m_webPage->hasPageOverlay())
+            m_webPage->drawPageOverlay(*graphicsContext, rects[i]);
         updateInfo.updateRects.append(rects[i]);
     }
-        
+
     // Layout can trigger more calls to setNeedsDisplay and we don't want to process them
     // until the UI process has painted the update, so we stop the timer here.
     m_displayTimer.stop();

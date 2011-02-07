@@ -1,5 +1,50 @@
 2011-02-07  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        The drawing area should be in charge of drawing the page overlay
+        https://bugs.webkit.org/show_bug.cgi?id=53927
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::didInstallPageOverlay):
+        (WebKit::DrawingArea::didUninstallPageOverlay):
+        (WebKit::DrawingArea::setOverlayNeedsDisplay):
+        Add empty stubs.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::didInstallPageOverlay):
+        Add empty function. This will eventually ask the layer tree host to
+        create a GraphicsLayer for the page overlay.
+
+        (WebKit::DrawingAreaImpl::didUninstallPageOverlay):
+        Tell the page that it needs to be repainted.
+
+        (WebKit::DrawingAreaImpl::setOverlayNeedsDisplay):
+        Just call setNeedsDisplay for now.
+
+        (WebKit::DrawingAreaImpl::display):
+        Paint the page overlay too.
+
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::drawRect):
+        Only call drawPageOverlay if we have an old drawing area.
+
+        (WebKit::WebPage::drawPageOverlay):
+        Draw the page overlay. Code moved here from WebPage::drawRect.
+
+        (WebKit::WebPage::installPageOverlay):
+        Call DrawingArea::installPageOverlay.
+
+        (WebKit::WebPage::uninstallPageOverlay):
+        Call DrawingArea::uninstallPageOverlay.
+
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::hasPageOverlay):
+        Add getter.
+
+2011-02-07  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Add WebPage::bounds and use it

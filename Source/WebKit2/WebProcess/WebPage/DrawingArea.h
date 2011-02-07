@@ -55,9 +55,14 @@ public:
     virtual void setNeedsDisplay(const WebCore::IntRect&) = 0;
     virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset) = 0;
 
+    // FIXME: These should be pure virtual.
     virtual void pageBackgroundTransparencyChanged() { }
     virtual void onPageClose() { }
     virtual void forceRepaint() { }
+
+    virtual void didInstallPageOverlay() { }
+    virtual void didUninstallPageOverlay() { }
+    virtual void setOverlayNeedsDisplay(const WebCore::IntRect&) { }
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual void attachCompositingContext() = 0;

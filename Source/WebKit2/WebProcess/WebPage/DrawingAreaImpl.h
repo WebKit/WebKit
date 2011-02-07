@@ -47,6 +47,11 @@ private:
     virtual void setNeedsDisplay(const WebCore::IntRect&);
     virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
     virtual void forceRepaint();
+
+    virtual void didInstallPageOverlay();
+    virtual void didUninstallPageOverlay();
+    virtual void setOverlayNeedsDisplay(const WebCore::IntRect&);
+    
     virtual void attachCompositingContext();
     virtual void detachCompositingContext();
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*);

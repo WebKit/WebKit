@@ -588,12 +588,19 @@ void WebPage::drawRect(GraphicsContext& graphicsContext, const IntRect& rect)
     m_mainFrame->coreFrame()->view()->paint(&graphicsContext, rect);
     graphicsContext.restore();
 
-    if (m_pageOverlay) {
-        graphicsContext.save();
-        graphicsContext.clip(rect);
-        m_pageOverlay->drawRect(graphicsContext, rect);
-        graphicsContext.restore();
-    }
+    // FIXME: Remove this code once we're using the new drawing area on mac and windows.
+    if (m_pageOverlay && m_drawingArea->info().type != DrawingAreaInfo::Impl)
+        drawPageOverlay(graphicsContext, rect);
+}
+
+void WebPage::drawPageOverlay(GraphicsContext& graphicsContext, const IntRect& rect)
+{
+    ASSERT(m_pageOverlay);
+
+    graphicsContext.save();
+    graphicsContext.clip(rect);
+    m_pageOverlay->drawRect(graphicsContext, rect);
+    graphicsContext.restore();
 }
 
 double WebPage::textZoomFactor() const
@@ -691,6 +698,8 @@ void WebPage::installPageOverlay(PassRefPtr<PageOverlay> pageOverlay)
     m_pageOverlay = pageOverlay;
     m_pageOverlay->setPage(this);
     m_pageOverlay->setNeedsDisplay();
+
+    m_drawingArea->didInstallPageOverlay();
 }
 
 void WebPage::uninstallPageOverlay(PageOverlay* pageOverlay)
@@ -700,7 +709,8 @@ void WebPage::uninstallPageOverlay(PageOverlay* pageOverlay)
 
     m_pageOverlay->setPage(0);
     m_pageOverlay = nullptr;
-    m_drawingArea->setNeedsDisplay(IntRect(IntPoint(0, 0), m_viewSize));
+
+    m_drawingArea->didUninstallPageOverlay();
 }
 
 PassRefPtr<WebImage> WebPage::snapshotInViewCoordinates(const IntRect& rect, ImageOptions options)
