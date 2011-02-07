@@ -471,7 +471,7 @@ private:
     void requestGeolocationPermissionForFrame(uint64_t geolocationID, uint64_t frameID, String originIdentifier);
     void runModal() { m_uiClient.runModal(this); }
     void didCompleteRubberBandForMainFrame(const WebCore::IntSize&);
-    void didChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVecticalScrollbar);
+    void didChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar);
 
     void reattachToWebProcess();
     void reattachToWebProcessWithItem(WebBackForwardListItem*);

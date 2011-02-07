@@ -1,5 +1,12 @@
 2011-02-07  Sam Weinig  <sam@webkit.org>
 
+        Fix typo. vectical -> vertical.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChangeScrollbarsForMainFrame):
+
+2011-02-07  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Inform the UIProcess when main frame scrollbars change

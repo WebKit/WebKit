@@ -2536,10 +2536,10 @@ void WebPageProxy::didCompleteRubberBandForMainFrame(const IntSize& initialOverh
     m_uiClient.didCompleteRubberBandForMainFrame(this, initialOverhang);
 }
 
-void WebPageProxy::didChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVecticalScrollbar)
+void WebPageProxy::didChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar)
 {
     m_mainFrameHasHorizontalScrollbar = hasHorizontalScrollbar;
-    m_mainFrameHasVerticalScrollbar = hasVecticalScrollbar;
+    m_mainFrameHasVerticalScrollbar = hasVerticalScrollbar;
 }
 
 void WebPageProxy::didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference& dataReference)
