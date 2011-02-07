@@ -1681,7 +1681,7 @@ Evas_Object* ewk_frame_child_add(Evas_Object* o, WTF::PassRefPtr<WebCore::Frame>
     if (!cf->page())
         goto died;
 
-    cf->loader()->loadURLIntoChildFrame(url, referrer, cf);
+    sd->frame->loader()->loadURLIntoChildFrame(url, referrer, cf);
     if (!cf->tree()->parent())
         goto died;
 
