@@ -56,6 +56,7 @@
 #if USE(JSC)
 #include "JSDOMBinding.h"
 #include "JSDOMWindow.h"
+#include <runtime/JSLock.h>
 #include <runtime/Protect.h>
 #endif
 
@@ -792,8 +793,10 @@ void XMLHttpRequest::dropProtection()
     // can't be recouped until the load is done, so only
     // report the extra cost at that point.
     JSC::JSGlobalData* globalData = scriptExecutionContext()->globalData();
-    if (hasCachedDOMObjectWrapper(globalData, this))
+    if (hasCachedDOMObjectWrapper(globalData, this)) {
+        JSC::JSLock lock(JSC::SilenceAssertionsOnly);
         globalData->heap.reportExtraMemoryCost(m_responseBuilder.length() * 2);
+    }
 #endif
 
     unsetPendingActivity(this);

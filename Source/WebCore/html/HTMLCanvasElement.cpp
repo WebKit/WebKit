@@ -48,6 +48,10 @@
 #include <math.h>
 #include <stdio.h>
 
+#if USE(JSC)
+#include <runtime/JSLock.h>
+#endif
+
 #if ENABLE(WEBGL)    
 #include "WebGLContextAttributes.h"
 #include "WebGLRenderingContext.h"
@@ -408,8 +412,10 @@ void HTMLCanvasElement::createImageBuffer() const
     m_imageBuffer->context()->setImageInterpolationQuality(DefaultInterpolationQuality);
 
 #if USE(JSC)
-    if (hasCachedDOMNodeWrapperUnchecked(document(), const_cast<HTMLCanvasElement*>(this)))
+    if (hasCachedDOMNodeWrapperUnchecked(document(), const_cast<HTMLCanvasElement*>(this))) {
+        JSC::JSLock lock(JSC::SilenceAssertionsOnly);
         scriptExecutionContext()->globalData()->heap.reportExtraMemoryCost(m_imageBuffer->dataSize());
+    }
 #endif
 }
 

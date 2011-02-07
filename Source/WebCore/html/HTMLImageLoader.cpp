@@ -33,6 +33,7 @@
 
 #if USE(JSC)
 #include "JSDOMWindowBase.h"
+#include <runtime/JSLock.h>
 #endif
 
 namespace WebCore {
@@ -76,6 +77,7 @@ void HTMLImageLoader::notifyFinished(CachedResource*)
 #if USE(JSC)
     if (!loadError) {
         if (!elem->inDocument()) {
+            JSC::JSLock lock(JSC::SilenceAssertionsOnly);
             JSC::JSGlobalData* globalData = JSDOMWindowBase::commonJSGlobalData();
             globalData->heap.reportExtraMemoryCost(cachedImage->encodedSize());
         }
