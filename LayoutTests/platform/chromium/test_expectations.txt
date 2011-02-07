@@ -3247,3 +3247,10 @@ BUG_SENORBLANCO GPU WIN LINUX : fast/canvas/canvas-transform-skewed.html = IMAGE
 
 BUGWK53469 GPU MAC : compositing/scroll-painted-composited-content.html = CRASH PASS
 BUGWK53825 LINUX : media/video-frame-accurate-seek.html = IMAGE
+
+// temporary for rebaseline after r77781
+BUG_LOISLO : fast/html/keygen.html = IMAGE+TEXT
+BUG_LOISLO : fast/invalid/residual-style.html = TEXT
+BUG_LOIDLO : html5lib/runner.html = TEXT
+
+

@@ -1,3 +1,11 @@
+2011-02-07  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed.
+
+        Chromium: three tests temporary disabled for rebaseline after r77781
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-04  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
