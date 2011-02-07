@@ -4562,21 +4562,36 @@ void WebGLRenderingContext::initVertexAttrib0()
     m_vertexAttrib0BufferValue[1] = 0.0f;
     m_vertexAttrib0BufferValue[2] = 0.0f;
     m_vertexAttrib0BufferValue[3] = 1.0f;
+    m_forceAttrib0BufferRefill = false;
+    m_vertexAttrib0UsedBefore = false;
 }
 
 bool WebGLRenderingContext::simulateVertexAttrib0(GC3Dsizei numVertex)
 {
     const VertexAttribState& state = m_vertexAttribState[0];
-    if (state.enabled || !m_currentProgram || !m_currentProgram->object()
-        || !m_currentProgram->isUsingVertexAttrib0())
+    if (!m_currentProgram)
         return false;
+    bool usingVertexAttrib0 = m_currentProgram->isUsingVertexAttrib0();
+    if (usingVertexAttrib0)
+        m_vertexAttrib0UsedBefore = true;
+    if (state.enabled && usingVertexAttrib0)
+        return false;
+    if (!usingVertexAttrib0 && !m_vertexAttrib0UsedBefore)
+        return false;
+    m_vertexAttrib0UsedBefore = true;
     m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_vertexAttrib0Buffer->object());
     GC3Dsizeiptr bufferDataSize = (numVertex + 1) * 4 * sizeof(GC3Dfloat);
-    if (bufferDataSize > m_vertexAttrib0BufferSize
-        || state.value[0] != m_vertexAttrib0BufferValue[0]
-        || state.value[1] != m_vertexAttrib0BufferValue[1]
-        || state.value[2] != m_vertexAttrib0BufferValue[2]
-        || state.value[3] != m_vertexAttrib0BufferValue[3]) {
+    if (bufferDataSize > m_vertexAttrib0BufferSize) {
+        m_context->bufferData(GraphicsContext3D::ARRAY_BUFFER, bufferDataSize, 0, GraphicsContext3D::DYNAMIC_DRAW);
+        m_vertexAttrib0BufferSize = bufferDataSize;
+        m_forceAttrib0BufferRefill = true;
+    }
+    if (usingVertexAttrib0
+        && (m_forceAttrib0BufferRefill
+            || state.value[0] != m_vertexAttrib0BufferValue[0]
+            || state.value[1] != m_vertexAttrib0BufferValue[1]
+            || state.value[2] != m_vertexAttrib0BufferValue[2]
+            || state.value[3] != m_vertexAttrib0BufferValue[3])) {
         OwnArrayPtr<GC3Dfloat> bufferData = adoptArrayPtr(new GC3Dfloat[(numVertex + 1) * 4]);
         for (GC3Dsizei ii = 0; ii < numVertex + 1; ++ii) {
             bufferData[ii * 4] = state.value[0];
@@ -4584,12 +4599,12 @@ bool WebGLRenderingContext::simulateVertexAttrib0(GC3Dsizei numVertex)
             bufferData[ii * 4 + 2] = state.value[2];
             bufferData[ii * 4 + 3] = state.value[3];
         }
-        m_context->bufferData(GraphicsContext3D::ARRAY_BUFFER, bufferDataSize, bufferData.get(), GraphicsContext3D::DYNAMIC_DRAW);
-        m_vertexAttrib0BufferSize = bufferDataSize;
         m_vertexAttrib0BufferValue[0] = state.value[0];
         m_vertexAttrib0BufferValue[1] = state.value[1];
         m_vertexAttrib0BufferValue[2] = state.value[2];
         m_vertexAttrib0BufferValue[3] = state.value[3];
+        m_forceAttrib0BufferRefill = false;
+        m_context->bufferSubData(GraphicsContext3D::ARRAY_BUFFER, 0, bufferDataSize, bufferData.get());
     }
     m_context->vertexAttribPointer(0, 4, GraphicsContext3D::FLOAT, 0, 0, 0);
     return true;

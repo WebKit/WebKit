@@ -399,6 +399,8 @@ public:
     RefPtr<WebGLBuffer> m_vertexAttrib0Buffer;
     long m_vertexAttrib0BufferSize;
     GC3Dfloat m_vertexAttrib0BufferValue[4];
+    bool m_forceAttrib0BufferRefill;
+    bool m_vertexAttrib0UsedBefore;
 
     RefPtr<WebGLProgram> m_currentProgram;
     RefPtr<WebGLFramebuffer> m_framebufferBinding;
