@@ -3419,7 +3419,11 @@ unsigned Editor::countMatchesForText(const String& target, Range* range, FindOpt
             if (!visibleRect.isEmpty()) {
                 GraphicsContext context((PlatformGraphicsContext*)0);
                 context.setPaintingDisabled(true);
+
+                PaintBehavior oldBehavior = m_frame->view()->paintBehavior();
+                m_frame->view()->setPaintBehavior(oldBehavior | PaintBehaviorFlattenCompositingLayers);
                 m_frame->view()->paintContents(&context, visibleRect);
+                m_frame->view()->setPaintBehavior(oldBehavior);
             }
         }
     }

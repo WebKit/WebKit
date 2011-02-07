@@ -1,3 +1,19 @@
+2011-02-07  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Missing text match markers with accelerated content
+        https://bugs.webkit.org/show_bug.cgi?id=53934
+
+        When doing the fake paint that recomputes the text match rects, we need to
+        flatten compositing layers, otherwise the rects won't be updated until the next paint call.
+
+        (This worked by accident in WebKit1 because Safari calls -[NSWindow displayIfNeeded] on the containing
+        window before asking for the text match rects).
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::countMatchesForText):
+
 2011-02-07  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Andreas Kling.
