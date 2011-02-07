@@ -1,3 +1,14 @@
+2011-02-07  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed, added new results for the slider-thumb-drag-release
+        test and removed use-infinite-recursion.svg from skipped, required
+        after r77778.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/fast/repaint/slider-thumb-drag-release-expected.checksum: Added.
+        * platform/gtk/fast/repaint/slider-thumb-drag-release-expected.png: Added.
+        * platform/gtk/fast/repaint/slider-thumb-drag-release-expected.txt: Added.
+
 2011-02-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

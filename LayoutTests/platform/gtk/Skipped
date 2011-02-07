@@ -2516,7 +2516,6 @@ svg/custom/use-event-handler-on-referenced-element.svg
 svg/custom/use-event-handler-on-use-element.svg
 svg/custom/use-events-crash.svg
 svg/custom/use-forward-refs.svg
-svg/custom/use-infinite-recursion.svg
 svg/custom/use-instanceRoot-modifications.svg
 svg/custom/use-modify-container-in-target.svg
 svg/custom/use-modify-target-container.svg
