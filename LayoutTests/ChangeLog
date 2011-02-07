@@ -1,3 +1,11 @@
+2011-02-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Unskip a passing accessibility test and organize the rest of the tests missing
+        results as failing.
+
+        * platform/gtk/Skipped: Unskip passing test and organize remaining failures.
+        * platform/gtk/accessibility/aria-describedby-on-input-expected.txt: Added.
+
 2011-02-03  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
