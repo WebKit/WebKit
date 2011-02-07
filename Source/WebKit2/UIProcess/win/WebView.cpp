@@ -27,10 +27,12 @@
 #include "WebView.h"
 
 #include "ChunkedUpdateDrawingAreaProxy.h"
+#include "DrawingAreaProxyImpl.h"
 #include "FindIndicator.h"
 #include "LayerBackedDrawingAreaProxy.h"
 #include "Logging.h"
 #include "NativeWebKeyboardEvent.h"
+#include "Region.h"
 #include "RunLoop.h"
 #include "WKAPICast.h"
 #include "WebContext.h"
@@ -79,6 +81,13 @@ static const int kMaxToolTipWidth = 250;
 enum {
     UpdateActiveStateTimer = 1,
 };
+
+static bool useNewDrawingArea()
+{
+    // FIXME: Turn this on by default <http://webkit.org/b/53877>.
+    static bool useNewDrawingArea = getenv("WEBKIT2_USE_NEW_DRAWING_AREA");
+    return useNewDrawingArea;
+}
 
 LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -395,18 +404,39 @@ LRESULT WebView::onKeyEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
     return 0;
 }
 
+static void drawPageBackground(HDC dc, const RECT& rect)
+{
+    // Mac checks WebPageProxy::drawsBackground and
+    // WebPageProxy::drawsTransparentBackground here, but those are always false on
+    // Windows currently (see <http://webkit.org/b/52009>).
+    ::FillRect(dc, &rect, reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1));
+}
+
 LRESULT WebView::onPaintEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled)
 {
     PAINTSTRUCT paintStruct;
     HDC hdc = ::BeginPaint(m_window, &paintStruct);
 
-    if (m_page->isValid() && m_page->drawingArea() && m_page->drawingArea()->paint(IntRect(paintStruct.rcPaint), hdc))
+    if (useNewDrawingArea()) {
+        if (DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(m_page->drawingArea())) {
+            // FIXME: We should port WebKit1's rect coalescing logic here.
+            Region unpaintedRegion;
+            drawingArea->paint(hdc, paintStruct.rcPaint, unpaintedRegion);
+
+            Vector<IntRect> unpaintedRects = unpaintedRegion.rects();
+            for (size_t i = 0; i < unpaintedRects.size(); ++i) {
+                RECT winRect = unpaintedRects[i];
+                drawPageBackground(hdc, unpaintedRects[i]);
+            }
+        } else
+            drawPageBackground(hdc, paintStruct.rcPaint);
+
         m_page->didDraw();
-    else {
-        // Mac checks WebPageProxy::drawsBackground and
-        // WebPageProxy::drawsTransparentBackground here, but those are always false on Windows
-        // currently (see <http://webkit.org/b/52009>).
-        ::FillRect(hdc, &paintStruct.rcPaint, reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1));
+    } else {
+        if (m_page->isValid() && m_page->drawingArea() && m_page->drawingArea()->paint(IntRect(paintStruct.rcPaint), hdc))
+            m_page->didDraw();
+        else
+            drawPageBackground(hdc, paintStruct.rcPaint);
     }
 
     ::EndPaint(m_window, &paintStruct);
@@ -591,6 +621,9 @@ void WebView::close()
 
 PassOwnPtr<DrawingAreaProxy> WebView::createDrawingAreaProxy()
 {
+    if (useNewDrawingArea())
+        return DrawingAreaProxyImpl::create(m_page.get());
+
     return ChunkedUpdateDrawingAreaProxy::create(this, m_page.get());
 }
 
@@ -1096,32 +1129,41 @@ void WebView::setIsInWindow(bool isInWindow)
 
 void WebView::enterAcceleratedCompositingMode(const LayerTreeContext&)
 {
+    ASSERT(useNewDrawingArea());
     // FIXME: Implement.
+    ASSERT_NOT_REACHED();
 }
 
 void WebView::exitAcceleratedCompositingMode()
 {
+    ASSERT(useNewDrawingArea());
     // FIXME: Implement.
+    ASSERT_NOT_REACHED();
 }
 
 void WebView::pageDidEnterAcceleratedCompositing()
 {
+    ASSERT(!useNewDrawingArea());
     switchToDrawingAreaTypeIfNecessary(DrawingAreaInfo::LayerBacked);
 }
 
 void WebView::pageDidLeaveAcceleratedCompositing()
 {
+    ASSERT(!useNewDrawingArea());
     switchToDrawingAreaTypeIfNecessary(DrawingAreaInfo::ChunkedUpdate);
 }
 
 void WebView::switchToDrawingAreaTypeIfNecessary(DrawingAreaInfo::Type type)
 {
+    ASSERT(!useNewDrawingArea());
+
     DrawingAreaInfo::Type existingDrawingAreaType = m_page->drawingArea() ? m_page->drawingArea()->info().type : DrawingAreaInfo::None;
     if (existingDrawingAreaType == type)
         return;
 
     OwnPtr<DrawingAreaProxy> newDrawingArea;
     switch (type) {
+    case DrawingAreaInfo::Impl:
     case DrawingAreaInfo::None:
         break;
     case DrawingAreaInfo::ChunkedUpdate:

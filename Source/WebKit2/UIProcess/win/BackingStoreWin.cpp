@@ -26,25 +26,84 @@
 #include "config.h"
 #include "BackingStore.h"
 
-#include "NotImplemented.h"
+#include "ShareableBitmap.h"
+#include "UpdateInfo.h"
+#include <WebCore/BitmapInfo.h>
+#include <WebCore/GraphicsContext.h>
+#include <WebCore/IntRect.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-void BackingStore::paint(HDC, const IntRect&)
+class BitmapDC {
+    WTF_MAKE_NONCOPYABLE(BitmapDC);
+
+public:
+    BitmapDC(HBITMAP, HDC destinationDC);
+    ~BitmapDC();
+
+    operator HDC() const { return m_dc.get(); }
+
+private:
+    OwnPtr<HDC> m_dc;
+    HBITMAP m_originalBitmap;
+};
+
+BitmapDC::BitmapDC(HBITMAP bitmap, HDC destinationDC)
+    : m_dc(adoptPtr(::CreateCompatibleDC(destinationDC)))
+    , m_originalBitmap(static_cast<HBITMAP>(::SelectObject(m_dc.get(), bitmap)))
 {
-    notImplemented();
 }
 
-void BackingStore::incorporateUpdate(ShareableBitmap*, const UpdateInfo&)
+BitmapDC::~BitmapDC()
 {
-    notImplemented();
+    ::SelectObject(m_dc.get(), m_originalBitmap);
 }
 
-void BackingStore::scroll(const IntRect&, const IntSize&)
+void BackingStore::paint(HDC dc, const IntRect& rect)
 {
-    notImplemented();
+    ASSERT(m_bitmap);
+    ::BitBlt(dc, rect.x(), rect.y(), rect.width(), rect.height(), BitmapDC(m_bitmap.get(), dc), rect.x(), rect.y(), SRCCOPY);
+}
+
+static PassOwnPtr<HBITMAP> createBitmap(const IntSize& size)
+{
+    // FIXME: Maybe it would be better for performance to create a device-dependent bitmap here?
+    BitmapInfo info = BitmapInfo::createBottomUp(size);
+    void* bits;
+    return adoptPtr(::CreateDIBSection(0, &info, DIB_RGB_COLORS, &bits, 0, 0));
+}
+
+void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& updateInfo)
+{
+    if (!m_bitmap)
+        m_bitmap = createBitmap(m_size);
+
+    scroll(updateInfo.scrollRect, updateInfo.scrollOffset);
+
+    IntPoint updateRectLocation = updateInfo.updateRectBounds.location();
+
+    BitmapDC dc(m_bitmap.get(), 0);
+    GraphicsContext graphicsContext(dc);
+
+    // Paint all update rects.
+    for (size_t i = 0; i < updateInfo.updateRects.size(); ++i) {
+        IntRect updateRect = updateInfo.updateRects[i];
+        IntRect srcRect = updateRect;
+        srcRect.move(-updateRectLocation.x(), -updateRectLocation.y());
+
+        bitmap->paint(graphicsContext, updateRect.location(), srcRect);
+    }
+}
+
+void BackingStore::scroll(const IntRect& scrollRect, const IntSize& scrollOffset)
+{
+    if (scrollOffset.isZero())
+        return;
+
+    RECT winScrollRect = scrollRect;
+    ::ScrollDC(BitmapDC(m_bitmap.get(), 0), scrollOffset.width(), scrollOffset.height(), &winScrollRect, &winScrollRect, 0, 0);
 }
 
 } // namespace WebKit

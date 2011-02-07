@@ -32,6 +32,8 @@
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
+#elif PLATFORM(WIN)
+#include <wtf/OwnPtr.h>
 #endif
 
 namespace WebCore {
@@ -76,6 +78,8 @@ private:
 
     RetainPtr<CGLayerRef> m_cgLayer;
     RetainPtr<CGContextRef> m_bitmapContext;
+#elif PLATFORM(WIN)
+    OwnPtr<HBITMAP> m_bitmap;
 #endif
 };
 

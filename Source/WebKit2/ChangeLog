@@ -1,3 +1,49 @@
+2011-02-06  Adam Roben  <aroben@apple.com>
+
+        Make it possible to use DrawingAreaProxyImpl on Windows
+
+        It can be optionally turned on by setting the WEBKIT2_USE_NEW_DRAWING_AREA environment
+        variable. Turning it on by default is covered by <http://webkit.org/b/53805>.
+
+        Fixes <http://webkit.org/b/53879>.
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/BackingStore.h: Add an m_bitmap member on Windows.
+
+        * UIProcess/win/BackingStoreWin.cpp:
+        (WebKit::BitmapDC::operator HDC):
+        (WebKit::BitmapDC::BitmapDC):
+        (WebKit::BitmapDC::~BitmapDC):
+        Added this helper class, which uses RAII to select a bitmap into a new memory DC.
+        (WebKit::BackingStore::paint): Wrap our bitmap in a BitmapDC and use ::BitBlt to copy the
+        specified rect into the destination DC.
+        (WebKit::createBitmap): New helper function, just creates a DIB section with the specified
+        size.
+        (WebKit::BackingStore::incorporateUpdate): Ported from BackingStoreMac.mm. It seems like
+        this code could be shared at some point.
+        (WebKit::BackingStore::scroll): Wrap our bitmap in a BitmapDC and use ::ScrollDC to scroll
+        the specified rect.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::useNewDrawingArea): Added. Returns true if the WEBKIT2_USE_NEW_DRAWING_AREA
+        environment variable is set.
+        (WebKit::drawPageBackground): New helper function. Code came from onPaintEvent.
+        (WebKit::WebView::onPaintEvent): Ported from -[WKView drawRect:].
+        (WebKit::WebView::createDrawingAreaProxy): Create a DrawingAreaProxyImpl if we're using the
+        new drawing area.
+
+        (WebKit::WebView::enterAcceleratedCompositingMode):
+        (WebKit::WebView::exitAcceleratedCompositingMode):
+        (WebKit::WebView::pageDidEnterAcceleratedCompositing):
+        (WebKit::WebView::pageDidLeaveAcceleratedCompositing):
+        Added some assertions to make sure these are only called when expected. We don't expect
+        enter/exitAcceleratedCompositingMode to be called at all right now, because accelerated
+        compositing is turned off in WebKit2 on Windows.
+
+        (WebKit::WebView::switchToDrawingAreaTypeIfNecessary): Ditto, and added a case for the
+        DrawingAreaInfo::Impl constant.
+
 2011-02-07  Adam Roben  <aroben@apple.com>
 
         Start compiling DrawingArea[Proxy]Impl and dependencies on Windows
