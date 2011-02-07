@@ -173,7 +173,7 @@ public:
 
     bool hasAuthenticationChallenge() const;
     void clearAuthentication();
-    void cancel();
+    virtual void cancel();
 
     // The client may be 0, in which case no callbacks will be made.
     ResourceHandleClient* client() const;

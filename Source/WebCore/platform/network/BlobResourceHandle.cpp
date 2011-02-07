@@ -138,11 +138,6 @@ void BlobResourceHandle::loadResourceSynchronously(PassRefPtr<BlobStorageData> b
     handle->start();
 }
 
-static void delayedStart(void* context)
-{
-    static_cast<BlobResourceHandle*>(context)->start();
-}
-
 BlobResourceHandle::BlobResourceHandle(PassRefPtr<BlobStorageData> blobData, const ResourceRequest& request, ResourceHandleClient* client, bool async)
     : ResourceHandle(request, client, false, false)
     , m_blobData(blobData)
@@ -158,11 +153,9 @@ BlobResourceHandle::BlobResourceHandle(PassRefPtr<BlobStorageData> blobData, con
     , m_readItemCount(0)
     , m_fileOpened(false)
 {    
-    if (m_async) {
-        // We need to take a ref.
+    if (m_async)
         m_asyncStream = client->createAsyncFileStream(this);
-        callOnMainThread(delayedStart, this);
-    } else
+    else
         m_stream = FileStream::create();
 }
 
@@ -187,9 +180,31 @@ void BlobResourceHandle::cancel()
     }
 
     m_aborted = true;
+
+    ResourceHandle::cancel();
+}
+
+void delayedStartBlobResourceHandle(void* context)
+{
+    RefPtr<BlobResourceHandle> handle = adoptRef(static_cast<BlobResourceHandle*>(context));
+    handle->doStart();
 }
 
 void BlobResourceHandle::start()
+{
+    if (m_async) {
+        // Keep BlobResourceHandle alive until delayedStartBlobResourceHandle runs.
+        ref();
+
+        // Finish this async call quickly and return.
+        callOnMainThread(delayedStartBlobResourceHandle, this);
+        return;
+    }
+
+    doStart();
+}
+
+void BlobResourceHandle::doStart()
 {
     // Do not continue if the request is aborted or an error occurs.
     if (m_aborted || m_errorCode)
@@ -578,10 +593,23 @@ void BlobResourceHandle::notifyFail(int errorCode)
         client()->didFail(this, ResourceError(String(), errorCode, firstRequest().url(), String()));
 }
 
+static void doNotifyFinish(void* context)
+{
+    BlobResourceHandle* handle = static_cast<BlobResourceHandle*>(context);
+    if (handle->client())
+        handle->client()->didFinishLoading(handle, 0);
+}
+
 void BlobResourceHandle::notifyFinish()
 {
-    if (client())
-        client()->didFinishLoading(this, 0);
+    if (m_async) {
+        // Schedule to notify the client from a standalone function because the client might dispose the handle immediately from the callback function
+        // while we still have BlobResourceHandle calls in the stack.
+        callOnMainThread(doNotifyFinish, this);
+        return;
+    }
+
+    doNotifyFinish(this);
 }
 
 } // namespace WebCore

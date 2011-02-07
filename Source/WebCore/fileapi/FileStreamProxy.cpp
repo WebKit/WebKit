@@ -83,6 +83,8 @@ static void didStart(ScriptExecutionContext*, FileStreamProxy* proxy)
 
 void FileStreamProxy::startOnFileThread()
 {
+    if (!client())
+        return;
     m_stream->start();
     m_context->postTask(createCallbackTask(&didStart, this));
 }

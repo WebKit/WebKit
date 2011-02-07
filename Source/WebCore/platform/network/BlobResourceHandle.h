@@ -69,9 +69,12 @@ public:
     int readSync(char*, int);
 
 private:
+    friend void delayedStartBlobResourceHandle(void*);
+
     BlobResourceHandle(PassRefPtr<BlobStorageData>, const ResourceRequest&, ResourceHandleClient*, bool async);
     virtual ~BlobResourceHandle();
 
+    void doStart();
     void getSizeForNext();
     void seek();
     void consumeData(const char* data, int bytesRead);

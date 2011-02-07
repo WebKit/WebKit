@@ -1,3 +1,33 @@
+2011-02-07  Jian Li  <jianli@chromium.org>
+
+        Reviewed by David Levin.
+
+        Intermittent crash in fast/files/read-blob-async.html on the GTK+ debug
+        bots
+        https://bugs.webkit.org/show_bug.cgi?id=53104
+
+        Covered by the existing tests.
+
+        * fileapi/FileStreamProxy.cpp:
+        (WebCore::FileStreamProxy::startOnFileThread):
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::createResourceHandle):
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::BlobResourceHandle::BlobResourceHandle):
+        (WebCore::BlobResourceHandle::cancel):
+        (WebCore::delayedStartBlobResourceHandle):
+        (WebCore::BlobResourceHandle::start): Keep BlobResourceHandle alive
+        till the delay function is called.
+        (WebCore::BlobResourceHandle::doStart):
+        (WebCore::doNotifyFinish):
+        (WebCore::BlobResourceHandle::notifyFinish): Notify the client via the
+        standalone function to prevent the handle from being disposed immediately
+        by the client which will make the calls in the stack that're still bound
+        to the handle suffer.
+        * platform/network/BlobResourceHandle.h:
+        * platform/network/ResourceHandle.h: Change cancel() to virtual so that
+        BlobResourceHandle::cancel will be called when we abort a FileReader.
+
 2011-02-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r77845.

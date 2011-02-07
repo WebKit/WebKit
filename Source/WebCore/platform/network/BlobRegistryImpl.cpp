@@ -68,7 +68,9 @@ PassRefPtr<ResourceHandle> BlobRegistryImpl::createResourceHandle(const Resource
     if (!shouldLoadResource(request))
         return 0;
 
-    return BlobResourceHandle::create(m_blobs.get(request.url().string()), request, client);
+    RefPtr<BlobResourceHandle> handle = BlobResourceHandle::create(m_blobs.get(request.url().string()), request, client);
+    handle->start();
+    return handle.release();
 }
 
 bool BlobRegistryImpl::loadResourceSynchronously(const ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<char>& data)
