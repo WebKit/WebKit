@@ -1,3 +1,15 @@
+2011-02-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Daniel Bates.
+
+        [GTK] fast/history/history-subframe-with-name.html fails with GTK DRT
+        https://bugs.webkit.org/show_bug.cgi?id=44784
+
+        Call FrameLoader::loadURLIntoChildFrame on the parent frame's loader, not the child's. 
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::createFrame): Fix the call to FrameLoader::loadURLIntoChildFrame.
+
 2011-02-07  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Xan Lopez.
