@@ -1,3 +1,13 @@
+2011-02-06  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Martin Robinson.
+
+        [WINCE] FrameLoaderClient calls loadURLInChildFrame on the child's frame loader
+        https://bugs.webkit.org/show_bug.cgi?id=53896
+
+        * WebView.cpp:
+        (WebView::createFrame): Use coreFrame instead of childFrame.
+
 2011-02-03  Adam Langley  <agl@chromium.org>
 
         Reviewed by Adam Barth.

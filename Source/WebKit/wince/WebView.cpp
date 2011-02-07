@@ -169,7 +169,7 @@ PassRefPtr<Frame> WebView::createFrame(const KURL& url, const String& name, HTML
     if (!childFrame->page())
         return 0;
 
-    childFrame->loader()->loadURLIntoChildFrame(url, referrer, childFrame.get());
+    coreFrame->loader()->loadURLIntoChildFrame(url, referrer, childFrame.get());
 
     // The frame's onload handler may have removed it from the document.
     if (!childFrame->tree()->parent())
