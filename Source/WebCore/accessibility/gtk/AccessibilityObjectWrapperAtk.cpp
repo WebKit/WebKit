@@ -1209,8 +1209,10 @@ static gint webkit_accessible_text_get_caret_offset(AtkText* text)
     // coreObject is the unignored object whose offset the caller is requesting.
     // focusedObject is the object with the caret. It is likely ignored -- unless it's a link.
     AccessibilityObject* coreObject = core(text);
-    Node* focusedNode = coreObject->selection().end().node();
+    if (!coreObject->isAccessibilityRenderObject())
+        return 0;
 
+    Node* focusedNode = coreObject->selection().end().node();
     if (!focusedNode)
         return 0;
 
@@ -1221,6 +1223,14 @@ static gint webkit_accessible_text_get_caret_offset(AtkText* text)
     // Don't ignore links if the offset is being requested for a link.
     if (!objectAndOffsetUnignored(focusedObject, offset, !coreObject->isLink()))
         return 0;
+
+    RenderObject* renderer = toAccessibilityRenderObject(coreObject)->renderer();
+    if (renderer && renderer->isListItem()) {
+        String markerText = toRenderListItem(renderer)->markerTextWithSuffix();
+
+        // We need to adjust the offset for the list item marker.
+        offset += markerText.length();
+    }
 
     // TODO: Verify this for RTL text.
     return offset;
@@ -1706,7 +1716,7 @@ static gboolean webkit_accessible_text_set_caret_offset(AtkText* text, gint offs
     RenderObject* renderer = toAccessibilityRenderObject(coreObject)->renderer();
     if (renderer && renderer->isListItem()) {
         String markerText = toRenderListItem(renderer)->markerTextWithSuffix();
-        int markerLength = g_utf8_strlen(markerText.utf8().data(), -1);
+        int markerLength = markerText.length();
         if (offset < markerLength)
             return FALSE;
 
