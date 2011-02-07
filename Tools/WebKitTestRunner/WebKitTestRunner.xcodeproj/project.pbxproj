@@ -483,9 +483,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC251A1811D16795002EBC01 /* WebKitTestRunner.xcconfig */;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-				);
 			};
 			name = Debug;
 		};
@@ -493,9 +490,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC251A1811D16795002EBC01 /* WebKitTestRunner.xcconfig */;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-				);
 			};
 			name = Release;
 		};
