@@ -1,3 +1,12 @@
+2011-02-07  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Remove an unnecessary extra computeLogicalWidth() from line layout.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine):
+
 2011-02-07  Lucas Forschler  <lforschler@apple.com>
 
         Reviewed by Geoffrey Garen.
