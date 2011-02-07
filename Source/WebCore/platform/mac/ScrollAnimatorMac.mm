@@ -585,6 +585,8 @@ void ScrollAnimatorMac::didAddVerticalScrollbar(Scrollbar* scrollbar)
     WKScrollbarPainterRef painter = static_cast<WebCore::ScrollbarThemeMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
     wkScrollbarPainterSetDelegate(painter, m_scrollbarPainterDelegate.get());
     wkSetPainterForPainterController(m_scrollbarPainterController.get(), painter, false);
+#else
+    UNUSED_PARAM(scrollbar);
 #endif
 }
 
@@ -594,6 +596,8 @@ void ScrollAnimatorMac::willRemoveVerticalScrollbar(Scrollbar* scrollbar)
     WKScrollbarPainterRef painter = static_cast<WebCore::ScrollbarThemeMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
     wkScrollbarPainterSetDelegate(painter, nil);
     wkSetPainterForPainterController(m_scrollbarPainterController.get(), nil, false);
+#else
+    UNUSED_PARAM(scrollbar);
 #endif
 }
 
@@ -603,6 +607,8 @@ void ScrollAnimatorMac::didAddHorizontalScrollbar(Scrollbar* scrollbar)
     WKScrollbarPainterRef painter = static_cast<WebCore::ScrollbarThemeMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
     wkScrollbarPainterSetDelegate(painter, m_scrollbarPainterDelegate.get());
     wkSetPainterForPainterController(m_scrollbarPainterController.get(), painter, true);
+#else
+    UNUSED_PARAM(scrollbar);
 #endif
 }
 
@@ -612,6 +618,8 @@ void ScrollAnimatorMac::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
     WKScrollbarPainterRef painter = static_cast<WebCore::ScrollbarThemeMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
     wkScrollbarPainterSetDelegate(painter, nil);
     wkSetPainterForPainterController(m_scrollbarPainterController.get(), nil, true);
+#else
+    UNUSED_PARAM(scrollbar);
 #endif
 }
 

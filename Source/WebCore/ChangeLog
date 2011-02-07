@@ -1,5 +1,15 @@
 2011-02-07  Sam Weinig  <sam@webkit.org>
 
+        Fix build.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::didAddVerticalScrollbar):
+        (WebCore::ScrollAnimatorMac::willRemoveVerticalScrollbar):
+        (WebCore::ScrollAnimatorMac::didAddHorizontalScrollbar):
+        (WebCore::ScrollAnimatorMac::willRemoveHorizontalScrollbar):
+
+2011-02-07  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Beth Dakin.
 
         Add mechanism to inform the ScrollAnimator when Scrollbars are added 
