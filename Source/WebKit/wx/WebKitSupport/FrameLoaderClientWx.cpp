@@ -850,7 +850,7 @@ PassRefPtr<Frame> FrameLoaderClientWx::createFrame(const KURL& url, const String
     if (!childFrame->page())
         return 0;
 
-    childFrame->loader()->loadURLIntoChildFrame(url, referrer, childFrame.get());
+    m_frame->loader()->loadURLIntoChildFrame(url, referrer, childFrame.get());
     
     // The frame's onload handler may have removed it from the document.
     if (!childFrame->tree()->parent())
