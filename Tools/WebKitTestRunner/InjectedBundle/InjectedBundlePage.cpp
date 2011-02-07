@@ -29,6 +29,7 @@
 #include "StringFunctions.h"
 #include <cmath>
 #include <JavaScriptCore/JSRetainPtr.h>
+#include <WebCore/KURL.h>
 #include <WebKit2/WKArray.h>
 #include <WebKit2/WKBundle.h>
 #include <WebKit2/WKBundleBackForwardList.h>
@@ -36,6 +37,7 @@
 #include <WebKit2/WKBundleFrame.h>
 #include <WebKit2/WKBundleFramePrivate.h>
 #include <WebKit2/WKBundlePagePrivate.h>
+#include <WebKit2/WKURLRequest.h>
 
 using namespace std;
 
@@ -578,6 +580,19 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef, WKB
 {
     if (InjectedBundle::shared().isTestRunning() && InjectedBundle::shared().layoutTestController()->willSendRequestReturnsNull())
         return 0;
+
+    string urlString = toSTD(adoptWK(WKURLCopyString(adoptWK(WKURLRequestCopyURL(request)).get())));
+    WebCore::KURL url(WebCore::ParsedURLString, urlString.c_str());
+
+    if (!url.host().isEmpty()
+        && (equalIgnoringCase(url.protocol(), "http") || (equalIgnoringCase(url.protocol(), "https")))
+        && (url.host() != "127.0.0.1")
+        && (url.host() != "255.255.255.255") // used in some tests that expect to get back an error
+        && (!equalIgnoringCase(url.host(), "localhost"))) {
+        InjectedBundle::shared().os() << "Blocked access to external URL " << urlString << "\n";
+        return 0;
+    }
+
 
     return request;
 }

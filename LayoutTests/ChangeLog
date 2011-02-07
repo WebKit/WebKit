@@ -1,3 +1,13 @@
+2011-02-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        WebKitTestRunner does not block remote resources or complain about them
+        https://bugs.webkit.org/show_bug.cgi?id=42139
+        <rdar://problem/8183942>
+
+        * platform/mac-wk2/Skipped: Unskip formerly skipped tests.
+
 2011-02-06  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, unskip the html5lib test again which fails for another reason. (See Bug 53030)

@@ -45,10 +45,6 @@
 accessibility
 platform/mac/accessibility
 
-# WebKitTestRunner does not block remote resources or complain about them
-# <https://bugs.webkit.org/show_bug.cgi?id=42139>
-fast/loader/null-request-after-willSendRequest.html
-
 # Some compositing tests flakey
 # <https://bugs.webkit.org/show_bug.cgi?id=48354>
 compositing/iframes/iframe-size-from-zero.html
@@ -219,7 +215,6 @@ fast/blockflow/vertical-lr-replaced-selection.html
 fast/blockflow/vertical-rl-replaced-selection.html
 fast/css-generated-content/drag-state.html
 fast/css-generated-content/hover-style-change.html
-fast/css-generated-content/malformed-url.html
 fast/css-generated-content/positioned-background-hit-test-crash.html
 fast/css-generated-content/spellingToolTip-assert.html
 fast/css/affected-by-hover-after-style-change.html
