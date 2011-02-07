@@ -31,6 +31,7 @@
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/Page.h>
+#include <WebCore/ScrollbarTheme.h>
 
 using namespace WebCore;
 
@@ -56,12 +57,14 @@ IntRect PageOverlay::bounds() const
     FrameView* frameView = webPage()->corePage()->mainFrame()->view();
 
     int width = frameView->width();
-    if (frameView->verticalScrollbar())
-        width -= frameView->verticalScrollbar()->width();
     int height = frameView->height();
-    if (frameView->horizontalScrollbar())
-        height -= frameView->horizontalScrollbar()->height();
-    
+
+    if (!ScrollbarTheme::nativeTheme()->usesOverlayScrollbars()) {
+        if (frameView->verticalScrollbar())
+            width -= frameView->verticalScrollbar()->width();
+        if (frameView->horizontalScrollbar())
+            height -= frameView->horizontalScrollbar()->height();
+    }    
     return IntRect(0, 0, width, height);
 }
 
