@@ -1,3 +1,14 @@
+2011-02-07  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Don't exclude overlay scrollers from the page overlay bounds
+        https://bugs.webkit.org/show_bug.cgi?id=53924
+
+        Export ScrollbarTheme::nativeTheme.
+
+        * WebCore.exp.in:
+
 2011-02-03  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
