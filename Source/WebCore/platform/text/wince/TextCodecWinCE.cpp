@@ -122,6 +122,9 @@ LanguageManager::LanguageManager()
 
 static UINT getCodePage(const char* name)
 {
+    if (!strcmp(name, "UTF-8"))
+        return CP_UTF8;
+
     // Explicitly use a "const" reference to fix the silly VS build error
     // saying "==" is not found for const_iterator and iterator
     const HashMap<String, CharsetInfo>& charsets = knownCharsets();
@@ -143,7 +146,17 @@ TextCodecWinCE::~TextCodecWinCE()
 {
 }
 
-void TextCodecWinCE::registerEncodingNames(EncodingNameRegistrar registrar)
+void TextCodecWinCE::registerBaseEncodingNames(EncodingNameRegistrar registrar)
+{
+    registrar("UTF-8", "UTF-8");
+}
+
+void TextCodecWinCE::registerBaseCodecs(TextCodecRegistrar registrar)
+{
+    registrar("UTF-8", newTextCodecWinCE, 0);
+}
+
+void TextCodecWinCE::registerExtendedEncodingNames(EncodingNameRegistrar registrar)
 {
     languageManager();
     for (CharsetSet::iterator i = supportedCharsets().begin(); i != supportedCharsets().end(); ++i) {
@@ -156,7 +169,7 @@ void TextCodecWinCE::registerEncodingNames(EncodingNameRegistrar registrar)
     }
 }
 
-void TextCodecWinCE::registerCodecs(TextCodecRegistrar registrar)
+void TextCodecWinCE::registerExtendedCodecs(TextCodecRegistrar registrar)
 {
     languageManager();
     for (CharsetSet::iterator i = supportedCharsets().begin(); i != supportedCharsets().end(); ++i) {

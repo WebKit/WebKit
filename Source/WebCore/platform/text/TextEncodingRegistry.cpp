@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,6 +50,9 @@
 #endif
 #if USE(GLIB_UNICODE)
 #include "gtk/TextCodecGtk.h"
+#endif
+#if USE(BREWMP_UNICODE)
+#include "brew/TextCodecBrew.h"
 #endif
 #if OS(WINCE) && !PLATFORM(QT)
 #include "TextCodecWinCE.h"
@@ -217,18 +220,30 @@ static void buildBaseTextCodecMaps()
     TextCodecLatin1::registerEncodingNames(addToTextEncodingNameMap);
     TextCodecLatin1::registerCodecs(addToTextCodecMap);
 
-    TextCodecUTF8::registerEncodingNames(addToTextEncodingNameMap);
-    TextCodecUTF8::registerCodecs(addToTextCodecMap);
-
     TextCodecUTF16::registerEncodingNames(addToTextEncodingNameMap);
     TextCodecUTF16::registerCodecs(addToTextCodecMap);
 
     TextCodecUserDefined::registerEncodingNames(addToTextEncodingNameMap);
     TextCodecUserDefined::registerCodecs(addToTextCodecMap);
 
+#if USE(ICU_UNICODE)
+    TextCodecICU::registerBaseEncodingNames(addToTextEncodingNameMap);
+    TextCodecICU::registerBaseCodecs(addToTextCodecMap);
+#endif
+
 #if USE(GLIB_UNICODE)
     TextCodecGtk::registerBaseEncodingNames(addToTextEncodingNameMap);
     TextCodecGtk::registerBaseCodecs(addToTextCodecMap);
+#endif
+
+#if USE(BREWMP_UNICODE)
+    TextCodecBrew::registerBaseEncodingNames(addToTextEncodingNameMap);
+    TextCodecBrew::registerBaseCodecs(addToTextCodecMap);
+#endif
+
+#if OS(WINCE) && !PLATFORM(QT)
+    TextCodecWinCE::registerBaseEncodingNames(addToTextEncodingNameMap);
+    TextCodecWinCE::registerBaseCodecs(addToTextCodecMap);
 #endif
 }
 
@@ -288,8 +303,8 @@ bool shouldShowBackslashAsCurrencySymbolIn(const char* canonicalEncodingName)
 static void extendTextCodecMaps()
 {
 #if USE(ICU_UNICODE)
-    TextCodecICU::registerEncodingNames(addToTextEncodingNameMap);
-    TextCodecICU::registerCodecs(addToTextCodecMap);
+    TextCodecICU::registerExtendedEncodingNames(addToTextEncodingNameMap);
+    TextCodecICU::registerExtendedCodecs(addToTextCodecMap);
 #endif
 
 #if USE(QT4_UNICODE)
@@ -308,8 +323,8 @@ static void extendTextCodecMaps()
 #endif
 
 #if OS(WINCE) && !PLATFORM(QT)
-    TextCodecWinCE::registerEncodingNames(addToTextEncodingNameMap);
-    TextCodecWinCE::registerCodecs(addToTextCodecMap);
+    TextCodecWinCE::registerExtendedEncodingNames(addToTextEncodingNameMap);
+    TextCodecWinCE::registerExtendedCodecs(addToTextCodecMap);
 #endif
 
     pruneBlacklistedCodecs();

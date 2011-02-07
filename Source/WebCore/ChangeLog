@@ -1,3 +1,34 @@
+2011-02-07  Darin Adler  <darin@apple.com>
+
+        Turn UTF-8 decoder off for now so we can look into failing tests
+        without leaving the tree red.
+
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::registerBaseEncodingNames): Reverting
+        earlier change so this can handle UTF-8.
+        (WebCore::TextCodecICU::registerBaseCodecs): Ditto.
+        (WebCore::TextCodecICU::registerExtendedEncodingNames): Ditto.
+        (WebCore::TextCodecICU::registerExtendedCodecs): Ditto.
+        * platform/text/TextCodecICU.h: Ditto.
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::buildBaseTextCodecMaps): Ditto.
+        (WebCore::extendTextCodecMaps): Ditto.
+        * platform/text/brew/TextCodecBrew.cpp:
+        (WebCore::TextCodecBrew::registerBaseEncodingNames): Ditto.
+        (WebCore::TextCodecBrew::registerBaseCodecs): Ditto.
+        (WebCore::TextCodecBrew::registerExtendedEncodingNames): Ditto.
+        (WebCore::TextCodecBrew::registerExtendedCodecs): Ditto.
+        * platform/text/brew/TextCodecBrew.h: Ditto.
+        * platform/text/gtk/TextCodecGtk.cpp:
+        (WebCore::TextCodecGtk::registerBaseEncodingNames): Ditto.
+        (WebCore::TextCodecGtk::registerBaseCodecs): Ditto.
+        * platform/text/wince/TextCodecWinCE.cpp:
+        (WebCore::TextCodecWinCE::registerBaseEncodingNames): Ditto.
+        (WebCore::TextCodecWinCE::registerBaseCodecs): Ditto.
+        (WebCore::TextCodecWinCE::registerExtendedEncodingNames): Ditto.
+        (WebCore::TextCodecWinCE::registerExtendedCodecs): Ditto.
+        * platform/text/wince/TextCodecWinCE.h: Ditto.
+
 2011-02-07  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Maciej Stachowiak.
@@ -9,7 +40,7 @@
 
         * WebCore.exp.in:
 
-2011-02-03  Zhenyao Mo  <zmo@google.com>
+2011-02-07  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
 
@@ -21,7 +52,7 @@
         (WebCore::WebGLRenderingContext::simulateVertexAttrib0):
         * html/canvas/WebGLRenderingContext.h:
 
-2011-02-06  Chris Fleizach  <cfleizach@apple.com>
+2011-02-07  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
 
@@ -38,7 +69,7 @@
         (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
         * html/HTMLAttributeNames.in:
 
-2011-02-06  Darin Adler  <darin@apple.com>
+2011-02-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Antti Koivisto.
 

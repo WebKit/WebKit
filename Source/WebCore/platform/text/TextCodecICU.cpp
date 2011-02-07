@@ -60,7 +60,17 @@ static PassOwnPtr<TextCodec> newTextCodecICU(const TextEncoding& encoding, const
     return new TextCodecICU(encoding);
 }
 
-void TextCodecICU::registerEncodingNames(EncodingNameRegistrar registrar)
+void TextCodecICU::registerBaseEncodingNames(EncodingNameRegistrar registrar)
+{
+    registrar("UTF-8", "UTF-8");
+}
+
+void TextCodecICU::registerBaseCodecs(TextCodecRegistrar registrar)
+{
+    registrar("UTF-8", newTextCodecICU, 0);
+}
+
+void TextCodecICU::registerExtendedEncodingNames(EncodingNameRegistrar registrar)
 {
     // We register Hebrew with logical ordering using a separate name.
     // Otherwise, this would share the same canonical name as the
@@ -179,7 +189,7 @@ void TextCodecICU::registerEncodingNames(EncodingNameRegistrar registrar)
     // and because older versions of ICU don't support ISO-8859-16 encoding at all.
 }
 
-void TextCodecICU::registerCodecs(TextCodecRegistrar registrar)
+void TextCodecICU::registerExtendedCodecs(TextCodecRegistrar registrar)
 {
     // See comment above in registerEncodingNames.
     registrar("ISO-8859-8-I", newTextCodecICU, 0);
