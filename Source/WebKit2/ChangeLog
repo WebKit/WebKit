@@ -1,3 +1,16 @@
+2011-02-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        Add WKURLRequestCopyURL API (needed for tests and also generally useful)
+        https://bugs.webkit.org/show_bug.cgi?id=53909
+
+        * Shared/API/c/WKURLRequest.cpp:
+        (WKURLRequestCopyURL):
+        * Shared/API/c/WKURLRequest.h:
+        * Shared/WebURLRequest.h:
+        (WebKit::WebURLRequest::url):
+
 2011-02-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed; speculative Qt build fix.

@@ -36,6 +36,8 @@ WK_EXPORT WKTypeID WKURLRequestGetTypeID();
 
 WK_EXPORT WKURLRequestRef WKURLRequestCreateWithWKURL(WKURLRef);
 
+WK_EXPORT WKURLRef WKURLRequestCopyURL(WKURLRequestRef);
+
 #ifdef __cplusplus
 }
 #endif

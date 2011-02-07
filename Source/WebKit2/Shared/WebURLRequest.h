@@ -59,6 +59,8 @@ public:
     PlatformRequest platformRequest() const;
     const WebCore::ResourceRequest& resourceRequest() const { return m_request; }
 
+    const String& url() const { return m_request.url(); }
+
 private:
     explicit WebURLRequest(const WebCore::ResourceRequest&);
     explicit WebURLRequest(PlatformRequest);
