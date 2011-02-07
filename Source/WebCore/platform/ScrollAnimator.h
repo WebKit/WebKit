@@ -39,6 +39,7 @@ namespace WebCore {
 class FloatPoint;
 class PlatformWheelEvent;
 class ScrollableArea;
+class Scrollbar;
 
 #if ENABLE(GESTURE_EVENTS)
 class PlatformGestureEvent;
@@ -76,6 +77,11 @@ public:
     virtual void willEndLiveResize() { }
     virtual void contentAreaDidShow() const { }
     virtual void contentAreaDidHide() const { }
+
+    virtual void didAddVerticalScrollbar(Scrollbar*) { }
+    virtual void willRemoveVerticalScrollbar(Scrollbar*) { }
+    virtual void didAddHorizontalScrollbar(Scrollbar*) { }
+    virtual void willRemoveHorizontalScrollbar(Scrollbar*) { }
 
 protected:
     ScrollAnimator(ScrollableArea*);

@@ -99,6 +99,11 @@ private:
     virtual void contentAreaDidShow() const;
     virtual void contentAreaDidHide() const;
 
+    virtual void didAddVerticalScrollbar(Scrollbar*);
+    virtual void willRemoveVerticalScrollbar(Scrollbar*);
+    virtual void didAddHorizontalScrollbar(Scrollbar*);
+    virtual void willRemoveHorizontalScrollbar(Scrollbar*);
+
 #if ENABLE(RUBBER_BANDING)
     bool allowsVerticalStretching() const;
     bool allowsHorizontalStretching() const;

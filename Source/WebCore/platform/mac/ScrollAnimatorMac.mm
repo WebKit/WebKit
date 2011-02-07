@@ -579,6 +579,43 @@ void ScrollAnimatorMac::contentAreaDidHide() const
 #endif
 }
 
+void ScrollAnimatorMac::didAddVerticalScrollbar(Scrollbar* scrollbar)
+{
+#if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
+    WKScrollbarPainterRef painter = static_cast<WebCore::ScrollbarThemeMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
+    wkScrollbarPainterSetDelegate(painter, m_scrollbarPainterDelegate.get());
+    wkSetPainterForPainterController(m_scrollbarPainterController.get(), painter, false);
+#endif
+}
+
+void ScrollAnimatorMac::willRemoveVerticalScrollbar(Scrollbar* scrollbar)
+{
+#if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
+    WKScrollbarPainterRef painter = static_cast<WebCore::ScrollbarThemeMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
+    wkScrollbarPainterSetDelegate(painter, nil);
+    wkSetPainterForPainterController(m_scrollbarPainterController.get(), nil, false);
+#endif
+}
+
+void ScrollAnimatorMac::didAddHorizontalScrollbar(Scrollbar* scrollbar)
+{
+#if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
+    WKScrollbarPainterRef painter = static_cast<WebCore::ScrollbarThemeMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
+    wkScrollbarPainterSetDelegate(painter, m_scrollbarPainterDelegate.get());
+    wkSetPainterForPainterController(m_scrollbarPainterController.get(), painter, true);
+#endif
+}
+
+void ScrollAnimatorMac::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
+{
+#if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
+    WKScrollbarPainterRef painter = static_cast<WebCore::ScrollbarThemeMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
+    wkScrollbarPainterSetDelegate(painter, nil);
+    wkSetPainterForPainterController(m_scrollbarPainterController.get(), nil, true);
+#endif
+}
+
+
 #if ENABLE(RUBBER_BANDING)
 
 static const float scrollVelocityZeroingTimeout = 0.10f;

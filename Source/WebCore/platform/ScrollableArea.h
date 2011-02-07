@@ -64,6 +64,11 @@ public:
     void willStartLiveResize();
     void willEndLiveResize();
 
+    void didAddVerticalScrollbar(Scrollbar*);
+    void willRemoveVerticalScrollbar(Scrollbar*);
+    void didAddHorizontalScrollbar(Scrollbar*);
+    void willRemoveHorizontalScrollbar(Scrollbar*);
+
     ScrollAnimator* scrollAnimator() const { return m_scrollAnimator.get(); }
 
     virtual int scrollSize(ScrollbarOrientation) const = 0;

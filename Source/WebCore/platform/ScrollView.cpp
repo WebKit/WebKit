@@ -92,8 +92,10 @@ void ScrollView::setHasHorizontalScrollbar(bool hasBar)
     if (hasBar && !m_horizontalScrollbar) {
         m_horizontalScrollbar = createScrollbar(HorizontalScrollbar);
         addChild(m_horizontalScrollbar.get());
+        ScrollableArea::didAddHorizontalScrollbar(m_horizontalScrollbar.get());
         m_horizontalScrollbar->styleChanged();
     } else if (!hasBar && m_horizontalScrollbar) {
+        ScrollableArea::willRemoveHorizontalScrollbar(m_horizontalScrollbar.get());
         removeChild(m_horizontalScrollbar.get());
         m_horizontalScrollbar = 0;
     }
@@ -110,8 +112,10 @@ void ScrollView::setHasVerticalScrollbar(bool hasBar)
     if (hasBar && !m_verticalScrollbar) {
         m_verticalScrollbar = createScrollbar(VerticalScrollbar);
         addChild(m_verticalScrollbar.get());
+        ScrollableArea::didAddVerticalScrollbar(m_verticalScrollbar.get());
         m_verticalScrollbar->styleChanged();
     } else if (!hasBar && m_verticalScrollbar) {
+        ScrollableArea::willRemoveVerticalScrollbar(m_verticalScrollbar.get());
         removeChild(m_verticalScrollbar.get());
         m_verticalScrollbar = 0;
     }

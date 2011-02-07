@@ -54,6 +54,7 @@ public:
 
 #if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
     void setNewPainterForScrollbar(Scrollbar*, WKScrollbarPainterRef);
+    WKScrollbarPainterRef painterForScrollbar(Scrollbar*);
 #endif
 
 protected:

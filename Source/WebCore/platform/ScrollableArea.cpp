@@ -159,4 +159,24 @@ void ScrollableArea::willEndLiveResize()
     scrollAnimator()->willEndLiveResize();
 }    
 
+void ScrollableArea::didAddVerticalScrollbar(Scrollbar* scrollbar)
+{
+    scrollAnimator()->didAddVerticalScrollbar(scrollbar);
+}
+
+void ScrollableArea::willRemoveVerticalScrollbar(Scrollbar* scrollbar)
+{
+    scrollAnimator()->willRemoveVerticalScrollbar(scrollbar);
+}
+
+void ScrollableArea::didAddHorizontalScrollbar(Scrollbar* scrollbar)
+{
+    scrollAnimator()->didAddHorizontalScrollbar(scrollbar);
+}
+
+void ScrollableArea::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
+{
+    scrollAnimator()->willRemoveHorizontalScrollbar(scrollbar);
+}
+
 } // namespace WebCore

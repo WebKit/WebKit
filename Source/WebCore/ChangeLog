@@ -1,3 +1,43 @@
+2011-02-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Beth Dakin.
+
+        Add mechanism to inform the ScrollAnimator when Scrollbars are added 
+        and removed.
+
+        * platform/ScrollAnimator.h:
+        (WebCore::ScrollAnimator::didAddVerticalScrollbar):
+        (WebCore::ScrollAnimator::willRemoveVerticalScrollbar):
+        (WebCore::ScrollAnimator::didAddHorizontalScrollbar):
+        (WebCore::ScrollAnimator::willRemoveHorizontalScrollbar):
+        Make virtual to allow platform specific overrides.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setHasHorizontalScrollbar):
+        (WebCore::ScrollView::setHasVerticalScrollbar):
+        Call new ScrollableArea functions.
+
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::didAddVerticalScrollbar):
+        (WebCore::ScrollableArea::willRemoveVerticalScrollbar):
+        (WebCore::ScrollableArea::didAddHorizontalScrollbar):
+        (WebCore::ScrollableArea::willRemoveHorizontalScrollbar):
+        * platform/ScrollableArea.h:
+        Pipe to ScrollAnimator.
+
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::didAddVerticalScrollbar):
+        (WebCore::ScrollAnimatorMac::willRemoveVerticalScrollbar):
+        (WebCore::ScrollAnimatorMac::didAddHorizontalScrollbar):
+        (WebCore::ScrollAnimatorMac::willRemoveHorizontalScrollbar):
+        * platform/mac/ScrollbarThemeMac.h:
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::registerScrollbar):
+        (WebCore::ScrollbarThemeMac::unregisterScrollbar):
+        (WebCore::ScrollbarThemeMac::painterForScrollbar):
+        Move painter delegate registration to the new didAdd/willRemove functions.
+
 2011-02-07  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
