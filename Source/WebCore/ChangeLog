@@ -1,3 +1,48 @@
+2011-01-31  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: implement beautification of scripts inlined in html documents.
+        https://bugs.webkit.org/show_bug.cgi?id=52706
+
+        To beautify scripts inlined in html, we need to cut individual scripts, beautify them using UglifyJS library, and
+        finally paste them back to html.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/ScriptFormatter.js:
+        (WebInspector.ScriptFormatter): Implement formatting of scripts inlined in html.
+        (WebInspector.ScriptFormatter.prototype.formatContent.didFormatChunks):
+        (WebInspector.ScriptFormatter.prototype.formatContent):
+        (WebInspector.ScriptFormatter.prototype._splitContentIntoChunks):
+        (WebInspector.ScriptFormatter.prototype._formatChunks.didFormat):
+        (WebInspector.ScriptFormatter.prototype._formatChunks):
+        (WebInspector.ScriptFormatter.prototype._buildContentFromChunks):
+        (WebInspector.ScriptFormatter.prototype._formatScript.messageHandler):
+        (WebInspector.ScriptFormatter.prototype._formatScript):
+        * inspector/front-end/ScriptFormatterWorker.js:
+        (onmessage):
+        (buildMapping):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrameContent): Use SourceFrameContent and FormattedSourceFrameContent to perform operations with line numbers.
+        * inspector/front-end/SourceFrameContent.js: Added.
+        (WebInspector.SourceFrameContent): Helper class, holds resource text and scripts layout
+        (WebInspector.SourceFrameContent.prototype.get scriptRanges):
+        (WebInspector.SourceFrameContent.prototype.locationToPosition):
+        (WebInspector.SourceFrameContent.prototype.positionToLocation):
+        (WebInspector.SourceFrameContent.prototype.scriptLocationForLineNumber):
+        (WebInspector.SourceFrameContent.prototype.scriptLocationForRange):
+        (WebInspector.SourceFrameContent.prototype.lineNumberToRange):
+        (WebInspector.SourceFrameContent.prototype._intersectingScriptRange):
+        (WebInspector):
+        (WebInspector.FormattedSourceFrameContent): Helper class, holds original and formatted versions of resource and mapping between them.
+        (WebInspector.FormattedSourceFrameContent.prototype.get text):
+        (WebInspector.FormattedSourceFrameContent.prototype.originalLocationToFormattedLocation):
+        (WebInspector.FormattedSourceFrameContent.prototype.scriptLocationForFormattedLineNumber):
+        (WebInspector.FormattedSourceFrameContent.prototype._convertPosition):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2011-02-07  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

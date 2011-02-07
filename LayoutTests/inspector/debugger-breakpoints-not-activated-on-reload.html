@@ -24,7 +24,7 @@ var test = function()
     function step2()
     {
         InspectorTest.addResult("Main resource was shown.");
-        InspectorTest.setBreakpointInVisibleView(8, true, "");
+        InspectorTest.setBreakpointInVisibleView(8, "", true);
         WebInspector.panels.scripts.toggleBreakpointsButton.element.click();
         InspectorTest.reloadPage(step4);
     }

@@ -94,6 +94,7 @@
     <file>SidebarTreeElement.js</file>
     <file>SourceCSSTokenizer.js</file>
     <file>SourceFrame.js</file>
+    <file>SourceFrameContent.js</file>
     <file>SourceHTMLTokenizer.js</file>
     <file>SourceJavaScriptTokenizer.js</file>
     <file>SourceTokenizer.js</file>

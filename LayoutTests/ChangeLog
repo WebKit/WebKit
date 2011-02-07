@@ -1,3 +1,15 @@
+2011-02-04  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: implement beautification of scripts inlined in html documents.
+        https://bugs.webkit.org/show_bug.cgi?id=52706
+
+        * http/tests/inspector/debugger-test2.js:
+        (initialize_DebuggerTest.InspectorTest.setBreakpointInVisibleView):
+        * inspector/debugger-breakpoints-not-activated-on-reload.html:
+        * inspector/debugger-pause-on-breakpoint.html:
+
 2011-02-07  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed.

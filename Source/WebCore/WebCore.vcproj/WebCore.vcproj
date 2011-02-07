@@ -65977,6 +65977,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\SourceFrameContent.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\SourceHTMLTokenizer.js"
 					>
 				</File>

@@ -170,11 +170,10 @@ WebInspector.SourceFrame.prototype = {
             delete this._lineToHighlight;
     },
 
-    _createTextViewer: function(mimeType, content)
+    _createTextViewer: function(mimeType, text)
     {
-        this._content = content;
-        this._textModel.setText(null, content);
-        this._formatter = new WebInspector.ScriptFormatter(content);
+        this._content = new WebInspector.SourceFrameContent(text, this._contentProvider.scripts());
+        this._textModel.setText(null, text);
 
         this._textViewer = new WebInspector.TextViewer(this._textModel, WebInspector.platform, this._url);
         var element = this._textViewer.element;
@@ -366,7 +365,7 @@ WebInspector.SourceFrame.prototype = {
         this._executionLine = lineNumber;
         if (!this._textViewer)
             return;
-        var textViewerLineNumber = this._formatter.originalLineNumberToFormattedLineNumber(this._executionLine - 1);
+        var textViewerLineNumber = this._originalLocationToTextViewerLineNumber(this._executionLine - 1, 0);
         this._textViewer.addDecoration(textViewerLineNumber, "webkit-execution-line");
     },
 
@@ -374,7 +373,7 @@ WebInspector.SourceFrame.prototype = {
     {
         if (!this._textViewer)
             return;
-        var textViewerLineNumber = this._formatter.originalLineNumberToFormattedLineNumber(this._executionLine - 1);
+        var textViewerLineNumber = this._originalLocationToTextViewerLineNumber(this._executionLine - 1, 0);
         this._textViewer.removeDecoration(textViewerLineNumber, "webkit-execution-line");
         delete this._executionLine;
     },
@@ -475,11 +474,9 @@ WebInspector.SourceFrame.prototype = {
             return;
 
         var resolved = breakpoint.locations.length;
-        var breakpointLineNumber = breakpoint.lineNumber;
-        if (resolved)
-            breakpointLineNumber = breakpoint.locations[0].lineNumber;
+        var location = resolved ? breakpoint.locations[0] : breakpoint;
 
-        var textViewerLineNumber = this._formatter.originalLineNumberToFormattedLineNumber(breakpointLineNumber);
+        var textViewerLineNumber = this._originalLocationToTextViewerLineNumber(location.lineNumber, location.columnNumber);
         if (textViewerLineNumber >= this._textModel.linesCount)
             return;
 
@@ -543,16 +540,15 @@ WebInspector.SourceFrame.prototype = {
         if (!target)
             return;
         var textViewerLineNumber = target.lineNumber;
-        var originalLineNumber = this._formatter.formattedLineNumberToOriginalLineNumber(textViewerLineNumber);
 
         var contextMenu = new WebInspector.ContextMenu();
 
-        contextMenu.appendItem(WebInspector.UIString("Continue to Here"), this._continueToLine.bind(this, originalLineNumber));
+        contextMenu.appendItem(WebInspector.UIString("Continue to Here"), this._continueToLine.bind(this, textViewerLineNumber));
 
         var breakpoint = this._findBreakpoint(textViewerLineNumber);
         if (!breakpoint) {
             // This row doesn't have a breakpoint: We want to show Add Breakpoint and Add and Edit Breakpoint.
-            contextMenu.appendItem(WebInspector.UIString("Add Breakpoint"), this._setBreakpoint.bind(this, originalLineNumber, "", true));
+            contextMenu.appendItem(WebInspector.UIString("Add Breakpoint"), this._setBreakpoint.bind(this, textViewerLineNumber, "", true));
 
             function addConditionalBreakpoint()
             {
@@ -561,7 +557,7 @@ WebInspector.SourceFrame.prototype = {
                 {
                     this._removeBreakpointDecoration(textViewerLineNumber);
                     if (committed)
-                        this._setBreakpoint(originalLineNumber, true, condition);
+                        this._setBreakpoint(textViewerLineNumber, condition, true);
                 }
                 this._editBreakpointCondition(textViewerLineNumber, "", didEditBreakpointCondition.bind(this));
             }
@@ -610,7 +606,6 @@ WebInspector.SourceFrame.prototype = {
         if (!target)
             return;
         var textViewerLineNumber = target.lineNumber;
-        var originalLineNumber = this._formatter.formattedLineNumberToOriginalLineNumber(textViewerLineNumber);
 
         var breakpoint = this._findBreakpoint(textViewerLineNumber);
         if (breakpoint) {
@@ -619,7 +614,7 @@ WebInspector.SourceFrame.prototype = {
             else
                 WebInspector.debuggerModel.removeBreakpoint(breakpoint.id);
         } else
-            this._setBreakpoint(originalLineNumber, true, "");
+            this._setBreakpoint(textViewerLineNumber, "", true);
         event.preventDefault();
     },
 
@@ -850,23 +845,24 @@ WebInspector.SourceFrame.prototype = {
 
     formatSource: function()
     {
-        if (!this._formatter)
+        if (!this._content)
             return;
 
-        function didFormat(source)
+        function didFormat(formattedContent)
         {
-            this._textModel.setText(null, source);
+            this._formattedContent = formattedContent;
+            this._textModel.setText(null, formattedContent.text);
             this._setTextViewerDecorations();
         }
-        this._formatter.format(didFormat.bind(this));
+        var formatter = new WebInspector.ScriptFormatter();
+        formatter.formatContent(this._content, didFormat.bind(this))
     },
 
     _continueToLine: function(lineNumber)
     {
-        var sourceID = this._sourceIDForLine(lineNumber);
-        if (!sourceID)
-            return;
-        WebInspector.debuggerModel.continueToLine(sourceID, lineNumber);
+        var location = this._textViewerLineNumberToScriptLocation(lineNumber);
+        if (location.sourceID)
+            WebInspector.debuggerModel.continueToLine(location.sourceID, location.lineNumber);
     },
 
     _doubleClick: function(event)
@@ -879,35 +875,35 @@ WebInspector.SourceFrame.prototype = {
             return;  // Do not trigger editing from line numbers.
 
         var lineNumber = lineRow.lineNumber;
-        var sourceID = this._sourceIDForLine(lineNumber);
-        if (!sourceID)
+        var location = this._textViewerLineNumberToScriptLocation(lineNumber);
+        if (!location.sourceID)
             return;
 
         function didEditLine(newContent)
         {
             var lines = [];
-            var oldLines = this._content.split('\n');
+            var oldLines = this._content.text.split('\n');
             for (var i = 0; i < oldLines.length; ++i) {
                 if (i === lineNumber)
                     lines.push(newContent);
                 else
                     lines.push(oldLines[i]);
             }
-            WebInspector.debuggerModel.editScriptSource(sourceID, lines.join("\n"));
+            WebInspector.debuggerModel.editScriptSource(location.sourceID, lines.join("\n"));
         }
         this._textViewer.editLine(lineRow, didEditLine.bind(this));
     },
 
-    _setBreakpoint: function(lineNumber, enabled, condition)
+    _setBreakpoint: function(lineNumber, condition, enabled)
     {
+        var location = this._textViewerLineNumberToScriptLocation(lineNumber);
         if (this._url)
-            WebInspector.debuggerModel.setBreakpoint(this._url, lineNumber, 0, condition, enabled);
-        else {
-            var sourceID = this._sourceIDForLine(lineNumber);
-            if (!sourceID)
-                return;
-            WebInspector.debuggerModel.setBreakpointBySourceId(sourceID, lineNumber, 0, condition, enabled);
-        }
+            WebInspector.debuggerModel.setBreakpoint(this._url, location.lineNumber, location.columnNumber, condition, enabled);
+        else if (location.sourceID)
+            WebInspector.debuggerModel.setBreakpointBySourceId(location.sourceID, location.lineNumber, location.columnNumber, condition, enabled);
+        else
+            return;
+
         if (!WebInspector.panels.scripts.breakpointsActivated)
             WebInspector.panels.scripts.toggleBreakpointsClicked();
     },
@@ -918,19 +914,18 @@ WebInspector.SourceFrame.prototype = {
         return WebInspector.debuggerModel.breakpointForId(breakpointId);
     },
 
-    _sourceIDForLine: function(lineNumber)
+    _originalLocationToTextViewerLineNumber: function(lineNumber, columnNumber)
     {
-        var sourceIDForLine = null;
-        var closestStartingLine = 0;
-        var scripts = this._contentProvider.scripts();
-        for (var i = 0; i < scripts.length; ++i) {
-            var lineOffset = scripts[i].lineOffset;
-            if (lineOffset <= lineNumber && lineOffset >= closestStartingLine) {
-                closestStartingLine = lineOffset;
-                sourceIDForLine = scripts[i].sourceID;
-            }
-        }
-        return sourceIDForLine;
+        if (!this._formattedContent)
+            return lineNumber;
+        return this._formattedContent.originalLocationToFormattedLocation(lineNumber, columnNumber).lineNumber;
+    },
+
+    _textViewerLineNumberToScriptLocation: function(lineNumber)
+    {
+        if (!this._formattedContent)
+            return this._content.scriptLocationForLineNumber(lineNumber);
+        return this._formattedContent.scriptLocationForFormattedLineNumber(lineNumber);
     }
 }
 
