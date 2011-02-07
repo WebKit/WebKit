@@ -1,3 +1,20 @@
+2011-02-06  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WAI-ARIA @aria-sort not exposed on rowheader and columnheader roles.
+        https://bugs.webkit.org/show_bug.cgi?id=53842
+
+        Test: platform/mac/accessibility/aria-sort.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::sortDirection):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper additionalAccessibilityAttributeNames]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+        * html/HTMLAttributeNames.in:
+
 2011-02-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Antti Koivisto.

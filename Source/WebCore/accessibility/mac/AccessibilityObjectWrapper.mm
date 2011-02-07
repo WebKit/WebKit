@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -664,6 +664,9 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(AXObjectCache
         [additional addObject:NSAccessibilityARIALiveAttribute];
         [additional addObject:NSAccessibilityARIARelevantAttribute];
     }
+    
+    if (m_object->sortDirection() != SortDirectionNone)
+        [additional addObject:NSAccessibilitySortDirectionAttribute];
         
     // If an object is a child of a live region, then add these
     if (m_object->isInsideARIALiveRegion()) {
@@ -1974,6 +1977,17 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         if (scrollBar)
             return scrollBar->wrapper();
         return nil;
+    }
+    
+    if ([attributeName isEqualToString:NSAccessibilitySortDirectionAttribute]) {
+        switch (m_object->sortDirection()) {
+        case SortDirectionAscending:
+            return NSAccessibilityAscendingSortDirectionValue;
+        case SortDirectionDescending:
+            return NSAccessibilityDescendingSortDirectionValue;
+        default:
+            return NSAccessibilityUnknownSortDirectionValue;
+        }
     }
     
     if ([attributeName isEqualToString:NSAccessibilityLanguageAttribute]) 

@@ -41,6 +41,7 @@ aria-readonly
 aria-relevant
 aria-required
 aria-selected
+aria-sort
 aria-valuemax
 aria-valuemin
 aria-valuenow

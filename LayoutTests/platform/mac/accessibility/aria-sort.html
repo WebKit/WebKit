@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div tabindex="0" id="button" role="button">button</div>
+
+<div role="grid">
+<div role="row">
+<div role="columnheader" aria-sort="ascending" tabindex="0" id="column">column</div>
+<div role="rowheader" aria-sort="descending" tabindex="0" id="row">row</div> 
+</div>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that aria-sort will be exposed correctly to the Mac accessibility API.");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("button").focus();
+        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXSortDirection')", "'AXUnknownSortDirection'");
+
+        document.getElementById("column").focus();
+        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXSortDirection')", "'AXAscendingSortDirection'");
+
+        document.getElementById("row").focus();
+        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXSortDirection')", "'AXDescendingSortDirection'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

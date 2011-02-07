@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nuanti Ltd.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -214,6 +214,12 @@ enum AccessibilityButtonState {
     ButtonStateOn, 
     ButtonStateMixed,
 };
+    
+enum AccessibilitySortDirection {
+    SortDirectionNone,
+    SortDirectionAscending,
+    SortDirectionDescending,
+};
 
 struct VisiblePositionRange {
 
@@ -366,6 +372,7 @@ public:
     bool ariaIsMultiline() const;
     virtual const AtomicString& invalidStatus() const;
     bool supportsARIAExpanded() const;
+    AccessibilitySortDirection sortDirection() const;
     
     // ARIA drag and drop
     virtual bool supportsARIADropping() const { return false; }
