@@ -58,7 +58,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpstrCm
 
     ::PathAppendW(webKitPath, webKitDLLName);
     HMODULE module = ::LoadLibraryW(webKitPath);
-    typedef int (WINAPI* WebKitMainProcPtr)(HINSTANCE, HINSTANCE, LPTSTR, int);
+    typedef int (__cdecl* WebKitMainProcPtr)(HINSTANCE, HINSTANCE, LPTSTR, int);
     WebKitMainProcPtr mainProc = reinterpret_cast<WebKitMainProcPtr>(GetProcAddress(module, "WebKitMain"));
     if (!mainProc)
         return 0;

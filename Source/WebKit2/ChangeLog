@@ -1,3 +1,16 @@
+2011-02-07  Adam Roben  <aroben@apple.com>
+
+        Use the right calling convention when calling WebKitMain
+
+        Fixes <http://webkit.org/b/53923> REGRESSION (r77678): Crash on quit in web process in
+        wWinMain
+
+        Reviewed by Steve Falkenburg.
+
+        * win/MainWin.cpp:
+        (wWinMain): Use __cdecl instead of WINAPI (__stdcall) when calling WebKitMain, since that is
+        how that function is declared.
+
 2011-02-07  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
