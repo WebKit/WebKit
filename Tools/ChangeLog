@@ -1,5 +1,14 @@
 2011-02-06  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Ryosuke Niwa.
+
+        Update test expectations for new core builder
+        https://bugs.webkit.org/show_bug.cgi?id=53904
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+
+2011-02-06  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by David Levin.
 
         Add WebKit2 test bot to core builders

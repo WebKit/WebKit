@@ -256,6 +256,7 @@ class BuildBotTest(unittest.TestCase):
         name_regexps = [
             "SnowLeopard.*Build",
             "SnowLeopard.*\(Test",
+            "SnowLeopard.*\(WebKit2 Test",
             "Leopard",
             "Tiger",
             "Windows.*Build",
