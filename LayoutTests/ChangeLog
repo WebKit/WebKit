@@ -1,3 +1,10 @@
+2011-02-07  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, rebaseline.
+
+        * platform/chromium-mac/fast/url/path-expected.txt:
+        * platform/chromium-win/fast/url/path-expected.txt:
+
 2011-02-07  Jian Li  <jianli@chromium.org>
 
         Reviewed by David Levin.
