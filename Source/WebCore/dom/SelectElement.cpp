@@ -30,7 +30,6 @@
 #include "FormDataList.h"
 #include "Frame.h"
 #include "HTMLFormElement.h"
-#include "HTMLKeygenElement.h"
 #include "HTMLNames.h"
 #include "HTMLSelectElement.h"
 #include "KeyboardEvent.h"
@@ -1027,12 +1026,8 @@ const Vector<Element*>& SelectElementData::listItems(const Element* element) con
 
 SelectElement* toSelectElement(Element* element)
 {
-    if (element->isHTMLElement()) {
-        if (element->hasTagName(HTMLNames::selectTag))
-            return static_cast<HTMLSelectElement*>(element);
-        if (element->hasTagName(HTMLNames::keygenTag))
-            return static_cast<HTMLKeygenElement*>(element);
-    }
+    if (element->isHTMLElement() && element->hasTagName(HTMLNames::selectTag))
+        return static_cast<HTMLSelectElement*>(element);
 
 #if ENABLE(WML)
     if (element->isWMLElement() && element->hasTagName(WMLNames::selectTag))

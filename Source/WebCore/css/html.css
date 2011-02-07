@@ -323,7 +323,7 @@ ol ul, ul ol, ul ul, ol ol {
 
 form {
     display: block;
-    margin-top: 0__qem
+    margin-top: 0__qem;
 }
 
 label {
@@ -433,6 +433,14 @@ input::-webkit-input-speech-button {
     display: inline-block;
 }
 
+keygen, select {
+    -webkit-border-radius: 5px;
+}
+
+keygen::-webkit-keygen-select {
+    margin: 0px;
+}
+
 textarea {
     -webkit-appearance: textarea;
     background-color: white;
@@ -535,12 +543,11 @@ input[type="radio"] {
     -webkit-box-sizing: border-box;
 }
 
-keygen, select {
+select {
     -webkit-appearance: menulist;
     -webkit-box-sizing: border-box;
     -webkit-box-align: center;
     border: 1px solid;
-    -webkit-border-radius: 5px;
     white-space: pre;
     -webkit-rtl-ordering: logical;
     color: black;

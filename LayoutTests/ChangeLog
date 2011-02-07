@@ -1,3 +1,14 @@
+2011-02-06  Dominic Cooney  <dominicc@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Convert <keygen> option elements to a shadow DOM
+        https://bugs.webkit.org/show_bug.cgi?id=51379
+
+        * html5lib/runner-expected.txt: Two more tests pass.
+        * platform/mac/fast/html/keygen-expected.txt: Shadow render tree.
+        * platform/mac/fast/invalid/residual-style-expected.txt:
+
 2011-02-06  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Oliver Hunt.

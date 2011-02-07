@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "FormDataList.h"
 #include "HTMLNames.h"
+#include "HTMLSelectElement.h"
 #include "HTMLOptionElement.h"
 #include "SSLKeyGenerator.h"
 #include "Text.h"
@@ -40,25 +41,72 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+class KeygenSelectElement : public HTMLSelectElement {
+public:
+    static PassRefPtr<KeygenSelectElement> create(Document* document)
+    {
+        return adoptRef(new KeygenSelectElement(document));
+    }
+
+    virtual const AtomicString& shadowPseudoId() const
+    {
+        DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-keygen-select"));
+        return pseudoId;
+    }
+
+protected:
+    KeygenSelectElement(Document* document)
+        : HTMLSelectElement(selectTag, document, 0)
+    {
+    }
+};
+
 inline HTMLKeygenElement::HTMLKeygenElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
-    : HTMLSelectElement(tagName, document, form)
+    : HTMLFormControlElementWithState(tagName, document, form)
 {
     ASSERT(hasTagName(keygenTag));
 
-    // FIXME: This markup should go in the shadow tree.
-    // Add one option element for each key size.
+    // Create a select element with one option element for each key size.
+    RefPtr<HTMLSelectElement> select = KeygenSelectElement::create(document);
     Vector<String> keys;
     getSupportedKeySizes(keys);
     for (size_t i = 0; i < keys.size(); ++i) {
         RefPtr<HTMLOptionElement> option = HTMLOptionElement::create(document, this->form());
-        parserAddChild(option);
+        select->parserAddChild(option);
         option->parserAddChild(Text::create(document, keys[i]));
     }
+    setShadowRoot(select);
 }
 
 PassRefPtr<HTMLKeygenElement> HTMLKeygenElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
 {
     return adoptRef(new HTMLKeygenElement(tagName, document, form));
+}
+
+void HTMLKeygenElement::parseMappedAttribute(Attribute* attr)
+{
+    // Reflect disabled attribute on the shadow select element
+    if (attr->name() == disabledAttr)
+        selectShadow()->setAttribute(attr->name(), attr->value());
+
+    if (attr->name() == challengeAttr)
+        m_challenge = attr->value();
+    else if (attr->name() == keytypeAttr)
+        m_keyType = attr->value();
+    else
+        HTMLFormControlElement::parseMappedAttribute(attr);
+}
+
+bool HTMLKeygenElement::appendFormData(FormDataList& encoded_values, bool)
+{
+    // Only RSA is supported at this time.
+    if (!m_keyType.isNull() && !equalIgnoringCase(m_keyType, "rsa"))
+        return false;
+    String value = signedPublicKeyAndChallengeString(selectShadow()->selectedIndex(), m_challenge, document()->baseURL());
+    if (value.isNull())
+        return false;
+    encoded_values.appendData(name(), value.utf8());
+    return true;
 }
 
 const AtomicString& HTMLKeygenElement::formControlType() const
@@ -67,28 +115,14 @@ const AtomicString& HTMLKeygenElement::formControlType() const
     return keygen;
 }
 
-void HTMLKeygenElement::parseMappedAttribute(Attribute* attr)
+void HTMLKeygenElement::reset()
 {
-    if (attr->name() == challengeAttr)
-        m_challenge = attr->value();
-    else if (attr->name() == keytypeAttr)
-        m_keyType = attr->value();
-    else {
-        // Skip HTMLSelectElement parsing.
-        HTMLFormControlElement::parseMappedAttribute(attr);
-    }
+    static_cast<HTMLFormControlElement*>(selectShadow())->reset();
 }
 
-bool HTMLKeygenElement::appendFormData(FormDataList& encoded_values, bool)
+HTMLSelectElement* HTMLKeygenElement::selectShadow()
 {
-    // Only RSA is supported at this time.
-    if (!m_keyType.isNull() && !equalIgnoringCase(m_keyType, "rsa"))
-        return false;
-    String value = signedPublicKeyAndChallengeString(selectedIndex(), m_challenge, document()->baseURL());
-    if (value.isNull())
-        return false;
-    encoded_values.appendData(name(), value.utf8());
-    return true;
+    return static_cast<HTMLSelectElement*>(shadowRoot());
 }
 
 } // namespace

@@ -49,7 +49,7 @@ static const unsigned maxSelectItems = 10000;
 HTMLSelectElement::HTMLSelectElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
     : HTMLFormControlElementWithState(tagName, document, form)
 {
-    ASSERT(hasTagName(selectTag) || hasTagName(keygenTag));
+    ASSERT(hasTagName(selectTag));
 }
 
 PassRefPtr<HTMLSelectElement> HTMLSelectElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)

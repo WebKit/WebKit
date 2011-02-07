@@ -24,11 +24,13 @@
 #ifndef HTMLKeygenElement_h
 #define HTMLKeygenElement_h
 
-#include "HTMLSelectElement.h"
+#include "HTMLFormControlElement.h"
 
 namespace WebCore {
 
-class HTMLKeygenElement : public HTMLSelectElement {
+class HTMLSelectElement;
+
+class HTMLKeygenElement : public HTMLFormControlElementWithState {
 public:
     static PassRefPtr<HTMLKeygenElement> create(const QualifiedName&, Document*, HTMLFormElement*);
 
@@ -37,12 +39,20 @@ public:
 private:
     HTMLKeygenElement(const QualifiedName&, Document*, HTMLFormElement*);
 
-    virtual bool isResettable() const { return true; }
+    virtual bool canStartSelection() const { return false; }
 
-    virtual const AtomicString& formControlType() const;
     virtual void parseMappedAttribute(Attribute*);
+
     virtual bool appendFormData(FormDataList&, bool);
+    virtual const AtomicString& formControlType() const;
     virtual bool isOptionalFormControl() const { return false; }
+
+    virtual bool isEnumeratable() const { return true; }
+
+    virtual bool isResettable() const { return true; }
+    virtual void reset();
+
+    HTMLSelectElement* selectShadow();
 
     AtomicString m_challenge;
     AtomicString m_keyType;

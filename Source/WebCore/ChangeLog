@@ -1,3 +1,39 @@
+2011-02-03  Dominic Cooney  <dominicc@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Convert <keygen> option elements to a shadow DOM
+        https://bugs.webkit.org/show_bug.cgi?id=51379
+
+        Covered by existing tests e.g. fast/html/keygen.html,
+        html5lib/runner.html, etc.
+
+        * css/html.css:
+        (form): Cleanup.
+        (keygen, select): Border radii should match so focus ring looks good.
+        (keygen::-webkit-keygen-select): No margin on the shadow element.
+        (select): Hoisting border radius to keygen, select rule.
+        * dom/SelectElement.cpp:
+        (WebCore::toSelectElement): keygen is no longer a select element.
+        * html/HTMLKeygenElement.cpp: Implements keygen shadow.
+        (WebCore::KeygenSelectElement::create):
+        (WebCore::KeygenSelectElement::shadowPseudoId):
+        (WebCore::KeygenSelectElement::KeygenSelectElement):
+        (WebCore::HTMLKeygenElement::HTMLKeygenElement):
+        (WebCore::HTMLKeygenElement::parseMappedAttribute):
+        (WebCore::HTMLKeygenElement::appendFormData):
+        (WebCore::HTMLKeygenElement::formControlType):
+        (WebCore::HTMLKeygenElement::reset):
+        (WebCore::HTMLKeygenElement::selectShadow):
+        * html/HTMLKeygenElement.h: keygen is no longer a select on C++ side.
+        (WebCore::HTMLKeygenElement::canStartSelection):
+        (WebCore::HTMLKeygenElement::isEnumeratable):
+        (WebCore::HTMLKeygenElement::isResettable):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::ownerSelectElement): Only owned by selects.
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::HTMLSelectElement): Only 'select' tag name.
+
 2011-02-06  Benjamin Poulain  <ikipou@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -4386,10 +4386,6 @@ svg/dom/path-parser.html
 http/tests/security/401-logout/401-logout.php
 http/tests/xmlhttprequest/remember-bad-password.html
 
-# There's somethign strange going on with <keygen> that causes a
-# different DOM to be created.
-html5lib/runner.html
-
 # Still failing, looks like a bug in the EventSender drag-and-drop
 fast/css/user-drag-none.html
 
