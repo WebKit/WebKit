@@ -50,7 +50,7 @@ private:
 
     virtual void didInstallPageOverlay();
     virtual void didUninstallPageOverlay();
-    virtual void setOverlayNeedsDisplay(const WebCore::IntRect&);
+    virtual void setPageOverlayNeedsDisplay(const WebCore::IntRect&);
     
     virtual void attachCompositingContext();
     virtual void detachCompositingContext();

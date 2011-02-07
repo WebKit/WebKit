@@ -1,3 +1,22 @@
+2011-02-07  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Rename some drawing area related member functions
+        https://bugs.webkit.org/show_bug.cgi?id=53935
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::setPageOverlayNeedsDisplay):
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::setNeedsDisplay):
+        (WebKit::DrawingAreaImpl::setPageOverlayNeedsDisplay):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        * WebProcess/WebPage/LayerTreeHost.h:
+        * WebProcess/WebPage/mac/LayerTreeHostMac.h:
+        * WebProcess/WebPage/mac/LayerTreeHostMac.mm:
+        (WebKit::LayerTreeHostMac::setNonCompositedContentsNeedDisplay):
+        (WebKit::LayerTreeHostMac::scrollNonCompositedContents):
+
 2011-02-07  Adam Roben  <aroben@apple.com>
 
         Use the right calling convention when calling WebKitMain

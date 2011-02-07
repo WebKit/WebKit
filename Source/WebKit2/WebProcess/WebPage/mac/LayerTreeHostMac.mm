@@ -131,7 +131,7 @@ void LayerTreeHostMac::invalidate()
     m_isValid = false;
 }
 
-void LayerTreeHostMac::setNonCompositedContentsNeedDisplayInRect(const IntRect& rect)
+void LayerTreeHostMac::setNonCompositedContentsNeedDisplay(const IntRect& rect)
 {
     m_nonCompositedContentLayer->setNeedsDisplayInRect(rect);
     scheduleLayerFlush();
@@ -139,7 +139,7 @@ void LayerTreeHostMac::setNonCompositedContentsNeedDisplayInRect(const IntRect& 
 
 void LayerTreeHostMac::scrollNonCompositedContents(const IntRect& scrollRect, const IntSize& scrollOffset)
 {
-    setNonCompositedContentsNeedDisplayInRect(scrollRect);
+    setNonCompositedContentsNeedDisplay(scrollRect);
 }
 
 void LayerTreeHostMac::sizeDidChange(const IntSize& newSize)

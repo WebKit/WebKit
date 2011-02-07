@@ -75,7 +75,7 @@ void DrawingAreaImpl::setNeedsDisplay(const IntRect& rect)
     if (m_layerTreeHost) {
         ASSERT(m_dirtyRegion.isEmpty());
 
-        m_layerTreeHost->setNonCompositedContentsNeedDisplayInRect(rect);
+        m_layerTreeHost->setNonCompositedContentsNeedDisplay(rect);
         return;
     }
     
@@ -149,7 +149,7 @@ void DrawingAreaImpl::didUninstallPageOverlay()
     setNeedsDisplay(m_webPage->bounds());
 }
 
-void DrawingAreaImpl::setOverlayNeedsDisplay(const IntRect& rect)
+void DrawingAreaImpl::setPageOverlayNeedsDisplay(const IntRect& rect)
 {
     setNeedsDisplay(rect);
 }

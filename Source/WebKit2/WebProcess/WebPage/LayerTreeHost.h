@@ -49,7 +49,7 @@ public:
     virtual void scheduleLayerFlush() = 0;
     virtual void invalidate() = 0;
 
-    virtual void setNonCompositedContentsNeedDisplayInRect(const WebCore::IntRect&) = 0;
+    virtual void setNonCompositedContentsNeedDisplay(const WebCore::IntRect&) = 0;
     virtual void scrollNonCompositedContents(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset) = 0;
     virtual void sizeDidChange(const WebCore::IntSize& newSize) = 0;
     

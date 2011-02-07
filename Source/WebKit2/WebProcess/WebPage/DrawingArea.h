@@ -62,7 +62,7 @@ public:
 
     virtual void didInstallPageOverlay() { }
     virtual void didUninstallPageOverlay() { }
-    virtual void setOverlayNeedsDisplay(const WebCore::IntRect&) { }
+    virtual void setPageOverlayNeedsDisplay(const WebCore::IntRect&) { }
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual void attachCompositingContext() = 0;
