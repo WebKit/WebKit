@@ -64,8 +64,8 @@ public:
     bool mayContain(const AtomicString& string) const { return mayContain(string.impl()->existingHash()); }
     bool mayContain(const String& string) const { return mayContain(string.impl()->hash()); }
 
-#ifndef ASSERTS_DISABLED
-    // Slow, for use in asserts only.
+#if !ASSERT_DISABLED
+    // Slow.
     bool likelyEmpty() const;
     bool isClear() const;
 #endif
@@ -110,6 +110,7 @@ inline void BloomFilter<keyBits>::clear()
     memset(m_table, 0, tableSize);
 }
 
+#if !ASSERT_DISABLED
 template <unsigned keyBits>
 bool BloomFilter<keyBits>::likelyEmpty() const
 {
@@ -129,6 +130,7 @@ bool BloomFilter<keyBits>::isClear() const
     }
     return true;
 }
+#endif
 
 }
 
