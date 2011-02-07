@@ -229,5 +229,6 @@ symbian: {
     }
     QMAKE_CXXFLAGS.ARMCC += -OTime -O3
 }
+
 # Disable C++0x mode in JSC for those who enabled it in their Qt's mkspec
 *-g++*:QMAKE_CXXFLAGS -= -std=c++0x -std=gnu++0x
