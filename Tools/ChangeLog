@@ -1,5 +1,13 @@
 2011-02-07  Maciej Stachowiak  <mjs@apple.com>
 
+        Not reviewed.
+
+        Remove accidental references to directories on my laptop.
+
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
+2011-02-07  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Antti Koivisto.
 
         WebKitTestRunner does not block remote resources or complain about them

@@ -485,7 +485,6 @@
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../../../../symroots/Release\"",
 				);
 			};
 			name = Debug;
@@ -496,7 +495,6 @@
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../../../../symroots/Release\"",
 				);
 			};
 			name = Release;
