@@ -1,5 +1,14 @@
 2011-02-07  Alexander Pavlov  <apavlov@chromium.org>
 
+        Unreviewed. Add Web Inspector warning 10x10 PNG, move files from r77801 into the inspector/ directory.
+
+        * blog-files/inspector/css_as_authored.png: Renamed from Websites/webkit.org/blog-files/inspector-css-as-authored.png.
+        * blog-files/inspector/css_autocomplete.png: Renamed from Websites/webkit.org/blog-files/inspector-css-autocomplete.png.
+        * blog-files/inspector/css_unknown_properties.png: Renamed from Websites/webkit.org/blog-files/inspector-unknown-css-properties.png.
+        * blog-files/inspector/warning_10x10.png: Added.
+
+2011-02-07  Alexander Pavlov  <apavlov@chromium.org>
+
         Unreviewed. Add Web Inspector style editing screenshots.
 
         * blog-files/inspector-css-as-authored.png: Added.
