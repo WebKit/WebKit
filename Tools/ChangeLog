@@ -1,5 +1,12 @@
 2011-02-06  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed Chromium build fix.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::pathToLocalResource):
+
+2011-02-06  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed by Darin Adler.
 
         OwnArraryPtr.h uses deleteOwnedPtr but doesn’t include OwnPtrCommon.h

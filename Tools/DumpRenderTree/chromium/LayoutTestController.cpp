@@ -799,7 +799,7 @@ void LayoutTestController::pathToLocalResource(const CppArgumentList& arguments,
         // We want a temp file.
         const unsigned tempPrefixLength = 5;
         size_t bufferSize = MAX_PATH;
-        OwnArrayPtr<WCHAR> tempPath(new WCHAR[bufferSize]);
+        OwnArrayPtr<WCHAR> tempPath = adoptArrayPtr(new WCHAR[bufferSize]);
         DWORD tempLength = ::GetTempPathW(bufferSize, tempPath.get());
         if (tempLength + url.length() - tempPrefixLength + 1 > bufferSize) {
             bufferSize = tempLength + url.length() - tempPrefixLength + 1;

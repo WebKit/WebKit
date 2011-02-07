@@ -1,5 +1,11 @@
 2011-02-06  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed; speculative Qt build fix.
+
+        * WebKit2.pro:
+
+2011-02-06  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed by Darin Adler.
 
         OwnArraryPtr.h uses deleteOwnedPtr but doesn’t include OwnPtrCommon.h
