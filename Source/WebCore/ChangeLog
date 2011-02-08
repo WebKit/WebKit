@@ -1,5 +1,26 @@
 2011-02-07  Beth Dakin  <bdakin@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Fix for <rdar://problem/8946961> Fix repaint problems
+        with WKScrollbarPainter scrollers while resizing the window
+
+        Remove setPainterForPainterController() and 
+        removePainterFromPainterController() since they aren't
+        used anymore.
+        * platform/mac/ScrollAnimatorMac.h:
+        
+        Return early if they alpha hasn't changed.
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[ScrollbarPainterDelegate scrollerImp:animateKnobAlphaTo:duration:]):
+        (-[ScrollbarPainterDelegate scrollerImp:animateTrackAlphaTo:duration:]):
+        
+        If we're in a live resize, restore alpha to 1.
+        (WebCore::ScrollAnimatorMac::didAddVerticalScrollbar):
+        (WebCore::ScrollAnimatorMac::didAddHorizontalScrollbar):
+
+2011-02-07  Beth Dakin  <bdakin@apple.com>
+
         Reviewed by Eric Seidel.
 
         Fix for https://bugs.webkit.org/show_bug.cgi?id=53950

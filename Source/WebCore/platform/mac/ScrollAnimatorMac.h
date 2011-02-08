@@ -57,11 +57,6 @@ public:
     ScrollAnimatorMac(ScrollableArea*);
     virtual ~ScrollAnimatorMac();
 
-#if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
-    void setPainterForPainterController(WKScrollbarPainterRef, bool isHorizontal);
-    void removePainterFromPainterController(ScrollbarOrientation orientation);
-#endif
-
     virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier);
     virtual void scrollToOffsetWithoutAnimation(const FloatPoint&);
 

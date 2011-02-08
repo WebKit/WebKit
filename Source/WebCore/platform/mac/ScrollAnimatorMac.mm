@@ -368,6 +368,8 @@ static NSSize abs(NSSize size)
 - (void)scrollerImp:(id)scrollerImp animateKnobAlphaTo:(CGFloat)newKnobAlpha duration:(NSTimeInterval)duration
 {
     WKScrollbarPainterRef scrollerPainter = (WKScrollbarPainterRef)scrollerImp;
+    if (newKnobAlpha == wkScrollbarPainterKnobAlpha(scrollerPainter))
+        return;
 
     if (wkScrollbarPainterIsHorizontal(scrollerPainter))
         [self setUpAnimation:_horizontalKnobAnimation scrollerPainter:scrollerPainter part:WebCore::ThumbPart animateAlphaTo:newKnobAlpha duration:duration];
@@ -378,6 +380,8 @@ static NSSize abs(NSSize size)
 - (void)scrollerImp:(id)scrollerImp animateTrackAlphaTo:(CGFloat)newTrackAlpha duration:(NSTimeInterval)duration
 {
     WKScrollbarPainterRef scrollerPainter = (WKScrollbarPainterRef)scrollerImp;
+    if (newTrackAlpha == wkScrollbarPainterTrackAlpha(scrollerPainter))
+        return;
 
     if (wkScrollbarPainterIsHorizontal(scrollerPainter))
         [self setUpAnimation:_horizontalTrackAnimation scrollerPainter:scrollerPainter part:WebCore::BackTrackPart animateAlphaTo:newTrackAlpha duration:duration];
@@ -446,18 +450,6 @@ id ScrollAnimatorMac::scrollbarPainterDelegate()
     return nil;
 #endif
 }
-
-#if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
-void ScrollAnimatorMac::setPainterForPainterController(WKScrollbarPainterRef painter, bool isHorizontal)
-{
-    wkSetPainterForPainterController(m_scrollbarPainterController.get(), painter, isHorizontal);
-}
-
-void ScrollAnimatorMac::removePainterFromPainterController(ScrollbarOrientation orientation)
-{
-    wkSetPainterForPainterController(m_scrollbarPainterController.get(), nil, orientation == HorizontalScrollbar);
-}
-#endif // #if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
 
 bool ScrollAnimatorMac::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier)
 {
@@ -585,6 +577,8 @@ void ScrollAnimatorMac::didAddVerticalScrollbar(Scrollbar* scrollbar)
     WKScrollbarPainterRef painter = static_cast<WebCore::ScrollbarThemeMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
     wkScrollbarPainterSetDelegate(painter, m_scrollbarPainterDelegate.get());
     wkSetPainterForPainterController(m_scrollbarPainterController.get(), painter, false);
+    if (scrollableArea()->inLiveResize())
+        wkSetScrollbarPainterKnobAlpha(painter, 1.0);
 #else
     UNUSED_PARAM(scrollbar);
 #endif
@@ -607,6 +601,8 @@ void ScrollAnimatorMac::didAddHorizontalScrollbar(Scrollbar* scrollbar)
     WKScrollbarPainterRef painter = static_cast<WebCore::ScrollbarThemeMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
     wkScrollbarPainterSetDelegate(painter, m_scrollbarPainterDelegate.get());
     wkSetPainterForPainterController(m_scrollbarPainterController.get(), painter, true);
+    if (scrollableArea()->inLiveResize())
+        wkSetScrollbarPainterKnobAlpha(painter, 1.0);
 #else
     UNUSED_PARAM(scrollbar);
 #endif
@@ -622,7 +618,6 @@ void ScrollAnimatorMac::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
     UNUSED_PARAM(scrollbar);
 #endif
 }
-
 
 #if ENABLE(RUBBER_BANDING)
 
