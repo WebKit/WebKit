@@ -63,7 +63,13 @@ private:
     static void didHandleOnloadEventsForFrame(WKBundlePageRef, WKBundleFrameRef, const void*);
     static void didDisplayInsecureContentForFrame(WKBundlePageRef, WKBundleFrameRef, WKTypeRef*, const void*);
     static void didRunInsecureContentForFrame(WKBundlePageRef, WKBundleFrameRef, WKTypeRef*, const void*);
+    static void didInitiateLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef, bool pageLoadIsProvisional, const void*);
     static WKURLRequestRef willSendRequestForFrame(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef, WKURLResponseRef, const void*);
+    static void didReceiveResponseForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKURLResponseRef, const void*);
+    static void didReceiveContentLengthForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, uint64_t length, const void*);
+    static void didFinishLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, const void*);
+    static void didFailLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKErrorRef, const void*);
+
     void didStartProvisionalLoadForFrame(WKBundleFrameRef);
     void didReceiveServerRedirectForProvisionalLoadForFrame(WKBundleFrameRef);
     void didFailProvisionalLoadWithErrorForFrame(WKBundleFrameRef, WKErrorRef);
@@ -79,7 +85,14 @@ private:
     void didHandleOnloadEventsForFrame(WKBundleFrameRef);
     void didDisplayInsecureContentForFrame(WKBundleFrameRef);
     void didRunInsecureContentForFrame(WKBundleFrameRef);
+
+    // Resource Load Client
+    void didInitiateLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef, bool pageLoadIsProvisional);
     WKURLRequestRef willSendRequestForFrame(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef, WKURLResponseRef);
+    void didReceiveResponseForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKURLResponseRef);
+    void didReceiveContentLengthForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, uint64_t length);
+    void didFinishLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier);
+    void didFailLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKErrorRef);
 
     // UI Client
     static void willAddMessageToConsole(WKBundlePageRef, WKStringRef message, uint32_t lineNumber, const void* clientInfo);

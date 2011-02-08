@@ -65,11 +65,18 @@ void WKBundlePageSetFormClient(WKBundlePageRef pageRef, WKBundlePageFormClient* 
     toImpl(pageRef)->initializeInjectedBundleFormClient(wkClient);
 }
 
-void WKBundlePageSetLoaderClient(WKBundlePageRef pageRef, WKBundlePageLoaderClient* wkClient)
+void WKBundlePageSetPageLoaderClient(WKBundlePageRef pageRef, WKBundlePageLoaderClient* wkClient)
 {
     if (wkClient && wkClient->version)
         return;
     toImpl(pageRef)->initializeInjectedBundleLoaderClient(wkClient);
+}
+
+void WKBundlePageSetResourceLoadClient(WKBundlePageRef pageRef, WKBundlePageResourceLoadClient* wkClient)
+{
+    if (wkClient && wkClient->version)
+        return;
+    toImpl(pageRef)->initializeInjectedBundleResourceLoadClient(wkClient);
 }
 
 void WKBundlePageSetUIClient(WKBundlePageRef pageRef, WKBundlePageUIClient* wkClient)

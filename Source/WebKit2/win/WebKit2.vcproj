@@ -1834,6 +1834,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\WebProcess\InjectedBundle\InjectedBundlePageResourceLoadClient.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\InjectedBundle\InjectedBundlePageResourceLoadClient.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\InjectedBundle\InjectedBundlePageUIClient.cpp"
 					>
 				</File>

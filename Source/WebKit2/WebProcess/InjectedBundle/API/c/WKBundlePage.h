@@ -87,9 +87,6 @@ typedef void (*WKBundlePageDidClearWindowObjectForFrameCallback)(WKBundlePageRef
 typedef void (*WKBundlePageDidCancelClientRedirectForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo);
 typedef void (*WKBundlePageWillPerformClientRedirectForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKURLRef url, double delay, double date, const void *clientInfo);
 typedef void (*WKBundlePageDidHandleOnloadEventsForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo);
-typedef WKURLRequestRef (*WKBundlePageWillSendRequestForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t resourceIdentifier, WKURLRequestRef request, WKURLResponseRef redirectResponse, const void *clientInfo);
-
-
 
 struct WKBundlePageLoaderClient {
     int                                                                 version;
@@ -114,9 +111,28 @@ struct WKBundlePageLoaderClient {
     WKBundlePageDidCancelClientRedirectForFrameCallback                 didCancelClientRedirectForFrame;
     WKBundlePageWillPerformClientRedirectForFrameCallback               willPerformClientRedirectForFrame;
     WKBundlePageDidHandleOnloadEventsForFrameCallback                   didHandleOnloadEventsForFrame;
-    WKBundlePageWillSendRequestForFrameCallback                         willSendRequestForFrame;
 };
 typedef struct WKBundlePageLoaderClient WKBundlePageLoaderClient;
+
+// Resource Load Client
+typedef void (*WKBundlePageDidInitiateLoadForResourceCallback)(WKBundlePageRef, WKBundleFrameRef, uint64_t resourceIdentifier, WKURLRequestRef, bool pageIsProvisionallyLoading, const void* clientInfo);
+typedef WKURLRequestRef (*WKBundlePageWillSendRequestForFrameCallback)(WKBundlePageRef, WKBundleFrameRef, uint64_t resourceIdentifier, WKURLRequestRef, WKURLResponseRef redirectResponse, const void *clientInfo);
+typedef void (*WKBundlePageDidReceiveResponseForResourceCallback)(WKBundlePageRef, WKBundleFrameRef, uint64_t resourceIdentifier, WKURLResponseRef, const void* clientInfo);
+typedef void (*WKBundlePageDidReceiveContentLengthForResourceCallback)(WKBundlePageRef, WKBundleFrameRef, uint64_t resourceIdentifier, uint64_t contentLength, const void* clientInfo);
+typedef void (*WKBundlePageDidFinishLoadForResourceCallback)(WKBundlePageRef, WKBundleFrameRef, uint64_t resourceIdentifier, const void* clientInfo);
+typedef void (*WKBundlePageDidFailLoadForResourceCallback)(WKBundlePageRef, WKBundleFrameRef, uint64_t resourceIdentifier, WKErrorRef, const void* clientInfo);
+
+struct WKBundlePageResourceLoadClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+    WKBundlePageDidInitiateLoadForResourceCallback                      didInitiateLoadForResource;
+    WKBundlePageWillSendRequestForFrameCallback                         willSendRequestForFrame;
+    WKBundlePageDidReceiveResponseForResourceCallback                   didReceiveResponseForResource;
+    WKBundlePageDidReceiveContentLengthForResourceCallback              didReceiveContentLengthForResource;
+    WKBundlePageDidFinishLoadForResourceCallback                        didFinishLoadForResource;
+    WKBundlePageDidFailLoadForResourceCallback                          didFailLoadForResource;
+};
+typedef struct WKBundlePageResourceLoadClient WKBundlePageResourceLoadClient;
 
 // UI Client
 typedef void (*WKBundlePageWillAddMessageToConsoleCallback)(WKBundlePageRef page, WKStringRef message, uint32_t lineNumber, const void *clientInfo);
@@ -204,7 +220,8 @@ WK_EXPORT WKTypeID WKBundlePageGetTypeID();
 WK_EXPORT void WKBundlePageSetContextMenuClient(WKBundlePageRef page, WKBundlePageContextMenuClient* client);
 WK_EXPORT void WKBundlePageSetEditorClient(WKBundlePageRef page, WKBundlePageEditorClient* client);
 WK_EXPORT void WKBundlePageSetFormClient(WKBundlePageRef page, WKBundlePageFormClient* client);
-WK_EXPORT void WKBundlePageSetLoaderClient(WKBundlePageRef page, WKBundlePageLoaderClient* client);
+WK_EXPORT void WKBundlePageSetPageLoaderClient(WKBundlePageRef page, WKBundlePageLoaderClient* client);
+WK_EXPORT void WKBundlePageSetResourceLoadClient(WKBundlePageRef page, WKBundlePageResourceLoadClient* client);
 WK_EXPORT void WKBundlePageSetUIClient(WKBundlePageRef page, WKBundlePageUIClient* client);
 
 WK_EXPORT WKBundlePageGroupRef WKBundlePageGetPageGroup(WKBundlePageRef page);

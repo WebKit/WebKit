@@ -638,6 +638,7 @@ SOURCES += \
     WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp \
     WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp \
     WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp \
+    WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.cpp \
     WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp \
     WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp \
     WebProcess/InjectedBundle/qt/InjectedBundleQt.cpp \

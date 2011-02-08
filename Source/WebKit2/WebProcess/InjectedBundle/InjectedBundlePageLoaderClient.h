@@ -62,8 +62,6 @@ public:
     void didDisplayInsecureContentForFrame(WebPage*, WebFrame*, RefPtr<APIObject>& userData);
     void didRunInsecureContentForFrame(WebPage*, WebFrame*, RefPtr<APIObject>& userData);
 
-    void willSendRequestForFrame(WebPage*, WebFrame*, uint64_t identifier, WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
-
     void didClearWindowObjectForFrame(WebPage*, WebFrame*, WebCore::DOMWrapperWorld*);
     void didCancelClientRedirectForFrame(WebPage*, WebFrame*);
     void willPerformClientRedirectForFrame(WebPage*, WebFrame*, const String& url, double delay, double date);

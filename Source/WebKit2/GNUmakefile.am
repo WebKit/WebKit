@@ -472,6 +472,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePageFormClient.h \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h \
+	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.cpp \
+	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.h \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePageUIClient.h \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp \

@@ -294,6 +294,8 @@
 		51B3005012529D0E000B5CA0 /* WebBackForwardListCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51B3004E12529D0E000B5CA0 /* WebBackForwardListCF.cpp */; };
 		51B3005112529D0E000B5CA0 /* WebPageProxyCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51B3004F12529D0E000B5CA0 /* WebPageProxyCF.cpp */; };
 		6501BD1A12F1243400E9F248 /* WKBundleInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65B86F1712F11D7B00B7DD8A /* WKBundleInspector.cpp */; };
+		6546A82C13000164000CEB1C /* InjectedBundlePageResourceLoadClient.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6546A82A13000164000CEB1C /* InjectedBundlePageResourceLoadClient.h */; };
+		659C551E130006410025C0C2 /* InjectedBundlePageResourceLoadClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6546A82913000164000CEB1C /* InjectedBundlePageResourceLoadClient.cpp */; };
 		65B86F1E12F11DE300B7DD8A /* WKBundleInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B86F1812F11D7B00B7DD8A /* WKBundleInspector.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6D8A91A611F0EFD100DD01FE /* com.apple.WebProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = 6D8A91A511F0EFD100DD01FE /* com.apple.WebProcess.sb */; };
 		762B748D120BC75C00819339 /* WKPreferencesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 762B7484120BBA2D00819339 /* WKPreferencesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -760,6 +762,7 @@
 				1A50DB66110A3D57000D3FE5 /* WebProcess.app in CopyFiles */,
 				1A64228B12DD024700CAAE2C /* DrawingArea.messages.in in CopyFiles */,
 				B396EA5612E0ED2D00F4FEB7 /* config.h in CopyFiles */,
+				6546A82C13000164000CEB1C /* InjectedBundlePageResourceLoadClient.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1059,6 +1062,8 @@
 		51B3004F12529D0E000B5CA0 /* WebPageProxyCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebPageProxyCF.cpp; path = cf/WebPageProxyCF.cpp; sourceTree = "<group>"; };
 		5DAD7294116FF70B00EE5396 /* WebProcess.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebProcess.xcconfig; sourceTree = "<group>"; };
 		5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = BaseTarget.xcconfig; sourceTree = "<group>"; };
+		6546A82913000164000CEB1C /* InjectedBundlePageResourceLoadClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageResourceLoadClient.cpp; sourceTree = "<group>"; };
+		6546A82A13000164000CEB1C /* InjectedBundlePageResourceLoadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageResourceLoadClient.h; sourceTree = "<group>"; };
 		65B86F1712F11D7B00B7DD8A /* WKBundleInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleInspector.cpp; sourceTree = "<group>"; };
 		65B86F1812F11D7B00B7DD8A /* WKBundleInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleInspector.h; sourceTree = "<group>"; };
 		6D8A91A511F0EFD100DD01FE /* com.apple.WebProcess.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = com.apple.WebProcess.sb; path = WebProcess/com.apple.WebProcess.sb; sourceTree = "<group>"; };
@@ -2444,6 +2449,8 @@
 				BC14E108120B905E00826C0C /* InjectedBundlePageFormClient.h */,
 				BCA8C6A611E3BA5F00812FB7 /* InjectedBundlePageLoaderClient.cpp */,
 				BCA8C6A711E3BA5F00812FB7 /* InjectedBundlePageLoaderClient.h */,
+				6546A82913000164000CEB1C /* InjectedBundlePageResourceLoadClient.cpp */,
+				6546A82A13000164000CEB1C /* InjectedBundlePageResourceLoadClient.h */,
 				BCA8C6AD11E3C08700812FB7 /* InjectedBundlePageUIClient.cpp */,
 				BCA8C6AE11E3C08700812FB7 /* InjectedBundlePageUIClient.h */,
 				BC14DF76120B5B7900826C0C /* InjectedBundleScriptWorld.cpp */,
@@ -3620,6 +3627,7 @@
 				BCA56A1D12F9028E00C566C7 /* WebGraphicsContext.cpp in Sources */,
 				BCA56A6612F9C8F900C566C7 /* WKGraphicsContext.cpp in Sources */,
 				BCA56A6A12F9C9AD00C566C7 /* WKGraphicsContextCG.cpp in Sources */,
+				659C551E130006410025C0C2 /* InjectedBundlePageResourceLoadClient.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

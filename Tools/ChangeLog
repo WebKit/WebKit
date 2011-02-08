@@ -1,3 +1,22 @@
+2011-02-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add resource load client for injected bundle and move willSendRequest there
+        https://bugs.webkit.org/show_bug.cgi?id=53972
+
+        * MiniBrowser/mac/WebBundle/WebBundleMain.m:
+        (didCreatePage):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+        (WTR::InjectedBundlePage::didInitiateLoadForResource):
+        (WTR::InjectedBundlePage::didReceiveResponseForResource):
+        (WTR::InjectedBundlePage::didReceiveContentLengthForResource):
+        (WTR::InjectedBundlePage::didFinishLoadForResource):
+        (WTR::InjectedBundlePage::didFailLoadForResource):
+        (WTR::InjectedBundlePage::willSendRequestForFrame):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+
 2011-02-07  Adam Barth  <abarth@webkit.org>
 
         Add Leopard Debug back to the core builders.

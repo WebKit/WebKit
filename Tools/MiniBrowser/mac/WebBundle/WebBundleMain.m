@@ -64,7 +64,7 @@ void didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* clientI
     memset(&client, 0, sizeof(client));
     client.didClearWindowObjectForFrame = didClearWindowObjectForFrame;
 
-    WKBundlePageSetLoaderClient(page, &client);
+    WKBundlePageSetPageLoaderClient(page, &client);
 }
 
 void willDestroyPage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo)

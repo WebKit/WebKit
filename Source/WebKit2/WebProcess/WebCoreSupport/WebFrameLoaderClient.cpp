@@ -152,6 +152,8 @@ void WebFrameLoaderClient::assignIdentifierToInitialRequest(unsigned long identi
     bool pageIsProvisionallyLoading = false;
     if (FrameLoader* frameLoader = loader->frameLoader())
         pageIsProvisionallyLoading = frameLoader->provisionalDocumentLoader() == loader;
+
+    webPage->injectedBundleResourceLoadClient().didInitiateLoadForResource(webPage, m_frame, identifier, request, pageIsProvisionallyLoading);
     webPage->send(Messages::WebPageProxy::DidInitiateLoadForResource(m_frame->frameID(), identifier, request, pageIsProvisionallyLoading));
 }
 
@@ -161,7 +163,7 @@ void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader*, unsigned lon
     if (!webPage)
         return;
 
-    webPage->injectedBundleLoaderClient().willSendRequestForFrame(webPage, m_frame, identifier, request, redirectResponse);
+    webPage->injectedBundleResourceLoadClient().willSendRequestForFrame(webPage, m_frame, identifier, request, redirectResponse);
 
     if (request.isNull()) {
         // FIXME: We should probably send a message saying we cancelled the request for the resource.
@@ -217,6 +219,7 @@ void WebFrameLoaderClient::dispatchDidReceiveResponse(DocumentLoader*, unsigned 
     if (!webPage)
         return;
 
+    webPage->injectedBundleResourceLoadClient().didReceiveResponseForResource(webPage, m_frame, identifier, response);
     webPage->send(Messages::WebPageProxy::DidReceiveResponseForResource(m_frame->frameID(), identifier, response));
 }
 
@@ -226,6 +229,7 @@ void WebFrameLoaderClient::dispatchDidReceiveContentLength(DocumentLoader*, unsi
     if (!webPage)
         return;
 
+    webPage->injectedBundleResourceLoadClient().didReceiveContentLengthForResource(webPage, m_frame, identifier, lengthReceived);
     webPage->send(Messages::WebPageProxy::DidReceiveContentLengthForResource(m_frame->frameID(), identifier, lengthReceived));
 }
 
@@ -235,6 +239,7 @@ void WebFrameLoaderClient::dispatchDidFinishLoading(DocumentLoader*, unsigned lo
     if (!webPage)
         return;
 
+    webPage->injectedBundleResourceLoadClient().didFinishLoadForResource(webPage, m_frame, identifier);
     webPage->send(Messages::WebPageProxy::DidFinishLoadForResource(m_frame->frameID(), identifier));
 }
 
@@ -244,6 +249,7 @@ void WebFrameLoaderClient::dispatchDidFailLoading(DocumentLoader*, unsigned long
     if (!webPage)
         return;
 
+    webPage->injectedBundleResourceLoadClient().didFailLoadForResource(webPage, m_frame, identifier, error);
     webPage->send(Messages::WebPageProxy::DidFailLoadForResource(m_frame->frameID(), identifier, error));
 }
 

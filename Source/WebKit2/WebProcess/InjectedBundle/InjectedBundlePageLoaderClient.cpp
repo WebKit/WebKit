@@ -176,18 +176,6 @@ void InjectedBundlePageLoaderClient::didRunInsecureContentForFrame(WebPage* page
     userData = adoptRef(toImpl(userDataToPass));
 }
 
-void InjectedBundlePageLoaderClient::willSendRequestForFrame(WebPage* page, WebFrame* frame, uint64_t identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
-{
-    if (!m_client.willSendRequestForFrame)
-        return;
-
-    RefPtr<WebURLRequest> returnedRequest = toImpl(m_client.willSendRequestForFrame(toAPI(page), toAPI(frame), identifier, toAPI(request), toAPI(redirectResponse), m_client.clientInfo));
-    if (returnedRequest)
-        request = returnedRequest->resourceRequest();
-    else
-        request = ResourceRequest();
-}
-
 void InjectedBundlePageLoaderClient::didClearWindowObjectForFrame(WebPage* page, WebFrame* frame, DOMWrapperWorld* world)
 {
     if (!m_client.didClearWindowObjectForFrame)

@@ -192,9 +192,20 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         didCancelClientRedirectForFrame,
         willPerformClientRedirectForFrame,
         didHandleOnloadEventsForFrame,
-        willSendRequestForFrame
     };
-    WKBundlePageSetLoaderClient(m_page, &loaderClient);
+    WKBundlePageSetPageLoaderClient(m_page, &loaderClient);
+
+    WKBundlePageResourceLoadClient resourceLoadClient = {
+        0,
+        this,
+        didInitiateLoadForResource,
+        willSendRequestForFrame,
+        didReceiveResponseForResource,
+        didReceiveContentLengthForResource,
+        didFinishLoadForResource,
+        didFailLoadForResource
+    };
+    WKBundlePageSetResourceLoadClient(m_page, &resourceLoadClient);
 
     WKBundlePageUIClient uiClient = {
         0,
@@ -324,9 +335,34 @@ void InjectedBundlePage::didRunInsecureContentForFrame(WKBundlePageRef page, WKB
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didRunInsecureContentForFrame(frame);
 }
 
+void InjectedBundlePage::didInitiateLoadForResource(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t identifier, WKURLRequestRef request, bool pageLoadIsProvisional, const void* clientInfo)
+{
+    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didInitiateLoadForResource(page, frame, identifier, request, pageLoadIsProvisional);
+}
+
 WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t identifier, WKURLRequestRef request, WKURLResponseRef redirectResponse, const void* clientInfo)
 {
     return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->willSendRequestForFrame(page, frame, identifier, request, redirectResponse);
+}
+
+void InjectedBundlePage::didReceiveResponseForResource(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t identifier, WKURLResponseRef response, const void* clientInfo)
+{
+    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didReceiveResponseForResource(page, frame, identifier, response);
+}
+
+void InjectedBundlePage::didReceiveContentLengthForResource(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t identifier, uint64_t length, const void* clientInfo)
+{
+    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didReceiveContentLengthForResource(page, frame, identifier, length);
+}
+
+void InjectedBundlePage::didFinishLoadForResource(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t identifier, const void* clientInfo)
+{
+    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didFinishLoadForResource(page, frame, identifier);
+}
+
+void InjectedBundlePage::didFailLoadForResource(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t identifier, WKErrorRef error, const void* clientInfo)
+{
+    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didFinishLoadForResource(page, frame, identifier, error);
 }
 
 void InjectedBundlePage::didStartProvisionalLoadForFrame(WKBundleFrameRef frame)
@@ -576,6 +612,12 @@ void InjectedBundlePage::didRunInsecureContentForFrame(WKBundleFrameRef frame)
 {
 }
 
+void InjectedBundlePage::didInitiateLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef, bool)
+{
+}
+
+// Resource Load Client Callbacks
+
 WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef, WKBundleFrameRef, uint64_t, WKURLRequestRef request, WKURLResponseRef)
 {
     if (InjectedBundle::shared().isTestRunning() && InjectedBundle::shared().layoutTestController()->willSendRequestReturnsNull())
@@ -593,8 +635,23 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef, WKB
         return 0;
     }
 
-
     return request;
+}
+
+void InjectedBundlePage::didReceiveResponseForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t, WKURLResponseRef)
+{
+}
+
+void InjectedBundlePage::didReceiveContentLengthForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t, uint64_t)
+{
+}
+
+void InjectedBundlePage::didFinishLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t)
+{
+}
+
+void InjectedBundlePage::didFailLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t, WKErrorRef)
+{
 }
 
 // UI Client Callbacks

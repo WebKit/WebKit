@@ -1,3 +1,40 @@
+2011-02-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add resource load client for injected bundle and move willSendRequest there
+        https://bugs.webkit.org/show_bug.cgi?id=53972
+
+        * GNUmakefile.am:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSetPageLoaderClient):
+        (WKBundlePageSetResourceLoadClient):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.cpp: Added.
+        (WebKit::InjectedBundlePageResourceLoadClient::didInitiateLoadForResource):
+        (WebKit::InjectedBundlePageResourceLoadClient::willSendRequestForFrame):
+        (WebKit::InjectedBundlePageResourceLoadClient::didReceiveResponseForResource):
+        (WebKit::InjectedBundlePageResourceLoadClient::didReceiveContentLengthForResource):
+        (WebKit::InjectedBundlePageResourceLoadClient::didFinishLoadForResource):
+        (WebKit::InjectedBundlePageResourceLoadClient::didFailLoadForResource):
+        * WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.h: Added.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::assignIdentifierToInitialRequest):
+        (WebKit::WebFrameLoaderClient::dispatchWillSendRequest):
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveResponse):
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveContentLength):
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishLoading):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailLoading):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::initializeInjectedBundleResourceLoadClient):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::injectedBundleResourceLoadClient):
+        * win/WebKit2.vcproj:
+
 2011-02-07  Mark Rowe  <mrowe@apple.com>
 
         Fix the 32-bit build.

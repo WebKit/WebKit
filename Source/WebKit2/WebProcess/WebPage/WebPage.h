@@ -35,6 +35,7 @@
 #include "InjectedBundlePageEditorClient.h"
 #include "InjectedBundlePageFormClient.h"
 #include "InjectedBundlePageLoaderClient.h"
+#include "InjectedBundlePageResourceLoadClient.h"
 #include "InjectedBundlePageUIClient.h"
 #include "MessageSender.h"
 #include "Plugin.h"
@@ -170,12 +171,14 @@ public:
     void initializeInjectedBundleEditorClient(WKBundlePageEditorClient*);
     void initializeInjectedBundleFormClient(WKBundlePageFormClient*);
     void initializeInjectedBundleLoaderClient(WKBundlePageLoaderClient*);
+    void initializeInjectedBundleResourceLoadClient(WKBundlePageResourceLoadClient*);
     void initializeInjectedBundleUIClient(WKBundlePageUIClient*);
 
     InjectedBundlePageContextMenuClient& injectedBundleContextMenuClient() { return m_contextMenuClient; }
     InjectedBundlePageEditorClient& injectedBundleEditorClient() { return m_editorClient; }
     InjectedBundlePageFormClient& injectedBundleFormClient() { return m_formClient; }
     InjectedBundlePageLoaderClient& injectedBundleLoaderClient() { return m_loaderClient; }
+    InjectedBundlePageResourceLoadClient& injectedBundleResourceLoadClient() { return m_resourceLoadClient; }
     InjectedBundlePageUIClient& injectedBundleUIClient() { return m_uiClient; }
 
     bool findStringFromInjectedBundle(const String&, FindOptions);
@@ -497,6 +500,7 @@ private:
     InjectedBundlePageEditorClient m_editorClient;
     InjectedBundlePageFormClient m_formClient;
     InjectedBundlePageLoaderClient m_loaderClient;
+    InjectedBundlePageResourceLoadClient m_resourceLoadClient;
     InjectedBundlePageUIClient m_uiClient;
 
 #if ENABLE(TILED_BACKING_STORE)
