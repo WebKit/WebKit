@@ -119,7 +119,11 @@ void RunLoop::wakeUp()
 void RunLoop::TimerBase::timerFired(RunLoop* runLoop, uint64_t ID)
 {
     TimerMap::iterator it = runLoop->m_activeTimers.find(ID);
-    ASSERT(it != runLoop->m_activeTimers.end());
+    if (it == runLoop->m_activeTimers.end()) {
+        // The timer must have been stopped after the WM_TIMER message was posted to the message queue.
+        return;
+    }
+
     TimerBase* timer = it->second;
 
     if (!timer->m_isRepeating) {

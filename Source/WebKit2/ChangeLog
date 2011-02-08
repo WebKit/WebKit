@@ -1,5 +1,21 @@
 2011-02-08  Adam Roben  <aroben@apple.com>
 
+        Handle WM_TIMER messages for stopped timers
+
+        Whenever we stop a timer, we call ::KillTimer to cancel any future firings of the timer. But
+        ::KillTimer doesn't do anything about WM_TIMER messages that have already been posted to the
+        message queue. We need to handle those, too.
+
+        Fixes <http://webkit.org/b/53999> Occasional assertion failures in
+        RunLoop::TimerBase::timerFired
+
+        Reviewed by Darin Adler.
+
+        * Platform/win/RunLoopWin.cpp:
+        (RunLoop::TimerBase::timerFired): Just bail if the timer has already been stopped.
+
+2011-02-08  Adam Roben  <aroben@apple.com>
+
         Don't mark a Connection as connected until open() is called on Windows
 
         This matches Mac. Even though the Connection's pipe is connected before open() is called,
