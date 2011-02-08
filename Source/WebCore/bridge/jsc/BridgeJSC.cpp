@@ -106,7 +106,6 @@ RuntimeObject* Instance::newRuntimeObject(ExecState* exec)
 void Instance::willDestroyRuntimeObject(RuntimeObject* object)
 {
     ASSERT(m_rootObject);
-    ASSERT(m_rootObject->isValid());
     m_rootObject->removeRuntimeObject(object);
     m_runtimeObject.clear(object);
 }

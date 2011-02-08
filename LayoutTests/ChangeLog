@@ -1,3 +1,15 @@
+2011-02-08  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Darin Adler.
+
+        JSC::Bindings m_rootObject->isValid() assert fails when running layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=53716
+
+        Re-enabled tests that are fixed with the corresponding change in 
+        WebCore.
+
+        * platform/gtk/Skipped:
+
 2011-02-08  Xiaomei Ji  <xji@chromium.org>
 
         Unreviewed.

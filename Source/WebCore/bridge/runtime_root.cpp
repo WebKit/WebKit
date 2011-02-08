@@ -185,7 +185,9 @@ void RootObject::addRuntimeObject(RuntimeObject* object)
 
 void RootObject::removeRuntimeObject(RuntimeObject* object)
 {
-    ASSERT(m_isValid);
+    if (!m_isValid)
+        return;
+
     ASSERT(m_runtimeObjects.uncheckedGet(object));
 
     m_runtimeObjects.take(object);

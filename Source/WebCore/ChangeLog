@@ -1,3 +1,20 @@
+2011-02-08  Michael Saboff  <msaboff@apple.com>
+
+        JSC::Bindings m_rootObject->isValid() assert fails when running layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=53716
+
+        Changed ASSERT to be an if for the case where the RuntimeObject was
+        GC'ed before RootObject::invalidate is called.  In that case there is 
+        no need to remove the RuntimeObject from the RootObject.  The isValid()
+        call will be false in this case, but the RuntimeObject has already
+        been removed from the RootObject.  Added similar defensive code
+        in RootObject::removeRuntimeObject().
+
+        * bridge/jsc/BridgeJSC.cpp:
+        (JSC::Bindings::Instance::willDestroyRuntimeObject):
+        * bridge/runtime_root.cpp:
+        (JSC::Bindings::RootObject::removeRuntimeObject):
+
 2011-02-08  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.
