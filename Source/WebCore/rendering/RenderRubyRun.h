@@ -46,8 +46,6 @@ public:
     RenderRubyRun(Node*);
     virtual ~RenderRubyRun();
 
-    virtual void destroy();
-
     bool hasRubyText() const;
     bool hasRubyBase() const;
     bool isEmpty() const;
@@ -75,8 +73,6 @@ private:
     virtual const char* renderName() const { return "RenderRubyRun (anonymous)"; }
     virtual bool createsAnonymousWrapper() const { return true; }
     virtual void removeLeftoverAnonymousBlock(RenderBlock*) { }
-
-    bool m_beingDestroyed;
 };
 
 } // namespace WebCore

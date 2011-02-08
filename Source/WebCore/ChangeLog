@@ -1,3 +1,15 @@
+2011-02-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        RenderRubyRun::m_beingDestroyed is redundant
+        https://bugs.webkit.org/show_bug.cgi?id=54042
+
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::RenderRubyRun): Removed intialization of m_beingDestroyed.
+        (WebCore::RenderRubyRun::removeChild): Use the base class beingDestroyed(). 
+        * rendering/RenderRubyRun.h:
+
 2011-02-08  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Ryosuke Niwa.

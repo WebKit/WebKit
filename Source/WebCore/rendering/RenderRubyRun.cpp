@@ -42,7 +42,6 @@ namespace WebCore {
 
 RenderRubyRun::RenderRubyRun(Node* node)
     : RenderBlock(node)
-    , m_beingDestroyed(false)
 {
     setReplaced(true);
     setInline(true);
@@ -50,13 +49,6 @@ RenderRubyRun::RenderRubyRun(Node* node)
 
 RenderRubyRun::~RenderRubyRun()
 {
-}
-
-void RenderRubyRun::destroy()
-{
-    // Mark if the run is being destroyed to avoid trouble in removeChild().
-    m_beingDestroyed = true;
-    RenderBlock::destroy();
 }
 
 bool RenderRubyRun::hasRubyText() const
@@ -165,7 +157,7 @@ void RenderRubyRun::removeChild(RenderObject* child)
 {
     // If the child is a ruby text, then merge the ruby base with the base of
     // the right sibling run, if possible.
-    if (!m_beingDestroyed && !documentBeingDestroyed() && child->isRubyText()) {
+    if (!beingDestroyed() && !documentBeingDestroyed() && child->isRubyText()) {
         RenderRubyBase* base = rubyBase();
         RenderObject* rightNeighbour = nextSibling();
         if (base && rightNeighbour && rightNeighbour->isRubyRun()) {
@@ -184,7 +176,7 @@ void RenderRubyRun::removeChild(RenderObject* child)
 
     RenderBlock::removeChild(child);
 
-    if (!m_beingDestroyed && !documentBeingDestroyed()) {
+    if (!beingDestroyed() && !documentBeingDestroyed()) {
         // Check if our base (if any) is now empty. If so, destroy it.
         RenderBlock* base = rubyBase();
         if (base && !base->firstChild()) {
