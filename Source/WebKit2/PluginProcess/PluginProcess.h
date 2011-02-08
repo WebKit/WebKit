@@ -68,7 +68,7 @@ private:
 
     // Message handlers.
     void didReceivePluginProcessMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-    void initialize(const PluginProcessCreationParameters&);
+    void initializePluginProcess(const PluginProcessCreationParameters&);
     void createWebProcessConnection();
     
     void shutdownTimerFired();

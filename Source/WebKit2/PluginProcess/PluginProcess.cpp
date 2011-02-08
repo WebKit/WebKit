@@ -111,7 +111,7 @@ void PluginProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::Mess
 {
 }
 
-void PluginProcess::initialize(const PluginProcessCreationParameters& parameters)
+void PluginProcess::initializePluginProcess(const PluginProcessCreationParameters& parameters)
 {
     ASSERT(!m_pluginModule);
 

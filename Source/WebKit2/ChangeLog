@@ -1,3 +1,20 @@
+2011-02-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Rename PluginProcess::initialize to PluginProcess::initializePluginProcess
+        https://bugs.webkit.org/show_bug.cgi?id=54037
+
+        Rename PluginProcess::initialize to PluginProcess::initializePluginProcess to better
+        match the WebProcess initialization code, in preparation of sharing more code.
+
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::initializePluginProcess):
+        * PluginProcess/PluginProcess.h:
+        * PluginProcess/PluginProcess.messages.in:
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::didFinishLaunching):
+
 2011-02-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

@@ -127,7 +127,7 @@ void PluginProcessProxy::didFinishLaunching(ProcessLauncher*, CoreIPC::Connectio
     platformInitializePluginProcess(parameters);
 
     // Initialize the plug-in host process.
-    m_connection->send(Messages::PluginProcess::Initialize(parameters), 0);
+    m_connection->send(Messages::PluginProcess::InitializePluginProcess(parameters), 0);
 
     // Send all our pending requests.
     for (unsigned i = 0; i < m_numPendingConnectionRequests; ++i)
