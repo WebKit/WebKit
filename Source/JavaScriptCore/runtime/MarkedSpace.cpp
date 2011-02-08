@@ -126,7 +126,7 @@ void* MarkedSpace::allocate(size_t s)
         Block* block = m_heap.collectorBlock(m_heap.nextBlock);
         do {
             ASSERT(m_heap.nextCell < HeapConstants::cellsPerBlock);
-            if (!block->marked.get(m_heap.nextCell)) { // Always false for the last cell in the block
+            if (!block->marked.testAndSet(m_heap.nextCell)) { // Always false for the last cell in the block
                 Cell* cell = &block->cells[m_heap.nextCell];
 
                 JSCell* imp = reinterpret_cast<JSCell*>(cell);
@@ -141,8 +141,12 @@ void* MarkedSpace::allocate(size_t s)
         m_heap.waterMark += BLOCK_SIZE;
     } while (++m_heap.nextBlock != m_heap.usedBlocks);
 
-    if (m_heap.waterMark < m_heap.highWaterMark)
-        return &allocateBlock()->cells[m_heap.nextCell++];
+    if (m_heap.waterMark < m_heap.highWaterMark) {
+        MarkedBlock* block = allocateBlock();
+        ASSERT(!block->marked.get(m_heap.nextCell));
+        block->marked.set(m_heap.nextCell);
+        return &block->cells[m_heap.nextCell++];
+    }
 
     return 0;
 }
@@ -208,14 +212,7 @@ bool MarkedSpace::containsSlowCase(const void* x)
         // x is a pointer into the heap. Now, verify that the cell it
         // points to is live. (If the cell is dead, we must not mark it,
         // since that would revive it in a zombie state.)
-        if (block < m_heap.nextBlock)
-            return true;
-        
         size_t cellOffset = offset / CELL_SIZE;
-        
-        if (block == m_heap.nextBlock && cellOffset < m_heap.nextCell)
-            return true;
-        
         return blockAddr->marked.get(cellOffset);
     }
     
