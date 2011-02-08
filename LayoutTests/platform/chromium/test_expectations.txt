@@ -2617,7 +2617,6 @@ BUGWK48034 : platform/win/plugins/npn-invalidate-rect-invalidates-window.html = 
 // Have been flaky for a long time.
 BUGWK48143 : svg/dom/altGlyph-dom.xhtml = CRASH PASS
 BUGWK48256 WIN LINUX : fast/multicol/float-multicol.html = IMAGE+TEXT PASS
-BUGWK48263 : media/adopt-node-crash.html = TIMEOUT PASS
 BUGWK48341 : svg/W3C-SVG-1.1/masking-intro-01-f.svg = CRASH PASS
 BUGWK48352 : fast/blockflow/block-level-images.html = IMAGE PASS
 
@@ -2767,7 +2766,6 @@ BUGCR57950 WIN : svg/batik/text/verticalText.svg = CRASH PASS
 
 // media/video-* flakyness
 BUGCR59665 MAC : media/video-aspect-ratio.html = CRASH TIMEOUT PASS
-BUGCR59665 MAC : media/video-src.html = CRASH TIMEOUT PASS
 BUGCR59665 MAC : media/video-controls-rendering.html = CRASH FAIL TIMEOUT PASS
 BUGCR59665 MAC : media/video-layer-crash.html = CRASH TIMEOUT PASS IMAGE
 // BUGCR59415 : setting SLOW in test_expectations.txt may fix the problem

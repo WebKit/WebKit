@@ -1,3 +1,12 @@
+2011-02-08  Kenji Imasaki  <imasaki@chromium.org>
+
+        Reviewed by Jian Li.
+
+        [Chromium] Remove non-Flaky media tests from test expectation file
+        https://bugs.webkit.org/show_bug.cgi?id=54021
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-08  Xiaomei Ji  <xji@chromium.org>
 
         Unreviewed. Fix typo in rebaseline in r77961.
