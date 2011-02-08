@@ -810,6 +810,16 @@ class GitTest(SCMTest):
         run_command(['git', 'config', '--add', 'svn-remote.svn.fetch', 'trunk:remote2'])
         self.assertEqual(self.tracking_scm.remote_branch_ref(), 'remote1')
 
+    def test_create_patch(self):
+        write_into_file_at_path('test_file_commit1', 'contents')
+        run_command(['git', 'add', 'test_file_commit1'])
+        scm = detect_scm_system(self.untracking_checkout_path)
+        scm.commit_locally_with_message('message')
+
+        patch = scm.create_patch()
+        self.assertFalse(re.search(r'Subversion Revision:', patch))
+
+
 class GitSVNTest(SCMTest):
 
     def _setup_git_checkout(self):
@@ -1126,6 +1136,7 @@ class GitSVNTest(SCMTest):
         patch = scm.create_patch()
         self.assertTrue(re.search(r'test_file_commit2', patch))
         self.assertTrue(re.search(r'test_file_commit1', patch))
+        self.assertTrue(re.search(r'Subversion Revision: 5', patch))
 
     def test_create_patch_with_changed_files(self):
         self._one_local_commit_plus_working_copy_changes()

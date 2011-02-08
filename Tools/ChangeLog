@@ -1,3 +1,13 @@
+2011-02-01  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        include svn revisions in git diffs for the code review tool to use
+        https://bugs.webkit.org/show_bug.cgi?id=53569
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+        * Scripts/webkitpy/common/checkout/scm_unittest.py:
+
 2011-02-03  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Darin Fisher.

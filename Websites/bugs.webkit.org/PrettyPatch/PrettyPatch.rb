@@ -15,6 +15,17 @@ public
         fileDiffs = FileDiff.parse(string)
 
         str = HEADER + "\n"
+
+        # Just look at the first line to see if it is an SVN revision number as added
+        # by webkit-patch for git checkouts.
+        string.each_line do |line|
+            match = /^Subversion\ Revision: (\d*)$/.match(line)
+            unless match.nil?
+              str += "<span class='revision'>" + match[1] + "</span>\n"
+            end
+            break
+        end
+
         str += fileDiffs.collect{ |diff| diff.to_html }.join
     end
 

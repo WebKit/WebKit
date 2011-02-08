@@ -1,5 +1,14 @@
 2011-02-01  Ojan Vafai  <ojan@chromium.org>
 
+        Reviewed by Adam Roben.
+
+        include svn revisions in git diffs for the code review tool to use
+        https://bugs.webkit.org/show_bug.cgi?id=53569
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2011-02-01  Ojan Vafai  <ojan@chromium.org>
+
         Reviewed by Adam Barth.
 
         make draft comments focusable
