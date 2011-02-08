@@ -70,8 +70,6 @@ public:
     void immediateScrollToPoint(const FloatPoint& newPosition);
     void immediateScrollByDeltaX(float deltaX);
     void immediateScrollByDeltaY(float deltaY);
-
-    id scrollbarPainterDelegate();
     
 private:
     RetainPtr<id> m_scrollAnimationHelper;

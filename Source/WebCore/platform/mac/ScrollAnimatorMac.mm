@@ -278,6 +278,9 @@ static NSSize abs(NSSize size)
 {
     [super setCurrentProgress:progress];
 
+    if (!_animator)
+        return;
+
     CGFloat currentAlpha;
     if (_initialAlpha > _newAlpha)
         currentAlpha = 1 - progress;
@@ -294,6 +297,11 @@ static NSSize abs(NSSize size)
         _animator->scrollableArea()->invalidateScrollbarRect(verticalScrollbar, WebCore::IntRect(0, 0, verticalScrollbar->width(), verticalScrollbar->height()));
     if (WebCore::Scrollbar* horizontalScrollbar = _animator->scrollableArea()->horizontalScrollbar())
         _animator->scrollableArea()->invalidateScrollbarRect(horizontalScrollbar, WebCore::IntRect(0, 0, horizontalScrollbar->width(), horizontalScrollbar->height()));
+}
+
+- (void)scrollAnimatorDestroyed
+{
+    _animator = 0;
 }
 
 @end
@@ -318,6 +326,8 @@ static NSSize abs(NSSize size)
 - (void)scrollerImp:(id)scrollerImp animateKnobAlphaTo:(CGFloat)newKnobAlpha duration:(NSTimeInterval)duration;
 - (void)scrollerImp:(id)scrollerImp animateTrackAlphaTo:(CGFloat)newTrackAlpha duration:(NSTimeInterval)duration;
 - (void)scrollerImp:(id)scrollerImp overlayScrollerStateChangedTo:(NSUInteger)newOverlayScrollerState;
+
+- (void)scrollAnimatorDestroyed;
 
 @end
 
@@ -367,6 +377,9 @@ static NSSize abs(NSSize size)
 
 - (void)scrollerImp:(id)scrollerImp animateKnobAlphaTo:(CGFloat)newKnobAlpha duration:(NSTimeInterval)duration
 {
+    if (!_animator)
+        return;
+
     WKScrollbarPainterRef scrollerPainter = (WKScrollbarPainterRef)scrollerImp;
     if (newKnobAlpha == wkScrollbarPainterKnobAlpha(scrollerPainter))
         return;
@@ -379,6 +392,9 @@ static NSSize abs(NSSize size)
 
 - (void)scrollerImp:(id)scrollerImp animateTrackAlphaTo:(CGFloat)newTrackAlpha duration:(NSTimeInterval)duration
 {
+    if (!_animator)
+        return;
+
     WKScrollbarPainterRef scrollerPainter = (WKScrollbarPainterRef)scrollerImp;
     if (newTrackAlpha == wkScrollbarPainterTrackAlpha(scrollerPainter))
         return;
@@ -391,6 +407,9 @@ static NSSize abs(NSSize size)
 
 - (void)scrollerImp:(id)scrollerImp overlayScrollerStateChangedTo:(NSUInteger)newOverlayScrollerState
 {
+    if (!_animator)
+        return;
+
     WKScrollbarPainterRef scrollbarPainter = (WKScrollbarPainterRef)scrollerImp;
     wkScrollbarPainterSetOverlayState(scrollbarPainter, newOverlayScrollerState);
 
@@ -402,6 +421,15 @@ static NSSize abs(NSSize size)
         _animator->scrollableArea()->invalidateScrollbarRect(verticalScrollbar, WebCore::IntRect(0, 0, verticalScrollbar->width(), verticalScrollbar->height()));
 
     }
+}
+
+- (void)scrollAnimatorDestroyed
+{
+    _animator = 0;
+    [_verticalKnobAnimation.get() scrollAnimatorDestroyed];
+    [_horizontalKnobAnimation.get() scrollAnimatorDestroyed];
+    [_verticalTrackAnimation.get() scrollAnimatorDestroyed];
+    [_horizontalTrackAnimation.get() scrollAnimatorDestroyed];
 }
 
 @end
@@ -439,15 +467,7 @@ ScrollAnimatorMac::~ScrollAnimatorMac()
 {
 #if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
     [(id)m_scrollbarPainterController.get() setDelegate:nil];
-#endif
-}
-
-id ScrollAnimatorMac::scrollbarPainterDelegate()
-{
-#if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
-    return m_scrollbarPainterDelegate.get();
-#else
-    return nil;
+    [(id)m_scrollbarPainterDelegate.get() scrollAnimatorDestroyed];
 #endif
 }
 
