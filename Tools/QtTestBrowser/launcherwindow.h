@@ -94,6 +94,10 @@ public:
         , showFrameRate(false)
         , resizesToContents(false)
         , viewportUpdateMode(QGraphicsView::MinimalViewportUpdate)
+        , useLocalStorage(false)
+        , useOfflineStorageDatabase(false)
+        , useOfflineWebApplicationCache(false)
+        , offlineStorageDefaultQuotaSize(0)
 #if defined(QT_CONFIGURED_WITH_OPENGL)
         , useQGLWidgetViewport(false)
 #endif
@@ -110,6 +114,10 @@ public:
     bool showFrameRate;
     bool resizesToContents;
     QGraphicsView::ViewportUpdateMode viewportUpdateMode;
+    bool useLocalStorage;
+    bool useOfflineStorageDatabase;
+    bool useOfflineWebApplicationCache;
+    quint64 offlineStorageDefaultQuotaSize;
 #if defined(QT_CONFIGURED_WITH_OPENGL)
     bool useQGLWidgetViewport;
 #endif
@@ -165,6 +173,10 @@ protected slots:
     void toggleJavascriptCanOpenWindows(bool enable);
     void toggleAutoLoadImages(bool enable);
     void togglePlugins(bool enable);
+    void toggleLocalStorage(bool toggle);
+    void toggleOfflineStorageDatabase(bool toggle);
+    void toggleOfflineWebApplicationCache(bool toggle);
+    void setOfflineStorageDefaultQuota();
 
 #if defined(QT_CONFIGURED_WITH_OPENGL)
     void toggleQGLWidgetViewport(bool enable);

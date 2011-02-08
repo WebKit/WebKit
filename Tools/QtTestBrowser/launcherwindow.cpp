@@ -264,6 +264,24 @@ void LauncherWindow::createChrome()
 
     toolsMenu->addSeparator();
 
+    QAction* toggleLocalStorage = toolsMenu->addAction("Enable Local Storage", this, SLOT(toggleLocalStorage(bool)));
+    toggleLocalStorage->setCheckable(true);
+    toggleLocalStorage->setChecked(m_windowOptions.useLocalStorage);
+
+    QAction* toggleOfflineStorageDatabase = toolsMenu->addAction("Enable Offline Storage Database", this, SLOT(toggleOfflineStorageDatabase(bool)));
+    toggleOfflineStorageDatabase->setCheckable(true);
+    toggleOfflineStorageDatabase->setChecked(m_windowOptions.useOfflineStorageDatabase);
+
+    QAction* toggleOfflineWebApplicationCache = toolsMenu->addAction("Enable Offline Web Application Cache", this, SLOT(toggleOfflineWebApplicationCache(bool)));
+    toggleOfflineWebApplicationCache->setCheckable(true);
+    toggleOfflineWebApplicationCache->setChecked(m_windowOptions.useOfflineWebApplicationCache);
+
+    QAction* offlineStorageDefaultQuotaAction = toolsMenu->addAction("Set Offline Storage Default Quota Size", this, SLOT(setOfflineStorageDefaultQuota()));
+    offlineStorageDefaultQuotaAction->setCheckable(true);
+    offlineStorageDefaultQuotaAction->setChecked(m_windowOptions.offlineStorageDefaultQuotaSize);
+
+    toolsMenu->addSeparator();
+
     QAction* userAgentAction = toolsMenu->addAction("Change User Agent", this, SLOT(showUserAgentDialog()));
     userAgentAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_U));
 
@@ -900,6 +918,40 @@ void LauncherWindow::updateFPS(int fps)
 #else
     statusBar()->showMessage(fpsStatusText);
 #endif
+}
+
+void LauncherWindow::toggleLocalStorage(bool toggle)
+{
+    m_windowOptions.useLocalStorage = toggle;
+    page()->settings()->setAttribute(QWebSettings::LocalStorageEnabled, toggle);
+}
+
+void LauncherWindow::toggleOfflineStorageDatabase(bool toggle)
+{
+    m_windowOptions.useOfflineStorageDatabase = toggle;
+    page()->settings()->setAttribute(QWebSettings::OfflineStorageDatabaseEnabled, toggle);
+}
+
+void LauncherWindow::toggleOfflineWebApplicationCache(bool toggle)
+{
+    m_windowOptions.useOfflineWebApplicationCache = toggle;
+    page()->settings()->setAttribute(QWebSettings::OfflineWebApplicationCacheEnabled, toggle);
+}
+
+void LauncherWindow::setOfflineStorageDefaultQuota()
+{
+    // For command line execution, quota size is taken from command line.   
+    if (m_windowOptions.offlineStorageDefaultQuotaSize)
+        page()->settings()->setOfflineStorageDefaultQuota(m_windowOptions.offlineStorageDefaultQuotaSize);
+    else {
+#ifndef QT_NO_INPUTDIALOG
+        bool ok;
+        // Maximum size is set to 25 * 1024 * 1024.
+        int quotaSize = QInputDialog::getInt(this, "Offline Storage Default Quota Size" , "Quota Size", 0, 0, 26214400, 1, &ok);
+        if (ok) 
+            page()->settings()->setOfflineStorageDefaultQuota(quotaSize);
+#endif
+    }
 }
 
 LauncherWindow* LauncherWindow::newWindow()
