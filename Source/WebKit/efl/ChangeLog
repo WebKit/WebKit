@@ -1,3 +1,12 @@
+2011-02-08  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Unreviewed build fix.
+
+        [EFL] Fix when building with curl backend.
+
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_proxy_uri_get):
+
 2011-02-07  Enrica Casucci  <enrica@apple.com>
 
         Reviewed Adam Roben and Darin Adler.

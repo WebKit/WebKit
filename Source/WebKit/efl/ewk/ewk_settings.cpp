@@ -310,7 +310,7 @@ const char* ewk_settings_proxy_uri_get()
     WTF::String proxy = soup_uri_to_string(uri, EINA_FALSE);
     return eina_stringshare_add(proxy.utf8().data());
 #elif USE(CURL)
-    EINA_SAFETY_ON_TRUE_RETURN(1);
+    EINA_SAFETY_ON_TRUE_RETURN_VAL(1, NULL);
 #endif
 }
 
