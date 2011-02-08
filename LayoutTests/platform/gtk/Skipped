@@ -224,23 +224,6 @@ fast/xmlhttprequest/xmlhttprequest-responsetype-document.html
 fast/xmlhttprequest/xmlhttprequest-responsetype-text.html
 http/tests/xmlhttprequest/send-array-buffer.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=30508
-# All these tests fail because WebKit does not work correctly with
-# very recent versions of libxml2, which the debug bots use
-fast/xpath/evaluate-twice.html
-fast/xpath/text-nodes.html
-fast/xpath/4XPath/Borrowed/sr_20021217.html
-fast/xpath/py-dom-xpath/abbreviations.html
-fast/xpath/py-dom-xpath/paths.html
-fast/xsl/xslt-processor.html
-fast/dom/import-document-fragment.html
-fast/dom/HTMLFontElement/size-attribute.html
-editing/selection/14971.html
-editing/selection/inline-closest-leaf-child.html
-http/tests/security/cookies/xmlhttprequest.html
-http/tests/xmlhttprequest/broken-xml-encoding.html
-http/tests/xmlhttprequest/web-apps/010.html
-
 # Possible bug in eventSender.zoomPageOut() ? https://bugs.webkit.org/show_bug.cgi?id=30575
 fast/dom/elementFromPoint-relative-to-viewport.html
 
@@ -4641,6 +4624,3 @@ http/tests/websocket/tests/url-with-credential.html
 http/tests/websocket/tests/url-with-empty-query.html
 http/tests/websocket/tests/simple.html
 http/tests/websocket/tests/cross-origin.html
-
-# GTK+ DRT should support enabling and disabling the icon database
-http/tests/inspector/resource-har-conversion.html

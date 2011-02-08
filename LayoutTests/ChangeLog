@@ -1,3 +1,14 @@
+2011-02-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Unskip a series of tests that seem to be passing locally. Also unskip
+        a test that was mistakenly reskipped in r77979 due to what looks like a
+        merge issue. Rebaseline two of these test which have results originating
+        from long ago.
+
+        * platform/gtk/Skipped: Unskip some tests.
+        * platform/gtk/editing/selection/14971-expected.txt:
+        * platform/gtk/editing/selection/inline-closest-leaf-child-expected.txt:
+
 2011-02-08  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Darin Adler.
