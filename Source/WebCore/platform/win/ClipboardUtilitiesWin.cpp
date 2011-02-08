@@ -702,10 +702,10 @@ void setUtf8Data(IDataObject* data, FORMATETC* format, const Vector<String>& dat
     medium.hGlobal = ::GlobalAlloc(GPTR, stringLength + 1);
     if (!medium.hGlobal)
         return;
-    char* buffer = static_cast<char*>(::GlobalLock(medium.hGlobal));
+    char* buffer = static_cast<char*>(GlobalLock(medium.hGlobal));
     memcpy(buffer, charString.data(), stringLength);
     buffer[stringLength] = 0;
-    ::GlobalUnlock(medium.hGlobal);
+    GlobalUnlock(medium.hGlobal);
     data->SetData(format, &medium, FALSE);
     ::GlobalFree(medium.hGlobal);
 }
@@ -719,12 +719,12 @@ void setCFData(IDataObject* data, FORMATETC* format, const Vector<String>& dataS
     if (!medium.hGlobal) 
         return;
 
-    DROPFILES* dropFiles = reinterpret_cast<DROPFILES *>(::GlobalLock(medium.hGlobal));
+    DROPFILES* dropFiles = reinterpret_cast<DROPFILES *>(GlobalLock(medium.hGlobal));
     dropFiles->pFiles = sizeof(DROPFILES);
     dropFiles->fWide = TRUE;
     String filename = dataStrings.first();
     wcscpy(reinterpret_cast<LPWSTR>(dropFiles + 1), filename.charactersWithNullTermination());    
-    ::GlobalUnlock(medium.hGlobal);
+    GlobalUnlock(medium.hGlobal);
     data->SetData(format, &medium, FALSE);
     ::GlobalFree(medium.hGlobal);
 }

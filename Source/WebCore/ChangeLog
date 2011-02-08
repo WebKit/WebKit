@@ -1,3 +1,11 @@
+2011-02-08  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed WinCE build fix for r77870.
+
+        Remove the global namespace prefix from GlobalLock/GlobalUnlock.
+
+        * platform/win/ClipboardUtilitiesWin.cpp:
+
 2011-02-08  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: re-apply r77924.
