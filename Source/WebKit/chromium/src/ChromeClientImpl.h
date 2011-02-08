@@ -39,7 +39,6 @@
 namespace WebCore {
 class AccessibilityObject;
 class FileChooser;
-class HTMLParserQuirks;
 class PopupContainer;
 class PopupMenuClient;
 class SecurityOrigin;
@@ -140,7 +139,6 @@ public:
     virtual void chooseIconForFiles(const Vector<WTF::String>&, WebCore::FileChooser*);
     virtual void setCursor(const WebCore::Cursor&);
     virtual void formStateDidChange(const WebCore::Node*);
-    virtual PassOwnPtr<WebCore::HTMLParserQuirks> createHTMLParserQuirks() { return 0; }
 #if ENABLE(TOUCH_EVENTS)
     // FIXME: All touch events are forwarded regardless of whether or not they are needed.
     virtual void needTouchEvents(bool needTouchEvents) { }

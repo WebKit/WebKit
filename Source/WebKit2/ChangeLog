@@ -1,3 +1,13 @@
+2011-02-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove orphan code from old parser
+        https://bugs.webkit.org/show_bug.cgi?id=53984
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp
+        * WebProcess/WebCoreSupport/WebChromeClient.h
+
 2011-02-08  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

@@ -23,27 +23,4 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTMLParserQuirks_h
-#define HTMLParserQuirks_h
-
-#include <wtf/Forward.h>
-
-namespace WebCore {
-
-class Node;
-
-class HTMLParserQuirks {
-    WTF_MAKE_NONCOPYABLE(HTMLParserQuirks);
-public:
-    HTMLParserQuirks() { }
-    virtual ~HTMLParserQuirks() { }
-
-    virtual void reset() = 0;
-
-    virtual bool shouldInsertNode(Node* parent, Node* newNode) = 0;
-    virtual bool shouldPopBlock(const AtomicString& tagNameOnStack, const AtomicString& tagNameToPop) = 0;
-};
-
-} // namespace WebCore
-
-#endif // HTMLParserQuirks_h
+// FIXME: Delete this file.

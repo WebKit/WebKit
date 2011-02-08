@@ -665,12 +665,6 @@ void WebChromeClient::showContextMenu()
 }
 #endif
 
-PassOwnPtr<HTMLParserQuirks> WebChromeClient::createHTMLParserQuirks()
-{
-    notImplemented();
-    return 0;
-}
-
 #if USE(ACCELERATED_COMPOSITING)
 void WebChromeClient::attachRootGraphicsLayer(Frame*, GraphicsLayer* layer)
 {

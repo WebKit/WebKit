@@ -26,7 +26,6 @@
 #include "Cursor.h"
 #include "FocusDirection.h"
 #include "GraphicsContext.h"
-#include "HTMLParserQuirks.h"
 #include "HostWindow.h"
 #include "PopupMenu.h"
 #include "PopupMenuClient.h"
@@ -53,7 +52,6 @@ namespace WebCore {
     class FloatRect;
     class Frame;
     class Geolocation;
-    class HTMLParserQuirks;
     class HitTestResult;
     class IntRect;
     class NavigationAction;
@@ -234,8 +232,6 @@ namespace WebCore {
         
         virtual void formDidFocus(const Node*) { };
         virtual void formDidBlur(const Node*) { };
-
-        virtual PassOwnPtr<HTMLParserQuirks> createHTMLParserQuirks() = 0;
 
 #if USE(ACCELERATED_COMPOSITING)
         // Pass 0 as the GraphicsLayer to detatch the root layer.

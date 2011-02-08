@@ -388,12 +388,6 @@ void ChromeClientHaiku::formStateDidChange(const Node*)
     notImplemented();
 }
 
-PassOwnPtr<HTMLParserQuirks> ChromeClientHaiku::createHTMLParserQuirks()
-{
-    notImplemented();
-    return 0;
-}
-
 bool ChromeClientHaiku::selectItemWritingDirectionIsNatural()
 {
     return false;

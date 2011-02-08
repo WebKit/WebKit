@@ -154,8 +154,6 @@ public:
     // will be called frequently, so handling should be very fast.
     virtual void formStateDidChange(const WebCore::Node*);
 
-    virtual PassOwnPtr<WebCore::HTMLParserQuirks> createHTMLParserQuirks();
-
 #if USE(ACCELERATED_COMPOSITING)
     // Pass 0 as the GraphicsLayer to detatch the root layer.
     virtual void attachRootGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*);

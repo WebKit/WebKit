@@ -152,8 +152,6 @@ public:
     virtual void formDidFocus(const WebCore::Node*);
     virtual void formDidBlur(const WebCore::Node*);
 
-    virtual PassOwnPtr<WebCore::HTMLParserQuirks> createHTMLParserQuirks() { return 0; }
-
 #if USE(ACCELERATED_COMPOSITING)
     virtual void attachRootGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*);
     virtual void setNeedsOneShotDrawingSynchronization();

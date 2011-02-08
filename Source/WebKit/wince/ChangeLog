@@ -1,3 +1,13 @@
+2011-02-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove orphan code from old parser
+        https://bugs.webkit.org/show_bug.cgi?id=53984
+
+        * WebCoreSupport/ChromeClientWinCE.cpp:
+        * WebCoreSupport/ChromeClientWinCE.h:
+
 2011-02-07  Enrica Casucci  <enrica@apple.com>
 
         Reviewed Adam Roben and Darin Adler.

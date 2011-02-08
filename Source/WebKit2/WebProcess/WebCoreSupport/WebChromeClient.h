@@ -164,20 +164,18 @@ private:
     // to use Geolococation. The ChromeClient must call Geolocation::setShouldClearCache() appropriately.
     virtual void requestGeolocationPermissionForFrame(WebCore::Frame*, WebCore::Geolocation*);
     virtual void cancelGeolocationPermissionRequestForFrame(WebCore::Frame*, WebCore::Geolocation*);
-    
+
     virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>);
     virtual void chooseIconForFiles(const Vector<String>&, WebCore::FileChooser*);
 
     virtual void setCursor(const WebCore::Cursor&);
-    
+
     // Notification that the given form element has changed. This function
     // will be called frequently, so handling should be very fast.
     virtual void formStateDidChange(const WebCore::Node*);
-    
+
     virtual void formDidFocus(const WebCore::Node*);
     virtual void formDidBlur(const WebCore::Node*);
-    
-    virtual PassOwnPtr<WebCore::HTMLParserQuirks> createHTMLParserQuirks();
 
     virtual bool selectItemWritingDirectionIsNatural();
     virtual bool selectItemAlignmentFollowsMenuWritingDirection();

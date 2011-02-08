@@ -179,8 +179,6 @@ namespace WebCore {
 
         virtual void formStateDidChange(const Node*) { }
 
-        virtual PassOwnPtr<HTMLParserQuirks> createHTMLParserQuirks() { return 0; }
-
         virtual void setCursor(const Cursor&);
 
         virtual void scrollRectIntoView(const IntRect&, const ScrollView*) const {}
