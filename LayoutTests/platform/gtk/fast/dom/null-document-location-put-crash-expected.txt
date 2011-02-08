@@ -1,0 +1,4 @@
+FAIL: Timed out waiting for notifyDone to be called
+This test checks for a NULL document crash that can happen when setting location. If the test passes, you'll see a PASS message below.
+
+

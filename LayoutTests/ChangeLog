@@ -1,3 +1,64 @@
+2011-02-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Classify tests failing in the fast directory on GTK+. Add results for
+        tests that just need platform expectations.
+
+        * platform/gtk/Skipped: Update the skipped list.
+        * platform/gtk/fast/backgrounds/background-clip-text-expected.checksum: Added.
+        * platform/gtk/fast/backgrounds/background-clip-text-expected.png: Added.
+        * platform/gtk/fast/backgrounds/background-clip-text-expected.txt: Added.
+        * platform/gtk/fast/canvas/canvas-zoom-expected.txt: Added.
+        * platform/gtk/fast/css/css1_forward_compatible_parsing-expected.checksum: Added.
+        * platform/gtk/fast/css/css1_forward_compatible_parsing-expected.png: Added.
+        * platform/gtk/fast/css/css1_forward_compatible_parsing-expected.txt: Added.
+        * platform/gtk/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Added.
+        * platform/gtk/fast/css/invalid-percentage-property-expected.checksum: Added.
+        * platform/gtk/fast/css/invalid-percentage-property-expected.png: Added.
+        * platform/gtk/fast/css/invalid-percentage-property-expected.txt: Added.
+        * platform/gtk/fast/css/text-align-expected.checksum: Added.
+        * platform/gtk/fast/css/text-align-expected.png: Added.
+        * platform/gtk/fast/css/text-align-expected.txt: Added.
+        * platform/gtk/fast/dom/Element/getBoundingClientRect-expected.txt: Added.
+        * platform/gtk/fast/dom/Range/getBoundingClientRect-expected.txt: Added.
+        * platform/gtk/fast/dom/Range/getClientRects-expected.txt: Added.
+        * platform/gtk/fast/dom/Window/webkitConvertPoint-expected.txt: Added.
+        * platform/gtk/fast/dom/null-document-location-put-crash-expected.txt: Added.
+        * platform/gtk/fast/dom/tabindex-clamp-expected.txt: Added.
+        * platform/gtk/fast/events/js-keyboard-event-creation-expected.txt: Added.
+        * platform/gtk/fast/events/offsetX-offsetY-expected.txt: Added.
+        * platform/gtk/fast/events/pointer-events-2-expected.checksum: Added.
+        * platform/gtk/fast/events/pointer-events-2-expected.png: Added.
+        * platform/gtk/fast/events/pointer-events-2-expected.txt: Added.
+        * platform/gtk/fast/fast-mobile-scrolling/fixed-position-element-expected.checksum: Added.
+        * platform/gtk/fast/fast-mobile-scrolling/fixed-position-element-expected.png: Added.
+        * platform/gtk/fast/fast-mobile-scrolling/fixed-position-element-expected.txt: Added.
+        * platform/gtk/fast/fast-mobile-scrolling/no-fixed-position-elements-expected.checksum: Added.
+        * platform/gtk/fast/fast-mobile-scrolling/no-fixed-position-elements-expected.png: Added.
+        * platform/gtk/fast/fast-mobile-scrolling/no-fixed-position-elements-expected.txt: Added.
+        * platform/gtk/fast/forms/listbox-hit-test-zoomed-expected.checksum: Added.
+        * platform/gtk/fast/forms/listbox-hit-test-zoomed-expected.png: Added.
+        * platform/gtk/fast/forms/listbox-hit-test-zoomed-expected.txt: Added.
+        * platform/gtk/fast/html/tab-order-expected.txt: Added.
+        * platform/gtk/fast/replaced/table-percent-height-expected.txt: Added.
+        * platform/gtk/fast/selectors/lang-inheritance-expected.checksum: Added.
+        * platform/gtk/fast/selectors/lang-inheritance-expected.png: Added.
+        * platform/gtk/fast/selectors/lang-inheritance-expected.txt: Added.
+        * platform/gtk/fast/selectors/lang-inheritance2-expected.checksum: Added.
+        * platform/gtk/fast/selectors/lang-inheritance2-expected.png: Added.
+        * platform/gtk/fast/selectors/lang-inheritance2-expected.txt: Added.
+        * platform/gtk/fast/selectors/lang-vs-xml-lang-expected.checksum: Added.
+        * platform/gtk/fast/selectors/lang-vs-xml-lang-expected.png: Added.
+        * platform/gtk/fast/selectors/lang-vs-xml-lang-expected.txt: Added.
+        * platform/gtk/fast/selectors/lang-vs-xml-lang-xhtml-expected.checksum: Added.
+        * platform/gtk/fast/selectors/lang-vs-xml-lang-xhtml-expected.png: Added.
+        * platform/gtk/fast/selectors/lang-vs-xml-lang-xhtml-expected.txt: Added.
+        * platform/gtk/fast/text/international/danda-space-expected.checksum: Added.
+        * platform/gtk/fast/text/international/danda-space-expected.png: Added.
+        * platform/gtk/fast/text/international/danda-space-expected.txt: Added.
+        * platform/gtk/fast/text/international/thai-baht-space-expected.checksum: Added.
+        * platform/gtk/fast/text/international/thai-baht-space-expected.png: Added.
+        * platform/gtk/fast/text/international/thai-baht-space-expected.txt: Added.
+
 2011-02-07  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, test expectations update.

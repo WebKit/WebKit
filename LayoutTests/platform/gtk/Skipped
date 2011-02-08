@@ -21,6 +21,8 @@
 # The group of tests below are timing out. As we go through them
 # and get more detailed information, we should attach bugs to them.
 fast/xmlhttprequest/null-document-xmlhttprequest-open.html
+fast/dom/null-document-location-replace-crash.html
+fast/dom/null-document-location-put-crash.html
 
 # Intermittently timing out on Gtk Debug Bot:
 # https://bugs.webkit.org/show_bug.cgi?id=33445
@@ -91,9 +93,18 @@ accessibility/visible-elements.html
 # https://bugs.webkit.org/show_bug.cgi?id=53647
 editing/selection/transformed-selection-rects.html
 
-# Test results show a caret and focus ring when there shouldn't be.
+# Blurring and focusing from LayoutTestController do not work.
 # https://bugs.webkit.org/show_bug.cgi?id=53646
+# Test results show a caret and focus ring when there shouldn't be.
 editing/selection/caret-and-focus-ring.html
+# Blur and focus events are not received for the following tests.
+fast/events/blur-focus-window-should-blur-focus-element.html
+fast/dom/Window/window-onFocus.html
+fast/events/frame-tab-focus.html
+# element.blur() and element.focus() does not seem to work always.
+fast/forms/select-double-onchange.html
+fast/forms/select-script-onchange.html
+fast/html/tab-order.html
 
 # Images do not seem to copy and paste properly
 # https://bugs.webkit.org/show_bug.cgi?id=53645
@@ -103,92 +114,105 @@ editing/pasteboard/copy-standalone-image.html
 # https://bugs.webkit.org/show_bug.cgi?id=53644
  editing/deleting/5408255.html
 
-# Ignored because we do not have OBJC bindings (via Chromium)
-editing/pasteboard/paste-RTFD.html
-editing/pasteboard/paste-TIFF.html
-
-# Deletion UI is a Mail-ism. We don't need to worry about this. (via Chromium)
-editing/deleting/deletionUI-single-instance.html
-fast/dom/Element/id-in-deletebutton.html
-
-# Mac Safari under certain circumstances automatically places
-# a caret in editable document even when none was requested programatically.
-editing/selection/designmode-no-caret.html
-
-# Tests in fast/ directory
-#   Tests failing
-fast/canvas/canvas-getImageData.html
-fast/canvas/canvas-gradient-addStop-error.html
-fast/canvas/canvas-zoom.html
-fast/css/css1_forward_compatible_parsing.html
-fast/css/invalid-percentage-property.html
-fast/css/text-align.html
-fast/css/getComputedStyle/computed-style-without-renderer.html
-fast/dom/client-width-height-quirks.html
-fast/dom/client-width-height.html
-fast/dom/cssTarget-crash.html
-fast/dom/DeviceMotion
-fast/dom/DeviceOrientation
-fast/dom/Element/getBoundingClientRect.html
-fast/dom/Range/getBoundingClientRect.html
-fast/dom/Range/getClientRects.html
-fast/dom/null-document-location-href-put-crash.html
-fast/dom/null-document-location-put-crash.html
-fast/dom/null-document-location-replace-crash.html
-fast/dom/object-embed-plugin-scripting.html
-fast/dom/tabindex-clamp.html
-fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport.html
-fast/dom/Window/new-window-opener.html
-fast/dom/Window/webkitConvertPoint.html
-fast/dom/Window/window-onFocus.html
-fast/dom/Window/window-properties-device-orientation.html
-fast/dom/Window/window-resize-and-move-arguments.html
-fast/dom/Window/window-resize.html
-fast/dynamic/paused-event-dispatch.html
-fast/encoding/char-decoding-mac.html
-fast/encoding/char-decoding.html
-fast/encoding/idn-security.html
-fast/encoding/mailto-always-utf-8.html
-fast/events/blur-focus-window-should-blur-focus-element.html
-fast/events/frame-tab-focus.html
-fast/events/js-keyboard-event-creation.html
-fast/events/mouseup-from-button2.html
-fast/events/offsetX-offsetY.html
-fast/events/option-tab.html
-fast/events/pointer-events-2.html
-fast/events/popup-blocking-click-in-iframe.html
-fast/events/scrollbar-double-click.html
-fast/forms/get-file-upload.html
-fast/forms/legend-access-key.html
-fast/forms/listbox-hit-test-zoomed.html
-fast/forms/listbox-onchange.html
-fast/forms/listbox-selection-2.html
-fast/forms/option-mouseevents.html
-fast/forms/select-double-onchange.html
-fast/forms/select-script-onchange.html
-fast/history/window-open.html
-fast/html/tab-order.html
+# Tests failing because of missing resource load delegate callbacks.
+webarchive/loading/test-loading-archive.html
+webarchive/loading/mainresource-null-mimetype-crash.html
+webarchive/loading/missing-data.html
 fast/loader/main-document-url-for-non-http-loads.html
+
+# Tests failing because of missing policy delegate callbacks.
 fast/loader/onload-policy-ignore-for-frame.html
 fast/loader/policy-delegate-action-hit-test-zoomed.html
 fast/loader/reload-policy-delegate.html
 fast/loader/stop-provisional-loads.html
 fast/loading/subframe-removes-itself.html
-fast/fast-mobile-scrolling/fixed-position-element.html
-fast/fast-mobile-scrolling/no-fixed-position-elements.html
+# This policy delegate is implemented, but it needs the DOM node path in the output.
+fast/encoding/mailto-always-utf-8.html
+
+# EventSender.scheduleAsynchronousClick unimplemented
+# https://bugs.webkit.org/show_bug.cgi?id=53960 
+fast/events/popup-blocking-click-in-iframe.html
+
+# EventSender.keyDown does not support non-array modifier arguments.
+# https://bugs.webkit.org/show_bug.cgi?id=53962 
+fast/forms/legend-access-key.html
+
+# Looks like a bug in the LayoutTestController global history support due to missing API.
+fast/history/window-open.html
+
+# All of these IDN encoding tests seem to fail.
+fast/encoding/idn-security.html
+
+# These two glyphs cannot be selected separately (verified in GtkLauncher)
+fast/text/international/thai-offsetForPosition-inside-character.html
+
+# Caret positioning is incorrect in this test.
+fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport.html
+
+# These failures appear to be bugs in the EventSender
+# https://bugs.webkit.org/show_bug.cgi?id=53964
+fast/forms/listbox-onchange.html
+fast/forms/listbox-selection-2.html
+fast/forms/option-mouseevents.html
+
+# Ignored because we do not have OBJC bindings (via Chromium)
+editing/pasteboard/paste-RTFD.html
+editing/pasteboard/paste-TIFF.html
+
+# These tests call dumpAsText, but still perform normal render tree dumps.
+# https://bugs.webkit.org/show_bug.cgi?id=53955 
+fast/dom/object-embed-plugin-scripting.html
+fast/dynamic/paused-event-dispatch.html
+
+# Scrollbar issues.
+# document.body.clientWidth includes vertical scrollbar size.
+scrollbars/scrollbar-click-does-not-blur-content.html
+# More issues where clientWith is incorrect, perhaps because of asynchronous 
+# main frame scrollbar behavior.
+fast/dom/client-width-height-quirks.html
+fast/dom/client-width-height.html
+fast/overflow/scrollbar-restored.html
+
+# Opened windows not properly passed statusbar, locationbar and toolbar properties
+# https://bugs.webkit.org/show_bug.cgi?id=53956 
+fast/dom/Window/new-window-opener.html
+
+# Probably failing because resizing is asynchronous.
+# https://bugs.webkit.org/show_bug.cgi?id=53959 
+fast/dom/Window/window-resize-and-move-arguments.html
+fast/dom/Window/window-resize.html
+
+# The background is not clipped in this test, as observed in the pixel output.
+fast/backgrounds/background-clip-text.html
+
+# DeviceMotion and DeviceOrientation are not enabled by default.
+fast/dom/Window/window-properties-device-orientation.html
+fast/dom/DeviceMotion
+fast/dom/DeviceOrientation
+
+# Desktop notifications are not supported
 fast/notifications
 http/tests/notifications
-fast/replaced/table-percent-height-text-controls.html
-fast/replaced/table-percent-height.html
-fast/selectors/lang-inheritance2.html
-fast/selectors/lang-inheritance.html
-fast/selectors/lang-vs-xml-lang-xhtml.xhtml
-fast/selectors/lang-vs-xml-lang.html
-fast/text/international/danda-space.html
-fast/text/international/thai-baht-space.html
-fast/text/international/thai-offsetForPosition-inside-character.html
-fast/backgrounds/background-clip-text.html
-fast/overflow/scrollbar-restored.html
+
+# Deletion UI is a Mail-ism. We don't need to worry about this. (via Chromium)
+editing/deleting/deletionUI-single-instance.html
+fast/dom/Element/id-in-deletebutton.html
+
+# WebKitGTK+ uses different keyboard accelerators than Safari. (via Chromium)
+fast/events/option-tab.html
+
+# We have no need to support Dashboard compatibility mode. (via Chromium)
+fast/canvas/canvas-gradient-addStop-error.html
+http/tests/xmlhttprequest/default-content-type-dashboard.html
+http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html
+svg/custom/embedded-svg-disallowed-in-dashboard.xml
+svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html
+svg/custom/manually-parsed-svg-disallowed-in-dashboard.html
+svg/custom/svg-disallowed-in-dashboard-object.html
+
+# Mac Safari under certain circumstances automatically places
+# a caret in editable document even when none was requested programatically.
+editing/selection/designmode-no-caret.html
 
 # These fast XMLHttpRequest tests fail because 3D_CANVAS is not enabled.
 fast/xmlhttprequest/xmlhttprequest-responsetype-abort.html
@@ -1846,7 +1870,6 @@ http/tests/xmlhttprequest/cross-origin-authorization.html
 http/tests/xmlhttprequest/cross-origin-cookie-storage.html
 http/tests/xmlhttprequest/cross-origin-no-authorization.html
 
-http/tests/xmlhttprequest/default-content-type-dashboard.html
 http/tests/xmlhttprequest/frame-load-cancelled-abort.html
 http/tests/xmlhttprequest/frame-unload-abort-crash.html
 http/tests/xmlhttprequest/methods-async.html
@@ -1854,7 +1877,6 @@ http/tests/xmlhttprequest/methods.html
 http/tests/xmlhttprequest/response-encoding.html
 http/tests/xmlhttprequest/state-after-network-error.html
 http/tests/xmlhttprequest/supported-xml-content-types.html
-http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html
 http/tests/xmlhttprequest/upload-onload-event.html
 http/tests/xmlhttprequest/upload-onprogress-event.html
 http/tests/xmlhttprequest/upload-progress-events.html
@@ -1957,17 +1979,13 @@ security/block-test.html
 #   Tests failing
 svg/filters/feColorMatrix-values.svg
 svg/dom/altGlyph-dom.xhtml
-svg/custom/embedded-svg-disallowed-in-dashboard.xml
 svg/custom/getSubStringLength.html
 svg/custom/getscreenctm-in-mixed-content2.xhtml
 svg/custom/glyph-setting-d-attribute.svg
-svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html
-svg/custom/manually-parsed-svg-disallowed-in-dashboard.html
 svg/custom/no-inherited-dashed-stroke.xhtml
 svg/custom/relative-sized-shadow-tree-content-with-symbol.xhtml
 svg/custom/relative-sized-use-on-symbol.xhtml
 svg/custom/stroke-width-click.svg
-svg/custom/svg-disallowed-in-dashboard-object.html
 svg/custom/svg-fonts-in-text-controls.html
 svg/custom/use-elementInstance-event-target.svg
 svg/custom/use-elementInstance-methods.svg
@@ -3626,12 +3644,6 @@ tables/mozilla_expected_failures/marvin/x_table_rules_rows.xml
 tables/mozilla_expected_failures/other/empty_cells.html
 tables/mozilla_expected_failures/other/test4.html
 
-# Tests in webarchive/ directory
-#  Tests failing because of missing resource load delegate callbacks.
-webarchive/loading/test-loading-archive.html
-webarchive/loading/mainresource-null-mimetype-crash.html
-webarchive/loading/missing-data.html
-
 #   Tests generating new results
 webarchive/adopt-attribute-styled-body-webarchive.html
 webarchive/adopt-attribute-styled-node-webarchive.html
@@ -4093,9 +4105,6 @@ inspector/timeline-paint.html
 # https://bugs.webkit.org/show_bug.cgi?id=37914
 fast/frames/frame-crash-with-page-cache.html
 
-# document.body.clientWidth includes vertical scrollbar size.
-scrollbars/scrollbar-click-does-not-blur-content.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=38509
 inspector/timeline-parse-html.html
 
@@ -4166,6 +4175,7 @@ inspector/timeline-script-tag-1.html
 # Tests failing because the context menu is grabbing mouse events.
 # https://bugs.webkit.org/show_bug.cgi?id=40601
 fast/events/mouse-click-events.html
+fast/events/mouseup-from-button2.html
 fast/events/right-click-focus.html
 editing/selection/5354455-1.html
 editing/selection/5354455-2.html
@@ -4595,6 +4605,7 @@ fast/history/multiple-classes-visited.html
 
 # Rounding color problems inside pixman
 # https://bugs.webkit.org/show_bug.cgi?id=49964
+fast/canvas/canvas-getImageData.html
 fast/canvas/canvas-fillPath-shadow.html
 fast/canvas/canvas-strokePath-shadow.html
 fast/canvas/canvas-transforms-fillRect-shadow.html
