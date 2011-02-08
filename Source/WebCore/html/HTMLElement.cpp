@@ -735,6 +735,8 @@ void HTMLElement::setContentEditable(const String& enabled, ExceptionCode& ec)
         setAttribute(contenteditableAttr, "true", ec);
     else if (equalIgnoringCase(enabled, "false"))
         setAttribute(contenteditableAttr, "false", ec);
+    else if (equalIgnoringCase(enabled, "plaintext-only"))
+        setAttribute(contenteditableAttr, "plaintext-only");
     else if (equalIgnoringCase(enabled, "inherit"))
         removeAttribute(contenteditableAttr, ec);
     else

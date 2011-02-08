@@ -8,6 +8,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 
+
 PASS document.getElementById("div1").getAttribute("contentEditable") is "true"
 PASS document.getElementById("div1").contentEditable is "true"
 FAIL document.getElementById("div1").isContentEditable should be true. Was false.
@@ -21,6 +22,14 @@ PASS document.getElementById("p2").hasAttribute("contentEditable") is false
 PASS document.getElementById("p2").contentEditable is "inherit"
 PASS document.getElementById("p2").isContentEditable is true
 PASS window.getComputedStyle(p2, "").getPropertyValue("-webkit-user-modify") is "read-write"
+PASS document.getElementById("div3").hasAttribute("contentEditable") is true
+PASS document.getElementById("div3").contentEditable is "plaintext-only"
+PASS document.getElementById("div3").isContentEditable is true
+PASS window.getComputedStyle(div3, "").getPropertyValue("-webkit-user-modify") is "read-write-plaintext-only"
+PASS document.getElementById("p3").hasAttribute("contentEditable") is false
+PASS document.getElementById("p3").contentEditable is "inherit"
+PASS document.getElementById("p3").isContentEditable is true
+PASS window.getComputedStyle(p3, "").getPropertyValue("-webkit-user-modify") is "read-write-plaintext-only"
 
 PASS successfullyParsed is true
 

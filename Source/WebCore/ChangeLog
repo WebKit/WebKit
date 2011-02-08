@@ -1,3 +1,14 @@
+2011-02-08  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r76301): 'plaintext-only' must be a supported contentEditable mode.
+        https://bugs.webkit.org/show_bug.cgi?id=54041
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setContentEditable): Setting the contentEditable
+        attribute to 'plaintext-only' should not throw an exception.
+
 2011-02-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
