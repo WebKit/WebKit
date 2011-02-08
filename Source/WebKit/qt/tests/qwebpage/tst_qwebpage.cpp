@@ -78,6 +78,7 @@ private slots:
     void initTestCase();
     void cleanupTestCase();
 
+    void contextMenuCopy();
     void acceptNavigationRequest();
     void geolocationRequestJS();
     void loadFinished();
@@ -2769,5 +2770,29 @@ void tst_QWebPage::macCopyUnicodeToClipboard()
 }
 #endif
 
+void tst_QWebPage::contextMenuCopy()
+{
+    QWebView view;
+
+    view.setHtml("<a href=\"http://www.google.com\">You cant miss this</a>");
+
+    view.page()->triggerAction(QWebPage::SelectAll);
+    QVERIFY(!view.page()->selectedText().isEmpty());
+
+    QWebElement link = view.page()->mainFrame()->findFirstElement("a");
+    QPoint pos(link.geometry().center());
+    QContextMenuEvent event(QContextMenuEvent::Mouse, pos);
+    view.page()->swallowContextMenuEvent(&event);
+    view.page()->updatePositionDependentActions(pos);
+
+    QList<QMenu*> contextMenus = view.findChildren<QMenu*>();
+    QVERIFY(!contextMenus.isEmpty());
+    QMenu* contextMenu = contextMenus.first();
+    QVERIFY(contextMenu);
+    
+    QList<QAction *> list = contextMenu->actions();
+    int index = list.indexOf(view.page()->action(QWebPage::Copy));
+    QVERIFY(index != -1);
+}
 QTEST_MAIN(tst_QWebPage)
 #include "tst_qwebpage.moc"

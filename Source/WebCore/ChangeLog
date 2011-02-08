@@ -1,3 +1,16 @@
+2011-02-07  Aparna Nandyal  <aparna.nand@wipro.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] - Context menu needs "Copy" as well when the selected text is a link.
+        https://bugs.webkit.org/show_bug.cgi?id=40983
+
+        Added copy option for Qt platform if selection is a link. 
+        Added a test in tst_qwebpage.cpp. 
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::populate):
+
 2011-02-07  Mike Reed  <reed@google.com>
 
         Reviewed by Kenneth Russell.
