@@ -27,6 +27,7 @@
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "LocalWindowsContext.h"
+#include "PaintInfo.h"
 #include "RenderSlider.h"
 #include "Settings.h"
 #include "SoftLinking.h"

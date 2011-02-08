@@ -1,3 +1,12 @@
+2011-02-07  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add missing PaintInfo include in RenderThemeWin.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=53885
+
+        * rendering/RenderThemeWin.cpp:
+
 2011-02-07  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Reviewed by Andreas Kling.
