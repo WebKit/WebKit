@@ -1,3 +1,19 @@
+2011-02-08  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix pop-up button text not rendered correctly according to its direction
+        in <option>.
+        https://bugs.webkit.org/show_bug.cgi?id=53642
+ 
+        In adjustInnerStyle(), if m_innerBlock's direction or unicode-bidi 
+        changes, set it needs layout.
+
+        * fast/text/international/pop-up-button-text-alignment-and-direction.html: Added.
+        * platform/mac/fast/text/international/pop-up-button-text-alignment-and-direction-expected.checksum: Added.
+        * platform/mac/fast/text/international/pop-up-button-text-alignment-and-direction-expected.png: Added.
+        * platform/mac/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt: Added.
+
 2011-02-08  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Martin Robinson.
