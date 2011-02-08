@@ -1,3 +1,9 @@
+2011-02-08  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed WinCE build fix for r77870.
+
+        * platform/DragImage.cpp: Enable createDragImageForLink for WinCE.
+
 2011-02-08  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
@@ -9,7 +15,7 @@
         (WebInspector.NetworkDataGridNode.prototype.createCells):
         (WebInspector.NetworkDataGridNode.prototype._openInNewTab):
 
-2010-12-01  Yonathan Randolph  <yonathan@gmail.com>
+2011-02-08  Yonathan Randolph  <yonathan@gmail.com>
 
         Reviewed by Pavel Feldman.
 
@@ -65,7 +71,7 @@
         (.):
         ():
 
-2011-02-04  Andrey Kosyakov  <caseq@chromium.org>
+2011-02-08  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
 
@@ -114,7 +120,7 @@
 
         * inspector/InjectedScriptSource.js:
 
-2011-02-07  Pavel Feldman  <pfeldman@chromium.org>
+2011-02-08  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
 
