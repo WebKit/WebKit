@@ -105,6 +105,7 @@ public:
         OpenImageInNewWindow,
         DownloadImageToDisk,
         CopyImageToClipboard,
+        CopyImageUrlToClipboard,
 
         Back,
         Forward,

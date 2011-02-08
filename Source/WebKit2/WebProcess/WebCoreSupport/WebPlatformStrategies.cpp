@@ -214,6 +214,13 @@ String WebPlatformStrategies::contextMenuItemTagCopyImageToClipboard()
     return UI_STRING("Copy Image", "Copy Image context menu item");
 }
 
+#if PLATFORM(QT)
+String WebPlatformStrategies::contextMenuItemTagCopyImageUrlToClipboard()
+{
+    return UI_STRING("Copy Image Address", "Copy Image Address menu item");
+}
+#endif
+
 String WebPlatformStrategies::contextMenuItemTagOpenVideoInNewWindow()
 {
     return UI_STRING("Open Video in New Window", "Open Video in New Window context menu item");

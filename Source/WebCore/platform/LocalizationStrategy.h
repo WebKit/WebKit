@@ -55,6 +55,9 @@ public:
     virtual String contextMenuItemTagOpenImageInNewWindow() = 0;
     virtual String contextMenuItemTagDownloadImageToDisk() = 0;
     virtual String contextMenuItemTagCopyImageToClipboard() = 0;
+#if PLATFORM(QT)
+    virtual String contextMenuItemTagCopyImageUrlToClipboard() = 0;
+#endif
     virtual String contextMenuItemTagOpenFrameInNewWindow() = 0;
     virtual String contextMenuItemTagCopy() = 0;
     virtual String contextMenuItemTagGoBack() = 0;

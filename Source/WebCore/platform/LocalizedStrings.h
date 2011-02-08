@@ -51,6 +51,9 @@ namespace WebCore {
     String contextMenuItemTagOpenImageInNewWindow();
     String contextMenuItemTagDownloadImageToDisk();
     String contextMenuItemTagCopyImageToClipboard();
+#if PLATFORM(QT)
+    String contextMenuItemTagCopyImageUrlToClipboard();
+#endif
     String contextMenuItemTagOpenFrameInNewWindow();
     String contextMenuItemTagCopy();
     String contextMenuItemTagGoBack();

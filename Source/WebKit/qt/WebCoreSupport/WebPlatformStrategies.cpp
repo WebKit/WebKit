@@ -200,6 +200,11 @@ String WebPlatformStrategies::contextMenuItemTagCopyImageToClipboard()
     return QCoreApplication::translate("QWebPage", "Copy Image", "Copy Link context menu item");
 }
 
+String WebPlatformStrategies::contextMenuItemTagCopyImageUrlToClipboard()
+{
+    return QCoreApplication::translate("QWebPage", "Copy Image Address", "Copy Image Address menu item");
+}
+
 String WebPlatformStrategies::contextMenuItemTagOpenVideoInNewWindow()
 {
     return QCoreApplication::translate("QWebPage", "Open Video", "Open Video in New Window");

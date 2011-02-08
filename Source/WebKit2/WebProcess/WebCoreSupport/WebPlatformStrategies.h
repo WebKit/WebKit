@@ -68,6 +68,9 @@ private:
     virtual String contextMenuItemTagOpenImageInNewWindow();
     virtual String contextMenuItemTagDownloadImageToDisk();
     virtual String contextMenuItemTagCopyImageToClipboard();
+#if PLATFORM(QT)
+    virtual String contextMenuItemTagCopyImageUrlToClipboard();
+#endif
     virtual String contextMenuItemTagOpenFrameInNewWindow();
     virtual String contextMenuItemTagCopy();
     virtual String contextMenuItemTagGoBack();

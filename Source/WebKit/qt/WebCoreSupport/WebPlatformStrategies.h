@@ -66,6 +66,7 @@ private:
     virtual WTF::String contextMenuItemTagOpenImageInNewWindow();
     virtual WTF::String contextMenuItemTagDownloadImageToDisk();
     virtual WTF::String contextMenuItemTagCopyImageToClipboard();
+    virtual WTF::String contextMenuItemTagCopyImageUrlToClipboard();
     virtual WTF::String contextMenuItemTagOpenFrameInNewWindow();
     virtual WTF::String contextMenuItemTagCopy();
     virtual WTF::String contextMenuItemTagGoBack();

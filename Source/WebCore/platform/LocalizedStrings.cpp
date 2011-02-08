@@ -104,6 +104,13 @@ String contextMenuItemTagCopyImageToClipboard()
     return platformStrategies()->localizationStrategy()->contextMenuItemTagCopyImageToClipboard();
 }
 
+#if PLATFORM(QT)
+String contextMenuItemTagCopyImageUrlToClipboard()
+{
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagCopyImageUrlToClipboard();
+}
+#endif
+
 String contextMenuItemTagOpenFrameInNewWindow()
 {
     return platformStrategies()->localizationStrategy()->contextMenuItemTagOpenFrameInNewWindow();

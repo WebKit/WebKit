@@ -1,3 +1,21 @@
+2011-02-07  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] enum QWebPage::WebAction doesn't have value QWebPage::CopyImageUrl
+        https://bugs.webkit.org/show_bug.cgi?id=52974
+
+        Add QWebPage::CopyImageUrlToClipboard into QWebPage::WebAction.
+
+        * Api/qwebpage.cpp:
+        (webActionForContextMenuAction):
+        (QWebPage::triggerAction):
+        (QWebPage::action):
+        * Api/qwebpage.h:
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebPlatformStrategies::contextMenuItemTagCopyImageUrlToClipboard):
+        * WebCoreSupport/WebPlatformStrategies.h:
+
 2011-02-07  Enrica Casucci  <enrica@apple.com>
 
         Reviewed Adam Roben and Darin Adler.

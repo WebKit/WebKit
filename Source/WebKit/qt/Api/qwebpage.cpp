@@ -162,6 +162,7 @@ static const char* editorCommandWebActions[] =
     0, // OpenImageInNewWindow,
     0, // DownloadImageToDisk,
     0, // CopyImageToClipboard,
+    0, // CopyImageUrlToClipboard,
 
     0, // Back,
     0, // Forward,
@@ -404,6 +405,7 @@ static QWebPage::WebAction webActionForContextMenuAction(WebCore::ContextMenuAct
         case WebCore::ContextMenuItemTagOpenImageInNewWindow: return QWebPage::OpenImageInNewWindow;
         case WebCore::ContextMenuItemTagDownloadImageToDisk: return QWebPage::DownloadImageToDisk;
         case WebCore::ContextMenuItemTagCopyImageToClipboard: return QWebPage::CopyImageToClipboard;
+        case WebCore::ContextMenuItemTagCopyImageUrlToClipboard: return QWebPage::CopyImageUrlToClipboard;
         case WebCore::ContextMenuItemTagOpenFrameInNewWindow: return QWebPage::OpenFrameInNewWindow;
         case WebCore::ContextMenuItemTagCopy: return QWebPage::Copy;
         case WebCore::ContextMenuItemTagGoBack: return QWebPage::Back;
@@ -1680,6 +1682,7 @@ IntPoint QWebPagePrivate::TouchAdjuster::findCandidatePointForTouch(const IntPoi
     \value OpenImageInNewWindow Open the highlighted image in a new window.
     \value DownloadImageToDisk Download the highlighted image to the disk.
     \value CopyImageToClipboard Copy the highlighted image to the clipboard.
+    \value CopyImageUrlToClipboard Copy the highlighted image's URL to the clipboard.
     \value Back Navigate back in the history of navigated links.
     \value Forward Navigate forward in the history of navigated links.
     \value Stop Stop loading the current page.
@@ -2342,6 +2345,9 @@ void QWebPage::triggerAction(WebAction action, bool)
         case CopyImageToClipboard:
             QApplication::clipboard()->setPixmap(d->hitTestResult.pixmap());
             break;
+        case CopyImageUrlToClipboard:
+            QApplication::clipboard()->setText(d->hitTestResult.imageUrl().toString());
+            break;
 #endif
         case Back:
             d->page->goBack();
@@ -2729,6 +2735,9 @@ QAction *QWebPage::action(WebAction action) const
             break;
         case CopyImageToClipboard:
             text = contextMenuItemTagCopyImageToClipboard();
+            break;
+        case CopyImageUrlToClipboard:
+            text = contextMenuItemTagCopyImageUrlToClipboard();
             break;
 
         case Back:
