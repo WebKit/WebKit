@@ -89,6 +89,25 @@
 
 2011-02-06  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Reviewed by Sam Weinig.
+
+        JSVariableObject::setRegisters should take PassOwnArrayPtr for registersArray.
+        https://bugs.webkit.org/show_bug.cgi?id=53902
+
+        * runtime/Arguments.h:
+        (JSC::JSActivation::copyRegisters): Uses OwnArrayPtr<Register> instead of Register*.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::copyGlobalsFrom): Ditto.
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::setRegisters): Takes PassOwnArrayPtr<Register> instead of Register*
+        for registerArray.
+        * runtime/JSVariableObject.h:
+        (JSC::JSVariableObject::copyRegisterArray): Returns PassOwnArrayPtr<Register> instead of Register*.
+        (JSC::JSVariableObject::setRegisters): Takes PassOwnArrayPtr<Register> instead of Register*
+        for registerArray.
+
+2011-02-06  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed; speculative Qt build fix.
 
         * JavaScriptCore.pro:

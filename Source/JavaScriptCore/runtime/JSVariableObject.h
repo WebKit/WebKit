@@ -89,8 +89,8 @@ namespace JSC {
         {
         }
 
-        Register* copyRegisterArray(Register* src, size_t count);
-        void setRegisters(Register* r, Register* registerArray);
+        PassOwnArrayPtr<Register> copyRegisterArray(Register* src, size_t count);
+        void setRegisters(Register* registers, PassOwnArrayPtr<Register> registerArray);
 
         bool symbolTableGet(const Identifier&, PropertySlot&);
         bool symbolTableGet(const Identifier&, PropertyDescriptor&);
@@ -149,18 +149,18 @@ namespace JSC {
         return true;
     }
 
-    inline Register* JSVariableObject::copyRegisterArray(Register* src, size_t count)
+    inline PassOwnArrayPtr<Register> JSVariableObject::copyRegisterArray(Register* src, size_t count)
     {
-        Register* registerArray = new Register[count];
-        memcpy(registerArray, src, count * sizeof(Register));
+        OwnArrayPtr<Register> registerArray = adoptArrayPtr(new Register[count]);
+        memcpy(registerArray.get(), src, count * sizeof(Register));
 
-        return registerArray;
+        return registerArray.release();
     }
 
-    inline void JSVariableObject::setRegisters(Register* registers, Register* registerArray)
+    inline void JSVariableObject::setRegisters(Register* registers, PassOwnArrayPtr<Register> registerArray)
     {
-        ASSERT(registerArray != d->registerArray.get());
-        d->registerArray = adoptArrayPtr(registerArray);
+        ASSERT(registerArray != d->registerArray);
+        d->registerArray = registerArray;
         d->registers = registers;
     }
 

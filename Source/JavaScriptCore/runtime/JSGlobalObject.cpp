@@ -404,9 +404,10 @@ void JSGlobalObject::copyGlobalsFrom(RegisterFile& registerFile)
         d()->registers = 0;
         return;
     }
-    
-    Register* registerArray = copyRegisterArray(registerFile.lastGlobal(), numGlobals);
-    setRegisters(registerArray + numGlobals, registerArray, numGlobals);
+
+    OwnArrayPtr<Register> registerArray = copyRegisterArray(registerFile.lastGlobal(), numGlobals);
+    Register* registers = registerArray.get() + numGlobals;
+    setRegisters(registers, registerArray.release(), numGlobals);
 }
 
 void JSGlobalObject::copyGlobalsTo(RegisterFile& registerFile)

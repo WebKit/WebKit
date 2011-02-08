@@ -295,7 +295,7 @@ namespace JSC {
         void init(JSObject* thisValue);
         void reset(JSValue prototype);
 
-        void setRegisters(Register* registers, Register* registerArray, size_t count);
+        void setRegisters(Register* registers, PassOwnArrayPtr<Register> registerArray, size_t count);
 
         void* operator new(size_t); // can only be allocated with JSGlobalData
     };
@@ -308,7 +308,7 @@ namespace JSC {
         return static_cast<JSGlobalObject*>(asObject(value));
     }
 
-    inline void JSGlobalObject::setRegisters(Register* registers, Register* registerArray, size_t count)
+    inline void JSGlobalObject::setRegisters(Register* registers, PassOwnArrayPtr<Register> registerArray, size_t count)
     {
         JSVariableObject::setRegisters(registers, registerArray);
         d()->registerArraySize = count;

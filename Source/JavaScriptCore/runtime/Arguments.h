@@ -247,8 +247,9 @@ namespace JSC {
         int registerOffset = numParametersMinusThis + RegisterFile::CallFrameHeaderSize;
         size_t registerArraySize = numLocals + RegisterFile::CallFrameHeaderSize;
 
-        Register* registerArray = copyRegisterArray(d()->registers - registerOffset, registerArraySize);
-        setRegisters(registerArray + registerOffset, registerArray);
+        OwnArrayPtr<Register> registerArray = copyRegisterArray(d()->registers - registerOffset, registerArraySize);
+        Register* registers = registerArray.get() + registerOffset;
+        setRegisters(registers, registerArray.release());
     }
 
 } // namespace JSC
