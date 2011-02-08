@@ -1377,6 +1377,7 @@ WebInspector.NetworkDataGridNode.prototype = {
         this._timeCell = this._createDivInTD("time");
         this._createTimelineCell();
         this._nameCell.addEventListener("click", this.select.bind(this), false);
+        this._nameCell.addEventListener("dblclick", this._openInNewTab.bind(this), false);
     },
 
     isFilteredOut: function()
@@ -1390,6 +1391,11 @@ WebInspector.NetworkDataGridNode.prototype = {
     {
         this._panel._showResource(this._resource);
         WebInspector.DataGridNode.prototype.select.apply(this, arguments);
+    },
+
+    _openInNewTab: function()
+    {
+        InspectorBackend.openInInspectedWindow(this._resource.url);
     },
 
     get selectable()

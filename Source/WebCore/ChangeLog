@@ -1,5 +1,16 @@
 2011-02-08  Pavel Feldman  <pfeldman@chromium.org>
 
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: open network resource url in new tab upon double click.
+        https://bugs.webkit.org/show_bug.cgi?id=53930
+
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkDataGridNode.prototype.createCells):
+        (WebInspector.NetworkDataGridNode.prototype._openInNewTab):
+
+2010-12-01  Yonathan Randolph  <yonathan@gmail.com>
+
         Reviewed by Pavel Feldman.
 
         Web Inspector: $x: any node should work in optional context parameter.
