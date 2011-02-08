@@ -89,15 +89,14 @@ void Connection::platformInitialize(Identifier identifier)
     m_writeState.hEvent = ::CreateEventW(0, FALSE, FALSE, 0);
 
     m_connectionPipe = identifier;
-
-    // We connected the two ends of the pipe in createServerAndClientIdentifiers.
-    m_isConnected = true;
 }
 
 void Connection::platformInvalidate()
 {
     if (m_connectionPipe == INVALID_HANDLE_VALUE)
         return;
+
+    m_isConnected = false;
 
     m_connectionQueue.unregisterAndCloseHandle(m_readState.hEvent);
     m_readState.hEvent = 0;
@@ -256,6 +255,9 @@ void Connection::writeEventHandler()
 
 bool Connection::open()
 {
+    // We connected the two ends of the pipe in createServerAndClientIdentifiers.
+    m_isConnected = true;
+
     // Start listening for read and write state events.
     m_connectionQueue.registerHandle(m_readState.hEvent, WorkItem::create(this, &Connection::readEventHandler));
     m_connectionQueue.registerHandle(m_writeState.hEvent, WorkItem::create(this, &Connection::writeEventHandler));

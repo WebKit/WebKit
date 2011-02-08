@@ -1,3 +1,23 @@
+2011-02-08  Adam Roben  <aroben@apple.com>
+
+        Don't mark a Connection as connected until open() is called on Windows
+
+        This matches Mac. Even though the Connection's pipe is connected before open() is called,
+        the Connection itself isn't really connected to the pipe until then, and we won't actually
+        read any data from before that point.
+
+        Fixes <http://webkit.org/b/53998> <rdar://problem/8971207> REGRESSION (r77874): Assertion
+        failure on launch in Connection::setDidCloseOnConnectionWorkQueueCallback on Windows
+
+        Reviewed by Darin Adler.
+
+        * Platform/CoreIPC/win/ConnectionWin.cpp:
+        (CoreIPC::Connection::platformInitialize): Moved code to set m_isConnected from here to
+        open.
+        (CoreIPC::Connection::platformInvalidate): Unset m_isConnected, to match Mac. (This isn't
+        part of the bug fix, but seemed worthwhile.)
+        (CoreIPC::Connection::open): Set m_isConnected now that we're going to listen on the pipe.
+
 2011-02-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r77866.
