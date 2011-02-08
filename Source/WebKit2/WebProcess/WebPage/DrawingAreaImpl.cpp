@@ -215,10 +215,12 @@ void DrawingAreaImpl::setSize(const WebCore::IntSize& size, const WebCore::IntSi
         layerTreeContext = m_layerTreeHost->layerTreeContext();
     }
 
-    if (m_isPaintingSuspended || m_layerTreeHost) {
+    if (m_isPaintingSuspended || m_layerTreeHost)
         updateInfo.viewSize = m_webPage->size();
-    } else
+    else {
+        m_dirtyRegion.unite(m_webPage->bounds());
         display(updateInfo);
+    }
 
     m_webPage->send(Messages::DrawingAreaProxy::DidSetSize(generateSequenceNumber(), updateInfo, layerTreeContext));
 

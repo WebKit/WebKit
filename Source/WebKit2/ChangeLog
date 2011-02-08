@@ -1,3 +1,19 @@
+2011-02-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Crash calling -setFrame:andScrollBy: in windowDidResize
+        https://bugs.webkit.org/show_bug.cgi?id=54030
+        <rdar://problem/8969760>
+
+        * Platform/mac/SharedMemoryMac.cpp:
+        (WebKit::SharedMemory::create):
+        Assert that size is not zero here; we never want to try to create shared memory with a zero size.
+        
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::setSize):
+        Always invalidate the entire visible page when resizing.
+
 2011-02-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

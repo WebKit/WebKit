@@ -91,6 +91,8 @@ static inline mach_vm_address_t toVMAddress(void* pointer)
     
 PassRefPtr<SharedMemory> SharedMemory::create(size_t size)
 {
+    ASSERT(size);
+
     mach_vm_address_t address;
     kern_return_t kr = mach_vm_allocate(mach_task_self(), &address, round_page(size), VM_FLAGS_ANYWHERE);
     if (kr != KERN_SUCCESS)
