@@ -49,23 +49,9 @@ SolidFillShader::SolidFillShader(GraphicsContext3D* context, unsigned program)
 
 PassOwnPtr<SolidFillShader> SolidFillShader::create(GraphicsContext3D* context)
 {
-    static const char* vertexShaderSource =
-            "uniform mat3 matrix;\n"
-            "uniform vec4 color;\n"
-            "attribute vec3 position;\n"
-            "void main() {\n"
-            "    gl_Position = vec4(matrix * position, 1.0);\n"
-            "}\n";
-    static const char* fragmentShaderSource =
-            "#ifdef GL_ES\n"
-            "precision mediump float;\n"
-            "#endif\n"
-            "uniform mat3 matrix;\n"
-            "uniform vec4 color;\n"
-            "void main() {\n"
-            "    gl_FragColor = color;\n"
-            "}\n";
-    unsigned program = loadProgram(context, vertexShaderSource, fragmentShaderSource);
+    unsigned program = loadProgram(context,
+                                   generateVertex(Shader::TwoDimensional, Shader::SolidFill),
+                                   generateFragment(Shader::TwoDimensional, Shader::SolidFill, Shader::NotAntialiased));
     if (!program)
         return 0;
     return new SolidFillShader(context, program);

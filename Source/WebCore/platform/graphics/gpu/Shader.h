@@ -33,6 +33,7 @@
 
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -42,13 +43,35 @@ class Color;
 
 class Shader {
     WTF_MAKE_NONCOPYABLE(Shader);
+public:
+    enum VertexType {
+        TwoDimensional,
+        LoopBlinnInterior,
+        LoopBlinnExterior
+    };
+
+    enum FillType {
+        SolidFill,
+        TextureFill
+    };
+
+    // Currently only applies to the Loop-Blinn vertex type.
+    enum AntialiasType {
+        NotAntialiased,
+        Antialiased
+    };
+
 protected:
     Shader(GraphicsContext3D*, unsigned program);
     ~Shader();
 
+    static String generateVertex(VertexType, FillType);
+    static String generateFragment(VertexType, FillType, AntialiasType);
+
     static void affineTo3x3(const AffineTransform&, float mat[9]);
-    static unsigned loadShader(GraphicsContext3D*, unsigned type, const char* shaderSource);
-    static unsigned loadProgram(GraphicsContext3D*, const char* vertexShaderSource, const char* fragmentShaderSource);
+    static void affineTo4x4(const AffineTransform&, float mat[16]);
+    static unsigned loadShader(GraphicsContext3D*, unsigned type, const String& shaderSource);
+    static unsigned loadProgram(GraphicsContext3D*, const String& vertexShaderSource, const String& fragmentShaderSource);
 
     GraphicsContext3D* m_context;
     unsigned m_program;

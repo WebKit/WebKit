@@ -1,3 +1,41 @@
+2011-02-04  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        Add shaders for GPU accelerated path rendering
+        https://bugs.webkit.org/show_bug.cgi?id=45520
+
+        Refactored SolidFillShader and TexShader to call new
+        generateVertex() and generateFragment() methods on base Shader
+        class, and added support for the Loop/Blinn shaders. Refactored
+        Loop/Blinn shader classes to derive from Shader.
+
+        Tested these changes with several of the IE9 Testdrive demos with
+        accelerated 2D canvas enabled, as well as a full layout test run
+        with --platform chromium-gpu.
+
+        * platform/graphics/gpu/LoopBlinnShader.cpp: Added.
+        (WebCore::LoopBlinnShader::LoopBlinnShader):
+        (WebCore::LoopBlinnShader::use):
+        * platform/graphics/gpu/LoopBlinnShader.h: Added.
+        * platform/graphics/gpu/LoopBlinnSolidFillShader.cpp: Added.
+        (WebCore::LoopBlinnSolidFillShader::create):
+        (WebCore::LoopBlinnSolidFillShader::LoopBlinnSolidFillShader):
+        (WebCore::LoopBlinnSolidFillShader::use):
+        * platform/graphics/gpu/LoopBlinnSolidFillShader.h: Added.
+        * platform/graphics/gpu/Shader.cpp:
+        (WebCore::Shader::affineTo4x4):
+        (WebCore::Shader::loadShader):
+        (WebCore::Shader::loadProgram):
+        (WebCore::Shader::generateVertex):
+        (WebCore::Shader::generateFragment):
+        * platform/graphics/gpu/Shader.h:
+        * platform/graphics/gpu/SolidFillShader.cpp:
+        (WebCore::SolidFillShader::create):
+        * platform/graphics/gpu/TexShader.cpp:
+        (WebCore::TexShader::TexShader):
+        (WebCore::TexShader::create):
+
 2011-02-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Oliver Hunt.

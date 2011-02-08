@@ -43,33 +43,16 @@ TexShader::TexShader(GraphicsContext3D* context, unsigned program)
 {
     m_matrixLocation = context->getUniformLocation(program, "matrix");
     m_texMatrixLocation = context->getUniformLocation(program, "texMatrix");
-    m_alphaLocation = context->getUniformLocation(program, "alpha");
+    m_alphaLocation = context->getUniformLocation(program, "globalAlpha");
     m_positionLocation = context->getAttribLocation(program, "position");
     m_samplerLocation = context->getUniformLocation(program, "sampler");
 }
 
 PassOwnPtr<TexShader> TexShader::create(GraphicsContext3D* context)
 {
-    static const char* vertexShaderSource =
-        "uniform mat3 matrix;\n"
-        "uniform mat3 texMatrix;\n"
-        "attribute vec3 position;\n"
-        "varying vec3 texCoord;\n"
-        "void main() {\n"
-        "    texCoord = texMatrix * position;\n"
-        "    gl_Position = vec4(matrix * position, 1.0);\n"
-        "}\n";
-    static const char* fragmentShaderSource =
-        "#ifdef GL_ES\n"
-        "precision mediump float;\n"
-        "#endif\n"
-        "uniform sampler2D sampler;\n"
-        "uniform float alpha;\n"
-        "varying vec3 texCoord;\n"
-        "void main() {\n"
-        "    gl_FragColor = texture2D(sampler, texCoord.xy)* vec4(alpha);\n"
-        "}\n";
-    unsigned program = loadProgram(context, vertexShaderSource, fragmentShaderSource);
+    unsigned program = loadProgram(context,
+                                   generateVertex(Shader::TwoDimensional, Shader::TextureFill),
+                                   generateFragment(Shader::TwoDimensional, Shader::TextureFill, Shader::NotAntialiased));
     if (!program)
         return 0;
     return new TexShader(context, program);
