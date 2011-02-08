@@ -258,13 +258,7 @@ void webkitInit()
     PageGroup::setShouldTrackVisitedLinks(true);
 
     Pasteboard::generalPasteboard()->setHelper(WebKit::pasteboardHelperInstance());
-
-    iconDatabase()->setEnabled(true);
-
-    GOwnPtr<gchar> iconDatabasePath(g_build_filename(g_get_user_data_dir(), "webkit", "icondatabase", NULL));
-    iconDatabase()->open(iconDatabasePath.get());
-
-    atexit(closeIconDatabaseOnExit);
+    WebKit::setIconDatabaseEnabled(true);
 
     SoupSession* session = webkit_get_default_session();
 
@@ -287,6 +281,26 @@ PasteboardHelperGtk* pasteboardHelperInstance()
     static PasteboardHelperGtk* helper = new PasteboardHelperGtk();
     return helper;
 }
+
+void setIconDatabaseEnabled(bool enabled)
+{
+    static bool initialized = false;
+    if (enabled && !initialized) {
+        initialized = true;
+        atexit(closeIconDatabaseOnExit);
+    }
+
+    if (enabled) {
+        iconDatabase()->setEnabled(true);
+        GOwnPtr<gchar> iconDatabasePath(g_build_filename(g_get_user_data_dir(), "webkit", "icondatabase", NULL));
+        iconDatabase()->open(iconDatabasePath.get());
+        return;
+    }
+
+    iconDatabase()->setEnabled(false);
+    iconDatabase()->close();
+}
+
 
 } /** end namespace WebKit */
 

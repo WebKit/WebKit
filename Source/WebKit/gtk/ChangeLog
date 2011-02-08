@@ -1,3 +1,22 @@
+2011-02-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] DRT needs an implementation of LayoutTestController.setIconDatabaseEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=54033
+
+        Add a DumpRenderTreeSupportGtk method for turning the icon database on and off.
+        This is a likely candidate for a new API point.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::setIconDatabaseEnabled): Added.
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+        * webkit/webkitglobals.cpp:
+        (webkitInit): Call setIconDatabaseEnabled(true) on startup, instead
+        of initializing the database manually.
+        (WebKit::setIconDatabaseEnabled): Added.
+        * webkit/webkitglobalsprivate.h: Added declarations.
+
 2011-02-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

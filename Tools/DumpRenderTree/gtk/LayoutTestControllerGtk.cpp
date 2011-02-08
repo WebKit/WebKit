@@ -490,9 +490,9 @@ void LayoutTestController::addMockSpeechInputResult(JSStringRef result, double c
     // See https://bugs.webkit.org/show_bug.cgi?id=39485.
 }
 
-void LayoutTestController::setIconDatabaseEnabled(bool flag)
+void LayoutTestController::setIconDatabaseEnabled(bool enabled)
 {
-    // FIXME: implement
+    DumpRenderTreeSupportGtk::setIconDatabaseEnabled(enabled);
 }
 
 void LayoutTestController::setJavaScriptProfilingEnabled(bool flag)

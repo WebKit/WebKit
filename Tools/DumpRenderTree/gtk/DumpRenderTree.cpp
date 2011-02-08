@@ -445,6 +445,7 @@ static void resetDefaultsToConsistentValues()
     setlocale(LC_ALL, "");
 
     DumpRenderTreeSupportGtk::setLinksIncludedInFocusChain(true);
+    DumpRenderTreeSupportGtk::setIconDatabaseEnabled(false);
 }
 
 static bool useLongRunningServerMode(int argc, char *argv[])

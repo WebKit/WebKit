@@ -50,6 +50,7 @@
 #include "SecurityOrigin.h"
 #include "TextIterator.h"
 #include "WorkerThread.h"
+#include "webkitglobalsprivate.h"
 #include "webkitwebframe.h"
 #include "webkitwebframeprivate.h"
 #include "webkitwebview.h"
@@ -93,6 +94,11 @@ void DumpRenderTreeSupportGtk::setLinksIncludedInFocusChain(bool enabled)
 bool DumpRenderTreeSupportGtk::linksIncludedInFocusChain()
 {
     return s_linksIncludedInTabChain;
+}
+
+void DumpRenderTreeSupportGtk::setIconDatabaseEnabled(bool enabled)
+{
+    WebKit::setIconDatabaseEnabled(enabled);
 }
 
 JSValueRef DumpRenderTreeSupportGtk::nodesFromRect(JSContextRef context, JSValueRef value, int x, int y, unsigned top, unsigned right, unsigned bottom, unsigned left, bool ignoreClipping)

@@ -53,6 +53,7 @@ public:
 
     static void setLinksIncludedInFocusChain(bool);
     static bool linksIncludedInFocusChain();
+    static void setIconDatabaseEnabled(bool);
     static JSValueRef nodesFromRect(JSContextRef context, JSValueRef value, int x, int y, unsigned top, unsigned right, unsigned bottom, unsigned left, bool ignoreClipping);
     static void dumpConfigurationForViewport(WebKitWebView* webView, gint availableWidth, gint availableHeight);
 

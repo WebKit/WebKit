@@ -1,3 +1,19 @@
+2011-02-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] DRT needs an implementation of LayoutTestController.setIconDatabaseEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=54033
+
+        Add an implementation of LayoutTestController.setIconDatabaseEnabled that just
+        call DumpRenderTreeSupportGtk. Turn off the icon database between tests.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues): Turn off the icon database.
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setIconDatabaseEnabled): Call the appropriate DumpRenderTreeSupportGtk
+        method.
+
 2011-02-08  Kundu Suchismita  <suchi.kundu@nokia.com>
 
         Reviewed by Laszlo Gombos.
