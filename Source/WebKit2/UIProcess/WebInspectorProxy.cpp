@@ -70,6 +70,7 @@ WebInspectorProxy::~WebInspectorProxy()
 
 void WebInspectorProxy::invalidate()
 {
+    m_page->close();
     platformClose();
 
     m_page = 0;
