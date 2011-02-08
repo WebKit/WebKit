@@ -628,8 +628,8 @@ CommandLineAPIImpl.prototype = {
     {
         var nodes = [];
         try {
-            var doc = context || document;
-            var results = doc.evaluate(xpath, doc, null, XPathResult.ANY_TYPE, null);
+            var doc = (context && context.ownerDocument) || inspectedWindow.document;
+            var results = doc.evaluate(xpath, context || doc, null, XPathResult.ANY_TYPE, null);
             var node;
             while (node = results.iterateNext())
                 nodes.push(node);
