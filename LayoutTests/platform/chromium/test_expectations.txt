@@ -3236,7 +3236,6 @@ BUG_ZMO : fast/table/colspanMinWidth-vertical.html = IMAGE+TEXT PASS
 
 BUG_ZMO : fast/notifications/notifications-document-close-crash.html = PASS TEXT
 
-BUG_ZMO MAC : fast/text/international/pop-up-button-text-alignment-and-direction.html = IMAGE IMAGE+TEXT PASS
 
 // temporary for rebaseline after r77781
 BUG_LOISLO : fast/invalid/residual-style.html = TEXT

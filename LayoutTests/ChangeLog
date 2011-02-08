@@ -1,3 +1,16 @@
+2011-02-08  Xiaomei Ji  <xji@chromium.org>
+
+        Unreviewed.
+
+        Rebaseline for chromium-mac after r77952.
+        Not sure why the previous rebase did not get the right results.
+        https://bugs.webkit.org/show_bug.cgi?id=54026
+
+        * platform/chromium-mac/fast/text/international/pop-up-button-text-alignment-and-direction-expected.checksum:
+        * platform/chromium-mac/fast/text/international/pop-up-button-text-alignment-and-direction-expected.png:
+        * platform/chromium-mac/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-02-08  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
