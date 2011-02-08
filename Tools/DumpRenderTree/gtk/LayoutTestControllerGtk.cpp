@@ -3,7 +3,7 @@
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008 Nuanti Ltd.
  * Copyright (C) 2009 Jan Michael Alonzo <jmalonzo@gmail.com>
- * Copyright (C) 2009 Collabora Ltd.
+ * Copyright (C) 2009,2011 Collabora Ltd.
  * Copyright (C) 2010 Joone Hur <joone@kldp.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -544,10 +544,42 @@ void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)
     g_free(cValue);
 }
 
-bool LayoutTestController::findString(JSContextRef /* context */, JSStringRef /* target */, JSObjectRef /* optionsArray */)
+bool LayoutTestController::findString(JSContextRef context, JSStringRef target, JSObjectRef optionsArray)
 {
-    // FIXME: Implement
-    return false;
+    WebKitFindOptions findOptions = 0;
+    WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
+    ASSERT(webView);
+
+    JSRetainPtr<JSStringRef> lengthPropertyName(Adopt, JSStringCreateWithUTF8CString("length"));
+    JSValueRef lengthValue = JSObjectGetProperty(context, optionsArray, lengthPropertyName.get(), 0); 
+    if (!JSValueIsNumber(context, lengthValue))
+        return false;
+
+    GOwnPtr<gchar> targetString(JSStringCopyUTF8CString(target));
+
+    size_t length = static_cast<size_t>(JSValueToNumber(context, lengthValue, 0));
+    for (size_t i = 0; i < length; ++i) {
+        JSValueRef value = JSObjectGetPropertyAtIndex(context, optionsArray, i, 0); 
+        if (!JSValueIsString(context, value))
+            continue;
+    
+        JSRetainPtr<JSStringRef> optionName(Adopt, JSValueToStringCopy(context, value, 0));
+
+        if (JSStringIsEqualToUTF8CString(optionName.get(), "CaseInsensitive"))
+            findOptions |= WebKit::WebFindOptionsCaseInsensitive;
+        else if (JSStringIsEqualToUTF8CString(optionName.get(), "AtWordStarts"))
+            findOptions |= WebKit::WebFindOptionsAtWordStarts;
+        else if (JSStringIsEqualToUTF8CString(optionName.get(), "TreatMedialCapitalAsWordStart"))
+            findOptions |= WebKit::WebFindOptionsTreatMedialCapitalAsWordStart;
+        else if (JSStringIsEqualToUTF8CString(optionName.get(), "Backwards"))
+            findOptions |= WebKit::WebFindOptionsBackwards;
+        else if (JSStringIsEqualToUTF8CString(optionName.get(), "WrapAround"))
+            findOptions |= WebKit::WebFindOptionsWrapAround;
+        else if (JSStringIsEqualToUTF8CString(optionName.get(), "StartInSelection"))
+            findOptions |= WebKit::WebFindOptionsStartInSelection;
+    }   
+
+    return DumpRenderTreeSupportGtk::findString(webView, targetString.get(), findOptions); 
 }
 
 bool LayoutTestController::isCommandEnabled(JSStringRef name)

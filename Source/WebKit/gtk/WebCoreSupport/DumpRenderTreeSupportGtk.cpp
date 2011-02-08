@@ -532,3 +532,9 @@ bool DumpRenderTreeSupportGtk::webkitWebFrameSelectionHasSpellingMarker(WebKitWe
 
     return core(frame)->editor()->selectionStartHasSpellingMarkerFor(from, length);
 }
+
+bool DumpRenderTreeSupportGtk::findString(WebKitWebView* webView, const gchar* targetString, WebKitFindOptions findOptions)
+{
+    return core(webView)->findString(String::fromUTF8(targetString), findOptions);
+}
+

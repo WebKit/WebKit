@@ -1,3 +1,13 @@
+2011-02-07  Joone Hur  <joone.hur@collabora.co.uk>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] Implement layoutTestController.findString
+        https://bugs.webkit.org/show_bug.cgi?id=50237
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::findString):
+
 2011-02-07  Chang Shu  <chang.shu@nokia.com>
 
         Reviewed by Darin Adler.
