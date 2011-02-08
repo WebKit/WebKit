@@ -797,11 +797,8 @@ BUGCR59635 SKIP : media/video-display-aspect-ratio.html = PASS FAIL TIMEOUT
 // video.buffered multiple TimeRanges support.
 BUGCR49165 SKIP : http/tests/media/video-buffered.html = PASS
 
-// These tests need to be changed to not rely on setTimeout().
-BUGCR60740 SLOW WIN DEBUG : media/video-played-collapse.html = PASS FAIL
-
 // We sometimes emit an error from the same source element twice.
-BUGCR59226 : media/video-source-error.html = PASS FAIL TIMEOUT
+BUGCR72234 : media/video-source-error.html = PASS FAIL TIMEOUT
 
 // Failing because we sometimes emit additional timeupdate events.
 // Test may need to be rewritten or only log the first timeupdate event.
@@ -814,9 +811,6 @@ BUGCR25375 BUGCR59399 SKIP : media/audio-delete-while-step-button-clicked.html =
 // Seeks to the end of file, which results in ogg packets with no timestamps.
 // KNOWNISSUE : fails because progress event is not published 
 BUGCR59675 BUGCR59263 SKIP : media/event-attributes.html = PASS FAIL TIMEOUT
-
-// Flaky because of our new seeking algorithm.
-BUGCR50438 BUGCR20187 : media/controls-drag-timebar.html = PASS FAIL
 
 // These tests are flaky with subtle pixel differences.
 BUGCR60744 LINUX : media/video-layer-crash.html = IMAGE PASS
@@ -2469,7 +2463,7 @@ BUGDPRANKE WIN LINUX DEBUG : fast/forms/select-set-length-with-mutation-remove.h
 BUGDPRANKE LINUX DEBUG : http/tests/incremental/slow-utf8-text.pl = TIMEOUT PASS
 
 // BUGCR60845 : Adding the sleep  may improves the stablility
-BUGDPRANKE BUGCR60845 WIN LINUX : media/video-poster.html = PASS TEXT
+BUGCR60845 WIN LINUX : media/video-poster.html = PASS TEXT
 
 BUGWEBGL : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
 BUGWEBGL : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
@@ -2768,23 +2762,18 @@ BUGCR57950 WIN : svg/batik/text/verticalText.svg = CRASH PASS
 
 // media/video-* flakyness
 BUGCR59665 MAC : media/video-aspect-ratio.html = CRASH TIMEOUT PASS
-BUGCR59665 MAC : media/video-play-empty-events.html = CRASH TIMEOUT PASS
 BUGCR59665 MAC : media/video-src.html = CRASH TIMEOUT PASS
 BUGCR59665 MAC : media/video-controls-rendering.html = CRASH FAIL TIMEOUT PASS
 BUGCR59665 MAC : media/video-layer-crash.html = CRASH TIMEOUT PASS IMAGE
 // BUGCR59415 : setting SLOW in test_expectations.txt may fix the problem
-BUGCR59665 : media/video-loop.html = CRASH TIMEOUT PASS FAIL
+BUGCR59665 BUGCR59415 : media/video-loop.html = CRASH TIMEOUT PASS FAIL
 // This test needs enhanced eventSender.contextMenu() return value.
 // See https://bugs.webkit.org/show_bug.cgi?id=45021 for more info.
 // UNIMPLEMENTED for chrome
 BUGCR59665 BUGWK45021 SKIP : media/context-menu-actions.html = CRASH TIMEOUT PASS
-BUGCR54334 MAC DEBUG : media/video-timeupdate-during-playback.html = PASS TIMEOUT
-BUGCR54334 LINUX DEBUG : media/video-timeupdate-during-playback.html = PASS TIMEOUT CRASH
-// Started flakily failing on win debug around r70597, WebKit r75136.
-BUGCR54334 WIN DEBUG : media/video-timeupdate-during-playback.html = PASS TEXT TIMEOUT
 
 // Also fails on the mac port; see http://webkit.org/b/34331
-BUG_DRT : http/tests/media/video-referer.html = TEXT PASS
+BUGCR16751 : http/tests/media/video-referer.html = TEXT PASS
 
 // Occasionally times out with, only under the DRT for Linux
 BUGCR58212 LINUX : http/tests/appcache/main-resource-redirect.html = PASS TIMEOUT
@@ -2850,10 +2839,8 @@ BUGCR66085 LINUX : fast/dom/Geolocation/disconnected-frame-permission-denied.htm
 BUGCR66085 WIN LINUX : fast/events/5056619.html = PASS TIMEOUT
 BUGCR66085 LINUX : fast/js/cyclic-proto.html = PASS TIMEOUT
 BUGCR66085 WIN LINUX : fast/replaced/css-content-and-webkit-mask-box-image-crash.html = PASS TIMEOUT
-BUGCR66085 LINUX : http/tests/media/video-cancel-load.html = PASS TIMEOUT
+BUGCR72026 LINUX : http/tests/media/video-cancel-load.html = PASS TIMEOUT
 BUGCR66085 LINUX : http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html = PASS TIMEOUT
-BUGCR66085 LINUX : media/constructors.html = PASS TIMEOUT
-BUGCR66085 : media/video-play-pause-exception.html = PASS TIMEOUT
 
 // Flaky failures
 BUGCR66087 WIN : fast/dom/Geolocation/timestamp.html = PASS TEXT
@@ -2945,7 +2932,6 @@ BUGWK51989 WIN LINUX : fast/canvas/canvas-fillRect-gradient-shadow.html = TEXT
 
 // These have been flaky for as long as we have test history.
 BUGWK52064 WIN DEBUG : fast/events/overflow-events.html = PASS TEXT
-BUGWK52063 WIN DEBUG : http/tests/media/text-served-as-text.html = PASS TEXT TIMEOUT
 BUGWK52063 WIN : http/tests/navigation/ping-cross-origin.html = PASS TEXT TIMEOUT
 BUGWK52063 MAC SLOW : http/tests/navigation/ping-cross-origin.html = PASS
 
@@ -3241,7 +3227,7 @@ BUG_SENORBLANCO GPU WIN LINUX : fast/canvas/canvas-composite.html = IMAGE
 BUG_SENORBLANCO GPU WIN LINUX : fast/canvas/canvas-transform-skewed.html = IMAGE 
 
 BUGWK53469 GPU MAC : compositing/scroll-painted-composited-content.html = CRASH PASS
-BUGWK53824 : media/video-frame-accurate-seek.html = IMAGE PASS
+BUGCR72223 : media/video-frame-accurate-seek.html = IMAGE PASS
 
 // Failure after r77818/77819
 BUG_ZMO : fast/css/text-overflow-ellipsis.html = IMAGE+TEXT PASS

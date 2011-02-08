@@ -1,3 +1,13 @@
+2011-02-07  Kenji Imasaki  <imasaki@chromium.org>
+
+        Reviewed by David Levin.
+
+        [Chromium] Remove non-Flaky media layout tests and update bugs that
+        are associated with media layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=53948
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-07  Kenichi Ishibashi  <bashi@google.com>
 
         Reviewed by Andreas Kling.
