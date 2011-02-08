@@ -1,3 +1,51 @@
+2011-02-07  James Robinson  <jamesr@chromium.org>
+
+        Move sputnik expectations to match test movement.
+
+        * platform/gtk/fast/js/sputnik: Removed.
+        * platform/gtk/fast/js/sputnik/Unicode: Removed.
+        * platform/gtk/fast/js/sputnik/Unicode/Unicode_510: Removed.
+        * platform/gtk/fast/js/sputnik/Unicode/Unicode_510/S7.6_A3.2-expected.txt: Removed.
+        * platform/gtk/fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.3_T1-expected.txt: Removed.
+        * platform/gtk/fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.3_T2-expected.txt: Removed.
+        * platform/gtk/sputnik: Copied from LayoutTests/platform/gtk/fast/js/sputnik.
+        * platform/mac-leopard/fast/js/sputnik: Removed.
+        * platform/mac-leopard/fast/js/sputnik/Unicode: Removed.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_500: Removed.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_500/S7.6_A3.1-expected.txt: Removed.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_500/S7.6_A3.2-expected.txt: Removed.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_500/S7.6_A5.3_T1-expected.txt: Removed.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_500/S7.6_A5.3_T2-expected.txt: Removed.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510: Removed.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510/S15.5.4.16_A1-expected.txt: Removed.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510/S15.5.4.18_A1-expected.txt: Removed.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510/S7.6_A1.1_T1-expected.txt: Removed.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510/S7.6_A1.1_T2-expected.txt: Removed.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510/S7.6_A1.1_T4-expected.txt: Removed.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510/S7.6_A2.2_T1-expected.txt: Removed.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510/S7.6_A2.2_T2-expected.txt: Removed.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510/S7.6_A2.3-expected.txt: Removed.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T1-expected.txt: Removed.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T2-expected.txt: Removed.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T4-expected.txt: Removed.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T7-expected.txt: Removed.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T8-expected.txt: Removed.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T9-expected.txt: Removed.
+        * platform/mac-leopard/sputnik: Copied from LayoutTests/platform/mac-leopard/fast/js/sputnik.
+        * platform/win/fast/js/sputnik: Removed.
+        * platform/win/fast/js/sputnik/Conformance: Removed.
+        * platform/win/fast/js/sputnik/Conformance/11_Expressions: Removed.
+        * platform/win/fast/js/sputnik/Conformance/11_Expressions/11.5_Multiplicative_Operators: Removed.
+        * platform/win/fast/js/sputnik/Conformance/11_Expressions/11.5_Multiplicative_Operators/11.5.3_Percent: Removed.
+        * platform/win/fast/js/sputnik/Conformance/11_Expressions/11.5_Multiplicative_Operators/11.5.3_Percent/S11.5.3_A4_T6-expected.txt: Removed.
+        * platform/win/fast/js/sputnik/Unicode: Removed.
+        * platform/win/fast/js/sputnik/Unicode/Unicode_510: Removed.
+        * platform/win/fast/js/sputnik/Unicode/Unicode_510/S7.6_A3.1-expected.txt: Removed.
+        * platform/win/fast/js/sputnik/Unicode/Unicode_510/S7.6_A3.2-expected.txt: Removed.
+        * platform/win/fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.3_T1-expected.txt: Removed.
+        * platform/win/fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.3_T2-expected.txt: Removed.
+        * platform/win/sputnik: Copied from LayoutTests/platform/win/fast/js/sputnik.
+
 2011-02-07  Ami Fischman  <fischman@google.com>
 
         Reviewed by Eric Carlson.
