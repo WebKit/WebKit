@@ -24,11 +24,11 @@
  */
 
 #include "config.h"
+#include "WKCAImageQueue.h"
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "WKCAImageQueue.h"
-
+#include <CoreFoundation/CoreFoundation.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/RetainPtr.h>
 
