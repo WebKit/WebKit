@@ -3241,6 +3241,3 @@ BUG_ZMO : fast/notifications/notifications-document-close-crash.html = PASS TEXT
 // temporary for rebaseline after r77781
 BUG_LOISLO : fast/invalid/residual-style.html = TEXT
 BUG_LOIDLO : html5lib/runner.html = TEXT
-
-// need rebase after r77952
-BUG_XJI : fast/text/international/pop-up-button-text-alignment-and-direction.html = FAIL

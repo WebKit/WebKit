@@ -1,3 +1,22 @@
+2011-02-08  Xiaomei Ji  <xji@chromium.org>
+
+        Unreviewed.
+
+        Rebaseline after r77952.
+
+        * platform/chromium-linux/fast/text/international/pop-up-button-text-alignment-and-direction-expected.checksum: Added.
+        * platform/chromium-linux/fast/text/international/pop-up-button-text-alignment-and-direction-expected.png: Added.
+        * platform/chromium-linux/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt: Added.
+        * platform/chromium-mac/fast/text/international/pop-up-button-text-alignment-and-direction-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/pop-up-button-text-alignment-and-direction-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt: Added.
+        * platform/chromium-win/fast/text/international/pop-up-button-text-alignment-and-direction-expected.checksum: Added.
+        * platform/chromium-win/fast/text/international/pop-up-button-text-alignment-and-direction-expected.png: Added.
+        * platform/chromium-win/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac-leopard/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt: Added.
+        * platform/win/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt: Added.
+
 2011-02-08  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, test expectations update.
