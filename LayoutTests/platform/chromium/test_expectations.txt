@@ -1033,7 +1033,7 @@ BUGCR10317 LINUX : fast/css/shadow-multiple.html = FAIL
 // Problems with getImageData and toDataURL.
 // This test requires us to do alpha blending exactly the way CG does it,
 // which Skia may never do (see bug).
-BUGCR22700 LINUX WIN : fast/canvas/canvas-getImageData.html = FAIL
+BUGCR22700 LINUX WIN : fast/canvas/canvas-getImageData.html = FAIL TIMEOUT
 
 // We're much closer now. To fully pass this we need encoders for jpg
 // and gif, which is a low priority.

@@ -10,6 +10,12 @@
 
         * platform/chromium/test_expectations.txt:
 
+2011-02-07  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
