@@ -96,12 +96,6 @@ WebString WebNotification::body() const
     return m_private->contents().body();
 }
 
-// FIXME: remove dir() when unreferenced.  Being replaced by direction().
-WebString WebNotification::dir() const
-{
-    return m_private->dir();
-}
-
 WebTextDirection WebNotification::direction() const
 {
     return (m_private->direction() == RTL) ?

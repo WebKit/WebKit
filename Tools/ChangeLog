@@ -1,3 +1,13 @@
+2011-02-07  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by Jian Li.
+
+        [chromium] Remove deprecated method WebNotification::dir
+        https://bugs.webkit.org/show_bug.cgi?id=53735
+
+        * DumpRenderTree/chromium/NotificationPresenter.cpp:
+        (NotificationPresenter::show):
+
 2011-02-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

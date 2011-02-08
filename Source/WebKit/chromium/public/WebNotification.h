@@ -75,10 +75,6 @@ public:
     WEBKIT_API WebURL iconURL() const;
     WEBKIT_API WebString title() const;
     WEBKIT_API WebString body() const;
-
-    // FIXME: Remove dir() when no longer referenced.
-    // dir() is deprecated; use direction().
-    WEBKIT_API WebString dir() const;
     WEBKIT_API WebTextDirection direction() const;
 
     WEBKIT_API WebString replaceId() const;

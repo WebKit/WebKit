@@ -95,7 +95,7 @@ bool NotificationPresenter::show(const WebNotification& notification)
                notification.url().spec().data());
     } else {
         printf("DESKTOP NOTIFICATION:%s icon %s, title %s, text %s\n",
-               notification.dir() == "rtl" ? "(RTL)" : "",
+               notification.direction() == WebTextDirectionRightToLeft ? "(RTL)" : "",
                notification.iconURL().isEmpty() ? "" :
                notification.iconURL().spec().data(),
                notification.title().isEmpty() ? "" :

@@ -1,3 +1,13 @@
+2011-02-07  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by Jian Li.
+
+        [chromium] Remove deprecated method WebNotification::dir
+        https://bugs.webkit.org/show_bug.cgi?id=53735
+
+        * public/WebNotification.h:
+        * src/WebNotification.cpp:
+
 2011-02-03  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Darin Fisher.
