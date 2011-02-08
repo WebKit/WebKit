@@ -1966,11 +1966,11 @@ static IntRect printerRect(HDC printDC)
                    GetDeviceCaps(printDC, PHYSICALHEIGHT) - 2 * GetDeviceCaps(printDC, PHYSICALOFFSETY));
 }
 
-void WebFrame::setPrinting(bool printing, float minPageWidth, float maxPageWidth, bool adjustViewSize)
+void WebFrame::setPrinting(bool printing, float minPageWidth, float maxPageWidth, float minPageHeight, bool adjustViewSize)
 {
     Frame* coreFrame = core(this);
     ASSERT(coreFrame);
-    coreFrame->setPrinting(printing, FloatSize(minPageWidth, 0), maxPageWidth / minPageWidth, adjustViewSize ? Frame::AdjustViewSize : Frame::DoNotAdjustViewSize);
+    coreFrame->setPrinting(printing, FloatSize(minPageWidth, minPageHeight), maxPageWidth / minPageWidth, adjustViewSize ? Frame::AdjustViewSize : Frame::DoNotAdjustViewSize);
 }
 
 HRESULT STDMETHODCALLTYPE WebFrame::setInPrintingMode( 
@@ -1990,20 +1990,25 @@ HRESULT STDMETHODCALLTYPE WebFrame::setInPrintingMode(
     // according to the paper size
     float minLayoutWidth = 0.0f;
     float maxLayoutWidth = 0.0f;
+    float minLayoutHeight = 0.0f;
     if (m_inPrintingMode && !coreFrame->document()->isFrameSet()) {
         if (!printDC) {
             ASSERT_NOT_REACHED();
             return E_POINTER;
         }
 
-        const int desiredHorizontalPixelsPerInch = 72;
+        const int desiredPixelsPerInch = 72;
+        IntRect printRect = printerRect(printDC);
         int paperHorizontalPixelsPerInch = ::GetDeviceCaps(printDC, LOGPIXELSX);
-        int paperWidth = printerRect(printDC).width() * desiredHorizontalPixelsPerInch / paperHorizontalPixelsPerInch;
+        int paperWidth = printRect.width() * desiredPixelsPerInch / paperHorizontalPixelsPerInch;
+        int paperVerticalPixelsPerInch = ::GetDeviceCaps(printDC, LOGPIXELSY);
+        int paperHeight = printRect.height() * desiredPixelsPerInch / paperVerticalPixelsPerInch;
         minLayoutWidth = paperWidth * PrintingMinimumShrinkFactor;
         maxLayoutWidth = paperWidth * PrintingMaximumShrinkFactor;
+        minLayoutHeight = paperHeight * PrintingMinimumShrinkFactor;
     }
 
-    setPrinting(m_inPrintingMode, minLayoutWidth, maxLayoutWidth, true);
+    setPrinting(m_inPrintingMode, minLayoutWidth, maxLayoutWidth, minLayoutHeight, true);
 
     if (!m_inPrintingMode)
         m_pageRects.clear();

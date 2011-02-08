@@ -384,7 +384,7 @@ protected:
     void loadHTMLString(BSTR string, BSTR baseURL, BSTR unreachableURL);
     void loadData(PassRefPtr<WebCore::SharedBuffer>, BSTR mimeType, BSTR textEncodingName, BSTR baseURL, BSTR failingURL);
     const Vector<WebCore::IntRect>& computePageRects(HDC printDC);
-    void setPrinting(bool printing, float minPageWidth, float maxPageWidth, bool adjustViewSize);
+    void setPrinting(bool printing, float minPageWidth, float maxPageWidth, float minPageHeight, bool adjustViewSize);
     void headerAndFooterHeights(float*, float*);
     WebCore::IntRect printerMarginRect(HDC);
     void spoolPage (PlatformGraphicsContext* pctx, WebCore::GraphicsContext* spoolCtx, HDC printDC, IWebUIDelegate*, float headerHeight, float footerHeight, UINT page, UINT pageCount);

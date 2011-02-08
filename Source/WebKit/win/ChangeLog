@@ -1,3 +1,18 @@
+2011-02-08  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben.
+
+        <rdar://problem/8932077> REGRESSION (5.0.3-ToT): United boarding pass has wrong layout when printed
+        
+        Windows never got patched to pass in the page height to WebCore, so when WebCore's pagination got re-written to depend on this
+        value, Windows got broken.  Patch setPrinting to be identical to WebKit1 on OS X and to have it take an extra minimum page height
+        argument.
+
+        * WebFrame.cpp:
+        (WebFrame::setPrinting):
+        (WebFrame::setInPrintingMode):
+        * WebFrame.h:
+
 2011-02-02  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
