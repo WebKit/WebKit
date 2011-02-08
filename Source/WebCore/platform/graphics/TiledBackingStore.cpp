@@ -76,8 +76,8 @@ void TiledBackingStore::invalidate(const IntRect& contentsDirtyRect)
     Tile::Coordinate topLeft = tileCoordinateForPoint(dirtyRect.location());
     Tile::Coordinate bottomRight = tileCoordinateForPoint(IntPoint(dirtyRect.maxX(), dirtyRect.maxY()));
     
-    for (unsigned yCoordinate = topLeft.y(); yCoordinate < bottomRight.y(); ++yCoordinate) {
-        for (unsigned xCoordinate = topLeft.x(); xCoordinate < bottomRight.x(); ++xCoordinate) {
+    for (unsigned yCoordinate = topLeft.y(); yCoordinate <= bottomRight.y(); ++yCoordinate) {
+        for (unsigned xCoordinate = topLeft.x(); xCoordinate <= bottomRight.x(); ++xCoordinate) {
             RefPtr<Tile> currentTile = tileAt(Tile::Coordinate(xCoordinate, yCoordinate));
             if (!currentTile)
                 continue;
@@ -110,6 +110,7 @@ void TiledBackingStore::updateTileBuffers()
         m_client->tiledBackingStorePaintEnd(paintedArea);
         return;
     }
+
     // FIXME: In single threaded case, tile back buffers could be updated asynchronously 
     // one by one and then swapped to front in one go. This would minimize the time spent
     // blocking on tile updates.
@@ -136,8 +137,8 @@ void TiledBackingStore::paint(GraphicsContext* context, const IntRect& rect)
     Tile::Coordinate topLeft = tileCoordinateForPoint(dirtyRect.location());
     Tile::Coordinate bottomRight = tileCoordinateForPoint(IntPoint(dirtyRect.maxX(), dirtyRect.maxY()));
 
-    for (unsigned yCoordinate = topLeft.y(); yCoordinate < bottomRight.y(); ++yCoordinate) {
-        for (unsigned xCoordinate = topLeft.x(); xCoordinate < bottomRight.x(); ++xCoordinate) {
+    for (unsigned yCoordinate = topLeft.y(); yCoordinate <= bottomRight.y(); ++yCoordinate) {
+        for (unsigned xCoordinate = topLeft.x(); xCoordinate <= bottomRight.x(); ++xCoordinate) {
             Tile::Coordinate currentCoordinate(xCoordinate, yCoordinate);
             RefPtr<Tile> currentTile = tileAt(currentCoordinate);
             if (currentTile && currentTile->isReadyToPaint())
@@ -230,8 +231,8 @@ void TiledBackingStore::createTiles()
     unsigned requiredTileCount = 0;
     Tile::Coordinate topLeft = tileCoordinateForPoint(coverRect.location());
     Tile::Coordinate bottomRight = tileCoordinateForPoint(IntPoint(coverRect.maxX(), coverRect.maxY()));
-    for (unsigned yCoordinate = topLeft.y(); yCoordinate < bottomRight.y(); ++yCoordinate) {
-        for (unsigned xCoordinate = topLeft.x(); xCoordinate < bottomRight.x(); ++xCoordinate) {
+    for (unsigned yCoordinate = topLeft.y(); yCoordinate <= bottomRight.y(); ++yCoordinate) {
+        for (unsigned xCoordinate = topLeft.x(); xCoordinate <= bottomRight.x(); ++xCoordinate) {
             Tile::Coordinate currentCoordinate(xCoordinate, yCoordinate);
             if (tileAt(currentCoordinate))
                 continue;
