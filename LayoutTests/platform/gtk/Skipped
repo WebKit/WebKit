@@ -4329,28 +4329,28 @@ fast/forms/input-spinbutton-capturing.html
 fast/events/show-modal-dialog-onblur-onfocus.html
 fast/events/scroll-event-during-modal-dialog.html
 fast/harness/show-modal-dialog.html
-fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T10.html
-fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T11.html
-fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T2.html
-fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T2.html
-fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T4.html
-fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T4.html
-fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T6.html
-fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T6.html
-fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T8.html
-fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T8.html
-fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T10.html
-fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T11.html
-fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T1.html
-fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T1.html
-fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T3.html
-fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T3.html
-fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T5.html
-fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T5.html
-fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T7.html
-fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T7.html
-fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T9.html
-fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T9.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T10.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T11.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T2.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T2.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T4.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T4.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T6.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T6.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T8.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T8.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T10.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T11.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T1.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T1.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T3.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T3.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T5.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T5.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T7.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T7.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T9.html
+sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T9.html
 
 # pastes a space instead of a tab
 # https://bugs.webkit.org/show_bug.cgi?id=38437
@@ -4458,54 +4458,54 @@ editing/selection/extend-selection-bidi.html
 
 # Remaining Sputnik failures
 # https://bugs.webkit.org/show_bug.cgi?id=43568
-fast/js/sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.12_Array_prototype_splice/S15.4.4.12_A2.1_T3.html
-fast/js/sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15.8.2.16_A7.html
-fast/js/sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html
-fast/js/sputnik/Unicode/Unicode_510/S7.6_A3.1.html
+sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.12_Array_prototype_splice/S15.4.4.12_A2.1_T3.html
+sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15.8.2.16_A7.html
+sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html
+sputnik/Unicode/Unicode_510/S7.6_A3.1.html
 
 # The following Sputnik tests fail on debug builds.
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.1_T1.html
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.1_T2.html
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.2_T1.html
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.2_T2.html
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.3.html
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.4.html
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A1.1_T2.html
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A1.2_T2.html
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A1.1_T1.html
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A1.2_T1.html
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A3.1_T1.html
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A3.1_T2.html
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A3.2_T1.html
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A3.2_T2.html
-fast/js/sputnik/Conformance/08_Types/8.4_The_String_Type/S8.4_A13_T1.html
-fast/js/sputnik/Conformance/08_Types/8.4_The_String_Type/S8.4_A13_T2.html
-fast/js/sputnik/Conformance/08_Types/8.4_The_String_Type/S8.4_A14_T1.html
-fast/js/sputnik/Conformance/08_Types/8.4_The_String_Type/S8.4_A14_T2.html
-fast/js/sputnik/Unicode/Unicode_218/S7.6_A5.3_T2.html
-fast/js/sputnik/Unicode/Unicode_320/S7.6_A3.1.html
-fast/js/sputnik/Unicode/Unicode_320/S7.6_A3.2.html
-fast/js/sputnik/Unicode/Unicode_320/S7.6_A5.3_T2.html
-fast/js/sputnik/Unicode/Unicode_410/S7.6_A3.1.html
-fast/js/sputnik/Unicode/Unicode_410/S7.6_A3.2.html
-fast/js/sputnik/Unicode/Unicode_410/S7.6_A5.3_T2.html
-fast/js/sputnik/Unicode/Unicode_500/S7.6_A3.1.html
-fast/js/sputnik/Unicode/Unicode_500/S7.6_A3.2.html
-fast/js/sputnik/Unicode/Unicode_500/S7.6_A5.3_T2.html
-fast/js/sputnik/Unicode/Unicode_510/S7.6_A3.2.html
-fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html
+sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.1_T1.html
+sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.1_T2.html
+sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.2_T1.html
+sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.2_T2.html
+sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.3.html
+sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.4.html
+sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A1.1_T2.html
+sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A1.2_T2.html
+sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A1.1_T1.html
+sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A1.2_T1.html
+sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A3.1_T1.html
+sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A3.1_T2.html
+sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A3.2_T1.html
+sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A3.2_T2.html
+sputnik/Conformance/08_Types/8.4_The_String_Type/S8.4_A13_T1.html
+sputnik/Conformance/08_Types/8.4_The_String_Type/S8.4_A13_T2.html
+sputnik/Conformance/08_Types/8.4_The_String_Type/S8.4_A14_T1.html
+sputnik/Conformance/08_Types/8.4_The_String_Type/S8.4_A14_T2.html
+sputnik/Unicode/Unicode_218/S7.6_A5.3_T2.html
+sputnik/Unicode/Unicode_320/S7.6_A3.1.html
+sputnik/Unicode/Unicode_320/S7.6_A3.2.html
+sputnik/Unicode/Unicode_320/S7.6_A5.3_T2.html
+sputnik/Unicode/Unicode_410/S7.6_A3.1.html
+sputnik/Unicode/Unicode_410/S7.6_A3.2.html
+sputnik/Unicode/Unicode_410/S7.6_A5.3_T2.html
+sputnik/Unicode/Unicode_500/S7.6_A3.1.html
+sputnik/Unicode/Unicode_500/S7.6_A3.2.html
+sputnik/Unicode/Unicode_500/S7.6_A5.3_T2.html
+sputnik/Unicode/Unicode_510/S7.6_A3.2.html
+sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html
 
 # The following Sputnik tests fail on the 32bit release bot
-fast/js/sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html
-fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T1.html
-fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T2.html
-fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T3.html
-fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T4.html
-fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T5.html
-fast/js/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T6.html
-fast/js/sputnik/Unicode/Unicode_510/S7.6_A3.2.html
-fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html
-fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html
+sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html
+sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T1.html
+sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T2.html
+sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T3.html
+sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T4.html
+sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T5.html
+sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T6.html
+sputnik/Unicode/Unicode_510/S7.6_A3.2.html
+sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html
+sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html
 
 # Still working out flakiness issues with the perf tests.
 # https://bugs.webkit.org/show_bug.cgi?id=44199

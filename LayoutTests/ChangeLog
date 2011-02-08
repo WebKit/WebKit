@@ -1,3 +1,22 @@
+2011-02-07  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Move the sputnik test suite out of fast/js/
+        https://bugs.webkit.org/show_bug.cgi?id=53954
+
+        The sputnik suite shouldn't go in fast/js/ because it is not fast and
+        it is an imported test suite.  This moves it to LayoutTests/sputnik
+        and updates references in skipped lists / expectations.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac-tiger/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/qt-wk2/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-02-07  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, test expectations update.

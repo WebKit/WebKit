@@ -158,25 +158,25 @@ http/tests/xmlhttprequest/access-control-preflight-credential-sync.html
 media/media-document-audio-size.html
 
 # These tests fail on Tiger/PPC, probably because of bugs in JSC intepreter.
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.4_T2.html
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.4_T2.html
-fast/js/sputnik/Conformance/11_Expressions/11.5_Multiplicative_Operators/11.5.3_Percent/S11.5.3_A4_T2.html
-fast/js/sputnik/Conformance/15_Native_Objects/15.3_Function/15.3.4/15.3.4.3_Function.prototype.apply/S15.3.4.3_A6_T1.html
-fast/js/sputnik/Conformance/15_Native_Objects/15.3_Function/15.3.4/15.3.4.3_Function.prototype.apply/S15.3.4.3_A6_T4.html
-fast/js/sputnik/Conformance/15_Native_Objects/15.3_Function/15.3.5/S15.3.5.3_A2_T6.html
-fast/js/sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.2/15.10.2.12_CharacterClassEscape/S15.10.2.12_A1_T1.html
-fast/js/sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.2/15.10.2.12_CharacterClassEscape/S15.10.2.12_A1_T2.html
-fast/js/sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.2/15.10.2.12_CharacterClassEscape/S15.10.2.12_A2_T1.html
-fast/js/sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.2/15.10.2.12_CharacterClassEscape/S15.10.2.12_A2_T2.html
+sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.4_T2.html
+sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.4_T2.html
+sputnik/Conformance/11_Expressions/11.5_Multiplicative_Operators/11.5.3_Percent/S11.5.3_A4_T2.html
+sputnik/Conformance/15_Native_Objects/15.3_Function/15.3.4/15.3.4.3_Function.prototype.apply/S15.3.4.3_A6_T1.html
+sputnik/Conformance/15_Native_Objects/15.3_Function/15.3.4/15.3.4.3_Function.prototype.apply/S15.3.4.3_A6_T4.html
+sputnik/Conformance/15_Native_Objects/15.3_Function/15.3.5/S15.3.5.3_A2_T6.html
+sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.2/15.10.2.12_CharacterClassEscape/S15.10.2.12_A1_T1.html
+sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.2/15.10.2.12_CharacterClassEscape/S15.10.2.12_A1_T2.html
+sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.2/15.10.2.12_CharacterClassEscape/S15.10.2.12_A2_T1.html
+sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.2/15.10.2.12_CharacterClassEscape/S15.10.2.12_A2_T2.html
 
 # These fail on Tiger/Intel bot.
 # https://bugs.webkit.org/show_bug.cgi?id=38396
-fast/js/sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15.8.2.16_A7.html
-fast/js/sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html
+sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15.8.2.16_A7.html
+sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html
 
 # Many of these tests are slow and/or fail, and they aren't that useful, since we aleady know that
 # Tiger has an old version of ICU and thus supports an old version of Unicode.
-fast/js/sputnik/Unicode
+sputnik/Unicode
 
 # https://bugs.webkit.org/show_bug.cgi?id=38743
 webarchive/test-link-rel-icon.html

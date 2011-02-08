@@ -1981,7 +1981,7 @@ BUGUKAI WIN MAC SKIP : fast/text/international/bold-bengali.html = FAIL
 
 // These 5,000+ tests are already being run by the V8 team (and have no chromium expectations).
 // They should be moved to the JavaScriptCore test suite.
-BUGCR42875 WONTFIX SKIP : fast/js/sputnik = TEXT
+BUGCR42875 WONTFIX SKIP : sputnik = TEXT
 
 // WebKit roll 58626:58719
 BUGCR43963 WIN : fast/forms/searchfield-heights.html = IMAGE
