@@ -1,3 +1,13 @@
+2011-02-07  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fixing a build break on Mac caused by http://trac.webkit.org/changeset/77874
+        
+        Removed unused static function.
+        
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+
 2011-02-07  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

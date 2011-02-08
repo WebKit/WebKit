@@ -48,22 +48,7 @@ using namespace WebCore;
 namespace WebKit {
 
 using namespace WebCore;
-
-static Font& fontFromNSFont(NSFont *font)
-{
-    static NSFont *currentFont;
-    DEFINE_STATIC_LOCAL(Font, currentRenderer, ());
-    
-    if ([font isEqual:currentFont])
-        return currentRenderer;
-    if (currentFont)
-        CFRelease(currentFont);
-    currentFont = font;
-    CFRetain(currentFont);
-    currentRenderer = Font(FontPlatformData(font, [font pointSize]), ![[NSGraphicsContext currentContext] isDrawingToScreen]);
-    return currentRenderer;
-}
-    
+   
 void WebDragClient::startDrag(DragImageRef dragImage, const IntPoint& at, const IntPoint& eventPos, Clipboard* clipboard, Frame* frame, bool linkDrag)
 {
     if (!frame)
