@@ -1,3 +1,15 @@
+2011-02-07  Kenichi Ishibashi  <bashi@google.com>
+
+        Reviewed by Andreas Kling.
+
+        HTMLOutputElement::childrenChanged() should call its base class childrenChanged()
+        https://bugs.webkit.org/show_bug.cgi?id=53791
+
+        Test that a live list is updated after the child of an HTMLOutputElement was removed.
+
+        * fast/dom/HTMLOutputElement/htmloutputelement-children-removed-expected.txt: Added.
+        * fast/dom/HTMLOutputElement/htmloutputelement-children-removed.html: Added.
+
 2011-02-07  Ami Fischman  <fischman@google.com>
 
         Reviewed by Eric Seidel.

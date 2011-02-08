@@ -1,3 +1,18 @@
+2011-02-07  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Reviewed by Andreas Kling.
+
+        HTMLOutputElement::childrenChanged() should call its base class childrenChanged()
+        https://bugs.webkit.org/show_bug.cgi?id=53791
+
+        Calls HTMLFormControlElement::childrenChanged() in HTMLOutputElement::childrenChanged().
+
+        Test: fast/dom/HTMLOutputElement/htmloutputelement-children-removed.html
+
+        * html/HTMLOutputElement.cpp:
+        (WebCore::HTMLOutputElement::childrenChanged): Calls super class's
+        childrenChanged().
+
 2011-02-07  Benjamin Poulain  <ikipou@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.
