@@ -87,6 +87,7 @@ void LayoutTestController::reset()
     DumpRenderTreeSupportQt::dumpHistoryCallbacks(false);
     DumpRenderTreeSupportQt::dumpVisitedLinksCallbacks(false);
     setIconDatabaseEnabled(false);
+    clearAllDatabases();
 
     emit hidePage();
 }

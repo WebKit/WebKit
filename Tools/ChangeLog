@@ -1,3 +1,23 @@
+2011-02-08  Benjamin Poulain  <ikipou@gmail.com>
+
+        Reviewed by Csaba Osztrogonác.
+
+        openDatabaseSync() stop responding after too many call
+        https://bugs.webkit.org/show_bug.cgi?id=53945
+
+        Reset the database quota to a known state between each test.
+
+        Define a quota for the known origins at each test run and delete
+        all the databases.
+        This way, the database related test do not depend on previous
+        allocations.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::resetToConsistentStateBeforeTesting):
+        (WebCore::DumpRenderTree::dumpDatabaseQuota):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::reset):
+
 2011-02-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

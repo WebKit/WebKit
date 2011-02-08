@@ -83,6 +83,8 @@
 
 namespace WebCore {
 
+const int databaseDefaultQuota = 5 * 1024 * 1024;
+
 NetworkAccessManager::NetworkAccessManager(QObject* parent)
     : QNetworkAccessManager(parent)
 {
@@ -528,6 +530,10 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting(const QUrl& url)
     m_page->blockSignals(true);
     m_page->triggerAction(QWebPage::Stop);
     m_page->blockSignals(false);
+
+    QList<QWebSecurityOrigin> knownOrigins = QWebSecurityOrigin::allOrigins();
+    for (int i = 0; i < knownOrigins.size(); ++i)
+        knownOrigins[i].setDatabaseQuota(databaseDefaultQuota);
 
     // reset the layoutTestController at this point, so that we under no
     // circumstance dump (stop the waitUntilDone timer) during the reset
@@ -1027,7 +1033,7 @@ void DumpRenderTree::dumpDatabaseQuota(QWebFrame* frame, const QString& dbName)
            origin.host().toUtf8().data(),
            origin.port(),
            dbName.toUtf8().data());
-    origin.setDatabaseQuota(5 * 1024 * 1024);
+    origin.setDatabaseQuota(databaseDefaultQuota);
 }
 
 void DumpRenderTree::dumpApplicationCacheQuota(QWebSecurityOrigin* origin, quint64 defaultOriginQuota)
