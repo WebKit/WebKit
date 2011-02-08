@@ -582,13 +582,11 @@ var CODE_REVIEW_UNITTEST;
 
     // Don't show the links to expand upwards/downwards if the patch starts/ends without context
     // lines, i.e. starts/ends with add/remove lines.
-    var first_line = file_diff.querySelector('.LineContainer');
+    var first_line = file_diff.querySelector('.LineContainer:not(.context)');
 
     // If there is no element with a "Line" class, then this is an image diff.
     if (!first_line)
       return;
-
-    $('.context', file_diff).detach();
 
     var expand_bar_index = 0;
     if (!$(first_line).hasClass('add') && !$(first_line).hasClass('remove'))
@@ -736,7 +734,7 @@ var CODE_REVIEW_UNITTEST;
     var above_line_numbers = $('.expansionLineNumber', above_expansion);
     if (!above_line_numbers[0]) {
       var diff_section = expand_bar.previousElementSibling;
-      above_line_numbers = $('.lineNumber', diff_section);
+      above_line_numbers = $('.Line:not(.context) .lineNumber', diff_section);
     }
 
     var above_last_line_num, above_last_from_line_num;
@@ -751,7 +749,7 @@ var CODE_REVIEW_UNITTEST;
     if (!below_line_numbers[0]) {
       var diff_section = expand_bar.nextElementSibling;
       if (diff_section)
-        below_line_numbers = $('.lineNumber', diff_section);
+        below_line_numbers = $('.Line:not(.context) .lineNumber', diff_section);
     }
 
     var below_first_line_num, below_first_from_line_num;
@@ -786,6 +784,8 @@ var CODE_REVIEW_UNITTEST;
     if (start_line_num == above_last_line_num && end_line_num == below_first_line_num) {
       $('.ExpandLinkContainer', expand_bar).detach();
       below_expansion.insertBefore(lines, below_expansion.firstChild);
+      // Now that we're filling in all the lines, the context line following this expand bar is no longer needed.
+      $('.context', expand_bar.nextElementSibling).detach();
     } else if (direction == ABOVE) {
       above_expansion.appendChild(lines);
     } else {
@@ -927,7 +927,7 @@ var CODE_REVIEW_UNITTEST;
     // Apply diffs in reverse order to avoid needing to keep track of changing line numbers.
     for (var i = diff_sections.length - 1; i >= 0; i--) {
       var section = diff_sections[i];
-      var lines = section.getElementsByClassName('Line');
+      var lines = $('.Line:not(.context)', section);
       var current_line = -1;
       var context = [];
       var hunk_num = i + 1;
@@ -1091,6 +1091,10 @@ var CODE_REVIEW_UNITTEST;
 
     $(file_diff).attr('data-diffstate', diff_type);
     updateDiffLinkVisibility(file_diff);
+
+    $('.context', file_diff).each(function() {
+      convertLine(diff_type, this);
+    });
 
     $('.shared .Line', file_diff).each(function() {
       convertLine(diff_type, this);
