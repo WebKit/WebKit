@@ -1,3 +1,17 @@
+2011-02-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Inset shadow with large offset renders incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=53882
+        
+        Test for inset shadows with offsets larger than the box size.
+
+        * fast/box-shadow/inset-shadow-large-offset-expected.checksum: Added.
+        * fast/box-shadow/inset-shadow-large-offset-expected.png: Added.
+        * fast/box-shadow/inset-shadow-large-offset-expected.txt: Added.
+        * fast/box-shadow/inset-shadow-large-offset.html: Added.
+
 2011-02-08  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

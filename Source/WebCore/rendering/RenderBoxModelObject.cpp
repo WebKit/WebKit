@@ -1575,6 +1575,20 @@ void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext* graphicsContex
     graphicsContext->clipConvexPolygon(4, secondQuad, !secondEdgeMatches);
 }
 
+static inline IntRect areaCastingShadowInHole(const IntRect& holeRect, int shadowBlur, int shadowSpread, const IntSize& shadowOffset)
+{
+    IntRect bounds(holeRect);
+    
+    bounds.inflate(shadowBlur);
+
+    if (shadowSpread < 0)
+        bounds.inflate(-shadowSpread);
+    
+    IntRect offsetBounds = bounds;
+    offsetBounds.move(-shadowOffset);
+    return unionRect(bounds, offsetBounds);
+}
+
 void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int ty, int w, int h, const RenderStyle* s, ShadowStyle shadowStyle, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
 {
     // FIXME: Deal with border-image.  Would be great to use border-image as a mask.
@@ -1699,10 +1713,7 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
 
             Color fillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), 255);
 
-            IntRect outerRect(border.rect());
-            outerRect.inflateX(w - 2 * shadowSpread);
-            outerRect.inflateY(h - 2 * shadowSpread);
-
+            IntRect outerRect = areaCastingShadowInHole(border.rect(), shadowBlur, shadowSpread, shadowOffset);
             context->save();
 
             Path path;
