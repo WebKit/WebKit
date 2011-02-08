@@ -1,3 +1,12 @@
+2011-02-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] EventSender.keyDown does not support non-array modifier arguments
+        https://bugs.webkit.org/show_bug.cgi?id=53962
+
+        * platform/gtk/Skipped: Unskip a test which is now passing.
+
 2011-02-08  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Removing inspector tests from Skipped on [win].

@@ -240,33 +240,42 @@ static void updateClickCount(int button)
         clickCount++;
 }
 
+static guint gdkModifierFromJSValue(JSContextRef context, const JSValueRef value)
+{
+    JSStringRef string = JSValueToStringCopy(context, value, 0);
+    guint gdkModifier = 0;
+    if (JSStringIsEqualToUTF8CString(string, "ctrlKey")
+        || JSStringIsEqualToUTF8CString(string, "addSelectionKey"))
+        gdkModifier = GDK_CONTROL_MASK;
+    else if (JSStringIsEqualToUTF8CString(string, "shiftKey")
+             || JSStringIsEqualToUTF8CString(string, "rangeSelectionKey"))
+        gdkModifier = GDK_SHIFT_MASK;
+    else if (JSStringIsEqualToUTF8CString(string, "altKey"))
+        gdkModifier = GDK_MOD1_MASK;
+    
+    // Currently the metaKey as defined in WebCore/platform/gtk/MouseEventGtk.cpp
+    // is GDK_MOD2_MASK. This code must be kept in sync with that file.
+    else if (JSStringIsEqualToUTF8CString(string, "metaKey"))
+        gdkModifier = GDK_MOD2_MASK;
+    
+    JSStringRelease(string);
+    return gdkModifier;
+}
+
 static guint gdkModifersFromJSValue(JSContextRef context, const JSValueRef modifiers)
 {
+    // The value may either be a string with a single modifier or an array of modifiers.
+    if (JSValueIsString(context, modifiers))
+        return gdkModifierFromJSValue(context, modifiers);
+
     JSObjectRef modifiersArray = JSValueToObject(context, modifiers, 0);
     if (!modifiersArray)
         return 0;
 
     guint gdkModifiers = 0;
     int modifiersCount = JSValueToNumber(context, JSObjectGetProperty(context, modifiersArray, JSStringCreateWithUTF8CString("length"), 0), 0);
-    for (int i = 0; i < modifiersCount; ++i) {
-        JSValueRef value = JSObjectGetPropertyAtIndex(context, modifiersArray, i, 0);
-        JSStringRef string = JSValueToStringCopy(context, value, 0);
-        if (JSStringIsEqualToUTF8CString(string, "ctrlKey")
-            || JSStringIsEqualToUTF8CString(string, "addSelectionKey"))
-            gdkModifiers |= GDK_CONTROL_MASK;
-        else if (JSStringIsEqualToUTF8CString(string, "shiftKey")
-                 || JSStringIsEqualToUTF8CString(string, "rangeSelectionKey"))
-            gdkModifiers |= GDK_SHIFT_MASK;
-        else if (JSStringIsEqualToUTF8CString(string, "altKey"))
-            gdkModifiers |= GDK_MOD1_MASK;
-
-        // Currently the metaKey as defined in WebCore/platform/gtk/MouseEventGtk.cpp
-        // is GDK_MOD2_MASK. This code must be kept in sync with that file.
-        else if (JSStringIsEqualToUTF8CString(string, "metaKey"))
-            gdkModifiers |= GDK_MOD2_MASK;
-
-        JSStringRelease(string);
-    }
+    for (int i = 0; i < modifiersCount; ++i)
+        gdkModifiers |= gdkModifierFromJSValue(context, JSObjectGetPropertyAtIndex(context, modifiersArray, i, 0));
     return gdkModifiers;
 }
 

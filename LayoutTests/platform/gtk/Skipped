@@ -133,10 +133,6 @@ fast/encoding/mailto-always-utf-8.html
 # https://bugs.webkit.org/show_bug.cgi?id=53960 
 fast/events/popup-blocking-click-in-iframe.html
 
-# EventSender.keyDown does not support non-array modifier arguments.
-# https://bugs.webkit.org/show_bug.cgi?id=53962 
-fast/forms/legend-access-key.html
-
 # Looks like a bug in the LayoutTestController global history support due to missing API.
 fast/history/window-open.html
 

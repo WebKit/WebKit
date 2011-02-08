@@ -1,3 +1,19 @@
+2011-02-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] EventSender.keyDown does not support non-array modifier arguments
+        https://bugs.webkit.org/show_bug.cgi?id=53962
+
+        Support handling either an array or a string for the modifier argument
+        to EventSender.keyDown.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (gdkModifierFromJSValue): Added this helper which factors out the
+        string comparison bits.
+        (gdkModifersFromJSValue): Test up front whether the value is a string,
+        to handle it specially.
+
 2011-02-08  Benjamin Poulain  <ikipou@gmail.com>
 
         Reviewed by Csaba Osztrogonác.
