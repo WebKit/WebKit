@@ -169,32 +169,6 @@ void MarkedSpace::shrink()
         m_heap.collectorBlock(i)->marked.set(HeapConstants::cellsPerBlock - 1);
 }
 
-bool MarkedSpace::containsSlowCase(const void* x)
-{
-    uintptr_t xAsBits = reinterpret_cast<uintptr_t>(x);
-    xAsBits &= CELL_ALIGN_MASK;
-
-    uintptr_t offset = xAsBits & BLOCK_OFFSET_MASK;
-    const size_t lastCellOffset = sizeof(CollectorCell) * (CELLS_PER_BLOCK - 1);
-    if (offset > lastCellOffset)
-        return false;
-
-    MarkedBlock* blockAddr = reinterpret_cast<MarkedBlock*>(xAsBits - offset);
-    size_t usedBlocks = m_heap.usedBlocks;
-    for (size_t block = 0; block < usedBlocks; block++) {
-        if (m_heap.collectorBlock(block) != blockAddr)
-            continue;
-
-        // x is a pointer into the heap. Now, verify that the cell it
-        // points to is live. (If the cell is dead, we must not mark it,
-        // since that would revive it in a zombie state.)
-        size_t cellOffset = offset / CELL_SIZE;
-        return blockAddr->marked.get(cellOffset);
-    }
-    
-    return false;
-}
-
 void MarkedSpace::clearMarkBits()
 {
     for (size_t i = 0; i < m_heap.usedBlocks; ++i)

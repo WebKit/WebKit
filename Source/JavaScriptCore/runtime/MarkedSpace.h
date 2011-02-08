@@ -92,8 +92,6 @@ namespace JSC {
         LiveObjectIterator primaryHeapEnd();
 
     private:
-        bool containsSlowCase(const void*);
-
         NEVER_INLINE MarkedBlock* allocateBlock();
         NEVER_INLINE void freeBlock(size_t);
         void shrink();
@@ -126,10 +124,25 @@ namespace JSC {
 
     inline bool MarkedSpace::contains(const void* x)
     {
-        if (!MarkedBlock::isPossibleCell(x))
+        if (!MarkedBlock::isCellAligned(x))
             return false;
-            
-        return containsSlowCase(x);
+
+        MarkedBlock* block = MarkedBlock::blockFor(x);
+        if (!block)
+            return false;
+
+        size_t usedBlocks = m_heap.usedBlocks;
+        for (size_t i = 0; i < usedBlocks; i++) {
+            if (block != m_heap.collectorBlock(i))
+                continue;
+
+            // x is a pointer into the heap. Now, verify that the cell it
+            // points to is live. (If the cell is dead, we must not mark it,
+            // since that would revive it in a zombie state.)
+            return block->isMarked(x);
+        }
+        
+        return false;
     }
 
 } // namespace JSC

@@ -28,7 +28,6 @@
 namespace JSC {
 
     class Heap;
-    class JSCell;
 
 #if OS(WINCE) || OS(SYMBIAN) || PLATFORM(BREWMP)
     const size_t BLOCK_SIZE = 64 * 1024; // 64k
@@ -44,7 +43,8 @@ namespace JSC {
     const size_t SMALL_CELL_SIZE = CELL_SIZE / 2;
     const size_t CELL_MASK = CELL_SIZE - 1;
     const size_t CELL_ALIGN_MASK = ~CELL_MASK;
-    const size_t CELLS_PER_BLOCK = (BLOCK_SIZE - sizeof(Heap*)) * 8 * CELL_SIZE / (8 * CELL_SIZE + 1) / CELL_SIZE; // one bitmap byte can represent 8 cells.
+    const size_t BITS_PER_BLOCK = BLOCK_SIZE / CELL_SIZE;
+    const size_t CELLS_PER_BLOCK = (BLOCK_SIZE - sizeof(Heap*) - sizeof(WTF::Bitmap<BITS_PER_BLOCK>)) / CELL_SIZE; // Division rounds down intentionally.
     
     struct CollectorCell {
         FixedArray<double, CELL_ARRAY_LENGTH> memory;
@@ -56,16 +56,15 @@ namespace JSC {
     class MarkedBlock {
     public:
         static bool isCellAligned(const void*);
-        static bool isPossibleCell(const void*);
         static MarkedBlock* blockFor(const void*);
 
-        size_t cellNumber(const JSCell*);
-        bool isMarked(const JSCell*);
-        bool testAndSetMarked(const JSCell*);
-        void setMarked(const JSCell*);
+        size_t cellNumber(const void*);
+        bool isMarked(const void*);
+        bool testAndSetMarked(const void*);
+        void setMarked(const void*);
 
         FixedArray<CollectorCell, CELLS_PER_BLOCK> cells;
-        WTF::Bitmap<CELLS_PER_BLOCK> marked;
+        WTF::Bitmap<BITS_PER_BLOCK> marked;
         Heap* heap;
     };
 
@@ -81,22 +80,22 @@ namespace JSC {
         return reinterpret_cast<MarkedBlock*>(reinterpret_cast<uintptr_t>(p) & BLOCK_MASK);
     }
 
-    inline size_t MarkedBlock::cellNumber(const JSCell* cell)
+    inline size_t MarkedBlock::cellNumber(const void* cell)
     {
         return (reinterpret_cast<uintptr_t>(cell) & BLOCK_OFFSET_MASK) / CELL_SIZE;
     }
 
-    inline bool MarkedBlock::isMarked(const JSCell* cell)
+    inline bool MarkedBlock::isMarked(const void* cell)
     {
         return marked.get(cellNumber(cell));
     }
 
-    inline bool MarkedBlock::testAndSetMarked(const JSCell* cell)
+    inline bool MarkedBlock::testAndSetMarked(const void* cell)
     {
         return marked.testAndSet(cellNumber(cell));
     }
 
-    inline void MarkedBlock::setMarked(const JSCell* cell)
+    inline void MarkedBlock::setMarked(const void* cell)
     {
         marked.set(cellNumber(cell));
     }
@@ -104,11 +103,6 @@ namespace JSC {
     inline bool MarkedBlock::isCellAligned(const void* p)
     {
         return !((intptr_t)(p) & CELL_MASK);
-    }
-
-    inline bool MarkedBlock::isPossibleCell(const void* p)
-    {
-        return isCellAligned(p) && p;
     }
 
 } // namespace JSC
