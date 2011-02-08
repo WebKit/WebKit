@@ -1,3 +1,12 @@
+2011-02-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] Fix crashes in QMetaObject::metacall
+        https://bugs.webkit.org/show_bug.cgi?id=53912
+
+        * platform/qt/Skipped: http/tests/websocket/tests/websocket-protocol-ignored.html added until fix.
+
 2011-02-07  Kenji Imasaki  <imasaki@chromium.org>
 
         Reviewed by David Levin.
