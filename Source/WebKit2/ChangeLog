@@ -1,3 +1,15 @@
+2011-02-08  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        ASSERTION FAILURE: ASSERT_NOT_REACHED() in Connection::writeEventHandler() after the Web
+        Process crashes.
+        https://bugs.webkit.org/show_bug.cgi?id=54005
+
+        * Platform/CoreIPC/win/ConnectionWin.cpp:
+        (CoreIPC::Connection::writeEventHandler):
+        Handle ERROR_BROKEN_PIPE by calling connectionDidClose() and returning early.
+
 2011-02-08  Adam Roben  <aroben@apple.com>
 
         Handle WM_TIMER messages for stopped timers

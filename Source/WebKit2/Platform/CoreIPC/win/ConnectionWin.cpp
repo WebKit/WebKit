@@ -242,6 +242,10 @@ void Connection::writeEventHandler()
             // FIXME: We should figure out why we're getting this error.
             return;
         }
+        if (error == ERROR_BROKEN_PIPE) {
+            connectionDidClose();
+            return;
+        }
         ASSERT_NOT_REACHED();
     }
 
