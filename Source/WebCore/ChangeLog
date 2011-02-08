@@ -1,3 +1,20 @@
+2011-02-07  Mike Reed  <reed@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Add compile-time flag ENABLE(SKIA_GPU) to use Skia's gpu backend
+        when drawing <canvas>. Disabled by default.
+
+        No new tests. existing canvas layouttests apply
+
+        * platform/graphics/chromium/DrawingBufferChromium.cpp:
+        (WebCore::DrawingBuffer::publishToPlatformLayer):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::GetGlobalGrContext):
+        (WebCore::PlatformContextSkia::isPrinting):
+        (WebCore::PlatformContextSkia::setSharedGraphicsContext3D):
+        (WebCore::PlatformContextSkia::syncSoftwareCanvas):
+
 2011-02-07  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Darin Fisher.
