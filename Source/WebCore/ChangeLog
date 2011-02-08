@@ -1,3 +1,14 @@
+2011-02-07  Lucas Forschler  <lforschler@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Tr #2, Fix the Leopard 32bit debug build.
+        
+        No new tests required.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AccessibilityAllInOne.cpp:
+
 2011-02-07  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.
