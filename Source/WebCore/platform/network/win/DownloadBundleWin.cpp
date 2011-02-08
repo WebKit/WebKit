@@ -24,14 +24,14 @@
  */
 
 #include "config.h"
-
 #include "DownloadBundle.h"
 
+#include <CoreFoundation/CoreFoundation.h>
 #include <io.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
-
-using WTF::String;
 
 namespace WebCore {
 
@@ -73,7 +73,7 @@ bool appendResumeData(CFDataRef resumeData, const String& bundlePath)
     if (!resumeBytes)
         goto exit;
 
-    UInt32 resumeLength = CFDataGetLength(resumeData);
+    CFIndex resumeLength = CFDataGetLength(resumeData);
     ASSERT(resumeLength > 0);
     if (resumeLength < 1)
         goto exit;

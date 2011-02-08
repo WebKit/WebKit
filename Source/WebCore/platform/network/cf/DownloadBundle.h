@@ -26,20 +26,18 @@
 #ifndef DownloadBundle_h
 #define DownloadBundle_h
 
-namespace WTF {
-    class String;
-}
+#include <wtf/Forward.h>
+
+typedef const struct __CFData* CFDataRef;
 
 namespace WebCore {
-
 namespace DownloadBundle {
 
-bool appendResumeData(CFDataRef resumeData, const WTF::String& bundlePath);
-CFDataRef extractResumeData(const WTF::String& bundlePath);
-const WTF::String& fileExtension();
+bool appendResumeData(CFDataRef resumeData, const String& bundlePath);
+CFDataRef extractResumeData(const String& bundlePath);
+const String& fileExtension();
 
-}
-
-}
+} // namespace DownloadBundle
+} // namespace WebCore
 
 #endif // DownloadBundle_h

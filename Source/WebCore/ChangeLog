@@ -2,6 +2,17 @@
 
         Reviewed by Adam Roben.
 
+        [WIN] Add missing includes and forward declarations for DownloadBundle
+        https://bugs.webkit.org/show_bug.cgi?id=53881
+
+        * platform/network/cf/DownloadBundle.h:
+        * platform/network/win/DownloadBundleWin.cpp:
+        (WebCore::DownloadBundle::appendResumeData):
+
+2011-02-08  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
         [WIN] Add missing include in WKCAImageQueue
         https://bugs.webkit.org/show_bug.cgi?id=53890
 
