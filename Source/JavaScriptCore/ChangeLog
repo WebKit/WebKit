@@ -1,3 +1,12 @@
+2011-02-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        LLVM Compiler build fix.
+
+        * runtime/WriteBarrier.h:
+        (JSC::WriteBarrier::WriteBarrier):
+
 2011-02-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

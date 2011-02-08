@@ -108,7 +108,7 @@ public:
     WriteBarrier() { this->m_cell = 0; }
     WriteBarrier(JSGlobalData& globalData, const JSCell* owner, T* value)
     {
-        set(globalData, owner, value);
+        this->set(globalData, owner, value);
     }
 
 };
@@ -146,7 +146,7 @@ public:
     WriteBarrier() { m_value = JSValue::encode(JSValue()); }
     WriteBarrier(JSGlobalData& globalData, const JSCell* owner, JSValue value)
     {
-        set(globalData, owner, value);
+        this->set(globalData, owner, value);
     }
 };
 
