@@ -1720,6 +1720,7 @@ fast/text/international/complex-character-based-fallback.html
 fast/text/international/hebrew-vowels.html
 fast/text/international/hindi-spacing.html
 fast/text/international/hindi-whitespace.html
+fast/text/international/pop-up-button-text-alignment-and-direction.html
 fast/text/international/rtl-caret.html
 fast/text/international/rtl-white-space-pre-wrap.html
 fast/text/international/thai-line-breaks.html

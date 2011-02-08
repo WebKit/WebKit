@@ -1,5 +1,15 @@
 2011-02-08  Xiaomei Ji  <xji@chromium.org>
 
+        Unreviewed. after r77952,
+        skip pop-up-button-text-alignment-and-direction.html in qt and gtk as bidi-menulist.html.
+        set it as expect to fail in chromium.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
+2011-02-08  Xiaomei Ji  <xji@chromium.org>
+
         Reviewed by Dan Bernstein.
 
         Fix pop-up button text not rendered correctly according to its direction

@@ -3633,6 +3633,7 @@ fast/forms/drag-out-of-textarea.html
 fast/frames/frame-src-attribute.html
 fast/overflow/003.xml
 fast/text/international/bidi-menulist.html
+fast/text/international/pop-up-button-text-alignment-and-direction.html
 fast/text/international/wrap-CJK-001.html
 fast/xpath/string-value.html
 
