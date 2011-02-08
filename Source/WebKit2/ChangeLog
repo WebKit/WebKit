@@ -1,3 +1,11 @@
+2011-02-07  Mark Rowe  <mrowe@apple.com>
+
+        Fix the 32-bit build.
+
+        * UIProcess/cf/WebBackForwardListCF.cpp:
+        (WebKit::WebBackForwardList::restoreFromCFDictionaryRepresentation): Add some casts
+        to prevent warnings about mixing signed and unsigned comparisons.
+
 2011-02-07  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Reviewed by Andreas Kling.
