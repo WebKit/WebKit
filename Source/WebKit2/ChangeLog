@@ -1,5 +1,20 @@
 2011-02-07  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        UI process crashes if web process crashes while web inspector is focused
+        https://bugs.webkit.org/show_bug.cgi?id=53965
+        <rdar://problem/8961633>
+
+        Make sure to close the web inspector web page proxy before calling platformClose, since
+        platformClose can cause the web page proxy to try to send messages (such as SetActive)
+        to the web process while it's in a bad state.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::didClose):
+
+2011-02-07  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         Find bouncy is missing content on pages with framesets
