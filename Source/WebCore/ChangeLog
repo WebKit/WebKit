@@ -1,3 +1,16 @@
+2011-02-07  Xiyuan Xia  <xiyuan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [Chromium] Select popup box does not align with select button when appearance is not "menulist".
+        https://bugs.webkit.org/show_bug.cgi?id=53942
+
+        Added manual test select_webkit_appearance_off_popup_alignment.html.
+
+        * manual-tests/select_webkit_appearance_off_popup_alignment.html: Added.
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupListBox::layout):
+
 2011-02-07  Aparna Nandyal  <aparna.nand@wipro.com>
 
         Reviewed by Andreas Kling.

@@ -73,6 +73,7 @@ static const int kMaxHeight = 500;
 static const int kBorderSize = 1;
 static const int kTextToLabelPadding = 10;
 static const int kLabelToIconPadding = 5;
+static const int kMinEndOfLinePadding = 2;
 static const TimeStamp kTypeAheadTimeoutMs = 1000;
 
 // The settings used for the drop down menu.
@@ -1243,9 +1244,12 @@ void PopupListBox::updateFromElement()
 
 void PopupListBox::layout()
 {
+    bool isRightAligned = m_popupClient->menuStyle().textDirection() == RTL;
+    
     // Size our child items.
     int baseWidth = 0;
     int paddingWidth = 0;
+    int lineEndPaddingWidth = 0;
     int y = 0;
     for (int i = 0; i < numItems(); ++i) {
         // Place the item vertically.
@@ -1278,6 +1282,8 @@ void PopupListBox::layout()
         // FIXME: http://b/1210481 We should get the padding of individual option elements.
         paddingWidth = max(paddingWidth,
             m_popupClient->clientPaddingLeft() + m_popupClient->clientPaddingRight());
+        lineEndPaddingWidth = max(lineEndPaddingWidth,
+            isRightAligned ? m_popupClient->clientPaddingLeft() : m_popupClient->clientPaddingRight());
     }
 
     // Calculate scroll bar width.
@@ -1298,8 +1304,15 @@ void PopupListBox::layout()
 
     // Set our widget and scrollable contents sizes.
     int scrollbarWidth = 0;
-    if (m_visibleRows < numItems())
+    if (m_visibleRows < numItems()) {
         scrollbarWidth = ScrollbarTheme::nativeTheme()->scrollbarThickness();
+
+        // Use kMinEndOfLinePadding when there is a scrollbar so that we use
+        // as much as (lineEndPaddingWidth - kMinEndOfLinePadding) padding
+        // space for scrollbar and allow user to use CSS padding to make the
+        // popup listbox align with the select element.
+        paddingWidth = paddingWidth - lineEndPaddingWidth + kMinEndOfLinePadding;
+    }
 
     int windowWidth;
     int contentWidth;
