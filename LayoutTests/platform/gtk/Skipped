@@ -4023,9 +4023,6 @@ fast/js/kde/string-1-n.html
 # https://bugs.webkit.org/show_bug.cgi?id=37534
 fast/js/kde/string-2-n.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=37535
-inspector/console-format.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=50868
 inspector/debugger-step-out.html
 inspector/styles-source-lines-inline.html
@@ -4045,12 +4042,6 @@ fast/dom/Window/HTMLBodyElement-window-eventListener-attributes.html
 # https://bugs.webkit.org/show_bug.cgi?id=37557
 http/tests/misc/image-blocked-src-change.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=37558
-inspector/console-clear.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=37559
-inspector/console-format-collections.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=37560
 svg/dom/SVGScriptElement/script-set-href.svg
 
@@ -4063,9 +4054,6 @@ plugins/open-and-close-window-with-plugin.html
 # https://bugs.webkit.org/show_bug.cgi?id=37574
 plugins/window-open.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=37611
-inspector/timeline-layout.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=37613
 printing
 editing/execCommand/print.html
@@ -4076,21 +4064,11 @@ fast/workers/shared-worker-frame-lifecycle.html
 # https://bugs.webkit.org/show_bug.cgi?id=37623
 scrollbars/scrollbar-crash-on-refresh.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=37752
-inspector/timeline-paint.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=37914
 fast/frames/frame-crash-with-page-cache.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=38509
-inspector/timeline-parse-html.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=38569
 http/tests/workers/text-encoding.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=40049
-http/tests/inspector/resource-har-conversion.html
-http/tests/inspector/resource-parameters.html
 
 # Some results are one pixel off on the 64-bit bot or
 # have other rounding errors.
@@ -4143,11 +4121,6 @@ fast/forms/slider-zoomed.html
 fast/dom/HTMLLinkElement/link-and-subresource-test.html
 fast/dom/HTMLLinkElement/prefetch.html
 fast/dom/HTMLLinkElement/prefetch-onload.html
-
-# Gtk seems to be pumping the lexer an extra time revealed by turning on the
-# HTML5 Lexer in r61234.
-# https://bugs.webkit.org/show_bug.cgi?id=40664
-inspector/timeline-script-tag-1.html
 
 # Tests failing because the context menu is grabbing mouse events.
 # https://bugs.webkit.org/show_bug.cgi?id=40601
@@ -4673,3 +4646,6 @@ http/tests/websocket/tests/cross-origin.html
 # It should be unskipped when https://bugs.webkit.org/show_bug.cgi?id=53716 is fixed.
 fast/frames/set-parent-src-synchronously.html
 fast/frames/sandboxed-iframe-storage.html
+
+# GTK+ DRT should support enabling and disabling the icon database
+http/tests/inspector/resource-har-conversion.html
