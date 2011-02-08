@@ -44,7 +44,7 @@ class PluginProcess : ChildProcess {
 public:
     static PluginProcess& shared();
 
-    void initializeConnection(CoreIPC::Connection::Identifier);
+    void initialize(CoreIPC::Connection::Identifier, RunLoop*);
     void removeWebProcessConnection(WebProcessConnection* webProcessConnection);
 
     NetscapePluginModule* netscapePluginModule();

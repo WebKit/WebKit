@@ -68,7 +68,7 @@ class WebProcess : ChildProcess {
 public:
     static WebProcess& shared();
 
-    void initialize(CoreIPC::Connection::Identifier, RunLoop* runLoop);
+    void initialize(CoreIPC::Connection::Identifier, RunLoop*);
 
     CoreIPC::Connection* connection() const { return m_connection.get(); }
     RunLoop* runLoop() const { return m_runLoop; }
