@@ -157,7 +157,7 @@ using namespace WebCore;
 - (BOOL)isTimelineProfilingEnabled
 {
     if (Page* page = core(_webView))
-        return page->inspectorController()->timelineAgent() ? YES : NO;
+        return page->inspectorController()->timelineProfilerEnabled() ? YES : NO;
     return NO;
 }
 

@@ -277,7 +277,7 @@ HRESULT STDMETHODCALLTYPE WebInspector::isTimelineProfilingEnabled(BOOL* isEnabl
     if (!page)
         return S_OK;
 
-    *isEnabled = page->inspectorController()->timelineAgent() != 0;
+    *isEnabled = page->inspectorController()->timelineProfilerEnabled();
     return S_OK;
 }
 

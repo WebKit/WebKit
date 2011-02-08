@@ -140,8 +140,8 @@ public:
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     static void addStartProfilingMessageToConsole(Page*, const String& title, unsigned lineNumber, const String& sourceURL);
     static void addProfile(Page*, RefPtr<ScriptProfile>, PassRefPtr<ScriptCallStack>);
-    static bool profilerEnabled(Page*);
     static String getCurrentUserInitiatedProfileName(Page*, bool incrementProfileNumber);
+    static bool profilerEnabled(Page*);
 #endif
 
 #if ENABLE(DATABASE)
@@ -176,8 +176,10 @@ public:
     static void frontendCreated() { s_frontendCounter += 1; }
     static void frontendDeleted() { s_frontendCounter -= 1; }
     static bool hasFrontends() { return s_frontendCounter; }
+    static bool hasFrontend(Page*);
 #else
     static bool hasFrontends() { return false; }
+    static bool hasFrontend(Page*) { return false; }
 #endif
 
 private:
@@ -254,8 +256,8 @@ private:
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     static void addStartProfilingMessageToConsoleImpl(InspectorAgent*, const String& title, unsigned lineNumber, const String& sourceURL);
     static void addProfileImpl(InspectorAgent*, RefPtr<ScriptProfile>, PassRefPtr<ScriptCallStack>);
-    static bool profilerEnabledImpl(InspectorAgent*);
     static String getCurrentUserInitiatedProfileNameImpl(InspectorAgent*, bool incrementProfileNumber);
+    static bool profilerEnabledImpl(InspectorAgent*);
 #endif
 
 #if ENABLE(DATABASE)
@@ -833,6 +835,16 @@ inline void InspectorInstrumentation::updateApplicationCacheStatus(Frame* frame)
 #endif
 }
 #endif
+
+inline bool InspectorInstrumentation::hasFrontend(Page* page)
+{
+#if ENABLE(INSPECTOR)
+    return inspectorAgentWithFrontendForPage(page);
+#else
+    return false;
+#endif
+}
+
 
 #if ENABLE(INSPECTOR)
 inline InspectorAgent* InspectorInstrumentation::inspectorAgentForContext(ScriptExecutionContext* context)

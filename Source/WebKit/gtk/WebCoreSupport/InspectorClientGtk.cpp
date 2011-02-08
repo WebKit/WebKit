@@ -23,6 +23,7 @@
 #include "Frame.h"
 #include "InspectorController.h"
 #include "NotImplemented.h"
+#include "Page.h"
 #include "PlatformString.h"
 #include "webkitversion.h"
 #include "webkitwebinspector.h"

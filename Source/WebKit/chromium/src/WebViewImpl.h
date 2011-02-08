@@ -53,6 +53,7 @@
 
 namespace WebCore {
 class ChromiumDataObject;
+class DocumentLoader;
 class Frame;
 class HistoryItem;
 class HitTestResult;

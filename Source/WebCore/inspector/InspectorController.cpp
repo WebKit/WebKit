@@ -33,16 +33,239 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "Frame.h"
+#include "GraphicsContext.h"
+#include "InjectedScriptHost.h"
+#include "InspectorAgent.h"
+#include "InspectorBackendDispatcher.h"
+#include "InspectorDebuggerAgent.h"
 #include "InspectorClient.h"
+#include "InspectorFrontend.h"
+#include "InspectorFrontendClient.h"
+#include "InspectorInstrumentation.h"
 #include "Page.h"
+#include "ScriptObject.h"
+#include "Settings.h"
 
 namespace WebCore {
 
-// FIXME: temporary solution. It will become a separate class in the next patch and Controller related subset of functions will be moved from InspectorAgent to InspectorControler.
+const char* const InspectorController::ElementsPanel = "elements";
+const char* const InspectorController::ConsolePanel = "console";
+const char* const InspectorController::ScriptsPanel = "scripts";
+const char* const InspectorController::ProfilesPanel = "profiles";
+
 InspectorController::InspectorController(Page* page, InspectorClient* inspectorClient)
-    : InspectorAgent(this, page, inspectorClient)
+    : m_inspectorAgent(new InspectorAgent(this, page, inspectorClient))
+    , m_inspectorBackendDispatcher(new InspectorBackendDispatcher(m_inspectorAgent.get()))
+    , m_inspectedPage(page)
+    , m_inspectorClient(inspectorClient)
+    , m_openingFrontend(false)
 {
 }
+
+InspectorController::~InspectorController()
+{
+}
+
+void InspectorController::setInspectorFrontendClient(PassOwnPtr<InspectorFrontendClient> inspectorFrontendClient)
+{
+    m_inspectorFrontendClient = inspectorFrontendClient;
+}
+
+bool InspectorController::hasInspectorFrontendClient() const
+{
+    return m_inspectorFrontendClient;
+}
+
+void InspectorController::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* world)
+{
+    if (world != mainThreadNormalWorld())
+        return;
+
+    // If the page is supposed to serve as InspectorFrontend notify inspector frontend
+    // client that it's cleared so that the client can expose inspector bindings.
+    if (m_inspectorFrontendClient && frame == m_inspectedPage->mainFrame())
+        m_inspectorFrontendClient->windowObjectCleared();
+}
+
+void InspectorController::startTimelineProfiler()
+{
+    m_inspectorAgent->startTimelineProfiler();
+}
+
+void InspectorController::stopTimelineProfiler()
+{
+    m_inspectorAgent->stopTimelineProfiler();
+}
+
+void InspectorController::connectFrontend()
+{
+    m_openingFrontend = false;
+    m_inspectorFrontend = new InspectorFrontend(m_inspectorClient);
+    m_inspectorAgent->setFrontend(m_inspectorFrontend.get());
+
+    if (!InspectorInstrumentation::hasFrontends())
+        ScriptController::setCaptureCallStackForUncaughtExceptions(true);
+    InspectorInstrumentation::frontendCreated();
+}
+
+void InspectorController::disconnectFrontend()
+{
+    m_inspectorAgent->disconnectFrontend();
+}
+
+void InspectorController::disconnectFrontendImpl()
+{
+    if (!m_inspectorFrontend)
+        return;
+
+    m_inspectorFrontend.clear();
+
+    InspectorInstrumentation::frontendDeleted();
+    if (!InspectorInstrumentation::hasFrontends())
+        ScriptController::setCaptureCallStackForUncaughtExceptions(false);
+}
+
+void InspectorController::show()
+{
+    if (!enabled())
+        return;
+
+    if (m_openingFrontend)
+        return;
+
+    if (m_inspectorFrontend)
+        m_inspectorFrontend->bringToFront();
+    else {
+        m_openingFrontend = true;
+        m_inspectorClient->openInspectorFrontend(this);
+    }
+}
+
+void InspectorController::close()
+{
+    if (!m_inspectorFrontend)
+        return;
+    m_inspectorFrontend->disconnectFromBackend();
+    disconnectFrontend();
+}
+
+void InspectorController::restoreInspectorStateFromCookie(const String& inspectorStateCookie)
+{
+    m_inspectorAgent->restoreInspectorStateFromCookie(inspectorStateCookie);
+}
+
+void InspectorController::evaluateForTestInFrontend(long callId, const String& script)
+{
+    m_inspectorAgent->evaluateForTestInFrontend(callId, script);
+}
+
+void InspectorController::drawNodeHighlight(GraphicsContext& context) const
+{
+    m_inspectorAgent->drawNodeHighlight(context);
+}
+
+void InspectorController::inspect(Node* node)
+{
+    if (!enabled())
+        return;
+
+    show();
+
+    m_inspectorAgent->inspect(node);
+}
+
+bool InspectorController::enabled() const
+{
+    if (!m_inspectedPage)
+        return false;
+
+    return m_inspectedPage->settings()->developerExtrasEnabled();
+}
+
+void InspectorController::showPanel(const String& panel)
+{
+    if (!enabled())
+        return;
+
+    show();
+
+    m_inspectorAgent->showPanel(panel);
+}
+
+bool InspectorController::timelineProfilerEnabled()
+{
+    return m_inspectorAgent->timelineAgent();
+}
+
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+void InspectorController::enableProfiler()
+{
+    m_inspectorAgent->enableProfiler();
+}
+
+void InspectorController::disableProfiler()
+{
+    m_inspectorAgent->disableProfiler();
+}
+
+bool InspectorController::profilerEnabled()
+{
+    return m_inspectorAgent->profilerEnabled();
+}
+
+bool InspectorController::debuggerEnabled()
+{
+    return m_inspectorAgent->debuggerEnabled();
+}
+
+void InspectorController::showAndEnableDebugger()
+{
+    m_inspectorAgent->showAndEnableDebugger();
+}
+
+void InspectorController::disableDebugger()
+{
+    m_inspectorAgent->disableDebugger();
+}
+
+void InspectorController::startUserInitiatedProfiling()
+{
+    m_inspectorAgent->startUserInitiatedProfiling();
+}
+
+void InspectorController::stopUserInitiatedProfiling()
+{
+    m_inspectorAgent->stopUserInitiatedProfiling();
+}
+
+bool InspectorController::isRecordingUserInitiatedProfile() const
+{
+    return m_inspectorAgent->isRecordingUserInitiatedProfile();
+}
+
+void InspectorController::setInspectorExtensionAPI(const String& source)
+{
+    m_inspectorAgent->setInspectorExtensionAPI(source);
+}
+
+void InspectorController::resume()
+{
+    if (InspectorDebuggerAgent* debuggerAgent = m_inspectorAgent->debuggerAgent())
+        debuggerAgent->resume();
+}
+
+void InspectorController::hideHighlight()
+{
+    m_inspectorAgent->hideHighlight();
+}
+
+void InspectorController::dispatchMessageFromFrontend(const String& message)
+{
+    m_inspectorBackendDispatcher->dispatch(message);
+}
+
+#endif
 
 } // namespace WebCore
 

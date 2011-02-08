@@ -32,6 +32,7 @@
 #include "V8InspectorFrontendHost.h"
 
 #include "InspectorController.h"
+#include "InspectorFrontendClient.h"
 #include "InspectorFrontendHost.h"
 #include "PlatformString.h"
 

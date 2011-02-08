@@ -161,7 +161,7 @@ unsigned InspectorFrontendClientLocal::constrainedAttachedWindowHeight(unsigned 
 
 void InspectorFrontendClientLocal::sendMessageToBackend(const String& message)
 {
-    m_inspectorController->inspectorBackendDispatcher()->dispatch(message);
+    m_inspectorController->dispatchMessageFromFrontend(message);
 }
 
 } // namespace WebCore

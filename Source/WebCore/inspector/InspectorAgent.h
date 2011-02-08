@@ -56,7 +56,6 @@ class HitTestResult;
 class InjectedScript;
 class InjectedScriptHost;
 class InspectorArray;
-class InspectorBackendDispatcher;
 class InspectorBrowserDebuggerAgent;
 class InspectorClient;
 class InspectorConsoleAgent;
@@ -109,15 +108,9 @@ class InspectorAgent {
     WTF_MAKE_NONCOPYABLE(InspectorAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static const char* const ConsolePanel;
-    static const char* const ElementsPanel;
-    static const char* const ProfilesPanel;
-    static const char* const ScriptsPanel;
-
     InspectorAgent(InspectorController*, Page*, InspectorClient*);
     virtual ~InspectorAgent();
 
-    InspectorBackendDispatcher* inspectorBackendDispatcher() { return m_inspectorBackendDispatcher.get(); }
     InspectorClient* inspectorClient() { return m_client; }
     InjectedScriptHost* injectedScriptHost() { return m_injectedScriptHost.get(); }
 
@@ -129,26 +122,22 @@ public:
     KURL inspectedURL() const;
     KURL inspectedURLWithoutFragment() const;
     void reloadPage(bool ignoreCache);
+    void showPanel(const String& panel);
 
     void restoreInspectorStateFromCookie(const String& inspectorCookie);
 
-    void inspect(Node*);
     void highlight(Node*);
     void hideHighlight();
+    void inspect(Node*);
     void highlightDOMNode(long nodeId);
     void hideDOMNodeHighlight() { hideHighlight(); }
 
     void highlightFrame(unsigned long frameId);
     void hideFrameHighlight() { hideHighlight(); }
 
-    void show();
-    void showPanel(const String&);
-    void close();
-
-    void connectFrontend();
-    void reuseFrontend();
+    void setFrontend(InspectorFrontend*);
+    InspectorFrontend* frontend() const { return m_frontend; }
     void disconnectFrontend();
-    InspectorFrontend* frontend() const { return m_frontend.get(); }
 
     InspectorResourceAgent* resourceAgent();
 
@@ -178,19 +167,13 @@ public:
     InspectorApplicationCacheAgent* applicationCacheAgent() { return m_applicationCacheAgent.get(); }
 #endif
 
-
+    bool handleMousePress();
     bool searchingForNodeInPage() const;
     void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
-    bool handleMousePress();
-
-    void setInspectorFrontendClient(PassOwnPtr<InspectorFrontendClient>);
-    bool hasInspectorFrontendClient() const { return m_inspectorFrontendClient; }
 
     void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld*);
 
     void didCommitLoad(DocumentLoader*);
-
-    void setExtraHeaders(PassRefPtr<InspectorObject>);
 
     void startTimelineProfiler();
     void stopTimelineProfiler();
@@ -280,6 +263,7 @@ private:
     void setSearchingForNode(bool enabled);
 
     void releaseFrontendLifetimeAgents();
+    void createFrontendLifetimeAgents();
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     void toggleRecordButton(bool);
@@ -294,9 +278,7 @@ private:
     InspectorController* m_inspectorController;
     Page* m_inspectedPage;
     InspectorClient* m_client;
-    OwnPtr<InspectorFrontendClient> m_inspectorFrontendClient;
-    bool m_openingFrontend;
-    OwnPtr<InspectorFrontend> m_frontend;
+    InspectorFrontend* m_frontend;
     OwnPtr<InspectorCSSAgent> m_cssAgent;
     RefPtr<InspectorDOMAgent> m_domAgent;
 
@@ -319,6 +301,7 @@ private:
     RefPtr<InspectorFileSystemAgent> m_fileSystemAgent;
 #endif
 
+    RefPtr<Node> m_highlightedNode;
     RefPtr<Node> m_nodeToFocus;
     RefPtr<InspectorResourceAgent> m_resourceAgent;
     OwnPtr<InspectorRuntimeAgent> m_runtimeAgent;
@@ -332,13 +315,11 @@ private:
     DOMStorageResourcesMap m_domStorageResources;
 #endif
 
-    String m_showAfterVisible;
-    RefPtr<Node> m_highlightedNode;
-    OwnPtr<InspectorBackendDispatcher> m_inspectorBackendDispatcher;
     RefPtr<InjectedScriptHost> m_injectedScriptHost;
     OwnPtr<InspectorConsoleAgent> m_consoleAgent;
 
     Vector<pair<long, String> > m_pendingEvaluateTestCommands;
+    String m_requiredPanel;
     Vector<String> m_scriptsToEvaluateOnLoad;
     String m_inspectorExtensionAPI;
 #if ENABLE(JAVASCRIPT_DEBUGGER)

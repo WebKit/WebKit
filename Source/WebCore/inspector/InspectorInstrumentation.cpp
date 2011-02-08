@@ -551,7 +551,7 @@ void InspectorInstrumentation::consoleMarkTimelineImpl(InspectorAgent* inspector
         String message;
         arguments->getFirstArgumentAsString(message);
         timelineAgent->didMarkTimeline(message);
-    }
+     }
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -569,23 +569,16 @@ void InspectorInstrumentation::addProfileImpl(InspectorAgent* inspectorAgent, Re
     }
 }
 
-bool InspectorInstrumentation::profilerEnabledImpl(InspectorAgent* inspectorAgent)
-{
-    if (!inspectorAgent->enabled())
-        return false;
-
-    InspectorProfilerAgent* profilerAgent = inspectorAgent->profilerAgent();
-    if (!profilerAgent)
-        return false;
-
-    return profilerAgent->enabled();
-}
-
 String InspectorInstrumentation::getCurrentUserInitiatedProfileNameImpl(InspectorAgent* inspectorAgent, bool incrementProfileNumber)
 {
     if (InspectorProfilerAgent* profilerAgent = inspectorAgent->profilerAgent())
         return profilerAgent->getCurrentUserInitiatedProfileName(incrementProfileNumber);
     return "";
+}
+
+bool InspectorInstrumentation::profilerEnabledImpl(InspectorAgent* inspectorAgent)
+{
+    return inspectorAgent->profilerEnabled();
 }
 #endif
 

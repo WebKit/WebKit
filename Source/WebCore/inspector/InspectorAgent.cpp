@@ -56,7 +56,6 @@
 #include "HitTestResult.h"
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
-#include "InspectorBackendDispatcher.h"
 #include "InspectorBrowserDebuggerAgent.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorClient.h"
@@ -137,19 +136,13 @@ static const char debuggerEnabled[] = "debuggerEnabled";
 static const char profilerEnabled[] = "profilerEnabled";
 }
 
-const char* const InspectorAgent::ElementsPanel = "elements";
-const char* const InspectorAgent::ConsolePanel = "console";
-const char* const InspectorAgent::ScriptsPanel = "scripts";
-const char* const InspectorAgent::ProfilesPanel = "profiles";
-
 InspectorAgent::InspectorAgent(InspectorController* inspectorController, Page* page, InspectorClient* client)
     : m_inspectorController(inspectorController)
     , m_inspectedPage(page)
     , m_client(client)
-    , m_openingFrontend(false)
+    , m_frontend(0)
     , m_cssAgent(new InspectorCSSAgent())
     , m_state(new InspectorState(client))
-    , m_inspectorBackendDispatcher(new InspectorBackendDispatcher(this))
     , m_injectedScriptHost(InjectedScriptHost::create(this))
     , m_consoleAgent(new InspectorConsoleAgent(this))
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -192,13 +185,6 @@ void InspectorAgent::inspectedPageDestroyed()
     m_client = 0;
 }
 
-bool InspectorAgent::enabled() const
-{
-    if (!m_inspectedPage)
-        return false;
-    return m_inspectedPage->settings()->developerExtrasEnabled();
-}
-
 bool InspectorAgent::searchingForNodeInPage() const
 {
     return m_state->getBoolean(InspectorAgentState::searchingForNode);
@@ -209,14 +195,14 @@ void InspectorAgent::restoreInspectorStateFromCookie(const String& inspectorStat
     m_state->restoreFromInspectorCookie(inspectorStateCookie);
 
     if (!m_frontend) {
-        connectFrontend();
+        m_inspectorController->connectFrontend();
         m_frontend->frontendReused();
         m_frontend->inspectedURLChanged(inspectedURL().string());
         m_domAgent->setDocument(m_inspectedPage->mainFrame()->document());
         pushDataCollectedOffline();
     }
 
-    m_resourceAgent = InspectorResourceAgent::restore(m_inspectedPage, m_state.get(), m_frontend.get());
+    m_resourceAgent = InspectorResourceAgent::restore(m_inspectedPage, m_state.get(), m_frontend);
 
     if (m_state->getBoolean(InspectorAgentState::timelineProfilerEnabled))
         startTimelineProfiler();
@@ -231,11 +217,6 @@ void InspectorAgent::restoreInspectorStateFromCookie(const String& inspectorStat
 
 void InspectorAgent::inspect(Node* node)
 {
-    if (!enabled())
-        return;
-
-    show();
-
     if (node->nodeType() != Node::ELEMENT_NODE && node->nodeType() != Node::DOCUMENT_NODE)
         node = node->parentNode();
     m_nodeToFocus = node;
@@ -319,33 +300,24 @@ bool InspectorAgent::handleMousePress()
     return true;
 }
 
-void InspectorAgent::setInspectorFrontendClient(PassOwnPtr<InspectorFrontendClient> client)
-{
-    ASSERT(!m_inspectorFrontendClient);
-    m_inspectorFrontendClient = client;
-}
-
 void InspectorAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* world)
 {
     if (world != mainThreadNormalWorld())
         return;
 
-    // If the page is supposed to serve as InspectorFrontend notify inspetor frontend
-    // client that it's cleared so that the client can expose inspector bindings.
-    if (m_inspectorFrontendClient && frame == m_inspectedPage->mainFrame())
-        m_inspectorFrontendClient->windowObjectCleared();
-
     if (enabled()) {
         if (m_frontend && frame == m_inspectedPage->mainFrame())
             m_injectedScriptHost->discardInjectedScripts();
+
         if (m_scriptsToEvaluateOnLoad.size()) {
             ScriptState* scriptState = mainWorldScriptState(frame);
             for (Vector<String>::iterator it = m_scriptsToEvaluateOnLoad.begin();
-                 it != m_scriptsToEvaluateOnLoad.end(); ++it) {
+                  it != m_scriptsToEvaluateOnLoad.end(); ++it) {
                 m_injectedScriptHost->injectScript(*it, scriptState);
             }
         }
     }
+
     if (!m_inspectorExtensionAPI.isEmpty())
         m_injectedScriptHost->injectScript(m_inspectorExtensionAPI, mainWorldScriptState(frame));
 }
@@ -365,80 +337,21 @@ void InspectorAgent::setSearchingForNode(bool enabled, bool* newState)
     setSearchingForNode(enabled);
 }
 
-void InspectorAgent::connectFrontend()
+void InspectorAgent::setFrontend(InspectorFrontend* inspectorFrontend)
 {
-    m_openingFrontend = false;
     releaseFrontendLifetimeAgents();
-    m_frontend = new InspectorFrontend(m_client);
-    m_domAgent = InspectorDOMAgent::create(m_injectedScriptHost.get(), m_frontend.get());
-    m_runtimeAgent = InspectorRuntimeAgent::create(m_injectedScriptHost.get());
+    m_frontend = inspectorFrontend;
+    createFrontendLifetimeAgents();
+
     m_cssAgent->setDOMAgent(m_domAgent.get());
 
-#if ENABLE(DATABASE)
-    m_databaseAgent = InspectorDatabaseAgent::create(&m_databaseResources, m_frontend.get());
-#endif
-
-#if ENABLE(DOM_STORAGE)
-    m_domStorageAgent = InspectorDOMStorageAgent::create(&m_domStorageResources, m_frontend.get());
-#endif
-
     if (m_timelineAgent)
-        m_timelineAgent->resetFrontendProxyObject(m_frontend.get());
+        m_timelineAgent->resetFrontendProxyObject(m_frontend);
 
-    m_consoleAgent->setFrontend(m_frontend.get());
+    m_consoleAgent->setFrontend(m_frontend);
 
     // Initialize Web Inspector title.
     m_frontend->inspectedURLChanged(inspectedURL().string());
-
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    m_applicationCacheAgent = new InspectorApplicationCacheAgent(this, m_frontend.get());
-#endif
-
-#if ENABLE(FILE_SYSTEM)
-    m_fileSystemAgent = InspectorFileSystemAgent::create(this, m_frontend.get());
-#endif
-
-    if (!InspectorInstrumentation::hasFrontends())
-        ScriptController::setCaptureCallStackForUncaughtExceptions(true);
-    InspectorInstrumentation::frontendCreated();
-}
-
-void InspectorAgent::show()
-{
-    if (!enabled())
-        return;
-
-    if (m_openingFrontend)
-        return;
-
-    if (m_frontend)
-        m_frontend->bringToFront();
-    else {
-        m_openingFrontend = true;
-        m_client->openInspectorFrontend(inspectorController());
-    }
-}
-
-void InspectorAgent::showPanel(const String& panel)
-{
-    if (!enabled())
-        return;
-
-    show();
-
-    if (!m_frontend) {
-        m_showAfterVisible = panel;
-        return;
-    }
-    m_frontend->showPanel(panel);
-}
-
-void InspectorAgent::close()
-{
-    if (!m_frontend)
-        return;
-    m_frontend->disconnectFromBackend();
-    disconnectFrontend();
 }
 
 void InspectorAgent::disconnectFrontend()
@@ -446,11 +359,9 @@ void InspectorAgent::disconnectFrontend()
     if (!m_frontend)
         return;
 
-    m_frontend.clear();
+    m_frontend = 0;
 
-    InspectorInstrumentation::frontendDeleted();
-    if (!InspectorInstrumentation::hasFrontends())
-        ScriptController::setCaptureCallStackForUncaughtExceptions(false);
+    m_inspectorController->disconnectFrontendImpl();
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     // If the window is being closed with the debugger enabled,
@@ -460,7 +371,6 @@ void InspectorAgent::disconnectFrontend()
 #endif
     setSearchingForNode(false);
     unbindAllResources();
-    stopTimelineProfiler();
 
     hideHighlight();
 
@@ -478,8 +388,30 @@ void InspectorAgent::disconnectFrontend()
 InspectorResourceAgent* InspectorAgent::resourceAgent()
 {
     if (!m_resourceAgent && m_frontend)
-        m_resourceAgent = InspectorResourceAgent::create(m_inspectedPage, m_state.get(), m_frontend.get());
+        m_resourceAgent = InspectorResourceAgent::create(m_inspectedPage, m_state.get(), m_frontend);
     return m_resourceAgent.get();
+}
+
+void InspectorAgent::createFrontendLifetimeAgents()
+{
+    m_domAgent = InspectorDOMAgent::create(m_injectedScriptHost.get(), m_frontend);
+    m_runtimeAgent = InspectorRuntimeAgent::create(m_injectedScriptHost.get());
+
+#if ENABLE(DATABASE)
+    m_databaseAgent = InspectorDatabaseAgent::create(&m_databaseResources, m_frontend);
+#endif
+
+#if ENABLE(DOM_STORAGE)
+    m_domStorageAgent = InspectorDOMStorageAgent::create(&m_domStorageResources, m_frontend);
+#endif
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    m_applicationCacheAgent = new InspectorApplicationCacheAgent(this, m_frontend);
+#endif
+
+#if ENABLE(FILE_SYSTEM)
+    m_fileSystemAgent = InspectorFileSystemAgent::create(this, m_frontend);
+#endif
 }
 
 void InspectorAgent::releaseFrontendLifetimeAgents()
@@ -515,6 +447,7 @@ void InspectorAgent::releaseFrontendLifetimeAgents()
         m_fileSystemAgent->stop();
         m_fileSystemAgent.clear();
 #endif
+    stopTimelineProfiler();
 }
 
 void InspectorAgent::populateScriptObjects()
@@ -522,11 +455,6 @@ void InspectorAgent::populateScriptObjects()
     ASSERT(m_frontend);
     if (!m_frontend)
         return;
-
-    if (!m_showAfterVisible.isEmpty()) {
-        showPanel(m_showAfterVisible);
-        m_showAfterVisible = "";
-    }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     if (m_profilerAgent->enabled())
@@ -538,13 +466,18 @@ void InspectorAgent::populateScriptObjects()
     if (m_nodeToFocus)
         focusNode();
 
+    if (!m_requiredPanel.isEmpty()) {
+        m_frontend->showPanel(m_requiredPanel);
+        m_requiredPanel = "";
+    }
+
+    restoreDebugger(true);
+    restoreProfiler(ProfilerRestoreNoAction);
+
     // Dispatch pending frontend commands
     for (Vector<pair<long, String> >::iterator it = m_pendingEvaluateTestCommands.begin(); it != m_pendingEvaluateTestCommands.end(); ++it)
         m_frontend->evaluateForTestInFrontend((*it).first, (*it).second);
     m_pendingEvaluateTestCommands.clear();
-
-    restoreDebugger(true);
-    restoreProfiler(ProfilerRestoreNoAction);
 }
 
 void InspectorAgent::pushDataCollectedOffline()
@@ -554,12 +487,12 @@ void InspectorAgent::pushDataCollectedOffline()
 #if ENABLE(DATABASE)
     DatabaseResourcesMap::iterator databasesEnd = m_databaseResources.end();
     for (DatabaseResourcesMap::iterator it = m_databaseResources.begin(); it != databasesEnd; ++it)
-        it->second->bind(m_frontend.get());
+        it->second->bind(m_frontend);
 #endif
 #if ENABLE(DOM_STORAGE)
     DOMStorageResourcesMap::iterator domStorageEnd = m_domStorageResources.end();
     for (DOMStorageResourcesMap::iterator it = m_domStorageResources.begin(); it != domStorageEnd; ++it)
-        it->second->bind(m_frontend.get());
+        it->second->bind(m_frontend);
 #endif
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(WORKERS)
     WorkersMap::iterator workersEnd = m_workers.end();
@@ -583,7 +516,7 @@ void InspectorAgent::restoreProfiler(ProfilerRestoreAction action)
 {
     ASSERT(m_frontend);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    m_profilerAgent->setFrontend(m_frontend.get());
+    m_profilerAgent->setFrontend(m_frontend);
     if (m_state->getBoolean(InspectorAgentState::profilerEnabled))
         enableProfiler();
     if (action == ProfilerRestoreResetAgent)
@@ -708,7 +641,7 @@ void InspectorAgent::startTimelineProfiler()
     if (m_timelineAgent)
         return;
 
-    m_timelineAgent = new InspectorTimelineAgent(m_frontend.get());
+    m_timelineAgent = new InspectorTimelineAgent(m_frontend);
     if (m_frontend)
         m_frontend->timelineProfilerWasStarted();
 
@@ -748,8 +681,8 @@ private:
     virtual void performTask(ScriptExecutionContext* scriptContext)
     {
         if (scriptContext->isDocument()) {
-            if (InspectorAgent* inspector = static_cast<Document*>(scriptContext)->page()->inspectorController())
-                inspector->postWorkerNotificationToFrontend(*m_worker, m_action);
+            if (InspectorAgent* inspectorAgent = static_cast<Document*>(scriptContext)->page()->inspectorController()->m_inspectorAgent.get())
+                inspectorAgent->postWorkerNotificationToFrontend(*m_worker, m_action);
         }
     }
 
@@ -811,7 +744,7 @@ void InspectorAgent::didOpenDatabase(PassRefPtr<Database> database, const String
 
     // Resources are only bound while visible.
     if (m_frontend)
-        resource->bind(m_frontend.get());
+        resource->bind(m_frontend);
 }
 #endif
 
@@ -917,7 +850,7 @@ void InspectorAgent::didUseDOMStorage(StorageArea* storageArea, bool isLocalStor
 
     // Resources are only bound while visible.
     if (m_frontend)
-        resource->bind(m_frontend.get());
+        resource->bind(m_frontend);
 }
 #endif
 
@@ -1005,7 +938,7 @@ void InspectorAgent::showAndEnableDebugger()
 
     if (!m_frontend) {
         m_state->setBoolean(InspectorAgentState::debuggerEnabled, true);
-        showPanel(ScriptsPanel);
+        showPanel(InspectorController::ScriptsPanel);
     } else
         enableDebugger(true);
 }
@@ -1017,7 +950,7 @@ void InspectorAgent::enableDebugger(bool eraseStickyBreakpoints)
     m_state->setBoolean(InspectorAgentState::debuggerEnabled, true);
     ASSERT(m_inspectedPage);
 
-    m_debuggerAgent = InspectorDebuggerAgent::create(this, m_frontend.get(), eraseStickyBreakpoints);
+    m_debuggerAgent = InspectorDebuggerAgent::create(this, m_frontend, eraseStickyBreakpoints);
     m_browserDebuggerAgent = InspectorBrowserDebuggerAgent::create(this, eraseStickyBreakpoints);
 
     m_frontend->debuggerWasEnabled();
@@ -1356,6 +1289,20 @@ KURL InspectorAgent::inspectedURLWithoutFragment() const
 void InspectorAgent::reloadPage(bool ignoreCache)
 {
     m_inspectedPage->mainFrame()->loader()->reload(ignoreCache);
+}
+
+bool InspectorAgent::enabled() const
+{
+    return m_inspectorController->enabled();
+}
+
+void InspectorAgent::showPanel(const String& panel)
+{
+    if (!m_frontend) {
+        m_requiredPanel = panel;
+        return;
+    }
+    m_frontend->showPanel(panel);
 }
 
 } // namespace WebCore

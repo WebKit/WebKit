@@ -1,3 +1,95 @@
+2011-02-02  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: move InspectorController's methods from InspectorAgent to InspectorController.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53169
+
+        All the Inspector API for WebCore has two parts.
+        The first one is InspectorInstrumentation for WebCore.
+        The second is InspectorController for WebKit.
+        InspectorAgent was produced by renaming original InspectorController.
+        This patch extracts WebKit related methods from InspectorAgent to InspectorController.
+
+        * WebCore.exp.in:
+        * bindings/v8/custom/V8InspectorFrontendHostCustom.cpp:
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::createParser):
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        (WebCore::InspectorAgent::~InspectorAgent):
+        (WebCore::InspectorAgent::restoreInspectorStateFromCookie):
+        (WebCore::InspectorAgent::inspect):
+        (WebCore::InspectorAgent::handleMousePress):
+        (WebCore::InspectorAgent::didClearWindowObjectInWorld):
+        (WebCore::InspectorAgent::setFrontend):
+        (WebCore::InspectorAgent::disconnectFrontend):
+        (WebCore::InspectorAgent::resourceAgent):
+        (WebCore::InspectorAgent::createFrontendLifetimeAgents):
+        (WebCore::InspectorAgent::releaseFrontendLifetimeAgents):
+        (WebCore::InspectorAgent::populateScriptObjects):
+        (WebCore::InspectorAgent::pushDataCollectedOffline):
+        (WebCore::InspectorAgent::restoreProfiler):
+        (WebCore::InspectorAgent::startTimelineProfiler):
+        (WebCore::PostWorkerNotificationToFrontendTask::performTask):
+        (WebCore::InspectorAgent::didOpenDatabase):
+        (WebCore::InspectorAgent::didUseDOMStorage):
+        (WebCore::InspectorAgent::showAndEnableDebugger):
+        (WebCore::InspectorAgent::enableDebugger):
+        (WebCore::InspectorAgent::enabled):
+        * inspector/InspectorAgent.h:
+        (WebCore::InspectorAgent::frontend):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::~InspectorController):
+        (WebCore::InspectorController::setInspectorFrontendClient):
+        (WebCore::InspectorController::hasInspectorFrontendClient):
+        (WebCore::InspectorController::didClearWindowObjectInWorld):
+        (WebCore::InspectorController::startTimelineProfiler):
+        (WebCore::InspectorController::stopTimelineProfiler):
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::disconnectFrontend):
+        (WebCore::InspectorController::disconnectFrontendImpl):
+        (WebCore::InspectorController::show):
+        (WebCore::InspectorController::close):
+        (WebCore::InspectorController::restoreInspectorStateFromCookie):
+        (WebCore::InspectorController::evaluateForTestInFrontend):
+        (WebCore::InspectorController::drawNodeHighlight):
+        (WebCore::InspectorController::inspect):
+        (WebCore::InspectorController::enabled):
+        (WebCore::InspectorController::showPanel):
+        (WebCore::InspectorController::frontendLoaded):
+        (WebCore::InspectorController::timelineProfilerEnabled):
+        (WebCore::InspectorController::enableProfiler):
+        (WebCore::InspectorController::disableProfiler):
+        (WebCore::InspectorController::profilerEnabled):
+        (WebCore::InspectorController::debuggerEnabled):
+        (WebCore::InspectorController::showAndEnableDebugger):
+        (WebCore::InspectorController::disableDebugger):
+        (WebCore::InspectorController::startUserInitiatedProfiling):
+        (WebCore::InspectorController::stopUserInitiatedProfiling):
+        (WebCore::InspectorController::isRecordingUserInitiatedProfile):
+        (WebCore::InspectorController::setInspectorExtensionAPI):
+        (WebCore::InspectorController::resume):
+        (WebCore::InspectorController::hideHighlight):
+        (WebCore::InspectorController::dispatchMessageFromFrontend):
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::inspectorClient):
+        (WebCore::InspectorController::inspectedPage):
+        (WebCore::InspectorController::hasFrontend):
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::sendMessageToBackend):
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::setExtensionAPI):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didClearWindowObjectInWorldImpl):
+        (WebCore::InspectorInstrumentation::profilerEnabledImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::hasFrontend):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+
 2011-02-08  George Wright  <gwright@rim.com>
 
         Reviewed by Adam Barth.

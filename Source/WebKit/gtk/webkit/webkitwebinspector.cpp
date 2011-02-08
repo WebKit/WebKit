@@ -29,6 +29,7 @@
 #include "HitTestResult.h"
 #include "InspectorClientGtk.h"
 #include "InspectorController.h"
+#include "InspectorInstrumentation.h"
 #include "IntPoint.h"
 #include "Page.h"
 #include "RenderLayer.h"
@@ -397,7 +398,7 @@ static void webkit_web_inspector_get_property(GObject* object, guint prop_id, GV
 #endif
         break;
     case PROP_TIMELINE_PROFILING_ENABLED:
-        g_value_set_boolean(value, priv->page->inspectorController()->timelineAgent() != 0);
+        g_value_set_boolean(value, priv->page->inspectorController()->timelineProfilerEnabled());
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);

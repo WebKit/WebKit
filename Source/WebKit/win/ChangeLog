@@ -1,3 +1,16 @@
+2011-02-02  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: move InspectorController's methods from InspectorAgent to InspectorController.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53169
+
+        Minor change enforced by major changes in WebCore/inspector/InspectorController.
+
+        * WebInspector.cpp:
+        (WebInspector::isTimelineProfilingEnabled):
+
 2011-02-07  Enrica Casucci  <enrica@apple.com>
 
         Reviewed Adam Roben and Darin Adler.

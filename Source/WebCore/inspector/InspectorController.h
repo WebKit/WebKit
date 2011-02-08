@@ -31,17 +31,93 @@
 #ifndef InspectorController_h
 #define InspectorController_h
 
-#include "InspectorAgent.h"
+#include "PlatformString.h"
+#include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
+class DOMWrapperWorld;
+class Frame;
+class GraphicsContext;
+class InspectorAgent;
+class InspectorBackendDispatcher;
 class InspectorClient;
+class InspectorFrontend;
+class InspectorFrontendClient;
 class Page;
+class PostWorkerNotificationToFrontendTask;
+class Node;
 
-// FIXME: temporary solution. It will become a separate class in the next patch and controller related subset of functions will be moved from InspectorAgent to InspectorControler.
-class InspectorController : public InspectorAgent {
+class InspectorController {
+    WTF_MAKE_NONCOPYABLE(InspectorController);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
+    static const char* const ConsolePanel;
+    static const char* const ElementsPanel;
+    static const char* const ProfilesPanel;
+    static const char* const ScriptsPanel;
+
     InspectorController(Page*, InspectorClient*);
+    ~InspectorController();
+
+    Page* inspectedPage() { return m_inspectedPage; }
+
+    bool enabled() const;
+
+    void show();
+    void showPanel(const String& panel);
+    void close();
+
+    void setInspectorFrontendClient(PassOwnPtr<InspectorFrontendClient>);
+    bool hasInspectorFrontendClient() const;
+    void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld*);
+    void setInspectorExtensionAPI(const String& source);
+    void dispatchMessageFromFrontend(const String& message);
+
+    bool hasFrontend() const { return m_inspectorFrontend; }
+    void connectFrontend();
+    void disconnectFrontend();
+    void restoreInspectorStateFromCookie(const String& inspectorCookie);
+
+    void inspect(Node*);
+    void drawNodeHighlight(GraphicsContext&) const;
+    void hideHighlight();
+
+    void evaluateForTestInFrontend(long callId, const String& script);
+
+    void startTimelineProfiler();
+    void stopTimelineProfiler();
+    bool timelineProfilerEnabled();
+
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    bool profilerEnabled();
+    void enableProfiler();
+    void startUserInitiatedProfiling();
+    bool isRecordingUserInitiatedProfile() const;
+    void stopUserInitiatedProfiling();
+    void disableProfiler();
+    void showAndEnableDebugger();
+    bool debuggerEnabled();
+    void disableDebugger();
+    void resume();
+#endif
+
+private:
+    friend class InspectorAgent;
+    friend class PostWorkerNotificationToFrontendTask;
+
+    void disconnectFrontendImpl(); // used by InspectorAgent
+    void frontendLoaded();
+
+    OwnPtr<InspectorAgent> m_inspectorAgent;
+    OwnPtr<InspectorBackendDispatcher> m_inspectorBackendDispatcher;
+    OwnPtr<InspectorFrontendClient> m_inspectorFrontendClient;
+    OwnPtr<InspectorFrontend> m_inspectorFrontend;
+    Page* m_inspectedPage;
+    InspectorClient* m_inspectorClient;
+    bool m_openingFrontend;
 };
 
 }

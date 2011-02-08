@@ -1,3 +1,17 @@
+2011-02-02  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: move InspectorController's methods from InspectorAgent to InspectorController.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53169
+
+        Minor change enforced by major changes in WebCore/inspector/InspectorController.
+
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::dispatchOnInspectorBackend):
+        * src/WebViewImpl.h:
+
 2011-02-07  Alexey Marinichev  <amarinichev@chromium.org>
 
         Reviewed by Kenneth Russell.

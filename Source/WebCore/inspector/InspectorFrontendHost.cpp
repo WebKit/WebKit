@@ -201,8 +201,8 @@ void InspectorFrontendHost::moveWindowBy(float x, float y) const
 
 void InspectorFrontendHost::setExtensionAPI(const String& script)
 {
-    InspectorAgent* inspector = m_frontendPage->inspectorController();
-    inspector->setInspectorExtensionAPI(script);
+    ASSERT(m_frontendPage->inspectorController());
+    m_frontendPage->inspectorController()->setInspectorExtensionAPI(script);
 }
 
 String InspectorFrontendHost::localizedStringsURL()

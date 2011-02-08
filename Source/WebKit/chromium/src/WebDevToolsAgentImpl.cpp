@@ -222,7 +222,7 @@ void WebDevToolsAgentImpl::didClearWindowObject(WebFrameImpl* webframe)
 
 void WebDevToolsAgentImpl::dispatchOnInspectorBackend(const WebString& message)
 {
-    inspectorController()->inspectorBackendDispatcher()->dispatch(message);
+    inspectorController()->dispatchMessageFromFrontend(message);
 }
 
 void WebDevToolsAgentImpl::inspectElementAt(const WebPoint& point)

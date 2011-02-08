@@ -69,7 +69,7 @@
 #include "HTMLBodyElement.h"
 #include "HTMLElementFactory.h"
 #include "HTMLNames.h"
-#include "InspectorController.h"
+#include "InspectorInstrumentation.h"
 #include "KURL.h"
 #include "Page.h"
 #include "Settings.h"
@@ -277,11 +277,7 @@ void HTMLDocument::releaseEvents()
 
 PassRefPtr<DocumentParser> HTMLDocument::createParser()
 {
-    bool reportErrors = false;
-#if ENABLE(INSPECTOR)
-    if (Page* page = this->page())
-        reportErrors = page->inspectorController()->hasFrontend();
-#endif
+    bool reportErrors = InspectorInstrumentation::hasFrontend(this->page());
     return HTMLDocumentParser::create(this, reportErrors);
 }
 

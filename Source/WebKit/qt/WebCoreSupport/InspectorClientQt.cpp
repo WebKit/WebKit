@@ -32,7 +32,6 @@
 #include "InspectorClientQt.h"
 
 #include "Frame.h"
-#include "InspectorBackendDispatcher.h"
 #include "InspectorController.h"
 #include "InspectorFrontend.h"
 #include "InspectorServerQt.h"
