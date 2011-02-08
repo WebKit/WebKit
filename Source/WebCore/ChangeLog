@@ -1,3 +1,24 @@
+2011-02-07  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=53950
+        USE_WK_SCROLLBAR_PAINTER in ScrollbarThemeMac should be in
+        Platform.h instead
+
+        Use hot new USE(WK_SCROLLBAR_PAINTER) from Platform.h rather
+        than the silly, old in-file #define.
+
+        * platform/mac/ScrollbarThemeMac.mm:
+        (+[ScrollbarPrefsObserver appearancePrefsChanged:]):
+        (WebCore::updateArrowPlacement):
+        (WebCore::ScrollbarThemeMac::registerScrollbar):
+        (WebCore::ScrollbarThemeMac::scrollbarThickness):
+        (WebCore::ScrollbarThemeMac::usesOverlayScrollbars):
+        (WebCore::ScrollbarThemeMac::hasThumb):
+        (WebCore::ScrollbarThemeMac::minimumThumbLength):
+        (WebCore::ScrollbarThemeMac::paint):
+
 2011-02-07  Enrica Casucci  <enrica@apple.com>
 
         Reviewed Adam Roben and Darin Adler.

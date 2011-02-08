@@ -36,10 +36,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/UnusedParam.h>
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-#define USE_WK_SCROLLBAR_PAINTER
-#endif
-
 // FIXME: There are repainting problems due to Aqua scroll bar buttons' visual overflow.
 
 using namespace std;
@@ -47,7 +43,7 @@ using namespace WebCore;
 
 namespace WebCore {
 
-#if defined(USE_WK_SCROLLBAR_PAINTER)
+#if USE(WK_SCROLLBAR_PAINTER)
 typedef HashMap<Scrollbar*, RetainPtr<WKScrollbarPainterRef> > ScrollbarPainterMap;
 #else
 typedef HashSet<Scrollbar*> ScrollbarPainterMap;
@@ -83,7 +79,7 @@ static ScrollbarPainterMap* scrollbarMap()
         return;
     ScrollbarPainterMap::iterator end = scrollbarMap()->end();
     for (ScrollbarPainterMap::iterator it = scrollbarMap()->begin(); it != end; ++it) {
-#if defined(USE_WK_SCROLLBAR_PAINTER)
+#if USE(WK_SCROLLBAR_PAINTER)
         it->first->styleChanged();
         it->first->invalidate();
 #else
@@ -121,7 +117,7 @@ static int cRealButtonLength[] = { 28, 21 };
 static int cButtonHitInset[] = { 3, 2 };
 // cRealButtonLength - cButtonInset
 static int cButtonLength[] = { 14, 10 };
-#if !defined(USE_WK_SCROLLBAR_PAINTER)
+#if !USE(WK_SCROLLBAR_PAINTER)
 static int cScrollbarThickness[] = { 15, 11 };
 static int cButtonInset[] = { 14, 11 };
 static int cThumbMinLength[] = { 26, 20 };
@@ -134,7 +130,7 @@ static float gInitialButtonDelay = 0.5f;
 static float gAutoscrollButtonDelay = 0.05f;
 static bool gJumpOnTrackClick = false;
 
-#if defined(USE_WK_SCROLLBAR_PAINTER)
+#if USE(WK_SCROLLBAR_PAINTER)
 static ScrollbarButtonsPlacement gButtonPlacement = ScrollbarButtonsNone;
 #else
 static ScrollbarButtonsPlacement gButtonPlacement = ScrollbarButtonsDoubleEnd;
@@ -150,7 +146,7 @@ static void updateArrowPlacement()
     else if ([buttonPlacement isEqualToString:@"DoubleBoth"])
         gButtonPlacement = ScrollbarButtonsDoubleBoth;
     else {
-#if defined(USE_WK_SCROLLBAR_PAINTER)
+#if USE(WK_SCROLLBAR_PAINTER)
         gButtonPlacement = ScrollbarButtonsNone;
 #else
         gButtonPlacement = ScrollbarButtonsDoubleEnd;
@@ -160,7 +156,7 @@ static void updateArrowPlacement()
 
 void ScrollbarThemeMac::registerScrollbar(Scrollbar* scrollbar)
 {
-#if defined(USE_WK_SCROLLBAR_PAINTER)
+#if USE(WK_SCROLLBAR_PAINTER)
     bool isHorizontal = scrollbar->orientation() == HorizontalScrollbar;
     WKScrollbarPainterRef scrollbarPainter = wkMakeScrollbarPainter(scrollbar->controlSize(), isHorizontal);
     scrollbarMap()->add(scrollbar, scrollbarPainter);
@@ -213,7 +209,7 @@ void ScrollbarThemeMac::preferencesChanged()
 
 int ScrollbarThemeMac::scrollbarThickness(ScrollbarControlSize controlSize)
 {
-#if defined(USE_WK_SCROLLBAR_PAINTER)
+#if USE(WK_SCROLLBAR_PAINTER)
     return wkScrollbarThickness(controlSize);
 #else
     return cScrollbarThickness[controlSize];
@@ -222,7 +218,7 @@ int ScrollbarThemeMac::scrollbarThickness(ScrollbarControlSize controlSize)
 
 bool ScrollbarThemeMac::usesOverlayScrollbars() const
 {
-#if defined(USE_WK_SCROLLBAR_PAINTER)
+#if USE(WK_SCROLLBAR_PAINTER)
     return wkScrollbarPainterUsesOverlayScrollers();
 #else
     return false;
@@ -255,7 +251,7 @@ bool ScrollbarThemeMac::hasButtons(Scrollbar* scrollbar)
 bool ScrollbarThemeMac::hasThumb(Scrollbar* scrollbar)
 {
     int minLengthForThumb;
-#if defined(USE_WK_SCROLLBAR_PAINTER)
+#if USE(WK_SCROLLBAR_PAINTER)
     minLengthForThumb = wkScrollbarMinimumTotalLengthNeededForThumb(scrollbarMap()->get(scrollbar).get());
 #else
     minLengthForThumb = 2 * cButtonInset[scrollbar->controlSize()] + cThumbMinLength[scrollbar->controlSize()] + 1;
@@ -396,7 +392,7 @@ IntRect ScrollbarThemeMac::trackRect(Scrollbar* scrollbar, bool painting)
 
 int ScrollbarThemeMac::minimumThumbLength(Scrollbar* scrollbar)
 {
-#if defined(USE_WK_SCROLLBAR_PAINTER)
+#if USE(WK_SCROLLBAR_PAINTER)
     return wkScrollbarMinimumThumbLength(scrollbarMap()->get(scrollbar).get());
 #else
     return cThumbMinLength[scrollbar->controlSize()];
@@ -432,7 +428,7 @@ static int scrollbarPartToHIPressedState(ScrollbarPart part)
 
 bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, const IntRect& damageRect)
 {
-#if defined(USE_WK_SCROLLBAR_PAINTER)
+#if USE(WK_SCROLLBAR_PAINTER)
     float value = 0.0f;
     float totalSize = 0.0f;
 
