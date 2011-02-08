@@ -96,12 +96,6 @@ void DragClientImpl::startDrag(DragImageRef dragImage,
         offsetPoint);
 }
 
-DragImageRef DragClientImpl::createDragImageForLink(KURL&, const String& label, Frame*)
-{
-    // FIXME
-    return 0;
-}
-
 void DragClientImpl::dragControllerDestroyed()
 {
     // Our lifetime is bound to the WebViewImpl.

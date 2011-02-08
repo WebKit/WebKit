@@ -51,18 +51,6 @@
 
 using namespace WebCore;
 
-const float DragLabelBorderX = 4;
-//Keep border_y in synch with DragController::LinkDragBorderInset
-const float DragLabelBorderY = 2;
-const float DragLabelRadius = 5;
-const float LabelBorderYOffset = 2;
-
-const float MinDragLabelWidthBeforeClip = 120;
-const float MaxDragLabelWidth = 320;
-
-const float DragLinkLabelFontsize = 11;
-const float DragLinkUrlFontSize = 10;
-
 WebDragClient::WebDragClient(WebView* webView)
     : m_webView(webView) 
 {
@@ -130,87 +118,6 @@ void WebDragClient::startDrag(DragImageRef dragImage, const IntPoint& at, const 
             [delegate webView:m_webView dragImage:dragNSImage at:at offset:NSZeroSize event:event pasteboard:pasteboard source:sourceHTMLView slideBack:YES forView:topHTMLView];
     } else
         [topHTMLView dragImage:dragNSImage at:at offset:NSZeroSize event:event pasteboard:pasteboard source:sourceHTMLView slideBack:YES];
-}
-
-DragImageRef WebDragClient::createDragImageForLink(KURL& url, const String& title, Frame* frame)
-{
-    if (!frame)
-        return nil;
-    NSString *label = 0;
-    if (!title.isEmpty())
-        label = title;
-    NSURL *cocoaURL = url;
-    NSString *urlString = [cocoaURL _web_userVisibleString];
-
-    BOOL drawURLString = YES;
-    BOOL clipURLString = NO;
-    BOOL clipLabelString = NO;
-
-    if (!label) {
-        drawURLString = NO;
-        label = urlString;
-    }
-
-    NSFont *labelFont = [[NSFontManager sharedFontManager] convertFont:[NSFont systemFontOfSize:DragLinkLabelFontsize]
-                                                           toHaveTrait:NSBoldFontMask];
-    NSFont *urlFont = [NSFont systemFontOfSize:DragLinkUrlFontSize];
-    NSSize labelSize;
-    labelSize.width = [label _web_widthWithFont: labelFont];
-    labelSize.height = [labelFont ascender] - [labelFont descender];
-    if (labelSize.width > MaxDragLabelWidth){
-        labelSize.width = MaxDragLabelWidth;
-        clipLabelString = YES;
-    }
-
-    NSSize imageSize;
-    imageSize.width = labelSize.width + DragLabelBorderX * 2;
-    imageSize.height = labelSize.height + DragLabelBorderY * 2;
-    if (drawURLString) {
-        NSSize urlStringSize;
-        urlStringSize.width = [urlString _web_widthWithFont: urlFont];
-        urlStringSize.height = [urlFont ascender] - [urlFont descender];
-        imageSize.height += urlStringSize.height;
-        if (urlStringSize.width > MaxDragLabelWidth) {
-            imageSize.width = max(MaxDragLabelWidth + DragLabelBorderY * 2, MinDragLabelWidthBeforeClip);
-            clipURLString = YES;
-        } else
-              imageSize.width = max(labelSize.width + DragLabelBorderX * 2, urlStringSize.width + DragLabelBorderX * 2);
-    }
-    NSImage *dragImage = [[[NSImage alloc] initWithSize: imageSize] autorelease];
-    [dragImage lockFocus];
-
-    [[NSColor colorWithDeviceRed: 0.7f green: 0.7f blue: 0.7f alpha: 0.8f] set];
-
-    // Drag a rectangle with rounded corners
-    NSBezierPath *path = [NSBezierPath bezierPath];
-    [path appendBezierPathWithOvalInRect: NSMakeRect(0, 0, DragLabelRadius * 2, DragLabelRadius * 2)];
-    [path appendBezierPathWithOvalInRect: NSMakeRect(0, imageSize.height - DragLabelRadius * 2, DragLabelRadius * 2, DragLabelRadius * 2)];
-    [path appendBezierPathWithOvalInRect: NSMakeRect(imageSize.width - DragLabelRadius * 2, imageSize.height - DragLabelRadius * 2, DragLabelRadius * 2, DragLabelRadius * 2)];
-    [path appendBezierPathWithOvalInRect: NSMakeRect(imageSize.width - DragLabelRadius * 2, 0, DragLabelRadius * 2, DragLabelRadius * 2)];
-
-    [path appendBezierPathWithRect: NSMakeRect(DragLabelRadius, 0, imageSize.width - DragLabelRadius * 2, imageSize.height)];
-    [path appendBezierPathWithRect: NSMakeRect(0, DragLabelRadius, DragLabelRadius + 10, imageSize.height - 2 * DragLabelRadius)];
-    [path appendBezierPathWithRect: NSMakeRect(imageSize.width - DragLabelRadius - 20, DragLabelRadius, DragLabelRadius + 20, imageSize.height - 2 * DragLabelRadius)];
-    [path fill];
-
-    NSColor *topColor = [NSColor colorWithDeviceWhite:0.0f alpha:0.75f];
-    NSColor *bottomColor = [NSColor colorWithDeviceWhite:1.0f alpha:0.5f];
-    if (drawURLString) {
-        if (clipURLString)
-            urlString = [WebStringTruncator centerTruncateString: urlString toWidth:imageSize.width - (DragLabelBorderX * 2) withFont:urlFont];
-
-       [urlString _web_drawDoubledAtPoint:NSMakePoint(DragLabelBorderX, DragLabelBorderY - [urlFont descender]) 
-                             withTopColor:topColor bottomColor:bottomColor font:urlFont];
-    }
-
-    if (clipLabelString)
-        label = [WebStringTruncator rightTruncateString: label toWidth:imageSize.width - (DragLabelBorderX * 2) withFont:labelFont];
-    [label _web_drawDoubledAtPoint:NSMakePoint (DragLabelBorderX, imageSize.height - LabelBorderYOffset - [labelFont pointSize])
-                      withTopColor:topColor bottomColor:bottomColor font:labelFont];
-
-    [dragImage unlockFocus];
-
-    return dragImage;
 }
 
 void WebDragClient::declareAndWriteDragImage(NSPasteboard* pasteboard, DOMElement* element, NSURL* URL, NSString* title, WebCore::Frame* frame) 

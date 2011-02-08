@@ -60,11 +60,6 @@ void DragClientEfl::startDrag(DragImageRef, const IntPoint&, const IntPoint&, Cl
     notImplemented();
 }
 
-DragImageRef DragClientEfl::createDragImageForLink(KURL&, const String& label, Frame*)
-{
-    return 0;
-}
-
 void DragClientEfl::dragControllerDestroyed()
 {
     delete this;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2011 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,65 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <WebCore/DragClient.h>
+#include "config.h"
+#include "WebDragSource.h"
 
-@class WebView;
+#include <WebCore/Cursor.h>
+#include <WebCore/DragActions.h>
+#include <WebCore/EventHandler.h>
+#include <WebCore/Frame.h>
+#include <WebCore/Page.h>
+#include <WebCore/PlatformMouseEvent.h>
+#include <wtf/CurrentTime.h>
 
-class WebDragClient : public WebCore::DragClient {
-public:
-    WebDragClient(WebView*);
-    virtual void willPerformDragDestinationAction(WebCore::DragDestinationAction, WebCore::DragData*);
-    virtual void willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::Clipboard*);
-    virtual WebCore::DragDestinationAction actionMaskForDrag(WebCore::DragData*);
-    virtual void dragControllerDestroyed();
-    virtual WebCore::DragSourceAction dragSourceActionMaskForPoint(const WebCore::IntPoint& windowPoint);
-    virtual void startDrag(WebCore::DragImageRef dragImage, const WebCore::IntPoint& dragPos, const WebCore::IntPoint& eventPos, WebCore::Clipboard*, WebCore::Frame*, bool linkDrag);
-    virtual void declareAndWriteDragImage(NSPasteboard*, DOMElement*, NSURL*, NSString*, WebCore::Frame*);
-private:
-    WebView* m_webView;
-};
+using namespace WebCore;
+
+PassRefPtr<WebDragSource> WebDragSource::createInstance()
+{
+    return adoptRef(new WebDragSource);
+}
+
+WebDragSource::WebDragSource()
+{
+}
+
+HRESULT WebDragSource::QueryInterface(REFIID riid, void** ppvObject)
+{
+    *ppvObject = 0;
+    if (IsEqualIID(riid, IID_IUnknown) || IsEqualIID(riid, IID_IDropSource)) {
+        *ppvObject = this;
+        AddRef();
+
+        return S_OK;
+    }
+
+    return E_NOINTERFACE;
+}
+
+ULONG WebDragSource::AddRef(void)
+{
+    ref();
+    return refCount();
+}
+
+ULONG WebDragSource::Release(void)
+{
+    deref();
+    return refCount();
+}
+
+HRESULT WebDragSource::QueryContinueDrag(BOOL fEscapePressed, DWORD grfState)
+{
+    if (fEscapePressed)
+        return DRAGDROP_S_CANCEL;
+
+    if (grfState & (MK_LBUTTON | MK_RBUTTON))
+        return S_OK;
+
+    return DRAGDROP_S_DROP;
+}
+
+HRESULT WebDragSource::GiveFeedback(DWORD dwEffect)
+{
+    return DRAGDROP_S_USEDEFAULTCURSORS;
+}

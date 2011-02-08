@@ -1,3 +1,16 @@
+2011-02-07  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed Adam Roben and Darin Adler.
+
+        WebKit2: drag and drop support on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=52775
+
+        Removed createDragImageForLink from DragClient.
+
+        * WebCoreSupport/WebDragClient.cpp:
+        (WebDragClient::startDrag):
+        * WebCoreSupport/WebDragClient.h:
+
 2011-02-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

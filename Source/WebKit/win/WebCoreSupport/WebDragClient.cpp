@@ -35,38 +35,10 @@
 #include <WebCore/ClipboardWin.h>
 #include <WebCore/DragController.h>
 #include <WebCore/DragData.h>
-#include <WebCore/Font.h>
-#include <WebCore/FontDescription.h>
-#include <WebCore/FontSelector.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/Page.h>
-#include <WebCore/Settings.h>
-#include <WebCore/StringTruncator.h>
-#include <WebCore/TextRun.h>
-#include <WebCore/WebCoreTextRenderer.h>
 #pragma warning(pop) 
-
-namespace WebCore {
-    HBITMAP allocImage(HDC dc, IntSize size, PlatformGraphicsContext** targetRef);
-    void deallocContext(PlatformGraphicsContext* target);
-}
-
-
-#define DRAG_LABEL_BORDER_X             4
-// Keep border_y in synch with DragController::LinkDragBorderInset
-#define DRAG_LABEL_BORDER_Y             2
-#define DRAG_LABEL_RADIUS               5
-#define DRAG_LABEL_BORDER_Y_OFFSET              2
-
-#define MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP        120
-
-// Observation says max size is 200x200
-#define MAX_DRAG_LABEL_WIDTH                    200
-#define MAX_DRAG_LABEL_STRING_WIDTH             (MAX_DRAG_LABEL_WIDTH - 2 * DRAG_LABEL_BORDER_X)
-
-#define DRAG_LINK_LABEL_FONT_SIZE   11
-#define DRAG_LINK_URL_FONT_SIZE   10
 
 using namespace WebCore;
 
@@ -195,129 +167,6 @@ void WebDragClient::startDrag(DragImageRef image, const IntPoint& imageOrigin, c
         }
         frame->eventHandler()->dragSourceEndedAt(generateMouseEvent(m_webView, false), operation);
     }
-}
-
-static Font dragLabelFont(int size, bool bold, FontRenderingMode renderingMode)
-{
-    NONCLIENTMETRICS metrics;
-    metrics.cbSize = sizeof(metrics);
-    SystemParametersInfo(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0);
-    FontDescription desc;
-    desc.setWeight(bold ? FontWeightBold : FontWeightNormal);
-    FontFamily family;
-    family.setFamily(metrics.lfSmCaptionFont.lfFaceName);
-    desc.setFamily(family);
-    desc.setSpecifiedSize((float)size);
-    desc.setComputedSize((float)size);
-    desc.setRenderingMode(renderingMode);
-    Font result = Font(desc, 0, 0); 
-    result.update(0);
-    return result;
-}
-
-DragImageRef WebDragClient::createDragImageForLink(KURL& url, const String& inLabel, Frame* frame)
-{
-    // This is more or less an exact match for the Mac OS X code.
-
-    const Font* labelFont;
-    const Font* urlFont;
-
-    if (frame->settings() && frame->settings()->fontRenderingMode() == AlternateRenderingMode) {
-        static const Font alternateRenderingModeLabelFont = dragLabelFont(DRAG_LINK_LABEL_FONT_SIZE, true, AlternateRenderingMode);
-        static const Font alternateRenderingModeURLFont = dragLabelFont(DRAG_LINK_URL_FONT_SIZE, false, AlternateRenderingMode);
-        labelFont = &alternateRenderingModeLabelFont;
-        urlFont = &alternateRenderingModeURLFont;
-    } else {
-        static const Font normalRenderingModeLabelFont = dragLabelFont(DRAG_LINK_LABEL_FONT_SIZE, true, NormalRenderingMode);
-        static const Font normalRenderingModeURLFont = dragLabelFont(DRAG_LINK_URL_FONT_SIZE, false, NormalRenderingMode);
-        labelFont = &normalRenderingModeLabelFont;
-        urlFont = &normalRenderingModeURLFont;
-    }
-
-    bool drawURLString = true;
-    bool clipURLString = false;
-    bool clipLabelString = false;
-
-    String urlString = url.string(); 
-    String label = inLabel;
-    if (label.isEmpty()) {
-        drawURLString = false;
-        label = urlString;
-    }
-
-    //First step in drawing the link drag image width
-    TextRun labelRun(label.impl());
-    TextRun urlRun(urlString.impl());
-    IntSize labelSize(labelFont->width(labelRun), labelFont->fontMetrics().ascent() + labelFont->fontMetrics().descent());
-
-    if (labelSize.width() > MAX_DRAG_LABEL_STRING_WIDTH){
-        labelSize.setWidth(MAX_DRAG_LABEL_STRING_WIDTH);
-        clipLabelString = true;
-    }
-    
-    IntSize urlStringSize;
-    IntSize imageSize(labelSize.width() + DRAG_LABEL_BORDER_X * 2, 
-                      labelSize.height() + DRAG_LABEL_BORDER_Y * 2);
-
-    if (drawURLString) {
-        urlStringSize.setWidth(urlFont->width(urlRun));
-        urlStringSize.setHeight(urlFont->fontMetrics().ascent() + urlFont->fontMetrics().descent()); 
-        imageSize.setHeight(imageSize.height() + urlStringSize.height());
-        if (urlStringSize.width() > MAX_DRAG_LABEL_STRING_WIDTH) {
-            imageSize.setWidth(MAX_DRAG_LABEL_WIDTH);
-            clipURLString = true;
-        } else {
-            imageSize.setWidth(std::max(labelSize.width(), urlStringSize.width()) + DRAG_LABEL_BORDER_X * 2);
-        }
-    }
-
-    // We now know how big the image needs to be, so we create and
-    // fill the background
-    HBITMAP image = 0;
-    HDC dc = GetDC(0);
-    HDC workingDC = CreateCompatibleDC(dc);
-    if (!workingDC) {
-        ReleaseDC(0, dc);
-        return 0;
-    }
-
-    PlatformGraphicsContext* contextRef;
-    image = allocImage(workingDC, imageSize, &contextRef);
-    if (!image) {
-        DeleteDC(workingDC);
-        ReleaseDC(0, dc);
-        return 0;
-    }
-        
-    ::SelectObject(workingDC, image);
-    GraphicsContext context(contextRef);
-    // On Mac alpha is {0.7, 0.7, 0.7, 0.8}, however we can't control alpha
-    // for drag images on win, so we use 1
-    static const Color backgroundColor(140, 140, 140);
-    static const IntSize radii(DRAG_LABEL_RADIUS, DRAG_LABEL_RADIUS);
-    IntRect rect(0, 0, imageSize.width(), imageSize.height());
-    context.fillRoundedRect(rect, radii, radii, radii, radii, backgroundColor, ColorSpaceDeviceRGB);
- 
-    // Draw the text
-    static const Color topColor(0, 0, 0, 255); //original alpha = 0.75
-    static const Color bottomColor(255, 255, 255, 127); //original alpha = 0.5
-    if (drawURLString) {
-        if (clipURLString)
-            urlString = StringTruncator::rightTruncate(urlString, imageSize.width() - (DRAG_LABEL_BORDER_X * 2.0f), *urlFont, false);
-        IntPoint textPos(DRAG_LABEL_BORDER_X, imageSize.height() - (DRAG_LABEL_BORDER_Y_OFFSET + urlFont->fontMetrics().descent()));
-        WebCoreDrawDoubledTextAtPoint(context, urlString, textPos, *urlFont, topColor, bottomColor);
-    }
-    
-    if (clipLabelString)
-        label = StringTruncator::rightTruncate(label, imageSize.width() - (DRAG_LABEL_BORDER_X * 2.0f), *labelFont, false);
-
-    IntPoint textPos(DRAG_LABEL_BORDER_X, DRAG_LABEL_BORDER_Y + labelFont->pixelSize());
-    WebCoreDrawDoubledTextAtPoint(context, label, textPos, *labelFont, topColor, bottomColor);
-
-    deallocContext(contextRef);
-    DeleteDC(workingDC);
-    ReleaseDC(0, dc);
-    return image;
 }
 
 void WebDragClient::dragControllerDestroyed()

@@ -58,12 +58,6 @@ void DragClientWinCE::startDrag(DragImageRef, const IntPoint&, const IntPoint&, 
     notImplemented();
 }
 
-DragImageRef DragClientWinCE::createDragImageForLink(KURL&, const String& label, Frame*)
-{
-    notImplemented();
-    return 0;
-}
-
 void DragClientWinCE::dragControllerDestroyed()
 {
     delete this;

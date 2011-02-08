@@ -62,8 +62,6 @@ public:
         WebCore::Clipboard* clipboard,
         WebCore::Frame* frame,
         bool isLinkDrag = false);
-    virtual WebCore::DragImageRef createDragImageForLink(
-        WebCore::KURL&, const WTF::String& label, WebCore::Frame*);
     virtual void dragControllerDestroyed();
 
 private:

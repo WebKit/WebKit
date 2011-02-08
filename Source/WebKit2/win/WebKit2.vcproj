@@ -1453,6 +1453,18 @@
 					Name="win"
 					>
 					<File
+						RelativePath="..\WebProcess\WebCoreSupport\win\WebDragClientWin.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\WebProcess\WebCoreSupport\win\WebDragSource.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\WebProcess\WebCoreSupport\win\WebDragSource.h"
+						>
+					</File>
+					<File
 						RelativePath="..\WebProcess\WebCoreSupport\win\WebContextMenuClientWin.cpp"
 						>
 					</File>

@@ -1,3 +1,56 @@
+2011-02-07  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed Adam Roben and Darin Adler.
+
+        WebKit2: drag and drop support on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=52775
+        <rdar://problem/8514409>
+
+        * loader/EmptyClients.h: Removed createDragImageFromLink.
+        * page/DragClient.h: Ditto.
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag): changed call to createDragImageFromLink.
+        * platform/DragImage.h:
+        * platform/mac/DragImageMac.mm:
+        (WebCore::createDragImageForLink): Moved from DragClient.
+        * platform/win/ClipboardUtilitiesWin.cpp: Added a series of functions
+        to de-serialize the drag data from the map into an IDataObject.
+        (WebCore::getWebLocData):
+        (WebCore::texthtmlFormat):
+        (WebCore::createGlobalData):
+        (WebCore::getFullCFHTML):
+        (WebCore::urlWFormat):
+        (WebCore::urlFormat):
+        (WebCore::filenameWFormat):
+        (WebCore::filenameFormat):
+        (WebCore::htmlFormat):
+        (WebCore::smartPasteFormat):
+        (WebCore::getURL):
+        (WebCore::getPlainText):
+        (WebCore::getTextHTML):
+        (WebCore::ClipboardDataItem::ClipboardDataItem):
+        (WebCore::getStringData):
+        (WebCore::getUtf8Data):
+        (WebCore::getCFData):
+        (WebCore::setUCharData):
+        (WebCore::setCharData):
+        (WebCore::setCFData):
+        (WebCore::getClipboardMap):
+        (WebCore::getClipboardData):
+        (WebCore::setClipboardData):
+        * platform/win/ClipboardUtilitiesWin.h:
+        * platform/win/DragImageWin.cpp: Moved createDragImageForLink from DragClient
+        to a platform specific file in WebCore. It makes a lot more sense here, since
+        the drag image is always created in WebCore for all the other content types
+        except for links.
+        (WebCore::dragLabelFont):
+        (WebCore::createDragImageForLink):
+        * platform/win/WCDataObject.cpp: Added new way to
+        construct a WCDataObject from a DragDataMap.
+        (WebCore::WCDataObject::createInstance):
+        (WebCore::WCDataObject::clearData):
+        * platform/win/WCDataObject.h:
+
 2011-02-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r77848.

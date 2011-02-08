@@ -310,6 +310,9 @@ public:
 #if PLATFORM(MAC)
     void setDragImage(const WebCore::IntPoint& clientPosition, const WebCore::IntSize& imageSize, const SharedMemory::Handle& dragImageHandle, bool isLinkDrag);
 #endif
+#if PLATFORM(WIN)
+    void startDragDrop(const WebCore::IntPoint& imagePoint, const WebCore::IntPoint& dragPoint, uint64_t okEffect, const HashMap<UINT, Vector<String> >& dataMap, const WebCore::IntSize& dragImageSize, const SharedMemory::Handle& dragImageHandle, bool isLinkDrag);
+#endif
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
 

@@ -75,6 +75,7 @@ String getCFHTML(IDataObject*, bool& success);
 String getCFHTML(const DragDataMap*);
 
 void getClipboardData(IDataObject*, FORMATETC* fetc, Vector<String>& dataStrings);
+void setClipboardData(IDataObject*, UINT format, const Vector<String>& dataStrings);
 
 } // namespace WebCore
 

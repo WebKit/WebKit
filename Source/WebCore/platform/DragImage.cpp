@@ -73,6 +73,13 @@ DragImageRef createDragImageForSelection(Frame* frame)
     return image;
 }
 
+#if !PLATFORM(MAC) && !PLATFORM(WIN)
+DragImageRef createDragImageForLink(KURL&, const String&, Frame*)
+{
+    return 0;
+}
+#endif
+
 } // namespace WebCore
 
 #endif // ENABLE(DRAG_SUPPORT)

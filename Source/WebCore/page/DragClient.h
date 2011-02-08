@@ -62,7 +62,6 @@ namespace WebCore {
         virtual DragSourceAction dragSourceActionMaskForPoint(const IntPoint& windowPoint) = 0;
         
         virtual void startDrag(DragImageRef dragImage, const IntPoint& dragImageOrigin, const IntPoint& eventPos, Clipboard*, Frame*, bool linkDrag = false) = 0;
-        virtual DragImageRef createDragImageForLink(KURL&, const String& label, Frame*) = 0;
         
         virtual void dragControllerDestroyed() = 0;
 #if PLATFORM(MAC)

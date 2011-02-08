@@ -31,6 +31,7 @@
 #include "PlatformString.h"
 #include "TextEncoding.h"
 #include "markup.h"
+#include <shlobj.h>
 #include <shlwapi.h>
 #include <wininet.h> // for INTERNET_MAX_URL_LENGTH
 #include <wtf/StringExtras.h>
@@ -619,7 +620,19 @@ bool containsHTML(const DragDataMap* data)
 }
 
 typedef void (*GetStringFunction)(IDataObject*, FORMATETC*, Vector<String>&);
-typedef HashMap<UINT, GetStringFunction> ClipboardFormatMap;
+typedef void (*SetStringFunction)(IDataObject*, FORMATETC*, const Vector<String>&);
+
+struct ClipboardDataItem {
+    GetStringFunction getString;
+    SetStringFunction setString;
+    FORMATETC* format;
+
+    ClipboardDataItem(FORMATETC* format, GetStringFunction getString, SetStringFunction setString): format(format), getString(getString), setString(setString) { }
+};
+
+typedef HashMap<UINT, ClipboardDataItem*> ClipboardFormatMap;
+
+// Getter functions.
 
 template<typename T> void getStringData(IDataObject* data, FORMATETC* format, Vector<String>& dataStrings)
 {
@@ -642,7 +655,7 @@ void getUtf8Data(IDataObject* data, FORMATETC* format, Vector<String>& dataStrin
 }
 
 #if PLATFORM(CF)
-void getCfData(IDataObject* data, FORMATETC* format, Vector<String>& dataStrings)
+void getCFData(IDataObject* data, FORMATETC* format, Vector<String>& dataStrings)
 {
     STGMEDIUM store;
     if (FAILED(data->GetData(format, &store)))
@@ -665,26 +678,93 @@ void getCfData(IDataObject* data, FORMATETC* format, Vector<String>& dataStrings
 }
 #endif
 
-void getClipboardData(IDataObject *dataObject, FORMATETC* format, Vector<String>& dataStrings)
+// Setter functions.
+
+void setUCharData(IDataObject* data, FORMATETC* format, const Vector<String>& dataStrings)
+{
+    STGMEDIUM medium = {0};
+    medium.tymed = TYMED_HGLOBAL;
+
+    medium.hGlobal = createGlobalData(dataStrings.first());
+    if (!medium.hGlobal)
+        return;
+    data->SetData(format, &medium, FALSE);
+    ::GlobalFree(medium.hGlobal);
+}
+
+void setUtf8Data(IDataObject* data, FORMATETC* format, const Vector<String>& dataStrings)
+{
+    STGMEDIUM medium = {0};
+    medium.tymed = TYMED_HGLOBAL;
+
+    CString charString = dataStrings.first().utf8();
+    size_t stringLength = charString.length();
+    medium.hGlobal = ::GlobalAlloc(GPTR, stringLength + 1);
+    if (!medium.hGlobal)
+        return;
+    char* buffer = static_cast<char*>(::GlobalLock(medium.hGlobal));
+    memcpy(buffer, charString.data(), stringLength);
+    buffer[stringLength] = 0;
+    ::GlobalUnlock(medium.hGlobal);
+    data->SetData(format, &medium, FALSE);
+    ::GlobalFree(medium.hGlobal);
+}
+
+#if PLATFORM(CF)
+void setCFData(IDataObject* data, FORMATETC* format, const Vector<String>& dataStrings)
+{
+    STGMEDIUM medium = {0};
+    SIZE_T dropFilesSize = sizeof(DROPFILES) + (sizeof(WCHAR) * (dataStrings.first().length() + 2));
+    medium.hGlobal = ::GlobalAlloc(GHND | GMEM_SHARE, dropFilesSize);
+    if (!medium.hGlobal) 
+        return;
+
+    DROPFILES* dropFiles = reinterpret_cast<DROPFILES *>(::GlobalLock(medium.hGlobal));
+    dropFiles->pFiles = sizeof(DROPFILES);
+    dropFiles->fWide = TRUE;
+    String filename = dataStrings.first();
+    wcscpy(reinterpret_cast<LPWSTR>(dropFiles + 1), filename.charactersWithNullTermination());    
+    ::GlobalUnlock(medium.hGlobal);
+    data->SetData(format, &medium, FALSE);
+    ::GlobalFree(medium.hGlobal);
+}
+#endif
+
+static const ClipboardFormatMap& getClipboardMap()
 {
     static ClipboardFormatMap formatMap;
     if (formatMap.isEmpty()) {
-        formatMap.add(htmlFormat()->cfFormat, getUtf8Data);
-        formatMap.add(texthtmlFormat()->cfFormat, getStringData<UChar>);
-        formatMap.add(plainTextFormat()->cfFormat, getStringData<char>);
-        formatMap.add(plainTextWFormat()->cfFormat, getStringData<UChar>);
+        formatMap.add(htmlFormat()->cfFormat, new ClipboardDataItem(htmlFormat(), getUtf8Data, setUtf8Data));
+        formatMap.add(texthtmlFormat()->cfFormat, new ClipboardDataItem(texthtmlFormat(), getStringData<UChar>, setUCharData));
+        formatMap.add(plainTextFormat()->cfFormat,  new ClipboardDataItem(plainTextFormat(), getStringData<char>, setUtf8Data));
+        formatMap.add(plainTextWFormat()->cfFormat,  new ClipboardDataItem(plainTextWFormat(), getStringData<UChar>, setUCharData));
 #if PLATFORM(CF)
-        formatMap.add(cfHDropFormat()->cfFormat, getCfData);
+        formatMap.add(cfHDropFormat()->cfFormat,  new ClipboardDataItem(cfHDropFormat(), getCFData, setCFData));
 #endif
-        formatMap.add(filenameFormat()->cfFormat, getStringData<char>);
-        formatMap.add(filenameWFormat()->cfFormat, getStringData<UChar>);
-        formatMap.add(urlFormat()->cfFormat, getStringData<char>);
-        formatMap.add(urlWFormat()->cfFormat, getStringData<UChar>);
+        formatMap.add(filenameFormat()->cfFormat,  new ClipboardDataItem(filenameFormat(), getStringData<char>, setUtf8Data));
+        formatMap.add(filenameWFormat()->cfFormat,  new ClipboardDataItem(filenameWFormat(), getStringData<UChar>, setUCharData));
+        formatMap.add(urlFormat()->cfFormat,  new ClipboardDataItem(urlFormat(), getStringData<char>, setUtf8Data));
+        formatMap.add(urlWFormat()->cfFormat,  new ClipboardDataItem(urlWFormat(), getStringData<UChar>, setUCharData));
     }
-    ClipboardFormatMap::iterator found = formatMap.find(format->cfFormat);
+    return formatMap;
+}
+
+void getClipboardData(IDataObject* dataObject, FORMATETC* format, Vector<String>& dataStrings)
+{
+    const ClipboardFormatMap& formatMap = getClipboardMap();
+    ClipboardFormatMap::const_iterator found = formatMap.find(format->cfFormat);
     if (found == formatMap.end())
         return;
-    found->second(dataObject, format, dataStrings);
+    found->second->getString(dataObject, found->second->format, dataStrings);
+}
+
+void setClipboardData(IDataObject* dataObject, UINT format, const Vector<String>& dataStrings)
+{
+    const ClipboardFormatMap& formatMap = getClipboardMap();
+    ClipboardFormatMap::const_iterator found = formatMap.find(format);
+    if (found == formatMap.end())
+        return;
+    found->second->setString(dataObject, found->second->format, dataStrings);
 }
 
 } // namespace WebCore

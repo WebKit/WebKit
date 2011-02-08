@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WCDataObject.h"
 
+#include "ClipboardUtilitiesWin.h"
+#include "DragData.h"
 #include "PlatformString.h"
 
 namespace WebCore {
@@ -157,6 +159,17 @@ HRESULT WCDataObject::createInstance(WCDataObject** result)
     if (!result)
         return E_POINTER;
     *result = new WCDataObject();
+    return S_OK;
+}
+
+HRESULT WCDataObject::createInstance(WCDataObject** result, const DragDataMap& dataMap)
+{
+    if (!result)
+        return E_POINTER;
+    *result = new WCDataObject;
+
+    for (DragDataMap::const_iterator it = dataMap.begin(); it != dataMap.end(); ++it)
+        setClipboardData(*result, it->first, it->second);
     return S_OK;
 }
 
@@ -379,6 +392,5 @@ void WCDataObject::clearData(CLIPFORMAT format)
         ptr++;
     }
 }
-
 
 }

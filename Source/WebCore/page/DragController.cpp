@@ -739,7 +739,7 @@ bool DragController::startDrag(Frame* src, Clipboard* clipboard, DragOperation s
 
         m_client->willPerformDragSourceAction(DragSourceActionLink, dragOrigin, clipboard);
         if (!dragImage) {
-            dragImage = m_client->createDragImageForLink(linkURL, dragSource.textContent(), src);
+            dragImage = createDragImageForLink(linkURL, dragSource.textContent(), src);
             IntSize size = dragImageSize(dragImage);
             m_dragOffset = IntPoint(-size.width() / 2, -LinkDragBorderInset);
             dragLoc = IntPoint(mouseDraggedPoint.x() + m_dragOffset.x(), mouseDraggedPoint.y() + m_dragOffset.y());

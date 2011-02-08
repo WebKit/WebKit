@@ -68,10 +68,4 @@ void DragClientWx::startDrag(DragImageRef dragImage,
     notImplemented();
 }
 
-DragImageRef DragClientWx::createDragImageForLink(KURL&, const String& label, Frame*)
-{
-    notImplemented();
-    return 0;
-}
-
 }

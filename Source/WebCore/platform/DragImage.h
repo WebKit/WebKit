@@ -96,6 +96,7 @@ namespace WebCore {
     DragImageRef createDragImageFromImage(Image*);
     DragImageRef createDragImageForSelection(Frame*);    
     DragImageRef createDragImageIconForCachedImage(CachedImage*);
+    DragImageRef createDragImageForLink(KURL&, const String& label, Frame*);
     void deleteDragImage(DragImageRef);
 }
 

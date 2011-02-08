@@ -151,12 +151,6 @@ void DragClient::drawDragIconWindow(GtkWidget* widget, cairo_t* context)
     cairo_fill(context);
 }
 
-DragImageRef DragClient::createDragImageForLink(KURL&, const String&, Frame*)
-{
-    notImplemented();
-    return 0;
-}
-
 void DragClient::dragControllerDestroyed()
 {
     delete this;

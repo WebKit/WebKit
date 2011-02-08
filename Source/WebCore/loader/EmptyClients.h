@@ -552,7 +552,6 @@ public:
     virtual DragDestinationAction actionMaskForDrag(DragData*) { return DragDestinationActionNone; }
     virtual DragSourceAction dragSourceActionMaskForPoint(const IntPoint&) { return DragSourceActionNone; }
     virtual void startDrag(DragImageRef, const IntPoint&, const IntPoint&, Clipboard*, Frame*, bool) { }
-    virtual DragImageRef createDragImageForLink(KURL&, const String&, Frame*) { return 0; }
     virtual void dragControllerDestroyed() { }
 };
 #endif // ENABLE(DRAG_SUPPORT)

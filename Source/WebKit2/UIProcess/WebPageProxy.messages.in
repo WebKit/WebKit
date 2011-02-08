@@ -200,4 +200,7 @@ messages -> WebPageProxy {
 #if PLATFORM(MAC)
     SetDragImage(WebCore::IntPoint clientPosition, WebCore::IntSize imageSize, WebKit::SharedMemory::Handle dragImage, bool linkDrag)
 #endif
+#if PLATFORM(WIN)
+    StartDragDrop(WebCore::IntPoint imagePoint, WebCore::IntPoint dragPoint, uint64_t okEffect, HashMap<UINT,Vector<String> > dataMap, WebCore::IntSize dragImageSize, WebKit::SharedMemory::Handle dragImage, bool linkDrag)
+#endif
 }

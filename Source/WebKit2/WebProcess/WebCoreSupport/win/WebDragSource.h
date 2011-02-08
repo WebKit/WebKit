@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2011 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <WebCore/DragClient.h>
+#ifndef WebDragSource_h
+#define WebDragSource_h
 
-@class WebView;
+#include <WTF/RefCounted.h>
+#include <WebCore/COMPtr.h>
+#include <objidl.h>
 
-class WebDragClient : public WebCore::DragClient {
+class WebDragSource : public IDropSource, public RefCounted<WebDragSource> {
 public:
-    WebDragClient(WebView*);
-    virtual void willPerformDragDestinationAction(WebCore::DragDestinationAction, WebCore::DragData*);
-    virtual void willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::Clipboard*);
-    virtual WebCore::DragDestinationAction actionMaskForDrag(WebCore::DragData*);
-    virtual void dragControllerDestroyed();
-    virtual WebCore::DragSourceAction dragSourceActionMaskForPoint(const WebCore::IntPoint& windowPoint);
-    virtual void startDrag(WebCore::DragImageRef dragImage, const WebCore::IntPoint& dragPos, const WebCore::IntPoint& eventPos, WebCore::Clipboard*, WebCore::Frame*, bool linkDrag);
-    virtual void declareAndWriteDragImage(NSPasteboard*, DOMElement*, NSURL*, NSString*, WebCore::Frame*);
+    static PassRefPtr<WebDragSource> createInstance();
+
 private:
-    WebView* m_webView;
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);        
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
+    virtual HRESULT STDMETHODCALLTYPE QueryContinueDrag(BOOL fEscapePressed, DWORD grfState);
+    virtual HRESULT STDMETHODCALLTYPE GiveFeedback(DWORD dwEffect);
+    WebDragSource();
 };
+
+#endif // !WebDragSource_h

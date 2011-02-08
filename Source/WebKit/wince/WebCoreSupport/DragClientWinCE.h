@@ -38,7 +38,6 @@ public:
     virtual WebCore::DragSourceAction dragSourceActionMaskForPoint(const WebCore::IntPoint&);
 
     virtual void startDrag(WebCore::DragImageRef, const WebCore::IntPoint&, const WebCore::IntPoint&, WebCore::Clipboard*, WebCore::Frame*, bool = false);
-    virtual WebCore::DragImageRef createDragImageForLink(WebCore::KURL&, const WTF::String&, WebCore::Frame*);
 
     virtual void dragControllerDestroyed();
 };

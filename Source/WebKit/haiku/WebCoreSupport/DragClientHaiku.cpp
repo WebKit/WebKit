@@ -64,11 +64,5 @@ void DragClientHaiku::startDrag(DragImageRef dragImage, const IntPoint&, const I
     notImplemented();
 }
 
-DragImageRef DragClientHaiku::createDragImageForLink(KURL&, const String&, Frame*)
-{
-    notImplemented();
-    return 0;
-}
-
 } // namespace WebCore
 

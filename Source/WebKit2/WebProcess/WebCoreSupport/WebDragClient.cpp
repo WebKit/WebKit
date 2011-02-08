@@ -51,15 +51,9 @@ DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const IntPoint& win
     return DragSourceActionAny;
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(MAC) && !PLATFORM(WIN)
 void WebDragClient::startDrag(DragImageRef, const IntPoint&, const IntPoint&, Clipboard*, Frame*, bool)
 {
-}
-
-DragImageRef WebDragClient::createDragImageForLink(KURL&, const String&, Frame*)
-{
-    notImplemented();
-    return 0;
 }
 #endif
 
