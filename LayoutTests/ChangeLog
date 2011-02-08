@@ -1,3 +1,20 @@
+2011-02-07  Ami Fischman  <fischman@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Re-baseline media/video-zoom.html for http://crbug.com/70252 aka
+        https://bugs.webkit.org/show_bug.cgi?id=53737 to account for (very)
+        slightly different scrollbar shading.
+        This test isn't flaky on LINUX or MAC according to
+        http://test-results.appspot.com/dashboards/flakiness_dashboard.html#showExpectations=true&showAllRuns=true&master=ChromiumWebkit&tests=media%2Fvideo-zoom.html
+        so take it out of test_expectations.txt; it passes 100% on LINUX and
+        fails 100% on MAC, and should pass 100% on MAC with this new
+        baseline.
+
+        * platform/chromium-mac/media/video-zoom-expected.checksum:
+        * platform/chromium-mac/media/video-zoom-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-02-07  James Robinson  <jamesr@chromium.org>
 
         Move sputnik expectations to match test movement.

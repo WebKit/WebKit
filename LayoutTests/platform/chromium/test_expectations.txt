@@ -819,7 +819,6 @@ BUGCR59675 BUGCR59263 SKIP : media/event-attributes.html = PASS FAIL TIMEOUT
 BUGCR50438 BUGCR20187 : media/controls-drag-timebar.html = PASS FAIL
 
 // These tests are flaky with subtle pixel differences.
-BUGCR70252 LINUX MAC : media/video-zoom.html = IMAGE PASS
 BUGCR60744 LINUX : media/video-layer-crash.html = IMAGE PASS
 
 // Behavior was changed by WebKit roll 69035:69062.
