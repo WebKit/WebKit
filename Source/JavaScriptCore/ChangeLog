@@ -1,3 +1,12 @@
+2011-02-08  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Should not always define USE_SYSTEM_MALLOC
+        https://bugs.webkit.org/show_bug.cgi?id=54007
+
+        * wtf/Platform.h:
+
 2011-02-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.
