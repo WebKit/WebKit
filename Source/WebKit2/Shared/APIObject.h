@@ -87,6 +87,7 @@ public:
         TypeBundleFrame,
         TypeBundleHitTestResult,
         TypeBundleInspector,
+        TypeBundleNavigationAction,
         TypeBundleNodeHandle,
         TypeBundlePage,
         TypeBundlePageGroup,

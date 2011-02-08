@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,46 +24,49 @@
  */
 
 #include "config.h"
-#include "WebPolicyClient.h"
+#include "InjectedBundlePagePolicyClient.h"
 
-#include "WKAPICast.h"
+#include "WKBundleAPICast.h"
 #include "WebURLRequest.h"
 
 using namespace WebCore;
 
 namespace WebKit {
 
-bool WebPolicyClient::decidePolicyForNavigationAction(WebPageProxy* page, WebFrameProxy* frame, NavigationType type, WebEvent::Modifiers modifiers, WebMouseEvent::Button mouseButton, const ResourceRequest& resourceRequest, WebFramePolicyListenerProxy* listener, APIObject* userData)
+void InjectedBundlePagePolicyClient::decidePolicyForNavigationAction(WebPage* page, WebFrame* frame, InjectedBundleNavigationAction* action, const ResourceRequest& resourceRequest, RefPtr<APIObject>& userData)
 {
     if (!m_client.decidePolicyForNavigationAction)
-        return false;
+        return;
 
     RefPtr<WebURLRequest> request = WebURLRequest::create(resourceRequest);
 
-    m_client.decidePolicyForNavigationAction(toAPI(page), toAPI(frame), toAPI(type), toAPI(modifiers), toAPI(mouseButton), toAPI(request.get()), toAPI(listener), toAPI(userData), m_client.clientInfo);
-    return true;
+    WKTypeRef userDataToPass = 0;
+    m_client.decidePolicyForNavigationAction(toAPI(page), toAPI(frame), toAPI(action), toAPI(request.get()), &userDataToPass, m_client.clientInfo);
+    userData = adoptRef(toImpl(userDataToPass));
 }
 
-bool WebPolicyClient::decidePolicyForNewWindowAction(WebPageProxy* page, WebFrameProxy* frame, NavigationType type, WebEvent::Modifiers modifiers, WebMouseEvent::Button mouseButton, const ResourceRequest& resourceRequest, const String& frameName, WebFramePolicyListenerProxy* listener, APIObject* userData)
+void InjectedBundlePagePolicyClient::decidePolicyForNewWindowAction(WebPage* page, WebFrame* frame, InjectedBundleNavigationAction* action, const ResourceRequest& resourceRequest, const String& frameName, RefPtr<APIObject>& userData)
 {
     if (!m_client.decidePolicyForNewWindowAction)
-        return false;
+        return;
 
     RefPtr<WebURLRequest> request = WebURLRequest::create(resourceRequest);
 
-    m_client.decidePolicyForNewWindowAction(toAPI(page), toAPI(frame), toAPI(type), toAPI(modifiers), toAPI(mouseButton), toAPI(request.get()), toAPI(frameName.impl()), toAPI(listener), toAPI(userData), m_client.clientInfo);
-    return true;
+    WKTypeRef userDataToPass = 0;
+    m_client.decidePolicyForNewWindowAction(toAPI(page), toAPI(frame), toAPI(action), toAPI(request.get()), toAPI(frameName.impl()), &userDataToPass, m_client.clientInfo);
+    userData = adoptRef(toImpl(userDataToPass));
 }
 
-bool WebPolicyClient::decidePolicyForMIMEType(WebPageProxy* page, WebFrameProxy* frame, const String& MIMEType, const ResourceRequest& resourceRequest, WebFramePolicyListenerProxy* listener, APIObject* userData)
+void InjectedBundlePagePolicyClient::decidePolicyForMIMEType(WebPage* page, WebFrame* frame, const String& MIMEType, const ResourceRequest& resourceRequest, RefPtr<APIObject>& userData)
 {
     if (!m_client.decidePolicyForMIMEType)
-        return false;
+        return;
 
     RefPtr<WebURLRequest> request = WebURLRequest::create(resourceRequest);
 
-    m_client.decidePolicyForMIMEType(toAPI(page), toAPI(frame), toAPI(MIMEType.impl()), toAPI(request.get()), toAPI(listener), toAPI(userData), m_client.clientInfo);
-    return true;
+    WKTypeRef userDataToPass = 0;
+    m_client.decidePolicyForMIMEType(toAPI(page), toAPI(frame), toAPI(MIMEType.impl()), toAPI(request.get()), &userDataToPass, m_client.clientInfo);
+    userData = adoptRef(toImpl(userDataToPass));
 }
 
 } // namespace WebKit

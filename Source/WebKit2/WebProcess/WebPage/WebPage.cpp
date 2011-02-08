@@ -255,6 +255,11 @@ void WebPage::initializeInjectedBundleLoaderClient(WKBundlePageLoaderClient* cli
     m_loaderClient.initialize(client);
 }
 
+void WebPage::initializeInjectedBundlePolicyClient(WKBundlePagePolicyClient* client)
+{
+    m_policyClient.initialize(client);
+}
+
 void WebPage::initializeInjectedBundleResourceLoadClient(WKBundlePageResourceLoadClient* client)
 {
     m_resourceLoadClient.initialize(client);

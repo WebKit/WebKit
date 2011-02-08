@@ -31,6 +31,7 @@
 
 #include "AuthenticationManager.h"
 #include "DataReference.h"
+#include "InjectedBundleNavigationAction.h"
 #include "InjectedBundleUserMessageCoders.h"
 #include "PlatformCertificateInfo.h"
 #include "PluginView.h"
@@ -575,44 +576,6 @@ void WebFrameLoaderClient::dispatchShow()
     webPage->show();
 }
 
-uint32_t modifiersForNavigationAction(const NavigationAction& navigationAction)
-{
-    uint32_t modifiers = 0;
-    if (const UIEventWithKeyState* keyStateEvent = findEventWithKeyState(const_cast<Event*>(navigationAction.event()))) {
-        if (keyStateEvent->shiftKey())
-            modifiers |= WebEvent::ShiftKey;
-        if (keyStateEvent->ctrlKey())
-            modifiers |= WebEvent::ControlKey;
-        if (keyStateEvent->altKey())
-            modifiers |= WebEvent::AltKey;
-        if (keyStateEvent->metaKey())
-            modifiers |= WebEvent::MetaKey;
-    }
-
-    return modifiers;
-}
-
-static const MouseEvent* findMouseEvent(const Event* event)
-{
-    for (const Event* e = event; e; e = e->underlyingEvent()) {
-        if (e->isMouseEvent())
-            return static_cast<const MouseEvent*>(e);
-    }
-    return 0;
-}
-
-int32_t mouseButtonForNavigationAction(const NavigationAction& navigationAction)
-{
-    const MouseEvent* mouseEvent = findMouseEvent(navigationAction.event());
-    if (!mouseEvent)
-        return -1;
-
-    if (!mouseEvent->buttonDown())
-        return -1;
-
-    return mouseEvent->button();
-}
-
 void WebFrameLoaderClient::dispatchDecidePolicyForMIMEType(FramePolicyFunction function, const String& MIMEType, const ResourceRequest& request)
 {
     if (m_frame->coreFrame()->loader()->documentLoader()->url().isEmpty() && request.url() == blankURL()) {
@@ -626,15 +589,21 @@ void WebFrameLoaderClient::dispatchDecidePolicyForMIMEType(FramePolicyFunction f
     if (!webPage)
         return;
 
-    uint64_t listenerID = m_frame->setUpPolicyListener(function);
-    const String& url = request.url().string(); // FIXME: Pass entire request.
-    if (!url)
+    if (!request.url().string())
         return;
 
+    RefPtr<APIObject> userData;
+
+    // Notify the bundle client.
+    webPage->injectedBundlePolicyClient().decidePolicyForMIMEType(webPage, m_frame, MIMEType, request, userData);
+
+    uint64_t listenerID = m_frame->setUpPolicyListener(function);
     bool receivedPolicyAction;
     uint64_t policyAction;
     uint64_t downloadID;
-    if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForMIMEType(m_frame->frameID(), MIMEType, url, listenerID), Messages::WebPageProxy::DecidePolicyForMIMEType::Reply(receivedPolicyAction, policyAction, downloadID)))
+
+    // Notify the UIProcess.
+    if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForMIMEType(m_frame->frameID(), MIMEType, request, listenerID, InjectedBundleUserMessageEncoder(userData.get())), Messages::WebPageProxy::DecidePolicyForMIMEType::Reply(receivedPolicyAction, policyAction, downloadID)))
         return;
 
     // We call this synchronously because CFNetwork can only convert a loading connection to a download from its didReceiveResponse callback.
@@ -642,26 +611,27 @@ void WebFrameLoaderClient::dispatchDecidePolicyForMIMEType(FramePolicyFunction f
         m_frame->didReceivePolicyDecision(listenerID, static_cast<PolicyAction>(policyAction), downloadID);
 }
 
-void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const NavigationAction& navigationAction, const ResourceRequest& request, PassRefPtr<FormState>, const String& frameName)
+void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const NavigationAction& navigationAction, const ResourceRequest& request, PassRefPtr<FormState> formState, const String& frameName)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
         return;
 
+    RefPtr<APIObject> userData;
+
+    RefPtr<InjectedBundleNavigationAction> action = InjectedBundleNavigationAction::create(m_frame, navigationAction, formState);
+
+    // Notify the bundle client.
+    webPage->injectedBundlePolicyClient().decidePolicyForNewWindowAction(webPage, m_frame, action.get(), request, frameName, userData);
+
+
     uint64_t listenerID = m_frame->setUpPolicyListener(function);
 
-    // FIXME: Pass more than just the navigation action type.
-    // FIXME: Pass the frame name.
-    const String& url = request.url().string(); // FIXME: Pass entire request.
-
-    uint32_t navigationType = static_cast<uint32_t>(navigationAction.type());
-    uint32_t modifiers = modifiersForNavigationAction(navigationAction);
-    int32_t mouseButton = mouseButtonForNavigationAction(navigationAction);
-
-    webPage->send(Messages::WebPageProxy::DecidePolicyForNewWindowAction(m_frame->frameID(), navigationType, modifiers, mouseButton, url, listenerID));
+    // Notify the UIProcess.
+    webPage->send(Messages::WebPageProxy::DecidePolicyForNewWindowAction(m_frame->frameID(), action->navigationType(), action->modifiers(), action->mouseButton(), request, frameName, listenerID, InjectedBundleUserMessageEncoder(userData.get())));
 }
 
-void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunction function, const NavigationAction& navigationAction, const ResourceRequest& request, PassRefPtr<FormState>)
+void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunction function, const NavigationAction& navigationAction, const ResourceRequest& request, PassRefPtr<FormState> formState)
 {
     if (m_frame->coreFrame()->loader()->documentLoader()->url().isEmpty() && request.url() == blankURL()) {
         // WebKit2 loads initial about:blank documents synchronously, without consulting the policy delegate
@@ -675,23 +645,24 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFu
         (m_frame->coreFrame()->loader()->policyChecker()->*function)(PolicyIgnore);
         return;
     }
-    
+
     WebPage* webPage = m_frame->page();
     if (!webPage)
         return;
 
+    RefPtr<APIObject> userData;
+
+    RefPtr<InjectedBundleNavigationAction> action = InjectedBundleNavigationAction::create(m_frame, navigationAction, formState);
+
+    // Notify the bundle client.
+    webPage->injectedBundlePolicyClient().decidePolicyForNavigationAction(webPage, m_frame, action.get(), request, userData);
+
     uint64_t listenerID = m_frame->setUpPolicyListener(function);
-
-    // FIXME: Pass more than just the navigation action type.
-    const String& url = request.url().string(); // FIXME: Pass entire request.
-
-    uint32_t navigationType = static_cast<uint32_t>(navigationAction.type());
-    uint32_t modifiers = modifiersForNavigationAction(navigationAction);
-    int32_t mouseButton = mouseButtonForNavigationAction(navigationAction);
-    
     bool receivedPolicyAction;
     uint64_t policyAction;
-    if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationAction(m_frame->frameID(), navigationType, modifiers, mouseButton, url, listenerID), Messages::WebPageProxy::DecidePolicyForNavigationAction::Reply(receivedPolicyAction, policyAction)))
+
+    // Notify the UIProcess.
+    if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationAction(m_frame->frameID(), action->navigationType(), action->modifiers(), action->mouseButton(), request, listenerID, InjectedBundleUserMessageEncoder(userData.get())), Messages::WebPageProxy::DecidePolicyForNavigationAction::Reply(receivedPolicyAction, policyAction)))
         return;
 
     // We call this synchronously because WebCore cannot gracefully handle a frame load without a synchronous navigation policy reply.

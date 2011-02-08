@@ -45,6 +45,7 @@ class InjectedBundle;
 class InjectedBundleBackForwardList;
 class InjectedBundleBackForwardListItem;
 class InjectedBundleHitTestResult;
+class InjectedBundleNavigationAction;
 class InjectedBundleNodeHandle;
 class InjectedBundleRangeHandle;
 class InjectedBundleScriptWorld;
@@ -60,6 +61,7 @@ WK_ADD_API_MAPPING(WKBundleCSSStyleDeclarationRef, WebCore::CSSStyleDeclaration)
 WK_ADD_API_MAPPING(WKBundleFrameRef, WebFrame)
 WK_ADD_API_MAPPING(WKBundleHitTestResultRef, InjectedBundleHitTestResult)
 WK_ADD_API_MAPPING(WKBundleInspectorRef, WebInspector)
+WK_ADD_API_MAPPING(WKBundleNavigationActionRef, InjectedBundleNavigationAction)
 WK_ADD_API_MAPPING(WKBundleNodeHandleRef, InjectedBundleNodeHandle)
 WK_ADD_API_MAPPING(WKBundlePageGroupRef, WebPageGroupProxy)
 WK_ADD_API_MAPPING(WKBundlePageOverlayRef, PageOverlay)

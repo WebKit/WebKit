@@ -1,3 +1,20 @@
+2011-02-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WK2: Add ability to pass context to policy delegate methods
+        https://bugs.webkit.org/show_bug.cgi?id=54031
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (decidePolicyForNavigationAction):
+        (decidePolicyForNewWindowAction):
+        (decidePolicyForMIMEType):
+        * TestWebKitAPI/Tests/WebKit2/PageLoadBasic.cpp:
+        (TestWebKitAPI::decidePolicyForNavigationAction):
+        (TestWebKitAPI::decidePolicyForNewWindowAction):
+        (TestWebKitAPI::decidePolicyForMIMEType):
+        Update policy client for new API.
+
 2011-02-08  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

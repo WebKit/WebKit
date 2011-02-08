@@ -79,6 +79,13 @@ void WKBundlePageSetResourceLoadClient(WKBundlePageRef pageRef, WKBundlePageReso
     toImpl(pageRef)->initializeInjectedBundleResourceLoadClient(wkClient);
 }
 
+void WKBundlePageSetPolicyClient(WKBundlePageRef pageRef, WKBundlePagePolicyClient* wkClient)
+{
+    if (wkClient && wkClient->version)
+        return;
+    toImpl(pageRef)->initializeInjectedBundlePolicyClient(wkClient);
+}
+
 void WKBundlePageSetUIClient(WKBundlePageRef pageRef, WKBundlePageUIClient* wkClient)
 {
     if (wkClient && wkClient->version)

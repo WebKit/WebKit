@@ -1802,6 +1802,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\WebProcess\InjectedBundle\InjectedBundleNavigationAction.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\InjectedBundle\InjectedBundleNavigationAction.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\InjectedBundle\InjectedBundlePageContextMenuClient.cpp"
 					>
 				</File>
@@ -1831,6 +1839,14 @@
 				</File>
 				<File
 					RelativePath="..\WebProcess\InjectedBundle\InjectedBundlePageLoaderClient.h"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\InjectedBundle\InjectedBundlePagePolicyClient.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\InjectedBundle\InjectedBundlePagePolicyClient.h"
 					>
 				</File>
 				<File
@@ -1925,6 +1941,14 @@
 						</File>
 						<File
 							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleInspector.h"
+							>
+						</File>
+						<File
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleNavigationAction.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleNavigationAction.h"
 							>
 						</File>
 						<File

@@ -31,6 +31,7 @@
 #include "NotImplemented.h"
 
 #include "DrawingArea.h"
+#include "InjectedBundleNavigationAction.h"
 #include "InjectedBundleUserMessageCoders.h"
 #include "WebContextMenu.h"
 #include "WebCoreArgumentCoders.h"
@@ -153,8 +154,8 @@ void WebChromeClient::focusedFrameChanged(Frame* frame)
 
 Page* WebChromeClient::createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures& windowFeatures, const NavigationAction& navigationAction)
 {
-    uint32_t modifiers = modifiersForNavigationAction(navigationAction);
-    int32_t mouseButton = mouseButtonForNavigationAction(navigationAction);
+    uint32_t modifiers = static_cast<uint32_t>(InjectedBundleNavigationAction::modifiersForNavigationAction(navigationAction));
+    int32_t mouseButton = static_cast<int32_t>(InjectedBundleNavigationAction::mouseButtonForNavigationAction(navigationAction));
 
     uint64_t newPageID = 0;
     WebPageCreationParameters parameters;

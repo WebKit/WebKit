@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPolicyClient_h
-#define WebPolicyClient_h
+#ifndef WKBundleNavigationAction_h
+#define WKBundleNavigationAction_h
 
-#include "APIClient.h"
-#include "APIObject.h"
-#include "WKPage.h"
-#include "WebEvent.h"
-#include <WebCore/FrameLoaderTypes.h>
-#include <wtf/Forward.h>
+#include <WebKit2/WKBase.h>
+#include <WebKit2/WKEvent.h>
+#include <WebKit2/WKPageLoadTypes.h>
 
-namespace WebCore {
-    class ResourceRequest;
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+WK_EXPORT WKTypeID WKBundleNavigationActionGetTypeID();
+
+WK_EXPORT WKFrameNavigationType WKBundleNavigationActionGetNavigationType(WKBundleNavigationActionRef navigationAction);
+WK_EXPORT WKEventModifiers WKBundleNavigationActionGetEventModifiers(WKBundleNavigationActionRef navigationAction);
+WK_EXPORT WKEventMouseButton WKBundleNavigationActionGetEventMouseButton(WKBundleNavigationActionRef navigationAction);
+WK_EXPORT WKBundleHitTestResultRef WKBundleNavigationActionCopyHitTestResult(WKBundleNavigationActionRef navigationAction);
+WK_EXPORT WKBundleNodeHandleRef WKBundleNavigationActionCopyFormElement(WKBundleNavigationActionRef navigationAction);
+
+#ifdef __cplusplus
 }
+#endif
 
-namespace WebKit {
-
-class WebPageProxy;
-class WebFrameProxy;
-class WebFramePolicyListenerProxy;
-
-class WebPolicyClient : public APIClient<WKPagePolicyClient> {
-public:
-    bool decidePolicyForNavigationAction(WebPageProxy*, WebFrameProxy*, WebCore::NavigationType, WebEvent::Modifiers, WebMouseEvent::Button, const WebCore::ResourceRequest&, WebFramePolicyListenerProxy*, APIObject* userData);
-    bool decidePolicyForNewWindowAction(WebPageProxy*, WebFrameProxy*, WebCore::NavigationType, WebEvent::Modifiers, WebMouseEvent::Button, const WebCore::ResourceRequest&, const String& frameName, WebFramePolicyListenerProxy*, APIObject* userData);
-    bool decidePolicyForMIMEType(WebPageProxy*, WebFrameProxy*, const String& MIMEType, const WebCore::ResourceRequest&, WebFramePolicyListenerProxy*, APIObject* userData);
-};
-
-} // namespace WebKit
-
-#endif // WebPolicyClient_h
+#endif /* WKBundleNavigationAction_h */

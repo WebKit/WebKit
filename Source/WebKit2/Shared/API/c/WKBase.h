@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -94,14 +94,13 @@ typedef const struct OpaqueWKBundleDOMCSSStyleDeclaration* WKBundleCSSStyleDecla
 typedef const struct OpaqueWKBundleFrame* WKBundleFrameRef;
 typedef const struct OpaqueWKBundleHitTestResult* WKBundleHitTestResultRef;
 typedef const struct OpaqueWKBundleInspector* WKBundleInspectorRef;
+typedef const struct OpaqueWKBundleNavigationAction* WKBundleNavigationActionRef;
 typedef const struct OpaqueWKBundleNodeHandle* WKBundleNodeHandleRef;
 typedef const struct OpaqueWKBundlePage* WKBundlePageRef;
 typedef const struct OpaqueWKBundlePageGroup* WKBundlePageGroupRef;
 typedef const struct OpaqueWKBundlePageOverlay* WKBundlePageOverlayRef;
 typedef const struct OpaqueWKBundleRangeHandle* WKBundleRangeHandleRef;
 typedef const struct OpaqueWKBundleScriptWorld* WKBundleScriptWorldRef;
-
-/* These rules should stay the same as in JavaScriptCore/API/JSBase.h */
 
 #undef WK_EXPORT
 #if defined(WK_NO_EXPORT)

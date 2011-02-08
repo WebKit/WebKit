@@ -67,9 +67,9 @@ messages -> WebPageProxy {
 #endif
 
     # Policy messages
-    DecidePolicyForMIMEType(uint64_t frameID, WTF::String MIMEType, WTF::String url, uint64_t listenerID) -> (bool receivedPolicyAction, uint64_t policyAction, uint64_t downloadID)
-    DecidePolicyForNavigationAction(uint64_t frameID, uint32_t navigationType, uint32_t modifiers, int32_t mouseButton, WTF::String url, uint64_t listenerID) -> (bool receivedPolicyAction, uint64_t policyAction)
-    DecidePolicyForNewWindowAction(uint64_t frameID, uint32_t navigationType, uint32_t modifiers, int32_t mouseButton, WTF::String url, uint64_t listenerID)
+    DecidePolicyForMIMEType(uint64_t frameID, WTF::String MIMEType, WebCore::ResourceRequest request, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData) -> (bool receivedPolicyAction, uint64_t policyAction, uint64_t downloadID)
+    DecidePolicyForNavigationAction(uint64_t frameID, uint32_t navigationType, uint32_t modifiers, int32_t mouseButton, WebCore::ResourceRequest request, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData) -> (bool receivedPolicyAction, uint64_t policyAction)
+    DecidePolicyForNewWindowAction(uint64_t frameID, uint32_t navigationType, uint32_t modifiers, int32_t mouseButton, WebCore::ResourceRequest request, WTF::String frameName, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData)
 
     # Progress messages
     DidChangeProgress(double value)

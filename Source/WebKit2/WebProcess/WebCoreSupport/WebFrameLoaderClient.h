@@ -222,9 +222,6 @@ private:
     bool m_frameHasCustomRepresentation;
 };
 
-uint32_t modifiersForNavigationAction(const WebCore::NavigationAction&);
-int32_t mouseButtonForNavigationAction(const WebCore::NavigationAction&);
-
 } // namespace WebKit
 
 #endif // WebFrameLoaderClient_h

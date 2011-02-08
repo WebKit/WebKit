@@ -375,9 +375,13 @@ def async_case_statement(receiver, message):
 
 
 def sync_case_statement(receiver, message):
+    dispatch_function = 'handleMessage'
+    if message.is_variadic:
+        dispatch_function += 'Variadic'
+
     result = []
     result.append('    case Messages::%s::%s:\n' % (receiver.name, message.id()))
-    result.append('        CoreIPC::handleMessage<Messages::%s::%s>(arguments, reply, this, &%s);\n' % (receiver.name, message.name, handler_function(receiver, message)))
+    result.append('        CoreIPC::%s<Messages::%s::%s>(arguments, reply, this, &%s);\n' % (dispatch_function, receiver.name, message.name, handler_function(receiver, message)))
     # FIXME: Handle delayed replies
     result.append('        return CoreIPC::AutomaticReply;\n')
     return surround_in_condition(''.join(result), message.condition)
