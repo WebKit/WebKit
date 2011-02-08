@@ -1435,7 +1435,7 @@ BUGCR10426 LINUX : fast/lists/drag-into-marker.html = FAIL
 BUGCR10429 LINUX : css2.1/t100801-c544-valgn-01-d-ag.html = FAIL
 
 // New failures from Merge 41078:41149
-BUGCR10430 LINUX : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE+TEXT
+BUGCR10430 : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE+TEXT
 
 // Flakey. Not clear when it started, but it was before 3/9/09.
 // This test also started failing with the merge of March 25th 2009
@@ -1874,9 +1874,6 @@ BUGCR33358 WIN LINUX : fast/dom/Window/window-postmessage-clone-frames.html = TE
 BUGCR33538 : fast/dom/Window/anonymous-slot-with-changes.html = TEXT
 
 BUGCR35064 WIN : fast/forms/restore-selection-after-layout.html = TEXT PASS
-
-// WebKit roll 54482 to 54493.
-BUGCR35242 WIN : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE+TEXT
 
 // WebKit roll 54493 to 54530: new tests.
 BUGCR35114 : fast/js/parser-syntax-check.html = TEXT
@@ -3022,7 +3019,7 @@ BUGRNIWA SLOW WIN : editing/execCommand/4786404-1.html = PASS
 BUGCR71013 LINUX : fast/text/justify-ideograph-vertical.html = CRASH IMAGE+TEXT
 
 // Started failing at http://trac.webkit.org/changeset/76743
-BUGCR71022 WIN LINUX : fast/text/justify-ideograph-complex.html = IMAGE+TEXT
+BUGCR71022 : fast/text/justify-ideograph-complex.html = IMAGE+TEXT
 BUGCR71022 WIN LINUX : fast/text/justify-ideograph-simple.html = IMAGE+TEXT
 BUGCR71022 WIN : fast/text/justify-ideograph-vertical.html = IMAGE+TEXT
 
