@@ -1,3 +1,20 @@
+2011-02-03  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Should implement EditorClientImpl::requestCheckingOfString()
+        https://bugs.webkit.org/show_bug.cgi?id=51013
+
+        Gave DRT implementation for requestTextCheck().
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::setAsynchronousSpellCheckingEnabled): Implemented.
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (invokeFinishLastTextCheck): Added.
+        (WebViewHost::requestTextCheck): Added.
+        (WebViewHost::finishLastTextCheck): Added.
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2011-02-07  Joone Hur  <joone.hur@collabora.co.uk>
 
         Reviewed by Martin Robinson.

@@ -97,6 +97,7 @@ public:
     virtual void setAccelerated2dCanvasEnabled(bool);
     virtual void setMemoryInfoEnabled(bool);
     virtual void setHyperlinkAuditingEnabled(bool);
+    virtual void setAsynchronousSpellCheckingEnabled(bool);
     virtual void setCaretBrowsingEnabled(bool);
     virtual void setInteractiveFormValidationEnabled(bool);
 

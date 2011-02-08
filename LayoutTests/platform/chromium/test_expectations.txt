@@ -2180,10 +2180,6 @@ BUGWK41311 WIN LINUX : fast/borders/borderRadiusDouble07.html = IMAGE
 BUGWK41311 WIN LINUX : fast/borders/borderRadiusDouble08.html = IMAGE
 BUGWK41311 WIN LINUX : fast/borders/borderRadiusDouble09.html = IMAGE
 
-// Need to implement EditorClient::requestCheckingOfString()
-// Overriden with 66682
-// BUGWK41423 WIN LINUX : editing/spelling/spellcheck-paste.html = TEXT
-
 // Flaky tests.
 BUGCR44345 LINUX : svg/zoom/text/zoom-hixie-mixed-009.xml = IMAGE PASS
 BUGCR44346 LINUX : svg/zoom/page/zoom-hixie-mixed-009.xml = IMAGE PASS
@@ -2873,7 +2869,6 @@ BUGCR66466 MAC WIN DEBUG SLOW : perf/array-nested-loop.html = PASS TEXT
 BUGCR66554 WIN DEBUG : fast/js/kde/encode_decode_uri.html = CRASH PASS
 
 BUGCR66683 WIN LINUX : fast/canvas/canvas-draw-canvas-on-canvas-shadow.html = TEXT
-BUGCR66682 WIN LINUX MAC : editing/spelling/spellcheck-paste.html = TEXT TIMEOUT
 BUGCR66686 : fast/loader/user-stylesheet-fast-path.html = TEXT
 
 BUGCR66751 : http/tests/local/link-stylesheet-load-order-preload.html = TEXT TIMEOUT PASS

@@ -126,6 +126,7 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void didEndEditing();
     virtual bool handleCurrentKeyboardEvent();
     virtual void spellCheck(const WebKit::WebString&, int& offset, int& length);
+    virtual void requestCheckingOfText(const WebKit::WebString&, WebKit::WebTextCheckingCompletion*);
     virtual WebKit::WebString autoCorrectWord(const WebKit::WebString&);
     virtual void runModalAlertDialog(WebKit::WebFrame*, const WebKit::WebString&);
     virtual bool runModalConfirmDialog(WebKit::WebFrame*, const WebKit::WebString&);
@@ -207,7 +208,10 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void openFileSystem(WebKit::WebFrame*, WebKit::WebFileSystem::Type, long long size, bool create, WebKit::WebFileSystemCallbacks*);
 
     WebKit::WebDeviceOrientationClientMock* deviceOrientationClientMock();
+    
+    // Spellcheck related helper APIs
     MockSpellCheck* mockSpellCheck();
+    void finishLastTextCheck();
 
     // Geolocation client mocks for LayoutTestController
     WebKit::WebGeolocationClientMock* geolocationClientMock();
@@ -320,6 +324,9 @@ private:
     OwnPtr<WebKit::WebSpeechInputControllerMock> m_speechInputControllerMock;
 
     OwnPtr<TestNavigationController*> m_navigationController;
+
+    WebKit::WebString m_lastRequestedTextCheckString;
+    WebKit::WebTextCheckingCompletion* m_lastRequestedTextCheckingCompletion;
 };
 
 #endif // WebViewHost_h

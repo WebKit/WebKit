@@ -627,9 +627,11 @@ void LayoutTestController::setAlwaysAcceptCookies(const CppArgumentList& argumen
     result->setNull();
 }
 
-void LayoutTestController::setAsynchronousSpellCheckingEnabled(const CppArgumentList&, CppVariant*)
+void LayoutTestController::setAsynchronousSpellCheckingEnabled(const CppArgumentList& arguments, CppVariant* result)
 {
-    // FIXME: Implement this.
+    if (arguments.size() > 0 && arguments[0].isBool())
+        m_shell->webView()->settings()->setAsynchronousSpellCheckingEnabled(cppVariantToBool(arguments[0]));
+    result->setNull();
 }
 
 void LayoutTestController::showWebInspector(const CppArgumentList&, CppVariant* result)

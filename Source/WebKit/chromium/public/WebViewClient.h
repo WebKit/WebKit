@@ -64,6 +64,7 @@ class WebRange;
 class WebSpeechInputController;
 class WebSpeechInputListener;
 class WebStorageNamespace;
+class WebTextCheckingCompletion;
 class WebURL;
 class WebURLRequest;
 class WebView;
@@ -178,7 +179,9 @@ public:
     // error, then upon return misspelledLength is 0.
     virtual void spellCheck(
         const WebString& text, int& misspelledOffset, int& misspelledLength) { }
-
+    // Requests asynchronous spelling and grammar checking, whose result should be
+    // returned by passed completion object.
+    virtual void requestCheckingOfText(const WebString&, WebTextCheckingCompletion*) { }
     // Computes an auto-corrected replacement for a misspelled word.  If no
     // replacement is found, then an empty string is returned.
     virtual WebString autoCorrectWord(const WebString& misspelledWord) { return WebString(); }

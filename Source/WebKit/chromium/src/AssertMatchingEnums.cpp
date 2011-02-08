@@ -36,6 +36,7 @@
 #include "AccessibilityObject.h"
 #include "ApplicationCacheHost.h"
 #include "AsyncFileSystem.h"
+#include "DocumentMarker.h"
 #include "EditorInsertAction.h"
 #include "FileError.h"
 #include "FileMetadata.h"
@@ -74,6 +75,7 @@
 #include "WebSettings.h"
 #include "WebTextAffinity.h"
 #include "WebTextCaseSensitivity.h"
+#include "WebTextCheckingResult.h"
 #include "WebVideoFrame.h"
 #include "WebView.h"
 #include <wtf/Assertions.h>
@@ -396,6 +398,9 @@ COMPILE_ASSERT_MATCHING_ENUM(WebFileErrorPathExists, FileError::PATH_EXISTS_ERR)
 
 COMPILE_ASSERT_MATCHING_ENUM(WebGeolocationError::ErrorPermissionDenied, GeolocationError::PermissionDenied);
 COMPILE_ASSERT_MATCHING_ENUM(WebGeolocationError::ErrorPositionUnavailable, GeolocationError::PositionUnavailable);
+
+COMPILE_ASSERT_MATCHING_ENUM(WebTextCheckingResult::ErrorSpelling, DocumentMarker::Spelling);
+COMPILE_ASSERT_MATCHING_ENUM(WebTextCheckingResult::ErrorGrammar, DocumentMarker::Grammar);
 
 #if OS(DARWIN)
 COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::StateDisabled, PlatformBridge::StateDisabled);

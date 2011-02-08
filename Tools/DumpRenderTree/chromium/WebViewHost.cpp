@@ -52,6 +52,8 @@
 #include "WebSize.h"
 #include "WebSpeechInputControllerMock.h"
 #include "WebStorageNamespace.h"
+#include "WebTextCheckingCompletion.h"
+#include "WebTextCheckingResult.h"
 #include "WebURLRequest.h"
 #include "WebURLResponse.h"
 #include "WebView.h"
@@ -60,6 +62,7 @@
 #include "webkit/support/webkit_support.h"
 #include <wtf/Assertions.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/Vector.h>
 
 using namespace WebCore;
 using namespace WebKit;
@@ -223,6 +226,12 @@ static string textAffinityDescription(WebTextAffinity affinity)
         return "NSSelectionAffinityDownstream";
     }
     return "(UNKNOWN AFFINITY)";
+}
+
+static void invokeFinishLastTextCheck(void* context)
+{
+    WebViewHost* wvh = static_cast<WebViewHost*>(context);
+    wvh->finishLastTextCheck();
 }
 
 // WebViewClient -------------------------------------------------------------
@@ -408,6 +417,35 @@ void WebViewHost::spellCheck(const WebString& text, int& misspelledOffset, int& 
     // Check the spelling of the given text.
     m_spellcheck.spellCheckWord(text, &misspelledOffset, &misspelledLength);
 }
+
+void WebViewHost::requestCheckingOfText(const WebString& text, WebTextCheckingCompletion* completion)
+{
+    m_lastRequestedTextCheckingCompletion = completion;
+    m_lastRequestedTextCheckString = text;
+    webkit_support::PostDelayedTask(invokeFinishLastTextCheck, static_cast<void*>(this), 0);
+}
+
+void WebViewHost::finishLastTextCheck()
+{
+    Vector<WebTextCheckingResult> results;
+    // FIXME: Do the grammar check.
+    int offset = 0;
+    String text(m_lastRequestedTextCheckString.data(), m_lastRequestedTextCheckString.length());
+    while (text.length()) {
+        int misspelledPosition = 0;
+        int misspelledLength = 0;
+        m_spellcheck.spellCheckWord(WebString(text.characters(), text.length()), &misspelledPosition, &misspelledLength);
+        if (!misspelledLength)
+            break;
+        results.append(WebTextCheckingResult(WebTextCheckingResult::ErrorSpelling, offset + misspelledPosition, misspelledLength));
+        text = text.substring(misspelledPosition + misspelledLength);
+        offset += misspelledPosition;
+    }
+
+    m_lastRequestedTextCheckingCompletion->didFinishCheckingText(results);
+    m_lastRequestedTextCheckingCompletion = 0;
+}
+
 
 WebString WebViewHost::autoCorrectWord(const WebString&)
 {
@@ -1115,6 +1153,7 @@ void WebViewHost::openFileSystem(WebFrame* frame, WebFileSystem::Type type, long
 WebViewHost::WebViewHost(TestShell* shell)
     : m_shell(shell)
     , m_webWidget(0)
+    , m_lastRequestedTextCheckingCompletion(0)
 {
     reset();
 }

@@ -329,6 +329,11 @@ void WebSettingsImpl::setHyperlinkAuditingEnabled(bool enabled)
     m_settings->setHyperlinkAuditingEnabled(enabled);
 }
 
+void WebSettingsImpl::setAsynchronousSpellCheckingEnabled(bool enabled)
+{
+    m_settings->setAsynchronousSpellCheckingEnabled(enabled);
+}
+
 void WebSettingsImpl::setCaretBrowsingEnabled(bool enabled)
 {
     m_settings->setCaretBrowsingEnabled(enabled);
