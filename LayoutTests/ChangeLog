@@ -1,3 +1,9 @@
+2011-02-08  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, typo fix.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-08  Martin Robinson  <mrobinson@igalia.com>
 
         Unskip some inspector tests that are passing locally. The bugs are
