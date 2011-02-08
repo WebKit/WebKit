@@ -1,3 +1,27 @@
+2011-02-07  Alexey Marinichev  <amarinichev@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Hook up WebGraphicsContext3D::setContextLostCallback.
+        https://bugs.webkit.org/show_bug.cgi?id=53722
+
+        Test: fast/canvas/webgl/context-lost.html, comment out the line with
+        extension.loseContext() and kill the GPU process "Lose context"
+        message shows up.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContextLostCallback::WebGLRenderingContextLostCallback):
+        (WebCore::WebGLRenderingContextLostCallback::onContextLost):
+        (WebCore::WebGLRenderingContextLostCallback::~WebGLRenderingContextLostCallback):
+        (WebCore::WebGLRenderingContext::initializeNewContext):
+        (WebCore::WebGLRenderingContext::~WebGLRenderingContext):
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore::GraphicsContext3D::ContextLostCallback::~ContextLostCallback):
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::setContextLostCallback): stub
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::setContextLostCallback): stub
+
 2011-02-07  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Eric Seidel.

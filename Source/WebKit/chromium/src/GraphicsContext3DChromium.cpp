@@ -1082,6 +1082,35 @@ DELEGATE_TO_INTERNAL_1(deleteTexture, Platform3DObject)
 DELEGATE_TO_INTERNAL_1(synthesizeGLError, GC3Denum)
 DELEGATE_TO_INTERNAL_R(getExtensions, Extensions3D*)
 
+DELEGATE_TO_INTERNAL_1(setContextLostCallback, PassOwnPtr<GraphicsContext3D::ContextLostCallback>)
+
+class GraphicsContextLostCallbackAdapter : public WebKit::WebGraphicsContext3D::WebGraphicsContextLostCallback {
+public:
+    virtual void onContextLost();
+    static PassOwnPtr<GraphicsContextLostCallbackAdapter> create(PassOwnPtr<GraphicsContext3D::ContextLostCallback>);
+    virtual ~GraphicsContextLostCallbackAdapter() {}
+private:
+    GraphicsContextLostCallbackAdapter(PassOwnPtr<GraphicsContext3D::ContextLostCallback> cb) : m_contextLostCallback(cb) {}
+    OwnPtr<GraphicsContext3D::ContextLostCallback> m_contextLostCallback;
+};
+
+void GraphicsContextLostCallbackAdapter::onContextLost()
+{
+    if (m_contextLostCallback)
+        m_contextLostCallback->onContextLost();
+}
+
+PassOwnPtr<GraphicsContextLostCallbackAdapter> GraphicsContextLostCallbackAdapter::create(PassOwnPtr<GraphicsContext3D::ContextLostCallback> cb)
+{
+    return adoptPtr(new GraphicsContextLostCallbackAdapter(cb));
+}
+
+void GraphicsContext3DInternal::setContextLostCallback(PassOwnPtr<GraphicsContext3D::ContextLostCallback> cb)
+{
+    m_contextLostCallbackAdapter = GraphicsContextLostCallbackAdapter::create(cb);
+    m_impl->setContextLostCallback(m_contextLostCallbackAdapter.get());
+}
+
 bool GraphicsContext3D::isGLES2Compliant() const
 {
     return m_internal->isGLES2Compliant();

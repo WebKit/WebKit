@@ -341,6 +341,15 @@ void WebGLRenderingContext::WebGLRenderingContextRestoreTimer::fired()
     }
 }
 
+class WebGLRenderingContextLostCallback : public GraphicsContext3D::ContextLostCallback {
+public:
+    WebGLRenderingContextLostCallback(WebGLRenderingContext* cb) : m_contextLostCallback(cb) {}
+    virtual void onContextLost() { m_contextLostCallback->forceLostContext(); }
+    virtual ~WebGLRenderingContextLostCallback() {}
+private:
+    WebGLRenderingContext* m_contextLostCallback;
+};
+
 PassOwnPtr<WebGLRenderingContext> WebGLRenderingContext::create(HTMLCanvasElement* canvas, WebGLContextAttributes* attrs)
 {
     HostWindow* hostWindow = canvas->document()->view()->root()->hostWindow();
@@ -416,6 +425,8 @@ void WebGLRenderingContext::initializeNewContext()
 
     m_context->reshape(canvas()->width(), canvas()->height());
     m_context->viewport(0, 0, canvas()->width(), canvas()->height());
+
+    m_context->setContextLostCallback(adoptPtr(new WebGLRenderingContextLostCallback(this)));
 }
 
 void WebGLRenderingContext::setupFlags()
@@ -437,6 +448,7 @@ void WebGLRenderingContext::setupFlags()
 WebGLRenderingContext::~WebGLRenderingContext()
 {
     detachAndRemoveAllObjects();
+    m_context->setContextLostCallback(0);
 }
 
 void WebGLRenderingContext::markContextChanged()

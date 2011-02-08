@@ -1647,6 +1647,10 @@ bool GraphicsContext3D::getImageData(Image* image,
                       format, type, neededAlphaOp, outputVector.data());
 }
 
+void GraphicsContext3D::setContextLostCallback(PassOwnPtr<ContextLostCallback>)
+{
+}
+
 }
 
 #endif // ENABLE(WEBGL)

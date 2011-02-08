@@ -454,6 +454,14 @@ public:
         RenderDirectlyToHostWindow
     };
 
+    class ContextLostCallback {
+    public:
+        virtual void onContextLost() = 0;
+        virtual ~ContextLostCallback() {}
+    };
+
+    void setContextLostCallback(PassOwnPtr<ContextLostCallback>);
+
     static PassRefPtr<GraphicsContext3D> create(Attributes, HostWindow*, RenderStyle = RenderOffscreen);
     ~GraphicsContext3D();
 

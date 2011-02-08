@@ -245,6 +245,10 @@ bool GraphicsContext3D::isGLES2Compliant() const
     return false;
 }
 
+void GraphicsContext3D::setContextLostCallback(PassOwnPtr<ContextLostCallback>)
+{
+}
+
 }
 
 #endif // ENABLE(WEBGL)

@@ -99,6 +99,7 @@ public:
     class WebGraphicsContextLostCallback {
     public:
         virtual void onContextLost() = 0;
+        virtual ~WebGraphicsContextLostCallback() {}
     };
 
     // This destructor needs to be public so that using classes can destroy instances if initialization fails.

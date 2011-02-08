@@ -44,6 +44,7 @@ class Extensions3DChromium;
 #if USE(ACCELERATED_COMPOSITING)
 class WebGLLayerChromium;
 #endif
+class GraphicsContextLostCallbackAdapter;
 
 class GraphicsContext3DInternal {
 public:
@@ -239,6 +240,8 @@ public:
 
     void synthesizeGLError(GC3Denum error);
 
+    void setContextLostCallback(PassOwnPtr<GraphicsContext3D::ContextLostCallback>);
+
     // Extensions3D support.
     Extensions3D* getExtensions();
     bool supportsExtension(const String& name);
@@ -265,6 +268,7 @@ public:
 private:
     OwnPtr<WebKit::WebGraphicsContext3D> m_impl;
     OwnPtr<Extensions3DChromium> m_extensions;
+    OwnPtr<GraphicsContextLostCallbackAdapter> m_contextLostCallbackAdapter;
     WebKit::WebViewImpl* m_webViewImpl;
     bool m_initializedAvailableExtensions;
     HashSet<String> m_enabledExtensions;
