@@ -1,3 +1,10 @@
+2011-02-08  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. Removing inspector tests from Skipped on [win].
+        Resource tracking has been removed since then, maybe it'll help.
+
+        * platform/win/Skipped:
+
 2011-02-08  Martin Robinson  <mrobinson@igalia.com>
 
         Clean up the skipped list slightly and unskip a test which should now be passing.

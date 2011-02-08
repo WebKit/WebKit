@@ -359,10 +359,6 @@ fast/frames/sandboxed-iframe-storage.html
 # Times out on apple-windows-3 http://webkit.org/b/48999
 fast/js/exceptions-thrown-in-callbacks.html
 
-# Sometimes fail due to an extra/missing "resources/" http://webkit.org/b/48752
-inspector/styles-source-lines-inline.html
-inspector/console-log-syntax-error.html
-
 # Sometimes times out http://webkit.org/b/48753
 http/tests/security/window-events-clear-port.html
 http/tests/security/window-properties-clear-port.html
