@@ -1,3 +1,10 @@
+2011-02-08  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed build fix for Qt-minimal.
+
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::hasFrontend):
+
 2011-02-02  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

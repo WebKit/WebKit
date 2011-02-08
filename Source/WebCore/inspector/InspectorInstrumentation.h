@@ -836,14 +836,12 @@ inline void InspectorInstrumentation::updateApplicationCacheStatus(Frame* frame)
 }
 #endif
 
+#if ENABLE(INSPECTOR)
 inline bool InspectorInstrumentation::hasFrontend(Page* page)
 {
-#if ENABLE(INSPECTOR)
     return inspectorAgentWithFrontendForPage(page);
-#else
-    return false;
-#endif
 }
+#endif
 
 
 #if ENABLE(INSPECTOR)
