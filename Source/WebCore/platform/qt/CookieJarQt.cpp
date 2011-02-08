@@ -114,10 +114,12 @@ String cookieRequestHeaderFieldValue(const Document* document, const KURL &url)
 
 bool cookiesEnabled(const Document* document)
 {
-    if (QNetworkAccessManager* manager = networkAccessManager(document))
-        return !!manager->cookieJar();
+    QNetworkAccessManager* manager = networkAccessManager(document);
+    if (!manager)
+        return false;
 
-    return false;
+    QtNAMThreadSafeProxy managerProxy(manager);
+    return managerProxy.hasCookieJar();
 }
 
 bool getRawCookies(const Document*, const KURL&, Vector<Cookie>& rawCookies)

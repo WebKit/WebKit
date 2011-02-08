@@ -35,6 +35,18 @@ QtNAMThreadSafeProxy::QtNAMThreadSafeProxy(QNetworkAccessManager *manager)
     connect(this, SIGNAL(localSetCookiesRequested(const QUrl&, const QString&)), SLOT(localSetCookies(const QUrl&, const QString&)));
     connect(this, SIGNAL(localCookiesForUrlRequested(const QUrl&, bool*, QList<QNetworkCookie>*)), SLOT(localCookiesForUrl(const QUrl&, bool*, QList<QNetworkCookie>*)));
     connect(this, SIGNAL(localWillLoadFromCacheRequested(const QUrl&, bool*, bool*)), SLOT(localWillLoadFromCache(const QUrl&, bool*, bool*)));
+    connect(this, SIGNAL(hasCookieJarRequested(bool*, bool*)), SLOT(hasCookieJar(bool*, bool*)));
+}
+
+bool QtNAMThreadSafeProxy::hasCookieJar()
+{
+    bool result;
+    bool done = false;
+    emit hasCookieJarRequested(&done, &result);
+    QMutexLocker lock(&m_resultMutex);
+    while (!done)
+        m_resultWaitCondition.wait(&m_resultMutex);
+    return result;
 }
 
 void QtNAMThreadSafeProxy::localSetCookies(const QUrl& url, const QString& cookies)
@@ -65,6 +77,14 @@ void QtNAMThreadSafeProxy::localWillLoadFromCache(const QUrl& url, bool* done, b
         *result = m_manager->cache()->metaData(url).isValid();
     else
         *result = false;
+    *done = true;
+    m_resultWaitCondition.wakeAll();
+}
+
+void QtNAMThreadSafeProxy::hasCookieJar(bool* done, bool* result)
+{
+    QMutexLocker lock(&m_resultMutex);
+    *result = !!m_manager->cookieJar();
     *done = true;
     m_resultWaitCondition.wakeAll();
 }

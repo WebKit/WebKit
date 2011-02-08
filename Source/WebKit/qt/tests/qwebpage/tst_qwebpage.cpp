@@ -133,6 +133,7 @@ private slots:
     void infiniteLoopJS();
     void networkAccessManagerOnDifferentThread();
     void navigatorCookieEnabled();
+    void navigatorCookieEnabledForNetworkAccessManagerOnDifferentThread();
 
 #ifdef Q_OS_MAC
     void macCopyUnicodeToClipboard();
@@ -2738,6 +2739,19 @@ void tst_QWebPage::navigatorCookieEnabled()
     m_page->networkAccessManager()->setCookieJar(new QNetworkCookieJar());
     QVERIFY(m_page->networkAccessManager()->cookieJar());
     QVERIFY(m_page->mainFrame()->evaluateJavaScript("navigator.cookieEnabled").toBool());
+}
+
+void tst_QWebPage::navigatorCookieEnabledForNetworkAccessManagerOnDifferentThread()
+{
+    QtNAMThread qnamThread;
+    qnamThread.start();
+    m_page->setNetworkAccessManager(qnamThread.networkAccessManager());
+
+    // This call access the cookie jar, the cookie jar must be in the same thread as
+    // the network access manager.
+    QVERIFY(m_page->mainFrame()->evaluateJavaScript("navigator.cookieEnabled").toBool());
+
+    QCOMPARE(qnamThread.networkAccessManager()->cookieJar()->thread(), &qnamThread);
 }
 
 #ifdef Q_OS_MAC

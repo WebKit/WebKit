@@ -67,15 +67,19 @@ public:
         return result;
     }
 
+    bool hasCookieJar();
+
 signals:
     void localSetCookiesRequested(const QUrl&, const QString& cookies);
     void localCookiesForUrlRequested(const QUrl&, bool* done, QList<QNetworkCookie>* result);
     void localWillLoadFromCacheRequested(const QUrl&, bool* done, bool* result);
+    void hasCookieJarRequested(bool* done, bool* result);
 
 private slots:
     void localSetCookies(const QUrl&, const QString& cookies);
     void localCookiesForUrl(const QUrl&, bool* done, QList<QNetworkCookie>* result);
     void localWillLoadFromCache(const QUrl&, bool* done, bool* result);
+    void hasCookieJar(bool* done, bool* result);
 
 private:
     QNetworkAccessManager* m_manager;
