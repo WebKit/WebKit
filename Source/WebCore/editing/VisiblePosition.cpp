@@ -48,12 +48,6 @@ VisiblePosition::VisiblePosition(const Position &pos, EAffinity affinity)
     init(pos, affinity);
 }
 
-VisiblePosition::VisiblePosition(Node *node, int offset, EAffinity affinity)
-{
-    ASSERT(offset >= 0);
-    init(Position(node, offset), affinity);
-}
-
 void VisiblePosition::init(const Position& position, EAffinity affinity)
 {
     m_affinity = affinity;
@@ -106,7 +100,7 @@ VisiblePosition VisiblePosition::previous(bool stayInEditableContent) const
 Position VisiblePosition::leftVisuallyDistinctCandidate() const
 {
     Position p = m_deepPosition;
-    if (!p.node())
+    if (p.isNull())
         return Position();
 
     Position downstreamStart = p.downstream();
@@ -242,7 +236,7 @@ VisiblePosition VisiblePosition::left(bool stayInEditableContent) const
 Position VisiblePosition::rightVisuallyDistinctCandidate() const
 {
     Position p = m_deepPosition;
-    if (!p.node())
+    if (p.isNull())
         return Position();
 
     Position downstreamStart = p.downstream();
@@ -451,9 +445,10 @@ Position VisiblePosition::canonicalPosition(const Position& passedPosition)
     // To fix this, we need to either a) add code to all paintCarets to pass the responsibility off to
     // the appropriate renderer for VisiblePosition's like these, or b) canonicalize to the rightmost candidate
     // unless the affinity is upstream.
-    Node* node = position.node();
-    if (!node)
+    if (position.isNull())
         return Position();
+
+    Node* node = position.containerNode();
 
     ASSERT(node->document());
     node->document()->updateLayoutIgnorePendingStylesheets();
@@ -510,11 +505,12 @@ UChar32 VisiblePosition::characterAfter() const
     // We canonicalize to the first of two equivalent candidates, but the second of the two candidates
     // is the one that will be inside the text node containing the character after this visible position.
     Position pos = m_deepPosition.downstream();
-    Node* node = pos.node();
-    if (!node || !node->isTextNode())
+    Node* node = pos.containerNode();
+    if (!node || !node->isTextNode() || pos.anchorType() == Position::PositionIsAfterAnchor)
         return 0;
-    Text* textNode = static_cast<Text*>(pos.node());
-    unsigned offset = pos.deprecatedEditingOffset();
+    ASSERT(pos.anchorType() == Position::PositionIsBeforeAnchor || pos.anchorType() == Position::PositionIsOffsetInAnchor);
+    Text* textNode = static_cast<Text*>(pos.containerNode());
+    unsigned offset = pos.anchorType() == Position::PositionIsOffsetInAnchor ? pos.offsetInContainerNode() : 0;
     unsigned length = textNode->length();
     if (offset >= length)
         return 0;
@@ -527,11 +523,11 @@ UChar32 VisiblePosition::characterAfter() const
 
 IntRect VisiblePosition::localCaretRect(RenderObject*& renderer) const
 {
-    Node* node = m_deepPosition.node();
-    if (!node) {
+    if (m_deepPosition.isNull()) {
         renderer = 0;
         return IntRect();
     }
+    Node* node = m_deepPosition.containerNode();
     
     renderer = node->renderer();
     if (!renderer)
@@ -599,19 +595,19 @@ PassRefPtr<Range> makeRange(const VisiblePosition &start, const VisiblePosition 
     
     Position s = start.deepEquivalent().parentAnchoredEquivalent();
     Position e = end.deepEquivalent().parentAnchoredEquivalent();
-    return Range::create(s.node()->document(), s.node(), s.deprecatedEditingOffset(), e.node(), e.deprecatedEditingOffset());
+    return Range::create(s.containerNode()->document(), s.containerNode(), s.offsetInContainerNode(), e.containerNode(), e.offsetInContainerNode());
 }
 
 VisiblePosition startVisiblePosition(const Range *r, EAffinity affinity)
 {
     int exception = 0;
-    return VisiblePosition(r->startContainer(exception), r->startOffset(exception), affinity);
+    return VisiblePosition(Position(r->startContainer(exception), r->startOffset(exception), Position::PositionIsOffsetInAnchor), affinity);
 }
 
 VisiblePosition endVisiblePosition(const Range *r, EAffinity affinity)
 {
     int exception = 0;
-    return VisiblePosition(r->endContainer(exception), r->endOffset(exception), affinity);
+    return VisiblePosition(Position(r->endContainer(exception), r->endOffset(exception), Position::PositionIsOffsetInAnchor), affinity);
 }
 
 bool setStart(Range *r, const VisiblePosition &visiblePosition)
@@ -620,7 +616,7 @@ bool setStart(Range *r, const VisiblePosition &visiblePosition)
         return false;
     Position p = visiblePosition.deepEquivalent().parentAnchoredEquivalent();
     int code = 0;
-    r->setStart(p.node(), p.deprecatedEditingOffset(), code);
+    r->setStart(p.containerNode(), p.offsetInContainerNode(), code);
     return code == 0;
 }
 
@@ -630,7 +626,7 @@ bool setEnd(Range *r, const VisiblePosition &visiblePosition)
         return false;
     Position p = visiblePosition.deepEquivalent().parentAnchoredEquivalent();
     int code = 0;
-    r->setEnd(p.node(), p.deprecatedEditingOffset(), code);
+    r->setEnd(p.containerNode(), p.offsetInContainerNode(), code);
     return code == 0;
 }
 
@@ -646,10 +642,10 @@ bool isFirstVisiblePositionInNode(const VisiblePosition &visiblePosition, const 
 {
     if (visiblePosition.isNull())
         return false;
-    
-    if (!visiblePosition.deepEquivalent().node()->isDescendantOf(node))
+
+    if (!visiblePosition.deepEquivalent().containerNode()->isDescendantOf(node))
         return false;
-        
+
     VisiblePosition previous = visiblePosition.previous();
     return previous.isNull() || !previous.deepEquivalent().node()->isDescendantOf(node);
 }
@@ -658,10 +654,10 @@ bool isLastVisiblePositionInNode(const VisiblePosition &visiblePosition, const N
 {
     if (visiblePosition.isNull())
         return false;
-    
-    if (!visiblePosition.deepEquivalent().node()->isDescendantOf(node))
+
+    if (!visiblePosition.deepEquivalent().containerNode()->isDescendantOf(node))
         return false;
-                
+
     VisiblePosition next = visiblePosition.next();
     return next.isNull() || !next.deepEquivalent().node()->isDescendantOf(node);
 }

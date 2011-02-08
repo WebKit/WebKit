@@ -513,7 +513,8 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
     
     // iterate backward from there, looking for a qualified position
     Node* boundary = enclosingVisualBoundary(startNode);
-    PositionIterator lastVisible = *this;
+    // FIXME: PositionIterator should respect Before and After positions.
+    PositionIterator lastVisible = m_anchorType == PositionIsAfterAnchor ? Position(m_anchorNode, caretMaxOffset(m_anchorNode.get())) : *this;
     PositionIterator currentPos = lastVisible;
     bool startEditable = startNode->isContentEditable();
     Node* lastNode = startNode;
@@ -634,7 +635,8 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
 
     // iterate forward from there, looking for a qualified position
     Node* boundary = enclosingVisualBoundary(startNode);
-    PositionIterator lastVisible = *this;
+    // FIXME: PositionIterator should respect Before and After positions.
+    PositionIterator lastVisible = m_anchorType == PositionIsAfterAnchor ? Position(m_anchorNode, caretMaxOffset(m_anchorNode.get())) : *this;
     PositionIterator currentPos = lastVisible;
     bool startEditable = startNode->isContentEditable();
     Node* lastNode = startNode;
