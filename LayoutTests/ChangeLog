@@ -1,3 +1,12 @@
+2011-02-08  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed, skipping flaky test on GTK debug bots.
+
+        svg/custom/use-multiple-on-nested-disallowed-font.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=53989
+
+        * platform/gtk/Skipped: Skipped test.
+
 2011-02-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

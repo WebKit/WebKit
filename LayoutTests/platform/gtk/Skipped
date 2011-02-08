@@ -1992,6 +1992,9 @@ svg/custom/use-elementInstance-methods.svg
 svg/custom/use-on-symbol-inside-pattern.svg
 svg/custom/use-setAttribute-crash.svg
 
+# flaky test (see https://bugs.webkit.org/show_bug.cgi?id=53989)
+svg/custom/use-multiple-on-nested-disallowed-font.html
+
 # This test needs to be looked at: runs on other platforms,
 # may fail here due to debug output limitations.
 # https://bugs.webkit.org/show_bug.cgi?id=25645
