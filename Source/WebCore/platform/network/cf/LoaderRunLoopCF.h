@@ -32,6 +32,8 @@
 #error This code is not needed on platforms other than Windows, because main thread's CFRunLoop can be used.
 #endif
 
+typedef struct __CFRunLoop* CFRunLoopRef;
+
 namespace WebCore {
 
 CFRunLoopRef loaderRunLoop();

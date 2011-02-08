@@ -36,6 +36,7 @@
 
 #if PLATFORM(WIN)
 #include "LoaderRunLoopCF.h"
+#include <CFNetwork/CFNetwork.h>
 #endif
 
 #if defined(BUILDING_ON_LEOPARD)

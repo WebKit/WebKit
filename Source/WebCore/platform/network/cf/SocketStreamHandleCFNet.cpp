@@ -47,6 +47,7 @@
 
 #if PLATFORM(WIN)
 #include "LoaderRunLoopCF.h"
+#include <CFNetwork/CFNetwork.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #else
 #include "WebCoreSystemInterface.h"

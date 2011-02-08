@@ -29,6 +29,10 @@
 #include "KURL.h"
 #include <wtf/RetainPtr.h>
 
+#if PLATFORM(WIN)
+#include <CFNetwork/CFNetwork.h>
+#endif
+
 namespace WebCore {
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)

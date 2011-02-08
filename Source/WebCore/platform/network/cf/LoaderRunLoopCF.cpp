@@ -28,6 +28,7 @@
 
 #if USE(CFNETWORK)
 
+#include <CoreFoundation/CoreFoundation.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {

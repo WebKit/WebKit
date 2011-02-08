@@ -36,6 +36,7 @@
 #include "SocketStreamHandleBase.h"
 #include <wtf/RetainPtr.h>
 
+typedef struct __CFHTTPMessage* CFHTTPMessageRef;
 
 namespace WebCore {
 

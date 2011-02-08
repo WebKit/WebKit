@@ -1,5 +1,19 @@
 2011-02-08  Patrick Gansterer  <paroga@webkit.org>
 
+        Reviewed by Adam Roben.
+
+        [WIN] Add missing includes and forward declarations for CFNetwork
+        https://bugs.webkit.org/show_bug.cgi?id=53883
+
+        * platform/network/cf/DNSCFNet.cpp:
+        * platform/network/cf/LoaderRunLoopCF.cpp:
+        * platform/network/cf/LoaderRunLoopCF.h:
+        * platform/network/cf/ProxyServerCFNet.cpp:
+        * platform/network/cf/SocketStreamHandle.h:
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+
+2011-02-08  Patrick Gansterer  <paroga@webkit.org>
+
         Unreviewed WinCE build fix for r77870.
 
         * platform/DragImage.cpp: Enable createDragImageForLink for WinCE.
