@@ -1,3 +1,15 @@
+2011-02-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r77866.
+        http://trac.webkit.org/changeset/77866
+        https://bugs.webkit.org/show_bug.cgi?id=53981
+
+        caused all WebKit2 inspector tests to crash (Requested by
+        othermaciej on #webkit).
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::didClose):
+
 2011-02-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -185,8 +185,6 @@ void WebInspectorProxy::didLoadInspectorPage()
 
 void WebInspectorProxy::didClose()
 {
-    m_page->close();
-
     platformClose();
 
     m_isVisible = false;
