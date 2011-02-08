@@ -268,7 +268,7 @@ class BuildBot(object):
             "SnowLeopard.*Build",
             "SnowLeopard.*\(Test",
             "SnowLeopard.*\(WebKit2 Test",
-            "Leopard.*Release",
+            "Leopard",
             "Windows.*Build",
             "EFL",
             "GTK.*32",

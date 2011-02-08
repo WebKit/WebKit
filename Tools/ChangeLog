@@ -1,3 +1,10 @@
+2011-02-07  Adam Barth  <abarth@webkit.org>
+
+        Add Leopard Debug back to the core builders.
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+
 2011-02-07  Adam Klein  <adamk@chromium.org>
 
         Reviewed by Jian Li.
