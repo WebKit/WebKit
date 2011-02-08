@@ -1,3 +1,10 @@
+2011-02-07  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed attempt to fix a flaky test.
+        https://bugs.webkit.org/show_bug.cgi?id=51757
+
+        * fast/css/font-face-download-error.html:
+
 2011-02-07  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, test expectations update.

@@ -56,7 +56,7 @@
 <link rel="stylesheet" href="../js/resources/js-test-style.css"/>
 <script src="../js/resources/js-test-pre.js"></script>
 </head>
-<body>
+<body onload="runTest()">
 <div id="description"></div>
 <div id="tests"></div>
 
@@ -126,7 +126,10 @@ for (var mainTestId = 0; mainTestId < expectedResults.length; mainTestId++) {
 
 // We need to run tests after the font downloading succeeded or failed.
 // Using a timer is not ideal, but there seems to be no better options.
-window.setTimeout(test, 100);
+function runTest()
+{
+    window.setTimeout(test, 100);
+}
 
 var successfullyParsed = true;
 </script>
