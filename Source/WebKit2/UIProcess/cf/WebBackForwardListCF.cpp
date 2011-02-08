@@ -103,6 +103,16 @@ bool WebBackForwardList::restoreFromCFDictionaryRepresentation(CFDictionaryRef d
     }
 
     CFIndex size = CFArrayGetCount(cfEntries);
+    if (currentIndex != NoCurrentItemIndex && currentIndex >= size) {
+        LOG(SessionState, "WebBackForwardList dictionary representation contains an invalid current index (%ld) for the number of entries (%ld)", currentIndex, size);
+        return false;
+    }
+
+    if (currentIndex == NoCurrentItemIndex && size) {
+        LOG(SessionState, "WebBackForwardList dictionary representation says there is no current item index, but there is a list of %ld entries - this is bogus", size);
+        return false;
+    }
+    
     BackForwardListItemVector newEntries;
     newEntries.reserveCapacity(size);
     for (CFIndex i = 0; i < size; ++i) {
@@ -141,8 +151,6 @@ bool WebBackForwardList::restoreFromCFDictionaryRepresentation(CFDictionaryRef d
     
     m_current = currentIndex;
     m_entries = newEntries;
-
-    ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
 
     return true;
 }

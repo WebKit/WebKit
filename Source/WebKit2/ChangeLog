@@ -1,3 +1,23 @@
+2011-02-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/8960434> and https://bugs.webkit.org/show_bug.cgi?id=53957
+        Crash after incorrectly restoring bogus session state.
+
+        In some cases we're writing an invalid session state for a back/forward list where the current entry is 0
+        but the number of entries is also 0.
+        In such cases the current entry should be "NoCurrentEntryIndex."
+
+        When we later read this state in, we set ourselves up to crash later.
+
+        Amusingly an ASSERT caught this, but we should've rejected it before the ASSERT fired.
+
+        * UIProcess/cf/WebBackForwardListCF.cpp:
+        (WebKit::WebBackForwardList::restoreFromCFDictionaryRepresentation): Fail the restore if the "current index past the end
+          of the list" case occurs, and speculatively bail out of the case where we have no current index but do have a list.
+          Also remove the unhelpful ASSERT.
+
 2011-02-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
