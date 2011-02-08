@@ -4671,7 +4671,6 @@ http/tests/security/local-user-CSS-from-remote.html
 # See https://bugs.webkit.org/show_bug.cgi?id=53056
 media/unsupported-rtsp.html
 
-
 # https://bugs.webkit.org/show_bug.cgi?id=53247
 media/audio-delete-while-slider-thumb-clicked.html
 
@@ -4686,18 +4685,13 @@ editing/selection/doubleclick-whitespace.html
 # https://bugs.webkit.org/show_bug.cgi?id=53605
 editing/text-iterator/basic-iteration.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=53680
-fast/frames/sandboxed-iframe-scripting.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=53991
-fast/frames/sandboxed-iframe-storage.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=53683
 http/tests/websocket/tests/url-with-credential.html
 http/tests/websocket/tests/url-with-empty-query.html
 http/tests/websocket/tests/simple.html
 http/tests/websocket/tests/cross-origin.html
 
-# This test fails ASSERT(m_rootObject->isValid()); on the GTK+ debug bots.
+# These tests fail ASSERT(m_rootObject->isValid()); on the GTK+ debug bots.
 # It should be unskipped when https://bugs.webkit.org/show_bug.cgi?id=53716 is fixed.
 fast/frames/set-parent-src-synchronously.html
+fast/frames/sandboxed-iframe-storage.html
