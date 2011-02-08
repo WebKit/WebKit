@@ -544,10 +544,10 @@ void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorS
         InterpolationQuality previousInterpolationQuality = imageInterpolationQuality();
         // FIXME: Should be InterpolationLow
         setImageInterpolationQuality(InterpolationNone);
-        image->draw(this, styleColorSpace, dest, src, op, useLowQualityScale);
+        image->draw(this, styleColorSpace, FloatRect(dest.location(), FloatSize(tw, th)), FloatRect(src.location(), FloatSize(tsw, tsh)), op, useLowQualityScale);
         setImageInterpolationQuality(previousInterpolationQuality);
     } else
-        image->draw(this, styleColorSpace, dest, src, op, useLowQualityScale);
+        image->draw(this, styleColorSpace, FloatRect(dest.location(), FloatSize(tw, th)), FloatRect(src.location(), FloatSize(tsw, tsh)), op, useLowQualityScale);
 }
 
 void GraphicsContext::addRoundedRectClip(const RoundedIntRect& rect)
