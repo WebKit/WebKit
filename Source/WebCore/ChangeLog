@@ -1,3 +1,18 @@
+2011-02-08  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Skip over sibling selectors when collecting descendant selector hashes 
+        https://bugs.webkit.org/show_bug.cgi?id=53987
+        
+        Skip instead of bailing out. This will allow optimizing some sibling selector cases.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::RuleData::RuleData):
+        (WebCore::RuleData::collectIdentifierHashes):
+        (WebCore::RuleData::collectDescendantSelectorIdentifierHashes):
+        * css/CSSStyleSelector.h:
+
 2011-02-07  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by Jian Li.

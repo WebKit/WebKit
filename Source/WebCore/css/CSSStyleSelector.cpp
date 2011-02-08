@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
  * Copyright (C) 2006, 2007 Nicholas Shanks (webkit@nickshanks.com)
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
@@ -361,7 +361,6 @@ public:
     {
         collectDescendantSelectorIdentifierHashes();
     }
-    void collectDescendantSelectorIdentifierHashes();
     unsigned position() const { return m_position; }
     CSSStyleRule* rule() const { return m_rule; }
     CSSSelector* selector() const { return m_selector; }
@@ -371,6 +370,9 @@ public:
     const unsigned* descendantSelectorIdentifierHashes() const { return m_descendantSelectorIdentifierHashes; }
 
 private:
+    void collectDescendantSelectorIdentifierHashes();
+    void collectIdentifierHashes(const CSSSelector*, unsigned& identifierCount);
+    
     CSSStyleRule* m_rule;
     CSSSelector* m_selector;
     unsigned m_position;
@@ -2932,30 +2934,43 @@ bool CSSStyleSelector::SelectorChecker::checkScrollbarPseudoClass(CSSSelector* s
 }
 
 // -----------------------------------------------------------------
+    
+inline void RuleData::collectIdentifierHashes(const CSSSelector* selector, unsigned& identifierCount)
+{
+    if ((selector->m_match == CSSSelector::Id || selector->m_match == CSSSelector::Class) && !selector->value().isEmpty())
+        m_descendantSelectorIdentifierHashes[identifierCount++] = selector->value().impl()->existingHash();
+    if (identifierCount == maximumIdentifierCount)
+        return;
+    const AtomicString& localName = selector->tag().localName();
+    if (localName != starAtom)
+        m_descendantSelectorIdentifierHashes[identifierCount++] = localName.impl()->existingHash();
+}
 
 inline void RuleData::collectDescendantSelectorIdentifierHashes()
 {
     unsigned identifierCount = 0;
     CSSSelector::Relation relation = m_selector->relation();
-    CSSSelector* selector = m_selector->tagHistory();
-    // Skip the topmost selector. It is handled quickly by the rule hashes.
-    for (; selector; selector = selector->tagHistory()) {
-        if (relation != CSSSelector::SubSelector)
+    
+    // Skip the topmost selector. It is handled quickly by the rule hashes.    
+    bool skipOverSubselectors = true;
+    for (const CSSSelector* selector = m_selector->tagHistory(); selector; selector = selector->tagHistory()) {
+        // Only collect identifiers that match ancestors.
+        switch (relation) {
+        case CSSSelector::SubSelector:
+            if (!skipOverSubselectors)
+                collectIdentifierHashes(selector, identifierCount);
             break;
-        relation = selector->relation();
-    }
-    for (; selector; selector = selector->tagHistory()) {
-        // Only collect identifiers that match direct ancestors.
-        // FIXME: Instead of just stopping, this should skip over sibling selectors.
-        if (relation != CSSSelector::Descendant && relation != CSSSelector::Child && relation != CSSSelector::SubSelector)
+        case CSSSelector::DirectAdjacent:
+        case CSSSelector::IndirectAdjacent:
+        case CSSSelector::ShadowDescendant:
+            skipOverSubselectors = true;
             break;
-        if ((selector->m_match == CSSSelector::Id || selector->m_match == CSSSelector::Class) && !selector->value().isEmpty())
-            m_descendantSelectorIdentifierHashes[identifierCount++] = selector->value().impl()->existingHash();
-        if (identifierCount == maximumIdentifierCount)
-            return;
-        const AtomicString& localName = selector->tag().localName();
-        if (localName != starAtom)
-            m_descendantSelectorIdentifierHashes[identifierCount++] = localName.impl()->existingHash();
+        case CSSSelector::Descendant:
+        case CSSSelector::Child:
+            skipOverSubselectors = false;
+            collectIdentifierHashes(selector, identifierCount);
+            break;
+        }
         if (identifierCount == maximumIdentifierCount)
             return;
         relation = selector->relation();
