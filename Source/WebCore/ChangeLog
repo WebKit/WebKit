@@ -1,3 +1,15 @@
+2011-02-07  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Removing unused code from PopupMenuChromium.
+        https://bugs.webkit.org/show_bug.cgi?id=53866
+
+       * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupListBox::layout):
+        (WebCore::PopupMenuChromium::show):
+        * platform/chromium/PopupMenuChromium.h:
+
 2011-02-07  Kenichi Ishibashi  <bashi@chromium.org>
 
         Reviewed by Andreas Kling.
