@@ -2,6 +2,7 @@
  *  Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *  Copyright (C) 2010 Joone Hur <joone@kldp.org>
  *  Copyright (C) 2009 Google Inc. All rights reserved.
+ *  Copyright (C) 2011 Igalia S.L.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -47,6 +48,7 @@
 #include "RenderTreeAsText.h"
 #include "RenderView.h"
 #include "SecurityOrigin.h"
+#include "TextIterator.h"
 #include "WorkerThread.h"
 #include "webkitwebframe.h"
 #include "webkitwebframeprivate.h"
@@ -464,6 +466,102 @@ bool DumpRenderTreeSupportGtk::isCommandEnabled(WebKitWebView* webView, const gc
     g_return_val_if_fail(name, FALSE);
 
     return core(webView)->focusController()->focusedOrMainFrame()->editor()->command(name).isEnabled();
+}
+
+void DumpRenderTreeSupportGtk::setComposition(WebKitWebView* webView, const char* text, int start, int end)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(text);
+
+    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    Editor* editor = frame->editor();
+    if (!editor)
+        return;
+    if (!editor->canEdit() && !editor->hasComposition())
+        return;
+
+    String compositionString = String::fromUTF8(text);
+    Vector<CompositionUnderline> underlines;
+    underlines.append(CompositionUnderline(0, compositionString.length(), Color(0, 0, 0), false));
+    editor->setComposition(compositionString, underlines, start, end);
+}
+
+void DumpRenderTreeSupportGtk::confirmComposition(WebKitWebView* webView, const char* text)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    Editor* editor = frame->editor();
+    if (!editor || (!editor->hasComposition() && !text))
+        return;
+
+    if (editor->hasComposition()) {
+        if (text)
+            editor->confirmComposition(String::fromUTF8(text));
+        else
+            editor->confirmComposition();
+    } else
+        editor->insertText(String::fromUTF8(text), 0);
+}
+
+bool DumpRenderTreeSupportGtk::firstRectForCharacterRange(WebKitWebView* webView, int location, int length, GdkRectangle* rect)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), false);
+    g_return_val_if_fail(rect, false);
+
+    if ((location + length < location) && (location + length))
+        length = 0;
+
+    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    if (!frame)
+        return false;
+
+    Editor* editor = frame->editor();
+    if (!editor)
+        return false;
+
+    Element* selectionRoot = frame->selection()->rootEditableElement();
+    Element* scope = selectionRoot ? selectionRoot : frame->document()->documentElement();
+    RefPtr<Range> range = TextIterator::rangeFromLocationAndLength(scope, location, length);
+    if (!range)
+        return false;
+
+    *rect = editor->firstRectForRange(range.get());
+
+    return true;
+}
+
+bool DumpRenderTreeSupportGtk::selectedRange(WebKitWebView* webView, int* start, int* end)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), false);
+    g_return_val_if_fail(start, false);
+    g_return_val_if_fail(end, false);
+
+    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    if (!frame)
+        return false;
+
+    RefPtr<Range> range = frame->selection()->toNormalizedRange().get();
+
+    Element* selectionRoot = frame->selection()->rootEditableElement();
+    Element* scope = selectionRoot ? selectionRoot : frame->document()->documentElement();
+
+    RefPtr<Range> testRange = Range::create(scope->document(), scope, 0, range->startContainer(), range->startOffset());
+    ASSERT(testRange->startContainer() == scope);
+    *start = TextIterator::rangeLength(testRange.get());
+
+    ExceptionCode ec;
+    testRange->setEnd(range->endContainer(), range->endOffset(), ec);
+    ASSERT(testRange->startContainer() == scope);
+    *end = TextIterator::rangeLength(testRange.get());
+
+    return true;
 }
 
 void DumpRenderTreeSupportGtk::whiteListAccessFromOrigin(const gchar* sourceOrigin, const gchar* destinationProtocol, const gchar* destinationHost, bool allowDestinationSubdomains)

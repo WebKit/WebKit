@@ -1,3 +1,25 @@
+2011-02-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] DRT's TextInputController is unimplemented on GTK
+        https://bugs.webkit.org/show_bug.cgi?id=52997
+
+        Initial implementation of TextInputController for GTK port.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (webViewWindowObjectCleared):
+        * DumpRenderTree/gtk/TextInputController.cpp: Added.
+        (setMarkedTextCallback):
+        (insertTextCallback):
+        (unmarkTextCallback):
+        (firstRectForCharacterRangeCallback):
+        (selectedRangeCallback):
+        (getClass):
+        (makeTextInputController):
+        * DumpRenderTree/gtk/TextInputController.h: Added.
+        * GNUmakefile.am:
+
 2011-02-07  Tony Chang  <tony@chromium.org>
 
         Reviewed by Adam Barth.

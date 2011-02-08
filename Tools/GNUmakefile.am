@@ -80,6 +80,8 @@ Programs_DumpRenderTree_SOURCES = \
 	Tools/DumpRenderTree/gtk/GCControllerGtk.cpp \
 	Tools/DumpRenderTree/gtk/LayoutTestControllerGtk.cpp \
 	Tools/DumpRenderTree/gtk/PixelDumpSupportGtk.cpp \
+	Tools/DumpRenderTree/gtk/TextInputController.h \
+	Tools/DumpRenderTree/gtk/TextInputController.cpp \
 	Tools/DumpRenderTree/gtk/WorkQueueItemGtk.cpp \
 	Source/WebCore/platform/gtk/GtkVersioning.c
 

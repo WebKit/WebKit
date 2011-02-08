@@ -39,6 +39,7 @@
 #include "GOwnPtr.h"
 #include "LayoutTestController.h"
 #include "PixelDumpSupport.h"
+#include "TextInputController.h"
 #include "WebCoreSupport/DumpRenderTreeSupportGtk.h"
 #include "WorkQueue.h"
 #include "WorkQueueItem.h"
@@ -780,6 +781,11 @@ static void webViewWindowObjectCleared(WebKitWebView* view, WebKitWebFrame* fram
     JSValueRef eventSender = makeEventSender(context, !webkit_web_frame_get_parent(frame));
     JSObjectSetProperty(context, windowObject, eventSenderStr, eventSender, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, 0);
     JSStringRelease(eventSenderStr);
+
+    JSStringRef textInputControllerStr = JSStringCreateWithUTF8CString("textInputController");
+    JSValueRef textInputController = makeTextInputController(context);
+    JSObjectSetProperty(context, windowObject, textInputControllerStr, textInputController, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, 0);
+    JSStringRelease(textInputControllerStr);
 }
 
 static gboolean webViewConsoleMessage(WebKitWebView* view, const gchar* message, unsigned int line, const gchar* sourceId, gpointer data)

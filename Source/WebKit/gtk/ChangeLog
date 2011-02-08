@@ -1,3 +1,18 @@
+2011-02-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] DRT's TextInputController is unimplemented on GTK
+        https://bugs.webkit.org/show_bug.cgi?id=52997
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::setComposition):
+        (DumpRenderTreeSupportGtk::confirmComposition):
+        (DumpRenderTreeSupportGtk::firstRectForCharacterRange):
+        (DumpRenderTreeSupportGtk::selectedRange): New methods needed by
+        TextInputController.
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+
 2011-02-07  Enrica Casucci  <enrica@apple.com>
 
         Reviewed Adam Roben and Darin Adler.
