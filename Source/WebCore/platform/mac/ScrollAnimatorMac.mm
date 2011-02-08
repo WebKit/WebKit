@@ -578,7 +578,7 @@ void ScrollAnimatorMac::didAddVerticalScrollbar(Scrollbar* scrollbar)
     wkScrollbarPainterSetDelegate(painter, m_scrollbarPainterDelegate.get());
     wkSetPainterForPainterController(m_scrollbarPainterController.get(), painter, false);
     if (scrollableArea()->inLiveResize())
-        wkSetScrollbarPainterKnobAlpha(painter, 1.0);
+        wkSetScrollbarPainterKnobAlpha(painter, 1);
 #else
     UNUSED_PARAM(scrollbar);
 #endif
@@ -602,7 +602,7 @@ void ScrollAnimatorMac::didAddHorizontalScrollbar(Scrollbar* scrollbar)
     wkScrollbarPainterSetDelegate(painter, m_scrollbarPainterDelegate.get());
     wkSetPainterForPainterController(m_scrollbarPainterController.get(), painter, true);
     if (scrollableArea()->inLiveResize())
-        wkSetScrollbarPainterKnobAlpha(painter, 1.0);
+        wkSetScrollbarPainterKnobAlpha(painter, 1);
 #else
     UNUSED_PARAM(scrollbar);
 #endif

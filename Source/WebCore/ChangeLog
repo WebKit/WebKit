@@ -1,3 +1,11 @@
+2011-02-07  Mark Rowe  <mrowe@apple.com>
+
+        Fix the 32-bit build.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::didAddVerticalScrollbar): Remove some extraneous characters.
+        (WebCore::ScrollAnimatorMac::didAddHorizontalScrollbar): Ditto.
+
 2011-02-07  Xiyuan Xia  <xiyuan@chromium.org>
 
         Reviewed by Tony Chang.
