@@ -138,6 +138,7 @@ private:
     };
 
     static void CALLBACK handleCallback(void* context, BOOLEAN timerOrWaitFired);
+    static void CALLBACK timerCallback(void* context, BOOLEAN timerOrWaitFired);
     static DWORD WINAPI workThreadCallback(void* context);
 
     bool tryRegisterAsWorkThread();
@@ -154,6 +155,8 @@ private:
 
     Mutex m_handlesLock;
     HashMap<HANDLE, RefPtr<HandleWorkItem> > m_handles;
+
+    HANDLE m_timerQueue;
 #elif PLATFORM(QT)
     class WorkItemQt;
     HashMap<QObject*, WorkItemQt*> m_signalListeners;

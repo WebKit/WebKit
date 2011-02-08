@@ -1,3 +1,29 @@
+2011-02-08  Adam Roben  <aroben@apple.com>
+
+        Implement WorkQueue::scheduleWorkAfterDelay on Windows
+
+        Each WorkQueue now owns its own timer queue. When scheduleWorkAfterDelay is called, we
+        create a timer-queue timer with the given delay. When the timer fires, we schedule the work
+        on the queue and clean up the timer.
+
+        Fixes <http://webkit.org/b/54040> <rdar://problem/8974230> Web process sticks around forever
+        if it's hung when UI process goes away
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/WorkQueue.h: Added timerCallback and m_timerQueue.
+
+        * Platform/win/WorkQueueWin.cpp:
+        (WorkQueue::platformInitialize): Initialize m_timerQueue.
+        (WorkQueue::platformInvalidate): Clean up m_timerQueue.
+        (TimerContext::TimerContext): Added this helper object to hold the context needed by the
+        timer callback.
+        (WorkQueue::timerCallback): Added. Schedules the WorkItem on the WorkQueue and cleans up the
+        timer.
+        (WorkQueue::scheduleWorkAfterDelay): Create a timer-queue timer on our timer queue that will
+        fire after the given delay. Pass a new TimerContext object to the timer callback that
+        contains the information it needs.
+
 2011-02-08  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

@@ -165,6 +165,8 @@ void WorkQueue::performWorkOnRegisteredWorkThread()
 void WorkQueue::platformInitialize(const char* name)
 {
     m_isWorkThreadRegistered = 0;
+    m_timerQueue = ::CreateTimerQueue();
+    ASSERT_WITH_MESSAGE(m_timerQueue, "::CreateTimerQueue failed with error %lu", ::GetLastError());
 }
 
 bool WorkQueue::tryRegisterAsWorkThread()
@@ -186,6 +188,10 @@ void WorkQueue::platformInvalidate()
     MutexLocker lock(m_handlesLock);
     ASSERT(m_handles.isEmpty());
 #endif
+
+    // FIXME: We need to ensure that any timer-queue timers that fire after this point don't try to
+    // access this WorkQueue <http://webkit.org/b/44690>.
+    ::DeleteTimerQueueEx(m_timerQueue, 0);
 }
 
 void WorkQueue::scheduleWork(PassOwnPtr<WorkItem> item)
@@ -204,9 +210,59 @@ void WorkQueue::scheduleWork(PassOwnPtr<WorkItem> item)
         ::QueueUserWorkItem(workThreadCallback, this, WT_EXECUTEDEFAULT);
 }
 
-void WorkQueue::scheduleWorkAfterDelay(PassOwnPtr<WorkItem>, double)
+struct TimerContext : public ThreadSafeShared<TimerContext> {
+    static PassRefPtr<TimerContext> create() { return adoptRef(new TimerContext); }
+
+    WorkQueue* queue;
+    OwnPtr<WorkItem> item;
+    Mutex timerMutex;
+    HANDLE timer;
+
+private:
+    TimerContext() : queue(0), timer(0) { }
+};
+
+void WorkQueue::timerCallback(void* context, BOOLEAN timerOrWaitFired)
 {
-    notImplemented();
+    ASSERT_ARG(context, context);
+    ASSERT_UNUSED(timerOrWaitFired, timerOrWaitFired);
+
+    // Balanced by leakRef in scheduleWorkAfterDelay.
+    RefPtr<TimerContext> timerContext = adoptRef(static_cast<TimerContext*>(context));
+
+    timerContext->queue->scheduleWork(timerContext->item.release());
+
+    MutexLocker lock(timerContext->timerMutex);
+    ASSERT(timerContext->timer);
+    ASSERT(timerContext->queue->m_timerQueue);
+    if (!::DeleteTimerQueueTimer(timerContext->queue->m_timerQueue, timerContext->timer, 0))
+        ASSERT_WITH_MESSAGE(false, "::DeleteTimerQueueTimer failed with error %lu", ::GetLastError());
+}
+
+void WorkQueue::scheduleWorkAfterDelay(PassOwnPtr<WorkItem> item, double delay)
+{
+    ASSERT(m_timerQueue);
+
+    RefPtr<TimerContext> context = TimerContext::create();
+    context->queue = this;
+    context->item = item;
+
+    {
+        // The timer callback could fire before ::CreateTimerQueueTimer even returns, so we protect
+        // context->timer with a mutex to ensure the timer callback doesn't access it before the
+        // timer handle has been stored in it.
+        MutexLocker lock(context->timerMutex);
+
+        // Since our timer callback is quick, we can execute in the timer thread itself and avoid
+        // an extra thread switch over to a worker thread.
+        if (!::CreateTimerQueueTimer(&context->timer, m_timerQueue, timerCallback, context.get(), delay * 1000, 0, WT_EXECUTEINTIMERTHREAD)) {
+            ASSERT_WITH_MESSAGE(false, "::CreateTimerQueueTimer failed with error %lu", ::GetLastError());
+            return;
+        }
+    }
+
+    // The timer callback will handle destroying context.
+    context.release().leakRef();
 }
 
 void WorkQueue::unregisterWaitAndDestroyItemSoon(PassRefPtr<HandleWorkItem> item)
