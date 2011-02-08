@@ -1,3 +1,13 @@
+2011-02-08  Daniel Bates  <dbates@rim.com>
+
+        Rubber-stamped by Martin Robinson.
+
+        Rename enum ProtectionSeting [sic] to ProtectionSetting.
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutableAllocator::reprotectRegion):
+        * jit/ExecutableAllocator.h:
+
 2011-02-08  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Andreas Kling.

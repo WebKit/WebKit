@@ -85,7 +85,7 @@ size_t ExecutableAllocator::committedByteCount()
 #error "ASSEMBLER_WX_EXCLUSIVE not yet suported on this platform."
 #endif
 
-void ExecutableAllocator::reprotectRegion(void* start, size_t size, ProtectionSeting setting)
+void ExecutableAllocator::reprotectRegion(void* start, size_t size, ProtectionSetting setting)
 {
     if (!pageSize)
         intializePageSize();

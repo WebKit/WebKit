@@ -167,7 +167,7 @@ private:
 };
 
 class ExecutableAllocator {
-    enum ProtectionSeting { Writable, Executable };
+    enum ProtectionSetting { Writable, Executable };
 
 public:
     static size_t pageSize;
@@ -318,7 +318,7 @@ public:
 private:
 
 #if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
-    static void reprotectRegion(void*, size_t, ProtectionSeting);
+    static void reprotectRegion(void*, size_t, ProtectionSetting);
 #endif
 
     RefPtr<ExecutablePool> m_smallAllocationPool;
