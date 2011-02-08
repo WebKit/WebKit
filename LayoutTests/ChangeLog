@@ -1,3 +1,13 @@
+2011-02-07  Cris Neckar  <cdn@chromium.org>
+
+        Reviewed by Jian Li.
+
+        Test for null deref in DOMURL
+        https://bugs.webkit.org/show_bug.cgi?id=53811
+
+        * fast/files/domurl-script-execution-context-crash-expected.txt: Added.
+        * fast/files/domurl-script-execution-context-crash.html: Added.
+
 2011-02-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.

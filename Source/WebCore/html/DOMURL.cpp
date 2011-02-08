@@ -37,7 +37,8 @@ namespace WebCore {
 DOMURL::DOMURL(ScriptExecutionContext* scriptExecutionContext)
     : m_scriptExecutionContext(scriptExecutionContext)
 {
-    m_scriptExecutionContext->createdDomUrl(this);
+    if (m_scriptExecutionContext)
+        m_scriptExecutionContext->createdDomUrl(this);
 }
 
 DOMURL::~DOMURL()
