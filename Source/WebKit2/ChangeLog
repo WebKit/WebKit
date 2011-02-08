@@ -1,3 +1,42 @@
+2011-02-07  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Crash in web process after the connection had been closed
+        https://bugs.webkit.org/show_bug.cgi?id=51115
+        <rdar://problem/8964255>
+
+        Remove didCloseOnConnectionWorkQueue from Connection::Client and add
+        Connection::setDidCloseOnConnectionWorkQueueCallback which takes a static
+        function, eliminating the race condition in connectionDidClose where m_client could be
+        nulled out in the client thread right before we try to dereference it.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::Connection):
+        Initialize m_didCloseOnConnectionWorkQueueCallback.
+
+        (CoreIPC::Connection::setDidCloseOnConnectionWorkQueueCallback):
+        Update m_didCloseOnConnectionWorkQueueCallback.
+
+        (CoreIPC::Connection::connectionDidClose):
+        Call m_didCloseOnConnectionWorkQueueCallback.
+
+        * Platform/WorkQueue.h:
+        Make WorkQueue noncopyable.
+
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::initializeConnection):
+        Call setDidCloseOnConnectionWorkQueueCallback.
+
+        * Shared/ChildProcess.cpp:
+        (WebKit::ChildProcess::didCloseOnConnectionWorkQueue):
+        * Shared/ChildProcess.h:
+        didCloseOnConnectionWorkQueue is now a static member function.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initialize):
+        Call setDidCloseOnConnectionWorkQueueCallback.
+
 2011-02-07  Enrica Casucci  <enrica@apple.com>
 
         Reviewed Adam Roben and Darin Adler.

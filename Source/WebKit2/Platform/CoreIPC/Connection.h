@@ -85,10 +85,6 @@ public:
     public:
         virtual void didClose(Connection*) = 0;
         virtual void didReceiveInvalidMessage(Connection*, MessageID) = 0;
-
-        // Called on the connection work queue when the connection is closed, before
-        // didCall is called on the client thread.
-        virtual void didCloseOnConnectionWorkQueue(WorkQueue*, Connection*) { }
     };
 
 #if PLATFORM(MAC)
@@ -112,6 +108,14 @@ public:
     void setShouldCloseConnectionOnProcessTermination(WebKit::PlatformProcessIdentifier);
 #endif
 
+    // The set callback will be called on the connection work queue when the connection is closed, 
+    // before didCall is called on the client thread. Must be called before the connection is opened.
+    // In the future we might want a more generic way to handle sync or async messages directly
+    // on the work queue, for example if we want to handle them on some other thread we could avoid
+    // handling the message on the client thread first.
+    typedef void (*DidCloseOnConnectionWorkQueueCallback)(WorkQueue&, Connection*);
+    void setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWorkQueueCallback callback);
+                                                
     bool open();
     void invalidate();
     void markCurrentlyDispatchedMessageAsInvalid();
@@ -193,6 +197,8 @@ private:
     Client* m_client;
     bool m_isServer;
     uint64_t m_syncRequestID;
+
+    DidCloseOnConnectionWorkQueueCallback m_didCloseOnConnectionWorkQueueCallback;
 
     bool m_isConnected;
     WorkQueue m_connectionQueue;

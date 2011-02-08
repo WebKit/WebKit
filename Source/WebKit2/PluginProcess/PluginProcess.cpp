@@ -61,6 +61,7 @@ void PluginProcess::initializeConnection(CoreIPC::Connection::Identifier serverI
     ASSERT(!m_connection);
 
     m_connection = CoreIPC::Connection::createClientConnection(serverIdentifier, this, RunLoop::main());
+    m_connection->setDidCloseOnConnectionWorkQueueCallback(didCloseOnConnectionWorkQueue);
     m_connection->open();
 }
 

@@ -51,6 +51,8 @@ typedef struct _GMainLoop GMainLoop;
 #endif
 
 class WorkQueue {
+    WTF_MAKE_NONCOPYABLE(WorkQueue);
+
 public:
     explicit WorkQueue(const char* name);
     ~WorkQueue();

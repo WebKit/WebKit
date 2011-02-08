@@ -49,6 +49,7 @@ Connection::Connection(Identifier identifier, bool isServer, Client* client, Run
     : m_client(client)
     , m_isServer(isServer)
     , m_syncRequestID(0)
+    , m_didCloseOnConnectionWorkQueueCallback(0)
     , m_isConnected(false)
     , m_connectionQueue("com.apple.CoreIPC.ReceiveQueue")
     , m_clientRunLoop(clientRunLoop)
@@ -66,6 +67,13 @@ Connection::~Connection()
     ASSERT(!isValid());
 
     m_connectionQueue.invalidate();
+}
+
+void Connection::setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWorkQueueCallback callback)
+{
+    ASSERT(!m_isConnected);
+
+    m_didCloseOnConnectionWorkQueueCallback = callback;    
 }
 
 void Connection::invalidate()
@@ -334,7 +342,8 @@ void Connection::connectionDidClose()
             m_waitForSyncReplySemaphore.signal();
     }
 
-    m_client->didCloseOnConnectionWorkQueue(&m_connectionQueue, this);
+    if (m_didCloseOnConnectionWorkQueueCallback)
+        m_didCloseOnConnectionWorkQueueCallback(m_connectionQueue, this);
 
     m_clientRunLoop->scheduleWork(WorkItem::create(this, &Connection::dispatchConnectionDidClose));
 }

@@ -36,8 +36,7 @@ protected:
     ChildProcess();
     ~ChildProcess();
 
-private:
-    void didCloseOnConnectionWorkQueue(WorkQueue*, CoreIPC::Connection*);
+    static void didCloseOnConnectionWorkQueue(WorkQueue&, CoreIPC::Connection*);
 };
 
 } // namespace WebKit

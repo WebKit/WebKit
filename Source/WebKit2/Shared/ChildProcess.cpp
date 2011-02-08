@@ -48,13 +48,13 @@ NO_RETURN static void watchdogCallback()
     _exit(EXIT_FAILURE);
 }
 
-void ChildProcess::didCloseOnConnectionWorkQueue(WorkQueue* workQueue, CoreIPC::Connection*)
+void ChildProcess::didCloseOnConnectionWorkQueue(WorkQueue& workQueue, CoreIPC::Connection*)
 {
     // If the connection has been closed and we haven't responded in the main thread for 10 seconds
     // the process will exit forcibly.
     static const double watchdogDelay = 10.0;
     
-    workQueue->scheduleWorkAfterDelay(WorkItem::create(watchdogCallback), watchdogDelay);
+    workQueue.scheduleWorkAfterDelay(WorkItem::create(watchdogCallback), watchdogDelay);
 }
     
 } // namespace WebKit

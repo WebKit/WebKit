@@ -127,6 +127,8 @@ void WebProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier, Ru
     ASSERT(!m_connection);
 
     m_connection = CoreIPC::Connection::createClientConnection(serverIdentifier, this, runLoop);
+    m_connection->setDidCloseOnConnectionWorkQueueCallback(didCloseOnConnectionWorkQueue);
+
     m_connection->open();
 
     m_runLoop = runLoop;
