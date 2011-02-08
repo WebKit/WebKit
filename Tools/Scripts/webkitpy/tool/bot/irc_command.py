@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import random
-import webkitpy.common.config.irc as config_irc
+from webkitpy.common.config import irc as config_irc
 
 from webkitpy.common.config import urls
 from webkitpy.common.net.bugzilla import parse_bug_id

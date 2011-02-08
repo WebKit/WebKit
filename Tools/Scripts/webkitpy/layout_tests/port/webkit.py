@@ -40,9 +40,9 @@ import sys
 import time
 import webbrowser
 
-import webkitpy.common.system.ospath as ospath
-import webkitpy.layout_tests.port.base as base
-import webkitpy.layout_tests.port.server_process as server_process
+from webkitpy.common.system import ospath
+from webkitpy.layout_tests.port import base
+from webkitpy.layout_tests.port import server_process
 
 _log = logging.getLogger("webkitpy.layout_tests.port.webkit")
 

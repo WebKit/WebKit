@@ -36,11 +36,12 @@ import os
 import subprocess
 import sys
 import re
-import webkitpy.common.checkout.scm as scm
-import webkitpy.common.system.executive as executive
-import webkitpy.common.system.logutils as logutils
-import webkitpy.common.system.ospath as ospath
-import webkitpy.layout_tests.port.factory as port_factory
+
+from webkitpy.common.checkout import scm
+from webkitpy.common.system import executive
+from webkitpy.common.system import logutils
+from webkitpy.common.system import ospath
+from webkitpy.layout_tests.port import factory as port_factory
 
 _log = logutils.get_logger(__file__)
 

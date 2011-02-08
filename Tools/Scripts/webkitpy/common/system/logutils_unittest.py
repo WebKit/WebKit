@@ -28,7 +28,7 @@ import unittest
 
 from webkitpy.common.system.logtesting import LogTesting
 from webkitpy.common.system.logtesting import TestLogStream
-import webkitpy.common.system.logutils as logutils
+from webkitpy.common.system import logutils
 
 
 class GetLoggerTest(unittest.TestCase):

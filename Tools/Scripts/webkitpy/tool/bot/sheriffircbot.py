@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import webkitpy.tool.bot.irc_command as irc_command
+from webkitpy.tool.bot import irc_command
 
 from webkitpy.common.net.irc.ircbot import IRCBotDelegate
 from webkitpy.common.thread.threadedmessagequeue import ThreadedMessageQueue

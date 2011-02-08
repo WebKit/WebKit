@@ -33,9 +33,7 @@ import os
 import platform
 import signal
 
-import webkitpy.common.system.ospath as ospath
-import webkitpy.layout_tests.port.server_process as server_process
-from webkitpy.layout_tests.port.webkit import WebKitPort, WebKitDriver
+from webkitpy.layout_tests.port.webkit import WebKitPort
 
 _log = logging.getLogger("webkitpy.layout_tests.port.mac")
 

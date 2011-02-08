@@ -41,10 +41,9 @@ import webbrowser
 from webkitpy.common.system import executive
 from webkitpy.common.system.path import cygpath
 from webkitpy.layout_tests.layout_package import test_expectations
-
-import base
-import http_server
-import websocket_server
+from webkitpy.layout_tests.port import base
+from webkitpy.layout_tests.port import http_server
+from webkitpy.layout_tests.port import websocket_server
 
 _log = logging.getLogger("webkitpy.layout_tests.port.chromium")
 

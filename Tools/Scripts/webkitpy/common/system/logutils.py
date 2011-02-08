@@ -83,7 +83,7 @@ def get_logger(path):
 
     Sample usage:
 
-      import webkitpy.common.system.logutils as logutils
+      from webkitpy.common.system import logutils
 
       _log = logutils.get_logger(__file__)
 

@@ -44,7 +44,7 @@ from webkitpy.common.net.statusserver import StatusServer
 from webkitpy.common.system import executive, filesystem, platforminfo, user, workspace
 from webkitpy.layout_tests import port
 from webkitpy.tool.multicommandtool import MultiCommandTool
-import webkitpy.tool.commands as commands
+from webkitpy.tool import commands
 
 
 class WebKitPatch(MultiCommandTool, Host):

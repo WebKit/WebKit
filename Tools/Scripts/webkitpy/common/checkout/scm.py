@@ -34,10 +34,10 @@ import re
 import sys
 import shutil
 
-from webkitpy.common.system.executive import Executive, run_command, ScriptError
-from webkitpy.common.system.deprecated_logging import error, log
-import webkitpy.common.system.ospath as ospath
 from webkitpy.common.memoized import memoized
+from webkitpy.common.system.deprecated_logging import error, log
+from webkitpy.common.system.executive import Executive, run_command, ScriptError
+from webkitpy.common.system import ospath
 
 
 def find_checkout_root():

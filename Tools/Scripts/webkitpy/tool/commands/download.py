@@ -29,7 +29,7 @@
 
 import os
 
-import webkitpy.tool.steps as steps
+from webkitpy.tool import steps
 
 from webkitpy.common.checkout.changelog import ChangeLog
 from webkitpy.common.config import urls

@@ -28,7 +28,7 @@
 
 from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCommand
 
-import webkitpy.tool.steps as steps
+from webkitpy.tool import steps
 
 
 class RollChromiumDEPS(AbstractSequencedCommand):

@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCommand
-import webkitpy.tool.steps as steps
+from webkitpy.tool import steps
 
 
 class PrettyDiff(AbstractSequencedCommand):

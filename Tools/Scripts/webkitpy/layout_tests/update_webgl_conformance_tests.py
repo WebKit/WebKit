@@ -31,7 +31,7 @@ import optparse
 import os
 import re
 import sys
-import webkitpy.common.checkout.scm as scm
+from webkitpy.common.checkout import scm
 
 _log = logging.getLogger("webkitpy.layout_tests."
                          "update-webgl-conformance-tests")

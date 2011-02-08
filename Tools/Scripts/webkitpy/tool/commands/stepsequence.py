@@ -26,12 +26,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import webkitpy.tool.steps as steps
+from webkitpy.tool import steps
 
-from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.checkout.scm import CheckoutNeedsUpdate
-from webkitpy.tool.bot.queueengine import QueueEngine
 from webkitpy.common.system.deprecated_logging import log
+from webkitpy.common.system.executive import ScriptError
+from webkitpy.tool.bot.queueengine import QueueEngine
 
 
 class StepSequenceErrorHandler():

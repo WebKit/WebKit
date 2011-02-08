@@ -30,7 +30,7 @@
 
 from optparse import make_option
 
-import webkitpy.tool.steps as steps
+from webkitpy.tool import steps
 
 from webkitpy.common.checkout.commitinfo import CommitInfo
 from webkitpy.common.config.committers import CommitterList
