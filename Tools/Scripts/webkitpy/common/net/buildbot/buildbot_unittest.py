@@ -222,7 +222,6 @@ class BuildBotTest(unittest.TestCase):
 
         # For complete testing, this list should match the list of builders at build.webkit.org:
         example_builders = [
-            {'name': u'Tiger Intel Release', },
             {'name': u'Leopard Intel Release (Build)', },
             {'name': u'Leopard Intel Release (Tests)', },
             {'name': u'Leopard Intel Debug (Build)', },
@@ -257,8 +256,7 @@ class BuildBotTest(unittest.TestCase):
             "SnowLeopard.*Build",
             "SnowLeopard.*\(Test",
             "SnowLeopard.*\(WebKit2 Test",
-            "Leopard",
-            "Tiger",
+            "Leopard.*Release",
             "Windows.*Build",
             "EFL",
             "GTK.*32",
@@ -267,11 +265,8 @@ class BuildBotTest(unittest.TestCase):
             "Chromium.*Release$",
         ]
         expected_builders = [
-            {'name': u'Tiger Intel Release', },
             {'name': u'Leopard Intel Release (Build)', },
             {'name': u'Leopard Intel Release (Tests)', },
-            {'name': u'Leopard Intel Debug (Build)', },
-            {'name': u'Leopard Intel Debug (Tests)', },
             {'name': u'SnowLeopard Intel Release (Build)', },
             {'name': u'SnowLeopard Intel Release (Tests)', },
             {'name': u'SnowLeopard Intel Release (WebKit2 Tests)', },

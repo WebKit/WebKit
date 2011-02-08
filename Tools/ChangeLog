@@ -1,3 +1,22 @@
+2011-02-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove Leopard Debug as a core builder
+        https://bugs.webkit.org/show_bug.cgi?id=53971
+
+        The Leopard Debug builder has been failing to compile for several days.
+        My understanding is that folks are working on fixing the build, but for
+        the time being we should probably remove it from the list of core
+        builders so that the core waterfall can be green.  We can certainly add
+        it back once the build is fixed.
+
+        Also, I've removed the Tiger builders because those no longer appear to
+        be attached to the buildbot master.
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+
 2011-02-01  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Roben.
