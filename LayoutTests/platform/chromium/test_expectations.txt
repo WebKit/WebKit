@@ -3256,7 +3256,6 @@ BUG_ZMO : fast/css/text-overflow-ellipsis.html = IMAGE+TEXT
 BUG_ZMO LINUX MAC : fast/table/colspanMinWidth-vertical.html = IMAGE+TEXT
 
 // temporary for rebaseline after r77781
-BUG_LOISLO : fast/html/keygen.html = IMAGE+TEXT
 BUG_LOISLO : fast/invalid/residual-style.html = TEXT
 BUG_LOIDLO : html5lib/runner.html = TEXT
 

@@ -1,5 +1,15 @@
 2011-02-07  Zhenyao Mo  <zmo@google.com>
 
+        Unreviewed, rebaseline.
+
+        * platform/chromium-linux/fast/html/keygen-expected.checksum:
+        * platform/chromium-linux/fast/html/keygen-expected.png:
+        * platform/chromium-linux/fast/html/keygen-expected.txt: Added.
+        * platform/chromium-win/fast/html/keygen-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
+2011-02-07  Zhenyao Mo  <zmo@google.com>
+
         Unreviewed, test expectations update.
 
         * platform/chromium/test_expectations.txt:
