@@ -125,6 +125,10 @@ shouldGenerateGLError(context, context.NO_ERROR, "context.drawElements(context.T
 shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawElements(context.TRIANGLES, 6, context.UNSIGNED_SHORT, 1)");
 shouldGenerateGLError(context, context.NO_ERROR, "context.drawElements(context.TRIANGLES, 6, context.UNSIGNED_SHORT, 2)");
 
+// invalid operation if no buffer is bound to ELEMENT_ARRAY_BUFFER
+context.bindBuffer(context.ELEMENT_ARRAY_BUFFER, null);
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawElements(context.TRIANGLES, 6, context.UNSIGNED_SHORT, 0)");
+
 debug("")
 successfullyParsed = true;
 </script>

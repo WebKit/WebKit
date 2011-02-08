@@ -52,6 +52,7 @@ PASS context.drawElements(context.TRIANGLES, 0, context.UNSIGNED_SHORT, 0) gener
 PASS context.drawElements(context.TRIANGLES, 6, context.UNSIGNED_SHORT, 0) generated expected GL error: NO_ERROR.
 PASS context.drawElements(context.TRIANGLES, 6, context.UNSIGNED_SHORT, 1) generated expected GL error: INVALID_OPERATION.
 PASS context.drawElements(context.TRIANGLES, 6, context.UNSIGNED_SHORT, 2) generated expected GL error: NO_ERROR.
+PASS context.drawElements(context.TRIANGLES, 6, context.UNSIGNED_SHORT, 0) generated expected GL error: INVALID_OPERATION.
 
 PASS successfullyParsed is true
 

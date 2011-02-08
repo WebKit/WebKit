@@ -1,3 +1,13 @@
+2011-02-08  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        drawElements should check if a buffer is bound to ELEMENT_ARRAY_BUFFER
+        https://bugs.webkit.org/show_bug.cgi?id=54017
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::drawElements):
+
 2011-01-28  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

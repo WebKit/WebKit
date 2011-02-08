@@ -1,3 +1,13 @@
+2011-02-08  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        drawElements should check if a buffer is bound to ELEMENT_ARRAY_BUFFER
+        https://bugs.webkit.org/show_bug.cgi?id=54017
+
+        * fast/canvas/webgl/draw-elements-out-of-bounds-expected.txt:
+        * fast/canvas/webgl/draw-elements-out-of-bounds.html:
+
 2011-02-08  Xiaomei Ji  <xji@chromium.org>
 
         Unreviewed. after r77952,
