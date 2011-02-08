@@ -3251,7 +3251,9 @@ BUGWK53469 GPU MAC : compositing/scroll-painted-composited-content.html = CRASH 
 BUGWK53824 : media/video-frame-accurate-seek.html = IMAGE PASS
 
 // Failure after r77818/77819
-BUG_ZMO: fast/css/text-overflow-ellipsis.html = IMAGE+TEXT
+BUG_ZMO : fast/css/text-overflow-ellipsis.html = IMAGE+TEXT
+
+BUG_ZMO LINUX MAC : fast/table/colspanMinWidth-vertical.html = IMAGE+TEXT
 
 // temporary for rebaseline after r77781
 BUG_LOISLO : fast/html/keygen.html = IMAGE+TEXT
