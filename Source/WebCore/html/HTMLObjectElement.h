@@ -98,6 +98,7 @@ private:
 
     virtual void refFormAssociatedElement() { ref(); }
     virtual void derefFormAssociatedElement() { deref(); }
+    virtual HTMLFormElement* virtualForm() const;
 
     virtual const AtomicString& formControlName() const;
 

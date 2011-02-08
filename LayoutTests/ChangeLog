@@ -1,3 +1,17 @@
+2011-02-07  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        HTMLFormElement::formElementIndex() returns a bad index into a vector of form associated elements
+        https://bugs.webkit.org/show_bug.cgi?id=53970
+
+        Adds a test that ensures WebKit parses successfully a page that
+        contains object elements which are in nested and defective form
+        elements.
+
+        * fast/dom/HTMLObjectElement/form/nested-form-element-expected.txt: Added.
+        * fast/dom/HTMLObjectElement/form/nested-form-element.html: Added.
+
 2011-02-07  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed attempt to fix a flaky test.

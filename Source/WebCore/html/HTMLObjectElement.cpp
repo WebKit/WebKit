@@ -510,4 +510,9 @@ const AtomicString& HTMLObjectElement::formControlName() const
     return m_name.isNull() ? emptyAtom : m_name;
 }
 
+HTMLFormElement* HTMLObjectElement::virtualForm() const
+{
+    return FormAssociatedElement::form();
+}
+
 }
