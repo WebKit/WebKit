@@ -68,6 +68,8 @@ void RenderThemeGtk::platformInit()
     m_gtkComboBoxButton = 0;
     m_gtkComboBoxArrow = 0;
     m_gtkComboBoxSeparator = 0;
+    m_gtkVScrollbar = 0;
+    m_gtkHScrollbar = 0;
 
     memset(&m_themeParts, 0, sizeof(GtkThemeParts));
     GdkColormap* colormap = gdk_screen_get_rgba_colormap(gdk_screen_get_default());
@@ -891,9 +893,22 @@ GtkWidget* RenderThemeGtk::gtkComboBoxSeparator() const
     return m_gtkComboBoxSeparator;
 }
 
-GtkWidget* RenderThemeGtk::gtkScrollbar()
+GtkWidget* RenderThemeGtk::gtkHScrollbar() const
 {
-    return moz_gtk_get_scrollbar_widget();
+    if (m_gtkHScrollbar)
+        return m_gtkHScrollbar;
+    m_gtkHScrollbar = gtk_hscrollbar_new(0);
+    setupWidgetAndAddToContainer(m_gtkHScrollbar, gtkContainer());
+    return m_gtkHScrollbar;
+}
+
+GtkWidget* RenderThemeGtk::gtkVScrollbar() const
+{
+    if (m_gtkVScrollbar)
+        return m_gtkVScrollbar;
+    m_gtkVScrollbar = gtk_vscrollbar_new(0);
+    setupWidgetAndAddToContainer(m_gtkVScrollbar, gtkContainer());
+    return m_gtkVScrollbar;
 }
 
 } // namespace WebCore

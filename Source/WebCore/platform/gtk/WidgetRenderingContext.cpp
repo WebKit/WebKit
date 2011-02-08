@@ -155,7 +155,16 @@ bool WidgetRenderingContext::paintMozillaWidget(GtkThemeWidgetType type, GtkWidg
 void WidgetRenderingContext::gtkPaintBox(const IntRect& rect, GtkWidget* widget, GtkStateType stateType, GtkShadowType shadowType, const gchar* detail)
 {
     GdkRectangle paintRect = { m_paintRect.x + rect.x(), m_paintRect.y + rect.y(), rect.width(), rect.height() };
-    gtk_paint_box(gtk_widget_get_style(widget), m_target, stateType, shadowType, &m_paintRect,
+
+    // Some widgets also need their allocation adjusted to account for extra space.
+    // Right now only scrollbar buttons have significant allocations.
+    GtkAllocation allocation;
+    gtk_widget_get_allocation(widget, &allocation);
+    allocation.x += m_paintRect.x;
+    allocation.y += m_paintRect.y;
+    gtk_widget_set_allocation(widget, &allocation);
+
+    gtk_paint_box(gtk_widget_get_style(widget), m_target, stateType, shadowType, &paintRect,
                   widget, detail, paintRect.x, paintRect.y, paintRect.width, paintRect.height);
 }
 

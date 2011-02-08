@@ -94,7 +94,10 @@ const gchar* gtk_menu_item_get_label(GtkMenuItem*);
 #define gtk_selection_data_get_length(data) (data)->length
 #define gtk_selection_data_get_data(data) (data)->data
 #define gtk_selection_data_get_target(data) (data)->target
-#define gtk_adjustment_set_page_size(adj, value) (adj)->page_size = value
+#define gtk_adjustment_set_page_size(adj, newValue) ((adj)->page_size = newValue)
+#define gtk_adjustment_set_value(adj, newValue) ((adj)->value = newValue)
+#define gtk_adjustment_set_lower(adj, newValue) ((adj)->lower = newValue)
+#define gtk_adjustment_set_upper(adj, newValue) ((adj)->upper = newValue)
 
 void gtk_adjustment_configure(GtkAdjustment* adjustment, gdouble value, gdouble lower, gdouble upper,
                               gdouble stepIncrement, gdouble pageIncrement, gdouble pageSize);

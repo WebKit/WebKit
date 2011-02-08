@@ -46,107 +46,169 @@ static void gtkStyleSetCallback(GtkWidget* widget, GtkStyle* previous, Scrollbar
 ScrollbarThemeGtk::ScrollbarThemeGtk()
 {
     updateThemeProperties();
-    g_signal_connect(static_cast<RenderThemeGtk*>(RenderTheme::defaultTheme().get())->gtkScrollbar(),
+    g_signal_connect(static_cast<RenderThemeGtk*>(RenderTheme::defaultTheme().get())->gtkHScrollbar(),
          "style-set", G_CALLBACK(gtkStyleSetCallback), this);
 }
 
 void ScrollbarThemeGtk::updateThemeProperties()
 {
-    MozGtkScrollbarMetrics metrics;
-    moz_gtk_get_scrollbar_metrics(&metrics);
-
-    m_thumbFatness = metrics.slider_width;
-    m_troughBorderWidth = metrics.trough_border;
-    m_stepperSize = metrics.stepper_size;
-    m_stepperSpacing = metrics.stepper_spacing;
-    m_minThumbLength = metrics.min_slider_size;
-    m_troughUnderSteppers = metrics.trough_under_steppers;
-    m_hasForwardButtonStartPart = metrics.has_secondary_forward_stepper;
-    m_hasBackButtonEndPart = metrics.has_secondary_backward_stepper;
-
+    GtkWidget* scrollbar = static_cast<RenderThemeGtk*>(RenderTheme::defaultTheme().get())->gtkHScrollbar();
+    gtk_widget_style_get(scrollbar,
+                         "slider_width", &m_thumbFatness,
+                         "trough_border", &m_troughBorderWidth,
+                         "stepper-size", &m_stepperSize,
+                         "trough-under-steppers", &m_troughUnderSteppers,
+                         "has-secondary-forward-stepper", &m_hasForwardButtonStartPart,
+                         "has-secondary-backward-stepper", &m_hasBackButtonEndPart, NULL);
+    m_minThumbLength = gtk_range_get_min_slider_size(GTK_RANGE(scrollbar));
     updateScrollbarsFrameThickness();
+}
+
+static GtkWidget* getWidgetForScrollbar(Scrollbar* scrollbar)
+{
+    RenderThemeGtk* theme = static_cast<RenderThemeGtk*>(RenderTheme::defaultTheme().get());
+    return scrollbar->orientation() == VerticalScrollbar ? theme->gtkVScrollbar() : theme->gtkHScrollbar();
 }
 
 void ScrollbarThemeGtk::paintTrackBackground(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect)
 {
-    GtkWidgetState state;
-    state.focused = FALSE;
-    state.isDefault = FALSE;
-    state.canDefault = FALSE;
-    state.disabled = FALSE;
-    state.active = FALSE;
-    state.inHover = FALSE;
-
     // Paint the track background. If the trough-under-steppers property is true, this
     // should be the full size of the scrollbar, but if is false, it should only be the
     // track rect.
-    IntRect fullScrollbarRect = rect;
+    IntRect fullScrollbarRect(rect);
     if (m_troughUnderSteppers)
         fullScrollbarRect = IntRect(scrollbar->x(), scrollbar->y(), scrollbar->width(), scrollbar->height());
 
-    GtkThemeWidgetType type = scrollbar->orientation() == VerticalScrollbar ? MOZ_GTK_SCROLLBAR_TRACK_VERTICAL : MOZ_GTK_SCROLLBAR_TRACK_HORIZONTAL;
     WidgetRenderingContext widgetContext(context, fullScrollbarRect);
-    widgetContext.paintMozillaWidget(type, &state, 0);
+    IntRect paintRect(IntPoint(), fullScrollbarRect.size());
+    widgetContext.gtkPaintBox(paintRect, getWidgetForScrollbar(scrollbar),
+                              GTK_STATE_ACTIVE, GTK_SHADOW_IN, "trough");
 }
 
 void ScrollbarThemeGtk::paintScrollbarBackground(GraphicsContext* context, Scrollbar* scrollbar)
 {
-    // This is unused by the moz_gtk_scrollecd_window_paint.
-    GtkWidgetState state;
     IntRect fullScrollbarRect = IntRect(scrollbar->x(), scrollbar->y(), scrollbar->width(), scrollbar->height());
+
     WidgetRenderingContext widgetContext(context, fullScrollbarRect);
-    widgetContext.paintMozillaWidget(MOZ_GTK_SCROLLED_WINDOW, &state, 0);
+    widgetContext.gtkPaintBox(fullScrollbarRect, getWidgetForScrollbar(scrollbar),
+                              GTK_STATE_NORMAL, GTK_SHADOW_IN, "scrolled_window");
 }
 
 void ScrollbarThemeGtk::paintThumb(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect)
 {
-    GtkWidgetState state;
-    state.focused = FALSE;
-    state.isDefault = FALSE;
-    state.canDefault = FALSE;
-    state.disabled = FALSE;
-    state.active = scrollbar->pressedPart() == ThumbPart;
-    state.inHover = scrollbar->hoveredPart() == ThumbPart;
-    state.maxpos = scrollbar->maximum();
-    state.curpos = scrollbar->currentPos();
+    GtkWidget* widget = getWidgetForScrollbar(scrollbar);
+    gboolean activateSlider;
+    gtk_widget_style_get(widget, "activate-slider", &activateSlider, NULL);
 
-    GtkThemeWidgetType type = scrollbar->orientation() == VerticalScrollbar ? MOZ_GTK_SCROLLBAR_THUMB_VERTICAL : MOZ_GTK_SCROLLBAR_THUMB_HORIZONTAL;
+    GtkStateType stateType = GTK_STATE_NORMAL;
+    GtkShadowType shadowType = GTK_SHADOW_OUT;
+    if (activateSlider && scrollbar->pressedPart() == ThumbPart) {
+        stateType = GTK_STATE_ACTIVE;
+        shadowType = GTK_SHADOW_IN;
+    } else if (scrollbar->pressedPart() == ThumbPart || scrollbar->hoveredPart() == ThumbPart)
+        stateType = GTK_STATE_PRELIGHT;
+
+    // The adjustment controls the rendering of the scrollbar thumb. If it's not set
+    // properly the theme may not draw the thumb borders properly.
+    GtkAdjustment* adjustment = gtk_range_get_adjustment(GTK_RANGE(widget));
+    gtk_adjustment_set_value(adjustment, scrollbar->currentPos());
+    gtk_adjustment_set_lower(adjustment, 0);
+    gtk_adjustment_set_upper(adjustment, scrollbar->maximum());
+
+    GtkOrientation orientation = GTK_ORIENTATION_HORIZONTAL;
+    if (scrollbar->orientation() == VerticalScrollbar) {
+        gtk_adjustment_set_page_size(adjustment, rect.height());
+        orientation = GTK_ORIENTATION_VERTICAL;
+    } else
+        gtk_adjustment_set_page_size(adjustment, rect.width());
+
     WidgetRenderingContext widgetContext(context, rect);
-    widgetContext.paintMozillaWidget(type, &state, 0);
+    IntRect sliderRect(IntPoint(), rect.size());
+    widgetContext.gtkPaintSlider(sliderRect, widget, stateType, shadowType, "slider", orientation);
 }
 
 void ScrollbarThemeGtk::paintButton(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect, ScrollbarPart part)
 {
-    int flags = 0;
-    if (scrollbar->orientation() == VerticalScrollbar)
-        flags |= MOZ_GTK_STEPPER_VERTICAL;
-
-    if (part == ForwardButtonEndPart)
-        flags |= (MOZ_GTK_STEPPER_DOWN | MOZ_GTK_STEPPER_BOTTOM);
-    if (part == ForwardButtonStartPart)
-        flags |= MOZ_GTK_STEPPER_DOWN;
-
-    GtkWidgetState state;
-    state.focused = TRUE;
-    state.isDefault = TRUE;
-    state.canDefault = TRUE;
-    state.depressed = FALSE;
+    // The buttons will be disabled if the thumb is as the appropriate extreme.
+    GtkShadowType shadowType = GTK_SHADOW_OUT;
+    GtkStateType stateType = GTK_STATE_INSENSITIVE;
+    bool pressed = (part == scrollbar->pressedPart());
 
     if ((BackButtonStartPart == part && scrollbar->currentPos())
         || (BackButtonEndPart == part && scrollbar->currentPos())
         || (ForwardButtonEndPart == part && scrollbar->currentPos() != scrollbar->maximum())
         || (ForwardButtonStartPart == part && scrollbar->currentPos() != scrollbar->maximum())) {
-        state.disabled = FALSE;
-        state.active = part == scrollbar->pressedPart();
-        state.inHover = part == scrollbar->hoveredPart();
-    } else {
-        state.disabled = TRUE;
-        state.active = FALSE;
-        state.inHover = FALSE;
+        stateType = GTK_STATE_NORMAL;
+        if (pressed) {
+            stateType = GTK_STATE_ACTIVE;
+            shadowType = GTK_SHADOW_IN;
+        } else if (part == scrollbar->hoveredPart())
+            stateType = GTK_STATE_PRELIGHT;
     }
 
+    // Themes determine how to draw the button (which button to draw) based on the allocation
+    // of the widget. Where the target rect is in relation to the total widget allocation
+    // determines the button.
+    ScrollbarOrientation orientation = scrollbar->orientation();
+    int buttonSize = (orientation == VerticalScrollbar) ? rect.height() : rect.width();
+    int totalAllocation = buttonSize * 5; // One space for each button and one extra.
+    int buttonOffset = 0;
+    if (ForwardButtonStartPart == part)
+        buttonOffset = buttonSize;
+    else if (BackButtonEndPart == part)
+        buttonOffset = 3 * buttonSize;
+    else if (ForwardButtonEndPart == part)
+        buttonOffset = 4 * buttonSize;
+
+    // Now we want the allocation to be relative to the origin of the painted rect.
+    GtkWidget* widget = getWidgetForScrollbar(scrollbar);
+    GtkAllocation allocation;
+    gtk_widget_get_allocation(widget, &allocation);
+    allocation.x = allocation.y = 0;
+    allocation.width = rect.width();
+    allocation.height = rect.height();
+
+    if (orientation == VerticalScrollbar) {
+        allocation.height = totalAllocation;
+        allocation.y -= buttonOffset;
+    } else {
+        allocation.width = totalAllocation;
+        allocation.x -= buttonOffset;
+    }
+    gtk_widget_set_allocation(widget, &allocation);
+
+    const char* detail = orientation == VerticalScrollbar ? "vscrollbar" : "hscrollbar";
     WidgetRenderingContext widgetContext(context, rect);
-    widgetContext.paintMozillaWidget(MOZ_GTK_SCROLLBAR_BUTTON, &state, flags);
+
+    IntRect buttonRect(IntPoint(), rect.size());
+    widgetContext.gtkPaintBox(buttonRect, widget, stateType, shadowType, detail);
+
+    float arrowScaling;
+    gtk_widget_style_get(widget, "arrow-scaling", &arrowScaling, NULL);
+    IntSize arrowSize = rect.size();
+    arrowSize.scale(arrowScaling);
+    IntRect arrowRect(IntPoint(buttonRect.x() + (buttonRect.width() - arrowSize.width()) / 2,
+                               buttonRect.y() + (buttonRect.height() - arrowSize.height()) / 2),
+                      arrowSize);
+    if (pressed) {
+        int arrowDisplacementX, arrowDisplacementY;
+        gtk_widget_style_get(widget,
+                             "arrow-displacement-x", &arrowDisplacementX,
+                             "arrow-displacement-y", &arrowDisplacementY,
+                             NULL);
+        arrowRect.move(arrowDisplacementX, arrowDisplacementY);
+    }
+
+    GtkArrowType arrowType = GTK_ARROW_DOWN;
+    if (orientation == VerticalScrollbar) {
+        if (part == BackButtonEndPart || part == BackButtonStartPart)
+            arrowType = GTK_ARROW_UP;
+    } else if (orientation == HorizontalScrollbar) {
+        arrowType = GTK_ARROW_RIGHT;
+        if (part == BackButtonEndPart || part == BackButtonStartPart)
+            arrowType = GTK_ARROW_LEFT;
+    }
+    widgetContext.gtkPaintArrow(arrowRect, widget, stateType, shadowType, arrowType, detail);
 }
 
 } // namespace WebCore

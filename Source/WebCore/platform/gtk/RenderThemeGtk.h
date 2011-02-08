@@ -92,7 +92,8 @@ public:
 #endif
 
 #ifdef GTK_API_VERSION_2
-    GtkWidget* gtkScrollbar();
+    GtkWidget* gtkVScrollbar() const;
+    GtkWidget* gtkHScrollbar() const;
     static void getIndicatorMetrics(ControlPart, int& indicatorSize, int& indicatorSpacing);
 #else
     GtkStyleContext* gtkScrollbarStyle();
@@ -233,6 +234,8 @@ private:
     mutable GtkWidget* m_gtkComboBoxButton;
     mutable GtkWidget* m_gtkComboBoxArrow;
     mutable GtkWidget* m_gtkComboBoxSeparator;
+    mutable GtkWidget* m_gtkVScrollbar;
+    mutable GtkWidget* m_gtkHScrollbar;
     bool m_themePartsHaveRGBAColormap;
     friend class WidgetRenderingContext;
 #endif

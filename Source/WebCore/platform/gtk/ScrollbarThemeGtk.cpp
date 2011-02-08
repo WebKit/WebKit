@@ -228,9 +228,10 @@ bool ScrollbarThemeGtk::paint(Scrollbar* scrollbar, GraphicsContext* graphicsCon
             scrollMask |= ThumbPart;
     }
 
-    paintScrollbarBackground(graphicsContext, scrollbar);
-
-    if (scrollMask & TrackBGPart)
+    ScrollbarControlPartMask allButtons = BackButtonStartPart | BackButtonEndPart
+                                         | ForwardButtonStartPart | ForwardButtonEndPart;
+    if (scrollMask & TrackBGPart || scrollMask & ThumbPart || scrollMask & allButtons)
+        paintScrollbarBackground(graphicsContext, scrollbar);
         paintTrackBackground(graphicsContext, scrollbar, trackPaintRect);
 
     // Paint the back and forward buttons.

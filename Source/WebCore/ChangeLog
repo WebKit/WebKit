@@ -1,3 +1,40 @@
+2011-02-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Move scrollbar rendering out of gtk2drawing.c
+        https://bugs.webkit.org/show_bug.cgi?id=52836
+
+        Replace gtk2drawing.c scrollbar rendering with our own version. This
+        is the last use of the Mozilla theme drawing code.
+
+        No new tests. This should not change the rendering of the default
+        theme.
+
+        * platform/gtk/GtkVersioning.h: Add some more backported allocation setters.
+        * platform/gtk/RenderThemeGtk.h: Add a getter for the scrollbar widgets.
+        * platform/gtk/RenderThemeGtk2.cpp:  Initialize and add getters for scrollbar widgets.
+        (WebCore::RenderThemeGtk::platformInit): Ditto.
+        (WebCore::RenderThemeGtk::gtkHScrollbar): Ditto.
+        (WebCore::RenderThemeGtk::gtkVScrollbar): Ditto.
+        * platform/gtk/ScrollbarThemeGtk.cpp: 
+        (WebCore::ScrollbarThemeGtk::paint): We only repaint the scrolled
+        window background if we are repainting a button or the thumb. In that
+        case also repaint the track rect.
+        * platform/gtk/ScrollbarThemeGtk2.cpp: Port to WidgetRenderingContext.
+        (WebCore::ScrollbarThemeGtk::ScrollbarThemeGtk): Ditto.
+        (WebCore::ScrollbarThemeGtk::updateThemeProperties): Ditto.
+        (WebCore::getWidgetForScrollbar): Ditto.
+        (WebCore::ScrollbarThemeGtk::paintTrackBackground): Ditto.
+        (WebCore::ScrollbarThemeGtk::paintScrollbarBackground): Ditto.
+        (WebCore::ScrollbarThemeGtk::paintThumb): Ditto.
+        (WebCore::ScrollbarThemeGtk::paintButton): Ditto.
+        * platform/gtk/WidgetRenderingContext.cpp: Ditto.
+        (WebCore::WidgetRenderingContext::gtkPaintBox): Added an option which
+        also adjusts a widget allocation according to the paint rect. This is
+        necessary to properly draw scrollbar buttons.
+        * platform/gtk/WidgetRenderingContext.h: Ditto.
+
 2011-02-08  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
