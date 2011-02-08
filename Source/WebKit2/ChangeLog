@@ -1,3 +1,17 @@
+2011-02-07  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Find bouncy is missing content on pages with framesets
+        https://bugs.webkit.org/show_bug.cgi?id=53958
+        <rdar://problem/8904447>
+
+        Fix paint rect computation; FrameView::paint expects the paint rect to be in the
+        parent widget's coordinate system.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindIndicator):
+
 2011-02-07  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders Carlsson.

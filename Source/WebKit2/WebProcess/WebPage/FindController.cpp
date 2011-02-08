@@ -152,25 +152,30 @@ bool FindController::updateFindIndicator(Frame* selectedFrame, bool isShowingOve
     if (!selectedFrame)
         return false;
 
+    IntRect selectionRect = enclosingIntRect(selectedFrame->selection()->bounds());
+
     // We want the selection rect in window coordinates.
-    IntRect selectionRectInWindowCoordinates = selectedFrame->view()->contentsToWindow(enclosingIntRect(selectedFrame->selection()->bounds()));
+    IntRect selectionRectInWindowCoordinates = selectedFrame->view()->contentsToWindow(selectionRect);
     
     Vector<FloatRect> textRects;
     selectedFrame->selection()->getClippedVisibleTextRectangles(textRects);
 
     // Create a backing store and paint the find indicator text into it.
-    RefPtr<ShareableBitmap> findIndicatorTextBackingStore = ShareableBitmap::createShareable(selectionRectInWindowCoordinates.size());
+    RefPtr<ShareableBitmap> findIndicatorTextBackingStore = ShareableBitmap::createShareable(selectionRect.size());
     if (!findIndicatorTextBackingStore)
         return false;
     
     OwnPtr<GraphicsContext> graphicsContext = findIndicatorTextBackingStore->createGraphicsContext();
 
-    graphicsContext->translate(-selectionRectInWindowCoordinates.x(), -selectionRectInWindowCoordinates.y());
+    IntRect paintRect = selectionRect;
+    paintRect.move(selectedFrame->view()->frameRect().x(), selectedFrame->view()->frameRect().y());
+    paintRect.move(-selectedFrame->view()->scrollOffset());
+
+    graphicsContext->translate(-paintRect.x(), -paintRect.y());
     selectedFrame->view()->setPaintBehavior(PaintBehaviorSelectionOnly | PaintBehaviorForceBlackText | PaintBehaviorFlattenCompositingLayers);
     selectedFrame->document()->updateLayout();
 
-    graphicsContext->clip(selectionRectInWindowCoordinates);
-    selectedFrame->view()->paint(graphicsContext.get(), selectionRectInWindowCoordinates);
+    selectedFrame->view()->paint(graphicsContext.get(), paintRect);
     selectedFrame->view()->setPaintBehavior(PaintBehaviorNormal);
     
     SharedMemory::Handle handle;
