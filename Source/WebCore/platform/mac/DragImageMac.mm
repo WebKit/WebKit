@@ -169,7 +169,7 @@ static inline CGFloat webkit_CGCeiling(CGFloat value)
 {
     if (sizeof(value) == sizeof(float))
         return ceilf(value);
-    return ceil(value);
+    return static_cast<CGFloat>(ceil(value));
 }
     
 static void drawAtPoint(NSString *string, NSPoint point, NSFont *font, NSColor *textColor)
