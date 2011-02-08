@@ -453,9 +453,9 @@ void WebPageProxy::goToBackForwardItem(WebBackForwardListItem* item)
     process()->send(Messages::WebPage::GoToBackForwardItem(item->itemID()), m_pageID);
 }
 
-void WebPageProxy::didChangeBackForwardList()
+void WebPageProxy::didChangeBackForwardList(WebBackForwardListItem* added, Vector<RefPtr<APIObject> >* removed)
 {
-    m_loaderClient.didChangeBackForwardList(this);
+    m_loaderClient.didChangeBackForwardList(this, added, removed);
 }
 
     

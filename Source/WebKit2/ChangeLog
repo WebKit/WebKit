@@ -1,3 +1,25 @@
+2011-02-08  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8972913> and https://bugs.webkit.org/show_bug.cgi?id=54036
+        didChangeBackForwardList should include some context about what changed
+
+        Update the implementation of this API to include the new item (if any) and removed items (if any):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::didChangeBackForwardList):
+        * UIProcess/WebLoaderClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChangeBackForwardList):
+        * UIProcess/WebPageProxy.h:
+
+        Have WebBackForwardList pass the new items and/or removed items when calling the notifier:
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::addItem):
+        (WebKit::WebBackForwardList::goToItem):
+        (WebKit::WebBackForwardList::clear):
+
 2011-02-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

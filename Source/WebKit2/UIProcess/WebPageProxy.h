@@ -162,7 +162,7 @@ public:
     bool canGoBack() const;
 
     void goToBackForwardItem(WebBackForwardListItem*);
-    void didChangeBackForwardList();
+    void didChangeBackForwardList(WebBackForwardListItem* addedItem, Vector<RefPtr<APIObject> >* removedItems);
 
     bool canShowMIMEType(const String& mimeType) const;
 

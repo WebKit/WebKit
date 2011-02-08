@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebLoaderClient.h"
 
+#include "ImmutableArray.h"
+#include "WebBackForwardListItem.h"
 #include "WKAPICast.h"
 #include <string.h>
 
@@ -209,12 +211,16 @@ void WebLoaderClient::processDidCrash(WebPageProxy* page)
     m_client.processDidCrash(toAPI(page), m_client.clientInfo);
 }
 
-void WebLoaderClient::didChangeBackForwardList(WebPageProxy* page)
+void WebLoaderClient::didChangeBackForwardList(WebPageProxy* page, WebBackForwardListItem* addedItem, Vector<RefPtr<APIObject> >* removedItems)
 {
     if (!m_client.didChangeBackForwardList)
         return;
 
-    m_client.didChangeBackForwardList(toAPI(page), m_client.clientInfo);
+    RefPtr<ImmutableArray> removedItemsArray;
+    if (removedItems && !removedItems->isEmpty())
+        removedItemsArray = ImmutableArray::adopt(*removedItems);
+
+    m_client.didChangeBackForwardList(toAPI(page), toAPI(addedItem), toAPI(removedItemsArray.get()), m_client.clientInfo);
 }
 
 } // namespace WebKit

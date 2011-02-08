@@ -351,7 +351,7 @@ static void processDidExit(WKPageRef page, const void *clientInfo)
     LOG(@"processDidExit");
 }
 
-static void didChangeBackForwardList(WKPageRef page, const void *clientInfo)
+static void didChangeBackForwardList(WKPageRef page, WKBackForwardListItemRef addedItem, WKArrayRef removedItems, const void *clientInfo)
 {
     [(BrowserWindowController *)clientInfo validateToolbar];
 }

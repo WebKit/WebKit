@@ -30,6 +30,8 @@
 #include "SameDocumentNavigationType.h"
 #include "WKPage.h"
 #include <wtf/Forward.h>
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 class ResourceError;
@@ -40,6 +42,7 @@ namespace WebKit {
 class APIObject;
 class AuthenticationChallengeProxy;
 class AuthenticationDecisionListener;
+class WebBackForwardListItem;
 class WebFrameProxy;
 class WebPageProxy;
 class WebProtectionSpace;
@@ -73,7 +76,7 @@ public:
     void processDidBecomeResponsive(WebPageProxy*);
     void processDidCrash(WebPageProxy*);
 
-    void didChangeBackForwardList(WebPageProxy*);
+    void didChangeBackForwardList(WebPageProxy*, WebBackForwardListItem* addedItem, Vector<RefPtr<APIObject> >* removedItems);
 };
 
 } // namespace WebKit

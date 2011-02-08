@@ -64,12 +64,16 @@ void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
     if (m_capacity == 0 || !m_enabled)
         return;
 
+    Vector<RefPtr<APIObject> > removedItems;
+    
     // Toss anything in the forward list    
     if (m_current != NoCurrentItemIndex) {
         unsigned targetSize = m_current + 1;
+        removedItems.reserveCapacity(m_entries.size() - targetSize);
         while (m_entries.size() > targetSize) {
             if (m_page)
                 m_page->backForwardRemovedItem(m_entries.last()->itemID());
+            removedItems.append(m_entries.last().release());
             m_entries.removeLast();
         }
     }
@@ -79,6 +83,7 @@ void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
     if (m_entries.size() == m_capacity && (m_current != 0 || m_capacity == 1)) {
         if (m_page)
             m_page->backForwardRemovedItem(m_entries[0]->itemID());
+        removedItems.append(m_entries[0].release());
         m_entries.remove(0);
         m_current--;
     }
@@ -87,7 +92,7 @@ void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
     m_current++;
 
     if (m_page)
-        m_page->didChangeBackForwardList();
+        m_page->didChangeBackForwardList(newItem, &removedItems);
 
     ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
 }
@@ -107,7 +112,7 @@ void WebBackForwardList::goToItem(WebBackForwardListItem* item)
     if (index < m_entries.size()) {
         m_current = index;
         if (m_page)
-            m_page->didChangeBackForwardList();
+            m_page->didChangeBackForwardList(0, 0);
     }
 }
 
@@ -221,13 +226,20 @@ void WebBackForwardList::clear()
         }
     }
 
+    Vector<RefPtr<APIObject> > removedItems;
+    removedItems.reserveCapacity(m_entries.size() - 1);
+    for (size_t i = 0; i < m_entries.size(); ++i) {
+        if (i != m_current)
+            removedItems.append(m_entries[i].release());
+    }
+    
     m_entries.shrink(1);
     m_entries[0] = currentItem.release();
 
     m_current = 0;
 
     if (m_page)
-        m_page->didChangeBackForwardList();
+        m_page->didChangeBackForwardList(0, &removedItems);
 }
 
 } // namespace WebKit
