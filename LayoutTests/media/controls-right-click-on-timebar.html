@@ -34,7 +34,9 @@
                 waitForEvent('playing', playing);
                 waitForEvent('seeked', seeked);
                 run("video.autoplay = true");
-                run("video.src = '" + findMediaFile("video", "content/test") + "'");
+                disableFullTestDetailsPrinting();
+                runSilently("video.src = '" + findMediaFile("video", "content/test") + "'");
+                enableFullTestDetailsPrinting();
             }    
         </script>
     </head>

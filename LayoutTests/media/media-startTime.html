@@ -19,7 +19,9 @@
                 waitForEvent('loadeddata', loadeddata);
 
                 var mediaFile = findMediaFile("video", "content/test");
-                run("video.src = '" + mediaFile + "'");
+                disableFullTestDetailsPrinting();
+                runSilently("video.src = '" + mediaFile + "'");
+                enableFullTestDetailsPrinting();
             }
 
         </script>

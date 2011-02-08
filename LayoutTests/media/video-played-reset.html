@@ -42,7 +42,7 @@
                 willExtendAnExistingRange = false;
 
                 var mediaFile = findMediaFile("video", "content/test");
-                run("video.src = \"" + mediaFile + "\"");
+                runSilently("video.src = \"" + mediaFile + "\"");
                 run("video.load()"); // Triggers canplay()
             }
 

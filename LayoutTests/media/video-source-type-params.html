@@ -10,7 +10,7 @@
 <script>
     video = mediaElement = document.getElementsByTagName('video')[0];
     waitForEvent('loadstart', function () { 
-        testExpected("relativeURL(video.currentSrc)", findMediaFile("video", "content/test"));
+        testExpected("stripExtension(relativeURL(video.currentSrc))", stripExtension(findMediaFile("video", "content/test")));
         endTest();
     } );
 </script>

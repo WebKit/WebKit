@@ -38,14 +38,16 @@
 
             // now set a valid url
             var mediaFile = findMediaFile("video", "content/test");
-            run("video.src = '" + mediaFile + "'");
+            disableFullTestDetailsPrinting();
+            runSilently("video.src = '" + mediaFile + "'");
+            enableFullTestDetailsPrinting();
         }
         
         // first set the src to a bogus url, it should attempt a load
         consoleWrite("");
         testNetworkState(HTMLMediaElement.NETWORK_EMPTY);
         run("video.src = 'bogus/movie.mpg'");
-        
+
         setTimeout(waitUntilNotLoading, 100);
     </script>
 

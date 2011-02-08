@@ -1,7 +1,5 @@
 Test that seeking video with 'loop' past it's end rewinds to the beginning and continues playback.
 
-RUN(video.src = 'content/test.mp4')
-
 EVENT(canplaythrough)
 EXPECTED (video.paused == 'true') OK
 RUN(video.play())

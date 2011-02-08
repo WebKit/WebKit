@@ -8,15 +8,16 @@
             {
                 var panel = document.getElementById("panel");
                 var mediaFile = findMediaFile("video", "content/test");
+
                 panel.innerHTML = "<video controls><source src='" + mediaFile + "'></video>";
 
                 video = mediaElement = document.getElementsByTagName('video')[0];
                 waitForEvent("loadstart", function () {
-                    testExpected("relativeURL(video.currentSrc) ", mediaFile);
+                    testExpected("stripExtension(relativeURL(video.currentSrc))", stripExtension(mediaFile));
 
                     source = document.querySelector('source');
-                    testExpected("source.getAttribute('src')", mediaFile);
-                    testExpected("relativeURL(source.src) ", mediaFile);
+                    testExpected("stripExtension(source.getAttribute('src'))", stripExtension(mediaFile));
+                    testExpected("stripExtension(relativeURL(source.src))", stripExtension(mediaFile));
 
                     endTest();
                 });

@@ -1,6 +1,5 @@
 Test that seeking paused video past it's duration time sets currentTime to duration and leaves video paused.
 
-RUN(video.src = 'content/test.mp4')
 RUN(video.load())
 
 EVENT(canplaythrough)

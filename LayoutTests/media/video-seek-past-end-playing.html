@@ -42,8 +42,9 @@
 
     mediaElement.addEventListener("timeupdate", timeupdate);
     var mediaFile = findMediaFile("video", "content/test");
-    run("video.src = '" + mediaFile + "'");
-    consoleWrite("");
+    disableFullTestDetailsPrinting();
+    runSilently("video.src = '" + mediaFile + "'");
+    enableFullTestDetailsPrinting();
 </script>
     </body>
 </html>

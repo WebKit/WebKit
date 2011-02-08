@@ -29,7 +29,9 @@
                 canvas = document.getElementsByTagName('canvas')[0];
                 waitForEvent('canplaythrough', canplaythrough);
                 var mediaFile = findMediaFile("video", "content/counting");
-                run("var source = document.createElement('source'); source.src = '" + mediaFile + "'; video.appendChild(source)");
+                disableFullTestDetailsPrinting();
+                runSilently("var source = document.createElement('source'); source.src = '" + mediaFile + "'; video.appendChild(source)");
+                enableFullTestDetailsPrinting();
             }
         </script>
     </head>

@@ -10,9 +10,9 @@
                 var mediaFile = findMediaFile("video", "content/test");
             
                 waitForEvent("loadstart", function () {
-                    testExpected("relativeURL(video.currentSrc) ", mediaFile);
-                    testExpected("relativeURL(video.src) ", mediaFile);
-                    testExpected("video.getAttribute('src')", mediaFile);
+                    testExpected("stripExtension(relativeURL(video.currentSrc))", stripExtension(mediaFile));
+                    testExpected("stripExtension(relativeURL(video.src))", stripExtension(mediaFile));
+                    testExpected("stripExtension(video.getAttribute('src'))", stripExtension(mediaFile));
                     endTest();
                 });
             

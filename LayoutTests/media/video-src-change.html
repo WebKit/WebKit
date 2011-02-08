@@ -24,7 +24,7 @@
         
             function loadedmetadata()
             {
-                testExpected("relativeURL(video.currentSrc)", mediaFile);
+                testExpected("stripExtension(relativeURL(video.currentSrc))", stripExtension(mediaFile));
                 testExpected("isNaN(video.duration)", false);
                 consoleWrite("");
                 

@@ -1,4 +1,4 @@
 EVENT(loadstart)
-EXPECTED (relativeURL(video.currentSrc) == 'content/test.mp4') OK
+EXPECTED (stripExtension(relativeURL(video.currentSrc)) == 'content/test') OK
 END OF TEST
 

@@ -8,7 +8,7 @@
     testExpected("video.currentSrc", "");
 
     waitForEvent('canplaythrough', function () { 
-        testExpected("relativeURL(video.currentSrc)", mediaFile);
+        testExpected("stripExtension(relativeURL(video.currentSrc))", stripExtension(mediaFile));
         endTest();
     } );
     

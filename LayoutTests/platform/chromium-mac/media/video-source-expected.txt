@@ -1,6 +1,0 @@
-EVENT(loadstart)
-EXPECTED (relativeURL(video.currentSrc) == 'content/test.ogv') OK
-EXPECTED (source.getAttribute('src') == 'content/test.ogv') OK
-EXPECTED (relativeURL(source.src) == 'content/test.ogv') OK
-END OF TEST
-

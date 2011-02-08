@@ -1,3 +1,99 @@
+2011-02-07  Ami Fischman  <fischman@google.com>
+
+        Reviewed by Eric Carlson.
+
+        Removed two of the three almost-duplicate test expectations
+        between {media,platform/chromium-{mac,win}} by excluding file
+        extensions from the emitted output.
+        Removed outdated test_expectation for deleted test.
+        http://crbug.com/28993
+        
+        * media/controls-right-click-on-timebar-expected.txt:
+        * media/controls-right-click-on-timebar.html:
+        * media/media-file.js:
+        (stripExtension):
+        * media/media-startTime-expected.txt:
+        * media/media-startTime.html:
+        * media/video-append-source-expected.txt:
+        * media/video-append-source.html:
+        * media/video-canvas-source-expected.txt:
+        * media/video-canvas-source.html:
+        * media/video-dom-src-expected.txt:
+        * media/video-dom-src.html:
+        * media/video-load-networkState-expected.txt:
+        * media/video-load-networkState.html:
+        * media/video-played-reset-expected.txt:
+        * media/video-played-reset.html:
+        * media/video-seek-past-end-paused-expected.txt:
+        * media/video-seek-past-end-paused.html:
+        * media/video-seek-past-end-playing-expected.txt:
+        * media/video-seek-past-end-playing.html:
+        * media/video-source-expected.txt:
+        * media/video-source-type-expected.txt:
+        * media/video-source-type-params-expected.txt:
+        * media/video-source-type-params.html:
+        * media/video-source-type.html:
+        * media/video-source.html:
+        * media/video-src-change-expected.txt:
+        * media/video-src-change.html:
+        * media/video-src-expected.txt:
+        * media/video-src-remove-expected.txt:
+        * media/video-src-remove.html:
+        * media/video-src-set-expected.txt:
+        * media/video-src-set.html:
+        * media/video-src-source-expected.txt:
+        * media/video-src-source.html:
+        * media/video-src.html:
+        * media/video-test.js:
+        (enableFullTestDetailsPrinting):
+        (test):
+        (testExpected):
+        (waitForEvent._eventCallback):
+        (waitForEvent):
+        (waitForEventAndTest._eventCallback):
+        (waitForEventAndTest):
+        (testException):
+        (endTest):
+        * platform/chromium-mac/media/controls-right-click-on-timebar-expected.txt: Removed.
+        * platform/chromium-mac/media/media-startTime-expected.txt: Removed.
+        * platform/chromium-mac/media/video-append-source-expected.txt: Removed.
+        * platform/chromium-mac/media/video-canvas-source-expected.txt: Removed.
+        * platform/chromium-mac/media/video-dom-src-expected.txt: Removed.
+        * platform/chromium-mac/media/video-load-networkState-expected.txt: Removed.
+        * platform/chromium-mac/media/video-played-reset-expected.txt: Removed.
+        * platform/chromium-mac/media/video-seek-past-end-paused-expected.txt: Removed.
+        * platform/chromium-mac/media/video-seek-past-end-playing-expected.txt: Removed.
+        * platform/chromium-mac/media/video-source-add-src-expected.txt: Removed.
+        * platform/chromium-mac/media/video-source-error-expected.txt: Removed.
+        * platform/chromium-mac/media/video-source-expected.txt: Removed.
+        * platform/chromium-mac/media/video-source-type-expected.txt: Removed.
+        * platform/chromium-mac/media/video-source-type-params-expected.txt: Removed.
+        * platform/chromium-mac/media/video-src-change-expected.txt: Removed.
+        * platform/chromium-mac/media/video-src-expected.txt: Removed.
+        * platform/chromium-mac/media/video-src-remove-expected.txt: Removed.
+        * platform/chromium-mac/media/video-src-set-expected.txt: Removed.
+        * platform/chromium-mac/media/video-src-source-expected.txt: Removed.
+        * platform/chromium-win/media/controls-right-click-on-timebar-expected.txt: Removed.
+        * platform/chromium-win/media/media-startTime-expected.txt: Removed.
+        * platform/chromium-win/media/video-append-source-expected.txt: Removed.
+        * platform/chromium-win/media/video-canvas-source-expected.txt: Removed.
+        * platform/chromium-win/media/video-dom-src-expected.txt: Removed.
+        * platform/chromium-win/media/video-load-networkState-expected.txt: Removed.
+        * platform/chromium-win/media/video-played-reset-expected.txt: Removed.
+        * platform/chromium-win/media/video-seek-past-end-paused-expected.txt: Removed.
+        * platform/chromium-win/media/video-seek-past-end-playing-expected.txt: Removed.
+        * platform/chromium-win/media/video-source-add-src-expected.txt: Removed.
+        * platform/chromium-win/media/video-source-error-expected.txt: Removed.
+        * platform/chromium-win/media/video-source-expected.txt: Removed.
+        * platform/chromium-win/media/video-source-type-expected.txt: Removed.
+        * platform/chromium-win/media/video-source-type-params-expected.txt: Removed.
+        * platform/chromium-win/media/video-src-change-expected.txt: Removed.
+        * platform/chromium-win/media/video-src-expected.txt: Removed.
+        * platform/chromium-win/media/video-src-remove-expected.txt: Removed.
+        * platform/chromium-win/media/video-src-set-expected.txt: Removed.
+        * platform/chromium-win/media/video-src-source-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-02-07  Kenichi Ishibashi  <bashi@chromium.org>
 
         Reviewed by Kent Tamura.

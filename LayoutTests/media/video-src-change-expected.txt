@@ -10,12 +10,12 @@ EXPECTED (video.error.code == '4') OK
 
 
 EVENT(loadedmetadata)
-EXPECTED (relativeURL(video.currentSrc) == 'content/test.mp4') OK
+EXPECTED (stripExtension(relativeURL(video.currentSrc)) == 'content/test') OK
 EXPECTED (isNaN(video.duration) == 'false') OK
 
 
 EVENT(loadedmetadata)
-EXPECTED (relativeURL(video.currentSrc) == 'content/counting.mp4') OK
+EXPECTED (stripExtension(relativeURL(video.currentSrc)) == 'content/counting') OK
 EXPECTED (isNaN(video.duration) == 'false') OK
 
 END OF TEST

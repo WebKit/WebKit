@@ -6,7 +6,6 @@ RUN(video.src = 'bogus/movie.mpg')
 EVENT(loadstart)
 EXPECTED (video.networkState == '3') OK
 
-RUN(video.src = 'content/test.mp4')
 EVENT(loadstart)
 EVENT(loadedmetadata)
 EVENT(loadeddata)

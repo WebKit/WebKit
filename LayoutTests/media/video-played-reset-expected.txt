@@ -14,7 +14,6 @@ Test 3 OK
 Test 4 OK
 
 Test to reset to non empty video source
-RUN(video.src = "content/test.mp4")
 RUN(video.load())
 EVENT(loadstart)
 EVENT(loadedmetadata)

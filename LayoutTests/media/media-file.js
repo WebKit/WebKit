@@ -57,3 +57,13 @@ function setSrcById(id, src) {
     if (element)
         element.src = src;
 }
+
+function stripExtension(filename) {
+  var lastPeriodIndex = filename.lastIndexOf(".");
+  if (lastPeriodIndex > 0)
+    return filename.substring(0, lastPeriodIndex);
+  return filename;
+}
+
+
+
