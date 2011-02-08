@@ -1,3 +1,17 @@
+2011-02-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/8946023> REGRESSION (r76674): SVG + BiDi text broken (text-intro-05-t.svg)
+        https://bugs.webkit.org/show_bug.cgi?id=53480
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun): m_indexEnd should be an
+        offset into m_characters, not into the run’s characters.
+        * platform/graphics/mac/ComplexTextControllerATSUI.cpp:
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun): Ditto.
+
 2011-02-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

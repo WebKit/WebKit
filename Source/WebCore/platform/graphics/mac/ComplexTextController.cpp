@@ -310,7 +310,7 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(const SimpleFontData* font
     , m_characters(characters)
     , m_stringLocation(stringLocation)
     , m_stringLength(stringLength)
-    , m_indexEnd(stringLocation + stringLength)
+    , m_indexEnd(stringLength)
     , m_isMonotonic(true)
 {
 #if USE(CORE_TEXT) && USE(ATSUI)
