@@ -1,5 +1,12 @@
 2011-02-08  Martin Robinson  <mrobinson@igalia.com>
 
+        Unskip a bunch of tests that are passing locally and move one
+        timeout with the other timeouts.
+
+        * platform/gtk/Skipped: Unskip some passing tests.
+
+2011-02-08  Martin Robinson  <mrobinson@igalia.com>
+
         Reviewed by Eric Seidel.
 
         [GTK] EventSender.keyDown does not support non-array modifier arguments
