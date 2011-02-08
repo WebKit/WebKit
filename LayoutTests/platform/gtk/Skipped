@@ -3906,6 +3906,10 @@ http/tests/security/no-referrer.html
 fast/loader/onload-willSendRequest-null-for-script.html
 fast/loader/willSendRequest-null-for-preload.html
 
+# Fails because of timing out in the GTK 32-bit Debug bot
+# (see bug https://bugs.webkit.org/show_bug.cgi?id=53992)
+fast/loader/onload-willSendRequest-null-for-frame.html
+
 # GTK+ does not have layoutTestController.setDomainRelaxationForbiddenForURLScheme
 http/tests/security/setDomainRelaxationForbiddenForURLScheme.html
 
