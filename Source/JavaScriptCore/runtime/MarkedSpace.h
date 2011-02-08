@@ -96,9 +96,7 @@ namespace JSC {
 
         NEVER_INLINE MarkedBlock* allocateBlock();
         NEVER_INLINE void freeBlock(size_t);
-        void resizeBlocks();
-        void growBlocks(size_t neededBlocks);
-        void shrinkBlocks(size_t neededBlocks);
+        void shrink();
 
         void clearMarkBits(MarkedBlock*);
 

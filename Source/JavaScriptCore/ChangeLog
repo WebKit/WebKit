@@ -1,5 +1,21 @@
 2011-02-07  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Removed some dead code from Heap
+        https://bugs.webkit.org/show_bug.cgi?id=53969
+        
+        SunSpider reports no change.
+
+        * runtime/MarkedSpace.cpp:
+        (JSC::MarkedSpace::shrink):
+        (JSC::MarkedSpace::sweep):
+        * runtime/MarkedSpace.h: Removed resizeBlocks and growBlocks, and
+        renamed shrinkBlocks to shrink, making it unconditionally shrink as
+        much as possible.
+
+2011-02-07  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Simplified the marked space's mark invariant

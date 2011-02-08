@@ -151,37 +151,13 @@ void* MarkedSpace::allocate(size_t s)
     return 0;
 }
 
-void MarkedSpace::resizeBlocks()
+void MarkedSpace::shrink()
 {
-    size_t usedCellCount = markedCells();
-    size_t minCellCount = usedCellCount + max(ALLOCATIONS_PER_COLLECTION, usedCellCount);
-    size_t minBlockCount = (minCellCount + HeapConstants::cellsPerBlock - 1) / HeapConstants::cellsPerBlock;
-
-    size_t maxCellCount = 1.25f * minCellCount;
-    size_t maxBlockCount = (maxCellCount + HeapConstants::cellsPerBlock - 1) / HeapConstants::cellsPerBlock;
-
-    if (m_heap.usedBlocks < minBlockCount)
-        growBlocks(minBlockCount);
-    else if (m_heap.usedBlocks > maxBlockCount)
-        shrinkBlocks(maxBlockCount);
-}
-
-void MarkedSpace::growBlocks(size_t neededBlocks)
-{
-    ASSERT(m_heap.usedBlocks < neededBlocks);
-    while (m_heap.usedBlocks < neededBlocks)
-        allocateBlock();
-}
-
-void MarkedSpace::shrinkBlocks(size_t neededBlocks)
-{
-    ASSERT(m_heap.usedBlocks > neededBlocks);
-    
     // Clear the always-on last bit, so isEmpty() isn't fooled by it.
     for (size_t i = 0; i < m_heap.usedBlocks; ++i)
         m_heap.collectorBlock(i)->marked.clear(HeapConstants::cellsPerBlock - 1);
 
-    for (size_t i = 0; i != m_heap.usedBlocks && m_heap.usedBlocks != neededBlocks; ) {
+    for (size_t i = 0; i != m_heap.usedBlocks && m_heap.usedBlocks > 1; ) { // We assume at least one block exists at all times.
         if (m_heap.collectorBlock(i)->marked.isEmpty()) {
             freeBlock(i);
         } else
@@ -272,8 +248,7 @@ void MarkedSpace::sweep()
 #endif
     }
     
-    if (m_heap.usedBlocks > 1)
-        shrinkBlocks(1);
+    shrink();
 }
 
 size_t MarkedSpace::objectCount() const
