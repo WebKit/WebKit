@@ -1,3 +1,13 @@
+2011-02-08  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: re-apply r77924.
+
+        Test: inspector/console-api-on-call-frame.html
+
+        * inspector/console-api-on-call-frame-expected.txt: Added.
+        * inspector/console-api-on-call-frame.html: Added.
+        * inspector/debugger-pause-in-eval-script-expected.txt:
+
 2011-02-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r77924.

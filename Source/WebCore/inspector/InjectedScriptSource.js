@@ -28,6 +28,20 @@
 
 (function (InjectedScriptHost, inspectedWindow, injectedScriptId) {
 
+function bind(thisObject, memberFunction)
+{
+    var func = memberFunction;
+    var args = Array.prototype.slice.call(arguments, 1);
+    function bound()
+    {
+        return func.apply(thisObject, args.concat(Array.prototype.slice.call(arguments, 0)));
+    }
+    bound.toString = function() {
+        return "bound: " + func;
+    };
+    return bound;
+}
+
 var InjectedScript = function()
 {
     this._lastBoundObjectId = 1;
@@ -196,10 +210,10 @@ InjectedScript.prototype = {
 
             if (typeof expressionResult === "object")
                 this._populatePropertyNames(expressionResult, props);
-    
+
             if (includeCommandLineAPI) {
-                for (var prop in this._commandLineAPI)
-                    props[prop] = true;
+                for (var prop in CommandLineAPI.members_)
+                    props[CommandLineAPI.members_[prop]] = true;
             }
         } catch(e) {
         }
@@ -226,8 +240,8 @@ InjectedScript.prototype = {
             }
     
             if (includeCommandLineAPI) {
-                for (var prop in this._commandLineAPI)
-                    props[prop] = true;
+                for (var prop in CommandLineAPI.members_)
+                    props[CommandLineAPI.members_[prop]] = true;
             }
         } catch(e) {
         }
@@ -253,24 +267,24 @@ InjectedScript.prototype = {
         // Only install command line api object for the time of evaluation.
         // Surround the expression in with statements to inject our command line API so that
         // the window object properties still take more precedent than our API functions.
-        if (inspectedWindow.console)
-            inspectedWindow.console._commandLineAPI = this._commandLineAPI;
-    
-        // We don't want local variables to be shadowed by global ones when evaluating on CallFrame.
-        if (!isEvalOnCallFrame)
-            expression = "with (window) {\n" + expression + "\n} ";
-        if (injectCommandLineAPI)
-            expression = "with ((window && window.console && window.console._commandLineAPI) || {}) {\n" + expression + "\n}";
-        var value = evalFunction.call(object, expression);
-    
-        if (inspectedWindow.console)
-            delete inspectedWindow.console._commandLineAPI;
-    
-        // When evaluating on call frame error is not thrown, but returned as a value.
-        if (this._type(value) === "error")
-            throw value.toString();
-    
-        return value;
+
+        try {
+            if (injectCommandLineAPI && inspectedWindow.console) {
+                inspectedWindow.console._commandLineAPI = new CommandLineAPI(this._commandLineAPIImpl, isEvalOnCallFrame ? object : null);
+                expression = "with ((window && window.console && window.console._commandLineAPI) || {}) {\n" + expression + "\n}";
+            }
+
+            var value = evalFunction.call(object, expression);
+
+            // When evaluating on call frame error is not thrown, but returned as a value.
+            if (this._type(value) === "error")
+                throw value.toString();
+
+            return value;
+        } finally {
+            if (injectCommandLineAPI && inspectedWindow.console)
+                delete inspectedWindow.console._commandLineAPI;
+        }
     },
 
     getNodeId: function(node)
@@ -474,49 +488,6 @@ InjectedScript.prototype = {
     {
         // We don't use String(obj) because inspectedWindow.String is undefined if owning frame navigated to another page.
         return "" + obj;
-    },
-
-    _logEvent: function(event)
-    {
-        console.log(event.type, event);
-    },
-
-    _normalizeEventTypes: function(types)
-    {
-        if (typeof types === "undefined")
-            types = [ "mouse", "key", "load", "unload", "abort", "error", "select", "change", "submit", "reset", "focus", "blur", "resize", "scroll" ];
-        else if (typeof types === "string")
-            types = [ types ];
-
-        var result = [];
-        for (var i = 0; i < types.length; i++) {
-            if (types[i] === "mouse")
-                result.splice(0, 0, "mousedown", "mouseup", "click", "dblclick", "mousemove", "mouseover", "mouseout");
-            else if (types[i] === "key")
-                result.splice(0, 0, "keydown", "keyup", "keypress");
-            else
-                result.push(types[i]);
-        }
-        return result;
-    },
-
-    _inspectedNode: function(num)
-    {
-        var nodeId = InjectedScriptHost.inspectedNode(num);
-        return this._nodeForId(nodeId);
-    },
-
-    _bindToScript: function(func)
-    {
-        var args = Array.prototype.slice.call(arguments, 1);
-        function bound()
-        {
-            return func.apply(injectedScript, args.concat(Array.prototype.slice.call(arguments)));
-        }
-        bound.toString = function() {
-            return "bound: " + func;
-        };
-        return bound;
     }
 }
 
@@ -605,15 +576,44 @@ InjectedScript.CallFrameProxy.prototype = {
     }
 }
 
-function CommandLineAPI()
+function CommandLineAPI(commandLineAPIImpl, callFrame)
 {
-    for (var i = 0; i < 5; ++i)
-        this.__defineGetter__("$" + i, injectedScript._bindToScript(injectedScript._inspectedNode, i));
+    function inScopeVariables(member)
+    {
+        if (!callFrame)
+            return false;
+
+        var scopeChain = callFrame.scopeChain;
+        for (var i = 0; i < scopeChain.length; ++i) {
+            if (member in scopeChain[i])
+                return true;
+        }
+        return false;
+    }
+
+    for (var i = 0; i < CommandLineAPI.members_.length; ++i) {
+        var member = CommandLineAPI.members_[i];
+        if (member in inspectedWindow)
+            continue;
+        if (inScopeVariables(member))
+            continue;
+
+        this[member] = bind(commandLineAPIImpl, commandLineAPIImpl[member]);
+    }
 }
 
-CommandLineAPI.prototype = {
-    // Only add API functions here, private stuff should go to
-    // InjectedScript so that it is not suggested by the completion.
+CommandLineAPI.members_ = [
+    "$", "$$", "$x", "dir", "dirxml", "keys", "values", "profile", "profileEnd",
+    "monitorEvents", "unmonitorEvents", "inspect", "copy", "clear"
+];
+
+function CommandLineAPIImpl()
+{
+    for (var i = 0; i < 5; ++i)
+        this.__defineGetter__("$" + i, this._bindToScript(this._inspectedNode, i));
+}
+
+CommandLineAPIImpl.prototype = {
     $: function()
     {
         return document.getElementById.apply(document, arguments)
@@ -675,10 +675,10 @@ CommandLineAPI.prototype = {
     {
         if (!object || !object.addEventListener || !object.removeEventListener)
             return;
-        types = injectedScript._normalizeEventTypes(types);
+        types = this._normalizeEventTypes(types);
         for (var i = 0; i < types.length; ++i) {
-            object.removeEventListener(types[i], injectedScript._logEvent, false);
-            object.addEventListener(types[i], injectedScript._logEvent, false);
+            object.removeEventListener(types[i], this._logEvent, false);
+            object.addEventListener(types[i], this._logEvent, false);
         }
     },
 
@@ -686,9 +686,9 @@ CommandLineAPI.prototype = {
     {
         if (!object || !object.addEventListener || !object.removeEventListener)
             return;
-        types = injectedScript._normalizeEventTypes(types);
+        types = this._normalizeEventTypes(types);
         for (var i = 0; i < types.length; ++i)
-            object.removeEventListener(types[i], injectedScript._logEvent, false);
+            object.removeEventListener(types[i], this._logEvent, false);
     },
 
     inspect: function(object)
@@ -721,10 +721,52 @@ CommandLineAPI.prototype = {
     clear: function()
     {
         InjectedScriptHost.clearConsoleMessages();
+    },
+
+    _bindToScript: function(func)
+    {
+        var args = Array.prototype.slice.call(arguments, 1);
+        function bound()
+        {
+            return func.apply(injectedScript, args.concat(Array.prototype.slice.call(arguments)));
+        }
+        bound.toString = function() {
+            return "bound: " + func;
+        };
+        return bound;
+    },
+
+    _inspectedNode: function(num)
+    {
+        var nodeId = InjectedScriptHost.inspectedNode(num);
+        return this._nodeForId(nodeId);
+    },
+
+    _normalizeEventTypes: function(types)
+    {
+        if (typeof types === "undefined")
+            types = [ "mouse", "key", "load", "unload", "abort", "error", "select", "change", "submit", "reset", "focus", "blur", "resize", "scroll" ];
+        else if (typeof types === "string")
+            types = [ types ];
+
+        var result = [];
+        for (var i = 0; i < types.length; i++) {
+            if (types[i] === "mouse")
+                result.splice(0, 0, "mousedown", "mouseup", "click", "dblclick", "mousemove", "mouseover", "mouseout");
+            else if (types[i] === "key")
+                result.splice(0, 0, "keydown", "keyup", "keypress");
+            else
+                result.push(types[i]);
+        }
+        return result;
+    },
+
+    _logEvent: function(event)
+    {
+        console.log(event.type, event);
     }
 }
 
-injectedScript._commandLineAPI = new CommandLineAPI();
+injectedScript._commandLineAPIImpl = new CommandLineAPIImpl();
 return injectedScript;
 })
-

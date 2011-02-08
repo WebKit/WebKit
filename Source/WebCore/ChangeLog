@@ -1,3 +1,13 @@
+2011-02-08  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: re-apply r77924.
+
+        Test: inspector/console-api-on-call-frame.html
+
+        * inspector/InjectedScriptSource.js:
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._onEvaluateOnInspectedPage):
+
 2011-02-08  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Tor Arne Vestbø.

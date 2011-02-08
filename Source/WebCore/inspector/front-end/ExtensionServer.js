@@ -272,10 +272,8 @@ WebInspector.ExtensionServer.prototype = {
             result.value = resultObject.description;
             this._dispatchCallback(message.requestId, port, result);
         }
-        var evalExpression = "JSON.stringify(eval('" +
-            "with (window.console._commandLineAPI) with (window) {' + unescape('" + escape(message.expression) +
-            "') + '}'));";
-        InspectorBackend.evaluate(evalExpression, "none", false, callback.bind(this));
+        var evalExpression = "JSON.stringify(eval(unescape('" + escape(message.expression) + "')));";
+        InspectorBackend.evaluate(evalExpression, "none", true, callback.bind(this));
     },
 
     _onRevealAndSelect: function(message)
