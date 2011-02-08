@@ -1,3 +1,41 @@
+2011-02-04  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [refacotring] merge InspectorAgent::willSendRequest() into InspectorResourceAgent
+        https://bugs.webkit.org/show_bug.cgi?id=53789
+         - perform UserAgent override via InspectorInstrumentation
+         - move adding extra request headers to InspectorResourceAgent
+         - simplified things in InspectorState
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::disconnectFrontend):
+        (WebCore::InspectorAgent::applyUserAgentOverride):
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::applyUserAgentOverrideImpl):
+        (WebCore::InspectorInstrumentation::willSendRequestImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::applyUserAgentOverride):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::setExtraHeaders):
+        (WebCore::InspectorResourceAgent::willSendRequest):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/InspectorState.cpp:
+        (WebCore::InspectorState::InspectorState):
+        (WebCore::InspectorState::restoreFromInspectorCookie):
+        (WebCore::InspectorState::updateCookie):
+        (WebCore::InspectorState::setValue):
+        (WebCore::InspectorState::getBoolean):
+        (WebCore::InspectorState::getString):
+        (WebCore::InspectorState::getLong):
+        (WebCore::InspectorState::getObject):
+        * inspector/InspectorState.h:
+        (WebCore::InspectorState::setObject):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::userAgent):
+
 2011-02-08  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

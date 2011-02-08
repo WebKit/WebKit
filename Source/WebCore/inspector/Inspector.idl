@@ -62,7 +62,6 @@ module core {
         [domain=Inspector] void hideFrameHighlight();
         [notify, domain=Inspector] void updateFocusedNode(out long nodeId);
 
-        [domain=Inspector] void setExtraHeaders(in Object headers);
         [domain=Inspector] void setUserAgentOverride(in String userAgent);
 
         [domain=Inspector] void getCookies(out Array cookies, out String cookiesString);
@@ -102,6 +101,7 @@ module core {
 
         [domain=Network] void cachedResources(out Object resources);
         [domain=Network] void resourceContent(in unsigned long frameId, in String url, in boolean base64Encode, out String content);
+        [domain=Network] void setExtraHeaders(in Object headers);
 
         [notify, domain=Network] void frameDetachedFromParent(out unsigned long frameId);
         [notify, domain=Network] void identifierForInitialRequest(out long identifier, out String url, out Object loader, out Value callStack);

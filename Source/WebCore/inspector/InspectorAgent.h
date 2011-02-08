@@ -246,8 +246,6 @@ public:
     void disableDebugger();
     bool debuggerEnabled() const { return m_debuggerAgent; }
     void resume();
-
-    void setAllBrowserBreakpoints(PassRefPtr<InspectorObject>);
 #endif
 
     // Generic code called from custom implementations.
@@ -267,11 +265,8 @@ public:
     void setSearchingForNode(bool enabled, bool* newState);
     void didEvaluateForTestInFrontend(long callId, const String& jsonResult);
 
-    // InspectorInstrumentation API
-    void willSendRequest(ResourceRequest&);
-
     void setUserAgentOverride(const String& userAgent);
-    String userAgentOverride() const;
+    void applyUserAgentOverride(String* userAgent) const;
 
 private:
     void pushDataCollectedOffline();
@@ -351,7 +346,6 @@ private:
     OwnPtr<InspectorBrowserDebuggerAgent> m_browserDebuggerAgent;
     OwnPtr<InspectorProfilerAgent> m_profilerAgent;
 #endif
-    OwnPtr<HTTPHeaderMap> m_extraHeaders;
     String m_userAgentOverride;
 #if ENABLE(WORKERS)
     typedef HashMap<intptr_t, RefPtr<InspectorWorkerResource> > WorkersMap;

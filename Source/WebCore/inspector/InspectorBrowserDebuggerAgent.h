@@ -51,10 +51,7 @@ class Node;
 class InspectorBrowserDebuggerAgent {
     WTF_MAKE_NONCOPYABLE(InspectorBrowserDebuggerAgent);
 public:
-    static PassOwnPtr<InspectorBrowserDebuggerAgent> create(InspectorAgent* inspectorAgent)
-    {
-        return adoptPtr(new InspectorBrowserDebuggerAgent(inspectorAgent));
-    }
+    static PassOwnPtr<InspectorBrowserDebuggerAgent> create(InspectorAgent*, bool eraseStickyBreakpoints);
 
     virtual ~InspectorBrowserDebuggerAgent();
 
@@ -79,7 +76,7 @@ public:
     void pauseOnNativeEventIfNeeded(const String& categoryType, const String& eventName, bool synchronous);
 
 private:
-    InspectorBrowserDebuggerAgent(InspectorAgent*);
+    InspectorBrowserDebuggerAgent(InspectorAgent*, bool eraseStickyBreakpoints);
 
     void restoreStickyBreakpoint(PassRefPtr<InspectorObject> breakpoint);
 

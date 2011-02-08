@@ -57,7 +57,7 @@ enum DebuggerEventType {
 class InspectorDebuggerAgent : public ScriptDebugListener {
     WTF_MAKE_NONCOPYABLE(InspectorDebuggerAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<InspectorDebuggerAgent> create(InspectorAgent*, InspectorFrontend*);
+    static PassOwnPtr<InspectorDebuggerAgent> create(InspectorAgent*, InspectorFrontend*, bool eraseStickyBreakpoints);
     virtual ~InspectorDebuggerAgent();
 
     void inspectedURLChanged(const String& url);
@@ -86,7 +86,7 @@ public:
     void getCompletionsOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, bool includeCommandLineAPI, RefPtr<InspectorValue>* result);
 
 private:
-    InspectorDebuggerAgent(InspectorAgent*, InspectorFrontend*);
+    InspectorDebuggerAgent(InspectorAgent*, InspectorFrontend*, bool eraseStickyBreakpoints);
 
     PassRefPtr<InspectorValue> currentCallFrames();
 

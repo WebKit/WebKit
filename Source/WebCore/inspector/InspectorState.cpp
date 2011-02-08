@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,124 +37,65 @@ namespace WebCore {
 
 InspectorState::InspectorState(InspectorClient* client)
     : m_client(client)
+    , m_properties(InspectorObject::create())
 {
-    // Pure reload state
-    registerBoolean(userInitiatedProfiling, false);
-    registerBoolean(timelineProfilerEnabled, false);
-    registerBoolean(searchingForNode, false);
-    registerBoolean(debuggerEnabled, false);
-    registerBoolean(profilerEnabled, false);
-    registerObject(javaScriptBreakpoints);
-    registerObject(browserBreakpoints);
-    registerBoolean(consoleMessagesEnabled, false);
-    registerBoolean(monitoringXHR, false);
-    registerBoolean(resourceAgentEnabled, false);
 }
 
 void InspectorState::restoreFromInspectorCookie(const String& json)
 {
     RefPtr<InspectorValue> jsonValue = InspectorValue::parseJSON(json);
-    if (!jsonValue)
-        return;
-
-    RefPtr<InspectorObject> jsonObject = jsonValue->asObject();
-    if (!jsonObject)
-        return;
-
-    for (InspectorObject::iterator i = jsonObject->begin(); i != jsonObject->end(); ++i) {
-        InspectorPropertyId id = (InspectorPropertyId)i->first.toInt();
-        ASSERT(id > 0 && id < lastPropertyId);
-        PropertyMap::iterator j = m_properties.find(id);
-        ASSERT(j != m_properties.end());
-        ASSERT(j->second.m_value->type() == i->second->type());
-        j->second.m_value = i->second;
-    }
+    if (jsonValue)
+        m_properties = jsonValue->asObject();
+    if (!m_properties)
+        m_properties = InspectorObject::create();
 }
 
 void InspectorState::updateCookie()
 {
-    RefPtr<InspectorObject> cookieObject = InspectorObject::create();
-    for (PropertyMap::iterator i = m_properties.begin(); i != m_properties.end(); ++i)
-        cookieObject->setValue(String::number(i->first), i->second.m_value);
-    m_client->updateInspectorStateCookie(cookieObject->toJSONString());
+    m_client->updateInspectorStateCookie(m_properties->toJSONString());
 }
 
-void InspectorState::setValue(InspectorPropertyId id, PassRefPtr<InspectorValue> value)
+void InspectorState::setValue(const String& propertyName, PassRefPtr<InspectorValue> value)
 {
-    PropertyMap::iterator i = m_properties.find(id);
-    ASSERT(i != m_properties.end());
-    i->second.m_value = value;
+    m_properties->setValue(propertyName, value);
     updateCookie();
 }
 
-bool InspectorState::getBoolean(InspectorPropertyId id)
+bool InspectorState::getBoolean(const String& propertyName)
 {
-    PropertyMap::iterator i = m_properties.find(id);
-    ASSERT(i != m_properties.end());
+    InspectorObject::iterator it = m_properties->find(propertyName);
     bool value = false;
-    i->second.m_value->asBoolean(&value);
+    if (it != m_properties->end())
+        it->second->asBoolean(&value);
     return value;
 }
 
-String InspectorState::getString(InspectorPropertyId id)
+String InspectorState::getString(const String& propertyName)
 {
-    PropertyMap::iterator i = m_properties.find(id);
-    ASSERT(i != m_properties.end());
+    InspectorObject::iterator it = m_properties->find(propertyName);
     String value;
-    i->second.m_value->asString(&value);
+    if (it != m_properties->end())
+        it->second->asString(&value);
     return value;
 }
 
-long InspectorState::getLong(InspectorPropertyId id)
+long InspectorState::getLong(const String& propertyName)
 {
-    PropertyMap::iterator i = m_properties.find(id);
-    ASSERT(i != m_properties.end());
+    InspectorObject::iterator it = m_properties->find(propertyName);
     long value = 0;
-    i->second.m_value->asNumber(&value);
+    if (it != m_properties->end())
+        it->second->asNumber(&value);
     return value;
 }
 
-PassRefPtr<InspectorObject> InspectorState::getObject(InspectorPropertyId id)
+PassRefPtr<InspectorObject> InspectorState::getObject(const String& propertyName)
 {
-    PropertyMap::iterator i = m_properties.find(id);
-    ASSERT(i != m_properties.end());
-    return i->second.m_value->asObject();
-}
-
-void InspectorState::setObject(InspectorPropertyId id, PassRefPtr<InspectorObject> value)
-{
-    PropertyMap::iterator i = m_properties.find(id);
-    ASSERT(i != m_properties.end());
-    Property& property = i->second;
-    property.m_value = value;
-    updateCookie();
-}
-
-void InspectorState::registerBoolean(InspectorPropertyId propertyId, bool value)
-{
-    m_properties.set(propertyId, Property::create(InspectorBasicValue::create(value)));
-}
-
-void InspectorState::registerString(InspectorPropertyId propertyId, const String& value)
-{
-    m_properties.set(propertyId, Property::create(InspectorString::create(value)));
-}
-
-void InspectorState::registerLong(InspectorPropertyId propertyId, long value)
-{
-    m_properties.set(propertyId, Property::create(InspectorBasicValue::create((double)value)));
-}
-
-void InspectorState::registerObject(InspectorPropertyId propertyId)
-{
-    m_properties.set(propertyId, Property::create(InspectorObject::create()));
-}
-
-InspectorState::Property InspectorState::Property::create(PassRefPtr<InspectorValue> value)
-{
-    Property property;
-    property.m_value = value;
-    return property;
+    InspectorObject::iterator it = m_properties->find(propertyName);
+    if (it == m_properties->end()) {
+        m_properties->setObject(propertyName, InspectorObject::create());
+        it = m_properties->find(propertyName);
+    }
+    return it->second->asObject();
 }
 
 } // namespace WebCore

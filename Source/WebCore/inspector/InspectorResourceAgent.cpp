@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -67,9 +67,14 @@
 
 namespace WebCore {
 
+namespace ResourceAgentState {
+static const char resourceAgentEnabled[] = "resourceAgentEnabled";
+static const char extraRequestHeaders[] = "extraRequestHeaders";
+}
+
 PassRefPtr<InspectorResourceAgent> InspectorResourceAgent::restore(Page* page, InspectorState* state, InspectorFrontend* frontend)
 {
-    if (state->getBoolean(InspectorState::resourceAgentEnabled))
+    if (state->getBoolean(ResourceAgentState::resourceAgentEnabled))
         return create(page, state, frontend);
     return 0;
 }
@@ -287,7 +292,7 @@ static void populateObjectWithFrameResources(Frame* frame, PassRefPtr<InspectorO
 
 InspectorResourceAgent::~InspectorResourceAgent()
 {
-    m_state->setBoolean(InspectorState::resourceAgentEnabled, false);
+    m_state->setBoolean(ResourceAgentState::resourceAgentEnabled, false);
 }
 
 void InspectorResourceAgent::identifierForInitialRequest(unsigned long identifier, const KURL& url, DocumentLoader* loader)
@@ -302,8 +307,28 @@ void InspectorResourceAgent::identifierForInitialRequest(unsigned long identifie
     m_frontend->identifierForInitialRequest(identifier, url.string(), loaderObject, callStackValue);
 }
 
+void InspectorResourceAgent::setExtraHeaders(PassRefPtr<InspectorObject> headers)
+{
+    m_state->setObject(ResourceAgentState::extraRequestHeaders, headers);
+}
+
+
 void InspectorResourceAgent::willSendRequest(unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
+    RefPtr<InspectorObject> headers = m_state->getObject(ResourceAgentState::extraRequestHeaders);
+
+    if (headers) {
+        InspectorObject::const_iterator end = headers->end();
+        for (InspectorObject::const_iterator it = headers->begin(); it != end; ++it) {
+            String value;
+            if (it->second->asString(&value))
+                request.setHTTPHeaderField(it->first, value);
+        }
+    }
+
+    request.setReportLoadTiming(true);
+    request.setReportRawHeaders(true);
+
     m_frontend->willSendRequest(identifier, currentTime(), buildObjectForResourceRequest(request), buildObjectForResourceResponse(redirectResponse));
 }
 
@@ -492,7 +517,7 @@ InspectorResourceAgent::InspectorResourceAgent(Page* page, InspectorState* state
     , m_state(state)
     , m_frontend(frontend)
 {
-    m_state->setBoolean(InspectorState::resourceAgentEnabled, true);
+    m_state->setBoolean(ResourceAgentState::resourceAgentEnabled, true);
 }
 
 } // namespace WebCore

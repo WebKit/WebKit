@@ -381,9 +381,13 @@ void InspectorInstrumentation::identifierForInitialRequestImpl(InspectorAgent* i
         resourceAgent->identifierForInitialRequest(identifier, request.url(), loader);
 }
 
+void InspectorInstrumentation::applyUserAgentOverrideImpl(InspectorAgent* inspectorAgent, String* userAgent)
+{
+    inspectorAgent->applyUserAgentOverride(userAgent);
+}
+
 void InspectorInstrumentation::willSendRequestImpl(InspectorAgent* ic, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
-    ic->willSendRequest(request);
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(ic))
         timelineAgent->willSendResourceRequest(identifier, request);
     if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))

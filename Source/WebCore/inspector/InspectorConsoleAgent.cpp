@@ -49,6 +49,11 @@ namespace WebCore {
 static const unsigned maximumConsoleMessages = 1000;
 static const unsigned expireConsoleMessagesStep = 100;
 
+namespace ConsoleAgentState {
+static const char monitoringXHR[] = "monitoringXHR";
+static const char consoleMessagesEnabled[] = "consoleMessagesEnabled";
+}
+
 InspectorConsoleAgent::InspectorConsoleAgent(InspectorAgent* inspectorAgent)
     : m_inspectorAgent(inspectorAgent)
     , m_frontend(0)
@@ -164,7 +169,7 @@ void InspectorConsoleAgent::resourceRetrievedByXMLHttpRequest(const String& url,
 {
     if (!m_inspectorAgent->enabled())
         return;
-    if (m_inspectorAgent->state()->getBoolean(InspectorState::monitoringXHR))
+    if (m_inspectorAgent->state()->getBoolean(ConsoleAgentState::monitoringXHR))
         addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, "XHR finished loading: \"" + url + "\".", sendLineNumber, sendURL);
 }
 
@@ -192,12 +197,12 @@ void InspectorConsoleAgent::didFailLoading(unsigned long identifier, const Resou
 
 void InspectorConsoleAgent::setMonitoringXHREnabled(bool enabled)
 {
-    m_inspectorAgent->state()->setBoolean(InspectorState::monitoringXHR, enabled);
+    m_inspectorAgent->state()->setBoolean(ConsoleAgentState::monitoringXHR, enabled);
 }
 
 void InspectorConsoleAgent::setConsoleMessagesEnabled(bool enabled)
 {
-    m_inspectorAgent->state()->setBoolean(InspectorState::consoleMessagesEnabled, enabled);
+    m_inspectorAgent->state()->setBoolean(ConsoleAgentState::consoleMessagesEnabled, enabled);
     if (!enabled || !m_frontend)
         return;
 
@@ -215,12 +220,12 @@ void InspectorConsoleAgent::addConsoleMessage(PassOwnPtr<ConsoleMessage> console
 
     if (m_previousMessage && m_previousMessage->isEqual(consoleMessage.get())) {
         m_previousMessage->incrementCount();
-        if (m_inspectorAgent->state()->getBoolean(InspectorState::consoleMessagesEnabled) && m_frontend)
+        if (m_inspectorAgent->state()->getBoolean(ConsoleAgentState::consoleMessagesEnabled) && m_frontend)
             m_previousMessage->updateRepeatCountInConsole(m_frontend);
     } else {
         m_previousMessage = consoleMessage.get();
         m_consoleMessages.append(consoleMessage);
-        if (m_inspectorAgent->state()->getBoolean(InspectorState::consoleMessagesEnabled) && m_frontend)
+        if (m_inspectorAgent->state()->getBoolean(ConsoleAgentState::consoleMessagesEnabled) && m_frontend)
             m_previousMessage->addToFrontend(m_frontend, m_inspectorAgent->injectedScriptHost());
     }
 

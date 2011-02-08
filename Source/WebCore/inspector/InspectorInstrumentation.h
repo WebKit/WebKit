@@ -108,6 +108,7 @@ public:
     static InspectorInstrumentationCookie willRecalculateStyle(Document*);
     static void didRecalculateStyle(const InspectorInstrumentationCookie&);
 
+    static void applyUserAgentOverride(Frame*, String*);
     static void identifierForInitialRequest(Frame*, unsigned long identifier, DocumentLoader*, const ResourceRequest&);
     static void willSendRequest(Frame*, unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse);
     static void markResourceAsCached(Page*, unsigned long identifier);
@@ -220,6 +221,8 @@ private:
     static void didPaintImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willRecalculateStyleImpl(InspectorAgent*);
     static void didRecalculateStyleImpl(const InspectorInstrumentationCookie&);
+
+    static void applyUserAgentOverrideImpl(InspectorAgent*, String*);
     static void identifierForInitialRequestImpl(InspectorAgent*, unsigned long identifier, DocumentLoader*, const ResourceRequest&);
     static void willSendRequestImpl(InspectorAgent*, unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse);
     static void markResourceAsCachedImpl(InspectorAgent*, unsigned long identifier);
@@ -594,6 +597,14 @@ inline void InspectorInstrumentation::identifierForInitialRequest(Frame* frame, 
         return;
     if (InspectorAgent* ic = inspectorAgentForPage(frame->page()))
         identifierForInitialRequestImpl(ic, identifier, loader, request);
+#endif
+}
+
+inline void InspectorInstrumentation::applyUserAgentOverride(Frame* frame, String* userAgent)
+{
+#if ENABLE(INSPECTOR)
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForFrame(frame))
+        applyUserAgentOverrideImpl(inspectorAgent, userAgent);
 #endif
 }
 

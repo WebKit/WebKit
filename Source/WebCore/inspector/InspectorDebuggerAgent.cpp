@@ -42,9 +42,13 @@
 
 namespace WebCore {
 
-PassOwnPtr<InspectorDebuggerAgent> InspectorDebuggerAgent::create(InspectorAgent* inspectorAgent, InspectorFrontend* frontend)
+namespace DebuggerAgentState {
+static const char javaScriptBreakpoints[] = "javaScriptBreakopints";
+};
+
+PassOwnPtr<InspectorDebuggerAgent> InspectorDebuggerAgent::create(InspectorAgent* inspectorAgent, InspectorFrontend* frontend, bool eraseStickyBreakpoints)
 {
-    OwnPtr<InspectorDebuggerAgent> agent = adoptPtr(new InspectorDebuggerAgent(inspectorAgent, frontend));
+    OwnPtr<InspectorDebuggerAgent> agent = adoptPtr(new InspectorDebuggerAgent(inspectorAgent, frontend, eraseStickyBreakpoints));
     ScriptDebugServer::shared().clearBreakpoints();
     // FIXME(WK44513): breakpoints activated flag should be synchronized between all front-ends
     ScriptDebugServer::shared().setBreakpointsActivated(true);
@@ -52,12 +56,14 @@ PassOwnPtr<InspectorDebuggerAgent> InspectorDebuggerAgent::create(InspectorAgent
     return agent.release();
 }
 
-InspectorDebuggerAgent::InspectorDebuggerAgent(InspectorAgent* inspectorAgent, InspectorFrontend* frontend)
+InspectorDebuggerAgent::InspectorDebuggerAgent(InspectorAgent* inspectorAgent, InspectorFrontend* frontend, bool eraseStickyBreakpoints)
     : m_inspectorAgent(inspectorAgent)
     , m_frontend(frontend)
     , m_pausedScriptState(0)
     , m_javaScriptPauseScheduled(false)
 {
+    if (eraseStickyBreakpoints)
+        inspectorAgent->state()->setObject(DebuggerAgentState::javaScriptBreakpoints, InspectorObject::create());
 }
 
 InspectorDebuggerAgent::~InspectorDebuggerAgent()
@@ -85,7 +91,7 @@ void InspectorDebuggerAgent::inspectedURLChanged(const String&)
 void InspectorDebuggerAgent::setJavaScriptBreakpoint(const String& url, int lineNumber, int columnNumber, const String& condition, bool enabled, String* outBreakpointId, RefPtr<InspectorArray>* locations)
 {
     String breakpointId = makeString(url, ":", String::number(lineNumber), ":", String::number(columnNumber));
-    RefPtr<InspectorObject> breakpointsCookie = m_inspectorAgent->state()->getObject(InspectorState::javaScriptBreakpoints);
+    RefPtr<InspectorObject> breakpointsCookie = m_inspectorAgent->state()->getObject(DebuggerAgentState::javaScriptBreakpoints);
     if (breakpointsCookie->find(breakpointId) != breakpointsCookie->end())
         return;
     RefPtr<InspectorObject> breakpointObject = InspectorObject::create();
@@ -95,7 +101,7 @@ void InspectorDebuggerAgent::setJavaScriptBreakpoint(const String& url, int line
     breakpointObject->setString("condition", condition);
     breakpointObject->setBoolean("enabled", enabled);
     breakpointsCookie->setObject(breakpointId, breakpointObject);
-    m_inspectorAgent->state()->setObject(InspectorState::javaScriptBreakpoints, breakpointsCookie);
+    m_inspectorAgent->state()->setObject(DebuggerAgentState::javaScriptBreakpoints, breakpointsCookie);
 
     ScriptBreakpoint breakpoint(lineNumber, columnNumber, condition, enabled);
     for (ScriptsMap::iterator it = m_scripts.begin(); it != m_scripts.end(); ++it) {
@@ -126,9 +132,9 @@ void InspectorDebuggerAgent::setJavaScriptBreakpointBySourceId(const String& sou
 
 void InspectorDebuggerAgent::removeJavaScriptBreakpoint(const String& breakpointId)
 {
-    RefPtr<InspectorObject> breakpointsCookie = m_inspectorAgent->state()->getObject(InspectorState::javaScriptBreakpoints);
+    RefPtr<InspectorObject> breakpointsCookie = m_inspectorAgent->state()->getObject(DebuggerAgentState::javaScriptBreakpoints);
     breakpointsCookie->remove(breakpointId);
-    m_inspectorAgent->state()->setObject(InspectorState::javaScriptBreakpoints, breakpointsCookie);
+    m_inspectorAgent->state()->setObject(DebuggerAgentState::javaScriptBreakpoints, breakpointsCookie);
 
     BreakpointIdToDebugServerBreakpointIdsMap::iterator debugServerBreakpointIdsIterator = m_breakpointIdToDebugServerBreakpointIds.find(breakpointId);
     if (debugServerBreakpointIdsIterator == m_breakpointIdToDebugServerBreakpointIds.end())
@@ -278,7 +284,7 @@ void InspectorDebuggerAgent::didParseSource(const String& sourceID, const String
     if (url.isEmpty())
         return;
 
-    RefPtr<InspectorObject> breakpointsCookie = m_inspectorAgent->state()->getObject(InspectorState::javaScriptBreakpoints);
+    RefPtr<InspectorObject> breakpointsCookie = m_inspectorAgent->state()->getObject(DebuggerAgentState::javaScriptBreakpoints);
     for (InspectorObject::iterator it = breakpointsCookie->begin(); it != breakpointsCookie->end(); ++it) {
         RefPtr<InspectorObject> breakpointObject = it->second->asObject();
         String breakpointURL;

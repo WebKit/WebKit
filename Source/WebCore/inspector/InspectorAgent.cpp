@@ -129,6 +129,14 @@ using namespace std;
 
 namespace WebCore {
 
+namespace InspectorAgentState {
+static const char searchingForNode[] = "searchingForNode";
+static const char timelineProfilerEnabled[] = "timelineProfilerEnabled";
+static const char userInitiatedProfiling[] = "userInitiatedProfiling";
+static const char debuggerEnabled[] = "debuggerEnabled";
+static const char profilerEnabled[] = "profilerEnabled";
+}
+
 const char* const InspectorAgent::ElementsPanel = "elements";
 const char* const InspectorAgent::ConsolePanel = "console";
 const char* const InspectorAgent::ScriptsPanel = "scripts";
@@ -193,7 +201,7 @@ bool InspectorAgent::enabled() const
 
 bool InspectorAgent::searchingForNodeInPage() const
 {
-    return m_state->getBoolean(InspectorState::searchingForNode);
+    return m_state->getBoolean(InspectorAgentState::searchingForNode);
 }
 
 void InspectorAgent::restoreInspectorStateFromCookie(const String& inspectorStateCookie)
@@ -210,13 +218,13 @@ void InspectorAgent::restoreInspectorStateFromCookie(const String& inspectorStat
 
     m_resourceAgent = InspectorResourceAgent::restore(m_inspectedPage, m_state.get(), m_frontend.get());
 
-    if (m_state->getBoolean(InspectorState::timelineProfilerEnabled))
+    if (m_state->getBoolean(InspectorAgentState::timelineProfilerEnabled))
         startTimelineProfiler();
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     restoreDebugger(false);
     restoreProfiler(ProfilerRestoreResetAgent);
-    if (m_state->getBoolean(InspectorState::userInitiatedProfiling))
+    if (m_state->getBoolean(InspectorAgentState::userInitiatedProfiling))
         startUserInitiatedProfiling();
 #endif
 }
@@ -346,7 +354,7 @@ void InspectorAgent::setSearchingForNode(bool enabled)
 {
     if (searchingForNodeInPage() == enabled)
         return;
-    m_state->setBoolean(InspectorState::searchingForNode, enabled);
+    m_state->setBoolean(InspectorAgentState::searchingForNode, enabled);
     if (!enabled)
         hideHighlight();
 }
@@ -464,7 +472,6 @@ void InspectorAgent::disconnectFrontend()
 
     releaseFrontendLifetimeAgents();
     m_timelineAgent.clear();
-    m_extraHeaders.clear();
     m_userAgentOverride = "";
 }
 
@@ -567,7 +574,7 @@ void InspectorAgent::restoreDebugger(bool eraseStickyBreakpoints)
 {
     ASSERT(m_frontend);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (m_state->getBoolean(InspectorState::debuggerEnabled))
+    if (m_state->getBoolean(InspectorAgentState::debuggerEnabled))
         enableDebugger(eraseStickyBreakpoints);
 #endif
 }
@@ -577,7 +584,7 @@ void InspectorAgent::restoreProfiler(ProfilerRestoreAction action)
     ASSERT(m_frontend);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     m_profilerAgent->setFrontend(m_frontend.get());
-    if (m_state->getBoolean(InspectorState::profilerEnabled))
+    if (m_state->getBoolean(InspectorAgentState::profilerEnabled))
         enableProfiler();
     if (action == ProfilerRestoreResetAgent)
         m_profilerAgent->resetFrontendProfiles();
@@ -687,27 +694,10 @@ void InspectorAgent::setUserAgentOverride(const String& userAgent)
     m_userAgentOverride = userAgent;
 }
 
-String InspectorAgent::userAgentOverride() const
+void InspectorAgent::applyUserAgentOverride(String* userAgent) const
 {
-    return m_userAgentOverride;
-}
-
-void InspectorAgent::willSendRequest(ResourceRequest& request)
-{
-    if (!enabled())
-        return;
-
-    if (m_frontend) {
-        // Only enable load timing and raw headers if front-end is attached, as otherwise we may produce overhead.
-        request.setReportLoadTiming(true);
-        request.setReportRawHeaders(true);
-
-        if (m_extraHeaders) {
-            HTTPHeaderMap::const_iterator end = m_extraHeaders->end();
-            for (HTTPHeaderMap::const_iterator it = m_extraHeaders->begin(); it != end; ++it)
-                request.setHTTPHeaderField(it->first, it->second);
-        }
-    }
+    if (!m_userAgentOverride.isEmpty())
+        *userAgent = m_userAgentOverride;
 }
 
 void InspectorAgent::startTimelineProfiler()
@@ -722,7 +712,7 @@ void InspectorAgent::startTimelineProfiler()
     if (m_frontend)
         m_frontend->timelineProfilerWasStarted();
 
-    m_state->setBoolean(InspectorState::timelineProfilerEnabled, true);
+    m_state->setBoolean(InspectorAgentState::timelineProfilerEnabled, true);
 }
 
 void InspectorAgent::stopTimelineProfiler()
@@ -737,7 +727,7 @@ void InspectorAgent::stopTimelineProfiler()
     if (m_frontend)
         m_frontend->timelineProfilerWasStopped();
 
-    m_state->setBoolean(InspectorState::timelineProfilerEnabled, false);
+    m_state->setBoolean(InspectorAgentState::timelineProfilerEnabled, false);
 }
 
 #if ENABLE(WORKERS)
@@ -973,7 +963,7 @@ void InspectorAgent::startUserInitiatedProfiling()
     if (!enabled())
         return;
     m_profilerAgent->startUserInitiatedProfiling();
-    m_state->setBoolean(InspectorState::userInitiatedProfiling, true);
+    m_state->setBoolean(InspectorAgentState::userInitiatedProfiling, true);
 }
 
 void InspectorAgent::stopUserInitiatedProfiling()
@@ -981,7 +971,7 @@ void InspectorAgent::stopUserInitiatedProfiling()
     if (!enabled())
         return;
     m_profilerAgent->stopUserInitiatedProfiling();
-    m_state->setBoolean(InspectorState::userInitiatedProfiling, false);
+    m_state->setBoolean(InspectorAgentState::userInitiatedProfiling, false);
 }
 
 bool InspectorAgent::profilerEnabled() const
@@ -993,13 +983,13 @@ void InspectorAgent::enableProfiler()
 {
     if (profilerEnabled())
         return;
-    m_state->setBoolean(InspectorState::profilerEnabled, true);
+    m_state->setBoolean(InspectorAgentState::profilerEnabled, true);
     m_profilerAgent->enable(false);
 }
 
 void InspectorAgent::disableProfiler()
 {
-    m_state->setBoolean(InspectorState::profilerEnabled, false);
+    m_state->setBoolean(InspectorAgentState::profilerEnabled, false);
     m_profilerAgent->disable();
 }
 #endif
@@ -1014,7 +1004,7 @@ void InspectorAgent::showAndEnableDebugger()
         return;
 
     if (!m_frontend) {
-        m_state->setBoolean(InspectorState::debuggerEnabled, true);
+        m_state->setBoolean(InspectorAgentState::debuggerEnabled, true);
         showPanel(ScriptsPanel);
     } else
         enableDebugger(true);
@@ -1024,16 +1014,11 @@ void InspectorAgent::enableDebugger(bool eraseStickyBreakpoints)
 {
     if (debuggerEnabled())
         return;
-    m_state->setBoolean(InspectorState::debuggerEnabled, true);
+    m_state->setBoolean(InspectorAgentState::debuggerEnabled, true);
     ASSERT(m_inspectedPage);
 
-    if (eraseStickyBreakpoints) {
-        m_state->setObject(InspectorState::javaScriptBreakpoints, InspectorObject::create());
-        m_state->setObject(InspectorState::browserBreakpoints, InspectorObject::create());
-    }
-
-    m_debuggerAgent = InspectorDebuggerAgent::create(this, m_frontend.get());
-    m_browserDebuggerAgent = InspectorBrowserDebuggerAgent::create(this);
+    m_debuggerAgent = InspectorDebuggerAgent::create(this, m_frontend.get(), eraseStickyBreakpoints);
+    m_browserDebuggerAgent = InspectorBrowserDebuggerAgent::create(this, eraseStickyBreakpoints);
 
     m_frontend->debuggerWasEnabled();
 }
@@ -1048,7 +1033,7 @@ void InspectorAgent::disableDebugger()
 
     if (m_frontend) {
         m_frontend->debuggerWasDisabled();
-        m_state->setBoolean(InspectorState::debuggerEnabled, false);
+        m_state->setBoolean(InspectorAgentState::debuggerEnabled, false);
     }
 }
 
@@ -1056,11 +1041,6 @@ void InspectorAgent::resume()
 {
     if (m_debuggerAgent)
         m_debuggerAgent->resume();
-}
-
-void InspectorAgent::setAllBrowserBreakpoints(PassRefPtr<InspectorObject> breakpoints)
-{
-    m_state->setObject(InspectorState::browserBreakpoints, breakpoints);
 }
 #endif
 
@@ -1376,18 +1356,6 @@ KURL InspectorAgent::inspectedURLWithoutFragment() const
 void InspectorAgent::reloadPage(bool ignoreCache)
 {
     m_inspectedPage->mainFrame()->loader()->reload(ignoreCache);
-}
-
-void InspectorAgent::setExtraHeaders(PassRefPtr<InspectorObject> headers)
-{
-    m_extraHeaders = adoptPtr(new HTTPHeaderMap());
-    InspectorObject::const_iterator end = headers->end();
-    for (InspectorObject::const_iterator it = headers->begin(); it != end; ++it) {
-        String value;
-        if (!it->second->asString(&value))
-            continue;
-        m_extraHeaders->add(it->first, value);
-    }
 }
 
 } // namespace WebCore

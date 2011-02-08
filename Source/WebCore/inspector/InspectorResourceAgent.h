@@ -104,6 +104,7 @@ public:
     // Called from frontend 
     void cachedResources(RefPtr<InspectorObject>*);
     void resourceContent(unsigned long frameID, const String& url, bool base64Encode, String* content);
+    void setExtraHeaders(PassRefPtr<InspectorObject>);
 
 private:
     InspectorResourceAgent(Page* page, InspectorState*, InspectorFrontend* frontend);

@@ -61,10 +61,21 @@ const int domBreakpointDerivedTypeShift = 16;
 
 namespace WebCore {
 
-InspectorBrowserDebuggerAgent::InspectorBrowserDebuggerAgent(InspectorAgent* inspectorAgent)
+namespace BrowserDebuggerAgentState {
+static const char browserBreakpoints[] = "browserBreakpoints";
+}
+
+PassOwnPtr<InspectorBrowserDebuggerAgent> InspectorBrowserDebuggerAgent::create(InspectorAgent* inspectorAgent, bool eraseStickyBreakpoints)
+{
+    return adoptPtr(new InspectorBrowserDebuggerAgent(inspectorAgent, eraseStickyBreakpoints));
+}
+
+InspectorBrowserDebuggerAgent::InspectorBrowserDebuggerAgent(InspectorAgent* inspectorAgent, bool eraseStickyBreakpoints)
     : m_inspectorAgent(inspectorAgent)
     , m_hasXHRBreakpointWithEmptyURL(false)
 {
+    if (eraseStickyBreakpoints)
+        inspectorAgent->state()->setObject(BrowserDebuggerAgentState::browserBreakpoints, InspectorObject::create());
 }
 
 InspectorBrowserDebuggerAgent::~InspectorBrowserDebuggerAgent()
@@ -73,7 +84,7 @@ InspectorBrowserDebuggerAgent::~InspectorBrowserDebuggerAgent()
 
 void InspectorBrowserDebuggerAgent::setAllBrowserBreakpoints(PassRefPtr<InspectorObject> breakpoints)
 {
-    m_inspectorAgent->state()->setObject(InspectorState::browserBreakpoints, breakpoints);
+    m_inspectorAgent->state()->setObject(BrowserDebuggerAgentState::browserBreakpoints, breakpoints);
     inspectedURLChanged(m_inspectorAgent->inspectedURLWithoutFragment());
 }
 
@@ -83,7 +94,7 @@ void InspectorBrowserDebuggerAgent::inspectedURLChanged(const String& url)
     m_XHRBreakpoints.clear();
     m_hasXHRBreakpointWithEmptyURL = false;
 
-    RefPtr<InspectorObject> allBreakpoints = m_inspectorAgent->state()->getObject(InspectorState::browserBreakpoints);
+    RefPtr<InspectorObject> allBreakpoints = m_inspectorAgent->state()->getObject(BrowserDebuggerAgentState::browserBreakpoints);
     RefPtr<InspectorArray> breakpoints = allBreakpoints->getArray(url);
     if (!breakpoints)
         return;
