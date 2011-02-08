@@ -1,5 +1,11 @@
 2011-02-08  Xiaomei Ji  <xji@chromium.org>
 
+        Unreviewed. Fix typo in rebaseline in r77961.
+
+        * platform/mac-leopard/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt:
+
+2011-02-08  Xiaomei Ji  <xji@chromium.org>
+
         Unreviewed.
 
         Rebaseline after r77952.
