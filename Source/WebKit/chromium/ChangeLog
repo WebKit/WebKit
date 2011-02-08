@@ -1,3 +1,11 @@
+2011-02-08  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, build fix for clobber builds of DRT on mac/linux.
+
+        This file moved in chromium r73530 and this path wasn't changed.
+
+        * WebKit.gyp:
+
 2011-02-02  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
