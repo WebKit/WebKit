@@ -1435,7 +1435,8 @@ BUGCR10426 LINUX : fast/lists/drag-into-marker.html = FAIL
 BUGCR10429 LINUX : css2.1/t100801-c544-valgn-01-d-ag.html = FAIL
 
 // New failures from Merge 41078:41149
-BUGCR10430 : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE+TEXT
+BUGCR10430 WIN LINUX : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE+TEXT
+BUGCR10430 MAC : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE
 
 // Flakey. Not clear when it started, but it was before 3/9/09.
 // This test also started failing with the merge of March 25th 2009
@@ -3014,7 +3015,8 @@ BUGRNIWA SLOW WIN : editing/execCommand/4786404-1.html = PASS
 BUGCR71013 LINUX : fast/text/justify-ideograph-vertical.html = CRASH IMAGE+TEXT
 
 // Started failing at http://trac.webkit.org/changeset/76743
-BUGCR71022 : fast/text/justify-ideograph-complex.html = IMAGE+TEXT
+BUGCR71022 WIN LINUX : fast/text/justify-ideograph-complex.html = IMAGE+TEXT
+BUGCR71022 MAC : fast/text/justify-ideograph-complex.html = IMAGE
 BUGCR71022 WIN LINUX : fast/text/justify-ideograph-simple.html = IMAGE+TEXT
 BUGCR71022 WIN : fast/text/justify-ideograph-vertical.html = IMAGE+TEXT
 
