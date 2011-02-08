@@ -93,7 +93,7 @@ InspectorTest.reloadPage = function(callback)
 
     if (WebInspector.panels.network)
         WebInspector.panels.network._reset();
-    InspectorBackend.reloadPage();
+    InspectorBackend.reloadPage(false);
 }
 
 InspectorTest.reloadPageIfNeeded = function(callback)

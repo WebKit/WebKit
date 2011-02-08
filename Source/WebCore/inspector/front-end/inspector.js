@@ -875,13 +875,13 @@ WebInspector.documentKeyDown = function(event)
 
         case "U+0052": // R key
             if ((event.metaKey && isMac) || (event.ctrlKey && !isMac)) {
-                InspectorBackend.reloadPage();
+                InspectorBackend.reloadPage(event.shiftKey);
                 event.preventDefault();
             }
             break;
         case "F5":
             if (!isMac)
-                InspectorBackend.reloadPage();
+                InspectorBackend.reloadPage(event.ctrlKey || event.shiftKey);
             break;
     }
 }

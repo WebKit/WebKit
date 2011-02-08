@@ -38,7 +38,7 @@ module core {
 
         [domain=Inspector] void addScriptToEvaluateOnLoad(in String scriptSource);
         [domain=Inspector] void removeAllScriptsToEvaluateOnLoad();
-        [domain=Inspector] void reloadPage();
+        [domain=Inspector] void reloadPage(in boolean ignoreCache);
         [domain=Inspector] void populateScriptObjects();
 
         [domain=Inspector] void openInInspectedWindow(in String url);

@@ -1373,11 +1373,9 @@ KURL InspectorAgent::inspectedURLWithoutFragment() const
     return url;
 }
 
-void InspectorAgent::reloadPage()
+void InspectorAgent::reloadPage(bool ignoreCache)
 {
-    // FIXME: Why do we set the user gesture indicator here?
-    UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
-    m_inspectedPage->mainFrame()->navigationScheduler()->scheduleRefresh();
+    m_inspectedPage->mainFrame()->loader()->reload(ignoreCache);
 }
 
 void InspectorAgent::setExtraHeaders(PassRefPtr<InspectorObject> headers)

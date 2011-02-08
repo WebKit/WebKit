@@ -1,4 +1,5 @@
 Tests audit rules.    
+Page reloaded.
   Network Utilization
     Combine external JavaScript (4)
      There are multiple resources served from same domain. Consider combining them into as few files as possible.

@@ -1,3 +1,21 @@
+2011-02-07  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: ignore cache upon reload via Ctrl(Cmd)+Shift+R.
+        https://bugs.webkit.org/show_bug.cgi?id=53914
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::reloadPage):
+        * inspector/InspectorAgent.h:
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditsPanel.prototype._reloadResources):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._onReload):
+        * inspector/front-end/inspector.js:
+        (WebInspector.documentKeyDown):
+
 2011-02-08  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Cameron Zwarich.

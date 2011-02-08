@@ -128,7 +128,7 @@ public:
     Page* inspectedPage() const { return m_inspectedPage; }
     KURL inspectedURL() const;
     KURL inspectedURLWithoutFragment() const;
-    void reloadPage();
+    void reloadPage(bool ignoreCache);
 
     void restoreInspectorStateFromCookie(const String& inspectorCookie);
 
