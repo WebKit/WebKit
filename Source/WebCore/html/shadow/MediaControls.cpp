@@ -239,7 +239,7 @@ void MediaControls::createControlsShadowRoot()
 void MediaControls::createPanel()
 {
     ASSERT(!m_panel);
-    m_panel = MediaControlElement::create(m_mediaElement, MEDIA_CONTROLS_PANEL);
+    m_panel = MediaControlPanelElement::create(m_mediaElement);
     m_panel->attachToParent(m_controlsShadowRoot.get());
 }
 
@@ -341,14 +341,14 @@ void MediaControls::createVolumeSliderMuteButton()
 void MediaControls::createCurrentTimeDisplay()
 {
     ASSERT(!m_currentTimeDisplay);
-    m_currentTimeDisplay = MediaControlTimeDisplayElement::create(m_mediaElement, MEDIA_CONTROLS_CURRENT_TIME_DISPLAY);
+    m_currentTimeDisplay = MediaControlCurrentTimeDisplayElement::create(m_mediaElement);
     m_currentTimeDisplay->attachToParent(m_timelineContainer.get());
 }
 
 void MediaControls::createTimeRemainingDisplay()
 {
     ASSERT(!m_timeRemainingDisplay);
-    m_timeRemainingDisplay = MediaControlTimeDisplayElement::create(m_mediaElement, MEDIA_CONTROLS_TIME_REMAINING_DISPLAY);
+    m_timeRemainingDisplay = MediaControlTimeRemainingDisplayElement::create(m_mediaElement);
     m_timeRemainingDisplay->attachToParent(m_timelineContainer.get());
 }
 

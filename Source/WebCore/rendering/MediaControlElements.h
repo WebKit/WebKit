@@ -75,7 +75,6 @@ class MediaControlShadowRootElement : public HTMLDivElement {
 public:
     static PassRefPtr<MediaControlShadowRootElement> create(HTMLMediaElement*);
 
-    void updateStyle();
     virtual void detach();
     
 private:
@@ -86,19 +85,17 @@ private:
 
 class MediaControlElement : public HTMLDivElement {
 public:
-    static PassRefPtr<MediaControlElement> create(HTMLMediaElement*, PseudoId);
-
     virtual void attach();
     void attachToParent(Element*);
     void update();
     void updateStyle();
 
-    MediaControlElementType displayType() const { return m_displayType; }
+    virtual MediaControlElementType displayType() const = 0;
 
     HTMLMediaElement* mediaElement() const { return m_mediaElement; }
 
 protected:
-    MediaControlElement(HTMLMediaElement*, PseudoId);
+    MediaControlElement(HTMLMediaElement*);
 
     virtual bool rendererIsNeeded(RenderStyle*);
 
@@ -108,9 +105,20 @@ private:
     virtual bool isMediaControlElement() const { return true; }
 
     HTMLMediaElement* m_mediaElement;   
-    PseudoId m_pseudoStyleId;
-    MediaControlElementType m_displayType;  // some elements can show multiple types (e.g. play/pause)
 };
+
+// ----------------------------
+
+class MediaControlPanelElement : public MediaControlElement {
+public:
+    static PassRefPtr<MediaControlPanelElement> create(HTMLMediaElement*);
+
+private:
+    MediaControlPanelElement(HTMLMediaElement*);
+    virtual MediaControlElementType displayType() const;
+    virtual const AtomicString& shadowPseudoId() const;
+};
+
 
 // ----------------------------
 
@@ -120,7 +128,9 @@ public:
 
 private:
     MediaControlTimelineContainerElement(HTMLMediaElement*);
+    virtual MediaControlElementType displayType() const;
     virtual bool rendererIsNeeded(RenderStyle*);
+    virtual const AtomicString& shadowPseudoId() const;
 };
 
 // ----------------------------
@@ -137,6 +147,8 @@ public:
 
 private:
     MediaControlVolumeSliderContainerElement(HTMLMediaElement*);
+    virtual MediaControlElementType displayType() const;
+    virtual const AtomicString& shadowPseudoId() const;
 
     bool m_isVisible;
     int m_x, m_y;
@@ -153,7 +165,9 @@ public:
 private:
     MediaControlStatusDisplayElement(HTMLMediaElement*);
 
+    virtual MediaControlElementType displayType() const;
     virtual bool rendererIsNeeded(RenderStyle*);
+    virtual const AtomicString& shadowPseudoId() const;
 
     enum StateBeingDisplayed { Nothing, Loading, LiveBroadcast };
     StateBeingDisplayed m_stateBeingDisplayed;
@@ -373,19 +387,44 @@ private:
 
 class MediaControlTimeDisplayElement : public MediaControlElement {
 public:
-    static PassRefPtr<MediaControlTimeDisplayElement> create(HTMLMediaElement*, PseudoId);
-
     void setVisible(bool);
 
     void setCurrentValue(float);
     float currentValue() const { return m_currentValue; }
 
-private:
-    MediaControlTimeDisplayElement(HTMLMediaElement*, PseudoId);
+protected:
+    MediaControlTimeDisplayElement(HTMLMediaElement*);
 
+private:
     virtual PassRefPtr<RenderStyle> styleForElement();
     float m_currentValue;
     bool m_isVisible;
+};
+
+// ----------------------------
+
+class MediaControlTimeRemainingDisplayElement : public MediaControlTimeDisplayElement {
+public:
+    static PassRefPtr<MediaControlTimeRemainingDisplayElement> create(HTMLMediaElement*);
+
+private:
+    MediaControlTimeRemainingDisplayElement(HTMLMediaElement*);
+
+    virtual MediaControlElementType displayType() const;
+    virtual const AtomicString& shadowPseudoId() const;
+};
+
+// ----------------------------
+
+class MediaControlCurrentTimeDisplayElement : public MediaControlTimeDisplayElement {
+public:
+    static PassRefPtr<MediaControlCurrentTimeDisplayElement> create(HTMLMediaElement*);
+
+private:
+    MediaControlCurrentTimeDisplayElement(HTMLMediaElement*);
+
+    virtual MediaControlElementType displayType() const;
+    virtual const AtomicString& shadowPseudoId() const;
 };
 
 // ----------------------------

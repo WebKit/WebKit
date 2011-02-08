@@ -41,6 +41,7 @@ class Event;
 class MediaControlMuteButtonElement;
 class MediaControlPlayButtonElement;
 class MediaControlSeekButtonElement;
+class MediaControlShadowRootElement;
 class MediaControlRewindButtonElement;
 class MediaControlReturnToRealtimeButtonElement;
 class MediaControlToggleClosedCaptionsButtonElement;
@@ -102,7 +103,7 @@ private:
     void updateVolumeSliderContainer(bool visible);
 
 private:
-    RefPtr<HTMLElement> m_controlsShadowRoot;
+    RefPtr<MediaControlShadowRootElement> m_controlsShadowRoot;
     RefPtr<MediaControlElement> m_panel;
     RefPtr<MediaControlMuteButtonElement> m_muteButton;
     RefPtr<MediaControlPlayButtonElement> m_playButton;

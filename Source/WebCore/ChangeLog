@@ -1,3 +1,75 @@
+2011-01-28  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Change the rest of HTMLMediaElement shadow DOM parts to use shadowPseudoId.
+        https://bugs.webkit.org/show_bug.cgi?id=53190
+
+        This is the second part of refactoring the HTMLMediaElement to use new
+        shadow DOM. The changes are mainly mechanical, except for needing to
+        add a new method to RenderTheme, which indicates whether or not status
+        display is being used by it. Previously, we relied on existence of a cached
+        pseudo style.
+
+        Refactoring, covered by existing tests.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::pseudoId): Removed now-unused enum values.
+        (WebCore::nameToPseudoTypeMap): Ditto.
+        (WebCore::CSSSelector::extractPseudoType): Ditto.
+        * css/CSSSelector.h: Ditto.
+        * html/shadow/MediaControls.cpp:
+        (WebCore::MediaControls::createPanel): Changed to use the newly-added MediaControlPanelElement.
+        (WebCore::MediaControls::createCurrentTimeDisplay): Changed to use the newly-added
+            MediaControlCurrentTimeDisplayElement.
+        (WebCore::MediaControls::createTimeRemainingDisplay): Changed to use the newly-added
+                MediaControlTimeRemainingDisplayElement.
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlShadowRootElement::updateStyle): Changed to use the
+            standard style resolution.
+        (WebCore::MediaControlShadowRootElement::shadowPseudoId): Added.
+        (WebCore::MediaControlElement::MediaControlElement): Removed the switch statement
+            that is no longer necessary.
+        (WebCore::MediaControlElement::styleForElement): Changed to use the standard
+            style resolution.
+        (WebCore::MediaControlPanelElement::MediaControlPanelElement): Added.
+        (WebCore::MediaControlPanelElement::create): Added.
+        (WebCore::MediaControlPanelElement::displayType): Added.
+        (WebCore::MediaControlPanelElement::shadowPseudoId): Added.
+        (WebCore::MediaControlTimelineContainerElement::MediaControlTimelineContainerElement):
+            Removed PseudoId constructor arg.
+        (WebCore::MediaControlTimelineContainerElement::rendererIsNeeded):
+            Changed to use the newly-plumbed usesMediaControlStatusDisplay helper.
+        (WebCore::MediaControlTimelineContainerElement::displayType): Added.
+        (WebCore::MediaControlTimelineContainerElement::shadowPseudoId): Added.
+        (WebCore::MediaControlVolumeSliderContainerElement::MediaControlVolumeSliderContainerElement):
+            Removed PseudoId constructor arg.
+        (WebCore::MediaControlVolumeSliderContainerElement::displayType): Added.
+        (WebCore::MediaControlVolumeSliderContainerElement::shadowPseudoId): Added.
+        (WebCore::MediaControlStatusDisplayElement::MediaControlStatusDisplayElement):
+            Removed PseudoId constructor arg.
+        (WebCore::MediaControlStatusDisplayElement::rendererIsNeeded): Changed to
+            use the newly-plumbed usesMediaControlStatusDisplay helper.
+        (WebCore::MediaControlStatusDisplayElement::displayType): Added.
+        (WebCore::MediaControlStatusDisplayElement::shadowPseudoId): Added.
+        (WebCore::MediaControlTimeDisplayElement::MediaControlTimeDisplayElement):
+            Removed PseudoId constructor arg.
+        (WebCore::MediaControlTimeRemainingDisplayElement::create): Added.
+        (WebCore::MediaControlTimeRemainingDisplayElement::MediaControlTimeRemainingDisplayElement): Added.
+        (WebCore::MediaControlTimeRemainingDisplayElement::displayType): Added.
+        (WebCore::MediaControlTimeRemainingDisplayElement::shadowPseudoId): Added.
+        (WebCore::MediaControlCurrentTimeDisplayElement::create): Added.
+        (WebCore::MediaControlCurrentTimeDisplayElement::MediaControlCurrentTimeDisplayElement): Added.
+        (WebCore::MediaControlCurrentTimeDisplayElement::displayType): Added.
+        (WebCore::MediaControlCurrentTimeDisplayElement::shadowPseudoId): Added.
+        * rendering/MediaControlElements.h: Added/changed defs accordingly.
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::usesMediaControlStatusDisplay): Added.
+        * rendering/RenderThemeMac.h: Added def.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::usesMediaControlStatusDisplay): Added.
+        * rendering/style/RenderStyleConstants.h: Removed now-unused enum values.
+
 2011-02-08  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Dan Bernstein.

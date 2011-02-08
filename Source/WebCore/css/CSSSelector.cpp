@@ -138,18 +138,6 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
         return SEARCH_RESULTS_DECORATION;
     case PseudoSearchResultsButton:
         return SEARCH_RESULTS_BUTTON;
-    case PseudoMediaControlsPanel:
-        return MEDIA_CONTROLS_PANEL;
-    case PseudoMediaControlsTimelineContainer:
-        return MEDIA_CONTROLS_TIMELINE_CONTAINER;
-    case PseudoMediaControlsVolumeSliderContainer:
-        return MEDIA_CONTROLS_VOLUME_SLIDER_CONTAINER;
-    case PseudoMediaControlsCurrentTimeDisplay:
-        return MEDIA_CONTROLS_CURRENT_TIME_DISPLAY;
-    case PseudoMediaControlsTimeRemainingDisplay:
-        return MEDIA_CONTROLS_TIME_REMAINING_DISPLAY;
-    case PseudoMediaControlsStatusDisplay:
-        return MEDIA_CONTROLS_STATUS_DISPLAY;
     case PseudoScrollbar:
         return SCROLLBAR;
     case PseudoScrollbarButton:
@@ -316,12 +304,6 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
     DEFINE_STATIC_LOCAL(AtomicString, lastOfType, ("last-of-type"));
     DEFINE_STATIC_LOCAL(AtomicString, link, ("link"));
     DEFINE_STATIC_LOCAL(AtomicString, lang, ("lang("));
-    DEFINE_STATIC_LOCAL(AtomicString, mediaControlsPanel, ("-webkit-media-controls-panel"));
-    DEFINE_STATIC_LOCAL(AtomicString, mediaControlsStatusDisplay, ("-webkit-media-controls-status-display"));
-    DEFINE_STATIC_LOCAL(AtomicString, mediaControlsTimelineContainer, ("-webkit-media-controls-timeline-container"));
-    DEFINE_STATIC_LOCAL(AtomicString, mediaControlsVolumeSliderContainer, ("-webkit-media-controls-volume-slider-container"));
-    DEFINE_STATIC_LOCAL(AtomicString, mediaControlsCurrentTimeDisplay, ("-webkit-media-controls-current-time-display"));
-    DEFINE_STATIC_LOCAL(AtomicString, mediaControlsTimeRemainingDisplay, ("-webkit-media-controls-time-remaining-display"));
     DEFINE_STATIC_LOCAL(AtomicString, notStr, ("not("));
     DEFINE_STATIC_LOCAL(AtomicString, onlyChild, ("only-child"));
     DEFINE_STATIC_LOCAL(AtomicString, onlyOfType, ("only-of-type"));
@@ -418,12 +400,6 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
         nameToPseudoType->set(innerSpinButton.impl(), CSSSelector::PseudoInnerSpinButton);
         nameToPseudoType->set(link.impl(), CSSSelector::PseudoLink);
         nameToPseudoType->set(lang.impl(), CSSSelector::PseudoLang);
-        nameToPseudoType->set(mediaControlsPanel.impl(), CSSSelector::PseudoMediaControlsPanel);
-        nameToPseudoType->set(mediaControlsCurrentTimeDisplay.impl(), CSSSelector::PseudoMediaControlsCurrentTimeDisplay);
-        nameToPseudoType->set(mediaControlsTimeRemainingDisplay.impl(), CSSSelector::PseudoMediaControlsTimeRemainingDisplay);
-        nameToPseudoType->set(mediaControlsStatusDisplay.impl(), CSSSelector::PseudoMediaControlsStatusDisplay);
-        nameToPseudoType->set(mediaControlsTimelineContainer.impl(), CSSSelector::PseudoMediaControlsTimelineContainer);
-        nameToPseudoType->set(mediaControlsVolumeSliderContainer.impl(), CSSSelector::PseudoMediaControlsVolumeSliderContainer);
         nameToPseudoType->set(notStr.impl(), CSSSelector::PseudoNot);
         nameToPseudoType->set(nthChild.impl(), CSSSelector::PseudoNthChild);
         nameToPseudoType->set(nthOfType.impl(), CSSSelector::PseudoNthOfType);
@@ -514,12 +490,6 @@ void CSSSelector::extractPseudoType() const
     case PseudoInputSpeechButton:
 #endif
     case PseudoInnerSpinButton:
-    case PseudoMediaControlsPanel:
-    case PseudoMediaControlsCurrentTimeDisplay:
-    case PseudoMediaControlsTimeRemainingDisplay:
-    case PseudoMediaControlsStatusDisplay:
-    case PseudoMediaControlsTimelineContainer:
-    case PseudoMediaControlsVolumeSliderContainer:
     case PseudoMeterHorizontalBar:
     case PseudoMeterHorizontalOptimum:
     case PseudoMeterHorizontalSuboptimal:

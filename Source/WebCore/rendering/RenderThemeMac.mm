@@ -1981,6 +1981,11 @@ bool RenderThemeMac::shouldRenderMediaControlPart(ControlPart part, Element* ele
     return RenderTheme::shouldRenderMediaControlPart(part, element);
 }
 
+bool RenderThemeMac::usesMediaControlStatusDisplay()
+{
+    return mediaControllerTheme() == MediaControllerThemeQuickTime;
+}
+
 IntPoint RenderThemeMac::volumeSliderOffsetFromMuteButton(Node* muteButton, const IntSize& size) const
 {
     static const int xOffset = -4;
