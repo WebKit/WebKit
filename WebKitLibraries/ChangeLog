@@ -1,3 +1,12 @@
+2011-02-08  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        [WIN] Add missing forward declarations in WebKitSystemInterface.h
+        https://bugs.webkit.org/show_bug.cgi?id=53889
+
+        * win/include/WebKitSystemInterface/WebKitSystemInterface.h:
+
 2011-02-04  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.

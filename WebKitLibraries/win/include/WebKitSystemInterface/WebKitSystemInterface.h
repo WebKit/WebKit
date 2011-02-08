@@ -35,6 +35,7 @@ struct WKCACFContext;
 struct WKCACFUpdateRectEnumerator;
 
 typedef struct _CACFLayer* CACFLayerRef;
+typedef const struct __CFArray* CFArrayRef;
 typedef const struct __CFData* CFDataRef;
 typedef const struct __CFString* CFStringRef;
 typedef double CFTimeInterval;
@@ -46,6 +47,7 @@ typedef CGFontIndex CGGlyph;
 typedef wchar_t UChar;
 typedef struct _CFURLResponse* CFURLResponseRef;
 typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
+typedef struct __CFDictionary* CFMutableDictionaryRef;
 typedef struct _CFURLRequest* CFMutableURLRequestRef;
 typedef const struct _CFURLRequest* CFURLRequestRef;
 typedef struct __CFHTTPMessage* CFHTTPMessageRef;
