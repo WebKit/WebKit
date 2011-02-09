@@ -90,7 +90,6 @@ class TestThread(threading.Thread):
     def clear_next_timeout(self):
         self._next_timeout = None
 
-
 class TestHandler(logging.Handler):
     def __init__(self, astream):
         logging.Handler.__init__(self)
@@ -156,15 +155,6 @@ class MultiThreadedBrokerTest(unittest.TestCase):
 
     def test_exception(self):
         self.assertRaises(ValueError, self.run_one_thread, 'Exception')
-
-    def test_find_thread_stack_found(self):
-        id, stack = sys._current_frames().items()[0]
-        found_stack = message_broker._find_thread_stack(id)
-        self.assertNotEqual(found_stack, None)
-
-    def test_find_thread_stack_not_found(self):
-        found_stack = message_broker._find_thread_stack(0)
-        self.assertEqual(found_stack, None)
 
 
 if __name__ == '__main__':

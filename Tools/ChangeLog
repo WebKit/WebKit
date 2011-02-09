@@ -1,5 +1,23 @@
 2011-02-08  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Mihai Parparita.
+
+        new-run-webkit-tests: split out thread stack logging code into a sharable module
+
+        This patch splits out the code used to find and log thread
+        stacks from NRWT-specific packages to something generic and
+        shareable by other python modules. It will be shared in the near
+        future by the manager_worker_broker module, for example.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53656
+
+        * Scripts/webkitpy/common/system/stack_utils.py: Added.
+        * Scripts/webkitpy/common/system/stack_utils_unittest.py: Added.
+        * Scripts/webkitpy/layout_tests/layout_package/message_broker.py:
+        * Scripts/webkitpy/layout_tests/layout_package/message_broker_unittest.py:
+
+2011-02-08  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Tony Chang.
 
         new-run-webkit-tests: move a bunch of testing logic out of
