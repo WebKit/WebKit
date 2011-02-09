@@ -94,7 +94,7 @@ class JSONGeneratorTest(unittest.TestCase):
         failed_count_map = dict([(t, 1) for t in failed_tests])
 
         # Test incremental json results
-        incremental_json = generator.get_json(incremental=True)
+        incremental_json = generator.get_json()
         self._verify_json_results(
             tests_set,
             test_timings,
@@ -105,33 +105,6 @@ class JSONGeneratorTest(unittest.TestCase):
             len(DISABLED_tests | failed_tests),
             incremental_json,
             1)
-
-        # Test aggregated json results
-        generator.set_archived_results(self._json)
-        json = generator.get_json(incremental=False)
-        self._json = json
-        self._num_runs += 1
-        self._tests_set |= tests_set
-        self._test_timings.update(test_timings)
-        self._PASS_count += len(PASS_tests)
-        self._DISABLED_count += len(DISABLED_tests)
-        self._FLAKY_count += len(FLAKY_tests)
-        self._fixable_count += len(DISABLED_tests | failed_tests)
-
-        get = self._failed_count_map.get
-        for test in failed_count_map.iterkeys():
-            self._failed_count_map[test] = get(test, 0) + 1
-
-        self._verify_json_results(
-            self._tests_set,
-            self._test_timings,
-            self._failed_count_map,
-            self._PASS_count,
-            self._DISABLED_count,
-            self._FLAKY_count,
-            self._fixable_count,
-            self._json,
-            self._num_runs)
 
     def _verify_json_results(self, tests_set, test_timings, failed_count_map,
                              PASS_count, DISABLED_count, FLAKY_count,

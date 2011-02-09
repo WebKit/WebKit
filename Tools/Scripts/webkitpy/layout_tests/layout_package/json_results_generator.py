@@ -114,13 +114,16 @@ class JSONResultsGeneratorBase(object):
     URL_FOR_TEST_LIST_JSON = \
         "http://%s/testfile?builder=%s&name=%s&testlistjson=1&testtype=%s"
 
+    # FIXME: Remove generate_incremental_results once the reference to it in
+    # http://src.chromium.org/viewvc/chrome/trunk/tools/build/scripts/slave/gtest_slave_utils.py
+    # has been removed.
     def __init__(self, port, builder_name, build_name, build_number,
         results_file_base_path, builder_base_url,
         test_results_map, svn_repositories=None,
-        generate_incremental_results=False,
         test_results_server=None,
         test_type="",
-        master_name=""):
+        master_name="",
+        generate_incremental_results=None):
         """Modifies the results.json file. Grabs it off the archive directory
         if it is not found locally.
 
@@ -137,8 +140,6 @@ class JSONResultsGeneratorBase(object):
           svn_repositories: A (json_field_name, svn_path) pair for SVN
               repositories that tests rely on.  The SVN revision will be
               included in the JSON with the given json_field_name.
-          generate_incremental_results: If true, generate incremental json file
-              from current run results.
           test_results_server: server that hosts test results json.
           test_type: test type string (e.g. 'layout-tests').
           master_name: the name of the buildbot master.
@@ -157,7 +158,6 @@ class JSONResultsGeneratorBase(object):
 
         self._test_results_map = test_results_map
         self._test_results = test_results_map.values()
-        self._generate_incremental_results = generate_incremental_results
 
         self._svn_repositories = svn_repositories
         if not self._svn_repositories:
@@ -167,39 +167,20 @@ class JSONResultsGeneratorBase(object):
         self._test_type = test_type
         self._master_name = master_name
 
-        self._json = None
         self._archived_results = None
 
     def generate_json_output(self):
-        """Generates the JSON output file."""
+        json = self.get_json()
+        if json:
+            self._generate_json_file(
+                json, self._incremental_results_file_path)
 
-        # Generate the JSON output file that has full results.
-        # FIXME: stop writing out the full results file once all bots use
-        # incremental results.
-        if not self._json:
-            self._json = self.get_json()
-        if self._json:
-            self._generate_json_file(self._json, self._results_file_path)
-
-        # Generate the JSON output file that only has incremental results.
-        if self._generate_incremental_results:
-            json = self.get_json(incremental=True)
-            if json:
-                self._generate_json_file(
-                    json, self._incremental_results_file_path)
-
-    def get_json(self, incremental=False):
+    def get_json(self):
         """Gets the results for the results.json file."""
         results_json = {}
-        if not incremental:
-            if self._json:
-                return self._json
-
-            if self._archived_results:
-                results_json = self._archived_results
 
         if not results_json:
-            results_json, error = self._get_archived_json_results(incremental)
+            results_json, error = self._get_archived_json_results()
             if error:
                 # If there was an error don't write a results.json
                 # file at all as it would lose all the information on the
@@ -231,7 +212,7 @@ class JSONResultsGeneratorBase(object):
         all_failing_tests = self._get_failed_test_names()
         all_failing_tests.update(tests.iterkeys())
         for test in all_failing_tests:
-            self._insert_test_time_and_result(test, tests, incremental)
+            self._insert_test_time_and_result(test, tests)
 
         return results_json
 
@@ -340,52 +321,39 @@ class JSONResultsGeneratorBase(object):
                 return ""
         return ""
 
-    def _get_archived_json_results(self, for_incremental=False):
-        """Reads old results JSON file if it exists.
-        Returns (archived_results, error) tuple where error is None if results
-        were successfully read.
-
-        if for_incremental is True, download JSON file that only contains test
+    def _get_archived_json_results(self):
+        """Download JSON file that only contains test
         name list from test-results server. This is for generating incremental
         JSON so the file generated has info for tests that failed before but
         pass or are skipped from current run.
+
+        Returns (archived_results, error) tuple where error is None if results
+        were successfully read.
         """
         results_json = {}
         old_results = None
         error = None
 
-        if self._fs.exists(self._results_file_path) and not for_incremental:
-            old_results = self._fs.read_text_file(self._results_file_path)
-        elif self._builder_base_url or for_incremental:
-            if for_incremental:
-                if not self._test_results_server:
-                    # starting from fresh if no test results server specified.
-                    return {}, None
+        if not self._test_results_server:
+            return {}, None
 
-                results_file_url = (self.URL_FOR_TEST_LIST_JSON %
-                    (urllib2.quote(self._test_results_server),
-                     urllib2.quote(self._builder_name),
-                     self.RESULTS_FILENAME,
-                     urllib2.quote(self._test_type)))
-            else:
-                # Check if we have the archived JSON file on the buildbot
-                # server.
-                results_file_url = (self._builder_base_url +
-                    self._build_name + "/" + self.RESULTS_FILENAME)
-                _log.error("Local results.json file does not exist. Grabbing "
-                           "it off the archive at " + results_file_url)
+        results_file_url = (self.URL_FOR_TEST_LIST_JSON %
+            (urllib2.quote(self._test_results_server),
+             urllib2.quote(self._builder_name),
+             self.RESULTS_FILENAME,
+             urllib2.quote(self._test_type)))
 
-            try:
-                results_file = urllib2.urlopen(results_file_url)
-                info = results_file.info()
-                old_results = results_file.read()
-            except urllib2.HTTPError, http_error:
-                # A non-4xx status code means the bot is hosed for some reason
-                # and we can't grab the results.json file off of it.
-                if (http_error.code < 400 and http_error.code >= 500):
-                    error = http_error
-            except urllib2.URLError, url_error:
-                error = url_error
+        try:
+            results_file = urllib2.urlopen(results_file_url)
+            info = results_file.info()
+            old_results = results_file.read()
+        except urllib2.HTTPError, http_error:
+            # A non-4xx status code means the bot is hosed for some reason
+            # and we can't grab the results.json file off of it.
+            if (http_error.code < 400 and http_error.code >= 500):
+                error = http_error
+        except urllib2.URLError, url_error:
+            error = url_error
 
         if old_results:
             # Strip the prefix and suffix so we can get the actual JSON object.
@@ -490,7 +458,7 @@ class JSONResultsGeneratorBase(object):
             int(time.time()),
             self.TIME)
 
-    def _insert_test_time_and_result(self, test_name, tests, incremental=False):
+    def _insert_test_time_and_result(self, test_name, tests):
         """ Insert a test item with its results to the given tests dictionary.
 
         Args:
@@ -513,11 +481,6 @@ class JSONResultsGeneratorBase(object):
             self._insert_item_run_length_encoded(time, thisTest[self.TIMES])
         else:
             thisTest[self.TIMES] = [[1, time]]
-
-        # Don't normalize the incremental results json because we need results
-        # for tests that pass or have no data from current run.
-        if not incremental:
-            self._normalize_results_json(thisTest, test_name, tests)
 
     def _convert_json_to_current_version(self, results_json):
         """If the JSON does not match the current version, converts it to the

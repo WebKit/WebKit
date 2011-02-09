@@ -687,6 +687,8 @@ class TestRunner:
             self._expectations, result_summary, retry_summary)
         self._printer.print_unexpected_results(unexpected_results)
 
+        # FIXME: remove record_results. It's just used for testing. There's no need
+        # for it to be a commandline argument.
         if (self._options.record_results and not self._options.dry_run and
             not interrupted):
             # Write the same data to log files and upload generated JSON files
@@ -788,7 +790,7 @@ class TestRunner:
         return failed_results
 
     def _upload_json_files(self, unexpected_results, result_summary,
-                        individual_test_timings):
+                           individual_test_timings):
         """Writes the results of the test run as JSON files into the results
         dir and upload the files to the appengine server.
 
@@ -824,18 +826,13 @@ class TestRunner:
             self._options.build_number, self._options.results_directory,
             BUILDER_BASE_URL, individual_test_timings,
             self._expectations, result_summary, self._test_files_list,
-            not self._options.upload_full_results,
             self._options.test_results_server,
             "layout-tests",
             self._options.master_name)
 
         _log.debug("Finished writing JSON files.")
 
-        json_files = ["expectations.json"]
-        if self._options.upload_full_results:
-            json_files.append("results.json")
-        else:
-            json_files.append("incremental_results.json")
+        json_files = ["expectations.json", "incremental_results.json"]
 
         generator.upload_json_files(json_files)
 

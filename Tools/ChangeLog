@@ -1,3 +1,20 @@
+2011-02-07  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        stop generating results.json files
+        https://bugs.webkit.org/show_bug.cgi?id=53977
+
+        We've only used incremental_results.json for a while now
+        and there are plans to start generating a results.json file that matches
+        the format of unexpected_results.json.
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_layout_results_generator.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_runner.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2011-02-08  Sailesh Agrawal  <sail@chromium.org>
 
         Reviewed by Kenneth Russell.
