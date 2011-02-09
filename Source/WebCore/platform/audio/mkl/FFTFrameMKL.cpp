@@ -200,6 +200,10 @@ void FFTFrame::doInverseFFT(float* data)
     ASSERT(DftiErrorClass(status, DFTI_NO_ERROR));
 }
 
+void FFTFrame::initialize()
+{
+}
+
 void FFTFrame::cleanup()
 {
     if (!descriptorHandles)

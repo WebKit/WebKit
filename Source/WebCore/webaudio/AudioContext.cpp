@@ -41,6 +41,7 @@
 #include "ConvolverNode.h"
 #include "DelayNode.h"
 #include "Document.h"
+#include "FFTFrame.h"
 #include "HRTFDatabaseLoader.h"
 #include "HRTFPanner.h"
 #include "HighPass2FilterNode.h"
@@ -78,6 +79,8 @@ AudioContext::AudioContext(Document* document)
     // Note: because adoptRef() won't be called until we leave this constructor, but code in this constructor needs to reference this context,
     // relax the check.
     relaxAdoptionRequirement();
+    
+    FFTFrame::initialize();
     
     m_destinationNode = AudioDestinationNode::create(this);
     m_listener = AudioListener::create();

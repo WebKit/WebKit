@@ -1,3 +1,29 @@
+2011-02-09  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Fix scaling and thread safety of FFTFrameFFTW
+        https://bugs.webkit.org/show_bug.cgi?id=54045
+
+        No new tests since audio API is not yet implemented.
+
+        * platform/audio/FFTFrame.h:
+        * platform/audio/fftw/FFTFrameFFTW.cpp:
+        (WebCore::FFTFrame::FFTFrame):
+        (WebCore::FFTFrame::doFFT):
+        (WebCore::FFTFrame::doInverseFFT):
+        (WebCore::FFTFrame::initialize):
+        (WebCore::FFTFrame::cleanup):
+        (WebCore::FFTFrame::realData):
+        (WebCore::FFTFrame::imagData):
+        (WebCore::FFTFrame::fftwPlanForSize):
+        * platform/audio/mac/FFTFrameMac.cpp:
+        (WebCore::FFTFrame::initialize):
+        * platform/audio/mkl/FFTFrameMKL.cpp:
+        (WebCore::FFTFrame::initialize):
+        * webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::AudioContext):
+
 2011-02-09  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

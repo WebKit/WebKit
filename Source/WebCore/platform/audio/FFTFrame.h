@@ -46,6 +46,7 @@
 
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Platform.h>
+#include <wtf/Threading.h>
 
 namespace WebCore {
 
@@ -61,6 +62,7 @@ public:
     FFTFrame(const FFTFrame& frame);
     ~FFTFrame();
 
+    static void initialize();
     static void cleanup();
     void doFFT(float* data);
     void doInverseFFT(float* data);
@@ -130,9 +132,14 @@ private:
         Backward
     };
 
-    AudioFloatArray m_realData;
-    AudioFloatArray m_imagData;
+    // Both the real and imaginary data are stored here.
+    // The real data is stored first, followed by three float values of padding.
+    // The imaginary data is stored after the padding and is 16-byte aligned (if m_data itself is aligned).
+    // The reason we don't use separate arrays for real and imaginary is because the FFTW plans are shared
+    // between FFTFrame instances and require that the real and imaginary data pointers be the same distance apart.
+    AudioFloatArray m_data;
 
+    static Mutex *s_planLock;
     static fftwf_plan* fftwForwardPlans;
     static fftwf_plan* fftwBackwardPlans;
 

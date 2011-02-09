@@ -40,6 +40,8 @@ const int kMaxFFTPow2Size = 24;
 fftwf_plan* FFTFrame::fftwForwardPlans = 0;
 fftwf_plan* FFTFrame::fftwBackwardPlans = 0;
 
+Mutex* FFTFrame::s_planLock = 0;
+
 namespace {
 
 unsigned unpackedFFTWDataSize(unsigned fftSize)
@@ -56,8 +58,7 @@ FFTFrame::FFTFrame(unsigned fftSize)
     , m_log2FFTSize(static_cast<unsigned>(log2(fftSize)))
     , m_forwardPlan(0)
     , m_backwardPlan(0)
-    , m_realData(unpackedFFTWDataSize(fftSize))
-    , m_imagData(unpackedFFTWDataSize(fftSize))
+    , m_data(2 * (3 + unpackedFFTWDataSize(fftSize))) // enough space for real and imaginary data plus 16-byte alignment padding
 {
     // We only allow power of two.
     ASSERT(1UL << m_log2FFTSize == m_FFTSize);
@@ -74,8 +75,6 @@ FFTFrame::FFTFrame(unsigned fftSize)
     // overhead. For the time being, we just assume unaligned data and
     // pass a temporary pointer down.
 
-    // FIXME: we should probably allocate both the source and destination
-    // arrays in this class and memcpy the data in and out of them.
     float temporary;
     m_forwardPlan = fftwPlanForSize(fftSize, Forward,
                                     &temporary, realData(), imagData());
@@ -98,8 +97,7 @@ FFTFrame::FFTFrame(const FFTFrame& frame)
     , m_log2FFTSize(frame.m_log2FFTSize)
     , m_forwardPlan(0)
     , m_backwardPlan(0)
-    , m_realData(unpackedFFTWDataSize(frame.m_FFTSize))
-    , m_imagData(unpackedFFTWDataSize(frame.m_FFTSize))
+    , m_data(2 * (3 + unpackedFFTWDataSize(fftSize()))) // enough space for real and imaginary data plus 16-byte alignment padding
 {
     // See the normal constructor for an explanation of the temporary pointer.
     float temporary;
@@ -162,26 +160,31 @@ void FFTFrame::doFFT(float* data)
     // or other intrinsics to accelerate it.
     float scaleFactor = 2;
     unsigned length = unpackedFFTWDataSize(fftSize());
-    ASSERT(length == m_realData.size());
+    float* realData = this->realData();
+    float* imagData = this->imagData();
+
     for (unsigned i = 0; i < length; ++i) {
-        m_realData[i] = m_realData[i] * scaleFactor;
-        m_imagData[i] = m_imagData[i] * scaleFactor;
+        realData[i] = realData[i] * scaleFactor;
+        imagData[i] = imagData[i] * scaleFactor;
     }
 
     // Move the Nyquist component to the location expected by the
     // FFTFrame API.
-    m_imagData[0] = m_realData[length - 1];
+    imagData[0] = realData[length - 1];
 }
 
 void FFTFrame::doInverseFFT(float* data)
 {
-    // Move the Nyquist component to the location expected by FFTW.
     unsigned length = unpackedFFTWDataSize(fftSize());
-    ASSERT(length = m_realData.size());
-    m_realData[length - 1] = m_imagData[0];
-    m_imagData[0] = 0;
+    float* realData = this->realData();
+    float* imagData = this->imagData();
 
-    fftwf_execute_split_dft_c2r(m_backwardPlan, realData(), imagData(), data);
+    // Move the Nyquist component to the location expected by FFTW.
+    realData[length - 1] = imagData[0];
+    imagData[length - 1] = 0;
+    imagData[0] = 0;
+
+    fftwf_execute_split_dft_c2r(m_backwardPlan, realData, imagData, data);
 
     // Restore the original scaling of the time domain data.
     // FIXME: if we change the definition of FFTFrame to eliminate the
@@ -189,12 +192,28 @@ void FFTFrame::doInverseFFT(float* data)
     // loop turns out to be hot then we should use SSE or other
     // intrinsics to accelerate it.
     float scaleFactor = 1.0 / (2.0 * fftSize());
-    for (unsigned i = 0; i < length; ++i)
+    unsigned n = fftSize();
+    for (unsigned i = 0; i < n; ++i)
         data[i] *= scaleFactor;
 
     // Move the Nyquist component back to the location expected by the
     // FFTFrame API.
-    m_imagData[0] = m_realData[length - 1];
+    imagData[0] = realData[length - 1];
+}
+
+void FFTFrame::initialize()
+{
+    if (!fftwForwardPlans) {
+        fftwForwardPlans = new fftwf_plan[kMaxFFTPow2Size];
+        fftwBackwardPlans = new fftwf_plan[kMaxFFTPow2Size];
+        for (int i = 0; i < kMaxFFTPow2Size; ++i) {
+            fftwForwardPlans[i] = 0;
+            fftwBackwardPlans[i] = 0;
+        }
+    }
+
+    if (!s_planLock)
+        s_planLock = new Mutex();
 }
 
 void FFTFrame::cleanup()
@@ -214,30 +233,35 @@ void FFTFrame::cleanup()
 
     fftwForwardPlans = 0;
     fftwBackwardPlans = 0;
+    
+    delete s_planLock;
+    s_planLock = 0;
 }
 
 float* FFTFrame::realData() const
 {
-    return const_cast<float*>(m_realData.data());
+    return const_cast<float*>(m_data.data());
 }
 
 float* FFTFrame::imagData() const
 {
-    return const_cast<float*>(m_imagData.data());
+    // Imaginary data is stored following the real data with enough padding for 16-byte alignment.
+    return const_cast<float*>(realData() + unpackedFFTWDataSize(fftSize()) + 3);
 }
 
 fftwf_plan FFTFrame::fftwPlanForSize(unsigned fftSize, Direction direction,
                                      float* data1, float* data2, float* data3)
 {
-    if (!fftwForwardPlans) {
-        fftwForwardPlans = new fftwf_plan[kMaxFFTPow2Size];
-        fftwBackwardPlans = new fftwf_plan[kMaxFFTPow2Size];
-        for (int i = 0; i < kMaxFFTPow2Size; ++i) {
-            fftwForwardPlans[i] = 0;
-            fftwBackwardPlans[i] = 0;
-        }
-    }
-
+    // initialize() must be called first.
+    ASSERT(fftwForwardPlans);
+    if (!fftwForwardPlans)
+        return 0;
+        
+    ASSERT(s_planLock);
+    if (!s_planLock)
+        return 0;
+    MutexLocker locker(*s_planLock);    
+        
     ASSERT(fftSize);
     int pow2size = static_cast<int>(log2(fftSize));
     ASSERT(pow2size < kMaxFFTPow2Size);

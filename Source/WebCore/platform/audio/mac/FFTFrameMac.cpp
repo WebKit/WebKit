@@ -162,6 +162,10 @@ FFTSetup FFTFrame::fftSetupForSize(unsigned fftSize)
     return fftSetups[pow2size];
 }
 
+void FFTFrame::initialize()
+{
+}
+
 void FFTFrame::cleanup()
 {
     if (!fftSetups)
