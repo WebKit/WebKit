@@ -1859,8 +1859,6 @@ http/tests/xmlhttprequest/cross-origin-no-authorization.html
 
 http/tests/xmlhttprequest/frame-load-cancelled-abort.html
 http/tests/xmlhttprequest/frame-unload-abort-crash.html
-http/tests/xmlhttprequest/methods-async.html
-http/tests/xmlhttprequest/methods.html
 http/tests/xmlhttprequest/response-encoding.html
 http/tests/xmlhttprequest/state-after-network-error.html
 http/tests/xmlhttprequest/supported-xml-content-types.html
@@ -1869,8 +1867,6 @@ http/tests/xmlhttprequest/upload-onprogress-event.html
 http/tests/xmlhttprequest/upload-progress-events.html
 http/tests/xmlhttprequest/xml-encoding.html
 http/tests/xmlhttprequest/xmlhttprequest-contenttype-empty.html
-http/tests/xmlhttprequest/workers/methods-async.html
-http/tests/xmlhttprequest/workers/methods.html
 # Tests crashing - https://bugs.webkit.org/show_bug.cgi?id=51104
 http/tests/cache/subresource-fragment-identifier.html
 http/tests/misc/authentication-sent-to-redirect.html
@@ -3778,10 +3774,6 @@ userscripts/user-script-video-document.html
 userscripts/user-style-top-frame-only.html
 userscripts/window-onerror-for-isolated-world-1.html
 userscripts/window-onerror-for-isolated-world-2.html
-
-# XHR sends sometimes yield null bytes sent instead of 0.
-http/tests/xmlhttprequest/workers/shared-worker-methods.html
-http/tests/xmlhttprequest/workers/shared-worker-methods-async.html
 
 # No authentication challenge handling
 http/tests/loading/basic-credentials-sent-automatically.html

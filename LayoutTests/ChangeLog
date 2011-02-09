@@ -1,3 +1,27 @@
+2011-02-09  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed.
+
+        Added new text expectations for GTK port. They should be actually
+        valid for any port using the libsoup backend. We need different
+        results because as stated here
+        https://bugs.webkit.org/show_bug.cgi?id=3812#c6, the original test
+        results were designed for NSURLConnection which adds the
+        "Content-Length: 0" header for null message bodies. That does not
+        happen in libsoup, so instead of artificially add that header we
+        better generate different results.
+
+        Also take into account that for HEAD and GET requests the body is
+        not included so we should expect always a null for them.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/http/tests/xmlhttprequest/methods-async-expected.txt: Added.
+        * platform/gtk/http/tests/xmlhttprequest/methods-expected.txt: Added.
+        * platform/gtk/http/tests/xmlhttprequest/workers/methods-async-expected.txt: Added.
+        * platform/gtk/http/tests/xmlhttprequest/workers/methods-expected.txt: Added.
+        * platform/gtk/http/tests/xmlhttprequest/workers/shared-worker-methods-async-expected.txt: Added.
+        * platform/gtk/http/tests/xmlhttprequest/workers/shared-worker-methods-expected.txt: Added.
+
 2011-02-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
