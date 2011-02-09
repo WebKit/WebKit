@@ -1,3 +1,11 @@
+2011-02-09  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed.
+
+        Chromium: update expectations for some canvas/philip tests which are failing on MAC.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-09  Martin Robinson  <mrobinson@igalia.com>
 
         Skip some failing tests.

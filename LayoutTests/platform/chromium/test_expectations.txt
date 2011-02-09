@@ -2103,6 +2103,19 @@ BUGWK45991 LINUX WIN : canvas/philip/tests/2d.transformation.transform.skewed.ht
 
 BUGWK45991 WIN : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
 
+BUGCR62301 MAC : canvas/philip/tests/2d.gradient.radial.cone.front.html = TEXT
+BUGCR62301 MAC : canvas/philip/tests/2d.gradient.radial.inside2.html = TEXT
+BUGCR62301 MAC : canvas/philip/tests/2d.gradient.radial.inside3.html = TEXT
+BUGCR62301 MAC : canvas/philip/tests/2d.gradient.radial.outside1.html = TEXT
+BUGCR62301 MAC : canvas/philip/tests/2d.line.cap.closed.html = TEXT
+BUGCR62301 MAC : canvas/philip/tests/2d.line.join.parallel.html = TEXT
+BUGCR62301 MAC : canvas/philip/tests/2d.line.miter.lineedge.html = TEXT
+BUGCR62301 MAC : canvas/philip/tests/2d.path.rect.winding.html = TEXT
+BUGCR62301 MAC : canvas/philip/tests/2d.shadow.enable.x.html = TEXT
+BUGCR62301 MAC : canvas/philip/tests/2d.shadow.enable.y.html = TEXT
+BUGCR62301 MAC : canvas/philip/tests/2d.strokeRect.zero.4.html = TEXT
+
+
 // Flaky tests
 BUGCR44229 WIN LINUX : fast/loader/recursive-before-unload-crash.html = PASS TEXT
 
