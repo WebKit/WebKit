@@ -28,17 +28,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""A Thread object for running DumpRenderTree and processing URLs from a
-shared queue.
+"""This module implements a shared-memory, thread-based version of the worker
+task in new-run-webkit-tests: it receives a list of tests from TestShellThread
+and passes them one at a time to SingleTestRunner to execute."""
 
-Each thread runs a separate instance of the DumpRenderTree binary and validates
-the output.  When there are no more URLs to process in the shared queue, the
-thread exits.
-"""
-
-import copy
 import logging
-import os
 import Queue
 import signal
 import sys
@@ -46,78 +40,10 @@ import thread
 import threading
 import time
 
-
-from webkitpy.layout_tests.test_types import image_diff
-from webkitpy.layout_tests.test_types import test_type_base
-from webkitpy.layout_tests.test_types import text_diff
-
-import single_test_runner
-import test_failures
-import test_results
+from webkitpy.layout_tests.layout_package.single_test_runner import SingleTestRunner
 
 _log = logging.getLogger("webkitpy.layout_tests.layout_package."
                          "dump_render_tree_thread")
-
-
-def _pad_timeout(timeout):
-    """Returns a safe multiple of the per-test timeout value to use
-    to detect hung test threads.
-
-    """
-    # When we're running one test per DumpRenderTree process, we can
-    # enforce a hard timeout.  The DumpRenderTree watchdog uses 2.5x
-    # the timeout; we want to be larger than that.
-    return timeout * 3
-
-
-def _milliseconds_to_seconds(msecs):
-    return float(msecs) / 1000.0
-
-
-def _should_fetch_expected_checksum(options):
-    return options.pixel_tests and not (options.new_baseline or options.reset_results)
-
-
-class SingleTestThread(threading.Thread):
-    """Thread wrapper for running a single test file."""
-
-    def __init__(self, port, options, worker_number, worker_name,
-                 test_input, test_types):
-        """
-        Args:
-          port: object implementing port-specific hooks
-          options: command line argument object from optparse
-          worker_number: worker number for tests
-          worker_name: for logging
-          test_input: Object containing the test filename and timeout
-          test_types: A list of TestType objects to run the test output
-              against.
-        """
-
-        threading.Thread.__init__(self)
-        self._port = port
-        self._options = options
-        self._test_input = test_input
-        self._test_types = test_types
-        self._driver = None
-        self._worker_number = worker_number
-        self._name = worker_name
-
-    def run(self):
-        self._covered_run()
-
-    def _covered_run(self):
-        # FIXME: this is a separate routine to work around a bug
-        # in coverage: see http://bitbucket.org/ned/coveragepy/issue/85.
-        self._driver = self._port.create_driver(self._worker_number)
-        self._driver.start()
-        self._test_result = single_test_runner.run_single_test(
-            self._port, self._options, self._test_input, self._driver,
-            self._name, self._test_type)
-        self._driver.stop()
-
-    def get_test_result(self):
-        return self._test_result
 
 
 class TestShellThread(threading.Thread):
@@ -146,8 +72,9 @@ class TestShellThread(threading.Thread):
         self._name = worker_name
         self._filename_list_queue = filename_list_queue
         self._result_queue = result_queue
+        self._current_group = None
         self._filename_list = []
-        self._driver = None
+        self._single_test_runner = None
         self._test_group_timing_stats = {}
         self._test_results = []
         self._num_tests = 0
@@ -157,10 +84,11 @@ class TestShellThread(threading.Thread):
         self._http_lock_wait_begin = 0
         self._http_lock_wait_end = 0
 
-        self._test_types = []
-        for cls in self._get_test_type_classes():
-            self._test_types.append(cls(self._port,
-                                        self._options.results_directory))
+    def cleanup(self):
+        if self._single_test_runner:
+            self._single_test_runner.cleanup()
+        if self._have_http_lock:
+            self._stop_servers_with_lock()
 
         # Current group of tests we're running.
         self._current_group = None
@@ -169,15 +97,9 @@ class TestShellThread(threading.Thread):
         # Time at which we started running tests from self._current_group.
         self._current_group_start_time = None
 
-    def _get_test_type_classes(self):
-        classes = [text_diff.TestTextDiff]
-        if self._options.pixel_tests:
-            classes.append(image_diff.ImageDiff)
-        return classes
-
     def cancel(self):
         """Set a flag telling this thread to quit."""
-        self._stop_servers_with_lock()
+        self.cleanup()
         self._canceled = True
 
     def clear_next_timeout(self):
@@ -269,18 +191,23 @@ class TestShellThread(threading.Thread):
 
         If test_runner is not None, then we call test_runner.UpdateSummary()
         with the results of each test."""
+        self._single_test_runner = SingleTestRunner(self._options, self._port,
+            self._name, self._worker_number)
+
         batch_size = self._options.batch_size
         batch_count = 0
 
         # Append tests we're running to the existing tests_run.txt file.
         # This is created in run_webkit_tests.py:_PrepareListsAndPrintOutput.
         tests_run_filename = self._port._filesystem.join(self._options.results_directory,
-                                          "tests_run.txt")
+                                                         "tests_run%d.txt" % self._worker_number)
         tests_run_file = self._port._filesystem.open_text_file_for_writing(tests_run_filename, append=False)
+
         while True:
             if self._canceled:
                 _log.debug('Testing cancelled')
                 tests_run_file.close()
+                self.cleanup()
                 return
 
             if len(self._filename_list) is 0:
@@ -293,8 +220,7 @@ class TestShellThread(threading.Thread):
                     self._current_group, self._filename_list = \
                         self._filename_list_queue.get_nowait()
                 except Queue.Empty:
-                    self._stop_servers_with_lock()
-                    self._kill_dump_render_tree()
+                    self.cleanup()
                     tests_run_file.close()
                     return
 
@@ -311,118 +237,34 @@ class TestShellThread(threading.Thread):
             # We have a url, run tests.
             batch_count += 1
             self._num_tests += 1
-            if self._options.run_singly:
-                result = self._run_test_in_another_thread(test_input)
-            else:
-                result = self._run_test_in_this_thread(test_input)
 
-            filename = test_input.filename
-            tests_run_file.write(filename + "\n")
+            timeout = self._single_test_runner.timeout(test_input)
+            result = self._single_test_runner.run_test(test_input, timeout)
+
+            tests_run_file.write(test_input.filename + "\n")
+            test_name = self._port.relative_test_filename(test_input.filename)
             if result.failures:
                 # Check and kill DumpRenderTree if we need to.
-                if len([1 for f in result.failures
-                        if f.should_kill_dump_render_tree()]):
-                    self._kill_dump_render_tree()
+                if any([f.should_kill_dump_render_tree() for f in result.failures]):
+                    self._single_test_runner.kill_dump_render_tree()
                     # Reset the batch count since the shell just bounced.
                     batch_count = 0
+
                 # Print the error message(s).
-                error_str = '\n'.join(['  ' + f.message() for
-                                       f in result.failures])
-                _log.debug("%s %s failed:\n%s" % (self.getName(),
-                           self._port.relative_test_filename(filename),
-                           error_str))
+                _log.debug("%s %s failed:" % (self._name, test_name))
+                for f in result.failures:
+                    _log.debug("%s  %s" % (self._name, f.message()))
             else:
-                _log.debug("%s %s passed" % (self.getName(),
-                           self._port.relative_test_filename(filename)))
+                _log.debug("%s %s passed" % (self._name, test_name))
             self._result_queue.put(result.dumps())
 
             if batch_size > 0 and batch_count >= batch_size:
                 # Bounce the shell and reset count.
-                self._kill_dump_render_tree()
+                self._single_test_runner.kill_dump_render_tree()
                 batch_count = 0
 
             if test_runner:
                 test_runner.update_summary(result_summary)
-
-    def _run_test_in_another_thread(self, test_input):
-        """Run a test in a separate thread, enforcing a hard time limit.
-
-        Since we can only detect the termination of a thread, not any internal
-        state or progress, we can only run per-test timeouts when running test
-        files singly.
-
-        Args:
-          test_input: Object containing the test filename and timeout
-
-        Returns:
-          A TestResult
-        """
-        worker = SingleTestThread(self._port,
-                                  self._options,
-                                  self._worker_number,
-                                  self._name,
-                                  test_input,
-                                  self._test_types)
-
-        worker.start()
-
-        thread_timeout = _milliseconds_to_seconds(
-            _pad_timeout(int(test_input.timeout)))
-        thread._next_timeout = time.time() + thread_timeout
-        worker.join(thread_timeout)
-        if worker.isAlive():
-            # If join() returned with the thread still running, the
-            # DumpRenderTree is completely hung and there's nothing
-            # more we can do with it.  We have to kill all the
-            # DumpRenderTrees to free it up. If we're running more than
-            # one DumpRenderTree thread, we'll end up killing the other
-            # DumpRenderTrees too, introducing spurious crashes. We accept
-            # that tradeoff in order to avoid losing the rest of this
-            # thread's results.
-            _log.error('Test thread hung: killing all DumpRenderTrees')
-            if worker._driver:
-                worker._driver.stop()
-
-        try:
-            result = worker.get_test_result()
-        except AttributeError, e:
-            # This gets raised if the worker thread has already exited.
-            _log.error('Cannot get results of test: %s' % test_input.filename)
-            # FIXME: Seems we want a unique failure type here.
-            result = test_results.TestResult(test_input.filename)
-
-        return result
-
-    def _run_test_in_this_thread(self, test_input):
-        """Run a single test file using a shared DumpRenderTree process.
-
-        Args:
-          test_input: Object containing the test filename, uri and timeout
-
-        Returns: a TestResult object.
-        """
-        self._ensure_dump_render_tree_is_running()
-        thread_timeout = _milliseconds_to_seconds(
-             _pad_timeout(int(test_input.timeout)))
-        self._next_timeout = time.time() + thread_timeout
-        test_result = single_test_runner.run_single_test(
-            self._port, self._options, test_input, self._driver, self._name,
-            self._test_types)
-        self._test_results.append(test_result)
-        return test_result
-
-    def _ensure_dump_render_tree_is_running(self):
-        """Start the shared DumpRenderTree, if it's not running.
-
-        This is not for use when running tests singly, since those each start
-        a separate DumpRenderTree in their own thread.
-
-        """
-        # poll() is not threadsafe and can throw OSError due to:
-        # http://bugs.python.org/issue1731717
-        if not self._driver or self._driver.poll() is not None:
-            self._driver = self._port.create_driver(self._worker_number)
-            self._driver.start()
 
     def _start_servers_with_lock(self):
         """Acquire http lock and start the servers."""
@@ -446,9 +288,3 @@ class TestShellThread(threading.Thread):
             _log.debug('Release http lock ...')
             self._port.release_http_lock()
             self._have_http_lock = False
-
-    def _kill_dump_render_tree(self):
-        """Kill the DumpRenderTree process if it's running."""
-        if self._driver:
-            self._driver.stop()
-            self._driver = None

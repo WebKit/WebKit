@@ -28,21 +28,19 @@
 
 
 import logging
-import os
+import threading
 import time
 
 from webkitpy.layout_tests.port import base
+
+from webkitpy.layout_tests.test_types import text_diff
+from webkitpy.layout_tests.test_types import image_diff
+
 from webkitpy.layout_tests.layout_package import test_failures
 from webkitpy.layout_tests.layout_package.test_results import TestResult
 
 
 _log = logging.getLogger(__name__)
-
-
-def run_single_test(port, options, test_input, driver, worker_name, test_types):
-    # FIXME: Pull this into TestShellThread._run().
-    runner = SingleTestRunner(options, port, driver, test_input, worker_name, test_types)
-    return runner.run()
 
 
 class ExpectedDriverOutput:
@@ -55,15 +53,108 @@ class ExpectedDriverOutput:
 
 class SingleTestRunner:
 
-    def __init__(self, options, port, driver, test_input, worker_name, test_types):
+    def __init__(self, options, port, worker_name, worker_number):
         self._options = options
         self._port = port
-        self._driver = driver
-        self._filename = test_input.filename
-        self._timeout = test_input.timeout
         self._worker_name = worker_name
-        self._test_types = test_types
-        self._testname = port.relative_test_filename(test_input.filename)
+        self._worker_number = worker_number
+        self._driver = None
+        self._test_types = []
+        for cls in self._get_test_type_classes():
+            self._test_types.append(cls(self._port,
+                                        self._options.results_directory))
+
+    def cleanup(self):
+        self.kill_dump_render_tree()
+
+    def _get_test_type_classes(self):
+        classes = [text_diff.TestTextDiff]
+        if self._options.pixel_tests:
+            classes.append(image_diff.ImageDiff)
+        return classes
+
+    def timeout(self, test_input):
+        # We calculate how long we expect the test to take.
+        #
+        # The DumpRenderTree watchdog uses 2.5x the timeout; we want to be
+        # larger than that. We also add a little more padding if we're
+        # running tests in a separate thread.
+        #
+        # Note that we need to convert the test timeout from a
+        # string value in milliseconds to a float for Python.
+        driver_timeout_sec = 3.0 * float(test_input.timeout) / 1000.0
+        if not self._options.run_singly:
+            return driver_timeout_sec
+
+        thread_padding_sec = 1.0
+        thread_timeout_sec = driver_timeout_sec + thread_padding_sec
+        return thread_timeout_sec
+
+    def run_test(self, test_input, timeout):
+        if self._options.run_singly:
+            return self._run_test_in_another_thread(test_input, timeout)
+        else:
+            return self._run_test_in_this_thread(test_input)
+        return result
+
+    def _run_test_in_another_thread(self, test_input, thread_timeout_sec):
+        """Run a test in a separate thread, enforcing a hard time limit.
+
+        Since we can only detect the termination of a thread, not any internal
+        state or progress, we can only run per-test timeouts when running test
+        files singly.
+
+        Args:
+          test_input: Object containing the test filename and timeout
+          thread_timeout_sec: time to wait before killing the driver process.
+        Returns:
+          A TestResult
+        """
+        worker = self
+        result = None
+
+        driver = worker._port.create_driver(worker._worker_number)
+        driver.start()
+
+        class SingleTestThread(threading.Thread):
+            def run(self):
+                result = worker.run(test_input, driver)
+
+        thread = SingleTestThread()
+        thread.start()
+        thread.join(thread_timeout_sec)
+        if thread.isAlive():
+            # If join() returned with the thread still running, the
+            # DumpRenderTree is completely hung and there's nothing
+            # more we can do with it.  We have to kill all the
+            # DumpRenderTrees to free it up. If we're running more than
+            # one DumpRenderTree thread, we'll end up killing the other
+            # DumpRenderTrees too, introducing spurious crashes. We accept
+            # that tradeoff in order to avoid losing the rest of this
+            # thread's results.
+            _log.error('Test thread hung: killing all DumpRenderTrees')
+
+        driver.stop()
+
+        if not result:
+            result = TestResult(test_input.filename, failures=[],
+                test_run_time=0, total_time_for_all_diffs=0, time_for_diffs={})
+        return result
+
+    def _run_test_in_this_thread(self, test_input):
+        """Run a single test file using a shared DumpRenderTree process.
+
+        Args:
+          test_input: Object containing the test filename, uri and timeout
+
+        Returns: a TestResult object.
+        """
+        # poll() is not threadsafe and can throw OSError due to:
+        # http://bugs.python.org/issue1731717
+        if not self._driver or self._driver.poll() is not None:
+            self._driver = self._port.create_driver(self._worker_number)
+            self._driver.start()
+        return self._run(self._driver, test_input)
 
     def _expected_driver_output(self):
         return ExpectedDriverOutput(self._port.expected_text(self._filename),
@@ -74,7 +165,11 @@ class SingleTestRunner:
         return (self._options.pixel_tests and
                 not (self._options.new_baseline or self._options.reset_results))
 
-    def _driver_input(self):
+    def _driver_input(self, test_input):
+        self._filename = test_input.filename
+        self._timeout = test_input.timeout
+        self._testname = self._port.relative_test_filename(test_input.filename)
+
         # The image hash is used to avoid doing an image dump if the
         # checksums match, so it should be set to a blank value if we
         # are generating a new baseline.  (Otherwise, an image from a
@@ -84,8 +179,8 @@ class SingleTestRunner:
             image_hash = self._port.expected_checksum(self._filename)
         return base.DriverInput(self._filename, self._timeout, image_hash)
 
-    def run(self):
-        driver_output = self._driver.run_test(self._driver_input())
+    def _run(self, driver, test_input):
+        driver_output = self._driver.run_test(self._driver_input(test_input))
         return self._process_output(driver_output)
 
     def _process_output(self, driver_output):
@@ -136,3 +231,9 @@ class SingleTestRunner:
         total_time_for_all_diffs = time.time() - start_diff_time
         return TestResult(self._filename, failures, driver_output.test_time,
                           total_time_for_all_diffs, time_for_diffs)
+
+    def kill_dump_render_tree(self):
+        """Kill the DumpRenderTree process if it's running."""
+        if self._driver:
+            self._driver.stop()
+            self._driver = None

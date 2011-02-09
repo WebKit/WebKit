@@ -499,7 +499,7 @@ class RebaselineTest(unittest.TestCase):
                         'failures/expected/missing_image.html'],
                         tests_included=True, filesystem=fs)
         file_list = fs.written_files.keys()
-        file_list.remove('/tmp/layout-test-results/tests_run.txt')
+        file_list.remove('/tmp/layout-test-results/tests_run0.txt')
         self.assertEqual(len(file_list), 6)
         self.assertBaselines(file_list,
             "/passes/image")
@@ -516,7 +516,7 @@ class RebaselineTest(unittest.TestCase):
                         'failures/expected/missing_image.html'],
                     tests_included=True, filesystem=fs)
         file_list = fs.written_files.keys()
-        file_list.remove('/tmp/layout-test-results/tests_run.txt')
+        file_list.remove('/tmp/layout-test-results/tests_run0.txt')
         self.assertEqual(len(file_list), 6)
         self.assertBaselines(file_list,
             "/platform/test-mac/passes/image")

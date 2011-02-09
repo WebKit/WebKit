@@ -1,5 +1,19 @@
 2011-02-08  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Tony Chang.
+
+        new-run-webkit-tests: move a bunch of testing logic out of
+        dump_render_tree_thread and into single_test_runner so that we
+        will be able to reuse it in the new multiprocessing worker class as well.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53838
+
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+        * Scripts/webkitpy/layout_tests/layout_package/single_test_runner.py:
+
+        
+2011-02-08  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Ojan Vafai.
 
         new-run-webkit-tests: remove no longer needed WatchableThread
