@@ -1,5 +1,19 @@
 2011-02-08  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Tony Chang.
+
+        new-run-webkit-tests: move the logic that starts and stops the
+        servers from dump_render_tree_thread into single_test_runner
+        so that we can reuse it in the new multiprocessing worker class
+        as well.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53840
+
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+        * Scripts/webkitpy/layout_tests/layout_package/single_test_runner.py:
+ 
+2011-02-08  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Mihai Parparita.
 
         new-run-webkit-tests: split out thread stack logging code into a sharable module

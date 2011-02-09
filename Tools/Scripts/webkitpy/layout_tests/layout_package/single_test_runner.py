@@ -60,12 +60,15 @@ class SingleTestRunner:
         self._worker_number = worker_number
         self._driver = None
         self._test_types = []
+        self.has_http_lock = False
         for cls in self._get_test_type_classes():
             self._test_types.append(cls(self._port,
                                         self._options.results_directory))
 
     def cleanup(self):
         self.kill_dump_render_tree()
+        if self.has_http_lock:
+            self.stop_servers_with_lock()
 
     def _get_test_type_classes(self):
         classes = [text_diff.TestTextDiff]
@@ -231,6 +234,26 @@ class SingleTestRunner:
         total_time_for_all_diffs = time.time() - start_diff_time
         return TestResult(self._filename, failures, driver_output.test_time,
                           total_time_for_all_diffs, time_for_diffs)
+
+    def start_servers_with_lock(self):
+        _log.debug('Acquiring http lock ...')
+        self._port.acquire_http_lock()
+        _log.debug('Starting HTTP server ...')
+        self._port.start_http_server()
+        _log.debug('Starting WebSocket server ...')
+        self._port.start_websocket_server()
+        self.has_http_lock = True
+
+    def stop_servers_with_lock(self):
+        """Stop the servers and release http lock."""
+        if self.has_http_lock:
+            _log.debug('Stopping HTTP server ...')
+            self._port.stop_http_server()
+            _log.debug('Stopping WebSocket server ...')
+            self._port.stop_websocket_server()
+            _log.debug('Releasing server lock ...')
+            self._port.release_http_lock()
+            self.has_http_lock = False
 
     def kill_dump_render_tree(self):
         """Kill the DumpRenderTree process if it's running."""

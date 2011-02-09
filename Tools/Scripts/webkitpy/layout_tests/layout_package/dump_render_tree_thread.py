@@ -74,32 +74,16 @@ class TestShellThread(threading.Thread):
         self._result_queue = result_queue
         self._current_group = None
         self._filename_list = []
-        self._single_test_runner = None
         self._test_group_timing_stats = {}
         self._test_results = []
         self._num_tests = 0
         self._start_time = 0
         self._stop_time = 0
-        self._have_http_lock = False
         self._http_lock_wait_begin = 0
         self._http_lock_wait_end = 0
 
-    def cleanup(self):
-        if self._single_test_runner:
-            self._single_test_runner.cleanup()
-        if self._have_http_lock:
-            self._stop_servers_with_lock()
-
-        # Current group of tests we're running.
-        self._current_group = None
-        # Number of tests in self._current_group.
-        self._num_tests_in_current_group = None
-        # Time at which we started running tests from self._current_group.
-        self._current_group_start_time = None
-
     def cancel(self):
         """Set a flag telling this thread to quit."""
-        self.cleanup()
         self._canceled = True
 
     def clear_next_timeout(self):
@@ -191,7 +175,7 @@ class TestShellThread(threading.Thread):
 
         If test_runner is not None, then we call test_runner.UpdateSummary()
         with the results of each test."""
-        self._single_test_runner = SingleTestRunner(self._options, self._port,
+        single_test_runner = SingleTestRunner(self._options, self._port,
             self._name, self._worker_number)
 
         batch_size = self._options.batch_size
@@ -207,7 +191,7 @@ class TestShellThread(threading.Thread):
             if self._canceled:
                 _log.debug('Testing cancelled')
                 tests_run_file.close()
-                self.cleanup()
+                single_test_runner.cleanup()
                 return
 
             if len(self._filename_list) is 0:
@@ -220,14 +204,16 @@ class TestShellThread(threading.Thread):
                     self._current_group, self._filename_list = \
                         self._filename_list_queue.get_nowait()
                 except Queue.Empty:
-                    self.cleanup()
                     tests_run_file.close()
+                    single_test_runner.cleanup()
                     return
 
                 if self._current_group == "tests_to_http_lock":
-                    self._start_servers_with_lock()
-                elif self._have_http_lock:
-                    self._stop_servers_with_lock()
+                    self._http_lock_wait_begin = time.time()
+                    single_test_runner.start_servers_with_lock()
+                    self._http_lock_wait_end = time.time()
+                elif single_test_runner.has_http_lock:
+                    single_test_runner.stop_servers_with_lock()
 
                 self._num_tests_in_current_group = len(self._filename_list)
                 self._current_group_start_time = time.time()
@@ -238,15 +224,15 @@ class TestShellThread(threading.Thread):
             batch_count += 1
             self._num_tests += 1
 
-            timeout = self._single_test_runner.timeout(test_input)
-            result = self._single_test_runner.run_test(test_input, timeout)
+            timeout = single_test_runner.timeout(test_input)
+            result = single_test_runner.run_test(test_input, timeout)
 
             tests_run_file.write(test_input.filename + "\n")
             test_name = self._port.relative_test_filename(test_input.filename)
             if result.failures:
                 # Check and kill DumpRenderTree if we need to.
                 if any([f.should_kill_dump_render_tree() for f in result.failures]):
-                    self._single_test_runner.kill_dump_render_tree()
+                    single_test_runner.kill_dump_render_tree()
                     # Reset the batch count since the shell just bounced.
                     batch_count = 0
 
@@ -260,31 +246,8 @@ class TestShellThread(threading.Thread):
 
             if batch_size > 0 and batch_count >= batch_size:
                 # Bounce the shell and reset count.
-                self._single_test_runner.kill_dump_render_tree()
+                single_test_runner.kill_dump_render_tree()
                 batch_count = 0
 
             if test_runner:
                 test_runner.update_summary(result_summary)
-
-    def _start_servers_with_lock(self):
-        """Acquire http lock and start the servers."""
-        self._http_lock_wait_begin = time.time()
-        _log.debug('Acquire http lock ...')
-        self._port.acquire_http_lock()
-        _log.debug('Starting HTTP server ...')
-        self._port.start_http_server()
-        _log.debug('Starting WebSocket server ...')
-        self._port.start_websocket_server()
-        self._http_lock_wait_end = time.time()
-        self._have_http_lock = True
-
-    def _stop_servers_with_lock(self):
-        """Stop the servers and release http lock."""
-        if self._have_http_lock:
-            _log.debug('Stopping HTTP server ...')
-            self._port.stop_http_server()
-            _log.debug('Stopping WebSocket server ...')
-            self._port.stop_websocket_server()
-            _log.debug('Release http lock ...')
-            self._port.release_http_lock()
-            self._have_http_lock = False
