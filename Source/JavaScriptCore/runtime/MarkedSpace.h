@@ -41,20 +41,20 @@ namespace JSC {
     class WeakGCHandle;
 
     struct CollectorHeap {
-        size_t nextBlock;
-        size_t nextCell;
-        PageAllocationAligned* blocks;
+        CollectorHeap()
+            : nextBlock(0)
+            , nextCell(0)
+        {
+        }
         
-        size_t numBlocks;
-        size_t usedBlocks;
-        
-        size_t waterMark;
-        size_t highWaterMark;
-
         MarkedBlock* collectorBlock(size_t index) const
         {
             return static_cast<MarkedBlock*>(blocks[index].base());
         }
+
+        size_t nextBlock;
+        size_t nextCell;
+        Vector<PageAllocationAligned> blocks;
     };
 
     class MarkedSpace {
@@ -71,8 +71,8 @@ namespace JSC {
 
         JSGlobalData* globalData() { return m_globalData; }
 
-        size_t highWaterMark() { return m_heap.highWaterMark; }
-        void setHighWaterMark(size_t highWaterMark) { m_heap.highWaterMark = highWaterMark; }
+        size_t highWaterMark() { return m_highWaterMark; }
+        void setHighWaterMark(size_t highWaterMark) { m_highWaterMark = highWaterMark; }
 
         void* allocate(size_t);
 
@@ -99,6 +99,8 @@ namespace JSC {
         void clearMarkBits(MarkedBlock*);
 
         CollectorHeap m_heap;
+        size_t m_waterMark;
+        size_t m_highWaterMark;
         JSGlobalData* m_globalData;
     };
 
@@ -131,8 +133,8 @@ namespace JSC {
         if (!block)
             return false;
 
-        size_t usedBlocks = m_heap.usedBlocks;
-        for (size_t i = 0; i < usedBlocks; i++) {
+        size_t size = m_heap.blocks.size();
+        for (size_t i = 0; i < size; i++) {
             if (block != m_heap.collectorBlock(i))
                 continue;
 

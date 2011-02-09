@@ -79,14 +79,12 @@ namespace JSC {
 
     inline bool CollectorHeapIterator::isValid()
     {
-        return m_block < m_heap.usedBlocks;
+        return m_block < m_heap.blocks.size();
     }
 
     inline bool CollectorHeapIterator::isLive()
     {
-        return m_block < m_heap.nextBlock
-            || (m_block == m_heap.nextBlock && m_cell < m_heap.nextCell)
-            || (m_block < m_heap.usedBlocks && m_heap.collectorBlock(m_block)->marked.get(m_cell));
+        return m_heap.collectorBlock(m_block)->marked.get(m_cell);
     }
 
     inline JSCell* CollectorHeapIterator::operator*() const

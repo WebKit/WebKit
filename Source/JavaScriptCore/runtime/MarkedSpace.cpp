@@ -42,9 +42,10 @@ const size_t ALLOCATIONS_PER_COLLECTION = 3600;
 #define MIN_ARRAY_SIZE (static_cast<size_t>(14))
 
 MarkedSpace::MarkedSpace(JSGlobalData* globalData)
-    : m_globalData(globalData)
+    : m_waterMark(0)
+    , m_highWaterMark(0)
+    , m_globalData(globalData)
 {
-    memset(&m_heap, 0, sizeof(CollectorHeap));
     allocateBlock();
 }
 
@@ -52,11 +53,9 @@ void MarkedSpace::destroy()
 {
     clearMarkBits(); // Make sure weak pointers appear dead during destruction.
 
-    while (m_heap.usedBlocks)
+    while (m_heap.blocks.size())
         freeBlock(0);
-    fastFree(m_heap.blocks);
-
-    memset(&m_heap, 0, sizeof(CollectorHeap));
+    m_heap.blocks.clear();
 }
 
 NEVER_INLINE MarkedBlock* MarkedSpace::allocateBlock()
@@ -75,19 +74,7 @@ NEVER_INLINE MarkedBlock* MarkedSpace::allocateBlock()
     for (size_t i = 0; i < HeapConstants::cellsPerBlock; ++i)
         new (&block->cells[i]) JSCell(dummyMarkableCellStructure);
     
-    // Add block to blocks vector.
-
-    size_t numBlocks = m_heap.numBlocks;
-    if (m_heap.usedBlocks == numBlocks) {
-        static const size_t maxNumBlocks = ULONG_MAX / sizeof(PageAllocationAligned) / GROWTH_FACTOR;
-        if (numBlocks > maxNumBlocks)
-            CRASH();
-        numBlocks = max(MIN_ARRAY_SIZE, numBlocks * GROWTH_FACTOR);
-        m_heap.numBlocks = numBlocks;
-        m_heap.blocks = static_cast<PageAllocationAligned*>(fastRealloc(m_heap.blocks, numBlocks * sizeof(PageAllocationAligned)));
-    }
-    m_heap.blocks[m_heap.usedBlocks++] = allocation;
-
+    m_heap.blocks.append(allocation);
     return block;
 }
 
@@ -100,13 +87,8 @@ NEVER_INLINE void MarkedSpace::freeBlock(size_t block)
     m_heap.blocks[block].deallocate();
 
     // swap with the last block so we compact as we go
-    m_heap.blocks[block] = m_heap.blocks[m_heap.usedBlocks - 1];
-    m_heap.usedBlocks--;
-
-    if (m_heap.numBlocks > MIN_ARRAY_SIZE && m_heap.usedBlocks < m_heap.numBlocks / LOW_WATER_FACTOR) {
-        m_heap.numBlocks = m_heap.numBlocks / GROWTH_FACTOR; 
-        m_heap.blocks = static_cast<PageAllocationAligned*>(fastRealloc(m_heap.blocks, m_heap.numBlocks * sizeof(PageAllocationAligned)));
-    }
+    m_heap.blocks[block] = m_heap.blocks.last();
+    m_heap.blocks.removeLast();
 }
 
 void* MarkedSpace::allocate(size_t s)
@@ -122,7 +104,7 @@ void* MarkedSpace::allocate(size_t s)
     // Fast case: find the next garbage cell and recycle it.
 
     do {
-        ASSERT(m_heap.nextBlock < m_heap.usedBlocks);
+        ASSERT(m_heap.nextBlock < m_heap.blocks.size());
         Block* block = m_heap.collectorBlock(m_heap.nextBlock);
         do {
             ASSERT(m_heap.nextCell < HeapConstants::cellsPerBlock);
@@ -138,10 +120,10 @@ void* MarkedSpace::allocate(size_t s)
             m_heap.nextCell = block->marked.nextPossiblyUnset(m_heap.nextCell);
         } while (m_heap.nextCell != HeapConstants::cellsPerBlock);
         m_heap.nextCell = 0;
-        m_heap.waterMark += BLOCK_SIZE;
-    } while (++m_heap.nextBlock != m_heap.usedBlocks);
+        m_waterMark += BLOCK_SIZE;
+    } while (++m_heap.nextBlock != m_heap.blocks.size());
 
-    if (m_heap.waterMark < m_heap.highWaterMark) {
+    if (m_waterMark < m_highWaterMark) {
         MarkedBlock* block = allocateBlock();
         ASSERT(!block->marked.get(m_heap.nextCell));
         block->marked.set(m_heap.nextCell);
@@ -154,10 +136,10 @@ void* MarkedSpace::allocate(size_t s)
 void MarkedSpace::shrink()
 {
     // Clear the always-on last bit, so isEmpty() isn't fooled by it.
-    for (size_t i = 0; i < m_heap.usedBlocks; ++i)
+    for (size_t i = 0; i < m_heap.blocks.size(); ++i)
         m_heap.collectorBlock(i)->marked.clear(HeapConstants::cellsPerBlock - 1);
 
-    for (size_t i = 0; i != m_heap.usedBlocks && m_heap.usedBlocks > 1; ) { // We assume at least one block exists at all times.
+    for (size_t i = 0; i != m_heap.blocks.size() && m_heap.blocks.size() > 1; ) { // We assume at least one block exists at all times.
         if (m_heap.collectorBlock(i)->marked.isEmpty()) {
             freeBlock(i);
         } else
@@ -165,13 +147,13 @@ void MarkedSpace::shrink()
     }
 
     // Reset the always-on last bit.
-    for (size_t i = 0; i < m_heap.usedBlocks; ++i)
+    for (size_t i = 0; i < m_heap.blocks.size(); ++i)
         m_heap.collectorBlock(i)->marked.set(HeapConstants::cellsPerBlock - 1);
 }
 
 void MarkedSpace::clearMarkBits()
 {
-    for (size_t i = 0; i < m_heap.usedBlocks; ++i)
+    for (size_t i = 0; i < m_heap.blocks.size(); ++i)
         clearMarkBits(m_heap.collectorBlock(i));
 }
 
@@ -184,15 +166,15 @@ void MarkedSpace::clearMarkBits(MarkedBlock* block)
 
 size_t MarkedSpace::markedCells(size_t startBlock, size_t startCell) const
 {
-    ASSERT(startBlock <= m_heap.usedBlocks);
+    ASSERT(startBlock <= m_heap.blocks.size());
     ASSERT(startCell < HeapConstants::cellsPerBlock);
 
-    if (startBlock >= m_heap.usedBlocks)
+    if (startBlock >= m_heap.blocks.size())
         return 0;
 
     size_t result = 0;
     result += m_heap.collectorBlock(startBlock)->marked.count(startCell);
-    for (size_t i = startBlock + 1; i < m_heap.usedBlocks; ++i)
+    for (size_t i = startBlock + 1; i < m_heap.blocks.size(); ++i)
         result += m_heap.collectorBlock(i)->marked.count();
 
     return result;
@@ -205,7 +187,7 @@ void MarkedSpace::sweep()
 #endif
 
     DeadObjectIterator it(m_heap, 0, 0);
-    DeadObjectIterator end(m_heap, m_heap.usedBlocks, 0);
+    DeadObjectIterator end(m_heap, m_heap.blocks.size(), 0);
     for ( ; it != end; ++it) {
         JSCell* cell = *it;
 #if ENABLE(JSC_ZOMBIES)
@@ -230,7 +212,7 @@ size_t MarkedSpace::objectCount() const
     return m_heap.nextBlock * HeapConstants::cellsPerBlock // allocated full blocks
            + m_heap.nextCell // allocated cells in current block
            + markedCells(m_heap.nextBlock, m_heap.nextCell) // marked cells in remainder of m_heap
-           - m_heap.usedBlocks; // 1 cell per block is a dummy sentinel
+           - m_heap.blocks.size(); // 1 cell per block is a dummy sentinel
 }
 
 size_t MarkedSpace::size() const
@@ -240,14 +222,14 @@ size_t MarkedSpace::size() const
 
 size_t MarkedSpace::capacity() const
 {
-    return m_heap.usedBlocks * BLOCK_SIZE;
+    return m_heap.blocks.size() * BLOCK_SIZE;
 }
 
 void MarkedSpace::reset()
 {
     m_heap.nextCell = 0;
     m_heap.nextBlock = 0;
-    m_heap.waterMark = 0;
+    m_waterMark = 0;
 #if ENABLE(JSC_ZOMBIES)
     sweep();
 #endif
@@ -260,7 +242,7 @@ LiveObjectIterator MarkedSpace::primaryHeapBegin()
 
 LiveObjectIterator MarkedSpace::primaryHeapEnd()
 {
-    return LiveObjectIterator(m_heap, m_heap.usedBlocks, 0);
+    return LiveObjectIterator(m_heap, m_heap.blocks.size(), 0);
 }
 
 } // namespace JSC

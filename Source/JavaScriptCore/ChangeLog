@@ -1,5 +1,45 @@
 2011-02-08  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Use a vector to track blocks in the Heap, instead of hand-rolled vector-like code
+        https://bugs.webkit.org/show_bug.cgi?id=54062
+        
+        SunSpider reports no change.
+
+        * runtime/CollectorHeapIterator.h:
+        (JSC::CollectorHeapIterator::isValid):
+        (JSC::CollectorHeapIterator::isLive): Updated for new mark invariant: To
+        know if an object is live, you just need to test its mark bit.
+
+        * runtime/MarkedSpace.cpp:
+        (JSC::MarkedSpace::MarkedSpace): Moved waterMark and highWaterMark from
+        CollectorHeap into MarkedSpace, since they're global state. Removed call
+        to memset since CollectorHeap is a true class with its own constructor now.
+
+        (JSC::MarkedSpace::destroy): Change uses of m_heap.usedBlocks to
+        m_heap.blocks.size(), and m_heap.numBlocks to m_heap.blocks.capacity().
+
+        (JSC::MarkedSpace::allocateBlock):
+        (JSC::MarkedSpace::freeBlock): No need to manage our vector manually anymore.
+
+        (JSC::MarkedSpace::allocate):
+        (JSC::MarkedSpace::shrink):
+        (JSC::MarkedSpace::clearMarkBits):
+        (JSC::MarkedSpace::markedCells):
+        (JSC::MarkedSpace::sweep):
+        (JSC::MarkedSpace::objectCount):
+        (JSC::MarkedSpace::capacity):
+        (JSC::MarkedSpace::reset):
+        (JSC::MarkedSpace::primaryHeapEnd):
+        * runtime/MarkedSpace.h:
+        (JSC::CollectorHeap::CollectorHeap):
+        (JSC::MarkedSpace::highWaterMark):
+        (JSC::MarkedSpace::setHighWaterMark):
+        (JSC::MarkedSpace::contains): Same as above.
+
+2011-02-08  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Darin Adler.
 
         Give each MarkedBlock enough mark bits to cover the whole block
