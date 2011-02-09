@@ -65,6 +65,7 @@ public:
 private:
     IDBCursorBackendImpl(IDBSQLiteDatabase*, PassRefPtr<IDBKeyRange>, IDBCursor::Direction, PassOwnPtr<SQLiteStatement> query, bool isSerializedScriptValueCursor, IDBTransactionBackendInterface*, IDBObjectStoreBackendInterface*);
 
+    bool currentRowExists();
     void loadCurrentRow();
     SQLiteDatabase& database() const;
 

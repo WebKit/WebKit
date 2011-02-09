@@ -98,6 +98,18 @@ void IDBCursorBackendImpl::continueFunction(PassRefPtr<IDBKey> prpKey, PassRefPt
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
 }
 
+bool IDBCursorBackendImpl::currentRowExists()
+{
+    String sql = m_currentIDBKeyValue ? "SELECT id FROM IndexData WHERE id = ?" : "SELECT id FROM ObjectStoreData WHERE id = ?";
+    SQLiteStatement statement(m_database->db(), sql);
+
+    bool ok = statement.prepare() == SQLResultOk;
+    ASSERT_UNUSED(ok, ok);
+
+    statement.bindInt64(1, m_currentId);
+    return statement.step() == SQLResultRow;
+}
+
 void IDBCursorBackendImpl::continueFunctionInternal(ScriptExecutionContext*, PassRefPtr<IDBCursorBackendImpl> prpCursor, PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallbacks> callbacks)
 {
     RefPtr<IDBCursorBackendImpl> cursor = prpCursor;
@@ -115,6 +127,10 @@ void IDBCursorBackendImpl::continueFunctionInternal(ScriptExecutionContext*, Pas
 
         RefPtr<IDBKey> oldKey = cursor->m_currentKey;
         cursor->loadCurrentRow();
+
+        // Skip if this entry has been deleted from the object store.
+        if (!cursor->currentRowExists())
+            continue;
 
         // If a key was supplied, we must loop until we find that key (or hit the end).
         if (key && !key->isEqual(cursor->m_currentKey.get()))
