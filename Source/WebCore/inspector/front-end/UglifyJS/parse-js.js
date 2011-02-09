@@ -182,7 +182,6 @@ var OPERATORS = array_to_hash([
         ">>=",
         "<<=",
         ">>>=",
-        "~=",
         "%=",
         "|=",
         "^=",
@@ -253,18 +252,19 @@ function is_token(token, type, val) {
 
 var EX_EOF = {};
 
-function tokenizer($TEXT, skip_comments) {
+function tokenizer($TEXT) {
 
         var S = {
-                text           : $TEXT.replace(/\r\n?|[\n\u2028\u2029]/g, "\n").replace(/^\uFEFF/, ''),
-                pos            : 0,
-                tokpos         : 0,
-                line           : 0,
-                tokline        : 0,
-                col            : 0,
-                tokcol         : 0,
-                newline_before : false,
-                regex_allowed  : false
+                text            : $TEXT.replace(/\r\n?|[\n\u2028\u2029]/g, "\n").replace(/^\uFEFF/, ''),
+                pos             : 0,
+                tokpos          : 0,
+                line            : 0,
+                tokline         : 0,
+                col             : 0,
+                tokcol          : 0,
+                newline_before  : false,
+                regex_allowed   : false,
+                comments_before : []
         };
 
         function peek() { return S.text.charAt(S.pos); };
@@ -299,7 +299,7 @@ function tokenizer($TEXT, skip_comments) {
                 S.tokpos = S.pos;
         };
 
-        function token(type, value) {
+        function token(type, value, is_comment) {
                 S.regex_allowed = ((type == "operator" && !HOP(UNARY_POSTFIX, value)) ||
                                    (type == "keyword" && HOP(KEYWORDS_BEFORE_EXPRESSION, value)) ||
                                    (type == "punc" && HOP(PUNC_BEFORE_EXPRESSION, value)));
@@ -311,6 +311,10 @@ function tokenizer($TEXT, skip_comments) {
                         pos   : S.tokpos,
                         nlb   : S.newline_before
                 };
+                if (!is_comment) {
+                        ret.comments_before = S.comments_before;
+                        S.comments_before = [];
+                }
                 S.newline_before = false;
                 return ret;
         };
@@ -334,7 +338,7 @@ function tokenizer($TEXT, skip_comments) {
         };
 
         function read_num(prefix) {
-                var has_e = false, after_e = false, has_x = false;
+                var has_e = false, after_e = false, has_x = false, has_dot = prefix == ".";
                 var num = read_while(function(ch, i){
                         if (ch == "x" || ch == "X") {
                                 if (has_x) return false;
@@ -350,7 +354,12 @@ function tokenizer($TEXT, skip_comments) {
                         }
                         if (ch == "+") return after_e;
                         after_e = false;
-                        return is_alphanumeric_char(ch) || ch == ".";
+                        if (ch == ".") {
+                                if (!has_dot)
+                                        return has_dot = true;
+                                return false;
+                        }
+                        return is_alphanumeric_char(ch);
                 });
                 if (prefix)
                         num = prefix + num;
@@ -412,7 +421,7 @@ function tokenizer($TEXT, skip_comments) {
                         ret = S.text.substring(S.pos, i);
                         S.pos = i;
                 }
-                return token("comment1", ret);
+                return token("comment1", ret, true);
         };
 
         function read_multiline_comment() {
@@ -420,8 +429,9 @@ function tokenizer($TEXT, skip_comments) {
                 return with_eof_error("Unterminated multiline comment", function(){
                         var i = find("*/", true),
                             text = S.text.substring(S.pos, i),
-                            tok = token("comment2", text);
+                            tok = token("comment2", text, true);
                         S.pos = i + 2;
+                        S.line += text.split("\n").length - 1;
                         S.newline_before = text.indexOf("\n") >= 0;
                         return tok;
                 });
@@ -455,6 +465,7 @@ function tokenizer($TEXT, skip_comments) {
 
         function read_operator(prefix) {
                 function grow(op) {
+                        if (!peek()) return op;
                         var bigger = op + peek();
                         if (HOP(OPERATORS, bigger)) {
                                 next();
@@ -466,19 +477,18 @@ function tokenizer($TEXT, skip_comments) {
                 return token("operator", grow(prefix || next()));
         };
 
-        var handle_slash = skip_comments ? function() {
+        function handle_slash() {
                 next();
                 var regex_allowed = S.regex_allowed;
                 switch (peek()) {
-                    case "/": read_line_comment(); S.regex_allowed = regex_allowed; return next_token();
-                    case "*": read_multiline_comment(); S.regex_allowed = regex_allowed; return next_token();
-                }
-                return S.regex_allowed ? read_regexp() : read_operator("/");
-        } : function() {
-                next();
-                switch (peek()) {
-                    case "/": return read_line_comment();
-                    case "*": return read_multiline_comment();
+                    case "/":
+                        S.comments_before.push(read_line_comment());
+                        S.regex_allowed = regex_allowed;
+                        return next_token();
+                    case "*":
+                        S.comments_before.push(read_multiline_comment());
+                        S.regex_allowed = regex_allowed;
+                        return next_token();
                 }
                 return S.regex_allowed ? read_regexp() : read_operator("/");
         };
@@ -559,7 +569,7 @@ var ASSIGNMENT = (function(a, ret, i){
         }
         return ret;
 })(
-        ["+=", "-=", "/=", "*=", "%=", ">>=", "<<=", ">>>=", "~=", "%=", "|=", "^=", "&="],
+        ["+=", "-=", "/=", "*=", "%=", ">>=", "<<=", ">>>=", "|=", "^=", "&="],
         { "=": true },
         0
 );
@@ -605,13 +615,13 @@ NodeWithToken.prototype.toString = function() { return this.name; };
 function parse($TEXT, strict_mode, embed_tokens) {
 
         var S = {
-                input: tokenizer($TEXT, true),
-                token: null,
-                prev: null,
-                peeked: null,
-                in_function: 0,
-                in_loop: 0,
-                labels: []
+                input       : typeof $TEXT == "string" ? tokenizer($TEXT, true) : $TEXT,
+                token       : null,
+                prev        : null,
+                peeked      : null,
+                in_function : 0,
+                in_loop     : 0,
+                labels      : []
         };
 
         S.token = next();
@@ -1016,20 +1026,23 @@ function parse($TEXT, strict_mode, embed_tokens) {
                 unexpected();
         };
 
-        function expr_list(closing, allow_trailing_comma) {
+        function expr_list(closing, allow_trailing_comma, allow_empty) {
                 var first = true, a = [];
                 while (!is("punc", closing)) {
                         if (first) first = false; else expect(",");
-                        if (allow_trailing_comma && is("punc", closing))
-                                break;
-                        a.push(expression(false));
+                        if (allow_trailing_comma && is("punc", closing)) break;
+                        if (is("punc", ",") && allow_empty) {
+                                a.push([ "atom", "undefined" ]);
+                        } else {
+                                a.push(expression(false));
+                        }
                 }
                 next();
                 return a;
         };
 
         function array_() {
-                return as("array", expr_list("]", !strict_mode));
+                return as("array", expr_list("]", !strict_mode, true));
         };
 
         function object_() {
@@ -1231,3 +1244,4 @@ exports.KEYWORDS = KEYWORDS;
 exports.ATOMIC_START_TOKEN = ATOMIC_START_TOKEN;
 exports.OPERATORS = OPERATORS;
 exports.is_alphanumeric_char = is_alphanumeric_char;
+exports.is_identifier_char = is_identifier_char;

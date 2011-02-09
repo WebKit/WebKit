@@ -1,3 +1,13 @@
+2011-02-08  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: sync uglifyjs parser files.
+        https://bugs.webkit.org/show_bug.cgi?id=54003
+
+        * inspector/front-end/UglifyJS/parse-js.js:
+        * inspector/front-end/UglifyJS/process.js:
+
 2011-02-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

@@ -69,139 +69,135 @@ var jsp = require("./parse-js"),
 
 function ast_walker(ast) {
         function _vardefs(defs) {
-                return MAP(defs, function(def){
+                return [ this[0], MAP(defs, function(def){
                         var a = [ def[0] ];
                         if (def.length > 1)
                                 a[1] = walk(def[1]);
                         return a;
-                });
+                }) ];
         };
         var walkers = {
                 "string": function(str) {
-                        return [ "string", str ];
+                        return [ this[0], str ];
                 },
                 "num": function(num) {
-                        return [ "num", num ];
+                        return [ this[0], num ];
                 },
                 "name": function(name) {
-                        return [ "name", name ];
+                        return [ this[0], name ];
                 },
                 "toplevel": function(statements) {
-                        return [ "toplevel", MAP(statements, walk) ];
+                        return [ this[0], MAP(statements, walk) ];
                 },
                 "block": function(statements) {
-                        var out = [ "block" ];
+                        var out = [ this[0] ];
                         if (statements != null)
                                 out.push(MAP(statements, walk));
                         return out;
                 },
-                "var": function(defs) {
-                        return [ "var", _vardefs(defs) ];
-                },
-                "const": function(defs) {
-                        return [ "const", _vardefs(defs) ];
-                },
+                "var": _vardefs,
+                "const": _vardefs,
                 "try": function(t, c, f) {
                         return [
-                                "try",
+                                this[0],
                                 MAP(t, walk),
                                 c != null ? [ c[0], MAP(c[1], walk) ] : null,
                                 f != null ? MAP(f, walk) : null
                         ];
                 },
                 "throw": function(expr) {
-                        return [ "throw", walk(expr) ];
+                        return [ this[0], walk(expr) ];
                 },
                 "new": function(ctor, args) {
-                        return [ "new", walk(ctor), MAP(args, walk) ];
+                        return [ this[0], walk(ctor), MAP(args, walk) ];
                 },
                 "switch": function(expr, body) {
-                        return [ "switch", walk(expr), MAP(body, function(branch){
+                        return [ this[0], walk(expr), MAP(body, function(branch){
                                 return [ branch[0] ? walk(branch[0]) : null,
                                          MAP(branch[1], walk) ];
                         }) ];
                 },
                 "break": function(label) {
-                        return [ "break", label ];
+                        return [ this[0], label ];
                 },
                 "continue": function(label) {
-                        return [ "continue", label ];
+                        return [ this[0], label ];
                 },
                 "conditional": function(cond, t, e) {
-                        return [ "conditional", walk(cond), walk(t), walk(e) ];
+                        return [ this[0], walk(cond), walk(t), walk(e) ];
                 },
                 "assign": function(op, lvalue, rvalue) {
-                        return [ "assign", op, walk(lvalue), walk(rvalue) ];
+                        return [ this[0], op, walk(lvalue), walk(rvalue) ];
                 },
                 "dot": function(expr) {
-                        return [ "dot", walk(expr) ].concat(slice(arguments, 1));
+                        return [ this[0], walk(expr) ].concat(slice(arguments, 1));
                 },
                 "call": function(expr, args) {
-                        return [ "call", walk(expr), MAP(args, walk) ];
+                        return [ this[0], walk(expr), MAP(args, walk) ];
                 },
                 "function": function(name, args, body) {
-                        return [ "function", name, args.slice(), MAP(body, walk) ];
+                        return [ this[0], name, args.slice(), MAP(body, walk) ];
                 },
                 "defun": function(name, args, body) {
-                        return [ "defun", name, args.slice(), MAP(body, walk) ];
+                        return [ this[0], name, args.slice(), MAP(body, walk) ];
                 },
                 "if": function(conditional, t, e) {
-                        return [ "if", walk(conditional), walk(t), walk(e) ];
+                        return [ this[0], walk(conditional), walk(t), walk(e) ];
                 },
                 "for": function(init, cond, step, block) {
-                        return [ "for", walk(init), walk(cond), walk(step), walk(block) ];
+                        return [ this[0], walk(init), walk(cond), walk(step), walk(block) ];
                 },
                 "for-in": function(has_var, key, hash, block) {
-                        return [ "for-in", has_var, key, walk(hash), walk(block) ];
+                        return [ this[0], has_var, key, walk(hash), walk(block) ];
                 },
                 "while": function(cond, block) {
-                        return [ "while", walk(cond), walk(block) ];
+                        return [ this[0], walk(cond), walk(block) ];
                 },
                 "do": function(cond, block) {
-                        return [ "do", walk(cond), walk(block) ];
+                        return [ this[0], walk(cond), walk(block) ];
                 },
                 "return": function(expr) {
-                        return [ "return", walk(expr) ];
+                        return [ this[0], walk(expr) ];
                 },
                 "binary": function(op, left, right) {
-                        return [ "binary", op, walk(left), walk(right) ];
+                        return [ this[0], op, walk(left), walk(right) ];
                 },
                 "unary-prefix": function(op, expr) {
-                        return [ "unary-prefix", op, walk(expr) ];
+                        return [ this[0], op, walk(expr) ];
                 },
                 "unary-postfix": function(op, expr) {
-                        return [ "unary-postfix", op, walk(expr) ];
+                        return [ this[0], op, walk(expr) ];
                 },
                 "sub": function(expr, subscript) {
-                        return [ "sub", walk(expr), walk(subscript) ];
+                        return [ this[0], walk(expr), walk(subscript) ];
                 },
                 "object": function(props) {
-                        return [ "object", MAP(props, function(p){
+                        return [ this[0], MAP(props, function(p){
                                 return p.length == 2
                                         ? [ p[0], walk(p[1]) ]
                                         : [ p[0], walk(p[1]), p[2] ]; // get/set-ter
                         }) ];
                 },
                 "regexp": function(rx, mods) {
-                        return [ "regexp", rx, mods ];
+                        return [ this[0], rx, mods ];
                 },
                 "array": function(elements) {
-                        return [ "array", MAP(elements, walk) ];
+                        return [ this[0], MAP(elements, walk) ];
                 },
                 "stat": function(stat) {
-                        return [ "stat", walk(stat) ];
+                        return [ this[0], walk(stat) ];
                 },
                 "seq": function() {
-                        return [ "seq" ].concat(MAP(slice(arguments), walk));
+                        return [ this[0] ].concat(MAP(slice(arguments), walk));
                 },
                 "label": function(name, block) {
-                        return [ "label", name, walk(block) ];
+                        return [ this[0], name, walk(block) ];
                 },
                 "with": function(expr, block) {
-                        return [ "with", walk(expr), walk(block) ];
+                        return [ this[0], walk(expr), walk(block) ];
                 },
                 "atom": function(name) {
-                        return [ "atom", name ];
+                        return [ this[0], name ];
                 }
         };
 
@@ -405,7 +401,7 @@ function ast_add_scope(ast) {
                         },
                         "try": function(t, c, f) {
                                 if (c != null) return [
-                                        "try",
+                                        this[0],
                                         MAP(t, walk),
                                         [ define(c[0]), MAP(c[1], walk) ],
                                         f != null ? MAP(f, walk) : null
@@ -491,9 +487,9 @@ function ast_mangle(ast, do_toplevel) {
         };
 
         function _vardefs(defs) {
-                return MAP(defs, function(d){
+                return [ this[0], MAP(defs, function(d){
                         return [ get_mangled(d[0]), walk(d[1]) ];
-                });
+                }) ];
         };
 
         return w.with_walkers({
@@ -510,28 +506,25 @@ function ast_mangle(ast, do_toplevel) {
                         }
                         return ast;
                 },
-                "var": function(defs) {
-                        return [ "var", _vardefs(defs) ];
-                },
-                "const": function(defs) {
-                        return [ "const", _vardefs(defs) ];
-                },
+                "var": _vardefs,
+                "const": _vardefs,
                 "name": function(name) {
-                        return [ "name", get_mangled(name) ];
+                        return [ this[0], get_mangled(name) ];
                 },
                 "try": function(t, c, f) {
-                        return [ "try",
+                        return [ this[0],
                                  MAP(t, walk),
                                  c != null ? [ get_mangled(c[0]), MAP(c[1], walk) ] : null,
                                  f != null ? MAP(f, walk) : null ];
                 },
                 "toplevel": function(body) {
-                        return with_scope(this.scope, function(){
-                                return [ "toplevel", MAP(body, walk) ];
+                        var self = this;
+                        return with_scope(self.scope, function(){
+                                return [ self[0], MAP(body, walk) ];
                         });
                 },
                 "for-in": function(has_var, name, obj, stat) {
-                        return [ "for-in", has_var, get_mangled(name), walk(obj), walk(stat) ];
+                        return [ this[0], has_var, get_mangled(name), walk(obj), walk(stat) ];
                 }
         }, function() {
                 return walk(ast_add_scope(ast));
@@ -569,28 +562,29 @@ function aborts(t) {
         }
 };
 
-function negate(c) {
-        var not_c = [ "unary-prefix", "!", c ];
-        switch (c[0]) {
-            case "unary-prefix":
-                return c[1] == "!" ? c[2] : not_c;
-            case "binary":
-                var op = c[1], left = c[2], right = c[3];
-                switch (op) {
-                    case "<=": return [ "binary", ">", left, right ];
-                    case "<": return [ "binary", ">=", left, right ];
-                    case ">=": return [ "binary", "<", left, right ];
-                    case ">": return [ "binary", "<=", left, right ];
-                    case "==": return [ "binary", "!=", left, right ];
-                    case "!=": return [ "binary", "==", left, right ];
-                    case "===": return [ "binary", "!==", left, right ];
-                    case "!==": return [ "binary", "===", left, right ];
-                    case "&&": return best_of(not_c, [ "binary", "||", negate(left), negate(right) ]);
-                    case "||": return best_of(not_c, [ "binary", "&&", negate(left), negate(right) ]);
-                }
-                break;
-        }
-        return not_c;
+function boolean_expr(expr) {
+        return ( (expr[0] == "unary-prefix"
+                  && member(expr[1], [ "!", "delete" ])) ||
+
+                 (expr[0] == "binary"
+                  && member(expr[1], [ "in", "instanceof", "==", "!=", "===", "!==", "<", "<=", ">=", ">" ])) ||
+
+                 (expr[0] == "binary"
+                  && member(expr[1], [ "&&", "||" ])
+                  && boolean_expr(expr[2])
+                  && boolean_expr(expr[3])) ||
+
+                 (expr[0] == "conditional"
+                  && boolean_expr(expr[2])
+                  && boolean_expr(expr[3])) ||
+
+                 (expr[0] == "assign"
+                  && expr[1] === true
+                  && boolean_expr(expr[3])) ||
+
+                 (expr[0] == "seq"
+                  && boolean_expr(expr[expr.length - 1]))
+               );
 };
 
 function make_conditional(c, t, e) {
@@ -609,11 +603,43 @@ function ast_squeeze(ast, options) {
         options = defaults(options, {
                 make_seqs   : true,
                 dead_code   : true,
-                no_warnings : false,
-                extra       : false
+                keep_comps  : true,
+                no_warnings : false
         });
 
         var w = ast_walker(), walk = w.walk, scope;
+
+        function negate(c) {
+                    var not_c = [ "unary-prefix", "!", c ];
+                switch (c[0]) {
+                    case "unary-prefix":
+                        return c[1] == "!" && boolean_expr(c[2]) ? c[2] : not_c;
+                    case "seq":
+                        c = slice(c);
+                        c[c.length - 1] = negate(c[c.length - 1]);
+                        return c;
+                    case "conditional":
+                        return best_of(not_c, [ "conditional", c[1], negate(c[2]), negate(c[3]) ]);
+                    case "binary":
+                        var op = c[1], left = c[2], right = c[3];
+                        if (!options.keep_comps) switch (op) {
+                            case "<="  : return [ "binary", ">", left, right ];
+                            case "<"   : return [ "binary", ">=", left, right ];
+                            case ">="  : return [ "binary", "<", left, right ];
+                            case ">"   : return [ "binary", "<=", left, right ];
+                        }
+                        switch (op) {
+                            case "=="  : return [ "binary", "!=", left, right ];
+                            case "!="  : return [ "binary", "==", left, right ];
+                            case "===" : return [ "binary", "!==", left, right ];
+                            case "!==" : return [ "binary", "===", left, right ];
+                            case "&&"  : return best_of(not_c, [ "binary", "||", negate(left), negate(right) ]);
+                            case "||"  : return best_of(not_c, [ "binary", "&&", negate(left), negate(right) ]);
+                        }
+                        break;
+                }
+                return not_c;
+        };
 
         function with_scope(s, cont) {
                 var _scope = scope;
@@ -628,85 +654,10 @@ function ast_squeeze(ast, options) {
                 return node[0] == "string" || node[0] == "num";
         };
 
-        function find_first_execute(node) {
-                if (!node)
-                        return false;
-
-                switch (node[0]) {
-                        case "num":
-                        case "string":
-                        case "name":
-                                return node;
-                        case "call":
-                        case "conditional":
-                        case "for":
-                        case "if":
-                        case "new":
-                        case "return":
-                        case "stat":
-                        case "switch":
-                        case "throw":
-                                return find_first_execute(node[1]);
-                        case "binary":
-                                return find_first_execute(node[2]);
-                        case "assign":
-                                if (node[1] === true)
-                                        return find_first_execute(node[3]);
-                                break;
-                        case "var":
-                                if (node[1][0].length > 1)
-                                        return find_first_execute(node[1][0][1]);
-                                break;
-                }
-                return null;
-        }
-
-        function find_assign_recursive(p, v) {
-                if (p[0] == "assign" && p[1] != true || p[0] == "unary-prefix") {
-                        if (p[2][0] == "name" && v[0] == "name" && p[2][1] == v[1])
-                                return true;
-                        return false;
-                }
-
-                if (p[0] != "assign" || p[1] !== true)
-                        return false;
-
-                if ((is_constant(p[3]) && p[3][0] == v[0] && p[3][1] == v[1]) ||
-                    (p[3][0] == "name" && v[0] == "name" && p[3][1] == v[1]) ||
-                    (p[2][0] == "name" && v[0] == "name" && p[2][1] == v[1]))
-                        return true;
-
-                return find_assign_recursive(p[3], v);
-        };
-
         function rmblock(block) {
                 if (block != null && block[0] == "block" && block[1] && block[1].length == 1)
                         block = block[1][0];
                 return block;
-        };
-
-        function clone(obj) {
-                if (obj && obj.constructor == Array)
-                        return MAP(obj, clone);
-                return obj;
-        };
-
-        function make_seq_to_statements(node) {
-                if (node[0] != "seq") {
-                        switch (node[0]) {
-                                case "var":
-                                case "const":
-                                        return [ node ];
-                                default:
-                                        return [ [ "stat", node ] ];
-                        }
-                }
-
-                var ret = [];
-                for (var i = 1; i < node.length; i++)
-                        ret.push.apply(ret, make_seq_to_statements(node[i]));
-
-                return ret;
         };
 
         function _lambda(name, args, body) {
@@ -733,64 +684,6 @@ function ast_squeeze(ast, options) {
                         }
                         return a;
                 }, []);
-
-                if (options.extra) {
-                        // Detightening things. We do this because then we can assume that the
-                        // statements are structured in a specific way.
-                        statements = (function(a, prev) {
-                                statements.forEach(function(cur) {
-                                        switch (cur[0]) {
-                                            case "for":
-                                                if (cur[1] != null) {
-                                                        a.push.apply(a, make_seq_to_statements(cur[1]));
-                                                        cur[1] = null;
-                                                }
-                                                a.push(cur);
-                                                break;
-                                            case "stat":
-                                                var stats = make_seq_to_statements(cur[1]);
-                                                stats.forEach(function(s) {
-                                                        if (s[1][0] == "unary-postfix")
-                                                                s[1][0] = "unary-prefix";
-                                                });
-                                                a.push.apply(a, stats);
-                                                break;
-                                            default:
-                                                a.push(cur);
-                                        }
-                                });
-                                return a;
-                        })([]);
-
-                        statements = (function(a, prev) {
-                                statements.forEach(function(cur) {
-                                        if (!(prev && prev[0] == "stat")) {
-                                                a.push(cur);
-                                                prev = cur;
-                                                return;
-                                        }
-
-                                        var p = prev[1];
-                                        var c = find_first_execute(cur);
-                                        if (c && find_assign_recursive(p, c)) {
-                                                var old_cur = clone(cur);
-                                                c.splice(0, c.length);
-                                                c.push.apply(c, p);
-                                                var tmp_cur = best_of(cur, [ "toplevel", [ prev, old_cur ] ]);
-                                                if (tmp_cur == cur) {
-                                                        a[a.length -1] = cur;
-                                                } else {
-                                                        cur = old_cur;
-                                                        a.push(cur);
-                                                }
-                                        } else {
-                                                a.push(cur);
-                                        }
-                                        prev = cur;
-                                });
-                                return a;
-                        })([]);
-                }
 
                 statements = (function(a, prev){
                         statements.forEach(function(cur){
@@ -834,22 +727,6 @@ function ast_squeeze(ast, options) {
                         });
                         return a;
                 })([]);
-
-                if (options.extra) {
-                        statements = (function(a, prev){
-                                statements.forEach(function(cur){
-                                        var replaced = false;
-                                        if (prev && cur[0] == "for" && cur[1] == null && (prev[0] == "var" || prev[0] == "const" || prev[0] == "stat")) {
-                                                cur[1] = prev;
-                                                a[a.length - 1] = cur;
-                                        } else {
-                                                a.push(cur);
-                                        }
-                                        prev = cur;
-                                });
-                                return a;
-                        })([]);
-                }
 
                 if (block_type == "lambda") statements = (function(i, a, stat){
                         while (i < statements.length) {
@@ -901,7 +778,10 @@ function ast_squeeze(ast, options) {
                 if (empty(e) && empty(t))
                         return [ "stat", c ];
                 var ret = [ "if", c, t, e ];
-                if (t[0] == "stat") {
+                if (t[0] == "if" && empty(t[3]) && empty(e)) {
+                        ret = best_of(ret, walk([ "if", [ "binary", "&&", c, t[1] ], t[2] ]));
+                }
+                else if (t[0] == "stat") {
                         if (e) {
                                 if (e[0] == "stat") {
                                         ret = best_of(ret, [ "stat", make_conditional(c, t[1], e[1]) ]);
@@ -972,23 +852,34 @@ function ast_squeeze(ast, options) {
                         left = walk(left);
                         right = walk(right);
                         var best = [ "binary", op, left, right ];
-                        if (is_constant(right)) {
-                                if (is_constant(left)) {
-                                        var val = null;
-                                        switch (op) {
-                                            case "+": val = left[1] + right[1]; break;
-                                            case "*": val = left[1] * right[1]; break;
-                                            case "/": val = left[1] / right[1]; break;
-                                            case "-": val = left[1] - right[1]; break;
-                                            case "<<": val = left[1] << right[1]; break;
-                                            case ">>": val = left[1] >> right[1]; break;
-                                            case ">>>": val = left[1] >>> right[1]; break;
+                        if (is_constant(right) && is_constant(left)) {
+                                var val = {};
+                                var orig = val;
+                                switch (op) {
+                                    case "+"   : val = left[1] +   right[1]; break;
+                                    case "*"   : val = left[1] *   right[1]; break;
+                                    case "/"   : val = left[1] /   right[1]; break;
+                                    case "-"   : val = left[1] -   right[1]; break;
+                                    case "<<"  : val = left[1] <<  right[1]; break;
+                                    case ">>"  : val = left[1] >>  right[1]; break;
+                                    case ">>>" : val = left[1] >>> right[1]; break;
+                                    case "=="  : val = left[1] ==  right[1]; break;
+                                    case "===" : val = left[1] === right[1]; break;
+                                    case "!="  : val = left[1] !=  right[1]; break;
+                                    case "!==" : val = left[1] !== right[1]; break;
+                                    case "<"   : val = left[1] <   right[1]; break;
+                                    case "<="  : val = left[1] <=  right[1]; break;
+                                    case ">"   : val = left[1] >   right[1]; break;
+                                    case ">="  : val = left[1] >=  right[1]; break;
+                                }
+                                if (val !== orig) {
+                                        switch (typeof val) {
+                                            case "string": val = [ "string", val ]; break;
+                                            case "boolean": val = [ "name", val+"" ]; break;
+                                            case "number": val = [ "num", val ]; break;
+                                            default: return best;
                                         }
-                                        if (val != null) {
-                                                best = best_of(best, [ typeof val == "string" ? "string" : "num", val ]);
-                                        }
-                                } else if (left[0] == "binary" && left[1] == "+" && left[3][0] == "string") {
-                                        best = best_of(best, [ "binary", "+", left[2], [ "string", left[3][1] + right[1] ] ]);
+                                        best = best_of(best, walk(val));
                                 }
                         }
                         return best;
@@ -1004,17 +895,12 @@ function ast_squeeze(ast, options) {
                                 f != null ? tighten(MAP(f, walk)) : null
                         ];
                 },
-                "unary-prefix": function(op, cond) {
-                        if (op == "!") {
-                                cond = walk(cond);
-                                if (cond[0] == "unary-prefix" && cond[1] == "!") {
-                                        var p = w.parent();
-                                        if (p[0] == "unary-prefix" && p[1] == "!")
-                                                return cond[2];
-                                        return [ "unary-prefix", "!", cond ];
-                                }
-                                return best_of(this, negate(cond));
-                        }
+                "unary-prefix": function(op, expr) {
+                        expr = walk(expr);
+                        var ret = [ "unary-prefix", op, expr ];
+                        if (op == "!")
+                                ret = best_of(ret, negate(expr));
+                        return ret;
                 },
                 "name": function(name) {
                         switch (name) {
@@ -1253,7 +1139,9 @@ function gen_code(ast, beautify) {
                 },
                 "dot": function(expr) {
                         var out = make(expr), i = 1;
-                        if (needs_parens(expr))
+                        if (expr[0] == "num")
+                                out += ".";
+                        else if (needs_parens(expr))
                                 out = "(" + out + ")";
                         while (i < arguments.length)
                                 out += "." + make_name(arguments[i++]);
@@ -1314,7 +1202,8 @@ function gen_code(ast, beautify) {
                                 left = "(" + left + ")";
                         }
                         if (member(rvalue[0], [ "assign", "conditional", "seq" ]) ||
-                            rvalue[0] == "binary" && PRECEDENCE[operator] >= PRECEDENCE[rvalue[1]]) {
+                            rvalue[0] == "binary" && PRECEDENCE[operator] >= PRECEDENCE[rvalue[1]] &&
+                            !(rvalue[1] == operator && member(operator, [ "&&", "||", "*" ]))) {
                                 right = "(" + right + ")";
                         }
                         return add_spaces([ left, operator, right ]);
@@ -1350,7 +1239,8 @@ function gen_code(ast, beautify) {
                                         var key = p[0], val = make(p[1]);
                                         if (beautify && beautify.quote_keys) {
                                                 key = make_string(key);
-                                        } else if (typeof key == "number" || !beautify && +key + "" == key) {
+                                        } else if ((typeof key == "number" || !beautify && +key + "" == key)
+                                                   && parseFloat(key) >= 0) {
                                                 key = make_num(+key);
                                         } else if (!is_identifier(key)) {
                                                 key = make_string(key);
@@ -1367,6 +1257,7 @@ function gen_code(ast, beautify) {
                 "array": function(elements) {
                         if (elements.length == 0) return "[]";
                         return add_spaces([ "[", add_commas(MAP(elements, function(el){
+                                if (!beautify && el[0] == "atom" && el[1] == "undefined") return "";
                                 return parenthesize(el, "seq");
                         })), "]" ]);
                 },
@@ -1384,12 +1275,6 @@ function gen_code(ast, beautify) {
                 },
                 "atom": function(name) {
                         return make_name(name);
-                },
-                "comment1": function(text) {
-                        return "//" + text + "\n";
-                },
-                "comment2": function(text) {
-                        return "/*" + text + "*/";
                 }
         };
 
@@ -1442,8 +1327,16 @@ function gen_code(ast, beautify) {
                         var stat = statements[i];
                         var code = make(stat);
                         if (code != ";") {
-                                if (!beautify && i == last)
-                                        code = code.replace(/;+\s*$/, "");
+                                if (!beautify && i == last) {
+                                        if ((stat[0] == "while" && empty(stat[2])) ||
+                                            (member(stat[0], [ "for", "for-in"] ) && empty(stat[4])) ||
+                                            (stat[0] == "if" && empty(stat[2]) && !stat[3]) ||
+                                            (stat[0] == "if" && stat[3] && empty(stat[3]))) {
+                                                code = code.replace(/;*\s*$/, ";");
+                                        } else {
+                                                code = code.replace(/;+\s*$/, "");
+                                        }
+                                }
                                 a.push(code);
                         }
                 }
@@ -1496,6 +1389,49 @@ function gen_code(ast, beautify) {
         };
 
         return make(ast);
+};
+
+function split_lines(code, max_line_length) {
+        var splits = [ 0 ];
+        jsp.parse(function(){
+                var next_token = jsp.tokenizer(code);
+                var last_split = 0;
+                var prev_token;
+                function current_length(tok) {
+                        return tok.pos - last_split;
+                };
+                function split_here(tok) {
+                        last_split = tok.pos;
+                        splits.push(last_split);
+                };
+                function custom(){
+                        var tok = next_token.apply(this, arguments);
+                        out: {
+                                if (prev_token) {
+                                        if (prev_token.type == "keyword") break out;
+                                }
+                                if (current_length(tok) > max_line_length) {
+                                        switch (tok.type) {
+                                            case "keyword":
+                                            case "atom":
+                                            case "name":
+                                            case "punc":
+                                                split_here(tok);
+                                                break out;
+                                        }
+                                }
+                        }
+                        prev_token = tok;
+                        return tok;
+                };
+                custom.context = function() {
+                        return next_token.context.apply(this, arguments);
+                };
+                return custom;
+        }());
+        return splits.map(function(pos, i){
+                return code.substring(pos, splits[i + 1] || code.length);
+        }).join("\n");
 };
 
 /* -----[ Utilities ]----- */
@@ -1558,3 +1494,5 @@ exports.gen_code = gen_code;
 exports.ast_add_scope = ast_add_scope;
 exports.ast_squeeze_more = require("./squeeze-more").ast_squeeze_more;
 exports.set_logger = function(logger) { warn = logger };
+exports.make_string = make_string;
+exports.split_lines = split_lines;
