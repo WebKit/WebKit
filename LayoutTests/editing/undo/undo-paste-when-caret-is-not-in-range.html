@@ -1,0 +1,43 @@
+<html>
+<head>
+
+<style>
+.editing {
+    border: 2px solid red;
+    padding: 12px;
+    font-size: 24px;
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script language="javascript" type="text/javascript">
+
+function editingTest() {
+    var s = window.getSelection();
+    var test = document.getElementById("test");
+    test.focus();
+    s.setPosition(test, 0);
+    document.execCommand("InsertText", false, "abc ");
+    s.setBaseAndExtent(test.firstChild, 0, test.firstChild, 3);
+    execCopyCommand();
+    document.execCommand("InsertText", false, "def");
+    s.setBaseAndExtent(test.firstChild, 0, test.firstChild, 3);
+    execPasteCommand();
+    moveSelectionForwardByLineCommand();
+    undoCommand();
+}
+</script>
+
+<title>Undo After Paste Test</title>
+</head>
+<body>
+This tests the situation of undoing a paste operation when the caret is outside of the range to be undone.
+<div id="test" contenteditable="true"></div>
+
+<script language="javascript" type="text/javascript">
+runEditingTest();
+</script>
+
+</body>
+</html>
+

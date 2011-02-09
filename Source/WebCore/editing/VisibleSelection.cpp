@@ -431,7 +431,6 @@ void VisibleSelection::setWithoutValidation(const Position& base, const Position
 {
     ASSERT(!base.isNull());
     ASSERT(!extent.isNull());
-    ASSERT(base != extent);
     ASSERT(m_affinity == DOWNSTREAM);
     m_base = base;
     m_extent = extent;
@@ -443,7 +442,7 @@ void VisibleSelection::setWithoutValidation(const Position& base, const Position
         m_start = extent;
         m_end = base;
     }
-    m_selectionType = RangeSelection;
+    m_selectionType = base == extent ? CaretSelection : RangeSelection;
 }
 
 void VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries()

@@ -1,3 +1,15 @@
+2011-02-08  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        VisibleSelection::setWithoutValidation() should allow caret selection.
+        https://bugs.webkit.org/show_bug.cgi?id=53943
+
+        Test: editing/undo/undo-paste-when-caret-is-not-in-range.html
+
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::setWithoutValidation):
+
 2011-02-08  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
