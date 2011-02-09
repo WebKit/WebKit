@@ -1,3 +1,29 @@
+2011-02-09  Chandra Vallala  <chandra.vallala@motorola.com> and Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Implement WKBaseGtk API for Webkit2
+        https://bugs.webkit.org/show_bug.cgi?id=54081
+
+        * GNUmakefile.am: Added new files to compilation.
+        * Shared/API/c/WKBase.h: Included WKBaseGtk.h in this file.
+        * Shared/API/c/gtk: Added.
+        * Shared/API/c/gtk/WKBaseGtk.h: Added. Declaration of WKViewRef
+        for GTK port.
+        * UIProcess/API/C/WKAPICast.h: Included WKAPICastGtk.h in this
+        file.
+        * UIProcess/API/C/gtk: Added.
+        * UIProcess/API/C/gtk/WKAPICastGtk.h: Added. Type definition
+        template for WKViewRef to WebView and vice-versa.
+        * UIProcess/API/C/gtk/WKView.cpp: Added. Implementation of WKView
+        API interface.
+        (WKViewCreate):
+        (WKViewGetWindow):
+        (WKViewGetPage):
+        (WKURLCreateWithURL):
+        * UIProcess/API/C/gtk/WKView.h: Added. Declaration of WKView API
+        interface.
+
 2011-02-09  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.

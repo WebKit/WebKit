@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +31,10 @@
 
 #if defined(WIN32) || defined(_WIN32)
 #include <WebKit2/WKBaseWin.h>
+#endif
+
+#if defined(BUILDING_GTK__)
+#include <WebKit2/WKBaseGtk.h>
 #endif
 
 /* WebKit2 shared types */

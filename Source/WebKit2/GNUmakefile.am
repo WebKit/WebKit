@@ -34,7 +34,8 @@ libWebKit2_la_HEADERS = \
 	$(WebKit2)/Shared/API/c/WKURLRequest.h \
 	$(WebKit2)/Shared/API/c/WKURLResponse.h \
 	$(WebKit2)/Shared/API/c/WKUserContentURLPattern.h \
-	$(WebKit2)/UIProcess/API/cpp/WKRetainPtr.h \
+	$(WebKit2)/UIProcess/API/C/gtk/WKAPICastGtk.h \
+	$(WebKit2)/UIProcess/API/C/gtk/WKView.h \
 	$(WebKit2)/UIProcess/API/C/WebKit2.h \
 	$(WebKit2)/UIProcess/API/C/WKAPICast.h \
 	$(WebKit2)/UIProcess/API/C/WKAuthenticationChallenge.h \
@@ -61,7 +62,8 @@ libWebKit2_la_HEADERS = \
 	$(WebKit2)/UIProcess/API/C/WKPreferences.h \
 	$(WebKit2)/UIProcess/API/C/WKPreferencesPrivate.h \
 	$(WebKit2)/UIProcess/API/C/WKProtectionSpace.h \
-	$(WebKit2)/UIProcess/API/C/WKProtectionSpaceTypes.h
+	$(WebKit2)/UIProcess/API/C/WKProtectionSpaceTypes.h \
+	$(WebKit2)/UIProcess/API/cpp/WKRetainPtr.h
 
 nodist_libWebKit2_la_SOURCES = \
 	$(webkit2_built_sources)
@@ -270,7 +272,9 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/Shared/WebURLResponse.h \
 	Source/WebKit2/Shared/WebUserContentURLPattern.h \
 	Source/WebKit2/Shared/WebWheelEvent.cpp \
-	Source/WebKit2/UIProcess/API/cpp/WKRetainPtr.h \
+	Source/WebKit2/UIProcess/API/C/gtk/WKAPICastGtk.h \
+	Source/WebKit2/UIProcess/API/C/gtk/WKView.cpp \
+	Source/WebKit2/UIProcess/API/C/gtk/WKView.h \
 	Source/WebKit2/UIProcess/API/C/WebKit2.h \
 	Source/WebKit2/UIProcess/API/C/WKAPICast.h \
 	Source/WebKit2/UIProcess/API/C/WKAuthenticationChallenge.cpp \
@@ -317,6 +321,7 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/UIProcess/API/C/WKProtectionSpace.cpp \
 	Source/WebKit2/UIProcess/API/C/WKProtectionSpace.h \
 	Source/WebKit2/UIProcess/API/C/WKProtectionSpaceTypes.h \
+	Source/WebKit2/UIProcess/API/cpp/WKRetainPtr.h \
 	Source/WebKit2/UIProcess/Authentication/AuthenticationChallengeProxy.cpp \
 	Source/WebKit2/UIProcess/Authentication/AuthenticationChallengeProxy.h \
 	Source/WebKit2/UIProcess/Authentication/AuthenticationDecisionListener.cpp \
