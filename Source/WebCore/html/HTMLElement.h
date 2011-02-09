@@ -108,6 +108,18 @@ private:
     HTMLFormElement* shadowAncestorOwnerForm();
 };
 
+inline HTMLElement* toHTMLElement(Node* node)
+{
+    ASSERT(!node || node->isHTMLElement());
+    return static_cast<HTMLElement*>(node);
+}
+
+inline const HTMLElement* toHTMLElement(const Node* node)
+{
+    ASSERT(!node || node->isHTMLElement());
+    return static_cast<const HTMLElement*>(node);
+}
+
 inline HTMLElement::HTMLElement(const QualifiedName& tagName, Document* document)
     : StyledElement(tagName, document, CreateHTMLElement)
 {

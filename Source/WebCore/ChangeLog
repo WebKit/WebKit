@@ -1,3 +1,15 @@
+2011-02-09  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Add convenience method toHTMLElement(Node*)
+        https://bugs.webkit.org/show_bug.cgi?id=54105
+
+        No new tests since no new functionality introduced.
+
+        * html/HTMLElement.h:
+        (WebCore::toHTMLElement):
+
 2011-02-09  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
