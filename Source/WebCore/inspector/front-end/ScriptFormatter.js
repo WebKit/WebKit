@@ -30,6 +30,10 @@
 
 WebInspector.ScriptFormatter = function()
 {
+    this._worker = new Worker("ScriptFormatterWorker.js");
+    this._worker.onmessage = this._handleMessage.bind(this);
+    this._worker.onerror = this._handleError.bind(this);
+    this._tasks = [];
 }
 
 WebInspector.ScriptFormatter.prototype = {
@@ -120,12 +124,21 @@ WebInspector.ScriptFormatter.prototype = {
 
     _formatScript: function(source, callback)
     {
-        var worker = new Worker("ScriptFormatterWorker.js");
-        function messageHandler(event)
-        {
-            callback(event.data.formattedSource, event.data.mapping);
-        }
-        worker.onmessage = messageHandler.bind(this);
-        worker.postMessage(source);
+        this._tasks.push({ source: source, callback: callback });
+        this._worker.postMessage(source);
+    },
+
+    _handleMessage: function(event)
+    {
+        var task = this._tasks.shift();
+        task.callback(event.data.formattedSource, event.data.mapping);
+    },
+
+    _handleError: function(event)
+    {
+        console.warn("Error in script formatter worker:", event);
+        event.preventDefault()
+        var task = this._tasks.shift();
+        task.callback(task.source, { original: [], formatted: [] });
     }
 }

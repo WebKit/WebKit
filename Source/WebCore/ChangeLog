@@ -1,5 +1,18 @@
 2011-02-08  Pavel Podivilov  <podivilov@chromium.org>
 
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: script formatter should not create a worker for each script.
+        https://bugs.webkit.org/show_bug.cgi?id=54010
+
+        * inspector/front-end/ScriptFormatter.js:
+        (WebInspector.ScriptFormatter):
+        (WebInspector.ScriptFormatter.prototype._formatScript):
+        (WebInspector.ScriptFormatter.prototype._handleMessage):
+        (WebInspector.ScriptFormatter.prototype._handleError):
+
+2011-02-08  Pavel Podivilov  <podivilov@chromium.org>
+
         Reviewed by Pavel Feldman.
 
         Web Inspector: sync uglifyjs parser files.
