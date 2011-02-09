@@ -57,6 +57,9 @@ namespace JSC {
     public:
         static bool isCellAligned(const void*);
         static MarkedBlock* blockFor(const void*);
+        
+        MarkedBlock(Heap*);
+        Heap* heap() const;
 
         size_t cellNumber(const void*);
         bool isMarked(const void*);
@@ -65,7 +68,9 @@ namespace JSC {
 
         FixedArray<CollectorCell, CELLS_PER_BLOCK> cells;
         WTF::Bitmap<BITS_PER_BLOCK> marked;
-        Heap* heap;
+
+    private:
+        Heap* m_heap;
     };
 
     struct HeapConstants {
@@ -75,9 +80,24 @@ namespace JSC {
         typedef MarkedBlock Block;
     };
 
+    inline bool MarkedBlock::isCellAligned(const void* p)
+    {
+        return !((intptr_t)(p) & CELL_MASK);
+    }
+
     inline MarkedBlock* MarkedBlock::blockFor(const void* p)
     {
         return reinterpret_cast<MarkedBlock*>(reinterpret_cast<uintptr_t>(p) & BLOCK_MASK);
+    }
+    
+    inline MarkedBlock::MarkedBlock(Heap* heap)
+        : m_heap(heap)
+    {
+    }
+    
+    inline Heap* MarkedBlock::heap() const
+    {
+        return m_heap;
     }
 
     inline size_t MarkedBlock::cellNumber(const void* cell)
@@ -98,11 +118,6 @@ namespace JSC {
     inline void MarkedBlock::setMarked(const void* cell)
     {
         marked.set(cellNumber(cell));
-    }
-
-    inline bool MarkedBlock::isCellAligned(const void* p)
-    {
-        return !((intptr_t)(p) & CELL_MASK);
     }
 
 } // namespace JSC

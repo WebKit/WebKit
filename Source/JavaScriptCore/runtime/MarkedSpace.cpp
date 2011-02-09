@@ -56,7 +56,7 @@ NEVER_INLINE MarkedBlock* MarkedSpace::allocateBlock()
 
     // Initialize block.
 
-    block->heap = &globalData()->heap;
+    new (block) MarkedBlock(&globalData()->heap);
     clearMarkBits(block);
 
     Structure* dummyMarkableCellStructure = globalData()->dummyMarkableCellStructure.get();

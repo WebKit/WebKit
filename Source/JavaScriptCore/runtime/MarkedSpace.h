@@ -106,7 +106,7 @@ namespace JSC {
 
     inline Heap* MarkedSpace::heap(JSCell* cell)
     {
-        return MarkedBlock::blockFor(cell)->heap;
+        return MarkedBlock::blockFor(cell)->heap();
     }
 
     inline bool MarkedSpace::isMarked(const JSCell* cell)

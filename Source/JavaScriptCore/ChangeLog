@@ -1,3 +1,21 @@
+2011-02-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        A tiny bit of encapsulation for MarkedBlock: made its heap data member private
+        https://bugs.webkit.org/show_bug.cgi?id=54129
+
+        * runtime/MarkedBlock.h:
+        (JSC::MarkedBlock::isCellAligned):
+        (JSC::MarkedBlock::MarkedBlock):
+        (JSC::MarkedBlock::heap): Made the heap data member private, and provided
+        a constructor and an accessor.
+
+        * runtime/MarkedSpace.cpp:
+        (JSC::MarkedSpace::allocateBlock):
+        * runtime/MarkedSpace.h:
+        (JSC::MarkedSpace::heap): Use the constructor and accessor.
+
 2011-02-09  Peter Varga  <pvarga@webkit.org>
 
         Reviewed by Gavin Barraclough.
