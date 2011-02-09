@@ -2,7 +2,8 @@
 
         Reviewed by Darin Adler.
 
-        REGRESSION (r76301): 'plaintext-only' must be a supported contentEditable mode.
+        <rdar://problem/8913952> REGRESSION (r76301): 'plaintext-only' must be
+        a supported contentEditable mode.
         https://bugs.webkit.org/show_bug.cgi?id=54041
 
         * fast/dom/HTMLElement/set-value-caseinsensitive-expected.txt:
