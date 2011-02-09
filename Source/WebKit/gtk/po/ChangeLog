@@ -2,6 +2,15 @@
 
         Unreviewed translation file.
 
+        [l10n] Polish translation of WebKitGTK+
+        https://bugs.webkit.org/show_bug.cgi?id=46567
+
+        * pl.po: Added.
+
+2011-02-09  Christian Dywan  <christian@lanedo.com>
+
+        Unreviewed translation file.
+
         [Gtk] Please add Hungarian translation
         https://bugs.webkit.org/show_bug.cgi?id=34543
 
