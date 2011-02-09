@@ -173,6 +173,11 @@ public:
     int scrollX() const { return scrollPosition().x(); }
     int scrollY() const { return scrollPosition().y(); }
 
+    // Functions for querying the current scrolled position, negating the effects of overhang.
+    int scrollXForFixedPosition() const;
+    int scrollYForFixedPosition() const;
+    IntSize scrollOffsetForFixedPosition() const;
+
     IntSize overhangAmount() const;
 
     // Functions for scrolling the view.

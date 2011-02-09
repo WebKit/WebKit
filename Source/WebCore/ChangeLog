@@ -1,3 +1,23 @@
+2011-02-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fixed positioned elements at very top or bottom of page remain fixed but clip during rubber-banding
+        <rdar://problem/7615997>
+        https://bugs.webkit.org/show_bug.cgi?id=54054
+
+        Take the overhang into account when calculating position for elements with position: fixed.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollXForFixedPosition):
+        (WebCore::ScrollView::scrollYForFixedPosition):
+        (WebCore::ScrollView::scrollOffsetForFixedPosition):
+        * platform/ScrollView.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::mapLocalToContainer):
+        (WebCore::RenderView::mapAbsoluteToLocalPoint):
+        (WebCore::RenderView::computeRectForRepaint):
+
 2011-02-09  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dirk Schulze.

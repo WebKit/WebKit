@@ -149,13 +149,13 @@ void RenderView::mapLocalToContainer(RenderBoxModelObject* repaintContainer, boo
     }
     
     if (fixed && m_frameView)
-        transformState.move(m_frameView->scrollOffset());
+        transformState.move(m_frameView->scrollOffsetForFixedPosition());
 }
 
 void RenderView::mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, TransformState& transformState) const
 {
     if (fixed && m_frameView)
-        transformState.move(-m_frameView->scrollOffset());
+        transformState.move(-m_frameView->scrollOffsetForFixedPosition());
 
     if (useTransforms && shouldUseTransformFromContainer(0)) {
         TransformationMatrix t;
@@ -310,7 +310,7 @@ void RenderView::computeRectForRepaint(RenderBoxModelObject* repaintContainer, I
     }
 
     if (fixed && m_frameView)
-        rect.move(m_frameView->scrollX(), m_frameView->scrollY());
+        rect.move(m_frameView->scrollXForFixedPosition(), m_frameView->scrollYForFixedPosition());
         
     // Apply our transform if we have one (because of full page zooming).
     if (m_layer && m_layer->transform())
