@@ -2459,14 +2459,14 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForIndex(int index) co
         return VisiblePosition();
     
     if (index <= 0)
-        return VisiblePosition(firstPositionInOrBeforeNode(node), DOWNSTREAM);
+        return VisiblePosition(node, 0, DOWNSTREAM);
     
     ExceptionCode ec = 0;
     RefPtr<Range> range = Range::create(m_renderer->document());
     range->selectNodeContents(node, ec);
     CharacterIterator it(range.get());
     it.advance(index - 1);
-    return VisiblePosition(Position(it.range()->endContainer(ec), it.range()->endOffset(ec), Position::PositionIsOffsetInAnchor), UPSTREAM);
+    return VisiblePosition(it.range()->endContainer(ec), it.range()->endOffset(ec), UPSTREAM);
 }
     
 int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& pos) const

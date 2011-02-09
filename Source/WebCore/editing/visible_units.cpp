@@ -377,8 +377,13 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c)
         startBox = startBox->nextLeafChild();
     }
     
-    VisiblePosition visPos = startBox->isInlineTextBox() ? VisiblePosition(Position(startNode, static_cast<InlineTextBox *>(startBox)->start(), Position::PositionIsOffsetInAnchor), DOWNSTREAM)
-                                                         : VisiblePosition(positionBeforeNode(startNode), DOWNSTREAM);
+    int startOffset = 0;
+    if (startBox->isInlineTextBox()) {
+        InlineTextBox *startTextBox = static_cast<InlineTextBox *>(startBox);
+        startOffset = startTextBox->start();
+    }
+  
+    VisiblePosition visPos = VisiblePosition(startNode, startOffset, DOWNSTREAM);
     return positionAvoidingFirstPositionInTable(visPos);
 }
 
@@ -424,19 +429,17 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c)
         endBox = endBox->prevLeafChild();
     }
     
-    Position pos;
+    int endOffset = 1;
     if (endNode->hasTagName(brTag)) {
-        pos = positionBeforeNode(endNode);
+        endOffset = 0;
     } else if (endBox->isInlineTextBox()) {
         InlineTextBox *endTextBox = static_cast<InlineTextBox *>(endBox);
-        int endOffset = endTextBox->start();
+        endOffset = endTextBox->start();
         if (!endTextBox->isLineBreak())
             endOffset += endTextBox->len();
-        pos = Position(endNode, endOffset, Position::PositionIsOffsetInAnchor);
-    } else
-        pos = positionAfterNode(endNode);
+    }
     
-    return VisiblePosition(pos, VP_UPSTREAM_IF_POSSIBLE);
+    return VisiblePosition(endNode, endOffset, VP_UPSTREAM_IF_POSSIBLE);
 }
 
 VisiblePosition endOfLine(const VisiblePosition& c)
@@ -572,7 +575,7 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
     // Move to the start of the content in this block, which effectively moves us
     // to the start of the line we're on.
     Element* rootElement = node->isContentEditable() ? node->rootEditableElement() : node->document()->documentElement();
-    return VisiblePosition(firstPositionInNode(rootElement), DOWNSTREAM);
+    return VisiblePosition(rootElement, 0, DOWNSTREAM);
 }
 
 static Node* nextLeafWithSameEditability(Node* node, int offset)
@@ -677,7 +680,7 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
     // Move to the end of the content in this block, which effectively moves us
     // to the end of the line we're on.
     Element* rootElement = node->isContentEditable() ? node->rootEditableElement() : node->document()->documentElement();
-    return VisiblePosition(lastPositionInNode(rootElement), DOWNSTREAM);
+    return VisiblePosition(rootElement, rootElement ? rootElement->childNodeCount() : 0, DOWNSTREAM);
 }
 
 // ---------
@@ -749,7 +752,6 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossi
 
     Node *node = startNode;
     int offset = p.deprecatedEditingOffset();
-    Position::AnchorType type = p.anchorType();
 
     Node *n = startNode;
     while (n) {
@@ -770,7 +772,6 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossi
             break;
 
         if (r->isText() && r->caretMaxRenderedOffset() > 0) {
-            type = Position::PositionIsOffsetInAnchor;
             if (style->preserveNewline()) {
                 const UChar* chars = toRenderText(r)->characters();
                 int i = toRenderText(r)->textLength();
@@ -779,23 +780,20 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossi
                     i = max(0, o);
                 while (--i >= 0)
                     if (chars[i] == '\n')
-                        return VisiblePosition(Position(n, i + 1, Position::PositionIsOffsetInAnchor), DOWNSTREAM);
+                        return VisiblePosition(n, i + 1, DOWNSTREAM);
             }
             node = n;
             offset = 0;
             n = n->traversePreviousNodePostOrder(startBlock);
         } else if (editingIgnoresContent(n) || isTableElement(n)) {
             node = n;
-            type = Position::PositionIsBeforeAnchor;
+            offset = 0;
             n = n->previousSibling() ? n->previousSibling() : n->traversePreviousNodePostOrder(startBlock);
         } else
             n = n->traversePreviousNodePostOrder(startBlock);
     }
 
-    if (type == Position::PositionIsOffsetInAnchor)
-        return VisiblePosition(Position(node, offset, type), DOWNSTREAM);
-    
-    return VisiblePosition(Position(node, type), DOWNSTREAM);
+    return VisiblePosition(node, offset, DOWNSTREAM);
 }
 
 VisiblePosition endOfParagraph(const VisiblePosition &c, EditingBoundaryCrossingRule boundaryCrossingRule)
@@ -814,7 +812,6 @@ VisiblePosition endOfParagraph(const VisiblePosition &c, EditingBoundaryCrossing
     
     Node *node = startNode;
     int offset = p.deprecatedEditingOffset();
-    Position::AnchorType type = p.anchorType();
 
     Node *n = startNode;
     while (n) {
@@ -837,29 +834,25 @@ VisiblePosition endOfParagraph(const VisiblePosition &c, EditingBoundaryCrossing
         // FIXME: We avoid returning a position where the renderer can't accept the caret.
         if (r->isText() && r->caretMaxRenderedOffset() > 0) {
             int length = toRenderText(r)->textLength();
-            type = Position::PositionIsOffsetInAnchor;
             if (style->preserveNewline()) {
                 const UChar* chars = toRenderText(r)->characters();
                 int o = n == startNode ? offset : 0;
                 for (int i = o; i < length; ++i)
                     if (chars[i] == '\n')
-                        return VisiblePosition(Position(n, i, Position::PositionIsOffsetInAnchor), DOWNSTREAM);
+                        return VisiblePosition(n, i, DOWNSTREAM);
             }
             node = n;
             offset = r->caretMaxOffset();
             n = n->traverseNextNode(stayInsideBlock);
         } else if (editingIgnoresContent(n) || isTableElement(n)) {
             node = n;
-            type = Position::PositionIsAfterAnchor;
+            offset = lastOffsetForEditing(n);
             n = n->traverseNextSibling(stayInsideBlock);
         } else
             n = n->traverseNextNode(stayInsideBlock);
     }
 
-    if (type == Position::PositionIsOffsetInAnchor)
-        return VisiblePosition(Position(node, offset, type), DOWNSTREAM);
-
-    return VisiblePosition(Position(node, type), DOWNSTREAM);
+    return VisiblePosition(node, offset, DOWNSTREAM);
 }
 
 VisiblePosition startOfNextParagraph(const VisiblePosition& visiblePosition)
@@ -933,7 +926,7 @@ VisiblePosition endOfBlock(const VisiblePosition &c)
 
     Node *startBlock = startNode->enclosingBlockFlowElement();
     
-    return VisiblePosition(lastPositionInNode(startBlock), VP_DEFAULT_AFFINITY);   
+    return VisiblePosition(startBlock, startBlock->childNodeCount(), VP_DEFAULT_AFFINITY);   
 }
 
 bool inSameBlock(const VisiblePosition &a, const VisiblePosition &b)
@@ -958,7 +951,7 @@ VisiblePosition startOfDocument(const Node* node)
     if (!node)
         return VisiblePosition();
     
-    return VisiblePosition(firstPositionInNode(node->document()->documentElement()), DOWNSTREAM);
+    return VisiblePosition(node->document()->documentElement(), 0, DOWNSTREAM);
 }
 
 VisiblePosition startOfDocument(const VisiblePosition &c)
@@ -972,7 +965,7 @@ VisiblePosition endOfDocument(const Node* node)
         return VisiblePosition();
     
     Element* doc = node->document()->documentElement();
-    return VisiblePosition(lastPositionInNode(doc), DOWNSTREAM);
+    return VisiblePosition(doc, doc->childNodeCount(), DOWNSTREAM);
 }
 
 VisiblePosition endOfDocument(const VisiblePosition &c)
@@ -1128,8 +1121,9 @@ static VisiblePosition logicalStartPositionForLine(const VisiblePosition& c)
     if (!logicalStartNode)
         return VisiblePosition();
 
-    VisiblePosition visPos = logicalStartNode->isTextNode() ? VisiblePosition(Position(logicalStartNode, logicalStartBox->caretMinOffset(), Position::PositionIsOffsetInAnchor), DOWNSTREAM)
-                                                            : VisiblePosition(positionBeforeNode(logicalStartNode), DOWNSTREAM);
+    int startOffset = logicalStartBox->caretMinOffset();
+  
+    VisiblePosition visPos = VisiblePosition(logicalStartNode, startOffset, DOWNSTREAM);
     return positionAvoidingFirstPositionInTable(visPos);
 }
 
@@ -1163,19 +1157,17 @@ static VisiblePosition logicalEndPositionForLine(const VisiblePosition& c)
     if (!logicalEndNode)
         return VisiblePosition();
     
-    Position pos;
+    int endOffset = 1;
     if (logicalEndNode->hasTagName(brTag))
-        pos = positionBeforeNode(logicalEndNode);
+        endOffset = 0;
     else if (logicalEndBox->isInlineTextBox()) {
         InlineTextBox* endTextBox = static_cast<InlineTextBox*>(logicalEndBox);
-        int endOffset = endTextBox->start();
+        endOffset = endTextBox->start();
         if (!endTextBox->isLineBreak())
             endOffset += endTextBox->len();
-        pos = Position(logicalEndNode, endOffset, Position::PositionIsOffsetInAnchor);
-    } else
-        pos = positionAfterNode(logicalEndNode);
+    }
     
-    return VisiblePosition(pos, VP_UPSTREAM_IF_POSSIBLE);
+    return VisiblePosition(logicalEndNode, endOffset, VP_UPSTREAM_IF_POSSIBLE);
 }
 
 bool inSameLogicalLine(const VisiblePosition& a, const VisiblePosition& b)

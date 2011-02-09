@@ -660,9 +660,9 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return ustringToString(result.toString(_private->coreFrame->script()->globalObject(mainThreadNormalWorld())->globalExec()));
 }
 
-- (NSRect)_caretRectAtPosition:(const Position&)pos affinity:(NSSelectionAffinity)affinity
+- (NSRect)_caretRectAtNode:(DOMNode *)node offset:(int)offset affinity:(NSSelectionAffinity)affinity
 {
-    VisiblePosition visiblePosition(pos, static_cast<EAffinity>(affinity));
+    VisiblePosition visiblePosition(core(node), offset, static_cast<EAffinity>(affinity));
     return visiblePosition.absoluteCaretBounds();
 }
 

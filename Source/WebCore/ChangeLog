@@ -1,3 +1,84 @@
+2011-02-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r77980.
+        http://trac.webkit.org/changeset/77980
+        https://bugs.webkit.org/show_bug.cgi?id=54043
+
+        "Crashes on Windows and Linux..." (Requested by leviw on
+        #webkit).
+
+        * WebCore.exp.in:
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::visiblePositionForTextMarkerData):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::startOfStyleRange):
+        (WebCore::endOfStyleRange):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::visiblePositionForIndex):
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (objectAndOffsetUnignored):
+        * dom/Position.cpp:
+        (WebCore::Position::upstream):
+        (WebCore::Position::downstream):
+        * dom/Range.cpp:
+        (WebCore::Range::editingStartPosition):
+        * editing/Editor.cpp:
+        (WebCore::Editor::canDeleteRange):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::selectFrameElementInParentIfFullySelected):
+        (WebCore::SelectionController::setSelectedRange):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::shouldRepresentNodeOffsetZero):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteKeyPressed):
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::VisiblePosition):
+        (WebCore::VisiblePosition::leftVisuallyDistinctCandidate):
+        (WebCore::VisiblePosition::rightVisuallyDistinctCandidate):
+        (WebCore::VisiblePosition::canonicalPosition):
+        (WebCore::VisiblePosition::characterAfter):
+        (WebCore::VisiblePosition::localCaretRect):
+        (WebCore::makeRange):
+        (WebCore::startVisiblePosition):
+        (WebCore::endVisiblePosition):
+        (WebCore::setStart):
+        (WebCore::setEnd):
+        (WebCore::isFirstVisiblePositionInNode):
+        (WebCore::isLastVisiblePositionInNode):
+        * editing/VisiblePosition.h:
+        * editing/htmlediting.cpp:
+        (WebCore::firstInSpecialElement):
+        (WebCore::lastInSpecialElement):
+        (WebCore::visiblePositionBeforeNode):
+        (WebCore::visiblePositionAfterNode):
+        * editing/visible_units.cpp:
+        (WebCore::startPositionForLine):
+        (WebCore::endPositionForLine):
+        (WebCore::previousLinePosition):
+        (WebCore::nextLinePosition):
+        (WebCore::startOfParagraph):
+        (WebCore::endOfParagraph):
+        (WebCore::endOfBlock):
+        (WebCore::startOfDocument):
+        (WebCore::endOfDocument):
+        (WebCore::logicalStartPositionForLine):
+        (WebCore::logicalEndPositionForLine):
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::collapse):
+        (WebCore::DOMSelection::setBaseAndExtent):
+        (WebCore::DOMSelection::setPosition):
+        (WebCore::DOMSelection::extend):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEventSingleClick):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createVisiblePosition):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::visiblePositionForIndex):
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::selectSubString):
+
 2011-02-08  Jia Pu  <jpu@apple.com>
 
         Reviewed by Darin Adler.

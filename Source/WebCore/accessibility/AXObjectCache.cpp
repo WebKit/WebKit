@@ -573,8 +573,7 @@ VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(TextMarkerData& 
     if (!isNodeInUse(textMarkerData.node))
         return VisiblePosition();
     
-    // FIXME: Accessability should make it clear these are DOM-compliant offsets or store Position objects.
-    VisiblePosition visiblePos = VisiblePosition(Position(textMarkerData.node, textMarkerData.offset), textMarkerData.affinity);
+    VisiblePosition visiblePos = VisiblePosition(textMarkerData.node, textMarkerData.offset, textMarkerData.affinity);
     Position deepPos = visiblePos.deepEquivalent();
     if (deepPos.isNull())
         return VisiblePosition();

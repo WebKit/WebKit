@@ -32,7 +32,6 @@
 #import "WebPreferencesPrivate.h"
 #import <WebCore/EditAction.h>
 #import <WebCore/FrameLoaderTypes.h>
-#import <WebCore/Position.h>
 #import <WebCore/SelectionController.h>
 #import <WebCore/Settings.h>
 
@@ -135,7 +134,7 @@ WebView *getWebView(WebFrame *webFrame);
 
 - (NSString *)_markupStringFromRange:(DOMRange *)range nodes:(NSArray **)nodes;
 
-- (NSRect)_caretRectAtPosition:(const WebCore::Position&)pos affinity:(NSSelectionAffinity)affinity;
+- (NSRect)_caretRectAtNode:(DOMNode *)node offset:(int)offset affinity:(NSSelectionAffinity)affinity;
 - (NSRect)_firstRectForDOMRange:(DOMRange *)range;
 - (void)_scrollDOMRangeToVisible:(DOMRange *)range;
 
