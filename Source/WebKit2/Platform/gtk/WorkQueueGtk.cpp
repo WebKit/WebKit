@@ -145,7 +145,6 @@ void WorkQueue::registerEventSourceHandler(int fileDescriptor, int condition, Pa
     // Set up the event sources under the mutex since this is shared across multiple threads.
     {
         MutexLocker locker(m_eventSourcesLock);
-        ASSERT(!m_eventSources.contains(fileDescriptor));
         Vector<EventSource*> sources;
         EventSourceIterator it = m_eventSources.find(fileDescriptor);
         if (it != m_eventSources.end()) 

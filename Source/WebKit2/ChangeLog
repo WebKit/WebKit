@@ -2,6 +2,20 @@
 
         Reviewed by Martin Robinson.
 
+        [GTK] Incorrect assertion in WorkQueueGtk, we need to register
+        more than one handle
+        https://bugs.webkit.org/show_bug.cgi?id=54014
+
+        Fixed assertion condition we need to register more than one
+        handler for the same file descriptor.
+
+        * Platform/gtk/WorkQueueGtk.cpp:
+        (WorkQueue::registerEventSourceHandler):
+
+2011-02-08  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         Fix typo in the include guards name in ChunkedUpdateDrawingAreaProxy.h
         https://bugs.webkit.org/show_bug.cgi?id=54013
 
