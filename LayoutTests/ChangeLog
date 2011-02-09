@@ -1,3 +1,9 @@
+2011-02-09  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, fix a bug in test_expectations.txt.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-09  Xiaomei Ji  <xji@chromium.org>
 
         Unreviewed.
