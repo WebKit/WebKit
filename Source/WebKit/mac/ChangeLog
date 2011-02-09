@@ -1,3 +1,13 @@
+2011-02-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Jon Honeycutt and Maciej Stachowiak.
+
+        <rdar://problem/8959420> Find in Mail no longer cycles around
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView searchFor:direction:caseSensitive:wrap:startInSelection:]): Set
+        the wrap option according to the flag.
+
 2011-02-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r77980.

@@ -6192,7 +6192,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag startInSelection:(BOOL)startInSelection
 {
-    return [self _findString:string options:(forward ? 0 : WebFindOptionsBackwards) | (caseFlag ? 0 : WebFindOptionsCaseInsensitive) | (startInSelection ? WebFindOptionsStartInSelection : 0)];
+    return [self _findString:string options:(forward ? 0 : WebFindOptionsBackwards) | (caseFlag ? 0 : WebFindOptionsCaseInsensitive) | (wrapFlag ? WebFindOptionsWrapAround : 0) | (startInSelection ? WebFindOptionsStartInSelection : 0)];
 }
 
 @end
