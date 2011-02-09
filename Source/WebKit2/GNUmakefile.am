@@ -228,6 +228,10 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/Shared/WebEvent.cpp \
 	Source/WebKit2/Shared/WebEvent.h \
 	Source/WebKit2/Shared/WebFindOptions.h \
+	Source/WebKit2/Shared/WebGeolocationPosition.cpp \
+	Source/WebKit2/Shared/WebGeolocationPosition.h \
+	Source/WebKit2/Shared/WebGraphicsContext.cpp \
+	Source/WebKit2/Shared/WebGraphicsContext.h \
 	Source/WebKit2/Shared/WebImage.cpp \
 	Source/WebKit2/Shared/WebImage.h \
 	Source/WebKit2/Shared/WebKeyboardEvent.cpp \
@@ -322,6 +326,11 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/UIProcess/FindIndicator.cpp \
 	Source/WebKit2/UIProcess/FindIndicator.h \
 	Source/WebKit2/UIProcess/GenericCallback.h \
+	Source/WebKit2/UIProcess/GeolocationPermissionRequestManagerProxy.cpp \
+	Source/WebKit2/UIProcess/GeolocationPermissionRequestManagerProxy.h \
+	Source/WebKit2/UIProcess/GeolocationPermissionRequestProxy.cpp \
+	Source/WebKit2/UIProcess/GeolocationPermissionRequestProxy.h \
+	Source/WebKit2/UIProcess/gtk/ChunkedUpdateDrawingAreaProxyGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/TextCheckerGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/WebInspectorGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/WebPageProxyGtk.cpp \
@@ -380,6 +389,10 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/UIProcess/WebFramePolicyListenerProxy.h \
 	Source/WebKit2/UIProcess/WebFrameProxy.cpp \
 	Source/WebKit2/UIProcess/WebFrameProxy.h \
+	Source/WebKit2/UIProcess/WebGeolocationManagerProxy.cpp \
+	Source/WebKit2/UIProcess/WebGeolocationManagerProxy.h \
+	Source/WebKit2/UIProcess/WebGeolocationProvider.cpp \
+	Source/WebKit2/UIProcess/WebGeolocationProvider.h \
 	Source/WebKit2/UIProcess/WebHistoryClient.cpp \
 	Source/WebKit2/UIProcess/WebHistoryClient.h \
 	Source/WebKit2/UIProcess/WebInspectorProxy.cpp \
@@ -416,6 +429,10 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/WebProcess/Downloads/Download.h \
 	Source/WebKit2/WebProcess/Downloads/DownloadManager.cpp \
 	Source/WebKit2/WebProcess/Downloads/DownloadManager.h \
+	Source/WebKit2/WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp \
+	Source/WebKit2/WebProcess/Geolocation/GeolocationPermissionRequestManager.h \
+	Source/WebKit2/WebProcess/Geolocation/WebGeolocationManager.cpp \
+	Source/WebKit2/WebProcess/Geolocation/WebGeolocationManager.h \
 	Source/WebKit2/WebProcess/gtk/WebProcessGtk.cpp \
 	Source/WebKit2/WebProcess/gtk/WebProcessMainGtk.cpp \
 	Source/WebKit2/WebProcess/gtk/WebProcessMainGtk.h \
@@ -523,6 +540,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebErrors.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebFrameLoaderClient.h \
+	Source/WebKit2/WebProcess/WebCoreSupport/WebGeolocationClient.cpp \
+	Source/WebKit2/WebProcess/WebCoreSupport/WebGeolocationClient.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebInspectorClient.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebInspectorClient.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp \
@@ -604,6 +623,7 @@ libWebKit2_la_CPPFLAGS = \
 	-I$(srcdir)/Source/WebKit2/WebProcess \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Authentication \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Downloads \
+	-I$(srcdir)/Source/WebKit2/WebProcess/Geolocation \
 	-I$(srcdir)/Source/WebKit2/WebProcess/gtk \
 	-I$(srcdir)/Source/WebKit2/WebProcess/InjectedBundle \
 	-I$(srcdir)/Source/WebKit2/WebProcess/InjectedBundle/API \
@@ -756,6 +776,10 @@ webkit2_built_sources += \
 	DerivedSources/WebKit2/WebDatabaseManagerMessages.h \
 	DerivedSources/WebKit2/WebDatabaseManagerProxyMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebDatabaseManagerProxyMessages.h \
+	DerivedSources/WebKit2/WebGeolocationManagerMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebGeolocationManagerMessages.h \
+	DerivedSources/WebKit2/WebGeolocationManagerProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebGeolocationManagerProxyMessages.h \
 	DerivedSources/WebKit2/WebInspectorMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebInspectorMessages.h \
 	DerivedSources/WebKit2/WebInspectorProxyMessageReceiver.cpp \
@@ -785,9 +809,11 @@ vpath %.messages.in = \
 	$(WebKit2)/Shared/Plugins \
 	$(WebKit2)/UIProcess \
 	$(WebKit2)/UIProcess/Downloads \
+	$(WebKit2)/UIProcess/Geolocation \
 	$(WebKit2)/UIProcess/Plugins \
 	$(WebKit2)/WebProcess \
 	$(WebKit2)/WebProcess/Authentication \
+	$(WebKit2)/WebProcess/Geolocation \
 	$(WebKit2)/WebProcess/Plugins \
 	$(WebKit2)/WebProcess/WebCoreSupport \
 	$(WebKit2)/WebProcess/WebPage

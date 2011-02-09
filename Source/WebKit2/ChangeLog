@@ -1,3 +1,14 @@
+2011-02-09  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Add geolocation support to the webkit2 compilation
+        https://bugs.webkit.org/show_bug.cgi?id=54077
+
+        Add Geolocation files to the GTK compilation.
+
+        * GNUmakefile.am:
+
 2011-02-09  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Csaba Osztrogonác.
