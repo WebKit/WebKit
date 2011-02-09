@@ -310,12 +310,13 @@ void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& 
 
 void ImageBuffer::putUnmultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
-    context()->platformContext()->prepareForSoftwareDraw();
+    context()->platformContext()->syncSoftwareCanvas();
     putImageData<Unmultiplied>(source, sourceSize, sourceRect, destPoint, *context()->platformContext()->bitmap(), m_size);
 }
 
 void ImageBuffer::putPremultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
+    context()->platformContext()->syncSoftwareCanvas();
     putImageData<Premultiplied>(source, sourceSize, sourceRect, destPoint, *context()->platformContext()->bitmap(), m_size);
 }
 

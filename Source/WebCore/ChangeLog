@@ -1,3 +1,17 @@
+2011-02-09  Naoki Takano  <takano.naoki@gmail.com>
+
+        Reviewed by Kenneth Russell.
+
+        [Chromium] Issue 58536: Fix Layout Test canvas/philip/tests/2d.imageData.put.alpha.html with --accelerated-2d-canvas.
+        https://bugs.webkit.org/show_bug.cgi?id=53757
+
+          This fix is for 2d.imageData.put.alpha.html with --accelerated-2d-canvas. No new tests.
+
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::putUnmultipliedImageData): needs to call syncSoftwareCanvas() to sync between hardware and software.
+        (WebCore::ImageBuffer::putPremultipliedImageData): needs to call syncSoftwareCanvas() to sync between hardware and software.
+
+
 2011-02-09  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.
