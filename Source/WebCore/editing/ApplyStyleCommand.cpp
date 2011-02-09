@@ -113,7 +113,7 @@ public:
 private:
     void init(PassRefPtr<CSSStyleDeclaration>, const Position&);
     void reconcileTextDecorationProperties(CSSMutableStyleDeclaration*);
-    void extractTextStyles(Document*, CSSMutableStyleDeclaration*, bool shouldUseFixedFontDefautlSize);
+    void extractTextStyles(Document*, CSSMutableStyleDeclaration*, bool shouldUseFixedFontDefaultSize);
 
     String m_cssStyle;
     bool m_applyBold;
@@ -205,7 +205,31 @@ static void setTextDecorationProperty(CSSMutableStyleDeclaration* style, const C
     }
 }
 
-void StyleChange::extractTextStyles(Document* document, CSSMutableStyleDeclaration* style, bool shouldUseFixedFontDefautlSize)
+static bool isCSSValueLength(CSSPrimitiveValue* value)
+{
+    return value->primitiveType() >= CSSPrimitiveValue::CSS_PX && value->primitiveType() <= CSSPrimitiveValue::CSS_PC;
+}
+
+int legacyFontSizeFromCSSValue(Document* document, CSSPrimitiveValue* value, bool shouldUseFixedFontDefaultSize, LegacyFontSizeMode mode)
+{
+    if (isCSSValueLength(value)) {
+        int pixelFontSize = value->getIntValue(CSSPrimitiveValue::CSS_PX);
+        int legacyFontSize = CSSStyleSelector::legacyFontSize(document, pixelFontSize, shouldUseFixedFontDefaultSize);
+        // Use legacy font size only if pixel value matches exactly to that of legacy font size.
+        int cssPrimitiveEquivalent = legacyFontSize - 1 + CSSValueXSmall;
+        if (mode == AlwaysUseLegacyFontSize || CSSStyleSelector::fontSizeForKeyword(document, cssPrimitiveEquivalent, shouldUseFixedFontDefaultSize) == pixelFontSize)
+            return legacyFontSize;
+
+        return 0;
+    }
+
+    if (CSSValueXSmall <= value->getIdent() && value->getIdent() <= CSSValueWebkitXxxLarge)
+        return value->getIdent() - CSSValueXSmall + 1;
+
+    return 0;
+}
+
+void StyleChange::extractTextStyles(Document* document, CSSMutableStyleDeclaration* style, bool shouldUseFixedFontDefaultSize)
 {
     ASSERT(style);
 
@@ -260,20 +284,10 @@ void StyleChange::extractTextStyles(Document* document, CSSMutableStyleDeclarati
     if (RefPtr<CSSValue> fontSize = style->getPropertyCSSValue(CSSPropertyFontSize)) {
         if (!fontSize->isPrimitiveValue())
             style->removeProperty(CSSPropertyFontSize); // Can't make sense of the number. Put no font size.
-        else {
-            CSSPrimitiveValue* value = static_cast<CSSPrimitiveValue*>(fontSize.get());
-            if (value->primitiveType() >= CSSPrimitiveValue::CSS_PX && value->primitiveType() <= CSSPrimitiveValue::CSS_PC) {
-                int pixelFontSize = value->getFloatValue(CSSPrimitiveValue::CSS_PX);
-                int legacyFontSize = CSSStyleSelector::legacyFontSize(document, pixelFontSize, shouldUseFixedFontDefautlSize);
-                // Use legacy font size only if pixel value matches exactly to that of legacy font size.
-                if (CSSStyleSelector::fontSizeForKeyword(document, legacyFontSize - 1 + CSSValueXSmall, shouldUseFixedFontDefautlSize) == pixelFontSize) {
-                    m_applyFontSize = String::number(legacyFontSize);
-                    style->removeProperty(CSSPropertyFontSize);
-                }
-            } else if (CSSValueXSmall <= value->getIdent() && value->getIdent() <= CSSValueWebkitXxxLarge) {
-                m_applyFontSize = String::number(value->getIdent() - CSSValueXSmall + 1);
-                style->removeProperty(CSSPropertyFontSize);
-            }
+        else if (int legacyFontSize = legacyFontSizeFromCSSValue(document, static_cast<CSSPrimitiveValue*>(fontSize.get()),
+                shouldUseFixedFontDefaultSize, UseLegacyFontSizeOnlyIfPixelValuesMatch)) {
+            m_applyFontSize = String::number(legacyFontSize);
+            style->removeProperty(CSSPropertyFontSize);
         }
     }
 }

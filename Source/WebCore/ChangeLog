@@ -1,3 +1,31 @@
+2011-02-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(71556,68059): queryCommandValue screws up background color at collapsed cursor
+        https://bugs.webkit.org/show_bug.cgi?id=53196
+
+        The bug was caused by Editor::selectionComputedStyle's modifying typing style without making a copy,
+        and its removing non-inheritable properties from the typing style. Fixed the bug by making a copy
+        before making the modification and not removing non-inheritable properties.
+
+        Also fixed a bug in selectionStartCSSPropertyValue that it doesn't handle xx-small to -webkit-xxx-large
+        by extracting a function from StyleChange::extractTextStyles and calling it in both extractTextStyles
+        and selectionStartCSSPropertyValue.
+
+        Test: editing/style/query-typing-style.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::legacyFontSizeFromCSSValue): Extracted from StyleChange::extractTextStyles.
+        (WebCore::StyleChange::extractTextStyles): Calls legacyFontSizeFromCSSValue; this fixes the bug that
+        CSS values from xx-small through -webkit-xxx-large are not accounted.
+        * editing/ApplyStyleCommand.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectionStartCSSPropertyValue): Calls legacyFontSizeFromCSSValue.
+        (WebCore::Editor::selectionComputedStyle): Makes a copy before modifying typing style.
+        No longer calls removeNonEditingProperties on the copied typing style so that background-color property
+        is included when merged into the style.
+
 2011-02-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.

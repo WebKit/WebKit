@@ -1047,10 +1047,10 @@ String Editor::selectionStartCSSPropertyValue(int propertyID)
 
     if (propertyID == CSSPropertyFontSize) {
         RefPtr<CSSValue> cssValue = selectionStyle->getPropertyCSSValue(CSSPropertyFontSize);
-        ASSERT(cssValue->isPrimitiveValue());
-        int fontPixelSize = static_cast<CSSPrimitiveValue*>(cssValue.get())->getIntValue(CSSPrimitiveValue::CSS_PX);
-        int size = CSSStyleSelector::legacyFontSize(m_frame->document(), fontPixelSize, shouldUseFixedFontDefaultSize);
-        value = String::number(size);
+        if (cssValue->isPrimitiveValue()) {
+            value = String::number(legacyFontSizeFromCSSValue(m_frame->document(), static_cast<CSSPrimitiveValue*>(cssValue.get()),
+                shouldUseFixedFontDefaultSize, AlwaysUseLegacyFontSize));
+        }
     }
 
     return value;
@@ -3140,8 +3140,7 @@ PassRefPtr<CSSMutableStyleDeclaration> Editor::selectionComputedStyle(bool& shou
     if (!m_frame->selection()->typingStyle())
         return mutableStyle;
 
-    RefPtr<EditingStyle> typingStyle = m_frame->selection()->typingStyle();
-    typingStyle->removeNonEditingProperties();
+    RefPtr<EditingStyle> typingStyle = m_frame->selection()->typingStyle()->copy();
     typingStyle->prepareToApplyAt(position);
     mutableStyle->merge(typingStyle->style());
 

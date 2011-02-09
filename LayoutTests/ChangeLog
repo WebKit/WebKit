@@ -1,3 +1,16 @@
+2011-02-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(71556,68059): queryCommandValue screws up background color at collapsed cursor
+        https://bugs.webkit.org/show_bug.cgi?id=53196
+
+        Added a test to ensure calling queryCommandValue returns the correct value for backColor
+        and fontSize from typing style.
+
+        * editing/style/query-typing-style-expected.txt: Added.
+        * editing/style/query-typing-style.html: Added.
+
 2011-02-08  Sailesh Agrawal  <sail@chromium.org>
 
         Reviewed by Kenneth Russell.
