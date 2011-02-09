@@ -1,3 +1,12 @@
+2011-02-09  Christian Dywan  <christian@lanedo.com>
+
+        Unreviewed translation file.
+
+        [Gtk] Please add Hungarian translation
+        https://bugs.webkit.org/show_bug.cgi?id=34543
+
+        * hu.po: Added.
+
 2011-02-02  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.
