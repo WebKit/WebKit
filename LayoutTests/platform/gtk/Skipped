@@ -264,9 +264,12 @@ fast/dynamic/layer-hit-test-crash.html
 # https://bugs.webkit.org/show_bug.cgi?id=54136
 fast/html/keygen.html
 
-# Hyphenation is not implemented yet.
+# [GTK] GTK+ does not support hyphenation
+# https://bugs.webkit.org/show_bug.cgi?id=44478
 fast/text/hyphenate-character.html
 fast/text/hyphens.html
+fast/text/hyphenate-first-word.html
+fast/text/hyphenate-locale.html
 
 # This port doesn't support v8 i18n extension.
 fast/js/i18n-bindings-locale.html
@@ -2219,9 +2222,6 @@ http/tests/loading/basic-auth-resend-wrong-credentials.html
 # https://bugs.webkit.org/show_bug.cgi?id=30680
 media/audio-delete-while-step-button-clicked.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=30594
-fast/dom/Window/window-properties.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=30620
 fast/xsl/sort-locale.xml
 
@@ -2446,10 +2446,6 @@ fast/dom/Geolocation/permission-denied.html
 # skipping it.
 # See also https://bugs.webkit.org/show_bug.cgi?id=36165
 media/video-played-collapse.html
-
-# This test crashes sometimes.
-# https://bugs.webkit.org/show_bug.cgi?id=36228
-plugins/return-error-from-new-stream-doesnt-invoke-destroy-stream.html
 
 # Misses setMediaType() implementation
 fast/media/print-restores-previous-mediatype.html
@@ -2928,11 +2924,6 @@ inspector/dom-breakpoints.html
 # https://bugs.webkit.org/show_bug.cgi?id=44316
 platform/gtk/accessibility/object-attributes.html
 platform/gtk/accessibility/title-and-alt.html
-
-# [GTK] GTK+ does not support hyphenation
-# https://bugs.webkit.org/show_bug.cgi?id=44478
-fast/text/hyphenate-first-word.html
-fast/text/hyphenate-locale.html
 
 # fails on 32-bits debug bot
 # https://bugs.webkit.org/show_bug.cgi?id=50389

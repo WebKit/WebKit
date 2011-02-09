@@ -1,3 +1,11 @@
+2011-02-09  Martin Robinson  <mrobinson@igalia.com>
+
+        Clean up the skipped list a bit and unskip a few tests which are passing.
+
+        * platform/gtk/Skipped: Clean up the skipped list.
+        * platform/gtk/editing/selection/extend-after-mouse-selection-expected.txt: Removed.
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt: Removed.
+
 2011-02-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
