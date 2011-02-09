@@ -23,6 +23,8 @@
 fast/xmlhttprequest/null-document-xmlhttprequest-open.html
 fast/dom/null-document-location-replace-crash.html
 fast/dom/null-document-location-put-crash.html
+fast/dom/null-document-location-assign-crash.html
+fast/dom/null-document-window-open-crash.html
 # Fails because of timing out in the GTK 32-bit Debug bot
 # (see bug https://bugs.webkit.org/show_bug.cgi?id=53992)
 fast/loader/onload-willSendRequest-null-for-frame.html
@@ -135,6 +137,8 @@ fast/loader/stop-provisional-loads.html
 fast/loading/subframe-removes-itself.html
 # This policy delegate is implemented, but it needs the DOM node path in the output.
 fast/encoding/mailto-always-utf-8.html
+# Missing output when page icon changes. We need some API exposing this event.
+fast/dom/icon-url-property.html
 
 # EventSender.scheduleAsynchronousClick unimplemented
 # https://bugs.webkit.org/show_bug.cgi?id=53960 
@@ -175,6 +179,9 @@ scrollbars/scrollbar-click-does-not-blur-content.html
 fast/dom/client-width-height-quirks.html
 fast/dom/client-width-height.html
 fast/overflow/scrollbar-restored.html
+# The test below is not scrolled to the proper position. Perhaps because of
+# asynchronous scrollbar behavior.
+fast/css/font-weight-1.html
 
 # Opened windows not properly passed statusbar, locationbar and toolbar properties
 # https://bugs.webkit.org/show_bug.cgi?id=53956 
@@ -229,6 +236,8 @@ fast/dom/elementFromPoint-relative-to-viewport.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=51213
 fast/dom/gc-11.html
+# This test crashes whatever test follows it. Perhaps it's related to the previous failure.
+fast/dom/gc-10.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=51242
 fast/dom/global-constructors.html
@@ -238,206 +247,6 @@ fast/dom/global-constructors.html
 fast/canvas/patternfill-repeat.html
 
 #   Tests generating new results
-fast/css/border-height.html
-fast/css/border-radius-outline-offset.html
-fast/css/clip-zooming.html
-fast/css/color-correction-on-background-image.html
-fast/css/color-correction-untagged-images.html
-fast/css/color-quirk.html
-fast/css/color-strict.html
-fast/css/content-dynamic.html
-fast/css/contentDiv.html
-fast/css/contentDivWithChildren.html
-fast/css/contentImage.html
-fast/css/continuationCrash.html
-fast/css/create_element_align.xhtml
-fast/css/css2-system-fonts.html
-fast/css/css3-modsel-22.html
-fast/css/css3-nth-child.html
-fast/css/css-imports.html
-fast/css/disabled-author-styles.html
-fast/css/dynamic-sibling-selector.html
-fast/css/empty-body-test.html
-fast/css/empty-generated-content.html
-fast/css/empty-pseudo-class.html
-fast/css/error-in-last-decl.html
-fast/css/ex-after-font-variant.html
-fast/css/fieldset-display-row.html
-fast/css/find-next-layer.html
-fast/css/first-child-pseudo-class.html
-fast/css/first-letter-capitalized.html
-fast/css/first-letter-detach.html
-fast/css/first-letter-float-after-float.html
-fast/css/first-letter-float.html
-fast/css/first-letter-hover.html
-fast/css/first-letter-recalculation.html
-fast/css/first-letter-skip-out-of-flow.html
-fast/css/first-letter-visibility.html
-fast/css/first-of-type-pseudo-class.html
-fast/css/font-face-default-font.html
-fast/css/font-face-descriptor-multiple-values.html
-fast/css/font-face-implicit-local-font.html
-fast/css/font-face-in-media-rule.html
-fast/css/font-face-locally-installed.html
-fast/css/font-face-multiple-faces.html
-fast/css/font-face-multiple-remote-sources.html
-fast/css/font-face-remote.html
-fast/css/font-face-unicode-range.html
-fast/css/font-shorthand-weight-only.html
-fast/css/font-size-negative.html
-fast/css/font-weight-1.html
-fast/css/font_property_normal.html
-fast/css/getFloatValueForUnit.html
-fast/css/hover-subselector.html
-fast/css/hsl-color.html
-fast/css/hsla-color.html
-fast/css/ignore-text-zoom.html
-fast/css/imageTileOpacity.html
-fast/css/import-rule-regression-11590.html
-fast/css/import_with_baseurl.html
-fast/css/inline-properties-important.html
-fast/css/invalid-pseudo-classes.html
-fast/css/invalidation-errors-2.html
-fast/css/invalidation-errors-3.html
-fast/css/invalidation-errors.html
-fast/css/last-child-pseudo-class.html
-fast/css/last-child-style-sharing.html
-fast/css/last-of-type-pseudo-class.html
-fast/css/layerZOrderCrash.html
-fast/css/line-height-font-order.html
-fast/css/line-height-negative.html
-fast/css/line-height-overflow.html
-fast/css/line-height.html
-fast/css/link-outside-head.html
-fast/css/list-outline.html
-fast/css/live-cssrules.html
-fast/css/margin-bottom-form-element-quirk.html
-fast/css/margin-bottom-form-element-strict.html
-fast/css/margin-top-bottom-dynamic.html
-fast/css/max-height-none.html
-fast/css/negative-nth-child.html
-fast/css/nested-layers-with-hover.html
-fast/css/only-child-pseudo-class.html
-fast/css/only-of-type-pseudo-class.html
-fast/css/outline-auto-empty-rects.html
-fast/css/outline-auto-location.html
-fast/css/pendingStylesheetFontSize.html
-fast/css/percent-top-value-with-relative-position.html
-fast/css/percentage-non-integer.html
-fast/css/position-negative-top-margin.html
-fast/css/quirk-orphaned-units.html
-fast/css/resize-corner-tracking-transformed.html
-fast/css/resize-corner-tracking.html
-fast/css/rgb-float.html
-fast/css/rtl-ordering.html
-fast/css/selector-set-attribute.html
-fast/css/simple-selector-chain-parsing.html
-fast/css/style-outside-head.html
-fast/css/style-parsed-outside-head.html
-fast/css/table-text-align-quirk.html
-fast/css/table-text-align-strict.html
-fast/css/target-fragment-match.html
-fast/css/text-overflow-ellipsis.html
-fast/css/text-overflow-ellipsis-bidi.html
-fast/css/text-overflow-ellipsis-strict.html
-fast/css/text-security.html
-fast/css/textCapitalizeEdgeCases.html
-fast/css/transform-default-parameter.html
-fast/css/transition-color-unspecified.html
-fast/css/universal-hover-quirk.html
-fast/css/value-list-out-of-bounds-crash.html
-fast/css/vertical-align-lengths.html
-fast/css/visibility-hit-test.html
-fast/css/word-space-extra.html
-fast/css/xml-stylesheet-pi-not-in-prolog.xml
-fast/css/zoom-font-size.html
-fast/css/zoom-property-parsing.html
-fast/css/counters/counter-text-security.html
-fast/css/counters/counter-text-transform.html
-fast/css/counters/invalidate-cached-counter-node.html
-fast/css/namespaces/001.xml
-fast/css/namespaces/002.xml
-fast/css/namespaces/003.xml
-fast/css/namespaces/004.xml
-fast/css/namespaces/005.xml
-fast/css/namespaces/006.xml
-fast/css/namespaces/007.xml
-fast/css/namespaces/namespaces-comments.xml
-fast/css/namespaces/namespaces-empty.xml
-fast/css/namespaces/namespaces-escapes.xml
-fast/css/namespaces/namespaces-invalid-at.xml
-fast/doctypes/001.html
-fast/doctypes/002.html
-fast/doctypes/003.html
-fast/doctypes/004.html
-fast/dom/anchor-text.html
-fast/dom/attr_dead_doc.html
-fast/dom/blur-contenteditable.html
-fast/dom/children-nodes.html
-fast/dom/clientWidthAfterDocumentIsRemoved.html
-fast/dom/clone-contents-0-end-offset.html
-fast/dom/clone-node-dynamic-style.html
-fast/dom/comment-not-documentElement.html
-fast/dom/createDocumentType.html
-fast/dom/css-cached-import-rule.html
-fast/dom/css-inline-style-important.html
-fast/dom/css-insert-import-rule.html
-fast/dom/css-mediarule-deleteRule-update.html
-fast/dom/css-mediarule-insertRule-update.html
-fast/dom/css-rule-functions.html
-fast/dom/delete-contents.html
-fast/dom/dom-parse-serialize-display.html
-fast/dom/dom-parse-serialize.html
-fast/dom/focus-contenteditable.html
-fast/dom/gc-10.html
-fast/dom/icon-url-property.html
-fast/dom/importNodeHTML.html
-fast/dom/importNodeXML.xhtml
-fast/dom/inner-text.html
-fast/dom/isindex-001.html
-fast/dom/isindex-002.html
-fast/dom/jsDevicePixelRatio.html
-fast/dom/null-document-location-assign-crash.html
-fast/dom/null-document-window-open-crash.html
-fast/dom/outerText.html
-fast/dom/replaceChild.html
-fast/dom/row-inner-text.html
-fast/dom/setPrimitiveValue.html
-fast/dom/stripNullFromTextNodes.html
-fast/dom/Element/class-attribute-whitespace.html
-fast/dom/Element/null-offset-parent.html
-fast/dom/HTMLDocument/frameless-location-bugzilla10837.html
-fast/dom/HTMLElement/bdo.html
-fast/dom/HTMLHeadElement/head-link-style-href-check.html
-fast/dom/HTMLHeadElement/textInHead1.html
-fast/dom/HTMLHeadElement/textInHead2.html
-fast/dom/HTMLHeadElement/textInHead3.html
-fast/dom/HTMLHeadElement/textInHead4.html
-fast/dom/HTMLHeadElement/textInHead5.html
-fast/dom/HTMLImageElement/image-alt-text.html
-fast/dom/HTMLInputElement/input-image-alt-text.html
-fast/dom/HTMLLinkElement/pending-stylesheet-count.html
-fast/dom/HTMLObjectElement/vspace-hspace-as-number.html
-fast/dom/HTMLStyleElement/insert-parser-generated.html
-fast/dom/HTMLTableElement/colSpan.html
-fast/dom/HTMLTableElement/createCaption.html
-fast/dom/HTMLTextAreaElement/reset-textarea.html
-fast/dom/Range/create-contextual-fragment.html
-fast/dom/Range/surroundContents-1.html
-fast/dom/Window/btoa-pnglet.html
-fast/dom/Window/open-existing-pop-up-blocking.html
-fast/dynamic/001.html
-fast/dynamic/002.html
-fast/dynamic/004.html
-fast/dynamic/005.html
-fast/dynamic/006.html
-fast/dynamic/007.html
-fast/dynamic/008.html
-fast/dynamic/009.html
-fast/dynamic/010.html
-fast/dynamic/011.html
-fast/dynamic/012.html
-fast/dynamic/013.html
 fast/dynamic/014.html
 fast/dynamic/015.html
 fast/dynamic/anchor-lock.html
@@ -4224,3 +4033,5 @@ http/tests/websocket/tests/cross-origin.html
 # https://bugs.webkit.org/show_bug.cgi?id=54073
 plugins/invalidate_rect.html
 
+# Need to source the "WeightWatcher" fonts for this test.
+fast/css/font-weight-1.html

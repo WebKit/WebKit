@@ -1,3 +1,10 @@
+2011-02-09  Martin Robinson  <mrobinson@igalia.com>
+
+        Continue importing new GTK+ results for tests in the fast directory.
+        Skip some tests that are obvious failures.
+
+        * platform/gtk/Skipped: Unskip some tests that now have results.
+
 2011-02-09  Nebojsa Ciric  <cira@chromium.org>
 
         Reviewed by Darin Fisher.
