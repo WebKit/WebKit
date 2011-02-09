@@ -1,3 +1,10 @@
+2011-02-09  Martin Robinson  <mrobinson@igalia.com>
+
+        Skip some failing tests.
+
+        * platform/gtk/Skipped: Skip plugins/invalidate_rect.html and
+        fast/frames/flattening/iframe-flattening-crash.html
+
 2011-02-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
