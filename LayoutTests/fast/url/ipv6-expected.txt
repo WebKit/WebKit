@@ -19,7 +19,7 @@ PASS canonicalize('http://[1::]/') is 'http://[1::]/'
 FAIL canonicalize('http://[::192.168.0.1]/') should be http://[::c0a8:1]/. Was http://[::192.168.0.1]/.
 FAIL canonicalize('http://[::ffff:192.168.0.1]/') should be http://[::ffff:c0a8:1]/. Was http://[::ffff:192.168.0.1]/.
 FAIL canonicalize('http://[000:01:02:003:004:5:6:007]/') should be http://[0:1:2:3:4:5:6:7]/. Was http://[000:01:02:003:004:5:6:007]/.
-FAIL canonicalize('http://[A:b:c:DE:fF:0:1:aC]/') should be http://[a:b:c:de:ff:0:1:ac]/. Was http://[A:b:c:DE:fF:0:1:aC]/.
+PASS canonicalize('http://[A:b:c:DE:fF:0:1:aC]/') is 'http://[a:b:c:de:ff:0:1:ac]/'
 FAIL canonicalize('http://[1:0:0:2::3:0]/') should be http://[1::2:0:0:3:0]/. Was http://[1:0:0:2::3:0]/.
 PASS canonicalize('http://[1::2:0:0:3:0]/') is 'http://[1::2:0:0:3:0]/'
 PASS canonicalize('http://[::eeee:192.168.0.1]/') is 'http://[::eeee:192.168.0.1]/'

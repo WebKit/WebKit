@@ -1,3 +1,13 @@
+2011-02-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Hostnames should cannonicalize to lowercase (to match every other browser)
+        https://bugs.webkit.org/show_bug.cgi?id=54084
+
+        * platform/KURL.cpp:
+        (WebCore::KURL::parse):
+
 2011-02-09  Peter Varga  <pvarga@webkit.org>
 
 

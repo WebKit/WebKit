@@ -1,3 +1,19 @@
+2011-02-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Hostnames should cannonicalize to lowercase (to match every other browser)
+        https://bugs.webkit.org/show_bug.cgi?id=54084
+
+        Pretty obvious change.  KURL is the odd man out here.
+
+        * fast/url/host-expected.txt:
+        * fast/url/ipv4-expected.txt:
+        * fast/url/ipv6-expected.txt:
+        * fast/url/relative-expected.txt:
+        * fast/url/relative-unix-expected.txt:
+        * fast/url/standard-url-expected.txt:
+
 2011-02-09  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed.
