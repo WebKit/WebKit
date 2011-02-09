@@ -155,7 +155,10 @@ bool WebInputElement::isValidValue(const WebString& value) const
     return constUnwrap<HTMLInputElement>()->isValidValue(value);
 }
 
-const int WebInputElement::defaultMaxLength = HTMLInputElement::s_maximumLength;
+int WebInputElement::defaultMaxLength()
+{
+    return HTMLInputElement::s_maximumLength;
+}
 
 WebInputElement::WebInputElement(const PassRefPtr<HTMLInputElement>& elem)
     : WebFormControlElement(elem)

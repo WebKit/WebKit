@@ -1,3 +1,16 @@
+2011-02-09  Ilya Sherman  <isherman@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Export WebInputElement::defaultMaxLength as a function rather than a constant.
+        Needed because the order of initialization of static constants
+        is not guaranteed across compilation units.
+        https://bugs.webkit.org/show_bug.cgi?id=54056
+
+        * public/WebInputElement.h:
+        * src/WebInputElement.cpp:
+        (WebKit::WebInputElement::defaultMaxLength): Now a static function.
+
 2011-02-09  Sailesh Agrawal  <sail@chromium.org>
 
         Reviewed by Tony Chang.

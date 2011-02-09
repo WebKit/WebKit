@@ -80,7 +80,7 @@ namespace WebKit {
         WEBKIT_API bool isValidValue(const WebString&) const;
 
         // Exposes the default value of the maxLength attribute.
-        WEBKIT_API static const int defaultMaxLength;
+        WEBKIT_API static int defaultMaxLength();
 
 #if WEBKIT_IMPLEMENTATION
         WebInputElement(const WTF::PassRefPtr<WebCore::HTMLInputElement>&);
