@@ -2,6 +2,15 @@
 
         Unreviewed translation file.
 
+        Attached is the Bulgarian translation of WebKit Gtk
+        https://bugs.webkit.org/show_bug.cgi?id=44400
+
+        * bg.po: Added.
+
+2011-02-09  Christian Dywan  <christian@lanedo.com>
+
+        Unreviewed translation file.
+
         [l10n] Indonesian translation
         https://bugs.webkit.org/show_bug.cgi?id=46455
 
