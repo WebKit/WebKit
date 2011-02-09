@@ -1,3 +1,13 @@
+2011-02-09  Xiaomei Ji  <xji@chromium.org>
+
+        Unreviewed.
+
+        Rebaseline for chromium-mac after r77952.
+        Added chromium-mac baseline due to fallback sequence.
+
+        * platform/chromium-mac/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-02-09  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, test expectations update.

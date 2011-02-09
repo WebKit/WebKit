@@ -3249,7 +3249,6 @@ BUG_ZMO : fast/table/colspanMinWidth-vertical.html = IMAGE+TEXT PASS
 
 BUG_ZMO : fast/notifications/notifications-document-close-crash.html = PASS TEXT
 
-BUG_ZMO MAC : fast/text/international/pop-up-button-text-alignment-and-direction.html = PASS TEXT IMAGE+TEXT
 
 BUG_ZMO : editing/undo/undo-paste-when-caret-is-not-in-range.html = PASS MISSING CRASH TEXT
 BUG_ZMO REBASELINE WIN LINUX : fast/box-shadow/inset-box-shadows.html = IMAGE+TEXT
