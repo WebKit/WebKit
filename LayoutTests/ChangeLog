@@ -1,3 +1,9 @@
+2011-02-09  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-09  Martin Robinson  <mrobinson@igalia.com>
 
         Continue importing new GTK+ results for tests in the fast directory.

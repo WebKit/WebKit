@@ -3255,6 +3255,9 @@ BUG_ZMO : editing/undo/undo-paste-when-caret-is-not-in-range.html = PASS MISSING
 // Should be able to remove these two after rebaseline, add them for now so we could roll
 BUG_ZMO MAC : fast/box-shadow/inset.html = IMAGE
 
+// Failure after r78095
+BUG_ZMO : fast/js/i18n-bindings-locale.html = TEXT
+
 BUGWK54051 : plugins/invalidate_rect.html = FAIL
 
 BUGCR72428 : fast/dom/HTMLAnchorElement/set-href-attribute-hash.html = TEXT
