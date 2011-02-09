@@ -1,5 +1,12 @@
 2011-02-09  Adam Barth  <abarth@webkit.org>
 
+        Attempt to fix the Qt Windows build.
+
+        * wtf/OSRandomSource.cpp:
+        (WTF::randomValuesFromOS):
+
+2011-02-09  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Add WTF::cryptographicallyRandomNumber

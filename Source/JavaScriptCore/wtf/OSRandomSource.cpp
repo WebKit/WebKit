@@ -39,13 +39,7 @@ namespace WTF {
 #if USE(OS_RANDOMNESS)
 void randomValuesFromOS(unsigned char* buffer, size_t length)
 {
-#if COMPILER(MSVC) && defined(_CRT_RAND_S)
-    for (size_t i = 0; i < length; i++) {
-        uint32_t bits;
-        rand_s(&bits);
-        buffer[i] = static_cast<unsigned char>(bits);
-    }
-#elif OS(DARWIN)
+#if OS(DARWIN)
     for (size_t i = 0; i < length; i++) {
         uint32_t bits;
         bits = arc4random();
@@ -58,6 +52,12 @@ void randomValuesFromOS(unsigned char* buffer, size_t length)
 
     read(fd, buffer, length);
     close(fd);
+#elif defined(_CRT_RAND_S)
+    for (size_t i = 0; i < length; i++) {
+        uint32_t bits;
+        rand_s(&bits);
+        buffer[i] = static_cast<unsigned char>(bits);
+    }
 #else
     #error "This configuration doesn't have a strong source of randomness."
     // WARNING: When adding new sources of OS randomness, the randomness must
