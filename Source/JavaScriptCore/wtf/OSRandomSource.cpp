@@ -52,7 +52,7 @@ void randomValuesFromOS(unsigned char* buffer, size_t length)
 
     read(fd, buffer, length);
     close(fd);
-#elif defined(_CRT_RAND_S)
+#elif COMPILER(MSVC)
     for (size_t i = 0; i < length; i++) {
         uint32_t bits;
         rand_s(&bits);

@@ -1,5 +1,13 @@
 2011-02-09  Adam Barth  <abarth@webkit.org>
 
+        Another attempt to fix the Qt Windows build.
+
+        * config.h:
+        * wtf/OSRandomSource.cpp:
+        (WTF::randomValuesFromOS):
+
+2011-02-09  Adam Barth  <abarth@webkit.org>
+
         Attempt to fix the Qt Windows build.
 
         * wtf/OSRandomSource.cpp:
