@@ -3255,6 +3255,5 @@ BUG_ZMO : editing/undo/undo-paste-when-caret-is-not-in-range.html = PASS MISSING
 
 // temporary for rebaseline after r77781
 BUG_LOISLO : fast/invalid/residual-style.html = TEXT
-BUG_LOIDLO : html5lib/runner.html = TEXT
 
 BUGWK54051 MAC : plugins/invalidate_rect.html = FAIL

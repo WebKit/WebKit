@@ -1,3 +1,12 @@
+2011-02-09  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed.
+
+        Chromium: Rebaseline html5lib/runner.html expectations after r77781.
+
+        * platform/chromium/html5lib/runner-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-02-09  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Jeremy Orlow.
