@@ -1111,6 +1111,7 @@ media/restore-from-page-cache.html
 
 # execCommand("undo") doesn't work in WebKit2
 # <rdar://problem/8862023>
+editing/undo/undo-paste-when-caret-is-not-in-range.html
 fast/forms/input-paste-undo.html
 editing/pasteboard/undoable-fragment-removes.html
 fast/forms/plaintext-mode-1.html
@@ -1351,6 +1352,8 @@ platform/mac/editing/deleting/deletionUI-successful-deletion.html
 
 # WebKitTestRunner needs to support layoutTestController.setFrameFlatteningEnabled
 # <https://bugs.webkit.org/show_bug.cgi?id=42536>
+fast/frames/flattening/iframe-flattening-crash.html
+fast/frames/flattening/iframe-flattening-selection-crash.html
 fast/frames/flattening/frameset-flattening-advanced.html
 fast/frames/flattening/frameset-flattening-grid.html
 fast/frames/flattening/frameset-flattening-simple.html
