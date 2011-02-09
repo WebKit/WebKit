@@ -1,5 +1,11 @@
 2011-02-09  Martin Robinson  <mrobinson@igalia.com>
 
+        Import the last set of GTK+ baselines in the fast directory.
+
+        * platform/gtk/Skipped: Unskip test which now have results.
+
+2011-02-09  Martin Robinson  <mrobinson@igalia.com>
+
         Continue importing new GTK+ results for tests in the fast directory.
 
         * platform/gtk/Skipped: Unskip test which now have results.
