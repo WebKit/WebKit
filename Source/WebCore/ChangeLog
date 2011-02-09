@@ -1,3 +1,13 @@
+2011-02-09  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [Chromium] Issue 72387: Integer bounds crash in LayerTilerChromium::resizeLayer
+        https://bugs.webkit.org/show_bug.cgi?id=54132
+ 
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::resizeLayer):
+
 2011-02-09  Xiyuan Xia  <xiyuan@chromium.org>
 
         Reviewed by Tony Chang.
