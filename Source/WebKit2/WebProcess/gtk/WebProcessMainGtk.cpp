@@ -52,10 +52,16 @@ WK_EXPORT int WebProcessMainGtk(int argc, char* argv[])
 
     JSC::initializeThreading();
     WTF::initializeMainThread();
-    
+
     RunLoop::initializeMainRunLoop();
-    WebCore::ResourceHandle::defaultSession();
-   
+    SoupSession* session = WebCore::ResourceHandle::defaultSession();
+
+    SoupSessionFeature* sniffer = static_cast<SoupSessionFeature*>(g_object_new(SOUP_TYPE_CONTENT_SNIFFER, NULL));
+    soup_session_add_feature(session, sniffer);
+    g_object_unref(sniffer);
+
+    soup_session_add_feature_by_type(session, SOUP_TYPE_CONTENT_DECODER);
+
     int socket = atoi(argv[1]);
     WebProcess::shared().initialize(socket, RunLoop::main());
     RunLoop::run();

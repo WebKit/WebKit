@@ -533,7 +533,6 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebPopupMenu.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebSearchPopupMenu.h \
-	Source/WebKit2/WebProcess/WebKitMain.cpp \
 	Source/WebKit2/WebProcess/WebPage/ChunkedUpdateDrawingArea.cpp \
 	Source/WebKit2/WebProcess/WebPage/ChunkedUpdateDrawingArea.h \
 	Source/WebKit2/WebProcess/WebPage/DecoderAdapter.cpp \
@@ -568,8 +567,7 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/WebProcess/WebPage/WebPageGroupProxy.h \
 	Source/WebKit2/WebProcess/WebPage/WebPage.h \
 	Source/WebKit2/WebProcess/WebProcess.cpp \
-	Source/WebKit2/WebProcess/WebProcess.h \
-	Source/WebKit2/WebProcess/WebProcessMain.h
+	Source/WebKit2/WebProcess/WebProcess.h
 
 libWebKit2_la_CPPFLAGS = \
 	-fno-strict-aliasing \

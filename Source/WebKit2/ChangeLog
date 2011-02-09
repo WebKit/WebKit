@@ -1,3 +1,17 @@
+2011-02-09  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Avoid WebProcessMain compilation, we are used a gtk specific main
+        https://bugs.webkit.org/show_bug.cgi?id=54015
+
+        Avoided the compilation of the general WebProcessMain, and added
+        soup initialization to WebProcessMainGtk.cpp.
+
+        * GNUmakefile.am:
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+        (WebKit::WebProcessMainGtk):
+
 2011-02-08  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.
