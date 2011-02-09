@@ -59,16 +59,6 @@ class TestTextDiff(test_type_base.TestTypeBase):
         the expected text from the LayoutTest directory."""
         failures = []
 
-        # If we're generating a new baseline, we pass.
-        if options.new_baseline or options.reset_results:
-            # Although all DumpRenderTree output should be utf-8, we do not
-            # ever decode it inside run-webkit-tests.  For some tests
-            # DumpRenderTree may not output utf-8 text (e.g.  webarchives).
-            self._save_baseline_data(filename, actual_driver_output.text,
-                                     ".txt", encoding=None,
-                                     generate_new_baseline=options.new_baseline)
-            return failures
-
         # Normalize text to diff
         actual_text = self._get_normalized_output_text(actual_driver_output.text)
         # Assuming expected_text is already normalized.

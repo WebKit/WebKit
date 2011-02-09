@@ -183,7 +183,87 @@ class SingleTestRunner:
         return base.DriverInput(self._filename, self._timeout, image_hash)
 
     def _run(self, driver, test_input):
+        if self._options.new_baseline or self._options.reset_results:
+            return self._run_rebaseline(driver, test_input)
+        return self._run_compare_test(driver, test_input)
+
+    def _run_compare_test(self, driver, test_input):
         driver_output = self._driver.run_test(self._driver_input(test_input))
+        return self._process_output(driver_output)
+
+    def _run_rebaseline(self, driver, test_input):
+        driver_output = self._driver.run_test(self._driver_input(test_input))
+        failures = self._handle_error(driver_output)
+        # FIXME: It the test crashed or timed out, it might be bettter to avoid
+        # to write new baselines.
+        self._save_baselines(driver_output)
+        return TestResult(self._filename, failures, driver_output.test_time)
+
+    def _save_baselines(self, driver_output):
+        # Although all test_shell/DumpRenderTree output should be utf-8,
+        # we do not ever decode it inside run-webkit-tests.  For some tests
+        # DumpRenderTree may not output utf-8 text (e.g. webarchives).
+        self._save_baseline_data(driver_output.text, ".txt", encoding=None,
+                                 generate_new_baseline=self._options.new_baseline)
+        if self._options.pixel_tests and driver_output.image_hash:
+            self._save_baseline_data(driver_output.image, ".png", encoding=None,
+                                     generate_new_baseline=self._options.new_baseline)
+            self._save_baseline_data(driver_output.image_hash, ".checksum",
+                                     encoding="ascii",
+                                     generate_new_baseline=self._options.new_baseline)
+
+    def _save_baseline_data(self, data, modifier, encoding,
+                            generate_new_baseline=True):
+        """Saves a new baseline file into the port's baseline directory.
+
+        The file will be named simply "<test>-expected<modifier>", suitable for
+        use as the expected results in a later run.
+
+        Args:
+          data: result to be saved as the new baseline
+          modifier: type of the result file, e.g. ".txt" or ".png"
+          encoding: file encoding (none, "utf-8", etc.)
+          generate_new_baseline: whether to enerate a new, platform-specific
+            baseline, or update the existing one
+        """
+
+        port = self._port
+        fs = port._filesystem
+        if generate_new_baseline:
+            relative_dir = fs.dirname(self._testname)
+            baseline_path = port.baseline_path()
+            output_dir = fs.join(baseline_path, relative_dir)
+            output_file = fs.basename(fs.splitext(self._filename)[0] +
+                "-expected" + modifier)
+            fs.maybe_make_directory(output_dir)
+            output_path = fs.join(output_dir, output_file)
+            _log.debug('writing new baseline result "%s"' % (output_path))
+        else:
+            output_path = port.expected_filename(self._filename, modifier)
+            _log.debug('resetting baseline result "%s"' % output_path)
+
+        port.update_baseline(output_path, data, encoding)
+
+    def _handle_error(self, driver_output):
+        failures = []
+        fs = self._port._filesystem
+        if driver_output.timeout:
+            failures.append(test_failures.FailureTimeout())
+        if driver_output.crash:
+            failures.append(test_failures.FailureCrash())
+            _log.debug("%s Stacktrace for %s:\n%s" % (self._worker_name, self._testname,
+                                                      driver_output.error))
+            stack_filename = fs.join(self._options.results_directory, self._testname)
+            stack_filename = fs.splitext(stack_filename)[0] + "-stack.txt"
+            fs.maybe_make_directory(fs.dirname(stack_filename))
+            fs.write_text_file(stack_filename, driver_output.error)
+        elif driver_output.error:
+            _log.debug("%s %s output stderr lines:\n%s" % (self._worker_name, self._testname,
+                                                           driver_output.error))
+        return failures
+
+    def _run_test(self):
+        driver_output = self._driver.run_test(self._driver_input())
         return self._process_output(driver_output)
 
     def _process_output(self, driver_output):
@@ -194,25 +274,8 @@ class SingleTestRunner:
 
         Returns: a TestResult object
         """
-        failures = []
         fs = self._port._filesystem
-
-        if driver_output.crash:
-            failures.append(test_failures.FailureCrash())
-        if driver_output.timeout:
-            failures.append(test_failures.FailureTimeout())
-
-        if driver_output.crash:
-            _log.debug("%s Stacktrace for %s:\n%s" % (self._worker_name, self._testname,
-                                                      driver_output.error))
-            stack_filename = fs.join(self._options.results_directory, self._testname)
-            stack_filename = fs.splitext(stack_filename)[0] + "-stack.txt"
-            fs.maybe_make_directory(fs.dirname(stack_filename))
-            fs.write_text_file(stack_filename, driver_output.error)
-        elif driver_output.error:
-            _log.debug("%s %s output stderr lines:\n%s" % (self._worker_name, self._testname,
-                                                           driver_output.error))
-
+        failures = self._handle_error(driver_output)
         expected_driver_output = self._expected_driver_output()
 
         # Check the output and save the results.

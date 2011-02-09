@@ -70,39 +70,6 @@ class TestTypeBase(object):
             self._port.relative_test_filename(filename))
         fs.maybe_make_directory(fs.dirname(output_filename))
 
-    def _save_baseline_data(self, filename, data, modifier, encoding,
-                            generate_new_baseline=True):
-        """Saves a new baseline file into the port's baseline directory.
-
-        The file will be named simply "<test>-expected<modifier>", suitable for
-        use as the expected results in a later run.
-
-        Args:
-          filename: path to the test file
-          data: result to be saved as the new baseline
-          modifier: type of the result file, e.g. ".txt" or ".png"
-          encoding: file encoding (none, "utf-8", etc.)
-          generate_new_baseline: whether to enerate a new, platform-specific
-            baseline, or update the existing one
-        """
-
-        port = self._port
-        fs = self._port._filesystem
-        if generate_new_baseline:
-            relative_dir = fs.dirname(port.relative_test_filename(filename))
-            baseline_path = port.baseline_path()
-            output_dir = fs.join(baseline_path, relative_dir)
-            output_file = fs.basename(fs.splitext(filename)[0] +
-                self.FILENAME_SUFFIX_EXPECTED + modifier)
-            fs.maybe_make_directory(output_dir)
-            output_path = fs.join(output_dir, output_file)
-            _log.debug('writing new baseline result "%s"' % (output_path))
-        else:
-            output_path = port.expected_filename(filename, modifier)
-            _log.debug('resetting baseline result "%s"' % output_path)
-
-        port.update_baseline(output_path, data, encoding)
-
     def output_filename(self, filename, modifier):
         """Returns a filename inside the output dir that contains modifier.
 

@@ -1,3 +1,19 @@
+2011-02-08  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [NRWT] Pull up rebaseline code from compare_output() function defined
+        in text_diff.py and image_diff.py into a SingleTestRunner.
+
+        This patch is a first step for eliminating test_type/* classes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53071
+
+        * Scripts/webkitpy/layout_tests/layout_package/single_test_runner.py:
+        * Scripts/webkitpy/layout_tests/test_types/image_diff.py:
+        * Scripts/webkitpy/layout_tests/test_types/test_type_base.py:
+        * Scripts/webkitpy/layout_tests/test_types/text_diff.py:
+
 2011-02-07  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Mihai Parparita.

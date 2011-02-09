@@ -49,23 +49,6 @@ _log = logging.getLogger("webkitpy.layout_tests.test_types.image_diff")
 
 class ImageDiff(test_type_base.TestTypeBase):
 
-    def _save_baseline_files(self, filename, image, image_hash,
-                             generate_new_baseline):
-        """Saves new baselines for the PNG and checksum.
-
-        Args:
-          filename: test filename
-          image: a image output
-          image_hash: a checksum of the image
-          generate_new_baseline: whether to generate a new, platform-specific
-            baseline, or update the existing one
-        """
-        self._save_baseline_data(filename, image, ".png", encoding=None,
-                                 generate_new_baseline=generate_new_baseline)
-        self._save_baseline_data(filename, image_hash, ".checksum",
-                                 encoding="ascii",
-                                 generate_new_baseline=generate_new_baseline)
-
     def _copy_image(self, filename, actual_image, expected_image):
         self.write_output_files(filename, '.png',
                                 output=actual_image, expected=expected_image,
@@ -94,13 +77,6 @@ class ImageDiff(test_type_base.TestTypeBase):
 
         # If we didn't produce a hash file, this test must be text-only.
         if actual_driver_output.image_hash is None:
-            return failures
-
-        # If we're generating a new baseline, we pass.
-        if options.new_baseline or options.reset_results:
-            self._save_baseline_files(filename, actual_driver_output.image,
-                                      actual_driver_output.image_hash,
-                                      options.new_baseline)
             return failures
 
         if not expected_driver_output.image:
