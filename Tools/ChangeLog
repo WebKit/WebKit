@@ -1,3 +1,21 @@
+2011-02-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Repro crash with Sony Google TV ad at Gizmodo
+        https://bugs.webkit.org/show_bug.cgi?id=54150
+        <rdar://problem/8782346>
+
+        Add a new plug-in test that runs JavaScript that destroys the plug-in from within its NPN_DestroyStream callback.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/TestNetscapePlugIn/Tests/EvaluateJSDestroyingPluginFromDestroyStream.cpp: Added.
+        (EvaluateJSDestroyingPluginFromDestroyStream::EvaluateJSDestroyingPluginFromDestroyStream):
+        (EvaluateJSDestroyingPluginFromDestroyStream::NPP_Destroy):
+        (EvaluateJSDestroyingPluginFromDestroyStream::NPP_DestroyStream):
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+
 2011-02-09  David Levin  <levin@chromium.org>
 
         Reviewed by Eric Seidel.

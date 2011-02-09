@@ -398,6 +398,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Tests\EvaluateJSDestroyingPluginFromDestroyStream.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\Tests\GetUserAgentWithNullNPPFromNPPNew.cpp"
 				>
 			</File>

@@ -1,3 +1,16 @@
+2011-02-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Repro crash with Sony Google TV ad at Gizmodo
+        https://bugs.webkit.org/show_bug.cgi?id=54150
+        <rdar://problem/8782346>
+
+        Add test.
+
+        * plugins/npruntime/evaluate-js-destroying-plugin-from-destroy-stream-expected.txt: Added.
+        * plugins/npruntime/evaluate-js-destroying-plugin-from-destroy-stream.html: Added.
+
 2011-02-09  Martin Robinson  <mrobinson@igalia.com>
 
         Clean up the skipped list a bit and unskip a few tests which are passing.
