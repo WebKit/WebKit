@@ -30,6 +30,7 @@
     (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.security.plist"))
     (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.security.revocation.plist"))
     (literal (string-append (param "HOME_DIR") "/Library/Application Support/SyncServices/Local/ClientsWithChanges/com.apple.Keychain"))
+    (regex (string-append "^" (param "HOME_DIR") "/Library/Preferences/com\.apple\.driver\.(AppleBluetoothMultitouch\.mouse|AppleBluetoothMultitouch\.trackpad|AppleHIDMouse)\.plist$"))
 
     ;; On-disk WebKit2 framework location, to account for debug installations
     ;; outside of /System/Library/Frameworks
