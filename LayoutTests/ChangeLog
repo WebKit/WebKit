@@ -1,3 +1,15 @@
+2011-02-09  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        VisibleSelection::setWithoutValidation() should allow caret selection.
+        https://bugs.webkit.org/show_bug.cgi?id=53943
+
+        Fixed the new test introduced in the previous patch for the same bug. Previous test isn't platform independent, and fails on all platforms other than Mac OS X with WebKit 1.
+
+        * editing/undo/undo-paste-when-caret-is-not-in-range-expected.txt:
+        * editing/undo/undo-paste-when-caret-is-not-in-range.html:
+
 2011-02-09  Martin Robinson  <mrobinson@igalia.com>
 
         Continue importing new GTK+ results for tests in the fast directory.
