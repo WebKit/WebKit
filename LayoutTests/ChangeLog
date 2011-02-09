@@ -1,3 +1,9 @@
+2011-02-09  Martin Robinson  <mrobinson@igalia.com>
+
+        Continue importing new GTK+ results for tests in the fast directory.
+
+        * platform/gtk/Skipped: Unskip test which now have results.
+
 2011-02-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
