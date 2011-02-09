@@ -1,3 +1,9 @@
+2011-02-09  Alexander Pavlov  <apavlov@chromium.org>
+
+        Unreviewed. Add Web Inspector stylesheet resource diff screenshot.
+
+        * blog-files/inspector/css_rule_diff.png: Added.
+
 2011-02-07  Alexander Pavlov  <apavlov@chromium.org>
 
         Unreviewed. Add Web Inspector warning 10x10 PNG, move files from r77801 into the inspector/ directory.
