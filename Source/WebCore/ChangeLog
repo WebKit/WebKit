@@ -1,3 +1,26 @@
+2011-02-08  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Antti Koivisto.
+
+        Crash when logging into gmail.com with frame flattening turned on.
+        https://bugs.webkit.org/show_bug.cgi?id=52449
+
+        Frame flattening algorithm requires that layout always starts from the main frame, since layout of
+        subframes impacts the layout of their parents. 
+        There are places in the code that call view->layout() not on the main frame.
+        Instead of changing all the callsites, I changed FrameView::layout()
+        to force layout from the main frame if frame flattening is enabled.
+        In addition, postLayoutTasks can trigger relayout, so make it use the timer even more.
+        Move the call to SelectionController::updateAppearance() to performPostLayoutTasks(), 
+        because calling the from layout() leads to a crash in pages that have a selection in an iframe.
+
+        Tests: fast/frames/flattening/iframe-flattening-crash.html
+               fast/frames/flattening/iframe-flattening-selection-crash.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::performPostLayoutTasks):
+
 2011-02-08  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.

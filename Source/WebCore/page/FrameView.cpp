@@ -725,6 +725,20 @@ void FrameView::layout(bool allowSubtree)
     if (m_inLayout)
         return;
 
+    bool inSubframeLayoutWithFrameFlattening = parent() && m_frame->settings() && m_frame->settings()->frameFlatteningEnabled();
+
+    if (inSubframeLayoutWithFrameFlattening) {
+        if (parent()->isFrameView()) {
+            FrameView* parentView =   static_cast<FrameView*>(parent());
+            if (!parentView->m_nestedLayoutCount) {
+                while (parentView->parent() && parentView->parent()->isFrameView())
+                    parentView = static_cast<FrameView*>(parentView->parent());
+                parentView->layout(allowSubtree);
+                return;
+            }
+        }
+    }
+
     m_layoutTimer.stop();
     m_delayedLayout = false;
     m_setNeedsLayoutWasDeferred = false;
@@ -757,7 +771,7 @@ void FrameView::layout(bool allowSubtree)
 
     m_layoutSchedulingEnabled = false;
 
-    if (!m_nestedLayoutCount && !m_inSynchronousPostLayout && m_hasPendingPostLayoutTasks) {
+    if (!m_nestedLayoutCount && !m_inSynchronousPostLayout && m_hasPendingPostLayoutTasks && !inSubframeLayoutWithFrameFlattening) {
         // This is a new top-level layout. If there are any remaining tasks from the previous
         // layout, finish them now.
         m_inSynchronousPostLayout = true;
@@ -895,9 +909,6 @@ void FrameView::layout(bool allowSubtree)
     }
     m_layoutRoot = 0;
 
-    m_frame->selection()->setCaretRectNeedsUpdate();
-    m_frame->selection()->updateAppearance();
-   
     m_layoutSchedulingEnabled = true;
 
     if (!subtree && !toRenderView(root)->printing())
@@ -936,14 +947,14 @@ void FrameView::layout(bool allowSubtree)
                              layoutHeight() < contentsHeight());
 
     if (!m_hasPendingPostLayoutTasks) {
-        if (!m_inSynchronousPostLayout) {
+        if (!m_inSynchronousPostLayout && !inSubframeLayoutWithFrameFlattening) {
             m_inSynchronousPostLayout = true;
             // Calls resumeScheduledEvents()
             performPostLayoutTasks();
             m_inSynchronousPostLayout = false;
         }
 
-        if (!m_hasPendingPostLayoutTasks && (needsLayout() || m_inSynchronousPostLayout)) {
+        if (!m_hasPendingPostLayoutTasks && (needsLayout() || m_inSynchronousPostLayout || inSubframeLayoutWithFrameFlattening)) {
             // If we need layout or are already in a synchronous call to postLayoutTasks(), 
             // defer widget updates and event dispatch until after we return. postLayoutTasks()
             // can make us need to update again, and we can get stuck in a nasty cycle unless
@@ -1848,6 +1859,9 @@ void FrameView::flushAnyPendingPostLayoutTasks()
 void FrameView::performPostLayoutTasks()
 {
     m_hasPendingPostLayoutTasks = false;
+
+    m_frame->selection()->setCaretRectNeedsUpdate();
+    m_frame->selection()->updateAppearance();
 
     if (m_firstLayoutCallbackPending) {
         m_firstLayoutCallbackPending = false;

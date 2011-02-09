@@ -1,3 +1,16 @@
+2011-02-08  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Antti Koivisto.
+
+        Crash when logging into gmail.com with frame flattening turned on.
+        https://bugs.webkit.org/show_bug.cgi?id=52449
+
+        * fast/frames/flattening/iframe-flattening-crash-expected.txt: Added.
+        * fast/frames/flattening/iframe-flattening-crash.html: Added.
+        * fast/frames/flattening/iframe-flattening-selection-crash-expected.txt: Added.
+        * fast/frames/flattening/iframe-flattening-selection-crash.html: Added.
+        * fast/frames/flattening/resources/iframe-flattening-crash.html: Added.
+
 2011-02-08  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.
