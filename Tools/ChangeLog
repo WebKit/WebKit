@@ -1,3 +1,28 @@
+2011-02-08  Sailesh Agrawal  <sail@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Invalidate rect doesn't work for windowless plugins on Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=53117
+
+        Added two new utility methods.
+        - layoutTestController.displayInvalidatedRegion() does a paint of any area that has been invalidated. This is different from layoutTestController.display() which explicitly invalidates the entire page then paints.
+        - plugin.invalidateRect(left, top, right, bottom) - invalidates the given rect
+        This is used to test that invalidating a rect correctly causes a repaint of the plugin.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (displayInvalidatedRegionCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/TestNetscapePlugIn/PluginObject.cpp:
+        (invalidateRect):
+        (pluginInvoke):
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::displayInvalidatedRegion):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+
 2011-02-08  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.

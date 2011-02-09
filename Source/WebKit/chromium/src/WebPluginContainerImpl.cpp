@@ -129,14 +129,12 @@ void WebPluginContainerImpl::invalidateRect(const IntRect& rect)
     if (!parent())
         return;
 
-    IntRect damageRect = convertToContainingWindow(rect);
+    RenderBox* renderer = toRenderBox(m_element->renderer());
 
-    // Get our clip rect and intersect with it to ensure we don't invalidate
-    // too much.
-    IntRect clipRect = parent()->windowClipRect();
-    damageRect.intersect(clipRect);
-
-    parent()->hostWindow()->invalidateContentsAndWindow(damageRect, false /*immediate*/);
+    IntRect dirtyRect = rect;
+    dirtyRect.move(renderer->borderLeft() + renderer->paddingLeft(),
+                   renderer->borderTop() + renderer->paddingTop());
+    renderer->repaintRectangle(dirtyRect);
 }
 
 void WebPluginContainerImpl::setFocus(bool focused)

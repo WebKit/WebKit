@@ -89,6 +89,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("counterValueForElementById", &LayoutTestController::counterValueForElementById);
     bindMethod("disableImageLoading", &LayoutTestController::disableImageLoading);
     bindMethod("display", &LayoutTestController::display);
+    bindMethod("displayInvalidatedRegion", &LayoutTestController::displayInvalidatedRegion);
     bindMethod("dumpAsText", &LayoutTestController::dumpAsText);
     bindMethod("dumpBackForwardList", &LayoutTestController::dumpBackForwardList);
     bindMethod("dumpChildFramesAsText", &LayoutTestController::dumpChildFramesAsText);
@@ -1079,6 +1080,14 @@ void LayoutTestController::display(const CppArgumentList& arguments, CppVariant*
     const WebKit::WebSize& size = m_shell->webView()->size();
     WebRect rect(0, 0, size.width, size.height);
     host->updatePaintRect(rect);
+    host->paintInvalidatedRegion();
+    host->displayRepaintMask();
+    result->setNull();
+}
+
+void LayoutTestController::displayInvalidatedRegion(const CppArgumentList& arguments, CppVariant* result)
+{
+    WebViewHost* host = m_shell->webViewHost();
     host->paintInvalidatedRegion();
     host->displayRepaintMask();
     result->setNull();

@@ -199,6 +199,7 @@ enum {
     ID_SET_STATUS,
     ID_RESIZE_TO,
     ID_NORMALIZE,
+    ID_INVALIDATE_RECT,
     NUM_METHOD_IDENTIFIERS
 };
 
@@ -239,7 +240,8 @@ static const NPUTF8 *pluginMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
     "refCount",
     "setStatus",
     "resizeTo",
-    "normalize"
+    "normalize",
+    "invalidateRect"
 };
 
 static NPUTF8* createCStringFromNPVariant(const NPVariant* variant)
@@ -986,6 +988,20 @@ static bool normalizeOverride(PluginObject* obj, const NPVariant* args, uint32_t
     return true;
 }
 
+static bool invalidateRect(PluginObject* obj, const NPVariant* args, uint32_t argCount, NPVariant* result)
+{
+    if (argCount != 4)
+        return false;
+
+    NPRect rect;
+    rect.left = NPVARIANT_TO_DOUBLE(args[0]);
+    rect.top = NPVARIANT_TO_DOUBLE(args[1]);
+    rect.right = NPVARIANT_TO_DOUBLE(args[2]);
+    rect.bottom = NPVARIANT_TO_DOUBLE(args[3]);
+    
+    browser->invalidaterect(obj->npp, &rect);
+    return true;
+}
 
 static bool pluginInvoke(NPObject* header, NPIdentifier name, const NPVariant* args, uint32_t argCount, NPVariant* result)
 {
@@ -1101,6 +1117,8 @@ static bool pluginInvoke(NPObject* header, NPIdentifier name, const NPVariant* a
         return testResizeTo(plugin, args, argCount, result);
     if (name == pluginMethodIdentifiers[ID_NORMALIZE])
         return normalizeOverride(plugin, args, argCount, result);
+    if (name == pluginMethodIdentifiers[ID_INVALIDATE_RECT])
+        return invalidateRect(plugin, args, argCount, result);
 
     return false;
 }

@@ -78,6 +78,9 @@ def _tests(port, paths):
             # Canvas is not yet accelerated on the Mac, so there's no point
             # in running the tests there.
             paths += ['fast/canvas', 'canvas/philip']
+        # invalidate_rect.html tests a bug in the compositor.
+        # See https://bugs.webkit.org/show_bug.cgi?id=53117
+        paths += ['plugins/invalidate_rect.html']
     return test_files.find(port, paths)
 
 

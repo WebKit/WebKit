@@ -59,6 +59,7 @@ public:
     void disableImageLoading();
     void dispatchPendingLoadRequests();
     void display();
+    void displayInvalidatedRegion();
     void execCommand(JSStringRef name, JSStringRef value);
     bool findString(JSContextRef, JSStringRef, JSObjectRef optionsArray);
     bool isCommandEnabled(JSStringRef name);

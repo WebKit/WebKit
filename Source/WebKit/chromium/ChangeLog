@@ -1,3 +1,21 @@
+2011-02-08  Sailesh Agrawal  <sail@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Invalidate rect doesn't work for windowless plugins on Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=53117
+
+        Invalidate rect for windowless plugins wasn't working if the web page was composited.
+
+        The problem was that the invalidate call was causing simply dirtying the LayerChromium layers. Since the plugin was windowless this didn't cause the plugin to be repainted.
+
+        Fix was to copy the invalidate code from WebCore/plugins/PluginView.cpp/PluginView::invalidateWindowlessPluginRect() which does the correct thing.
+
+        Tested my fix on Windows and Mac and verified that the movie on http://apple.com/appltv correctly plays. Verified that windowed plugins still correctly draw as well.
+
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::invalidateRect):
+
 2011-02-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

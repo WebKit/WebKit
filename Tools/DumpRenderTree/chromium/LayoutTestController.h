@@ -250,6 +250,7 @@ public:
     void dumpTitleChanges(const CppArgumentList&, CppVariant*);
     void setMainFrameIsFirstResponder(const CppArgumentList&, CppVariant*);
     void display(const CppArgumentList&, CppVariant*);
+    void displayInvalidatedRegion(const CppArgumentList&, CppVariant*);
     void testRepaint(const CppArgumentList&, CppVariant*);
     void repaintSweepHorizontally(const CppArgumentList&, CppVariant*);
     void clearBackForwardList(const CppArgumentList&, CppVariant*);

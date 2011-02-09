@@ -1,3 +1,15 @@
+2011-02-08  Sailesh Agrawal  <sail@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Invalidate rect doesn't work for windowless plugins on Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=53117
+
+        Added a test to make sure that NPN_InvalidateRect() works correctly for windowless plugins.
+
+        * plugins/invalidate_rect-expected.txt: Added.
+        * plugins/invalidate_rect.html: Added.
+
 2011-02-08  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed. Remove chromium-gpu-win baseline that has a failing result,
