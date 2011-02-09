@@ -1,3 +1,15 @@
+2011-02-09  Brian Weinstein  <bweinstein@apple.com>
+
+        Add failing Windows expected results for tests that were added recently and have failed since
+        they were added.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=54120 tracks editing/undo/undo-paste-when-caret-is-not-in-range.html
+        https://bugs.webkit.org/show_bug.cgi?id=54122 tracks plugins/invalidate_rect.html
+
+        * platform/win/editing/undo: Added.
+        * platform/win/editing/undo/undo-paste-when-caret-is-not-in-range-expected.txt: Added.
+        * platform/win/plugins/invalidate_rect-expected.txt: Added.
+
 2011-02-09  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, test expectations.
