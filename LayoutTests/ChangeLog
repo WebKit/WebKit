@@ -1,3 +1,16 @@
+2011-02-09  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Martin Robinson.
+
+        frames/flattening/iframe-flattening-crash.html fails on GTK.
+        https://bugs.webkit.org/show_bug.cgi?id=54106
+
+        Modify the test to be more consistent with other frame flattening tests.
+
+        * fast/frames/flattening/iframe-flattening-crash.html:
+        * fast/frames/flattening/resources/iframe-flattening-crash.html: Removed.
+        * platform/gtk/Skipped:
+
 2011-02-09  Brian Weinstein  <bweinstein@apple.com>
 
         Add failing Windows expected results for tests that were added recently and have failed since

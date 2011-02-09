@@ -4221,6 +4221,3 @@ http/tests/websocket/tests/cross-origin.html
 # https://bugs.webkit.org/show_bug.cgi?id=54073
 plugins/invalidate_rect.html
 
-# This test was introduced in http://trac.webkit.org/changeset/77988. It seems
-# that onresize never fires on the interior frame, so the test times out.
-fast/frames/flattening/iframe-flattening-crash.html
