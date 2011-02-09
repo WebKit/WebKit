@@ -1,3 +1,14 @@
+2011-02-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        REGRESSION (r76831): Subframes are printed blank
+        <rdar://problem/8945867>
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintOverhangAreas):
+        Don't paint overhangs when printing.
+
 2011-02-07  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Nate Chapin.

@@ -2280,6 +2280,9 @@ void FrameView::paintOverhangAreas(GraphicsContext* context, const IntRect& hori
     if (context->paintingDisabled())
         return;
 
+    if (m_frame->document()->printing())
+        return;
+
     Page* page = m_frame->page();
     if (page->mainFrame() == m_frame) {
         if (page->chrome()->client()->paintCustomOverhangArea(context, horizontalOverhangArea, verticalOverhangArea, dirtyRect))
