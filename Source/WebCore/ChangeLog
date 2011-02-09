@@ -1,3 +1,22 @@
+2011-02-09  Mike Reed  <reed@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Use Skia's device->readPixels() when its bitmap claims to have no pixels, as this
+        handles the case when the device is backed by the GPU.
+        Patch developed by bsalomon@google.com
+
+        No new tests. Existing canvas tests suffice
+        e.g. LayoutTests/canvas/philip/... 
+
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::getImageData):
+        (WebCore::ImageBuffer::getUnmultipliedImageData):
+        (WebCore::ImageBuffer::getPremultipliedImageData):
+        (WebCore::putImageData):
+        (WebCore::ImageBuffer::putUnmultipliedImageData):
+        (WebCore::ImageBuffer::putPremultipliedImageData):
+
 2011-02-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
