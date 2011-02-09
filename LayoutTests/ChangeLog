@@ -1,3 +1,13 @@
+2011-02-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        Remove unnecessary Qt specific expected results after r78104.
+
+        * platform/qt/editing/undo/undo-paste-when-caret-is-not-in-range-expected.checksum: Removed.
+        * platform/qt/editing/undo/undo-paste-when-caret-is-not-in-range-expected.png: Removed.
+        * platform/qt/editing/undo/undo-paste-when-caret-is-not-in-range-expected.txt: Removed.
+
 2011-02-09  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, test expectations update.
