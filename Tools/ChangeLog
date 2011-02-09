@@ -1,3 +1,19 @@
+2011-02-08  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        new-run-webkit-tests: add simplified message broker for new-style
+        messaging. This change adds a very simple message broker that
+        will be used to shuttle messages between the TestRunner2 manager
+        thread and the Worker threads. For now the class is not used by
+        anything, but the eventual usage can be seen in the patches
+        attached to bug 49566.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53158
+
+        * Scripts/webkitpy/layout_tests/layout_package/message_broker2.py: Added.
+        * Scripts/webkitpy/layout_tests/layout_package/message_broker2_unittest.py: Added.
+
 2011-02-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.
