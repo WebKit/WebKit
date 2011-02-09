@@ -408,14 +408,16 @@ void WebPageProxy::goForward()
     if (isValid() && !canGoForward())
         return;
 
-    setPendingAPIRequestURL(m_backForwardList->forwardItem()->url());
+    WebBackForwardListItem* forwardItem = m_backForwardList->forwardItem();
+    if (forwardItem)
+        setPendingAPIRequestURL(forwardItem->url());
 
     if (!isValid()) {
-        reattachToWebProcessWithItem(m_backForwardList->forwardItem());
+        reattachToWebProcessWithItem(forwardItem);
         return;
     }
 
-    process()->send(Messages::WebPage::GoForward(m_backForwardList->forwardItem()->itemID()), m_pageID);
+    process()->send(Messages::WebPage::GoForward(forwardItem->itemID()), m_pageID);
 }
 
 bool WebPageProxy::canGoForward() const
@@ -428,14 +430,16 @@ void WebPageProxy::goBack()
     if (isValid() && !canGoBack())
         return;
 
-    setPendingAPIRequestURL(m_backForwardList->backItem()->url());
+    WebBackForwardListItem* backItem = m_backForwardList->backItem();
+    if (backItem)
+        setPendingAPIRequestURL(backItem->url());
 
     if (!isValid()) {
-        reattachToWebProcessWithItem(m_backForwardList->backItem());
+        reattachToWebProcessWithItem(backItem);
         return;
     }
 
-    process()->send(Messages::WebPage::GoBack(m_backForwardList->backItem()->itemID()), m_pageID);
+    process()->send(Messages::WebPage::GoBack(backItem->itemID()), m_pageID);
 }
 
 bool WebPageProxy::canGoBack() const

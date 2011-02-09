@@ -1,3 +1,15 @@
+2011-02-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Crash when going back/forward when back/forward list is in a bad state.
+        https://bugs.webkit.org/show_bug.cgi?id=54059
+        <rdar://problem/8975244>
+        
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::goForward): Add a null check.
+        (WebKit::WebPageProxy::goBack): ditto
+
 2011-02-08  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Beth Dakin.
