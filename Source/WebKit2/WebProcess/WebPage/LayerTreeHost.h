@@ -42,11 +42,12 @@ class WebPage;
 
 class LayerTreeHost : public RefCounted<LayerTreeHost> {
 public:
-    static PassRefPtr<LayerTreeHost> create(WebPage*, WebCore::GraphicsLayer*);
+    static PassRefPtr<LayerTreeHost> create(WebPage*);
     virtual ~LayerTreeHost();
 
     virtual const LayerTreeContext& layerTreeContext() = 0;
     virtual void scheduleLayerFlush() = 0;
+    virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) = 0;
     virtual void invalidate() = 0;
 
     virtual void setNonCompositedContentsNeedDisplay(const WebCore::IntRect&) = 0;

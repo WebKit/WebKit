@@ -38,15 +38,16 @@ namespace WebKit {
 
 class LayerTreeHostMac : public LayerTreeHost, WebCore::GraphicsLayerClient {
 public:
-    static PassRefPtr<LayerTreeHostMac> create(WebPage*, WebCore::GraphicsLayer*);
+    static PassRefPtr<LayerTreeHostMac> create(WebPage*);
     ~LayerTreeHostMac();
     
 private:
-    explicit LayerTreeHostMac(WebPage*, WebCore::GraphicsLayer*);
+    explicit LayerTreeHostMac(WebPage*);
 
     // LayerTreeHost.
     virtual const LayerTreeContext& layerTreeContext();
     virtual void scheduleLayerFlush();
+    virtual void setRootCompositingLayer(WebCore::GraphicsLayer*);
     virtual void invalidate();
 
     virtual void setNonCompositedContentsNeedDisplay(const WebCore::IntRect&);

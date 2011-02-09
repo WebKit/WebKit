@@ -43,12 +43,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<LayerTreeHostMac> LayerTreeHostMac::create(WebPage* webPage, GraphicsLayer* graphicsLayer)
+PassRefPtr<LayerTreeHostMac> LayerTreeHostMac::create(WebPage* webPage)
 {
-    return adoptRef(new LayerTreeHostMac(webPage, graphicsLayer));
+    return adoptRef(new LayerTreeHostMac(webPage));
 }
 
-LayerTreeHostMac::LayerTreeHostMac(WebPage* webPage, GraphicsLayer* graphicsLayer)
+LayerTreeHostMac::LayerTreeHostMac(WebPage* webPage)
     : LayerTreeHost(webPage)
     , m_isValid(true)
 {
@@ -75,9 +75,6 @@ LayerTreeHostMac::LayerTreeHostMac(WebPage* webPage, GraphicsLayer* graphicsLaye
 
     m_rootLayer->addChild(m_nonCompositedContentLayer.get());
 
-    // Add the accelerated layer tree hierarchy.
-    m_nonCompositedContentLayer->addChild(graphicsLayer);
-    
     WKCARemoteLayerClientSetLayer(m_remoteLayerClient.get(), m_rootLayer->platformLayer());
 
     if (m_webPage->hasPageOverlay())
@@ -117,6 +114,16 @@ void LayerTreeHostMac::scheduleLayerFlush()
     m_flushPendingLayerChangesRunLoopObserver.adoptCF(CFRunLoopObserverCreate(0, kCFRunLoopBeforeWaiting | kCFRunLoopExit, true, runLoopOrder, flushPendingLayerChangesRunLoopObserverCallback, &context));
 
     CFRunLoopAddObserver(currentRunLoop, m_flushPendingLayerChangesRunLoopObserver.get(), kCFRunLoopCommonModes);
+}
+
+void LayerTreeHostMac::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
+{
+    ASSERT(graphicsLayer);
+
+    m_nonCompositedContentLayer->removeAllChildren();
+
+    // Add the accelerated layer tree hierarchy.
+    m_nonCompositedContentLayer->addChild(graphicsLayer);
 }
 
 void LayerTreeHostMac::invalidate()

@@ -1,3 +1,46 @@
+2011-02-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Assertion failure !isInAcceleratedCompositingMode() in DrawingAreaProxyImpl::incorporateUpdate()
+        https://bugs.webkit.org/show_bug.cgi?id=54046
+        <rdar://problem/8973960>
+
+        DrawingAreaImpl::setRootCompositingLayer can be called with a new layer even when already
+        in accelerated compositing mode. Similarly, it can be called with a null layer even when not
+        in accelerated compositing mode. Make the drawing area and layer tree host handle both these cases.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::setRootCompositingLayer):
+        Only call enterAcceleratedCompositingMode if there is no layer tree host, otherwise
+        just call LayerTreeHost::setRootCompositingLayer.
+
+        (WebKit::DrawingAreaImpl::setSize):
+        Add an assert.
+
+        (WebKit::DrawingAreaImpl::enterAcceleratedCompositingMode):
+        Assert that we don't have a layer tree host.
+
+        (WebKit::DrawingAreaImpl::exitAcceleratedCompositingMode):
+        Assert that we do have a layer tree host.
+
+        (WebKit::DrawingAreaImpl::display):
+        If the call to display caused the page to enter accelerated compositing mode, we don't
+        want to send back an Update message.
+
+        * WebProcess/WebPage/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::create):
+        * WebProcess/WebPage/LayerTreeHost.h:
+        Create no longer takes a graphics layer.
+
+        * WebProcess/WebPage/mac/LayerTreeHostMac.mm:
+        (WebKit::LayerTreeHostMac::create):
+        (WebKit::LayerTreeHostMac::LayerTreeHostMac):
+        Create no longer takes a graphics layer.
+        
+        (WebKit::LayerTreeHostMac::setRootCompositingLayer):
+        Set the new root compositing layer.
+
 2011-02-08  Adam Roben  <aroben@apple.com>
 
         Implement WorkQueue::scheduleWorkAfterDelay on Windows

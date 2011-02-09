@@ -38,10 +38,10 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<LayerTreeHost> LayerTreeHost::create(WebPage* webPage, GraphicsLayer* graphicsLayer)
+PassRefPtr<LayerTreeHost> LayerTreeHost::create(WebPage* webPage)
 {
 #if PLATFORM(MAC)
-    return LayerTreeHostMac::create(webPage, graphicsLayer);
+    return LayerTreeHostMac::create(webPage);
 #endif
 
     return 0;

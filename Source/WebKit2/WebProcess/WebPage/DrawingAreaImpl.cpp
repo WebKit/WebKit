@@ -174,10 +174,21 @@ void DrawingAreaImpl::detachCompositingContext()
 
 void DrawingAreaImpl::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
 {
-    if (graphicsLayer)
-        enterAcceleratedCompositingMode(graphicsLayer);
-    else
-        exitAcceleratedCompositingMode();
+    if (graphicsLayer) {
+        if (!m_layerTreeHost) {
+            // We're actually entering accelerated compositing mode.
+            enterAcceleratedCompositingMode(graphicsLayer);
+        } else {
+            // We're already in accelerated compositing mode, but the root compositing layer changed.
+            m_layerTreeHost->setRootCompositingLayer(graphicsLayer);
+        }
+    } else {
+        if (m_layerTreeHost) {
+            // We're exiting accelerated compositing mode.
+            exitAcceleratedCompositingMode();
+            ASSERT(!m_layerTreeHost);
+        }
+    }
 }
 
 void DrawingAreaImpl::scheduleCompositingLayerSync()
@@ -219,7 +230,10 @@ void DrawingAreaImpl::setSize(const WebCore::IntSize& size, const WebCore::IntSi
         updateInfo.viewSize = m_webPage->size();
     else {
         m_dirtyRegion.unite(m_webPage->bounds());
+
+        // The display here should not cause layout to happen, so we can't enter accelerated compositing mode here.
         display(updateInfo);
+        ASSERT(!m_layerTreeHost);
     }
 
     m_webPage->send(Messages::DrawingAreaProxy::DidSetSize(generateSequenceNumber(), updateInfo, layerTreeContext));
@@ -260,10 +274,10 @@ void DrawingAreaImpl::resumePainting()
 
 void DrawingAreaImpl::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLayer)
 {
-    if (m_layerTreeHost)
-        m_layerTreeHost->invalidate();
+    ASSERT(!m_layerTreeHost);
 
-    m_layerTreeHost = LayerTreeHost::create(m_webPage, graphicsLayer);
+    m_layerTreeHost = LayerTreeHost::create(m_webPage);
+    m_layerTreeHost->setRootCompositingLayer(graphicsLayer);
     
     // Non-composited content will now be handled exclusively by the layer tree host.
     m_dirtyRegion = Region();
@@ -278,10 +292,10 @@ void DrawingAreaImpl::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLay
 
 void DrawingAreaImpl::exitAcceleratedCompositingMode()
 {
-    if (m_layerTreeHost) {
-        m_layerTreeHost->invalidate();
-        m_layerTreeHost = nullptr;
-    }
+    ASSERT(m_layerTreeHost);
+
+    m_layerTreeHost->invalidate();
+    m_layerTreeHost = nullptr;
 
     if (m_inSetSize)
         return;
@@ -330,6 +344,12 @@ void DrawingAreaImpl::display()
 
     UpdateInfo updateInfo;
     display(updateInfo);
+
+    if (m_layerTreeHost) {
+        // The call to update caused layout which turned on accelerated compositing.
+        // Don't send an Update message in this case.
+        return;
+    }
 
     m_webPage->send(Messages::DrawingAreaProxy::Update(generateSequenceNumber(), updateInfo));
     m_isWaitingForDidUpdate = true;
