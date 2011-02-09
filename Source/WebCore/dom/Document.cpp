@@ -1102,7 +1102,7 @@ void Document::setContent(const String& content)
     open();
     m_parser->append(content);
     m_parser->finish();
-    close();
+    explicitClose();
 }
 
 // FIXME: We need to discuss the DOM API here at some point. Ideas:
@@ -1911,6 +1911,8 @@ void Document::open(Document* ownerDocument)
 
     removeAllEventListeners();
     implicitOpen();
+    if (ScriptableDocumentParser* parser = scriptableDocumentParser())
+        parser->setWasCreatedByScript(true);
 
     if (DOMWindow* domWindow = this->domWindow())
         domWindow->removeAllEventListeners();
@@ -1929,14 +1931,15 @@ void Document::detachParser()
 
 void Document::cancelParsing()
 {
-    if (m_parser) {
-        // We have to clear the parser to avoid possibly triggering
-        // the onload handler when closing as a side effect of a cancel-style
-        // change, such as opening a new document or closing the window while
-        // still parsing
-        detachParser();
-        close();
-    }
+    if (!m_parser)
+        return;
+
+    // We have to clear the parser to avoid possibly triggering
+    // the onload handler when closing as a side effect of a cancel-style
+    // change, such as opening a new document or closing the window while
+    // still parsing
+    detachParser();
+    explicitClose();
 }
 
 void Document::implicitOpen()
@@ -2004,18 +2007,28 @@ HTMLHeadElement* Document::head()
 
 void Document::close()
 {
-    Frame* frame = this->frame();
-    if (frame) {
-        // This code calls implicitClose() if all loading has completed.
-        FrameLoader* frameLoader = frame->loader();
-        frameLoader->writer()->endIfNotLoadingMainResource();
-        frameLoader->checkCompleted();
-    } else {
+    // FIXME: We should follow the specification more closely:
+    //        http://www.whatwg.org/specs/web-apps/current-work/#dom-document-close
+
+    if (!scriptableDocumentParser() || !scriptableDocumentParser()->wasCreatedByScript())
+        return;
+
+    explicitClose();
+}
+
+void Document::explicitClose()
+{
+    if (!m_frame) {
         // Because we have no frame, we don't know if all loading has completed,
         // so we just call implicitClose() immediately. FIXME: This might fire
         // the load event prematurely <http://bugs.webkit.org/show_bug.cgi?id=14568>.
         implicitClose();
+        return;
     }
+
+    // This code calls implicitClose() if all loading has completed.
+    m_frame->loader()->writer()->endIfNotLoadingMainResource();
+    m_frame->loader()->checkCompleted();
 }
 
 void Document::implicitClose()
@@ -2843,8 +2856,7 @@ void Document::removePendingSheet()
 
     styleSelectorChanged(RecalcStyleImmediately);
 
-    ScriptableDocumentParser* parser = scriptableDocumentParser();
-    if (parser)
+    if (ScriptableDocumentParser* parser = scriptableDocumentParser())
         parser->executeScriptsWaitingForStylesheets();
 
     if (m_gotoAnchorNeededAfterStylesheetsLoad && view())

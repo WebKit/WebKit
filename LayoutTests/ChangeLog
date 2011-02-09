@@ -1,3 +1,26 @@
+2011-02-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        document.close shouldn't affect non-script-created parsers
+        https://bugs.webkit.org/show_bug.cgi?id=53689
+
+        Tests for various cases involving document.open/write/close.  Not all
+        of them are related to this patch, but they were helpful to me in
+        working through this patch, so I've added them in case they're useful
+        in the future.
+
+        * fast/frames/document-write-in-iframe-onload-3-expected.txt: Added.
+        * fast/frames/document-write-in-iframe-onload-3.html: Added.
+        * fast/parser/iframe-onload-document-close-with-external-script-2-expected.txt: Added.
+        * fast/parser/iframe-onload-document-close-with-external-script-2.html: Added.
+        * fast/parser/iframe-onload-document-close-with-external-script-3-expected.txt: Added.
+        * fast/parser/iframe-onload-document-close-with-external-script-3.html: Added.
+        * fast/parser/iframe-onload-document-close-with-external-script-expected.txt: Added.
+        * fast/parser/iframe-onload-document-close-with-external-script.html: Added.
+        * fast/parser/setTimeout-open-expected.txt: Added.
+        * fast/parser/setTimeout-open.html: Added.
+
 2011-02-09  Martin Robinson  <mrobinson@igalia.com>
 
         Import the last set of GTK+ baselines in the fast directory.

@@ -276,7 +276,12 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
 
 bool HTMLDocumentParser::hasInsertionPoint()
 {
-    return m_input.hasInsertionPoint();
+    // FIXME: The wasCreatedByScript() branch here might not be fully correct.
+    //        Our model of the EOF character differs slightly from the one in
+    //        the spec because our treatment is uniform between network-sourced
+    //        and script-sourced input streams whereas the spec treats them
+    //        differently.
+    return m_input.hasInsertionPoint() || (wasCreatedByScript() && !m_input.haveSeenEndOfFile());
 }
 
 void HTMLDocumentParser::insert(const SegmentedString& source)

@@ -559,8 +559,16 @@ public:
 
     void open(Document* ownerDocument = 0);
     void implicitOpen();
+
+    // close() is the DOM API document.close()
     void close();
+    // In some situations (see the code), we ignore document.close().
+    // explicitClose() bypass these checks and actually tries to close the
+    // input stream.
+    void explicitClose();
+    // implicitClose() actually does the work of closing the input stream.
     void implicitClose();
+
     void cancelParsing();
 
     void write(const SegmentedString& text, Document* ownerDocument = 0);

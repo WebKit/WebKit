@@ -47,11 +47,17 @@ public:
     virtual int lineNumber() const = 0;
     virtual TextPosition0 textPosition() const = 0;
 
+    void setWasCreatedByScript(bool wasCreatedByScript) { m_wasCreatedByScript = wasCreatedByScript; }
+    bool wasCreatedByScript() const { return m_wasCreatedByScript; }
+
 protected:
     explicit ScriptableDocumentParser(Document*);
 
 private:
     virtual ScriptableDocumentParser* asScriptableDocumentParser() { return this; }
+
+    // http://www.whatwg.org/specs/web-apps/current-work/#script-created-parser
+    bool m_wasCreatedByScript;
 };
 
 }

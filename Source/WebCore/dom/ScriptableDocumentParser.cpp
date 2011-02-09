@@ -30,6 +30,7 @@ namespace WebCore {
 
 ScriptableDocumentParser::ScriptableDocumentParser(Document* document)
     : DecodedDataDocumentParser(document)
+    , m_wasCreatedByScript(false)
 {
 }
 

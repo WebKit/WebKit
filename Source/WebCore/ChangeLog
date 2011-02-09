@@ -1,3 +1,49 @@
+2011-02-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        document.close shouldn't affect non-script-created parsers
+        https://bugs.webkit.org/show_bug.cgi?id=53689
+
+        Tests: fast/frames/document-write-in-iframe-onload-3.html
+               fast/parser/iframe-onload-document-close-with-external-script-2.html
+               fast/parser/iframe-onload-document-close-with-external-script-3.html
+               fast/parser/iframe-onload-document-close-with-external-script.html
+               fast/parser/setTimeout-open.html
+
+        Move our implementation of document.close closer to the spec by
+        introducing the notion of a script-created parser.  This area of our
+        code is somewhat hairy.  It might take a few more iterations before we
+        fully come up to spec.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setContent):
+        (WebCore::Document::open):
+        (WebCore::Document::cancelParsing):
+        (WebCore::Document::close):
+            - Over time, this method should converge to the spec.
+        (WebCore::Document::explicitClose):
+            - I'm not in love with this name.  Somehow we want to differentiate
+              between Document closing itself and the document.close DOM
+              method.
+        (WebCore::Document::removePendingSheet):
+        * dom/Document.h:
+        * dom/ScriptableDocumentParser.cpp:
+        (WebCore::ScriptableDocumentParser::ScriptableDocumentParser):
+        * dom/ScriptableDocumentParser.h:
+        (WebCore::ScriptableDocumentParser::setWasCreatedByScript):
+        (WebCore::ScriptableDocumentParser::wasCreatedByScript):
+            - General nonsense to keep track of whether the parser was created
+              by script.
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::hasInsertionPoint):
+            - I'm not sure whether this part of the change is 100% correct.  I
+              think our notion of the EOF character might be subtly different
+              from the notion in the spec.
+        * html/parser/HTMLInputStream.h:
+        (WebCore::HTMLInputStream::hasInsertionPoint):
+            - Remove FIXME because we're fixing that!
+
 2011-02-09  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by James Robinson.

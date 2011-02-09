@@ -67,17 +67,7 @@ public:
 
     bool hasInsertionPoint() const
     {
-        if (&m_first != m_last)
-            return true;
-        if (!haveSeenEndOfFile()) {
-            // FIXME: Somehow we need to understand the difference between
-            // input streams that are coming off the network and streams that
-            // were created with document.open(). In the later case, we always
-            // have an isertion point at the end of the stream until someone
-            // calls document.close().
-            return true;
-        }
-        return false;
+        return &m_first != m_last;
     }
 
     void markEndOfFile()
