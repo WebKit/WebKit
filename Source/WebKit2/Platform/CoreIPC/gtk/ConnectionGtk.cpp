@@ -99,7 +99,6 @@ void Connection::platformInitialize(Identifier identifier)
     m_pendingBytes = 0;
     m_readBuffer.resize(initialMessageBufferSize);
     m_socket = identifier;
-    m_isConnected = true;
 }
 
 void Connection::platformInvalidate()
@@ -171,6 +170,8 @@ bool Connection::open()
 {
     int flags = fcntl(m_socket, F_GETFL, 0);
     fcntl(m_socket, F_SETFL, flags | O_NONBLOCK);
+
+    m_isConnected = true;
 
     // Register callbacks for connection termination and input data on the WorkQueue.
     m_connectionQueue.registerEventSourceHandler(m_socket, (G_IO_HUP | G_IO_ERR), WorkItem::create(this, &Connection::connectionDidClose));

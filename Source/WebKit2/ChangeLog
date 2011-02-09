@@ -2,6 +2,21 @@
 
         Reviewed by Martin Robinson.
 
+        [GTK] Fix after r77874, m_isConnected is initialized before the
+        socket is opened
+        https://bugs.webkit.org/show_bug.cgi?id=54011
+
+        Fixed connection breakage after r77874, we have to wait until open
+        the socket to open the connection.
+
+        * Platform/CoreIPC/gtk/ConnectionGtk.cpp:
+        (CoreIPC::Connection::platformInitialize):
+        (CoreIPC::Connection::open):
+
+2011-02-08  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         [WK2] LayerTreeContext is used outside the ACCELERATED_COMPOSITING
         guards but not defined in DrawingAreaProxy.h
         https://bugs.webkit.org/show_bug.cgi?id=54009
