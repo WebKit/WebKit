@@ -21,6 +21,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
+import sys
+
 types = {
     "wordchar": { "UseTable" : True, "data": ['_', ('0','9'), ('A', 'Z'), ('a','z')]},
     "nonwordchar": { "UseTable" : True, "Inverse": "wordchar", "data": ['`', (0, ord('0') - 1), (ord('9') + 1, ord('A') - 1), (ord('Z') + 1, ord('_') - 1), (ord('z') + 1, 0xffff)]},
@@ -107,6 +109,12 @@ for name, classes in types.items():
     function += ("}\n\n")
     functions += function
 
-print(arrays)
-print(functions)
+if (len(sys.argv) > 1):
+    f = open(sys.argv[-1], "w")
+    f.write(arrays)
+    f.write(functions)
+    f.close()
+else:
+    print(arrays)
+    print(functions)
 

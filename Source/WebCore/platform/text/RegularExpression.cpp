@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Collabora Ltd.
+ * Copyright (C) 2011 Peter Varga (pvarga@webkit.org), University of Szeged
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,52 +28,48 @@
 #include "config.h"
 #include "RegularExpression.h"
 
+#include <wtf/BumpPointerAllocator.h>
+#include <yarr/Yarr.h>
 #include "Logging.h"
-#include <pcre/pcre.h>
 
 namespace WebCore {
 
 class RegularExpression::Private : public RefCounted<RegularExpression::Private> {
 public:
-    static PassRefPtr<Private> create(const String& pattern, TextCaseSensitivity);
-    ~Private();
+    static PassRefPtr<Private> create(const String& pattern, TextCaseSensitivity caseSensitivity)
+    {
+        return adoptRef(new Private(pattern, caseSensitivity));
+    }
 
-    JSRegExp* regexp() const { return m_regexp; }
-    int lastMatchLength;    
+    int lastMatchLength;
+
+    unsigned m_numSubpatterns;
+    OwnPtr<JSC::Yarr::BytecodePattern> m_regExpByteCode;
 
 private:
-    Private(const String& pattern, TextCaseSensitivity);
-    static JSRegExp* compile(const String& pattern, TextCaseSensitivity);
+    Private(const String& pattern, TextCaseSensitivity caseSensitivity)
+        : lastMatchLength(-1)
+        , m_regExpByteCode(compile(pattern, caseSensitivity))
+        , m_constructionError(0)
+    {
+    }
 
-    JSRegExp* m_regexp;
+    PassOwnPtr<JSC::Yarr::BytecodePattern> compile(const String& patternString, TextCaseSensitivity caseSensitivity)
+    {
+        JSC::Yarr::YarrPattern pattern(JSC::UString(patternString.impl()), (caseSensitivity == TextCaseInsensitive), false, &m_constructionError);
+        if (m_constructionError) {
+            LOG_ERROR("RegularExpression: YARR compile failed with '%s'", m_constructionError);
+            return PassOwnPtr<JSC::Yarr::BytecodePattern>();
+        }
+
+        m_numSubpatterns = pattern.m_numSubpatterns;
+
+        return JSC::Yarr::byteCompile(pattern, &m_regexAllocator);
+    }
+
+    BumpPointerAllocator m_regexAllocator;
+    const char* m_constructionError;
 };
-
-inline JSRegExp* RegularExpression::Private::compile(const String& pattern, TextCaseSensitivity caseSensitivity)
-{
-    const char* errorMessage;
-    JSRegExp* regexp = jsRegExpCompile(pattern.characters(), pattern.length(),
-        caseSensitivity == TextCaseSensitive ? JSRegExpDoNotIgnoreCase : JSRegExpIgnoreCase, JSRegExpSingleLine,
-        0, &errorMessage);
-    if (!regexp)
-        LOG_ERROR("RegularExpression: pcre_compile failed with '%s'", errorMessage);
-    return regexp;
-}
-
-inline RegularExpression::Private::Private(const String& pattern, TextCaseSensitivity caseSensitivity)
-    : lastMatchLength(-1)
-    , m_regexp(compile(pattern, caseSensitivity))
-{
-}
-
-inline PassRefPtr<RegularExpression::Private> RegularExpression::Private::create(const String& pattern, TextCaseSensitivity caseSensitivity)
-{
-    return adoptRef(new Private(pattern, caseSensitivity));
-}
-
-RegularExpression::Private::~Private()
-{
-    jsRegExpFree(m_regexp);
-}
 
 RegularExpression::RegularExpression(const String& pattern, TextCaseSensitivity caseSensitivity)
     : d(Private::create(pattern, caseSensitivity))
@@ -96,28 +93,36 @@ RegularExpression& RegularExpression::operator=(const RegularExpression& re)
 
 int RegularExpression::match(const String& str, int startFrom, int* matchLength) const
 {
-    if (!d->regexp())
+    if (!d->m_regExpByteCode)
         return -1;
 
     if (str.isNull())
         return -1;
 
-    // First 2 offsets are start and end offsets; 3rd entry is used internally by pcre
-    static const size_t maxOffsets = 3;
-    int offsets[maxOffsets];
-    int result = jsRegExpExecute(d->regexp(), str.characters(), str.length(), startFrom, offsets, maxOffsets);
+    int offsetVectorSize = (d->m_numSubpatterns + 1) * 2;
+    int* offsetVector;
+    Vector<int, 32> nonReturnedOvector;
+
+    nonReturnedOvector.resize(offsetVectorSize);
+    offsetVector = nonReturnedOvector.data();
+
+    ASSERT(offsetVector);
+    for (unsigned j = 0, i = 0; i < d->m_numSubpatterns + 1; j += 2, i++)
+        offsetVector[j] = -1;
+
+    int result = JSC::Yarr::interpret(d->m_regExpByteCode.get(), str.characters(), startFrom, str.length(), offsetVector);
+    ASSERT(result >= -1);
+
     if (result < 0) {
-        if (result != JSRegExpErrorNoMatch)
-            LOG_ERROR("RegularExpression: pcre_exec() failed with result %d", result);
         d->lastMatchLength = -1;
         return -1;
     }
 
-    // 1 means 1 match; 0 means more than one match. First match is recorded in offsets.
-    d->lastMatchLength = offsets[1] - offsets[0];
+    // 1 means 1 match; 0 means more than one match. First match is recorded in offsetVector.
+    d->lastMatchLength = offsetVector[1] - offsetVector[0];
     if (matchLength)
         *matchLength = d->lastMatchLength;
-    return offsets[0];
+    return offsetVector[0];
 }
 
 int RegularExpression::searchRev(const String& str) const

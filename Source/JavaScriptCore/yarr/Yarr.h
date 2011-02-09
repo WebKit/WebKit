@@ -29,7 +29,6 @@
 #define Yarr_h
 
 #include "YarrInterpreter.h"
-#include "YarrJIT.h"
 #include "YarrPattern.h"
 
 namespace JSC { namespace Yarr {
@@ -60,11 +59,6 @@ enum JSRegExpResult {
 
 PassOwnPtr<BytecodePattern> byteCompile(YarrPattern&, BumpPointerAllocator*);
 int interpret(BytecodePattern*, const UChar* input, unsigned start, unsigned length, int* output);
-
-#if ENABLE(YARR_JIT)
-void jitCompile(YarrPattern&, JSGlobalData*, YarrCodeBlock& jitObject);
-int execute(YarrCodeBlock& jitObject, const UChar* input, unsigned start, unsigned length, int* output);
-#endif
 
 } } // namespace JSC::Yarr
 

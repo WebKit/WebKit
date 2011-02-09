@@ -26,6 +26,7 @@ EXPORTS
     ??0UString@JSC@@QAE@PBDI@Z
     ??0UString@JSC@@QAE@PB_WI@Z
     ??0WTFThreadData@WTF@@QAE@XZ
+    ??0YarrPattern@Yarr@JSC@@QAE@ABVUString@2@_N1PAPBD@Z
     ??1ClientData@JSGlobalData@JSC@@UAE@XZ
     ??1Collator@WTF@@QAE@XZ
     ??1Debugger@JSC@@UAE@XZ
@@ -61,6 +62,7 @@ EXPORTS
     ?attach@Debugger@JSC@@QAEXPAVJSGlobalObject@2@@Z
     ?broadcast@ThreadCondition@WTF@@QAEXXZ
     ?bufferLengthForStringDecimal@DecimalNumber@WTF@@QBEIXZ
+    ?byteCompile@Yarr@JSC@@YA?AV?$PassOwnPtr@UBytecodePattern@Yarr@JSC@@@WTF@@AAUYarrPattern@12@PAVBumpPointerAllocator@4@@Z
     ?byteSize@SourceProviderCache@JSC@@QBEIXZ
     ?calculateDSTOffset@WTF@@YANNN@Z
     ?calculateStringHashFromUTF8@Unicode@WTF@@YAIPBD0AAI@Z
@@ -207,6 +209,7 @@ EXPORTS
     ?initializeMainThread@WTF@@YAXXZ
     ?initializeThreading@JSC@@YAXXZ
     ?initializeThreading@WTF@@YAXXZ
+    ?interpret@Yarr@JSC@@YAHPAUBytecodePattern@12@PB_WIIPAH@Z
     ?isAccessorDescriptor@PropertyDescriptor@JSC@@QBE_NXZ
     ?isBusy@Heap@JSC@@QAE_NXZ
     ?isDataDescriptor@PropertyDescriptor@JSC@@QBE_NXZ
@@ -218,9 +221,6 @@ EXPORTS
     ?isVariableObject@JSVariableObject@JSC@@UBE_NXZ
     ?jsNumberCell@JSC@@YA?AVJSValue@1@PAVExecState@1@N@Z
     ?jsOwnedString@JSC@@YAPAVJSString@1@PAVJSGlobalData@1@ABVUString@1@@Z
-    ?jsRegExpCompile@@YAPAUJSRegExp@@PB_WHW4JSRegExpIgnoreCaseOption@@W4JSRegExpMultilineOption@@PAIPAPBD@Z
-    ?jsRegExpExecute@@YAHPBUJSRegExp@@PB_WHHPAHH@Z
-    ?jsRegExpFree@@YAXPAUJSRegExp@@@Z
     ?jsString@JSC@@YAPAVJSString@1@PAVJSGlobalData@1@ABVUString@1@@Z
     ?length@CString@WTF@@QBEIXZ
     ?lock@JSLock@JSC@@SAXW4JSLockBehavior@2@@Z

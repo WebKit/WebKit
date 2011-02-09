@@ -507,7 +507,7 @@
             'wtf/win/MainThreadWin.cpp',
             'wtf/win/OwnPtrWin.cpp',
             'wtf/wx/MainThreadWx.cpp',
-            'yarr/Yarr.h'
+            'yarr/Yarr.h',
             'yarr/YarrInterpreter.cpp',
             'yarr/YarrInterpreter.h',
             'yarr/YarrJIT.cpp',

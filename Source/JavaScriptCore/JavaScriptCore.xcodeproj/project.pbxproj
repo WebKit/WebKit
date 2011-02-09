@@ -196,7 +196,7 @@
 		41359CF70FDD89CB00206180 /* DateMath.h in Headers */ = {isa = PBXBuildFile; fileRef = 41359CF50FDD89CB00206180 /* DateMath.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4409D8470FAF80A200523B87 /* OwnPtrCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 440B7AED0FAF7FCB0073323E /* OwnPtrCommon.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		44DD48530FAEA85000D6B4EB /* PassOwnPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 44DD48520FAEA85000D6B4EB /* PassOwnPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		451539B912DC994500EF7AC4 /* Yarr.h in Headers */ = {isa = PBXBuildFile; fileRef = 451539B812DC994500EF7AC4 /* Yarr.h */; };
+		451539B912DC994500EF7AC4 /* Yarr.h in Headers */ = {isa = PBXBuildFile; fileRef = 451539B812DC994500EF7AC4 /* Yarr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		511FC4C9117EE28700425272 /* MD5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511FC4C7117EE23D00425272 /* MD5.cpp */; };
 		511FC4CB117EE2A800425272 /* MD5.h in Headers */ = {isa = PBXBuildFile; fileRef = 511FC4CA117EE2A800425272 /* MD5.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5135FAF212D26ACE003C083B /* Decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 5135FAD512D26856003C083B /* Decoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -232,12 +232,12 @@
 		86704B4212DB8A8100A9FE7B /* YarrSyntaxChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86704B4012DB8A8100A9FE7B /* YarrSyntaxChecker.cpp */; };
 		86704B4312DB8A8100A9FE7B /* YarrSyntaxChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 86704B4112DB8A8100A9FE7B /* YarrSyntaxChecker.h */; };
 		86704B8412DBA33700A9FE7B /* YarrInterpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86704B7D12DBA33700A9FE7B /* YarrInterpreter.cpp */; };
-		86704B8512DBA33700A9FE7B /* YarrInterpreter.h in Headers */ = {isa = PBXBuildFile; fileRef = 86704B7E12DBA33700A9FE7B /* YarrInterpreter.h */; };
+		86704B8512DBA33700A9FE7B /* YarrInterpreter.h in Headers */ = {isa = PBXBuildFile; fileRef = 86704B7E12DBA33700A9FE7B /* YarrInterpreter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86704B8612DBA33700A9FE7B /* YarrJIT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86704B7F12DBA33700A9FE7B /* YarrJIT.cpp */; };
-		86704B8712DBA33700A9FE7B /* YarrJIT.h in Headers */ = {isa = PBXBuildFile; fileRef = 86704B8012DBA33700A9FE7B /* YarrJIT.h */; };
-		86704B8812DBA33700A9FE7B /* YarrParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 86704B8112DBA33700A9FE7B /* YarrParser.h */; };
+		86704B8712DBA33700A9FE7B /* YarrJIT.h in Headers */ = {isa = PBXBuildFile; fileRef = 86704B8012DBA33700A9FE7B /* YarrJIT.h */; settings = {ATTRIBUTES = (); }; };
+		86704B8812DBA33700A9FE7B /* YarrParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 86704B8112DBA33700A9FE7B /* YarrParser.h */; settings = {ATTRIBUTES = (); }; };
 		86704B8912DBA33700A9FE7B /* YarrPattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86704B8212DBA33700A9FE7B /* YarrPattern.cpp */; };
-		86704B8A12DBA33700A9FE7B /* YarrPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = 86704B8312DBA33700A9FE7B /* YarrPattern.h */; };
+		86704B8A12DBA33700A9FE7B /* YarrPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = 86704B8312DBA33700A9FE7B /* YarrPattern.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		868BFA08117CEFD100B908B1 /* AtomicString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 868BFA00117CEFD100B908B1 /* AtomicString.cpp */; };
 		868BFA09117CEFD100B908B1 /* AtomicString.h in Headers */ = {isa = PBXBuildFile; fileRef = 868BFA01117CEFD100B908B1 /* AtomicString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		868BFA0A117CEFD100B908B1 /* AtomicStringImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 868BFA02117CEFD100B908B1 /* AtomicStringImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };

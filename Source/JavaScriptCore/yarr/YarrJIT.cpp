@@ -27,9 +27,7 @@
 #include "YarrJIT.h"
 
 #include "ASCIICType.h"
-#include "JSGlobalData.h"
 #include "LinkBuffer.h"
-#include "MacroAssembler.h"
 #include "Yarr.h"
 
 #if ENABLE(YARR_JIT)
