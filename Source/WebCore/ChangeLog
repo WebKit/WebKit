@@ -1,3 +1,17 @@
+2011-02-09  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: accessibilityShouldUseUniqueId doesn't need to be in the core AX object
+        https://bugs.webkit.org/show_bug.cgi?id=54126
+
+        This is a Mac-only accessibility API concept and doesn't belong in the core AX object.
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::node):
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityShouldUseUniqueId]):
+
 2011-02-09  Nebojsa Ciric  <cira@chromium.org>
 
         Reviewed by Darin Fisher.

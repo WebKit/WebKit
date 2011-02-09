@@ -349,7 +349,6 @@ public:
     virtual void setAccessibleName(String&) { }
     
     virtual Node* node() const { return 0; }
-    bool accessibilityShouldUseUniqueId() const { return true; }
     virtual bool accessibilityIsIgnored() const  { return true; }
 
     virtual int headingLevel() const { return 0; }

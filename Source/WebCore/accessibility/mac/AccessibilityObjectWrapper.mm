@@ -2752,7 +2752,8 @@ static RenderObject* rendererForView(NSView* view)
 
 - (BOOL)accessibilityShouldUseUniqueId
 {
-    return m_object->accessibilityShouldUseUniqueId();
+    // All AX object wrappers should use unique ID's because it's faster within AppKit to look them up.
+    return YES;
 }
 
 // API that AppKit uses for faster access
