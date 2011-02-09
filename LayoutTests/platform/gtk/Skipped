@@ -1387,6 +1387,9 @@ fast/xsl/xslt-missing-namespace-in-xslt.xml
 fast/xsl/xslt-relative-path.xml
 fast/xsl/xslt_unicode.xml
 
+# This port doesn't support v8 i18n extension.
+fast/js/i18n-bindings-locale.html
+
 # Tests in http/ directory
 #   Tests failing
 http/tests/appcache/crash-when-navigating-away-then-back.html

@@ -96,6 +96,9 @@ public:
 
     WEBKIT_API static void enableFileSystem(bool);
     WEBKIT_API static bool isFileSystemEnabled();
+    
+    WEBKIT_API static void enableJavaScriptI18NAPI(bool);
+    WEBKIT_API static bool isJavaScriptI18NAPIEnabled();
 
 private:
     WebRuntimeFeatures();

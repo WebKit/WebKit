@@ -1,3 +1,22 @@
+2011-02-09  Nebojsa Ciric  <cira@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Implements Locale object of JavaScript internationalization API proposal, as an
+        v8 extension. Extension code is hosted in v8 project (src/extensions/experimental/i18n-extension.{cc,h})
+        and in this patch we just provide flags, tests and build rules for chromium port.
+        https://bugs.webkit.org/show_bug.cgi?id=49414
+
+        Test: fast/js/i18n-bindings-locale.html
+
+        * WebCore.gyp/WebCore.gyp:
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::experimentalI18NAPIEnabled):
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setExperimentalI18NAPIEnabled):
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::createNewContext):
+
 2011-02-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

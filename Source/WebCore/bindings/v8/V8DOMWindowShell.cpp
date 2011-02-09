@@ -39,6 +39,7 @@
 #include "FrameLoaderClient.h"
 #include "Page.h"
 #include "PageGroup.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
 #include "ScriptController.h"
@@ -62,6 +63,11 @@
 #include <utility>
 #include <v8-debug.h>
 #include <v8.h>
+
+#if ENABLE(JAVASCRIPT_I18N_API)
+#include <v8/src/extensions/experimental/i18n-extension.h>
+#endif
+
 #include <wtf/Assertions.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/StdLibExtras.h>
@@ -355,6 +361,12 @@ v8::Persistent<v8::Context> V8DOMWindowShell::createNewContext(v8::Handle<v8::Ob
     // Used to avoid sleep calls in unload handlers.
     if (!V8Proxy::registeredExtensionWithV8(DateExtension::get()))
         V8Proxy::registerExtension(DateExtension::get());
+
+#if ENABLE(JAVASCRIPT_I18N_API)
+    // Enables experimental i18n API in V8.
+    if (RuntimeEnabledFeatures::javaScriptI18NAPIEnabled() && !V8Proxy::registeredExtensionWithV8(v8::internal::I18NExtension::get()))
+        V8Proxy::registerExtension(v8::internal::I18NExtension::get());
+#endif
 
     // Dynamically tell v8 about our extensions now.
     const V8Extensions& extensions = V8Proxy::extensions();

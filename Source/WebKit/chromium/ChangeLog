@@ -1,3 +1,18 @@
+2011-02-09  Nebojsa Ciric  <cira@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Implements Locale object of JavaScript internationalization API proposal, as an
+        v8 extension. Extension code is hosted in v8 project (src/extensions/experimental/i18n-extension.{cc,h})
+        and in this patch we just provide flags, tests and build rules for chromium port.
+        https://bugs.webkit.org/show_bug.cgi?id=49414
+
+        * features.gypi:
+        * public/WebRuntimeFeatures.h:
+        * src/WebRuntimeFeatures.cpp:
+        (WebKit::WebRuntimeFeatures::enableExperimentalI18NAPI):
+        (WebKit::WebRuntimeFeatures::isExperimentalI18NAPIEnabled):
+
 2011-02-09  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Shinichiro Hamaji.

@@ -69,6 +69,15 @@ bool RuntimeEnabledFeatures::fileSystemEnabled()
 }
 #endif
 
+#if ENABLE(JAVASCRIPT_I18N_API)
+bool RuntimeEnabledFeatures::isJavaScriptI18NAPIEnabled = false;
+
+bool RuntimeEnabledFeatures::javaScriptI18NAPIEnabled()
+{
+    return isJavaScriptI18NAPIEnabled;
+}
+#endif
+
 #if ENABLE(VIDEO)
 
 bool RuntimeEnabledFeatures::audioEnabled()

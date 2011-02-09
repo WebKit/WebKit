@@ -1,3 +1,38 @@
+2011-02-09  Nebojsa Ciric  <cira@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Implements Locale object of JavaScript internationalization API proposal, as an
+        v8 extension. Extension code is hosted in v8 project (src/extensions/experimental/i18n-extension.{cc,h})
+        and in this patch we just provide flags, tests and build rules for chromium port.
+        https://bugs.webkit.org/show_bug.cgi?id=49414
+
+        * fast/js/i18n-bindings-locale-expected.txt: Added.
+        * fast/js/i18n-bindings-locale.html: Added.
+        * fast/js/script-tests/i18n-bindings-locale.js: Added.
+        (reportResult):
+        (localeTests.this.defaultLocale):
+        (localeTests.this.baseLocale):
+        (localeTests.this.languageScriptLocale):
+        (localeTests.this.languageScriptRegionLocale):
+        (localeTests.this.languageScriptRegionExtensionLocale):
+        (localeTests.this.languageScriptRegionDashUExtensionLocale):
+        (localeTests.this.availableLocales):
+        (localeTests.this.maximizedLocale):
+        (localeTests.this.maximizedLocaleWithExtension):
+        (localeTests.this.minimizedLocale):
+        (localeTests.this.minimizedLocaleWithExtension):
+        (localeTests.this.displayForBaseLocale):
+        (localeTests.this.displayInSameLocale):
+        (localeTests.this.displayInDifferentLocale):
+        (localeTests.this.displayInCyrillicScript):
+        (localeTests.this.displayInHebrewScript):
+        (localeTests):
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-02-09  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, fix a bug in test_expectations.txt.

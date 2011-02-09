@@ -169,6 +169,11 @@ public:
     static void setFileSystemEnabled(bool isEnabled) { isFileSystemEnabled = isEnabled; }
 #endif
 
+#if ENABLE(JAVASCRIPT_I18N_API)
+    static bool javaScriptI18NAPIEnabled();
+    static void setJavaScriptI18NAPIEnabled(bool isEnabled) { isJavaScriptI18NAPIEnabled = isEnabled; }
+#endif
+
 private:
     // Never instantiate.
     RuntimeEnabledFeatures() { }
@@ -192,6 +197,10 @@ private:
 
 #if ENABLE(FILE_SYSTEM)
     static bool isFileSystemEnabled;
+#endif
+
+#if ENABLE(JAVASCRIPT_I18N_API)
+    static bool isJavaScriptI18NAPIEnabled;
 #endif
 };
 

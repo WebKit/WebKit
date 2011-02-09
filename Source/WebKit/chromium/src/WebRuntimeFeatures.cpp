@@ -304,4 +304,20 @@ bool WebRuntimeFeatures::isFileSystemEnabled()
 #endif
 }
 
+void WebRuntimeFeatures::enableJavaScriptI18NAPI(bool enable)
+{
+#if ENABLE(JAVASCRIPT_I18N_API)
+    RuntimeEnabledFeatures::setJavaScriptI18NAPIEnabled(enable);
+#endif
+}
+
+bool WebRuntimeFeatures::isJavaScriptI18NAPIEnabled()
+{
+#if ENABLE(JAVASCRIPT_I18N_API)
+    return RuntimeEnabledFeatures::javaScriptI18NAPIEnabled();
+#else
+    return false;
+#endif
+}
+
 } // namespace WebKit

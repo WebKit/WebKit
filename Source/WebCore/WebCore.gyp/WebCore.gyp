@@ -45,7 +45,9 @@
       },
     },{
       # WebKit is checked out in src/chromium/third_party/WebKit
-      'variables': {'chromium_src_dir': '../../../../..'},
+      'variables': {
+        'chromium_src_dir': '../../../../..',
+      },
     }],
     ['OS == "mac"', {
       'targets': [
@@ -121,6 +123,10 @@
     # If set to 0, doesn't build SVG support, reducing the size of the
     # binary and increasing the speed of gdb.
     'enable_svg%': 1,
+
+    # Use v8 as default JavaScript engine. This makes sure that javascript_engine variable
+    # is set for both inside_chromium_build 0 and 1 cases.
+    'javascript_engine%': 'v8',
 
     'webcore_include_dirs': [
       '../',
@@ -1467,6 +1473,11 @@
           'sources/': [
             ['exclude', 'Win\\.cpp$'],
             ['exclude', '/(Windows|Uniscribe)[^/]*\\.cpp$']
+          ],
+        }],
+        ['javascript_engine=="v8"', {
+          'dependencies': [
+            '<(chromium_src_dir)/v8/src/extensions/experimental/experimental.gyp:i18n_api',
           ],
         }],
       ],
