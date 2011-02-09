@@ -97,7 +97,7 @@ void AccessibilityMenuListPopup::addChildren()
     for (unsigned i = 0; i < length; i++) {
         // The cast to HTMLElement below is safe because the only other possible listItem type
         // would be a WMLElement, but WML builds don't use accessbility features at all.
-        AccessibilityMenuListOption* option = menuListOptionAccessibilityObject(static_cast<HTMLElement*>(listItems[i]));
+        AccessibilityMenuListOption* option = menuListOptionAccessibilityObject(toHTMLElement(listItems[i]));
         if (option) {
             option->setParent(this);
             m_children.append(option);

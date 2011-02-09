@@ -107,7 +107,7 @@ RenderMeter::~RenderMeter()
 
 PassRefPtr<MeterPartElement> RenderMeter::createPart(PseudoId pseudoId)
 {
-    RefPtr<MeterPartElement> element = MeterPartElement::createForPart(static_cast<HTMLElement*>(node()), pseudoId);
+    RefPtr<MeterPartElement> element = MeterPartElement::createForPart(toHTMLElement(node()), pseudoId);
     if (element->renderer())
         addChild(element->renderer());
     return element;

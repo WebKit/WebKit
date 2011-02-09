@@ -611,17 +611,17 @@ void RenderTextControlSingleLine::createSubtreeIfNeeded()
 #if ENABLE(INPUT_SPEECH)
         if (inputElement()->isSpeechEnabled() && !m_speechButton) {
             // Create the speech button element.
-            m_speechButton = InputFieldSpeechButtonElement::create(static_cast<HTMLElement*>(node()));
+            m_speechButton = InputFieldSpeechButtonElement::create(toHTMLElement(node()));
             m_speechButton->attachInnerElement(node(), createSpeechButtonStyle(), renderArena());
         }
 #endif
         bool hasSpinButton = inputElement()->hasSpinButton();
         if (hasSpinButton && !m_innerSpinButton) {
-            m_innerSpinButton = SpinButtonElement::create(static_cast<HTMLElement*>(node()));
+            m_innerSpinButton = SpinButtonElement::create(toHTMLElement(node()));
             m_innerSpinButton->attachInnerElement(node(), createInnerSpinButtonStyle(), renderArena());
         }
         if (hasSpinButton && !m_outerSpinButton) {
-            m_outerSpinButton = SpinButtonElement::create(static_cast<HTMLElement*>(node()));
+            m_outerSpinButton = SpinButtonElement::create(toHTMLElement(node()));
             m_outerSpinButton->attachInnerElement(node(), createOuterSpinButtonStyle(), renderArena());
         }
         return;
@@ -629,18 +629,18 @@ void RenderTextControlSingleLine::createSubtreeIfNeeded()
 
     if (!m_innerBlock) {
         // Create the inner block element
-        m_innerBlock = TextControlInnerElement::create(static_cast<HTMLElement*>(node()));
+        m_innerBlock = TextControlInnerElement::create(toHTMLElement(node()));
         m_innerBlock->attachInnerElement(node(), createInnerBlockStyle(style()), renderArena());
     }
 #if ENABLE(INPUT_SPEECH)
     if (inputElement()->isSpeechEnabled() && !m_speechButton) {
         // Create the speech button element.
-        m_speechButton = InputFieldSpeechButtonElement::create(static_cast<HTMLElement*>(node()));
+        m_speechButton = InputFieldSpeechButtonElement::create(toHTMLElement(node()));
         m_speechButton->attachInnerElement(node(), createSpeechButtonStyle(), renderArena());
     }
 #endif
     if (inputElement()->hasSpinButton() && !m_outerSpinButton) {
-        m_outerSpinButton = SpinButtonElement::create(static_cast<HTMLElement*>(node()));
+        m_outerSpinButton = SpinButtonElement::create(toHTMLElement(node()));
         m_outerSpinButton->attachInnerElement(node(), createOuterSpinButtonStyle(), renderArena());
     }
 

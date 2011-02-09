@@ -164,7 +164,7 @@ static HTMLElement* enclosingDeletableElement(const VisibleSelection& selection)
         return 0;
 
     ASSERT(element->isHTMLElement());
-    return static_cast<HTMLElement*>(element);
+    return toHTMLElement(element);
 }
 
 void DeleteButtonController::respondToChangedSelection(const VisibleSelection& oldSelection)
@@ -263,7 +263,7 @@ void DeleteButtonController::show(HTMLElement* element)
     if (!enabled() || !element || !element->inDocument() || !isDeletableElement(element))
         return;
 
-    if (!m_frame->editor()->shouldShowDeleteInterface(static_cast<HTMLElement*>(element)))
+    if (!m_frame->editor()->shouldShowDeleteInterface(toHTMLElement(element)))
         return;
 
     // we rely on the renderer having current information, so we should update the layout if needed

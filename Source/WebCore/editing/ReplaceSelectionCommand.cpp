@@ -476,7 +476,7 @@ void ReplaceSelectionCommand::negateStyleRulesThatAffectAppearance()
     for (RefPtr<Node> node = m_firstNodeInserted.get(); node; node = node->traverseNextNode()) {
         // FIXME: <rdar://problem/5371536> Style rules that match pasted content can change it's appearance
         if (isStyleSpan(node.get())) {
-            HTMLElement* e = static_cast<HTMLElement*>(node.get());
+            HTMLElement* e = toHTMLElement(node.get());
             // There are other styles that style rules can give to style spans,
             // but these are the two important ones because they'll prevent
             // inserted content from appearing in the right paragraph.
@@ -620,7 +620,7 @@ void ReplaceSelectionCommand::handleStyleSpans()
     if (!sourceDocumentStyleSpan)
         return;
 
-    RefPtr<EditingStyle> sourceDocumentStyle = EditingStyle::create(static_cast<HTMLElement*>(sourceDocumentStyleSpan)->getInlineStyleDecl());
+    RefPtr<EditingStyle> sourceDocumentStyle = EditingStyle::create(toHTMLElement(sourceDocumentStyleSpan)->getInlineStyleDecl());
     ContainerNode* context = sourceDocumentStyleSpan->parentNode();
 
     // If Mail wraps the fragment with a Paste as Quotation blockquote, or if you're pasting into a quoted region,
@@ -657,7 +657,7 @@ void ReplaceSelectionCommand::handleStyleSpans()
         return;
     }
     
-    RefPtr<EditingStyle> copiedRangeStyle = EditingStyle::create(static_cast<HTMLElement*>(copiedRangeStyleSpan)->getInlineStyleDecl());
+    RefPtr<EditingStyle> copiedRangeStyle = EditingStyle::create(toHTMLElement(copiedRangeStyleSpan)->getInlineStyleDecl());
 
     // We're going to put sourceDocumentStyleSpan's non-redundant styles onto copiedRangeStyleSpan,
     // as long as they aren't overridden by ones on copiedRangeStyleSpan.
@@ -696,7 +696,7 @@ void ReplaceSelectionCommand::copyStyleToChildren(Node* parentNode, const CSSMut
             // In this case, put a span tag around the child node.
             RefPtr<Node> newNode = parentNode->cloneNode(false);
             ASSERT(newNode->hasTagName(spanTag));
-            HTMLElement* newSpan = static_cast<HTMLElement*>(newNode.get());
+            HTMLElement* newSpan = toHTMLElement(newNode.get());
             setNodeAttribute(newSpan, styleAttr, parentStyle->cssText());
             insertNodeAfter(newSpan, childNode);
             ExceptionCode ec = 0;
@@ -707,7 +707,7 @@ void ReplaceSelectionCommand::copyStyleToChildren(Node* parentNode, const CSSMut
             // Copy the style attribute and merge them into the child node.  We don't want to override
             // existing styles, so don't clobber on merge.
             RefPtr<CSSMutableStyleDeclaration> newStyle = parentStyle->copy();
-            HTMLElement* childElement = static_cast<HTMLElement*>(childNode);
+            HTMLElement* childElement = toHTMLElement(childNode);
             RefPtr<CSSMutableStyleDeclaration> existingStyles = childElement->getInlineStyleDecl()->copy();
             existingStyles->merge(newStyle.get(), false);
             setNodeAttribute(childElement, styleAttr, existingStyles->cssText());

@@ -1558,7 +1558,7 @@ void Editor::setBaseWritingDirection(WritingDirection direction)
     if (focusedNode && (focusedNode->hasTagName(textareaTag) || (focusedNode->hasTagName(inputTag) && static_cast<HTMLInputElement*>(focusedNode)->isTextField()))) {
         if (direction == NaturalWritingDirection)
             return;
-        static_cast<HTMLElement*>(focusedNode)->setAttribute(dirAttr, direction == LeftToRightWritingDirection ? "ltr" : "rtl");
+        toHTMLElement(focusedNode)->setAttribute(dirAttr, direction == LeftToRightWritingDirection ? "ltr" : "rtl");
         frame()->document()->updateStyleIfNeeded();
         return;
     }

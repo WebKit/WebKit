@@ -1548,7 +1548,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
                 // effect on plugins (which matches Firefox).
                 bool overPluginElement = false;
                 if (mev.targetNode() && mev.targetNode()->isHTMLElement()) {
-                    HTMLElement* el = static_cast<HTMLElement*>(mev.targetNode());
+                    HTMLElement* el = toHTMLElement(mev.targetNode());
                     overPluginElement = el->hasTagName(appletTag) || el->hasTagName(objectTag) || el->hasTagName(embedTag);
                 }
                 if (!overPluginElement) {

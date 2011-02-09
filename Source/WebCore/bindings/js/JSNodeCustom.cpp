@@ -169,7 +169,7 @@ static ALWAYS_INLINE JSValue createWrapperInline(ExecState* exec, JSDOMGlobalObj
     switch (node->nodeType()) {
         case Node::ELEMENT_NODE:
             if (node->isHTMLElement())
-                wrapper = createJSHTMLWrapper(exec, globalObject, static_cast<HTMLElement*>(node));
+                wrapper = createJSHTMLWrapper(exec, globalObject, toHTMLElement(node));
 #if ENABLE(SVG)
             else if (node->isSVGElement())
                 wrapper = createJSSVGWrapper(exec, globalObject, static_cast<SVGElement*>(node));

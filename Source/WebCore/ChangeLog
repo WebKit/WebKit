@@ -1,3 +1,95 @@
+2011-02-09  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Replace static_cast<HTMLElement*> with toHTMLElement
+        https://bugs.webkit.org/show_bug.cgi?id=54117
+
+        No new tests since no new functionality was introduced.
+
+        * accessibility/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::addChildren):
+        * accessibility/AccessibilityMenuListPopup.cpp:
+        (WebCore::AccessibilityMenuListPopup::addChildren):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::accessibleNameForNode):
+        (WebCore::AccessibilityRenderObject::accessibilityDescription):
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_get_name):
+        (webkit_accessible_get_description):
+        * bindings/gobject/WebKitDOMBinding.cpp:
+        (WebKit::createWrapper):
+        (WebKit::kit):
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSHTMLFrameSetElementCustom.cpp:
+        (WebCore::JSHTMLFrameSetElement::nameGetter):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::createWrapperInline):
+        * bindings/v8/custom/V8ElementCustom.cpp:
+        (WebCore::toV8):
+        * dom/Document.cpp:
+        (WebCore::Document::body):
+        * dom/Element.cpp:
+        (WebCore::Element::deprecatedCreateContextualFragment):
+        * dom/Range.cpp:
+        (WebCore::Range::createContextualFragment):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyBlockStyle):
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        (WebCore::ApplyStyleCommand::splitAncestorsWithUnicodeBidi):
+        (WebCore::ApplyStyleCommand::applyInlineStyleToNodeRange):
+        (WebCore::ApplyStyleCommand::removeStyleFromRunBeforeApplyingStyle):
+        (WebCore::ApplyStyleCommand::highestAncestorWithConflictingInlineStyle):
+        (WebCore::ApplyStyleCommand::applyInlineStyleToPushDown):
+        (WebCore::ApplyStyleCommand::pushDownInlineStyleAroundNode):
+        (WebCore::ApplyStyleCommand::removeInlineStyle):
+        (WebCore::ApplyStyleCommand::shouldSplitTextElement):
+        (WebCore::ApplyStyleCommand::addInlineStyleIfNeeded):
+        * editing/DeleteButtonController.cpp:
+        (WebCore::enclosingDeletableElement):
+        (WebCore::DeleteButtonController::show):
+        * editing/Editor.cpp:
+        (WebCore::Editor::setBaseWritingDirection):
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::mergeWithNeighboringLists):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::negateStyleRulesThatAffectAppearance):
+        (WebCore::ReplaceSelectionCommand::handleStyleSpans):
+        (WebCore::ReplaceSelectionCommand::copyStyleToChildren):
+        * editing/SelectionController.cpp:
+        (WebCore::scanForForm):
+        (WebCore::SelectionController::currentForm):
+        * editing/htmlediting.cpp:
+        (WebCore::enclosingList):
+        (WebCore::enclosingListChild):
+        (WebCore::embeddedSublist):
+        (WebCore::appendedSublist):
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::appendElement):
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::checkForNameMatch):
+        (WebCore::HTMLCollection::updateNameCache):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setOuterHTML):
+        (WebCore::HTMLElement::shadowAncestorOwnerForm):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::formElementIndex):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setOption):
+        (WebCore::HTMLSelectElement::setLength):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getOuterHTML):
+        (WebCore::InspectorDOMAgent::setOuterHTML):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        * rendering/RenderMeter.cpp:
+        (WebCore::RenderMeter::createPart):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::createSubtreeIfNeeded):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::createSubtreeIfNeeded):
+
 2011-02-09  Mike Reed  <reed@google.com>
 
         Reviewed by Kenneth Russell.

@@ -203,7 +203,7 @@ PassRefPtr<HTMLElement> createHTMLElement(Document*, const AtomicString&);
 
 HTMLElement* enclosingList(Node*);
 HTMLElement* outermostEnclosingList(Node*, Node* rootList = 0);
-HTMLElement* enclosingListChild(Node*);
+Node* enclosingListChild(Node*);
 
 // -------------------------------------------------------------------------
 // Element

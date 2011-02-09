@@ -1700,7 +1700,7 @@ static HTMLFormElement* scanForForm(Node* start)
     for (Node* node = start; node; node = node->traverseNextNode()) {
         if (node->hasTagName(formTag))
             return static_cast<HTMLFormElement*>(node);
-        if (node->isHTMLElement() && static_cast<HTMLElement*>(node)->isFormControlElement())
+        if (node->isHTMLElement() && toHTMLElement(node)->isFormControlElement())
             return static_cast<HTMLFormControlElement*>(node)->form();
         if (node->hasTagName(frameTag) || node->hasTagName(iframeTag)) {
             Node* childDocument = static_cast<HTMLFrameElementBase*>(node)->contentDocument();
@@ -1724,7 +1724,7 @@ HTMLFormElement* SelectionController::currentForm() const
     for (node = start; node; node = node->parentNode()) {
         if (node->hasTagName(formTag))
             return static_cast<HTMLFormElement*>(node);
-        if (node->isHTMLElement() && static_cast<HTMLElement*>(node)->isFormControlElement())
+        if (node->isHTMLElement() && toHTMLElement(node)->isFormControlElement())
             return static_cast<HTMLFormControlElement*>(node)->form();
     }
 

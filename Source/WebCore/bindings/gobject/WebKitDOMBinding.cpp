@@ -57,7 +57,7 @@ static gpointer createWrapper(Node* node)
     switch (node->nodeType()) {
     case Node::ELEMENT_NODE:
         if (node->isHTMLElement())
-            wrappedNode = createHTMLElementWrapper(static_cast<HTMLElement*>(node));
+            wrappedNode = createHTMLElementWrapper(toHTMLElement(node));
         else
             wrappedNode = wrapElement(static_cast<Element*>(node));
         break;
@@ -93,7 +93,7 @@ WebKitDOMElement* kit(Element* element)
     gpointer wrappedElement;
 
     if (element->isHTMLElement())
-        wrappedElement = createHTMLElementWrapper(static_cast<HTMLElement*>(element));
+        wrappedElement = createHTMLElementWrapper(toHTMLElement(element));
     else
         wrappedElement = wrapElement(element);
 

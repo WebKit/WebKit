@@ -58,7 +58,7 @@ v8::Handle<v8::Value> toV8(Element* impl, bool forceNewObject)
     if (!impl)
         return v8::Null();
     if (impl->isHTMLElement())
-        return toV8(static_cast<HTMLElement*>(impl), forceNewObject);
+        return toV8(toHTMLElement(impl), forceNewObject);
 #if ENABLE(SVG)
     if (impl->isSVGElement())
         return toV8(static_cast<SVGElement*>(impl), forceNewObject);

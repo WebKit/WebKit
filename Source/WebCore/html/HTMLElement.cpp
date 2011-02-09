@@ -371,7 +371,7 @@ void HTMLElement::setOuterHTML(const String& html, ExceptionCode& ec)
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
-    HTMLElement* parent = static_cast<HTMLElement*>(p);
+    HTMLElement* parent = toHTMLElement(p);
 
     RefPtr<DocumentFragment> fragment = createFragmentFromSource(html, parent, ec);
     if (fragment) {
@@ -852,7 +852,7 @@ HTMLFormElement* HTMLElement::shadowAncestorOwnerForm()
 
     if (!ancestorNode->isHTMLElement())
         return 0;
-    HTMLElement* ancestorHTML = static_cast<HTMLElement*>(ancestorNode);
+    HTMLElement* ancestorHTML = toHTMLElement(ancestorNode);
     if (!ancestorHTML)
         return 0;
     return ancestorHTML->form();

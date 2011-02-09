@@ -1169,7 +1169,7 @@ static String accessibleNameForNode(Node* node)
         return static_cast<HTMLInputElement*>(node)->value();
 
     if (node->isHTMLElement()) {
-        const AtomicString& alt = static_cast<HTMLElement*>(node)->getAttribute(altAttr);
+        const AtomicString& alt = toHTMLElement(node)->getAttribute(altAttr);
         if (!alt.isEmpty())
             return alt;
     }
@@ -1357,7 +1357,7 @@ String AccessibilityRenderObject::accessibilityDescription() const
     if (isImage() || isInputImage() || isNativeImage()) {
         Node* node = m_renderer->node();
         if (node && node->isHTMLElement()) {
-            const AtomicString& alt = static_cast<HTMLElement*>(node)->getAttribute(altAttr);
+            const AtomicString& alt = toHTMLElement(node)->getAttribute(altAttr);
             if (alt.isEmpty())
                 return String();
             return alt;
@@ -1384,11 +1384,11 @@ String AccessibilityRenderObject::accessibilityDescription() const
                 return static_cast<HTMLFrameElementBase*>(owner)->getAttribute(nameAttr);
             }
             if (owner->isHTMLElement())
-                return static_cast<HTMLElement*>(owner)->getAttribute(nameAttr);
+                return toHTMLElement(owner)->getAttribute(nameAttr);
         }
         owner = document->body();
         if (owner && owner->isHTMLElement())
-            return static_cast<HTMLElement*>(owner)->getAttribute(nameAttr);
+            return toHTMLElement(owner)->getAttribute(nameAttr);
     }
 
     return String();

@@ -1970,12 +1970,12 @@ HTMLElement* Document::body() const
     Node* body = 0;
     for (Node* i = de->firstChild(); i; i = i->nextSibling()) {
         if (i->hasTagName(framesetTag))
-            return static_cast<HTMLElement*>(i);
+            return toHTMLElement(i);
         
         if (i->hasTagName(bodyTag) && !body)
             body = i;
     }
-    return static_cast<HTMLElement*>(body);
+    return toHTMLElement(body);
 }
 
 void Document::setBody(PassRefPtr<HTMLElement> newBody, ExceptionCode& ec)

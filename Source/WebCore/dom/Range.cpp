@@ -1079,7 +1079,7 @@ PassRefPtr<DocumentFragment> Range::createContextualFragment(const String& marku
     // Logic from deprecatedCreateContextualFragment should just be moved into
     // this function.  Range::createContextualFragment semantics do not make
     // sense for the rest of the DOM implementation to use.
-    RefPtr<DocumentFragment> fragment = static_cast<HTMLElement*>(element)->deprecatedCreateContextualFragment(markup);
+    RefPtr<DocumentFragment> fragment = toHTMLElement(element)->deprecatedCreateContextualFragment(markup);
     if (!fragment) {
         ec = NOT_SUPPORTED_ERR;
         return 0;

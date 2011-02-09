@@ -185,7 +185,7 @@ static const gchar* webkit_accessible_get_name(AtkObject* object)
         Node* node = renderObject->renderer()->node();
         if (node && node->isHTMLElement()) {
             // Get the attribute rather than altText String so as not to fall back on title.
-            String alt = static_cast<HTMLElement*>(node)->getAttribute(HTMLNames::altAttr);
+            String alt = toHTMLElement(node)->getAttribute(HTMLNames::altAttr);
             if (!alt.isEmpty())
                 return returnString(alt);
         }
@@ -212,7 +212,7 @@ static const gchar* webkit_accessible_get_description(AtkObject* object)
 
     // The title attribute should be reliably available as the object's descripton.
     // We do not want to fall back on other attributes in its absence. See bug 25524.
-    String title = static_cast<HTMLElement*>(node)->title();
+    String title = toHTMLElement(node)->title();
     if (!title.isEmpty())
         return returnString(title);
 

@@ -79,7 +79,7 @@ void AccessibilityListBox::addChildren()
     for (unsigned i = 0; i < length; i++) {
         // The cast to HTMLElement below is safe because the only other possible listItem type
         // would be a WMLElement, but WML builds don't use accessibility features at all.
-        AccessibilityObject* listOption = listBoxOptionAccessibilityObject(static_cast<HTMLElement*>(listItems[i]));
+        AccessibilityObject* listOption = listBoxOptionAccessibilityObject(toHTMLElement(listItems[i]));
         if (listOption && !listOption->accessibilityIsIgnored())
             m_children.append(listOption);
     }

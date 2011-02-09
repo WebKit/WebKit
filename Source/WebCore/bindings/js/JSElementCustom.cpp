@@ -75,7 +75,7 @@ JSValue toJSNewlyCreated(ExecState* exec, JSDOMGlobalObject* globalObject, Eleme
 
     JSNode* wrapper;        
     if (element->isHTMLElement())
-        wrapper = createJSHTMLWrapper(exec, globalObject, static_cast<HTMLElement*>(element));
+        wrapper = createJSHTMLWrapper(exec, globalObject, toHTMLElement(element));
 #if ENABLE(SVG)
     else if (element->isSVGElement())
         wrapper = createJSSVGWrapper(exec, globalObject, static_cast<SVGElement*>(element));

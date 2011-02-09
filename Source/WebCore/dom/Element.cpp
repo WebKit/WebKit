@@ -152,7 +152,7 @@ PassRefPtr<DocumentFragment> Element::deprecatedCreateContextualFragment(const S
     for (RefPtr<Node> node = fragment->firstChild(); node; node = nextNode) {
         nextNode = node->nextSibling();
         if (node->hasTagName(htmlTag) || node->hasTagName(bodyTag)) {
-            HTMLElement* element = static_cast<HTMLElement*>(node.get());
+            HTMLElement* element = toHTMLElement(node.get());
             Node* firstChild = element->firstChild();
             if (firstChild)
                 nextNode = firstChild;

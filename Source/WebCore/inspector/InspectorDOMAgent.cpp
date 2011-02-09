@@ -537,7 +537,7 @@ void InspectorDOMAgent::getOuterHTML(long nodeId, WTF::String* outerHTML)
     if (!node || !node->isHTMLElement())
         return;
 
-    *outerHTML = static_cast<HTMLElement*>(node)->outerHTML();
+    *outerHTML = toHTMLElement(node)->outerHTML();
 }
 
 void InspectorDOMAgent::setOuterHTML(long nodeId, const String& outerHTML, long* newId)
@@ -552,7 +552,7 @@ void InspectorDOMAgent::setOuterHTML(long nodeId, const String& outerHTML, long*
     Node* previousSibling = node->previousSibling();
     ContainerNode* parentNode = node->parentNode();
 
-    HTMLElement* htmlElement = static_cast<HTMLElement*>(node);
+    HTMLElement* htmlElement = toHTMLElement(node);
     ExceptionCode ec = 0;
     htmlElement->setOuterHTML(outerHTML, ec);
     if (ec)

@@ -602,9 +602,9 @@ void ApplyStyleCommand::applyBlockStyle(CSSMutableStyleDeclaration *style)
             }
             ASSERT(block->isHTMLElement());
             if (block->isHTMLElement()) {
-                removeCSSStyle(style, static_cast<HTMLElement*>(block.get()));
+                removeCSSStyle(style, toHTMLElement(block.get()));
                 if (!m_removeOnly)
-                    addBlockStyle(styleChange, static_cast<HTMLElement*>(block.get()));
+                    addBlockStyle(styleChange, toHTMLElement(block.get()));
             }
 
             if (nextParagraphStart.isOrphan())
@@ -691,7 +691,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
             // Only work on fully selected nodes.
             if (!nodeFullySelected(node, start, end))
                 continue;
-            element = static_cast<HTMLElement*>(node);
+            element = toHTMLElement(node);
         } else if (node->isTextNode() && node->renderer() && node->parentNode() != lastStyledNode) {
             // Last styled node was not parent node of this text node, but we wish to style this
             // text node. To make this possible, add a style span to surround this text node.
@@ -784,9 +784,9 @@ HTMLElement* ApplyStyleCommand::splitAncestorsWithUnicodeBidi(Node* node, bool b
         && getIdentifierValue(computedStyle(highestAncestorWithUnicodeBidi).get(), CSSPropertyDirection) == allowedDirection
         && highestAncestorWithUnicodeBidi->isHTMLElement()) {
         if (!nextHighestAncestorWithUnicodeBidi)
-            return static_cast<HTMLElement*>(highestAncestorWithUnicodeBidi);
+            return toHTMLElement(highestAncestorWithUnicodeBidi);
 
-        unsplitAncestor = static_cast<HTMLElement*>(highestAncestorWithUnicodeBidi);
+        unsplitAncestor = toHTMLElement(highestAncestorWithUnicodeBidi);
         highestAncestorWithUnicodeBidi = nextHighestAncestorWithUnicodeBidi;
     }
 
@@ -1054,7 +1054,7 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(CSSMutableStyleDeclaration* 
             if (pastEndNode && pastEndNode->isDescendantOf(node))
                 break;
             // Add to this element's inline style and skip over its contents.
-            HTMLElement* element = static_cast<HTMLElement*>(node);
+            HTMLElement* element = toHTMLElement(node);
             RefPtr<CSSMutableStyleDeclaration> inlineStyle = element->getInlineStyleDecl()->copy();
             inlineStyle->merge(style);
             setNodeAttribute(element, styleAttr, inlineStyle->cssText());
@@ -1124,7 +1124,7 @@ bool ApplyStyleCommand::removeStyleFromRunBeforeApplyingStyle(CSSMutableStyleDec
         RefPtr<Node> previousSibling = node->previousSibling();
         RefPtr<Node> nextSibling = node->nextSibling();
         RefPtr<ContainerNode> parent = node->parentNode();
-        removeInlineStyleFromElement(style, static_cast<HTMLElement*>(node.get()), RemoveAlways);
+        removeInlineStyleFromElement(style, toHTMLElement(node.get()), RemoveAlways);
         if (!node->inDocument()) {
             // FIXME: We might need to update the start and the end of current selection here but need a test.
             if (runStart == node)
@@ -1350,8 +1350,8 @@ HTMLElement* ApplyStyleCommand::highestAncestorWithConflictingInlineStyle(CSSMut
     Node* unsplittableElement = unsplittableElementForPosition(firstPositionInOrBeforeNode(node));
 
     for (Node *n = node; n; n = n->parentNode()) {
-        if (n->isHTMLElement() && shouldRemoveInlineStyleFromElement(style, static_cast<HTMLElement*>(n)))
-            result = static_cast<HTMLElement*>(n);
+        if (n->isHTMLElement() && shouldRemoveInlineStyleFromElement(style, toHTMLElement(n)))
+            result = toHTMLElement(n);
         // Should stop at the editable root (cannot cross editing boundary) and
         // also stop at the unsplittable element to be consistent with other UAs
         if (n == unsplittableElement)
@@ -1370,7 +1370,7 @@ void ApplyStyleCommand::applyInlineStyleToPushDown(Node* node, CSSMutableStyleDe
 
     RefPtr<CSSMutableStyleDeclaration> newInlineStyle = style;
     if (node->isHTMLElement()) {
-        HTMLElement* element = static_cast<HTMLElement*>(node);
+        HTMLElement* element = toHTMLElement(node);
         CSSMutableStyleDeclaration* existingInlineStyle = element->inlineStyleDecl();
 
         // Avoid overriding existing styles of node
@@ -1406,7 +1406,7 @@ void ApplyStyleCommand::applyInlineStyleToPushDown(Node* node, CSSMutableStyleDe
     // Since addInlineStyleIfNeeded can't add styles to block-flow render objects, add style attribute instead.
     // FIXME: applyInlineStyleToRange should be used here instead.
     if ((node->renderer()->isBlockFlow() || node->childNodeCount()) && node->isHTMLElement()) {
-        setNodeAttribute(static_cast<HTMLElement*>(node), styleAttr, newInlineStyle->cssText());
+        setNodeAttribute(toHTMLElement(node), styleAttr, newInlineStyle->cssText());
         return;
     }
 
@@ -1442,7 +1442,7 @@ void ApplyStyleCommand::pushDownInlineStyleAroundNode(CSSMutableStyleDeclaration
             elementsToPushDown.append(styledElement);
         }
         RefPtr<CSSMutableStyleDeclaration> styleToPushDown = CSSMutableStyleDeclaration::create();
-        removeInlineStyleFromElement(style, static_cast<HTMLElement*>(current), RemoveIfNeeded, styleToPushDown.get());
+        removeInlineStyleFromElement(style, toHTMLElement(current), RemoveIfNeeded, styleToPushDown.get());
 
         // The inner loop will go through children on each level
         // FIXME: we should aggregate inline child elements together so that we don't wrap each child separately.
@@ -1514,7 +1514,7 @@ void ApplyStyleCommand::removeInlineStyle(PassRefPtr<CSSMutableStyleDeclaration>
     while (node) {
         RefPtr<Node> next = node->traverseNextNode();
         if (node->isHTMLElement() && nodeFullySelected(node, start, end)) {
-            RefPtr<HTMLElement> elem = static_cast<HTMLElement*>(node);
+            RefPtr<HTMLElement> elem = toHTMLElement(node);
             RefPtr<Node> prev = elem->traversePreviousNodePostOrder();
             RefPtr<Node> next = elem->traverseNextNode();
             RefPtr<CSSMutableStyleDeclaration> styleToPushDown;
@@ -1638,7 +1638,7 @@ bool ApplyStyleCommand::shouldSplitTextElement(Element* element, CSSMutableStyle
     if (!element || !element->isHTMLElement())
         return false;
 
-    return shouldRemoveInlineStyleFromElement(style, static_cast<HTMLElement*>(element));
+    return shouldRemoveInlineStyleFromElement(style, toHTMLElement(element));
 }
 
 bool ApplyStyleCommand::isValidCaretPositionInTextNode(const Position& position)
@@ -1841,10 +1841,10 @@ void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclaration *style
     HTMLElement* styleContainer = 0;
     for (Node* container = startNode.get(); container && startNode == endNode; container = container->firstChild()) {
         if (container->isHTMLElement() && container->hasTagName(fontTag))
-            fontContainer = static_cast<HTMLElement*>(container);
+            fontContainer = toHTMLElement(container);
         bool styleContainerIsNotSpan = !styleContainer || !styleContainer->hasTagName(spanTag);
         if (container->isHTMLElement() && (container->hasTagName(spanTag) || (styleContainerIsNotSpan && container->childNodeCount())))
-            styleContainer = static_cast<HTMLElement*>(container);
+            styleContainer = toHTMLElement(container);
         if (!container->firstChild())
             break;
         startNode = container->firstChild();
@@ -1874,7 +1874,7 @@ void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclaration *style
 
     if (styleChange.cssStyle().length()) {
         if (styleContainer) {
-            CSSMutableStyleDeclaration* existingStyle = static_cast<HTMLElement*>(styleContainer)->inlineStyleDecl();
+            CSSMutableStyleDeclaration* existingStyle = toHTMLElement(styleContainer)->inlineStyleDecl();
             if (existingStyle)
                 setNodeAttribute(styleContainer, styleAttr, existingStyle->cssText() + styleChange.cssStyle());
             else

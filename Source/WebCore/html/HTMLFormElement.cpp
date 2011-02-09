@@ -462,7 +462,7 @@ unsigned HTMLFormElement::formElementIndex(FormAssociatedElement* associatedElem
             if (node->isHTMLElement()
                     && (static_cast<Element*>(node)->isFormControlElement()
                         || node->hasTagName(objectTag))
-                    && static_cast<HTMLElement*>(node)->form() == this)
+                    && toHTMLElement(node)->form() == this)
                 ++i;
         }
     }

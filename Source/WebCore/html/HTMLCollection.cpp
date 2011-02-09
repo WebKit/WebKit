@@ -264,7 +264,7 @@ bool HTMLCollection::checkForNameMatch(Element* element, bool checkName, const A
     if (!element->isHTMLElement())
         return false;
     
-    HTMLElement* e = static_cast<HTMLElement*>(element);
+    HTMLElement* e = toHTMLElement(element);
     if (!checkName)
         return e->getIdAttribute() == name;
 
@@ -318,7 +318,7 @@ void HTMLCollection::updateNameCache() const
     for (Element* element = itemAfter(0); element; element = itemAfter(element)) {
         if (!element->isHTMLElement())
             continue;
-        HTMLElement* e = static_cast<HTMLElement*>(element);
+        HTMLElement* e = toHTMLElement(element);
         const AtomicString& idAttrVal = e->getIdAttribute();
         const AtomicString& nameAttrVal = e->getAttribute(nameAttr);
         if (!idAttrVal.isEmpty()) {

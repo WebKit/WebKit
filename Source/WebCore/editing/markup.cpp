@@ -268,7 +268,7 @@ void StyledMarkupAccumulator::appendElement(Vector<UChar>& out, Element* element
     }
 
     if (element->isHTMLElement() && (shouldAnnotate() || addDisplayInline)) {
-        RefPtr<CSSMutableStyleDeclaration> style = static_cast<HTMLElement*>(element)->getInlineStyleDecl()->copy();
+        RefPtr<CSSMutableStyleDeclaration> style = toHTMLElement(element)->getInlineStyleDecl()->copy();
         if (shouldAnnotate()) {
             RefPtr<CSSMutableStyleDeclaration> styleFromMatchedRules = styleFromMatchedRulesForElement(const_cast<Element*>(element));
             // Styles from the inline style declaration, held in the variable "style", take precedence 

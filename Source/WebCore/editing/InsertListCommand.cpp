@@ -72,7 +72,7 @@ PassRefPtr<HTMLElement> InsertListCommand::mergeWithNeighboringLists(PassRefPtr<
     if (!list || !list->nextElementSibling() || !list->nextElementSibling()->isHTMLElement())
         return list.release();
 
-    RefPtr<HTMLElement> nextList = static_cast<HTMLElement*>(list->nextElementSibling());
+    RefPtr<HTMLElement> nextList = toHTMLElement(list->nextElementSibling());
     if (canMergeLists(list.get(), nextList.get())) {
         mergeIdenticalElements(list, nextList);
         return nextList.release();

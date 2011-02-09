@@ -464,7 +464,7 @@ void HTMLSelectElement::setOption(unsigned index, HTMLOptionElement* option, Exc
         setLength(index, ec);
         // replace an existing entry ?
     } else if (diff < 0) {
-        before = static_cast<HTMLElement*>(options()->item(index+1));
+        before = toHTMLElement(options()->item(index+1));
         remove(index);
     }
     // finally add the new element
@@ -486,7 +486,7 @@ void HTMLSelectElement::setLength(unsigned newLen, ExceptionCode& ec)
         do {
             RefPtr<Element> option = document()->createElement(optionTag, false);
             ASSERT(option);
-            add(static_cast<HTMLElement*>(option.get()), 0, ec);
+            add(toHTMLElement(option.get()), 0, ec);
             if (ec)
                 break;
         } while (++diff);

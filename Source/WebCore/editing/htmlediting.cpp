@@ -662,7 +662,7 @@ HTMLElement* enclosingList(Node* node)
     
     for (ContainerNode* n = node->parentNode(); n; n = n->parentNode()) {
         if (n->hasTagName(ulTag) || n->hasTagName(olTag))
-            return static_cast<HTMLElement*>(n);
+            return toHTMLElement(n);
         if (n == root)
             return 0;
     }
@@ -670,7 +670,7 @@ HTMLElement* enclosingList(Node* node)
     return 0;
 }
 
-HTMLElement* enclosingListChild(Node *node)
+Node* enclosingListChild(Node *node)
 {
     if (!node)
         return 0;
@@ -681,7 +681,7 @@ HTMLElement* enclosingListChild(Node *node)
     // FIXME: This function is inappropriately named if it starts with node instead of node->parentNode()
     for (Node* n = node; n && n->parentNode(); n = n->parentNode()) {
         if (n->hasTagName(liTag) || isListElement(n->parentNode()))
-            return static_cast<HTMLElement*>(n);
+            return n;
         if (n == root || isTableCell(n))
             return 0;
     }
@@ -694,7 +694,7 @@ static HTMLElement* embeddedSublist(Node* listItem)
     // Check the DOM so that we'll find collapsed sublists without renderers.
     for (Node* n = listItem->firstChild(); n; n = n->nextSibling()) {
         if (isListElement(n))
-            return static_cast<HTMLElement*>(n);
+            return toHTMLElement(n);
     }
     
     return 0;
@@ -705,7 +705,7 @@ static Node* appendedSublist(Node* listItem)
     // Check the DOM so that we'll find collapsed sublists without renderers.
     for (Node* n = listItem->nextSibling(); n; n = n->nextSibling()) {
         if (isListElement(n))
-            return static_cast<HTMLElement*>(n);
+            return toHTMLElement(n);
         if (isListItem(listItem))
             return 0;
     }
