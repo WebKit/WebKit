@@ -3254,7 +3254,6 @@ BUG_ZMO : editing/undo/undo-paste-when-caret-is-not-in-range.html = PASS MISSING
 
 // Should be able to remove these two after rebaseline, add them for now so we could roll
 BUG_ZMO MAC : fast/box-shadow/inset.html = IMAGE
-BUG_ZMO WIN LINUX : fast/box-shadow/inset-box-shadows.html = IMAGE+TEXT
 
 BUGWK54051 : plugins/invalidate_rect.html = FAIL
 

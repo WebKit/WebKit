@@ -1,3 +1,14 @@
+2011-02-09  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, rebaseline.
+
+        * platform/chromium-linux/fast/box-shadow/inset-box-shadows-expected.checksum: Added.
+        * platform/chromium-linux/fast/box-shadow/inset-box-shadows-expected.png: Added.
+        * platform/chromium-win/fast/box-shadow/inset-box-shadows-expected.checksum: Added.
+        * platform/chromium-win/fast/box-shadow/inset-box-shadows-expected.png: Added.
+        * platform/chromium-win/fast/box-shadow/inset-box-shadows-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-02-09  Jia Pu  <jpu@apple.com>
 
         Reviewed by Darin Adler.
