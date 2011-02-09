@@ -4,6 +4,8 @@ noinst_LTLIBRARIES += \
 
 libWebKit2_ladir = $(prefix)/include/webkit2-@WEBKITGTK_API_VERSION@/WebKit2
 libWebKit2_la_HEADERS = \
+	$(WebKit2)/Shared/API/c/gtk/WKBaseGtk.h \
+	$(WebKit2)/Shared/API/c/gtk/WKGraphicsContextGtk.h \
 	$(WebKit2)/Shared/API/c/WKArray.h \
 	$(WebKit2)/Shared/API/c/WKBase.h \
 	$(WebKit2)/Shared/API/c/WKCertificateInfo.h \
@@ -15,6 +17,7 @@ libWebKit2_la_HEADERS = \
 	$(WebKit2)/Shared/API/c/WKEvent.h \
 	$(WebKit2)/Shared/API/c/WKFindOptions.h \
 	$(WebKit2)/Shared/API/c/WKGeometry.h \
+	$(WebKit2)/Shared/API/c/WKGraphicsContext.h \
 	$(WebKit2)/Shared/API/c/WKImage.h \
 	$(WebKit2)/Shared/API/c/WKMutableArray.h \
 	$(WebKit2)/Shared/API/c/WKMutableDictionary.h \
@@ -106,6 +109,9 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/PluginProcess/WebProcessConnection.cpp \
 	Source/WebKit2/PluginProcess/WebProcessConnection.h \
 	Source/WebKit2/Shared/APIClient.h \
+	Source/WebKit2/Shared/API/c/gtk/WKBaseGtk.h \
+	Source/WebKit2/Shared/API/c/gtk/WKGraphicsContextGtk.h \
+	Source/WebKit2/Shared/API/c/gtk/WKGraphicsContextGtk.cpp \
 	Source/WebKit2/Shared/API/c/WKArray.cpp \
 	Source/WebKit2/Shared/API/c/WKArray.h \
 	Source/WebKit2/Shared/API/c/WKBase.h \
@@ -123,6 +129,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/Shared/API/c/WKEvent.h \
 	Source/WebKit2/Shared/API/c/WKFindOptions.h \
 	Source/WebKit2/Shared/API/c/WKGeometry.h \
+	Source/WebKit2/Shared/API/c/WKGraphicsContext.cpp \
+	Source/WebKit2/Shared/API/c/WKGraphicsContext.h \
 	Source/WebKit2/Shared/API/c/WKImage.cpp \
 	Source/WebKit2/Shared/API/c/WKImage.h \
 	Source/WebKit2/Shared/API/c/WKMutableArray.cpp \

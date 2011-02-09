@@ -32,6 +32,8 @@
 
 #if PLATFORM(CG)
 #include <wtf/RetainPtr.h>
+#elif PLATFORM(GTK)
+#include "RefPtrCairo.h"
 #endif
 
 namespace WebKit {
@@ -47,7 +49,10 @@ public:
 
 #if PLATFORM(CG)
     CGContextRef platformContext() { return m_platformContext.get(); }
+#elif PLATFORM(GTK)
+    cairo_t* platformContext() { return m_platformContext.get(); }
 #endif
+
 
 private:
     explicit WebGraphicsContext(WebCore::GraphicsContext*);
@@ -56,6 +61,8 @@ private:
 
 #if PLATFORM(CG)
     RetainPtr<CGContextRef> m_platformContext;
+#elif PLATFORM(GTK)
+    RefPtr<cairo_t> m_platformContext;
 #endif
 };
 

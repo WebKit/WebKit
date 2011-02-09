@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Igalia SL All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 #include "config.h"
+#include "WKGraphicsContextGtk.h"
+
+#include "WKSharedAPICast.h"
 #include "WebGraphicsContext.h"
 
-using namespace WebCore;
+using namespace WebKit;
 
-namespace WebKit {
-
-WebGraphicsContext::WebGraphicsContext(GraphicsContext* graphicsContext)
-#if PLATFORM(CG)
-    : m_platformContext(graphicsContext->platformContext())
-#elif PLATFORM(GTK)
-    : m_platformContext(graphicsContext->platformContext())
-#endif
+cairo_t* WKGraphicsContextGetGtkContext(WKGraphicsContextRef graphicsContextRef)
 {
+    return toImpl(graphicsContextRef)->platformContext();
 }
-
-} // namespace WebKit

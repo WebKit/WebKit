@@ -2,6 +2,24 @@
 
         Reviewed by Martin Robinson.
 
+        [GTK] Add WebGraphicsContext stub to the compilation
+        https://bugs.webkit.org/show_bug.cgi?id=54078
+
+        * GNUmakefile.am:
+        * Shared/API/c/gtk/WKGraphicsContextGtk.cpp: Added stub just for
+        compilation.
+        (WKGraphicsContextGetGtkContext):
+        * Shared/API/c/gtk/WKGraphicsContextGtk.h: Added stub just for
+        compilation.
+        * Shared/WebGraphicsContext.cpp:
+        (WebKit::WebGraphicsContext::WebGraphicsContext):
+        * Shared/WebGraphicsContext.h:
+        (WebKit::WebGraphicsContext::platformContext):
+
+2011-02-09  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         [GTK] Add geolocation support to the webkit2 compilation
         https://bugs.webkit.org/show_bug.cgi?id=54077
 
