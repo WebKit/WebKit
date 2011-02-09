@@ -1,3 +1,9 @@
+2011-02-09  Martin Robinson  <mrobinson@igalia.com>
+
+        Add more results for many tests in the fast directory missing results.
+
+        * platform/gtk/Skipped: Unskip tests that now have results.
+
 2011-02-09  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, test expectations update.
