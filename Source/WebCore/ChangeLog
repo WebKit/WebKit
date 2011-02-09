@@ -1,3 +1,15 @@
+2011-02-09  Xiyuan Xia  <xiyuan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [Chromium] Use #f7f7f7 for select popup background on chromium/linux
+        https://bugs.webkit.org/show_bug.cgi?id=54115
+
+        No new tests since no behavior change.
+
+        * css/themeChromiumLinux.css:
+        (select[size="1"] option):
+
 2011-02-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -34,3 +34,8 @@ select {
     background-color: #dddddd;
     border: 0px;
 }
+
+select[size="0"] option,
+select[size="1"] option {
+    background-color: #f7f7f7;
+}
