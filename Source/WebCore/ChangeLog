@@ -1,3 +1,31 @@
+2011-02-08  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        Add cache for GPU-accelerated path processing results
+        https://bugs.webkit.org/show_bug.cgi?id=45519
+
+        Adding a cache which holds the results of processing a path into
+        interior and exterior triangle meshes, according to the path
+        rendering algorithm from GPU Gems 3. No tests yet; will be tested
+        in conjunction with later code.
+
+        * platform/graphics/gpu/LoopBlinnPathCache.cpp: Added.
+        (WebCore::LoopBlinnPathCache::LoopBlinnPathCache):
+        (WebCore::LoopBlinnPathCache::~LoopBlinnPathCache):
+        (WebCore::LoopBlinnPathCache::addVertex):
+        (WebCore::LoopBlinnPathCache::clear):
+        (WebCore::LoopBlinnPathCache::addInteriorVertex):
+        (WebCore::LoopBlinnPathCache::numberOfInteriorEdgeVertices):
+        (WebCore::LoopBlinnPathCache::interiorEdgeVertices):
+        (WebCore::LoopBlinnPathCache::addInteriorEdgeVertex):
+        * platform/graphics/gpu/LoopBlinnPathCache.h: Added.
+        (WebCore::LoopBlinnPathCache::numberOfVertices):
+        (WebCore::LoopBlinnPathCache::vertices):
+        (WebCore::LoopBlinnPathCache::texcoords):
+        (WebCore::LoopBlinnPathCache::numberOfInteriorVertices):
+        (WebCore::LoopBlinnPathCache::interiorVertices):
+
 2011-02-08  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
