@@ -1,3 +1,9 @@
+2011-02-09  Martin Robinson  <mrobinson@igalia.com>
+
+        Add test results for many tests in the fast directory missing results.
+
+        * platform/gtk/Skipped: Unskip tests with results.
+
 2011-02-09  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dirk Schulze.

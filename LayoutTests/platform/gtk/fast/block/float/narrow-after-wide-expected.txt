@@ -1,0 +1,35 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x541
+  RenderBlock {HTML} at (0,0) size 800x541
+    RenderBody {BODY} at (8,8) size 784x525
+layer at (8,8) size 350x175
+  RenderBlock (relative positioned) {DIV} at (0,0) size 350x175
+    RenderBlock {DIV} at (0,0) size 200x50
+    RenderText {#text} at (0,0) size 0x0
+    RenderBlock (floating) {DIV} at (150,50) size 200x100
+    RenderText {#text} at (0,0) size 0x0
+    RenderBlock (floating) {DIV} at (50,50) size 100x100 [bgcolor=#FF0000]
+    RenderText {#text} at (0,0) size 0x0
+layer at (58,58) size 100x100
+  RenderBlock (positioned) {DIV} at (50,50) size 100x100 [bgcolor=#008000]
+layer at (8,183) size 350x175
+  RenderBlock (relative positioned) {DIV} at (0,175) size 350x175
+    RenderBlock {DIV} at (0,0) size 200x50
+    RenderText {#text} at (0,0) size 0x0
+    RenderBlock (floating) {DIV} at (0,50) size 200x100
+    RenderText {#text} at (0,0) size 0x0
+    RenderBlock (floating) {DIV} at (250,50) size 100x100 [bgcolor=#FF0000]
+    RenderText {#text} at (0,0) size 0x0
+layer at (258,233) size 100x100
+  RenderBlock (positioned) {DIV} at (250,50) size 100x100 [bgcolor=#008000]
+layer at (8,358) size 350x175
+  RenderBlock (relative positioned) {DIV} at (0,350) size 350x175
+    RenderBlock {DIV} at (0,0) size 200x50
+    RenderText {#text} at (0,0) size 0x0
+    RenderBlock (floating) {DIV} at (0,50) size 200x100
+    RenderText {#text} at (0,0) size 0x0
+    RenderBlock (floating) {DIV} at (200,50) size 100x100 [bgcolor=#FF0000]
+    RenderText {#text} at (0,0) size 0x0
+layer at (208,408) size 100x100
+  RenderBlock (positioned) {DIV} at (200,50) size 100x100 [bgcolor=#008000]
