@@ -1,3 +1,17 @@
+2011-02-08  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        fix toolbar anchoring in the code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=54058
+
+        Avoid the anchoring cycle of doom when on the cusp
+        of whether the toolbar needs to be anchored and
+        speculatively avoid the Firefox crash when resizing.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
 2011-02-07  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.

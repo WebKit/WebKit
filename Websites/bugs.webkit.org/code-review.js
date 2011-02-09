@@ -981,8 +981,12 @@ var CODE_REVIEW_UNITTEST;
   }
 
   function updateToolbarAnchorState() {
-    var has_scrollbar = window.innerWidth > document.documentElement.offsetWidth;
-    $('#toolbar').toggleClass('anchored', has_scrollbar);
+    var toolbar = $('#toolbar');
+    // Unanchor the toolbar and then see if it's bottom is below the body's bottom.
+    toolbar.toggleClass('anchored', false);
+    var toolbar_bottom = toolbar.offset().top + toolbar.outerHeight();
+    var should_anchor = toolbar_bottom >= document.body.clientHeight;
+    toolbar.toggleClass('anchored', should_anchor);
   }
 
   function diffLinksHtml() {
@@ -1010,7 +1014,7 @@ var CODE_REVIEW_UNITTEST;
               '<span id="flagContainer"></span>' +
               '<button id="preview_comments">Preview</button>' +
               '<button id="post_comments">Publish</button> ' +
-          '</span></div>' +
+          '</span>' +
         '</div>' +
         '</div>');
 
@@ -1023,7 +1027,8 @@ var CODE_REVIEW_UNITTEST;
     // FIXME: Should we setTimeout throttle these?
     var resize_iframe = $('<iframe class="pseudo_resize_event_iframe"></iframe>');
     $(document.body).append(resize_iframe);
-    $(resize_iframe[0].contentWindow).bind('resize', onBodyResize);
+    // Handle the event on a timeout to avoid crashing Firefox.
+    $(resize_iframe[0].contentWindow).bind('resize', function() { setTimeout(onBodyResize, 0)});
 
     updateToolbarAnchorState();
     loadDiffState();

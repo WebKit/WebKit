@@ -275,16 +275,16 @@ body {
   display: -webkit-box;
   display: -moz-box;
   padding: 3px;
-  bottom: 0;
   left: 0;
   right: 0;
   border: 1px solid #ddd;
   background-color: #eee;
   font-family: sans-serif;
+  position: fixed;
 }
 
 #toolbar.anchored {
-  position: fixed;
+  bottom: 0;
 }
 
 #toolbar .actions {
