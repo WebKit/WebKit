@@ -1,3 +1,10 @@
+2011-02-09  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix.
+
+        * win/MainWin.cpp:
+        (wWinMain):
+
 2011-02-09  Amruth Raj  <amruthraj@motorola.com> and Ravi Phaneendra Kasibhatla  <ravi.kasibhatla@motorola.com>
 
         Reviewed by Martin Robinson.

@@ -43,7 +43,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpstrCm
 #ifndef DEBUG_ALL
     LPCWSTR webKitDLLName = L"WebKit.dll";
 #else
-    LPCTSTR webKitDLLName = L"WebKit_debug.dll");
+    LPCTSTR webKitDLLName = L"WebKit_debug.dll";
 #endif
 
     WCHAR webKitPath[MAX_PATH];
