@@ -1,5 +1,12 @@
 2011-02-09  Zhenyao Mo  <zmo@google.com>
 
+        Unreviewed, test expectations update.
+
+        * platform/chromium-win/editing/undo/undo-paste-when-caret-is-not-in-range-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
+2011-02-09  Zhenyao Mo  <zmo@google.com>
+
         Unreviewed, rebaseline.
 
         * platform/chromium-win/editing/undo/undo-paste-when-caret-is-not-in-range-expected.txt: Added.
