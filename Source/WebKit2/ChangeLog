@@ -1,3 +1,37 @@
+2011-02-09  Adam Roben  <aroben@apple.com>
+
+        Hide the ugly details of WebView::m_window initialization from WebPageProxy, and make it
+        less ugly
+
+        WebView::WebView was initially creating a hidden window, then showing it. It would tell
+        WebPageProxy about the window while it was still hidden, and then have to inform
+        WebPageProxy that the window had become shown. This resulted in WebPageProxy sending
+        unnecessary messages to the web process, and confused code that assumed that the window
+        would be in the same state after WebView's constructor exited as it was when WebPageProxy
+        first found out about the window.
+
+        We now don't hide the window when creating it, which simplifies the code, and only tell
+        WebPageProxy about the window after we're done modifying it, which fixes the bug.
+
+        Fixes <http://webkit.org/b/53878> <rdar://problem/8977306> Assertion failure in
+        DrawingAreaImpl::resumePainting after window.open or when opening Web Inspector
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::WebView): Changed ::CreateWindowEx to ::CreateWindowExW, to match other
+        Win32 API calls in WebKit2. Pass WS_VISIBLE to ::CreateWindowExW rather than waiting until
+        later to show the window. Added an assertion that m_isVisible matches the window's visible
+        state. Don't even create our WebPageProxy, or tell it about our window, until we're done
+        initializing our window, so that it doesn't get informed about our window's internal state
+        changes that happen beneath ::CreateWindowExW.
+        (WebKit::WebView::onSizeEvent): Null-check m_page since we can receive this message beneath
+        ::CreateWindowExW.
+        (WebKit::WebView::onShowWindowEvent): Ditto. Replaced one FIXME with another. Always set
+        handled to false so that ::DefWindowProcW can do its thing. (MSDN says this is when it
+        actually shows/hides the window, though I couldn't find any consequences of not calling
+        ::DefWindowProcW here.)
+
 2011-02-09  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

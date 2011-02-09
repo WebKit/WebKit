@@ -250,17 +250,18 @@ WebView::WebView(RECT rect, WebContext* context, WebPageGroup* pageGroup, HWND p
 {
     registerWebViewWindowClass();
 
-    m_page = context->createWebPage(this, pageGroup);
-
-    m_window = ::CreateWindowEx(0, kWebKit2WebViewWindowClassName, 0, WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+    m_window = ::CreateWindowExW(0, kWebKit2WebViewWindowClassName, 0, WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE,
         rect.top, rect.left, rect.right - rect.left, rect.bottom - rect.top, parentWindow ? parentWindow : HWND_MESSAGE, 0, instanceHandle(), this);
     ASSERT(::IsWindow(m_window));
+    // We only check our window style, and not ::IsWindowVisible, because m_isVisible only tracks
+    // this window's visibility status, while ::IsWindowVisible takes our ancestors' visibility
+    // status into account. <http://webkit.org/b/54104>
+    ASSERT(m_isVisible == static_cast<bool>(::GetWindowLong(m_window, GWL_STYLE) & WS_VISIBLE));
 
+    m_page = context->createWebPage(this, pageGroup);
     m_page->initializeWebPage();
 
     CoCreateInstance(CLSID_DragDropHelper, 0, CLSCTX_INPROC_SERVER, IID_IDropTargetHelper, (void**)&m_dropTargetHelper);
-
-    ::ShowWindow(m_window, SW_SHOW);
 
     // FIXME: Initializing the tooltip window here matches WebKit win, but seems like something
     // we could do on demand to save resources.
@@ -463,7 +464,7 @@ LRESULT WebView::onSizeEvent(HWND, UINT, WPARAM, LPARAM lParam, bool& handled)
     int width = LOWORD(lParam);
     int height = HIWORD(lParam);
 
-    if (m_page->drawingArea())
+    if (m_page && m_page->drawingArea())
         m_page->drawingArea()->setSize(IntSize(width, height), IntSize());
 
     handled = true;
@@ -509,14 +510,15 @@ LRESULT WebView::onTimerEvent(HWND hWnd, UINT, WPARAM wParam, LPARAM, bool& hand
 LRESULT WebView::onShowWindowEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& handled)
 {
     // lParam is 0 when the message is sent because of a ShowWindow call.
-    // FIXME: Is WM_SHOWWINDOW sent when ShowWindow is called on an ancestor of our window?
+    // FIXME: Since we don't get notified when an ancestor window is hidden or shown, we will keep
+    // painting even when we have a hidden ancestor. <http://webkit.org/b/54104>
     if (!lParam) {
         m_isVisible = wParam;
-        m_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
-
-        handled = true;
+        if (m_page)
+            m_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
     }
 
+    handled = false;
     return 0;
 }
 
