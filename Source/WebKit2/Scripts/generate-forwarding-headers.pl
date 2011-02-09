@@ -78,7 +78,7 @@ sub collectFameworkHeaderPaths {
     my $file = $_;
     if ($filePath =~ '\.h$' && $filePath !~ "ForwardingHeaders" && grep{$file eq $_} keys %neededHeaders) {
         my $headerPath = substr($filePath, length(File::Spec->catfile($srcRoot, $framework)) + 1 );
-        push(@frameworkHeaders, $headerPath) unless (grep($headerPath =~ "$_/", @skippedPrefixes));
+        push(@frameworkHeaders, $headerPath) unless (grep($headerPath =~ "$_/", @skippedPrefixes) || $headerPath =~ "config.h");
     }
 }
 

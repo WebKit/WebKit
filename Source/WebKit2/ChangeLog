@@ -1,3 +1,11 @@
+2011-02-09  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt][WK2] Don't generate superfluous forwarding header for config.h.
+
+        * Scripts/generate-forwarding-headers.pl:
+
 2011-02-09  Adam Roben  <aroben@apple.com>
 
         Hide the ugly details of WebView::m_window initialization from WebPageProxy, and make it
