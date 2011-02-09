@@ -1,3 +1,125 @@
+2011-02-08  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed chromium-gpu-win rebaseline.
+        
+        * platform/chromium-gpu-win/compositing/direct-image-compositing-expected.txt:
+        * platform/chromium-gpu-win/compositing/geometry/composited-html-size-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/geometry/composited-html-size-expected.png: Copied from LayoutTests/platform/chromium-gpu-win/fast/canvas/canvas-transform-skewed-expected.png.
+        * platform/chromium-gpu-win/compositing/geometry/composited-html-size-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/geometry/fixed-position-expected.checksum:
+        * platform/chromium-gpu-win/compositing/geometry/fixed-position-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/fixed-position-expected.txt:
+        * platform/chromium-gpu-win/compositing/geometry/horizontal-scroll-composited-expected.checksum:
+        * platform/chromium-gpu-win/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/layer-due-to-layer-children-deep-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/geometry/layer-due-to-layer-children-deep-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/geometry/layer-due-to-layer-children-deep-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/geometry/layer-due-to-layer-children-deep-switch-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/geometry/layer-due-to-layer-children-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/geometry/layer-due-to-layer-children-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/geometry/layer-due-to-layer-children-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/geometry/layer-due-to-layer-children-switch-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/geometry/limit-layer-bounds-overflow-root-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/geometry/limit-layer-bounds-transformed-overflow-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/geometry/tall-page-composited-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/geometry/tall-page-composited-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/geometry/vertical-scroll-composited-expected.checksum:
+        * platform/chromium-gpu-win/compositing/geometry/vertical-scroll-composited-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/vertical-scroll-composited-expected.txt:
+        * platform/chromium-gpu-win/compositing/iframes/composited-iframe-scroll-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/iframes/composited-iframe-scroll-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/iframes/composited-iframe-scroll-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/iframes/composited-parent-iframe-expected.txt:
+        * platform/chromium-gpu-win/compositing/images/direct-svg-image-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/images/direct-svg-image-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/masks/masked-ancestor-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/masks/masked-ancestor-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/masks/masked-ancestor-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/masks/simple-composited-mask-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/masks/simple-composited-mask-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/masks/simple-composited-mask-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/overflow/fixed-position-ancestor-clip-expected.checksum:
+        * platform/chromium-gpu-win/compositing/overflow/fixed-position-ancestor-clip-expected.png:
+        * platform/chromium-gpu-win/compositing/overflow/fixed-position-ancestor-clip-expected.txt:
+        * platform/chromium-gpu-win/compositing/reflections/animation-inside-reflection-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/reflections/animation-inside-reflection-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/reflections/animation-inside-reflection-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/reflections/compositing-change-inside-reflection-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/reflections/compositing-change-inside-reflection-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/reflections/compositing-change-inside-reflection-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/reflections/deeply-nested-reflections-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/reflections/deeply-nested-reflections-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/reflections/deeply-nested-reflections-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/reflections/masked-reflection-on-composited-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/reflections/masked-reflection-on-composited-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/reflections/masked-reflection-on-composited-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-animated-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-animated-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-animated-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-mask-change-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-mask-change-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-mask-change-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-on-overflow-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-on-overflow-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-on-overflow-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-opacity-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-opacity-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-opacity-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-size-change-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-size-change-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-size-change-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-transformed-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-transformed-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-transformed-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-transformed2-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-transformed2-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-transformed2-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-transition-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-transition-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-transition-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/reflections/reflection-on-composited-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/reflections/reflection-on-composited-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/reflections/reflection-on-composited-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/reflections/reflection-ordering-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/reflections/reflection-ordering-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/reflections/reflection-ordering-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/reflections/reflection-positioning-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/reflections/reflection-positioning-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/reflections/reflection-positioning-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/reflections/reflection-positioning2-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/reflections/reflection-positioning2-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/reflections/reflection-positioning2-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/reflections/remove-add-reflection-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/reflections/remove-add-reflection-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/reflections/simple-composited-reflections-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/reflections/simple-composited-reflections-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/reflections/simple-composited-reflections-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/reflections/transform-inside-reflection-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/reflections/transform-inside-reflection-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/reflections/transform-inside-reflection-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/repaint/content-into-overflow-expected.txt:
+        * platform/chromium-gpu-win/compositing/repaint/overflow-into-content-expected.txt:
+        * platform/chromium-gpu-win/compositing/text-on-large-layer-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/text-on-large-layer-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/text-on-large-layer-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/tiling/huge-layer-add-remove-child-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/tiling/huge-layer-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/tiling/huge-layer-with-layer-children-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/transitions/scale-transition-no-start-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/transitions/scale-transition-no-start-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/transitions/scale-transition-no-start-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/webgl/webgl-reflection-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/webgl/webgl-reflection-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/webgl/webgl-reflection-expected.txt: Added.
+        * platform/chromium-gpu-win/fast/canvas/canvas-composite-expected.checksum:
+        * platform/chromium-gpu-win/fast/canvas/canvas-composite-expected.png:
+        * platform/chromium-gpu-win/fast/canvas/canvas-transform-skewed-expected.checksum:
+        * platform/chromium-gpu-win/fast/canvas/canvas-transform-skewed-expected.png:
+
 2011-02-08  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, test expectations update.

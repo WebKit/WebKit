@@ -17,6 +17,6 @@ layer at (28,328) size 100x100
   RenderBlock (positioned) {DIV} at (0,308) size 100x100
     RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#008000]
       RenderBlock {DIV} at (0,80) size 100x20
-layer at (28,328) size 100x80
+layer at (28,328) size 100x0
   RenderBlock (relative positioned) {DIV} at (0,0) size 100x0
     RenderBlock (floating) {DIV} at (0,0) size 100x80
