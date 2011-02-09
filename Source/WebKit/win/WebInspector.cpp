@@ -110,7 +110,7 @@ HRESULT STDMETHODCALLTYPE WebInspector::showConsole()
 {
     if (m_webView)
         if (Page* page = m_webView->page())
-            page->inspectorController()->showPanel(InspectorController::ConsolePanel);
+            page->inspectorController()->showConsole();
 
     return S_OK;
 }
@@ -205,10 +205,9 @@ HRESULT STDMETHODCALLTYPE WebInspector::toggleProfilingJavaScript()
 
     InspectorController* inspector = page->inspectorController();
 
-    if (inspector->isRecordingUserInitiatedProfile()) {
+    if (inspector->isRecordingUserInitiatedProfile())
         inspector->stopUserInitiatedProfiling();
-        inspector->showPanel(InspectorController::ProfilesPanel);
-    } else
+    else
         inspector->startUserInitiatedProfiling();
 
     return S_OK;

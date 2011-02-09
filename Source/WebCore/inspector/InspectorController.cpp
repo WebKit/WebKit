@@ -49,15 +49,9 @@
 
 namespace WebCore {
 
-const char* const InspectorController::ElementsPanel = "elements";
-const char* const InspectorController::ConsolePanel = "console";
-const char* const InspectorController::ScriptsPanel = "scripts";
-const char* const InspectorController::ProfilesPanel = "profiles";
-
 InspectorController::InspectorController(Page* page, InspectorClient* inspectorClient)
     : m_inspectorAgent(new InspectorAgent(this, page, inspectorClient))
     , m_inspectorBackendDispatcher(new InspectorBackendDispatcher(m_inspectorAgent.get()))
-    , m_inspectedPage(page)
     , m_inspectorClient(inspectorClient)
     , m_openingFrontend(false)
 {
@@ -84,7 +78,7 @@ void InspectorController::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWo
 
     // If the page is supposed to serve as InspectorFrontend notify inspector frontend
     // client that it's cleared so that the client can expose inspector bindings.
-    if (m_inspectorFrontendClient && frame == m_inspectedPage->mainFrame())
+    if (m_inspectorFrontendClient && frame == m_inspectorAgent->inspectedPage()->mainFrame())
         m_inspectorFrontendClient->windowObjectCleared();
 }
 
@@ -165,6 +159,14 @@ void InspectorController::drawNodeHighlight(GraphicsContext& context) const
     m_inspectorAgent->drawNodeHighlight(context);
 }
 
+void InspectorController::showConsole()
+{
+    if (!enabled())
+        return;
+    show();
+    m_inspectorAgent->showConsole();
+}
+
 void InspectorController::inspect(Node* node)
 {
     if (!enabled())
@@ -177,20 +179,12 @@ void InspectorController::inspect(Node* node)
 
 bool InspectorController::enabled() const
 {
-    if (!m_inspectedPage)
-        return false;
-
-    return m_inspectedPage->settings()->developerExtrasEnabled();
+    return m_inspectorAgent->enabled();
 }
 
-void InspectorController::showPanel(const String& panel)
+Page* InspectorController::inspectedPage() const
 {
-    if (!enabled())
-        return;
-
-    show();
-
-    m_inspectorAgent->showPanel(panel);
+    return m_inspectorAgent->inspectedPage();
 }
 
 bool InspectorController::timelineProfilerEnabled()

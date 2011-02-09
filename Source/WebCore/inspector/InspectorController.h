@@ -54,26 +54,20 @@ class InspectorController {
     WTF_MAKE_NONCOPYABLE(InspectorController);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static const char* const ConsolePanel;
-    static const char* const ElementsPanel;
-    static const char* const ProfilesPanel;
-    static const char* const ScriptsPanel;
-
     InspectorController(Page*, InspectorClient*);
     ~InspectorController();
 
-    Page* inspectedPage() { return m_inspectedPage; }
-
     bool enabled() const;
+    Page* inspectedPage() const;
 
     void show();
-    void showPanel(const String& panel);
     void close();
 
     void setInspectorFrontendClient(PassOwnPtr<InspectorFrontendClient>);
     bool hasInspectorFrontendClient() const;
     void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld*);
     void setInspectorExtensionAPI(const String& source);
+
     void dispatchMessageFromFrontend(const String& message);
 
     bool hasFrontend() const { return m_inspectorFrontend; }
@@ -81,6 +75,7 @@ public:
     void disconnectFrontend();
     void restoreInspectorStateFromCookie(const String& inspectorCookie);
 
+    void showConsole();
     void inspect(Node*);
     void drawNodeHighlight(GraphicsContext&) const;
     void hideHighlight();
@@ -115,7 +110,6 @@ private:
     OwnPtr<InspectorBackendDispatcher> m_inspectorBackendDispatcher;
     OwnPtr<InspectorFrontendClient> m_inspectorFrontendClient;
     OwnPtr<InspectorFrontend> m_inspectorFrontend;
-    Page* m_inspectedPage;
     InspectorClient* m_inspectorClient;
     bool m_openingFrontend;
 };

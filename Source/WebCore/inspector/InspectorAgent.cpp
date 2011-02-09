@@ -136,6 +136,10 @@ static const char debuggerEnabled[] = "debuggerEnabled";
 static const char profilerEnabled[] = "profilerEnabled";
 }
 
+static const char scriptsPanelName[] = "scripts";
+static const char consolePanelName[] = "console";
+static const char profilesPanelName[] = "profiles";
+
 InspectorAgent::InspectorAgent(InspectorController* inspectorController, Page* page, InspectorClient* client)
     : m_inspectorController(inspectorController)
     , m_inspectedPage(page)
@@ -905,6 +909,7 @@ void InspectorAgent::stopUserInitiatedProfiling()
         return;
     m_profilerAgent->stopUserInitiatedProfiling();
     m_state->setBoolean(InspectorAgentState::userInitiatedProfiling, false);
+    showPanel(profilesPanelName);
 }
 
 bool InspectorAgent::profilerEnabled() const
@@ -938,7 +943,7 @@ void InspectorAgent::showAndEnableDebugger()
 
     if (!m_frontend) {
         m_state->setBoolean(InspectorAgentState::debuggerEnabled, true);
-        showPanel(InspectorController::ScriptsPanel);
+        showPanel(scriptsPanelName);
     } else
         enableDebugger(true);
 }
@@ -1293,7 +1298,14 @@ void InspectorAgent::reloadPage(bool ignoreCache)
 
 bool InspectorAgent::enabled() const
 {
-    return m_inspectorController->enabled();
+    if (!m_inspectedPage)
+        return false;
+    return m_inspectedPage->settings()->developerExtrasEnabled();
+}
+
+void InspectorAgent::showConsole()
+{
+    showPanel(consolePanelName);
 }
 
 void InspectorAgent::showPanel(const String& panel)

@@ -122,7 +122,7 @@ public:
     KURL inspectedURL() const;
     KURL inspectedURLWithoutFragment() const;
     void reloadPage(bool ignoreCache);
-    void showPanel(const String& panel);
+    void showConsole();
 
     void restoreInspectorStateFromCookie(const String& inspectorCookie);
 
@@ -252,6 +252,7 @@ public:
     void applyUserAgentOverride(String* userAgent) const;
 
 private:
+    void showPanel(const String& panel);
     void pushDataCollectedOffline();
     void restoreDebugger(bool eraseStickyBreakpoints);
     enum ProfilerRestoreAction {

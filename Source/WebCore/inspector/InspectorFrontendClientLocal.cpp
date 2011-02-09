@@ -77,7 +77,7 @@ InspectorFrontendClientLocal::~InspectorFrontendClientLocal()
     m_frontendPage = 0;
     m_inspectorController = 0;
 }
-    
+
 void InspectorFrontendClientLocal::windowObjectCleared()
 {
     // FIXME: don't keep reference to the script state

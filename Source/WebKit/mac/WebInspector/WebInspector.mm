@@ -68,7 +68,7 @@ using namespace WebCore;
 - (void)showConsole:(id)sender
 {
     if (Page* page = core(_webView))
-        page->inspectorController()->showPanel(InspectorController::ConsolePanel);
+        page->inspectorController()->showConsole();
 }
 
 - (void)showTimeline:(id)sender
@@ -132,7 +132,6 @@ using namespace WebCore;
     if (!page)
         return;
     page->inspectorController()->stopUserInitiatedProfiling();
-    page->inspectorController()->showPanel(InspectorController::ProfilesPanel);
 }
 
 - (BOOL)isJavaScriptProfilingEnabled

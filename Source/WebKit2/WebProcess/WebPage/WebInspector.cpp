@@ -104,7 +104,7 @@ void WebInspector::evaluateScriptForTest(long callID, const String& script)
 
 void WebInspector::showConsole()
 {
-    m_page->corePage()->inspectorController()->showPanel(InspectorController::ConsolePanel);
+    m_page->corePage()->inspectorController()->showConsole();
 }
 
 void WebInspector::startJavaScriptDebugging()
@@ -132,7 +132,6 @@ void WebInspector::stopJavaScriptProfiling()
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     m_page->corePage()->inspectorController()->stopUserInitiatedProfiling();
-    m_page->corePage()->inspectorController()->showPanel(InspectorController::ProfilesPanel);
 #endif
 }
 
