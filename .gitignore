@@ -12,6 +12,7 @@ Tools/Scripts/webkitpy/thirdparty/autoinstalled
 .gdb_history
 tags
 *~
+*.swp
 
 # Ignore Chromium projects auto-generated from .gyp files:
 Source/JavaScriptCore/JavaScriptCore.gyp/*.Makefile
