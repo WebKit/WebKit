@@ -3249,9 +3249,6 @@ BUG_ZMO : fast/table/colspanMinWidth-vertical.html = IMAGE+TEXT PASS
 
 BUG_ZMO : fast/notifications/notifications-document-close-crash.html = PASS TEXT
 
-
-BUG_ZMO : editing/undo/undo-paste-when-caret-is-not-in-range.html = PASS MISSING CRASH TEXT
-
 // Should be able to remove these two after rebaseline, add them for now so we could roll
 BUG_ZMO MAC : fast/box-shadow/inset.html = IMAGE
 
