@@ -89,6 +89,7 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/Platform/CoreIPC/HandleMessage.h \
 	Source/WebKit2/Platform/CoreIPC/MessageID.h \
 	Source/WebKit2/Platform/CoreIPC/MessageSender.h \
+	Source/WebKit2/Platform/gtk/ModuleGtk.cpp \
 	Source/WebKit2/Platform/gtk/RunLoopGtk.cpp \
 	Source/WebKit2/Platform/gtk/SharedMemoryGtk.cpp \
 	Source/WebKit2/Platform/gtk/WorkQueueGtk.cpp \

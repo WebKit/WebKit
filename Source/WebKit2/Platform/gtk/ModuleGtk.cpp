@@ -1,5 +1,7 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Portions Copyright (c) 2010 Motorola Mobility, Inc. All rights reserved.
+ * Copyright (C) 2011 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,59 +25,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Module_h
-#define Module_h
+#include "config.h"
+#include "Module.h"
 
-#include <wtf/Noncopyable.h>
-#include <wtf/text/WTFString.h>
-
-#if PLATFORM(MAC)
-#include <wtf/RetainPtr.h>
-#endif
-
-#if PLATFORM(QT)
-#include <QLibrary>
-#endif
-
-#if PLATFORM(GTK)
-typedef struct _GModule GModule;
-#endif
+#include <gmodule.h>
+#include <wtf/text/CString.h>
 
 namespace WebKit {
 
-class Module {
-    WTF_MAKE_NONCOPYABLE(Module);
-public:
-    Module(const String& path);
-    ~Module();
-
-    bool load();
-    // Note: On Mac this leaks the CFBundle to avoid crashes when a bundle is unloaded and there are
-    // live Objective-C objects whose methods come from that bundle.
-    void unload();
-
-    template<typename FunctionType> FunctionType functionPointer(const char* functionName) const;
-
-private:
-    void* platformFunctionPointer(const char* functionName) const;
-
-    String m_path;
-#if PLATFORM(MAC)
-    RetainPtr<CFBundleRef> m_bundle;
-#elif PLATFORM(WIN)
-    HMODULE m_module;
-#elif PLATFORM(QT)
-    QLibrary m_lib;
-#elif PLATFORM(GTK)
-    GModule* m_handle;
-#endif
-};
-
-template<typename FunctionType> FunctionType Module::functionPointer(const char* functionName) const
+bool Module::load()
 {
-    return reinterpret_cast<FunctionType>(platformFunctionPointer(functionName));
+    m_handle = g_module_open(m_path.utf8().data(), G_MODULE_BIND_LAZY);
+    return !m_handle;
+}
+
+void Module::unload()
+{
+    g_module_close(m_handle);
+}
+
+void* Module::platformFunctionPointer(const char* functionName) const
+{
+    gpointer symbol = 0;
+    g_module_symbol(m_handle, functionName, &symbol);
+    return symbol;
 }
 
 }
-
-#endif
