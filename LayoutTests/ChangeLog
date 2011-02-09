@@ -1,3 +1,13 @@
+2011-02-09  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed.
+
+        Chromium: Create expectations for residual-style.html see r77781.
+
+        * platform/chromium-linux/fast/invalid/residual-style-expected.txt:
+        * platform/chromium-win/fast/invalid/residual-style-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-02-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

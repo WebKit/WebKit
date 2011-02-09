@@ -444,10 +444,11 @@ layer at (0,0) size 785x3617
       RenderBlock (anonymous) at (0,2002) size 769x24
         RenderText {#text} at (0,2) size 71x19
           text run at (0,2) width 71: "KEYGEN: "
-        RenderMenuList {KEYGEN} at (73,2) size 150x20 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (1,1) size 148x18
-            RenderText at (4,1) size 105x16
-              text run at (4,1) width 105: "2048 (High Grade)"
+        RenderBlock {KEYGEN} at (73,2) size 150x20
+          RenderMenuList {SELECT} at (0,0) size 150x20 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+            RenderBlock (anonymous) at (1,1) size 148x18
+              RenderText at (4,1) size 105x16
+                text run at (4,1) width 105: "2048 (High Grade)"
         RenderInline {FONT} at (0,0) size 160x19 [color=#008000]
           RenderText {#text} at (225,2) size 160x19
             text run at (225,2) width 160: "All of this should be green."
