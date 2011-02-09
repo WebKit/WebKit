@@ -1,3 +1,14 @@
+2011-02-09  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Chromium: update expectations
+
+        plugins/invalidate_rect is failing on linux and win, too.
+
+        plugins/invalidate_rect.html fails on chromium-mac
+        https://bugs.webkit.org/show_bug.cgi?id=54051
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-09  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed.
