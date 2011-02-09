@@ -22,6 +22,7 @@
 #include "FixedArray.h"
 #include "StdLibExtras.h"
 #include <stdint.h>
+#include <string.h>
 
 namespace WTF {
 
