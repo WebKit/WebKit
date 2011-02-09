@@ -3254,3 +3254,5 @@ BUG_ZMO MAC : fast/text/international/pop-up-button-text-alignment-and-direction
 BUG_ZMO : editing/undo/undo-paste-when-caret-is-not-in-range.html = PASS MISSING CRASH TEXT
 
 BUGWK54051 : plugins/invalidate_rect.html = FAIL
+
+BUGCR72428 : fast/dom/HTMLAnchorElement/set-href-attribute-hash.html = TEXT
