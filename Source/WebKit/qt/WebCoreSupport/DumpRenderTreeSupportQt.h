@@ -58,6 +58,8 @@ extern QMap<int, QWebScriptWorld*> m_worldMap;
 class QWEBKIT_EXPORT QDRTNode {
 public:
     QDRTNode();
+    QDRTNode(const QDRTNode&);
+    QDRTNode &operator=(const QDRTNode&);
     ~QDRTNode();
 
 private:

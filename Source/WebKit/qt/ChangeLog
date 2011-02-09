@@ -1,3 +1,19 @@
+2011-02-09  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] fast/dom/nodesFromRect-links-and-text.html crashes in debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=53921
+
+        QDRTNode needs a copy constructor and an operator= in order to keep
+        proper refcounts.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (:m_node):
+        (QDRTNode::operator=):
+        (DumpRenderTreeSupportQt::nodesFromRect):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2011-02-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
@@ -13,7 +29,7 @@
 
         [Qt] - Context menu needs "Copy" as well when the selected text is a link.
         https://bugs.webkit.org/show_bug.cgi?id=40983
-    
+
         Added a test case to create a context sensitive menu.
         A check is made if it has Copy menu item when user
         selects a link and opens context menu.

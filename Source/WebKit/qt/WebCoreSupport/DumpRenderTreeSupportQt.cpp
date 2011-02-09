@@ -104,6 +104,26 @@ QDRTNode::~QDRTNode()
         m_node->deref();
 }
 
+QDRTNode::QDRTNode(const QDRTNode& other)
+    :m_node(other.m_node)
+{
+    if (m_node)
+        m_node->ref();
+}
+
+QDRTNode& QDRTNode::operator=(const QDRTNode& other)
+{
+    if (this != &other) {
+        Node* otherNode = other.m_node;
+        if (otherNode)
+            otherNode->ref();
+        if (m_node)
+            m_node->deref();
+        m_node = otherNode;
+    }
+    return *this;
+}
+
 
 DumpRenderTreeSupportQt::DumpRenderTreeSupportQt()
 {
@@ -875,13 +895,11 @@ QVariantList DumpRenderTreeSupportQt::nodesFromRect(const QWebElement& document,
         return res;
     RefPtr<NodeList> nodes = doc->nodesFromRect(x, y, top, right, bottom, left, ignoreClipping);
     for (int i = 0; i < nodes->length(); i++) {
-        QVariant v;
         // QWebElement will be null if the Node is not an HTML Element
         if (nodes->item(i)->isHTMLElement())
-            v.setValue(QWebElement(nodes->item(i)));
+            res << qVariantFromValue(QWebElement(nodes->item(i)));
         else
-            v.setValue(QDRTNode(nodes->item(i)));
-        res << v;
+            res << qVariantFromValue(QDRTNode(nodes->item(i)));
     }
     return res;
 }
