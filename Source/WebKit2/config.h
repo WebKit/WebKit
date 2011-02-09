@@ -24,6 +24,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */ 
 
+#if defined (BUILDING_GTK__)
+#include "autotoolsconfig.h"
+#endif /* defined (BUILDING_GTK__) */
+
 #ifdef __cplusplus
 
 // These undefs match up with defines in WebKit2Prefix.h for Mac OS X.
@@ -33,10 +37,6 @@
 #include <wtf/FastMalloc.h>
 
 #endif
-
-#if defined (BUILDING_GTK__)
-#include <WebCore/config.h>
-#endif /* defined (BUILDING_GTK__) */
 
 #include <wtf/DisallowCType.h>
 #include <wtf/Platform.h>
@@ -61,7 +61,7 @@ static const type& name() \
     return name##Value; \
 }
 
-#if defined(BUILDING_QT__)
+#if defined(BUILDING_QT__) || defined(BUILDING_GTK__)
 
 #define WTF_USE_JSC 1
 #define WTF_USE_V8 0

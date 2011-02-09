@@ -1,3 +1,16 @@
+2011-02-08  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        WebKit2 GTK Fails to Build #include nested too deeply
+        https://bugs.webkit.org/show_bug.cgi?id=52219
+
+        * GNUmakefile.am: Removed the commands to create the directories
+        for the forwarding headers, the script already does it for us.
+        * config.h: Removed the config.h inclusion and added the
+        autotoolsconfig.h directly, also added a condition to share the
+        defines with QT.
+
 2011-02-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mark Rowe.

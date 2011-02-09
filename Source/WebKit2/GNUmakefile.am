@@ -779,9 +779,6 @@ BUILT_SOURCES += \
 
 forwarding_headers := $(GENSOURCES_WEBKIT2)/include
 generate-webkit2-forwarding-headers: $(WebKit2)/Scripts/generate-forwarding-headers.pl $(libWebKit2_la_SOURCES)
-	$(AM_V_at)$(mkdir_p) $(forwarding_headers)/JavaScriptCore
-	$(AM_V_at)$(mkdir_p) $(forwarding_headers)/WebCore
-	$(AM_V_at)$(mkdir_p) $(forwarding_headers)/WebKit2
 	$(AM_V_GEN)$(PERL) $< $(WebKit2) $(forwarding_headers) gtk
 	$(AM_V_GEN)$(PERL) $< $(WebKit2) $(forwarding_headers) soup 
 

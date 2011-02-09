@@ -911,11 +911,6 @@ AC_ARG_ENABLE(webkit2,
                 [], [enable_webkit2="no"])
 AC_MSG_RESULT([$enable_webkit2])
 if test "$enable_webkit2" = "yes"; then
-    # Turn on this macro by default. It is used in inttypes.h for defining macros used by webkit.
-    # In WebKit, this define is ensured by doing it before including config.h in any source file.
-    # In WebKit2, WebKit2Prefix.h is included as first header file, so we need to define this
-    # macro before actually WebKit2Prefix.h is included in any file.
-    AC_DEFINE([__STDC_FORMAT_MACROS],[1],[Turn on the __STDC_FORMAT_MACROS used in inttypes.h])
     WEBKITGTK_PC_NAME=${WEBKITGTK_PC_NAME}2
     AC_SUBST([WEBKITGTK_PC_NAME])
 fi

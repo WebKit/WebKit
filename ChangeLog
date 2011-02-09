@@ -1,3 +1,16 @@
+2011-02-08  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        WebKit2 GTK Fails to Build #include nested too deeply
+        https://bugs.webkit.org/show_bug.cgi?id=52219
+
+        Removed the __STDC_FORMAT_MACROS definition, it is already defined
+        in the file where PRIxx64 is used before the inclusion so we are
+        safe.
+
+        * configure.ac:
+
 2011-02-08  Kristian Amlie  <kristian.amlie@nokia.com>
 
         Reviewed by Eric Seidel.
