@@ -58,10 +58,24 @@ private:
 
     void adjustBlurRadius(GraphicsContext*);
     void blurLayerImage(unsigned char*, const IntSize&, int stride);
+    
+    enum ShadowDirection {
+        OuterShadow,
+        InnerShadow
+    };
+    
     IntRect calculateLayerBoundingRect(GraphicsContext*, const FloatRect& layerArea, const IntRect& clipRect);
+    IntSize templateSize(const RoundedIntRect::Radii&) const;
 
     void drawRectShadowWithoutTiling(GraphicsContext*, const FloatRect&, const RoundedIntRect::Radii&, const IntRect& layerRect);
     void drawRectShadowWithTiling(GraphicsContext*, const FloatRect&, const RoundedIntRect::Radii&, const IntSize& shadowTemplateSize);
+
+    void drawInsetShadowWithoutTiling(GraphicsContext*, const FloatRect&, const FloatRect& holeRect, const RoundedIntRect::Radii&, const IntRect& layerRect);
+    void drawInsetShadowWithTiling(GraphicsContext*, const FloatRect&, const FloatRect& holeRect, const RoundedIntRect::Radii&, const IntSize& shadowTemplateSize);
+    
+    void drawLayerPieces(GraphicsContext*, const FloatRect& shadowBounds, const RoundedIntRect::Radii&, float roundedRadius, const IntSize& templateSize, ShadowDirection);
+    
+    void blurAndColorShadowBuffer(const IntSize& templateSize);
     
     enum ShadowType {
         NoShadow,
