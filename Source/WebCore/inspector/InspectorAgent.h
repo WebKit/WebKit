@@ -59,7 +59,6 @@ class InspectorArray;
 class InspectorBrowserDebuggerAgent;
 class InspectorClient;
 class InspectorConsoleAgent;
-class InspectorController;
 class InspectorCSSAgent;
 class InspectorDOMAgent;
 class InspectorDOMStorageAgent;
@@ -108,7 +107,7 @@ class InspectorAgent {
     WTF_MAKE_NONCOPYABLE(InspectorAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorAgent(InspectorController*, Page*, InspectorClient*);
+    InspectorAgent(Page*, InspectorClient*);
     virtual ~InspectorAgent();
 
     InspectorClient* inspectorClient() { return m_client; }
@@ -141,7 +140,6 @@ public:
 
     InspectorResourceAgent* resourceAgent();
 
-    InspectorController* inspectorController() { return m_inspectorController; };
     InspectorAgent* inspectorAgent() { return this; }
     InspectorConsoleAgent* consoleAgent() { return m_consoleAgent.get(); }
     InspectorCSSAgent* cssAgent() { return m_cssAgent.get(); }
@@ -276,7 +274,6 @@ private:
     void focusNode();
     bool isMainResourceLoader(DocumentLoader*, const KURL& requestUrl);
 
-    InspectorController* m_inspectorController;
     Page* m_inspectedPage;
     InspectorClient* m_client;
     InspectorFrontend* m_frontend;

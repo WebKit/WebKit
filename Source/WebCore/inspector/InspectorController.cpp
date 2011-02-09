@@ -50,7 +50,7 @@
 namespace WebCore {
 
 InspectorController::InspectorController(Page* page, InspectorClient* inspectorClient)
-    : m_inspectorAgent(new InspectorAgent(this, page, inspectorClient))
+    : m_inspectorAgent(new InspectorAgent(page, inspectorClient))
     , m_inspectorBackendDispatcher(new InspectorBackendDispatcher(m_inspectorAgent.get()))
     , m_inspectorClient(inspectorClient)
     , m_openingFrontend(false)
@@ -105,19 +105,17 @@ void InspectorController::connectFrontend()
 
 void InspectorController::disconnectFrontend()
 {
-    m_inspectorAgent->disconnectFrontend();
-}
-
-void InspectorController::disconnectFrontendImpl()
-{
     if (!m_inspectorFrontend)
         return;
+
+    m_inspectorAgent->disconnectFrontend();
 
     m_inspectorFrontend.clear();
 
     InspectorInstrumentation::frontendDeleted();
     if (!InspectorInstrumentation::hasFrontends())
         ScriptController::setCaptureCallStackForUncaughtExceptions(false);
+
 }
 
 void InspectorController::show()
@@ -146,6 +144,8 @@ void InspectorController::close()
 
 void InspectorController::restoreInspectorStateFromCookie(const String& inspectorStateCookie)
 {
+    ASSERT(!m_inspectorFrontend);
+    connectFrontend();
     m_inspectorAgent->restoreInspectorStateFromCookie(inspectorStateCookie);
 }
 

@@ -1,3 +1,21 @@
+2011-02-09  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: InspectorAgent should know nothing about InspectorController instance.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54100
+
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        (WebCore::InspectorAgent::restoreInspectorStateFromCookie):
+        (WebCore::InspectorAgent::disconnectFrontend):
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::disconnectFrontend):
+        (WebCore::InspectorController::restoreInspectorStateFromCookie):
+
 2011-02-09  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

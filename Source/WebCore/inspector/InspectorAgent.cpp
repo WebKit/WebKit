@@ -140,9 +140,8 @@ static const char scriptsPanelName[] = "scripts";
 static const char consolePanelName[] = "console";
 static const char profilesPanelName[] = "profiles";
 
-InspectorAgent::InspectorAgent(InspectorController* inspectorController, Page* page, InspectorClient* client)
-    : m_inspectorController(inspectorController)
-    , m_inspectedPage(page)
+InspectorAgent::InspectorAgent(Page* page, InspectorClient* client)
+    : m_inspectedPage(page)
     , m_client(client)
     , m_frontend(0)
     , m_cssAgent(new InspectorCSSAgent())
@@ -198,13 +197,9 @@ void InspectorAgent::restoreInspectorStateFromCookie(const String& inspectorStat
 {
     m_state->restoreFromInspectorCookie(inspectorStateCookie);
 
-    if (!m_frontend) {
-        m_inspectorController->connectFrontend();
-        m_frontend->frontendReused();
-        m_frontend->inspectedURLChanged(inspectedURL().string());
-        m_domAgent->setDocument(m_inspectedPage->mainFrame()->document());
-        pushDataCollectedOffline();
-    }
+    m_frontend->frontendReused();
+    m_frontend->inspectedURLChanged(inspectedURL().string());
+    pushDataCollectedOffline();
 
     m_resourceAgent = InspectorResourceAgent::restore(m_inspectedPage, m_state.get(), m_frontend);
 
@@ -364,8 +359,6 @@ void InspectorAgent::disconnectFrontend()
         return;
 
     m_frontend = 0;
-
-    m_inspectorController->disconnectFrontendImpl();
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     // If the window is being closed with the debugger enabled,

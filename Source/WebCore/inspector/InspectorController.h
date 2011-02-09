@@ -100,11 +100,7 @@ public:
 #endif
 
 private:
-    friend class InspectorAgent;
     friend class PostWorkerNotificationToFrontendTask;
-
-    void disconnectFrontendImpl(); // used by InspectorAgent
-    void frontendLoaded();
 
     OwnPtr<InspectorAgent> m_inspectorAgent;
     OwnPtr<InspectorBackendDispatcher> m_inspectorBackendDispatcher;
