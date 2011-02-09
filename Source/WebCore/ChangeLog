@@ -1,3 +1,12 @@
+2011-02-09  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed WinCE build fix for r78047.
+
+        ContextMenu.cpp and ContextMenuItem.cpp have a USE(CROSS_PLATFORM_CONTEXT_MENUS),
+        so they shouldn't cause problems with correct preprocessor defines.
+
+        * CMakeLists.txt:
+
 2011-02-09  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.
