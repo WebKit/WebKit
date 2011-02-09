@@ -9,6 +9,7 @@ SET(WTF_HEADERS
     ByteArray.h
     Complex.h
     CrossThreadRefCounted.h
+    CryptographicallyRandomNumber.h
     CurrentTime.h
     DateMath.h
     DecimalNumber.h
@@ -41,6 +42,7 @@ SET(WTF_HEADERS
     NotFound.h
     NullPtr.h
     OSAllocator.h
+    OSRandomSource.h
     OwnArrayPtr.h
     OwnFastMallocPtr.h
     OwnPtr.h
@@ -103,12 +105,14 @@ SET(WTF_HEADERS
 SET(WTF_SOURCES
     Assertions.cpp
     ByteArray.cpp
+    CryptographicallyRandomNumber.cpp
     CurrentTime.cpp
     DecimalNumber.cpp
     FastMalloc.cpp
     HashTable.cpp
     MainThread.cpp
     MD5.cpp
+    OSRandomSource.cpp
     RandomNumber.cpp
     RefCountedLeakCounter.cpp
     StackBounds.cpp

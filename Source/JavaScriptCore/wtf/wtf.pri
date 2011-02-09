@@ -3,6 +3,7 @@
 SOURCES += \
     wtf/Assertions.cpp \
     wtf/ByteArray.cpp \
+    wtf/CryptographicallyRandomNumber.cpp \
     wtf/CurrentTime.cpp \
     wtf/DateMath.cpp \
     wtf/dtoa.cpp \
@@ -14,6 +15,7 @@ SOURCES += \
     wtf/MD5.cpp \
     wtf/MainThread.cpp \
     wtf/NullPtr.cpp \
+    wtf/OSRandomSource.cpp \
     wtf/qt/MainThreadQt.cpp \
     wtf/qt/StringQt.cpp \
     wtf/qt/ThreadingQt.cpp \

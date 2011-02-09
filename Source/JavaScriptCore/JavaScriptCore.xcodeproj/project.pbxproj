@@ -338,6 +338,10 @@
 		971EDEA61169E0D3005E4262 /* Terminator.h in Headers */ = {isa = PBXBuildFile; fileRef = 97F6903A1169DF7F00A6BB46 /* Terminator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		972A485F12661E0800F4514F /* URLCharacterTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 972A485D12661E0800F4514F /* URLCharacterTypes.cpp */; };
 		972A48771266256F00F4514F /* URLEscape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 972A48741266256F00F4514F /* URLEscape.cpp */; };
+		97941A5713029AAB004A3447 /* OSRandomSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97941A3F130299DB004A3447 /* OSRandomSource.cpp */; };
+		97941A5A13029ACC004A3447 /* OSRandomSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 97941A40130299DB004A3447 /* OSRandomSource.h */; };
+		97941A7E1302A098004A3447 /* CryptographicallyRandomNumber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97941A7C1302A098004A3447 /* CryptographicallyRandomNumber.cpp */; };
+		97941A7F1302A098004A3447 /* CryptographicallyRandomNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = 97941A7D1302A098004A3447 /* CryptographicallyRandomNumber.h */; };
 		A1712B3B11C7B212007A5315 /* RegExpCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1712B3A11C7B212007A5315 /* RegExpCache.cpp */; };
 		A1712B3F11C7B228007A5315 /* RegExpCache.h in Headers */ = {isa = PBXBuildFile; fileRef = A1712B3E11C7B228007A5315 /* RegExpCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1712B4111C7B235007A5315 /* RegExpKey.h in Headers */ = {isa = PBXBuildFile; fileRef = A1712B4011C7B235007A5315 /* RegExpKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1006,6 +1010,10 @@
 		972A48741266256F00F4514F /* URLEscape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = URLEscape.cpp; path = url/src/URLEscape.cpp; sourceTree = "<group>"; };
 		972A48751266256F00F4514F /* URLEscape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = URLEscape.h; path = url/src/URLEscape.h; sourceTree = "<group>"; };
 		972A48761266256F00F4514F /* URLQueryCanonicalizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = URLQueryCanonicalizer.h; path = url/src/URLQueryCanonicalizer.h; sourceTree = "<group>"; };
+		97941A3F130299DB004A3447 /* OSRandomSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OSRandomSource.cpp; sourceTree = "<group>"; };
+		97941A40130299DB004A3447 /* OSRandomSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSRandomSource.h; sourceTree = "<group>"; };
+		97941A7C1302A098004A3447 /* CryptographicallyRandomNumber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptographicallyRandomNumber.cpp; sourceTree = "<group>"; };
+		97941A7D1302A098004A3447 /* CryptographicallyRandomNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptographicallyRandomNumber.h; sourceTree = "<group>"; };
 		97F6903A1169DF7F00A6BB46 /* Terminator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Terminator.h; sourceTree = "<group>"; };
 		A1712B3A11C7B212007A5315 /* RegExpCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegExpCache.cpp; sourceTree = "<group>"; };
 		A1712B3E11C7B228007A5315 /* RegExpCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpCache.h; sourceTree = "<group>"; };
@@ -1537,6 +1545,8 @@
 				A7A1F7AB0F252B3C00E184E2 /* ByteArray.h */,
 				FDA15C1612B03028003A583A /* Complex.h */,
 				0BDFFAD40FC6171000D69EF4 /* CrossThreadRefCounted.h */,
+				97941A7C1302A098004A3447 /* CryptographicallyRandomNumber.cpp */,
+				97941A7D1302A098004A3447 /* CryptographicallyRandomNumber.h */,
 				180B9AEF0F16C569009BDBC5 /* CurrentTime.cpp */,
 				180B9AF00F16C569009BDBC5 /* CurrentTime.h */,
 				41359CF40FDD89CB00206180 /* DateMath.cpp */,
@@ -1579,6 +1589,8 @@
 				933F5CDB126922690049191E /* NullPtr.h */,
 				1400067612A6F7830064D123 /* OSAllocator.h */,
 				1400069212A6F9E10064D123 /* OSAllocatorPosix.cpp */,
+				97941A3F130299DB004A3447 /* OSRandomSource.cpp */,
+				97941A40130299DB004A3447 /* OSRandomSource.h */,
 				9303F5A409911A5800AD71B8 /* OwnArrayPtr.h */,
 				0BDFFAD10FC616EC00D69EF4 /* OwnFastMallocPtr.h */,
 				9303F567099118FA00AD71B8 /* OwnPtr.h */,
@@ -2444,6 +2456,8 @@
 				E49DC16D12EF295300184A1F /* SourceProviderCacheItem.h in Headers */,
 				14C824AD12F7C785008F35E0 /* MarkedBlock.h in Headers */,
 				E4D8CEFB12FC439600BC9F5A /* BloomFilter.h in Headers */,
+				97941A5A13029ACC004A3447 /* OSRandomSource.h in Headers */,
+				97941A7F1302A098004A3447 /* CryptographicallyRandomNumber.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2913,6 +2927,8 @@
 				86704B4212DB8A8100A9FE7B /* YarrSyntaxChecker.cpp in Sources */,
 				E49DC16B12EF293E00184A1F /* SourceProviderCache.cpp in Sources */,
 				14C824AB12F7C77E008F35E0 /* MarkedBlock.cpp in Sources */,
+				97941A5713029AAB004A3447 /* OSRandomSource.cpp in Sources */,
+				97941A7E1302A098004A3447 /* CryptographicallyRandomNumber.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

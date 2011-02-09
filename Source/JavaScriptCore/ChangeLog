@@ -1,3 +1,44 @@
+2011-02-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add WTF::cryptographicallyRandomNumber
+        https://bugs.webkit.org/show_bug.cgi?id=54083
+
+        Introduce a cryptographically strong random number generator to WTF.
+        The random number generator is based on arc4random as found in:
+
+        http://www.openbsd.org/cgi-bin/cvsweb/src/lib/libc/crypt/arc4random.c?rev=1.22
+
+        I've changed to source to WebKit style and abstracted the operating
+        system interaction to OSRandomSource.  We'll use this functionality to
+        expose a cryptographically strong random number generator to
+        JavaScript.
+
+        * Android.mk:
+        * Android.v8.wtf.mk:
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * config.h:
+        * wtf/CMakeLists.txt:
+        * wtf/CryptographicallyRandomNumber.cpp: Added.
+        (WTF::initMutexIfNeeded):
+        (WTF::init):
+        (WTF::addRandomData):
+        (WTF::stir):
+        (WTF::stirIfNeeded):
+        (WTF::getByte):
+        (WTF::getWord):
+        (WTF::cryptographicallyRandomNumber):
+        (WTF::cryptographicallyRandomValues):
+        * wtf/CryptographicallyRandomNumber.h: Added.
+        * wtf/OSRandomSource.cpp: Added.
+        (WTF::randomValuesFromOS):
+        * wtf/OSRandomSource.h: Added.
+        * wtf/wtf.pri:
+
 2011-02-09  Geoffrey Garen  <ggaren@apple.com>
 
         Try to fix the build.

@@ -561,6 +561,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\CryptographicallyRandomNumber.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\CryptographicallyRandomNumber.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\CurrentTime.cpp"
 			>
 		</File>
@@ -750,6 +758,14 @@
 		</File>
 		<File
 			RelativePath="..\..\wtf\OSAllocatorWin.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\OSRandomSource.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\OSRandomSource.h"
 			>
 		</File>
 		<File

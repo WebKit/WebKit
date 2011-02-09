@@ -161,17 +161,19 @@ LOCAL_SRC_FILES := \
 	\
 	wtf/Assertions.cpp \
 	wtf/ByteArray.cpp \
+	wtf/CryptographicallyRandomNumber.cpp \
 	wtf/CurrentTime.cpp \
 	wtf/DateMath.cpp \
 	wtf/DecimalNumber.cpp \
 	wtf/FastMalloc.cpp \
 	wtf/HashTable.cpp \
 	wtf/MainThread.cpp \
+	wtf/OSRandomSource.cpp \
 	wtf/PageAllocationAligned.cpp\
 	wtf/PageBlock.cpp\
 	wtf/RandomNumber.cpp \
 	wtf/RefCountedLeakCounter.cpp \
-    wtf/StackBounds.cpp \
+	wtf/StackBounds.cpp \
 	wtf/TCSystemAlloc.cpp \
 	wtf/ThreadIdentifierDataPthreads.cpp \
 	wtf/Threading.cpp \

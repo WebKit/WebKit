@@ -443,6 +443,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/ByteArray.cpp \
 	Source/JavaScriptCore/wtf/ByteArray.h \
 	Source/JavaScriptCore/wtf/CrossThreadRefCounted.h \
+	Source/JavaScriptCore/wtf/CryptographicallyRandomNumber.cpp \
+	Source/JavaScriptCore/wtf/CryptographicallyRandomNumber.h \
 	Source/JavaScriptCore/wtf/CurrentTime.cpp \
 	Source/JavaScriptCore/wtf/CurrentTime.h \
 	Source/JavaScriptCore/wtf/DateMath.cpp \
@@ -491,6 +493,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/NotFound.h \
 	Source/JavaScriptCore/wtf/NullPtr.h \
 	Source/JavaScriptCore/wtf/OSAllocator.h \
+	Source/JavaScriptCore/wtf/OSRandomSource.cpp \
+	Source/JavaScriptCore/wtf/OSRandomSource.h \
 	Source/JavaScriptCore/wtf/OwnArrayPtr.h \
 	Source/JavaScriptCore/wtf/OwnFastMallocPtr.h \
 	Source/JavaScriptCore/wtf/OwnPtrCommon.h \
