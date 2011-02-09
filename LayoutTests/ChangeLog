@@ -1,3 +1,17 @@
+2011-02-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] Qt platform has a different editing delegates for several tests
+        https://bugs.webkit.org/show_bug.cgi?id=43082
+
+        editing/undo/undo-paste-when-caret-is-not-in-range.html introduced in r77995, but fails on Qt.
+        Add platform specific expected result until fix.
+
+        * platform/qt/editing/undo/undo-paste-when-caret-is-not-in-range-expected.checksum: Added.
+        * platform/qt/editing/undo/undo-paste-when-caret-is-not-in-range-expected.png: Added.
+        * platform/qt/editing/undo/undo-paste-when-caret-is-not-in-range-expected.txt: Copied from LayoutTests/editing/undo/undo-paste-when-caret-is-not-in-range-expected.txt.
+
 2011-02-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
