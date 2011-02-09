@@ -1,3 +1,14 @@
+2011-02-08  Kristian Amlie  <kristian.amlie@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Added include paths for QtScript.
+
+        WebKit patches required to work with a modularized version of Qt
+        https://bugs.webkit.org/show_bug.cgi?id=53916
+
+        * Source/WebKit.pri:
+
 2011-02-03  Martin Robinson  <mrobinson@igalia.com>
 
         Fix GTK+ WebGL build after r76600.

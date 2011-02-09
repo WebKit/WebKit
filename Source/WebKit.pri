@@ -52,6 +52,7 @@ CONFIG(release, debug|release) {
 }
 
 INCLUDEPATH += $$OUTPUT_DIR/include/QtWebKit
+INCLUDEPATH += $$QT.script.includes
 
 CONFIG -= warn_on
 *-g++*:QMAKE_CXXFLAGS += -Wall -Wextra -Wreturn-type -fno-strict-aliasing -Wcast-align -Wchar-subscripts -Wformat-security -Wreturn-type -Wno-unused-parameter -Wno-sign-compare -Wno-switch -Wno-switch-enum -Wundef -Wmissing-noreturn -Winit-self
