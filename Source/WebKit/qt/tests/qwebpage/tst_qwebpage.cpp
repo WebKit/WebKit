@@ -86,6 +86,7 @@ private slots:
     void userStyleSheet();
     void modified();
     void contextMenuCrash();
+    void updatePositionDependentActionsCrash();
     void database();
     void createPluginWithPluginsEnabled();
     void createPluginWithPluginsDisabled();
@@ -497,11 +498,31 @@ void tst_QWebPage::modified()
     QVERIFY(::waitForSignal(m_page, SIGNAL(saveFrameStateRequested(QWebFrame*,QWebHistoryItem*))));
 }
 
+// https://bugs.webkit.org/show_bug.cgi?id=51331
+void tst_QWebPage::updatePositionDependentActionsCrash()
+{
+    QWebView view;
+    view.setHtml("<p>test");
+    QPoint pos(0, 0);
+    view.page()->updatePositionDependentActions(pos);
+    QMenu* contextMenu = 0;
+    foreach (QObject* child, view.children()) {
+        contextMenu = qobject_cast<QMenu*>(child);
+        if (contextMenu)
+            break;
+    }
+    QVERIFY(!contextMenu);
+}
+
+// https://bugs.webkit.org/show_bug.cgi?id=20357
 void tst_QWebPage::contextMenuCrash()
 {
     QWebView view;
     view.setHtml("<p>test");
-    view.page()->updatePositionDependentActions(QPoint(0, 0));
+    QPoint pos(0, 0);
+    QContextMenuEvent event(QContextMenuEvent::Mouse, pos);
+    view.page()->swallowContextMenuEvent(&event);
+    view.page()->updatePositionDependentActions(pos);
     QMenu* contextMenu = 0;
     foreach (QObject* child, view.children()) {
         contextMenu = qobject_cast<QMenu*>(child);

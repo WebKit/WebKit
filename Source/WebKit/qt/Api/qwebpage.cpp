@@ -433,7 +433,7 @@ static QWebPage::WebAction webActionForContextMenuAction(WebCore::ContextMenuAct
 QMenu *QWebPagePrivate::createContextMenu(const WebCore::ContextMenu *webcoreMenu,
         const QList<WebCore::ContextMenuItem> *items, QBitArray *visitedWebActions)
 {
-    if (!client)
+    if (!client || !webcoreMenu)
         return 0;
 
     QMenu* menu = new QMenu(client->ownerWidget());

@@ -1,5 +1,30 @@
 2011-02-09  Robert Hogan  <robert@webkit.org>
 
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] REGRESSION (r73535): tst_QWebPage fails
+        https://bugs.webkit.org/show_bug.cgi?id=51331
+
+        Since r73535 a ContextMenu is only created when a context menu
+        event is received, so QWebPage::updatePositionDependentActions()
+        can't depend on one being there if it is called directly by
+        the client. QtWebKit itself only ever calls updatePositionDependentActions()
+        when a context menu event has been received.
+
+        Update tst_QWebPage:contextMenuCrash to create a context menu.
+        Add tst_QWebPage:updatePositionDependentActionsCrash to test for this crash.
+
+        There doesn't seem to be a good reason for creating a context menu if
+        clients call QWebPage::updatePositionDependentActions() when no
+        context menu event has ever been received.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::createContextMenu):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::contextMenuCrash):
+
+2011-02-09  Robert Hogan  <robert@webkit.org>
+
         Reviewed by Antonio Gomes.
 
         [Qt] fast/dom/nodesFromRect-links-and-text.html crashes in debug mode
