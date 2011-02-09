@@ -1,3 +1,14 @@
+2011-02-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt]Missing layoutTestController.displayInvalidatedRegion()
+
+        plugins/invalidate_rect.html introduced in r78010, but unfortunately
+        Qt DRT doesn't have layoutTestController.displayInvalidatedRegion().
+
+        * platform/qt/Skipped: Add plugins/invalidate_rect.html.
+
 2011-02-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Kent Tamura.

@@ -715,6 +715,9 @@ java
 fast/dom/Window/timer-resume-on-navigation-back.html
 loader/go-back-to-different-window-size.html
 
+# Missing layoutTestController.displayInvalidatedRegion()
+plugins/invalidate_rect.html
+
 # Missing layoutTestController.findString() http://webkit.org/b/50236
 editing/text-iterator/findString.html
 
