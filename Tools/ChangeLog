@@ -1,3 +1,13 @@
+2011-02-09  David Levin  <levin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        check-webkit-style: The error message about NULL should be more clear for comments.
+        https://bugs.webkit.org/show_bug.cgi?id=53786
+
+        * Scripts/webkitpy/style/checkers/cpp.py: Clarified the error message.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py: Fixed the corresponding test.
+
 2011-02-09  Nebojsa Ciric  <cira@chromium.org>
 
         Reviewed by Darin Fisher.

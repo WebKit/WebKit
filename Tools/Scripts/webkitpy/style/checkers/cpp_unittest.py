@@ -3901,12 +3901,12 @@ class WebKitStyleTest(CppStyleTestBase):
             'foo.cpp')
         self.assert_lint(
             "// Don't use NULL in comments since it isn't in code.",
-            'Use 0 instead of NULL.'
+            'Use 0 or null instead of NULL (even in *comments*).'
             '  [readability/null] [4]',
             'foo.cpp')
         self.assert_lint(
             '"A string with NULL" // and a comment with NULL is tricky to flag correctly in cpp_style.',
-            'Use 0 instead of NULL.'
+            'Use 0 or null instead of NULL (even in *comments*).'
             '  [readability/null] [4]',
             'foo.cpp')
         self.assert_lint(

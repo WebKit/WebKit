@@ -2315,7 +2315,7 @@ def check_for_null(clean_lines, line_number, file_state, error):
     # matches, then do the check with strings collapsed to avoid giving errors for
     # NULLs occurring in strings.
     if search(r'\bNULL\b', line) and search(r'\bNULL\b', CleansedLines.collapse_strings(line)):
-        error(line_number, 'readability/null', 4, 'Use 0 instead of NULL.')
+        error(line_number, 'readability/null', 4, 'Use 0 or null instead of NULL (even in *comments*).')
 
 def get_line_width(line):
     """Determines the width of the line in column positions.
