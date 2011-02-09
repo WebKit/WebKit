@@ -1,3 +1,11 @@
+2011-02-09  Adam Roben  <aroben@apple.com>
+
+        Windows Production build fix
+
+        * WebCore.vcproj/QTMovieWinCommon.vsprops: Link against
+        WebKitSystemInterface$(WebKitConfigSuffix).lib, not just WebKitSystemInterface.lib, so we
+        pick up the _debug variant when appropriate.
+
 2011-02-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
