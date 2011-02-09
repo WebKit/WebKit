@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DrawingAreaProxyUpdateChunk_h
-#define DrawingAreaProxyUpdateChunk_h
+#ifndef ChunkedUpdateDrawingAreaProxy_h
+#define ChunkedUpdateDrawingAreaProxy_h
 
 #include "DrawingAreaProxy.h"
 #include <WebCore/IntSize.h>
@@ -102,4 +102,4 @@ private:
     
 } // namespace WebKit
 
-#endif // DrawingAreaProxyUpdateChunk_h
+#endif // ChunkedUpdateDrawingAreaProxy_h
