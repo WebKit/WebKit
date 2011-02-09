@@ -35,10 +35,7 @@ class QPainter;
 
 namespace WebKit {
 
-#if USE(ACCELERATED_COMPOSITING)
 class LayerTreeContext;
-#endif
-
 class UpdateInfo;
 class WebPageProxy;
 

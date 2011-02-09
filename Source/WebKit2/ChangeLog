@@ -2,6 +2,20 @@
 
         Reviewed by Martin Robinson.
 
+        [WK2] LayerTreeContext is used outside the ACCELERATED_COMPOSITING
+        guards but not defined in DrawingAreaProxy.h
+        https://bugs.webkit.org/show_bug.cgi?id=54009
+
+        Removed the guards in the forward declaration, this will fail if
+        the class is finally used in the function, but it works for the
+        moment.
+
+        * UIProcess/DrawingAreaProxy.h:
+
+2011-02-08  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         WebKit2 GTK Fails to Build #include nested too deeply
         https://bugs.webkit.org/show_bug.cgi?id=52219
 
