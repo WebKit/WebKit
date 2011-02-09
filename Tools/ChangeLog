@@ -1,3 +1,16 @@
+2011-02-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        chromium-win builder shouldn't run python or perl tests
+        https://bugs.webkit.org/show_bug.cgi?id=54032
+
+        These tests don't pass on this builder because the builder isn't
+        running in cygwin.  There isn't really any point in running them and
+        making the bot red forever.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+
 2011-02-08  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.
