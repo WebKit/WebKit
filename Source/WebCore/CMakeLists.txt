@@ -1156,8 +1156,6 @@ SET(WebCore_SOURCES
     page/animation/KeyframeAnimation.cpp
 
     platform/Arena.cpp
-    platform/ContextMenu.cpp
-    platform/ContextMenuItem.cpp
     platform/ContentType.cpp
     platform/CrossThreadCopier.cpp
     platform/DeprecatedPtrListImpl.cpp
