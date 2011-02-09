@@ -145,11 +145,6 @@ PassRefPtr<PlatformCAAnimation> PlatformCAAnimation::create(PlatformAnimationRef
     return adoptRef(new PlatformCAAnimation(animation));
 }
 
-PassRefPtr<PlatformCAAnimation> PlatformCAAnimation::create(const PlatformCAAnimation* animation)
-{
-    return adoptRef(new PlatformCAAnimation(animation));
-}
-
 PlatformCAAnimation::PlatformCAAnimation(AnimationType type, const String& keyPath)
     : m_type(type)
 {
@@ -176,33 +171,33 @@ PlatformCAAnimation::PlatformCAAnimation(PlatformAnimationRef animation)
     m_animation = animation;
 }
 
-PlatformCAAnimation::PlatformCAAnimation(const PlatformCAAnimation* animation)
+PassRefPtr<PlatformCAAnimation> PlatformCAAnimation::copy() const
 {
-    m_animation.adoptCF(CACFAnimationCreate((animation->animationType() == Basic) ? kCACFBasicAnimation : kCACFKeyframeAnimation));
-    RetainPtr<CFStringRef> keyPath(AdoptCF, animation->keyPath().createCFString());
-    CACFAnimationSetKeyPath(m_animation.get(), keyPath.get());
-
-    setBeginTime(animation->beginTime());
-    setDuration(animation->duration());
-    setSpeed(animation->speed());
-    setTimeOffset(animation->timeOffset());
-    setRepeatCount(animation->repeatCount());
-    setAutoreverses(animation->autoreverses());
-    setFillMode(animation->fillMode());
-    setRemovedOnCompletion(animation->isRemovedOnCompletion());
-    setAdditive(animation->isAdditive());
-    copyTimingFunctionFrom(animation);
-    setValueFunction(animation->valueFunction());
-
+    RefPtr<PlatformCAAnimation> animation = create(animationType(), keyPath());
+    
+    animation->setBeginTime(beginTime());
+    animation->setDuration(duration());
+    animation->setSpeed(speed());
+    animation->setTimeOffset(timeOffset());
+    animation->setRepeatCount(repeatCount());
+    animation->setAutoreverses(autoreverses());
+    animation->setFillMode(fillMode());
+    animation->setRemovedOnCompletion(isRemovedOnCompletion());
+    animation->setAdditive(isAdditive());
+    animation->copyTimingFunctionFrom(this);
+    animation->setValueFunction(valueFunction());
+    
     // Copy the specific Basic or Keyframe values
-    if (animation->animationType() == Keyframe) {
-        copyValuesFrom(animation);
-        copyKeyTimesFrom(animation);
-        copyTimingFunctionsFrom(animation);
+    if (animationType() == Keyframe) {
+        animation->copyValuesFrom(this);
+        animation->copyKeyTimesFrom(this);
+        animation->copyTimingFunctionsFrom(this);
     } else {
-        copyFromValueFrom(animation);
-        copyToValueFrom(animation);
+        animation->copyFromValueFrom(this);
+        animation->copyToValueFrom(this);
     }
+    
+    return animation;
 }
 
 PlatformCAAnimation::~PlatformCAAnimation()

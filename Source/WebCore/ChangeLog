@@ -1,3 +1,29 @@
+2011-02-07  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        LayoutTests/animations/play-state.html has wrong behavior with accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=53513
+
+        The PlatformCAAnimation::create() function which took a pointer to another
+        PlatformCAAnimation was supposed to make a copy of that passed object.
+        But it was doing completely the wrong thing on Mac and was leaking an object
+        to boot. And the notion of copying an object using a static creation function
+        is wrong in the first place. So I changed it to a member copy() function
+        which would create a new PlatformCAAnimation which was a copy of 'this' and
+        return it. I changed the implementation on both Mac and Win to match.
+
+        This problem was not caught by DRT, even there is a specific test for it.
+        That test just verifies that the higher level logic is working 
+        properly, which it is. There's no practical way to find out if the
+        layer is currently animating. There is no logic which probes that
+        deeply into the layer mechanics.
+        
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        * platform/graphics/ca/PlatformCAAnimation.h:
+        * platform/graphics/ca/mac/PlatformCAAnimationMac.mm:
+        * platform/graphics/ca/win/PlatformCAAnimationWin.cpp:
+
 2011-02-09  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Unreviewed build fix.

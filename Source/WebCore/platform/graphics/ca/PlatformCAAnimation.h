@@ -63,13 +63,14 @@ public:
     enum ValueFunctionType { NoValueFunction, RotateX, RotateY, RotateZ, ScaleX, ScaleY, ScaleZ, Scale, TranslateX, TranslateY, TranslateZ, Translate };
 
     static PassRefPtr<PlatformCAAnimation> create(AnimationType, const String& keyPath);
-    static PassRefPtr<PlatformCAAnimation> create(PlatformAnimationRef animation);
-    static PassRefPtr<PlatformCAAnimation> create(const PlatformCAAnimation* animation);
+    static PassRefPtr<PlatformCAAnimation> create(PlatformAnimationRef);
 
     ~PlatformCAAnimation();
     
     static bool supportsValueFunction();
     
+    PassRefPtr<PlatformCAAnimation> copy() const;
+
     PlatformAnimationRef platformAnimation() const;
     
     AnimationType animationType() const { return m_type; }
@@ -136,8 +137,7 @@ public:
     
 protected:
     PlatformCAAnimation(AnimationType, const String& keyPath);
-    PlatformCAAnimation(PlatformAnimationRef animation);
-    PlatformCAAnimation(const PlatformCAAnimation* animation);
+    PlatformCAAnimation(PlatformAnimationRef);
     
 private:
     AnimationType m_type;

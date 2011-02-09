@@ -159,11 +159,6 @@ PassRefPtr<PlatformCAAnimation> PlatformCAAnimation::create(PlatformAnimationRef
     return adoptRef(new PlatformCAAnimation(animation));
 }
 
-PassRefPtr<PlatformCAAnimation> PlatformCAAnimation::create(const PlatformCAAnimation* animation)
-{
-    return adoptRef(new PlatformCAAnimation(animation));
-}
-
 PlatformCAAnimation::PlatformCAAnimation(AnimationType type, const String& keyPath)
     : m_type(type)
 {
@@ -187,38 +182,36 @@ PlatformCAAnimation::PlatformCAAnimation(PlatformAnimationRef animation)
     m_animation = static_cast<CAPropertyAnimation*>(animation);
 }
 
-PlatformCAAnimation::PlatformCAAnimation(const PlatformCAAnimation* animation)
+PassRefPtr<PlatformCAAnimation> PlatformCAAnimation::copy() const
 {
-    PlatformCAAnimation* newAnimation = new PlatformCAAnimation(animation->animationType(), animation->keyPath());
+    RefPtr<PlatformCAAnimation> animation = create(animationType(), keyPath());
+    
+    animation->setBeginTime(beginTime());
+    animation->setDuration(duration());
+    animation->setSpeed(speed());
+    animation->setTimeOffset(timeOffset());
+    animation->setRepeatCount(repeatCount());
+    animation->setAutoreverses(autoreverses());
+    animation->setFillMode(fillMode());
+    animation->setRemovedOnCompletion(isRemovedOnCompletion());
+    animation->setAdditive(isAdditive());
+    animation->copyTimingFunctionFrom(this);
+    animation->setValueFunction(valueFunction());
 
-    newAnimation->setBeginTime(animation->beginTime());
-    newAnimation->setDuration(animation->duration());
-    newAnimation->setSpeed(animation->speed());
-    newAnimation->setTimeOffset(animation->timeOffset());
-    newAnimation->setRepeatCount(animation->repeatCount());
-    newAnimation->setAutoreverses(animation->autoreverses());
-    newAnimation->setFillMode(animation->fillMode());
-    newAnimation->setRemovedOnCompletion(animation->isRemovedOnCompletion());
-    newAnimation->setAdditive(animation->isAdditive());
-    newAnimation->copyTimingFunctionFrom(animation);
-
-#if HAVE_MODERN_QUARTZCORE
-    newAnimation->setValueFunction(animation->valueFunction());
-#endif
-
-    setNonZeroBeginTimeFlag(newAnimation, hasNonZeroBeginTimeFlag(animation));
+    setNonZeroBeginTimeFlag(animation.get(), hasNonZeroBeginTimeFlag(this));
     
     // Copy the specific Basic or Keyframe values
-    if (animation->animationType() == Keyframe) {
-        newAnimation->copyValuesFrom(animation);
-        newAnimation->copyKeyTimesFrom(animation);
-        newAnimation->copyTimingFunctionsFrom(animation);
+    if (animationType() == Keyframe) {
+        animation->copyValuesFrom(this);
+        animation->copyKeyTimesFrom(this);
+        animation->copyTimingFunctionsFrom(this);
     } else {
-        newAnimation->copyFromValueFrom(animation);
-        newAnimation->copyToValueFrom(animation);
+        animation->copyFromValueFrom(this);
+        animation->copyToValueFrom(this);
     }
+    
+    return animation;
 }
-
 PlatformCAAnimation::~PlatformCAAnimation()
 {
 }
