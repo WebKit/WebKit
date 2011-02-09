@@ -1,3 +1,20 @@
+2011-02-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION(HTML 5): HTMLDocumentParser does not report html parse errors to the console
+        https://bugs.webkit.org/show_bug.cgi?id=41187
+
+        Wire up a basic HTML parse error message.  There's a lot of room for
+        improvement in this area, but this is a start.
+
+        No tests!  See https://bugs.webkit.org/show_bug.cgi?id=54134
+
+        * html/parser/HTMLDocumentParser.h:
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::parseError):
+        * html/parser/HTMLTreeBuilder.h:
+
 2011-02-09  Naoki Takano  <takano.naoki@gmail.com>
 
         Reviewed by Kenneth Russell.

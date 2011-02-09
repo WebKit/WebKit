@@ -183,8 +183,7 @@ private:
 
     bool m_framesetOk;
 
-    // FIXME: Implement error reporting.
-    void parseError(AtomicHTMLToken&) { }
+    void parseError(AtomicHTMLToken&);
 
     InsertionMode insertionMode() const { return m_insertionMode; }
     void setInsertionMode(InsertionMode mode)

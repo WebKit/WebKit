@@ -27,6 +27,7 @@
 #include "HTMLTreeBuilder.h"
 
 #include "Comment.h"
+#include "DOMWindow.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
 #include "Frame.h"
@@ -2805,6 +2806,20 @@ void HTMLTreeBuilder::finished()
 
     // Warning, this may detach the parser. Do not do anything else after this.
     m_document->finishedParsing();
+}
+
+void HTMLTreeBuilder::parseError(AtomicHTMLToken&)
+{
+    DEFINE_STATIC_LOCAL(String, parseErrorMessage, ("HTML parse error (recovered gracefully)"));
+
+    if (!m_reportErrors)
+        return;
+
+    DOMWindow* domWindow = m_document->domWindow();
+    if (!domWindow)
+        return;
+
+    domWindow->console()->addMessage(HTMLMessageSource, LogMessageType, WarningMessageLevel, parseErrorMessage, m_parser->lineNumber(), m_document->url().string());
 }
 
 bool HTMLTreeBuilder::scriptEnabled(Frame* frame)

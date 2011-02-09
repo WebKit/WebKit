@@ -76,6 +76,8 @@ public:
     String sourceForToken(const HTMLToken&);
 
     virtual TextPosition0 textPosition() const;
+    virtual int lineNumber() const;
+
     virtual void suspendScheduledTasks();
     virtual void resumeScheduledTasks();
 
@@ -100,7 +102,6 @@ private:
     virtual bool isWaitingForScripts() const;
     virtual bool isExecutingScript() const;
     virtual void executeScriptsWaitingForStylesheets();
-    virtual int lineNumber() const;
 
     // HTMLScriptRunnerHost
     virtual void watchForLoad(CachedResource*);
