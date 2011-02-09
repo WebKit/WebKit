@@ -1,3 +1,15 @@
+2011-02-09  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Shinichiro Hamaji.
+
+        [Chromium] WebTextCheckingResult should have a default constructor.
+        https://bugs.webkit.org/show_bug.cgi?id=54075
+
+        Gave default parameters to WebTextCheckingResult constructor.
+        
+        * public/WebTextCheckingResult.h:
+        (WebKit::WebTextCheckingResult::WebTextCheckingResult):
+
 2011-02-08  Sailesh Agrawal  <sail@chromium.org>
 
         Reviewed by Kenneth Russell.

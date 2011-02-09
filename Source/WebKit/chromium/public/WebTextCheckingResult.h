@@ -47,7 +47,7 @@ public:
     int position() const { return m_position; }
     int length() const { return m_length; }
 
-    WebTextCheckingResult(Error error, int position, int length) 
+    explicit WebTextCheckingResult(Error error = ErrorSpelling, int position = 0, int length = 0) 
         : m_error(error)
         , m_position(position)
         , m_length(length)
