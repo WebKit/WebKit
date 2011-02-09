@@ -1043,4 +1043,83 @@ bool RenderThemeEfl::paintProgressBar(RenderObject* o, const PaintInfo& i, const
 }
 #endif
 
+#if ENABLE(VIDEO)
+String RenderThemeEfl::extraMediaControlsStyleSheet()
+{
+    notImplemented();
+    return String();
+}
+
+String RenderThemeEfl::formatMediaControlsCurrentTime(float currentTime, float duration) const
+{
+    notImplemented();
+    return String();
+}
+
+bool RenderThemeEfl::paintMediaFullscreenButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    notImplemented();
+    return false;
+}
+
+bool RenderThemeEfl::paintMediaMuteButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    notImplemented();
+    return false;
+}
+
+bool RenderThemeEfl::paintMediaPlayButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    notImplemented();
+    return false;
+}
+
+bool RenderThemeEfl::paintMediaSeekBackButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    notImplemented();
+    return false;
+}
+
+bool RenderThemeEfl::paintMediaSeekForwardButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    notImplemented();
+    return false;
+}
+
+bool RenderThemeEfl::paintMediaSliderTrack(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+{
+    notImplemented();
+    return false;
+}
+
+bool RenderThemeEfl::paintMediaSliderThumb(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+{
+    notImplemented();
+    return false;
+}
+
+bool RenderThemeEfl::paintMediaVolumeSliderContainer(RenderObject*, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    notImplemented();
+    return false;
+}
+
+bool RenderThemeEfl::paintMediaVolumeSliderTrack(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    notImplemented();
+    return false;
+}
+
+bool RenderThemeEfl::paintMediaVolumeSliderThumb(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    notImplemented();
+    return false;
+}
+
+bool RenderThemeEfl::paintMediaCurrentTime(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    notImplemented();
+    return false;
+}
+#endif
 }

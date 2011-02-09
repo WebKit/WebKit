@@ -153,6 +153,23 @@ public:
     virtual bool paintProgressBar(RenderObject*, const PaintInfo&, const IntRect&);
 #endif
 
+#if ENABLE(VIDEO)
+    virtual String extraMediaControlsStyleSheet();
+    virtual String formatMediaControlsCurrentTime(float currentTime, float duration) const;
+
+    virtual bool paintMediaFullscreenButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMediaPlayButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMediaMuteButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMediaSeekBackButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMediaSeekForwardButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMediaSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMediaSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMediaVolumeSliderContainer(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMediaVolumeSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMediaVolumeSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMediaCurrentTime(RenderObject*, const PaintInfo&, const IntRect&);
+#endif
+
 protected:
     static float defaultFontSize;
 
