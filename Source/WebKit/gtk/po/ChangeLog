@@ -1,5 +1,12 @@
 2011-02-09  Christian Dywan  <christian@lanedo.com>
 
+        Please add Greek translation of WebkitGTK+
+        https://bugs.webkit.org/show_bug.cgi?id=34482
+
+        * gr.po: Added.
+
+2011-02-09  Christian Dywan  <christian@lanedo.com>
+
         Unreviewed translation file.
 
         Arabic translation
