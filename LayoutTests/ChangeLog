@@ -1,5 +1,14 @@
 2011-02-08  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Kent Tamura.
+
+        Skip a freshly added test that depends on newly added DRT functionality
+        https://bugs.webkit.org/show_bug.cgi?id=54069
+
+        * platform/mac-wk2/Skipped:
+
+2011-02-08  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Mark Rowe.
 
         Skip some tests that fail in WebKit2 for obvious reasons
