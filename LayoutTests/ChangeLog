@@ -1,3 +1,9 @@
+2011-02-08  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-07  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Nate Chapin.
