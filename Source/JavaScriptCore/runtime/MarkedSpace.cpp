@@ -26,20 +26,9 @@
 #include "JSGlobalData.h"
 #include "JSLock.h"
 
-using std::max;
-
 namespace JSC {
 
 class Structure;
-
-// tunable parameters
-
-const size_t GROWTH_FACTOR = 2;
-const size_t LOW_WATER_FACTOR = 4;
-const size_t ALLOCATIONS_PER_COLLECTION = 3600;
-// This value has to be a macro to be used in max() without introducing
-// a PIC branch in Mach-O binaries, see <rdar://problem/5971391>.
-#define MIN_ARRAY_SIZE (static_cast<size_t>(14))
 
 MarkedSpace::MarkedSpace(JSGlobalData* globalData)
     : m_waterMark(0)
@@ -91,25 +80,15 @@ NEVER_INLINE void MarkedSpace::freeBlock(size_t block)
     m_heap.blocks.removeLast();
 }
 
-void* MarkedSpace::allocate(size_t s)
+void* MarkedSpace::allocate(size_t)
 {
-    ASSERT(globalData()->identifierTable == wtfThreadData().currentIdentifierTable());
-    typedef HeapConstants::Block Block;
-    typedef HeapConstants::Cell Cell;
-    
-    ASSERT(JSLock::lockCount() > 0);
-    ASSERT(JSLock::currentThreadIsHoldingLock());
-    ASSERT_UNUSED(s, s <= HeapConstants::cellSize);
-
-    // Fast case: find the next garbage cell and recycle it.
-
     do {
         ASSERT(m_heap.nextBlock < m_heap.blocks.size());
-        Block* block = m_heap.collectorBlock(m_heap.nextBlock);
+        MarkedBlock* block = m_heap.collectorBlock(m_heap.nextBlock);
         do {
             ASSERT(m_heap.nextCell < HeapConstants::cellsPerBlock);
             if (!block->marked.testAndSet(m_heap.nextCell)) { // Always false for the last cell in the block
-                Cell* cell = &block->cells[m_heap.nextCell];
+                CollectorCell* cell = &block->cells[m_heap.nextCell];
 
                 JSCell* imp = reinterpret_cast<JSCell*>(cell);
                 imp->~JSCell();
