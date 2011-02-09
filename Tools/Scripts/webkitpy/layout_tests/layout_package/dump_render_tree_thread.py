@@ -120,42 +120,7 @@ class SingleTestThread(threading.Thread):
         return self._test_result
 
 
-class WatchableThread(threading.Thread):
-    """This class abstracts an interface used by
-    run_webkit_tests.TestRunner._wait_for_threads_to_finish for thread
-    management."""
-    def __init__(self):
-        threading.Thread.__init__(self)
-        self._canceled = False
-        self._exception_info = None
-        self._next_timeout = None
-        self._thread_id = None
-
-    def cancel(self):
-        """Set a flag telling this thread to quit."""
-        self._canceled = True
-
-    def clear_next_timeout(self):
-        """Mark a flag telling this thread to stop setting timeouts."""
-        self._timeout = 0
-
-    def exception_info(self):
-        """If run() terminated on an uncaught exception, return it here
-        ((type, value, traceback) tuple).
-        Returns None if run() terminated normally. Meant to be called after
-        joining this thread."""
-        return self._exception_info
-
-    def id(self):
-        """Return a thread identifier."""
-        return self._thread_id
-
-    def next_timeout(self):
-        """Return the time the test is supposed to finish by."""
-        return self._next_timeout
-
-
-class TestShellThread(WatchableThread):
+class TestShellThread(threading.Thread):
     def __init__(self, port, options, worker_number, worker_name,
                  filename_list_queue, result_queue):
         """Initialize all the local state for this DumpRenderTree thread.
@@ -170,7 +135,11 @@ class TestShellThread(WatchableThread):
           result_queue: A thread safe Queue class that will contain
               serialized TestResult objects.
         """
-        WatchableThread.__init__(self)
+        threading.Thread.__init__(self)
+        self._canceled = False
+        self._exception_info = None
+        self._next_timeout = None
+        self._thread_id = None
         self._port = port
         self._options = options
         self._worker_number = worker_number
@@ -205,6 +174,32 @@ class TestShellThread(WatchableThread):
         if self._options.pixel_tests:
             classes.append(image_diff.ImageDiff)
         return classes
+
+    def cancel(self):
+        """Set a flag telling this thread to quit."""
+        self._stop_servers_with_lock()
+        self._canceled = True
+
+    def clear_next_timeout(self):
+        """Mark a flag telling this thread to stop setting timeouts."""
+        self._timeout = 0
+
+    def exception_info(self):
+        """If run() terminated on an uncaught exception, return it here
+        ((type, value, traceback) tuple).
+        Returns None if run() terminated normally. Meant to be called after
+        joining this thread."""
+        return self._exception_info
+
+    def id(self):
+        """Return a thread identifier."""
+        return self._thread_id
+
+    def next_timeout(self):
+        """Return the time the test is supposed to finish by."""
+        if self._next_timeout:
+            return self._next_timeout + self._http_lock_wait_time()
+        return self._next_timeout
 
     def get_test_group_timing_stats(self):
         """Returns a dictionary mapping test group to a tuple of
@@ -259,17 +254,6 @@ class TestShellThread(WatchableThread):
         threads. This allows us to debug the test harness without having to
         do multi-threaded debugging."""
         self._run(test_runner, result_summary)
-
-    def cancel(self):
-        """Clean up http lock and set a flag telling this thread to quit."""
-        self._stop_servers_with_lock()
-        WatchableThread.cancel(self)
-
-    def next_timeout(self):
-        """Return the time the test is supposed to finish by."""
-        if self._next_timeout:
-            return self._next_timeout + self._http_lock_wait_time()
-        return self._next_timeout
 
     def _http_lock_wait_time(self):
         """Return the time what http locking takes."""

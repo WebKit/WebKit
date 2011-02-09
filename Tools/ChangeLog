@@ -1,5 +1,16 @@
 2011-02-08  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Ojan Vafai.
+
+        new-run-webkit-tests: remove no longer needed WatchableThread
+        class.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53839
+
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+
+2011-02-08  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Tony Chang.
 
         new-run-webkit-tests: add stubs for the Manager objects that
