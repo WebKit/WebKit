@@ -64,7 +64,7 @@ WEBKIT_SRC_FILES :=
 # We have to use bison 2.3
 include $(BASE_PATH)/bison_check.mk
 
-# Build our list of include paths. We include Source/WebKit/android/icu first so that
+# Build our list of include paths. We include WebKit/android/icu first so that
 # any files that include <unicode/ucnv.h> will include our ucnv.h first. We
 # also add external/ as an include directory so that we can specify the real
 # icu header directory as a more exact reference to avoid including our ucnv.h.
@@ -73,7 +73,7 @@ include $(BASE_PATH)/bison_check.mk
 # the right config.h.
 LOCAL_C_INCLUDES := \
 	$(JNI_H_INCLUDE) \
-	$(LOCAL_PATH)/Source/WebKit/android/icu \
+	$(LOCAL_PATH)/WebKit/android/icu \
 	external/ \
 	external/icu4c/common \
 	external/icu4c/i18n \
@@ -89,79 +89,79 @@ LOCAL_C_INCLUDES := \
 	frameworks/base/core/jni/android/graphics
 
 LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
-	$(LOCAL_PATH)/Source/WebCore \
-	$(LOCAL_PATH)/Source/WebCore/accessibility \
-	$(LOCAL_PATH)/Source/WebCore/bindings/generic \
-	$(LOCAL_PATH)/Source/WebCore/css \
-	$(LOCAL_PATH)/Source/WebCore/dom \
-	$(LOCAL_PATH)/Source/WebCore/editing \
-	$(LOCAL_PATH)/Source/WebCore/history \
-	$(LOCAL_PATH)/Source/WebCore/history/android \
-	$(LOCAL_PATH)/Source/WebCore/html \
-	$(LOCAL_PATH)/Source/WebCore/html/canvas \
-	$(LOCAL_PATH)/Source/WebCore/inspector \
-	$(LOCAL_PATH)/Source/WebCore/loader \
-	$(LOCAL_PATH)/Source/WebCore/loader/appcache \
-	$(LOCAL_PATH)/Source/WebCore/loader/icon \
-	$(LOCAL_PATH)/Source/WebCore/notifications \
-	$(LOCAL_PATH)/Source/WebCore/page \
-	$(LOCAL_PATH)/Source/WebCore/page/android \
-	$(LOCAL_PATH)/Source/WebCore/page/animation \
-	$(LOCAL_PATH)/Source/WebCore/platform \
-	$(LOCAL_PATH)/Source/WebCore/platform/android \
-	$(LOCAL_PATH)/Source/WebCore/platform/animation \
-	$(LOCAL_PATH)/Source/WebCore/platform/graphics \
-	$(LOCAL_PATH)/Source/WebCore/platform/graphics/android \
-	$(LOCAL_PATH)/Source/WebCore/platform/graphics/network \
-	$(LOCAL_PATH)/Source/WebCore/platform/graphics/skia \
-	$(LOCAL_PATH)/Source/WebCore/platform/graphics/transforms \
-	$(LOCAL_PATH)/Source/WebCore/platform/image-decoders \
-	$(LOCAL_PATH)/Source/WebCore/platform/mock \
-	$(LOCAL_PATH)/Source/WebCore/platform/network \
-	$(LOCAL_PATH)/Source/WebCore/platform/network/android \
-	$(LOCAL_PATH)/Source/WebCore/platform/sql \
-	$(LOCAL_PATH)/Source/WebCore/platform/text \
-	$(LOCAL_PATH)/Source/WebCore/plugins \
-	$(LOCAL_PATH)/Source/WebCore/plugins/android \
-	$(LOCAL_PATH)/Source/WebCore/rendering \
-	$(LOCAL_PATH)/Source/WebCore/rendering/style \
-	$(LOCAL_PATH)/Source/WebCore/storage \
-	$(LOCAL_PATH)/Source/WebCore/workers \
-	$(LOCAL_PATH)/Source/WebCore/xml
+	$(LOCAL_PATH)/WebCore \
+	$(LOCAL_PATH)/WebCore/accessibility \
+	$(LOCAL_PATH)/WebCore/bindings/generic \
+	$(LOCAL_PATH)/WebCore/css \
+	$(LOCAL_PATH)/WebCore/dom \
+	$(LOCAL_PATH)/WebCore/editing \
+	$(LOCAL_PATH)/WebCore/history \
+	$(LOCAL_PATH)/WebCore/history/android \
+	$(LOCAL_PATH)/WebCore/html \
+	$(LOCAL_PATH)/WebCore/html/canvas \
+	$(LOCAL_PATH)/WebCore/inspector \
+	$(LOCAL_PATH)/WebCore/loader \
+	$(LOCAL_PATH)/WebCore/loader/appcache \
+	$(LOCAL_PATH)/WebCore/loader/icon \
+	$(LOCAL_PATH)/WebCore/notifications \
+	$(LOCAL_PATH)/WebCore/page \
+	$(LOCAL_PATH)/WebCore/page/android \
+	$(LOCAL_PATH)/WebCore/page/animation \
+	$(LOCAL_PATH)/WebCore/platform \
+	$(LOCAL_PATH)/WebCore/platform/android \
+	$(LOCAL_PATH)/WebCore/platform/animation \
+	$(LOCAL_PATH)/WebCore/platform/graphics \
+	$(LOCAL_PATH)/WebCore/platform/graphics/android \
+	$(LOCAL_PATH)/WebCore/platform/graphics/network \
+	$(LOCAL_PATH)/WebCore/platform/graphics/skia \
+	$(LOCAL_PATH)/WebCore/platform/graphics/transforms \
+	$(LOCAL_PATH)/WebCore/platform/image-decoders \
+	$(LOCAL_PATH)/WebCore/platform/mock \
+	$(LOCAL_PATH)/WebCore/platform/network \
+	$(LOCAL_PATH)/WebCore/platform/network/android \
+	$(LOCAL_PATH)/WebCore/platform/sql \
+	$(LOCAL_PATH)/WebCore/platform/text \
+	$(LOCAL_PATH)/WebCore/plugins \
+	$(LOCAL_PATH)/WebCore/plugins/android \
+	$(LOCAL_PATH)/WebCore/rendering \
+	$(LOCAL_PATH)/WebCore/rendering/style \
+	$(LOCAL_PATH)/WebCore/storage \
+	$(LOCAL_PATH)/WebCore/workers \
+	$(LOCAL_PATH)/WebCore/xml
 
 LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
-	$(LOCAL_PATH)/Source/WebKit/android \
-	$(LOCAL_PATH)/Source/WebKit/android/WebCoreSupport \
-	$(LOCAL_PATH)/Source/WebKit/android/jni \
-	$(LOCAL_PATH)/Source/WebKit/android/nav \
-	$(LOCAL_PATH)/Source/WebKit/android/plugins \
-	$(LOCAL_PATH)/Source/WebKit/android/stl
+	$(LOCAL_PATH)/WebKit/android \
+	$(LOCAL_PATH)/WebKit/android/WebCoreSupport \
+	$(LOCAL_PATH)/WebKit/android/jni \
+	$(LOCAL_PATH)/WebKit/android/nav \
+	$(LOCAL_PATH)/WebKit/android/plugins \
+	$(LOCAL_PATH)/WebKit/android/stl
 
 LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
-	$(LOCAL_PATH)/Source/JavaScriptCore \
-	$(LOCAL_PATH)/Source/JavaScriptCore/wtf \
-	$(LOCAL_PATH)/Source/JavaScriptCore/wtf/unicode \
-	$(LOCAL_PATH)/Source/JavaScriptCore/wtf/unicode/icu
+	$(LOCAL_PATH)/JavaScriptCore \
+	$(LOCAL_PATH)/JavaScriptCore/wtf \
+	$(LOCAL_PATH)/JavaScriptCore/wtf/unicode \
+	$(LOCAL_PATH)/JavaScriptCore/wtf/unicode/icu
 
 LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
-	$(base_intermediates)/Source/WebCore/ \
-	$(base_intermediates)/Source/WebCore/css \
-	$(base_intermediates)/Source/WebCore/html \
-	$(base_intermediates)/Source/WebCore/platform
+	$(base_intermediates)/WebCore/ \
+	$(base_intermediates)/WebCore/css \
+	$(base_intermediates)/WebCore/html \
+	$(base_intermediates)/WebCore/platform
 
 ifeq ($(ENABLE_SVG), true)
 LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
-	$(LOCAL_PATH)/Source/WebCore/platform/graphics/filters \
-	$(LOCAL_PATH)/Source/WebCore/svg \
-	$(LOCAL_PATH)/Source/WebCore/svg/animation \
-	$(LOCAL_PATH)/Source/WebCore/svg/graphics \
-	$(LOCAL_PATH)/Source/WebCore/svg/graphics/filters \
-	$(base_intermediates)/Source/WebCore/svg
+	$(LOCAL_PATH)/WebCore/platform/graphics/filters \
+	$(LOCAL_PATH)/WebCore/svg \
+	$(LOCAL_PATH)/WebCore/svg/animation \
+	$(LOCAL_PATH)/WebCore/svg/graphics \
+	$(LOCAL_PATH)/WebCore/svg/graphics/filters \
+	$(base_intermediates)/WebCore/svg
 endif
 
 ifeq ($(JAVASCRIPT_ENGINE),v8)
 # Include WTF source file.
-d := Source/JavaScriptCore
+d := JavaScriptCore
 LOCAL_PATH := $(BASE_PATH)/$d
 intermediates := $(base_intermediates)/$d
 include $(LOCAL_PATH)/Android.v8.wtf.mk
@@ -171,7 +171,7 @@ endif  # JAVASCRIPT_ENGINE == v8
 # Include source files for WebCore
 d := WebCore
 LOCAL_PATH := $(BASE_PATH)/$d
-JAVASCRIPTCORE_PATH := $(BASE_PATH)/Source/JavaScriptCore
+JAVASCRIPTCORE_PATH := $(BASE_PATH)/JavaScriptCore
 intermediates := $(base_intermediates)/$d
 include $(LOCAL_PATH)/Android.mk
 ifeq ($(JAVASCRIPT_ENGINE),jsc)
@@ -283,7 +283,7 @@ LOCAL_SHARED_LIBRARIES := $(WEBKIT_SHARED_LIBRARIES)
 LOCAL_STATIC_LIBRARIES := $(WEBKIT_STATIC_LIBRARIES)
 LOCAL_CFLAGS := $(WEBKIT_CFLAGS)
 # Include source files for JavaScriptCore
-d := Source/JavaScriptCore
+d := JavaScriptCore
 LOCAL_PATH := $(BASE_PATH)/$d
 LOCAL_MODULE_CLASS := STATIC_LIBRARIES
 # Cannot use base_intermediates as this is a new module

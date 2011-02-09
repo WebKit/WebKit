@@ -1,3 +1,17 @@
+2011-02-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Steve Block.
+
+        Move Android.mk into Source
+        https://bugs.webkit.org/show_bug.cgi?id=53751
+
+        A somewhat blind attempt to move Android.mk into the Source directory.
+        I'm sure I've goofed this up in some way.  The Android folks have
+        kindly volunteered to fix this up once they merge past this revision.
+
+        * Android.mk: Removed.
+        * Source/Android.mk: Copied from Android.mk.
+
 2011-02-08  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.
