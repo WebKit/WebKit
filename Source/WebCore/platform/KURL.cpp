@@ -968,6 +968,14 @@ bool KURL::isLocalFile() const
     return protocolIs("file");
 }
 
+// Caution: This function does not bounds check.
+static void appendEscapedChar(char*& buffer, unsigned char c)
+{
+    *buffer++ = '%';
+    *buffer++ = hexDigits[c >> 4];
+    *buffer++ = hexDigits[c & 0xF];
+}
+
 static void appendEscapingBadChars(char*& buffer, const char* strStart, size_t length)
 {
     char* p = buffer;
@@ -977,16 +985,37 @@ static void appendEscapingBadChars(char*& buffer, const char* strStart, size_t l
     while (str < strEnd) {
         unsigned char c = *str++;
         if (isBadChar(c)) {
-            if (c == '%' || c == '?') {
+            if (c == '%' || c == '?')
                 *p++ = c;
-            } else if (c != 0x09 && c != 0x0a && c != 0x0d) {
-                *p++ = '%';
-                *p++ = hexDigits[c >> 4];
-                *p++ = hexDigits[c & 0xF];
-            }
-        } else {
+            else if (c != 0x09 && c != 0x0a && c != 0x0d)
+                appendEscapedChar(p, c);
+        } else
             *p++ = c;
+    }
+
+    buffer = p;
+}
+
+static void escapeAndAppendFragment(char*& buffer, const char* strStart, size_t length)
+{
+    char* p = buffer;
+
+    const char* str = strStart;
+    const char* strEnd = strStart + length;
+    while (str < strEnd) {
+        unsigned char c = *str++;
+        // Strip CR, LF and Tab from fragments, per:
+        // https://bugs.webkit.org/show_bug.cgi?id=8770
+        if (c == 0x09 || c == 0x0a || c == 0x0d)
+            continue;
+
+        // Chrome and IE allow non-ascii characters in fragments, however doing
+        // so would hit an ASSERT in checkEncodedString, so for now we don't.
+        if (c < 0x20 || c >= 127) {
+            appendEscapedChar(p, c);
+            continue;
         }
+        *p++ = c;
     }
 
     buffer = p;
@@ -1350,7 +1379,7 @@ void KURL::parse(const char* url, const String* originalString)
     // add fragment, escaping bad characters
     if (fragmentEnd != queryEnd) {
         *p++ = '#';
-        appendEscapingBadChars(p, url + fragmentStart, fragmentEnd - fragmentStart);
+        escapeAndAppendFragment(p, url + fragmentStart, fragmentEnd - fragmentStart);
     }
     m_fragmentEnd = p - buffer.data();
 
@@ -1416,11 +1445,9 @@ String encodeWithURLEscapeSequences(const String& notEncodedString)
     const char* strEnd = str + asUTF8.length();
     while (str < strEnd) {
         unsigned char c = *str++;
-        if (isBadChar(c)) {
-            *p++ = '%';
-            *p++ = hexDigits[c >> 4];
-            *p++ = hexDigits[c & 0xF];
-        } else
+        if (isBadChar(c))
+            appendEscapedChar(p, c);
+        else
             *p++ = c;
     }
 

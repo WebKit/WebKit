@@ -9,6 +9,7 @@ cases = [
   ["a\\uFDD0", "a\\uFDD0"],
   ["asdf#qwer", "asdf#qwer"],
   ["#asdf", "#asdf"],
+  ["a\\nb\\rc\\td", "abcd"],
 ];
 
 for (var i = 0; i < cases.length; ++i) {

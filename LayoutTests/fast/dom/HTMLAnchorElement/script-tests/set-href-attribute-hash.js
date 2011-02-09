@@ -50,7 +50,7 @@ shouldBe("a.href", "'mailto:e-mail_address@goes_here#hash-value'");
 debug("Add hash to file: protocol");
 a.href = "file:///some path";
 a.hash = "hash value";
-shouldBe("a.href", "'file:///some%20path#hash%20value'");
+shouldBe("a.href", "'file:///some%20path#hash value'");
 
 debug("Set hash to '#'");
 a.href = "http://mydomain.com#middle";

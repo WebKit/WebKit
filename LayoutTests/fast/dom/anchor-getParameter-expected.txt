@@ -16,5 +16,5 @@ http://example.com/foo/bar?a=b=& (b) =>
 http://example.com/foo/bar?&a=b (a) => b
 http://example.com/foo/bar?&a=b& (a) => b
 http://example.com/foo/bar?a=b#xyz (a) => b
-http://example.com/foo/bar?#a=b%23xyz (a) => 
+http://example.com/foo/bar?#a=b#xyz (a) => 
 

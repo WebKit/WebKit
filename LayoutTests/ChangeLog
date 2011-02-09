@@ -1,3 +1,20 @@
+2011-02-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Make WebKit's fragment cannonicalization match other browsers
+        https://bugs.webkit.org/show_bug.cgi?id=53850
+
+        * fast/dom/HTMLAnchorElement/set-href-attribute-hash.html: Updated to match IE/Chrome
+        * fast/dom/HTMLAnchorElement/set-href-attribute-hash-expected.txt: Updated to match IE/Chrome.
+        * fast/url/anchor-expected.txt:
+         - "hello world": Our new behavior here matches IE and Chrome, but diverges from FF.
+         - The last two tests involving #, we were the odd man out. Now match all browsers.
+        * fast/url/segments-expected.txt:
+         - Don't percent encode spaces in fragments (to match other browsers)
+         - WebKit was the only engine encoding # in fragments.
+        * fast/url/segments-from-data-url-expected.txt:
+
 2011-02-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
