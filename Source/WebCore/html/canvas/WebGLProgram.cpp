@@ -103,7 +103,7 @@ bool WebGLProgram::isUsingVertexAttrib0() const
     return false;
 }
 
-WebGLShader* WebGLProgram::getAttachedShader(GraphicsContext3D::WebGLEnumType type)
+WebGLShader* WebGLProgram::getAttachedShader(GC3Denum type)
 {
     switch (type) {
     case GraphicsContext3D::VERTEX_SHADER:

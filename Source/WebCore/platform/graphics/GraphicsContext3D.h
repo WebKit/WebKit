@@ -119,7 +119,7 @@ class GraphicsContext3DInternal;
 
 class GraphicsContext3D : public RefCounted<GraphicsContext3D> {
 public:
-    enum WebGLEnumType {
+    enum {
         DEPTH_BUFFER_BIT = 0x00000100,
         STENCIL_BUFFER_BIT = 0x00000400,
         COLOR_BUFFER_BIT = 0x00004000,

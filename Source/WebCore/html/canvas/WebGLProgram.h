@@ -60,7 +60,7 @@ public:
     // will never be linked so many times.
     void increaseLinkCount() { ++m_linkCount; }
 
-    WebGLShader* getAttachedShader(GraphicsContext3D::WebGLEnumType);
+    WebGLShader* getAttachedShader(GC3Denum);
     bool attachShader(WebGLShader*);
     bool detachShader(WebGLShader*);
 
