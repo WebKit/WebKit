@@ -39,8 +39,8 @@ class WebPage;
 class WebChromeClient : public WebCore::ChromeClient {
 public:
     WebChromeClient(WebPage* page)
-        : m_cachedHasHorizontalScrollbar(false)
-        , m_cachedHasVerticalScrollbar(false)
+        : m_cachedMainFrameHasHorizontalScrollbar(false)
+        , m_cachedMainFrameHasVerticalScrollbar(false)
         , m_page(page)
     {
     }
@@ -210,8 +210,8 @@ private:
 
     String m_cachedToolTip;
     mutable RefPtr<WebFrame> m_cachedFrameSetLargestFrame;
-    mutable bool m_cachedHasHorizontalScrollbar;
-    mutable bool m_cachedHasVerticalScrollbar;
+    mutable bool m_cachedMainFrameHasHorizontalScrollbar;
+    mutable bool m_cachedMainFrameHasVerticalScrollbar;
 
     WebPage* m_page;
 };

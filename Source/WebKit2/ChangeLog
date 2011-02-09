@@ -1,3 +1,20 @@
+2011-02-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Google Maps says it has horizontal scrollbars when it doesn't
+        <rdar://problem/8978005>
+
+        We were updating the main frame's scrollbar state for changes to
+        frames other than the main frame.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::contentsSizeChanged):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        (WebKit::WebChromeClient::WebChromeClient):
+        Change to bail out early if we are not looking at the main frame. Also
+        fix some silly typos and rename the variables to be more specific.
+
 2011-02-09  Ivan Krstić  <ike@apple.com>
 
         Reviewed by Sam Weinig.

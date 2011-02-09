@@ -423,18 +423,20 @@ void WebChromeClient::contentsSizeChanged(Frame* frame, const IntSize& size) con
         m_page->send(Messages::WebPageProxy::FrameSetLargestFrameChanged(largestFrame ? largestFrame->frameID() : 0));
     }
 
+    if (frame->page()->mainFrame() != frame)
+        return;
     FrameView* frameView = frame->view();
     if (!frameView)
         return;
 
     bool hasHorizontalScrollbar = frameView->horizontalScrollbar();
-    bool hasVecticalScrollbar = frameView->verticalScrollbar();
+    bool hasVerticalScrollbar = frameView->verticalScrollbar();
 
-    if (hasHorizontalScrollbar != m_cachedHasHorizontalScrollbar || hasVecticalScrollbar != m_cachedHasVerticalScrollbar) {
-        m_page->send(Messages::WebPageProxy::DidChangeScrollbarsForMainFrame(hasHorizontalScrollbar, hasVecticalScrollbar));
+    if (hasHorizontalScrollbar != m_cachedMainFrameHasHorizontalScrollbar || hasVerticalScrollbar != m_cachedMainFrameHasVerticalScrollbar) {
+        m_page->send(Messages::WebPageProxy::DidChangeScrollbarsForMainFrame(hasHorizontalScrollbar, hasVerticalScrollbar));
         
-        m_cachedHasHorizontalScrollbar = hasHorizontalScrollbar;
-        m_cachedHasVerticalScrollbar = hasVecticalScrollbar;
+        m_cachedMainFrameHasHorizontalScrollbar = hasHorizontalScrollbar;
+        m_cachedMainFrameHasVerticalScrollbar = hasVerticalScrollbar;
     }
 }
 
