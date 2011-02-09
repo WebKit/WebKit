@@ -36,7 +36,7 @@
 #if WEBKIT_IMPLEMENTATION
 #include "IntPoint.h"
 #else
-#include <gfx/point.h>
+#include <ui/gfx/point.h>
 #endif
 
 namespace WebKit {

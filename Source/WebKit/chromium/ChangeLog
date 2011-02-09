@@ -1,3 +1,13 @@
+2011-02-09  Sailesh Agrawal  <sail@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Search/replace references to gfx/* with ui/gfx/*
+
+        * public/WebPoint.h:
+        * public/WebRect.h:
+        * public/WebSize.h:
+
 2011-02-09  Nebojsa Ciric  <cira@chromium.org>
 
         Reviewed by Darin Fisher.
