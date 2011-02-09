@@ -121,12 +121,6 @@ public:
     // otherwise.
     virtual bool showFormAutofillForNode(WebCore::Node*);
 
-    // Notification that the text changed due to acceptance of a suggestion
-    // provided by an Autocomplete popup.  Having a separate callback in this
-    // case is a simple way to break the cycle that would otherwise occur if
-    // textDidChangeInTextField was called.
-    virtual void onAutocompleteSuggestionAccepted(WebCore::HTMLInputElement*);
-
 private:
     void modifySelection(WebCore::Frame*, WebCore::KeyboardEvent*);
 

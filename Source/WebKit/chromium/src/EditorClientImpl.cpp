@@ -802,18 +802,6 @@ void EditorClientImpl::cancelPendingAutofill()
     m_autofillTimer.stop();
 }
 
-void EditorClientImpl::onAutocompleteSuggestionAccepted(HTMLInputElement* textField)
-{
-    if (m_webView->autoFillClient())
-        m_webView->autoFillClient()->didAcceptAutocompleteSuggestion(WebInputElement(textField));
-
-    WebFrameImpl* webframe = WebFrameImpl::fromFrame(textField->document()->frame());
-    if (!webframe)
-        return;
-
-    webframe->notifiyPasswordListenerOfAutocomplete(WebInputElement(textField));
-}
-
 bool EditorClientImpl::doTextFieldCommandFromEvent(Element* element,
                                                    KeyboardEvent* event)
 {

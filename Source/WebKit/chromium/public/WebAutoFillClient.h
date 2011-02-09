@@ -70,11 +70,6 @@ public:
     virtual void removeAutocompleteSuggestion(const WebString& name,
                                               const WebString& value) { }
 
-    // Informs the browser that the user has selected an autocomplete (password
-    // or field) suggestion from the drop-down.  The input element text has
-    // already been set to the selected suggestion.
-    virtual void didAcceptAutocompleteSuggestion(const WebInputElement&) { }
-
     // These methods are called when the users edits a text-field.
     virtual void textFieldDidBeginEditing(const WebInputElement&) { }
     virtual void textFieldDidEndEditing(const WebInputElement&) { }

@@ -1,3 +1,14 @@
+2011-02-09  David Holloway  <dhollowa@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Removes deprecated interface WebAutoFillClient::didAcceptAutocompleteSuggestion().  This interface has been replaced by the more general WebAutoFillClient::didAcceptAutoFillSuggestion() method.
+        https://bugs.webkit.org/show_bug.cgi?id=54125
+
+        * public/WebAutoFillClient.h:
+        * src/EditorClientImpl.cpp:
+        * src/EditorClientImpl.h:
+
 2011-02-09  Ilya Sherman  <isherman@chromium.org>
 
         Reviewed by Darin Fisher.
