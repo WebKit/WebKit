@@ -9,7 +9,7 @@ function log(msg, success)
     logDiv.appendChild(document.createElement('div')).textContent = msg + ': ' + (success ? 'PASS' : 'FAIL');
 }
 
-function clickOn(element)
+function moveOver(element)
 {
     if (!window.eventSender)
         return;
@@ -17,6 +17,11 @@ function clickOn(element)
     var x = element.offsetLeft + element.offsetWidth / 2;
     var y = element.offsetTop + element.offsetHeight / 2;
     eventSender.mouseMoveTo(x, y);
+}
+
+function clickOn(element)
+{
+    moveOver(element);
     eventSender.mouseDown();
     eventSender.mouseUp();
 }
@@ -99,6 +104,22 @@ var tests = {
         log("Events for default event handler should not be retargeted", count == 1);
         document.body.removeEventListener('DOMActivate', counter, false);
         fileInput.parentNode.removeChild(fileInput);
+    },
+    relatedTargetRetargeting: function()
+    {
+        var count = 0;
+        var textInput = document.body.appendChild(document.createElement('input'));
+        var counter = function(evt)
+        {
+            if (evt.relatedTarget && !evt.relatedTarget.parentNode)
+                count++;
+        }
+        moveOver(textInput);
+        document.body.addEventListener("mouseover", counter, false);
+        moveOver(document.body);
+        document.body.removeEventListener("mouseover", counter, false);
+        log("Event's relatedTarget should be retargeted", count == 0);
+        textInput.parentNode.removeChild(textInput);
     },
     eventInProgress: function()
     {

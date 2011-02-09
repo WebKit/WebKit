@@ -1,3 +1,15 @@
+2011-02-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(r71934): Shadow DOM nodes leak via relatedTarget
+        https://bugs.webkit.org/show_bug.cgi?id=52065
+
+        * dom/Node.cpp:
+        (WebCore::pullOutOfShadow): Added a helper to move a node to the outermost
+            boundary of shadow DOM.
+        (WebCore::Node::dispatchMouseEvent): Changed to use pullOutOfShadow.
+
 2011-02-09  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Darin Adler.

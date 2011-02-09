@@ -1,3 +1,12 @@
+2011-02-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(r71934): Shadow DOM nodes leak via relatedTarget
+        https://bugs.webkit.org/show_bug.cgi?id=52065
+
+        * fast/events/shadow-boundary-crossing.html: Added relatedTarget retargeting test.
+
 2011-02-09  Martin Robinson  <mrobinson@igalia.com>
 
         Add more results for many tests in the fast directory missing results.
