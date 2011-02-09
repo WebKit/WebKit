@@ -10,8 +10,6 @@ HEADERS += \
     BrowserView.h \
     BrowserWindow.h \
 
-CONFIG += uitools
-
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../../..
 include(../../../Source/WebKit.pri)
 
