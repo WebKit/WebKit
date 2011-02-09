@@ -268,6 +268,7 @@ WebInspector.ScriptsPanel.prototype = {
             delete script._sourceFrame;
             newView = this._sourceFrameForScript(script);
         }
+        newView.scrollTop = oldView.scrollTop;
 
         if (this.visibleView === oldView)
             this.visibleView = newView;

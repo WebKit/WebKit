@@ -97,6 +97,26 @@ WebInspector.TextViewer.prototype = {
         this._mainPanel.editLine(lineRow, callback);
     },
 
+    get scrollTop()
+    {
+        return this._mainPanel.element.scrollTop;
+    },
+
+    set scrollTop(scrollTop)
+    {
+        this._mainPanel.element.scrollTop = scrollTop;
+    },
+
+    get scrollLeft()
+    {
+        return this._mainPanel.element.scrollLeft;
+    },
+
+    set scrollLeft(scrollLeft)
+    {
+        this._mainPanel.element.scrollLeft = scrollLeft;
+    },
+
     beginUpdates: function()
     {
         this._mainPanel.beginUpdates();
@@ -338,7 +358,7 @@ WebInspector.TextEditorChunkedPanel.prototype = {
         if (toIndex)
             this._expandChunks(fromIndex, toIndex);
     },
-    
+
     resize: function()
     {
         this._scheduleRepaintAll();

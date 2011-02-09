@@ -64,25 +64,25 @@ WebInspector.SourceFrame.prototype = {
 
         if (this._textViewer) {
             if (this._scrollTop)
-                this._textViewer.element.scrollTop = this._scrollTop;
+                this._textViewer.scrollTop = this._scrollTop;
             if (this._scrollLeft)
-                this._textViewer.element.scrollLeft = this._scrollLeft;
+                this._textViewer.scrollLeft = this._scrollLeft;
             this._textViewer.resize();
         }
     },
 
     hide: function()
     {
+        if (this._textViewer) {
+            this._scrollTop = this._textViewer.scrollTop;
+            this._scrollLeft = this._textViewer.scrollLeft;
+            this._textViewer.freeCachedElements();
+        }
+
         WebInspector.View.prototype.hide.call(this);
 
         this._hidePopup();
         this._clearLineHighlight();
-
-        if (this._textViewer) {
-            this._scrollTop = this._textViewer.element.scrollTop;
-            this._scrollLeft = this._textViewer.element.scrollLeft;
-            this._textViewer.freeCachedElements();
-        }
     },
 
     hasContent: function()
@@ -145,13 +145,14 @@ WebInspector.SourceFrame.prototype = {
 
     get scrollTop()
     {
-        return this._textViewer ? this._textViewer.element.scrollTop : 0;
+        return this._textViewer ? this._textViewer.scrollTop : this._scrollTop;
     },
 
     set scrollTop(scrollTop)
     {
+        this._scrollTop = scrollTop;
         if (this._textViewer)
-            this._textViewer.element.scrollTop = scrollTop;
+            this._textViewer.scrollTop = scrollTop;
     },
 
     highlightLine: function(line)
