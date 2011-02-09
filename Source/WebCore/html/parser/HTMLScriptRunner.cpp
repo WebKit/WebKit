@@ -264,6 +264,7 @@ bool HTMLScriptRunner::requestPendingScript(PendingScript& pendingScript, Elemen
     ASSERT(!pendingScript.element());
     const AtomicString& srcValue = script->getAttribute(srcAttr);
     // Allow the host to disllow script loads (using the XSSAuditor, etc.)
+    // FIXME: this check should be performed on the final URL in a redirect chain.
     if (!m_host->shouldLoadExternalScriptFromSrc(srcValue))
         return false;
     // FIXME: We need to resolve the url relative to the element.

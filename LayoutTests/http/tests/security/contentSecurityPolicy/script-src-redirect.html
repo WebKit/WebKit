@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+  layoutTestController.dumpAsText();
+  layoutTestController.dumpChildFramesAsText();
+}
+</script>
+</head>
+<body>
+  <p>
+    Loads an iframe which in turns tries to load an external script. The request for the script is redirected to 'localhost'. The iframe has a content security policy disabling external scripts from hosts other than 'localhost'. So the script should be allowed to run.
+  </p>
+  <iframe src="http://127.0.0.1:8000/security/contentSecurityPolicy/resources/echo-script-src.pl?should_run=yes&csp=allow%20*;%20script-src%20'localhost'&q=http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.php%3furl=http://localhost:8000/security/contentSecurityPolicy/resources/script.js"></iframe>
+</body>
+</html>

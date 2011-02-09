@@ -455,10 +455,9 @@ void HTMLDocumentParser::stopWatchingForLoad(CachedResource* cachedScript)
     cachedScript->removeClient(this);
 }
 
-bool HTMLDocumentParser::shouldLoadExternalScriptFromSrc(const AtomicString&)
+bool HTMLDocumentParser::shouldLoadExternalScriptFromSrc(const AtomicString& srcValue)
 {
-    // FIXME: Add Content-Security-Policy hook here.
-    return true;
+    return document()->contentSecurityPolicy()->canLoadExternalScriptFromSrc(srcValue);
 }
 
 void HTMLDocumentParser::notifyFinished(CachedResource* cachedResource)

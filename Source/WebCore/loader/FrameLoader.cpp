@@ -668,6 +668,10 @@ void FrameLoader::didBeginDocument(bool dispatch)
         String dnsPrefetchControl = m_documentLoader->response().httpHeaderField("X-DNS-Prefetch-Control");
         if (!dnsPrefetchControl.isEmpty())
             m_frame->document()->parseDNSPrefetchControlHeader(dnsPrefetchControl);
+
+        String contentSecurityPolicy = m_documentLoader->response().httpHeaderField("X-WebKit-CSP");
+        if (!contentSecurityPolicy.isEmpty())
+            m_frame->document()->contentSecurityPolicy()->didReceiveHeader(contentSecurityPolicy);
     }
 
     history()->restoreDocumentState();

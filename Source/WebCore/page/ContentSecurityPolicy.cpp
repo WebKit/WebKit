@@ -25,16 +25,24 @@
 
 #include "config.h"
 #include "ContentSecurityPolicy.h"
+#include "Document.h"
 
 namespace WebCore {
 
 ContentSecurityPolicy::ContentSecurityPolicy()
+    : m_isEnabled(false)
 {
 }
 
 void ContentSecurityPolicy::didReceiveHeader(const String& header)
 {
+    m_isEnabled = true;
     m_header = header;
+}
+
+bool ContentSecurityPolicy::canLoadExternalScriptFromSrc(const String&) const
+{
+    return !m_isEnabled;
 }
 
 }

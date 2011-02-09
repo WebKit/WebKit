@@ -31,7 +31,6 @@
 #include "MainResourceLoader.h"
 
 #include "ApplicationCacheHost.h"
-#include "ContentSecurityPolicy.h"
 #include "Document.h"
 #include "DocumentLoadTiming.h"
 #include "DocumentLoader.h"
@@ -356,12 +355,6 @@ void MainResourceLoader::didReceiveResponse(const ResourceResponse& r)
             cancel();
             return;
         }
-    }
-
-    it = r.httpHeaderFields().find(AtomicString("x-webkit-csp"));
-    if (it != r.httpHeaderFields().end()) {
-        String content = it->second;
-        m_frame->document()->contentSecurityPolicy()->didReceiveHeader(content);
     }
 
     // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.

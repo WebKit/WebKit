@@ -36,8 +36,10 @@ public:
     ContentSecurityPolicy();
 
     void didReceiveHeader(const String&);
+    bool canLoadExternalScriptFromSrc(const String& url) const;
 
 private:
+    bool m_isEnabled;
     String m_header;
 };
 

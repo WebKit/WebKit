@@ -1,0 +1,8 @@
+Loads an iframe which in turns tries to load an external script. The iframe has a content security policy disabling external scripts. So the script should not get executed.
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+PASS
