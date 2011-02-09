@@ -1,5 +1,12 @@
 2011-02-08  Mihai Parparita  <mihaip@chromium.org>
 
+        Unreviewed. Remove chromium-gpu-win baseline that has a failing result,
+        since we now pass the test.
+
+        * platform/chromium-gpu-win/compositing/animation/animated-composited-inside-hidden-expected.txt: Removed.
+
+2011-02-08  Mihai Parparita  <mihaip@chromium.org>
+
         Unreviewed chromium-gpu-win rebaseline.
         
         * platform/chromium-gpu-win/compositing/direct-image-compositing-expected.txt:
