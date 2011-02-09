@@ -1,3 +1,48 @@
+2011-02-07  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Events should propagate through IDBDatabase (for IDBRequest and IDBTransaction)
+        https://bugs.webkit.org/show_bug.cgi?id=53975
+
+        The third change in the series of overhauling IndexedDB's event model to match
+        the spec (at least the version in our heads and bugs).
+
+        Test: storage/indexeddb/transaction-event-propagation.html
+
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::convertEventTargetToV8Object):
+        * dom/Event.cpp:
+        (WebCore::Event::isIDBAbortEvent):
+        (WebCore::Event::isIDBCompleteEvent):
+        * dom/Event.h:
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::toIDBDatabase):
+        * dom/EventTarget.h:
+        * storage/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::create):
+        (WebCore::IDBDatabase::IDBDatabase):
+        (WebCore::IDBDatabase::scriptExecutionContext):
+        (WebCore::IDBDatabase::eventTargetData):
+        (WebCore::IDBDatabase::ensureEventTargetData):
+        * storage/IDBDatabase.h:
+        (WebCore::IDBDatabase::toIDBDatabase):
+        (WebCore::IDBDatabase::refEventTarget):
+        (WebCore::IDBDatabase::derefEventTarget):
+        * storage/IDBDatabase.idl:
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::onSuccess):
+        (WebCore::IDBRequest::dispatchEvent):
+        * storage/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::backend):
+        (WebCore::IDBTransaction::db):
+        (WebCore::IDBTransaction::objectStore):
+        (WebCore::IDBTransaction::scriptExecutionContext):
+        (WebCore::IDBTransaction::dispatchEvent):
+        (WebCore::IDBTransaction::enqueueEvent):
+        * storage/IDBTransaction.h:
+        (WebCore::IDBTransaction::dispatchEvent):
+
 2011-02-08  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.

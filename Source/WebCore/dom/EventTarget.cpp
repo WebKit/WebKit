@@ -181,6 +181,10 @@ FileWriter* EventTarget::toFileWriter()
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
+IDBDatabase* EventTarget::toIDBDatabase()
+{
+    return 0;
+}
 IDBRequest* EventTarget::toIDBRequest()
 {
     return 0;

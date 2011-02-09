@@ -51,6 +51,7 @@
 #include "V8FileWriter.h"
 #include "V8HTMLCollection.h"
 #include "V8HTMLDocument.h"
+#include "V8IDBDatabase.h"
 #include "V8IDBRequest.h"
 #include "V8IDBTransaction.h"
 #include "V8IsolatedContext.h"
@@ -381,6 +382,8 @@ v8::Handle<v8::Value> V8DOMWrapper::convertEventTargetToV8Object(EventTarget* ta
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
+    if (IDBDatabase* idbDatabase = target->toIDBDatabase())
+        return toV8(idbDatabase);
     if (IDBRequest* idbRequest = target->toIDBRequest())
         return toV8(idbRequest);
     if (IDBTransaction* idbTransaction = target->toIDBTransaction())

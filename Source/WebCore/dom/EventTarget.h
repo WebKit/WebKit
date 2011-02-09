@@ -49,6 +49,7 @@ namespace WebCore {
     class EventSource;
     class FileReader;
     class FileWriter;
+    class IDBDatabase;
     class IDBRequest;
     class IDBTransaction;
     class JavaScriptAudioNode;
@@ -138,6 +139,7 @@ namespace WebCore {
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
+        virtual IDBDatabase* toIDBDatabase();
         virtual IDBRequest* toIDBRequest();
         virtual IDBTransaction* toIDBTransaction();
 #endif

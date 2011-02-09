@@ -43,7 +43,7 @@ function cleaned()
 {
     evalAndLog("db.createObjectStore('a')");
     evalAndLog("db.createObjectStore('b')");
-    evalAndLog("trans.oncomplete = created");
+    evalAndLog("trans.addEventListener('complete', created, true)");
     debug("");
 }
 

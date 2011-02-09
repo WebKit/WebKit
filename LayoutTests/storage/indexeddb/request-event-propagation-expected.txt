@@ -62,28 +62,56 @@ trans.onabort = transactionAborted2
 trans.oncomplete = unexpectedAbortCallback
 trans.addEventListener('error', errorCaptureCallback, true)
 trans.addEventListener('error', errorBubbleCallback, false)
+trans.addEventListener('success', unexpectedSuccessCallback, true)
+trans.addEventListener('success', unexpectedSuccessCallback, false)
+db.addEventListener('error', dbErrorCaptureCallback, true)
+db.addEventListener('error', dbErrorBubbleCallback, false)
+db.addEventListener('success', unexpectedSuccessCallback, true)
+db.addEventListener('success', unexpectedSuccessCallback, false)
 store = trans.objectStore('storeName')
 store.add({x: 'value', y: 'zzz'}, 'key')
 
-In IDBTransaction error capture
+In IDBDatabase error capture
+PASS dbCaptureFired is false
 PASS captureFired is false
 PASS requestFired is false
 PASS bubbleFired is false
+PASS dbBubbleFired is false
+
+In IDBTransaction error capture
+PASS dbCaptureFired is true
+PASS captureFired is false
+PASS requestFired is false
+PASS bubbleFired is false
+PASS dbBubbleFired is false
 
 In IDBRequest handler
+PASS dbCaptureFired is true
 PASS captureFired is true
 PASS requestFired is false
 PASS bubbleFired is false
+PASS dbBubbleFired is false
 
 In IDBTransaction error bubble
+PASS dbCaptureFired is true
 PASS captureFired is true
 PASS requestFired is true
 PASS bubbleFired is false
+PASS dbBubbleFired is false
 
-Transaction aborted
+In IDBDatabase error bubble
+PASS dbCaptureFired is true
 PASS captureFired is true
 PASS requestFired is true
 PASS bubbleFired is true
+PASS dbBubbleFired is false
+
+Transaction aborted
+PASS dbCaptureFired is true
+PASS captureFired is true
+PASS requestFired is true
+PASS bubbleFired is true
+PASS dbBubbleFired is true
 
 Verifing success.
 trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
@@ -91,23 +119,46 @@ trans.oncomplete = transactionComplete
 trans.onabort = unexpectedAbortCallback
 trans.addEventListener('success', successCaptureCallback, true)
 trans.addEventListener('success', successBubbleCallback, false)
+trans.addEventListener('error', unexpectedErrorCallback, true)
+trans.addEventListener('error', unexpectedErrorCallback, false)
+db.removeEventListener('error', dbErrorCaptureCallback, true)
+db.removeEventListener('error', dbErrorBubbleCallback, false)
+db.removeEventListener('success', unexpectedSuccessCallback, true)
+db.removeEventListener('success', unexpectedSuccessCallback, false)
+db.addEventListener('success', dbSuccessCaptureCallback, true)
+db.addEventListener('success', dbSuccessBubbleCallback, false)
+db.addEventListener('error', unexpectedErrorCallback, true)
+db.addEventListener('error', unexpectedErrorCallback, false)
 store = trans.objectStore('storeName')
 store.add({x: 'value', y: 'zzz'}, 'key2')
 
-In IDBTransaction success capture
+In IDBDatabase success capture
+PASS dbCaptureFired is false
 PASS captureFired is false
 PASS requestFired is false
 PASS bubbleFired is false
+PASS dbBubbleFired is false
+
+In IDBTransaction success capture
+PASS dbCaptureFired is true
+PASS captureFired is false
+PASS requestFired is false
+PASS bubbleFired is false
+PASS dbBubbleFired is false
 
 In IDBRequest handler
+PASS dbCaptureFired is true
 PASS captureFired is true
 PASS requestFired is false
 PASS bubbleFired is false
+PASS dbBubbleFired is false
 
 Transaction completed
+PASS dbCaptureFired is true
 PASS captureFired is true
 PASS requestFired is true
 PASS bubbleFired is false
+PASS dbBubbleFired is false
 
 PASS successfullyParsed is true
 

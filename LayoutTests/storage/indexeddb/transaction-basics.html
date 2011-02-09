@@ -55,7 +55,7 @@ function addRemoveIDBObjects()
     verifySuccessEvent(event);
     var trans = evalAndLog("trans = event.result");
     shouldBeTrue("trans !== null");
-    trans.onabort = testSetVersionAbort2;
+    trans.addEventListener('abort', testSetVersionAbort2, true);
     trans.oncomplete = unexpectedCompleteCallback;
 
     var store = evalAndLog("store = db.createObjectStore('storeFail', null)");
@@ -80,7 +80,7 @@ function addRemoveAddIDBObjects()
     verifySuccessEvent(event);
     var trans = evalAndLog("trans = event.result");
     shouldBeTrue("trans !== null");
-    trans.onabort = testSetVersionAbort3;
+    trans.addEventListener('abort', testSetVersionAbort3, false);
     trans.oncomplete = unexpectedCompleteCallback;
 
     var store = evalAndLog("store = db.createObjectStore('storeFail', null)");
@@ -209,7 +209,7 @@ function setVersionSuccess()
     window.trans = evalAndLog("trans = event.result");
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
-    trans.oncomplete = completeCallback;
+    trans.addEventListener('complete', completeCallback, false);
     window.completeEventFired = false;
 
     deleteAllObjectStores(db, createObjectStoreAndStartTransaction);

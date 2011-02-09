@@ -30,6 +30,7 @@
 
 #include "ActiveDOMObject.h"
 #include "DOMStringList.h"
+#include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventTarget.h"
@@ -53,10 +54,10 @@ public:
         VERSION_CHANGE = 2
     };
 
-    IDBTransactionBackendInterface* backend() const { return m_backend.get(); }
+    IDBTransactionBackendInterface* backend() const;
 
     unsigned short mode() const;
-    IDBDatabase* db();
+    IDBDatabase* db() const;
     PassRefPtr<IDBObjectStore> objectStore(const String& name, ExceptionCode&);
     void abort();
 
@@ -71,6 +72,8 @@ public:
     // EventTarget
     virtual IDBTransaction* toIDBTransaction() { return this; }
     virtual ScriptExecutionContext* scriptExecutionContext() const;
+    virtual bool dispatchEvent(PassRefPtr<Event>);
+    bool dispatchEvent(PassRefPtr<Event> event, ExceptionCode& ec) { return EventTarget::dispatchEvent(event, ec); }
 
     // ActiveDOMObject
     virtual bool canSuspend() const;

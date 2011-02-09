@@ -82,22 +82,44 @@ function transactionAborted()
     evalAndLog("trans.oncomplete = unexpectedAbortCallback");
     evalAndLog("trans.addEventListener('error', errorCaptureCallback, true)");
     evalAndLog("trans.addEventListener('error', errorBubbleCallback, false)");
+    evalAndLog("trans.addEventListener('success', unexpectedSuccessCallback, true)");
+    evalAndLog("trans.addEventListener('success', unexpectedSuccessCallback, false)");
+    evalAndLog("db.addEventListener('error', dbErrorCaptureCallback, true)");
+    evalAndLog("db.addEventListener('error', dbErrorBubbleCallback, false)");
+    evalAndLog("db.addEventListener('success', unexpectedSuccessCallback, true)");
+    evalAndLog("db.addEventListener('success', unexpectedSuccessCallback, false)");
     store = evalAndLog("store = trans.objectStore('storeName')");
     result = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key')");
     result.onsuccess = unexpectedSuccessCallback;
     result.onerror = errorFiredCallback;
+    dbCaptureFired = false;
     captureFired = false;
     requestFired = false;
     bubbleFired = false;
+    dbBubbleFired = false;
+}
+
+function dbErrorCaptureCallback()
+{
+    debug("");
+    debug("In IDBDatabase error capture");
+    shouldBeFalse("dbCaptureFired");
+    shouldBeFalse("captureFired");
+    shouldBeFalse("requestFired");
+    shouldBeFalse("bubbleFired");
+    shouldBeFalse("dbBubbleFired");
+    dbCaptureFired = true;
 }
 
 function errorCaptureCallback()
 {
     debug("");
     debug("In IDBTransaction error capture");
+    shouldBeTrue("dbCaptureFired");
     shouldBeFalse("captureFired");
     shouldBeFalse("requestFired");
     shouldBeFalse("bubbleFired");
+    shouldBeFalse("dbBubbleFired");
     captureFired = true;
 }
 
@@ -105,9 +127,11 @@ function errorFiredCallback()
 {
     debug("");
     debug("In IDBRequest handler");
+    shouldBeTrue("dbCaptureFired");
     shouldBeTrue("captureFired");
     shouldBeFalse("requestFired");
     shouldBeFalse("bubbleFired");
+    shouldBeFalse("dbBubbleFired");
     requestFired = true;
 }
 
@@ -115,19 +139,35 @@ function errorBubbleCallback()
 {
     debug("");
     debug("In IDBTransaction error bubble");
+    shouldBeTrue("dbCaptureFired");
     shouldBeTrue("captureFired");
     shouldBeTrue("requestFired");
     shouldBeFalse("bubbleFired");
+    shouldBeFalse("dbBubbleFired");
     bubbleFired = true;
+}
+
+function dbErrorBubbleCallback()
+{
+    debug("");
+    debug("In IDBDatabase error bubble");
+    shouldBeTrue("dbCaptureFired");
+    shouldBeTrue("captureFired");
+    shouldBeTrue("requestFired");
+    shouldBeTrue("bubbleFired");
+    shouldBeFalse("dbBubbleFired");
+    dbBubbleFired = true;
 }
 
 function transactionAborted2()
 {
     debug("");
     debug("Transaction aborted");
+    shouldBeTrue("dbCaptureFired");
     shouldBeTrue("captureFired");
     shouldBeTrue("requestFired");
     shouldBeTrue("bubbleFired");
+    shouldBeTrue("dbBubbleFired");
     debug("");
     debug("Verifing success.");
     trans = evalAndLog("trans = db.transaction([], webkitIDBTransaction.READ_WRITE)");
@@ -135,22 +175,48 @@ function transactionAborted2()
     evalAndLog("trans.onabort = unexpectedAbortCallback");
     evalAndLog("trans.addEventListener('success', successCaptureCallback, true)");
     evalAndLog("trans.addEventListener('success', successBubbleCallback, false)");
+    evalAndLog("trans.addEventListener('error', unexpectedErrorCallback, true)");
+    evalAndLog("trans.addEventListener('error', unexpectedErrorCallback, false)");
+    evalAndLog("db.removeEventListener('error', dbErrorCaptureCallback, true)");
+    evalAndLog("db.removeEventListener('error', dbErrorBubbleCallback, false)");
+    evalAndLog("db.removeEventListener('success', unexpectedSuccessCallback, true)");
+    evalAndLog("db.removeEventListener('success', unexpectedSuccessCallback, false)");
+    evalAndLog("db.addEventListener('success', dbSuccessCaptureCallback, true)");
+    evalAndLog("db.addEventListener('success', dbSuccessBubbleCallback, false)");
+    evalAndLog("db.addEventListener('error', unexpectedErrorCallback, true)");
+    evalAndLog("db.addEventListener('error', unexpectedErrorCallback, false)");
     store = evalAndLog("store = trans.objectStore('storeName')");
     result = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key2')");
     result.onerror = unexpectedErrorCallback;
     result.onsuccess = successFiredCallback;
+    dbCaptureFired = false;
     captureFired = false;
     requestFired = false;
     bubbleFired = false;
+    dbBubbleFired = false;
+}
+
+function dbSuccessCaptureCallback()
+{
+    debug("");
+    debug("In IDBDatabase success capture");
+    shouldBeFalse("dbCaptureFired");
+    shouldBeFalse("captureFired");
+    shouldBeFalse("requestFired");
+    shouldBeFalse("bubbleFired");
+    shouldBeFalse("dbBubbleFired");
+    dbCaptureFired = true;
 }
 
 function successCaptureCallback()
 {
     debug("");
     debug("In IDBTransaction success capture");
+    shouldBeTrue("dbCaptureFired");
     shouldBeFalse("captureFired");
     shouldBeFalse("requestFired");
     shouldBeFalse("bubbleFired");
+    shouldBeFalse("dbBubbleFired");
     captureFired = true;
 }
 
@@ -158,9 +224,11 @@ function successFiredCallback()
 {
     debug("");
     debug("In IDBRequest handler");
+    shouldBeTrue("dbCaptureFired");
     shouldBeTrue("captureFired");
     shouldBeFalse("requestFired");
     shouldBeFalse("bubbleFired");
+    shouldBeFalse("dbBubbleFired");
     requestFired = true;
 }
 
@@ -168,17 +236,27 @@ function successBubbleCallback()
 {
     debug("");
     debug("In IDBTransaction success bubble");
-    testFailed("Success capture callback should NOT fire");
+    testFailed("Success bubble callback should NOT fire");
     bubbleFired = true;
+}
+
+function dbSuccessBubbleCallback()
+{
+    debug("");
+    debug("In IDBDatabase success bubble");
+    testFailed("Success bubble callback should NOT fire");
+    dbBubbleFired = true;
 }
 
 function transactionComplete()
 {
     debug("");
     debug("Transaction completed");
+    shouldBeTrue("dbCaptureFired");
     shouldBeTrue("captureFired");
     shouldBeTrue("requestFired");
     shouldBeFalse("bubbleFired");
+    shouldBeFalse("dbBubbleFired");
     debug("");
 
     done();

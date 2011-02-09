@@ -91,7 +91,7 @@ void IDBRequest::onSuccess(PassRefPtr<IDBCursorBackendInterface> backend)
 
 void IDBRequest::onSuccess(PassRefPtr<IDBDatabaseBackendInterface> backend)
 {
-    enqueueEvent(IDBSuccessEvent::create(m_source, IDBAny::create(IDBDatabase::create(backend))));
+    enqueueEvent(IDBSuccessEvent::create(m_source, IDBAny::create(IDBDatabase::create(scriptExecutionContext(), backend))));
 }
 
 void IDBRequest::onSuccess(PassRefPtr<IDBIndexBackendInterface> backend)
@@ -138,14 +138,19 @@ ScriptExecutionContext* IDBRequest::scriptExecutionContext() const
 
 bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
 {
+    ASSERT(scriptExecutionContext());
+    ASSERT(event->target() == this);
     ASSERT(m_readyState < DONE);
     m_readyState = DONE;
 
     Vector<RefPtr<EventTarget> > targets;
     targets.append(this);
-    ASSERT(event->target() == this);
-    if (m_transaction)
+    if (m_transaction) {
         targets.append(m_transaction);
+        // If there ever are events that are associated with a database but
+        // that do not have a transaction, then this will not work.
+        targets.append(m_transaction->db());
+    }
 
     ASSERT(event->isIDBErrorEvent() || event->isIDBSuccessEvent());
     bool dontPreventDefault = static_cast<IDBEvent*>(event.get())->dispatch(targets);

@@ -41,8 +41,14 @@
 
 namespace WebCore {
 
-IDBDatabase::IDBDatabase(PassRefPtr<IDBDatabaseBackendInterface> backend)
-    : m_backend(backend)
+PassRefPtr<IDBDatabase> IDBDatabase::create(ScriptExecutionContext* context, PassRefPtr<IDBDatabaseBackendInterface> database)
+{
+    return adoptRef(new IDBDatabase(context, database));
+}
+
+IDBDatabase::IDBDatabase(ScriptExecutionContext* context, PassRefPtr<IDBDatabaseBackendInterface> backend)
+    : ActiveDOMObject(context, this)
+    , m_backend(backend)
     , m_noNewTransactions(false)
 {
     // We pass a reference of this object before it can be adopted.
@@ -129,6 +135,21 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
 void IDBDatabase::close()
 {
     m_noNewTransactions = true;
+}
+
+ScriptExecutionContext* IDBDatabase::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
+}
+
+EventTargetData* IDBDatabase::eventTargetData()
+{
+    return &m_eventTargetData;
+}
+
+EventTargetData* IDBDatabase::ensureEventTargetData()
+{
+    return &m_eventTargetData;
 }
 
 } // namespace WebCore

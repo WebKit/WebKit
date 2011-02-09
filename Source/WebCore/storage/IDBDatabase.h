@@ -26,7 +26,10 @@
 #ifndef IDBDatabase_h
 #define IDBDatabase_h
 
+#include "ActiveDOMObject.h"
 #include "DOMStringList.h"
+#include "Event.h"
+#include "EventTarget.h"
 #include "ExceptionCode.h"
 #include "IDBDatabaseBackendInterface.h"
 #include "IDBObjectStore.h"
@@ -42,14 +45,10 @@ namespace WebCore {
 
 class IDBAny;
 class IDBRequest;
-class ScriptExecutionContext;
 
-class IDBDatabase : public RefCounted<IDBDatabase> {
+class IDBDatabase : public RefCounted<IDBDatabase>, public EventTarget, public ActiveDOMObject {
 public:
-    static PassRefPtr<IDBDatabase> create(PassRefPtr<IDBDatabaseBackendInterface> database)
-    {
-        return adoptRef(new IDBDatabase(database));
-    }
+    static PassRefPtr<IDBDatabase> create(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendInterface>);
     ~IDBDatabase();
 
     void setSetVersionTransaction(IDBTransaction*);
@@ -70,13 +69,31 @@ public:
     PassRefPtr<IDBRequest> setVersion(ScriptExecutionContext*, const String& version, ExceptionCode&);
     void close();
 
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(abort);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
+
+    // EventTarget
+    virtual IDBDatabase* toIDBDatabase() { return this; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const;
+
+    using RefCounted<IDBDatabase>::ref;
+    using RefCounted<IDBDatabase>::deref;
+
 private:
-    IDBDatabase(PassRefPtr<IDBDatabaseBackendInterface>);
+    IDBDatabase(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendInterface>);
+
+    // EventTarget
+    virtual void refEventTarget() { ref(); }
+    virtual void derefEventTarget() { deref(); }
+    virtual EventTargetData* eventTargetData();
+    virtual EventTargetData* ensureEventTargetData();
 
     RefPtr<IDBDatabaseBackendInterface> m_backend;
     RefPtr<IDBTransaction> m_setVersionTransaction;
 
     bool m_noNewTransactions;
+
+    EventTargetData m_eventTargetData;
 };
 
 } // namespace WebCore

@@ -17,7 +17,7 @@ trans = event.result
 Deleted all object stores.
 db.createObjectStore('a')
 db.createObjectStore('b')
-trans.oncomplete = created
+trans.addEventListener('complete', created, true)
 
 trans = db.transaction(['a'])
 trans.objectStore('a')

@@ -1,3 +1,19 @@
+2011-02-07  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Events should propagate through IDBDatabase (for IDBRequest and IDBTransaction)
+        https://bugs.webkit.org/show_bug.cgi?id=53975
+
+        * storage/indexeddb/objectstore-basics.html:
+        * storage/indexeddb/request-event-propagation-expected.txt:
+        * storage/indexeddb/request-event-propagation.html:
+        * storage/indexeddb/transaction-and-objectstore-calls-expected.txt:
+        * storage/indexeddb/transaction-and-objectstore-calls.html:
+        * storage/indexeddb/transaction-basics.html:
+        * storage/indexeddb/transaction-event-propagation-expected.txt: Added.
+        * storage/indexeddb/transaction-event-propagation.html: Added.
+
 2011-02-08  Jia Pu  <jpu@apple.com>
 
         Reviewed by Darin Adler.

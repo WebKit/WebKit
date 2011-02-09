@@ -62,19 +62,23 @@ IDBTransaction::~IDBTransaction()
 {
 }
 
+IDBTransactionBackendInterface* IDBTransaction::backend() const
+{
+    return m_backend.get();
+}
+
 unsigned short IDBTransaction::mode() const
 {
     return m_mode;
 }
 
-IDBDatabase* IDBTransaction::db()
+IDBDatabase* IDBTransaction::db() const
 {
     return m_database.get();
 }
 
 PassRefPtr<IDBObjectStore> IDBTransaction::objectStore(const String& name, ExceptionCode& ec)
 {
-    // FIXME: It'd be better (because it's more deterministic) if we didn't start throwing this until the complete or abort event fires.
     if (m_finished) {
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
         return 0;
@@ -95,11 +99,6 @@ void IDBTransaction::abort()
         m_backend->abort();
 }
 
-ScriptExecutionContext* IDBTransaction::scriptExecutionContext() const
-{
-    return ActiveDOMObject::scriptExecutionContext();
-}
-
 void IDBTransaction::onAbort()
 {
     enqueueEvent(IDBAbortEvent::create(IDBAny::create(this)));
@@ -108,6 +107,26 @@ void IDBTransaction::onAbort()
 void IDBTransaction::onComplete()
 {
     enqueueEvent(IDBCompleteEvent::create(IDBAny::create(this)));
+}
+
+ScriptExecutionContext* IDBTransaction::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
+}
+
+bool IDBTransaction::dispatchEvent(PassRefPtr<Event> event)
+{
+    ASSERT(scriptExecutionContext());
+    ASSERT(event->target() == this);
+    ASSERT(!m_finished);
+    m_finished = true;
+
+    Vector<RefPtr<EventTarget> > targets;
+    targets.append(this);
+    targets.append(db());
+
+    ASSERT(event->isIDBAbortEvent() || event->isIDBCompleteEvent());
+    return static_cast<IDBEvent*>(event.get())->dispatch(targets);
 }
 
 bool IDBTransaction::canSuspend() const
@@ -130,9 +149,6 @@ void IDBTransaction::enqueueEvent(PassRefPtr<Event> event)
 {
     if (!scriptExecutionContext())
         return;
-
-    ASSERT(!m_finished);
-    m_finished = true;
 
     ASSERT(scriptExecutionContext()->isDocument());
     EventQueue* eventQueue = static_cast<Document*>(scriptExecutionContext())->eventQueue();

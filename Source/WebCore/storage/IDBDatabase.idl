@@ -26,11 +26,15 @@
 module storage {
 
     interface [
-        Conditional=INDEXED_DATABASE
+        Conditional=INDEXED_DATABASE,
+        EventTarget
     ] IDBDatabase {
         readonly attribute DOMString name;
         readonly attribute DOMString version;
         readonly attribute DOMStringList objectStoreNames;
+
+        attribute EventListener onabort;
+        attribute EventListener onerror;
 
         IDBObjectStore createObjectStore(in DOMString name, in [Optional] OptionsObject options)
             raises (IDBDatabaseException);
@@ -41,6 +45,16 @@ module storage {
         [CallWith=ScriptExecutionContext] IDBTransaction transaction(in [Optional] DOMStringList storeNames, in [Optional] unsigned short mode)
             raises (IDBDatabaseException);
         void close();
+
+        // EventTarget interface
+        void addEventListener(in DOMString type,
+                              in EventListener listener,
+                              in boolean useCapture);
+        void removeEventListener(in DOMString type,
+                                 in EventListener listener,
+                                 in boolean useCapture);
+        boolean dispatchEvent(in Event evt) 
+            raises(EventException);
     };
 
 }
