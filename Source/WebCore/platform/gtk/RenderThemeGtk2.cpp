@@ -41,7 +41,6 @@
 #include "TextDirection.h"
 #include "UserAgentStyleSheets.h"
 #include "WidgetRenderingContext.h"
-#include "gtkdrawing.h"
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
 
@@ -50,7 +49,6 @@ namespace WebCore {
 // This is not a static method, because we want to avoid having GTK+ headers in RenderThemeGtk.h.
 extern GtkTextDirection gtkTextDirection(TextDirection);
 
-static int mozGtkRefCount = 0;
 void RenderThemeGtk::platformInit()
 {
     m_themePartsHaveRGBAColormap = true;
@@ -71,29 +69,15 @@ void RenderThemeGtk::platformInit()
     m_gtkVScrollbar = 0;
     m_gtkHScrollbar = 0;
 
-    memset(&m_themeParts, 0, sizeof(GtkThemeParts));
-    GdkColormap* colormap = gdk_screen_get_rgba_colormap(gdk_screen_get_default());
-    if (!colormap) {
+    m_colormap = gdk_screen_get_rgba_colormap(gdk_screen_get_default());
+    if (!m_colormap) {
         m_themePartsHaveRGBAColormap = false;
-        colormap = gdk_screen_get_default_colormap(gdk_screen_get_default());
+        m_colormap = gdk_screen_get_default_colormap(gdk_screen_get_default());
     }
-    m_themeParts.colormap = colormap;
-
-    // Initialize the Mozilla theme drawing code.
-    if (!mozGtkRefCount) {
-        moz_gtk_init();
-        moz_gtk_use_theme_parts(&m_themeParts);
-    }
-    ++mozGtkRefCount;
 }
 
 RenderThemeGtk::~RenderThemeGtk()
 {
-    --mozGtkRefCount;
-
-    if (!mozGtkRefCount)
-        moz_gtk_shutdown();
-
     if (m_gtkWindow)
         gtk_widget_destroy(m_gtkWindow);
 }
@@ -147,34 +131,6 @@ static GtkStateType getGtkStateType(RenderThemeGtk* theme, RenderObject* object)
     if (theme->isHovered(object))
         return GTK_STATE_PRELIGHT;
     return GTK_STATE_NORMAL;
-}
-
-bool RenderThemeGtk::paintRenderObject(GtkThemeWidgetType type, RenderObject* renderObject, GraphicsContext* context, const IntRect& rect, int flags)
-{
-    // Painting is disabled so just claim to have succeeded
-    if (context->paintingDisabled())
-        return false;
-
-    GtkWidgetState widgetState;
-    widgetState.active = isPressed(renderObject);
-    widgetState.focused = isFocused(renderObject);
-
-    // https://bugs.webkit.org/show_bug.cgi?id=18364
-    // The Mozilla theme drawing code, only paints a button as pressed when it's pressed 
-    // while hovered. Until we move away from the Mozila code, work-around the issue by
-    // forcing a pressed button into the hovered state. This ensures that buttons activated
-    // via the keyboard have the proper rendering.
-    widgetState.inHover = isHovered(renderObject) || (type == MOZ_GTK_BUTTON && isPressed(renderObject));
-
-    // FIXME: Disabled does not always give the correct appearance for ReadOnly
-    widgetState.disabled = !isEnabled(renderObject) || isReadOnlyControl(renderObject);
-    widgetState.isDefault = false;
-    widgetState.canDefault = false;
-    widgetState.depressed = false;
-
-    WidgetRenderingContext widgetContext(context, rect);
-    return !widgetContext.paintMozillaWidget(type, &widgetState, flags,
-                                             gtkTextDirection(renderObject->style()->direction()));
 }
 
 static void setToggleSize(const RenderThemeGtk* theme, RenderStyle* style, GtkWidget* widget)
@@ -719,7 +675,7 @@ GtkWidget* RenderThemeGtk::gtkContainer() const
         return m_gtkContainer;
 
     m_gtkWindow = gtk_window_new(GTK_WINDOW_POPUP);
-    gtk_widget_set_colormap(m_gtkWindow, m_themeParts.colormap);
+    gtk_widget_set_colormap(m_gtkWindow, m_colormap);
     setupWidget(m_gtkWindow);
     gtk_widget_set_name(m_gtkWindow, "MozillaGtkWidget");
 

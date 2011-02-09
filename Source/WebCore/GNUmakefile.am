@@ -3740,8 +3740,6 @@ webcoregtk_sources += \
 	Source/WebCore/platform/gtk/GOwnPtrGtk.h \
 	Source/WebCore/platform/gtk/GRefPtrGtk.cpp \
 	Source/WebCore/platform/gtk/GRefPtrGtk.h \
-	Source/WebCore/platform/gtk/gtk2drawing.c \
-	Source/WebCore/platform/gtk/gtkdrawing.h \
 	Source/WebCore/platform/gtk/GtkPluginWidget.cpp \
 	Source/WebCore/platform/gtk/GtkPluginWidget.h \
 	Source/WebCore/platform/gtk/GtkVersioning.c \

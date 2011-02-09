@@ -1,3 +1,28 @@
+2011-02-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Remove the last remnants of the Mozilla theme drawing code
+        https://bugs.webkit.org/show_bug.cgi?id=54035
+
+        Remove all Mozilla theme drawing code.
+
+        No new tests. This change only removes dead code.
+
+        * GNUmakefile.am: Remove Mozilla files from the source list.
+        * platform/gtk/RenderThemeGtk.h: Remove Mozilla-theme-drawing-related methods
+        and add m_colormap to hold the current colormap of the widgets.
+        * platform/gtk/RenderThemeGtk2.cpp: Remove Mozilla code.
+        (WebCore::RenderThemeGtk::platformInit): Ditto.
+        (WebCore::RenderThemeGtk::~RenderThemeGtk): Ditto.
+        (WebCore::RenderThemeGtk::gtkContainer): Ditto.
+        * platform/gtk/ScrollbarThemeGtk2.cpp: Ditto.
+        * platform/gtk/WidgetRenderingContext.cpp: Ditto.
+        (WebCore::WidgetRenderingContext::WidgetRenderingContext): Ditto.
+        * platform/gtk/WidgetRenderingContext.h: Ditto.
+        * platform/gtk/gtk2drawing.c: Removed.
+        * platform/gtk/gtkdrawing.h: Removed.
+
 2011-02-08  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Antti Koivisto.

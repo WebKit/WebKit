@@ -31,11 +31,8 @@
 #include "GRefPtr.h"
 #include "RenderTheme.h"
 
-#ifdef GTK_API_VERSION_2
-#include "gtkdrawing.h"
-#endif
-
 typedef gulong GType;
+typedef struct _GdkColormap GdkColormap;
 
 namespace WebCore {
 
@@ -199,12 +196,10 @@ private:
 
 #ifdef GTK_API_VERSION_2
     void setupWidgetAndAddToContainer(GtkWidget*, GtkWidget*) const;
-    bool paintRenderObject(GtkThemeWidgetType, RenderObject*, GraphicsContext*, const IntRect&, int flags = 0);
     void refreshComboBoxChildren() const;
     void getComboBoxPadding(RenderStyle*, int& left, int& top, int& right, int& bottom) const;
     int getComboBoxSeparatorWidth() const;
     int comboBoxArrowSize(RenderStyle*) const;
-    GtkThemeParts m_themeParts;
 
     GtkWidget* gtkButton() const;
     GtkWidget* gtkEntry() const;
@@ -220,6 +215,7 @@ private:
     GtkWidget* gtkComboBoxArrow() const;
     GtkWidget* gtkComboBoxSeparator() const;
 
+    GdkColormap* m_colormap;
     mutable GtkWidget* m_gtkWindow;
     mutable GtkWidget* m_gtkContainer;
     mutable GtkWidget* m_gtkButton;

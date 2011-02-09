@@ -25,7 +25,11 @@
 #ifdef GTK_API_VERSION_2
 
 #include "IntRect.h"
-#include "gtkdrawing.h"
+
+// Usually this is too expensive to have in headers, but GtkStateType GtkShadowType are
+// enums and cannot be forward declared. WidgetRenderingContext.h is currently only
+// included in RenderThemeGtk2.cpp and ScrollbarThemeGtk2.cpp.
+#include <gtk/gtk.h>
 
 namespace WebCore {
 
@@ -37,7 +41,6 @@ public:
     WidgetRenderingContext(GraphicsContext*, const IntRect&);
     ~WidgetRenderingContext();
 
-    bool paintMozillaWidget(GtkThemeWidgetType, GtkWidgetState*, int flags, GtkTextDirection = GTK_TEXT_DIR_NONE);
     void gtkPaintBox(const IntRect&, GtkWidget*, GtkStateType, GtkShadowType, const gchar*);
     void gtkPaintFlatBox(const IntRect&, GtkWidget*, GtkStateType, GtkShadowType, const gchar*);
     void gtkPaintFocus(const IntRect&, GtkWidget*, GtkStateType, const gchar*);
