@@ -1,3 +1,30 @@
+2011-02-10  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Log signals from AtkDocument interface also in AccessibilityController
+        https://bugs.webkit.org/show_bug.cgi?id=54198
+
+        Trace AtkDocument's signals emission through AccessibilityController.
+
+        Also, taken the code related to adding and removing global
+        listeners for ATK signals out to a separate file, for the sake of
+        clarity and to ease future additions.
+
+        * DumpRenderTree/gtk/AccessibilityCallbacks.h: Added.
+        * DumpRenderTree/gtk/AccessibilityCallbacks.cpp: Added
+        (printAccessibilityEvent): Print information about an event.
+        (axObjectEventListener): Global listener for AtkObject's signals.
+        (axDocumentEventListener): Global listener for AtkDocument's signals.
+        (connectAccessibilityCallbacks): Connect all global listeners.
+        (disconnectAccessibilityCallbacks): Disconnect all global listeners.
+
+        * DumpRenderTree/gtk/AccessibilityControllerGtk.cpp:
+        (AccessibilityController::setLogAccessibilityEvents): Call to
+        connectAccessibilityCallbacks and disconnectAccessibilityCallbacks.
+
+        * GNUmakefile.am: Added new files.
+
 2011-02-09  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
