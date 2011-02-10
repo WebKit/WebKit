@@ -34,12 +34,6 @@
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 
-#ifdef __OBJC__
-@class WebCoreTextMarker;
-#else
-class WebCoreTextMarker;
-#endif
-
 namespace WebCore {
 
 class Document;

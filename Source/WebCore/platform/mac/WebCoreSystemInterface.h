@@ -224,6 +224,17 @@ extern void (*wkContentAreaDidHide)(WKScrollbarPainterControllerRef);
 extern bool (*wkScrollbarPainterUsesOverlayScrollers)(void);
 #endif
 
+extern void (*wkUnregisterUniqueIdForElement)(id element);
+extern void (*wkAccessibilityHandleFocusChanged)(void);    
+extern CFTypeID (*wkGetAXTextMarkerTypeID)(void);
+extern CFTypeID (*wkGetAXTextMarkerRangeTypeID)(void);
+extern CFTypeRef (*wkCreateAXTextMarkerRange)(CFTypeRef start, CFTypeRef end);
+extern CFTypeRef (*wkCopyAXTextMarkerRangeStart)(CFTypeRef range);
+extern CFTypeRef (*wkCopyAXTextMarkerRangeEnd)(CFTypeRef range);
+extern CFTypeRef (*wkCreateAXTextMarker)(const void *bytes, size_t len);
+extern BOOL (*wkGetBytesFromAXTextMarker)(CFTypeRef textMarker, void *bytes, size_t length);
+extern AXUIElementRef (*wkCreateAXUIElementRef)(id element);
+
 }
 
 #endif

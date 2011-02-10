@@ -1,3 +1,13 @@
+2011-02-10  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        AX: AX needs to stop using WebCoreViewFactory
+        https://bugs.webkit.org/show_bug.cgi?id=54153
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2011-02-10  Peter Varga  <pvarga@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

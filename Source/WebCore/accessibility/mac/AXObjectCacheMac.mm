@@ -31,7 +31,7 @@
 #import "AccessibilityObject.h"
 #import "AccessibilityObjectWrapper.h"
 #import "RenderObject.h"
-#import "WebCoreViewFactory.h"
+#import "WebCoreSystemInterface.h"
 
 #import <wtf/PassRefPtr.h>
 
@@ -127,7 +127,7 @@ void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXT
 
 void AXObjectCache::handleFocusedUIElementChanged(RenderObject*, RenderObject*)
 {
-    [[WebCoreViewFactory sharedFactory] accessibilityHandleFocusChanged];
+    wkAccessibilityHandleFocusChanged();
 }
 
 void AXObjectCache::handleScrolledToAnchor(const Node*)

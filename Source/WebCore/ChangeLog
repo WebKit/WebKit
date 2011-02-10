@@ -1,3 +1,47 @@
+2011-02-10  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        AX: AX needs to stop using WebCoreViewFactory
+        https://bugs.webkit.org/show_bug.cgi?id=54153
+
+        WebKit2 no longer uses WebCoreViewFactory, which means that accessibility code needs
+        to get off of it and use WebCoreSystemInterface, like other clients.
+
+        * WebCore.exp.in:
+        * accessibility/AXObjectCache.h:
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::handleFocusedUIElementChanged):
+        * accessibility/mac/AccessibilityObjectWrapper.h:
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper unregisterUniqueIdForUIElement]):
+        (CFAutoreleaseHelper):
+        (AXObjectIsTextMarker):
+        (AXObjectIsTextMarkerRange):
+        (AXTextMarkerRange):
+        (AXTextMarkerRangeStart):
+        (AXTextMarkerRangeEnd):
+        (textMarkerForVisiblePosition):
+        (-[AccessibilityObjectWrapper textMarkerForVisiblePosition:]):
+        (visiblePositionForTextMarker):
+        (-[AccessibilityObjectWrapper visiblePositionForTextMarker:]):
+        (visiblePositionForStartOfTextMarkerRange):
+        (visiblePositionForEndOfTextMarkerRange):
+        (textMarkerRangeFromMarkers):
+        (AXAttributeStringSetElement):
+        (-[AccessibilityObjectWrapper doAXAttributedStringForTextMarkerRange:]):
+        (textMarkerRangeFromVisiblePositions):
+        (-[AccessibilityObjectWrapper textMarkerRangeFromVisiblePositions:endPosition:]):
+        (-[AccessibilityObjectWrapper visiblePositionRangeForTextMarkerRange:]):
+        (-[AccessibilityObjectWrapper textMarkerRangeForSelection]):
+        (-[AccessibilityObjectWrapper accessibilitySetValue:forAttribute:]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+        * editing/mac/SelectionControllerMac.mm:
+        (WebCore::accessibilityConvertScreenRect):
+        (WebCore::SelectionController::notifyAccessibilityForSelectionChange):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2011-02-10  Alexis Menard  <alexis.menard@nokia.com>
 
         Reviewed by Andreas Kling.

@@ -156,5 +156,16 @@ void InitWebCoreSystemInterface(void)
     INIT(ScrollbarPainterUsesOverlayScrollers);
 #endif
 
+    INIT(GetAXTextMarkerTypeID);
+    INIT(GetAXTextMarkerRangeTypeID);
+    INIT(CreateAXTextMarker);
+    INIT(GetBytesFromAXTextMarker);
+    INIT(CreateAXTextMarkerRange);
+    INIT(CopyAXTextMarkerRangeStart);
+    INIT(CopyAXTextMarkerRangeEnd);
+    INIT(AccessibilityHandleFocusChanged);
+    INIT(CreateAXUIElementRef);
+    INIT(UnregisterUniqueIdForElement);
+
     didInit = true;
 }

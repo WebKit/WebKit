@@ -130,5 +130,16 @@ void InitWebCoreSystemInterface(void)
 #else
         INIT(GetHyphenationLocationBeforeIndex);
 #endif
+        
+        INIT(GetAXTextMarkerTypeID);
+        INIT(GetAXTextMarkerRangeTypeID);
+        INIT(CreateAXTextMarker);
+        INIT(GetBytesFromAXTextMarker);
+        INIT(CreateAXTextMarkerRange);
+        INIT(CopyAXTextMarkerRangeStart);
+        INIT(CopyAXTextMarkerRangeEnd);
+        INIT(AccessibilityHandleFocusChanged);
+        INIT(CreateAXUIElementRef);
+        INIT(UnregisterUniqueIdForElement);        
     });
 }
