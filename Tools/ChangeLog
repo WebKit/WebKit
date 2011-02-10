@@ -1,5 +1,17 @@
 2011-02-09  Adam Roben  <aroben@apple.com>
 
+        Test that having a WKView paint after being resized while hidden doesn't cause a crash
+
+        Test for <http://webkit.org/b/54142> <rdar://problem/8979365> Crash in
+        DrawingAreaProxyImpl::paint when WKView paints after being resized while hidden
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKit2/win/ResizeViewWhileHidden.cpp:
+        (TestWebKitAPI::TEST): Force the WKView to paint after resizing it while hidden.
+
+2011-02-09  Adam Roben  <aroben@apple.com>
+
         Add a test that resizes a WKView while it's hidden
 
         Test for <http://webkit.org/b/54141> <rdar://problem/8979195> WKView draws at wrong size,

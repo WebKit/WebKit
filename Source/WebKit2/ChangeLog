@@ -1,5 +1,21 @@
 2011-02-09  Adam Roben  <aroben@apple.com>
 
+        Notice when the backing store goes away after DidSetSize
+
+        Fixes <http://webkit.org/b/54142> <rdar://problem/8979365> Crash in
+        DrawingAreaProxyImpl::paint when WKView paints after being resized while hidden
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::paint): Null-check m_backingStore after waiting for
+        DidSetSize, as m_backingStore can go away when we receive that message. This is the bug fix.
+        Also moved the accelerated compositing check inside the block where we wait for DidSetSize.
+        If we didn't wait for DidSetSize, we already know that we're not in accelerated compositing
+        mode (and asserted so earlier in this function).
+
+2011-02-09  Adam Roben  <aroben@apple.com>
+
         Decode a null SharedMemory::Handle correctly on Windows
 
         Fixes <http://webkit.org/b/54141> <rdar://problem/8979195> WKView draws at wrong size,

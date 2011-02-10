@@ -74,11 +74,11 @@ void DrawingAreaProxyImpl::paint(BackingStore::PlatformGraphicsContext context, 
         // Wait for a DidSetSize message that contains the new bits before we paint
         // what's currently in the backing store.
         waitForAndDispatchDidSetSize();
-    }
 
-    // Dispatching DidSetSize could change the compositing mode, return if that happens.
-    if (isInAcceleratedCompositingMode())
-        return;
+        // Dispatching DidSetSize could destroy our backing store or change the compositing mode.
+        if (!m_backingStore || isInAcceleratedCompositingMode())
+            return;
+    }
 
     m_backingStore->paint(context, rect);
     unpaintedRegion.subtract(IntRect(IntPoint(), m_backingStore->size()));

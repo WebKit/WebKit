@@ -112,6 +112,9 @@ TEST(WebKit2, ResizeViewWhileHidden)
     webView.resizeTo(originalRect.right - originalRect.left, originalRect.bottom - originalRect.top);
     ::ShowWindow(window, SW_SHOW);
 
+    // Force the WKView to paint to try to trigger <http://webkit.org/b/54142>.
+    ::SendMessage(window, WM_PAINT, 0, 0);
+
     // In Debug builds without the fix for <http://webkit.org/b/54141>, the web process will assert
     // at this point.
     // FIXME: It would be good to have a way to check that our behavior is correct in Release
