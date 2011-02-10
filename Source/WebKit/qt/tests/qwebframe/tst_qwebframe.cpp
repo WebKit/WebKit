@@ -2446,8 +2446,10 @@ void tst_QWebFrame::javaScriptWindowObjectClearedOnEvaluate()
 void tst_QWebFrame::setHtml()
 {
     QString html("<html><head></head><body><p>hello world</p></body></html>");
+    QSignalSpy spy(m_view->page(), SIGNAL(loadFinished(bool)));
     m_view->page()->mainFrame()->setHtml(html);
     QCOMPARE(m_view->page()->mainFrame()->toHtml(), html);
+    QCOMPARE(spy.count(), 1);
 }
 
 void tst_QWebFrame::setHtmlWithResource()

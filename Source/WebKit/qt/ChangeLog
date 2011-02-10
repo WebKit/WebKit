@@ -1,3 +1,23 @@
+2011-02-10  kasthuri  <kasthuri.n-s@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] QWebFrame::setHtml doesn't emit loadFinished signal
+        https://bugs.webkit.org/show_bug.cgi?id=38634
+
+        QWebView->page()->mainFrame()->setHtml(html) is always emitting
+        the loadFinished() signal for all types of html files.
+        But the proposed test content was trying to catch the signal after
+        calling setHtml() api and becuase of this the emitted signal for a 
+        simple html page is never caught as its emitted before even the connect
+        call was successful.
+
+        updated the tst_QWebFrame::setHtml() in tst_qwebframe.cpp to check for 
+        signal using the QSignalSpy.
+         
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2011-02-09  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Csaba Osztrogonác.
