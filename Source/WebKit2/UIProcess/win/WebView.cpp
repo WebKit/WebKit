@@ -84,9 +84,9 @@ enum {
 
 static bool useNewDrawingArea()
 {
-    // FIXME: Turn this on by default <http://webkit.org/b/53877>.
-    static bool useNewDrawingArea = getenv("WEBKIT2_USE_NEW_DRAWING_AREA");
-    return useNewDrawingArea;
+    // FIXME: Remove this function and the old drawing area code once we aren't interested in
+    // testing the old drawing area anymore.
+    return true;
 }
 
 LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

@@ -1,5 +1,17 @@
 2011-02-09  Adam Roben  <aroben@apple.com>
 
+        Turn on the new drawing area on Windows
+
+        Fixes <http://webkit.org/b/53805> <rdar://problem/8960666> WebKit2 on Windows should use
+        DrawingAreaProxyImpl
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::useNewDrawingArea): Return true!
+
+2011-02-09  Adam Roben  <aroben@apple.com>
+
         Hook up WM_PRINT to the new drawing area
 
         Fixes <http://webkit.org/b/54145> <rdar://problem/8979559> WM_PRINT doesn't work with new
