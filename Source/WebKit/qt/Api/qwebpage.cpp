@@ -1886,9 +1886,10 @@ QWebPage::ViewportAttributes& QWebPage::ViewportAttributes::operator=(const QWeb
     The loadStarted() signal is emitted when the page begins to load.The
     loadProgress() signal, on the other hand, is emitted whenever an element
     of the web page completes loading, such as an embedded image, a script,
-    etc. Finally, the loadFinished() signal is emitted when the page has
-    loaded completely. Its argument, either true or false, indicates whether
-    or not the load operation succeeded.
+    etc. Finally, the loadFinished() signal is emitted when the page contents
+    are loaded completely, independent of script execution or page rendering.
+    Its argument, either true or false, indicates whether or not the load
+    operation succeeded.
 
     \section1 Using QWebPage in a Widget-less Environment
 
@@ -3988,7 +3989,7 @@ quint64 QWebPage::bytesReceived() const
 /*!
     \fn void QWebPage::loadStarted()
 
-    This signal is emitted when a new load of the page is started.
+    This signal is emitted when a page starts loading content.
 
     \sa loadFinished()
 */
@@ -4007,7 +4008,8 @@ quint64 QWebPage::bytesReceived() const
 /*!
     \fn void QWebPage::loadFinished(bool ok)
 
-    This signal is emitted when a load of the page is finished.
+    This signal is emitted when the page finishes loading content. This signal
+    is independant of script execution or page rendering.
     \a ok will indicate whether the load was successful or any error occurred.
 
     \sa loadStarted(), ErrorPageExtension

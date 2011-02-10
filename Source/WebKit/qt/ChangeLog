@@ -2,6 +2,32 @@
 
         Reviewed by Andreas Kling.
 
+        [Qt] Misc documentation fixes/updates
+        https://bugs.webkit.org/show_bug.cgi?id=54236
+
+        There are a few commits in the Qt repository (master and 4.7 branches)
+        with QtWebKit documentation fixes:
+
+        84d278501a19eaccf9a77cccd95ca5d17a2dcd2b
+        Clarified documentation of loadFinished() signal
+
+        eebe205b306daaa3674d9746de11a73bef4bd0de
+        Doc: Fixed QML, unindented snippet
+
+        b0d64717d2c541976dc5524e4100c62f060e206f
+        doc: Changed a table into 3 tables to eliminate a \raw.
+
+        As these are all minor doc changes, I decided to group them
+        into one single patch.
+
+        * Api/qwebpage.cpp:
+        * declarative/qdeclarativewebview.cpp:
+        * docs/qtwebkit.qdoc:
+
+2011-02-10  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
         [Qt] Remove the use of deprecated qVariant*
         https://bugs.webkit.org/show_bug.cgi?id=54229
 
