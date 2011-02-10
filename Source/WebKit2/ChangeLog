@@ -1,5 +1,24 @@
 2011-02-09  Adam Roben  <aroben@apple.com>
 
+        Hook up WM_PRINT to the new drawing area
+
+        Fixes <http://webkit.org/b/54145> <rdar://problem/8979559> WM_PRINT doesn't work with new
+        drawing area (assertion failure in DrawingAreaProxyImpl in Debug builds)
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::paint): Added. Code came from onPaintEvent.
+
+        (WebKit::WebView::onPaintEvent):
+        (WebKit::WebView::onPrintClientEvent):
+        Changed to call paint.
+
+        * UIProcess/win/WebView.h: Added paint. Also separated message handler functions into their
+        own paragraph.
+
+2011-02-09  Adam Roben  <aroben@apple.com>
+
         Notice when the backing store goes away after DidSetSize
 
         Fixes <http://webkit.org/b/54142> <rdar://problem/8979365> Crash in

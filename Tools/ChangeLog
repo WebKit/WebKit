@@ -1,5 +1,17 @@
 2011-02-09  Adam Roben  <aroben@apple.com>
 
+        Test that WM_PRINT doesn't trigger an assertion
+
+        Test for <http://webkit.org/b/54145> <rdar://problem/8979559> WM_PRINT doesn't work with new
+        drawing area (assertion failure in DrawingAreaProxyImpl in Debug builds)
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKit2/win/WMPrint.cpp: Added.
+        (TestWebKitAPI::TEST): Send a WM_PRINT message to a WKView.
+
+2011-02-09  Adam Roben  <aroben@apple.com>
+
         Test that having a WKView paint after being resized while hidden doesn't cause a crash
 
         Test for <http://webkit.org/b/54142> <rdar://problem/8979365> Crash in

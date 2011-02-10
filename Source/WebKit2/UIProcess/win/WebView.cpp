@@ -413,16 +413,13 @@ static void drawPageBackground(HDC dc, const RECT& rect)
     ::FillRect(dc, &rect, reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1));
 }
 
-LRESULT WebView::onPaintEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled)
+void WebView::paint(HDC hdc, const IntRect& dirtyRect)
 {
-    PAINTSTRUCT paintStruct;
-    HDC hdc = ::BeginPaint(m_window, &paintStruct);
-
     if (useNewDrawingArea()) {
         if (DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(m_page->drawingArea())) {
             // FIXME: We should port WebKit1's rect coalescing logic here.
             Region unpaintedRegion;
-            drawingArea->paint(hdc, paintStruct.rcPaint, unpaintedRegion);
+            drawingArea->paint(hdc, dirtyRect, unpaintedRegion);
 
             Vector<IntRect> unpaintedRects = unpaintedRegion.rects();
             for (size_t i = 0; i < unpaintedRects.size(); ++i) {
@@ -430,15 +427,23 @@ LRESULT WebView::onPaintEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& han
                 drawPageBackground(hdc, unpaintedRects[i]);
             }
         } else
-            drawPageBackground(hdc, paintStruct.rcPaint);
+            drawPageBackground(hdc, dirtyRect);
 
         m_page->didDraw();
     } else {
-        if (m_page->isValid() && m_page->drawingArea() && m_page->drawingArea()->paint(IntRect(paintStruct.rcPaint), hdc))
+        if (m_page->isValid() && m_page->drawingArea() && m_page->drawingArea()->paint(dirtyRect, hdc))
             m_page->didDraw();
         else
-            drawPageBackground(hdc, paintStruct.rcPaint);
+            drawPageBackground(hdc, dirtyRect);
     }
+}
+
+LRESULT WebView::onPaintEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled)
+{
+    PAINTSTRUCT paintStruct;
+    HDC hdc = ::BeginPaint(m_window, &paintStruct);
+
+    paint(hdc, paintStruct.rcPaint);
 
     ::EndPaint(m_window, &paintStruct);
 
@@ -451,9 +456,8 @@ LRESULT WebView::onPrintClientEvent(HWND hWnd, UINT, WPARAM wParam, LPARAM, bool
     HDC hdc = reinterpret_cast<HDC>(wParam);
     RECT winRect;
     ::GetClientRect(hWnd, &winRect);
-    IntRect rect = winRect;
 
-    m_page->drawingArea()->paint(rect, hdc);
+    paint(hdc, winRect);
 
     handled = true;
     return 0;

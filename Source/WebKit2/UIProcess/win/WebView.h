@@ -87,7 +87,6 @@ private:
     static LRESULT CALLBACK WebViewWndProc(HWND, UINT, WPARAM, LPARAM);
     LRESULT wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-    void setWasActivatedByMouseEvent(bool flag) { m_wasActivatedByMouseEvent = flag; }
     LRESULT onMouseEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
     LRESULT onWheelEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
     LRESULT onKeyEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
@@ -100,6 +99,9 @@ private:
     LRESULT onTimerEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
     LRESULT onShowWindowEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
     LRESULT onSetCursor(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
+
+    void paint(HDC, const WebCore::IntRect& dirtyRect);
+    void setWasActivatedByMouseEvent(bool flag) { m_wasActivatedByMouseEvent = flag; }
     bool onIMEStartComposition();
     bool onIMEComposition(LPARAM);
     bool onIMEEndComposition();
