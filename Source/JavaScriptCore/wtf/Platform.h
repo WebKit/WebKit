@@ -731,6 +731,12 @@
 #define HAVE_SIGNAL_H 1
 #endif
 
+#if !defined(HAVE_STRNSTR)
+#if OS(DARWIN) || OS(FREEBSD)
+#define HAVE_STRNSTR 1
+#endif
+#endif
+
 #if !OS(WINDOWS) && !OS(SOLARIS) && !OS(QNX) \
     && !OS(SYMBIAN) && !OS(HAIKU) && !OS(RVCT) \
     && !OS(ANDROID) && !PLATFORM(BREWMP)

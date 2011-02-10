@@ -1,3 +1,15 @@
+2011-02-10  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        Fix compilation error on OpenBSD
+        https://bugs.webkit.org/show_bug.cgi?id=53766
+
+        Add a HAVE_STRNSTR in Platform.h and define it only on Darwin and FreeBSD.
+
+        * wtf/Platform.h:
+        * wtf/StringExtras.h: Use HAVE(STRNSTR) now.
+
 2011-02-10  Adam Roben  <aroben@apple.com>
 
         Print locations of assertions and logs in a way that Visual Studio understands

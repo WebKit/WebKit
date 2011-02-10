@@ -100,8 +100,7 @@ inline int strcasecmp(const char* s1, const char* s2)
 
 #endif
 
-#if COMPILER(MSVC) || COMPILER(RVCT) || OS(WINDOWS) || OS(LINUX) || OS(SOLARIS)
-// FIXME: should check HAVE_STRNSTR
+#if !HAVE(STRNSTR)
 
 inline char* strnstr(const char* buffer, const char* target, size_t bufferLength)
 {
