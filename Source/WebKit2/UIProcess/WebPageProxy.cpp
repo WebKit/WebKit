@@ -2632,6 +2632,8 @@ void WebPageProxy::didChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, 
 {
     m_mainFrameHasHorizontalScrollbar = hasHorizontalScrollbar;
     m_mainFrameHasVerticalScrollbar = hasVerticalScrollbar;
+
+    m_pageClient->didChangeScrollbarsForMainFrame();
 }
 
 void WebPageProxy::didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference& dataReference)

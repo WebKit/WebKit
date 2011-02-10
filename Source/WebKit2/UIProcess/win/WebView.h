@@ -171,6 +171,7 @@ private:
     virtual double customRepresentationZoomFactor();
     virtual void setCustomRepresentationZoomFactor(double);
     WebCore::DragOperation keyStateToDragOperation(DWORD grfKeyState) const;
+    virtual void didChangeScrollbarsForMainFrame() const;
 
     virtual HWND nativeWindow();
 

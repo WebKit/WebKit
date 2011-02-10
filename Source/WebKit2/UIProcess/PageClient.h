@@ -135,6 +135,8 @@ public:
     virtual CGContextRef containingWindowGraphicsContext() = 0;
 #endif
 
+    virtual void didChangeScrollbarsForMainFrame() const = 0;
+
     // Custom representations.
     virtual void didCommitLoadForMainFrame(bool useCustomRepresentation) = 0;
     virtual void didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference&) = 0;

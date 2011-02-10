@@ -69,4 +69,6 @@ namespace WebKit {
 - (void)_setDragImage:(NSImage *)image at:(NSPoint)clientPoint linkDrag:(BOOL)linkDrag;
 
 - (void)_setDrawingAreaSize:(NSSize)size;
+
+- (void)_didChangeScrollbarsForMainFrame;
 @end

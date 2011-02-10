@@ -1125,6 +1125,10 @@ void WebView::setCustomRepresentationZoomFactor(double)
 {
 }
 
+void WebView::didChangeScrollbarsForMainFrame() const
+{
+}
+
 void WebView::setIsInWindow(bool isInWindow)
 {
     m_isInWindow = isInWindow;

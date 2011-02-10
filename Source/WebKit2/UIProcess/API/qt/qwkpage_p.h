@@ -90,6 +90,7 @@ public:
     virtual void didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference&);
     virtual double customRepresentationZoomFactor() { return 1; }
     virtual void setCustomRepresentationZoomFactor(double) { }
+    virtual void didChangeScrollbarsForMainFrame() const { }
 
     void paint(QPainter* painter, QRect);
 

@@ -77,6 +77,7 @@
 
 @interface NSWindow (Details)
 - (NSRect)_growBoxRect;
+- (void)_setShowOpaqueGrowBoxForOwner:(id)owner;
 - (BOOL)_updateGrowBoxForWindowFrameChange;
 @end
 
@@ -1303,15 +1304,22 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 {
     // Temporarily enable the resize indicator to make a the _ownsWindowGrowBox calculation work.
     BOOL wasShowingIndicator = [[self window] showsResizeIndicator];
-    [[self window] setShowsResizeIndicator:YES];
+    if (!wasShowingIndicator)
+        [[self window] setShowsResizeIndicator:YES];
 
     BOOL ownsGrowBox = [self _ownsWindowGrowBox];
     _data->_page->setWindowResizerSize(ownsGrowBox ? enclosingIntRect([[self window] _growBoxRect]).size() : IntSize());
-    
+
+    if (ownsGrowBox)
+        [[self window] _setShowOpaqueGrowBoxForOwner:(_data->_page->hasHorizontalScrollbar() || _data->_page->hasVerticalScrollbar() ? self : nil)];
+    else
+        [[self window] _setShowOpaqueGrowBoxForOwner:nil];
+
     // Once WebCore can draw the window resizer, this should read:
     // if (wasShowingIndicator)
     //     [[self window] setShowsResizeIndicator:!ownsGrowBox];
-    [[self window] setShowsResizeIndicator:wasShowingIndicator];
+    if (!wasShowingIndicator)
+        [[self window] setShowsResizeIndicator:NO];
 
     return ownsGrowBox;
 }
@@ -2003,6 +2011,11 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     
     _data->_page->drawingArea()->setSize(IntSize(size), IntSize(_data->_resizeScrollOffset));
     _data->_resizeScrollOffset = NSZeroSize;
+}
+
+- (void)_didChangeScrollbarsForMainFrame
+{
+    [self _updateGrowBoxForWindowFrameChange];
 }
 
 @end

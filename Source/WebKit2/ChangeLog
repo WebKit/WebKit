@@ -1,3 +1,27 @@
+2011-02-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Window resizer does not have a border when there are scrollbars in WebKit2 windows
+        <rdar://problem/8488476>
+        https://bugs.webkit.org/show_bug.cgi?id=54222
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::didChangeScrollbarsForMainFrame):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _updateGrowBoxForWindowFrameChange]):
+        (-[WKView _didChangeScrollbarsForMainFrame]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/API/qt/qwkpage_p.h:
+        (QWKPagePrivate::didChangeScrollbarsForMainFrame):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChangeScrollbarsForMainFrame):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::didChangeScrollbarsForMainFrame):
+        * UIProcess/win/WebView.h:
+
 2011-02-10  Ivan Krstić  <ike@apple.com>
 
         Reviewed by Adam Roben.
