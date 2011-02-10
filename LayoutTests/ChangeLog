@@ -1,3 +1,9 @@
+2011-02-10  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip failing test.
+
+        * platform/gtk/Skipped: Skip fast/events/focusingUnloadedFrame.html
+
 2011-02-10  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Chromium expectations update.
