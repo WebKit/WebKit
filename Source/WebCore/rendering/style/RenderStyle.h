@@ -165,7 +165,6 @@ protected:
                    (_text_align == other._text_align) &&
                    (_text_transform == other._text_transform) &&
                    (_text_decorations == other._text_decorations) &&
-                   (_text_transform == other._text_transform) &&
                    (_cursor_style == other._cursor_style) &&
                    (_direction == other._direction) &&
                    (_border_collapse == other._border_collapse) &&

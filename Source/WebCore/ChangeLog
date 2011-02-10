@@ -1,3 +1,12 @@
+2011-02-10  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        RenderStyle: Remove duplicate comparison of InheritedFlags::_text_transform
+        https://bugs.webkit.org/show_bug.cgi?id=54246
+
+        * rendering/style/RenderStyle.h:
+
 2011-02-10  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Andreas Kling.
