@@ -37,8 +37,10 @@ WebInspector.TextViewer = function(textModel, platform, url)
     this.element = document.createElement("div");
     this.element.className = "text-editor monospace";
 
-    this._mainPanel = new WebInspector.TextEditorMainPanel(this._textModel, url, this._syncScroll.bind(this), this._syncDecorationsForLine.bind(this));
-    this._gutterPanel = new WebInspector.TextEditorGutterPanel(this._textModel);
+    var syncScrollListener = this._syncScroll.bind(this);
+    var syncDecorationsForLineListener = this._syncDecorationsForLine.bind(this);
+    this._mainPanel = new WebInspector.TextEditorMainPanel(this._textModel, url, syncScrollListener, syncDecorationsForLineListener);
+    this._gutterPanel = new WebInspector.TextEditorGutterPanel(this._textModel, syncDecorationsForLineListener);
     this.element.appendChild(this._mainPanel.element);
     this.element.appendChild(this._gutterPanel.element);
 }
@@ -148,9 +150,9 @@ WebInspector.TextViewer.prototype = {
     {
         var lineNumbersWidth = this._gutterPanel.element.offsetWidth;
         if (lineNumbersWidth)
-            this._mainPanel.element.style.left = (lineNumbersWidth + 2) + "px";
+            this._mainPanel.element.style.setProperty("left", lineNumbersWidth + "px");
         else
-            this._mainPanel.element.style.left = ""; // Use default value set in CSS.
+            this._mainPanel.element.style.removeProperty("left"); // Use default value set in CSS.
     },
 
     _syncScroll: function()
@@ -162,9 +164,9 @@ WebInspector.TextViewer.prototype = {
 
             // Handle horizontal scroll bar at the bottom of the main panel.
             if (gutterElement.offsetHeight > mainElement.clientHeight)
-                gutterElement.style.paddingBottom = (gutterElement.offsetHeight - mainElement.clientHeight) + "px";
+                gutterElement.style.setProperty("padding-bottom", (gutterElement.offsetHeight - mainElement.clientHeight) + "px");
             else
-                gutterElement.style.paddingBottom = "";
+                gutterElement.style.removeProperty("padding-bottom");
 
             gutterElement.scrollTop = mainElement.scrollTop;
         }.bind(this), 0);
@@ -177,7 +179,11 @@ WebInspector.TextViewer.prototype = {
 
         var mainChunk = this._mainPanel.makeLineAChunk(lineNumber);
         var gutterChunk = this._gutterPanel.makeLineAChunk(lineNumber);
-        gutterChunk.element.style.height = mainChunk.element.offsetHeight + "px";
+        var height = mainChunk.height;
+        if (height)
+            gutterChunk.element.style.setProperty("height", height + "px");
+        else
+            gutterChunk.element.style.removeProperty("height");
     }
 }
 
@@ -359,15 +365,27 @@ WebInspector.TextEditorChunkedPanel.prototype = {
             this._expandChunks(fromIndex, toIndex);
     },
 
+    _totalHeight: function(firstElement, lastElement)
+    {
+        lastElement = (lastElement || firstElement).nextElementSibling;
+        if (lastElement)
+            return lastElement.offsetTop - firstElement.offsetTop;
+        else if (firstElement.offsetParent)
+            return firstElement.offsetParent.scrollHeight - firstElement.offsetTop;
+        return firstElement.offsetHeight;
+    },
+    
     resize: function()
     {
-        this._scheduleRepaintAll();
+        this._repaintAll();
     }
 }
 
-WebInspector.TextEditorGutterPanel = function(textModel)
+WebInspector.TextEditorGutterPanel = function(textModel, syncDecorationsForLineListener)
 {
     WebInspector.TextEditorChunkedPanel.call(this, textModel);
+
+    this._syncDecorationsForLineListener = syncDecorationsForLineListener;
 
     this.element = document.createElement("div");
     this.element.className = "text-editor-lines";
@@ -455,14 +473,16 @@ WebInspector.TextEditorGutterChunk.prototype = {
 
     set expanded(expanded)
     {
+        if (this.linesCount === 1)
+            this._textViewer._syncDecorationsForLineListener(this.startLine);
+
         if (this._expanded === expanded)
             return;
 
         this._expanded = expanded;
 
-        if (this.linesCount === 1) {
+        if (this.linesCount === 1)
             return;
-        }
 
         if (expanded) {
             this._expandedLineRows = [];
@@ -494,13 +514,8 @@ WebInspector.TextEditorGutterChunk.prototype = {
     get height()
     {
         if (!this._expandedLineRows)
-            return this.element.offsetHeight;
-        var result = 0;
-        for (var i = 0; i < this._expandedLineRows.length; ++i) {
-            var lineRow = this._expandedLineRows[i];
-            result += lineRow.offsetHeight;
-        }
-        return result;
+            return this._textViewer._totalHeight(this.element);
+        return this._textViewer._totalHeight(this._expandedLineRows[0], this._expandedLineRows[this._expandedLineRows.length - 1]);
     },
 
     _createRow: function(lineNumber)
@@ -1012,13 +1027,8 @@ WebInspector.TextEditorMainChunk.prototype = {
     get height()
     {
         if (!this._expandedLineRows)
-            return this.element.offsetHeight;
-        var result = 0;
-        for (var i = 0; i < this._expandedLineRows.length; ++i) {
-            var lineRow = this._expandedLineRows[i];
-            result += lineRow.offsetHeight;
-        }
-        return result;
+            return this._textViewer._totalHeight(this.element);
+        return this._textViewer._totalHeight(this._expandedLineRows[0], this._expandedLineRows[this._expandedLineRows.length - 1]);
     },
 
     _createRow: function(lineNumber)

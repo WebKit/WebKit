@@ -106,6 +106,10 @@
     margin-right: -10px;
 }
 
+.webkit-line-content {
+    padding-left: 2px;
+}
+
 .webkit-breakpoint .webkit-line-number-outer {
     color: white;
     border-width: 0 14px 0px 2px;

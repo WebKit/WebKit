@@ -1,3 +1,24 @@
+2011-02-10  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [regression] Fix syncing heights of the gutter and main panel lines, and add 2px padding-left
+        https://bugs.webkit.org/show_bug.cgi?id=54098
+
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer):
+        (WebInspector.TextViewer.prototype._updatePanelOffsets):
+        (WebInspector.TextViewer.prototype._syncScroll):
+        (WebInspector.TextViewer.prototype._syncDecorationsForLine):
+        (WebInspector.TextEditorChunkedPanel.prototype._totalHeight):
+        (WebInspector.TextEditorChunkedPanel.prototype.resize):
+        (WebInspector.TextEditorGutterPanel):
+        (WebInspector.TextEditorGutterChunk.prototype.set expanded):
+        (WebInspector.TextEditorGutterChunk.prototype.get height):
+        (WebInspector.TextEditorMainChunk.prototype.get height):
+        * inspector/front-end/textViewer.css:
+        (.webkit-line-content):
+
 2011-02-10  takano takumi  <takano@apple.com>
 
         Reviewed by Dan Bernstein.
