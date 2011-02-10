@@ -52,6 +52,14 @@ compositing/iframes/iframe-src-change.html
 
 # WebKitTestRunner needs an implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
+svg/dynamic-updates/SVGFESpecularLightingElement-dom-in-attr.html
+svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularConstant-attr.html
+svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularExponent-attr.html
+svg/dynamic-updates/SVGFESpecularLightingElement-dom-suraceScale-attr.html
+svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-in-prop.html
+svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularConstant-prop.html
+svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularExponent-prop.html
+svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop.html
 fast/forms/file-input-hit-test.html
 fast/repaint/slider-thumb-drag-release.html
 editing/pasteboard/emacs-ctrl-k-y-001.html
