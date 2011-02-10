@@ -334,7 +334,7 @@ static NSSize abs(NSSize size)
     return dummyLayer;
 }
 
-- (void)setUpAnimation:(RetainPtr<ScrollbarPartAnimation>)scrollbarPartAnimation scrollerPainter:(WKScrollbarPainterRef)scrollerPainter part:(WebCore::ScrollbarPart)part animateAlphaTo:(CGFloat)newAlpha duration:(NSTimeInterval)duration
+- (void)setUpAnimation:(RetainPtr<ScrollbarPartAnimation>&)scrollbarPartAnimation scrollerPainter:(WKScrollbarPainterRef)scrollerPainter part:(WebCore::ScrollbarPart)part animateAlphaTo:(CGFloat)newAlpha duration:(NSTimeInterval)duration
 {
     // If we are currently animating, stop
     if (scrollbarPartAnimation) {

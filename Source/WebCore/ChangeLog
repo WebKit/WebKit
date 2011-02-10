@@ -1,3 +1,15 @@
+2011-02-09  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix for <rdar://problem/8977051> CrashTracer: 8 crashes 
+        in WebProcess at com.apple.WebCore: 
+        -[ScrollbarPartAnimation setCurrentProgress:] + 364
+
+        The ScrollbarPartAnimation must be sent by reference!
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[ScrollbarPainterDelegate setUpAnimation:scrollerPainter:part:WebCore::animateAlphaTo:duration:]):
+
 2011-02-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
