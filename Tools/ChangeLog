@@ -1,3 +1,13 @@
+2011-02-10  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Reset GTK' DRT's AccessibilityController to consistent value before every test
+        https://bugs.webkit.org/show_bug.cgi?id=54185
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+
 2011-02-10  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed GTK build fix.

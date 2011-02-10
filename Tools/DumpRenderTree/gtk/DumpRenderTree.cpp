@@ -446,6 +446,9 @@ static void resetDefaultsToConsistentValues()
 
     DumpRenderTreeSupportGtk::setLinksIncludedInFocusChain(true);
     DumpRenderTreeSupportGtk::setIconDatabaseEnabled(false);
+
+    if (axController)
+        axController->resetToConsistentState();
 }
 
 static bool useLongRunningServerMode(int argc, char *argv[])
