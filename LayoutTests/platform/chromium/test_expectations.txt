@@ -2612,9 +2612,6 @@ BUGJAMESR LINUX WIN : fast/text/international/vertical-text-metrics-test.html = 
 // Added in WebKit r69755, failed immediately.
 BUGJAPHET WIN LINUX : fast/canvas/canvas-currentColor.html = TEXT
 
-// Added in WebKit r69749, failed immediately due to KURL/KURLGoogle differences.
-BUGJAPHET : fast/dom/anchor-getParameter.html = TEXT
-
 // Added in Webkit r69707 without expected results.
 BUGJAPHET : platform/gtk/accessibility/aria-table-hierarchy.html = MISSING
 
@@ -3255,11 +3252,7 @@ BUG_ZMO MAC : fast/box-shadow/inset.html = IMAGE
 // Failure after r78095
 BUG_ZMO : fast/js/i18n-bindings-locale.html = TEXT
 
-BUG_ZMO WIN LINUX : editing/undo/undo-paste-when-caret-is-not-in-range.html = TEXT
-
 BUG_ZMO : plugins/npruntime/evaluate-js-destroying-plugin-from-destroy-stream.html = TIMEOUT
-
-BUG_ZMO : fast/dom/prototype-inheritance.html = TEXT
 
 BUGWK54051 : plugins/invalidate_rect.html = FAIL
 
