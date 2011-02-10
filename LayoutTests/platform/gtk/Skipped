@@ -267,19 +267,13 @@ fast/js/i18n-bindings-locale.html
 #   Tests failing
 http/tests/appcache/crash-when-navigating-away-then-back.html
 http/tests/appcache/fallback.html
-http/tests/appcache/local-content.html
-http/tests/appcache/manifest-redirect-2.html
-http/tests/appcache/offline-access.html
 http/tests/appcache/origin-quota.html
-http/tests/appcache/resource-redirect-2.html
 http/tests/cookies/double-quoted-value-with-semi-colon.html
-http/tests/incremental/slow-utf8-text.pl
 http/tests/loading/bad-scheme-subframe.html
 http/tests/loading/bad-server-subframe.html
 # Needed to cover the fix for <rdar://problem/6727495>
 http/tests/loading/deleted-host-in-resource-load-delegate-callback.html
 http/tests/loading/gmail-assert-on-load.html
-http/tests/loading/preload-img-test.html
 http/tests/loading/redirect-with-no-location-crash.html
 http/tests/loading/text-content-type-with-binary-extension.html
 
@@ -289,33 +283,20 @@ http/tests/media/video-seekable-stall.html
 http/tests/mime/standard-mode-loads-stylesheet-with-empty-content-type.html
 http/tests/mime/standard-mode-loads-stylesheet-with-text-css-and-invalid-type.html
 http/tests/misc/acid3.html
-http/tests/misc/isindex-formdata.html
 http/tests/misc/policy-delegate-called-twice.html
 http/tests/misc/prefetch-purpose.html
 http/tests/misc/redirect-to-external-url.html
-http/tests/misc/slow-preload-cancel.html
 http/tests/misc/window-dot-stop.html
-http/tests/navigation/reload-subframe-object.html
 http/tests/plugins/npapi-response-headers.html
 http/tests/plugins/post-url-file.html
-http/tests/security/credentials-in-referer.html
-http/tests/security/cross-frame-access-put.html
 http/tests/security/feed-urls-from-remote.html
-http/tests/security/local-video-source-from-remote.html
-http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html
-http/tests/security/mixedContent/data-url-iframe-in-main-frame.html
-http/tests/security/mixedContent/data-url-script-in-iframe.html
-http/tests/security/mixedContent/insecure-css-in-iframe.html
 http/tests/security/mixedContent/insecure-css-in-main-frame.html
-http/tests/security/mixedContent/insecure-iframe-in-iframe.html
 http/tests/security/mixedContent/insecure-iframe-in-main-frame.html
-http/tests/security/mixedContent/insecure-image-in-iframe.html
 http/tests/security/mixedContent/insecure-image-in-main-frame.html
 http/tests/security/mixedContent/insecure-script-in-iframe.html
 http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html
 http/tests/security/mixedContent/redirect-http-to-https-script-in-iframe.html
 http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html
-http/tests/security/mixedContent/redirect-https-to-http-script-in-iframe.html
 http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html
 http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow.html
 http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html
@@ -325,19 +306,12 @@ http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-allow.html
 http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html
 http/tests/xmlhttprequest/abort-should-cancel-load.html
 http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html
-http/tests/xmlhttprequest/basic-auth.html
 http/tests/xmlhttprequest/logout.html
 #We don't seem to support neither of these for now
 http/tests/xmlhttprequest/cross-origin-authorization.html
 http/tests/xmlhttprequest/cross-origin-cookie-storage.html
 http/tests/xmlhttprequest/cross-origin-no-authorization.html
 
-http/tests/xmlhttprequest/frame-load-cancelled-abort.html
-http/tests/xmlhttprequest/frame-unload-abort-crash.html
-http/tests/xmlhttprequest/response-encoding.html
-http/tests/xmlhttprequest/state-after-network-error.html
-http/tests/xmlhttprequest/supported-xml-content-types.html
-http/tests/xmlhttprequest/xml-encoding.html
 http/tests/xmlhttprequest/xmlhttprequest-contenttype-empty.html
 # Tests crashing - https://bugs.webkit.org/show_bug.cgi?id=51104
 http/tests/cache/subresource-fragment-identifier.html
