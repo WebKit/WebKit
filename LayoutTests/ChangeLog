@@ -1,3 +1,10 @@
+2011-02-10  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed skip failing fast/text/atsui* tests on GTK
+        https://bugs.webkit.org/show_bug.cgi?id=54210
+
+        * platform/gtk/Skipped:
+
 2011-02-10  Renata Hodovan  <reni@webkit.org>
 
         Reviewed by Dirk Schulze.
