@@ -49,12 +49,12 @@ namespace JSC {
         
         MarkedBlock* collectorBlock(size_t index) const
         {
-            return static_cast<MarkedBlock*>(blocks[index].base());
+            return blocks[index];
         }
 
         size_t nextBlock;
         size_t nextCell;
-        Vector<PageAllocationAligned> blocks;
+        Vector<MarkedBlock*> blocks;
     };
 
     class MarkedSpace {

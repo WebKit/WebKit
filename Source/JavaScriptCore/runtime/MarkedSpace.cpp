@@ -49,31 +49,14 @@ void MarkedSpace::destroy()
 
 NEVER_INLINE MarkedBlock* MarkedSpace::allocateBlock()
 {
-    PageAllocationAligned allocation = PageAllocationAligned::allocate(BLOCK_SIZE, BLOCK_SIZE, OSAllocator::JSGCHeapPages);
-    MarkedBlock* block = static_cast<MarkedBlock*>(allocation.base());
-    if (!block)
-        CRASH();
-
-    // Initialize block.
-
-    new (block) MarkedBlock(&globalData()->heap);
-    clearMarkBits(block);
-
-    Structure* dummyMarkableCellStructure = globalData()->dummyMarkableCellStructure.get();
-    for (size_t i = 0; i < HeapConstants::cellsPerBlock; ++i)
-        new (&block->cells[i]) JSCell(dummyMarkableCellStructure);
-    
-    m_heap.blocks.append(allocation);
+    MarkedBlock* block = MarkedBlock::create(globalData());
+    m_heap.blocks.append(block);
     return block;
 }
 
 NEVER_INLINE void MarkedSpace::freeBlock(size_t block)
 {
-    ObjectIterator it(m_heap, block, 0);
-    ObjectIterator end(m_heap, block + 1, 0);
-    for ( ; it != end; ++it)
-        (*it)->~JSCell();
-    m_heap.blocks[block].deallocate();
+    MarkedBlock::destroy(m_heap.blocks[block]);
 
     // swap with the last block so we compact as we go
     m_heap.blocks[block] = m_heap.blocks.last();

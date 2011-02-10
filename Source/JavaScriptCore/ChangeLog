@@ -56,6 +56,40 @@
 
 2011-02-09  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        A little more encapsulation for MarkedBlock: Made MarkedBlock responsible
+        for its own initialization and destruction
+        https://bugs.webkit.org/show_bug.cgi?id=54137
+
+        * runtime/CollectorHeapIterator.h: Removed ObjectIterator since it is
+        now unused.
+
+        * runtime/JSCell.h: Maded MarkedBlock a friend so it can construct and
+        destruct JSCells.
+
+        * runtime/MarkedBlock.cpp:
+        (JSC::MarkedBlock::create):
+        (JSC::MarkedBlock::destroy):
+        (JSC::MarkedBlock::MarkedBlock): Migrated initialization and destruction
+        code from MarkedSpace, updating it not to use ObjectIterator. We don't
+        want to use an abstract iterator since iteration will be unique to each
+        block in the future.
+
+        * runtime/MarkedBlock.h: Made the consructor private and moved it into
+        the .cpp file because it's big now.
+
+        * runtime/MarkedSpace.cpp:
+        (JSC::MarkedSpace::allocateBlock):
+        (JSC::MarkedSpace::freeBlock): Migrated code.
+
+        * runtime/MarkedSpace.h:
+        (JSC::CollectorHeap::collectorBlock): Keep a vector of MarkedBlock
+        pointers instead of aligned allocations -- how MarkedBlocks are allocated
+        is now an implementation detail of MarkedBlock.
+
+2011-02-09  Geoffrey Garen  <ggaren@apple.com>
+
         Try to fix the build.
 
         * wtf/Bitmap.h: Include string.h for memset. Not sure why this started

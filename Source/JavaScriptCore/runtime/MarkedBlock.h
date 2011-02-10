@@ -24,10 +24,12 @@
 
 #include <wtf/Bitmap.h>
 #include <wtf/FixedArray.h>
+#include <wtf/PageAllocationAligned.h>
 
 namespace JSC {
 
     class Heap;
+    class JSGlobalData;
 
 #if OS(WINCE) || OS(SYMBIAN) || PLATFORM(BREWMP)
     const size_t BLOCK_SIZE = 64 * 1024; // 64k
@@ -55,10 +57,12 @@ namespace JSC {
 
     class MarkedBlock {
     public:
+        static MarkedBlock* create(JSGlobalData*);
+        static void destroy(MarkedBlock*);
+
         static bool isCellAligned(const void*);
         static MarkedBlock* blockFor(const void*);
         
-        MarkedBlock(Heap*);
         Heap* heap() const;
 
         size_t cellNumber(const void*);
@@ -70,6 +74,9 @@ namespace JSC {
         WTF::Bitmap<BITS_PER_BLOCK> marked;
 
     private:
+        MarkedBlock(const PageAllocationAligned&, JSGlobalData*);
+
+        PageAllocationAligned m_allocation;
         Heap* m_heap;
     };
 
@@ -89,12 +96,7 @@ namespace JSC {
     {
         return reinterpret_cast<MarkedBlock*>(reinterpret_cast<uintptr_t>(p) & BLOCK_MASK);
     }
-    
-    inline MarkedBlock::MarkedBlock(Heap* heap)
-        : m_heap(heap)
-    {
-    }
-    
+
     inline Heap* MarkedBlock::heap() const
     {
         return m_heap;

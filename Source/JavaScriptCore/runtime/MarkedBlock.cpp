@@ -26,6 +26,34 @@
 #include "config.h"
 #include "MarkedBlock.h"
 
+#include "JSCell.h"
+
 namespace JSC {
+
+MarkedBlock* MarkedBlock::create(JSGlobalData* globalData)
+{
+    PageAllocationAligned allocation = PageAllocationAligned::allocate(BLOCK_SIZE, BLOCK_SIZE, OSAllocator::JSGCHeapPages);
+    if (!allocation)
+        CRASH();
+    return new (allocation.base()) MarkedBlock(allocation, globalData);
+}
+
+void MarkedBlock::destroy(MarkedBlock* block)
+{
+    for (size_t i = 0; i < HeapConstants::cellsPerBlock; ++i)
+        reinterpret_cast<JSCell*>(&block->cells[i])->~JSCell();
+    block->m_allocation.deallocate();
+}
+
+MarkedBlock::MarkedBlock(const PageAllocationAligned& allocation, JSGlobalData* globalData)
+    : m_allocation(allocation)
+    , m_heap(&globalData->heap)
+{
+    marked.set(HeapConstants::cellsPerBlock - 1);
+
+    Structure* dummyMarkableCellStructure = globalData->dummyMarkableCellStructure.get();
+    for (size_t i = 0; i < HeapConstants::cellsPerBlock; ++i)
+        new (&cells[i]) JSCell(dummyMarkableCellStructure);
+}
 
 } // namespace JSC

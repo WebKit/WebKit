@@ -64,6 +64,7 @@ namespace JSC {
         friend class JSZombie;
         friend class JSGlobalData;
         friend class MarkedSpace;
+        friend class MarkedBlock;
 
     private:
         explicit JSCell(Structure*);
