@@ -83,7 +83,7 @@ void TiledDrawingAreaProxy::sizeDidChange()
     m_isWaitingForDidSetFrameNotification = true;
 
     page->process()->responsivenessTimer()->start();
-    page->process()->send(DrawingAreaLegacyMessage::SetSize, page->pageID(), CoreIPC::In(m_size));
+    page->process()->deprecatedSend(DrawingAreaLegacyMessage::SetSize, page->pageID(), CoreIPC::In(m_size));
 }
 
 void TiledDrawingAreaProxy::setPageIsVisible(bool isVisible)
@@ -99,12 +99,12 @@ void TiledDrawingAreaProxy::setPageIsVisible(bool isVisible)
 
     if (!m_isVisible) {
         // Tell the web process that it doesn't need to paint anything for now.
-        page->process()->send(DrawingAreaLegacyMessage::SuspendPainting, page->pageID(), CoreIPC::In());
+        page->process()->deprecatedSend(DrawingAreaLegacyMessage::SuspendPainting, page->pageID(), CoreIPC::In());
         return;
     }
 
     // The page is now visible.
-    page->process()->send(DrawingAreaLegacyMessage::ResumePainting, page->pageID(), CoreIPC::In());
+    page->process()->deprecatedSend(DrawingAreaLegacyMessage::ResumePainting, page->pageID(), CoreIPC::In());
 
     // FIXME: We should request a full repaint here if needed.
 }
@@ -178,7 +178,7 @@ void TiledDrawingAreaProxy::didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC:
 
 void TiledDrawingAreaProxy::requestTileUpdate(int tileID, const IntRect& dirtyRect)
 {
-    page()->process()->connection()->send(DrawingAreaLegacyMessage::RequestTileUpdate, page()->pageID(), CoreIPC::In(tileID, dirtyRect, contentsScale()));
+    page()->process()->connection()->deprecatedSend(DrawingAreaLegacyMessage::RequestTileUpdate, page()->pageID(), CoreIPC::In(tileID, dirtyRect, contentsScale()));
 }
 
 void TiledDrawingAreaProxy::waitUntilUpdatesComplete()
@@ -233,7 +233,7 @@ void TiledDrawingAreaProxy::setKeepAndCoverAreaMultipliers(const FloatSize& keep
 void TiledDrawingAreaProxy::takeSnapshot(const IntSize& size, const IntRect& contentsRect)
 {
     WebPageProxy* page = this->page();
-    page->process()->send(DrawingAreaLegacyMessage::TakeSnapshot, page->pageID(), CoreIPC::Out(size, contentsRect));
+    page->process()->deprecatedSend(DrawingAreaLegacyMessage::TakeSnapshot, page->pageID(), CoreIPC::Out(size, contentsRect));
 }
 
 void TiledDrawingAreaProxy::invalidate(const IntRect& contentsDirtyRect)
@@ -542,7 +542,7 @@ void TiledDrawingAreaProxy::removeTile(const TiledDrawingAreaTile::Coordinate& c
     if (!tile->hasBackBufferUpdatePending())
         return;
     WebPageProxy* page = this->page();
-    page->process()->send(DrawingAreaLegacyMessage::CancelTileUpdate, page->pageID(), CoreIPC::In(tile->ID()));
+    page->process()->deprecatedSend(DrawingAreaLegacyMessage::CancelTileUpdate, page->pageID(), CoreIPC::In(tile->ID()));
 }
 
 IntRect TiledDrawingAreaProxy::mapToContents(const IntRect& rect) const

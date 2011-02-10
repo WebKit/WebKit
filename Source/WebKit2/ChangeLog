@@ -1,3 +1,20 @@
+2011-02-10  Anders Carlsson  <andersca@apple.com>
+
+        Attempt to fix the Qt build.
+
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        (WebKit::TiledDrawingAreaProxy::sizeDidChange):
+        (WebKit::TiledDrawingAreaProxy::setPageIsVisible):
+        (WebKit::TiledDrawingAreaProxy::requestTileUpdate):
+        (WebKit::TiledDrawingAreaProxy::takeSnapshot):
+        (WebKit::TiledDrawingAreaProxy::removeTile):
+        * WebProcess/WebPage/TiledDrawingArea.cpp:
+        (WebKit::TiledDrawingArea::display):
+        (WebKit::TiledDrawingArea::setSize):
+        (WebKit::TiledDrawingArea::updateTile):
+        (WebKit::TiledDrawingArea::tileUpdateTimerFired):
+        (WebKit::TiledDrawingArea::didReceiveMessage):
+
 2011-02-10  Adam Roben  <aroben@apple.com>
 
         Handle a null FindIndicator correctly
