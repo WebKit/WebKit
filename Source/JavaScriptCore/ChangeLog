@@ -1,3 +1,20 @@
+2011-02-10  Adam Roben  <aroben@apple.com>
+
+        Print locations of assertions and logs in a way that Visual Studio understands
+
+        With this change, double-clicking one of these locations in Visual Studio's Output Window
+        will focus that line of code in the editor.
+
+        Fixes <http://webkit.org/b/54208> Double-clicking locations of assertions/logs in Visual
+        Studio's Output Window does nothing
+
+        Reviewed by Alexey Proskuryakov.
+
+        * wtf/Assertions.cpp:
+        (printCallSite): Use OS(WINDOWS) instead of the meaningless OS(WIN). When we aren't using
+        the debug CRT (and thus can't call _CrtDbgReport), print the file and line number using the
+        same format that cl.exe uses when it prints compiler errors.
+
 2011-02-10  Dan Bernstein  <mitz@apple.com>
 
         LLVM Compiler build fix.

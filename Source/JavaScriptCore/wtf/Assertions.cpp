@@ -171,10 +171,13 @@ static void printf_stderr_common(const char* format, ...)
 
 static void printCallSite(const char* file, int line, const char* function)
 {
-#if OS(WIN) && !OS(WINCE) && defined _DEBUG
+#if OS(WINDOWS) && !OS(WINCE) && defined(_DEBUG)
     _CrtDbgReport(_CRT_WARN, file, line, NULL, "%s\n", function);
 #else
-    printf_stderr_common("(%s:%d %s)\n", file, line, function);
+    // By using this format, which matches the format used by MSVC for compiler errors, developers
+    // using Visual Studio can double-click the file/line number in the Output Window to have the
+    // editor navigate to that line of code. It seems fine for other developers, too.
+    printf_stderr_common("%s(%d) : %s\n", file, line, function);
 #endif
 }
 
