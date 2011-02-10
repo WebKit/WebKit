@@ -352,16 +352,17 @@ class CppStyleTestBase(unittest.TestCase):
 
 
 class FunctionDetectionTest(CppStyleTestBase):
-    def perform_function_detection(self, lines, function_information):
+    def perform_function_detection(self, lines, function_information, detection_line=0):
         clean_lines = cpp_style.CleansedLines(lines)
         function_state = cpp_style._FunctionState(5)
         error_collector = ErrorCollector(self.assert_)
-        cpp_style.detect_functions(clean_lines, 0, function_state, error_collector)
+        cpp_style.detect_functions(clean_lines, detection_line, function_state, error_collector)
         if not function_information:
             self.assertEquals(function_state.in_a_function, False)
             return
         self.assertEquals(function_state.in_a_function, True)
         self.assertEquals(function_state.current_function, function_information['name'] + '()')
+        self.assertEquals(function_state.modifiers_and_return_type(), function_information['modifiers_and_return_type'])
         self.assertEquals(function_state.is_pure, function_information['is_pure'])
         self.assertEquals(function_state.is_declaration, function_information['is_declaration'])
         self.assert_positions_equal(function_state.function_name_start_position, function_information['function_name_start_position'])
@@ -385,6 +386,7 @@ class FunctionDetectionTest(CppStyleTestBase):
             ['void theTestFunctionName(int) {',
              '}'],
             {'name': 'theTestFunctionName',
+             'modifiers_and_return_type': 'void',
              'function_name_start_position': (0, 5),
              'parameter_start_position': (0, 24),
              'parameter_end_position': (0, 29),
@@ -397,6 +399,7 @@ class FunctionDetectionTest(CppStyleTestBase):
         self.perform_function_detection(
             ['void aFunctionName(int);'],
             {'name': 'aFunctionName',
+             'modifiers_and_return_type': 'void',
              'function_name_start_position': (0, 5),
              'parameter_start_position': (0, 18),
              'parameter_end_position': (0, 23),
@@ -408,6 +411,7 @@ class FunctionDetectionTest(CppStyleTestBase):
         self.perform_function_detection(
             ['CheckedInt<T> operator /(const CheckedInt<T> &lhs, const CheckedInt<T> &rhs);'],
             {'name': 'operator /',
+             'modifiers_and_return_type': 'CheckedInt<T>',
              'function_name_start_position': (0, 14),
              'parameter_start_position': (0, 24),
              'parameter_end_position': (0, 76),
@@ -419,6 +423,7 @@ class FunctionDetectionTest(CppStyleTestBase):
         self.perform_function_detection(
             ['CheckedInt<T> operator -(const CheckedInt<T> &lhs, const CheckedInt<T> &rhs);'],
             {'name': 'operator -',
+             'modifiers_and_return_type': 'CheckedInt<T>',
              'function_name_start_position': (0, 14),
              'parameter_start_position': (0, 24),
              'parameter_end_position': (0, 76),
@@ -430,6 +435,7 @@ class FunctionDetectionTest(CppStyleTestBase):
         self.perform_function_detection(
             ['CheckedInt<T> operator !=(const CheckedInt<T> &lhs, const CheckedInt<T> &rhs);'],
             {'name': 'operator !=',
+             'modifiers_and_return_type': 'CheckedInt<T>',
              'function_name_start_position': (0, 14),
              'parameter_start_position': (0, 25),
              'parameter_end_position': (0, 77),
@@ -441,6 +447,7 @@ class FunctionDetectionTest(CppStyleTestBase):
         self.perform_function_detection(
             ['CheckedInt<T> operator +(const CheckedInt<T> &lhs, const CheckedInt<T> &rhs);'],
             {'name': 'operator +',
+             'modifiers_and_return_type': 'CheckedInt<T>',
              'function_name_start_position': (0, 14),
              'parameter_start_position': (0, 24),
              'parameter_end_position': (0, 76),
@@ -453,6 +460,7 @@ class FunctionDetectionTest(CppStyleTestBase):
         self.perform_function_detection(
             ['virtual void theTestFunctionName(int = 0);'],
             {'name': 'theTestFunctionName',
+             'modifiers_and_return_type': 'virtual void',
              'function_name_start_position': (0, 13),
              'parameter_start_position': (0, 32),
              'parameter_end_position': (0, 41),
@@ -464,6 +472,7 @@ class FunctionDetectionTest(CppStyleTestBase):
         self.perform_function_detection(
             ['virtual void theTestFunctionName(int) = 0;'],
             {'name': 'theTestFunctionName',
+             'modifiers_and_return_type': 'virtual void',
              'function_name_start_position': (0, 13),
              'parameter_start_position': (0, 32),
              'parameter_end_position': (0, 37),
@@ -478,6 +487,7 @@ class FunctionDetectionTest(CppStyleTestBase):
              ' = ',
              ' 0 ;'],
             {'name': 'theTestFunctionName',
+             'modifiers_and_return_type': 'virtual void',
              'function_name_start_position': (0, 13),
              'parameter_start_position': (0, 32),
              'parameter_end_position': (0, 37),
@@ -498,6 +508,7 @@ class FunctionDetectionTest(CppStyleTestBase):
             # This isn't a function but it looks like one to our simple
             # algorithm and that is ok.
             {'name': 'asm',
+             'modifiers_and_return_type': '',
              'function_name_start_position': (0, 0),
              'parameter_start_position': (0, 3),
              'parameter_end_position': (2, 1),
@@ -514,6 +525,7 @@ class FunctionDetectionTest(CppStyleTestBase):
         function_state = self.perform_function_detection(
             ['void functionName();'],
             {'name': 'functionName',
+             'modifiers_and_return_type': 'void',
              'function_name_start_position': (0, 5),
              'parameter_start_position': (0, 17),
              'parameter_end_position': (0, 19),
@@ -527,6 +539,7 @@ class FunctionDetectionTest(CppStyleTestBase):
         function_state = self.perform_function_detection(
             ['void functionName(int);'],
             {'name': 'functionName',
+             'modifiers_and_return_type': 'void',
              'function_name_start_position': (0, 5),
              'parameter_start_position': (0, 17),
              'parameter_end_position': (0, 22),
@@ -541,6 +554,7 @@ class FunctionDetectionTest(CppStyleTestBase):
         function_state = self.perform_function_detection(
             ['void functionName(unsigned a, short b, long c, long long short unsigned int);'],
             {'name': 'functionName',
+             'modifiers_and_return_type': 'void',
              'function_name_start_position': (0, 5),
              'parameter_start_position': (0, 17),
              'parameter_end_position': (0, 76),
@@ -558,6 +572,7 @@ class FunctionDetectionTest(CppStyleTestBase):
         function_state = self.perform_function_detection(
             ['virtual void determineARIADropEffects(Vector<String>*&, const unsigned long int*&, const MediaPlayer::Preload, Other<Other2, Other3<P1, P2> >, int);'],
             {'name': 'determineARIADropEffects',
+             'modifiers_and_return_type': 'virtual void',
              'parameter_start_position': (0, 37),
              'function_name_start_position': (0, 13),
              'parameter_end_position': (0, 147),
@@ -574,23 +589,27 @@ class FunctionDetectionTest(CppStyleTestBase):
 
         # Try parsing a function with a very complex definition.
         function_state = self.perform_function_detection(
-            ['AnotherTemplate<Class1, Class2> aFunctionName(PassRefPtr<MyClass> paramName,',
+            ['#define MyMacro(a) a',
+             'virtual',
+             'AnotherTemplate<Class1, Class2> aFunctionName(PassRefPtr<MyClass> paramName,',
              'const Other1Class& foo,',
              'const ComplexTemplate<Class1, NestedTemplate<P1, P2> >* const * param = new ComplexTemplate<Class1, NestedTemplate<P1, P2> >(34, 42),',
              'int* myCount = 0);'],
             {'name': 'aFunctionName',
-             'function_name_start_position': (0, 32),
-             'parameter_start_position': (0, 45),
-             'parameter_end_position': (3, 17),
-             'body_start_position': (3, 17),
-             'end_position': (3, 18),
+             'modifiers_and_return_type': 'virtual AnotherTemplate<Class1, Class2>',
+             'function_name_start_position': (2, 32),
+             'parameter_start_position': (2, 45),
+             'parameter_end_position': (5, 17),
+             'body_start_position': (5, 17),
+             'end_position': (5, 18),
              'is_pure': False,
              'is_declaration': True,
              'parameter_list':
-                 ({'type': 'PassRefPtr<MyClass>', 'name': 'paramName', 'row': 0},
-                  {'type': 'const Other1Class&', 'name': 'foo', 'row': 1},
-                  {'type': 'const ComplexTemplate<Class1, NestedTemplate<P1, P2> >* const *', 'name': 'param', 'row': 2},
-                  {'type': 'int*', 'name': 'myCount', 'row': 3})})
+                 ({'type': 'PassRefPtr<MyClass>', 'name': 'paramName', 'row': 2},
+                  {'type': 'const Other1Class&', 'name': 'foo', 'row': 3},
+                  {'type': 'const ComplexTemplate<Class1, NestedTemplate<P1, P2> >* const *', 'name': 'param', 'row': 4},
+                  {'type': 'int*', 'name': 'myCount', 'row': 5})},
+            detection_line=2)
 
 
 class CppStyleTest(CppStyleTestBase):
@@ -629,6 +648,14 @@ class CppStyleTest(CppStyleTestBase):
         self.assertTrue(position < cpp_style.Position(position.row, position.column + 1))
         self.assertTrue(position < cpp_style.Position(position.row + 1, position.column - 1))
         self.assertEquals(position.__str__(), '(3, 4)')
+
+    def test_rfind_in_lines(self):
+        not_found_position = cpp_style.Position(10, 11)
+        start_position = cpp_style.Position(2, 2)
+        lines = ['ab', 'ace', 'test']
+        self.assertEquals(not_found_position, cpp_style._rfind_in_lines('st', lines, start_position, not_found_position))
+        self.assertTrue(cpp_style.Position(1, 1) == cpp_style._rfind_in_lines('a', lines, start_position, not_found_position))
+        self.assertEquals(cpp_style.Position(2, 2), cpp_style._rfind_in_lines('(te|a)', lines, start_position, not_found_position))
 
     def test_close_expression(self):
         self.assertEquals(cpp_style.Position(1, -1), cpp_style.close_expression([')('], cpp_style.Position(0, 1)))

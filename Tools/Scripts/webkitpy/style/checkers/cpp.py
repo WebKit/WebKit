@@ -194,6 +194,31 @@ def iteratively_replace_matches_with_char(pattern, char_replacement, s):
         s = s[:start_match_index] + char_replacement * match_length + s[end_match_index:]
 
 
+def _rfind_in_lines(regex, lines, start_position, not_found_position):
+    """Does a reverse find starting at start position and going backwards until
+    a match is found.
+
+    Returns the position where the regex ended.
+    """
+    # Put the regex in a group and proceed it with a greedy expression that
+    # matches anything to ensure that we get the last possible match in a line.
+    last_in_line_regex = r'.*(' + regex + ')'
+    current_row = start_position.row
+
+    # Start with the given row and trim off everything past what may be matched.
+    current_line = lines[start_position.row][:start_position.column]
+    while True:
+        found_match = match(last_in_line_regex, current_line)
+        if found_match:
+            return Position(current_row, found_match.end(1))
+
+        # A match was not found so continue backward.
+        current_row -= 1
+        if current_row < 0:
+            return not_found_position
+        current_line = lines[current_row]
+
+
 def _convert_to_lower_with_underscores(text):
     """Converts all text strings in camelCase or PascalCase to lowers with underscores."""
 
@@ -525,6 +550,15 @@ class _FunctionState(object):
             self.is_pure = bool(match(r'\s*=\s*0\s*', characters_after_parameters))
         self._clean_lines = clean_lines
         self._parameter_list = None
+
+    def modifiers_and_return_type(self):
+        """Returns the modifiers and the return type."""
+        # Go backwards from where the function name is until we encounter one of several things:
+        #   ';' or '{' or '}' or 'private:', etc. or '#' or return Position(0, 0)
+        elided = self._clean_lines.elided
+        start_modifiers = _rfind_in_lines(r';|\{|\}|((private|public|protected):)|(#.*)',
+                                          elided, self.parameter_start_position, Position(0, 0))
+        return SingleLineView(elided, start_modifiers, self.function_name_start_position).single_line.strip()
 
     def parameter_list(self):
         if not self._parameter_list:
