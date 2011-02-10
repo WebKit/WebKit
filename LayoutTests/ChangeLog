@@ -1,3 +1,61 @@
+2011-02-10  Renata Hodovan  <reni@webkit.org>
+
+        Reviewed by Dirk Schulze.
+
+        SVGFESpecularLightingElement doesn't support dynamic invalidation, when attributes change.
+        https://bugs.webkit.org/show_bug.cgi?id=54186
+
+        Adding layout tests for feSpecularLighting dynamic changes.
+
+        * platform/mac/svg/dynamic-updates/SVGFESpecularLightingElement-dom-in-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpecularLightingElement-dom-in-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularConstant-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularConstant-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularExponent-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularExponent-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpecularLightingElement-dom-suraceScale-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpecularLightingElement-dom-suraceScale-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-in-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-in-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularConstant-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularConstant-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularExponent-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularExponent-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop-expected.png: Added.
+        * svg/dynamic-updates/SVGFESpecularLightingElement-dom-in-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFESpecularLightingElement-dom-in-attr.html: Added.
+        * svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularConstant-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularConstant-attr.html: Added.
+        * svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularExponent-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularExponent-attr.html: Added.
+        * svg/dynamic-updates/SVGFESpecularLightingElement-dom-suraceScale-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFESpecularLightingElement-dom-suraceScale-attr.html: Added.
+        * svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-in-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-in-prop.html: Added.
+        * svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularConstant-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularConstant-prop.html: Added.
+        * svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularExponent-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularExponent-prop.html: Added.
+        * svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop.html: Added.
+        * svg/dynamic-updates/script-tests/SVGFESpecularLightingElement-dom-in-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFESpecularLightingElement-dom-specularConstant-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFESpecularLightingElement-dom-specularExponent-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFESpecularLightingElement-dom-surfaceScale-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFESpecularLightingElement-svgdom-in-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFESpecularLightingElement-svgdom-specularConstant-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFESpecularLightingElement-svgdom-specularExponent-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFESpecularLightingElement-svgdom-surfaceScale-prop.js: Added.
+        (executeTest):
+
 2011-02-10  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed skipping websocket tests on GTK

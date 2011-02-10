@@ -1,3 +1,25 @@
+2011-02-10  Renata Hodovan  <reni@webkit.org>
+
+        Reviewed by Dirk Schulze.
+
+        SVGFESpecularLightingElement doesn't support dynamic invalidation, when attributes change.
+        https://bugs.webkit.org/show_bug.cgi?id=54186
+
+        The dynamic changes are captured by the svgAttributeChange function, and invalidate the filter primitive if necessary.
+
+        Tests: svg/dynamic-updates/SVGFESpecularLightingElement-dom-in-attr.html
+               svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularConstant-attr.html
+               svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularExponent-attr.html
+               svg/dynamic-updates/SVGFESpecularLightingElement-dom-suraceScale-attr.html
+               svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-in-prop.html
+               svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularConstant-prop.html
+               svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularExponent-prop.html
+               svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop.html
+
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::svgAttributeChanged):
+        * svg/SVGFESpecularLightingElement.h:
+
 2011-02-10  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Pavel Feldman.

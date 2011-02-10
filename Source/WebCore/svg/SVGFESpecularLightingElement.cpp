@@ -89,6 +89,18 @@ void SVGFESpecularLightingElement::parseMappedAttribute(Attribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
+void SVGFESpecularLightingElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+
+    if (attrName == SVGNames::inAttr
+        || attrName == SVGNames::surfaceScaleAttr
+        || attrName == SVGNames::specularConstantAttr
+        || attrName == SVGNames::specularExponentAttr
+        || attrName == SVGNames::kernelUnitLengthAttr)
+        invalidate();
+}
+
 void SVGFESpecularLightingElement::synchronizeProperty(const QualifiedName& attrName)
 {
     SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
