@@ -1,3 +1,25 @@
+2011-02-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(r76107): Crash in VisibleSelection::toNormalizedRange
+        https://bugs.webkit.org/show_bug.cgi?id=54053
+
+        The bug was caused by RenderBlock::positionForPoint's improperly returning a shadow node inside
+        RenderFileUploadControl for hit testing and VisibleSelection::toNormalizedRange's always assuming
+        the position variable "s" is not null.
+
+        Fixed the bug by always returning a null position from RenderFileUploadControl::positionForPoint,
+        and also exiting early when either "s" or "e" is null in VisibleSelection::toNormalizedRange.
+
+        Test: fast/forms/file-input-hit-test.html
+
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::toNormalizedRange):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::positionForPoint):
+        * rendering/RenderFileUploadControl.h:
+
 2011-02-09  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Beth Dakin.

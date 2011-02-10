@@ -172,6 +172,9 @@ PassRefPtr<Range> VisibleSelection::toNormalizedRange() const
         s = s.parentAnchoredEquivalent();
         e = e.parentAnchoredEquivalent();
     }
+    
+    if (s.isNull() || e.isNull())
+        return 0;
 
     // VisibleSelections are supposed to always be valid.  This constructor will ASSERT
     // if a valid range could not be created, which is fine for this callsite.

@@ -28,7 +28,7 @@ namespace WebCore {
 
 class Chrome;
 class HTMLInputElement;
-    
+
 // Each RenderFileUploadControl contains a RenderButton (for opening the file chooser), and
 // sufficient space to draw a file icon and filename. The RenderButton has a shadow node
 // associated with it to receive click/hover events.
@@ -71,6 +71,8 @@ private:
     Chrome* chrome() const;
     int maxFilenameWidth() const;
     PassRefPtr<RenderStyle> createButtonStyle(const RenderStyle* parentStyle) const;
+    
+    virtual VisiblePosition positionForPoint(const IntPoint&);
 
     RefPtr<HTMLInputElement> m_button;
     RefPtr<FileChooser> m_fileChooser;

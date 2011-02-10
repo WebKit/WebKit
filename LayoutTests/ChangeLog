@@ -1,3 +1,16 @@
+2011-02-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(r76107): Crash in VisibleSelection::toNormalizedRange
+        https://bugs.webkit.org/show_bug.cgi?id=54053
+
+        Added a test to ensure WebKit does not crash when a user clicks on a region immediately after a file
+        upload control.
+
+        * fast/forms/file-input-hit-test-expected.txt: Added.
+        * fast/forms/file-input-hit-test.html: Added.
+
 2011-02-09  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, test expectations update.

@@ -297,6 +297,11 @@ void RenderFileUploadControl::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
+VisiblePosition RenderFileUploadControl::positionForPoint(const IntPoint&)
+{
+    return VisiblePosition();
+}
+
 void RenderFileUploadControl::receiveDroppedFiles(const Vector<String>& paths)
 {
     if (allowsMultipleFiles())
