@@ -1,3 +1,12 @@
+2011-02-10  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, rebaseline.
+
+        * platform/chromium-mac/fast/text/international/text-combine-image-test-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/international/text-combine-image-test-expected.png: Removed.
+        * platform/mac-leopard/fast/text/international/text-combine-image-test-expected.checksum: Added.
+        * platform/mac-leopard/fast/text/international/text-combine-image-test-expected.png: Added.
+
 2011-02-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders Carlsson.
