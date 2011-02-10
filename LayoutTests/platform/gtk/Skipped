@@ -3109,3 +3109,6 @@ fast/replaced/border-radius-clip.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=54191
 fast/text/capitalize-boundaries.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=54194
+fast/text/midword-break-after-breakable-char.html
