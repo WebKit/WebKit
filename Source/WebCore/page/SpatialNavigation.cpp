@@ -701,7 +701,7 @@ IntRect virtualRectForAreaElementAndDirection(HTMLAreaElement* area, FocusDirect
     ASSERT(area->imageElement());
     // Area elements tend to overlap more than other focusable elements. We flatten the rect of the area elements
     // to minimize the effect of overlapping areas.
-    IntRect rect = virtualRectForDirection(direction, rectToAbsoluteCoordinates(area->document()->frame(), area->getRect(area->imageElement()->renderer())), 1);
+    IntRect rect = virtualRectForDirection(direction, rectToAbsoluteCoordinates(area->document()->frame(), area->computeRect(area->imageElement()->renderer())), 1);
     return rect;
 }
 

@@ -1,3 +1,27 @@
+2011-02-10  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix clang warning "WebCore::HTMLAreaElement::getRect' hides overloaded virtual function [-Woverloaded-virtual]"
+        https://bugs.webkit.org/show_bug.cgi?id=54221
+
+        The method name conflicts with ContainerNode::getRect() so rename it to
+        computeRect(). Rename getPath() to computePath() for consistency as
+        well.
+
+        No intended functionality change, covered by existing tests.
+
+        * accessibility/AccessibilityImageMapLink.cpp:
+        (WebCore::AccessibilityImageMapLink::elementRect):
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::computePath):
+        (WebCore::HTMLAreaElement::computeRect):
+        * html/HTMLAreaElement.h:
+        * page/SpatialNavigation.cpp:
+        (WebCore::virtualRectForAreaElementAndDirection):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintFocusRing):
+
 2011-02-10  Alexis Menard  <alexis.menard@nokia.com>
 
         Reviewed by Andreas Kling.

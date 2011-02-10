@@ -41,8 +41,8 @@ public:
 
     bool mapMouseEvent(int x, int y, const IntSize&, HitTestResult&);
 
-    IntRect getRect(RenderObject*) const;
-    Path getPath(RenderObject*) const;
+    IntRect computeRect(RenderObject*) const;
+    Path computePath(RenderObject*) const;
 
     // The parent map's image.
     HTMLImageElement* imageElement() const;

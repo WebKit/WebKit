@@ -133,7 +133,7 @@ IntRect AccessibilityImageMapLink::elementRect() const
     if (!renderer)
         return IntRect();
     
-    return m_areaElement->getRect(renderer);
+    return m_areaElement->computeRect(renderer);
 }
     
 String AccessibilityImageMapLink::stringValueForMSAA() const

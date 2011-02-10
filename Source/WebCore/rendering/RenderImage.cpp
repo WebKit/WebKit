@@ -345,7 +345,7 @@ void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo)
     // Even if the theme handles focus ring drawing for entire elements, it won't do it for
     // an area within an image, so we don't call RenderTheme::supportsFocusRing here.
 
-    Path path = areaElement->getPath(this);
+    Path path = areaElement->computePath(this);
     if (path.isEmpty())
         return;
 

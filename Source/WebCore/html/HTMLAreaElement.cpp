@@ -86,7 +86,7 @@ bool HTMLAreaElement::mapMouseEvent(int x, int y, const IntSize& size, HitTestRe
     return true;
 }
 
-Path HTMLAreaElement::getPath(RenderObject* obj) const
+Path HTMLAreaElement::computePath(RenderObject* obj) const
 {
     if (!obj)
         return Path();
@@ -111,9 +111,9 @@ Path HTMLAreaElement::getPath(RenderObject* obj) const
     return p;
 }
     
-IntRect HTMLAreaElement::getRect(RenderObject* obj) const
+IntRect HTMLAreaElement::computeRect(RenderObject* obj) const
 {
-    return enclosingIntRect(getPath(obj).boundingRect());
+    return enclosingIntRect(computePath(obj).boundingRect());
 }
 
 Path HTMLAreaElement::getRegion(const IntSize& size) const
