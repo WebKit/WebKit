@@ -1,3 +1,11 @@
+2011-02-10  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Chromium expectations update.
+
+        fast/box-shadow/shadow-buffer-partial.html is failing.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Kent Tamura.

@@ -3262,3 +3262,5 @@ BUG_ZMO : plugins/npruntime/evaluate-js-destroying-plugin-from-destroy-stream.ht
 BUGWK54051 : plugins/invalidate_rect.html = FAIL
 
 BUGCR72428 : fast/dom/HTMLAnchorElement/set-href-attribute-hash.html = TEXT
+
+BUGCR72529 : fast/box-shadow/shadow-buffer-partial.html = IMAGE
