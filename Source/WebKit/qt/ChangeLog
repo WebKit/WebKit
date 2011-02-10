@@ -2,6 +2,26 @@
 
         Reviewed by Andreas Kling.
 
+        [Qt] Fix assert in QDeclarativeWebView
+        https://bugs.webkit.org/show_bug.cgi?id=54240
+
+        As reported in:
+        http://bugreports.qt.nokia.com/browse/QTBUG-14278
+
+        Instantiating a QDeclarativeWebView twice will trigger an assertion
+        when in debug mode.
+
+        Original patch from Thomas Hartmann <Thomas.Hartmann@nokia.com>,
+        reviewed (there) by Aaron Kennedy
+        f532679ca11914b453e22342f2ae5e9f790ce47a
+
+        * declarative/qdeclarativewebview.cpp:
+        (QDeclarativeWebView::init):
+
+2011-02-10  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
         [Qt] Misc documentation fixes/updates
         https://bugs.webkit.org/show_bug.cgi?id=54236
 

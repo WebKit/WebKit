@@ -249,7 +249,11 @@ void QDeclarativeWebView::init()
 {
     d = new QDeclarativeWebViewPrivate(this);
 
-    QWebSettings::enablePersistentStorage();
+    if (QWebSettings::iconDatabasePath().isNull() &&
+        QWebSettings::globalSettings()->localStoragePath().isNull() &&
+        QWebSettings::offlineStoragePath().isNull() &&
+        QWebSettings::offlineWebApplicationCachePath().isNull())
+        QWebSettings::enablePersistentStorage();
 
     setAcceptedMouseButtons(Qt::LeftButton);
     setFlag(QGraphicsItem::ItemHasNoContents, true);
