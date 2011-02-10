@@ -1,5 +1,13 @@
 2011-02-10  Adam Roben  <aroben@apple.com>
 
+        Update Windows results after r78204
+
+        * platform/win/fast/text/international/text-combine-image-test-expected.checksum:
+        * platform/win/fast/text/international/text-combine-image-test-expected.png:
+        * platform/win/fast/text/international/text-combine-image-test-expected.txt:
+
+2011-02-10  Adam Roben  <aroben@apple.com>
+
         Update Windows results after r78182
 
         Nikolas Zimmermann says he thinks we're not matching the Mac results anymore due to rounding
