@@ -1,3 +1,13 @@
+2011-02-10  Adam Roben  <aroben@apple.com>
+
+        Update Windows results after r78182
+
+        Nikolas Zimmermann says he thinks we're not matching the Mac results anymore due to rounding
+        differences.
+
+        * platform/win/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.txt: Added.
+
 2011-02-10  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip failing fast/text/midword-break-after-breakable-char.html on
