@@ -67,6 +67,11 @@ IDBTransactionBackendInterface* IDBTransaction::backend() const
     return m_backend.get();
 }
 
+bool IDBTransaction::finished() const
+{
+    return m_finished;
+}
+
 unsigned short IDBTransaction::mode() const
 {
     return m_mode;
@@ -109,6 +114,14 @@ void IDBTransaction::onComplete()
     enqueueEvent(IDBCompleteEvent::create(IDBAny::create(this)));
 }
 
+bool IDBTransaction::hasPendingActivity() const
+{
+    // FIXME: In an ideal world, we should return true as long as anyone has a or can
+    //        get a handle to us or any child request object and any of those have
+    //        event listeners. This is  in order to handle user generated events properly.
+    return !m_finished || ActiveDOMObject::hasPendingActivity();
+}
+
 ScriptExecutionContext* IDBTransaction::scriptExecutionContext() const
 {
     return ActiveDOMObject::scriptExecutionContext();
@@ -116,6 +129,7 @@ ScriptExecutionContext* IDBTransaction::scriptExecutionContext() const
 
 bool IDBTransaction::dispatchEvent(PassRefPtr<Event> event)
 {
+    ASSERT(!m_finished);
     ASSERT(scriptExecutionContext());
     ASSERT(event->target() == this);
     ASSERT(!m_finished);
@@ -131,13 +145,17 @@ bool IDBTransaction::dispatchEvent(PassRefPtr<Event> event)
 
 bool IDBTransaction::canSuspend() const
 {
-    return !m_backend;
+    // FIXME: Technically we can suspend before the first request is schedule
+    //        and after the complete/abort event is enqueued.
+    return m_finished;
 }
 
 void IDBTransaction::contextDestroyed()
 {
     ActiveDOMObject::contextDestroyed();
 
+    // Must happen in contextDestroyed since it can result in ActiveDOMObjects being destructed
+    // (and contextDestroyed is the only one resilient against this).
     RefPtr<IDBTransaction> selfRef = this;
     if (m_backend)
         m_backend->abort();
@@ -147,6 +165,7 @@ void IDBTransaction::contextDestroyed()
 
 void IDBTransaction::enqueueEvent(PassRefPtr<Event> event)
 {
+    ASSERT(!m_finished);
     if (!scriptExecutionContext())
         return;
 

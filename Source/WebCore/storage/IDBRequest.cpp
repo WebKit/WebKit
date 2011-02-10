@@ -56,6 +56,7 @@ IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> sourc
     , m_source(source)
     , m_transaction(transaction)
     , m_readyState(LOADING)
+    , m_finished(false)
 {
     if (m_transaction)
         IDBPendingTransactionMonitor::removePendingTransaction(m_transaction->backend());
@@ -67,6 +68,7 @@ IDBRequest::~IDBRequest()
 
 bool IDBRequest::resetReadyState(IDBTransaction* transaction)
 {
+    ASSERT(!m_finished);
     ASSERT(scriptExecutionContext());
     if (m_readyState != DONE)
         return false;
@@ -131,6 +133,14 @@ void IDBRequest::onSuccess(PassRefPtr<SerializedScriptValue> serializedScriptVal
     enqueueEvent(IDBSuccessEvent::create(m_source, IDBAny::create(serializedScriptValue)));
 }
 
+bool IDBRequest::hasPendingActivity() const
+{
+    // FIXME: In an ideal world, we should return true as long as anyone has a or can
+    //        get a handle to us and we have event listeners. This is order to handle
+    //        user generated events properly.
+    return !m_finished || ActiveDOMObject::hasPendingActivity();
+}
+
 ScriptExecutionContext* IDBRequest::scriptExecutionContext() const
 {
     return ActiveDOMObject::scriptExecutionContext();
@@ -138,6 +148,7 @@ ScriptExecutionContext* IDBRequest::scriptExecutionContext() const
 
 bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
 {
+    ASSERT(!m_finished);
     ASSERT(scriptExecutionContext());
     ASSERT(event->target() == this);
     ASSERT(m_readyState < DONE);
@@ -148,12 +159,23 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
     if (m_transaction) {
         targets.append(m_transaction);
         // If there ever are events that are associated with a database but
-        // that do not have a transaction, then this will not work.
+        // that do not have a transaction, then this will not work and we need
+        // this object to actually hold a reference to the database (to ensure
+        // it stays alive).
         targets.append(m_transaction->db());
     }
 
     ASSERT(event->isIDBErrorEvent() || event->isIDBSuccessEvent());
     bool dontPreventDefault = static_cast<IDBEvent*>(event.get())->dispatch(targets);
+
+    // If the event's result was of type IDBCursor, then it's possible for us to
+    // fire again (unless the transaction completes).
+    if (event->isIDBSuccessEvent()) {
+        RefPtr<IDBAny> any = static_cast<IDBSuccessEvent*>(event.get())->result();
+        if (any->type() != IDBAny::IDBCursorType)
+            m_finished = true;
+    } else
+        m_finished = true;
 
     if (m_transaction) {
         if (dontPreventDefault && event->isIDBErrorEvent())
@@ -165,6 +187,7 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
 
 void IDBRequest::enqueueEvent(PassRefPtr<Event> event)
 {
+    ASSERT(!m_finished);
     ASSERT(m_readyState < DONE);
     if (!scriptExecutionContext())
         return;

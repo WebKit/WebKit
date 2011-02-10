@@ -55,6 +55,7 @@ public:
     };
 
     IDBTransactionBackendInterface* backend() const;
+    bool finished() const;
 
     unsigned short mode() const;
     IDBDatabase* db() const;
@@ -76,6 +77,7 @@ public:
     bool dispatchEvent(PassRefPtr<Event> event, ExceptionCode& ec) { return EventTarget::dispatchEvent(event, ec); }
 
     // ActiveDOMObject
+    virtual bool hasPendingActivity() const;
     virtual bool canSuspend() const;
     virtual void contextDestroyed();
 
@@ -96,7 +98,7 @@ private:
     RefPtr<IDBTransactionBackendInterface> m_backend;
     RefPtr<IDBDatabase> m_database;
     unsigned short m_mode;
-    bool m_finished;
+    bool m_finished; // Is it possible that we'll fire any more events or allow any new transactions? If not, we're finished.
 
     EventTargetData m_eventTargetData;
 };

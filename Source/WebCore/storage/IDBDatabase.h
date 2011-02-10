@@ -72,6 +72,10 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(abort);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
 
+    // ActiveDOMObject
+    virtual bool hasPendingActivity() const;
+    virtual void stop();
+
     // EventTarget
     virtual IDBDatabase* toIDBDatabase() { return this; }
     virtual ScriptExecutionContext* scriptExecutionContext() const;
@@ -92,6 +96,7 @@ private:
     RefPtr<IDBTransaction> m_setVersionTransaction;
 
     bool m_noNewTransactions;
+    bool m_stopped;
 
     EventTargetData m_eventTargetData;
 };

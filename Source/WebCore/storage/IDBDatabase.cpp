@@ -50,6 +50,7 @@ IDBDatabase::IDBDatabase(ScriptExecutionContext* context, PassRefPtr<IDBDatabase
     : ActiveDOMObject(context, this)
     , m_backend(backend)
     , m_noNewTransactions(false)
+    , m_stopped(false)
 {
     // We pass a reference of this object before it can be adopted.
     relaxAdoptionRequirement();
@@ -57,6 +58,7 @@ IDBDatabase::IDBDatabase(ScriptExecutionContext* context, PassRefPtr<IDBDatabase
 
 IDBDatabase::~IDBDatabase()
 {
+    ASSERT(m_stopped);
 }
 
 void IDBDatabase::setSetVersionTransaction(IDBTransaction* transaction)
@@ -135,6 +137,24 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
 void IDBDatabase::close()
 {
     m_noNewTransactions = true;
+}
+
+bool IDBDatabase::hasPendingActivity() const
+{
+    // FIXME: Try to find some way not to just leak this object until page navigation.
+    // FIXME: In an ideal world, we should return true as long as anyone has or can
+    //        get a handle to us or any derivative transaction/request object and any
+    //        of those have event listeners. This is in order to handle user generated
+    //        events properly.
+    return !m_stopped || ActiveDOMObject::hasPendingActivity();
+}
+
+void IDBDatabase::stop()
+{
+    // Stop fires at a deterministic time, so we need to call close in it.
+    close();
+
+    m_stopped = true;
 }
 
 ScriptExecutionContext* IDBDatabase::scriptExecutionContext() const

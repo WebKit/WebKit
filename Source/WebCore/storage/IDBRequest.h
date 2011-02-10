@@ -70,6 +70,9 @@ public:
     virtual void onSuccess(PassRefPtr<IDBTransactionBackendInterface>);
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>);
 
+    // ActiveDOMObject
+    virtual bool hasPendingActivity() const;
+
     // EventTarget
     virtual IDBRequest* toIDBRequest() { return this; }
     virtual ScriptExecutionContext* scriptExecutionContext() const;
@@ -94,6 +97,7 @@ private:
     RefPtr<IDBTransaction> m_transaction;
 
     ReadyState m_readyState;
+    bool m_finished; // Is it possible that we'll fire any more events? If not, we're finished.
 
     EventTargetData m_eventTargetData;
 };

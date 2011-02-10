@@ -110,6 +110,8 @@ bool IDBCursorBackendImpl::currentRowExists()
     return statement.step() == SQLResultRow;
 }
 
+// IMPORTANT: If this ever 1) fires an 'error' event and 2) it's possible to fire another event afterwards,
+//            IDBRequest::hasPendingActivity() will need to be modified to handle this!!!
 void IDBCursorBackendImpl::continueFunctionInternal(ScriptExecutionContext*, PassRefPtr<IDBCursorBackendImpl> prpCursor, PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallbacks> callbacks)
 {
     RefPtr<IDBCursorBackendImpl> cursor = prpCursor;

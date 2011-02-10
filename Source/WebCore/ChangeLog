@@ -1,3 +1,40 @@
+2011-02-09  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        IndexedDB event targets need to ensure their wrappers aren't garbage collected
+        https://bugs.webkit.org/show_bug.cgi?id=54144
+
+        hasActivityPending should return true as long as it's possible that we'll
+        fire more event listeners on our event targets. It is still possible for
+        user generated events to run into problems, but I'm not sure how to address
+        that yet (or how big of a deal it is).
+
+        There's really no way to test this deterministically. Testing by hand makes
+        it seem like this patch works as expected though.
+
+        * storage/IDBCursorBackendImpl.cpp:
+        * storage/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::IDBDatabase):
+        (WebCore::IDBDatabase::~IDBDatabase):
+        (WebCore::IDBDatabase::hasPendingActivity):
+        (WebCore::IDBDatabase::stop):
+        * storage/IDBDatabase.h:
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::IDBRequest):
+        (WebCore::IDBRequest::hasPendingActivity):
+        (WebCore::IDBRequest::dispatchEvent):
+        (WebCore::IDBRequest::enqueueEvent):
+        * storage/IDBRequest.h:
+        * storage/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::finished):
+        (WebCore::IDBTransaction::hasPendingActivity):
+        (WebCore::IDBTransaction::dispatchEvent):
+        (WebCore::IDBTransaction::canSuspend):
+        (WebCore::IDBTransaction::contextDestroyed):
+        (WebCore::IDBTransaction::enqueueEvent):
+        * storage/IDBTransaction.h:
+
 2011-02-10  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
 
         Reviewed by Andreas Kling.
