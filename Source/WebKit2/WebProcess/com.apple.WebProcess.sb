@@ -20,7 +20,10 @@
 
     ;; System and user preferences
     (literal "/Library/Preferences/.GlobalPreferences.plist")
+    (literal "/Library/Preferences/com.apple.crypto.plist")
     (literal "/Library/Preferences/com.apple.security.plist")
+    (literal "/Library/Preferences/com.apple.security.common.plist")
+    (literal "/Library/Preferences/com.apple.security.revocation.plist")
     (literal (string-append (param "HOME_DIR") "/Library/Preferences/.GlobalPreferences.plist"))
     (regex (string-append "^" (param "HOME_DIR") "/Library/Preferences/ByHost/\.GlobalPreferences\."))
     (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.ATS.plist"))
