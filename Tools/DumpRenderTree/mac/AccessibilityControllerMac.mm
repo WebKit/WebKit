@@ -74,6 +74,10 @@ void AccessibilityController::setLogValueChangeEvents(bool)
 {
 }
 
+void AccessibilityController::setLogAccessibilityEvents(bool)
+{
+}
+
 void AccessibilityController::addNotificationListener(PlatformUIElement, JSObjectRef)
 {
 }

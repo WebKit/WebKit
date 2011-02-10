@@ -1,3 +1,37 @@
+2011-02-10  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Chris Fleizach.
+
+        [GTK] Add support in DRT to log "accessibility events"
+        https://bugs.webkit.org/show_bug.cgi?id=54116
+
+        Added a way to log accessibility related events, in a
+        platform-dependant way.
+
+        Add new function to AccessibilityController.
+
+        * DumpRenderTree/AccessibilityController.h:
+        * DumpRenderTree/AccessibilityController.cpp:
+        (logAccessibilityEventsCallback): New callback.
+        (AccessibilityController::getJSClass): Added new function.
+        (AccessibilityController::resetToConsistentState): Initialized
+        calling setLogAccessibilityEvents(false).
+
+        Provided implementation for the GTK port.
+
+        * DumpRenderTree/gtk/AccessibilityControllerGtk.cpp:
+        (accessibility_event_listener): Common listener for logging
+        information about all the signals emitted by any AtkObject.
+        (AccessibilityController::setLogAccessibilityEvents): Add or
+        remove listeners for signals, as specified by the parameter.
+
+        Provide dummy implementations for mac and win ports.
+
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm:
+        (AccessibilityController::setLogAccessibilityEvents):
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+        (AccessibilityController::setLogAccessibilityEvents):
+
 2011-02-09  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Tony Chang.

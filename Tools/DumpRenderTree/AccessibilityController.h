@@ -50,6 +50,7 @@ public:
     void setLogFocusEvents(bool);
     void setLogValueChangeEvents(bool);
     void setLogScrollingStartEvents(bool);
+    void setLogAccessibilityEvents(bool);
 
     void resetToConsistentState();
 

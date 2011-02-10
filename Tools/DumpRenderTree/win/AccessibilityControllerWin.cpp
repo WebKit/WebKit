@@ -213,6 +213,10 @@ void AccessibilityController::setLogScrollingStartEvents(bool logScrollingStartE
     ASSERT(m_scrollingStartEventHook);
 }
 
+void AccessibilityController::setLogAccessibilityEvents(bool)
+{
+}
+
 static string stringEvent(DWORD event)
 {
     switch(event) {
