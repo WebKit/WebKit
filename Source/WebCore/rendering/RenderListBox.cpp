@@ -141,8 +141,11 @@ void RenderListBox::selectionChanged()
 void RenderListBox::layout()
 {
     RenderBlock::layout();
-    if (m_scrollToRevealSelectionAfterLayout)
+    if (m_scrollToRevealSelectionAfterLayout) {
+        view()->disableLayoutState();
         scrollToRevealSelection();
+        view()->enableLayoutState();
+    }
 }
 
 void RenderListBox::scrollToRevealSelection()
@@ -695,6 +698,27 @@ IntPoint RenderListBox::convertFromContainingViewToScrollbar(const Scrollbar* sc
     return point;
 }
 
+IntSize RenderListBox::contentsSize() const
+{
+    return IntSize(scrollWidth(), scrollHeight());
+}
+
+IntPoint RenderListBox::currentMousePosition() const
+{
+    RenderView* view = this->view();
+    if (!view)
+        return IntPoint();
+    return view->frameView()->currentMousePosition();
+}
+
+bool RenderListBox::scrollbarWillRenderIntoCompositingLayer() const
+{
+    RenderLayer* layer = this->enclosingLayer();
+    if (!layer)
+        return false;
+    return layer->scrollbarWillRenderIntoCompositingLayer();
+}
+
 PassRefPtr<Scrollbar> RenderListBox::createScrollbar()
 {
     RefPtr<Scrollbar> widget;
@@ -722,10 +746,13 @@ void RenderListBox::setHasVerticalScrollbar(bool hasScrollbar)
     if (hasScrollbar == (m_vBar != 0))
         return;
 
-    if (hasScrollbar)
+    if (hasScrollbar) {
         m_vBar = createScrollbar();
-    else
+        ScrollableArea::didAddVerticalScrollbar(m_vBar.get());
+    } else {
+        ScrollableArea::willRemoveVerticalScrollbar(m_vBar.get());
         destroyScrollbar();
+    }
 
     if (m_vBar)
         m_vBar->styleChanged();
@@ -735,14 +762,6 @@ void RenderListBox::setHasVerticalScrollbar(bool hasScrollbar)
     if (document()->hasDashboardRegions())
         document()->setDashboardRegionsDirty(true);
 #endif
-}
-
-bool RenderListBox::scrollbarWillRenderIntoCompositingLayer() const
-{
-    RenderLayer* layer = this->enclosingLayer();
-    if (!layer)
-        return false;
-    return layer->scrollbarWillRenderIntoCompositingLayer();
 }
 
 } // namespace WebCore

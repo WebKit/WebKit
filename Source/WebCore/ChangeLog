@@ -1,3 +1,18 @@
+2011-02-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Beth Dakin.
+
+        Overlay scrollbars crash used with a RenderListBox.
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::layout):
+        (WebCore::RenderListBox::contentsSize):
+        (WebCore::RenderListBox::currentMousePosition):
+        (WebCore::RenderListBox::setHasVerticalScrollbar):
+        * rendering/RenderListBox.h:
+        Implement enough of the ScrollableArea interface to get things generally
+        working.
+
 2011-02-09  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Simon Fraser.
