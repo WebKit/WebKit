@@ -45,7 +45,6 @@ var Preferences = {
     onlineDetectionEnabled: true,
     nativeInstrumentationEnabled: false,
     resourceExportEnabled: false,
-    fileSystemEnabled: false,
     useDataURLForResourceImageIcons: true,
     showTimingTab: false,
     showCookiesTab: false,

@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+class DocumentLoader;
 class Frame;
 class InspectorArray;
 class InspectorAgent;
@@ -44,8 +45,10 @@ class ResourceResponse;
 class InspectorApplicationCacheAgent {
     WTF_MAKE_NONCOPYABLE(InspectorApplicationCacheAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorApplicationCacheAgent(InspectorAgent*, InspectorFrontend*);
+    InspectorApplicationCacheAgent(DocumentLoader*, InspectorFrontend*);
     ~InspectorApplicationCacheAgent() { }
+
+    void didCommitLoad(DocumentLoader*);
 
     // Backend to Frontend
     void updateApplicationCacheStatus(Frame*);
@@ -59,7 +62,7 @@ private:
     PassRefPtr<InspectorArray> buildArrayForApplicationCacheResources(const ApplicationCacheHost::ResourceInfoList&);
     PassRefPtr<InspectorObject> buildObjectForApplicationCacheResource(const ApplicationCacheHost::ResourceInfo&);
 
-    InspectorAgent* m_inspectorAgent;
+    DocumentLoader* m_documentLoader;
     InspectorFrontend* m_frontend;
 };
 

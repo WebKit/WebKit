@@ -1987,8 +1987,6 @@ webcore_sources += \
 	Source/WebCore/inspector/InspectorDOMStorageAgent.h \
 	Source/WebCore/inspector/InspectorDOMStorageResource.cpp \
 	Source/WebCore/inspector/InspectorDOMStorageResource.h \
-	Source/WebCore/inspector/InspectorFileSystemAgent.cpp \
-	Source/WebCore/inspector/InspectorFileSystemAgent.h \
 	Source/WebCore/inspector/InspectorFrontendClient.h \
 	Source/WebCore/inspector/InspectorFrontendClientLocal.cpp \
 	Source/WebCore/inspector/InspectorFrontendClientLocal.h \

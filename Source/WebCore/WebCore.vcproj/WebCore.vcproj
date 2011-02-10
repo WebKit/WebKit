@@ -65454,14 +65454,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\InspectorFileSystemAgent.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\inspector\InspectorFileSystemAgent.h"
-				>
-			</File>
-			<File
 				RelativePath="..\inspector\InspectorFrontendClient.h"
 				>
 			</File>
@@ -65770,10 +65762,6 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\ExtensionServer.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\FileSystemView.js"
 					>
 				</File>
 				<File

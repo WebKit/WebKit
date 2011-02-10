@@ -120,10 +120,6 @@
 #include "InspectorApplicationCacheAgent.h"
 #endif
 
-#if ENABLE(FILE_SYSTEM)
-#include "InspectorFileSystemAgent.h"
-#endif
-
 using namespace std;
 
 namespace WebCore {
@@ -403,11 +399,7 @@ void InspectorAgent::createFrontendLifetimeAgents()
 #endif
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    m_applicationCacheAgent = new InspectorApplicationCacheAgent(this, m_frontend);
-#endif
-
-#if ENABLE(FILE_SYSTEM)
-    m_fileSystemAgent = InspectorFileSystemAgent::create(this, m_frontend);
+    m_applicationCacheAgent = new InspectorApplicationCacheAgent(m_inspectedPage->mainFrame()->loader()->documentLoader(), m_frontend);
 #endif
 }
 
@@ -439,11 +431,6 @@ void InspectorAgent::releaseFrontendLifetimeAgents()
     m_applicationCacheAgent.clear();
 #endif
 
-#if ENABLE(FILE_SYSTEM)
-    if (m_fileSystemAgent)
-        m_fileSystemAgent->stop();
-        m_fileSystemAgent.clear();
-#endif
     stopTimelineProfiler();
 }
 
@@ -544,7 +531,7 @@ void InspectorAgent::didCommitLoad(DocumentLoader* loader)
 
     if (m_resourceAgent)
         m_resourceAgent->didCommitLoad(loader);
-    
+
     ASSERT(m_inspectedPage);
 
     if (loader->frame() == m_inspectedPage->mainFrame()) {
@@ -553,6 +540,11 @@ void InspectorAgent::didCommitLoad(DocumentLoader* loader)
 
         m_injectedScriptHost->discardInjectedScripts();
         m_consoleAgent->reset();
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+        if (m_applicationCacheAgent)
+            m_applicationCacheAgent->didCommitLoad(loader);
+#endif
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
         if (m_debuggerAgent) {

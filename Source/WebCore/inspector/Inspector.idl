@@ -151,17 +151,6 @@ module core {
     };
 #endif
 
-#if defined(ENABLE_FILE_SYSTEM) && ENABLE_FILE_SYSTEM
-    interface [Conditional=INSPECTOR] FileSystem {
-        void getFileSystemPathAsync(in unsigned int type, in String origin);
-        void revealFolderInOS(in String path);
-
-        [notify] void didGetFileSystemPath(out String root, out int type, out String origin);
-        [notify] void didGetFileSystemError(out int type, out String origin);
-        [notify] void didGetFileSystemDisabled();
-    };
-#endif
-
     interface [Conditional=INSPECTOR] DOM {
         void getChildNodes(in long nodeId);
         void setAttribute(in long elementId, in String name, in String value, out boolean success);

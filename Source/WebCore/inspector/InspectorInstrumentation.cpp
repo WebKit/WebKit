@@ -372,12 +372,12 @@ void InspectorInstrumentation::didRecalculateStyleImpl(const InspectorInstrument
         timelineAgent->didRecalculateStyle();
 }
 
-void InspectorInstrumentation::identifierForInitialRequestImpl(InspectorAgent* ic, unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request)
+void InspectorInstrumentation::identifierForInitialRequestImpl(InspectorAgent* inspectorAgent, unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request)
 {
-    if (!ic->enabled())
+    if (!inspectorAgent->enabled())
         return;
 
-    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))
+    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorAgent))
         resourceAgent->identifierForInitialRequest(identifier, request.url(), loader);
 }
 
@@ -386,25 +386,25 @@ void InspectorInstrumentation::applyUserAgentOverrideImpl(InspectorAgent* inspec
     inspectorAgent->applyUserAgentOverride(userAgent);
 }
 
-void InspectorInstrumentation::willSendRequestImpl(InspectorAgent* ic, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
+void InspectorInstrumentation::willSendRequestImpl(InspectorAgent* inspectorAgent, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
-    if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(ic))
+    if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(inspectorAgent))
         timelineAgent->willSendResourceRequest(identifier, request);
-    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))
+    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorAgent))
         resourceAgent->willSendRequest(identifier, request, redirectResponse);
 }
 
-void InspectorInstrumentation::markResourceAsCachedImpl(InspectorAgent* ic, unsigned long identifier)
+void InspectorInstrumentation::markResourceAsCachedImpl(InspectorAgent* inspectorAgent, unsigned long identifier)
 {
-    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))
+    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorAgent))
         resourceAgent->markResourceAsCached(identifier);
 }
 
-void InspectorInstrumentation::didLoadResourceFromMemoryCacheImpl(InspectorAgent* ic, DocumentLoader* loader, const CachedResource* cachedResource)
+void InspectorInstrumentation::didLoadResourceFromMemoryCacheImpl(InspectorAgent* inspectorAgent, DocumentLoader* loader, const CachedResource* cachedResource)
 {
-    if (!ic->enabled())
+    if (!inspectorAgent->enabled())
         return;
-    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))
+    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorAgent))
         resourceAgent->didLoadResourceFromMemoryCache(loader, cachedResource);
 }
 
@@ -438,47 +438,47 @@ InspectorInstrumentationCookie InspectorInstrumentation::willReceiveResourceResp
 
 void InspectorInstrumentation::didReceiveResourceResponseImpl(const InspectorInstrumentationCookie& cookie, unsigned long identifier, DocumentLoader* loader, const ResourceResponse& response)
 {
-    InspectorAgent* ic = cookie.first;
-    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))
+    InspectorAgent* inspectorAgent = cookie.first;
+    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorAgent))
         resourceAgent->didReceiveResponse(identifier, loader, response);
-    ic->consoleAgent()->didReceiveResponse(identifier, response);
+    inspectorAgent->consoleAgent()->didReceiveResponse(identifier, response);
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
         timelineAgent->didReceiveResourceResponse();
 }
 
-void InspectorInstrumentation::didReceiveContentLengthImpl(InspectorAgent* ic, unsigned long identifier, int lengthReceived)
+void InspectorInstrumentation::didReceiveContentLengthImpl(InspectorAgent* inspectorAgent, unsigned long identifier, int lengthReceived)
 {
-    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))
+    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorAgent))
         resourceAgent->didReceiveContentLength(identifier, lengthReceived);
 }
 
-void InspectorInstrumentation::didFinishLoadingImpl(InspectorAgent* ic, unsigned long identifier, double finishTime)
+void InspectorInstrumentation::didFinishLoadingImpl(InspectorAgent* inspectorAgent, unsigned long identifier, double finishTime)
 {
-    if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(ic))
+    if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(inspectorAgent))
         timelineAgent->didFinishLoadingResource(identifier, false, finishTime);
-    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))
+    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorAgent))
         resourceAgent->didFinishLoading(identifier, finishTime);
 }
 
-void InspectorInstrumentation::didFailLoadingImpl(InspectorAgent* ic, unsigned long identifier, const ResourceError& error)
+void InspectorInstrumentation::didFailLoadingImpl(InspectorAgent* inspectorAgent, unsigned long identifier, const ResourceError& error)
 {
-    ic->consoleAgent()->didFailLoading(identifier, error);
-    if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(ic))
+    inspectorAgent->consoleAgent()->didFailLoading(identifier, error);
+    if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(inspectorAgent))
         timelineAgent->didFinishLoadingResource(identifier, true, 0);
-    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))
+    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorAgent))
         resourceAgent->didFailLoading(identifier, error);
 }
 
-void InspectorInstrumentation::resourceRetrievedByXMLHttpRequestImpl(InspectorAgent* ic, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber)
+void InspectorInstrumentation::resourceRetrievedByXMLHttpRequestImpl(InspectorAgent* inspectorAgent, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber)
 {
-    ic->consoleAgent()->resourceRetrievedByXMLHttpRequest(url, sendURL, sendLineNumber);
-    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))
+    inspectorAgent->consoleAgent()->resourceRetrievedByXMLHttpRequest(url, sendURL, sendLineNumber);
+    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorAgent))
         resourceAgent->setInitialContent(identifier, sourceString, "XHR");
 }
 
-void InspectorInstrumentation::scriptImportedImpl(InspectorAgent* ic, unsigned long identifier, const String& sourceString)
+void InspectorInstrumentation::scriptImportedImpl(InspectorAgent* inspectorAgent, unsigned long identifier, const String& sourceString)
 {
-    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))
+    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorAgent))
         resourceAgent->setInitialContent(identifier, sourceString, "Script");
 }
 
@@ -631,15 +631,15 @@ void InspectorInstrumentation::didCloseWebSocketImpl(InspectorAgent* inspectorAg
 #endif
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
-void InspectorInstrumentation::networkStateChangedImpl(InspectorAgent* ic)
+void InspectorInstrumentation::networkStateChangedImpl(InspectorAgent* inspectorAgent)
 {
-    if (InspectorApplicationCacheAgent* applicationCacheAgent = ic->applicationCacheAgent())
+    if (InspectorApplicationCacheAgent* applicationCacheAgent = inspectorAgent->applicationCacheAgent())
         applicationCacheAgent->networkStateChanged();
 }
 
-void InspectorInstrumentation::updateApplicationCacheStatusImpl(InspectorAgent* ic, Frame* frame)
+void InspectorInstrumentation::updateApplicationCacheStatusImpl(InspectorAgent* inspectorAgent, Frame* frame)
 {
-    if (InspectorApplicationCacheAgent* applicationCacheAgent = ic->applicationCacheAgent())
+    if (InspectorApplicationCacheAgent* applicationCacheAgent = inspectorAgent->applicationCacheAgent())
         applicationCacheAgent->updateApplicationCacheStatus(frame);
 }
 #endif
@@ -678,9 +678,9 @@ InspectorTimelineAgent* InspectorInstrumentation::retrieveTimelineAgent(const In
     return 0;
 }
 
-InspectorResourceAgent* InspectorInstrumentation::retrieveResourceAgent(InspectorAgent* ic)
+InspectorResourceAgent* InspectorInstrumentation::retrieveResourceAgent(InspectorAgent* inspectorAgent)
 {
-    return ic->resourceAgent();
+    return inspectorAgent->resourceAgent();
 }
 
 } // namespace WebCore

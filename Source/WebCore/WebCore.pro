@@ -1060,7 +1060,6 @@ SOURCES += \
     inspector/InspectorDOMAgent.cpp \
     inspector/InspectorDOMStorageAgent.cpp \
     inspector/InspectorDOMStorageResource.cpp \
-    inspector/InspectorFileSystemAgent.cpp \
     inspector/InspectorFrontendClientLocal.cpp \
     inspector/InspectorFrontendHost.cpp \
     inspector/InspectorInstrumentation.cpp \

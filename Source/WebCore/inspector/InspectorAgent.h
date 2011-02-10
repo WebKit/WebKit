@@ -94,10 +94,6 @@ class StorageArea;
 class InspectorApplicationCacheAgent;
 #endif
 
-#if ENABLE(FILE_SYSTEM)
-class InspectorFileSystemAgent;
-#endif
-
 #if ENABLE(WEB_SOCKETS)
 class WebSocketHandshakeRequest;
 class WebSocketHandshakeResponse;
@@ -152,9 +148,6 @@ public:
 #endif
 #if ENABLE(DOM_STORAGE)
     InspectorDOMStorageAgent* domStorageAgent() { return m_domStorageAgent.get(); }
-#endif
-#if ENABLE(FILE_SYSTEM)
-    InspectorFileSystemAgent* fileSystemAgent() { return m_fileSystemAgent.get(); }
 #endif
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     InspectorBrowserDebuggerAgent* browserDebuggerAgent() const { return m_browserDebuggerAgent.get(); }
@@ -293,10 +286,6 @@ private:
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     OwnPtr<InspectorApplicationCacheAgent> m_applicationCacheAgent;
-#endif
-
-#if ENABLE(FILE_SYSTEM)
-    RefPtr<InspectorFileSystemAgent> m_fileSystemAgent;
 #endif
 
     RefPtr<Node> m_highlightedNode;
