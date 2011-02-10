@@ -1,3 +1,21 @@
+2011-02-09  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8805364> Malloc zone enumeration code should be safe in the face of errors from the memory reader.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::PageHeapAllocator::recordAdministrativeRegions): Use the new helper function to walk the linked list safely.
+        (WTF::TCMalloc_ThreadCache_FreeList::enumerateFreeObjects): Ditto.
+        (WTF::TCMalloc_Central_FreeList::enumerateFreeObjects): Ditto.
+        (WTF::TCMallocStats::PageMapFreeObjectFinder::visit): Bail out if the span could not be read.
+        (WTF::TCMallocStats::PageMapMemoryUsageRecorder::visit): Ditto.
+        * wtf/MallocZoneSupport.h:
+        (WTF::RemoteMemoryReader::operator()): Remove an assert that is not valid.
+        (WTF::RemoteMemoryReader::nextEntryInLinkedList): Add a helper function for retrieving the next entry in
+        a linked list. It maps a failed read of the remote memory in to a null pointer, which all callers can
+        handle gracefully.
+
 2011-02-09  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

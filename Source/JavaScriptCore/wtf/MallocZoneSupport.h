@@ -47,7 +47,6 @@ public:
     {
         void* output;
         kern_return_t err = (*m_reader)(m_task, address, size, static_cast<void**>(&output));
-        ASSERT(!err);
         if (err)
             output = 0;
         return output;
@@ -57,6 +56,15 @@ public:
     T* operator()(T* address, size_t size=sizeof(T)) const
     {
         return static_cast<T*>((*this)(reinterpret_cast<vm_address_t>(address), size));
+    }
+
+    template <typename T>
+    T* nextEntryInLinkedList(T** address) const
+    {
+        T** output = (*this)(address);
+        if (!output)
+            return 0;
+        return *output;
     }
 };
 

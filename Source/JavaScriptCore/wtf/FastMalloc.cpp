@@ -1061,11 +1061,8 @@ class PageHeapAllocator {
   template <class Recorder>
   void recordAdministrativeRegions(Recorder& recorder, const RemoteMemoryReader& reader)
   {
-      vm_address_t adminAllocation = reinterpret_cast<vm_address_t>(allocated_regions_);
-      while (adminAllocation) {
-          recorder.recordRegion(adminAllocation, kAllocIncrement);
-          adminAllocation = *reader(reinterpret_cast<vm_address_t*>(adminAllocation));
-      }
+      for (void* adminAllocation = allocated_regions_; adminAllocation; adminAllocation = reader.nextEntryInLinkedList(reinterpret_cast<void**>(adminAllocation)))
+          recorder.recordRegion(reinterpret_cast<vm_address_t>(adminAllocation), kAllocIncrement);
   }
 #endif
 };
@@ -2221,7 +2218,7 @@ class TCMalloc_ThreadCache_FreeList {
   template <class Finder, class Reader>
   void enumerateFreeObjects(Finder& finder, const Reader& reader)
   {
-      for (void* nextObject = list_; nextObject; nextObject = *reader(reinterpret_cast<void**>(nextObject)))
+      for (void* nextObject = list_; nextObject; nextObject = reader.nextEntryInLinkedList(reinterpret_cast<void**>(nextObject)))
           finder.visit(nextObject);
   }
 #endif
@@ -2346,7 +2343,7 @@ class TCMalloc_Central_FreeList {
     Span* remoteSpan = nonempty_.next;
 
     for (Span* span = reader(remoteSpan); span && remoteSpan != remoteNonempty; remoteSpan = span->next, span = (span->next ? reader(span->next) : 0)) {
-      for (void* nextObject = span->objects; nextObject; nextObject = *reader(reinterpret_cast<void**>(nextObject)))
+      for (void* nextObject = span->objects; nextObject; nextObject = reader.nextEntryInLinkedList(reinterpret_cast<void**>(nextObject)))
         finder.visit(nextObject);
     }
   }
@@ -4341,12 +4338,15 @@ public:
             return 1;
 
         Span* span = m_reader(reinterpret_cast<Span*>(ptr));
+        if (!span)
+            return 1;
+
         if (span->free) {
             void* ptr = reinterpret_cast<void*>(span->start << kPageShift);
             m_freeObjectFinder.visit(ptr);
         } else if (span->sizeclass) {
             // Walk the free list of the small-object span, keeping track of each object seen
-            for (void* nextObject = span->objects; nextObject; nextObject = *m_reader(reinterpret_cast<void**>(nextObject)))
+            for (void* nextObject = span->objects; nextObject; nextObject = m_reader.nextEntryInLinkedList(reinterpret_cast<void**>(nextObject)))
                 m_freeObjectFinder.visit(nextObject);
         }
         return span->length;
@@ -4430,7 +4430,7 @@ public:
             return 1;
 
         Span* span = m_reader(reinterpret_cast<Span*>(ptr));
-        if (!span->start)
+        if (!span || !span->start)
             return 1;
 
         if (m_seenPointers.contains(ptr))
