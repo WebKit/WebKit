@@ -1,3 +1,13 @@
+2011-02-09  Martin Robinson  <mrobinson@igalia.com>
+
+        Rebaseline a few tests which differ on the bots. Skip a test which is
+        timing out intermittently.
+
+        * platform/gtk/Skipped: Skip a test timing out.
+        * platform/gtk/fast/block/float/marquee-shrink-to-avoid-floats-expected.txt:
+        * platform/gtk/fast/dom/52776-expected.txt:
+        * platform/gtk/fast/text/stroking-decorations-expected.txt:
+
 2011-02-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
