@@ -1,3 +1,9 @@
+2011-02-09  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-09  Martin Robinson  <mrobinson@igalia.com>
 
         Rebaseline a few tests which differ on the bots. Skip a test which is

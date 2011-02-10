@@ -3257,6 +3257,8 @@ BUG_ZMO : fast/js/i18n-bindings-locale.html = TEXT
 
 BUG_ZMO WIN LINUX : editing/undo/undo-paste-when-caret-is-not-in-range.html = TEXT
 
+BUG_ZMO : plugins/npruntime/evaluate-js-destroying-plugin-from-destroy-stream.html = TIMEOUT
+
 BUGWK54051 : plugins/invalidate_rect.html = FAIL
 
 BUGCR72428 : fast/dom/HTMLAnchorElement/set-href-attribute-hash.html = TEXT
