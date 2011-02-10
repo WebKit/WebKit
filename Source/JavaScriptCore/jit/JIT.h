@@ -505,9 +505,6 @@ namespace JSC {
 
         int32_t getConstantOperandImmediateInt(unsigned src);
 
-        void emitGetVariableObjectRegister(RegisterID variableObject, int index, RegisterID dst);
-        void emitPutVariableObjectRegister(RegisterID src, RegisterID variableObject, int index);
-        
         void killLastResultRegister();
 
         Jump emitJumpIfJSCell(RegisterID);

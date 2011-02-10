@@ -587,22 +587,6 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
     return patchBuffer.finalizeCode();
 }
 
-#if USE(JSVALUE64)
-void JIT::emitGetVariableObjectRegister(RegisterID variableObject, int index, RegisterID dst)
-{
-    loadPtr(Address(variableObject, OBJECT_OFFSETOF(JSVariableObject, d)), dst);
-    loadPtr(Address(dst, OBJECT_OFFSETOF(JSVariableObject::JSVariableObjectData, registers)), dst);
-    loadPtr(Address(dst, index * sizeof(Register)), dst);
-}
-
-void JIT::emitPutVariableObjectRegister(RegisterID src, RegisterID variableObject, int index)
-{
-    loadPtr(Address(variableObject, OBJECT_OFFSETOF(JSVariableObject, d)), variableObject);
-    loadPtr(Address(variableObject, OBJECT_OFFSETOF(JSVariableObject::JSVariableObjectData, registers)), variableObject);
-    storePtr(src, Address(variableObject, index * sizeof(Register)));
-}
-#endif
-
 #if ENABLE(JIT_OPTIMIZE_CALL)
 void JIT::unlinkCallOrConstruct(CallLinkInfo* callLinkInfo)
 {

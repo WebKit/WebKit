@@ -455,8 +455,8 @@ void JIT::emit_op_construct(Instruction* currentInstruction)
 void JIT::emit_op_get_global_var(Instruction* currentInstruction)
 {
     JSVariableObject* globalObject = m_codeBlock->globalObject();
-    move(ImmPtr(globalObject), regT0);
-    emitGetVariableObjectRegister(regT0, currentInstruction[2].u.operand, regT0);
+    loadPtr(&globalObject->d->registers, regT0);
+    loadPtr(Address(regT0, currentInstruction[2].u.operand * sizeof(Register)), regT0);
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
 
@@ -464,8 +464,8 @@ void JIT::emit_op_put_global_var(Instruction* currentInstruction)
 {
     emitGetVirtualRegister(currentInstruction[2].u.operand, regT1);
     JSVariableObject* globalObject = m_codeBlock->globalObject();
-    move(ImmPtr(globalObject), regT0);
-    emitPutVariableObjectRegister(regT1, regT0, currentInstruction[1].u.operand);
+    loadPtr(&globalObject->d->registers, regT0);
+    storePtr(regT1, Address(regT0, currentInstruction[1].u.operand * sizeof(Register)));
 }
 
 void JIT::emit_op_get_scoped_var(Instruction* currentInstruction)
@@ -486,7 +486,9 @@ void JIT::emit_op_get_scoped_var(Instruction* currentInstruction)
         loadPtr(Address(regT0, OBJECT_OFFSETOF(ScopeChainNode, next)), regT0);
 
     loadPtr(Address(regT0, OBJECT_OFFSETOF(ScopeChainNode, object)), regT0);
-    emitGetVariableObjectRegister(regT0, currentInstruction[2].u.operand, regT0);
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSVariableObject, d)), regT0);
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSVariableObject::JSVariableObjectData, registers)), regT0);
+    loadPtr(Address(regT0, currentInstruction[2].u.operand * sizeof(Register)), regT0);
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
 
@@ -509,7 +511,9 @@ void JIT::emit_op_put_scoped_var(Instruction* currentInstruction)
         loadPtr(Address(regT1, OBJECT_OFFSETOF(ScopeChainNode, next)), regT1);
 
     loadPtr(Address(regT1, OBJECT_OFFSETOF(ScopeChainNode, object)), regT1);
-    emitPutVariableObjectRegister(regT0, regT1, currentInstruction[1].u.operand);
+    loadPtr(Address(regT1, OBJECT_OFFSETOF(JSVariableObject, d)), regT1);
+    loadPtr(Address(regT1, OBJECT_OFFSETOF(JSVariableObject::JSVariableObjectData, registers)), regT1);
+    storePtr(regT0, Address(regT1, currentInstruction[1].u.operand * sizeof(Register)));
 }
 
 void JIT::emit_op_tear_off_activation(Instruction* currentInstruction)
