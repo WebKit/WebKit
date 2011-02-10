@@ -42,6 +42,8 @@ public:
     PassRefPtr<Text> replaceWholeText(const String&, ExceptionCode&);
 
     virtual void attach();
+    
+    virtual bool canContainRangeEndPoint() const { return true; }
 
 protected:
     Text(Document* document, const String& data)

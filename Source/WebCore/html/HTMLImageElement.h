@@ -74,6 +74,8 @@ public:
 
     bool haveFiredLoadEvent() const { return m_imageLoader.haveFiredLoadEvent(); }
 
+    virtual bool canContainRangeEndPoint() const { return false; }
+
 protected:
     HTMLImageElement(const QualifiedName&, Document*, HTMLFormElement* = 0);
 

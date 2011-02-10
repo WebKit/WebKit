@@ -64,33 +64,6 @@ bool isAtomicNode(const Node *node)
     return node && (!node->hasChildNodes() || editingIgnoresContent(node));
 }
 
-// Returns true for nodes that either have no content, or have content that is ignored (skipped 
-// over) while editing.  There are no VisiblePositions inside these nodes.
-bool editingIgnoresContent(const Node* node)
-{
-    return !canHaveChildrenForEditing(node) && !node->isTextNode();
-}
-
-bool canHaveChildrenForEditing(const Node* node)
-{
-    return !node->hasTagName(hrTag) &&
-           !node->hasTagName(brTag) &&
-           !node->hasTagName(imgTag) &&
-           !node->hasTagName(buttonTag) &&
-           !node->hasTagName(inputTag) &&
-           !node->hasTagName(textareaTag) &&
-           !node->hasTagName(objectTag) &&
-           !node->hasTagName(iframeTag) &&
-           !node->hasTagName(embedTag) &&
-           !node->hasTagName(appletTag) &&
-           !node->hasTagName(selectTag) &&
-           !node->hasTagName(datagridTag) &&
-#if ENABLE(WML)
-           !node->hasTagName(WMLNames::doTag) &&
-#endif
-           !node->isTextNode();
-}
-
 // Compare two positions, taking into account the possibility that one or both
 // could be inside a shadow tree. Only works for non-null values.
 int comparePositions(const Position& a, const Position& b)

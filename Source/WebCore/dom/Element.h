@@ -313,6 +313,8 @@ public:
     virtual bool isInRange() const { return false; }
     virtual bool isOutOfRange() const { return false; }
 
+    virtual bool canContainRangeEndPoint() const { return true; }
+
     virtual bool formControlValueMatchesRenderer() const { return false; }
     virtual void setFormControlValueMatchesRenderer(bool) { }
 

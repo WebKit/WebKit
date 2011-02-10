@@ -53,6 +53,8 @@ public:
     void setActive(bool active) { m_isActive = active; }
     void setNoop(bool noop) { m_isNoop = noop;}
 
+    virtual bool canContainRangeEndPoint() const { return false; }
+
 private:
     WMLTaskElement* m_task;
     bool m_isActive;

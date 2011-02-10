@@ -230,6 +230,8 @@ public:
     void setPreviousSibling(Node* previous) { m_previous = previous; }
     void setNextSibling(Node* next) { m_next = next; }
 
+    virtual bool canContainRangeEndPoint() const { return false; }
+
     // FIXME: These two functions belong in editing -- "atomic node" is an editing concept.
     Node* previousNodeConsideringAtomicNodes() const;
     Node* nextNodeConsideringAtomicNodes() const;

@@ -40,6 +40,8 @@ public:
     virtual void parseMappedAttribute(Attribute*);
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+
+    virtual bool canContainRangeEndPoint() const { return false; }
 };
 
 }
