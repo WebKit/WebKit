@@ -1,3 +1,28 @@
+2011-02-10  Adam Roben  <aroben@apple.com>
+
+        Test showing and hiding the find indicator on Windows
+
+        Test for <http://webkit.org/b/54213> <rdar://problem/8983261> REGRESSION (r78198): Crash in
+        FindIndicator::contentImage when scrolling page
+
+        Reviewed by Steve Falkenburg.
+
+        * TestWebKitAPI/Tests/WebKit2/win/HideFindIndicator.cpp: Added.
+        (TestWebKitAPI::didFinishLoadForFrame): Record that the load finished.
+        (TestWebKitAPI::findIndicatorCallback): Record that the callback was called, and save the
+        bitmap.
+        (TestWebKitAPI::initialize): Hook up our callbacks.
+        (TestWebKitAPI::TEST): Test showing then hiding the find indicator to see if we crash.
+
+        * TestWebKitAPI/PlatformWebView.h:
+        * TestWebKitAPI/mac/PlatformWebViewMac.mm:
+        (TestWebKitAPI::PlatformWebView::page):
+        * TestWebKitAPI/win/PlatformWebViewWin.cpp:
+        (TestWebKitAPI::PlatformWebView::page):
+        Made page a const member function.
+
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj: Added the new test.
+
 2011-02-10  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Martin Robinson.

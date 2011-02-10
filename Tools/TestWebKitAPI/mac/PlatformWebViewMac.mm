@@ -55,7 +55,7 @@ PlatformWebView::~PlatformWebView()
     [m_view release];
 }
 
-WKPageRef PlatformWebView::page()
+WKPageRef PlatformWebView::page() const
 {
     return [m_view pageRef];
 }

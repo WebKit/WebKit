@@ -54,7 +54,7 @@ public:
     PlatformWebView(WKContextRef, WKPageGroupRef = 0);
     ~PlatformWebView();
 
-    WKPageRef page();
+    WKPageRef page() const;
     PlatformWKView platformView() const { return m_view; }
     void resizeTo(unsigned width, unsigned height);
     void focus();

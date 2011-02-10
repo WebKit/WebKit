@@ -72,7 +72,7 @@ PlatformWebView::~PlatformWebView()
     WKRelease(m_view);
 }
 
-WKPageRef PlatformWebView::page()
+WKPageRef PlatformWebView::page() const
 {
     return WKViewGetPage(m_view);
 }

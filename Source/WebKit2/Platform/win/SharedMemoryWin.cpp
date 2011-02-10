@@ -46,6 +46,11 @@ SharedMemory::Handle::~Handle()
     ::CloseHandle(m_handle);
 }
 
+bool SharedMemory::Handle::isNull() const
+{
+    return !m_handle;
+}
+
 void SharedMemory::Handle::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     encoder->encodeUInt64(m_size);
@@ -141,9 +146,13 @@ static DWORD accessRights(SharedMemory::Protection protection)
 
 PassRefPtr<SharedMemory> SharedMemory::create(const Handle& handle, Protection protection)
 {
+    if (handle.isNull())
+        return 0;
+
     DWORD desiredAccess = accessRights(protection);
 
     void* baseAddress = ::MapViewOfFile(handle.m_handle, desiredAccess, 0, 0, handle.m_size);
+    ASSERT_WITH_MESSAGE(baseAddress, "::MapViewOfFile failed with error %lu", ::GetLastError());
     if (!baseAddress)
         return 0;
 

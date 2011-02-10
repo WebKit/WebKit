@@ -1060,35 +1060,37 @@ PassRefPtr<WebContextMenuProxy> WebView::createContextMenuProxy(WebPageProxy* pa
     return WebContextMenuProxyWin::create(m_window, page);
 }
 
-void WebView::setFindIndicator(PassRefPtr<FindIndicator> findIndicator, bool fadeOut)
+void WebView::setFindIndicator(PassRefPtr<FindIndicator> prpFindIndicator, bool fadeOut)
 {
     if (!m_findIndicatorCallback)
         return;
-    
+
     HBITMAP hbmp = 0;
-    ShareableBitmap* contentImage = findIndicator->contentImage();
-    
-    if (contentImage) {
-        // Render the contentImage to an HBITMAP.
-        void* bits;
-        HDC hdc = ::CreateCompatibleDC(0);
-        int width = contentImage->bounds().width();
-        int height = contentImage->bounds().height();
-        BitmapInfo bitmapInfo = BitmapInfo::create(contentImage->size());
+    IntRect selectionRect;
 
-        hbmp = CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, static_cast<void**>(&bits), 0, 0);
-        HBITMAP hbmpOld = static_cast<HBITMAP>(SelectObject(hdc, hbmp));
-        RetainPtr<CGContextRef> context(AdoptCF, CGBitmapContextCreate(bits, width, height,
-            8, width * sizeof(RGBQUAD), deviceRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst));
+    if (RefPtr<FindIndicator> findIndicator = prpFindIndicator) {
+        if (ShareableBitmap* contentImage = findIndicator->contentImage()) {
+            // Render the contentImage to an HBITMAP.
+            void* bits;
+            HDC hdc = ::CreateCompatibleDC(0);
+            int width = contentImage->bounds().width();
+            int height = contentImage->bounds().height();
+            BitmapInfo bitmapInfo = BitmapInfo::create(contentImage->size());
 
-        GraphicsContext graphicsContext(context.get());
-        contentImage->paint(graphicsContext, IntPoint(), contentImage->bounds());
+            hbmp = CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, static_cast<void**>(&bits), 0, 0);
+            HBITMAP hbmpOld = static_cast<HBITMAP>(SelectObject(hdc, hbmp));
+            RetainPtr<CGContextRef> context(AdoptCF, CGBitmapContextCreate(bits, width, height,
+                8, width * sizeof(RGBQUAD), deviceRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst));
 
-        ::SelectObject(hdc, hbmpOld);
-        ::DeleteDC(hdc);
+            GraphicsContext graphicsContext(context.get());
+            contentImage->paint(graphicsContext, IntPoint(), contentImage->bounds());
+
+            ::SelectObject(hdc, hbmpOld);
+            ::DeleteDC(hdc);
+        }
+
+        selectionRect = IntRect(findIndicator->selectionRectInWindowCoordinates());
     }
-
-    IntRect selectionRect(findIndicator->selectionRectInWindowCoordinates());
     
     // The callback is responsible for calling ::DeleteObject(hbmp).
     (*m_findIndicatorCallback)(toAPI(this), hbmp, selectionRect, fadeOut, m_findIndicatorCallbackContext);

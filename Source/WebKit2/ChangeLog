@@ -1,3 +1,24 @@
+2011-02-10  Adam Roben  <aroben@apple.com>
+
+        Handle a null FindIndicator correctly
+
+        We are passed a null FindIndicator when the find indicator becomes hidden.
+
+        Fixes <http://webkit.org/b/54213> <rdar://problem/8983261> REGRESSION (r78198): Crash in
+        FindIndicator::contentImage when scrolling page
+
+        Reviewed by Steve Falkenburg.
+
+        * Platform/win/SharedMemoryWin.cpp:
+        (WebKit::SharedMemory::Handle::isNull): Implemented.
+        (WebKit::SharedMemory::create): Bail out if the handle is null, just like Mac does.
+        Otherwise assert that ::MapViewOfFile succeeded. This doesn't fix the bug, but should help
+        catch other errors.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::setFindIndicator): Null-check the FindIndicator before dereferencing it.
+        Also changed the function to store the FindIndicator in a RefPtr.
+
 2011-02-10  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
