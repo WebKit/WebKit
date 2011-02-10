@@ -1,3 +1,10 @@
+2011-02-10  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: chromium build fix.
+
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgent::shouldInterruptForMessage):
+
 2011-02-10  Jochen Eisinger  <jochen@chromium.org>
 
         Reviewed by Jeremy Orlow.

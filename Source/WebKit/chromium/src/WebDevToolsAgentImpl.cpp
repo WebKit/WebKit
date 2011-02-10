@@ -394,14 +394,14 @@ bool WebDevToolsAgent::shouldInterruptForMessage(const WebString& message)
     String commandName;
     if (!InspectorBackendDispatcher::getCommandName(message, &commandName))
         return false;
-    return commandName == InspectorBackendDispatcher::pauseCmd
-        || commandName == InspectorBackendDispatcher::setJavaScriptBreakpointCmd
-        || commandName == InspectorBackendDispatcher::removeJavaScriptBreakpointCmd
-        || commandName == InspectorBackendDispatcher::activateBreakpointsCmd
-        || commandName == InspectorBackendDispatcher::deactivateBreakpointsCmd
-        || commandName == InspectorBackendDispatcher::startProfilingCmd
-        || commandName == InspectorBackendDispatcher::stopProfilingCmd
-        || commandName == InspectorBackendDispatcher::getProfileCmd;
+    return commandName == InspectorBackendDispatcher::Debugger_pauseCmd
+        || commandName == InspectorBackendDispatcher::Debugger_setJavaScriptBreakpointCmd
+        || commandName == InspectorBackendDispatcher::Debugger_removeJavaScriptBreakpointCmd
+        || commandName == InspectorBackendDispatcher::Debugger_activateBreakpointsCmd
+        || commandName == InspectorBackendDispatcher::Debugger_deactivateBreakpointsCmd
+        || commandName == InspectorBackendDispatcher::Inspector_startProfilingCmd
+        || commandName == InspectorBackendDispatcher::Inspector_stopProfilingCmd
+        || commandName == InspectorBackendDispatcher::Profiler_getProfileCmd;
 }
 
 void WebDevToolsAgent::processPendingMessages()
