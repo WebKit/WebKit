@@ -2,6 +2,20 @@
 
         Unreviewed, rebaseline.
 
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-light-04-f-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-light-04-f-expected.png:
+        * platform/chromium-linux/svg/transforms/animated-path-inside-transformed-html-expected.checksum:
+        * platform/chromium-linux/svg/transforms/animated-path-inside-transformed-html-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-light-04-f-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-light-04-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-light-04-f-expected.txt:
+        * platform/chromium-win/svg/transforms/animated-path-inside-transformed-html-expected.checksum:
+        * platform/chromium-win/svg/transforms/animated-path-inside-transformed-html-expected.png:
+
+2011-02-10  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, rebaseline.
+
         * platform/mac-leopard/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.checksum:
         * platform/mac-leopard/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.png:
         * platform/mac-leopard/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.checksum:
