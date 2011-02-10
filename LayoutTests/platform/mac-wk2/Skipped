@@ -52,6 +52,7 @@ compositing/iframes/iframe-src-change.html
 
 # WebKitTestRunner needs an implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
+fast/forms/file-input-hit-test.html
 fast/repaint/slider-thumb-drag-release.html
 editing/pasteboard/emacs-ctrl-k-y-001.html
 editing/pasteboard/drag-drop-dead-frame.html
