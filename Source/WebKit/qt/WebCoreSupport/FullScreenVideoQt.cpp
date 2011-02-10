@@ -22,15 +22,56 @@
 #include "FullScreenVideoQt.h"
 
 #include "ChromeClientQt.h"
+#include "FullScreenVideoWidget.h"
 #include "HTMLNames.h"
 #include "HTMLVideoElement.h"
 #include "MediaPlayerPrivateQt.h"
 #include "Node.h"
-#include "qwebkitplatformplugin.h"
+
 
 #include <QGraphicsVideoItem>
+#include <QMediaPlayer>
 
 namespace WebCore {
+
+bool DefaultFullScreenVideoHandler::s_shouldForceFullScreenVideoPlayback = false;
+
+DefaultFullScreenVideoHandler::DefaultFullScreenVideoHandler()
+    : QWebFullScreenVideoHandler()
+    , m_fullScreenWidget(new FullScreenVideoWidget)
+{
+    connect(m_fullScreenWidget, SIGNAL(didExitFullScreen()), this, SIGNAL(fullScreenClosed()));
+    m_fullScreenWidget->hide();
+}
+
+DefaultFullScreenVideoHandler::~DefaultFullScreenVideoHandler()
+{
+    delete m_fullScreenWidget;
+}
+
+bool DefaultFullScreenVideoHandler::requiresFullScreenForVideoPlayback() const
+{
+    static bool initialized = false;
+    if (!initialized) {
+        QByteArray forceFullScreen = qgetenv("QT_WEBKIT_FORCE_FULLSCREEN_VIDEO");
+        if (!forceFullScreen.isEmpty())
+            s_shouldForceFullScreenVideoPlayback = true;
+
+        initialized = true;
+    }
+
+    return s_shouldForceFullScreenVideoPlayback;
+}
+
+void DefaultFullScreenVideoHandler::enterFullScreen(QMediaPlayer* player)
+{
+    m_fullScreenWidget->show(player);
+}
+
+void DefaultFullScreenVideoHandler::exitFullScreen()
+{
+    m_fullScreenWidget->close();
+}
 
 FullScreenVideoQt::FullScreenVideoQt(ChromeClientQt* chromeClient)
     : m_chromeClient(chromeClient)
@@ -38,6 +79,9 @@ FullScreenVideoQt::FullScreenVideoQt(ChromeClientQt* chromeClient)
 {
     Q_ASSERT(m_chromeClient);
     m_FullScreenVideoHandler = m_chromeClient->m_platformPlugin.createFullScreenVideoHandler();
+
+    if (!m_FullScreenVideoHandler)
+        m_FullScreenVideoHandler = new DefaultFullScreenVideoHandler;
 
     if (m_FullScreenVideoHandler)
         connect(m_FullScreenVideoHandler, SIGNAL(fullScreenClosed()), this, SLOT(aboutToClose()));

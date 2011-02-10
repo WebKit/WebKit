@@ -20,20 +20,37 @@
 #ifndef FullScreenVideoQt_h
 #define FullScreenVideoQt_h
 
+#include "qwebkitplatformplugin.h"
 #include <QObject>
 
 QT_BEGIN_NAMESPACE
 class QGraphicsVideoItem;
+class QMediaPlayer;
 QT_END_NAMESPACE
-
-class QWebFullScreenVideoHandler;
 
 namespace WebCore {
 
 class ChromeClientQt;
+class FullScreenVideoWidget;
 class HTMLVideoElement;
 class Node;
 class MediaPlayerPrivateQt;
+
+class DefaultFullScreenVideoHandler : public QWebFullScreenVideoHandler {
+    Q_OBJECT
+public:
+    DefaultFullScreenVideoHandler();
+    virtual ~DefaultFullScreenVideoHandler();
+    bool requiresFullScreenForVideoPlayback() const;
+
+public Q_SLOTS:
+    void enterFullScreen(QMediaPlayer*);
+    void exitFullScreen();
+
+private:
+    static bool s_shouldForceFullScreenVideoPlayback;
+    FullScreenVideoWidget *m_fullScreenWidget;
+};
 
 class FullScreenVideoQt : public QObject {
     Q_OBJECT
@@ -61,4 +78,4 @@ private:
 
 }
 
-#endif // PopupMenuQt_h
+#endif // FullScreenVideoQt_h

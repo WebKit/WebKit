@@ -2677,6 +2677,7 @@ HEADERS += \
     $$PWD/../WebKit/qt/Api/qwebplugindatabase_p.h \
     $$PWD/../WebKit/qt/WebCoreSupport/InspectorServerQt.h \
     $$PWD/../WebKit/qt/WebCoreSupport/QtFallbackWebPopup.h \
+    $$PWD/../WebKit/qt/WebCoreSupport/ChromeClientQt.h \
     $$PWD/../WebKit/qt/WebCoreSupport/FrameLoaderClientQt.h \
     $$PWD/../WebKit/qt/WebCoreSupport/FrameNetworkingContextQt.h \
     $$PWD/../WebKit/qt/WebCoreSupport/GeolocationPermissionClientQt.h \
@@ -3282,11 +3283,13 @@ contains(DEFINES, ENABLE_VIDEO=1) {
      } else:contains(MOBILITY_CONFIG, multimedia) {
         HEADERS += \ 
             platform/graphics/qt/MediaPlayerPrivateQt.h \
-            $$PWD/../WebKit/qt/WebCoreSupport/FullScreenVideoQt.h
+            $$PWD/../WebKit/qt/WebCoreSupport/FullScreenVideoQt.h \
+            $$PWD/../WebKit/qt/WebCoreSupport/FullScreenVideoWidget.h
 
         SOURCES += \
             platform/graphics/qt/MediaPlayerPrivateQt.cpp \
-            $$PWD/../WebKit/qt/WebCoreSupport/FullScreenVideoQt.cpp
+            $$PWD/../WebKit/qt/WebCoreSupport/FullScreenVideoQt.cpp \
+            $$PWD/../WebKit/qt/WebCoreSupport/FullScreenVideoWidget.cpp
 
         CONFIG *= mobility
         MOBILITY += multimedia
