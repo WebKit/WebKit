@@ -1222,6 +1222,7 @@ SET(WebCore_SOURCES
     platform/graphics/StringTruncator.cpp
     platform/graphics/WidthIterator.cpp
 
+    platform/graphics/filters/DistantLightSource.cpp
     platform/graphics/filters/FEBlend.cpp
     platform/graphics/filters/FEColorMatrix.cpp
     platform/graphics/filters/FEComponentTransfer.cpp
@@ -1240,6 +1241,8 @@ SET(WebCore_SOURCES
     platform/graphics/filters/FETurbulence.cpp
     platform/graphics/filters/FilterEffect.cpp
     platform/graphics/filters/LightSource.cpp
+    platform/graphics/filters/PointLightSource.cpp
+    platform/graphics/filters/SpotLightSource.cpp
     platform/graphics/filters/SourceAlpha.cpp
     platform/graphics/filters/SourceGraphic.cpp
 

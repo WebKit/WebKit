@@ -2343,6 +2343,7 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/ContextShadow.cpp \
 	Source/WebCore/platform/graphics/ContextShadow.h \
 	Source/WebCore/platform/graphics/DashArray.h \
+	Source/WebCore/platform/graphics/filters/DistantLightSource.cpp \
 	Source/WebCore/platform/graphics/filters/DistantLightSource.h \
 	Source/WebCore/platform/graphics/filters/FEBlend.cpp \
 	Source/WebCore/platform/graphics/filters/FEBlend.h \
@@ -2381,11 +2382,13 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/filters/Filter.h \
 	Source/WebCore/platform/graphics/filters/LightSource.cpp \
 	Source/WebCore/platform/graphics/filters/LightSource.h \
+	Source/WebCore/platform/graphics/filters/PointLightSource.cpp \
 	Source/WebCore/platform/graphics/filters/PointLightSource.h \
 	Source/WebCore/platform/graphics/filters/SourceAlpha.cpp \
 	Source/WebCore/platform/graphics/filters/SourceAlpha.h \
 	Source/WebCore/platform/graphics/filters/SourceGraphic.cpp \
 	Source/WebCore/platform/graphics/filters/SourceGraphic.h \
+	Source/WebCore/platform/graphics/filters/SpotLightSource.cpp \
 	Source/WebCore/platform/graphics/filters/SpotLightSource.h \
 	Source/WebCore/platform/graphics/FloatPoint3D.cpp \
 	Source/WebCore/platform/graphics/FloatPoint3D.h \

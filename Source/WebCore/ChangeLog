@@ -1,3 +1,50 @@
+2011-02-10  Renata Hodovan  <reni@webkit.org>
+
+        Reviewed by Dirk Schulze.
+
+        Move the light source implementations into their own files.
+        https://bugs.webkit.org/show_bug.cgi?id=53996
+
+        Splitting LightSource.cpp into 3 files.
+
+        No new tests are added since this is a refactoring.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/filters/DistantLightSource.cpp: Added.
+        (WebCore::DistantLightSource::initPaintingData):
+        (WebCore::DistantLightSource::updatePaintingData):
+        (WebCore::DistantLightSource::setAzimuth):
+        (WebCore::DistantLightSource::setElevation):
+        (WebCore::DistantLightSource::externalRepresentation):
+        * platform/graphics/filters/LightSource.cpp:
+        * platform/graphics/filters/PointLightSource.cpp: Added.
+        (WebCore::PointLightSource::initPaintingData):
+        (WebCore::PointLightSource::updatePaintingData):
+        (WebCore::PointLightSource::setX):
+        (WebCore::PointLightSource::setY):
+        (WebCore::PointLightSource::setZ):
+        (WebCore::operator<<):
+        (WebCore::PointLightSource::externalRepresentation):
+        * platform/graphics/filters/SpotLightSource.cpp: Added.
+        (WebCore::SpotLightSource::initPaintingData):
+        (WebCore::SpotLightSource::updatePaintingData):
+        (WebCore::SpotLightSource::setX):
+        (WebCore::SpotLightSource::setY):
+        (WebCore::SpotLightSource::setZ):
+        (WebCore::SpotLightSource::setPointsAtX):
+        (WebCore::SpotLightSource::setPointsAtY):
+        (WebCore::SpotLightSource::setPointsAtZ):
+        (WebCore::SpotLightSource::setSpecularExponent):
+        (WebCore::SpotLightSource::setLimitingConeAngle):
+        (WebCore::operator<<):
+        (WebCore::SpotLightSource::externalRepresentation):
+
 2011-02-10  Avi Drissman  <avi@google.com>
 
         Reviewed by Darin Fisher.

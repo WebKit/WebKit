@@ -543,6 +543,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 
 ifeq ($(ENABLE_SVG), true)
 LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
+	platform/graphics/filters/DistantLightSource.cpp \
 	platform/graphics/filters/FEBlend.cpp \
 	platform/graphics/filters/FEColorMatrix.cpp \
 	platform/graphics/filters/FEComponentTransfer.cpp \
@@ -557,7 +558,9 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	platform/graphics/filters/FESpecularLighting.cpp \
 	platform/graphics/filters/FETile.cpp \
 	platform/graphics/filters/FETurbulence.cpp \
-	platform/graphics/filters/LightSource.cpp
+	platform/graphics/filters/LightSource.cpp \
+	platform/graphics/filters/PointLightSource.cpp \
+	platform/graphics/filters/SpotLightSource.cpp
 endif
 
 LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \

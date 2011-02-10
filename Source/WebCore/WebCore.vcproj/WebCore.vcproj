@@ -28660,6 +28660,10 @@
 					Name="filters"
 					>
 					<File
+						RelativePath="..\platform\graphics\filters\DistantLightSource.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\filters\DistantLightSource.h"
 						>
 					</File>
@@ -28812,6 +28816,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\filters\PointLightSource.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\filters\PointLightSource.h"
 						>
 					</File>
@@ -28829,6 +28837,10 @@
 					</File>
 					<File
 						RelativePath="..\platform\graphics\filters\SourceGraphic.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\SpotLightSource.cpp"
 						>
 					</File>
 					<File
