@@ -31,7 +31,6 @@ JAVASCRIPTCORE_INCLUDEPATH = \
     $$PWD/interpreter \
     $$PWD/jit \
     $$PWD/parser \
-    $$PWD/pcre \
     $$PWD/profiler \
     $$PWD/runtime \
     $$PWD/wtf \

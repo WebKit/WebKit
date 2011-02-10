@@ -1,3 +1,40 @@
+2011-02-10  Peter Varga  <pvarga@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Remove PCRE source from trunk
+        https://bugs.webkit.org/show_bug.cgi?id=54188
+
+        * Android.mk:
+        * Android.v8.wtf.mk:
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pro:
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.order:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make:
+        * JavaScriptCore.vcproj/WTF/WTFCommon.vsprops:
+        * JavaScriptCore.vcproj/jsc/jscCommon.vsprops:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * pcre/AUTHORS: Removed.
+        * pcre/COPYING: Removed.
+        * pcre/dftables: Removed.
+        * pcre/pcre.h: Removed.
+        * pcre/pcre.pri: Removed.
+        * pcre/pcre_compile.cpp: Removed.
+        * pcre/pcre_exec.cpp: Removed.
+        * pcre/pcre_internal.h: Removed.
+        * pcre/pcre_tables.cpp: Removed.
+        * pcre/pcre_ucp_searchfuncs.cpp: Removed.
+        * pcre/pcre_xclass.cpp: Removed.
+        * pcre/ucpinternal.h: Removed.
+        * pcre/ucptable.cpp: Removed.
+        * wscript:
+
 2011-02-10  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Barth.

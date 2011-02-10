@@ -10,7 +10,6 @@ SET(JavaScriptCore_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/interpreter"
     "${JAVASCRIPTCORE_DIR}/jit"
     "${JAVASCRIPTCORE_DIR}/parser"
-    "${JAVASCRIPTCORE_DIR}/pcre"
     "${JAVASCRIPTCORE_DIR}/profiler"
     "${JAVASCRIPTCORE_DIR}/runtime"
     "${JAVASCRIPTCORE_DIR}/yarr"
@@ -68,12 +67,6 @@ SET(JavaScriptCore_SOURCES
     parser/Parser.cpp
     parser/ParserArena.cpp
     parser/SourceProviderCache.cpp
-
-    pcre/pcre_compile.cpp
-    pcre/pcre_exec.cpp
-    pcre/pcre_tables.cpp
-    pcre/pcre_ucp_searchfuncs.cpp
-    pcre/pcre_xclass.cpp
 
     profiler/Profile.cpp
     profiler/ProfileGenerator.cpp
@@ -210,15 +203,6 @@ ENDFOREACH ()
 # GENERATOR 1-B: particular LUT creator (for 1 file only)
 GENERATE_HASH_LUT(${JAVASCRIPTCORE_DIR}/parser/Keywords.table ${DERIVED_SOURCES_DIR}/Lexer.lut.h MAIN_DEPENDENCY)
 LIST(APPEND JavaScriptCore_HEADERS ${DERIVED_SOURCES_DIR}/Lexer.lut.h)
-
-# GENERATOR: "chartables.c": compile and execute the chartables generator (and add it to sources)
-ADD_CUSTOM_COMMAND(
-    OUTPUT ${DERIVED_SOURCES_DIR}/chartables.c
-    MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/pcre/dftables
-    COMMAND ${PERL_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/pcre/dftables --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" ${DERIVED_SOURCES_DIR}/chartables.c
-    VERBATIM)
-ADD_SOURCE_DEPENDENCIES(${JAVASCRIPTCORE_DIR}/pcre/pcre_tables.cpp ${DERIVED_SOURCES_DIR}/chartables.c)
-
 
 #GENERATOR: "RegExpJitTables.h": tables used by Yarr
 ADD_CUSTOM_COMMAND(

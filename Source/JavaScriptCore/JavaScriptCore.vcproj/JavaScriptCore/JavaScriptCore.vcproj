@@ -1339,42 +1339,6 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="pcre"
-			>
-			<File
-				RelativePath="..\..\pcre\pcre.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\pcre\pcre_compile.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\pcre\pcre_exec.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\pcre\pcre_internal.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\pcre\pcre_tables.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\pcre\pcre_ucp_searchfuncs.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\pcre\pcre_xclass.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\pcre\ucpinternal.h"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="API"
 			>
 			<File

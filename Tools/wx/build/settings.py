@@ -86,7 +86,6 @@ jscore_dirs = [
     'interpreter',
     'jit',
     'parser',
-    'pcre',
     'profiler',
     'runtime',
     'wtf',

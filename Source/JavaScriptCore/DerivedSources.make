@@ -27,7 +27,6 @@
 VPATH = \
     $(JavaScriptCore) \
     $(JavaScriptCore)/parser \
-    $(JavaScriptCore)/pcre \
     $(JavaScriptCore)/docs \
     $(JavaScriptCore)/runtime \
     $(JavaScriptCore)/interpreter \
@@ -49,7 +48,6 @@ all : \
     RegExpJitTables.h \
     RegExpObject.lut.h \
     StringPrototype.lut.h \
-    chartables.c \
     docs/bytecode.html \
 #
 
@@ -59,11 +57,6 @@ all : \
 	$^ -i > $@
 Lexer.lut.h: create_hash_table Keywords.table
 	$^ > $@
-
-# character tables for PCRE
-
-chartables.c : dftables
-	$^ $@
 
 docs/bytecode.html: make-bytecode-docs.pl Interpreter.cpp 
 	perl $^ $@

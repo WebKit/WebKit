@@ -11,7 +11,6 @@ javascriptcore_cppflags += \
 	-I$(srcdir)/Source/JavaScriptCore/jit \
 	-I$(srcdir)/Source/JavaScriptCore/jit \
 	-I$(srcdir)/Source/JavaScriptCore/parser \
-	-I$(srcdir)/Source/JavaScriptCore/pcre \
 	-I$(srcdir)/Source/JavaScriptCore/profiler \
 	-I$(srcdir)/Source/JavaScriptCore/runtime \
 	-I$(srcdir)/Source/JavaScriptCore/wtf \
@@ -23,7 +22,6 @@ javascriptcore_cppflags += \
 	-I$(srcdir)/Source/JavaScriptCore/yarr \
 	-I$(top_builddir)/Source/JavaScriptCore \
 	-I$(top_builddir)/Source/JavaScriptCore/parser \
-	-I$(top_builddir)/Source/JavaScriptCore/pcre \
 	-I$(top_builddir)/Source/JavaScriptCore/runtime
 
 javascriptcore_h_api += \
@@ -48,8 +46,7 @@ javascriptcore_built_nosources += \
 	Source/JavaScriptCore/runtime/NumberConstructor.lut.h \
 	Source/JavaScriptCore/runtime/RegExpConstructor.lut.h \
 	Source/JavaScriptCore/runtime/RegExpObject.lut.h \
-	Source/JavaScriptCore/runtime/StringPrototype.lut.h \
-	Source/JavaScriptCore/pcre/chartables.c
+	Source/JavaScriptCore/runtime/StringPrototype.lut.h
 
 javascriptcore_sources += \
 	Source/JavaScriptCore/API/APICast.h \
@@ -206,14 +203,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/parser/SourceProviderCache.h \
 	Source/JavaScriptCore/parser/SourceProviderCacheItem.h \
 	Source/JavaScriptCore/parser/SyntaxChecker.h \
-	Source/JavaScriptCore/pcre/pcre_compile.cpp \
-	Source/JavaScriptCore/pcre/pcre_exec.cpp \
-	Source/JavaScriptCore/pcre/pcre.h \
-	Source/JavaScriptCore/pcre/pcre_internal.h \
-	Source/JavaScriptCore/pcre/pcre_tables.cpp \
-	Source/JavaScriptCore/pcre/pcre_ucp_searchfuncs.cpp \
-	Source/JavaScriptCore/pcre/pcre_xclass.cpp \
-	Source/JavaScriptCore/pcre/ucpinternal.h \
 	Source/JavaScriptCore/profiler/CallIdentifier.h \
 	Source/JavaScriptCore/profiler/Profile.cpp \
 	Source/JavaScriptCore/profiler/ProfileGenerator.cpp \
@@ -622,9 +611,6 @@ Source/JavaScriptCore/%.lut.h: $(srcdir)/Source/JavaScriptCore/create_hash_table
 Source/JavaScriptCore/RegExpJitTables.h: $(srcdir)/Source/JavaScriptCore/create_regex_tables
 	$(AM_V_GEN)$(PYTHON) $^ > $@
 
-Source/JavaScriptCore/pcre/chartables.c: $(srcdir)/Source/JavaScriptCore/pcre/dftables
-	$(AM_V_GEN)$(PERL) $^ $@
-
 jsc: $(javascriptcore_built_nosources) Programs/jsc-@WEBKITGTK_API_MAJOR_VERSION@$(EXEEXT);
 
 bin_PROGRAMS += \
@@ -699,10 +685,6 @@ EXTRA_DIST += \
 	Source/JavaScriptCore/icu/LICENSE \
 	Source/JavaScriptCore/icu/README \
 	Source/JavaScriptCore/parser/Keywords.table \
-	Source/JavaScriptCore/pcre/AUTHORS \
-	Source/JavaScriptCore/pcre/COPYING \
-	Source/JavaScriptCore/pcre/dftables \
-	Source/JavaScriptCore/pcre/ucptable.cpp \
 	Source/JavaScriptCore/THANKS
 
 # Clean rules for JavaScriptCore
@@ -715,7 +697,6 @@ CLEANFILES += \
 	Source/JavaScriptCore/runtime/RegExpConstructor.lut.h \
 	Source/JavaScriptCore/runtime/RegExpObject.lut.h \
 	Source/JavaScriptCore/runtime/StringPrototype.lut.h \
-	Source/JavaScriptCore/pcre/chartables.c \
 	Programs/jsc \
 	Programs/jsc-@WEBKITGTK_API_MAJOR_VERSION@ \
 	Programs/minidom

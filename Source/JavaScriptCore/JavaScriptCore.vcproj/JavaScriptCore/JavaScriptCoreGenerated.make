@@ -39,7 +39,6 @@ all:
     xcopy /y /d "..\..\debugger\*.h" "%ConfigurationBuildDir%\include\private\JavaScriptCore"
     xcopy /y /d "..\..\profiler\*.h" "%ConfigurationBuildDir%\include\private\JavaScriptCore"
     xcopy /y /d "..\..\create_hash_table" "%ConfigurationBuildDir%\include\private\JavaScriptCore"
-    xcopy /y /d "..\..\pcre\pcre.h" "%ConfigurationBuildDir%\include\private\JavaScriptCore"
     xcopy /y /d "..\..\wtf\text\AtomicString.cpp" "%ConfigurationBuildDir%\include\private\JavaScriptCore"
     xcopy /y /d "..\..\wtf\text\StringBuilder.cpp" "%ConfigurationBuildDir%\include\private\JavaScriptCore"
     xcopy /y /d "..\..\wtf\text\StringImpl.cpp" "%ConfigurationBuildDir%\include\private\JavaScriptCore"

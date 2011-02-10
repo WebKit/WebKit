@@ -61,12 +61,6 @@ LOCAL_SRC_FILES := \
 	parser/Parser.cpp \
 	parser/ParserArena.cpp \
 	\
-	pcre/pcre_compile.cpp \
-	pcre/pcre_exec.cpp \
-	pcre/pcre_tables.cpp \
-	pcre/pcre_ucp_searchfuncs.cpp \
-	pcre/pcre_xclass.cpp \
-	\
 	profiler/Profile.cpp \
 	profiler/ProfileGenerator.cpp \
 	profiler/ProfileNode.cpp \
@@ -226,11 +220,4 @@ $(LEXER_HEADER): $(LOCAL_PATH)/create_hash_table
 $(LEXER_HEADER): $(intermediates)/%.lut.h : $(LOCAL_PATH)/parser/Keywords.table
 	$(transform-generated-source)
 
-CHARTABLES := $(intermediates)/chartables.c
-$(CHARTABLES): PRIVATE_PATH := $(LOCAL_PATH)
-$(CHARTABLES): PRIVATE_CUSTOM_TOOL = perl $(PRIVATE_PATH)/pcre/dftables $@
-$(CHARTABLES): $(LOCAL_PATH)/pcre/dftables
-$(CHARTABLES): $(LOCAL_PATH)/pcre/pcre_internal.h
-	$(transform-generated-source)
-
-LOCAL_GENERATED_SOURCES += $(JSC_OBJECTS) $(LEXER_HEADER) $(CHARTABLES)
+LOCAL_GENERATED_SOURCES += $(JSC_OBJECTS) $(LEXER_HEADER)

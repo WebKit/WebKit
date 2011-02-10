@@ -45,7 +45,6 @@ WEBKIT2_INCLUDEPATH = \
     $$PWD/../JavaScriptCore/interpreter \
     $$PWD/../JavaScriptCore/jit \
     $$PWD/../JavaScriptCore/parser \
-    $$PWD/../JavaScriptCore/pcre \
     $$PWD/../JavaScriptCore/profiler \
     $$PWD/../JavaScriptCore/runtime \
     $$PWD/../JavaScriptCore/wtf \
