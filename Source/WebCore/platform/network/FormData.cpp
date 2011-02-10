@@ -209,14 +209,16 @@ void FormData::appendKeyValuePairItems(const FormDataList& list, const TextEncod
                     name = file->webkitRelativePath().isEmpty() ? file->name() : file->webkitRelativePath();
 #else
                     name = file->name();
-#endif                    
-
+#endif
                     // Let the application specify a filename if it's going to generate a replacement file for the upload.
-                    if (Page* page = document->page()) {
-                        String generatedFileName;
-                        shouldGenerateFile = page->chrome()->client()->shouldReplaceWithGeneratedFileForUpload(file->path(), generatedFileName);
-                        if (shouldGenerateFile)
-                            name = generatedFileName;
+                    const String& path = file->path();
+                    if (!path.isEmpty()) {
+                        if (Page* page = document->page()) {
+                            String generatedFileName;
+                            shouldGenerateFile = page->chrome()->client()->shouldReplaceWithGeneratedFileForUpload(path, generatedFileName);
+                            if (shouldGenerateFile)
+                                name = generatedFileName;
+                        }
                     }
                 } else {
                     // For non-file blob, use the identifier part of the URL as the name.

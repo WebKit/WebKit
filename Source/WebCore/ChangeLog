@@ -1,3 +1,16 @@
+2011-02-10  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=50306
+        <rdar://problem/8976152> REGRESSION: WebChromeClient::shouldReplaceWithGeneratedFileForUpload()
+        uses an initialized result value (breaks form submission with clang-built WebKit)
+
+        No new test, because I can't reproduce the observable effect with my gcc build.
+
+        * platform/network/FormData.cpp: (WebCore::FormData::appendKeyValuePairItems): Restore an
+        empty path check - an empty path was causing an exception in Foundation.
+
 2011-02-09  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
