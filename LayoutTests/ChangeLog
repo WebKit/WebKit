@@ -1,3 +1,18 @@
+2011-02-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION (r77101) box-shadow sometimes renders incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=54160
+        
+        Testcase that draws one box-shadow, then draws a second partially clipped shadow
+        that should not show artifacts.
+
+        * fast/box-shadow/shadow-buffer-partial.html: Added.
+        * platform/mac/fast/box-shadow/shadow-buffer-partial-expected.checksum: Added.
+        * platform/mac/fast/box-shadow/shadow-buffer-partial-expected.png: Added.
+        * platform/mac/fast/box-shadow/shadow-buffer-partial-expected.txt: Added.
+
 2011-02-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed; removed Windows port's expected result for r78104.

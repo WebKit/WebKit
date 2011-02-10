@@ -1,3 +1,25 @@
+2011-02-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION (r77101) box-shadow sometimes renders incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=54160
+        
+        Fix an issue when ShadowBlur had a cached image buffer
+        that was larger than that of the current shadow being drawn,
+        and the current shadow was partially clipped out.
+        
+        In that situation endShadowLayer() would clip to the image
+        buffer, using the size of the buffer (as it must), but failed
+        to take into account the fact that we'd only cleared and painted
+        into a smaller section of the buffer. So we need to additionally
+        constrain the clip to cover only the valid part of the buffer.
+
+        Test: fast/box-shadow/shadow-buffer-partial.html
+
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ShadowBlur::endShadowLayer):
+
 2011-02-09  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej Stachowiak.

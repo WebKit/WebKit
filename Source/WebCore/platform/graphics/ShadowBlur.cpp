@@ -393,7 +393,13 @@ void ShadowBlur::endShadowLayer(GraphicsContext* graphicsContext)
 
     graphicsContext->save();
 
-    graphicsContext->clipToImageBuffer(m_layerImage, FloatRect(m_layerOrigin, m_layerImage->size()));
+    IntSize bufferSize = m_layerImage->size();
+    if (bufferSize != m_layerSize) {
+        // The rect passed to clipToImageBuffer() has to be the size of the entire buffer,
+        // but we may not have cleared it all, so clip to the filled part first.
+        graphicsContext->clip(FloatRect(m_layerOrigin, m_layerSize));
+    }
+    graphicsContext->clipToImageBuffer(m_layerImage, FloatRect(m_layerOrigin, bufferSize));
     graphicsContext->setFillColor(m_color, m_colorSpace);
 
     graphicsContext->clearShadow();
