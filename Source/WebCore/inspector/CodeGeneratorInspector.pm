@@ -205,18 +205,20 @@ my $namespace;
 my $backendClassName;
 my $backendJSStubName;
 my %backendTypes;
-my %backendMethods;
+my @backendMethods;
 my @backendMethodsImpl;
+my %backendMethodSignatures;
 my $backendConstructor;
 my @backendConstantDeclarations;
 my @backendConstantDefinitions;
 my $backendFooter;
-my @backendStubJS;
+my @backendJSStubs;
 
 my $frontendClassName;
 my %frontendTypes;
-my %frontendMethods;
+my @frontendMethods;
 my @frontendMethodsImpl;
+my %frontendMethodSignatures;
 my $frontendConstructor;
 my @frontendConstantDeclarations;
 my @frontendConstantDefinitions;
@@ -259,15 +261,15 @@ sub GenerateInterface
 
     my $className = $interface->name;
 
-    $frontendClassName = $className . "Frontend";
+    $frontendClassName = "InspectorFrontend";
     $frontendConstructor = "    ${frontendClassName}(InspectorClient* inspectorClient) : m_inspectorClient(inspectorClient) { }";
-    $frontendFooter = "    InspectorClient* m_inspectorClient;";
+    $frontendFooter = "  private:\n    InspectorClient* m_inspectorClient;";
     $frontendTypes{"String"} = 1;
     $frontendTypes{"InspectorClient"} = 1;
     $frontendTypes{"PassRefPtr"} = 1;
 
-    $backendClassName = $className . "BackendDispatcher";
-    $backendJSStubName = $className . "BackendStub";
+    $backendClassName = "InspectorBackendDispatcher";
+    $backendJSStubName = "InspectorBackendStub";
     my @backendHead;
     push(@backendHead, "    ${backendClassName}(InspectorAgent* inspectorAgent) : m_inspectorAgent(inspectorAgent) { }");
     push(@backendHead, "    void reportProtocolError(const long callId, const String& errorText) const;");
@@ -280,12 +282,7 @@ sub GenerateInterface
     $backendTypes{"PassRefPtr"} = 1;
     $backendTypes{"Object"} = 1;
 
-    push(@backendMethodsImpl, generateBackendMessageParser());
     generateFunctions($interface);
-
-    # Make dispatcher methods private on the backend.
-    push(@backendConstantDeclarations, "");
-    push(@backendConstantDeclarations, "private:");
 }
 
 sub generateFunctions
@@ -294,55 +291,48 @@ sub generateFunctions
 
     foreach my $function (@{$interface->functions}) {
         if ($function->signature->extendedAttributes->{"notify"}) {
-            generateFrontendFunction($function);
+            generateFrontendFunction($interface, $function);
         } else {
-            generateBackendFunction($function);
-        }
-    }
-    push(@backendMethodsImpl, generateBackendDispatcher());
-    push(@backendMethodsImpl, generateBackendReportProtocolError());
-
-    foreach my $type (keys %backendTypes) {
-        if ($typeTransform{$type}{"JSONType"}) {
-            push(@backendMethodsImpl, generateArgumentGetters($type));
+            generateBackendFunction($interface, $function);
         }
     }
 
-    @backendStubJS = generateBackendStubJS($interface);
+    collectBackendJSStubFunctions($interface);
 }
 
 sub generateFrontendFunction
 {
+    my $interface = shift;
     my $function = shift;
 
     my $functionName = $function->signature->name;
 
-    my $domain = $function->signature->extendedAttributes->{"domain"} || "Inspector";
+    my $domain = $interface->name;
     my @argsFiltered = grep($_->direction eq "out", @{$function->parameters}); # just keep only out parameters for frontend interface.
     map($frontendTypes{$_->type} = 1, @argsFiltered); # register required types.
     my $arguments = join(", ", map($typeTransform{$_->type}->{"param"} . " " . $_->name, @argsFiltered)); # prepare arguments for function signature.
 
     my $signature = "    void ${functionName}(${arguments});";
-    if (!$frontendMethods{${signature}}) {
-        $frontendMethods{${signature}} = 1;
+    !$frontendMethodSignatures{${signature}} || die "Duplicate frontend function was detected for signature '$signature'.";
+    $frontendMethodSignatures{${signature}} = 1;
+    push(@frontendMethods, $signature);
 
-        my @function;
-        push(@function, "void ${frontendClassName}::${functionName}(${arguments})");
-        push(@function, "{");
-        push(@function, "    RefPtr<InspectorObject> ${functionName}Message = InspectorObject::create();");
-        push(@function, "    ${functionName}Message->setString(\"type\", \"event\");");
-        push(@function, "    ${functionName}Message->setString(\"domain\", \"$domain\");");
-        push(@function, "    ${functionName}Message->setString(\"event\", \"$functionName\");");
-        push(@function, "    RefPtr<InspectorObject> payloadDataObject = InspectorObject::create();");
-        my @pushArguments = map("    payloadDataObject->set" . $typeTransform{$_->type}->{"JSONType"} . "(\"" . $_->name . "\", " . $_->name . ");", @argsFiltered);
-        push(@function, @pushArguments);
-        push(@function, "    ${functionName}Message->setObject(\"data\", payloadDataObject);");
-        push(@function, "    m_inspectorClient->sendMessageToFrontend(${functionName}Message->toJSONString());");
+    my @function;
+    push(@function, "void ${frontendClassName}::${functionName}(${arguments})");
+    push(@function, "{");
+    push(@function, "    RefPtr<InspectorObject> ${functionName}Message = InspectorObject::create();");
+    push(@function, "    ${functionName}Message->setString(\"type\", \"event\");");
+    push(@function, "    ${functionName}Message->setString(\"domain\", \"$domain\");");
+    push(@function, "    ${functionName}Message->setString(\"event\", \"$functionName\");");
+    push(@function, "    RefPtr<InspectorObject> payloadDataObject = InspectorObject::create();");
+    my @pushArguments = map("    payloadDataObject->set" . $typeTransform{$_->type}->{"JSONType"} . "(\"" . $_->name . "\", " . $_->name . ");", @argsFiltered);
+    push(@function, @pushArguments);
+    push(@function, "    ${functionName}Message->setObject(\"data\", payloadDataObject);");
+    push(@function, "    m_inspectorClient->sendMessageToFrontend(${functionName}Message->toJSONString());");
 
-        push(@function, "}");
-        push(@function, "");
-        push(@frontendMethodsImpl, @function);
-    }
+    push(@function, "}");
+    push(@function, "");
+    push(@frontendMethodsImpl, @function);
 }
 
 sub camelCase
@@ -355,29 +345,32 @@ sub camelCase
 
 sub generateBackendFunction
 {
+    my $interface = shift;
     my $function = shift;
 
     my $functionName = $function->signature->name;
+    my $fullQualifiedFunctionName = $interface->name . "_" . $function->signature->name;
 
-    push(@backendConstantDeclarations, "    static const char* ${functionName}Cmd;");
-    push(@backendConstantDefinitions, "const char* ${backendClassName}::${functionName}Cmd = \"${functionName}\";");
+    push(@backendConstantDeclarations, "    static const char* ${fullQualifiedFunctionName}Cmd;");
+    push(@backendConstantDefinitions, "const char* ${backendClassName}::${fullQualifiedFunctionName}Cmd = \"${functionName}\";");
 
     map($backendTypes{$_->type} = 1, @{$function->parameters}); # register required types
     my @inArgs = grep($_->direction eq "in" && !($_->name eq "callId") , @{$function->parameters});
     my @outArgs = grep($_->direction eq "out", @{$function->parameters});
 
-    my $signature = "    void ${functionName}(long callId, InspectorObject* requestMessageObject);";
-    !$backendMethods{${signature}} || die "Duplicate function was detected for signature '$signature'.";
-    $backendMethods{${signature}} = $functionName;
+    my $signature = "    void ${fullQualifiedFunctionName}(long callId, InspectorObject* requestMessageObject);";
+    !$backendMethodSignatures{${signature}} || die "Duplicate function was detected for signature '$signature'.";
+    $backendMethodSignatures{${signature}} = "$fullQualifiedFunctionName";
+    push(@backendMethods, ${signature});
 
     my @function;
     my $requestMessageObject = scalar(@inArgs) ? " requestMessageObject" : "";
-    push(@function, "void ${backendClassName}::${functionName}(long callId, InspectorObject*$requestMessageObject)");
+    push(@function, "void ${backendClassName}::${fullQualifiedFunctionName}(long callId, InspectorObject*$requestMessageObject)");
     push(@function, "{");
     push(@function, "    RefPtr<InspectorArray> protocolErrors = InspectorArray::create();");
     push(@function, "");
 
-    my $domain = $function->signature->extendedAttributes->{"domain"} || "Inspector";
+    my $domain = $interface->name;
     my $domainAccessor = $typeTransform{$domain}->{"domainAccessor"};
     $backendTypes{$domain} = 1;
     push(@function, "    if (!$domainAccessor)");
@@ -490,8 +483,7 @@ EOF
 sub generateBackendDispatcher
 {
     my @body;
-    my @methods = map($backendMethods{$_}, keys %backendMethods);
-    my @mapEntries = map("        dispatchMap.add(${_}Cmd, &${backendClassName}::$_);", @methods);
+    my @mapEntries = map("        dispatchMap.add(${_}Cmd, &${backendClassName}::$_);", map ($backendMethodSignatures{$_}, @backendMethods));
     my $mapEntries = join("\n", @mapEntries);
 
     my $backendDispatcherBody = << "EOF";
@@ -572,30 +564,31 @@ bool ${backendClassName}::getCommandName(const String& message, String* result)
 
     return commandValue->asString(result);
 }
-
 EOF
     return split("\n", $messageParserBody);
 }
 
-sub generateBackendStubJS
+sub collectBackendJSStubFunctions
 {
     my $interface = shift;
-    my @backendFunctions = grep(!$_->signature->extendedAttributes->{"notify"}, @{$interface->functions});
-    my @JSStubs;
+    my @functions = grep(!$_->signature->extendedAttributes->{"notify"}, @{$interface->functions});
+    my $domain = $interface->name;
 
-    foreach my $function (@backendFunctions) {
+    foreach my $function (@functions) {
         my $name = $function->signature->name;
-        my $domain = $function->signature->extendedAttributes->{"domain"};
         my $argumentNames = join(",", map("\"" . $_->name . "\": \"" . $typeTransform{$_->type}->{"JSType"} . "\"", grep($_->direction eq "in", @{$function->parameters})));
-        push(@JSStubs, "    this._registerDelegate('{" .
+        push(@backendJSStubs, "    this._registerDelegate('{" .
             "\"seq\": 0, " .
             "\"domain\": \"$domain\", " .
             "\"command\": \"$name\", " .
             "\"arguments\": {$argumentNames}" .
         "}');");
     }
+}
 
-    my $JSStubs = join("\n", @JSStubs);
+sub generateBackendStubJS
+{
+    my $JSStubs = join("\n", @backendJSStubs);
     my $inspectorBackendStubJS = << "EOF";
 $licenseTemplate
 
@@ -734,7 +727,7 @@ sub generateHeader
     my $forwardHeaders = join("\n", sort(map("#include <" . $typeTransform{$_}->{"forwardHeader"} . ">", grep($typeTransform{$_}->{"forwardHeader"}, keys %{$types}))));
     my $forwardDeclarations = join("\n", sort(map("class " . $typeTransform{$_}->{"forward"} . ";", grep($typeTransform{$_}->{"forward"}, keys %{$types}))));
     my $constantDeclarations = join("\n", @{$constants});
-    my $methodsDeclarations = join("\n", keys %{$methods});
+    my $methodsDeclarations = join("\n", @{$methods});
 
     my $headerBody = << "EOF";
 // Copyright (c) 2010 The Chromium Authors. All rights reserved.
@@ -756,7 +749,6 @@ $constructor
 $constantDeclarations
 $methodsDeclarations
 
-private:
 $footer
 };
 
@@ -791,7 +783,7 @@ sub generateSource
     push(@sourceContent, "");
     push(@sourceContent, "namespace $namespace {");
     push(@sourceContent, "");
-    push (@sourceContent, join("\n", @{$constants}));
+    push(@sourceContent, join("\n", @{$constants}));
     push(@sourceContent, "");
     push(@sourceContent, @{$methods});
     push(@sourceContent, "");
@@ -806,15 +798,33 @@ sub finish
 {
     my $object = shift;
 
+    push(@backendMethodsImpl, generateBackendDispatcher());
+    push(@backendMethodsImpl, generateBackendReportProtocolError());
+
     open(my $SOURCE, ">$outputDir/$frontendClassName.cpp") || die "Couldn't open file $outputDir/$frontendClassName.cpp";
     print $SOURCE join("\n", generateSource($frontendClassName, \%frontendTypes, \@frontendConstantDefinitions, \@frontendMethodsImpl));
     close($SOURCE);
     undef($SOURCE);
 
     open(my $HEADER, ">$outputHeadersDir/$frontendClassName.h") || die "Couldn't open file $outputHeadersDir/$frontendClassName.h";
-    print $HEADER generateHeader($frontendClassName, \%frontendTypes, $frontendConstructor, \@frontendConstantDeclarations, \%frontendMethods, $frontendFooter);
+    print $HEADER generateHeader($frontendClassName, \%frontendTypes, $frontendConstructor, \@frontendConstantDeclarations, \@frontendMethods, $frontendFooter);
     close($HEADER);
     undef($HEADER);
+
+    # Make dispatcher methods private on the backend.
+    push(@backendConstantDeclarations, "");
+    push(@backendConstantDeclarations, "private:");
+
+    foreach my $type (keys %backendTypes) {
+        if ($typeTransform{$type}{"JSONType"}) {
+            push(@backendMethodsImpl, generateArgumentGetters($type));
+        }
+    }
+
+    push(@backendMethodsImpl, generateBackendMessageParser());
+    push(@backendMethodsImpl, "");
+
+    push(@backendConstantDeclarations, "");
 
     open($SOURCE, ">$outputDir/$backendClassName.cpp") || die "Couldn't open file $outputDir/$backendClassName.cpp";
     print $SOURCE join("\n", generateSource($backendClassName, \%backendTypes, \@backendConstantDefinitions, \@backendMethodsImpl));
@@ -822,12 +832,12 @@ sub finish
     undef($SOURCE);
 
     open($HEADER, ">$outputHeadersDir/$backendClassName.h") || die "Couldn't open file $outputHeadersDir/$backendClassName.h";
-    print $HEADER join("\n", generateHeader($backendClassName, \%backendTypes, $backendConstructor, \@backendConstantDeclarations, \%backendMethods, $backendFooter));
+    print $HEADER join("\n", generateHeader($backendClassName, \%backendTypes, $backendConstructor, \@backendConstantDeclarations, \@backendMethods, $backendFooter));
     close($HEADER);
     undef($HEADER);
 
     open(my $JS_STUB, ">$outputDir/$backendJSStubName.js") || die "Couldn't open file $outputDir/$backendJSStubName.js";
-    print $JS_STUB join("\n", @backendStubJS);
+    print $JS_STUB join("\n", generateBackendStubJS());
     close($JS_STUB);
     undef($JS_STUB);
 }

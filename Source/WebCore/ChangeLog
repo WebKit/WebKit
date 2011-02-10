@@ -1,3 +1,13 @@
+2011-02-10  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: define interface per domain in Inspector.idl.
+        https://bugs.webkit.org/show_bug.cgi?id=54135
+
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/Inspector.idl:
+
 2011-02-10  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Pavel Feldman.

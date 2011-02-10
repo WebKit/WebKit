@@ -31,286 +31,260 @@
 
 module core {
     interface [Conditional=INSPECTOR] Inspector {
+        void addScriptToEvaluateOnLoad(in String scriptSource);
+        void removeAllScriptsToEvaluateOnLoad();
+        void reloadPage(in boolean ignoreCache);
+        void populateScriptObjects();
 
-        ///////////////////////////////////////////////////////////////////////
-        // generic Inspector's methods
-        ///////////////////////////////////////////////////////////////////////
+        void openInInspectedWindow(in String url);
+        void setSearchingForNode(in boolean enabled, out boolean newState);
+        [notify] void frontendReused();
+        [notify] void addNodesToSearchResult(out Array nodeIds);
+        [notify] void bringToFront();
+        [notify] void disconnectFromBackend();
+        [notify] void inspectedURLChanged(out String url);
+        [notify] void domContentEventFired(out double time);
+        [notify] void loadEventFired(out double time);
+        [notify] void reset();
+        [notify] void showPanel(out String panel);
 
-        [domain=Inspector] void addScriptToEvaluateOnLoad(in String scriptSource);
-        [domain=Inspector] void removeAllScriptsToEvaluateOnLoad();
-        [domain=Inspector] void reloadPage(in boolean ignoreCache);
-        [domain=Inspector] void populateScriptObjects();
+        [notify] void evaluateForTestInFrontend(out long testCallId, out String script);
+        void didEvaluateForTestInFrontend(in long testCallId, in String jsonResult);
 
-        [domain=Inspector] void openInInspectedWindow(in String url);
-        [domain=Inspector] void setSearchingForNode(in boolean enabled, out boolean newState);
-        [notify, domain=Inspector] void frontendReused();
-        [notify, domain=Inspector] void addNodesToSearchResult(out Array nodeIds);
-        [notify, domain=Inspector] void bringToFront();
-        [notify, domain=Inspector] void disconnectFromBackend();
-        [notify, domain=Inspector] void inspectedURLChanged(out String url);
-        [notify, domain=Inspector] void domContentEventFired(out double time);
-        [notify, domain=Inspector] void loadEventFired(out double time);
-        [notify, domain=Inspector] void reset();
-        [notify, domain=Inspector] void showPanel(out String panel);
+        void highlightDOMNode(in long nodeId);
+        void hideDOMNodeHighlight();
+        void highlightFrame(in unsigned long frameId);
+        void hideFrameHighlight();
+        [notify] void updateFocusedNode(out long nodeId);
 
-        [notify, domain=Inspector] void evaluateForTestInFrontend(out long testCallId, out String script);
-        [domain=Inspector] void didEvaluateForTestInFrontend(in long testCallId, in String jsonResult);
+        void setUserAgentOverride(in String userAgent);
 
-        [domain=Inspector] void highlightDOMNode(in long nodeId);
-        [domain=Inspector] void hideDOMNodeHighlight();
-        [domain=Inspector] void highlightFrame(in unsigned long frameId);
-        [domain=Inspector] void hideFrameHighlight();
-        [notify, domain=Inspector] void updateFocusedNode(out long nodeId);
+        void getCookies(out Array cookies, out String cookiesString);
+        void deleteCookie(in String cookieName, in String domain);
 
-        [domain=Inspector] void setUserAgentOverride(in String userAgent);
+        // FIXME: dispatch on agents.
+        void startTimelineProfiler();
+        void stopTimelineProfiler();
 
-        [domain=Inspector] void getCookies(out Array cookies, out String cookiesString);
-        [domain=Inspector] void deleteCookie(in String cookieName, in String domain);
+#if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
+        void enableDebugger();
+        void disableDebugger();
+        void enableProfiler();
+        void disableProfiler();
+        void startProfiling();
+        void stopProfiling();
+#endif // ENABLE_JAVASCRIPT_DEBUGGER
+    };
 
-        ///////////////////////////////////////////////////////////////////////
-        // Runtime
-        ///////////////////////////////////////////////////////////////////////
+    interface [Conditional=INSPECTOR] Runtime {
+        void evaluate(in String expression, in String objectGroup, in boolean includeCommandLineAPI, out Value result);
+        void getCompletions(in String expression, in boolean includeCommandLineAPI, out Value result);
+        void getProperties(in Object objectId, in boolean ignoreHasOwnProperty, in boolean abbreviate, out Value result);
+        void setPropertyValue(in Object objectId, in String propertyName, in String expression, out Value result);
+        void releaseWrapperObjectGroup(in long injectedScriptId, in String objectGroup);
+    };
 
-        [domain=Runtime] void evaluate(in String expression, in String objectGroup, in boolean includeCommandLineAPI, out Value result);
-        [domain=Runtime] void getCompletions(in String expression, in boolean includeCommandLineAPI, out Value result);
-        [domain=Runtime] void getProperties(in Object objectId, in boolean ignoreHasOwnProperty, in boolean abbreviate, out Value result);
-        [domain=Runtime] void setPropertyValue(in Object objectId, in String propertyName, in String expression, out Value result);
-        [domain=Runtime] void releaseWrapperObjectGroup(in long injectedScriptId, in String objectGroup);
+    interface [Conditional=INSPECTOR] InjectedScript {
+        void evaluateOnSelf(in String functionBody, in Array argumentsArray, out Value result);
+    };
 
-        ///////////////////////////////////////////////////////////////////////
-        // Injected Script
-        ///////////////////////////////////////////////////////////////////////
+    interface [Conditional=INSPECTOR] Console {
+        void setConsoleMessagesEnabled(in boolean enabled, out boolean newState);
+        [notify] void addConsoleMessage(out Object messageObj);
+        [notify] void updateConsoleMessageExpiredCount(out unsigned long count);
+        [notify] void updateConsoleMessageRepeatCount(out unsigned long count);
+        void clearConsoleMessages();
+        [notify] void consoleMessagesCleared();
+        void setMonitoringXHREnabled(in boolean enabled);
+    };
 
-        [domain=InjectedScript] void evaluateOnSelf(in String functionBody, in Array argumentsArray, out Value result);
+    interface [Conditional=INSPECTOR] Network {
+        void cachedResources(out Object resources);
+        void resourceContent(in unsigned long frameId, in String url, in boolean base64Encode, out boolean success, out String content);
+        void setExtraHeaders(in Object headers);
 
-        ///////////////////////////////////////////////////////////////////////
-        // Console API
-        ///////////////////////////////////////////////////////////////////////
-
-        [domain=Console] void setConsoleMessagesEnabled(in boolean enabled, out boolean newState);
-        [notify, domain=Console] void addConsoleMessage(out Object messageObj);
-        [notify, domain=Console] void updateConsoleMessageExpiredCount(out unsigned long count);
-        [notify, domain=Console] void updateConsoleMessageRepeatCount(out unsigned long count);
-        [domain=Console] void clearConsoleMessages();
-        [notify, domain=Console] void consoleMessagesCleared();
-        [domain=Console] void setMonitoringXHREnabled(in boolean enabled);
-
-        ///////////////////////////////////////////////////////////////////////
-        // Network API
-        ///////////////////////////////////////////////////////////////////////
-
-        [domain=Network] void cachedResources(out Object resources);
-        [domain=Network] void resourceContent(in unsigned long frameId, in String url, in boolean base64Encode, out boolean success, out String content);
-        [domain=Network] void setExtraHeaders(in Object headers);
-
-        [notify, domain=Network] void frameDetachedFromParent(out unsigned long frameId);
-        [notify, domain=Network] void identifierForInitialRequest(out long identifier, out String url, out Object loader, out Value callStack);
-        [notify, domain=Network] void willSendRequest(out long identifier, out double time, out Object request, out Object redirectResponse);
-        [notify, domain=Network] void markResourceAsCached(out long identifier);
-        [notify, domain=Network] void didReceiveResponse(out long identifier, out double time, out String resourceType, out Object response);
-        [notify, domain=Network] void didReceiveContentLength(out long identifier, out double time, out long lengthReceived);
-        [notify, domain=Network] void didFinishLoading(out long identifier, out double finishTime);
-        [notify, domain=Network] void didFailLoading(out long identifier, out double time, out String localizedDescription);
-        [notify, domain=Network] void didLoadResourceFromMemoryCache(out double time, out Object resource);
-        [notify, domain=Network] void setInitialContent(out long identifier, out String sourceString, out String type);
-        [notify, domain=Network] void didCommitLoadForFrame(out Object frame, out Object loader);
-        [notify, domain=Network] void didCreateWebSocket(out unsigned long identifier, out String requestURL);
-        [notify, domain=Network] void willSendWebSocketHandshakeRequest(out unsigned long identifier, out double time, out Object request);
-        [notify, domain=Network] void didReceiveWebSocketHandshakeResponse(out unsigned long identifier, out double time, out Object response);
-        [notify, domain=Network] void didCloseWebSocket(out unsigned long identifier, out double time);
+        [notify] void frameDetachedFromParent(out unsigned long frameId);
+        [notify] void identifierForInitialRequest(out long identifier, out String url, out Object loader, out Value callStack);
+        [notify] void willSendRequest(out long identifier, out double time, out Object request, out Object redirectResponse);
+        [notify] void markResourceAsCached(out long identifier);
+        [notify] void didReceiveResponse(out long identifier, out double time, out String resourceType, out Object response);
+        [notify] void didReceiveContentLength(out long identifier, out double time, out long lengthReceived);
+        [notify] void didFinishLoading(out long identifier, out double finishTime);
+        [notify] void didFailLoading(out long identifier, out double time, out String localizedDescription);
+        [notify] void didLoadResourceFromMemoryCache(out double time, out Object resource);
+        [notify] void setInitialContent(out long identifier, out String sourceString, out String type);
+        [notify] void didCommitLoadForFrame(out Object frame, out Object loader);
+        [notify] void didCreateWebSocket(out unsigned long identifier, out String requestURL);
+        [notify] void willSendWebSocketHandshakeRequest(out unsigned long identifier, out double time, out Object request);
+        [notify] void didReceiveWebSocketHandshakeResponse(out unsigned long identifier, out double time, out Object response);
+        [notify] void didCloseWebSocket(out unsigned long identifier, out double time);
+    };
 
 #if defined(ENABLE_DATABASE) && ENABLE_DATABASE
+    interface [Conditional=INSPECTOR] Database {
+        void getDatabaseTableNames(in long databaseId, out Array tableNames);
+        void executeSQL(in long databaseId, in String query, out boolean success, out long transactionId);
 
-        ///////////////////////////////////////////////////////////////////////
-        // Database API
-        ///////////////////////////////////////////////////////////////////////
-
-        [domain=Database] void getDatabaseTableNames(in long databaseId, out Array tableNames);
-        [domain=Database] void executeSQL(in long databaseId, in String query, out boolean success, out long transactionId);
-
-        [notify, domain=Database] void addDatabase(out Object database);
-        [notify, domain=Database] void selectDatabase(out int databaseId);
-        [notify, domain=Database] void sqlTransactionSucceeded(out long transactionId, out Value columnNames, out Value values);
-        [notify, domain=Database] void sqlTransactionFailed(out long transactionId, out Value sqlError);
+        [notify] void addDatabase(out Object database);
+        [notify] void selectDatabase(out int databaseId);
+        [notify] void sqlTransactionSucceeded(out long transactionId, out Value columnNames, out Value values);
+        [notify] void sqlTransactionFailed(out long transactionId, out Value sqlError);
+    };
 #endif
 
 #if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE
-
-        ///////////////////////////////////////////////////////////////////////
-        // DOM Storage API
-        ///////////////////////////////////////////////////////////////////////
-
-        [domain=DOMStorage] void getDOMStorageEntries(in long storageId, out Array entries);
-        [domain=DOMStorage] void setDOMStorageItem(in long storageId, in String key, in String value, out boolean success);
-        [domain=DOMStorage] void removeDOMStorageItem(in long storageId, in String key, out boolean success);
-        [notify, domain=DOMStorage] void addDOMStorage(out Object storage);
-        [notify, domain=DOMStorage] void updateDOMStorage(out int storageId);
-        [notify, domain=DOMStorage] void selectDOMStorage(out int storageId);
+    interface [Conditional=INSPECTOR] DOMStorage {
+        void getDOMStorageEntries(in long storageId, out Array entries);
+        void setDOMStorageItem(in long storageId, in String key, in String value, out boolean success);
+        void removeDOMStorageItem(in long storageId, in String key, out boolean success);
+        [notify] void addDOMStorage(out Object storage);
+        [notify] void updateDOMStorage(out int storageId);
+        [notify] void selectDOMStorage(out int storageId);
+    };
 #endif
 
 #if defined(ENABLE_OFFLINE_WEB_APPLICATIONS) && ENABLE_OFFLINE_WEB_APPLICATIONS
-
-        ///////////////////////////////////////////////////////////////////////
-        // AppCache API
-        ///////////////////////////////////////////////////////////////////////
-
-        [domain=ApplicationCache] void getApplicationCaches(out Value applicationCaches);
-        [notify, domain=ApplicationCache] void updateApplicationCacheStatus(out int status);
-        [notify, domain=ApplicationCache] void updateNetworkState(out boolean isNowOnline);
+    interface [Conditional=INSPECTOR] ApplicationCache {
+        void getApplicationCaches(out Value applicationCaches);
+        [notify] void updateApplicationCacheStatus(out int status);
+        [notify] void updateNetworkState(out boolean isNowOnline);
+    };
 #endif
 
 #if defined(ENABLE_FILE_SYSTEM) && ENABLE_FILE_SYSTEM
+    interface [Conditional=INSPECTOR] FileSystem {
+        void getFileSystemPathAsync(in unsigned int type, in String origin);
+        void revealFolderInOS(in String path);
 
-        ///////////////////////////////////////////////////////////////////////
-        // Filesystem API
-        ///////////////////////////////////////////////////////////////////////
-
-        [domain=FileSystem] void getFileSystemPathAsync(in unsigned int type, in String origin);
-        [domain=FileSystem] void revealFolderInOS(in String path);
-
-        [notify, domain=FileSystem] void didGetFileSystemPath(out String root, out int type, out String origin);
-        [notify, domain=FileSystem] void didGetFileSystemError(out int type, out String origin);
-        [notify, domain=FileSystem] void didGetFileSystemDisabled();
+        [notify] void didGetFileSystemPath(out String root, out int type, out String origin);
+        [notify] void didGetFileSystemError(out int type, out String origin);
+        [notify] void didGetFileSystemDisabled();
+    };
 #endif
 
-        ///////////////////////////////////////////////////////////////////////
-        // DOM API
-        ///////////////////////////////////////////////////////////////////////
+    interface [Conditional=INSPECTOR] DOM {
+        void getChildNodes(in long nodeId);
+        void setAttribute(in long elementId, in String name, in String value, out boolean success);
+        void removeAttribute(in long elementId, in String name, out boolean success);
+        void setTextNodeValue(in long nodeId, in String value, out boolean success);
+        void getEventListenersForNode(in long nodeId, out long outNodeId, out Array listenersArray);
+        void copyNode(in long nodeId);
+        void removeNode(in long nodeId, out long outNodeId);
+        void changeTagName(in long nodeId, in String newTagName, out long outNodeId);
+        void getOuterHTML(in long nodeId, out String outerHTML);
+        void setOuterHTML(in long nodeId, in String outerHTML, out long outNodeId);
+        void addInspectedNode(in long nodeId);
+        void performSearch(in String query, in boolean runSynchronously);
+        void searchCanceled();
+        void pushNodeByPathToFrontend(in String path, out long nodeId);
+        void resolveNode(in long nodeId, out Value result);
+        void getNodeProperties(in long nodeId, in Array propertiesArray, out Value result);
+        void getNodePrototypes(in long nodeId, out Value result);
+        void pushNodeToFrontend(in Object objectId, out Value result);
 
-        [domain=DOM] void getChildNodes(in long nodeId);
-        [domain=DOM] void setAttribute(in long elementId, in String name, in String value, out boolean success);
-        [domain=DOM] void removeAttribute(in long elementId, in String name, out boolean success);
-        [domain=DOM] void setTextNodeValue(in long nodeId, in String value, out boolean success);
-        [domain=DOM] void getEventListenersForNode(in long nodeId, out long outNodeId, out Array listenersArray);
-        [domain=DOM] void copyNode(in long nodeId);
-        [domain=DOM] void removeNode(in long nodeId, out long outNodeId);
-        [domain=DOM] void changeTagName(in long nodeId, in String newTagName, out long outNodeId);
-        [domain=DOM] void getOuterHTML(in long nodeId, out String outerHTML);
-        [domain=DOM] void setOuterHTML(in long nodeId, in String outerHTML, out long outNodeId);
-        [domain=DOM] void addInspectedNode(in long nodeId);
-        [domain=DOM] void performSearch(in String query, in boolean runSynchronously);
-        [domain=DOM] void searchCanceled();
-        [domain=DOM] void pushNodeByPathToFrontend(in String path, out long nodeId);
-        [domain=DOM] void resolveNode(in long nodeId, out Value result);
-        [domain=DOM] void getNodeProperties(in long nodeId, in Array propertiesArray, out Value result);
-        [domain=DOM] void getNodePrototypes(in long nodeId, out Value result);
-        [domain=DOM] void pushNodeToFrontend(in Object objectId, out Value result);
+        [notify] void setDocument(out Value root); // FIXME: should be requested from the front-end as getDocument.
+        [notify] void attributesUpdated(out long id, out Array attributes);
+        [notify] void characterDataModified(out long id, out String newValue);
+        [notify] void setChildNodes(out long parentId, out Array nodes);
+        [notify] void setDetachedRoot(out Object root);
+        [notify] void childNodeCountUpdated(out long id, out int newValue);
+        [notify] void childNodeInserted(out long parentId, out long prevId, out Object node);
+        [notify] void childNodeRemoved(out long parentId, out long id);
+    };
 
-        [notify, domain=DOM] void setDocument(out Value root); // FIXME: should be requested from the front-end as getDocument.
-        [notify, domain=DOM] void attributesUpdated(out long id, out Array attributes);
-        [notify, domain=DOM] void characterDataModified(out long id, out String newValue);
-        [notify, domain=DOM] void setChildNodes(out long parentId, out Array nodes);
-        [notify, domain=DOM] void setDetachedRoot(out Object root);
-        [notify, domain=DOM] void childNodeCountUpdated(out long id, out int newValue);
-        [notify, domain=DOM] void childNodeInserted(out long parentId, out long prevId, out Object node);
-        [notify, domain=DOM] void childNodeRemoved(out long parentId, out long id);
+    interface [Conditional=INSPECTOR] CSS {
+        void getStylesForNode(in long nodeId, out Value styles);
+        void getComputedStyleForNode(in long nodeId, out Value style);
+        void getInlineStyleForNode(in long nodeId, out Value style);
+        void getAllStyles(out Array styleSheetIds);
+        void getStyleSheet(in String styleSheetId, out Value styleSheet);
+        void getStyleSheetText(in String styleSheetId, out String url, out String text);
+        void setStyleSheetText(in String styleSheetId, in String text, out boolean success);
+        void setPropertyText(in Object styleId, in long propertyIndex, in String text, in boolean overwrite, out Value style);
+        void toggleProperty(in Object styleId, in long propertyIndex, in boolean disable, out Value style);
+        void setRuleSelector(in Object ruleId, in String selector, out Value rule);
+        void addRule(in long contextNodeId, in String selector, out Value rule);
+        void getSupportedCSSProperties(out Array cssProperties);
+        void querySelectorAll(in long documentId, in String selector, out Array result);
+    };
 
-        ///////////////////////////////////////////////////////////////////////
-        // CSS API
-        ///////////////////////////////////////////////////////////////////////
-
-        [domain=CSS] void getStylesForNode(in long nodeId, out Value styles);
-        [domain=CSS] void getComputedStyleForNode(in long nodeId, out Value style);
-        [domain=CSS] void getInlineStyleForNode(in long nodeId, out Value style);
-        [domain=CSS] void getAllStyles(out Array styleSheetIds);
-        [domain=CSS] void getStyleSheet(in String styleSheetId, out Value styleSheet);
-        [domain=CSS] void getStyleSheetText(in String styleSheetId, out String url, out String text);
-        [domain=CSS] void setStyleSheetText(in String styleSheetId, in String text, out boolean success);
-        [domain=CSS] void setPropertyText(in Object styleId, in long propertyIndex, in String text, in boolean overwrite, out Value style);
-        [domain=CSS] void toggleProperty(in Object styleId, in long propertyIndex, in boolean disable, out Value style);
-        [domain=CSS] void setRuleSelector(in Object ruleId, in String selector, out Value rule);
-        [domain=CSS] void addRule(in long contextNodeId, in String selector, out Value rule);
-        [domain=CSS] void getSupportedCSSProperties(out Array cssProperties);
-        [domain=CSS] void querySelectorAll(in long documentId, in String selector, out Array result);
-
-        ///////////////////////////////////////////////////////////////////////
-        // Timeline API
-        ///////////////////////////////////////////////////////////////////////
-
-        [domain=Inspector] void startTimelineProfiler();
-        [domain=Inspector] void stopTimelineProfiler();
-        [notify, domain=Timeline] void timelineProfilerWasStarted();
-        [notify, domain=Timeline] void timelineProfilerWasStopped();
-        [notify, domain=Timeline] void addRecordToTimeline(out Object record);
+    interface [Conditional=INSPECTOR] Timeline {
+        [notify] void timelineProfilerWasStarted();
+        [notify] void timelineProfilerWasStopped();
+        [notify] void addRecordToTimeline(out Object record);
+    };
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
+    interface [Conditional=INSPECTOR] Debugger {
+        [notify] void debuggerWasEnabled();
+        [notify] void debuggerWasDisabled();
 
-        ///////////////////////////////////////////////////////////////////////
-        // Debugger API
-        ///////////////////////////////////////////////////////////////////////
+        [notify] void parsedScriptSource(out String sourceID, out String url, out int lineOffset, out int columnOffset, out int length, out int scriptWorldType);
+        [notify] void failedToParseScriptSource(out String url, out String data, out int firstLine, out int errorLine, out String errorMessage);
 
-        [domain=Inspector] void enableDebugger();
-        [domain=Inspector] void disableDebugger();
+        void activateBreakpoints();
+        void deactivateBreakpoints();
 
-        [notify, domain=Debugger] void debuggerWasEnabled();
-        [notify, domain=Debugger] void debuggerWasDisabled();
+        void setJavaScriptBreakpoint(in String url, in int lineNumber, in int columnNumber, in String condition, in boolean enabled, out String breakpointId, out Array locations);
+        void setJavaScriptBreakpointBySourceId(in String sourceId, in int lineNumber, in int columnNumber, in String condition, in boolean enabled, out String breakpointId, out int actualLineNumber, out int actualColumnNumber);
+        void removeJavaScriptBreakpoint(in String breakpointId);
+        [notify] void breakpointResolved(out String breakpointId, out String sourceId, out int lineNumber, out int columnNumber);
+        void continueToLocation(in String sourceId, in int lineNumber, in int columnNumber);
 
-        [notify, domain=Debugger] void parsedScriptSource(out String sourceID, out String url, out int lineOffset, out int columnOffset, out int length, out int scriptWorldType);
-        [notify, domain=Debugger] void failedToParseScriptSource(out String url, out String data, out int firstLine, out int errorLine, out String errorMessage);
+        void stepOver();
+        void stepInto();
+        void stepOut();
+        void pause();
+        [notify] void pausedScript(out Object details);
+        void resume();
+        [notify] void resumedScript(); // FIXME: Make this out parameter of resume if possible.
 
-        [domain=Debugger] void activateBreakpoints();
-        [domain=Debugger] void deactivateBreakpoints();
+        void editScriptSource(in String sourceID, in String newContent, out boolean success, out String result, out Value newCallFrames);
+        void getScriptSource(in String sourceID, out String scriptSource);
 
-        [domain=Debugger] void setJavaScriptBreakpoint(in String url, in int lineNumber, in int columnNumber, in String condition, in boolean enabled, out String breakpointId, out Array locations);
-        [domain=Debugger] void setJavaScriptBreakpointBySourceId(in String sourceId, in int lineNumber, in int columnNumber, in String condition, in boolean enabled, out String breakpointId, out int actualLineNumber, out int actualColumnNumber);
-        [domain=Debugger] void removeJavaScriptBreakpoint(in String breakpointId);
-        [notify, domain=Debugger] void breakpointResolved(out String breakpointId, out String sourceId, out int lineNumber, out int columnNumber);
-        [domain=Debugger] void continueToLocation(in String sourceId, in int lineNumber, in int columnNumber);
+        void setPauseOnExceptionsState(in long pauseOnExceptionsState, out long newState);
 
-        [domain=BrowserDebugger] void setAllBrowserBreakpoints(in Object breakpoints);
-        [domain=BrowserDebugger] void setDOMBreakpoint(in long nodeId, in long type);
-        [domain=BrowserDebugger] void removeDOMBreakpoint(in long nodeId, in long type);
-        [domain=BrowserDebugger] void setEventListenerBreakpoint(in String eventName);
-        [domain=BrowserDebugger] void removeEventListenerBreakpoint(in String eventName);
-        [domain=BrowserDebugger] void setXHRBreakpoint(in String url);
-        [domain=BrowserDebugger] void removeXHRBreakpoint(in String url);
-
-        [domain=Debugger] void stepOver();
-        [domain=Debugger] void stepInto();
-        [domain=Debugger] void stepOut();
-        [domain=Debugger] void pause();
-        [notify, domain=Debugger] void pausedScript(out Object details);
-        [domain=Debugger] void resume();
-        [notify, domain=Debugger] void resumedScript(); // FIXME: Make this out parameter of resume if possible.
-
-        [domain=Debugger] void editScriptSource(in String sourceID, in String newContent, out boolean success, out String result, out Value newCallFrames);
-        [domain=Debugger] void getScriptSource(in String sourceID, out String scriptSource);
-
-        [domain=Debugger] void setPauseOnExceptionsState(in long pauseOnExceptionsState, out long newState);
-
-        [domain=Debugger] void evaluateOnCallFrame(in Object callFrameId, in String expression, in String objectGroup, in boolean includeCommandLineAPI, out Value result);
-        [domain=Debugger] void getCompletionsOnCallFrame(in Object callFrameId, in String expression, in boolean includeCommandLineAPI, out Value result);
+        void evaluateOnCallFrame(in Object callFrameId, in String expression, in String objectGroup, in boolean includeCommandLineAPI, out Value result);
+        void getCompletionsOnCallFrame(in Object callFrameId, in String expression, in boolean includeCommandLineAPI, out Value result);
 
 #if defined(ENABLE_WORKERS) && ENABLE_WORKERS
-        [notify, domain=Debugger] void didCreateWorker(out long id, out String url, out boolean isShared);
-        [notify, domain=Debugger] void didDestroyWorker(out long id);
+        [notify] void didCreateWorker(out long id, out String url, out boolean isShared);
+        [notify] void didDestroyWorker(out long id);
 #endif // ENABLE_WORKERS
 
-        ///////////////////////////////////////////////////////////////////////
-        // Profiler API
-        ///////////////////////////////////////////////////////////////////////
+    };
+#endif // ENABLE_JAVASCRIPT_DEBUGGER
 
-        [domain=Inspector] void enableProfiler();
-        [domain=Inspector] void disableProfiler();
-        [notify, domain=Profiler] void profilerWasEnabled();
-        [notify, domain=Profiler] void profilerWasDisabled();
+#if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
+    interface [Conditional=INSPECTOR] BrowserDebugger {
+        void setAllBrowserBreakpoints(in Object breakpoints);
+        void setDOMBreakpoint(in long nodeId, in long type);
+        void removeDOMBreakpoint(in long nodeId, in long type);
+        void setEventListenerBreakpoint(in String eventName);
+        void removeEventListenerBreakpoint(in String eventName);
+        void setXHRBreakpoint(in String url);
+        void removeXHRBreakpoint(in String url);
+    };
+#endif // ENABLE_JAVASCRIPT_DEBUGGER
 
-        [domain=Inspector] void startProfiling(); // FIXME: dispatch on profiler agent.
-        [domain=Inspector] void stopProfiling(); // FIXME: dispatch on profiler agent.
+#if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
+    interface [Conditional=INSPECTOR] Profiler {
+        [notify] void profilerWasEnabled();
+        [notify] void profilerWasDisabled();
 
-        [domain=Profiler] void getProfileHeaders(out Array headers);
-        [domain=Profiler] void getProfile(in String type, in unsigned long uid, out Object profile);
-        [domain=Profiler] void removeProfile(in String type, in unsigned long uid);
-        [domain=Profiler] void clearProfiles();
+        void getProfileHeaders(out Array headers);
+        void getProfile(in String type, in unsigned long uid, out Object profile);
+        void removeProfile(in String type, in unsigned long uid);
+        void clearProfiles();
 
         // FIXME: split into Profiler and HeapProfiler.
-        [domain=Profiler] void takeHeapSnapshot(in boolean detailed);
-        [notify, domain=Profiler] void addProfileHeader(out Object header);
-        [notify, domain=Profiler] void addHeapSnapshotChunk(out unsigned long uid, out String chunk);
-        [notify, domain=Profiler] void finishHeapSnapshot(out unsigned long uid);
-        [notify, domain=Profiler] void setRecordingProfile(out boolean isProfiling);
-        [notify, domain=Profiler] void resetProfiles();
-        [notify, domain=Profiler] void reportHeapSnapshotProgress(out int done, out int total);
-#endif // ENABLE_JAVASCRIPT_DEBUGGER
+        void takeHeapSnapshot(in boolean detailed);
+        [notify] void addProfileHeader(out Object header);
+        [notify] void addHeapSnapshotChunk(out unsigned long uid, out String chunk);
+        [notify] void finishHeapSnapshot(out unsigned long uid);
+        [notify] void setRecordingProfile(out boolean isProfiling);
+        [notify] void resetProfiles();
+        [notify] void reportHeapSnapshotProgress(out int done, out int total);
     };
+#endif // ENABLE_JAVASCRIPT_DEBUGGER
 }
