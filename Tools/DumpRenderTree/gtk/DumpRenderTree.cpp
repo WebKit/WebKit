@@ -742,6 +742,11 @@ static void webViewLoadFinished(WebKitWebView* view, WebKitWebFrame* frame, void
         dump();
 }
 
+static gboolean webViewLoadError(WebKitWebView*, WebKitWebFrame*, gchar*, gpointer, gpointer)
+{
+    return TRUE; // Return true here to disable the default error page.
+}
+
 static void webViewDocumentLoadFinished(WebKitWebView* view, WebKitWebFrame* frame, void*)
 {
     if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
@@ -1008,6 +1013,7 @@ static WebKitWebView* createWebView()
     g_object_connect(G_OBJECT(view),
                      "signal::load-started", webViewLoadStarted, 0,
                      "signal::load-finished", webViewLoadFinished, 0,
+                     "signal::load-error", webViewLoadError, 0,
                      "signal::window-object-cleared", webViewWindowObjectCleared, 0,
                      "signal::console-message", webViewConsoleMessage, 0,
                      "signal::script-alert", webViewScriptAlert, 0,

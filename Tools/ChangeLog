@@ -1,3 +1,17 @@
+2011-02-09  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Default error page is interfering with tests which require failed loads
+        https://bugs.webkit.org/show_bug.cgi?id=54157
+
+        Disable the default error page during DRT runs. This prevents unexpected loads
+        from interfering with tests that have planned failed loads.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (webViewLoadError): Added, disable default handler.
+        (createWebView): Connect the new load-error handler.
+
 2011-02-10  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Andreas Kling.

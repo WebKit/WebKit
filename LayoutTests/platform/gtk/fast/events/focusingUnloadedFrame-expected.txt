@@ -19,28 +19,8 @@ layer at (0,0) size 800x600
                   text run at (580,19) width 37: "Crash"
               RenderText {#text} at (0,0) size 0x0
       RenderFrame {FRAME} at (0,0) size 0x0
-        layer at (0,0) size 600x245
-          RenderView at (0,0) size 0x0
         layer at (0,0) size 0x0
-          RenderBlock {HTML} at (0,0) size 0x0
-            RenderBody {BODY} at (0,0) size 0x0 [bgcolor=#FFFFFF]
-        layer at (16,32) size 584x213
-          RenderBlock (positioned) {DIV} at (16,32) size 584x213 [border: (2px solid #EEEEEE)]
-            RenderBlock {DIV} at (12,31) size 560x22
-              RenderBlock {P} at (0,0) size 560x22
-                RenderText {#text} at (0,0) size 165x22
-                  text run at (0,0) width 165: "Unable to load page"
-            RenderBlock {DIV} at (12,72) size 560x69
-              RenderBlock {P} at (0,0) size 560x38
-                RenderText {#text} at (0,0) size 477x38
-                  text run at (0,0) width 262: "Problem occurred while loading the URL"
-                  text run at (0,19) width 477: "file:///home/martin/WebKit/LayoutTests/fast/events/resources/notfound.html"
-              RenderBlock {P} at (0,54) size 560x15
-                RenderText {#text} at (0,0) size 234x15
-                  text run at (0,0) width 234: "Error opening file: No such file or directory"
-            RenderBlock {FORM} at (12,153) size 560x32
-              RenderButton {INPUT} at (2,2) size 83x28 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-                RenderBlock (anonymous) at (8,4) size 67x19
-                  RenderText at (0,0) size 67x19
-                    text run at (0,0) width 67: "Try again"
-              RenderText {#text} at (0,0) size 0x0
+          RenderView at (0,0) size 0x0
+        layer at (0,0) size 0x8
+          RenderBlock {HTML} at (0,0) size 0x8
+            RenderBody {BODY} at (8,8) size 0x0
