@@ -33,6 +33,7 @@
 
 #include "WebCommon.h"
 #include "WebString.h"
+#include "WebTextDirection.h"
 #include "WebVector.h"
 
 namespace WebKit {
@@ -56,6 +57,8 @@ struct WebMenuItemInfo {
     WebString label;
     Type type;
     unsigned action;
+    WebTextDirection textDirection;
+    bool hasTextDirectionOverride;
     bool enabled;
     bool checked;
 };

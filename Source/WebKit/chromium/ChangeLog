@@ -1,3 +1,19 @@
+2011-02-10  Avi Drissman  <avi@google.com>
+
+        Reviewed by Darin Fisher.
+
+        <option> should implement the dir attribute. Mac Chromium version, followup to r76983, r77654.
+        https://bugs.webkit.org/show_bug.cgi?id=50969
+
+        Use manual test Source/WebCore/manual-tests/pop-up-alignment-and-direction.html added in r76983.
+
+        * public/WebMenuItemInfo.h:
+        * public/WebPopupMenuInfo.h:
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::getPopupMenuInfo):
+        * src/ExternalPopupMenu.cpp:
+        (WebKit::ExternalPopupMenu::getPopupMenuInfo):
+
 2011-02-09  David Holloway  <dhollowa@chromium.org>
 
         Reviewed by Darin Fisher.

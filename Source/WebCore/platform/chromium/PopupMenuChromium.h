@@ -65,6 +65,8 @@ struct PopupItem {
     String label;
     Type type;
     int yOffset; // y offset of this item, relative to the top of the popup.
+    TextDirection textDirection;
+    bool hasTextDirectionOverride;
     bool enabled;
 };
 

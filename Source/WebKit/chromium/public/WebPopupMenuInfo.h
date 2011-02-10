@@ -38,8 +38,6 @@ namespace WebKit {
 
 // Describes the contents of a popup menu.
 struct WebPopupMenuInfo {
-    // FIXME: migrate clients to WebMenuItemInfo and remove this temporary Item typedef.
-    typedef WebMenuItemInfo Item;
     int itemHeight;
     int itemFontSize;
     int selectedIndex;

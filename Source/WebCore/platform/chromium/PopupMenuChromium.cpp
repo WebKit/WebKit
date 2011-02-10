@@ -1234,6 +1234,9 @@ void PopupListBox::updateFromElement()
             type = PopupItem::TypeOption;
         m_items.append(new PopupItem(m_popupClient->itemText(i), type));
         m_items[i]->enabled = isSelectableItem(i);
+        PopupMenuStyle style = m_popupClient->itemStyle(i);
+        m_items[i]->textDirection = style.textDirection();
+        m_items[i]->hasTextDirectionOverride = style.hasTextDirectionOverride();
     }
 
     m_selectedIndex = m_popupClient->selectedIndex();

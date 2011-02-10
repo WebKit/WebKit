@@ -744,24 +744,29 @@ void ChromeClientImpl::getPopupMenuInfo(PopupContainer* popupContainer,
 {
     const Vector<PopupItem*>& inputItems = popupContainer->popupData();
 
-    WebVector<WebPopupMenuInfo::Item> outputItems(inputItems.size());
+    WebVector<WebMenuItemInfo> outputItems(inputItems.size());
 
     for (size_t i = 0; i < inputItems.size(); ++i) {
         const PopupItem& inputItem = *inputItems[i];
-        WebPopupMenuInfo::Item& outputItem = outputItems[i];
+        WebMenuItemInfo& outputItem = outputItems[i];
 
         outputItem.label = inputItem.label;
         outputItem.enabled = inputItem.enabled;
+        if (inputItem.textDirection == WebCore::RTL)
+            outputItem.textDirection = WebTextDirectionRightToLeft;
+        else
+            outputItem.textDirection = WebTextDirectionLeftToRight;
+        outputItem.hasTextDirectionOverride = inputItem.hasTextDirectionOverride;
 
         switch (inputItem.type) {
         case PopupItem::TypeOption:
-            outputItem.type = WebPopupMenuInfo::Item::Option;
+            outputItem.type = WebMenuItemInfo::Option;
             break;
         case PopupItem::TypeGroup:
-            outputItem.type = WebPopupMenuInfo::Item::Group;
+            outputItem.type = WebMenuItemInfo::Group;
             break;
         case PopupItem::TypeSeparator:
-            outputItem.type = WebPopupMenuInfo::Item::Separator;
+            outputItem.type = WebMenuItemInfo::Separator;
             break;
         default:
             ASSERT_NOT_REACHED();
