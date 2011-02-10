@@ -69,17 +69,20 @@ DrawingAreaImpl::DrawingAreaImpl(WebPage* webPage, const WebPageCreationParamete
 
 void DrawingAreaImpl::setNeedsDisplay(const IntRect& rect)
 {
-    if (rect.isEmpty())
+    IntRect dirtyRect = rect;
+    dirtyRect.intersect(m_webPage->bounds());
+
+    if (dirtyRect.isEmpty())
         return;
 
     if (m_layerTreeHost) {
         ASSERT(m_dirtyRegion.isEmpty());
 
-        m_layerTreeHost->setNonCompositedContentsNeedDisplay(rect);
+        m_layerTreeHost->setNonCompositedContentsNeedDisplay(dirtyRect);
         return;
     }
     
-    m_dirtyRegion.unite(rect);
+    m_dirtyRegion.unite(dirtyRect);
     scheduleDisplay();
 }
 
@@ -380,6 +383,7 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
 {
     ASSERT(!m_isPaintingSuspended);
     ASSERT(!m_layerTreeHost);
+    ASSERT(!m_webPage->size().isEmpty());
 
     // FIXME: It would be better if we could avoid painting altogether when there is a custom representation.
     if (m_webPage->mainFrameHasCustomRepresentation())

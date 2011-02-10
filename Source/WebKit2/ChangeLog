@@ -1,3 +1,18 @@
+2011-02-09  Adam Roben  <aroben@apple.com>
+
+        Don't invalidate outside of the WebPage's bounds
+
+        Fixes <http://webkit.org/b/54123> <rdar://problem/8978383> Assertion failure in
+        BackingStore::BackingStore if a new WebPage becomes active before receiving a size
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::setNeedsDisplay): Intersect the dirty rect with our bounds before
+        doing anything else.
+        (WebKit::DrawingAreaImpl::display): Added an assertion to help catch the bad case a little
+        earlier.
+
 2011-02-10  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, rolling out r78157.
