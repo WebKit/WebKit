@@ -1,3 +1,21 @@
+2011-02-10  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] create pkg-config files for mingw
+        https://bugs.webkit.org/show_bug.cgi?id=54238
+
+        (mingw is mostly the same as unix)
+
+        This change was applied in the Qt repository (qt/src/3rdparty/webkit),
+        so we should do the same here in QtWebKit.
+
+        Patch by Mark Brand <mabrand@mabrand.nl>, reviewed (there) by
+        Oswald Buddenhagen <oswald.buddenhagen@nokia.com>
+        45fe2dddc3a0677b9ec9fce09f07cd4129e37afa
+
+        * WebCore.pro:
+
 2011-02-10  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Antti Koivisto.
