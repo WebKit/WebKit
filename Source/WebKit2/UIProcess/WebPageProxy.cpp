@@ -2116,7 +2116,16 @@ void WebPageProxy::didChooseFilesForOpenPanel(const Vector<String>& fileURLs)
     if (!isValid())
         return;
 
-    // FIXME: This also needs to send a sandbox extension for these paths.
+#if ENABLE(WEB_PROCESS_SANDBOX)
+    // FIXME: The sandbox extensions should be sent with the DidChooseFilesForOpenPanel message. This
+    // is gated on a way of passing SandboxExtension::Handles in a Vector.
+    for (size_t i = 0; i < fileURLs.size(); ++i) {
+        SandboxExtension::Handle sandboxExtensionHandle;
+        SandboxExtension::createHandle(fileURLs[i], SandboxExtension::ReadOnly, sandboxExtensionHandle);
+        process()->send(Messages::WebPage::ExtendSandboxForFileFromOpenPanel(sandboxExtensionHandle), m_pageID);
+    }
+#endif
+
     process()->send(Messages::WebPage::DidChooseFilesForOpenPanel(fileURLs), m_pageID);
 
     m_openPanelResultListener->invalidate();

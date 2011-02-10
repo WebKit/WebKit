@@ -432,6 +432,9 @@ private:
 
     void didChooseFilesForOpenPanel(const Vector<String>&);
     void didCancelForOpenPanel();
+#if ENABLE(WEB_PROCESS_SANDBOX)
+    void extendSandboxForFileFromOpenPanel(const SandboxExtension::Handle&);
+#endif
 
     void didReceiveGeolocationPermissionDecision(uint64_t geolocationID, bool allowed);
 

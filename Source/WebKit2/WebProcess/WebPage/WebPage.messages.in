@@ -127,6 +127,9 @@ messages -> WebPage {
     # Open panel.
     DidChooseFilesForOpenPanel(Vector<WTF::String> fileURLs)
     DidCancelForOpenPanel()
+#if ENABLE(WEB_PROCESS_SANDBOX)
+    ExtendSandboxForFileFromOpenPanel(WebKit::SandboxExtension::Handle sandboxExtensionHandle)
+#endif
 
     # Spelling and grammar.
     AdvanceToNextMisspelling(bool startBeforeSelection)

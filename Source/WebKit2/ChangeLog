@@ -1,3 +1,18 @@
+2011-02-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        File uploads do not work within the sandbox
+        <rdar://problem/8950518>
+        https://bugs.webkit.org/show_bug.cgi?id=54154
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChooseFilesForOpenPanel):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::extendSandboxForFileFromOpenPanel):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2011-02-09  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

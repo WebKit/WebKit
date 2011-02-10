@@ -1568,6 +1568,13 @@ void WebPage::didCancelForOpenPanel()
     m_activeOpenPanelResultListener = 0;
 }
 
+#if ENABLE(WEB_PROCESS_SANDBOX)
+void WebPage::extendSandboxForFileFromOpenPanel(const SandboxExtension::Handle& handle)
+{
+    SandboxExtension::create(handle)->consumePermanently();
+}
+#endif
+
 void WebPage::didReceiveGeolocationPermissionDecision(uint64_t geolocationID, bool allowed)
 {
     m_geolocationPermissionRequestManager.didReceiveGeolocationPermissionDecision(geolocationID, allowed);
