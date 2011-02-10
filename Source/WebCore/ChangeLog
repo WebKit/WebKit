@@ -1,3 +1,15 @@
+2011-02-10  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Error messages are not displayed for the last line in a script
+        https://bugs.webkit.org/show_bug.cgi?id=54204
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.addMessage):
+        (WebInspector.SourceFrame.prototype._addMessageToSource):
+        (WebInspector.SourceFrame.prototype._createConditionElement):
+
 2011-02-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

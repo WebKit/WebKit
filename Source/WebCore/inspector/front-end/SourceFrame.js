@@ -113,7 +113,7 @@ WebInspector.SourceFrame.prototype = {
         // Don't add the message if there is no message or valid line or if the msg isn't an error or warning.
         if (!msg.message || msg.line <= 0 || !msg.isErrorOrWarning())
             return;
-        this._messages.push(msg)
+        this._messages.push(msg);
         if (this._textViewer)
             this._addMessageToSource(msg);
     },
@@ -415,7 +415,7 @@ WebInspector.SourceFrame.prototype = {
 
     _addMessageToSource: function(msg)
     {
-        if (msg.line >= this._textModel.linesCount)
+        if (msg.line > this._textModel.linesCount)
             return;
 
         var messageBubbleElement = this._messageBubbles[msg.line];
@@ -813,7 +813,7 @@ WebInspector.SourceFrame.prototype = {
         var editorElement = document.createElement("input");
         editorElement.id = "source-frame-breakpoint-condition";
         editorElement.className = "monospace";
-        editorElement.type = "text"
+        editorElement.type = "text";
         conditionElement.appendChild(editorElement);
         this._conditionEditorElement = editorElement;
 
