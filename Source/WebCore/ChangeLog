@@ -2,6 +2,34 @@
 
         Reviewed by Andreas Kling.
 
+        [Qt] Remove the use of deprecated qFindChildren()
+        https://bugs.webkit.org/show_bug.cgi?id=54232
+
+        This was applied on the Qt repository and affects QtWebKit there.
+        (13833beb641289c45faed337848d37280195aadc)
+
+        The side effect of this change is that we won't be able to build
+        QtWebKit with MSVC 6, as it doesn't support member template functions
+        (not sure if that's possible today anyway).
+
+        Original patch from Olivier Goffart <olivier.goffart@nokia.com>, with
+        review reported as being from the mailing list.
+
+        The changes are result of the following commands:
+
+            git grep -O"sed -i 's/qF\(indChildr*e*n*<[^>]*>\)(this,* */f\\1(/'" qFindChild
+            git grep -O"sed -i 's/qF\(indChildr*e*n*<[^>]*>\)(&\([^\(),]*\),* */\\2.f\\1(/'" qFindChild
+            git grep -O"sed -i 's/qF\(indChildr*e*n*<[^>]*>\)(\([^\(),]*()\),* */\\2->f\\1(/'" qFindChild
+            git grep -O"sed -i 's/qF\(indChildr*e*n*<[^>]*>\)(\([^\(),]*\):\([^\(),]*\),* */(\\2:\\3)->f\\1(/'" qFindChild
+            git grep -O"sed -i 's/qF\(indChildr*e*n*<[^>]*>\)(\([^\(),]*\),* */\\2->f\\1(/'" qFindChild
+
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.cpp:
+        (WebCore::MediaPlayerPrivatePhonon::MediaPlayerPrivatePhonon):
+
+2011-02-10  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
         [Qt] Rename build target from "embedded" to "qpa"
         https://bugs.webkit.org/show_bug.cgi?id=54233
 
