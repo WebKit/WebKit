@@ -1,3 +1,30 @@
+2011-02-09  Adam Roben  <aroben@apple.com>
+
+        Add a test that resizes a WKView while it's hidden
+
+        Test for <http://webkit.org/b/54141> <rdar://problem/8979195> WKView draws at wrong size,
+        performs badly if is resized while hidden (assertion fails in
+        BackingStore::incorporateUpdate in Debug builds)
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKit2/win/ResizeViewWhileHidden.cpp: Added.
+        (TestWebKitAPI::didFinishLoadForFrame): Record that the load finished.
+        (TestWebKitAPI::setPageLoaderClient): Hook up our didFinishLoadForFrame callback.
+        (TestWebKitAPI::flushMessages): Load a URL and wait for the load to complete. This ensures
+        that all pending messages have been handled by the UI and web process.
+        (TestWebKitAPI::timerCallback): Kill the timer and record that it fired.
+        (TestWebKitAPI::runForDuration): Set a timer and run the run loop until it fires.
+        (TestWebKitAPI::waitForBackingStoreUpdate): Wait for half a second to give the web process a
+        chance to display, then flush all pending messages.
+        (TestWebKitAPI::TEST): Resize the WKView while it's hidden, then show it again and wait for
+        the backing store to update. This triggers the assertion from bug 54141.
+
+        * TestWebKitAPI/win/PlatformWebViewWin.cpp:
+        (TestWebKitAPI::PlatformWebView::resizeTo): Implemented.
+
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj: Added new test.
+
 2011-02-10  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK build fix after roll out of r78157...

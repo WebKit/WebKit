@@ -77,6 +77,11 @@ WKPageRef PlatformWebView::page()
     return WKViewGetPage(m_view);
 }
 
+void PlatformWebView::resizeTo(unsigned width, unsigned height)
+{
+    ::SetWindowPos(WKViewGetWindow(m_view), 0, 0, 0, width, height, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOCOPYBITS);
+}
+
 void PlatformWebView::simulateSpacebarKeyPress()
 {
     HWND window = WKViewGetWindow(m_view);

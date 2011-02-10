@@ -1,5 +1,21 @@
 2011-02-09  Adam Roben  <aroben@apple.com>
 
+        Decode a null SharedMemory::Handle correctly on Windows
+
+        Fixes <http://webkit.org/b/54141> <rdar://problem/8979195> WKView draws at wrong size,
+        performs badly if is resized while hidden (assertion fails in
+        BackingStore::incorporateUpdate in Debug builds)
+
+        Reviewed by Darin Adler.
+
+        * Platform/win/SharedMemoryWin.cpp:
+        (WebKit::getDuplicatedHandle): Added. Code came from decode. The only changes were to
+        null-check sourceHandle (this is the bug fix) and to assert when ::DuplicateHandle fails
+        (which would have caught the bug earlier).
+        (WebKit::SharedMemory::Handle::decode): Changed to use getDuplicatedHandle.
+
+2011-02-09  Adam Roben  <aroben@apple.com>
+
         Don't invalidate outside of the WebPage's bounds
 
         Fixes <http://webkit.org/b/54123> <rdar://problem/8978383> Assertion failure in
