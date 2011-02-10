@@ -37,7 +37,7 @@
 namespace WTF {
 
 #if USE(OS_RANDOMNESS)
-void randomValuesFromOS(unsigned char* buffer, size_t length)
+void cryptographicallyRandomValuesFromOS(unsigned char* buffer, size_t length)
 {
 #if OS(DARWIN)
     for (size_t i = 0; i < length; i++) {

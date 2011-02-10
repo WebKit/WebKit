@@ -33,7 +33,7 @@ namespace WTF {
 // system.  If insufficient randomness is available, the buffer will be
 // partially filled.  Rather than calling this function directly, consider
 // calling cryptographicallyRandomNumber or cryptographicallyRandomValues.
-void randomValuesFromOS(unsigned char* buffer, size_t length);
+void cryptographicallyRandomValuesFromOS(unsigned char* buffer, size_t length);
 #endif
 
 }

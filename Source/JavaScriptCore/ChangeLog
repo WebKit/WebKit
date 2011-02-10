@@ -1,3 +1,19 @@
+2011-02-10  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Rename randomValuesFromOS to cryptographicallyRandomValuesFromOS
+        https://bugs.webkit.org/show_bug.cgi?id=54156
+
+        randomValuesFromOS generates random numbers of cryptographic quality.
+        Make this clear by adding "cryptographically" to the function name.
+
+        * wtf/CryptographicallyRandomNumber.cpp:
+        (WTF::ARC4Stream::ARC4RandomNumberGenerator::stir):
+        * wtf/OSRandomSource.cpp:
+        (WTF::cryptographicallyRandomValuesFromOS):
+        * wtf/OSRandomSource.h:
+
 2011-02-09  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

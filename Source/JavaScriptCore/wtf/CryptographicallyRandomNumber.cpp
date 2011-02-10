@@ -99,7 +99,7 @@ void ARC4RandomNumberGenerator::stir()
 {
     unsigned char randomness[128];
     size_t length = sizeof(randomness);
-    randomValuesFromOS(randomness, length);
+    cryptographicallyRandomValuesFromOS(randomness, length);
     addRandomData(randomness, length);
 
     // Discard early keystream, as per recommendations in:
