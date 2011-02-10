@@ -1,3 +1,12 @@
+2011-02-10  Ivan Krstić  <ike@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Rename remaining instances of _HOME sandbox parameter.
+        <rdar://problem/8983428>
+
+        * WebProcess/com.apple.WebProcess.sb:
+
 2011-02-10  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Anders Carlsson.
