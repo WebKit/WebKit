@@ -421,6 +421,34 @@ void Connection::dispatchSyncMessage(MessageID messageID, ArgumentDecoder* argum
     sendSyncReply(replyEncoder);
 }
 
+void Connection::dispatchMessage(IncomingMessage& message)
+{
+    OwnPtr<ArgumentDecoder> arguments = message.releaseArguments();
+
+    // If there's no client, return. We do this after calling releaseArguments so that
+    // the ArgumentDecoder message will be freed.
+    if (!m_client)
+        return;
+
+    m_inDispatchMessageCount++;
+
+    bool oldDidReceiveInvalidMessage = m_didReceiveInvalidMessage;
+    m_didReceiveInvalidMessage = false;
+
+    if (message.messageID().isSync())
+        dispatchSyncMessage(message.messageID(), arguments.get());
+    else
+        m_client->didReceiveMessage(this, message.messageID(), arguments.get());
+
+    m_didReceiveInvalidMessage |= arguments->isInvalid();
+    m_inDispatchMessageCount--;
+
+    if (m_didReceiveInvalidMessage && m_client)
+        m_client->didReceiveInvalidMessage(this, message.messageID());
+
+    m_didReceiveInvalidMessage = oldDidReceiveInvalidMessage;
+}
+
 void Connection::dispatchMessages()
 {
     Vector<IncomingMessage> incomingMessages;
@@ -430,33 +458,8 @@ void Connection::dispatchMessages()
         m_incomingMessages.swap(incomingMessages);
     }
 
-    // Dispatch messages.
-    for (size_t i = 0; i < incomingMessages.size(); ++i) {
-        // If someone calls invalidate while we're invalidating messages, we should stop.
-        if (!m_client)
-            return;
-        
-        IncomingMessage& message = incomingMessages[i];
-        OwnPtr<ArgumentDecoder> arguments = message.releaseArguments();
-
-        m_inDispatchMessageCount++;
-
-        bool oldDidReceiveInvalidMessage = m_didReceiveInvalidMessage;
-        m_didReceiveInvalidMessage = false;
-
-        if (message.messageID().isSync())
-            dispatchSyncMessage(message.messageID(), arguments.get());
-        else
-            m_client->didReceiveMessage(this, message.messageID(), arguments.get());
-
-        m_didReceiveInvalidMessage |= arguments->isInvalid();
-        m_inDispatchMessageCount--;
-
-        if (m_didReceiveInvalidMessage)
-            m_client->didReceiveInvalidMessage(this, message.messageID());
-
-        m_didReceiveInvalidMessage = oldDidReceiveInvalidMessage;
-    }
+    for (size_t i = 0; i < incomingMessages.size(); ++i)
+        dispatchMessage(incomingMessages[i]);
 }
 
 } // namespace CoreIPC

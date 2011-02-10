@@ -189,8 +189,11 @@ private:
     bool sendOutgoingMessage(MessageID, PassOwnPtr<ArgumentEncoder>);
     void connectionDidClose();
     
+    typedef Message<ArgumentDecoder> IncomingMessage;
+
     // Called on the listener thread.
     void dispatchConnectionDidClose();
+    void dispatchMessage(IncomingMessage&);
     void dispatchMessages();
     void dispatchSyncMessage(MessageID, ArgumentDecoder*);
                              
@@ -208,8 +211,6 @@ private:
     bool m_didReceiveInvalidMessage;
 
     // Incoming messages.
-    typedef Message<ArgumentDecoder> IncomingMessage;
-
     Mutex m_incomingMessagesLock;
     Vector<IncomingMessage> m_incomingMessages;
 
