@@ -1,3 +1,12 @@
+2011-02-09  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Fix a typo in WebSecurityOrigin::protocol.
+
+        * Shared/WebSecurityOrigin.h:
+        (WebKit::WebSecurityOrigin::protocol): This should return the protocol, not the domain.
+
 2011-02-09  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

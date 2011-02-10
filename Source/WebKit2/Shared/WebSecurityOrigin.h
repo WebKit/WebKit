@@ -52,7 +52,7 @@ public:
         return adoptRef(new WebSecurityOrigin(securityOrigin.release()));
     }
 
-    const String protocol() const { return m_securityOrigin->domain(); }
+    const String protocol() const { return m_securityOrigin->protocol(); }
     const String host() const { return m_securityOrigin->host(); }
     unsigned short port() const { return m_securityOrigin->port(); }
 
