@@ -1,3 +1,10 @@
+2011-02-10  Martin Robinson  <mrobinson@igalia.com>
+
+        Clump the tests failing only on the GTK+ 32-bit bot together with the
+        other tests that have this kind of failure.
+
+        * platform/gtk/Skipped: Clean up the skipped list slightly.
+
 2011-02-10  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, rebaseline.

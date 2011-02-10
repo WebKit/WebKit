@@ -2532,8 +2532,18 @@ svg/custom/gradient-with-1d-boundingbox.svg
 svg/custom/relative-sized-inner-svg.xhtml
 svg/custom/relative-sized-use-without-attributes-on-symbol.xhtml
 
-# This test shows a 1 pixel difference, but only the 32-bit debug bot.
+# These test shows a 1 pixel difference, but only the 32-bit debug bot.
 fast/text/emphasis.html
+# https://bugs.webkit.org/show_bug.cgi?id=54210
+fast/text/atsui-multiple-renderers.html
+fast/text/atsui-negative-spacing-features.html
+fast/text/atsui-spacing-features.html
+# https://bugs.webkit.org/show_bug.cgi?id=54194
+fast/text/midword-break-after-breakable-char.html
+# https://bugs.webkit.org/show_bug.cgi?id=54191
+fast/text/capitalize-boundaries.html
+# https://bugs.webkit.org/show_bug.cgi?id=54189
+fast/replaced/border-radius-clip.html
 
 # New test needs enhanced frameloader delegate logging in DRT
 # Discussed in https://bugs.webkit.org/show_bug.cgi?id=38928
@@ -3085,20 +3095,3 @@ plugins/invalidate_rect.html
 
 # Need to source the "WeightWatcher" fonts for this test.
 fast/css/font-weight-1.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=54189
-fast/replaced/border-radius-clip.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=54191
-fast/text/capitalize-boundaries.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=54194
-fast/text/midword-break-after-breakable-char.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=54210
-fast/text/atsui-multiple-renderers.html
-fast/text/atsui-negative-spacing-features.html
-fast/text/atsui-spacing-features.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=54212
-fast/text/international/hindi-whitespace.html
