@@ -33,11 +33,14 @@ extern NPNetscapeFuncs *browser;
 
 PluginTest* PluginTest::create(NPP npp, const string& identifier)
 {
+    if (identifier.empty())
+        return new PluginTest(npp, identifier);
+        
     CreateTestFunction createTestFunction = createTestFunctions()[identifier];
     if (createTestFunction)
         return createTestFunction(npp, identifier);
 
-    return new PluginTest(npp, identifier);
+    return 0;
 }
 
 PluginTest::PluginTest(NPP npp, const string& identifier)

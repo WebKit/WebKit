@@ -274,6 +274,11 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc
 
     obj->pluginTest = PluginTest::create(instance, testIdentifier);
 
+    if (!obj->pluginTest) {
+        pluginLog(instance, "NPP_New: Could not find a test named \"%s\", maybe its .cpp file wasn't added to the build system?", testIdentifier.c_str());
+        return NPERR_GENERIC_ERROR;
+    }
+
 #ifdef XP_UNIX
     // On Unix, plugins only get events if they are windowless.
     browser->setvalue(instance, NPPVpluginWindowBool, 0);
