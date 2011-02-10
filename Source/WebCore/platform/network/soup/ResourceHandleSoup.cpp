@@ -297,6 +297,25 @@ static void gotHeadersCallback(SoupMessage* msg, gpointer data)
     client->didReceiveResponse(handle.get(), d->m_response);
 }
 
+static void wroteBodyDataCallback(SoupMessage*, SoupBuffer* buffer, gpointer data)
+{
+    RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
+    if (!handle)
+        return;
+
+    ASSERT(buffer);
+    ResourceHandleInternal* internal = handle->getInternal();
+    internal->m_bodyDataSent += buffer->length;
+
+    if (internal->m_cancelled)
+        return;
+    ResourceHandleClient* client = handle->client();
+    if (!client)
+        return;
+
+    client->didSendData(handle.get(), internal->m_bodyDataSent, internal->m_bodySize);
+}
+
 // This callback will not be called if the content sniffer is disabled in startHTTPRequest.
 static void contentSniffedCallback(SoupMessage* msg, const char* sniffedType, GHashTable *params, gpointer data)
 {
@@ -482,6 +501,49 @@ static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer use
                               G_PRIORITY_DEFAULT, d->m_cancellable.get(), readCallback, 0);
 }
 
+static bool addFormElementsToSoupMessage(SoupMessage* message, const char* contentType, FormData* httpBody, unsigned long& totalBodySize)
+{
+    size_t numElements = httpBody->elements().size();
+    if (numElements < 2) { // No file upload is the most common case.
+        Vector<char> body;
+        httpBody->flatten(body);
+        totalBodySize = body.size();
+        soup_message_set_request(message, contentType, SOUP_MEMORY_COPY, body.data(), body.size());
+        return true;
+    }
+
+    // We have more than one element to upload, and some may be large files,
+    // which we will want to mmap instead of copying into memory
+    soup_message_body_set_accumulate(message->request_body, FALSE);
+    for (size_t i = 0; i < numElements; i++) {
+        const FormDataElement& element = httpBody->elements()[i];
+
+        if (element.m_type == FormDataElement::data) {
+            totalBodySize += element.m_data.size();
+            soup_message_body_append(message->request_body, SOUP_MEMORY_TEMPORARY,
+                                     element.m_data.data(), element.m_data.size());
+            continue;
+        }
+
+        // This technique is inspired by libsoup's simple-httpd test.
+        GOwnPtr<GError> error;
+        CString fileName = fileSystemRepresentation(element.m_filename);
+        GMappedFile* fileMapping = g_mapped_file_new(fileName.data(), false, &error.outPtr());
+        if (error)
+            return false;
+
+        gsize mappedFileSize = g_mapped_file_get_length(fileMapping);
+        totalBodySize += mappedFileSize;
+        SoupBuffer* soupBuffer = soup_buffer_new_with_owner(g_mapped_file_get_contents(fileMapping),
+                                                            mappedFileSize, fileMapping,
+                                                            reinterpret_cast<GDestroyNotify>(g_mapped_file_unref));
+        soup_message_body_append_buffer(message->request_body, soupBuffer);
+        soup_buffer_free(soupBuffer);
+    }
+
+    return true;
+}
+
 static bool startHTTPRequest(ResourceHandle* handle)
 {
     ASSERT(handle);
@@ -520,6 +582,7 @@ static bool startHTTPRequest(ResourceHandle* handle)
 
     g_signal_connect(soupMessage, "restarted", G_CALLBACK(restartedCallback), handle);
     g_signal_connect(soupMessage, "got-headers", G_CALLBACK(gotHeadersCallback), handle);
+    g_signal_connect(soupMessage, "wrote-body-data", G_CALLBACK(wroteBodyDataCallback), handle);
     d->m_gotChunkHandler = g_signal_connect(soupMessage, "got-chunk", G_CALLBACK(gotChunkCallback), handle);
 
     String firstPartyString = request.firstPartyForCookies().string();
@@ -529,54 +592,13 @@ static bool startHTTPRequest(ResourceHandle* handle)
     }
 
     FormData* httpBody = d->m_firstRequest.httpBody();
-    if (httpBody && !httpBody->isEmpty()) {
-        size_t numElements = httpBody->elements().size();
-
-        // handle the most common case (i.e. no file upload)
-        if (numElements < 2) {
-            Vector<char> body;
-            httpBody->flatten(body);
-            soup_message_set_request(soupMessage, d->m_firstRequest.httpContentType().utf8().data(),
-                                     SOUP_MEMORY_COPY, body.data(), body.size());
-        } else {
-            /*
-             * we have more than one element to upload, and some may
-             * be (big) files, which we will want to mmap instead of
-             * copying into memory; TODO: support upload of non-local
-             * (think sftp://) files by using GIO?
-             */
-            soup_message_body_set_accumulate(soupMessage->request_body, FALSE);
-            for (size_t i = 0; i < numElements; i++) {
-                const FormDataElement& element = httpBody->elements()[i];
-
-                if (element.m_type == FormDataElement::data)
-                    soup_message_body_append(soupMessage->request_body, SOUP_MEMORY_TEMPORARY, element.m_data.data(), element.m_data.size());
-                else {
-                    /*
-                     * mapping for uploaded files code inspired by technique used in
-                     * libsoup's simple-httpd test
-                     */
-                    GOwnPtr<GError> error;
-                    CString fileName = fileSystemRepresentation(element.m_filename);
-                    GMappedFile* fileMapping = g_mapped_file_new(fileName.data(), false, &error.outPtr());
-
-                    if (error) {
-                        g_signal_handlers_disconnect_matched(soupMessage, G_SIGNAL_MATCH_DATA,
-                                                             0, 0, 0, 0, handle);
-                        d->m_soupMessage.clear();
-
-                        return false;
-                    }
-
-                    SoupBuffer* soupBuffer = soup_buffer_new_with_owner(g_mapped_file_get_contents(fileMapping),
-                                                                        g_mapped_file_get_length(fileMapping),
-                                                                        fileMapping,
-                                                                        reinterpret_cast<GDestroyNotify>(g_mapped_file_unref));
-                    soup_message_body_append_buffer(soupMessage->request_body, soupBuffer);
-                    soup_buffer_free(soupBuffer);
-                }
-            }
-        }
+    CString contentType = d->m_firstRequest.httpContentType().utf8().data();
+    if (httpBody && !httpBody->isEmpty()
+        && !addFormElementsToSoupMessage(soupMessage, contentType.data(), httpBody, d->m_bodySize)) {
+        // We failed to prepare the body data, so just fail this load.
+        g_signal_handlers_disconnect_matched(soupMessage, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, handle);
+        d->m_soupMessage.clear();
+        return false;
     }
 
     // balanced by a deref() in cleanupSoupRequestOperation, which should always run

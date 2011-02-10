@@ -267,7 +267,6 @@ fast/js/i18n-bindings-locale.html
 #   Tests failing
 http/tests/appcache/crash-when-navigating-away-then-back.html
 http/tests/appcache/fallback.html
-http/tests/appcache/foreign-iframe-main.html
 http/tests/appcache/local-content.html
 http/tests/appcache/manifest-redirect-2.html
 http/tests/appcache/offline-access.html
@@ -338,9 +337,6 @@ http/tests/xmlhttprequest/frame-unload-abort-crash.html
 http/tests/xmlhttprequest/response-encoding.html
 http/tests/xmlhttprequest/state-after-network-error.html
 http/tests/xmlhttprequest/supported-xml-content-types.html
-http/tests/xmlhttprequest/upload-onload-event.html
-http/tests/xmlhttprequest/upload-onprogress-event.html
-http/tests/xmlhttprequest/upload-progress-events.html
 http/tests/xmlhttprequest/xml-encoding.html
 http/tests/xmlhttprequest/xmlhttprequest-contenttype-empty.html
 # Tests crashing - https://bugs.webkit.org/show_bug.cgi?id=51104
@@ -2812,11 +2808,11 @@ editing/pasteboard/drop-link.html
 # https://bugs.webkit.org/show_bug.cgi?id=52882
 http/tests/security/drag-drop-same-unique-origin.html
 
-# [Soup] ResourceHandleSoup does not ever call didSendData for file uploads
-# https://bugs.webkit.org/show_bug.cgi?id=52090
-http/tests/local/formdata/upload-events.html
-fast/files/workers/worker-apply-blob-url-to-xhr.html
+# This test crashes: https://bugs.webkit.org/show_bug.cgi?id=54234 
 fast/files/apply-blob-url-to-xhr.html
+# Fails with "Received error from worker: ReferenceError: Can't find variable: revokeObjectURL
+# Should recheck it when the above bug is fixed.
+fast/files/workers/worker-apply-blob-url-to-xhr.html
 
 # [Soup] ResourceHandleSoup does not handle encodedBlobData
 # https://bugs.webkit.org/show_bug.cgi?id=52092

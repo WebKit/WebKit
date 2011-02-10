@@ -115,6 +115,8 @@ namespace WebCore {
             , m_cancelled(false)
             , m_buffer(0)
             , m_total(0)
+            , m_bodySize(0)
+            , m_bodyDataSent(0)
             , m_idleHandler(0)
             , m_gotChunkHandler(0)
 #endif
@@ -193,6 +195,8 @@ namespace WebCore {
         GRefPtr<GCancellable> m_cancellable;
         char* m_buffer;
         gsize m_total;
+        unsigned long m_bodySize;
+        unsigned long m_bodyDataSent;
         guint m_idleHandler;
         RefPtr<NetworkingContext> m_context;
         gulong m_gotChunkHandler;

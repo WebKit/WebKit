@@ -1,3 +1,23 @@
+2011-02-10  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [Soup] ResourceHandleSoup does not ever call didSendData for file uploads
+        https://bugs.webkit.org/show_bug.cgi?id=52090
+
+        Call didSendData as body data is uploaded to the server. This is necessary
+        for XHR upload events to function properly.
+
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal): Add two new members.
+        One to track the total amount of body data and one to track the total amount of
+        body data sent so far.
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::wroteBodyDataCallback): Added.
+        (WebCore::addFormElementsToSoupMessage): Split this out into a helper function.
+        Will now now sum the total amount of body data.
+        (WebCore::startHttp): Attach a wrote-body-data signal handler.
+
 2011-02-10  Bill Budge  <bbudge@chromium.org>
 
         Reviewed by David Levin.
