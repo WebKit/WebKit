@@ -1,3 +1,76 @@
+2011-02-10  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        Incorporate algorithm for processing paths into GPU-renderable triangle meshes
+        https://bugs.webkit.org/show_bug.cgi?id=45521
+
+        Adding an implementation of Loop and Blinn's GPU accelerated path
+        rendering algorithm from GPU Gems 3. This implementation pays
+        particular attention to the efficiency of the curve subdivision
+        phase needed for correct rendering. It utilizes the OpenGL utility
+        library tessellator for triangulation of the interior of the
+        shape. The regions handled by Loop and Blinn's algorithm are
+        handled by the local triangulator previously incorporated.
+
+        No tests yet; pixel tests will eventually be used to verify this
+        algorithm and prevent regressions.
+
+        * platform/graphics/gpu/LoopBlinnPathProcessor.cpp: Added.
+        (WebCore::LoopBlinnPathProcessorImplementation::Segment::Segment):
+        (WebCore::LoopBlinnPathProcessorImplementation::Segment::setup):
+        (WebCore::LoopBlinnPathProcessorImplementation::Segment::kind):
+        (WebCore::LoopBlinnPathProcessorImplementation::Segment::getPoint):
+        (WebCore::LoopBlinnPathProcessorImplementation::Segment::next):
+        (WebCore::LoopBlinnPathProcessorImplementation::Segment::prev):
+        (WebCore::LoopBlinnPathProcessorImplementation::Segment::setNext):
+        (WebCore::LoopBlinnPathProcessorImplementation::Segment::setPrev):
+        (WebCore::LoopBlinnPathProcessorImplementation::Segment::contour):
+        (WebCore::LoopBlinnPathProcessorImplementation::Segment::subdivide):
+        (WebCore::LoopBlinnPathProcessorImplementation::Segment::boundingBox):
+        (WebCore::LoopBlinnPathProcessorImplementation::Segment::numCrossingsForXRay):
+        (WebCore::LoopBlinnPathProcessorImplementation::Segment::numberOfTriangles):
+        (WebCore::LoopBlinnPathProcessorImplementation::Segment::getTriangle):
+        (WebCore::LoopBlinnPathProcessorImplementation::Segment::numberOfInteriorVertices):
+        (WebCore::LoopBlinnPathProcessorImplementation::Segment::getInteriorVertex):
+        (WebCore::LoopBlinnPathProcessorImplementation::Segment::markedForSubdivision):
+        (WebCore::LoopBlinnPathProcessorImplementation::Segment::setMarkedForSubdivision):
+        (WebCore::LoopBlinnPathProcessorImplementation::Segment::toString):
+        (WebCore::LoopBlinnPathProcessorImplementation::Segment::computeBoundingBox):
+        (WebCore::LoopBlinnPathProcessorImplementation::Contour::Contour):
+        (WebCore::LoopBlinnPathProcessorImplementation::Contour::add):
+        (WebCore::LoopBlinnPathProcessorImplementation::Contour::subdivide):
+        (WebCore::LoopBlinnPathProcessorImplementation::Contour::begin):
+        (WebCore::LoopBlinnPathProcessorImplementation::Contour::end):
+        (WebCore::LoopBlinnPathProcessorImplementation::Contour::isOrientedCounterClockwise):
+        (WebCore::LoopBlinnPathProcessorImplementation::Contour::setIsOrientedCounterClockwise):
+        (WebCore::LoopBlinnPathProcessorImplementation::Contour::boundingBox):
+        (WebCore::LoopBlinnPathProcessorImplementation::Contour::fillSide):
+        (WebCore::LoopBlinnPathProcessorImplementation::Contour::setFillSide):
+        (WebCore::LoopBlinnPathProcessorImplementation::Segment::triangulate):
+        (WebCore::LoopBlinnPathProcessor::LoopBlinnPathProcessor):
+        (WebCore::LoopBlinnPathProcessor::~LoopBlinnPathProcessor):
+        (WebCore::LoopBlinnPathProcessor::process):
+        (WebCore::LoopBlinnPathProcessor::buildContours):
+        (WebCore::LoopBlinnPathProcessor::allSegmentsOverlappingY):
+        (WebCore::LoopBlinnPathProcessor::determineSidesToFill):
+        (WebCore::LoopBlinnPathProcessor::determineOrientation):
+        (WebCore::SweepData::SweepEvent::SweepEvent):
+        (WebCore::SweepData::SweepEvent::setup):
+        (WebCore::SweepData::SweepEvent::x):
+        (WebCore::SweepData::SweepEvent::entry):
+        (WebCore::SweepData::SweepEvent::interval):
+        (WebCore::SweepData::SweepEvent::operator<):
+        (WebCore::SweepData::trianglesOverlap):
+        (WebCore::LoopBlinnPathProcessor::subdivideCurves):
+        (WebCore::LoopBlinnPathProcessor::conditionallySubdivide):
+        (WebCore::LoopBlinnPathProcessor::subdivideCurvesSlow):
+        (WebCore::TessellationState::vertexCallback):
+        (WebCore::TessellationState::combineCallback):
+        (WebCore::TessellationState::edgeFlagCallback):
+        (WebCore::LoopBlinnPathProcessor::tessellateInterior):
+        * platform/graphics/gpu/LoopBlinnPathProcessor.h: Added.
+
 2011-02-10  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
 
         Reviewed by Andreas Kling.
