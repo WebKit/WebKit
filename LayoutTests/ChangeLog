@@ -1,5 +1,11 @@
 2011-02-10  Zhenyao Mo  <zmo@google.com>
 
+        Unreviewed, test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-02-10  Zhenyao Mo  <zmo@google.com>
+
         Unreviewed, rebaseline.
 
         * platform/chromium-mac/fast/text/international/text-combine-image-test-expected.checksum: Removed.
