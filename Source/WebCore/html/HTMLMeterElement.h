@@ -55,9 +55,6 @@ public:
     void setOptimum(double, ExceptionCode&);
 
     GaugeRegion gaugeRegion() const;
-
-    virtual bool canContainRangeEndPoint() const { return false; }
-
 private:
     HTMLMeterElement(const QualifiedName&, Document*, HTMLFormElement*);
 

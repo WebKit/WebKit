@@ -97,8 +97,6 @@ public:
     virtual InputElementData data() const { return m_data; }
 #endif
 
-    virtual bool canContainRangeEndPoint() const { return false; }
-
 private:
     friend class WMLCardElement;
     void initialize();

@@ -38,8 +38,6 @@ public:
 
     double position() const;
 
-    virtual bool canContainPosition() const { return false; }
-
 private:
     HTMLProgressElement(const QualifiedName&, Document*, HTMLFormElement*);
 

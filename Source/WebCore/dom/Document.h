@@ -438,8 +438,6 @@ public:
         return m_styleSelector.get();
     }
 
-    virtual bool canContainRangeEndPoint() const { return true; }
-
     Element* getElementByAccessKey(const String& key) const;
     
     /**

@@ -1,3 +1,38 @@
+2011-02-10  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r78219.
+        http://trac.webkit.org/changeset/78219
+        https://bugs.webkit.org/show_bug.cgi?id=54215
+
+        breaks editing/style/iframe-onload-crash.html on GTK 64-bit
+        Debug (Requested by philn-tp on #webkit).
+
+        * dom/Document.h:
+        * dom/DocumentFragment.h:
+        * dom/Element.h:
+        * dom/Node.h:
+        * dom/Text.h:
+        * editing/htmlediting.cpp:
+        (WebCore::editingIgnoresContent):
+        (WebCore::canHaveChildrenForEditing):
+        * editing/htmlediting.h:
+        * html/HTMLBRElement.h:
+        * html/HTMLButtonElement.h:
+        * html/HTMLDataGridElement.h:
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFrameElementBase.h:
+        * html/HTMLHRElement.h:
+        * html/HTMLImageElement.h:
+        * html/HTMLMeterElement.h:
+        * html/HTMLOutputElement.h:
+        * html/HTMLPlugInElement.h:
+        * html/HTMLProgressElement.h:
+        * wml/WMLBRElement.h:
+        * wml/WMLDoElement.h:
+        * wml/WMLImageElement.h:
+        * wml/WMLInputElement.h:
+        * wml/WMLSelectElement.h:
+
 2011-02-10  Andras Becsi  <abecsi@webkit.org>
 
         Rubber-stamped by Csaba Osztrogonác.

@@ -53,8 +53,6 @@ public:
 
     DataGridColumnList* columns() const { return m_columns.get(); }
 
-    virtual bool canContainRangeEndPoint() const { return false; }
-
 private:
     HTMLDataGridElement(const QualifiedName&, Document*);
 

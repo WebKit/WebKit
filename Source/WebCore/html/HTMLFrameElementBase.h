@@ -44,8 +44,6 @@ public:
 
     void setRemainsAliveOnRemovalFromTree(bool);
 
-    virtual bool canContainRangeEndPoint() const { return false; }
-
 protected:
     HTMLFrameElementBase(const QualifiedName&, Document*);
 

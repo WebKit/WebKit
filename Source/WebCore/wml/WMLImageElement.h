@@ -49,8 +49,6 @@ public:
     bool useFallbackAttribute() { return m_useFallbackAttribute; }
     void setUseFallbackAttribute(bool value) { m_useFallbackAttribute = value; }
 
-    virtual bool canContainRangeEndPoint() const { return false; }
-
 private:
     WMLImageLoader m_imageLoader;
     bool m_useFallbackAttribute;

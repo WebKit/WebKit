@@ -34,8 +34,6 @@ public:
 
     String value() const;
 
-    virtual bool canContainRangeEndPoint() const { return false; }
-
 private:
     HTMLButtonElement(const QualifiedName& tagName, Document*, HTMLFormElement*);
 
