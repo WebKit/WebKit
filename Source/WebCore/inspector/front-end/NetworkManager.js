@@ -53,7 +53,11 @@ WebInspector.NetworkManager.prototype = {
 
     requestContent: function(resource, base64Encode, callback)
     {
-        InspectorBackend.resourceContent(resource.loader.frameId, resource.url, base64Encode, callback);
+        function callbackWrapper(success, content)
+        {
+            callback(success ? content : null);
+        }
+        InspectorBackend.resourceContent(resource.loader.frameId, resource.url, base64Encode, callbackWrapper);
     },
 
     _processCachedResources: function(mainFramePayload)

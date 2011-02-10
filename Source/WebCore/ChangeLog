@@ -1,3 +1,24 @@
+2011-02-09  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Network & Resource panels make multiple requests for images with no content
+        https://bugs.webkit.org/show_bug.cgi?id=54085
+
+        - Added success parameter to resourceContent
+        - NetworkManager.requestContent() now returns empty for zero-length resources, null for errors
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::resourceData):
+        (WebCore::InspectorResourceAgent::resourceContent):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkManager.prototype.requestContent):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.requestContent):
+        (WebInspector.Resource.prototype._contentURL):
+
 2011-02-10  Renata Hodovan  <reni@webkit.org>
 
         Reviewed by Dirk Schulze.

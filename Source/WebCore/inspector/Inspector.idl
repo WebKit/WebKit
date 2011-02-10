@@ -100,7 +100,7 @@ module core {
         ///////////////////////////////////////////////////////////////////////
 
         [domain=Network] void cachedResources(out Object resources);
-        [domain=Network] void resourceContent(in unsigned long frameId, in String url, in boolean base64Encode, out String content);
+        [domain=Network] void resourceContent(in unsigned long frameId, in String url, in boolean base64Encode, out boolean success, out String content);
         [domain=Network] void setExtraHeaders(in Object headers);
 
         [notify, domain=Network] void frameDetachedFromParent(out unsigned long frameId);

@@ -124,6 +124,10 @@ PassRefPtr<SharedBuffer> InspectorResourceAgent::resourceData(Frame* frame, cons
     if (!cachedResource)
         return 0;
 
+    // Zero-sized resources don't have data at all -- so fake the empty buffer, insted of indicating error by returning 0.
+    if (!cachedResource->encodedSize())
+        return SharedBuffer::create();
+
     if (cachedResource->isPurgeable()) {
         // If the resource is purgeable then make it unpurgeable to get
         // get its data. This might fail, in which case we return an
@@ -499,17 +503,17 @@ void InspectorResourceAgent::cachedResources(RefPtr<InspectorObject>* object)
     *object = buildObjectForFrameTree(m_page->mainFrame(), true);
 }
 
-void InspectorResourceAgent::resourceContent(unsigned long id, const String& url, bool base64Encode, String* content)
+void InspectorResourceAgent::resourceContent(unsigned long frameId, const String& url, bool base64Encode, bool* success, String* content)
 {
-    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext(m_page->mainFrame())) {
-        if (frameId(frame) != id)
-            continue;
-        if (base64Encode)
-            InspectorResourceAgent::resourceContentBase64(frame, KURL(ParsedURLString, url), content);
-        else
-            InspectorResourceAgent::resourceContent(frame, KURL(ParsedURLString, url), content);
-        break;
+    Frame* frame = frameForId(frameId);
+    if (!frame) {
+        *success = false;
+        return;
     }
+    if (base64Encode)
+        *success = InspectorResourceAgent::resourceContentBase64(frame, KURL(ParsedURLString, url), content);
+    else
+        *success = InspectorResourceAgent::resourceContent(frame, KURL(ParsedURLString, url), content);
 }
 
 InspectorResourceAgent::InspectorResourceAgent(Page* page, InspectorState* state, InspectorFrontend* frontend)

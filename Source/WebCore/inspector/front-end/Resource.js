@@ -693,8 +693,8 @@ WebInspector.Resource.prototype = {
             callback(null, null);
             return;
         }
-        if (this._content) {
-            callback(this._content, this._contentEncoded);
+        if (typeof this._content !== "undefined") {
+            callback(this.content, this._contentEncoded);
             return;
         }
         this._pendingContentCallbacks.push(callback);
@@ -719,7 +719,7 @@ WebInspector.Resource.prototype = {
     {
         const maxDataUrlSize = 1024 * 1024;
         // If resource content is not available or won't fit a data URL, fall back to using original URL.
-        if (!this._content || this._content.length > maxDataUrlSize)
+        if (this._content == null || this._content.length > maxDataUrlSize)
             return this.url;
 
         return "data:" + this.mimeType + (this._contentEncoded ? ";base64," : ",") + this._content;
