@@ -48,7 +48,6 @@ namespace WebKit {
     HashMap<uint64_t, WebCore::IntRect> _expectedPreviewCallbacks;
     uint64_t _latestExpectedPreviewCallback;
     uint64_t _expectedPrintCallback;
-    BOOL _isForcingPreviewUpdate;
 
     BOOL _isPrintingFromSecondaryThread;
     Mutex _printingCallbackMutex;

@@ -39,6 +39,8 @@ NSString * const WebKitOriginalBottomPrintingMarginKey = @"WebKitOriginalBottomM
 
 NSString * const NSPrintInfoDidChangeNotification = @"NSPrintInfoDidChange";
 
+static BOOL isForcingPreviewUpdate;
+
 @implementation WKPrintingView
 
 - (id)initWithFrameProxy:(WebFrameProxy*)frame
@@ -127,9 +129,10 @@ NSString * const NSPrintInfoDidChangeNotification = @"NSPrintInfoDidChange";
 - (void)_updatePreview
 {
     // <rdar://problem/8900923> Please add an API to force print preview update.
-    _isForcingPreviewUpdate = YES;
+    ASSERT(!isForcingPreviewUpdate);
+    isForcingPreviewUpdate = YES;
     [[NSNotificationCenter defaultCenter] postNotificationName:NSPrintInfoDidChangeNotification object:nil];
-    _isForcingPreviewUpdate = NO;
+    isForcingPreviewUpdate = NO;
 }
 
 - (BOOL)_hasPageRects
@@ -319,7 +322,7 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
 
 - (BOOL)knowsPageRange:(NSRangePointer)range
 {
-    LOG(View, "-[WKPrintingView knowsPageRange:], %s, %s", [self _hasPageRects] ? "print data is available" : "print data is not available yet", isMainThread() ? "on main thread" : "on secondary thread");
+    LOG(View, "-[WKPrintingView %p knowsPageRange:], %s, %s", self, [self _hasPageRects] ? "print data is available" : "print data is not available yet", isMainThread() ? "on main thread" : "on secondary thread");
     ASSERT(_printOperation == [NSPrintOperation currentOperation]);
 
     // Assuming that once we switch to printing from a secondary thread, we don't go back.
@@ -342,7 +345,9 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
     } else {
         ASSERT([self _isPrintingPreview]);
 
-        [self _askPageToComputePageRects];
+        // If a request for pages hasn't already been made, make it now.
+        if (!_expectedComputedPagesCallback)
+            [self _askPageToComputePageRects];
 
         *range = NSMakeRange(1, NSIntegerMax);
     }
@@ -434,7 +439,7 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
 
 - (void)drawRect:(NSRect)nsRect
 {
-    LOG(View, "WKPrintingView printing rect x:%g, y:%g, width:%g, height:%g%s", nsRect.origin.x, nsRect.origin.y, nsRect.size.width, nsRect.size.height, [self _isPrintingPreview] ? " for preview" : "");
+    LOG(View, "WKPrintingView %p printing rect x:%g, y:%g, width:%g, height:%g%s", self, nsRect.origin.x, nsRect.origin.y, nsRect.size.width, nsRect.size.height, [self _isPrintingPreview] ? " for preview" : "");
 
     ASSERT(_printOperation == [NSPrintOperation currentOperation]);
 
@@ -518,7 +523,7 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
 {
     ASSERT(_printOperation == [NSPrintOperation currentOperation]);
     if (![self _hasPageRects]) {
-        LOG(View, "-[WKPrintingView rectForPage:%d] - data is not yet available", (int)page);
+        LOG(View, "-[WKPrintingView %p rectForPage:%d] - data is not yet available", self, (int)page);
         // We must be still calculating the page range.
         ASSERT(_expectedComputedPagesCallback);
         return NSMakeRect(0, 0, 1, 1);
@@ -526,7 +531,7 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
 
     IntRect rect = _printingPageRects[page - 1];
     rect.scale(_totalScaleFactorForPrinting);
-    LOG(View, "-[WKPrintingView rectForPage:%d] -> x %d, y %d, width %d, height %d", (int)page, rect.x(), rect.y(), rect.width(), rect.height());
+    LOG(View, "-[WKPrintingView %p rectForPage:%d] -> x %d, y %d, width %d, height %d", self, (int)page, rect.x(), rect.y(), rect.width(), rect.height());
     return rect;
 }
 
@@ -542,10 +547,10 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
     ASSERT(_printOperation == [NSPrintOperation currentOperation]);
 
     // Forcing preview update gets us here, but page setup hasn't actually changed.
-    if (_isForcingPreviewUpdate)
+    if (isForcingPreviewUpdate)
         return;
 
-    LOG(View, "-[WKPrintingView beginDocument]");
+    LOG(View, "-[WKPrintingView %p beginDocument]", self);
 
     [super beginDocument];
 
@@ -557,10 +562,10 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
     ASSERT(_printOperation == [NSPrintOperation currentOperation]);
 
     // Forcing preview update gets us here, but page setup hasn't actually changed.
-    if (_isForcingPreviewUpdate)
+    if (isForcingPreviewUpdate)
         return;
 
-    LOG(View, "-[WKPrintingView endDocument] - clearing cached data");
+    LOG(View, "-[WKPrintingView %p endDocument] - clearing cached data", self);
 
     // Both existing data and pending responses are now obsolete.
     _printingPageRects.clear();

@@ -1,3 +1,22 @@
+2011-02-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54148
+        <rdar://problem/8973887> REGRESSION (WebKit2): Opening two print dialogs causes havoc
+
+        * UIProcess/API/mac/WKPrintingView.h: Moved _isForcingPreviewUpdate into a static variable,
+        because dispatching a notification affects all WKPrintingViews at once.
+        * UIProcess/API/mac/WKPrintingView.mm:
+        (-[WKPrintingView _updatePreview]): Updated for new variable name.
+        (-[WKPrintingView knowsPageRange:]): Don't break if the method is called twice in a row
+        (we already had this logic when printing from separate thread, but not for preview).
+        (-[WKPrintingView drawRect:]): Changed all LOG messages to have view object address for
+        easier matching.
+        (-[WKPrintingView rectForPage:]): Ditto.
+        (-[WKPrintingView beginDocument]): Ditto.
+        (-[WKPrintingView endDocument]): Ditto.
+
 2011-02-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
