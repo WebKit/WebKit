@@ -1,3 +1,16 @@
+2011-02-10  Jochen Eisinger  <jochen@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        [chromium] add WebIDBObjectStore::clear method
+
+        https://bugs.webkit.org/show_bug.cgi?id=54149
+
+        * public/WebIDBObjectStore.h:
+        (WebKit::WebIDBObjectStore::put):
+        (WebKit::WebIDBObjectStore::deleteFunction):
+        (WebKit::WebIDBObjectStore::clear):
+
 2011-02-10  Avi Drissman  <avi@google.com>
 
         Reviewed by Darin Fisher.
