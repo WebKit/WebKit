@@ -1,3 +1,12 @@
+2011-02-10  Andreas Kling  <kling@webkit.org>
+
+        Unreviewed Qt build fix.
+
+        waitFor() -> deprecatedWaitFor()
+
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        (WebKit::TiledDrawingAreaProxy::waitUntilUpdatesComplete):
+
 2011-02-10  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

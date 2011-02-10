@@ -189,7 +189,7 @@ void TiledDrawingAreaProxy::waitUntilUpdatesComplete()
         float scale;
         unsigned pendingUpdateCount;
         static const double tileUpdateTimeout = 10.0;
-        OwnPtr<CoreIPC::ArgumentDecoder> arguments = page()->process()->connection()->waitFor(DrawingAreaProxyLegacyMessage::TileUpdated, page()->pageID(), tileUpdateTimeout);
+        OwnPtr<CoreIPC::ArgumentDecoder> arguments = page()->process()->connection()->deprecatedWaitFor(DrawingAreaProxyLegacyMessage::TileUpdated, page()->pageID(), tileUpdateTimeout);
         if (!arguments)
             break;
         if (!arguments->decode(CoreIPC::Out(tileID, updateChunk, scale, pendingUpdateCount)))
