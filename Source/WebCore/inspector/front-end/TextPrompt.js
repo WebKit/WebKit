@@ -196,7 +196,12 @@ WebInspector.TextPrompt.prototype = {
             return;
 
         var selectionRange = selection.getRangeAt(0);
-        if (!selectionRange.commonAncestorContainer.isDescendant(this.element))
+        var isEmptyInput = selectionRange.commonAncestorContainer === this.element; // this.element has no child Text nodes.
+
+        // Do not attempt to auto-complete an empty input in the auto mode (only on demand).
+        if (auto && isEmptyInput)
+            return;
+        if (!auto && !isEmptyInput && !selectionRange.commonAncestorContainer.isDescendant(this.element))
             return;
         if (auto && !this.isCaretAtEndOfPrompt())
             return;

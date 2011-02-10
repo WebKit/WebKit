@@ -30,10 +30,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CSSCompletions = function(values)
+WebInspector.CSSCompletions = function(values, acceptEmptyPrefix)
 {
     this._values = values.slice();
     this._values.sort();
+    this._acceptEmptyPrefix = acceptEmptyPrefix;
 }
 
 WebInspector.CSSCompletions.prototype = {
@@ -57,10 +58,10 @@ WebInspector.CSSCompletions.prototype = {
 
     _firstIndexOfPrefix: function(prefix)
     {
-        if (!prefix)
-            return -1;
         if (!this._values.length)
             return -1;
+        if (!prefix)
+            return this._acceptEmptyPrefix ? 0 : -1;
 
         var maxIndex = this._values.length - 1;
         var minIndex = 0;

@@ -38,7 +38,7 @@ WebInspector.CSSKeywordCompletions = {
             acceptedKeywords = acceptedKeywords.concat(WebInspector.CSSKeywordCompletions._colors);
         if (propertyName in WebInspector.StylesSidebarPane.InheritedProperties)
             acceptedKeywords.push("inherit");
-        return new WebInspector.CSSCompletions(acceptedKeywords);
+        return new WebInspector.CSSCompletions(acceptedKeywords, true);
     }
 };
 

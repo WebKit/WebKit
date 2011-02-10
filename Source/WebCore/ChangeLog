@@ -1,3 +1,20 @@
+2011-02-10  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [STYLES] Suggest CSS property values once Up/Down is pressed with an empty input
+        https://bugs.webkit.org/show_bug.cgi?id=54205
+
+        * inspector/front-end/CSSCompletions.js:
+        (WebInspector.CSSCompletions):
+        (WebInspector.CSSCompletions.prototype._firstIndexOfPrefix):
+        * inspector/front-end/CSSKeywordCompletions.js:
+        (WebInspector.CSSKeywordCompletions.forProperty):
+        * inspector/front-end/StylesSidebarPane.js:
+        ():
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt.prototype.complete):
+
 2011-02-10  Renata Hodovan  <reni@webkit.org>
 
         Reviewed by Dirk Schulze.
