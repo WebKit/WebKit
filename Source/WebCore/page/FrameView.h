@@ -45,6 +45,7 @@ class RenderLayer;
 class RenderObject;
 class RenderEmbeddedObject;
 class RenderScrollbarPart;
+
 struct ScheduledEvent;
 
 template <typename T> class Timer;
@@ -307,6 +308,7 @@ private:
     virtual void getTickmarks(Vector<IntRect>&) const;
     virtual void scrollTo(const IntSize&);
     virtual void didCompleteRubberBand(const IntSize&) const;
+    virtual bool scrollbarWillRenderIntoCompositingLayer() const { return hasCompositedContent() || isEnclosedInCompositingLayer(); }
 
     void deferredRepaintTimerFired(Timer<FrameView>*);
     void doDeferredRepaints();

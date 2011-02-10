@@ -1,7 +1,5 @@
 /*
- * This file is part of the select element renderer in WebCore.
- *
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2011 Apple Inc. All rights reserved.
  *               2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,6 +46,7 @@
 #include "OptionElement.h"
 #include "Page.h"
 #include "PaintInfo.h"
+#include "RenderLayer.h"
 #include "RenderScrollbar.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -736,6 +735,14 @@ void RenderListBox::setHasVerticalScrollbar(bool hasScrollbar)
     if (document()->hasDashboardRegions())
         document()->setDashboardRegionsDirty(true);
 #endif
+}
+
+bool RenderListBox::scrollbarWillRenderIntoCompositingLayer() const
+{
+    RenderLayer* layer = this->enclosingLayer();
+    if (!layer)
+        return false;
+    return layer->scrollbarWillRenderIntoCompositingLayer();
 }
 
 } // namespace WebCore

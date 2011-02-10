@@ -1,3 +1,27 @@
+2011-02-09  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Fix for <rdar://problem/8966868> ScrollbarPainterDelegate 
+        must return a layer if layer-backed to avoid crashing
+
+        New virtual function scrollbarWillRenderIntoCompositingLayer()
+        on ScrollableArea.
+        * page/FrameView.h:
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::scrollbarWillRenderIntoCompositingLayer):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::scrollbarWillRenderIntoCompositingLayer):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::scrollbarWillRenderIntoCompositingLayer):
+        * rendering/RenderListBox.h:
+
+        Clean up unnecessary method declarations and call 
+        scrollbarWillRenderIntoCompositingLayer() to deterine if 
+        we need to return a layer.
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[ScrollbarPainterDelegate layer]):
+
 2011-02-09  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Darin Adler.

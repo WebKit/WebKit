@@ -106,6 +106,7 @@ private:
     virtual IntPoint convertFromScrollbarToContainingView(const Scrollbar*, const IntPoint&) const;
     virtual IntPoint convertFromContainingViewToScrollbar(const Scrollbar*, const IntPoint&) const;
     virtual Scrollbar* verticalScrollbar() const { return m_vBar.get(); }
+    virtual bool scrollbarWillRenderIntoCompositingLayer() const;
 
     // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
     void scrollTo(int newOffset);

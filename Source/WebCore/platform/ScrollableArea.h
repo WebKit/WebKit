@@ -33,12 +33,9 @@
 namespace WebCore {
 
 class FloatPoint;
+class PlatformGestureEvent;
 class PlatformWheelEvent;
 class ScrollAnimator;
-
-#if ENABLE(GESTURE_EVENTS)
-class PlatformGestureEvent;
-#endif
 
 class ScrollableArea {
 public:
@@ -82,7 +79,6 @@ public:
     // scroll of the content.
     virtual void setScrollOffset(const IntPoint&) = 0;
 
-
     // Convert points and rects between the scrollbar and its containing view.
     // The client needs to implement these in order to be aware of layout effects
     // like CSS transforms.
@@ -116,6 +112,8 @@ public:
     virtual IntSize overhangAmount() const { ASSERT_NOT_REACHED(); return IntSize(); }
     virtual IntPoint currentMousePosition() const { return IntPoint(); }
     virtual void didCompleteRubberBand(const IntSize&) const { ASSERT_NOT_REACHED(); }
+
+    virtual bool scrollbarWillRenderIntoCompositingLayer() const { return false; }
 
 private:
     // NOTE: Only called from the ScrollAnimator.

@@ -40,29 +40,20 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/UnusedParam.h>
 
-@interface NSObject (NSScrollAnimationHelperDetails)
+@interface NSObject (ScrollAnimationHelperDetails)
 - (id)initWithDelegate:(id)delegate;
 - (void)_stopRun;
 - (BOOL)_isAnimating;
 - (NSPoint)targetOrigin;
 @end
 
+using namespace WebCore;
+
 @interface ScrollAnimationHelperDelegate : NSObject
 {
     WebCore::ScrollAnimatorMac* _animator;
 }
-
 - (id)initWithScrollAnimator:(WebCore::ScrollAnimatorMac*)scrollAnimator;
-
-- (NSRect)bounds;
-- (void)_immediateScrollToPoint:(NSPoint)newPosition;
-- (NSSize)convertSizeToBase:(NSSize)size;
-- (NSSize)convertSizeFromBase:(NSSize)size;
-
-- (id)superview; // Return nil.
-- (id)documentView; // Return nil.
-- (id)window; // Return nil.
-- (void)_recursiveRecomputeToolTips; // No-op.
 @end
 
 static NSSize abs(NSSize size)
@@ -140,20 +131,12 @@ static NSSize abs(NSSize size)
 @end
 
 #if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
+
 @interface ScrollbarPainterControllerDelegate : NSObject
 {
     WebCore::ScrollAnimatorMac* _animator;
 }
-
 - (id)initWithScrollAnimator:(WebCore::ScrollAnimatorMac*)scrollAnimator;
-
-- (NSRect)contentAreaRectForScrollerImpPair:(id)scrollerImpPair;
-- (BOOL)inLiveResizeForScrollerImpPair:(id)scrollerImpPair;
-- (NSPoint)mouseLocationInContentAreaForScrollerImpPair:(id)scrollerImpPair;
-- (NSPoint)scrollerImpPair:(id)scrollerImpPair convertContentPoint:(NSPoint)pointInContentArea toScrollerImp:(id)scrollerImp;
-- (void)scrollerImpPair:(id)scrollerImpPair setContentAreaNeedsDisplayInRect:(NSRect)rect;
-- (void)scrollerImpPair:(id)scrollerImpPair updateScrollerStyleForNewRecommendedScrollerStyle:(NSScrollerStyle)newRecommendedScrollerStyle;
-
 @end
 
 @implementation ScrollbarPainterControllerDelegate
@@ -252,9 +235,7 @@ static NSSize abs(NSSize size)
     CGFloat _initialAlpha;
     CGFloat _newAlpha;
 }
-
 - (id)initWithScrollbarPainter:(WKScrollbarPainterRef)scrollerPainter part:(WebCore::ScrollbarPart)part scrollAnimator:(WebCore::ScrollAnimatorMac*)scrollAnimator animateAlphaTo:(CGFloat)newAlpha duration:(NSTimeInterval)duration;
-
 @end
 
 @implementation ScrollbarPartAnimation
@@ -316,19 +297,7 @@ static NSSize abs(NSSize size)
     RetainPtr<ScrollbarPartAnimation> _verticalTrackAnimation;
     RetainPtr<ScrollbarPartAnimation> _horizontalTrackAnimation;
 }
-
 - (id)initWithScrollAnimator:(WebCore::ScrollAnimatorMac*)scrollAnimator;
-
-- (NSRect)convertRectToBacking:(NSRect)aRect;
-- (NSRect)convertRectFromBacking:(NSRect)aRect;
-- (CALayer *)layer;
-
-- (void)scrollerImp:(id)scrollerImp animateKnobAlphaTo:(CGFloat)newKnobAlpha duration:(NSTimeInterval)duration;
-- (void)scrollerImp:(id)scrollerImp animateTrackAlphaTo:(CGFloat)newTrackAlpha duration:(NSTimeInterval)duration;
-- (void)scrollerImp:(id)scrollerImp overlayScrollerStateChangedTo:(NSUInteger)newOverlayScrollerState;
-
-- (void)scrollAnimatorDestroyed;
-
 @end
 
 @implementation ScrollbarPainterDelegate
@@ -355,7 +324,14 @@ static NSSize abs(NSSize size)
 
 - (CALayer *)layer
 {
-    return nil;
+    if (!_animator)
+        return nil;
+    if (!_animator->scrollableArea()->scrollbarWillRenderIntoCompositingLayer())
+        return nil;
+
+    // FIXME: This should attempt to return an actual layer.
+    static CALayer *dummyLayer = [[CALayer alloc] init];
+    return dummyLayer;
 }
 
 - (void)setUpAnimation:(RetainPtr<ScrollbarPartAnimation>)scrollbarPartAnimation scrollerPainter:(WKScrollbarPainterRef)scrollerPainter part:(WebCore::ScrollbarPart)part animateAlphaTo:(CGFloat)newAlpha duration:(NSTimeInterval)duration
