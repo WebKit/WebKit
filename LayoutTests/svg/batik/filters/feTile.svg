@@ -27,7 +27,7 @@
 <!-- @version $Id: feTile.svg 475477 2006-11-15 22:44:28Z cam $ -->
 <!-- ========================================================================= -->
 
-<?xml-stylesheet type="text/css" href="../../resources/style/test.css" ?>
+<?xml-stylesheet type="text/css" href="../resources/test.css" ?>
 
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="body" width="450" height="500" viewBox="0 0 450 500">
 <title>feTile Test</title>
@@ -142,6 +142,6 @@
     <!-- ============================================================= -->
     <!-- Batik sample mark                                             -->
     <!-- ============================================================= -->
-    <use xlink:href="../../../batikLogo.svg#Batik_Tag_Box" />
+    <use xlink:href="../resources/batikLogo.svg#Batik_Tag_Box" />
     
 </svg>

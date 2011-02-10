@@ -1,3 +1,106 @@
+2011-02-10  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        LayoutTests/svg cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=54184
+
+        Fix wrong xlink:hrefs in dozens of SVG testcases. SVGFreeSans.svg is now used in more places.
+        Remove unnecessary xml-stylesheet declarations, and unneeded text css attributes in some places.
+
+        Updated pixel test results for the affected testcases.
+
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-light-04-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-light-04-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-light-04-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-turb-02-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-turb-02-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-turb-02-f-expected.txt:
+        * platform/mac/svg/batik/filters/feTile-expected.checksum:
+        * platform/mac/svg/batik/filters/feTile-expected.png:
+        * platform/mac/svg/batik/filters/feTile-expected.txt:
+        * platform/mac/svg/css/circle-in-mask-with-shadow-expected.checksum:
+        * platform/mac/svg/css/circle-in-mask-with-shadow-expected.png:
+        * platform/mac/svg/css/mask-with-shadow-expected.checksum:
+        * platform/mac/svg/css/mask-with-shadow-expected.png:
+        * platform/mac/svg/foreignObject/text-tref-02-b-expected.checksum:
+        * platform/mac/svg/foreignObject/text-tref-02-b-expected.png:
+        * platform/mac/svg/foreignObject/text-tref-02-b-expected.txt:
+        * platform/mac/svg/text/text-tref-01-b-expected.checksum:
+        * platform/mac/svg/text/text-tref-01-b-expected.png:
+        * platform/mac/svg/transforms/animated-path-inside-transformed-html-expected.checksum:
+        * platform/mac/svg/transforms/animated-path-inside-transformed-html-expected.png:
+        * platform/mac/svg/zoom/page/zoom-mask-with-percentages-expected.checksum:
+        * platform/mac/svg/zoom/page/zoom-mask-with-percentages-expected.png:
+        * platform/mac/svg/zoom/page/zoom-mask-with-percentages-expected.txt:
+        * svg/W3C-SVG-1.1-SE/coords-dom-01-f.svg:
+        * svg/W3C-SVG-1.1-SE/coords-dom-02-f.svg:
+        * svg/W3C-SVG-1.1-SE/coords-dom-03-f.svg:
+        * svg/W3C-SVG-1.1-SE/coords-dom-04-f.svg:
+        * svg/W3C-SVG-1.1-SE/paths-dom-02-f.svg:
+        * svg/W3C-SVG-1.1-SE/pservers-pattern-04-f.svg:
+        * svg/W3C-SVG-1.1-SE/types-dom-01-b.svg:
+        * svg/W3C-SVG-1.1-SE/types-dom-02-f.svg:
+        * svg/W3C-SVG-1.1-SE/types-dom-03-b.svg:
+        * svg/W3C-SVG-1.1-SE/types-dom-04-b.svg:
+        * svg/W3C-SVG-1.1-SE/types-dom-05-b.svg:
+        * svg/W3C-SVG-1.1-SE/types-dom-06-f.svg:
+        * svg/W3C-SVG-1.1-SE/types-dom-07-f.svg:
+        * svg/W3C-SVG-1.1/filters-light-04-f.svg:
+        * svg/W3C-SVG-1.1/filters-turb-02-f.svg:
+        * svg/W3C-SVG-1.1/resources/interact-order-02-b-targ.svg:
+        * svg/W3C-SVG-1.1/resources/interact-order-03-b-targ.svg:
+        * svg/W3C-SVG-1.1/resources/linkingToc-t.svg:
+        * svg/batik/filters/feTile.svg:
+        * svg/css/circle-in-mask-with-shadow.svg:
+        * svg/css/mask-with-shadow.svg:
+        * svg/custom/image-clipped-hit.svg:
+        * svg/foreignObject/text-tref-02-b.svg:
+        * svg/hixie/cascade/002.css: Removed.
+        * svg/text/text-tref-01-b.svg:
+        * svg/transforms/animated-path-inside-transformed-html.xhtml:
+        * svg/zoom/page/zoom-mask-with-percentages.svg:
+        * svg/zoom/page/zoom-zoom-coords.xhtml:
+
 2011-02-10  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, typo fix.

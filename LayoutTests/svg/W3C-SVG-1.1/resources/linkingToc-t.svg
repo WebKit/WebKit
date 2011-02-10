@@ -21,13 +21,13 @@
    <text x="75" y="20" font-size="20">TOC &amp; index of linking tests.</text>
 
    
-   <a xlink:href="../svg/linking-a-04-t.svg" > 
+   <a xlink:href="../linking-a-04-t.svg" > 
      <text x="20" y="70" fill="blue" font-size="12">
        1.) linking-a-04-t:  Verify basic links out of SVG content ('a').
      </text> 
    </a>
 
-   <a xlink:href="../svg/linking-uri-03-t.svg" > 
+   <a xlink:href="../linking-uri-03-t.svg" > 
      <text x="20" y="100" fill="blue" font-size="12">
        2.) linking-uri-03-t:  Verify handling of xlink attributes on 'a'.
      </text> 
@@ -39,13 +39,13 @@
      </text> 
    </a>
    
-   <a xlink:href="../svg/linking-uri-01-b.svg" > 
+   <a xlink:href="../linking-uri-01-b.svg" > 
      <text x="20" y="160" fill="blue" font-size="12">
       4.) linking-uri-01-b:  Verify 'view' element handling.
      </text> 
    </a>
  
-   <a xlink:href="../svg/linking-uri-02-b.svg" > 
+   <a xlink:href="../linking-uri-02-b.svg" > 
      <text x="20" y="190" fill="blue" font-size="12">
       5.) linking-uri-02-b:  Verify 'view' element handling (companion to linking-uri-01-f).
      </text> 
