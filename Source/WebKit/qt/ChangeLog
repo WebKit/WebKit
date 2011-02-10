@@ -2,6 +2,28 @@
 
         Reviewed by Andreas Kling.
 
+        [Qt] Ensure WebView press delay timer is cancelled when grab is taken
+        https://bugs.webkit.org/show_bug.cgi?id=54242
+
+        As reported in:
+        http://bugreports.qt.nokia.com/browse/QTBUG-15529
+
+        Flickable steals the grab, but the timer was not stopped and the
+        keepGrab flag is set and the mouse grabbed. This means that the WebView
+        now has the grab and subsequent clicks on another element are ignored.
+
+        Original patch from Martin Jones <martin.jones@nokia.com>
+        reviewed (there) by Joona Petrell
+        52068f57f9c32098a90cc217730a530f85590f65
+
+        * declarative/qdeclarativewebview.cpp:
+        (GraphicsWebView::sceneEvent):
+        * declarative/qdeclarativewebview_p.h:
+
+2011-02-10  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
         [Qt] Fix assert in QDeclarativeWebView
         https://bugs.webkit.org/show_bug.cgi?id=54240
 

@@ -70,6 +70,8 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
     void timerEvent(QTimerEvent* event);
+    bool sceneEvent(QEvent *event);
+
 Q_SIGNALS:
     void doubleClick(int clickX, int clickY);
 private:

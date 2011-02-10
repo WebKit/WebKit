@@ -141,6 +141,16 @@ void GraphicsWebView::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
         QGraphicsWebView::mouseMoveEvent(event);
 }
 
+bool GraphicsWebView::sceneEvent(QEvent *event)
+{
+    bool rv = QGraphicsWebView::sceneEvent(event);
+    if (event->type() == QEvent::UngrabMouse) {
+        pressTimer.stop();
+        parent->setKeepMouseGrab(false);
+    }
+    return rv;
+}
+
 /*!
     \qmlclass WebView QDeclarativeWebView
     \ingroup qml-view-elements
