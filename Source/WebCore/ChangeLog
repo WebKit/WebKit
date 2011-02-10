@@ -1,3 +1,20 @@
+2011-02-10  Alexis Menard  <alexis.menard@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Default focus ring is too wide
+        https://bugs.webkit.org/show_bug.cgi?id=51854
+
+        We now respect the outline property and html.css defines the outline of the focus
+        ring to be 5px. This is propagated until GraphicsContext::drawFocusRing which uses
+        it as the pen size. We should ignore the size and keep a default one. I also
+        reverted the SolidLine to DotLine so that the selection looks nicer. Chromium Skia,
+        CG Win, Haiku, WinCE ports also ignore the width.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::drawFocusRingForPath):
+        (WebCore::GraphicsContext::drawFocusRing):
+
 2011-02-10  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
