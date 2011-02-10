@@ -1,3 +1,14 @@
+2011-02-10  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, rolling out r78157.
+        http://trac.webkit.org/changeset/78157
+        https://bugs.webkit.org/show_bug.cgi?id=54150
+
+        Fails on a bunch of bots
+
+        * plugins/npruntime/evaluate-js-destroying-plugin-from-destroy-stream-expected.txt: Removed.
+        * plugins/npruntime/evaluate-js-destroying-plugin-from-destroy-stream.html: Removed.
+
 2011-02-10  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Maciej Stachowiak.

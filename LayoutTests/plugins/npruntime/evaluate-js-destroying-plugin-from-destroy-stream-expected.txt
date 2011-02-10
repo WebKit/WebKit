@@ -1,3 +1,0 @@
-This tests that evaluating JS that destroys the plug-in from within NPP_Destroy stream doesn't crash.
-
-

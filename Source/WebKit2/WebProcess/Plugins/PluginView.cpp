@@ -284,11 +284,8 @@ PluginView::~PluginView()
     // Invalidate the object map.
     m_npRuntimeObjectMap.invalidate();
 
+    // Cancel all streams.
     cancelAllStreams();
-
-    // Null out the plug-in element explicitly so we'll crash earlier if we try to use
-    // the plug-in view after it's been destroyed.
-    m_pluginElement = nullptr;
 }
 
 Frame* PluginView::frame()
@@ -905,10 +902,6 @@ bool PluginView::evaluate(NPObject* npObject, const String& scriptString, NPVari
 
     bool oldAllowPopups = frame()->script()->allowPopupsFromPlugin();
     frame()->script()->setAllowPopupsFromPlugin(allowPopups);
-
-    // Calling evaluate will run JavaScript that can potentially remove the plug-in element, so we need to
-    // protect the plug-in view from destruction.
-    NPRuntimeObjectMap::PluginProtector pluginProtector(&m_npRuntimeObjectMap);
 
     bool returnValue = m_npRuntimeObjectMap.evaluate(npObject, scriptString, result);
 

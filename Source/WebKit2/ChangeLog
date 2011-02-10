@@ -1,3 +1,15 @@
+2011-02-10  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, rolling out r78157.
+        http://trac.webkit.org/changeset/78157
+        https://bugs.webkit.org/show_bug.cgi?id=54150
+
+        Fails on a bunch of bots
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::~PluginView):
+        (WebKit::PluginView::evaluate):
+
 2011-02-09  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Sam Weinig.

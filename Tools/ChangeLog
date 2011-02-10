@@ -1,3 +1,16 @@
+2011-02-10  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, rolling out r78157.
+        http://trac.webkit.org/changeset/78157
+        https://bugs.webkit.org/show_bug.cgi?id=54150
+
+        Fails on a bunch of bots
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/TestNetscapePlugIn/Tests/EvaluateJSDestroyingPluginFromDestroyStream.cpp: Removed.
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+
 2011-02-10  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Xan Lopez.
