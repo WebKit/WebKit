@@ -1,3 +1,10 @@
+2011-02-10  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip failing fast/text/capitalize-boundaries.html on
+        GTK
+
+        * platform/gtk/Skipped:
+
 2011-02-10  takano takumi  <takano@apple.com>
 
         Reviewed by Dan Bernstein.
