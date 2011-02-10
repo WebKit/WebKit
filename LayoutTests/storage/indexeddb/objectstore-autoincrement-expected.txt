@@ -57,7 +57,22 @@ PASS storeNames.length is 3
 setVersionCompleted():
 trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
 store = trans.objectStore('StoreWithKeyPath')
-Insert in object store with key gen and key path
+Insert into object store with auto increment and key path, with key in the object.
+store.add({name: 'Jeffersson', number: '7010', id: 3})
+addJefferssonSuccess():
+Success event fired:
+PASS 'result' in event is true
+PASS 'code' in event is false
+PASS 'message' in event is false
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+PASS event.result is 3
+Insert into object store with auto increment and key path, without key in the object.
 store.add({name: 'Lincoln', number: '7012'})
 addLincolnError():
 Error event fired:
@@ -75,23 +90,7 @@ PASS event.code is webkitIDBDatabaseException.UNKNOWN_ERR
 event.preventDefault()
 store = trans.objectStore('StoreWithAutoIncrement')
 Insert into object store with key gen using explicit key
-store.add({name: 'Lincoln'}, 1)
-addWithExplicitKeyError():
-Error event fired:
-PASS 'result' in event is false
-PASS 'code' in event is true
-PASS 'message' in event is true
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-PASS event.code is webkitIDBDatabaseException.DATA_ERR
-event.preventDefault()
-Insert into object store with key gen and no key path
-store.add({name: 'Lincoln', number: '7012'})
+store.add({name: 'Lincoln', number: '7012'}, 5)
 addLincolnSuccess():
 Success event fired:
 PASS 'result' in event is true
@@ -104,8 +103,8 @@ PASS 'onerror' in event.target is true
 PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
-PASS event.result is 1
-store.get(1)
+PASS event.result is 5
+store.get(5)
 getLincolnSuccess():
 Success event fired:
 PASS 'result' in event is true
@@ -133,8 +132,8 @@ PASS 'onerror' in event.target is true
 PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
-PASS event.result is 2
-store.get(2)
+PASS event.result is 6
+store.get(6)
 getAbrahamSuccess():
 Success event fired:
 PASS 'result' in event is true

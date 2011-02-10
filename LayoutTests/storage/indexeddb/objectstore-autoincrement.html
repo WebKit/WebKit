@@ -74,7 +74,19 @@ function setVersionCompleted()
 
     window.store = evalAndLog("store = trans.objectStore('StoreWithKeyPath')");
 
-    debug("Insert in object store with key gen and key path");
+    debug("Insert into object store with auto increment and key path, with key in the object.");
+    result = evalAndLog("store.add({name: 'Jeffersson', number: '7010', id: 3})");
+    result.onsuccess = addJefferssonSuccess;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function addJefferssonSuccess()
+{
+    debug("addJefferssonSuccess():");
+    verifySuccessEvent(event);
+    shouldBe("event.result", "3");
+
+    debug("Insert into object store with auto increment and key path, without key in the object.");
     result = evalAndLog("store.add({name: 'Lincoln', number: '7012'})");
     result.onsuccess = unexpectedSuccessCallback;
     result.onerror = addLincolnError;
@@ -91,32 +103,17 @@ function addLincolnError()
 
     window.store = evalAndLog("store = trans.objectStore('StoreWithAutoIncrement')");
     debug("Insert into object store with key gen using explicit key");
-    result = evalAndLog("store.add({name: 'Lincoln'}, 1)");
-    result.onsuccess = unexpectedSuccessCallback;
-    result.onerror = addWithExplicitKeyError;
-}
-
-function addWithExplicitKeyError()
-{
-    debug("addWithExplicitKeyError():");
-    verifyErrorEvent(event);
-    shouldBe("event.code", "webkitIDBDatabaseException.DATA_ERR");
-
-    evalAndLog("event.preventDefault()");
-
-    debug("Insert into object store with key gen and no key path");
-    result = evalAndLog("store.add({name: 'Lincoln', number: '7012'})");
+    result = evalAndLog("store.add({name: 'Lincoln', number: '7012'}, 5)");
     result.onsuccess = addLincolnSuccess;
-    result.onerror = unexpectedErrorCallback;
 }
 
 function addLincolnSuccess()
 {
     debug("addLincolnSuccess():");
     verifySuccessEvent(event);
-    shouldBe("event.result", "1");
+    shouldBe("event.result", "5");
 
-    result = evalAndLog("store.get(1)");
+    result = evalAndLog("store.get(5)");
     result.onsuccess = getLincolnSuccess;
     result.onerror = unexpectedErrorCallback;
 }
@@ -137,9 +134,9 @@ function putAbrahamSuccess()
 {
     debug("putAbrahamSuccess():");
     verifySuccessEvent(event);
-    shouldBe("event.result", "2");
+    shouldBe("event.result", "6");
 
-    result = evalAndLog("store.get(2)");
+    result = evalAndLog("store.get(6)");
     result.onsuccess = getAbrahamSuccess;
     result.onerror = unexpectedErrorCallback;
 }

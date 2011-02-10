@@ -197,50 +197,70 @@ void IDBObjectStoreBackendImpl::put(PassRefPtr<SerializedScriptValue> prpValue, 
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
 }
 
-void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<SerializedScriptValue> prpValue, PassRefPtr<IDBKey> prpKey, PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendInterface> transaction)
+PassRefPtr<IDBKey> IDBObjectStoreBackendImpl::selectKeyForPut(IDBObjectStoreBackendImpl* objectStore, SerializedScriptValue* value, IDBKey* key, PutMode putMode, IDBCallbacks* callbacks)
 {
-    RefPtr<SerializedScriptValue> value = prpValue;
-    RefPtr<IDBKey> key = prpKey;
-
     if (putMode == CursorUpdate)
         ASSERT(key);
 
-    if (!objectStore->m_keyPath.isNull() && key && putMode != CursorUpdate) {
+    const bool autoIncrement = objectStore->autoIncrement();
+    const bool hasKeyPath = !objectStore->m_keyPath.isNull();
+
+    if (hasKeyPath && key && putMode != CursorUpdate) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "A key was supplied for an objectStore that has a keyPath."));
-        return;
+        return 0;
     }
 
-    if (objectStore->autoIncrement() && key && putMode != CursorUpdate) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "A key was supplied for an objectStore that is using auto increment."));
-        return;
+    if (autoIncrement && key) {
+        objectStore->resetAutoIncrementKeyCache();
+        return key;
     }
 
-    if (objectStore->autoIncrement() && putMode != CursorUpdate) {
-        key = objectStore->genAutoIncrementKey();
+    if (autoIncrement) {
+        ASSERT(!key);
+        if (!hasKeyPath)
+            return objectStore->genAutoIncrementKey();
 
-        if (!objectStore->m_keyPath.isNull()) {
-            // FIXME: Inject the generated key into the object.
-            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Adding data to object stores with auto increment and in-line keys not yet supported."));
-            return;
+        RefPtr<IDBKey> keyPathKey = fetchKeyFromKeyPath(value, objectStore->m_keyPath);
+        if (keyPathKey) {
+            objectStore->resetAutoIncrementKeyCache();
+            return keyPathKey;
         }
-    } else if (!objectStore->m_keyPath.isNull()) {
-        RefPtr<IDBKey> keyPathKey = fetchKeyFromKeyPath(value.get(), objectStore->m_keyPath);
+
+        // FIXME: Generate auto increment key, and inject it through the key path.
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Adding data to object stores with auto increment and in-line keys not yet supported."));
+        return 0;
+    }
+
+    if (hasKeyPath) {
+        RefPtr<IDBKey> keyPathKey = fetchKeyFromKeyPath(value, objectStore->m_keyPath);
 
         if (!keyPathKey) {
             callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "The key could not be fetched from the keyPath."));
-            return;
+            return 0;
         }
 
-        if (putMode == CursorUpdate && !keyPathKey->isEqual(key.get())) {
+        if (putMode == CursorUpdate && !keyPathKey->isEqual(key)) {
             callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "The key fetched from the keyPath does not match the key of the cursor."));
-            return;
+            return 0;
         }
 
-        key = keyPathKey;
-    } else if (!key) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "No key supplied."));
-        return;
+        return keyPathKey.release();
     }
+
+    if (!key) {
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "No key supplied"));
+        return 0;
+    }
+
+    return key;
+}
+
+void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<SerializedScriptValue> prpValue, PassRefPtr<IDBKey> prpKey, PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendInterface> transaction)
+{
+    RefPtr<SerializedScriptValue> value = prpValue;
+    RefPtr<IDBKey> key = selectKeyForPut(objectStore.get(), value.get(), prpKey.get(), putMode, callbacks.get());
+    if (!key)
+        return;
 
     if (key->type() == IDBKey::NullType) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "NULL key is not allowed."));

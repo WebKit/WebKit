@@ -1,3 +1,26 @@
+2011-02-10  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        IndexedDB: Update the semantics of put()
+        https://bugs.webkit.org/show_bug.cgi?id=54102
+
+        Update the semantics of put: For object stores with auto increment,
+        it should be allowed to provide an explicit key, or an in-line key,
+        overriding the key generator mechanism.
+
+        This reflects the spec changes suggested here:
+        http://www.w3.org/Bugs/Public/show_bug.cgi?id=11976
+
+        Extracting key-selection logic into its own function
+        to make it a bit easier on the eyes.
+
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::selectKeyForPut):
+        (WebCore::IDBObjectStoreBackendImpl::putInternal):
+        * storage/IDBObjectStoreBackendImpl.h:
+        (WebCore::IDBObjectStoreBackendImpl::resetAutoIncrementKeyCache):
+
 2011-02-09  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin Adler.
