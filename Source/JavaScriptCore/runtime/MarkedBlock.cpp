@@ -33,7 +33,7 @@ namespace JSC {
 MarkedBlock* MarkedBlock::create(JSGlobalData* globalData)
 {
     PageAllocationAligned allocation = PageAllocationAligned::allocate(BLOCK_SIZE, BLOCK_SIZE, OSAllocator::JSGCHeapPages);
-    if (!allocation)
+    if (!static_cast<bool>(allocation))
         CRASH();
     return new (allocation.base()) MarkedBlock(allocation, globalData);
 }

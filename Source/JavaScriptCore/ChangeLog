@@ -1,3 +1,10 @@
+2011-02-10  Dan Bernstein  <mitz@apple.com>
+
+        LLVM Compiler build fix.
+
+        * runtime/MarkedBlock.cpp:
+        (JSC::MarkedBlock::create):
+
 2011-02-10  Peter Varga  <pvarga@webkit.org>
 
         Reviewed by Csaba Osztrogonác.
@@ -672,7 +679,7 @@
 
         Unreviewed rollout two patches r77614 and r77612.
 
-        REGRESSION: Snow Leopard Intell Release anumber of failing tests.
+        REGRESSION: Snow Leopard Intel Release anumber of failing tests.
 
         * runtime/Heap.cpp:
         (JSC::Heap::Heap):
