@@ -2,6 +2,48 @@
 
         Reviewed by Andreas Kling.
 
+        [Qt] Add UrlLoader and command line argument handling to MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=54192
+ 
+        Copy and modify files from QtTestBrowser's implementation.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::BrowserWindow):
+        (BrowserWindow::newWindow):
+        * MiniBrowser/qt/BrowserWindow.h:
+        * MiniBrowser/qt/MiniBrowser.pro:
+        * MiniBrowser/qt/MiniBrowserApplication.cpp: Copied from QtTestBrowser/launcherwindow.cpp
+        (MiniBrowserApplication::MiniBrowserApplication):
+        (MiniBrowserApplication::handleUserOptions):
+        * MiniBrowser/qt/MiniBrowserApplication.h: Copied from QtTestBrowser/launcherwindow.h
+        (WindowOptions::WindowOptions):
+        (MiniBrowserApplication::urls):
+        (MiniBrowserApplication::isRobotized):
+        (MiniBrowserApplication::robotTimeout):
+        (MiniBrowserApplication::robotExtraTime):
+        * MiniBrowser/qt/UrlLoader.cpp: Copied from QtTestBrowser/urlloader.cpp
+        (UrlLoader::UrlLoader):
+        (UrlLoader::loadNext):
+        (UrlLoader::checkIfFinished):
+        (UrlLoader::frameLoadStarted):
+        (UrlLoader::frameLoadFinished):
+        (UrlLoader::loadUrlList):
+        (UrlLoader::getUrl):
+        * MiniBrowser/qt/UrlLoader.h: Copied from QtTestBrowser/urlloader.h 
+        * MiniBrowser/qt/main.cpp:
+        (main):
+        * MiniBrowser/qt/utils.cpp: Copied from QtTestBrowser/utils.cpp 
+        (takeOptionValue):
+        (formatKeys):
+        (enumToKeys):
+        (appQuit):
+        (urlFromUserInput):
+        * MiniBrowser/qt/utils.h: Copied from QtTestBrowser/utils.h
+
+2011-02-10  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Andreas Kling.
+
         check-webkit-style: Add -build/include exemption for Tools/MiniBrowser/qt
         https://bugs.webkit.org/show_bug.cgi?id=54200
 

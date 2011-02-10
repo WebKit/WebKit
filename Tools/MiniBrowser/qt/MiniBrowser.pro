@@ -2,13 +2,19 @@ TEMPLATE = app
 TARGET = MiniBrowser
 
 SOURCES += \
-    main.cpp \
     BrowserView.cpp \
     BrowserWindow.cpp \
+    main.cpp \
+    MiniBrowserApplication.cpp \
+    UrlLoader.cpp \
+    utils.cpp \
 
 HEADERS += \
     BrowserView.h \
     BrowserWindow.h \
+    MiniBrowserApplication.h \
+    UrlLoader.h \
+    utils.h \
 
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../../..
 include(../../../Source/WebKit.pri)

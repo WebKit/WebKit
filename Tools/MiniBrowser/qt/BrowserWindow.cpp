@@ -36,17 +36,25 @@ static QWKPage* newPageFunction(QWKPage* page)
     return window->page();
 }
 
-QGraphicsWKView::BackingStoreType BrowserWindow::backingStoreTypeForNewWindow = QGraphicsWKView::Simple;
-bool BrowserWindow::useSeparateWebProcessPerWindow = false;
-
 QVector<qreal> BrowserWindow::m_zoomLevels;
 
-BrowserWindow::BrowserWindow(QWKContext* context)
+BrowserWindow::BrowserWindow(QWKContext* context, WindowOptions* options)
     : m_isZoomTextOnly(false)
     , m_currentZoom(1)
     , m_context(context)
-    , m_browser(new BrowserView(backingStoreTypeForNewWindow, context))
 {
+    if (options)
+        m_windowOptions = *options;
+    else {
+        WindowOptions tmpOptions;
+        m_windowOptions = tmpOptions;
+    }
+
+    if (m_windowOptions.useTiledBackingStore)
+        m_browser = new BrowserView(QGraphicsWKView::Tiled, context);
+    else
+        m_browser = new BrowserView(QGraphicsWKView::Simple, context);
+
     setAttribute(Qt::WA_DeleteOnClose);
 
     connect(m_browser->view(), SIGNAL(loadProgress(int)), SLOT(loadProgress(int)));
@@ -144,7 +152,7 @@ QWKPage* BrowserWindow::page()
 BrowserWindow* BrowserWindow::newWindow(const QString& url)
 {
     BrowserWindow* window;
-    if (useSeparateWebProcessPerWindow) {
+    if (m_windowOptions.useSeparateWebProcessPerWindow) {
         QWKContext* context = new QWKContext();
         window = new BrowserWindow(context);
         context->setParent(window);

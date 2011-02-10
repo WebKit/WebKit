@@ -30,22 +30,20 @@
 #define BrowserWindow_h
 
 #include "BrowserView.h"
+
+#include "MiniBrowserApplication.h"
 #include <QStringList>
 #include <QtGui>
-#include <qgraphicswkview.h>
 
 class BrowserWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    BrowserWindow(QWKContext*);
+    BrowserWindow(QWKContext*, WindowOptions* = 0);
     ~BrowserWindow();
     void load(const QString& url);
 
     QWKPage* page();
-
-    static QGraphicsWKView::BackingStoreType backingStoreTypeForNewWindow;
-    static bool useSeparateWebProcessPerWindow;
 
 public slots:
     BrowserWindow* newWindow(const QString& url = "about:blank");
@@ -84,6 +82,7 @@ private:
     qreal m_currentZoom;
 
     QWKContext* m_context;
+    WindowOptions m_windowOptions;
     BrowserView* m_browser;
     QLineEdit* m_addressBar;
     QStringList m_userAgentList;

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
- * Copyright (C) 2010 University of Szeged
+ * Copyright (C) 2011 University of Szeged
  *
  * All rights reserved.
  *
@@ -26,49 +26,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "BrowserWindow.h"
+#ifndef utils_h
+#define utils_h
 
-#include "MiniBrowserApplication.h"
-#include "UrlLoader.h"
-#include <QLatin1String>
-#include <QRegExp>
-#include <qgraphicswkview.h>
-#include <QtGui>
+#include <QtCore>
 
-int main(int argc, char** argv)
-{
-    MiniBrowserApplication app(argc, argv);
+#ifndef NO_RETURN
+#if defined(__CC_ARM) || defined(__ARMCC__)
+#define NO_RETURN __declspec(noreturn)
+#elif defined(__GNUC__)
+#define NO_RETURN __attribute((__noreturn__))
+#else
+#define NO_RETURN
+#endif
+#endif
 
-    if (app.isRobotized()) {
-        QWKContext* context = new QWKContext;
-        BrowserWindow* window = new BrowserWindow(context, &app.m_windowOptions);
-        UrlLoader loader(window, app.urls().at(0), app.robotTimeout(), app.robotExtraTime());
-        loader.loadNext();
-        window->show();
-        return app.exec();
-    }
+// options handling
+QString takeOptionValue(QStringList* arguments, int index);
+QString formatKeys(QList<QString> keys);
+QList<QString> enumToKeys(const QMetaObject, const QString&, const QString&);
 
-    QStringList urls = app.urls();
+NO_RETURN void appQuit(int status, const QString& msg = QString());
 
-    if (urls.isEmpty()) {
-        QString defaultUrl = QString("file://%1/%2").arg(QDir::homePath()).arg(QLatin1String("index.html"));
-        if (QDir(defaultUrl).exists())
-            urls.append(defaultUrl);
-        else
-            urls.append("http://www.google.com");
-    }
+QUrl urlFromUserInput(const QString& input);
 
-    QWKContext* context = new QWKContext;
-    BrowserWindow* window = new BrowserWindow(context, &app.m_windowOptions);
-    if (app.m_windowOptions.useSeparateWebProcessPerWindow)
-        context->setParent(window);
-
-    window->load(urls.at(0));
-
-    for (int i = 1; i < urls.size(); ++i)
-        window->newWindow(urls.at(i));
-
-    app.exec();
-
-    return 0;
-}
+#endif

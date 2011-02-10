@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
- * Copyright (C) 2010 University of Szeged
+ * Copyright (C) 2011 University of Szeged
  *
  * All rights reserved.
  *
@@ -26,49 +26,61 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "BrowserWindow.h"
+#include "utils.h"
 
-#include "MiniBrowserApplication.h"
-#include "UrlLoader.h"
-#include <QLatin1String>
-#include <QRegExp>
-#include <qgraphicswkview.h>
-#include <QtGui>
-
-int main(int argc, char** argv)
+QString takeOptionValue(QStringList* arguments, int index)
 {
-    MiniBrowserApplication app(argc, argv);
+    QString result;
 
-    if (app.isRobotized()) {
-        QWKContext* context = new QWKContext;
-        BrowserWindow* window = new BrowserWindow(context, &app.m_windowOptions);
-        UrlLoader loader(window, app.urls().at(0), app.robotTimeout(), app.robotExtraTime());
-        loader.loadNext();
-        window->show();
-        return app.exec();
+    if (++index < arguments->count() && !arguments->at(index).startsWith("-"))
+        result = arguments->takeAt(index);
+
+    return result;
+}
+
+QString formatKeys(QList<QString> keys)
+{
+    QString result;
+    for (int i = 0; i < keys.count() - 1; i++)
+        result.append(keys.at(i) + "|");
+    result.append(keys.last());
+    return result;
+}
+
+QList<QString> enumToKeys(const QMetaObject o, const QString& name, const QString& strip)
+{
+    QList<QString> list;
+
+    int enumIndex = o.indexOfEnumerator(name.toLatin1().data());
+    QMetaEnum enumerator = o.enumerator(enumIndex);
+
+    if (enumerator.isValid()) {
+        for (int i = 0; i < enumerator.keyCount(); i++) {
+            QString key(enumerator.valueToKey(i));
+            list.append(key.remove(strip));
+        }
     }
 
-    QStringList urls = app.urls();
+    return list;
+}
 
-    if (urls.isEmpty()) {
-        QString defaultUrl = QString("file://%1/%2").arg(QDir::homePath()).arg(QLatin1String("index.html"));
-        if (QDir(defaultUrl).exists())
-            urls.append(defaultUrl);
+void appQuit(int exitCode, const QString& msg)
+{
+    if (!msg.isEmpty()) {
+        if (exitCode > 0)
+            qDebug("ERROR: %s", msg.toLatin1().data());
         else
-            urls.append("http://www.google.com");
+            qDebug() << msg;
     }
+    exit(exitCode);
+}
 
-    QWKContext* context = new QWKContext;
-    BrowserWindow* window = new BrowserWindow(context, &app.m_windowOptions);
-    if (app.m_windowOptions.useSeparateWebProcessPerWindow)
-        context->setParent(window);
+QUrl urlFromUserInput(const QString& string)
+{
+    QString input(string);
+    QFileInfo fi(input);
+    if (fi.exists() && fi.isRelative())
+        input = fi.absoluteFilePath();
 
-    window->load(urls.at(0));
-
-    for (int i = 1; i < urls.size(); ++i)
-        window->newWindow(urls.at(i));
-
-    app.exec();
-
-    return 0;
+    return QUrl::fromUserInput(input);
 }

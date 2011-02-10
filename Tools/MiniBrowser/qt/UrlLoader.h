@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
- * Copyright (C) 2010 University of Szeged
+ * Copyright (C) 2009 University of Szeged
  *
  * All rights reserved.
  *
@@ -26,49 +26,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef UrlLoader_h
+#define UrlLoader_h
+
 #include "BrowserWindow.h"
 
-#include "MiniBrowserApplication.h"
-#include "UrlLoader.h"
-#include <QLatin1String>
-#include <QRegExp>
-#include <qgraphicswkview.h>
-#include <QtGui>
+#include <QTextStream>
+#include <QTimer>
+#include <QVector>
 
-int main(int argc, char** argv)
-{
-    MiniBrowserApplication app(argc, argv);
+class UrlLoader : public QObject {
+    Q_OBJECT
 
-    if (app.isRobotized()) {
-        QWKContext* context = new QWKContext;
-        BrowserWindow* window = new BrowserWindow(context, &app.m_windowOptions);
-        UrlLoader loader(window, app.urls().at(0), app.robotTimeout(), app.robotExtraTime());
-        loader.loadNext();
-        window->show();
-        return app.exec();
-    }
+public:
+    UrlLoader(BrowserWindow*, const QString&, int, int);
 
-    QStringList urls = app.urls();
+public slots:
+    void loadNext();
 
-    if (urls.isEmpty()) {
-        QString defaultUrl = QString("file://%1/%2").arg(QDir::homePath()).arg(QLatin1String("index.html"));
-        if (QDir(defaultUrl).exists())
-            urls.append(defaultUrl);
-        else
-            urls.append("http://www.google.com");
-    }
+private slots:
+    void checkIfFinished();
+    void frameLoadStarted();
+    void frameLoadFinished();
 
-    QWKContext* context = new QWKContext;
-    BrowserWindow* window = new BrowserWindow(context, &app.m_windowOptions);
-    if (app.m_windowOptions.useSeparateWebProcessPerWindow)
-        context->setParent(window);
+signals:
+    void pageLoadFinished();
 
-    window->load(urls.at(0));
+private:
+    void loadUrlList(const QString& inputFileName);
+    bool getUrl(QString& qstr);
 
-    for (int i = 1; i < urls.size(); ++i)
-        window->newWindow(urls.at(i));
+private:
+    QVector<QString> m_urls;
+    int m_index;
+    BrowserWindow* m_browserWindow;
+    QTextStream m_stdOut;
+    int m_loaded;
+    QTimer m_timeoutTimer;
+    QTimer m_extraTimeTimer;
+    QTimer m_checkIfFinishedTimer;
+    int m_numFramesLoading;
+};
 
-    app.exec();
-
-    return 0;
-}
+#endif

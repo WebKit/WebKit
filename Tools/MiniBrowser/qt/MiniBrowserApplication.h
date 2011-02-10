@@ -26,49 +26,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "BrowserWindow.h"
+#ifndef MiniBrowserApplication_h
+#define MiniBrowserApplication_h
 
-#include "MiniBrowserApplication.h"
-#include "UrlLoader.h"
-#include <QLatin1String>
-#include <QRegExp>
-#include <qgraphicswkview.h>
+#include <QStringList>
 #include <QtGui>
 
-int main(int argc, char** argv)
-{
-    MiniBrowserApplication app(argc, argv);
-
-    if (app.isRobotized()) {
-        QWKContext* context = new QWKContext;
-        BrowserWindow* window = new BrowserWindow(context, &app.m_windowOptions);
-        UrlLoader loader(window, app.urls().at(0), app.robotTimeout(), app.robotExtraTime());
-        loader.loadNext();
-        window->show();
-        return app.exec();
+struct WindowOptions {
+    WindowOptions()
+        : useTiledBackingStore(false)
+        , useSeparateWebProcessPerWindow(false)
+    {
     }
 
-    QStringList urls = app.urls();
+    bool useTiledBackingStore;
+    bool useSeparateWebProcessPerWindow;
+};
 
-    if (urls.isEmpty()) {
-        QString defaultUrl = QString("file://%1/%2").arg(QDir::homePath()).arg(QLatin1String("index.html"));
-        if (QDir(defaultUrl).exists())
-            urls.append(defaultUrl);
-        else
-            urls.append("http://www.google.com");
-    }
+class MiniBrowserApplication : public QApplication {
+    Q_OBJECT
 
-    QWKContext* context = new QWKContext;
-    BrowserWindow* window = new BrowserWindow(context, &app.m_windowOptions);
-    if (app.m_windowOptions.useSeparateWebProcessPerWindow)
-        context->setParent(window);
+public:
+    MiniBrowserApplication(int& argc, char** argv);
+    QStringList urls() const { return m_urls; }
+    bool isRobotized() const { return m_isRobotized; }
+    int robotTimeout() const { return m_robotTimeoutSeconds; }
+    int robotExtraTime() const { return m_robotExtraTimeSeconds; }
 
-    window->load(urls.at(0));
+    WindowOptions m_windowOptions;
 
-    for (int i = 1; i < urls.size(); ++i)
-        window->newWindow(urls.at(i));
+private:
+    void handleUserOptions();
 
-    app.exec();
+private:
+    bool m_isRobotized;
+    int m_robotTimeoutSeconds;
+    int m_robotExtraTimeSeconds;
+    QStringList m_urls;
+};
 
-    return 0;
-}
+#endif
