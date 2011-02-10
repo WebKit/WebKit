@@ -1,3 +1,24 @@
+2011-02-10  Bill Budge  <bbudge@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add fields to ResourceRequest and ResourceResponse in preparation for adding CORS support to AssociatedURLLoader.
+        https://bugs.webkit.org/show_bug.cgi?id=53925
+
+        * platform/network/chromium/ResourceRequest.cpp:
+        (WebCore::ResourceRequest::doPlatformCopyData):
+        (WebCore::ResourceRequest::doPlatformAdopt):
+        * platform/network/chromium/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+        (WebCore::ResourceRequest::downloadToFile):
+        (WebCore::ResourceRequest::setDownloadToFile):
+        * platform/network/chromium/ResourceResponse.cpp:
+        (WebCore::ResourceResponse::doPlatformCopyData):
+        (WebCore::ResourceResponse::doPlatformAdopt):
+        * platform/network/chromium/ResourceResponse.h:
+        (WebCore::ResourceResponse::downloadFilePath):
+        (WebCore::ResourceResponse::setDownloadFilePath):
+
 2011-02-10  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

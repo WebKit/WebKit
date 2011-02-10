@@ -40,6 +40,7 @@ PassOwnPtr<CrossThreadResourceResponseData> ResourceResponse::doPlatformCopyData
     data->m_wasFetchedViaProxy = m_wasFetchedViaProxy;
     data->m_responseTime = m_responseTime;
     data->m_socketAddress = m_socketAddress;
+    data->m_downloadFilePath = m_downloadFilePath;
     return data;
 }
 
@@ -55,6 +56,7 @@ void ResourceResponse::doPlatformAdopt(PassOwnPtr<CrossThreadResourceResponseDat
     m_wasFetchedViaProxy = data->m_wasFetchedViaProxy;
     m_responseTime = data->m_responseTime;
     m_socketAddress = data->m_socketAddress;
+    m_downloadFilePath = data->m_downloadFilePath;
 }
 
 } // namespace WebCore

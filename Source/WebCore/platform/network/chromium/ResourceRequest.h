@@ -42,6 +42,7 @@ namespace WebCore {
             , m_requestorProcessID(0)
             , m_appCacheHostID(0)
             , m_hasUserGesture(false)
+            , m_downloadToFile(false)
         {
         }
 
@@ -51,6 +52,7 @@ namespace WebCore {
             , m_requestorProcessID(0)
             , m_appCacheHostID(0)
             , m_hasUserGesture(false)
+            , m_downloadToFile(false)
         {
         }
 
@@ -60,6 +62,7 @@ namespace WebCore {
             , m_requestorProcessID(0)
             , m_appCacheHostID(0)
             , m_hasUserGesture(false)
+            , m_downloadToFile(false)
         {
             setHTTPReferrer(referrer);
         }
@@ -70,6 +73,7 @@ namespace WebCore {
             , m_requestorProcessID(0)
             , m_appCacheHostID(0)
             , m_hasUserGesture(false)
+            , m_downloadToFile(false)
         {
         }
 
@@ -92,6 +96,10 @@ namespace WebCore {
         bool hasUserGesture() const { return m_hasUserGesture; }
         void setHasUserGesture(bool hasUserGesture) { m_hasUserGesture = hasUserGesture; }
 
+        // True if request should be downloaded to file.
+        bool downloadToFile() const { return m_downloadToFile; }
+        void setDownloadToFile(bool downloadToFile) { m_downloadToFile = downloadToFile; }
+
     private:
         friend class ResourceRequestBase;
 
@@ -105,6 +113,7 @@ namespace WebCore {
         int m_requestorProcessID;
         int m_appCacheHostID;
         bool m_hasUserGesture;
+        bool m_downloadToFile;
     };
 
     struct CrossThreadResourceRequestData : public CrossThreadResourceRequestDataBase {
@@ -112,6 +121,7 @@ namespace WebCore {
         int m_requestorProcessID;
         int m_appCacheHostID;
         bool m_hasUserGesture;
+        bool m_downloadToFile;
     };
 
 } // namespace WebCore
