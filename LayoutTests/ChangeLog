@@ -5,6 +5,17 @@
         LayoutTests/svg cleanup
         https://bugs.webkit.org/show_bug.cgi?id=54184
 
+        Regenerate result with a 64bit SL machine.. a pity that we have diffs there.
+
+        * platform/mac/svg/zoom/page/zoom-mask-with-percentages-expected.txt:
+
+2011-02-10  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
+        LayoutTests/svg cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=54184
+
         Update mac-leopard/qt baselines after r78182.
 
         * platform/mac-leopard/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.txt:
