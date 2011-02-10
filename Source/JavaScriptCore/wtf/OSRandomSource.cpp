@@ -50,7 +50,9 @@ void cryptographicallyRandomValuesFromOS(unsigned char* buffer, size_t length)
     if (fd < 0)
         CRASH(); // We need /dev/urandom for this API to work...
 
-    read(fd, buffer, length);
+    if (read(fd, buffer, length) != length)
+        CRASH();
+
     close(fd);
 #elif COMPILER(MSVC)
     for (size_t i = 0; i < length; i++) {
