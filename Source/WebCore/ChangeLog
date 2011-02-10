@@ -1,3 +1,34 @@
+2011-02-10  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Remove the use of deprecated qVariant*
+        https://bugs.webkit.org/show_bug.cgi?id=54229
+
+        This was applied on the Qt repository and affects QtWebKit there.
+        (633f3f45e5420663cf4ceadea79e62fea44cd2eb)
+
+        The side effect of this change is that we won't be able to build
+        QtWebKit with MSVC 6, as it doesn't support member template functions
+        (not sure if it's possible today anyway).
+
+        Original patch from Olivier Goffart <olivier.goffart@nokia.com>, with
+        review reported as being from the mailing list.
+
+        The changes are result of the following commands:
+
+            git grep -O"sed -i 's/qVariantValue</qvariant_cast</'" qVariantValue
+            git grep -O"sed -i 's/qVariantSetValue(\([^&*\(),]*\), */\\1.setValue(/'" qVariantSetValue
+            git grep -O"sed -i 's/qVariantSetValue *<\([^>]*\)> *(\([^&*\(),]*\), */\\2.setValue<\\1>(/'" qVariantSetValue
+            git grep -O"sed -i 's/qVariantCanConvert *<\([^>]*\)> *(\([^&*\(),]*\))/\\2.canConvert<\\1>()/g'" qVariantCanConvert
+            git grep -O"sed -i 's/qVariantCanConvert *<\([^>]*\)> *(\([^&*\(),]*([^&*\(),]*)\))/\\2.canConvert<\\1>()/g'" qVariantCanConvert
+            git grep -O"sed -i 's/qVariantFromValue\( *[(<]\)/QVariant::fromValue\\1/'" qVariantFromValue
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::convertValueToQVariant):
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        (WebCore::MediaPlayerPrivateQt::commitLoad):
+
 2011-02-10  Nico Weber  <thakis@chromium.org>
 
         Reviewed by Darin Adler.

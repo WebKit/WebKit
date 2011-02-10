@@ -587,7 +587,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                     if (qstring.mid(lastSlash + 1).contains(QLatin1Char('i')))
                         realRe.setCaseSensitivity(Qt::CaseInsensitive);
 
-                    ret = qVariantFromValue(realRe);
+                    ret = QVariant::fromValue(realRe);
                     dist = 0;
                 } else {
                     qConvDebug() << "couldn't parse a JS regexp";
@@ -598,7 +598,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
 
                 QRegExp re(qstring);
                 if (re.isValid()) {
-                    ret = qVariantFromValue(re);
+                    ret = QVariant::fromValue(re);
                     dist = 10;
                 }
             }
@@ -610,7 +610,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                 if (qtinst) {
                     if (qtinst->getObject()) {
                         qConvDebug() << "found instance, with object:" << (void*) qtinst->getObject();
-                        ret = qVariantFromValue(qtinst->getObject());
+                        ret = QVariant::fromValue(qtinst->getObject());
                         qConvDebug() << ret;
                         dist = 0;
                     } else {
@@ -621,7 +621,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                 }
             } else if (type == Null) {
                 QObject* nullobj = 0;
-                ret = qVariantFromValue(nullobj);
+                ret = QVariant::fromValue(nullobj);
                 dist = 0;
             } else {
                 qConvDebug() << "previous type was not an object:" << type;
@@ -634,7 +634,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                 if (qtinst) {
                     if (qtinst->getObject()) {
                         qConvDebug() << "found instance, with object:" << (void*) qtinst->getObject();
-                        ret = qVariantFromValue((void *)qtinst->getObject());
+                        ret = QVariant::fromValue((void *)qtinst->getObject());
                         qConvDebug() << ret;
                         dist = 0;
                     } else {
@@ -644,7 +644,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                     qConvDebug() << "wasn't a qtinstance";
                 }
             } else if (type == Null) {
-                ret = qVariantFromValue((void*)0);
+                ret = QVariant::fromValue((void*)0);
                 dist = 0;
             } else if (type == Number) {
                 // I don't think that converting a double to a pointer is a wise

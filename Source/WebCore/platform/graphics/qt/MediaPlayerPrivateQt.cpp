@@ -215,7 +215,7 @@ void MediaPlayerPrivateQt::commitLoad(const String& url)
             // Don't set the header if there are no cookies.
             // This prevents a warning from being emitted.
             if (!cookies.isEmpty())
-                request.setHeader(QNetworkRequest::CookieHeader, qVariantFromValue(cookies));
+                request.setHeader(QNetworkRequest::CookieHeader, QVariant::fromValue(cookies));
 
             // Set the refferer, but not when requesting insecure content from a secure page
             QUrl documentUrl = QUrl(QString(document->documentURI()));

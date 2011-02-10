@@ -897,9 +897,9 @@ QVariantList DumpRenderTreeSupportQt::nodesFromRect(const QWebElement& document,
     for (int i = 0; i < nodes->length(); i++) {
         // QWebElement will be null if the Node is not an HTML Element
         if (nodes->item(i)->isHTMLElement())
-            res << qVariantFromValue(QWebElement(nodes->item(i)));
+            res << QVariant::fromValue(QWebElement(nodes->item(i)));
         else
-            res << qVariantFromValue(QDRTNode(nodes->item(i)));
+            res << QVariant::fromValue(QDRTNode(nodes->item(i)));
     }
     return res;
 }
