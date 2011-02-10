@@ -203,17 +203,15 @@ class SingleTestRunner:
         # Although all test_shell/DumpRenderTree output should be utf-8,
         # we do not ever decode it inside run-webkit-tests.  For some tests
         # DumpRenderTree may not output utf-8 text (e.g. webarchives).
-        self._save_baseline_data(driver_output.text, ".txt", encoding=None,
+        self._save_baseline_data(driver_output.text, ".txt",
                                  generate_new_baseline=self._options.new_baseline)
         if self._options.pixel_tests and driver_output.image_hash:
-            self._save_baseline_data(driver_output.image, ".png", encoding=None,
+            self._save_baseline_data(driver_output.image, ".png",
                                      generate_new_baseline=self._options.new_baseline)
             self._save_baseline_data(driver_output.image_hash, ".checksum",
-                                     encoding="ascii",
                                      generate_new_baseline=self._options.new_baseline)
 
-    def _save_baseline_data(self, data, modifier, encoding,
-                            generate_new_baseline=True):
+    def _save_baseline_data(self, data, modifier, generate_new_baseline=True):
         """Saves a new baseline file into the port's baseline directory.
 
         The file will be named simply "<test>-expected<modifier>", suitable for
@@ -222,7 +220,6 @@ class SingleTestRunner:
         Args:
           data: result to be saved as the new baseline
           modifier: type of the result file, e.g. ".txt" or ".png"
-          encoding: file encoding (none, "utf-8", etc.)
           generate_new_baseline: whether to enerate a new, platform-specific
             baseline, or update the existing one
         """
@@ -242,7 +239,7 @@ class SingleTestRunner:
             output_path = port.expected_filename(self._filename, modifier)
             _log.debug('resetting baseline result "%s"' % output_path)
 
-        port.update_baseline(output_path, data, encoding)
+        port.update_baseline(output_path, data)
 
     def _handle_error(self, driver_output):
         failures = []

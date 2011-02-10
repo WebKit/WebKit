@@ -1,3 +1,15 @@
+2011-02-09  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [NRWT] Remove encoding parameters where we can assume data can be
+        written in binary mode.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54066
+
+        * Scripts/webkitpy/layout_tests/layout_package/single_test_runner.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+
 2011-02-09  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.

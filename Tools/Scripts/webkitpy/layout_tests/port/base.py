@@ -318,7 +318,7 @@ class Port(object):
         path = self.expected_filename(test, '.checksum')
         if not self.path_exists(path):
             return None
-        return self._filesystem.read_text_file(path)
+        return self._filesystem.read_binary_file(path)
 
     def expected_image(self, test):
         """Returns the image we expect the test to produce."""
@@ -396,7 +396,7 @@ class Port(object):
         driver = self.create_driver(0)
         return driver.cmd_line()
 
-    def update_baseline(self, path, data, encoding):
+    def update_baseline(self, path, data):
         """Updates the baseline for a test.
 
         Args:
@@ -404,14 +404,8 @@ class Port(object):
               the test. This function is used to update either generic or
               platform-specific baselines, but we can't infer which here.
             data: contents of the baseline.
-            encoding: file encoding to use for the baseline.
         """
-        # FIXME: remove the encoding parameter in favor of text/binary
-        # functions.
-        if encoding is None:
-            self._filesystem.write_binary_file(path, data)
-        else:
-            self._filesystem.write_text_file(path, data)
+        self._filesystem.write_binary_file(path, data)
 
     def uri_to_test_name(self, uri):
         """Return the base layout test name for a given URI.
