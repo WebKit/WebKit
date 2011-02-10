@@ -159,6 +159,29 @@ void SVGFEConvolveMatrixElement::svgAttributeChanged(const QualifiedName& attrNa
         invalidate();
 }
 
+AttributeToPropertyTypeMap& SVGFEConvolveMatrixElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGFEConvolveMatrixElement::fillAttributeToPropertyTypeMap()
+{
+    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
+
+    SVGFilterPrimitiveStandardAttributes::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    attributeToPropertyTypeMap.set(SVGNames::inAttr, AnimatedString);
+    attributeToPropertyTypeMap.set(SVGNames::orderAttr, AnimatedNumberOptionalNumber);
+    attributeToPropertyTypeMap.set(SVGNames::kernelMatrixAttr, AnimatedNumberList);
+    attributeToPropertyTypeMap.set(SVGNames::divisorAttr, AnimatedNumber);
+    attributeToPropertyTypeMap.set(SVGNames::biasAttr, AnimatedNumber);
+    attributeToPropertyTypeMap.set(SVGNames::targetXAttr, AnimatedInteger);
+    attributeToPropertyTypeMap.set(SVGNames::targetYAttr, AnimatedInteger);
+    attributeToPropertyTypeMap.set(SVGNames::operatorAttr, AnimatedEnumeration);
+    attributeToPropertyTypeMap.set(SVGNames::kernelUnitLengthAttr, AnimatedNumberOptionalNumber);
+    attributeToPropertyTypeMap.set(SVGNames::preserveAlphaAttr, AnimatedBoolean);
+}
+
 PassRefPtr<FilterEffect> SVGFEConvolveMatrixElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)
 {
     FilterEffect* input1 = filterBuilder->getEffectById(in1());

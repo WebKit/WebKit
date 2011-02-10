@@ -45,6 +45,8 @@ private:
     virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual void synchronizeProperty(const QualifiedName&);
+    virtual void fillAttributeToPropertyTypeMap();
+    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
 
     virtual bool childShouldCreateRenderer(Node*) const;
     virtual RenderObject* createRenderer(RenderArena* arena, RenderStyle* style);

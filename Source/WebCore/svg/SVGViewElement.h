@@ -47,6 +47,8 @@ private:
 
     virtual void parseMappedAttribute(Attribute*);
     virtual void synchronizeProperty(const QualifiedName&);
+    virtual void fillAttributeToPropertyTypeMap();
+    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
 
     virtual bool rendererIsNeeded(RenderStyle*) { return false; }
 

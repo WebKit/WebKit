@@ -107,6 +107,21 @@ void SVGFEGaussianBlurElement::synchronizeProperty(const QualifiedName& attrName
         synchronizeIn1();
 }
 
+AttributeToPropertyTypeMap& SVGFEGaussianBlurElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGFEGaussianBlurElement::fillAttributeToPropertyTypeMap()
+{
+    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
+
+    SVGFilterPrimitiveStandardAttributes::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    attributeToPropertyTypeMap.set(SVGNames::inAttr, AnimatedString);
+    attributeToPropertyTypeMap.set(SVGNames::stdDeviationAttr, AnimatedNumberOptionalNumber);
+}
+
 PassRefPtr<FilterEffect> SVGFEGaussianBlurElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)
 {
     FilterEffect* input1 = filterBuilder->getEffectById(in1());

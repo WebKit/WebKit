@@ -71,6 +71,17 @@ void SVGFEMergeNodeElement::svgAttributeChanged(const QualifiedName& attrName)
     RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
 }
 
+AttributeToPropertyTypeMap& SVGFEMergeNodeElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGFEMergeNodeElement::fillAttributeToPropertyTypeMap()
+{
+    attributeToPropertyTypeMap().set(SVGNames::inAttr, AnimatedString);
+}
+
 void SVGFEMergeNodeElement::synchronizeProperty(const QualifiedName& attrName)
 {
     SVGElement::synchronizeProperty(attrName);

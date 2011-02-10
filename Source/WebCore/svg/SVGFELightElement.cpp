@@ -151,6 +151,27 @@ void SVGFELightElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeLimitingConeAngle();
 }
 
+AttributeToPropertyTypeMap& SVGFELightElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGFELightElement::fillAttributeToPropertyTypeMap()
+{
+    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
+    attributeToPropertyTypeMap.set(SVGNames::azimuthAttr, AnimatedNumber);
+    attributeToPropertyTypeMap.set(SVGNames::elevationAttr, AnimatedNumber);
+    attributeToPropertyTypeMap.set(SVGNames::xAttr, AnimatedNumber);
+    attributeToPropertyTypeMap.set(SVGNames::yAttr, AnimatedNumber);
+    attributeToPropertyTypeMap.set(SVGNames::zAttr, AnimatedNumber);
+    attributeToPropertyTypeMap.set(SVGNames::pointsAtXAttr, AnimatedNumber);
+    attributeToPropertyTypeMap.set(SVGNames::pointsAtYAttr, AnimatedNumber);
+    attributeToPropertyTypeMap.set(SVGNames::pointsAtZAttr, AnimatedNumber);
+    attributeToPropertyTypeMap.set(SVGNames::specularExponentAttr, AnimatedNumber);
+    attributeToPropertyTypeMap.set(SVGNames::limitingConeAngleAttr, AnimatedNumber);
+}
+
 void SVGFELightElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     SVGElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);

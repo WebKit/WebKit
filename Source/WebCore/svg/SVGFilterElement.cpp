@@ -196,6 +196,27 @@ void SVGFilterElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeHref();
 }
 
+AttributeToPropertyTypeMap& SVGFilterElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGFilterElement::fillAttributeToPropertyTypeMap()
+{
+    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
+
+    SVGStyledElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    attributeToPropertyTypeMap.set(SVGNames::filterUnitsAttr, AnimatedEnumeration);
+    attributeToPropertyTypeMap.set(SVGNames::primitiveUnitsAttr, AnimatedEnumeration);
+    attributeToPropertyTypeMap.set(SVGNames::xAttr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::yAttr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::widthAttr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::heightAttr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::filterResAttr, AnimatedNumberOptionalNumber);
+    attributeToPropertyTypeMap.set(XLinkNames::hrefAttr, AnimatedEnumeration);
+}
+
 void SVGFilterElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     SVGStyledElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);

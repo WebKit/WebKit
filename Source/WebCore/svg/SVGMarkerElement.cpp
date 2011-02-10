@@ -183,6 +183,26 @@ void SVGMarkerElement::synchronizeProperty(const QualifiedName& attrName)
     }
 }
 
+AttributeToPropertyTypeMap& SVGMarkerElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGMarkerElement::fillAttributeToPropertyTypeMap()
+{
+    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
+
+    SVGStyledElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    attributeToPropertyTypeMap.set(SVGNames::refXAttr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::refYAttr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::markerWidthAttr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::markerHeightAttr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::markerUnitsAttr, AnimatedEnumeration);
+    attributeToPropertyTypeMap.set(SVGNames::orientAttr, AnimatedAngle);
+    attributeToPropertyTypeMap.set(SVGNames::viewBoxAttr, AnimatedRect);
+}
+
 void SVGMarkerElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     SVGStyledElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);

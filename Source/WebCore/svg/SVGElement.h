@@ -25,8 +25,31 @@
 #if ENABLE(SVG)
 #include "SVGLocatable.h"
 #include "StyledElement.h"
+#include <wtf/HashMap.h>
 
 namespace WebCore {
+
+enum AnimatedAttributeType {
+    AnimatedAngle,
+    AnimatedBoolean,
+    AnimatedColor,
+    AnimatedEnumeration,
+    AnimatedInteger,
+    AnimatedLength,
+    AnimatedLengthList,
+    AnimatedNumber,
+    AnimatedNumberList,
+    AnimatedNumberOptionalNumber,
+    AnimatedPath,
+    AnimatedPoints,
+    AnimatedPreserveAspectRatio,
+    AnimatedRect,
+    AnimatedString,
+    AnimatedTransformList,
+    AnimatedUnknown
+};
+
+typedef HashMap<QualifiedName, AnimatedAttributeType> AttributeToPropertyTypeMap;
 
 class CSSCursorImageValue;
 class Document;
@@ -63,6 +86,11 @@ public:
 
     virtual void svgAttributeChanged(const QualifiedName&) { }
     virtual void synchronizeProperty(const QualifiedName&) { }
+
+    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
+    AnimatedAttributeType animatedPropertyTypeForAttribute(const QualifiedName&);
+
+    virtual void fillAttributeToPropertyTypeMap() { }
 
     void sendSVGLoadEventIfPossible(bool sendParentLoadEvents = false);
 

@@ -152,6 +152,17 @@ void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(bool primitiveB
     filterEffect->setEffectBoundaries(effectBBox);
 }
 
+void SVGFilterPrimitiveStandardAttributes::fillAttributeToPropertyTypeMap(AttributeToPropertyTypeMap& attributeToPropertyTypeMap)
+{
+    SVGStyledElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    
+    attributeToPropertyTypeMap.set(SVGNames::xAttr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::yAttr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::widthAttr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::heightAttr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::resultAttr, AnimatedString);
+}
+
 RenderObject* SVGFilterPrimitiveStandardAttributes::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderSVGResourceFilterPrimitive(this);

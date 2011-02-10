@@ -1,3 +1,261 @@
+2011-02-10  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGAnimateElement needs information about the animated attribute type
+        https://bugs.webkit.org/show_bug.cgi?id=53442
+
+        For animations, we need to know the SVG property type for a XML attribute. A global static mapping between
+        attribute name and a type is not possible, since one attribute name can be bound to different property types:
+        x can be a SVGNumberList, a SVGNumber or a SVGLength. So we have to ask every target element, if it supports
+        the animated attribute and of which type it is. Just for CSS properties we can share an explicit mapping between
+        the name and the type. This is done in a static map in SVGStyledElement. All other mappings are stored in local static
+        HashMaps for all SVG elements with animated properties. These maps get filled once with the fillAttributeToPropertyTypeMap function
+        that needs to be included in every SVG element. The function is not virtual in base classes for performance reasons.
+
+        No change of functionality, so no new test cases.
+
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::attributeToPropertyTypeMap):
+        (WebCore::SVGAElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGAElement.h:
+        * svg/SVGAltGlyphElement.cpp:
+        (WebCore::SVGAltGlyphElement::attributeToPropertyTypeMap):
+        (WebCore::SVGAltGlyphElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGAltGlyphElement.h:
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::determinePropertyType):
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::attributeToPropertyTypeMap):
+        (WebCore::SVGCircleElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGCircleElement.h:
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::attributeToPropertyTypeMap):
+        (WebCore::SVGClipPathElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGClipPathElement.h:
+        * svg/SVGComponentTransferFunctionElement.cpp:
+        (WebCore::SVGComponentTransferFunctionElement::attributeToPropertyTypeMap):
+        (WebCore::SVGComponentTransferFunctionElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGComponentTransferFunctionElement.h:
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::attributeToPropertyTypeMap):
+        (WebCore::SVGCursorElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGCursorElement.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::attributeToPropertyTypeMap):
+        (WebCore::SVGElement::animatedPropertyTypeForAttribute):
+        * svg/SVGElement.h:
+        (WebCore::SVGElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::attributeToPropertyTypeMap):
+        (WebCore::SVGEllipseElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGEllipseElement.h:
+        * svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::attributeToPropertyTypeMap):
+        (WebCore::SVGFEBlendElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFEBlendElement.h:
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::attributeToPropertyTypeMap):
+        (WebCore::SVGFEColorMatrixElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFEColorMatrixElement.h:
+        * svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::attributeToPropertyTypeMap):
+        (WebCore::SVGFEComponentTransferElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFEComponentTransferElement.h:
+        * svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::attributeToPropertyTypeMap):
+        (WebCore::SVGFECompositeElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFECompositeElement.h:
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::attributeToPropertyTypeMap):
+        (WebCore::SVGFEConvolveMatrixElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFEConvolveMatrixElement.h:
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::attributeToPropertyTypeMap):
+        (WebCore::SVGFEDiffuseLightingElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFEDiffuseLightingElement.h:
+        * svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::attributeToPropertyTypeMap):
+        (WebCore::SVGFEDisplacementMapElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFEDisplacementMapElement.h:
+        * svg/SVGFEFloodElement.cpp:
+        (WebCore::SVGFEFloodElement::attributeToPropertyTypeMap):
+        (WebCore::SVGFEFloodElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFEFloodElement.h:
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::attributeToPropertyTypeMap):
+        (WebCore::SVGFEGaussianBlurElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFEGaussianBlurElement.h:
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::attributeToPropertyTypeMap):
+        (WebCore::SVGFEImageElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFEImageElement.h:
+        * svg/SVGFELightElement.cpp:
+        (WebCore::SVGFELightElement::attributeToPropertyTypeMap):
+        (WebCore::SVGFELightElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFELightElement.h:
+        * svg/SVGFEMergeElement.cpp:
+        (WebCore::SVGFEMergeElement::attributeToPropertyTypeMap):
+        (WebCore::SVGFEMergeElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFEMergeElement.h:
+        * svg/SVGFEMergeNodeElement.cpp:
+        (WebCore::SVGFEMergeNodeElement::attributeToPropertyTypeMap):
+        (WebCore::SVGFEMergeNodeElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFEMergeNodeElement.h:
+        * svg/SVGFEMorphologyElement.cpp:
+        (WebCore::SVGFEMorphologyElement::attributeToPropertyTypeMap):
+        (WebCore::SVGFEMorphologyElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFEMorphologyElement.h:
+        * svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::attributeToPropertyTypeMap):
+        (WebCore::SVGFEOffsetElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFEOffsetElement.h:
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::attributeToPropertyTypeMap):
+        (WebCore::SVGFESpecularLightingElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFESpecularLightingElement.h:
+        * svg/SVGFETileElement.cpp:
+        (WebCore::SVGFETileElement::attributeToPropertyTypeMap):
+        (WebCore::SVGFETileElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFETileElement.h:
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::attributeToPropertyTypeMap):
+        (WebCore::SVGFETurbulenceElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFETurbulenceElement.h:
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::attributeToPropertyTypeMap):
+        (WebCore::SVGFilterElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFilterElement.h:
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::fillAttributeToPropertyTypeMap):
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        * svg/SVGFontElement.cpp:
+        (WebCore::SVGFontElement::attributeToPropertyTypeMap):
+        (WebCore::SVGFontElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFontElement.h:
+        (WebCore::SVGFontElement::rendererIsNeeded):
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::attributeToPropertyTypeMap):
+        (WebCore::SVGForeignObjectElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGForeignObjectElement.h:
+        * svg/SVGGlyphElement.cpp:
+        (WebCore::SVGGlyphElement::attributeToPropertyTypeMap):
+        (WebCore::SVGGlyphElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGGlyphElement.h:
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGGradientElement.h:
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::attributeToPropertyTypeMap):
+        (WebCore::SVGImageElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGImageElement.h:
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::attributeToPropertyTypeMap):
+        (WebCore::SVGLineElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGLineElement.h:
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::attributeToPropertyTypeMap):
+        (WebCore::SVGLinearGradientElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGLinearGradientElement.h:
+        * svg/SVGMPathElement.cpp:
+        (WebCore::SVGMPathElement::attributeToPropertyTypeMap):
+        (WebCore::SVGMPathElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGMPathElement.h:
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::attributeToPropertyTypeMap):
+        (WebCore::SVGMarkerElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGMarkerElement.h:
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::attributeToPropertyTypeMap):
+        (WebCore::SVGMaskElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGMaskElement.h:
+        * svg/SVGMissingGlyphElement.cpp:
+        (WebCore::SVGMissingGlyphElement::attributeToPropertyTypeMap):
+        (WebCore::SVGMissingGlyphElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGMissingGlyphElement.h:
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::attributeToPropertyTypeMap):
+        (WebCore::SVGPathElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGPathElement.h:
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::attributeToPropertyTypeMap):
+        (WebCore::SVGPatternElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGPatternElement.h:
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::attributeToPropertyTypeMap):
+        (WebCore::SVGPolyElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGPolyElement.h:
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::attributeToPropertyTypeMap):
+        (WebCore::SVGRadialGradientElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGRadialGradientElement.h:
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::attributeToPropertyTypeMap):
+        (WebCore::SVGRectElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGRectElement.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::attributeToPropertyTypeMap):
+        (WebCore::SVGSVGElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGSVGElement.h:
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::attributeToPropertyTypeMap):
+        (WebCore::SVGScriptElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGScriptElement.h:
+        * svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::attributeToPropertyTypeMap):
+        (WebCore::SVGStopElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGStopElement.h:
+        * svg/SVGStyledElement.cpp:
+        (WebCore::cssPropertyToTypeMap):
+        (WebCore::SVGStyledElement::animatedPropertyTypeForCSSProperty):
+        (WebCore::SVGStyledElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGStyledElement.h:
+        * svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGStyledTransformableElement.h:
+        * svg/SVGSwitchElement.cpp:
+        (WebCore::SVGSwitchElement::attributeToPropertyTypeMap):
+        (WebCore::SVGSwitchElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGSwitchElement.h:
+        * svg/SVGSymbolElement.cpp:
+        (WebCore::SVGSymbolElement::attributeToPropertyTypeMap):
+        (WebCore::SVGSymbolElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGSymbolElement.h:
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::attributeToPropertyTypeMap):
+        (WebCore::SVGTRefElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGTRefElement.h:
+        * svg/SVGTSpanElement.cpp:
+        (WebCore::SVGTSpanElement::attributeToPropertyTypeMap):
+        (WebCore::SVGTSpanElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGTSpanElement.h:
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGTextContentElement.h:
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::attributeToPropertyTypeMap):
+        (WebCore::SVGTextElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGTextElement.h:
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::attributeToPropertyTypeMap):
+        (WebCore::SVGTextPathElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGTextPathElement.h:
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGTextPositioningElement.h:
+        * svg/SVGTitleElement.cpp:
+        (WebCore::SVGTitleElement::attributeToPropertyTypeMap):
+        (WebCore::SVGTitleElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGTitleElement.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::attributeToPropertyTypeMap):
+        (WebCore::SVGUseElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGUseElement.h:
+        * svg/SVGViewElement.cpp:
+        (WebCore::SVGViewElement::attributeToPropertyTypeMap):
+        (WebCore::SVGViewElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGViewElement.h:
+
 2011-02-10  Alexis Menard  <alexis.menard@nokia.com>
 
         Reviewed by Andreas Kling.

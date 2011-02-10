@@ -32,6 +32,9 @@ public:
 private:
     SVGMissingGlyphElement(const QualifiedName&, Document*);
 
+    virtual void fillAttributeToPropertyTypeMap();
+    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
+
     virtual bool rendererIsNeeded(RenderStyle*) { return false; }
 };
 

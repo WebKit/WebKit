@@ -114,6 +114,13 @@ RenderObject* SVGStyledTransformableElement::createRenderer(RenderArena* arena, 
     return new (arena) RenderSVGPath(this);
 }
 
+void SVGStyledTransformableElement::fillAttributeToPropertyTypeMap(AttributeToPropertyTypeMap& attributeToPropertyTypeMap)
+{
+    SVGStyledElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    
+    attributeToPropertyTypeMap.set(SVGNames::transformAttr, AnimatedTransformList);
+}
+
 void SVGStyledTransformableElement::toClipPath(Path& path) const
 {
     toPathData(path);

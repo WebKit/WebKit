@@ -52,6 +52,8 @@ public:
     bool instanceUpdatesBlocked() const;
     void setInstanceUpdatesBlocked(bool);
 
+    AnimatedAttributeType animatedPropertyTypeForCSSProperty(const QualifiedName&);
+
     virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const;
 
     virtual CSSStyleDeclaration* style() { return StyledElement::style(); }
@@ -65,6 +67,8 @@ protected:
     virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual void synchronizeProperty(const QualifiedName&);
+
+    void fillAttributeToPropertyTypeMap(AttributeToPropertyTypeMap&);
 
     virtual void attach();
     virtual void insertedIntoDocument();

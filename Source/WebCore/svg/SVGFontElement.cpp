@@ -179,6 +179,17 @@ void SVGFontElement::getGlyphIdentifiersForString(const String& string, Vector<S
     m_glyphMap.get(string, glyphs);
 }
 
+AttributeToPropertyTypeMap& SVGFontElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGFontElement::fillAttributeToPropertyTypeMap()
+{
+    SVGStyledElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap());
+}
+
 }
 
 #endif // ENABLE(SVG_FONTS)

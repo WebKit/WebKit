@@ -84,6 +84,20 @@ void SVGTRefElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeHref();
 }
 
+AttributeToPropertyTypeMap& SVGTRefElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGTRefElement::fillAttributeToPropertyTypeMap()
+{
+    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
+
+    SVGTextPositioningElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    attributeToPropertyTypeMap.set(XLinkNames::hrefAttr, AnimatedString);
+}
+
 RenderObject* SVGTRefElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderSVGInline(this);

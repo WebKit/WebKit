@@ -112,6 +112,20 @@ void SVGPolyElement::synchronizeProperty(const QualifiedName& attrName)
         SVGTests::synchronizeProperties(this, attrName);
 }
 
+AttributeToPropertyTypeMap& SVGPolyElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGPolyElement::fillAttributeToPropertyTypeMap()
+{
+    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
+
+    SVGStyledTransformableElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    attributeToPropertyTypeMap.set(SVGNames::pointsAttr, AnimatedPoints);
+}
+
 void SVGPolyElement::synchronizePoints()
 {
     if (!m_points.shouldSynchronize)

@@ -72,6 +72,20 @@ void SVGCursorElement::parseMappedAttribute(Attribute* attr)
     }
 }
 
+AttributeToPropertyTypeMap& SVGCursorElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGCursorElement::fillAttributeToPropertyTypeMap()
+{
+    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
+    attributeToPropertyTypeMap.set(SVGNames::xAttr, AnimatedNumber);
+    attributeToPropertyTypeMap.set(SVGNames::yAttr, AnimatedNumber);
+    attributeToPropertyTypeMap.set(XLinkNames::hrefAttr, AnimatedString);
+}
+
 void SVGCursorElement::addClient(SVGElement* element)
 {
     m_clients.add(element);

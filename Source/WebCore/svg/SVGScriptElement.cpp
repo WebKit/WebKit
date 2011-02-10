@@ -97,6 +97,17 @@ void SVGScriptElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeHref();
 }
 
+AttributeToPropertyTypeMap& SVGScriptElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGScriptElement::fillAttributeToPropertyTypeMap()
+{
+    attributeToPropertyTypeMap().set(XLinkNames::hrefAttr, AnimatedString);
+}
+
 void SVGScriptElement::insertedIntoDocument()
 {
     SVGElement::insertedIntoDocument();

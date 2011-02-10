@@ -46,6 +46,9 @@ private:
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void synchronizeProperty(const QualifiedName&);
+     
+    virtual void fillAttributeToPropertyTypeMap();
+    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
 
     // Animated property declarations
 

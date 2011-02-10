@@ -379,6 +379,23 @@ void SVGSVGElement::synchronizeProperty(const QualifiedName& attrName)
         SVGTests::synchronizeProperties(this, attrName);
 }
 
+AttributeToPropertyTypeMap& SVGSVGElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGSVGElement::fillAttributeToPropertyTypeMap()
+{
+    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
+    attributeToPropertyTypeMap.set(SVGNames::xAttr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::yAttr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::widthAttr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::heightAttr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::viewBoxAttr, AnimatedRect);
+    attributeToPropertyTypeMap.set(SVGNames::preserveAspectRatioAttr, AnimatedPreserveAspectRatio);
+}
+
 unsigned SVGSVGElement::suspendRedraw(unsigned /* maxWaitMilliseconds */)
 {
     // FIXME: Implement me (see bug 11275)

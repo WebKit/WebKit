@@ -98,6 +98,22 @@ void SVGFEColorMatrixElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeValues();
 }
 
+AttributeToPropertyTypeMap& SVGFEColorMatrixElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGFEColorMatrixElement::fillAttributeToPropertyTypeMap()
+{
+    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
+
+    SVGFilterPrimitiveStandardAttributes::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    attributeToPropertyTypeMap.set(SVGNames::inAttr, AnimatedString);
+    attributeToPropertyTypeMap.set(SVGNames::typeAttr, AnimatedEnumeration);
+    attributeToPropertyTypeMap.set(SVGNames::valuesAttr, AnimatedNumberList);
+}
+
 PassRefPtr<FilterEffect> SVGFEColorMatrixElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)
 {
     FilterEffect* input1 = filterBuilder->getEffectById(in1());

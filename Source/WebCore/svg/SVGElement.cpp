@@ -256,6 +256,25 @@ void SVGElement::parseMappedAttribute(Attribute* attr)
         StyledElement::parseMappedAttribute(attr);
 }
 
+AttributeToPropertyTypeMap& SVGElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+AnimatedAttributeType SVGElement::animatedPropertyTypeForAttribute(const QualifiedName& attrName)
+{
+    AttributeToPropertyTypeMap& animatedAttributeMap = attributeToPropertyTypeMap();
+    if (animatedAttributeMap.isEmpty())
+        fillAttributeToPropertyTypeMap();
+    if (animatedAttributeMap.contains(attrName))
+        return animatedAttributeMap.get(attrName);
+    if (isStyled())
+        return static_cast<SVGStyledElement*>(this)->animatedPropertyTypeForCSSProperty(attrName);
+
+    return AnimatedUnknown;
+}
+
 bool SVGElement::haveLoadedRequiredResources()
 {
     Node* child = firstChild();

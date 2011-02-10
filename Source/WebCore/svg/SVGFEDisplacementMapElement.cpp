@@ -116,6 +116,24 @@ void SVGFEDisplacementMapElement::synchronizeProperty(const QualifiedName& attrN
         synchronizeScale();
 }
 
+AttributeToPropertyTypeMap& SVGFEDisplacementMapElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGFEDisplacementMapElement::fillAttributeToPropertyTypeMap()
+{
+    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
+
+    SVGFilterPrimitiveStandardAttributes::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    attributeToPropertyTypeMap.set(SVGNames::inAttr, AnimatedString);
+    attributeToPropertyTypeMap.set(SVGNames::in2Attr, AnimatedString);
+    attributeToPropertyTypeMap.set(SVGNames::xChannelSelectorAttr, AnimatedEnumeration);
+    attributeToPropertyTypeMap.set(SVGNames::yChannelSelectorAttr, AnimatedEnumeration);
+    attributeToPropertyTypeMap.set(SVGNames::scaleAttr, AnimatedNumber);
+}
+
 PassRefPtr<FilterEffect> SVGFEDisplacementMapElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)
 {
     FilterEffect* input1 = filterBuilder->getEffectById(in1());

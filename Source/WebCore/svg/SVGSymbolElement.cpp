@@ -88,6 +88,21 @@ void SVGSymbolElement::synchronizeProperty(const QualifiedName& attrName)
     } 
 }
 
+AttributeToPropertyTypeMap& SVGSymbolElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGSymbolElement::fillAttributeToPropertyTypeMap()
+{
+    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
+
+    SVGStyledElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    attributeToPropertyTypeMap.set(SVGNames::viewBoxAttr, AnimatedRect);
+    attributeToPropertyTypeMap.set(SVGNames::preserveAspectRatioAttr, AnimatedPreserveAspectRatio);
+}
+
 bool SVGSymbolElement::selfHasRelativeLengths() const
 {
     return hasAttribute(SVGNames::viewBoxAttr);

@@ -143,6 +143,20 @@ void SVGTextElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeTransform();
 }
 
+AttributeToPropertyTypeMap& SVGTextElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGTextElement::fillAttributeToPropertyTypeMap()
+{
+    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
+
+    SVGTextPositioningElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    attributeToPropertyTypeMap.set(SVGNames::transformAttr, AnimatedTransformList);
+}
+
 }
 
 #endif // ENABLE(SVG)

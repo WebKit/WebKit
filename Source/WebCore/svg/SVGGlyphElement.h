@@ -117,6 +117,8 @@ private:
     SVGGlyphElement(const QualifiedName&, Document*);
 
     virtual void parseMappedAttribute(Attribute*);
+    virtual void fillAttributeToPropertyTypeMap();
+    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
 
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();

@@ -34,6 +34,17 @@ PassRefPtr<SVGMissingGlyphElement> SVGMissingGlyphElement::create(const Qualifie
     return adoptRef(new SVGMissingGlyphElement(tagName, document));
 }
 
+AttributeToPropertyTypeMap& SVGMissingGlyphElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGMissingGlyphElement::fillAttributeToPropertyTypeMap()
+{
+    SVGStyledElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap());
+}
+
 }
 
 #endif // ENABLE(SVG_FONTS)

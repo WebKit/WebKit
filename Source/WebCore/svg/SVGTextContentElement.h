@@ -65,6 +65,7 @@ protected:
     virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual void synchronizeProperty(const QualifiedName&);
+    void fillAttributeToPropertyTypeMap(AttributeToPropertyTypeMap&);
 
     virtual bool selfHasRelativeLengths() const;
 

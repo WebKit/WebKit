@@ -142,6 +142,23 @@ void SVGEllipseElement::synchronizeProperty(const QualifiedName& attrName)
         SVGTests::synchronizeProperties(this, attrName);
 }
 
+AttributeToPropertyTypeMap& SVGEllipseElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGEllipseElement::fillAttributeToPropertyTypeMap()
+{
+    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
+
+    SVGStyledTransformableElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);    
+    attributeToPropertyTypeMap.set(SVGNames::cxAttr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::cyAttr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::rxAttr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::ryAttr, AnimatedLength);
+}
+
 void SVGEllipseElement::toPathData(Path& path) const
 {
     ASSERT(path.isEmpty());

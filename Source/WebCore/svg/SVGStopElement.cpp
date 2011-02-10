@@ -77,6 +77,20 @@ void SVGStopElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeOffset();
 }
 
+AttributeToPropertyTypeMap& SVGStopElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGStopElement::fillAttributeToPropertyTypeMap()
+{
+    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
+
+    SVGStyledElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    attributeToPropertyTypeMap.set(SVGNames::offsetAttr, AnimatedLength);
+}
+
 RenderObject* SVGStopElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderSVGGradientStop(this);

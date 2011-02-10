@@ -26,6 +26,7 @@
 
 #include "ColorDistance.h"
 #include "FloatConversion.h"
+#include "QualifiedName.h"
 #include "SVGColor.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
@@ -84,15 +85,18 @@ static bool parseNumberValueAndUnit(const String& in, double& value, String& uni
 
 SVGAnimateElement::PropertyType SVGAnimateElement::determinePropertyType(const String& attribute) const
 {
-    // FIXME: We need a full property table for figuring this out reliably.
+    // FIXME: We should not allow animation of attribute types other than AnimatedColor for <animateColor>.
     if (hasTagName(SVGNames::animateColorTag))
         return ColorProperty;
-    if (attribute == "d")
-        return PathProperty;
-    if (attribute == "points")
-        return PointsProperty;
-    if (attribute == "color" || attribute == "fill" || attribute == "stroke")
+
+    // FIXME: Now that we have a full property table we need a more granular type specific animation.
+    AnimatedAttributeType type = targetElement()->animatedPropertyTypeForAttribute(QualifiedName(nullAtom, attribute, nullAtom));
+    if (type == AnimatedColor)
         return ColorProperty;
+    if (type == AnimatedPath)
+        return PathProperty;
+    if (type == AnimatedPoints)
+        return PointsProperty;
     return NumberProperty;
 }
 

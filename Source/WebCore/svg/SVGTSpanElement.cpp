@@ -73,6 +73,17 @@ bool SVGTSpanElement::rendererIsNeeded(RenderStyle* style)
     return false;
 }
 
+AttributeToPropertyTypeMap& SVGTSpanElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGTSpanElement::fillAttributeToPropertyTypeMap()
+{        
+    SVGTextPositioningElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap());
+}
+
 }
 
 #endif // ENABLE(SVG)

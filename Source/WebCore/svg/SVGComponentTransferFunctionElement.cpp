@@ -112,6 +112,24 @@ void SVGComponentTransferFunctionElement::synchronizeProperty(const QualifiedNam
         synchronizeOffset();
 }
 
+AttributeToPropertyTypeMap& SVGComponentTransferFunctionElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGComponentTransferFunctionElement::fillAttributeToPropertyTypeMap()
+{
+    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
+    attributeToPropertyTypeMap.set(SVGNames::typeAttr, AnimatedEnumeration);
+    attributeToPropertyTypeMap.set(SVGNames::tableValuesAttr, AnimatedNumberList);
+    attributeToPropertyTypeMap.set(SVGNames::slopeAttr, AnimatedNumber);
+    attributeToPropertyTypeMap.set(SVGNames::interceptAttr, AnimatedNumber);
+    attributeToPropertyTypeMap.set(SVGNames::amplitudeAttr, AnimatedNumber);
+    attributeToPropertyTypeMap.set(SVGNames::exponentAttr, AnimatedNumber);
+    attributeToPropertyTypeMap.set(SVGNames::offsetAttr, AnimatedNumber);
+}
+
 ComponentTransferFunction SVGComponentTransferFunctionElement::transferFunction() const
 {
     ComponentTransferFunction func;

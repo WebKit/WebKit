@@ -124,6 +124,24 @@ void SVGRadialGradientElement::synchronizeProperty(const QualifiedName& attrName
         synchronizeR();
 }
 
+AttributeToPropertyTypeMap& SVGRadialGradientElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGRadialGradientElement::fillAttributeToPropertyTypeMap()
+{
+    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
+
+    SVGGradientElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    attributeToPropertyTypeMap.set(SVGNames::cxAttr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::cyAttr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::rAttr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::fxAttr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::fyAttr, AnimatedLength);
+}
+
 RenderObject* SVGRadialGradientElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderSVGResourceRadialGradient(this);

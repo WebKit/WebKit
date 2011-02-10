@@ -104,6 +104,8 @@ private:
     virtual void parseMappedAttribute(Attribute*);
     virtual void synchronizeProperty(const QualifiedName&);
     virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void fillAttributeToPropertyTypeMap();
+    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
     virtual bool supportsMarkers() const { return true; }
 
     // Animated property declarations

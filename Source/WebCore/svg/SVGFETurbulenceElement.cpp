@@ -128,6 +128,24 @@ void SVGFETurbulenceElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeNumOctaves();
 }
 
+AttributeToPropertyTypeMap& SVGFETurbulenceElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGFETurbulenceElement::fillAttributeToPropertyTypeMap()
+{
+    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
+
+    SVGFilterPrimitiveStandardAttributes::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    attributeToPropertyTypeMap.set(SVGNames::baseFrequencyAttr, AnimatedNumberOptionalNumber);
+    attributeToPropertyTypeMap.set(SVGNames::numOctavesAttr, AnimatedInteger);
+    attributeToPropertyTypeMap.set(SVGNames::seedAttr, AnimatedNumber);
+    attributeToPropertyTypeMap.set(SVGNames::stitchTilesAttr, AnimatedEnumeration);
+    attributeToPropertyTypeMap.set(SVGNames::typeAttr, AnimatedEnumeration);
+}
+
 PassRefPtr<FilterEffect> SVGFETurbulenceElement::build(SVGFilterBuilder*, Filter* filter)
 {
     if (baseFrequencyX() < 0 || baseFrequencyY() < 0)

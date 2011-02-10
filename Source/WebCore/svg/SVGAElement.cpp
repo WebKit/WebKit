@@ -105,6 +105,21 @@ void SVGAElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 }
 
+AttributeToPropertyTypeMap& SVGAElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGAElement::fillAttributeToPropertyTypeMap()
+{
+    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
+
+    SVGStyledTransformableElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    attributeToPropertyTypeMap.set(SVGNames::targetAttr, AnimatedString);
+    attributeToPropertyTypeMap.set(XLinkNames::hrefAttr, AnimatedString);
+}
+
 void SVGAElement::synchronizeProperty(const QualifiedName& attrName)
 {
     SVGStyledTransformableElement::synchronizeProperty(attrName);

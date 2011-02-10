@@ -132,6 +132,20 @@ static inline float parseSVGGlyphAttribute(const SVGElement* element, const WebC
     return value.toFloat();
 }
 
+AttributeToPropertyTypeMap& SVGGlyphElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGGlyphElement::fillAttributeToPropertyTypeMap()
+{
+    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
+
+    SVGStyledElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    attributeToPropertyTypeMap.set(SVGNames::dAttr, AnimatedPath);
+}
+
 SVGGlyphIdentifier SVGGlyphElement::buildGenericGlyphIdentifier(const SVGElement* element)
 {
     SVGGlyphIdentifier identifier;

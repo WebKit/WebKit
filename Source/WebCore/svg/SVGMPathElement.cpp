@@ -65,6 +65,17 @@ void SVGMPathElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeHref();
 }
 
+AttributeToPropertyTypeMap& SVGMPathElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGMPathElement::fillAttributeToPropertyTypeMap()
+{
+    attributeToPropertyTypeMap().set(XLinkNames::hrefAttr, AnimatedString);
+}
+
 SVGPathElement* SVGMPathElement::pathElement()
 {
     Element* target = document()->getElementById(getTarget(href()));

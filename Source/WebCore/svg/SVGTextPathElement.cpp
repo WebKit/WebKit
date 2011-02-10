@@ -110,6 +110,23 @@ void SVGTextPathElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeHref();
 }
 
+AttributeToPropertyTypeMap& SVGTextPathElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGTextPathElement::fillAttributeToPropertyTypeMap()
+{
+    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
+
+    SVGTextContentElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    attributeToPropertyTypeMap.set(SVGNames::startOffsetAttr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::methodAttr, AnimatedEnumeration);
+    attributeToPropertyTypeMap.set(SVGNames::spacingAttr, AnimatedEnumeration);
+    attributeToPropertyTypeMap.set(XLinkNames::hrefAttr, AnimatedString);
+}
+
 RenderObject* SVGTextPathElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderSVGTextPath(this);

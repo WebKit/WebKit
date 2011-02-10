@@ -114,6 +114,23 @@ void SVGLinearGradientElement::synchronizeProperty(const QualifiedName& attrName
         synchronizeY2();
 }
 
+AttributeToPropertyTypeMap& SVGLinearGradientElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGLinearGradientElement::fillAttributeToPropertyTypeMap()
+{
+    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
+
+    SVGGradientElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    attributeToPropertyTypeMap.set(SVGNames::x1Attr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::y1Attr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::x2Attr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::y2Attr, AnimatedLength);
+}
+
 RenderObject* SVGLinearGradientElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderSVGResourceLinearGradient(this);

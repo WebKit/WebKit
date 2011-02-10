@@ -272,6 +272,21 @@ void SVGPathElement::synchronizeD()
     SVGAnimatedPropertySynchronizer<true>::synchronize(this, SVGNames::dAttr, m_pathSegList.value.valueAsString());
 }
 
+AttributeToPropertyTypeMap& SVGPathElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGPathElement::fillAttributeToPropertyTypeMap()
+{
+    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
+
+    SVGStyledTransformableElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    attributeToPropertyTypeMap.set(SVGNames::dAttr, AnimatedPath);
+    attributeToPropertyTypeMap.set(SVGNames::pathLengthAttr, AnimatedNumber);
+}
+
 SVGPathSegListPropertyTearOff* SVGPathElement::pathSegList()
 {
     if (!m_animatablePathSegList) {

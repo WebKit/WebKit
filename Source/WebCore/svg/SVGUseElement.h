@@ -62,6 +62,8 @@ private:
     virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual void synchronizeProperty(const QualifiedName&);
+    virtual void fillAttributeToPropertyTypeMap();
+    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
 
     virtual void recalcStyle(StyleChange = NoChange);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);

@@ -138,6 +138,23 @@ void SVGLineElement::synchronizeProperty(const QualifiedName& attrName)
         SVGTests::synchronizeProperties(this, attrName);
 }
 
+AttributeToPropertyTypeMap& SVGLineElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGLineElement::fillAttributeToPropertyTypeMap()
+{
+    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
+
+    SVGStyledTransformableElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    attributeToPropertyTypeMap.set(SVGNames::x1Attr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::y1Attr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::x2Attr, AnimatedLength);
+    attributeToPropertyTypeMap.set(SVGNames::y2Attr, AnimatedLength);
+}
+
 void SVGLineElement::toPathData(Path& path) const
 {
     ASSERT(path.isEmpty());

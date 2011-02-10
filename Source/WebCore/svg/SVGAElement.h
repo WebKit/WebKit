@@ -52,6 +52,9 @@ private:
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual void synchronizeProperty(const QualifiedName&);
 
+    virtual void fillAttributeToPropertyTypeMap();
+    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
+
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
     virtual void defaultEventHandler(Event*);

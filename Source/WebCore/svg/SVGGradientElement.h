@@ -44,6 +44,7 @@ protected:
     virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual void synchronizeProperty(const QualifiedName&);
+    void fillAttributeToPropertyTypeMap(AttributeToPropertyTypeMap&);
 
 private:
     virtual bool needsPendingResourceHandling() const { return false; }

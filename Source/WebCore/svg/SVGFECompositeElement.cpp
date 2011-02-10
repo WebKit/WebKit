@@ -127,6 +127,26 @@ void SVGFECompositeElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeK4();
 }
 
+AttributeToPropertyTypeMap& SVGFECompositeElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGFECompositeElement::fillAttributeToPropertyTypeMap()
+{
+    AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
+
+    SVGFilterPrimitiveStandardAttributes::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);    
+    attributeToPropertyTypeMap.set(SVGNames::inAttr, AnimatedString);
+    attributeToPropertyTypeMap.set(SVGNames::in2Attr, AnimatedString);
+    attributeToPropertyTypeMap.set(SVGNames::operatorAttr, AnimatedEnumeration);
+    attributeToPropertyTypeMap.set(SVGNames::k1Attr, AnimatedNumber);
+    attributeToPropertyTypeMap.set(SVGNames::k2Attr, AnimatedNumber);
+    attributeToPropertyTypeMap.set(SVGNames::k3Attr, AnimatedNumber);
+    attributeToPropertyTypeMap.set(SVGNames::k4Attr, AnimatedNumber);
+}
+
 PassRefPtr<FilterEffect> SVGFECompositeElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)
 {
     FilterEffect* input1 = filterBuilder->getEffectById(in1());

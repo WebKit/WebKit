@@ -54,6 +54,8 @@ private:
             
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual void synchronizeProperty(const QualifiedName&);
+    virtual void fillAttributeToPropertyTypeMap();
+    virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
 
     // Animated property declarations
     DECLARE_ANIMATED_TRANSFORM_LIST(Transform, transform)

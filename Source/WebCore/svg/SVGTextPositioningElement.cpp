@@ -161,6 +161,17 @@ void SVGTextPositioningElement::synchronizeProperty(const QualifiedName& attrNam
         synchronizeRotate();
 }
 
+void SVGTextPositioningElement::fillAttributeToPropertyTypeMap(AttributeToPropertyTypeMap& attributeToPropertyTypeMap)
+{
+    SVGTextContentElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+
+    attributeToPropertyTypeMap.set(SVGNames::xAttr, AnimatedNumberList);
+    attributeToPropertyTypeMap.set(SVGNames::yAttr, AnimatedNumberList);
+    attributeToPropertyTypeMap.set(SVGNames::dxAttr, AnimatedNumberList);
+    attributeToPropertyTypeMap.set(SVGNames::dyAttr, AnimatedNumberList);
+    attributeToPropertyTypeMap.set(SVGNames::rotateAttr, AnimatedNumberList);
+}
+
 SVGTextPositioningElement* SVGTextPositioningElement::elementFromRenderer(RenderObject* renderer)
 {
     if (!renderer)
