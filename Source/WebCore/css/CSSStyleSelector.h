@@ -161,9 +161,6 @@ public:
  
         CSSFontSelector* fontSelector() const { return m_fontSelector.get(); }
 
-        // Checks if a compound selector (which can consist of multiple simple selectors) matches the current element.
-        bool checkSelector(CSSSelector*);
-
         void addViewportDependentMediaQueryResult(const MediaQueryExp*, bool result);
 
         bool affectedByViewportChange() const;
@@ -193,6 +190,8 @@ public:
         void matchRulesForList(const Vector<RuleData>*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
         bool fastRejectSelector(const RuleData&) const;
         void sortMatchedRules(unsigned start, unsigned end);
+        
+        bool checkSelector(const RuleData&);
 
         template <bool firstPass>
         void applyDeclarations(bool important, int startIndex, int endIndex);
@@ -241,6 +240,7 @@ public:
             SelectorMatch checkSelector(CSSSelector*, Element*, HashSet<AtomicStringImpl*>* selectorAttrs, PseudoId& dynamicPseudo, bool isSubSelector, bool encounteredLink, RenderStyle* = 0, RenderStyle* elementParentStyle = 0) const;
             bool checkOneSelector(CSSSelector*, Element*, HashSet<AtomicStringImpl*>* selectorAttrs, PseudoId& dynamicPseudo, bool isSubSelector, RenderStyle*, RenderStyle* elementParentStyle) const;
             bool checkScrollbarPseudoClass(CSSSelector*, PseudoId& dynamicPseudo) const;
+            static bool fastCheckSelector(const CSSSelector*, const Element*);
 
             EInsideLink determineLinkState(Element* element) const;
             EInsideLink determineLinkStateSlowCase(Element* element) const;

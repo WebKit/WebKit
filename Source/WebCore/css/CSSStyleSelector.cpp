@@ -354,16 +354,15 @@ if (id == propID) { \
 
 class RuleData {
 public:
-    RuleData(CSSStyleRule* rule, CSSSelector* selector, unsigned position)
-        : m_rule(rule)
-        , m_selector(selector)
-        , m_position(position)
-    {
-        collectDescendantSelectorIdentifierHashes();
-    }
+    RuleData(CSSStyleRule*, CSSSelector*, unsigned position);
+
     unsigned position() const { return m_position; }
     CSSStyleRule* rule() const { return m_rule; }
     CSSSelector* selector() const { return m_selector; }
+    
+    bool hasFastCheckableSelector() const { return m_hasFastCheckableSelector; }
+    bool hasMultipartSelector() const { return m_hasMultipartSelector; }
+    bool hasTopSelectorMatchingHTMLBasedOnRuleHash() const { return m_hasTopSelectorMatchingHTMLBasedOnRuleHash; }
     
     // Try to balance between memory usage (there can be lots of RuleData objects) and good filtering performance.
     static const unsigned maximumIdentifierCount = 4;
@@ -375,7 +374,10 @@ private:
     
     CSSStyleRule* m_rule;
     CSSSelector* m_selector;
-    unsigned m_position;
+    unsigned m_position : 29;
+    bool m_hasFastCheckableSelector : 1;
+    bool m_hasMultipartSelector : 1;
+    bool m_hasTopSelectorMatchingHTMLBasedOnRuleHash : 1;
     // Use plain array instead of a Vector to minimize memory overhead.
     unsigned m_descendantSelectorIdentifierHashes[maximumIdentifierCount];
 };
@@ -783,11 +785,11 @@ void CSSStyleSelector::matchRulesForList(const Vector<RuleData>* rules, int& fir
     unsigned size = rules->size();
     for (unsigned i = 0; i < size; ++i) {
         const RuleData& ruleData = rules->at(i);
-        CSSStyleRule* rule = ruleData.rule();
         if (canUseFastReject && fastRejectSelector(ruleData))
             continue;
-        if (checkSelector(ruleData.selector())) {
+        if (checkSelector(ruleData)) {
             // If the rule has no properties to apply, then ignore it in the non-debug mode.
+            CSSStyleRule* rule = ruleData.rule();
             CSSMutableStyleDeclaration* decl = rule->declaration();
             if (!decl || (!decl->length() && !includeEmptyRules))
                 continue;
@@ -2070,20 +2072,102 @@ PassRefPtr<CSSRuleList> CSSStyleSelector::pseudoStyleRulesForElement(Element* e,
     return m_ruleList.release();
 }
 
-bool CSSStyleSelector::checkSelector(CSSSelector* sel)
+inline bool CSSStyleSelector::checkSelector(const RuleData& ruleData)
 {
     m_dynamicPseudo = NOPSEUDO;
 
-    // Check the selector
-    SelectorMatch match = m_checker.checkSelector(sel, m_element, &m_selectorAttrs, m_dynamicPseudo, false, false, style(), m_parentNode ? m_parentNode->renderStyle() : 0);
+    if (ruleData.hasFastCheckableSelector()) {
+        // We know this selector does not include any pseudo selectors.
+        if (m_checker.m_pseudoStyle != NOPSEUDO)
+            return false;
+        // We know a sufficiently simple single part selector matches simply because we found it from the rule hash.
+        // This is limited to HTML only so we don't need to check the namespace.
+        if (ruleData.hasTopSelectorMatchingHTMLBasedOnRuleHash() && !ruleData.hasMultipartSelector() && m_element->isHTMLElement())
+            return true;
+        return SelectorChecker::fastCheckSelector(ruleData.selector(), m_element);
+    }
+
+    // Slow path.
+    SelectorMatch match = m_checker.checkSelector(ruleData.selector(), m_element, &m_selectorAttrs, m_dynamicPseudo, false, false, style(), m_parentNode ? m_parentNode->renderStyle() : 0);
     if (match != SelectorMatches)
         return false;
-
     if (m_checker.m_pseudoStyle != NOPSEUDO && m_checker.m_pseudoStyle != m_dynamicPseudo)
         return false;
-
     return true;
 }
+
+static inline bool selectorTagMatches(const Element* element, const CSSSelector* selector)
+{
+    if (!selector->hasTag())
+        return true;
+    const AtomicString& localName = selector->tag().localName();
+    if (localName != starAtom && localName != element->localName())
+        return false;
+    const AtomicString& namespaceURI = selector->tag().namespaceURI();
+    return namespaceURI == starAtom || namespaceURI == element->namespaceURI();
+}
+
+static inline bool isFastCheckableSelector(const CSSSelector* selector)
+{
+    for (; selector; selector = selector->tagHistory()) {
+        if (selector->relation() != CSSSelector::Descendant)
+            return false;
+        if (selector->m_match != CSSSelector::None && selector->m_match != CSSSelector::Id && selector->m_match != CSSSelector::Class)
+            return false;
+    }
+    return true;
+}
+
+bool CSSStyleSelector::SelectorChecker::fastCheckSelector(const CSSSelector* selector, const Element* element)
+{
+    ASSERT(isFastCheckableSelector(selector));
+
+    // The top selector requires tag check only as rule hashes have already handled id and class matches.
+    if (!selectorTagMatches(element, selector))
+        return false;
+
+    selector = selector->tagHistory();
+    if (!selector)
+        return true;
+    const Element* ancestor = element;
+    // We know this compound selector has descendant combinators only and all components are simple.
+    for (; selector; selector = selector->tagHistory()) {
+        AtomicStringImpl* value;
+        switch (selector->m_match) {
+        case CSSSelector::Class:
+            value = selector->value().impl();
+            while (true) {
+                if (!(ancestor = ancestor->parentElement()))
+                    return false;
+                const StyledElement* styledElement = static_cast<const StyledElement*>(ancestor);
+                if (ancestor->hasClass() && styledElement->classNames().contains(value) && selectorTagMatches(ancestor, selector))
+                    break;
+            }
+            break;
+        case CSSSelector::Id:
+            value = selector->value().impl();
+            while (true) {
+                if (!(ancestor = ancestor->parentElement()))
+                    return false;
+                if (ancestor->hasID() && ancestor->idForStyleResolution().impl() == value && selectorTagMatches(ancestor, selector))
+                    break;
+            }
+            break;
+        case CSSSelector::None:
+            while (true) {
+                if (!(ancestor = ancestor->parentElement()))
+                    return false;
+                if (selectorTagMatches(ancestor, selector))
+                    break;
+            }
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+    }
+    return true;
+}
+    
 
 // Recursive check of selectors and combinators
 // It can return 3 different values:
@@ -2276,14 +2360,8 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
     if (!e)
         return false;
 
-    if (sel->hasTag()) {
-        const AtomicString& selLocalName = sel->tag().localName();
-        if (selLocalName != starAtom && selLocalName != e->localName())
-            return false;
-        const AtomicString& selNS = sel->tag().namespaceURI();
-        if (selNS != starAtom && selNS != e->namespaceURI())
-            return false;
-    }
+    if (!selectorTagMatches(e, sel))
+        return false;
 
     if (sel->hasAttribute()) {
         if (sel->m_match == CSSSelector::Class)
@@ -2934,7 +3012,30 @@ bool CSSStyleSelector::SelectorChecker::checkScrollbarPseudoClass(CSSSelector* s
 }
 
 // -----------------------------------------------------------------
-    
+
+static inline bool isSelectorMatchingHTMLBasedOnRuleHash(const CSSSelector* selector)
+{
+    const AtomicString& selectorNamespace = selector->tag().namespaceURI();
+    if (selectorNamespace != starAtom && selectorNamespace != xhtmlNamespaceURI)
+        return false;
+    if (selector->m_match == CSSSelector::None)
+        return true;
+    if (selector->m_match != CSSSelector::Id && selector->m_match != CSSSelector::Class)
+        return false;
+    return selector->tag() == starAtom;
+}
+
+RuleData::RuleData(CSSStyleRule* rule, CSSSelector* selector, unsigned position)
+    : m_rule(rule)
+    , m_selector(selector)
+    , m_position(position)
+    , m_hasFastCheckableSelector(isFastCheckableSelector(selector))
+    , m_hasMultipartSelector(selector->tagHistory())
+    , m_hasTopSelectorMatchingHTMLBasedOnRuleHash(isSelectorMatchingHTMLBasedOnRuleHash(selector))
+{
+    collectDescendantSelectorIdentifierHashes();
+}
+
 inline void RuleData::collectIdentifierHashes(const CSSSelector* selector, unsigned& identifierCount)
 {
     if ((selector->m_match == CSSSelector::Id || selector->m_match == CSSSelector::Class) && !selector->value().isEmpty())
