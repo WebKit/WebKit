@@ -1,3 +1,15 @@
+2011-02-10  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed GTK build fix.
+
+        Adding
+        Tools/DumpRenderTree/TestNetscapePlugIn/Tests/EvaluateJSDestroyingPluginFromDestroyStream.cpp
+        in the build, fixing the
+        plugins/npruntime/evaluate-js-destroying-plugin-from-destroy-stream.html
+        test.
+
+        * GNUmakefile.am:
+
 2011-02-10  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Chris Fleizach.

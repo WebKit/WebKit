@@ -1,5 +1,11 @@
 2011-02-10  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, typo fix.
+
+        * platform/gtk/Skipped:
+
+2011-02-10  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, skip failing test.
 
         * platform/gtk/Skipped: Skip fast/events/focusingUnloadedFrame.html

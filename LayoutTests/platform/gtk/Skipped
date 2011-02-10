@@ -24,7 +24,7 @@ fast/xmlhttprequest/null-document-xmlhttprequest-open.html
 fast/dom/null-document-location-replace-crash.html
 fast/dom/null-document-location-put-crash.html
 fast/dom/null-document-location-assign-crash.html
-fast/dom/null-document-location-href-put-crash.htm
+fast/dom/null-document-location-href-put-crash.html
 fast/dom/null-document-window-open-crash.html
 # Fails because of timing out in the GTK 32-bit Debug bot
 # (see bug https://bugs.webkit.org/show_bug.cgi?id=53992)
