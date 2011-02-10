@@ -1,3 +1,9 @@
+2011-02-10  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK build fix after roll out of r78157...
+
+        * GNUmakefile.am:
+
 2011-02-10  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, rolling out r78157.
