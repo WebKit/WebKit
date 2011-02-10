@@ -1,3 +1,123 @@
+2011-02-10  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, rebaseline.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.txt: Removed.
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-turb-02-f-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-turb-02-f-expected.png:
+        * platform/chromium-linux/svg/batik/filters/feTile-expected.checksum:
+        * platform/chromium-linux/svg/batik/filters/feTile-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFESpecularLightingElement-dom-in-attr-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFESpecularLightingElement-dom-in-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularConstant-attr-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularConstant-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularExponent-attr-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularExponent-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFESpecularLightingElement-dom-suraceScale-attr-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFESpecularLightingElement-dom-suraceScale-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-in-prop-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-in-prop-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularConstant-prop-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularConstant-prop-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularExponent-prop-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularExponent-prop-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop-expected.png: Added.
+        * platform/chromium-linux/svg/foreignObject/text-tref-02-b-expected.checksum:
+        * platform/chromium-linux/svg/foreignObject/text-tref-02-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.txt: Removed.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.txt: Removed.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.txt: Removed.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.txt: Removed.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.txt: Removed.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.txt: Removed.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.txt: Removed.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.txt: Removed.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.txt: Removed.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.txt: Removed.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.txt: Removed.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.txt: Removed.
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-turb-02-f-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-turb-02-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-turb-02-f-expected.txt: Removed.
+        * platform/chromium-win/svg/batik/filters/feTile-expected.checksum:
+        * platform/chromium-win/svg/batik/filters/feTile-expected.png:
+        * platform/chromium-win/svg/batik/filters/feTile-expected.txt:
+        * platform/chromium-win/svg/dynamic-updates/SVGFESpecularLightingElement-dom-in-attr-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFESpecularLightingElement-dom-in-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularConstant-attr-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularConstant-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularExponent-attr-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularExponent-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFESpecularLightingElement-dom-suraceScale-attr-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFESpecularLightingElement-dom-suraceScale-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-in-prop-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-in-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularConstant-prop-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularConstant-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularExponent-prop-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularExponent-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop-expected.png: Added.
+        * platform/chromium-win/svg/foreignObject/text-tref-02-b-expected.checksum:
+        * platform/chromium-win/svg/foreignObject/text-tref-02-b-expected.png:
+        * platform/chromium-win/svg/foreignObject/text-tref-02-b-expected.txt: Removed.
+
 2011-02-09  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
