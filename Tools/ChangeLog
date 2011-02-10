@@ -1,3 +1,13 @@
+2011-02-10  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        check-webkit-style: Add -build/include exemption for Tools/MiniBrowser/qt
+        https://bugs.webkit.org/show_bug.cgi?id=54200
+
+        * Scripts/webkitpy/style/checker.py:
+        * Scripts/webkitpy/style/checker_unittest.py:
+
 2011-02-10  Peter Varga  <pvarga@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

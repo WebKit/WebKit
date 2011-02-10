@@ -140,6 +140,9 @@ _PATH_RULES_SPECIFIER = [
       "Source/WebKit/qt/declarative/",
       "Source/WebKit/qt/examples/"],
      ["-readability/naming"]),
+     ([# Qt's MiniBrowser has no config.h
+       "Tools/MiniBrowser/qt"],
+      ["-build/include"]),
     ([# The GTK+ APIs use GTK+ naming style, which includes
       # lower-cased, underscore-separated values.
       # Also, GTK+ allows the use of NULL.
