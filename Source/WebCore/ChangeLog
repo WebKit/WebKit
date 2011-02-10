@@ -1,3 +1,14 @@
+2011-02-10  Andras Becsi  <abecsi@webkit.org>
+
+        Rubber-stamped by Csaba Osztrogonác.
+
+        [Qt][V8] Fix the build.
+
+        No new tests needed.
+
+        * bindings/v8/WorkerContextExecutionProxy.cpp: add missing CString header.
+        * loader/cache/CachedScript.h: do not use extra qualification for base class enum.
+
 2011-02-10  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

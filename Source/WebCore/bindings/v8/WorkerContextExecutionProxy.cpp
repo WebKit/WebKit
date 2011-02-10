@@ -49,6 +49,7 @@
 #include "WorkerContext.h"
 #include "WorkerScriptController.h"
 #include "WrapperTypeInfo.h"
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
