@@ -1,3 +1,24 @@
+2011-02-10  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Rename build target from "embedded" to "qpa"
+        https://bugs.webkit.org/show_bug.cgi?id=54233
+
+        This flag is used by Qt's configure script to enable a QPA build
+        ("QPA is a window system agnostic implementation of Qt" --
+        previously known as lighthouse).
+
+        On the Qt repository, this was changed by two commits:
+
+        13a0b4935900093607f2b3b7688e1452d22770fd
+        (from embedded to embedded_lite)
+
+        9716e12e0f5590ebc23ad9fb7ba75c6a3c5aadab
+        (from embedded_lite to qpa)
+
+        * WebCore.pro:
+
 2011-02-10  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.
