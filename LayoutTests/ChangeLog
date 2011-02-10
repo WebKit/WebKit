@@ -1,5 +1,12 @@
 2011-02-10  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed skipping websocket tests on GTK
+        https://bugs.webkit.org/show_bug.cgi?id=53683
+
+        * platform/gtk/Skipped:
+
+2011-02-10  Philippe Normand  <pnormand@igalia.com>
+
         Update GTK results after r78204
 
         * platform/gtk/fast/text/international/text-combine-image-test-expected.txt:
