@@ -1,3 +1,17 @@
+2011-02-10  takano takumi  <takano@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        A full-width character rotated leftward 90 degrees in text-combine
+        https://bugs.webkit.org/show_bug.cgi?id=54169
+
+        Added a test for this bug to existing text-combine test.
+
+        * fast/text/international/text-combine-image-test.html:
+        * platform/mac/fast/text/international/text-combine-image-test-expected.checksum:
+        * platform/mac/fast/text/international/text-combine-image-test-expected.png:
+        * platform/mac/fast/text/international/text-combine-image-test-expected.txt:
+
 2011-02-10  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip failing fast/replaced/border-radius-clip.html on GTK

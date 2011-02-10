@@ -1,3 +1,15 @@
+2011-02-10  takano takumi  <takano@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        A full-width character rotated leftward 90 degrees in text-combine
+        https://bugs.webkit.org/show_bug.cgi?id=54169
+
+        * rendering/RenderCombineText.cpp:
+        (WebCore::RenderCombineText::combineText):
+        - Fixed by resetting font's orientation to horizontal when we decided to make combined text.
+        Otherwise the text will be unexpectedly rotated in showGlyphsWithAdvances() in FontMac.mm.
+
 2011-02-10  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

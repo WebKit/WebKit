@@ -93,17 +93,22 @@ void RenderCombineText::combineText()
         return;
 
     TextRun run = TextRun(String(text()));
-    float emWidth = style()->font().fontDescription().computedSize() * textCombineMargin;
+    FontDescription description = style()->font().fontDescription();
+    float emWidth = description.computedSize() * textCombineMargin;
+    bool shouldUpdateFont = false;
+
+    description.setOrientation(Horizontal); // We are going to draw combined text horizontally.
     m_combinedTextWidth = style()->font().floatWidth(run);
     m_isCombined = m_combinedTextWidth <= emWidth;
 
-    if (!m_isCombined) {
+    if (m_isCombined)
+        shouldUpdateFont = style()->setFontDescription(description); // Need to change font orientation to horizontal.
+    else {
         // Need to try compressed glyphs.
         static const FontWidthVariant widthVariants[] = { HalfWidth, ThirdWidth, QuarterWidth };
-        FontDescription compressedFontDescription = style()->font().fontDescription();
         for (size_t i = 0 ; i < WTF_ARRAY_LENGTH(widthVariants) ; ++i) {
-            compressedFontDescription.setWidthVariant(widthVariants[i]);
-            Font compressedFont = Font(compressedFontDescription, style()->font().letterSpacing(), style()->font().wordSpacing());
+            description.setWidthVariant(widthVariants[i]);
+            Font compressedFont = Font(description, style()->font().letterSpacing(), style()->font().wordSpacing());
             compressedFont.update(style()->font().fontSelector());
             float runWidth = compressedFont.floatWidth(run);
             if (runWidth <= emWidth) {
@@ -111,13 +116,14 @@ void RenderCombineText::combineText()
                 m_isCombined = true;
 
                 // Replace my font with the new one.
-                if (style()->setFontDescription(compressedFontDescription))
-                    style()->font().update(style()->font().fontSelector());
-
+                shouldUpdateFont = style()->setFontDescription(description);
                 break;
             }
         }
     }
+
+    if (shouldUpdateFont)
+        style()->font().update(style()->font().fontSelector());
 
     if (m_isCombined) {
         static const UChar newCharacter = objectReplacementCharacter;
