@@ -1,3 +1,27 @@
+2011-02-10  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        SVG animation avoid unnecessary adjust for currentColor
+        https://bugs.webkit.org/show_bug.cgi?id=54243
+
+        At the moment we try to adjust every animation value for currentColor - independent of the animation type.
+        Since the value is a string and the target element may needs to get called by getElementById, this could
+        be an expensive and unnecessary operation. Also after we adjust for currentColor, we save the result back
+        as a string and parse it to Color afterwards again.
+        With the patch we just adjust an animation value, if we use color animation. The color won't get saved and
+        parsed as a string again.
+
+        No change of functionality, no new tests.
+
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::adjustForCurrentColor):
+        (WebCore::SVGAnimateElement::calculateFromAndToValues):
+        (WebCore::SVGAnimateElement::calculateFromAndByValues):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::currentValuesForValuesAnimation):
+        (WebCore::SVGAnimationElement::startedActiveInterval):
+
 2011-02-10  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
 
         Reviewed by Andreas Kling.

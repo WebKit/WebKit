@@ -24,9 +24,11 @@
 #if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
 #include "SVGAnimateElement.h"
 
+#include "CSSPropertyNames.h"
 #include "ColorDistance.h"
 #include "FloatConversion.h"
 #include "QualifiedName.h"
+#include "RenderObject.h"
 #include "SVGColor.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
@@ -81,6 +83,17 @@ static bool parseNumberValueAndUnit(const String& in, double& value, String& uni
     bool ok;
     value = number.toDouble(&ok);
     return ok;
+}
+
+static inline bool adjustForCurrentColor(Color& color, const String& value, SVGElement* target)
+{
+    if (!target || !target->isStyled() || value != "currentColor")
+        return false;
+    
+    if (RenderObject* targetRenderer = target->renderer())
+        color = targetRenderer->style()->visitedDependentColor(CSSPropertyColor);
+
+    return true;
 }
 
 SVGAnimateElement::PropertyType SVGAnimateElement::determinePropertyType(const String& attribute) const
@@ -216,8 +229,11 @@ bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const
     // FIXME: Needs more solid way determine target attribute type.
     m_propertyType = determinePropertyType(attributeName());
     if (m_propertyType == ColorProperty) {
-        m_fromColor = SVGColor::colorFromRGBColorString(fromString);
-        m_toColor = SVGColor::colorFromRGBColorString(toString);
+        SVGElement* targetElement = this->targetElement();
+        if (!adjustForCurrentColor(m_fromColor, fromString, targetElement))
+            m_fromColor = SVGColor::colorFromRGBColorString(fromString);
+        if (!adjustForCurrentColor(m_toColor, toString, targetElement))
+            m_toColor = SVGColor::colorFromRGBColorString(toString);
         if ((m_fromColor.isValid() && m_toColor.isValid()) || (m_toColor.isValid() && animationMode() == ToAnimation))
             return true;
     } else if (m_propertyType == NumberProperty) {
@@ -255,8 +271,12 @@ bool SVGAnimateElement::calculateFromAndByValues(const String& fromString, const
     ASSERT(!hasTagName(SVGNames::setTag));
     m_propertyType = determinePropertyType(attributeName());
     if (m_propertyType == ColorProperty) {
-        m_fromColor = fromString.isEmpty() ? Color() : SVGColor::colorFromRGBColorString(fromString);
-        m_toColor = ColorDistance::addColorsAndClamp(m_fromColor, SVGColor::colorFromRGBColorString(byString));
+        SVGElement* targetElement = this->targetElement();
+        if (!adjustForCurrentColor(m_fromColor, fromString, targetElement))
+            m_fromColor = fromString.isEmpty() ? Color() : SVGColor::colorFromRGBColorString(fromString);
+        if (!adjustForCurrentColor(m_toColor, byString, targetElement))
+            m_toColor = SVGColor::colorFromRGBColorString(byString);
+        m_toColor = ColorDistance::addColorsAndClamp(m_fromColor, m_toColor);
         if (!m_fromColor.isValid() || !m_toColor.isValid())
             return false;
     } else {
