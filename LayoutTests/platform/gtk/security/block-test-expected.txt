@@ -1,0 +1,3 @@
+This test attempts to change the src of an IMG tag to all black listed ports to confirm that WebKit returns the correct error for them - blocked instead of cannot find. It also tries the FTP ports for exemptions. Due to the nature of this test, the results can only be processed automatically via DumpRenderTree
+
+

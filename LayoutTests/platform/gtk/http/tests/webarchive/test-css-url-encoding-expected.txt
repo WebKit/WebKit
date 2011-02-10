@@ -1,0 +1,53 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 53x19
+          text run at (0,0) width 53: "Test for "
+        RenderInline {A} at (0,0) size 400x19 [color=#0000EE]
+          RenderText {#text} at (53,0) size 400x19
+            text run at (53,0) width 400: "Bug 11850: Webarchive fails to save images referenced in CSS"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,35) size 784x19
+        RenderBlock {P} at (0,0) size 784x19
+          RenderText {#text} at (0,0) size 665x19
+            text run at (0,0) width 665: "This test makes sure that the URL in the shift-jis encoded CSS file is encoded properly in the webarchive."
+      RenderBlock {DIV} at (0,70) size 784x69
+        RenderText {#text} at (0,50) size 63x19
+          text run at (0,50) width 63: "Expected "
+        RenderInline {TT} at (0,0) size 208x15
+          RenderText {#text} at (63,54) size 208x15
+            text run at (63,54) width 208: "?img-src-no-charset-%88%9F"
+        RenderText {#text} at (271,50) size 344x19
+          text run at (271,50) width 344: " query string for <img> tag with no document charset: "
+        RenderBlock {DIV} at (615,0) size 54x66 [border: (1px solid #000000)]
+          RenderImage {IMG} at (1,1) size 52x64
+      RenderBlock {DIV} at (0,139) size 784x70
+        RenderText {#text} at (0,51) size 63x19
+          text run at (0,51) width 63: "Expected "
+        RenderInline {TT} at (0,0) size 208x15
+          RenderText {#text} at (63,55) size 208x15
+            text run at (63,55) width 208: "?css-url-no-charset-%88%9F"
+        RenderText {#text} at (271,51) size 306x19
+          text run at (271,51) width 306: " query string for CSS url() with no CSS charset: "
+        RenderBlock {DIV} at (577,0) size 54x66 [border: (1px solid #000000)]
+      RenderBlock {DIV} at (0,209) size 784x70
+        RenderText {#text} at (0,51) size 63x19
+          text run at (0,51) width 63: "Expected "
+        RenderInline {TT} at (0,0) size 200x15
+          RenderText {#text} at (63,55) size 200x15
+            text run at (63,55) width 200: "?css-url-shift-jis-%88%9F"
+        RenderText {#text} at (263,51) size 336x19
+          text run at (263,51) width 336: " query string for CSS url() with shift-jis CSS charset: "
+        RenderBlock {DIV} at (599,0) size 54x66 [border: (1px solid #000000)]
+      RenderBlock {DIV} at (0,279) size 784x70
+        RenderText {#text} at (0,51) size 63x19
+          text run at (0,51) width 63: "Expected "
+        RenderInline {TT} at (0,0) size 192x15
+          RenderText {#text} at (63,55) size 192x15
+            text run at (63,55) width 192: "?css-url-utf-8-%E4%BA%9C"
+        RenderText {#text} at (255,51) size 320x19
+          text run at (255,51) width 320: " query string for CSS url() with utf-8 CSS charset: "
+        RenderBlock {DIV} at (575,0) size 54x66 [border: (1px solid #000000)]

@@ -1,3 +1,9 @@
+2011-02-10  Martin Robinson  <mrobinson@igalia.com>
+
+        Add results for HTTP tests missing GTK+ results.
+
+        * platform/gtk/Skipped: Unskip HTTP tests that now have results.
+
 2011-02-10  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, tiny test fix from cira.

@@ -287,6 +287,14 @@ http/tests/misc/policy-delegate-called-twice.html
 http/tests/misc/prefetch-purpose.html
 http/tests/misc/redirect-to-external-url.html
 http/tests/misc/window-dot-stop.html
+http/tests/multipart/policy-ignore-crash.php
+
+# Rendering of multipart images is broken.
+# https://bugs.webkit.org/show_bug.cgi?id=54251 
+http/tests/multipart/invalid-image-data.html
+# This one times out.
+http/tests/multipart/invalid-image-data-standalone.html
+
 http/tests/plugins/npapi-response-headers.html
 http/tests/plugins/post-url-file.html
 http/tests/security/feed-urls-from-remote.html
@@ -320,34 +328,6 @@ http/tests/misc/authentication-sent-to-redirect.html
 #   Tests crashing
 http/tests/security/cross-origin-xsl-BLOCKED.html
 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
-#   Tests generating new results
-http/tests/loading/simple-subframe.html
-http/tests/local/file-url-sent-as-referer.html
-http/tests/misc/acid2-pixel.html
-http/tests/misc/acid2.html
-http/tests/misc/error404.pl
-http/tests/misc/frame-access-during-load.html
-http/tests/misc/generated-content-inside-table.html
-http/tests/misc/iframe404.html
-http/tests/misc/location-replace-crossdomain.html
-http/tests/misc/willCacheResponse-delegate-callback.html
-http/tests/multipart/invalid-image-data-standalone.html
-http/tests/multipart/invalid-image-data.html
-http/tests/multipart/policy-ignore-crash.php
-http/tests/navigation/anchor-frames.html
-http/tests/navigation/javascriptlink-frames.html
-http/tests/navigation/post-basic.html
-http/tests/navigation/post-frames.html
-http/tests/navigation/post-goback1.html
-http/tests/navigation/postredirect-basic.html
-http/tests/navigation/postredirect-frames.html
-http/tests/navigation/postredirect-goback1.html
-http/tests/uri/css-href.php
-http/tests/webarchive/cross-origin-stylesheet-crash.html
-http/tests/webarchive/test-css-url-encoding-shift-jis.html
-http/tests/webarchive/test-css-url-encoding-utf-8.html
-http/tests/webarchive/test-css-url-encoding.html
-http/tests/webarchive/test-preload-resources.html
 
 # Tests in media/ directory
 #   Tests failing
@@ -389,20 +369,12 @@ plugins/plugin-initiate-popup-window.html
 # This test is for clients that choose to make the missing plugin indicator a button
 plugins/clicking-missing-plugin-fires-delegate.html
 
-#   Tests generating new results
-plugins/embed-attributes-style.html
-plugins/netscape-dom-access.html
-
 # Tests in security/ directory
 #   Tests failing
 security/set-form-autocomplete-attribute.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=41903
 plugins/return-negative-one-from-write.html
-
-#   Tests generating new results
-security/block-test-no-port.html
-security/block-test.html
 
 # Tests in svg/ directory
 #   Tests failing

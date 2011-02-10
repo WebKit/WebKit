@@ -1,0 +1,31 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 762x38
+          text run at (0,0) width 395: "This page tests using attributes to set style on embed elements. "
+          text run at (395,0) width 367: "Previous versions of WebKit supported valign and border,"
+          text run at (0,19) width 43: "which "
+          text run at (43,19) width 452: "didn't match IE and FF. The only special support should be for 'hidden.'"
+      RenderBlock {HR} at (0,54) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,64) size 784x0
+      RenderBlock {DIV} at (0,64) size 784x104
+        RenderText {#text} at (50,85) size 122x19
+          text run at (50,85) width 4: " "
+          text run at (54,85) width 118: "valign top attribute"
+      RenderBlock {DIV} at (0,168) size 784x104
+        RenderText {#text} at (50,85) size 128x19
+          text run at (50,85) width 4: " "
+          text run at (54,85) width 124: "border 5px attribute"
+      RenderBlock {DIV} at (0,272) size 784x106
+        RenderText {#text} at (52,87) size 102x19
+          text run at (52,87) width 4: " "
+          text run at (56,87) width 98: "hidden attribute"
+layer at (8,72) size 50x100
+  RenderEmbeddedObject {EMBED} at (0,0) size 50x100
+layer at (8,176) size 50x100
+  RenderEmbeddedObject {EMBED} at (0,0) size 50x100
+layer at (8,280) size 52x102
+  RenderEmbeddedObject {EMBED} at (0,0) size 52x102 [border: (1px dashed #000000)]
