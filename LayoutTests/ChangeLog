@@ -1,5 +1,11 @@
 2011-02-09  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed; removed Windows port's expected result for r78104.
+
+        * platform/win/editing/undo/undo-paste-when-caret-is-not-in-range-expected.txt: Removed.
+
+2011-02-09  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed by Darin Adler.
 
         REGRESSION(r76107): Crash in VisibleSelection::toNormalizedRange
