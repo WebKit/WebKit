@@ -1,3 +1,22 @@
+2011-02-10  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, updated svg GTK baselines after r78182.
+
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.txt:
+        * platform/gtk/svg/foreignObject/text-tref-02-b-expected.txt:
+
 2011-02-10  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Jeremy Orlow.
