@@ -34,6 +34,11 @@
 #include <unistd.h>
 #endif
 
+#if OS(WINDOWS)
+#include <windows.h>
+#include <wincrypt.h> // windows.h must be included before wincrypt.h.
+#endif
+
 namespace WTF {
 
 #if USE(OS_RANDOMNESS)
@@ -54,12 +59,13 @@ void cryptographicallyRandomValuesFromOS(unsigned char* buffer, size_t length)
         CRASH();
 
     close(fd);
-#elif COMPILER(MSVC)
-    for (size_t i = 0; i < length; i++) {
-        uint32_t bits;
-        rand_s(&bits);
-        buffer[i] = static_cast<unsigned char>(bits);
-    }
+#elif OS(WINDOWS)
+    HCRYPTPROV hCryptProv = 0;
+    if (!CryptAcquireContext(&hCryptProv, 0, MS_DEF_PROV, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT))
+        CRASH();
+    if (!CryptGenRandom(hCryptProv, length, buffer))
+        CRASH();
+    CryptReleaseContext(hCryptProv, 0);
 #else
     #error "This configuration doesn't have a strong source of randomness."
     // WARNING: When adding new sources of OS randomness, the randomness must

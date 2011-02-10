@@ -52,15 +52,12 @@
 // We need to define this before the first #include of stdlib.h or it won't contain rand_s.
 #ifndef _CRT_RAND_S
 #define _CRT_RAND_S
-#if COMPILER(MSVC)
-#define WTF_USE_OS_RANDOMNESS 1
-#endif
 #endif
 #endif
 
 #endif
 
-#if OS(DARWIN) || OS(UNIX)
+#if OS(DARWIN) || OS(UNIX) || OS(WINDOWS)
 #define WTF_USE_OS_RANDOMNESS 1
 #endif
 
