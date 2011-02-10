@@ -1,3 +1,11 @@
+2011-02-10  Alexis Menard  <alexis.menard@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        Fix a Warning after removing FileSystem support for the inspector.
+
+        * WebCore.pro:
+
 2011-02-10  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Anders Carlsson.

@@ -1962,7 +1962,6 @@ HEADERS += \
     inspector/InspectorDebuggerAgent.h \
     inspector/InspectorDOMStorageAgent.h \
     inspector/InspectorDOMStorageResource.h \
-    inspector/InspectorFileSystemAgent.h \
     inspector/InspectorFrontendClient.h \
     inspector/InspectorFrontendClientLocal.h \
     inspector/InspectorFrontendHost.h \
