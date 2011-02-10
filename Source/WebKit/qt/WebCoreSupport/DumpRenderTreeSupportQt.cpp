@@ -916,6 +916,32 @@ void DumpRenderTreeSupportQt::addURLToRedirect(const QString& origin, const QStr
     FrameLoaderClientQt::URLsToRedirect[origin] = destination;
 }
 
+static QStringList iterateContextMenu(QMenu* menu)
+{
+    if (!menu)
+        return QStringList();
+
+    QStringList items;
+    QList<QAction *> actions = menu->actions();
+    for (int i = 0; i < actions.count(); ++i) {
+        if (actions.at(i)->isSeparator())
+            items << QLatin1String("<separator>");
+        else
+            items << actions.at(i)->text();
+        if (actions.at(i)->menu())
+            items << iterateContextMenu(actions.at(i)->menu());
+    }
+    return items;
+}
+
+QStringList DumpRenderTreeSupportQt::contextMenu(QWebPage* page)
+{
+#ifndef QT_NO_CONTEXTMENU
+    return iterateContextMenu(page->d->currentContextMenu);
+#else
+    return QStringList();
+#endif
+}
 // Provide a backward compatibility with previously exported private symbols as of QtWebKit 4.6 release
 
 void QWEBKIT_EXPORT qt_resumeActiveDOMObjects(QWebFrame* frame)

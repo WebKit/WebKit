@@ -1,3 +1,14 @@
+2011-02-10  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Return menu items from eventSender.contextMenu()
+        https://bugs.webkit.org/show_bug.cgi?id=53039
+
+        * DumpRenderTree/qt/EventSenderQt.cpp:
+        (EventSender::contextClick):
+        * DumpRenderTree/qt/EventSenderQt.h:
+
 2011-02-10  Adam Roben  <aroben@apple.com>
 
         Test showing and hiding the find indicator on Windows

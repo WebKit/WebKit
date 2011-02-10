@@ -1,3 +1,15 @@
+2011-02-10  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Return menu items from eventSender.contextMenu()
+        https://bugs.webkit.org/show_bug.cgi?id=53039
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (iterateContextMenu):
+        (DumpRenderTreeSupportQt::contextMenu):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2011-02-10  Alexis Menard  <alexis.menard@nokia.com>
 
         Reviewed by Andreas Kling.

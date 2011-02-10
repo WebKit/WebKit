@@ -65,7 +65,7 @@ public slots:
     void leapForward(int ms);
     void keyDown(const QString& string, const QStringList& modifiers = QStringList(), unsigned int location = 0);
     void clearKillRing() {}
-    void contextClick();
+    QStringList contextClick();
     void scheduleAsynchronousClick();
     void addTouchPoint(int x, int y);
     void updateTouchPoint(int index, int x, int y);

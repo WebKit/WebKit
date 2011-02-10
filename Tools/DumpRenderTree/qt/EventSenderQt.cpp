@@ -360,7 +360,7 @@ void EventSender::keyDown(const QString& string, const QStringList& modifiers, u
     sendEvent(m_page, &event2);
 }
 
-void EventSender::contextClick()
+QStringList EventSender::contextClick()
 {
     QMouseEvent event(QEvent::MouseButtonPress, m_mousePos, Qt::RightButton, Qt::RightButton, Qt::NoModifier);
     sendEvent(m_page, &event);
@@ -378,6 +378,7 @@ void EventSender::contextClick()
         QContextMenuEvent ctxEvent(QContextMenuEvent::Mouse, m_mousePos);
         sendEvent(m_page->view(), &ctxEvent);
     }
+    return DumpRenderTreeSupportQt::contextMenu(m_page);
 }
 
 void EventSender::scheduleAsynchronousClick()
