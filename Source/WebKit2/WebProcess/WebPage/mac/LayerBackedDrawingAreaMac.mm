@@ -84,7 +84,7 @@ void LayerBackedDrawingArea::attachCompositingContext()
     WKCARemoteLayerClientSetLayer(m_remoteLayerRef.get(), m_hostingLayer->platformLayer());
     
     uint32_t contextID = WKCARemoteLayerClientGetClientId(m_remoteLayerRef.get());
-    WebProcess::shared().connection()->sendSync(DrawingAreaProxyLegacyMessage::AttachCompositingContext, m_webPage->pageID(), CoreIPC::In(contextID), CoreIPC::Out());
+    WebProcess::shared().connection()->deprecatedSendSync(DrawingAreaProxyLegacyMessage::AttachCompositingContext, m_webPage->pageID(), CoreIPC::In(contextID), CoreIPC::Out());
 #endif
 }
 

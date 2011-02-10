@@ -94,7 +94,7 @@ bool Connection::open()
         m_isConnected = true;
         
         // Send the initialize message, which contains a send right for the server to use.
-        send(CoreIPCMessage::InitializeConnection, 0, MachPort(m_receivePort, MACH_MSG_TYPE_MAKE_SEND));
+        deprecatedSend(CoreIPCMessage::InitializeConnection, 0, MachPort(m_receivePort, MACH_MSG_TYPE_MAKE_SEND));
 
         // Set the dead name handler for our send port.
         initializeDeadNameSource();
@@ -110,7 +110,7 @@ bool Connection::open()
     if (m_exceptionPort) {
         m_connectionQueue.registerMachPortEventHandler(m_exceptionPort, WorkQueue::MachPortDataAvailable, WorkItem::create(this, &Connection::exceptionSourceEventHandler));
 
-        send(CoreIPCMessage::SetExceptionPort, 0, MachPort(m_exceptionPort, MACH_MSG_TYPE_MAKE_SEND));
+        deprecatedSend(CoreIPCMessage::SetExceptionPort, 0, MachPort(m_exceptionPort, MACH_MSG_TYPE_MAKE_SEND));
     }
 
     return true;

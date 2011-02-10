@@ -62,7 +62,7 @@ PluginProcessConnection* PluginProcessConnectionManager::getPluginProcessConnect
 
     CoreIPC::Connection::Identifier connectionIdentifier;
     CoreIPC::MachPort connectionMachPort;
-    if (!WebProcess::shared().connection()->sendSync(WebProcessProxyLegacyMessage::GetPluginProcessConnection, 0, CoreIPC::In(pluginPath), CoreIPC::Out(connectionMachPort)))
+    if (!WebProcess::shared().connection()->deprecatedSendSync(WebProcessProxyLegacyMessage::GetPluginProcessConnection, 0, CoreIPC::In(pluginPath), CoreIPC::Out(connectionMachPort)))
         return 0;
 
     connectionIdentifier = connectionMachPort.port();

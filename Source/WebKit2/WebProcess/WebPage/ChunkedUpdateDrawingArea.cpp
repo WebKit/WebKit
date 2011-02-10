@@ -90,7 +90,7 @@ void ChunkedUpdateDrawingArea::display()
     UpdateChunk updateChunk(dirtyRect);
     paintIntoUpdateChunk(&updateChunk);
 
-    WebProcess::shared().connection()->send(DrawingAreaProxyLegacyMessage::Update, m_webPage->pageID(), CoreIPC::In(updateChunk));
+    WebProcess::shared().connection()->deprecatedSend(DrawingAreaProxyLegacyMessage::Update, m_webPage->pageID(), CoreIPC::In(updateChunk));
 
     m_isWaitingForUpdate = true;
     m_displayTimer.stop();
@@ -139,7 +139,7 @@ void ChunkedUpdateDrawingArea::setSize(const IntSize& viewSize)
         ASSERT(!m_displayTimer.isActive());
 
         // Painting is suspended, just send back an empty update chunk.
-        WebProcess::shared().connection()->send(DrawingAreaProxyLegacyMessage::DidSetSize, m_webPage->pageID(), CoreIPC::In(UpdateChunk()));
+        WebProcess::shared().connection()->deprecatedSend(DrawingAreaProxyLegacyMessage::DidSetSize, m_webPage->pageID(), CoreIPC::In(UpdateChunk()));
         return;
     }
 
@@ -149,7 +149,7 @@ void ChunkedUpdateDrawingArea::setSize(const IntSize& viewSize)
 
     m_displayTimer.stop();
 
-    WebProcess::shared().connection()->send(DrawingAreaProxyLegacyMessage::DidSetSize, m_webPage->pageID(), CoreIPC::In(updateChunk));
+    WebProcess::shared().connection()->deprecatedSend(DrawingAreaProxyLegacyMessage::DidSetSize, m_webPage->pageID(), CoreIPC::In(updateChunk));
 }
 
 void ChunkedUpdateDrawingArea::suspendPainting()

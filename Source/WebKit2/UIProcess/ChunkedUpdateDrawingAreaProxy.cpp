@@ -66,7 +66,7 @@ bool ChunkedUpdateDrawingAreaProxy::paint(const IntRect& rect, PlatformDrawingCo
         if (page->process()->isLaunching())
             return false;
 
-        OwnPtr<CoreIPC::ArgumentDecoder> arguments = page->process()->connection()->waitFor(DrawingAreaProxyLegacyMessage::DidSetSize, page->pageID(), 0.04);
+        OwnPtr<CoreIPC::ArgumentDecoder> arguments = page->process()->connection()->deprecatedWaitFor(DrawingAreaProxyLegacyMessage::DidSetSize, page->pageID(), 0.04);
         if (arguments)
             didReceiveMessage(page->process()->connection(), CoreIPC::MessageID(DrawingAreaProxyLegacyMessage::DidSetSize), arguments.get());
     }

@@ -132,9 +132,9 @@ public:
 
     // FIXME: These variants of senc, sendSync and waitFor are all deprecated.
     // All clients should move to the overloads that take a message type.
-    template<typename E, typename T> bool send(E messageID, uint64_t destinationID, const T& arguments);
-    template<typename E, typename T, typename U> bool sendSync(E messageID, uint64_t destinationID, const T& arguments, const U& reply, double timeout = NoTimeout);
-    template<typename E> PassOwnPtr<ArgumentDecoder> waitFor(E messageID, uint64_t destinationID, double timeout);
+    template<typename E, typename T> bool deprecatedSend(E messageID, uint64_t destinationID, const T& arguments);
+    template<typename E, typename T, typename U> bool deprecatedSendSync(E messageID, uint64_t destinationID, const T& arguments, const U& reply, double timeout = NoTimeout);
+    template<typename E> PassOwnPtr<ArgumentDecoder> deprecatedWaitFor(E messageID, uint64_t destinationID, double timeout);
     
 private:
     template<typename T> class Message {
@@ -345,7 +345,7 @@ template<typename T> bool Connection::waitForAndDispatchImmediately(uint64_t des
 // These three member functions are all deprecated.
 
 template<typename E, typename T, typename U>
-inline bool Connection::sendSync(E messageID, uint64_t destinationID, const T& arguments, const U& reply, double timeout)
+inline bool Connection::deprecatedSendSync(E messageID, uint64_t destinationID, const T& arguments, const U& reply, double timeout)
 {
     uint64_t syncRequestID = 0;
     OwnPtr<ArgumentEncoder> argumentEncoder = createSyncMessageArgumentEncoder(destinationID, syncRequestID);
@@ -363,7 +363,7 @@ inline bool Connection::sendSync(E messageID, uint64_t destinationID, const T& a
 }
 
 template<typename E, typename T>
-bool Connection::send(E messageID, uint64_t destinationID, const T& arguments)
+bool Connection::deprecatedSend(E messageID, uint64_t destinationID, const T& arguments)
 {
     OwnPtr<ArgumentEncoder> argumentEncoder = ArgumentEncoder::create(destinationID);
     argumentEncoder->encode(arguments);
@@ -371,7 +371,7 @@ bool Connection::send(E messageID, uint64_t destinationID, const T& arguments)
     return sendMessage(MessageID(messageID), argumentEncoder.release());
 }
 
-template<typename E> inline PassOwnPtr<ArgumentDecoder> Connection::waitFor(E messageID, uint64_t destinationID, double timeout)
+template<typename E> inline PassOwnPtr<ArgumentDecoder> Connection::deprecatedWaitFor(E messageID, uint64_t destinationID, double timeout)
 {
     return waitForMessage(MessageID(messageID), destinationID, timeout);
 }

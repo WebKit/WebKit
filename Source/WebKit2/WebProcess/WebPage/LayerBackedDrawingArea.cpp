@@ -122,7 +122,7 @@ void LayerBackedDrawingArea::setSize(const IntSize& viewSize)
     if (m_webPage->drawingArea() != this)
         return;
     
-    WebProcess::shared().connection()->send(DrawingAreaProxyLegacyMessage::DidSetSize, m_webPage->pageID(), CoreIPC::In(viewSize));
+    WebProcess::shared().connection()->deprecatedSend(DrawingAreaProxyLegacyMessage::DidSetSize, m_webPage->pageID(), CoreIPC::In(viewSize));
 }
 
 void LayerBackedDrawingArea::suspendPainting()
