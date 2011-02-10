@@ -77,13 +77,13 @@ def runtime_options():
     return options
 
 
-def get(port, options, manager, worker_class):
+def get(port, options, client, worker_class):
     """Return a connection to a manager/worker message_broker
 
     Args:
         port - handle to layout_tests/port object for port-specific stuff
         options - optparse argument for command-line options
-        manager - object to dispatch replies to
+        client - object to dispatch replies to
         worker_class - type of workers to create. This class must implement
             the methods in AbstractWorker.
     Returns:
@@ -105,7 +105,7 @@ def get(port, options, manager, worker_class):
                          worker_model)
 
     broker = message_broker2.Broker(options, queue_class)
-    return manager_class(broker, port, options, manager, worker_class)
+    return manager_class(broker, port, options, client, worker_class)
 
 
 class AbstractWorker(message_broker2.BrokerClient):
@@ -136,30 +136,30 @@ class AbstractWorker(message_broker2.BrokerClient):
         raise NotImplementedError
 
 
-class _AbstractManager(object):
-    def __init__(self, broker, port, options, manager, worker_class):
+class _ManagerConnection(message_broker2.BrokerConnection):
+    def __init__(self, broker, port, options, client, worker_class):
         """Base initialization for all Manager objects.
 
         Args:
             broker: handle to the message_broker2 object
             port: handle to port-specific functionality
             options: command line options object
-            manager: Manager callback object (the caller)
+            client: callback object (the caller)
             worker_class: class object to use to create workers.
         """
-        self._broker = broker
+        message_broker2.BrokerConnection.__init__(self, broker, client,
+            MANAGER_TOPIC, ANY_WORKER_TOPIC)
         self._options = options
-        self._manager = manager
         self._worker_class = worker_class
 
 
-class _InlineManager(_AbstractManager):
+class _InlineManager(_ManagerConnection):
     pass
 
 
-class _ThreadedManager(_AbstractManager):
+class _ThreadedManager(_ManagerConnection):
     pass
 
 
-class _MultiProcessManager(_AbstractManager):
+class _MultiProcessManager(_ManagerConnection):
     pass

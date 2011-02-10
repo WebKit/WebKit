@@ -1,3 +1,20 @@
+2011-02-09  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        nrwt multiprocessing: minor cleanup prior to implementing the new worker
+
+        This patch renames AbstractManager to ManagerConnection and
+        changes some argument names to be more consistent between
+        manager_worker_broker and message_broker. It also fixes a couple
+        of typos in message_broker. These changes will be tested by code
+        introduced in the next patch.
+       
+        https://bugs.webkit.org/show_bug.cgi?id=54067
+
+        * Scripts/webkitpy/layout_tests/layout_package/manager_worker_broker.py:
+        * Scripts/webkitpy/layout_tests/layout_package/message_broker2.py:
+
 2011-02-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

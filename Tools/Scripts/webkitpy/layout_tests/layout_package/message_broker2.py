@@ -132,7 +132,7 @@ class Broker(object):
         self._run_loop(topic_name, client, block=False, delay_secs=None)
 
     def _run_loop(self, topic_name, client, block, delay_secs):
-        queue = self._find_topic(topic_name)
+        queue = self._get_queue_for_topic(topic_name)
         while not client.is_done():
             try:
                 s = queue.get(block, delay_secs)
@@ -146,7 +146,7 @@ class Broker(object):
             raise ValueError(
                "%s: received message '%s' it couldn't handle" %
                (client.name(), message.name))
-        optargs = message.body
+        optargs = message.args
         message_handler = getattr(client, 'handle_' + message.name)
         message_handler(message.src, *optargs)
 
