@@ -1,3 +1,14 @@
+2011-02-11  Adam Barth  <abarth@webkit.org>
+
+        Attempt to fix the Windows build.  Apparently we don't support
+        conditional attributes on functions.  This patch makes the whole Crypto
+        interface conditional on ArrayBuffer support.
+
+        * page/DOMWindow.idl:
+        * page/Crypto.cpp:
+        * page/Crypto.h:
+        * page/Crypto.idl:
+
 2011-02-10  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Dave Hyatt.

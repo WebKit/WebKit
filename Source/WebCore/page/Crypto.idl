@@ -29,10 +29,11 @@
 module window {
 
     interface [
+        // FIXME: We should just enable ArrayBuffer support all the time.
+        Conditional=WEBGL|BLOB,
         OmitConstructor
     ] Crypto {
-        // FIXME: We should just enable ArrayBuffer support all the time.
-        [Conditional=WEBGL|BLOB] void getRandomValues(in ArrayBufferView array) raises(DOMException);
+        void getRandomValues(in ArrayBufferView array) raises(DOMException);
     };
 
 }

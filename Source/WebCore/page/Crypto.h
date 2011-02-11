@@ -43,7 +43,9 @@ class Crypto : public RefCounted<Crypto> {
 public:
     static PassRefPtr<Crypto> create() { return adoptRef(new Crypto()); }
 
+#if ENABLE(WEBGL) || ENABLE(BLOG)
     void getRandomValues(ArrayBufferView*, ExceptionCode&);
+#endif
 
 private:
     Crypto();
