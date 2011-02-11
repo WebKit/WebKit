@@ -1,5 +1,15 @@
 2011-02-11  Jessie Berlin  <jberlin@apple.com>
 
+        [Windows XP Debug Tests] media/audio-mpeg4-supported.html timing out since introduction in
+        r76621.
+        https://bugs.webkit.org/show_bug.cgi?id=54291
+
+        Unreviewed, adding this test to the Windows XP skip list in order to get the bots green.
+
+        * platform/win-xp/Skipped:
+
+2011-02-11  Jessie Berlin  <jberlin@apple.com>
+
         Add Windows XP specific results for fast/dom/52776.html to get the bot green. Unreviewed.
         https://bugs.webkit.org/show_bug.cgi?id=52776
 
