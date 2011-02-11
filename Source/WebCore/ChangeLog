@@ -1,3 +1,26 @@
+2011-02-11  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [REGRESSION] click on error message in console doesn't scroll into view
+        https://bugs.webkit.org/show_bug.cgi?id=54089
+
+        * inspector/front-end/Drawer.js:
+        (WebInspector.Drawer.prototype.show.animationFinished):
+        (WebInspector.Drawer.prototype.show):
+        (WebInspector.Drawer.prototype.hide):
+        (WebInspector.Drawer.prototype.resize):
+        (WebInspector.Drawer.prototype.immediatelyFinishAnimation):
+        (WebInspector.Drawer.prototype._cancelAnimationIfNeeded):
+        (WebInspector.Drawer.prototype._animateDrawerHeight.animationFinished):
+        (WebInspector.Drawer.prototype._animateDrawerHeight):
+        (WebInspector.Drawer.prototype._statusBarDragging):
+        * inspector/front-end/inspector.js:
+        (WebInspector.animateStyle):
+        (WebInspector.animateStyle.forceComplete):
+        (WebInspector.animateStyle.cancel):
+        (WebInspector.showSourceLine):
+
 2011-02-10  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.

@@ -908,6 +908,7 @@ WebInspector.animateStyle = function(animations, duration, callback)
 {
     var interval;
     var complete = 0;
+    var hasCompleted = false;
 
     const intervalDuration = (1000 / 30); // 30 frames per second.
     const animationsLength = animations.length;
@@ -976,14 +977,32 @@ WebInspector.animateStyle = function(animations, duration, callback)
 
         // End condition.
         if (complete >= duration) {
+            hasCompleted = true;
             clearInterval(interval);
             if (callback)
                 callback();
         }
     }
 
+    function forceComplete()
+    {
+        if (!hasCompleted) {
+            complete = duration;
+            animateLoop();
+        }
+    }
+
+    function cancel()
+    {
+        hasCompleted = true;
+        clearInterval(interval);
+    }
+
     interval = setInterval(animateLoop, intervalDuration);
-    return interval;
+    return {
+        cancel: cancel,
+        forceComplete: forceComplete
+    };
 }
 
 WebInspector.updateSearchLabel = function()
@@ -1338,6 +1357,8 @@ WebInspector.showSourceLine = function(url, line, preferredPanel)
     this.currentPanel = this._choosePanelToShowSourceLine(url, line, preferredPanel);
     if (!this.currentPanel)
         return false;
+    if (this.drawer)
+        this.drawer.immediatelyFinishAnimation();
     this.currentPanel.showSourceLine(url, line);
     return true;
 }
