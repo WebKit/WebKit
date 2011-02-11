@@ -32,13 +32,17 @@
 
 #if ENABLE(FILE_SYSTEM)
 
+#include "AsyncFileSystem.h"
 #include "DirectoryEntry.h"
 #include "EntryCallback.h"
 #include "ErrorCallback.h"
 #include "FileError.h"
 #include "FileSystemCallbacks.h"
 #include "MetadataCallback.h"
+#include "ScriptExecutionContext.h"
+#include "SecurityOrigin.h"
 #include "VoidCallback.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -82,11 +86,15 @@ void Entry::getParent(PassRefPtr<EntryCallback> successCallback, PassRefPtr<Erro
         filesystem()->scheduleCallback(errorCallback.release(), FileError::create(FileError::INVALID_MODIFICATION_ERR));
 }
 
-String Entry::toURI(const String&)
+String Entry::toURI()
 {
-    // FIXME: to be implemented.
-    ASSERT_NOT_REACHED();
-    return String();
+    StringBuilder uriBuilder;
+    uriBuilder.append("filesystem:");
+    uriBuilder.append(filesystem()->scriptExecutionContext()->securityOrigin()->toString());
+    uriBuilder.append("/");
+    uriBuilder.append(m_fileSystem->asyncFileSystem()->type() == AsyncFileSystem::Temporary ? "temporary" : "persistent");
+    uriBuilder.append(m_fullPath);
+    return uriBuilder.toString();
 }
 
 } // namespace WebCore

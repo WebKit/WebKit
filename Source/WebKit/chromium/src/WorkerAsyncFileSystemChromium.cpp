@@ -56,8 +56,8 @@ namespace WebCore {
 
 static const char fileSystemOperationsMode[] = "fileSystemOperationsMode";
 
-WorkerAsyncFileSystemChromium::WorkerAsyncFileSystemChromium(ScriptExecutionContext* context, const String& rootPath, bool synchronous)
-    : AsyncFileSystem(rootPath)
+WorkerAsyncFileSystemChromium::WorkerAsyncFileSystemChromium(ScriptExecutionContext* context, AsyncFileSystem::Type type, const String& rootPath, bool synchronous)
+    : AsyncFileSystem(type, rootPath)
     , m_scriptExecutionContext(context)
     , m_webFileSystem(WebKit::webKitClient()->fileSystem())
     , m_workerContext(static_cast<WorkerContext*>(context))

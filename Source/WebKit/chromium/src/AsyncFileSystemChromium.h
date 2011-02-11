@@ -46,9 +46,9 @@ class AsyncFileSystemCallbacks;
 
 class AsyncFileSystemChromium : public AsyncFileSystem {
 public:
-    static PassOwnPtr<AsyncFileSystem> create(const String& rootPath)
+    static PassOwnPtr<AsyncFileSystem> create(AsyncFileSystem::Type type, const String& rootPath)
     {
-        return adoptPtr(new AsyncFileSystemChromium(rootPath));
+        return adoptPtr(new AsyncFileSystemChromium(type, rootPath));
     }
 
     virtual ~AsyncFileSystemChromium();
@@ -66,7 +66,7 @@ public:
     virtual void createWriter(AsyncFileWriterClient* client, const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
 
 private:
-    explicit AsyncFileSystemChromium(const String& rootPath);
+    AsyncFileSystemChromium(AsyncFileSystem::Type, const String& rootPath);
     WebKit::WebFileSystem* m_webFileSystem;
 };
 

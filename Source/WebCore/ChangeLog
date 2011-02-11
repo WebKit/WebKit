@@ -1,3 +1,56 @@
+2011-02-11  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [fileapi] Add support for filesystem: URI handling
+        https://bugs.webkit.org/show_bug.cgi?id=53529
+
+        There are two major parts to this patch: one is to add an
+        implementation of Entry.toURI to the FileSystem API.
+        The other is to implement security origin checking for this
+        new scheme.
+
+        All changes are guarded by the FILE_SYSTEM feature. An accompanying
+        Chromium change, to support loading of filesystem: URIs, has recently
+        been submitted as Chromium r74082.
+
+        Spec:
+          http://dev.w3.org/2009/dap/file-system/file-dir-sys.html#methods-2
+        Proposed URI format, and discussion of security origin issues:
+          http://lists.w3.org/Archives/Public/public-webapps/2011JanMar/0218.html
+
+        Tests: fast/filesystem/directory-entry-to-uri.html
+               fast/filesystem/file-entry-to-uri.html
+               fast/filesystem/filesystem-uri-origin.html
+               http/tests/security/filesystem-iframe-from-remote.html
+
+        * fileapi/Entry.cpp:
+        (WebCore::Entry::toURI):
+        * fileapi/Entry.h:
+        * fileapi/Entry.idl:
+        - Added toURI method to the IDL, omitting the MIME type argument
+          specified in the spec as it will soon be removed.
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::SecurityOrigin):
+        - crack the filesystem: URI to get at the origin of the site
+        (WebCore::SecurityOrigin::canDisplay):
+        - canDisplay for filesystem: URIs is equivalent to canRequest
+        * platform/AsyncFileSystem.cpp:
+        (WebCore::AsyncFileSystem::create):
+        (WebCore::AsyncFileSystem::openFileSystem):
+        * platform/AsyncFileSystem.h:
+        (WebCore::AsyncFileSystem::type):
+        - Exposed filesystem type to allow toURI to use it as part of the
+          path.
+        (WebCore::AsyncFileSystem::AsyncFileSystem):
+        * platform/SchemeRegistry.cpp:
+        (WebCore::canDisplayOnlyIfCanRequestSchemes):
+        (WebCore::SchemeRegistry::canDisplayOnlyIfCanRequest):
+        (WebCore::SchemeRegistry::registerAsCanDisplayOnlyIfCanRequest):
+        - Generalized canDisplayOnlyIfCanRequest as it applies to both
+          filesystem: and blob: URIs.
+        * platform/SchemeRegistry.h:
+
 2011-02-11  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.

@@ -1,3 +1,30 @@
+2011-02-11  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [fileapi] Add support for filesystem: URI handling
+        https://bugs.webkit.org/show_bug.cgi?id=53529
+
+        Changes to Chromium WebKit API required to expose
+        the FileSystem type to WebCore's fileapi code, since the
+        type is part of the filesystem URI.
+
+        * src/AsyncFileSystemChromium.cpp:
+        (WebCore::AsyncFileSystemChromium::AsyncFileSystemChromium):
+        * src/AsyncFileSystemChromium.h:
+        (WebCore::AsyncFileSystemChromium::create):
+        * src/LocalFileSystemChromium.cpp:
+        (WebCore::LocalFileSystem::readFileSystem):
+        (WebCore::LocalFileSystem::requestFileSystem):
+        * src/WebFileSystemCallbacksImpl.cpp:
+        (WebKit::WebFileSystemCallbacksImpl::WebFileSystemCallbacksImpl):
+        (WebKit::WebFileSystemCallbacksImpl::didOpenFileSystem):
+        * src/WebFileSystemCallbacksImpl.h:
+        * src/WorkerAsyncFileSystemChromium.cpp:
+        (WebCore::WorkerAsyncFileSystemChromium::WorkerAsyncFileSystemChromium):
+        * src/WorkerAsyncFileSystemChromium.h:
+        (WebCore::WorkerAsyncFileSystemChromium::create):
+
 2011-02-10  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.

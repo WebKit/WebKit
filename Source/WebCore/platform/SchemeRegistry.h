@@ -58,6 +58,11 @@ public:
 
     static void registerURLSchemeAsEmptyDocument(const String&);
     static bool shouldLoadURLSchemeAsEmptyDocument(const String&);
+
+    // Such schemes should delegate to SecurityOrigin::canRequest for any URL
+    // passed to SecurityOrigin::canDisplay.
+    static bool canDisplayOnlyIfCanRequest(const String& scheme);
+    static void registerAsCanDisplayOnlyIfCanRequest(const String& scheme);
 };
 
 } // namespace WebCore

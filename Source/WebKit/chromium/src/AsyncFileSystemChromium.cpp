@@ -50,8 +50,8 @@ bool AsyncFileSystem::isAvailable()
     return true;
 }
 
-AsyncFileSystemChromium::AsyncFileSystemChromium(const String& rootPath)
-    : AsyncFileSystem(rootPath)
+AsyncFileSystemChromium::AsyncFileSystemChromium(AsyncFileSystem::Type type, const String& rootPath)
+    : AsyncFileSystem(type, rootPath)
     , m_webFileSystem(WebKit::webKitClient()->fileSystem())
 {
     ASSERT(m_webFileSystem);

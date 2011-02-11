@@ -31,6 +31,8 @@
 #ifndef WebFileSystemCallbacksImpl_h
 #define WebFileSystemCallbacksImpl_h
 
+#include "AsyncFileSystem.h"
+#include "WebFileSystem.h"
 #include "WebFileSystemCallbacks.h"
 #include "WebVector.h"
 #include <wtf/OwnPtr.h>
@@ -49,7 +51,7 @@ class WebString;
 
 class WebFileSystemCallbacksImpl : public WebFileSystemCallbacks {
 public:
-    WebFileSystemCallbacksImpl(PassOwnPtr<WebCore::AsyncFileSystemCallbacks>, WebCore::ScriptExecutionContext* = 0, bool synchronous = false);
+    WebFileSystemCallbacksImpl(PassOwnPtr<WebCore::AsyncFileSystemCallbacks>, WebCore::AsyncFileSystem::Type = WebCore::AsyncFileSystem::Temporary, WebCore::ScriptExecutionContext* = 0, bool synchronous = false);
     virtual ~WebFileSystemCallbacksImpl();
 
     virtual void didSucceed();
@@ -60,6 +62,9 @@ public:
 
 private:
     OwnPtr<WebCore::AsyncFileSystemCallbacks> m_callbacks;
+
+    // Used for openFileSystem callbacks.
+    WebCore::AsyncFileSystem::Type m_type;
 
     // Used for worker's openFileSystem callbacks.
     WebCore::ScriptExecutionContext* m_context;

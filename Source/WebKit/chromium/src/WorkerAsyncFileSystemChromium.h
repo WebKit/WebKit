@@ -52,9 +52,9 @@ class WorkerContext;
 
 class WorkerAsyncFileSystemChromium : public AsyncFileSystem {
 public:
-    static PassOwnPtr<AsyncFileSystem> create(ScriptExecutionContext* context, const String& rootPath, bool synchronous)
+    static PassOwnPtr<AsyncFileSystem> create(ScriptExecutionContext* context, AsyncFileSystem::Type type, const String& rootPath, bool synchronous)
     {
-        return adoptPtr(new WorkerAsyncFileSystemChromium(context, rootPath, synchronous));
+        return adoptPtr(new WorkerAsyncFileSystemChromium(context, type, rootPath, synchronous));
     }
 
     virtual ~WorkerAsyncFileSystemChromium();
@@ -75,7 +75,7 @@ public:
     virtual void createWriter(AsyncFileWriterClient* client, const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
 
 private:
-    WorkerAsyncFileSystemChromium(ScriptExecutionContext*, const String& rootPath, bool synchronous);
+    WorkerAsyncFileSystemChromium(ScriptExecutionContext*, AsyncFileSystem::Type, const String& rootPath, bool synchronous);
 
     PassRefPtr<WebKit::WorkerFileSystemCallbacksBridge> createWorkerFileSystemCallbacksBridge(PassOwnPtr<AsyncFileSystemCallbacks>);
 

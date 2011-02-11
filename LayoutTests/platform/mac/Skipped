@@ -257,6 +257,7 @@ http/tests/media/video-buffered.html
 
 # FileSystem API is not supported.
 fast/filesystem
+http/tests/security/filesystem-iframe-from-remote.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=46223
 # The WebKit plugin implementation does not support iframe shims.

@@ -86,6 +86,24 @@ static URLSchemesMap& emptyDocumentSchemes()
     return emptyDocumentSchemes;
 }
 
+static URLSchemesMap& canDisplayOnlyIfCanRequestSchemes()
+{
+    DEFINE_STATIC_LOCAL(URLSchemesMap, canDisplayOnlyIfCanRequestSchemes, ());
+
+#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+    if (canDisplayOnlyIfCanRequestSchemes.isEmpty()) {
+#if ENABLE(BLOB)
+        canDisplayOnlyIfCanRequestSchemes.add("blob");
+#endif
+#if ENABLE(FILE_SYSTEM)
+        canDisplayOnlyIfCanRequestSchemes.add("filesystem");
+#endif
+    }
+#endif // ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+
+    return canDisplayOnlyIfCanRequestSchemes;
+}
+
 void SchemeRegistry::registerURLSchemeAsLocal(const String& scheme)
 {
     localURLSchemes().add(scheme);
@@ -154,6 +172,18 @@ void SchemeRegistry::registerURLSchemeAsEmptyDocument(const String& scheme)
 bool SchemeRegistry::shouldLoadURLSchemeAsEmptyDocument(const String& scheme)
 {
     return emptyDocumentSchemes().contains(scheme);
+}
+
+bool SchemeRegistry::canDisplayOnlyIfCanRequest(const String& scheme)
+{
+    if (scheme.isEmpty())
+        return false;
+    return canDisplayOnlyIfCanRequestSchemes().contains(scheme);
+}
+
+void SchemeRegistry::registerAsCanDisplayOnlyIfCanRequest(const String& scheme)
+{
+    canDisplayOnlyIfCanRequestSchemes().add(scheme);
 }
 
 } // namespace WebCore

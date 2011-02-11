@@ -79,6 +79,18 @@ SecurityOrigin::SecurityOrigin(const KURL& url, SandboxFlags sandboxFlags)
     if (m_protocol == "about" || m_protocol == "javascript")
         m_protocol = "";
 
+#if ENABLE(FILE_SYSTEM)
+    if (m_protocol == "filesystem") {
+        KURL originURL(ParsedURLString, url.path());
+        if (originURL.isValid()) {
+            m_protocol = originURL.protocol().lower();
+            m_host = originURL.host().lower();
+            m_port = originURL.port();
+        } else
+            m_isUnique = true;
+    }
+#endif
+
     // For edge case URLs that were probably misparsed, make sure that the origin is unique.
     if (schemeRequiresAuthority(m_protocol) && m_host.isEmpty())
         m_isUnique = true;
@@ -313,11 +325,8 @@ bool SecurityOrigin::canDisplay(const KURL& url) const
 {
     String protocol = url.protocol().lower();
 
-#if ENABLE(BLOB)
-    // FIXME: We should generalize this check.
-    if (protocol == BlobURL::blobProtocol())
+    if (SchemeRegistry::canDisplayOnlyIfCanRequest(protocol))
         return canRequest(url);
-#endif
 
     if (SchemeRegistry::shouldTreatURLSchemeAsDisplayIsolated(protocol))
         return m_protocol == protocol || isAccessToURLWhiteListed(url);

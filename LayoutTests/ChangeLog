@@ -1,3 +1,33 @@
+2011-02-11  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [fileapi] Add support for filesystem: URI handling
+        https://bugs.webkit.org/show_bug.cgi?id=53529
+
+        Tests for filesystem: URIs, testing both their security origin
+        properties and the existence of the Entry.toURI method.
+
+        * fast/filesystem/directory-entry-to-uri-expected.txt: Added.
+        * fast/filesystem/directory-entry-to-uri.html: Added.
+        * fast/filesystem/file-entry-to-uri-expected.txt: Added.
+        * fast/filesystem/file-entry-to-uri.html: Added.
+        * fast/filesystem/filesystem-uri-origin-expected.txt: Added.
+        * fast/filesystem/filesystem-uri-origin.html: Added.
+        * fast/filesystem/resources/directory-entry-to-uri.js: Added.
+        (errorCallback):
+        (entryToURI):
+        (createTestDirectory):
+        ():
+        * fast/filesystem/resources/file-entry-to-uri.js: Added.
+        (errorCallback):
+        (entryToURI):
+        (createTestFile):
+        ():
+        * http/tests/security/filesystem-iframe-from-remote-expected.txt: Added.
+        * http/tests/security/filesystem-iframe-from-remote.html: Added.
+        * http/tests/security/resources/create-filesystem-file.html: Added.
+
 2011-02-11  Sailesh Agrawal  <sail@chromium.org>
 
         Reviewed by Kenneth Russell.

@@ -46,7 +46,7 @@ bool AsyncFileSystem::isAvailable()
     return false;
 }
 
-PassOwnPtr<AsyncFileSystem> AsyncFileSystem::create(const String&)
+PassOwnPtr<AsyncFileSystem> AsyncFileSystem::create(Type, const String&)
 {
     notImplemented();
     return 0;
@@ -68,7 +68,7 @@ void AsyncFileSystem::openFileSystem(const String& basePath, const String& stora
     rootPath += typeString;
     rootPath.append(PlatformFilePathSeparator);
 
-    callbacks->didOpenFileSystem(name, AsyncFileSystem::create(rootPath));
+    callbacks->didOpenFileSystem(name, AsyncFileSystem::create(type, rootPath));
 }
 #endif
 

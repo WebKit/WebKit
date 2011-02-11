@@ -65,7 +65,7 @@ public:
     virtual bool waitForOperationToComplete() { return false; }
 
     // Creates and returns a new platform-specific AsyncFileSystem instance if the platform has its own implementation.
-    static PassOwnPtr<AsyncFileSystem> create(const String& rootPath);
+    static PassOwnPtr<AsyncFileSystem> create(Type, const String& rootPath);
 
     // Opens a new file system. The create parameter specifies whether or not to create the path if it does not already exists.
     static void openFileSystem(const String& basePath, const String& storageIdentifier, Type, bool create, PassOwnPtr<AsyncFileSystemCallbacks>);
@@ -132,12 +132,16 @@ public:
     // Getter for this file system's root path.
     String root() const { return m_platformRootPath; }
 
+    Type type() const { return m_type; }
+
 protected:
-    AsyncFileSystem(const String& platformRootPath)
-        : m_platformRootPath(platformRootPath)
+    AsyncFileSystem(Type type, const String& platformRootPath)
+        : m_type(type)
+        , m_platformRootPath(platformRootPath)
     {
     }
 
+    Type m_type;
     String m_platformRootPath;
 };
 
