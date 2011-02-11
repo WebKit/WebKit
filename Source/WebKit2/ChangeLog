@@ -1,3 +1,23 @@
+2011-02-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Repro crash with Sony Google TV ad at Gizmodo
+        https://bugs.webkit.org/show_bug.cgi?id=54150
+        <rdar://problem/8782346>
+
+        Re-landing this fix, bug without the test case, since it causes hangs on the bots.
+        https://bugs.webkit.org/show_bug.cgi?id=54171 tracks adding back the test.
+
+        Since PluginView::evaluate can cause the plug-in element to go away, we need to protect it.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::~PluginView):
+        Null out m_pluginElement here so we'll catch crashes earlier.
+
+        (WebKit::PluginView::evaluate):
+        Add a plug-in protector.
+
 2011-02-10  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Enrica Casucci and Adele Peterson.
