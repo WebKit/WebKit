@@ -409,6 +409,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	page/Console.cpp \
 	page/ContentSecurityPolicy.cpp \
 	page/ContextMenuController.cpp \
+	page/Crypto.cpp \
 	page/DOMSelection.cpp \
 	page/DOMTimer.cpp \
 	page/DOMWindow.cpp \

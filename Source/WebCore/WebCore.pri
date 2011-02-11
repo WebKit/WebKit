@@ -308,6 +308,7 @@ IDL_BINDINGS += \
     page/BarInfo.idl \
     page/Console.idl \
     page/Coordinates.idl \
+    page/Crypto.idl \
     page/DOMSelection.idl \
     page/DOMWindow.idl \
     page/EventSource.idl \

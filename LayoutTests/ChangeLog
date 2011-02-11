@@ -1,3 +1,17 @@
+2011-02-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        WebKit should have a cryptographic RNG
+        https://bugs.webkit.org/show_bug.cgi?id=22049
+
+        Test crypto.getRandomValues API.  It's pretty hard to write a
+        deterministic API for a randomized API, but this test should catch some
+        regressions.
+
+        * security/crypto-random-values-expected.txt: Added.
+        * security/crypto-random-values.html: Added.
+
 2011-02-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dan Bernstein.

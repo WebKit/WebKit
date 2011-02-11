@@ -58,7 +58,7 @@ module window {
 
         attribute [Replaceable, CustomGetter, V8CustomSetter] Event event;
 
-        readonly attribute [Custom] Crypto crypto;
+        readonly attribute Crypto crypto;
 
         DOMSelection getSelection();
 

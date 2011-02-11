@@ -183,12 +183,6 @@ void V8DOMWindow::eventAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::
     context->Global()->SetHiddenValue(eventSymbol, value);
 }
 
-v8::Handle<v8::Value> V8DOMWindow::cryptoAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    // FIXME: Implement me.
-    return v8::Undefined();
-}
-
 void V8DOMWindow::locationAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     DOMWindow* imp = V8DOMWindow::toNative(info.Holder());

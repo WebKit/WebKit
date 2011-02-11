@@ -319,6 +319,7 @@ SET(WebCore_IDL_FILES
     page/BarInfo.idl
     page/Console.idl
     page/Coordinates.idl
+    page/Crypto.idl
     page/DOMSelection.idl
     page/DOMWindow.idl
     page/EventSource.idl
@@ -1110,6 +1111,7 @@ SET(WebCore_SOURCES
     page/Console.cpp
     page/ContentSecurityPolicy.cpp
     page/ContextMenuController.cpp
+    page/Crypto.cpp
     page/DOMSelection.cpp
     page/DOMTimer.cpp
     page/DOMWindow.cpp

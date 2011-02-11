@@ -336,7 +336,7 @@
 		97941A5713029AAB004A3447 /* OSRandomSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97941A3F130299DB004A3447 /* OSRandomSource.cpp */; };
 		97941A5A13029ACC004A3447 /* OSRandomSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 97941A40130299DB004A3447 /* OSRandomSource.h */; };
 		97941A7E1302A098004A3447 /* CryptographicallyRandomNumber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97941A7C1302A098004A3447 /* CryptographicallyRandomNumber.cpp */; };
-		97941A7F1302A098004A3447 /* CryptographicallyRandomNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = 97941A7D1302A098004A3447 /* CryptographicallyRandomNumber.h */; };
+		97941A7F1302A098004A3447 /* CryptographicallyRandomNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = 97941A7D1302A098004A3447 /* CryptographicallyRandomNumber.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1712B3B11C7B212007A5315 /* RegExpCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1712B3A11C7B212007A5315 /* RegExpCache.cpp */; };
 		A1712B3F11C7B228007A5315 /* RegExpCache.h in Headers */ = {isa = PBXBuildFile; fileRef = A1712B3E11C7B228007A5315 /* RegExpCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1712B4111C7B235007A5315 /* RegExpKey.h in Headers */ = {isa = PBXBuildFile; fileRef = A1712B4011C7B235007A5315 /* RegExpKey.h */; settings = {ATTRIBUTES = (Private, ); }; };

@@ -489,11 +489,6 @@ void JSDOMWindow::setLocation(ExecState* exec, JSValue value)
     impl()->setLocation(ustringToString(locationString), activeDOMWindow(exec), firstDOMWindow(exec));
 }
 
-JSValue JSDOMWindow::crypto(ExecState*) const
-{
-    return jsUndefined();
-}
-
 JSValue JSDOMWindow::event(ExecState* exec) const
 {
     Event* event = currentEvent();

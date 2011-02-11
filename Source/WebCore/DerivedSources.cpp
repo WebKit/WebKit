@@ -50,6 +50,7 @@
 #include "JSConsole.cpp"
 #include "JSCoordinates.cpp"
 #include "JSCounter.cpp"
+#include "JSCrypto.cpp"
 #include "JSCSSCharsetRule.cpp"
 #include "JSCSSFontFaceRule.cpp"
 #include "JSCSSImportRule.cpp"

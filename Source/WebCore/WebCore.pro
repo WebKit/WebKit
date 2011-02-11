@@ -1128,11 +1128,10 @@ SOURCES += \
     page/Console.cpp \
     page/ContentSecurityPolicy.cpp \
     page/ContextMenuController.cpp \
+    page/Crypto.cpp \
     page/DOMSelection.cpp \
     page/DOMTimer.cpp \
     page/DOMWindow.cpp \
-    page/Navigator.cpp \
-    page/NavigatorBase.cpp \
     page/DragController.cpp \
     page/EventHandler.cpp \
     page/EventSource.cpp \
@@ -1148,6 +1147,8 @@ SOURCES += \
     page/Location.cpp \
     page/MemoryInfo.cpp \
     page/MouseEventWithHitTestResults.cpp \
+    page/Navigator.cpp \
+    page/NavigatorBase.cpp \
     page/OriginAccessEntry.cpp \
     page/Page.cpp \
     page/PageGroup.cpp \
@@ -1157,8 +1158,8 @@ SOURCES += \
     page/PerformanceTiming.cpp \
     page/PluginHalter.cpp \
     page/PrintContext.cpp \
-    page/SecurityOrigin.cpp \
     page/Screen.cpp \
+    page/SecurityOrigin.cpp \
     page/Settings.cpp \
     page/SpatialNavigation.cpp \
     page/SuspendableTimer.cpp \

@@ -162,6 +162,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSCoordinates.h \
 	DerivedSources/WebCore/JSCounter.cpp \
 	DerivedSources/WebCore/JSCounter.h \
+	DerivedSources/WebCore/JSCrypto.cpp \
+	DerivedSources/WebCore/JSCrypto.h \
 	DerivedSources/WebCore/JSCSSCharsetRule.cpp \
 	DerivedSources/WebCore/JSCSSCharsetRule.h \
 	DerivedSources/WebCore/JSCSSFontFaceRule.cpp \
@@ -2173,9 +2175,9 @@ webcore_sources += \
 	Source/WebCore/page/animation/KeyframeAnimation.h \
 	Source/WebCore/page/BarInfo.cpp \
 	Source/WebCore/page/BarInfo.h \
-	Source/WebCore/page/ChromeClient.h \
 	Source/WebCore/page/Chrome.cpp \
 	Source/WebCore/page/Chrome.h \
+	Source/WebCore/page/ChromeClient.h \
 	Source/WebCore/page/Console.cpp \
 	Source/WebCore/page/Console.h \
 	Source/WebCore/page/ContentSecurityPolicy.cpp \
@@ -2185,6 +2187,8 @@ webcore_sources += \
 	Source/WebCore/page/ContextMenuController.h \
 	Source/WebCore/page/ContextMenuProvider.h \
 	Source/WebCore/page/Coordinates.h \
+	Source/WebCore/page/Crypto.cpp \
+	Source/WebCore/page/Crypto.h \
 	Source/WebCore/page/DOMSelection.cpp \
 	Source/WebCore/page/DOMSelection.h \
 	Source/WebCore/page/DOMTimer.cpp \
@@ -2213,9 +2217,9 @@ webcore_sources += \
 	Source/WebCore/page/Geolocation.cpp \
 	Source/WebCore/page/Geolocation.h \
 	Source/WebCore/page/GeolocationClient.h \
-	Source/WebCore/page/GeolocationError.h \
 	Source/WebCore/page/GeolocationController.cpp \
 	Source/WebCore/page/GeolocationController.h \
+	Source/WebCore/page/GeolocationError.h \
 	Source/WebCore/page/GeolocationPosition.h \
 	Source/WebCore/page/GeolocationPositionCache.cpp \
 	Source/WebCore/page/GeolocationPositionCache.h \
@@ -2232,30 +2236,30 @@ webcore_sources += \
 	Source/WebCore/page/MemoryInfo.h \
 	Source/WebCore/page/MouseEventWithHitTestResults.cpp \
 	Source/WebCore/page/MouseEventWithHitTestResults.h \
-	Source/WebCore/page/NavigatorBase.cpp \
-	Source/WebCore/page/NavigatorBase.h \
 	Source/WebCore/page/Navigator.cpp \
 	Source/WebCore/page/Navigator.h \
+	Source/WebCore/page/NavigatorBase.cpp \
+	Source/WebCore/page/NavigatorBase.h \
 	Source/WebCore/page/OriginAccessEntry.cpp \
 	Source/WebCore/page/OriginAccessEntry.h \
 	Source/WebCore/page/Page.cpp \
+	Source/WebCore/page/Page.h \
 	Source/WebCore/page/PageGroup.cpp \
 	Source/WebCore/page/PageGroup.h \
 	Source/WebCore/page/PageGroupLoadDeferrer.cpp \
 	Source/WebCore/page/PageGroupLoadDeferrer.h \
-	Source/WebCore/page/Page.h \
 	Source/WebCore/page/Performance.cpp \
 	Source/WebCore/page/Performance.h \
 	Source/WebCore/page/PerformanceNavigation.cpp \
 	Source/WebCore/page/PerformanceNavigation.h \
 	Source/WebCore/page/PerformanceTiming.cpp \
 	Source/WebCore/page/PerformanceTiming.h \
-	Source/WebCore/page/PluginHalterClient.h \
 	Source/WebCore/page/PluginHalter.cpp \
 	Source/WebCore/page/PluginHalter.h \
+	Source/WebCore/page/PluginHalterClient.h \
 	Source/WebCore/page/PositionCallback.h \
-	Source/WebCore/page/PositionErrorCallback.h \
 	Source/WebCore/page/PositionError.h \
+	Source/WebCore/page/PositionErrorCallback.h \
 	Source/WebCore/page/PositionOptions.h \
 	Source/WebCore/page/PrintContext.cpp \
 	Source/WebCore/page/PrintContext.h \

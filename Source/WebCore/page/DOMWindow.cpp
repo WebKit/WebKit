@@ -37,6 +37,7 @@
 #include "CSSStyleSelector.h"
 #include "Chrome.h"
 #include "Console.h"
+#include "Crypto.h"
 #include "DOMApplicationCache.h"
 #include "DOMSelection.h"
 #include "DOMSettableTokenList.h"
@@ -433,6 +434,8 @@ void DOMWindow::clear()
         m_history->disconnectFrame();
     m_history = 0;
 
+    m_crypto = 0;
+
     if (m_locationbar)
         m_locationbar->disconnectFrame();
     m_locationbar = 0;
@@ -528,6 +531,13 @@ History* DOMWindow::history() const
     if (!m_history)
         m_history = History::create(m_frame);
     return m_history.get();
+}
+
+Crypto* DOMWindow::crypto() const
+{
+    if (!m_crypto)
+        m_crypto = Crypto::create();
+    return m_crypto.get();
 }
 
 BarInfo* DOMWindow::locationbar() const

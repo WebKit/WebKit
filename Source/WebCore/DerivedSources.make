@@ -127,6 +127,7 @@ DOM_CLASSES = \
     Console \
     Coordinates \
     Counter \
+    Crypto \
     CustomEvent \
     DataGridColumn \
     DataGridColumnList \
