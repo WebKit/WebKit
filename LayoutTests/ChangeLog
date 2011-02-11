@@ -1,3 +1,13 @@
+2011-02-11  Jessie Berlin  <jberlin@apple.com>
+
+        plugins/invalidate_rect.html failing on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=54122
+
+        This test was fixed on Windows in http://trac.webkit.org/changeset/78359. Remove the failing
+        expected results. Unreviewed.
+
+        * platform/win/plugins/invalidate_rect-expected.txt: Removed.
+
 2011-02-11  Adam Klein  <adamk@chromium.org>
 
         Reviewed by Darin Fisher.
