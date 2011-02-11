@@ -55,6 +55,7 @@
 #include "DocumentType.h"
 #include "EditingText.h"
 #include "Editor.h"
+#include "Element.h"
 #include "EntityReference.h"
 #include "Event.h"
 #include "EventHandler.h"
@@ -700,7 +701,7 @@ void Document::childrenChanged(bool changedByParser, Node* beforeChange, Node* a
 void Document::cacheDocumentElement() const
 {
     ASSERT(!m_documentElement);
-    m_documentElement = static_cast<Element*>(firstElementChild());
+    m_documentElement = firstElementChild(this);
 }
 
 PassRefPtr<Element> Document::createElement(const AtomicString& name, ExceptionCode& ec)

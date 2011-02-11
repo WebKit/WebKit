@@ -514,6 +514,15 @@ inline const AtomicString& Element::shadowPseudoId() const
 {
     return nullAtom;
 }
+    
+inline Element* firstElementChild(const ContainerNode* container)
+{
+    ASSERT_ARG(container, container);
+    Node* child = container->firstChild();
+    while (child && !child->isElementNode())
+        child = child->nextSibling();
+    return static_cast<Element*>(child);
+}
 
 } // namespace
 

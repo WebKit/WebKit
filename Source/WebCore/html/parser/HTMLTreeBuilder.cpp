@@ -417,7 +417,7 @@ void HTMLTreeBuilder::FragmentParsingContext::finished()
     
     // The HTML5 spec says to return the children of the fragment's document
     // element when there is a context element (10.4.7).
-    RefPtr<ContainerNode> documentElement = m_fragment->firstElementChild();
+    RefPtr<ContainerNode> documentElement = firstElementChild(m_fragment);
     m_fragment->removeChildren();
     ASSERT(documentElement);
     m_fragment->takeAllChildrenFrom(documentElement.get());

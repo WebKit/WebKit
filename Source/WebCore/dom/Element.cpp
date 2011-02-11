@@ -1654,10 +1654,7 @@ void Element::normalizeAttributes()
 // ElementTraversal API
 Element* Element::firstElementChild() const
 {
-    Node* n = firstChild();
-    while (n && !n->isElementNode())
-        n = n->nextSibling();
-    return static_cast<Element*>(n);
+    return WebCore::firstElementChild(this);
 }
 
 Element* Element::lastElementChild() const

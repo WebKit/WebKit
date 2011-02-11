@@ -1,3 +1,30 @@
+2011-02-10  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Convert ContainerNode::firstElementChild() to a free function.
+        https://bugs.webkit.org/show_bug.cgi?id=54269
+
+        No new tests. No change in behavior.
+        
+        It seemed incorrect to have a method on ContainerNode that had the
+        concept of an Element but couldn't return an Element*, but a method on
+        Element could not be called by holders of ContainerNodes or other
+        non-Element ContainerNode subclasses. A free function can both return
+        an Element* and be called by anyone with a ContainerNode*.
+
+        * dom/ContainerNode.h:
+        (WebCore::ContainerNode::lastChild):
+        (WebCore::Node::lastChild):
+        * dom/Document.cpp:
+        (WebCore::Document::cacheDocumentElement):
+        * dom/Element.cpp:
+        (WebCore::Element::firstElementChild):
+        * dom/Element.h:
+        (WebCore::firstElementChild):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::FragmentParsingContext::finished):
+
 2011-02-10  Mads Ager  <ager@chromium.org>
 
         Reviewed by Nate Chapin.
