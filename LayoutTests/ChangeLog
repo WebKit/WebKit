@@ -1,3 +1,9 @@
+2011-02-11  Martin Robinson  <mrobinson@igalia.com>
+
+        Generate more GTK+ results for many SVG tests missing them.
+
+        * platform/gtk/Skipped: Unskip tests which now have results.
+
 2011-02-11  Jessie Berlin  <jberlin@apple.com>
 
         [Windows XP Debug Tests] media/audio-mpeg4-supported.html timing out since introduction in
