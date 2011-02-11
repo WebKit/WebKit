@@ -69,6 +69,8 @@ PASS ConsolePrototype from inner.document.forms.testForm.0.ownerDocument.default
 PASS Counter from inner.document.getElementById("styledSpan").style.getPropertyCSSValue("content")[0].getCounterValue()
 PASS CounterConstructor from inner.document.getElementById("styledSpan").style.getPropertyCSSValue("content")[0].getCounterValue().constructor
 PASS CounterPrototype from inner.document.getElementById("styledSpan").style.getPropertyCSSValue("content")[0].getCounterValue().__proto__
+PASS Crypto from inner.document.forms.testForm.0.ownerDocument.defaultView.crypto
+PASS CryptoPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.crypto.__proto__
 PASS DOMApplicationCache from inner.document.forms.testForm.0.ownerDocument.defaultView.applicationCache
 PASS DOMApplicationCachePrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.applicationCache.__proto__
 PASS DOMImplementation from inner.document.forms.testForm.0.ownerDocument.implementation

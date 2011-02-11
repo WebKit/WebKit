@@ -1,5 +1,11 @@
 2011-02-11  Adam Barth  <abarth@webkit.org>
 
+        Turns out window.crypto is supposed to be readonly.
+
+        * page/DOMWindow.idl:
+
+2011-02-11  Adam Barth  <abarth@webkit.org>
+
         Actually add Crypto.cpp to the Windows build.  I'm terrible.
 
         * WebCore.vcproj/WebCore.vcproj:
