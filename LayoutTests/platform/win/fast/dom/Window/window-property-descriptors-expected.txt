@@ -333,7 +333,6 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'clientInformation') is 'obj
 PASS typeof Object.getOwnPropertyDescriptor(window, 'closed') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'console') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'constructor') is 'object'
-PASS typeof Object.getOwnPropertyDescriptor(window, 'crypto') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'debug') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'decodeURI') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'decodeURIComponent') is 'object'

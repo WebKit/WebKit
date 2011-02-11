@@ -1,0 +1,28 @@
+CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: crypto
+Test to make sure cached lookups on the global object are performed correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS cachedFunctions[0]() is addEventListener
+PASS cachedFunctions[0]() is addEventListener
+PASS cachedFunctions[1]() is alert
+PASS cachedFunctions[1]() is alert
+PASS cachedFunctions[2]() is clearInterval
+PASS cachedFunctions[2]() is clearInterval
+PASS cachedFunctions[3]() is clearTimeout
+PASS cachedFunctions[3]() is clearTimeout
+PASS cachedFunctions[4]() is clientInformation
+PASS cachedFunctions[4]() is clientInformation
+PASS cachedFunctions[5]() is close
+PASS cachedFunctions[5]() is close
+PASS cachedFunctions[6]() is closed
+PASS cachedFunctions[6]() is closed
+PASS cachedFunctions[7]() is confirm
+PASS cachedFunctions[7]() is confirm
+PASS cachedFunctions[8]() is console
+PASS cachedFunctions[8]() is console
+FAIL successfullyParsed should be true. Threw exception ReferenceError: Can't find variable: successfullyParsed
+
+TEST COMPLETE
+

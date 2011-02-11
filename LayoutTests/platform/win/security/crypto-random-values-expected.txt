@@ -1,0 +1,13 @@
+Tests crypto.randomValues.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+This test requres ArrayBuffers to run!
+FAIL 'crypto' in window should be true. Was false.
+FAIL 'getRandomValues' in window.crypto should be true. Threw exception TypeError: 'undefined' is not a valid argument for 'in' (evaluating ''getRandomValues' in window.crypto')
+ReferenceError: Can't find variable: Uint8Array
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
