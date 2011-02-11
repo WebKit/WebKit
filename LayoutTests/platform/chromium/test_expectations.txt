@@ -728,7 +728,7 @@ BUGCR67767 : http/tests/security/aboutBlank/xss-DENIED-set-opener.html = TEXT
 // -----------------------------------------------------------------
 BUGCR21841 MAC WIN DEBUG : plugins/destroy-during-npp-new.html = CRASH PASS
 BUGJOHNNYG LINUX : plugins/embed-attributes-style.html = IMAGE
-BUGCR61799 : plugins/evaluate-js-after-removing-plugin-element.html = TEXT
+BUGCR61799 : plugins/evaluate-js-after-removing-plugin-element.html = CRASH TEXT
 BUGCR37962 MAC : plugins/iframe-shims.html = TEXT PASS
 BUGCR10351 MAC : plugins/inner-html-display-none.html = FAIL
 BUGWK48164 MAC LINUX WIN : plugins/invalid-mime-with-valid-extension-shows-missing-plugin.html = TEXT
