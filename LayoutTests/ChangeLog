@@ -1,5 +1,17 @@
 2011-02-11  Martin Robinson  <mrobinson@igalia.com>
 
+        Explicitly skip webarchive tests on GTK+, because we do not
+        support them. Remove all GTK+-specific webarchive expected results.
+
+        * platform/gtk/Skipped: Explicitly skip all webarchive tests.
+        * platform/gtk/http/tests/webarchive/cross-origin-stylesheet-crash-expected.txt: Removed.
+        * platform/gtk/http/tests/webarchive/test-css-url-encoding-expected.txt: Removed.
+        * platform/gtk/http/tests/webarchive/test-css-url-encoding-shift-jis-expected.txt: Removed.
+        * platform/gtk/http/tests/webarchive/test-css-url-encoding-utf-8-expected.txt: Removed.
+        * platform/gtk/http/tests/webarchive/test-preload-resources-expected.txt: Removed.
+
+2011-02-11  Martin Robinson  <mrobinson@igalia.com>
+
         Add the next batch of GTK+ SVG test results.
 
         * platform/gtk/Skipped: Unskip tests which now have results.
