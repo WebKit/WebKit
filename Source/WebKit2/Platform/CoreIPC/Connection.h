@@ -259,6 +259,10 @@ private:
     
     BinarySemaphore m_waitForSyncReplySemaphore;
 
+    class SyncMessageState;
+    friend class SyncMessageState;
+    RefPtr<SyncMessageState> m_syncMessageState;
+
     Mutex m_syncReplyStateMutex;
     bool m_shouldWaitForSyncReplies;
     Vector<PendingSyncReply> m_pendingSyncReplies;

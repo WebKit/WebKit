@@ -35,6 +35,57 @@ using namespace std;
 
 namespace CoreIPC {
 
+class Connection::SyncMessageState : public RefCounted<Connection::SyncMessageState> {
+public:
+    static PassRefPtr<SyncMessageState> getOrCreate(RunLoop*);
+    ~SyncMessageState();
+
+private:
+    explicit SyncMessageState(RunLoop*);
+
+    RunLoop* m_runLoop;
+
+    typedef HashMap<RunLoop*, SyncMessageState*> SyncMessageStateMap;
+    static SyncMessageStateMap& syncMessageStateMap()
+    {
+        DEFINE_STATIC_LOCAL(SyncMessageStateMap, syncMessageStateMap, ());
+        return syncMessageStateMap;
+    }
+
+    static Mutex& syncMessageStateMapMutex()
+    {
+        DEFINE_STATIC_LOCAL(Mutex, syncMessageStateMapMutex, ());
+        return syncMessageStateMapMutex;
+    }
+};
+
+PassRefPtr<Connection::SyncMessageState> Connection::SyncMessageState::getOrCreate(RunLoop* runLoop)
+{
+    MutexLocker locker(syncMessageStateMapMutex());
+    pair<SyncMessageStateMap::iterator, bool> result = syncMessageStateMap().add(runLoop, 0);
+
+    if (!result.second)
+        return result.first->second;
+
+    RefPtr<SyncMessageState> syncMessageState = adoptRef(new SyncMessageState(runLoop));
+    result.first->second = syncMessageState.get();
+
+    return syncMessageState.release();
+}
+
+Connection::SyncMessageState::SyncMessageState(RunLoop* runLoop)
+    : m_runLoop(runLoop)
+{
+}
+
+Connection::SyncMessageState::~SyncMessageState()
+{
+    MutexLocker locker(syncMessageStateMapMutex());
+    
+    ASSERT(syncMessageStateMap().contains(m_runLoop));
+    syncMessageStateMap().remove(m_runLoop);
+}
+
 PassRefPtr<Connection> Connection::createServerConnection(Identifier identifier, Client* client, RunLoop* clientRunLoop)
 {
     return adoptRef(new Connection(identifier, true, client, clientRunLoop));
