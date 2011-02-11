@@ -43,7 +43,8 @@ class Element;
 class HTMLConstructionSite {
     WTF_MAKE_NONCOPYABLE(HTMLConstructionSite);
 public:
-    HTMLConstructionSite(Document*, FragmentScriptingPermission, bool isParsingFragment);
+    HTMLConstructionSite(Document*);
+    HTMLConstructionSite(DocumentFragment*, FragmentScriptingPermission);
     ~HTMLConstructionSite();
 
     void detach();
@@ -130,6 +131,12 @@ private:
     void dispatchDocumentElementAvailableIfNeeded();
 
     Document* m_document;
+    
+    // This is the root ContainerNode to which the parser attaches all newly
+    // constructed nodes. It points to a DocumentFragment when parsing fragments
+    // and a Document in all other cases.
+    ContainerNode* m_attachmentRoot;
+    
     RefPtr<Element> m_head;
     RefPtr<HTMLFormElement> m_form;
     mutable HTMLElementStack m_openElements;

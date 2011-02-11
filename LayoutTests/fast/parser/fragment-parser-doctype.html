@@ -1,0 +1,25 @@
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    debug("Verify that a fragment's DOCTYPE does not affect parsing. We expect DOCTYPEs to be ignored for fragments with context elements.");
+    var container = document.createElement("div");
+    document.body.appendChild(container);
+    container.innerHTML = "<!DOCTYPE html><p><table>"
+    shouldBeNull("container.firstChild.nextSibling");    
+</script>
+<p id="test"><table></table>
+<script>
+    debug ("Verify that a fragment's DOCTYPE does not change the compatibility mode of the owner document.");
+    var test = document.getElementById("test");
+    shouldBeNull("container.firstChild.nextSibling");
+    var successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

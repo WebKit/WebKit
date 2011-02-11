@@ -705,10 +705,7 @@ void Document::childrenChanged(bool changedByParser, Node* beforeChange, Node* a
 void Document::cacheDocumentElement() const
 {
     ASSERT(!m_documentElement);
-    Node* n = firstChild();
-    while (n && !n->isElementNode())
-        n = n->nextSibling();
-    m_documentElement = static_cast<Element*>(n);
+    m_documentElement = static_cast<Element*>(firstElementChild());
 }
 
 PassRefPtr<Element> Document::createElement(const AtomicString& name, ExceptionCode& ec)

@@ -43,6 +43,7 @@ public:
 
     Node* firstChild() const { return m_firstChild; }
     Node* lastChild() const { return m_lastChild; }
+    ContainerNode* firstElementChild() const;
 
     bool insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode&, bool shouldLazyAttach = false);
     bool replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode&, bool shouldLazyAttach = false);
@@ -168,6 +169,14 @@ inline Node* Node::lastChild() const
     if (!isContainerNode())
         return 0;
     return toContainerNode(this)->lastChild();
+}
+    
+inline ContainerNode* ContainerNode::firstElementChild() const
+{
+    Node* child = firstChild();
+    while (child && !child->isElementNode())
+        child = child->nextSibling();
+    return static_cast<ContainerNode*>(child);
 }
 
 } // namespace WebCore

@@ -1,3 +1,52 @@
+2011-02-10  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        HTML5 TreeBuilder regressed a Peacekeeper DOM test by 40%
+        https://bugs.webkit.org/show_bug.cgi?id=48719
+        
+        The HTML5 fragment parsing algorithm specifies that a new Document
+        should be created to serve as the temporary parent of fragment nodes
+        during parsing. Document creation is expensive and accounts for ~38% of
+        the Peacekeeper DOM performance regression. Avoid the cost of creating
+        a dummy document by using the already-created DocumentFragment as the
+        root node during fragment parsing.
+        
+        With this patch, the regression in Peacekeeper from Safari 5.0.3 to ToT
+        is ~24%.
+
+        Test: fast/parser/fragment-parser-doctype.html
+
+        * dom/ContainerNode.h:
+        (WebCore::ContainerNode::firstElementChild): Add a method that returns
+        the first element-typed child from a ContainerNode.
+        * dom/Document.cpp:
+        (WebCore::Document::cacheDocumentElement): Call
+        ContainerNode::firstElementChild() to retrieve and cache the document
+        element.
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::HTMLConstructionSite): Initialize the
+        root ContainerNode.
+        (WebCore::HTMLConstructionSite::detach): Clear the reference to the
+        root ContainerNode.
+        (WebCore::HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML):
+        Attach the new element to the root ContainerNode.
+        (WebCore::HTMLConstructionSite::insertDoctype): Ditto.
+        (WebCore::HTMLConstructionSite::insertCommentOnDocument): Ditto.
+        * html/parser/HTMLConstructionSite.h: Store a pointer to a
+        ContainerNode that will be used as the root node for document parsing.
+        This node might or might not be the same as m_document.
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder): Initialize the
+        HTMLConstructionSite with the correct root ContainerNode based on
+        whether or not we're parsing a fragment.
+        (WebCore::HTMLTreeBuilder::FragmentParsingContext::FragmentParsingContext):
+        Remove m_dummyDocumentForFragmentParsing.
+        (WebCore::HTMLTreeBuilder::FragmentParsingContext::finished): If the
+        fragment has a context element, store only the children of the root
+        element (HTML5 Section 10.4, Step 7).
+        * html/parser/HTMLTreeBuilder.h:
+
 2011-02-10  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Oliver Hunt.

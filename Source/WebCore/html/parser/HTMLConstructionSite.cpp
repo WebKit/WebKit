@@ -130,10 +130,20 @@ void HTMLConstructionSite::attachAtSite(const AttachmentSite& site, PassRefPtr<N
         child->attach();
 }
 
-HTMLConstructionSite::HTMLConstructionSite(Document* document, FragmentScriptingPermission scriptingPermission, bool isParsingFragment)
+HTMLConstructionSite::HTMLConstructionSite(Document* document)
     : m_document(document)
+    , m_attachmentRoot(document)
+    , m_fragmentScriptingPermission(FragmentScriptingAllowed)
+    , m_isParsingFragment(false)
+    , m_redirectAttachToFosterParent(false)
+{
+}
+
+HTMLConstructionSite::HTMLConstructionSite(DocumentFragment* fragment, FragmentScriptingPermission scriptingPermission)
+    : m_document(fragment->document())
+    , m_attachmentRoot(fragment)
     , m_fragmentScriptingPermission(scriptingPermission)
-    , m_isParsingFragment(isParsingFragment)
+    , m_isParsingFragment(true)
     , m_redirectAttachToFosterParent(false)
 {
 }
@@ -145,6 +155,7 @@ HTMLConstructionSite::~HTMLConstructionSite()
 void HTMLConstructionSite::detach()
 {
     m_document = 0;
+    m_attachmentRoot = 0;
 }
 
 void HTMLConstructionSite::setForm(HTMLFormElement* form)
@@ -170,7 +181,7 @@ void HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML(AtomicHTMLToken& tok
 {
     RefPtr<HTMLHtmlElement> element = HTMLHtmlElement::create(m_document);
     element->setAttributeMap(token.takeAtributes(), m_fragmentScriptingPermission);
-    m_openElements.pushHTMLHtmlElement(attach<Element>(m_document, element.get()));
+    m_openElements.pushHTMLHtmlElement(attach<Element>(m_attachmentRoot, element.get()));
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     element->insertedByParser();
 #endif
@@ -205,7 +216,16 @@ void HTMLConstructionSite::insertHTMLBodyStartTagInBody(AtomicHTMLToken& token)
 void HTMLConstructionSite::insertDoctype(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::DOCTYPE);
-    attach(m_document, DocumentType::create(m_document, token.name(), String::adopt(token.publicIdentifier()), String::adopt(token.systemIdentifier())));
+    attach(m_attachmentRoot, DocumentType::create(m_document, token.name(), String::adopt(token.publicIdentifier()), String::adopt(token.systemIdentifier())));
+    
+    // DOCTYPE nodes are only processed when parsing fragments w/o contextElements, which
+    // never occurs.  However, if we ever chose to support such, this code is subtly wrong,
+    // because context-less fragments can determine their own quirks mode, and thus change
+    // parsing rules (like <p> inside <table>).  For now we ASSERT that we never hit this code
+    // in a fragment, as changing the owning document's compatibility mode would be wrong.
+    ASSERT(!m_isParsingFragment);
+    if (m_isParsingFragment)
+        return;
     
     if (token.forceQuirks())
         m_document->setCompatibilityMode(Document::QuirksMode);
@@ -222,7 +242,7 @@ void HTMLConstructionSite::insertComment(AtomicHTMLToken& token)
 void HTMLConstructionSite::insertCommentOnDocument(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLToken::Comment);
-    attach(m_document, Comment::create(m_document, token.comment()));
+    attach(m_attachmentRoot, Comment::create(m_document, token.comment()));
 }
 
 void HTMLConstructionSite::insertCommentOnHTMLHtmlElement(AtomicHTMLToken& token)
