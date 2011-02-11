@@ -1,3 +1,24 @@
+2011-02-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Crash with dynamic popup menu use
+        <rdar://problem/8716952>
+
+        Invalidate popup menus when forcing them closed, since they might still be
+        in their tracking loop.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showPopupMenu):
+        (WebKit::WebPageProxy::hidePopupMenu):
+        * UIProcess/WebPopupMenuProxy.h:
+        (WebKit::WebPopupMenuProxy::invalidate):
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        (WebKit::WebPopupMenuProxyMac::showPopupMenu):
+        * UIProcess/win/WebPopupMenuProxyWin.cpp:
+        (WebKit::WebPopupMenuProxyWin::showPopupMenu):
+        (WebKit::WebPopupMenuProxyWin::setFocusedIndex):
+
 2011-02-11  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

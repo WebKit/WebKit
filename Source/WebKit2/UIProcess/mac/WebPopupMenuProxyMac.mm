@@ -116,13 +116,13 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
     [m_popup.get() dismissPopUp];
     [dummyView.get() removeFromSuperview];
 
-    m_client->valueChangedForPopupMenu(this, [m_popup.get() indexOfSelectedItem]);
+    if (m_client)
+        m_client->valueChangedForPopupMenu(this, [m_popup.get() indexOfSelectedItem]);
 }
 
 void WebPopupMenuProxyMac::hidePopupMenu()
 {
     [m_popup.get() dismissPopUp];
 }
-
 
 } // namespace WebKit

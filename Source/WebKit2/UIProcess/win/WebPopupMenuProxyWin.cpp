@@ -324,7 +324,8 @@ void WebPopupMenuProxyWin::showPopupMenu(const IntRect& rect, TextDirection, con
     m_showPopup = false;
     ::ShowWindow(m_popup, SW_HIDE);
 
-    m_client->valueChangedForPopupMenu(this, m_newSelectedIndex);
+    if (m_client)
+        m_client->valueChangedForPopupMenu(this, m_newSelectedIndex);
 }
 
 void WebPopupMenuProxyWin::hidePopupMenu()
@@ -849,8 +850,10 @@ bool WebPopupMenuProxyWin::setFocusedIndex(int i, bool hotTracking)
 
     m_focusedIndex = i;
 
-    if (!hotTracking)
-        m_client->setTextFromItemForPopupMenu(this, i);
+    if (!hotTracking) {
+        if (m_client)
+            m_client->setTextFromItemForPopupMenu(this, i);
+    }
 
     if (!scrollToRevealSelection())
         ::UpdateWindow(m_popup);

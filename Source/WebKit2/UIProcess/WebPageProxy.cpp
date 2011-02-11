@@ -2013,18 +2013,24 @@ void WebPageProxy::setTextFromItemForPopupMenu(WebPopupMenuProxy*, int32_t index
 
 void WebPageProxy::showPopupMenu(const IntRect& rect, uint64_t textDirection, const Vector<WebPopupItem>& items, int32_t selectedIndex, const PlatformPopupMenuData& data)
 {
-    if (m_activePopupMenu)
+    if (m_activePopupMenu) {
         m_activePopupMenu->hidePopupMenu();
-    else
-        m_activePopupMenu = m_pageClient->createPopupMenuProxy(this);
+        m_activePopupMenu->invalidate();
+        m_activePopupMenu = 0;
+    }
+
+    m_activePopupMenu = m_pageClient->createPopupMenuProxy(this);
 
 #if PLATFORM(WIN)
     // On Windows, we're about to run our own message pump in showPopupMenu(), so turn off the responsiveness timer.
     process()->responsivenessTimer()->stop();
 #endif
 
-    m_activePopupMenu->showPopupMenu(rect, static_cast<TextDirection>(textDirection), items, data, selectedIndex);
-    m_activePopupMenu = 0;
+    RefPtr<WebPopupMenuProxy> protectedActivePopupMenu = m_activePopupMenu;
+
+    protectedActivePopupMenu->showPopupMenu(rect, static_cast<TextDirection>(textDirection), items, data, selectedIndex);
+    protectedActivePopupMenu->invalidate();
+    protectedActivePopupMenu = 0;
 }
 
 void WebPageProxy::hidePopupMenu()
@@ -2033,6 +2039,7 @@ void WebPageProxy::hidePopupMenu()
         return;
 
     m_activePopupMenu->hidePopupMenu();
+    m_activePopupMenu->invalidate();
     m_activePopupMenu = 0;
 }
 
