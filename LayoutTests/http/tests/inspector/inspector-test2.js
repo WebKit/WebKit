@@ -22,6 +22,17 @@ InspectorTest.evaluateInConsole = function(code, callback)
         });
 }
 
+InspectorTest.evaluateInConsoleAndDump = function(code, callback)
+{
+    function mycallback(text)
+    {
+        InspectorTest.addResult(code + " = " + text);
+        if (callback)
+            callback(text);
+    }
+    InspectorTest.evaluateInConsole(code, mycallback);
+}
+
 InspectorTest.evaluateInPage = function(code, callback)
 {
     InspectorBackend.evaluate(code, "console", false, callback || function() {});

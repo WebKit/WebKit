@@ -1,0 +1,30 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script>
+
+var test = function()
+{
+    InspectorTest.evaluateInConsoleAndDump("keys([3,4]).toString()", step2);
+
+    function step2()
+    {
+        InspectorTest.evaluateInConsoleAndDump("values([3,4]).toString()", step3);
+    }
+
+    function step3()
+    {
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that command line api works.
+</p>
+
+</body>
+</html>

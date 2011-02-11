@@ -31,7 +31,7 @@
 function bind(thisObject, memberFunction)
 {
     var func = memberFunction;
-    var args = Array.prototype.slice.call(arguments, 1);
+    var args = Array.prototype.slice.call(arguments, 2);
     function bound()
     {
         return func.apply(thisObject, args.concat(Array.prototype.slice.call(arguments, 0)));

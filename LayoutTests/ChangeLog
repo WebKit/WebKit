@@ -1,3 +1,15 @@
+2011-02-11  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: command line's API inspect() is broken.
+        https://bugs.webkit.org/show_bug.cgi?id=54275
+
+        * http/tests/inspector/inspector-test2.js:
+        (initialize_InspectorTest.InspectorTest.evaluateInConsoleAndDump):
+        * inspector/command-line-api-expected.txt: Added.
+        * inspector/command-line-api.html: Added.
+
 2011-02-11  Adam Barth  <abarth@webkit.org>
 
         Update test expectations to show window.crypto.

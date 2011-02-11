@@ -1,0 +1,5 @@
+Tests that command line api works.
+
+keys([3,4]).toString() = "0,1"
+values([3,4]).toString() = "3,4"
+
