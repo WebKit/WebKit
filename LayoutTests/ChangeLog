@@ -1,5 +1,12 @@
 2011-02-11  Adam Barth  <abarth@webkit.org>
 
+        Turns out that expectation isn't Qt specific.
+
+        * http/tests/security/cross-frame-access-put-expected.txt:
+        * platform/qt/http/tests/security/cross-frame-access-put-expected.txt: Removed.
+
+2011-02-11  Adam Barth  <abarth@webkit.org>
+
         Update Qt expected results for window.crypto.
 
         * platform/qt/fast/dom/Window/window-properties-expected.txt:
