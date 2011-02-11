@@ -1,5 +1,16 @@
 2011-02-11  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Garbage collection timer cycles forever, even when nothing is happening
+        https://bugs.webkit.org/show_bug.cgi?id=54320
+
+        * runtime/GCActivityCallbackCF.cpp:
+        (JSC::DefaultGCActivityCallbackPlatformData::trigger): Be sure to make
+        our timer inert after forcing a GC, to avoid GC'ing repeatedly.
+
+2011-02-11  Geoffrey Garen  <ggaren@apple.com>
+
         Try to fix the Windows build: added an exported symbol.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
