@@ -366,7 +366,7 @@ private:
     Document* m_document;
 };
 
-Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML, const KURL& baseURL)
+Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     : ContainerNode(0)
     , m_compatibilityMode(NoQuirksMode)
     , m_compatibilityModeLocked(false)
@@ -450,11 +450,6 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML, con
     // FIXME: Can/should we unify this behavior?
     if ((frame && frame->ownerElement()) || !url.isEmpty())
         setURL(url);
-
-    // Setting of m_baseURL needs to happen after the setURL call, since that
-    // calls updateBaseURL, which would clobber the passed in value.
-    if (!baseURL.isNull())
-        m_baseURL = baseURL;
 
     m_axObjectCache = 0;
 

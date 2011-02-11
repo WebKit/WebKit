@@ -35,9 +35,9 @@ class HTMLElement;
 
 class HTMLDocument : public Document, public CachedResourceClient {
 public:
-    static PassRefPtr<HTMLDocument> create(Frame* frame, const KURL& url, const KURL& baseURL = KURL())
+    static PassRefPtr<HTMLDocument> create(Frame* frame, const KURL& url)
     {
-        return adoptRef(new HTMLDocument(frame, url, baseURL));
+        return adoptRef(new HTMLDocument(frame, url));
     }
     virtual ~HTMLDocument();
 
@@ -80,7 +80,7 @@ public:
     bool hasExtraNamedItem(AtomicStringImpl* name);
 
 protected:
-    HTMLDocument(Frame* frame, const KURL& url, const KURL& baseURL = KURL());
+    HTMLDocument(Frame*, const KURL&);
 
 private:
     virtual PassRefPtr<Element> createElement(const AtomicString& tagName, ExceptionCode&);

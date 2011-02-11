@@ -1101,7 +1101,7 @@ public:
     ContentSecurityPolicy* contentSecurityPolicy() { return &m_contentSecurityPolicy; }
 
 protected:
-    Document(Frame*, const KURL& url, bool isXHTML, bool isHTML, const KURL& baseURL = KURL());
+    Document(Frame*, const KURL&, bool isXHTML, bool isHTML);
 
     void clearXMLVersion() { m_xmlVersion = String(); }
 

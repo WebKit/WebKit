@@ -1,3 +1,27 @@
+2011-02-10  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Remove an unneeded argument from HTMLDocument::create().
+        https://bugs.webkit.org/show_bug.cgi?id=54268
+        
+        Now that HTMLTreeBuilder no longer uses a dummy HTMLDocument for
+        fragment parsing, there isn't a need to explicitly specify a baseURL
+        when constructing an HTMLDocument. We can remove the unneeded argument.
+        
+        Also fix some style issues in Document.h and HTMLDocument.h caught by
+        check-webkit-style.
+
+        No new tests. No change in behavior.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::HTMLDocument):
+        * html/HTMLDocument.h:
+        (WebCore::HTMLDocument::create):
+
 2011-02-10  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Geoffrey Garen.
