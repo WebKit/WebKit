@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, 2009, Google Inc. All rights reserved.
+ * Copyright (c) 2008, 2009, 2011 Google Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -56,8 +56,8 @@ namespace WebCore {
                   const TextEncoding* queryEncoding);
 
         // Backend initializers. The query encoding parameters are optional and can
-        // be NULL (this implies UTF-8). These initializers require that the object
-        // has just been created and the strings are NULL. Do not call on an
+        // be 0 (this implies UTF-8). These initializers require that the object
+        // has just been created and the strings are null. Do not call on an
         // already-constructed object.
         void init(const KURL& base, const char* rel, int relLength,
                   const TextEncoding* queryEncoding);

@@ -1,3 +1,18 @@
+2011-02-10  Cosmin Truta  <ctruta@chromium.org>
+
+        Reviewed by David Levin.
+
+        Fix style in KURLGooglePrivate
+        https://bugs.webkit.org/show_bug.cgi?id=54228
+
+        Replace occurrences of NULL with 0, '\0' or null (as applicable),
+        to appease check-webkit-style.
+
+        No new tests. This is a style fix.
+
+        * platform/KURLGoogle.cpp:
+        * platform/KURLGooglePrivate.h:
+
 2011-02-10  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.

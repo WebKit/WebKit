@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2007, 2008, 2009 Apple Inc. All rights reserved.
- * Copyright (C) 2008, 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2011 Google Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -63,8 +63,7 @@ static const int invalidPortNumber = 0xFFFF;
 // canonicalizer.
 class KURLCharsetConverter : public url_canon::CharsetConverter {
 public:
-    // The encoding parameter may be NULL, but in this case the object must not
-    // be called.
+    // The encoding parameter may be 0, but in this case the object must not be called.
     KURLCharsetConverter(const TextEncoding* encoding)
         : m_encoding(encoding)
     {
@@ -96,8 +95,8 @@ static inline void assertProtocolIsGood(const char* protocol)
 }
 
 // Returns the characters for the given string, or a pointer to a static empty
-// string if the input string is NULL. This will always ensure we have a non-
-// NULL character pointer since ReplaceComponents has special meaning for NULL.
+// string if the input string is null. This will always ensure we have a non-
+// null character pointer since ReplaceComponents has special meaning for null.
 static inline const url_parse::UTF16Char* CharactersOrEmpty(const String& str)
 {
     static const url_parse::UTF16Char zero = 0;
@@ -233,7 +232,7 @@ void KURLGooglePrivate::init(const KURL& base, const char* rel, int relLength,
         else
             setAscii(CString(output.data(), output.length()));
     } else {
-        // WebCore expects resolved URLs to be empty rather than NULL.
+        // WebCore expects resolved URLs to be empty rather than null.
         setUtf8(CString("", 0));
     }
 }
@@ -295,8 +294,8 @@ void KURLGooglePrivate::copyTo(KURLGooglePrivate* dest) const
 String KURLGooglePrivate::componentString(const url_parse::Component& comp) const
 {
     if (!m_isValid || comp.len <= 0) {
-        // KURL returns a NULL string if the URL is itself a NULL string, and an
-        // empty string for other nonexistant entities.
+        // KURL returns a null string if the URL is itself a null string, and an
+        // empty string for other nonexistent entities.
         if (utf8String().isNull())
             return String();
         return String("", 0);
@@ -330,9 +329,9 @@ void KURLGooglePrivate::replaceComponents(const Replacements& replacements)
 const String& KURLGooglePrivate::string() const
 {
     if (!m_stringIsValid) {
-        // Must special case the NULL case, since constructing the
-        // string like we do below will generate an empty rather than
-        // a NULL string.
+        // Handle the null case separately. Otherwise, constructing
+        // the string like we do below would generate the empty string,
+        // not the null string.
         if (m_utf8.isNull())
             m_string = String();
         else if (m_utf8IsASCII)
@@ -346,9 +345,9 @@ const String& KURLGooglePrivate::string() const
 
 // KURL ------------------------------------------------------------------------
 
-// Creates with NULL-terminated string input representing an absolute URL.
+// Creates with null-terminated string input representing an absolute URL.
 // WebCore generally calls this only with hardcoded strings, so the input is
-// ASCII. We treat is as UTF-8 just in case.
+// ASCII. We treat it as UTF-8 just in case.
 KURL::KURL(ParsedURLStringTag, const char *url)
 {
     // FIXME The Mac code checks for beginning with a slash and converting to a
@@ -356,7 +355,7 @@ KURL::KURL(ParsedURLStringTag, const char *url)
     // system like that.
     m_url.init(KURL(), url, strlen(url), 0);
 
-    // The one-argument constructors should never generate a NULL string.
+    // The one-argument constructors should never generate a null string.
     // This is a funny quirk of KURL.cpp (probably a bug) which we preserve.
     if (m_url.utf8String().isNull())
         m_url.setAscii(CString("", 0));
@@ -365,7 +364,7 @@ KURL::KURL(ParsedURLStringTag, const char *url)
 // Initializes with a string representing an absolute URL. No encoding
 // information is specified. This generally happens when a KURL is converted
 // to a string and then converted back. In this case, the URL is already
-// canonical and in proper escaped form so needs no encoding. We treat it was
+// canonical and in proper escaped form so needs no encoding. We treat it as
 // UTF-8 just in case.
 KURL::KURL(ParsedURLStringTag, const String& url)
 {
@@ -533,8 +532,8 @@ String KURL::user() const
 String KURL::fragmentIdentifier() const
 {
     // Empty but present refs ("foo.com/bar#") should result in the empty
-    // string, which m_url.componentString will produce. Nonexistant refs should be
-    // the NULL string.
+    // string, which m_url.componentString will produce. Nonexistent refs
+    // should be the null string.
     if (!m_url.m_parsed.ref.is_valid())
         return String();
 
@@ -745,7 +744,7 @@ void KURL::setQuery(const String& query)
 {
     KURLGooglePrivate::Replacements replacements;
     if (query.isNull()) {
-        // KURL.cpp sets to NULL to clear any query.
+        // KURL.cpp sets to null to clear any query.
         replacements.ClearQuery();
     } else if (query.length() > 0 && query[0] == '?') {
         // WebCore expects the query string to begin with a question mark, but
@@ -946,7 +945,7 @@ String decodeURLEscapeSequences(const String& str)
 }
 
 // In KURL.cpp's implementation, this is called by every component getter.
-// It will unescape every character, including NULL. This is scary, and may
+// It will unescape every character, including '\0'. This is scary, and may
 // cause security holes. We never call this function for components, and
 // just return the ASCII versions instead.
 //
@@ -1005,10 +1004,10 @@ bool KURL::isLocalFile() const
 // will automatically do the correct escaping, this function does not have to
 // do any work.
 //
-// There is a possibility that a future called may use this function in other
+// There is a possibility that a future caller may use this function in other
 // ways, and may expect to get a valid URL string. The dangerous thing we want
-// to protect against here is accidentally getting NULLs in a string that is
-// not supposed to have NULLs. Therefore, we escape NULLs here to prevent this.
+// to protect against here is accidentally getting '\0' characters in a string
+// that is not supposed to have them. Therefore, we escape these characters.
 String encodeWithURLEscapeSequences(const String& notEncodedString)
 {
     CString utf8 = UTF8Encoding().encode(
@@ -1115,7 +1114,7 @@ bool protocolIs(const String& url, const char* protocol)
 
     // Check the scheme like GURL does.
     return url_util::FindAndCompareScheme(url.characters(), url.length(), 
-        protocol, NULL); 
+        protocol, 0);
 }
 
 inline bool KURL::protocolIs(const String& string, const char* protocol)
