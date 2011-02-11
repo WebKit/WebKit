@@ -1,3 +1,14 @@
+2011-02-11  Sailesh Agrawal  <sail@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        plugins/invalidate_rect.html fails on chromium-mac
+        https://bugs.webkit.org/show_bug.cgi?id=54051
+
+        invalidate_rect.html should now pass on Windows. Removing skip.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-11  Martin Robinson  <mrobinson@igalia.com>
 
         Add another batch of GTK+ SVG test results.

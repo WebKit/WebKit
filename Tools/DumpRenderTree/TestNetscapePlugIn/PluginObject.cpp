@@ -994,11 +994,11 @@ static bool invalidateRect(PluginObject* obj, const NPVariant* args, uint32_t ar
         return false;
 
     NPRect rect;
-    rect.left = NPVARIANT_TO_DOUBLE(args[0]);
-    rect.top = NPVARIANT_TO_DOUBLE(args[1]);
-    rect.right = NPVARIANT_TO_DOUBLE(args[2]);
-    rect.bottom = NPVARIANT_TO_DOUBLE(args[3]);
-    
+    rect.left = static_cast<int>(NPVARIANT_TO_DOUBLE(args[0]));
+    rect.top = static_cast<int>(NPVARIANT_TO_DOUBLE(args[1]));
+    rect.right = static_cast<int>(NPVARIANT_TO_DOUBLE(args[2]));
+    rect.bottom = static_cast<int>(NPVARIANT_TO_DOUBLE(args[3]));
+
     browser->invalidaterect(obj->npp, &rect);
     return true;
 }

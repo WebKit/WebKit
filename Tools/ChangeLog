@@ -1,3 +1,26 @@
+2011-02-11  Sailesh Agrawal  <sail@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        plugins/invalidate_rect.html fails on chromium-mac
+        https://bugs.webkit.org/show_bug.cgi?id=54051
+
+        This change fixes the invalidate_rect.html test failure on Windows.
+
+        There were two problems. First, the test specified that the plugin was window less by doing <embed ... windowedPlugin="false"></embed>. The windowedPlugin parameter was never being read by the plugin. Fix was to simply set the NPPVpluginWindowBool variable based on the parameter.
+
+        The second problem was that the plugin never handled paint events on Windows. Fix was to simply copy the Mac code to handle paint events.
+
+        This change also updates the build path in chromium_win.py to use the new Source directory.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginObject.cpp:
+        (invalidateRect):
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NPP_New):
+        (handleEventWin):
+        (NPP_HandleEvent):
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+
 2011-02-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Andreas Kling.

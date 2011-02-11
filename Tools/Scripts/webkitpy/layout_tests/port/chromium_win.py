@@ -115,7 +115,7 @@ class ChromiumWinPort(chromium.ChromiumPort):
         p = self.path_from_chromium_base('chrome', *comps)
         if self._filesystem.exists(p):
             return p
-        return self._filesystem.join(self.path_from_webkit_base(), 'WebKit', 'chromium', *comps)
+        return self._filesystem.join(self.path_from_webkit_base(), 'Source', 'WebKit', 'chromium', *comps)
 
     def _lighttpd_path(self, *comps):
         return self.path_from_chromium_base('third_party', 'lighttpd', 'win',

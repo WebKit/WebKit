@@ -259,6 +259,15 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc
             // When testing evaluate script on mouse-down or key-down, allow event logging to handle events.
             if (obj->evaluateScriptOnMouseDownOrKeyDown)
                 obj->eventLogging = true;
+        } else if (!strcasecmp(argn[i], "windowedPlugin")) {
+            void* windowed = 0;
+            if (!strcasecmp(argv[i], "false") || !strcasecmp(argv[i], "0"))
+                windowed = 0;
+            else if (!strcasecmp(argv[i], "true") || !strcasecmp(argv[i], "1"))
+                windowed = reinterpret_cast<void*>(1);
+            else
+                assert(false);
+            browser->setvalue(instance, NPPVpluginWindowBool, windowed);
         }
     }
 
@@ -671,6 +680,19 @@ static int16_t handleEventX11(NPP instance, PluginObject* obj, XEvent* event)
 }
 #endif // XP_UNIX
 
+#ifdef XP_WIN
+static int16_t handleEventWin(NPP instance, PluginObject* obj, NPEvent* event)
+{
+    switch (event->event) {
+    case WM_PAINT:
+        if (obj->onPaintEvent)
+            executeScript(obj, obj->onPaintEvent);
+        return 1;
+    }
+    return 0;
+}
+#endif // XP_WIN
+
 int16_t NPP_HandleEvent(NPP instance, void *event)
 {
     PluginObject* obj = static_cast<PluginObject*>(instance->pdata);
@@ -685,6 +707,8 @@ int16_t NPP_HandleEvent(NPP instance, void *event)
     return handleEventCocoa(instance, obj, static_cast<NPCocoaEvent*>(event));
 #elif defined(XP_UNIX)
     return handleEventX11(instance, obj, static_cast<XEvent*>(event));
+#elif defined(XP_WIN)
+    return handleEventWin(instance, obj, static_cast<NPEvent*>(event));
 #else
     // FIXME: Implement for other platforms.
     return 0;
