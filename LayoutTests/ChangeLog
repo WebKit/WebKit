@@ -1,3 +1,10 @@
+2011-02-11  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: unflake inspector test.
+
+        * inspector/command-line-api-expected.txt:
+        * inspector/command-line-api.html:
+
 2011-02-11  Jessie Berlin  <jberlin@apple.com>
 
         [Windows 7 Release Tests] fast/dom/Window/window-property-descriptors.html,

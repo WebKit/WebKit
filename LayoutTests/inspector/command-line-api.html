@@ -1,10 +1,13 @@
 <html>
 <head>
 <script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="elements-tests2.js"></script>
 <script>
 
 var test = function()
 {
+    InspectorTest.selectElementAndRun("foo", evalExpressions);
+
     var expressions = [
         "$0.toString()",
         "keys([3,4]).toString()",
@@ -23,7 +26,6 @@ var test = function()
         expressions.splice(0, 1);
         InspectorTest.evaluateInConsoleAndDump(expression, evalExpressions);
     }
-    evalExpressions();
 }
 
 </script>
