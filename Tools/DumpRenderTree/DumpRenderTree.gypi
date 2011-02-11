@@ -75,6 +75,8 @@
                     'TestNetscapePlugIn/Tests/win/NPNInvalidateRectInvalidatesWindow.cpp',
                     'TestNetscapePlugIn/Tests/win/WindowGeometryInitializedBeforeSetWindow.cpp',
                     'TestNetscapePlugIn/Tests/win/WindowRegionIsSetToClipRect.cpp',
+                    'TestNetscapePlugIn/win/WindowedPluginTest.cpp',
+                    'TestNetscapePlugIn/win/WindowedPluginTest.h',
                 ],
             }],
             ['OS=="mac"', {
