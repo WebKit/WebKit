@@ -199,8 +199,10 @@ public:
                     GC3Denum format, GC3Denum type, HTMLImageElement*, ExceptionCode&);
     void texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat,
                     GC3Denum format, GC3Denum type, HTMLCanvasElement*, ExceptionCode&);
+#if ENABLE(VIDEO)
     void texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat,
                     GC3Denum format, GC3Denum type, HTMLVideoElement*, ExceptionCode&);
+#endif
 
     void texParameterf(GC3Denum target, GC3Denum pname, GC3Dfloat param);
     void texParameteri(GC3Denum target, GC3Denum pname, GC3Dint param);
@@ -214,8 +216,10 @@ public:
                        GC3Denum format, GC3Denum type, HTMLImageElement*, ExceptionCode&);
     void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
                        GC3Denum format, GC3Denum type, HTMLCanvasElement*, ExceptionCode&);
+#if ENABLE(VIDEO)
     void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
                        GC3Denum format, GC3Denum type, HTMLVideoElement*, ExceptionCode&);
+#endif
 
     void uniform1f(const WebGLUniformLocation* location, GC3Dfloat x, ExceptionCode&);
     void uniform1fv(const WebGLUniformLocation* location, Float32Array* v, ExceptionCode&);
@@ -336,7 +340,9 @@ public:
 
     bool validateWebGLObject(WebGLObject*);
 
+#if ENABLE(VIDEO)
     PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*);
+#endif
 
     RefPtr<GraphicsContext3D> m_context;
 

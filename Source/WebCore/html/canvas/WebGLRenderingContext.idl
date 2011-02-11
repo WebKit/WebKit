@@ -609,8 +609,10 @@ module html {
                                                      in unsigned long format, in unsigned long type, in HTMLImageElement image) raises (DOMException);
         [StrictTypeChecking] void         texImage2D(in unsigned long target, in long level, in unsigned long internalformat,
                                                      in unsigned long format, in unsigned long type, in HTMLCanvasElement canvas) raises (DOMException);
+#if defined(ENABLE_VIDEO) && ENABLE_VIDEO
         [StrictTypeChecking] void         texImage2D(in unsigned long target, in long level, in unsigned long internalformat,
                                                      in unsigned long format, in unsigned long type, in HTMLVideoElement video) raises (DOMException);
+#endif
 
         [StrictTypeChecking] void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset, 
                                                         in long width, in long height, 
@@ -621,8 +623,10 @@ module html {
                                                         in unsigned long format, in unsigned long type, in HTMLImageElement image) raises (DOMException);
         [StrictTypeChecking] void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset,
                                                         in unsigned long format, in unsigned long type, in HTMLCanvasElement canvas) raises (DOMException);
+#if defined(ENABLE_VIDEO) && ENABLE_VIDEO
         [StrictTypeChecking] void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset,
                                                         in unsigned long format, in unsigned long type, in HTMLVideoElement video) raises (DOMException);
+#endif
 
         [StrictTypeChecking] void uniform1f(in WebGLUniformLocation location, in float x) raises(DOMException);
         [StrictTypeChecking, Custom] void uniform1fv(in WebGLUniformLocation location, in Float32Array v) raises(DOMException);
