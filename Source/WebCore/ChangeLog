@@ -1,3 +1,21 @@
+2011-02-11  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] events missing when a document is (re)loaded
+        https://bugs.webkit.org/show_bug.cgi?id=25831
+
+        Make sure webArea returns a proper name and that a signal
+        'state-change::defunct' is emitted when detaching the wrapper.
+
+        Test: platform/gtk/accessibility/document-reload-events.html
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_get_name): Returns the current document's title
+        as fallback mechanism for webArea objects.
+        (webkit_accessible_detach): Emit 'state-change::defunct' function
+        as soon as the wrapper is detached from the related core object.
+
 2011-02-11  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

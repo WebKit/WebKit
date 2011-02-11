@@ -1,3 +1,15 @@
+2011-02-11  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] events missing when a document is (re)loaded
+        https://bugs.webkit.org/show_bug.cgi?id=25831
+
+        Added new layout test to check the right signals are emitted.
+
+        * platform/gtk/accessibility/document-reload-events-expected.txt: Added.
+        * platform/gtk/accessibility/document-reload-events.html: Added.
+
 2011-02-11  Adam Barth  <abarth@webkit.org>
 
         Turns out that expectation isn't Qt specific.

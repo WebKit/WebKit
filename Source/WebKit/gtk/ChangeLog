@@ -1,3 +1,17 @@
+2011-02-11  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] events missing when a document is (re)loaded
+        https://bugs.webkit.org/show_bug.cgi?id=25831
+
+        Emit the right signals when reloading a document.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::notifyAccessibilityStatus): New function, to make sure
+        the signals involved in reloading a document are properly emitted.
+        (WebKit::notifyStatus): Also notify accessibility if enabled.
+
 2011-02-08  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
