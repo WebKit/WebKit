@@ -142,7 +142,7 @@ ls.localStorageStore = {
     'draft-comments-for-attachment-1': '{"born-on": 100, "comments":[]}',
     'draft-comments-for-attachment-2': '{"born-on": 100, "comments":[{"start_line_id": 1, "end_line_id": 2, "contents": "DUMMY CONTENTS"}, {"start_line_id": 3, "end_line_id": 4, "contents": "DUMMY CONTENTS 2"}]}'
 };
-var comments = new MockDraftCommentSaver('2', ls).saved_comments();
+var comments = new MockDraftCommentSaver('2', ls).saved_comments().comments;
 ASSERT_EQUAL(comments.length, 2);
 ASSERT_EQUAL(ls.log_string(), 'getItem:draft-comments-for-attachment-2');
 
@@ -150,14 +150,14 @@ var ls = new MockLocalStorage();
 ls.localStorageStore = {
     'draft-comments-for-attachment-1': 'corrupt comments'
 };
-var comments = new MockDraftCommentSaver('1', ls).saved_comments();
+var comments = new MockDraftCommentSaver('1', ls).saved_comments().comments;
 ASSERT_EQUAL(ls.log_string(), 'getItem:draft-comments-for-attachment-1\nremoveItem:draft-comments-for-attachment-1');
 
 var ls = new MockLocalStorage();
 ls.localStorageStore = {
     'draft-comments-for-attachment-1': '["also corrupt comments"]'
 };
-var comments = new MockDraftCommentSaver('1', ls).saved_comments();
+var comments = new MockDraftCommentSaver('1', ls).saved_comments().comments;
 ASSERT_EQUAL(ls.log_string(), 'getItem:draft-comments-for-attachment-1\nremoveItem:draft-comments-for-attachment-1');
 
 

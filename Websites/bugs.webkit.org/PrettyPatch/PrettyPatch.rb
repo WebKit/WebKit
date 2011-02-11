@@ -313,6 +313,7 @@ body {
   right: 10%;
   top: 10%;
   bottom: 10%;
+  background: white;
 }
 
 .lightbox iframe {
@@ -423,12 +424,30 @@ body {
   display: none;
 }
 
+.autosave-state {
+  position: absolute;
+  right: 0;
+  top: -1.3em;
+  padding: 0 3px;
+  outline: 1px solid #DDD;
+  color: #8FDF5F;
+  font-size: small;   
+  background-color: #EEE;
+}
+
+.autosave-state:empty {
+  outline: 0px;
+}
+.autosave-state.saving {
+  color: #E98080;
+}
+
 .clear_float {
     clear: both;
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
-<script src="code-review.js?version=33"></script>
+<script src="code-review.js?version=34"></script>
 EOF
 
     def self.revisionOrDescription(string)

@@ -1,3 +1,21 @@
+2011-02-09  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        save overall comments when saving drafts in the review tool
+        https://bugs.webkit.org/show_bug.cgi?id=54165
+
+        -save overall comments in localstorage as well
+        -save all draft comments as you type
+        -give a *subtle* indicator of saved state
+
+        The latter should also make it super easy if someone wanted to do
+        the work to store draft comments in appengine/s3/bugzilla/etc.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review-test.html:
+        * code-review.js:
+
 2011-02-08  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.

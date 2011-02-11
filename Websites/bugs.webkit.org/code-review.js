@@ -152,9 +152,15 @@ var CODE_REVIEW_UNITTEST;
     g_displayed_draft_comments = true;
 
     var comments = g_draftCommentSaver.saved_comments();
-    $(comments).each(function() {
+    $(comments.comments).each(function() {
       addDraftComment(this.start_line_id, this.end_line_id, this.contents);
     });
+    
+    var overall_comments = comments['overall-comments'];
+    if (overall_comments) {
+      openOverallComments();
+      $('.overallComments textarea').val(overall_comments);
+    }
   }
 
   function DraftCommentSaver(opt_attachment_id, opt_localStorage) {
@@ -187,7 +193,8 @@ var CODE_REVIEW_UNITTEST;
       });
     });
 
-    return JSON.stringify({'born-on': Date.now(), 'comments': comment_store});
+    var overall_comments = $('.overallComments textarea').val().trim();
+    return JSON.stringify({'born-on': Date.now(), 'comments': comment_store, 'overall-comments': overall_comments});
   }
   
   DraftCommentSaver.prototype.saved_comments = function() {
@@ -195,21 +202,22 @@ var CODE_REVIEW_UNITTEST;
     if (!serialized_comments)
       return [];
 
-    var comments = [];
+    var comments = {};
     try {
-      comments = JSON.parse(serialized_comments).comments;
+      comments = JSON.parse(serialized_comments);
     } catch (e) {
       this._erase_corrupt_comments();
-      return [];
+      return {};
     }
     
-    if (comments && !comments.length)
+    var individual_comments = comments.comments;
+    if (comments && !individual_comments.length)
       return comments;
     
     // Sanity check comments are as expected.
-    if (!comments || !comments[0].contents) {
+    if (!comments || !individual_comments[0].contents) {
       this._erase_corrupt_comments();
-      return [];
+      return {};
     }
     
     return comments;
@@ -307,6 +315,17 @@ var CODE_REVIEW_UNITTEST;
   function saveDraftComments() {
     ensureDraftCommentsDisplayed();
     g_draftCommentSaver.save();
+    setAutoSaveStateIndicator('saved');
+  }
+
+  function setAutoSaveStateIndicator(state) {
+    var container = $('.autosave-state');
+    container.text(state);
+    
+    if (state == 'saving')
+      container.addClass(state);
+    else
+      container.removeClass('saving');
   }
 
   function createCommentFor(line) {
@@ -320,6 +339,7 @@ var CODE_REVIEW_UNITTEST;
     line.addClass('commentContext');
 
     var comment_block = $('<div class="comment"><textarea data-comment-for="' + line.attr('id') + '"></textarea><div class="actions"><button class="ok">OK</button><button class="discard">Discard</button></div></div>');
+    $('textarea', comment_block).bind('input', handleOverallCommentsInput);
     insertCommentFor(line, comment_block);
     return comment_block;
   }
@@ -976,6 +996,16 @@ var CODE_REVIEW_UNITTEST;
     $('#statusBubbleContainer').addClass('wrap');
   }
 
+  var g_overallCommentsInputTimer;
+
+  function handleOverallCommentsInput() {
+    setAutoSaveStateIndicator('saving');
+    // Save draft comments after we haven't received an input event in 1 second.
+    if (g_overallCommentsInputTimer)
+      clearTimeout(g_overallCommentsInputTimer);
+    g_overallCommentsInputTimer = setTimeout(saveDraftComments, 1000);
+  }
+
   function onBodyResize() {
     updateToolbarAnchorState();
   }
@@ -993,7 +1023,6 @@ var CODE_REVIEW_UNITTEST;
     return '<a href="javascript:" class="unify-link">unified</a>' +
       '<a href="javascript:" class="side-by-side-link">side-by-side</a>';
   }
-
 
   $(document).ready(function() {
     crawlDiff();
@@ -1016,9 +1045,11 @@ var CODE_REVIEW_UNITTEST;
               '<button id="post_comments">Publish</button> ' +
           '</span>' +
         '</div>' +
+        '<div class="autosave-state"></div>' +
         '</div>');
 
     $('.overallComments textarea').bind('click', openOverallComments);
+    $('.overallComments textarea').bind('input', handleOverallCommentsInput);
 
     $(document.body).prepend('<div id="comment_form" class="inactive"><div class="winter"></div><div class="lightbox"><iframe id="reviewform" src="attachment.cgi?id=' + attachment_id + '&action=reviewform"></iframe></div></div>');
     $('#reviewform').bind('load', handleReviewFormLoad);
