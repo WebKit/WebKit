@@ -252,7 +252,6 @@ EXPORTS
     ?protect@Heap@JSC@@QAEXVJSValue@2@@Z
     ?protectedGlobalObjectCount@Heap@JSC@@QAEIXZ
     ?protectedObjectCount@Heap@JSC@@QAEIXZ
-    ?protectedObjectTypeCounts@Heap@JSC@@QAEPAV?$HashCountedSet@PBDU?$PtrHash@PBD@WTF@@U?$HashTraits@PBD@2@@WTF@@XZ
     ?put@JSCell@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@VJSValue@2@AAVPutPropertySlot@2@@Z
     ?put@JSCell@JSC@@UAEXPAVExecState@2@IVJSValue@2@@Z
     ?put@JSGlobalObject@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@VJSValue@2@AAVPutPropertySlot@2@@Z

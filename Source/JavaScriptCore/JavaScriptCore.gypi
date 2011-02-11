@@ -182,7 +182,6 @@
             'runtime/MarkedSpace.h',
             'runtime/Heap.cpp',
             'runtime/Heap.h',
-            'runtime/CollectorHeapIterator.h',
             'runtime/CommonIdentifiers.cpp',
             'runtime/CommonIdentifiers.h',
             'runtime/Completion.cpp',

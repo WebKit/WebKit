@@ -237,7 +237,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/MarkedSpace.h \
 	Source/JavaScriptCore/runtime/Heap.cpp \
 	Source/JavaScriptCore/runtime/Heap.h \
-	Source/JavaScriptCore/runtime/CollectorHeapIterator.h \
 	Source/JavaScriptCore/runtime/CommonIdentifiers.cpp \
 	Source/JavaScriptCore/runtime/CommonIdentifiers.h \
 	Source/JavaScriptCore/runtime/Completion.cpp \

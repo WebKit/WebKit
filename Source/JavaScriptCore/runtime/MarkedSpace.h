@@ -88,8 +88,7 @@ namespace JSC {
 
         bool contains(const void*);
 
-        LiveObjectIterator primaryHeapBegin();
-        LiveObjectIterator primaryHeapEnd();
+        template<typename Functor> void forEach(Functor&);
 
     private:
         NEVER_INLINE MarkedBlock* allocateBlock();
@@ -144,6 +143,12 @@ namespace JSC {
         }
         
         return false;
+    }
+
+    template <typename Functor> inline void MarkedSpace::forEach(Functor& functor)
+    {
+        for (size_t i = 0; i < m_heap.blocks.size(); ++i)
+            m_heap.collectorBlock(i)->forEach(functor);
     }
 
 } // namespace JSC

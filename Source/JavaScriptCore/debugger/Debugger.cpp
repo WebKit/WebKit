@@ -22,7 +22,6 @@
 #include "config.h"
 #include "Debugger.h"
 
-#include "CollectorHeapIterator.h"
 #include "Error.h"
 #include "Interpreter.h"
 #include "JSFunction.h"
@@ -31,6 +30,57 @@
 #include "Protect.h"
 
 namespace JSC {
+
+class Recompiler {
+public:
+    Recompiler(Debugger*);
+    ~Recompiler();
+    void operator()(JSCell*);
+
+private:
+    typedef HashSet<FunctionExecutable*> FunctionExecutableSet;
+    typedef HashMap<SourceProvider*, ExecState*> SourceProviderMap;
+    
+    Debugger* m_debugger;
+    FunctionExecutableSet m_functionExecutables;
+    SourceProviderMap m_sourceProviders;
+};
+
+inline Recompiler::Recompiler(Debugger* debugger)
+    : m_debugger(debugger)
+{
+}
+
+inline Recompiler::~Recompiler()
+{
+    // Call sourceParsed() after reparsing all functions because it will execute
+    // JavaScript in the inspector.
+    SourceProviderMap::const_iterator end = m_sourceProviders.end();
+    for (SourceProviderMap::const_iterator iter = m_sourceProviders.begin(); iter != end; ++iter)
+        m_debugger->sourceParsed(iter->second, iter->first, -1, UString());
+}
+
+inline void Recompiler::operator()(JSCell* cell)
+{
+    if (!cell->inherits(&JSFunction::info))
+        return;
+
+    JSFunction* function = asFunction(cell);
+    if (function->executable()->isHostFunction())
+        return;
+
+    FunctionExecutable* executable = function->jsExecutable();
+
+    // Check if the function is already in the set - if so,
+    // we've already retranslated it, nothing to do here.
+    if (!m_functionExecutables.add(executable).second)
+        return;
+
+    ExecState* exec = function->scope().globalObject()->JSGlobalObject::globalExec();
+    executable->discardCode();
+    if (m_debugger == function->scope().globalObject()->debugger())
+        m_sourceProviders.add(executable->source().provider(), exec);
+}
 
 Debugger::~Debugger()
 {
@@ -61,40 +111,8 @@ void Debugger::recompileAllJSFunctions(JSGlobalData* globalData)
     if (globalData->dynamicGlobalObject)
         return;
 
-    typedef HashSet<FunctionExecutable*> FunctionExecutableSet;
-    typedef HashMap<SourceProvider*, ExecState*> SourceProviderMap;
-
-    FunctionExecutableSet functionExecutables;
-    SourceProviderMap sourceProviders;
-
-    LiveObjectIterator it = globalData->heap.primaryHeapBegin();
-    LiveObjectIterator heapEnd = globalData->heap.primaryHeapEnd();
-    for ( ; it != heapEnd; ++it) {
-        if (!(*it)->inherits(&JSFunction::info))
-            continue;
-
-        JSFunction* function = asFunction(*it);
-        if (function->executable()->isHostFunction())
-            continue;
-
-        FunctionExecutable* executable = function->jsExecutable();
-
-        // Check if the function is already in the set - if so,
-        // we've already retranslated it, nothing to do here.
-        if (!functionExecutables.add(executable).second)
-            continue;
-
-        ExecState* exec = function->scope().globalObject()->JSGlobalObject::globalExec();
-        executable->discardCode();
-        if (function->scope().globalObject()->debugger() == this)
-            sourceProviders.add(executable->source().provider(), exec);
-    }
-
-    // Call sourceParsed() after reparsing all functions because it will execute
-    // JavaScript in the inspector.
-    SourceProviderMap::const_iterator end = sourceProviders.end();
-    for (SourceProviderMap::const_iterator iter = sourceProviders.begin(); iter != end; ++iter)
-        sourceParsed(iter->second, iter->first, -1, UString());
+    Recompiler recompiler(this);
+    globalData->heap.forEach(recompiler);
 }
 
 JSValue evaluateInGlobalCallFrame(const UString& script, JSValue& exception, JSGlobalObject* globalObject)

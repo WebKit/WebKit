@@ -86,7 +86,7 @@ using namespace WebCore;
     
     NSCountedSet *result = [NSCountedSet set];
 
-    OwnPtr<HashCountedSet<const char*> > counts(JSDOMWindow::commonJSGlobalData()->heap.protectedObjectTypeCounts());
+    OwnPtr<TypeCountSet> counts(JSDOMWindow::commonJSGlobalData()->heap.protectedObjectTypeCounts());
     HashCountedSet<const char*>::iterator end = counts->end();
     for (HashCountedSet<const char*>::iterator it = counts->begin(); it != end; ++it)
         for (unsigned i = 0; i < it->second; ++i)
@@ -101,7 +101,7 @@ using namespace WebCore;
     
     NSCountedSet *result = [NSCountedSet set];
 
-    OwnPtr<HashCountedSet<const char*> > counts(JSDOMWindow::commonJSGlobalData()->heap.objectTypeCounts());
+    OwnPtr<TypeCountSet> counts(JSDOMWindow::commonJSGlobalData()->heap.objectTypeCounts());
     HashCountedSet<const char*>::iterator end = counts->end();
     for (HashCountedSet<const char*>::iterator it = counts->begin(); it != end; ++it)
         for (unsigned i = 0; i < it->second; ++i)

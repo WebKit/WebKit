@@ -31,6 +31,7 @@
 namespace JSC {
 
     class Heap;
+    class JSCell;
     class JSGlobalData;
 
     class MarkedBlock {
@@ -61,8 +62,6 @@ namespace JSC {
         // Cell size needs to be a power of two for CELL_MASK to be valid.
         COMPILE_ASSERT(!(sizeof(CollectorCell) % 2), Collector_cell_size_is_power_of_two);
 
-        friend class CollectorHeapIterator;
-
     public:
         static MarkedBlock* create(JSGlobalData*);
         static void destroy(MarkedBlock*);
@@ -86,6 +85,8 @@ namespace JSC {
         bool isMarked(const void*);
         bool testAndSetMarked(const void*);
         void setMarked(const void*);
+        
+        template <typename Functor> void forEach(Functor&);
 
         FixedArray<CollectorCell, CELLS_PER_BLOCK> cells;
 
@@ -160,6 +161,15 @@ namespace JSC {
     inline void MarkedBlock::setMarked(const void* cell)
     {
         marked.set(cellNumber(cell));
+    }
+
+    template <typename Functor> inline void MarkedBlock::forEach(Functor& functor)
+    {
+        for (size_t i = 0; i < CELLS_PER_BLOCK - 1; ++i) { // The last cell is a dummy place-holder.
+            if (!marked.get(i))
+                continue;
+            functor(reinterpret_cast<JSCell*>(&cells[i]));
+        }
     }
 
 } // namespace JSC

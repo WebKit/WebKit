@@ -22,7 +22,6 @@
 #include "Heap.h"
 
 #include "CodeBlock.h"
-#include "CollectorHeapIterator.h"
 #include "ConservativeSet.h"
 #include "GCActivityCallback.h"
 #include "GCHandle.h"
@@ -321,7 +320,23 @@ size_t Heap::protectedObjectCount()
     return m_protectedValues.size();
 }
 
-static const char* typeName(JSCell* cell)
+class TypeCounter {
+public:
+    TypeCounter();
+    void operator()(JSCell*);
+    PassOwnPtr<TypeCountSet> take();
+    
+private:
+    const char* typeName(JSCell*);
+    OwnPtr<TypeCountSet> m_typeCountSet;
+};
+
+inline TypeCounter::TypeCounter()
+    : m_typeCountSet(new TypeCountSet)
+{
+}
+
+inline const char* TypeCounter::typeName(JSCell* cell)
 {
     if (cell->isString())
         return "string";
@@ -337,27 +352,32 @@ static const char* typeName(JSCell* cell)
     return info ? info->className : "Object";
 }
 
-HashCountedSet<const char*>* Heap::protectedObjectTypeCounts()
+inline void TypeCounter::operator()(JSCell* cell)
 {
-    HashCountedSet<const char*>* counts = new HashCountedSet<const char*>;
+    m_typeCountSet->add(typeName(cell));
+}
+
+inline PassOwnPtr<TypeCountSet> TypeCounter::take()
+{
+    return m_typeCountSet.release();
+}
+
+PassOwnPtr<TypeCountSet> Heap::protectedObjectTypeCounts()
+{
+    TypeCounter typeCounter;
 
     ProtectCountSet::iterator end = m_protectedValues.end();
     for (ProtectCountSet::iterator it = m_protectedValues.begin(); it != end; ++it)
-        counts->add(typeName(it->first));
+        typeCounter(it->first);
 
-    return counts;
+    return typeCounter.take();
 }
 
-HashCountedSet<const char*>* Heap::objectTypeCounts()
+PassOwnPtr<TypeCountSet> Heap::objectTypeCounts()
 {
-    HashCountedSet<const char*>* counts = new HashCountedSet<const char*>;
-
-    LiveObjectIterator it = primaryHeapBegin();
-    LiveObjectIterator heapEnd = primaryHeapEnd();
-    for ( ; it != heapEnd; ++it)
-        counts->add(typeName(*it));
-
-    return counts;
+    TypeCounter typeCounter;
+    forEach(typeCounter);
+    return typeCounter.take();
 }
 
 bool Heap::isBusy()
@@ -393,16 +413,6 @@ void Heap::reset(SweepToggle sweepToggle)
     JAVASCRIPTCORE_GC_END();
 
     (*m_activityCallback)();
-}
-
-LiveObjectIterator Heap::primaryHeapBegin()
-{
-    return m_markedSpace.primaryHeapBegin();
-}
-
-LiveObjectIterator Heap::primaryHeapEnd()
-{
-    return m_markedSpace.primaryHeapEnd();
 }
 
 void Heap::setActivityCallback(PassOwnPtr<GCActivityCallback> activityCallback)

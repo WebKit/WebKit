@@ -610,10 +610,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\CollectorHeapIntrospector.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\runtime\CommonIdentifiers.cpp"
 				>
 			</File>

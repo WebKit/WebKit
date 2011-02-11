@@ -179,7 +179,6 @@
 		14C824AB12F7C77E008F35E0 /* MarkedBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14C824AA12F7C77E008F35E0 /* MarkedBlock.cpp */; };
 		14C824AD12F7C785008F35E0 /* MarkedBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 14C824AC12F7C785008F35E0 /* MarkedBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14E9D17B107EC469004DDA21 /* JSGlobalObjectFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC756FC60E2031B200DE7D12 /* JSGlobalObjectFunctions.cpp */; };
-		14F3488F0E95EF8A003648BC /* CollectorHeapIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 14F3488E0E95EF8A003648BC /* CollectorHeapIterator.h */; settings = {ATTRIBUTES = (); }; };
 		14F8BA3E107EC886009892DC /* FastMalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E217B908E7EECC0023E5F6 /* FastMalloc.cpp */; };
 		14F8BA43107EC88C009892DC /* TCSystemAlloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6541BD7008E80A17002CBEE7 /* TCSystemAlloc.cpp */; };
 		14FFF98C12BFFF7500795BB8 /* PageAllocationAligned.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14FFF98A12BFFF7500795BB8 /* PageAllocationAligned.cpp */; };
@@ -760,7 +759,6 @@
 		14DA818F0D99FD2000B0A4FB /* JSActivation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSActivation.cpp; sourceTree = "<group>"; };
 		14DE0D680D02431400AACCA2 /* JSGlobalObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGlobalObject.cpp; sourceTree = "<group>"; };
 		14F252560D08DD8D004ECFFF /* JSVariableObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVariableObject.h; sourceTree = "<group>"; };
-		14F3488E0E95EF8A003648BC /* CollectorHeapIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectorHeapIterator.h; sourceTree = "<group>"; };
 		14FFF98A12BFFF7500795BB8 /* PageAllocationAligned.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageAllocationAligned.cpp; sourceTree = "<group>"; };
 		14FFF98B12BFFF7500795BB8 /* PageAllocationAligned.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageAllocationAligned.h; sourceTree = "<group>"; };
 		180B9AEF0F16C569009BDBC5 /* CurrentTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CurrentTime.cpp; sourceTree = "<group>"; };
@@ -1699,7 +1697,6 @@
 				BCA62DFE0E2826230004F30D /* CallData.cpp */,
 				145C507F0D9DF63B0088F6B9 /* CallData.h */,
 				BC6AAAE40E1F426500AD87D8 /* ClassInfo.h */,
-				14F3488E0E95EF8A003648BC /* CollectorHeapIterator.h */,
 				65EA73620BAE35D1001BB560 /* CommonIdentifiers.cpp */,
 				65EA73630BAE35D1001BB560 /* CommonIdentifiers.h */,
 				969A09220ED1E09C00F1F681 /* Completion.cpp */,
@@ -2129,7 +2126,6 @@
 				969A07970ED1D3AE00F1F681 /* CodeBlock.h in Headers */,
 				86E116B10FE75AC800B512BC /* CodeLocation.h in Headers */,
 				BC18C3F00E16F5CD00B34460 /* Collator.h in Headers */,
-				14F3488F0E95EF8A003648BC /* CollectorHeapIterator.h in Headers */,
 				BC18C3F30E16F5CD00B34460 /* CommonIdentifiers.h in Headers */,
 				BC18C3F40E16F5CD00B34460 /* Completion.h in Headers */,
 				FDA15C1E12B0305C003A583A /* Complex.h in Headers */,

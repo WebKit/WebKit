@@ -44,6 +44,7 @@ namespace JSC {
 
     typedef std::pair<JSValue, UString> ValueStringPair;
     typedef HashCountedSet<JSCell*> ProtectCountSet;
+    typedef HashCountedSet<const char*> TypeCountSet;
 
     enum OperationInProgress { NoOperation, Allocation, Collection };
 
@@ -85,8 +86,8 @@ namespace JSC {
         size_t globalObjectCount();
         size_t protectedObjectCount();
         size_t protectedGlobalObjectCount();
-        HashCountedSet<const char*>* protectedObjectTypeCounts();
-        HashCountedSet<const char*>* objectTypeCounts();
+        PassOwnPtr<TypeCountSet> protectedObjectTypeCounts();
+        PassOwnPtr<TypeCountSet> objectTypeCounts();
 
         WeakGCHandle* addWeakGCHandle(JSCell*);
 
@@ -96,9 +97,8 @@ namespace JSC {
         HashSet<GlobalCodeBlock*>& codeBlocks() { return m_codeBlocks; }
 
         HashSet<MarkedArgumentBuffer*>& markListSet() { if (!m_markListSet) m_markListSet = new HashSet<MarkedArgumentBuffer*>; return *m_markListSet; }
-
-        LiveObjectIterator primaryHeapBegin();
-        LiveObjectIterator primaryHeapEnd();
+        
+        template <typename Functor> void forEach(Functor&);
         
     private:
         friend class JSGlobalData;
@@ -169,6 +169,11 @@ namespace JSC {
     inline WeakGCHandlePool* Heap::weakGCHandlePool(size_t index)
     {
         return static_cast<WeakGCHandlePool*>(m_weakGCHandlePools[index].base());
+    }
+
+    template <typename Functor> inline void Heap::forEach(Functor& functor)
+    {
+        m_markedSpace.forEach(functor);
     }
 
 } // namespace JSC

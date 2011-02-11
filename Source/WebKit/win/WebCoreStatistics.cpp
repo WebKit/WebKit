@@ -139,8 +139,8 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::javaScriptProtectedObjectTypeCounts
     /* [retval][out] */ IPropertyBag2** typeNamesAndCounts)
 {
     JSLock lock(SilenceAssertionsOnly);
-    OwnPtr<HashCountedSet<const char*> > jsObjectTypeNames(JSDOMWindow::commonJSGlobalData()->heap.protectedObjectTypeCounts());
-    typedef HashCountedSet<const char*>::const_iterator Iterator;
+    OwnPtr<TypeCountSet> jsObjectTypeNames(JSDOMWindow::commonJSGlobalData()->heap.protectedObjectTypeCounts());
+    typedef TypeCountSet::const_iterator Iterator;
     Iterator end = jsObjectTypeNames->end();
     HashMap<String, int> typeCountMap;
     for (Iterator current = jsObjectTypeNames->begin(); current != end; ++current)

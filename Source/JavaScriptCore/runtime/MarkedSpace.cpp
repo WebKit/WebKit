@@ -21,7 +21,6 @@
 #include "config.h"
 #include "MarkedSpace.h"
 
-#include "CollectorHeapIterator.h"
 #include "JSCell.h"
 #include "JSGlobalData.h"
 #include "JSLock.h"
@@ -134,16 +133,6 @@ void MarkedSpace::reset()
 #if ENABLE(JSC_ZOMBIES)
     sweep();
 #endif
-}
-
-LiveObjectIterator MarkedSpace::primaryHeapBegin()
-{
-    return LiveObjectIterator(m_heap, 0, 0);
-}
-
-LiveObjectIterator MarkedSpace::primaryHeapEnd()
-{
-    return LiveObjectIterator(m_heap, m_heap.blocks.size(), 0);
 }
 
 } // namespace JSC

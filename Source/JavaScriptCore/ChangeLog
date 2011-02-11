@@ -1,3 +1,55 @@
+2011-02-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        A little more encapsulation for the heap: Removed CollectorHeapIterator
+        https://bugs.webkit.org/show_bug.cgi?id=54298
+        
+        CollectorHeapIterator is a God object that knows the internals of each
+        of the pieces of the heap. This undermines the encapsulation I'm trying
+        to achieve by splitting concepts into different classes.
+        
+        As an alternative, I've given each class a forEach iteration function,
+        which takes a functor as an argument. Now, each class just needs to
+        know how to iterate the things it knows about.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Removed CollectorHeapIterator.
+
+        * debugger/Debugger.cpp:
+        (JSC::Recompiler::Recompiler):
+        (JSC::Recompiler::~Recompiler):
+        (JSC::Recompiler::operator()):
+        (JSC::Debugger::recompileAllJSFunctions): Updated to use forEach interface
+        instead of an iterator.
+
+        * runtime/CollectorHeapIterator.h: Removed.
+
+        * runtime/Heap.cpp:
+        (JSC::TypeCounter::TypeCounter):
+        (JSC::TypeCounter::typeName):
+        (JSC::TypeCounter::operator()):
+        (JSC::TypeCounter::take):
+        (JSC::Heap::protectedObjectTypeCounts):
+        (JSC::Heap::objectTypeCounts): Added forEach and removed iterator.
+
+        * runtime/Heap.h:
+        (JSC::Heap::forEach):
+        * runtime/JSGlobalData.cpp:
+        (JSC::Recompiler::operator()):
+        (JSC::JSGlobalData::recompileAllJSFunctions):
+
+        * runtime/MarkedBlock.h:
+        (JSC::MarkedBlock::forEach): Added forEach. Removed friend declaration
+        for CollectorHeapIterator. Now, we can make all our data private and
+        change it without breaking any other classes.
+
+        * runtime/MarkedSpace.cpp:
+        * runtime/MarkedSpace.h:
+        (JSC::MarkedSpace::forEach): Added forEach and removed iterator.
+
 2011-02-11  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Andreas Kling.
