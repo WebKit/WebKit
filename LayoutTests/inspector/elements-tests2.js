@@ -31,13 +31,8 @@ InspectorTest.nodeForId = function(idValue)
 InspectorTest.selectElementAndRun = function(idValue, callback)
 {
     var node = InspectorTest.nodeForId(idValue);
-    if (!node) {
-        InspectorTest.addResult("Debugger was enabled.");
-        InspectorTest.completeTest();
-        return;
-    }
-
-    WebInspector.updateFocusedNode(node.id);
+    if (node)
+        WebInspector.updateFocusedNode(node.id);
     InspectorTest.runAfterPendingDispatches(callback);
 };
 

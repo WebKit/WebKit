@@ -1,5 +1,13 @@
 2011-02-11  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed: unflake inspector test (2).
+
+        * inspector/command-line-api.html:
+        * inspector/elements-tests2.js:
+        (initialize_ElementTest.InspectorTest.selectElementAndRun):
+
+2011-02-11  Pavel Feldman  <pfeldman@chromium.org>
+
         Not reviewed: unflake inspector test.
 
         * inspector/command-line-api-expected.txt:

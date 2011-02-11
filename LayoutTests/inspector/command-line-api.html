@@ -6,7 +6,12 @@
 
 var test = function()
 {
-    InspectorTest.selectElementAndRun("foo", evalExpressions);
+    InspectorTest.expandDOMSubtreeAndRun(null, step1);
+
+    function step1()
+    {
+        InspectorTest.selectElementAndRun("foo", step2);
+    }
 
     var expressions = [
         "$0.toString()",
@@ -16,7 +21,7 @@ var test = function()
         "$$('p#foo').toString()"
     ];
 
-    function evalExpressions()
+    function step2()
     {
         if (!expressions.length) {
             InspectorTest.completeTest();
@@ -24,7 +29,7 @@ var test = function()
         }
         var expression = expressions[0];
         expressions.splice(0, 1);
-        InspectorTest.evaluateInConsoleAndDump(expression, evalExpressions);
+        InspectorTest.evaluateInConsoleAndDump(expression, step2);
     }
 }
 
