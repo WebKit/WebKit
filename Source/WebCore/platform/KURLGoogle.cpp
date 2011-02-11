@@ -193,15 +193,15 @@ void KURLGooglePrivate::init(const KURL& base,
     init(base, relative.characters(), relative.length(), queryEncoding);
 }
 
-// Note: code mostly duplicated below.
-void KURLGooglePrivate::init(const KURL& base, const char* rel, int relLength,
+template <typename CHAR>
+void KURLGooglePrivate::init(const KURL& base, const CHAR* rel, int relLength,
                              const TextEncoding* queryEncoding)
 {
-    // As a performance optimization, we do not use the charset converter if
-    // encoding is UTF-8 or other Unicode encodings. Note that this is
-    // per HTML5 2.5.3 (resolving URL). The URL canonicalizer will be
-    // more efficient with no charset converter object because it
-    // can do UTF-8 internally with no extra copies.
+    // As a performance optimization, we do not use the charset converter
+    // if encoding is UTF-8 or other Unicode encodings. Note that this is
+    // per HTML5 2.5.3 (resolving URL). The URL canonicalizer will be more
+    // efficient with no charset converter object because it can do UTF-8
+    // internally with no extra copies.
 
     // We feel free to make the charset converter object every time since it's
     // just a wrapper around a reference.
@@ -235,32 +235,6 @@ void KURLGooglePrivate::init(const KURL& base, const char* rel, int relLength,
         // WebCore expects resolved URLs to be empty rather than null.
         setUtf8(CString("", 0));
     }
-}
-
-// Note: code mostly duplicated above. See FIXMEs and comments there.
-void KURLGooglePrivate::init(const KURL& base, const UChar* rel, int relLength,
-                             const TextEncoding* queryEncoding)
-{
-    KURLCharsetConverter charsetConverterObject(queryEncoding);
-    KURLCharsetConverter* charsetConverter =
-        (!queryEncoding || isUnicodeEncoding(queryEncoding)) ? 0 :
-        &charsetConverterObject;
-
-    url_canon::RawCanonOutputT<char> output;
-    const CString& baseStr = base.m_url.utf8String();
-    m_isValid = url_util::ResolveRelative(baseStr.data(), baseStr.length(),
-                                          base.m_url.m_parsed, rel, relLength,
-                                          charsetConverter,
-                                          &output, &m_parsed);
-
-
-    if (m_isValid || output.length()) {
-        if (m_parsed.ref.is_nonempty())
-            setUtf8(CString(output.data(), output.length()));
-        else
-            setAscii(CString(output.data(), output.length()));
-    } else
-        setUtf8(CString("", 0));
 }
 
 void KURLGooglePrivate::initProtocolInHTTPFamily()
@@ -350,7 +324,7 @@ const String& KURLGooglePrivate::string() const
 // ASCII. We treat it as UTF-8 just in case.
 KURL::KURL(ParsedURLStringTag, const char *url)
 {
-    // FIXME The Mac code checks for beginning with a slash and converting to a
+    // FIXME The Mac code checks for beginning with a slash and converts it to
     // file: URL. We will want to add this as well once we can compile on a
     // system like that.
     m_url.init(KURL(), url, strlen(url), 0);

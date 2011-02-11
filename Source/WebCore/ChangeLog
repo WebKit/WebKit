@@ -1,3 +1,16 @@
+2011-02-11  Cosmin Truta  <ctruta@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Templatize KURLGooglePrivate::init
+        https://bugs.webkit.org/show_bug.cgi?id=53749
+
+        No new tests. Refactoring.
+
+        * platform/KURLGoogle.cpp:
+        (WebCore::KURLGooglePrivate::init):
+        * platform/KURLGooglePrivate.h:
+
 2011-02-10  Andy Estes  <aestes@apple.com>
 
         Reviewed by Eric Seidel.
