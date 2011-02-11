@@ -24478,6 +24478,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\Crypto.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\Crypto.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\DOMSelection.cpp"
 				>
 			</File>

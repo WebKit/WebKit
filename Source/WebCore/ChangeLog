@@ -1,5 +1,11 @@
 2011-02-11  Adam Barth  <abarth@webkit.org>
 
+        Actually add Crypto.cpp to the Windows build.  I'm terrible.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
+2011-02-11  Adam Barth  <abarth@webkit.org>
+
         Attempt to fix the Windows build.  Apparently we don't support
         conditional attributes on functions.  This patch makes the whole Crypto
         interface conditional on ArrayBuffer support.
