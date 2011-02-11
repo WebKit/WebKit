@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Connection.h"
 
+#include "BinarySemaphore.h"
 #include "CoreIPCMessageKinds.h"
 #include "RunLoop.h"
 #include "WorkItem.h"
@@ -40,10 +41,18 @@ public:
     static PassRefPtr<SyncMessageState> getOrCreate(RunLoop*);
     ~SyncMessageState();
 
+    void wakeUpClientRunLoop()
+    {
+        m_waitForSyncReplySemaphore.signal();
+    }
+
+    bool wait(double absoluteTime)
+    {
+        return m_waitForSyncReplySemaphore.wait(absoluteTime);
+    }
+
 private:
     explicit SyncMessageState(RunLoop*);
-
-    RunLoop* m_runLoop;
 
     typedef HashMap<RunLoop*, SyncMessageState*> SyncMessageStateMap;
     static SyncMessageStateMap& syncMessageStateMap()
@@ -57,6 +66,9 @@ private:
         DEFINE_STATIC_LOCAL(Mutex, syncMessageStateMapMutex, ());
         return syncMessageStateMapMutex;
     }
+
+    RunLoop* m_runLoop;
+    BinarySemaphore m_waitForSyncReplySemaphore;
 };
 
 PassRefPtr<Connection::SyncMessageState> Connection::SyncMessageState::getOrCreate(RunLoop* runLoop)
@@ -322,7 +334,7 @@ PassOwnPtr<ArgumentDecoder> Connection::waitForSyncReply(uint64_t syncRequestID,
         }
 
         // We didn't find a sync reply yet, keep waiting.
-        timedOut = !m_waitForSyncReplySemaphore.wait(absoluteTime);
+        timedOut = !m_syncMessageState->wait(absoluteTime);
     }
 
     // We timed out.
@@ -341,7 +353,7 @@ void Connection::processIncomingMessage(MessageID messageID, PassOwnPtr<Argument
 
         pendingSyncReply.replyDecoder = arguments.leakPtr();
         pendingSyncReply.didReceiveReply = true;
-        m_waitForSyncReplySemaphore.signal();
+        m_syncMessageState->wakeUpClientRunLoop();
         return;
     }
 
@@ -354,7 +366,7 @@ void Connection::processIncomingMessage(MessageID messageID, PassOwnPtr<Argument
             m_syncMessagesReceivedWhileWaitingForSyncReply.append(IncomingMessage(messageID, arguments));
 
             // The message has been added, now wake up the client thread.
-            m_waitForSyncReplySemaphore.signal();
+            m_syncMessageState->wakeUpClientRunLoop();
             return;
         }
     }
@@ -390,7 +402,7 @@ void Connection::connectionDidClose()
         m_shouldWaitForSyncReplies = false;
 
         if (!m_pendingSyncReplies.isEmpty())
-            m_waitForSyncReplySemaphore.signal();
+            m_syncMessageState->wakeUpClientRunLoop();
     }
 
     if (m_didCloseOnConnectionWorkQueueCallback)

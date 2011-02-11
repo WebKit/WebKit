@@ -31,7 +31,6 @@
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include "Arguments.h"
-#include "BinarySemaphore.h"
 #include "MessageID.h"
 #include "WorkQueue.h"
 #include <wtf/HashMap.h>
@@ -257,8 +256,6 @@ private:
         }
     };
     
-    BinarySemaphore m_waitForSyncReplySemaphore;
-
     class SyncMessageState;
     friend class SyncMessageState;
     RefPtr<SyncMessageState> m_syncMessageState;

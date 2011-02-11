@@ -2,6 +2,24 @@
 
         Reviewed by Adam Roben.
 
+        Move the binary semaphore into SyncMessageState
+        https://bugs.webkit.org/show_bug.cgi?id=54311
+
+        With this change, all connections that belong to the same run loop will use same binary semaphore.
+        This is in preparation for making any connection be able to wakeup the client run loop.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::SyncMessageState::wakeUpClientRunLoop):
+        (CoreIPC::Connection::SyncMessageState::wait):
+        (CoreIPC::Connection::waitForSyncReply):
+        (CoreIPC::Connection::processIncomingMessage):
+        (CoreIPC::Connection::connectionDidClose):
+        * Platform/CoreIPC/Connection.h:
+
+2011-02-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
         Add a SyncMessageState class to CoreIPC::Connection
         https://bugs.webkit.org/show_bug.cgi?id=54309
 
