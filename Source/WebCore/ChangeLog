@@ -1,3 +1,16 @@
+2011-02-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r78331.
+        http://trac.webkit.org/changeset/78331
+        https://bugs.webkit.org/show_bug.cgi?id=54295
+
+        This patch broke 11 tests in GTK bots (Requested by svillar on
+        #webkit).
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_get_name):
+        (webkit_accessible_detach):
+
 2011-02-11  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.

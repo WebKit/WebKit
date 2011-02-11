@@ -1,3 +1,15 @@
+2011-02-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r78331.
+        http://trac.webkit.org/changeset/78331
+        https://bugs.webkit.org/show_bug.cgi?id=54295
+
+        This patch broke 11 tests in GTK bots (Requested by svillar on
+        #webkit).
+
+        * platform/gtk/accessibility/document-reload-events-expected.txt: Removed.
+        * platform/gtk/accessibility/document-reload-events.html: Removed.
+
 2011-02-11  Martin Robinson  <mrobinson@igalia.com>
 
         Generate more GTK+ results for many SVG tests missing them.

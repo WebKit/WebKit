@@ -175,7 +175,7 @@ static const gchar* webkit_accessible_get_name(AtkObject* object)
                 return webkit_accessible_text_get_text(ATK_TEXT(atkObject), 0, -1);
         }
 
-        // Try text under the node.
+        // Try text under the node
         String textUnder = renderObject->textUnderElement();
         if (textUnder.length())
             return returnString(textUnder);
@@ -189,13 +189,6 @@ static const gchar* webkit_accessible_get_name(AtkObject* object)
             if (!alt.isEmpty())
                 return returnString(alt);
         }
-    }
-
-    // Fallback for the webArea object: just return the document's title.
-    if (renderObject->isWebArea()) {
-        Document* document = coreObject->document();
-        if (document)
-            return returnString(document->title());
     }
 
     return returnString(coreObject->stringValue());
@@ -2470,9 +2463,6 @@ AccessibilityObject* webkit_accessible_get_accessibility_object(WebKitAccessible
 void webkit_accessible_detach(WebKitAccessible* accessible)
 {
     ASSERT(accessible->m_object);
-
-    if (core(accessible)->roleValue() == WebAreaRole)
-        g_signal_emit_by_name(accessible, "state-change", "defunct", true);
 
     // We replace the WebCore AccessibilityObject with a fallback object that
     // provides default implementations to avoid repetitive null-checking after
