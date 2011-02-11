@@ -54,7 +54,9 @@ v8::Local<v8::Function> V8EventListener::getListenerFunction(ScriptExecutionCont
 
     if (listener->IsObject()) {
         v8::Local<v8::Value> property = listener->Get(v8::String::NewSymbol("handleEvent"));
-        if (property->IsFunction())
+        // Check that no exceptions were thrown when getting the
+        // handleEvent property and that the value is a function.
+        if (!property.IsEmpty() && property->IsFunction())
             return v8::Local<v8::Function>::Cast(property);
     }
 

@@ -1,3 +1,16 @@
+2011-02-10  Mads Ager  <ager@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        [V8] Don't crash on exception getting event handler function
+        https://bugs.webkit.org/show_bug.cgi?id=54216
+
+        Add crash regression test with custom chromium expectations.
+
+        * fast/dom/exception-getting-event-handler-expected.txt: Added.
+        * fast/dom/exception-getting-event-handler.html: Added.
+        * platform/chromium/fast/dom/exception-getting-event-handler-expected.txt: Added.
+
 2011-02-10  Naoki Takano  <takano.naoki@gmail.com>
 
         Reviewed by James Robinson.
