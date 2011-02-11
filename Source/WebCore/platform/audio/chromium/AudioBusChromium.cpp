@@ -42,7 +42,7 @@ PassOwnPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, double sam
 PassOwnPtr<AudioBus> createBusFromInMemoryAudioFile(const void* data, size_t dataSize, bool mixToMono, double sampleRate)
 {
     OwnPtr<AudioBus> audioBus = PlatformBridge::decodeAudioFileData(static_cast<const char*>(data), dataSize, sampleRate);
-    if (audioBus->numberOfChannels() == 2 && mixToMono) {
+    if (audioBus.get() && audioBus->numberOfChannels() == 2 && mixToMono) {
         OwnPtr<AudioBus> monoAudioBus = adoptPtr(new AudioBus(1, audioBus->length()));
 
         // FIXME: AudioBus::copyFrom() should be able to do a downmix to mono.

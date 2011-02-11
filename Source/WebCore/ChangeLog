@@ -1,3 +1,21 @@
+2011-02-11  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Throw exception when AudioContext's createBuffer() fails to properly decode audio file data
+        https://bugs.webkit.org/show_bug.cgi?id=54158
+
+        No new tests since audio API is not yet implemented.
+
+        * bindings/js/JSAudioContextCustom.cpp:
+        (WebCore::JSAudioContextConstructor::constructJSAudioContext):
+        (WebCore::JSAudioContext::createBuffer):
+        * bindings/v8/custom/V8AudioContextCustom.cpp:
+        (WebCore::V8AudioContext::createBufferCallback):
+        * platform/audio/chromium/AudioBusChromium.cpp:
+        (WebCore::createBusFromInMemoryAudioFile):
+        * webaudio/AudioContext.idl:
+
 2011-02-11  Mike Reed  <reed@google.com>
 
         Reviewed by James Robinson.

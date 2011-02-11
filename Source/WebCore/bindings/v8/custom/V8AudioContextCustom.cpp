@@ -28,8 +28,13 @@
 
 #include "V8AudioContext.h"
 
+#include "ArrayBuffer.h"
+#include "AudioBuffer.h"
 #include "AudioContext.h"
 #include "Frame.h"
+#include "V8ArrayBuffer.h"
+#include "V8AudioBuffer.h"
+#include "V8Binding.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
@@ -53,6 +58,58 @@ v8::Handle<v8::Value> V8AudioContext::constructorCallback(const v8::Arguments& a
     audioContext->ref();
     
     return args.Holder();
+}
+
+v8::Handle<v8::Value> V8AudioContext::createBufferCallback(const v8::Arguments& args)
+{
+    if (args.Length() < 2)
+        return throwError("Not enough arguments", V8Proxy::SyntaxError);
+
+    AudioContext* audioContext = toNative(args.Holder());
+    ASSERT(audioContext);
+
+    v8::Handle<v8::Value> arg = args[0];
+    
+    // AudioBuffer createBuffer(in ArrayBuffer buffer, in boolean mixToMono);
+    if (V8ArrayBuffer::HasInstance(arg)) {
+        v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(arg);
+        ArrayBuffer* arrayBuffer = V8ArrayBuffer::toNative(object);
+        ASSERT(arrayBuffer);
+
+        if (arrayBuffer) {
+            bool mixToMono = args[1]->ToBoolean()->Value();
+
+            RefPtr<AudioBuffer> audioBuffer = audioContext->createBuffer(arrayBuffer, mixToMono);
+            if (!audioBuffer.get())
+                return throwError("Error decoding audio file data", V8Proxy::SyntaxError);
+
+            return toV8(audioBuffer.get());
+        }
+        
+        return v8::Undefined();
+    }
+    
+    // AudioBuffer createBuffer(in unsigned long numberOfChannels, in unsigned long numberOfFrames, in float sampleRate);
+    if (args.Length() < 3)
+        return throwError("Not enough arguments", V8Proxy::SyntaxError);
+
+    bool ok = false;
+    
+    unsigned numberOfChannels = toInt32(args[0], ok);
+    if (!ok)
+        return throwError("Invalid number of channels", V8Proxy::SyntaxError);
+    
+    unsigned numberOfFrames = toInt32(args[1], ok);
+    if (!ok)
+        return throwError("Invalid number of frames", V8Proxy::SyntaxError);
+    
+    float sampleRate = toFloat(args[2]);
+    
+    RefPtr<AudioBuffer> audioBuffer = audioContext->createBuffer(numberOfChannels, numberOfFrames, sampleRate);
+    if (!audioBuffer.get())
+        return throwError("Error creating AudioBuffer", V8Proxy::SyntaxError);
+
+    return toV8(audioBuffer.get());
 }
 
 } // namespace WebCore

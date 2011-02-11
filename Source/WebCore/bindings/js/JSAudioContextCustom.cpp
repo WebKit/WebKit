@@ -28,12 +28,18 @@
 
 #include "AudioContext.h"
 
+#include "ArrayBuffer.h"
+#include "AudioBuffer.h"
+#include "JSArrayBuffer.h"
+#include "JSAudioBuffer.h"
 #include "JSAudioContext.h"
 #include <runtime/Error.h>
 
+using namespace JSC;
+
 namespace WebCore {
 
-JSC::EncodedJSValue JSC_HOST_CALL JSAudioContextConstructor::constructJSAudioContext(JSC::ExecState* exec)
+EncodedJSValue JSC_HOST_CALL JSAudioContextConstructor::constructJSAudioContext(ExecState* exec)
 {
     JSAudioContextConstructor* jsConstructor = static_cast<JSAudioContextConstructor*>(exec->callee());
     if (!jsConstructor)
@@ -49,7 +55,48 @@ JSC::EncodedJSValue JSC_HOST_CALL JSAudioContextConstructor::constructJSAudioCon
     Document* document = static_cast<Document*>(scriptExecutionContext);
 
     RefPtr<AudioContext> context = AudioContext::create(document);
-    return JSC::JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), context.get())));
+    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), context.get())));
+}
+
+JSValue JSAudioContext::createBuffer(ExecState* exec)
+{
+    if (exec->argumentCount() < 2)
+        return throwError(exec, createSyntaxError(exec, "Not enough arguments"));
+
+    AudioContext* audioContext = static_cast<AudioContext*>(impl());
+    ASSERT(audioContext);
+
+    // AudioBuffer createBuffer(in ArrayBuffer buffer, in boolean mixToMono);
+    JSValue val = exec->argument(0);
+    if (val.inherits(&JSArrayBuffer::s_info)) {
+        ArrayBuffer* arrayBuffer = toArrayBuffer(val);
+        ASSERT(arrayBuffer);
+        if (arrayBuffer) {
+            bool mixToMono = exec->argument(1).toBoolean(exec);
+
+            RefPtr<AudioBuffer> audioBuffer = audioContext->createBuffer(arrayBuffer, mixToMono);
+            if (!audioBuffer.get())
+                return throwError(exec, createSyntaxError(exec, "Error decoding audio file data"));
+
+            return toJS(exec, globalObject(), audioBuffer.get());
+        }
+
+        return jsUndefined();
+    }
+    
+    // AudioBuffer createBuffer(in unsigned long numberOfChannels, in unsigned long numberOfFrames, in float sampleRate);
+    if (exec->argumentCount() < 3)
+        return throwError(exec, createSyntaxError(exec, "Not enough arguments"));
+    
+    unsigned numberOfChannels = exec->argument(0).toInt32(exec);
+    unsigned numberOfFrames = exec->argument(1).toInt32(exec);
+    float sampleRate = exec->argument(2).toFloat(exec);
+
+    RefPtr<AudioBuffer> audioBuffer = audioContext->createBuffer(numberOfChannels, numberOfFrames, sampleRate);
+    if (!audioBuffer.get())
+        return throwError(exec, createSyntaxError(exec, "Error creating AudioBuffer"));
+
+    return toJS(exec, globalObject(), audioBuffer.get());
 }
 
 } // namespace WebCore

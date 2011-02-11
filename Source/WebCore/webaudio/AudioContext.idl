@@ -41,8 +41,10 @@ module webaudio {
         // All panning is relative to this listener.
         readonly attribute AudioListener listener;
 
-        AudioBuffer createBuffer(in unsigned long numberOfChannels, in unsigned long numberOfFrames, in float sampleRate);
-        AudioBuffer createBuffer(in ArrayBuffer buffer, in boolean mixToMono);
+        // AudioBuffer createBuffer(in unsigned long numberOfChannels, in unsigned long numberOfFrames, in float sampleRate);
+        // AudioBuffer createBuffer(in ArrayBuffer buffer, in boolean mixToMono);
+        [Custom] AudioBuffer createBuffer()
+            raises(DOMException);
 
         // Source
         AudioBufferSourceNode createBufferSource();
