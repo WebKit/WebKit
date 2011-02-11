@@ -137,14 +137,14 @@ http://255.255.255.255:4294967296/test.jpg - willSendRequest <NSURLRequest URL h
 http://255.255.255.255:4294967296/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://255.255.255.255:4294967296/test.jpg">
 http://255.255.255.255:0/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255:0/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
 http://255.255.255.255:0/test.jpg - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1004, failing URL "http://255.255.255.255:0/test.jpg">
-http://255.255.255.255:80/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255:80/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
-http://255.255.255.255:80/test.jpg - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1004, failing URL "http://255.255.255.255:80/test.jpg">
-http://255.255.255.255:/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255:/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
-http://255.255.255.255:/test.jpg - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1004, failing URL "http://255.255.255.255:/test.jpg">
+http://255.255.255.255/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
+http://255.255.255.255/test.jpg - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1004, failing URL "http://255.255.255.255/test.jpg">
+http://255.255.255.255/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
+http://255.255.255.255/test.jpg - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1004, failing URL "http://255.255.255.255/test.jpg">
 ftp://255.255.255.255/test.jpg - willSendRequest <NSURLRequest URL ftp://255.255.255.255/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
 ftp://255.255.255.255/test.jpg - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1, failing URL "ftp://255.255.255.255/test.jpg">
-ftp://255.255.255.255:21/test.jpg - willSendRequest <NSURLRequest URL ftp://255.255.255.255:21/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
-ftp://255.255.255.255:21/test.jpg - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1, failing URL "ftp://255.255.255.255:21/test.jpg">
+ftp://255.255.255.255/test.jpg - willSendRequest <NSURLRequest URL ftp://255.255.255.255/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
+ftp://255.255.255.255/test.jpg - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1, failing URL "ftp://255.255.255.255/test.jpg">
 ftp://255.255.255.255:22/test.jpg - willSendRequest <NSURLRequest URL ftp://255.255.255.255:22/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
 ftp://255.255.255.255:22/test.jpg - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1, failing URL "ftp://255.255.255.255:22/test.jpg">
 This test attempts to change the src of an IMG tag to all black listed ports to confirm that WebKit returns the correct error for them - blocked instead of cannot find. It also tries the FTP ports for exemptions. Due to the nature of this test, the results can only be processed automatically via DumpRenderTree

@@ -1,3 +1,14 @@
+2011-02-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        KURL should remove default port numbers when cannonicalizing urls (to match every other browser)
+        https://bugs.webkit.org/show_bug.cgi?id=54090
+
+        * platform/KURL.cpp:
+        (WebCore::isDefaultPortForScheme):
+        (WebCore::KURL::parse):
+
 2011-02-11  Mike Reed  <reed@google.com>
 
         Reviewed by James Robinson.

@@ -7,6 +7,8 @@ cases = [
   // Default port should be omitted.
   ["80", ""],
   ["8080", ":8080"],
+  // Empty ports (just a colon) should also be removed
+  ["", ""],
 ];
 
 for (var i = 0; i < cases.length; ++i) {

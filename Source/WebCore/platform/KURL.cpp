@@ -1100,6 +1100,38 @@ void KURL::parse(const String& string)
     parse(buffer.data(), &string);
 }
 
+static inline bool equal(const char* a, size_t lenA, const char* b, size_t lenB)
+{
+    if (lenA != lenB)
+        return false;
+    return !strncmp(a, b, lenA);
+}
+
+// List of default schemes is taken from google-url:
+// http://code.google.com/p/google-url/source/browse/trunk/src/url_canon_stdurl.cc#120
+static inline bool isDefaultPortForScheme(const char* port, size_t portLength, const char* scheme, size_t schemeLength)
+{
+    // This switch is theoretically a performance optimization.  It came over when
+    // the code was moved from google-url, but may be removed later.
+    switch (schemeLength) {
+    case 2:
+        return equal("ws", 2, scheme, schemeLength) && equal("80", 2, port, portLength);
+    case 3:
+        if (equal("ftp", 3, scheme, schemeLength))
+            return equal("21", 2, port, portLength);
+        if (equal("wss", 3, scheme, schemeLength))
+            return equal("443", 3, port, portLength);
+        break;
+    case 4:
+        return equal("http", 4, scheme, schemeLength) && equal("80", 2, port, portLength);
+    case 5:
+        return equal("https", 5, scheme, schemeLength) && equal("443", 3, port, portLength);
+    case 6:
+        return equal("gopher", 6, scheme, schemeLength) && equal("70", 2, port, portLength);
+    }
+    return false;
+}
+
 void KURL::parse(const char* url, const String* originalString)
 {
     if (!url || url[0] == '\0') {
@@ -1335,13 +1367,16 @@ void KURL::parse(const char* url, const String* originalString)
         }
         m_hostEnd = p - buffer.data();
 
-        // copy in the port
+        // Copy in the port if the URL has one (and it's not default).
         if (hostEnd != portStart) {
-            *p++ = ':';
-            strPtr = url + portStart;
-            const char *portEndPtr = url + portEnd;
-            while (strPtr < portEndPtr)
-                *p++ = *strPtr++;
+            const char* portStr = url + portStart;
+            size_t portLength = portEnd - portStart;
+            if (portLength && !isDefaultPortForScheme(portStr, portLength, buffer.data(), m_schemeEnd)) {
+                *p++ = ':';
+                const char* portEndPtr = url + portEnd;
+                while (portStr < portEndPtr)
+                    *p++ = *portStr++;
+            }
         }
         m_portEnd = p - buffer.data();
     } else

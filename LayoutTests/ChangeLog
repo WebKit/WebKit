@@ -1,3 +1,19 @@
+2011-02-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        KURL should remove default port numbers when cannonicalizing urls (to match every other browser)
+        https://bugs.webkit.org/show_bug.cgi?id=54090
+
+        Added a new test to show that we are intentionally removing
+        a colon after a host name.  http://foo.com:/ -> http://foo.com/
+
+        * fast/url/port-expected.txt:
+        * fast/url/relative-unix-expected.txt:
+        * fast/url/segments-expected.txt:
+        * fast/url/segments-from-data-url-expected.txt:
+        * fast/url/standard-url-expected.txt:
+
 2011-02-11  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Darin Adler.

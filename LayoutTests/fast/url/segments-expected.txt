@@ -67,7 +67,7 @@ PASS segments('http://[2001::1') is '[":","","0","","",""]'
 PASS segments('http://2001::1]') is '[":","","0","","",""]'
 PASS segments('http://2001::1]:80') is '[":","","0","","",""]'
 PASS segments('http://[2001::1]') is '["http:","[2001::1]","0","/","",""]'
-FAIL segments('http://[2001::1]:80') should be ["http:","[2001::1]","0","/","",""]. Was ["http:","[2001::1]","80","/","",""].
+PASS segments('http://[2001::1]:80') is '["http:","[2001::1]","0","/","",""]'
 PASS segments('http://[[::]]') is '[":","","0","","",""]'
 PASS successfullyParsed is true
 
