@@ -1,3 +1,11 @@
+2011-02-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Increase the timeout of Qt API tests to 120 seconds.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+
 2011-02-10  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, build fix.
