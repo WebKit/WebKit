@@ -95,6 +95,7 @@ class MessageID {
 public:
     enum Flags {
         SyncMessage = 1 << 0,
+        DispatchMessageWhenWaitingForSyncReply = 1 << 1,
     };
 
     MessageID()
@@ -106,6 +107,14 @@ public:
     explicit MessageID(EnumType messageKind, unsigned char flags = 0)
         : m_messageID(stripMostSignificantBit(flags << 24 | (MessageKindTraits<EnumType>::messageClass) << 16 | messageKind))
     {
+    }
+
+    MessageID messageIDWithAddedFlags(unsigned char flags)
+    {
+        MessageID messageID;
+
+        messageID.m_messageID = stripMostSignificantBit(m_messageID | (flags << 24));
+        return messageID;
     }
 
     template <typename EnumType>
@@ -137,6 +146,7 @@ public:
     
     unsigned toInt() const { return m_messageID; }
 
+    bool shouldDispatchMessageWhenWaitingForSyncReply() const { return getFlags() & DispatchMessageWhenWaitingForSyncReply; }
     bool isSync() const { return getFlags() & SyncMessage; }
 
 private:

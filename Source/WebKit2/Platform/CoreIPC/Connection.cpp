@@ -172,10 +172,13 @@ PassOwnPtr<ArgumentEncoder> Connection::createSyncMessageArgumentEncoder(uint64_
     return argumentEncoder.release();
 }
 
-bool Connection::sendMessage(MessageID messageID, PassOwnPtr<ArgumentEncoder> arguments)
+bool Connection::sendMessage(MessageID messageID, PassOwnPtr<ArgumentEncoder> arguments, unsigned messageSendFlags)
 {
     if (!isValid())
         return false;
+
+    if (messageSendFlags & DispatchMessageEvenWhenWaitingForSyncReply)
+        messageID = messageID.messageIDWithAddedFlags(MessageID::DispatchMessageWhenWaitingForSyncReply);
 
     MutexLocker locker(m_outgoingMessagesLock);
     m_outgoingMessages.append(OutgoingMessage(messageID, arguments));
@@ -280,7 +283,7 @@ PassOwnPtr<ArgumentDecoder> Connection::sendSyncMessage(MessageID messageID, uin
 
         if (m_pendingSyncReplies.isEmpty()) {
             // This was the bottom-most sendSyncMessage call in the stack. If we have any pending incoming
-            // sync messages, they need to be dispatched.
+            // messages, they need to be dispatched.
             if (!m_syncMessagesReceivedWhileWaitingForSyncReply.isEmpty()) {
                 // Add the messages.
                 MutexLocker locker(m_incomingMessagesLock);
@@ -305,7 +308,7 @@ PassOwnPtr<ArgumentDecoder> Connection::waitForSyncReply(uint64_t syncRequestID,
         {
             MutexLocker locker(m_syncReplyStateMutex);
 
-            // First, check if we have any incoming sync messages that we need to process.
+            // First, check if we have any sync messages that we need to process.
             Vector<IncomingMessage> syncMessagesReceivedWhileWaitingForSyncReply;
             m_syncMessagesReceivedWhileWaitingForSyncReply.swap(syncMessagesReceivedWhileWaitingForSyncReply);
 
@@ -318,7 +321,10 @@ PassOwnPtr<ArgumentDecoder> Connection::waitForSyncReply(uint64_t syncRequestID,
                     IncomingMessage& message = syncMessagesReceivedWhileWaitingForSyncReply[i];
                     OwnPtr<ArgumentDecoder> arguments = message.releaseArguments();
 
-                    dispatchSyncMessage(message.messageID(), arguments.get());
+                    if (message.messageID().isSync())
+                        dispatchSyncMessage(message.messageID(), arguments.get());
+                    else
+                        m_client->didReceiveMessage(this, message.messageID(), arguments.get());
                 }
                 m_syncReplyStateMutex.lock();
             }
@@ -358,10 +364,10 @@ void Connection::processIncomingMessage(MessageID messageID, PassOwnPtr<Argument
         return;
     }
 
-    // Check if this is a sync message. If it is, and we're waiting for a sync reply this message
-    // needs to be dispatched. If we don't we'll end up with a deadlock where both sync message senders are
-    // stuck waiting for a reply.
-    if (messageID.isSync()) {
+    // Check if this is a sync message or if it's a message that should be dispatched even when waiting for
+    // a sync reply. If it is, and we're waiting for a sync reply this message needs to be dispatched.
+    // If we don't we'll end up with a deadlock where both sync message senders are stuck waiting for a reply.
+    if (messageID.isSync() || messageID.shouldDispatchMessageWhenWaitingForSyncReply()) {
         MutexLocker locker(m_syncReplyStateMutex);
         if (!m_pendingSyncReplies.isEmpty()) {
             m_syncMessagesReceivedWhileWaitingForSyncReply.append(IncomingMessage(messageID, arguments));

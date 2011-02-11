@@ -58,6 +58,12 @@ enum SyncReplyMode {
     ManualReply
 };
 
+enum MessageSendFlags {
+    // Whether this message should be dispatched when waiting for a sync reply.
+    // This is the default for synchronous messages.
+    DispatchMessageEvenWhenWaitingForSyncReply = 1 << 0,
+};
+
 #define MESSAGE_CHECK_BASE(assertion, connection) do \
     if (!(assertion)) { \
         ASSERT(assertion); \
@@ -121,12 +127,12 @@ public:
 
     static const unsigned long long NoTimeout = 10000000000ULL;
 
-    template<typename T> bool send(const T& message, uint64_t destinationID);
+    template<typename T> bool send(const T& message, uint64_t destinationID, unsigned messageSendFlags = 0);
     template<typename T> bool sendSync(const T& message, const typename T::Reply& reply, uint64_t destinationID, double timeout = NoTimeout);
     template<typename T> bool waitForAndDispatchImmediately(uint64_t destinationID, double timeout);
 
     PassOwnPtr<ArgumentEncoder> createSyncMessageArgumentEncoder(uint64_t destinationID, uint64_t& syncRequestID);
-    bool sendMessage(MessageID, PassOwnPtr<ArgumentEncoder>);
+    bool sendMessage(MessageID, PassOwnPtr<ArgumentEncoder>, unsigned messageSendFlags = 0);
     bool sendSyncReply(PassOwnPtr<ArgumentEncoder>);
 
     // FIXME: These variants of senc, sendSync and waitFor are all deprecated.
@@ -308,12 +314,12 @@ private:
 #endif
 };
 
-template<typename T> bool Connection::send(const T& message, uint64_t destinationID)
+template<typename T> bool Connection::send(const T& message, uint64_t destinationID, unsigned messageSendFlags)
 {
     OwnPtr<ArgumentEncoder> argumentEncoder = ArgumentEncoder::create(destinationID);
     argumentEncoder->encode(message);
     
-    return sendMessage(MessageID(T::messageID), argumentEncoder.release());
+    return sendMessage(MessageID(T::messageID), argumentEncoder.release(), messageSendFlags);
 }
 
 template<typename T> bool Connection::sendSync(const T& message, const typename T::Reply& reply, uint64_t destinationID, double timeout)
