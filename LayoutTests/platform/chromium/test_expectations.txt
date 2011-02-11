@@ -1026,7 +1026,7 @@ BUGCR10317 LINUX : fast/css/shadow-multiple.html = FAIL
 // Problems with getImageData and toDataURL.
 // This test requires us to do alpha blending exactly the way CG does it,
 // which Skia may never do (see bug).
-BUGCR22700 LINUX WIN : fast/canvas/canvas-getImageData.html = FAIL TIMEOUT
+BUGCR22700 CPU LINUX WIN : fast/canvas/canvas-getImageData.html = FAIL TIMEOUT
 
 // We're much closer now. To fully pass this we need encoders for jpg
 // and gif, which is a low priority.
@@ -2076,8 +2076,8 @@ BUGWK45991 LINUX WIN : canvas/philip/tests/2d.line.width.basic.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.line.width.transformed.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.path.arc.angle.3.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.path.arc.angle.5.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.path.arcTo.shape.curve1.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.path.arcTo.shape.curve2.html = TEXT
+BUGWK45991 CPU LINUX WIN : canvas/philip/tests/2d.path.arcTo.shape.curve1.html = TEXT
+BUGWK45991 CPU LINUX WIN : canvas/philip/tests/2d.path.arcTo.shape.curve2.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.norepeat.coord3.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.repeatx.coord1.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.repeaty.coord1.html = TEXT
@@ -2098,8 +2098,8 @@ BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.image.transparent.2.html = 
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.pattern.alpha.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.pattern.basic.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.pattern.transparent.2.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
+BUGWK45991 CPU LINUX WIN : canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
+BUGWK45991 CPU LINUX WIN : canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
 
 BUGWK45991 WIN : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
 
@@ -3133,20 +3133,20 @@ BUGWK47925 GPU MAC : compositing/plugins/large-to-small-composited-plugin.html =
 
 // The word "compositing" appears in Chromium's pixel results and not
 // in Safari's; this should probably be fixed.
-BUGWK47926 GPU WIN LINUX : compositing/geometry/composited-html-size.html = IMAGE
+BUGWK47926 GPU MAC LINUX : compositing/geometry/composited-html-size.html = IMAGE
 
 // These tests are missing an entire layer in the layer tree output.
-BUGWK47927 GPU WIN LINUX : compositing/geometry/limit-layer-bounds-clipping-ancestor.html = TEXT
+BUGWK47927 DEBUG GPU WIN LINUX : compositing/geometry/limit-layer-bounds-clipping-ancestor.html = PASS TEXT
 
 // The following failure seems suspicious because it does not contain
 // any text; it seems that the layer tree should precisely match
 // Safari's.
-BUGWK47944 GPU WIN LINUX : compositing/geometry/limit-layer-bounds-overflow-root.html = TEXT
+BUGWK47944 DEBUG GPU WIN LINUX : compositing/geometry/limit-layer-bounds-overflow-root.html = PASS TEXT
 
 // The following failure is missing a tiled layer where Safari has
 // one, in addition to having a layer positioned differently than in
 // Safari.
-BUGWK47946 GPU : compositing/geometry/limit-layer-bounds-transformed-overflow.html = TIMEOUT TEXT
+BUGWK47946 GPU MAC : compositing/geometry/limit-layer-bounds-transformed-overflow.html = TEXT
 
 // Skia does not handle multiple masks correctly
 BUGWK47947 GPU LINUX WIN : compositing/masks/multiple-masks.html = IMAGE+TEXT
@@ -3199,9 +3199,9 @@ BUGWK49629 GPU SKIP : platform/chromium/compositing/lots-of-img-layers.html = PA
 BUGWK49629 GPU SKIP : platform/chromium/compositing/lots-of-img-layers-with-opacity.html = PASS
 
 BUGCR57431 GPU WIN LINUX : fast/canvas/canvas-strokeRect.html = TEXT
-BUGCR58534 GPU WIN LINUX : canvas/philip/tests/2d.composite.globalAlpha.fill.html = TEXT
-BUGCR58536 GPU WIN LINUX : canvas/philip/tests/2d.imageData.put.alpha.html = TEXT
 BUGCR60965 GPU WIN LINUX : fast/canvas/setWidthResetAfterForcedRender.html = IMAGE+TEXT
+
+BUGNONE SLOW GPU DEBUG WIN : fast/canvas/canvas-getImageData.html = PASS
 
 // Has been timing out on win debug for a while.
 BUGWEBGL GPU WIN DEBUG : fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html = TIMEOUT
@@ -3209,9 +3209,8 @@ BUGWEBGL GPU WIN DEBUG : fast/canvas/webgl/context-attributes-alpha-depth-stenci
 // Started failing after r75648 on everything except Snow Leopard
 BUGWK52341 GPU : fast/canvas/canvas-large-dimensions.html = TEXT
 
-// These will need to rebaselined after the new path drawing lands. 
-BUG_SENORBLANCO GPU WIN LINUX : fast/canvas/canvas-composite.html = IMAGE 
-BUG_SENORBLANCO GPU WIN LINUX : fast/canvas/canvas-transform-skewed.html = IMAGE 
+// This will need to rebaselined after the new path drawing lands. 
+BUG_SENORBLANCO GPU LINUX : fast/canvas/canvas-composite.html = IMAGE 
 
 BUGWK53469 GPU MAC : compositing/scroll-painted-composited-content.html = CRASH PASS
 BUGCR72223 : media/video-frame-accurate-seek.html = IMAGE PASS
