@@ -60,6 +60,10 @@
             'TestNetscapePlugIn/Tests/NullNPPGetValuePointer.cpp',
             'TestNetscapePlugIn/Tests/PassDifferentNPPStruct.cpp',
             'TestNetscapePlugIn/Tests/PluginScriptableNPObjectInvokeDefault.cpp',
+            'TestNetscapePlugIn/Tests/win/GetValueNetscapeWindow.cpp',
+            'TestNetscapePlugIn/Tests/win/NPNInvalidateRectInvalidatesWindow.cpp',
+            'TestNetscapePlugIn/Tests/win/WindowGeometryInitializedBeforeSetWindow.cpp',
+            'TestNetscapePlugIn/Tests/win/WindowRegionIsSetToClipRect.cpp',
             'TestNetscapePlugIn/main.cpp',
         ],
         'conditions': [
