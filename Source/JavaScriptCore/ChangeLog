@@ -1,5 +1,11 @@
 2011-02-11  Geoffrey Garen  <ggaren@apple.com>
 
+        Try to fix the Windows build: added an exported symbol.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2011-02-11  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Oliver Hunt.
 
         A little more encapsulation for the heap: Removed CollectorHeapIterator
