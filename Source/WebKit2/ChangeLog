@@ -1,3 +1,36 @@
+2011-02-11  Chandra Vallala  <chandra.vallala@motorola.com> and Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Implement UpdateChunk, ChunkedUpdateDrawingArea/Proxy
+        classes for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=54080
+
+        * GNUmakefile.am:
+        * Shared/gtk/UpdateChunk.cpp: Added.
+        (WebKit::UpdateChunk::UpdateChunk):
+        (WebKit::UpdateChunk::~UpdateChunk):
+        (WebKit::UpdateChunk::encode):
+        (WebKit::UpdateChunk::decode):
+        (WebKit::UpdateChunk::createImage):
+        * Shared/gtk/UpdateChunk.h: Added.
+        (WebKit::UpdateChunk::rect):
+        (WebKit::UpdateChunk::isEmpty):
+        (WebKit::UpdateChunk::size):
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.cpp:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::ChunkedUpdateDrawingAreaProxy):
+        Initialize the surface.
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.h:
+        * UIProcess/DrawingAreaProxy.h: Added cairo variables.
+        * UIProcess/gtk/ChunkedUpdateDrawingAreaProxyGtk.cpp: Added.
+        (WebKit::ChunkedUpdateDrawingAreaProxy::page):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::ensureBackingStore):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::invalidateBackingStore):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::platformPaint):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::drawUpdateChunkIntoBackingStore):
+        * WebProcess/WebPage/gtk/ChunkedUpdateDrawingAreaGtk.cpp: Added.
+        (WebKit::ChunkedUpdateDrawingArea::paintIntoUpdateChunk):
+
 2011-02-10  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

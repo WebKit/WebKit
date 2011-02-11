@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +32,8 @@
 
 #if PLATFORM(QT)
 class QPainter;
+#elif PLATFORM(GTK)
+typedef struct _cairo cairo_t;
 #endif
 
 namespace WebKit {
@@ -45,6 +48,8 @@ typedef CGContextRef PlatformDrawingContext;
 typedef HDC PlatformDrawingContext;
 #elif PLATFORM(QT)
 typedef QPainter* PlatformDrawingContext;
+#elif PLATFORM(GTK)
+typedef cairo_t* PlatformDrawingContext;
 #endif
 
 class DrawingAreaProxy {
