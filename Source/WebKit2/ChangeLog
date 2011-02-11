@@ -1,3 +1,22 @@
+2011-02-11  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        crashes in WebProcess at WebCore::Range::startPosition const + 16
+        https://bugs.webkit.org/show_bug.cgi?id=54294
+        <rdar://problem/8982710>
+        
+        I don't have a repro case for this bugs, but the side-by-side
+        comparison of the IME support implementation in WebKit and WebKi2
+        shows a missing null check on a Range that could very well explain
+        this crash.
+        I tried running platform/mac/editing/input tests with a version of WebKit
+        without the null check and I can reproduce a crash with the same signature.
+        These tests are not yet enabled for WebKit2.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::firstRectForCharacterRange):
+
 2011-02-11  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Steve Falkenburg.

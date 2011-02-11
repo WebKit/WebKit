@@ -231,10 +231,11 @@ void WebPage::firstRectForCharacterRange(uint64_t location, uint64_t length, Web
     resultRect.setSize(IntSize(0, 0));
     
     RefPtr<Range> range = convertToRange(frame, NSMakeRange(location, length));
-    if (range) {
-        ASSERT(range->startContainer());
-        ASSERT(range->endContainer());
-    }
+    if (!range)
+        return;
+    
+    ASSERT(range->startContainer());
+    ASSERT(range->endContainer());
      
     IntRect rect = frame->editor()->firstRectForRange(range.get());
     resultRect = frame->view()->contentsToWindow(rect);
