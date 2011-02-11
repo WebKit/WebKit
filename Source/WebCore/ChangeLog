@@ -1,3 +1,12 @@
+2011-02-11  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix.
+
+        [GTK] Build break with 2.18.3
+        https://bugs.webkit.org/show_bug.cgi?id=54057
+
+        * platform/gtk/ScrollbarThemeGtk2.cpp: Include GtkVersioning.h
+
 2011-02-11  Cosmin Truta  <ctruta@chromium.org>
 
         Reviewed by Adam Barth.

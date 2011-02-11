@@ -28,6 +28,7 @@
 
 #ifdef GTK_API_VERSION_2
 
+#include "GtkVersioning.h"
 #include "PlatformMouseEvent.h"
 #include "RenderThemeGtk.h"
 #include "ScrollView.h"
