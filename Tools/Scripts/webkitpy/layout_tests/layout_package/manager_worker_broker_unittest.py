@@ -65,11 +65,11 @@ class FunctionTests(unittest.TestCase):
         self.assertTrue(make_broker(self, 'inline') is not None)
 
     def test_get__threads(self):
-        self.assertTrue(make_broker(self, 'threads') is not None)
+        self.assertRaises(NotImplementedError, make_broker, self, 'threads')
 
     def test_get__processes(self):
         if multiprocessing:
-            self.assertTrue(make_broker(self, 'processes') is not None)
+            self.assertRaises(NotImplementedError, make_broker, self, 'processes')
         else:
             self.assertRaises(ValueError, make_broker, self, 'processes')
 
@@ -81,6 +81,8 @@ class FunctionTests(unittest.TestCase):
         parser = optparse.OptionParser(option_list=option_list)
         options, args = parser.parse_args([])
         self.assertTrue(options)
+
+# FIXME: Add in unit tests for the managers, coverage tests for the interfaces.
 
 
 if __name__ == '__main__':

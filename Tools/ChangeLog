@@ -1,3 +1,25 @@
+2011-02-10  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        This patch adds the bulk of the remaining functionality for
+        the NRWT message-passing implementation. The patch adds a new
+        Worker class that will eventually replace the TestShellThread
+        class in dump_render_tree_thread.py, and implements enough of
+        TestRunner2 and the inline version of the manager_worker_broker
+        to actually be able to send a full set of messages back and
+        forth. The Worker stubs do not actually run tests, and there's
+        lots of error handling and stats needed, but this is the core
+        logic.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54068
+
+        * Scripts/webkitpy/layout_tests/layout_package/manager_worker_broker.py:
+        * Scripts/webkitpy/layout_tests/layout_package/manager_worker_broker_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_runner2.py:
+        * Scripts/webkitpy/layout_tests/layout_package/worker.py: Added.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2011-02-10  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, build fix.

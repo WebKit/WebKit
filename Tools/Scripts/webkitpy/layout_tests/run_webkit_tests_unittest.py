@@ -470,7 +470,7 @@ class MainTest(unittest.TestCase):
         self.assertRaises(ValueError, logging_run, ['--worker-model', 'processes'])
 
     def test_worker_model__threads(self):
-        self.assertTrue(passing_run(['--worker-model', 'threads']))
+        self.assertRaises(ValueError, logging_run, ['--worker-model', 'threads'])
 
     def test_worker_model__unknown(self):
         self.assertRaises(ValueError, logging_run,

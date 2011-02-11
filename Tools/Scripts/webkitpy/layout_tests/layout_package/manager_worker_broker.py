@@ -28,16 +28,19 @@
 
 """Module for handling messages and concurrency for run-webkit-tests.
 
-This module builds on the functionality of message_broker2 to provide
-a simple message broker for a manager sending messages to (and getting
-replies from) a pool of workers. In addition it provides a choice of
-concurrency models for callers to choose from (single-threaded inline
-model, threads, or processes).
+This module implements a message broker that connects the manager
+(TestRunner2) to the workers: it provides a messaging abstraction and
+message loops (building on top of message_broker2), and handles starting
+workers by launching threads and/or processes depending on the
+requested configuration.
 
-FIXME: At the moment, this module is just a bunch of stubs, but eventually
-it will provide three sets of manager classes and worker classes for
-the three concurrency models. The get() factory method selects between
-them.
+There are a lot of classes and objects involved in a fully connected system.
+They interact more or less like:
+
+TestRunner2  --> _InlineManager ---> _InlineWorker <-> Worker
+     ^                    \               /              ^
+     |                     v             v               |
+     \--------------------  MessageBroker   -------------/
 """
 
 import logging
@@ -45,9 +48,7 @@ import optparse
 import Queue
 import threading
 
-#
 # Handle Python < 2.6 where multiprocessing isn't available.
-#
 try:
     import multiprocessing
 except ImportError:
@@ -83,7 +84,8 @@ def get(port, options, client, worker_class):
     Args:
         port - handle to layout_tests/port object for port-specific stuff
         options - optparse argument for command-line options
-        client - object to dispatch replies to
+        client - message_broker2.BrokerClient implementation to dispatch
+            replies to.
         worker_class - type of workers to create. This class must implement
             the methods in AbstractWorker.
     Returns:
@@ -109,7 +111,7 @@ def get(port, options, client, worker_class):
 
 
 class AbstractWorker(message_broker2.BrokerClient):
-    def __init__(self, broker_connection, worker_number, options, **kwargs):
+    def __init__(self, broker_connection, worker_number, options):
         """The constructor should be used to do any simple initialization
         necessary, but should not do anything that creates data structures
         that cannot be Pickled or sent across processes (like opening
@@ -137,12 +139,11 @@ class AbstractWorker(message_broker2.BrokerClient):
 
 
 class _ManagerConnection(message_broker2.BrokerConnection):
-    def __init__(self, broker, port, options, client, worker_class):
+    def __init__(self, broker, options, client, worker_class):
         """Base initialization for all Manager objects.
 
         Args:
             broker: handle to the message_broker2 object
-            port: handle to port-specific functionality
             options: command line options object
             client: callback object (the caller)
             worker_class: class object to use to create workers.
@@ -152,14 +153,60 @@ class _ManagerConnection(message_broker2.BrokerConnection):
         self._options = options
         self._worker_class = worker_class
 
+    def start_worker(self, worker_number):
+        raise NotImplementedError
+
 
 class _InlineManager(_ManagerConnection):
-    pass
+    def __init__(self, broker, port, options, client, worker_class):
+        _ManagerConnection.__init__(self, broker, options, client, worker_class)
+        self._port = port
+        self._inline_worker = None
+
+    def start_worker(self, worker_number):
+        self._inline_worker = _InlineWorker(self._broker, self._port, self._client,
+            self._worker_class, worker_number)
+        return self._inline_worker
+
+    def run_message_loop(self, delay_secs=None):
+        # Note that delay_secs is ignored in this case since we can't easily
+        # implement it.
+        self._inline_worker.run()
+        self._broker.run_all_pending(MANAGER_TOPIC, self._client)
 
 
 class _ThreadedManager(_ManagerConnection):
-    pass
+    def __init__(self, broker, port, options, client, worker_class):
+        raise NotImplementedError
 
 
 class _MultiProcessManager(_ManagerConnection):
-    pass
+    def __init__(self, broker, port, options, client, worker_class):
+        raise NotImplementedError
+
+
+class _WorkerConnection(message_broker2.BrokerConnection):
+    def __init__(self, broker, worker_class, worker_number, options):
+        self._client = worker_class(self, worker_number, options)
+        self.name = self._client.name()
+        message_broker2.BrokerConnection.__init__(self, broker, self._client,
+                                                  ANY_WORKER_TOPIC, MANAGER_TOPIC)
+
+    def run(self):
+        raise NotImplementedError
+
+    def yield_to_broker(self):
+        pass
+
+
+class _InlineWorker(_WorkerConnection):
+    def __init__(self, broker, port, manager_client, worker_class, worker_number):
+        _WorkerConnection.__init__(self, broker, worker_class, worker_number, port._options)
+        self._port = port
+        self._manager_client = manager_client
+
+    def run(self):
+        self._client.run(self._port)
+
+    def yield_to_broker(self):
+        self._broker.run_all_pending(MANAGER_TOPIC, self._manager_client)
