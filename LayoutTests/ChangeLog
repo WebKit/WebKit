@@ -1,5 +1,11 @@
 2011-02-10  Zhenyao Mo  <zmo@google.com>
 
+        Unreviewed, fix a typo.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-02-10  Zhenyao Mo  <zmo@google.com>
+
         Unreviewed, test expectations update.
 
         * platform/chromium/test_expectations.txt:

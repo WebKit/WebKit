@@ -2676,7 +2676,7 @@ WONTFIX SKIP WIN : platform/win/plugins/window-region-is-set-to-clip-rect.html =
 // Added in WK r71418, doesn't look like it's applicable to Chromium
 WONTFIX SKIP WIN : platform/win/plugins/draws-gradient.html = IMAGE+TEXT CRASH
 // Doesn't look like it's applicable to Chromium
-WONTFIX SKIP WIN : platform/win/plugins/get-value-netscape-window.html = TEST CRASH
+WONTFIX SKIP WIN : platform/win/plugins/get-value-netscape-window.html = TEXT CRASH
 
 // Added in WK r71424
 BUGCR62138 : animations/stop-animation-on-suspend.html = TEXT PASS
