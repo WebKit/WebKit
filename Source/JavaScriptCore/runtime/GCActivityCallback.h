@@ -32,6 +32,10 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
+#if PLATFORM(CF)
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
 namespace JSC {
 
 class Heap;
@@ -57,6 +61,12 @@ public:
 
     void operator()();
     void synchronize();
+
+#if PLATFORM(CF)
+protected:
+    DefaultGCActivityCallback(Heap*, CFRunLoopRef);
+    void commonConstructor(Heap*, CFRunLoopRef);
+#endif
 
 private:
     OwnPtr<DefaultGCActivityCallbackPlatformData*> d;

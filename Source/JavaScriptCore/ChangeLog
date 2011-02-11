@@ -1,3 +1,26 @@
+2011-02-10  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Make DefaultGCActivityCallback for PLATFORM(CF) Easier to Subclass
+        https://bugs.webkit.org/show_bug.cgi?id=54257
+
+        A subclass may want to specify the CFRunLoop that the Garbage Collection
+        will happen on. It was difficult to manipulate this in a subclass because
+        the current DefaultGCActivityCallback class does this in its constructor.
+        This patch generalizes things a bit more so that a specific run loop can
+        be passed in to the constructor. This makes it so all run loop management
+        can stay in DefaultGCActivityCallback and a subclass can specify any runloop.
+
+        * runtime/GCActivityCallback.h: expose a PLATFORM(CF) constructor that can
+        specify the runloop GC can be scheduled on.
+        * runtime/GCActivityCallbackCF.cpp:
+        (JSC::DefaultGCActivityCallback::DefaultGCActivityCallback): two constructors,
+        one that specifies the run loop and passes that on to commonConstructor and
+        the old constructor defaults to the current run loop.
+        (JSC::DefaultGCActivityCallback::commonConstructor): do normal construction,
+        adding the timer to the given runloop.
+
 2011-02-10  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

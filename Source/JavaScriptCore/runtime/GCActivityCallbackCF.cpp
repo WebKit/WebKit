@@ -35,7 +35,6 @@
 #include "JSLock.h"
 #include <wtf/RetainPtr.h>
 #include <wtf/WTFThreadData.h>
-#include <CoreFoundation/CoreFoundation.h>
 
 #if !PLATFORM(CF)
 #error "This file should only be used on CF platforms."
@@ -63,13 +62,12 @@ void DefaultGCActivityCallbackPlatformData::trigger(CFRunLoopTimerRef, void *inf
 
 DefaultGCActivityCallback::DefaultGCActivityCallback(Heap* heap)
 {
-    d = adoptPtr(new DefaultGCActivityCallbackPlatformData);
+    commonConstructor(heap, CFRunLoopGetCurrent());
+}
 
-    memset(&d->context, '\0', sizeof(CFRunLoopTimerContext));
-    d->context.info = heap;
-    d->runLoop = CFRunLoopGetCurrent();
-    d->timer.adoptCF(CFRunLoopTimerCreate(0, decade, decade, 0, 0, DefaultGCActivityCallbackPlatformData::trigger, &d->context));
-    CFRunLoopAddTimer(d->runLoop.get(), d->timer.get(), kCFRunLoopCommonModes);
+DefaultGCActivityCallback::DefaultGCActivityCallback(Heap* heap, CFRunLoopRef runLoop)
+{
+    commonConstructor(heap, runLoop);
 }
 
 DefaultGCActivityCallback::~DefaultGCActivityCallback()
@@ -79,6 +77,17 @@ DefaultGCActivityCallback::~DefaultGCActivityCallback()
     d->context.info = 0;
     d->runLoop = 0;
     d->timer = 0;
+}
+
+void DefaultGCActivityCallback::commonConstructor(Heap* heap, CFRunLoopRef runLoop)
+{
+    d = adoptPtr(new DefaultGCActivityCallbackPlatformData);
+
+    memset(&d->context, '0', sizeof(CFRunLoopTimerContext));
+    d->context.info = heap;
+    d->runLoop = runLoop;
+    d->timer.adoptCF(CFRunLoopTimerCreate(0, decade, decade, 0, 0, DefaultGCActivityCallbackPlatformData::trigger, &d->context));
+    CFRunLoopAddTimer(d->runLoop.get(), d->timer.get(), kCFRunLoopCommonModes);
 }
 
 void DefaultGCActivityCallback::operator()()
