@@ -1,3 +1,9 @@
+2011-02-10  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, build fix.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+
 2011-02-10  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.

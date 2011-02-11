@@ -70,14 +70,6 @@
                     'chromium/WebThemeEngineDRTWin.cpp',
                     'chromium/WebThemeEngineDRTWin.h',
                 ],
-                'test_plugin_files': [
-                    'TestNetscapePlugIn/Tests/win/GetValueNetscapeWindow.cpp',
-                    'TestNetscapePlugIn/Tests/win/NPNInvalidateRectInvalidatesWindow.cpp',
-                    'TestNetscapePlugIn/Tests/win/WindowGeometryInitializedBeforeSetWindow.cpp',
-                    'TestNetscapePlugIn/Tests/win/WindowRegionIsSetToClipRect.cpp',
-                    'TestNetscapePlugIn/win/WindowedPluginTest.cpp',
-                    'TestNetscapePlugIn/win/WindowedPluginTest.h',
-                ],
             }],
             ['OS=="mac"', {
                 'drt_files': [
