@@ -5,24 +5,32 @@
 
 var test = function()
 {
-    InspectorTest.evaluateInConsoleAndDump("keys([3,4]).toString()", step2);
+    var expressions = [
+        "$0.toString()",
+        "keys([3,4]).toString()",
+        "values([3,4]).toString()",
+        "$('foo').toString()",
+        "$$('p#foo').toString()"
+    ];
 
-    function step2()
+    function evalExpressions()
     {
-        InspectorTest.evaluateInConsoleAndDump("values([3,4]).toString()", step3);
+        if (!expressions.length) {
+            InspectorTest.completeTest();
+            return;
+        }
+        var expression = expressions[0];
+        expressions.splice(0, 1);
+        InspectorTest.evaluateInConsoleAndDump(expression, evalExpressions);
     }
-
-    function step3()
-    {
-        InspectorTest.completeTest();
-    }
+    evalExpressions();
 }
 
 </script>
 </head>
 
 <body onload="runTest()">
-<p>
+<p id="foo">
 Tests that command line api works.
 </p>
 

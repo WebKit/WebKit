@@ -593,12 +593,18 @@ function CommandLineAPI(commandLineAPIImpl, callFrame)
 
     for (var i = 0; i < CommandLineAPI.members_.length; ++i) {
         var member = CommandLineAPI.members_[i];
-        if (member in inspectedWindow)
-            continue;
-        if (inScopeVariables(member))
+        if (member in inspectedWindow || inScopeVariables(member))
             continue;
 
         this[member] = bind(commandLineAPIImpl, commandLineAPIImpl[member]);
+    }
+
+    for (var i = 0; i < 5; ++i) {
+        var member = "$" + i;
+        if (member in inspectedWindow || inScopeVariables(member))
+            continue;
+
+        this.__defineGetter__("$" + i, bind(commandLineAPIImpl, commandLineAPIImpl._inspectedNode, i));
     }
 }
 
@@ -609,8 +615,6 @@ CommandLineAPI.members_ = [
 
 function CommandLineAPIImpl()
 {
-    for (var i = 0; i < 5; ++i)
-        this.__defineGetter__("$" + i, this._bindToScript(this._inspectedNode, i));
 }
 
 CommandLineAPIImpl.prototype = {
@@ -723,23 +727,10 @@ CommandLineAPIImpl.prototype = {
         InjectedScriptHost.clearConsoleMessages();
     },
 
-    _bindToScript: function(func)
-    {
-        var args = Array.prototype.slice.call(arguments, 1);
-        function bound()
-        {
-            return func.apply(injectedScript, args.concat(Array.prototype.slice.call(arguments)));
-        }
-        bound.toString = function() {
-            return "bound: " + func;
-        };
-        return bound;
-    },
-
     _inspectedNode: function(num)
     {
         var nodeId = InjectedScriptHost.inspectedNode(num);
-        return this._nodeForId(nodeId);
+        return injectedScript._nodeForId(nodeId);
     },
 
     _normalizeEventTypes: function(types)
