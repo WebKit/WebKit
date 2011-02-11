@@ -1,3 +1,25 @@
+2011-02-11  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed.
+
+        Added new test expectations for the GTK port.
+
+        * platform/gtk/fast/box-shadow/inset-box-shadows-expected.checksum: Added.
+        * platform/gtk/fast/box-shadow/inset-box-shadows-expected.png: Added.
+        * platform/gtk/fast/box-shadow/inset-box-shadows-expected.txt: Added.
+        * platform/gtk/fast/box-shadow/shadow-buffer-partial-expected.checksum: Added.
+        * platform/gtk/fast/box-shadow/shadow-buffer-partial-expected.png: Added.
+        * platform/gtk/fast/box-shadow/shadow-buffer-partial-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/linking-a-01-b-expected.checksum: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/linking-a-01-b-expected.png: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/linking-a-01-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/linking-a-02-b-expected.checksum: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/linking-a-02-b-expected.png: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/linking-a-02-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/linking-a-03-b-expected.checksum: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/linking-a-03-b-expected.png: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/linking-a-03-b-expected.txt: Added.
+
 2011-02-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
