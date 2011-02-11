@@ -1,3 +1,12 @@
+2011-02-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Temporarily skip a test that fails in WebKit2 due to a recent regression
+        https://bugs.webkit.org/show_bug.cgi?id=54276
+
+        * platform/mac-wk2/Skipped:
+
 2011-02-10  Mads Ager  <ager@chromium.org>
 
         Reviewed by Nate Chapin.

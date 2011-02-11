@@ -1745,6 +1745,10 @@ fast/dom/global-constructors.html
 # <rdar://problem/8735596>
 compositing/tiling/huge-layer-resize.html
 
+# REGRESSION(r77974): http/tests/security/aboutBlank/security-context-window-open.html is failing
+# <https://bugs.webkit.org/show_bug.cgi?id=54159>
+http/tests/security/aboutBlank/security-context-window-open.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
