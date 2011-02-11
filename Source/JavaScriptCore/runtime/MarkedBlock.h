@@ -56,6 +56,8 @@ namespace JSC {
     COMPILE_ASSERT(!(sizeof(CollectorCell) % 2), Collector_cell_size_is_power_of_two);
 
     class MarkedBlock {
+        friend class CollectorHeapIterator;
+
     public:
         static MarkedBlock* create(JSGlobalData*);
         static void destroy(MarkedBlock*);
@@ -67,6 +69,11 @@ namespace JSC {
         
         void* allocate(size_t& nextCell);
         void sweep();
+        
+        bool isEmpty();
+
+        void clearMarks();
+        size_t markCount();
 
         size_t cellNumber(const void*);
         bool isMarked(const void*);
@@ -74,11 +81,11 @@ namespace JSC {
         void setMarked(const void*);
 
         FixedArray<CollectorCell, CELLS_PER_BLOCK> cells;
-        WTF::Bitmap<BITS_PER_BLOCK> marked;
 
     private:
         MarkedBlock(const PageAllocationAligned&, JSGlobalData*);
 
+        WTF::Bitmap<BITS_PER_BLOCK> marked;
         PageAllocationAligned m_allocation;
         Heap* m_heap;
     };
@@ -103,6 +110,26 @@ namespace JSC {
     inline Heap* MarkedBlock::heap() const
     {
         return m_heap;
+    }
+
+    inline bool MarkedBlock::isEmpty()
+    {
+        marked.clear(HeapConstants::cellsPerBlock - 1); // Clear the always-set last bit to avoid confusing isEmpty().
+        bool result = marked.isEmpty();
+        marked.set(HeapConstants::cellsPerBlock - 1);
+        return result;
+    }
+
+    inline void MarkedBlock::clearMarks()
+    {
+        // allocate() assumes that the last mark bit is always set.
+        marked.clearAll();
+        marked.set(HeapConstants::cellsPerBlock - 1);
+    }
+    
+    inline size_t MarkedBlock::markCount()
+    {
+        return marked.count() - 1; // The last mark bit is always set.
     }
 
     inline size_t MarkedBlock::cellNumber(const void* cell)

@@ -76,12 +76,12 @@ namespace JSC {
 
         void* allocate(size_t);
 
-        void clearMarkBits();
+        void clearMarks();
+        size_t markCount() const;
         void markRoots();
         void reset();
         void sweep();
         void shrink();
-        size_t markedCells(size_t startBlock = 0, size_t startCell = 0) const;
 
         size_t size() const;
         size_t capacity() const;
@@ -96,7 +96,7 @@ namespace JSC {
         NEVER_INLINE MarkedBlock* allocateBlock();
         NEVER_INLINE void freeBlock(size_t);
 
-        void clearMarkBits(MarkedBlock*);
+        void clearMarks(MarkedBlock*);
 
         CollectorHeap m_heap;
         size_t m_waterMark;

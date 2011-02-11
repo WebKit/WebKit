@@ -40,7 +40,7 @@ MarkedSpace::MarkedSpace(JSGlobalData* globalData)
 
 void MarkedSpace::destroy()
 {
-    clearMarkBits(); // Make sure weak pointers appear dead during destruction.
+    clearMarks(); // Make sure weak pointers appear dead during destruction.
 
     while (m_heap.blocks.size())
         freeBlock(0);
@@ -83,48 +83,25 @@ void* MarkedSpace::allocate(size_t)
 
 void MarkedSpace::shrink()
 {
-    // Clear the always-on last bit, so isEmpty() isn't fooled by it.
-    for (size_t i = 0; i < m_heap.blocks.size(); ++i)
-        m_heap.collectorBlock(i)->marked.clear(HeapConstants::cellsPerBlock - 1);
-
     for (size_t i = 0; i != m_heap.blocks.size() && m_heap.blocks.size() > 1; ) { // We assume at least one block exists at all times.
-        if (m_heap.collectorBlock(i)->marked.isEmpty()) {
+        if (m_heap.collectorBlock(i)->isEmpty()) {
             freeBlock(i);
         } else
             ++i;
     }
-
-    // Reset the always-on last bit.
-    for (size_t i = 0; i < m_heap.blocks.size(); ++i)
-        m_heap.collectorBlock(i)->marked.set(HeapConstants::cellsPerBlock - 1);
 }
 
-void MarkedSpace::clearMarkBits()
+void MarkedSpace::clearMarks()
 {
     for (size_t i = 0; i < m_heap.blocks.size(); ++i)
-        clearMarkBits(m_heap.collectorBlock(i));
+        m_heap.collectorBlock(i)->clearMarks();
 }
 
-void MarkedSpace::clearMarkBits(MarkedBlock* block)
+size_t MarkedSpace::markCount() const
 {
-    // allocate assumes that the last cell in every block is marked.
-    block->marked.clearAll();
-    block->marked.set(HeapConstants::cellsPerBlock - 1);
-}
-
-size_t MarkedSpace::markedCells(size_t startBlock, size_t startCell) const
-{
-    ASSERT(startBlock <= m_heap.blocks.size());
-    ASSERT(startCell < HeapConstants::cellsPerBlock);
-
-    if (startBlock >= m_heap.blocks.size())
-        return 0;
-
     size_t result = 0;
-    result += m_heap.collectorBlock(startBlock)->marked.count(startCell);
-    for (size_t i = startBlock + 1; i < m_heap.blocks.size(); ++i)
-        result += m_heap.collectorBlock(i)->marked.count();
-
+    for (size_t i = 0; i < m_heap.blocks.size(); ++i)
+        result += m_heap.collectorBlock(i)->markCount();
     return result;
 }
 
@@ -136,10 +113,7 @@ void MarkedSpace::sweep()
 
 size_t MarkedSpace::objectCount() const
 {
-    return m_heap.nextBlock * HeapConstants::cellsPerBlock // allocated full blocks
-           + m_heap.nextCell // allocated cells in current block
-           + markedCells(m_heap.nextBlock, m_heap.nextCell) // marked cells in remainder of m_heap
-           - m_heap.blocks.size(); // 1 cell per block is a dummy sentinel
+    return markCount();
 }
 
 size_t MarkedSpace::size() const

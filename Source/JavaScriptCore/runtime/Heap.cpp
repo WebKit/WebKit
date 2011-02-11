@@ -242,8 +242,7 @@ void Heap::markRoots()
     m_machineStackMarker.markMachineStackConservatively(conservativeSet);
     conservativeSet.add(registerFile().start(), registerFile().end());
 
-    // Reset mark bits.
-    m_markedSpace.clearMarkBits();
+    m_markedSpace.clearMarks();
 
     MarkStack& markStack = m_markStack;
     conservativeSet.mark(markStack);
@@ -388,7 +387,7 @@ void Heap::reset(SweepToggle sweepToggle)
         m_markedSpace.shrink();
     }
 
-    size_t usedCellCount = m_markedSpace.markedCells();
+    size_t usedCellCount = m_markedSpace.markCount();
     size_t proportionalBytes = static_cast<size_t>(usedCellCount * 1.5 * HeapConstants::cellSize);
     m_markedSpace.setHighWaterMark(max(proportionalBytes, minBytesPerCycle));
 

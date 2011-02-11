@@ -1,3 +1,34 @@
+2011-02-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        A little more encapsulation for MarkedBlock: Made mark bits private
+        https://bugs.webkit.org/show_bug.cgi?id=54264
+        
+        SunSpider reports no change.
+
+        * runtime/Heap.cpp:
+        (JSC::Heap::markRoots):
+        (JSC::Heap::reset): Renamed clearMarkBits => clearMarks, since clients
+        don't need to know that marks are represented as bits. Renamed
+        markedCells => markCount, since clients don't need to know that blocks
+        are split into cells.
+
+        * runtime/MarkedBlock.h:
+        (JSC::MarkedBlock::isEmpty):
+        (JSC::MarkedBlock::clearMarks):
+        (JSC::MarkedBlock::markCount): New helper functions for encapsulating
+        the information clients actually need.
+
+        * runtime/MarkedSpace.cpp:
+        (JSC::MarkedSpace::destroy):
+        (JSC::MarkedSpace::shrink):
+        (JSC::MarkedSpace::clearMarks):
+        (JSC::MarkedSpace::markCount):
+        (JSC::MarkedSpace::objectCount):
+        * runtime/MarkedSpace.h: Use new helper functions instead of accessing
+        MarkedBlock data directly.
+
 2011-02-10  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Geoffrey Garen.
