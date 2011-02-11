@@ -990,6 +990,9 @@ static const short kIOHIDEventTypeScroll = 6;
 
 - (BOOL)_handleStyleKeyEquivalent:(NSEvent *)event
 {
+    if (!_data->_page->selectionState().isContentEditable)
+        return NO;
+
     if (([event modifierFlags] & NSDeviceIndependentModifierFlagsMask) != NSCommandKeyMask)
         return NO;
     

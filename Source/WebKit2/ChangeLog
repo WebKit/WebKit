@@ -1,3 +1,14 @@
+2011-02-10  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Enrica Casucci and Adele Peterson.
+
+        WebKit2 pages gobble up cmd-I as an editing command in some cases where it shouldn't
+        https://bugs.webkit.org/show_bug.cgi?id=54254
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _handleStyleKeyEquivalent:]):
+        Return early if we're not in an editable region.
+
 2011-02-10  Andreas Kling  <kling@webkit.org>
 
         Unreviewed Qt build fix.
