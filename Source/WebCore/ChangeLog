@@ -1,3 +1,14 @@
+2011-02-10  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Speculative fix for <rdar://problem/8985232> Overlay 
+        scrollers can appear on the sliding page during 
+        back/forward fluid gesture
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[ScrollbarPartAnimation scrollAnimatorDestroyed]):
+
 2011-02-09  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Nate Chapin.

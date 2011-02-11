@@ -282,6 +282,7 @@ static NSSize abs(NSSize size)
 
 - (void)scrollAnimatorDestroyed
 {
+    [self stopAnimation];
     _animator = 0;
 }
 
