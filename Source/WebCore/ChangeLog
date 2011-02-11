@@ -1,3 +1,19 @@
+2011-02-10  Naoki Takano  <takano.naoki@gmail.com>
+
+        Reviewed by James Robinson.
+
+        [Chromium] Layout Test canvas/philip/tests/2d.composite.globalAlpha.fill.html with --accelerated-2d-canvas.
+        https://bugs.webkit.org/show_bug.cgi?id=53857
+
+        globalAlpha is not applied to fillPath() and fillRect().
+
+        Test: fast/canvas/2d.composite.globalAlpha.fillPath.html and canvas/philip/tests/2d.composite.globalAlpha.fill.html with --accelerated-2d-canvas.
+
+        * platform/graphics/chromium/GLES2Canvas.cpp:
+        (WebCore::GLES2Canvas::State::applyAlpha): Append a new function to apply global alpha when fillRect() and fillPath() are called.
+        (WebCore::GLES2Canvas::fillRect): Global alpha is applied to m_fillColor.
+        (WebCore::GLES2Canvas::fillPath): Global alpha is applied to m_fillColor.
+
 2011-02-10  Andy Estes  <aestes@apple.com>
 
         Reviewed by Adam Barth.

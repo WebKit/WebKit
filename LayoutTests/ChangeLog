@@ -1,3 +1,15 @@
+2011-02-10  Naoki Takano  <takano.naoki@gmail.com>
+
+        Reviewed by James Robinson.
+
+        [Chromium] Layout Test canvas/philip/tests/2d.composite.globalAlpha.fill.html with --accelerated-2d-canvas.
+        https://bugs.webkit.org/show_bug.cgi?id=53857
+
+        This fix is for 2d.composite.globalAlpha.fill.html with --accelerated-2d-canvas. Add 2d.composite.globalAlpha.fillPath.html as a new test for the combination with globalAlpha and fillPath().
+
+        * fast/canvas/2d.composite.globalAlpha.fillPath-expected.txt: Added.
+        * fast/canvas/2d.composite.globalAlpha.fillPath.html: Added.
+
 2011-02-10  Martin Robinson  <mrobinson@igalia.com>
 
         Clean up the skipped list and skip some tests that show differences

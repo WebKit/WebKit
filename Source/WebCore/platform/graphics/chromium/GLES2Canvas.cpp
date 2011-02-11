@@ -83,6 +83,22 @@ struct GLES2Canvas::State {
     AffineTransform m_ctm;
     WTF::Vector<Path> m_clippingPaths;
     bool m_clippingEnabled;
+
+    // Helper function for applying the state's alpha value to the given input
+    // color to produce a new output color. The logic is the same as
+    // PlatformContextSkia::State::applyAlpha(), but the type is different.
+    Color applyAlpha(const Color& c)
+    {
+        int s = roundf(m_alpha * 256);
+        if (s >= 256)
+            return c;
+        if (s < 0)
+            return Color();
+
+        int a = (c.alpha() * s) >> 8;
+        return Color(c.red(), c.green(), c.blue(), a);
+    }
+
 };
 
 static inline FloatPoint operator*(const FloatPoint& f, float scale)
@@ -192,7 +208,7 @@ void GLES2Canvas::fillPath(const Path& path)
 {
     m_context->applyCompositeOperator(m_state->m_compositeOp);
     applyClipping(m_state->m_clippingEnabled);
-    fillPath(path, m_state->m_fillColor);
+    fillPath(path, m_state->applyAlpha(m_state->m_fillColor));
 }
 
 void GLES2Canvas::fillRect(const FloatRect& rect, const Color& color, ColorSpace colorSpace)
@@ -214,7 +230,7 @@ void GLES2Canvas::fillRect(const FloatRect& rect, const Color& color, ColorSpace
 
 void GLES2Canvas::fillRect(const FloatRect& rect)
 {
-    fillRect(rect, m_state->m_fillColor, ColorSpaceDeviceRGB);
+    fillRect(rect, m_state->applyAlpha(m_state->m_fillColor), ColorSpaceDeviceRGB);
 }
 
 void GLES2Canvas::setFillColor(const Color& color, ColorSpace colorSpace)
