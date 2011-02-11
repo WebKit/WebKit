@@ -1,3 +1,25 @@
+2011-02-10  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Cached JavaScript Parser Data Being Left in Memory Cache
+        https://bugs.webkit.org/show_bug.cgi?id=54245
+
+        Added logic in CachedScript to clear SourceProviderCache data in
+        destroyDecodedData().  Added and changed CachedScript timeout to
+        act similar to CachedImage.  Changed didAddClient to call super
+        class method instead of duplicating the logic in the derived
+        classes.
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::didAddClient):
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::didAddClient):
+        (WebCore::CachedScript::allClientsRemoved):
+        (WebCore::CachedScript::script):
+        (WebCore::CachedScript::destroyDecodedData):
+        * loader/cache/CachedScript.h:
+
 2011-02-10  Cosmin Truta  <ctruta@chromium.org>
 
         Reviewed by David Levin.

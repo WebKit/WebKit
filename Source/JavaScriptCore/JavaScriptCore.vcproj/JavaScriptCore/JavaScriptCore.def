@@ -82,6 +82,7 @@ EXPORTS
     ?classInfo@InternalFunction@JSC@@UBEPBUClassInfo@2@XZ
     ?classInfo@JSCell@JSC@@UBEPBUClassInfo@2@XZ
     ?className@JSObject@JSC@@UBE?AVUString@2@XZ
+    ?clear@SourceProviderCache@JSC@@QAEXXZ
     ?collate@Collator@WTF@@QBE?AW4Result@12@PB_WI0I@Z
     ?collectAllGarbage@Heap@JSC@@QAEXXZ
     ?configurable@PropertyDescriptor@JSC@@QBE_NXZ

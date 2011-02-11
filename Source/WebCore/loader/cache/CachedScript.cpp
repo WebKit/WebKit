@@ -55,9 +55,18 @@ CachedScript::~CachedScript()
 {
 }
 
+void CachedScript::didAddClient(CachedResourceClient* c)
+{
+    if (m_decodedDataDeletionTimer.isActive())
+        m_decodedDataDeletionTimer.stop();
+
+    CachedResource::didAddClient(c);
+}
+
 void CachedScript::allClientsRemoved()
 {
-    m_decodedDataDeletionTimer.startOneShot(0);
+    if (double interval = memoryCache()->deadDecodedDataDeletionInterval())
+        m_decodedDataDeletionTimer.startOneShot(interval);
 }
 
 void CachedScript::setEncoding(const String& chs)
@@ -79,7 +88,6 @@ const String& CachedScript::script()
         m_script += m_decoder->flush();
         setDecodedSize(m_script.length() * sizeof(UChar));
     }
-    m_decodedDataDeletionTimer.startOneShot(0);
     return m_script;
 }
 
@@ -117,7 +125,9 @@ void CachedScript::destroyDecodedData()
     m_script = String();
     unsigned extraSize = 0;
 #if USE(JSC)
-    // FIXME: SourceInfoCache should be wiped out too but not this easily.
+    if (m_sourceProviderCache)
+        m_sourceProviderCache->clear();
+
     extraSize = m_sourceProviderCache ? m_sourceProviderCache->byteSize() : 0;
 #endif
     setDecodedSize(extraSize);

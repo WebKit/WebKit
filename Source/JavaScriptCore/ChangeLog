@@ -1,3 +1,22 @@
+2011-02-10  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Cached JavaScript Parser Data Being Left in Memory Cache
+        https://bugs.webkit.org/show_bug.cgi?id=54245
+
+        Added clear method which removes SourceProviderCache items.
+        Cleaned up extraneous whitespace.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * parser/SourceProviderCache.cpp:
+        (JSC::SourceProviderCache::~SourceProviderCache):
+        (JSC::SourceProviderCache::clear):
+        (JSC::SourceProviderCache::byteSize):
+        (JSC::SourceProviderCache::add):
+        * parser/SourceProviderCache.h:
+
 2011-02-10  Joseph Pecoraro  <joepeck@webkit.org>
 
         Follow-up fix to r78291. I should pass (int) 0, not '0' to memset. 

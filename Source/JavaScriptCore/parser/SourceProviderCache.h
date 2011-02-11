@@ -34,7 +34,8 @@ class SourceProviderCache {
 public:
     SourceProviderCache() : m_contentByteSize(0) {}
     ~SourceProviderCache();
-    
+
+    void clear();
     unsigned byteSize() const;
     void add(int sourcePosition, PassOwnPtr<SourceProviderCacheItem>, unsigned size);
     const SourceProviderCacheItem* get(int sourcePosition) const { return m_map.get(sourcePosition); }

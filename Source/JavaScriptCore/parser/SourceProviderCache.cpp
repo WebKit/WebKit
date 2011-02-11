@@ -32,18 +32,25 @@ namespace JSC {
 
 SourceProviderCache::~SourceProviderCache()
 {
-    deleteAllValues(m_map);
+    clear();
 }
-    
+
+void SourceProviderCache::clear()
+{
+    deleteAllValues(m_map);
+    m_map.clear();
+    m_contentByteSize = 0;
+}
+
 unsigned SourceProviderCache::byteSize() const
 { 
-    return m_contentByteSize + sizeof(*this) + m_map.capacity() * sizeof(SourceProviderCacheItem*); 
+    return m_contentByteSize + sizeof(*this) + m_map.capacity() * sizeof(SourceProviderCacheItem*);
 }
-    
+
 void SourceProviderCache::add(int sourcePosition, PassOwnPtr<SourceProviderCacheItem> item, unsigned size)
 {
-    m_map.add(sourcePosition, item.leakPtr()); 
-    m_contentByteSize += size; 
+    m_map.add(sourcePosition, item.leakPtr());
+    m_contentByteSize += size;
 }
 
 }
