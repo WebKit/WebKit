@@ -1,5 +1,11 @@
 2011-02-11  Martin Robinson  <mrobinson@igalia.com>
 
+        Add another batch of GTK+ SVG test results.
+
+        * platform/gtk/Skipped: Unskip tests which now have results.
+
+2011-02-11  Martin Robinson  <mrobinson@igalia.com>
+
         Add the next batch of GTK+ SVG test results.
 
         * platform/gtk/Skipped: Unskip tests which now have results.
