@@ -1,3 +1,17 @@
+2011-02-11  Janne Koskinen  <janne.p.koskinen@digia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt][S60] Vertical borders of buttons and frames are misaligned
+        https://bugs.webkit.org/show_bug.cgi?id=51169
+
+        Force anti-aliasing for lines and rects when using OpenVG backend on Symbian.
+        OpenVG cannot guarantee rendering to be on pixel in floating point co-ordinates
+        without anti-aliasing. Patch idea by Laszlo Agocs.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+
 2011-02-11  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Xan Lopez.
