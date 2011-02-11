@@ -1,3 +1,16 @@
+2011-02-11  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed chromium-gpu expectations update. Add more fine-grained
+        expectations for compositing on Windows (instead of the whole directory
+        being marked PASS FAIL). Also replace all FAIL GPU expectations with
+        more specific ones (e.g. TEXT or IMAGE+TEXT).
+        
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-animated-expected.checksum:
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-animated-expected.png:
+        * platform/chromium-gpu/compositing/iframes/nested-iframe-scrolling-expected.checksum: Added.
+        * platform/chromium-gpu/compositing/iframes/nested-iframe-scrolling-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-02-11  Jessie Berlin  <jberlin@apple.com>
 
         plugins/invalidate_rect.html failing on Windows
