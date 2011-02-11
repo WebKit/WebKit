@@ -2524,9 +2524,6 @@ BUGWK46689 : fast/dom/HTMLElement/class-list.html = TEXT PASS
 // Flaky since r68438:r68445 or before that.
 BUGWK46693 MAC : fast/repaint/repaint-svg-after-style-change.html = TEXT
 
-// New test; was added in http://trac.webkit.org/changeset/68520
-BUGWK46735 WIN : platform/win/plugins/window-geometry-initialized-before-set-window.html = TEXT
-
 // New failures introduced in 68854.
 BUGWK46951 : fast/url/segments-from-data-url.html = TEXT
 BUGWK46951 : fast/url/segments.html = TEXT
@@ -2621,9 +2618,6 @@ BUGJAPHET : fast/dom/HTMLAnchorElement/set-href-attribute-prevents-rebase.html =
 // r69833, JSC/V8 Date parsing differences
 BUGJAPHET : fast/js/date-parse-test.html = TEXT
 
-// Added in WebKit r70265
-BUGWK48034 : platform/win/plugins/npn-invalidate-rect-invalidates-window.html = TEXT
-
 // Have been flaky for a long time.
 BUGWK48143 : svg/dom/altGlyph-dom.xhtml = CRASH PASS
 BUGWK48256 WIN LINUX : fast/multicol/float-multicol.html = IMAGE+TEXT PASS
@@ -2673,11 +2667,14 @@ BUGCR31342 WIN RELEASE : security/block-test-no-port.html = TEXT PASS
 BUGCR61978 : svg/animations/animate-path-nested-transforms.html = CRASH PASS TEXT
 BUGCR61978 : svg/animations/animate-text-nested-transforms.html = PASS TEXT
 
+// New test; was added in http://trac.webkit.org/changeset/68520
+WONTFIX SKIP WIN BUGWK46735 : platform/win/plugins/window-geometry-initialized-before-set-window.html = TEXT CRASH
+// Added in WebKit r70265
+WONTFIX SKIP WIN BUGWK48034 : platform/win/plugins/npn-invalidate-rect-invalidates-window.html = TEXT CRASH
 // Added in WK r71416, doesn't look like it's applicable to Chromium
-WONTFIX SKIP WIN : platform/win/plugins/window-region-is-set-to-clip-rect.html = TEXT
-
+WONTFIX SKIP WIN : platform/win/plugins/window-region-is-set-to-clip-rect.html = TEXT CRASH
 // Added in WK r71418, doesn't look like it's applicable to Chromium
-WONTFIX SKIP : platform/win/plugins/draws-gradient.html = IMAGE+TEXT
+WONTFIX SKIP WIN : platform/win/plugins/draws-gradient.html = IMAGE+TEXT CRASH
 
 // Added in WK r71424
 BUGCR62138 : animations/stop-animation-on-suspend.html = TEXT PASS
