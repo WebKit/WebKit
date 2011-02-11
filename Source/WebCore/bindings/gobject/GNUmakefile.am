@@ -395,10 +395,13 @@ endif
 
 if ENABLE_VIDEO
 webkitgtk_built_h_api += \
-	$(top_builddir)/DerivedSources/webkit/WebKitDOMHTMLAudioElement.h
+	$(top_builddir)/DerivedSources/webkit/WebKitDOMHTMLAudioElement.h \
+	$(top_builddir)/DerivedSources/webkit/WebKitDOMHTMLVideoElement.h
 webkitgtk_gdom_built_sources += \
 	DerivedSources/webkit/WebKitDOMHTMLAudioElement.cpp \
-	DerivedSources/webkit/WebKitDOMHTMLAudioElementPrivate.h
+	DerivedSources/webkit/WebKitDOMHTMLAudioElementPrivate.h \
+	DerivedSources/webkit/WebKitDOMHTMLVideoElement.cpp \
+	DerivedSources/webkit/WebKitDOMHTMLVideoElementPrivate.h
 endif
 
 gdom_class_list := $(subst WebKitDOM,, $(filter-out %Private, $(basename $(notdir $(webkitgtk_gdom_built_sources)))))

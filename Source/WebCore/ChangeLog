@@ -1,3 +1,18 @@
+2011-02-11  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        [GDOM] Video element needs proper wrapping
+        https://bugs.webkit.org/show_bug.cgi?id=54231
+
+        Use the same strategy as the one used for the audio tag to wrap
+        video as well. No layout tests because this only adds API.
+
+        * bindings/gobject/GNUmakefile.am:
+        * bindings/gobject/WebKitHTMLElementWrapperFactory.cpp:
+        (WebKit::createVideoWrapper):
+        (WebKit::createHTMLElementWrapper):
+
 2011-02-11  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Andreas Kling.

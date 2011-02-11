@@ -93,6 +93,7 @@
 #include "HTMLTextAreaElement.h"
 #include "HTMLTitleElement.h"
 #include "HTMLUListElement.h"
+#include "HTMLVideoElement.h"
 
 #include "webkit/WebKitDOMHTMLAnchorElementPrivate.h"
 #include "webkit/WebKitDOMHTMLAppletElementPrivate.h"
@@ -156,6 +157,7 @@
 
 #if ENABLE(VIDEO)
 #include "webkit/WebKitDOMHTMLAudioElementPrivate.h"
+#include "webkit/WebKitDOMHTMLVideoElementPrivate.h"
 #endif
 
 #include <wtf/text/CString.h>
@@ -186,6 +188,11 @@ static gpointer createAreaWrapper(PassRefPtr<HTMLElement> element)
 static gpointer createAudioWrapper(PassRefPtr<HTMLElement> element)
 {
     return wrapHTMLAudioElement(static_cast<HTMLAudioElement*>(element.get()));
+}
+
+static gpointer createVideoWrapper(PassRefPtr<HTMLElement> element)
+{
+    return wrapHTMLVideoElement(static_cast<HTMLVideoElement*>(element.get()));
 }
 #endif
 
@@ -467,6 +474,7 @@ gpointer createHTMLElementWrapper(PassRefPtr<WebCore::HTMLElement> element)
        map.set(appletTag.localName().impl(), createAppletWrapper);
 #if ENABLE(VIDEO)
        map.set(audioTag.localName().impl(), createAudioWrapper);
+       map.set(videoTag.localName().impl(), createVideoWrapper);
 #endif
        map.set(areaTag.localName().impl(), createAreaWrapper);
        map.set(baseTag.localName().impl(), createBaseWrapper);
