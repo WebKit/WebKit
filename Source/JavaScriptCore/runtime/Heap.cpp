@@ -383,8 +383,10 @@ void Heap::reset(SweepToggle sweepToggle)
     m_markedSpace.reset();
     m_extraCost = 0;
 
-    if (sweepToggle == DoSweep)
+    if (sweepToggle == DoSweep) {
         m_markedSpace.sweep();
+        m_markedSpace.shrink();
+    }
 
     size_t usedCellCount = m_markedSpace.markedCells();
     size_t proportionalBytes = static_cast<size_t>(usedCellCount * 1.5 * HeapConstants::cellSize);

@@ -80,6 +80,7 @@ namespace JSC {
         void markRoots();
         void reset();
         void sweep();
+        void shrink();
         size_t markedCells(size_t startBlock = 0, size_t startCell = 0) const;
 
         size_t size() const;
@@ -94,7 +95,6 @@ namespace JSC {
     private:
         NEVER_INLINE MarkedBlock* allocateBlock();
         NEVER_INLINE void freeBlock(size_t);
-        void shrink();
 
         void clearMarkBits(MarkedBlock*);
 

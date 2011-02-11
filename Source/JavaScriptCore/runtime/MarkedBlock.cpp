@@ -56,4 +56,29 @@ MarkedBlock::MarkedBlock(const PageAllocationAligned& allocation, JSGlobalData* 
         new (&cells[i]) JSCell(dummyMarkableCellStructure);
 }
 
+void MarkedBlock::sweep()
+{
+#if !ENABLE(JSC_ZOMBIES)
+    Structure* dummyMarkableCellStructure = m_heap->globalData()->dummyMarkableCellStructure.get();
+#endif
+
+    for (size_t i = 0; i < HeapConstants::cellsPerBlock; ++i) {
+        if (marked.get(i))
+            continue;
+
+        JSCell* cell = reinterpret_cast<JSCell*>(&cells[i]);
+#if ENABLE(JSC_ZOMBIES)
+        if (!cell->isZombie()) {
+            const ClassInfo* info = cell->classInfo();
+            cell->~JSCell();
+            new (cell) JSZombie(info, JSZombie::leakedZombieStructure());
+            marked.set(i);
+        }
+#else
+        cell->~JSCell();
+        new (cell) JSCell(dummyMarkableCellStructure);
+#endif
+    }
+}
+
 } // namespace JSC

@@ -53,12 +53,6 @@ namespace JSC {
         LiveObjectIterator& operator++();
     };
 
-    class DeadObjectIterator : public CollectorHeapIterator {
-    public:
-        DeadObjectIterator(CollectorHeap&, size_t startBlock, size_t startCell = 0);
-        DeadObjectIterator& operator++();
-    };
-
     inline CollectorHeapIterator::CollectorHeapIterator(CollectorHeap& heap, size_t startBlock, size_t startCell)
         : m_heap(heap)
         , m_block(startBlock)
@@ -109,21 +103,6 @@ namespace JSC {
         do {
             advance();
         } while (isValid() && !isLive());
-        return *this;
-    }
-
-    inline DeadObjectIterator::DeadObjectIterator(CollectorHeap& heap, size_t startBlock, size_t startCell)
-        : CollectorHeapIterator(heap, startBlock, startCell)
-    {
-        if (isValid() && isLive())
-            ++(*this);
-    }
-
-    inline DeadObjectIterator& DeadObjectIterator::operator++()
-    {
-        do {
-            advance();
-        } while (isValid() && isLive());
         return *this;
     }
 

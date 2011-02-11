@@ -401,6 +401,22 @@ namespace JSC {
         return isCell() && asCell() && asCell()->isZombie();
     }
 #endif
+
+    inline void* MarkedBlock::allocate(size_t& nextCell)
+    {
+        do {
+            ASSERT(nextCell < HeapConstants::cellsPerBlock);
+            if (!marked.testAndSet(nextCell)) { // Always false for the last cell in the block
+                JSCell* cell = reinterpret_cast<JSCell*>(&cells[nextCell++]);
+                cell->~JSCell();
+                return cell;
+            }
+            nextCell = marked.nextPossiblyUnset(nextCell);
+        } while (nextCell != HeapConstants::cellsPerBlock);
+        
+        return 0;
+    }
+
 } // namespace JSC
 
 #endif // JSCell_h

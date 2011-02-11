@@ -64,6 +64,9 @@ namespace JSC {
         static MarkedBlock* blockFor(const void*);
         
         Heap* heap() const;
+        
+        void* allocate(size_t& nextCell);
+        void sweep();
 
         size_t cellNumber(const void*);
         bool isMarked(const void*);

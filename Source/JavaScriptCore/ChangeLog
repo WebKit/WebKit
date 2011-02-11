@@ -1,3 +1,34 @@
+2011-02-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        A little more encapsulation for MarkedBlock: Moved allocate() and sweep() into MarkedBlock
+        https://bugs.webkit.org/show_bug.cgi?id=54253
+        
+        SunSpider reports no change.
+
+        * runtime/CollectorHeapIterator.h: Removed DeadObjectIterator, since it
+        is now unused.
+
+        * runtime/Heap.cpp:
+        (JSC::Heap::reset): Moved the call to shrink() here, since it seems a
+        little more clear for MarkedSpace's client to tell it explicitly when to
+        shrink.
+
+        * runtime/JSCell.h:
+        (JSC::JSCell::MarkedBlock::allocate): Split out from MarkedSpace::allocate.
+
+        * runtime/MarkedBlock.cpp:
+        (JSC::MarkedBlock::sweep): Split out from MarkedSpace::sweep, and
+        converted to more directly iterate a MarkedBlock based on knowing its
+        internal structure.
+
+        * runtime/MarkedBlock.h:
+        * runtime/MarkedSpace.cpp:
+        (JSC::MarkedSpace::allocate):
+        (JSC::MarkedSpace::sweep):
+        * runtime/MarkedSpace.h: Split out the code mentioned above.
+
 2011-02-10  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Andreas Kling.

@@ -68,29 +68,15 @@ void* MarkedSpace::allocate(size_t)
     do {
         ASSERT(m_heap.nextBlock < m_heap.blocks.size());
         MarkedBlock* block = m_heap.collectorBlock(m_heap.nextBlock);
-        do {
-            ASSERT(m_heap.nextCell < HeapConstants::cellsPerBlock);
-            if (!block->marked.testAndSet(m_heap.nextCell)) { // Always false for the last cell in the block
-                CollectorCell* cell = &block->cells[m_heap.nextCell];
+        if (void* result = block->allocate(m_heap.nextCell))
+            return result;
 
-                JSCell* imp = reinterpret_cast<JSCell*>(cell);
-                imp->~JSCell();
-
-                ++m_heap.nextCell;
-                return cell;
-            }
-            m_heap.nextCell = block->marked.nextPossiblyUnset(m_heap.nextCell);
-        } while (m_heap.nextCell != HeapConstants::cellsPerBlock);
         m_heap.nextCell = 0;
         m_waterMark += BLOCK_SIZE;
     } while (++m_heap.nextBlock != m_heap.blocks.size());
 
-    if (m_waterMark < m_highWaterMark) {
-        MarkedBlock* block = allocateBlock();
-        ASSERT(!block->marked.get(m_heap.nextCell));
-        block->marked.set(m_heap.nextCell);
-        return &block->cells[m_heap.nextCell++];
-    }
+    if (m_waterMark < m_highWaterMark)
+        return allocateBlock()->allocate(m_heap.nextCell);
 
     return 0;
 }
@@ -144,29 +130,8 @@ size_t MarkedSpace::markedCells(size_t startBlock, size_t startCell) const
 
 void MarkedSpace::sweep()
 {
-#if !ENABLE(JSC_ZOMBIES)
-    Structure* dummyMarkableCellStructure = globalData()->dummyMarkableCellStructure.get();
-#endif
-
-    DeadObjectIterator it(m_heap, 0, 0);
-    DeadObjectIterator end(m_heap, m_heap.blocks.size(), 0);
-    for ( ; it != end; ++it) {
-        JSCell* cell = *it;
-#if ENABLE(JSC_ZOMBIES)
-        if (!cell->isZombie()) {
-            const ClassInfo* info = cell->classInfo();
-            cell->~JSCell();
-            new (cell) JSZombie(info, JSZombie::leakedZombieStructure());
-            Heap::markCell(cell);
-        }
-#else
-        cell->~JSCell();
-        // Callers of sweep assume it's safe to mark any cell in the heap.
-        new (cell) JSCell(dummyMarkableCellStructure);
-#endif
-    }
-    
-    shrink();
+    for (size_t i = 0; i < m_heap.blocks.size(); ++i)
+        m_heap.collectorBlock(i)->sweep();
 }
 
 size_t MarkedSpace::objectCount() const
