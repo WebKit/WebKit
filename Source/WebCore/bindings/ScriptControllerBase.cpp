@@ -109,7 +109,7 @@ bool ScriptController::executeIfJavaScriptURL(const KURL& url, ShouldReplaceDocu
     //        synchronously can cause crashes:
     //        http://bugs.webkit.org/show_bug.cgi?id=16782
     if (shouldReplaceDocumentIfJavaScriptURL == ReplaceDocumentIfJavaScriptURL)
-        m_frame->loader()->writer()->replaceDocument(scriptResult);
+        m_frame->document()->loader()->writer()->replaceDocument(scriptResult);
 
     return true;
 }

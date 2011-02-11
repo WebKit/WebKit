@@ -279,10 +279,10 @@ bool SVGImage::dataChanged(bool allDataReceived)
         loader->load(fakeRequest, false); // Make sure the DocumentLoader is created
         loader->policyChecker()->cancelCheck(); // cancel any policy checks
         loader->commitProvisionalLoad();
-        loader->writer()->setMIMEType("image/svg+xml");
-        loader->writer()->begin(KURL()); // create the empty document
-        loader->writer()->addData(data()->data(), data()->size());
-        loader->writer()->end();
+        loader->activeDocumentLoader()->writer()->setMIMEType("image/svg+xml");
+        loader->activeDocumentLoader()->writer()->begin(KURL()); // create the empty document
+        loader->activeDocumentLoader()->writer()->addData(data()->data(), data()->size());
+        loader->activeDocumentLoader()->writer()->end();
         frame->view()->setTransparent(true); // SVG Images are transparent.
     }
 

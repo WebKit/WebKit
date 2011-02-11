@@ -53,7 +53,8 @@ public:
     void addData(const char* string, int length = -1, bool flush = false);
     void end();
     void endIfNotLoadingMainResource();
-    void clear();
+    
+    void setFrame(Frame* frame) { m_frame = frame; }
 
     String encoding() const;
     void setEncoding(const String& encoding, bool userChosen);
@@ -76,6 +77,7 @@ public:
 
 private:
     PassRefPtr<Document> createDocument(const KURL&);
+    void clear();
 
     Frame* m_frame;
 

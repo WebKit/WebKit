@@ -62,8 +62,7 @@ void GetFormEncoding(const HTMLFormElement* form, TextEncoding* encoding)
         if (encoding->isValid())
             return;
     }
-    const Frame* frame = form->document()->frame();
-    *encoding = frame ? TextEncoding(frame->loader()->writer()->encoding()) : Latin1Encoding();
+    *encoding = TextEncoding(form->document()->loader()->writer()->encoding());
 }
 
 // Returns true if the submit request results in an HTTP URL.

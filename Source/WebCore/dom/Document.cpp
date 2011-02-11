@@ -443,6 +443,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     m_ignoreAutofocus = false;
 
     m_frame = frame;
+    m_documentLoader = frame ? frame->loader()->activeDocumentLoader() : 0;
 
     // We depend on the url getting immediately set in subframes, but we
     // also depend on the url NOT getting immediately set in opened windows.
@@ -2020,7 +2021,7 @@ void Document::explicitClose()
     }
 
     // This code calls implicitClose() if all loading has completed.
-    m_frame->loader()->writer()->endIfNotLoadingMainResource();
+    loader()->writer()->endIfNotLoadingMainResource();
     m_frame->loader()->checkCompleted();
 }
 
@@ -3697,7 +3698,7 @@ String Document::lastModified() const
     DateComponents date;
     bool foundDate = false;
     if (m_frame) {
-        String httpLastModified = m_frame->loader()->documentLoader()->response().httpHeaderField("Last-Modified");
+        String httpLastModified = m_documentLoader->response().httpHeaderField("Last-Modified");
         if (!httpLastModified.isEmpty()) {
             date.setMillisecondsSinceEpochForDateTime(parseDate(httpLastModified));
             foundDate = true;
@@ -4413,8 +4414,7 @@ void Document::initSecurityContext()
         // load local resources.  See https://bugs.webkit.org/show_bug.cgi?id=16756
         // and https://bugs.webkit.org/show_bug.cgi?id=19760 for further
         // discussion.
-        DocumentLoader* documentLoader = m_frame->loader()->documentLoader();
-        if (documentLoader && documentLoader->substituteData().isValid())
+        if (m_documentLoader->substituteData().isValid())
             securityOrigin()->grantLoadLocalResources();
     }
 
@@ -4493,7 +4493,7 @@ void Document::updateURLForPushOrReplaceState(const KURL& url)
 
     setURL(url);
     f->loader()->setOutgoingReferrer(url);
-    f->loader()->documentLoader()->replaceRequestURLForSameDocumentNavigation(url);
+    m_documentLoader->replaceRequestURLForSameDocumentNavigation(url);
 }
 
 void Document::statePopped(SerializedScriptValue* stateObject)

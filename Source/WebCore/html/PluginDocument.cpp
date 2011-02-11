@@ -92,7 +92,7 @@ void PluginDocumentParser::createDocumentStructure()
     
     m_embedElement->setAttribute(nameAttr, "plugin");
     m_embedElement->setAttribute(srcAttr, document()->url().string());
-    m_embedElement->setAttribute(typeAttr, document()->frame()->loader()->writer()->mimeType());
+    m_embedElement->setAttribute(typeAttr, document()->loader()->writer()->mimeType());
 
     static_cast<PluginDocument*>(document())->setPluginNode(m_embedElement);
 

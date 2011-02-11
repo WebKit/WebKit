@@ -1458,7 +1458,7 @@ WebString WebViewImpl::pageEncoding() const
     if (!m_page.get())
         return WebString();
 
-    return m_page->mainFrame()->loader()->writer()->encoding();
+    return m_page->mainFrame()->document()->loader()->writer()->encoding();
 }
 
 void WebViewImpl::setPageEncoding(const WebString& encodingName)

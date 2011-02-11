@@ -434,8 +434,7 @@ void FrameLoaderClientWx::finishedLoading(DocumentLoader* loader)
 {
     if (!m_pluginView) {
         if (m_firstData) {
-            FrameLoader* fl = loader->frameLoader();
-            fl->writer()->setEncoding(m_response.textEncodingName(), false);
+            loader->writer()->setEncoding(m_response.textEncodingName(), false);
             m_firstData = false;
         }
     } else {

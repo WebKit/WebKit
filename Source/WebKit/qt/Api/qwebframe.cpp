@@ -749,8 +749,8 @@ static inline QUrl ensureAbsoluteUrl(const QUrl &url)
 void QWebFrame::setUrl(const QUrl &url)
 {
     const QUrl absolute = ensureAbsoluteUrl(url);
-    d->frame->loader()->writer()->begin(absolute);
-    d->frame->loader()->writer()->end();
+    d->frame->loader()->activeDocumentLoader()->writer()->begin(absolute);
+    d->frame->loader()->activeDocumentLoader()->writer()->end();
     load(absolute);
 }
 

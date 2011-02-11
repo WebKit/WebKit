@@ -1064,7 +1064,7 @@ void FrameLoaderClient::finishedLoading(WebCore::DocumentLoader* documentLoader)
         // This is necessary to create an empty document,
         // but it has to be skipped in the provisional phase.
         if (m_hasRepresentation)
-            documentLoader->frameLoader()->writer()->setEncoding("", false);
+            documentLoader->writer()->setEncoding("", false);
     } else {
         m_pluginView->didFinishLoading();
         m_pluginView = 0;

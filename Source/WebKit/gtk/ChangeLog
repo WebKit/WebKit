@@ -1,3 +1,19 @@
+2011-02-10  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Update calls to DocumentWriter.
+        https://bugs.webkit.org/show_bug.cgi?id=50489
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::FrameLoaderClient):
+        (WebKit::FrameLoaderClient::didRunInsecureContent):
+        (WebKit::FrameLoaderClient::dispatchDidLoadMainResource):
+        (WebKit::FrameLoaderClient::finishedLoading):
+        * WebCoreSupport/FrameLoaderClientGtk.h:
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_get_encoding):
+
 2011-02-11  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Xan Lopez.

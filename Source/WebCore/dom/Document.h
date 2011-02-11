@@ -34,6 +34,7 @@
 #include "ContainerNode.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMTimeStamp.h"
+#include "DocumentLoader.h"
 #include "DocumentOrderedMap.h"
 #include "DocumentTiming.h"
 #include "QualifiedName.h"
@@ -557,6 +558,9 @@ public:
     // to get visually ordered hebrew and arabic pages right
     void setVisuallyOrdered();
     bool visuallyOrdered() const { return m_visuallyOrdered; }
+    
+    void setDocumentLoader(DocumentLoader* documentLoader) { m_documentLoader = documentLoader; }
+    DocumentLoader* loader() const { return m_documentLoader; }
 
     void open(Document* ownerDocument = 0);
     void implicitOpen();
@@ -1149,6 +1153,7 @@ private:
     bool m_didCalculateStyleSelector;
 
     Frame* m_frame;
+    DocumentLoader* m_documentLoader;
     OwnPtr<CachedResourceLoader> m_cachedResourceLoader;
     RefPtr<DocumentParser> m_parser;
     bool m_wellFormed;

@@ -1099,7 +1099,7 @@ void FrameLoaderClientImpl::finishedLoading(DocumentLoader* dl)
         // However, we only want to do this if makeRepresentation has been called, to
         // match the behavior on the Mac.
         if (m_hasRepresentation)
-            dl->frameLoader()->writer()->setEncoding("", false);
+            dl->writer()->setEncoding("", false);
     }
 }
 
