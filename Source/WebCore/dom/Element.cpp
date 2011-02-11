@@ -1260,12 +1260,22 @@ void Element::childrenChanged(bool changedByParser, Node* beforeChange, Node* af
     if (!changedByParser)
         checkForSiblingStyleChanges(this, renderStyle(), false, beforeChange, afterChange, childCountDelta);
 }
+    
+void Element::beginParsingChildren()
+{
+    clearIsParsingChildrenFinished();
+    CSSStyleSelector* styleSelector = document()->styleSelectorIfExists();
+    if (styleSelector && attached())
+        styleSelector->pushParent(this);
+}
 
 void Element::finishParsingChildren()
 {
     ContainerNode::finishParsingChildren();
     setIsParsingChildrenFinished();
     checkForSiblingStyleChanges(this, renderStyle(), true, lastChild(), 0, 0);
+    if (CSSStyleSelector* styleSelector = document()->styleSelectorIfExists())
+        styleSelector->popParent(this);
 }
 
 void Element::dispatchAttrRemovalEvent(Attribute*)

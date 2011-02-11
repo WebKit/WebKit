@@ -669,23 +669,11 @@ static inline void collectElementIdentifierHashes(const Element* element, Vector
     }
 }
 
-void CSSStyleSelector::pushParent(Element* parent)
+void CSSStyleSelector::pushParentStackFrame(Element* parent)
 {
-    // If we are not invoked consistently for each parent, just pause maintaining the stack.
-    // There are all kinds of wacky special cases where the style recalc may temporarily branch to some random elements.
-    // FIXME: Perhaps we should fix up the stack instead? There is some danger of getting into O(n^2) situations doing that.
-    if (m_parentStack.isEmpty()) {
-        ASSERT(!m_ancestorIdentifierFilter);
-        // We must start from the root.
-        if (parent->parentElement())
-            return;
-        m_ancestorIdentifierFilter = adoptPtr(new BloomFilter<bloomFilterKeyBits>);
-    } else {
-        ASSERT(m_ancestorIdentifierFilter);
-        if (m_parentStack.last().element != parent->parentElement())
-            return;
-    }
-
+    ASSERT(m_ancestorIdentifierFilter);
+    ASSERT(m_parentStack.isEmpty() || m_parentStack.last().element == parent->parentElement());
+    ASSERT(!m_parentStack.isEmpty() || !parent->parentElement());
     m_parentStack.append(ParentStackFrame(parent));
     ParentStackFrame& parentFrame = m_parentStack.last();
     // Mix tags, class names and ids into some sort of weird bouillabaisse.
@@ -696,12 +684,10 @@ void CSSStyleSelector::pushParent(Element* parent)
         m_ancestorIdentifierFilter->add(parentFrame.identifierHashes[i]);
 }
 
-void CSSStyleSelector::popParent(Element* parent)
+void CSSStyleSelector::popParentStackFrame()
 {
-    if (m_parentStack.isEmpty() || m_parentStack.last().element != parent)
-        return;
+    ASSERT(!m_parentStack.isEmpty());
     ASSERT(m_ancestorIdentifierFilter);
-
     const ParentStackFrame& parentFrame = m_parentStack.last();
     size_t count = parentFrame.identifierHashes.size();
     for (size_t i = 0; i < count; ++i)
@@ -711,6 +697,44 @@ void CSSStyleSelector::popParent(Element* parent)
         ASSERT(m_ancestorIdentifierFilter->likelyEmpty());
         m_ancestorIdentifierFilter.clear();
     }
+}
+
+void CSSStyleSelector::pushParent(Element* parent)
+{
+    if (m_parentStack.isEmpty()) {
+        ASSERT(!m_ancestorIdentifierFilter);
+        m_ancestorIdentifierFilter = adoptPtr(new BloomFilter<bloomFilterKeyBits>);
+        // If the element is not the root itself, build the stack starting from the root.
+        if (parent->parentElement()) {
+            Vector<Element*, 30> ancestors;
+            for (Element* ancestor = parent; ancestor; ancestor = ancestor->parentElement())
+                ancestors.append(ancestor);
+            int count = ancestors.size();
+            for (int n = count - 1; n >= 0; --n)
+                pushParentStackFrame(ancestors[n]);
+            return;
+        }
+    } else if (!parent->parentElement()) {
+        // We are not always invoked consistently. For example, script execution can cause us to enter
+        // style recalc in the middle of tree building. Reset the stack if we see a new root element.
+        ASSERT(m_ancestorIdentifierFilter);
+        m_ancestorIdentifierFilter->clear();
+        m_parentStack.resize(0);
+    } else {
+        ASSERT(m_ancestorIdentifierFilter);
+        // We may get invoked for some random elements in some wacky cases during style resolve.
+        // Pause maintaining the stack in this case.
+        if (m_parentStack.last().element != parent->parentElement())
+            return;
+    }
+    pushParentStackFrame(parent);
+}
+
+void CSSStyleSelector::popParent(Element* parent)
+{
+    if (m_parentStack.isEmpty() || m_parentStack.last().element != parent)
+        return;
+    popParentStackFrame();
 }
 
 void CSSStyleSelector::addMatchedDeclaration(CSSMutableStyleDeclaration* decl)

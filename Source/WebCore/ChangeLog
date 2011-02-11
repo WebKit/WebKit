@@ -1,3 +1,29 @@
+2011-02-10  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Enable ancestor identifier filtering for tree building
+        https://bugs.webkit.org/show_bug.cgi?id=54241
+        
+        Call CSSStyleSelector::push/popParent() during tree building too, fix up the parent
+        element stack as needed.
+        
+        This roughly halves the remaining time in style matching over a typical page load.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::pushParentStackFrame):
+        (WebCore::CSSStyleSelector::popParentStackFrame):
+        (WebCore::CSSStyleSelector::pushParent):
+        (WebCore::CSSStyleSelector::popParent):
+        * css/CSSStyleSelector.h:
+        (WebCore::CSSStyleSelector::ParentStackFrame::ParentStackFrame):
+        * dom/Document.h:
+        (WebCore::Document::styleSelectorIfExists):
+        * dom/Element.cpp:
+        (WebCore::Element::beginParsingChildren):
+        (WebCore::Element::finishParsingChildren):
+        * dom/Element.h:
+
 2011-02-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

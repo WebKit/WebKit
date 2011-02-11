@@ -119,6 +119,9 @@ public:
         Node* locateCousinList(Element* parent, unsigned depth = 1) const;
         Node* findSiblingForStyleSharing(Node*, unsigned& count) const;
         bool canShareStyleWithElement(Node*) const;
+        
+        void pushParentStackFrame(Element* parent);
+        void popParentStackFrame();
 
         RenderStyle* style() const { return m_style.get(); }
 
@@ -210,6 +213,7 @@ public:
         HashSet<AtomicStringImpl*> m_idsInRules;
         
         struct ParentStackFrame {
+            ParentStackFrame() {}
             ParentStackFrame(Element* element) : element(element) {}
             Element* element;
             Vector<unsigned, 4> identifierHashes;
