@@ -1066,8 +1066,28 @@ var CODE_REVIEW_UNITTEST;
   });
 
   function handleReviewFormLoad() {
-    var form = $('#reviewform').contents().find('form')[0];
-    form.addEventListener('submit', eraseDraftComments);
+    var review_form_contents = $('#reviewform').contents();
+    if (review_form_contents[0].querySelector('#form-controls #flags')) {
+      // This is the intial load of the review form iframe.
+      var form = review_form_contents.find('form')[0];
+      form.addEventListener('submit', eraseDraftComments);
+      form.target = '';
+      return;
+    }
+
+    // Review form iframe have the publish button has been pressed.
+    var email_sent_to = review_form_contents[0].querySelector('#bugzilla-body dl');
+    // If the email_send_to DL is not in the tree that means the publish failed for some reason,
+    // e.g., you're not logged in. Show the comment form to allow you to login.
+    if (!email_sent_to) {
+      showCommentForm();
+      return;
+    }
+
+    eraseDraftComments();
+    // FIXME: Once WebKit supports seamless iframes, we can just make the review-form
+    // iframe fill the page instead of redirecting back to the bug.
+    window.location.replace($('#toolbar .bugLink a').attr('href'));
   }
   
   function eraseDraftComments() {
@@ -1583,14 +1603,17 @@ var CODE_REVIEW_UNITTEST;
     });
   }
 
+  function showCommentForm() {
+    $('#comment_form').removeClass('inactive');
+  }
+
   $('#preview_comments').live('click', function() {
     fillInReviewForm();
-    $('#comment_form').removeClass('inactive');
+    showCommentForm();
   });
 
   $('#post_comments').live('click', function() {
     fillInReviewForm();
-    eraseDraftComments();
     $('#reviewform').contents().find('form').submit();
   });
 })();
