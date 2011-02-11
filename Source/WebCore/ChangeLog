@@ -1,3 +1,17 @@
+2011-02-11  Mike Reed  <reed@google.com>
+
+        Reviewed by James Robinson.
+
+        Fix toDataURL() to use device->readPixels() if need be, rather than always dereferencing
+        the address returned by getPixels() (as the device may not be backed by a CPU bitmap)
+        https://bugs.webkit.org/show_bug.cgi?id=54224
+
+        No new tests. Existing canvas tests exercise this...
+        fast/canvas/script-tests/canvas-createPattern-fillRect-shadow.html
+
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::toDataURL):
+
 2011-02-11  Andrew Wason  <rectalogic@rectalogic.com>
 
         Reviewed by David Levin.

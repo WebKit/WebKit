@@ -346,14 +346,27 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality) con
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 
     Vector<unsigned char> encodedImage;
+    SkDevice* device = context()->platformContext()->canvas()->getDevice();
+    SkBitmap bitmap = device->accessBitmap(false);
+
+    // if we can't see the pixels directly, call readPixels() to get a copy.
+    // this could happen if the device is backed by a GPU.
+    bitmap.lockPixels(); // balanced by our destructor, or explicitly if getPixels() fails
+    if (!bitmap.getPixels()) {
+        bitmap.unlockPixels();
+        SkIRect bounds = SkIRect::MakeWH(device->width(), device->height());
+        if (!device->readPixels(bounds, &bitmap))
+            return "data:,";
+    }
+    
     if (mimeType == "image/jpeg") {
         int compressionQuality = JPEGImageEncoder::DefaultCompressionQuality;
         if (quality && *quality >= 0.0 && *quality <= 1.0)
             compressionQuality = static_cast<int>(*quality * 100 + 0.5);
-        if (!JPEGImageEncoder::encode(*context()->platformContext()->bitmap(), compressionQuality, &encodedImage))
+        if (!JPEGImageEncoder::encode(bitmap, compressionQuality, &encodedImage))
             return "data:,";
     } else {
-        if (!PNGImageEncoder::encode(*context()->platformContext()->bitmap(), &encodedImage))
+        if (!PNGImageEncoder::encode(bitmap, &encodedImage))
             return "data:,";
         ASSERT(mimeType == "image/png");
     }
