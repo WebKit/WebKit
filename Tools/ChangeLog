@@ -1,3 +1,9 @@
+2011-02-10  Sam Weinig  <sam@webkit.org>
+
+        Try and fix some crashing tests on the chromium build bot.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+
 2011-02-10  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
