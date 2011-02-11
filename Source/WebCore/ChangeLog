@@ -1,5 +1,20 @@
 2011-02-11  Adam Klein  <adamk@chromium.org>
 
+        Reviewed by Darin Adler.
+
+        Check for empty scheme before accessing URLSchemeMaps in SchemeRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=54304
+
+        This avoids potential crashes in HashMap, as WTF's StringHash doesn't
+        accept empty Strings.
+
+        * platform/SchemeRegistry.cpp:
+        (WebCore::SchemeRegistry::shouldTreatURLSchemeAsNoAccess):
+        (WebCore::SchemeRegistry::shouldTreatURLSchemeAsSecure):
+        (WebCore::SchemeRegistry::shouldLoadURLSchemeAsEmptyDocument):
+
+2011-02-11  Adam Klein  <adamk@chromium.org>
+
         Reviewed by Darin Fisher.
 
         [fileapi] Add support for filesystem: URI handling

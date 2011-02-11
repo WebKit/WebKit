@@ -139,6 +139,8 @@ void SchemeRegistry::registerURLSchemeAsNoAccess(const String& scheme)
 
 bool SchemeRegistry::shouldTreatURLSchemeAsNoAccess(const String& scheme)
 {
+    if (scheme.isEmpty())
+        return false;
     return schemesWithUniqueOrigins().contains(scheme);
 }
 
@@ -161,6 +163,8 @@ void SchemeRegistry::registerURLSchemeAsSecure(const String& scheme)
 
 bool SchemeRegistry::shouldTreatURLSchemeAsSecure(const String& scheme)
 {
+    if (scheme.isEmpty())
+        return false;
     return secureSchemes().contains(scheme);
 }
 
@@ -171,6 +175,8 @@ void SchemeRegistry::registerURLSchemeAsEmptyDocument(const String& scheme)
 
 bool SchemeRegistry::shouldLoadURLSchemeAsEmptyDocument(const String& scheme)
 {
+    if (scheme.isEmpty())
+        return false;
     return emptyDocumentSchemes().contains(scheme);
 }
 
