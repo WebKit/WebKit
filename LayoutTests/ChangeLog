@@ -1,3 +1,9 @@
+2011-02-10  Martin Robinson  <mrobinson@igalia.com>
+
+        Generate GTK+ results for many SVG tests missing them.
+
+        * platform/gtk/Skipped: Unskip tests which now have results.
+
 2011-02-09  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.
