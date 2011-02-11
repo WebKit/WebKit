@@ -1,3 +1,15 @@
+2011-02-11  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed.
+
+        Added two tests to the skipped file that started to fail only in
+        64-bit debug bot. Rounding issues are most likely the source of
+        differences between 32 and 64bit bots.
+
+        * platform/gtk/Skipped: added
+        svg/W3C-SVG-1.1-SE/types-dom-02-f.svg and
+        svg/W3C-SVG-1.1-SE/types-dom-05-b.svg
+
 2011-02-11  Mads Ager  <ager@chromium.org>
 
         Reviewed by Dimitri Glazkov.

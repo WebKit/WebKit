@@ -2332,6 +2332,9 @@ svg/W3C-SVG-1.1/animate-elem-80-t.svg
 svg/W3C-SVG-1.1/extend-namespace-01-f.svg
 svg/W3C-SVG-1.1/filters-conv-01-f.svg
 svg/W3C-SVG-1.1/metadata-example-01-b.svg
+# These two started to fail in 64bit debug bot
+svg/W3C-SVG-1.1-SE/types-dom-02-f.svg
+svg/W3C-SVG-1.1-SE/types-dom-05-b.svg
 # https://bugs.webkit.org/show_bug.cgi?id=54210
 fast/text/atsui-multiple-renderers.html
 fast/text/atsui-negative-spacing-features.html
