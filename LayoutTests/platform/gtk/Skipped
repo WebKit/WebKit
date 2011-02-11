@@ -405,56 +405,6 @@ svg/custom/pattern-excessive-malloc.svg
 svg/animations/animate-path-nested-transforms.html
 
 #   Tests generating new results
-svg/batik/text/textProperties.svg
-svg/batik/text/textStyles.svg
-svg/batik/text/verticalText.svg
-svg/batik/text/verticalTextOnPath.svg
-svg/batik/text/xmlSpace.svg
-svg/carto.net/button.svg
-svg/carto.net/colourpicker.svg
-svg/carto.net/combobox.svg
-svg/carto.net/scrollbar.svg
-svg/carto.net/selectionlist.svg
-svg/carto.net/slider.svg
-svg/carto.net/tabgroup.svg
-svg/carto.net/textbox.svg
-svg/carto.net/window.svg
-svg/css/css-box-min-width.html
-svg/custom/SVGMatrix-interface.svg
-svg/custom/SVGNumber-interface.svg
-svg/custom/SVGPoint-interface.svg
-svg/custom/SVGPoint-matrixTransform.svg
-svg/custom/SVGRect-interface.svg
-svg/custom/absolute-sized-svg-in-xhtml.xhtml
-svg/custom/alignment-baseline-modes.svg
-svg/custom/altglyph.svg
-svg/custom/animate-path-discrete.svg
-svg/custom/animate-path-morphing.svg
-svg/custom/attribute-namespace-check.svg
-svg/custom/baseval-animval-equality.svg
-svg/custom/circle-move-invalidation.svg
-svg/custom/circular-marker-reference-1.svg
-svg/custom/circular-marker-reference-2.svg
-svg/custom/circular-marker-reference-3.svg
-svg/custom/circular-marker-reference-4.svg
-svg/custom/class-baseValue.svg
-svg/custom/class-selector.svg
-svg/custom/clip-path-child-changes.svg
-svg/custom/clip-path-href-changes.svg
-svg/custom/clip-path-referencing-use2.svg
-svg/custom/clip-path-referencing-use.svg
-svg/custom/clip-path-units-changes.svg
-svg/custom/clip-path-with-transform.svg
-svg/custom/conditional-processing-outside-switch.svg
-svg/custom/container-opacity-clip-viewBox.svg
-svg/custom/control-points-for-S-and-T.svg
-svg/custom/coords-relative-units-transforms.svg
-svg/custom/create-metadata-element.svg
-svg/custom/createelement.svg
-svg/custom/css-pixels-dpi.svg
-svg/custom/dasharrayOrigin.svg
-svg/custom/deep-dynamic-updates.svg
-svg/custom/display-none.svg
 svg/custom/dominant-baseline-hanging.svg
 svg/custom/dominant-baseline-modes.svg
 svg/custom/dynamic-empty-path.svg
@@ -2266,18 +2216,30 @@ svg/W3C-SVG-1.1/filters-example-01-b.svg
 svg/W3C-SVG-1.1/filters-offset-01-b.svg
 # The boxes here are totally opaque, but should be partially transparent.
 svg/W3C-SVG-1.1/masking-mask-01-b.svg
-# The text is not clipped properly in the following tests. Masking seem broken.
+# The text is not clipped properly in the following tests. Masking seem broken entirely.
 svg/W3C-SVG-1.1/masking-path-01-b.svg
 svg/W3C-SVG-1.1/masking-path-04-b.svg
 svg/W3C-SVG-1.1/masking-intro-01-f.svg
 svg/batik/masking/maskRegions.svg
 svg/batik/text/textEffect2.svg
+svg/custom/js-late-mask-creation.svg
+svg/custom/js-late-mask-and-object-creation.svg
+svg/custom/mask-change.svg
+svg/custom/mask-child-changes.svg
+svg/custom/mask-excessive-malloc.svg
+svg/custom/mask-inside-defs.svg
+svg/custom/mask-with-all-units.svg
 # No matching language preference set
 svg/W3C-SVG-1.1/struct-cond-02-t.svg
 # The pixel output shows two broken images instead of the sunset.
 svg/W3C-SVG-1.1/struct-image-04-t.svg
 # The gradient limits seem broken in this test.
 svg/batik/paints/gradientLimit.svg
+# The middle circle on both rectangles is missing in the pixel output.
+svg/custom/circular-marker-reference-2.svg
+svg/custom/non-circular-marker-reference.svg
+# The gradient is missing on the first line of text
+svg/custom/js-late-gradient-and-object-creation.svg
 
 # The following  canvas test cases from http://philip.html5.org/tests/canvas/suite/tests/
 # fail for Mac and can likely be removed from this Skipped list when they are removed from
