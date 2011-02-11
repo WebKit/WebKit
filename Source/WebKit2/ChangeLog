@@ -2,6 +2,15 @@
 
         Reviewed by Adam Roben.
 
+        Actually initialize m_syncMessageState.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::Connection):
+
+2011-02-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
         Move the binary semaphore into SyncMessageState
         https://bugs.webkit.org/show_bug.cgi?id=54311
 

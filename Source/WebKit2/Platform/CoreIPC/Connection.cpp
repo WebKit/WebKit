@@ -118,6 +118,7 @@ Connection::Connection(Identifier identifier, bool isServer, Client* client, Run
     , m_clientRunLoop(clientRunLoop)
     , m_inDispatchMessageCount(0)
     , m_didReceiveInvalidMessage(false)
+    , m_syncMessageState(SyncMessageState::getOrCreate(clientRunLoop))
     , m_shouldWaitForSyncReplies(true)
 {
     ASSERT(m_client);
