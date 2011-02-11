@@ -1581,7 +1581,7 @@ PassRefPtr<Widget> FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, 
                 if (wmodeIndex == -1) {
                     params.append("wmode");
                     values.append("opaque");
-                } else
+                } else if (equalIgnoringCase(values[wmodeIndex], "window"))
                     values[wmodeIndex] = "opaque";
             }
 #endif

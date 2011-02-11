@@ -1,3 +1,14 @@
+2011-02-11  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] wmode gets overridden even if already windowless in QGraphicsWebView
+        Do not override wmode if it is not set to "window".
+        https://bugs.webkit.org/show_bug.cgi?id=50495
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createPlugin):
+
 2011-02-10  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.
