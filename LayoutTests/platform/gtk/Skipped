@@ -2306,26 +2306,32 @@ fast/frames/frame-crash-with-page-cache.html
 # https://bugs.webkit.org/show_bug.cgi?id=38569
 http/tests/workers/text-encoding.html
 
-# Some results are one pixel off on the 64-bit bot or
-# have other rounding errors.
+# The following tests differ between the 64-bit and 32-bit bots and sometimes
+# between debug and release builds. These failures are likely due to rounding
+# errors or differences in software versions between the bots.
 # https://bugs.webkit.org/show_bug.cgi?id=39022
 css1/box_properties/acid_test.html
 fast/css/zoom-body-scroll.html
-svg/custom/svg-fonts-with-no-element-reference.html
-svg/filters/parent-children-with-same-filter.svg
-svg/overflow/overflow-on-inner-svg-element.svg
-svg/custom/recursive-filter.svg
 fast/repaint/moving-shadow-on-container.html
 fast/repaint/moving-shadow-on-path.html
+fast/text/emphasis.html
+fast/text/international/hindi-whitespace.html
 svg/css/composite-shadow-example.html
 svg/css/composite-shadow-with-opacity.html
 svg/css/stars-with-shadow.html
 svg/custom/gradient-with-1d-boundingbox.svg
+svg/custom/recursive-filter.svg
 svg/custom/relative-sized-inner-svg.xhtml
 svg/custom/relative-sized-use-without-attributes-on-symbol.xhtml
-
-# These test shows a 1 pixel difference, but only the 32-bit debug bot.
-fast/text/emphasis.html
+svg/custom/svg-fonts-with-no-element-reference.html
+svg/filters/parent-children-with-same-filter.svg
+svg/overflow/overflow-on-inner-svg-element.svg
+svg/W3C-SVG-1.1/animate-elem-36-t.svg
+svg/W3C-SVG-1.1/animate-elem-40-t.svg
+svg/W3C-SVG-1.1/animate-elem-80-t.svg
+svg/W3C-SVG-1.1/extend-namespace-01-f.svg
+svg/W3C-SVG-1.1/filters-conv-01-f.svg
+svg/W3C-SVG-1.1/metadata-example-01-b.svg
 # https://bugs.webkit.org/show_bug.cgi?id=54210
 fast/text/atsui-multiple-renderers.html
 fast/text/atsui-negative-spacing-features.html
@@ -2403,7 +2409,7 @@ svg/filters/shadow-on-rect-with-filter.svg
 svg/css/clippath-with-shadow.svg
 # The shadow in this image is square, while it should be shaped like the layer above.
 svg/W3C-SVG-1.1/filters-example-01-b.svg
-# This should show a series of cirles, but instead shows a series of squares.
+# This should show a series of circles, but instead shows a series of squares.
 svg/W3C-SVG-1.1/filters-offset-01-b.svg
 # The boxes here are totally opaque, but should be partially transparent.
 svg/W3C-SVG-1.1/masking-mask-01-b.svg
@@ -2418,8 +2424,7 @@ svg/W3C-SVG-1.1/struct-cond-02-t.svg
 # The pixel output shows two broken images instead of the sunset.
 svg/W3C-SVG-1.1/struct-image-04-t.svg
 # The gradient limits seem broken in this test.
-svg/batik/paints/gradientLimit-expected.svg
-
+svg/batik/paints/gradientLimit.svg
 
 # The following  canvas test cases from http://philip.html5.org/tests/canvas/suite/tests/
 # fail for Mac and can likely be removed from this Skipped list when they are removed from
