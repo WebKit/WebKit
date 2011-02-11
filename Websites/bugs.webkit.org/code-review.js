@@ -823,7 +823,7 @@ var CODE_REVIEW_UNITTEST;
     var line = $('<div class="' + className + '" ' + (opt_attributes || '') + '>' +
         '<span class="from ' + lineNumberClassName + '">' + (from || '&nbsp;') +
         '</span><span class="to ' + lineNumberClassName + '">' + (to || '&nbsp;') +
-        '</span> <span class="text"></span>' +
+        '</span><span class="text"></span>' +
         '</div>');
 
     $('.text', line).replaceWith(contents);
