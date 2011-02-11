@@ -83,7 +83,7 @@ void DefaultGCActivityCallback::commonConstructor(Heap* heap, CFRunLoopRef runLo
 {
     d = adoptPtr(new DefaultGCActivityCallbackPlatformData);
 
-    memset(&d->context, '0', sizeof(CFRunLoopTimerContext));
+    memset(&d->context, 0, sizeof(CFRunLoopTimerContext));
     d->context.info = heap;
     d->runLoop = runLoop;
     d->timer.adoptCF(CFRunLoopTimerCreate(0, decade, decade, 0, 0, DefaultGCActivityCallbackPlatformData::trigger, &d->context));

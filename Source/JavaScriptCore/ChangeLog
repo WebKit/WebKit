@@ -1,5 +1,12 @@
 2011-02-10  Joseph Pecoraro  <joepeck@webkit.org>
 
+        Follow-up fix to r78291. I should pass (int) 0, not '0' to memset. 
+
+        * runtime/GCActivityCallbackCF.cpp:
+        (JSC::DefaultGCActivityCallback::commonConstructor): fix mistaken post-review change.
+
+2011-02-10  Joseph Pecoraro  <joepeck@webkit.org>
+
         Reviewed by Geoffrey Garen.
 
         Make DefaultGCActivityCallback for PLATFORM(CF) Easier to Subclass
