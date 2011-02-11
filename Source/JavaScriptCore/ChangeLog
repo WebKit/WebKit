@@ -1,3 +1,16 @@
+2011-02-11  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        CryptographicRandomNumber has its threading ifdefs backwards
+        https://bugs.webkit.org/show_bug.cgi?id=54280
+
+        Turns out we want the mutex when thread is enabled.  :)
+
+        * wtf/CryptographicallyRandomNumber.cpp:
+        (WTF::ARC4Stream::ARC4RandomNumberGenerator::randomNumber):
+        (WTF::ARC4Stream::ARC4RandomNumberGenerator::randomValues):
+
 2011-02-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
