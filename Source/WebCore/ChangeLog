@@ -1,3 +1,15 @@
+2011-02-11  Mike Reed  <reed@google.com>
+
+        Reviewed by James Robinson.
+
+        Need makeContextCurrent() called in prepareForSoftwareDraw(), in the case that skia's backend
+        is the gpu. This matches the pattern in GraphicsContext3DOpenGL.cpp
+
+        No new tests. All existing canvas layouttests exercise this code path
+
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::prepareForSoftwareDraw):
+
 2011-02-11  Adam Klein  <adamk@chromium.org>
 
         Reviewed by Darin Adler.

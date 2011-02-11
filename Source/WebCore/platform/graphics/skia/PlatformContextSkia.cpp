@@ -759,8 +759,13 @@ void PlatformContextSkia::setSharedGraphicsContext3D(SharedGraphicsContext3D* co
 
 void PlatformContextSkia::prepareForSoftwareDraw() const
 {
-    if (!m_useGPU)
+    if (!m_useGPU) {
+#if ENABLE(SKIA_GPU)
+        if (m_gpuCanvas)
+            m_gpuCanvas->context()->makeContextCurrent();
+#endif
         return;
+    }
 
     if (m_backingStoreState == Hardware) {
         // Depending on the blend mode we need to do one of a few things:
