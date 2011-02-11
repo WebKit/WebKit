@@ -57,7 +57,7 @@ AttributeToPropertyTypeMap& SVGFEFloodElement::attributeToPropertyTypeMap()
 
 void SVGFEFloodElement::fillAttributeToPropertyTypeMap()
 {
-    SVGFilterPrimitiveStandardAttributes::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap());
+    SVGFilterPrimitiveStandardAttributes::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap());
 }
 
 }

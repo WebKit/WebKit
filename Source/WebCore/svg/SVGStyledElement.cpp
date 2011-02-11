@@ -273,7 +273,7 @@ AnimatedAttributeType SVGStyledElement::animatedPropertyTypeForCSSProperty(const
     return AnimatedUnknown;
 }
 
-void SVGStyledElement::fillAttributeToPropertyTypeMap(AttributeToPropertyTypeMap& attributeToPropertyTypeMap)
+void SVGStyledElement::fillPassedAttributeToPropertyTypeMap(AttributeToPropertyTypeMap& attributeToPropertyTypeMap)
 {
     attributeToPropertyTypeMap.set(HTMLNames::classAttr, AnimatedString);
 }

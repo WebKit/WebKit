@@ -1,3 +1,126 @@
+2011-02-11  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        SVGStyledElement::fillAttributeToPropertyTypeMap triggers a clang warning (-Woverloaded-virtual)
+        https://bugs.webkit.org/show_bug.cgi?id=54259
+
+        Renamed fillAttributeToPropertyTypeMap with passed map to fillPassedAttributeToPropertyTypeMap to
+        avoid overloading a virtual function.
+
+        No change of functionality. Just fixing a build warning, so no new tests.
+
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGAltGlyphElement.cpp:
+        (WebCore::SVGAltGlyphElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFEFloodElement.cpp:
+        (WebCore::SVGFEFloodElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFEMergeElement.cpp:
+        (WebCore::SVGFEMergeElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFEMorphologyElement.cpp:
+        (WebCore::SVGFEMorphologyElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFETileElement.cpp:
+        (WebCore::SVGFETileElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::fillPassedAttributeToPropertyTypeMap):
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        * svg/SVGFontElement.cpp:
+        (WebCore::SVGFontElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGGlyphElement.cpp:
+        (WebCore::SVGGlyphElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::fillPassedAttributeToPropertyTypeMap):
+        * svg/SVGGradientElement.h:
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGMissingGlyphElement.cpp:
+        (WebCore::SVGMissingGlyphElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::fillPassedAttributeToPropertyTypeMap):
+        * svg/SVGStyledElement.h:
+        * svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::fillPassedAttributeToPropertyTypeMap):
+        * svg/SVGStyledTransformableElement.h:
+        * svg/SVGSwitchElement.cpp:
+        (WebCore::SVGSwitchElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGSymbolElement.cpp:
+        (WebCore::SVGSymbolElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGTSpanElement.cpp:
+        (WebCore::SVGTSpanElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::fillPassedAttributeToPropertyTypeMap):
+        * svg/SVGTextContentElement.h:
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::fillPassedAttributeToPropertyTypeMap):
+        * svg/SVGTextPositioningElement.h:
+        * svg/SVGTitleElement.cpp:
+        (WebCore::SVGTitleElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGViewElement.cpp:
+        (WebCore::SVGViewElement::fillAttributeToPropertyTypeMap):
+
 2011-02-11  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Pavel Feldman.

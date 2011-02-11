@@ -97,7 +97,7 @@ void SVGFEOffsetElement::fillAttributeToPropertyTypeMap()
 {
     AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
 
-    SVGFilterPrimitiveStandardAttributes::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    SVGFilterPrimitiveStandardAttributes::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
     attributeToPropertyTypeMap.set(SVGNames::inAttr, AnimatedString);
     attributeToPropertyTypeMap.set(SVGNames::dxAttr, AnimatedNumber);
     attributeToPropertyTypeMap.set(SVGNames::dyAttr, AnimatedNumber);

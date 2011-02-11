@@ -64,7 +64,7 @@ AttributeToPropertyTypeMap& SVGTitleElement::attributeToPropertyTypeMap()
 
 void SVGTitleElement::fillAttributeToPropertyTypeMap()
 {        
-    SVGStyledElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap());
+    SVGStyledElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap());
 }
 
 }

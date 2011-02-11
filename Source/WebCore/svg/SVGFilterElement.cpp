@@ -206,7 +206,7 @@ void SVGFilterElement::fillAttributeToPropertyTypeMap()
 {
     AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
 
-    SVGStyledElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    SVGStyledElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
     attributeToPropertyTypeMap.set(SVGNames::filterUnitsAttr, AnimatedEnumeration);
     attributeToPropertyTypeMap.set(SVGNames::primitiveUnitsAttr, AnimatedEnumeration);
     attributeToPropertyTypeMap.set(SVGNames::xAttr, AnimatedLength);

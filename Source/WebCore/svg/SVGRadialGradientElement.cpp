@@ -134,7 +134,7 @@ void SVGRadialGradientElement::fillAttributeToPropertyTypeMap()
 {
     AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
 
-    SVGGradientElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    SVGGradientElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
     attributeToPropertyTypeMap.set(SVGNames::cxAttr, AnimatedLength);
     attributeToPropertyTypeMap.set(SVGNames::cyAttr, AnimatedLength);
     attributeToPropertyTypeMap.set(SVGNames::rAttr, AnimatedLength);

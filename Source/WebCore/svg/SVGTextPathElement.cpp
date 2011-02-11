@@ -120,7 +120,7 @@ void SVGTextPathElement::fillAttributeToPropertyTypeMap()
 {
     AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
 
-    SVGTextContentElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    SVGTextContentElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
     attributeToPropertyTypeMap.set(SVGNames::startOffsetAttr, AnimatedLength);
     attributeToPropertyTypeMap.set(SVGNames::methodAttr, AnimatedEnumeration);
     attributeToPropertyTypeMap.set(SVGNames::spacingAttr, AnimatedEnumeration);

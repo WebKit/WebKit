@@ -115,7 +115,7 @@ void SVGAElement::fillAttributeToPropertyTypeMap()
 {
     AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
 
-    SVGStyledTransformableElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    SVGStyledTransformableElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
     attributeToPropertyTypeMap.set(SVGNames::targetAttr, AnimatedString);
     attributeToPropertyTypeMap.set(XLinkNames::hrefAttr, AnimatedString);
 }

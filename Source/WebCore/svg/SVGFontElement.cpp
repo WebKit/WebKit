@@ -187,7 +187,7 @@ AttributeToPropertyTypeMap& SVGFontElement::attributeToPropertyTypeMap()
 
 void SVGFontElement::fillAttributeToPropertyTypeMap()
 {
-    SVGStyledElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap());
+    SVGStyledElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap());
 }
 
 }

@@ -282,7 +282,7 @@ void SVGPathElement::fillAttributeToPropertyTypeMap()
 {
     AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
 
-    SVGStyledTransformableElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    SVGStyledTransformableElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
     attributeToPropertyTypeMap.set(SVGNames::dAttr, AnimatedPath);
     attributeToPropertyTypeMap.set(SVGNames::pathLengthAttr, AnimatedNumber);
 }

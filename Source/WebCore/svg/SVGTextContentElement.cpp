@@ -221,9 +221,9 @@ void SVGTextContentElement::svgAttributeChanged(const QualifiedName& attrName)
     // FIXME: also handle attribute changes for lengthAdjust and textLength
 }
 
-void SVGTextContentElement::fillAttributeToPropertyTypeMap(AttributeToPropertyTypeMap& attributeToPropertyTypeMap)
+void SVGTextContentElement::fillPassedAttributeToPropertyTypeMap(AttributeToPropertyTypeMap& attributeToPropertyTypeMap)
 {
-    SVGStyledElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    SVGStyledElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
 
     attributeToPropertyTypeMap.set(SVGNames::textLengthAttr, AnimatedLength);
     attributeToPropertyTypeMap.set(SVGNames::lengthAdjustAttr, AnimatedEnumeration);

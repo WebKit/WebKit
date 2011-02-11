@@ -42,7 +42,7 @@ AttributeToPropertyTypeMap& SVGMissingGlyphElement::attributeToPropertyTypeMap()
 
 void SVGMissingGlyphElement::fillAttributeToPropertyTypeMap()
 {
-    SVGStyledElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap());
+    SVGStyledElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap());
 }
 
 }

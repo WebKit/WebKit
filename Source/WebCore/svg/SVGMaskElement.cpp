@@ -158,7 +158,7 @@ void SVGMaskElement::fillAttributeToPropertyTypeMap()
 {
     AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
 
-    SVGStyledLocatableElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    SVGStyledLocatableElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
     attributeToPropertyTypeMap.set(SVGNames::xAttr, AnimatedLength);
     attributeToPropertyTypeMap.set(SVGNames::yAttr, AnimatedLength);
     attributeToPropertyTypeMap.set(SVGNames::widthAttr, AnimatedLength);

@@ -81,7 +81,7 @@ AttributeToPropertyTypeMap& SVGTSpanElement::attributeToPropertyTypeMap()
 
 void SVGTSpanElement::fillAttributeToPropertyTypeMap()
 {        
-    SVGTextPositioningElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap());
+    SVGTextPositioningElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap());
 }
 
 }

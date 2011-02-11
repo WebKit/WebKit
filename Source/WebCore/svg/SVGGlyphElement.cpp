@@ -142,7 +142,7 @@ void SVGGlyphElement::fillAttributeToPropertyTypeMap()
 {
     AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
 
-    SVGStyledElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    SVGStyledElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
     attributeToPropertyTypeMap.set(SVGNames::dAttr, AnimatedPath);
 }
 

@@ -204,7 +204,7 @@ void SVGPatternElement::fillAttributeToPropertyTypeMap()
 {
     AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
 
-    SVGStyledElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    SVGStyledElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
     attributeToPropertyTypeMap.set(SVGNames::xAttr, AnimatedLength);
     attributeToPropertyTypeMap.set(SVGNames::yAttr, AnimatedLength);
     attributeToPropertyTypeMap.set(SVGNames::widthAttr, AnimatedLength);

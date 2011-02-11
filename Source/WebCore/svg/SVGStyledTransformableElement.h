@@ -59,7 +59,7 @@ protected:
 
     virtual void parseMappedAttribute(Attribute*);
     virtual void synchronizeProperty(const QualifiedName&);
-    void fillAttributeToPropertyTypeMap(AttributeToPropertyTypeMap&);
+    void fillPassedAttributeToPropertyTypeMap(AttributeToPropertyTypeMap&);
 
     // Animated property declarations
     DECLARE_ANIMATED_TRANSFORM_LIST(Transform, transform)

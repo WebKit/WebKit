@@ -94,7 +94,7 @@ void SVGTRefElement::fillAttributeToPropertyTypeMap()
 {
     AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
 
-    SVGTextPositioningElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    SVGTextPositioningElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
     attributeToPropertyTypeMap.set(XLinkNames::hrefAttr, AnimatedString);
 }
 

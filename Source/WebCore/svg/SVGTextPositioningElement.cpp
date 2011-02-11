@@ -161,9 +161,9 @@ void SVGTextPositioningElement::synchronizeProperty(const QualifiedName& attrNam
         synchronizeRotate();
 }
 
-void SVGTextPositioningElement::fillAttributeToPropertyTypeMap(AttributeToPropertyTypeMap& attributeToPropertyTypeMap)
+void SVGTextPositioningElement::fillPassedAttributeToPropertyTypeMap(AttributeToPropertyTypeMap& attributeToPropertyTypeMap)
 {
-    SVGTextContentElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    SVGTextContentElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
 
     attributeToPropertyTypeMap.set(SVGNames::xAttr, AnimatedNumberList);
     attributeToPropertyTypeMap.set(SVGNames::yAttr, AnimatedNumberList);

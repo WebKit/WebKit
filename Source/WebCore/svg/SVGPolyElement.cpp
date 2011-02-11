@@ -122,7 +122,7 @@ void SVGPolyElement::fillAttributeToPropertyTypeMap()
 {
     AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
 
-    SVGStyledTransformableElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    SVGStyledTransformableElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
     attributeToPropertyTypeMap.set(SVGNames::pointsAttr, AnimatedPoints);
 }
 

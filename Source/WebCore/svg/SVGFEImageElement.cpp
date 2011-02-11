@@ -132,7 +132,7 @@ void SVGFEImageElement::fillAttributeToPropertyTypeMap()
 {
     AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
 
-    SVGFilterPrimitiveStandardAttributes::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    SVGFilterPrimitiveStandardAttributes::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
     attributeToPropertyTypeMap.set(SVGNames::preserveAspectRatioAttr, AnimatedPreserveAspectRatio);
     attributeToPropertyTypeMap.set(XLinkNames::hrefAttr, AnimatedString);
 }

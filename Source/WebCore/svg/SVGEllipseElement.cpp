@@ -152,7 +152,7 @@ void SVGEllipseElement::fillAttributeToPropertyTypeMap()
 {
     AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
 
-    SVGStyledTransformableElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);    
+    SVGStyledTransformableElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);    
     attributeToPropertyTypeMap.set(SVGNames::cxAttr, AnimatedLength);
     attributeToPropertyTypeMap.set(SVGNames::cyAttr, AnimatedLength);
     attributeToPropertyTypeMap.set(SVGNames::rxAttr, AnimatedLength);

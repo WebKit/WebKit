@@ -139,7 +139,7 @@ void SVGFESpecularLightingElement::fillAttributeToPropertyTypeMap()
 {
     AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
 
-    SVGFilterPrimitiveStandardAttributes::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    SVGFilterPrimitiveStandardAttributes::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
     attributeToPropertyTypeMap.set(SVGNames::inAttr, AnimatedString);
     attributeToPropertyTypeMap.set(SVGNames::specularConstantAttr, AnimatedNumber);
     attributeToPropertyTypeMap.set(SVGNames::specularExponentAttr, AnimatedNumber);

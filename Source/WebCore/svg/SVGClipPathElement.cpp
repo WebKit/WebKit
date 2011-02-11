@@ -112,7 +112,7 @@ void SVGClipPathElement::fillAttributeToPropertyTypeMap()
 {
     AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
 
-    SVGStyledTransformableElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    SVGStyledTransformableElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
     attributeToPropertyTypeMap.set(SVGNames::clipPathUnitsAttr, AnimatedEnumeration);
 }
 

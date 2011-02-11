@@ -88,7 +88,7 @@ AttributeToPropertyTypeMap& SVGSwitchElement::attributeToPropertyTypeMap()
 
 void SVGSwitchElement::fillAttributeToPropertyTypeMap()
 {
-    SVGStyledTransformableElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap());
+    SVGStyledTransformableElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap());
 }
 
 }

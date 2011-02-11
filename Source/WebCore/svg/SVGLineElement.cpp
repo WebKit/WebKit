@@ -148,7 +148,7 @@ void SVGLineElement::fillAttributeToPropertyTypeMap()
 {
     AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
 
-    SVGStyledTransformableElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    SVGStyledTransformableElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
     attributeToPropertyTypeMap.set(SVGNames::x1Attr, AnimatedLength);
     attributeToPropertyTypeMap.set(SVGNames::y1Attr, AnimatedLength);
     attributeToPropertyTypeMap.set(SVGNames::x2Attr, AnimatedLength);

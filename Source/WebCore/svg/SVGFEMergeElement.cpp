@@ -67,7 +67,7 @@ AttributeToPropertyTypeMap& SVGFEMergeElement::attributeToPropertyTypeMap()
 
 void SVGFEMergeElement::fillAttributeToPropertyTypeMap()
 {
-    SVGFilterPrimitiveStandardAttributes::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap());
+    SVGFilterPrimitiveStandardAttributes::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap());
 }
 
 }

@@ -153,7 +153,7 @@ void SVGTextElement::fillAttributeToPropertyTypeMap()
 {
     AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
 
-    SVGTextPositioningElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    SVGTextPositioningElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
     attributeToPropertyTypeMap.set(SVGNames::transformAttr, AnimatedTransformList);
 }
 

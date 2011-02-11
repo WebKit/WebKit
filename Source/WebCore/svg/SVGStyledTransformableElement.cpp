@@ -114,9 +114,9 @@ RenderObject* SVGStyledTransformableElement::createRenderer(RenderArena* arena, 
     return new (arena) RenderSVGPath(this);
 }
 
-void SVGStyledTransformableElement::fillAttributeToPropertyTypeMap(AttributeToPropertyTypeMap& attributeToPropertyTypeMap)
+void SVGStyledTransformableElement::fillPassedAttributeToPropertyTypeMap(AttributeToPropertyTypeMap& attributeToPropertyTypeMap)
 {
-    SVGStyledElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    SVGStyledElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
     
     attributeToPropertyTypeMap.set(SVGNames::transformAttr, AnimatedTransformList);
 }

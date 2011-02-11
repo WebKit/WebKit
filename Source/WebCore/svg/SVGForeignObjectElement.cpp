@@ -147,7 +147,7 @@ void SVGForeignObjectElement::fillAttributeToPropertyTypeMap()
 {    
     AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
 
-    SVGStyledTransformableElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    SVGStyledTransformableElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
     attributeToPropertyTypeMap.set(SVGNames::xAttr, AnimatedLength);
     attributeToPropertyTypeMap.set(SVGNames::yAttr, AnimatedLength);
     attributeToPropertyTypeMap.set(SVGNames::widthAttr, AnimatedLength);

@@ -138,7 +138,7 @@ void SVGFETurbulenceElement::fillAttributeToPropertyTypeMap()
 {
     AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
 
-    SVGFilterPrimitiveStandardAttributes::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    SVGFilterPrimitiveStandardAttributes::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
     attributeToPropertyTypeMap.set(SVGNames::baseFrequencyAttr, AnimatedNumberOptionalNumber);
     attributeToPropertyTypeMap.set(SVGNames::numOctavesAttr, AnimatedInteger);
     attributeToPropertyTypeMap.set(SVGNames::seedAttr, AnimatedNumber);

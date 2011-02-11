@@ -193,7 +193,7 @@ void SVGMarkerElement::fillAttributeToPropertyTypeMap()
 {
     AttributeToPropertyTypeMap& attributeToPropertyTypeMap = this->attributeToPropertyTypeMap();
 
-    SVGStyledElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    SVGStyledElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
     attributeToPropertyTypeMap.set(SVGNames::refXAttr, AnimatedLength);
     attributeToPropertyTypeMap.set(SVGNames::refYAttr, AnimatedLength);
     attributeToPropertyTypeMap.set(SVGNames::markerWidthAttr, AnimatedLength);

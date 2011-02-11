@@ -152,9 +152,9 @@ void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(bool primitiveB
     filterEffect->setEffectBoundaries(effectBBox);
 }
 
-void SVGFilterPrimitiveStandardAttributes::fillAttributeToPropertyTypeMap(AttributeToPropertyTypeMap& attributeToPropertyTypeMap)
+void SVGFilterPrimitiveStandardAttributes::fillPassedAttributeToPropertyTypeMap(AttributeToPropertyTypeMap& attributeToPropertyTypeMap)
 {
-    SVGStyledElement::fillAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
+    SVGStyledElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
     
     attributeToPropertyTypeMap.set(SVGNames::xAttr, AnimatedLength);
     attributeToPropertyTypeMap.set(SVGNames::yAttr, AnimatedLength);

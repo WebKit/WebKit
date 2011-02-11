@@ -51,7 +51,7 @@ protected:
     virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual void synchronizeProperty(const QualifiedName&);
-    void fillAttributeToPropertyTypeMap(AttributeToPropertyTypeMap&);
+    void fillPassedAttributeToPropertyTypeMap(AttributeToPropertyTypeMap&);
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
     inline void invalidate()
