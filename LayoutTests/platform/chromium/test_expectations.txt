@@ -266,7 +266,7 @@ WONTFIX SKIP : platform/qt/plugins/qt-qwidget-plugin.html = FAIL
 WONTFIX SKIP : platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment.html = PASS
 
 WONTFIX MAC WIN : platform/chromium-linux = FAIL
-WONTFIX LINUX MAC : platform/win = FAIL PASS
+WONTFIX SKIP LINUX MAC : platform/win = FAIL CRASH PASS
 
 // This is a Safari specific test to make WebKit behave like AppKit on the Mac.
 // We do not support it because PLATFORM(MAC) is not defined for the mac version.
