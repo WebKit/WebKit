@@ -71,8 +71,7 @@ void* MarkedSpace::allocate(size_t)
         if (void* result = block->allocate(m_heap.nextCell))
             return result;
 
-        m_heap.nextCell = 0;
-        m_waterMark += BLOCK_SIZE;
+        m_waterMark += block->capacity();
     } while (++m_heap.nextBlock != m_heap.blocks.size());
 
     if (m_waterMark < m_highWaterMark)
@@ -97,14 +96,6 @@ void MarkedSpace::clearMarks()
         m_heap.collectorBlock(i)->clearMarks();
 }
 
-size_t MarkedSpace::markCount() const
-{
-    size_t result = 0;
-    for (size_t i = 0; i < m_heap.blocks.size(); ++i)
-        result += m_heap.collectorBlock(i)->markCount();
-    return result;
-}
-
 void MarkedSpace::sweep()
 {
     for (size_t i = 0; i < m_heap.blocks.size(); ++i)
@@ -113,17 +104,26 @@ void MarkedSpace::sweep()
 
 size_t MarkedSpace::objectCount() const
 {
-    return markCount();
+    size_t result = 0;
+    for (size_t i = 0; i < m_heap.blocks.size(); ++i)
+        result += m_heap.collectorBlock(i)->markCount();
+    return result;
 }
 
 size_t MarkedSpace::size() const
 {
-    return objectCount() * HeapConstants::cellSize;
+    size_t result = 0;
+    for (size_t i = 0; i < m_heap.blocks.size(); ++i)
+        result += m_heap.collectorBlock(i)->size();
+    return result;
 }
 
 size_t MarkedSpace::capacity() const
 {
-    return m_heap.blocks.size() * BLOCK_SIZE;
+    size_t result = 0;
+    for (size_t i = 0; i < m_heap.blocks.size(); ++i)
+        result += m_heap.collectorBlock(i)->capacity();
+    return result;
 }
 
 void MarkedSpace::reset()

@@ -106,7 +106,7 @@ void* Heap::allocate(size_t s)
     ASSERT(globalData()->identifierTable == wtfThreadData().currentIdentifierTable());
     ASSERT(JSLock::lockCount() > 0);
     ASSERT(JSLock::currentThreadIsHoldingLock());
-    ASSERT_UNUSED(s, s <= HeapConstants::cellSize);
+    ASSERT_UNUSED(s, s <= MarkedBlock::CELL_SIZE);
     ASSERT(m_operationInProgress == NoOperation);
 
 #if COLLECT_ON_EVERY_ALLOCATION
@@ -387,8 +387,7 @@ void Heap::reset(SweepToggle sweepToggle)
         m_markedSpace.shrink();
     }
 
-    size_t usedCellCount = m_markedSpace.markCount();
-    size_t proportionalBytes = static_cast<size_t>(usedCellCount * 1.5 * HeapConstants::cellSize);
+    size_t proportionalBytes = static_cast<size_t>(1.5 * m_markedSpace.size());
     m_markedSpace.setHighWaterMark(max(proportionalBytes, minBytesPerCycle));
 
     JAVASCRIPTCORE_GC_END();

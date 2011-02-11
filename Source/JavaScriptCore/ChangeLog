@@ -2,6 +2,61 @@
 
         Reviewed by Sam Weinig.
 
+        A little more encapsulation for MarkedBlock: Made all constants private
+        so clients don't know whether allocations are fixed-sized or not
+        https://bugs.webkit.org/show_bug.cgi?id=54270
+        
+        SunSpider reports no change.
+
+        * runtime/CollectorHeapIterator.h:
+        (JSC::CollectorHeapIterator::advance): Updated for removal of HeapConstants.
+
+        * runtime/Error.cpp: Switched to using ASSERT_CLASS_FITS_IN_CELL, like
+        all other classes.
+
+        * runtime/Heap.cpp:
+        (JSC::Heap::allocate): Updated for removal of HeapConstants.
+        (JSC::Heap::reset): Updated to use size(), instead of calculating size
+        on our own.
+
+        * runtime/Heap.h: Moved the ASSERT here to MarkedBlock, since it enforces
+        on special knowledge of fixed-sizery, which only MarkedBlock is supposed
+        to know about.
+
+        * runtime/JSCell.h:
+        (JSC::JSCell::MarkedBlock::allocate): Updated for removal of HeapConstants.
+        Also changed to reset nextCell to 0 at the end of a block, since that
+        seems more consistent.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::storeVPtrs): Changed to use a fixed array of char.
+        This hard-coded size is a little wonky, but the compiler will tell us
+        if it's ever wrong, so I think it's OK.
+
+        * runtime/MarkedBlock.cpp:
+        (JSC::MarkedBlock::destroy):
+        (JSC::MarkedBlock::MarkedBlock):
+        (JSC::MarkedBlock::sweep): Updated for removal of HeapConstants.
+
+        * runtime/MarkedBlock.h:
+        (JSC::MarkedBlock::isEmpty):
+        (JSC::MarkedBlock::clearMarks):
+        (JSC::MarkedBlock::size):
+        (JSC::MarkedBlock::capacity): Made constants private to this class.
+        Removed HeapConstants. Added size() and capacity() functions.
+
+        * runtime/MarkedSpace.cpp:
+        (JSC::MarkedSpace::allocate):
+        (JSC::MarkedSpace::objectCount):
+        (JSC::MarkedSpace::size):
+        (JSC::MarkedSpace::capacity):
+        * runtime/MarkedSpace.h: Use MarkedBlock helper functions instead of
+        direct knowledge of MarkedBlock internals.
+
+2011-02-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
         A little more encapsulation for MarkedBlock: Made mark bits private
         https://bugs.webkit.org/show_bug.cgi?id=54264
         

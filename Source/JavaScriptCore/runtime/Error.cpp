@@ -201,7 +201,7 @@ private:
     UString m_message;
 };
 
-COMPILE_ASSERT(sizeof(StrictModeTypeErrorFunction) <= sizeof(CollectorCell), sizeof_StrictModeTypeErrorFunction_must_be_less_than_CollectorCell);
+ASSERT_CLASS_FITS_IN_CELL(StrictModeTypeErrorFunction);
 
 JSValue createTypeErrorFunction(ExecState* exec, const UString& message)
 {

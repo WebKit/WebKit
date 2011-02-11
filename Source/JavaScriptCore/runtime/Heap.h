@@ -27,8 +27,6 @@
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 
-#define ASSERT_CLASS_FITS_IN_CELL(class) COMPILE_ASSERT(sizeof(class) <= CELL_SIZE, class_fits_in_cell)
-
 namespace JSC {
 
     class GCActivityCallback;

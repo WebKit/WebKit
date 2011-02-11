@@ -77,7 +77,6 @@ namespace JSC {
         void* allocate(size_t);
 
         void clearMarks();
-        size_t markCount() const;
         void markRoots();
         void reset();
         void sweep();

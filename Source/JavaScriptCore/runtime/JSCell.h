@@ -405,15 +405,16 @@ namespace JSC {
     inline void* MarkedBlock::allocate(size_t& nextCell)
     {
         do {
-            ASSERT(nextCell < HeapConstants::cellsPerBlock);
+            ASSERT(nextCell < CELLS_PER_BLOCK);
             if (!marked.testAndSet(nextCell)) { // Always false for the last cell in the block
                 JSCell* cell = reinterpret_cast<JSCell*>(&cells[nextCell++]);
                 cell->~JSCell();
                 return cell;
             }
             nextCell = marked.nextPossiblyUnset(nextCell);
-        } while (nextCell != HeapConstants::cellsPerBlock);
+        } while (nextCell != CELLS_PER_BLOCK);
         
+        nextCell = 0;
         return 0;
     }
 

@@ -85,7 +85,7 @@ namespace JSC {
     inline void CollectorHeapIterator::advance()
     {
         ++m_cell;
-        if (m_cell == HeapConstants::cellsPerBlock - 1) {
+        if (m_cell == MarkedBlock::CELLS_PER_BLOCK - 1) {
             m_cell = 0;
             ++m_block;
         }

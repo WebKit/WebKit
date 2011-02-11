@@ -87,25 +87,26 @@ void* JSGlobalData::jsFunctionVPtr;
 
 void JSGlobalData::storeVPtrs()
 {
-    CollectorCell cell;
-    void* storage = &cell;
+    // Enough storage to fit a JSArray, JSByteArray, JSString, or JSFunction.
+    // COMPILE_ASSERTS below check that this is true.
+    char storage[64];
 
-    COMPILE_ASSERT(sizeof(JSArray) <= sizeof(CollectorCell), sizeof_JSArray_must_be_less_than_CollectorCell);
+    COMPILE_ASSERT(sizeof(JSArray) <= sizeof(storage), sizeof_JSArray_must_be_less_than_storage);
     JSCell* jsArray = new (storage) JSArray(JSArray::VPtrStealingHack);
     JSGlobalData::jsArrayVPtr = jsArray->vptr();
     jsArray->~JSCell();
 
-    COMPILE_ASSERT(sizeof(JSByteArray) <= sizeof(CollectorCell), sizeof_JSByteArray_must_be_less_than_CollectorCell);
+    COMPILE_ASSERT(sizeof(JSByteArray) <= sizeof(storage), sizeof_JSByteArray_must_be_less_than_storage);
     JSCell* jsByteArray = new (storage) JSByteArray(JSByteArray::VPtrStealingHack);
     JSGlobalData::jsByteArrayVPtr = jsByteArray->vptr();
     jsByteArray->~JSCell();
 
-    COMPILE_ASSERT(sizeof(JSString) <= sizeof(CollectorCell), sizeof_JSString_must_be_less_than_CollectorCell);
+    COMPILE_ASSERT(sizeof(JSString) <= sizeof(storage), sizeof_JSString_must_be_less_than_storage);
     JSCell* jsString = new (storage) JSString(JSString::VPtrStealingHack);
     JSGlobalData::jsStringVPtr = jsString->vptr();
     jsString->~JSCell();
 
-    COMPILE_ASSERT(sizeof(JSFunction) <= sizeof(CollectorCell), sizeof_JSFunction_must_be_less_than_CollectorCell);
+    COMPILE_ASSERT(sizeof(JSFunction) <= sizeof(storage), sizeof_JSFunction_must_be_less_than_storage);
     JSCell* jsFunction = new (storage) JSFunction(JSFunction::createStructure(jsNull()));
     JSGlobalData::jsFunctionVPtr = jsFunction->vptr();
     jsFunction->~JSCell();

@@ -26,36 +26,41 @@
 #include <wtf/FixedArray.h>
 #include <wtf/PageAllocationAligned.h>
 
+#define ASSERT_CLASS_FITS_IN_CELL(class) COMPILE_ASSERT(sizeof(class) <= MarkedBlock::CELL_SIZE, class_fits_in_cell)
+
 namespace JSC {
 
     class Heap;
     class JSGlobalData;
 
+    class MarkedBlock {
 #if OS(WINCE) || OS(SYMBIAN) || PLATFORM(BREWMP)
-    const size_t BLOCK_SIZE = 64 * 1024; // 64k
+        static const size_t BLOCK_SIZE = 64 * 1024; // 64k
 #else
-    const size_t BLOCK_SIZE = 256 * 1024; // 256k
+        static const size_t BLOCK_SIZE = 256 * 1024; // 256k
 #endif
 
-    const size_t BLOCK_OFFSET_MASK = BLOCK_SIZE - 1;
-    const size_t BLOCK_MASK = ~BLOCK_OFFSET_MASK;
-    const size_t MINIMUM_CELL_SIZE = 64;
-    const size_t CELL_ARRAY_LENGTH = (MINIMUM_CELL_SIZE / sizeof(double)) + (MINIMUM_CELL_SIZE % sizeof(double) != 0 ? sizeof(double) : 0);
-    const size_t CELL_SIZE = CELL_ARRAY_LENGTH * sizeof(double);
-    const size_t SMALL_CELL_SIZE = CELL_SIZE / 2;
-    const size_t CELL_MASK = CELL_SIZE - 1;
-    const size_t CELL_ALIGN_MASK = ~CELL_MASK;
-    const size_t BITS_PER_BLOCK = BLOCK_SIZE / CELL_SIZE;
-    const size_t CELLS_PER_BLOCK = (BLOCK_SIZE - sizeof(Heap*) - sizeof(WTF::Bitmap<BITS_PER_BLOCK>)) / CELL_SIZE; // Division rounds down intentionally.
-    
-    struct CollectorCell {
-        FixedArray<double, CELL_ARRAY_LENGTH> memory;
-    };
+        static const size_t BLOCK_OFFSET_MASK = BLOCK_SIZE - 1;
+        static const size_t BLOCK_MASK = ~BLOCK_OFFSET_MASK;
+        static const size_t MINIMUM_CELL_SIZE = 64;
+        static const size_t CELL_ARRAY_LENGTH = (MINIMUM_CELL_SIZE / sizeof(double)) + (MINIMUM_CELL_SIZE % sizeof(double) != 0 ? sizeof(double) : 0);
+    public:
+        // This is still public for now, for use in assertions.
+        static const size_t CELL_SIZE = CELL_ARRAY_LENGTH * sizeof(double);
+    private:
+        static const size_t SMALL_CELL_SIZE = CELL_SIZE / 2;
+        static const size_t CELL_MASK = CELL_SIZE - 1;
+        static const size_t CELL_ALIGN_MASK = ~CELL_MASK;
+        static const size_t BITS_PER_BLOCK = BLOCK_SIZE / CELL_SIZE;
+        static const size_t CELLS_PER_BLOCK = (BLOCK_SIZE - sizeof(Heap*) - sizeof(WTF::Bitmap<BITS_PER_BLOCK>)) / CELL_SIZE; // Division rounds down intentionally.
+        
+        struct CollectorCell {
+            FixedArray<double, CELL_ARRAY_LENGTH> memory;
+        };
 
-    // Cell size needs to be a power of two for CELL_MASK to be valid.
-    COMPILE_ASSERT(!(sizeof(CollectorCell) % 2), Collector_cell_size_is_power_of_two);
+        // Cell size needs to be a power of two for CELL_MASK to be valid.
+        COMPILE_ASSERT(!(sizeof(CollectorCell) % 2), Collector_cell_size_is_power_of_two);
 
-    class MarkedBlock {
         friend class CollectorHeapIterator;
 
     public:
@@ -74,6 +79,8 @@ namespace JSC {
 
         void clearMarks();
         size_t markCount();
+        size_t size();
+        size_t capacity();
 
         size_t cellNumber(const void*);
         bool isMarked(const void*);
@@ -88,13 +95,6 @@ namespace JSC {
         WTF::Bitmap<BITS_PER_BLOCK> marked;
         PageAllocationAligned m_allocation;
         Heap* m_heap;
-    };
-
-    struct HeapConstants {
-        static const size_t cellSize = CELL_SIZE;
-        static const size_t cellsPerBlock = CELLS_PER_BLOCK;
-        typedef CollectorCell Cell;
-        typedef MarkedBlock Block;
     };
 
     inline bool MarkedBlock::isCellAligned(const void* p)
@@ -114,9 +114,9 @@ namespace JSC {
 
     inline bool MarkedBlock::isEmpty()
     {
-        marked.clear(HeapConstants::cellsPerBlock - 1); // Clear the always-set last bit to avoid confusing isEmpty().
+        marked.clear(CELLS_PER_BLOCK - 1); // Clear the always-set last bit to avoid confusing isEmpty().
         bool result = marked.isEmpty();
-        marked.set(HeapConstants::cellsPerBlock - 1);
+        marked.set(CELLS_PER_BLOCK - 1);
         return result;
     }
 
@@ -124,12 +124,22 @@ namespace JSC {
     {
         // allocate() assumes that the last mark bit is always set.
         marked.clearAll();
-        marked.set(HeapConstants::cellsPerBlock - 1);
+        marked.set(CELLS_PER_BLOCK - 1);
     }
     
     inline size_t MarkedBlock::markCount()
     {
         return marked.count() - 1; // The last mark bit is always set.
+    }
+
+    inline size_t MarkedBlock::size()
+    {
+        return markCount() * CELL_SIZE;
+    }
+
+    inline size_t MarkedBlock::capacity()
+    {
+        return BLOCK_SIZE;
     }
 
     inline size_t MarkedBlock::cellNumber(const void* cell)
