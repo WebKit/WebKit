@@ -51,6 +51,7 @@ namespace WebCore {
         {
             return adoptRef(new InspectorDOMStorageResource(domStorage, isLocalStorage, frame));
         }
+
         static const InspectorDOMStorageResource* cast(const EventListener* listener)
         {
             return listener->type() == InspectorDOMStorageResourceType ? static_cast<const InspectorDOMStorageResource*>(listener) : 0;

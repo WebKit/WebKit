@@ -172,8 +172,8 @@ public:
     void getCookies(RefPtr<InspectorArray>* cookies, WTF::String* cookiesString);
     void deleteCookie(const String& cookieName, const String& domain);
 
-    void mainResourceFiredLoadEvent(DocumentLoader*, const KURL&);
-    void mainResourceFiredDOMContentEvent(DocumentLoader*, const KURL&);
+    void domContentLoadedEventFired(DocumentLoader*, const KURL&);
+    void loadEventFired(DocumentLoader*, const KURL&);
 
 #if ENABLE(WORKERS)
     enum WorkerAction { WorkerCreated, WorkerDestroyed };
@@ -271,14 +271,14 @@ private:
     InspectorClient* m_client;
     InspectorFrontend* m_frontend;
     OwnPtr<InspectorCSSAgent> m_cssAgent;
-    RefPtr<InspectorDOMAgent> m_domAgent;
+    OwnPtr<InspectorDOMAgent> m_domAgent;
 
 #if ENABLE(DATABASE)
-    RefPtr<InspectorDatabaseAgent> m_databaseAgent;
+    OwnPtr<InspectorDatabaseAgent> m_databaseAgent;
 #endif
 
 #if ENABLE(DOM_STORAGE)
-    RefPtr<InspectorDOMStorageAgent> m_domStorageAgent;
+    OwnPtr<InspectorDOMStorageAgent> m_domStorageAgent;
 #endif
 
     OwnPtr<InspectorTimelineAgent> m_timelineAgent;

@@ -48,6 +48,9 @@ namespace WebCore {
 
 InspectorDOMStorageAgent::~InspectorDOMStorageAgent()
 {
+    DOMStorageResourcesMap::iterator domStorageEnd = m_domStorageResources->end();
+    for (DOMStorageResourcesMap::iterator it = m_domStorageResources->begin(); it != domStorageEnd; ++it)
+        it->second->unbind();
 }
 
 void InspectorDOMStorageAgent::getDOMStorageEntries(long storageId, RefPtr<InspectorArray>* entries)

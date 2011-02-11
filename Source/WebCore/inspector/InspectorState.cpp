@@ -38,10 +38,14 @@ namespace WebCore {
 InspectorState::InspectorState(InspectorClient* client)
     : m_client(client)
     , m_properties(InspectorObject::create())
+    , m_isOnMute(false)
 {
 }
 
-void InspectorState::restoreFromInspectorCookie(const String& json)
+InspectorState::InspectorState(InspectorClient* client, const String& json)
+    : m_client(client)
+    , m_properties(InspectorObject::create())
+    , m_isOnMute(false)
 {
     RefPtr<InspectorValue> jsonValue = InspectorValue::parseJSON(json);
     if (jsonValue)
@@ -50,9 +54,15 @@ void InspectorState::restoreFromInspectorCookie(const String& json)
         m_properties = InspectorObject::create();
 }
 
+void InspectorState::mute()
+{
+    m_isOnMute = true;
+}
+
 void InspectorState::updateCookie()
 {
-    m_client->updateInspectorStateCookie(m_properties->toJSONString());
+    if (!m_isOnMute)
+        m_client->updateInspectorStateCookie(m_properties->toJSONString());
 }
 
 void InspectorState::setValue(const String& propertyName, PassRefPtr<InspectorValue> value)

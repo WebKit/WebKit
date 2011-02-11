@@ -1,3 +1,76 @@
+2011-02-10  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: make InspectorAgent own sub-agents, align agent creation/deletion routines.
+        https://bugs.webkit.org/show_bug.cgi?id=54227
+
+        * dom/Document.cpp:
+        (WebCore::Document::finishedParsing):
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::restoreInspectorStateFromCookie):
+        (WebCore::InspectorAgent::setFrontend):
+        (WebCore::InspectorAgent::disconnectFrontend):
+        (WebCore::InspectorAgent::releaseFrontendLifetimeAgents):
+        (WebCore::InspectorAgent::didCommitLoad):
+        (WebCore::InspectorAgent::domContentLoadedEventFired):
+        (WebCore::InspectorAgent::loadEventFired):
+        (WebCore::InspectorAgent::startTimelineProfiler):
+        (WebCore::InspectorAgent::stopTimelineProfiler):
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorCSSAgent.cpp:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::startListening):
+        (WebCore::InspectorDOMAgent::stopListening):
+        (WebCore::InspectorDOMAgent::mainDOMContentLoaded):
+        (WebCore::InspectorDOMAgent::loadEventFired):
+        * inspector/InspectorDOMAgent.h:
+        (WebCore::InspectorDOMAgent::create):
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::~InspectorDOMStorageAgent):
+        * inspector/InspectorDOMStorageAgent.h:
+        (WebCore::InspectorDOMStorageAgent::create):
+        * inspector/InspectorDOMStorageResource.h:
+        * inspector/InspectorDatabaseAgent.cpp:
+        (WebCore::InspectorDatabaseAgent::~InspectorDatabaseAgent):
+        (WebCore::InspectorDatabaseAgent::executeSQL):
+        (WebCore::InspectorDatabaseAgent::selectDatabase):
+        (WebCore::InspectorDatabaseAgent::InspectorDatabaseAgent):
+        * inspector/InspectorDatabaseAgent.h:
+        (WebCore::InspectorDatabaseAgent::FrontendProvider::create):
+        (WebCore::InspectorDatabaseAgent::FrontendProvider::~FrontendProvider):
+        (WebCore::InspectorDatabaseAgent::FrontendProvider::frontend):
+        (WebCore::InspectorDatabaseAgent::FrontendProvider::clearFrontend):
+        (WebCore::InspectorDatabaseAgent::FrontendProvider::FrontendProvider):
+        (WebCore::InspectorDatabaseAgent::create):
+        * inspector/InspectorDatabaseResource.cpp:
+        (WebCore::InspectorDatabaseResource::InspectorDatabaseResource):
+        (WebCore::InspectorDatabaseResource::bind):
+        * inspector/InspectorDatabaseResource.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::domContentLoadedEventFiredImpl):
+        (WebCore::InspectorInstrumentation::loadEventFiredImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::domContentLoadedEventFired):
+        (WebCore::InspectorInstrumentation::loadEventFired):
+        * inspector/InspectorState.cpp:
+        (WebCore::InspectorState::InspectorState):
+        (WebCore::InspectorState::mute):
+        (WebCore::InspectorState::updateCookie):
+        * inspector/InspectorState.h:
+        (WebCore::InspectorState::~InspectorState):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::restore):
+        (WebCore::InspectorTimelineAgent::~InspectorTimelineAgent):
+        (WebCore::InspectorTimelineAgent::didCommitLoad):
+        (WebCore::InspectorTimelineAgent::setFrontend):
+        (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+        * inspector/InspectorTimelineAgent.h:
+        (WebCore::InspectorTimelineAgent::create):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::dispatchLoadEvent):
+
 2011-02-11  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -30,8 +30,8 @@
 #define InspectorDOMStorageAgent_h
 
 #include "PlatformString.h"
-#include "wtf/HashMap.h"
-#include "wtf/PassRefPtr.h"
+#include <wtf/HashMap.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -40,13 +40,13 @@ class InspectorDOMStorageResource;
 class InspectorFrontend;
 class Storage;
 
-class InspectorDOMStorageAgent : public RefCounted<InspectorDOMStorageAgent> {
+class InspectorDOMStorageAgent {
 public:
     typedef HashMap<int, RefPtr<InspectorDOMStorageResource> > DOMStorageResourcesMap;
 
-    static PassRefPtr<InspectorDOMStorageAgent> create(DOMStorageResourcesMap* domStorageResources, InspectorFrontend* frontend)
+    static PassOwnPtr<InspectorDOMStorageAgent> create(DOMStorageResourcesMap* domStorageResources, InspectorFrontend* frontend)
     {
-        return adoptRef(new InspectorDOMStorageAgent(domStorageResources, frontend));
+        return adoptPtr(new InspectorDOMStorageAgent(domStorageResources, frontend));
     }
 
     virtual ~InspectorDOMStorageAgent();
@@ -58,8 +58,6 @@ public:
 
     // Called from the injected script.
     void selectDOMStorage(Storage* storage);
-
-    InspectorFrontend* frontend() { return m_frontend; }
 
 private:
     InspectorDOMStorageAgent(DOMStorageResourcesMap*, InspectorFrontend*);

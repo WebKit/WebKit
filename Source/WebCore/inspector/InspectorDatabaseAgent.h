@@ -30,8 +30,8 @@
 #define InspectorDatabaseAgent_h
 
 #include "PlatformString.h"
-#include "wtf/HashMap.h"
-#include "wtf/PassRefPtr.h"
+#include <wtf/HashMap.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -40,13 +40,15 @@ class InspectorArray;
 class InspectorDatabaseResource;
 class InspectorFrontend;
 
-class InspectorDatabaseAgent : public RefCounted<InspectorDatabaseAgent> {
+class InspectorDatabaseAgent {
 public:
+    class FrontendProvider;
+
     typedef HashMap<int, RefPtr<InspectorDatabaseResource> > DatabaseResourcesMap;
 
-    static PassRefPtr<InspectorDatabaseAgent> create(DatabaseResourcesMap* databaseResources, InspectorFrontend* frontend)
+    static PassOwnPtr<InspectorDatabaseAgent> create(DatabaseResourcesMap* databaseResources, InspectorFrontend* frontend)
     {
-        return adoptRef(new InspectorDatabaseAgent(databaseResources, frontend));
+        return adoptPtr(new InspectorDatabaseAgent(databaseResources, frontend));
     }
 
     virtual ~InspectorDatabaseAgent();
@@ -59,14 +61,11 @@ public:
     Database* databaseForId(long databaseId);
     void selectDatabase(Database* database);
 
-    InspectorFrontend* frontend() { return m_frontend; }
-    void clearFrontend();
-
 private:
     InspectorDatabaseAgent(DatabaseResourcesMap*, InspectorFrontend*);
 
     DatabaseResourcesMap* m_databaseResources;
-    InspectorFrontend* m_frontend;
+    RefPtr<FrontendProvider> m_frontendProvider;
 };
 
 } // namespace WebCore

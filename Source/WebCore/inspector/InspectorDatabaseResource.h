@@ -46,7 +46,6 @@ public:
     static PassRefPtr<InspectorDatabaseResource> create(PassRefPtr<Database> database, const String& domain, const String& name, const String& version);
 
     void bind(InspectorFrontend* frontend);
-    void unbind();
     Database* database() { return m_database.get(); }
     long id() const { return m_id; }
 private:
@@ -57,7 +56,6 @@ private:
     String m_domain;
     String m_name;
     String m_version;
-    bool m_scriptObjectCreated;
 };
 
 } // namespace WebCore

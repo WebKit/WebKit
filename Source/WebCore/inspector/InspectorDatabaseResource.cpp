@@ -51,28 +51,17 @@ InspectorDatabaseResource::InspectorDatabaseResource(PassRefPtr<Database> databa
     , m_domain(domain)
     , m_name(name)
     , m_version(version)
-    , m_scriptObjectCreated(false)
 {
 }
 
 void InspectorDatabaseResource::bind(InspectorFrontend* frontend)
 {
-    if (m_scriptObjectCreated)
-        return;
-
     RefPtr<InspectorObject> jsonObject = InspectorObject::create();
     jsonObject->setNumber("id", m_id);
     jsonObject->setString("domain", m_domain);
     jsonObject->setString("name", m_name);
     jsonObject->setString("version", m_version);
-
     frontend->addDatabase(jsonObject);
-    m_scriptObjectCreated = true;
-}
-
-void InspectorDatabaseResource::unbind()
-{
-    m_scriptObjectCreated = false;
 }
 
 } // namespace WebCore

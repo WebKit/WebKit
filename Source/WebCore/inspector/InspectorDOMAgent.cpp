@@ -208,8 +208,7 @@ public:
 }
 
 InspectorDOMAgent::InspectorDOMAgent(InjectedScriptHost* injectedScriptHost, InspectorFrontend* frontend)
-    : EventListener(InspectorDOMAgentType)
-    , m_injectedScriptHost(injectedScriptHost)
+    : m_injectedScriptHost(injectedScriptHost)
     , m_frontend(frontend)
     , m_domListener(0)
     , m_lastNodeId(1)
@@ -222,16 +221,22 @@ InspectorDOMAgent::~InspectorDOMAgent()
     reset();
 }
 
+Vector<Document*> InspectorDOMAgent::documents()
+{
+    Vector<Document*> result;
+    for (Frame* frame = m_document->frame(); frame; frame = frame->tree()->traverseNext()) {
+        Document* document = frame->document();
+        if (!document)
+            continue;
+        result.append(document);
+    }
+    return result;
+}
+
 void InspectorDOMAgent::reset()
 {
     searchCanceled();
     discardBindings();
-
-    ListHashSet<RefPtr<Document> > copy = m_documents;
-    for (ListHashSet<RefPtr<Document> >::iterator it = copy.begin(); it != copy.end(); ++it)
-        stopListening((*it).get());
-
-    ASSERT(!m_documents.size());
 }
 
 void InspectorDOMAgent::setDOMListener(DOMListener* listener)
@@ -241,13 +246,14 @@ void InspectorDOMAgent::setDOMListener(DOMListener* listener)
 
 void InspectorDOMAgent::setDocument(Document* doc)
 {
-    if (doc == mainFrameDocument())
+    if (doc == m_document.get())
         return;
 
     reset();
 
+    m_document = doc;
+
     if (doc) {
-        startListening(doc);
         if (doc->documentElement())
             pushDocumentToFrontend();
     } else
@@ -258,66 +264,6 @@ void InspectorDOMAgent::releaseDanglingNodes()
 {
     deleteAllValues(m_danglingNodeToIdMaps);
     m_danglingNodeToIdMaps.clear();
-}
-
-void InspectorDOMAgent::startListeningFrameDocument(Node* frameOwnerNode)
-{
-    ASSERT(frameOwnerNode->isFrameOwnerElement());
-    HTMLFrameOwnerElement* frameOwner = static_cast<HTMLFrameOwnerElement*>(frameOwnerNode);
-    Document* doc = frameOwner->contentDocument();
-    if (doc)
-        startListening(doc);
-}
-
-void InspectorDOMAgent::startListening(Document* doc)
-{
-    if (m_documents.contains(doc))
-        return;
-
-    doc->addEventListener(eventNames().DOMContentLoadedEvent, this, false);
-    doc->addEventListener(eventNames().loadEvent, this, true);
-    m_documents.add(doc);
-}
-
-void InspectorDOMAgent::stopListening(Document* doc)
-{
-    if (!m_documents.contains(doc))
-        return;
-
-    doc->removeEventListener(eventNames().DOMContentLoadedEvent, this, false);
-    doc->removeEventListener(eventNames().loadEvent, this, true);
-    m_documents.remove(doc);
-}
-
-void InspectorDOMAgent::handleEvent(ScriptExecutionContext*, Event* event)
-{
-    AtomicString type = event->type();
-    Node* node = event->target()->toNode();
-
-    if (type == eventNames().DOMContentLoadedEvent) {
-        // Re-push document once it is loaded.
-        discardBindings();
-        pushDocumentToFrontend();
-    } else if (type == eventNames().loadEvent) {
-        long frameOwnerId = m_documentNodeToIdMap.get(node);
-        if (!frameOwnerId)
-            return;
-
-        if (!m_childrenRequested.contains(frameOwnerId)) {
-            // No children are mapped yet -> only notify on changes of hasChildren.
-            m_frontend->childNodeCountUpdated(frameOwnerId, innerChildNodeCount(node));
-        } else {
-            // Re-add frame owner element together with its new children.
-            long parentId = m_documentNodeToIdMap.get(innerParentNode(node));
-            m_frontend->childNodeRemoved(parentId, frameOwnerId);
-            RefPtr<InspectorObject> value = buildObjectForNode(node, 0, &m_documentNodeToIdMap);
-            Node* previousSibling = innerPreviousSibling(node);
-            long prevId = previousSibling ? m_documentNodeToIdMap.get(previousSibling) : 0;
-            m_frontend->childNodeInserted(parentId, prevId, value.release());
-            // Invalidate children requested flag for the element.
-            m_childrenRequested.remove(m_childrenRequested.find(frameOwnerId));
-        }
-    }
 }
 
 long InspectorDOMAgent::bind(Node* node, NodeToIdMap* nodesMap)
@@ -336,7 +282,6 @@ void InspectorDOMAgent::unbind(Node* node, NodeToIdMap* nodesMap)
 {
     if (node->isFrameOwnerElement()) {
         const HTMLFrameOwnerElement* frameOwner = static_cast<const HTMLFrameOwnerElement*>(node);
-        stopListening(frameOwner->contentDocument());
         if (m_domListener)
             m_domListener->didRemoveDocument(frameOwner->contentDocument());
     }
@@ -360,11 +305,10 @@ void InspectorDOMAgent::unbind(Node* node, NodeToIdMap* nodesMap)
 
 bool InspectorDOMAgent::pushDocumentToFrontend()
 {
-    Document* document = mainFrameDocument();
-    if (!document)
+    if (!m_document)
         return false;
-    if (!m_documentNodeToIdMap.contains(document))
-        m_frontend->setDocument(buildObjectForNode(document, 2, &m_documentNodeToIdMap));
+    if (!m_documentNodeToIdMap.contains(m_document))
+        m_frontend->setDocument(buildObjectForNode(m_document.get(), 2, &m_documentNodeToIdMap));
     return true;
 }
 
@@ -559,9 +503,9 @@ void InspectorDOMAgent::setOuterHTML(long nodeId, const String& outerHTML, long*
         return;
 
     if (requiresTotalUpdate) {
-        Document* document = mainFrameDocument();
+        RefPtr<Document> document = m_document;
         reset();
-        setDocument(document);
+        setDocument(document.get());
         *newId = 0;
         return;
     }
@@ -693,10 +637,9 @@ void InspectorDOMAgent::performSearch(const String& whitespaceTrimmedQuery, bool
     searchCanceled();
 
     // Find all frames, iframes and object elements to search their documents.
-    for (Frame* frame = mainFrameDocument()->frame(); frame; frame = frame->tree()->traverseNext()) {
-        Document* document = frame->document();
-        if (!document)
-            continue;
+    Vector<Document*> docs = documents();
+    for (Vector<Document*>::iterator it = docs.begin(); it != docs.end(); ++it) {
+        Document* document = *it;
 
         if (!tagNameQuery.isEmpty() && startTagFound && endTagFound) {
             m_pendingMatchJobs.append(new MatchExactTagNamesJob(document, tagNameQuery));
@@ -891,9 +834,6 @@ PassRefPtr<InspectorArray> InspectorDOMAgent::buildArrayForContainerChildren(Nod
         depth--;
     }
 
-    if (container->isFrameOwnerElement())
-        startListeningFrameDocument(container);
-
     while (child) {
         children->pushObject(buildObjectForNode(child, depth, nodesMap));
         child = innerNextSibling(child);
@@ -974,19 +914,37 @@ bool InspectorDOMAgent::isWhitespace(Node* node)
     return node && node->nodeType() == Node::TEXT_NODE && node->nodeValue().stripWhiteSpace().length() == 0;
 }
 
-Document* InspectorDOMAgent::mainFrameDocument() const
+void InspectorDOMAgent::mainFrameDOMContentLoaded()
 {
-    ListHashSet<RefPtr<Document> >::const_iterator it = m_documents.begin();
-    if (it != m_documents.end())
-        return it->get();
-    return 0;
+    // Re-push document once it is loaded.
+    discardBindings();
+    pushDocumentToFrontend();
 }
 
-bool InspectorDOMAgent::operator==(const EventListener& listener)
+void InspectorDOMAgent::loadEventFired(Document* document)
 {
-    if (const InspectorDOMAgent* inspectorDOMAgentListener = InspectorDOMAgent::cast(&listener))
-        return mainFrameDocument() == inspectorDOMAgentListener->mainFrameDocument();
-    return false;
+    Element* frameOwner = document->ownerElement();
+    if (!frameOwner)
+        return;
+
+    long frameOwnerId = m_documentNodeToIdMap.get(frameOwner);
+    if (!frameOwnerId)
+        return;
+
+    if (!m_childrenRequested.contains(frameOwnerId)) {
+        // No children are mapped yet -> only notify on changes of hasChildren.
+        m_frontend->childNodeCountUpdated(frameOwnerId, innerChildNodeCount(frameOwner));
+    } else {
+        // Re-add frame owner element together with its new children.
+        long parentId = m_documentNodeToIdMap.get(innerParentNode(frameOwner));
+        m_frontend->childNodeRemoved(parentId, frameOwnerId);
+        RefPtr<InspectorObject> value = buildObjectForNode(frameOwner, 0, &m_documentNodeToIdMap);
+        Node* previousSibling = innerPreviousSibling(frameOwner);
+        long prevId = previousSibling ? m_documentNodeToIdMap.get(previousSibling) : 0;
+        m_frontend->childNodeInserted(parentId, prevId, value.release());
+        // Invalidate children requested flag for the element.
+        m_childrenRequested.remove(m_childrenRequested.find(frameOwnerId));
+    }
 }
 
 void InspectorDOMAgent::didInsertDOMNode(Node* node)
@@ -1062,10 +1020,10 @@ void InspectorDOMAgent::characterDataModified(CharacterData* characterData)
 Node* InspectorDOMAgent::nodeForPath(const String& path)
 {
     // The path is of form "1,HTML,2,BODY,1,DIV"
-    Node* node = mainFrameDocument();
-    if (!node)
+    if (!m_document)
         return 0;
 
+    Node* node = m_document.get();
     Vector<String> pathTokens;
     path.split(",", false, pathTokens);
     if (!pathTokens.size())
@@ -1153,7 +1111,7 @@ InjectedScript InspectorDOMAgent::injectedScriptForNodeId(long nodeId)
                 frame = document->frame();
         }
     } else
-        frame = mainFrameDocument()->frame();
+        frame = m_document->frame();
 
     if (frame)
         return m_injectedScriptHost->injectedScriptFor(mainWorldScriptState(frame));

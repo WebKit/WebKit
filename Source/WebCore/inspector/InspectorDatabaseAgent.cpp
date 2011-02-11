@@ -52,32 +52,48 @@
 
 namespace WebCore {
 
+class InspectorDatabaseAgent::FrontendProvider : public RefCounted<InspectorDatabaseAgent::FrontendProvider> {
+public:
+    static PassRefPtr<FrontendProvider> create(InspectorFrontend* inspectorFrontend)
+    {
+        return adoptRef(new FrontendProvider(inspectorFrontend));
+    }
+
+    virtual ~FrontendProvider() { }
+
+    InspectorFrontend* frontend() { return m_inspectorFrontend; }
+    void clearFrontend() { m_inspectorFrontend = 0; }
+private:
+    FrontendProvider(InspectorFrontend* inspectorFrontend) : m_inspectorFrontend(inspectorFrontend) { }
+    InspectorFrontend* m_inspectorFrontend;
+};
+
 namespace {
 
 long lastTransactionId = 0;
 
-void reportTransactionFailed(InspectorDatabaseAgent* agent, long transactionId, SQLError* error)
+void reportTransactionFailed(InspectorFrontend* frontend, long transactionId, SQLError* error)
 {
-    if (!agent->frontend())
+    if (!frontend)
         return;
     RefPtr<InspectorObject> errorObject = InspectorObject::create();
     errorObject->setString("message", error->message());
     errorObject->setNumber("code", error->code());
-    agent->frontend()->sqlTransactionFailed(transactionId, errorObject);
+    frontend->sqlTransactionFailed(transactionId, errorObject);
 }
 
 class StatementCallback : public SQLStatementCallback {
 public:
-    static PassRefPtr<StatementCallback> create(long transactionId, PassRefPtr<InspectorDatabaseAgent> agent)
+    static PassRefPtr<StatementCallback> create(long transactionId, PassRefPtr<InspectorDatabaseAgent::FrontendProvider> frontendProvider)
     {
-        return adoptRef(new StatementCallback(transactionId, agent));
+        return adoptRef(new StatementCallback(transactionId, frontendProvider));
     }
 
     virtual ~StatementCallback() { }
 
     virtual bool handleEvent(SQLTransaction*, SQLResultSet* resultSet)
     {
-        if (!m_agent->frontend())
+        if (!m_frontendProvider->frontend())
             return true;
 
         SQLResultSetRowList* rowList = resultSet->rows();
@@ -97,92 +113,92 @@ public:
                 case SQLValue::NullValue: values->pushValue(InspectorValue::null()); break;
             }
         }
-        m_agent->frontend()->sqlTransactionSucceeded(m_transactionId, columnNames, values);
+        m_frontendProvider->frontend()->sqlTransactionSucceeded(m_transactionId, columnNames, values);
         return true;
     }
 
 private:
-    StatementCallback(long transactionId, PassRefPtr<InspectorDatabaseAgent> agent)
+    StatementCallback(long transactionId, PassRefPtr<InspectorDatabaseAgent::FrontendProvider> frontendProvider)
         : m_transactionId(transactionId)
-        , m_agent(agent) { }
+        , m_frontendProvider(frontendProvider) { }
     long m_transactionId;
-    RefPtr<InspectorDatabaseAgent> m_agent;
+    RefPtr<InspectorDatabaseAgent::FrontendProvider> m_frontendProvider;
 };
 
 class StatementErrorCallback : public SQLStatementErrorCallback {
 public:
-    static PassRefPtr<StatementErrorCallback> create(long transactionId, PassRefPtr<InspectorDatabaseAgent> agent)
+    static PassRefPtr<StatementErrorCallback> create(long transactionId, PassRefPtr<InspectorDatabaseAgent::FrontendProvider> frontendProvider)
     {
-        return adoptRef(new StatementErrorCallback(transactionId, agent));
+        return adoptRef(new StatementErrorCallback(transactionId, frontendProvider));
     }
 
     virtual ~StatementErrorCallback() { }
 
     virtual bool handleEvent(SQLTransaction*, SQLError* error)
     {
-        reportTransactionFailed(m_agent.get(), m_transactionId, error);
+        reportTransactionFailed(m_frontendProvider->frontend(), m_transactionId, error);
         return true;  
     }
 
 private:
-    StatementErrorCallback(long transactionId, RefPtr<InspectorDatabaseAgent> agent)
+    StatementErrorCallback(long transactionId, PassRefPtr<InspectorDatabaseAgent::FrontendProvider> frontendProvider)
         : m_transactionId(transactionId)
-        , m_agent(agent) { }
+        , m_frontendProvider(frontendProvider) { }
     long m_transactionId;
-    RefPtr<InspectorDatabaseAgent> m_agent;
+    RefPtr<InspectorDatabaseAgent::FrontendProvider> m_frontendProvider;
 };
 
 class TransactionCallback : public SQLTransactionCallback {
 public:
-    static PassRefPtr<TransactionCallback> create(const String& sqlStatement, long transactionId, PassRefPtr<InspectorDatabaseAgent> agent)
+    static PassRefPtr<TransactionCallback> create(const String& sqlStatement, long transactionId, PassRefPtr<InspectorDatabaseAgent::FrontendProvider> frontendProvider)
     {
-        return adoptRef(new TransactionCallback(sqlStatement, transactionId, agent));
+        return adoptRef(new TransactionCallback(sqlStatement, transactionId, frontendProvider));
     }
 
     virtual ~TransactionCallback() { }
 
     virtual bool handleEvent(SQLTransaction* transaction)
     {
-        if (!m_agent->frontend())
+        if (!m_frontendProvider->frontend())
             return true;
 
         Vector<SQLValue> sqlValues;
-        RefPtr<SQLStatementCallback> callback(StatementCallback::create(m_transactionId, m_agent));
-        RefPtr<SQLStatementErrorCallback> errorCallback(StatementErrorCallback::create(m_transactionId, m_agent));
+        RefPtr<SQLStatementCallback> callback(StatementCallback::create(m_transactionId, m_frontendProvider));
+        RefPtr<SQLStatementErrorCallback> errorCallback(StatementErrorCallback::create(m_transactionId, m_frontendProvider));
         ExceptionCode ec = 0;
         transaction->executeSQL(m_sqlStatement, sqlValues, callback.release(), errorCallback.release(), ec);
         return true;
     }
 private:
-    TransactionCallback(const String& sqlStatement, long transactionId, PassRefPtr<InspectorDatabaseAgent> agent)
+    TransactionCallback(const String& sqlStatement, long transactionId, PassRefPtr<InspectorDatabaseAgent::FrontendProvider> frontendProvider)
         : m_sqlStatement(sqlStatement)
         , m_transactionId(transactionId)
-        , m_agent(agent) { }
+        , m_frontendProvider(frontendProvider) { }
     String m_sqlStatement;
     long m_transactionId;
-    RefPtr<InspectorDatabaseAgent> m_agent;
+    RefPtr<InspectorDatabaseAgent::FrontendProvider> m_frontendProvider;
 };
 
 class TransactionErrorCallback : public SQLTransactionErrorCallback {
 public:
-    static PassRefPtr<TransactionErrorCallback> create(long transactionId, PassRefPtr<InspectorDatabaseAgent> agent)
+    static PassRefPtr<TransactionErrorCallback> create(long transactionId, PassRefPtr<InspectorDatabaseAgent::FrontendProvider> frontendProvider)
     {
-        return adoptRef(new TransactionErrorCallback(transactionId, agent));
+        return adoptRef(new TransactionErrorCallback(transactionId, frontendProvider));
     }
 
     virtual ~TransactionErrorCallback() { }
 
     virtual bool handleEvent(SQLError* error)
     {
-        reportTransactionFailed(m_agent.get(), m_transactionId, error);
+        reportTransactionFailed(m_frontendProvider->frontend(), m_transactionId, error);
         return true;
     }
 private:
-    TransactionErrorCallback(long transactionId, PassRefPtr<InspectorDatabaseAgent> agent)
+    TransactionErrorCallback(long transactionId, PassRefPtr<InspectorDatabaseAgent::FrontendProvider> frontendProvider)
         : m_transactionId(transactionId)
-        , m_agent(agent) { }
+        , m_frontendProvider(frontendProvider) { }
     long m_transactionId;
-    RefPtr<InspectorDatabaseAgent> m_agent;
+    RefPtr<InspectorDatabaseAgent::FrontendProvider> m_frontendProvider;
 };
 
 class TransactionSuccessCallback : public VoidCallback {
@@ -204,6 +220,7 @@ private:
 
 InspectorDatabaseAgent::~InspectorDatabaseAgent()
 {
+    m_frontendProvider->clearFrontend();
 }
 
 void InspectorDatabaseAgent::getDatabaseTableNames(long databaseId, RefPtr<InspectorArray>* names)
@@ -226,8 +243,8 @@ void InspectorDatabaseAgent::executeSQL(long databaseId, const String& query, bo
     }
 
     *transactionId = ++lastTransactionId;
-    RefPtr<SQLTransactionCallback> callback(TransactionCallback::create(query, *transactionId, this));
-    RefPtr<SQLTransactionErrorCallback> errorCallback(TransactionErrorCallback::create(*transactionId, this));
+    RefPtr<SQLTransactionCallback> callback(TransactionCallback::create(query, *transactionId, m_frontendProvider));
+    RefPtr<SQLTransactionErrorCallback> errorCallback(TransactionErrorCallback::create(*transactionId, m_frontendProvider));
     RefPtr<VoidCallback> successCallback(TransactionSuccessCallback::create());
     database->transaction(callback.release(), errorCallback.release(), successCallback.release());
     *success = true;
@@ -243,25 +260,20 @@ Database* InspectorDatabaseAgent::databaseForId(long databaseId)
 
 void InspectorDatabaseAgent::selectDatabase(Database* database)
 {
-    if (!m_frontend)
+    if (!m_frontendProvider->frontend())
         return;
 
     for (DatabaseResourcesMap::iterator it = m_databaseResources->begin(); it != m_databaseResources->end(); ++it) {
         if (it->second->database() == database) {
-            m_frontend->selectDatabase(it->first);
+            m_frontendProvider->frontend()->selectDatabase(it->first);
             break;
         }
     }
 }
 
-void InspectorDatabaseAgent::clearFrontend()
-{
-    m_frontend = 0;
-}
-
 InspectorDatabaseAgent::InspectorDatabaseAgent(DatabaseResourcesMap* databaseResources, InspectorFrontend* frontend)
     : m_databaseResources(databaseResources)
-    , m_frontend(frontend)
+    , m_frontendProvider(FrontendProvider::create(frontend))
 {
 }
 

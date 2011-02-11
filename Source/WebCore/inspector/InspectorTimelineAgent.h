@@ -36,11 +36,13 @@
 #include "InspectorValues.h"
 #include "ScriptGCEvent.h"
 #include "ScriptGCEventListener.h"
+#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 class Event;
 class InspectorFrontend;
+class InspectorState;
 class IntRect;
 class ResourceRequest;
 class ResourceResponse;
@@ -71,15 +73,21 @@ enum TimelineRecordType {
 };
 
 class InspectorTimelineAgent : ScriptGCEventListener {
-    WTF_MAKE_NONCOPYABLE(InspectorTimelineAgent); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(InspectorTimelineAgent);
 public:
-    InspectorTimelineAgent(InspectorFrontend* frontend);
+    static PassOwnPtr<InspectorTimelineAgent> create(InspectorState* state, InspectorFrontend* frontend)
+    {
+        return adoptPtr(new InspectorTimelineAgent(state, frontend));
+    }
+
+    static PassOwnPtr<InspectorTimelineAgent> restore(InspectorState*, InspectorFrontend*);
+
     ~InspectorTimelineAgent();
 
     int id() const { return m_id; }
 
-    void reset();
-    void resetFrontendProxyObject(InspectorFrontend*);
+    void didCommitLoad();
+    void setFrontend(InspectorFrontend*);
 
     // Methods called from WebCore.
     void willCallFunction(const String& scriptName, int scriptLine);
@@ -141,6 +149,8 @@ private:
         TimelineRecordType type;
     };
         
+    InspectorTimelineAgent(InspectorState*, InspectorFrontend*);
+
     void pushCurrentRecord(PassRefPtr<InspectorObject>, TimelineRecordType);
     void setHeapSizeStatistic(InspectorObject* record);
         
@@ -150,6 +160,7 @@ private:
 
     void pushGCEventRecords();
 
+    InspectorState* m_state;
     InspectorFrontend* m_frontend;
 
     Vector<TimelineRecordEntry> m_recordStack;

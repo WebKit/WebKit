@@ -482,14 +482,14 @@ void InspectorInstrumentation::scriptImportedImpl(InspectorAgent* inspectorAgent
         resourceAgent->setInitialContent(identifier, sourceString, "Script");
 }
 
-void InspectorInstrumentation::mainResourceFiredLoadEventImpl(InspectorAgent* inspectorAgent, Frame* frame, const KURL& url)
+void InspectorInstrumentation::domContentLoadedEventFiredImpl(InspectorAgent* inspectorAgent, Frame* frame, const KURL& url)
 {
-    inspectorAgent->mainResourceFiredLoadEvent(frame->loader()->documentLoader(), url);
+    inspectorAgent->domContentLoadedEventFired(frame->loader()->documentLoader(), url);
 }
 
-void InspectorInstrumentation::mainResourceFiredDOMContentEventImpl(InspectorAgent* inspectorAgent, Frame* frame, const KURL& url)
+void InspectorInstrumentation::loadEventFiredImpl(InspectorAgent* inspectorAgent, Frame* frame, const KURL& url)
 {
-    inspectorAgent->mainResourceFiredDOMContentEvent(frame->loader()->documentLoader(), url);
+    inspectorAgent->loadEventFired(frame->loader()->documentLoader(), url);
 }
 
 void InspectorInstrumentation::frameDetachedFromParentImpl(InspectorAgent* inspectorAgent, Frame* frame)

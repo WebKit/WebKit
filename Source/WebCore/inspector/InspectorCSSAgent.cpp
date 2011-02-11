@@ -42,10 +42,10 @@
 #include "InspectorFrontend.h"
 #include "InspectorValues.h"
 #include "Node.h"
+#include "NodeList.h"
 #include "StyleSheetList.h"
 
 #include <wtf/HashSet.h>
-#include <wtf/ListHashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 
@@ -254,8 +254,8 @@ void InspectorCSSAgent::getComputedStyleForNode(long nodeId, RefPtr<InspectorVal
 
 void InspectorCSSAgent::getAllStyles(RefPtr<InspectorArray>* styles)
 {
-    const ListHashSet<RefPtr<Document> >& documents = m_domAgent->documents();
-    for (ListHashSet<RefPtr<Document> >::const_iterator it = documents.begin(); it != documents.end(); ++it) {
+    Vector<Document*> documents = m_domAgent->documents();
+    for (Vector<Document*>::iterator it = documents.begin(); it != documents.end(); ++it) {
         StyleSheetList* list = (*it)->styleSheets();
         for (unsigned i = 0; i < list->length(); ++i) {
             StyleSheet* styleSheet = list->item(i);

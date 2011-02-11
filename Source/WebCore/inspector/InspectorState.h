@@ -45,9 +45,11 @@ class InspectorClient;
 
 class InspectorState {
 public:
-    InspectorState(InspectorClient* client);
+    InspectorState(InspectorClient*);
+    InspectorState(InspectorClient*, const String& jsonString);
+    virtual ~InspectorState() {}
 
-    void restoreFromInspectorCookie(const String& jsonString);
+    void mute();
 
     bool getBoolean(const String& propertyName);
     String getString(const String& propertyName);
@@ -65,6 +67,7 @@ private:
 
     InspectorClient* m_client;
     RefPtr<InspectorObject> m_properties;
+    bool m_isOnMute;
 };
 
 } // namespace WebCore

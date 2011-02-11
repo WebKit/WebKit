@@ -191,16 +191,14 @@ bool InspectorAgent::searchingForNodeInPage() const
 
 void InspectorAgent::restoreInspectorStateFromCookie(const String& inspectorStateCookie)
 {
-    m_state->restoreFromInspectorCookie(inspectorStateCookie);
+    m_state = new InspectorState(m_client, inspectorStateCookie);
 
     m_frontend->frontendReused();
     m_frontend->inspectedURLChanged(inspectedURL().string());
     pushDataCollectedOffline();
 
     m_resourceAgent = InspectorResourceAgent::restore(m_inspectedPage, m_state.get(), m_frontend);
-
-    if (m_state->getBoolean(InspectorAgentState::timelineProfilerEnabled))
-        startTimelineProfiler();
+    m_timelineAgent = InspectorTimelineAgent::restore(m_state.get(), m_frontend);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     restoreDebugger(false);
@@ -334,15 +332,10 @@ void InspectorAgent::setSearchingForNode(bool enabled, bool* newState)
 
 void InspectorAgent::setFrontend(InspectorFrontend* inspectorFrontend)
 {
-    releaseFrontendLifetimeAgents();
     m_frontend = inspectorFrontend;
     createFrontendLifetimeAgents();
 
     m_cssAgent->setDOMAgent(m_domAgent.get());
-
-    if (m_timelineAgent)
-        m_timelineAgent->resetFrontendProxyObject(m_frontend);
-
     m_consoleAgent->setFrontend(m_frontend);
 
     // Initialize Web Inspector title.
@@ -354,6 +347,10 @@ void InspectorAgent::disconnectFrontend()
     if (!m_frontend)
         return;
 
+    // Destroying agents would change the state, but we don't want that.
+    // Pre-disconnect state will be used to restore inspector agents.
+    m_state->mute();
+
     m_frontend = 0;
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -363,7 +360,6 @@ void InspectorAgent::disconnectFrontend()
     disableDebugger();
 #endif
     setSearchingForNode(false);
-    unbindAllResources();
 
     hideHighlight();
 
@@ -371,10 +367,10 @@ void InspectorAgent::disconnectFrontend()
     m_profilerAgent->setFrontend(0);
     m_profilerAgent->stopUserInitiatedProfiling(true);
 #endif
+
     m_consoleAgent->setFrontend(0);
 
     releaseFrontendLifetimeAgents();
-    m_timelineAgent.clear();
     m_userAgentOverride = "";
 }
 
@@ -407,19 +403,9 @@ void InspectorAgent::releaseFrontendLifetimeAgents()
 {
     m_resourceAgent.clear();
     m_runtimeAgent.clear();
-
-    // This should be invoked prior to m_domAgent destruction.
-    m_cssAgent->setDOMAgent(0);
-
-    // m_domAgent is RefPtr. Remove DOM listeners first to ensure that there are
-    // no references to the DOM agent from the DOM tree.
-    if (m_domAgent)
-        m_domAgent->reset();
-    m_domAgent.clear();
+    m_timelineAgent.clear();
 
 #if ENABLE(DATABASE)
-    if (m_databaseAgent)
-        m_databaseAgent->clearFrontend();
     m_databaseAgent.clear();
 #endif
 
@@ -431,7 +417,9 @@ void InspectorAgent::releaseFrontendLifetimeAgents()
     m_applicationCacheAgent.clear();
 #endif
 
-    stopTimelineProfiler();
+    // This should be invoked prior to m_domAgent destruction.
+    m_cssAgent->setDOMAgent(0);
+    m_domAgent.clear();
 }
 
 void InspectorAgent::populateScriptObjects()
@@ -508,22 +496,6 @@ void InspectorAgent::restoreProfiler(ProfilerRestoreAction action)
 #endif
 }
 
-void InspectorAgent::unbindAllResources()
-{
-#if ENABLE(DATABASE)
-    DatabaseResourcesMap::iterator databasesEnd = m_databaseResources.end();
-    for (DatabaseResourcesMap::iterator it = m_databaseResources.begin(); it != databasesEnd; ++it)
-        it->second->unbind();
-#endif
-#if ENABLE(DOM_STORAGE)
-    DOMStorageResourcesMap::iterator domStorageEnd = m_domStorageResources.end();
-    for (DOMStorageResourcesMap::iterator it = m_domStorageResources.begin(); it != domStorageEnd; ++it)
-        it->second->unbind();
-#endif
-    if (m_timelineAgent)
-        m_timelineAgent->reset();
-}
-
 void InspectorAgent::didCommitLoad(DocumentLoader* loader)
 {
     if (!enabled())
@@ -540,6 +512,9 @@ void InspectorAgent::didCommitLoad(DocumentLoader* loader)
 
         m_injectedScriptHost->discardInjectedScripts();
         m_consoleAgent->reset();
+
+        if (m_timelineAgent)
+            m_timelineAgent->didCommitLoad();
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         if (m_applicationCacheAgent)
@@ -559,10 +534,6 @@ void InspectorAgent::didCommitLoad(DocumentLoader* loader)
         m_profilerAgent->stopUserInitiatedProfiling(true);
         m_profilerAgent->resetState();
 #endif
-
-        // unbindAllResources should be called before database and DOM storage
-        // resources are cleared so that it has a chance to unbind them.
-        unbindAllResources();
 
         if (m_frontend) {
             m_frontend->reset();
@@ -584,20 +555,28 @@ void InspectorAgent::didCommitLoad(DocumentLoader* loader)
     }
 }
 
-void InspectorAgent::mainResourceFiredDOMContentEvent(DocumentLoader* loader, const KURL& url)
+void InspectorAgent::domContentLoadedEventFired(DocumentLoader* loader, const KURL& url)
 {
     if (!enabled() || !isMainResourceLoader(loader, url))
         return;
 
+    if (m_domAgent)
+        m_domAgent->mainFrameDOMContentLoaded();
     if (m_timelineAgent)
         m_timelineAgent->didMarkDOMContentEvent();
     if (m_frontend)
         m_frontend->domContentEventFired(currentTime());
 }
 
-void InspectorAgent::mainResourceFiredLoadEvent(DocumentLoader* loader, const KURL& url)
+void InspectorAgent::loadEventFired(DocumentLoader* loader, const KURL& url)
 {
-    if (!enabled() || !isMainResourceLoader(loader, url))
+    if (!enabled())
+        return;
+
+    if (m_domAgent)
+        m_domAgent->loadEventFired(loader->frame()->document());
+
+    if (!isMainResourceLoader(loader, url))
         return;
 
     if (m_timelineAgent)
@@ -624,32 +603,15 @@ void InspectorAgent::applyUserAgentOverride(String* userAgent) const
 
 void InspectorAgent::startTimelineProfiler()
 {
-    if (!enabled())
+    if (m_timelineAgent || !enabled() || !m_frontend)
         return;
 
-    if (m_timelineAgent)
-        return;
-
-    m_timelineAgent = new InspectorTimelineAgent(m_frontend);
-    if (m_frontend)
-        m_frontend->timelineProfilerWasStarted();
-
-    m_state->setBoolean(InspectorAgentState::timelineProfilerEnabled, true);
+    m_timelineAgent = InspectorTimelineAgent::create(m_state.get(), m_frontend);
 }
 
 void InspectorAgent::stopTimelineProfiler()
 {
-    if (!enabled())
-        return;
-
-    if (!m_timelineAgent)
-        return;
-
-    m_timelineAgent = 0;
-    if (m_frontend)
-        m_frontend->timelineProfilerWasStopped();
-
-    m_state->setBoolean(InspectorAgentState::timelineProfilerEnabled, false);
+    m_timelineAgent.clear();
 }
 
 #if ENABLE(WORKERS)

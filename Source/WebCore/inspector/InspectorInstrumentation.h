@@ -122,8 +122,8 @@ public:
     static void didFailLoading(Frame*, unsigned long identifier, const ResourceError&);
     static void resourceRetrievedByXMLHttpRequest(ScriptExecutionContext*, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber);
     static void scriptImported(ScriptExecutionContext*, unsigned long identifier, const String& sourceString);
-    static void mainResourceFiredLoadEvent(Frame*, const KURL&);
-    static void mainResourceFiredDOMContentEvent(Frame*, const KURL&);
+    static void domContentLoadedEventFired(Frame*, const KURL&);
+    static void loadEventFired(Frame*, const KURL&);
     static void frameDetachedFromParent(Frame*);
     static void didCommitLoad(Frame*, DocumentLoader*);
 
@@ -238,8 +238,8 @@ private:
     static void didFailLoadingImpl(InspectorAgent*, unsigned long identifier, const ResourceError&);
     static void resourceRetrievedByXMLHttpRequestImpl(InspectorAgent*, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber);
     static void scriptImportedImpl(InspectorAgent*, unsigned long identifier, const String& sourceString);
-    static void mainResourceFiredLoadEventImpl(InspectorAgent*, Frame*, const KURL&);
-    static void mainResourceFiredDOMContentEventImpl(InspectorAgent*, Frame*, const KURL&);
+    static void domContentLoadedEventFiredImpl(InspectorAgent*, Frame*, const KURL&);
+    static void loadEventFiredImpl(InspectorAgent*, Frame*, const KURL&);
     static void frameDetachedFromParentImpl(InspectorAgent*, Frame*);
     static void didCommitLoadImpl(InspectorAgent*, DocumentLoader*);
 
@@ -706,19 +706,19 @@ inline void InspectorInstrumentation::scriptImported(ScriptExecutionContext* con
 #endif
 }
 
-inline void InspectorInstrumentation::mainResourceFiredLoadEvent(Frame* frame, const KURL& url)
+inline void InspectorInstrumentation::domContentLoadedEventFired(Frame* frame, const KURL& url)
 {
 #if ENABLE(INSPECTOR)
     if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForFrame(frame))
-        mainResourceFiredLoadEventImpl(inspectorAgent, frame, url);
+        domContentLoadedEventFiredImpl(inspectorAgent, frame, url);
 #endif
 }
 
-inline void InspectorInstrumentation::mainResourceFiredDOMContentEvent(Frame* frame, const KURL& url)
+inline void InspectorInstrumentation::loadEventFired(Frame* frame, const KURL& url)
 {
 #if ENABLE(INSPECTOR)
     if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForFrame(frame))
-        mainResourceFiredDOMContentEventImpl(inspectorAgent, frame, url);
+        loadEventFiredImpl(inspectorAgent, frame, url);
 #endif
 }
 

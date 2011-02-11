@@ -30,29 +30,22 @@
 #ifndef InspectorDOMAgent_h
 #define InspectorDOMAgent_h
 
-#include "EventListener.h"
-#include "EventTarget.h"
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
 #include "InspectorValues.h"
-#include "NodeList.h"
 #include "Timer.h"
 
 #include <wtf/Deque.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 class ContainerNode;
-class CSSRule;
-class CSSRuleList;
-class CSSStyleDeclaration;
-class CSSStyleRule;
-class CSSStyleSheet;
 class CharacterData;
 class Document;
 class Element;
@@ -79,7 +72,7 @@ struct EventListenerInfo {
     const EventListenerVector eventListenerVector;
 };
 
-class InspectorDOMAgent : public EventListener {
+class InspectorDOMAgent {
 public:
     struct DOMListener {
         virtual ~DOMListener()
@@ -90,24 +83,16 @@ public:
         virtual void didModifyDOMAttr(Element*) = 0;
     };
 
-    static PassRefPtr<InspectorDOMAgent> create(InjectedScriptHost* injectedScriptHost, InspectorFrontend* frontend)
+    static PassOwnPtr<InspectorDOMAgent> create(InjectedScriptHost* injectedScriptHost, InspectorFrontend* frontend)
     {
-        return adoptRef(new InspectorDOMAgent(injectedScriptHost, frontend));
-    }
-
-    static const InspectorDOMAgent* cast(const EventListener* listener)
-    {
-        return listener->type() == InspectorDOMAgentType
-            ? static_cast<const InspectorDOMAgent*>(listener)
-            : 0;
+        return adoptPtr(new InspectorDOMAgent(injectedScriptHost, frontend));
     }
 
     InspectorDOMAgent(InjectedScriptHost*, InspectorFrontend*);
     ~InspectorDOMAgent();
 
+    Vector<Document*> documents();
     void reset();
-
-    virtual bool operator==(const EventListener& other);
 
     // Methods called from the frontend for DOM nodes inspection.
     void getChildNodes(long nodeId);
@@ -131,6 +116,9 @@ public:
     void setDocument(Document*);
     void releaseDanglingNodes();
 
+    void mainFrameDOMContentLoaded();
+    void loadEventFired(Document*);
+
     void didInsertDOMNode(Node*);
     void didRemoveDOMNode(Node*);
     void didModifyDOMAttr(Element*);
@@ -142,7 +130,6 @@ public:
     void pushNodeByPathToFrontend(const String& path, long* nodeId);
     long inspectedNode(unsigned long num);
     void copyNode(long nodeId);
-    const ListHashSet<RefPtr<Document> >& documents() { return m_documents; }
     void setDOMListener(DOMListener*);
 
     String documentURLString(Document*) const;
@@ -157,12 +144,6 @@ public:
     static bool isWhitespace(Node*);
 
 private:
-    void startListeningFrameDocument(Node* frameOwnerNode);
-    void startListening(Document*);
-    void stopListening(Document*);
-
-    virtual void handleEvent(ScriptExecutionContext*, Event*);
-
     // Node-related methods.
     typedef HashMap<RefPtr<Node>, long> NodeToIdMap;
     long bind(Node*, NodeToIdMap*);
@@ -178,8 +159,6 @@ private:
     PassRefPtr<InspectorArray> buildArrayForElementAttributes(Element*);
     PassRefPtr<InspectorArray> buildArrayForContainerChildren(Node* container, int depth, NodeToIdMap* nodesMap);
     PassRefPtr<InspectorObject> buildObjectForEventListener(const RegisteredEventListener&, const AtomicString& eventType, Node*);
-
-    Document* mainFrameDocument() const;
 
     void onMatchJobsTimer(Timer<InspectorDOMAgent>*);
     void reportNodesAsSearchResults(ListHashSet<Node*>& resultCollector);
@@ -201,7 +180,7 @@ private:
     HashMap<long, NodeToIdMap*> m_idToNodesMap;
     HashSet<long> m_childrenRequested;
     long m_lastNodeId;
-    ListHashSet<RefPtr<Document> > m_documents;
+    RefPtr<Document> m_document;
     Deque<MatchJob*> m_pendingMatchJobs;
     Timer<InspectorDOMAgent> m_matchJobsTimer;
     HashSet<RefPtr<Node> > m_searchResults;

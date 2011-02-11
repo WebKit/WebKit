@@ -4200,7 +4200,7 @@ void Document::finishedParsing()
 
         f->loader()->finishedParsing();
 
-        InspectorInstrumentation::mainResourceFiredDOMContentEvent(f, url());
+        InspectorInstrumentation::domContentLoadedEventFired(f, url());
     }
 }
 

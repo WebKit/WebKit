@@ -1535,7 +1535,7 @@ void DOMWindow::dispatchLoadEvent()
         ownerElement->dispatchGenericEvent(ownerEvent.release());
     }
 
-    InspectorInstrumentation::mainResourceFiredLoadEvent(frame(), url());
+    InspectorInstrumentation::loadEventFired(frame(), url());
 }
 
 bool DOMWindow::dispatchEvent(PassRefPtr<Event> prpEvent, PassRefPtr<EventTarget> prpTarget)
