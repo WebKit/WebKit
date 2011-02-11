@@ -1,3 +1,14 @@
+2011-02-11  Mads Ager  <ager@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Remove unnecessary chromium layout test rebaselines
+        https://bugs.webkit.org/show_bug.cgi?id=54278
+
+        * platform/chromium/fast/js/ToNumber-expected.txt: Removed.
+        * platform/chromium/fast/js/parseFloat-expected.txt: Removed.
+        * platform/chromium/fast/js/regexp-look-ahead-empty-expected.txt: Removed.
+
 2011-02-11  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: unflake inspector test (2).
