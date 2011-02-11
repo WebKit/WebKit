@@ -1,0 +1,5 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 100x100
+    RenderSVGPath {polyline} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [points="0 0 100 0 100 100 0 100"]
