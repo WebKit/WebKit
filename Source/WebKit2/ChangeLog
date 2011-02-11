@@ -1,3 +1,12 @@
+2011-02-11  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        Eliminate /DELAYLOAD:msimg32.dll ignored warning when building WebKit project
+        https://bugs.webkit.org/show_bug.cgi?id=54296
+
+        * win/WebKit2Common.vsprops: Remove msimg32.dll from the list of DelayLoadDLLs.
+
 2011-02-11  Chandra Vallala  <chandra.vallala@motorola.com> and Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.
