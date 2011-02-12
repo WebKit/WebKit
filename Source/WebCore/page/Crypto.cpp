@@ -34,8 +34,21 @@
 #include "Uint8Array.h"
 #include <wtf/CryptographicallyRandomNumber.h>
 
-
 namespace WebCore {
+
+namespace {
+
+bool isIntegerArray(ArrayBufferView* array)
+{
+    return array->isByteArray()
+        || array->isUnsignedByteArray()
+        || array->isShortArray()
+        || array->isUnsignedShortArray()
+        || array->isIntArray()
+        || array->isUnsignedIntArray();
+}
+
+}
 
 Crypto::Crypto()
 {
@@ -44,7 +57,7 @@ Crypto::Crypto()
 void Crypto::getRandomValues(ArrayBufferView* array, ExceptionCode& ec)
 {
 #if USE(OS_RANDOMNESS)
-    if (!array || !array->isUnsignedByteArray()) {
+    if (!array || !isIntegerArray(array)) {
         ec = VALIDATION_ERR;
         return;
     }

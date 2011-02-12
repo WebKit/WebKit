@@ -1,5 +1,19 @@
 2011-02-12  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Sam Weinig.
+
+        crypto.getRandomValues should support all integer array types
+        https://bugs.webkit.org/show_bug.cgi?id=54342
+
+        As discussed on whatwg, we should support all the integer array types.
+
+        Test: security/crypto-random-values-types.html
+
+        * page/Crypto.cpp:
+        (WebCore::Crypto::getRandomValues):
+
+2011-02-12  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Mark Rowe.
 
         Use /dev/urandom as the OSRandomSource on OS(DARWIN)
