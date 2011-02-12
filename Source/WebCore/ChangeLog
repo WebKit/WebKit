@@ -1,3 +1,17 @@
+2011-02-11  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix for <rdar://problem/8976456> Scrollbars for overflow
+        areas never appear for WKScrollbarPainter scrollers
+
+        Call ScrollableArea::didAddVerticalScrollbar() and 
+        ScrollableArea::willRemoveVerticalScrollbar() when
+        appropriate for RenderLayers.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setHasHorizontalScrollbar):
+        (WebCore::RenderLayer::setHasVerticalScrollbar):
+
 2011-02-11  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

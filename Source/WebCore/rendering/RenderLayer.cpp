@@ -1830,10 +1830,13 @@ void RenderLayer::setHasHorizontalScrollbar(bool hasScrollbar)
     if (hasScrollbar == (m_hBar != 0))
         return;
 
-    if (hasScrollbar)
+    if (hasScrollbar) {
         m_hBar = createScrollbar(HorizontalScrollbar);
-    else
+        ScrollableArea::didAddHorizontalScrollbar(m_hBar.get());
+    } else {
+        ScrollableArea::willRemoveHorizontalScrollbar(m_hBar.get());
         destroyScrollbar(HorizontalScrollbar);
+    }
 
     // Destroying or creating one bar can cause our scrollbar corner to come and go.  We need to update the opposite scrollbar's style.
     if (m_hBar)
@@ -1853,10 +1856,13 @@ void RenderLayer::setHasVerticalScrollbar(bool hasScrollbar)
     if (hasScrollbar == (m_vBar != 0))
         return;
 
-    if (hasScrollbar)
+    if (hasScrollbar) {
         m_vBar = createScrollbar(VerticalScrollbar);
-    else
+        ScrollableArea::didAddVerticalScrollbar(m_vBar.get());
+    } else {
+        ScrollableArea::willRemoveVerticalScrollbar(m_vBar.get());
         destroyScrollbar(VerticalScrollbar);
+    }
 
      // Destroying or creating one bar can cause our scrollbar corner to come and go.  We need to update the opposite scrollbar's style.
     if (m_hBar)
