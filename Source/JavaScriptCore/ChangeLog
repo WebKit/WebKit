@@ -1,5 +1,20 @@
 2011-02-12  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Mark Rowe.
+
+        Use /dev/urandom as the OSRandomSource on OS(DARWIN)
+        https://bugs.webkit.org/show_bug.cgi?id=54279
+
+        I'm not sure it makes much of a difference whether we use arc4random or
+        /dev/urandom on Mac.  However, there's some aesthetic benefit to using
+        the same underlying API on as many platforms as reasonable.
+
+        * config.h:
+        * wtf/OSRandomSource.cpp:
+        (WTF::cryptographicallyRandomValuesFromOS):
+
+2011-02-12  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Kenneth Russell.
 
         Enable ArrayBuffers by default

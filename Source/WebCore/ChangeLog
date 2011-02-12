@@ -1,3 +1,15 @@
+2011-02-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Use /dev/urandom as the OSRandomSource on OS(DARWIN)
+        https://bugs.webkit.org/show_bug.cgi?id=54279
+
+        Update the ifdef.  OS(UNIX) includes OS(DARWIN), so this change is
+        should be a NOP.
+
+        * config.h:
+
 2011-02-11  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

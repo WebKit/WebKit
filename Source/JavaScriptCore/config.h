@@ -57,7 +57,7 @@
 
 #endif
 
-#if OS(DARWIN) || OS(UNIX) || OS(WINDOWS)
+#if OS(UNIX) || OS(WINDOWS)
 #define WTF_USE_OS_RANDOMNESS 1
 #endif
 
