@@ -2,6 +2,16 @@
 
         Reviewed by Dan Bernstein.
 
+        Follow up fix to:
+        https://bugs.webkit.org/show_bug.cgi?id=54341 - optionally scale snapshots in document view coordinates
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::scaledSnapshotInDocumentCoordinates): Fixed the order of the scale and translate.
+
+2011-02-12  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         https://bugs.webkit.org/show_bug.cgi?id=54341 - optionally scale snapshots in document view coordinates
         <rdar://problem/8990069>
         

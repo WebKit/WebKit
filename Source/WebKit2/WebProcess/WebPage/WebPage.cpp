@@ -773,11 +773,11 @@ PassRefPtr<WebImage> WebPage::scaledSnapshotInDocumentCoordinates(const IntRect&
     RefPtr<WebImage> snapshot = WebImage::create(size, options);
     OwnPtr<WebCore::GraphicsContext> graphicsContext = snapshot->bitmap()->createGraphicsContext();
     graphicsContext->save();
-    graphicsContext->translate(-rect.x(), -rect.y());
     
     if (scale)
         graphicsContext->scale(FloatSize(scaleFactor, scaleFactor));
-        
+    
+    graphicsContext->translate(-rect.x(), -rect.y());
     frameView->paintContents(graphicsContext.get(), rect);
     graphicsContext->restore();
 
