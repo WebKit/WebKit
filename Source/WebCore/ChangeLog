@@ -1,5 +1,13 @@
 2011-02-12  Adam Barth  <abarth@webkit.org>
 
+        CPP files belong in SOURCES not in HEADERS.  There are more errors like
+        this for other disabled features, but I'm not fixing them in this
+        patch.
+
+        * WebCore.pro:
+
+2011-02-12  Adam Barth  <abarth@webkit.org>
+
         Apparently lines in .pro files need to be \-terminated.
 
         * WebCore.pro:

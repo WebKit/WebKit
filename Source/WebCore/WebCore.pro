@@ -506,6 +506,7 @@ v8 {
         bindings/js/DOMObjectHashTableMap.cpp \
         bindings/js/DOMWrapperWorld.cpp \
         bindings/js/GCController.cpp \
+        bindings/js/JSArrayBufferCustom.cpp \
         bindings/js/JSAttrCustom.cpp \
         bindings/js/JSCDATASectionCustom.cpp \
         bindings/js/JSCSSFontFaceRuleCustom.cpp \
@@ -540,6 +541,7 @@ v8 {
         bindings/js/JSDOMWrapper.cpp \
         bindings/js/JSDataGridColumnListCustom.cpp \
         bindings/js/JSDataGridDataSource.cpp \
+        bindings/js/JSDataViewCustom.cpp \
         bindings/js/JSDebugWrapperSet.cpp \
         bindings/js/JSDesktopNotificationsCustom.cpp \
         bindings/js/JSDeviceMotionEventCustom.cpp \
@@ -553,6 +555,7 @@ v8 {
         bindings/js/JSEventTarget.cpp \
         bindings/js/JSExceptionBase.cpp \
         bindings/js/JSFileReaderCustom.cpp \
+        bindings/js/JSFloat32ArrayCustom.cpp \
         bindings/js/JSGeolocationCustom.cpp \
         bindings/js/JSHTMLAllCollectionCustom.cpp \
         bindings/js/JSHTMLAppletElementCustom.cpp \
@@ -577,6 +580,9 @@ v8 {
         bindings/js/JSImageDataCustom.cpp \
         bindings/js/JSInjectedScriptHostCustom.cpp \
         bindings/js/JSInspectorFrontendHostCustom.cpp \
+        bindings/js/JSInt16ArrayCustom.cpp \
+        bindings/js/JSInt32ArrayCustom.cpp \
+        bindings/js/JSInt8ArrayCustom.cpp \
         bindings/js/JSLazyEventListener.cpp \
         bindings/js/JSLocationCustom.cpp \
         bindings/js/JSMainThreadExecState.cpp \
@@ -602,6 +608,9 @@ v8 {
         bindings/js/JSTouchCustom.cpp \
         bindings/js/JSTouchListCustom.cpp \
         bindings/js/JSTreeWalkerCustom.cpp \
+        bindings/js/JSUint16ArrayCustom.cpp \
+        bindings/js/JSUint32ArrayCustom.cpp \
+        bindings/js/JSUint8ArrayCustom.cpp \
         bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp \
         bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp \
         bindings/js/JSWebKitCSSMatrixCustom.cpp \
@@ -1508,7 +1517,6 @@ v8 {
         bindings/js/GCController.h \
         bindings/js/DOMObjectHashTableMap.h \
         bindings/js/DOMWrapperWorld.h \
-        bindings/js/JSArrayBufferCustom.cpp \
         bindings/js/JSArrayBufferViewHelper.h \
         bindings/js/JSAudioConstructor.h \
         bindings/js/JSCSSStyleDeclarationCustom.h \
@@ -1525,12 +1533,10 @@ v8 {
         bindings/js/JSDOMWindowShell.h \
         bindings/js/JSDOMWrapper.h \
         bindings/js/JSDataGridDataSource.h \
-        bindings/js/JSDataViewCustom.cpp \
         bindings/js/JSDebugWrapperSet.h \
         bindings/js/JSErrorHandler.h \
         bindings/js/JSEventListener.h \
         bindings/js/JSEventTarget.h \
-        bindings/js/JSFloat32ArrayCustom.cpp \
         bindings/js/JSHTMLAppletElementCustom.h \
         bindings/js/JSHTMLEmbedElementCustom.h \
         bindings/js/JSHTMLInputElementCustom.h \
@@ -1538,9 +1544,6 @@ v8 {
         bindings/js/JSHTMLSelectElementCustom.h \
         bindings/js/JSHistoryCustom.h \
         bindings/js/JSImageConstructor.h \
-        bindings/js/JSInt16ArrayCustom.cpp \
-        bindings/js/JSInt32ArrayCustom.cpp \
-        bindings/js/JSInt8ArrayCustom.cpp \
         bindings/js/JSLazyEventListener.h \
         bindings/js/JSLocationCustom.h \
         bindings/js/JSNodeCustom.h \
@@ -1548,9 +1551,6 @@ v8 {
         bindings/js/JSOptionConstructor.h \
         bindings/js/JSPluginElementFunctions.h \
         bindings/js/JSStorageCustom.h \
-        bindings/js/JSUint16ArrayCustom.cpp \
-        bindings/js/JSUint32ArrayCustom.cpp \
-        bindings/js/JSUint8ArrayCustom.cpp \
         bindings/js/JSWorkerContextBase.h \
         bindings/js/JavaScriptCallFrame.h \
         bindings/js/ScheduledAction.h \
