@@ -1,3 +1,12 @@
+2011-02-11  Anders Carlsson  <andersca@apple.com>
+
+        Fix Snow Leopard build.
+
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::didFailToSendSyncMessage):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didFailToSendSyncMessage):
+
 2011-02-11  Yael Aharon  <yael.aharon@nokia.com>
 
         Unreviewed Qt webkit2 build fix after r78392.
