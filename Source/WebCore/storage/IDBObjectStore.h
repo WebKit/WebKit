@@ -69,6 +69,7 @@ public:
     PassRefPtr<IDBRequest> add(ScriptExecutionContext*, PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, ExceptionCode&);
     PassRefPtr<IDBRequest> put(ScriptExecutionContext*, PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, ExceptionCode&);
     PassRefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, PassRefPtr<IDBKey> key, ExceptionCode&);
+    PassRefPtr<IDBRequest> clear(ScriptExecutionContext*, ExceptionCode&);
 
     PassRefPtr<IDBIndex> createIndex(const String& name, const String& keyPath, const OptionsObject&, ExceptionCode&);
     PassRefPtr<IDBIndex> index(const String& name, ExceptionCode&);

@@ -1,3 +1,23 @@
+2011-02-12  Jochen Eisinger  <jochen@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Implement IDBObjectStore::clear
+        https://bugs.webkit.org/show_bug.cgi?id=54193
+
+        Test: storage/indexeddb/objectstore-clear.html
+
+        * storage/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::clear):
+        * storage/IDBObjectStore.h:
+        * storage/IDBObjectStore.idl:
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::clear):
+        (WebCore::doDelete):
+        (WebCore::IDBObjectStoreBackendImpl::clearInternal):
+        * storage/IDBObjectStoreBackendImpl.h:
+        * storage/IDBObjectStoreBackendInterface.h:
+
 2011-02-12  Adam Barth  <abarth@webkit.org>
 
         Another attempt to fix the EFL build.  Looks like we're missing one

@@ -375,6 +375,38 @@ void IDBObjectStoreBackendImpl::deleteInternal(ScriptExecutionContext*, PassRefP
     callbacks->onSuccess(SerializedScriptValue::nullValue());
 }
 
+void IDBObjectStoreBackendImpl::clear(PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
+{
+    if (transaction->mode() == IDBTransaction::READ_ONLY) {
+        ec = IDBDatabaseException::READ_ONLY_ERR;
+        return;
+    }
+
+    RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
+    RefPtr<IDBCallbacks> callbacks = prpCallbacks;
+
+    if (!transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::clearInternal, objectStore, callbacks)))
+        ec = IDBDatabaseException::NOT_ALLOWED_ERR;
+}
+
+static void doDelete(SQLiteDatabase& db, const char* sql, int64_t id)
+{
+    SQLiteStatement deleteQuery(db, sql);
+    bool ok = deleteQuery.prepare() == SQLResultOk;
+    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
+    deleteQuery.bindInt64(1, id);
+    ok = deleteQuery.step() == SQLResultDone;
+    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
+}
+
+void IDBObjectStoreBackendImpl::clearInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBCallbacks> callbacks)
+{
+    doDelete(objectStore->sqliteDatabase(), "DELETE FROM IndexData WHERE objectStoreDataId IN (SELECT id FROM ObjectStoreData WHERE objectStoreId = ?)", objectStore->id());
+    doDelete(objectStore->sqliteDatabase(), "DELETE FROM ObjectStoreData WHERE objectStoreId = ?", objectStore->id());
+
+    callbacks->onSuccess(SerializedScriptValue::undefinedValue());
+}
+
 PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::createIndex(const String& name, const String& keyPath, bool unique, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     if (m_indexes.contains(name)) {
@@ -429,16 +461,6 @@ PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::index(const Stri
         return 0;
     }
     return index.release();
-}
-
-static void doDelete(SQLiteDatabase& db, const char* sql, int64_t id)
-{
-    SQLiteStatement deleteQuery(db, sql);
-    bool ok = deleteQuery.prepare() == SQLResultOk;
-    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
-    deleteQuery.bindInt64(1, id);
-    ok = deleteQuery.step() == SQLResultDone;
-    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
 }
 
 void IDBObjectStoreBackendImpl::deleteIndex(const String& name, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)

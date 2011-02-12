@@ -81,6 +81,11 @@ void WebIDBObjectStoreImpl::deleteFunction(const WebIDBKey& key, WebIDBCallbacks
     m_objectStore->deleteFunction(key, IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface(), ec);
 }
 
+void WebIDBObjectStoreImpl::clear(WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode& ec)
+{
+    m_objectStore->clear(IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface(), ec);
+}
+
 WebIDBIndex* WebIDBObjectStoreImpl::createIndex(const WebString& name, const WebString& keyPath, bool unique, const WebIDBTransaction& transaction, WebExceptionCode& ec)
 {
     RefPtr<IDBIndexBackendInterface> index = m_objectStore->createIndex(name, keyPath, unique, transaction.getIDBTransactionBackendInterface(), ec);

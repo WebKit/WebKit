@@ -1,0 +1,130 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test IndexedDB's webkitIDBObjectStore.clear().");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    result = evalAndLog("webkitIndexedDB.open('name')");
+    verifyResult(result);
+    result.onsuccess = startSetVersion;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function startSetVersion()
+{
+    verifySuccessEvent(event);
+    db = evalAndLog("db = event.result");
+
+    result = evalAndLog("db.setVersion('new version')");
+    verifyResult(result);
+    result.onsuccess = deleteExisting;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function deleteExisting()
+{
+    verifySuccessEvent(event);
+    window.trans = evalAndLog("trans = event.result");
+    shouldBeTrue("trans !== null");
+
+    deleteAllObjectStores(db, createObjectStoreAndAddValue);
+}
+
+function createObjectStoreAndAddValue()
+{
+    store = evalAndLog("store = db.createObjectStore('storeName', null)");
+
+    window.index = evalAndLog("store.createIndex('indexName', '')");
+    shouldBeTrue("store.indexNames.contains('indexName')");
+
+    result = evalAndLog("store.add('value', 'key')");
+    verifyResult(result);
+    result.onsuccess = createSecondObjectStoreAndAddValue;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function createSecondObjectStoreAndAddValue()
+{
+    verifySuccessEvent(event);
+
+    otherStore = evalAndLog("otherStore = db.createObjectStore('otherStoreName', null)");
+
+    result = evalAndLog("otherStore.add('value', 'key')");
+    verifyResult(result);
+    result.onsuccess = clearObjectStore;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function clearObjectStore()
+{
+    verifySuccessEvent(event);
+
+    result = evalAndLog("store.clear()");
+    verifyResult(result);
+    result.onsuccess = clearSuccess;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function clearSuccess()
+{
+    verifySuccessEvent(event);
+    shouldBeUndefined("event.result");
+
+    result = evalAndLog("store.openCursor()");
+    result.onsuccess = openCursorSuccess;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function openCursorSuccess()
+{
+    verifySuccessEvent(event);
+    shouldBeNull("event.result");
+
+    index = evalAndLog("index = store.index('indexName')");
+    result = evalAndLog("index.openKeyCursor()");
+    result.onsuccess = openKeyCursorSuccess;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function openKeyCursorSuccess()
+{
+    debug("openKeyCursorSuccess():");
+    verifySuccessEvent(event);
+    shouldBeNull("event.result");
+
+    transaction = evalAndLog("db.transaction({mode: webkitIDBTransaction.READ_WRITE})");
+    transaction.onabort = unexpectedErrorCallback;
+    var otherStore = evalAndLog("otherStore = transaction.objectStore('otherStoreName')");
+
+    result = evalAndLog("otherStore.get('key')");
+    verifyResult(result);
+    result.onsuccess = getSuccess;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function getSuccess()
+{
+    verifySuccessEvent(event);
+    shouldBeEqualToString("event.result", "value");
+
+    done();
+}
+
+test();
+
+var successfullyParsed = true;
+</script>
+</body>
+</html>
