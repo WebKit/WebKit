@@ -24,9 +24,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(WEBGL) || ENABLE(BLOB)
-
 #include "JSUint32Array.h"
 
 #include "JSArrayBufferViewHelper.h"
@@ -62,5 +59,3 @@ EncodedJSValue JSC_HOST_CALL JSUint32ArrayConstructor::constructJSUint32Array(Ex
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEBGL) || ENABLE(BLOB)

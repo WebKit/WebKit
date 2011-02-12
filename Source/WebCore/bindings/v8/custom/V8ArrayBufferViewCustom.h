@@ -31,8 +31,6 @@
 #ifndef V8ArrayBufferViewCustom_h
 #define V8ArrayBufferViewCustom_h
 
-#if ENABLE(WEBGL) || ENABLE(BLOB)
-
 #include "ArrayBuffer.h"
 
 #include "V8ArrayBuffer.h"
@@ -208,7 +206,5 @@ v8::Handle<v8::Value> setWebGLArrayHelper(const v8::Arguments& args)
 }
 
 }
-
-#endif // ENABLE(WEBGL)
 
 #endif // V8ArrayBufferViewCustom_h

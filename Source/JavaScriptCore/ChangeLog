@@ -1,3 +1,14 @@
+2011-02-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Kenneth Russell.
+
+        Enable ArrayBuffers by default
+        https://bugs.webkit.org/show_bug.cgi?id=54310
+
+        Export the required functions.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2011-02-11  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Geoffrey Garen.

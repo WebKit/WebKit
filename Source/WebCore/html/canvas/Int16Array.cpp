@@ -24,9 +24,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(WEBGL) || ENABLE(BLOB)
-
 #include "Int16Array.h"
 
 namespace WebCore {
@@ -62,5 +59,3 @@ PassRefPtr<Int16Array> Int16Array::subarray(int start, int end) const
 }
 
 }
-
-#endif // ENABLE(WEBGL) || ENABLE(BLOB)

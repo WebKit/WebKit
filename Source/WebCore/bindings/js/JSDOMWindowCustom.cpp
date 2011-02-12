@@ -24,17 +24,26 @@
 #include "HTMLCollection.h"
 #include "HTMLDocument.h"
 #include "History.h"
+#include "JSArrayBuffer.h"
 #include "JSAudioConstructor.h"
+#include "JSDataView.h"
 #include "JSEvent.h"
 #include "JSEventListener.h"
 #include "JSEventSource.h"
+#include "JSFloat32Array.h"
 #include "JSHTMLCollection.h"
 #include "JSHistory.h"
 #include "JSImageConstructor.h"
+#include "JSInt16Array.h"
+#include "JSInt32Array.h"
+#include "JSInt8Array.h"
 #include "JSLocation.h"
 #include "JSMessageChannel.h"
 #include "JSMessagePortCustom.h"
 #include "JSOptionConstructor.h"
+#include "JSUint16Array.h"
+#include "JSUint32Array.h"
+#include "JSUint8Array.h"
 #include "JSWebKitCSSMatrix.h"
 #include "JSWebKitPoint.h"
 #include "JSWorker.h"
@@ -47,18 +56,6 @@
 #include "SharedWorkerRepository.h"
 #include <runtime/JSFunction.h>
 #include <runtime/PrototypeFunction.h>
-
-#if ENABLE(WEBGL) || ENABLE(BLOB)
-#include "JSArrayBuffer.h"
-#include "JSDataView.h"
-#include "JSFloat32Array.h"
-#include "JSInt16Array.h"
-#include "JSInt32Array.h"
-#include "JSInt8Array.h"
-#include "JSUint16Array.h"
-#include "JSUint32Array.h"
-#include "JSUint8Array.h"
-#endif
 
 #if ENABLE(SHARED_WORKERS)
 #include "JSSharedWorker.h"
@@ -533,7 +530,6 @@ JSValue JSDOMWindow::webKitCSSMatrix(ExecState* exec) const
     return getDOMConstructor<JSWebKitCSSMatrixConstructor>(exec, this);
 }
  
-#if ENABLE(WEBGL) || ENABLE(BLOB)
 JSValue JSDOMWindow::arrayBuffer(ExecState* exec) const
 {
     return getDOMConstructor<JSArrayBufferConstructor>(exec, this);
@@ -578,8 +574,7 @@ JSValue JSDOMWindow::dataView(ExecState* exec) const
 {
     return getDOMConstructor<JSDataViewConstructor>(exec, this);
 }
-#endif
- 
+
 JSValue JSDOMWindow::xmlHttpRequest(ExecState* exec) const
 {
     return getDOMConstructor<JSXMLHttpRequestConstructor>(exec, this);

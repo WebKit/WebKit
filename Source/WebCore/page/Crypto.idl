@@ -29,8 +29,6 @@
 module window {
 
     interface [
-        // FIXME: We should just enable ArrayBuffer support all the time.
-        Conditional=WEBGL|BLOB,
         OmitConstructor
     ] Crypto {
         void getRandomValues(in ArrayBufferView array) raises(DOMException);

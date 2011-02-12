@@ -25,7 +25,6 @@
 
 module html {
     interface [
-        Conditional=WEBGL|BLOB,
         CanBeConstructed,
         CustomConstructFunction,
         V8CustomConstructor,

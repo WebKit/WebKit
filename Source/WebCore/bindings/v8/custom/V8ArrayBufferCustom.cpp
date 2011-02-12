@@ -29,9 +29,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(WEBGL) || ENABLE(BLOB)
-
 #include "ArrayBuffer.h"
 
 #include "ExceptionCode.h"
@@ -77,5 +74,3 @@ v8::Handle<v8::Value> V8ArrayBuffer::constructorCallback(const v8::Arguments& ar
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEBGL) || ENABLE(BLOB)

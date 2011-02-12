@@ -1,3 +1,66 @@
+2011-02-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Kenneth Russell.
+
+        Enable ArrayBuffers by default
+        https://bugs.webkit.org/show_bug.cgi?id=54310
+
+        As discussed on webkit-dev, ArrayBuffers are used by a bunch of
+        different APIs, implemented by Firefox, and appear to be stable.
+        Keeping them conditional is a large mantainance burden than it's worth.
+
+        * DerivedSources.cpp:
+        * WebCore.vcproj/WebCore.vcproj:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setWebGLEnabled):
+        * bindings/js/JSArrayBufferCustom.cpp:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        * bindings/js/JSDataViewCustom.cpp:
+        * bindings/js/JSFloat32ArrayCustom.cpp:
+        * bindings/js/JSInt16ArrayCustom.cpp:
+        * bindings/js/JSInt32ArrayCustom.cpp:
+        * bindings/js/JSInt8ArrayCustom.cpp:
+        * bindings/js/JSUint16ArrayCustom.cpp:
+        * bindings/js/JSUint32ArrayCustom.cpp:
+        * bindings/js/JSUint8ArrayCustom.cpp:
+        * bindings/v8/custom/V8ArrayBufferCustom.cpp:
+        * bindings/v8/custom/V8ArrayBufferViewCustom.h:
+        * bindings/v8/custom/V8DataViewCustom.cpp:
+        * bindings/v8/custom/V8Float32ArrayCustom.cpp:
+        * bindings/v8/custom/V8Int16ArrayCustom.cpp:
+        * bindings/v8/custom/V8Int32ArrayCustom.cpp:
+        * bindings/v8/custom/V8Int8ArrayCustom.cpp:
+        * bindings/v8/custom/V8Uint16ArrayCustom.cpp:
+        * bindings/v8/custom/V8Uint32ArrayCustom.cpp:
+        * bindings/v8/custom/V8Uint8ArrayCustom.cpp:
+        * html/canvas/ArrayBuffer.cpp:
+        * html/canvas/ArrayBuffer.idl:
+        * html/canvas/ArrayBufferView.cpp:
+        * html/canvas/ArrayBufferView.idl:
+        * html/canvas/DataView.cpp:
+        * html/canvas/DataView.idl:
+        * html/canvas/Float32Array.cpp:
+        * html/canvas/Float32Array.idl:
+        * html/canvas/Int16Array.cpp:
+        * html/canvas/Int16Array.idl:
+        * html/canvas/Int32Array.cpp:
+        * html/canvas/Int32Array.idl:
+        * html/canvas/Int8Array.cpp:
+        * html/canvas/Int8Array.idl:
+        * html/canvas/Uint16Array.cpp:
+        * html/canvas/Uint16Array.idl:
+        * html/canvas/Uint32Array.cpp:
+        * html/canvas/Uint32Array.idl:
+        * html/canvas/Uint8Array.cpp:
+        * html/canvas/Uint8Array.idl:
+        * page/Crypto.cpp:
+        (WebCore::Crypto::getRandomValues):
+        * page/Crypto.h:
+        * page/Crypto.idl:
+        * page/DOMWindow.idl:
+        * workers/WorkerContext.idl:
+
 2011-02-11  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Darin Adler.

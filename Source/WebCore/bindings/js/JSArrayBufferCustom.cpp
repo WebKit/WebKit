@@ -24,9 +24,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(WEBGL) || ENABLE(BLOB)
-
 #include "JSArrayBuffer.h"
 
 #include "ArrayBuffer.h"
@@ -53,5 +50,3 @@ EncodedJSValue JSC_HOST_CALL JSArrayBufferConstructor::constructJSArrayBuffer(Ex
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEBGL) || ENABLE(BLOB)

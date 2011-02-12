@@ -24,9 +24,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(WEBGL) || ENABLE(BLOB)
-
 #include "JSFloat32Array.h"
 
 #include "Float32Array.h"
@@ -62,5 +59,3 @@ EncodedJSValue JSC_HOST_CALL JSFloat32ArrayConstructor::constructJSFloat32Array(
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEBGL) || ENABLE(BLOB)

@@ -54,7 +54,7 @@ module window {
         attribute [Replaceable] BarInfo toolbar;
         attribute [Replaceable] Navigator navigator;
         attribute [Replaceable] Navigator clientInformation;
-        readonly attribute [Conditional=WEBGL|BLOB] Crypto crypto;
+        readonly attribute Crypto crypto;
         attribute [DoNotCheckDomainSecurity, JSCCustom, V8CustomSetter, V8DisallowShadowing, CPPCustom] Location location;
 
         attribute [Replaceable, CustomGetter, V8CustomSetter] Event event;
@@ -505,15 +505,15 @@ module window {
 
         attribute DOMStringMapConstructor DOMStringMap;
 
-        attribute [JSCCustomGetter,Conditional=WEBGL|BLOB,EnabledAtRuntime] ArrayBufferConstructor ArrayBuffer; // Usable with new operator
-        attribute [JSCCustomGetter,Conditional=WEBGL|BLOB,EnabledAtRuntime] Int8ArrayConstructor Int8Array; // Usable with new operator
-        attribute [JSCCustomGetter,Conditional=WEBGL|BLOB,EnabledAtRuntime] Uint8ArrayConstructor Uint8Array; // Usable with new operator
-        attribute [JSCCustomGetter,Conditional=WEBGL|BLOB,EnabledAtRuntime] Int16ArrayConstructor Int16Array; // Usable with new operator
-        attribute [JSCCustomGetter,Conditional=WEBGL|BLOB,EnabledAtRuntime] Uint16ArrayConstructor Uint16Array; // Usable with new operator
-        attribute [JSCCustomGetter,Conditional=WEBGL|BLOB,EnabledAtRuntime] Int32ArrayConstructor Int32Array; // Usable with new operator
-        attribute [JSCCustomGetter,Conditional=WEBGL|BLOB,EnabledAtRuntime] Uint32ArrayConstructor Uint32Array; // Usable with new operator
-        attribute [JSCCustomGetter,Conditional=WEBGL|BLOB,EnabledAtRuntime] Float32ArrayConstructor Float32Array; // Usable with new operator
-        attribute [JSCCustomGetter,Conditional=WEBGL|BLOB,EnabledAtRuntime] DataViewConstructor DataView; // Usable with new operator
+        attribute [JSCCustomGetter] ArrayBufferConstructor ArrayBuffer; // Usable with new operator
+        attribute [JSCCustomGetter] Int8ArrayConstructor Int8Array; // Usable with new operator
+        attribute [JSCCustomGetter] Uint8ArrayConstructor Uint8Array; // Usable with new operator
+        attribute [JSCCustomGetter] Int16ArrayConstructor Int16Array; // Usable with new operator
+        attribute [JSCCustomGetter] Uint16ArrayConstructor Uint16Array; // Usable with new operator
+        attribute [JSCCustomGetter] Int32ArrayConstructor Int32Array; // Usable with new operator
+        attribute [JSCCustomGetter] Uint32ArrayConstructor Uint32Array; // Usable with new operator
+        attribute [JSCCustomGetter] Float32ArrayConstructor Float32Array; // Usable with new operator
+        attribute [JSCCustomGetter] DataViewConstructor DataView; // Usable with new operator
 
         attribute [JSCCustomGetter,Conditional=WEB_AUDIO,EnabledAtRuntime] AudioContextConstructor webkitAudioContext; // Usable with new operator
         attribute [Conditional=WEB_AUDIO] AudioPannerNodeConstructor webkitAudioPannerNode; // Needed for panning model constants

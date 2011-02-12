@@ -29,9 +29,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(WEBGL) || ENABLE(BLOB)
-
 #include "ArrayBuffer.h"
 #include "Int8Array.h"
 
@@ -67,5 +64,3 @@ v8::Handle<v8::Value> toV8(Int8Array* impl)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEBGL) || ENABLE(BLOB)

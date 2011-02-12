@@ -24,9 +24,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(WEBGL) || ENABLE(BLOB)
-
 #include "ArrayBuffer.h"
 
 #include <wtf/RefPtr.h>
@@ -100,5 +97,3 @@ void* ArrayBuffer::tryAllocate(unsigned numElements, unsigned elementByteSize)
 }
 
 }
-
-#endif // ENABLE(WEBGL) || ENABLE(BLOB)

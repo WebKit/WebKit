@@ -41,7 +41,6 @@ Crypto::Crypto()
 {
 }
 
-#if ENABLE(WEBGL) || ENABLE(BLOB)
 void Crypto::getRandomValues(ArrayBufferView* array, ExceptionCode& ec)
 {
 #if USE(OS_RANDOMNESS)
@@ -55,6 +54,5 @@ void Crypto::getRandomValues(ArrayBufferView* array, ExceptionCode& ec)
     ec = NOT_SUPPORTED_ERR;
 #endif
 }
-#endif
 
 }

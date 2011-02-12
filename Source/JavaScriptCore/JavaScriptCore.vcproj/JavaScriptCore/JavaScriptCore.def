@@ -102,6 +102,7 @@ EXPORTS
     ?createInheritorID@JSObject@JSC@@AAEPAVStructure@2@XZ
     ?createInterruptedExecutionException@JSC@@YAPAVJSObject@1@PAVJSGlobalData@1@@Z
     ?createLeaked@JSGlobalData@JSC@@SA?AV?$PassRefPtr@VJSGlobalData@JSC@@@WTF@@W4ThreadStackType@2@@Z
+    ?createRangeError@JSC@@YAPAVJSObject@1@PAVExecState@1@ABVUString@1@@Z
     ?createReferenceError@JSC@@YAPAVJSObject@1@PAVExecState@1@ABVUString@1@@Z
     ?createSingleCharacterString@SmallStrings@JSC@@AAEXPAVJSGlobalData@2@E@Z
     ?createStackOverflowError@JSC@@YAPAVJSObject@1@PAVExecState@1@@Z
@@ -111,6 +112,7 @@ EXPORTS
     ?createThread@WTF@@YAIP6APAXPAX@Z0@Z
     ?createThread@WTF@@YAIP6APAXPAX@Z0PBD@Z
     ?createTypeError@JSC@@YAPAVJSObject@1@PAVExecState@1@ABVUString@1@@Z
+    ?cryptographicallyRandomValues@WTF@@YAXPAXI@Z
     ?currentThread@WTF@@YAIXZ
     ?currentTime@WTF@@YANXZ
     ?data@CString@WTF@@QBEPBDXZ

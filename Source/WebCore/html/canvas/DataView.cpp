@@ -24,9 +24,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(WEBGL) || ENABLE(BLOB)
-
 #include "DataView.h"
 
 #include "CheckedInt.h"
@@ -231,5 +228,3 @@ void DataView::setFloat64(unsigned byteOffset, double value, bool littleEndian, 
 }
 
 }
-
-#endif // ENABLE(WEBGL) || ENABLE(BLOB)

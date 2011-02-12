@@ -24,9 +24,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(WEBGL) || ENABLE(BLOB)
-
 #include "ArrayBufferView.h"
 
 #include "ArrayBuffer.h"
@@ -105,5 +102,3 @@ void ArrayBufferView::calculateOffsetAndLength(int start, int end, unsigned arra
 }
 
 }
-
-#endif // ENABLE(WEBGL) || ENABLE(BLOB)

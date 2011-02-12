@@ -24,9 +24,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(WEBGL) || ENABLE(BLOB)
-
 #include "DataView.h"
 
 #include "V8ArrayBufferViewCustom.h"
@@ -120,5 +117,3 @@ v8::Handle<v8::Value> V8DataView::setUint8Callback(const v8::Arguments& args)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEBGL) || ENABLE(BLOB)
