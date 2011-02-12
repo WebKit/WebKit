@@ -677,6 +677,8 @@ PASS inner.confirm.isInner is true
 PASS inner.confirm.constructor.isInner is true
 FAIL inner.console.isInner should be true. Was false.
 FAIL inner.console.constructor.isInner should be true. Was false.
+FAIL inner.crypto.isInner should be true. Was false.
+FAIL inner.crypto.constructor.isInner should be true. Was false.
 PASS inner.decodeURI.isInner is true
 PASS inner.decodeURI.constructor.isInner is true
 PASS inner.decodeURIComponent.isInner is true

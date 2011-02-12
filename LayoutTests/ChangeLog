@@ -1,6 +1,20 @@
+2011-02-11  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed, Chromium test expectations update.
+
+        Also moved a test that's not Linux-specific and other platforms seem to
+        pass from chromium-linux/ to chromium/.
+
+        * platform/chromium-linux/fast/text/international/complex-text-rectangle-expected.txt: Removed.
+        * platform/chromium-linux/fast/text/international/complex-text-rectangle.html: Removed.
+        * platform/chromium/fast/dom/prototype-inheritance-expected.txt:
+        * platform/chromium/fast/text/international/complex-text-rectangle-expected.txt: Copied from platform/chromium-linux/fast/text/international/complex-text-rectangle-expected.txt.
+        * platform/chromium/fast/text/international/complex-text-rectangle.html: Copied from platform/chromium-linux/fast/text/international/complex-text-rectangle.html.
+        * platform/chromium/test_expectations.txt:
+
 2011-02-11  Mihai Parparita  <mihaip@chromium.org>
 
-        Unrevied chromium-gpu expectations update. Update expectations for
+        Unreviewed chromium-gpu expectations update. Update expectations for
         chromium-gpu-mac (it often has image diffs only, since it can use the
         text results from the mac port).
 

@@ -533,7 +533,6 @@ BUGCR20404 : editing/execCommand/copy-without-selection.html = FAIL
 BUGCR30536 WIN SKIP : http/tests/xmlhttprequest/methods-lower-case.html = TIMEOUT CRASH
 BUGCR30536 WIN : http/tests/xmlhttprequest/methods-async.html = TIMEOUT
 BUGCR30536 WIN SLOW : http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-invalidation-by-method.html = FAIL
-BUGCR30536 WIN : http/tests/xmlhttprequest/cross-origin-preflight-get.html = TEXT
 // LightTPD doesn't accept unknown HTTP methods and passes CGIs a Content-Type
 // even when a request didn't send the header.
 BUGCR30536 WIN SLOW : http/tests/xmlhttprequest/methods.html = FAIL
@@ -742,7 +741,6 @@ BUGCR35822 : plugins/npruntime/browser-object-identity.html = TEXT
 BUGCR21901 : plugins/npruntime/enumerate.html = TEXT
 BUGCR50787 : plugins/npruntime/plugin-scriptable-object-invoke-default.html = TEXT
 BUGCR50910 : plugins/npruntime/remove-property.html = TEXT
-BUGWK48034 : plugins/pass-different-npp-struct.html = TEXT
 // NPP_HandleEvent doesn't be implemented/work on mac/linux.
 BUGCR48033 LINUX MAC SKIP : plugins/plugin-initiate-popup-window.html = PASS TIMEOUT
 BUGCR35387 MAC : plugins/reentrant-update-widget-positions.html = TIMEOUT
@@ -1427,9 +1425,9 @@ BUGCR10426 LINUX : fast/lists/drag-into-marker.html = FAIL
 // x-height correct and we're still one px off.
 BUGCR10429 LINUX : css2.1/t100801-c544-valgn-01-d-ag.html = FAIL
 
-// New failures from Merge 41078:41149
+// May need rebaseline or expectations change (Linux looks like Mac but is using
+// expectations from Windows instead).
 BUGCR10430 WIN LINUX : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE+TEXT
-BUGCR10430 MAC : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE
 
 // Flakey. Not clear when it started, but it was before 3/9/09.
 // This test also started failing with the merge of March 25th 2009
@@ -1944,10 +1942,9 @@ BUGCR41292 : fast/url/anchor.html = TEXT
 
 BUGWK33812 SKIP : fast/dom/icon-url-property.html = FAIL
 
-// Failing with webkit roll 57659 -> 57677.
-BUGCR41817 WIN LINUX : fast/backgrounds/svg-as-background-1.html = IMAGE PASS
-BUGCR41817 WIN LINUX : fast/backgrounds/svg-as-background-3.html = IMAGE PASS
-BUGCR41817 MAC : svg/text/text-intro-05-t.svg = IMAGE
+// Diffs are kind of close; may just need rebaseline?
+BUGCR41817 WIN LINUX : fast/backgrounds/svg-as-background-1.html = IMAGE
+BUGCR41817 WIN LINUX : fast/backgrounds/svg-as-background-3.html = IMAGE
 
 BUGCR42044 WIN : http/tests/security/xss-DENIED-mime-type-execute-as-html.html = PASS TIMEOUT
 
@@ -2540,8 +2537,6 @@ BUG_HCLAM : http/tests/css/css-image-loading.html = TEXT TIMEOUT PASS
 BUG_HCLAM : http/tests/css/mask-image-loading.html = TEXT TIMEOUT PASS
 BUG_HCLAM : http/tests/css/reflection-mask-image-loading.html = TEXT TIMEOUT PASS
 
-BUG_HCLAM LINUX : svg/text/text-intro-05-t.svg = IMAGE PASS
-
 // Added by r69084
 BUGCR57934 WIN : http/tests/appcache/fail-on-update-2.html = PASS TEXT TIMEOUT
 
@@ -2721,8 +2716,6 @@ BUGCR64733 : editing/text-iterator/findString.html = TEXT
 
 // FIXME: Need to add tooling support for V8 bugs.
 BUGV8_953 : fast/regex/pcre-test-1.html = TIMEOUT
-
-BUGCR50347 : plugins/get-user-agent-with-null-npp-from-npp-new.html = TEXT
 
 BUGCR50282 MAC : fast/images/imagemap-case.html = IMAGE
 BUGCR50282 MAC : fast/images/imagemap-focus-ring-zoom.html = IMAGE
@@ -2983,23 +2976,6 @@ BUGCR70686 MAC : fast/text/international/cjk-segmentation.html = TEXT
 
 // Added by http://trac.webkit.org/changeset/76674
 BUGCR70882 WIN : fast/text/offsetForPosition-complex-fallback.html = TEXT
-// Started failing at http://trac.webkit.org/changeset/76674
-BUGCR70882 MAC : fast/text/atsui-small-caps-punctuation-size.html = IMAGE
-BUGCR70882 MAC : fast/text/capitalize-boundaries.html = IMAGE
-BUGCR70882 MAC : fast/text/drawBidiText.html = IMAGE
-BUGCR70882 MAC : fast/text/international/bidi-AN-after-empty-run.html = IMAGE
-BUGCR70882 MAC : fast/text/international/bidi-CS-after-AN.html = IMAGE
-BUGCR70882 MAC : fast/text/international/bidi-linebreak-001.html = IMAGE
-BUGCR70882 MAC : fast/text/international/bidi-linebreak-002.html = IMAGE
-BUGCR70882 MAC : fast/text/international/bidi-linebreak-003.html = IMAGE
-BUGCR70882 MAC : fast/text/international/bidi-mirror-he-ar.html = IMAGE
-BUGCR70882 MAC : fast/text/international/bidi-neutral-run.html = IMAGE
-BUGCR70882 MAC : fast/text/international/complex-character-based-fallback.html = IMAGE
-BUGCR70882 MAC : fast/text/international/danda-space.html = IMAGE
-BUGCR70882 MAC : fast/text/international/hebrew-vowels.html = IMAGE
-BUGCR70882 MAC : fast/text/international/hindi-spacing.html = IMAGE
-BUGCR70882 MAC : fast/text/international/hindi-whitespace.html = IMAGE
-BUGCR70882 MAC : fast/text/international/thai-baht-space.html = IMAGE
 
 BUGCR70942 LINUX : editing/execCommand/break-out-of-empty-list-item.html = PASS TIMEOUT
 BUGRNIWA SLOW WIN : editing/execCommand/4786404-1.html = PASS
@@ -3225,9 +3201,6 @@ BUG_ZMO : fast/notifications/notifications-document-close-crash.html = PASS TEXT
 
 // Should be able to remove these two after rebaseline, add them for now so we could roll
 BUG_ZMO MAC : fast/box-shadow/inset.html = IMAGE
-
-// Failure after r78095
-BUG_ZMO : fast/js/i18n-bindings-locale.html = TEXT
 
 BUGWK54051 MAC LINUX : plugins/invalidate_rect.html = FAIL
 
@@ -3523,3 +3496,10 @@ BUGWK54322 MAC SNOWLEOPARD : transitions/move-after-transition.html = IMAGE
 BUGCR72428 : fast/dom/HTMLAnchorElement/set-href-attribute-hash.html = TEXT
 
 BUGCR72529 : fast/box-shadow/shadow-buffer-partial.html = IMAGE
+
+// The mac-leopard baselines for these are clearly wrong.  They need
+// rebaselining, at which point they should look like the mac baselines.  It's
+// not clear to me whether the two will/should be the same and whether our
+// current output is correct, but it's very close.
+BUGPKASTING MAC : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE
+BUGPKASTING MAC : svg/text/text-intro-05-t.svg = IMAGE
