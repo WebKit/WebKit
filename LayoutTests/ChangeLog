@@ -1,3 +1,13 @@
+2011-02-11  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed, Chromium test expectations update.
+
+        Unify identical expectation files in chromium/ and update for r78383.
+
+        * platform/chromium-mac/fast/url/port-expected.txt: Removed.
+        * platform/chromium-win/fast/url/port-expected.txt: Removed.
+        * platform/chromium/fast/url/port-expected.txt: Copied from platform/chromium-win/fast/url/port-expected.txt.
+
 2011-02-11  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Darin Adler.
