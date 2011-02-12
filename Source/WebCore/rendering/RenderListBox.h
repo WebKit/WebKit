@@ -107,6 +107,8 @@ private:
     virtual IntPoint convertFromContainingViewToScrollbar(const Scrollbar*, const IntPoint&) const;
     virtual Scrollbar* verticalScrollbar() const { return m_vBar.get(); }
     virtual IntSize contentsSize() const;
+    virtual int visibleHeight() const;
+    virtual int visibleWidth() const;
     virtual IntPoint currentMousePosition() const;
     virtual bool scrollbarWillRenderIntoCompositingLayer() const;
 

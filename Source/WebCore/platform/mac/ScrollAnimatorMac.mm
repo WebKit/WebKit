@@ -40,14 +40,15 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/UnusedParam.h>
 
+using namespace WebCore;
+using namespace std;
+
 @interface NSObject (ScrollAnimationHelperDetails)
 - (id)initWithDelegate:(id)delegate;
 - (void)_stopRun;
 - (BOOL)_isAnimating;
 - (NSPoint)targetOrigin;
 @end
-
-using namespace WebCore;
 
 @interface ScrollAnimationHelperDelegate : NSObject
 {
@@ -506,25 +507,54 @@ bool ScrollAnimatorMac::scroll(ScrollbarOrientation orientation, ScrollGranulari
 void ScrollAnimatorMac::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
 {
     [m_scrollAnimationHelper.get() _stopRun];
-    ScrollAnimator::scrollToOffsetWithoutAnimation(offset);
+    immediateScrollToPoint(offset);
+}
+
+float ScrollAnimatorMac::adjustScrollXPositionIfNecessary(float position) const
+{
+    if (!m_scrollableArea->constrainsScrollingToContentEdge())
+        return position;
+
+    return max<float>(min<float>(position, m_scrollableArea->contentsSize().width() - m_scrollableArea->visibleWidth()), 0);
+}
+
+float ScrollAnimatorMac::adjustScrollYPositionIfNecessary(float position) const
+{
+    if (!m_scrollableArea->constrainsScrollingToContentEdge())
+        return position;
+
+    return max<float>(min<float>(position, m_scrollableArea->contentsSize().height() - m_scrollableArea->visibleHeight()), 0);
+}
+
+FloatPoint ScrollAnimatorMac::adjustScrollPositionIfNecessary(const FloatPoint& position) const
+{
+    if (!m_scrollableArea->constrainsScrollingToContentEdge())
+        return position;
+
+    float newX = max<float>(min<float>(position.x(), m_scrollableArea->contentsSize().width() - m_scrollableArea->visibleWidth()), 0);
+    float newY = max<float>(min<float>(position.y(), m_scrollableArea->contentsSize().height() - m_scrollableArea->visibleHeight()), 0);
+
+    return FloatPoint(newX, newY);
 }
 
 void ScrollAnimatorMac::immediateScrollToPoint(const FloatPoint& newPosition)
 {
-    m_currentPosX = newPosition.x();
-    m_currentPosY = newPosition.y();
+    FloatPoint adjustedPosition = adjustScrollPositionIfNecessary(newPosition);
+ 
+    m_currentPosX = adjustedPosition.x();
+    m_currentPosY = adjustedPosition.y();
     notityPositionChanged();
 }
 
 void ScrollAnimatorMac::immediateScrollByDeltaX(float deltaX)
 {
-    m_currentPosX += deltaX;
+    m_currentPosX = adjustScrollXPositionIfNecessary(m_currentPosX + deltaX);
     notityPositionChanged();
 }
 
 void ScrollAnimatorMac::immediateScrollByDeltaY(float deltaY)
 {
-    m_currentPosY += deltaY;
+    m_currentPosY = adjustScrollYPositionIfNecessary(m_currentPosY + deltaY);
     notityPositionChanged();
 }
 

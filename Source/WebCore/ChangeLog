@@ -1,3 +1,43 @@
+2011-02-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        WK2: Extra scrolling required when scrolling with a scroll wheel (Mighty Mouse)
+        <rdar://problem/8984760> 
+
+        When going down the smooth scroll path, constrained scrolls (such as those from a
+        Mighty Mouse) were being correctly constrained at the ScrollView level, but the 
+        duplicate values being stored by the animator were not being constrained correctly.
+
+        In order to implement the constraint at this level, more of the ScrollableArea's API
+        needed to be filled in for RenderLayer and RenderListBox.
+
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::scrollToOffsetWithoutAnimation): Call immediateScrollToPoint to stay
+        consistent and get the desired behavior.
+
+        (WebCore::ScrollAnimatorMac::adjustScrollXPositionIfNecessary):
+        (WebCore::ScrollAnimatorMac::adjustScrollYPositionIfNecessary):
+        (WebCore::ScrollAnimatorMac::adjustScrollPositionIfNecessary):
+        (WebCore::ScrollAnimatorMac::immediateScrollToPoint):
+        (WebCore::ScrollAnimatorMac::immediateScrollByDeltaX):
+        (WebCore::ScrollAnimatorMac::immediateScrollByDeltaY):
+        Ensure that the scroll animators view of the current scroll position is the
+        same as the scrollable areas by correctly clamping the value.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::contentsSize): Correct implementation
+        to use the scroll size, not the visible size.
+        (WebCore::RenderLayer::visibleHeight):
+        (WebCore::RenderLayer::visibleWidth):
+        * rendering/RenderLayer.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::visibleHeight):
+        (WebCore::RenderListBox::visibleWidth):
+        * rendering/RenderListBox.h:
+        Add implementations for visibleHeight/visibleWidth.
+
 2011-02-12  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.

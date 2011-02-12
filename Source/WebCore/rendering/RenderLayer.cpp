@@ -1773,6 +1773,21 @@ IntPoint RenderLayer::convertFromContainingViewToScrollbar(const Scrollbar* scro
     return point;
 }
 
+IntSize RenderLayer::contentsSize() const
+{
+    return IntSize(const_cast<RenderLayer*>(this)->scrollWidth(), const_cast<RenderLayer*>(this)->scrollHeight());
+}
+
+int RenderLayer::visibleHeight() const
+{
+    return m_height;
+}
+
+int RenderLayer::visibleWidth() const
+{
+    return m_width;
+}
+
 IntSize RenderLayer::scrollbarOffset(const Scrollbar* scrollbar) const
 {
     RenderBox* box = renderBox();
