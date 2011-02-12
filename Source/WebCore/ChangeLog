@@ -1,3 +1,31 @@
+2011-02-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Extract a function to process contents for one node from Range::processContents
+        https://bugs.webkit.org/show_bug.cgi?id=54282
+
+        Extracted Range::processContentsBetweenOffsets, which process contents of a node
+        between two offsets. This function is used for the simple case where the start
+        and the end containers are of the same node, and to process start and end containers
+        in the complex case.
+
+        When the function takes a non-null fragment (simple case), it appends the processed
+        contents to the fragment; character data and processing instruction's contents are copied
+        between the offsets, and descendants are copied for node of other types (not node itself).
+
+        When the fragment is null (complex case), the function copies contents of character data,
+        processing instruction, and node of other types (including node itself).
+
+        No new tests are added since this is a refactoring.
+
+        * dom/Range.cpp:
+        (WebCore::highestAncestorUnderCommonRoot): Added.
+        (WebCore::Range::processContents): Calls highestAncestorUnderCommonRoot and
+        processContentsBetweenOffsets.
+        (WebCore::Range::processContentsBetweenOffsets): Added.
+        * dom/Range.h:
+
 2011-02-12  Adam Barth  <abarth@webkit.org>
 
         Attempt to fix the Qt Windows build.
