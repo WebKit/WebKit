@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 59: ReferenceError: Can't find variable: Uint8Array
+CONSOLE MESSAGE: line 59: TypeError: Type error
 FAIL: Timed out waiting for notifyDone to be called
 Tests XMLHttpRequest 'arraybuffer' loading with the .responseType and .response attributes.
 

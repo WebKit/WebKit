@@ -1,5 +1,15 @@
 2011-02-12  Adam Barth  <abarth@webkit.org>
 
+        Update test expectations on Windows to account for ArrayBuffers being
+        on by default.
+
+        * platform/win/fast/dom/prototype-inheritance-2-expected.txt:
+        * platform/win/fast/dom/prototype-inheritance-expected.txt:
+        * platform/win/fast/xmlhttprequest/xmlhttprequest-responsetype-arraybuffer-expected.txt:
+        * platform/win/http/tests/xmlhttprequest/send-array-buffer-expected.txt:
+
+2011-02-12  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Kenneth Russell.
 
         Enable ArrayBuffers by default
