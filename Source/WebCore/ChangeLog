@@ -1,3 +1,9 @@
+2011-02-12  Adam Barth  <abarth@webkit.org>
+
+        Apparently lines in .pro files need to be \-terminated.
+
+        * WebCore.pro:
+
 2011-02-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

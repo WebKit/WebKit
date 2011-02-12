@@ -1028,7 +1028,7 @@ SOURCES += \
     html/canvas/Int16Array.cpp \
     html/canvas/Int32Array.cpp \
     html/canvas/Int8Array.cpp \
-    html/canvas/Uint16Array.cpp
+    html/canvas/Uint16Array.cpp \
     html/canvas/Uint32Array.cpp \
     html/canvas/Uint8Array.cpp \
     html/parser/CSSPreloadScanner.cpp \
@@ -1509,7 +1509,7 @@ v8 {
         bindings/js/DOMObjectHashTableMap.h \
         bindings/js/DOMWrapperWorld.h \
         bindings/js/JSArrayBufferCustom.cpp \
-        bindings/js/JSArrayBufferViewHelper.h
+        bindings/js/JSArrayBufferViewHelper.h \
         bindings/js/JSAudioConstructor.h \
         bindings/js/JSCSSStyleDeclarationCustom.h \
         bindings/js/JSCallbackData.h \
@@ -1548,7 +1548,7 @@ v8 {
         bindings/js/JSOptionConstructor.h \
         bindings/js/JSPluginElementFunctions.h \
         bindings/js/JSStorageCustom.h \
-        bindings/js/JSUint16ArrayCustom.cpp
+        bindings/js/JSUint16ArrayCustom.cpp \
         bindings/js/JSUint32ArrayCustom.cpp \
         bindings/js/JSUint8ArrayCustom.cpp \
         bindings/js/JSWorkerContextBase.h \
@@ -1845,7 +1845,7 @@ HEADERS += \
     html/canvas/Int16Array.h \
     html/canvas/Int32Array.h \
     html/canvas/Int8Array.h \
-    html/canvas/Uint16Array.h
+    html/canvas/Uint16Array.h \
     html/canvas/Uint32Array.h \
     html/canvas/Uint8Array.h \
     html/ClassList.h \
