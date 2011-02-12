@@ -1,5 +1,12 @@
 2011-02-12  Adam Barth  <abarth@webkit.org>
 
+        Another attempt to fix the EFL build.  Looks like we're missing one
+        more file.
+
+        * CMakeLists.txt:
+
+2011-02-12  Adam Barth  <abarth@webkit.org>
+
         Attempt to fix the EFL build.  Apparently the CMake build had no
         concept of ArrayBuffers.
 
