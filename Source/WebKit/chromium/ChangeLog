@@ -1,3 +1,13 @@
+2011-02-11  David Grogan  <dgrogan@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        indexeddb: add onBlocked to WebKit::WebIDBCallbacks
+        https://bugs.webkit.org/show_bug.cgi?id=54329
+
+        * public/WebIDBCallbacks.h:
+        (WebKit::WebIDBCallbacks::onBlocked):
+
 2011-02-11  Adam Klein  <adamk@chromium.org>
 
         Reviewed by Darin Fisher.

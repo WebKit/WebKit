@@ -53,6 +53,7 @@ public:
     virtual void onSuccess(WebIDBObjectStore*) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccess(WebIDBTransaction*) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccess(const WebSerializedScriptValue&) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void onBlocked() { WEBKIT_ASSERT_NOT_REACHED(); }
 };
 
 } // namespace WebKit
