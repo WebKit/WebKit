@@ -93,6 +93,8 @@ public:
     CoreIPC::SyncReplyMode didReceiveSyncWebInspectorProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
 #endif
 
+    static bool isInspectorPage(WebPageProxy*);
+
 private:
     WebInspectorProxy(WebPageProxy* page);
 

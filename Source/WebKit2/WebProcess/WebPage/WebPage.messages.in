@@ -42,9 +42,9 @@ messages -> WebPage {
     TouchEvent(WebKit::WebTouchEvent event)
 #endif
 
-    GoBack(uint64_t backForwardItemID)
-    GoForward(uint64_t backForwardItemID)
-    GoToBackForwardItem(uint64_t backForwardItemID)
+    GoBack(uint64_t backForwardItemID, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
+    GoForward(uint64_t backForwardItemID, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
+    GoToBackForwardItem(uint64_t backForwardItemID, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
     LoadHTMLString(WTF::String htmlString, WTF::String baseURL)
     LoadAlternateHTMLString(WTF::String htmlString, WTF::String baseURL, WTF::String unreachableURL); 
     LoadPlainTextString(WTF::String string)
@@ -55,7 +55,7 @@ messages -> WebPage {
 
     StopLoadingFrame(uint64_t frameID)
     
-    RestoreSessionAndNavigateToCurrentItem(WebKit::SessionState state)
+    RestoreSessionAndNavigateToCurrentItem(WebKit::SessionState state, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
 
     DidRemoveBackForwardItem(uint64_t backForwardItemID)
 

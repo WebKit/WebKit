@@ -31,6 +31,7 @@
 #include "DragControllerAction.h"
 #include "DrawingAreaProxy.h"
 #include "GeolocationPermissionRequestManagerProxy.h"
+#include "SandboxExtension.h"
 #include "SelectionState.h"
 #include "SharedMemory.h"
 #include "WKBase.h"
@@ -568,6 +569,8 @@ private:
 
     void clearPendingAPIRequestURL() { m_pendingAPIRequestURL = String(); }
     void setPendingAPIRequestURL(const String& pendingAPIRequestURL) { m_pendingAPIRequestURL = pendingAPIRequestURL; }
+
+    void initializeSandboxExtensionHandle(const WebCore::KURL&, SandboxExtension::Handle&);
 
     PageClient* m_pageClient;
     WebLoaderClient m_loaderClient;

@@ -158,6 +158,11 @@ void WebInspectorProxy::togglePageProfiling()
     m_isProfilingPage = !m_isProfilingPage;
 }
 
+bool WebInspectorProxy::isInspectorPage(WebPageProxy* page)
+{
+    return page->pageGroup() == inspectorPageGroup();
+}
+
 // Called by WebInspectorProxy messages
 void WebInspectorProxy::createInspectorPage(uint64_t& inspectorPageID, WebPageCreationParameters& inspectorPageParameters)
 {

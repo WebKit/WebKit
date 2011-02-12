@@ -240,9 +240,13 @@ void WebPageProxy::reattachToWebProcessWithItem(WebBackForwardListItem* item)
         m_backForwardList->goToItem(item);
     
     reattachToWebProcess();
-    
-    if (item)
-        process()->send(Messages::WebPage::GoToBackForwardItem(item->itemID()), m_pageID);
+
+    if (!item)
+        return;
+
+    SandboxExtension::Handle sandboxExtensionHandle;
+    initializeSandboxExtensionHandle(KURL(KURL(), item->url()), sandboxExtensionHandle);
+    process()->send(Messages::WebPage::GoToBackForwardItem(item->itemID(), sandboxExtensionHandle), m_pageID);
 }
 
 void WebPageProxy::initializeWebPage()
@@ -325,9 +329,13 @@ bool WebPageProxy::tryClose()
     return false;
 }
 
-static void initializeSandboxExtensionHandle(const KURL& url, SandboxExtension::Handle& sandboxExtensionHandle)
+void WebPageProxy::initializeSandboxExtensionHandle(const KURL& url, SandboxExtension::Handle& sandboxExtensionHandle)
 {
     if (!url.isLocalFile())
+        return;
+
+    // Don't give the inspector full access to the file system.
+    if (WebInspectorProxy::isInspectorPage(this))
         return;
 
     SandboxExtension::createHandle("/", SandboxExtension::ReadOnly, sandboxExtensionHandle);
@@ -417,7 +425,9 @@ void WebPageProxy::goForward()
         return;
     }
 
-    process()->send(Messages::WebPage::GoForward(forwardItem->itemID()), m_pageID);
+    SandboxExtension::Handle sandboxExtensionHandle;
+    initializeSandboxExtensionHandle(KURL(KURL(), forwardItem->url()), sandboxExtensionHandle);
+    process()->send(Messages::WebPage::GoForward(forwardItem->itemID(), sandboxExtensionHandle), m_pageID);
 }
 
 bool WebPageProxy::canGoForward() const
@@ -439,7 +449,9 @@ void WebPageProxy::goBack()
         return;
     }
 
-    process()->send(Messages::WebPage::GoBack(backItem->itemID()), m_pageID);
+    SandboxExtension::Handle sandboxExtensionHandle;
+    initializeSandboxExtensionHandle(KURL(KURL(), backItem->url()), sandboxExtensionHandle);
+    process()->send(Messages::WebPage::GoBack(backItem->itemID(), sandboxExtensionHandle), m_pageID);
 }
 
 bool WebPageProxy::canGoBack() const
@@ -454,7 +466,9 @@ void WebPageProxy::goToBackForwardItem(WebBackForwardListItem* item)
         return;
     }
 
-    process()->send(Messages::WebPage::GoToBackForwardItem(item->itemID()), m_pageID);
+    SandboxExtension::Handle sandboxExtensionHandle;
+    initializeSandboxExtensionHandle(KURL(KURL(), item->url()), sandboxExtensionHandle);
+    process()->send(Messages::WebPage::GoToBackForwardItem(item->itemID(), sandboxExtensionHandle), m_pageID);
 }
 
 void WebPageProxy::didChangeBackForwardList(WebBackForwardListItem* added, Vector<RefPtr<APIObject> >* removed)

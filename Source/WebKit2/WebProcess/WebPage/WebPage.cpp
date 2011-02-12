@@ -480,20 +480,26 @@ void WebPage::reload(bool reloadFromOrigin)
     m_mainFrame->coreFrame()->loader()->reload(reloadFromOrigin);
 }
 
-void WebPage::goForward(uint64_t backForwardItemID)
+void WebPage::goForward(uint64_t backForwardItemID, const SandboxExtension::Handle& sandboxExtensionHandle)
 {
+    m_sandboxExtensionTracker.beginLoad(m_mainFrame.get(), sandboxExtensionHandle);
+
     HistoryItem* item = WebBackForwardListProxy::itemForID(backForwardItemID);
     m_page->goToItem(item, FrameLoadTypeForward);
 }
 
-void WebPage::goBack(uint64_t backForwardItemID)
+void WebPage::goBack(uint64_t backForwardItemID, const SandboxExtension::Handle& sandboxExtensionHandle)
 {
+    m_sandboxExtensionTracker.beginLoad(m_mainFrame.get(), sandboxExtensionHandle);
+
     HistoryItem* item = WebBackForwardListProxy::itemForID(backForwardItemID);
     m_page->goToItem(item, FrameLoadTypeBack);
 }
 
-void WebPage::goToBackForwardItem(uint64_t backForwardItemID)
+void WebPage::goToBackForwardItem(uint64_t backForwardItemID, const SandboxExtension::Handle& sandboxExtensionHandle)
 {
+    m_sandboxExtensionTracker.beginLoad(m_mainFrame.get(), sandboxExtensionHandle);
+
     HistoryItem* item = WebBackForwardListProxy::itemForID(backForwardItemID);
     m_page->goToItem(item, FrameLoadTypeIndexedBackForward);
 }
@@ -1023,10 +1029,10 @@ uint64_t WebPage::restoreSession(const SessionState& sessionState)
     return currentItemID;
 }
 
-void WebPage::restoreSessionAndNavigateToCurrentItem(const SessionState& sessionState)
+void WebPage::restoreSessionAndNavigateToCurrentItem(const SessionState& sessionState, const SandboxExtension::Handle& sandboxExtensionHandle)
 {
     if (uint64_t currentItemID = restoreSession(sessionState))
-        goToBackForwardItem(currentItemID);
+        goToBackForwardItem(currentItemID, sandboxExtensionHandle);
 }
 
 #if ENABLE(TOUCH_EVENTS)
@@ -1792,10 +1798,38 @@ void WebPage::SandboxExtensionTracker::beginLoad(WebFrame* frame, const SandboxE
     m_pendingProvisionalSandboxExtension = SandboxExtension::create(handle);
 }
 
+static bool shouldReuseCommittedSandboxExtension(WebFrame* frame)
+{
+    ASSERT(frame->isMainFrame());
+
+    FrameLoader* frameLoader = frame->coreFrame()->loader();
+    FrameLoadType frameLoadType = frameLoader->loadType();
+
+    // If the page is being reloaded, it should reuse whatever extension is committed.
+    if (frameLoadType == FrameLoadTypeReload || frameLoadType == FrameLoadTypeReloadFromOrigin)
+        return true;
+
+    DocumentLoader* documentLoader = frameLoader->documentLoader();
+    DocumentLoader* provisionalDocumentLoader = frameLoader->provisionalDocumentLoader();
+    if (!documentLoader || !provisionalDocumentLoader)
+        return false;
+
+    if (documentLoader->url().isLocalFile() && provisionalDocumentLoader->url().isLocalFile() 
+        && provisionalDocumentLoader->triggeringAction().type() == NavigationTypeLinkClicked)
+        return true;
+
+    return false;
+}
+
 void WebPage::SandboxExtensionTracker::didStartProvisionalLoad(WebFrame* frame)
 {
     if (!frame->isMainFrame())
         return;
+
+    if (shouldReuseCommittedSandboxExtension(frame)) {
+        m_pendingProvisionalSandboxExtension = m_committedSandboxExtension.release();
+        ASSERT(!m_committedSandboxExtension);
+    }
 
     ASSERT(!m_provisionalSandboxExtension);
 

@@ -354,15 +354,15 @@ private:
 
     // Actions
     void tryClose();
-    void loadURL(const String&, const SandboxExtension::Handle& sandboxExtensionHandle);
-    void loadURLRequest(const WebCore::ResourceRequest&, const SandboxExtension::Handle& sandboxExtensionHandle);
+    void loadURL(const String&, const SandboxExtension::Handle&);
+    void loadURLRequest(const WebCore::ResourceRequest&, const SandboxExtension::Handle&);
     void loadHTMLString(const String& htmlString, const String& baseURL);
     void loadAlternateHTMLString(const String& htmlString, const String& baseURL, const String& unreachableURL);
     void loadPlainTextString(const String&);
     void reload(bool reloadFromOrigin);
-    void goForward(uint64_t);
-    void goBack(uint64_t);
-    void goToBackForwardItem(uint64_t);
+    void goForward(uint64_t, const SandboxExtension::Handle&);
+    void goBack(uint64_t, const SandboxExtension::Handle&);
+    void goToBackForwardItem(uint64_t, const SandboxExtension::Handle&);
     void setActive(bool);
     void setFocused(bool);
     void setInitialFocus(bool);
@@ -382,7 +382,7 @@ private:
 #endif
 
     uint64_t restoreSession(const SessionState&);
-    void restoreSessionAndNavigateToCurrentItem(const SessionState&);
+    void restoreSessionAndNavigateToCurrentItem(const SessionState&, const SandboxExtension::Handle&);
 
     void didRemoveBackForwardItem(uint64_t);
 

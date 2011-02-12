@@ -1,5 +1,55 @@
 2011-02-11  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        Can’t open local files on reload or navigation from the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=54332
+        <rdar://problem/8903076>
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::isInspectorPage):
+        * UIProcess/WebInspectorProxy.h:
+        Check whether the given page is a web inspector page.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeSandboxExtensionHandle):
+        If this is a web inspector page, we don't want to make a sandbox extension.
+
+        (WebKit::WebPageProxy::reattachToWebProcessWithItem):
+        (WebKit::WebPageProxy::goForward):
+        (WebKit::WebPageProxy::goBack):
+        (WebKit::WebPageProxy::goToBackForwardItem):
+        Pass a sandbox extension along when sending the message.
+
+        * UIProcess/WebPageProxy.h:
+        Make initializeSandboxExtensionHandle a member function.
+
+        * UIProcess/cf/WebPageProxyCF.cpp:
+        (WebKit::WebPageProxy::restoreFromSessionStateData):
+        Pass a sandbox extension along.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::goForward):
+        (WebKit::WebPage::goBack):
+        (WebKit::WebPage::goToBackForwardItem):
+        Hand the sandbox extension to the sandbox extension tracker.
+
+        (WebKit::WebPage::restoreSessionAndNavigateToCurrentItem):
+        Pass the sandbox extension to goToBackForwardItem.
+
+        (WebKit::shouldReuseCommittedSandboxExtension):
+        New function that checks whether a committed sandbox extension should be re-used. We
+        do this for page reloads, as well as regular page navigations when both the committed
+        and provisional documents have file URLs.
+
+        (WebKit::WebPage::SandboxExtensionTracker::didStartProvisionalLoad):
+        Reuse the committed sandbox extension if necessary.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+2011-02-11  Anders Carlsson  <andersca@apple.com>
+
         Fix Snow Leopard build.
 
         * PluginProcess/PluginProcess.cpp:
