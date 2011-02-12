@@ -157,6 +157,8 @@ private:
         }
         
         MessageID messageID() const { return m_messageID; }
+        uint64_t destinationID() const { return m_arguments->destinationID(); }
+
         T* arguments() const { return m_arguments; }
         
         PassOwnPtr<T> releaseArguments()
@@ -202,7 +204,10 @@ private:
     void dispatchMessage(IncomingMessage&);
     void dispatchMessages();
     void dispatchSyncMessage(MessageID, ArgumentDecoder*);
-                             
+
+    // Can be called on any thread.
+    void enqueueIncomingMessage(IncomingMessage&);
+
     Client* m_client;
     bool m_isServer;
     uint64_t m_syncRequestID;
@@ -270,7 +275,6 @@ private:
     Mutex m_syncReplyStateMutex;
     bool m_shouldWaitForSyncReplies;
     Vector<PendingSyncReply> m_pendingSyncReplies;
-    Vector<IncomingMessage> m_syncMessagesReceivedWhileWaitingForSyncReply;
 
 #if PLATFORM(MAC)
     // Called on the connection queue.

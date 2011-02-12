@@ -1,3 +1,44 @@
+2011-02-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Incoming synchronous messages should always be processed regardless of connection waiting for a reply
+        https://bugs.webkit.org/show_bug.cgi?id=54326
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::SyncMessageState::getOrCreate):
+        Assert that the map has a non-null SyncMessageState object.
+
+        (CoreIPC::Connection::SyncMessageState::SyncMessageState):
+        Initialize m_waitForSyncReplyCount.
+
+        (CoreIPC::Connection::SyncMessageState::beginWaitForSyncReply):
+        Increment m_waitForSyncReplyCount.
+
+        (CoreIPC::Connection::SyncMessageState::endWaitForSyncReply):
+        Decrement m_waitForSyncReplyCount. If it's 0, enqueue any incoming sync messages.
+
+        (CoreIPC::Connection::SyncMessageState::processIncomingMessage):
+        If this is a message that needs to be dispatched, add it to the queue and wake up the client run loop.
+
+        (CoreIPC::Connection::SyncMessageState::dispatchMessages):
+        Go through the queue of incoming messages and dispatch them.
+
+        (CoreIPC::Connection::sendSyncMessage):
+        call beginWaitForSyncReply/endWaitForSyncReply.
+
+        (CoreIPC::Connection::waitForSyncReply):
+        Dispatch messages.
+
+        (CoreIPC::Connection::processIncomingMessage):
+        Call SyncMessageState::processIncomingMessage.
+
+        (CoreIPC::Connection::enqueueIncomingMessage):
+        Add helper function for enqueuing an incoming message.
+
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC::Connection::Message::destinationID):
+
 2011-02-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.
