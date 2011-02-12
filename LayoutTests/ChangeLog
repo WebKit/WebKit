@@ -1,3 +1,10 @@
+2011-02-11  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations update. Mark tests that fail only on
+        Snow Leopard, so that we can begin to have green Snow Leopard bots.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-11  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
