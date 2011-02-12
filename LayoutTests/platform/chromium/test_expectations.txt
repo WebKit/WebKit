@@ -3120,7 +3120,8 @@ BUGWK47924 GPU WIN LINUX : compositing/iframes/composited-iframe-alignment.html 
 BUGWK47924 GPU MAC : compositing/iframes/composited-iframe-alignment.html = TIMEOUT IMAGE
 
 // Chromium does not support PDF content in <img> tags.
-WONTFIX GPU : compositing/color-matching/pdf-image-match.html = IMAGE+TEXT
+WONTFIX GPU WIN LINUX : compositing/color-matching/pdf-image-match.html = IMAGE+TEXT
+WONTFIX GPU MAC : compositing/color-matching/pdf-image-match.html = IMAGE
 WONTFIX GPU : compositing/images/direct-pdf-image.html = IMAGE
 
 // Chromium does not support PDF or plugin content in layers right now.
@@ -3150,9 +3151,10 @@ BUGWK47946 GPU MAC : compositing/geometry/limit-layer-bounds-transformed-overflo
 // Skia does not handle multiple masks correctly
 BUGWK47947 GPU LINUX WIN : compositing/masks/multiple-masks.html = IMAGE+TEXT
 
-BUGWK47949 GPU WIN LINUX: compositing/reflections/nested-reflection-anchor-point.html = IMAGE+TEXT
-BUGWK47949 GPU MAC: compositing/reflections/nested-reflection-anchor-point.html = IMAGE
-BUGWK47949 GPU : compositing/reflections/reflection-opacity.html = IMAGE+TEXT
+BUGWK47949 GPU WIN LINUX : compositing/reflections/nested-reflection-anchor-point.html = IMAGE+TEXT
+BUGWK47949 GPU MAC : compositing/reflections/nested-reflection-anchor-point.html = IMAGE
+BUGWK47949 GPU WIN LINUX : compositing/reflections/reflection-opacity.html = IMAGE+TEXT
+BUGWK47949 GPU MAC : compositing/reflections/reflection-opacity.html = IMAGE
 BUGWK54306 GPU WIN : compositing/reflections/animation-inside-reflection.html = IMAGE PASS
 BUGWK54306 GPU WIN : compositing/reflections/nested-reflection-animated.html = IMAGE PASS
 

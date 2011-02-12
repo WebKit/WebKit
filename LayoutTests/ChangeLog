@@ -1,5 +1,13 @@
 2011-02-11  Mihai Parparita  <mihaip@chromium.org>
 
+        Unrevied chromium-gpu expectations update. Update expectations for
+        chromium-gpu-mac (it often has image diffs only, since it can use the
+        text results from the mac port).
+
+        * platform/chromium/test_expectations.txt:
+
+2011-02-11  Mihai Parparita  <mihaip@chromium.org>
+
         Unreviewed Chromium expectations update. Mark tests that fail only on
         Snow Leopard, so that we can begin to have green Snow Leopard bots.
 
