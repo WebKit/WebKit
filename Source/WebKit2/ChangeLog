@@ -1,3 +1,26 @@
+2011-02-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        WebKit2: Going to Ars Technica crashes WebProcess in WebCore::ResourceRequestBase::url() const + 9
+        <rdar://problem/8978832>
+
+        Speculative fix for crash accessing a bad ResourceRequest in policy
+        client code. Remove early returns from dispatchDecidePolicyForMIMEType 
+        and dispatchDecidePolicyForNavigationAction that are not present in the WebKit1
+        equivalent code. This should be safe, now that the IPC calls are synchronous.
+
+        Also removes some invalid assertions in WebFrameProxy that were getting hit. It is okay
+        for the url to empty.
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::didReceiveServerRedirectForProvisionalLoad):
+        (WebKit::WebFrameProxy::didFailProvisionalLoad):
+        (WebKit::WebFrameProxy::didFailLoad):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForMIMEType):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2011-02-11  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler and Anders Carlsson.

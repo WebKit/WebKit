@@ -138,16 +138,13 @@ void WebFrameProxy::didStartProvisionalLoad(const String& url)
 
 void WebFrameProxy::didReceiveServerRedirectForProvisionalLoad(const String& url)
 {
-    ASSERT(!url.isEmpty());
     ASSERT(m_loadState == LoadStateProvisional);
-    ASSERT(!m_provisionalURL.isEmpty());
     m_provisionalURL = url;
 }
 
 void WebFrameProxy::didFailProvisionalLoad()
 {
     ASSERT(m_loadState == LoadStateProvisional);
-    ASSERT(!m_provisionalURL.isEmpty());
     m_loadState = LoadStateFinished;
     m_provisionalURL = String();
 }
@@ -175,7 +172,6 @@ void WebFrameProxy::didFailLoad()
 {
     ASSERT(m_loadState == LoadStateCommitted);
     ASSERT(m_provisionalURL.isEmpty());
-    ASSERT(!m_url.isEmpty());
     m_loadState = LoadStateFinished;
     m_title = String();
 }
