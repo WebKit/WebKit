@@ -1015,12 +1015,22 @@ SOURCES += \
     html/ValidationMessage.cpp \
     html/ValidityState.cpp \
     html/WeekInputType.cpp \
+    html/canvas/ArrayBuffer.cpp \
+    html/canvas/ArrayBufferView.cpp \
     html/canvas/CanvasGradient.cpp \
     html/canvas/CanvasPattern.cpp \
     html/canvas/CanvasPixelArray.cpp \
     html/canvas/CanvasRenderingContext.cpp \
     html/canvas/CanvasRenderingContext2D.cpp \
     html/canvas/CanvasStyle.cpp \
+    html/canvas/DataView.cpp \
+    html/canvas/Float32Array.cpp \
+    html/canvas/Int16Array.cpp \
+    html/canvas/Int32Array.cpp \
+    html/canvas/Int8Array.cpp \
+    html/canvas/Uint16Array.cpp
+    html/canvas/Uint32Array.cpp \
+    html/canvas/Uint8Array.cpp \
     html/parser/CSSPreloadScanner.cpp \
     html/parser/HTMLConstructionSite.cpp \
     html/parser/HTMLDocumentParser.cpp \
@@ -1498,15 +1508,15 @@ v8 {
         bindings/js/GCController.h \
         bindings/js/DOMObjectHashTableMap.h \
         bindings/js/DOMWrapperWorld.h \
-        bindings/js/JSCallbackData.h \
+        bindings/js/JSArrayBufferCustom.cpp \
+        bindings/js/JSArrayBufferViewHelper.h
         bindings/js/JSAudioConstructor.h \
         bindings/js/JSCSSStyleDeclarationCustom.h \
+        bindings/js/JSCallbackData.h \
         bindings/js/JSCustomPositionCallback.h \
         bindings/js/JSCustomPositionErrorCallback.h \
         bindings/js/JSCustomVoidCallback.h \
         bindings/js/JSCustomXPathNSResolver.h \
-        bindings/js/JSDataGridDataSource.h \
-        bindings/js/JSDebugWrapperSet.h \
         bindings/js/JSDOMBinding.h \
         bindings/js/JSDOMGlobalObject.h \
         bindings/js/JSDOMStringMapCustom.h \
@@ -1514,16 +1524,23 @@ v8 {
         bindings/js/JSDOMWindowCustom.h \
         bindings/js/JSDOMWindowShell.h \
         bindings/js/JSDOMWrapper.h \
+        bindings/js/JSDataGridDataSource.h \
+        bindings/js/JSDataViewCustom.cpp \
+        bindings/js/JSDebugWrapperSet.h \
         bindings/js/JSErrorHandler.h \
         bindings/js/JSEventListener.h \
         bindings/js/JSEventTarget.h \
-        bindings/js/JSHistoryCustom.h \
+        bindings/js/JSFloat32ArrayCustom.cpp \
         bindings/js/JSHTMLAppletElementCustom.h \
         bindings/js/JSHTMLEmbedElementCustom.h \
         bindings/js/JSHTMLInputElementCustom.h \
         bindings/js/JSHTMLObjectElementCustom.h \
         bindings/js/JSHTMLSelectElementCustom.h \
+        bindings/js/JSHistoryCustom.h \
         bindings/js/JSImageConstructor.h \
+        bindings/js/JSInt16ArrayCustom.cpp \
+        bindings/js/JSInt32ArrayCustom.cpp \
+        bindings/js/JSInt8ArrayCustom.cpp \
         bindings/js/JSLazyEventListener.h \
         bindings/js/JSLocationCustom.h \
         bindings/js/JSNodeCustom.h \
@@ -1531,6 +1548,9 @@ v8 {
         bindings/js/JSOptionConstructor.h \
         bindings/js/JSPluginElementFunctions.h \
         bindings/js/JSStorageCustom.h \
+        bindings/js/JSUint16ArrayCustom.cpp
+        bindings/js/JSUint32ArrayCustom.cpp \
+        bindings/js/JSUint8ArrayCustom.cpp \
         bindings/js/JSWorkerContextBase.h \
         bindings/js/JavaScriptCallFrame.h \
         bindings/js/ScheduledAction.h \
@@ -1812,12 +1832,22 @@ HEADERS += \
     history/HistoryItem.h \
     history/PageCache.h \
     html/AsyncImageResizer.h \
+    html/canvas/ArrayBuffer.h \
+    html/canvas/ArrayBufferView.h \
     html/canvas/CanvasGradient.h \
     html/canvas/CanvasPattern.h \
     html/canvas/CanvasPixelArray.h \
     html/canvas/CanvasRenderingContext.h \
     html/canvas/CanvasRenderingContext2D.h \
     html/canvas/CanvasStyle.h \
+    html/canvas/DataView.h \
+    html/canvas/Float32Array.h \
+    html/canvas/Int16Array.h \
+    html/canvas/Int32Array.h \
+    html/canvas/Int8Array.h \
+    html/canvas/Uint16Array.h
+    html/canvas/Uint32Array.h \
+    html/canvas/Uint8Array.h \
     html/ClassList.h \
     html/CollectionCache.h \
     html/DataGridColumn.h \
@@ -3772,49 +3802,6 @@ contains(DEFINES, ENABLE_WEB_SOCKETS=1) {
             websockets/WorkerThreadableWebSocketChannel.cpp
     }
 }
-
-contains(DEFINES, ENABLE_BLOB=1) | contains(DEFINES, ENABLE_WEBGL=1) {
-    !v8 {
-        HEADERS += \
-            bindings/js/JSArrayBufferViewHelper.h
-    }
-
-    HEADERS += \
-        html/canvas/ArrayBuffer.h \
-        html/canvas/ArrayBufferView.h \
-        html/canvas/DataView.h \
-        html/canvas/Int8Array.h \
-        html/canvas/Float32Array.h \
-        html/canvas/Int32Array.h \
-        html/canvas/Int16Array.h \
-        html/canvas/Uint8Array.h \
-        html/canvas/Uint32Array.h \
-        html/canvas/Uint16Array.h
-
-    !v8 {
-        SOURCES += \
-            bindings/js/JSArrayBufferCustom.cpp \
-            bindings/js/JSDataViewCustom.cpp \
-            bindings/js/JSInt8ArrayCustom.cpp \
-            bindings/js/JSFloat32ArrayCustom.cpp \
-            bindings/js/JSInt32ArrayCustom.cpp \
-            bindings/js/JSInt16ArrayCustom.cpp \
-            bindings/js/JSUint8ArrayCustom.cpp \
-            bindings/js/JSUint32ArrayCustom.cpp \
-            bindings/js/JSUint16ArrayCustom.cpp
-    }
-    SOURCES += \
-        html/canvas/ArrayBuffer.cpp \
-        html/canvas/ArrayBufferView.cpp \
-        html/canvas/DataView.cpp \
-        html/canvas/Int8Array.cpp \
-        html/canvas/Float32Array.cpp \
-        html/canvas/Int32Array.cpp \
-        html/canvas/Int16Array.cpp \
-        html/canvas/Uint8Array.cpp \
-        html/canvas/Uint32Array.cpp \
-        html/canvas/Uint16Array.cpp
-    }
 
 contains(DEFINES, ENABLE_WEBGL=1) {
     tobe|!tobe: QT += opengl

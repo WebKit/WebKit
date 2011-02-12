@@ -1,5 +1,11 @@
 2011-02-12  Adam Barth  <abarth@webkit.org>
 
+        Attempt to fix the Qt Windows build.
+
+        * WebCore.pro:
+
+2011-02-12  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Kenneth Russell.
 
         Enable ArrayBuffers by default
