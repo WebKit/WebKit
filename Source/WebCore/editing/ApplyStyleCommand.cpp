@@ -536,18 +536,17 @@ void ApplyStyleCommand::doApply()
         // Apply the block-centric properties of the style.
         RefPtr<EditingStyle> blockStyle = m_style->extractAndRemoveBlockProperties();
         if (!blockStyle->isEmpty())
-            applyBlockStyle(blockStyle->style());
+            applyBlockStyle(blockStyle.get());
         // Apply any remaining styles to the inline elements.
         if (!m_style->isEmpty() || m_styledInlineElement || m_isInlineElementToRemoveFunction) {
-            RefPtr<CSSMutableStyleDeclaration> style = m_style->style() ? m_style->style() : CSSMutableStyleDeclaration::create();
             applyRelativeFontStyleChange(m_style.get());
-            applyInlineStyle(style.get());
+            applyInlineStyle(m_style.get());
         }
         break;
     }
     case ForceBlockProperties:
         // Force all properties to be applied as block styles.
-        applyBlockStyle(m_style->style());
+        applyBlockStyle(m_style.get());
         break;
     }
 }
@@ -557,7 +556,7 @@ EditAction ApplyStyleCommand::editingAction() const
     return m_editingAction;
 }
 
-void ApplyStyleCommand::applyBlockStyle(CSSMutableStyleDeclaration *style)
+void ApplyStyleCommand::applyBlockStyle(EditingStyle *style)
 {
     // update document layout once before removing styles
     // so that we avoid the expense of updating before each and every call
@@ -592,7 +591,7 @@ void ApplyStyleCommand::applyBlockStyle(CSSMutableStyleDeclaration *style)
     VisiblePosition nextParagraphStart(endOfParagraph(paragraphStart).next());
     VisiblePosition beyondEnd(endOfParagraph(visibleEnd).next());
     while (paragraphStart.isNotNull() && paragraphStart != beyondEnd) {
-        StyleChange styleChange(style, paragraphStart.deepEquivalent());
+        StyleChange styleChange(style->style(), paragraphStart.deepEquivalent());
         if (styleChange.cssStyle().length() || m_removeOnly) {
             RefPtr<Node> block = enclosingBlock(paragraphStart.deepEquivalent().node());
             if (!m_removeOnly) {
@@ -602,7 +601,7 @@ void ApplyStyleCommand::applyBlockStyle(CSSMutableStyleDeclaration *style)
             }
             ASSERT(block->isHTMLElement());
             if (block->isHTMLElement()) {
-                removeCSSStyle(style, toHTMLElement(block.get()));
+                removeCSSStyle(style->style(), toHTMLElement(block.get()));
                 if (!m_removeOnly)
                     addBlockStyle(styleChange, toHTMLElement(block.get()));
             }
@@ -755,7 +754,7 @@ void ApplyStyleCommand::cleanupUnstyledAppleStyleSpans(Node* dummySpanAncestor)
     }
 }
 
-HTMLElement* ApplyStyleCommand::splitAncestorsWithUnicodeBidi(Node* node, bool before, int allowedDirection)
+HTMLElement* ApplyStyleCommand::splitAncestorsWithUnicodeBidi(Node* node, bool before, WritingDirection allowedDirection)
 {
     // We are allowed to leave the highest ancestor with unicode-bidi unsplit if it is unicode-bidi: embed and direction: allowedDirection.
     // In that case, we return the unsplit ancestor. Otherwise, we return 0.
@@ -780,9 +779,12 @@ HTMLElement* ApplyStyleCommand::splitAncestorsWithUnicodeBidi(Node* node, bool b
 
     HTMLElement* unsplitAncestor = 0;
 
-    if (allowedDirection && highestAncestorUnicodeBidi != CSSValueBidiOverride
-        && getIdentifierValue(computedStyle(highestAncestorWithUnicodeBidi).get(), CSSPropertyDirection) == allowedDirection
-        && highestAncestorWithUnicodeBidi->isHTMLElement()) {
+    WritingDirection highestAncestorDirection;
+    if (allowedDirection != NaturalWritingDirection
+        && highestAncestorUnicodeBidi != CSSValueBidiOverride
+        && highestAncestorWithUnicodeBidi->isHTMLElement()
+        && EditingStyle::create(highestAncestorWithUnicodeBidi, EditingStyle::AllProperties)->textDirection(highestAncestorDirection)
+        && highestAncestorDirection == allowedDirection) {
         if (!nextHighestAncestorWithUnicodeBidi)
             return toHTMLElement(highestAncestorWithUnicodeBidi);
 
@@ -850,7 +852,7 @@ static Node* highestEmbeddingAncestor(Node* startNode, Node* enclosingNode)
     return 0;
 }
 
-void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclaration *style)
+void ApplyStyleCommand::applyInlineStyle(EditingStyle* style)
 {
     Node* startDummySpanAncestor = 0;
     Node* endDummySpanAncestor = 0;
@@ -872,7 +874,7 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclaration *style)
     // split the start node and containing element if the selection starts inside of it
     bool splitStart = isValidCaretPositionInTextNode(start);
     if (splitStart) {
-        if (shouldSplitTextElement(start.node()->parentElement(), style))
+        if (shouldSplitTextElement(start.node()->parentElement(), style->style()))
             splitTextElementAtStart(start, end);
         else
             splitTextAtStart(start, end);
@@ -884,7 +886,7 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclaration *style)
     // split the end node and containing element if the selection ends inside of it
     bool splitEnd = isValidCaretPositionInTextNode(end);
     if (splitEnd) {
-        if (shouldSplitTextElement(end.node()->parentElement(), style))
+        if (shouldSplitTextElement(end.node()->parentElement(), style->style()))
             splitTextElementAtEnd(start, end);
         else
             splitTextAtEnd(start, end);
@@ -899,15 +901,16 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclaration *style)
     // and prevent us from adding redundant ones, as described in:
     // <rdar://problem/3724344> Bolding and unbolding creates extraneous tags
     Position removeStart = start.upstream();
-    int unicodeBidi = getIdentifierValue(style, CSSPropertyUnicodeBidi);
-    int direction = 0;
-    RefPtr<CSSMutableStyleDeclaration> styleWithoutEmbedding;
+    int unicodeBidi = getIdentifierValue(style->style(), CSSPropertyUnicodeBidi);
+    RefPtr<EditingStyle> styleWithoutEmbedding;
+    RefPtr<EditingStyle> embeddingStyle;
     if (unicodeBidi) {
+        WritingDirection textDirection = NaturalWritingDirection;
+        style->textDirection(textDirection);
+
         // Leave alone an ancestor that provides the desired single level embedding, if there is one.
-        if (unicodeBidi == CSSValueEmbed)
-            direction = getIdentifierValue(style, CSSPropertyDirection);
-        HTMLElement* startUnsplitAncestor = splitAncestorsWithUnicodeBidi(start.node(), true, direction);
-        HTMLElement* endUnsplitAncestor = splitAncestorsWithUnicodeBidi(end.node(), false, direction);
+        HTMLElement* startUnsplitAncestor = splitAncestorsWithUnicodeBidi(start.node(), true, textDirection);
+        HTMLElement* endUnsplitAncestor = splitAncestorsWithUnicodeBidi(end.node(), false, textDirection);
         removeEmbeddingUpToEnclosingBlock(start.node(), startUnsplitAncestor);
         removeEmbeddingUpToEnclosingBlock(end.node(), endUnsplitAncestor);
 
@@ -921,18 +924,15 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclaration *style)
             embeddingRemoveEnd = positionInParentBeforeNode(endUnsplitAncestor).downstream();
 
         if (embeddingRemoveEnd != removeStart || embeddingRemoveEnd != end) {
-            RefPtr<CSSMutableStyleDeclaration> embeddingStyle = CSSMutableStyleDeclaration::create();
-            embeddingStyle->setProperty(CSSPropertyUnicodeBidi, CSSValueEmbed);
-            embeddingStyle->setProperty(CSSPropertyDirection, direction);
-            if (comparePositions(embeddingRemoveStart, embeddingRemoveEnd) <= 0)
-                removeInlineStyle(embeddingStyle, embeddingRemoveStart, embeddingRemoveEnd);
             styleWithoutEmbedding = style->copy();
-            styleWithoutEmbedding->removeProperty(CSSPropertyUnicodeBidi);
-            styleWithoutEmbedding->removeProperty(CSSPropertyDirection);
+            embeddingStyle = styleWithoutEmbedding->extractAndRemoveTextDirection();
+
+            if (comparePositions(embeddingRemoveStart, embeddingRemoveEnd) <= 0)
+                removeInlineStyle(embeddingStyle->style(), embeddingRemoveStart, embeddingRemoveEnd);
         }
     }
 
-    removeInlineStyle(styleWithoutEmbedding ? styleWithoutEmbedding.get() : style, removeStart, end);
+    removeInlineStyle(styleWithoutEmbedding ? styleWithoutEmbedding->style() : style->style(), removeStart, end);
     start = startPosition();
     end = endPosition();
     if (start.isNull() || start.isOrphan() || end.isNull() || end.isOrphan())
@@ -956,7 +956,7 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclaration *style)
     // to check a computed style
     updateLayout();
 
-    RefPtr<CSSMutableStyleDeclaration> styleToApply = style;
+    RefPtr<CSSMutableStyleDeclaration> styleToApply = style->isEmpty() ? CSSMutableStyleDeclaration::create() : style->style();
     if (unicodeBidi) {
         // Avoid applying the unicode-bidi and direction properties beneath ancestors that already have them.
         Node* embeddingStartNode = highestEmbeddingAncestor(start.node(), enclosingBlock(start.node()));
@@ -967,18 +967,13 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclaration *style)
             Position embeddingApplyEnd = embeddingEndNode ? positionInParentBeforeNode(embeddingEndNode) : end;
             ASSERT(embeddingApplyStart.isNotNull() && embeddingApplyEnd.isNotNull());
 
-            RefPtr<CSSMutableStyleDeclaration> embeddingStyle = CSSMutableStyleDeclaration::create();
-            embeddingStyle->setProperty(CSSPropertyUnicodeBidi, CSSValueEmbed);
-            embeddingStyle->setProperty(CSSPropertyDirection, direction);
-            fixRangeAndApplyInlineStyle(embeddingStyle.get(), embeddingApplyStart, embeddingApplyEnd);
-
-            if (styleWithoutEmbedding)
-                styleToApply = styleWithoutEmbedding;
-            else {
-                styleToApply = style->copy();
-                styleToApply->removeProperty(CSSPropertyUnicodeBidi);
-                styleToApply->removeProperty(CSSPropertyDirection);
+            if (!embeddingStyle) {
+                styleWithoutEmbedding = style->copy();
+                embeddingStyle = styleWithoutEmbedding->extractAndRemoveTextDirection();
             }
+            fixRangeAndApplyInlineStyle(embeddingStyle->style(), embeddingApplyStart, embeddingApplyEnd);
+
+            styleToApply = styleWithoutEmbedding->style();
         }
     }
 
@@ -1139,7 +1134,6 @@ bool ApplyStyleCommand::removeStyleFromRunBeforeApplyingStyle(CSSMutableStyleDec
 
 bool ApplyStyleCommand::removeInlineStyleFromElement(CSSMutableStyleDeclaration* style, PassRefPtr<HTMLElement> element, InlineStyleRemovalMode mode, CSSMutableStyleDeclaration* extractedStyle)
 {
-    ASSERT(style);
     ASSERT(element);
 
     if (!element->parentNode() || !element->parentNode()->isContentEditable())
@@ -1154,6 +1148,9 @@ bool ApplyStyleCommand::removeInlineStyleFromElement(CSSMutableStyleDeclaration*
         removeNodePreservingChildren(element);
         return true;
     }
+
+    if (!style)
+        return false;
 
     bool removed = false;
     if (removeImplicitlyStyledElement(style, element.get(), mode, extractedStyle))
@@ -1228,6 +1225,7 @@ static const HTMLEquivalent HTMLEquivalents[] = {
 bool ApplyStyleCommand::removeImplicitlyStyledElement(CSSMutableStyleDeclaration* style, HTMLElement* element, InlineStyleRemovalMode mode, CSSMutableStyleDeclaration* extractedStyle)
 {
     // Current implementation does not support stylePushedDown when mode == RemoveNone because of early exit.
+    ASSERT(style);
     ASSERT(!extractedStyle || mode != RemoveNone);
     bool removed = false;
     for (size_t i = 0; i < WTF_ARRAY_LENGTH(HTMLEquivalents); ++i) {
@@ -1483,8 +1481,8 @@ void ApplyStyleCommand::removeInlineStyle(PassRefPtr<CSSMutableStyleDeclaration>
     ASSERT(start.node()->inDocument());
     ASSERT(end.node()->inDocument());
     ASSERT(comparePositions(start, end) <= 0);
-    
-    RefPtr<CSSValue> textDecorationSpecialProperty = style->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
+
+    RefPtr<CSSValue> textDecorationSpecialProperty = style ? style->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect) : 0;
     if (textDecorationSpecialProperty) {
         style = style->copy();
         style->setProperty(CSSPropertyTextDecoration, textDecorationSpecialProperty->cssText(), style->getPropertyPriority(CSSPropertyWebkitTextDecorationsInEffect));

@@ -47,6 +47,7 @@ class RenderStyle;
 class EditingStyle : public RefCounted<EditingStyle> {
 public:
 
+    enum PropertiesToInclude { AllProperties, OnlyInheritableProperties };
     enum ShouldPreserveWritingDirection { PreserveWritingDirection, DoNotPreserveWritingDirection };
     static float NoFontDelta;
 
@@ -55,9 +56,9 @@ public:
         return adoptRef(new EditingStyle());
     }
 
-    static PassRefPtr<EditingStyle> create(Node* node)
+    static PassRefPtr<EditingStyle> create(Node* node, PropertiesToInclude propertiesToInclude = OnlyInheritableProperties)
     {
-        return adoptRef(new EditingStyle(node));
+        return adoptRef(new EditingStyle(node, propertiesToInclude));
     }
 
     static PassRefPtr<EditingStyle> create(const Position& position)
@@ -80,6 +81,7 @@ public:
     void clear();
     PassRefPtr<EditingStyle> copy() const;
     PassRefPtr<EditingStyle> extractAndRemoveBlockProperties();
+    PassRefPtr<EditingStyle> extractAndRemoveTextDirection();
     void removeBlockProperties();
     void removeStyleAddedByNode(Node*);
     void removeStyleConflictingWithStyleOfNode(Node*);
@@ -91,10 +93,10 @@ public:
 
 private:
     EditingStyle();
-    EditingStyle(Node*);
+    EditingStyle(Node*, PropertiesToInclude);
     EditingStyle(const Position&);
     EditingStyle(const CSSStyleDeclaration*);
-    void init(Node*);
+    void init(Node*, PropertiesToInclude);
     void removeTextFillAndStrokeColorsIfNeeded(RenderStyle*);
     void replaceFontSizeByKeywordIfPossible(RenderStyle*, CSSComputedStyleDeclaration*);
     void extractFontSizeDelta();

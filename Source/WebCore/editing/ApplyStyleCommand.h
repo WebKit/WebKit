@@ -28,6 +28,7 @@
 
 #include "CompositeEditCommand.h"
 #include "HTMLElement.h"
+#include "WritingDirection.h"
 
 namespace WebCore {
 
@@ -90,9 +91,9 @@ private:
     bool nodeFullyUnselected(Node*, const Position& start, const Position& end) const;
 
     // style-application helpers
-    void applyBlockStyle(CSSMutableStyleDeclaration*);
+    void applyBlockStyle(EditingStyle*);
     void applyRelativeFontStyleChange(EditingStyle*);
-    void applyInlineStyle(CSSMutableStyleDeclaration*);
+    void applyInlineStyle(EditingStyle*);
     void fixRangeAndApplyInlineStyle(CSSMutableStyleDeclaration*, const Position& start, const Position& end);
     void applyInlineStyleToNodeRange(CSSMutableStyleDeclaration*, Node* startNode, Node* pastEndNode);
     void addBlockStyle(const StyleChange&, HTMLElement*);
@@ -111,7 +112,7 @@ private:
     float computedFontSize(Node*);
     void joinChildTextNodes(Node*, const Position& start, const Position& end);
 
-    HTMLElement* splitAncestorsWithUnicodeBidi(Node*, bool before, int allowedDirection);
+    HTMLElement* splitAncestorsWithUnicodeBidi(Node*, bool before, WritingDirection allowedDirection);
     void removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsplitAncestor);
 
     void updateStartEnd(const Position& newStart, const Position& newEnd);

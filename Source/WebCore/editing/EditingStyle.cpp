@@ -90,18 +90,18 @@ EditingStyle::EditingStyle()
 {
 }
 
-EditingStyle::EditingStyle(Node* node)
+EditingStyle::EditingStyle(Node* node, PropertiesToInclude propertiesToInclude)
     : m_shouldUseFixedDefaultFontSize(false)
     , m_fontSizeDelta(NoFontDelta)
 {
-    init(node);
+    init(node, propertiesToInclude);
 }
 
 EditingStyle::EditingStyle(const Position& position)
     : m_shouldUseFixedDefaultFontSize(false)
     , m_fontSizeDelta(NoFontDelta)
 {
-    init(position.node());
+    init(position.node(), OnlyInheritableProperties);
 }
 
 EditingStyle::EditingStyle(const CSSStyleDeclaration* style)
@@ -116,10 +116,10 @@ EditingStyle::~EditingStyle()
 {
 }
 
-void EditingStyle::init(Node* node)
+void EditingStyle::init(Node* node, PropertiesToInclude propertiesToInclude)
 {
     RefPtr<CSSComputedStyleDeclaration> computedStyleAtPosition = computedStyle(node);
-    m_mutableStyle = editingStyleFromComputedStyle(computedStyleAtPosition);
+    m_mutableStyle = propertiesToInclude == AllProperties && computedStyleAtPosition ? computedStyleAtPosition->copy() : editingStyleFromComputedStyle(computedStyleAtPosition);
 
     if (node && node->computedStyle()) {
         RenderStyle* renderStyle = node->computedStyle();
@@ -253,6 +253,20 @@ PassRefPtr<EditingStyle> EditingStyle::extractAndRemoveBlockProperties()
     m_mutableStyle->removeBlockProperties();
 
     return blockProperties;
+}
+
+PassRefPtr<EditingStyle> EditingStyle::extractAndRemoveTextDirection()
+{
+    RefPtr<EditingStyle> textDirection = EditingStyle::create();
+    textDirection->m_mutableStyle = CSSMutableStyleDeclaration::create();
+    textDirection->m_mutableStyle->setProperty(CSSPropertyUnicodeBidi, CSSValueEmbed, m_mutableStyle->getPropertyPriority(CSSPropertyUnicodeBidi));
+    textDirection->m_mutableStyle->setProperty(CSSPropertyDirection, m_mutableStyle->getPropertyValue(CSSPropertyDirection),
+        m_mutableStyle->getPropertyPriority(CSSPropertyDirection));
+
+    m_mutableStyle->removeProperty(CSSPropertyUnicodeBidi);
+    m_mutableStyle->removeProperty(CSSPropertyDirection);
+
+    return textDirection;
 }
 
 void EditingStyle::removeBlockProperties()

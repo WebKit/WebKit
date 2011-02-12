@@ -1,3 +1,34 @@
+2011-02-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        Deploy EditingStyle in applyBlockStyle and applyInlineStyle
+        https://bugs.webkit.org/show_bug.cgi?id=53911
+
+        Deployed EditingStyle in ApplyStyleCommand::applyBlockStyle and ApplyStyleCommand::applyInlineStyle.
+        Extracted EditingStyle::extractAndRemoveTextDirection from applyInlineStyle.
+        Also added propertiesToInclude to the argument list of EditingStyle's constructor that takes Node*
+        so that splitAncestorsWithUnicodeBidi can call EditingStyle::textDirection to obtain the text direction.
+
+        No new tests are added since this is a refactoring.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::doApply): Passes EditingStyle* to applyBlockStyle and applyInlineStyle.
+        (WebCore::ApplyStyleCommand::applyBlockStyle): Takes EditingStyle*.
+        (WebCore::ApplyStyleCommand::splitAncestorsWithUnicodeBidi): Changed the type of allowedDirection
+        from int to WritingDirection. Uses EditingStyle's textDirection to obtain the writing direction.
+        (WebCore::ApplyStyleCommand::applyInlineStyle): Takes EditingStyle*.
+        (WebCore::ApplyStyleCommand::removeInlineStyleFromElement): Allows style to be null; exit early instead.
+        (WebCore::ApplyStyleCommand::removeImplicitlyStyledElement): Asserts that style is not null.
+        (WebCore::ApplyStyleCommand::removeInlineStyle): Allows style to be null.
+        * editing/ApplyStyleCommand.h: Includes WritingDirection.h; prototype changes.
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::EditingStyle): Added PropertiesToInclude to the argument.
+        (WebCore::EditingStyle::init): Supports PropertiesToInclude.
+        (WebCore::EditingStyle::extractAndRemoveTextDirection): Extracted from applyInlineStyle.
+        * editing/EditingStyle.h:
+        (WebCore::EditingStyle::create): Supports PropertiesToInclude.
+
 2011-02-12  Jochen Eisinger  <jochen@chromium.org>
 
         Reviewed by Jeremy Orlow.
