@@ -2,6 +2,20 @@
 
         Reviewed by Sam Weinig.
 
+        WebProcess hung communicating with the plug-in process
+        https://bugs.webkit.org/show_bug.cgi?id=54328
+        <rdar://problem/8854075>
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::createWebProcessConnection):
+        Add the DispatchMessageEvenWhenWaitingForSyncReply message send flag when sending the
+        PluginProcess::CreateWebProcessConnection message, since the plug-in process can be busy waiting
+        for a sync reply from the web process.
+
+2011-02-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Incoming synchronous messages should always be processed regardless of connection waiting for a reply
         https://bugs.webkit.org/show_bug.cgi?id=54326
 
