@@ -1008,14 +1008,21 @@ void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, c
         // strip.  Even though that strip has been broken up across multiple lines, you still paint it
         // as though you had one single line.  This means each line has to pick up the background where
         // the previous line left off.
-        // FIXME: What the heck do we do with RTL here? The math we're using is obviously not right,
-        // but it isn't even clear how this should work at all.
         int logicalOffsetOnLine = 0;
-        for (InlineFlowBox* curr = prevLineBox(); curr; curr = curr->prevLineBox())
-            logicalOffsetOnLine += curr->logicalWidth();
-        int totalLogicalWidth = logicalOffsetOnLine;
-        for (InlineFlowBox* curr = this; curr; curr = curr->nextLineBox())
-            totalLogicalWidth += curr->logicalWidth();
+        int totalLogicalWidth;
+        if (renderer()->style()->direction() == LTR) {
+            for (InlineFlowBox* curr = prevLineBox(); curr; curr = curr->prevLineBox())
+                logicalOffsetOnLine += curr->logicalWidth();
+            totalLogicalWidth = logicalOffsetOnLine;
+            for (InlineFlowBox* curr = this; curr; curr = curr->nextLineBox())
+                totalLogicalWidth += curr->logicalWidth();
+        } else {
+            for (InlineFlowBox* curr = nextLineBox(); curr; curr = curr->nextLineBox())
+                logicalOffsetOnLine += curr->logicalWidth();
+            totalLogicalWidth = logicalOffsetOnLine;
+            for (InlineFlowBox* curr = this; curr; curr = curr->prevLineBox())
+                totalLogicalWidth += curr->logicalWidth();
+        }
         int stripX = tx - (isHorizontal() ? logicalOffsetOnLine : 0);
         int stripY = ty - (isHorizontal() ? 0 : logicalOffsetOnLine);
         int stripWidth = isHorizontal() ? totalLogicalWidth : width();

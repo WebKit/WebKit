@@ -1,3 +1,20 @@
+2011-02-11  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Background image positioning on RTL text
+        https://bugs.webkit.org/show_bug.cgi?id=32862
+
+        When the style of InlineFlowBox is right-to-left, the strips should be rearranged in reverse order.
+
+        Tests: fast/inline/inline-box-background-long-image.html
+               fast/inline/inline-box-background-repeat-x.html
+               fast/inline/inline-box-background-repeat-y.html
+               fast/inline/inline-box-background.html
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintFillLayer):
+
 2011-02-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r78044.
