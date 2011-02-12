@@ -45,9 +45,6 @@ _log = logging.getLogger(__name__)
 
 class TestRunner2(test_runner.TestRunner):
     def __init__(self, port, options, printer):
-        if options.worker_model in ('threads', 'processes'):
-            raise ValueError('--worker-model=%s not supported yet' % options.worker_model)
-
         test_runner.TestRunner.__init__(self, port, options, printer)
         self._all_results = []
         self._group_stats = {}

@@ -46,15 +46,24 @@ TestRunner2  --> _InlineManager ---> _InlineWorker <-> Worker
 import logging
 import optparse
 import Queue
+import thread
 import threading
+import time
+
 
 # Handle Python < 2.6 where multiprocessing isn't available.
+#
+# _Multiprocessing_Process is needed so that _MultiProcessWorker
+# can be defined with or without multiprocessing.
 try:
     import multiprocessing
+    _Multiprocessing_Process = multiprocessing.Process
 except ImportError:
     multiprocessing = None
+    _Multiprocessing_Process = threading.Thread
 
 
+from webkitpy.layout_tests import port
 from webkitpy.layout_tests.layout_package import message_broker2
 
 
@@ -164,8 +173,8 @@ class _InlineManager(_ManagerConnection):
         self._inline_worker = None
 
     def start_worker(self, worker_number):
-        self._inline_worker = _InlineWorker(self._broker, self._port, self._client,
-            self._worker_class, worker_number)
+        self._inline_worker = _InlineWorkerConnection(self._broker, self._port,
+            self._client, self._worker_class, worker_number)
         return self._inline_worker
 
     def run_message_loop(self, delay_secs=None):
@@ -177,12 +186,30 @@ class _InlineManager(_ManagerConnection):
 
 class _ThreadedManager(_ManagerConnection):
     def __init__(self, broker, port, options, client, worker_class):
-        raise NotImplementedError
+        _ManagerConnection.__init__(self, broker, options, client, worker_class)
+        self._port = port
+
+    def start_worker(self, worker_number):
+        worker_connection = _ThreadedWorkerConnection(self._broker, self._port,
+            self._worker_class, worker_number)
+        worker_connection.start()
+        return worker_connection
 
 
 class _MultiProcessManager(_ManagerConnection):
     def __init__(self, broker, port, options, client, worker_class):
-        raise NotImplementedError
+        # Note that this class does not keep a handle to the actual port
+        # object, because it isn't Picklable. Instead it keeps the port
+        # name and recreates the port in the child process from the name
+        # and options.
+        _ManagerConnection.__init__(self, broker, options, client, worker_class)
+        self._platform_name = port.real_name()
+
+    def start_worker(self, worker_number):
+        worker_connection = _MultiProcessWorkerConnection(self._broker, self._platform_name,
+            self._worker_class, worker_number, self._options)
+        worker_connection.start()
+        return worker_connection
 
 
 class _WorkerConnection(message_broker2.BrokerConnection):
@@ -192,14 +219,11 @@ class _WorkerConnection(message_broker2.BrokerConnection):
         message_broker2.BrokerConnection.__init__(self, broker, self._client,
                                                   ANY_WORKER_TOPIC, MANAGER_TOPIC)
 
-    def run(self):
-        raise NotImplementedError
-
     def yield_to_broker(self):
         pass
 
 
-class _InlineWorker(_WorkerConnection):
+class _InlineWorkerConnection(_WorkerConnection):
     def __init__(self, broker, port, manager_client, worker_class, worker_number):
         _WorkerConnection.__init__(self, broker, worker_class, worker_number, port._options)
         self._port = port
@@ -210,3 +234,49 @@ class _InlineWorker(_WorkerConnection):
 
     def yield_to_broker(self):
         self._broker.run_all_pending(MANAGER_TOPIC, self._manager_client)
+
+
+class _Thread(threading.Thread):
+    def __init__(self, worker_connection, port, client):
+        threading.Thread.__init__(self)
+        self._worker_connection = worker_connection
+        self._port = port
+        self._client = client
+
+    def run(self):
+        # FIXME: We can remove this once everyone is on 2.6.
+        if not hasattr(self, 'ident'):
+            self.ident = thread.get_ident()
+        self._client.run(self._port)
+
+
+class _ThreadedWorkerConnection(_WorkerConnection):
+    def __init__(self, broker, port, worker_class, worker_number):
+        _WorkerConnection.__init__(self, broker, worker_class, worker_number, port._options)
+        self._thread = _Thread(self, port, self._client)
+
+    def start(self):
+        self._thread.start()
+
+
+class _Process(_Multiprocessing_Process):
+    def __init__(self, worker_connection, platform_name, options, client):
+        _Multiprocessing_Process.__init__(self)
+        self._worker_connection = worker_connection
+        self._platform_name = platform_name
+        self._options = options
+        self._client = client
+
+    def run(self):
+        logging.basicConfig()
+        port_obj = port.get(self._platform_name, self._options)
+        self._client.run(port_obj)
+
+
+class _MultiProcessWorkerConnection(_WorkerConnection):
+    def __init__(self, broker, platform_name, worker_class, worker_number, options):
+        _WorkerConnection.__init__(self, broker, worker_class, worker_number, options)
+        self._proc = _Process(self, platform_name, options, self._client)
+
+    def start(self):
+        self._proc.start()

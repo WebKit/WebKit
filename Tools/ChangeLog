@@ -1,3 +1,21 @@
+2011-02-11  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        This patch adds to NRWT most of the support needed to run the new
+        message-based workers in separate threads or processes. The code
+        isn't fully complete yet because we don't support cancel() or
+        is_alive().
+
+        https://bugs.webkit.org/show_bug.cgi?id=54070
+
+        * Scripts/webkitpy/layout_tests/layout_package/manager_worker_broker.py:
+        * Scripts/webkitpy/layout_tests/layout_package/manager_worker_broker_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_runner2.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/mock_drt.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2011-02-11  Sailesh Agrawal  <sail@chromium.org>
 
         Reviewed by Kenneth Russell.

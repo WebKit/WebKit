@@ -467,10 +467,11 @@ class MainTest(unittest.TestCase):
         self.assertTrue(passing_run(['--worker-model', 'old-threads']))
 
     def test_worker_model__processes(self):
-        self.assertRaises(ValueError, logging_run, ['--worker-model', 'processes'])
+        if compare_version(sys, '2.6')[0] >= 0:
+            self.assertTrue(passing_run(['--worker-model', 'processes']))
 
     def test_worker_model__threads(self):
-        self.assertRaises(ValueError, logging_run, ['--worker-model', 'threads'])
+        self.assertTrue(passing_run(['--worker-model', 'threads']))
 
     def test_worker_model__unknown(self):
         self.assertRaises(ValueError, logging_run,

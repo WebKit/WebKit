@@ -53,6 +53,10 @@ class MockDRTPort(object):
         if 'port_name' in kwargs:
             kwargs['port_name'] = kwargs['port_name'][len(prefix):]
         self.__delegate = factory.get(**kwargs)
+        self.__real_name = prefix + self.__delegate.name()
+
+    def real_name(self):
+        return self.__real_name
 
     def __getattr__(self, name):
         return getattr(self.__delegate, name)
@@ -269,7 +273,6 @@ class MockChromiumDRT(MockDRT):
             self._stdout.write('\n')
         self._stdout.write('#EOF\n')
         self._stdout.flush()
-
 
 
 if __name__ == '__main__':

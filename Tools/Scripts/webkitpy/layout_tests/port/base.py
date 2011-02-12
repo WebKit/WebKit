@@ -467,6 +467,10 @@ class Port(object):
         ('cpu')."""
         return 'cpu'
 
+    def real_name(self):
+        """Returns the actual name of the port, not the delegate's."""
+        return self.name()
+
     def get_option(self, name, default_value=None):
         # FIXME: Eventually we should not have to do a test for
         # hasattr(), and we should be able to just do
