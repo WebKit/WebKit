@@ -1,3 +1,11 @@
+2011-02-12  Chang Shu  <cshu@webkit.org>
+
+        Unreviewed.
+
+        Update my own email addresses and IRC nickname.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-02-11  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.

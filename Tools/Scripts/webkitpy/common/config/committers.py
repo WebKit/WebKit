@@ -91,7 +91,7 @@ committers_unable_to_review = [
     Committer("Cameron McCormack", "cam@webkit.org", "heycam"),
     Committer("Carlos Garcia Campos", ["cgarcia@igalia.com", "carlosgc@gnome.org", "carlosgc@webkit.org"], "KaL"),
     Committer("Carol Szabo", "carol.szabo@nokia.com"),
-    Committer("Chang Shu", "Chang.Shu@nokia.com"),
+    Committer("Chang Shu", ["Chang.Shu@nokia.com", "cshu@webkit.org"], "cshu"),
     Committer("Chris Evans", "cevans@google.com"),
     Committer("Chris Petersen", "cpetersen@apple.com", "cpetersen"),
     Committer("Chris Rogers", "crogers@google.com", "crogers"),
