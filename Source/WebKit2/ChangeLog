@@ -1,3 +1,9 @@
+2011-02-11  Yael Aharon  <yael.aharon@nokia.com>
+
+        Unreviewed Qt webkit2 build fix after r78392.
+
+        * WebProcess/WebProcess.h:
+
 2011-02-11  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
