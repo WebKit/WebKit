@@ -1,3 +1,15 @@
+2011-02-11  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Remove explicit disable ENABLE_ASSEMBLER_WX_EXCLUSIVE on non-iOS ports
+        https://bugs.webkit.org/show_bug.cgi?id=54107
+        
+        It is unnecessary to explicitly disable ENABLE_ASSEMBLER_WX_EXCLUSIVE
+        by the definition of ENABLE().
+
+        * wtf/Platform.h:
+
 2011-02-11  Geoffrey Garen  <ggaren@apple.com>
 
         Not reviewed.

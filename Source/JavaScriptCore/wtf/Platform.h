@@ -1056,8 +1056,6 @@
    security but currectly comes at a significant performance cost. */
 #if PLATFORM(IOS)
 #define ENABLE_ASSEMBLER_WX_EXCLUSIVE 1
-#else
-#define ENABLE_ASSEMBLER_WX_EXCLUSIVE 0
 #endif
 
 /* Pick which allocator to use; we only need an executable allocator if the assembler is compiled in.
