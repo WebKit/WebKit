@@ -48,6 +48,7 @@
 #include "OESTextureFloat.h"
 #include "RenderBox.h"
 #include "RenderLayer.h"
+#include "Settings.h"
 #include "Uint16Array.h"
 #include "WebGLActiveInfo.h"
 #include "WebGLBuffer.h"
@@ -354,6 +355,13 @@ PassOwnPtr<WebGLRenderingContext> WebGLRenderingContext::create(HTMLCanvasElemen
 {
     HostWindow* hostWindow = canvas->document()->view()->root()->hostWindow();
     GraphicsContext3D::Attributes attributes = attrs ? attrs->attributes() : GraphicsContext3D::Attributes();
+
+    if (attributes.antialias) {
+        Page* p = canvas->document()->page();
+        if (p && !p->settings()->openGLMultisamplingEnabled())
+            attributes.antialias = false;
+    }
+
     RefPtr<GraphicsContext3D> context(GraphicsContext3D::create(attributes, hostWindow));
 
     if (!context) {

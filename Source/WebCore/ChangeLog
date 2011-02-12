@@ -1,3 +1,18 @@
+2011-02-11  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Allow turning off multisampling through web preference settings
+        https://bugs.webkit.org/show_bug.cgi?id=54321
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::create): Disable multisampling in WebGL if web reference says so.
+        * page/Settings.cpp: Add a flag for multisampling preference.
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setOpenGLMultisamplingEnabled):
+        * page/Settings.h: Ditto.
+        (WebCore::Settings::openGLMultisamplingEnabled):
+
 2011-02-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.

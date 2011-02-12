@@ -93,6 +93,7 @@ public:
     virtual void setOfflineWebApplicationCacheEnabled(bool) = 0;
     virtual void setWebAudioEnabled(bool) = 0;
     virtual void setExperimentalWebGLEnabled(bool) = 0;
+    virtual void setOpenGLMultisamplingEnabled(bool) = 0;
     virtual void setShowDebugBorders(bool) = 0;
     virtual void setEditingBehavior(EditingBehavior) = 0;
     virtual void setAcceleratedCompositingEnabled(bool) = 0;
