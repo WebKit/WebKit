@@ -1363,7 +1363,7 @@ void KURL::parse(const char* url, const String* originalString)
             strPtr = url + hostStart;
             const char* hostEndPtr = url + hostEnd;
             while (strPtr < hostEndPtr)
-                *p++ = toASCIILower(*strPtr++);
+                *p++ = *strPtr++;
         }
         m_hostEnd = p - buffer.data();
 
