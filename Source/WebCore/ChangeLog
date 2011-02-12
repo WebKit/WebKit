@@ -1,3 +1,12 @@
+2011-02-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed build fix.
+
+        * dom/Range.cpp:
+        (WebCore::lengthOfContentsInNode): Replaced static const unsigned LengthOfContentsInNode.
+        (WebCore::Range::processContents):
+        (WebCore::Range::processContentsBetweenOffsets):
+
 2011-02-12  Adam Barth  <abarth@webkit.org>
 
         CPP files belong in SOURCES not in HEADERS.  There are more errors like

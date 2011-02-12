@@ -607,7 +607,7 @@ static inline Node* highestAncestorUnderCommonRoot(Node* node, Node* commonRoot)
     return node;
 }
 
-static const unsigned LengthOfContentsInNode = numeric_limits<unsigned>::max();
+static inline unsigned lengthOfContentsInNode() { return numeric_limits<unsigned>::max(); }
 
 PassRefPtr<DocumentFragment> Range::processContents(ActionType action, ExceptionCode& ec)
 {
@@ -656,7 +656,7 @@ PassRefPtr<DocumentFragment> Range::processContents(ActionType action, Exception
 
     RefPtr<Node> leftContents;
     if (m_start.container() != commonRoot) {
-        leftContents = processContentsBetweenOffsets(action, 0, m_start.container(), m_start.offset(), LengthOfContentsInNode, ec);
+        leftContents = processContentsBetweenOffsets(action, 0, m_start.container(), m_start.offset(), lengthOfContentsInNode(), ec);
 
         NodeVector ancestorNodes;
         for (ContainerNode* n = m_start.container()->parentNode(); n && n != commonRoot; n = n->parentNode())
@@ -785,8 +785,8 @@ PassRefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRef
     case Node::TEXT_NODE:
     case Node::CDATA_SECTION_NODE:
     case Node::COMMENT_NODE:
-        ASSERT(endOffset <= static_cast<CharacterData*>(container)->length() || endOffset == LengthOfContentsInNode);
-        if (endOffset == LengthOfContentsInNode)
+        ASSERT(endOffset <= static_cast<CharacterData*>(container)->length() || endOffset == lengthOfContentsInNode());
+        if (endOffset == lengthOfContentsInNode())
             endOffset = static_cast<CharacterData*>(container)->length();
         if (action == EXTRACT_CONTENTS || action == CLONE_CONTENTS) {
             RefPtr<CharacterData> c = static_pointer_cast<CharacterData>(container->cloneNode(true));
@@ -804,8 +804,8 @@ PassRefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRef
             static_cast<CharacterData*>(container)->deleteData(startOffset, endOffset - startOffset, ec);
         break;
     case Node::PROCESSING_INSTRUCTION_NODE:
-        ASSERT(endOffset <= static_cast<ProcessingInstruction*>(container)->data().length() || endOffset == LengthOfContentsInNode);
-        if (endOffset == LengthOfContentsInNode)
+        ASSERT(endOffset <= static_cast<ProcessingInstruction*>(container)->data().length() || endOffset == lengthOfContentsInNode());
+        if (endOffset == lengthOfContentsInNode())
             endOffset = static_cast<ProcessingInstruction*>(container)->data().length();
         if (action == EXTRACT_CONTENTS || action == CLONE_CONTENTS) {
             RefPtr<ProcessingInstruction> c = static_pointer_cast<ProcessingInstruction>(container->cloneNode(true));
