@@ -58,7 +58,6 @@ void DefaultGCActivityCallbackPlatformData::trigger(CFRunLoopTimerRef, void *inf
     Heap* heap = static_cast<Heap*>(info);
     APIEntryShim shim(heap->globalData());
     heap->collectAllGarbage();
-    CFRunLoopTimerSetNextFireDate(d->timer.get(), CFAbsoluteTimeGetCurrent() + decade);
 }
 
 DefaultGCActivityCallback::DefaultGCActivityCallback(Heap* heap)
