@@ -111,6 +111,13 @@ void PluginProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::Mess
 {
 }
 
+void PluginProcess::didFailToSendSyncMessage(CoreIPC::Connection*)
+{
+    // We were making a synchronous call to a web process that doesn't exist any more.
+    // Callers are unlikely to be prepared for an error like this, so it's best to exit immediately.
+    exit(0);
+}
+    
 void PluginProcess::initializePluginProcess(const PluginProcessCreationParameters& parameters)
 {
     ASSERT(!m_pluginModule);

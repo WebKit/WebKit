@@ -567,6 +567,13 @@ void WebProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::Message
     // we'll let it slide.
 }
 
+void WebProcess::didFailToSendSyncMessage(CoreIPC::Connection*)
+{
+    // We were making a synchronous call to a UI process that doesn't exist any more.
+    // Callers are unlikely to be prepared for an error like this, so it's best to exit immediately.
+    exit(0);
+}
+
 WebFrame* WebProcess::webFrame(uint64_t frameID) const
 {
     return m_frameMap.get(frameID);

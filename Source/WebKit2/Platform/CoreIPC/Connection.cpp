@@ -255,14 +255,18 @@ PassOwnPtr<ArgumentDecoder> Connection::sendSyncMessage(MessageID messageID, uin
     // We only allow sending sync messages from the client run loop.
     ASSERT(RunLoop::current() == m_clientRunLoop);
 
-    if (!isValid())
+    if (!isValid()) {
+        m_client->didFailToSendSyncMessage(this);
         return 0;
+    }
     
     // Push the pending sync reply information on our stack.
     {
         MutexLocker locker(m_syncReplyStateMutex);
-        if (!m_shouldWaitForSyncReplies)
+        if (!m_shouldWaitForSyncReplies) {
+            m_client->didFailToSendSyncMessage(this);
             return 0;
+        }
 
         m_pendingSyncReplies.append(PendingSyncReply(syncRequestID));
     }
@@ -295,7 +299,10 @@ PassOwnPtr<ArgumentDecoder> Connection::sendSyncMessage(MessageID messageID, uin
             }
         }
     }
-    
+
+    if (!reply)
+        m_client->didFailToSendSyncMessage(this);
+
     return reply.release();
 }
 

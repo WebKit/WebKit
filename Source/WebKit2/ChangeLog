@@ -1,3 +1,28 @@
+2011-02-11  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler and Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53593
+        <rdar://problem/8948380> Crash beneath HistoryController::recursiveSetProvisionalItem in web
+        process (preceded by assertion failure) if UI process exits while 
+        Messages::WebPage::RestoreSessionAndNavigateToCurrentItem is being handled
+
+        Can't test exiting the UI process.
+
+        * Platform/CoreIPC/Connection.cpp: (CoreIPC::Connection::sendSyncMessage):
+        * Platform/CoreIPC/Connection.h: (CoreIPC::Connection::Client::didFailToSendSyncMessage):
+        Notify connection client when the connection fails to send a sync message.
+
+        * WebProcess/WebProcess.cpp: (WebKit::WebProcess::didFailToSendSyncMessage):
+        * WebProcess/WebProcess.h:
+        Quit the web process immediately if it tried to send a sync message to a dead UI process.
+        It never needs to continue and handle an unexpected null "reply".
+
+        * PluginProcess/PluginProcess.cpp: (WebKit::PluginProcess::didFailToSendSyncMessage):
+        * PluginProcess/PluginProcess.h:
+        Ditto. There is no need for a plug-in to keep running even briefly if it couldn't get a
+        reply to a sync message.
+
 2011-02-11  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
