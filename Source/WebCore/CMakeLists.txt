@@ -458,6 +458,7 @@ SET(WebCore_SOURCES
     bindings/js/GCController.cpp
     bindings/js/IDBBindingUtilities.cpp
     bindings/js/JSAttrCustom.cpp
+    bindings/js/JSArrayBufferCustom.cpp
     bindings/js/JSCDATASectionCustom.cpp
     bindings/js/JSCSSFontFaceRuleCustom.cpp
     bindings/js/JSCSSImportRuleCustom.cpp
@@ -506,6 +507,7 @@ SET(WebCore_SOURCES
     bindings/js/JSEventTarget.cpp
     bindings/js/JSExceptionBase.cpp
     bindings/js/JSFileReaderCustom.cpp
+    bindings/js/JSFloat32ArrayCustom.cpp
     bindings/js/JSGeolocationCustom.cpp
     bindings/js/JSHTMLAllCollectionCustom.cpp
     bindings/js/JSHTMLAppletElementCustom.cpp
@@ -530,6 +532,9 @@ SET(WebCore_SOURCES
     bindings/js/JSIDBKeyCustom.cpp
     bindings/js/JSImageConstructor.cpp
     bindings/js/JSImageDataCustom.cpp
+    bindings/js/JSInt16ArrayCustom.cpp
+    bindings/js/JSInt32ArrayCustom.cpp
+    bindings/js/JSInt8ArrayCustom.cpp
     bindings/js/JSInjectedScriptHostCustom.cpp
     bindings/js/JSInspectorFrontendHostCustom.cpp
     bindings/js/JSJavaScriptCallFrameCustom.cpp
@@ -562,6 +567,9 @@ SET(WebCore_SOURCES
     bindings/js/JSTouchCustom.cpp
     bindings/js/JSTouchListCustom.cpp
     bindings/js/JSTreeWalkerCustom.cpp
+    bindings/js/JSUint16ArrayCustom.cpp 
+    bindings/js/JSUint32ArrayCustom.cpp
+    bindings/js/JSUint8ArrayCustom.cpp
     bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp
     bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp
     bindings/js/JSWebKitCSSMatrixCustom.cpp
@@ -985,12 +993,22 @@ SET(WebCore_SOURCES
     html/ValidityState.cpp
     html/WeekInputType.cpp
 
+    html/canvas/ArrayBuffer.cpp
+    html/canvas/ArrayBufferView.cpp
     html/canvas/CanvasGradient.cpp
     html/canvas/CanvasPattern.cpp
     html/canvas/CanvasPixelArray.cpp
     html/canvas/CanvasRenderingContext.cpp
     html/canvas/CanvasRenderingContext2D.cpp
     html/canvas/CanvasStyle.cpp
+    html/canvas/DataView.cpp
+    html/canvas/Float32Array.cpp
+    html/canvas/Int16Array.cpp
+    html/canvas/Int32Array.cpp
+    html/canvas/Int8Array.cpp
+    html/canvas/Uint16Array.cpp
+    html/canvas/Uint32Array.cpp
+    html/canvas/Uint8Array.cpp
 
     html/parser/CSSPreloadScanner.cpp
     html/parser/HTMLConstructionSite.cpp
