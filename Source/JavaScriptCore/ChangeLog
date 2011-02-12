@@ -1,5 +1,15 @@
 2011-02-11  Geoffrey Garen  <ggaren@apple.com>
 
+        Not reviewed.
+
+        Randomly touch some build files in the hopes of fixing the Qt build.
+
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.pro:
+
+2011-02-11  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
 
         Garbage collection timer cycles forever, even when nothing is happening
