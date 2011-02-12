@@ -53,11 +53,12 @@ struct DefaultGCActivityCallbackPlatformData {
 const CFTimeInterval decade = 60 * 60 * 24 * 365 * 10;
 const CFTimeInterval triggerInterval = 2; // seconds
 
-void DefaultGCActivityCallbackPlatformData::trigger(CFRunLoopTimerRef, void *info)
+void DefaultGCActivityCallbackPlatformData::trigger(CFRunLoopTimerRef timer, void *info)
 {
     Heap* heap = static_cast<Heap*>(info);
     APIEntryShim shim(heap->globalData());
     heap->collectAllGarbage();
+    CFRunLoopTimerSetNextFireDate(timer, CFAbsoluteTimeGetCurrent() + decade);
 }
 
 DefaultGCActivityCallback::DefaultGCActivityCallback(Heap* heap)
