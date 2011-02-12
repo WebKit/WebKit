@@ -754,7 +754,7 @@ PassRefPtr<WebImage> WebPage::snapshotInViewCoordinates(const IntRect& rect, Ima
     return snapshot.release();
 }
 
-PassRefPtr<WebImage> WebPage::snapshotInDocumentCoordinates(const IntRect& rect, ImageOptions options)
+PassRefPtr<WebImage> WebPage::scaledSnapshotInDocumentCoordinates(const IntRect& rect, double scaleFactor, ImageOptions options)
 {
     FrameView* frameView = m_mainFrame->coreFrame()->view();
     if (!frameView)
@@ -765,17 +765,30 @@ PassRefPtr<WebImage> WebPage::snapshotInDocumentCoordinates(const IntRect& rect,
     PaintBehavior oldBehavior = frameView->paintBehavior();
     frameView->setPaintBehavior(oldBehavior | PaintBehaviorFlattenCompositingLayers);
 
-    RefPtr<WebImage> snapshot = WebImage::create(rect.size(), options);
-    OwnPtr<WebCore::GraphicsContext> graphicsContext = snapshot->bitmap()->createGraphicsContext();
+    bool scale = scaleFactor != 1;
+    IntSize size = rect.size();
+    if (scale) 
+        size = IntSize(ceil(rect.width() * scaleFactor), ceil(rect.height() * scaleFactor));
 
+    RefPtr<WebImage> snapshot = WebImage::create(size, options);
+    OwnPtr<WebCore::GraphicsContext> graphicsContext = snapshot->bitmap()->createGraphicsContext();
     graphicsContext->save();
     graphicsContext->translate(-rect.x(), -rect.y());
+    
+    if (scale)
+        graphicsContext->scale(FloatSize(scaleFactor, scaleFactor));
+        
     frameView->paintContents(graphicsContext.get(), rect);
     graphicsContext->restore();
 
     frameView->setPaintBehavior(oldBehavior);
 
     return snapshot.release();
+}
+
+PassRefPtr<WebImage> WebPage::snapshotInDocumentCoordinates(const IntRect& rect, ImageOptions options)
+{
+    return scaledSnapshotInDocumentCoordinates(rect, 1, options);
 }
 
 void WebPage::pageDidScroll()

@@ -200,6 +200,12 @@ WKImageRef WKBundlePageCreateSnapshotInDocumentCoordinates(WKBundlePageRef pageR
     return toAPI(webImage.release().leakRef());
 }
 
+WKImageRef WKBundlePageCreateScaledSnapshotInDocumentCoordinates(WKBundlePageRef pageRef, WKRect rect, double scaleFactor, WKImageOptions options)
+{
+    RefPtr<WebImage> webImage = toImpl(pageRef)->scaledSnapshotInDocumentCoordinates(toIntRect(rect), scaleFactor, toImageOptions(options));
+    return toAPI(webImage.release().leakRef());
+}
+
 #if defined(ENABLE_INSPECTOR) && ENABLE_INSPECTOR
 WKBundleInspectorRef WKBundlePageGetInspector(WKBundlePageRef pageRef)
 {
