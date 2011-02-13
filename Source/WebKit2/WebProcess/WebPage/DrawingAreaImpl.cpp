@@ -64,6 +64,7 @@ DrawingAreaImpl::DrawingAreaImpl(WebPage* webPage, const WebPageCreationParamete
     , m_isWaitingForDidUpdate(false)
     , m_isPaintingSuspended(!parameters.isVisible)
     , m_displayTimer(WebProcess::shared().runLoop(), this, &DrawingAreaImpl::display)
+    , m_exitCompositingTimer(WebProcess::shared().runLoop(), this, &DrawingAreaImpl::exitAcceleratedCompositingMode)
 {
 }
 
@@ -182,14 +183,15 @@ void DrawingAreaImpl::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
             // We're actually entering accelerated compositing mode.
             enterAcceleratedCompositingMode(graphicsLayer);
         } else {
+            m_exitCompositingTimer.stop();
             // We're already in accelerated compositing mode, but the root compositing layer changed.
             m_layerTreeHost->setRootCompositingLayer(graphicsLayer);
         }
     } else {
         if (m_layerTreeHost) {
-            // We're exiting accelerated compositing mode.
-            exitAcceleratedCompositingMode();
-            ASSERT(!m_layerTreeHost);
+            // We'll exit accelerated compositing mode on a timer, to avoid re-entering
+            // compositing code via display() and layout.
+            exitAcceleratedCompositingModeSoon();
         }
     }
 }
@@ -277,6 +279,8 @@ void DrawingAreaImpl::resumePainting()
 
 void DrawingAreaImpl::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLayer)
 {
+    m_exitCompositingTimer.stop();
+
     ASSERT(!m_layerTreeHost);
 
     m_layerTreeHost = LayerTreeHost::create(m_webPage);
@@ -295,6 +299,8 @@ void DrawingAreaImpl::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLay
 
 void DrawingAreaImpl::exitAcceleratedCompositingMode()
 {
+    m_exitCompositingTimer.stop();
+
     ASSERT(m_layerTreeHost);
 
     m_layerTreeHost->invalidate();
@@ -315,6 +321,14 @@ void DrawingAreaImpl::exitAcceleratedCompositingMode()
     // accelerated compositing mode, eliminiating flicker.
     if (!m_inSetSize)
         m_webPage->send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode(generateSequenceNumber(), updateInfo));
+}
+
+void DrawingAreaImpl::exitAcceleratedCompositingModeSoon()
+{
+    if (m_exitCompositingTimer.isActive())
+        return;
+
+    m_exitCompositingTimer.startOneShot(0);
 }
 
 void DrawingAreaImpl::scheduleDisplay()

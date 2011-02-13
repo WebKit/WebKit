@@ -66,6 +66,7 @@ private:
     virtual void resumePainting();
 
     void enterAcceleratedCompositingMode(WebCore::GraphicsLayer*);
+    void exitAcceleratedCompositingModeSoon();
     void exitAcceleratedCompositingMode();
 
     void scheduleDisplay();
@@ -88,6 +89,7 @@ private:
     bool m_isPaintingSuspended;
 
     RunLoop::Timer<DrawingAreaImpl> m_displayTimer;
+    RunLoop::Timer<DrawingAreaImpl> m_exitCompositingTimer;
 
     // The layer tree host that handles accelerated compositing.
     RefPtr<LayerTreeHost> m_layerTreeHost;

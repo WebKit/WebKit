@@ -1,3 +1,26 @@
+2011-02-12  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Crash in RenderLayerCompositor::updateCompositingLayers when loading some sites
+        https://bugs.webkit.org/show_bug.cgi?id=54345
+
+        Some sites flip between composited and non-comosited state while loading. When the timing is
+        right, when we flip out of compositing we will need to do a display while tossing all the
+        compositing layers. This causes us to reenter RenderLayerCompositor::computeCompositingRequirements()
+        while we are in the middle of tossing layers, which leads to a crash.
+
+        The solution is to defer the logic of exiting compositing mode until the DrawingArea is finished
+        doing its display, using a timer.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::DrawingAreaImpl):
+        (WebKit::DrawingAreaImpl::setRootCompositingLayer):
+        (WebKit::DrawingAreaImpl::enterAcceleratedCompositingMode):
+        (WebKit::DrawingAreaImpl::exitAcceleratedCompositingMode):
+        (WebKit::DrawingAreaImpl::exitAcceleratedCompositingModeSoon):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+
 2011-02-12  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Dan Bernstein.
