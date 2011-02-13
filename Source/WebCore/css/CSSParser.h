@@ -64,6 +64,7 @@ namespace WebCore {
         PassRefPtr<CSSRule> parseKeyframeRule(CSSStyleSheet*, const String&);
         bool parseValue(CSSMutableStyleDeclaration*, int propId, const String&, bool important);
         static bool parseColor(RGBA32& color, const String&, bool strict = false);
+        static bool parseSystemColor(RGBA32& color, const String&, Document*);
         bool parseColor(CSSMutableStyleDeclaration*, const String&);
         bool parseDeclaration(CSSMutableStyleDeclaration*, const String&, RefPtr<CSSStyleSourceData>* styleSourceData = 0);
         bool parseMediaQuery(MediaList*, const String&);

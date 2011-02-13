@@ -1,3 +1,16 @@
+2011-02-13  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Dirk Schulze.
+
+        Canvas: 2d.fillStyle.parse.system.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=39168
+
+        * fast/css/test-setting-canvas-color-expected.txt: Added.
+        * fast/css/test-setting-canvas-color.html: Added.
+        * platform/gtk/Skipped:
+        * platform/mac-leopard/Skipped:
+        * platform/qt/Skipped:
+
 2011-02-13  Jarred Nicholls  <jarred@sencha.com>
 
         Reviewed by Simon Fraser.

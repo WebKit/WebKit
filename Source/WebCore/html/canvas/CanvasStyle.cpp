@@ -51,14 +51,16 @@
 
 namespace WebCore {
 
-enum ColorParseResult { ParsedRGBA, ParsedCurrentColor, ParseFailed };
+enum ColorParseResult { ParsedRGBA, ParsedCurrentColor, ParsedSystemColor, ParseFailed };
 
-static ColorParseResult parseColor(RGBA32& parsedColor, const String& colorString)
+static ColorParseResult parseColor(RGBA32& parsedColor, const String& colorString, Document* document = 0)
 {
     if (equalIgnoringCase(colorString, "currentcolor"))
         return ParsedCurrentColor;
     if (CSSParser::parseColor(parsedColor, colorString))
         return ParsedRGBA;
+    if (CSSParser::parseSystemColor(parsedColor, colorString, document))
+        return ParsedSystemColor;
     return ParseFailed;
 }
 
@@ -73,9 +75,10 @@ RGBA32 currentColor(HTMLCanvasElement* canvas)
 
 bool parseColorOrCurrentColor(RGBA32& parsedColor, const String& colorString, HTMLCanvasElement* canvas)
 {
-    ColorParseResult parseResult = parseColor(parsedColor, colorString);
+    ColorParseResult parseResult = parseColor(parsedColor, colorString, canvas ? canvas->document() : 0);
     switch (parseResult) {
     case ParsedRGBA:
+    case ParsedSystemColor:
         return true;
     case ParsedCurrentColor:
         parsedColor = currentColor(canvas);
@@ -131,12 +134,13 @@ CanvasStyle::CanvasStyle(PassRefPtr<CanvasPattern> pattern)
 {
 }
 
-PassRefPtr<CanvasStyle> CanvasStyle::createFromString(const String& color)
+PassRefPtr<CanvasStyle> CanvasStyle::createFromString(const String& color, Document* document)
 {
     RGBA32 rgba;
-    ColorParseResult parseResult = parseColor(rgba, color);
+    ColorParseResult parseResult = parseColor(rgba, color, document);
     switch (parseResult) {
     case ParsedRGBA:
+    case ParsedSystemColor:
         return adoptRef(new CanvasStyle(rgba));
     case ParsedCurrentColor:
         return adoptRef(new CanvasStyle(CurrentColor));

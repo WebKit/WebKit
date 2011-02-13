@@ -126,7 +126,6 @@ platform/mac/editing/spelling/move-cursor-to-beginning-of-autocorrected-word.htm
 # Skipping failing philip canvas tests from http://philip.html5.org/tests/canvas/suite/tests/
 canvas/philip/tests/2d.drawImage.broken.html
 canvas/philip/tests/2d.drawImage.null.html
-canvas/philip/tests/2d.fillStyle.parse.system.html
 canvas/philip/tests/2d.gradient.radial.cone.front.html
 canvas/philip/tests/2d.gradient.radial.cone.top.html
 canvas/philip/tests/2d.gradient.radial.inside2.html
