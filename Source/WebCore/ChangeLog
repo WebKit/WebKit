@@ -1,3 +1,18 @@
+2011-02-13  Leo Yang  <leo.yang.c@gmail.com>
+
+        Reviewed by Andreas Kling.
+
+        Unnecessary call of containingBlock() in RenderBoxModelObject::relativePositionOffsetX()
+        https://bugs.webkit.org/show_bug.cgi?id=54351
+
+        We were calling containingBlock() twice if the left is not auto. We only need to call it
+        once because we can use 'cb' variable in the following line.
+
+        No functionality change, no new tests.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::relativePositionOffsetX):
+
 2011-02-13  Jarred Nicholls  <jarred@sencha.com>
 
         Reviewed by Simon Fraser.

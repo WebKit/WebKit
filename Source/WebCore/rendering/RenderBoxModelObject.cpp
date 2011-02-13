@@ -381,7 +381,7 @@ int RenderBoxModelObject::relativePositionOffsetX() const
     // call availableWidth on our containing block.
     if (!style()->left().isAuto()) {
         RenderBlock* cb = containingBlock();
-        if (!style()->right().isAuto() && !containingBlock()->style()->isLeftToRightDirection())
+        if (!style()->right().isAuto() && !cb->style()->isLeftToRightDirection())
             return -style()->right().calcValue(cb->availableWidth());
         return style()->left().calcValue(cb->availableWidth());
     }
