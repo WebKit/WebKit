@@ -231,6 +231,12 @@ void ProcessLauncher::launchProcess()
     // Start suspended so we can set up the termination notification handler.
     flags |= POSIX_SPAWN_START_SUSPENDED;
 
+#ifndef BUILDING_ON_SNOW_LEOPARD
+    static const int allowExecutableHeapFlag = 0x2000;
+    if (m_launchOptions.executableHeap)
+        flags |= allowExecutableHeapFlag;
+#endif
+
     posix_spawnattr_setflags(&attr, flags);
 
     pid_t processIdentifier;

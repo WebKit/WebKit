@@ -56,6 +56,7 @@ public:
 #if PLATFORM(MAC)
         static const cpu_type_t MatchCurrentArchitecture = 0;
         cpu_type_t architecture;
+        bool executableHeap;
 #endif
     };
 

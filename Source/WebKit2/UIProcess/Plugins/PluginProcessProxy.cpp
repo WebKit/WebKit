@@ -52,6 +52,9 @@ PluginProcessProxy::PluginProcessProxy(PluginProcessManager* PluginProcessManage
     launchOptions.processType = ProcessLauncher::PluginProcess;
 #if PLATFORM(MAC)
     launchOptions.architecture = pluginInfo.pluginArchitecture;
+
+    // FIXME: This shouldn't be true for all plug-ins.
+    launchOptions.executableHeap = true;
 #endif
 
     m_processLauncher = ProcessLauncher::create(this, launchOptions);
