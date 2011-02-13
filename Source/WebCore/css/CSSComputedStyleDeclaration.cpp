@@ -3,6 +3,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007 Nicholas Shanks <webkit@nickshanks.com>
+ * Copyright (C) 2011 Sencha, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -1121,26 +1122,30 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return CSSPrimitiveValue::create(style->listStylePosition());
         case CSSPropertyListStyleType:
             return CSSPrimitiveValue::create(style->listStyleType());
-        case CSSPropertyMarginTop:
-            if (renderer && renderer->isBox())
-                // FIXME: Supposed to return the percentage if percentage was specified.
-                return zoomAdjustedPixelValue(toRenderBox(renderer)->marginTop(), style.get());
-            return CSSPrimitiveValue::create(style->marginTop());
-        case CSSPropertyMarginRight:
-            if (renderer && renderer->isBox())
-                // FIXME: Supposed to return the percentage if percentage was specified.
-                return zoomAdjustedPixelValue(toRenderBox(renderer)->marginRight(), style.get());
-            return CSSPrimitiveValue::create(style->marginRight());
-        case CSSPropertyMarginBottom:
-            if (renderer && renderer->isBox())
-                // FIXME: Supposed to return the percentage if percentage was specified.
-                return zoomAdjustedPixelValue(toRenderBox(renderer)->marginBottom(), style.get());
-            return CSSPrimitiveValue::create(style->marginBottom());
-        case CSSPropertyMarginLeft:
-            if (renderer && renderer->isBox())
-                // FIXME: Supposed to return the percentage if percentage was specified.
-                return zoomAdjustedPixelValue(toRenderBox(renderer)->marginLeft(), style.get());
-            return CSSPrimitiveValue::create(style->marginLeft());
+        case CSSPropertyMarginTop: {
+            Length marginTop = style->marginTop();
+            if (marginTop.isPercent())
+                return CSSPrimitiveValue::create(marginTop);
+            return zoomAdjustedPixelValue(marginTop.value(), style.get());
+        }
+        case CSSPropertyMarginRight: {
+            Length marginRight = style->marginRight();
+            if (marginRight.isPercent())
+                return CSSPrimitiveValue::create(marginRight);
+            return zoomAdjustedPixelValue(marginRight.value(), style.get());
+        }
+        case CSSPropertyMarginBottom: {
+            Length marginBottom = style->marginBottom();
+            if (marginBottom.isPercent())
+                return CSSPrimitiveValue::create(marginBottom);
+            return zoomAdjustedPixelValue(marginBottom.value(), style.get());
+        }
+        case CSSPropertyMarginLeft: {
+            Length marginLeft = style->marginLeft();
+            if (marginLeft.isPercent())
+                return CSSPrimitiveValue::create(marginLeft);
+            return zoomAdjustedPixelValue(marginLeft.value(), style.get());
+        }
         case CSSPropertyWebkitMarqueeDirection:
             return CSSPrimitiveValue::create(style->marqueeDirection());
         case CSSPropertyWebkitMarqueeIncrement:
