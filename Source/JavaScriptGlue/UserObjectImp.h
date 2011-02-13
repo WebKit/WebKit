@@ -50,7 +50,7 @@ public:
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     virtual void put(ExecState *exec, const Identifier &propertyName, JSValue value, PutPropertySlot&);
 
-    JSValue toPrimitive(ExecState*, JSType preferredType = UnspecifiedType) const;
+    JSValue toPrimitive(ExecState*, PreferredPrimitiveType preferredType = NoPreference) const;
     virtual bool toBoolean(ExecState *exec) const;
     virtual double toNumber(ExecState *exec) const;
     virtual UString toString(ExecState *exec) const;

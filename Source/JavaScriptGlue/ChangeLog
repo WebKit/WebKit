@@ -1,3 +1,17 @@
+2011-02-13  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Bug 53760 - JSC fails to build with TOT Clang
+        https://bugs.webkit.org/show_bug.cgi?id=53760
+
+        Fix -Woverloaded-virtual warnings.
+
+        * UserObjectImp.cpp:
+        (UserObjectImp::toPrimitive): Use PreferredPrimitiveType instead of JSType to
+        match the base class.
+        * UserObjectImp.h: 
+
 2011-02-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

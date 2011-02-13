@@ -164,12 +164,6 @@ bool JSCallbackObject<Base>::getOwnPropertySlot(ExecState* exec, const Identifie
 }
 
 template <class Base>
-bool JSCallbackObject<Base>::getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
-{
-    return getOwnPropertySlot(exec, Identifier::from(exec, propertyName), slot);
-}
-
-template <class Base>
 bool JSCallbackObject<Base>::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
     PropertySlot slot;

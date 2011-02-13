@@ -1,3 +1,21 @@
+2011-02-13  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Bug 53760 - JSC fails to build with TOT Clang
+        https://bugs.webkit.org/show_bug.cgi?id=53760
+
+        Fix -Woverloaded-virtual warnings. This is also a 6% speedup on the v8 raytrace
+        benchmark; it is nothing-to-noise on everything else.
+
+        * API/JSCallbackObject.h: Remove pointlessly overloaded method.
+        * API/JSCallbackObjectFunctions.h: Ditto.
+        * runtime/Arguments.cpp: 
+        (JSC::Arguments::put): Change signature to match the base class. This implementation
+        was no longer being called by anyone. This wasn't noticed because it is merely an
+        optimization of the base class' implementation.
+        * runtime/Arguments.h: Ditto.
+
 2011-02-12  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Mark Rowe.

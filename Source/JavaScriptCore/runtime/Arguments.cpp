@@ -253,7 +253,7 @@ void Arguments::getOwnPropertyNames(ExecState* exec, PropertyNameArray& property
     JSObject::getOwnPropertyNames(exec, propertyNames, mode);
 }
 
-void Arguments::put(ExecState* exec, unsigned i, JSValue value, PutPropertySlot& slot)
+void Arguments::put(ExecState* exec, unsigned i, JSValue value)
 {
     if (i < d->numArguments && (!d->deletedArguments || !d->deletedArguments[i])) {
         if (i < d->numParameters)
@@ -263,6 +263,7 @@ void Arguments::put(ExecState* exec, unsigned i, JSValue value, PutPropertySlot&
         return;
     }
 
+    PutPropertySlot slot;
     JSObject::put(exec, Identifier(exec, UString::number(i)), value, slot);
 }
 
