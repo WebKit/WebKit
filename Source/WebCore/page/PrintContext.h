@@ -50,8 +50,8 @@ public:
     void computePageRectsWithPageSize(const FloatSize& pageSizeInPixels, bool allowHorizontalTiling);
 
     // These are only valid after page rects are computed.
-    size_t pageCount() const;
-    const IntRect& pageRect(size_t pageNumber) const;
+    size_t pageCount() const { return m_pageRects.size(); }
+    const IntRect& pageRect(size_t pageNumber) const { return m_pageRects[pageNumber]; }
     const Vector<IntRect>& pageRects() const { return m_pageRects; }
 
     float computeAutomaticScaleFactor(const FloatSize& availablePaperSize);

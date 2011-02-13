@@ -1,3 +1,19 @@
+2011-02-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54349
+        Inline some accessors in PrintContext
+
+        No change in behavior, so no tests.
+
+        * WebCore.exp.in:
+        * page/PrintContext.cpp:
+        * page/PrintContext.h:
+        (WebCore::PrintContext::pageCount):
+        (WebCore::PrintContext::pageRect):
+        Inline pageCount() and pageRect() to match pageRects().
+
 2011-02-13  Sam Weinig  <sam@webkit.org>
 
         Roll r78424 [Extra scrolling required when scrolling with a scroll wheel (Mighty Mouse)] back
