@@ -3503,3 +3503,10 @@ BUGCR72529 : fast/box-shadow/shadow-buffer-partial.html = IMAGE
 // current output is correct, but it's very close.
 BUGPKASTING MAC : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE
 BUGPKASTING MAC : svg/text/text-intro-05-t.svg = IMAGE
+
+BUGCR72861 : fast/inline/inline-box-background-long-image.html = IMAGE+TEXT
+BUGCR72861 : fast/inline/inline-box-background-repeat-x.html = IMAGE+TEXT
+BUGCR72861 : fast/inline/inline-box-background-repeat-y.html = IMAGE+TEXT
+BUGCR72861 : fast/inline/inline-box-background.html = IMAGE+TEXT
+
+
