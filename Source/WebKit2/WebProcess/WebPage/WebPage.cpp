@@ -2012,10 +2012,10 @@ void WebPage::drawPagesToPDF(uint64_t frameID, uint32_t first, uint32_t count, u
         // FIXME: Use CGDataConsumerCreate with callbacks to avoid copying the data.
         RetainPtr<CGDataConsumerRef> pdfDataConsumer(AdoptCF, CGDataConsumerCreateWithCFData(pdfPageData.get()));
 
-        CGRect mediaBox = m_printContext->pageRect(0);
+        CGRect mediaBox = m_printContext->pageCount() ? m_printContext->pageRect(0) : CGRectMake(0, 0, 1, 1);
         RetainPtr<CGContextRef> context(AdoptCF, CGPDFContextCreate(pdfDataConsumer.get(), &mediaBox, 0));
         for (uint32_t page = first; page < first + count; ++page) {
-            if (page > m_printContext->pageCount())
+            if (page >= m_printContext->pageCount())
                 break;
 
             RetainPtr<CFDictionaryRef> pageInfo(AdoptCF, CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));

@@ -1,3 +1,13 @@
+2011-02-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54348
+        Crash when printing a document with no pages
+
+        * WebProcess/WebPage/WebPage.cpp: (WebKit::WebPage::drawPagesToPDF): Don't fail on a fake
+        page that computePagesForPrinting() added to a pageless document.
+
 2011-02-13  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed and landed by Sam Weinig.
