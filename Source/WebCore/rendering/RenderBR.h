@@ -40,8 +40,8 @@ public:
  
     virtual IntRect selectionRectForRepaint(RenderBoxModelObject* /*repaintContainer*/, bool /*clipToVisibleContent*/) { return IntRect(); }
 
-    virtual unsigned width(unsigned /*from*/, unsigned /*len*/, const Font&, int /*xpos*/) const { return 0; }
-    virtual unsigned width(unsigned /*from*/, unsigned /*len*/, int /*xpos*/, bool /*firstLine = false*/) const { return 0; }
+    virtual unsigned width(unsigned /*from*/, unsigned /*len*/, const Font&, int /*xPos*/, HashSet<const SimpleFontData*>* = 0 /*fallbackFonts*/ , GlyphOverflow* = 0) const { return 0; }
+    virtual unsigned width(unsigned /*from*/, unsigned /*len*/, int /*xpos*/, bool = false /*firstLine*/, HashSet<const SimpleFontData*>* = 0 /*fallbackFonts*/, GlyphOverflow* = 0) const { return 0; }
 
     int lineHeight(bool firstLine) const;
 

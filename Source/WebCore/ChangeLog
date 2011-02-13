@@ -1,3 +1,17 @@
+2011-02-13  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Anders Carlsson.
+
+        RenderBR::width() tries but fails to override RenderText::width()
+        https://bugs.webkit.org/show_bug.cgi?id=54301
+
+        The superclass method's signature changed, e.g. in
+        http://trac.webkit.org/changeset/57215, but the subclass was not
+        updated.
+
+        * rendering/RenderBR.h:
+        (WebCore::RenderBR::width):
+
 2011-02-13  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Dirk Schulze.
