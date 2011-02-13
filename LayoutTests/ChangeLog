@@ -1,3 +1,12 @@
+2011-02-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        crypto.getRandomValues should throw TYPE_MISMATCH_ERR
+        https://bugs.webkit.org/show_bug.cgi?id=54346
+
+        * security/crypto-random-values-types-expected.txt:
+
 2011-02-13  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Update chromium's test expectations for fast/inline/inline-box-background-*

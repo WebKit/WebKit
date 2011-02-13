@@ -11,7 +11,7 @@ PASS crypto.getRandomValues(new Uint16Array(3)) is undefined.
 PASS crypto.getRandomValues(new Int16Array(3)) is undefined.
 PASS crypto.getRandomValues(new Uint32Array(3)) is undefined.
 PASS crypto.getRandomValues(new Int32Array(3)) is undefined.
-PASS crypto.getRandomValues(new Float32Array(3)) threw exception Error: VALIDATION_ERR: DOM Exception 16.
+PASS crypto.getRandomValues(new Float32Array(3)) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS successfullyParsed is true
 
 TEST COMPLETE
