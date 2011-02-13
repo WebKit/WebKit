@@ -445,7 +445,8 @@ void Connection::processIncomingMessage(MessageID messageID, PassOwnPtr<Argument
         
         HashMap<std::pair<unsigned, uint64_t>, ArgumentDecoder*>::iterator it = m_waitForMessageMap.find(std::make_pair(messageID.toInt(), incomingMessage.destinationID()));
         if (it != m_waitForMessageMap.end()) {
-            it->second = arguments.leakPtr();
+            it->second = incomingMessage.releaseArguments().leakPtr();
+            ASSERT(it->second);
         
             m_waitForMessageCondition.signal();
             return;
