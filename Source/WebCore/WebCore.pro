@@ -1091,7 +1091,6 @@ SOURCES += \
     inspector/ScriptCallFrame.cpp \
     inspector/ScriptCallStack.cpp \
     inspector/TimelineRecordFactory.cpp \
-    loader/archive/ArchiveFactory.cpp \
     loader/archive/ArchiveResource.cpp \
     loader/archive/ArchiveResourceCollection.cpp \
     loader/cache/MemoryCache.cpp \
@@ -2010,7 +2009,6 @@ HEADERS += \
     loader/appcache/ApplicationCacheStorage.h \
     loader/appcache/DOMApplicationCache.h \
     loader/appcache/ManifestParser.h \
-    loader/archive/ArchiveFactory.h \
     loader/archive/ArchiveResourceCollection.h \
     loader/archive/ArchiveResource.h \
     loader/cache/CachedCSSStyleSheet.h \

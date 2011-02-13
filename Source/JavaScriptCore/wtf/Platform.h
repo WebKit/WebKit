@@ -622,6 +622,7 @@
 #define HAVE_RUNLOOP_TIMER 1
 #define ENABLE_FULLSCREEN_API 1
 #define ENABLE_SMOOTH_SCROLLING 1
+#define ENABLE_WEB_ARCHIVE 1
 #endif /* PLATFORM(MAC) && !PLATFORM(IOS) */
 
 #if PLATFORM(MAC)
@@ -662,6 +663,7 @@
 #define WTF_PLATFORM_CF 1
 #define WTF_USE_PTHREADS 1
 #define HAVE_PTHREAD_RWLOCK 1
+#define ENABLE_WEB_ARCHIVE 1
 #endif
 
 #if PLATFORM(ANDROID)
@@ -684,6 +686,10 @@
 #define WTF_USE_PTHREADS 0
 #endif
 
+#if PLATFORM(WIN) && !OS(WINCE) && !PLATFORM(CHROMIUM) && !PLATFORM(QT)
+#define ENABLE_WEB_ARCHIVE 1
+#endif
+
 #if PLATFORM(WX)
 #define ENABLE_ASSEMBLER 1
 #define ENABLE_GLOBAL_FASTMALLOC_NEW 0
@@ -691,6 +697,7 @@
 #define WTF_PLATFORM_CF 1
 #ifndef BUILDING_ON_TIGER
 #define WTF_USE_CORE_TEXT 1
+#define ENABLE_WEB_ARCHIVE 1
 #else
 #define WTF_USE_ATSUI 1
 #endif
@@ -1074,6 +1081,10 @@
 
 #if !defined(ENABLE_SMOOTH_SCROLLING)
 #define ENABLE_SMOOTH_SCROLLING 0
+#endif
+
+#if !defined(ENABLE_WEB_ARCHIVE)
+#define ENABLE_WEB_ARCHIVE 0
 #endif
 
 /* Use the QXmlStreamReader implementation for XMLDocumentParser */

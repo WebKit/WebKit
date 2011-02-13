@@ -30,7 +30,6 @@
 #include "DocumentLoader.h"
 
 #include "ApplicationCacheHost.h"
-#include "ArchiveFactory.h"
 #include "ArchiveResourceCollection.h"
 #include "CachedPage.h"
 #include "CachedResourceLoader.h"
@@ -54,6 +53,10 @@
 #include <wtf/Assertions.h>
 #include <wtf/text/CString.h>
 #include <wtf/unicode/Unicode.h>
+
+#if ENABLE(WEB_ARCHIVE)
+#include "ArchiveFactory.h"
+#endif
 
 namespace WebCore {
 
@@ -292,8 +295,10 @@ void DocumentLoader::commitLoad(const char* data, int length)
     FrameLoader* frameLoader = DocumentLoader::frameLoader();
     if (!frameLoader)
         return;
+#if ENABLE(WEB_ARCHIVE)
     if (ArchiveFactory::isArchiveMimeType(response().mimeType()))
         return;
+#endif
     frameLoader->client()->committedLoad(this, data, length);
 }
 
@@ -350,7 +355,9 @@ void DocumentLoader::setupForReplaceByMIMEType(const String& newMIMEType)
     
     stopLoadingSubresources();
     stopLoadingPlugIns();
+#if ENABLE(WEB_ARCHIVE)
     clearArchiveResources();
+#endif
 }
 
 void DocumentLoader::updateLoading()
@@ -438,6 +445,7 @@ bool DocumentLoader::isLoadingInAPISense() const
     return frameLoader()->subframeIsLoading();
 }
 
+#if ENABLE(WEB_ARCHIVE)
 void DocumentLoader::addAllArchiveResources(Archive* archive)
 {
     if (!m_archiveResourceCollection)
@@ -464,16 +472,6 @@ void DocumentLoader::addArchiveResource(PassRefPtr<ArchiveResource> resource)
     m_archiveResourceCollection->addResource(resource);
 }
 
-ArchiveResource* DocumentLoader::archiveResourceForURL(const KURL& url) const
-{
-    if (!m_archiveResourceCollection)
-        return 0;
-        
-    ArchiveResource* resource = m_archiveResourceCollection->archiveResourceForURL(url);
-
-    return resource && !resource->shouldIgnoreWhenUnarchiving() ? resource : 0;
-}
-
 PassRefPtr<Archive> DocumentLoader::popArchiveForSubframe(const String& frameName)
 {
     return m_archiveResourceCollection ? m_archiveResourceCollection->popSubframeArchive(frameName) : 0;
@@ -493,6 +491,17 @@ void DocumentLoader::setParsedArchiveData(PassRefPtr<SharedBuffer> data)
 SharedBuffer* DocumentLoader::parsedArchiveData() const
 {
     return m_parsedArchiveData.get();
+}
+#endif // ENABLE(WEB_ARCHIVE)
+
+ArchiveResource* DocumentLoader::archiveResourceForURL(const KURL& url) const
+{
+    if (!m_archiveResourceCollection)
+        return 0;
+        
+    ArchiveResource* resource = m_archiveResourceCollection->archiveResourceForURL(url);
+
+    return resource && !resource->shouldIgnoreWhenUnarchiving() ? resource : 0;
 }
 
 PassRefPtr<ArchiveResource> DocumentLoader::mainResource() const
@@ -601,6 +610,7 @@ void DocumentLoader::cancelPendingSubstituteLoad(ResourceLoader* loader)
         m_substituteResourceDeliveryTimer.stop();
 }
 
+#if ENABLE(WEB_ARCHIVE)
 bool DocumentLoader::scheduleArchiveLoad(ResourceLoader* loader, const ResourceRequest& request, const KURL& originalURL)
 {
     ArchiveResource* resource = 0;
@@ -621,6 +631,7 @@ bool DocumentLoader::scheduleArchiveLoad(ResourceLoader* loader, const ResourceR
     
     return true;
 }
+#endif // ENABLE(WEB_ARCHIVE)
 
 void DocumentLoader::addResponse(const ResourceResponse& r)
 {

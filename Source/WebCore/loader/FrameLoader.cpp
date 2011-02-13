@@ -34,8 +34,6 @@
 #include "FrameLoader.h"
 
 #include "ApplicationCacheHost.h"
-#include "Archive.h"
-#include "ArchiveFactory.h"
 #include "BackForwardController.h"
 #include "BeforeUnloadEvent.h"
 #include "MemoryCache.h"
@@ -111,6 +109,11 @@
 #include "SVGSVGElement.h"
 #include "SVGViewElement.h"
 #include "SVGViewSpec.h"
+#endif
+
+#if ENABLE(WEB_ARCHIVE)
+#include "Archive.h"
+#include "ArchiveFactory.h"
 #endif
 
 namespace WebCore {
@@ -911,11 +914,13 @@ void FrameLoader::loadURLIntoChildFrame(const KURL& url, const String& referer, 
 {
     ASSERT(childFrame);
 
+#if ENABLE(WEB_ARCHIVE)
     RefPtr<Archive> subframeArchive = activeDocumentLoader()->popArchiveForSubframe(childFrame->tree()->uniqueName());    
     if (subframeArchive) {
         childFrame->loader()->loadArchive(subframeArchive.release());
         return;
     }
+#endif // ENABLE(WEB_ARCHIVE)
 
     HistoryItem* parentItem = history()->currentItem();
     // If we're moving in the back/forward list, we might want to replace the content
@@ -931,6 +936,7 @@ void FrameLoader::loadURLIntoChildFrame(const KURL& url, const String& referer, 
     childFrame->loader()->loadURL(url, referer, String(), false, FrameLoadTypeRedirectWithLockedBackForwardList, 0, 0);
 }
 
+#if ENABLE(WEB_ARCHIVE)
 void FrameLoader::loadArchive(PassRefPtr<Archive> prpArchive)
 {
     RefPtr<Archive> archive = prpArchive;
@@ -951,6 +957,7 @@ void FrameLoader::loadArchive(PassRefPtr<Archive> prpArchive)
     documentLoader->addAllArchiveResources(archive.get());
     load(documentLoader.get());
 }
+#endif // ENABLE(WEB_ARCHIVE)
 
 ObjectContentType FrameLoader::defaultObjectContentType(const KURL& url, const String& mimeTypeIn)
 {
@@ -1711,8 +1718,10 @@ void FrameLoader::stopAllLoaders(DatabasePolicy databasePolicy, ClearProvisional
 
     setProvisionalDocumentLoader(0);
     
+#if ENABLE(WEB_ARCHIVE)
     if (m_documentLoader)
         m_documentLoader->clearArchiveResources();
+#endif
 
     m_checkTimer.stop();
 
@@ -2228,6 +2237,9 @@ void FrameLoader::finishedLoadingDocument(DocumentLoader* loader)
         return;
 #endif
 
+#if !ENABLE(WEB_ARCHIVE)
+    m_client->finishedLoading(loader);
+#else
     // Give archive machinery a crack at this document. If the MIME type is not an archive type, it will return 0.
     RefPtr<Archive> archive = ArchiveFactory::create(loader->mainResourceData().get(), loader->responseMIMEType());
     if (!archive) {
@@ -2252,6 +2264,7 @@ void FrameLoader::finishedLoadingDocument(DocumentLoader* loader)
     bool encodingIsUserChosen = !userChosenEncoding.isNull();
     loader->writer()->setEncoding(encodingIsUserChosen ? userChosenEncoding : mainResource->textEncoding(), encodingIsUserChosen);
     loader->writer()->addData(mainResource->data()->data(), mainResource->data()->size());
+#endif // ENABLE(WEB_ARCHIVE)
 }
 
 bool FrameLoader::isReplacing() const

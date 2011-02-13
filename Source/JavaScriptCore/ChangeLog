@@ -1,3 +1,17 @@
+2011-02-13  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add a compile-time option to completely disable WebArchive support.
+        https://bugs.webkit.org/show_bug.cgi?id=52712
+
+        Add an ENABLE(WEB_ARCHIVE) compile-time setting and use it for all WebArchive code.
+        Ports Affected:
+            WebArchive support is currently enabled for all ports that define PLATFORM(CF) apart from Qt.
+            This patch preserves this behavior except that it also disables support in the Chromium port.
+
+        * wtf/Platform.h: Add ENABLE_WEB_ARCHIVE definition and turn it off explicitly for Qt & Chromium ports.
+
 2011-02-13  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Dan Bernstein.

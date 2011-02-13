@@ -261,7 +261,6 @@
           # FIXME: Eliminate dependency on platform/graphics/mac and
           # related directories.
           # platform/graphics/cg may need to stick around, though.
-          '../loader/archive/cf',
           '../platform/audio/mac',
           '../platform/graphics/mac',
           '../platform/mac',
@@ -1239,7 +1238,6 @@
             # Some of these are used instead of Chromium platform files, see
             # the specific exclusions in the "sources!" list below.
             ['include', 'rendering/RenderThemeMac\\.mm$'],
-            ['include', 'loader/archive/cf/LegacyWebArchive\\.cpp$'],
             ['include', 'platform/graphics/mac/ColorMac\\.mm$'],
             ['include', 'platform/graphics/mac/FloatPointMac\\.mm$'],
             ['include', 'platform/graphics/mac/FloatRectMac\\.mm$'],
@@ -1384,6 +1382,12 @@
 
         # Don't build IDBKeyPathBackendImpl.  We have our own implementation.
         ['exclude', 'storage/IDBKeyPathBackendImpl\\.cpp$'],
+
+        # Don't build files needed for WebArchive support, since we disable
+        # this feature.
+        ['exclude', 'loader/archive/cf/LegacyWebArchive\\.cpp$'],
+        ['exclude', 'loader/archive/cf/LegacyWebArchiveMac\\.mm$'],
+        ['exclude', 'loader/archive/ArchiveFactory\\.cpp$'],
 
         # Use loader/icon/IconDatabaseNone.cpp instead.
         ['exclude', 'loader/icon/IconDatabase\\.cpp$'],

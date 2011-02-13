@@ -511,10 +511,12 @@ void Settings::setFrameFlatteningEnabled(bool frameFlatteningEnabled)
     m_frameFlatteningEnabled = frameFlatteningEnabled;
 }
 
+#if ENABLE(WEB_ARCHIVE)
 void Settings::setWebArchiveDebugModeEnabled(bool enabled)
 {
     m_webArchiveDebugModeEnabled = enabled;
 }
+#endif
 
 void Settings::setLocalFileContentSniffingEnabled(bool enabled)
 {

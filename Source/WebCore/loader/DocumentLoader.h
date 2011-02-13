@@ -44,7 +44,9 @@
 namespace WebCore {
 
     class ApplicationCacheHost;
+#if ENABLE(WEB_ARCHIVE)
     class Archive;
+#endif
     class ArchiveResource;
     class ArchiveResourceCollection;
     class Frame;
@@ -127,24 +129,29 @@ namespace WebCore {
         void unschedule(SchedulePair*);
 #endif
 
+#if ENABLE(WEB_ARCHIVE)
         void addAllArchiveResources(Archive*);
         void addArchiveResource(PassRefPtr<ArchiveResource>);
-        
-        // Return an ArchiveResource for the URL, either creating from live data or
-        // pulling from the ArchiveResourceCollection
-        PassRefPtr<ArchiveResource> subresource(const KURL&) const;
-        // Return the ArchiveResource for the URL only when loading an Archive
-        ArchiveResource* archiveResourceForURL(const KURL&) const;
         
         PassRefPtr<Archive> popArchiveForSubframe(const String& frameName);
         void clearArchiveResources();
         void setParsedArchiveData(PassRefPtr<SharedBuffer>);
         SharedBuffer* parsedArchiveData() const;
         
-        PassRefPtr<ArchiveResource> mainResource() const;
-        void getSubresources(Vector<PassRefPtr<ArchiveResource> >&) const;
-        
         bool scheduleArchiveLoad(ResourceLoader*, const ResourceRequest&, const KURL&);
+#endif // ENABLE(WEB_ARCHIVE)
+
+        // Return the ArchiveResource for the URL only when loading an Archive
+        ArchiveResource* archiveResourceForURL(const KURL&) const;
+
+        PassRefPtr<ArchiveResource> mainResource() const;
+
+        // Return an ArchiveResource for the URL, either creating from live data or
+        // pulling from the ArchiveResourceCollection
+        PassRefPtr<ArchiveResource> subresource(const KURL&) const;
+        void getSubresources(Vector<PassRefPtr<ArchiveResource> >&) const;
+
+
 #ifndef NDEBUG
         bool isSubstituteLoadPending(ResourceLoader*) const;
 #endif
@@ -306,9 +313,11 @@ namespace WebCore {
         typedef HashMap<RefPtr<ResourceLoader>, RefPtr<SubstituteResource> > SubstituteResourceMap;
         SubstituteResourceMap m_pendingSubstituteResources;
         Timer<DocumentLoader> m_substituteResourceDeliveryTimer;
-                
+
         OwnPtr<ArchiveResourceCollection> m_archiveResourceCollection;
+#if ENABLE(WEB_ARCHIVE)
         RefPtr<SharedBuffer> m_parsedArchiveData;
+#endif
 
         HashSet<String> m_resourcesClientKnowsAbout;
         Vector<String> m_resourcesLoadedFromMemoryCacheForClientNotification;

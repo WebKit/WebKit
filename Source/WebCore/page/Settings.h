@@ -234,9 +234,11 @@ namespace WebCore {
 
         void setNeedsSiteSpecificQuirks(bool);
         bool needsSiteSpecificQuirks() const { return m_needsSiteSpecificQuirks; }
-        
+
+#if ENABLE(WEB_ARCHIVE)
         void setWebArchiveDebugModeEnabled(bool);
         bool webArchiveDebugModeEnabled() const { return m_webArchiveDebugModeEnabled; }
+#endif
 
         void setLocalFileContentSniffingEnabled(bool);
         bool localFileContentSniffingEnabled() const { return m_localFileContentSniffingEnabled; }

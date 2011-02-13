@@ -116,8 +116,10 @@ public:
     void load(const ResourceRequest&, bool lockHistory);                                        // Called by WebFrame, calls load(ResourceRequest, SubstituteData).
     void load(const ResourceRequest&, const SubstituteData&, bool lockHistory);                 // Called both by WebFrame and internally, calls load(DocumentLoader*).
     void load(const ResourceRequest&, const String& frameName, bool lockHistory);               // Called by WebPluginController.
-    
+
+#if ENABLE(WEB_ARCHIVE)
     void loadArchive(PassRefPtr<Archive>);
+#endif
 
     static void reportLocalLoadFailed(Frame*, const String& url);
 

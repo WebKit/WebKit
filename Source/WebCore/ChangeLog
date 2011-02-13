@@ -1,3 +1,43 @@
+2011-02-13  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add a compile-time option to completely disable WebArchive support.
+        https://bugs.webkit.org/show_bug.cgi?id=52712
+
+        Add an ENABLE(WEB_ARCHIVE) compile-time setting and use it for all WebArchive code.
+
+        ArchiveResource and ArchiveResourceCollection are notably still compiled in. They are used
+        in Safari for functionality such as "Save Image As" and Image copy & paste independent of
+        WebArchive support.
+
+        Ports Affected:
+            WebArchive support is currently enabled for all ports that define PLATFORM(CF) apart from Qt.
+            This patch preserves this behavior except that it also disables support in the Chromium port.
+
+        No behavior changes so no new tests.
+
+        * WebCore.gyp/WebCore.gyp: Don't compile LegacyWebArchive.cpp and friends.
+        * WebCore.pro: Don't compile ArchiveFactory.cpp in Qt port.
+        * loader/DocumentLoader.cpp: Surround WebArchive code with #ifdef.
+        (WebCore::DocumentLoader::commitLoad):
+        (WebCore::DocumentLoader::setupForReplaceByMIMEType):
+        (WebCore::DocumentLoader::archiveResourceForURL):
+        * loader/DocumentLoader.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURLIntoChildFrame):
+        (WebCore::FrameLoader::stopAllLoaders):
+        (WebCore::FrameLoader::finishedLoadingDocument):
+        * loader/FrameLoader.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::start):
+        * loader/archive/ArchiveFactory.cpp: Remove #ifdef since feature is now enabled/disabled wholesale.
+        (WebCore::archiveMIMETypes):
+        * page/Settings.cpp:
+        * page/Settings.h:
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedNonImageMimeTypes):
+
 2011-02-13  Aparna Nandyal  <aparna.nand@wipro.com>
 
         Reviewed by Andreas Kling.

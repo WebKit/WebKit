@@ -145,8 +145,10 @@ void ResourceLoader::start()
     ASSERT(!m_request.isNull());
     ASSERT(m_deferredRequest.isNull());
 
+#if ENABLE(WEB_ARCHIVE)
     if (m_documentLoader->scheduleArchiveLoad(this, m_request, m_request.url()))
         return;
+#endif
     
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (m_documentLoader->applicationCacheHost()->maybeLoadResource(this, m_request, m_request.url()))
