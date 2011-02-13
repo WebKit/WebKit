@@ -1,3 +1,16 @@
+2011-02-13  Aparna Nandyal  <aparna.nand@wipro.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] QtWebKit does not properly handle D&D of a percent-encoded URL.
+        https://bugs.webkit.org/show_bug.cgi?id=53320
+
+        The encoding that was done is corrected in the fix.  
+        Replaced the KURL encoding function with QUrl API.
+
+        * platform/qt/DragDataQt.cpp:
+        (WebCore::DragData::asURL):
+
 2011-02-13  Leo Yang  <leo.yang.c@gmail.com>
 
         Reviewed by Andreas Kling.

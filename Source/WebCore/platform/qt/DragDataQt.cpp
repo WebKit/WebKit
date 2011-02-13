@@ -125,7 +125,8 @@ String DragData::asURL(Frame*, FilenameConversionPolicy filenamePolicy, String*)
     if (urls.isEmpty())
         return String();
 
-    return encodeWithURLEscapeSequences(urls.first().toString());
+    QByteArray encodedUrl = urls.first().toEncoded();
+    return String(encodedUrl.constData(), encodedUrl.length());
 }
 
 PassRefPtr<DocumentFragment> DragData::asFragment(Frame* frame, PassRefPtr<Range>, bool, bool&) const
