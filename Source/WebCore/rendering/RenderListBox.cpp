@@ -703,16 +703,6 @@ IntSize RenderListBox::contentsSize() const
     return IntSize(scrollWidth(), scrollHeight());
 }
 
-int RenderListBox::visibleHeight() const
-{
-    return height();
-}
-
-int RenderListBox::visibleWidth() const
-{
-    return width();
-}
-
 IntPoint RenderListBox::currentMousePosition() const
 {
     RenderView* view = this->view();

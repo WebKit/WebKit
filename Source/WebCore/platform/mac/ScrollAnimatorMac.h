@@ -97,10 +97,6 @@ private:
     virtual void didAddHorizontalScrollbar(Scrollbar*);
     virtual void willRemoveHorizontalScrollbar(Scrollbar*);
 
-    float adjustScrollXPositionIfNecessary(float) const;
-    float adjustScrollYPositionIfNecessary(float) const;
-    FloatPoint adjustScrollPositionIfNecessary(const FloatPoint&) const;
-
 #if ENABLE(RUBBER_BANDING)
     bool allowsVerticalStretching() const;
     bool allowsHorizontalStretching() const;
