@@ -271,7 +271,10 @@ public:
     bool hasVerticalScrollbar() const { return m_mainFrameHasVerticalScrollbar; }
 
 #if PLATFORM(MAC)
-    void sendAccessibilityPresenterToken(const CoreIPC::DataReference&);
+    // Called by the web process through a message.
+    void registerWebProcessAccessibilityToken(const CoreIPC::DataReference&);
+    // Called by the UI process when it is ready to send its tokens to the web process.
+    void registerUIProcessAccessibilityTokens(const CoreIPC::DataReference& elemenToken, const CoreIPC::DataReference& windowToken);
 #endif
 
     void viewScaleFactorDidChange(double);
@@ -429,7 +432,6 @@ private:
     void didStartProgress();
     void didChangeProgress(double);
     void didFinishProgress();
-    void didReceiveAccessibilityPageToken(const CoreIPC::DataReference&);
     
     void decidePolicyForNavigationAction(uint64_t frameID, uint32_t navigationType, uint32_t modifiers, int32_t mouseButton, const WebCore::ResourceRequest&, uint64_t listenerID, CoreIPC::ArgumentDecoder*, bool& receivedPolicyAction, uint64_t& policyAction);
     void decidePolicyForNewWindowAction(uint64_t frameID, uint32_t navigationType, uint32_t modifiers, int32_t mouseButton, const WebCore::ResourceRequest&, const String& frameName, uint64_t listenerID, CoreIPC::ArgumentDecoder*);

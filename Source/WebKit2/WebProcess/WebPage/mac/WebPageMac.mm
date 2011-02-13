@@ -66,7 +66,7 @@ void WebPage::platformInitialize()
     // send data back over
     NSData* remoteToken = (NSData *)WKAXRemoteTokenForElement(mockAccessibilityElement); 
     CoreIPC::DataReference dataToken = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>([remoteToken bytes]), [remoteToken length]);
-    send(Messages::WebPageProxy::DidReceiveAccessibilityPageToken(dataToken));
+    send(Messages::WebPageProxy::RegisterWebProcessAccessibilityToken(dataToken));
     m_mockAccessibilityElement = mockAccessibilityElement;
 #endif
 }
@@ -336,11 +336,16 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboard
     return true;
 }
 
-void WebPage::sendAccessibilityPresenterToken(const CoreIPC::DataReference& data)
+void WebPage::registerUIProcessAccessibilityTokens(const CoreIPC::DataReference& elementToken, const CoreIPC::DataReference& windowToken)
 {
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
-    NSData* tokenData = [NSData dataWithBytes:data.data() length:data.size()];
-    [m_mockAccessibilityElement.get() setRemoteParent:WKAXRemoteElementForToken((CFDataRef)tokenData)];
+    NSData* elementTokenData = [NSData dataWithBytes:elementToken.data() length:elementToken.size()];
+    NSData* windowTokenData = [NSData dataWithBytes:windowToken.data() length:windowToken.size()];
+    id remoteElement = WKAXRemoteElementForToken(elementTokenData);
+    id remoteWindow = WKAXRemoteElementForToken(windowTokenData);
+    WKAXSetWindowForRemoteElement(remoteWindow, remoteElement);
+    
+    [accessibilityRemoteObject() setRemoteParent:remoteElement];
 #endif
 }
 

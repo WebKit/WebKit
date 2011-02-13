@@ -1537,13 +1537,6 @@ void WebPageProxy::didRunInsecureContentForFrame(uint64_t frameID, CoreIPC::Argu
     m_loaderClient.didRunInsecureContentForFrame(this, frame, userData.get());
 }
 
-void WebPageProxy::didReceiveAccessibilityPageToken(const CoreIPC::DataReference& data)
-{
-#if PLATFORM(MAC)
-    m_pageClient->accessibilityChildTokenReceived(data);
-#endif
-}
-    
 void WebPageProxy::frameDidBecomeFrameSet(uint64_t frameID, bool value)
 {
     WebFrameProxy* frame = process()->webFrame(frameID);
@@ -2417,12 +2410,18 @@ void WebPageProxy::computedPagesCallback(const Vector<WebCore::IntRect>& pageRec
 }
 
 #if PLATFORM(MAC)
-void WebPageProxy::sendAccessibilityPresenterToken(const CoreIPC::DataReference& token)
+    
+void WebPageProxy::registerWebProcessAccessibilityToken(const CoreIPC::DataReference& data)
+{
+    m_pageClient->accessibilityWebProcessTokenReceived(data);
+}    
+    
+void WebPageProxy::registerUIProcessAccessibilityTokens(const CoreIPC::DataReference& elementToken, const CoreIPC::DataReference& windowToken)
 {
     if (!isValid())
         return;
 
-    process()->send(Messages::WebPage::SendAccessibilityPresenterToken(token), m_pageID);
+    process()->send(Messages::WebPage::RegisterUIProcessAccessibilityTokens(elementToken, windowToken), m_pageID);
 }
 #endif
 

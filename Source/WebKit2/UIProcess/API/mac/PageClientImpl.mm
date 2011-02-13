@@ -336,10 +336,10 @@ void PageClientImpl::setFindIndicator(PassRefPtr<FindIndicator> findIndicator, b
     [m_wkView _setFindIndicator:findIndicator fadeOut:fadeOut];
 }
 
-void PageClientImpl::accessibilityChildTokenReceived(const CoreIPC::DataReference& data)
+void PageClientImpl::accessibilityWebProcessTokenReceived(const CoreIPC::DataReference& data)
 {
     NSData* remoteToken = [NSData dataWithBytes:data.data() length:data.size()];
-    [m_wkView _setAccessibilityChildToken:remoteToken];
+    [m_wkView _setAccessibilityWebProcessToken:remoteToken];
 }
     
 #if USE(ACCELERATED_COMPOSITING)

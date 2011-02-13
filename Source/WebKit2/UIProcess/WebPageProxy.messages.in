@@ -120,13 +120,15 @@ messages -> WebPageProxy {
     StringCallback(WTF::String resultString, uint64_t callbackID)
     ComputedPagesCallback(Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, uint64_t callbackID)
 
-    DidReceiveAccessibilityPageToken(CoreIPC::DataReference data)
 
     ViewScaleFactorDidChange(double scaleFactor)
 
 #if PLATFORM(MAC)
     # Keyboard support messages
     InterpretKeyEvent(uint32_t type) -> (Vector<WebCore::KeypressCommand> commandName, uint32_t selectionStart, uint32_t selectionEnd, Vector<WebCore::CompositionUnderline> underlines)
+    
+    # Remote accessibility messages
+    RegisterWebProcessAccessibilityToken(CoreIPC::DataReference data)
 #endif
     
     # BackForward messages

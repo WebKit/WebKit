@@ -171,7 +171,7 @@ messages -> WebPage {
     GetMarkedRange() -> (uint64_t location, uint64_t length)
     CharacterIndexForPoint(WebCore::IntPoint point) -> (uint64_t result)
     FirstRectForCharacterRange(uint64_t location, uint64_t length) -> (WebCore::IntRect resultRect)
-    SendAccessibilityPresenterToken(CoreIPC::DataReference token)
+    RegisterUIProcessAccessibilityTokens(CoreIPC::DataReference elemenToken, CoreIPC::DataReference windowToken)
 #endif
 #if PLATFORM(WIN)
     ConfirmComposition(WTF::String compositionString)

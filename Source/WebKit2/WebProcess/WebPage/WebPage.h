@@ -285,7 +285,7 @@ public:
     static void getLocationAndLengthFromRange(WebCore::Range*, uint64_t& location, uint64_t& length);
 
 #if PLATFORM(MAC)
-    void sendAccessibilityPresenterToken(const CoreIPC::DataReference&);
+    void registerUIProcessAccessibilityTokens(const CoreIPC::DataReference& elemenToken, const CoreIPC::DataReference& windowToken);
     AccessibilityWebPageObject* accessibilityRemoteObject();
     WebCore::IntPoint accessibilityPosition() const { return m_accessibilityPosition; }    
     

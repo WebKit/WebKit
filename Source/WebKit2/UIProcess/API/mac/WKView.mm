@@ -184,6 +184,24 @@ static bool useNewDrawingArea()
     [types release];
 }
 
+- (void)_updateRemoteAccessibilityRegistration:(BOOL)registerProcess
+{
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    // When the tree is connected/disconnected, the remote accessibility registration
+    // needs to be updated with the pid of the remote process. If the process is going
+    // away, that information is not present in WebProcess
+    pid_t pid = 0;
+    if (registerProcess && _data->_page->process())
+        pid = _data->_page->process()->processIdentifier();
+    else if (!registerProcess) {
+        pid = WKAXRemoteProcessIdentifier(_data->_remoteAccessibilityChild.get());
+        _data->_remoteAccessibilityChild = nil;
+    }
+    if (pid)
+        WKAXRegisterRemoteProcess(registerProcess, pid); 
+#endif
+}
+
 - (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef
 {
     self = [super initWithFrame:frame];
@@ -212,12 +230,6 @@ static bool useNewDrawingArea()
 
     WebContext::statistics().wkViewCount++;
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
-    NSData *remoteToken = (NSData *)WKAXRemoteTokenForElement(self);
-    CoreIPC::DataReference dataToken = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>([remoteToken bytes]), [remoteToken length]);
-    _data->_page->sendAccessibilityPresenterToken(dataToken);
-#endif
-    
     return self;
 }
 
@@ -298,13 +310,6 @@ static bool useNewDrawingArea()
 - (BOOL)isFlipped
 {
     return YES;
-}
-
-- (void)_setRemoteAccessibilityWindow:(id)window
-{
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
-    WKAXInitializeRemoteElementWithWindow(_data->_remoteAccessibilityChild.get(), window);    
-#endif
 }
 
 - (void)setFrame:(NSRect)rect andScrollBy:(NSSize)offset
@@ -1377,6 +1382,16 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible | WebPageProxy::ViewIsInWindow);
         [self _updateWindowVisibility];
         [self _updateWindowAndViewFrames];
+        
+        // Initialize remote accessibility when the window connection has been established.
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+        NSData *remoteElementToken = WKAXRemoteTokenForElement(self);
+        NSData *remoteWindowToken = WKAXRemoteTokenForElement([self window]);
+        CoreIPC::DataReference elementToken = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>([remoteElementToken bytes]), [remoteElementToken length]);
+        CoreIPC::DataReference windowToken = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>([remoteWindowToken bytes]), [remoteWindowToken length]);
+        _data->_page->registerUIProcessAccessibilityTokens(elementToken, windowToken);
+#endif    
+            
     } else {
         _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
         _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive | WebPageProxy::ViewIsInWindow);
@@ -1388,7 +1403,6 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         }
 #endif
     }
-    [self _setRemoteAccessibilityWindow:[self window]];
 }
 
 - (void)_windowDidBecomeKey:(NSNotification *)notification
@@ -1589,14 +1603,12 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 - (void)_processDidCrash
 {
     [self setNeedsDisplay:YES];
-    [self _setRemoteAccessibilityWindow:nil];
+    [self _updateRemoteAccessibilityRegistration:NO];
 }
 
 - (void)_pageClosed
 {
-    // When the page closes, the references the accessibility child has to the window 
-    // need to be removed, otherwise it can leak.
-    [self _setRemoteAccessibilityWindow:nil];
+    [self _updateRemoteAccessibilityRegistration:NO];
 }
 
 - (void)_didRelaunchProcess
@@ -1925,11 +1937,11 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 }
 #endif // USE(ACCELERATED_COMPOSITING)
 
-- (void)_setAccessibilityChildToken:(NSData *)data
+- (void)_setAccessibilityWebProcessToken:(NSData *)data
 {
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
-    _data->_remoteAccessibilityChild = WKAXRemoteElementForToken((CFDataRef)data);
-    [self _setRemoteAccessibilityWindow:[self window]];
+    _data->_remoteAccessibilityChild = WKAXRemoteElementForToken(data);
+    [self _updateRemoteAccessibilityRegistration:YES];
 #endif
 }
 

@@ -91,7 +91,7 @@ private:
     virtual void pageDidLeaveAcceleratedCompositing();
 #endif
 
-    virtual void accessibilityChildTokenReceived(const CoreIPC::DataReference&);    
+    virtual void accessibilityWebProcessTokenReceived(const CoreIPC::DataReference&);    
     virtual void setComplexTextInputEnabled(uint64_t pluginComplexTextInputIdentifier, bool complexTextInputEnabled);
     virtual void setAutodisplay(bool);
 
