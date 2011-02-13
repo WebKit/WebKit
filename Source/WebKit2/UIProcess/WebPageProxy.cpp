@@ -121,6 +121,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, WebContext* context, WebPageG
     , m_isValid(true)
     , m_isClosed(false)
     , m_isInPrintingMode(false)
+    , m_isPerformingDOMPrintOperation(false)
     , m_inDecidePolicyForMIMEType(false)
     , m_syncMimeTypePolicyActionIsValid(false)
     , m_syncMimeTypePolicyAction(PolicyUse)
@@ -1875,10 +1876,15 @@ void WebPageProxy::runOpenPanel(uint64_t frameID, const WebOpenPanelParameters::
 
 void WebPageProxy::printFrame(uint64_t frameID)
 {
+    ASSERT(!m_isPerformingDOMPrintOperation);
+    m_isPerformingDOMPrintOperation = true;
+
     WebFrameProxy* frame = process()->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
     m_uiClient.printFrame(this, frame);
+
+    m_isPerformingDOMPrintOperation = false;
 }
 
 #if PLATFORM(QT)
@@ -2685,7 +2691,7 @@ void WebPageProxy::beginPrinting(WebFrameProxy* frame, const PrintInfo& printInf
         return;
 
     m_isInPrintingMode = true;
-    process()->send(Messages::WebPage::BeginPrinting(frame->frameID(), printInfo), m_pageID);
+    process()->send(Messages::WebPage::BeginPrinting(frame->frameID(), printInfo), m_pageID, m_isPerformingDOMPrintOperation ? CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply : 0);
 }
 
 void WebPageProxy::endPrinting()
@@ -2694,7 +2700,7 @@ void WebPageProxy::endPrinting()
         return;
 
     m_isInPrintingMode = false;
-    process()->send(Messages::WebPage::EndPrinting(), m_pageID);
+    process()->send(Messages::WebPage::EndPrinting(), m_pageID, m_isPerformingDOMPrintOperation ? CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply : 0);
 }
 
 void WebPageProxy::computePagesForPrinting(WebFrameProxy* frame, const PrintInfo& printInfo, PassRefPtr<ComputedPagesCallback> callback)
@@ -2702,7 +2708,7 @@ void WebPageProxy::computePagesForPrinting(WebFrameProxy* frame, const PrintInfo
     uint64_t callbackID = callback->callbackID();
     m_computedPagesCallbacks.set(callbackID, callback.get());
     m_isInPrintingMode = true;
-    process()->send(Messages::WebPage::ComputePagesForPrinting(frame->frameID(), printInfo, callbackID), m_pageID);
+    process()->send(Messages::WebPage::ComputePagesForPrinting(frame->frameID(), printInfo, callbackID), m_pageID, m_isPerformingDOMPrintOperation ? CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply : 0);
 }
 
 #if PLATFORM(MAC)
@@ -2710,14 +2716,14 @@ void WebPageProxy::drawRectToPDF(WebFrameProxy* frame, const IntRect& rect, Pass
 {
     uint64_t callbackID = callback->callbackID();
     m_dataCallbacks.set(callbackID, callback.get());
-    process()->send(Messages::WebPage::DrawRectToPDF(frame->frameID(), rect, callbackID), m_pageID);
+    process()->send(Messages::WebPage::DrawRectToPDF(frame->frameID(), rect, callbackID), m_pageID, m_isPerformingDOMPrintOperation ? CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply : 0);
 }
 
 void WebPageProxy::drawPagesToPDF(WebFrameProxy* frame, uint32_t first, uint32_t count, PassRefPtr<DataCallback> callback)
 {
     uint64_t callbackID = callback->callbackID();
     m_dataCallbacks.set(callbackID, callback.get());
-    process()->send(Messages::WebPage::DrawPagesToPDF(frame->frameID(), first, count, callbackID), m_pageID);
+    process()->send(Messages::WebPage::DrawPagesToPDF(frame->frameID(), first, count, callbackID), m_pageID, m_isPerformingDOMPrintOperation ? CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply : 0);
 }
 #endif
 

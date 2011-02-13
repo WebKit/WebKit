@@ -136,7 +136,7 @@ public:
     bool sendMessage(MessageID, PassOwnPtr<ArgumentEncoder>, unsigned messageSendFlags = 0);
     bool sendSyncReply(PassOwnPtr<ArgumentEncoder>);
 
-    // FIXME: These variants of senc, sendSync and waitFor are all deprecated.
+    // FIXME: These variants of send, sendSync and waitFor are all deprecated.
     // All clients should move to the overloads that take a message type.
     template<typename E, typename T> bool deprecatedSend(E messageID, uint64_t destinationID, const T& arguments);
     template<typename E, typename T, typename U> bool deprecatedSendSync(E messageID, uint64_t destinationID, const T& arguments, const U& reply, double timeout = NoTimeout);

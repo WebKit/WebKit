@@ -63,8 +63,7 @@ public:
 
     void terminate();
 
-    template<typename E, typename T> bool send(E messageID, uint64_t destinationID, const T& arguments);
-    template<typename T> bool send(const T& message, uint64_t destinationID);
+    template<typename T> bool send(const T& message, uint64_t destinationID, unsigned messageSendFlags = 0);
     template<typename U> bool sendSync(const U& message, const typename U::Reply& reply, uint64_t destinationID, double timeout = 1);
     
     CoreIPC::Connection* connection() const
@@ -105,13 +104,16 @@ public:
     void updateTextCheckerState();
 
     void registerNewWebBackForwardListItem(WebBackForwardListItem*);
-    
+
+    // FIXME: This variant of send is deprecated. All clients should move to an overload that take a message type.
+    template<typename E, typename T> bool deprecatedSend(E messageID, uint64_t destinationID, const T& arguments);
+
 private:
     explicit WebProcessProxy(WebContext*);
 
     void connect();
 
-    bool sendMessage(CoreIPC::MessageID, PassOwnPtr<CoreIPC::ArgumentEncoder>);
+    bool sendMessage(CoreIPC::MessageID, PassOwnPtr<CoreIPC::ArgumentEncoder>, unsigned messageSendFlags);
 
     void addBackForwardItem(uint64_t itemID, const String& originalURLString, const String& urlString, const String& title, const CoreIPC::DataReference& backForwardData);
 
@@ -143,7 +145,7 @@ private:
     ResponsivenessTimer m_responsivenessTimer;
     RefPtr<CoreIPC::Connection> m_connection;
 
-    Vector<CoreIPC::Connection::OutgoingMessage> m_pendingMessages;
+    Vector<std::pair<CoreIPC::Connection::OutgoingMessage, unsigned> > m_pendingMessages;
     RefPtr<ProcessLauncher> m_processLauncher;
     RefPtr<ThreadLauncher> m_threadLauncher;
 
@@ -155,21 +157,21 @@ private:
 };
 
 template<typename E, typename T>
-bool WebProcessProxy::send(E messageID, uint64_t destinationID, const T& arguments)
+bool WebProcessProxy::deprecatedSend(E messageID, uint64_t destinationID, const T& arguments)
 {
     OwnPtr<CoreIPC::ArgumentEncoder> argumentEncoder = CoreIPC::ArgumentEncoder::create(destinationID);
     argumentEncoder->encode(arguments);
 
-    return sendMessage(CoreIPC::MessageID(messageID), argumentEncoder.release());
+    return sendMessage(CoreIPC::MessageID(messageID), argumentEncoder.release(), 0);
 }
 
 template<typename T>
-bool WebProcessProxy::send(const T& message, uint64_t destinationID)
+bool WebProcessProxy::send(const T& message, uint64_t destinationID, unsigned messageSendFlags)
 {
     OwnPtr<CoreIPC::ArgumentEncoder> argumentEncoder = CoreIPC::ArgumentEncoder::create(destinationID);
     argumentEncoder->encode(message);
 
-    return sendMessage(CoreIPC::MessageID(T::messageID), argumentEncoder.release());
+    return sendMessage(CoreIPC::MessageID(T::messageID), argumentEncoder.release(), messageSendFlags);
 }
 
 template<typename U> 

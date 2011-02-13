@@ -81,7 +81,7 @@ void LayerBackedDrawingAreaProxy::sizeDidChange()
 
     m_isWaitingForDidSetFrameNotification = true;
 
-    page->process()->send(DrawingAreaLegacyMessage::SetSize, page->pageID(), CoreIPC::In(info().identifier, m_size));
+    page->process()->deprecatedSend(DrawingAreaLegacyMessage::SetSize, page->pageID(), CoreIPC::In(info().identifier, m_size));
 }
 
 #if !PLATFORM(MAC) && !PLATFORM(WIN)
@@ -103,12 +103,12 @@ void LayerBackedDrawingAreaProxy::setPageIsVisible(bool isVisible)
 
     if (!m_isVisible) {
         // Tell the web process that it doesn't need to paint anything for now.
-        page->process()->send(DrawingAreaLegacyMessage::SuspendPainting, page->pageID(), CoreIPC::In(info().identifier));
+        page->process()->deprecatedSend(DrawingAreaLegacyMessage::SuspendPainting, page->pageID(), CoreIPC::In(info().identifier));
         return;
     }
     
     // The page is now visible.
-    page->process()->send(DrawingAreaLegacyMessage::ResumePainting, page->pageID(), CoreIPC::In(info().identifier));
+    page->process()->deprecatedSend(DrawingAreaLegacyMessage::ResumePainting, page->pageID(), CoreIPC::In(info().identifier));
     
     // FIXME: We should request a full repaint here if needed.
 }
@@ -124,7 +124,7 @@ void LayerBackedDrawingAreaProxy::didSetSize(const IntSize& size)
 void LayerBackedDrawingAreaProxy::update()
 {
     WebPageProxy* page = this->page();
-    page->process()->send(DrawingAreaLegacyMessage::DidUpdate, page->pageID(), CoreIPC::In(info().identifier));
+    page->process()->deprecatedSend(DrawingAreaLegacyMessage::DidUpdate, page->pageID(), CoreIPC::In(info().identifier));
 }
 
 void LayerBackedDrawingAreaProxy::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)

@@ -1,3 +1,55 @@
+2011-02-11  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54335
+        <rdar://problem/8895141> Make window.print() work with WebKit2
+
+        * Platform/CoreIPC/Connection.h: Corrected a typo in FIXME comment.
+
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.cpp:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::setPageIsVisible):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::update):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::sendSetSize):
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        (WebKit::TiledDrawingAreaProxy::sizeDidChange):
+        (WebKit::TiledDrawingAreaProxy::setPageIsVisible):
+        (WebKit::TiledDrawingAreaProxy::takeSnapshot):
+        (WebKit::TiledDrawingAreaProxy::removeTile):
+        * UIProcess/LayerBackedDrawingAreaProxy.cpp:
+        (WebKit::LayerBackedDrawingAreaProxy::sizeDidChange):
+        (WebKit::LayerBackedDrawingAreaProxy::setPageIsVisible):
+        (WebKit::LayerBackedDrawingAreaProxy::update):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::ensureWebProcess):
+        (WebKit::WebContext::postMessageToInjectedBundle):
+        Updated for send() -> deprecatedSend() rename.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy): Added a flag that's true while serving window.print().
+        (WebKit::WebPageProxy::printFrame): Set and unset m_isPerformingDOMPrintOperation.
+        (WebKit::WebPageProxy::beginPrinting): Force message processing in web process when serving
+        window.print().
+        (WebKit::WebPageProxy::endPrinting): Ditto.
+        (WebKit::WebPageProxy::computePagesForPrinting): Ditto.
+        (WebKit::WebPageProxy::drawRectToPDF): Ditto.
+        (WebKit::WebPageProxy::drawPagesToPDF): Ditto.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::~WebProcessProxy):
+        (WebKit::WebProcessProxy::sendMessage):
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        When waiting for a web process to launch, store message flags, too. This is not practically
+        important for DispatchMessageEvenWhenWaitingForSyncReply, but it's easier to store flags
+        than to remember about this pitfall.
+
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::send): Added a flags argument, matching Connection::send().
+        (WebKit::WebProcessProxy::deprecatedSend): Renamed one of send() overloads, because it was
+        conflicting with the other one after adding a flags argument. This matches a change previously
+        made to CoreIPC::Connection.
+
 2011-02-12  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Dan Bernstein.

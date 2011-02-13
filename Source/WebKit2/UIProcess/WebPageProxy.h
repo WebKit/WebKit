@@ -646,6 +646,7 @@ private:
     bool m_isClosed;
 
     bool m_isInPrintingMode;
+    bool m_isPerformingDOMPrintOperation;
 
     bool m_inDecidePolicyForMIMEType;
     bool m_syncMimeTypePolicyActionIsValid;
