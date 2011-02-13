@@ -1,5 +1,31 @@
 2011-02-13  Sam Weinig  <sam@webkit.org>
 
+        Roll r78424 [Extra scrolling required when scrolling with a scroll wheel (Mighty Mouse)] back
+        in with fixes to make it work with render layers.
+
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::scrollToOffsetWithoutAnimation):
+        (WebCore::ScrollAnimatorMac::adjustScrollXPositionIfNecessary):
+        (WebCore::ScrollAnimatorMac::adjustScrollYPositionIfNecessary):
+        (WebCore::ScrollAnimatorMac::adjustScrollPositionIfNecessary):
+        (WebCore::ScrollAnimatorMac::immediateScrollToPoint):
+        (WebCore::ScrollAnimatorMac::immediateScrollByDeltaX):
+        (WebCore::ScrollAnimatorMac::immediateScrollByDeltaY):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::contentsSize):
+        (WebCore::RenderLayer::visibleHeight):
+        (WebCore::RenderLayer::visibleWidth):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        * rendering/RenderLayer.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::visibleHeight):
+        (WebCore::RenderListBox::visibleWidth):
+        * rendering/RenderListBox.h:
+
+2011-02-13  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Dan Bernstein.
 
         Some Scrollbar functions assume an attached ScrollableArea but can be called without one

@@ -182,6 +182,8 @@ RenderLayer::RenderLayer(RenderBoxModelObject* renderer)
     , m_scrollCorner(0)
     , m_resizer(0)
 {
+    ScrollableArea::setConstrainsScrollingToContentEdge(false);
+
     if (!renderer->firstChild() && renderer->style()) {
         m_visibleContentStatusDirty = false;
         m_hasVisibleContent = renderer->style()->visibility() == VISIBLE;
@@ -1773,6 +1775,21 @@ IntPoint RenderLayer::convertFromContainingViewToScrollbar(const Scrollbar* scro
     return point;
 }
 
+IntSize RenderLayer::contentsSize() const
+{
+    return IntSize(const_cast<RenderLayer*>(this)->scrollWidth(), const_cast<RenderLayer*>(this)->scrollHeight());
+}
+
+int RenderLayer::visibleHeight() const
+{
+    return m_height;
+}
+
+int RenderLayer::visibleWidth() const
+{
+    return m_width;
+}
+
 IntSize RenderLayer::scrollbarOffset(const Scrollbar* scrollbar) const
 {
     RenderBox* box = renderBox();
@@ -2124,7 +2141,10 @@ void RenderLayer::updateScrollInfoAfterLayout()
         m_vBar->setProportion(clientHeight, m_scrollHeight);
     }
  
+    RenderView* view = renderer()->view();
+    view->disableLayoutState();
     scrollToOffset(scrollXOffset(), scrollYOffset());
+    view->enableLayoutState();
  
     if (renderer()->node() && renderer()->document()->hasListenerType(Document::OVERFLOWCHANGED_LISTENER))
         updateOverflowStatus(horizontalOverflow, verticalOverflow);
