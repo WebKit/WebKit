@@ -1,5 +1,13 @@
 2011-02-13  Simon Fraser  <simon.fraser@apple.com>
 
+        Change previous test to dump as text, with pixel output, to fix
+        Qt failure.
+
+        * fast/gradients/css3-repeating-end-fill-expected.txt:
+        * fast/gradients/css3-repeating-end-fill.html:
+
+2011-02-13  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Andreas Kling.
 
         Repeating gradients drawn incorrectly
