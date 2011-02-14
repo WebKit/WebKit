@@ -1,3 +1,20 @@
+2011-02-14  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        GraphicsContext: Add clip(IntRect) overload for Qt
+        https://bugs.webkit.org/show_bug.cgi?id=54365
+
+        Qt has special code paths for clipping to integer rectangles.
+        Add a GraphicsContext::clip() overload to allow us to take
+        advantage of the optimized code.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::clip):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::clip):
+
 2011-02-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Alexey Proskuryakov.

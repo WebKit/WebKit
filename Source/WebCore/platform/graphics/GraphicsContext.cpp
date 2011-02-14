@@ -550,6 +550,13 @@ void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorS
         image->draw(this, styleColorSpace, FloatRect(dest.location(), FloatSize(tw, th)), FloatRect(src.location(), FloatSize(tsw, tsh)), op, useLowQualityScale);
 }
 
+#if !PLATFORM(QT)
+void GraphicsContext::clip(const IntRect& rect)
+{
+    clip(FloatRect(rect));
+}
+#endif
+
 void GraphicsContext::addRoundedRectClip(const RoundedIntRect& rect)
 {
     if (paintingDisabled())

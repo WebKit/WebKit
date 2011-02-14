@@ -769,6 +769,14 @@ ContextShadow* GraphicsContext::contextShadow()
     return &m_data->shadow;
 }
 
+void GraphicsContext::clip(const IntRect& rect)
+{
+    if (paintingDisabled())
+        return;
+
+    m_data->p()->setClipRect(rect, Qt::IntersectClip);
+}
+
 void GraphicsContext::clip(const FloatRect& rect)
 {
     if (paintingDisabled())

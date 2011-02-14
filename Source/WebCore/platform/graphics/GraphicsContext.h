@@ -321,6 +321,7 @@ namespace WebCore {
         void setImageInterpolationQuality(InterpolationQuality);
         InterpolationQuality imageInterpolationQuality() const;
 
+        void clip(const IntRect&);
         void clip(const FloatRect&);
         void addRoundedRectClip(const RoundedIntRect&);
         void addInnerRoundedRectClip(const IntRect&, int thickness);
