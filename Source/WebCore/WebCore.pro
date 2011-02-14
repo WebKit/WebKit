@@ -3810,6 +3810,7 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         html/canvas/WebGLActiveInfo.h \
         html/canvas/WebGLBuffer.h \
         html/canvas/WebGLContextAttributes.h \
+        html/canvas/WebGLContextEvent.h \
         html/canvas/WebGLExtension.h \
         html/canvas/WebGLFramebuffer.h \
         html/canvas/WebGLGetInfo.h \
@@ -3824,6 +3825,7 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         html/canvas/WebKitLoseContext.h \
         platform/graphics/Extensions3D.h \
         platform/graphics/GraphicsContext3D.h \
+        platform/graphics/gpu/DrawingBuffer.h \
         platform/graphics/qt/Extensions3DQt.h
 
     !v8 {
@@ -3835,6 +3837,7 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         html/canvas/WebGLObject.cpp \
         html/canvas/WebGLBuffer.cpp \
         html/canvas/WebGLContextAttributes.cpp \
+        html/canvas/WebGLContextEvent.cpp \
         html/canvas/WebGLExtension.cpp \
         html/canvas/WebGLFramebuffer.cpp \
         html/canvas/WebGLGetInfo.cpp \
@@ -3848,8 +3851,12 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         html/canvas/WebGLUniformLocation.cpp \
         html/canvas/WebKitLoseContext.cpp \
         platform/graphics/GraphicsContext3D.cpp \
+        platform/graphics/gpu/DrawingBuffer.cpp \
+        platform/graphics/gpu/qt/DrawingBufferQt.cpp \
         platform/graphics/qt/Extensions3DQt.cpp \
         platform/graphics/qt/GraphicsContext3DQt.cpp
+
+        INCLUDEPATH += $$PWD/platform/graphics/gpu
 }
 
 contains(DEFINES, ENABLE_SYMBIAN_DIALOG_PROVIDERS) {

@@ -56,6 +56,14 @@ int Extensions3DQt::getGraphicsResetStatusARB()
     return GraphicsContext3D::NO_ERROR;
 }
 
+void Extensions3DQt::blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter)
+{
+}
+
+void Extensions3DQt::renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height)
+{
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBGL)

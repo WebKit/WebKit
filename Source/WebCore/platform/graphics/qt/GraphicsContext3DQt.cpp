@@ -252,7 +252,7 @@ public:
     GLuint m_currentFbo;
     GLuint m_depthBuffer;
     QImage m_pixels;
-    ListHashSet<unsigned long> m_syntheticErrors;
+    ListHashSet<unsigned int> m_syntheticErrors;
 
     OwnPtr<Extensions3DQt> m_extensions;
 
@@ -277,24 +277,6 @@ bool GraphicsContext3D::isGLES2Compliant() const
 #endif
 }
 
-// Even with underlying GLES2 driver, the below flags should still be set to
-// false if extentions exist (and they almost always do).
-bool GraphicsContext3D::isGLES2NPOTStrict() const
-{
-    return false;
-}
-
-bool GraphicsContext3D::isErrorGeneratedOnOutOfBoundsAccesses() const
-{
-    return false;
-}
-
-int GraphicsContext3D::getGraphicsResetStatusARB()
-{
-    return NO_ERROR;
-}
-
- 
 GraphicsContext3DInternal::GraphicsContext3DInternal(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow)
     : m_attrs(attrs)
     , m_hostWindow(hostWindow)
@@ -499,12 +481,12 @@ void* GraphicsContext3DInternal::getProcAddress(const String& proc)
     return 0;
 }
 
-PassOwnPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow, GraphicsContext3D::RenderStyle renderStyle)
+PassRefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow, GraphicsContext3D::RenderStyle renderStyle)
 {
     // This implementation doesn't currently support rendering directly to the HostWindow.
     if (renderStyle == RenderDirectlyToHostWindow)
         return 0;
-    OwnPtr<GraphicsContext3D> context(new GraphicsContext3D(attrs, hostWindow, false));
+    RefPtr<GraphicsContext3D> context = adoptRef(new GraphicsContext3D(attrs, hostWindow, false));
     return context->m_internal ? context.release() : 0;
 }
 
@@ -1038,7 +1020,7 @@ GC3Dboolean GraphicsContext3D::isTexture(Platform3DObject texture)
     return glIsTexture(texture);
 }
 
-void GraphicsContext3D::lineWidth(double width)
+void GraphicsContext3D::lineWidth(GC3Dfloat width)
 {
     m_internal->m_glWidget->makeCurrent();
     glLineWidth(static_cast<float>(width));
@@ -1489,7 +1471,7 @@ void GraphicsContext3D::getUniformiv(Platform3DObject program, GC3Dint location,
     m_internal->getUniformiv(program, location, value);
 }
 
-long GraphicsContext3D::getUniformLocation(Platform3DObject program, const String& name)
+GC3Dint GraphicsContext3D::getUniformLocation(Platform3DObject program, const String& name)
 {
     ASSERT(program);
     
@@ -1620,7 +1602,7 @@ Extensions3D* GraphicsContext3D::getExtensions()
 {
     if (!m_internal->m_extensions)
         m_internal->m_extensions = adoptPtr(new Extensions3DQt);
-    return m_internal->m_extensions;
+    return m_internal->m_extensions.get();
 }
 
 bool GraphicsContext3D::getImageData(Image* image,
@@ -1637,13 +1619,13 @@ bool GraphicsContext3D::getImageData(Image* image,
     if (!nativePixmap)
         return false;
 
-    AlphaOp neededAlphaOp = kAlphaDoNothing;
+    AlphaOp neededAlphaOp = AlphaDoNothing;
     if (!premultiplyAlpha)
         // FIXME: must fetch the image data before the premultiplication step
-        neededAlphaOp = kAlphaDoUnmultiply;
+        neededAlphaOp = AlphaDoUnmultiply;
     QImage nativeImage = nativePixmap->toImage().convertToFormat(QImage::Format_ARGB32);
     outputVector.resize(nativeImage.byteCount());
-    return packPixels(nativeImage.rgbSwapped().bits(), kSourceFormatRGBA8, image->width(), image->height(), 0,
+    return packPixels(nativeImage.rgbSwapped().bits(), SourceFormatRGBA8, image->width(), image->height(), 0,
                       format, type, neededAlphaOp, outputVector.data());
 }
 

@@ -1,3 +1,45 @@
+2011-02-14  Andrew Wason  <rectalogic@rectalogic.com>
+
+        Reviewed by Kenneth Russell.
+
+        [Qt] WebKit fails to compile for Qt when WebGL enabled
+        https://bugs.webkit.org/show_bug.cgi?id=53431
+
+        No new tests.
+
+        * WebCore.pro:
+          Add source and header files and include directory to Qt project.
+        * html/canvas/WebGLRenderingContext.cpp:
+          File uses 'emit' which is a Qt keyword - #undef emit.
+        * platform/graphics/gpu/qt: Added.
+        * platform/graphics/gpu/qt/DrawingBufferQt.cpp: Added.
+          Partial implementation of DrawingBuffer for Qt.
+        (WebCore::DrawingBuffer::DrawingBuffer):
+        (WebCore::DrawingBuffer::~DrawingBuffer):
+        (WebCore::DrawingBuffer::didReset):
+        (WebCore::DrawingBuffer::platformLayer):
+        (WebCore::DrawingBuffer::platformColorBuffer):
+        * platform/graphics/qt/Extensions3DQt.cpp:
+          Noop implementation for pure virtual methods added to Extensions3D.h
+        (WebCore::Extensions3DQt::blitFramebuffer):
+        (WebCore::Extensions3DQt::renderbufferStorageMultisample):
+        * platform/graphics/qt/Extensions3DQt.h:
+          Declare new methods added to Extensions3D.h
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+          Remove method implementations no longer in GraphicsContext3D.h.
+          Change m_syntheticErrors to use unsigned int to match new
+          GC3Denum type.
+        (WebCore::GraphicsContext3D::create):
+         Change return type to match GraphicsContext3D.h
+        (WebCore::GraphicsContext3D::lineWidth):
+         Change argument type to GC3Dfloat to match GraphicsContext3D.h
+        (WebCore::GraphicsContext3D::getUniformLocation):
+         Change return type to GC3Dfloat to match GraphicsContext3D.h
+        (WebCore::GraphicsContext3D::getExtensions):
+         Need to call get() on OwnPtr.
+        (WebCore::GraphicsContext3D::getImageData):
+         Rename enum values to match declarations in GraphicsContext3D.h
+
 2011-02-14  Tony Chang  <tony@chromium.org>
 
         Reviewed by Dimitri Glazkov.
