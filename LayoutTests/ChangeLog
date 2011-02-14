@@ -2,6 +2,12 @@
 
         Unreviewed, Chromium test expectations update.
 
+        * platform/chromium/test_expectations.txt:
+
+2011-02-14  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed, Chromium test expectations update.
+
         https://bugs.webkit.org/show_bug.cgi?id=54409
         Mark tests as failing due to r78484.
 

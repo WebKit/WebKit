@@ -99,6 +99,8 @@ BUGCR36539 SLOW : http/tests/misc/uncacheable-script-repeated.html = PASS
 BUGCR32018 SLOW : http/tests/websocket/tests/frame-lengths.html = PASS
 BUGCR69513 DEBUG SLOW : html5lib/webkit-resumer.html = PASS
 
+BUGNONE LINUX DEBUG SLOW : fast/forms/form-attribute-elements-order.html = PASS
+
 // -----------------------------------------------------------------
 // SKIPPED TESTS
 // -----------------------------------------------------------------
@@ -2948,7 +2950,7 @@ BUG_ABARTH : svg/text/caret-in-svg-text.xhtml = TEXT
 // V8 test failures introduced by r75408
 BUGCR69181 : fast/js/exception-codegen-crash.html = FAIL
 BUGCR69181 : fast/js/kde/parse.html = FAIL
-BUGCR69181 : fast/js/large-expressions.html = FAIL
+BUGCR69181 : fast/js/large-expressions.html = SLOW TEXT
 
 // Flaky on Linux since r75250
 BUGCR69300 LINUX : svg/batik/text/textOnPath.svg = IMAGE PASS
@@ -3437,7 +3439,6 @@ BUGWK54322 MAC SNOWLEOPARD : svg/text/small-fonts-in-html5.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/text/small-fonts.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/transforms/text-with-mask-with-svg-transform.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/transforms/text-with-pattern-inside-transformed-html.xhtml = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : svg/transforms/text-with-pattern-with-svg-transform.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/zoom/page/zoom-coords-viewattr-01-b.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/zoom/page/zoom-foreignObject.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/zoom/page/zoom-hixie-mixed-008.xml = IMAGE
@@ -3573,3 +3574,9 @@ BUGWK51152 LINUX : tables/mozilla/dom/tableDom.html = IMAGE+TEXT
 BUGWK51152 LINUX : tables/mozilla_expected_failures/bugs/bug2479-5.html = IMAGE+TEXT
 BUGWK51152 LINUX : transforms/2d/zoom-menulist.html = IMAGE+TEXT
 BUGWK51152 LINUX : tables/mozilla/bugs/bug2479-4.html = TEXT
+
+BUG_LOISLO LINUX : svg/text/font-size-below-point-five.svg = TEXT
+BUG_LOISLO MAC DEBUG : svg/text/font-size-below-point-five.svg = TEXT
+
+// May just need rebaseline?
+BUGNONE LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg = IMAGE
