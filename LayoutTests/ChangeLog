@@ -1,5 +1,22 @@
 2011-02-14  Alejandro G. Castro  <alex@igalia.com>
 
+        Unreviewed, rolling out r78516.
+        http://trac.webkit.org/changeset/78516
+
+        The rebaseline was previously done
+
+        * platform/gtk/fast/css/rtl-ordering-expected.checksum:
+        * platform/gtk/fast/css/rtl-ordering-expected.png:
+        * platform/gtk/fast/css/rtl-ordering-expected.txt:
+        * platform/gtk/fast/forms/select-visual-hebrew-expected.checksum:
+        * platform/gtk/fast/forms/select-visual-hebrew-expected.png:
+        * platform/gtk/fast/forms/select-visual-hebrew-expected.txt:
+        * platform/gtk/fast/forms/visual-hebrew-text-field-expected.checksum:
+        * platform/gtk/fast/forms/visual-hebrew-text-field-expected.png:
+        * platform/gtk/fast/forms/visual-hebrew-text-field-expected.txt:
+
+2011-02-14  Alejandro G. Castro  <alex@igalia.com>
+
         Unreviewed. Rebaseline GTK test results after r78491.
 
         * platform/gtk/fast/css/rtl-ordering-expected.checksum:
