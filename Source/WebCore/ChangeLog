@@ -1,3 +1,35 @@
+2011-02-14  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed, rolling out r78451.
+        http://trac.webkit.org/changeset/78451
+        https://bugs.webkit.org/show_bug.cgi?id=53898
+
+        It is causing crashes in some bots
+
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::newTextCodecICU):
+        (WebCore::TextCodecICU::registerBaseEncodingNames):
+        (WebCore::TextCodecICU::registerBaseCodecs):
+        (WebCore::TextCodecICU::registerExtendedEncodingNames):
+        (WebCore::TextCodecICU::registerExtendedCodecs):
+        (WebCore::ErrorCallbackSetter::~ErrorCallbackSetter):
+        (WebCore::getGbkEscape):
+        (WebCore::urlEscapedEntityCallback):
+        (WebCore::gbkCallbackEscape):
+        (WebCore::gbkUrlEscapedEntityCallack):
+        (WebCore::gbkCallbackSubstitute):
+        * platform/text/TextCodecICU.h:
+        (WebCore::ICUConverterWrapper::ICUConverterWrapper):
+        * platform/text/TextCodecUTF8.cpp:
+        (WebCore::TextCodecUTF8::registerEncodingNames):
+        (WebCore::nonASCIISequenceLength):
+        (WebCore::decodeNonASCIISequence):
+        (WebCore::TextCodecUTF8::decode):
+        * platform/text/TextCodecUTF8.h:
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::buildBaseTextCodecMaps):
+        (WebCore::extendTextCodecMaps):
+
 2011-02-13  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Dan Bernstein.
