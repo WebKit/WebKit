@@ -17,7 +17,7 @@ iframe style:
 [expanded] element.style { ()
 
 ======== Matched CSS Rules ========
-[expanded] body { (resources/styles-iframe-data.html:4)
+[expanded] body { (styles-iframe-data.html:4)
 background: green;
 
 [expanded] body { (user agent stylesheet)

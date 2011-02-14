@@ -9,6 +9,12 @@
 <script src="../http/tests/inspector/elements-test.js"></script>
 <script>
 
+function onload()
+{
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+}
+
 function test()
 {
     InspectorTest.selectNodeWithId("mainBody", step1);
@@ -30,12 +36,12 @@ function test()
 </script>
 </head>
 
-<body onload="runAfterIframeIsLoaded()" id="mainBody">
+<body onload="onload()" id="mainBody">
 <p>
 Tests that proper (and different) styles are returned for body elements of main document and iframe.
 </p>
 
-<iframe src="resources/styles-iframe-data.html"></iframe>
+<iframe src="resources/styles-iframe-data.html" onload="runTest()"></iframe>
 
 </body>
 </html>
