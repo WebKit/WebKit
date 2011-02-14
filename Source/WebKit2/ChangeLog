@@ -1,3 +1,12 @@
+2011-02-14  Adam Roben  <aroben@apple.com>
+
+        Add some .messages.in and script files to WebKit2 projects
+
+        This is just for convenience. It doesn't affect the build.
+
+        * win/WebKit2.vcproj: Also let VS resort some files.
+        * win/WebKit2Generated.vcproj:
+
 2011-02-14  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

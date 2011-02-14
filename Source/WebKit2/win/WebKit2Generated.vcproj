@@ -73,6 +73,34 @@
 	<References>
 	</References>
 	<Files>
+		<Filter
+			Name="Scripts"
+			>
+			<File
+				RelativePath="..\Scripts\generate-message-receiver.py"
+				>
+			</File>
+			<File
+				RelativePath="..\Scripts\generate-messages-header.py"
+				>
+			</File>
+			<Filter
+				Name="webkit2"
+				>
+				<File
+					RelativePath="..\Scripts\webkit2\__init__.py"
+					>
+				</File>
+				<File
+					RelativePath="..\Scripts\webkit2\messages.py"
+					>
+				</File>
+				<File
+					RelativePath="..\Scripts\webkit2\messages_unittest.py"
+					>
+				</File>
+			</Filter>
+		</Filter>
 		<File
 			RelativePath=".\build-generated-files.sh"
 			>
