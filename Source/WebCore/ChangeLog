@@ -1,3 +1,21 @@
+2011-02-14  Naoki Takano  <takano.naoki@gmail.com>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium] Fix wrong popup position for RTL(again)
+        https://bugs.webkit.org/show_bug.cgi?id=54375
+
+        Fix right position bug introduce by https://bugs.webkit.org/show_bug.cgi?id=53567, because the previous fix was correct for the current behaviour, but not good for http://crbug.com/60427. To calculate the correct right offset value and apply to the position, change WebCore::PopupContainer::layout() to return right offset value and use the returned value to calculate position.
+
+        No new tests. However we can check manually with select_dropdown_box_alignment.html, autofill_alignment.html, select_alignment.html, select_dropdown_box_alignment.html, autofill-popup-width-and-item-direction.html
+
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupContainer::layoutAndCalculateWidgetRect): Change the input parameter to take popupInitialCoordinate again. And calculate correct right position with returned right offset from layoutAndGetRightOffset().
+        (WebCore::PopupContainer::showPopup): Change the passing parameter to layoutAndCalculateWidgetRect().
+        (WebCore::PopupContainer::layoutAndGetRightOffset): Change the name from layout() and to return rightOffset value.
+        (WebCore::PopupContainer::refresh): Change the passing parameter to layoutAndCalculateWidgetRect().
+        * platform/chromium/PopupMenuChromium.h: Change the function name and parameters.
+
 2011-02-14  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed, rolling out r78451.

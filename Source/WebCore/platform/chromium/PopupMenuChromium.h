@@ -141,8 +141,8 @@ public:
     // The popup was hidden.
     void notifyPopupHidden();
 
-    // Compute size of widget and children.
-    void layout();
+    // Compute size of widget and children. Return right offset for RTL.
+    int layoutAndGetRightOffset();
 
     PopupListBox* listBox() const { return m_listBox.get(); }
 
@@ -177,7 +177,7 @@ private:
     void paintBorder(GraphicsContext*, const IntRect&);
 
     // Layout and calculate popup widget size and location and returns it as IntRect.
-    IntRect layoutAndCalculateWidgetRect(int targetControlHeight, int popupInitialY);
+    IntRect layoutAndCalculateWidgetRect(int targetControlHeight, const IntPoint& popupInitialCoordinate);
 
     // Returns the ChromeClient of the page this popup is associated with.
     ChromeClientChromium* chromeClientChromium();
