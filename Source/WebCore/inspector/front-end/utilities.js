@@ -399,6 +399,15 @@ String.prototype.findAll = function(string)
     return matches;
 }
 
+String.prototype.lineEndings = function()
+{
+    if (!this._lineEndings) {
+        this._lineEndings = this.findAll("\n");
+        this._lineEndings.push(this.length);
+    }
+    return this._lineEndings;
+}
+
 String.prototype.asParsedURL = function()
 {
     // RegExp groups:

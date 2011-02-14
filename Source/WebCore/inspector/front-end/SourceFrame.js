@@ -171,10 +171,10 @@ WebInspector.SourceFrame.prototype = {
             delete this._lineToHighlight;
     },
 
-    _createTextViewer: function(mimeType, text)
+    _createTextViewer: function(mimeType, content)
     {
-        this._content = new WebInspector.SourceFrameContent(text, this._contentProvider.scripts());
-        this._textModel.setText(null, text);
+        this._content = content;
+        this._textModel.setText(null, content.text);
 
         this._textViewer = new WebInspector.TextViewer(this._textModel, WebInspector.platform, this._url);
         var element = this._textViewer.element;
@@ -240,7 +240,7 @@ WebInspector.SourceFrame.prototype = {
     {
         if (this._url)
             return this._url === breakpoint.url;
-        var scripts = this._contentProvider.scripts();
+        var scripts = this._content.scriptRanges;
         for (var i = 0; i < scripts.length; ++i) {
             if (breakpoint.sourceID === scripts[i].sourceID)
                 return true;
@@ -366,7 +366,7 @@ WebInspector.SourceFrame.prototype = {
         this._executionLine = lineNumber;
         if (!this._textViewer)
             return;
-        var textViewerLineNumber = this._originalLocationToTextViewerLineNumber(this._executionLine - 1, 0);
+        var textViewerLineNumber = this._content.actualLocationToSourceFrameLineNumber(this._executionLine - 1, 0);
         this._textViewer.addDecoration(textViewerLineNumber, "webkit-execution-line");
     },
 
@@ -374,7 +374,7 @@ WebInspector.SourceFrame.prototype = {
     {
         if (!this._textViewer)
             return;
-        var textViewerLineNumber = this._originalLocationToTextViewerLineNumber(this._executionLine - 1, 0);
+        var textViewerLineNumber = this._content.actualLocationToSourceFrameLineNumber(this._executionLine - 1, 0);
         this._textViewer.removeDecoration(textViewerLineNumber, "webkit-execution-line");
         delete this._executionLine;
     },
@@ -477,7 +477,7 @@ WebInspector.SourceFrame.prototype = {
         var resolved = breakpoint.locations.length;
         var location = resolved ? breakpoint.locations[0] : breakpoint;
 
-        var textViewerLineNumber = this._originalLocationToTextViewerLineNumber(location.lineNumber, location.columnNumber);
+        var textViewerLineNumber = this._content.actualLocationToSourceFrameLineNumber(location.lineNumber, location.columnNumber);
         if (textViewerLineNumber >= this._textModel.linesCount)
             return;
 
@@ -851,7 +851,7 @@ WebInspector.SourceFrame.prototype = {
 
         function didFormat(formattedContent)
         {
-            this._formattedContent = formattedContent;
+            this._content = formattedContent;
             this._textModel.setText(null, formattedContent.text);
             this._setTextViewerDecorations();
         }
@@ -861,7 +861,7 @@ WebInspector.SourceFrame.prototype = {
 
     _continueToLine: function(lineNumber)
     {
-        var location = this._textViewerLineNumberToScriptLocation(lineNumber);
+        var location = this._content.sourceFrameLineNumberToActualLocation(lineNumber);
         if (location.sourceID)
             WebInspector.debuggerModel.continueToLine(location.sourceID, location.lineNumber);
     },
@@ -876,7 +876,7 @@ WebInspector.SourceFrame.prototype = {
             return;  // Do not trigger editing from line numbers.
 
         var lineNumber = lineRow.lineNumber;
-        var location = this._textViewerLineNumberToScriptLocation(lineNumber);
+        var location = this._content.sourceFrameLineNumberToActualLocation(lineNumber);
         if (!location.sourceID)
             return;
 
@@ -897,7 +897,7 @@ WebInspector.SourceFrame.prototype = {
 
     _setBreakpoint: function(lineNumber, condition, enabled)
     {
-        var location = this._textViewerLineNumberToScriptLocation(lineNumber);
+        var location = this._content.sourceFrameLineNumberToActualLocation(lineNumber);
         if (this._url)
             WebInspector.debuggerModel.setBreakpoint(this._url, location.lineNumber, location.columnNumber, condition, enabled);
         else if (location.sourceID)
@@ -913,20 +913,6 @@ WebInspector.SourceFrame.prototype = {
     {
         var breakpointId = this._textViewerLineNumberToBreakpointId[textViewerLineNumber];
         return WebInspector.debuggerModel.breakpointForId(breakpointId);
-    },
-
-    _originalLocationToTextViewerLineNumber: function(lineNumber, columnNumber)
-    {
-        if (!this._formattedContent)
-            return lineNumber;
-        return this._formattedContent.originalLocationToFormattedLocation(lineNumber, columnNumber).lineNumber;
-    },
-
-    _textViewerLineNumberToScriptLocation: function(lineNumber)
-    {
-        if (!this._formattedContent)
-            return this._content.scriptLocationForLineNumber(lineNumber);
-        return this._formattedContent.scriptLocationForFormattedLineNumber(lineNumber);
     }
 }
 
@@ -939,11 +925,6 @@ WebInspector.SourceFrameContentProvider = function()
 
 WebInspector.SourceFrameContentProvider.prototype = {
     requestContent: function(callback)
-    {
-        // Should be implemented by subclasses.
-    },
-
-    scripts: function()
     {
         // Should be implemented by subclasses.
     }

@@ -1,3 +1,54 @@
+2011-02-10  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: refactoring, extract SourceMapping from SourceFrameContent.
+        https://bugs.webkit.org/show_bug.cgi?id=54195
+
+        Add SourceMapping interface with two implementations - IdenticalSourceMapping and SourceMappingForFormattedScript.
+        Rewrite SourceFrameContent based on SourceMapping. Make SourceFrame unaware of source mapping details.
+
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.SourceFrameContentProviderForResource.prototype.requestContent):
+        * inspector/front-end/ScriptFormatter.js:
+        (WebInspector.ScriptFormatter.locationToPosition):
+        (WebInspector.ScriptFormatter.positionToLocation):
+        (WebInspector.ScriptFormatter.prototype.formatContent.didFormatChunks):
+        (WebInspector.ScriptFormatter.prototype.formatContent):
+        (WebInspector.ScriptFormatter.prototype._splitContentIntoChunks):
+        (WebInspector.SourceMappingForFormattedScript):
+        (WebInspector.SourceMappingForFormattedScript.prototype.fromScriptLocation):
+        (WebInspector.SourceMappingForFormattedScript.prototype.toScriptLocation):
+        (WebInspector.SourceMappingForFormattedScript.prototype.originalPositionToFormattedLocation):
+        (WebInspector.SourceMappingForFormattedScript.prototype._convertPosition):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.SourceFrameContentProviderForScript.prototype.requestContent):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._createTextViewer):
+        (WebInspector.SourceFrame.prototype._shouldDisplayBreakpoint):
+        (WebInspector.SourceFrame.prototype.setExecutionLine):
+        (WebInspector.SourceFrame.prototype.clearExecutionLine):
+        (WebInspector.SourceFrame.prototype._breakpointAdded):
+        (WebInspector.SourceFrame.prototype.formatSource.didFormat):
+        (WebInspector.SourceFrame.prototype.formatSource):
+        (WebInspector.SourceFrame.prototype._continueToLine):
+        (WebInspector.SourceFrame.prototype._setBreakpoint):
+        (WebInspector.SourceFrame.prototype._findBreakpoint):
+        (WebInspector.SourceFrameContentProvider.prototype.requestContent):
+        * inspector/front-end/SourceFrameContent.js:
+        (WebInspector.SourceFrameContent):
+        (WebInspector.SourceFrameContent.prototype.sourceFrameLineNumberToScriptLocation):
+        (WebInspector.SourceFrameContent.prototype.scriptLocationToSourceFrameLineNumber):
+        (WebInspector.SourceFrameContent.prototype._sourceIDForSourceFrameLineNumber):
+        (WebInspector.SourceMapping):
+        (WebInspector.SourceMapping.prototype.fromScriptLocation):
+        (WebInspector.SourceMapping.prototype.toScriptLocation):
+        (WebInspector.IdenticalSourceMapping):
+        (WebInspector.IdenticalSourceMapping.prototype.fromScriptLocation):
+        (WebInspector.IdenticalSourceMapping.prototype.toScriptLocation):
+        * inspector/front-end/utilities.js:
+        (String.prototype.lineEndings):
+
 2011-02-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

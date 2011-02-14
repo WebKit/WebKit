@@ -36,6 +36,38 @@ WebInspector.ScriptFormatter = function()
     this._tasks = [];
 }
 
+WebInspector.ScriptFormatter.locationToPosition = function(lineEndings, lineNumber, columnNumber)
+{
+    var position = lineNumber ? lineEndings[lineNumber - 1] + 1 : 0;
+    return position + columnNumber;
+}
+
+WebInspector.ScriptFormatter.positionToLocation = function(lineEndings, position)
+{
+    var location = {};
+    location.lineNumber = lineEndings.upperBound(position - 1);
+    if (!location.lineNumber)
+        location.columnNumber = position;
+    else
+        location.columnNumber = position - lineEndings[location.lineNumber - 1] - 1;
+    return location;
+}
+
+WebInspector.ScriptFormatter.findScriptRanges = function(lineEndings, scripts)
+{
+    var scriptRanges = [];
+    for (var i = 0; i < scripts.length; ++i) {
+        var start = { lineNumber: scripts[i].lineOffset, columnNumber: scripts[i].columnOffset };
+        start.position = WebInspector.ScriptFormatter.locationToPosition(lineEndings, start.lineNumber, start.columnNumber);
+        var endPosition = start.position + scripts[i].length;
+        var end = WebInspector.ScriptFormatter.positionToLocation(lineEndings, endPosition);
+        end.position = endPosition;
+        scriptRanges.push({ start: start, end: end, sourceID: scripts[i].sourceID });
+    }
+    scriptRanges.sort(function(x, y) { return x.start.position - y.start.position; });
+    return scriptRanges;
+}
+
 WebInspector.ScriptFormatter.prototype = {
     formatContent: function(content, callback)
     {
@@ -44,7 +76,18 @@ WebInspector.ScriptFormatter.prototype = {
         function didFormatChunks()
         {
             var result = this._buildContentFromChunks(chunks);
-            callback(new WebInspector.FormattedSourceFrameContent(content, result.text, result.mapping));
+
+            var sourceMapping = new WebInspector.SourceMappingForFormattedScript(content.text.lineEndings(), result.text.lineEndings(), result.mapping);
+            var formattedScriptRanges = [];
+            for (var i = 0; i < content.scriptRanges.length; ++i) {
+                var scriptRange = content.scriptRanges[i];
+                formattedScriptRange = {};
+                formattedScriptRange.start = sourceMapping.originalPositionToFormattedLocation(scriptRange.start.position);
+                formattedScriptRange.end = sourceMapping.originalPositionToFormattedLocation(scriptRange.end.position);
+                formattedScriptRange.sourceID = scriptRange.sourceID;
+                formattedScriptRanges.push(formattedScriptRange);
+            }
+            callback(new WebInspector.SourceFrameContent(result.text, sourceMapping, formattedScriptRanges));
         }
         this._formatChunks(chunks, 0, didFormatChunks.bind(this));
     },
@@ -63,11 +106,12 @@ WebInspector.ScriptFormatter.prototype = {
         }
         var currentPosition = 0;
         for (var i = 0; i < scriptRanges.length; ++i) {
-            var scriptRange = scriptRanges[i];
-            if (currentPosition < scriptRange.start)
-                addChunk(currentPosition, scriptRange.start, false);
-            addChunk(scriptRange.start, scriptRange.end, true);
-            currentPosition = scriptRange.end;
+            var start = scriptRanges[i].start.position;
+            var end = scriptRanges[i].end.position;
+            if (currentPosition < start)
+                addChunk(currentPosition, start, false);
+            addChunk(start, end, true);
+            currentPosition = end;
         }
         if (currentPosition < text.length)
             addChunk(currentPosition, text.length, false);
@@ -142,3 +186,48 @@ WebInspector.ScriptFormatter.prototype = {
         task.callback(task.source, { original: [], formatted: [] });
     }
 }
+
+
+WebInspector.SourceMappingForFormattedScript = function(originalLineEndings, formattedLineEndings, mapping)
+{
+    WebInspector.SourceMapping.call(this);
+    this._originalLineEndings = originalLineEndings;
+    this._formattedLineEndings = formattedLineEndings;
+    this._mapping = mapping;
+}
+
+WebInspector.SourceMappingForFormattedScript.prototype = {
+    actualLocationToSourceLocation: function(lineNumber, columnNumber)
+    {
+        var position = WebInspector.ScriptFormatter.locationToPosition(this._originalLineEndings, lineNumber, columnNumber);
+        return this.originalPositionToFormattedLocation(position);
+    },
+
+    sourceLocationToActualLocation: function(lineNumber, columnNumber)
+    {
+        var formattedPosition = WebInspector.ScriptFormatter.locationToPosition(this._formattedLineEndings, lineNumber, columnNumber);
+        var position = this._convertPosition(this._mapping.formatted, this._mapping.original, formattedPosition);
+        return WebInspector.ScriptFormatter.positionToLocation(this._originalLineEndings, position);
+    },
+
+    originalPositionToFormattedLocation: function(position)
+    {
+        var formattedPosition = this._convertPosition(this._mapping.original, this._mapping.formatted, position);
+        var location = WebInspector.ScriptFormatter.positionToLocation(this._formattedLineEndings, formattedPosition);
+        location.position = formattedPosition;
+        return location;
+    },
+
+    _convertPosition: function(positions1, positions2, position)
+    {
+        var index = positions1.upperBound(position);
+        var range1 = positions1[index] - positions1[index - 1];
+        var range2 = positions2[index] - positions2[index - 1];
+        var position2 = positions2[index - 1];
+        if (range1)
+            position2 += Math.round((position - positions1[index - 1]) * range2 / range1);
+        return position2;
+    }
+}
+
+WebInspector.SourceMappingForFormattedScript.prototype.__proto__ = WebInspector.SourceMapping.prototype;

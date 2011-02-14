@@ -137,17 +137,20 @@ WebInspector.SourceFrameContentProviderForResource.DefaultMIMETypeForResourceTyp
 WebInspector.SourceFrameContentProviderForResource.prototype = {
     requestContent: function(callback)
     {
-        function contentLoaded(content)
+        function contentLoaded(text)
         {
             var mimeType = WebInspector.SourceFrameContentProviderForResource.DefaultMIMETypeForResourceType[this._resource.type] || this._resource.mimeType;
-            callback(mimeType, content);
+            if (this._resource.type !== WebInspector.Resource.Type.Script) {
+                // WebKit html lexer normalizes line endings and scripts are passed to VM with "\n" line endings.
+                // However, resource content has original line endings, so we have to normalize line endings here.
+                text = text.replace(/\r\n/g, "\n");
+            }
+            var sourceMapping = new WebInspector.IdenticalSourceMapping();
+            var scripts = WebInspector.debuggerModel.scriptsForURL(this._resource.url);
+            var scriptRanges = WebInspector.ScriptFormatter.findScriptRanges(text.lineEndings(), scripts);
+            callback(mimeType, new WebInspector.SourceFrameContent(text, sourceMapping, scriptRanges));
         }
         this._resource.requestContent(contentLoaded.bind(this));
-    },
-
-    scripts: function()
-    {
-        return WebInspector.debuggerModel.scriptsForURL(this._resource.url);
     }
 }
 

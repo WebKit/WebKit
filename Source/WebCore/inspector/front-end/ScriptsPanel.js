@@ -1062,29 +1062,21 @@ WebInspector.SourceFrameContentProviderForScript = function(script)
 WebInspector.SourceFrameContentProviderForScript.prototype = {
     requestContent: function(callback)
     {
-        if (this._script.source) {
-            callback("text/javascript", this._script.source);
-            return;
-        }
-
-        function didRequestSource(content)
+        function didRequestSource(source)
         {
-            var source;
-            if (content) {
+            if (source) {
                 var prefix = "";
-                for (var i = 0; i < this._script.startingLine - 1; ++i)
+                for (var i = 0; i < this._script.lineOffset; ++i)
                     prefix += "\n";
-                source = prefix + content;
+                source = prefix + source;
             } else
                 source = WebInspector.UIString("<source is not available>");
-            callback("text/javascript", source);
+
+            var sourceMapping = new WebInspector.IdenticalSourceMapping();
+            var scriptRanges = WebInspector.ScriptFormatter.findScriptRanges(source.lineEndings(), [this._script]);
+            callback("text/javascript", new WebInspector.SourceFrameContent(source, sourceMapping, scriptRanges));
         }
         this._script.requestSource(didRequestSource.bind(this));
-    },
-
-    scripts: function()
-    {
-        return [this._script];
     }
 }
 
