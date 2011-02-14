@@ -1,5 +1,11 @@
 2011-02-14  Shinichiro Hamaji  <hamaji@chromium.org>
 
+        Rebaseline chromium's test expectation for http://trac.webkit.org/changeset/78449
+
+        * platform/chromium-win/fast/gradients/css3-repeating-end-fill-expected.txt: Added.
+
+2011-02-14  Shinichiro Hamaji  <hamaji@chromium.org>
+
         Rebaseline chromium's test expectations for inline-box-background-*
 
         * platform/chromium-linux/fast/inline/inline-box-background-expected.checksum: Added.
