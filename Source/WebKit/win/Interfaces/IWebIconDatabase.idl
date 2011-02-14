@@ -164,4 +164,11 @@ interface IWebIconDatabase : IUnknown
         - (void)setEnabled:(BOOL)flag;
     */
     HRESULT setEnabled([in] BOOL flag);
+    
+    /*!
+        @method hasIconForURL:
+        @discussion Returns whether or not the icon database has an icon for this URL.
+        @parm url The URL to test for.
+    */
+    HRESULT hasIconForURL([in] BSTR url, [out, retval] BOOL* result);
 }

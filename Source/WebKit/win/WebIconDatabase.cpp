@@ -261,6 +261,26 @@ HRESULT STDMETHODCALLTYPE WebIconDatabase::setEnabled(
     return S_OK;
 }
 
+HRESULT STDMETHODCALLTYPE WebIconDatabase::hasIconForURL(
+        /* [in] */ BSTR url,
+        /* [out][retval] */ BOOL* result)
+{
+    if (!url || !result)
+        return E_POINTER;
+
+    String urlString(url, SysStringLen(url));
+
+    // Passing a size parameter of 0, 0 means we don't care about the result of the image, we just
+    // want to make sure the read from disk to load the icon is kicked off.
+    iconDatabase()->iconForPageURL(urlString, IntSize(0, 0));
+
+    // Check to see if we have a non-empty icon URL for the page, and if we do, we have an icon for
+    // the page.
+    *result = !(iconDatabase()->iconURLForPageURL(urlString).isEmpty());
+
+    return S_OK;
+}
+
 HBITMAP createDIB(LPSIZE size)
 {
     BitmapInfo bmInfo = BitmapInfo::create(IntSize(*size));

@@ -102,6 +102,10 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setEnabled( 
         /* [in] */ BOOL /*flag*/);
 
+    virtual HRESULT STDMETHODCALLTYPE hasIconForURL(
+        /* [in] */ BSTR url,
+        /* [retval][out] */ BOOL* result);
+
     // IconDatabaseClient
     virtual void dispatchDidRemoveAllIcons();
     virtual void dispatchDidAddIconForPageURL(const WTF::String&);

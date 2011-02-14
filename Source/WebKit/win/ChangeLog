@@ -1,3 +1,21 @@
+2011-02-14  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        Need WebKit API to determine whether we have a site icon for a given URL
+        https://bugs.webkit.org/show_bug.cgi?id=54400
+        
+        This patch implements IWebIconDatabase::hasIconForURL which tells us whether or not
+        we have a site icon for the given URL.
+
+        * Interfaces/IWebIconDatabase.idl: Added new function.
+        * Interfaces/WebKit.idl: Touched to make sure Interfaces rebuilds.
+        * WebIconDatabase.cpp:
+        (WebIconDatabase::hasIconForURL): Call IconDatabase::iconForPageURL to make sure we
+            load the icon from disk, and call iconURLForPageURL to determine whether or not
+            we actually have an icon.
+        * WebIconDatabase.h:
+
 2011-02-11  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
