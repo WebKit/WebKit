@@ -35,13 +35,13 @@ import time
 from webkitpy.common.system import stack_utils
 
 from webkitpy.layout_tests.layout_package import manager_worker_broker
-from webkitpy.layout_tests.layout_package import test_results
+from webkitpy.layout_tests.layout_package import worker_mixin
 
 
 _log = logging.getLogger(__name__)
 
 
-class Worker(manager_worker_broker.AbstractWorker):
+class Worker(manager_worker_broker.AbstractWorker, worker_mixin.WorkerMixin):
     def __init__(self, worker_connection, worker_number, options):
         self._worker_connection = worker_connection
         self._worker_number = worker_number
@@ -51,8 +51,8 @@ class Worker(manager_worker_broker.AbstractWorker):
         self._canceled = False
         self._port = None
 
-    def _deferred_init(self, port):
-        self._port = port
+    def __del__(self):
+        self.cleanup()
 
     def cancel(self):
         """Attempt to abort processing (best effort)."""
@@ -65,7 +65,7 @@ class Worker(manager_worker_broker.AbstractWorker):
         return self._name
 
     def run(self, port):
-        self._deferred_init(port)
+        self.safe_init(port)
 
         exception_msg = ""
         _log.debug("%s starting" % self._name)
@@ -90,7 +90,8 @@ class Worker(manager_worker_broker.AbstractWorker):
             self._worker_connection.post_message('done')
 
     def handle_test_list(self, src, list_name, test_list):
-        # FIXME: check to see if we need to get the http lock.
+        if list_name == "tests_to_http_lock":
+            self.start_servers_with_lock()
 
         start_time = time.time()
         num_tests = 0
@@ -102,24 +103,20 @@ class Worker(manager_worker_broker.AbstractWorker):
         elapsed_time = time.time() - start_time
         self._worker_connection.post_message('finished_list', list_name, num_tests, elapsed_time)
 
-        # FIXME: release the lock if necessary
+        if self._has_http_lock:
+            self.stop_servers_with_lock()
 
     def handle_stop(self, src):
         self._done = True
 
     def _run_test(self, test_input):
-
-        # FIXME: get real timeout value from SingleTestRunner
-        test_timeout_sec = int(test_input.timeout) / 1000
+        test_timeout_sec = self.timeout(test_input)
         start = time.time()
         self._worker_connection.post_message('started_test', test_input, test_timeout_sec)
 
-        # FIXME: actually run the test.
-        result = test_results.TestResult(test_input.filename, failures=[],
-            test_run_time=0, total_time_for_all_diffs=0, time_for_diffs={})
+        result = self.run_test_with_timeout(test_input, test_timeout_sec)
 
         elapsed_time = time.time() - start
-
-        # FIXME: update stats, check for failures.
-
         self._worker_connection.post_message('finished_test', result, elapsed_time)
+
+        self.clean_up_after_test(test_input, result)

@@ -2,6 +2,20 @@
 
         Reviewed by Mihai Parparita.
 
+        This patch modifies NRWT's Worker clas to use the new
+        WorkerMixin class to actually run tests. With this patch, the
+        multiprocess version of NRWT is fully functional and just needs
+        the values for --worker-model and --child-processes to be corrected
+        in the port/* classes to start using the new code by default.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54082
+
+        * Scripts/webkitpy/layout_tests/layout_package/worker.py:
+
+2011-02-14  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
         This patch shuffles code out of dump_render_tree_thread and
         single_test_runner and into a new worker_mixin class that will
         be shared by both TestShellThread and Worker. This change
