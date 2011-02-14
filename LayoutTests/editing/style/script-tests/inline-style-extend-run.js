@@ -23,9 +23,9 @@ testSingleToggle("italic", null, 'hello <u><i title="message">world </i><i>WebKi
 testSingleToggle("bold", null, 'hello <i><b>world</b> WebKit</i>', '<b>hello <i>world WebKit</i></b>');
 testSingleToggle("bold", null, 'hello <i><b class="test">world</b> WebKit</i>', '<b>hello <i><span class="test">world</span> WebKit</i></b>');
 testSingleToggle("bold", null, 'hello <b contenteditable="false">world</b> <b>WebKit </b><u><b>rocks</b></u>', '<b>hello </b><b contenteditable="false">world</b><b> WebKit <u>rocks</u></b>');
-testSingleToggle("strikeThrough", null, 'hello <b>world <s>WebKit</s></b>', '<s>hello <b>world WebKit</b></s>');
-testSingleToggle("strikeThrough", null, 'hello <i><s>world</s></i><b><s>WebKit</s></b> rocks', '<s>hello <i>world</i><b>WebKit</b> rocks</s>');
-testSingleToggle("strikeThrough", null, 'hello <i><s>world</s></i> WebKit <b><s>rocks</s></b>', '<s>hello <i>world</i> WebKit <b>rocks</b></s>');
+testSingleToggle("strikeThrough", null, 'hello <b>world <strike>WebKit</strike></b>', '<strike>hello <b>world WebKit</b></strike>');
+testSingleToggle("strikeThrough", null, 'hello <i><strike>world</strike></i><b><strike>WebKit</strike></b> rocks', '<strike>hello <i>world</i><b>WebKit</b> rocks</strike>');
+testSingleToggle("strikeThrough", null, 'hello <i><strike>world</strike></i> WebKit <b><strike>rocks</strike></b>', '<strike>hello <i>world</i> WebKit <b>rocks</b></strike>');
 
 // block nodes and br tests
 testSingleToggle("bold", null, 'hello<div><i>world</i> <b>WebKit</b></div><div>rocks</div>', '<b>hello</b><div><b><i>world</i> WebKit</b></div><div><b>rocks</b></div>');

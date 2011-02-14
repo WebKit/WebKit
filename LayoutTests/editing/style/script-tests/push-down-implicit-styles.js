@@ -53,7 +53,7 @@ testSingleToggle("bold", selectFirstWord, '<b><div>hello</div><em>world</em></b>
 testSingleToggle("bold", selectSecondWord, '<b>hello <div>world</div></b>', '<b>hello </b><div>world</div>');
 testSingleToggle("bold", selectSecondWord, '<b><em>hello</em> <div>world</div></b>', '<em style="font-weight: bold; ">hello</em> <div>world</div>');
 testSingleToggle("bold", selectAll, '<b> <div>text</div> </b>', ' <div>text</div> ');
-testSingleToggle("bold", selectAll, '<b><s><div>text</div></s></b>', '<s><div>text</div></s>');
+testSingleToggle("bold", selectAll, '<b><strike><div>text</div></strike></b>', '<strike><div>text</div></strike>');
 testSingleToggle("bold", selectFirstWord, '<b><div>hello</div><div>world</div></b>', '<div>hello</div><div style="font-weight: bold; ">world</div>');
 testSingleToggle("bold", selectFirstWord, '<b><div>hello</div><div style="font-weight: normal;">world</div>webkit</b>', '<div>hello</div><div style="font-weight: normal; ">world</div><b>webkit</b>');
 testSingleToggle("bold", selectSecondWord, '<b style="font-style: italic;">hello world</b>', '<b style="font-style: italic;">hello</b><span style="font-style: italic;"> world</span>');
@@ -63,13 +63,13 @@ testSingleToggle("underline", selectLastTwoWords, '<u>hello <b>world</b> webkit<
 testSingleToggle("underline", selectLastTwoWords, '<u>hello <b>world webkit</b></u>', '<u>hello </u><b>world webkit</b>');
 testSingleToggle("underline", selectSecondWord, '<u>hello <b>world webkit</b></u>', '<u>hello</u> <b>world<u> webkit</u></b>');
 testSingleToggle("underline", selectSecondWord, '<u><b>hello world</b> webkit</u>', '<b><u>hello</u> world</b><u> webkit</u>');
-testSingleToggle("underline", selectSecondWord, '<u><s>hello world</s></u>', '<s><u>hello</u> world</s>');
-testSingleToggle("underline", selectSecondWord, '<u><s>hello world webkit</s></u>', '<s><u>hello</u> world<u> webkit</u></s>');
-testSingleToggle("underline", selectSecondWord, '<u><s>hello world</s> webkit</u>', '<s><u>hello</u> world</s><u> webkit</u>');
+testSingleToggle("underline", selectSecondWord, '<u><strike>hello world</strike></u>', '<strike><u>hello</u> world</strike>');
+testSingleToggle("underline", selectSecondWord, '<u><strike>hello world webkit</strike></u>', '<strike><u>hello</u> world<u> webkit</u></strike>');
+testSingleToggle("underline", selectSecondWord, '<u><strike>hello world</strike> webkit</u>', '<strike><u>hello</u> world</strike><u> webkit</u>');
 testSingleToggle("underline", selectSecondWord, '<u>hello <em><code>world webkit</code></em> rocks</u>', '<u>hello</u> <em><code>world<u> webkit</u></code></em><u> rocks</u>');
 
-testSingleToggle("strikeThrough", selectAll, '<s style="color: blue;">hello world</s>', '<span style="color: blue;">hello world</span>');
-testSingleToggle("strikeThrough", selectFirstWord, '<s style="color: blue;"><div>hello</div> <b>world</b> webkit</s>', '<span style="color: blue;"><div>hello</div> <b style="text-decoration: line-through; ">world</b><s> webkit</s></span>');
+testSingleToggle("strikeThrough", selectAll, '<s style="color: blue;">hello world</strike>', '<span style="color: blue;">hello world</span>');
+testSingleToggle("strikeThrough", selectFirstWord, '<s style="color: blue;"><div>hello</div> <b>world</b> webkit</strike>', '<span style="color: blue;"><div>hello</div> <b style="text-decoration: line-through; ">world</b><strike> webkit</strike></span>');
 
 document.body.removeChild(testContainer);
 

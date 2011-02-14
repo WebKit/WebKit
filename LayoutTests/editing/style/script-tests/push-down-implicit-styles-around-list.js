@@ -44,10 +44,10 @@ testSingleToggle("underline", selectFirstWord, '<u><ul><li>hello</li><li>world</
 testSingleToggle("underline", selectLastWord, '<ul><li>hello</li><li style="text-decoration: underline; ">world</li></ul>', '<ul><li>hello</li><li>world</li></ul>');
 testSingleToggle("underline", selectFirstWord, '<u><ul><li>hello world</li><li>webkit</li></ul></u>', '<ul><li>hello<u> world</u></li><li style="text-decoration: underline; ">webkit</li></ul>');
 
-testSingleToggle("strikethrough", selectFirstWord, '<s><ul><li><s>a</s></li></ul></s>', '<ul><li>a</li></ul>');
-testSingleToggle("strikethrough", selectFirstWord, '<s><ul><li>hello</li><li>world</li></ul></s>', '<ul><li>hello</li><li style="text-decoration: line-through; ">world</li></ul>');
+testSingleToggle("strikethrough", selectFirstWord, '<strike><ul><li><strike>a</strike></li></ul></strike>', '<ul><li>a</li></ul>');
+testSingleToggle("strikethrough", selectFirstWord, '<strike><ul><li>hello</li><li>world</li></ul></strike>', '<ul><li>hello</li><li style="text-decoration: line-through; ">world</li></ul>');
 testSingleToggle("strikethrough", selectLastWord, '<ul><li>hello</li><li style="text-decoration: line-through; ">world</li></ul>', '<ul><li>hello</li><li>world</li></ul>');
-testSingleToggle("strikethrough", selectFirstWord, '<s><ul><li>hello world</li><li>webkit</li></ul></s>', '<ul><li>hello<s> world</s></li><li style="text-decoration: line-through; ">webkit</li></ul>');
+testSingleToggle("strikethrough", selectFirstWord, '<strike><ul><li>hello world</li><li>webkit</li></ul></strike>', '<ul><li>hello<strike> world</strike></li><li style="text-decoration: line-through; ">webkit</li></ul>');
 
 document.body.removeChild(testContainer);
 

@@ -69,7 +69,7 @@ Has strike in:
 | <u>
 |   "x"
 | "x"
-| <s>
+| <strike>
 |   "xx<#selection-caret>"
 
 Has strike in:
@@ -79,7 +79,7 @@ Has strike in:
 | <u>
 |   "x"
 | "x"
-| <s>
+| <strike>
 |   "x<#selection-caret>x"
 
 Has strike after removing strikeThrough in:
@@ -89,7 +89,7 @@ Has strike after removing strikeThrough in:
 | <u>
 |   "x"
 | "x"
-| <s>
+| <strike>
 |   "x<#selection-caret>x"
 
 Has strike in:
@@ -99,10 +99,10 @@ Has strike in:
 | <u>
 |   "x"
 | "x"
-| <s>
+| <strike>
 |   "x"
 | "x<#selection-caret>"
-| <s>
+| <strike>
 |   "x"
 
 Has strike before removing strikeThrough in:
@@ -112,10 +112,10 @@ Has strike before removing strikeThrough in:
 | <u>
 |   "x"
 | "x"
-| <s>
+| <strike>
 |   "x"
 | "x"
-| <s>
+| <strike>
 |   "x<#selection-caret>"
 
 Has strike after removing strikeThrough in:
@@ -125,10 +125,10 @@ Has strike after removing strikeThrough in:
 | <u>
 |   "x"
 | "x"
-| <s>
+| <strike>
 |   "x"
 | "x"
-| <s>
+| <strike>
 |   "x<#selection-caret>"
 
 Has strike in:
@@ -138,9 +138,9 @@ Has strike in:
 | <u>
 |   "x"
 | "x"
-| <s>
+| <strike>
 |   "x"
 | "x"
-| <s>
+| <strike>
 |   "x"
 | "x<#selection-caret>"

@@ -1,3 +1,33 @@
+2011-02-14  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Strikethrough disappears when posting a message on odnoklassniki.ru
+        https://bugs.webkit.org/show_bug.cgi?id=53475
+
+        Updating test expectations and creating a test in an attempt to prevent the
+        uninformed WebKit dev from switching back to using <s> tags for strikethrough.
+        As explained in the bug, this is bad for compatibility with various rich text
+        editors.
+
+        * editing/execCommand/query-text-decoration-with-typing-style-expected.txt:
+        * editing/execCommand/script-tests/strikethrough-uses-strike-tag.js: Added.
+        (test):
+        * editing/execCommand/script-tests/toggle-style-2.js:
+        * editing/execCommand/strikethrough-uses-strike-tag-expected.txt: Added.
+        * editing/execCommand/strikethrough-uses-strike-tag.html: Added.
+        * editing/execCommand/strikethroughSelection-expected.txt:
+        * editing/execCommand/toggle-style-2-expected.txt:
+        * editing/style/inline-style-container-expected.txt:
+        * editing/style/inline-style-extend-run-expected.txt:
+        * editing/style/push-down-implicit-styles-around-list-expected.txt:
+        * editing/style/push-down-implicit-styles-expected.txt:
+        * editing/style/script-tests/inline-style-container.js:
+        * editing/style/script-tests/inline-style-extend-run.js:
+        * editing/style/script-tests/push-down-implicit-styles-around-list.js:
+        * editing/style/script-tests/push-down-implicit-styles.js:
+        * editing/style/style-text-node-without-editable-parent-expected.txt:
+
 2011-02-14  Peter Kasting  <pkasting@google.com>
 
         Unreviewed, Chromium test expectations update.

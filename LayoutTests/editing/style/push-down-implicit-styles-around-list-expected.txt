@@ -15,10 +15,10 @@ PASS underline on first word of <u><ul><li><u>a</u></li></ul></u> yields <ul><li
 PASS underline on first word of <u><ul><li>hello</li><li>world</li></ul></u> yields <ul><li>hello</li><li style="text-decoration: underline; ">world</li></ul>
 PASS underline on last word of <ul><li>hello</li><li style="text-decoration: underline; ">world</li></ul> yields <ul><li>hello</li><li>world</li></ul>
 PASS underline on first word of <u><ul><li>hello world</li><li>webkit</li></ul></u> yields <ul><li>hello<u> world</u></li><li style="text-decoration: underline; ">webkit</li></ul>
-PASS strikethrough on first word of <s><ul><li><s>a</s></li></ul></s> yields <ul><li>a</li></ul>
-PASS strikethrough on first word of <s><ul><li>hello</li><li>world</li></ul></s> yields <ul><li>hello</li><li style="text-decoration: line-through; ">world</li></ul>
+PASS strikethrough on first word of <strike><ul><li><strike>a</strike></li></ul></strike> yields <ul><li>a</li></ul>
+PASS strikethrough on first word of <strike><ul><li>hello</li><li>world</li></ul></strike> yields <ul><li>hello</li><li style="text-decoration: line-through; ">world</li></ul>
 PASS strikethrough on last word of <ul><li>hello</li><li style="text-decoration: line-through; ">world</li></ul> yields <ul><li>hello</li><li>world</li></ul>
-PASS strikethrough on first word of <s><ul><li>hello world</li><li>webkit</li></ul></s> yields <ul><li>hello<s> world</s></li><li style="text-decoration: line-through; ">webkit</li></ul>
+PASS strikethrough on first word of <strike><ul><li>hello world</li><li>webkit</li></ul></strike> yields <ul><li>hello<strike> world</strike></li><li style="text-decoration: line-through; ">webkit</li></ul>
 PASS successfullyParsed is true
 
 TEST COMPLETE

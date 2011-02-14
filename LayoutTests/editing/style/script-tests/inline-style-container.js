@@ -28,17 +28,17 @@ testSingleToggle("fontName", "Arial", '<b><font face="Arial">hello</font></b> wo
 testSingleToggle("fontName", "Arial", '<font color="blue">hello</font> world', '<font class="Apple-style-span" face="Arial"><font color="blue">hello</font> world</font>');
 testSingleToggle("fontName", "Arial", '<b><u>hello</u> world</b>', '<b><font class="Apple-style-span" face="Arial"><u>hello</u> world</font></b>');
 testSingleToggle("foreColor", 'blue', '<font><u style="color:red;">hello</u></font>', '<font color="#0000FF"><u>hello</u></font>');
-testSingleToggle("bold", null, '<u><s>hello</s> <s>world</s></u>', '<u><b><s>hello</s> <s>world</s></b></u>');
+testSingleToggle("bold", null, '<u><strike>hello</strike> <strike>world</strike></u>', '<u><b><strike>hello</strike> <strike>world</strike></b></u>');
 testSingleToggle("bold", null, '<i>hello</i> <b>world</b>', '<b><i>hello</i> world</b>');
-testSingleToggle("bold", null, '<s><i><u>hello <b>world</b></u></i> webkit</s>', '<s><b><i><u>hello world</u></i> webkit</b></s>');
+testSingleToggle("bold", null, '<strike><i><u>hello <b>world</b></u></i> webkit</strike>', '<strike><b><i><u>hello world</u></i> webkit</b></strike>');
 testSingleToggle("bold", null,
     '<b contenteditable="false"><span style="font-weight: normal;">hello</span> world</b> world',
     '<b contenteditable="false"><span style="font-weight: normal;">hello</span> world</b><b> world</b>');
 testSingleToggle("bold", null,
     '<i>hello</i> <b contenteditable="false">world</b>',
     '<b><i>hello</i> </b><b contenteditable="false">world</b>');
-testSingleToggle("strikeThrough", null, '<i>hello</i> <b><s>world</s></b> WebKit', '<s><i>hello</i> <b>world</b> WebKit</s>');
-testSingleToggle("strikeThrough", null, '<b><i>hello <s>world</s></i> WebKit</b>', '<b><s><i>hello world</i> WebKit</s></b>');
+testSingleToggle("strikeThrough", null, '<i>hello</i> <b><strike>world</strike></b> WebKit', '<strike><i>hello</i> <b>world</b> WebKit</strike>');
+testSingleToggle("strikeThrough", null, '<b><i>hello <strike>world</strike></i> WebKit</b>', '<b><strike><i>hello world</i> WebKit</strike></b>');
 
 debug('')
 debug('styleWithCSS = true')

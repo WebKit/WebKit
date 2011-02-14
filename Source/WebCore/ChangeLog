@@ -1,3 +1,20 @@
+2011-02-14  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Strikethrough disappears when posting a message on odnoklassniki.ru
+        https://bugs.webkit.org/show_bug.cgi?id=53475
+
+        Changing the behavior of the strikethrough execCommand when styleWithCSS
+        is false. We formerly created <s> tags, which was different than both IE
+        and FF and caused problems with some rich text editors that would strip
+        out unexpected tags such as <s>.
+
+        Test: editing/execCommand/strikethrough-uses-strike-tag.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::addInlineStyleIfNeeded):
+
 2011-02-14  Pratik Solanki  <psolanki@apple.com>
 
         Remove dead code in FormDataStreamCFNet.cpp

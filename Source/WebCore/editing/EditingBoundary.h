@@ -30,7 +30,8 @@ namespace WebCore {
 
 enum EditingBoundaryCrossingRule {
     CanCrossEditingBoundary,
-    CannotCrossEditingBoundary
+    CannotCrossEditingBoundary,
+    CanSkipOverEditingBoundary
 };
 
 }

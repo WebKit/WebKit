@@ -61,23 +61,23 @@ underline all:
 |   "<#selection-anchor>hello, world WebKit<#selection-focus>"
 
 strikeThrough first:
-| <s>
+| <strike>
 |   "<#selection-anchor>hello, <#selection-focus>"
 | "world WebKit"
 
 strikeThrough middle:
 | "hello, "
-| <s>
+| <strike>
 |   "<#selection-anchor>world<#selection-focus>"
 | " WebKit"
 
 strikeThrough last:
 | "hello, world"
-| <s>
+| <strike>
 |   "<#selection-anchor> WebKit<#selection-focus>"
 
 strikeThrough all:
-| <s>
+| <strike>
 |   "<#selection-anchor>hello, world WebKit<#selection-focus>"
 
 foreColor first:

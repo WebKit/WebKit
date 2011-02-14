@@ -1894,7 +1894,7 @@ void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclaration *style
         surroundNodeRangeWithElement(startNode, endNode, createHTMLElement(document(), uTag));
 
     if (styleChange.applyLineThrough())
-        surroundNodeRangeWithElement(startNode, endNode, createHTMLElement(document(), sTag));
+        surroundNodeRangeWithElement(startNode, endNode, createHTMLElement(document(), strikeTag));
 
     if (styleChange.applySubscript())
         surroundNodeRangeWithElement(startNode, endNode, createHTMLElement(document(), subTag));
