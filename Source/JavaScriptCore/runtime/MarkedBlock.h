@@ -88,12 +88,11 @@ namespace JSC {
         
         template <typename Functor> void forEach(Functor&);
 
-        FixedArray<CollectorCell, CELLS_PER_BLOCK> cells;
-
     private:
         MarkedBlock(const PageAllocationAligned&, JSGlobalData*);
 
-        WTF::Bitmap<BITS_PER_BLOCK> marked;
+        FixedArray<CollectorCell, CELLS_PER_BLOCK> m_cells;
+        WTF::Bitmap<BITS_PER_BLOCK> m_marks;
         PageAllocationAligned m_allocation;
         Heap* m_heap;
     };
@@ -115,22 +114,22 @@ namespace JSC {
 
     inline bool MarkedBlock::isEmpty()
     {
-        marked.clear(CELLS_PER_BLOCK - 1); // Clear the always-set last bit to avoid confusing isEmpty().
-        bool result = marked.isEmpty();
-        marked.set(CELLS_PER_BLOCK - 1);
+        m_marks.clear(CELLS_PER_BLOCK - 1); // Clear the always-set last bit to avoid confusing isEmpty().
+        bool result = m_marks.isEmpty();
+        m_marks.set(CELLS_PER_BLOCK - 1);
         return result;
     }
 
     inline void MarkedBlock::clearMarks()
     {
         // allocate() assumes that the last mark bit is always set.
-        marked.clearAll();
-        marked.set(CELLS_PER_BLOCK - 1);
+        m_marks.clearAll();
+        m_marks.set(CELLS_PER_BLOCK - 1);
     }
     
     inline size_t MarkedBlock::markCount()
     {
-        return marked.count() - 1; // The last mark bit is always set.
+        return m_marks.count() - 1; // The last mark bit is always set.
     }
 
     inline size_t MarkedBlock::size()
@@ -150,25 +149,25 @@ namespace JSC {
 
     inline bool MarkedBlock::isMarked(const void* cell)
     {
-        return marked.get(cellNumber(cell));
+        return m_marks.get(cellNumber(cell));
     }
 
     inline bool MarkedBlock::testAndSetMarked(const void* cell)
     {
-        return marked.testAndSet(cellNumber(cell));
+        return m_marks.testAndSet(cellNumber(cell));
     }
 
     inline void MarkedBlock::setMarked(const void* cell)
     {
-        marked.set(cellNumber(cell));
+        m_marks.set(cellNumber(cell));
     }
 
     template <typename Functor> inline void MarkedBlock::forEach(Functor& functor)
     {
         for (size_t i = 0; i < CELLS_PER_BLOCK - 1; ++i) { // The last cell is a dummy place-holder.
-            if (!marked.get(i))
+            if (!m_marks.get(i))
                 continue;
-            functor(reinterpret_cast<JSCell*>(&cells[i]));
+            functor(reinterpret_cast<JSCell*>(&m_cells[i]));
         }
     }
 

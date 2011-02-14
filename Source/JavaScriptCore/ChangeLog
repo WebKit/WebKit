@@ -1,3 +1,29 @@
+2011-02-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Rubber-stamped by Gavin Barraclough.
+
+        Some MarkedBlock refactoring.
+        
+        Made cells private.
+        
+        Renamed cells => m_cells
+                marked => m_marks.
+
+        * runtime/JSCell.h:
+        (JSC::JSCell::MarkedBlock::allocate):
+        * runtime/MarkedBlock.cpp:
+        (JSC::MarkedBlock::destroy):
+        (JSC::MarkedBlock::MarkedBlock):
+        (JSC::MarkedBlock::sweep):
+        * runtime/MarkedBlock.h:
+        (JSC::MarkedBlock::isEmpty):
+        (JSC::MarkedBlock::clearMarks):
+        (JSC::MarkedBlock::markCount):
+        (JSC::MarkedBlock::isMarked):
+        (JSC::MarkedBlock::testAndSetMarked):
+        (JSC::MarkedBlock::setMarked):
+        (JSC::MarkedBlock::forEach):
+
 2011-02-14  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
