@@ -1,3 +1,13 @@
+2011-02-14  Christian Dywan  <christian@lanedo.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Regression: Back, Forward, Reload hidden in context menu
+        https://bugs.webkit.org/show_bug.cgi?id=54393
+
+        * page/ContextMenuController.cpp: Always show Back, Forward,
+            Reload and Stop context menu items for the GTK+ port.
+
 2011-02-14  Johnny Ding  <jnd@chromium.org>
 
         Reviewed by Andreas Kling.

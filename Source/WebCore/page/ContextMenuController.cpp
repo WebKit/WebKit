@@ -780,6 +780,14 @@ void ContextMenuController::populate()
 #if ENABLE(INSPECTOR)
                 if (!(frame->page() && frame->page()->inspectorController()->hasInspectorFrontendClient())) {
 #endif
+
+                // In GTK+ unavailable items are not hidden but insensitive
+#if PLATFORM(GTK)
+                appendItem(BackItem, m_contextMenu.get());
+                appendItem(ForwardItem, m_contextMenu.get());
+                appendItem(StopItem, m_contextMenu.get());
+                appendItem(ReloadItem, m_contextMenu.get());
+#else
                 if (frame->page() && frame->page()->backForward()->canGoBackOrForward(-1))
                     appendItem(BackItem, m_contextMenu.get());
 
@@ -792,6 +800,7 @@ void ContextMenuController::populate()
                     appendItem(StopItem, m_contextMenu.get());
                 else
                     appendItem(ReloadItem, m_contextMenu.get());
+#endif
 #if ENABLE(INSPECTOR)
                 }
 #endif
