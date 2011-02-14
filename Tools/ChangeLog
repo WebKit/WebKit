@@ -1,5 +1,21 @@
 2011-02-14  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Adam Barth.
+
+        update-webkit hangs in a git-only checkout
+
+        Previously it would hang forever trying to do a 'git svn
+        rebase'. Now, it will default to a 'git pull' if the
+        svn-remote.svn.fetch variable isn't set, and bail out if it
+        doesn't know where to pull from.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54265
+
+        * Scripts/update-webkit:
+        * Scripts/VCSUtils.pm:
+
+2011-02-14  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Mihai Parparita.
 
         This patch modifies NRWT's Worker clas to use the new

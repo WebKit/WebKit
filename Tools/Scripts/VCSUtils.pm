@@ -59,6 +59,7 @@ BEGIN {
         &gitBranch
         &gitdiff2svndiff
         &isGit
+        &isGitSVN
         &isGitBranchBuild
         &isGitDirectory
         &isSVN
@@ -88,6 +89,7 @@ our @EXPORT_OK;
 my $gitBranch;
 my $gitRoot;
 my $isGit;
+my $isGitSVN;
 my $isGitBranchBuild;
 my $isSVN;
 my $svnVersion;
@@ -199,6 +201,18 @@ sub isGit()
 
     $isGit = isGitDirectory(".");
     return $isGit;
+}
+
+sub isGitSVN()
+{
+    return $isGitSVN if defined $isGitSVN;
+
+    # There doesn't seem to be an officially documented way to determine
+    # if you're in a git-svn checkout. The best suggestions seen so far
+    # all use something like the following:
+    my $output = `git config --get svn-remote.svn.fetch 2>& 1`;
+    $isGitSVN = $output ne '';
+    return $isGitSVN;
 }
 
 sub gitBranch()
