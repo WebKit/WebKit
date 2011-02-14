@@ -1,3 +1,13 @@
+2011-02-13  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/8995490> WebCoreAuthenticationClientAsChallengeSender doesn't implement some necessary methods.
+
+        * platform/network/mac/AuthenticationMac.mm:
+        (-[WebCoreAuthenticationClientAsChallengeSender performDefaultHandlingForAuthenticationChallenge:]):
+        (-[WebCoreAuthenticationClientAsChallengeSender rejectProtectionSpaceAndContinueWithChallenge:]):
+
 2011-02-13  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Andreas Kling.

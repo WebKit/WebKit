@@ -31,6 +31,7 @@
 #import "AuthenticationClient.h"
 #import "Credential.h"
 #import "ProtectionSpace.h"
+#import <wtf/UnusedParam.h>
 
 #import <Foundation/NSURLAuthenticationChallenge.h>
 #import <Foundation/NSURLCredential.h>
@@ -84,6 +85,20 @@ using namespace WebCore;
 {
     if (m_client)
         m_client->receivedCancellation(core(challenge));
+}
+
+- (void)performDefaultHandlingForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    // FIXME: <rdar://problem/8995483> Determine what, if anything, we should do here.
+    ASSERT_NOT_REACHED();
+    UNUSED_PARAM(challenge);
+}
+
+- (void)rejectProtectionSpaceAndContinueWithChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    // FIXME: <rdar://problem/8995483> Determine what, if anything, we should do here.
+    ASSERT_NOT_REACHED();
+    UNUSED_PARAM(challenge);
 }
 
 @end
