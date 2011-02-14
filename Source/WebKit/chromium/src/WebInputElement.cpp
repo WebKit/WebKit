@@ -155,6 +155,11 @@ bool WebInputElement::isValidValue(const WebString& value) const
     return constUnwrap<HTMLInputElement>()->isValidValue(value);
 }
 
+bool WebInputElement::isChecked() const
+{
+    return constUnwrap<HTMLInputElement>()->checked();
+}
+
 int WebInputElement::defaultMaxLength()
 {
     return HTMLInputElement::s_maximumLength;

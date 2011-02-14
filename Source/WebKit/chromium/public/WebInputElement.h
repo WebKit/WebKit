@@ -78,6 +78,7 @@ namespace WebKit {
         WEBKIT_API int selectionStart() const;
         WEBKIT_API int selectionEnd() const;
         WEBKIT_API bool isValidValue(const WebString&) const;
+        WEBKIT_API bool isChecked() const;
 
         // Exposes the default value of the maxLength attribute.
         WEBKIT_API static int defaultMaxLength();
