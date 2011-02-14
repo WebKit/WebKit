@@ -1,3 +1,23 @@
+2011-02-13  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54376
+        Make sorting of matched rules faster
+        
+        - use std::sort
+        - cache specificity, it is slow to compute
+        - inline compare function
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::RuleData::specificity):
+        (WebCore::CSSStyleSelector::matchRules):
+        (WebCore::compareRules):
+        (WebCore::CSSStyleSelector::sortMatchedRules):
+        (WebCore::RuleData::RuleData):
+        (WebCore::CSSStyleSelector::matchPageRules):
+        * css/CSSStyleSelector.h:
+
 2011-02-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Alexey Proskuryakov.

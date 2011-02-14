@@ -192,7 +192,7 @@ public:
         void matchRules(RuleSet*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
         void matchRulesForList(const Vector<RuleData>*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
         bool fastRejectSelector(const RuleData&) const;
-        void sortMatchedRules(unsigned start, unsigned end);
+        void sortMatchedRules();
         
         bool checkSelector(const RuleData&);
 

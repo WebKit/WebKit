@@ -363,6 +363,7 @@ public:
     bool hasFastCheckableSelector() const { return m_hasFastCheckableSelector; }
     bool hasMultipartSelector() const { return m_hasMultipartSelector; }
     bool hasTopSelectorMatchingHTMLBasedOnRuleHash() const { return m_hasTopSelectorMatchingHTMLBasedOnRuleHash; }
+    unsigned specificity() const { return m_specificity; }
     
     // Try to balance between memory usage (there can be lots of RuleData objects) and good filtering performance.
     static const unsigned maximumIdentifierCount = 4;
@@ -374,6 +375,7 @@ private:
     
     CSSStyleRule* m_rule;
     CSSSelector* m_selector;
+    unsigned m_specificity;
     unsigned m_position : 29;
     bool m_hasFastCheckableSelector : 1;
     bool m_hasMultipartSelector : 1;
@@ -772,7 +774,7 @@ void CSSStyleSelector::matchRules(RuleSet* rules, int& firstRuleIndex, int& last
         return;
     
     // Sort the set of matched rules.
-    sortMatchedRules(0, m_matchedRules.size());
+    sortMatchedRules();
     
     // Now transfer the set of matched rules over to our list of decls.
     if (!m_checker.m_collectRulesOnly) {
@@ -839,80 +841,16 @@ void CSSStyleSelector::matchRulesForList(const Vector<RuleData>* rules, int& fir
     }
 }
 
-static bool operator >(const RuleData& r1, const RuleData& r2)
+static inline bool compareRules(const RuleData* r1, const RuleData* r2)
 {
-    int spec1 = r1.selector()->specificity();
-    int spec2 = r2.selector()->specificity();
-    return (spec1 == spec2) ? r1.position() > r2.position() : spec1 > spec2; 
-}
-    
-static bool operator <=(const RuleData& r1, const RuleData& r2)
-{
-    return !(r1 > r2);
+    unsigned specificity1 = r1->specificity();
+    unsigned specificity2 = r2->specificity();
+    return (specificity1 == specificity2) ? r1->position() < r2->position() : specificity1 < specificity2; 
 }
 
-void CSSStyleSelector::sortMatchedRules(unsigned start, unsigned end)
+void CSSStyleSelector::sortMatchedRules()
 {
-    if (start >= end || (end - start == 1))
-        return; // Sanity check.
-
-    if (end - start <= 6) {
-        // Apply a bubble sort for smaller lists.
-        for (unsigned i = end - 1; i > start; i--) {
-            bool sorted = true;
-            for (unsigned j = start; j < i; j++) {
-                const RuleData* elt = m_matchedRules[j];
-                const RuleData* elt2 = m_matchedRules[j + 1];
-                if (*elt > *elt2) {
-                    sorted = false;
-                    m_matchedRules[j] = elt2;
-                    m_matchedRules[j + 1] = elt;
-                }
-            }
-            if (sorted)
-                return;
-        }
-        return;
-    }
-
-    // Perform a merge sort for larger lists.
-    unsigned mid = (start + end) / 2;
-    sortMatchedRules(start, mid);
-    sortMatchedRules(mid, end);
-    
-    const RuleData* elt = m_matchedRules[mid - 1];
-    const RuleData* elt2 = m_matchedRules[mid];
-    
-    // Handle the fast common case (of equal specificity).  The list may already
-    // be completely sorted.
-    if (*elt <= *elt2)
-        return;
-    
-    // We have to merge sort.  Ensure our merge buffer is big enough to hold
-    // all the items.
-    Vector<const RuleData*> rulesMergeBuffer;
-    rulesMergeBuffer.reserveInitialCapacity(end - start); 
-
-    unsigned i1 = start;
-    unsigned i2 = mid;
-    
-    elt = m_matchedRules[i1];
-    elt2 = m_matchedRules[i2];
-    
-    while (i1 < mid || i2 < end) {
-        if (i1 < mid && (i2 == end || *elt <= *elt2)) {
-            rulesMergeBuffer.append(elt);
-            if (++i1 < mid)
-                elt = m_matchedRules[i1];
-        } else {
-            rulesMergeBuffer.append(elt2);
-            if (++i2 < end)
-                elt2 = m_matchedRules[i2];
-        }
-    }
-    
-    for (unsigned i = start; i < end; i++)
-        m_matchedRules[i] = rulesMergeBuffer[i - start];
+    std::sort(m_matchedRules.begin(), m_matchedRules.end(), compareRules);
 }
 
 inline EInsideLink CSSStyleSelector::SelectorChecker::determineLinkState(Element* element) const
@@ -3052,6 +2990,7 @@ static inline bool isSelectorMatchingHTMLBasedOnRuleHash(const CSSSelector* sele
 RuleData::RuleData(CSSStyleRule* rule, CSSSelector* selector, unsigned position)
     : m_rule(rule)
     , m_selector(selector)
+    , m_specificity(selector->specificity())
     , m_position(position)
     , m_hasFastCheckableSelector(isFastCheckableSelector(selector))
     , m_hasMultipartSelector(selector->tagHistory())
@@ -3363,7 +3302,7 @@ void CSSStyleSelector::matchPageRules(RuleSet* rules, bool isLeftPage, bool isFi
         return;
 
     // Sort the set of matched rules.
-    sortMatchedRules(0, m_matchedRules.size());
+    sortMatchedRules();
 
     // Now transfer the set of matched rules over to our list of decls.
     for (unsigned i = 0; i < m_matchedRules.size(); i++)
