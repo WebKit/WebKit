@@ -1,3 +1,11 @@
+2011-02-14  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Rebaseline chromium's test_expectations.
+
+        * platform/chromium-win/fast/box-shadow/shadow-buffer-partial-expected.checksum: Added.
+        * platform/chromium-win/fast/box-shadow/shadow-buffer-partial-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-02-13  Simon Fraser  <simon.fraser@apple.com>
 
         Change previous test to dump as text, with pixel output, to fix

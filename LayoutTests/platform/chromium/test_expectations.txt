@@ -3495,8 +3495,6 @@ BUGWK54322 MAC SNOWLEOPARD : transitions/move-after-transition.html = IMAGE
 
 BUGCR72428 : fast/dom/HTMLAnchorElement/set-href-attribute-hash.html = TEXT
 
-BUGCR72529 : fast/box-shadow/shadow-buffer-partial.html = IMAGE
-
 // The mac-leopard baselines for these are clearly wrong.  They need
 // rebaselining, at which point they should look like the mac baselines.  It's
 // not clear to me whether the two will/should be the same and whether our
