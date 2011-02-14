@@ -480,6 +480,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     m_gotoAnchorNeededAfterStylesheetsLoad = false;
  
     m_didCalculateStyleSelector = false;
+    m_hasDirtyStyleSelector = false;
     m_pendingStylesheets = 0;
     m_ignorePendingStylesheets = false;
     m_hasNodesWithPlaceholderStyle = false;
@@ -1490,6 +1491,9 @@ void Document::recalcStyle(StyleChange change)
     
     if (m_inStyleRecalc)
         return; // Guard against re-entrancy. -dwh
+    
+    if (m_hasDirtyStyleSelector)
+        recalcStyleSelector();
 
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willRecalculateStyle(this);
 
@@ -2945,6 +2949,14 @@ void Document::removeStyleSheetCandidateNode(Node* node)
 
 void Document::recalcStyleSelector()
 {
+    if (m_inStyleRecalc) {
+        // SVG <use> element may manage to invalidate style selector in the middle of a style recalc.
+        // https://bugs.webkit.org/show_bug.cgi?id=54344
+        // FIXME: This should be fixed in SVG and this code replaced with ASSERT(!m_inStyleRecalc).
+        m_hasDirtyStyleSelector = true;
+        scheduleForcedStyleRecalc();
+        return;
+    }
     if (!renderer() || !attached())
         return;
 
@@ -3047,6 +3059,7 @@ void Document::recalcStyleSelector()
 
     m_styleSelector.clear();
     m_didCalculateStyleSelector = true;
+    m_hasDirtyStyleSelector = false;
 }
 
 void Document::setHoverNode(PassRefPtr<Node> newHoverNode)

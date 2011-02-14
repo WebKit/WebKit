@@ -1151,6 +1151,7 @@ private:
 
     OwnPtr<CSSStyleSelector> m_styleSelector;
     bool m_didCalculateStyleSelector;
+    bool m_hasDirtyStyleSelector;
 
     Frame* m_frame;
     DocumentLoader* m_documentLoader;

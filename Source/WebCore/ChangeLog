@@ -1,3 +1,18 @@
+2011-02-14  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Andreas Kling.
+
+        REGRESSION (r77834): Assertion failing in svg/custom/use-multiple-on-nested-disallowed-font.svg
+        https://bugs.webkit.org/show_bug.cgi?id=54344
+        
+        Intead of recomputing, just mark style selector dirty if it is invalidated in the middle of a style recalc.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::recalcStyleSelector):
+        * dom/Document.h:
+
 2011-02-14  Naoki Takano  <takano.naoki@gmail.com>
 
         Reviewed by Kent Tamura.
