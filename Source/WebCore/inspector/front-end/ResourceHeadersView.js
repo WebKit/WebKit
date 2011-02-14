@@ -224,7 +224,7 @@ WebInspector.ResourceHeadersView.prototype = {
 
         if (this._resource.statusCode) {
             var statusImageSource = "";
-            if (this._resource.statusCode < 300)
+            if (this._resource.statusCode < 300 || this._resource.statusCode === 304)
                 statusImageSource = "Images/successGreenDot.png";
             else if (this._resource.statusCode < 400)
                 statusImageSource = "Images/warningOrangeDot.png";

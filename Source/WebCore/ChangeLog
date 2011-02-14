@@ -1,3 +1,13 @@
+2011-02-14  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: 304 Not Modified responses have a yellow icon in Web Inspector Resources panel
+        https://bugs.webkit.org/show_bug.cgi?id=33220
+
+        * inspector/front-end/ResourceHeadersView.js:
+        (WebInspector.ResourceHeadersView.prototype._refreshHTTPInformation):
+
 2011-02-14  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.
