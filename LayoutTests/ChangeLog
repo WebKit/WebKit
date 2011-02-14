@@ -1,3 +1,20 @@
+2011-02-14  Xiaomei Ji  <xji@chromium.org>
+
+        Unreviewed.
+        Rebaseline after r78491. Since select-visual-hebrew.html and visual-hebrew-text-field.html
+        are marked as FAIL in Chromium WIN and LINUX, rebaseline for them are done manually and
+        only changed the part related to r78491.
+
+        * platform/chromium-linux/fast/css/rtl-ordering-expected.txt:
+        * platform/chromium-linux/fast/forms/select-visual-hebrew-expected.txt:
+        * platform/chromium-linux/fast/forms/visual-hebrew-text-field-expected.txt:
+        * platform/chromium-win/fast/css/rtl-ordering-expected.txt:
+        * platform/chromium-win/fast/forms/select-visual-hebrew-expected.txt:
+        * platform/chromium-win/fast/forms/visual-hebrew-text-field-expected.txt:
+        * platform/gtk/fast/css/rtl-ordering-expected.txt:
+        * platform/gtk/fast/forms/select-visual-hebrew-expected.txt:
+        * platform/gtk/fast/forms/visual-hebrew-text-field-expected.txt:
+
 2011-02-14  Tony Chang  <tony@chromium.org>
 
         Unreviewed, updating chromium test expectations, missed a test
