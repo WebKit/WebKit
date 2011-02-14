@@ -205,6 +205,7 @@ public:
     LayerRendererChromium* layerRenderer() const { return m_layerRenderer.get(); }
 
     static unsigned createShaderProgram(GraphicsContext3D*, const char* vertexShaderSource, const char* fragmentShaderSource);
+    static void toGLMatrix(float*, const TransformationMatrix&);
 
     static void drawTexturedQuad(GraphicsContext3D*, const TransformationMatrix& projectionMatrix, const TransformationMatrix& layerMatrix,
                                  float width, float height, float opacity,
@@ -223,8 +224,6 @@ protected:
 
     // Returns true if any of the layer's descendants has content to draw.
     bool descendantsDrawContent();
-
-    static void toGLMatrix(float*, const TransformationMatrix&);
 
     IntSize m_bounds;
     FloatRect m_dirtyRect;

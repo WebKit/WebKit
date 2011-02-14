@@ -31,6 +31,7 @@
 
 #include "LayerChromium.h"
 #include "LayerTexture.h"
+#include "TilingData.h"
 #include <wtf/OwnArrayPtr.h>
 
 namespace WebCore {
@@ -46,7 +47,9 @@ public:
 class LayerTilerChromium {
     WTF_MAKE_NONCOPYABLE(LayerTilerChromium);
 public:
-    static PassOwnPtr<LayerTilerChromium> create(LayerRendererChromium* layerRenderer, const IntSize& tileSize);
+    enum BorderTexelOption { HasBorderTexels, NoBorderTexels };
+
+    static PassOwnPtr<LayerTilerChromium> create(LayerRendererChromium*, const IntSize& tileSize, BorderTexelOption);
 
     ~LayerTilerChromium();
 
@@ -60,8 +63,30 @@ public:
     // Change the tile size.  This may invalidate all the existing tiles.
     void setTileSize(const IntSize& size);
 
+    class SharedValues {
+    public:
+        explicit SharedValues(GraphicsContext3D*);
+        ~SharedValues();
+
+        unsigned tilerShaderProgram() const { return m_tilerShaderProgram; }
+        int shaderSamplerLocation() const { return m_shaderSamplerLocation; }
+        int shaderMatrixLocation() const { return m_shaderMatrixLocation; }
+        int shaderAlphaLocation() const { return m_shaderAlphaLocation; }
+        int shaderTexTransformLocation() const { return m_shaderTexTransformLocation; }
+        int initialized() const { return m_initialized; }
+
+    private:
+        GraphicsContext3D* m_context;
+        unsigned m_tilerShaderProgram;
+        int m_shaderSamplerLocation;
+        int m_shaderMatrixLocation;
+        int m_shaderAlphaLocation;
+        int m_shaderTexTransformLocation;
+        int m_initialized;
+    };
+
 private:
-    LayerTilerChromium(LayerRendererChromium* layerRenderer, const IntSize& tileSize);
+    LayerTilerChromium(LayerRendererChromium*, const IntSize& tileSize, BorderTexelOption);
 
     class Tile {
         WTF_MAKE_NONCOPYABLE(Tile);
@@ -78,6 +103,12 @@ private:
     private:
         OwnPtr<LayerTexture> m_tex;
     };
+
+    void drawTexturedQuad(GraphicsContext3D*, const TransformationMatrix& projectionMatrix, const TransformationMatrix& drawMatrix,
+                          float width, float height, float opacity,
+                          float texTranslateX, float texTranslateY,
+                          float texScaleX, float texScaleY,
+                          const LayerTilerChromium::SharedValues*);
 
     void resizeLayer(const IntSize& size);
     // Grow layer size to contain this rectangle.
@@ -100,9 +131,10 @@ private:
     // Returns the bounds in layer space for a given tile location.
     IntRect tileLayerRect(int i, int j) const;
 
+    IntSize layerSize() const;
+    IntSize layerTileSize() const;
+
     IntSize m_tileSize;
-    IntSize m_layerSize;
-    IntSize m_layerTileSize;
     IntRect m_lastUpdateLayerRect;
     IntPoint m_layerPosition;
 
@@ -115,6 +147,8 @@ private:
 
     // Cache a tile-sized pixel buffer to draw into.
     OwnArrayPtr<uint8_t> m_tilePixels;
+
+    TilingData m_tilingData;
 
     LayerRendererChromium* m_layerRenderer;
 };

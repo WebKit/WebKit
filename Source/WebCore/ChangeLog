@@ -1,3 +1,60 @@
+2011-02-14  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Modify LayerTilerChromium to use TilingData.
+        https://bugs.webkit.org/show_bug.cgi?id=54143
+
+        Most of the previous data in LayerTilerChromium is now calculated
+        from TilingData.  TilingData was modified to allow for a dynamic
+        tile size and page size.  LayerTilerChromium also gets its own
+        shader with a texture transform to handle drawing from a texture
+        that is larger than a tile.
+
+        * platform/graphics/chromium/LayerChromium.h:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::updateAndDrawRootLayer):
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        (WebCore::LayerRendererChromium::cleanupSharedObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore::LayerRendererChromium::tilerSharedValues):
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::create):
+        (WebCore::LayerTilerChromium::LayerTilerChromium):
+        (WebCore::LayerTilerChromium::setTileSize):
+        (WebCore::LayerTilerChromium::reset):
+        (WebCore::LayerTilerChromium::contentRectToTileIndices):
+        (WebCore::LayerTilerChromium::tileIndex):
+        (WebCore::LayerTilerChromium::tileContentRect):
+        (WebCore::LayerTilerChromium::tileLayerRect):
+        (WebCore::LayerTilerChromium::layerSize):
+        (WebCore::LayerTilerChromium::layerTileSize):
+        (WebCore::LayerTilerChromium::invalidateEntireLayer):
+        (WebCore::LayerTilerChromium::draw):
+        (WebCore::LayerTilerChromium::resizeLayer):
+        (WebCore::LayerTilerChromium::growLayerToContain):
+        (WebCore::LayerTilerChromium::drawTexturedQuad):
+        (WebCore::LayerTilerChromium::SharedValues::SharedValues):
+        (WebCore::LayerTilerChromium::SharedValues::~SharedValues):
+        * platform/graphics/chromium/LayerTilerChromium.h:
+        (WebCore::LayerTilerChromium::SharedValues::tilerShaderProgram):
+        (WebCore::LayerTilerChromium::SharedValues::shaderSamplerLocation):
+        (WebCore::LayerTilerChromium::SharedValues::shaderMatrixLocation):
+        (WebCore::LayerTilerChromium::SharedValues::shaderAlphaLocation):
+        (WebCore::LayerTilerChromium::SharedValues::shaderTexTransformLocation):
+        (WebCore::LayerTilerChromium::SharedValues::initialized):
+        * platform/graphics/gpu/TilingData.cpp:
+        (WebCore::computeNumTiles):
+        (WebCore::TilingData::TilingData):
+        (WebCore::TilingData::setTotalSize):
+        (WebCore::TilingData::setMaxTextureSize):
+        (WebCore::TilingData::tileSizeX):
+        (WebCore::TilingData::tileSizeY):
+        (WebCore::TilingData::textureOffset):
+        (WebCore::TilingData::recomputeNumTiles):
+        * platform/graphics/gpu/TilingData.h:
+
 2011-02-14  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Pavel Feldman.

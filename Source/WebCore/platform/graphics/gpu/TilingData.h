@@ -37,11 +37,14 @@ namespace WebCore {
 
 class FloatRect;
 class IntRect;
+class IntPoint;
 
 class TilingData {
     WTF_MAKE_NONCOPYABLE(TilingData);
 public:
     TilingData(int maxTextureSize, int totalSizeX, int totalSizeY, bool hasBorderTexels);
+    void setTotalSize(int totalSizeX, int totalSizeY);
+    void setMaxTextureSize(int);
     int maxTextureSize() const { return m_maxTextureSize; }
     int totalSizeX() const { return m_totalSizeX; }
     int totalSizeY() const { return m_totalSizeY; }
@@ -70,9 +73,13 @@ public:
     // in texel units, returns adjusted data to render just the one tile.
     void intersectDrawQuad(const FloatRect& srcRect, const FloatRect& dstRect, int tile, FloatRect* newSrc, FloatRect* newDst) const;
 
+    // Difference between tileBound's and tileBoundWithBorder's location().
+    IntPoint textureOffset(int xIndex, int yIndex) const;
+
 private:
     TilingData() : m_maxTextureSize(0), m_totalSizeX(0), m_totalSizeY(0) {}
     void assertTile(int tile) const { ASSERT(tile >= 0 && tile < numTiles()); }
+    void recomputeNumTiles();
 
     int m_maxTextureSize;
     int m_totalSizeX;

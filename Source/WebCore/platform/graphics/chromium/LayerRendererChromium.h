@@ -112,6 +112,7 @@ public:
     const VideoLayerChromium::SharedValues* videoLayerSharedValues() const { return m_videoLayerSharedValues.get(); }
     const PluginLayerChromium::SharedValues* pluginLayerSharedValues() const { return m_pluginLayerSharedValues.get(); }
     const RenderSurfaceChromium::SharedValues* renderSurfaceSharedValues() const { return m_renderSurfaceSharedValues.get(); }
+    const LayerTilerChromium::SharedValues* tilerSharedValues() const { return m_tilerSharedValues.get(); }
 
     void resizeOnscreenContent(const IntSize&);
 
@@ -194,6 +195,7 @@ private:
     OwnPtr<VideoLayerChromium::SharedValues> m_videoLayerSharedValues;
     OwnPtr<PluginLayerChromium::SharedValues> m_pluginLayerSharedValues;
     OwnPtr<RenderSurfaceChromium::SharedValues> m_renderSurfaceSharedValues;
+    OwnPtr<LayerTilerChromium::SharedValues> m_tilerSharedValues;
 
     OwnPtr<TextureManager> m_textureManager;
 

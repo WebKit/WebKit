@@ -112,7 +112,7 @@ LayerRendererChromium::LayerRendererChromium(PassRefPtr<GraphicsContext3D> conte
     , m_defaultRenderSurface(0)
 {
     m_hardwareCompositing = initializeSharedObjects();
-    m_rootLayerTiler = LayerTilerChromium::create(this, IntSize(256, 256));
+    m_rootLayerTiler = LayerTilerChromium::create(this, IntSize(256, 256), LayerTilerChromium::NoBorderTexels);
     ASSERT(m_rootLayerTiler);
 }
 
@@ -181,7 +181,7 @@ void LayerRendererChromium::updateAndDrawRootLayer(TilePaintInterface& tilePaint
         IntRect verticalScrollbar = verticalScrollbarRect(visibleRect, contentRect);
         IntSize tileSize = verticalScrollbar.size().shrunkTo(IntSize(m_maxTextureSize, m_maxTextureSize));
         if (!m_verticalScrollbarTiler)
-            m_verticalScrollbarTiler = LayerTilerChromium::create(this, tileSize);
+            m_verticalScrollbarTiler = LayerTilerChromium::create(this, tileSize, LayerTilerChromium::NoBorderTexels);
         else
             m_verticalScrollbarTiler->setTileSize(tileSize);
         m_verticalScrollbarTiler->setLayerPosition(verticalScrollbar.location());
@@ -193,7 +193,7 @@ void LayerRendererChromium::updateAndDrawRootLayer(TilePaintInterface& tilePaint
         IntRect horizontalScrollbar = horizontalScrollbarRect(visibleRect, contentRect);
         IntSize tileSize = horizontalScrollbar.size().shrunkTo(IntSize(m_maxTextureSize, m_maxTextureSize));
         if (!m_horizontalScrollbarTiler)
-            m_horizontalScrollbarTiler = LayerTilerChromium::create(this, tileSize);
+            m_horizontalScrollbarTiler = LayerTilerChromium::create(this, tileSize, LayerTilerChromium::NoBorderTexels);
         else
             m_horizontalScrollbarTiler->setTileSize(tileSize);
         m_horizontalScrollbarTiler->setLayerPosition(horizontalScrollbar.location());
@@ -799,9 +799,11 @@ bool LayerRendererChromium::initializeSharedObjects()
     m_videoLayerSharedValues = adoptPtr(new VideoLayerChromium::SharedValues(m_context.get()));
     m_pluginLayerSharedValues = adoptPtr(new PluginLayerChromium::SharedValues(m_context.get()));
     m_renderSurfaceSharedValues = adoptPtr(new RenderSurfaceChromium::SharedValues(m_context.get()));
+    m_tilerSharedValues = adoptPtr(new LayerTilerChromium::SharedValues(m_context.get()));
 
     if (!m_layerSharedValues->initialized() || !m_contentLayerSharedValues->initialized() || !m_canvasLayerSharedValues->initialized()
-        || !m_videoLayerSharedValues->initialized() || !m_pluginLayerSharedValues->initialized() || !m_renderSurfaceSharedValues->initialized()) {
+        || !m_videoLayerSharedValues->initialized() || !m_pluginLayerSharedValues->initialized() || !m_renderSurfaceSharedValues->initialized()
+        || !m_tilerSharedValues->initialized()) {
         cleanupSharedObjects();
         return false;
     }
@@ -820,6 +822,7 @@ void LayerRendererChromium::cleanupSharedObjects()
     m_videoLayerSharedValues.clear();
     m_pluginLayerSharedValues.clear();
     m_renderSurfaceSharedValues.clear();
+    m_tilerSharedValues.clear();
     if (m_offscreenFramebufferId)
         GLC(m_context.get(), m_context->deleteFramebuffer(m_offscreenFramebufferId));
 

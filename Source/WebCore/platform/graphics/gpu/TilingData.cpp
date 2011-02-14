@@ -44,7 +44,8 @@ namespace WebCore {
 
 static int computeNumTiles(int maxTextureSize, int totalSize, int borderTexels)
 {
-    return max(1, 1 + (totalSize - 1 - 2 * borderTexels) / (maxTextureSize - 2 * borderTexels));
+    int numTiles = max(1, 1 + (totalSize - 1 - 2 * borderTexels) / (maxTextureSize - 2 * borderTexels));
+    return totalSize > 0 ? numTiles : 0;
 }
 
 TilingData::TilingData(int maxTextureSize, int totalSizeX, int totalSizeY, bool hasBorderTexels)
@@ -53,8 +54,20 @@ TilingData::TilingData(int maxTextureSize, int totalSizeX, int totalSizeY, bool 
     , m_totalSizeY(totalSizeY)
     , m_borderTexels(hasBorderTexels ? 1 : 0)
 {
-    m_numTilesX = computeNumTiles(maxTextureSize, m_totalSizeX, m_borderTexels);
-    m_numTilesY = computeNumTiles(maxTextureSize, m_totalSizeY, m_borderTexels);
+    recomputeNumTiles();
+}
+
+void TilingData::setTotalSize(int totalSizeX, int totalSizeY)
+{
+    m_totalSizeX = totalSizeX;
+    m_totalSizeY = totalSizeY;
+    recomputeNumTiles();
+}
+
+void TilingData::setMaxTextureSize(int maxTextureSize)
+{
+    m_maxTextureSize = m_maxTextureSize;
+    recomputeNumTiles();
 }
 
 int TilingData::tileXIndexFromSrcCoord(int srcPos) const
@@ -142,9 +155,6 @@ int TilingData::tileSizeX(int xIndex) const
 {
     ASSERT(xIndex >= 0 && xIndex < numTilesX());
 
-    int size = maxTextureSize();
-    size = min(size, totalSizeX());
-
     if (!xIndex && m_numTilesX == 1)
         return m_totalSizeX;
     if (!xIndex && m_numTilesX > 1)
@@ -161,9 +171,6 @@ int TilingData::tileSizeX(int xIndex) const
 int TilingData::tileSizeY(int yIndex) const
 {
     ASSERT(yIndex >= 0 && yIndex < numTilesY());
-
-    int size = maxTextureSize();
-    size = min(size, totalSizeY());
 
     if (!yIndex && m_numTilesY == 1)
         return m_totalSizeY;
@@ -220,6 +227,20 @@ void TilingData::intersectDrawQuad(const FloatRect& srcRect, const FloatRect& ds
         srcRectIntersectedNormY * dstRect.height() + dstRect.y(),
         srcRectIntersectedNormW * dstRect.width(),
         srcRectIntersectedNormH * dstRect.height());
+}
+
+IntPoint TilingData::textureOffset(int xIndex, int yIndex) const
+{
+    int left = (!xIndex || m_numTilesX == 1) ? 0 : m_borderTexels;
+    int top = (!yIndex || m_numTilesY == 1) ? 0 : m_borderTexels;
+
+    return IntPoint(left, top);
+}
+
+void TilingData::recomputeNumTiles()
+{
+    m_numTilesX = computeNumTiles(m_maxTextureSize, m_totalSizeX, m_borderTexels);
+    m_numTilesY = computeNumTiles(m_maxTextureSize, m_totalSizeY, m_borderTexels);
 }
 
 }
