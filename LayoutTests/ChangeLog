@@ -1,3 +1,11 @@
+2011-02-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: unflake inspector/styles-iframe.html
+
+        * inspector/resources/styles-iframe-data.html:
+        * inspector/styles-iframe-expected.txt:
+        * inspector/styles-iframe.html:
+
 2011-02-14  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

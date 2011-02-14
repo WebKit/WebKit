@@ -9,15 +9,22 @@
 <script src="../http/tests/inspector/elements-test.js"></script>
 <script>
 
-function onload()
+function loadIframe()
 {
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    var iframe = document.createElement("iframe");
+    iframe.src = "resources/styles-iframe-data.html";
+    document.body.appendChild(iframe);
 }
 
 function test()
 {
-    InspectorTest.selectNodeWithId("mainBody", step1);
+    InspectorTest.evaluateInPage("loadIframe()");
+    InspectorTest._addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step0);
+
+    function step0()
+    {
+        InspectorTest.selectNodeWithId("mainBody", step1);
+    }
 
     function step1()
     {
@@ -36,12 +43,10 @@ function test()
 </script>
 </head>
 
-<body onload="onload()" id="mainBody">
+<body onload="runTest()" id="mainBody">
 <p>
 Tests that proper (and different) styles are returned for body elements of main document and iframe.
 </p>
-
-<iframe src="resources/styles-iframe-data.html" onload="runTest()"></iframe>
 
 </body>
 </html>
