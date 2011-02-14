@@ -438,9 +438,9 @@ void InspectorAgent::populateScriptObjects()
     if (m_nodeToFocus)
         focusNode();
 
-    if (!m_requiredPanel.isEmpty()) {
-        m_frontend->showPanel(m_requiredPanel);
-        m_requiredPanel = "";
+    if (!m_showPanelAfterVisible.isEmpty()) {
+        m_frontend->showPanel(m_showPanelAfterVisible);
+        m_showPanelAfterVisible = "";
     }
 
     restoreDebugger(true);
@@ -852,8 +852,6 @@ void InspectorAgent::startUserInitiatedProfiling()
 
 void InspectorAgent::stopUserInitiatedProfiling()
 {
-    if (!enabled())
-        return;
     m_profilerAgent->stopUserInitiatedProfiling();
     m_state->setBoolean(InspectorAgentState::userInitiatedProfiling, false);
     showPanel(profilesPanelName);
@@ -880,17 +878,16 @@ void InspectorAgent::disableProfiler()
 #endif
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-void InspectorAgent::showAndEnableDebugger()
+void InspectorAgent::startUserInitiatedDebugging()
 {
-    if (!enabled())
-        return;
-
     if (debuggerEnabled())
         return;
 
+    showPanel(scriptsPanelName);
     if (!m_frontend) {
+        // We are called after show(), set the debuggerEnabled flag so that it was enabled
+        // upon frontend opening.
         m_state->setBoolean(InspectorAgentState::debuggerEnabled, true);
-        showPanel(scriptsPanelName);
     } else
         enableDebugger(true);
 }
@@ -1258,7 +1255,7 @@ void InspectorAgent::showConsole()
 void InspectorAgent::showPanel(const String& panel)
 {
     if (!m_frontend) {
-        m_requiredPanel = panel;
+        m_showPanelAfterVisible = panel;
         return;
     }
     m_frontend->showPanel(panel);

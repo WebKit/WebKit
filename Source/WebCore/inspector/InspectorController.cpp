@@ -215,7 +215,10 @@ bool InspectorController::debuggerEnabled()
 
 void InspectorController::showAndEnableDebugger()
 {
-    m_inspectorAgent->showAndEnableDebugger();
+    if (!enabled())
+        return;
+    show();
+    m_inspectorAgent->startUserInitiatedDebugging();
 }
 
 void InspectorController::disableDebugger()
@@ -230,6 +233,9 @@ void InspectorController::startUserInitiatedProfiling()
 
 void InspectorController::stopUserInitiatedProfiling()
 {
+    if (!enabled())
+        return;
+    show();
     m_inspectorAgent->stopUserInitiatedProfiling();
 }
 

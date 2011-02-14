@@ -214,7 +214,7 @@ public:
     void disableProfiler();
     bool profilerEnabled() const;
 
-    void showAndEnableDebugger();
+    void startUserInitiatedDebugging();
     void enableDebugger() { enableDebugger(false); }
     void enableDebugger(bool eraseStickyBreakpoints);
     void disableDebugger();
@@ -306,7 +306,7 @@ private:
     OwnPtr<InspectorConsoleAgent> m_consoleAgent;
 
     Vector<pair<long, String> > m_pendingEvaluateTestCommands;
-    String m_requiredPanel;
+    String m_showPanelAfterVisible;
     Vector<String> m_scriptsToEvaluateOnLoad;
     String m_inspectorExtensionAPI;
 #if ENABLE(JAVASCRIPT_DEBUGGER)

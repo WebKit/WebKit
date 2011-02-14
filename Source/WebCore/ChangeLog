@@ -1,3 +1,20 @@
+2011-02-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [REGRESSION introduced in r77950] Develop -> Start Debugging JavaScript does not open Web Inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=54277
+
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::populateScriptObjects):
+        (WebCore::InspectorAgent::stopUserInitiatedProfiling):
+        (WebCore::InspectorAgent::showAndEnableDebugger):
+        (WebCore::InspectorAgent::showPanel):
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::showAndEnableDebugger):
+        (WebCore::InspectorController::stopUserInitiatedProfiling):
+
 2011-02-14  Kenichi Ishibashi  <bashi@chromium.org>
 
         Reviewed by Andreas Kling.
