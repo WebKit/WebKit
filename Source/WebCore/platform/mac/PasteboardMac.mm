@@ -34,6 +34,7 @@
 #import "Editor.h"
 #import "EditorClient.h"
 #import "Frame.h"
+#import "FrameView.h"
 #import "FrameLoaderClient.h"
 #import "HitTestResult.h"
 #import "HTMLAnchorElement.h"
@@ -56,7 +57,6 @@
 @interface NSAttributedString (AppKitSecretsIKnowAbout)
 - (id)_initWithDOMRange:(DOMRange *)domRange;
 @end
-
 namespace WebCore {
 
 // FIXME: It's not great to have these both here and in WebKit.
@@ -144,8 +144,9 @@ void Pasteboard::writeSelection(NSPasteboard* pasteboard, Range* selectedRange, 
         Pasteboard::generalPasteboard(); // Initializes pasteboard types.
     ASSERT(selectedRange);
     
-    NSAttributedString *attributedString = [[[NSAttributedString alloc] initWithString:selectedRange->text()] autorelease];
-
+    // Using different API for WebKit and WebKit2.
+    // FIXME - We need to have a way to create the NSAttributedString for WebKit2 that doesn't require accessing the WebFrame.
+    NSAttributedString *attributedString = (frame->view()->platformWidget()) ? [[[NSAttributedString alloc] _initWithDOMRange:kit(selectedRange)] autorelease] : [[[NSAttributedString alloc] initWithString:selectedRange->text()] autorelease];
 #ifdef BUILDING_ON_TIGER
     // 4930197: Mail overrides [WebHTMLView pasteboardTypesForSelection] in order to add another type to the pasteboard
     // after WebKit does.  On Tiger we must call this function so that Mail code will be executed, meaning that 

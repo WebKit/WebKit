@@ -1,3 +1,18 @@
+2011-02-14  Enrica Casucci  <enrica@apple.com>
+
+        Copy/paste from a WebKit window to a TextEdit window loses fonts.
+        <rdar://problem/8623090>
+        https://bugs.webkit.org/show_bug.cgi?id=54416
+        
+        Reviewed by Dan Bernstein.
+        
+        We don't have the complete solution that fixes this problem for WebKit2 yet.
+        This patch fixes the regression in WebKit.
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeSelection): For WebKit2 use only plain text,
+        for WebKit use the original API to create the NSAttributedString.
+
 2011-02-14  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
