@@ -1,5 +1,12 @@
 2011-02-14  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed: update chromium expectation for inspector test.
+
+        * inspector/console-uncaught-exception-in-eval.html:
+        * platform/chromium/inspector/console-uncaught-exception-in-eval-expected.txt:
+
+2011-02-14  Pavel Feldman  <pfeldman@chromium.org>
+
         Not reviewed: chromium expectations update.
 
         * platform/chromium-win/inspector/console-format-expected.txt: Removed.

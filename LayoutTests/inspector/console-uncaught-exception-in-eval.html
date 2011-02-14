@@ -7,8 +7,8 @@
 function test()
 {
     InspectorTest.reloadPage(function() {
-        InspectorTest.dumpConsoleMessages();
         InspectorTest.expandConsoleMessages();
+        InspectorTest.dumpConsoleMessages();
         InspectorTest.completeTest();
     });
 }
@@ -26,7 +26,6 @@ function evalSource()
     }
 
     a();
-    dumpConsoleMessages();
 }
 
 eval("(" + evalSource + ")()//@ sourceURL=evalURL.js");
