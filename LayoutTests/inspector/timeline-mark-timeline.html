@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
 <script src="timeline-test.js"></script>
 <script>
 
@@ -9,15 +9,15 @@ function performActions()
     console.markTimeline("MARK TIMELINE");
 }
 
-function doit() 
+function test()
 {
-    printTimelineRecords(performActions, "MarkTimeline");
+    InspectorTest.performActionsAndPrint("performActions()", "MarkTimeline");
 }
 
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 Tests the Timeline API mark feature
 </p>

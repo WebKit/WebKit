@@ -3,4 +3,5 @@
 var element = document.createElement("div");
 element.innerHTML = "Script resource loaded";
 document.body.appendChild(element);
-runAfterScriptIsEvaluated();
+
+console.log("Script evaluated");

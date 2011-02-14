@@ -1,5 +1,7 @@
+CONSOLE MESSAGE: line 7: Script evaluated
 Tests the Timeline API instrumentation of a network resource load
 
+Script resource loaded
 
 ResourceSendRequest Properties:
 {
@@ -21,7 +23,7 @@ ResourceReceiveResponse Properties:
         identifier : <number>
         statusCode : 0
         mimeType : <string>
-        expectedContentLength : 208
+        expectedContentLength : 213
         url : <string>
     }
     children : <object>
@@ -43,4 +45,4 @@ ResourceFinish Properties:
     usedHeapSize : <number>
     totalHeapSize : <number>
 }
-Script resource loaded
+

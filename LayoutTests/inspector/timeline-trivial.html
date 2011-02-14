@@ -1,33 +1,25 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
 <script>
 
-function doit()
-{
-    function callback(result) {
-        output("Timeline started");
-        notifyDone();
-    }
-    evaluateInWebInspector("startTimeline()", callback);
-}
-
-
-// Frontend functions.
-
-function frontend_startTimeline() {
+function test() {
     /* This test seems silly, but originally it tickled bug 31080 */
-    InspectorController.startTimelineProfiler();
-    return true;
+    function callback()
+    {
+        InspectorTest.addResult("Timeline started");
+        InspectorTest.completeTest();
+    }
+    InspectorBackend.startTimelineProfiler(callback);
 }
 
 
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p> 
-Trivial use of inspector frontend tests 
+Trivial use of inspector frontend tests
 </p>
 
 </body>

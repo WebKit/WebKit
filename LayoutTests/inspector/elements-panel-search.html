@@ -1,31 +1,20 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
 <script>
-function doit()
+function test()
 {
-    function callback(searchResults)
-    {
-        output("====================================");
-        output("Results:");
-        for (var i = 0; i < searchResults.length; ++i)
-            output(searchResults[i]);
-        notifyDone();
-    }
-    evaluateInWebInspector("frontend_performSearch", callback);
-}
-
-
-// Frontend functions.
-
-function frontend_performSearch(testController)
-{
-    testController.waitUntilDone();
-
     var searchResults = [];
     function addSearchResult(markupValue)
     {
+        if (markupValue.indexOf("ter" + "mi" + "nator") !== -1) {
+            InspectorTest.addResult("====================================");
+            InspectorTest.addResult("Results:");
+            InspectorTest.addResults(searchResults);
+            InspectorTest.completeTest();
+            return;
+         }
         searchResults.push(markupValue);
     }
 
@@ -39,6 +28,7 @@ function frontend_performSearch(testController)
                 InspectorBackend.getOuterHTML(node.id, addSearchResult);
         }
     }
+
     // Plain text.
     InspectorBackend.performSearch("Foo" + "Bar", true);
     // Partial text.
@@ -53,21 +43,20 @@ function frontend_performSearch(testController)
     InspectorBackend.performSearch("In" + "putVa" + "l", true);
     // Partial attribute val<>ue.
     InspectorBackend.performSearch("n" + "putVa" + "l", true);
-
-    testController.runAfterPendingDispatches(function() {
-        testController.notifyDone(searchResults);
-    });
+    // Terminator.
+    InspectorBackend.performSearch("ter" + "mi" + "nator", true);
 }
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 Tests that elements panel search is returning proper results.
 </p>
 
 <div>FooBar</div>
 <input value="InputVal">
+<div id="terminator"></div>
 
 </body>
 </html>

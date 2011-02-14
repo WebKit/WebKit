@@ -1,37 +1,35 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
 <script src="syntax-highlight.js"></script>
 <script>
 
-// Frontend functions.
-
-function frontend_dumpSyntaxHighlightJS(str)
+function test()
 {
-    return frontend_dumpSyntaxHighlight(str, "text/javascript");
-}
+    function dumpSyntaxHighlightJS(str)
+    {
+        InspectorTest.dumpSyntaxHighlight(str, "text/javascript");
+    }
 
-function frontend_doitAndDump() {
-    var result = [];
-    
-    result.push(frontend_dumpSyntaxHighlightJS("return'foo';"));
-    result.push(frontend_dumpSyntaxHighlightJS("/\\\//g"));
-    result.push(frontend_dumpSyntaxHighlightJS("//ig';"));
-    result.push(frontend_dumpSyntaxHighlightJS("1 / 2 + /a/.test('a');"));
-    result.push(frontend_dumpSyntaxHighlightJS("\"\\\"/\".length / 2"));
-    result.push(frontend_dumpSyntaxHighlightJS("var foo = 1/*/***//2"));
-    result.push(frontend_dumpSyntaxHighlightJS("/*comment*//.*/.test('a')"));
-    result.push(frontend_dumpSyntaxHighlightJS("'f\\\noo';"));
-    result.push(frontend_dumpSyntaxHighlightJS("'\\f\\b\\t';"));
-    result.push(frontend_dumpSyntaxHighlightJS("'/\\\n/';"));
-    result.push(frontend_dumpSyntaxHighlightJS("foo/**\n/\n*/foo"));
-    return result;
+    dumpSyntaxHighlightJS("return'foo';");
+    dumpSyntaxHighlightJS("/\\\//g");
+    dumpSyntaxHighlightJS("//ig';");
+    dumpSyntaxHighlightJS("1 / 2 + /a/.test('a');");
+    dumpSyntaxHighlightJS("\"\\\"/\".length / 2");
+    dumpSyntaxHighlightJS("var foo = 1/*/***//2");
+    dumpSyntaxHighlightJS("/*comment*//.*/.test('a')");
+    dumpSyntaxHighlightJS("'f\\\noo';");
+    dumpSyntaxHighlightJS("'\\f\\b\\t';");
+    dumpSyntaxHighlightJS("'/\\\n/';");
+    dumpSyntaxHighlightJS("foo/**\n/\n*/foo");
+
+    InspectorTest.completeTest();
 }
 
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 Tests that JavaScriptSourceSyntaxHighlighter detects the tokens.
 </p>

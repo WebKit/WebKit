@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
 <script src="timeline-test.js"></script>
 <script>
 
@@ -10,15 +10,15 @@ function performActions()
         layoutTestController.display();
 }
 
-function doit() 
+function test()
 {
-    printTimelineRecords(performActions, "Paint");
+    InspectorTest.performActionsAndPrint("performActions()", "Paint");
 }
 
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 Tests the Timeline API instrumentation of a paint event
 </p>

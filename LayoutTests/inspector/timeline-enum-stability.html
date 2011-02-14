@@ -1,25 +1,18 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
 <script>
 
-function dumpTimelineAgentRecordType(types) {
-   var prefix = "WebInspector.TimelineAgent.RecordType.";
-   for (prop in types) {
-       output(prefix + prop + " : " + types[prop]);
-   }
-   notifyDone();
-}
-
-function doit()
+function test()
 {
-   evaluateInWebInspector("WebInspector.TimelineAgent.RecordType", dumpTimelineAgentRecordType);
+    InspectorTest.addObject(WebInspector.TimelineAgent.RecordType);
+    InspectorTest.completeTest();
 }
 
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p> 
 Check to see that TimelineAgent record types are stable.
 </p>

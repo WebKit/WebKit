@@ -1,39 +1,41 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
 <script src="timeline-test.js"></script>
 <script>
 
-function runAfterScriptIsEvaluated(continuation)
+function performActions()
 {
-    function step()
-    {
-        if (!window.scriptEvaluated)
-            setTimeout(step, 100);
-        else
-            continuation();
-    }
-    setTimeout(step, 100);
-}
-
-function doit() 
-{
-    if (window.layoutTestController)
-        layoutTestController.setTimelineProfilingEnabled(true);
-
     var script = document.createElement("script");
     script.src = "timeline-script-tag-2.js";
     document.body.appendChild(script);
+}
 
-    runAfterScriptIsEvaluated(function() {
-        printTimelineRecords(null, "EvaluateScript");
-    });
+function test() 
+{
+    InspectorBackend.startTimelineProfiler(step1);
+    function step1()
+    {
+        InspectorTest._addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2);
+        InspectorTest.evaluateInPage("performActions()");
+    }
+
+    function step2()
+    {
+        InspectorBackend.stopTimelineProfiler(step3);
+    }
+
+    function step3()
+    {
+        InspectorTest.printTimelineRecords("EvaluateScript");
+        InspectorTest.completeTest();
+    }
 }
 
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 Tests the Timeline API instrumentation of a script tag with an external script.
 </p>

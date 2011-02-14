@@ -1,5 +1,6 @@
 Tests the Timeline API instrumentation of a Layout event
 
+Test data
 Layout Properties:
 {
     startTime : <number>
@@ -11,4 +12,4 @@ Layout Properties:
     usedHeapSize : <number>
     totalHeapSize : <number>
 }
-Test data
+

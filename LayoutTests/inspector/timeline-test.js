@@ -1,7 +1,7 @@
-var timelineAgentRecordType = {};
+var initialize_Timeline = function() {
 
 // Scrub values when printing out these properties in the record or data field.
-var timelineNonDeterministicProps = { 
+InspectorTest.timelineNonDeterministicProps = { 
     children : 1,
     endTime : 1, 
     height : 1,
@@ -15,85 +15,39 @@ var timelineNonDeterministicProps = {
     mimeType : 1
 };
 
-function printTimelineRecords(performActions, typeName, formatter)
+InspectorTest.performActionsAndPrint = function(actions, typeName)
 {
-    if (performActions) {
-        if (window.layoutTestController)
-            layoutTestController.setTimelineProfilingEnabled(true);
-        performActions();
+    InspectorBackend.startTimelineProfiler(step1);
+    function step1()
+    {
+        InspectorTest.evaluateInPage(actions, step2);
     }
 
-    evaluateInWebInspector("WebInspector.TimelineAgent.RecordType", function(result) {
-        timelineAgentRecordType = result;
-    });
-
-    evaluateInWebInspector("frontend_getTimelineResults", function(timelineRecords) {
-        try {
-            if (typeof(timelineRecords) === "string")
-                output("Error fetching Timeline results: " + timelineRecords);
-            else {
-                for (var i = 0; i < timelineRecords.length; ++i) {
-                    var record = timelineRecords[i];
-                    if (typeName && record.type === timelineAgentRecordType[typeName])
-                        printTimelineRecordProperties(record);
-                    if (formatter)
-                        formatter(record);
-                }
-            }
-            if (window.layoutTestController)
-                layoutTestController.setTimelineProfilingEnabled(false);
-            notifyDone();
-        } catch (e) {
-            console.log("An exception was caught: " + e.toString());
-            notifyDone(e.toString());
-        }
-    });
-}
-
-// Dump just the record name, indenting output on separate lines for subrecords
-function dumpTimelineRecord(record, level) 
-{
-    if (typeof level !== "number")
-        level = 0;
-    var prefix = "";
-    var suffix = "";
-    for (var i = 0; i < level ; ++i)
-        prefix = "----" + prefix;
-    if (level > 0)
-        prefix = prefix + "> ";
-    if (record.type === timelineAgentRecordType.MarkTimeline) {
-        suffix = " : " + record.data.message;
+    function step2()
+    {
+        InspectorBackend.stopTimelineProfiler(step3);
     }
-    output(prefix + timelineAgentTypeToString(record.type) + suffix);
 
-    var numChildren = record.children ? record.children.length : 0;
-    for (var i = 0; i < numChildren; ++i)
-        dumpTimelineRecord(record.children[i], level + 1);
-}
-
-function dumpTimelineRecords(timelineRecords) {
-    for (var i = 0; i < timelineRecords.length; ++i)
-        dumpTimelineRecord(timelineRecords[i], 0);
-}
-
-function printTimelineRecordProperties(record)
-{
-    output(timelineAgentTypeToString(record.type) + " Properties:");
-    // Use this recursive routine to print the properties
-    dumpObject(record, timelineNonDeterministicProps);
-}
-
-function timelineAgentTypeToString(numericType)
-{
-    for (var prop in timelineAgentRecordType) {
-        if (timelineAgentRecordType[prop] === numericType)
-            return prop;
+    function step3()
+    {
+        InspectorTest.printTimelineRecords(typeName);
+        InspectorTest.completeTest();
     }
-    return undefined;
 }
 
-// Injected into Inspector window
-function frontend_getTimelineResults() {
+InspectorTest.printTimelineRecords = function(typeName, formatter)
+{
+    var timelineRecords = InspectorTest._timelineResults();
+    for (var i = 0; i < timelineRecords.length; ++i) {
+        var record = timelineRecords[i];
+        if (typeName && record.type === WebInspector.TimelineAgent.RecordType[typeName])
+            InspectorTest.printTimelineRecordProperties(record);
+        if (formatter)
+            formatter(record);
+    }
+};
+
+InspectorTest._timelineResults = function() {
     var result = [];
     function addRecords(records)
     {
@@ -106,4 +60,49 @@ function frontend_getTimelineResults() {
     }
     addRecords(WebInspector.panels.timeline._rootRecord.children);
     return result;
-}
+};
+
+// Dump just the record name, indenting output on separate lines for subrecords
+InspectorTest.dumpTimelineRecord = function(record, level) 
+{
+    if (typeof level !== "number")
+        level = 0;
+    var prefix = "";
+    var suffix = "";
+    for (var i = 0; i < level ; ++i)
+        prefix = "----" + prefix;
+    if (level > 0)
+        prefix = prefix + "> ";
+    if (record.type === WebInspector.TimelineAgent.RecordType.MarkTimeline) {
+        suffix = " : " + record.data.message;
+    }
+    InspectorTest.addResult(prefix + InspectorTest._timelineAgentTypeToString(record.type) + suffix);
+
+    var numChildren = record.children ? record.children.length : 0;
+    for (var i = 0; i < numChildren; ++i)
+        InspectorTest.dumpTimelineRecord(record.children[i], level + 1);
+};
+
+InspectorTest.dumpTimelineRecords = function(timelineRecords)
+{
+    for (var i = 0; i < timelineRecords.length; ++i)
+        InspectorTest.dumpTimelineRecord(timelineRecords[i], 0);
+};
+
+InspectorTest.printTimelineRecordProperties = function(record)
+{
+    InspectorTest.addResult(InspectorTest._timelineAgentTypeToString(record.type) + " Properties:");
+    // Use this recursive routine to print the properties
+    InspectorTest.addObject(record, InspectorTest.timelineNonDeterministicProps);
+};
+
+InspectorTest._timelineAgentTypeToString = function(numericType)
+{
+    for (var prop in WebInspector.TimelineAgent.RecordType) {
+        if (WebInspector.TimelineAgent.RecordType[prop] === numericType)
+            return prop;
+    }
+    return undefined;
+};
+
+};

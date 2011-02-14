@@ -1,36 +1,26 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
 <script>
 
-function doit() {
-    function callback(result)
-    {
-        for (var i = 0; i < result.length; ++i)
-            output("[" + result[i] + "]");
-        notifyDone();
-    }
-    evaluateInWebInspector("frontend_doitAndDump", callback);
-}
+function test() {
 
-function frontend_doitAndDump()
-{
     var cookies = [
-        frontend_createCookie("insecureOnlyWebkit", "1234567890", false, "webkit.org", "/"),
-        frontend_createCookie("insecureAllWebkit", "1234567890123456", false, ".webkit.org", "/"),
-        frontend_createCookie("insecureAllWebkitPath", "1234567890123456", false, ".webkit.org", "/path"),
-        frontend_createCookie("secureOnlyWebkitPath", "bar", true, "webkit.org", "/path"),
-        frontend_createCookie("secureAllWebkit", "foo", true, ".webkit.org", "/"),
-        frontend_createCookie("secureAllWebkitPath", "foo", true, ".webkit.org", "/path"),
-        frontend_createCookie("insecureOnlyWebkitPort", "1234567890", false, "webkit.org", "/", 80),
-        frontend_createCookie("insecureAllWebkitPort", "1234567890123456", false, ".webkit.org", "/", 80),
-        frontend_createCookie("insecureAllWebkitPathPort", "1234567890123456", false, ".webkit.org", "/path", 80),
-        frontend_createCookie("secureOnlyWebkitPathPort", "bar", true, "webkit.org", "/path", 80),
-        frontend_createCookie("secureAllWebkitPort", "foo", true, ".webkit.org", "/", 80),
-        frontend_createCookie("secureAllWebkitPathPort", "foo", true, ".webkit.org", "/path", 80),
-        frontend_createCookie("nonMatching1", "bar", false, "webkit.zoo", "/"),
-        frontend_createCookie("nonMatching2", "bar", false, "webkit.org", "/badPath"),
-        frontend_createCookie("nonMatching3", "bar", true, ".moo.com", "/")
+        createCookie("insecureOnlyWebkit", "1234567890", false, "webkit.org", "/"),
+        createCookie("insecureAllWebkit", "1234567890123456", false, ".webkit.org", "/"),
+        createCookie("insecureAllWebkitPath", "1234567890123456", false, ".webkit.org", "/path"),
+        createCookie("secureOnlyWebkitPath", "bar", true, "webkit.org", "/path"),
+        createCookie("secureAllWebkit", "foo", true, ".webkit.org", "/"),
+        createCookie("secureAllWebkitPath", "foo", true, ".webkit.org", "/path"),
+        createCookie("insecureOnlyWebkitPort", "1234567890", false, "webkit.org", "/", 80),
+        createCookie("insecureAllWebkitPort", "1234567890123456", false, ".webkit.org", "/", 80),
+        createCookie("insecureAllWebkitPathPort", "1234567890123456", false, ".webkit.org", "/path", 80),
+        createCookie("secureOnlyWebkitPathPort", "bar", true, "webkit.org", "/path", 80),
+        createCookie("secureAllWebkitPort", "foo", true, ".webkit.org", "/", 80),
+        createCookie("secureAllWebkitPathPort", "foo", true, ".webkit.org", "/path", 80),
+        createCookie("nonMatching1", "bar", false, "webkit.zoo", "/"),
+        createCookie("nonMatching2", "bar", false, "webkit.org", "/badPath"),
+        createCookie("nonMatching3", "bar", true, ".moo.com", "/")
     ];
 
     var resourceURLs = [
@@ -67,31 +57,30 @@ function frontend_doitAndDump()
             if (WebInspector.Cookies.cookieMatchesResourceURL(cookies[i], resourceURLs[j]))
                 cookieResult.push(j);
         }
-        result.push(cookieResult);
+        InspectorTest.addResult("[" + cookieResult + "]");
     }
-    return result;
-}
+    InspectorTest.completeTest();
 
-function frontend_createCookie(name, value, secure, domain, path, port)
-{
-    return {
-        name: name,
-        value: value,
-        domain: domain,
-        port: port,
-        path: path,
-        expires: "Thu Jan 01 1970 00:00:00 GMT",
-        size: name.length + value.length,
-        httpOnly: false,
-        secure: secure,
-        session: true
-    };
+    function createCookie(name, value, secure, domain, path, port)
+    {
+        return {
+            name: name,
+            value: value,
+            domain: domain,
+            port: port,
+            path: path,
+            expires: "Thu Jan 01 1970 00:00:00 GMT",
+            size: name.length + value.length,
+            httpOnly: false,
+            secure: secure,
+            session: true
+        };
+    }
 }
-
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 Tests that cookies are matched up with resources correctly.
 </p>

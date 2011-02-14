@@ -1,5 +1,58 @@
 2011-02-14  Pavel Feldman  <pfeldman@chromium.org>
 
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: move timeline and highlighter tests to the new harness.
+        https://bugs.webkit.org/show_bug.cgi?id=54390
+
+        * inspector/cookie-resource-match.html:
+        * inspector/elements-panel-search.html:
+        * inspector/evaluate-in-frontend-expected.txt: Removed.
+        * inspector/evaluate-in-frontend.html: Removed.
+        * inspector/inspected-objects-not-overriden.html:
+        * inspector/resources/timeline-iframe-data.html:
+        * inspector/syntax-highlight-css.html:
+        * inspector/syntax-highlight-html.html:
+        * inspector/syntax-highlight-javascript-expected.txt:
+        * inspector/syntax-highlight-javascript.html:
+        * inspector/syntax-highlight.js:
+        (initialize_SyntaxHighlight.InspectorTest.dumpSyntaxHighlight):
+        (initialize_SyntaxHighlight):
+        * inspector/timeline-enum-stability-expected.txt:
+        * inspector/timeline-enum-stability.html:
+        * inspector/timeline-event-dispatch.html:
+        * inspector/timeline-layout-expected.txt:
+        * inspector/timeline-layout.html:
+        * inspector/timeline-mark-timeline.html:
+        * inspector/timeline-network-resource-expected.txt:
+        * inspector/timeline-network-resource.html:
+        * inspector/timeline-network-resource.js:
+        * inspector/timeline-paint.html:
+        * inspector/timeline-parse-html-expected.txt:
+        * inspector/timeline-parse-html.html:
+        * inspector/timeline-recalculate-styles-expected.txt:
+        * inspector/timeline-recalculate-styles.html:
+        * inspector/timeline-script-tag-1-expected.txt:
+        * inspector/timeline-script-tag-1.html:
+        * inspector/timeline-script-tag-2-expected.txt:
+        * inspector/timeline-script-tag-2.html:
+        * inspector/timeline-script-tag-2.js:
+        * inspector/timeline-test.js:
+        (initialize_Timeline.InspectorTest.performActionsAndPrint.step1):
+        (initialize_Timeline.InspectorTest.performActionsAndPrint.step2):
+        (initialize_Timeline.InspectorTest.performActionsAndPrint.step3):
+        (initialize_Timeline.InspectorTest.performActionsAndPrint):
+        (initialize_Timeline.InspectorTest.printTimelineRecords):
+        (initialize_Timeline.InspectorTest._timelineResults):
+        (initialize_Timeline.InspectorTest.dumpTimelineRecord):
+        (initialize_Timeline.InspectorTest.dumpTimelineRecords):
+        (initialize_Timeline.InspectorTest.printTimelineRecordProperties):
+        (initialize_Timeline.InspectorTest._timelineAgentTypeToString):
+        (initialize_Timeline):
+        * inspector/timeline-trivial.html:
+
+2011-02-14  Pavel Feldman  <pfeldman@chromium.org>
+
         Not reviewed: update chromium expectation for inspector test.
 
         * inspector/console-uncaught-exception-in-eval.html:

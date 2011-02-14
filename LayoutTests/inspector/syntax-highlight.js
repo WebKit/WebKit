@@ -1,19 +1,6 @@
-// Inspected Page functions.
+var initialize_SyntaxHighlight = function() {
 
-function doit()
-{
-    function callback(result)
-    {
-        for (var i = 0; i < result.length; ++i)
-            output(result[i]);
-        notifyDone();
-    }
-    evaluateInWebInspector("frontend_doitAndDump", callback);
-}
-
-// Frontend functions.
-
-function frontend_dumpSyntaxHighlight(str, mimeType)
+InspectorTest.dumpSyntaxHighlight = function(str, mimeType)
 {
     var node = document.createElement("span");
     node.textContent = str;
@@ -27,5 +14,7 @@ function frontend_dumpSyntaxHighlight(str, mimeType)
             node_parts.push("*");
         }
     }
-    return str + ": " + node_parts.join(",");
-}
+    InspectorTest.addResult(str + ": " + node_parts.join(","));
+};
+
+};

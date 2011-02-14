@@ -1,33 +1,32 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
 <script src="syntax-highlight.js"></script>
 <script>
 
-// Frontend functions.
-
-function frontend_dumpSyntaxHighlightHTML(str)
+function test()
 {
-    return frontend_dumpSyntaxHighlight(str, "text/html");
-}
+    function dumpSyntaxHighlightHTML(str)
+    {
+        InspectorTest.dumpSyntaxHighlight(str, "text/html");
+    }
 
-function frontend_doitAndDump() {
-    var result = [];
-    result.push(frontend_dumpSyntaxHighlightHTML("<html>"));
-    result.push(frontend_dumpSyntaxHighlightHTML("<table cellspacing=0>"));
-    result.push(frontend_dumpSyntaxHighlightHTML("<input checked value=\"foo\">"));
-    result.push(frontend_dumpSyntaxHighlightHTML("<table cellspacing=\"0\" cellpadding='0'>"));
-    result.push(frontend_dumpSyntaxHighlightHTML("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">"));
-    result.push(frontend_dumpSyntaxHighlightHTML("<!--div><div foobar-->"));
-    result.push(frontend_dumpSyntaxHighlightHTML("<script></" + "script><!--div-->"));
-    result.push(frontend_dumpSyntaxHighlightHTML("<script type=\"text/javascript\">document.write('<script type=\"text/javascript\"></' + 'script>');</" + "script>"));
-    return result;
+    dumpSyntaxHighlightHTML("<html>");
+    dumpSyntaxHighlightHTML("<table cellspacing=0>");
+    dumpSyntaxHighlightHTML("<input checked value=\"foo\">");
+    dumpSyntaxHighlightHTML("<table cellspacing=\"0\" cellpadding='0'>");
+    dumpSyntaxHighlightHTML("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">");
+    dumpSyntaxHighlightHTML("<!--div><div foobar-->");
+    dumpSyntaxHighlightHTML("<script></" + "script><!--div-->");
+    dumpSyntaxHighlightHTML("<script type=\"text/javascript\">document.write('<script type=\"text/javascript\"></' + 'script>');</" + "script>");
+
+    InspectorTest.completeTest();
 }
 
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 Tests that SourceHTMLTokenizer detects the tokens.
 </p>

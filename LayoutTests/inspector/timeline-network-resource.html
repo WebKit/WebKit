@@ -1,74 +1,90 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
 <script src="timeline-test.js"></script>
 <script>
 
 var scriptUrl = "timeline-network-resource.js";
 
-function runAfterScriptIsEvaluated()
+function performActions() 
 {
-    printTimelineRecords(null, null, function(record) {
-        if (record.type === timelineAgentRecordType["ResourceSendRequest"])
-            printSend(record);
-        else if (record.type === timelineAgentRecordType["ResourceReceiveResponse"])
-            printReceive(record);
-        else if (record.type === timelineAgentRecordType["ResourceFinish"])
-            printFinish(record);
-    });
-    evaluateInWebInspector("0", function(result) {
-        // Temporary noop to remove flake.
-    });
-}
-
-function printRecord(record)
-{
-    output("");
-    printTimelineRecordProperties(record);
-}
-
-function printSend(record)
-{
-    printRecord(record);
-    window.resourceId = record.data.identifier;
-    if (record.data.url === undefined) 
-        output("* No 'url' property in record");
-    else if (record.data.url.indexOf(scriptUrl) === -1)
-        output("* Didn't find URL: " + scriptUrl);
-}
-
-function printReceive(record)
-{
-    printRecord(record);
-    if (window.resourceId !== record.data.identifier)
-        output("Didn't find matching resourceId: " + window.resourceId);
-    if (record.data.statusCode !== 0)
-        output("Response received status: " + record.data.statusCode);
-}
-
-function printFinish(record)
-{
-    printRecord(record);
-    if (window.resourceId !== record.data.identifier)
-        output("Didn't find matching resourceId: " + window.resourceId);
-    if (record.data.didFail)
-        output("Request failed.");
-}
-
-function doit() 
-{
-    if (window.layoutTestController)
-        layoutTestController.setTimelineProfilingEnabled(true);
-
     var script = document.createElement("script");
     script.src = scriptUrl;
     document.body.appendChild(script);
 }
 
+function test()
+{
+    var resourceId;
+    var scriptUrl = "timeline-network-resource.js";
+
+    InspectorBackend.startTimelineProfiler(step1);
+
+    function step1()
+    {
+        InspectorTest.evaluateInPage("performActions()");
+        InspectorTest._addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2);
+    }
+
+    function step2()
+    {
+        InspectorBackend.stopTimelineProfiler(step3);
+    }
+
+    function step3()
+    {
+        function format(record)
+        {
+            if (record.type === WebInspector.TimelineAgent.RecordType.ResourceSendRequest)
+                printSend(record);
+            else if (record.type === WebInspector.TimelineAgent.RecordType.ResourceReceiveResponse)
+                printReceive(record);
+            else if (record.type === WebInspector.TimelineAgent.RecordType.ResourceFinish)
+                printFinish(record);
+        }
+        InspectorTest.printTimelineRecords(null, format);
+        InspectorTest.completeTest();
+    }
+
+    function printRecord(record)
+    {
+        InspectorTest.addResult("");
+        InspectorTest.printTimelineRecordProperties(record);
+    }
+
+    function printSend(record)
+    {
+        printRecord(record);
+        resourceId = record.data.identifier;
+        if (record.data.url === undefined) 
+            InspectorTest.addResult("* No 'url' property in record");
+        else if (record.data.url.indexOf(scriptUrl) === -1)
+            InspectorTest.addResult("* Didn't find URL: " + scriptUrl);
+    }
+
+    function printReceive(record)
+    {
+        printRecord(record);
+        if (resourceId !== record.data.identifier)
+            InspectorTest.addResult("Didn't find matching resourceId: " + resourceId);
+        if (record.data.statusCode !== 0)
+            InspectorTest.addResult("Response received status: " + record.data.statusCode);
+    }
+
+    function printFinish(record)
+    {
+        printRecord(record);
+        if (resourceId !== record.data.identifier)
+            InspectorTest.addResult("Didn't find matching resourceId: " + resourceId);
+        if (record.data.didFail)
+            InspectorTest.addResult("Request failed.");
+    }
+}
+
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 Tests the Timeline API instrumentation of a network resource load
 </p>

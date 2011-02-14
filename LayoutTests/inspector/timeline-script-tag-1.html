@@ -1,44 +1,47 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
 <script src="timeline-test.js"></script>
 <script>
 
-function runAfterIframeIsLoaded(continuation)
+function performActions()
 {
-    function step()
-    {
-        if (!window.iframeLoaded)
-            setTimeout(step, 100);
-        else
-            continuation();
-    }
-    setTimeout(step, 100);
-}
-
-function doit() 
-{
-    if (window.layoutTestController)
-        layoutTestController.setTimelineProfilingEnabled(true);
-
     var iframe = document.createElement("iframe");
     iframe.src = "resources/timeline-iframe-data.html";
     document.body.appendChild(iframe);
+}
 
-    runAfterIframeIsLoaded(function() {
-        printTimelineRecords(null, null, function(record) {
-            if (record.type === timelineAgentRecordType.EvaluateScript)
-                printTimelineRecordProperties(record);
-            else if (record.type === timelineAgentRecordType.ParseHTML)
-                dumpTimelineRecord(record);
-        });
-    });
+function test() 
+{
+    InspectorBackend.startTimelineProfiler(step1);
+    function step1()
+    {
+        InspectorTest.evaluateInPage("performActions()");
+        InspectorTest._addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2);
+    }
+
+    function step2()
+    {
+        InspectorBackend.stopTimelineProfiler(step3);
+    }
+
+    function step3()
+    {
+        function format(record) {
+            if (record.type === WebInspector.TimelineAgent.RecordType.EvaluateScript)
+                InspectorTest.printTimelineRecordProperties(record);
+            else if (record.type === WebInspector.TimelineAgent.RecordType.ParseHTML)
+                InspectorTest.dumpTimelineRecord(record);
+        }
+        InspectorTest.printTimelineRecords(null, format);
+        InspectorTest.completeTest();
+    }
 }
 
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 Tests the Timeline API instrumentation of an HTML script tag.
 </p>
