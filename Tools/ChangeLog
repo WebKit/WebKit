@@ -1,3 +1,14 @@
+2011-02-14  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        update the NRWT multiprocessing code to spawn multiple workers
+        instead of just using one.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54071
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_runner2.py:
+
 2011-02-12  Chang Shu  <cshu@webkit.org>
 
         Unreviewed.
