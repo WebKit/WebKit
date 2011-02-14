@@ -1,3 +1,15 @@
+2011-02-13  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        Unused variable result in RenderBlock::addOverflowFromFloats()
+        https://bugs.webkit.org/show_bug.cgi?id=54363
+
+        Remove the unused variable.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addOverflowFromFloats):
+
 2011-02-13  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Anders Carlsson.

@@ -1377,7 +1377,6 @@ void RenderBlock::addOverflowFromBlockChildren()
 
 void RenderBlock::addOverflowFromFloats()
 {
-    IntRect result;
     if (!m_floatingObjects)
         return;
     FloatingObject* r;
