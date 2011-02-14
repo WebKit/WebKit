@@ -3497,3 +3497,4 @@ BUGCR72428 : fast/dom/HTMLAnchorElement/set-href-attribute-hash.html = TEXT
 
 BUGCR72861 : fast/css/test-setting-canvas-color.html = TEXT
 
+BUGV8_1154 : http/tests/security/cross-frame-access-enumeration.html = TEXT

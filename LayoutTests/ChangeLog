@@ -1,3 +1,12 @@
+2011-02-14  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed, Chromium test expectations update.
+
+        http://code.google.com/p/v8/issues/detail?id=1154
+        Temporarily mark a test as failing due to a new V8 version.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-14  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Dan Bernstein.
