@@ -1,3 +1,11 @@
+2011-02-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: follow up to r78460 with expectation updates.
+
+        * inspector/styles-iframe-expected.txt:
+        * platform/mac-leopard/http/tests/inspector/console-websocket-error-expected.txt:
+        * platform/mac/http/tests/inspector/console-websocket-error-expected.txt:
+
 2011-02-14  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Rebaseline chromium's test expectation for http://trac.webkit.org/changeset/78449
