@@ -1,5 +1,61 @@
 2011-02-14  Adam Roben  <aroben@apple.com>
 
+        Add a way to flash backing store and view updates
+
+        The new WKPageSetDebugPaintFlags SPI can be used to control whether backing store and/or
+        view updates are flashed. A blueish color is used for view updates, and a purpleish color is
+        used for backing store updates. The flashing currently only works on Windows.
+
+        Fixes <http://webkit.org/b/54303>.
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetDebugPaintFlags):
+        (WKPageGetDebugPaintFlags):
+        * UIProcess/API/C/WKPagePrivate.h:
+        Added. These call through to WebPageProxy.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::flashBackingStoreUpdates):
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::flashBackingStoreUpdates):
+        * UIProcess/API/qt/qwkpage_p.h:
+        Stubbed out new PageClient functions.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::incorporateUpdate): Tell the WebPageProxy to flash the
+        backing store updates we're performing.
+
+        * UIProcess/PageClient.h: Added flashBackingStoreUpdates.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::flashBackingStoreUpdates): Call through to the PageClient.
+        (WebKit::WebPageProxy::viewUpdatesFlashColor): Return the blueish color used for view
+        updates.
+        (WebKit::WebPageProxy::backingStoreUpdatesFlashColor): Return the purpleish color used for
+        backing store updates.
+
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::setDebugPaintFlags):
+        (WebKit::WebPageProxy::debugPaintFlags):
+        Added these simple accessors.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::flashRects):
+        (WebKit::createBrush):
+        New helper functions.
+
+        (WebKit::WebView::onPaintEvent): Flash the dirty region if requested.
+        (WebKit::WebView::flashBackingStoreUpdates): Added. Calls through to flashRects.
+
+        * UIProcess/win/WebView.h: Added flashBackingStoreUpdates.
+
+        * win/WebKit2Generated.make: Export WKPagePrivate.h so clients can use it.
+
+2011-02-14  Adam Roben  <aroben@apple.com>
+
         Add some .messages.in and script files to WebKit2 projects
 
         This is just for convenience. It doesn't affect the build.

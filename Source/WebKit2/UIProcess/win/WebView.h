@@ -133,6 +133,7 @@ private:
     virtual void setViewNeedsDisplay(const WebCore::IntRect&);
     virtual void displayView();
     virtual void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
+    virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects);
     
     virtual WebCore::IntSize viewSize();
     virtual bool isViewWindowActive();

@@ -92,6 +92,8 @@ public:
     virtual void setCustomRepresentationZoomFactor(double) { }
     virtual void didChangeScrollbarsForMainFrame() const { }
 
+    virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects);
+
     void paint(QPainter* painter, QRect);
 
     void keyPressEvent(QKeyEvent*);

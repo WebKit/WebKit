@@ -142,6 +142,8 @@ public:
     virtual void didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference&) = 0;
     virtual double customRepresentationZoomFactor() = 0;
     virtual void setCustomRepresentationZoomFactor(double) = 0;
+
+    virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects) = 0;
 };
 
 } // namespace WebKit

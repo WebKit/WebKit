@@ -35,6 +35,7 @@
 #include "SelectionState.h"
 #include "SharedMemory.h"
 #include "WKBase.h"
+#include "WKPagePrivate.h"
 #include "WebContextMenuItemData.h"
 #include "WebEvent.h"
 #include "WebFindClient.h"
@@ -396,6 +397,16 @@ public:
 
     const String& pendingAPIRequestURL() const { return m_pendingAPIRequestURL; }
 
+    void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects);
+
+    static void setDebugPaintFlags(WKPageDebugPaintFlags flags) { s_debugPaintFlags = flags; }
+    static WKPageDebugPaintFlags debugPaintFlags() { return s_debugPaintFlags; }
+
+    // Color to be used with kWKDebugFlashViewUpdates.
+    static WebCore::Color viewUpdatesFlashColor();
+    // Color to be used with kWKDebugFlashBackingStoreUpdates.
+    static WebCore::Color backingStoreUpdatesFlashColor();
+
 private:
     WebPageProxy(PageClient*, WebContext*, WebPageGroup*, uint64_t pageID);
 
@@ -683,6 +694,8 @@ private:
 
     bool m_mainFrameHasHorizontalScrollbar;
     bool m_mainFrameHasVerticalScrollbar;
+
+    static WKPageDebugPaintFlags s_debugPaintFlags;
 };
 
 } // namespace WebKit

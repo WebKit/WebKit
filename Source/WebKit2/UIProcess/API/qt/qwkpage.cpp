@@ -34,6 +34,7 @@
 #include "FindIndicator.h"
 #include "LocalizedStrings.h"
 #include "NativeWebKeyboardEvent.h"
+#include "NotImplemented.h"
 #include "TiledDrawingAreaProxy.h"
 #include "WebContext.h"
 #include "WebContextMenuProxyQt.h"
@@ -256,6 +257,11 @@ void QWKPagePrivate::didCommitLoadForMainFrame(bool useCustomRepresentation)
 
 void QWKPagePrivate::didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference&)
 {
+}
+
+void QWKPagePrivate::flashBackingStoreUpdates(const Vector<IntRect>&)
+{
+    notImplemented();
 }
 
 void QWKPagePrivate::paint(QPainter* painter, QRect area)

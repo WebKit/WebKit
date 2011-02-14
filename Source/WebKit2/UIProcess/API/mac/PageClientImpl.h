@@ -105,6 +105,8 @@ private:
     virtual double customRepresentationZoomFactor();
     virtual void setCustomRepresentationZoomFactor(double);
 
+    virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects);
+
     WKView* m_wkView;
     RetainPtr<WebEditorUndoTargetObjC> m_undoTarget;
 };

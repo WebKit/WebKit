@@ -452,3 +452,13 @@ WK_EXPORT WKURLRef WKPageCopyPendingAPIRequestURL(WKPageRef pageRef)
         return 0;
     return toCopiedURLAPI(toImpl(pageRef)->pendingAPIRequestURL());
 }
+
+void WKPageSetDebugPaintFlags(WKPageDebugPaintFlags flags)
+{
+    WebPageProxy::setDebugPaintFlags(flags);
+}
+
+WKPageDebugPaintFlags WKPageGetDebugPaintFlags()
+{
+    return WebPageProxy::debugPaintFlags();
+}

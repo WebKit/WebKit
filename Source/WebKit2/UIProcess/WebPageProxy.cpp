@@ -92,6 +92,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
+WKPageDebugPaintFlags WebPageProxy::s_debugPaintFlags = 0;
+
 #ifndef NDEBUG
 static WTF::RefCountedLeakCounter webPageProxyCounter("WebPageProxy");
 #endif
@@ -2725,5 +2727,20 @@ void WebPageProxy::drawPagesToPDF(WebFrameProxy* frame, uint32_t first, uint32_t
     process()->send(Messages::WebPage::DrawPagesToPDF(frame->frameID(), first, count, callbackID), m_pageID, m_isPerformingDOMPrintOperation ? CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply : 0);
 }
 #endif
+
+void WebPageProxy::flashBackingStoreUpdates(const Vector<IntRect>& updateRects)
+{
+    m_pageClient->flashBackingStoreUpdates(updateRects);
+}
+
+Color WebPageProxy::viewUpdatesFlashColor()
+{
+    return Color(0, 200, 255);
+}
+
+Color WebPageProxy::backingStoreUpdatesFlashColor()
+{
+    return Color(200, 0, 255);
+}
 
 } // namespace WebKit

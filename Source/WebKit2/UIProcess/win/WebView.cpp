@@ -438,10 +438,32 @@ void WebView::paint(HDC hdc, const IntRect& dirtyRect)
     }
 }
 
+static void flashRects(HDC dc, const IntRect rects[], size_t rectCount, HBRUSH brush)
+{
+    for (size_t i = 0; i < rectCount; ++i) {
+        RECT winRect = rects[i];
+        ::FillRect(dc, &winRect, brush);
+    }
+
+    ::GdiFlush();
+    ::Sleep(50);
+}
+
+static OwnPtr<HBRUSH> createBrush(const Color& color)
+{
+    return adoptPtr(::CreateSolidBrush(RGB(color.red(), color.green(), color.blue())));
+}
+
 LRESULT WebView::onPaintEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled)
 {
     PAINTSTRUCT paintStruct;
     HDC hdc = ::BeginPaint(m_window, &paintStruct);
+
+    if (WebPageProxy::debugPaintFlags() & kWKDebugFlashViewUpdates) {
+        static HBRUSH brush = createBrush(WebPageProxy::viewUpdatesFlashColor().rgb()).leakPtr();
+        IntRect rect = paintStruct.rcPaint;
+        flashRects(hdc, &rect, 1, brush);
+    }
 
     paint(hdc, paintStruct.rcPaint);
 
@@ -648,6 +670,14 @@ void WebView::scrollView(const IntRect& scrollRect, const IntSize& scrollOffset)
 {
     // FIXME: Actually scroll the view contents.
     setViewNeedsDisplay(scrollRect);
+}
+
+void WebView::flashBackingStoreUpdates(const Vector<IntRect>& updateRects)
+{
+    static HBRUSH brush = createBrush(WebPageProxy::backingStoreUpdatesFlashColor().rgb()).leakPtr();
+    HDC dc = ::GetDC(m_window);
+    flashRects(dc, updateRects.data(), updateRects.size(), brush);
+    ::ReleaseDC(m_window, dc);
 }
 
 WebCore::IntSize WebView::viewSize()

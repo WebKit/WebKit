@@ -29,6 +29,7 @@
 #import "DataReference.h"
 #import "FindIndicator.h"
 #import "NativeWebKeyboardEvent.h"
+#import "NotImplemented.h"
 #import "WKAPICast.h"
 #import "WKStringCF.h"
 #import "WKViewInternal.h"
@@ -405,6 +406,11 @@ double PageClientImpl::customRepresentationZoomFactor()
 void PageClientImpl::setCustomRepresentationZoomFactor(double zoomFactor)
 {
     [m_wkView _setCustomRepresentationZoomFactor:zoomFactor];
+}
+
+void PageClientImpl::flashBackingStoreUpdates(const Vector<IntRect>&)
+{
+    notImplemented();
 }
 
 } // namespace WebKit
