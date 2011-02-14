@@ -405,7 +405,19 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
     if (m_webPage->mainFrameHasCustomRepresentation())
         return;
 
+    m_webPage->layoutIfNeeded();
+
+    // The layout may have put the page into accelerated compositing mode, in which case the
+    // LayerTreeHost is now in charge of displaying.
+    if (m_layerTreeHost)
+        return;
+
     IntRect bounds = m_dirtyRegion.bounds();
+
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(bounds.size());
+    if (!bitmap->createHandle(updateInfo.bitmapHandle))
+        return;
+
     Vector<IntRect> rects = m_dirtyRegion.rects();
 
     if (shouldPaintBoundsRect(bounds, rects)) {
@@ -419,14 +431,8 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
     m_dirtyRegion = Region();
     m_scrollRect = IntRect();
     m_scrollOffset = IntSize();
-    
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(bounds.size());
-    if (!bitmap->createHandle(updateInfo.bitmapHandle))
-        return;
 
     OwnPtr<GraphicsContext> graphicsContext = bitmap->createGraphicsContext();
-
-    m_webPage->layoutIfNeeded();
     
     updateInfo.viewSize = m_webPage->size();
     updateInfo.updateRectBounds = bounds;

@@ -1,5 +1,20 @@
 2011-02-14  Adam Roben  <aroben@apple.com>
 
+        React to accelerated compositing changes and allocation failures in DrawingAreaImpl::display
+
+        Fixes <http://webkit.org/b/54398> DrawingAreaImpl::display handles error cases poorly.
+
+        Reviewed by Darin Adler and Anders Carlsson.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::display): Bail out if the layout we perform puts us into
+        accelerated compositing mode. Moved the layout earlier in this function so we can bail
+        before doing other work that would be unnecessary in this case. Moved the allocation of the
+        ShareableBitmap earlier so we will leave our state (e.g., dirty region) intact even if the
+        allocation fails.
+
+2011-02-14  Adam Roben  <aroben@apple.com>
+
         Add a way to flash backing store and view updates
 
         The new WKPageSetDebugPaintFlags SPI can be used to control whether backing store and/or
