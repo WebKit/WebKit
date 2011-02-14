@@ -1,5 +1,13 @@
 2011-02-14  Alejandro G. Castro  <alex@igalia.com>
 
+        Unreviewed, skipped some tests that were causing problems just in
+        one of the bots, apparently rounding issues.
+        https://bugs.webkit.org/show_bug.cgi?id=39022
+
+        * platform/gtk/Skipped:
+
+2011-02-14  Alejandro G. Castro  <alex@igalia.com>
+
         Unreviewed, skipped generated-content-inside-table.htm test, it
         fails in the bots, opened bug:
         https://bugs.webkit.org/show_bug.cgi?id=54389
