@@ -1,3 +1,11 @@
+2011-02-14  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed, skipped generated-content-inside-table.htm test, it
+        fails in the bots, opened bug:
+        https://bugs.webkit.org/show_bug.cgi?id=54389
+
+        * platform/gtk/Skipped:
+
 2011-02-14  Kenichi Ishibashi  <bashi@chromium.org>
 
         Reviewed by Andreas Kling.
