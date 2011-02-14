@@ -877,6 +877,8 @@ bool CanvasRenderingContext2D::isPointInPath(const float x, const float y)
     FloatPoint point(x, y);
     AffineTransform ctm = state().m_transform;
     FloatPoint transformedPoint = ctm.inverse().mapPoint(point);
+    if (!isfinite(transformedPoint.x()) || !isfinite(transformedPoint.y()))
+        return false;
     return m_path.contains(transformedPoint);
 }
 

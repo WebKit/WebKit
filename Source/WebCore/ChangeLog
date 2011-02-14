@@ -1,3 +1,14 @@
+2011-02-14  Johnny Ding  <jnd@chromium.org>
+
+        Reviewed by Andreas Kling.
+
+        Move the finiteness check into common code.
+
+        Test covered by canvas/philip/tests/2d.path.isPointInPath.nonfinite.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::isPointInPath):
+
 2011-02-14  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Kent Tamura.
