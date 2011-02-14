@@ -3502,15 +3502,5 @@ BUGCR72428 : fast/dom/HTMLAnchorElement/set-href-attribute-hash.html = TEXT
 BUGPKASTING MAC : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE
 BUGPKASTING MAC : svg/text/text-intro-05-t.svg = IMAGE
 
-BUGCR72861 WIN LINUX : fast/inline/inline-box-background-long-image.html = IMAGE+TEXT
-BUGCR72861 WIN LINUX : fast/inline/inline-box-background-repeat-x.html = IMAGE+TEXT
-BUGCR72861 WIN LINUX : fast/inline/inline-box-background-repeat-y.html = IMAGE+TEXT
-BUGCR72861 WIN LINUX : fast/inline/inline-box-background.html = IMAGE+TEXT
-
-BUGCR72861 MAC : fast/inline/inline-box-background-long-image.html = IMAGE
-BUGCR72861 MAC : fast/inline/inline-box-background-repeat-x.html = IMAGE
-BUGCR72861 MAC : fast/inline/inline-box-background-repeat-y.html = IMAGE
-BUGCR72861 MAC : fast/inline/inline-box-background.html = IMAGE
-
 BUGCR72861 : fast/css/test-setting-canvas-color.html = TEXT
 
