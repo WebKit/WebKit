@@ -89,13 +89,13 @@ static void notify_load_status_cb(WebKitWebView* view, GParamSpec* pspec, GMainL
     /* Test get_request */
     g_test_message("Testing webkit_web_data_source_get_request");
     WebKitNetworkRequest* request = webkit_web_data_source_get_request(dataSource);
-    g_assert_cmpstr(webkit_network_request_get_uri(request), ==, "http://webkit.org/");
+    g_assert_cmpstr(webkit_network_request_get_uri(request), ==, "http://www.webkit.org/");
 
     /* Test get_main_resource */
     g_test_message("Testing webkit_web_data_source_get_main_resource");
     WebKitWebResource* resource = webkit_web_data_source_get_main_resource(dataSource);
     g_assert_cmpstr("text/html", ==, webkit_web_resource_get_mime_type(resource));
-    g_assert_cmpstr("http://webkit.org/", ==, webkit_web_resource_get_uri(resource));
+    g_assert_cmpstr("http://www.webkit.org/", ==, webkit_web_resource_get_uri(resource));
 
     /* Test get_data. We just test if data has certain size for the mean time */
     g_test_message("Testing webkit_web_data_source_get_data has certain size");
@@ -124,7 +124,7 @@ static void test_webkit_web_data_source()
     g_object_ref_sink(view);
     loop = g_main_loop_new(NULL, TRUE);
     g_signal_connect(view, "notify::load-status", G_CALLBACK(notify_load_status_cb), loop);
-    webkit_web_view_load_uri(view, "http://webkit.org");
+    webkit_web_view_load_uri(view, "http://www.webkit.org");
 
     waitTimer = g_timeout_add_seconds(defaultTimeout, (GSourceFunc)wait_timer_fired, loop);
 
@@ -163,7 +163,7 @@ static void test_webkit_web_data_source_lifetime()
     g_object_ref_sink(view);
     loop = g_main_loop_new(NULL, TRUE);
     g_signal_connect(view, "notify::load-status", G_CALLBACK(notify_load_status_lifetime_cb), loop);
-    webkit_web_view_load_uri(view, "http://webkit.org");
+    webkit_web_view_load_uri(view, "http://www.webkit.org");
 
     waitTimer = g_timeout_add_seconds(defaultTimeout, (GSourceFunc)wait_timer_fired, loop);
 
