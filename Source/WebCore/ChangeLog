@@ -1,3 +1,16 @@
+2011-02-14  Pratik Solanki  <psolanki@apple.com>
+
+        Remove dead code in FormDataStreamCFNet.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=54401
+
+        Reviewed by Darin Adler.
+
+        The static functions in this file are no longer reachable. We added a conditional branch to
+        use new CFNetwork functions in r30329 and later made that code path permanent in r41517
+        which made these functions unreachable.
+
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+
 2011-02-14  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Darin Adler.
