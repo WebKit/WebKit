@@ -1,3 +1,17 @@
+2011-02-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Andreas Kling.
+
+        Repeating gradients drawn incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=53502
+        
+        Testcase for a gradient that requires both backward- and forward-fill.
+
+        * fast/gradients/css3-repeating-end-fill-expected.checksum: Added.
+        * fast/gradients/css3-repeating-end-fill-expected.png: Added.
+        * fast/gradients/css3-repeating-end-fill-expected.txt: Added.
+        * fast/gradients/css3-repeating-end-fill.html: Added.
+
 2011-02-13  Andreas Kling  <kling@webkit.org>
 
         Unreviewed, remove unnecessary platform expectations for now-passing test.

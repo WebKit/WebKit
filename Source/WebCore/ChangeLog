@@ -1,3 +1,20 @@
+2011-02-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Andreas Kling.
+
+        Repeating gradients drawn incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=53502
+        
+        The 'forward-fill' logic for repeating gradients used the wrong
+        starting stop index (0 rather than the original first index), which
+        resulted in incorrect gradients if backwards-fill had already been
+        applied.
+
+        Test: fast/gradients/css3-repeating-end-fill.html
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::addStops):
+
 2011-02-13  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Andreas Kling.
