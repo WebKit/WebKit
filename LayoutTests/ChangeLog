@@ -1,3 +1,17 @@
+2011-02-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: chromium expectations update.
+
+        * platform/chromium-win/inspector/console-format-expected.txt: Removed.
+        * platform/chromium-win/inspector/console-uncaught-exception-expected.txt: Removed.
+        * platform/chromium-win/inspector/debugger-expand-scope-expected.txt: Removed.
+        * platform/chromium/inspector/console-dir-global-expected.txt: Renamed from LayoutTests/platform/chromium-win/inspector/console-dir-global-expected.txt.
+        * platform/chromium/inspector/console-format-collections-expected.txt:
+        * platform/chromium/inspector/console-format-expected.txt:
+        * platform/chromium/inspector/console-trace-in-eval-expected.txt:
+        * platform/chromium/inspector/console-uncaught-exception-expected.txt:
+        * platform/chromium/inspector/debugger-expand-scope-expected.txt:
+
 2011-02-14  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed, skipped some tests that were causing problems just in

@@ -4,34 +4,40 @@ CONSOLE MESSAGE: line 14: Object %o
 CONSOLE MESSAGE: line 20: test,test2,,,test4
 CONSOLE MESSAGE: line 21: %o
 CONSOLE MESSAGE: line 22: %O
-CONSOLE MESSAGE: line 52: /^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i
 CONSOLE MESSAGE: line 53: /^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i
-CONSOLE MESSAGE: line 52: /foo\\bar\sbaz/i
+CONSOLE MESSAGE: line 54: /^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i
 CONSOLE MESSAGE: line 53: /foo\\bar\sbaz/i
-CONSOLE MESSAGE: line 52: test
+CONSOLE MESSAGE: line 54: /foo\\bar\sbaz/i
 CONSOLE MESSAGE: line 53: test
-CONSOLE MESSAGE: line 52: test named "test"
+CONSOLE MESSAGE: line 54: test
 CONSOLE MESSAGE: line 53: test named "test"
-CONSOLE MESSAGE: line 52: Error
+CONSOLE MESSAGE: line 54: test named "test"
 CONSOLE MESSAGE: line 53: Error
-CONSOLE MESSAGE: line 52: [object HTMLBodyElement]
+CONSOLE MESSAGE: line 54: Error
 CONSOLE MESSAGE: line 53: [object HTMLBodyElement]
-CONSOLE MESSAGE: line 52: function () { return 1; }
+CONSOLE MESSAGE: line 54: [object HTMLBodyElement]
 CONSOLE MESSAGE: line 53: function () { return 1; }
-CONSOLE MESSAGE: line 52: function () {
-        return 2;
-    }
+CONSOLE MESSAGE: line 54: function () { return 1; }
 CONSOLE MESSAGE: line 53: function () {
         return 2;
     }
-CONSOLE MESSAGE: line 52: 0.12
+CONSOLE MESSAGE: line 54: function () {
+        return 2;
+    }
 CONSOLE MESSAGE: line 53: 0.12
-CONSOLE MESSAGE: line 52: http://webkit.org/
+CONSOLE MESSAGE: line 54: 0.12
 CONSOLE MESSAGE: line 53: http://webkit.org/
-CONSOLE MESSAGE: line 52: null
-CONSOLE MESSAGE: line 53: 
-CONSOLE MESSAGE: line 52: undefined
-CONSOLE MESSAGE: line 53: 
+CONSOLE MESSAGE: line 54: http://webkit.org/
+CONSOLE MESSAGE: line 53: null
+CONSOLE MESSAGE: line 54: 
+CONSOLE MESSAGE: line 53: undefined
+CONSOLE MESSAGE: line 54: 
+CONSOLE MESSAGE: line 53: [object Attr]
+CONSOLE MESSAGE: line 54: [object Attr]
+CONSOLE MESSAGE: line 53: [object Attr]
+CONSOLE MESSAGE: line 54: [object Attr]
+CONSOLE MESSAGE: line 53: [object Attr]
+CONSOLE MESSAGE: line 54: [object Attr]
 Tests that console logging dumps proper messages.
 
 console-format.html:12Message format number 1, 2 and 3.5
@@ -40,46 +46,70 @@ console-format.html:14Object Object
 console-format.html:20["test", "test2", undefined, undefined, "test4"]
 console-format.html:21["test", "test2", undefined, undefined, "test4"]
 console-format.html:22Array[5]
-console-format.html:52/^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i
-console-format.html:53[/^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i]
+console-format.html:53/^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i
+console-format.html:54[/^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i]
+globals[0]
 /^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i
-console-format.html:52/foo\\bar\sbaz/i
-console-format.html:53[/foo\\bar\sbaz/i]
+console-format.html:53/foo\\bar\sbaz/i
+console-format.html:54[/foo\\bar\sbaz/i]
+globals[1]
 /foo\\bar\sbaz/i
-console-format.html:52test
-console-format.html:53["test"]
+console-format.html:53test
+console-format.html:54["test"]
+globals[2]
 "test"
-console-format.html:52test named "test"
-console-format.html:53["test named "test""]
+console-format.html:53test named "test"
+console-format.html:54["test named "test""]
+globals[3]
 "test named "test""
-console-format.html:52Error
-console-format.html:53[Error]
+console-format.html:53Error
+console-format.html:54[Error]
+globals[4]
 Error
-console-format.html:52<body onload="onload()">…</body>
-console-format.html:53[<body onload="onload()">…</body>]
+console-format.html:53<body onload="onload()">…</body>
+console-format.html:54[<body onload="onload()">…</body>]
+globals[5]
 <body onload="onload()">…</body>
-console-format.html:52function () { return 1; }
-console-format.html:53[function () { return 1; }]
+console-format.html:53function () { return 1; }
+console-format.html:54[function () { return 1; }]
+globals[6]
 function () { return 1; }
-console-format.html:52function () {
+console-format.html:53function () {
         return 2;
     }
-console-format.html:53[function () {
+console-format.html:54[function () {
         return 2;
     }]
+globals[7]
 function () {
         return 2;
     }
-console-format.html:520.12
-console-format.html:53[0.12]
+console-format.html:530.12
+console-format.html:54[0.12]
+globals[8]
 0.12
-console-format.html:52http://webkit.org/
-console-format.html:53["http://webkit.org/"]
+console-format.html:53http://webkit.org/
+console-format.html:54["http://webkit.org/"]
+globals[9]
 "http://webkit.org/"
-console-format.html:52null
-console-format.html:53[null]
+console-format.html:53null
+console-format.html:54[null]
+globals[10]
 null
-console-format.html:52undefined
-console-format.html:53[undefined]
+console-format.html:53undefined
+console-format.html:54[undefined]
+globals[11]
 undefined
+console-format.html:53attr=""
+console-format.html:54[attr=""]
+globals[12]
+attr=""
+console-format.html:53attr="value"
+console-format.html:54[attr="value"]
+globals[13]
+attr="value"
+console-format.html:53id="x"
+console-format.html:54[id="x"]
+globals[14]
+id="x"
 
