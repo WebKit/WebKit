@@ -62,7 +62,7 @@ private:
     PingLoader(Frame*, const ResourceRequest&);
 
     void didReceiveResponse(ResourceHandle*, const ResourceResponse&) { delete this; }
-    void didReceiveData(ResourceHandle*, const char*, int) { delete this; }
+    void didReceiveData(ResourceHandle*, const char*, int, int) { delete this; }
     void didFinishLoading(ResourceHandle*, double) { delete this; }
     void didFail(ResourceHandle*, const ResourceError&) { delete this; }
     void timeout(Timer<PingLoader>*) { delete this; }

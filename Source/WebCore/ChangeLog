@@ -1,3 +1,14 @@
+2011-02-13  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        WebCore fails to build with Clang's -Woverloaded-virtual
+        https://bugs.webkit.org/show_bug.cgi?id=54367
+
+        * loader/PingLoader.h:
+        (WebCore::PingLoader::didReceiveData): Change the method signature to match the signature
+        in the base class.
+
 2011-02-13  Nico Weber  <thakis@chromium.org>
 
         Reviewed by Anders Carlsson.
