@@ -42,6 +42,7 @@ from webkitpy.layout_tests.layout_package import manager_worker_broker
 from webkitpy.layout_tests.layout_package import test_runner
 from webkitpy.layout_tests.layout_package import worker
 
+
 _log = logging.getLogger(__name__)
 
 
@@ -55,6 +56,10 @@ class _WorkerState(object):
         self.current_test_name = None
         self.next_timeout = None
         self.wedged = False
+        self.stats = {}
+        self.stats['name'] = worker_connection.name
+        self.stats['num_tests'] = 0
+        self.stats['total_time'] = 0
 
     def __repr__(self):
         return "_WorkerState(" + str(self.__dict__) + ")"
@@ -108,6 +113,7 @@ class TestRunner2(test_runner.TestRunner):
         """
         self._current_result_summary = result_summary
         self._all_results = []
+        self._group_stats = {}
         self._worker_states = {}
 
         num_workers = self._num_workers()
@@ -133,6 +139,7 @@ class TestRunner2(test_runner.TestRunner):
             # workers.
             time.sleep(0.1)
 
+        self._printer.print_update("Starting testing ...")
         for test_list in test_lists:
             manager_connection.post_message('test_list', test_list[0], test_list[1])
 
@@ -177,10 +184,7 @@ class TestRunner2(test_runner.TestRunner):
             _log.info("Exception raised, exiting")
             raise
 
-
-        # FIXME: implement stats.
-
-        thread_timings = []
+        thread_timings = [worker_state.stats for worker_state in self._worker_states.values()]
 
         # FIXME: should this be a class instead of a tuple?
         return (keyboard_interrupted, interrupted, thread_timings,
@@ -203,19 +207,18 @@ class TestRunner2(test_runner.TestRunner):
         raise exception_info
 
     def handle_finished_list(self, source, list_name, num_tests, elapsed_time):
-        # FIXME: update stats
-        pass
+        self._group_stats[list_name] = (num_tests, elapsed_time)
 
     def handle_finished_test(self, source, result, elapsed_time):
         worker_state = self._worker_states[source]
         worker_state.next_timeout = None
         worker_state.current_test_name = None
+        worker_state.stats['total_time'] += elapsed_time
+        worker_state.stats['num_tests'] += 1
 
         if worker_state.wedged:
             # This shouldn't happen if we have our timeouts tuned properly.
             _log.error("%s unwedged", w.name)
 
-        self._update_summary_with_result(self._current_result_summary, result)
-
-        # FIXME: update stats.
         self._all_results.append(result)
+        self._update_summary_with_result(self._current_result_summary, result)
