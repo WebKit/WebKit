@@ -95,7 +95,9 @@ public:
 private:
     size_t m_size;
     void* m_data;
-#if PLATFORM(WIN)
+#if PLATFORM(MAC)
+    mach_port_t m_port;
+#elif PLATFORM(WIN)
     HANDLE m_handle;
 #elif PLATFORM(QT)
     int m_fileDescriptor;

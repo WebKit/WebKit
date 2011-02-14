@@ -1,3 +1,21 @@
+2011-02-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Shared memory should be made shared immediately
+        https://bugs.webkit.org/show_bug.cgi?id=54413
+        <rdar://problem/8972153>
+
+        Under some circumstances, mach_make_memory_entry_64 may only return parts of a
+        memory allocation. Work around this by creating a mach port representing the shared memory
+        right away. Also, hand out this mach port in createHandle when using the default memory protection.
+
+        * Platform/SharedMemory.h:
+        * Platform/mac/SharedMemoryMac.cpp:
+        (WebKit::SharedMemory::create):
+        (WebKit::SharedMemory::~SharedMemory):
+        (WebKit::SharedMemory::createHandle):
+
 2011-02-14  Adam Roben  <aroben@apple.com>
 
         React to accelerated compositing changes and allocation failures in DrawingAreaImpl::display

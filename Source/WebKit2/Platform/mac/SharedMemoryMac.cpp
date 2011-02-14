@@ -98,9 +98,22 @@ PassRefPtr<SharedMemory> SharedMemory::create(size_t size)
     if (kr != KERN_SUCCESS)
         return 0;
 
+    // Create a Mach port that represents the shared memory.
+    mach_port_t port;
+    memory_object_size_t memoryObjectSize = round_page(size);
+    kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, address, VM_PROT_DEFAULT, &port, MACH_PORT_NULL);
+
+    if (kr != KERN_SUCCESS) {
+        mach_vm_deallocate(mach_task_self(), address, round_page(size));
+        return false;
+    }
+
+    ASSERT(memoryObjectSize >= round_page(size));
+
     RefPtr<SharedMemory> sharedMemory(adoptRef(new SharedMemory));
     sharedMemory->m_size = size;
     sharedMemory->m_data = toPointer(address);
+    sharedMemory->m_port = port;
 
     return sharedMemory.release();
 }
@@ -133,17 +146,22 @@ PassRefPtr<SharedMemory> SharedMemory::create(const Handle& handle, Protection p
     RefPtr<SharedMemory> sharedMemory(adoptRef(new SharedMemory));
     sharedMemory->m_size = handle.m_size;
     sharedMemory->m_data = toPointer(mappedAddress);
-    
+    sharedMemory->m_port = MACH_PORT_NULL;
+
     return sharedMemory.release();
 }
 
 SharedMemory::~SharedMemory()
 {
-    if (!m_data)
-        return;
-    
-    kern_return_t kr = mach_vm_deallocate(mach_task_self(), toVMAddress(m_data), round_page(m_size));
-    ASSERT_UNUSED(kr, kr == KERN_SUCCESS);
+    if (m_data) {
+        kern_return_t kr = mach_vm_deallocate(mach_task_self(), toVMAddress(m_data), round_page(m_size));
+        ASSERT_UNUSED(kr, kr == KERN_SUCCESS);
+    }
+
+    if (m_port) {
+        kern_return_t kr = mach_port_deallocate(mach_task_self(), m_port);
+        ASSERT_UNUSED(kr, kr == KERN_SUCCESS);
+    }        
 }
     
 bool SharedMemory::createHandle(Handle& handle, Protection protection)
@@ -154,11 +172,21 @@ bool SharedMemory::createHandle(Handle& handle, Protection protection)
     mach_vm_address_t address = toVMAddress(m_data);
     memory_object_size_t size = round_page(m_size);
 
-    // Create a mach port that represents the shared memory.
     mach_port_t port;
-    kern_return_t kr = mach_make_memory_entry_64(mach_task_self(), &size, address, machProtection(protection), &port, MACH_PORT_NULL);
-    if (kr != KERN_SUCCESS)
-        return false;
+
+    if (protection == ReadWrite && m_port) {
+        // Just re-use the port we have.
+        port = m_port;
+        if (mach_port_mod_refs(mach_task_self(), port, MACH_PORT_RIGHT_SEND, 1) != KERN_SUCCESS)
+            return false;
+    } else {
+        // Create a mach port that represents the shared memory.
+        kern_return_t kr = mach_make_memory_entry_64(mach_task_self(), &size, address, machProtection(protection), &port, MACH_PORT_NULL);
+        if (kr != KERN_SUCCESS)
+            return false;
+
+        ASSERT(size >= round_page(m_size));
+    }
 
     handle.m_port = port;
     handle.m_size = size;
