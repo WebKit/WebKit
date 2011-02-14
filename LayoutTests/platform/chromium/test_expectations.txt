@@ -3561,3 +3561,4 @@ BUGWK51152 LINUX : tables/mozilla/core/margins.html = IMAGE+TEXT
 BUGWK51152 LINUX : tables/mozilla/dom/tableDom.html = IMAGE+TEXT
 BUGWK51152 LINUX : tables/mozilla_expected_failures/bugs/bug2479-5.html = IMAGE+TEXT
 BUGWK51152 LINUX : transforms/2d/zoom-menulist.html = IMAGE+TEXT
+BUGWK51152 LINUX : tables/mozilla/bugs/bug2479-4.html = TEXT

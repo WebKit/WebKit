@@ -1,3 +1,10 @@
+2011-02-14  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, updating chromium test expectations, missed a test
+        in my last checkin.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-14  Peter Kasting  <pkasting@google.com>
 
         Unreviewed, Chromium test expectations update.
