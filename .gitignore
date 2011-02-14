@@ -17,11 +17,13 @@ tags
 # Ignore Chromium projects auto-generated from .gyp files:
 Source/JavaScriptCore/JavaScriptCore.gyp/*.Makefile
 Source/JavaScriptCore/JavaScriptCore.gyp/*.mk
+Source/JavaScriptCore/JavaScriptCore.gyp/*.ninja
 Source/JavaScriptCore/JavaScriptCore.gyp/*.sln
 Source/JavaScriptCore/JavaScriptCore.gyp/*.vcproj*
 Source/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.xcodeproj
 Source/WebCore/WebCore.gyp/*.Makefile
 Source/WebCore/WebCore.gyp/*.mk
+Source/WebCore/WebCore.gyp/*.ninja
 Source/WebCore/WebCore.gyp/*.rules
 Source/WebCore/WebCore.gyp/*.sln
 Source/WebCore/WebCore.gyp/*.tmp
@@ -29,6 +31,7 @@ Source/WebCore/WebCore.gyp/*.vcproj*
 Source/WebCore/WebCore.gyp/WebCore.xcodeproj
 Source/WebKit/chromium/*.Makefile
 Source/WebKit/chromium/*.mk
+Source/WebKit/chromium/*.ninja
 Source/WebKit/chromium/*.sln
 Source/WebKit/chromium/*.vcproj*
 Source/WebKit/chromium/WebKit.xcodeproj
