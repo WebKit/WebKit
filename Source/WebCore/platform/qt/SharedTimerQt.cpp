@@ -68,8 +68,12 @@ SharedTimerQt::SharedTimerQt()
 
 SharedTimerQt::~SharedTimerQt()
 {
-    if (m_timer.isActive())
-        (m_timerFunction)();
+    if (m_timer.isActive()) {
+        if (m_timerFunction) {
+            (m_timerFunction)();
+            m_timerFunction = 0;
+        }
+    }
 }
 
 void SharedTimerQt::destroy()

@@ -26,6 +26,7 @@
 #include <QGraphicsWidget>
 #include <QLineEdit>
 #include <QLocale>
+#include <QMainWindow>
 #include <QMenu>
 #include <QPushButton>
 #include <QStyle>
@@ -136,6 +137,7 @@ private slots:
     void networkAccessManagerOnDifferentThread();
     void navigatorCookieEnabled();
     void navigatorCookieEnabledForNetworkAccessManagerOnDifferentThread();
+    void deleteQWebViewTwice();
 
 #ifdef Q_OS_MAC
     void macCopyUnicodeToClipboard();
@@ -2815,5 +2817,19 @@ void tst_QWebPage::contextMenuCopy()
     int index = list.indexOf(view.page()->action(QWebPage::Copy));
     QVERIFY(index != -1);
 }
+
+void tst_QWebPage::deleteQWebViewTwice()
+{
+    for (int i = 0; i < 2; ++i) {
+        QMainWindow mainWindow;
+        QWebView* webView = new QWebView(&mainWindow);
+        mainWindow.setCentralWidget(webView);
+        webView->load(QUrl("qrc:///resources/frame_a.html"));
+        mainWindow.show();
+        connect(webView, SIGNAL(loadFinished(bool)), &mainWindow, SLOT(close()));
+        QApplication::instance()->exec();
+    }
+}
+
 QTEST_MAIN(tst_QWebPage)
 #include "tst_qwebpage.moc"

@@ -1,3 +1,15 @@
+2011-02-14  Alexis Menard  <alexis.menard@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Crash on application exit after constructing and destroying a QWebView twice
+        https://bugs.webkit.org/show_bug.cgi?id=54000
+
+        Test case to cover the crash.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::deleteQWebViewTwice):
+
 2011-02-11  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
