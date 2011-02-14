@@ -1,13 +1,13 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
-<script src="../http/tests/inspector/console-tests.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/console-test.js"></script>
 <script>
 
 // Global Values
 var globals = [];
 
-function doit()
+function onload()
 {
     console.log('Message format number %i, %d and %f', 1, 2, 3.5);
     console.log('Message %s for %s', 'format', 'string');
@@ -44,45 +44,42 @@ function doit()
         regex1, regex2, str, str2, error, node, func, multilinefunc, num, linkify,
         null, undefined, valuelessAttribute, valuedAttribute, existingAttribute
     ];
-    loopOverGlobals(0);
+
+    runTest();
 }
 
-function loopOverGlobals(current)
+function log(current)
 {
-    function advance()
-    {
-        var next = current + 1;
-        if (next == globals.length)
-            dumpConsoleMessages();
-        else
-            loopOverGlobals(next);
-    }
     console.log(globals[current]);
     console.log([globals[current]]);
-    evaluateInWebInspector("frontend_evaluateGlobal", advance);
 }
 
-// Frontend functions.
-
-function frontend_evaluateGlobal()
+function test()
 {
-    window.__next = window.__next || 0;
-    var current = window.__next++;
-    var expression = "globals[" + current + "]";
-    frontend_evalExpression(expression);
-}
+    InspectorTest.evaluateInPage("globals.length", loopOverGlobals.bind(this, 0));
 
-function frontend_evalExpression(expression)
-{
-    var self = WebInspector.console;
-    function printResult(result)
+    function loopOverGlobals(current, total)
     {
-        self.addMessage(new WebInspector.ConsoleCommandResult(result, expression));
+        function advance()
+        {
+            var next = current + 1;
+            if (next == total.description) {
+                InspectorTest.dumpConsoleMessages();
+                InspectorTest.completeTest();
+               }
+            else
+                loopOverGlobals(next, total);
+        }
+
+        InspectorTest.evaluateInPage("log(" + current + ")");
+        InspectorTest.runAfterPendingDispatches(evalInConsole);
+        function evalInConsole()
+        {
+            InspectorTest.evaluateInConsole("globals[" + current + "]");
+            InspectorTest.runAfterPendingDispatches(advance);
+        }
     }
-
-    self.evalInInspectedWindow(expression, "console", false, printResult);
 }
-
 </script>
 </head>
 

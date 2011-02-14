@@ -1,42 +1,31 @@
 <html>
 <head>
-<script src="inspector-test.js"></script>
-<script src="resource-tests.js"></script>
+<script src="inspector-test2.js"></script>
+<script src="resources-test.js"></script>
 
 <script>
-function doit()
+function submit()
 {
-    window.submitCalled = true;
     document.getElementById("submit").click();
 }
 
-function onIframeLoad()
+function test()
 {
-    if (!window.submitCalled)
-        return;
+    InspectorTest.evaluateInPage("submit()");
+    InspectorTest._addSniffer(WebInspector.NetworkDispatcher.prototype, "didFinishLoading", dumpHAR);
 
-    function callback(result)
+    function dumpHAR()
     {
-        dumpObject(result, HARNondeterministicProperties);
-        notifyDone();
+        var resource = WebInspector.resourceForURL("http://localhost:8000/inspector/resources/post-target.cgi?queryParam1=queryValue1&queryParam2=");
+        if (resource)
+           InspectorTest.addObject(new WebInspector.HAREntry(resource).build(), InspectorTest.HARNondeterministicProperties);
+        InspectorTest.completeTest();
     }
-    evaluateInWebInspector("frontend_dumpFormData", callback);
-}
-
-function frontend_dumpFormData(testController)
-{
-    var resource = WebInspector.resourceForURL("http://localhost:8000/inspector/resources/post-target.cgi?queryParam1=queryValue1&queryParam2=");
-
-    if (!resource) {
-        testController.notifyDone("No resource found");
-        return;
-    }
-    testController.notifyDone(new WebInspector.HAREntry(resource).build());
 }
 
 </script>
 </head>
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 Tests that resources panel shows form data parameters.
 </p>
@@ -45,6 +34,6 @@ Tests that resources panel shows form data parameters.
 <input name="formParam2">
 <input id="submit" type="submit">
 </form>
-<iframe name="target-iframe" onload="onIframeLoad();"></iframe>
+<iframe name="target-iframe"></iframe>
 </body>
 </html>

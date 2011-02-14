@@ -1,10 +1,28 @@
 Tests that proper (and different) styles are returned for body elements of main document and iframe.
 
 
-Style: 0
-{"margin":"8px"}
-{"background":"blue"}
-Style: 1
-{"margin":"8px"}
-{"background":"green"}
+Main frame style:
+[expanded] element.style { ()
+
+======== Matched CSS Rules ========
+[expanded] body { (styles-iframe.html:5)
+background: blue;
+
+[expanded] body { (user agent stylesheet)
+display: block;
+margin: 8px;
+
+
+iframe style:
+[expanded] element.style { ()
+
+======== Matched CSS Rules ========
+[expanded] body { (styles-iframe-data.html:4)
+background: green;
+
+[expanded] body { (user agent stylesheet)
+display: block;
+margin: 8px;
+
+
 

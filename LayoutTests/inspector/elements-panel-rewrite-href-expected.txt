@@ -1,7 +1,7 @@
 Tests that src and href element targets are rewritten properly.
 
-[,bogusSheet1.css]
-[LayoutTests,inspector,bogusSheet2.css]
-[tests,inspector,inspector-test.js]
-[LayoutTests,inspector,elements-tests.js]
+,bogusSheet1.css
+LayoutTests,inspector,bogusSheet2.css
+tests,inspector,inspector-test2.js
+tests,inspector,elements-test.js
 

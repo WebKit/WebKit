@@ -1,62 +1,43 @@
 <html>
 <head>
 
-<script src="../http/tests/inspector/inspector-test.js"></script>
-<script src="elements-tests.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/elements-test.js"></script>
 <script>
-var EXPECTED_TOOLTIP_TEXT = "215 \xd7 174 pixels";
-function doit()
+
+var test = function()
 {
-    function callback(tooltipText)
+    InspectorTest.nodeWithId("image", step1);
+
+    function step1(node)
     {
-        if (!tooltipText)
-            output("FAILED, tooltip text should have been \"" + EXPECTED_TOOLTIP_TEXT + "\". Was " + tooltipText + ".");
-        else if (tooltipText == EXPECTED_TOOLTIP_TEXT)
-            output("PASSED, tooltip text is \"" + EXPECTED_TOOLTIP_TEXT + "\".");
+        var treeElement = WebInspector.panels.elements.treeOutline.findTreeElement(node);
+        treeElement._createTooltipForNode();
+        InspectorTest.runAfterPendingDispatches(step2.bind(this, treeElement));
+    }
+
+    function step2(treeElement)
+    {
+        const EXPECTED_TOOLTIP_TEXT = "215 \xd7 174 pixels";
+
+        var tooltipText = treeElement.tooltip;
+        if (tooltipText === EXPECTED_TOOLTIP_TEXT)
+            InspectorTest.addResult("PASSED, tooltip text is \"" + EXPECTED_TOOLTIP_TEXT + "\".");
         else
-            output("FAILED, tooltip text should have been \"" + EXPECTED_TOOLTIP_TEXT + "\". Was \"" + tooltipText + "\".");
-        notifyDone();
-    }
-    evaluateInWebInspector("frontend_dumpTooltip", callback);
-}
-
-// Frontend functions.
-
-function frontend_dumpTooltip(testController)
-{
-    testController.waitUntilDone();
-    frontend_expandDOMSubtreeAndRun(testController, null, frontend_dumpTooltipContinuation);
-}
-
-function frontend_dumpTooltipContinuation(testController)
-{
-    function callback(tooltipText)
-    {
-        testController.notifyDone(tooltipText);
-    }
-
-    var innerMapping = WebInspector.domAgent._idToDOMNode;
-    for (var nodeId in innerMapping) {
-        if (innerMapping[nodeId].nodeName === "IMG") {
-            var node = innerMapping[nodeId];
-            var treeElement = WebInspector.panels.elements.treeOutline.findTreeElement(node);
-            treeElement._createTooltipForNode();
-            testController.runAfterPendingDispatches(function() {
-                testController.notifyDone(treeElement.tooltip);
-            });
-            break;
-        }
+            InspectorTest.addResult("FAILED, tooltip text should have been \"" + EXPECTED_TOOLTIP_TEXT + "\". Was \"" + tooltipText + "\".");
+        InspectorTest.completeTest();
     }
 }
+
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
-Tests that the tooltip text for the image (below) is &quot;<script>document.write(EXPECTED_TOOLTIP_TEXT)</script>&quot;.
+Tests the tooltip for the image on hover.
 </p>
 
-<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANcAAACuCAIAAAAqMg/rAAAAAXNSR0IArs4c6QAAAU9JREFUeNrt0jERAAAIxDDAv+dHAxNLIqHXTlLwaiTAheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSFEuBCcCEuBBfiQnAhLgQX4kJwIS4EF+JCcCEuBBfiQnAhLgQX4kJwIS4EF+JCcCEuBBfiQnAhLgQX4kJwIS4EF+JCcCEuBBfiQnAhLoSDBZXqBFnkRyeqAAAAAElFTkSuQmCC"/>
+<img id="image" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANcAAACuCAIAAAAqMg/rAAAAAXNSR0IArs4c6QAAAU9JREFUeNrt0jERAAAIxDDAv+dHAxNLIqHXTlLwaiTAheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSFEuBCcCEuBBfiQnAhLgQX4kJwIS4EF+JCcCEuBBfiQnAhLgQX4kJwIS4EF+JCcCEuBBfiQnAhLgQX4kJwIS4EF+JCcCEuBBfiQnAhLoSDBZXqBFnkRyeqAAAAAElFTkSuQmCC"/>
 
 </body>
 </html>

@@ -1,20 +1,18 @@
 <html>
 <head>
 <script src="../http/tests/inspector/inspector-test2.js"></script>
-<script src="elements-tests2.js"></script>
+<script src="../http/tests/inspector/elements-test.js"></script>
 <script>
 
 function test()
 {
-    function selectInspectedElement()
-    {
-        InspectorTest.selectElementAndRun("inspected", executeTest);
-    }
 
-    function executeTest()
+    InspectorTest.selectNodeWithId("inspected", step1);
+
+    function step1()
     {
         InspectorTest.addResult("Before style property removal:");
-        InspectorTest.addResults(InspectorTest.getSelectedElementStyles(true));
+        InspectorTest.dumpSelectedElementStyles(true);
 
         var treeElement;
         var innerMapping = WebInspector.domAgent._idToDOMNode;
@@ -31,14 +29,15 @@ function test()
         // Remove the "style" attribute altogether (not just clear its value).
         editorElement.textContent = "";
         editorElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
-        InspectorTest.runAfterPendingDispatches(function() {
-            InspectorTest.addResult("After style property removal:");
-            InspectorTest.addResults(InspectorTest.getSelectedElementStyles(true));
-            InspectorTest.completeTest();
-        });
+        InspectorTest.runAfterPendingDispatches(step2);
     }
 
-    InspectorTest.expandDOMSubtreeAndRun(null, selectInspectedElement);
+    function step2()
+    {
+        InspectorTest.addResult("After style property removal:");
+        InspectorTest.dumpSelectedElementStyles(true);
+        InspectorTest.completeTest();
+    }
 }
 
 </script>

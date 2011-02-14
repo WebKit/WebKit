@@ -1,7 +1,7 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
-<script src="../http/tests/inspector/console-tests.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/console-test.js"></script>
 <script>
 
 
@@ -18,20 +18,30 @@ function evalSource()
     }
 
     a();
-    dumpConsoleMessages();
 }
 
-function doit()
+function doEvalSource()
 {
     setTimeout(function() {
         eval("(" + evalSource + ")()//@ sourceURL=evalURL.js");
     }, 0);
 }
 
+function test()
+{
+    function callback()
+    {
+        InspectorTest.dumpConsoleMessages();
+        InspectorTest.completeTest();
+    }
+    InspectorTest.evaluateInPage("doEvalSource()");
+    InspectorTest._addSniffer(WebInspector.ConsoleView.prototype, "addMessage", callback);
+}
+
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 Tests that when console.trace is called in eval'ed script ending
 with //@ sourceURL=url it will dump a stack trace that will have

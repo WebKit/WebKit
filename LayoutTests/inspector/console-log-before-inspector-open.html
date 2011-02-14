@@ -1,7 +1,7 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
-<script src="../http/tests/inspector/console-tests.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/console-test.js"></script>
 <script>
 
 console.log('log');
@@ -10,15 +10,16 @@ console.info('info');
 console.warn('warn');
 console.error('error');
 
-function doit()
+function test()
 {
-    dumpConsoleMessages();
+    InspectorTest.dumpConsoleMessages();
+    InspectorTest.completeTest();
 }
 
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 Tests that Web Inspector won't crash if some console have been logged by the time it's opening.
 </p>

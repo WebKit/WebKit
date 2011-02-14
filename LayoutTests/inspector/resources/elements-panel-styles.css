@@ -1,34 +1,34 @@
 body {
-	font-size: 12px;
+    font-size: 12px;
 }
 
 #container {
-	font-family: serif;
-	font-size: 14px;
+    font-family: serif;
+    font-size: 14px;
 }
 
 .foo {
-	color: black;
-	margin: 10px 0 2px;
-	border-radius: 5px;
+    color: black;
+    margin: 10px 0 2px;
+    border-radius: 5px;
 }
 
 .foo, .foo::before {
-	content: "[before Foo]";
-	color: blue;
+    content: "[before Foo]";
+    color: blue;
 }
 
 .foo::before {
-	color: red;
+    color: red;
 }
 
 .foo::after {
-	content: "[after Foo]";
-	color: green;
+    content: "[after Foo]";
+    color: green;
 }
 .foo::after {
-	font-family: courier;
-	content: "[after Foo 2]";
+    font-family: courier;
+    content: "[after Foo 2]";
 }
 
 .foo {

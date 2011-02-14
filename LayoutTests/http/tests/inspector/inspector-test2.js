@@ -35,7 +35,12 @@ InspectorTest.evaluateInConsoleAndDump = function(code, callback)
 
 InspectorTest.evaluateInPage = function(code, callback)
 {
-    InspectorBackend.evaluate(code, "console", false, callback || function() {});
+    function mycallback(result)
+    {
+        if (callback)
+            callback(WebInspector.RemoteObject.fromPayload(result));
+    }
+    InspectorBackend.evaluate(code, "console", false, mycallback);
 }
 
 InspectorTest.evaluateInPageWithTimeout = function(code, callback)
@@ -105,17 +110,6 @@ InspectorTest.reloadPage = function(callback)
     if (WebInspector.panels.network)
         WebInspector.panels.network._reset();
     InspectorBackend.reloadPage(false);
-}
-
-InspectorTest.reloadPageIfNeeded = function(callback)
-{
-    if (!InspectorTest._pageWasReloaded) {
-        InspectorTest._pageWasReloaded = true;
-        InspectorTest.reloadPage(callback);
-    } else {
-        if (callback)
-            callback();
-    }
 }
 
 InspectorTest.pageReloaded = function()
@@ -209,6 +203,20 @@ InspectorTest._addSniffer = function(receiver, methodName, override, opt_sticky)
 
 var runTestCallId = 0;
 var completeTestCallId = 1;
+
+function runAfterIframeIsLoaded()
+{
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+    function step()
+    {
+        if (!window.iframeLoaded)
+            setTimeout(step, 100);
+        else
+            runTest();
+    }
+    setTimeout(step, 100);
+}
 
 function runTest()
 {

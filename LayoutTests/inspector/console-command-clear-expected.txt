@@ -8,4 +8,5 @@ console-command-clear.html:9one
 console-command-clear.html:10two
 console-command-clear.html:11three
 === After clear ===
+undefined
 

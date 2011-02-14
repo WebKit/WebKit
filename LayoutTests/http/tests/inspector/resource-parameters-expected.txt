@@ -4,7 +4,7 @@ Tests that resources panel shows form data parameters.
 
 {
     pageref : "http://localhost:8000/inspector/resources/post-target.cgi?queryParam1=queryValue1&queryParam2="
-    startedDateTime : <string>
+    startedDateTime : <object>
     time : <number>
     request : {
         method : "POST"

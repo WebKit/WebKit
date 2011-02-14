@@ -1,17 +1,17 @@
 <html>
 <head>
-<script src="inspector-test.js"></script>
-<script src="console-tests.js"></script>
+<script src="inspector-test2.js"></script>
+<script src="console-test.js"></script>
 <script>
 var testFunctions = [testDNSLookup, testSSLCertificate];
 var nextTestIndex = 0;
 
-function doit()
+function onload()
 {
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
     if (!window.WebSocket) {
-        console.log("WebSocket is not supported.");
-        dumpConsoleMessages(false);
-        return;
+        console.log("WebSocket is not supported."); return;
     }
     doNextTest();
 }
@@ -19,7 +19,7 @@ function doit()
 function doNextTest()
 {
     if (nextTestIndex == testFunctions.length) {
-        dumpConsoleMessages(false);
+        runTest();
         return;
     }
     var testFunction = testFunctions[nextTestIndex];
@@ -65,6 +65,13 @@ function testSSLCertificate()
         doNextTest();
     };
 }
+
+function test()
+{
+    InspectorTest.dumpConsoleMessages();
+    InspectorTest.completeTest();
+}
+
 </script>
 </head>
 

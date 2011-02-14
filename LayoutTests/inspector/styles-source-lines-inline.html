@@ -1,7 +1,7 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
-<script src="elements-tests.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/elements-test.js"></script>
 
 <style>
 .foo {
@@ -11,41 +11,21 @@
 
 <script>
 
-function doit()
+function test()
 {
-    runAfterIframeIsLoaded(function() {
-        function callback(result)
-        {
-            dumpArray(result);
-            notifyDone();
-        }
-        evaluateInWebInspector("frontend_dumpStyles", callback);
-    });
-}
+    InspectorTest.selectNodeWithId("foo", step1);
 
-// Frontend functions.
-
-function frontend_dumpStyles(testController)
-{
-    testController.waitUntilDone();
-    frontend_expandDOMSubtreeAndRun(testController, null, frontend_selectElementContinuation);
-}
-
-function frontend_selectElementContinuation(testController)
-{
-    frontend_selectElementAndRun(testController, "foo", frontend_selectElementContinuation2);
-}
-
-function frontend_selectElementContinuation2(testController)
-{
-    var result = frontend_getSelectedElementStyles(true);
-    testController.notifyDone(result);
+    function step1()
+    {
+        InspectorTest.dumpSelectedElementStyles(true, false, true);
+        InspectorTest.completeTest();
+    }
 }
 
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 Tests that elements panel shows proper inline style locations in the sidebar panel.
 </p>

@@ -4,11 +4,18 @@ Paragraph BR test
 Next line
 
  
-application/xhtml+xml 
+
 <HTML xmlns="http://www.w3.org/1999/xhtml">
-<Head>…
+<Head>
+<script src="../http/tests/inspector/inspector-test2.js">
+</script>
+<script src="../http/tests/inspector/elements-test.js">
+</script>
+<script>
+<![CDATA[function test(){    InspectorTest.pushAllDOM(step1);    function step1()    {        InspectorTest.dumpLoadedDOM();        InspectorTest.completeTest();    }}]]>
+</script>
 </Head>
-<body onload="onload()">
+<body onload="runTest()">
 <p>"Tests that elements panel shows XML dom tree structure with closing tags for all elements."
 </p>
 <hr>
@@ -20,10 +27,6 @@ application/xhtml+xml
 <![CDATA[ CData Content ]]>
 <img alt="Random Image">
 </img>
-<pre id="outputPre">
-</pre>
-<div id="output" style="white-space: pre; ">
-</div>
 </body>
 </HTML>
 

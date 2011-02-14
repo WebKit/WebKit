@@ -1,44 +1,39 @@
 <html>
 <head>
 <script src="../http/tests/inspector/inspector-test2.js"></script>
-<script src="elements-tests2.js"></script>
+<script src="../http/tests/inspector/elements-test.js"></script>
 <script>
 
 function test()
 {
-    function selectContainerElementContinuation()
-    {
-        InspectorTest.selectElementAndRun("container", disableContainerStyle);
-    }
+    InspectorTest.selectNodeWithId("container", step1);
 
-    function disableContainerStyle()
+    function step1()
     {
-        var treeItem = InspectorTest.getElementStylePropertyTreeItem("font-weight");
         InspectorTest.addResult("Before disable");
-        InspectorTest.addResults(InspectorTest.getSelectedElementStyles(true, true));
+        InspectorTest.dumpSelectedElementStyles(true, true);
 
-        treeItem.toggleEnabled({ target: { checked: false } });
-        InspectorTest.runAfterPendingDispatches(changeContainerStyle);
-    }
-
-    function changeContainerStyle()
-    {
         var treeItem = InspectorTest.getElementStylePropertyTreeItem("font-weight");
-        InspectorTest.addResult("After disable");
-        InspectorTest.addResults(InspectorTest.getSelectedElementStyles(true, true));
-
-        treeItem.applyStyleText("color: green", true);
-        InspectorTest.runAfterPendingDispatches(dumpResults);
+        treeItem.toggleEnabled({ target: { checked: false } });
+        InspectorTest.runAfterPendingDispatches(step2);
     }
 
-    function dumpResults()
+    function step2()
+    {
+        InspectorTest.addResult("After disable");
+        InspectorTest.dumpSelectedElementStyles(true, true);
+
+        var treeItem = InspectorTest.getElementStylePropertyTreeItem("font-weight");
+        treeItem.applyStyleText("color: green", true);
+        InspectorTest.runAfterPendingDispatches(step3);
+    }
+
+    function step3()
     {
         InspectorTest.addResult("After change");
-        InspectorTest.addResults(InspectorTest.getSelectedElementStyles(true, true));
+        InspectorTest.dumpSelectedElementStyles(true, true);
         InspectorTest.completeTest();
     }
-
-    InspectorTest.expandDOMSubtreeAndRun(null, selectContainerElementContinuation);
 }
 </script>
 </head>

@@ -3,61 +3,44 @@
 <head>
 <link rel="stylesheet" src="/bogusSheet1.css">
 <link rel="stylesheet" src="bogusSheet2.css">
-<script src="../http/tests/inspector/inspector-test.js"></script>
-<script src="elements-tests.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/elements-test.js"></script>
 <script>
 
-function doit()
+function test()
 {
-    function callback(result)
+    InspectorTest.pushAllDOM(step1);
+
+    function step1()
     {
-        for (var i = 0; i < result.length; ++i)
-            output("[" + result[i] + "]");
-        notifyDone();
-    }
-    evaluateInWebInspector("frontend_testRewriteHrefs", callback);
-}
+        var innerMapping = WebInspector.domAgent._idToDOMNode;
 
-
-// Frontend functions.
-
-function frontend_testRewriteHrefs(testController)
-{
-    testController.waitUntilDone();
-    // Need test to be async to expand whole the tree first.
-    frontend_expandDOMSubtreeAndRun(testController, null, frontend_testRewriteHrefsContinuation);
-}
-
-function frontend_testRewriteHrefsContinuation(testController)
-{
-    var innerMapping = WebInspector.domAgent._idToDOMNode;
-    var result = [];
-
-    for (var nodeId in innerMapping) {
-        var node = innerMapping[nodeId];
-        if (node.nodeName === "LINK" || node.nodeName === "SCRIPT") {
-            var segments = [];
-            var href = WebInspector.resourceURLForRelatedNode(node, node.getAttribute("src") || node.getAttribute("href"));
-            if (!href) {
-                segments.push("<empty>");
-                continue;
+        for (var nodeId in innerMapping) {
+            var node = innerMapping[nodeId];
+            if (node.nodeName === "LINK" || node.nodeName === "SCRIPT") {
+                var segments = [];
+                var href = WebInspector.resourceURLForRelatedNode(node, node.getAttribute("src") || node.getAttribute("href"));
+                if (!href) {
+                    segments.push("<empty>");
+                    continue;
+                }
+                var parsedURL = href.asParsedURL();
+                if (!parsedURL)
+                    testController.notifyDone("FAIL: no URL match for <" + href + ">");
+                var split = parsedURL.path.split("/");
+                for (var i = split.length - 1, j = 0; j < 3 && i >= 0; --i, ++j)
+                    segments.push(split[i]);
+                InspectorTest.addResult(segments.reverse());
             }
-            var parsedURL = href.asParsedURL();
-            if (!parsedURL)
-                testController.notifyDone("FAIL: no URL match for <" + href + ">");
-            var split = parsedURL.path.split("/");
-            for (var i = split.length - 1, j = 0; j < 3 && i >= 0; --i, ++j)
-                segments.push(split[i]);
-            result.push(segments.reverse());
         }
+        InspectorTest.completeTest();
     }
-    testController.notifyDone(result);
 }
 
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 Tests that src and href element targets are rewritten properly.
 </p>

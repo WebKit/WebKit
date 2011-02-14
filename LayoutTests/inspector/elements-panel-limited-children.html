@@ -1,163 +1,66 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
-<script src="elements-tests.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/elements-test.js"></script>
 <script>
 
-function doit()
+function insertNode()
 {
-    function preOutput(result)
-    {
-        var output = document.getElementById("outputPre");
-        output.textContent += result.replace(/\u200b/g, "").replace(/\n/g, "").replace(/</g, "\n<");
-    }
-
-    function nodeDumpAfterCallback(dump)
-    {
-        preOutput(dump);
-        notifyDone();
-    }
-
-    function showAllCallback(result)
-    {
-        if (result) {
-            preOutput(result);
-            notifyDone();
-        }
-        evaluateInWebInspector("frontend_dumpNode", nodeDumpAfterCallback);
-    }
-
-    function nodeDumpBeforeCallback(dump)
-    {
-        preOutput(dump);
-        evaluateInWebInspector("frontend_showAll", showAllCallback);
-    }
-
-    function nodeExpandedCallback(result)
-    {
-        if (result) {
-            preOutput(result);
-            notifyDone();
-        }
-        var dataElement = document.getElementById("data");
-        dataElement.appendChild(document.createElement("a"));
-        dataElement.removeChild(document.getElementById("id2"));
-        var aElement = document.createElement("a");
-        dataElement.insertBefore(aElement, document.getElementById("id1"));
-        dataElement.appendChild(aElement);
-        dataElement.insertBefore(aElement, document.getElementById("id1"));
-        evaluateInWebInspector("frontend_dumpNode", nodeDumpBeforeCallback);
-    }
-
-    function domLoadedCallback(result)
-    {
-        if (result) {
-            preOutput(result);
-            notifyDone();
-        }
-        evaluateInWebInspector("frontend_revealAndExpandDataNodeInElementsPanel", nodeExpandedCallback);
-    }
-
-    evaluateInWebInspector("frontend_loadDOM", domLoadedCallback);
+    var dataElement = document.getElementById("data");
+    dataElement.appendChild(document.createElement("a"));
+    dataElement.removeChild(document.getElementById("id2"));
+    var aElement = document.createElement("a");
+    dataElement.insertBefore(aElement, document.getElementById("id1"));
+    dataElement.appendChild(aElement);
+    dataElement.insertBefore(aElement, document.getElementById("id1"));
 }
 
-// Frontend functions.
-
-function frontend_showAll(testController)
+function test()
 {
-    try {
-        var dataDivTreeElement = frontend_getDataTreeElement();
-        if (!dataDivTreeElement) {
-            testController.notifyDone("show_All: No data div tree element found");
-            return;
-        }
-        window.__oldUpdateChildren = WebInspector.ElementsTreeElement.prototype._updateChildren;
-        window.__newUpdateChildren = function() {
-            window.__oldUpdateChildren.apply(this, arguments);
-            WebInspector.ElementsTreeElement.prototype._updateChildren = window.__oldUpdateChildren;
-            testController.notifyDone("");
-        }
-        WebInspector.ElementsTreeElement.prototype._updateChildren = window.__newUpdateChildren;
+    var dataTreeElement;
 
-        WebInspector.ElementsTreeElement.prototype.handleLoadAllChildren.call(dataDivTreeElement);
-        testController.waitUntilDone();
-    } catch(e) {
-        testController.notifyDone("showAll: " + e);
-    }
-}
+    InspectorTest.nodeWithId("data", step1);
 
-function frontend_dumpNode(testController)
-{
-    testController.waitUntilDone();
-    function dumpFunction()
+    function step1(node)
     {
-        var dataDivTreeElement = frontend_getDataTreeElement();
-        if (!dataDivTreeElement) {
-            testController.notifyDone("dumpNode: No data div tree element found");
-            return;
-        }
-
-        var liContent = dataDivTreeElement.listItemElement ? dataDivTreeElement.listItemElement.textContent : "{EMPTY}";
-        var childrenContent = dataDivTreeElement.childrenListElement ? dataDivTreeElement.childrenListElement.textContent : "{EMPTY}";
-        testController.notifyDone(liContent + "/" + childrenContent);
-    }
-    // Ensure all asynchronous updates to the Elements tree outline are processed before dumping.
-    setTimeout(dumpFunction, 0);
-}
-
-function frontend_revealAndExpandDataNodeInElementsPanel(testController)
-{
-    var dataDivTreeElement = frontend_getDataTreeElement();
-    if (!dataDivTreeElement) {
-        testController.notifyDone("No data div tree element found");
-        return;
+        dataTreeElement = WebInspector.panels.elements.treeOutline.findTreeElement(node);
+        dataTreeElement._expandedChildrenLimit = 5;
+        dataTreeElement.reveal();
+        dataTreeElement.expand();
+        InspectorTest.runAfterPendingDispatches(step2);
     }
 
-    try {
-        dataDivTreeElement._expandedChildrenLimit = 5;
-        dataDivTreeElement.reveal();
-        dataDivTreeElement.expand();
-        testController.notifyDone("");
-    } catch(e) {
-        testController.notifyDone("expandNode: " + e);
+    function step2()
+    {
+        InspectorTest.addResult("=========== Loaded 5 children ===========");
+        InspectorTest.dumpElementsTree();
+        InspectorTest.evaluateInPage("insertNode()", step3);
     }
-}
 
-function frontend_loadDOM(testController)
-{
-    testController.waitUntilDone();
-    // Need test to be async to expand whole the tree first.
-    try {
-        frontend_expandDOMSubtreeAndRun(testController, null, testController.notifyDone.bind(testController, ""));
-    } catch(e) {
-        testController.notifyDone("loadDOM: " + e);
+    function step3()
+    {
+        InspectorTest.runAfterPendingDispatches(step4);
     }
-}
 
-function frontend_getDataTreeElement()
-{
-    var node = frontend_getDataDOMElement();
-    if (!node)
-        return null;
-    return WebInspector.panels.elements.treeOutline.findTreeElement(node);
-}
-
-
-function frontend_getDataDOMElement()
-{
-    var innerMapping = WebInspector.domAgent._idToDOMNode;
-
-    for (var nodeId in innerMapping) {
-        var node = innerMapping[nodeId];
-        if (node.nodeName === "DIV" && node.getAttribute("id") === "data")
-            return node;
+    function step4()
+    {   
+        InspectorTest.addResult("=========== Modified children ===========");
+        InspectorTest.dumpElementsTree();
+        dataTreeElement.handleLoadAllChildren();
+        InspectorTest.runAfterPendingDispatches(step5);
     }
-    return null;
+
+    function step5()
+    {
+        InspectorTest.addResult("=========== Loaded all children ===========");
+        InspectorTest.dumpElementsTree();
+        InspectorTest.completeTest();
+    }
 }
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <div id="data">
 <div id="id1">1</div>
 <div id="id2">2</div>
@@ -173,7 +76,5 @@ function frontend_getDataDOMElement()
 <p>
 Tests that src and href element targets are rewritten properly.
 </p>
-<pre id="outputPre">
-</pre>
 </body>
 </html>

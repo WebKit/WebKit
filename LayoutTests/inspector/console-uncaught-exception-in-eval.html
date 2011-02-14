@@ -1,18 +1,17 @@
 <html>
 <head>
 <script src="../http/tests/inspector/inspector-test2.js"></script>
-<script src="../http/tests/inspector/console-tests2.js"></script>
+<script src="../http/tests/inspector/console-test.js"></script>
 <script>
 
 function test()
 {
     InspectorTest.reloadPage(function() {
-        InspectorTest.expandConsoleMessages();
         InspectorTest.dumpConsoleMessages();
+        InspectorTest.expandConsoleMessages();
         InspectorTest.completeTest();
     });
 }
-
 
 function evalSource()
 {

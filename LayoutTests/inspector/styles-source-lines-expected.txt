@@ -1,7 +1,26 @@
 Tests that proper source lines are reported for the parsed styles.
 
-Line:15	body, .at_line_15::before
-Line:29	body, .at_line_29
-Line:43	body, .at_line_43
-Line:50	body, .at_line_50
+[expanded] element.style { ()
+
+======== Matched CSS Rules ========
+[expanded] body, .at_line_50 { (styles-source-lines.html:50)
+border: 1px solid
+    red;
+
+[expanded] body, .at_line_43 { (styles-source-lines.html:43)
+font-size: 10px;
+
+[expanded] body, .at_line_29 { (styles-source-lines.html:29)
+font-family: /*  Comment in 
+                      value  */courier;
+
+[expanded] body, .at_line_15::before { (styles-source-lines.html:15)
+color: red;
+content: "Before";
+
+[expanded] body { (user agent stylesheet)
+display: block;
+margin: 8px;
+
+
 

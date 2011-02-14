@@ -1,27 +1,16 @@
 <html>
 <head>
-<script src="inspector-test.js"></script>
-<script src="console-tests.js"></script>
+<script src="inspector-test2.js"></script>
+<script src="console-test.js"></script>
 <script>
 
-function doit()
+function requestHelper(method, url)
 {
-    // Enable XMLHttpRequest Logging.
-    evaluateInWebInspector("frontend_enableXMLHttpRequestLogging", function(result) {
-        console.log(result);
-        makeRequests();
-        testDisabled();
-    });
-}
-
-function testDisabled()
-{
-    // Disable XMLHttpRequest Logging.
-    evaluateInWebInspector("frontend_disableXMLHttpRequestLogging", function(result) {
-        console.log(result);
-        makeRequests();
-        dumpConsoleMessages();
-    });
+    // Make synchronous requests for simplicity.
+    console.log("sending a %s request to %s", method, url);
+    var xhr = new XMLHttpRequest();
+    xhr.open(method, url, false);
+    xhr.send();
 }
 
 function makeRequests()
@@ -34,37 +23,43 @@ function makeRequests()
     requestHelper("POST", "resources/post-target.cgi");
 }
 
-function requestHelper(method, url)
+function test()
 {
-    // Make synchronous requests for simplicity.
-    console.log("sending a %s request to %s", method, url);
-    var xhr = new XMLHttpRequest();
-    xhr.open(method, url, false);
-    xhr.send();
-}
+    step1();
 
-function frontend_enableXMLHttpRequestLogging(testController)
-{
-    InspectorBackend.setMonitoringXHREnabled(true, function() {
-        testController.notifyDone("enabled");
-    });
+    function step1()
+    {
+        function callback()
+        {
+            InspectorTest.evaluateInPage("makeRequests()", step2);
+        }
+        InspectorBackend.setMonitoringXHREnabled(true, callback);
+    }
 
-    testController.waitUntilDone();
-}
+    function step2()
+    {
+        function callback()
+        {
+            InspectorTest.evaluateInPage("makeRequests()", step3);
+        }
+        InspectorBackend.setMonitoringXHREnabled(false, callback);
+    }
 
-function frontend_disableXMLHttpRequestLogging(testController)
-{
-    InspectorBackend.setMonitoringXHREnabled(false, function() {
-        testController.notifyDone("disabled");
-    });
-
-    testController.waitUntilDone();
+    function step3()
+    {
+        function finish()
+        {
+            InspectorTest.dumpConsoleMessages();
+            InspectorTest.completeTest();
+        }
+        InspectorTest.runAfterPendingDispatches(finish);
+    }
 }
 
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 Tests that XMLHttpRequest Logging works when Enabled and doesn't show logs when Disabled.
 </p>

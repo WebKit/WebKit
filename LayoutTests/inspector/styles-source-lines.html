@@ -53,47 +53,25 @@ body, .at_line_50
 }
 </style>
 
-<script src="../http/tests/inspector/inspector-test.js"></script>
-<script src="elements-tests.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/elements-test.js"></script>
 <script>
 
-function doit()
+function test()
 {
-    function callback(styles)
+    InspectorTest.selectNodeWithId("mainBody", step1);
+
+    function step1()
     {
-        var matchedCSSRules = styles.matchedCSSRules;
-        for (var i = 0; i < matchedCSSRules.length; ++i) {
-            if (matchedCSSRules[i].origin !== "")
-                continue;
-            output("Line:" + (matchedCSSRules[i].sourceLine + 1) + "\t" + matchedCSSRules[i].selectorText);
-        }
-        notifyDone();
+        InspectorTest.dumpSelectedElementStyles(true, false, true);
+        InspectorTest.completeTest();
     }
-    evaluateInWebInspector("frontend_dumpSourceLines", callback);
-}
-
-
-// Frontend functions.
-
-function frontend_dumpSourceLines(testController)
-{
-    testController.waitUntilDone();
-    frontend_expandDOMSubtreeAndRun(testController, null, frontend_getRawStyles);
-}
-
-function frontend_getRawStyles(testController)
-{
-    function callback(styles)
-    {
-        testController.notifyDone(styles);
-    }
-    InspectorBackend.getStylesForNode(WebInspector.domAgent.document.body.id, callback);
 }
 
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()" id="mainBody">
 <p>
 Tests that proper source lines are reported for the parsed styles.
 </p>

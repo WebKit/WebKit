@@ -9,8 +9,35 @@
 10
 Tests that src and href element targets are rewritten properly.
 
+=========== Loaded 5 children ===========
 
-<div id="data">/
+<html>
+<head>…
+</head>
+<body onload="runTest()">
+<div id="data">
+<div id="id1">1
+</div>
+<div id="id2">2
+</div>
+<div id="id3">3
+</div>
+<div id="id4">4
+</div>
+<div id="id5">5
+</div>Show All Nodes (5 More)
+</div>
+<p>Tests that src and href element targets are rewritten properly.
+</p>
+</body>
+</html>
+=========== Modified children ===========
+
+<html>
+<head>…
+</head>
+<body onload="runTest()">
+<div id="data">
 <a>
 </a>
 <div id="id1">1
@@ -22,7 +49,21 @@ Tests that src and href element targets are rewritten properly.
 <div id="id5">5
 </div>Show All Nodes (6 More)
 </div>
-<div id="data">/
+<p>Tests that src and href element targets are rewritten properly.
+</p>
+<div class="output" style="white-space: pre; ">…
+</div>
+<div class="output" style="white-space: pre; ">…
+</div>
+</body>
+</html>
+=========== Loaded all children ===========
+
+<html>
+<head>…
+</head>
+<body onload="runTest()">
+<div id="data">
 <a>
 </a>
 <div id="id1">1
@@ -46,4 +87,16 @@ Tests that src and href element targets are rewritten properly.
 <a>
 </a>
 </div>
+<p>Tests that src and href element targets are rewritten properly.
+</p>
+<div class="output" style="white-space: pre; ">…
+</div>
+<div class="output" style="white-space: pre; ">…
+</div>
+<div class="output" style="white-space: pre; ">…
+</div>
+<div class="output" style="white-space: pre; ">…
+</div>
+</body>
+</html>
 

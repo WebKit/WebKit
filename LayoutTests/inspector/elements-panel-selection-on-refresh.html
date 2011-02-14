@@ -1,54 +1,37 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
-<script src="elements-tests.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/elements-test.js"></script>
 <script>
 
-function doit()
+function test()
 {
-    function callback(result)
+    InspectorTest.selectNodeWithId("test-topic", step1);
+
+    function step1()
     {
-        if (result === "reload")
-            window.location.reload();
-        else {
-            output("Selected element should be 'P', was: '" + result + "'");
-            notifyDone();
-        }
+        InspectorTest.reloadPage(step2);
     }
-    evaluateInWebInspector("frontend_selectElement", callback);
-}
+ 
+    function step2()
+    {
+        InspectorTest.runAfterPendingDispatches(step3);
+    }
 
-// Frontend functions.
-
-function frontend_selectElement(testController)
-{
-    if (window.refreshCalled) {
+    function step3()
+    {
         // We should have "test-topic" element selected after refresh.
         var selectedElement = WebInspector.panels.elements.treeOutline.selectedTreeElement;
-        return selectedElement ? selectedElement.representedObject.nodeName : "null";
-    } else {
-        // Select the "test-topic" element.
-        testController.waitUntilDone();
-        frontend_expandDOMSubtreeAndRun(testController, null, frontend_selectElementContinuation);
+        var nodeName = selectedElement ? selectedElement.representedObject.nodeName : "null";
+        InspectorTest.addResult("Selected element should be 'P', was: '" + nodeName + "'");
+        InspectorTest.completeTest();
     }
-}
-
-function frontend_selectElementContinuation(testController)
-{
-    var node = frontend_nodeForId("test-topic");
-    if (node) {
-        WebInspector.panels.elements.treeOutline.revealAndSelectNode(node);
-        window.refreshCalled = true;
-        testController.notifyDone("reload");
-        return;
-    }
-    testController.notifyDone("FAIL");
 }
 
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p id="test-topic">
 Tests that elements panel preserves selected node on page refresh.
 </p>

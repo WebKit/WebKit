@@ -1,109 +1,24 @@
 <HTML xmlns="http://www.w3.org/1999/xhtml">
 <Head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
-<script src="elements-tests.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/elements-test.js"></script>
 <script>
 <![CDATA[
-function doit()
+function test()
 {
-    function preOutput(result)
+    InspectorTest.pushAllDOM(step1);
+
+    function step1()
     {
-        var output = document.getElementById("outputPre");
-        output.textContent = result.replace(/\u200b/g, "").replace(/\n/g, "").replace(/</g, "\n<");
-    }
-
-    function nodeDumpCallback(dump)
-    {
-        preOutput(dump);
-        notifyDone();
-    }
-
-    function nodeExpandedCallback(result)
-    {
-        if (result) {
-            preOutput(result);
-            notifyDone();
-        }
-        evaluateInWebInspector("frontend_dumpAllElements", nodeDumpCallback);
-    }
-
-    function domLoadedCallback(result)
-    {
-        if (result) {
-            preOutput(result);
-            notifyDone();
-        }
-        evaluateInWebInspector("frontend_expandNodes", nodeExpandedCallback);
-    }
-
-    evaluateInWebInspector("frontend_loadDOM", domLoadedCallback);
-}
-
-
-// Frontend functions.
-
-function frontend_dumpAllElements(testController)
-{
-    testController.waitUntilDone();
-    // Need test to be async to expand whole the tree first.
-    frontend_expandDOMSubtreeAndRun(testController, null, frontend_reportMimeTypeAndContent);
-}
-
-function frontend_reportMimeTypeAndContent(testController)
-{
-    testController.notifyDone(WebInspector.mainResource.mimeType + " " + WebInspector.panels.elements.treeOutline.element.textContent);
-}
-
-function frontend_expandNodes(testController)
-{
-    try {
-        var innerMapping = WebInspector.domAgent._idToDOMNode;
-        var treeElement = false;
-        var result = "";
-
-        for (var nodeId in innerMapping) {
-            var node = innerMapping[nodeId];
-            result += node.nodeName + " ";
-            if (node.nodeName === "p") {
-                treeElement = WebInspector.panels.elements.treeOutline.createTreeElementFor(node);
-                if (treeElement) {
-                    treeElement.reveal();
-                    treeElement.expand();
-                }
-            }
-        }
-
-        if (!treeElement) {
-            if (treeElement === false)
-                testController.notifyDone("No 'p' DOM element found");
-            else
-                testController.notifyDone("'p' tree element could not be created");
-
-            return;
-        }
-
-        testController.notifyDone("");
-    } catch(e) {
-        testController.notifyDone("expandNode: " + e);
+        InspectorTest.dumpLoadedDOM();
+        InspectorTest.completeTest();
     }
 }
-
-function frontend_loadDOM(testController)
-{
-    testController.waitUntilDone();
-    // Need test to be async to expand whole the tree first.
-    try {
-        frontend_expandDOMSubtreeAndRun(testController, null, testController.notifyDone.bind(testController, ""));
-    } catch(e) {
-        testController.notifyDone("loadDOM: " + e);
-    }
-}
-
 ]]>
 </script>
 </Head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 Tests that elements panel shows XML dom tree structure with closing tags for all elements.
 </p>
@@ -114,9 +29,6 @@ Tests that elements panel shows XML dom tree structure with closing tags for all
 <![CDATA[ CData Content ]]>
 
 <img alt="Random Image"></img>
-
-<pre id="outputPre">
-</pre>
 
 </body>
 </HTML>

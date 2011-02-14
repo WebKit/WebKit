@@ -1,10 +1,10 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
-<script src="../http/tests/inspector/console-tests.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/console-test.js"></script>
 <script>
 
-function doit()
+function onload()
 {
     var formElement = document.getElementById("f");
     var selectElement = document.getElementById("sel");
@@ -40,9 +40,14 @@ function doit()
     arrayX.push(arrayY);
     console.log(arrayX);
 
-    dumpConsoleMessages();
+    runTest();
 }
 
+function test()
+{
+    InspectorTest.dumpConsoleMessages();
+    InspectorTest.completeTest();
+}
 </script>
 </head>
 

@@ -1,18 +1,11 @@
 <html>
 <head>
 <script src="../http/tests/inspector/inspector-test2.js"></script>
-<script src="elements-tests2.js"></script>
+<script src="../http/tests/inspector/elements-test.js"></script>
 <script>
 
 var test = function()
 {
-    InspectorTest.expandDOMSubtreeAndRun(null, step1);
-
-    function step1()
-    {
-        InspectorTest.selectElementAndRun("foo", step2);
-    }
-
     var expressions = [
         "$0.toString()",
         "keys([3,4]).toString()",
@@ -21,7 +14,9 @@ var test = function()
         "$$('p#foo').toString()"
     ];
 
-    function step2()
+    InspectorTest.selectNodeWithId("foo", step1);
+
+    function step1(node)
     {
         if (!expressions.length) {
             InspectorTest.completeTest();
@@ -29,7 +24,7 @@ var test = function()
         }
         var expression = expressions[0];
         expressions.splice(0, 1);
-        InspectorTest.evaluateInConsoleAndDump(expression, step2);
+        InspectorTest.evaluateInConsoleAndDump(expression, step1);
     }
 }
 

@@ -1,25 +1,30 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
-<script src="../http/tests/inspector/inspector-test2.js"></script>
-<script src="elements-tests2.js"></script>
 <link rel="stylesheet" href="resources/styles-url-linkify.css">
-<script>
 
-function runAfterIframeLoaded()
-{
-    function step()
-    {
-        if (!window.iframeLoaded)
-            setTimeout(step, 100);
-        else
-            runTest();
-    }
-    setTimeout(step, 100);
-}
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/elements-test.js"></script>
+<script>
 
 function test()
 {
+    function completeURL(baseURL, href)
+    {
+        InspectorTest.addResult(WebInspector.completeURL(baseURL, href));
+    }
+
+    InspectorTest.addResult("Partial URLs completed:");
+    completeURL("http://example.com", "/");
+    completeURL("http://example.com", "moo");
+    completeURL("http://example.com/", "https://secure.com/moo");
+    completeURL("https://example.com/foo", "//secure.com/moo");
+    completeURL("http://example.com/foo/zoo", "/moo");
+    completeURL("http://example.com/foo/zoo/", "moo");
+    completeURL("http://example.com/foo/zoo", "boo/moo");
+    completeURL("http://example.com/foo", "moo");
+    completeURL("http://example.com/foo", "?a=b");
+    completeURL("http://example.com/foo?c=d", "?a=b");
+
     function dumpHref()
     {
         var href;
@@ -41,52 +46,26 @@ function test()
         InspectorTest.addResult(output.join("/"));
     }
 
-    function selectLocalElement()
-    {
-        InspectorTest.selectElementAndRun("local", executeLocalTest);
-    }
+    InspectorTest.selectNodeWithId("local", step1);
 
-    function completeURL(baseURL, href)
+    function step1()
     {
-        InspectorTest.addResult(WebInspector.completeURL(baseURL, href));
-    }
-
-    function completeURLTest()
-    {
-        InspectorTest.addResult("Partial URLs completed:");
-        completeURL("http://example.com", "/");
-        completeURL("http://example.com", "moo");
-        completeURL("http://example.com/", "https://secure.com/moo");
-        completeURL("https://example.com/foo", "//secure.com/moo");
-        completeURL("http://example.com/foo/zoo", "/moo");
-        completeURL("http://example.com/foo/zoo/", "moo");
-        completeURL("http://example.com/foo/zoo", "boo/moo");
-        completeURL("http://example.com/foo", "moo");
-        completeURL("http://example.com/foo", "?a=b");
-        completeURL("http://example.com/foo?c=d", "?a=b");
-    }
-
-    function executeLocalTest()
-    {
-        completeURLTest();
         InspectorTest.addResult("Link for a URI from CSS document:");
         dumpHref();
-        InspectorTest.selectElementAndRun("iframed", executeIframedTest);
+        InspectorTest.selectNodeWithId("iframed", step2);
     }
 
-    function executeIframedTest()
+    function step2()
     {
         InspectorTest.addResult("Link for a URI from iframe inline stylesheet:");
         dumpHref();
         InspectorTest.completeTest();
     }
-
-    InspectorTest.expandDOMSubtreeAndRun(null, selectLocalElement);
 }
 
 </script>
 </head>
-<body onload="runAfterIframeLoaded()">
+<body onload="runAfterIframeIsLoaded()">
 <p>
 Tests that URLs are linked to and completed correctly. Bugs <a href="http://bugs.webkit.org/show_bug.cgi?id=51663">51663</a>, <a href="http://bugs.webkit.org/show_bug.cgi?id=53171">53171</a>
 </p>

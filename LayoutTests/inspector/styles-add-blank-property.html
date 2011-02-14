@@ -1,89 +1,71 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
-<script src="elements-tests.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/elements-test.js"></script>
 <script>
 
-function doit()
+function test()
 {
-    function callback(result)
+    InspectorTest.selectNodeWithId("inspected", step1);
+
+    var treeElement;
+
+    function step1()
     {
-        dumpArray(result);
-        notifyDone();
-    }
-    evaluateInWebInspector("frontend_runTest", callback);
-}
+        InspectorTest.addResult("Before append:");
+        InspectorTest.dumpSelectedElementStyles(true);
 
-// Frontend functions.
+        var section = WebInspector.panels.elements.sidebarPanes.styles.sections[0][1];
+        section.expand();
 
-function frontend_runTest(testController)
-{
-    testController.waitUntilDone();
-    frontend_expandDOMSubtreeAndRun(testController, null, frontend_selectInspectedElement);
-}
-
-function frontend_selectInspectedElement(testController)
-{
-    frontend_selectElementAndRun(testController, "inspected", frontend_dumpInspectedStyle);
-}
-
-function frontend_dumpInspectedStyle(testController)
-{
-    testController.results.push("Before append:");
-    testController.results = testController.results.concat(frontend_getSelectedElementStyles(true));
-
-    var section = WebInspector.panels.elements.sidebarPanes.styles.sections[0][1];
-    section.expand();
-    var treeElement = section.addNewBlankProperty();
-    var enterKeyDown = frontend_createKeyEvent("Enter");
-
-    function removeEmpty()
-    {
-        window.getSelection().anchorNode.dispatchEvent(enterKeyDown);
-        frontend_dumpResults(testController);
+        // Create and increment.
+        treeElement = section.addNewBlankProperty();
+        treeElement.startEditing();
+        treeElement.nameElement.textContent = "margin-left";
+        treeElement.nameElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
+        treeElement.valueElement.textContent = "1px";
+        treeElement.valueElement.firstChild.select();
+        treeElement.valueElement.dispatchEvent(InspectorTest.createKeyEvent("Up"));
+        InspectorTest.runAfterPendingDispatches(step2);
     }
 
-    function commit()
+    function step2()
     {
-        treeElement.valueElement.dispatchEvent(enterKeyDown);
-        testController.runAfterPendingDispatches(removeEmpty.bind(this));
+        // Increment again.
+        treeElement.valueElement.dispatchEvent(InspectorTest.createKeyEvent("Up"));
+        InspectorTest.runAfterPendingDispatches(step3);
     }
 
-    function incrementAgain()
+    function step3()
     {
-        treeElement.valueElement.dispatchEvent(frontend_createKeyEvent("Up"));
-        testController.runAfterPendingDispatches(commit.bind(this));
+        // Commit.
+        treeElement.nameElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
+        InspectorTest.selectNodeWithId("other", step4);
     }
 
-    treeElement.startEditing();
-    treeElement.nameElement.textContent = "margin-left";
-    treeElement.nameElement.dispatchEvent(enterKeyDown);
-    treeElement.valueElement.textContent = "1px";
-    treeElement.valueElement.firstChild.select();
-    treeElement.valueElement.dispatchEvent(frontend_createKeyEvent("Up"));
-    testController.runAfterPendingDispatches(incrementAgain.bind(this));
-}
-
-function frontend_dumpResults(testController)
-{
-    function reportResults()
+    function step4()
     {
-        testController.results.push("After append:");
-        testController.results = testController.results.concat(frontend_getSelectedElementStyles(true));
-        testController.notifyDone(testController.results);
+        InspectorTest.selectNodeWithId("inspected", step5);
     }
-    frontend_selectElementAndRun(testController, "inspected", reportResults);
+
+    function step5()
+    {
+        InspectorTest.addResult("After append:");
+        InspectorTest.dumpSelectedElementStyles(true);
+        InspectorTest.completeTest();
+    }
 }
 
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 Tests that adding a new blank property works.
 </p>
 
 <div id="inspected" style="font-size: 12px">Text</div>
+<div id="other"></div>
 
 </body>
 </html>

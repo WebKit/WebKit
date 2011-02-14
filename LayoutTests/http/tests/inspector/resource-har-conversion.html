@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="resource-test2.js"></script>
+<script src="resources-test.js"></script>
 <script src="inspector-test2.js"></script>
 
 <script>
@@ -25,7 +25,7 @@ var test = function()
         }
     }
 
-    InspectorTest.reloadPageIfNeeded(function() {
+    InspectorTest.reloadPage(function() {
         InspectorBackend.evaluate("doXHR()", "console", false, function() {
             addCookieHeadersToResource(findResourceByURL(/inspector-test2\.js$/));
             var entries = (new WebInspector.HARLog()).build().entries;

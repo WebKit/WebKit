@@ -1,16 +1,25 @@
 Tests that elements panel shows dom tree structure.
 
+Text
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<head>…
+<head>
+<script src="../http/tests/inspector/inspector-test2.js">
+</script>
+<script src="../http/tests/inspector/elements-test.js">
+</script>
+<script>function test(){    InspectorTest.pushAllDOM(step1);    function step1()    {        InspectorTest.dumpLoadedDOM();        InspectorTest.completeTest();    }}
+</script>
 </head>
-<body onload="onload()">
+<body onload="runTest()">
 <p>Tests that elements panel shows dom tree structure.
 </p>
-<pre id="outputPre">
-</pre>
-<div id="output" style="white-space: pre; ">
+<div id="level1">
+<div id="level2">"Text        "
+<div id="level3">
+</div>
+</div>
 </div>
 </body>
 </html>

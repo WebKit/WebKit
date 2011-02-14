@@ -1,63 +1,41 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
-<script src="elements-tests.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/elements-test.js"></script>
 <script>
 
-function doit()
+function test()
 {
-    function callback(result)
+
+    InspectorTest.selectNodeWithId("nested", step1);
+
+    function step1()
     {
-        dumpArray(result);
-        notifyDone();
+        var treeItem = InspectorTest.getElementStylePropertyTreeItem("font-weight");
+        InspectorTest.addResult("Before disable");
+        InspectorTest.dumpSelectedElementStyles(true);
+
+        InspectorTest.selectNodeWithId("container", step2);
     }
-    evaluateInWebInspector("frontend_runTest", callback);
-}
 
-// Frontend functions.
-
-function frontend_runTest(testController)
-{
-    testController.waitUntilDone();
-    frontend_expandDOMSubtreeAndRun(testController, null, frontend_selectNestedElement);
-}
-
-function frontend_selectNestedElement(testController)
-{
-    frontend_selectElementAndRun(testController, "nested", frontend_dumpNestedStyle);
-}
-
-function frontend_dumpNestedStyle(testController)
-{
-    var treeItem = frontend_getElementStylePropertyTreeItem("font-weight");
-    testController.results.push("Before disable");
-    testController.results = testController.results.concat(frontend_getSelectedElementStyles(true));
-
-    frontend_selectElementAndRun(testController, "container", frontend_disableContainerStyle);
-}
-
-function frontend_disableContainerStyle(testController)
-{
-    var treeItem = frontend_getElementStylePropertyTreeItem("font-weight");
-    treeItem.toggleEnabled({ target: { checked: false } });
-    testController.runAfterPendingDispatches(frontend_dumpResults.bind(this, testController));
-}
-
-function frontend_dumpResults(testController)
-{
-    function reportResults()
+    function step2()
     {
-        testController.results.push("After disable:");
-        testController.results = testController.results.concat(frontend_getSelectedElementStyles(true));
-        testController.notifyDone(testController.results);
+        var treeItem = InspectorTest.getElementStylePropertyTreeItem("font-weight");
+        treeItem.toggleEnabled({ target: { checked: false } });
+        InspectorTest.selectNodeWithId("nested", step3);
     }
-    frontend_selectElementAndRun(testController, "nested", reportResults);
-}
 
+    function step3()
+    {
+        InspectorTest.addResult("After disable:");
+        InspectorTest.dumpSelectedElementStyles(true);
+        InspectorTest.completeTest();
+    }
+}
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 Tests that disabling inherited style property does not break further style inspection.
 </p>

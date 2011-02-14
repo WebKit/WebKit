@@ -1,3 +1,100 @@
+2011-02-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [layout tests] get rid of elements-tests.js in favor of elements-tests2.js
+        https://bugs.webkit.org/show_bug.cgi?id=54354
+
+        * http/tests/inspector/console-resource-errors.html:
+        * http/tests/inspector/console-test.js: Renamed from LayoutTests/http/tests/inspector/console-tests2.js.
+        * http/tests/inspector/console-tests.js: Removed.
+        * http/tests/inspector/console-websocket-error.html:
+        * http/tests/inspector/console-xhr-logging-expected.txt:
+        * http/tests/inspector/console-xhr-logging.html:
+        * http/tests/inspector/debugger-test.js: Renamed from LayoutTests/http/tests/inspector/debugger-test2.js.
+        * http/tests/inspector/elements-test.js: Added.
+        * http/tests/inspector/inspector-test2.js:
+        * http/tests/inspector/resource-har-conversion-expected.txt:
+        * http/tests/inspector/resource-har-conversion.html:
+        * http/tests/inspector/resource-parameters-expected.txt:
+        * http/tests/inspector/resource-parameters.html:
+        * http/tests/inspector/resource-tests.js: Removed.
+        * http/tests/inspector/resources-test.js: Renamed from LayoutTests/http/tests/inspector/resource-test2.js.
+        * inspector/command-line-api.html:
+        * inspector/console-api-on-call-frame.html:
+        * inspector/console-assert.html:
+        * inspector/console-clear.html:
+        * inspector/console-command-clear-expected.txt:
+        * inspector/console-command-clear.html:
+        * inspector/console-dir-global.html:
+        * inspector/console-dir.html:
+        * inspector/console-dirxml.html:
+        * inspector/console-eval-global.html:
+        * inspector/console-eval.html:
+        * inspector/console-format-collections-expected.txt:
+        * inspector/console-format-collections.html:
+        * inspector/console-format-expected.txt:
+        * inspector/console-format.html:
+        * inspector/console-log-before-inspector-open.html:
+        * inspector/console-log-syntax-error.html:
+        * inspector/console-object-constructor-name.html:
+        * inspector/console-tests.html:
+        * inspector/console-trace-in-eval.html:
+        * inspector/console-trace.html:
+        * inspector/console-uncaught-exception-in-eval.html:
+        * inspector/console-uncaught-exception.html:
+        * inspector/debugger-autocontinue-on-syntax-error.html:
+        * inspector/debugger-breakpoints-not-activated-on-reload.html:
+        * inspector/debugger-cyclic-ref.html:
+        * inspector/debugger-eval-on-call-frame.html:
+        * inspector/debugger-eval-while-paused.html:
+        * inspector/debugger-expand-scope.html:
+        * inspector/debugger-no-nested-pause.html:
+        * inspector/debugger-pause-in-eval-script.html:
+        * inspector/debugger-pause-on-breakpoint.html:
+        * inspector/debugger-pause-on-debugger-statement.html:
+        * inspector/debugger-pause-on-exception.html:
+        * inspector/debugger-proto-property.html:
+        * inspector/debugger-scripts.html:
+        * inspector/debugger-step-in.html:
+        * inspector/debugger-step-out.html:
+        * inspector/debugger-step-over.html:
+        * inspector/debugger-suspend-active-dom-objects.html:
+        * inspector/dom-breakpoints.html:
+        * inspector/elements-delete-inline-style.html:
+        * inspector/elements-img-tooltip-expected.txt:
+        * inspector/elements-img-tooltip.html:
+        * inspector/elements-panel-limited-children-expected.txt:
+        * inspector/elements-panel-limited-children.html:
+        * inspector/elements-panel-rewrite-href-expected.txt:
+        * inspector/elements-panel-rewrite-href.html:
+        * inspector/elements-panel-selection-on-refresh-expected.txt:
+        * inspector/elements-panel-selection-on-refresh.html:
+        * inspector/elements-panel-structure-expected.txt:
+        * inspector/elements-panel-structure.html:
+        * inspector/elements-panel-styles.html:
+        * inspector/elements-panel-xhtml-structure-expected.txt:
+        * inspector/elements-panel-xhtml-structure.xhtml:
+        * inspector/elements-tests.js: Removed.
+        * inspector/elements-tests2.js: Removed.
+        * inspector/resources/elements-panel-styles.css:
+        * inspector/resources/styles-iframe-data.html:
+        * inspector/storage-panel-dom-storage.html:
+        * inspector/styles-add-blank-property.html:
+        * inspector/styles-computed-trace.html:
+        * inspector/styles-disable-inherited.html:
+        * inspector/styles-disable-then-change.html:
+        * inspector/styles-disable-then-delete.html:
+        * inspector/styles-disable-then-enable.html:
+        * inspector/styles-iframe-expected.txt:
+        * inspector/styles-iframe.html:
+        * inspector/styles-new-API.html:
+        * inspector/styles-source-lines-expected.txt:
+        * inspector/styles-source-lines-inline.html:
+        * inspector/styles-source-lines.html:
+        * inspector/styles-source-offsets.html:
+        * inspector/styles-url-linkify.html:
+
 2011-02-14  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Rebaseline chromium's test_expectations.

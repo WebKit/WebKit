@@ -1,7 +1,7 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
-<script src="../http/tests/inspector/console-tests.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/console-test.js"></script>
 <script>
 
 var foo = 'fooValue';
@@ -9,27 +9,26 @@ var bar = {
     a: 'b'
 };
 
-function doit()
+function test()
 {
-    evaluateInWebInspector("frontend_testEvalGlobal", function() {
-        dumpConsoleMessages();
-    });
-}
+    InspectorTest.evaluateInConsole("foo", step1);
 
-function frontend_testEvalGlobal(layoutTestController)
-{
-    layoutTestController.waitUntilDone();
-    frontend_evaluateInConsole("foo", function() {
-        frontend_evaluateInConsole("bar1", function() {
-            layoutTestController.notifyDone();
-        });
-    });
+    function step1()
+    {
+        InspectorTest.evaluateInConsole("bar1", step2);
+    }
+
+    function step2()
+    {
+        InspectorTest.dumpConsoleMessages();
+        InspectorTest.completeTest();
+    }
 }
 
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 Tests that simple evaluations may be performed in the console on global object.
 </p>

@@ -1,0 +1,148 @@
+var initialize_ElementTest = function() {
+
+InspectorTest.pushAllDOM = function(callback)
+{
+    InspectorTest.nodeWithId(/nonstring/, callback);
+}
+
+InspectorTest.nodeWithId = function(idValue, callback)
+{
+    var result = null;
+    var topLevelChildrenRequested = false;
+    var pendingRequests = 0;
+    function processChildren(topLevel, children)
+    {
+        pendingRequests--;
+        if (result)
+            return;
+
+        for (var i = 0; children && i < children.length; ++i) {
+            var childNode = children[i];
+            if (childNode.getAttribute("id") === idValue) {
+                result = childNode;
+                if (callback)
+                    callback(result);
+                return;
+            }
+            pendingRequests++;
+            WebInspector.domAgent.getChildNodesAsync(childNode, processChildren.bind(null, false));
+        }
+
+        if (topLevel)
+            topLevelChildrenRequested = true;
+        if (topLevelChildrenRequested && !result && !pendingRequests)
+            callback(null);    
+    }
+    pendingRequests++;
+    WebInspector.domAgent.getChildNodesAsync(WebInspector.domAgent.document, processChildren.bind(this, true));
+};
+
+InspectorTest.selectNodeWithId = function(idValue, callback)
+{
+    function mycallback(node)
+    {
+        if (node)
+            WebInspector.updateFocusedNode(node.id);
+        if (callback)
+            InspectorTest.runAfterPendingDispatches(callback.bind(null, node));
+    }
+    InspectorTest.nodeWithId(idValue, mycallback);
+};
+
+InspectorTest.dumpSelectedElementStyles = function(excludeComputed, excludeMatched, omitLonghands)
+{
+    var styleSections = WebInspector.panels.elements.sidebarPanes.styles.sections;
+    for (var pseudoId in styleSections) {
+        var pseudoName = WebInspector.StylesSidebarPane.PseudoIdNames[pseudoId];
+        var sections = styleSections[pseudoId];
+        for (var i = 0; i < sections.length; ++i) {
+            var section = sections[i];
+            if (section.computedStyle && excludeComputed)
+                continue;
+            if (section.rule && excludeMatched)
+                continue;
+            if (section.element.previousSibling && section.element.previousSibling.className === "styles-sidebar-separator")
+                InspectorTest.addResult("======== " + section.element.previousSibling.textContent + " ========");
+            InspectorTest.addResult((section.expanded ? "[expanded] " : "[collapsed] ") + section.titleElement.textContent + " (" + section.subtitleAsTextForTest + ")");
+            section.expand();
+            InspectorTest.dumpStyleTreeOutline(section.propertiesTreeOutline, omitLonghands ? 1 : 2);
+            InspectorTest.addResult("");
+        }
+        InspectorTest.addResult("");
+    }
+};
+
+// FIXME: this returns the first tree item found (may fail for same-named properties in a style).
+InspectorTest.getElementStylePropertyTreeItem = function(propertyName)
+{
+    var styleSections = WebInspector.panels.elements.sidebarPanes.styles.sections[0];
+    var elementStyleSection = styleSections[1];
+    var outline = elementStyleSection.propertiesTreeOutline;
+    for (var i = 0; i < outline.children.length; ++i) {
+        var treeItem = outline.children[i];
+        if (treeItem.name === propertyName)
+            return treeItem;
+    }
+    return null;
+};
+
+InspectorTest.dumpStyleTreeOutline = function(treeItem, depth)
+{
+    var children = treeItem.children;
+    for (var i = 0; i < children.length; ++i)
+        InspectorTest.dumpStyleTreeItem(children[i], "", depth || 2);
+};
+
+InspectorTest.dumpStyleTreeItem = function(treeItem, prefix, depth)
+{
+    // Filter out width and height properties in order to minimize
+    // potential diffs.
+    if (!treeItem.listItemElement.textContent.indexOf("width") ||
+        !treeItem.listItemElement.textContent.indexOf("height"))
+        return;
+
+    if (treeItem.listItemElement.hasStyleClass("inherited"))
+        return;
+    var typePrefix = "";
+    if (treeItem.listItemElement.hasStyleClass("overloaded"))
+        typePrefix += "/-- overloaded --/ ";
+    if (treeItem.listItemElement.hasStyleClass("disabled"))
+        typePrefix += "/-- disabled --/ ";
+    var textContent = treeItem.listItemElement.textContent;
+
+    // Add non-selectable url text.
+    var textData = treeItem.listItemElement.querySelector("[data-uncopyable]");
+    if (textData)
+        textContent += textData.getAttribute("data-uncopyable");
+    InspectorTest.addResult(prefix + typePrefix + textContent);
+    if (--depth) {
+        treeItem.expand();
+        var children = treeItem.children;
+        for (var i = 0; children && i < children.length; ++i)
+            InspectorTest.dumpStyleTreeItem(children[i], prefix + "    ", depth);
+    }
+};
+
+InspectorTest.dumpElementsTree = function()
+{
+    WebInspector.panels.elements.updateModifiedNodes();
+    InspectorTest.addResult(WebInspector.panels.elements.treeOutline.element.textContent.replace(/\u200b/g, "").replace(/\n/g, "").replace(/</g, "\n<"));
+};
+
+InspectorTest.dumpLoadedDOM = function()
+{
+    function expand(treeItem, topLevel)
+    {
+        var children = treeItem.children;
+        for (var i = 0; children && i < children.length; ++i) {
+            children[i].expand();
+            expand(children[i], false);
+        }
+        if (topLevel)
+            InspectorTest.dumpElementsTree();
+    }
+    WebInspector.panels.elements.updateModifiedNodes();
+    expand(WebInspector.panels.elements.treeOutline, true);
+};
+
+};

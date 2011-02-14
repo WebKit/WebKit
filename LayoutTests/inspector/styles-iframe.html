@@ -5,75 +5,32 @@
   body { background:blue; }
 </style>
 
-<script src="../http/tests/inspector/inspector-test.js"></script>
-<script src="elements-tests.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/elements-test.js"></script>
 <script>
 
-function doit()
+function test()
 {
-    runAfterIframeIsLoaded(function() {
-        function callback(result)
-        {
-            for (var i = 0; i < result.length; ++i) {
-                output("Style: " + i);
-                var matchedRules = result[i].matchedCSSRules;
-                for (var j = 0; matchedRules && j < matchedRules.length; ++j) {
-                    output(JSON.stringify(matchedRules[j].style.shorthandValues));
-                }
-            }
-            notifyDone();
-        }
-        evaluateInWebInspector("frontend_dumpStyles", callback);
-    });
-}
+    InspectorTest.selectNodeWithId("mainBody", step1);
 
-
-// Frontend functions.
-
-function frontend_dumpStyles(testController)
-{
-    testController.waitUntilDone();
-    frontend_expandDOMSubtreeAndRun(testController, null, frontend_dumpStylesContinuation);
-}
-
-function frontend_dumpStylesContinuation(testController)
-{
-    // 1. Get styles for body, store them in mainStyles var.
-    var body = WebInspector.domAgent.document.body;
-    var mainStyles = null;
-    function mainFrameCallback(styles)
+    function step1()
     {
-        mainStyles = styles;
+        InspectorTest.addResult("Main frame style:");
+        InspectorTest.dumpSelectedElementStyles(true, false, true);
+        InspectorTest.selectNodeWithId("iframeBody", step2);
     }
 
-    InspectorBackend.getStylesForNode(body.id, mainFrameCallback);
-
-    // 2. Find iframe node
-    var innerMapping = WebInspector.domAgent._idToDOMNode;
-    var iframeBody = null;
-
-    for (var nodeId in innerMapping) {
-        if (innerMapping[nodeId].nodeName === "IFRAME")
-            iframeBody = innerMapping[nodeId].firstChild.lastChild;
-    }
-    if (!iframeBody) {
-        testController.notifyDone(["No iframe node found"]);
-        return;
-    }
-
-    // 3. Get styles for iframe's body, return them together with main styles.
-    function iframeCallback(styles)
+    function step2()
     {
-        testController.notifyDone([mainStyles, styles]);
+        InspectorTest.addResult("iframe style:");
+        InspectorTest.dumpSelectedElementStyles(true, false, true);
+        InspectorTest.completeTest();
     }
-
-    InspectorBackend.getStylesForNode(iframeBody.id, iframeCallback);
 }
-
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runAfterIframeIsLoaded()" id="mainBody">
 <p>
 Tests that proper (and different) styles are returned for body elements of main document and iframe.
 </p>

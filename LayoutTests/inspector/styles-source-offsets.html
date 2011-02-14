@@ -3,71 +3,51 @@
 
 <link rel="stylesheet" href="resources/styles-source-offsets.css" -->
 
-<script src="../http/tests/inspector/inspector-test.js"></script>
-<script src="elements-tests.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/elements-test.js"></script>
 <script>
 
-function doit()
+function test()
 {
-    function callback(result)
+    function dumpStyleData(ruleOrStyle)
     {
-        if (result === "refreshing")
-            return;
-        dumpArray(result);
-        notifyDone();
-    }
-    evaluateInWebInspector("frontend_runTest", callback);
-}
-
-
-// Frontend functions.
-
-function frontend_runTest(testController)
-{
-    testController.waitUntilDone();
-    frontend_expandDOMSubtree(WebInspector.domAgent.document);
-
-    testController.runAfterPendingDispatches(function() {
-        function stylesCallback(testController, styles)
-        {
-            var matchedCSSRules = styles.matchedCSSRules;
-            for (var i = 0; i < matchedCSSRules.length; ++i) {
-                var rule = matchedCSSRules[i];
-                frontend_dumpStyleData(testController, rule, false);
-            }
-            frontend_dumpStyleData(testController, styles.inlineStyle, true);
+        var isRule = !!(ruleOrStyle.style);
+        var style;
+        var header = "";
+        if (isRule) {
+            if (ruleOrStyle.origin !== "")
+                return;
+            style = ruleOrStyle.style;
+            header = ruleOrStyle.selectorText + ": [" + (ruleOrStyle.selectorRange ? ruleOrStyle.selectorRange.start + "-" + ruleOrStyle.selectorRange.end : "")  + "]";
+        } else {
+            style = ruleOrStyle;
+            header = "element.style:";
         }
-        InspectorBackend.getStylesForNode(WebInspector.domAgent.document.body.id, stylesCallback.bind(null, testController));
-    });
-}
-
-function frontend_dumpStyleData(testController, ruleOrStyle, shouldBail)
-{
-    var isRule = !!(ruleOrStyle.style);
-    var style;
-    var header = "";
-    if (isRule) {
-        if (ruleOrStyle.origin !== "") {
-            if (shouldBail)
-                testController.notifyDone(testController.results);
-            return;
+        InspectorTest.addResult(header + " [" + style.properties.startOffset  + "-" + style.properties.endOffset + "]");
+        var allProperties = style.cssProperties;
+        for (var i = 0; i < allProperties.length; ++i) {
+            var property = allProperties[i];
+            if (property.status === "style")
+                continue;
+            InspectorTest.addResult("['" + property.name + "':'" + property.value + "'" + (property.priority ? " !important" : "") + (property.parsedOk ? "" : " non-parsed") +"] @[" + property.startOffset + "-" + property.endOffset + "]");
         }
-        style = ruleOrStyle.style;
-        header = ruleOrStyle.selectorText + ": [" + (ruleOrStyle.selectorRange ? ruleOrStyle.selectorRange.start + "-" + ruleOrStyle.selectorRange.end : "")  + "]";
-    } else {
-        style = ruleOrStyle;
-        header = "element.style:";
     }
-    testController.results.push(header + " [" + style.properties.startOffset  + "-" + style.properties.endOffset + "]");
-    var allProperties = style.cssProperties;
-    for (var i = 0; i < allProperties.length; ++i) {
-        var property = allProperties[i];
-        if (property.status === "style")
-            continue;
-        testController.results.push("['" + property.name + "':'" + property.value + "'" + (property.priority ? " !important" : "") + (property.parsedOk ? "" : " non-parsed") +"] @[" + property.startOffset + "-" + property.endOffset + "]");
+    
+    InspectorTest.selectNodeWithId("mainBody", step1);
+
+    function step1(node)
+    {
+        InspectorBackend.getStylesForNode(node.id, step2);
     }
-    if (shouldBail)
-        testController.notifyDone(testController.results);
+
+    function step2(styles)
+    {
+        var matchedCSSRules = styles.matchedCSSRules;
+        for (var i = 0; i < matchedCSSRules.length; ++i)
+            dumpStyleData(matchedCSSRules[i]);
+        dumpStyleData(styles.inlineStyle);
+        InspectorTest.completeTest();
+    }
 }
 
 </script>
@@ -82,7 +62,7 @@ body.mainpage {
 </style>
 </head>
 
-<body class="main1 main2 mainpage" onload="onload()" style="font-weight: normal; width: 80%">
+<body id="mainBody" class="main1 main2 mainpage" onload="runTest()" style="font-weight: normal; width: 80%">
 <p>
 Tests that proper data and start/end offset positions are reported for CSS style declarations and properties.
 </p>

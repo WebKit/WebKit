@@ -1,63 +1,46 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
-<script src="elements-tests.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/elements-test.js"></script>
 <script>
 
-function doit()
+function test()
 {
-    function callback(result)
+    InspectorTest.selectNodeWithId("container", step1);
+
+    function step1()
     {
-        dumpArray(result);
-        notifyDone();
+        InspectorTest.addResult("Before disable");
+        var treeItem = InspectorTest.getElementStylePropertyTreeItem("font-weight");
+        InspectorTest.dumpStyleTreeItem(treeItem, "");
+
+        treeItem.toggleEnabled({ target: { checked: false } });
+        InspectorTest.runAfterPendingDispatches(step2);
     }
-    evaluateInWebInspector("frontend_runTest", callback);
-}
 
-// Frontend functions.
+    function step2()
+    {
+        InspectorTest.addResult("After disable");
+        var treeItem = InspectorTest.getElementStylePropertyTreeItem("font-weight");
+        InspectorTest.dumpStyleTreeItem(treeItem, "");
 
-function frontend_runTest(testController)
-{
-    testController.waitUntilDone();
-    frontend_expandDOMSubtreeAndRun(testController, null, frontend_selectContainerElementContinuation);
-}
+        treeItem.toggleEnabled({ target: { checked: true } });
+        InspectorTest.runAfterPendingDispatches(step3);
+    }
 
-function frontend_selectContainerElementContinuation(testController)
-{
-    frontend_selectElementAndRun(testController, "container", frontend_disableContainerStyle);
-}
+    function step3()
+    {
+        InspectorTest.addResult("After enable");
+        var treeItem = InspectorTest.getElementStylePropertyTreeItem("font-weight");
+        InspectorTest.dumpStyleTreeItem(treeItem, "");
 
-function frontend_disableContainerStyle(testController)
-{
-    var treeItem = frontend_getElementStylePropertyTreeItem("font-weight");
-    testController.results.push("Before disable");
-    frontend_dumpStyleTreeItem(treeItem, testController.results, "");
-
-    treeItem.toggleEnabled({ target: { checked: false } });
-    testController.runAfterPendingDispatches(frontend_enableContainerStyle.bind(this, testController));
-}
-
-function frontend_enableContainerStyle(testController)
-{
-    var treeItem = frontend_getElementStylePropertyTreeItem("font-weight");
-    testController.results.push("After disable");
-    frontend_dumpStyleTreeItem(treeItem, testController.results, "");
-
-    treeItem.toggleEnabled({ target: { checked: true } });
-    testController.runAfterPendingDispatches(frontend_dumpResults.bind(this, testController));
-}
-
-function frontend_dumpResults(testController)
-{
-    var treeItem = frontend_getElementStylePropertyTreeItem("font-weight");
-    testController.results.push("After enable");
-    frontend_dumpStyleTreeItem(treeItem, testController.results, "");
-    testController.notifyDone(testController.results);
+        InspectorTest.completeTest();
+    }
 }
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 Tests that disabling style property works.
 </p>

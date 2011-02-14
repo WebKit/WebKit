@@ -1,37 +1,19 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
-<script src="../http/tests/inspector/console-tests.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/console-test.js"></script>
 <script>
 
-function doit()
+function onload()
 {
     console.dir(["test1", "test2"]);
     console.dir(document.childNodes);
     console.dir(document.evaluate("//head", document, null, XPathResult.ANY_TYPE, null));
-
-    expandAndDumpConsoleMessages();
+    runTest();
 }
 
-function expandAndDumpConsoleMessages(noNotifyDone) {
-    function callback(result)
-    {
-        for (var i = 0; i < result.length; ++i) {
-            output(result[i].title);
-            var properties = result[i].properties;
-            for (var j = 0; properties && j < properties.length; ++j)
-                output("    " + properties[j].name + " = " + properties[j].value._description);
-        }
-        if (!noNotifyDone)
-            notifyDone();
-    }
-    evaluateInWebInspector("frontend_expandAndDumpConsoleMessages", callback);
-}
-
-function frontend_expandAndDumpConsoleMessages(testController)
+function test()
 {
-    // Need test to be async to expand console objects.
-    testController.waitUntilDone();
     var messages = WebInspector.console.messages;
     for (var i = 0; i < messages.length; ++i) {
         var element = messages[i].toMessageElement();
@@ -46,16 +28,23 @@ function frontend_expandAndDumpConsoleMessages(testController)
         }
     }
 
-    testController.runAfterPendingDispatches(function() {
+    InspectorTest.runAfterPendingDispatches(dumpConsoleMessages);
+
+    function dumpConsoleMessages()
+    {
         var messages = WebInspector.console.messages;
         var result = [];
         for (var i = 0; i < messages.length; ++i) {
             var section = messages[i].section;
-            if (section)
-                result.push({ title: section.titleElement.textContent, properties: section.propertiesForTest});
+            if (section) {
+                InspectorTest.addResult(section.titleElement.textContent);
+                var properties = section.propertiesForTest;
+                for (var j = 0; properties && j < properties.length; ++j)
+                    InspectorTest.addResult("    " + properties[j].name + " = " + properties[j].value._description);
+            }
         }
-        testController.notifyDone(result);
-    });
+        InspectorTest.completeTest();
+    }
 }
 
 </script>

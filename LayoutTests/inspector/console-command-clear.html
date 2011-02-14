@@ -1,31 +1,39 @@
 <html>
 <head>
-<script src="../http/tests/inspector/inspector-test.js"></script>
-<script src="../http/tests/inspector/console-tests.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="../http/tests/inspector/console-test.js"></script>
 <script>
 
-function doit()
-{
+function log() {
+    // Fill console.
     console.log("one");
     console.log("two");
     console.log("three");
+}
 
-    output("=== Before clear ==="); 
-    dumpConsoleMessages(true);
+log();
+
+function test()
+{
+
+    InspectorTest.addResult("=== Before clear ==="); 
+    InspectorTest.dumpConsoleMessages();
+
     function callback()
     {
-        output("=== After clear ==="); 
-        dumpConsoleMessages();
+        InspectorTest.addResult("=== After clear ==="); 
+        InspectorTest.dumpConsoleMessages();
+        InspectorTest.completeTest();
     }
-    evaluateInWebInspector("InspectorBackend.evaluate('clear()', '', true, function() {})", callback);
+    InspectorTest.evaluateInConsole("clear()", callback);
 }
 
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
-Tests that console is cleared upon clear() eval in console.
+    Tests that console is cleared upon clear() eval in console.
 </p>
 
 </body>
