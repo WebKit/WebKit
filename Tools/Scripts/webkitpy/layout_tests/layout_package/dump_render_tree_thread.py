@@ -40,13 +40,13 @@ import thread
 import threading
 import time
 
-from webkitpy.layout_tests.layout_package.single_test_runner import SingleTestRunner
+from webkitpy.layout_tests.layout_package import worker_mixin
 
 _log = logging.getLogger("webkitpy.layout_tests.layout_package."
                          "dump_render_tree_thread")
 
 
-class TestShellThread(threading.Thread):
+class TestShellThread(threading.Thread, worker_mixin.WorkerMixin):
     def __init__(self, port, options, worker_number, worker_name,
                  filename_list_queue, result_queue):
         """Initialize all the local state for this DumpRenderTree thread.
@@ -130,6 +130,7 @@ class TestShellThread(threading.Thread):
     def run(self):
         """Delegate main work to a helper method and watch for uncaught
         exceptions."""
+
         self._covered_run()
 
     def _covered_run(self):
@@ -175,23 +176,16 @@ class TestShellThread(threading.Thread):
 
         If test_runner is not None, then we call test_runner.UpdateSummary()
         with the results of each test."""
-        single_test_runner = SingleTestRunner(self._options, self._port,
-            self._name, self._worker_number)
 
-        batch_size = self._options.batch_size
-        batch_count = 0
-
-        # Append tests we're running to the existing tests_run.txt file.
-        # This is created in run_webkit_tests.py:_PrepareListsAndPrintOutput.
-        tests_run_filename = self._port._filesystem.join(self._options.results_directory,
-                                                         "tests_run%d.txt" % self._worker_number)
-        tests_run_file = self._port._filesystem.open_text_file_for_writing(tests_run_filename, append=False)
+        # Initialize the real state of the WorkerMixin now that we're executing
+        # in the child thread. Technically, we could have called this during
+        # __init__(), but we wait until now to match Worker.run().
+        self.safe_init(self._port)
 
         while True:
             if self._canceled:
                 _log.debug('Testing cancelled')
-                tests_run_file.close()
-                single_test_runner.cleanup()
+                self.cleanup()
                 return
 
             if len(self._filename_list) is 0:
@@ -204,16 +198,15 @@ class TestShellThread(threading.Thread):
                     self._current_group, self._filename_list = \
                         self._filename_list_queue.get_nowait()
                 except Queue.Empty:
-                    tests_run_file.close()
-                    single_test_runner.cleanup()
+                    self.cleanup()
                     return
 
                 if self._current_group == "tests_to_http_lock":
                     self._http_lock_wait_begin = time.time()
-                    single_test_runner.start_servers_with_lock()
+                    self.start_servers_with_lock()
                     self._http_lock_wait_end = time.time()
-                elif single_test_runner.has_http_lock:
-                    single_test_runner.stop_servers_with_lock()
+                elif self._has_http_lock:
+                    self.stop_servers_with_lock()
 
                 self._num_tests_in_current_group = len(self._filename_list)
                 self._current_group_start_time = time.time()
@@ -221,33 +214,13 @@ class TestShellThread(threading.Thread):
             test_input = self._filename_list.pop()
 
             # We have a url, run tests.
-            batch_count += 1
             self._num_tests += 1
 
-            timeout = single_test_runner.timeout(test_input)
-            result = single_test_runner.run_test(test_input, timeout)
+            result = self.run_test_with_timeout(test_input, self.timeout(test_input))
 
-            tests_run_file.write(test_input.filename + "\n")
-            test_name = self._port.relative_test_filename(test_input.filename)
-            if result.failures:
-                # Check and kill DumpRenderTree if we need to.
-                if any([f.should_kill_dump_render_tree() for f in result.failures]):
-                    single_test_runner.kill_dump_render_tree()
-                    # Reset the batch count since the shell just bounced.
-                    batch_count = 0
-
-                # Print the error message(s).
-                _log.debug("%s %s failed:" % (self._name, test_name))
-                for f in result.failures:
-                    _log.debug("%s  %s" % (self._name, f.message()))
-            else:
-                _log.debug("%s %s passed" % (self._name, test_name))
+            self.clean_up_after_test(test_input, result)
+            self._test_results.append(result)
             self._result_queue.put(result.dumps())
-
-            if batch_size > 0 and batch_count >= batch_size:
-                # Bounce the shell and reset count.
-                single_test_runner.kill_dump_render_tree()
-                batch_count = 0
 
             if test_runner:
                 test_runner.update_summary(result_summary)

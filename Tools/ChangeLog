@@ -1,5 +1,22 @@
 2011-02-14  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Mihai Parparita.
+
+        This patch shuffles code out of dump_render_tree_thread and
+        single_test_runner and into a new worker_mixin class that will
+        be shared by both TestShellThread and Worker. This change
+        restores single_test_runner to its state as of r77606 - it is
+        stateless again. It also prunes TestShellThread to pretty much
+        just the logic used for the original shared-memory access.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54079
+
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+        * Scripts/webkitpy/layout_tests/layout_package/single_test_runner.py:
+        * Scripts/webkitpy/layout_tests/layout_package/worker_mixin.py: Added.
+
+2011-02-14  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Ojan Vafai.
 
         This patch updates NRWT to add per-worker and per-shard test stats
