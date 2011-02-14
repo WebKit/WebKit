@@ -1,5 +1,18 @@
 2011-02-13  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        Speculative fix for
+
+        <rdar://problem/8995361>
+        CrashTracer: [USER] 47 crashes in WebProcess at com.apple.WebKit2: WebKit::WebPage::layoutIfNeeded + 4
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::~DrawingAreaImpl):
+        Invalidate the layer tree host.
+
+2011-02-13  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         The plug-in process heap should be executable by default

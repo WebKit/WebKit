@@ -56,6 +56,8 @@ PassRefPtr<DrawingAreaImpl> DrawingAreaImpl::create(WebPage* webPage, const WebP
 
 DrawingAreaImpl::~DrawingAreaImpl()
 {
+    if (m_layerTreeHost)
+        m_layerTreeHost->invalidate();
 }
 
 DrawingAreaImpl::DrawingAreaImpl(WebPage* webPage, const WebPageCreationParameters& parameters)
