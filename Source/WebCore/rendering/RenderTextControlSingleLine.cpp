@@ -605,9 +605,13 @@ void RenderTextControlSingleLine::adjustControlHeightBasedOnLineHeight(int lineH
 
 void RenderTextControlSingleLine::createSubtreeIfNeeded()
 {
-    bool createSubtree = inputElement()->isSearchField();
-    if (!createSubtree) {
-        RenderTextControl::createSubtreeIfNeeded(m_innerBlock.get());
+    if (inputElement()->isSearchField()) {
+        if (!m_innerBlock) {
+            // Create the inner block element
+            m_innerBlock = TextControlInnerElement::create(toHTMLElement(node()));
+            m_innerBlock->attachInnerElement(node(), createInnerBlockStyle(style()), renderArena());
+        }
+
 #if ENABLE(INPUT_SPEECH)
         if (inputElement()->isSpeechEnabled() && !m_speechButton) {
             // Create the speech button element.
@@ -615,7 +619,34 @@ void RenderTextControlSingleLine::createSubtreeIfNeeded()
             m_speechButton->attachInnerElement(node(), createSpeechButtonStyle(), renderArena());
         }
 #endif
+
+        if (!m_resultsButton) {
+            // Create the search results button element.
+            m_resultsButton = SearchFieldResultsButtonElement::create(document());
+            m_resultsButton->attachInnerElement(m_innerBlock.get(), createResultsButtonStyle(m_innerBlock->renderer()->style()), renderArena());
+        }
+
+        // Create innerText element before adding the other buttons.
+        RenderTextControl::createSubtreeIfNeeded(m_innerBlock.get());
+
+        if (!m_cancelButton) {
+            // Create the cancel button element.
+            m_cancelButton = SearchFieldCancelButtonElement::create(document());
+            m_cancelButton->attachInnerElement(m_innerBlock.get(), createCancelButtonStyle(m_innerBlock->renderer()->style()), renderArena());
+        }
+    } else {
+        RenderTextControl::createSubtreeIfNeeded(0);
+
+#if ENABLE(INPUT_SPEECH)
+        if (inputElement()->isSpeechEnabled() && !m_speechButton) {
+            // Create the speech button element.
+            m_speechButton = InputFieldSpeechButtonElement::create(toHTMLElement(node()));
+            m_speechButton->attachInnerElement(node(), createSpeechButtonStyle(), renderArena());
+        }
+#endif
+
         bool hasSpinButton = inputElement()->hasSpinButton();
+
         if (hasSpinButton && !m_innerSpinButton) {
             m_innerSpinButton = SpinButtonElement::create(toHTMLElement(node()));
             m_innerSpinButton->attachInnerElement(node(), createInnerSpinButtonStyle(), renderArena());
@@ -623,43 +654,6 @@ void RenderTextControlSingleLine::createSubtreeIfNeeded()
         if (hasSpinButton && !m_outerSpinButton) {
             m_outerSpinButton = SpinButtonElement::create(toHTMLElement(node()));
             m_outerSpinButton->attachInnerElement(node(), createOuterSpinButtonStyle(), renderArena());
-        }
-        return;
-    }
-
-    if (!m_innerBlock) {
-        // Create the inner block element
-        m_innerBlock = TextControlInnerElement::create(toHTMLElement(node()));
-        m_innerBlock->attachInnerElement(node(), createInnerBlockStyle(style()), renderArena());
-    }
-#if ENABLE(INPUT_SPEECH)
-    if (inputElement()->isSpeechEnabled() && !m_speechButton) {
-        // Create the speech button element.
-        m_speechButton = InputFieldSpeechButtonElement::create(toHTMLElement(node()));
-        m_speechButton->attachInnerElement(node(), createSpeechButtonStyle(), renderArena());
-    }
-#endif
-    if (inputElement()->hasSpinButton() && !m_outerSpinButton) {
-        m_outerSpinButton = SpinButtonElement::create(toHTMLElement(node()));
-        m_outerSpinButton->attachInnerElement(node(), createOuterSpinButtonStyle(), renderArena());
-    }
-
-    if (inputElement()->isSearchField()) {
-        if (!m_resultsButton) {
-            // Create the search results button element.
-            m_resultsButton = SearchFieldResultsButtonElement::create(document());
-            m_resultsButton->attachInnerElement(m_innerBlock.get(), createResultsButtonStyle(m_innerBlock->renderer()->style()), renderArena());
-        }
-    }
-
-    // Create innerText element before adding the other buttons.
-    RenderTextControl::createSubtreeIfNeeded(m_innerBlock.get());
-
-    if (inputElement()->isSearchField()) {
-        if (!m_cancelButton) {
-            // Create the cancel button element.
-            m_cancelButton = SearchFieldCancelButtonElement::create(document());
-            m_cancelButton->attachInnerElement(m_innerBlock.get(), createCancelButtonStyle(m_innerBlock->renderer()->style()), renderArena());
         }
     }
 }
@@ -729,7 +723,7 @@ PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerBlockStyle(const
     RefPtr<RenderStyle> innerBlockStyle = RenderStyle::create();
     innerBlockStyle->inheritFrom(startStyle);
 
-    innerBlockStyle->setDisplay(inputElement()->hasSpinButton() ? INLINE_BLOCK : BLOCK);
+    innerBlockStyle->setDisplay(BLOCK);
     innerBlockStyle->setDirection(LTR);
 
     // We don't want the shadow dom to be editable, so we set this block to read-only in case the input itself is editable.

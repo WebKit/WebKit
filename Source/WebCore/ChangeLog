@@ -1,3 +1,23 @@
+2011-02-14  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Bug 54377 - Clean up RenderTextControlSingleLine::createSubtreeIfNeeded()
+        https://bugs.webkit.org/show_bug.cgi?id=54377
+
+        Rearranged the condition blocks, removed superfluous conditions:
+        .) if-statements where it's already clear that a search field is being generated
+        .) testing for spin-buttons on field types that can never have them.
+
+        createInnerBlockStyle(): only search fields create an inner block, and
+        these can never have spin buttons.
+
+        No new tests. (Refactoring - covered by existing tests)
+
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::createInnerBlockStyle):
+        (WebCore::RenderTextControlSingleLine::createSubtreeIfNeeded):
+
 2011-02-10  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
