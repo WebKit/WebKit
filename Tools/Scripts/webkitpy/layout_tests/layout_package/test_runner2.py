@@ -52,6 +52,9 @@ class _WorkerState(object):
         self.worker_connection = worker_connection
         self.number = number
         self.done = False
+        self.current_test_name = None
+        self.next_timeout = None
+        self.wedged = False
 
     def __repr__(self):
         return "_WorkerState(" + str(self.__dict__) + ")"
@@ -72,8 +75,19 @@ class TestRunner2(test_runner.TestRunner):
         return worker_states and all(self._worker_is_done(worker_state) for worker_state in worker_states)
 
     def _worker_is_done(self, worker_state):
-        # FIXME: check if the worker is wedged.
-        return worker_state.done
+        t = time.time()
+        if worker_state.done or worker_state.wedged:
+            return True
+
+        next_timeout = worker_state.next_timeout
+        WEDGE_PADDING = 40.0
+        if next_timeout and t > next_timeout + WEDGE_PADDING:
+            _log.error('')
+            worker_state.worker_connection.log_wedged_worker(worker_state.current_test_name)
+            _log.error('')
+            worker_state.wedged = True
+            return True
+        return False
 
     def name(self):
         return 'TestRunner2'
@@ -131,12 +145,38 @@ class TestRunner2(test_runner.TestRunner):
 
         keyboard_interrupted = False
         interrupted = False
-        if not self._options.dry_run:
-            while not self.is_done():
-                # We loop with a timeout in order to be able to detect wedged threads.
-                manager_connection.run_message_loop(delay_secs=1.0)
+        try:
+            if not self._options.dry_run:
+                while not self.is_done():
+                    # We loop with a timeout in order to be able to detect wedged threads.
+                    manager_connection.run_message_loop(delay_secs=1.0)
 
-        # FIXME: handle exceptions, interrupts.
+                if any(worker_state.wedged for worker_state in self._worker_states.values()):
+                    _log.error('')
+                    _log.error('Remaining workers are wedged, bailing out.')
+                    _log.error('')
+                else:
+                    _log.debug('No wedged threads')
+
+                # Make sure all of the workers have shut down (if possible).
+                for worker_state in self._worker_states.values():
+                    if not worker_state.wedged and worker_state.worker_connection.is_alive():
+                        worker_state.worker_connection.join(0.5)
+                        assert not worker_state.worker_connection.is_alive()
+
+        except KeyboardInterrupt:
+            _log.info("Interrupted, exiting")
+            self._cancel_workers()
+            keyboard_interrupted = True
+        except test_runner.TestRunInterruptedException, e:
+            _log.info(e.reason)
+            self._cancel_workers()
+            interrupted = True
+        except:
+            # Unexpected exception; don't try to clean up workers.
+            _log.info("Exception raised, exiting")
+            raise
+
 
         # FIXME: implement stats.
 
@@ -146,9 +186,14 @@ class TestRunner2(test_runner.TestRunner):
         return (keyboard_interrupted, interrupted, thread_timings,
                 self._group_stats, self._all_results)
 
+    def cancel_workers(self):
+        for worker_state in self._worker_states.values():
+            worker_state.worker_connection.cancel()
+
     def handle_started_test(self, source, test_info, hang_timeout):
-        # FIXME: implement
-        pass
+        worker_state = self._worker_states[source]
+        worker_state.current_test_name = self._port.relative_test_filename(test_info.filename)
+        worker_state.next_timeout = time.time() + hang_timeout
 
     def handle_done(self, source):
         worker_state = self._worker_states[source]
@@ -162,6 +207,14 @@ class TestRunner2(test_runner.TestRunner):
         pass
 
     def handle_finished_test(self, source, result, elapsed_time):
+        worker_state = self._worker_states[source]
+        worker_state.next_timeout = None
+        worker_state.current_test_name = None
+
+        if worker_state.wedged:
+            # This shouldn't happen if we have our timeouts tuned properly.
+            _log.error("%s unwedged", w.name)
+
         self._update_summary_with_result(self._current_result_summary, result)
 
         # FIXME: update stats.

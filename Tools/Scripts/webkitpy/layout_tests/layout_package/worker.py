@@ -48,13 +48,18 @@ class Worker(manager_worker_broker.AbstractWorker):
         self._options = options
         self._name = 'worker/%d' % worker_number
         self._done = False
+        self._canceled = False
         self._port = None
 
     def _deferred_init(self, port):
         self._port = port
 
+    def cancel(self):
+        """Attempt to abort processing (best effort)."""
+        self._canceled = True
+
     def is_done(self):
-        return self._done
+        return self._done or self._canceled
 
     def name(self):
         return self._name
@@ -62,11 +67,27 @@ class Worker(manager_worker_broker.AbstractWorker):
     def run(self, port):
         self._deferred_init(port)
 
+        exception_msg = ""
         _log.debug("%s starting" % self._name)
 
-        # FIXME: need to add in error handling, better logging.
-        self._worker_connection.run_message_loop()
-        self._worker_connection.post_message('done')
+        try:
+            self._worker_connection.run_message_loop()
+            if not self.is_done():
+                raise AssertionError("%s: ran out of messages in worker queue."
+                                     % self._name)
+        except KeyboardInterrupt:
+            exception_msg = ", interrupted"
+        except:
+            exception_msg = ", exception raised"
+        finally:
+            _log.debug("%s done%s" % (self._name, exception_msg))
+            if exception_msg:
+                exc_info = sys.exc_info()
+                stack_utils.log_traceback(_log.error, exc_info[2])
+                # FIXME: Figure out how to send a message with a traceback.
+                self._worker_connection.post_message('exception',
+                    (exc_info[0], exc_info[1], None))
+            self._worker_connection.post_message('done')
 
     def handle_test_list(self, src, list_name, test_list):
         # FIXME: check to see if we need to get the http lock.

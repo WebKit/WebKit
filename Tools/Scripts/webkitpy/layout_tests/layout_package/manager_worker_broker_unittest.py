@@ -44,38 +44,47 @@ from webkitpy.layout_tests.layout_package import manager_worker_broker
 from webkitpy.layout_tests.layout_package import message_broker2
 
 
-class TestWorker(manager_worker_broker.AbstractWorker):
-    def __init__(self, broker_connection, worker_number, options):
-        self._broker_connection = broker_connection
-        self._options = options
-        self._worker_number = worker_number
-        self._name = 'TestWorker/%d' % worker_number
-        self._stopped = False
+def worker_maker(starting_queue=None, stopping_queue=None):
+    class _TestWorker(manager_worker_broker.AbstractWorker):
+        def __init__(self, broker_connection, worker_number, options):
+            self._broker_connection = broker_connection
+            self._options = options
+            self._worker_number = worker_number
+            self._name = 'TestWorker/%d' % worker_number
+            self._stopped = False
+            self._canceled = False
+            self._starting_queue = starting_queue
+            self._stopping_queue = stopping_queue
 
-    def handle_stop(self, src):
-        self._stopped = True
+        def handle_stop(self, src):
+            self._stopped = True
 
-    def handle_test(self, src, an_int, a_str):
-        assert an_int == 1
-        assert a_str == "hello, world"
-        self._broker_connection.post_message('test', 2, 'hi, everybody')
+        def handle_test(self, src, an_int, a_str):
+            assert an_int == 1
+            assert a_str == "hello, world"
+            self._broker_connection.post_message('test', 2, 'hi, everybody')
 
-    def is_done(self):
-        return self._stopped
+        def is_done(self):
+            return self._stopped or self._canceled
 
-    def name(self):
-        return self._name
+        def name(self):
+            return self._name
 
-    def start(self):
-        pass
+        def cancel(self):
+            self._canceled = True
 
-    def run(self, port):
-        try:
-            self._broker_connection.run_message_loop()
-            self._broker_connection.yield_to_broker()
-            self._broker_connection.post_message('done')
-        except Exception, e:
-            self._broker_connection.post_message('exception', (type(e), str(e), None))
+        def run(self, port):
+            if self._starting_queue:
+                self._starting_queue.put('')
+            if self._stopping_queue:
+                self._stopping_queue.get()
+            try:
+                self._broker_connection.run_message_loop()
+                self._broker_connection.yield_to_broker()
+                self._broker_connection.post_message('done')
+            except Exception, e:
+                self._broker_connection.post_message('exception', (type(e), str(e), None))
+    return _TestWorker
 
 
 def get_options(worker_model):
@@ -85,10 +94,10 @@ def get_options(worker_model):
     return options
 
 
-def make_broker(manager, worker_model):
+def make_broker(manager, worker_model, starting_queue=None, stopping_queue=None):
     options = get_options(worker_model)
     return manager_worker_broker.get(port.get("test"), options, manager,
-                                     TestWorker)
+                                     worker_maker(starting_queue, stopping_queue))
 
 
 class FunctionTests(unittest.TestCase):
@@ -112,18 +121,12 @@ class _TestsMixin(object):
     """Mixin class that implements a series of tests to enforce the
     contract all implementations must follow."""
 
-    #
-    # Methods to implement the Manager side of the ClientInterface
-    #
     def name(self):
         return 'Tester'
 
     def is_done(self):
         return self._done
 
-    #
-    # Handlers for the messages the TestWorker may send.
-    #
     def handle_done(self, src):
         self._done = True
 
@@ -135,9 +138,6 @@ class _TestsMixin(object):
         self._exception = exc_info
         self._done = True
 
-    #
-    # Testing helper methods
-    #
     def setUp(self):
         self._an_int = None
         self._a_str = None
@@ -146,33 +146,58 @@ class _TestsMixin(object):
         self._exception = None
         self._worker_model = None
 
-    def make_broker(self):
-        self._broker = make_broker(self, self._worker_model)
+    def make_broker(self, starting_queue=None, stopping_queue=None):
+        self._broker = make_broker(self, self._worker_model, starting_queue,
+                                   stopping_queue)
 
-    #
-    # Actual unit tests
-    #
+    def test_cancel(self):
+        self.make_broker()
+        worker = self._broker.start_worker(0)
+        worker.cancel()
+        self._broker.post_message('test', 1, 'hello, world')
+        worker.join(0.5)
+        self.assertFalse(worker.is_alive())
+
     def test_done(self):
-        if not self._worker_model:
-            return
         self.make_broker()
         worker = self._broker.start_worker(0)
         self._broker.post_message('test', 1, 'hello, world')
         self._broker.post_message('stop')
         self._broker.run_message_loop()
+        worker.join(0.5)
+        self.assertFalse(worker.is_alive())
         self.assertTrue(self.is_done())
         self.assertEqual(self._an_int, 2)
         self.assertEqual(self._a_str, 'hi, everybody')
 
+    def test_log_wedged_worker(self):
+        starting_queue = self.queue()
+        stopping_queue = self.queue()
+        self.make_broker(starting_queue, stopping_queue)
+        oc = outputcapture.OutputCapture()
+        oc.capture_output()
+        try:
+            worker = self._broker.start_worker(0)
+            starting_queue.get()
+            worker.log_wedged_worker('test_name')
+            stopping_queue.put('')
+            self._broker.post_message('stop')
+            self._broker.run_message_loop()
+            worker.join(0.5)
+            self.assertFalse(worker.is_alive())
+            self.assertTrue(self.is_done())
+        finally:
+            oc.restore_output()
+
     def test_unknown_message(self):
-        if not self._worker_model:
-            return
         self.make_broker()
         worker = self._broker.start_worker(0)
         self._broker.post_message('unknown')
         self._broker.run_message_loop()
+        worker.join(0.5)
 
         self.assertTrue(self.is_done())
+        self.assertFalse(worker.is_alive())
         self.assertEquals(self._exception[0], ValueError)
         self.assertEquals(self._exception[1],
             "TestWorker/0: received message 'unknown' it couldn't handle")
@@ -183,23 +208,30 @@ class InlineBrokerTests(_TestsMixin, unittest.TestCase):
         _TestsMixin.setUp(self)
         self._worker_model = 'inline'
 
+    def test_log_wedged_worker(self):
+        self.make_broker()
+        worker = self._broker.start_worker(0)
+        self.assertRaises(AssertionError, worker.log_wedged_worker, None)
 
-class MultiProcessBrokerTests(_TestsMixin, unittest.TestCase):
-    def setUp(self):
-        _TestsMixin.setUp(self)
-        if multiprocessing:
+
+if multiprocessing:
+
+    class MultiProcessBrokerTests(_TestsMixin, unittest.TestCase):
+        def setUp(self):
+            _TestsMixin.setUp(self)
             self._worker_model = 'processes'
-        else:
-            self._worker_model = None
 
-    def queue(self):
-        return multiprocessing.Queue()
+        def queue(self):
+            return multiprocessing.Queue()
 
 
 class ThreadedBrokerTests(_TestsMixin, unittest.TestCase):
     def setUp(self):
         _TestsMixin.setUp(self)
         self._worker_model = 'threads'
+
+    def queue(self):
+        return Queue.Queue()
 
 
 class FunctionsTest(unittest.TestCase):
@@ -221,6 +253,16 @@ class InterfaceTest(unittest.TestCase):
         broker = make_broker(self, 'inline')
         obj = manager_worker_broker._ManagerConnection(broker._broker, None, self, None)
         self.assertRaises(NotImplementedError, obj.start_worker, 0)
+
+    def test_workerconnection_is_abstract(self):
+        # Test that all the base class methods are abstract and have the
+        # signature we expect.
+        broker = make_broker(self, 'inline')
+        obj = manager_worker_broker._WorkerConnection(broker._broker, worker_maker(), 0, None)
+        self.assertRaises(NotImplementedError, obj.cancel)
+        self.assertRaises(NotImplementedError, obj.is_alive)
+        self.assertRaises(NotImplementedError, obj.join, None)
+        self.assertRaises(NotImplementedError, obj.log_wedged_worker, None)
 
 
 if __name__ == '__main__':
