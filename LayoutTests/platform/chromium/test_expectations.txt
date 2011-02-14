@@ -3495,12 +3495,5 @@ BUGWK54322 MAC SNOWLEOPARD : transitions/move-after-transition.html = IMAGE
 
 BUGCR72428 : fast/dom/HTMLAnchorElement/set-href-attribute-hash.html = TEXT
 
-// The mac-leopard baselines for these are clearly wrong.  They need
-// rebaselining, at which point they should look like the mac baselines.  It's
-// not clear to me whether the two will/should be the same and whether our
-// current output is correct, but it's very close.
-BUGPKASTING MAC : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE
-BUGPKASTING MAC : svg/text/text-intro-05-t.svg = IMAGE
-
 BUGCR72861 : fast/css/test-setting-canvas-color.html = TEXT
 

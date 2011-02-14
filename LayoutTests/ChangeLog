@@ -1,3 +1,13 @@
+2011-02-14  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Rebaseline chromium's test expectations for SVG tests.
+
+        * platform/chromium-mac/svg/W3C-SVG-1.1/text-intro-05-t-expected.checksum: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/text-intro-05-t-expected.png: Added.
+        * platform/chromium-mac/svg/text/text-intro-05-t-expected.checksum:
+        * platform/chromium-mac/svg/text/text-intro-05-t-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-02-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: follow up to r78460 with expectation updates.
