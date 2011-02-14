@@ -1,5 +1,11 @@
 2011-02-14  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed: chromium expectations update.
+
+        * platform/chromium/inspector/timeline-network-resource-expected.txt:
+
+2011-02-14  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Yury Semikhatsky.
 
         Web Inspector: move timeline and highlighter tests to the new harness.
