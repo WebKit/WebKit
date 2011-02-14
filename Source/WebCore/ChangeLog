@@ -1,3 +1,23 @@
+2011-02-14  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix rendering of ISO-8859-8 when dir="rtl".
+        https://bugs.webkit.org/show_bug.cgi?id=52128
+
+        Test: fast/text/international/iso-8859-8.html
+
+        * platform/text/BidiResolver.h: Add VisualDirectionOverride enum.
+        (WebCore::::createBidiRunsForLine): For lines with visual direction override,
+        create bidi runs without resolving bidi levels (one run per render object), 
+        set bidi level as 0 or 1 depending on LTR or RTL override, 
+        and reverse runs for RTL override.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::constructLine): Set inline box bidi level the same as
+        BidiRun's bidi level without special handling of VisualDirectionOverride.
+        (WebCore::RenderBlock::layoutInlineChildren): Pass in VisualDirectionOverride 
+        to createBidiRunsForLine().
+
 2011-02-14  Alexis Menard  <alexis.menard@nokia.com>
 
         Reviewed by Andreas Kling.

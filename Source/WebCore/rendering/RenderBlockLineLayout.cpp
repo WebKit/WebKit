@@ -281,7 +281,7 @@ RootInlineBox* RenderBlock::constructLine(unsigned runCount, BidiRun* firstRun, 
         parentBox->addToLine(box);
 
         bool visuallyOrdered = r->m_object->style()->visuallyOrdered();
-        box->setBidiLevel(visuallyOrdered ? 0 : r->level());
+        box->setBidiLevel(r->level());
 
         if (box->isInlineTextBox()) {
             InlineTextBox* text = static_cast<InlineTextBox*>(box);
@@ -687,7 +687,8 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
             ASSERT(end != resolver.position());
 
             if (!isLineEmpty) {
-                resolver.createBidiRunsForLine(end, style()->visuallyOrdered(), previousLineBrokeCleanly);
+                VisualDirectionOverride override = (style()->visuallyOrdered() ? (style()->direction() == LTR ? VisualLeftToRightOverride : VisualRightToLeftOverride) : NoVisualOverride);
+                resolver.createBidiRunsForLine(end, override, previousLineBrokeCleanly);
                 ASSERT(resolver.position() == end);
 
                 BidiRun* trailingSpaceRun = 0;

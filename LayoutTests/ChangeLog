@@ -1,3 +1,16 @@
+2011-02-14  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix rendering of ISO-8859-8 when dir="rtl".
+        https://bugs.webkit.org/show_bug.cgi?id=52128
+
+        * fast/text/international/iso-8859-8-expected.txt: Added.
+        * fast/text/international/iso-8859-8.html: Added.
+        * platform/mac/fast/css/rtl-ordering-expected.txt:
+        * platform/mac/fast/forms/select-visual-hebrew-expected.txt:
+        * platform/mac/fast/forms/visual-hebrew-text-field-expected.txt:
+
 2011-02-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: unflake inspector/styles-iframe.html

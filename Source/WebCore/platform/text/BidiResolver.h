@@ -126,6 +126,12 @@ struct BidiCharacterRun {
     BidiCharacterRun* m_next;
 };
 
+enum VisualDirectionOverride {
+    NoVisualOverride,
+    VisualLeftToRightOverride,
+    VisualRightToLeftOverride
+};
+
 template <class Iterator, class Run> class BidiResolver {
     WTF_MAKE_NONCOPYABLE(BidiResolver);
 public :
@@ -163,7 +169,7 @@ public :
     void embed(WTF::Unicode::Direction);
     bool commitExplicitEmbedding();
 
-    void createBidiRunsForLine(const Iterator& end, bool visualOrder = false, bool hardLineBreak = false);
+    void createBidiRunsForLine(const Iterator& end, VisualDirectionOverride = NoVisualOverride, bool hardLineBreak = false);
 
     Run* firstRun() const { return m_firstRun; }
     Run* lastRun() const { return m_lastRun; }
@@ -514,11 +520,27 @@ void BidiResolver<Iterator, Run>::reverseRuns(unsigned start, unsigned end)
 }
 
 template <class Iterator, class Run>
-void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, bool visualOrder, bool hardLineBreak)
+void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, VisualDirectionOverride override, bool hardLineBreak)
 {
     using namespace WTF::Unicode;
 
     ASSERT(m_direction == OtherNeutral);
+
+    if (override != NoVisualOverride) {
+        emptyRun = false;
+        sor = current;
+        eor = Iterator();
+        while (current != end && !current.atEnd()) {
+            eor = current;
+            increment();
+        }
+        m_direction = override == VisualLeftToRightOverride ? LeftToRight : RightToLeft;
+        appendRun();
+        m_logicallyLastRun = m_lastRun;
+        if (override == VisualRightToLeftOverride)
+            reverseRuns(0, runCount() - 1);
+        return;
+    }
 
     emptyRun = true;
 
@@ -916,49 +938,45 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, boo
     m_logicallyLastRun = m_lastRun;
 
     // reorder line according to run structure...
-    // do not reverse for visually ordered web sites
-    if (!visualOrder) {
+    // first find highest and lowest levels
+    unsigned char levelLow = 128;
+    unsigned char levelHigh = 0;
+    Run* r = firstRun();
+    while (r) {
+        if (r->m_level > levelHigh)
+            levelHigh = r->m_level;
+        if (r->m_level < levelLow)
+            levelLow = r->m_level;
+        r = r->next();
+    }
 
-        // first find highest and lowest levels
-        unsigned char levelLow = 128;
-        unsigned char levelHigh = 0;
-        Run* r = firstRun();
-        while (r) {
-            if (r->m_level > levelHigh)
-                levelHigh = r->m_level;
-            if (r->m_level < levelLow)
-                levelLow = r->m_level;
-            r = r->next();
-        }
+    // implements reordering of the line (L2 according to Bidi spec):
+    // L2. From the highest level found in the text to the lowest odd level on each line,
+    // reverse any contiguous sequence of characters that are at that level or higher.
 
-        // implements reordering of the line (L2 according to Bidi spec):
-        // L2. From the highest level found in the text to the lowest odd level on each line,
-        // reverse any contiguous sequence of characters that are at that level or higher.
+    // reversing is only done up to the lowest odd level
+    if (!(levelLow % 2))
+        levelLow++;
 
-        // reversing is only done up to the lowest odd level
-        if (!(levelLow % 2))
-            levelLow++;
+    unsigned count = runCount() - 1;
 
-        unsigned count = runCount() - 1;
-
-        while (levelHigh >= levelLow) {
-            unsigned i = 0;
-            Run* currRun = firstRun();
-            while (i < count) {
-                while (i < count && currRun && currRun->m_level < levelHigh) {
-                    i++;
-                    currRun = currRun->next();
-                }
-                unsigned start = i;
-                while (i <= count && currRun && currRun->m_level >= levelHigh) {
-                    i++;
-                    currRun = currRun->next();
-                }
-                unsigned end = i - 1;
-                reverseRuns(start, end);
+    while (levelHigh >= levelLow) {
+        unsigned i = 0;
+        Run* currRun = firstRun();
+        while (i < count) {
+            while (i < count && currRun && currRun->m_level < levelHigh) {
+                i++;
+                currRun = currRun->next();
             }
-            levelHigh--;
+            unsigned start = i;
+            while (i <= count && currRun && currRun->m_level >= levelHigh) {
+                i++;
+                currRun = currRun->next();
+            }
+            unsigned end = i - 1;
+            reverseRuns(start, end);
         }
+        levelHigh--;
     }
     endOfLine = Iterator();
 }
