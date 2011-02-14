@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov <ap@nypop.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,6 @@
 
 #include "TextCodec.h"
 #include "TextEncoding.h"
-
 #include <unicode/utypes.h>
 
 typedef struct UConverter UConverter;
@@ -38,19 +37,18 @@ namespace WebCore {
 
     class TextCodecICU : public TextCodec {
     public:
-        static void registerBaseEncodingNames(EncodingNameRegistrar);
-        static void registerBaseCodecs(TextCodecRegistrar);
+        static void registerEncodingNames(EncodingNameRegistrar);
+        static void registerCodecs(TextCodecRegistrar);
 
-        static void registerExtendedEncodingNames(EncodingNameRegistrar);
-        static void registerExtendedCodecs(TextCodecRegistrar);
-
-        TextCodecICU(const TextEncoding&);
         virtual ~TextCodecICU();
+
+    private:
+        TextCodecICU(const TextEncoding&);
+        static PassOwnPtr<TextCodec> create(const TextEncoding&, const void*);
 
         virtual String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError);
         virtual CString encode(const UChar*, size_t length, UnencodableHandling);
 
-    private:
         void createICUConverter() const;
         void releaseICUConverter() const;
         bool needsGBKFallbacks() const { return m_needsGBKFallbacks; }
@@ -67,13 +65,12 @@ namespace WebCore {
     };
 
     struct ICUConverterWrapper {
-        ICUConverterWrapper()
-            : converter(0)
-        {
-        }
+        ICUConverterWrapper() : converter(0) { }
         ~ICUConverterWrapper();
 
         UConverter* converter;
+
+        WTF_MAKE_NONCOPYABLE(ICUConverterWrapper);
     };
 
 } // namespace WebCore

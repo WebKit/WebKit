@@ -1,3 +1,58 @@
+2011-02-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add built-in decoder for UTF-8 for improved performance
+        https://bugs.webkit.org/show_bug.cgi?id=53898
+
+        Covered by existing tests; not adding new tests at this time.
+
+        This patch now handles errors in the same way the existing codecs do,
+        and so passes our tests. The first version failed some tests because
+        of incorrect error handling. The second version was missing one line
+        of code that made it decode incomplete sequences at the end of the
+        buffer twice.
+
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::create): Renamed from newTextCodecICU, made a static member
+        function, and added a call to adoptPtr.
+        (WebCore::TextCodecICU::registerEncodingNames): Renamed from
+        registerExtendedEncodingNames since this class is no longer used for
+        base codecs. Removed aliases for UTF-8; now handled by TextCodecUTF8.
+        (WebCore::TextCodecICU::registerCodecs): Renamed.
+        (WebCore::fallbackForGBK): Renamed to conform to our current style.
+
+        * platform/text/TextCodecICU.h: Updated for above changes. Changed
+        indentation. Made most functions private, including virtual function
+        overrides. Marked ICUConverterWrapper noncopyable.
+
+        * platform/text/TextCodecUTF8.cpp:
+        (WebCore::TextCodecUTF8::registerEncodingNames): Added the UTF-8 aliases
+        that were formerly added by TextCodecICU.
+        (WebCore::nonASCIISequenceLength): Fixed bug where this would return 4 for
+        bytes F5-FF instead of failing.
+        (WebCore::decodeNonASCIISequence): Tweaked coding style.
+        (WebCore::appendCharacter): Added. Makes it easier to share code between
+        the partial-character handling and main loop.
+        (WebCore::TextCodecUTF8::decode): Fixed buffer size computation for case
+        where there is a partial sequence. Fixed partial sequence handling so that
+        goto is no longer needed, since compilers sometimes make poor code when
+        goto is involved. Added a loop for partial sequences since we consume only
+        one byte when a partial sequence is invalid. Fixed logic in main decoding
+        loop so goto is not needed. Used early-exit style in both loops so the main
+        flow is not nested inside if statements. Added correct error handling for
+        flush when a partial sequence remains, which involved wrapping the function
+        in yet another loop.
+
+        * platform/text/TextCodecUTF8.h: Made virtual function overrides private.
+
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::buildBaseTextCodecMaps): Added calls to TextCodecUTF8. Removed
+        calls to TextCodecICU. Added FIXMEs for other codecs that no longer need
+        to be included here.
+        (WebCore::extendTextCodecMaps): Updated for the name change of the
+        TextCodecICU functions.
+
 2011-02-14  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
