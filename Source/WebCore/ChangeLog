@@ -1,3 +1,47 @@
+2011-02-14  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: use call frame column to determine execution line in source frame.
+        https://bugs.webkit.org/show_bug.cgi?id=54001
+
+        - Make call frame line and column zero based
+        - Set execution line in source frame based on call frame line:column
+        - Determine currently hit breakpoint based on call frame line:column
+
+        * bindings/js/JavaScriptCallFrame.cpp:
+        (WebCore::JavaScriptCallFrame::JavaScriptCallFrame):
+        * bindings/js/JavaScriptCallFrame.h:
+        (WebCore::JavaScriptCallFrame::create):
+        (WebCore::JavaScriptCallFrame::line):
+        (WebCore::JavaScriptCallFrame::column):
+        (WebCore::JavaScriptCallFrame::update):
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::createCallFrameAndPauseIfNeeded):
+        (WebCore::ScriptDebugServer::updateCallFrameAndPauseIfNeeded):
+        * bindings/v8/DebuggerScript.js:
+        ():
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._debuggerPaused):
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane.prototype.update):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype.continueToLocation):
+        (WebInspector.DebuggerModel.prototype._pausedScript):
+        (WebInspector.DebuggerModel.prototype._breakpointForCallFrame):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._debuggerPaused):
+        (WebInspector.ScriptsPanel.prototype._clearCurrentExecutionLine):
+        (WebInspector.ScriptsPanel.prototype._callFrameSelected):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._setTextViewerDecorations):
+        (WebInspector.SourceFrame.prototype.setExecutionLocation):
+        (WebInspector.SourceFrame.prototype.clearExecutionLocation):
+        (WebInspector.SourceFrame.prototype._setExecutionLocation):
+        (WebInspector.SourceFrame.prototype._breakpointAdded):
+        (WebInspector.SourceFrame.prototype._continueToLine):
+        (WebInspector.SourceFrame.prototype._originalLocationToTextViewerLineNumber):
+
 2011-02-14  Christian Dywan  <christian@lanedo.com>
 
         Reviewed by Gustavo Noronha Silva.

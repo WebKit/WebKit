@@ -377,7 +377,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         WebInspector.currentPanel = this;
 
-        this.sidebarPanes.callstack.update(callFrames, event.data.eventType, event.data.eventData);
+        this.sidebarPanes.callstack.update(event.data);
         this.sidebarPanes.callstack.selectedCallFrame = callFrames[0];
 
         window.focus();
@@ -666,7 +666,7 @@ WebInspector.ScriptsPanel.prototype = {
     _clearCurrentExecutionLine: function()
     {
         if (this._executionSourceFrame)
-            this._executionSourceFrame.clearExecutionLine();
+            this._executionSourceFrame.clearExecutionLocation();
         delete this._executionSourceFrame;
     },
 
@@ -688,7 +688,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         this._executionSourceFrame = this._sourceFrameForScriptOrResource(scriptOrResource);
         if (this._executionSourceFrame)
-            this._executionSourceFrame.setExecutionLine(currentFrame.line);
+            this._executionSourceFrame.setExecutionLocation(currentFrame.line, currentFrame.column);
     },
 
     _changeVisibleFile: function(event)

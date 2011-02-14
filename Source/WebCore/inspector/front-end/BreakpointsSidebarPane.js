@@ -143,10 +143,10 @@ WebInspector.JavaScriptBreakpointsSidebarPane.prototype = {
 
     _debuggerPaused: function(event)
     {
-        var breakpointId = this._breakpointIdForDebuggerPausedEvent(event.data);
-        if (!breakpointId)
+        var breakpoint = event.data.breakpoint;
+        if (!breakpoint)
             return;
-        var breakpointItem = this._items[breakpointId];
+        var breakpointItem = this._items[breakpoint.id];
         if (!breakpointItem)
             return;
         breakpointItem.element.addStyleClass("breakpoint-hit");
@@ -235,14 +235,6 @@ WebInspector.JavaScriptBreakpointsSidebarPane.prototype = {
         var clickHandler = WebInspector.panels.scripts.showSourceLine.bind(WebInspector.panels.scripts, data.url, lineNumber + 1);
         element.addEventListener("click", clickHandler, false);
     },
-
-    _breakpointIdForDebuggerPausedEvent: function(details)
-    {
-        var callFrame = details.callFrames[0];
-        var breakpoint = WebInspector.debuggerModel.findBreakpoint(callFrame.sourceID, callFrame.line);
-        if (breakpoint)
-            return breakpoint.id;
-   },
 
     _removeBreakpoint: function(breakpointId)
     {

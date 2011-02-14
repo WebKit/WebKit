@@ -85,7 +85,7 @@ InspectorTest.captureStackTrace = function(callFrames)
         var script = WebInspector.debuggerModel.scriptForSourceID(frame.sourceID);
         var scriptOrResource = script.resource || script;
         var url = scriptOrResource && WebInspector.displayNameForURL(scriptOrResource.sourceURL || scriptOrResource.url);
-        var s = "    " + i + ") " + frame.functionName + " (" + url + ":" + frame.line + ")";
+        var s = "    " + i + ") " + frame.functionName + " (" + url + ":" + (frame.line + 1) + ")";
         InspectorTest.addResult(s);
     }
 };

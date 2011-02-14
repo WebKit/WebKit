@@ -222,8 +222,8 @@ WebInspector.SourceFrame.prototype = {
         this._addExistingMessagesToSource();
         this._updateDiffDecorations();
 
-        if (this._executionLine)
-            this.setExecutionLine(this._executionLine);
+        if (this._executionLocation)
+            this._setExecutionLocation();
 
         this._breakpointIdToTextViewerLineNumber = {};
         this._textViewerLineNumberToBreakpointId = {};
@@ -361,22 +361,26 @@ WebInspector.SourceFrame.prototype = {
         msg._resourceMessageRepeatCountElement.textContent = WebInspector.UIString(" (repeated %d times)", msg.repeatCount);
     },
 
-    setExecutionLine: function(lineNumber)
+    setExecutionLocation: function(lineNumber, columnNumber)
     {
-        this._executionLine = lineNumber;
-        if (!this._textViewer)
-            return;
-        var textViewerLineNumber = this._content.actualLocationToSourceFrameLineNumber(this._executionLine - 1, 0);
-        this._textViewer.addDecoration(textViewerLineNumber, "webkit-execution-line");
+        this._executionLocation = { lineNumber: lineNumber, columnNumber: columnNumber };
+        if (this._textViewer)
+            this._setExecutionLocation();
     },
 
-    clearExecutionLine: function()
+    clearExecutionLocation: function()
     {
-        if (!this._textViewer)
-            return;
-        var textViewerLineNumber = this._content.actualLocationToSourceFrameLineNumber(this._executionLine - 1, 0);
-        this._textViewer.removeDecoration(textViewerLineNumber, "webkit-execution-line");
-        delete this._executionLine;
+        if (this._textViewer) {
+            var textViewerLineNumber = this._content.actualLocationToSourceFrameLineNumber(this._executionLocation.lineNumber, this._executionLocation.columnNumber);
+            this._textViewer.removeDecoration(textViewerLineNumber, "webkit-execution-line");
+        }
+        delete this._executionLocation;
+    },
+
+    _setExecutionLocation: function()
+    {
+        var textViewerLineNumber = this._content.actualLocationToSourceFrameLineNumber(this._executionLocation.lineNumber, this._executionLocation.columnNumber);
+        this._textViewer.addDecoration(textViewerLineNumber, "webkit-execution-line");
     },
 
     _updateDiffDecorations: function()
@@ -863,7 +867,7 @@ WebInspector.SourceFrame.prototype = {
     {
         var location = this._content.sourceFrameLineNumberToActualLocation(lineNumber);
         if (location.sourceID)
-            WebInspector.debuggerModel.continueToLine(location.sourceID, location.lineNumber);
+            WebInspector.debuggerModel.continueToLocation(location.sourceID, location.lineNumber, location.columnNumber);
     },
 
     _doubleClick: function(event)

@@ -71,9 +71,9 @@ WebInspector.DebuggerModel.prototype = {
         InspectorBackend.disableDebugger();
     },
 
-    continueToLine: function(sourceID, lineNumber)
+    continueToLocation: function(sourceID, lineNumber, columnNumber)
     {
-        InspectorBackend.continueToLocation(sourceID, lineNumber, 0);
+        InspectorBackend.continueToLocation(sourceID, lineNumber, columnNumber);
     },
 
     setBreakpoint: function(url, lineNumber, columnNumber, condition, enabled)
@@ -171,17 +171,6 @@ WebInspector.DebuggerModel.prototype = {
                breakpoints.push(breakpoint);
         }
         return breakpoints;
-    },
-
-    findBreakpoint: function(sourceID, lineNumber)
-    {
-        for (var id in this._breakpoints) {
-            var locations = this._breakpoints[id].locations;
-            for (var i = 0; i < locations.length; ++i) {
-                if (locations[i].sourceID == sourceID && locations[i].lineNumber + 1 === lineNumber)
-                    return this._breakpoints[id];
-            }
-        }
     },
 
     reset: function()
@@ -286,6 +275,7 @@ WebInspector.DebuggerModel.prototype = {
     {
         this._paused = true;
         this._callFrames = details.callFrames;
+        details.breakpoint = this._breakpointForCallFrame(details.callFrames[0]);
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.DebuggerPaused, details);
     },
 
@@ -294,6 +284,23 @@ WebInspector.DebuggerModel.prototype = {
         this._paused = false;
         this._callFrames = [];
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.DebuggerResumed);
+    },
+
+    _breakpointForCallFrame: function(callFrame)
+    {
+        function match(location)
+        {
+            if (location.sourceID != callFrame.sourceID)
+                return false;
+            return location.lineNumber === callFrame.line && location.columnNumber === callFrame.column;
+        }
+        for (var id in this._breakpoints) {
+            var breakpoint = this._breakpoints[id];
+            for (var i = 0; i < breakpoint.locations.length; ++i) {
+                if (match(breakpoint.locations[i]))
+                    return breakpoint;
+            }
+        }
     },
 
     _parsedScriptSource: function(sourceID, sourceURL, lineOffset, columnOffset, length, scriptWorldType)

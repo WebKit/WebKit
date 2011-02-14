@@ -42,6 +42,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/TextPosition.h>
 
 namespace JSC {
 class DebuggerCallFrame;
@@ -100,7 +101,7 @@ private:
     ScriptDebugServer();
     ~ScriptDebugServer();
 
-    bool hasBreakpoint(intptr_t sourceID, unsigned lineNumber) const;
+    bool hasBreakpoint(intptr_t sourceID, const TextPosition0& position) const;
     bool hasListenersInterestedInPage(Page*);
 
     void setJavaScriptPaused(const PageGroup&, bool paused);

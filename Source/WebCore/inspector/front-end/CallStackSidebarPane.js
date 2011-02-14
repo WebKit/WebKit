@@ -29,14 +29,14 @@ WebInspector.CallStackSidebarPane = function()
 }
 
 WebInspector.CallStackSidebarPane.prototype = {
-    update: function(callFrames, eventType, eventData)
+    update: function(details)
     {
         this.bodyElement.removeChildren();
 
         this.placards = [];
         delete this._selectedCallFrame;
 
-        if (!callFrames) {
+        if (!details) {
             var infoElement = document.createElement("div");
             infoElement.className = "info";
             infoElement.textContent = WebInspector.UIString("Not Paused");
@@ -44,6 +44,7 @@ WebInspector.CallStackSidebarPane.prototype = {
             return;
         }
 
+        var callFrames = details.callFrames;
         var title;
         var subtitle;
         var script;
@@ -81,10 +82,10 @@ WebInspector.CallStackSidebarPane.prototype = {
             this.bodyElement.appendChild(placard.element);
         }
 
-        if (WebInspector.debuggerModel.findBreakpoint(callFrames[0].sourceID, callFrames[0].line))
+        if (details.breakpoint)
             this._scriptBreakpointHit();
-        else if (eventType === WebInspector.DebuggerEventTypes.NativeBreakpoint)
-            this._nativeBreakpointHit(eventData);
+        else if (details.eventType === WebInspector.DebuggerEventTypes.NativeBreakpoint)
+            this._nativeBreakpointHit(details.eventData);
     },
 
     get selectedCallFrame()
@@ -94,9 +95,6 @@ WebInspector.CallStackSidebarPane.prototype = {
 
     set selectedCallFrame(x)
     {
-        if (this._selectedCallFrame === x)
-            return;
-
         this._selectedCallFrame = x;
 
         for (var i = 0; i < this.placards.length; ++i) {

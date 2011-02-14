@@ -89,7 +89,7 @@ public:
     ZeroBasedNumber() {}
 
     int zeroBasedInt() const { return m_value; }
-
+    int convertAsOneBasedInt() const { return m_value + 1; }
     OneBasedNumber convertToOneBased() const;
 
     bool operator==(ZeroBasedNumber other) { return m_value == other.m_value; }

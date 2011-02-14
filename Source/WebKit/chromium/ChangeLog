@@ -1,3 +1,13 @@
+2011-02-14  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: use call frame column to determine execution line in source frame.
+        https://bugs.webkit.org/show_bug.cgi?id=54001
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype._checkExecutionLine):
+
 2011-02-11  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
