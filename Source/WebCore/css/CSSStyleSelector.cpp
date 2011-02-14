@@ -4159,8 +4159,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     // length, percent
     case CSSPropertyMaxWidth:
         // +none +inherit
-        if (primitiveValue && primitiveValue->getIdent() == CSSValueNone)
+        if (primitiveValue && primitiveValue->getIdent() == CSSValueNone) {
+            l = Length(undefinedLength, Fixed);
             apply = true;
+        }
     case CSSPropertyTop:
     case CSSPropertyLeft:
     case CSSPropertyRight:

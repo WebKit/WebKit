@@ -1,3 +1,20 @@
+2011-02-14  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Reviewed by Andreas Kling.
+
+        css style="max-width:none" works wrong
+        https://bugs.webkit.org/show_bug.cgi?id=53743
+
+        Fix a bug that "max-width:none" works wrong.
+        See also: http://trac.webkit.org/changeset/13462
+
+        Test: fast/css/max-width-none.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty): For max-width of none,
+        set it to Length(undefinedLength, Fixed), which is the correct
+        value.
+
 2011-02-14  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Andreas Kling.
