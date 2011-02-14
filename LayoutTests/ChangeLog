@@ -2,6 +2,14 @@
 
         Unreviewed, Chromium test expectations update.
 
+        Try using the right syntax this time.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-02-14  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed, Chromium test expectations update.
+
         * platform/chromium/test_expectations.txt:
 
 2011-02-14  Peter Kasting  <pkasting@google.com>
