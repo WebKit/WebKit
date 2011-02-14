@@ -92,6 +92,11 @@ public:
     // Construct a string with UTF-16 data.
     String(const UChar* characters, unsigned length);
 
+    // Construct a string by copying the contents of a vector.  To avoid
+    // copying, consider using String::adopt instead.
+    template<size_t inlineCapacity>
+    explicit String(const Vector<UChar, inlineCapacity>&);
+
     // Construct a string with UTF-16 data, from a null-terminated source.
     String(const UChar*);
 
@@ -377,6 +382,12 @@ inline bool operator!(const String& str) { return str.isNull(); }
 inline void swap(String& a, String& b) { a.swap(b); }
 
 // Definitions of string operations
+
+template<size_t inlineCapacity>
+String::String(const Vector<UChar, inlineCapacity>& vector)
+    : m_impl(vector.size() ? StringImpl::create(vector.data(), vector.size()) : 0)
+{
+}
 
 #ifdef __OBJC__
 // This is for situations in WebKit where the long standing behavior has been

@@ -26,21 +26,29 @@
 #ifndef ContentSecurityPolicy_h
 #define ContentSecurityPolicy_h
 
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+class CSPDirective;
 
 class ContentSecurityPolicy {
     WTF_MAKE_NONCOPYABLE(ContentSecurityPolicy);
 public:
     ContentSecurityPolicy();
+    ~ContentSecurityPolicy();
 
     void didReceiveHeader(const String&);
     bool canLoadExternalScriptFromSrc(const String& url) const;
 
 private:
+    typedef Vector<CSPDirective> DirectiveList;
+
+    void parse(const String&);
+
     bool m_isEnabled;
-    String m_header;
+    DirectiveList m_directives;
 };
 
 }

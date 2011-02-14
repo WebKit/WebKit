@@ -29,20 +29,101 @@
 
 namespace WebCore {
 
+class CSPDirective {
+public:
+    CSPDirective(const String& name, const String& value)
+        : m_name(name)
+        , m_value(value)
+    {
+    }
+
+    const String& name() const { return m_name; }
+    const String& value() const { return m_value; }
+
+private:
+    String m_name;
+    String m_value;
+};
+
 ContentSecurityPolicy::ContentSecurityPolicy()
     : m_isEnabled(false)
 {
 }
 
+ContentSecurityPolicy::~ContentSecurityPolicy()
+{
+}
+
 void ContentSecurityPolicy::didReceiveHeader(const String& header)
 {
+    if (!m_directives.isEmpty())
+        return; // The first policy wins.
+
     m_isEnabled = true;
-    m_header = header;
+    parse(header);
 }
 
 bool ContentSecurityPolicy::canLoadExternalScriptFromSrc(const String&) const
 {
     return !m_isEnabled;
+}
+
+void ContentSecurityPolicy::parse(const String& policy)
+{
+    ASSERT(m_directives.isEmpty());
+
+    if (policy.isEmpty())
+        return;
+
+    enum {
+        BeforeDirectiveName,
+        DirectiveName,
+        AfterDirectiveName,
+        DirectiveValue,
+    } state = BeforeDirectiveName;
+
+    const UChar* pos = policy.characters();
+    const UChar* end = pos + policy.length();
+
+    Vector<UChar, 32> name;
+    Vector<UChar, 64> value;
+
+    while (pos < end) {
+        UChar currentCharacter = *pos++;
+        switch (state) {
+        case BeforeDirectiveName:
+            if (isASCIISpace(currentCharacter))
+                continue;
+            state = DirectiveName;
+            // Fall through.
+        case DirectiveName:
+            if (!isASCIISpace(currentCharacter)) {
+                name.append(currentCharacter);
+                continue;
+            }
+            state = AfterDirectiveName;
+            // Fall through.
+        case AfterDirectiveName:
+            if (isASCIISpace(currentCharacter))
+                continue;
+            state = DirectiveValue;
+            // Fall through.
+        case DirectiveValue:
+            if (currentCharacter != ';') {
+                value.append(currentCharacter);
+                continue;
+            }
+            // We use a copy here instead of String::adopt because we expect
+            // the name and the value to be relatively short, so the copy will
+            // be cheaper than the extra malloc.
+            // FIXME: Perform directive-specific parsing of the value.
+            m_directives.append(CSPDirective(String(name), String(value)));
+            name.clear();
+            value.clear();
+            state = BeforeDirectiveName;
+            continue;
+        }
+    }
 }
 
 }

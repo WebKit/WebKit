@@ -1,3 +1,17 @@
+2011-02-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add basic parser for Content Security Policy
+        https://bugs.webkit.org/show_bug.cgi?id=54379
+
+        Add a constructor for copying a Vector into a String.  I suspect there
+        are a number of call sites that are doing this manually that would
+        benefit from being moved to this API.
+
+        * wtf/text/WTFString.h:
+        (WTF::String::String):
+
 2011-02-14  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
