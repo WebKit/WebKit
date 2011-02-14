@@ -32,7 +32,6 @@
 
 select {
     background-color: #dddddd;
-    border: 0px;
 }
 
 select[size="0"] option,

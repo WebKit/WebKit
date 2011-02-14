@@ -856,6 +856,7 @@ static void GetWebThemeExtraParams(PlatformBridge::ThemePart part, PlatformBridg
         break;
     case PlatformBridge::PartButton:
         webThemeExtraParams->button.isDefault = extraParams->button.isDefault;
+        webThemeExtraParams->button.hasBorder = extraParams->button.hasBorder;
         webThemeExtraParams->button.backgroundColor = extraParams->button.backgroundColor;
         break;
     case PlatformBridge::PartTextField:
@@ -864,6 +865,8 @@ static void GetWebThemeExtraParams(PlatformBridge::ThemePart part, PlatformBridg
         webThemeExtraParams->textField.backgroundColor = extraParams->textField.backgroundColor;
         break;
     case PlatformBridge::PartMenuList:
+        webThemeExtraParams->menuList.hasBorder = extraParams->menuList.hasBorder;
+        webThemeExtraParams->menuList.hasBorderRadius = extraParams->menuList.hasBorderRadius;
         webThemeExtraParams->menuList.arrowX = extraParams->menuList.arrowX;
         webThemeExtraParams->menuList.arrowY = extraParams->menuList.arrowY;
         webThemeExtraParams->menuList.backgroundColor = extraParams->menuList.backgroundColor;

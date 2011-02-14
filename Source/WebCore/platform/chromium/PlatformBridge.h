@@ -308,6 +308,7 @@ public:
         bool checked;
         bool indeterminate; // Whether the button state is indeterminate.
         bool isDefault; // Whether the button is default button.
+        bool hasBorder;
         unsigned backgroundColor;
     };
 
@@ -318,6 +319,8 @@ public:
     };
 
     struct MenuListExtraParams {
+        bool hasBorder;
+        bool hasBorderRadius;
         int arrowX;
         int arrowY;
         unsigned backgroundColor;

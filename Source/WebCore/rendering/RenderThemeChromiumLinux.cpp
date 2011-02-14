@@ -227,6 +227,7 @@ bool RenderThemeChromiumLinux::paintButton(RenderObject* o, const PaintInfo& i, 
 {
     PlatformBridge::ThemePaintExtraParams extraParams;
     extraParams.button.isDefault = isDefault(o);
+    extraParams.button.hasBorder = true;
     extraParams.button.backgroundColor = defaultButtonBackgroundColor;
     if (o->hasBackground())
         extraParams.button.backgroundColor = o->style()->visitedDependentColor(CSSPropertyBackgroundColor).rgb();
@@ -260,12 +261,19 @@ bool RenderThemeChromiumLinux::paintTextField(RenderObject* o, const PaintInfo& 
 
 bool RenderThemeChromiumLinux::paintMenuList(RenderObject* o, const PaintInfo& i, const IntRect& rect)
 {
+    if (!o->isBox())
+        return false;
+
     const int right = rect.x() + rect.width();
     const int middle = rect.y() + rect.height() / 2;
 
     PlatformBridge::ThemePaintExtraParams extraParams;
     extraParams.menuList.arrowX = (o->style()->direction() == RTL) ? rect.x() + 7 : right - 13;
     extraParams.menuList.arrowY = middle;
+    const RenderBox* box = toRenderBox(o);
+    // Match Chromium Win behaviour of showing all borders if any are shown.
+    extraParams.menuList.hasBorder = box->borderRight() || box->borderLeft() || box->borderTop() || box->borderBottom();
+    extraParams.menuList.hasBorderRadius = o->style()->hasBorderRadius();
     extraParams.menuList.backgroundColor = SkColorSetRGB(0xdd, 0xdd, 0xdd);
     if (o->hasBackground())
         extraParams.menuList.backgroundColor = o->style()->visitedDependentColor(CSSPropertyBackgroundColor).rgb();
