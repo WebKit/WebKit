@@ -1,3 +1,21 @@
+2011-02-15  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed, Chromium test expectations update.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40147
+        https://bugs.webkit.org/show_bug.cgi?id=48029
+        https://bugs.webkit.org/show_bug.cgi?id=53740
+        https://bugs.webkit.org/show_bug.cgi?id=54387
+        https://bugs.webkit.org/show_bug.cgi?id=54418
+        https://bugs.webkit.org/show_bug.cgi?id=54499
+        Remove a couple erroneously-added baselines, unmark some now-passing
+        tests, bug numbers, etc.
+
+        * platform/chromium-linux/http/tests/xmlhttprequest: Removed.
+        * platform/chromium-linux/http/tests/xmlhttprequest/cache-override-expected.txt: Removed.
+        * platform/chromium-win/fast/gradients/css3-repeating-end-fill-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-02-15  Steve Falkenburg  <sfalken@apple.com>
 
         Add media/audio-delete-while-slider-thumb-clicked.html to Windows skipped list.
