@@ -307,8 +307,8 @@ bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const
     SVGElement* targetElement = this->targetElement();
     if (!targetElement)
         return false;
-    m_fromPropertyValueType = inheritsFromProperty(targetElement, attributeName(), fromString) ? InheritValue : CurrentColorValue;
-    m_toPropertyValueType = inheritsFromProperty(targetElement, attributeName(), toString) ? InheritValue : CurrentColorValue;
+    m_fromPropertyValueType = inheritsFromProperty(targetElement, attributeName(), fromString) ? InheritValue : RegularPropertyValue;
+    m_toPropertyValueType = inheritsFromProperty(targetElement, attributeName(), toString) ? InheritValue : RegularPropertyValue;
 
     // FIXME: Needs more solid way determine target attribute type.
     m_propertyType = determinePropertyType(attributeName());
@@ -323,8 +323,9 @@ bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const
             m_toPropertyValueType = CurrentColorValue;
         else
             m_toColor = SVGColor::colorFromRGBColorString(toString);
-        if (((m_fromColor.isValid() || fromIsCurrentColor) && (m_toColor.isValid() || toIsCurrentColor))
-            || ((m_toColor.isValid() || toIsCurrentColor) && animationMode() == ToAnimation))
+        bool fromIsValid = m_fromColor.isValid() || fromIsCurrentColor || m_fromPropertyValueType == InheritValue;
+        bool toIsValid = m_toColor.isValid() || toIsCurrentColor || m_toPropertyValueType == InheritValue;
+        if ((fromIsValid && toIsValid) || (toIsValid && animationMode() == ToAnimation))
             return true;
     } else if (m_propertyType == NumberProperty) {
         m_numberUnit = String();
@@ -361,8 +362,8 @@ bool SVGAnimateElement::calculateFromAndByValues(const String& fromString, const
     SVGElement* targetElement = this->targetElement();
     if (!targetElement)
         return false;
-    m_fromPropertyValueType = inheritsFromProperty(targetElement, attributeName(), fromString) ? InheritValue : CurrentColorValue;
-    m_toPropertyValueType = inheritsFromProperty(targetElement, attributeName(), byString) ? InheritValue : CurrentColorValue;
+    m_fromPropertyValueType = inheritsFromProperty(targetElement, attributeName(), fromString) ? InheritValue : RegularPropertyValue;
+    m_toPropertyValueType = inheritsFromProperty(targetElement, attributeName(), byString) ? InheritValue : RegularPropertyValue;
 
     ASSERT(!hasTagName(SVGNames::setTag));
     m_propertyType = determinePropertyType(attributeName());

@@ -1,3 +1,19 @@
+2011-02-15  Dirk Schulze  <krit@webkit.org>
+
+        Rubber-stamped by Nikolas Zimmermann.
+
+        SVG animation doesn't support attribute value 'inherit'
+        https://bugs.webkit.org/show_bug.cgi?id=54410
+
+        We have support for 'inherit' in SVG animations now. This means the cyan circles
+        are invisible at the beginning.
+        The test itself is still broken, since calcMode gets handled incorrectly.
+
+        * platform/mac-wk2/Skipped:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-31-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-31-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-31-t-expected.txt:
+
 2011-02-15  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed, unskip passing test after r78541.
