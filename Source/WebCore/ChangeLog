@@ -1,3 +1,23 @@
+2011-02-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add NPP_GetSitesWithData and NPP_URLRedirectNotify to the NPAPI headers
+        https://bugs.webkit.org/show_bug.cgi?id=54481
+
+        We should really sync all headers with the NPAPI repository, but doing that
+        lead to build errors so I just added what was needed.
+
+        * bridge/npapi.h:
+        Add new functions.
+
+        * bridge/nptypes.h:
+        Sync with the official NPAPI repository, adding 64-bit integer types and
+        removing a duplicate license header.
+
+        * plugins/npfunctions.h:
+        Add new functions.
+
 2011-02-15  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin Adler.

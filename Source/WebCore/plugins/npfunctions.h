@@ -109,6 +109,11 @@ typedef int16_t (*NPP_HandleEventProcPtr)(NPP instance, void* event);
 typedef void (*NPP_URLNotifyProcPtr)(NPP instance, const char* URL, NPReason reason, void* notifyData);
 typedef NPError (*NPP_GetValueProcPtr)(NPP instance, NPPVariable variable, void *ret_value);
 typedef NPError (*NPP_SetValueProcPtr)(NPP instance, NPNVariable variable, void *value);
+typedef NPBool (*NPP_GotFocusPtr)(NPP instance, NPFocusDirection direction);
+typedef void (*NPP_LostFocusPtr)(NPP instance);
+typedef void (*NPP_URLRedirectNotifyPtr)(NPP instance, const char* url, int32_t status, void* notifyData);
+typedef NPError (*NPP_ClearSiteDataPtr)(const char* site, uint64_t flags, uint64_t maxAge);
+typedef char** (*NPP_GetSitesWithDataPtr)(void);
 
 typedef void *(*NPP_GetJavaClassProcPtr)(void);
 typedef void* JRIGlobalRef; //not using this right now
@@ -189,6 +194,11 @@ typedef struct _NPPluginFuncs {
     JRIGlobalRef javaClass;
     NPP_GetValueProcPtr getvalue;
     NPP_SetValueProcPtr setvalue;
+    NPP_GotFocusPtr gotfocus;
+    NPP_LostFocusPtr lostfocus;
+    NPP_URLRedirectNotifyPtr urlredirectnotify;
+    NPP_ClearSiteDataPtr clearsitedata;
+    NPP_GetSitesWithDataPtr getsiteswithdata;
 } NPPluginFuncs;
 
 typedef EXPORTED_CALLBACK(NPError, NP_GetEntryPointsFuncPtr)(NPPluginFuncs*);

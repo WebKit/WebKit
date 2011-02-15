@@ -237,6 +237,11 @@ typedef struct _NPSize
   int32_t height;
 } NPSize;
 
+typedef enum {
+  NPFocusNext = 0,
+  NPFocusPrevious = 1
+} NPFocusDirection;
+
 /* Return values for NPP_HandleEvent */
 #define kNPEventNotHandled 0
 #define kNPEventHandled 1
@@ -698,6 +703,12 @@ enum NPEventType {
 
 #define NP_MAXREADY (((unsigned)(~0)<<1)>>1)
 
+/*
+ * Flags for NPP_ClearSiteData.
+ */
+#define NP_CLEAR_ALL   0
+#define NP_CLEAR_CACHE (1 << 0)
+
 #if !defined(__LP64__)
 #if defined(XP_MACOSX)
 #pragma options align=reset
@@ -763,6 +774,9 @@ enum NPEventType {
 #define NPVERS_HAS_PRIVATE_MODE             22
 #define NPVERS_MACOSX_HAS_EVENT_MODELS      23
 #define NPVERS_HAS_CANCEL_SRC_STREAM        24
+#define NPVERS_HAS_ADVANCED_KEY_HANDLING    25
+#define NPVERS_HAS_URL_REDIRECT_HANDLING    26
+#define NPVERS_HAS_CLEAR_SITE_DATA          27
 
 /*----------------------------------------------------------------------*/
 /*                        Function Prototypes                           */
@@ -808,6 +822,11 @@ void    NP_LOADDS NPP_URLNotify(NPP instance, const char* url,
 jref    NP_LOADDS NPP_GetJavaClass(void);
 NPError NP_LOADDS NPP_GetValue(NPP instance, NPPVariable variable, void *value);
 NPError NP_LOADDS NPP_SetValue(NPP instance, NPNVariable variable, void *value);
+NPBool  NP_LOADDS NPP_GotFocus(NPP instance, NPFocusDirection direction);
+void    NP_LOADDS NPP_LostFocus(NPP instance);
+void    NP_LOADDS NPP_URLRedirectNotify(NPP instance, const char* url, int32_t status, void* notifyData);
+NPError NP_LOADDS NPP_ClearSiteData(const char* site, uint64_t flags, uint64_t maxAge);
+char**  NP_LOADDS NPP_GetSitesWithData(void);
 
 /* NPN_* functions are provided by the navigator and called by the plugin. */
 void        NP_LOADDS NPN_Version(int* plugin_major, int* plugin_minor,
