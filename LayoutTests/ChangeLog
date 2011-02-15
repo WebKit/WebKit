@@ -1,3 +1,17 @@
+2011-02-15  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Carlson.
+
+        [GTK] media/audio-delete-while-slider-thumb-clicked.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=53247
+
+        Refactored the test to use the seeking event instead of timeupdate
+        and avoid flakyness.
+
+        * media/audio-delete-while-slider-thumb-clicked-expected.txt:
+        * media/audio-delete-while-slider-thumb-clicked.html:
+        * platform/gtk/Skipped:
+
 2011-02-15  Dirk Schulze  <krit@webkit.org>
 
         Unreviewed rebaseline.

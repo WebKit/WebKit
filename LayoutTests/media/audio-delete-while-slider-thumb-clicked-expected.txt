@@ -4,7 +4,6 @@ This tests that events don't continue to target a slider thumb if the media elem
 
 clicking in controller
 clicking on thumb
-timeupdate
 
 deleting audio element
 

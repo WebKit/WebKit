@@ -2534,9 +2534,6 @@ http/tests/security/local-user-CSS-from-remote.html
 # See https://bugs.webkit.org/show_bug.cgi?id=53056
 media/unsupported-rtsp.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=53247
-media/audio-delete-while-slider-thumb-clicked.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=53428
 http/tests/misc/favicon-as-image.html
 
