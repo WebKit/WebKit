@@ -3579,3 +3579,5 @@ BUGPKASTING LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg = IM
 
 // Assertion failure in UTF-8 decoding
 BUGWK54418 : http/tests/xmlhttprequest/cache-override.html = CRASH
+
+BUGWK54460 : svg/custom/use-css-no-effect-on-shadow-tree.svg = IMAGE
