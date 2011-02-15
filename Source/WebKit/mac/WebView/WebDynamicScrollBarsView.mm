@@ -160,7 +160,7 @@ struct WebDynamicScrollBarsViewPrivate {
     return _private->verticalScrollingAllowedButScrollerHidden || [self hasVerticalScroller];
 }
 
-- (BOOL)inProgramaticScroll
+- (BOOL)inProgrammaticScroll
 {
     return _private->inProgrammaticScroll;
 }

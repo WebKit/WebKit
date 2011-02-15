@@ -1,3 +1,16 @@
+2011-02-15  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/54485> Fix spelling of -inProgramaticScroll
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebDynamicScrollBarsView.h:
+        * WebView/WebDynamicScrollBarsView.mm:
+        (-[WebDynamicScrollBarsView inProgrammaticScroll]): Renamed from
+        -inProgramaticScroll.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _frameOrBoundsChanged]): Corrected method name.
+
 2011-02-15  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Darin Fisher.

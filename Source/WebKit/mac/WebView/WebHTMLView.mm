@@ -1239,7 +1239,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     WebDynamicScrollBarsView *scrollView = [[[webView mainFrame] frameView] _scrollView];
 
     NSPoint origin = [[self superview] bounds].origin;
-    if (!NSEqualPoints(_private->lastScrollPosition, origin) && ![scrollView inProgramaticScroll]) {
+    if (!NSEqualPoints(_private->lastScrollPosition, origin) && ![scrollView inProgrammaticScroll]) {
         if (Frame* coreFrame = core([self _frame])) {
             if (FrameView* coreView = coreFrame->view()) {
 #ifndef BUILDING_ON_TIGER

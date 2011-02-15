@@ -63,5 +63,5 @@ struct WebDynamicScrollBarsViewPrivate;
 // scrollbar.
 // NOTE: As opposed to other places in the code, programmatically moving the
 // scrollers from inside this class should not fire JS events.
-- (BOOL)inProgramaticScroll;
+- (BOOL)inProgrammaticScroll;
 @end
