@@ -1067,6 +1067,11 @@ void WebPageProxy::viewScaleFactorDidChange(double scaleFactor)
     m_viewScaleFactor = scaleFactor;
 }
 
+void WebPageProxy::setMemoryCacheClientCallsEnabled(bool memoryCacheClientCallsEnabled)
+{
+    process()->send(Messages::WebPage::SetMemoryCacheMessagesEnabled(memoryCacheClientCallsEnabled), m_pageID);
+}
+
 void WebPageProxy::findString(const String& string, FindOptions options, unsigned maxMatchCount)
 {
     process()->send(Messages::WebPage::FindString(string, options, maxMatchCount), m_pageID);

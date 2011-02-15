@@ -158,6 +158,8 @@ messages -> WebPage {
     DrawPagesToPDF(uint64_t frameID, uint32_t first, uint32_t count, uint64_t callbackID)
 #endif
 
+    SetMemoryCacheMessagesEnabled(bool memoryCacheMessagesEnabled)
+
     // FIXME: This a dummy message, to avoid breaking the build for platforms that don't require
     // any synchronous messages, and should be removed when <rdar://problem/8775115> is fixed.
     Dummy() -> (bool dummyReturn)

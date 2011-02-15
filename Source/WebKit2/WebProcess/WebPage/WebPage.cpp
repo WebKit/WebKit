@@ -2050,4 +2050,9 @@ void WebPage::runModal()
     ASSERT(!m_isRunningModal);
 }
 
+void WebPage::setMemoryCacheMessagesEnabled(bool memoryCacheMessagesEnabled)
+{
+    m_page->setMemoryCacheClientCallsEnabled(memoryCacheMessagesEnabled);
+}
+
 } // namespace WebKit

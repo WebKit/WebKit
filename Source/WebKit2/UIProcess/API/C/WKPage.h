@@ -272,6 +272,8 @@ WK_EXPORT WKFrameRef WKPageGetFocusedFrame(WKPageRef page); // The focused frame
 WK_EXPORT WKFrameRef WKPageGetFrameSetLargestFrame(WKPageRef page);
 WK_EXPORT double WKPageGetEstimatedProgress(WKPageRef page);
 
+WK_EXPORT void WKPageSetMemoryCacheClientCallsEnabled(WKPageRef page, bool memoryCacheClientCallsEnabled);
+
 #if defined(ENABLE_INSPECTOR) && ENABLE_INSPECTOR
 WK_EXPORT WKInspectorRef WKPageGetInspector(WKPageRef page);
 #endif

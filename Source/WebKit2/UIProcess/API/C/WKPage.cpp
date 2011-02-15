@@ -170,6 +170,11 @@ double WKPageGetEstimatedProgress(WKPageRef pageRef)
     return toImpl(pageRef)->estimatedProgress();
 }
 
+void WKPageSetMemoryCacheClientCallsEnabled(WKPageRef pageRef, bool memoryCacheClientCallsEnabled)
+{
+    toImpl(pageRef)->setMemoryCacheClientCallsEnabled(memoryCacheClientCallsEnabled);
+}
+
 WKStringRef WKPageCopyUserAgent(WKPageRef pageRef)
 {
     return toCopiedAPI(toImpl(pageRef)->userAgent());

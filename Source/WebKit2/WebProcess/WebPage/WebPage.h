@@ -334,6 +334,8 @@ public:
     bool canRunModal() const { return m_canRunModal; }
     void runModal();
 
+    void setMemoryCacheMessagesEnabled(bool);
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 

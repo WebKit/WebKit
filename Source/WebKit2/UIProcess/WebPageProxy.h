@@ -280,6 +280,8 @@ public:
 
     void viewScaleFactorDidChange(double);
 
+    void setMemoryCacheClientCallsEnabled(bool);
+
     // Find.
     void findString(const String&, FindOptions, unsigned maxMatchCount);
     void hideFindUI();
