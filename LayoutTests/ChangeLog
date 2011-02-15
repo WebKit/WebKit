@@ -1,3 +1,79 @@
+2011-02-15  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed chromium-gpu-linux rebaseline. Check in correct expectations
+        which should allow us to remove the PASS FAIL line for compositing/ for
+        this platform.
+
+        * platform/chromium-gpu-linux/compositing/direct-image-compositing-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/direct-image-compositing-expected.png:
+        * platform/chromium-gpu-linux/compositing/generated-content-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/generated-content-expected.png:
+        * platform/chromium-gpu-linux/compositing/geometry/composited-html-size-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/geometry/composited-html-size-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/geometry/fixed-position-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/geometry/fixed-position-expected.png:
+        * platform/chromium-gpu-linux/compositing/geometry/horizontal-scroll-composited-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/chromium-gpu-linux/compositing/geometry/layer-due-to-layer-children-deep-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/geometry/layer-due-to-layer-children-deep-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/geometry/layer-due-to-layer-children-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/geometry/layer-due-to-layer-children-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/geometry/vertical-scroll-composited-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/geometry/vertical-scroll-composited-expected.png:
+        * platform/chromium-gpu-linux/compositing/masks/masked-ancestor-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/masks/masked-ancestor-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/masks/simple-composited-mask-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/masks/simple-composited-mask-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/overflow/fixed-position-ancestor-clip-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/overflow/fixed-position-ancestor-clip-expected.png:
+        * platform/chromium-gpu-linux/compositing/reflections/animation-inside-reflection-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/animation-inside-reflection-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/compositing-change-inside-reflection-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/compositing-change-inside-reflection-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/deeply-nested-reflections-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/deeply-nested-reflections-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/masked-reflection-on-composited-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/masked-reflection-on-composited-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/nested-reflection-animated-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/nested-reflection-animated-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/nested-reflection-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/nested-reflection-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/nested-reflection-mask-change-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/nested-reflection-mask-change-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/nested-reflection-on-overflow-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/nested-reflection-on-overflow-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/nested-reflection-opacity-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/nested-reflection-opacity-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/nested-reflection-size-change-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/nested-reflection-size-change-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/nested-reflection-transformed-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/nested-reflection-transformed-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/nested-reflection-transformed2-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/nested-reflection-transformed2-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/nested-reflection-transition-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/nested-reflection-transition-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/reflection-in-composited-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/reflections/reflection-in-composited-expected.png:
+        * platform/chromium-gpu-linux/compositing/reflections/reflection-on-composited-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/reflection-on-composited-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/reflection-ordering-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/reflection-ordering-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/reflection-positioning-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/reflection-positioning-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/reflection-positioning2-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/reflection-positioning2-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/simple-composited-reflections-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/simple-composited-reflections-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/transform-inside-reflection-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/transform-inside-reflection-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/sibling-positioning-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/sibling-positioning-expected.png:
+        * platform/chromium-gpu-linux/compositing/transitions/scale-transition-no-start-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/transitions/scale-transition-no-start-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/webgl/webgl-reflection-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/webgl/webgl-reflection-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-02-15  Tony Chang  <tony@chromium.org>
 
         Rebaseline chromium-linux tests with menulists (select drop downs).
