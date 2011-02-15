@@ -96,7 +96,10 @@ public:
     // - http://www.whatwg.org/specs/web-apps/current-work/#serialization-of-a-color
     String serialized() const;
 
-    String name() const;
+    // Returns the color serialized as either #RRGGBB or #RRGGBBAA
+    // The latter format is not a valid CSS color, and should only be seen in DRT dumps.
+    String nameForRenderTreeAsText() const;
+
     void setNamedColor(const String&);
 
     bool isValid() const { return m_valid; }

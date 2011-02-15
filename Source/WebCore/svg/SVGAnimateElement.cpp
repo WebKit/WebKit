@@ -429,9 +429,10 @@ void SVGAnimateElement::resetToBaseValue(const String& baseString)
 void SVGAnimateElement::applyResultsToTarget()
 {
     String valueToApply;
-    if (m_propertyType == ColorProperty)
-        valueToApply = m_animatedColor.name();
-    else if (m_propertyType == NumberProperty)
+    if (m_propertyType == ColorProperty) {
+        // FIXME: Use Color::serialized() instead.
+        valueToApply = m_animatedColor.nameForRenderTreeAsText();
+    } else if (m_propertyType == NumberProperty)
         valueToApply = String::number(m_animatedNumber) + m_numberUnit;
     else if (m_propertyType == PathProperty) {
         if (!m_animatedPathPointer || m_animatedPathPointer->isEmpty())

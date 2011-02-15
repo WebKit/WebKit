@@ -192,7 +192,7 @@ String Color::serialized() const
     return String::format("rgba(%u, %u, %u, %.5f)", red(), green(), blue(), alpha() / 255.0f);
 }
 
-String Color::name() const
+String Color::nameForRenderTreeAsText() const
 {
     if (alpha() < 0xFF)
         return String::format("#%02X%02X%02X%02X", red(), green(), blue(), alpha());

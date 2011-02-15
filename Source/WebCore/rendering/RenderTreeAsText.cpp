@@ -278,22 +278,22 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
             ts << " " << quoteAndEscapeNonPrintables(toRenderFileUploadControl(&o)->fileTextValue());
 
         if (o.parent() && (o.parent()->style()->color() != o.style()->color()))
-            ts << " [color=" << o.style()->color().name() << "]";
+            ts << " [color=" << o.style()->color().nameForRenderTreeAsText() << "]";
 
         if (o.parent() && (o.parent()->style()->backgroundColor() != o.style()->backgroundColor()) &&
             o.style()->backgroundColor().isValid() && o.style()->backgroundColor().rgb())
             // Do not dump invalid or transparent backgrounds, since that is the default.
-            ts << " [bgcolor=" << o.style()->backgroundColor().name() << "]";
+            ts << " [bgcolor=" << o.style()->backgroundColor().nameForRenderTreeAsText() << "]";
         
         if (o.parent() && (o.parent()->style()->textFillColor() != o.style()->textFillColor()) &&
             o.style()->textFillColor().isValid() && o.style()->textFillColor() != o.style()->color() &&
             o.style()->textFillColor().rgb())
-            ts << " [textFillColor=" << o.style()->textFillColor().name() << "]";
+            ts << " [textFillColor=" << o.style()->textFillColor().nameForRenderTreeAsText() << "]";
 
         if (o.parent() && (o.parent()->style()->textStrokeColor() != o.style()->textStrokeColor()) &&
             o.style()->textStrokeColor().isValid() && o.style()->textStrokeColor() != o.style()->color() &&
             o.style()->textStrokeColor().rgb())
-            ts << " [textStrokeColor=" << o.style()->textStrokeColor().name() << "]";
+            ts << " [textStrokeColor=" << o.style()->textStrokeColor().nameForRenderTreeAsText() << "]";
 
         if (o.parent() && (o.parent()->style()->textStrokeWidth() != o.style()->textStrokeWidth()) &&
             o.style()->textStrokeWidth() > 0)
@@ -317,7 +317,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
                     Color col = o.style()->borderTopColor();
                     if (!col.isValid())
                         col = o.style()->color();
-                    ts << col.name() << ")";
+                    ts << col.nameForRenderTreeAsText() << ")";
                 }
             }
 
@@ -331,7 +331,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
                     Color col = o.style()->borderRightColor();
                     if (!col.isValid())
                         col = o.style()->color();
-                    ts << col.name() << ")";
+                    ts << col.nameForRenderTreeAsText() << ")";
                 }
             }
 
@@ -345,7 +345,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
                     Color col = o.style()->borderBottomColor();
                     if (!col.isValid())
                         col = o.style()->color();
-                    ts << col.name() << ")";
+                    ts << col.nameForRenderTreeAsText() << ")";
                 }
             }
 
@@ -359,7 +359,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
                     Color col = o.style()->borderLeftColor();
                     if (!col.isValid())
                         col = o.style()->color();
-                    ts << col.name() << ")";
+                    ts << col.nameForRenderTreeAsText() << ")";
                 }
             }
 

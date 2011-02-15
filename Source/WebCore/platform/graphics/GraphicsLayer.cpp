@@ -470,7 +470,7 @@ void GraphicsLayer::dumpProperties(TextStream& ts, int indent, LayerTreeAsTextBe
 
     if (m_backgroundColorSet) {
         writeIndent(ts, indent + 1);
-        ts << "(backgroundColor " << m_backgroundColor.name() << ")\n";
+        ts << "(backgroundColor " << m_backgroundColor.nameForRenderTreeAsText() << ")\n";
     }
 
     if (!m_transform.isIdentity()) {

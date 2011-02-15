@@ -222,7 +222,7 @@ static TextStream& operator<<(TextStream& ts, const SVGMarkerElement::SVGMarkerU
 
 TextStream& operator<<(TextStream& ts, const Color& c)
 {
-    return ts << c.name();
+    return ts << c.nameForRenderTreeAsText();
 }
 
 // FIXME: Maybe this should be in KCanvasRenderingStyle.cpp
@@ -441,7 +441,7 @@ static void writeRenderSVGTextBox(TextStream& ts, const RenderBlock& text)
     ts << " contains 1 chunk(s)";
 
     if (text.parent() && (text.parent()->style()->visitedDependentColor(CSSPropertyColor) != text.style()->visitedDependentColor(CSSPropertyColor)))
-        writeNameValuePair(ts, "color", text.style()->visitedDependentColor(CSSPropertyColor).name());
+        writeNameValuePair(ts, "color", text.style()->visitedDependentColor(CSSPropertyColor).nameForRenderTreeAsText());
 }
 
 static inline void writeSVGInlineTextBox(TextStream& ts, SVGInlineTextBox* textBox, int indent)

@@ -1,3 +1,35 @@
+2011-02-15  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Rename Color::name() to Color::nameForRenderTreeAsText()
+        https://bugs.webkit.org/show_bug.cgi?id=54464
+
+        Color::name() returns the color as either #RRGGBB or #RRGGBBAA.
+        Since the latter is not a valid CSS color, it can't be re-parsed
+        by WebKit, and should only be used in DRT dumps.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::StyleChange::extractTextStyles):
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeEditDrag):
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::nameForRenderTreeAsText):
+        * platform/graphics/Color.h:
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::dumpProperties):
+        * platform/graphics/filters/FEFlood.cpp:
+        (WebCore::FEFlood::externalRepresentation):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::operator<<):
+        (WebCore::writeRenderSVGTextBox):
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::applyResultsToTarget):
+        * svg/SVGColor.cpp:
+        (WebCore::SVGColor::cssText):
+
 2011-02-15  Andras Becsi  <abecsi@webkit.org>
 
         Rubber-stamped by Andreas Kling.

@@ -85,7 +85,7 @@ TextStream& FEFlood::externalRepresentation(TextStream& ts, int indent) const
     writeIndent(ts, indent);
     ts << "[feFlood";
     FilterEffect::externalRepresentation(ts);
-    ts << " flood-color=\"" << floodColor().name() << "\" "
+    ts << " flood-color=\"" << floodColor().nameForRenderTreeAsText() << "\" "
        << "flood-opacity=\"" << floodOpacity() << "\"]\n";
     return ts;
 }

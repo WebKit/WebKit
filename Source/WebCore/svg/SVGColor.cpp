@@ -87,8 +87,10 @@ void SVGColor::setColor(unsigned short colorType, const String& /* rgbColor */ ,
 
 String SVGColor::cssText() const
 {
-    if (m_colorType == SVG_COLORTYPE_RGBCOLOR)
-        return m_color.name();
+    if (m_colorType == SVG_COLORTYPE_RGBCOLOR) {
+        // FIXME: Use Color::serialized() instead.
+        return m_color.nameForRenderTreeAsText();
+    }
 
     return String();
 }
