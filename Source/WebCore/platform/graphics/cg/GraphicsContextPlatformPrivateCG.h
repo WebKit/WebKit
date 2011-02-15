@@ -33,7 +33,7 @@ namespace WebCore {
 
 class GraphicsContextPlatformPrivate {
 public:
-    GraphicsContextPlatformPrivate(CGContextRef cgContext)
+    GraphicsContextPlatformPrivate(CGContextRef cgContext, bool isLayerContext = false)
         : m_cgContext(cgContext)
 #if PLATFORM(WIN)
         , m_hdc(0)
@@ -41,6 +41,7 @@ public:
         , m_shouldIncludeChildWindows(false)
 #endif
         , m_userToDeviceTransformKnownToBeIdentity(false)
+        , m_isCALayerContext(isLayerContext)
     {
     }
     
@@ -84,6 +85,7 @@ public:
 
     RetainPtr<CGContextRef> m_cgContext;
     bool m_userToDeviceTransformKnownToBeIdentity;
+    bool m_isCALayerContext;
 };
 
 }

@@ -61,6 +61,7 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCA
     [NSGraphicsContext setCurrentContext:layerContext];
 
     GraphicsContext graphicsContext(context);
+    graphicsContext.setIsCALayerContext(true);
 
     if (!layerContents->platformCALayerContentsOpaque()) {
         // Turn off font smoothing to improve the appearance of text rendered onto a transparent background.

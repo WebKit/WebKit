@@ -59,7 +59,6 @@ static ScrollbarPainterMap* scrollbarMap()
 
 @interface ScrollbarPrefsObserver : NSObject
 {
-
 }
 
 + (void)registerAsObserver;
@@ -167,7 +166,6 @@ void ScrollbarThemeMac::registerScrollbar(Scrollbar* scrollbar)
 
 void ScrollbarThemeMac::unregisterScrollbar(Scrollbar* scrollbar)
 {
-
     scrollbarMap()->remove(scrollbar);
 }
 
@@ -446,6 +444,9 @@ bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, co
         totalSize = scrollbar->totalSize();
     }
 
+    ScrollAnimatorMac* scrollAnimator = static_cast<ScrollAnimatorMac*>(scrollbar->scrollableArea()->scrollAnimator());
+    scrollAnimator->setIsDrawingIntoLayer(context->isCALayerContext());
+
     context->save();
     context->clip(damageRect);
     context->translate(scrollbar->frameRect().x(), scrollbar->frameRect().y());
@@ -455,6 +456,9 @@ bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, co
                             value,
                             static_cast<CGFloat>(scrollbar->visibleSize()) / totalSize,
                             scrollbar->frameRect());
+
+    scrollAnimator->setIsDrawingIntoLayer(false);
+
     context->restore();
     return true;
 #endif

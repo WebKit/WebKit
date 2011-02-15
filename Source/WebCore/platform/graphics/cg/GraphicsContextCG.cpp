@@ -1269,6 +1269,16 @@ void GraphicsContext::setAllowsFontSmoothing(bool allowsFontSmoothing)
 #endif
 }
 
+void GraphicsContext::setIsCALayerContext(bool)
+{
+    m_data->m_isCALayerContext = true;
+}
+
+bool GraphicsContext::isCALayerContext() const
+{
+    return m_data->m_isCALayerContext;
+}
+
 void GraphicsContext::setPlatformTextDrawingMode(TextDrawingModeFlags mode)
 {
     if (paintingDisabled())

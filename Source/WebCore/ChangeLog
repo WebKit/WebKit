@@ -1,3 +1,48 @@
+2011-02-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix scrollbar rendering crash when rendered into a layer
+        https://bugs.webkit.org/show_bug.cgi?id=54494
+        
+        The scroller delegate was failing to return a layer in a case
+        where the scroller was still rendering into a GraphicsLayer, because
+        even though WebCore had switched out of compositing mode, the
+        DrawingAreaImpl was still rendering into its nonCompositedContent
+        layer. This happens when the m_exitCompositingTimer timer hasn't fired
+        yet.
+        
+        The fix is to track whether we're drawing into a layer via the
+        GraphicsContext, rather than asking about compositing layers.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setIsCALayerContext):
+        (WebCore::GraphicsContext::isCALayerContext):
+        Getter and setter for the bit that says if we're rendering into a CALayer.
+
+        * platform/graphics/cg/GraphicsContextPlatformPrivateCG.h:
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        Store a bool for whether this context targets a layer.
+
+        * platform/graphics/mac/WebLayer.mm:
+        (drawLayerContents): Call setIsCALayerContext(true).
+        
+        * platform/mac/ScrollAnimatorMac.h:
+        (WebCore::ScrollAnimatorMac::setIsDrawingIntoLayer):
+        (WebCore::ScrollAnimatorMac::isDrawingIntoLayer):
+        New methods to get and set a flag that says when we're
+        drawing into a layer, so that the delegate can get at this state.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[ScrollbarPainterDelegate layer]): Use isDrawingIntoLayer()
+        (WebCore::ScrollAnimatorMac::ScrollAnimatorMac): Init the flag.
+
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::unregisterScrollbar): Whitespace.
+        (WebCore::ScrollbarThemeMac::paint): Push the "isDrawingIntoLayer"
+        state down onto ScrollAnimatorMac, getting it from the GraphicsContext.
+
 2011-02-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

@@ -268,6 +268,9 @@ namespace WebCore {
         
         // Allow font smoothing (LCD antialiasing). Not part of the graphics state.
         void setAllowsFontSmoothing(bool);
+        
+        void setIsCALayerContext(bool);
+        bool isCALayerContext() const;
 #endif
 
         void save();

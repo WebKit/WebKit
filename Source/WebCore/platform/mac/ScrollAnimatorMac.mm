@@ -357,7 +357,7 @@ static NSSize abs(NSSize size)
 {
     if (!_animator)
         return nil;
-    if (!_animator->scrollableArea()->scrollbarWillRenderIntoCompositingLayer())
+    if (!_animator->isDrawingIntoLayer())
         return nil;
 
     // FIXME: This should attempt to return an actual layer.
@@ -455,6 +455,7 @@ ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea* scrollableArea)
     , m_inScrollGesture(false)
     , m_momentumScrollInProgress(false)
     , m_ignoreMomentumScrolls(false)
+    , m_drawingIntoLayer(false)
     , m_lastMomemtumScrollTimestamp(0)
     , m_startTime(0)
     , m_snapRubberBandTimer(this, &ScrollAnimatorMac::snapRubberBandTimerFired)
