@@ -1,3 +1,10 @@
+2011-02-15  Andreas Kling  <kling@webkit.org>
+
+        Unreviewed Qt build fix after r78588.
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::QWKPage): Add WKPageLoaderClient::shouldGoToHistoryItem.
+
 2011-02-15  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.

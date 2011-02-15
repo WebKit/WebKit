@@ -448,7 +448,8 @@ QWKPage::QWKPage(QWKContext* context)
         qt_wk_didBecomeUnresponsive,
         qt_wk_didBecomeResponsive,
         0,  /* processDidCrash */
-        0   /* didChangeBackForwardList */
+        0,  /* didChangeBackForwardList */
+        0   /* shouldGoToBackForwardListItem */
     };
     WKPageSetPageLoaderClient(pageRef(), &loadClient);
 
