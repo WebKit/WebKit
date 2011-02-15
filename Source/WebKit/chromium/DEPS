@@ -32,7 +32,7 @@
 
 vars = {
   'chromium_svn': 'http://src.chromium.org/svn/trunk/src',
-  'chromium_rev': '73764'
+  'chromium_rev': '74986'
 }
 
 deps = {
@@ -50,8 +50,6 @@ deps = {
   # Basic tools
   'base':
     Var('chromium_svn')+'/base@'+Var('chromium_rev'),
-  'gfx':
-    Var('chromium_svn')+'/gfx@'+Var('chromium_rev'),
 
   # skia dependencies
   'skia':
