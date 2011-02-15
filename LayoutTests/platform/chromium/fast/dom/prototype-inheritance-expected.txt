@@ -803,10 +803,6 @@ PASS inner.webkitIDBDatabaseError.isInner is true
 PASS inner.webkitIDBDatabaseError.constructor.isInner is true
 PASS inner.webkitIDBDatabaseException.isInner is true
 PASS inner.webkitIDBDatabaseException.constructor.isInner is true
-PASS inner.webkitIDBErrorEvent.isInner is true
-PASS inner.webkitIDBErrorEvent.constructor.isInner is true
-PASS inner.webkitIDBEvent.isInner is true
-PASS inner.webkitIDBEvent.constructor.isInner is true
 PASS inner.webkitIDBFactory.isInner is true
 PASS inner.webkitIDBFactory.constructor.isInner is true
 PASS inner.webkitIDBIndex.isInner is true
@@ -817,8 +813,6 @@ PASS inner.webkitIDBObjectStore.isInner is true
 PASS inner.webkitIDBObjectStore.constructor.isInner is true
 PASS inner.webkitIDBRequest.isInner is true
 PASS inner.webkitIDBRequest.constructor.isInner is true
-PASS inner.webkitIDBSuccessEvent.isInner is true
-PASS inner.webkitIDBSuccessEvent.constructor.isInner is true
 PASS inner.webkitIDBTransaction.isInner is true
 PASS inner.webkitIDBTransaction.constructor.isInner is true
 FAIL inner.webkitIndexedDB.isInner should be true. Was false.
