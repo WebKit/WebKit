@@ -1057,7 +1057,7 @@ void WebFrameImpl::replaceSelection(const WebString& text)
     RefPtr<DocumentFragment> fragment = createFragmentFromText(
         frame()->selection()->toNormalizedRange().get(), text);
     applyCommand(ReplaceSelectionCommand::create(
-        frame()->document(), fragment.get(), false, true, true));
+        frame()->document(), fragment.get(), ReplaceSelectionCommand::SmartReplace | ReplaceSelectionCommand::MatchStyle | ReplaceSelectionCommand::PreventNesting));
 }
 
 void WebFrameImpl::insertText(const WebString& text)

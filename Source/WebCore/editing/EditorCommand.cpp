@@ -194,8 +194,7 @@ static bool executeApplyParagraphStyle(Frame* frame, EditorCommandSource source,
 
 static bool executeInsertFragment(Frame* frame, PassRefPtr<DocumentFragment> fragment)
 {
-    applyCommand(ReplaceSelectionCommand::create(frame->document(), fragment,
-        false, false, false, true, false, EditActionUnspecified));
+    applyCommand(ReplaceSelectionCommand::create(frame->document(), fragment, ReplaceSelectionCommand::PreventNesting, EditActionUnspecified));
     return true;
 }
 

@@ -1136,8 +1136,14 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
     if (_private->coreFrame->selection()->isNone() || !fragment)
         return;
-    
-    applyCommand(ReplaceSelectionCommand::create(_private->coreFrame->document(), core(fragment), selectReplacement, smartReplace, matchStyle));
+    ReplaceSelectionCommand::CommandOptions options = ReplaceSelectionCommand::PreventNesting;
+    if (selectReplacement)
+        options |= ReplaceSelectionCommand::SelectReplacement;
+    if (smartReplace)
+        options |= ReplaceSelectionCommand::SmartReplace;
+    if (matchStyle)
+        options |= ReplaceSelectionCommand::MatchStyle;
+    applyCommand(ReplaceSelectionCommand::create(_private->coreFrame->document(), core(fragment), options));
     _private->coreFrame->selection()->revealSelection(ScrollAlignment::alignToEdgeIfNeeded);
 }
 

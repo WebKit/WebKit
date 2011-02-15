@@ -144,6 +144,7 @@ public:
     virtual void showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const WTF::String& replacedString, const WTF::String& replacementString, const WTF::Vector<WTF::String>& alternativeReplacementStrings, WebCore::Editor*);
     virtual void dismissCorrectionPanel(WebCore::ReasonForDismissingCorrectionPanel);
     virtual bool isShowingCorrectionPanel();
+    virtual void recordAutocorrectionResponse(AutocorrectionResponseType, const WTF::String& replacedString, const WTF::String& replacementString);
 #endif
 private:
     void registerCommandForUndoOrRedo(PassRefPtr<WebCore::EditCommand>, bool isRedo);

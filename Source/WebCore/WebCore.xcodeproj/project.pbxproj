@@ -4769,6 +4769,10 @@
 		B885E8D411E06DD2009FFBF4 /* InspectorApplicationCacheAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B885E8D211E06DD2009FFBF4 /* InspectorApplicationCacheAgent.cpp */; };
 		B885E8D511E06DD2009FFBF4 /* InspectorApplicationCacheAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = B885E8D311E06DD2009FFBF4 /* InspectorApplicationCacheAgent.h */; settings = {ATTRIBUTES = (); }; };
 		B8A6A6D5127B338D008673BA /* CorrectionPanelInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = B8A6A6D4127B338D008673BA /* CorrectionPanelInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B8DBDB4B130B0F8A00F5CDB1 /* SetSelectionCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B8DBDB47130B0F8A00F5CDB1 /* SetSelectionCommand.cpp */; };
+		B8DBDB4C130B0F8A00F5CDB1 /* SetSelectionCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = B8DBDB48130B0F8A00F5CDB1 /* SetSelectionCommand.h */; };
+		B8DBDB4D130B0F8A00F5CDB1 /* SpellingCorrectionCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B8DBDB49130B0F8A00F5CDB1 /* SpellingCorrectionCommand.cpp */; };
+		B8DBDB4E130B0F8A00F5CDB1 /* SpellingCorrectionCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = B8DBDB4A130B0F8A00F5CDB1 /* SpellingCorrectionCommand.h */; };
 		BC00F0040E0A185500FD04E3 /* DOMFile.h in Headers */ = {isa = PBXBuildFile; fileRef = BC00EFFE0E0A185500FD04E3 /* DOMFile.h */; };
 		BC00F0050E0A185500FD04E3 /* DOMFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC00EFFF0E0A185500FD04E3 /* DOMFile.mm */; };
 		BC00F0060E0A185500FD04E3 /* DOMFileInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC00F0000E0A185500FD04E3 /* DOMFileInternal.h */; };
@@ -11061,6 +11065,10 @@
 		B885E8D211E06DD2009FFBF4 /* InspectorApplicationCacheAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorApplicationCacheAgent.cpp; sourceTree = "<group>"; };
 		B885E8D311E06DD2009FFBF4 /* InspectorApplicationCacheAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorApplicationCacheAgent.h; sourceTree = "<group>"; };
 		B8A6A6D4127B338D008673BA /* CorrectionPanelInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorrectionPanelInfo.h; sourceTree = "<group>"; };
+		B8DBDB47130B0F8A00F5CDB1 /* SetSelectionCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetSelectionCommand.cpp; sourceTree = "<group>"; };
+		B8DBDB48130B0F8A00F5CDB1 /* SetSelectionCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetSelectionCommand.h; sourceTree = "<group>"; };
+		B8DBDB49130B0F8A00F5CDB1 /* SpellingCorrectionCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpellingCorrectionCommand.cpp; sourceTree = "<group>"; };
+		B8DBDB4A130B0F8A00F5CDB1 /* SpellingCorrectionCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpellingCorrectionCommand.h; sourceTree = "<group>"; };
 		BC00EFFE0E0A185500FD04E3 /* DOMFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMFile.h; sourceTree = "<group>"; };
 		BC00EFFF0E0A185500FD04E3 /* DOMFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMFile.mm; sourceTree = "<group>"; };
 		BC00F0000E0A185500FD04E3 /* DOMFileInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMFileInternal.h; sourceTree = "<group>"; };
@@ -15324,6 +15332,10 @@
 				93309DBF099E64910056E581 /* SelectionController.h */,
 				93309DC0099E64910056E581 /* SetNodeAttributeCommand.cpp */,
 				93309DC1099E64910056E581 /* SetNodeAttributeCommand.h */,
+				B8DBDB47130B0F8A00F5CDB1 /* SetSelectionCommand.cpp */,
+				B8DBDB48130B0F8A00F5CDB1 /* SetSelectionCommand.h */,
+				B8DBDB49130B0F8A00F5CDB1 /* SpellingCorrectionCommand.cpp */,
+				B8DBDB4A130B0F8A00F5CDB1 /* SpellingCorrectionCommand.h */,
 				4B6FA6F30C39E48C00087011 /* SmartReplace.cpp */,
 				4B6FA6F20C39E48C00087011 /* SmartReplace.h */,
 				4B6FA6F60C39E4A100087011 /* SmartReplaceCF.cpp */,
@@ -22420,6 +22432,8 @@
 				975CA28B130365F800E99AD9 /* Crypto.h in Headers */,
 				975CA2A21303679D00E99AD9 /* JSCrypto.h in Headers */,
 				26E98A10130A9FCA008EB7B2 /* TextCodecASCIIFastPath.h in Headers */,
+				B8DBDB4C130B0F8A00F5CDB1 /* SetSelectionCommand.h in Headers */,
+				B8DBDB4E130B0F8A00F5CDB1 /* SpellingCorrectionCommand.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25102,6 +25116,8 @@
 				A1E1154413015C3D0054AC8C /* DistantLightSource.cpp in Sources */,
 				A1E1154613015C4E0054AC8C /* PointLightSource.cpp in Sources */,
 				A1E1154813015C5D0054AC8C /* SpotLightSource.cpp in Sources */,
+				B8DBDB4B130B0F8A00F5CDB1 /* SetSelectionCommand.cpp in Sources */,
+				B8DBDB4D130B0F8A00F5CDB1 /* SpellingCorrectionCommand.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

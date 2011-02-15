@@ -1,3 +1,22 @@
+2011-02-15  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Autocorrection should respect undo.
+        https://bugs.webkit.org/show_bug.cgi?id=52221
+        <rdar://problem/8663399>
+
+        Please see WebCore/ChangeLog for detailed description.
+
+        * WebCoreSupport/WebEditorClient.h: Updated for the new function declared in EditorClient.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::recordAutocorrectionResponse): Ditto.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _replaceSelectionWithFragment:selectReplacement:smartReplace:matchStyle:]):
+             Adopted new signature of ReplaceSelectionCommand::create().
+
 2011-02-15  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/54485> Fix spelling of -inProgramaticScroll
@@ -26,31 +45,6 @@
         (+[WebView _defaultMinimumTimerInterval]):
         (-[WebView _setMinimumTimerInterval:]):
         * WebView/WebViewPrivate.h:
-
-2011-01-26  MORITA Hajime  <morrita@google.com>
-
-        Reviewed by Ryosuke Niwa.
-
-        Refactoring: Extract TextCheckerClient from EditorClient
-        https://bugs.webkit.org/show_bug.cgi?id=53213
-
-        * WebCoreSupport/WebEditorClient.h:
-        (WebEditorClient::textChecker):
-
-2011-02-07  Ryosuke Niwa  <rniwa@webkit.org>
-
-        Reviewed by Adam Barth.
-
-        Add EditorClient callbacks to override isDOMPasteAllowed and javaScriptCanAccessClipboard
-        https://bugs.webkit.org/show_bug.cgi?id=52417
-
-        Added two callback functions, canCopyCut and canPaste to EditorClient. They are currently
-        not implemented.
-
-        * WebCoreSupport/WebEditorClient.h:
-        * WebCoreSupport/WebEditorClient.mm:
-        (WebEditorClient::canCopyCut): Added.
-        (WebEditorClient::canPaste): Added.
 
 2011-02-11  Geoffrey Garen  <ggaren@apple.com>
 

@@ -962,6 +962,12 @@ bool WebEditorClient::isShowingCorrectionPanel()
 {
     return m_correctionPanelIsShown;
 }
+
+void WebEditorClient::recordAutocorrectionResponse(EditorClient::AutocorrectionResponseType responseType, const String& replacedString, const String& replacementString)
+{
+    NSCorrectionResponse spellCheckerResponse = responseType == EditorClient::AutocorrectionReverted ? NSCorrectionResponseReverted : NSCorrectionResponseEdited;
+    [[NSSpellChecker sharedSpellChecker] recordResponse:spellCheckerResponse toCorrection:replacementString forWord:replacedString language:nil inSpellDocumentWithTag:[m_webView spellCheckerDocumentTag]];
+}
 #endif
 
 void WebEditorClient::updateSpellingUIWithMisspelledWord(const String& misspelledWord)

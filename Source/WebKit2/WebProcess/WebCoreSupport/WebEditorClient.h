@@ -145,6 +145,7 @@ private:
     virtual void showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings, WebCore::Editor*);
     virtual void dismissCorrectionPanel(WebCore::ReasonForDismissingCorrectionPanel);
     virtual bool isShowingCorrectionPanel();
+    virtual void recordAutocorrectionResponse(AutocorrectionResponseType, const WTF::String& replacedString, const WTF::String& replacementString);
 #endif
     WebPage* m_page;
 };

@@ -1664,9 +1664,9 @@ void WebPage::replaceSelectionWithText(Frame* frame, const String& text)
 {
     if (frame->selection()->isNone())
         return;
-    
+
     RefPtr<DocumentFragment> textFragment = createFragmentFromText(frame->selection()->toNormalizedRange().get(), text);
-    applyCommand(ReplaceSelectionCommand::create(frame->document(), textFragment.release(), true, false, true));
+    applyCommand(ReplaceSelectionCommand::create(frame->document(), textFragment.release(), ReplaceSelectionCommand::SelectReplacement | ReplaceSelectionCommand::MatchStyle | ReplaceSelectionCommand::PreventNesting));
     frame->selection()->revealSelection(ScrollAlignment::alignToEdgeIfNeeded);
 }
 

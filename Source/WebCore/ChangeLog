@@ -1,3 +1,111 @@
+2011-02-15  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Autocorrection should respect undo.
+        https://bugs.webkit.org/show_bug.cgi?id=52221
+        <rdar://problem/8663399>
+
+        Manual test: manual-tests/autocorrection/undo-autocorrection.html
+
+        When user undoes an autocorrection, we need to do four things:
+        1. Revert the change in text that has been made by correction.
+        2. Revert the selection to pre-correction state so that user can immediately continue typing.
+        3. Add appropriate markers to reverted text so that it won't be corrected again and/or shown
+           as misspelled.
+        4. If applicable, notify spell checking service to record this reversion.
+
+        To achieve these, this patch introduces following changes:
+        1. Created SpellingCorrectionCommand so that correction can be undone in similar way as any
+           other editing command. SpellingCorrectionCommand is a composition of SetSelectionCommand,
+           SpellingCorrectionRecordUndoCommand and ReplaceSelectionCommand.
+        2. Created SetSelectionCommand so that undo command can restore selection state.
+        3. Added member function recordAutocorrectionResponse() to editor client.
+
+        To improve readability, this patch also consolidates various boolean arguments in SelectionController::setSelection()
+        and ReplaceSelectionCommand::ReplaceSelectionCommand(). These boolean arguments have been
+        replaced by enum variable.
+
+        * WebCore.exp.in: Updated for changes in Editor and ReplaceSelectionCommand.
+
+        * WebCore.xcodeproj/project.pbxproj: Updated for new source files.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs): Adopted new signature of ReplaceSelectionCommand::create().
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::replaceSelectionWithFragment): Ditto.
+        (WebCore::Editor::unappliedEditing): Cleaned up trailing whitespace.
+        (WebCore::Editor::reappliedEditing): Ditto.
+        (WebCore::Editor::selectComposition): Adopted new signature of SelectionController::setSelection().
+        (WebCore::Editor::confirmComposition): Ditto.
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges): Rearranged code to reduce the
+            level of deeply nested if statement. Adopted SpellingCorrectionCommand.
+        (WebCore::Editor::applyCorrectionPanelInfo): Adopted SpellingCorrectionCommand.
+        (WebCore::Editor::unappliedSpellCorrection): Function for adding markers to reverted text and
+            for notifiying editor client about undone correction.
+        (WebCore::Editor::changeSelectionAfterCommand): Adopted new signature of SelectionController::setSelection().
+        (WebCore::Editor::respondToChangedSelection): Use SelectionController::SetSelectionOptions
+            instead of boolean variables.
+
+        * editing/Editor.h: Added Editor::unappliedSpellCorrection().
+
+        * editing/EditorCommand.cpp:
+        (WebCore::executeInsertFragment): Adopted new signature of ReplaceSelectionCommand::create().
+
+        * editing/MoveSelectionCommand.cpp:
+        (WebCore::MoveSelectionCommand::doApply): Ditto.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::ReplaceSelectionCommand): Replaced all boolean arguments
+            with an enum value.
+
+        * editing/ReplaceSelectionCommand.h:
+        (WebCore::ReplaceSelectionCommand::create): Ditto.
+
+        * editing/SelectionController.cpp: Adopted new signature of SelectionController::setSelection().
+        (WebCore::SelectionController::moveTo):
+        (WebCore::SelectionController::setSelection):
+        (WebCore::SelectionController::respondToNodeModification):
+        (WebCore::SelectionController::setBase):
+        (WebCore::SelectionController::setExtent):
+        (WebCore::SelectionController::setSelectedRange):
+
+        * editing/SelectionController.h:
+        (WebCore::SelectionController::setSelection): Replaced all boolean arguments with an enum value.
+
+        * editing/SetSelectionCommand.cpp: Added.
+        (WebCore::SetSelectionCommand::SetSelectionCommand):
+        (WebCore::SetSelectionCommand::doApply):
+        (WebCore::SetSelectionCommand::doUnapply):
+
+        * editing/SetSelectionCommand.h: Added.
+        (WebCore::SetSelectionCommand::create):
+
+        * editing/mac/SpellingCorrectionCommand.cpp: Added.
+        (WebCore::SpellingCorrectionRecordUndoCommand::create):
+        (WebCore::SpellingCorrectionRecordUndoCommand::SpellingCorrectionRecordUndoCommand):
+        (WebCore::SpellingCorrectionRecordUndoCommand::doApply):
+        (WebCore::SpellingCorrectionRecordUndoCommand::doUnapply):
+        (WebCore::SpellingCorrectionCommand::SpellingCorrectionCommand):
+        (WebCore::SpellingCorrectionCommand::doApply):
+
+        * editing/mac/SpellingCorrectionCommand.h: Added.
+        (WebCore::SpellingCorrectionCommand::create):
+
+        * loader/EmptyClients.h: Updated for the new function declared in EditorClient.
+        (WebCore::EmptyEditorClient::recordAutocorrectionResponse):
+
+        * manual-tests/autocorrection/undo-autocorrection.html: Added.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected): Adopted new signature of ReplaceSelectionCommand::create().
+
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeEditDrag): Ditto.
+
+        * page/EditorClient.h: Added EditorClient::recordAutocorrectionResponse().
+
 2011-02-15  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.

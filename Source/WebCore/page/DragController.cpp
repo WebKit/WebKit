@@ -466,8 +466,14 @@ bool DragController::concludeEditDrag(DragData* dragData)
             bool smartInsert = smartDelete && innerFrame->selection()->granularity() == WordGranularity && dragData->canSmartReplace();
             applyCommand(MoveSelectionCommand::create(fragment, dragCaret.base(), smartInsert, smartDelete));
         } else {
-            if (setSelectionToDragCaret(innerFrame, dragCaret, range, point))
-                applyCommand(ReplaceSelectionCommand::create(m_documentUnderMouse.get(), fragment, true, dragData->canSmartReplace(), chosePlainText));
+            if (setSelectionToDragCaret(innerFrame, dragCaret, range, point)) {
+                ReplaceSelectionCommand::CommandOptions options = ReplaceSelectionCommand::SelectReplacement | ReplaceSelectionCommand::PreventNesting;
+                if (dragData->canSmartReplace())
+                    options |= ReplaceSelectionCommand::SmartReplace;
+                if (chosePlainText)
+                    options |= ReplaceSelectionCommand::MatchStyle;
+                applyCommand(ReplaceSelectionCommand::create(m_documentUnderMouse.get(), fragment, options));
+            }
         }
     } else {
         String text = dragData->asPlainText(innerFrame);
@@ -478,7 +484,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
 
         m_client->willPerformDragDestinationAction(DragDestinationActionEdit, dragData);
         if (setSelectionToDragCaret(innerFrame, dragCaret, range, point))
-            applyCommand(ReplaceSelectionCommand::create(m_documentUnderMouse.get(), createFragmentFromText(range.get(), text), true, false, true));
+            applyCommand(ReplaceSelectionCommand::create(m_documentUnderMouse.get(), createFragmentFromText(range.get(), text),  ReplaceSelectionCommand::SelectReplacement | ReplaceSelectionCommand::MatchStyle | ReplaceSelectionCommand::PreventNesting));
     }
     cachedResourceLoader->setAllowStaleResources(false);
 

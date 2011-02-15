@@ -1,3 +1,16 @@
+2011-02-15  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Autocorrection should respect undo.
+        https://bugs.webkit.org/show_bug.cgi?id=52221
+        <rdar://problem/8663399>
+
+        Please see WebCore/ChangeLog for detailed description.
+
+        * WebCoreSupport/WebEditorClient.cpp:
+        (WebFrameImpl::replaceSelection): Adopted new signature of ReplaceSelectionCommand::create().
+
 2011-02-15  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Darin Fisher.

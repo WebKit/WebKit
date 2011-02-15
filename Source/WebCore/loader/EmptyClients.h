@@ -512,6 +512,7 @@ public:
     virtual void showCorrectionPanel(CorrectionPanelInfo::PanelType, const FloatRect&, const String&, const String&, const Vector<String>&, Editor*) { }
     virtual void dismissCorrectionPanel(ReasonForDismissingCorrectionPanel) { }
     virtual bool isShowingCorrectionPanel() { return false; }
+    virtual void recordAutocorrectionResponse(AutocorrectionResponseType, const String&, const String&) { }
 #endif
     virtual void updateSpellingUIWithGrammarString(const String&, const GrammarDetail&) { }
     virtual void updateSpellingUIWithMisspelledWord(const String&) { }

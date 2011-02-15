@@ -340,18 +340,16 @@ void ReplacementFragment::removeInterchangeNodes(Node* container)
     }
 }
 
-ReplaceSelectionCommand::ReplaceSelectionCommand(Document* document, PassRefPtr<DocumentFragment> fragment,
-        bool selectReplacement, bool smartReplace, bool matchStyle, bool preventNesting, bool movingParagraph,
-        EditAction editAction) 
-    : CompositeEditCommand(document),
-      m_selectReplacement(selectReplacement), 
-      m_smartReplace(smartReplace),
-      m_matchStyle(matchStyle),
-      m_documentFragment(fragment),
-      m_preventNesting(preventNesting),
-      m_movingParagraph(movingParagraph),
-      m_editAction(editAction),
-      m_shouldMergeEnd(false)
+ReplaceSelectionCommand::ReplaceSelectionCommand(Document* document, PassRefPtr<DocumentFragment> fragment, CommandOptions options, EditAction editAction)
+    : CompositeEditCommand(document)
+    , m_selectReplacement(options & SelectReplacement)
+    , m_smartReplace(options & SmartReplace)
+    , m_matchStyle(options & MatchStyle)
+    , m_documentFragment(fragment)
+    , m_preventNesting(options & PreventNesting)
+    , m_movingParagraph(options & MovingParagraph)
+    , m_editAction(editAction)
+    , m_shouldMergeEnd(false)
 {
 }
 

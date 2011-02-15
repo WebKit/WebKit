@@ -88,33 +88,52 @@ SelectionController::SelectionController(Frame* frame, bool isDragCaretControlle
 
 void SelectionController::moveTo(const VisiblePosition &pos, bool userTriggered, CursorAlignOnScroll align)
 {
-    setSelection(VisibleSelection(pos.deepEquivalent(), pos.deepEquivalent(), pos.affinity()), true, true, userTriggered, align);
+    SetSelectionOptions options = CloseTyping | ClearTypingStyle;
+    if (userTriggered)
+        options |= UserTriggered;
+    setSelection(VisibleSelection(pos.deepEquivalent(), pos.deepEquivalent(), pos.affinity()), options, align);
 }
 
 void SelectionController::moveTo(const VisiblePosition &base, const VisiblePosition &extent, bool userTriggered)
 {
-    setSelection(VisibleSelection(base.deepEquivalent(), extent.deepEquivalent(), base.affinity()), true, true, userTriggered);
+    SetSelectionOptions options = CloseTyping | ClearTypingStyle;
+    if (userTriggered)
+        options |= UserTriggered;
+    setSelection(VisibleSelection(base.deepEquivalent(), extent.deepEquivalent(), base.affinity()), options);
 }
 
 void SelectionController::moveTo(const Position &pos, EAffinity affinity, bool userTriggered)
 {
-    setSelection(VisibleSelection(pos, affinity), true, true, userTriggered);
+    SetSelectionOptions options = CloseTyping | ClearTypingStyle;
+    if (userTriggered)
+        options |= UserTriggered;
+    setSelection(VisibleSelection(pos, affinity), options);
 }
 
 void SelectionController::moveTo(const Range *r, EAffinity affinity, bool userTriggered)
 {
+    SetSelectionOptions options = CloseTyping | ClearTypingStyle;
+    if (userTriggered)
+        options |= UserTriggered;
     VisibleSelection selection = r ? VisibleSelection(r->startPosition(), r->endPosition(), affinity) : VisibleSelection(Position(), Position(), affinity);
-    setSelection(selection, true, true, userTriggered);
+    setSelection(selection, options);
 }
 
 void SelectionController::moveTo(const Position &base, const Position &extent, EAffinity affinity, bool userTriggered)
 {
-    setSelection(VisibleSelection(base, extent, affinity), true, true, userTriggered);
+    SetSelectionOptions options = CloseTyping | ClearTypingStyle;
+    if (userTriggered)
+        options |= UserTriggered;
+    setSelection(VisibleSelection(base, extent, affinity), options);
 }
 
-void SelectionController::setSelection(const VisibleSelection& s, bool closeTyping, bool shouldClearTypingStyle, bool userTriggered, CursorAlignOnScroll align, TextGranularity granularity, DirectionalityPolicy directionalityPolicy)
+void SelectionController::setSelection(const VisibleSelection& s, SetSelectionOptions options, CursorAlignOnScroll align, TextGranularity granularity, DirectionalityPolicy directionalityPolicy)
 {
     m_granularity = granularity;
+
+    bool closeTyping = options & CloseTyping;
+    bool shouldClearTypingStyle = options & ClearTypingStyle;
+    bool userTriggered = options & UserTriggered;
 
     setIsDirectional(directionalityPolicy == MakeDirectionalSelection);
 
@@ -139,10 +158,10 @@ void SelectionController::setSelection(const VisibleSelection& s, bool closeTypi
     // <http://bugs.webkit.org/show_bug.cgi?id=23464>: Infinite recursion at SelectionController::setSelection
     // if document->frame() == m_frame we can get into an infinite loop
     if (document && document->frame() && document->frame() != m_frame && document != m_frame->document()) {
-        document->frame()->selection()->setSelection(s, closeTyping, shouldClearTypingStyle, userTriggered);
+        document->frame()->selection()->setSelection(s, options);
         return;
     }
-    
+
     if (closeTyping)
         TypingCommand::closeTyping(m_frame->editor()->lastEditCommand());
 
@@ -168,7 +187,7 @@ void SelectionController::setSelection(const VisibleSelection& s, bool closeTypi
     m_xPosForVerticalArrowNavigation = NoXPosForVerticalArrowNavigation;
     selectFrameElementInParentIfFullySelected();
     notifyRendererOfSelectionChange(userTriggered);
-    m_frame->editor()->respondToChangedSelection(oldSelection, closeTyping);
+    m_frame->editor()->respondToChangedSelection(oldSelection, options);
     if (userTriggered) {
         ScrollAlignment alignment;
 
@@ -250,7 +269,7 @@ void SelectionController::respondToNodeModification(Node* node, bool baseRemoved
     }
 
     if (clearDOMTreeSelection)
-        setSelection(VisibleSelection(), false, false);
+        setSelection(VisibleSelection(), 0);
 }
 
 enum EndPointType { EndPointIsStart, EndPointIsEnd };
@@ -942,22 +961,34 @@ void SelectionController::setEnd(const VisiblePosition &pos, bool userTriggered)
 
 void SelectionController::setBase(const VisiblePosition &pos, bool userTriggered)
 {
-    setSelection(VisibleSelection(pos.deepEquivalent(), m_selection.extent(), pos.affinity()), true, true, userTriggered);
+    SetSelectionOptions options = CloseTyping | ClearTypingStyle;
+    if (userTriggered)
+        options |= UserTriggered;
+    setSelection(VisibleSelection(pos.deepEquivalent(), m_selection.extent(), pos.affinity()), options);
 }
 
 void SelectionController::setExtent(const VisiblePosition &pos, bool userTriggered)
 {
-    setSelection(VisibleSelection(m_selection.base(), pos.deepEquivalent(), pos.affinity()), true, true, userTriggered);
+    SetSelectionOptions options = CloseTyping | ClearTypingStyle;
+    if (userTriggered)
+        options |= UserTriggered;
+    setSelection(VisibleSelection(m_selection.base(), pos.deepEquivalent(), pos.affinity()), options);
 }
 
 void SelectionController::setBase(const Position &pos, EAffinity affinity, bool userTriggered)
 {
-    setSelection(VisibleSelection(pos, m_selection.extent(), affinity), true, true, userTriggered);
+    SetSelectionOptions options = CloseTyping | ClearTypingStyle;
+    if (userTriggered)
+        options |= UserTriggered;
+    setSelection(VisibleSelection(pos, m_selection.extent(), affinity), options);
 }
 
 void SelectionController::setExtent(const Position &pos, EAffinity affinity, bool userTriggered)
 {
-    setSelection(VisibleSelection(m_selection.base(), pos, affinity), true, true, userTriggered);
+    SetSelectionOptions options = CloseTyping | ClearTypingStyle;
+    if (userTriggered)
+        options |= UserTriggered;
+    setSelection(VisibleSelection(m_selection.base(), pos, affinity), options);
 }
 
 void SelectionController::setCaretRectNeedsUpdate(bool flag)
@@ -1389,7 +1420,10 @@ bool SelectionController::setSelectedRange(Range* range, EAffinity affinity, boo
     // FIXME: Can we provide extentAffinity?
     VisiblePosition visibleStart(startContainer, startOffset, collapsed ? affinity : DOWNSTREAM);
     VisiblePosition visibleEnd(endContainer, endOffset, SEL_DEFAULT_AFFINITY);
-    setSelection(VisibleSelection(visibleStart, visibleEnd), closeTyping);
+    SetSelectionOptions options = ClearTypingStyle;
+    if (closeTyping)
+        options |= CloseTyping;
+    setSelection(VisibleSelection(visibleStart, visibleEnd), options);
     return true;
 }
 

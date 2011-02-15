@@ -264,6 +264,11 @@ bool WebEditorClient::isShowingCorrectionPanel()
     notImplemented();
     return false;
 }
+
+void WebEditorClient::recordAutocorrectionResponse(EditorClient::AutocorrectionResponseType responseType, const String& replacedString, const String& replacementString)
+{
+    notImplemented();
+}
 #endif
 
 } // namespace WebKit

@@ -35,6 +35,7 @@
 #include "EditorDeleteAction.h"
 #include "EditorInsertAction.h"
 #include "FindOptions.h"
+#include "SelectionController.h"
 #include "Timer.h"
 #include "VisibleSelection.h"
 #include "WritingDirection.h"
@@ -167,7 +168,8 @@ public:
     void appliedEditing(PassRefPtr<EditCommand>);
     void unappliedEditing(PassRefPtr<EditCommand>);
     void reappliedEditing(PassRefPtr<EditCommand>);
-    
+    void unappliedSpellCorrection(const VisibleSelection& selectionOfCorrected, const String& corrected, const String& correction);
+
     bool selectionStartHasStyle(CSSStyleDeclaration*) const;
 
     bool clientIsEditable() const;
@@ -353,7 +355,7 @@ public:
 
     IntRect firstRectForRange(Range*) const;
 
-    void respondToChangedSelection(const VisibleSelection& oldSelection, bool closeTyping);
+    void respondToChangedSelection(const VisibleSelection& oldSelection, SelectionController::SetSelectionOptions);
     bool shouldChangeSelection(const VisibleSelection& oldSelection, const VisibleSelection& newSelection, EAffinity, bool stillSelecting) const;
 
     RenderStyle* styleForSelectionStart(Node*& nodeToRemove) const;

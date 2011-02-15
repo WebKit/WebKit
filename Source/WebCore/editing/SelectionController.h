@@ -54,6 +54,13 @@ public:
     enum EAlteration { AlterationMove, AlterationExtend };
     enum CursorAlignOnScroll { AlignCursorOnScrollIfNeeded,
                                AlignCursorOnScrollAlways };
+    enum SetSelectionOption {
+        CloseTyping = 1 << 0,
+        ClearTypingStyle = 1 << 1,
+        UserTriggered = 1 << 2,
+        SpellCorrectionTriggered = 1 << 3,
+    };
+    typedef unsigned SetSelectionOptions;
 
     SelectionController(Frame* = 0, bool isDragCaretController = false);
 
@@ -69,8 +76,8 @@ public:
     void moveTo(const Position&, const Position&, EAffinity, bool userTriggered = false);
 
     const VisibleSelection& selection() const { return m_selection; }
-    void setSelection(const VisibleSelection&, bool closeTyping = true, bool clearTypingStyle = true, bool userTriggered = false, CursorAlignOnScroll = AlignCursorOnScrollIfNeeded, TextGranularity = CharacterGranularity, DirectionalityPolicy = MakeDirectionalSelection);
-    void setSelection(const VisibleSelection& selection, TextGranularity granularity, DirectionalityPolicy directionality = MakeDirectionalSelection) { setSelection(selection, true, true, false, AlignCursorOnScrollIfNeeded, granularity, directionality); }
+    void setSelection(const VisibleSelection&, SetSelectionOptions = CloseTyping | ClearTypingStyle, CursorAlignOnScroll = AlignCursorOnScrollIfNeeded, TextGranularity = CharacterGranularity, DirectionalityPolicy = MakeDirectionalSelection);
+    void setSelection(const VisibleSelection& selection, TextGranularity granularity, DirectionalityPolicy directionality = MakeDirectionalSelection) { setSelection(selection, CloseTyping | ClearTypingStyle, AlignCursorOnScrollIfNeeded, granularity, directionality); }
     bool setSelectedRange(Range*, EAffinity, bool closeTyping);
     void selectAll();
     void clear();

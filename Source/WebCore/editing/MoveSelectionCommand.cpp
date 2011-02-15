@@ -70,7 +70,10 @@ void MoveSelectionCommand::doApply()
         // Document was modified out from under us.
         return;
     }
-    applyCommandToComposite(ReplaceSelectionCommand::create(document(), m_fragment, true, m_smartInsert));
+    ReplaceSelectionCommand::CommandOptions options = ReplaceSelectionCommand::SelectReplacement | ReplaceSelectionCommand::PreventNesting;
+    if (m_smartInsert)
+        options |= ReplaceSelectionCommand::SmartReplace;
+    applyCommandToComposite(ReplaceSelectionCommand::create(document(), m_fragment, options));
 }
 
 EditAction MoveSelectionCommand::editingAction() const

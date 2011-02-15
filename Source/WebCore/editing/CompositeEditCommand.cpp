@@ -1006,7 +1006,10 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
 
     setEndingSelection(destination);
     ASSERT(endingSelection().isCaretOrRange());
-    applyCommandToComposite(ReplaceSelectionCommand::create(document(), fragment, true, false, !preserveStyle, false, true));
+    ReplaceSelectionCommand::CommandOptions options = ReplaceSelectionCommand::SelectReplacement | ReplaceSelectionCommand::MovingParagraph;
+    if (!preserveStyle)
+        options |= ReplaceSelectionCommand::MatchStyle;
+    applyCommandToComposite(ReplaceSelectionCommand::create(document(), fragment, options));
 
     document()->frame()->editor()->markMisspellingsAndBadGrammar(endingSelection());
 
