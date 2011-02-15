@@ -310,6 +310,8 @@ public:
     static const unsigned maxViewWidth;
     static const unsigned maxViewHeight;
 
+    void setMinimumTimerInterval(double);
+
 private:
     LayoutTestController(const std::string& testPathOrURL, const std::string& expectedPixelHash);
 

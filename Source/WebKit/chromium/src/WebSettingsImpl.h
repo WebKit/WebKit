@@ -101,6 +101,7 @@ public:
     virtual void setAsynchronousSpellCheckingEnabled(bool);
     virtual void setCaretBrowsingEnabled(bool);
     virtual void setInteractiveFormValidationEnabled(bool);
+    virtual void setMinimumTimerInterval(double);
 
 private:
     WebCore::Settings* m_settings;

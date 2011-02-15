@@ -942,6 +942,21 @@ QStringList DumpRenderTreeSupportQt::contextMenu(QWebPage* page)
     return QStringList();
 #endif
 }
+
+double DumpRenderTreeSupportQt::defaultMinimumTimerInterval()
+{
+    return Settings::defaultMinDOMTimerInterval();
+}
+
+void DumpRenderTreeSupportQt::setMinimumTimerInterval(QWebPage* page, double interval)
+{
+    Page* corePage = QWebPagePrivate::core(page);
+    if (!corePage)
+        return;
+
+    corePage->settings()->setMinDOMTimerInterval(interval);
+}
+
 // Provide a backward compatibility with previously exported private symbols as of QtWebKit 4.6 release
 
 void QWEBKIT_EXPORT qt_resumeActiveDOMObjects(QWebFrame* frame)

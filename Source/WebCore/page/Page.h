@@ -91,6 +91,7 @@ namespace WebCore {
 
     class Page {
         WTF_MAKE_NONCOPYABLE(Page);
+        friend class Settings;
     public:
         static void scheduleForcedStyleRecalcForAllPages();
 
@@ -297,6 +298,9 @@ namespace WebCore {
 
         MediaCanStartListener* takeAnyMediaCanStartListener();
 
+        void setMinimumTimerInterval(double);
+        double minimumTimerInterval() const;
+
         OwnPtr<Chrome> m_chrome;
         OwnPtr<SelectionController> m_dragCaretController;
 
@@ -385,6 +389,8 @@ namespace WebCore {
         ViewMode m_viewMode;
 
         ViewportArguments m_viewportArguments;
+
+        double m_minimumTimerInterval;
     };
 
 } // namespace WebCore

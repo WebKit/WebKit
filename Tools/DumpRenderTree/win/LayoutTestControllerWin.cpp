@@ -1430,3 +1430,16 @@ void LayoutTestController::setSerializeHTTPLoads(bool)
 {
     // FIXME: Implement.
 }
+
+void LayoutTestController::setMinimumTimerInterval(double minimumTimerInterval)
+{
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebViewPrivate> viewPrivate(Query, webView);
+    if (!viewPrivate)
+        return;
+
+    viewPrivate->setMinimumTimerInterval(minimumTimerInterval);
+}

@@ -349,4 +349,9 @@ void WebSettingsImpl::setInteractiveFormValidationEnabled(bool enabled)
     m_settings->setInteractiveFormValidationEnabled(enabled);
 }
 
+void WebSettingsImpl::setMinimumTimerInterval(double interval)
+{
+    m_settings->setMinDOMTimerInterval(interval);
+}
+
 } // namespace WebKit

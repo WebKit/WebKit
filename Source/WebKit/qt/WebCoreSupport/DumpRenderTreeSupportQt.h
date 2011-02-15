@@ -189,6 +189,9 @@ public:
     static QString responseMimeType(QWebFrame*);
     static void addURLToRedirect(const QString& origin, const QString& destination);
     static QStringList contextMenu(QWebPage*);
+
+    static double defaultMinimumTimerInterval(); // Not really tied to WebView
+    static void setMinimumTimerInterval(QWebPage*, double);
 };
 
 #endif

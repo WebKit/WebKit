@@ -147,6 +147,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setGeolocationPermission", &LayoutTestController::setGeolocationPermission);
     bindMethod("setIconDatabaseEnabled", &LayoutTestController::setIconDatabaseEnabled);
     bindMethod("setJavaScriptCanAccessClipboard", &LayoutTestController::setJavaScriptCanAccessClipboard);
+    bindMethod("setMinimumTimerInterval", &LayoutTestController::setMinimumTimerInterval);
     bindMethod("setMockDeviceOrientation", &LayoutTestController::setMockDeviceOrientation);
     bindMethod("setMockGeolocationError", &LayoutTestController::setMockGeolocationError);
     bindMethod("setMockGeolocationPosition", &LayoutTestController::setMockGeolocationPosition);
@@ -1592,4 +1593,12 @@ void LayoutTestController::hasSpellingMarker(const CppArgumentList& arguments, C
     if (arguments.size() < 2 || !arguments[0].isNumber() || !arguments[1].isNumber())
         return;
     result->set(m_shell->webView()->mainFrame()->selectionStartHasSpellingMarkerFor(arguments[0].toInt32(), arguments[1].toInt32()));
+}
+
+void LayoutTestController::setMinimumTimerInterval(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    if (arguments.size() < 1 || !arguments[0].isNumber())
+        return;
+    m_shell->webView()->settings()->setMinimumTimerInterval(arguments[0].toDouble());
 }

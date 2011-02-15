@@ -39,13 +39,14 @@ namespace WebCore {
 
 static const int maxTimerNestingLevel = 5;
 static const double oneMillisecond = 0.001;
-double DOMTimer::s_minTimerInterval = 0.010; // 10 milliseconds
+double DOMTimer::s_minDefaultTimerInterval = 0.010; // 10 milliseconds
 
 static int timerNestingLevel = 0;
 
 DOMTimer::DOMTimer(ScriptExecutionContext* context, PassOwnPtr<ScheduledAction> action, int timeout, bool singleShot)
     : SuspendableTimer(context)
     , m_action(action)
+    , m_originalTimeout(timeout)
 {
     static int lastUsedTimeoutId = 0;
     ++lastUsedTimeoutId;
@@ -58,10 +59,7 @@ DOMTimer::DOMTimer(ScriptExecutionContext* context, PassOwnPtr<ScheduledAction> 
 
     scriptExecutionContext()->addTimeout(m_timeoutId, this);
 
-    double intervalMilliseconds = max(oneMillisecond, timeout * oneMillisecond);
-
-    if (intervalMilliseconds < s_minTimerInterval && m_nestingLevel >= maxTimerNestingLevel)
-        intervalMilliseconds = s_minTimerInterval;
+    double intervalMilliseconds = intervalClampedToMinimum(timeout, context->minimumTimerInterval());
     if (singleShot)
         startOneShot(intervalMilliseconds);
     else
@@ -108,10 +106,11 @@ void DOMTimer::fired()
 
     // Simple case for non-one-shot timers.
     if (isActive()) {
-        if (repeatInterval() && repeatInterval() < s_minTimerInterval) {
+        double minimumInterval = context->minimumTimerInterval();
+        if (repeatInterval() && repeatInterval() < minimumInterval) {
             m_nestingLevel++;
             if (m_nestingLevel >= maxTimerNestingLevel)
-                augmentRepeatInterval(s_minTimerInterval - repeatInterval());
+                augmentRepeatInterval(minimumInterval - repeatInterval());
         }
 
         // No access to member variables after this point, it can delete the timer.
@@ -148,6 +147,24 @@ void DOMTimer::stop()
     // because they can form circular references back to the ScriptExecutionContext
     // which will cause a memory leak.
     m_action.clear();
+}
+
+void DOMTimer::adjustMinimumTimerInterval(double oldMinimumTimerInterval)
+{
+    if (m_nestingLevel < maxTimerNestingLevel)
+        return;
+    double previousClampedInterval = intervalClampedToMinimum(m_originalTimeout, oldMinimumTimerInterval);
+    double newClampedInterval = intervalClampedToMinimum(m_originalTimeout, scriptExecutionContext()->minimumTimerInterval());
+    augmentFireInterval(newClampedInterval - previousClampedInterval);
+}
+
+double DOMTimer::intervalClampedToMinimum(int timeout, double minimumTimerInterval) const
+{
+    double intervalMilliseconds = max(oneMillisecond, timeout * oneMillisecond);
+
+    if (intervalMilliseconds < minimumTimerInterval && m_nestingLevel >= maxTimerNestingLevel)
+        intervalMilliseconds = minimumTimerInterval;
+    return intervalMilliseconds;
 }
 
 } // namespace WebCore

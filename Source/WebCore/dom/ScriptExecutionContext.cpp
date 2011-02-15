@@ -30,6 +30,7 @@
 #include "ActiveDOMObject.h"
 #include "Blob.h"
 #include "BlobURL.h"
+#include "DOMTimer.h"
 #include "DOMURL.h"
 #include "Database.h"
 #include "DatabaseTask.h"
@@ -41,6 +42,7 @@
 #include "MessagePort.h"
 #include "ScriptCallStack.h"
 #include "SecurityOrigin.h"
+#include "Settings.h"
 #include "ThreadableBlobRegistry.h"
 #include "WorkerContext.h"
 #include "WorkerThread.h"
@@ -405,6 +407,26 @@ FileThread* ScriptExecutionContext::fileThread()
     return m_fileThread.get();
 }
 #endif
+
+void ScriptExecutionContext::adjustMinimumTimerInterval(double oldMinimumTimerInterval)
+{
+    if (minimumTimerInterval() != oldMinimumTimerInterval) {
+        for (TimeoutMap::iterator iter = m_timeouts.begin(); iter != m_timeouts.end(); ++iter) {
+            DOMTimer* timer = iter->second;
+            timer->adjustMinimumTimerInterval(oldMinimumTimerInterval);
+        }
+    }
+}
+
+double ScriptExecutionContext::minimumTimerInterval() const
+{
+    // The default implementation returns the DOMTimer's default
+    // minimum timer interval. FIXME: to make it work with dedicated
+    // workers, we will have to override it in the appropriate
+    // subclass, and provide a way to enumerate a Document's dedicated
+    // workers so we can update them all.
+    return Settings::defaultMinDOMTimerInterval();
+}
 
 ScriptExecutionContext::Task::~Task()
 {

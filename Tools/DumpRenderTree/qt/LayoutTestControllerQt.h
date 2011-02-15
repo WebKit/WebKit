@@ -252,6 +252,8 @@ public slots:
     QString pageProperty(const QString& propertyName, int pageNumber);
     void addUserStyleSheet(const QString& sourceCode);
 
+    void setMinimumTimerInterval(double);
+
 private slots:
     void processWork();
 

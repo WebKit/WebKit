@@ -866,6 +866,10 @@ static void resetWebViewToConsistentStateBeforeTesting()
     if (!webViewPrivate)
         return;
 
+    double minimumInterval = 0;
+    if (SUCCEEDED(webViewPrivate->defaultMinimumTimerInterval(&minimumInterval)))
+        webViewPrivate->setMinimumTimerInterval(minimumInterval);
+
     COMPtr<IWebInspector> inspector;
     if (SUCCEEDED(webViewPrivate->inspector(&inspector)))
         inspector->setJavaScriptProfilingEnabled(FALSE);

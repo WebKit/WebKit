@@ -1,3 +1,27 @@
+2011-02-15  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Allow controlling minimum DOMTimer interval on a per-page basis
+        https://bugs.webkit.org/show_bug.cgi?id=54312
+
+        * fast/dom/timer-increase-min-interval-and-reset-part-1-expected.txt: Added.
+        * fast/dom/timer-increase-min-interval-and-reset-part-1.html: Added.
+        * fast/dom/timer-increase-min-interval-and-reset-part-2-expected.txt: Added.
+        * fast/dom/timer-increase-min-interval-and-reset-part-2.html: Added.
+          - Chained tests (the assumption is that the run-webkit-tests
+            harness will run them sequentially, which is a reasonably good
+            assumption) which verify that the minimum timer interval is
+            reset between tests.
+        * fast/dom/timer-increase-min-interval-expected.txt: Added.
+        * fast/dom/timer-increase-min-interval.html: Added.
+          - Verifies that increasing the minimum timer interval causes
+            fast timers to run slowly.
+        * fast/dom/timer-increase-then-decrease-min-interval-expected.txt: Added.
+        * fast/dom/timer-increase-then-decrease-min-interval.html: Added.
+          - Verifies that decreasing the minimum timer interval causes
+            previously slowed-down timers to be reevaluated immediately.
+
 2011-02-15  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed chromium-gpu baseline update. Unskip some tests that fail;

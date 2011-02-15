@@ -205,6 +205,8 @@ void WebPage::resetSettings()
     QWebSettings::setMaximumPagesInCache(0); // reset to default
     settings()->setUserStyleSheetUrl(QUrl()); // reset to default
 
+    DumpRenderTreeSupportQt::setMinimumTimerInterval(this, DumpRenderTreeSupportQt::defaultMinimumTimerInterval());
+
     m_pendingGeolocationRequests.clear();
 }
 

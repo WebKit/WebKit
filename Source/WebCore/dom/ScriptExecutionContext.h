@@ -152,6 +152,10 @@ namespace WebCore {
         void stopFileThread();
 #endif
 
+        // Interval is in seconds.
+        void adjustMinimumTimerInterval(double oldMinimumTimerInterval);
+        virtual double minimumTimerInterval() const;
+
     protected:
         // Explicitly override the security origin for this script context.
         // Note: It is dangerous to change the security origin of a script context
@@ -176,7 +180,8 @@ namespace WebCore {
         bool m_iteratingActiveDOMObjects;
         bool m_inDestructor;
 
-        HashMap<int, DOMTimer*> m_timeouts;
+        typedef HashMap<int, DOMTimer*> TimeoutMap;
+        TimeoutMap m_timeouts;
 
 #if ENABLE(BLOB)
         HashSet<String> m_publicBlobURLs;

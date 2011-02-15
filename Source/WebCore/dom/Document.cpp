@@ -2243,6 +2243,14 @@ KURL Document::virtualCompleteURL(const String& url) const
     return completeURL(url);
 }
 
+double Document::minimumTimerInterval() const
+{
+    Page* p = page();
+    if (!p)
+        return ScriptExecutionContext::minimumTimerInterval();
+    return p->settings()->minDOMTimerInterval();
+}
+
 EventTarget* Document::errorEventTarget()
 {
     return domWindow();

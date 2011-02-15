@@ -1003,3 +1003,8 @@ void LayoutTestController::setSerializeHTTPLoads(bool serialize)
 {
     [WebView _setLoadResourcesSerially:serialize];
 }
+
+void LayoutTestController::setMinimumTimerInterval(double minimumTimerInterval)
+{
+    [[mainFrame webView] _setMinimumTimerInterval:minimumTimerInterval];
+}

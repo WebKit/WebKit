@@ -434,9 +434,24 @@ void Settings::setDOMPasteAllowed(bool DOMPasteAllowed)
     m_isDOMPasteAllowed = DOMPasteAllowed;
 }
 
+void Settings::setDefaultMinDOMTimerInterval(double interval)
+{
+    DOMTimer::setDefaultMinTimerInterval(interval);
+}
+
+double Settings::defaultMinDOMTimerInterval()
+{
+    return DOMTimer::defaultMinTimerInterval();
+}
+
 void Settings::setMinDOMTimerInterval(double interval)
 {
-    DOMTimer::setMinTimerInterval(interval);
+    m_page->setMinimumTimerInterval(interval);
+}
+
+double Settings::minDOMTimerInterval()
+{
+    return m_page->minimumTimerInterval();
 }
 
 void Settings::setUsesPageCache(bool usesPageCache)

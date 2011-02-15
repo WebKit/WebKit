@@ -836,5 +836,10 @@ void LayoutTestController::addURLToRedirect(const QString& origin, const QString
     DumpRenderTreeSupportQt::addURLToRedirect(origin, destination);
 }
 
+void LayoutTestController::setMinimumTimerInterval(double minimumTimerInterval)
+{
+    DumpRenderTreeSupportQt::setMinimumTimerInterval(m_drt->webPage(), minimumTimerInterval);
+}
+
 const unsigned LayoutTestController::maxViewWidth = 800;
 const unsigned LayoutTestController::maxViewHeight = 600;

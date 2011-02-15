@@ -1226,8 +1226,11 @@ void WebViewHost::reset()
     m_windowRect = WebRect();
     m_paintRect = WebRect();
 
-    if (m_webWidget)
+    if (m_webWidget) {
         webView()->mainFrame()->setName(WebString());
+        // FIXME: change to use webkit_support::ForegroundTabTimerInterval once that lands.
+        webView()->settings()->setMinimumTimerInterval(0.004);
+    }
 }
 
 void WebViewHost::setSelectTrailingWhitespaceEnabled(bool enabled)

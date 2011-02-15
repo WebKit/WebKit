@@ -1017,6 +1017,7 @@ static void resetWebViewToConsistentStateBeforeTesting()
     [[webView undoManager] removeAllActions];
     [WebView _removeAllUserContentFromGroup:[webView groupName]];
     [[webView window] setAutodisplay:NO];
+    [webView _setMinimumTimerInterval:[WebView _defaultMinimumTimerInterval]];
 
     resetDefaultsToConsistentValues();
 

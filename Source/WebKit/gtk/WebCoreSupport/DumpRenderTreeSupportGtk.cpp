@@ -48,6 +48,7 @@
 #include "RenderTreeAsText.h"
 #include "RenderView.h"
 #include "SecurityOrigin.h"
+#include "Settings.h"
 #include "TextIterator.h"
 #include "WorkerThread.h"
 #include "webkitglobalsprivate.h"
@@ -642,3 +643,12 @@ bool DumpRenderTreeSupportGtk::findString(WebKitWebView* webView, const gchar* t
     return core(webView)->findString(String::fromUTF8(targetString), findOptions);
 }
 
+double DumpRenderTreeSupportGtk::defaultMinimumTimerInterval()
+{
+    return Settings::defaultMinDOMTimerInterval();
+}
+
+void DumpRenderTreeSupportGtk::setMinimumTimerInterval(WebKitWebView* webView, double interval)
+{
+    core(webView)->settings()->setMinDOMTimerInterval(interval);
+}

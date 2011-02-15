@@ -880,3 +880,9 @@ void LayoutTestController::setSerializeHTTPLoads(bool)
 {
     // FIXME: Implement if needed for https://bugs.webkit.org/show_bug.cgi?id=50758.
 }
+
+void LayoutTestController::setMinimumTimerInterval(double minimumTimerInterval)
+{
+    WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
+    DumpRenderTreeSupportGtk::setMinimumTimerInterval(webView, minimumTimerInterval);
+}

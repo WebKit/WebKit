@@ -161,6 +161,7 @@ Page::Page(const PageClients& pageClients)
     , m_customHTMLTokenizerChunkSize(-1)
     , m_canStartMedia(true)
     , m_viewMode(ViewModeWindowed)
+    , m_minimumTimerInterval(Settings::defaultMinDOMTimerInterval())
 {
     if (!allPages) {
         allPages = new HashSet<Page*>;
@@ -830,6 +831,21 @@ void Page::setJavaScriptURLsAreAllowed(bool areAllowed)
 bool Page::javaScriptURLsAreAllowed() const
 {
     return m_javaScriptURLsAreAllowed;
+}
+
+void Page::setMinimumTimerInterval(double minimumTimerInterval)
+{
+    double oldTimerInterval = m_minimumTimerInterval;
+    m_minimumTimerInterval = minimumTimerInterval;
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNextWithWrap(false)) {
+        if (frame->document())
+            frame->document()->adjustMinimumTimerInterval(oldTimerInterval);
+    }
+}
+
+double Page::minimumTimerInterval() const
+{
+    return m_minimumTimerInterval;
 }
 
 #if ENABLE(INPUT_SPEECH)

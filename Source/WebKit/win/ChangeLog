@@ -1,3 +1,23 @@
+2011-02-15  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Allow controlling minimum DOMTimer interval on a per-page basis
+        https://bugs.webkit.org/show_bug.cgi?id=54312
+
+        Added needed methods to implement LayoutTestController's new
+        setMinimumTimerInterval method. Includes whitespace-only change to
+        WebKit.idl to trigger proper rebuild on bots; will be removed in
+        subsequent checkin.
+
+        * Interfaces/IWebViewPrivate.idl:
+        * Interfaces/WebKit.idl:
+        * WebView.cpp:
+        (WebView::initWithFrame):
+        (WebView::defaultMinimumTimerInterval):
+        (WebView::setMinimumTimerInterval):
+        * WebView.h:
+
 2011-01-26  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ryosuke Niwa.

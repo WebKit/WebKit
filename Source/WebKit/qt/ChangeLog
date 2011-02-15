@@ -1,3 +1,18 @@
+2011-02-15  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Allow controlling minimum DOMTimer interval on a per-page basis
+        https://bugs.webkit.org/show_bug.cgi?id=54312
+
+        Added needed methods to implement LayoutTestController's new
+        setMinimumTimerInterval method.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::defaultMinimumTimerInterval):
+        (DumpRenderTreeSupportQt::setMinimumTimerInterval):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2011-01-26  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ryosuke Niwa.

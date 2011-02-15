@@ -52,7 +52,8 @@ public:
     double nextFireInterval() const;
     double repeatInterval() const { return m_repeatInterval; }
 
-    void augmentRepeatInterval(double delta) { setNextFireTime(m_nextFireTime + delta); m_repeatInterval += delta; }
+    void augmentFireInterval(double delta) { setNextFireTime(m_nextFireTime + delta); }
+    void augmentRepeatInterval(double delta) { augmentFireInterval(delta); m_repeatInterval += delta; }
 
     static void fireTimersInNestedEventLoop();
 

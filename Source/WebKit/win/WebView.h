@@ -813,6 +813,12 @@ public:
 
     virtual HRESULT STDMETHODCALLTYPE nextDisplayIsSynchronous();
 
+    virtual HRESULT STDMETHODCALLTYPE defaultMinimumTimerInterval(
+        /* [retval][out] */ double *interval);
+
+    virtual HRESULT STDMETHODCALLTYPE setMinimumTimerInterval(
+        /* [in] */ double);
+
     // WebView
     bool shouldUseEmbeddedView(const WTF::String& mimeType) const;
 

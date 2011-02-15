@@ -694,7 +694,7 @@ static NSString *leakMailQuirksUserScriptPath()
         
         // Initialize our platform strategies.
         WebPlatformStrategies::initialize();
-        Settings::setMinDOMTimerInterval(0.004);
+        Settings::setDefaultMinDOMTimerInterval(0.004);
 
         didOneTimeInitialization = true;
     }
@@ -2736,6 +2736,17 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
 + (void)_setLoadResourcesSerially:(BOOL)serialize 
 {
     resourceLoadScheduler()->setSerialLoadingEnabled(serialize);
+}
+
++ (double)_defaultMinimumTimerInterval
+{
+    return Settings::defaultMinDOMTimerInterval();
+}
+
+- (void)_setMinimumTimerInterval:(double)intervalInSeconds
+{
+    if (_private->page)
+        _private->page->settings()->setMinDOMTimerInterval(intervalInSeconds);
 }
 
 @end

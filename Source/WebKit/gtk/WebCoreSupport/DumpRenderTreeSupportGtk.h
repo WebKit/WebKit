@@ -89,6 +89,8 @@ public:
     static void confirmComposition(WebKitWebView*, const char* text);
     static bool firstRectForCharacterRange(WebKitWebView*, int location, int length, GdkRectangle*);
     static bool selectedRange(WebKitWebView*, int* start, int* end);
+    static double defaultMinimumTimerInterval(); // Not really tied to WebView
+    static void setMinimumTimerInterval(WebKitWebView*, double);
 
     // GC
     static void gcCollectJavascriptObjects();

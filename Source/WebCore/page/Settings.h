@@ -203,8 +203,12 @@ namespace WebCore {
         void setDOMPasteAllowed(bool);
         bool isDOMPasteAllowed() const { return m_isDOMPasteAllowed; }
         
-        static void setMinDOMTimerInterval(double); // Interval specified in seconds.
+        static void setDefaultMinDOMTimerInterval(double); // Interval specified in seconds.
+        static double defaultMinDOMTimerInterval();
         
+        void setMinDOMTimerInterval(double); // Per-page; initialized to default value.
+        double minDOMTimerInterval();
+
         void setUsesPageCache(bool);
         bool usesPageCache() const { return m_usesPageCache; }
 

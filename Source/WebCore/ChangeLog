@@ -1,3 +1,79 @@
+2011-02-15  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Allow controlling minimum DOMTimer interval on a per-page basis
+        https://bugs.webkit.org/show_bug.cgi?id=54312
+
+        Renamed DOMTimer::minTimerInterval and setMinTimerInterval to
+        defaultMinTimerInterval and setDefaultMinTimerInterval, made them
+        private and exposed them via Settings::defaultMinDOMTimerInterval
+        and setDefaultMinDOMTimerInterval. Added new
+        Settings::setMinDOMTimerInterval and minDOMTimerInterval.
+
+        The storage for the minimum timer interval currently lives in the
+        Page, though this could be moved to the Settings object if
+        desired. The accessor methods on the Page are private and exposed
+        to Settings by making Settings a friend, so the abstraction
+        barrier is clear at the API level.
+
+        Adjusting the interval both upward and downward may cause the fire
+        times of the active timers on the page to be adjusted, if they
+        would be affected by the clamping value. This is needed to reduce
+        latency when bringing a tab to the foreground, in particular if
+        the minimum timer interval was decreased from a very high value to
+        a very low value.
+
+        A new method, setMinimumTimerInterval, has been added to
+        LayoutTestController, implemented in all ports of DumpRenderTree,
+        and used in new layout tests.
+
+        Ideally changing the page's minimum timer interval would affect
+        dedicated workers, but this is too much to do in an initial patch,
+        so a FIXME has been added.
+
+        Tested with:
+          - The new layout tests on the WebKit Mac and Chromium (Mac,
+            Linux) DRT ports.
+          - Hooked up the new API in Chromium and ran some simple manual
+            tests.
+
+        Tests: fast/dom/timer-increase-min-interval-and-reset-part-1.html
+               fast/dom/timer-increase-min-interval-and-reset-part-2.html
+               fast/dom/timer-increase-min-interval.html
+               fast/dom/timer-increase-then-decrease-min-interval.html
+
+        * WebCore.exp.in:
+        * dom/Document.cpp:
+        (WebCore::Document::minimumTimerInterval):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::adjustMinimumTimerInterval):
+        (WebCore::ScriptExecutionContext::minimumTimerInterval):
+        * dom/ScriptExecutionContext.h:
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::DOMTimer):
+        (WebCore::DOMTimer::fired):
+        (WebCore::DOMTimer::adjustMinimumTimerInterval):
+        (WebCore::DOMTimer::intervalClampedToMinimum):
+        * page/DOMTimer.h:
+        (WebCore::DOMTimer::defaultMinTimerInterval):
+        (WebCore::DOMTimer::setDefaultMinTimerInterval):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::setMinimumTimerInterval):
+        (WebCore::Page::minimumTimerInterval):
+        * page/Page.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::setDefaultMinDOMTimerInterval):
+        (WebCore::Settings::defaultMinDOMTimerInterval):
+        (WebCore::Settings::setMinDOMTimerInterval):
+        (WebCore::Settings::minDOMTimerInterval):
+        * page/Settings.h:
+        * platform/Timer.h:
+        (WebCore::TimerBase::augmentFireInterval):
+        (WebCore::TimerBase::augmentRepeatInterval):
+
 2011-02-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Beth Dakin.

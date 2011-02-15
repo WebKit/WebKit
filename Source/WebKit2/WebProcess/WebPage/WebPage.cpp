@@ -184,7 +184,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     m_page->setGroupName(m_pageGroup->identifier());
 
     platformInitialize();
-    Settings::setMinDOMTimerInterval(0.004);
+    Settings::setDefaultMinDOMTimerInterval(0.004);
 
     m_drawingArea = DrawingArea::create(this, parameters);
     m_mainFrame = WebFrame::createMainFrame(this);

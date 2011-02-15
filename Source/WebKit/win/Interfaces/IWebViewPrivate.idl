@@ -239,4 +239,21 @@ interface IWebViewPrivate : IUnknown
     [local] HRESULT reportException([in] JSContextRef context, [in] JSValueRef exception);
 
     [local] HRESULT elementFromJS([in] JSContextRef context, [in] JSValueRef nodeObject, [out, retval] IDOMElement** element);
+
+
+    /*!
+        @method defaultMinimumTimerInterval
+        @discussion Returns the default minimum interval for DOMTimers on all pages, not
+        just the one associated with this receiver.
+        - (double)interval;
+    */
+    HRESULT defaultMinimumTimerInterval([out, retval] double* interval);
+
+    /*!
+        @method setMinimumTimerInterval
+        @discussion Sets the minimum interval for DOMTimers on the web page associated
+        with the receiver.
+        - (double)interval;
+    */
+    HRESULT setMinimumTimerInterval([in] double interval);
 }
