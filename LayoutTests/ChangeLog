@@ -1,3 +1,12 @@
+2011-02-15  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed, skipping flaky test on GTK 64-bit debug bot.
+
+        editing/selection/end-of-document.html is failing in the GTK 64-bit debug bot
+        https://bugs.webkit.org/show_bug.cgi?id=53995
+
+        * platform/gtk/Skipped: Skipped flaky test.
+
 2011-02-15  Benjamin Kalman  <kalman@chromium.org>
 
         Reviewed by Ryosuke Niwa.
