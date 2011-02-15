@@ -1,3 +1,9 @@
+2011-02-15  Martin Robinson  <mrobinson@igalia.com>
+
+        Continue importing GTK+ SVG test results.
+
+        * platform/gtk/Skipped: Unskip tests which now have results.
+
 2011-02-15  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
