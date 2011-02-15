@@ -1,3 +1,16 @@
+2011-02-15  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Freetype] Better map CSS font weight to Fontconfig font weight
+        https://bugs.webkit.org/show_bug.cgi?id=54323
+
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::fontWeightToFontconfigWeight): Added this helper to map between CSS and
+        Fontconfig font weights.
+        (WebCore::FontCache::createFontPlatformData): Use the new helper instead of just
+        deciding between bold and regular.
+
 2011-02-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.

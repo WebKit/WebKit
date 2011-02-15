@@ -1,3 +1,17 @@
+2011-02-15  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Freetype] Better map CSS font weight to Fontconfig font weight
+        https://bugs.webkit.org/show_bug.cgi?id=54323
+
+        Update the results of this test, which is now passing. Also update results for
+        all other tests which have different results now.
+
+        * platform/gtk/fast/css/font-weight-1-expected.checksum:
+        * platform/gtk/fast/css/font-weight-1-expected.png:
+        * platform/gtk/fast/css/font-weight-1-expected.txt:
+
 2011-02-15  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed chromium-gpu-linux rebaseline. Check in correct expectations

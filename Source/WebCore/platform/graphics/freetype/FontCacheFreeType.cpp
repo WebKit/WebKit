@@ -142,6 +142,33 @@ static String getFamilyNameStringFromFontDescriptionAndFamily(const FontDescript
     }
 }
 
+int fontWeightToFontconfigWeight(FontWeight weight)
+{
+    switch (weight) {
+    case FontWeight100:
+        return FC_WEIGHT_THIN;
+    case FontWeight200:
+        return FC_WEIGHT_ULTRALIGHT;
+    case FontWeight300:
+        return FC_WEIGHT_LIGHT;
+    case FontWeight400:
+        return FC_WEIGHT_REGULAR;
+    case FontWeight500:
+        return FC_WEIGHT_MEDIUM;
+    case FontWeight600:
+        return FC_WEIGHT_SEMIBOLD;
+    case FontWeight700:
+        return FC_WEIGHT_BOLD;
+    case FontWeight800:
+        return FC_WEIGHT_EXTRABOLD;
+    case FontWeight900:
+        return FC_WEIGHT_ULTRABLACK;
+    default:
+        ASSERT_NOT_REACHED();
+        return FC_WEIGHT_REGULAR;
+    }
+}
+
 FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
 {
     // The CSS font matching algorithm (http://www.w3.org/TR/css3-fonts/#font-matching-algorithm)
@@ -155,8 +182,7 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
     bool italic = fontDescription.italic();
     if (!FcPatternAddInteger(pattern.get(), FC_SLANT, italic ? FC_SLANT_ITALIC : FC_SLANT_ROMAN))
         return 0;
-    bool bold = fontDescription.weight() >= FontWeightBold;
-    if (!FcPatternAddInteger(pattern.get(), FC_WEIGHT, bold ? FC_WEIGHT_BOLD : FC_WEIGHT_NORMAL))
+    if (!FcPatternAddInteger(pattern.get(), FC_WEIGHT, fontWeightToFontconfigWeight(fontDescription.weight())))
         return 0;
     if (!FcPatternAddDouble(pattern.get(), FC_PIXEL_SIZE, fontDescription.computedPixelSize()))
         return 0;

@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
             RenderText {#text} at (384,2) size 290x19
               text run at (384,2) width 290: "Papyrus syn. bold syn. italic"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (4,61) size 776x41 [border: (1px solid #ADD8E6)]
+      RenderBlock {DIV} at (4,61) size 776x42 [border: (1px solid #ADD8E6)]
         RenderInline {SPAN} at (0,0) size 70x19
           RenderText {#text} at (1,2) size 70x19
             text run at (1,2) width 70: "Courier"
@@ -45,25 +45,27 @@ layer at (0,0) size 800x600
             text run at (321,2) width 70: "Courier"
         RenderText {#text} at (391,2) size 10x19
           text run at (391,2) width 10: " "
-        RenderInline {SPAN} at (0,0) size 104x19
-          RenderText {#text} at (401,1) size 104x19
-            text run at (401,1) width 104: "Helvetica Bold"
-        RenderText {#text} at (505,2) size 10x19
-          text run at (505,2) width 10: " "
         RenderInline {SPAN} at (0,0) size 110x19
-          RenderText {#text} at (515,1) size 110x19
-            text run at (515,1) width 110: "Helvetica Bold"
-        RenderText {#text} at (625,2) size 10x19
-          text run at (625,2) width 10: " "
+          RenderText {#text} at (401,1) size 110x19
+            text run at (401,1) width 110: "Helvetica Bold"
+        RenderText {#text} at (511,2) size 10x19
+          text run at (511,2) width 10: " "
+        RenderInline {SPAN} at (0,0) size 110x19
+          RenderText {#text} at (521,1) size 110x19
+            text run at (521,1) width 110: "Helvetica Bold"
+        RenderText {#text} at (631,2) size 10x19
+          text run at (631,2) width 10: " "
+        RenderInline {SPAN} at (0,0) size 740x39
+          RenderText {#text} at (641,1) size 740x39
+            text run at (641,1) width 100: "Papyrus syn."
+            text run at (1,21) width 34: "bold"
+        RenderText {#text} at (35,22) size 10x19
+          text run at (35,22) width 10: " "
         RenderInline {SPAN} at (0,0) size 138x19
-          RenderText {#text} at (635,1) size 138x19
-            text run at (635,1) width 138: "Papyrus syn. bold"
+          RenderText {#text} at (45,21) size 138x19
+            text run at (45,21) width 138: "Papyrus syn. bold"
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {SPAN} at (0,0) size 138x19
-          RenderText {#text} at (1,21) size 138x19
-            text run at (1,21) width 138: "Papyrus syn. bold"
-        RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (4,106) size 776x41 [border: (1px solid #ADD8E6)]
+      RenderBlock {DIV} at (4,107) size 776x41 [border: (1px solid #ADD8E6)]
         RenderInline {SPAN} at (0,0) size 70x19
           RenderText {#text} at (1,2) size 70x19
             text run at (1,2) width 70: "Courier"
@@ -89,25 +91,25 @@ layer at (0,0) size 800x600
             text run at (321,2) width 70: "Courier"
         RenderText {#text} at (391,2) size 10x19
           text run at (391,2) width 10: " "
-        RenderInline {SPAN} at (0,0) size 104x19
-          RenderText {#text} at (401,1) size 104x19
-            text run at (401,1) width 104: "Helvetica Bold"
-        RenderText {#text} at (505,2) size 10x19
-          text run at (505,2) width 10: " "
         RenderInline {SPAN} at (0,0) size 110x19
-          RenderText {#text} at (515,1) size 110x19
-            text run at (515,1) width 110: "Helvetica Bold"
-        RenderText {#text} at (625,2) size 10x19
-          text run at (625,2) width 10: " "
+          RenderText {#text} at (401,1) size 110x19
+            text run at (401,1) width 110: "Helvetica Bold"
+        RenderText {#text} at (511,2) size 10x19
+          text run at (511,2) width 10: " "
         RenderInline {SPAN} at (0,0) size 110x19
-          RenderText {#text} at (635,1) size 110x19
-            text run at (635,1) width 110: "Helvetica Bold"
+          RenderText {#text} at (521,1) size 110x19
+            text run at (521,1) width 110: "Helvetica Bold"
+        RenderText {#text} at (631,2) size 10x19
+          text run at (631,2) width 10: " "
+        RenderInline {SPAN} at (0,0) size 110x19
+          RenderText {#text} at (641,1) size 110x19
+            text run at (641,1) width 110: "Helvetica Bold"
         RenderText {#text} at (0,0) size 0x0
         RenderInline {SPAN} at (0,0) size 110x19
           RenderText {#text} at (1,21) size 110x19
             text run at (1,21) width 110: "Helvetica Bold"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (4,151) size 776x41 [border: (1px solid #ADD8E6)]
+      RenderBlock {DIV} at (4,152) size 776x41 [border: (1px solid #ADD8E6)]
         RenderInline {SPAN} at (0,0) size 70x19
           RenderText {#text} at (1,2) size 70x19
             text run at (1,2) width 70: "Courier"
@@ -133,58 +135,58 @@ layer at (0,0) size 800x600
             text run at (321,2) width 70: "Courier"
         RenderText {#text} at (391,2) size 10x19
           text run at (391,2) width 10: " "
-        RenderInline {SPAN} at (0,0) size 104x19
-          RenderText {#text} at (401,1) size 104x19
-            text run at (401,1) width 104: "Helvetica Bold"
-        RenderText {#text} at (505,2) size 10x19
-          text run at (505,2) width 10: " "
         RenderInline {SPAN} at (0,0) size 110x19
-          RenderText {#text} at (515,1) size 110x19
-            text run at (515,1) width 110: "Helvetica Bold"
-        RenderText {#text} at (625,2) size 10x19
-          text run at (625,2) width 10: " "
+          RenderText {#text} at (401,1) size 110x19
+            text run at (401,1) width 110: "Helvetica Bold"
+        RenderText {#text} at (511,2) size 10x19
+          text run at (511,2) width 10: " "
         RenderInline {SPAN} at (0,0) size 110x19
-          RenderText {#text} at (635,1) size 110x19
-            text run at (635,1) width 110: "Helvetica Bold"
+          RenderText {#text} at (521,1) size 110x19
+            text run at (521,1) width 110: "Helvetica Bold"
+        RenderText {#text} at (631,2) size 10x19
+          text run at (631,2) width 10: " "
+        RenderInline {SPAN} at (0,0) size 110x19
+          RenderText {#text} at (641,1) size 110x19
+            text run at (641,1) width 110: "Helvetica Bold"
         RenderText {#text} at (0,0) size 0x0
         RenderInline {SPAN} at (0,0) size 110x19
           RenderText {#text} at (1,21) size 110x19
             text run at (1,21) width 110: "Helvetica Bold"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,208) size 784x19
+      RenderBlock {P} at (0,209) size 784x19
         RenderText {#text} at (0,0) size 224x19
           text run at (0,0) width 224: "Times followed by Ahem (normal):"
-      RenderBlock {DIV} at (4,243) size 776x21 [border: (1px solid #ADD8E6)]
+      RenderBlock {DIV} at (4,244) size 776x21 [border: (1px solid #ADD8E6)]
         RenderText {#text} at (1,1) size 43x19
           text run at (1,1) width 43: "Times "
         RenderInline {I} at (0,0) size 64x17
           RenderText {#text} at (44,3) size 64x17
             text run at (44,3) width 64: "AHEM"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,280) size 784x19
+      RenderBlock {P} at (0,281) size 784x19
         RenderText {#text} at (0,0) size 101x19
           text run at (0,0) width 101: "Ahem (normal):"
-      RenderBlock {DIV} at (4,315) size 776x19 [border: (1px solid #ADD8E6)]
+      RenderBlock {DIV} at (4,316) size 776x19 [border: (1px solid #ADD8E6)]
         RenderText {#text} at (1,1) size 80x17
           text run at (1,1) width 80: "AHEM "
         RenderInline {I} at (0,0) size 64x17
           RenderText {#text} at (81,1) size 64x17
             text run at (81,1) width 64: "AHEM"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,350) size 784x19
+      RenderBlock {P} at (0,351) size 784x19
         RenderText {#text} at (0,0) size 326x19
           text run at (0,0) width 326: "Ahem (normal) followed by Ahem (synthetic bold):"
-      RenderBlock {DIV} at (4,385) size 776x19 [border: (1px solid #ADD8E6)]
+      RenderBlock {DIV} at (4,386) size 776x19 [border: (1px solid #ADD8E6)]
         RenderText {#text} at (1,1) size 80x17
           text run at (1,1) width 80: "AHEM "
         RenderInline {B} at (0,0) size 64x17
           RenderText {#text} at (81,1) size 64x17
             text run at (81,1) width 64: "AHEM"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,420) size 784x19
+      RenderBlock {P} at (0,421) size 784x19
         RenderText {#text} at (0,0) size 334x19
           text run at (0,0) width 334: "Ahem (normal) followed by Ahem (synthetic italics):"
-      RenderBlock {DIV} at (4,455) size 776x19 [border: (1px solid #ADD8E6)]
+      RenderBlock {DIV} at (4,456) size 776x19 [border: (1px solid #ADD8E6)]
         RenderText {#text} at (1,1) size 80x17
           text run at (1,1) width 80: "AHEM "
         RenderInline {I} at (0,0) size 64x17

@@ -232,6 +232,13 @@ static void initializeFonts(const char* testURL = 0)
     if (!FcConfigAppFontAddFile(config, reinterpret_cast<FcChar8*>(ahemFontFilename.get())))
         g_error("Could not load font at %s!", ahemFontFilename.get()); 
 
+    for (int i = 1; i <= 9; i++) {
+        GOwnPtr<gchar> fontFilename(g_strdup_printf("WebKitWeightWatcher%i00.ttf", i));
+        GOwnPtr<gchar> fontPath(g_build_filename(FONTS_CONF_DIR, "..", "..", "fonts", fontFilename.get(), NULL));
+        if (!FcConfigAppFontAddFile(config, reinterpret_cast<FcChar8*>(fontPath.get())))
+            g_error("Could not load font at %s!", fontPath.get()); 
+    }
+
     // A font with no valid Fontconfig encoding to test https://bugs.webkit.org/show_bug.cgi?id=47452
     GOwnPtr<gchar> fontWithNoValidEncodingFilename(g_build_filename(FONTS_CONF_DIR, "FontWithNoValidEncoding.fon", NULL));
     if (!FcConfigAppFontAddFile(config, reinterpret_cast<FcChar8*>(fontWithNoValidEncodingFilename.get())))

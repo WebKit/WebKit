@@ -1,3 +1,16 @@
+2011-02-15  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Freetype] Better map CSS font weight to Fontconfig font weight
+        https://bugs.webkit.org/show_bug.cgi?id=54323
+
+        Add the WeightWatcher fonts to the list of sourced fonts when intializing
+        DRT. This will allow us to pass tests that use WeightWatcher.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (initializeFonts): Source the WebkitWeightWatcher fonts.
+
 2011-02-15  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.
