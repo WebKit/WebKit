@@ -2072,11 +2072,61 @@ static inline bool selectorTagMatches(const Element* element, const CSSSelector*
 static inline bool isFastCheckableSelector(const CSSSelector* selector)
 {
     for (; selector; selector = selector->tagHistory()) {
-        if (selector->relation() != CSSSelector::Descendant)
+        if (selector->relation() != CSSSelector::Descendant && selector->relation() != CSSSelector::Child && selector->relation() != CSSSelector::SubSelector)
             return false;
         if (selector->m_match != CSSSelector::None && selector->m_match != CSSSelector::Id && selector->m_match != CSSSelector::Class)
             return false;
     }
+    return true;
+}
+    
+template <typename CheckValueFunction>
+inline bool fastCheckSingleSelector(const CSSSelector*& selector, const Element*& element, const CSSSelector*& topChildOrSubselector, const Element*& topChildOrSubselectorMatchElement, CheckValueFunction checkValue)
+{
+    AtomicStringImpl* value = selector->value().impl();
+    for (; element; element = element->parentElement()) {
+        if (checkValue(element, value) && selectorTagMatches(element, selector)) {
+            if (selector->relation() == CSSSelector::Descendant)
+                topChildOrSubselector = 0;
+            else if (!topChildOrSubselector) {
+                ASSERT(selector->relation() == CSSSelector::Child || selector->relation() == CSSSelector::SubSelector);
+                topChildOrSubselector = selector;
+                topChildOrSubselectorMatchElement = element;
+            }
+            if (selector->relation() != CSSSelector::SubSelector)
+                element = element->parentElement();
+            selector = selector->tagHistory();
+            return true;
+        }
+        if (topChildOrSubselector) {
+            // Child or subselector check failed.
+            // If the match element is null, topChildOrSubselector was also the very topmost selector and had to match 
+            // the original element we were checking.
+            if (!topChildOrSubselectorMatchElement)
+                return false;
+            // There may be other matches down the ancestor chain.
+            // Rewind to the topmost child or subselector and the element it matched, continue checking ancestors.
+            selector = topChildOrSubselector;
+            element = topChildOrSubselectorMatchElement->parentElement();
+            topChildOrSubselector = 0;
+            return true;
+        }
+    }
+    return false;
+}
+    
+static inline bool checkSelectorClassValue(const Element* element, AtomicStringImpl* value) 
+{
+    return element->hasClass() && static_cast<const StyledElement*>(element)->classNames().contains(value);
+}
+
+static inline bool checkSelectorIdValue(const Element* element, AtomicStringImpl* value) 
+{
+    return element->hasID() && element->idForStyleResolution().impl() == value;
+}
+
+static inline bool checkSelectorTagValue(const Element*, AtomicStringImpl*)
+{
     return true;
 }
 
@@ -2088,40 +2138,30 @@ bool CSSStyleSelector::SelectorChecker::fastCheckSelector(const CSSSelector* sel
     if (!selectorTagMatches(element, selector))
         return false;
 
+    const CSSSelector* topChildOrSubselector = 0;
+    const Element* topChildOrSubselectorMatchElement = 0;
+    if (selector->relation() == CSSSelector::Child || selector->relation() == CSSSelector::SubSelector)
+        topChildOrSubselector = selector;
+
+    if (selector->relation() != CSSSelector::SubSelector)
+        element = element->parentElement();
+
     selector = selector->tagHistory();
-    if (!selector)
-        return true;
-    const Element* ancestor = element;
-    // We know this compound selector has descendant combinators only and all components are simple.
-    for (; selector; selector = selector->tagHistory()) {
-        AtomicStringImpl* value;
+
+    // We know this compound selector has descendant, child and subselector combinators only and all components are simple.
+    while (selector) {
         switch (selector->m_match) {
         case CSSSelector::Class:
-            value = selector->value().impl();
-            while (true) {
-                if (!(ancestor = ancestor->parentElement()))
-                    return false;
-                const StyledElement* styledElement = static_cast<const StyledElement*>(ancestor);
-                if (ancestor->hasClass() && styledElement->classNames().contains(value) && selectorTagMatches(ancestor, selector))
-                    break;
-            }
+            if (!fastCheckSingleSelector(selector, element, topChildOrSubselector, topChildOrSubselectorMatchElement, checkSelectorClassValue))
+                return false;
             break;
         case CSSSelector::Id:
-            value = selector->value().impl();
-            while (true) {
-                if (!(ancestor = ancestor->parentElement()))
-                    return false;
-                if (ancestor->hasID() && ancestor->idForStyleResolution().impl() == value && selectorTagMatches(ancestor, selector))
-                    break;
-            }
+            if (!fastCheckSingleSelector(selector, element, topChildOrSubselector, topChildOrSubselectorMatchElement, checkSelectorIdValue))
+                return false;
             break;
         case CSSSelector::None:
-            while (true) {
-                if (!(ancestor = ancestor->parentElement()))
-                    return false;
-                if (selectorTagMatches(ancestor, selector))
-                    break;
-            }
+            if (!fastCheckSingleSelector(selector, element, topChildOrSubselector, topChildOrSubselectorMatchElement, checkSelectorTagValue))
+                return false;
             break;
         default:
             ASSERT_NOT_REACHED();
@@ -2129,7 +2169,6 @@ bool CSSStyleSelector::SelectorChecker::fastCheckSelector(const CSSSelector* sel
     }
     return true;
 }
-    
 
 // Recursive check of selectors and combinators
 // It can return 3 different values:

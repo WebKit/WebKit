@@ -1,3 +1,18 @@
+2011-02-15  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Enable fast path selector checking for child and subselector combinators
+        https://bugs.webkit.org/show_bug.cgi?id=54360
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::isFastCheckableSelector):
+        (WebCore::fastCheckSingleSelector):
+        (WebCore::checkClassValue):
+        (WebCore::checkIdValue):
+        (WebCore::checkTagValue):
+        (WebCore::CSSStyleSelector::SelectorChecker::fastCheckSelector):
+
 2011-02-15  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
