@@ -14,8 +14,8 @@ CONFIG(standalone_package) {
 }
 
 include($$PWD/../WebKit.pri)
-include($$PWD/../common.pri)
-include($$PWD/../WebCore/features.pri)
+include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
+include($$PWD/../WebCore/WebCore.pri)
 include(WebKit2.pri)
 
 TEMPLATE = lib
@@ -32,90 +32,6 @@ DESTDIR = $$WEBKIT2_DESTDIR
 
 # Build both debug and release configurations
 mac: CONFIG += build_all
-
-WEBKIT2_INCLUDEPATH = \
-    $$PWD/.. \
-
-WEBKIT2_INCLUDEPATH = \
-    $$PWD/../JavaScriptCore \
-    $$PWD/../JavaScriptCore/assembler \
-    $$PWD/../JavaScriptCore/bytecode \
-    $$PWD/../JavaScriptCore/bytecompiler \
-    $$PWD/../JavaScriptCore/debugger \
-    $$PWD/../JavaScriptCore/interpreter \
-    $$PWD/../JavaScriptCore/jit \
-    $$PWD/../JavaScriptCore/parser \
-    $$PWD/../JavaScriptCore/profiler \
-    $$PWD/../JavaScriptCore/runtime \
-    $$PWD/../JavaScriptCore/wtf \
-    $$PWD/../JavaScriptCore/wtf/symbian \
-    $$PWD/../JavaScriptCore/wtf/unicode \
-    $$PWD/../JavaScriptCore/yarr \
-    $$PWD/../JavaScriptCore/API \
-    $$PWD/../JavaScriptCore/ForwardingHeaders \
-    $$WEBKIT2_INCLUDEPATH
-
-WEBKIT2_INCLUDEPATH = \
-    $$PWD/../WebCore \
-    $$PWD/../WebCore/accessibility \
-    $$PWD/../WebCore/bindings \
-    $$PWD/../WebCore/bindings/generic \
-    $$PWD/../WebCore/bindings/js \
-    $$PWD/../WebCore/bridge \
-    $$PWD/../WebCore/bridge/c \
-    $$PWD/../WebCore/bridge/jsc \
-    $$PWD/../WebCore/css \
-    $$PWD/../WebCore/dom \
-    $$PWD/../WebCore/dom/default \
-    $$PWD/../WebCore/editing \
-    $$PWD/../WebCore/history \
-    $$PWD/../WebCore/html \
-    $$PWD/../WebCore/html/canvas \
-    $$PWD/../WebCore/inspector \
-    $$PWD/../WebCore/loader \
-    $$PWD/../WebCore/loader/appcache \
-    $$PWD/../WebCore/loader/archive \
-    $$PWD/../WebCore/loader/cache \
-    $$PWD/../WebCore/loader/icon \
-    $$PWD/../WebCore/mathml \
-    $$PWD/../WebCore/notifications \
-    $$PWD/../WebCore/page \
-    $$PWD/../WebCore/page/animation \
-    $$PWD/../WebCore/platform \
-    $$PWD/../WebCore/platform/animation \
-    $$PWD/../WebCore/platform/graphics \
-    $$PWD/../WebCore/platform/graphics/filters \
-    $$PWD/../WebCore/platform/graphics/transforms \
-    $$PWD/../WebCore/platform/image-decoders \
-    $$PWD/../WebCore/platform/mock \
-    $$PWD/../WebCore/platform/network \
-    $$PWD/../WebCore/platform/sql \
-    $$PWD/../WebCore/platform/text \
-    $$PWD/../WebCore/platform/text/transcoder \
-    $$PWD/../WebCore/plugins \
-    $$PWD/../WebCore/rendering \
-    $$PWD/../WebCore/rendering/style \
-    $$PWD/../WebCore/storage \
-    $$PWD/../WebCore/svg \
-    $$PWD/../WebCore/svg/animation \
-    $$PWD/../WebCore/svg/graphics \
-    $$PWD/../WebCore/svg/graphics/filters \
-    $$PWD/../WebCore/svg/properties \
-    $$PWD/../WebCore/websockets \
-    $$PWD/../WebCore/wml \
-    $$PWD/../WebCore/workers \
-    $$PWD/../WebCore/xml \
-    $$WEBKIT2_INCLUDEPATH
-
-WEBKIT2_INCLUDEPATH = \
-    $$PWD/../WebCore/bridge/qt \
-    $$PWD/../WebCore/page/qt \
-    $$PWD/../WebCore/platform/graphics/qt \
-    $$PWD/../WebCore/platform/network/qt \
-    $$PWD/../WebCore/platform/qt \
-    $$PWD/../WebKit/qt/Api \
-    $$PWD/../WebKit/qt/WebCoreSupport \
-    $$WEBKIT2_INCLUDEPATH
 
 WEBKIT2_INCLUDEPATH = \
     $$PWD \
@@ -152,15 +68,14 @@ WEBKIT2_INCLUDEPATH = \
     WebProcess/WebCoreSupport/qt \
     WebProcess/WebPage \
     WebProcess/qt \
-    $$WEBKIT2_INCLUDEPATH
+    $$OUTPUT_DIR/include
 
-WEBKIT2_INCLUDEPATH += \
-    $$OUTPUT_DIR/include \
+WEBKIT2_INCLUDEPATH = \
     $$WC_GENERATED_SOURCES_DIR \
     $$WEBKIT2_GENERATED_SOURCES_DIR \
     $$WEBKIT2_INCLUDEPATH
 
-# On Symbian PREPEND_INCLUDEPATH is the best way to make sure that WebKit headers 
+# On Symbian PREPEND_INCLUDEPATH is the best way to make sure that WebKit headers
 # are included before platform headers.
 
 symbian {
@@ -267,6 +182,7 @@ HEADERS += \
     Shared/StringPairVector.h \
     Shared/UserMessageCoders.h \
     Shared/VisitedLinkTable.h \
+    Shared/WebCoreArgumentCoders.h \
     Shared/WebBackForwardListItem.h \
     Shared/WebCertificateInfo.h \
     Shared/WebContextMenuItem.h \

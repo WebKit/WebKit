@@ -27,5 +27,4 @@ defineTest(addExtraCompiler) {
     return(true)
 }
 
-include(WebCore.pri)
-
+include(CodeGenerators.pri)

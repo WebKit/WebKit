@@ -1,3 +1,23 @@
+2011-02-15  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Redesign the build system
+        https://bugs.webkit.org/show_bug.cgi?id=51339
+
+        Part 1.
+
+        Introduce CodeGenerators.pri and add common includepaths to WebCore.pri,
+        thus unnecessary duplications can be removed from project files.
+
+        No new tests needed.
+
+        * CodeGenerators.pri: Copied from Source/WebCore/WebCore.pri.
+        Don't add non-source generated files to SOURCES.
+        * DerivedSources.pro: Change WebCore.pri to CodeGenerators.pri.
+        * WebCore.pri: Move code generation rules to CodeGenerators.pri.
+        * WebCore.pro: Move common options to WebCore.pri.
+
 2011-02-15  Charlie Reis  <creis@chromium.org>
 
         Reviewed by Mihai Parparita.

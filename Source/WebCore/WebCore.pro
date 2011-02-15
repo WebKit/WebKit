@@ -2,21 +2,6 @@
 CONFIG += building-libs
 CONFIG += depend_includepath
 
-V8_DIR = "$$[QT_INSTALL_PREFIX]/src/3rdparty/v8"
-
-v8:exists($${V8_DIR}/include/v8.h) {
-    message(Using V8 with QtScript)
-    QT += script
-    INCLUDEPATH += $${V8_DIR}/include
-
-    DEFINES *= V8_BINDING=1
-    DEFINES += WTF_CHANGES=1
-    DEFINES *= WTF_USE_V8=1
-    DEFINES += USING_V8_SHARED
-
-    linux-*:LIBS += -lv8
-}
-
 symbian: {
     TARGET.EPOCALLOWDLLDATA=1
     # DRM and Allfiles capabilites need to be audited to be signed on Symbian
@@ -79,29 +64,11 @@ symbian: {
 }
 
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ..
+include($$PWD/WebCore.pri)
 include($$PWD/../WebKit.pri)
 
 TEMPLATE = lib
 TARGET = QtWebKit
-
-contains(QT_CONFIG, qpa):CONFIG += embedded
-
-CONFIG(standalone_package) {
-    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = $$PWD/generated
-    isEmpty(JSC_GENERATED_SOURCES_DIR):JSC_GENERATED_SOURCES_DIR = $$PWD/../JavaScriptCore/generated
-
-    PRECOMPILED_HEADER = $$PWD/../WebKit/qt/WebKit_pch.h
-} else {
-    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = generated
-    isEmpty(JSC_GENERATED_SOURCES_DIR):JSC_GENERATED_SOURCES_DIR = ../JavaScriptCore/generated
-
-    !CONFIG(release, debug|release) {
-        OBJECTS_DIR = obj/debug
-    } else { # Release
-        OBJECTS_DIR = obj/release
-    }
-
-}
 
 CONFIG(QTDIR_build) {
     include($$QT_SOURCE_TREE/src/qbase.pri)
@@ -160,16 +127,10 @@ symbian {
     }
 }
 
-
-
 RESOURCES += \
     $$PWD/../WebCore/WebCore.qrc
 
 include_webinspector: RESOURCES += $$PWD/../WebCore/inspector/front-end/WebKit.qrc $$WC_GENERATED_SOURCES_DIR/InspectorBackendStub.qrc
-
-enable_fast_mobile_scrolling: DEFINES += ENABLE_FAST_MOBILE_SCROLLING=1
-
-use_qt_mobile_theme: DEFINES += WTF_USE_QT_MOBILE_THEME=1
 
 contains(DEFINES, WTF_USE_QT_MOBILE_THEME=1) {
     DEFINES += ENABLE_NO_LISTBOX_RENDERING=1
@@ -202,99 +163,7 @@ defineTest(addExtraCompiler) {
 
     return(true)
 }
-include(WebCore.pri)
-
-v8 {
-    WEBCORE_INCLUDEPATH = \
-        $$PWD/bindings/v8 \
-        $$PWD/bindings/v8/custom \
-        $$PWD/bindings/v8/specialization \
-        $$PWD/bridge/qt/v8
-
-} else {
-    WEBCORE_INCLUDEPATH = \
-        $$PWD/bridge/jsc \
-        $$PWD/bindings/js \
-        $$PWD/bindings/js/specialization \
-        $$PWD/bridge/c
-}
-
-
-WEBCORE_INCLUDEPATH = \
-    $$PWD \
-    $$PWD/accessibility \
-    $$PWD/bindings \
-    $$PWD/bindings/generic \
-    $$PWD/bridge \
-    $$PWD/css \
-    $$PWD/dom \
-    $$PWD/dom/default \
-    $$PWD/editing \
-    $$PWD/fileapi \
-    $$PWD/history \
-    $$PWD/html \
-    $$PWD/html/canvas \
-    $$PWD/html/parser \
-    $$PWD/html/shadow \
-    $$PWD/inspector \
-    $$PWD/loader \
-    $$PWD/loader/appcache \
-    $$PWD/loader/archive \
-    $$PWD/loader/cache \
-    $$PWD/loader/icon \
-    $$PWD/mathml \
-    $$PWD/notifications \
-    $$PWD/page \
-    $$PWD/page/animation \
-    $$PWD/platform \
-    $$PWD/platform/animation \
-    $$PWD/platform/audio \
-    $$PWD/platform/graphics \
-    $$PWD/platform/graphics/filters \
-    $$PWD/platform/graphics/transforms \
-    $$PWD/platform/image-decoders \
-    $$PWD/platform/mock \
-    $$PWD/platform/network \
-    $$PWD/platform/sql \
-    $$PWD/platform/text \
-    $$PWD/platform/text/transcoder \
-    $$PWD/plugins \
-    $$PWD/rendering \
-    $$PWD/rendering/mathml \
-    $$PWD/rendering/style \
-    $$PWD/rendering/svg \
-    $$PWD/storage \
-    $$PWD/svg \
-    $$PWD/svg/animation \
-    $$PWD/svg/graphics \
-    $$PWD/svg/graphics/filters \
-    $$PWD/svg/properties \
-    $$PWD/webaudio \
-    $$PWD/websockets \
-    $$PWD/wml \
-    $$PWD/workers \
-    $$PWD/xml \
-    $$WC_GENERATED_SOURCES_DIR \
-    $$WEBCORE_INCLUDEPATH
-
-WEBCORE_INCLUDEPATH = \
-    $$PWD/bridge/qt \
-    $$PWD/page/qt \
-    $$PWD/platform/graphics/qt \
-    $$PWD/platform/network/qt \
-    $$PWD/platform/qt \
-    $$PWD/../WebKit/qt/Api \
-    $$PWD/../WebKit/qt/WebCoreSupport \
-    $$WEBCORE_INCLUDEPATH
-
-symbian {
-    PREPEND_INCLUDEPATH = $$WEBCORE_INCLUDEPATH $$PREPEND_INCLUDEPATH
-} else {
-    INCLUDEPATH = $$WEBCORE_INCLUDEPATH $$INCLUDEPATH
-}
-
-QT += network
-
+include(CodeGenerators.pri)
 
 DASHBOARDSUPPORTCSSPROPERTIES = $$PWD/css/DashboardSupportCSSPropertyNames.in
 

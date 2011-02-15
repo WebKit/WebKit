@@ -1,3 +1,17 @@
+2011-02-15  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by NOBODY Csaba Osztrogonác.
+
+        [Qt] Redesign the build system
+        https://bugs.webkit.org/show_bug.cgi?id=51339
+
+        Part 1.
+
+        Introduce CodeGenerators.pri and add common includepaths to WebCore.pri,
+        thus unnecessary duplications can be removed from project files.
+
+        * WebKit2.pro: Simplify and deduplicate includepaths.
+
 2011-01-26  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ryosuke Niwa.
