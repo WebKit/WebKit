@@ -1,3 +1,9 @@
+2011-02-15  Steve Falkenburg  <sfalken@apple.com>
+
+        Skip failing tests being tracked by https://bugs.webkit.org/show_bug.cgi?id=54490
+
+        * platform/win/Skipped:
+
 2011-02-15  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; new Chromium/Linux test baselines.
