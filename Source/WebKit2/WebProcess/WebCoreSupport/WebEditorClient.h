@@ -27,12 +27,13 @@
 #define WebEditorClient_h
 
 #include <WebCore/EditorClient.h>
+#include <WebCore/TextCheckerClient.h>
 
 namespace WebKit {
 
 class WebPage;
 
-class WebEditorClient : public WebCore::EditorClient {
+class WebEditorClient : public WebCore::EditorClient, public WebCore::TextCheckerClient {
 public:
     WebEditorClient(WebPage* page)
         : m_page(page)
@@ -121,6 +122,8 @@ private:
     virtual bool isAutomaticSpellingCorrectionEnabled();
     virtual void toggleAutomaticSpellingCorrection();
 #endif
+
+    TextCheckerClient* textChecker() { return this; }
 
     virtual void ignoreWordInSpellDocument(const String&);
     virtual void learnWord(const String&);

@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class EditorClient;
+class TextCheckerClient;
 class Frame;
 class Node;
 
@@ -57,7 +57,7 @@ private:
 class SpellChecker {
     WTF_MAKE_NONCOPYABLE(SpellChecker);
 public:
-    explicit SpellChecker(Frame*, EditorClient*);
+    explicit SpellChecker(Frame*, TextCheckerClient*);
     ~SpellChecker();
 
     bool isAsynchronousEnabled() const;
@@ -73,7 +73,7 @@ private:
     void clearRequest();
 
     Frame* m_frame;
-    EditorClient* m_client;
+    TextCheckerClient* m_client;
 
     RefPtr<Node> m_requestNode;
     String m_requestText;

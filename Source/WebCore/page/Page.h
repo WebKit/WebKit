@@ -75,7 +75,6 @@ namespace WebCore {
     class SharedGraphicsContext3D;
     class SpeechInput;
     class SpeechInputClient;
-
 #if ENABLE(DOM_STORAGE)
     class StorageNamespace;
 #endif

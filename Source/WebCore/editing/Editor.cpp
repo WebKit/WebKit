@@ -64,6 +64,7 @@
 #include "NodeList.h"
 #include "Page.h"
 #include "Pasteboard.h"
+#include "TextCheckerClient.h"
 #include "TextCheckingHelper.h"
 #include "RemoveFormatCommand.h"
 #include "RenderBlock.h"
@@ -168,6 +169,14 @@ EditorClient* Editor::client() const
 {
     if (Page* page = m_frame->page())
         return page->editorClient();
+    return 0;
+}
+
+
+TextCheckerClient* Editor::textChecker() const
+{
+    if (EditorClient* owner = client())
+        return owner->textChecker();
     return 0;
 }
 
@@ -1150,7 +1159,7 @@ Editor::Editor(Frame* frame)
     // This is off by default, since most editors want this behavior (this matches IE but not FF).
     , m_shouldStyleWithCSS(false)
     , m_killRing(adoptPtr(new KillRing))
-    , m_spellChecker(new SpellChecker(frame, frame->page() ? frame->page()->editorClient() : 0))
+    , m_spellChecker(new SpellChecker(frame, frame->page() ? frame->page()->editorClient()->textChecker() : 0))
     , m_correctionPanelTimer(this, &Editor::correctionPanelTimerFired)
     , m_areMarkedTextMatchesHighlighted(false)
 {
@@ -1746,7 +1755,7 @@ void Editor::ignoreSpelling()
 
     String text = selectedText();
     ASSERT(text.length());
-    client()->ignoreWordInSpellDocument(text);
+    textChecker()->ignoreWordInSpellDocument(text);
 }
 
 void Editor::learnSpelling()
@@ -1759,7 +1768,7 @@ void Editor::learnSpelling()
 
     String text = selectedText();
     ASSERT(text.length());
-    client()->learnWord(text);
+    textChecker()->learnWord(text);
 }
 
 void Editor::advanceToNextMisspelling(bool startBeforeSelection)
@@ -1949,7 +1958,7 @@ bool Editor::isSelectionMisspelled()
     
     int misspellingLocation = -1;
     int misspellingLength = 0;
-    client()->checkSpellingOfString(selectedString.characters(), length, &misspellingLocation, &misspellingLength);
+    textChecker()->checkSpellingOfString(selectedString.characters(), length, &misspellingLocation, &misspellingLength);
     
     // The selection only counts as misspelled if the selected text is exactly one misspelled word
     if (misspellingLength != length)
@@ -1993,7 +2002,7 @@ Vector<String> Editor::guessesForMisspelledSelection()
 
     Vector<String> guesses;
     if (client())
-        client()->getGuessesForWord(selectedString, String(), guesses);
+        textChecker()->getGuessesForWord(selectedString, String(), guesses);
     return guesses;
 }
 
@@ -2125,7 +2134,7 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart,
     
     // Get the misspelled word.
     const String misspelledWord = plainText(misspellingRange.get());
-    String autocorrectedString = client()->getAutoCorrectSuggestionForMisspelledWord(misspelledWord);
+    String autocorrectedString = textChecker()->getAutoCorrectSuggestionForMisspelledWord(misspelledWord);
 
     // If autocorrected word is non empty, replace the misspelled word by this word.
     if (!autocorrectedString.isEmpty()) {
@@ -2296,7 +2305,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
         if (shouldMarkSpelling && isAutomaticSpellingCorrectionEnabled())
             checkingTypes |= TextCheckingTypeCorrection;
     }
-    client()->checkTextOfParagraph(paragraph.textCharacters(), paragraph.textLength(), checkingTypes, results);
+    textChecker()->checkTextOfParagraph(paragraph.textCharacters(), paragraph.textLength(), checkingTypes, results);
 
 #if SUPPORT_AUTOCORRECTION_PANEL
     // If this checking is only for showing correction panel, we shouldn't bother to mark misspellings.
@@ -2510,7 +2519,7 @@ void Editor::correctionPanelTimerFired(Timer<Editor>*)
             break;
         String paragraphText = plainText(TextCheckingParagraph(m_correctionPanelInfo.rangeToBeReplaced).paragraphRange().get());
         Vector<String> suggestions;
-        client()->getGuessesForWord(m_correctionPanelInfo.replacedString, paragraphText, suggestions);
+        textChecker()->getGuessesForWord(m_correctionPanelInfo.replacedString, paragraphText, suggestions);
         if (suggestions.isEmpty()) {
             m_correctionPanelInfo.rangeToBeReplaced.clear();
             break;
@@ -3532,6 +3541,5 @@ bool Editor::selectionStartHasSpellingMarkerFor(int from, int length) const
 
     return false;
 }
-
 
 } // namespace WebCore

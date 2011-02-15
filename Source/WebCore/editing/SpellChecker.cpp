@@ -37,12 +37,13 @@
 #include "Range.h"
 #include "RenderObject.h"
 #include "Settings.h"
+#include "TextCheckerClient.h"
 #include "TextIterator.h"
 #include "htmlediting.h"
 
 namespace WebCore {
 
-SpellChecker::SpellChecker(Frame* frame, EditorClient* client)
+SpellChecker::SpellChecker(Frame* frame, TextCheckerClient* client)
     : m_frame(frame)
     , m_client(client)
     , m_requestSequence(0)

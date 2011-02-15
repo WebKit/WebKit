@@ -29,6 +29,7 @@
 #include "WebKit.h"
 #pragma warning(push, 0)
 #include <WebCore/EditorClient.h>
+#include <WebCore/TextCheckerClient.h>
 #include <wtf/OwnPtr.h>
 #pragma warning(pop)
 
@@ -36,7 +37,7 @@ class WebView;
 class WebNotification;
 class WebEditorUndoTarget;
 
-class WebEditorClient : public WebCore::EditorClient {
+class WebEditorClient : public WebCore::EditorClient, public WebCore::TextCheckerClient {
 public:
     WebEditorClient(WebView*);
     ~WebEditorClient();
@@ -114,6 +115,7 @@ public:
     virtual void willSetInputMethodState();
     virtual void setInputMethodState(bool);
     virtual void requestCheckingOfString(WebCore::SpellChecker*, int, const WTF::String&) {}
+    virtual WebCore::TextCheckerClient* textChecker() { return this; }
 
 private:
     WebView* m_webView;

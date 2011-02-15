@@ -29,6 +29,7 @@
 
 #include "DocumentMarkerController.h"
 #include "Range.h"
+#include "TextCheckerClient.h"
 #include "TextIterator.h"
 #include "VisiblePosition.h"
 #include "visible_units.h"
@@ -179,7 +180,7 @@ String TextCheckingHelper::findFirstMisspelling(int& firstMisspellingOffset, boo
             
             int misspellingLocation = -1;
             int misspellingLength = 0;
-            m_client->checkSpellingOfString(chars, len, &misspellingLocation, &misspellingLength);
+            m_client->textChecker()->checkSpellingOfString(chars, len, &misspellingLocation, &misspellingLength);
 
             // 5490627 shows that there was some code path here where the String constructor below crashes.
             // We don't know exactly what combination of bad input caused this, so we're making this much
@@ -274,7 +275,7 @@ String TextCheckingHelper::findFirstMisspellingOrBadGrammar(bool checkGrammar, b
                 
                 Vector<TextCheckingResult> results;
                 uint64_t checkingTypes = checkGrammar ? (TextCheckingTypeSpelling | TextCheckingTypeGrammar) : TextCheckingTypeSpelling;
-                m_client->checkTextOfParagraph(paragraphString.characters(), paragraphString.length(), checkingTypes, results);
+                m_client->textChecker()->checkTextOfParagraph(paragraphString.characters(), paragraphString.length(), checkingTypes, results);
                 
                 for (unsigned i = 0; i < results.size(); i++) {
                     const TextCheckingResult* result = &results[i];
@@ -422,7 +423,7 @@ String TextCheckingHelper::findFirstBadGrammar(GrammarDetail& outGrammarDetail, 
         Vector<GrammarDetail> grammarDetails;
         int badGrammarPhraseLocation = -1;
         int badGrammarPhraseLength = 0;
-        m_client->checkGrammarOfString(paragraph.textCharacters() + startOffset, paragraph.textLength() - startOffset, grammarDetails, &badGrammarPhraseLocation, &badGrammarPhraseLength);
+        m_client->textChecker()->checkGrammarOfString(paragraph.textCharacters() + startOffset, paragraph.textLength() - startOffset, grammarDetails, &badGrammarPhraseLocation, &badGrammarPhraseLength);
         
         if (!badGrammarPhraseLength) {
             ASSERT(badGrammarPhraseLocation == -1);
@@ -535,14 +536,14 @@ Vector<String> TextCheckingHelper::guessesForMisspelledOrUngrammaticalRange(bool
 
     Vector<TextCheckingResult> results;
     uint64_t checkingTypes = checkGrammar ? (TextCheckingTypeSpelling | TextCheckingTypeGrammar) : TextCheckingTypeSpelling;
-    m_client->checkTextOfParagraph(paragraph.textCharacters(), paragraph.textLength(), checkingTypes, results);
+    m_client->textChecker()->checkTextOfParagraph(paragraph.textCharacters(), paragraph.textLength(), checkingTypes, results);
     
     for (unsigned i = 0; i < results.size(); i++) {
         const TextCheckingResult* result = &results[i];
         if (result->type == TextCheckingTypeSpelling && paragraph.checkingRangeMatches(result->location, result->length)) {
             String misspelledWord = paragraph.checkingSubstring();
             ASSERT(misspelledWord.length());
-            m_client->getGuessesForWord(misspelledWord, String(), guesses);
+            m_client->textChecker()->getGuessesForWord(misspelledWord, String(), guesses);
             m_client->updateSpellingUIWithMisspelledWord(misspelledWord);
             misspelled = true;
             return guesses;

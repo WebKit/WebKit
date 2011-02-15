@@ -2070,6 +2070,7 @@ HEADERS += \
     page/DragController.h \
     page/EventHandler.h \
     page/EventSource.h \
+    page/EditorClient.h \
     page/FocusController.h \
     page/Frame.h \
     page/FrameTree.h \
@@ -2193,6 +2194,7 @@ HEADERS += \
     platform/KURL.h \
     platform/Length.h \
     platform/text/LineEnding.h \
+    platform/text/TextCheckerClient.h \
     platform/LinkHash.h \
     platform/Logging.h \
     platform/Language.h \

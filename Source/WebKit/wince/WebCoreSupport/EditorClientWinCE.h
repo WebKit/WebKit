@@ -26,12 +26,13 @@
 #define EditorClientWinCE_h
 
 #include "EditorClient.h"
+#include "TextCheckerClient.h"
 
 class WebView;
 
 namespace WebKit {
 
-class EditorClientWinCE : public WebCore::EditorClient {
+class EditorClientWinCE : public WebCore::EditorClient, public WebCore::TextCheckerClient {
 public:
     EditorClientWinCE(WebView*);
     ~EditorClientWinCE();
@@ -103,6 +104,7 @@ public:
     virtual void willSetInputMethodState();
     virtual void setInputMethodState(bool);
     virtual void requestCheckingOfString(WebCore::SpellChecker*, int, const WTF::String&) {}
+    virtual WebCore::TextCheckerClient* textChecker() { return this; }
 
 private:
     WebView* m_webView;

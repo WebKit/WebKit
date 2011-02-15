@@ -29,6 +29,7 @@
 
 #import <WebCore/Editor.h>
 #import <WebCore/EditorClient.h>
+#import <WebCore/TextCheckerClient.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Forward.h>
 #import <wtf/Vector.h>
@@ -36,7 +37,7 @@
 @class WebView;
 @class WebEditorUndoTarget;
 
-class WebEditorClient : public WebCore::EditorClient {
+class WebEditorClient : public WebCore::EditorClient, public WebCore::TextCheckerClient {
 public:
     WebEditorClient(WebView *);
     virtual ~WebEditorClient();
@@ -97,6 +98,8 @@ public:
     virtual bool isAutomaticSpellingCorrectionEnabled();
     virtual void toggleAutomaticSpellingCorrection();
 #endif
+
+    TextCheckerClient* textChecker() { return this; }
 
     virtual void respondToChangedContents();
     virtual void respondToChangedSelection();

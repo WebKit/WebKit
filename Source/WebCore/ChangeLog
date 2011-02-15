@@ -1,3 +1,57 @@
+2011-01-26  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        Refactoring: Extract TextCheckerClient from EditorClient
+        https://bugs.webkit.org/show_bug.cgi?id=53213
+        
+        Created new abstract class TextCheckerClient. The class has
+        spellcheck related API which is split.
+        This is the first step for sharing spell-checking codebase
+        between ports. A standalone TextCheckerClient implementation
+        should be done in future changes.
+
+        No new tests. No behavioral change.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (AXAttributeStringSetSpelling):
+        * editing/Editor.cpp: Replacing some client() call with textChecker().
+        (WebCore::Editor::textChecker): Added.
+        (WebCore::Editor::ignoreSpelling):
+        (WebCore::Editor::learnSpelling):
+        (WebCore::Editor::isSelectionMisspelled):
+        (WebCore::Editor::guessesForMisspelledSelection):
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+        (WebCore::Editor::correctionPanelTimerFired):
+        * editing/Editor.h:
+        * editing/SpellChecker.cpp:
+        (WebCore::SpellChecker::SpellChecker):
+        * editing/TextCheckingHelper.cpp: Replacing some client() call with textChecker().
+        (WebCore::TextCheckingHelper::findFirstMisspelling):
+        (WebCore::TextCheckingHelper::findFirstMisspellingOrBadGrammar):
+        (WebCore::TextCheckingHelper::findFirstBadGrammar):
+        (WebCore::TextCheckingHelper::guessesForMisspelledOrUngrammaticalRange):
+        * loader/EmptyClients.h: Added EmptyTextCheckerClient.
+        (WebCore::EmptyTextCheckerClient::ignoreWordInSpellDocument):
+        (WebCore::EmptyTextCheckerClient::learnWord):
+        (WebCore::EmptyTextCheckerClient::checkSpellingOfString):
+        (WebCore::EmptyTextCheckerClient::getAutoCorrectSuggestionForMisspelledWord):
+        (WebCore::EmptyTextCheckerClient::checkGrammarOfString):
+        (WebCore::EmptyTextCheckerClient::checkTextOfParagraph):
+        (WebCore::EmptyTextCheckerClient::getGuessesForWord):
+        (WebCore::EmptyTextCheckerClient::requestCheckingOfString):
+        (WebCore::EmptyEditorClient::textChecker):
+        * page/EditorClient.h: Extracted TextCheckerClient.
+        * page/Page.h:
+        * platform/text/TextCheckerClient.h: Added.
+        (WebCore::TextCheckerClient::~TextCheckerClient):
+
 2011-02-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Adam Barth.

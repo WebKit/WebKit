@@ -27,6 +27,7 @@
 #define TextChecker_h
 
 #include <WebCore/EditorClient.h>
+#include <WebCore/TextCheckerClient.h>
 
 namespace WebKit {
 

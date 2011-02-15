@@ -3341,6 +3341,7 @@
             'platform/text/TextBreakIterator.h',
             'platform/text/TextBreakIteratorICU.cpp',
             'platform/text/TextBreakIteratorInternalICU.h',
+            'platform/text/TextCheckerClient.h',
             'platform/text/TextCodec.cpp',
             'platform/text/TextCodec.h',
             'platform/text/TextCodecICU.cpp',

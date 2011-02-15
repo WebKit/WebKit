@@ -32,6 +32,7 @@
 #define EditorClientGtk_h
 
 #include "EditorClient.h"
+#include "TextCheckerClient.h"
 
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
@@ -47,7 +48,7 @@ class KeyboardEvent;
 
 namespace WebKit {
 
-    class EditorClient : public WebCore::EditorClient {
+class EditorClient : public WebCore::EditorClient,  public WebCore::TextCheckerClient {
     protected:
         bool m_isInRedo;
 
@@ -121,6 +122,8 @@ namespace WebKit {
         virtual bool doTextFieldCommandFromEvent(WebCore::Element*, WebCore::KeyboardEvent*);
         virtual void textWillBeDeletedInTextField(WebCore::Element*);
         virtual void textDidChangeInTextArea(WebCore::Element*);
+
+        virtual WebCore::TextCheckerClient* textChecker() { return this; }
 
         virtual void ignoreWordInSpellDocument(const WTF::String&);
         virtual void learnWord(const WTF::String&);

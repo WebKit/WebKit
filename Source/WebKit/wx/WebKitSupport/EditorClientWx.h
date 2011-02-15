@@ -30,13 +30,14 @@
 
 #include "EditorClient.h"
 #include "Page.h"
+#include "TextCheckerClient.h"
 
 #include "WebView.h"
 #include "WebFrame.h"
 
 namespace WebCore {
 
-class EditorClientWx : public EditorClient {
+class EditorClientWx : public EditorClient, public TextCheckerClient {
 friend class ::wxWebView;
 friend class ::wxWebFrame;
 
@@ -115,6 +116,7 @@ public:
     virtual void willSetInputMethodState();
     virtual void setInputMethodState(bool enabled);
     virtual void requestCheckingOfString(WebCore::SpellChecker*, int, const WTF::String&) {}
+    virtual TextCheckerClient* textChecker() { return this; }
 
 private:
     Page* m_page;

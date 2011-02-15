@@ -37,6 +37,7 @@
 #include "DragClient.h"
 #include "EditCommand.h"
 #include "EditorClient.h"
+#include "TextCheckerClient.h"
 #include "FloatRect.h"
 #include "FocusDirection.h"
 #include "FrameLoaderClient.h"
@@ -395,6 +396,22 @@ public:
     virtual PassRefPtr<FrameNetworkingContext> createNetworkingContext() { return PassRefPtr<FrameNetworkingContext>(); }
 };
 
+class EmptyTextCheckerClient : public TextCheckerClient {
+public:
+    virtual void ignoreWordInSpellDocument(const String&) { }
+    virtual void learnWord(const String&) { }
+    virtual void checkSpellingOfString(const UChar*, int, int*, int*) { }
+    virtual String getAutoCorrectSuggestionForMisspelledWord(const String&) { return String(); }
+    virtual void checkGrammarOfString(const UChar*, int, Vector<GrammarDetail>&, int*, int*) { }
+
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    virtual void checkTextOfParagraph(const UChar*, int, uint64_t, Vector<TextCheckingResult>&) { };
+#endif
+
+    virtual void getGuessesForWord(const String&, const String&, Vector<String>&) { }
+    virtual void requestCheckingOfString(SpellChecker*, int, const String&) { }
+};
+
 class EmptyEditorClient : public EditorClient {
     WTF_MAKE_NONCOPYABLE(EmptyEditorClient); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -489,14 +506,8 @@ public:
     virtual bool isAutomaticSpellingCorrectionEnabled() { return false; }
     virtual void toggleAutomaticSpellingCorrection() { }
 #endif
-    virtual void ignoreWordInSpellDocument(const String&) { }
-    virtual void learnWord(const String&) { }
-    virtual void checkSpellingOfString(const UChar*, int, int*, int*) { }
-    virtual String getAutoCorrectSuggestionForMisspelledWord(const String&) { return String(); }
-    virtual void checkGrammarOfString(const UChar*, int, Vector<GrammarDetail>&, int*, int*) { }
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
-    virtual void checkTextOfParagraph(const UChar*, int, uint64_t, Vector<TextCheckingResult>&) { };
-#endif
+    TextCheckerClient* textChecker() { return &m_textCheckerClient; }
+
 #if SUPPORT_AUTOCORRECTION_PANEL
     virtual void showCorrectionPanel(CorrectionPanelInfo::PanelType, const FloatRect&, const String&, const String&, const Vector<String>&, Editor*) { }
     virtual void dismissCorrectionPanel(ReasonForDismissingCorrectionPanel) { }
@@ -506,10 +517,12 @@ public:
     virtual void updateSpellingUIWithMisspelledWord(const String&) { }
     virtual void showSpellingUI(bool) { }
     virtual bool spellingUIIsShowing() { return false; }
-    virtual void getGuessesForWord(const String&, const String&, Vector<String>&) { }
+
     virtual void willSetInputMethodState() { }
     virtual void setInputMethodState(bool) { }
-    virtual void requestCheckingOfString(SpellChecker*, int, const String&) { }
+
+private:
+    EmptyTextCheckerClient m_textCheckerClient;
 };
 
 #if ENABLE(CONTEXT_MENUS)

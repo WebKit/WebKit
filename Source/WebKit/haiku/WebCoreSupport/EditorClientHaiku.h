@@ -32,6 +32,7 @@
 #define EditorClientHaiku_H
 
 #include "EditorClient.h"
+#include "TextCheckerClient.h"
 #include "RefCounted.h"
 #include "Page.h"
 
@@ -40,7 +41,7 @@
 
 namespace WebCore {
 
-    class EditorClientHaiku : public EditorClient {
+class EditorClientHaiku : public EditorClient, public TextCheckerClient {
     public:
         EditorClientHaiku();
         void setPage( Page* page );
@@ -113,6 +114,7 @@ namespace WebCore {
         virtual void willSetInputMethodState();
         virtual void setInputMethodState(bool enabled);
         virtual void requestCheckingOfString(SpellChecker*, int, const String&) {}
+        virtual TextCheckerClient* textChecker() { return this; }
 
         bool isEditing() const;
 

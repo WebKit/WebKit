@@ -2642,6 +2642,7 @@ webcore_sources += \
 	Source/WebCore/platform/text/TextBoundaries.cpp \
 	Source/WebCore/platform/text/TextBoundaries.h \
 	Source/WebCore/platform/text/TextBreakIterator.h \
+	Source/WebCore/platform/text/TextCheckerClient.h \
 	Source/WebCore/platform/text/TextCodec.cpp \
 	Source/WebCore/platform/text/TextCodec.h \
 	Source/WebCore/platform/text/TextCodecLatin1.cpp \

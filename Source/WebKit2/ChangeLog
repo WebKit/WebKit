@@ -1,3 +1,16 @@
+2011-01-26  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        Refactoring: Extract TextCheckerClient from EditorClient
+        https://bugs.webkit.org/show_bug.cgi?id=53213
+
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/TextChecker.h:
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        (WebKit::WebEditorClient::textChecker):
+        * Scripts/webkit2/messages.py: Re-arranged the include file
+
 2011-02-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Adam Barth.

@@ -61,6 +61,7 @@ class Pasteboard;
 class SimpleFontData;
 class SpellChecker;
 class Text;
+class TextCheckerClient;
 class TextEvent;
 
 struct CompositionUnderline {
@@ -83,6 +84,8 @@ public:
     ~Editor();
 
     EditorClient* client() const;
+    TextCheckerClient* textChecker() const;
+
     Frame* frame() const { return m_frame; }
     DeleteButtonController* deleteButtonController() const { return m_deleteButtonController.get(); }
     EditCommand* lastEditCommand() { return m_lastEditCommand.get(); }
