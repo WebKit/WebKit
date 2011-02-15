@@ -3584,3 +3584,5 @@ BUGWK54472 : media/audio-delete-while-slider-thumb-clicked.html = TIMEOUT
 
 BUGPFELDMAN SKIP : inspector/debugger/dom-breakpoints.html = TIMEOUT
 BUGPFELDMAN SKIP : inspector/elements/set-attribute.html = MISSING
+BUGPFELDMAN SKIP : http/tests/inspector-enabled/database-open.html = CRASH
+BUGPFELDMAN SKIP : http/tests/inspector-enabled/dom-storage-open.html = TEXT
