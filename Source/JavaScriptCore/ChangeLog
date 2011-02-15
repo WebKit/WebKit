@@ -1,3 +1,42 @@
+2011-02-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Moved MarkedBlock data members to the head of the block
+        https://bugs.webkit.org/show_bug.cgi?id=54482
+        
+        This allows for a variable-sized tail, to accommodate oversized blocks.
+
+        SunSpider reports no change.
+        
+        * runtime/JSCell.h:
+        (JSC::JSCell::MarkedBlock::allocate):
+        * runtime/MarkedBlock.cpp:
+        (JSC::MarkedBlock::destroy):
+        (JSC::MarkedBlock::MarkedBlock):
+        (JSC::MarkedBlock::sweep):
+        * runtime/MarkedBlock.h: Added missing element to the CELLS_PER_BLOCK
+        calculation. This kind of error is why we want to migrate to the system
+        described below.
+
+        (JSC::roundUpToMultipleOf):
+        (JSC::MarkedBlock::firstCell):
+        (JSC::MarkedBlock::cells):
+        (JSC::MarkedBlock::cellNumber): Use subtraction instead of masking to
+        calculate cell number. The mask is no longer correct because the first
+        cell is not at the head of the block.
+
+        (JSC::MarkedBlock::forEach): Replaced m_cells data member with a cells()
+        accessor. We want to use sizeof(MarkedBlock) to calculate the size of the
+        block header, so we can't have an explicit data member to represent the block tail.
+        
+        Also replaced iteration from zero with iteration from startCell(), since
+        the first N cells are now occupied by the header.
+
+        * runtime/MarkedSpace.cpp:
+        (JSC::MarkedSpace::MarkedSpace):
+        (JSC::MarkedSpace::reset): Replaced iteration from zero as above.
+
 2011-02-15  Chris Rogers  <crogers@google.com>
 
         Reviewed by Alexey Proskuryakov.

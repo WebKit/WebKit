@@ -35,6 +35,7 @@ MarkedSpace::MarkedSpace(JSGlobalData* globalData)
     , m_globalData(globalData)
 {
     allocateBlock();
+    m_heap.nextCell = m_heap.collectorBlock(0)->firstCell();
 }
 
 void MarkedSpace::destroy()
@@ -127,8 +128,8 @@ size_t MarkedSpace::capacity() const
 
 void MarkedSpace::reset()
 {
-    m_heap.nextCell = 0;
     m_heap.nextBlock = 0;
+    m_heap.nextCell = m_heap.collectorBlock(0)->firstCell();
     m_waterMark = 0;
 #if ENABLE(JSC_ZOMBIES)
     sweep();

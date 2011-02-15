@@ -407,14 +407,14 @@ namespace JSC {
         do {
             ASSERT(nextCell < CELLS_PER_BLOCK);
             if (!m_marks.testAndSet(nextCell)) { // Always false for the last cell in the block
-                JSCell* cell = reinterpret_cast<JSCell*>(&m_cells[nextCell++]);
+                JSCell* cell = reinterpret_cast<JSCell*>(&cells()[nextCell++]);
                 cell->~JSCell();
                 return cell;
             }
             nextCell = m_marks.nextPossiblyUnset(nextCell);
         } while (nextCell != CELLS_PER_BLOCK);
-        
-        nextCell = 0;
+
+        nextCell = firstCell();
         return 0;
     }
 

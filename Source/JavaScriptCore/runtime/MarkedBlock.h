@@ -34,6 +34,15 @@ namespace JSC {
     class JSCell;
     class JSGlobalData;
 
+    // Efficient implementation that takes advantage of powers of two.
+    template<size_t divisor> inline size_t roundUpToMultipleOf(size_t x)
+    {
+        COMPILE_ASSERT(divisor && !(divisor & (divisor - 1)), divisor_is_a_power_of_two);
+
+        size_t remainderMask = divisor - 1;
+        return (x + remainderMask) & ~remainderMask;
+    }
+
     class MarkedBlock {
 #if OS(WINCE) || OS(SYMBIAN) || PLATFORM(BREWMP)
         static const size_t BLOCK_SIZE = 64 * 1024; // 64k
@@ -41,8 +50,7 @@ namespace JSC {
         static const size_t BLOCK_SIZE = 256 * 1024; // 256k
 #endif
 
-        static const size_t BLOCK_OFFSET_MASK = BLOCK_SIZE - 1;
-        static const size_t BLOCK_MASK = ~BLOCK_OFFSET_MASK;
+        static const size_t BLOCK_MASK = ~(BLOCK_SIZE - 1);
         static const size_t MINIMUM_CELL_SIZE = 64;
         static const size_t CELL_ARRAY_LENGTH = (MINIMUM_CELL_SIZE / sizeof(double)) + (MINIMUM_CELL_SIZE % sizeof(double) != 0 ? sizeof(double) : 0);
     public:
@@ -53,7 +61,7 @@ namespace JSC {
         static const size_t CELL_MASK = CELL_SIZE - 1;
         static const size_t CELL_ALIGN_MASK = ~CELL_MASK;
         static const size_t BITS_PER_BLOCK = BLOCK_SIZE / CELL_SIZE;
-        static const size_t CELLS_PER_BLOCK = (BLOCK_SIZE - sizeof(Heap*) - sizeof(WTF::Bitmap<BITS_PER_BLOCK>)) / CELL_SIZE; // Division rounds down intentionally.
+        static const size_t CELLS_PER_BLOCK = (BLOCK_SIZE - sizeof(WTF::Bitmap<BITS_PER_BLOCK>) - sizeof(PageAllocationAligned) - sizeof(Heap*)) / CELL_SIZE; // Division rounds down intentionally.
         
         struct CollectorCell {
             FixedArray<double, CELL_ARRAY_LENGTH> memory;
@@ -81,6 +89,8 @@ namespace JSC {
         size_t size();
         size_t capacity();
 
+        size_t firstCell();
+
         size_t cellNumber(const void*);
         bool isMarked(const void*);
         bool testAndSetMarked(const void*);
@@ -90,12 +100,22 @@ namespace JSC {
 
     private:
         MarkedBlock(const PageAllocationAligned&, JSGlobalData*);
+        CollectorCell* cells();
 
-        FixedArray<CollectorCell, CELLS_PER_BLOCK> m_cells;
         WTF::Bitmap<BITS_PER_BLOCK> m_marks;
         PageAllocationAligned m_allocation;
         Heap* m_heap;
     };
+
+    inline size_t MarkedBlock::firstCell()
+    {
+        return roundUpToMultipleOf<CELL_SIZE>(sizeof(MarkedBlock)) / CELL_SIZE;
+    }
+
+    inline MarkedBlock::CollectorCell* MarkedBlock::cells()
+    {
+        return reinterpret_cast<CollectorCell*>(this);
+    }
 
     inline bool MarkedBlock::isCellAligned(const void* p)
     {
@@ -144,7 +164,7 @@ namespace JSC {
 
     inline size_t MarkedBlock::cellNumber(const void* cell)
     {
-        return (reinterpret_cast<uintptr_t>(cell) & BLOCK_OFFSET_MASK) / CELL_SIZE;
+        return (reinterpret_cast<uintptr_t>(cell) - reinterpret_cast<uintptr_t>(this)) / CELL_SIZE;
     }
 
     inline bool MarkedBlock::isMarked(const void* cell)
@@ -164,10 +184,10 @@ namespace JSC {
 
     template <typename Functor> inline void MarkedBlock::forEach(Functor& functor)
     {
-        for (size_t i = 0; i < CELLS_PER_BLOCK - 1; ++i) { // The last cell is a dummy place-holder.
+        for (size_t i = firstCell(); i < CELLS_PER_BLOCK - 1; ++i) { // The last cell is a dummy place-holder.
             if (!m_marks.get(i))
                 continue;
-            functor(reinterpret_cast<JSCell*>(&m_cells[i]));
+            functor(reinterpret_cast<JSCell*>(&cells()[i]));
         }
     }
 

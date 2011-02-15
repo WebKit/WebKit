@@ -40,8 +40,8 @@ MarkedBlock* MarkedBlock::create(JSGlobalData* globalData)
 
 void MarkedBlock::destroy(MarkedBlock* block)
 {
-    for (size_t i = 0; i < CELLS_PER_BLOCK; ++i)
-        reinterpret_cast<JSCell*>(&block->m_cells[i])->~JSCell();
+    for (size_t i = block->firstCell(); i < CELLS_PER_BLOCK; ++i)
+        reinterpret_cast<JSCell*>(&block->cells()[i])->~JSCell();
     block->m_allocation.deallocate();
 }
 
@@ -52,8 +52,8 @@ MarkedBlock::MarkedBlock(const PageAllocationAligned& allocation, JSGlobalData* 
     m_marks.set(CELLS_PER_BLOCK - 1);
 
     Structure* dummyMarkableCellStructure = globalData->dummyMarkableCellStructure.get();
-    for (size_t i = 0; i < CELLS_PER_BLOCK; ++i)
-        new (&m_cells[i]) JSCell(dummyMarkableCellStructure);
+    for (size_t i = firstCell(); i < CELLS_PER_BLOCK; ++i)
+        new (&cells()[i]) JSCell(dummyMarkableCellStructure);
 }
 
 void MarkedBlock::sweep()
@@ -62,11 +62,11 @@ void MarkedBlock::sweep()
     Structure* dummyMarkableCellStructure = m_heap->globalData()->dummyMarkableCellStructure.get();
 #endif
 
-    for (size_t i = 0; i < CELLS_PER_BLOCK; ++i) {
+    for (size_t i = firstCell(); i < CELLS_PER_BLOCK; ++i) {
         if (m_marks.get(i))
             continue;
 
-        JSCell* cell = reinterpret_cast<JSCell*>(&m_cells[i]);
+        JSCell* cell = reinterpret_cast<JSCell*>(&cells()[i]);
 #if ENABLE(JSC_ZOMBIES)
         if (!cell->isZombie()) {
             const ClassInfo* info = cell->classInfo();
