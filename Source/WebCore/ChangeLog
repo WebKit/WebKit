@@ -1,3 +1,9 @@
+2011-02-14  Jeremy Orlow  <jorlow@chromium.org>
+
+        efl build fix
+
+        * CMakeLists.txt:
+
 2011-02-11  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Nate Chapin.

@@ -353,15 +353,12 @@ SET(WebCore_IDL_FILES
     storage/IDBDatabaseError.idl
     storage/IDBDatabaseException.idl
     storage/IDBDatabase.idl
-    storage/IDBErrorEvent.idl
-    storage/IDBEvent.idl
     storage/IDBFactory.idl
     storage/IDBIndex.idl
     storage/IDBKey.idl
     storage/IDBKeyRange.idl
     storage/IDBObjectStore.idl
     storage/IDBRequest.idl
-    storage/IDBSuccessEvent.idl
     storage/IDBTransaction.idl
     storage/SQLError.idl
     storage/SQLException.idl
@@ -1454,8 +1451,7 @@ SET(WebCore_SOURCES
     storage/IDBDatabaseBackendImpl.cpp
     storage/IDBCursor.cpp
     storage/IDBCursorBackendImpl.cpp
-    storage/IDBErrorEvent.cpp
-    storage/IDBEvent.cpp
+    storage/IDBEventDispatcher.cpp
     storage/IDBIndex.cpp
     storage/IDBIndexBackendImpl.cpp
     storage/IDBKey.cpp
@@ -1463,7 +1459,6 @@ SET(WebCore_SOURCES
     storage/IDBRequest.cpp
     storage/IDBObjectStore.cpp
     storage/IDBObjectStoreBackendImpl.cpp
-    storage/IDBSuccessEvent.cpp
     storage/IDBFactory.cpp
     storage/IDBFactoryBackendInterface.cpp
     storage/IDBFactoryBackendImpl.cpp
