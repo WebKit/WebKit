@@ -407,45 +407,6 @@ svg/custom/pattern-excessive-malloc.svg
 # https://bugs.webkit.org/show_bug.cgi?id=49065
 svg/animations/animate-path-nested-transforms.html
 
-#   Tests generating new results
-svg/text/lengthAdjust-text-metrics.html
-svg/text/kerning.svg
-svg/text/multichar-glyph.svg
-svg/text/text-align-01-b.svg
-svg/text/text-align-02-b.svg
-svg/text/text-align-03-b.svg
-svg/text/text-align-04-b.svg
-svg/text/text-align-05-b.svg
-svg/text/text-align-06-b.svg
-svg/text/text-altglyph-01-b.svg
-svg/text/text-deco-01-b.svg
-svg/text/text-fonts-01-t.svg
-svg/text/text-fonts-02-t.svg
-svg/text/text-gradient-positioning.svg
-svg/text/text-intro-05-t.svg
-svg/text/text-path-01-b.svg
-svg/text/text-repaint-rects.xhtml
-svg/text/text-spacing-01-b.svg
-svg/text/text-text-01-b.svg
-svg/text/text-text-03-b.svg
-svg/text/text-text-04-t.svg
-svg/text/text-text-05-t.svg
-svg/text/text-text-06-t.svg
-svg/text/text-text-07-t.svg
-svg/text/text-text-08-b.svg
-svg/text/text-tref-01-b.svg
-svg/text/text-tselect-01-b.svg
-svg/text/text-tselect-02-f.svg
-svg/text/text-tspan-01-b.svg
-svg/text/text-ws-01-t.svg
-svg/text/text-ws-02-t.svg
-svg/text/textPathBoundsBug.svg
-svg/transforms/animated-path-inside-transformed-html.xhtml
-svg/transforms/text-with-pattern-inside-transformed-html.xhtml
-svg/transforms/text-with-pattern-with-svg-transform.svg
-svg/custom/resource-invalidate-on-target-update.svg
-svg/clip-path
-
 # Tests in tables/ directory
 #   Tests generating new results
 tables/mozilla/bugs/45621.html
@@ -1914,6 +1875,7 @@ svg/custom/mask-excessive-malloc.svg
 svg/custom/mask-inside-defs.svg
 svg/custom/mask-with-all-units.svg
 svg/custom/visibility-override-mask.svg
+svg/clip-path
 # No matching language preference set
 svg/W3C-SVG-1.1/struct-cond-02-t.svg
 # The pixel output shows two broken images instead of the sunset.

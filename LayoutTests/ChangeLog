@@ -1,5 +1,11 @@
 2011-02-15  Martin Robinson  <mrobinson@igalia.com>
 
+        Import the last set of GTK+ baselines for SVG tests.
+
+        * platform/gtk/Skipped: Unskip tests which now have results. Classify failures.
+
+2011-02-15  Martin Robinson  <mrobinson@igalia.com>
+
         Add the next batch of GTK+ SVG results.
 
         * platform/gtk/Skipped: Unskip tests which now have results.
