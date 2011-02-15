@@ -79,9 +79,9 @@ bool WEBPImageDecoder::decode(bool onlySize)
 
     if (failed())
         return false;
-    const size_t dataSize = m_data->buffer().size();
+    const size_t dataSize = m_data->size();
     const uint8_t* dataBytes =
-        reinterpret_cast<const uint8_t*>(m_data->buffer().data());
+        reinterpret_cast<const uint8_t*>(m_data->data());
     int width, height;
     if (dataSize < sizeOfHeader)
         return true;

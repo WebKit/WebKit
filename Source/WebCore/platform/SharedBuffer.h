@@ -81,10 +81,6 @@ public:
 
     unsigned size() const;
 
-    // Calling this function will force internal segmented buffers
-    // to be merged into a flat buffer. Use getSomeData() whenever possible
-    // for better performance.
-    const Vector<char>& buffer() const;
 
     bool isEmpty() const { return !size(); }
 
@@ -119,6 +115,13 @@ private:
     SharedBuffer(const char*, int);
     SharedBuffer(const unsigned char*, int);
     
+    // Calling this function will force internal segmented buffers
+    // to be merged into a flat buffer. Use getSomeData() whenever possible
+    // for better performance.
+    // As well, be aware that this method does *not* return any purgeable
+    // memory, which can be a source of bugs.
+    const Vector<char>& buffer() const;
+
     void clearPlatformData();
     void maybeTransferPlatformData();
     bool hasPlatformData() const;

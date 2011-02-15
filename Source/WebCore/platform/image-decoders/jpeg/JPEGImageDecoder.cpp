@@ -179,7 +179,7 @@ public:
         m_bytesToSkip = std::max(numBytes - bytesToSkip, static_cast<long>(0));
     }
 
-    bool decode(const Vector<char>& data, bool onlySize)
+    bool decode(const SharedBuffer& data, bool onlySize)
     {
         m_decodingSizeOnly = onlySize;
 
@@ -532,7 +532,7 @@ void JPEGImageDecoder::decode(bool onlySize)
 
     // If we couldn't decode the image but we've received all the data, decoding
     // has failed.
-    if (!m_reader->decode(m_data->buffer(), onlySize) && isAllDataReceived())
+    if (!m_reader->decode(*m_data, onlySize) && isAllDataReceived())
         setFailed();
     // If we're done decoding the image, we don't need the JPEGImageReader
     // anymore.  (If we failed, |m_reader| has already been cleared.)

@@ -107,7 +107,7 @@ bool InspectorResourceAgent::resourceContentBase64(Frame* frame, const KURL& url
         return false;
     }
 
-    *result = base64Encode(data->buffer());
+    *result = base64Encode(data->data(), data->size());
     return true;
 }
 
