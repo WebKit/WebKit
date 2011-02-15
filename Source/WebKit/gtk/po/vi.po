@@ -500,7 +500,7 @@ msgid "Enable Caret Browsing"
 msgstr "Bật con nháy"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:521
-msgid "Whether to enable accesibility enhanced keyboard navigation"
+msgid "Whether to enable accessibility enhanced keyboard navigation"
 msgstr "Có bật khả năng duyệt tăng cường bằng bàn phím không"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:536

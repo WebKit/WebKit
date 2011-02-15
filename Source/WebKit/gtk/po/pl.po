@@ -753,7 +753,7 @@ msgid "Enable Caret Browsing"
 msgstr "Włączenie przeglądania w trybie karetki"
 
 #: ../webkit/webkitwebsettings.cpp:536
-msgid "Whether to enable accesibility enhanced keyboard navigation"
+msgid "Whether to enable accessibility enhanced keyboard navigation"
 msgstr ""
 "Określa, czy włączyć nawigację klawiaturą usprawnioną pod kątem dostępności"
 

@@ -377,7 +377,7 @@ msgstr ""
 msgid "Enable Caret Browsing"
 msgstr "Kursoriga sirvimine lubatud"
 
-msgid "Whether to enable accesibility enhanced keyboard navigation"
+msgid "Whether to enable accessibility enhanced keyboard navigation"
 msgstr "Kas lubada klaviatuurihõlbustused navigeerimiseks"
 
 msgid "Enable HTML5 Database"

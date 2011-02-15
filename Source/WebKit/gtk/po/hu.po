@@ -505,7 +505,7 @@ msgid "Enable Caret Browsing"
 msgstr "Kurzoros böngészés engedélyezése"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:517
-msgid "Whether to enable accesibility enhanced keyboard navigation"
+msgid "Whether to enable accessibility enhanced keyboard navigation"
 msgstr "Akadálymentes billentyűzetnavigáció engedélyezése"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:532

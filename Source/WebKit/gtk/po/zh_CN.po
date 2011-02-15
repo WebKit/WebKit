@@ -502,7 +502,7 @@ msgid "Enable Caret Browsing"
 msgstr "启用光标导航"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:521
-msgid "Whether to enable accesibility enhanced keyboard navigation"
+msgid "Whether to enable accessibility enhanced keyboard navigation"
 msgstr "是否启用辅助功能增强型键盘导航"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:536

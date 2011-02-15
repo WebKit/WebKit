@@ -736,7 +736,7 @@ msgid "Enable Caret Browsing"
 msgstr "캐럿 모드 사용"
 
 #: ../webkit/webkitwebsettings.cpp:531
-msgid "Whether to enable accesibility enhanced keyboard navigation"
+msgid "Whether to enable accessibility enhanced keyboard navigation"
 msgstr "키보드 네비게이션 기능을 사용할지 여부"
 
 #: ../webkit/webkitwebsettings.cpp:546

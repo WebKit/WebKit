@@ -1,3 +1,10 @@
+2011-02-15  Christian Dywan  <christian@lanedo.com>
+
+        Rubber-stamped by Gustavo Noronha Silva.
+
+        * webkit/webkitwebsettings.cpp: Correct a typo, it is
+            acces*s*ibility with two s.
+
 2011-01-26  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ryosuke Niwa.

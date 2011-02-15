@@ -742,7 +742,7 @@ msgid "Enable Caret Browsing"
 msgstr "Aktifkan Perambanan Caret"
 
 #: ../webkit/webkitwebsettings.cpp:531
-msgid "Whether to enable accesibility enhanced keyboard navigation"
+msgid "Whether to enable accessibility enhanced keyboard navigation"
 msgstr "Apakah mengaktifkan navigasi papan tik bagi aksesabilitas"
 
 #: ../webkit/webkitwebsettings.cpp:546

@@ -509,7 +509,7 @@ msgid "Enable Caret Browsing"
 msgstr "Visuomet įjungti teksto žymeklį"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:517
-msgid "Whether to enable accesibility enhanced keyboard navigation"
+msgid "Whether to enable accessibility enhanced keyboard navigation"
 msgstr "Ar įjungti teksto fragmentų žymėjimą klaviatūra"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:532

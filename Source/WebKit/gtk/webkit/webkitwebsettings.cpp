@@ -536,7 +536,7 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     PROP_ENABLE_CARET_BROWSING,
                                     g_param_spec_boolean("enable-caret-browsing",
                                                          _("Enable Caret Browsing"),
-                                                         _("Whether to enable accesibility enhanced keyboard navigation"),
+                                                         _("Whether to enable accessibility enhanced keyboard navigation"),
                                                          FALSE,
                                                          flags));
     /**

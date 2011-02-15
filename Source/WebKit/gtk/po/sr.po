@@ -508,7 +508,7 @@ msgid "Enable Caret Browsing"
 msgstr "Преглед са показивачем"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:521
-msgid "Whether to enable accesibility enhanced keyboard navigation"
+msgid "Whether to enable accessibility enhanced keyboard navigation"
 msgstr "Одређује да ли да се користи приступачнија тастатура за навигацију"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:536

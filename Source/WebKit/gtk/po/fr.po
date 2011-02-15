@@ -542,7 +542,7 @@ msgid "Enable Caret Browsing"
 msgstr "Activer la navigation au curseur"
 
 #: Source/WebKit/gtk/webkit/webkitwebsettings.cpp:539
-msgid "Whether to enable accesibility enhanced keyboard navigation"
+msgid "Whether to enable accessibility enhanced keyboard navigation"
 msgstr ""
 "Indique s'il faut activer la navigation au clavier pour favoriser "
 "l'accessibilité"

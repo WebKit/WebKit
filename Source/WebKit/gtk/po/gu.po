@@ -505,7 +505,7 @@ msgid "Enable Caret Browsing"
 msgstr "કેરેટ બ્રાઉઝીંગ સક્રિય કરો"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:521
-msgid "Whether to enable accesibility enhanced keyboard navigation"
+msgid "Whether to enable accessibility enhanced keyboard navigation"
 msgstr "શું સુલભતા ઉન્નત કીબોર્ડ શોધખોળ સક્રિય કરવી છે"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:536

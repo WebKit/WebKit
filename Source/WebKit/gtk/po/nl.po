@@ -739,7 +739,7 @@ msgid "Enable Caret Browsing"
 msgstr "Cursor-browsen inschakelen"
 
 #: ../webkit/webkitwebsettings.cpp:525
-msgid "Whether to enable accesibility enhanced keyboard navigation"
+msgid "Whether to enable accessibility enhanced keyboard navigation"
 msgstr ""
 "Of toegankelijkheidsgeoptimaliseerde toetsenbordnavigatie is ingeschakeld"
 

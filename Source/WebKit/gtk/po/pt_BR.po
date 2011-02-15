@@ -504,7 +504,7 @@ msgid "Enable Caret Browsing"
 msgstr "Habilitar navegação exclusiva"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:521
-msgid "Whether to enable accesibility enhanced keyboard navigation"
+msgid "Whether to enable accessibility enhanced keyboard navigation"
 msgstr "Quando habilitar navegação de acessibilidade avançada pelo teclado"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:536

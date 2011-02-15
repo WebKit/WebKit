@@ -506,7 +506,7 @@ msgid "Enable Caret Browsing"
 msgstr "Povolit prohlížení s kurzorem"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:521
-msgid "Whether to enable accesibility enhanced keyboard navigation"
+msgid "Whether to enable accessibility enhanced keyboard navigation"
 msgstr "Jestli povolit zpřístupnění pomocí navigace klávesnicí"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:536

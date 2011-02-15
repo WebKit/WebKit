@@ -508,7 +508,7 @@ msgid "Enable Caret Browsing"
 msgstr "Увімкнути режим активного вказівника"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:523
-msgid "Whether to enable accesibility enhanced keyboard navigation"
+msgid "Whether to enable accessibility enhanced keyboard navigation"
 msgstr ""
 "Вмикає або вимикає додаткові можливості керування вказівником за допомогою "
 "клавіатури"
