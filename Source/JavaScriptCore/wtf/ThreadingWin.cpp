@@ -332,6 +332,7 @@ bool PlatformCondition::timedWait(PlatformMutex& mutex, DWORD durationMillisecon
     res = ReleaseSemaphore(m_blockLock, 1, 0);
     ASSERT(res);
 
+    --mutex.m_recursionCount;
     LeaveCriticalSection(&mutex.m_internalMutex);
 
     // Main wait - use timeout.
@@ -365,6 +366,7 @@ bool PlatformCondition::timedWait(PlatformMutex& mutex, DWORD durationMillisecon
     }
 
     EnterCriticalSection (&mutex.m_internalMutex);
+    ++mutex.m_recursionCount;
 
     return !timedOut;
 }

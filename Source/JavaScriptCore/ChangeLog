@@ -1,3 +1,13 @@
+2011-02-15  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix Mutex::tryLock() on Windows to work properly with PlatformCondition::timedWait()
+        https://bugs.webkit.org/show_bug.cgi?id=54408
+
+        * wtf/ThreadingWin.cpp:
+        (WTF::PlatformCondition::timedWait):
+
 2011-02-15  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.
