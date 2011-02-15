@@ -1,5 +1,11 @@
 2011-02-15  Simon Fraser  <simon.fraser@apple.com>
 
+        Let Xcode have its way with the project.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+
+2011-02-15  Simon Fraser  <simon.fraser@apple.com>
+
         Fix Mac builds that don't use rubber-band scrolling
         by moving m_drawingIntoLayer out of the #ifdef.
 
