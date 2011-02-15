@@ -60,14 +60,11 @@ public:
     static bool webkitIDBDatabaseEnabled() { return isIndexedDBEnabled; }
     static bool webkitIDBDatabaseErrorEnabled() { return isIndexedDBEnabled; }
     static bool webkitIDBDatabaseExceptionEnabled() { return isIndexedDBEnabled; }
-    static bool webkitIDBErrorEventEnabled() { return isIndexedDBEnabled; }
-    static bool webkitIDBEventEnabled() { return isIndexedDBEnabled; }
     static bool webkitIDBFactoryEnabled() { return isIndexedDBEnabled; }
     static bool webkitIDBIndexEnabled() { return isIndexedDBEnabled; }
     static bool webkitIDBKeyRangeEnabled() { return isIndexedDBEnabled; }
     static bool webkitIDBObjectStoreEnabled() { return isIndexedDBEnabled; }
     static bool webkitIDBRequestEnabled() { return isIndexedDBEnabled; }
-    static bool webkitIDBSuccessEventEnabled() { return isIndexedDBEnabled; }
     static bool webkitIDBTransactionEnabled() { return isIndexedDBEnabled; }
 
 #if ENABLE(VIDEO)

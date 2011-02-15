@@ -16,39 +16,31 @@ if (window.layoutTestController)
 
 function test()
 {
-    result = evalAndLog("webkitIndexedDB.open('name')");
-    verifyResult(result);
-    result.onsuccess = openSuccess;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("webkitIndexedDB.open('name')");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function openSuccess()
 {
     debug("openSuccess():");
-    verifySuccessEvent(event);
-    window.db = evalAndLog("db = event.result");
+    window.db = evalAndLog("db = event.target.result");
 
-    result = evalAndLog("db.setVersion('new version')");
-    verifyResult(result);
-    result.onsuccess = setVersionSuccess;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("db.setVersion('new version')");
+    request.onsuccess = setVersionSuccess;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function setVersionSuccess()
 {
     debug("setVersionSuccess():");
-    verifySuccessEvent(event);
-    window.trans = evalAndLog("trans = event.result");
+    window.trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = addData;
 
-    deleteAllObjectStores(db, createObjectStore);
-}
+    deleteAllObjectStores(db);
 
-function createObjectStore()
-{
-    debug("createObjectStore():");
     evalAndLog("db.createObjectStore('storeName')");
 }
 
@@ -58,8 +50,8 @@ function addData()
 {
     debug("addData():");
     var transaction = evalAndLog("transaction = db.transaction([], webkitIDBTransaction.READ_WRITE)");
-    var result = evalAndLog("result = transaction.objectStore('storeName').add({x: testDate}, 'key')");
-    result.onerror = unexpectedErrorCallback;
+    var request = evalAndLog("request = transaction.objectStore('storeName').add({x: testDate}, 'key')");
+    request.onerror = unexpectedErrorCallback;
     transaction.oncomplete = getData;
 }
 
@@ -67,15 +59,14 @@ function getData()
 {
     debug("addData():");
     var transaction = evalAndLog("transaction = db.transaction([], webkitIDBTransaction.READ_ONLY)");
-    var result = evalAndLog("result = transaction.objectStore('storeName').get('key')");
-    result.onerror = unexpectedErrorCallback;
-    result.onsuccess = doCheck;
+    var request = evalAndLog("request = transaction.objectStore('storeName').get('key')");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = doCheck;
 }
 
 function doCheck()
 {
-    verifySuccessEvent(event);
-    shouldBeTrue("event.result.x.toString() == testDate.toString()");
+    shouldBeTrue("event.target.result.x.toString() == testDate.toString()");
     done();
 }
 

@@ -44,8 +44,6 @@
 #include "V8DeviceOrientationEvent.h"
 #include "V8ErrorEvent.h"
 #include "V8HashChangeEvent.h"
-#include "V8IDBErrorEvent.h"
-#include "V8IDBSuccessEvent.h"
 #include "V8KeyboardEvent.h"
 #include "V8MessageEvent.h"
 #include "V8MouseEvent.h"
@@ -154,12 +152,6 @@ v8::Handle<v8::Value> toV8(Event* impl)
 #if ENABLE(DOM_STORAGE)
     if (impl->isStorageEvent())
         return toV8(static_cast<StorageEvent*>(impl));
-#endif
-#if ENABLE(INDEXED_DATABASE)
-    if (impl->isIDBErrorEvent())
-        return toV8(static_cast<IDBErrorEvent*>(impl));
-    if (impl->isIDBSuccessEvent())
-        return toV8(static_cast<IDBSuccessEvent*>(impl));
 #endif
     if (impl->isBeforeLoadEvent())
         return toV8(static_cast<BeforeLoadEvent*>(impl));

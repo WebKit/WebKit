@@ -4,79 +4,15 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 webkitIndexedDB.open('name')
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-db = event.result
+db = event.target.result
 db.setVersion('new version')
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
 setVersionSuccess():
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-trans = event.result
+trans = event.target.result
 PASS trans !== null is true
 Deleted all object stores.
 Testing setVersion.
 db.setVersion("version a")
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
 db.setVersion("version b")
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
 PASS db.version is "version b"
 PASS db.name is "name"
 PASS db.objectStoreNames is []
@@ -91,22 +27,6 @@ PASS db.objectStoreNames.contains('') is false
 PASS db.objectStoreNames.contains('test456') is false
 PASS db.objectStoreNames.contains('test123') is true
 db.setVersion("version c")
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
 PASS db.version is "version c"
 PASS db.name is "name"
 PASS db.objectStoreNames is ['test123']
@@ -115,7 +35,7 @@ PASS db.objectStoreNames.contains('') is false
 PASS db.objectStoreNames.contains('test456') is false
 PASS db.objectStoreNames.contains('test123') is true
 db.createObjectStore("test456")
-setVersionTrans = event.result
+setVersionTrans = event.target.result
 PASS setVersionTrans !== null is true
 PASS db.version is "version b"
 PASS db.objectStoreNames is ['test123']

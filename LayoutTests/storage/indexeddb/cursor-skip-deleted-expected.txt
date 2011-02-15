@@ -4,45 +4,12 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 webkitIndexedDB.open('name')
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-db = event.result
+db = event.target.result
 db.setVersion('new version')
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
 setVersionSuccess():
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-trans = event.result
+trans = event.target.result
 PASS trans !== null is true
 Deleted all object stores.
-createAndPopulateObjectStore():
 objectStore = db.createObjectStore('store', {keyPath: 'id'})
 objectStore.createIndex('nameIndex', 'name')
 
@@ -53,11 +20,6 @@ trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
 
 testCursor():
 trans.objectStore('store').openCursor(webkitIDBKeyRange.lowerBound(0))
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
 0: Alpha
 1: Bravo
 request = trans.objectStore('store').delete(0)
@@ -97,11 +59,6 @@ reverseCursorTest():
 
 testCursor():
 trans.objectStore('store').openCursor(webkitIDBKeyRange.lowerBound(0), webkitIDBCursor.PREV)
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
 25: Zulu
 24: Yankee
 request = trans.objectStore('store').delete(25)
@@ -141,11 +98,6 @@ indexCursorTest():
 
 testCursor():
 trans.objectStore('store').index('nameIndex').openCursor(webkitIDBKeyRange.lowerBound('Alpha'))
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
 0: Alpha
 1: Bravo
 request = trans.objectStore('store').delete(0)

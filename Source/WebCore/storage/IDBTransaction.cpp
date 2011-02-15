@@ -31,10 +31,9 @@
 #include "Document.h"
 #include "EventException.h"
 #include "EventQueue.h"
-#include "IDBAbortEvent.h"
-#include "IDBCompleteEvent.h"
 #include "IDBDatabase.h"
 #include "IDBDatabaseException.h"
+#include "IDBEventDispatcher.h"
 #include "IDBIndex.h"
 #include "IDBObjectStore.h"
 #include "IDBObjectStoreBackendInterface.h"
@@ -106,12 +105,12 @@ void IDBTransaction::abort()
 
 void IDBTransaction::onAbort()
 {
-    enqueueEvent(IDBAbortEvent::create(IDBAny::create(this)));
+    enqueueEvent(Event::create(eventNames().abortEvent, true, true));
 }
 
 void IDBTransaction::onComplete()
 {
-    enqueueEvent(IDBCompleteEvent::create(IDBAny::create(this)));
+    enqueueEvent(Event::create(eventNames().completeEvent, false, true));
 }
 
 bool IDBTransaction::hasPendingActivity() const
@@ -139,8 +138,9 @@ bool IDBTransaction::dispatchEvent(PassRefPtr<Event> event)
     targets.append(this);
     targets.append(db());
 
-    ASSERT(event->isIDBAbortEvent() || event->isIDBCompleteEvent());
-    return static_cast<IDBEvent*>(event.get())->dispatch(targets);
+    // FIXME: When we allow custom event dispatching, this will probably need to change.
+    ASSERT(event->type() == eventNames().completeEvent || event->type() == eventNames().abortEvent);
+    return IDBEventDispatcher::dispatch(event.get(), targets);
 }
 
 bool IDBTransaction::canSuspend() const

@@ -16,37 +16,32 @@ if (window.layoutTestController)
 
 function test()
 {
-    result = evalAndLog("webkitIndexedDB.open('name')");
-    verifyResult(result);
-    result.onsuccess = setVersion;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("webkitIndexedDB.open('name')");
+    request.onsuccess = setVersion;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function setVersion()
 {
-    db = evalAndLog("db = event.result");
+    db = evalAndLog("db = event.target.result");
 
-    result = evalAndLog("db.setVersion('new version')");
-    verifyResult(result);
-    result.onsuccess = deleteExisting;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("db.setVersion('new version')");
+    request.onsuccess = deleteExisting;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function deleteExisting()
 {
-    window.trans = evalAndLog("trans = event.result");
+    window.trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
     evalAndLog("trans.oncomplete = startTest");
 
-    deleteAllObjectStores(db, createObjectStore);
-}
+    deleteAllObjectStores(db);
 
-function createObjectStore()
-{
     store = evalAndLog("store = db.createObjectStore('storeName', null)");
-    result = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key')");
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key')");
+    request.onerror = unexpectedErrorCallback;
 }
 
 function startTest()

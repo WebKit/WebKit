@@ -16,37 +16,30 @@ if (window.layoutTestController)
 
 function test()
 {
-    result = evalAndLog("webkitIndexedDB.open('name')");
-    verifyResult(result);
-    result.onsuccess = setVersion;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("webkitIndexedDB.open('name')");
+    request.onsuccess = setVersion;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function setVersion()
 {
-    verifySuccessEvent(event);
-    db = evalAndLog("db = event.result");
+    db = evalAndLog("db = event.target.result");
 
-    result = evalAndLog("db.setVersion('new version')");
-    verifyResult(result);
-    result.onsuccess = deleteExisting;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("db.setVersion('new version')");
+    request.onsuccess = deleteExisting;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function deleteExisting()
 {
     debug("setVersionSuccess():");
-    verifySuccessEvent(event);
-    window.trans = evalAndLog("trans = event.result");
+    window.trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
     evalAndLog("trans.oncomplete = addData");
 
-    deleteAllObjectStores(db, createObjectStore);
-}
+    deleteAllObjectStores(db);
 
-function createObjectStore()
-{
     evalAndLog("db.createObjectStore('storeName', null)");
 }
 
@@ -56,20 +49,17 @@ function addData()
     evalAndLog("trans.onabort = unexpectedAbortCallback");
     evalAndLog("trans.oncomplete = transactionCompleted");
     store = evalAndLog("store = trans.objectStore('storeName')");
-    result = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key')");
-    verifyResult(result);
-    result.onsuccess = addMore;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key')");
+    request.onsuccess = addMore;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function addMore()
 {
-    verifySuccessEvent(event);
-
-    result = evalAndLog("event.source.add({x: 'value', y: 'zzz'}, 'key')");
-    verifyResult(result);
-    result.onsuccess = unexpectedSuccessCallback;
-    result.addEventListener("error", preventTheDefault);
+    
+    request = evalAndLog("event.target.source.add({x: 'value', y: 'zzz'}, 'key')");
+    request.onsuccess = unexpectedSuccessCallback;
+    request.addEventListener("error", preventTheDefault);
 }
 
 function preventTheDefault()
@@ -86,10 +76,9 @@ function transactionCompleted()
     evalAndLog("trans.onabort = transactionAborted1");
     evalAndLog("trans.oncomplete = unexpectedCompleteCallback");
     store = evalAndLog("store = trans.objectStore('storeName')");
-    result = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key')");
-    verifyResult(result);
-    result.onsuccess = unexpectedSuccessCallback;
-    result.onerror = allowDefault;
+    request = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key')");
+    request.onsuccess = unexpectedSuccessCallback;
+    request.onerror = allowDefault;
 }
 
 function allowDefault()
@@ -106,9 +95,8 @@ function transactionAborted1()
     evalAndLog("trans.onabort = transactionAborted2");
     evalAndLog("trans.oncomplete = unexpectedCompleteCallback");
     store = evalAndLog("store = trans.objectStore('storeName')");
-    result = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key')");
-    verifyResult(result);
-    result.onsuccess = unexpectedSuccessCallback;
+    request = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key')");
+    request.onsuccess = unexpectedSuccessCallback;
     debug("Omitting an onerror handler");
 }
 

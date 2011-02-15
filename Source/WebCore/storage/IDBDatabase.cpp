@@ -58,7 +58,6 @@ IDBDatabase::IDBDatabase(ScriptExecutionContext* context, PassRefPtr<IDBDatabase
 
 IDBDatabase::~IDBDatabase()
 {
-    ASSERT(m_stopped);
 }
 
 void IDBDatabase::setSetVersionTransaction(IDBTransaction* transaction)

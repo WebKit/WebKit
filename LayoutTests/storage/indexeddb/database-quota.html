@@ -16,37 +16,29 @@ if (window.layoutTestController)
 
 function test()
 {
-    result = evalAndLog("webkitIndexedDB.open('name')");
-    verifyResult(result);
-    result.onsuccess = openSuccess;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("webkitIndexedDB.open('name')");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function openSuccess()
 {
-    verifySuccessEvent(event);
-    window.db = evalAndLog("db = event.result");
+    window.db = evalAndLog("db = event.target.result");
 
-    result = evalAndLog("db.setVersion('new version')");
-    verifyResult(result);
-    result.onsuccess = setVersionSuccess;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("db.setVersion('new version')");
+    request.onsuccess = setVersionSuccess;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function setVersionSuccess()
 {
     debug("setVersionSuccess():");
-    verifySuccessEvent(event);
-    window.trans = evalAndLog("trans = event.result");
+    window.trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
 
-    deleteAllObjectStores(db, createNewObjectStore);
-}
+    deleteAllObjectStores(db);
 
-function createNewObjectStore()
-{
-    verifySuccessEvent(event);
     shouldBeEqualToString("db.version", "new version");
     shouldBeEqualToString("db.name", "name");
     shouldBe("db.objectStoreNames", "[]");
@@ -91,22 +83,21 @@ function addData()
 {
     if (dataAdded < 5 * 1024 * 1024) {
         if (dataAdded > 0)
-            store = event.source;
+            store = event.target.source;
     } else {
         testFailed("added more than quota");
         done();
         return;
     }
     dataAdded += 65536;
-    result = store.add({x: data}, dataAdded);
-    result.onsuccess = addData;
-    result.onerror = logError;
+    request = store.add({x: data}, dataAdded);
+    request.onsuccess = addData;
+    request.onerror = logError;
 }
 
 function logError()
 {
     debug("Error function called: (" + event.code + ") " + event.message);
-    verifyErrorEvent(event);
     evalAndLog("event.preventDefault()");
 }
 

@@ -16,40 +16,33 @@ if (window.layoutTestController)
 
 function test()
 {
-    result = evalAndLog("webkitIndexedDB.open('name')");
-    verifyResult(result);
-    result.onsuccess = setVersion;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("webkitIndexedDB.open('name')");
+    request.onsuccess = setVersion;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function setVersion()
 {
-    verifySuccessEvent(event);
-    db = evalAndLog("db = event.result");
+    db = evalAndLog("db = event.target.result");
 
-    result = evalAndLog("db.setVersion('new version')");
-    verifyResult(result);
-    result.onsuccess = deleteExisting;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("db.setVersion('new version')");
+    request.onsuccess = deleteExisting;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function deleteExisting()
 {
     debug("setVersionSuccess():");
-    verifySuccessEvent(event);
-    window.trans = evalAndLog("trans = event.result");
+    window.trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
     evalAndLog("trans.oncomplete = startTest");
 
-    deleteAllObjectStores(db, createObjectStore);
-}
+    deleteAllObjectStores(db);
 
-function createObjectStore()
-{
     store = evalAndLog("store = db.createObjectStore('storeName', null)");
-    result = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key')");
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key')");
+    request.onerror = unexpectedErrorCallback;
 }
 
 function startTest()
@@ -60,8 +53,8 @@ function startTest()
     evalAndLog("trans.oncomplete = unexpectedCompleteCallback");
     evalAndLog("trans.onerror = allowDefault");
     store = evalAndLog("store = trans.objectStore('storeName')");
-    result = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key')");
-    result.onsuccess = unexpectedSuccessCallback;
+    request = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key')");
+    request.onsuccess = unexpectedSuccessCallback;
     handlerFired = false;
 }
 
@@ -89,9 +82,9 @@ function transactionAborted()
     evalAndLog("db.addEventListener('success', unexpectedSuccessCallback, true)");
     evalAndLog("db.addEventListener('success', unexpectedSuccessCallback, false)");
     store = evalAndLog("store = trans.objectStore('storeName')");
-    result = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key')");
-    result.onsuccess = unexpectedSuccessCallback;
-    result.onerror = errorFiredCallback;
+    request = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key')");
+    request.onsuccess = unexpectedSuccessCallback;
+    request.onerror = errorFiredCallback;
     dbCaptureFired = false;
     captureFired = false;
     requestFired = false;
@@ -186,9 +179,9 @@ function transactionAborted2()
     evalAndLog("db.addEventListener('error', unexpectedErrorCallback, true)");
     evalAndLog("db.addEventListener('error', unexpectedErrorCallback, false)");
     store = evalAndLog("store = trans.objectStore('storeName')");
-    result = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key2')");
-    result.onerror = unexpectedErrorCallback;
-    result.onsuccess = successFiredCallback;
+    request = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key2')");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = successFiredCallback;
     dbCaptureFired = false;
     captureFired = false;
     requestFired = false;

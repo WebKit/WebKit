@@ -19,25 +19,22 @@ function test()
     shouldBeTrue("'webkitIndexedDB' in window");
     shouldBeFalse("webkitIndexedDB == null");
 
-    result = evalAndLog("webkitIndexedDB.open('name')");
-    verifyResult(result);
-    result.onsuccess = openSuccess;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("webkitIndexedDB.open('name')");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function openSuccess()
 {
     debug("openSuccess():");
-    verifySuccessEvent(event);
-    window.db = evalAndLog("db = event.result");
-    result = evalAndLog("result = db.setVersion('version 1')");
-    result.onsuccess = cleanDatabase;
-    result.onerror = unexpectedErrorCallback;
+    window.db = evalAndLog("db = event.target.result");
+    request = evalAndLog("request = db.setVersion('version 1')");
+    request.onsuccess = cleanDatabase;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function cleanDatabase()
 {
-    verifySuccessEvent(event);
     deleteAllObjectStores(db, checkMetadataEmpty);
     commitAndContinue(testSetVersionAbort1);
 }
@@ -45,15 +42,14 @@ function cleanDatabase()
 function testSetVersionAbort1()
 {
     checkMetadataEmpty();
-    result = evalAndLog("result = startSetVersion('version fail')");
-    result.onsuccess = addRemoveIDBObjects;
+    request = evalAndLog("request = startSetVersion('version fail')");
+    request.onsuccess = addRemoveIDBObjects;
 }
 
 function addRemoveIDBObjects()
 {
     debug("addRemoveIDBObjects():");
-    verifySuccessEvent(event);
-    var trans = evalAndLog("trans = event.result");
+    var trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.addEventListener('abort', testSetVersionAbort2, true);
     trans.oncomplete = unexpectedCompleteCallback;
@@ -70,15 +66,14 @@ function addRemoveIDBObjects()
 function testSetVersionAbort2()
 {
     checkMetadataEmpty();
-    result = evalAndLog("result = startSetVersion('version fail')");
-    result.onsuccess = addRemoveAddIDBObjects;
+    request = evalAndLog("request = startSetVersion('version fail')");
+    request.onsuccess = addRemoveAddIDBObjects;
 }
 
 function addRemoveAddIDBObjects()
 {
     debug("addRemoveAddIDBObjects():");
-    verifySuccessEvent(event);
-    var trans = evalAndLog("trans = event.result");
+    var trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.addEventListener('abort', testSetVersionAbort3, false);
     trans.oncomplete = unexpectedCompleteCallback;
@@ -98,15 +93,14 @@ function addRemoveAddIDBObjects()
 function testSetVersionAbort3()
 {
     checkMetadataEmpty();
-    result = evalAndLog("result = startSetVersion('version fail')");
-    result.onsuccess = addIDBObjects;
+    request = evalAndLog("request = startSetVersion('version fail')");
+    request.onsuccess = addIDBObjects;
 }
 
 function addIDBObjects()
 {
     debug("addIDBObjects():");
-    verifySuccessEvent(event);
-    var trans = evalAndLog("trans = event.result");
+    var trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.onabort = testSetVersionAbort4;
     trans.oncomplete = unexpectedCompleteCallback;
@@ -120,15 +114,14 @@ function addIDBObjects()
 function testSetVersionAbort4()
 {
     checkMetadataEmpty();
-    result = evalAndLog("result = startSetVersion('version fail')");
-    result.onsuccess = addIDBObjectsAndCommit;
+    request = evalAndLog("request = startSetVersion('version fail')");
+    request.onsuccess = addIDBObjectsAndCommit;
 }
 
 function addIDBObjects()
 {
     debug("addIDBObjects():");
-    verifySuccessEvent(event);
-    var trans = evalAndLog("trans = event.result");
+    var trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
 
@@ -146,15 +139,14 @@ function commitAndContinue(continueFunction)
 function testSetVersionAbort5()
 {
     checkMetadataExistingObjectStore();
-    result = evalAndLog("result = startSetVersion('version fail')");
-    result.onsuccess = removeIDBObjects;
+    request = evalAndLog("request = startSetVersion('version fail')");
+    request.onsuccess = removeIDBObjects;
 }
 
 function removeIDBObjects()
 {
     debug("removeIDBObjects():");
-    verifySuccessEvent(event);
-    var trans = evalAndLog("trans = event.result");
+    var trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.onabort = testSetVersionAbort6;
     trans.oncomplete = unexpectedCompleteCallback;
@@ -174,10 +166,9 @@ function testSetVersionAbort6()
 
 function startSetVersion(versionName)
 {
-    result = db.setVersion(versionName);
-    verifyResult(result);
-    result.onerror = unexpectedErrorCallback;
-    return result;
+    request = db.setVersion(versionName);
+    request.onerror = unexpectedErrorCallback;
+    return request;
 }
 
 function checkMetadataEmpty()
@@ -196,27 +187,22 @@ function checkMetadataExistingObjectStore()
 
 function setNewVersion()
 {
-    result = evalAndLog("db.setVersion('new version')");
-    verifyResult(result);
-    result.onsuccess = setVersionSuccess;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("db.setVersion('new version')");
+    request.onsuccess = setVersionSuccess;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function setVersionSuccess()
 {
     debug("setVersionSuccess():");
-    verifySuccessEvent(event);
-    window.trans = evalAndLog("trans = event.result");
+    window.trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
     trans.addEventListener('complete', completeCallback, false);
     window.completeEventFired = false;
 
-    deleteAllObjectStores(db, createObjectStoreAndStartTransaction);
-}
+    deleteAllObjectStores(db);
 
-function createObjectStoreAndStartTransaction()
-{
     evalAndLog("db.createObjectStore('storeName', null)");
     transaction = evalAndLog("db.transaction({mode: webkitIDBTransaction.READ_WRITE})");
     transaction.onabort = abortCallback;
@@ -226,13 +212,13 @@ function createObjectStoreAndStartTransaction()
 
 function completeCallback()
 {
-    verifyCompleteEvent(event);
+    testPassed("complete event fired");
     window.completeEventFired = true;
 }
 
 function abortCallback()
 {
-    verifyAbortEvent(event);
+    testPassed("complete event fired");
     checkForCompleteEvent();
 }
 

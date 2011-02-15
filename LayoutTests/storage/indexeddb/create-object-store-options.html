@@ -19,28 +19,24 @@ function test()
     shouldBeTrue("'webkitIndexedDB' in window");
     shouldBeFalse("webkitIndexedDB == null");
 
-    result = evalAndLog("webkitIndexedDB.open('name', 'description')");
-    verifyResult(result);
-    result.onsuccess = openSuccess;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("webkitIndexedDB.open('name', 'description')");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function openSuccess()
 {
-    db = evalAndLog("db = event.result");
+    db = evalAndLog("db = event.target.result");
 
-    result = evalAndLog("result = db.setVersion('version 1')");
-    result.onsuccess = cleanDatabase;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("request = db.setVersion('version 1')");
+    request.onsuccess = cleanDatabase;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function cleanDatabase()
 {
-    deleteAllObjectStores(db, cleaned);
-}
+    deleteAllObjectStores(db);
 
-function cleaned()
-{
     evalAndLog("db.createObjectStore('a', {keyPath: 'a'})");
     evalAndLog("db.createObjectStore('b')");
 
@@ -71,7 +67,7 @@ function getA()
 
 function getB()
 {
-    shouldBe("event.result.a", "{a: 0}");
+    shouldBe("event.target.result.a", "{a: 0}");
 
     req = evalAndLog("trans.objectStore('b').get(0)");
     req.onsuccess = checkB;
@@ -80,7 +76,7 @@ function getB()
 
 function checkB()
 {
-    shouldBe("event.result.a", "{a: 0}");
+    shouldBe("event.target.result.a", "{a: 0}");
 
     done();
 }

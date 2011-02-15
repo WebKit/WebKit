@@ -192,28 +192,6 @@ bool Event::isStorageEvent() const
 }
 #endif
 
-#if ENABLE(INDEXED_DATABASE)
-bool Event::isIDBAbortEvent() const
-{
-    return false;
-}
-
-bool Event::isIDBCompleteEvent() const
-{
-    return false;
-}
-
-bool Event::isIDBErrorEvent() const
-{
-    return false;
-}
-
-bool Event::isIDBSuccessEvent() const
-{
-    return false;
-}
-#endif
-
 bool Event::isErrorEvent() const
 {
     return false;

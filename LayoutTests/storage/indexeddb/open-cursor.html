@@ -17,7 +17,6 @@ if (window.layoutTestController)
 function emptyCursorSuccess()
 {
     debug("Empty cursor opened successfully.")
-    verifySuccessEvent(event);
     // FIXME: check that we can iterate the cursor.
     done();
 }
@@ -26,24 +25,22 @@ function openEmptyCursor()
 {
     debug("Opening an empty cursor.");
     keyRange = webkitIDBKeyRange.lowerBound("InexistentKey");
-    result = evalAndLog("objectStore.openCursor(keyRange)");
-    verifyResult(result);
-    result.onsuccess = emptyCursorSuccess;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("objectStore.openCursor(keyRange)");
+    request.onsuccess = emptyCursorSuccess;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function cursorSuccess()
 {
     debug("Cursor opened successfully.")
-    verifySuccessEvent(event);
     // FIXME: check that we can iterate the cursor.
-    shouldBe("event.result.direction", "0");
-    shouldBe("event.result.key", "'myKey'");
-    shouldBe("event.result.value", "'myValue'");
+    shouldBe("event.target.result.direction", "0");
+    shouldBe("event.target.result.key", "'myKey'");
+    shouldBe("event.target.result.value", "'myValue'");
     debug("");
     try {
         debug("Passing an invalid key into .continue().");
-        event.result.continue([]);
+        event.target.result.continue([]);
         testFailed("No exception thrown");
     } catch (e) {
         testPassed("Caught exception: " + e.toString());
@@ -56,49 +53,40 @@ function openCursor()
 {
     debug("Opening cursor");
     keyRange = webkitIDBKeyRange.lowerBound("myKey");
-    result = evalAndLog("event.source.openCursor(keyRange)");
-    verifyResult(result);
-    result.onsuccess = cursorSuccess;
-    result.onerror = unexpectedErrorCallback;
-}
-
-function createAndPopulateObjectStore() 
-{
-    var objectStore = evalAndLog("objectStore = db.createObjectStore('test')");
-    result = evalAndLog("objectStore.add('myValue', 'myKey')");
-    verifyResult(result);
-    result.onsuccess = openCursor;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("event.target.source.openCursor(keyRange)");
+    request.onsuccess = cursorSuccess;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function setVersionSuccess()
 {
     debug("setVersionSuccess():");
-    verifySuccessEvent(event);
-    window.trans = evalAndLog("trans = event.result");
+    window.trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
 
-    deleteAllObjectStores(db, createAndPopulateObjectStore);
-}
+    deleteAllObjectStores(db);
 
+    var objectStore = evalAndLog("objectStore = db.createObjectStore('test')");
+    request = evalAndLog("objectStore.add('myValue', 'myKey')");
+    request.onsuccess = openCursor;
+    request.onerror = unexpectedErrorCallback;
+}
+ 
 function openSuccess()
 {
-    verifySuccessEvent(event);
-    var db = evalAndLog("db = event.result");
-
-    result = evalAndLog("db.setVersion('new version')");
-    verifyResult(result);
-    result.onsuccess = setVersionSuccess;
-    result.onerror = unexpectedErrorCallback;
+    var db = evalAndLog("db = event.target.result");
+ 
+    request = evalAndLog("db.setVersion('new version')");
+    request.onsuccess = setVersionSuccess;
+    request.onerror = unexpectedErrorCallback;
 }
-
+ 
 function test()
 {
-    result = evalAndLog("webkitIndexedDB.open('name')");
-    verifyResult(result);
-    result.onsuccess = openSuccess;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("webkitIndexedDB.open('name')");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
 }
 
 test();

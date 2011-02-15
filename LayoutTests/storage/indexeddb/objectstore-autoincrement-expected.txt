@@ -4,43 +4,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 webkitIndexedDB.open('Address Book')
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
 openSuccess():
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-db = event.result
+db = event.target.result
 db.setVersion('new version')
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
 setVersionSuccess():
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-trans = event.result
+trans = event.target.result
 PASS trans !== null is true
 Deleted all object stores.
 createObjectStore():
@@ -60,125 +28,37 @@ store = trans.objectStore('StoreWithKeyPath')
 Insert into object store with auto increment and key path, with key in the object.
 store.add({name: 'Jeffersson', number: '7010', id: 3})
 addJefferssonSuccess():
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-PASS event.result is 3
+PASS event.target.result is 3
 Insert into object store with auto increment and key path, without key in the object.
 store.add({name: 'Lincoln', number: '7012'})
 addLincolnError():
-Error event fired:
-PASS 'result' in event is false
-PASS 'code' in event is true
-PASS 'message' in event is true
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-PASS event.code is webkitIDBDatabaseException.UNKNOWN_ERR
+PASS event.target.errorCode is webkitIDBDatabaseException.UNKNOWN_ERR
 event.preventDefault()
 store = trans.objectStore('StoreWithAutoIncrement')
 Insert into object store with key gen using explicit key
 store.add({name: 'Lincoln', number: '7012'}, 5)
 addLincolnSuccess():
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-PASS event.result is 5
+PASS event.target.result is 5
 store.get(5)
 getLincolnSuccess():
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-PASS event.result.name is "Lincoln"
-PASS event.result.number is "7012"
+PASS event.target.result.name is "Lincoln"
+PASS event.target.result.number is "7012"
 store.put({name: 'Abraham', number: '2107'})
 putAbrahamSuccess():
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-PASS event.result is 6
+PASS event.target.result is 6
 store.get(6)
 getAbrahamSuccess():
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-PASS event.result.name is "Abraham"
-PASS event.result.number is "2107"
+PASS event.target.result.name is "Abraham"
+PASS event.target.result.number is "2107"
 store = trans.objectStore('PlainOldStore')
 Try adding with no key to object store without auto increment.
 store.add({name: 'Adam'})
 addAdamError():
-Error event fired:
-PASS 'result' in event is false
-PASS 'code' in event is true
-PASS 'message' in event is true
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-PASS event.code is webkitIDBDatabaseException.DATA_ERR
+PASS event.target.errorCode is webkitIDBDatabaseException.DATA_ERR
 event.preventDefault()
 store.add({name: 'Adam'}, 1)
 addAdamSuccess():
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-PASS event.result is 1
+PASS event.target.result is 1
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -16,37 +16,30 @@ if (window.layoutTestController)
 
 function test()
 {
-    result = evalAndLog("webkitIndexedDB.open('name')");
-    verifyResult(result);
-    result.onsuccess = openSuccess;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("webkitIndexedDB.open('name')");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function openSuccess()
 {
     debug("openSuccess():");
-    verifySuccessEvent(event);
-    window.db = evalAndLog("db = event.result");
+    window.db = evalAndLog("db = event.target.result");
 
-    result = evalAndLog("db.setVersion('new version')");
-    verifyResult(result);
-    result.onsuccess = setVersionSuccess;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("db.setVersion('new version')");
+    request.onsuccess = setVersionSuccess;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function setVersionSuccess()
 {
     debug("setVersionSuccess():");
-    verifySuccessEvent(event);
-    window.trans = evalAndLog("trans = event.result");
+    window.trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
 
-    deleteAllObjectStores(db, createObjectStore);
-}
+    deleteAllObjectStores(db);
 
-function createObjectStore()
-{
     debug("createObjectStore():");
     window.store = evalAndLog("store = db.createObjectStore('storeName', null)");
     var storeNames = evalAndLog("storeNames = db.objectStoreNames");
@@ -64,7 +57,8 @@ function createObjectStore()
         testFailed("Asking for a store that doesn't exist should have thrown.");
     } catch (err) {
         testPassed("Exception thrown.");
-        // FIXME: Verify the correct exception thrown.
+        code = err.code;
+        shouldBe("code", "webkitIDBDatabaseException.NOT_FOUND_ERR");
     }
 
     createIndex();
@@ -86,7 +80,8 @@ function createIndex()
         testFailed("Asking for a store that doesn't exist should have thrown.");
     } catch (err) {
         testPassed("Exception thrown.");
-        // FIXME: Verify the correct exception thrown.
+        code = err.code
+        shouldBe("code", "webkitIDBDatabaseException.NOT_FOUND_ERR");
     }
 
     commitAndContinue();    
@@ -99,18 +94,16 @@ function commitAndContinue()
 
 function testSetVersionAbort()
 {
-    result = evalAndLog('db.setVersion("version fail")');
-    verifyResult(result);
-    result.onsuccess = createAnotherIndex;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog('db.setVersion("version fail")');
+    request.onsuccess = createAnotherIndex;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function createAnotherIndex()
 {
-    verifySuccessEvent(event);
     shouldBeEqualToString("db.version", "version fail");
 
-    var setVersionTrans = evalAndLog("setVersionTrans = event.result");
+    var setVersionTrans = evalAndLog("setVersionTrans = event.target.result");
     shouldBeTrue("setVersionTrans !== null");
     setVersionTrans.oncomplete = unexpectedCompleteCallback;
     setVersionTrans.onabort = checkMetadata;
@@ -146,9 +139,9 @@ function addData()
     window.store = evalAndLog("store = transaction.objectStore('storeName')");
 
     debug("Try to insert data with a Date key:");
-    result = evalAndLog("store.add({x: 'foo'}, testDate)");
-    result.onsuccess = addDateSuccess;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("store.add({x: 'foo'}, testDate)");
+    request.onsuccess = addDateSuccess;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function addDateSuccess()
@@ -165,29 +158,26 @@ function addDateSuccess()
     }
 
     debug("Try to insert data where key path yields a Date key:");
-    result = evalAndLog("store.add({x: testDateB, y: 'value'}, 'key')");
-    result.onsuccess = addSuccess;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("store.add({x: testDateB, y: 'value'}, 'key')");
+    request.onsuccess = addSuccess;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function addSuccess()
 {
     debug("addSuccess():");
-    verifySuccessEvent(event);
-    shouldBeEqualToString("event.result", "key");
+    shouldBeEqualToString("event.target.result", "key");
 
-    result = evalAndLog("event.source.add({x: 'foo'}, 'zzz')");
-    verifyResult(result);
-    result.onsuccess = unexpectedSuccessCallback;
-    result.addEventListener('error', addAgainFailure, false);
+    request = evalAndLog("event.target.source.add({x: 'foo'}, 'zzz')");
+    request.onsuccess = unexpectedSuccessCallback;
+    request.addEventListener('error', addAgainFailure, false);
 }
 
 function addAgainFailure()
 {
     debug("addAgainFailure():");
-    verifyErrorEvent(event);
     // FIXME: This error code needs to be specced.
-    shouldBe("event.code", "webkitIDBDatabaseException.UNKNOWN_ERR");
+    shouldBe("event.target.errorCode", "webkitIDBDatabaseException.UNKNOWN_ERR");
 
     evalAndLog("event.preventDefault()");
 
@@ -195,17 +185,15 @@ function addAgainFailure()
     transaction.onabort = unexpectedErrorCallback;
     var store = evalAndLog("store = transaction.objectStore('storeName')");
 
-    result = evalAndLog("store.add({x: 'othervalue'}, null)");
-    verifyResult(result);
-    result.onsuccess = unexpectedSuccessCallback;
-    result.addEventListener('error', addWithNullKeyFailure, true);
+    request = evalAndLog("store.add({x: 'othervalue'}, null)");
+    request.onsuccess = unexpectedSuccessCallback;
+    request.addEventListener('error', addWithNullKeyFailure, true);
 }
 
 function addWithNullKeyFailure()
 {
     debug("addWithNullKeyFailre():");
-    verifyErrorEvent(event);
-    shouldBe("event.code", "webkitIDBDatabaseException.DATA_ERR");
+    shouldBe("event.target.errorCode", "webkitIDBDatabaseException.DATA_ERR");
 
     evalAndLog("event.preventDefault()");
 
@@ -213,17 +201,15 @@ function addWithNullKeyFailure()
     transaction.onabort = unexpectedErrorCallback;
     var store = evalAndLog("store = transaction.objectStore('storeName')");
 
-    result = evalAndLog("store.add({x: null}, 'validkey')");
-    verifyResult(result);
-    result.onsuccess = unexpectedSuccessCallback;
-    result.onerror = addWithNullIndexFailure;
+    request = evalAndLog("store.add({x: null}, 'validkey')");
+    request.onsuccess = unexpectedSuccessCallback;
+    request.onerror = addWithNullIndexFailure;
 }
 
 function addWithNullIndexFailure()
 {
     debug("addWithNullIndexFailure():");
-    verifyErrorEvent(event);
-    shouldBe("event.code", "webkitIDBDatabaseException.DATA_ERR");
+    shouldBe("event.target.errorCode", "webkitIDBDatabaseException.DATA_ERR");
 
     evalAndLog("event.preventDefault()");
 
@@ -231,42 +217,37 @@ function addWithNullIndexFailure()
     transaction.onabort = unexpectedErrorCallback;
     var store = evalAndLog("store = transaction.objectStore('storeName')");
 
-    result = evalAndLog("store.get('key')");
-    verifyResult(result);
-    result.addEventListener('success', getSuccess, true);
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("store.get('key')");
+    request.addEventListener('success', getSuccess, true);
+    request.onerror = unexpectedErrorCallback;
 }
 
 function getSuccess()
 {
     debug("getSuccess():");
-    verifySuccessEvent(event);
-    shouldBeEqualToString("event.result.y", "value");
+    shouldBeEqualToString("event.target.result.y", "value");
 
-    var store = evalAndLog("store = event.source");
-    result = evalAndLog("store.get(testDate)");
-    result.addEventListener('success', getSuccessDateKey, false);
-    result.onerror = unexpectedErrorCallback;
+    var store = evalAndLog("store = event.target.source");
+    request = evalAndLog("store.get(testDate)");
+    request.addEventListener('success', getSuccessDateKey, false);
+    request.onerror = unexpectedErrorCallback;
 }
 
 function getSuccessDateKey()
 {
     debug("getSuccessDateKey():");
-    verifySuccessEvent(event);
-    shouldBeEqualToString("event.result.x", "foo");
+    shouldBeEqualToString("event.target.result.x", "foo");
 
-    result = evalAndLog("store.delete('key')");
-    verifyResult(result);
-    result.onsuccess = removeSuccess;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("store.delete('key')");
+    request.onsuccess = removeSuccess;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function removeSuccess()
 {
     debug("removeSuccess():");
-    verifySuccessEvent(event);
-    shouldBeNull("event.result");
-    var store = evalAndLog("store = event.source");
+    shouldBeNull("event.target.result");
+    var store = evalAndLog("store = event.target.source");
 
     try {
         debug("Passing an invalid key into store.get().");

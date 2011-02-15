@@ -4,42 +4,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 webkitIndexedDB.open('name')
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-db = event.result
+db = event.target.result
 db.setVersion('new version')
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
 setVersionSuccess():
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-trans = event.result
+trans = event.target.result
 PASS trans !== null is true
 Deleted all object stores.
 objectStore = db.createObjectStore('test')
@@ -50,83 +18,30 @@ objectStore.add('myValue4', 'myKey4')
 openCursor1
 trans = db.transaction(['test'], webkitIDBTransaction.READ_WRITE)
 trans.objectStore('test').openCursor({range: keyRange})
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
-event.result.delete()
-PASS event.result.value is "myValue1"
-event.result.continue()
-event.result.delete()
-PASS event.result.value is "myValue2"
-event.result.continue()
-event.result.delete()
-PASS event.result.value is "myValue3"
-event.result.continue()
-event.result.delete()
-PASS event.result.value is "myValue4"
-event.result.continue()
+event.target.result.delete()
+PASS event.target.result.value is "myValue1"
+event.target.result.continue()
+event.target.result.delete()
+PASS event.target.result.value is "myValue2"
+event.target.result.continue()
+event.target.result.delete()
+PASS event.target.result.value is "myValue3"
+event.target.result.continue()
+event.target.result.delete()
+PASS event.target.result.value is "myValue4"
+event.target.result.continue()
 PASS counter is 5
 trans.objectStore('test').openCursor(keyRange)
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-PASS event.result is null
+PASS event.target.result is null
 trans = db.transaction(['test'], webkitIDBTransaction.READ_WRITE)
 objectStore = trans.objectStore('test')
 objectStore.add('myValue1', 'myKey1')
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
 openCursor2
 objectStore.openCursor(keyRange)
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
 PASS [object IDBCursor] is non-null.
-event.result.delete()
+event.target.result.delete()
 objectStore.get('myKey1')
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-PASS event.result is undefined
+PASS event.target.result is undefined
 PASS successfullyParsed is true
 
 TEST COMPLETE

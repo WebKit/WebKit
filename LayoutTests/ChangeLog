@@ -1,3 +1,78 @@
+2011-02-11  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Finish up implementing the new event model in IndexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=54331
+
+        Make the requried changes + s/result/request/g (where it should
+        have always been that way) + remove the verify functions (since
+        these days they mostly just add noise) + get rid of the callback
+        in the delete object store funciton.
+
+        * storage/indexeddb/basics-expected.txt:
+        * storage/indexeddb/basics.html:
+        * storage/indexeddb/create-and-remove-object-store-expected.txt:
+        * storage/indexeddb/create-and-remove-object-store.html:
+        * storage/indexeddb/create-object-store-options-expected.txt:
+        * storage/indexeddb/create-object-store-options.html:
+        * storage/indexeddb/cursor-delete-expected.txt:
+        * storage/indexeddb/cursor-delete.html:
+        * storage/indexeddb/cursor-index-delete-expected.txt:
+        * storage/indexeddb/cursor-index-delete.html:
+        * storage/indexeddb/cursor-skip-deleted-expected.txt:
+        * storage/indexeddb/cursor-skip-deleted.html:
+        * storage/indexeddb/cursor-update-expected.txt:
+        * storage/indexeddb/cursor-update.html:
+        * storage/indexeddb/data-corruption-expected.txt:
+        * storage/indexeddb/data-corruption.html:
+        * storage/indexeddb/database-basics-expected.txt:
+        * storage/indexeddb/database-basics.html:
+        * storage/indexeddb/database-quota-expected.txt:
+        * storage/indexeddb/database-quota.html:
+        * storage/indexeddb/duplicates-expected.txt:
+        * storage/indexeddb/duplicates.html:
+        * storage/indexeddb/error-causes-abort-by-default-expected.txt:
+        * storage/indexeddb/error-causes-abort-by-default.html:
+        * storage/indexeddb/index-basics-expected.txt:
+        * storage/indexeddb/index-basics.html:
+        * storage/indexeddb/index-cursor-expected.txt:
+        * storage/indexeddb/index-cursor.html:
+        * storage/indexeddb/objectstore-autoincrement-expected.txt:
+        * storage/indexeddb/objectstore-autoincrement.html:
+        * storage/indexeddb/objectstore-basics-expected.txt:
+        * storage/indexeddb/objectstore-basics.html:
+        * storage/indexeddb/objectstore-cursor-expected.txt:
+        * storage/indexeddb/objectstore-cursor.html:
+        * storage/indexeddb/objectstore-removeobjectstore-expected.txt:
+        * storage/indexeddb/objectstore-removeobjectstore.html:
+        * storage/indexeddb/open-cursor-expected.txt:
+        * storage/indexeddb/open-cursor.html:
+        * storage/indexeddb/queued-commands-expected.txt:
+        * storage/indexeddb/queued-commands.html:
+        * storage/indexeddb/request-event-propagation-expected.txt:
+        * storage/indexeddb/request-event-propagation.html:
+        * storage/indexeddb/resources/shared.js:
+        (unexpectedSuccessCallback):
+        (unexpectedErrorCallback):
+        (unexpectedAbortCallback):
+        (unexpectedCompleteCallback):
+        (evalAndExpectException):
+        (deleteAllObjectStores):
+        * storage/indexeddb/transaction-after-close-expected.txt:
+        * storage/indexeddb/transaction-after-close.html:
+        * storage/indexeddb/transaction-and-objectstore-calls-expected.txt:
+        * storage/indexeddb/transaction-and-objectstore-calls.html:
+        * storage/indexeddb/transaction-basics-expected.txt:
+        * storage/indexeddb/transaction-basics.html:
+        * storage/indexeddb/transaction-crash-on-abort-expected.txt:
+        * storage/indexeddb/transaction-crash-on-abort.html:
+        * storage/indexeddb/transaction-event-propagation-expected.txt:
+        * storage/indexeddb/transaction-event-propagation.html:
+        * storage/indexeddb/transaction-read-only-expected.txt:
+        * storage/indexeddb/transaction-read-only.html:
+        * storage/indexeddb/tutorial.html:
+
 2011-02-14  Peter Kasting  <pkasting@google.com>
 
         Unreviewed, Chromium test expectations update.

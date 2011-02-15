@@ -340,15 +340,12 @@ IDL_BINDINGS += \
     storage/IDBDatabaseError.idl \
     storage/IDBDatabaseException.idl \
     storage/IDBDatabase.idl \
-    storage/IDBErrorEvent.idl \
-    storage/IDBEvent.idl \
     storage/IDBFactory.idl \
     storage/IDBIndex.idl \
     storage/IDBKey.idl \
     storage/IDBKeyRange.idl \
     storage/IDBObjectStore.idl \
     storage/IDBRequest.idl \
-    storage/IDBSuccessEvent.idl \
     storage/IDBTransaction.idl \
     storage/Storage.idl \
     storage/StorageEvent.idl \

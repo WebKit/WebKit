@@ -26,36 +26,29 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "IDBSuccessEvent.h"
+#ifndef IDBEventDispatcher_h
+#define IDBEventDispatcher_h
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "EventNames.h"
-#include "IDBAny.h"
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-PassRefPtr<IDBSuccessEvent> IDBSuccessEvent::create(PassRefPtr<IDBAny> source, PassRefPtr<IDBAny> result)
-{
-    return adoptRef(new IDBSuccessEvent(source, result));
-}
+class Event;
+class EventTarget;
 
-IDBSuccessEvent::IDBSuccessEvent(PassRefPtr<IDBAny> source, PassRefPtr<IDBAny> result)
-    : IDBEvent(eventNames().successEvent, source, false)
-    , m_result(result)
-{
-}
+class IDBEventDispatcher {
+public:
+    static bool dispatch(Event*, Vector<RefPtr<EventTarget> >&); // The target first and then its ancestors in order of how the event bubbles.
 
-IDBSuccessEvent::~IDBSuccessEvent()
-{
-}
-
-PassRefPtr<IDBAny> IDBSuccessEvent::result()
-{
-    return m_result;
-}
+private:
+    IDBEventDispatcher();
+};
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(INDEXED_DATABASE)
+
+#endif // IDBEventDispatcher_h

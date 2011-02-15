@@ -19,17 +19,15 @@ function test()
     shouldBeTrue("'webkitIndexedDB' in window");
     shouldBeFalse("webkitIndexedDB == null");
 
-    result = evalAndLog("webkitIndexedDB.open('name')");
-    verifyResult(result);
-    result.onsuccess = openSuccess;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("webkitIndexedDB.open('name')");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function openSuccess()
 {
     debug("openSuccess():");
-    verifySuccessEvent(event);
-    db = evalAndLog("db = event.result");
+    db = evalAndLog("db = event.target.result");
     evalAndLog("db.transaction()");
     evalAndLog("window.gc()");
     done();

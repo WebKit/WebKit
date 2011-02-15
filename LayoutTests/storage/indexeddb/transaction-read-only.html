@@ -19,32 +19,26 @@ function test()
     shouldBeTrue("'webkitIndexedDB' in window");
     shouldBeFalse("webkitIndexedDB == null");
 
-    result = evalAndLog("webkitIndexedDB.open('name')");
-    verifyResult(result);
-    result.onsuccess = openSuccess;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("webkitIndexedDB.open('name')");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function openSuccess()
 {
     debug("openSuccess():");
-    verifySuccessEvent(event);
-    window.db = evalAndLog("db = event.result");
-    result = evalAndLog("result = db.setVersion('version 1')");
-    result.onsuccess = cleanDatabase;
-    result.onerror = unexpectedErrorCallback;
+    window.db = evalAndLog("db = event.target.result");
+    request = evalAndLog("result = db.setVersion('version 1')");
+    request.onsuccess = cleanDatabase;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function cleanDatabase()
 {
-    verifySuccessEvent(event);
-    deleteAllObjectStores(db, setVersionStuff);
-}
+    deleteAllObjectStores(db);
 
-function setVersionStuff()
-{
-    event.result.oncomplete = setVersionDone;
-    event.result.onabort = unexpectedAbortCallback;
+    event.target.result.oncomplete = setVersionDone;
+    event.target.result.onabort = unexpectedAbortCallback;
     store = evalAndLog("store = db.createObjectStore('store')");
     evalAndLog("store.put('x', 'y')");
 }
@@ -65,8 +59,8 @@ function setVersionDone()
 
 function gotCursor()
 {
-    shouldBeFalse("!event.result");
-    evalAndExpectException("event.result.delete()", "webkitIDBDatabaseException.READ_ONLY_ERR");
+    shouldBeFalse("!event.target.result");
+    evalAndExpectException("event.target.result.delete()", "webkitIDBDatabaseException.READ_ONLY_ERR");
 
     done();
 }

@@ -28,35 +28,28 @@ window.testData = [
  
 function openDatabase()
 {
-    result = evalAndLog("webkitIndexedDB.open('someDB')");
-    verifyResult(result);
-    result.onsuccess = setVersion;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("webkitIndexedDB.open('someDB')");
+    request.onsuccess = setVersion;
+    request.onerror = unexpectedErrorCallback;
 }
  
 function setVersion()
 {
-    verifySuccessEvent(event);
-    window.db = evalAndLog("db = event.result");
+    window.db = evalAndLog("db = event.target.result");
 
-    result = evalAndLog("db.setVersion('new version')");
-    verifyResult(result);
-    result.onsuccess = deleteExisting;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("db.setVersion('new version')");
+    request.onsuccess = deleteExisting;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function deleteExisting()
 {
-    verifySuccessEvent(event);
-    window.trans = evalAndLog("trans = event.result");
+    window.trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
 
-    deleteAllObjectStores(db, startAddingData);
-}
- 
-function startAddingData()
-{
+    deleteAllObjectStores(db);
+
     window.objectStore = evalAndLog("db.createObjectStore('someObjectStore')");
     window.nextToAdd = 0;
     addData();
@@ -64,13 +57,9 @@ function startAddingData()
 
 function addData()
 {
-    if (window.nextToAdd > 0)
-        verifySuccessEvent(event);
-
-    result = evalAndLog("objectStore.add('', testData[nextToAdd])");
-    verifyResult(result);
-    result.onsuccess = ++window.nextToAdd < testData.length ? addData : scheduleTests;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("objectStore.add('', testData[nextToAdd])");
+    request.onsuccess = ++window.nextToAdd < testData.length ? addData : scheduleTests;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function scheduleTests()
@@ -187,21 +176,21 @@ function testWithinBounds()
 function cursorIteration()
 {
     if (expectedIndex === null) {
-        shouldBeNull("event.result");
+        shouldBeNull("event.target.result");
         runNextTest();
         return;
     }
-    if (event.result === null) {
-        testFailed("Event.result should not be null.");
+    if (event.target.result === null) {
+        testFailed("event.target.result should not be null.");
         runNextTest();
         return;
     }
  
-    shouldBe("event.result.key", "testData[" + expectedIndex + "]");
+    shouldBe("event.target.result.key", "testData[" + expectedIndex + "]");
     window.expectedIndex = ascending ? expectedIndex+1 : expectedIndex-1;
     testWithinBounds();
 
-    event.result.continue();
+    event.target.result.continue();
 }
  
 window.nullKeyRangeStep = 0;

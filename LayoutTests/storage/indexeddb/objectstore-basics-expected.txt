@@ -4,43 +4,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 webkitIndexedDB.open('name')
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
 openSuccess():
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-db = event.result
+db = event.target.result
 db.setVersion('new version')
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
 setVersionSuccess():
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-trans = event.result
+trans = event.target.result
 PASS trans !== null is true
 Deleted all object stores.
 createObjectStore():
@@ -53,6 +21,7 @@ PASS storeNames.length is 1
 Ask for an index that doesn't exist:
 index = store.index('asdf')
 PASS Exception thrown.
+PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
 createIndex():
 index = store.createIndex('indexName', 'x', {unique: true})
 PASS index !== null is true
@@ -62,25 +31,10 @@ PASS index !== null is true
 Ask for an index that doesn't exist:
 index = store.index('asdf')
 PASS Exception thrown.
+PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
 db.setVersion("version fail")
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
 PASS db.version is "version fail"
-setVersionTrans = event.result
+setVersionTrans = event.target.result
 PASS setVersionTrans !== null is true
 store = setVersionTrans.objectStore('storeName')
 index = store.createIndex('indexFail', 'x')
@@ -106,138 +60,36 @@ PASS code is DOMException.NOT_SUPPORTED_ERR
 Try to insert data where key path yields a Date key:
 store.add({x: testDateB, y: 'value'}, 'key')
 addSuccess():
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-PASS event.result is "key"
-event.source.add({x: 'foo'}, 'zzz')
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
+PASS event.target.result is "key"
+event.target.source.add({x: 'foo'}, 'zzz')
 addAgainFailure():
-Error event fired:
-PASS 'result' in event is false
-PASS 'code' in event is true
-PASS 'message' in event is true
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-PASS event.code is webkitIDBDatabaseException.UNKNOWN_ERR
+PASS event.target.errorCode is webkitIDBDatabaseException.UNKNOWN_ERR
 event.preventDefault()
 db.transaction([], webkitIDBTransaction.READ_WRITE)
 store = transaction.objectStore('storeName')
 store.add({x: 'othervalue'}, null)
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
 addWithNullKeyFailre():
-Error event fired:
-PASS 'result' in event is false
-PASS 'code' in event is true
-PASS 'message' in event is true
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-PASS event.code is webkitIDBDatabaseException.DATA_ERR
+PASS event.target.errorCode is webkitIDBDatabaseException.DATA_ERR
 event.preventDefault()
 db.transaction([], webkitIDBTransaction.READ_WRITE)
 store = transaction.objectStore('storeName')
 store.add({x: null}, 'validkey')
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
 addWithNullIndexFailure():
-Error event fired:
-PASS 'result' in event is false
-PASS 'code' in event is true
-PASS 'message' in event is true
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-PASS event.code is webkitIDBDatabaseException.DATA_ERR
+PASS event.target.errorCode is webkitIDBDatabaseException.DATA_ERR
 event.preventDefault()
 db.transaction([], webkitIDBTransaction.READ_WRITE)
 store = transaction.objectStore('storeName')
 store.get('key')
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
 getSuccess():
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-PASS event.result.y is "value"
-store = event.source
+PASS event.target.result.y is "value"
+store = event.target.source
 store.get(testDate)
 getSuccessDateKey():
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-PASS event.result.x is "foo"
+PASS event.target.result.x is "foo"
 store.delete('key')
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
 removeSuccess():
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-PASS event.result is null
-store = event.source
+PASS event.target.result is null
+store = event.target.source
 Passing an invalid key into store.get().
 PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
 Passing an invalid key into store.delete().

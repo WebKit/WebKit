@@ -3043,8 +3043,7 @@ contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
         storage/IDBDatabaseBackendInterface.h \
         storage/IDBDatabaseError.h \
         storage/IDBDatabaseException.h \
-        storage/IDBErrorEvent.h \
-        storage/IDBEvent.h \
+        storage/IDBEventDispatcher.h \
         storage/IDBFactory.h \
         storage/IDBFactoryBackendInterface.h \
         storage/IDBFactoryBackendImpl.h \
@@ -3057,7 +3056,6 @@ contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
         storage/IDBObjectStoreBackendImpl.h \
         storage/IDBObjectStoreBackendInterface.h \
         storage/IDBRequest.h \
-        storage/IDBSuccessEvent.h \
         storage/IDBTransaction.h \
         storage/IDBTransactionBackendInterface.h
 
@@ -3074,8 +3072,7 @@ contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
         storage/IDBCursorBackendImpl.cpp \
         storage/IDBDatabase.cpp \
         storage/IDBDatabaseBackendImpl.cpp \
-        storage/IDBErrorEvent.cpp \
-        storage/IDBEvent.cpp \
+        storage/IDBEventDispatcher.cpp \
         storage/IDBFactory.cpp \
         storage/IDBFactoryBackendInterface.cpp \
         storage/IDBFactoryBackendImpl.cpp \
@@ -3086,7 +3083,6 @@ contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
         storage/IDBObjectStore.cpp \
         storage/IDBObjectStoreBackendImpl.cpp \
         storage/IDBRequest.cpp \
-        storage/IDBSuccessEvent.cpp \
         storage/IDBTransaction.cpp
 }
 

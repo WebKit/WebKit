@@ -92,9 +92,10 @@ function unexpectedError()
 function onOpen()
 {
     // If an asynchronous call results in success, a "success" event will fire on the IDBRequest
-    // object that was returned and the call's result will be placed in the event's "result"
-    // attribute. In some cases, the expected result will be null.
-    window.db = event.result;
+    // object that was returned (i.e. it'll be the event target), which means that you can simply
+    // look at event.target.result to get the result of the call. In some cases, the expected
+    // result will be null.
+    window.db = event.target.result;
 
     // The IDBDatabase object has a "version" attribute. This can only be set by calling
     // "setVersion" on the database and supplying a new version. This also starts a new
@@ -113,10 +114,10 @@ function onOpen()
 function onSetVersion()
 {
     // We are now in a setVersion transaction. Such a transaction is the only place where one
-    // can add or delete indexes and objectStores. The result (property of event) is an
+    // can add or delete indexes and objectStores. The result (property of the request) is an
     // IDBTransaction object that has "complete" and "abort" event handlers which tell
     // us when the transaction has committed, aborted, or timed out.
-    window.currentTransaction = event.result;
+    window.currentTransaction = event.target.result;
     currentTransaction.oncomplete = onSetVersionComplete;
     currentTransaction.onabort = unexpectedAbort;
 
@@ -292,7 +293,7 @@ function onTransactionAborted()
 function onPutSuccess()
 {
     // Result is the key used for the put.
-    if (event.result !== 1)
+    if (event.target.result !== 1)
         logError("Something went wrong.");
 
     // We should be able to request the transaction via event.transaction from within any event handler
@@ -323,12 +324,12 @@ function onPutTransactionComplete()
 
 function onGetSuccess()
 {
-    if (event.result.fname !== "John")
+    if (event.target.result.fname !== "John")
         logError("Something went wrong.");
 
-    // Events have a .source attribute which is the object that fired the event. In this case, it's our
-    // "people" objectStore object.
-    var people = event.source;
+    // Requests (which are our event target) also have a source attribute that's the object that
+    // returned the request. In this case, it's our "people" objectStore object.
+    var people = event.target.source;
 
     // Now let's try opening a cursor from id 1 (exclusive/open) to id 3 (inclusive/closed). This means
     // we'll get the objects for ids 2 and 3. You can also create cursors that are only right or only
@@ -346,9 +347,9 @@ function onObjectStoreCursor()
 {
     // The result of openCursor is an IDBCursor object or null if there are no (more--see below)
     // records left.
-    var cursor = event.result;
+    var cursor = event.target.result;
     if (cursor === null) {
-        cursorComplete(event.source); // The soruce is still an objectStore.
+        cursorComplete(event.target.source); // The soruce is still an objectStore.
         return;
     }
 
@@ -363,7 +364,7 @@ function onObjectStoreCursor()
     // we MAY prioritize .continue() calls ahead of all other async operations queued up. This will
     // introduce a level of non-determinism but should speed things up. Mozilla has already implemented
     // this non-standard behavior, from what I've head.
-    event.result.continue();
+    event.target.result.continue();
 }
 
 function cursorComplete(objectStore)
@@ -383,13 +384,13 @@ function cursorComplete(objectStore)
 function onIndexGetSuccess()
 {
     // Because we did "getKey" the result is the objectStore's key.
-    if (event.result !== 1)
+    if (event.target.result !== 1)
         logError("Something went wrong.");
 
     // Similarly, indexes have openCursor and openKeyCursor. We'll try a few of them with various
     // different IDBKeyRanges just to demonstrate how to use them, but we won't bother to handle
     // the onsuccess conditions.
-    var lname = event.source;
+    var lname = event.target.source;
     lname.openCursor(IDBKeyRange.lowerBound("Doe", false), IDBCursor.NEXT_NO_DUPLICATE);
     lname.openCursor(null, IDBCursor.PREV_NO_DUPLICATE);
     lname.openCursor(IDBKeyRange.upperBound("ZZZZ"));

@@ -27,53 +27,39 @@
  */
 
 #include "config.h"
-#include "IDBEvent.h"
+#include "IDBEventDispatcher.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBAny.h"
+#include "Event.h"
+#include "EventTarget.h"
 
 namespace WebCore {
 
-IDBEvent::IDBEvent(const AtomicString& type, PassRefPtr<IDBAny> source, bool canBubble)
-    : Event(type, canBubble, true)
-    , m_source(source)
-{
-}
-
-IDBEvent::~IDBEvent()
-{
-}
-
-PassRefPtr<IDBAny> IDBEvent::source()
-{
-    return m_source;
-}
-
-bool IDBEvent::dispatch(Vector<RefPtr<EventTarget> >& eventTargets)
+bool IDBEventDispatcher::dispatch(Event* event, Vector<RefPtr<EventTarget> >& eventTargets)
 {
     size_t size = eventTargets.size();
     ASSERT(size);
 
-    setEventPhase(Event::CAPTURING_PHASE);
+    event->setEventPhase(Event::CAPTURING_PHASE);
     for (size_t i = size - 1; i; --i) { // Don't do the first element.
-        setCurrentTarget(eventTargets[i].get());
-        eventTargets[i]->fireEventListeners(this);
-        if (propagationStopped())
+        event->setCurrentTarget(eventTargets[i].get());
+        eventTargets[i]->fireEventListeners(event);
+        if (event->propagationStopped())
             goto doneDispatching;
     }
 
-    setEventPhase(Event::AT_TARGET);
-    setCurrentTarget(eventTargets[0].get());
-    eventTargets[0]->fireEventListeners(this);
-    if (propagationStopped() || !bubbles() || cancelBubble())
+    event->setEventPhase(Event::AT_TARGET);
+    event->setCurrentTarget(eventTargets[0].get());
+    eventTargets[0]->fireEventListeners(event);
+    if (event->propagationStopped() || !event->bubbles() || event->cancelBubble())
         goto doneDispatching;
 
-    setEventPhase(Event::BUBBLING_PHASE);
+    event->setEventPhase(Event::BUBBLING_PHASE);
     for (size_t i = 1; i < size; ++i) { // Don't do the first element.
-        setCurrentTarget(eventTargets[i].get());
-        eventTargets[i]->fireEventListeners(this);
-        if (propagationStopped() || cancelBubble())
+        event->setCurrentTarget(eventTargets[i].get());
+        eventTargets[i]->fireEventListeners(event);
+        if (event->propagationStopped() || event->cancelBubble())
             goto doneDispatching;
     }
 
@@ -93,12 +79,12 @@ bool IDBEvent::dispatch(Vector<RefPtr<EventTarget> >& eventTargets)
     //        
     //        (I think that so far webkit hasn't implemented the window.onerror
     //        feature yet, so you probably don't want to fire the separate error
-    //        event on the window until that has been implemented)."
+    //        event on the window until that has been implemented)." -- Jonas Sicking
 
 doneDispatching:
-    setCurrentTarget(0);
-    setEventPhase(0);
-    return !defaultPrevented();
+    event->setCurrentTarget(0);
+    event->setEventPhase(0);
+    return !event->defaultPrevented();
 }
 
 } // namespace WebCore

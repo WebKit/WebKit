@@ -277,15 +277,12 @@ DOM_CLASSES = \
     IDBDatabaseError \
     IDBDatabaseException \
     IDBDatabase \
-    IDBErrorEvent \
-    IDBEvent \
     IDBFactory \
     IDBIndex \
     IDBKey \
     IDBKeyRange \
     IDBObjectStore \
     IDBRequest \
-    IDBSuccessEvent \
     IDBTransaction \
     ImageData \
     InjectedScriptHost \

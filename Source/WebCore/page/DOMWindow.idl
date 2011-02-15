@@ -184,14 +184,11 @@ module window {
         attribute [EnabledAtRuntime] IDBDatabaseConstructor webkitIDBDatabase;
         attribute [EnabledAtRuntime] IDBDatabaseErrorConstructor webkitIDBDatabaseError;
         attribute [EnabledAtRuntime] IDBDatabaseExceptionConstructor webkitIDBDatabaseException;
-        attribute [EnabledAtRuntime] IDBErrorEventConstructor webkitIDBErrorEvent;
-        attribute [EnabledAtRuntime] IDBEventConstructor webkitIDBEvent;
         attribute [EnabledAtRuntime] IDBFactoryConstructor webkitIDBFactory;
         attribute [EnabledAtRuntime] IDBIndexConstructor webkitIDBIndex;
         attribute [EnabledAtRuntime] IDBKeyRangeConstructor webkitIDBKeyRange;
         attribute [EnabledAtRuntime] IDBObjectStoreConstructor webkitIDBObjectStore;
         attribute [EnabledAtRuntime] IDBRequestConstructor webkitIDBRequest;
-        attribute [EnabledAtRuntime] IDBSuccessEventConstructor webkitIDBSuccessEvent;
         attribute [EnabledAtRuntime] IDBTransactionConstructor webkitIDBTransaction;
 #endif
 #if defined(ENABLE_FILE_SYSTEM) && ENABLE_FILE_SYSTEM

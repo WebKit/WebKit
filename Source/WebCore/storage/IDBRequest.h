@@ -36,12 +36,12 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventTarget.h"
+#include "ExceptionCode.h"
 #include "IDBAny.h"
 #include "IDBCallbacks.h"
 
 namespace WebCore {
 
-class IDBEvent;
 class IDBTransaction;
 
 class IDBRequest : public IDBCallbacks, public EventTarget, public ActiveDOMObject {
@@ -49,12 +49,19 @@ public:
     static PassRefPtr<IDBRequest> create(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBTransaction*);
     virtual ~IDBRequest();
 
+    PassRefPtr<IDBAny> result(ExceptionCode&) const;
+    unsigned short errorCode(ExceptionCode&) const;
+    String webkitErrorMessage(ExceptionCode&) const;
+    PassRefPtr<IDBAny> source() const;
+    PassRefPtr<IDBTransaction> transaction() const;
+
     // Defined in the IDL
     enum ReadyState {
         LOADING = 1,
         DONE = 2
     };
-    unsigned short readyState() const { return m_readyState; }
+    unsigned short readyState() const;
+
     DEFINE_ATTRIBUTE_EVENT_LISTENER(success);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
 
@@ -93,6 +100,9 @@ private:
     virtual EventTargetData* eventTargetData();
     virtual EventTargetData* ensureEventTargetData();
 
+    RefPtr<IDBAny> m_result;
+    unsigned short m_errorCode;
+    String m_errorMessage;
     RefPtr<IDBAny> m_source;
     RefPtr<IDBTransaction> m_transaction;
 

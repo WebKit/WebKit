@@ -16,74 +16,46 @@ if (window.layoutTestController)
 
 function test()
 {
-    shouldBeTrue("'webkitIndexedDB' in window");
-    shouldBeFalse("webkitIndexedDB == null");
-
-    result = evalAndLog("webkitIndexedDB.open('name')");
-    verifyResult(result);
-    result.onsuccess = openSuccess;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("webkitIndexedDB.open('name')");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function openSuccess()
 {
     debug("openSuccess():");
-    verifySuccessEvent(event);
-    window.db = evalAndLog("db = event.result");
+    window.db = evalAndLog("db = event.target.result");
     testCreateAndRemove();
-    result = evalAndLog("result = db.setVersion('version 1')");
-    result.onsuccess = cleanDatabase;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("result = db.setVersion('version 1')");
+    request.onsuccess = cleanDatabase;
+    request.onerror = unexpectedErrorCallback;
     testCreateAndRemove();
 }
 
 function testCreateAndRemove()
 {
     debug("Trying create");
-    try {
-        db.createObjectStore("some os");
-        testFailed("No exception thrown!");
-    } catch (e) {
-        code = e.code;
-        shouldBe("code", "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
-    }
+    evalAndExpectException('db.createObjectStore("some os")', "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
     debug("Trying remove");
-    try {
-        db.createObjectStore("some os");
-        testFailed("No exception thrown!");
-    } catch (e) {
-        code = e.code;
-        shouldBe("code", "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
-    }
+    evalAndExpectException('db.createObjectStore("some os")', "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
 }
 
 function cleanDatabase()
 {
-    verifySuccessEvent(event);
-    deleteAllObjectStores(db, cleaned);
-}
+    deleteAllObjectStores(db);
 
-function cleaned()
-{
     os = evalAndLog("db.createObjectStore('tmp')");
-    debug("Adding 'tmp' again");
-    try {
-        db.createObjectStore('tmp');
-        testFailed("No exception thrown!");
-    } catch (e) {
-        code = e.code;
-        shouldBe("code", "webkitIDBDatabaseException.CONSTRAINT_ERR");
-    }
+    evalAndExpectException("db.createObjectStore('tmp')", "webkitIDBDatabaseException.CONSTRAINT_ERR");
+
     trans = evalAndLog("trans = db.transaction({mode: webkitIDBTransaction.READ_WRITE})");
-    req = evalAndLog("trans.objectStore('tmp').get(0)");
-    req.onsuccess = tryOnceMore;
-    req.onerror = unexpectedErrorCallback;
+    request = evalAndLog("trans.objectStore('tmp').get(0)");
+    request.onsuccess = tryOnceMore;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function tryOnceMore()
 {
-    verifySuccessEvent(event);
-    shouldBe("event.result", "undefined");
+    shouldBeUndefined("event.target.result");
 
     testCreateAndRemove();
 

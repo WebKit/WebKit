@@ -18,37 +18,30 @@ test();
 
 function test()
 {
-    result = evalAndLog("webkitIndexedDB.open('name')");
-    verifyResult(result);
-    result.onsuccess = openSuccess;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("webkitIndexedDB.open('name')");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function openSuccess()
 {
-    verifySuccessEvent(event);
-    var db = evalAndLog("db = event.result");
+    var db = evalAndLog("db = event.target.result");
 
-    result = evalAndLog("db.setVersion('new version')");
-    verifyResult(result);
-    result.onsuccess = setVersionSuccess;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("db.setVersion('new version')");
+    request.onsuccess = setVersionSuccess;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function setVersionSuccess()
 {
     debug("setVersionSuccess():");
-    verifySuccessEvent(event);
-    window.trans = evalAndLog("trans = event.result");
+    window.trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = openCursor;
 
-    deleteAllObjectStores(db, createAndPopulateObjectStore);
-}
+    deleteAllObjectStores(db);
 
-function createAndPopulateObjectStore() 
-{
     var objectStore = evalAndLog("objectStore = db.createObjectStore('test')");
     evalAndLog("objectStore.add('myValue1', 'myKey1')");
     evalAndLog("objectStore.add('myValue2', 'myKey2')");
@@ -61,32 +54,29 @@ function openCursor()
     debug("openCursor1");
     evalAndLog("trans = db.transaction(['test'], webkitIDBTransaction.READ_WRITE)");
     keyRange = webkitIDBKeyRange.lowerBound("myKey1");
-    result = evalAndLog("trans.objectStore('test').openCursor({range: keyRange})");
-    verifyResult(result);
-    result.onsuccess = cursorSuccess;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("trans.objectStore('test').openCursor({range: keyRange})");
+    request.onsuccess = cursorSuccess;
+    request.onerror = unexpectedErrorCallback;
     counter = 1;
 }
 
 function cursorSuccess()
 {
-    if (event.result == null) {
+    if (event.target.result == null) {
         shouldBe("counter", "5");
-        result = evalAndLog("trans.objectStore('test').openCursor(keyRange)");
-        verifyResult(result);
-        result.onsuccess = cursorEmpty;
-        result.onerror = unexpectedErrorCallback;
+        request = evalAndLog("trans.objectStore('test').openCursor(keyRange)");
+        request.onsuccess = cursorEmpty;
+        request.onerror = unexpectedErrorCallback;
         return;
     }
-    evalAndLog("event.result.delete()");
-    shouldBeEqualToString("event.result.value", "myValue" + counter++);
-    evalAndLog("event.result.continue()");
+    evalAndLog("event.target.result.delete()");
+    shouldBeEqualToString("event.target.result.value", "myValue" + counter++);
+    evalAndLog("event.target.result.continue()");
 }
 
 function cursorEmpty()
 {
-    verifySuccessEvent(event);
-    shouldBeNull("event.result");
+    shouldBeNull("event.target.result");
     trans.oncomplete = addObject;
 }
 
@@ -94,35 +84,31 @@ function addObject()
 {
     evalAndLog("trans = db.transaction(['test'], webkitIDBTransaction.READ_WRITE)");
     objectStore = evalAndLog("objectStore = trans.objectStore('test')");
-    result = evalAndLog("objectStore.add('myValue1', 'myKey1')");
-    verifyResult(result);
-    result.onsuccess = openCursor2;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("objectStore.add('myValue1', 'myKey1')");
+    request.onsuccess = openCursor2;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function openCursor2()
 {
     debug("openCursor2");
-    result = evalAndLog("objectStore.openCursor(keyRange)");
-    verifyResult(result);
-    result.onsuccess = deleteObject;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("objectStore.openCursor(keyRange)");
+    request.onsuccess = deleteObject;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function deleteObject()
 {
-    verifySuccessEvent(event);
-    shouldBeNonNull(event.result);
-    evalAndLog("event.result.delete()");
-    result = evalAndLog("objectStore.get('myKey1')");
-    result.onsuccess = verifyObjectDeleted;
-    result.onerror = unexpectedErrorCallback;
+    shouldBeNonNull(event.target.result);
+    evalAndLog("event.target.result.delete()");
+    request = evalAndLog("objectStore.get('myKey1')");
+    request.onsuccess = verifyObjectDeleted;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function verifyObjectDeleted()
 {
-    verifySuccessEvent(event);
-    shouldBe("event.result", "undefined");
+    shouldBe("event.target.result", "undefined");
     done();
 }
 

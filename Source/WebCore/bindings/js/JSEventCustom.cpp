@@ -93,13 +93,6 @@
 #include "TouchEvent.h"
 #endif
 
-#if ENABLE(INDEXED_DATABASE)
-#include "IDBErrorEvent.h"
-#include "IDBSuccessEvent.h"
-#include "JSIDBErrorEvent.h"
-#include "JSIDBSuccessEvent.h"
-#endif
-
 #if ENABLE(WEB_AUDIO)
 #include "AudioProcessingEvent.h"
 #include "JSAudioProcessingEvent.h"
@@ -164,12 +157,6 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Event* event)
 #if ENABLE(DOM_STORAGE)
     else if (event->isStorageEvent())
         wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, StorageEvent, event);
-#endif
-#if ENABLE(INDEXED_DATABASE)
-    else if (event->isIDBErrorEvent())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, IDBErrorEvent, event);
-    else if (event->isIDBSuccessEvent())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, IDBSuccessEvent, event);
 #endif
     else if (event->isWebKitAnimationEvent())
         wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, WebKitAnimationEvent, event);

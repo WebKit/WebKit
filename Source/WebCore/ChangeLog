@@ -1,3 +1,62 @@
+2011-02-11  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Finish up implementing the new event model in IndexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=54331
+
+        We shouldn't have our own event subclasses. Instead, we
+        should just fire Event's with the proper type and bubble
+        settings. All the attributes on the events before should
+        just be on the request. IDBRequest should throw if they're
+        accessed before the success event fires.
+
+        * WebCore.gypi:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * bindings/v8/custom/V8EventCustom.cpp:
+        (WebCore::toV8):
+        * dom/Event.cpp:
+        * dom/Event.h:
+        * page/DOMWindow.idl:
+        * storage/IDBAbortEvent.h: Removed.
+        * storage/IDBCompleteEvent.cpp: Removed.
+        * storage/IDBCompleteEvent.h: Removed.
+        * storage/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::~IDBDatabase):
+        * storage/IDBDatabaseException.h:
+        * storage/IDBDatabaseException.idl:
+        * storage/IDBErrorEvent.cpp: Removed.
+        * storage/IDBErrorEvent.h: Removed.
+        * storage/IDBErrorEvent.idl: Removed.
+        * storage/IDBEvent.h: Removed.
+        * storage/IDBEvent.idl: Removed.
+        * storage/IDBEventDispatcher.cpp:
+        (WebCore::IDBEventDispatcher::dispatch):
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::IDBRequest):
+        (WebCore::IDBRequest::result):
+        (WebCore::IDBRequest::errorCode):
+        (WebCore::IDBRequest::webkitErrorMessage):
+        (WebCore::IDBRequest::source):
+        (WebCore::IDBRequest::transaction):
+        (WebCore::IDBRequest::readyState):
+        (WebCore::IDBRequest::resetReadyState):
+        (WebCore::IDBRequest::onError):
+        (WebCore::createSuccessEvent):
+        (WebCore::IDBRequest::onSuccess):
+        (WebCore::IDBRequest::dispatchEvent):
+        * storage/IDBRequest.h:
+        * storage/IDBRequest.idl:
+        * storage/IDBSuccessEvent.cpp: Removed.
+        * storage/IDBSuccessEvent.h: Removed.
+        * storage/IDBSuccessEvent.idl: Removed.
+        * storage/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::onAbort):
+        (WebCore::IDBTransaction::onComplete):
+        (WebCore::IDBTransaction::dispatchEvent):
+
 2011-02-14  Enrica Casucci  <enrica@apple.com>
 
         Copy/paste from a WebKit window to a TextEdit window loses fonts.

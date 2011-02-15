@@ -16,36 +16,29 @@ if (window.layoutTestController)
 
 function test()
 {
-    result = evalAndLog("webkitIndexedDB.open('name')");
-    verifyResult(result);
-    result.onsuccess = setVersion;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("webkitIndexedDB.open('name')");
+    request.onsuccess = setVersion;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function setVersion()
 {
-    verifySuccessEvent(event);
-    db = evalAndLog("db = event.result");
+    db = evalAndLog("db = event.target.result");
 
-    result = evalAndLog("db.setVersion('new version')");
-    verifyResult(result);
-    result.onsuccess = deleteExisting;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("db.setVersion('new version')");
+    request.onsuccess = deleteExisting;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function deleteExisting()
 {
     debug("setVersionSuccess():");
-    verifySuccessEvent(event);
-    window.trans = evalAndLog("trans = event.result");
+    window.trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
 
-    deleteAllObjectStores(db, createIndex);
-}
+    deleteAllObjectStores(db);
 
-function createIndex()
-{
     window.store = evalAndLog("db.createObjectStore('storeName', null)");
     window.indexObject = evalAndLog("store.createIndex('indexName', 'x')");
     window.indexObject2 = evalAndLog("store.createIndex('indexName2', 'y', false)");
@@ -68,172 +61,142 @@ function addData()
     shouldBeTrue("'getKey' in indexObject");
     shouldBeTrue("'get' in indexObject");
 
-    result = evalAndLog("store.add({x: 'value', y: 'zzz', z: 2.72}, 'key')");
-    verifyResult(result);
-    result.onsuccess = addMore;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("store.add({x: 'value', y: 'zzz', z: 2.72}, 'key')");
+    request.onsuccess = addMore;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function addMore()
 {
-    verifySuccessEvent(event);
-
-    result = evalAndLog("event.source.add({x: 'value2', y: 'zzz2', z: 2.71}, 'key2')");
-    verifyResult(result);
-    result.onsuccess = getData;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("event.target.source.add({x: 'value2', y: 'zzz2', z: 2.71}, 'key2')");
+    request.onsuccess = getData;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function getData()
 {
-    verifySuccessEvent(event);
-
-    result = evalAndLog("indexObject.getKey('value')");
-    verifyResult(result);
-    result.onsuccess = getObjectData;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("indexObject.getKey('value')");
+    request.onsuccess = getObjectData;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function getObjectData()
 {
-    verifySuccessEvent(event);
-    shouldBeEqualToString("event.result", "key");
+    shouldBeEqualToString("event.target.result", "key");
 
-    result = evalAndLog("indexObject2.getKey('zzz')");
-    verifyResult(result);
-    result.onsuccess = getObjectData2;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("indexObject2.getKey('zzz')");
+    request.onsuccess = getObjectData2;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function getObjectData2()
 {
-    verifySuccessEvent(event);
-    shouldBeEqualToString("event.result", "key");
+    shouldBeEqualToString("event.target.result", "key");
 
-    result = evalAndLog("indexObject3.get(2.71)");
-    verifyResult(result);
-    result.onsuccess = getObjectData3;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("indexObject3.get(2.71)");
+    request.onsuccess = getObjectData3;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function getObjectData3()
 {
-    verifySuccessEvent(event);
-    shouldBeEqualToString("event.result.x", "value2");
+    shouldBeEqualToString("event.target.result.x", "value2");
 
-    result = evalAndLog("indexObject.get('value')");
-    verifyResult(result);
-    result.onsuccess = getDataFail;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("indexObject.get('value')");
+    request.onsuccess = getDataFail;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function getDataFail()
 {
-    verifySuccessEvent(event);
-    shouldBeEqualToString("event.result.x", "value");
-    shouldBeEqualToString("event.result.y", "zzz");
+    shouldBeEqualToString("event.target.result.x", "value");
+    shouldBeEqualToString("event.target.result.y", "zzz");
 
-    result = evalAndLog("indexObject.getKey('does not exist')");
-    verifyResult(result);
-    result.onsuccess = unexpectedSuccessCallback;
-    result.onerror = getObjectDataFail;
+    request = evalAndLog("indexObject.getKey('does not exist')");
+    request.onsuccess = unexpectedSuccessCallback;
+    request.onerror = getObjectDataFail;
 }
 
 function getObjectDataFail()
 {
-    verifyErrorEvent(event);
-    shouldBe("event.code", "webkitIDBDatabaseException.NOT_FOUND_ERR");
+    shouldBe("event.target.errorCode", "webkitIDBDatabaseException.NOT_FOUND_ERR");
 
     evalAndLog("event.preventDefault()");
 
-    result = evalAndLog("indexObject.get('does not exist')");
-    verifyResult(result);
-    result.onsuccess = unexpectedSuccessCallback;
-    result.onerror = openKeyCursor;
+    request = evalAndLog("indexObject.get('does not exist')");
+    request.onsuccess = unexpectedSuccessCallback;
+    request.onerror = openKeyCursor;
 }
 
 function openKeyCursor()
 {
-    verifyErrorEvent(event);
-    shouldBe("event.code", "webkitIDBDatabaseException.NOT_FOUND_ERR");
+    shouldBe("event.target.errorCode", "webkitIDBDatabaseException.NOT_FOUND_ERR");
 
     evalAndLog("event.preventDefault()");
 
-    window.result = evalAndLog("indexObject.openKeyCursor()");
-    verifyResult(result);
-    result.onsuccess = cursor1Continue;
-    result.onerror = unexpectedErrorCallback;
+    window.request = evalAndLog("indexObject.openKeyCursor()");
+    request.onsuccess = cursor1Continue;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function cursor1Continue()
 {
-    verifySuccessEvent(event);
-    shouldBeFalse("event.result === null");
-    shouldBeEqualToString("event.result.key", "value");
-    shouldBeEqualToString("event.result.value", "key");
+    shouldBeFalse("event.target.result === null");
+    shouldBeEqualToString("event.target.result.key", "value");
+    shouldBeEqualToString("event.target.result.value", "key");
 
-    // We re-use the last result object.
-    evalAndLog("event.result.continue()");
-    verifyResult(window.result);
-    window.result.onsuccess = cursor1Continue2;
+    // We re-use the last request object.
+    evalAndLog("event.target.result.continue()");
+    window.request.onsuccess = cursor1Continue2;
 }
 
 function cursor1Continue2()
 {
-    verifySuccessEvent(event);
-    shouldBeFalse("event.result === null");
-    shouldBeEqualToString("event.result.key", "value2");
-    shouldBeEqualToString("event.result.value", "key2");
+    shouldBeFalse("event.target.result === null");
+    shouldBeEqualToString("event.target.result.key", "value2");
+    shouldBeEqualToString("event.target.result.value", "key2");
 
-    // We re-use the last result object.
-    evalAndLog("event.result.continue()");
-    verifyResult(window.result);
-    window.result.onsuccess = openObjectCursor;
+    // We re-use the last request object.
+    evalAndLog("event.target.result.continue()");
+    window.request.onsuccess = openObjectCursor;
 }
 
 function openObjectCursor()
 {
-    verifySuccessEvent(event);
-    shouldBeTrue("event.result === null");
+    shouldBeTrue("event.target.result === null");
 
-    window.result = evalAndLog("indexObject.openCursor()");
-    verifyResult(result);
-    result.onsuccess = cursor2Continue;
-    result.onerror = unexpectedErrorCallback;
+    window.request = evalAndLog("indexObject.openCursor()");
+    request.onsuccess = cursor2Continue;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function cursor2Continue()
 {
-    verifySuccessEvent(event);
-    shouldBeFalse("event.result === null");
-    shouldBeEqualToString("event.result.key", "value");
-    shouldBeEqualToString("event.result.value.x", "value");
-    shouldBeEqualToString("event.result.value.y", "zzz");
+    shouldBeFalse("event.target.result === null");
+    shouldBeEqualToString("event.target.result.key", "value");
+    shouldBeEqualToString("event.target.result.value.x", "value");
+    shouldBeEqualToString("event.target.result.value.y", "zzz");
 
-    // We re-use the last result object.
-    evalAndLog("event.result.continue()");
-    verifyResult(window.result);
-    window.result.onsuccess = cursor2Continue2;
+    // We re-use the last request object.
+    evalAndLog("event.target.result.continue()");
+    window.request.onsuccess = cursor2Continue2;
 }
 
 function cursor2Continue2()
 {
-    verifySuccessEvent(event);
-    shouldBeFalse("event.result === null");
-    shouldBeEqualToString("event.result.key", "value2");
-    shouldBeEqualToString("event.result.value.x", "value2");    
-    shouldBeEqualToString("event.result.value.y", "zzz2");
+    shouldBeFalse("event.target.result === null");
+    shouldBeEqualToString("event.target.result.key", "value2");
+    shouldBeEqualToString("event.target.result.value.x", "value2");    
+    shouldBeEqualToString("event.target.result.value.y", "zzz2");
 
-    // We re-use the last result object.
-    evalAndLog("event.result.continue()");
-    verifyResult(window.result);
-    window.result.onsuccess = last;
+    // We re-use the last request object.
+    evalAndLog("event.target.result.continue()");
+    window.request.onsuccess = last;
 }
 
 function last()
 {
-    verifySuccessEvent(event);
-    shouldBeTrue("event.result === null");
+    shouldBeTrue("event.target.result === null");
 
     try {
         debug("Passing an invalid key into indexObject.get().");

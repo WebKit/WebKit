@@ -3103,10 +3103,8 @@ webcore_sources += \
 	Source/WebCore/storage/IDBDatabaseError.h \
 	Source/WebCore/storage/IDBDatabaseException.h \
 	Source/WebCore/storage/IDBDatabase.h \
-	Source/WebCore/storage/IDBErrorEvent.cpp \
-	Source/WebCore/storage/IDBErrorEvent.h \
-	Source/WebCore/storage/IDBEvent.cpp \
-	Source/WebCore/storage/IDBEvent.h \
+	Source/WebCore/storage/IDBEventDispatcher.cpp \
+	Source/WebCore/storage/IDBEventDispatcher.h \
 	Source/WebCore/storage/IDBFactoryBackendImpl.cpp \
 	Source/WebCore/storage/IDBFactoryBackendImpl.h \
 	Source/WebCore/storage/IDBFactoryBackendInterface.cpp \
@@ -3134,8 +3132,6 @@ webcore_sources += \
 	Source/WebCore/storage/IDBRequest.h \
 	Source/WebCore/storage/IDBSQLiteDatabase.cpp \
 	Source/WebCore/storage/IDBSQLiteDatabase.h \
-	Source/WebCore/storage/IDBSuccessEvent.cpp \
-	Source/WebCore/storage/IDBSuccessEvent.h \
 	Source/WebCore/storage/IDBTransactionBackendInterface.h \
 	Source/WebCore/storage/IDBTransactionCoordinator.h \
 	Source/WebCore/storage/IDBTransaction.cpp \
@@ -4018,10 +4014,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSIDBDatabaseException.h \
 	DerivedSources/WebCore/JSIDBDatabase.cpp \
 	DerivedSources/WebCore/JSIDBDatabase.h \
-	DerivedSources/WebCore/JSIDBErrorEvent.cpp \
-	DerivedSources/WebCore/JSIDBErrorEvent.h \
-	DerivedSources/WebCore/JSIDBEvent.cpp \
-	DerivedSources/WebCore/JSIDBEvent.h \
 	DerivedSources/WebCore/JSIDBFactory.cpp \
 	DerivedSources/WebCore/JSIDBFactory.h \
 	DerivedSources/WebCore/JSIDBIndex.cpp \
@@ -4032,8 +4024,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSIDBObjectStore.h \
 	DerivedSources/WebCore/JSIDBRequest.cpp \
 	DerivedSources/WebCore/JSIDBRequest.h \
-	DerivedSources/WebCore/JSIDBSuccessEvent.cpp \
-	DerivedSources/WebCore/JSIDBSuccessEvent.h \
 	DerivedSources/WebCore/JSIDBTransaction.cpp \
 	DerivedSources/WebCore/JSIDBTransaction.h
 endif # END ENABLE_INDEXED_DATABASE

@@ -43,6 +43,7 @@ public:
     static const int IDBDatabaseExceptionMax = 1299;
 
     enum IDBDatabaseExceptionCode {
+        NO_ERR = IDBDatabaseExceptionOffset + 0,
         UNKNOWN_ERR = IDBDatabaseExceptionOffset + 1,
         NON_TRANSIENT_ERR = IDBDatabaseExceptionOffset + 2,
         NOT_FOUND_ERR = IDBDatabaseExceptionOffset + 3,

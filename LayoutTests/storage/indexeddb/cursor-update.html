@@ -18,38 +18,30 @@ test();
 
 function test()
 {
-    result = evalAndLog("webkitIndexedDB.open('name')");
-    verifyResult(result);
-    result.onsuccess = openSuccess;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("webkitIndexedDB.open('name')");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function openSuccess()
 {
-    verifySuccessEvent(event);
-    var db = evalAndLog("db = event.result");
+    var db = evalAndLog("db = event.target.result");
 
-    result = evalAndLog("db.setVersion('new version')");
-    verifyResult(result);
-    result.onsuccess = setVersionSuccess;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("db.setVersion('new version')");
+    request.onsuccess = setVersionSuccess;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function setVersionSuccess()
 {
     debug("setVersionSuccess():");
-    verifySuccessEvent(event);
-    window.trans = evalAndLog("trans = event.result");
+    window.trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = openBasicCursor;
 
-    deleteAllObjectStores(db, createAndPopulateObjectStore);
-}
+    deleteAllObjectStores(db);
 
-function createAndPopulateObjectStore()
-{
-    debug("createAndPopulateObjectStore():");
     var objectStore = evalAndLog("objectStore = db.createObjectStore('basicStore')");
     evalAndLog("objectStore.add('myValue1', 'myKey1').onerror = unexpectedErrorCallback");
     evalAndLog("objectStore.add('myValue2', 'myKey2').onerror = unexpectedErrorCallback");
@@ -78,154 +70,147 @@ function openBasicCursor()
     trans.oncomplete = transactionComplete;
 
     keyRange = webkitIDBKeyRange.lowerBound("myKey1");
-    result = evalAndLog("trans.objectStore('basicStore').openCursor(keyRange)");
-    verifyResult(result);
-    result.onsuccess = basicUpdateCursor;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("trans.objectStore('basicStore').openCursor(keyRange)");
+    request.onsuccess = basicUpdateCursor;
+    request.onerror = unexpectedErrorCallback;
     counter = 1;
 }
 
 function basicUpdateCursor()
 {
     debug("basicUpdateCursor()");
-    if (event.result == null) {
+    if (event.target.result == null) {
         shouldBe("counter", "5");
         counter = 1;
 
-        result = evalAndLog("trans.objectStore('basicStore').openCursor(keyRange)");
-        verifyResult(result);
-        result.onsuccess = basicCheckCursor;
-        result.onerror = unexpectedErrorCallback;
+        request = evalAndLog("trans.objectStore('basicStore').openCursor(keyRange)");
+        request.onsuccess = basicCheckCursor;
+        request.onerror = unexpectedErrorCallback;
         return;
     }
 
-    result = evalAndLog("event.result.update('myUpdatedValue' + counter++)");
-    result.onsuccess = function() { evalAndLog("event.source.continue()"); }
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("event.target.result.update('myUpdatedValue' + counter++)");
+    request.onsuccess = function() { evalAndLog("event.target.source.continue()"); }
+    request.onerror = unexpectedErrorCallback;
 }
 
 function basicCheckCursor()
 {
     debug("basicCheckCursor()");
-    if (event.result == null) {
+    if (event.target.result == null) {
         shouldBe("counter", "5");
         counter = 1;
 
         keyRange = webkitIDBKeyRange.lowerBound(1);
-        result = evalAndLog("trans.objectStore('autoIncrementStore').openCursor(keyRange)");
-        verifyResult(result);
-        result.onsuccess = autoIncrementUpdateCursor;
-        result.onerror = unexpectedErrorCallback;
+        request = evalAndLog("trans.objectStore('autoIncrementStore').openCursor(keyRange)");
+        request.onsuccess = autoIncrementUpdateCursor;
+        request.onerror = unexpectedErrorCallback;
         return;
     }
 
-    shouldBeEqualToString("event.result.key", "myKey" + counter);
-    shouldBeEqualToString("event.result.value", "myUpdatedValue" + counter++);
-    evalAndLog("event.result.continue()");
+    shouldBeEqualToString("event.target.result.key", "myKey" + counter);
+    shouldBeEqualToString("event.target.result.value", "myUpdatedValue" + counter++);
+    evalAndLog("event.target.result.continue()");
 }
 
 function autoIncrementUpdateCursor()
 {
     debug("autoIncrementUpdateCursor()");
-    if (event.result == null) {
+    if (event.target.result == null) {
         shouldBe("counter", "5");
         counter = 1;
 
-        result = evalAndLog("trans.objectStore('autoIncrementStore').openCursor(keyRange)");
-        verifyResult(result);
-        result.onsuccess = autoIncrementCheckCursor;
-        result.onerror = unexpectedErrorCallback;
+        request = evalAndLog("trans.objectStore('autoIncrementStore').openCursor(keyRange)");
+        request.onsuccess = autoIncrementCheckCursor;
+        request.onerror = unexpectedErrorCallback;
         return;
     }
 
-    result = evalAndLog("event.result.update('myUpdatedFoo' + counter++)");
-    result.onsuccess = function() { evalAndLog("event.source.continue()"); }
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("event.target.result.update('myUpdatedFoo' + counter++)");
+    request.onsuccess = function() { evalAndLog("event.target.source.continue()"); }
+    request.onerror = unexpectedErrorCallback;
 }
 
 function autoIncrementCheckCursor()
 {
     debug("autoIncrementCheckCursor()");
-    if (event.result == null) {
+    if (event.target.result == null) {
         shouldBe("counter", "5");
         counter = 1;
 
         keyRange = webkitIDBKeyRange.lowerBound(1);
-        result = evalAndLog("trans.objectStore('keyPathStore').openCursor(keyRange)");
-        verifyResult(result);
-        result.onsuccess = keyPathUpdateCursor;
-        result.onerror = unexpectedErrorCallback;
+        request = evalAndLog("trans.objectStore('keyPathStore').openCursor(keyRange)");
+        request.onsuccess = keyPathUpdateCursor;
+        request.onerror = unexpectedErrorCallback;
         return;
     }
 
-    shouldBe("event.result.key", "counter");
-    shouldBeEqualToString("event.result.value", "myUpdatedFoo" + counter++);
-    evalAndLog("event.result.continue()");
+    shouldBe("event.target.result.key", "counter");
+    shouldBeEqualToString("event.target.result.value", "myUpdatedFoo" + counter++);
+    evalAndLog("event.target.result.continue()");
 }
 
 function keyPathUpdateCursor()
 {
     debug("keyPathUpdateCursor()");
-    if (event.result == null) {
+    if (event.target.result == null) {
         shouldBe("counter", "5");
         counter = 1;
 
-        result = evalAndLog("trans.objectStore('keyPathStore').openCursor(keyRange)");
-        verifyResult(result);
-        result.onsuccess = keyPathCheckCursor;
-        result.onerror = unexpectedErrorCallback;
+        request = evalAndLog("trans.objectStore('keyPathStore').openCursor(keyRange)");
+        request.onsuccess = keyPathCheckCursor;
+        request.onerror = unexpectedErrorCallback;
         return;
     }
 
-    result = evalAndLog("event.result.update({id: 100 + counter, number: 100 + counter})");
-    result.onsuccess = unexpectedSuccessCallback;
-    result.onerror = function() {
-        verifyErrorEvent(event);
-        shouldBe("event.code", "webkitIDBDatabaseException.DATA_ERR");
+    request = evalAndLog("event.target.result.update({id: 100 + counter, number: 100 + counter})");
+    request.onsuccess = unexpectedSuccessCallback;
+    request.onerror = function() {
+        shouldBe("event.target.errorCode", "webkitIDBDatabaseException.DATA_ERR");
 
         evalAndLog("event.preventDefault()");
 
-        result = evalAndLog("event.source.update({id: counter, number: 100 + counter++})");
-        result.onsuccess = function() { evalAndLog("event.source.continue()") };
-        result.onerror = unexpectedErrorCallback;
+        request = evalAndLog("event.target.source.update({id: counter, number: 100 + counter++})");
+        request.onsuccess = function() { evalAndLog("event.target.source.continue()") };
+        request.onerror = unexpectedErrorCallback;
     }
 }
 
 function keyPathCheckCursor()
 {
     debug("keyPathCheckCursor()");
-    if (event.result == null) {
+    if (event.target.result == null) {
         shouldBe("counter", "5");
         counter = 1;
 
         keyRange = webkitIDBKeyRange.lowerBound(101);
-        result = evalAndLog("trans.objectStore('keyPathStore').index('numberIndex').openKeyCursor(keyRange)");
-        result.onsuccess = keyCursor;
-        result.onerror = unexpectedErrorCallback;
+        request = evalAndLog("trans.objectStore('keyPathStore').index('numberIndex').openKeyCursor(keyRange)");
+        request.onsuccess = keyCursor;
+        request.onerror = unexpectedErrorCallback;
         return;
     }
 
-    shouldBe("event.result.key", "counter");
-    shouldBe("event.result.value.id", "counter");
-    shouldBe("event.result.value.number", (counter + 100).toString());
+    shouldBe("event.target.result.key", "counter");
+    shouldBe("event.target.result.value.id", "counter");
+    shouldBe("event.target.result.value.number", (counter + 100).toString());
     counter++;
-    evalAndLog("event.result.continue()");
+    evalAndLog("event.target.result.continue()");
 }
 
 function keyCursor()
 {
     debug("keyCursor()");
-    if (event.result == null) {
+    if (event.target.result == null) {
         shouldBe("counter", "5");
         return;
     }
 
-    shouldBe("event.result.key", "counter + 100");
-    shouldBe("event.result.value", "counter");
+    shouldBe("event.target.result.key", "counter + 100");
+    shouldBe("event.target.result.value", "counter");
 
     try {
-        debug("event.result.update({id: counter, number: counter + 200})");
-        event.result.update({id: counter, number: counter + 200});
+        debug("event.target.result.update({id: counter, number: counter + 200})");
+        event.target.result.update({id: counter, number: counter + 200});
         testFailed("Expected exception.");
     } catch (e) {
         code = e.code;
@@ -233,7 +218,7 @@ function keyCursor()
     }
 
     counter++;
-    event.result.continue();
+    event.target.result.continue();
 }
 
 function transactionComplete()

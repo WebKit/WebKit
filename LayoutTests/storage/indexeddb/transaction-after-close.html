@@ -19,32 +19,26 @@ function test()
     shouldBeTrue("'webkitIndexedDB' in window");
     shouldBeFalse("webkitIndexedDB == null");
 
-    result = evalAndLog("webkitIndexedDB.open('some db name')");
-    verifyResult(result);
-    result.onsuccess = openSuccess;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("webkitIndexedDB.open('some db name')");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function openSuccess()
 {
     debug("openSuccess():");
-    verifySuccessEvent(event);
-    window.db = evalAndLog("db = event.result");
-    result = evalAndLog("result = db.setVersion('version 1')");
-    result.onsuccess = inSetVersion;
-    result.onerror = unexpectedErrorCallback;
+    window.db = evalAndLog("db = event.target.result");
+    request = evalAndLog("request = db.setVersion('version 1')");
+    request.onsuccess = inSetVersion;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function inSetVersion()
 {
-    verifySuccessEvent(event);
-    deleteAllObjectStores(db, doSetVersionStuff);
-}
+    deleteAllObjectStores(db);
 
-function doSetVersionStuff()
-{
-    event.result.oncomplete = runFirstRegularTransaction;
-    event.result.onabort = unexpectedAbortCallback;
+    event.target.result.oncomplete = runFirstRegularTransaction;
+    event.target.result.onabort = unexpectedAbortCallback;
     store = evalAndLog("store = db.createObjectStore('store')");
     request = evalAndLog("request = store.put('x', 'y')");
     request.onsuccess = onPutSuccess;
@@ -53,7 +47,7 @@ function doSetVersionStuff()
 
 function onPutSuccess()
 {
-    verifySuccessEvent(event);
+    testPassed("Put success")
 }
 
 function runFirstRegularTransaction()
@@ -63,8 +57,8 @@ function runFirstRegularTransaction()
     currentTransaction.onabort = unexpectedAbortCallback;
     currentTransaction.oncomplete = firstTransactionComplete;
     objectStore = currentTransaction.objectStore('store');
-    result = evalAndLog("objectStore.put('a', 'b')");
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("objectStore.put('a', 'b')");
+    request.onerror = unexpectedErrorCallback;
 }
 
 function firstTransactionComplete()
@@ -74,15 +68,13 @@ function firstTransactionComplete()
 
     debug("")
     debug("verify that we can reopen the db after calling close")
-    result = evalAndLog("webkitIndexedDB.open('some db name')");
-    verifyResult(result);
-    result.onsuccess = onSecondOpen
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("webkitIndexedDB.open('some db name')");
+    request.onsuccess = onSecondOpen
+    request.onerror = unexpectedErrorCallback;
 }
 
 function onSecondOpen() {
-    verifySuccessEvent(event);
-    second_db = evalAndLog("second_db = event.result");
+    second_db = evalAndLog("second_db = event.target.result");
     currentTransaction = evalAndLog("currentTransaction = second_db.transaction([], webkitIDBTransaction.READ_WRITE)");
     store = currentTransaction.objectStore('store');
     request = evalAndLog("request = store.put('1', '2')");
@@ -93,7 +85,7 @@ function onSecondOpen() {
 }
 
 function onFinalPutSuccess() {
-    verifySuccessEvent(event);
+    testPassed("final put success");
 }
 
 var successfullyParsed = true;

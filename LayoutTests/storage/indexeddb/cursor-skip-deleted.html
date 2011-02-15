@@ -23,38 +23,29 @@ test();
 
 function test()
 {
-    result = evalAndLog("webkitIndexedDB.open('name')");
-    verifyResult(result);
-    result.onsuccess = openSuccess;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("webkitIndexedDB.open('name')");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function openSuccess()
 {
-    verifySuccessEvent(event);
-    var db = evalAndLog("db = event.result");
+    var db = evalAndLog("db = event.target.result");
 
-    result = evalAndLog("db.setVersion('new version')");
-    verifyResult(result);
-    result.onsuccess = setVersionSuccess;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("db.setVersion('new version')");
+    request.onsuccess = setVersionSuccess;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function setVersionSuccess()
 {
     debug("setVersionSuccess():");
-    verifySuccessEvent(event);
-    window.trans = evalAndLog("trans = event.result");
+    window.trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = basicCursorTest;
 
-    deleteAllObjectStores(db, createAndPopulateObjectStore);
-}
-
-function createAndPopulateObjectStore()
-{
-    debug("createAndPopulateObjectStore():");
+    deleteAllObjectStores(db);
 
     var objectStore = evalAndLog("objectStore = db.createObjectStore('store', {keyPath: 'id'})");
     evalAndLog("objectStore.createIndex('nameIndex', 'name')");
@@ -100,11 +91,10 @@ function testCursor(deleteList, createCursorCommand, callback)
 
     // Create the cursor.
     request = evalAndLog(createCursorCommand);
-    verifyResult(request);
 
     request.onerror = unexpectedErrorCallback;
     request.onsuccess = function () {
-        if (event.result == null) {
+        if (event.target.result == null) {
             // Make sure we have seen every non-deleted item.
             for (var i = 0; i < names.length; i++) {
                 if (contains(deleted, i))
@@ -125,16 +115,16 @@ function testCursor(deleteList, createCursorCommand, callback)
             return;
         }
 
-        cursor = event.result;
-        debug(event.result.value.id + ": " + event.result.value.name);
-        seen.push(event.result.value.id);
+        cursor = event.target.result;
+        debug(event.target.result.value.id + ": " + event.target.result.value.name);
+        seen.push(event.target.result.value.id);
 
         // Make sure we don't see any deleted items.
-        if (contains(deleted, event.result.value.id))
+        if (contains(deleted, event.target.result.value.id))
             testFailed("Cursor hit previously deleted element.");
 
         for (var i = 0; i < deleteList.length; i++) {
-            if (event.result.value.id == deleteList[i].id) {
+            if (event.target.result.value.id == deleteList[i].id) {
                 // Delete objects targeted by this id.
                 var targets = deleteList[i].targets;
                 for (var j = 0; j < targets.length; j++) {

@@ -16,56 +16,44 @@ if (window.layoutTestController)
 
 function test()
 {
-    result = evalAndLog("webkitIndexedDB.open('name')");
-    verifyResult(result);
-    result.onsuccess = openSuccess;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("webkitIndexedDB.open('name')");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function openSuccess()
 {
-    verifySuccessEvent(event);
-    window.db = evalAndLog("db = event.result");
+    window.db = evalAndLog("db = event.target.result");
 
-    result = evalAndLog("db.setVersion('new version')");
-    verifyResult(result);
-    result.onsuccess = setVersionSuccess;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("db.setVersion('new version')");
+    request.onsuccess = setVersionSuccess;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function setVersionSuccess()
 {
     debug("setVersionSuccess():");
-    verifySuccessEvent(event);
-    window.trans = evalAndLog("trans = event.result");
+    window.trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
 
-    deleteAllObjectStores(db, testSetVersion);
-}
+    deleteAllObjectStores(db);
 
-function testSetVersion()
-{
     debug("Testing setVersion.");
-    result = evalAndLog('db.setVersion("version a")');
-    verifyResult(result);
-    result.onsuccess = setVersionAgain;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog('db.setVersion("version a")');
+    request.onsuccess = setVersionAgain;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function setVersionAgain()
 {
-    verifySuccessEvent(event);
-
-    result = evalAndLog('db.setVersion("version b")');
-    verifyResult(result);
-    result.onsuccess = createObjectStore;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog('db.setVersion("version b")');
+    request.onsuccess = createObjectStore;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function createObjectStore()
 {
-    verifySuccessEvent(event);
     shouldBeEqualToString("db.version", "version b");
     shouldBeEqualToString("db.name", "name");
     shouldBe("db.objectStoreNames", "[]");
@@ -95,21 +83,19 @@ function commitAndContinue()
 
 function testSetVersionAbort()
 {
-    result = evalAndLog('db.setVersion("version c")');
-    verifyResult(result);
-    result.onsuccess = createAnotherObjectStore;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog('db.setVersion("version c")');
+    request.onsuccess = createAnotherObjectStore;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function createAnotherObjectStore()
 {
-    verifySuccessEvent(event);
     shouldBeEqualToString("db.version", "version c");
     shouldBeEqualToString("db.name", "name");
     checkObjectStore();
 
     objectStore = evalAndLog('db.createObjectStore("test456")');
-    var setVersionTrans = evalAndLog("setVersionTrans = event.result");
+    var setVersionTrans = evalAndLog("setVersionTrans = event.target.result");
     shouldBeTrue("setVersionTrans !== null");
     setVersionTrans.oncomplete = unexpectedCompleteCallback;
     setVersionTrans.onabort = checkMetadata;

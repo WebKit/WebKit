@@ -19,28 +19,24 @@ function test()
     shouldBeTrue("'webkitIndexedDB' in window");
     shouldBeFalse("webkitIndexedDB == null");
 
-    result = evalAndLog("webkitIndexedDB.open('name', 'description')");
-    verifyResult(result);
-    result.onsuccess = openSuccess;
-    result.onerror = unexpectedErrorCallback;
+    request = evalAndLog("webkitIndexedDB.open('name', 'description')");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function openSuccess()
 {
-    window.db = evalAndLog("db = event.result");
-    result = evalAndLog("result = db.setVersion('version 1')");
-    result.onsuccess = cleanDatabase;
-    result.onerror = unexpectedErrorCallback;
+    window.db = evalAndLog("db = event.target.result");
+    request = evalAndLog("result = db.setVersion('version 1')");
+    request.onsuccess = cleanDatabase;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function cleanDatabase()
 {
-    trans = evalAndLog("trans = event.result");
-    deleteAllObjectStores(db, cleaned);
-}
+    trans = evalAndLog("trans = event.target.result");
+    deleteAllObjectStores(db);
 
-function cleaned()
-{
     evalAndLog("db.createObjectStore('a')");
     evalAndLog("db.createObjectStore('b')");
     evalAndLog("trans.addEventListener('complete', created, true)");
