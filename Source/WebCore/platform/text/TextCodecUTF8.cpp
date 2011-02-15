@@ -201,6 +201,9 @@ static inline UChar* appendCharacter(UChar* destination, int character)
 
 String TextCodecUTF8::decode(const char* bytes, size_t length, bool flush, bool stopOnError, bool& sawError)
 {
+    if (!length)
+        return String();
+
     // Each input byte might turn into a character.
     // That includes all bytes in the partial-sequence buffer because
     // each byte in an invalid sequence will turn into a replacement character.

@@ -1,3 +1,15 @@
+2011-02-15  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Andreas Kling.
+
+        r78499 causes assertion failure in http/tests/xmlhttprequest/cache-override.html
+        https://bugs.webkit.org/show_bug.cgi?id=54418
+        
+        Check for zero buffer length.
+
+        * platform/text/TextCodecUTF8.cpp:
+        (WebCore::TextCodecUTF8::decode):
+
 2011-02-15  MORITA Hajime  <morrita@google.com>
 
         Unreviewed build fix.
