@@ -52,10 +52,8 @@ public:
     virtual ~WebIDBFactory() { }
 
     // The WebKit implementation of open ignores the WebFrame* parameter.
-    virtual void open(const WebString& name, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame* webFrame, const WebString& dataDir, unsigned long long maximumSize)
-    {
-        WEBKIT_ASSERT_NOT_REACHED();
-    }
+    virtual void open(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir, unsigned long long maximumSize) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void deleteDatabase(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir) { WEBKIT_ASSERT_NOT_REACHED(); }
 };
 
 } // namespace WebKit
