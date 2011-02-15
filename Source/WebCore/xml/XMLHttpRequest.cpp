@@ -684,12 +684,7 @@ void XMLHttpRequest::abort()
 
     internalAbort();
 
-    m_responseBuilder.clear();
-    m_createdDocument = false;
-    m_responseXML = 0;
-#if ENABLE(XHR_RESPONSE_BLOB)
-    m_responseBlob = 0;
-#endif
+    clearResponseBuffers();
 
     // Clear headers as required by the spec
     m_requestHeaders.clear();
@@ -733,6 +728,11 @@ void XMLHttpRequest::internalAbort()
 void XMLHttpRequest::clearResponse()
 {
     m_response = ResourceResponse();
+    clearResponseBuffers();
+}
+
+void XMLHttpRequest::clearResponseBuffers()
+{
     m_responseBuilder.clear();
     m_createdDocument = false;
     m_responseXML = 0;

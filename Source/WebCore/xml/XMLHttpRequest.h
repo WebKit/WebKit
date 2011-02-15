@@ -173,6 +173,7 @@ private:
     void dropProtection();
     void internalAbort();
     void clearResponse();
+    void clearResponseBuffers();
     void clearRequest();
 
     void createRequest(ExceptionCode&);
