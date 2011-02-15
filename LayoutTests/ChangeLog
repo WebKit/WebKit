@@ -1,3 +1,14 @@
+2011-02-15  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Andreas Kling.
+
+        [Gtk] Cleanup in the canvas tests
+        https://bugs.webkit.org/show_bug.cgi?id=54458
+
+        Unskip canvas tests that already pass.
+
+        * platform/gtk/Skipped:
+
 2011-02-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

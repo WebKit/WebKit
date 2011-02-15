@@ -2098,31 +2098,11 @@ canvas/philip/tests/2d.composite.uncovered.pattern.destination-in.html
 canvas/philip/tests/2d.composite.uncovered.pattern.source-in.html
 canvas/philip/tests/2d.composite.uncovered.pattern.source-out.html
 canvas/philip/tests/2d.drawImage.broken.html
-canvas/philip/tests/2d.drawImage.null.html
-canvas/philip/tests/2d.gradient.radial.cone.front.html
-canvas/philip/tests/2d.gradient.radial.cone.top.html
-canvas/philip/tests/2d.gradient.radial.inside2.html
-canvas/philip/tests/2d.gradient.radial.inside3.html
-canvas/philip/tests/2d.gradient.radial.outside1.html
 canvas/philip/tests/2d.imageData.create1.type.html
 canvas/philip/tests/2d.imageData.create2.type.html
-canvas/philip/tests/2d.imageData.get.source.negative.html
-canvas/philip/tests/2d.imageData.get.source.outside.html
 canvas/philip/tests/2d.imageData.get.type.html
-canvas/philip/tests/2d.line.cap.closed.html
-canvas/philip/tests/2d.line.join.parallel.html
-canvas/philip/tests/2d.line.miter.lineedge.html
 canvas/philip/tests/2d.missingargs.html
-canvas/philip/tests/2d.path.arcTo.ensuresubpath.2.html
-canvas/philip/tests/2d.path.clip.empty.html
 canvas/philip/tests/2d.pattern.image.broken.html
-canvas/philip/tests/2d.shadow.enable.blur.html
-canvas/philip/tests/2d.shadow.enable.x.html
-canvas/philip/tests/2d.shadow.enable.y.html
-canvas/philip/tests/2d.shadow.gradient.alpha.html
-canvas/philip/tests/2d.shadow.gradient.basic.html
-canvas/philip/tests/2d.shadow.gradient.transparent.2.html
-canvas/philip/tests/2d.strokeRect.zero.4.html
 canvas/philip/tests/2d.text.draw.baseline.bottom.html
 canvas/philip/tests/2d.text.draw.baseline.hanging.html
 canvas/philip/tests/2d.text.draw.baseline.ideographic.html
@@ -2146,21 +2126,13 @@ canvas/philip/tests/type.prototype.html
 
 # These tests are failing for us, but not for Mac. This likely
 # indicates platform specific problems.
-canvas/philip/tests/2d.shadow.transform.2.html
 canvas/philip/tests/2d.drawImage.floatsource.html
 canvas/philip/tests/2d.drawImage.self.2.html
-canvas/philip/tests/2d.gradient.radial.cone.behind.html
-canvas/philip/tests/2d.gradient.radial.cone.beside.html
-canvas/philip/tests/2d.gradient.radial.cone.shape2.html
-canvas/philip/tests/2d.gradient.radial.touch1.html
-canvas/philip/tests/2d.gradient.radial.touch2.html
-canvas/philip/tests/2d.gradient.radial.touch3.html
 canvas/philip/tests/2d.path.arc.selfintersect.1.html
 canvas/philip/tests/2d.path.arc.shape.3.html
 canvas/philip/tests/2d.path.arc.zeroradius.html
 canvas/philip/tests/2d.path.arcTo.collinear.2.html
 canvas/philip/tests/2d.path.arcTo.collinear.3.html
-canvas/philip/tests/2d.path.closePath.nextpoint.html
 canvas/philip/tests/2d.path.rect.selfintersect.html
 canvas/philip/tests/2d.path.rect.zero.6.html
 canvas/philip/tests/2d.pattern.paint.repeatx.coord1.html
