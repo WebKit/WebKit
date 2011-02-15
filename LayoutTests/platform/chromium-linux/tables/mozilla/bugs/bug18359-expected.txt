@@ -27,9 +27,9 @@ layer at (0,0) size 800x600
                 RenderInline {B} at (0,0) size 105x19
                   RenderText {#text} at (1,1) size 105x19
                     text run at (1,1) width 105: "Run Test Case:"
-              RenderTableCell {TD} at (111,34) size 431x24 [r=1 c=1 rs=1 cs=1]
-                RenderMenuList {SELECT} at (3,3) size 268x18 [bgcolor=#DDDDDD]
-                  RenderBlock (anonymous) at (0,0) size 268x18
+              RenderTableCell {TD} at (111,33) size 431x26 [r=1 c=1 rs=1 cs=1]
+                RenderMenuList {SELECT} at (3,3) size 270x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+                  RenderBlock (anonymous) at (1,1) size 268x18
                     RenderText at (4,1) size 77x16
                       text run at (4,1) width 77: "a_abortinstall"
                 RenderText {#text} at (0,0) size 0x0
