@@ -36,6 +36,7 @@
 #include "PlatformCertificateInfo.h"
 #include "PluginView.h"
 #include "StringPairVector.h"
+#include "WebBackForwardListProxy.h"
 #include "WebContextMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
@@ -845,10 +846,24 @@ void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
     }
 }
 
-bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem*) const
+bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem* item) const
 {
-    notImplemented();
-    return true;
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return false;
+    
+    uint64_t itemID = WebBackForwardListProxy::idForItem(item);
+    if (!itemID) {
+        // We should never be considering navigating to an item that is not actually in the back/forward list.
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+    
+    bool shouldGoToBackForwardListItem;
+    if (!webPage->sendSync(Messages::WebPageProxy::ShouldGoToBackForwardListItem(itemID), Messages::WebPageProxy::ShouldGoToBackForwardListItem::Reply(shouldGoToBackForwardListItem)))
+        return false;
+    
+    return shouldGoToBackForwardListItem;
 }
 
 void WebFrameLoaderClient::dispatchDidAddBackForwardItem(HistoryItem*) const

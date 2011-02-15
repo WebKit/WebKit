@@ -77,6 +77,7 @@ public:
     void processDidCrash(WebPageProxy*);
 
     void didChangeBackForwardList(WebPageProxy*, WebBackForwardListItem* addedItem, Vector<RefPtr<APIObject> >* removedItems);
+    bool shouldGoToBackForwardListItem(WebPageProxy*, WebBackForwardListItem*);
 };
 
 } // namespace WebKit

@@ -597,7 +597,8 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         didBecomeUnresponsive,
         didBecomeResponsive,
         processDidExit,
-        didChangeBackForwardList
+        didChangeBackForwardList,
+        0 // shouldGoToBackForwardItem
     };
     WKPageSetPageLoaderClient(_webView.pageRef, &loadClient);
     

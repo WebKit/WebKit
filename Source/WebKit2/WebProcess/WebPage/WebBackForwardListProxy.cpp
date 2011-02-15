@@ -118,6 +118,12 @@ HistoryItem* WebBackForwardListProxy::itemForID(uint64_t itemID)
     return idToHistoryItemMap().get(itemID).get();
 }
 
+uint64_t WebBackForwardListProxy::idForItem(HistoryItem* item)
+{
+    ASSERT(item);
+    return historyItemToIDMap().get(item);
+}
+
 void WebBackForwardListProxy::removeItem(uint64_t itemID)
 {
     IDToHistoryItemMap::iterator it = idToHistoryItemMap().find(itemID);

@@ -1,3 +1,18 @@
+2011-02-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/9002047> and https://bugs.webkit.org/show_bug.cgi?id=54426
+        WebFrameLoaderClient::shouldGoToHistoryItem needs implementation
+
+        Add dummy implementations to keep our tools building.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController awakeFromNib]):
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+
 2011-02-15  David Levin  <levin@chromium.org>
 
         Reviewed by Shinichiro Hamaji.

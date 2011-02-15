@@ -61,6 +61,7 @@ typedef void (*WKPageDidRunInsecureContentForFrameCallback)(WKPageRef page, WKFr
 typedef bool (*WKPageCanAuthenticateAgainstProtectionSpaceInFrameCallback)(WKPageRef page, WKFrameRef frame, WKProtectionSpaceRef protectionSpace, const void *clientInfo);
 typedef void (*WKPageDidReceiveAuthenticationChallengeInFrameCallback)(WKPageRef page, WKFrameRef frame, WKAuthenticationChallengeRef authenticationChallenge, const void *clientInfo);
 typedef void (*WKPageDidChangeBackForwardListCallback)(WKPageRef page, WKBackForwardListItemRef addedItem, WKArrayRef removedItems, const void *clientInfo);
+typedef bool (*WKPageShouldGoToBackForwardListItemCallback)(WKPageRef page, WKBackForwardListItemRef item, const void *clientInfo);
 
 struct WKPageLoaderClient {
     int                                                                 version;
@@ -93,6 +94,7 @@ struct WKPageLoaderClient {
     WKPageCallback                                                      processDidCrash;
 
     WKPageDidChangeBackForwardListCallback                              didChangeBackForwardList;
+    WKPageShouldGoToBackForwardListItemCallback                         shouldGoToBackForwardListItem;
 };
 typedef struct WKPageLoaderClient WKPageLoaderClient;
 

@@ -138,6 +138,7 @@ messages -> WebPageProxy {
     BackForwardBackListCount() -> (int32_t count)
     BackForwardForwardListCount() -> (int32_t count)
     BackForwardClear()
+    ShouldGoToBackForwardListItem(uint64_t itemID) -> (bool shouldGoToBackForwardListItem)
 
     # Undo/Redo messages
     RegisterEditCommandForUndo(uint64_t commandID, uint32_t editAction)

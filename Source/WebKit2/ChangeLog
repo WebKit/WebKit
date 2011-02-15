@@ -1,3 +1,33 @@
+2011-02-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/9002047> and https://bugs.webkit.org/show_bug.cgi?id=54426
+        WebFrameLoaderClient::shouldGoToHistoryItem needs implementation
+
+        Expose HistoryItem -> ItemID mapping for the message:
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::WebBackForwardListProxy::idForItem):
+        * WebProcess/WebPage/WebBackForwardListProxy.h:
+
+        Sync message to the UIProcess for the answer:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::shouldGoToHistoryItem):
+
+        Call out to the WebLoaderClient for the answer:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::shouldGoToBackForwardListItem):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        Call out to the client application for the answer:
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::shouldGoToBackForwardListItem):
+        * UIProcess/WebLoaderClient.h:
+
+        Add API for the client application to listen for this:
+        * UIProcess/API/C/WKPage.h:
+
 2011-02-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

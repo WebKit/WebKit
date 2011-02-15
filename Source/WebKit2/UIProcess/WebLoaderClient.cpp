@@ -223,4 +223,12 @@ void WebLoaderClient::didChangeBackForwardList(WebPageProxy* page, WebBackForwar
     m_client.didChangeBackForwardList(toAPI(page), toAPI(addedItem), toAPI(removedItemsArray.get()), m_client.clientInfo);
 }
 
+bool WebLoaderClient::shouldGoToBackForwardListItem(WebPageProxy* page, WebBackForwardListItem* item)
+{
+    if (!m_client.shouldGoToBackForwardListItem)
+        return true;
+    
+    return m_client.shouldGoToBackForwardListItem(toAPI(page), toAPI(item), m_client.clientInfo);
+}
+
 } // namespace WebKit

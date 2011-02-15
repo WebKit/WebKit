@@ -327,7 +327,8 @@ void TestController::initialize(int argc, const char* argv[])
         0, // didBecomeUnresponsive
         0, // didBecomeResponsive
         processDidCrash, // processDidCrash
-        0 // didChangeBackForwardList
+        0, // didChangeBackForwardList
+        0 // shouldGoToBackForwardListItem
     };
     WKPageSetPageLoaderClient(m_mainWebView->page(), &pageLoaderClient);
 }

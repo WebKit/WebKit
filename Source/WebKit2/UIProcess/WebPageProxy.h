@@ -165,6 +165,7 @@ public:
 
     void goToBackForwardItem(WebBackForwardListItem*);
     void didChangeBackForwardList(WebBackForwardListItem* addedItem, Vector<RefPtr<APIObject> >* removedItems);
+    void shouldGoToBackForwardListItem(uint64_t itemID, bool& shouldGoToBackForwardListItem);
 
     bool canShowMIMEType(const String& mimeType) const;
 

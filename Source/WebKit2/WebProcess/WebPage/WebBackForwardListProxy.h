@@ -38,6 +38,7 @@ public:
     static PassRefPtr<WebBackForwardListProxy> create(WebPage* page) { return adoptRef(new WebBackForwardListProxy(page)); }
 
     static WebCore::HistoryItem* itemForID(uint64_t);
+    static uint64_t idForItem(WebCore::HistoryItem*);
     static void removeItem(uint64_t itemID);
 
     static void addItemFromUIProcess(uint64_t itemID, PassRefPtr<WebCore::HistoryItem>);
