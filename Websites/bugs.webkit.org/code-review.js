@@ -102,6 +102,10 @@ var CODE_REVIEW_UNITTEST;
     return $(line).parents('.FileDiff');
   }
 
+  function diffSectionFor(line) {
+    return $(line).parents('.DiffSection');
+  }
+
   function activeCommentFor(line) {
     // Scope to the diffSection as a performance improvement.
     return $('textarea[data-comment-for~="' + line[0].id + '"]', fileDiffFor(line));
@@ -1408,11 +1412,6 @@ var CODE_REVIEW_UNITTEST;
 
   var drag_select_start_index = -1;
 
-  function stopDragSelect() {
-    $('.selected').removeClass('selected');
-    drag_select_start_index = -1;
-  }
-
   function lineOffsetFrom(line, offset) {
     var file_diff = line.parents('.FileDiff');
     var all_lines = $('.Line', file_diff);
@@ -1428,16 +1427,67 @@ var CODE_REVIEW_UNITTEST;
     return lineOffsetFrom(line, 1);
   }
 
-  $('.lineNumber').live('click', function() {
+  $(document.body).bind('mouseup', processSelectedLines);
+
+  $('.lineNumber').live('click', function(e) {
     var line = lineFromLineDescendant($(this));
     if (line.hasClass('commentContext'))
       trimCommentContextToBefore(previousLineFor(line), line.attr('data-comment-base-line'));
-  }).live('mousedown', function() {
+    else if (e.shiftKey)
+      extendCommentContextTo(line);
+  }).live('mousedown', function(e) {
+    // preventDefault to avoid selecting text when dragging to select comment context lines.
+    // FIXME: should we use user-modify CSS instead?
+    event.preventDefault();
+    if (e.shiftKey)
+      return;
+
     var line = lineFromLineDescendant($(this));
     drag_select_start_index = numberFrom(line.attr('id'));
     line.addClass('selected');
-    event.preventDefault();
   });
+
+  $('.LineContainer').live('mouseenter', function(e) {
+    if (drag_select_start_index == -1 || e.shiftKey)
+      return;
+    selectToLineContainer(this);
+  }).live('mouseup', function(e) {
+    if (drag_select_start_index == -1 || e.shiftKey)
+      return;
+
+    selectToLineContainer(this);
+    processSelectedLines();
+  });
+
+  function extendCommentContextTo(line) {
+    var diff_section = diffSectionFor(line);
+    var lines = $('.Line', diff_section);
+    var lines_to_modify = [];
+    var have_seen_start_line = false;
+    var data_comment_base_line = null;
+    lines.each(function() {
+      if (data_comment_base_line)
+        return;
+
+      have_seen_start_line = have_seen_start_line || this == line[0];
+      
+      if (have_seen_start_line) {
+        if ($(this).hasClass('commentContext'))
+          data_comment_base_line = $(this).attr('data-comment-base-line');
+        else
+          lines_to_modify.push(this);
+      }
+    });
+    
+    // There is no comment context to extend.
+    if (!data_comment_base_line)
+      return;
+    
+    $(lines_to_modify).each(function() {
+      $(this).addClass('commentContext');
+      $(this).attr('data-comment-base-line', data_comment_base_line);
+    });
+  }
 
   function selectTo(focus_index) {
     var selected = $('.selected').removeClass('selected');
@@ -1452,20 +1502,29 @@ var CODE_REVIEW_UNITTEST;
 
   function selectToLineContainer(line_container) {
     var line = lineFromLineContainer(line_container);
+
+    // Ensure that the selected lines are all contained in the same DiffSection.
+    var selected_lines = $('.selected');
+    var selected_diff_section = diffSectionFor(selected_lines.first());
+    var new_diff_section = diffSectionFor(line);
+    if (new_diff_section[0] != selected_diff_section[0]) {
+      var lines = $('.Line', selected_diff_section);
+      if (numberFrom(selected_lines.first().attr('id')) == drag_select_start_index)
+        line = lines.last();
+      else
+        line = lines.first();
+    }
+    
     selectTo(numberFrom(line.attr('id')));
   }
 
-  $('.LineContainer').live('mouseenter', function() {
-    if (drag_select_start_index == -1)
-      return;
-    selectToLineContainer(this);
-  }).live('mouseup', function() {
-    if (drag_select_start_index == -1)
-      return;
-
-    selectToLineContainer(this);
+  function processSelectedLines() {
+    drag_select_start_index = -1;
 
     var selected = $('.selected');
+    if (!selected.size())
+      return;
+    
     var already_has_comment = selected.last().hasClass('commentContext');
     selected.addClass('commentContext');
 
@@ -1480,10 +1539,11 @@ var CODE_REVIEW_UNITTEST;
 
     selected.each(function() {
       addDataCommentBaseLine(this, comment_base_line);
+      $(this).removeClass('selected');
     });
 
     saveDraftComments();
-  });
+  }
 
   function addDataCommentBaseLine(line, id) {
     var val = $(line).attr('data-comment-base-line');
@@ -1524,8 +1584,6 @@ var CODE_REVIEW_UNITTEST;
       line = $('.Line', line);
     return line;
   }
-
-  $('.DiffSection').live('mouseleave', stopDragSelect).live('mouseup', stopDragSelect);
 
   function contextSnippetFor(line, indent) {
     var snippets = []

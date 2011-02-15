@@ -1,3 +1,16 @@
+2011-02-14  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        improve line selection in the code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=54430
+
+        -shift+click now extends the comment context
+        -selecting outside of a diff section no longer clears the selected lines.
+         Instead it just restricts the selected lines to that diff section.
+
+        * code-review.js:
+
 2011-02-10  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.
