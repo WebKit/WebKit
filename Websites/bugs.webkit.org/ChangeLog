@@ -2,6 +2,19 @@
 
         Reviewed by Adam Barth.
 
+        allow for modifying comments without the mouse
+        https://bugs.webkit.org/show_bug.cgi?id=54433
+
+        Use n/p to navigate the comments.
+        Enter to begin editing a comment.
+        Escape to finish editing a comment.
+
+        * code-review.js:
+
+2011-02-14  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
         improve line selection in the code review tool
         https://bugs.webkit.org/show_bug.cgi?id=54430
 

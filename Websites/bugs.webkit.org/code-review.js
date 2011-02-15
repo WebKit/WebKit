@@ -336,7 +336,7 @@ var CODE_REVIEW_UNITTEST;
     if (line.attr('data-has-comment')) {
       // FIXME: This query is overly complex because we place comment blocks
       // after Lines.  Instead, comment blocks should be children of Lines.
-      findCommentPositionFor(line).next().next().filter('.frozenComment').each(unfreezeComment);
+      findCommentPositionFor(line).next().next().filter('.frozenComment').each(handleUnfreezeComment);
       return;
     }
     line.attr('data-has-comment', 'true');
@@ -350,16 +350,23 @@ var CODE_REVIEW_UNITTEST;
 
   function addCommentFor(line) {
     var comment_block = createCommentFor(line);
+    if (!comment_block)
+      return;
+
     comment_block.hide().slideDown('fast', function() {
       $(this).children('textarea').focus();
     });
   }
 
-  function addCommentField() {
-    var id = $(this).attr('data-comment-for');
+  function addCommentField(comment_block) {
+    var id = $(comment_block).attr('data-comment-for');
     if (!id)
-      id = this.id;
+      id = comment_block.id;
     addCommentFor($('#' + id));
+  }
+  
+  function handleAddCommentField() {
+    addCommentField(this);
   }
 
   function addPreviousComment(line, author, comment_text) {
@@ -367,7 +374,7 @@ var CODE_REVIEW_UNITTEST;
     var comment_block = $('<div data-comment-for="' + line_id + '" class="previousComment"></div>');
     var author_block = $('<div class="author"></div>').text(author + ':');
     var text_block = $('<div class="content"></div>').text(comment_text);
-    comment_block.append(author_block).append(text_block).each(hoverify).click(addCommentField);
+    comment_block.append(author_block).append(text_block).each(hoverify).click(handleAddCommentField);
     addDataCommentBaseLine(line, line_id);
     insertCommentFor(line, comment_block);
   }
@@ -1067,6 +1074,9 @@ var CODE_REVIEW_UNITTEST;
 
     updateToolbarAnchorState();
     loadDiffState();
+
+    // Ensure the body has focus so that it receives key events.
+    document.body.focus();
   });
 
   function handleReviewFormLoad() {
@@ -1274,9 +1284,15 @@ var CODE_REVIEW_UNITTEST;
     });
   }
 
-  function unfreezeComment() {
-    $(this).prev().show();
-    $(this).remove();
+  function handleUnfreezeComment() {
+    unfreezeComment(this);
+  }
+
+  function unfreezeComment(comment) {
+    var unfrozen_comment = $(comment).prev();
+    unfrozen_comment.show();
+    $(comment).remove();
+    unfrozen_comment.find('textarea')[0].focus();
   }
 
   function showFileDiffLinks() {
@@ -1292,7 +1308,11 @@ var CODE_REVIEW_UNITTEST;
   }
   
   function handleAcceptComment() {
-    freezeComment($(this).parents('.comment'));
+    acceptComment($(this).parents('.comment'));
+  }
+  
+  function acceptComment(comment) {
+    freezeComment(comment);
     saveDraftComments();
   }
 
@@ -1301,7 +1321,7 @@ var CODE_REVIEW_UNITTEST;
   $('.side-by-side-link').live('click', handleSideBySideLinkClick);
   $('.unify-link').live('click', handleUnifyLinkClick);
   $('.ExpandLink').live('click', handleExpandLinkClick);
-  $('.frozenComment').live('click', unfreezeComment);
+  $('.frozenComment').live('click', handleUnfreezeComment);
   $('.comment .discard').live('click', handleDiscardComment);
   $('.comment .ok').live('click', handleAcceptComment);
 
@@ -1317,6 +1337,7 @@ var CODE_REVIEW_UNITTEST;
   }
 
   function focusOn(node) {
+    // FIXME: We should probably give propery browser focus here.
     $('.focused').removeClass('focused');
     if (node.length == 0)
       return;
@@ -1324,8 +1345,8 @@ var CODE_REVIEW_UNITTEST;
   }
 
   function focusNext(filter, direction) {
-    var focusable_nodes = $('.frozenComment,.previousComment,.DiffBlock').filter(function() {
-      return ($(this).hasClass('frozenComment') || $(this).hasClass('previousComment') || $('.add,.remove', this).size());
+    var focusable_nodes = $('.frozenComment,.previousComment,.DiffBlock,.overallComments').filter(function() {
+      return !$(this).hasClass('DiffBlock') || $('.add,.remove', this).size();
     });
 
     var is_backward = direction == DIRECTION.BACKWARD;
@@ -1339,9 +1360,10 @@ var CODE_REVIEW_UNITTEST;
       var node = $(focusable_nodes[i]);
       if (filter(node)) {
         focusOn(node);
-        return;
+        return true;
       }
     }
+    return false;
   }
 
   var DIRECTION = {FORWARD: 1, BACKWARD: 2};
@@ -1350,39 +1372,88 @@ var CODE_REVIEW_UNITTEST;
   var kCharCodeForP = 'p'.charCodeAt(0);
   var kCharCodeForJ = 'j'.charCodeAt(0);
   var kCharCodeForK = 'k'.charCodeAt(0);
+  var kCharCodeForEnter = '\r'.charCodeAt(0);
 
   function isComment(node) {
-    return node.hasClass('frozenComment') || node.hasClass('previousComment');
+    return node.hasClass('frozenComment') || node.hasClass('previousComment') || node.hasClass('overallComments');
   }
   
   function isDiffBlock(node) {
     return node.hasClass('DiffBlock');
   }
 
+  $('textarea').live('keydown', function() {
+    var unicode_escape = 'U+001B';
+    if (event.keyIdentifier == unicode_escape)
+      handleEscapeKeyDownInTextarea(this);
+  });
+
   $('body').live('keypress', function() {
     // FIXME: There's got to be a better way to avoid seeing these keypress
     // events.
     if (event.target.nodeName == 'TEXTAREA')
       return;
+    
+    var handled = false;
 
     switch (event.charCode) {
     case kCharCodeForN:
-      focusNext(isComment, DIRECTION.FORWARD);
+      handled = focusNext(isComment, DIRECTION.FORWARD);
       break;
 
     case kCharCodeForP:
-      focusNext(isComment, DIRECTION.BACKWARD);
+      handled = focusNext(isComment, DIRECTION.BACKWARD);
       break;
 
     case kCharCodeForJ:
-      focusNext(isDiffBlock, DIRECTION.FORWARD);
+      handled = focusNext(isDiffBlock, DIRECTION.FORWARD);
       break;
 
     case kCharCodeForK:
-      focusNext(isDiffBlock, DIRECTION.BACKWARD);
+      handled = focusNext(isDiffBlock, DIRECTION.BACKWARD);
+      break;
+    
+    case kCharCodeForEnter:
+      handled = handleEnterKeyPress();
       break;
     }
+    
+    if (handled)
+      event.preventDefault();
   });
+  
+  function handleEscapeKeyDownInTextarea(textarea) {
+    var comment = $(textarea).parents('.comment');
+    if (comment.size())
+      acceptComment(comment);
+
+    textarea.blur();
+    document.body.focus();
+  }
+  
+  function handleEnterKeyPress() {
+    var focused = $('.focused');
+    if (!focused.size())
+      return false;
+
+    if (focused.hasClass('frozenComment')) {
+      unfreezeComment(focused);
+      return true;
+    }
+    
+    if (focused.hasClass('overallComments')) {
+      openOverallComments();
+      focused.find('textarea')[0].focus();
+      return true;
+    }
+    
+    if (focused.hasClass('previousComment')) {
+      addCommentField(focused);
+      return true;
+    }
+
+    return false;
+  }
 
   function contextLinesFor(comment_base_lines, file_diff) {
     var base_lines = comment_base_lines.split(' ');
