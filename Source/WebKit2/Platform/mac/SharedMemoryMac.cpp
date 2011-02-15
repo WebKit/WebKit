@@ -105,7 +105,7 @@ PassRefPtr<SharedMemory> SharedMemory::create(size_t size)
 
     if (kr != KERN_SUCCESS) {
         mach_vm_deallocate(mach_task_self(), address, round_page(size));
-        return false;
+        return 0;
     }
 
     ASSERT(memoryObjectSize >= round_page(size));

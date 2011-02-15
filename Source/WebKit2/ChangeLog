@@ -1,3 +1,12 @@
+2011-02-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix Anders typo. false -> 0.
+
+        * Platform/mac/SharedMemoryMac.cpp:
+        (WebKit::SharedMemory::create):
+
 2011-02-15  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by NOBODY Csaba Osztrogonác.
