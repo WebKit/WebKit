@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -119,12 +119,13 @@ WK_EXPORT WKCacheModel WKContextGetCacheModel(WKContextRef context);
 
 WK_EXPORT void WKContextClearResourceCaches(WKContextRef context);
 WK_EXPORT void WKContextClearApplicationCache(WKContextRef context);
-    
+
 WK_EXPORT void WKContextStartMemorySampler(WKContextRef context, WKDoubleRef interval);
 WK_EXPORT void WKContextStopMemorySampler(WKContextRef context);
 
 WK_EXPORT WKDatabaseManagerRef WKContextGetDatabaseManager(WKContextRef context);
 WK_EXPORT WKGeolocationManagerRef WKContextGetGeolocationManager(WKContextRef context);
+WK_EXPORT WKPluginSiteDataManagerRef WKContextGetPluginSiteDataManager(WKContextRef context);
 
 #ifdef __cplusplus
 }

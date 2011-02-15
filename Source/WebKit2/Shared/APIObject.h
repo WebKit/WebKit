@@ -78,6 +78,7 @@ public:
         TypeOpenPanelResultListener,
         TypePage,
         TypePageGroup,
+        TypePluginSiteDataManager,
         TypePreferences,
 
         // Bundle types

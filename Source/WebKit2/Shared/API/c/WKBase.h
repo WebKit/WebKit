@@ -87,6 +87,7 @@ typedef const struct OpaqueWKOpenPanelParameters* WKOpenPanelParametersRef;
 typedef const struct OpaqueWKOpenPanelResultListener* WKOpenPanelResultListenerRef;
 typedef const struct OpaqueWKPage* WKPageRef;
 typedef const struct OpaqueWKPageGroup* WKPageGroupRef;
+typedef const struct OpaqueWKPluginSiteDataManager* WKPluginSiteDataManagerRef;
 typedef const struct OpaqueWKPreferences* WKPreferencesRef;
 typedef const struct OpaqueWKProtectionSpace* WKProtectionSpaceRef;
 

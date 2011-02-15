@@ -152,6 +152,7 @@ HEADERS += \
     Shared/API/c/WKImage.h \
     Shared/API/c/WKNumber.h \
     Shared/API/c/WKPageLoadTypes.h \
+    Shared/API/c/WKPluginSiteDataManager.h \
     Shared/API/c/WKSecurityOrigin.h \
     Shared/API/c/WKSerializedScriptValue.h \
     Shared/API/c/WKSharedAPICast.h \
@@ -390,6 +391,7 @@ SOURCES += \
     Shared/API/c/WKGraphicsContext.cpp \
     Shared/API/c/WKImage.cpp \
     Shared/API/c/WKNumber.cpp \
+    Shared/API/c/WKPluginSiteDataManager.cpp \
     Shared/API/c/WKSecurityOrigin.cpp \
     Shared/API/c/WKSerializedScriptValue.cpp \
     Shared/API/c/WKString.cpp \

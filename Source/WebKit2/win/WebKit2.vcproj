@@ -870,6 +870,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Shared\API\c\WKPluginSiteDataManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKPluginSiteDataManager.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Shared\API\c\WKSecurityOrigin.cpp"
 					>
 				</File>

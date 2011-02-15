@@ -1,3 +1,26 @@
+2011-02-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Add stubbed out WKPluginSiteDataManagerRef API
+        https://bugs.webkit.org/show_bug.cgi?id=54504
+
+        * Shared/API/c/WKBase.h:
+        * Shared/APIObject.h:
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetPluginSiteDataManager):
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/C/WKPluginSiteDataManager.cpp: Added.
+        (WKPluginSiteDataManagerGetTypeID):
+        (WKPluginSiteDataManagerGetSitesWithData):
+        (WKPluginSiteDataManagerClearSiteData):
+        (WKPluginSiteDataManagerClearAllSiteData):
+        * UIProcess/API/C/WKPluginSiteDataManager.h: Added.
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+
 2011-02-15  Jia Pu  <jpu@apple.com>
 
         Reviewed by Darin Adler.
