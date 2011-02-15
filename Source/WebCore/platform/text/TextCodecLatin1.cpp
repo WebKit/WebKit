@@ -27,7 +27,7 @@
 #include "TextCodecLatin1.h"
 
 #include "PlatformString.h"
-#include <stdio.h>
+#include "TextCodecASCIIFastPath.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/PassOwnPtr.h>
@@ -116,76 +116,42 @@ void TextCodecLatin1::registerCodecs(TextCodecRegistrar registrar)
     registrar("US-ASCII", newStreamingTextDecoderWindowsLatin1, 0);
 }
 
-template<size_t size> struct NonASCIIMask;
-template<> struct NonASCIIMask<4> {
-    static unsigned value() { return 0x80808080U; }
-};
-template<> struct NonASCIIMask<8> {
-    static unsigned long long value() { return 0x8080808080808080ULL; }
-};
-
-template<size_t size> struct UCharByteFiller;
-template<> struct UCharByteFiller<4> {
-    static void copy(UChar* dest, const unsigned char* src)
-    {
-        dest[0] = src[0];
-        dest[1] = src[1];
-        dest[2] = src[2];
-        dest[3] = src[3];
-    }
-};
-template<> struct UCharByteFiller<8> {
-    static void copy(UChar* dest, const unsigned char* src)
-    {
-        dest[0] = src[0];
-        dest[1] = src[1];
-        dest[2] = src[2];
-        dest[3] = src[3];
-        dest[4] = src[4];
-        dest[5] = src[5];
-        dest[6] = src[6];
-        dest[7] = src[7];
-    }
-};
-
 String TextCodecLatin1::decode(const char* bytes, size_t length, bool, bool, bool&)
 {
     UChar* characters;
     String result = String::createUninitialized(length, characters);
 
-    const unsigned char* src = reinterpret_cast<const unsigned char*>(bytes);
-    const unsigned char* end = reinterpret_cast<const unsigned char*>(bytes + length);
-    const unsigned char* alignedEnd = reinterpret_cast<const unsigned char*>(reinterpret_cast<ptrdiff_t>(end) & ~(sizeof(uintptr_t) - 1));
-    UChar* dest = characters;
+    const uint8_t* source = reinterpret_cast<const uint8_t*>(bytes);
+    const uint8_t* end = reinterpret_cast<const uint8_t*>(bytes + length);
+    const uint8_t* alignedEnd = alignToMachineWord(end);
+    UChar* destination = characters;
 
-    while (src < end) {
-        if (*src < 0x80) {
-            // Fast path for values < 0x80 (most Latin-1 text will be ASCII)
-            // Wait until we're at a properly aligned address, then read full CPU words.
-            if (!(reinterpret_cast<ptrdiff_t>(src) & (sizeof(uintptr_t) - 1))) {
-                while (src < alignedEnd) {
-                    uintptr_t chunk = *reinterpret_cast_ptr<const uintptr_t*>(src);
+    while (source < end) {
+        if (isASCII(*source)) {
+            // Fast path for ASCII. Most Latin-1 text will be ASCII.
+            if (isAlignedToMachineWord(source)) {
+                while (source < alignedEnd) {
+                    MachineWord chunk = *reinterpret_cast_ptr<const MachineWord*>(source);
 
-                    if (chunk & NonASCIIMask<sizeof(uintptr_t)>::value())
+                    if (!isAllASCII(chunk))
                         goto useLookupTable;
 
-                    UCharByteFiller<sizeof(uintptr_t)>::copy(dest, src);
-
-                    src += sizeof(uintptr_t);
-                    dest += sizeof(uintptr_t);
+                    copyASCIIMachineWord(destination, source);
+                    source += sizeof(MachineWord);
+                    destination += sizeof(MachineWord);
                 }
 
-                if (src == end)
+                if (source == end)
                     break;
             }
-            *dest = *src;
+            *destination = *source;
         } else {
 useLookupTable:
-            *dest = table[*src];
+            *destination = table[*source];
         }
 
-        ++src;
-        ++dest;
+        ++source;
+        ++destination;
     }
 
     return result;

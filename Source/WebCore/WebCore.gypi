@@ -3344,6 +3344,7 @@
             'platform/text/TextCheckerClient.h',
             'platform/text/TextCodec.cpp',
             'platform/text/TextCodec.h',
+            'platform/text/TextCodecASCIIFastPath.h',
             'platform/text/TextCodecICU.cpp',
             'platform/text/TextCodecICU.h',
             'platform/text/TextCodecLatin1.cpp',

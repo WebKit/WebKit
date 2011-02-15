@@ -1,3 +1,29 @@
+2011-02-15  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Share the helper functions used by Latin-1 and UTF-8 text codecs
+        https://bugs.webkit.org/show_bug.cgi?id=54446
+
+        Move MachineWord, UCharByteFiller and the other helper functions
+        into TextCodecASCIIFastPath.h where they can be used by both
+        TextCodecUTF8 and TextCodecLatin1.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/text/TextCodecASCIIFastPath.h: Added.
+        (WebCore::isAllASCII):
+        (WebCore::copyASCIIMachineWord):
+        (WebCore::isAlignedToMachineWord):
+        (WebCore::alignToMachineWord):
+        * platform/text/TextCodecLatin1.cpp:
+        (WebCore::TextCodecLatin1::decode):
+        * platform/text/TextCodecUTF8.cpp:
+        (WebCore::TextCodecUTF8::decode):
+
 2011-02-15  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         Reviewed by Kent Tamura.

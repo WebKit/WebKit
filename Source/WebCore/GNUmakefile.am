@@ -2645,6 +2645,7 @@ webcore_sources += \
 	Source/WebCore/platform/text/TextCheckerClient.h \
 	Source/WebCore/platform/text/TextCodec.cpp \
 	Source/WebCore/platform/text/TextCodec.h \
+	Source/WebCore/platform/text/TextCodecASCIIFastPath.h \
 	Source/WebCore/platform/text/TextCodecLatin1.cpp \
 	Source/WebCore/platform/text/TextCodecLatin1.h \
 	Source/WebCore/platform/text/TextCodecUserDefined.cpp \

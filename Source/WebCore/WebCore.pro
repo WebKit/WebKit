@@ -2122,6 +2122,7 @@ HEADERS += \
     platform/text/SegmentedString.h \
     platform/text/TextBoundaries.h \
     platform/text/TextCodec.h \
+    platform/text/TextCodecFastPath.h \
     platform/text/TextCodecLatin1.h \
     platform/text/TextCodecUserDefined.h \
     platform/text/TextCodecUTF16.h \

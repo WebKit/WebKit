@@ -30253,6 +30253,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\text\TextCodecASCIIFastPath.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\text\TextCodecICU.cpp"
 					>
 					<FileConfiguration

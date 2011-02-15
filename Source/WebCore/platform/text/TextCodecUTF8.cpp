@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TextCodecUTF8.h"
 
+#include "TextCodecASCIIFastPath.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -36,56 +37,6 @@ using namespace std;
 namespace WebCore {
 
 const int nonCharacter = -1;
-
-// Assuming that a pointer is the size of a "machine word", then
-// uintptr_t is an integer type that is also a machine word.
-typedef uintptr_t MachineWord;
-
-// This constant has type uintptr_t since we will use it to align
-// pointers. Not because MachineWord is uintptr_t.
-const uintptr_t machineWordAlignmentMask = sizeof(MachineWord) - 1;
-
-template<size_t size> struct NonASCIIMask;
-template<> struct NonASCIIMask<4> {
-    static unsigned value() { return 0x80808080U; }
-};
-template<> struct NonASCIIMask<8> {
-    static unsigned long long value() { return 0x8080808080808080ULL; }
-};
-
-template<size_t size> struct UCharByteFiller;
-template<> struct UCharByteFiller<4> {
-    static void copy(UChar* destination, const uint8_t* source)
-    {
-        destination[0] = source[0];
-        destination[1] = source[1];
-        destination[2] = source[2];
-        destination[3] = source[3];
-    }
-};
-template<> struct UCharByteFiller<8> {
-    static void copy(UChar* destination, const uint8_t* source)
-    {
-        destination[0] = source[0];
-        destination[1] = source[1];
-        destination[2] = source[2];
-        destination[3] = source[3];
-        destination[4] = source[4];
-        destination[5] = source[5];
-        destination[6] = source[6];
-        destination[7] = source[7];
-    }
-};
-
-static inline bool isAlignedToMachineWord(const void* pointer)
-{
-    return !(reinterpret_cast<uintptr_t>(pointer) & machineWordAlignmentMask);
-}
-
-template<typename T> static inline T* alignToMachineWord(T* pointer)
-{
-    return reinterpret_cast<T*>(reinterpret_cast<uintptr_t>(pointer) & ~machineWordAlignmentMask);
-}
 
 PassOwnPtr<TextCodec> TextCodecUTF8::create(const TextEncoding&, const void*)
 {
@@ -269,9 +220,9 @@ String TextCodecUTF8::decode(const char* bytes, size_t length, bool flush, bool 
                 if (isAlignedToMachineWord(source)) {
                     while (source < alignedEnd) {
                         MachineWord chunk = *reinterpret_cast_ptr<const MachineWord*>(source);
-                        if (chunk & NonASCIIMask<sizeof(MachineWord)>::value())
+                        if (!isAllASCII(chunk))
                             break;
-                        UCharByteFiller<sizeof(MachineWord)>::copy(destination, source);
+                        copyASCIIMachineWord(destination, source);
                         source += sizeof(MachineWord);
                         destination += sizeof(MachineWord);
                     }

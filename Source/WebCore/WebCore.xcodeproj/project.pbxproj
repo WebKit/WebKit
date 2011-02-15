@@ -657,6 +657,7 @@
 		24F54EAD101FE914000AE741 /* ApplicationCacheHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 24F54EAB101FE914000AE741 /* ApplicationCacheHost.h */; settings = {ATTRIBUTES = (); }; };
 		2542F4DA1166C25A00E89A86 /* UserGestureIndicator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2542F4D81166C25A00E89A86 /* UserGestureIndicator.cpp */; };
 		2542F4DB1166C25A00E89A86 /* UserGestureIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2542F4D91166C25A00E89A86 /* UserGestureIndicator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		26E98A10130A9FCA008EB7B2 /* TextCodecASCIIFastPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 26E98A0F130A9FCA008EB7B2 /* TextCodecASCIIFastPath.h */; };
 		29489FC712C00F0300D83F0F /* AccessibilityScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = 29489FC512C00F0300D83F0F /* AccessibilityScrollView.h */; };
 		29A8122B0FBB9C1D00510293 /* AccessibilityTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A8120D0FBB9C1D00510293 /* AccessibilityTable.h */; };
 		29A8122C0FBB9C1D00510293 /* AccessibilityList.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A8120E0FBB9C1D00510293 /* AccessibilityList.h */; };
@@ -6995,6 +6996,7 @@
 		24F54EAB101FE914000AE741 /* ApplicationCacheHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationCacheHost.h; sourceTree = "<group>"; };
 		2542F4D81166C25A00E89A86 /* UserGestureIndicator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserGestureIndicator.cpp; sourceTree = "<group>"; };
 		2542F4D91166C25A00E89A86 /* UserGestureIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserGestureIndicator.h; sourceTree = "<group>"; };
+		26E98A0F130A9FCA008EB7B2 /* TextCodecASCIIFastPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCodecASCIIFastPath.h; sourceTree = "<group>"; };
 		29489FC512C00F0300D83F0F /* AccessibilityScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityScrollView.h; sourceTree = "<group>"; };
 		29A8120D0FBB9C1D00510293 /* AccessibilityTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityTable.h; sourceTree = "<group>"; };
 		29A8120E0FBB9C1D00510293 /* AccessibilityList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityList.h; sourceTree = "<group>"; };
@@ -17547,6 +17549,7 @@
 				A7151BD712F1558F005A0F64 /* TextCheckerClient.h */,
 				B2C3DA090D006C1D00EF6F26 /* TextCodec.cpp */,
 				B2C3DA0A0D006C1D00EF6F26 /* TextCodec.h */,
+				26E98A0F130A9FCA008EB7B2 /* TextCodecASCIIFastPath.h */,
 				B2C3DA0B0D006C1D00EF6F26 /* TextCodecICU.cpp */,
 				B2C3DA0C0D006C1D00EF6F26 /* TextCodecICU.h */,
 				B2C3DA0D0D006C1D00EF6F26 /* TextCodecLatin1.cpp */,
@@ -22416,6 +22419,7 @@
 				977E2E0F12F0FC9C00C13379 /* XSSFilter.h in Headers */,
 				975CA28B130365F800E99AD9 /* Crypto.h in Headers */,
 				975CA2A21303679D00E99AD9 /* JSCrypto.h in Headers */,
+				26E98A10130A9FCA008EB7B2 /* TextCodecASCIIFastPath.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
