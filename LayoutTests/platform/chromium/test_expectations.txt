@@ -796,7 +796,7 @@ BUGCR72234 : media/video-source-error.html = PASS FAIL TIMEOUT
 
 // Failing because we sometimes emit additional timeupdate events.
 // Test may need to be rewritten or only log the first timeupdate event.
-BUGCR59399 LINUX MAC : media/audio-delete-while-slider-thumb-clicked.html = PASS FAIL
+// BUGCR59399 LINUX MAC : media/audio-delete-while-slider-thumb-clicked.html = PASS FAIL
 
 // Failing because we sometimes emit additional timeupdate events.
 // Test might be WONTFIX because we don't export a step button in the first place.
