@@ -1,3 +1,19 @@
+2011-02-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson, Darin Adler.
+
+        Layers stick around in DrawingAreaImpl until we switch out of compositing
+        https://bugs.webkit.org/show_bug.cgi?id=54498
+        
+        When leaving compositing mode soon, remove all the child layers
+        of the nonCompositedContent layer right away, so they don't stick
+        around.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::setRootCompositingLayer):
+        * WebProcess/WebPage/mac/LayerTreeHostMac.mm:
+        (WebKit::LayerTreeHostMac::setRootCompositingLayer):
+
 2011-02-15  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Darin Fisher.

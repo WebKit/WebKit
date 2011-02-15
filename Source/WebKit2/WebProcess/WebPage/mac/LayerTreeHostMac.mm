@@ -118,12 +118,11 @@ void LayerTreeHostMac::scheduleLayerFlush()
 
 void LayerTreeHostMac::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
 {
-    ASSERT(graphicsLayer);
-
     m_nonCompositedContentLayer->removeAllChildren();
 
     // Add the accelerated layer tree hierarchy.
-    m_nonCompositedContentLayer->addChild(graphicsLayer);
+    if (graphicsLayer)
+        m_nonCompositedContentLayer->addChild(graphicsLayer);
 }
 
 void LayerTreeHostMac::invalidate()

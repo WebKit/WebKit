@@ -193,6 +193,7 @@ void DrawingAreaImpl::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
         if (m_layerTreeHost) {
             // We'll exit accelerated compositing mode on a timer, to avoid re-entering
             // compositing code via display() and layout.
+            m_layerTreeHost->setRootCompositingLayer(0);
             exitAcceleratedCompositingModeSoon();
         }
     }
