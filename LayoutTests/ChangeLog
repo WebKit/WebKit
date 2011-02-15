@@ -1,3 +1,14 @@
+2011-02-15  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r78579.
+        http://trac.webkit.org/changeset/78579
+        https://bugs.webkit.org/show_bug.cgi?id=54479
+
+        Undo wrong rebaseline for Gtk results (Requested by msanchez
+        on #webkit).
+
+        * platform/gtk/fast/block/float/marquee-shrink-to-avoid-floats-expected.txt:
+
 2011-02-15  Martin Robinson  <mrobinson@igalia.com>
 
         Import the next batch of GTK+ SVG test results and correct an incorrect
