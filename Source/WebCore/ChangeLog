@@ -1,3 +1,38 @@
+2011-02-15  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Speculative fix for <rdar://problem/8998498> CrashTracer: [USER] 
+        8 crashes in WebProcess calling setOverlayScrollerState:forceImmediately:
+
+        My best guess is that this is crashing because 
+        willRemoveVerticalScrollbar()/Horizontal was not being called
+        properly from the RenderLayer destructor. 
+        
+        Call willRemoveVerticalScrollbar()/Horizontal from destroyScrollbar()
+        so that all current and future scrollbar-destroyers will properly 
+        call this function. And only do it for native scrollers.
+        (WebCore::RenderLayer::destroyScrollbar):
+        (WebCore::RenderListBox::destroyScrollbar):
+
+        For consistency's sake, I also moved didAddVerticalScrollbar()
+        /Horizontal to createScrollbar(). Again, only call for native 
+        scrollers.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::createScrollbar):
+        (WebCore::RenderListBox::createScrollbar):
+
+        These functions no longer call didAdd/willRemove.
+        (WebCore::RenderLayer::setHasHorizontalScrollbar):
+        (WebCore::RenderLayer::setHasVerticalScrollbar):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::setHasVerticalScrollbar):
+        
+        Remove unnecessary ScrollableArea::-prefix
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setHasHorizontalScrollbar):
+        (WebCore::ScrollView::setHasVerticalScrollbar):
+
 2011-02-15  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by David Kilzer.

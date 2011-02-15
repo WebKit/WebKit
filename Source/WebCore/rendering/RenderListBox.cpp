@@ -727,8 +727,10 @@ PassRefPtr<Scrollbar> RenderListBox::createScrollbar()
     bool hasCustomScrollbarStyle = style()->hasPseudoStyle(SCROLLBAR);
     if (hasCustomScrollbarStyle)
         widget = RenderScrollbar::createCustomScrollbar(this, VerticalScrollbar, this);
-    else
+    else {
         widget = Scrollbar::createNativeScrollbar(this, VerticalScrollbar, theme()->scrollbarControlSizeForPart(ListboxPart));
+        didAddVerticalScrollbar(widget.get());
+    }
     document()->view()->addChild(widget.get());        
     return widget.release();
 }
@@ -737,7 +739,9 @@ void RenderListBox::destroyScrollbar()
 {
     if (!m_vBar)
         return;
-    
+
+    if (!m_vBar->isCustomScrollbar())
+        ScrollableArea::willRemoveVerticalScrollbar(m_vBar.get());
     m_vBar->removeFromParent();
     m_vBar->disconnectFromScrollableArea();
     m_vBar = 0;
@@ -748,13 +752,10 @@ void RenderListBox::setHasVerticalScrollbar(bool hasScrollbar)
     if (hasScrollbar == (m_vBar != 0))
         return;
 
-    if (hasScrollbar) {
+    if (hasScrollbar)
         m_vBar = createScrollbar();
-        ScrollableArea::didAddVerticalScrollbar(m_vBar.get());
-    } else {
-        ScrollableArea::willRemoveVerticalScrollbar(m_vBar.get());
+    else
         destroyScrollbar();
-    }
 
     if (m_vBar)
         m_vBar->styleChanged();
