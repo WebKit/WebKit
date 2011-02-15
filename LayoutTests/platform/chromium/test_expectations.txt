@@ -3127,8 +3127,8 @@ BUGWK47949 GPU WIN LINUX : compositing/reflections/nested-reflection-anchor-poin
 BUGWK47949 GPU MAC : compositing/reflections/nested-reflection-anchor-point.html = IMAGE
 BUGWK47949 GPU WIN LINUX : compositing/reflections/reflection-opacity.html = IMAGE+TEXT
 BUGWK47949 GPU MAC : compositing/reflections/reflection-opacity.html = IMAGE
-BUGWK54306 GPU WIN : compositing/reflections/animation-inside-reflection.html = IMAGE PASS
-BUGWK54306 GPU WIN : compositing/reflections/nested-reflection-animated.html = IMAGE PASS
+BUGWK54306 GPU WIN LINUX : compositing/reflections/animation-inside-reflection.html = IMAGE PASS
+BUGWK54306 GPU WIN LINUX : compositing/reflections/nested-reflection-animated.html = IMAGE PASS
 
 // Most of the tiling tests are misbehaving in Chrome even though the
 // DRT output looks similar to Safari's. These need to be investigated.
