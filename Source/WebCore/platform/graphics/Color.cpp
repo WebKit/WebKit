@@ -180,16 +180,49 @@ Color::Color(const char* name)
     }
 }
 
+static inline void appendHexNumber(UChar* destination, uint8_t number)
+{
+    static const char hexDigits[17] = "0123456789abcdef";
+
+    destination[0] = hexDigits[number >> 4];
+    destination[1] = hexDigits[number & 0xF];
+}
+
 String Color::serialized() const
 {
-    if (alpha() == 0xFF)
-        return String::format("#%02x%02x%02x", red(), green(), blue());
+    DEFINE_STATIC_LOCAL(const String, commaSpace, (", "));
+    DEFINE_STATIC_LOCAL(const String, rgbaParen, ("rgba("));
+    DEFINE_STATIC_LOCAL(const String, zeroPointZero, ("0.0"));
+
+    if (!hasAlpha()) {
+        UChar* characters;
+        String result = String::createUninitialized(7, characters);
+        characters[0] = '#';
+        appendHexNumber(characters + 1, red());
+        appendHexNumber(characters + 3, green());
+        appendHexNumber(characters + 5, blue());
+        return result;
+    }
+
+    Vector<UChar> result;
+    result.reserveInitialCapacity(28);
+
+    append(result, rgbaParen);
+    appendNumber(result, red());
+    append(result, commaSpace);
+    appendNumber(result, green());
+    append(result, commaSpace);
+    appendNumber(result, blue());
+    append(result, commaSpace);
 
     // Match Gecko ("0.0" for zero, 5 decimals for anything else)
     if (!alpha())
-        return String::format("rgba(%u, %u, %u, 0.0)", red(), green(), blue());
+        append(result, zeroPointZero);
+    else
+        append(result, String::format("%.5f", alpha() / 255.0f));
 
-    return String::format("rgba(%u, %u, %u, %.5f)", red(), green(), blue(), alpha() / 255.0f);
+    result.append(')');
+    return String::adopt(result);
 }
 
 String Color::nameForRenderTreeAsText() const

@@ -1,3 +1,18 @@
+2011-02-15  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Optimize Color::serialized()
+        https://bugs.webkit.org/show_bug.cgi?id=54452
+
+        Apply the optimizations from CSSPrimitiveValue::cssText() [CSS_RGBCOLOR]
+        to Color::serialized() - build the serialized color strings manually
+        instead of using String::format().
+
+        * platform/graphics/Color.cpp:
+        (WebCore::appendHexNumber):
+        (WebCore::Color::serialized):
+
 2011-02-15  Jarred Nicholls  <jarred@sencha.com>
 
         Reviewed by Alexey Proskuryakov.
