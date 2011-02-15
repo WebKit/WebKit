@@ -1,5 +1,16 @@
 2011-02-15  Dirk Schulze  <krit@webkit.org>
 
+        Unreviewed rebaseline.
+
+        SVG animation doesn't support attribute value 'inherit'
+        https://bugs.webkit.org/show_bug.cgi?id=54410
+
+        Rebaseline of Gtk result.
+
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-31-t-expected.txt:
+
+2011-02-15  Dirk Schulze  <krit@webkit.org>
+
         Rubber-stamped by Nikolas Zimmermann.
 
         SVG animation doesn't support attribute value 'inherit'
