@@ -94,9 +94,9 @@ void SharedGraphicsContext3D::makeContextCurrent()
     m_context->makeContextCurrent();
 }
 
-void SharedGraphicsContext3D::scissor(const FloatRect& rect)
+void SharedGraphicsContext3D::scissor(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height)
 {
-    m_context->scissor(rect.x(), rect.y(), rect.width(), rect.height());
+    m_context->scissor(x, y, width, height);
 }
 
 void SharedGraphicsContext3D::enable(GC3Denum capacity)

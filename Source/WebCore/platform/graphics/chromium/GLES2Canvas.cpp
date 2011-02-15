@@ -191,7 +191,7 @@ void GLES2Canvas::clearRect(const FloatRect& rect)
 {
     bindFramebuffer();
     if (m_state->m_ctm.isIdentity() && !m_state->m_clippingEnabled) {
-        m_context->scissor(rect);
+        m_context->scissor(rect.x(), m_size.height() - rect.height() - rect.y(), rect.width(), rect.height());
         m_context->enable(GraphicsContext3D::SCISSOR_TEST);
         m_context->clearColor(Color(RGBA32(0)));
         m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT);

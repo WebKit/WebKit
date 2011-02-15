@@ -3171,7 +3171,6 @@ BUGJAMESR GPU MAC : compositing/text-on-large-layer.html = IMAGE
 BUGWK49629 GPU SKIP : platform/chromium/compositing/lots-of-img-layers.html = PASS
 BUGWK49629 GPU SKIP : platform/chromium/compositing/lots-of-img-layers-with-opacity.html = PASS
 
-BUGCR57431 GPU WIN LINUX : fast/canvas/canvas-strokeRect.html = TEXT
 BUGCR60965 GPU WIN LINUX : fast/canvas/setWidthResetAfterForcedRender.html = IMAGE+TEXT
 
 BUGNONE SLOW GPU DEBUG WIN : fast/canvas/canvas-getImageData.html = PASS

@@ -63,7 +63,7 @@ public:
     void makeContextCurrent();
     void bindFramebuffer(Platform3DObject framebuffer);
     void setViewport(const IntSize&);
-    void scissor(const FloatRect&);
+    void scissor(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height);
     void enable(GC3Denum capacity);
     void disable(GC3Denum capacity);
     void clearColor(const Color&);
