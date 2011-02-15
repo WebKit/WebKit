@@ -1,3 +1,18 @@
+2011-02-15  Charlie Reis  <creis@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        Crash in WebCore::FrameLoader::continueLoadAfterNavigationPolicy
+        https://bugs.webkit.org/show_bug.cgi?id=54219
+
+        Ensures we do not start a new navigation while we are in the process of
+        stopping a navigation.  Also adds a manual test, since the crash can
+        only be reproduced using the back button and not history.back().
+
+        * loader/FrameLoader.cpp:
+        * manual-tests/navigation-during-onload-triggered-by-back.html: Added.
+        * manual-tests/resources/navigation-during-onload-container.html: Added.
+
 2011-02-15  Bill Budge  <bbudge@chromium.org>
 
         Reviewed by David Levin.

@@ -1301,6 +1301,9 @@ void FrameLoader::loadFrameRequest(const FrameLoadRequest& request, bool lockHis
 void FrameLoader::loadURL(const KURL& newURL, const String& referrer, const String& frameName, bool lockHistory, FrameLoadType newLoadType,
     PassRefPtr<Event> event, PassRefPtr<FormState> prpFormState)
 {
+    if (m_inStopAllLoaders)
+        return;
+
     RefPtr<FormState> formState = prpFormState;
     bool isFormSubmission = formState;
     
