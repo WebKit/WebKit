@@ -31,22 +31,22 @@ namespace WebCore {
 
 class CSPDirective {
 public:
-    CSPDirective(const String& name, const String& value)
-        : m_name(name)
-        , m_value(value)
+    explicit CSPDirective(const String& value)
+        : m_value(value)
     {
     }
 
-    const String& name() const { return m_name; }
-    const String& value() const { return m_value; }
+    bool allows(const KURL&)
+    {
+        return false;
+    }
 
 private:
-    String m_name;
     String m_value;
 };
 
 ContentSecurityPolicy::ContentSecurityPolicy()
-    : m_isEnabled(false)
+    : m_havePolicy(false)
 {
 }
 
@@ -56,24 +56,48 @@ ContentSecurityPolicy::~ContentSecurityPolicy()
 
 void ContentSecurityPolicy::didReceiveHeader(const String& header)
 {
-    if (!m_directives.isEmpty())
+    if (m_havePolicy)
         return; // The first policy wins.
 
-    m_isEnabled = true;
     parse(header);
+    m_havePolicy = true;
 }
 
-bool ContentSecurityPolicy::canLoadExternalScriptFromSrc(const String&) const
+bool ContentSecurityPolicy::canLoadExternalScriptFromSrc(const String& url) const
 {
-    return !m_isEnabled;
+    return !m_scriptSrc || m_scriptSrc->allows(KURL(ParsedURLString, url));
 }
 
 void ContentSecurityPolicy::parse(const String& policy)
 {
-    ASSERT(m_directives.isEmpty());
+    ASSERT(!m_havePolicy);
 
     if (policy.isEmpty())
         return;
+
+    const UChar* pos = policy.characters();
+    const UChar* end = pos + policy.length();
+
+    while (pos < end) {
+        Vector<UChar, 32> name;
+        Vector<UChar, 64> value;
+
+        parseDirective(pos, end, name, value);
+        if (name.isEmpty())
+            continue;
+
+        // We use a copy here instead of String::adopt because we expect
+        // the name and the value to be relatively short, so the copy will
+        // be cheaper than the extra malloc.
+        emitDirective(String(name), String(value));
+    }
+}
+
+void ContentSecurityPolicy::parseDirective(const UChar*& pos, const UChar* end, Vector<UChar, 32>& name, Vector<UChar, 64>& value)
+{
+    ASSERT(pos < end);
+    ASSERT(name.isEmpty());
+    ASSERT(value.isEmpty());
 
     enum {
         BeforeDirectiveName,
@@ -81,12 +105,6 @@ void ContentSecurityPolicy::parse(const String& policy)
         AfterDirectiveName,
         DirectiveValue,
     } state = BeforeDirectiveName;
-
-    const UChar* pos = policy.characters();
-    const UChar* end = pos + policy.length();
-
-    Vector<UChar, 32> name;
-    Vector<UChar, 64> value;
 
     while (pos < end) {
         UChar currentCharacter = *pos++;
@@ -113,17 +131,19 @@ void ContentSecurityPolicy::parse(const String& policy)
                 value.append(currentCharacter);
                 continue;
             }
-            // We use a copy here instead of String::adopt because we expect
-            // the name and the value to be relatively short, so the copy will
-            // be cheaper than the extra malloc.
-            // FIXME: Perform directive-specific parsing of the value.
-            m_directives.append(CSPDirective(String(name), String(value)));
-            name.clear();
-            value.clear();
-            state = BeforeDirectiveName;
-            continue;
+            return;
         }
     }
+}
+
+void ContentSecurityPolicy::emitDirective(const String& name, const String& value)
+{
+    DEFINE_STATIC_LOCAL(String, scriptSrc, ("script-src"));
+
+    ASSERT(!name.isEmpty());
+
+    if (!m_scriptSrc && equalIgnoringCase(name, scriptSrc))
+        m_scriptSrc = adoptPtr(new CSPDirective(value));
 }
 
 }

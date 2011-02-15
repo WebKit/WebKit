@@ -1,3 +1,19 @@
+2011-02-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Sketch script-src for Content Security Policy
+        https://bugs.webkit.org/show_bug.cgi?id=54381
+
+        * http/tests/security/contentSecurityPolicy/script-loads-with-img-src-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/script-loads-with-img-src.html: Added.
+            - Test that we don't block scripts when the policy is just img-src.
+        * http/tests/security/contentSecurityPolicy/script-src-in-iframe.html:
+        * http/tests/security/contentSecurityPolicy/script-src-none.html:
+        * http/tests/security/contentSecurityPolicy/script-src-redirect.html:
+            - Turns out we need to escape the ; character in order for it to be
+              echoed back correctly in the header.
+
 2011-02-15  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed, skipping flaky test on GTK 64-bit debug bot.

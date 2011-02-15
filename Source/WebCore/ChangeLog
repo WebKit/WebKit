@@ -1,3 +1,26 @@
+2011-02-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Sketch script-src for Content Security Policy
+        https://bugs.webkit.org/show_bug.cgi?id=54381
+
+        This patch provides a sketch of the script-src directive.  We still do
+        not parse the value of the directive, and the wiring into the rest of
+        WebCore is incorrect, but those are things we can fix in future
+        patches.  For the momemnt, this patch lets us test what we're doing.
+
+        Test: http/tests/security/contentSecurityPolicy/script-loads-with-img-src.html
+
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::CSPDirective::CSPDirective):
+        (WebCore::CSPDirective::allows):
+        (WebCore::ContentSecurityPolicy::didReceiveHeader):
+        (WebCore::ContentSecurityPolicy::canLoadExternalScriptFromSrc):
+        (WebCore::ContentSecurityPolicy::parse):
+        (WebCore::ContentSecurityPolicy::emitDirective):
+        * page/ContentSecurityPolicy.h:
+
 2011-02-15  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Andreas Kling.

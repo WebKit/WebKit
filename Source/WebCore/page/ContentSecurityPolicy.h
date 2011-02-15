@@ -43,12 +43,12 @@ public:
     bool canLoadExternalScriptFromSrc(const String& url) const;
 
 private:
-    typedef Vector<CSPDirective> DirectiveList;
-
     void parse(const String&);
+    void parseDirective(const UChar*& pos, const UChar* end, Vector<UChar, 32>& name, Vector<UChar, 64>& value);
+    void emitDirective(const String& name, const String& value);
 
-    bool m_isEnabled;
-    DirectiveList m_directives;
+    bool m_havePolicy;
+    OwnPtr<CSPDirective> m_scriptSrc;
 };
 
 }
