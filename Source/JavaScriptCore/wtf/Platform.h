@@ -686,6 +686,10 @@
 #define WTF_USE_PTHREADS 0
 #endif
 
+#if PLATFORM(WIN) && !OS(WINCE) && !PLATFORM(CHROMIUM) && !defined(WIN_CAIRO)
+#define WTF_USE_CFNETWORK 1
+#endif
+
 #if PLATFORM(WIN) && !OS(WINCE) && !PLATFORM(CHROMIUM) && !PLATFORM(QT)
 #define ENABLE_WEB_ARCHIVE 1
 #endif

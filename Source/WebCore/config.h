@@ -149,7 +149,6 @@
 #if defined(WIN_CAIRO)
 #undef WTF_PLATFORM_CG
 #define WTF_PLATFORM_CAIRO 1
-#undef WTF_USE_CFNETWORK
 #define WTF_USE_CURL 1
 #ifndef _WINSOCKAPI_
 #define _WINSOCKAPI_ // Prevent inclusion of winsock.h in windows.h
@@ -157,7 +156,6 @@
 #elif !OS(WINCE)
 #define WTF_PLATFORM_CG 1
 #undef WTF_PLATFORM_CAIRO
-#define WTF_USE_CFNETWORK 1
 #undef WTF_USE_CURL
 #endif
 #endif
@@ -192,8 +190,6 @@
 #if !defined(WTF_USE_V8)
 #define WTF_USE_V8 1
 #endif
-
-#undef WTF_USE_CFNETWORK
 
 #endif /* PLATFORM(CHROMIUM) */
 

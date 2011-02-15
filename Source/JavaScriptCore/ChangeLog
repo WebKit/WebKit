@@ -1,3 +1,12 @@
+2011-02-15  Pratik Solanki  <psolanki@apple.com>
+
+        Move WTF_USE_CFNETWORK to Platform.h
+        https://bugs.webkit.org/show_bug.cgi?id=54168
+
+        Reviewed by Darin Adler.
+
+        * wtf/Platform.h: Define WTF_USE_CFNETWORK for Windows builds.
+
 2011-02-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
