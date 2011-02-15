@@ -46,6 +46,7 @@
 #include "WebKitWebSourceGStreamer.h"
 #include <GOwnPtr.h>
 #include <gst/gst.h>
+#include <gst/interfaces/streamvolume.h>
 #include <gst/video/video.h>
 #include <limits>
 #include <math.h>
@@ -640,7 +641,8 @@ void MediaPlayerPrivateGStreamer::setVolume(float volume)
     if (!m_playBin)
         return;
 
-    g_object_set(m_playBin, "volume", static_cast<double>(volume), NULL);
+    gst_stream_volume_set_volume(GST_STREAM_VOLUME(m_playBin), GST_STREAM_VOLUME_FORMAT_CUBIC,
+                                 static_cast<double>(volume));
 }
 
 void MediaPlayerPrivateGStreamer::notifyPlayerOfVolumeChange()
@@ -650,7 +652,11 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfVolumeChange()
     if (!m_player || !m_playBin)
         return;
     double volume;
-    g_object_get(m_playBin, "volume", &volume, NULL);
+    volume = gst_stream_volume_get_volume(GST_STREAM_VOLUME(m_playBin), GST_STREAM_VOLUME_FORMAT_CUBIC);
+    // get_volume() can return values superior to 1.0 if the user
+    // applies software user gain via third party application (GNOME
+    // volume control for instance).
+    volume = CLAMP(volume, 0.0, 1.0);
     m_player->volumeChanged(static_cast<float>(volume));
 }
 
@@ -1561,7 +1567,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
     g_signal_connect(bus, "message", G_CALLBACK(mediaPlayerPrivateMessageCallback), this);
     gst_object_unref(bus);
 
-    g_object_set(m_playBin, "mute", m_player->muted(), "volume", m_player->volume(), NULL);
+    g_object_set(m_playBin, "mute", m_player->muted(), NULL);
 
     g_signal_connect(m_playBin, "notify::volume", G_CALLBACK(mediaPlayerPrivateVolumeChangedCallback), this);
     g_signal_connect(m_playBin, "notify::source", G_CALLBACK(mediaPlayerPrivateSourceChangedCallback), this);
