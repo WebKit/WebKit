@@ -1,3 +1,20 @@
+2011-02-15  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed, GTK baselines for 4 new tests added in r78396.
+
+        * platform/gtk/fast/inline/inline-box-background-expected.checksum: Added.
+        * platform/gtk/fast/inline/inline-box-background-expected.png: Added.
+        * platform/gtk/fast/inline/inline-box-background-expected.txt: Added.
+        * platform/gtk/fast/inline/inline-box-background-long-image-expected.checksum: Added.
+        * platform/gtk/fast/inline/inline-box-background-long-image-expected.png: Added.
+        * platform/gtk/fast/inline/inline-box-background-long-image-expected.txt: Added.
+        * platform/gtk/fast/inline/inline-box-background-repeat-x-expected.checksum: Added.
+        * platform/gtk/fast/inline/inline-box-background-repeat-x-expected.png: Added.
+        * platform/gtk/fast/inline/inline-box-background-repeat-x-expected.txt: Added.
+        * platform/gtk/fast/inline/inline-box-background-repeat-y-expected.checksum: Added.
+        * platform/gtk/fast/inline/inline-box-background-repeat-y-expected.png: Added.
+        * platform/gtk/fast/inline/inline-box-background-repeat-y-expected.txt: Added.
+
 2011-02-15  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: update inspector expectation path for mac-leopard.
