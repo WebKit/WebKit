@@ -1,3 +1,14 @@
+2011-02-15  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: console auto-scroll is broken when there are both scrollers.
+        https://bugs.webkit.org/show_bug.cgi?id=54273
+
+        * inspector/front-end/utilities.js:
+        (Element.prototype.isScrolledToBottom): use clientHeight instead of offsetHeight to determine
+        whether the element is scrolled to the bottom.
+
 2011-02-14  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

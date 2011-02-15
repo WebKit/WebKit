@@ -218,7 +218,8 @@ Element.prototype.pruneEmptyTextNodes = function()
 
 Element.prototype.isScrolledToBottom = function()
 {
-    return this.scrollTop === this.scrollHeight - this.offsetHeight;
+    // This code works only for 0-width border
+    return this.scrollTop + this.clientHeight === this.scrollHeight;
 }
 
 Node.prototype.enclosingNodeOrSelfWithNodeNameInArray = function(nameArray)
