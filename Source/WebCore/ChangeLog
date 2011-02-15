@@ -1,3 +1,15 @@
+2011-02-14  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: highlighter works incorrect at build.chromium.org WebKit cells
+        https://bugs.webkit.org/show_bug.cgi?id=53910
+
+        Use enclosingBoundingBox for the absolute margin quad as the reference box for a tooltip.
+
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::drawNodeHighlight):
+
 2011-02-15  Dirk Schulze  <krit@webkit.org>
 
         Rubber-stamped by Nikolas Zimmermann.

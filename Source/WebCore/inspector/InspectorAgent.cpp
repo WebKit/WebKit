@@ -1069,9 +1069,6 @@ void InspectorAgent::drawNodeHighlight(GraphicsContext& context) const
         IntRect marginBox(borderBox.x() - renderBox->marginLeft(), borderBox.y() - renderBox->marginTop(),
                           borderBox.width() + renderBox->marginLeft() + renderBox->marginRight(), borderBox.height() + renderBox->marginTop() + renderBox->marginBottom());
 
-        titleReferenceBox = marginBox;
-        titleReferenceBox.move(mainFrameOffset);
-        titleReferenceBox.move(boundingBox.x(), boundingBox.y());
 
         FloatQuad absContentQuad = renderBox->localToAbsoluteQuad(FloatRect(contentBox));
         FloatQuad absPaddingQuad = renderBox->localToAbsoluteQuad(FloatRect(paddingBox));
@@ -1082,6 +1079,8 @@ void InspectorAgent::drawNodeHighlight(GraphicsContext& context) const
         absPaddingQuad.move(mainFrameOffset);
         absBorderQuad.move(mainFrameOffset);
         absMarginQuad.move(mainFrameOffset);
+
+        titleReferenceBox = absMarginQuad.enclosingBoundingBox();
 
         drawHighlightForBox(context, absContentQuad, absPaddingQuad, absBorderQuad, absMarginQuad);
     } else if (renderer->isRenderInline() || isSVGRenderer) {
