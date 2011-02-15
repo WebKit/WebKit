@@ -8,36 +8,31 @@
 <body>
 <pre id="console"></pre>
 <script>
-
-function testExtendingLineBoundary(tests, sel)
+function testExtendingLineBoundary(testNodes)
 {
-    for (var i = 0; i < tests.length; ++i) {
-        tests[i].style.direction = "ltr";
-        log("Test " + (i + 1) + ", LTR:\n  Extending forward: ");
-        sel.setPosition(tests[i], 0);
-        var ltrRightPos = extendingSelection(sel, "forward", "lineBoundary", 0);
-
+    function extendToEndAndBack(node)
+    {
+        getSelection().setPosition(node, 0);
+        log("  Extending forward: ");
+        extendAndLogSelectionToEnd("forward", "lineBoundary");
         log("  Extending backward:  ");
-        var ltrLeftPos = extendingSelection(sel, "backward", "lineBoundary", 0);
+        extendAndLogSelectionToEnd("backward", "lineBoundary");
+    }
 
-        tests[i].style.direction = "rtl";
-        log("Test " + (i + 1) + ", RTL:\n  Extending forward: ");
-        sel.setPosition(tests[i], 0);
-        var ltrRightPos = extendingSelection(sel, "forward", "lineBoundary", 0);
+    for (var i = 0; i < testNodes.length; ++i) {
+        var node = testNodes[i];
 
-        log("  Extending backward:  ");
-        var ltrLeftPos = extendingSelection(sel, "backward", "lineBoundary", 0);
+        log("Test " + (i + 1) + ", LTR:\n");
+        node.style.direction = "ltr";
+        extendToEndAndBack(node);
+
+        log("Test " + (i + 1) + ", RTL:\n");
+        node.style.direction = "rtl";
+        extendToEndAndBack(node);
     }
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-
-    tests = createTestNodes(); // all
-    var sel = getSelection();
-    log("\n\n\nExtending by lineBoundary\n");
-    testExtendingLineBoundary(tests,  sel);
-}
-
+log("\n\n\nExtending by lineBoundary\n");
+testExtendingLineBoundary(createAllNodes());
 </script>
 </body>

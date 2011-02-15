@@ -8,16 +8,7 @@
 <body>
 <pre id="console"></pre>
 <script>
-
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-
-    var tests = createTestNodes("char-and-word");
-    var sel = getSelection();
-
-    log("\n\n\nExtending by character\n");
-    testExtendingSelection(tests,  sel, "character", 0);
-}
-
+log("\n\n\nExtending by character\n");
+runSelectionTestsWithGranularity(createCharAndWordNodes(), "character");
 </script>
 </body>

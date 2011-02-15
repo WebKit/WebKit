@@ -8,30 +8,24 @@
 <body>
 <pre id="console"></pre>
 <script>
-
-function testExtendingSelectionForEnclosingBlock(tests, sel, granularity)
+function runSelectionTestsWithGranularityForEnclosingBlock(testNodes, granularity)
 {
-    for (var i = 0; i < tests.length; ++i) {
-        log("Test " + (i + 1) + ", LTR:\n  Extending right: ");
-        sel.setPosition(tests[i], 0);
-        var ltrRightPos = extendingSelection(sel, "right", granularity, 1);
+    for (var i = 0; i < testNodes.length; ++i) {
+        getSelection().setPosition(testNodes[i], 0);
+
+        log("Test " + (i + 1) + ", LTR:\n");
+        log("  Extending right: ");
+        extendAndLogSelectionWithinBlock("right", granularity);
 
         log("  Extending left:  ");
-        var ltrLeftPos = extendingSelection(sel, "left", granularity, 1);
+        extendAndLogSelectionWithinBlock("left", granularity);
     }
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+log("\n\n\nExtending by character\n");
+runSelectionTestsWithGranularityForEnclosingBlock(createEnclosingBlockNodes(), "character");
 
-    tests = createTestNodes("enclosing-block");
-    sel = getSelection();
-
-    log("\n\n\nExtending by character\n");
-    testExtendingSelectionForEnclosingBlock(tests,  sel, "character", 1);
-    log("\n\n\n\n\nExtending by word\n");
-    testExtendingSelectionForEnclosingBlock(tests,  sel, "word", 1);
-}
-
+log("\n\n\n\n\nExtending by word\n");
+runSelectionTestsWithGranularityForEnclosingBlock(createEnclosingBlockNodes(), "word");
 </script>
 </body>
