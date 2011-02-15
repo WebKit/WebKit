@@ -1,3 +1,10 @@
+2011-02-15  Martin Robinson  <mrobinson@igalia.com>
+
+        Import the next batch of GTK+ SVG test results and correct an incorrect
+        line in the skipped list.
+
+        * platform/gtk/Skipped: Unskip tests which now have results.
+
 2011-02-15  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: expectations update for r78548 and r78576.
