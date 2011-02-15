@@ -52,7 +52,6 @@ EXPORTS
     ?addPropertyTransitionToExistingStructure@Structure@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@PAV12@ABVIdentifier@2@IPAVJSCell@2@AAI@Z
     ?addPropertyWithoutTransition@Structure@JSC@@QAEIABVIdentifier@2@IPAVJSCell@2@@Z
     ?addSlowCase@Identifier@JSC@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVExecState@2@PAVStringImpl@4@@Z
-    ?addWeakGCHandle@Heap@JSC@@QAEPAVWeakGCHandle@2@PAVJSCell@2@@Z
     ?allocate@Heap@JSC@@QAEPAXI@Z
     ?allocatePropertyStorage@JSObject@JSC@@QAEXII@Z
     ?allocateStack@MarkStack@JSC@@CAPAXI@Z
@@ -164,7 +163,6 @@ EXPORTS
     ?fastZeroedMalloc@WTF@@YAPAXI@Z
     ?fillGetterPropertySlot@JSObject@JSC@@QAEXAAVPropertySlot@2@PAV?$WriteBarrierBase@W4Unknown@JSC@@@2@@Z
     ?focus@Profile@JSC@@QAEXPBVProfileNode@2@@Z
-    ?free@WeakGCHandlePool@JSC@@QAEXPAVWeakGCHandle@2@@Z
     ?from@Identifier@JSC@@SA?AV12@PAVExecState@2@H@Z
     ?from@Identifier@JSC@@SA?AV12@PAVExecState@2@I@Z
     ?functionGetter@PropertySlot@JSC@@ABE?AVJSValue@2@PAVExecState@2@@Z
@@ -201,6 +199,7 @@ EXPORTS
     ?globalExec@JSGlobalObject@JSC@@UAEPAVExecState@2@XZ
     ?globalObject@JSObjectWithGlobalObject@JSC@@QBEPAVJSGlobalObject@2@XZ
     ?globalObjectCount@Heap@JSC@@QAEIXZ
+    ?grow@HandleHeap@JSC@@AAEXXZ
     ?hasInstance@JSObject@JSC@@UAE_NPAVExecState@2@VJSValue@2@1@Z
     ?hasProperty@JSObject@JSC@@QBE_NPAVExecState@2@ABVIdentifier@2@@Z
     ?hasProperty@JSObject@JSC@@QBE_NPAVExecState@2@I@Z
@@ -249,7 +248,6 @@ EXPORTS
     ?objectCount@Heap@JSC@@QBEIXZ
     ?objectProtoFuncToString@JSC@@YI_JPAVExecState@1@@Z
     ?parseDateFromNullTerminatedCharacters@WTF@@YANPBD@Z
-    ?pool@WeakGCHandle@JSC@@QAEPAVWeakGCHandlePool@2@XZ
     ?profiler@Profiler@JSC@@SAPAV12@XZ
     ?protect@Heap@JSC@@QAEXVJSValue@2@@Z
     ?protectedGlobalObjectCount@Heap@JSC@@QAEIXZ
@@ -360,6 +358,7 @@ EXPORTS
     ?wait@ThreadCondition@WTF@@QAEXAAVMutex@2@@Z
     ?waitForThreadCompletion@WTF@@YAHIPAPAX@Z
     ?writable@PropertyDescriptor@JSC@@QBE_NXZ
+    ?writeBarrier@HandleHeap@JSC@@QAEXPAVJSValue@2@ABV32@@Z
     ?yield@WTF@@YAXXZ
     WTFLog
     WTFLogVerbose

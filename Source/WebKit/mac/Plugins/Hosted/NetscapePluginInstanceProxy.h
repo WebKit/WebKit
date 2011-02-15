@@ -28,7 +28,7 @@
 #ifndef NetscapePluginInstanceProxy_h
 #define NetscapePluginInstanceProxy_h
 
-#include <JavaScriptCore/Protect.h>
+#include <JavaScriptCore/Global.h>
 #include <WebCore/Timer.h>
 #include <WebKit/npapi.h>
 #include <wtf/Deque.h>
@@ -318,7 +318,7 @@ private:
     public:
         LocalObjectMap();
         ~LocalObjectMap();
-        uint32_t idForObject(JSC::JSObject*);
+        uint32_t idForObject(JSC::JSGlobalData&, JSC::JSObject*);
         void retain(JSC::JSObject*);
         void release(JSC::JSObject*);
         void clear();
@@ -327,7 +327,7 @@ private:
         JSC::JSObject* get(uint32_t) const;
 
     private:
-        HashMap<uint32_t, JSC::ProtectedPtr<JSC::JSObject> > m_idToJSObjectMap;
+        HashMap<uint32_t, JSC::Global<JSC::JSObject> > m_idToJSObjectMap;
         // The pair consists of object ID and a reference count. One reference belongs to remote plug-in,
         // and the proxy will add transient references for arguments that are being sent out.
         HashMap<JSC::JSObject*, pair<uint32_t, uint32_t> > m_jsObjectToIDMap;

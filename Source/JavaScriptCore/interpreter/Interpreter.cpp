@@ -419,9 +419,10 @@ NEVER_INLINE JSValue Interpreter::callEval(CallFrame* callFrame, RegisterFile* r
     return callFrame->globalData().interpreter->execute(eval.get(), callFrame, callFrame->uncheckedR(codeBlock->thisRegister()).jsValue().toThisObject(callFrame), callFrame->registers() - registerFile->start() + registerOffset, scopeChain);
 }
 
-Interpreter::Interpreter()
+Interpreter::Interpreter(JSGlobalData& globalData)
     : m_sampleEntryDepth(0)
     , m_reentryDepth(0)
+    , m_registerFile(globalData)
 {
 #if ENABLE(COMPUTED_GOTO_INTERPRETER)
     privateExecute(InitializeAndReturn, 0, 0);

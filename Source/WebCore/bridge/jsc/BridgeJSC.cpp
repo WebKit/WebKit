@@ -27,9 +27,12 @@
 #include "config.h"
 #include "BridgeJSC.h"
 
+#include "JSDOMWindowBase.h"
+
 #include "runtime_object.h"
 #include "runtime_root.h"
 #include <runtime/JSLock.h>
+
 
 #if PLATFORM(QT)
 #include "qt_instance.h"
@@ -51,6 +54,7 @@ Array::~Array()
 
 Instance::Instance(PassRefPtr<RootObject> rootObject)
     : m_rootObject(rootObject)
+    , m_runtimeObject(*WebCore::JSDOMWindowBase::commonJSGlobalData())
 {
     ASSERT(m_rootObject);
 }
@@ -58,7 +62,6 @@ Instance::Instance(PassRefPtr<RootObject> rootObject)
 Instance::~Instance()
 {
     ASSERT(!m_runtimeObject);
-    ASSERT(!m_runtimeObject.hasDeadObject());
 }
 
 static KJSDidExecuteFunctionPtr s_didExecuteFunction;
@@ -92,7 +95,7 @@ JSObject* Instance::createRuntimeObject(ExecState* exec)
 
     JSLock lock(SilenceAssertionsOnly);
     RuntimeObject* newObject = newRuntimeObject(exec);
-    m_runtimeObject = newObject;
+    m_runtimeObject.set(exec->globalData(), newObject, 0);
     m_rootObject->addRuntimeObject(newObject);
     return newObject;
 }
@@ -107,13 +110,11 @@ void Instance::willDestroyRuntimeObject(RuntimeObject* object)
 {
     ASSERT(m_rootObject);
     m_rootObject->removeRuntimeObject(object);
-    m_runtimeObject.clear(object);
 }
 
-void Instance::willInvalidateRuntimeObject(RuntimeObject* object)
+void Instance::willInvalidateRuntimeObject()
 {
-    ASSERT(object);
-    m_runtimeObject.clear(object);
+    m_runtimeObject.clear();
 }
 
 RootObject* Instance::rootObject() const

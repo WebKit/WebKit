@@ -42,19 +42,20 @@ using namespace WebCore;
 
 namespace WebKit {
 
-NPJSObject* NPJSObject::create(NPRuntimeObjectMap* objectMap, JSObject* jsObject)
+NPJSObject* NPJSObject::create(JSGlobalData& globalData, NPRuntimeObjectMap* objectMap, JSObject* jsObject)
 {
     // We should never have a JSNPObject inside an NPJSObject.
     ASSERT(!jsObject->inherits(&JSNPObject::s_info));
 
     NPJSObject* npJSObject = toNPJSObject(createNPObject(0, npClass()));
-    npJSObject->initialize(objectMap, jsObject);
+    npJSObject->initialize(globalData, objectMap, jsObject);
 
     return npJSObject;
 }
 
 NPJSObject::NPJSObject()
     : m_objectMap(0)
+    , m_jsObject(Global<JSObject>::EmptyValue)
 {
 }
 
@@ -68,13 +69,13 @@ bool NPJSObject::isNPJSObject(NPObject* npObject)
     return npObject->_class == npClass();
 }
 
-void NPJSObject::initialize(NPRuntimeObjectMap* objectMap, JSObject* jsObject)
+void NPJSObject::initialize(JSGlobalData& globalData, NPRuntimeObjectMap* objectMap, JSObject* jsObject)
 {
     ASSERT(!m_objectMap);
     ASSERT(!m_jsObject);
 
     m_objectMap = objectMap;
-    m_jsObject = jsObject;
+    m_jsObject.set(globalData, jsObject);
 }
 
 static Identifier identifierFromIdentifierRep(ExecState* exec, IdentifierRep* identifierRep)
@@ -132,7 +133,7 @@ bool NPJSObject::invokeDefault(const NPVariant* arguments, uint32_t argumentCoun
 
     JSLock lock(SilenceAssertionsOnly);
 
-    JSValue function = m_jsObject;
+    JSValue function = m_jsObject.get();
     return invoke(exec, m_objectMap->globalObject(), function, arguments, argumentCount, result);
 }
 
@@ -259,7 +260,7 @@ bool NPJSObject::construct(const NPVariant* arguments, uint32_t argumentCount, N
     JSLock lock(SilenceAssertionsOnly);
 
     ConstructData constructData;
-    ConstructType constructType = getConstructData(m_jsObject, constructData);
+    ConstructType constructType = getConstructData(m_jsObject.get(), constructData);
     if (constructType == ConstructTypeNone)
         return false;
 
@@ -269,7 +270,7 @@ bool NPJSObject::construct(const NPVariant* arguments, uint32_t argumentCount, N
         argumentList.append(m_objectMap->convertNPVariantToJSValue(exec, m_objectMap->globalObject(), arguments[i]));
 
     exec->globalData().timeoutChecker.start();
-    JSValue value = JSC::construct(exec, m_jsObject, constructType, constructData, argumentList);
+    JSValue value = JSC::construct(exec, m_jsObject.get(), constructType, constructData, argumentList);
     exec->globalData().timeoutChecker.stop();
     
     // Convert and return the new object.
@@ -292,7 +293,7 @@ bool NPJSObject::invoke(ExecState* exec, JSGlobalObject* globalObject, JSValue f
         argumentList.append(m_objectMap->convertNPVariantToJSValue(exec, globalObject, arguments[i]));
 
     exec->globalData().timeoutChecker.start();
-    JSValue value = JSC::call(exec, function, callType, callData, m_jsObject, argumentList);
+    JSValue value = JSC::call(exec, function, callType, callData, m_jsObject.get(), argumentList);
     exec->globalData().timeoutChecker.stop();
 
     // Convert and return the result of the function call.

@@ -56,8 +56,8 @@
 #if USE(JSC)
 #include "JSDOMBinding.h"
 #include "JSDOMWindow.h"
+#include <collector/handles/Global.h>
 #include <runtime/JSLock.h>
-#include <runtime/Protect.h>
 #endif
 
 namespace WebCore {

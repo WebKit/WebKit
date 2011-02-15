@@ -29,7 +29,7 @@
 #if PLATFORM(MAC)
 #include "jni_jsobject.h"
 #endif
-#include <runtime/Protect.h>
+#include <collector/handles/Global.h>
 
 #include <runtime/WeakGCMap.h>
 #include <wtf/Forward.h>
@@ -86,7 +86,7 @@ private:
     bool m_isValid;
     
     const void* m_nativeHandle;
-    ProtectedPtr<JSGlobalObject> m_globalObject;
+    Global<JSGlobalObject> m_globalObject;
 
     ProtectCountSet m_protectCountSet;
     WeakGCMap<RuntimeObject*, RuntimeObject> m_runtimeObjects; // Really need a WeakGCSet, but this will do.

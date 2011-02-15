@@ -5,6 +5,7 @@ javascriptcore_cppflags += \
 	-I$(srcdir)/Source/JavaScriptCore/assembler \
 	-I$(srcdir)/Source/JavaScriptCore/bytecode \
 	-I$(srcdir)/Source/JavaScriptCore/bytecompiler \
+	-I$(srcdir)/Source/JavaScriptCore/collector/handles \
 	-I$(srcdir)/Source/JavaScriptCore/debugger \
 	-I$(srcdir)/Source/JavaScriptCore/ForwardingHeaders \
 	-I$(srcdir)/Source/JavaScriptCore/interpreter \
@@ -109,6 +110,10 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecompiler/LabelScope.h \
 	Source/JavaScriptCore/bytecompiler/NodesCodegen.cpp \
 	Source/JavaScriptCore/bytecompiler/RegisterID.h \
+	Source/JavaScriptCore/collector/handles/Global.h \
+	Source/JavaScriptCore/collector/handles/Handle.h \
+	Source/JavaScriptCore/collector/handles/HandleHeap.cpp \
+	Source/JavaScriptCore/collector/handles/HandleHeap.h \
 	Source/JavaScriptCore/config.h \
 	Source/JavaScriptCore/debugger/DebuggerActivation.cpp \
 	Source/JavaScriptCore/debugger/DebuggerActivation.h \
@@ -270,8 +275,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/FunctionPrototype.h \
 	Source/JavaScriptCore/runtime/GCActivityCallback.cpp \
 	Source/JavaScriptCore/runtime/GCActivityCallback.h \
-	Source/JavaScriptCore/runtime/GCHandle.cpp \
-	Source/JavaScriptCore/runtime/GCHandle.h \
 	Source/JavaScriptCore/runtime/GetterSetter.cpp \
 	Source/JavaScriptCore/runtime/GetterSetter.h \
 	Source/JavaScriptCore/runtime/GlobalEvalFunction.cpp \
@@ -426,6 +429,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/Atomics.h \
 	Source/JavaScriptCore/wtf/AVLTree.h \
 	Source/JavaScriptCore/wtf/Bitmap.h \
+	Source/JavaScriptCore/wtf/BlockStack.h \
 	Source/JavaScriptCore/wtf/BloomFilter.h \
 	Source/JavaScriptCore/wtf/BumpPointerAllocator.h \
 	Source/JavaScriptCore/wtf/ByteArray.cpp \
@@ -508,6 +512,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/RefPtrHashMap.h \
 	Source/JavaScriptCore/wtf/RetainPtr.h \
 	Source/JavaScriptCore/wtf/SegmentedVector.h \
+	Source/JavaScriptCore/wtf/SentinelLinkedList.h \
+	Source/JavaScriptCore/wtf/SinglyLinkedList.h \
 	Source/JavaScriptCore/wtf/StackBounds.cpp \
 	Source/JavaScriptCore/wtf/StackBounds.h \
 	Source/JavaScriptCore/wtf/StaticConstructors.h \

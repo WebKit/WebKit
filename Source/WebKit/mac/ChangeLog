@@ -1,3 +1,31 @@
+2011-02-14  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough and Geoff Garen.
+
+        Refactor handles and weak pointers to become nicer and more automatic
+        https://bugs.webkit.org/show_bug.cgi?id=54415
+
+        Update to use Global<> instead of ProtectedPtr, and refactored slightly
+        to get global data to places it's needed for when we're assigning to
+        Global<>s
+
+        * ForwardingHeaders/collector/handles/Global.h: Added.
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::LocalObjectMap::get):
+        (WebKit::NetscapePluginInstanceProxy::LocalObjectMap::idForObject):
+        (WebKit::NetscapePluginInstanceProxy::LocalObjectMap::forget):
+        (WebKit::NetscapePluginInstanceProxy::getWindowNPObject):
+        (WebKit::NetscapePluginInstanceProxy::getPluginElementNPObject):
+        (WebKit::NetscapePluginInstanceProxy::evaluate):
+        (WebKit::NetscapePluginInstanceProxy::invoke):
+        (WebKit::NetscapePluginInstanceProxy::invokeDefault):
+        (WebKit::NetscapePluginInstanceProxy::construct):
+        (WebKit::NetscapePluginInstanceProxy::addValueToArray):
+        * WebView/WebScriptDebugger.h:
+        * WebView/WebScriptDebugger.mm:
+        (WebScriptDebugger::WebScriptDebugger):
+
 2011-02-15  Jia Pu  <jpu@apple.com>
 
         Reviewed by Darin Adler.

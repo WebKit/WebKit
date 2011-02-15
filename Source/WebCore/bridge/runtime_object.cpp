@@ -62,7 +62,7 @@ void RuntimeObject::invalidate()
 {
     ASSERT(m_instance);
     if (m_instance)
-        m_instance->willInvalidateRuntimeObject(this);
+        m_instance->willInvalidateRuntimeObject();
     m_instance = 0;
 }
 

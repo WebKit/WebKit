@@ -34,8 +34,8 @@
 #include "ScriptState.h"
 #include "ScriptValue.h"
 
+#include <collector/handles/Global.h>
 #include <runtime/JSObject.h>
-#include <runtime/Protect.h>
 
 namespace WebCore {
     class InjectedScriptHost;

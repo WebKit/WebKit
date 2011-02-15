@@ -26,13 +26,16 @@
 #ifndef NPJSObject_h
 #define NPJSObject_h
 
-#include <JavaScriptCore/Protect.h>
+#include <JavaScriptCore/Global.h>
 #include <WebCore/npruntime_internal.h>
 #include <wtf/Noncopyable.h>
 
 namespace JSC {
-    class JSGlobalObject;
-    class JSObject;
+
+class JSGlobalData;
+class JSGlobalObject;
+class JSObject;
+
 }
 
 namespace WebKit {
@@ -43,7 +46,7 @@ class NPRuntimeObjectMap;
 class NPJSObject : public NPObject {
     WTF_MAKE_NONCOPYABLE(NPJSObject);
 public:
-    static NPJSObject* create(NPRuntimeObjectMap* objectMap, JSC::JSObject* jsObject);
+    static NPJSObject* create(JSC::JSGlobalData&, NPRuntimeObjectMap*, JSC::JSObject*);
 
     JSC::JSObject* jsObject() const { return m_jsObject.get(); }
 
@@ -59,7 +62,7 @@ private:
     NPJSObject();
     ~NPJSObject();
 
-    void initialize(NPRuntimeObjectMap*, JSC::JSObject* jsObject);
+    void initialize(JSC::JSGlobalData&, NPRuntimeObjectMap*, JSC::JSObject*);
 
     bool hasMethod(NPIdentifier methodName);
     bool invoke(NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result);
@@ -87,7 +90,7 @@ private:
     static bool NP_Construct(NPObject*, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result);
     
     NPRuntimeObjectMap* m_objectMap;
-    JSC::ProtectedPtr<JSC::JSObject> m_jsObject;
+    JSC::Global<JSC::JSObject> m_jsObject;
 };
 
 } // namespace WebKit

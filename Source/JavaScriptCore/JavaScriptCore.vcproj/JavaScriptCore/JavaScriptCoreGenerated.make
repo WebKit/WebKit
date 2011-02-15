@@ -36,6 +36,7 @@ all:
     xcopy /y /d "..\..\interpreter\*.h" "%ConfigurationBuildDir%\include\private\JavaScriptCore"
     xcopy /y /d "..\..\assembler\*.h" "%ConfigurationBuildDir%\include\private\JavaScriptCore"
     xcopy /y /d "..\..\jit\*.h" "%ConfigurationBuildDir%\include\private\JavaScriptCore"
+    xcopy /y /d "..\..\collector\handles\*.h" "%ConfigurationBuildDir%\include\private\JavaScriptCore"
     xcopy /y /d "..\..\debugger\*.h" "%ConfigurationBuildDir%\include\private\JavaScriptCore"
     xcopy /y /d "..\..\profiler\*.h" "%ConfigurationBuildDir%\include\private\JavaScriptCore"
     xcopy /y /d "..\..\create_hash_table" "%ConfigurationBuildDir%\include\private\JavaScriptCore"

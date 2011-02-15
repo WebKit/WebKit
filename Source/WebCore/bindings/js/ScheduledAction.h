@@ -22,8 +22,8 @@
 
 #include "PlatformString.h"
 #include <JSDOMBinding.h>
+#include <collector/handles/Global.h>
 #include <runtime/JSCell.h>
-#include <runtime/Protect.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
@@ -51,7 +51,8 @@ namespace WebCore {
     private:
         ScheduledAction(JSC::ExecState*, JSC::JSValue function, DOMWrapperWorld* isolatedWorld);
         ScheduledAction(const String& code, DOMWrapperWorld* isolatedWorld)
-            : m_code(code)
+            : m_function(*isolatedWorld->globalData())
+            , m_code(code)
             , m_isolatedWorld(isolatedWorld)
         {
         }
@@ -62,8 +63,8 @@ namespace WebCore {
         void execute(WorkerContext*);
 #endif
 
-        JSC::ProtectedJSValue m_function;
-        Vector<JSC::ProtectedJSValue> m_args;
+        JSC::Global<JSC::Unknown> m_function;
+        Vector<JSC::Global<JSC::Unknown> > m_args;
         String m_code;
         RefPtr<DOMWrapperWorld> m_isolatedWorld;
     };

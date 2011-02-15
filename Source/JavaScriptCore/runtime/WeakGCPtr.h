@@ -26,127 +26,78 @@
 #ifndef WeakGCPtr_h
 #define WeakGCPtr_h
 
+#include "Global.h"
 #include "Heap.h"
-#include "GCHandle.h"
 
 namespace JSC {
+// A smart pointer whose get() function returns 0 for cells that have died
 
-// A smart pointer whose get() function returns 0 for cells awaiting destruction.
-template <typename T> class WeakGCPtr {
+template <typename T> class WeakGCPtr : public HandleConverter<WeakGCPtr<T>, T> {
     WTF_MAKE_NONCOPYABLE(WeakGCPtr);
+
 public:
+    typedef typename HandleTypes<T>::ExternalType ExternalType;
+    
     WeakGCPtr()
-        : m_ptr(0)
+        : m_slot(0)
     {
     }
+    
+    WeakGCPtr(JSGlobalData& globalData, Finalizer finalizer = 0)
+        : m_slot(globalData.allocateGlobalHandle())
+    {
+        HandleHeap::heapFor(m_slot)->makeWeak(m_slot, finalizer);
+    }
+    
+    WeakGCPtr(JSGlobalData& globalData, ExternalType value, Finalizer finalizer = 0)
+        : m_slot(globalData.allocateGlobalHandle())
+    {
+        HandleHeap::heapFor(m_slot)->makeWeak(m_slot, finalizer);
+        internalSet(value);
+    }
 
-    WeakGCPtr(T* ptr) { assign(ptr); }
+    ExternalType get() const { return  HandleTypes<T>::getFromSlot(m_slot); }
+    
+    void clear()
+    {
+        if (m_slot)
+            internalSet(ExternalType());
+    }
+    
+    bool operator!() const { return !m_slot || !*m_slot; }
+
+    // This conversion operator allows implicit conversion to bool but not to other integer types.
+    typedef ExternalType (WeakGCPtr::*UnspecifiedBoolType);
+    operator UnspecifiedBoolType*() const { return !*this ? 0 : reinterpret_cast<UnspecifiedBoolType*>(1); }
 
     ~WeakGCPtr()
     {
-        if (m_ptr)
-            m_ptr->pool()->free(m_ptr);
+        if (!m_slot)
+            return;
+        HandleHeap::heapFor(m_slot)->deallocate(m_slot);
     }
 
-    T* get() const
+    void set(JSGlobalData& globalData, ExternalType value, Finalizer finalizer)
     {
-        if (m_ptr && m_ptr->isValidPtr())
-            return static_cast<T*>(m_ptr->get());
-        return 0;
+        if (!this->m_slot) {
+            this->m_slot = globalData.allocateGlobalHandle();
+            HandleHeap::heapFor(this->m_slot)->makeWeak(this->m_slot, finalizer);
+        } else
+            ASSERT(HandleHeap::heapFor(this->m_slot)->getFinalizer(this->m_slot) == finalizer);
+        this->internalSet(value);
     }
-    
-    bool clear(JSCell* p)
-    {
-        if (!m_ptr || m_ptr->get() != p)
-            return false;
-
-        m_ptr->pool()->free(m_ptr);
-        m_ptr = 0;
-        return true;
-    }
-
-    T& operator*() const { return *get(); }
-    T* operator->() const { return get(); }
-    
-    bool operator!() const { return !get(); }
-
-    // This conversion operator allows implicit conversion to bool but not to other integer types.
-#if COMPILER(WINSCW)
-    operator bool() const { return m_ptr; }
-#else
-    typedef WeakGCHandle* WeakGCPtr::*UnspecifiedBoolType;
-    operator UnspecifiedBoolType() const { return get() ? &WeakGCPtr::m_ptr : 0; }
-#endif
-
-    WeakGCPtr& operator=(T*);
-
-#if !ASSERT_DISABLED
-    bool hasDeadObject() const { return !!m_ptr; }
-#endif
 
 private:
-    void assign(JSCell* ptr)
+    void internalSet(ExternalType value)
     {
-        ASSERT(ptr);
-        if (m_ptr)
-            m_ptr->set(ptr);
-        else
-            m_ptr = Heap::heap(ptr)->addWeakGCHandle(ptr);
+        ASSERT(m_slot);
+        JSValue newValue(HandleTypes<T>::toJSValue(value));
+        HandleHeap::heapFor(m_slot)->writeBarrier(m_slot, newValue);
+        *m_slot = newValue;
     }
 
-    WeakGCHandle* m_ptr;
+    HandleSlot m_slot;
 };
-
-template <typename T> inline WeakGCPtr<T>& WeakGCPtr<T>::operator=(T* optr)
-{
-    assign(optr);
-    return *this;
-}
-
-template <typename T, typename U> inline bool operator==(const WeakGCPtr<T>& a, const WeakGCPtr<U>& b)
-{ 
-    return a.get() == b.get(); 
-}
-
-template <typename T, typename U> inline bool operator==(const WeakGCPtr<T>& a, U* b)
-{ 
-    return a.get() == b; 
-}
-
-template <typename T, typename U> inline bool operator==(T* a, const WeakGCPtr<U>& b) 
-{
-    return a == b.get(); 
-}
-
-template <typename T, typename U> inline bool operator!=(const WeakGCPtr<T>& a, const WeakGCPtr<U>& b)
-{ 
-    return a.get() != b.get(); 
-}
-
-template <typename T, typename U> inline bool operator!=(const WeakGCPtr<T>& a, U* b)
-{
-    return a.get() != b; 
-}
-
-template <typename T, typename U> inline bool operator!=(T* a, const WeakGCPtr<U>& b)
-{ 
-    return a != b.get(); 
-}
-
-template <typename T, typename U> inline WeakGCPtr<T> static_pointer_cast(const WeakGCPtr<U>& p)
-{ 
-    return WeakGCPtr<T>(static_cast<T*>(p.get())); 
-}
-
-template <typename T, typename U> inline WeakGCPtr<T> const_pointer_cast(const WeakGCPtr<U>& p)
-{ 
-    return WeakGCPtr<T>(const_cast<T*>(p.get())); 
-}
-
-template <typename T> inline T* get(const WeakGCPtr<T>& p)
-{
-    return p.get();
-}
 
 } // namespace JSC
 

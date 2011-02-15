@@ -1,3 +1,172 @@
+2011-02-14  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough and Geoff Garen.
+
+        Refactor handles and weak pointers to become nicer and more automatic
+        https://bugs.webkit.org/show_bug.cgi?id=54415
+
+        Move to a true handle based mechanism for GC value protection.  This
+        also allows us to switch to a more sensible behaviour for weak pointers
+        in which weak pointers are automatically updated.
+
+        This allows us to remove the old (and convoluted) that required all
+        objects that may be held by a weak reference to be aware of the reference
+        and manually clear them in their destructors.
+
+        This also adds a few new data types to JSC that we use to efficiently
+        allocate and return the underlying handle storage.
+
+        This patch is largely renaming and removing now unnecessary destructors
+        from objects.
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::create):
+        (OpaqueJSClassContextData::OpaqueJSClassContextData):
+        (OpaqueJSClass::contextData):
+        (OpaqueJSClass::prototype):
+        * API/JSClassRef.h:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.vcproj/jsc/jscCommon.vsprops:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * collector/handles/Global.h: Added.
+            New Global handle type used to keep gc objects live, even if they're not
+            marked.
+        (JSC::Global::Global):
+        (JSC::Global::~Global):
+        (JSC::Global::set):
+            We can only assign directly to a global from another global.
+            In all other cases we need the JSGlobalData to be provided
+            explicitly so we use a set function.
+        (JSC::Global::operator=):
+        (JSC::Global::clear):
+        (JSC::Global::isHashTableDeletedValue):
+        (JSC::Global::internalSet):
+        * collector/handles/Handle.h: Added.
+            Root "Handle" type used for immutable handles and to provide the basic
+            APIs needed for pointer-like behaviour.
+        (JSC::HandleBase::operator!):
+        (JSC::HandleBase::operator UnspecifiedBoolType*):
+        (JSC::HandleBase::isEmpty):
+        (JSC::HandleBase::HandleBase):
+        (JSC::HandleBase::slot):
+        (JSC::HandleBase::invalidate):
+        (JSC::HandleBase::setSlot):
+        (JSC::HandleTypes::getFromSlot):
+        (JSC::HandleTypes::toJSValue):
+        (JSC::HandleTypes::validateUpcast):
+        (JSC::HandleConverter::operator->):
+        (JSC::HandleConverter::operator*):
+        (JSC::Handle::Handle):
+        (JSC::Handle::get):
+        (JSC::Handle::wrapSlot):
+        (JSC::operator==):
+        (JSC::operator!=):
+        * collector/handles/HandleHeap.cpp: Added.
+            New heap for global handles.
+        (JSC::HandleHeap::HandleHeap):
+        (JSC::HandleHeap::grow):
+        (JSC::HandleHeap::markStrongHandles):
+        (JSC::HandleHeap::updateAfterMark):
+        (JSC::HandleHeap::clearWeakPointers):
+        (JSC::HandleHeap::writeBarrier):
+        * collector/handles/HandleHeap.h: Added.
+        (JSC::HandleHeap::heapFor):
+        (JSC::HandleHeap::toHandle):
+        (JSC::HandleHeap::toNode):
+        (JSC::HandleHeap::allocate):
+        (JSC::HandleHeap::deallocate):
+        (JSC::HandleHeap::makeWeak):
+            Convert a hard handle into weak handle that does not
+            protect the object it points to.
+        (JSC::HandleHeap::makeSelfDestroying):
+            Converts a handle to a weak handle that will be returned
+            to the free list when the referenced object dies.
+        (JSC::HandleHeap::Node::Node):
+        (JSC::HandleHeap::Node::slot):
+        (JSC::HandleHeap::Node::handleHeap):
+        (JSC::HandleHeap::Node::setFinalizer):
+        (JSC::HandleHeap::Node::makeWeak):
+        (JSC::HandleHeap::Node::isWeak):
+        (JSC::HandleHeap::Node::makeSelfDestroying):
+        (JSC::HandleHeap::Node::isSelfDestroying):
+        (JSC::HandleHeap::Node::finalizer):
+        (JSC::HandleHeap::Node::setPrev):
+        (JSC::HandleHeap::Node::prev):
+        (JSC::HandleHeap::Node::setNext):
+        (JSC::HandleHeap::Node::next):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::Interpreter):
+        * interpreter/Interpreter.h:
+        * interpreter/RegisterFile.cpp:
+        (JSC::RegisterFile::globalObjectCollected):
+        * interpreter/RegisterFile.h:
+        (JSC::RegisterFile::RegisterFile):
+        * runtime/GCHandle.cpp: Removed.
+        * runtime/GCHandle.h: Removed.
+        * runtime/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::destroy):
+        (JSC::Heap::markRoots):
+        * runtime/Heap.h:
+        (JSC::Heap::allocateGlobalHandle):
+        (JSC::Heap::reportExtraMemoryCost):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSC::JSGlobalData::allocateGlobalHandle):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::~JSGlobalObject):
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::create):
+        (JSC::JSPropertyNameIterator::~JSPropertyNameIterator):
+        * runtime/JSPropertyNameIterator.h:
+        (JSC::JSPropertyNameIterator::createStructure):
+        (JSC::Structure::setEnumerationCache):
+        (JSC::Structure::clearEnumerationCache):
+        * runtime/Protect.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::~Structure):
+        * runtime/Structure.h:
+        * runtime/WeakGCPtr.h:
+        (JSC::WeakGCPtrBase::get):
+        (JSC::WeakGCPtrBase::clear):
+        (JSC::WeakGCPtrBase::operator!):
+        (JSC::WeakGCPtrBase::operator UnspecifiedBoolType*):
+        (JSC::WeakGCPtrBase::~WeakGCPtrBase):
+        (JSC::WeakGCPtrBase::WeakGCPtrBase):
+        (JSC::WeakGCPtrBase::internalSet):
+        (JSC::LazyWeakGCPtr::LazyWeakGCPtr):
+        (JSC::LazyWeakGCPtr::set):
+        (JSC::WeakGCPtr::WeakGCPtr):
+        (JSC::WeakGCPtr::operator=):
+        * runtime/WriteBarrier.h:
+        * wtf/BlockStack.h: Added.
+        (WTF::::BlockStack):
+        (WTF::::~BlockStack):
+        (WTF::::blocks):
+        (WTF::::grow):
+        (WTF::::shrink):
+        * wtf/SentinelLinkedList.h: Added.
+        (WTF::::SentinelLinkedList):
+        (WTF::::begin):
+        (WTF::::end):
+        (WTF::::push):
+        (WTF::::remove):
+        * wtf/SinglyLinkedList.h: Added.
+        (WTF::::SinglyLinkedList):
+        (WTF::::isEmpty):
+        (WTF::::push):
+        (WTF::::pop):
+
 2011-02-15  Pratik Solanki  <psolanki@apple.com>
 
         Move WTF_USE_CFNETWORK to Platform.h

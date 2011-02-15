@@ -53,12 +53,11 @@ namespace WebCore {
         DOMWrapperWorld* isolatedWorld() const { return m_isolatedWorld.get(); }
 
         JSC::JSObject* wrapper() const { return m_wrapper.get(); }
-        void setWrapper(JSC::JSObject* wrapper) const { m_wrapper = wrapper; }
+        void setWrapper(JSC::JSGlobalData& globalData, JSC::JSObject* wrapper) const { m_wrapper.set(globalData, wrapper, 0); }
 
     private:
         virtual JSC::JSObject* initializeJSFunction(ScriptExecutionContext*) const;
         virtual void markJSFunction(JSC::MarkStack&);
-        virtual void invalidateJSFunction(JSC::JSObject*);
         virtual bool virtualisAttribute() const;
 
     protected:
@@ -89,11 +88,6 @@ namespace WebCore {
         ASSERT(!m_jsFunction || static_cast<JSC::JSCell*>(m_jsFunction.get())->isObject());
 
         return m_jsFunction.get();
-    }
-
-    inline void JSEventListener::invalidateJSFunction(JSC::JSObject* wrapper)
-    {
-        m_wrapper.clear(wrapper);
     }
 
     // Creates a JS EventListener for an "onXXX" event attribute.

@@ -253,6 +253,8 @@ namespace JSC {
         void addRegExpToTrace(PassRefPtr<RegExp> regExp);
 #endif
         void dumpRegExpTrace();
+        HandleSlot allocateGlobalHandle() { return heap.allocateGlobalHandle(); }
+
     private:
         JSGlobalData(GlobalDataType, ThreadStackType);
         static JSGlobalData*& sharedInstanceInternal();

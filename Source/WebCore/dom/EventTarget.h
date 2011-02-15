@@ -231,20 +231,6 @@ namespace WebCore {
                 entry[i].listener->markJSFunction(markStack);
         }
     }
-
-    inline void EventTarget::invalidateJSEventListeners(JSC::JSObject* wrapper)
-    {
-        EventTargetData* d = eventTargetData();
-        if (!d)
-            return;
-
-        EventListenerMap::iterator end = d->eventListenerMap.end();
-        for (EventListenerMap::iterator it = d->eventListenerMap.begin(); it != end; ++it) {
-            EventListenerVector& entry = *it->second;
-            for (size_t i = 0; i < entry.size(); ++i)
-                entry[i].listener->invalidateJSFunction(wrapper);
-        }
-    }
 #endif
 
     inline bool EventTarget::isFiringEventListeners()

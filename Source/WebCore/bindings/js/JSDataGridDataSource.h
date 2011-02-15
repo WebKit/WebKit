@@ -29,8 +29,8 @@
 #if ENABLE(DATAGRID)
 
 #include "DataGridDataSource.h"
+#include <collector/handles/Global.h>
 #include <runtime/JSValue.h>
-#include <runtime/Protect.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 

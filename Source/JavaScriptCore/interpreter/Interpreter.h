@@ -69,7 +69,7 @@ namespace JSC {
         friend class JIT;
         friend class CachedCall;
     public:
-        Interpreter();
+        Interpreter(JSGlobalData&);
 
         RegisterFile& registerFile() { return m_registerFile; }
         

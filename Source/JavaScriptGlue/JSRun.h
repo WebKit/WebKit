@@ -67,7 +67,7 @@ class JSRun : public JSBase {
         JSFlags Flags() const;
     private:
         UString fSource;
-        ProtectedPtr<JSGlobalObject> fGlobalObject;
+        Global<JSGlobalObject> fGlobalObject;
         JSFlags fFlags;
 };
 

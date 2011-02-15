@@ -34,7 +34,7 @@
 #include <pthread.h>
 
 JSValueWrapper::JSValueWrapper(JSValue inValue)
-    : fValue(inValue)
+    : fValue(getThreadGlobalExecState()->globalData(), inValue)
 {
 }
 

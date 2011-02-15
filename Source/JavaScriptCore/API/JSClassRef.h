@@ -69,7 +69,7 @@ struct OpaqueJSClass;
 struct OpaqueJSClassContextData {
     WTF_MAKE_NONCOPYABLE(OpaqueJSClassContextData); WTF_MAKE_FAST_ALLOCATED;
 public:
-    OpaqueJSClassContextData(OpaqueJSClass*);
+    OpaqueJSClassContextData(JSC::JSGlobalData&, OpaqueJSClass*);
     ~OpaqueJSClassContextData();
 
     // It is necessary to keep OpaqueJSClass alive because of the following rare scenario:

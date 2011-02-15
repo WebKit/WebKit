@@ -266,7 +266,6 @@ Structure::~Structure()
         m_previous->transitionTableRemove(make_pair(m_nameInPrevious.get(), m_attributesInPrevious), m_specificValueInPrevious);
 
     }
-    ASSERT(!m_enumerationCache.hasDeadObject());
 
     if (m_propertyTable) {
         unsigned entryCount = m_propertyTable->keyCount + m_propertyTable->deletedSentinelCount;

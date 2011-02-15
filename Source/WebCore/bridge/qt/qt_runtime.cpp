@@ -1629,7 +1629,7 @@ EncodedJSValue QtRuntimeConnectionMethod::call(ExecState* exec)
                 //  receiver function [from arguments]
                 //  receiver this object [from arguments]
 
-                QtConnectionObject* conn = new QtConnectionObject(d->m_instance, signalIndex, thisObject, funcObject);
+                QtConnectionObject* conn = new QtConnectionObject(exec->globalData(), d->m_instance, signalIndex, thisObject, funcObject);
                 bool ok = QMetaObject::connect(sender, signalIndex, conn, conn->metaObject()->methodOffset());
                 if (!ok) {
                     delete conn;
@@ -1723,12 +1723,12 @@ JSValue QtRuntimeConnectionMethod::lengthGetter(ExecState*, JSValue, const Ident
 
 // ===============
 
-QtConnectionObject::QtConnectionObject(PassRefPtr<QtInstance> instance, int signalIndex, JSObject* thisObject, JSObject* funcObject)
+QtConnectionObject::QtConnectionObject(JSGlobalData& globalData, PassRefPtr<QtInstance> instance, int signalIndex, JSObject* thisObject, JSObject* funcObject)
     : m_instance(instance)
     , m_signalIndex(signalIndex)
     , m_originalObject(m_instance->getObject())
-    , m_thisObject(thisObject)
-    , m_funcObject(funcObject)
+    , m_thisObject(globalData, thisObject)
+    , m_funcObject(globalData, funcObject)
 {
     setParent(m_originalObject);
     ASSERT(JSLock::currentThreadIsHoldingLock()); // so our ProtectedPtrs are safe
@@ -1843,7 +1843,7 @@ void QtConnectionObject::execute(void **argv)
 
                     CallData callData;
                     CallType callType = m_funcObject->getCallData(callData);
-                    call(exec, m_funcObject, callType, callData, m_thisObject, l);
+                    call(exec, m_funcObject.get(), callType, callData, m_thisObject.get(), l);
 
                     if (fimp)
                         fimp->setScope(oldsc);
@@ -1859,7 +1859,7 @@ void QtConnectionObject::execute(void **argv)
 bool QtConnectionObject::match(QObject* sender, int signalIndex, JSObject* thisObject, JSObject *funcObject)
 {
     if (m_originalObject == sender && m_signalIndex == signalIndex
-        && thisObject == (JSObject*)m_thisObject && funcObject == (JSObject*)m_funcObject)
+        && thisObject == (JSObject*)m_thisObject.get() && funcObject == (JSObject*)m_funcObject.get())
         return true;
     return false;
 }

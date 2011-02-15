@@ -108,10 +108,11 @@ void ScriptController::destroyWindowShell(DOMWrapperWorld* world)
 JSDOMWindowShell* ScriptController::createWindowShell(DOMWrapperWorld* world)
 {
     ASSERT(!m_windowShells.contains(world));
-    JSDOMWindowShell* windowShell = new JSDOMWindowShell(m_frame->domWindow(), world);
+    Global<JSDOMWindowShell> windowShell(*world->globalData(), new JSDOMWindowShell(m_frame->domWindow(), world));
+    Global<JSDOMWindowShell> windowShell2(windowShell);
     m_windowShells.add(world, windowShell);
     world->didCreateWindowShell(this);
-    return windowShell;
+    return windowShell.get();
 }
 
 ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode, DOMWrapperWorld* world)
@@ -149,14 +150,14 @@ ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode
 
     if (comp.complType() == Normal || comp.complType() == ReturnValue) {
         m_sourceURL = savedSourceURL;
-        return comp.value();
+        return ScriptValue(exec->globalData(), comp.value());
     }
 
     if (comp.complType() == Throw || comp.complType() == Interrupted)
         reportException(exec, comp.value());
 
     m_sourceURL = savedSourceURL;
-    return JSValue();
+    return ScriptValue();
 }
 
 ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode) 
@@ -182,7 +183,7 @@ void ScriptController::clearWindowShell(bool goingIntoPageCache)
     JSLock lock(SilenceAssertionsOnly);
 
     for (ShellMap::iterator iter = m_windowShells.begin(); iter != m_windowShells.end(); ++iter) {
-        JSDOMWindowShell* windowShell = iter->second;
+        JSDOMWindowShell* windowShell = iter->second.get();
 
         // Clear the debugger from the current window before setting the new window.
         attachDebugger(windowShell, 0);
@@ -317,7 +318,7 @@ bool ScriptController::canAccessFromCurrentOrigin(Frame *frame)
 void ScriptController::attachDebugger(JSC::Debugger* debugger)
 {
     for (ShellMap::iterator iter = m_windowShells.begin(); iter != m_windowShells.end(); ++iter)
-        attachDebugger(iter->second, debugger);
+        attachDebugger(iter->second.get(), debugger);
 }
 
 void ScriptController::attachDebugger(JSDOMWindowShell* shell, JSC::Debugger* debugger)

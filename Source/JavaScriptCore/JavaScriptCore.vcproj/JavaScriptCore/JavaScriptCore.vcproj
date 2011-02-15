@@ -1974,6 +1974,30 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="collector"
+			>
+			<Filter
+				Name="handles"
+				>
+				<File
+					RelativePath="..\..\collector\handles\Global.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\collector\handles\Handle.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\collector\handles\HandleHeap.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\collector\handles\HandleHeap.h"
+					>
+				</File>
+			</Filter>
+		</Filter>
 		<File
 			RelativePath="..\..\config.h"
 			>

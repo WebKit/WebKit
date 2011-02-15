@@ -150,7 +150,7 @@ ScriptValue ScriptFunctionCall::call(bool& hadException, bool reportExceptions)
         return ScriptValue();
     }
 
-    return ScriptValue(result);
+    return ScriptValue(m_exec->globalData(), result);
 }
 
 ScriptValue ScriptFunctionCall::call()
@@ -220,7 +220,7 @@ ScriptValue ScriptCallback::call(bool& hadException)
         return ScriptValue();
     }
 
-    return ScriptValue(result);
+    return ScriptValue(m_exec->globalData(), result);
 }
 
 } // namespace WebCore

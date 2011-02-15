@@ -24,7 +24,6 @@
 #include "CodeBlock.h"
 #include "ConservativeSet.h"
 #include "GCActivityCallback.h"
-#include "GCHandle.h"
 #include "Interpreter.h"
 #include "JSGlobalData.h"
 #include "JSGlobalObject.h"
@@ -49,6 +48,7 @@ Heap::Heap(JSGlobalData* globalData)
     , m_globalData(globalData)
     , m_machineStackMarker(this)
     , m_markStack(globalData->jsArrayVPtr)
+    , m_handleHeap(globalData)
     , m_extraCost(0)
 {
     (*m_activityCallback)();
@@ -77,6 +77,7 @@ void Heap::destroy()
     delete m_markListSet;
     m_markListSet = 0;
 
+    m_handleHeap.clearWeakPointers();
     m_markedSpace.destroy();
 
     m_globalData = 0;
@@ -126,36 +127,6 @@ void* Heap::allocate(size_t s)
 
     ASSERT(result);
     return result;
-}
-
-void Heap::updateWeakGCHandles()
-{
-    for (unsigned i = 0; i < m_weakGCHandlePools.size(); ++i)
-        weakGCHandlePool(i)->update();
-}
-
-void WeakGCHandlePool::update()
-{
-    for (unsigned i = 1; i < WeakGCHandlePool::numPoolEntries; ++i) {
-        if (m_entries[i].isValidPtr()) {
-            JSCell* cell = m_entries[i].get();
-            if (!cell || !Heap::isMarked(cell))
-                m_entries[i].invalidate();
-        }
-    }
-}
-
-WeakGCHandle* Heap::addWeakGCHandle(JSCell* ptr)
-{
-    for (unsigned i = 0; i < m_weakGCHandlePools.size(); ++i)
-        if (!weakGCHandlePool(i)->isFull())
-            return weakGCHandlePool(i)->allocate(ptr);
-
-    PageAllocationAligned allocation = PageAllocationAligned::allocate(WeakGCHandlePool::poolSize, WeakGCHandlePool::poolSize, OSAllocator::JSGCHeapPages);
-    m_weakGCHandlePools.append(allocation);
-
-    WeakGCHandlePool* pool = new (allocation.base()) WeakGCHandlePool();
-    return pool->allocate(ptr);
 }
 
 void Heap::protect(JSValue k)
@@ -269,14 +240,16 @@ void Heap::markRoots()
         JSONObject::markStringifiers(markStack, m_globalData->firstStringifierToMark);
     markStack.drain();
 
+    m_handleHeap.markStrongHandles(markStack);
+
     // Mark the small strings cache last, since it will clear itself if nothing
     // else has marked it.
     m_globalData->smallStrings.markChildren(markStack);
 
     markStack.drain();
     markStack.compact();
-
-    updateWeakGCHandles();
+    
+    m_handleHeap.updateAfterMark();
 
     m_operationInProgress = NoOperation;
 }

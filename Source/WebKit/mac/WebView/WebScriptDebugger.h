@@ -29,8 +29,8 @@
 #ifndef WebScriptDebugger_h
 #define WebScriptDebugger_h
 
+#include <collector/handles/Global.h>
 #include <debugger/Debugger.h>
-#include <runtime/Protect.h>
 
 #include <wtf/RetainPtr.h>
 
@@ -69,7 +69,7 @@ private:
     bool m_callingDelegate;
     RetainPtr<WebScriptCallFrame> m_topCallFrame;
 
-    JSC::ProtectedPtr<JSC::JSGlobalObject> m_globalObject;
+    JSC::Global<JSC::JSGlobalObject> m_globalObject;
     RetainPtr<WebScriptCallFrame> m_globalCallFrame;
 };
 

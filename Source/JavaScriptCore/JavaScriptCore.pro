@@ -94,6 +94,7 @@ SOURCES += \
     debugger/DebuggerActivation.cpp \
     debugger/DebuggerCallFrame.cpp \
     debugger/Debugger.cpp \
+    collector/handles/HandleHeap.cpp \
     interpreter/CallFrame.cpp \
     interpreter/Interpreter.cpp \
     interpreter/RegisterFile.cpp \
@@ -147,7 +148,6 @@ SOURCES += \
     runtime/FunctionConstructor.cpp \
     runtime/FunctionPrototype.cpp \
     runtime/GCActivityCallback.cpp \
-    runtime/GCHandle.cpp \
     runtime/GetterSetter.cpp \
     runtime/GlobalEvalFunction.cpp \
     runtime/Identifier.cpp \

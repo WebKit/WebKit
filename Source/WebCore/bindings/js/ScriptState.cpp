@@ -45,14 +45,14 @@ ScriptStateProtectedPtr::~ScriptStateProtectedPtr()
 }
 
 ScriptStateProtectedPtr::ScriptStateProtectedPtr(ScriptState* scriptState)
-    : m_globalObject(scriptState->lexicalGlobalObject())
+    : m_globalObject(scriptState->globalData(), scriptState->lexicalGlobalObject())
 {
 }
 
 ScriptState* ScriptStateProtectedPtr::get() const
 {
     if (m_globalObject)
-        return m_globalObject->globalExec();
+        return const_cast<JSC::JSGlobalObject*>(m_globalObject.get())->globalExec();
     return 0;
 }
 

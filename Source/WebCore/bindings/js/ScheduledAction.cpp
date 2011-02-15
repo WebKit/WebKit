@@ -61,13 +61,13 @@ PassOwnPtr<ScheduledAction> ScheduledAction::create(ExecState* exec, DOMWrapperW
 }
 
 ScheduledAction::ScheduledAction(ExecState* exec, JSValue function, DOMWrapperWorld* isolatedWorld)
-    : m_function(function)
+    : m_function(exec->globalData(), function)
     , m_isolatedWorld(isolatedWorld)
 {
     // setTimeout(function, interval, arg0, arg1...).
     // Start at 2 to skip function and interval.
     for (size_t i = 2; i < exec->argumentCount(); ++i)
-        m_args.append(exec->argument(i));
+        m_args.append(Global<JSC::Unknown>(exec->globalData(), exec->argument(i)));
 }
 
 void ScheduledAction::execute(ScriptExecutionContext* context)
@@ -99,13 +99,13 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
     MarkedArgumentBuffer args;
     size_t size = m_args.size();
     for (size_t i = 0; i < size; ++i)
-        args.append(m_args[i]);
+        args.append(m_args[i].get());
 
     globalObject->globalData().timeoutChecker.start();
     if (context->isDocument())
-        JSMainThreadExecState::call(exec, m_function, callType, callData, thisValue, args);
+        JSMainThreadExecState::call(exec, m_function.get(), callType, callData, thisValue, args);
     else
-        JSC::call(exec, m_function, callType, callData, thisValue, args);
+        JSC::call(exec, m_function.get(), callType, callData, thisValue, args);
     globalObject->globalData().timeoutChecker.stop();
 
     if (exec->hadException())

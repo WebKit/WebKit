@@ -142,19 +142,12 @@ PassRefPtr<OpaqueJSClass> OpaqueJSClass::createNoAutomaticPrototype(const JSClas
     return adoptRef(new OpaqueJSClass(definition, 0));
 }
 
-static void clearReferenceToPrototype(JSObjectRef prototype)
-{
-    OpaqueJSClassContextData* jsClassData = static_cast<OpaqueJSClassContextData*>(JSObjectGetPrivate(prototype));
-    ASSERT(jsClassData);
-    jsClassData->cachedPrototype.clear(toJS(prototype));
-}
-
 PassRefPtr<OpaqueJSClass> OpaqueJSClass::create(const JSClassDefinition* clientDefinition)
 {
     JSClassDefinition definition = *clientDefinition; // Avoid modifying client copy.
 
     JSClassDefinition protoDefinition = kJSClassDefinitionEmpty;
-    protoDefinition.finalize = clearReferenceToPrototype;
+    protoDefinition.finalize = 0;
     swap(definition.staticFunctions, protoDefinition.staticFunctions); // Move static functions to the prototype.
     
     // We are supposed to use JSClassRetain/Release but since we know that we currently have
@@ -163,7 +156,7 @@ PassRefPtr<OpaqueJSClass> OpaqueJSClass::create(const JSClassDefinition* clientD
     return adoptRef(new OpaqueJSClass(&definition, protoClass.get()));
 }
 
-OpaqueJSClassContextData::OpaqueJSClassContextData(OpaqueJSClass* jsClass)
+OpaqueJSClassContextData::OpaqueJSClassContextData(JSC::JSGlobalData&, OpaqueJSClass* jsClass)
     : m_class(jsClass)
 {
     if (jsClass->m_staticValues) {
@@ -209,7 +202,7 @@ OpaqueJSClassContextData& OpaqueJSClass::contextData(ExecState* exec)
 {
     OpaqueJSClassContextData*& contextData = exec->globalData().opaqueJSClassData.add(this, 0).first->second;
     if (!contextData)
-        contextData = new OpaqueJSClassContextData(this);
+        contextData = new OpaqueJSClassContextData(exec->globalData(), this);
     return *contextData;
 }
 
@@ -256,7 +249,7 @@ JSObject* OpaqueJSClass::prototype(ExecState* exec)
 
     if (!jsClassData.cachedPrototype) {
         // Recursive, but should be good enough for our purposes
-        jsClassData.cachedPrototype = new (exec) JSCallbackObject<JSObjectWithGlobalObject>(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->callbackObjectStructure(), prototypeClass, &jsClassData); // set jsClassData as the object's private data, so it can clear our reference on destruction
+        jsClassData.cachedPrototype.set(exec->globalData(), new (exec) JSCallbackObject<JSObjectWithGlobalObject>(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->callbackObjectStructure(), prototypeClass, &jsClassData), 0); // set jsClassData as the object's private data, so it can clear our reference on destruction
         if (parentClass) {
             if (JSObject* prototype = parentClass->prototype(exec))
                 jsClassData.cachedPrototype->setPrototype(prototype);

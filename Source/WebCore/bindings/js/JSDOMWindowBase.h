@@ -22,7 +22,7 @@
 
 #include "PlatformString.h"
 #include "JSDOMBinding.h"
-#include <runtime/Protect.h>
+#include <collector/handles/Global.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>

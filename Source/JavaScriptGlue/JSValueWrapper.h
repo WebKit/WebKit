@@ -43,7 +43,7 @@ public:
     JSValue GetValue();
 
 private:
-    ProtectedJSValue fValue;
+    Global<Unknown> fValue;
     
     static void JSObjectDispose(void *data);
     static CFArrayRef JSObjectCopyPropertyNames(void *data);

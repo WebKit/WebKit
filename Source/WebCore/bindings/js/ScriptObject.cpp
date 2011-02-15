@@ -45,7 +45,7 @@ using namespace JSC;
 namespace WebCore {
 
 ScriptObject::ScriptObject(ScriptState* scriptState, JSObject* object)
-    : ScriptValue(object)
+    : ScriptValue(scriptState->globalData(), object)
     , m_scriptState(scriptState)
 {
 }

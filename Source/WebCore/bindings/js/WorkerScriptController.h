@@ -29,7 +29,7 @@
 
 #if ENABLE(WORKERS)
 
-#include <runtime/Protect.h>
+#include <collector/handles/Global.h>
 #include <wtf/Forward.h>
 #include <wtf/Threading.h>
 
@@ -53,7 +53,7 @@ namespace WebCore {
         JSWorkerContext* workerContextWrapper()
         {
             initScriptIfNeeded();
-            return m_workerContextWrapper;
+            return m_workerContextWrapper.get();
         }
 
         ScriptValue evaluate(const ScriptSourceCode&);
@@ -77,7 +77,7 @@ namespace WebCore {
 
         RefPtr<JSC::JSGlobalData> m_globalData;
         WorkerContext* m_workerContext;
-        JSC::ProtectedPtr<JSWorkerContext> m_workerContextWrapper;
+        JSC::Global<JSWorkerContext> m_workerContextWrapper;
 
         Mutex m_sharedDataMutex;
         bool m_executionForbidden;

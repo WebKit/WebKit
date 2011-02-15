@@ -1,3 +1,109 @@
+2011-02-14  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough and Geoff Garen.
+
+        Refactor handles and weak pointers to become nicer and more automatic
+        https://bugs.webkit.org/show_bug.cgi?id=54415
+
+        Update WebCore to use the new Global<> type rather than ProtectedJSValue
+        and gc[Un]Protect.  Also update to use new WeakGCPtr APIs, and remove now
+        unnecessary destructors.
+
+        * ForwardingHeaders/collector/handles/Global.h: Added.
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/copyForwardingHeaders.cmd:
+        * bindings/js/JSCallbackData.h:
+        (WebCore::JSCallbackData::JSCallbackData):
+        * bindings/js/JSCustomVoidCallback.h:
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::forgetDOMNode):
+        (WebCore::cacheDOMNodeWrapper):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::setWindow):
+        * bindings/js/JSDataGridDataSource.h:
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::JSEventListener):
+        * bindings/js/JSEventListener.h:
+        (WebCore::JSEventListener::setWrapper):
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::initializeJSFunction):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::ScheduledAction):
+        (WebCore::ScheduledAction::executeFunctionInContext):
+        * bindings/js/ScheduledAction.h:
+        (WebCore::ScheduledAction::ScheduledAction):
+        * bindings/js/ScriptCachedFrameData.cpp:
+        (WebCore::ScriptCachedFrameData::ScriptCachedFrameData):
+        (WebCore::ScriptCachedFrameData::restore):
+        * bindings/js/ScriptCachedFrameData.h:
+        * bindings/js/ScriptCallStackFactory.cpp:
+        (WebCore::createScriptArguments):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::createWindowShell):
+        (WebCore::ScriptController::evaluateInWorld):
+        (WebCore::ScriptController::clearWindowShell):
+        (WebCore::ScriptController::attachDebugger):
+        * bindings/js/ScriptController.h:
+        * bindings/js/ScriptFunctionCall.cpp:
+        (WebCore::ScriptFunctionCall::call):
+        (WebCore::ScriptCallback::call):
+        * bindings/js/ScriptObject.cpp:
+        (WebCore::ScriptObject::ScriptObject):
+        * bindings/js/ScriptObject.h:
+        * bindings/js/ScriptState.cpp:
+        (WebCore::ScriptStateProtectedPtr::ScriptStateProtectedPtr):
+        (WebCore::ScriptStateProtectedPtr::get):
+        * bindings/js/ScriptState.h:
+        * bindings/js/ScriptValue.cpp:
+        (WebCore::ScriptValue::isFunction):
+        (WebCore::ScriptValue::deserialize):
+        * bindings/js/ScriptValue.h:
+        (WebCore::ScriptValue::ScriptValue):
+        (WebCore::ScriptValue::hasNoValue):
+        * bindings/js/ScriptWrappable.h:
+        (WebCore::ScriptWrappable::ScriptWrappable):
+        (WebCore::ScriptWrappable::setWrapper):
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::WorkerScriptController):
+        (WebCore::WorkerScriptController::~WorkerScriptController):
+        (WebCore::WorkerScriptController::initScript):
+        (WebCore::WorkerScriptController::evaluate):
+        * bindings/js/WorkerScriptController.h:
+        (WebCore::WorkerScriptController::workerContextWrapper):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/NP_jsobject.cpp:
+        (_NPN_InvokeDefault):
+        (_NPN_Invoke):
+        (_NPN_Evaluate):
+        (_NPN_Construct):
+        * bridge/jsc/BridgeJSC.cpp:
+        (JSC::Bindings::Instance::Instance):
+        (JSC::Bindings::Instance::~Instance):
+        (JSC::Bindings::Instance::willDestroyRuntimeObject):
+        (JSC::Bindings::Instance::willInvalidateRuntimeObject):
+        * bridge/jsc/BridgeJSC.h:
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::RuntimeObject::invalidate):
+        * bridge/runtime_root.cpp:
+        (JSC::Bindings::RootObject::RootObject):
+        (JSC::Bindings::RootObject::invalidate):
+        (JSC::Bindings::RootObject::globalObject):
+        (JSC::Bindings::RootObject::updateGlobalObject):
+        * bridge/runtime_root.h:
+        * dom/EventListener.h:
+        * dom/EventTarget.h:
+        (WebCore::EventTarget::markJSEventListeners):
+        * xml/XMLHttpRequest.cpp:
+        
+        Qt bindings courtesy of Csaba Osztrogonác
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::QtRuntimeConnectionMethod::call):
+        (JSC::Bindings::QtConnectionObject::QtConnectionObject):
+        (JSC::Bindings::QtConnectionObject::execute):
+        (JSC::Bindings::QtConnectionObject::match):
+        * bridge/qt/qt_runtime.h:
+
 2011-02-15  Jia Pu  <jpu@apple.com>
 
         Reviewed by Darin Adler.

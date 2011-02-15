@@ -22,7 +22,7 @@
 
 #include "Bridge.h"
 #include "Completion.h"
-#include "Protect.h"
+#include "Global.h"
 #include "runtime_method.h"
 
 #include <qbytearray.h>
@@ -212,7 +212,7 @@ private:
 class QtConnectionObject: public QObject
 {
 public:
-    QtConnectionObject(PassRefPtr<QtInstance> instance, int signalIndex, JSObject* thisObject, JSObject* funcObject);
+    QtConnectionObject(JSGlobalData&, PassRefPtr<QtInstance> instance, int signalIndex, JSObject* thisObject, JSObject* funcObject);
     ~QtConnectionObject();
 
     static const QMetaObject staticMetaObject;
@@ -229,8 +229,8 @@ private:
     RefPtr<QtInstance> m_instance;
     int m_signalIndex;
     QObject* m_originalObject; // only used as a key, not dereferenced
-    ProtectedPtr<JSObject> m_thisObject;
-    ProtectedPtr<JSObject> m_funcObject;
+    Global<JSObject> m_thisObject;
+    Global<JSObject> m_funcObject;
 };
 
 QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type hint, int *distance);

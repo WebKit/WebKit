@@ -32,8 +32,8 @@
 #include "JSDOMBinding.h"
 #include "JSDOMGlobalObject.h"
 #include "ScriptExecutionContext.h"
+#include <collector/handles/Global.h>
 #include <runtime/JSObject.h>
-#include <runtime/Protect.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {
@@ -47,8 +47,8 @@ public:
     static void deleteData(void*);
 
     JSCallbackData(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
-        : m_callback(callback)
-        , m_globalObject(globalObject)
+        : m_callback(globalObject->globalData(), callback)
+        , m_globalObject(globalObject->globalData(), globalObject)
 #ifndef NDEBUG
         , m_thread(currentThread())
 #endif
@@ -66,8 +66,8 @@ public:
     JSC::JSValue invokeCallback(JSC::MarkedArgumentBuffer&, bool* raisedException = 0);
 
 private:
-    JSC::ProtectedPtr<JSC::JSObject> m_callback;
-    JSC::ProtectedPtr<JSDOMGlobalObject> m_globalObject;
+    JSC::Global<JSC::JSObject> m_callback;
+    JSC::Global<JSDOMGlobalObject> m_globalObject;
 #ifndef NDEBUG
     ThreadIdentifier m_thread;
 #endif

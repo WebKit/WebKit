@@ -34,8 +34,8 @@
 #include "JSDOMBinding.h"
 #include "PlatformString.h"
 #include "ScriptState.h"
+#include <collector/handles/Global.h>
 #include <runtime/JSValue.h>
-#include <runtime/Protect.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -45,7 +45,8 @@ class SerializedScriptValue;
 
 class ScriptValue {
 public:
-    ScriptValue(JSC::JSValue value = JSC::JSValue()) : m_value(value) {}
+    ScriptValue() : m_value(JSC::Global<JSC::Unknown>::EmptyValue) { }
+    ScriptValue(JSC::JSGlobalData& globalData, JSC::JSValue value) : m_value(globalData, value) {}
     virtual ~ScriptValue() {}
 
     JSC::JSValue jsValue() const { return m_value.get(); }
@@ -56,21 +57,21 @@ public:
     bool isUndefined() const;
     bool isObject() const;
     bool isFunction() const;
-    bool hasNoValue() const { return m_value == JSC::JSValue(); }
+    bool hasNoValue() const { return m_value.isEmpty(); }
 
     bool operator==(const ScriptValue& other) const { return m_value == other.m_value; }
 
     PassRefPtr<SerializedScriptValue> serialize(ScriptState*);
     static ScriptValue deserialize(ScriptState*, SerializedScriptValue*);
 
-    static ScriptValue undefined() { return ScriptValue(JSC::jsUndefined()); }
+    static ScriptValue undefined();
 
 #if ENABLE(INSPECTOR)
     PassRefPtr<InspectorValue> toInspectorValue(ScriptState*) const;
 #endif
 
 private:
-    JSC::ProtectedJSValue m_value;
+    JSC::Global<JSC::Unknown> m_value;
 };
 
 } // namespace WebCore

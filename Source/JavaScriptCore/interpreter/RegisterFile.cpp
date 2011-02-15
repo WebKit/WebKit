@@ -29,6 +29,8 @@
 #include "config.h"
 #include "RegisterFile.h"
 
+#include "Interpreter.h"
+#include "JSGlobalData.h"
 #include "JSGlobalObject.h"
 
 namespace JSC {
@@ -59,12 +61,13 @@ void RegisterFile::releaseExcessCapacity()
 
 void RegisterFile::setGlobalObject(JSGlobalObject* globalObject)
 {
-    m_globalObject = globalObject;
+    m_globalObject.set(globalObject->globalData(), globalObject, globalObjectCollected);
 }
 
-bool RegisterFile::clearGlobalObject(JSGlobalObject* globalObject)
+void RegisterFile::globalObjectCollected(JSGlobalData&, Handle<Unknown> value)
 {
-    return m_globalObject.clear(globalObject);
+    JSGlobalObject* globalObject = asGlobalObject(value.get());
+    globalObject->globalData().interpreter->registerFile().setNumGlobals(0);
 }
 
 JSGlobalObject* RegisterFile::globalObject()

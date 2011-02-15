@@ -47,12 +47,6 @@ inline JSPropertyNameIterator::JSPropertyNameIterator(ExecState* exec, PropertyN
         m_jsStrings[i].set(exec->globalData(), this, jsOwnedString(exec, propertyNameVector[i].ustring()));
 }
 
-JSPropertyNameIterator::~JSPropertyNameIterator()
-{
-    if (m_cachedStructure)
-        m_cachedStructure->clearEnumerationCache(this);
-}
-
 JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, JSObject* o)
 {
     ASSERT(!o->structure()->enumerationCache() ||
@@ -85,7 +79,7 @@ JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, JSObject
 
     jsPropertyNameIterator->setCachedPrototypeChain(structureChain);
     jsPropertyNameIterator->setCachedStructure(o->structure());
-    o->structure()->setEnumerationCache(jsPropertyNameIterator);
+    o->structure()->setEnumerationCache(exec->globalData(), jsPropertyNameIterator);
     return jsPropertyNameIterator;
 }
 
@@ -105,4 +99,12 @@ void JSPropertyNameIterator::markChildren(MarkStack& markStack)
     markStack.appendValues(m_jsStrings.get(), m_jsStringsSize, MayContainNullValues);
 }
 
+#if !ASSERT_DISABLED
+
+JSPropertyNameIterator::~JSPropertyNameIterator()
+{
+    ASSERT(!m_cachedStructure || m_cachedStructure->enumerationCache() != this);
+}
+
+#endif
 } // namespace JSC

@@ -25,7 +25,7 @@
 #include "JSDOMWindowShell.h"
 #include "ScriptControllerBase.h"
 #include "ScriptInstance.h"
-#include <runtime/Protect.h>
+#include <collector/handles/Global.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
@@ -64,7 +64,7 @@ typedef HashMap<void*, RefPtr<JSC::Bindings::RootObject> > RootObjectMap;
 
 class ScriptController {
     friend class ScriptCachedFrameData;
-    typedef WTF::HashMap< RefPtr<DOMWrapperWorld>, JSC::ProtectedPtr<JSDOMWindowShell> > ShellMap;
+    typedef WTF::HashMap< RefPtr<DOMWrapperWorld>, JSC::Global<JSDOMWindowShell> > ShellMap;
 
 public:
     ScriptController(Frame*);

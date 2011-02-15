@@ -33,6 +33,7 @@ class JSCell;
 class JSGlobalData;
 
 typedef enum { } Unknown;
+typedef JSValue* HandleSlot;
 
 template <class T> class DeprecatedPtr {
 public:

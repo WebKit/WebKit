@@ -138,7 +138,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , emptyList(new MarkedArgumentBuffer)
     , lexer(new Lexer(this))
     , parser(new Parser)
-    , interpreter(new Interpreter)
+    , interpreter(0)
     , heap(this)
     , dynamicGlobalObject(0)
     , firstStringifierToMark(0)
@@ -152,6 +152,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , exclusiveThread(0)
 #endif
 {
+    interpreter = new Interpreter(*this);
     if (globalDataType == Default)
         m_stack = wtfThreadData().stack();
 

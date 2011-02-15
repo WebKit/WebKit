@@ -883,7 +883,7 @@ NPObject* PluginView::windowScriptNPObject()
     // FIXME: Handle JavaScript being disabled.
     ASSERT(frame()->script()->canExecuteScripts(NotAboutToExecuteScript));
 
-    return m_npRuntimeObjectMap.getOrCreateNPObject(frame()->script()->windowShell(pluginWorld())->window());
+    return m_npRuntimeObjectMap.getOrCreateNPObject(*pluginWorld()->globalData(), frame()->script()->windowShell(pluginWorld())->window());
 }
 
 NPObject* PluginView::pluginElementNPObject()
@@ -895,7 +895,7 @@ NPObject* PluginView::pluginElementNPObject()
     JSObject* object = frame()->script()->jsObjectForPluginElement(m_pluginElement.get());
     ASSERT(object);
 
-    return m_npRuntimeObjectMap.getOrCreateNPObject(object);
+    return m_npRuntimeObjectMap.getOrCreateNPObject(*pluginWorld()->globalData(), object);
 }
 
 bool PluginView::evaluate(NPObject* npObject, const String& scriptString, NPVariant* result, bool allowPopups)

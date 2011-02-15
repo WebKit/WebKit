@@ -54,7 +54,6 @@ namespace WebCore {
 
 #if USE(JSC)
         virtual void markJSFunction(JSC::MarkStack&) { }
-        virtual void invalidateJSFunction(JSC::JSObject*) { }
 #endif
 
         bool isAttribute() const { return virtualisAttribute(); }

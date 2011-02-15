@@ -48,7 +48,7 @@ void JSGlueGlobalObject::destroyData(void* data)
 JSRun::JSRun(CFStringRef source, JSFlags inFlags)
     :   JSBase(kJSRunTypeID),
         fSource(CFStringToUString(source)),
-        fGlobalObject(new (&getThreadGlobalExecState()->globalData()) JSGlueGlobalObject(JSGlueGlobalObject::createStructure(jsNull()), inFlags)),
+        fGlobalObject(getThreadGlobalExecState()->globalData(), new (&getThreadGlobalExecState()->globalData()) JSGlueGlobalObject(JSGlueGlobalObject::createStructure(jsNull()), inFlags)),
         fFlags(inFlags)
 {
 }
@@ -69,7 +69,7 @@ UString JSRun::GetSource() const
 
 JSGlobalObject* JSRun::GlobalObject() const
 {
-    return fGlobalObject;
+    return fGlobalObject.get();
 }
 
 Completion JSRun::Evaluate()

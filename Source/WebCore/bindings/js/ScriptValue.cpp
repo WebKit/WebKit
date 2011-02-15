@@ -35,8 +35,8 @@
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSValueRef.h>
 
+#include <collector/handles/Global.h>
 #include <runtime/JSLock.h>
-#include <runtime/Protect.h>
 #include <runtime/UString.h>
 
 using namespace JSC;
@@ -87,7 +87,7 @@ bool ScriptValue::isObject() const
 bool ScriptValue::isFunction() const
 {
     CallData callData;
-    return getCallData(m_value, callData) != CallTypeNone;
+    return getCallData(m_value.get(), callData) != CallTypeNone;
 }
 
 PassRefPtr<SerializedScriptValue> ScriptValue::serialize(ScriptState* scriptState)
@@ -97,7 +97,7 @@ PassRefPtr<SerializedScriptValue> ScriptValue::serialize(ScriptState* scriptStat
 
 ScriptValue ScriptValue::deserialize(ScriptState* scriptState, SerializedScriptValue* value)
 {
-    return ScriptValue(value->deserialize(scriptState, scriptState->lexicalGlobalObject()));
+    return ScriptValue(scriptState->globalData(), value->deserialize(scriptState, scriptState->lexicalGlobalObject()));
 }
 
 #if ENABLE(INSPECTOR)

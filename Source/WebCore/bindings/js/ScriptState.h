@@ -32,7 +32,7 @@
 #ifndef ScriptState_h
 #define ScriptState_h
 
-#include <runtime/Protect.h>
+#include <collector/handles/Global.h>
 #include <wtf/Noncopyable.h>
 
 namespace JSC {
@@ -59,7 +59,7 @@ public:
     ~ScriptStateProtectedPtr();
     ScriptState* get() const;
 private:
-    JSC::ProtectedPtr<JSC::JSGlobalObject> m_globalObject;
+    JSC::Global<JSC::JSGlobalObject> m_globalObject;
 };
 
 ScriptState* mainWorldScriptState(Frame*);

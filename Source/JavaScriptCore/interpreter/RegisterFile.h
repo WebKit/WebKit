@@ -112,7 +112,7 @@ namespace JSC {
         // Allow 8k of excess registers before we start trying to reap the registerfile
         static const ptrdiff_t maxExcessCapacity = 8 * 1024;
 
-        RegisterFile(size_t capacity = defaultCapacity, size_t maxGlobals = defaultMaxGlobals);
+        RegisterFile(JSGlobalData&, size_t capacity = defaultCapacity, size_t maxGlobals = defaultMaxGlobals);
         ~RegisterFile();
 
         Register* start() const { return m_start; }
@@ -120,7 +120,7 @@ namespace JSC {
         size_t size() const { return m_end - m_start; }
 
         void setGlobalObject(JSGlobalObject*);
-        bool clearGlobalObject(JSGlobalObject*);
+        static void globalObjectCollected(JSGlobalData&, Handle<Unknown>);
         JSGlobalObject* globalObject();
 
         bool grow(Register* newEnd);
@@ -150,16 +150,16 @@ namespace JSC {
         WeakGCPtr<JSGlobalObject> m_globalObject; // The global object whose vars are currently stored in the register file.
     };
 
-    inline RegisterFile::RegisterFile(size_t capacity, size_t maxGlobals)
+    inline RegisterFile::RegisterFile(JSGlobalData& globalData, size_t capacity, size_t maxGlobals)
         : m_numGlobals(0)
         , m_maxGlobals(maxGlobals)
         , m_start(0)
         , m_end(0)
         , m_max(0)
+        , m_globalObject(globalData, globalObjectCollected)
     {
         ASSERT(maxGlobals && isPageAligned(maxGlobals));
         ASSERT(capacity && isPageAligned(capacity));
-
         size_t bufferLength = (capacity + maxGlobals) * sizeof(Register);
         m_reservation = PageReservation::reserve(roundUpAllocationSize(bufferLength, commitSize), OSAllocator::JSVMStackPages);
         void* base = m_reservation.base();

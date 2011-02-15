@@ -121,10 +121,10 @@ inline JSC::JSObject* NetscapePluginInstanceProxy::LocalObjectMap::get(uint32_t 
     if (objectID == HashTraits<uint32_t>::emptyValue() || HashTraits<uint32_t>::isDeletedValue(objectID))
         return 0;
 
-    return m_idToJSObjectMap.get(objectID);
+    return m_idToJSObjectMap.get(objectID).get();
 }
 
-uint32_t NetscapePluginInstanceProxy::LocalObjectMap::idForObject(JSObject* object)
+uint32_t NetscapePluginInstanceProxy::LocalObjectMap::idForObject(JSGlobalData& globalData, JSObject* object)
 {
     // This method creates objects with refcount of 1, but doesn't increase refcount when returning
     // found objects. This extra count accounts for the main "reference" kept by plugin process.
@@ -148,7 +148,7 @@ uint32_t NetscapePluginInstanceProxy::LocalObjectMap::idForObject(JSObject* obje
         objectID = ++m_objectIDCounter;
     } while (!m_objectIDCounter || m_objectIDCounter == static_cast<uint32_t>(-1) || m_idToJSObjectMap.contains(objectID));
 
-    m_idToJSObjectMap.set(objectID, object);
+    m_idToJSObjectMap.set(objectID, Global<JSObject>(globalData, object));
     m_jsObjectToIDMap.set(object, make_pair<uint32_t, uint32_t>(objectID, 1));
 
     return objectID;
@@ -188,7 +188,7 @@ bool NetscapePluginInstanceProxy::LocalObjectMap::forget(uint32_t objectID)
         return true;
     }
 
-    HashMap<uint32_t, JSC::ProtectedPtr<JSC::JSObject> >::iterator iter = m_idToJSObjectMap.find(objectID);
+    HashMap<uint32_t, JSC::Global<JSC::JSObject> >::iterator iter = m_idToJSObjectMap.find(objectID);
     if (iter == m_idToJSObjectMap.end()) {
         LOG_ERROR("NetscapePluginInstanceProxy::LocalObjectMap::forget: local object %u doesn't exist.", objectID);
         return true;
@@ -823,7 +823,7 @@ bool NetscapePluginInstanceProxy::getWindowNPObject(uint32_t& objectID)
     if (!frame->script()->canExecuteScripts(NotAboutToExecuteScript))
         objectID = 0;
     else
-        objectID = m_localObjects.idForObject(frame->script()->windowShell(pluginWorld())->window());
+        objectID = m_localObjects.idForObject(*pluginWorld()->globalData(), frame->script()->windowShell(pluginWorld())->window());
         
     return true;
 }
@@ -835,7 +835,7 @@ bool NetscapePluginInstanceProxy::getPluginElementNPObject(uint32_t& objectID)
         return false;
     
     if (JSObject* object = frame->script()->jsObjectForPluginElement([m_pluginView element]))
-        objectID = m_localObjects.idForObject(object);
+        objectID = m_localObjects.idForObject(*pluginWorld()->globalData(), object);
     else
         objectID = 0;
     
@@ -866,7 +866,7 @@ bool NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const String& scri
 
     JSLock lock(SilenceAssertionsOnly);
     
-    ProtectedPtr<JSGlobalObject> globalObject = frame->script()->globalObject(pluginWorld());
+    Global<JSGlobalObject> globalObject(*pluginWorld()->globalData(), frame->script()->globalObject(pluginWorld()));
     ExecState* exec = globalObject->globalExec();
 
     bool oldAllowPopups = frame->script()->allowPopupsFromPlugin();
@@ -920,10 +920,10 @@ bool NetscapePluginInstanceProxy::invoke(uint32_t objectID, const Identifier& me
     MarkedArgumentBuffer argList;
     demarshalValues(exec, argumentsData, argumentsLength, argList);
 
-    ProtectedPtr<JSGlobalObject> globalObject = frame->script()->globalObject(pluginWorld());
-    globalObject->globalData().timeoutChecker.start();
+    RefPtr<JSGlobalData> globalData = pluginWorld()->globalData();
+    globalData->timeoutChecker.start();
     JSValue value = call(exec, function, callType, callData, object, argList);
-    globalObject->globalData().timeoutChecker.stop();
+    globalData->timeoutChecker.stop();
         
     marshalValue(exec, value, resultData, resultLength);
     exec->clearException();
@@ -955,10 +955,10 @@ bool NetscapePluginInstanceProxy::invokeDefault(uint32_t objectID, data_t argume
     MarkedArgumentBuffer argList;
     demarshalValues(exec, argumentsData, argumentsLength, argList);
 
-    ProtectedPtr<JSGlobalObject> globalObject = frame->script()->globalObject(pluginWorld());
-    globalObject->globalData().timeoutChecker.start();
+    RefPtr<JSGlobalData> globalData = pluginWorld()->globalData();
+    globalData->timeoutChecker.start();
     JSValue value = call(exec, object, callType, callData, object, argList);
-    globalObject->globalData().timeoutChecker.stop();
+    globalData->timeoutChecker.stop();
     
     marshalValue(exec, value, resultData, resultLength);
     exec->clearException();
@@ -991,10 +991,10 @@ bool NetscapePluginInstanceProxy::construct(uint32_t objectID, data_t argumentsD
     MarkedArgumentBuffer argList;
     demarshalValues(exec, argumentsData, argumentsLength, argList);
 
-    ProtectedPtr<JSGlobalObject> globalObject = frame->script()->globalObject(pluginWorld());
-    globalObject->globalData().timeoutChecker.start();
+    RefPtr<JSGlobalData> globalData = pluginWorld()->globalData();
+    globalData->timeoutChecker.start();
     JSValue value = JSC::construct(exec, object, constructType, constructData, argList);
-    globalObject->globalData().timeoutChecker.stop();
+    globalData->timeoutChecker.stop();
     
     marshalValue(exec, value, resultData, resultLength);
     exec->clearException();
@@ -1283,7 +1283,7 @@ void NetscapePluginInstanceProxy::addValueToArray(NSMutableArray *array, ExecSta
             }
         } else {
             [array addObject:[NSNumber numberWithInt:JSObjectValueType]];
-            [array addObject:[NSNumber numberWithInt:m_localObjects.idForObject(object)]];
+            [array addObject:[NSNumber numberWithInt:m_localObjects.idForObject(exec->globalData(), object)]];
         }
     } else
         [array addObject:[NSNumber numberWithInt:VoidValueType]];

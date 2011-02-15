@@ -1,3 +1,20 @@
+2011-02-14  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough and Geoff Garen.
+
+        Refactor handles and weak pointers to become nicer and more automatic
+        https://bugs.webkit.org/show_bug.cgi?id=54415
+
+        Update to use new Global<> type
+
+        * JSRun.cpp:
+        (JSRun::JSRun):
+        (JSRun::GlobalObject):
+        * JSRun.h:
+        * JSValueWrapper.cpp:
+        (JSValueWrapper::JSValueWrapper):
+        * JSValueWrapper.h:
+
 2011-02-13  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Dan Bernstein.

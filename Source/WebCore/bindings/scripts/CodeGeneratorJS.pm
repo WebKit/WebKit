@@ -1445,7 +1445,6 @@ sub GenerateImplementation
 
         if ($eventTarget) {
             $implIncludes{"RegisteredEventListener.h"} = 1;
-            push(@implContent, "    impl()->invalidateJSEventListeners(this);\n");
         }
 
         if (!$dataNode->extendedAttributes->{"ExtendsDOMGlobalObject"}) {
@@ -2039,7 +2038,7 @@ sub GenerateImplementation
                                 }
                             }
 
-                            push(@implContent, "    " . GetNativeTypeFromSignature($parameter) . " $name = " . JSValueToNative($parameter, "exec->argument($argsIndex)") . ";\n");
+                            push(@implContent, "    " . GetNativeTypeFromSignature($parameter) . " $name(" . JSValueToNative($parameter, "exec->argument($argsIndex)") . ");\n");
 
                             # If a parameter is "an index" and it's negative it should throw an INDEX_SIZE_ERR exception.
                             # But this needs to be done in the bindings, because the type is unsigned and the fact that it
@@ -2494,12 +2493,12 @@ sub JSValueToNative
     }
 
     if ($type eq "DOMObject") {
-        return "$value";
+        return "exec->globalData(), $value";
     }
 
     if ($type eq "MediaQueryListListener") {
         $implIncludes{"MediaQueryListListener.h"} = 1;
-        return "MediaQueryListListener::create(" . $value .")";
+        return "MediaQueryListListener::create(ScriptValue(exec->globalData(), " . $value ."))";
     }
 
     if ($type eq "SerializedScriptValue" or $type eq "any") {

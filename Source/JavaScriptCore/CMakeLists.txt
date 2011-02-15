@@ -40,6 +40,8 @@ SET(JavaScriptCore_SOURCES
     bytecompiler/BytecodeGenerator.cpp
     bytecompiler/NodesCodegen.cpp
 
+    collector/handles/HandleHeap.cpp
+
     debugger/Debugger.cpp
     debugger/DebuggerActivation.cpp
     debugger/DebuggerCallFrame.cpp
@@ -100,7 +102,6 @@ SET(JavaScriptCore_SOURCES
     runtime/FunctionConstructor.cpp
     runtime/FunctionPrototype.cpp
     runtime/GCActivityCallback.cpp
-    runtime/GCHandle.cpp
     runtime/GetterSetter.cpp
     runtime/GlobalEvalFunction.cpp
     runtime/Identifier.cpp

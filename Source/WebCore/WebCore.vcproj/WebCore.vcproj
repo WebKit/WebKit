@@ -64673,6 +64673,18 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="collector"
+				>
+				<Filter
+					Name="handles"
+					>
+					<File
+						RelativePath="..\ForwardingHeaders\collector\handles\Global.h"
+						>
+					</File>
+				</Filter>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="history"

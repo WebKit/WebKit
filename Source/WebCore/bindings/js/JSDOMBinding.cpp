@@ -206,8 +206,6 @@ void forgetDOMObject(DOMObject* wrapper, void* objectHandle)
 
 void forgetDOMNode(JSNode* wrapper, Node* node, Document* document)
 {
-    node->clearWrapper(wrapper);
-
     if (!document) {
         forgetDOMObject(wrapper, node);
         return;
@@ -233,7 +231,7 @@ void cacheDOMNodeWrapper(JSC::ExecState* exec, Document* document, Node* node, J
         document->getWrapperCache(currentWorld(exec))->set(node, wrapper);
 
     if (currentWorld(exec)->isNormal())
-        node->setWrapper(wrapper);
+        node->setWrapper(exec->globalData(), wrapper);
 }
 
 static inline bool isObservableThroughDOM(JSNode* jsNode, DOMWrapperWorld* world)
