@@ -3173,8 +3173,6 @@ BUGWK54409 GPU : compositing/geometry/vertical-scroll-composited.html = IMAGE
 BUGWK54409 GPU WIN : compositing/masks/masked-ancestor.html = IMAGE
 BUGWK54409 GPU WIN : compositing/masks/simple-composited-mask.html = IMAGE
 BUGWK54409 GPU : compositing/overflow/fixed-position-ancestor-clip.html = IMAGE
-BUGWK54409 GPU WIN : fast/canvas/canvas-text-alignment.html = IMAGE
-BUGWK54409 GPU WIN : fast/canvas/image-object-in-canvas.html = IMAGE
 
 BUGCR72223 : media/video-frame-accurate-seek.html = IMAGE PASS
 
