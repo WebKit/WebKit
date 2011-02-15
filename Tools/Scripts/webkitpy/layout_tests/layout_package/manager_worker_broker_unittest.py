@@ -43,48 +43,64 @@ from webkitpy.layout_tests import port
 from webkitpy.layout_tests.layout_package import manager_worker_broker
 from webkitpy.layout_tests.layout_package import message_broker2
 
+# In order to reliably control when child workers are starting and stopping,
+# we use a pair of global variables to hold queues used for messaging. Ideally
+# we wouldn't need globals, but we can't pass these through a lexical closure
+# because those can't be Pickled and sent to a subprocess, and we'd prefer not
+# to have to pass extra arguments to the worker in the start_worker() call.
+starting_queue = None
+stopping_queue = None
 
-def worker_maker(starting_queue=None, stopping_queue=None):
-    class _TestWorker(manager_worker_broker.AbstractWorker):
-        def __init__(self, broker_connection, worker_number, options):
-            self._broker_connection = broker_connection
-            self._options = options
-            self._worker_number = worker_number
-            self._name = 'TestWorker/%d' % worker_number
-            self._stopped = False
-            self._canceled = False
-            self._starting_queue = starting_queue
-            self._stopping_queue = stopping_queue
 
-        def handle_stop(self, src):
-            self._stopped = True
+def make_broker(manager, worker_model, start_queue=None, stop_queue=None):
+    global starting_queue
+    global stopping_queue
+    starting_queue = start_queue
+    stopping_queue = stop_queue
+    options = get_options(worker_model)
+    return manager_worker_broker.get(port.get("test"), options, manager, _TestWorker)
 
-        def handle_test(self, src, an_int, a_str):
-            assert an_int == 1
-            assert a_str == "hello, world"
-            self._broker_connection.post_message('test', 2, 'hi, everybody')
 
-        def is_done(self):
-            return self._stopped or self._canceled
+class _TestWorker(manager_worker_broker.AbstractWorker):
+    def __init__(self, broker_connection, worker_number, options):
+        self._broker_connection = broker_connection
+        self._options = options
+        self._worker_number = worker_number
+        self._name = 'TestWorker/%d' % worker_number
+        self._stopped = False
+        self._canceled = False
+        self._starting_queue = starting_queue
+        self._stopping_queue = stopping_queue
 
-        def name(self):
-            return self._name
+    def handle_stop(self, src):
+        self._stopped = True
 
-        def cancel(self):
-            self._canceled = True
+    def handle_test(self, src, an_int, a_str):
+        assert an_int == 1
+        assert a_str == "hello, world"
+        self._broker_connection.post_message('test', 2, 'hi, everybody')
 
-        def run(self, port):
-            if self._starting_queue:
-                self._starting_queue.put('')
-            if self._stopping_queue:
-                self._stopping_queue.get()
-            try:
-                self._broker_connection.run_message_loop()
-                self._broker_connection.yield_to_broker()
-                self._broker_connection.post_message('done')
-            except Exception, e:
-                self._broker_connection.post_message('exception', (type(e), str(e), None))
-    return _TestWorker
+    def is_done(self):
+        return self._stopped or self._canceled
+
+    def name(self):
+        return self._name
+
+    def cancel(self):
+        self._canceled = True
+
+    def run(self, port):
+        if self._starting_queue:
+            self._starting_queue.put('')
+
+        if self._stopping_queue:
+            self._stopping_queue.get()
+        try:
+            self._broker_connection.run_message_loop()
+            self._broker_connection.yield_to_broker()
+            self._broker_connection.post_message('done')
+        except Exception, e:
+            self._broker_connection.post_message('exception', (type(e), str(e), None))
 
 
 def get_options(worker_model):
@@ -93,11 +109,6 @@ def get_options(worker_model):
     options, args = parser.parse_args(args=['--worker-model', worker_model])
     return options
 
-
-def make_broker(manager, worker_model, starting_queue=None, stopping_queue=None):
-    options = get_options(worker_model)
-    return manager_worker_broker.get(port.get("test"), options, manager,
-                                     worker_maker(starting_queue, stopping_queue))
 
 
 class FunctionTests(unittest.TestCase):
@@ -258,7 +269,7 @@ class InterfaceTest(unittest.TestCase):
         # Test that all the base class methods are abstract and have the
         # signature we expect.
         broker = make_broker(self, 'inline')
-        obj = manager_worker_broker._WorkerConnection(broker._broker, worker_maker(), 0, None)
+        obj = manager_worker_broker._WorkerConnection(broker._broker, _TestWorker, 0, None)
         self.assertRaises(NotImplementedError, obj.cancel)
         self.assertRaises(NotImplementedError, obj.is_alive)
         self.assertRaises(NotImplementedError, obj.join, None)

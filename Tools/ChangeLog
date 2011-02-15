@@ -1,3 +1,23 @@
+2011-02-15  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Make new-run-webkit-tests --processes work under Windows' weird
+        multiprocessing model. This requires us to be running a Python
+        file that can be imported as a module, so I've modified the
+        new-run-webkit-tests script to spawn a subprocess runing
+        webkitpy.layout_tests.run_webkit_tests.py. I've also modified
+        the manager_worker_broker tests because you can't pickle a
+        nested class. This requires us to use globals to pass queues
+        back and forth for testing, but the alternative is to pass extra
+        arguments to start_worker() and that feels like a bad tradeoff
+        just for testing.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54431
+
+        * Scripts/new-run-webkit-tests:
+        * Scripts/webkitpy/layout_tests/layout_package/manager_worker_broker_unittest.py:
+
 2011-02-15  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.

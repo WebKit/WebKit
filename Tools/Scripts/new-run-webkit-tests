@@ -28,14 +28,25 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """Wrapper around webkitpy/layout_tests/run_webkit_tests.py"""
-import signal
+import os
+import subprocess
 import sys
 
-import webkitpy.layout_tests.run_webkit_tests as run_webkit_tests
-
 if __name__ == '__main__':
-    try:
-        sys.exit(run_webkit_tests.main())
-    except KeyboardInterrupt:
-        # this mirrors what the shell normally does
-        sys.exit(signal.SIGINT + 128)
+    # In order for the multiprocessing module to spawn children correctly on
+    # Windows, we need to be running a Python module that can be imported
+    # (which means a file in sys.path that ends in .py). We also make surei
+    # that sys.path / PYTHONPATH is set and propagating correctly.
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    env = os.environ
+    if env.has_key('PYTHONPATH'):
+        if script_dir not in env['PYTHONPATH']:
+            env_separator = ':'
+            if sys.platform == 'win32':
+                env_separator = ';'
+            env['PYTHONPATH'] = env['PYTHONPATH'] + env_separator + script_dir
+    else:
+        env['PYTHONPATH'] = script_dir
+    module_path = os.path.join(script_dir, 'webkitpy', 'layout_tests', 'run_webkit_tests.py')
+    cmd = [sys.executable, module_path] + sys.argv[1:]
+    sys.exit(subprocess.call(cmd, env=env))
