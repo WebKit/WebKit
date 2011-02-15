@@ -63,7 +63,7 @@ void WebDragClient::startDrag(DragImageRef dragImage, const IntPoint& at, const 
     NSGraphicsContext* bitmapContext = [NSGraphicsContext graphicsContextWithGraphicsPort:graphicsContext->platformContext() flipped:YES];
     [NSGraphicsContext setCurrentContext: bitmapContext];
     
-    [dragNSImage drawInRect:NSMakeRect(0, 0, [dragNSImage size].width , [dragNSImage size].height) fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1];
+    [dragNSImage drawInRect:NSMakeRect(0, 0, [dragNSImage size].width , [dragNSImage size].height) fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1 respectFlipped:YES hints:nil];
     [NSGraphicsContext restoreGraphicsState];
  
     SharedMemory::Handle handle;

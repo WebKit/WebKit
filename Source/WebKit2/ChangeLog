@@ -1,3 +1,20 @@
+2011-02-15  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Stop using deprecated API to flip the dragImage.
+        <rdar://problem/8930897>
+        https://bugs.webkit.org/show_bug.cgi?id=54477
+        
+        NSImage setFlipped is a deprecated API. We replace it with
+        drawInRect:fromRect:operation:fraction:respectFlipped:hints.
+        
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::setDragImage): Removed call to setFlipped.
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::WebDragClient::startDrag): The image is now drawn with
+        drawInRect:fromRect:operation:fraction:respectFlipped:hints.
+
 2011-02-15  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.

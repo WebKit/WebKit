@@ -295,7 +295,6 @@ void PageClientImpl::setDragImage(const IntPoint& clientPosition, const IntSize&
 {
     OwnPtr<GraphicsContext> graphicsContext = dragImage->createGraphicsContext();
     RetainPtr<NSImage> dragNSImage(AdoptNS, [[NSImage alloc] initWithCGImage:CGBitmapContextCreateImage(graphicsContext->platformContext()) size:imageSize]);
-    [dragNSImage.get() setFlipped:YES];
     [m_wkView _setDragImage:dragNSImage.get() at:clientPosition linkDrag:isLinkDrag];
 }
     
