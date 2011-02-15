@@ -1,149 +1,193 @@
-var lastCallId = 0;
-var callbacks = {};
+var initialize_InspectorTest = function() {
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+var results = [];
+var resultsSynchronized = false;
+
+InspectorTest.completeTest = function()
+{
+    InspectorBackend.didEvaluateForTestInFrontend(InspectorTest.completeTestCallId, "");
 }
 
-function onload()
+InspectorTest.evaluateInConsole = function(code, callback)
 {
-    var outputElement = document.createElement("div");
-    outputElement.id = "output";
-    outputElement.style.whiteSpace = "pre";
-    document.body.appendChild(outputElement);
+    WebInspector.console.visible = true;
+    WebInspector.console.prompt.text = code;
+    var event = document.createEvent("KeyboardEvent");
+    event.initKeyboardEvent("keydown", true, true, null, "Enter", "");
+    WebInspector.console.promptElement.dispatchEvent(event);
+    InspectorTest._addSniffer(WebInspector.ConsoleView.prototype, "addMessage",
+        function(commandResult) {
+            if (callback)
+                callback(commandResult.toMessageElement().textContent);
+        });
+}
 
-    var toInject = [];
-    for (var name in window) {
-        if (name.indexOf("frontend_") === 0 && typeof window[name] === "function")
-            toInject.push(window[name].toString());
+InspectorTest.evaluateInConsoleAndDump = function(code, callback)
+{
+    function mycallback(text)
+    {
+        InspectorTest.addResult(code + " = " + text);
+        if (callback)
+            callback(text);
     }
-    toInject.push("frontend_setupTestEnvironment();");
-    evaluateInWebInspector(toInject.join("\n"), doit);
+    InspectorTest.evaluateInConsole(code, mycallback);
 }
 
-function evaluateInWebInspector(script, callback)
+InspectorTest.evaluateInPage = function(code, callback)
 {
-    var callId = lastCallId++;
-    callbacks[callId] = callback;
-    if (window.layoutTestController)
-        layoutTestController.evaluateInWebInspector(callId, script);
+    function mycallback(result)
+    {
+        if (callback)
+            callback(WebInspector.RemoteObject.fromPayload(result));
+    }
+    InspectorBackend.evaluate(code, "console", false, mycallback);
 }
 
-function notifyDone()
+InspectorTest.evaluateInPageWithTimeout = function(code, callback)
 {
-    evaluateInWebInspector("true", function() {
-        if (window.layoutTestController) {
-            layoutTestController.closeWebInspector();
-            // Wait until Web Inspector actually closes before calling notifyDone.
-            setTimeout(function() {
-                layoutTestController.notifyDone();
-            }, 0);
-        }
-    });
+    InspectorTest.evaluateInPage("setTimeout(unescape('" + escape(code) + "'))", callback);
 }
 
-function dumpObject(object, nondeterministicProps, prefix, firstLinePrefix)
+InspectorTest.addResult = function(text)
+{
+    results.push(text);
+    if (resultsSynchronized)
+        addResultToPage(text);
+    else {
+        clearResults();
+        for (var i = 0; i < results.length; ++i)
+            addResultToPage(results[i]);
+        resultsSynchronized = true;
+    }
+
+    function clearResults()
+    {
+        InspectorTest.evaluateInPage("Array.prototype.forEach.call(document.body.querySelectorAll('div.output'), function(node) { node.parentNode.removeChild(node); })");
+    }
+
+    function addResultToPage(text)
+    {
+        InspectorTest.evaluateInPage("output(unescape('" + escape(text) + "'))");
+    }
+}
+
+InspectorTest.addResults = function(textArray)
+{
+    if (!textArray)
+        return;
+    for (var i = 0, size = textArray.length; i < size; ++i)
+        InspectorTest.addResult(textArray[i]);
+}
+
+InspectorTest.addObject = function(object, nondeterministicProps, prefix, firstLinePrefix)
 {
     prefix = prefix || "";
     firstLinePrefix = firstLinePrefix || prefix;
-    output(firstLinePrefix + "{");
+    InspectorTest.addResult(firstLinePrefix + "{");
     for (var prop in object) {
+        if (!object.hasOwnProperty(prop))
+            continue;
         var prefixWithName = prefix + "    " + prop + " : ";
         var propValue = object[prop];
         if (nondeterministicProps && prop in nondeterministicProps)
-            output(prefixWithName + "<" + typeof propValue + ">");
+            InspectorTest.addResult(prefixWithName + "<" + typeof propValue + ">");
         else if (propValue === null)
-            output(prefixWithName + "null");
+            InspectorTest.addResult(prefixWithName + "null");
         else if (typeof propValue === "object")
-            dumpObject(propValue, nondeterministicProps, prefix + "    ", prefixWithName);
+            InspectorTest.addObject(propValue, nondeterministicProps, prefix + "    ", prefixWithName);
         else if (typeof propValue === "string")
-            output(prefixWithName + "\"" + propValue + "\"");
-        else if (typeof propValue === "function")
-            output(prefixWithName + "<function>");
+            InspectorTest.addResult(prefixWithName + "\"" + propValue + "\"");
         else
-            output(prefixWithName + propValue);
+            InspectorTest.addResult(prefixWithName + propValue);
     }
-    output(prefix + "}");
+    InspectorTest.addResult(prefix + "}");
 }
 
-function dumpArray(result)
+InspectorTest.reloadPage = function(callback)
 {
-    if (result instanceof Array) {
-        for (var i = 0; i < result.length; ++i)
-            output(result[i]);
-    } else
-        output(result);
+    InspectorTest._reloadPageCallback = callback;
+
+    if (WebInspector.panels.network)
+        WebInspector.panels.network._reset();
+    InspectorBackend.reloadPage(false);
 }
 
-function completeTest(result)
+InspectorTest.pageReloaded = function()
 {
-    dumpArray(result);
-    notifyDone();
-}
-
-function output(text)
-{
-    var output = document.getElementById("output");
-    output.appendChild(document.createTextNode(text));
-    output.appendChild(document.createElement("br"));
-}
-
-function didEvaluateForTestInFrontend(callId, jsonResult)
-{
-    if (callbacks[callId]) {
-        callbacks[callId].call(this, JSON.parse(jsonResult));
-        delete callbacks[callId];
+    resultsSynchronized = false;
+    InspectorTest.addResult("Page reloaded.");
+    if (InspectorTest._reloadPageCallback) {
+        var callback = InspectorTest._reloadPageCallback;
+        delete InspectorTest._reloadPageCallback;
+        callback();
     }
 }
 
-function runAfterIframeIsLoaded(continuation)
+InspectorTest.runAfterPendingDispatches = function(callback)
 {
-    function step()
+    WebInspector.TestController.prototype.runAfterPendingDispatches(callback);
+}
+
+InspectorTest.createKeyEvent = function(keyIdentifier)
+{
+    var evt = document.createEvent("KeyboardEvent");
+    evt.initKeyboardEvent("keydown", true /* can bubble */, true /* can cancel */, null /* view */, keyIdentifier, "");
+    return evt;
+}
+
+InspectorTest.findDOMNode = function(root, filter, callback)
+{
+    var found = false;
+    var pendingCalls = 1;
+
+    if (root)
+        findDOMNode(root);
+    else
+        waitForDocument();
+
+    function waitForDocument()
     {
-        if (!window.iframeLoaded)
-            setTimeout(step, 100);
+        root = WebInspector.domAgent.document;
+        if (root)
+            findDOMNode(root);
         else
-            continuation();
+            InspectorTest._addSniffer(WebInspector, setDocument, waitForDocument);
     }
-    setTimeout(step, 100);
+
+    function findDOMNode(node)
+    {
+        if (filter(node)) {
+            callback(node);
+            found = true;
+        } else
+            WebInspector.domAgent.getChildNodesAsync(node, processChildren);
+
+        --pendingCalls;
+
+        if (!found && !pendingCalls)
+            setTimeout(findDOMNode.bind(null, root), 0);
+
+        function processChildren(children)
+        {
+            pendingCalls += children ? children.length : 0;
+            for (var i = 0; !found && children && i < children.length; ++i)
+                findDOMNode(children[i]);
+        }
+    }
 }
 
-// Front-end utilities.
-
-function frontend_dumpTreeOutline(treeItem, result)
+InspectorTest._addSniffer = function(receiver, methodName, override, opt_sticky)
 {
-    var children = treeItem.children;
-    for (var i = 0; i < children.length; ++i)
-        frontend_dumpTreeItem(children[i], result);
-}
-
-function frontend_dumpTreeItem(treeItem, result, prefix)
-{
-    prefix = prefix || "";
-    result.push(prefix + treeItem.listItemElement.textContent);
-    treeItem.expand();
-    var children = treeItem.children;
-    for (var i = 0; children && i < children.length; ++i)
-        frontend_dumpTreeItem(children[i], result, prefix + "    ");
-}
-
-function frontend_setupTestEnvironment()
-{
-   WebInspector.showPanel("elements");
-}
-
-function frontend_addSniffer(receiver, methodName, override, opt_sticky)
-{
-    var orig = receiver[methodName];
-    if (typeof orig !== "function")
+    var original = receiver[methodName];
+    if (typeof original !== "function")
         throw ("Cannot find method to override: " + methodName);
+
     receiver[methodName] = function(var_args) {
         try {
-            var result = orig.apply(this, arguments);
+            var result = original.apply(this, arguments);
         } finally {
             if (!opt_sticky)
-                receiver[methodName] = orig;
+                receiver[methodName] = original;
         }
         // In case of exception the override won't be called.
         try {
@@ -155,21 +199,81 @@ function frontend_addSniffer(receiver, methodName, override, opt_sticky)
     };
 }
 
-function frontend_createKeyEvent(keyIdentifier)
+};
+
+var runTestCallId = 0;
+var completeTestCallId = 1;
+
+function runAfterIframeIsLoaded()
 {
-    var evt = document.createEvent("KeyboardEvent");
-    evt.initKeyboardEvent("keydown", true /* can bubble */, true /* can cancel */, null /* view */, keyIdentifier, "");
-    return evt;
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+    function step()
+    {
+        if (!window.iframeLoaded)
+            setTimeout(step, 100);
+        else
+            runTest();
+    }
+    setTimeout(step, 100);
 }
 
-function frontend_evaluateInConsole(code, callback)
+function runTest()
 {
-    WebInspector.console.visible = true;
-    WebInspector.console.prompt.text = code;
-    WebInspector.console.promptElement.dispatchEvent(frontend_createKeyEvent("Enter"));
+    if (!window.layoutTestController)
+        return;
 
-    frontend_addSniffer(WebInspector.ConsoleView.prototype, "addMessage",
-        function(commandResult) {
-            callback(commandResult.toMessageElement().textContent);
-        });
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+
+    function runTestInFrontend(initializationFunctions, testFunction, completeTestCallId)
+    {
+        if (window.InspectorTest) {
+            InspectorTest.pageReloaded();
+            return;
+        }
+
+        InspectorTest = {};
+        InspectorTest.completeTestCallId = completeTestCallId;
+
+        for (var i = 0; i < initializationFunctions.length; ++i) {
+            try {
+                initializationFunctions[i]();
+            } catch (e) {
+                console.error("Exception in test initialization: " + e);
+            }
+        }
+
+        WebInspector.showPanel("elements");
+        testFunction();
+    }
+
+    var initializationFunctions = [];
+    for (var name in window) {
+        if (name.indexOf("initialize_") === 0 && typeof window[name] === "function")
+            initializationFunctions.push(window[name].toString());
+    }
+    var parameters = ["[" + initializationFunctions + "]", test, completeTestCallId];
+    var toEvaluate = "(" + runTestInFrontend + ")(" + parameters.join(", ") + ");";
+    layoutTestController.evaluateInWebInspector(runTestCallId, toEvaluate);
+}
+
+function didEvaluateForTestInFrontend(callId)
+{
+    if (callId !== completeTestCallId)
+        return;
+    layoutTestController.closeWebInspector();
+    setTimeout(function() {
+        layoutTestController.notifyDone();
+    }, 0);
+}
+
+function output(text)
+{
+    var outputElement = document.createElement("div");
+    outputElement.className = "output";
+    outputElement.style.whiteSpace = "pre";
+    outputElement.appendChild(document.createTextNode(text));
+    outputElement.appendChild(document.createElement("br"));
+    document.body.appendChild(outputElement);
 }

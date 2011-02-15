@@ -1,0 +1,28 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/console-test.js"></script>
+<script>
+
+console.log('log');
+console.debug('debug');
+console.info('info');
+console.warn('warn');
+console.error('error');
+
+function test()
+{
+    InspectorTest.dumpConsoleMessages();
+    InspectorTest.completeTest();
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that Web Inspector won't crash if some console have been logged by the time it's opening.
+</p>
+
+</body>
+</html>

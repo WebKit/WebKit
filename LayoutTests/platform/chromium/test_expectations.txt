@@ -611,13 +611,7 @@ BUGCR24197 SKIP : fast/css/disabled-author-styles.html = FAIL
 // -----------------------------------------------------------------
 
 // There is no message port harness to test extensions
-WONTFIX SKIP : inspector/extensions.html = FAIL
-WONTFIX SKIP : inspector/extensions-api.html = FAIL
-WONTFIX SKIP : inspector/extensions-audits.html = FAIL
-WONTFIX SKIP : inspector/extensions-audits-api.html = FAIL
-WONTFIX SKIP : inspector/extensions-events.html = FAIL
-WONTFIX SKIP : inspector/extensions-eval.html = FAIL
-WONTFIX SKIP : inspector/extensions-resources.html = TIMEOUT CRASH
+WONTFIX SKIP : inspector/extensions = FAIL
 WONTFIX SKIP : http/tests/inspector/extensions-headers.html = FAIL
 
 // Inspector tests in Debug build are very slow.  If we remove SLOW, we'll see
@@ -631,11 +625,11 @@ BUGCR26734 MAC SKIP : inspector = PASS
 BUGCR26734 MAC SKIP : http/tests/inspector = PASS
 BUGCR26734 MAC SKIP : http/tests/inspector-enabled = PASS
 
-BUGCR66087 WIN LINUX SLOW : inspector/styles-disable-then-enable.html = PASS TEXT
-BUGCR66087 WIN LINUX : inspector/timeline-layout.html = CRASH TIMEOUT PASS TEXT
-BUGCR66087 WIN LINUX : inspector/timeline-parse-html.html = CRASH TIMEOUT PASS TEXT
+BUGCR66087 WIN LINUX SLOW : inspector/styles/styles-disable-then-enable.html = PASS TEXT
+BUGCR66087 WIN LINUX : inspector/timeline/timeline-layout.html = CRASH TIMEOUT PASS TEXT
+BUGCR66087 WIN LINUX : inspector/timeline/timeline-parse-html.html = CRASH TIMEOUT PASS TEXT
 // WebKit roll 74708:74711
-BUGCR68165 WIN LINUX DEBUG SLOW : inspector/styles-source-lines.html = PASS
+BUGCR68165 WIN LINUX DEBUG SLOW : inspector/styles/styles-source-lines.html = PASS
 BUGCR66087 WIN LINUX SLOW : inspector/storage-panel-dom-storage.html = PASS TEXT
 
 BUG_DRT WIN LINUX : http/tests/inspector-enabled/console-log-before-frame-navigation.html = TEXT
@@ -2877,10 +2871,10 @@ BUG_YURYS DEBUG SLOW : fast/overflow/lots-of-sibling-inline-boxes.html = PASS
 BUGCR67139 WIN MAC LINUX DEBUG : storage/close-during-stress-test.html = CRASH PASS
 
 // These tests are flaky.
-BUGCR67209 WIN LINUX DEBUG : inspector/console-uncaught-exception-in-eval.html = CRASH TIMEOUT PASS
-BUGCR67209 WIN LINUX DEBUG : inspector/timeline-enum-stability.html = CRASH TIMEOUT PASS
-BUGCR67209 WIN LINUX DEBUG : inspector/console-clear.html = CRASH TIMEOUT PASS
-BUGCR67209 WIN LINUX DEBUG : inspector/styles-disable-then-delete.html = CRASH TIMEOUT PASS
+BUGCR67209 WIN LINUX DEBUG : inspector/console/console-uncaught-exception-in-eval.html = CRASH TIMEOUT PASS
+BUGCR67209 WIN LINUX DEBUG : inspector/timeline/timeline-enum-stability.html = CRASH TIMEOUT PASS
+BUGCR67209 WIN LINUX DEBUG : inspector/console/console-clear.html = CRASH TIMEOUT PASS
+BUGCR67209 WIN LINUX DEBUG : inspector/styles/styles-disable-then-delete.html = CRASH TIMEOUT PASS
 
 // WebKit roll 74255:74308
 BUGCR67416 : fast/text/emphasis.html = FAIL
@@ -3002,8 +2996,8 @@ BUGCR71418 MAC : fast/transforms/shadows.html = IMAGE PASS
 BUGWK53446 WIN LINUX DEBUG : http/tests/navigation/forward-and-cancel.html = PASS TEXT
 
 BUGWK53459 WIN LINUX : editing/pasteboard/3976872.html = PASS TIMEOUT
-BUGWK53505 WIN DEBUG : inspector/console-eval.html = PASS CRASH
-BUGWK53505 WIN DEBUG : inspector/console-dir.html = PASS CRASH
+BUGWK53505 WIN DEBUG : inspector/console/console-eval.html = PASS CRASH
+BUGWK53505 WIN DEBUG : inspector/console/console-dir.html = PASS CRASH
 BUGWK53505 WIN DEBUG : inspector/cpu-profiler-profiling.html = PASS CRASH
 
 BUGWK53527 DEBUG : fast/frames/iframe-reparenting-new-page.html = CRASH PASS

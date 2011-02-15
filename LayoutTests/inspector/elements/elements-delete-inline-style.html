@@ -1,0 +1,52 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function test()
+{
+
+    InspectorTest.selectNodeWithId("inspected", step1);
+
+    function step1()
+    {
+        InspectorTest.addResult("Before style property removal:");
+        InspectorTest.dumpSelectedElementStyles(true);
+
+        var treeElement;
+        var innerMapping = WebInspector.domAgent._idToDOMNode;
+        for (var nodeId in innerMapping) {
+            if (innerMapping[nodeId].nodeName === "DIV") {
+                treeElement = WebInspector.panels.elements.treeOutline.findTreeElement(innerMapping[nodeId]);
+                break;
+            }
+        }
+        var styleAttrElement = treeElement.listItemElement.getElementsByClassName("webkit-html-attribute")[1];
+        treeElement._startEditingTarget(styleAttrElement);
+        var editorElement = window.getSelection().anchorNode.parentElement;
+
+        // Remove the "style" attribute altogether (not just clear its value).
+        editorElement.textContent = "";
+        editorElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
+        InspectorTest.runAfterPendingDispatches(step2);
+    }
+
+    function step2()
+    {
+        InspectorTest.addResult("After style property removal:");
+        InspectorTest.dumpSelectedElementStyles(true);
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<p>
+Tests that the "style" attribute removal results in the Styles sidebar pane update (not a crash). <a href="http://bugs.webkit.org/show_bug.cgi?id=51478">Bug 51478</a>
+</p>
+
+<div id="inspected" style="color: red"></div>
+</body>
+</html>

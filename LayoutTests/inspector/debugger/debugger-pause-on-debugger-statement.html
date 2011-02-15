@@ -1,0 +1,36 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+<script>
+
+function testFunction()
+{
+    debugger;
+}
+
+var test = function()
+{
+    InspectorTest.startDebuggerTest(step1);
+
+    function step1()
+    {
+        InspectorTest.runTestFunctionAndWaitUntilPaused(step2);
+    }
+
+    function step2()
+    {
+        InspectorTest.completeDebuggerTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that debugger will stop on "debugger" statement.
+</p>
+
+</body>
+</html>

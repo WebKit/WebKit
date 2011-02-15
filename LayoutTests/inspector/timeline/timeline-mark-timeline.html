@@ -1,0 +1,26 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="timeline-test.js"></script>
+<script>
+
+function performActions()
+{
+    console.markTimeline("MARK TIMELINE");
+}
+
+function test()
+{
+    InspectorTest.performActionsAndPrint("performActions()", "MarkTimeline");
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests the Timeline API mark feature
+</p>
+
+</body>
+</html>

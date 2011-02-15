@@ -1,3 +1,250 @@
+2011-02-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: move rest of the tests off old harness.
+        https://bugs.webkit.org/show_bug.cgi?id=54437
+
+        * http/tests/inspector-enabled/console-log-before-frame-navigation.html:
+        * http/tests/inspector/change-iframe-src-expected.txt:
+        * http/tests/inspector/change-iframe-src.html:
+        * http/tests/inspector/console-resource-errors.html:
+        * http/tests/inspector/console-websocket-error.html:
+        * http/tests/inspector/console-xhr-logging.html:
+        * http/tests/inspector/extensions-headers.html:
+        * http/tests/inspector/extensions-resources-redirect-expected.txt:
+        * http/tests/inspector/extensions-resources-redirect.html:
+        * http/tests/inspector/extensions-test.js:
+        * http/tests/inspector/inspect-iframe-from-different-domain-expected.txt:
+        * http/tests/inspector/inspect-iframe-from-different-domain.html:
+        * http/tests/inspector/inspector-test.js:
+        * http/tests/inspector/inspector-test2.js: Removed.
+        * http/tests/inspector/network-preflight-options.html:
+        * http/tests/inspector/resource-har-conversion-expected.txt:
+        * http/tests/inspector/resource-har-conversion.html:
+        * http/tests/inspector/resource-parameters.html:
+        * http/tests/inspector/resources/extension-main.html:
+        * http/tests/inspector/resources/iframe-from-different-domain-data.html:
+        * inspector/audits/audits-panel-functional-expected.txt: Renamed from LayoutTests/inspector/audits-panel-functional-expected.txt.
+        * inspector/audits/audits-panel-functional.html: Renamed from LayoutTests/inspector/audits-panel-functional.html.
+        * inspector/audits/audits-test.js: Renamed from LayoutTests/inspector/audits-tests2.js.
+        * inspector/audits/resources/Ahem.ttf: Copied from LayoutTests/inspector/resources/Ahem.ttf.
+        * inspector/audits/resources/abe.png: Copied from LayoutTests/inspector/resources/abe.png.
+        * inspector/audits/resources/audits-script1.js: Renamed from LayoutTests/inspector/resources/audits-script1.js.
+        * inspector/audits/resources/audits-script2.js: Renamed from LayoutTests/inspector/resources/audits-script2.js.
+        * inspector/audits/resources/audits-style1.css: Copied from LayoutTests/inspector/resources/audits-style1.css.
+        * inspector/console/command-line-api-expected.txt: Renamed from LayoutTests/inspector/command-line-api-expected.txt.
+        * inspector/console/command-line-api.html: Renamed from LayoutTests/inspector/command-line-api.html.
+        * inspector/console/console-api-on-call-frame-expected.txt: Renamed from LayoutTests/inspector/console-api-on-call-frame-expected.txt.
+        * inspector/console/console-api-on-call-frame.html: Renamed from LayoutTests/inspector/console-api-on-call-frame.html.
+        * inspector/console/console-assert-expected.txt: Renamed from LayoutTests/inspector/console-assert-expected.txt.
+        * inspector/console/console-assert.html: Renamed from LayoutTests/inspector/console-assert.html.
+        * inspector/console/console-clear-expected.txt: Renamed from LayoutTests/inspector/console-clear-expected.txt.
+        * inspector/console/console-clear.html: Renamed from LayoutTests/inspector/console-clear.html.
+        * inspector/console/console-command-clear-expected.txt: Renamed from LayoutTests/inspector/console-command-clear-expected.txt.
+        * inspector/console/console-command-clear.html: Renamed from LayoutTests/inspector/console-command-clear.html.
+        * inspector/console/console-dir-expected.txt: Renamed from LayoutTests/inspector/console-dir-expected.txt.
+        * inspector/console/console-dir-global-expected.txt: Renamed from LayoutTests/inspector/console-dir-global-expected.txt.
+        * inspector/console/console-dir-global.html: Renamed from LayoutTests/inspector/console-dir-global.html.
+        * inspector/console/console-dir.html: Renamed from LayoutTests/inspector/console-dir.html.
+        * inspector/console/console-dirxml-expected.txt: Renamed from LayoutTests/inspector/console-dirxml-expected.txt.
+        * inspector/console/console-dirxml.html: Renamed from LayoutTests/inspector/console-dirxml.html.
+        * inspector/console/console-eval-expected.txt: Renamed from LayoutTests/inspector/console-eval-expected.txt.
+        * inspector/console/console-eval-global-expected.txt: Renamed from LayoutTests/inspector/console-eval-global-expected.txt.
+        * inspector/console/console-eval-global.html: Renamed from LayoutTests/inspector/console-eval-global.html.
+        * inspector/console/console-eval.html: Renamed from LayoutTests/inspector/console-eval.html.
+        * inspector/console/console-format-collections-expected.txt: Renamed from LayoutTests/inspector/console-format-collections-expected.txt.
+        * inspector/console/console-format-collections.html: Renamed from LayoutTests/inspector/console-format-collections.html.
+        * inspector/console/console-format-expected.txt: Renamed from LayoutTests/inspector/console-format-expected.txt.
+        * inspector/console/console-format.html: Renamed from LayoutTests/inspector/console-format.html.
+        * inspector/console/console-log-before-inspector-open-expected.txt: Renamed from LayoutTests/inspector/console-log-before-inspector-open-expected.txt.
+        * inspector/console/console-log-before-inspector-open.html: Renamed from LayoutTests/inspector/console-log-before-inspector-open.html.
+        * inspector/console/console-log-native-funcs-expected.txt: Renamed from LayoutTests/inspector/console-log-native-funcs-expected.txt.
+        * inspector/console/console-log-syntax-error-expected.txt: Renamed from LayoutTests/inspector/console-log-syntax-error-expected.txt.
+        * inspector/console/console-log-syntax-error.html: Renamed from LayoutTests/inspector/console-log-syntax-error.html.
+        * inspector/console/console-object-constructor-name-expected.txt: Renamed from LayoutTests/inspector/console-object-constructor-name-expected.txt.
+        * inspector/console/console-object-constructor-name.html: Renamed from LayoutTests/inspector/console-object-constructor-name.html.
+        * inspector/console/console-substituted-expected.txt: Renamed from LayoutTests/inspector/console-substituted-expected.txt.
+        * inspector/console/console-substituted.html: Renamed from LayoutTests/inspector/console-substituted.html.
+        * inspector/console/console-tests-expected.txt: Renamed from LayoutTests/inspector/console-tests-expected.txt.
+        * inspector/console/console-tests.html: Renamed from LayoutTests/inspector/console-tests.html.
+        * inspector/console/console-trace-expected.txt: Renamed from LayoutTests/inspector/console-trace-expected.txt.
+        * inspector/console/console-trace-in-eval-expected.txt: Renamed from LayoutTests/inspector/console-trace-in-eval-expected.txt.
+        * inspector/console/console-trace-in-eval.html: Renamed from LayoutTests/inspector/console-trace-in-eval.html.
+        * inspector/console/console-trace.html: Renamed from LayoutTests/inspector/console-trace.html.
+        * inspector/console/console-uncaught-exception-expected.txt: Renamed from LayoutTests/inspector/console-uncaught-exception-expected.txt.
+        * inspector/console/console-uncaught-exception-in-eval-expected.txt: Renamed from LayoutTests/inspector/console-uncaught-exception-in-eval-expected.txt.
+        * inspector/console/console-uncaught-exception-in-eval.html: Renamed from LayoutTests/inspector/console-uncaught-exception-in-eval.html.
+        * inspector/console/console-uncaught-exception.html: Renamed from LayoutTests/inspector/console-uncaught-exception.html.
+        * inspector/console/resources/syntax-error.js: Copied from LayoutTests/inspector/resources/syntax-error.js.
+        * inspector/cookie-parser.html:
+        * inspector/cookie-resource-match.html:
+        * inspector/cpu-profiler-profiling.html:
+        * inspector/debugger/debugger-autocontinue-on-syntax-error-expected.txt: Renamed from LayoutTests/inspector/debugger-autocontinue-on-syntax-error-expected.txt.
+        * inspector/debugger/debugger-autocontinue-on-syntax-error.html: Renamed from LayoutTests/inspector/debugger-autocontinue-on-syntax-error.html.
+        * inspector/debugger/debugger-breakpoints-not-activated-on-reload-expected.txt: Renamed from LayoutTests/inspector/debugger-breakpoints-not-activated-on-reload-expected.txt.
+        * inspector/debugger/debugger-breakpoints-not-activated-on-reload.html: Renamed from LayoutTests/inspector/debugger-breakpoints-not-activated-on-reload.html.
+        * inspector/debugger/debugger-cyclic-ref-expected.txt: Renamed from LayoutTests/inspector/debugger-cyclic-ref-expected.txt.
+        * inspector/debugger/debugger-cyclic-ref.html: Renamed from LayoutTests/inspector/debugger-cyclic-ref.html.
+        * inspector/debugger/debugger-eval-on-call-frame-expected.txt: Renamed from LayoutTests/inspector/debugger-eval-on-call-frame-expected.txt.
+        * inspector/debugger/debugger-eval-on-call-frame.html: Renamed from LayoutTests/inspector/debugger-eval-on-call-frame.html.
+        * inspector/debugger/debugger-eval-while-paused-expected.txt: Renamed from LayoutTests/inspector/debugger-eval-while-paused-expected.txt.
+        * inspector/debugger/debugger-eval-while-paused.html: Renamed from LayoutTests/inspector/debugger-eval-while-paused.html.
+        * inspector/debugger/debugger-expand-scope-expected.txt: Renamed from LayoutTests/inspector/debugger-expand-scope-expected.txt.
+        * inspector/debugger/debugger-expand-scope.html: Renamed from LayoutTests/inspector/debugger-expand-scope.html.
+        * inspector/debugger/debugger-no-nested-pause-expected.txt: Renamed from LayoutTests/inspector/debugger-no-nested-pause-expected.txt.
+        * inspector/debugger/debugger-no-nested-pause.html: Renamed from LayoutTests/inspector/debugger-no-nested-pause.html.
+        * inspector/debugger/debugger-pause-in-eval-script-expected.txt: Renamed from LayoutTests/inspector/debugger-pause-in-eval-script-expected.txt.
+        * inspector/debugger/debugger-pause-in-eval-script.html: Renamed from LayoutTests/inspector/debugger-pause-in-eval-script.html.
+        * inspector/debugger/debugger-pause-on-breakpoint-expected.txt: Renamed from LayoutTests/inspector/debugger-pause-on-breakpoint-expected.txt.
+        * inspector/debugger/debugger-pause-on-breakpoint.html: Renamed from LayoutTests/inspector/debugger-pause-on-breakpoint.html.
+        * inspector/debugger/debugger-pause-on-debugger-statement-expected.txt: Renamed from LayoutTests/inspector/debugger-pause-on-debugger-statement-expected.txt.
+        * inspector/debugger/debugger-pause-on-debugger-statement.html: Renamed from LayoutTests/inspector/debugger-pause-on-debugger-statement.html.
+        * inspector/debugger/debugger-pause-on-exception-expected.txt: Renamed from LayoutTests/inspector/debugger-pause-on-exception-expected.txt.
+        * inspector/debugger/debugger-pause-on-exception.html: Renamed from LayoutTests/inspector/debugger-pause-on-exception.html.
+        * inspector/debugger/debugger-proto-property-expected.txt: Renamed from LayoutTests/inspector/debugger-proto-property-expected.txt.
+        * inspector/debugger/debugger-proto-property.html: Renamed from LayoutTests/inspector/debugger-proto-property.html.
+        * inspector/debugger/debugger-scripts-expected.txt: Renamed from LayoutTests/inspector/debugger-scripts-expected.txt.
+        * inspector/debugger/debugger-scripts.html: Renamed from LayoutTests/inspector/debugger-scripts.html.
+        * inspector/debugger/debugger-step-in-expected.txt: Renamed from LayoutTests/inspector/debugger-step-in-expected.txt.
+        * inspector/debugger/debugger-step-in.html: Renamed from LayoutTests/inspector/debugger-step-in.html.
+        * inspector/debugger/debugger-step-out-expected.txt: Renamed from LayoutTests/inspector/debugger-step-out-expected.txt.
+        * inspector/debugger/debugger-step-out.html: Renamed from LayoutTests/inspector/debugger-step-out.html.
+        * inspector/debugger/debugger-step-over-expected.txt: Renamed from LayoutTests/inspector/debugger-step-over-expected.txt.
+        * inspector/debugger/debugger-step-over.html: Renamed from LayoutTests/inspector/debugger-step-over.html.
+        * inspector/debugger/debugger-suspend-active-dom-objects-expected.txt: Renamed from LayoutTests/inspector/debugger-suspend-active-dom-objects-expected.txt.
+        * inspector/debugger/debugger-suspend-active-dom-objects.html: Renamed from LayoutTests/inspector/debugger-suspend-active-dom-objects.html.
+        * inspector/debugger/dom-breakpoints-expected.txt: Renamed from LayoutTests/inspector/dom-breakpoints-expected.txt.
+        * inspector/debugger/dom-breakpoints.html: Renamed from LayoutTests/inspector/dom-breakpoints.html.
+        * inspector/debugger/resources/syntax-error.js: Renamed from LayoutTests/inspector/resources/syntax-error.js.
+        * inspector/elements/elements-delete-inline-style-expected.txt: Renamed from LayoutTests/inspector/elements-delete-inline-style-expected.txt.
+        * inspector/elements/elements-delete-inline-style.html: Renamed from LayoutTests/inspector/elements-delete-inline-style.html.
+        * inspector/elements/elements-img-tooltip-expected.txt: Renamed from LayoutTests/inspector/elements-img-tooltip-expected.txt.
+        * inspector/elements/elements-img-tooltip.html: Renamed from LayoutTests/inspector/elements-img-tooltip.html.
+        * inspector/elements/elements-panel-limited-children-expected.txt: Renamed from LayoutTests/inspector/elements-panel-limited-children-expected.txt.
+        * inspector/elements/elements-panel-limited-children.html: Renamed from LayoutTests/inspector/elements-panel-limited-children.html.
+        * inspector/elements/elements-panel-rewrite-href-expected.txt: Renamed from LayoutTests/inspector/elements-panel-rewrite-href-expected.txt.
+        * inspector/elements/elements-panel-rewrite-href.html: Renamed from LayoutTests/inspector/elements-panel-rewrite-href.html.
+        * inspector/elements/elements-panel-search-expected.txt: Renamed from LayoutTests/inspector/elements-panel-search-expected.txt.
+        * inspector/elements/elements-panel-search.html: Renamed from LayoutTests/inspector/elements-panel-search.html.
+        * inspector/elements/elements-panel-selection-on-refresh-expected.txt: Renamed from LayoutTests/inspector/elements-panel-selection-on-refresh-expected.txt.
+        * inspector/elements/elements-panel-selection-on-refresh.html: Renamed from LayoutTests/inspector/elements-panel-selection-on-refresh.html.
+        * inspector/elements/elements-panel-structure-expected.txt: Renamed from LayoutTests/inspector/elements-panel-structure-expected.txt.
+        * inspector/elements/elements-panel-structure.html: Renamed from LayoutTests/inspector/elements-panel-structure.html.
+        * inspector/elements/elements-panel-styles-expected.txt: Renamed from LayoutTests/inspector/elements-panel-styles-expected.txt.
+        * inspector/elements/elements-panel-styles.html: Renamed from LayoutTests/inspector/elements-panel-styles.html.
+        * inspector/elements/elements-panel-xhtml-structure-expected.txt: Renamed from LayoutTests/inspector/elements-panel-xhtml-structure-expected.txt.
+        * inspector/elements/elements-panel-xhtml-structure.xhtml: Renamed from LayoutTests/inspector/elements-panel-xhtml-structure.xhtml.
+        * inspector/elements/resources/elements-panel-styles.css: Renamed from LayoutTests/inspector/resources/elements-panel-styles.css.
+        * inspector/evaluate-in-page.html:
+        * inspector/extensions/extensions-api-expected.txt: Renamed from LayoutTests/inspector/extensions-api-expected.txt.
+        * inspector/extensions/extensions-api.html: Renamed from LayoutTests/inspector/extensions-api.html.
+        * inspector/extensions/extensions-audits-api-expected.txt: Renamed from LayoutTests/inspector/extensions-audits-api-expected.txt.
+        * inspector/extensions/extensions-audits-api.html: Renamed from LayoutTests/inspector/extensions-audits-api.html.
+        * inspector/extensions/extensions-audits-expected.txt: Renamed from LayoutTests/inspector/extensions-audits-expected.txt.
+        * inspector/extensions/extensions-audits-tests.js: Renamed from LayoutTests/inspector/extensions-audits-tests.js.
+        * inspector/extensions/extensions-audits.html: Renamed from LayoutTests/inspector/extensions-audits.html.
+        * inspector/extensions/extensions-eval-expected.txt: Renamed from LayoutTests/inspector/extensions-eval-expected.txt.
+        * inspector/extensions/extensions-eval.html: Renamed from LayoutTests/inspector/extensions-eval.html.
+        * inspector/extensions/extensions-events-expected.txt: Renamed from LayoutTests/inspector/extensions-events-expected.txt.
+        * inspector/extensions/extensions-events.html: Renamed from LayoutTests/inspector/extensions-events.html.
+        * inspector/extensions/extensions-expected.txt: Renamed from LayoutTests/inspector/extensions-expected.txt.
+        * inspector/extensions/extensions-resources-expected.txt: Renamed from LayoutTests/inspector/extensions-resources-expected.txt.
+        * inspector/extensions/extensions-resources.html: Renamed from LayoutTests/inspector/extensions-resources.html.
+        * inspector/extensions/extensions.html: Renamed from LayoutTests/inspector/extensions.html.
+        * inspector/extensions/resources/Ahem.ttf: Renamed from LayoutTests/inspector/resources/Ahem.ttf.
+        * inspector/extensions/resources/abe.png: Renamed from LayoutTests/inspector/resources/abe.png.
+        * inspector/extensions/resources/audits-style1.css: Renamed from LayoutTests/inspector/resources/audits-style1.css.
+        * inspector/inspected-objects-not-overriden.html:
+        * inspector/report-API-errors.html:
+        * inspector/report-protocol-errors.html:
+        * inspector/storage-panel-dom-storage.html:
+        * inspector/styles/resources/styles-iframe-data.html: Renamed from LayoutTests/inspector/resources/styles-iframe-data.html.
+        * inspector/styles/resources/styles-new-API-1.css: Renamed from LayoutTests/inspector/resources/styles-new-API-1.css.
+        * inspector/styles/resources/styles-new-API.css: Renamed from LayoutTests/inspector/resources/styles-new-API.css.
+        * inspector/styles/resources/styles-source-lines-inline-iframe.html: Renamed from LayoutTests/inspector/resources/styles-source-lines-inline-iframe.html.
+        * inspector/styles/resources/styles-source-offsets.css: Renamed from LayoutTests/inspector/resources/styles-source-offsets.css.
+        * inspector/styles/resources/styles-url-linkify-iframe.html: Renamed from LayoutTests/inspector/resources/styles-url-linkify-iframe.html.
+        * inspector/styles/resources/styles-url-linkify.css: Renamed from LayoutTests/inspector/resources/styles-url-linkify.css.
+        * inspector/styles/styles-add-blank-property-expected.txt: Renamed from LayoutTests/inspector/styles-add-blank-property-expected.txt.
+        * inspector/styles/styles-add-blank-property.html: Renamed from LayoutTests/inspector/styles-add-blank-property.html.
+        * inspector/styles/styles-computed-trace-expected.txt: Renamed from LayoutTests/inspector/styles-computed-trace-expected.txt.
+        * inspector/styles/styles-computed-trace.html: Renamed from LayoutTests/inspector/styles-computed-trace.html.
+        * inspector/styles/styles-disable-inherited-expected.txt: Renamed from LayoutTests/inspector/styles-disable-inherited-expected.txt.
+        * inspector/styles/styles-disable-inherited.html: Renamed from LayoutTests/inspector/styles-disable-inherited.html.
+        * inspector/styles/styles-disable-then-change-expected.txt: Renamed from LayoutTests/inspector/styles-disable-then-change-expected.txt.
+        * inspector/styles/styles-disable-then-change.html: Renamed from LayoutTests/inspector/styles-disable-then-change.html.
+        * inspector/styles/styles-disable-then-delete-expected.txt: Renamed from LayoutTests/inspector/styles-disable-then-delete-expected.txt.
+        * inspector/styles/styles-disable-then-delete.html: Renamed from LayoutTests/inspector/styles-disable-then-delete.html.
+        * inspector/styles/styles-disable-then-enable-expected.txt: Renamed from LayoutTests/inspector/styles-disable-then-enable-expected.txt.
+        * inspector/styles/styles-disable-then-enable.html: Renamed from LayoutTests/inspector/styles-disable-then-enable.html.
+        * inspector/styles/styles-iframe-expected.txt: Renamed from LayoutTests/inspector/styles-iframe-expected.txt.
+        * inspector/styles/styles-iframe.html: Renamed from LayoutTests/inspector/styles-iframe.html.
+        * inspector/styles/styles-new-API-expected.txt: Renamed from LayoutTests/inspector/styles-new-API-expected.txt.
+        * inspector/styles/styles-new-API.html: Renamed from LayoutTests/inspector/styles-new-API.html.
+        * inspector/styles/styles-source-lines-expected.txt: Renamed from LayoutTests/inspector/styles-source-lines-expected.txt.
+        * inspector/styles/styles-source-lines-inline-expected.txt: Renamed from LayoutTests/inspector/styles-source-lines-inline-expected.txt.
+        * inspector/styles/styles-source-lines-inline.html: Renamed from LayoutTests/inspector/styles-source-lines-inline.html.
+        * inspector/styles/styles-source-lines.html: Renamed from LayoutTests/inspector/styles-source-lines.html.
+        * inspector/styles/styles-source-offsets-expected.txt: Renamed from LayoutTests/inspector/styles-source-offsets-expected.txt.
+        * inspector/styles/styles-source-offsets.html: Renamed from LayoutTests/inspector/styles-source-offsets.html.
+        * inspector/styles/styles-url-linkify-expected.txt: Renamed from LayoutTests/inspector/styles-url-linkify-expected.txt.
+        * inspector/styles/styles-url-linkify.html: Renamed from LayoutTests/inspector/styles-url-linkify.html.
+        * inspector/syntax-highlight-css.html:
+        * inspector/syntax-highlight-html.html:
+        * inspector/syntax-highlight-javascript.html:
+        * inspector/timeline/resources/timeline-iframe-data.html: Renamed from LayoutTests/inspector/resources/timeline-iframe-data.html.
+        * inspector/timeline/timeline-enum-stability-expected.txt: Renamed from LayoutTests/inspector/timeline-enum-stability-expected.txt.
+        * inspector/timeline/timeline-enum-stability.html: Renamed from LayoutTests/inspector/timeline-enum-stability.html.
+        * inspector/timeline/timeline-event-dispatch-expected.txt: Renamed from LayoutTests/inspector/timeline-event-dispatch-expected.txt.
+        * inspector/timeline/timeline-event-dispatch.html: Renamed from LayoutTests/inspector/timeline-event-dispatch.html.
+        * inspector/timeline/timeline-layout-expected.txt: Renamed from LayoutTests/inspector/timeline-layout-expected.txt.
+        * inspector/timeline/timeline-layout.html: Renamed from LayoutTests/inspector/timeline-layout.html.
+        * inspector/timeline/timeline-mark-timeline-expected.txt: Renamed from LayoutTests/inspector/timeline-mark-timeline-expected.txt.
+        * inspector/timeline/timeline-mark-timeline.html: Renamed from LayoutTests/inspector/timeline-mark-timeline.html.
+        * inspector/timeline/timeline-network-resource-expected.txt: Renamed from LayoutTests/inspector/timeline-network-resource-expected.txt.
+        * inspector/timeline/timeline-network-resource.html: Renamed from LayoutTests/inspector/timeline-network-resource.html.
+        * inspector/timeline/timeline-network-resource.js: Renamed from LayoutTests/inspector/timeline-network-resource.js.
+        * inspector/timeline/timeline-paint-expected.txt: Renamed from LayoutTests/inspector/timeline-paint-expected.txt.
+        * inspector/timeline/timeline-paint.html: Renamed from LayoutTests/inspector/timeline-paint.html.
+        * inspector/timeline/timeline-parse-html-expected.txt: Renamed from LayoutTests/inspector/timeline-parse-html-expected.txt.
+        * inspector/timeline/timeline-parse-html.html: Renamed from LayoutTests/inspector/timeline-parse-html.html.
+        * inspector/timeline/timeline-recalculate-styles-expected.txt: Renamed from LayoutTests/inspector/timeline-recalculate-styles-expected.txt.
+        * inspector/timeline/timeline-recalculate-styles.html: Renamed from LayoutTests/inspector/timeline-recalculate-styles.html.
+        * inspector/timeline/timeline-script-tag-1-expected.txt: Renamed from LayoutTests/inspector/timeline-script-tag-1-expected.txt.
+        * inspector/timeline/timeline-script-tag-1.html: Renamed from LayoutTests/inspector/timeline-script-tag-1.html.
+        * inspector/timeline/timeline-script-tag-2-expected.txt: Renamed from LayoutTests/inspector/timeline-script-tag-2-expected.txt.
+        * inspector/timeline/timeline-script-tag-2.html: Renamed from LayoutTests/inspector/timeline-script-tag-2.html.
+        * inspector/timeline/timeline-script-tag-2.js: Renamed from LayoutTests/inspector/timeline-script-tag-2.js.
+        * inspector/timeline/timeline-test.js: Renamed from LayoutTests/inspector/timeline-test.js.
+        * inspector/timeline/timeline-trivial-expected.txt: Renamed from LayoutTests/inspector/timeline-trivial-expected.txt.
+        * inspector/timeline/timeline-trivial.html: Renamed from LayoutTests/inspector/timeline-trivial.html.
+        * platform/chromium/inspector/console/console-dir-expected.txt: Renamed from LayoutTests/platform/chromium/inspector/console-dir-expected.txt.
+        * platform/chromium/inspector/console/console-dir-global-expected.txt: Renamed from LayoutTests/platform/chromium/inspector/console-dir-global-expected.txt.
+        * platform/chromium/inspector/console/console-eval-global-expected.txt: Renamed from LayoutTests/platform/chromium/inspector/console-eval-global-expected.txt.
+        * platform/chromium/inspector/console/console-format-collections-expected.txt: Renamed from LayoutTests/platform/chromium/inspector/console-format-collections-expected.txt.
+        * platform/chromium/inspector/console/console-format-expected.txt: Renamed from LayoutTests/platform/chromium/inspector/console-format-expected.txt.
+        * platform/chromium/inspector/console/console-log-native-funcs-expected.txt: Renamed from LayoutTests/platform/chromium/inspector/console-log-native-funcs-expected.txt.
+        * platform/chromium/inspector/console/console-log-syntax-error-expected.txt: Renamed from LayoutTests/platform/chromium/inspector/console-log-syntax-error-expected.txt.
+        * platform/chromium/inspector/console/console-object-constructor-name-expected.txt: Renamed from LayoutTests/platform/chromium/inspector/console-object-constructor-name-expected.txt.
+        * platform/chromium/inspector/console/console-trace-in-eval-expected.txt: Renamed from LayoutTests/platform/chromium/inspector/console-trace-in-eval-expected.txt.
+        * platform/chromium/inspector/console/console-uncaught-exception-expected.txt: Renamed from LayoutTests/platform/chromium/inspector/console-uncaught-exception-expected.txt.
+        * platform/chromium/inspector/console/console-uncaught-exception-in-eval-expected.txt: Renamed from LayoutTests/platform/chromium/inspector/console-uncaught-exception-in-eval-expected.txt.
+        * platform/chromium/inspector/debugger/debugger-autocontinue-on-syntax-error-expected.txt: Renamed from LayoutTests/platform/chromium/inspector/debugger-autocontinue-on-syntax-error-expected.txt.
+        * platform/chromium/inspector/debugger/debugger-expand-scope-expected.txt: Renamed from LayoutTests/platform/chromium/inspector/debugger-expand-scope-expected.txt.
+        * platform/chromium/inspector/debugger/debugger-pause-on-exception-expected.txt: Renamed from LayoutTests/platform/chromium/inspector/debugger-pause-on-exception-expected.txt.
+        * platform/chromium/inspector/debugger/debugger-step-in-expected.txt: Renamed from LayoutTests/platform/chromium/inspector/debugger-step-in-expected.txt.
+        * platform/chromium/inspector/timeline/timeline-event-dispatch-expected.txt: Renamed from LayoutTests/platform/chromium/inspector/timeline-event-dispatch-expected.txt.
+        * platform/chromium/inspector/timeline/timeline-mark-timeline-expected.txt: Renamed from LayoutTests/platform/chromium/inspector/timeline-mark-timeline-expected.txt.
+        * platform/chromium/inspector/timeline/timeline-network-resource-expected.txt: Renamed from LayoutTests/platform/chromium/inspector/timeline-network-resource-expected.txt.
+        * platform/chromium/inspector/timeline/timeline-paint-expected.txt: Renamed from LayoutTests/platform/chromium/inspector/timeline-paint-expected.txt.
+        * platform/chromium/inspector/timeline/timeline-parse-html-expected.txt: Renamed from LayoutTests/platform/chromium/inspector/timeline-parse-html-expected.txt.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-02-11  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Nate Chapin.

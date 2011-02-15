@@ -1,0 +1,50 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+<script>
+
+function d()
+{
+    var i = 10;
+}
+
+function testFunction()
+{
+    debugger;
+    d();
+}
+
+var test = function()
+{
+    InspectorTest.startDebuggerTest(step1);
+
+    function step1()
+    {
+        InspectorTest.runTestFunctionAndWaitUntilPaused(step2);
+    }
+
+    var stepCount = 0;
+    function step2(callFrames)
+    {
+        InspectorTest.captureStackTrace(callFrames);
+        if (stepCount < 2) {
+            InspectorTest.addResult("Stepping into...");
+            document.getElementById("scripts-step-into").click();
+            InspectorTest.waitUntilResumed(InspectorTest.waitUntilPaused.bind(InspectorTest, step2));
+        } else
+            InspectorTest.completeDebuggerTest();
+        stepCount++;
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests "step in" functionality in debugger.
+</p>
+
+</body>
+</html>

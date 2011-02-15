@@ -322,7 +322,7 @@ http/tests/xmlhttprequest/xmlhttprequest-sync-vs-async-assertion-failure.html
 sputnik/Conformance/11_Expressions/11.7_Bitwise_Shift_Operators/11.7.3_The_Unsigned_Right_Shift_Operator/S11.7.3_A2.3_T1.html
 
 # Sometimes fails https://webkit.org/b/49412
-inspector/timeline-network-resource.html
+inspector/timeline/timeline-network-resource.html
 
 # Sometimes fails http://webkit.org/b/46998
 svg/dom/SVGScriptElement/script-load-and-error-events.svg
@@ -935,7 +935,7 @@ media/media-document-audio-size.html
 fast/css/display-none-inline-style-change-crash.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=38795 - doesn't print PaintEvent instrumentation output
-inspector/timeline-paint.html
+inspector/timeline/timeline-paint.html
 
 # New canvas test suite from http://philip.html5.org/tests/canvas/suite/tests/
 canvas/philip
@@ -1069,7 +1069,7 @@ perf/
 http/tests/appcache/origin-quota.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=43332
-inspector/dom-breakpoints.html
+inspector/debugger/dom-breakpoints.html
 
 # <https://bugs.webkit.org/show_bug.cgi?id=44484>
 svg/batik/paints/patternRegions-positioned-objects.svg

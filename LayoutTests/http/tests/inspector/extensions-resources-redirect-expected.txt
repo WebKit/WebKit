@@ -15,7 +15,7 @@ Resources in HAR:
 http://127.0.0.1:8000/inspector/extensions-resources-redirect.html
 http://127.0.0.1:8000/inspector/extensions-resources-test.js
 http://127.0.0.1:8000/inspector/extensions-test.js
-http://127.0.0.1:8000/inspector/inspector-test2.js
+http://127.0.0.1:8000/inspector/inspector-test.js
 http://127.0.0.1:8000/loading/resources/redirect-methods-result.php?redirected=true
 http://127.0.0.1:8000/loading/resources/redirect-methods-result.php?redirected=true
 http://127.0.0.1:8000/loading/resources/redirect-methods-result.php?status=302

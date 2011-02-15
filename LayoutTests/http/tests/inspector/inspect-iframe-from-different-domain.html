@@ -2,103 +2,34 @@
 <head>
 <title>Inspect style in iframe from different domain.</title>
 <script src="inspector-test.js"></script>
-<script type="text/javascript" charset="utf-8">
+<script src="elements-test.js"></script>
+<script>
 
-function doit()
-{
-    function callback(result)
-    {
-        output(result);
-        notifyDone();
-    }
-    evaluateInWebInspector("frontend_dumpIFrameBackground", callback);
-}
-
+var onIFrameLoadCalled = false;
 function onIFrameLoad()
 {
-  onload();
-}
-
-// Frontend functions.
-
-function frontend_expandElementsTreeNode(elementsTreeNode, testController, callback)
-{
-    if (elementsTreeNode.expanded) {
-        callback();
+    if (onIFrameLoadCalled)
         return;
-    }
-    elementsTreeNode.expand();
-    testController.runAfterPendingDispatches(function() {
-        callback();
-    });
+    onIFrameLoadCalled = true;
+    runTest();
 }
 
-function frontend_expandDOMElementsTreePath(elementsTreeRoot, path, testController, callback)
+function test()
 {
-    if (!path.length) {
-        callback(elementsTreeRoot);
-        return;
+    InspectorTest.selectNodeWithId("iframe-body", step1);
+
+    function step1()
+    {
+        var treeItem = InspectorTest.getElementStylePropertyTreeItem("background");
+        InspectorTest.dumpStyleTreeItem(treeItem, "");
+        InspectorTest.completeTest();
     }
-    frontend_expandElementsTreeNode(elementsTreeRoot, testController, function() {
-        var children = elementsTreeRoot.children;
-        var child = elementsTreeRoot.children[path[0]];
-        if (!child) {
-            testController.notifyDone("Failed to expand node. Path = " + path);
-            return;
-        }
-        if (!child.representedObject) {
-            testController.notifyDone("Represented object is null. Path = " + path);
-            return;
-        }
-        var childNodeName = child.representedObject.nodeName;
-        if (childNodeName !== path[1]) {
-            testController.notifyDone("Unexpected child node name: " + childNodeName + ". Path = " + path);
-            return;
-        }
-        frontend_expandDOMElementsTreePath(child, path.slice(2), testController, callback);
-    });
-}
-
-function frontend_dumpIFrameBackground(testController)
-{
-    testController.waitUntilDone();
-    // Expand the iframe body and examine it.
-    frontend_expandDOMElementsTreePath(WebInspector.panels.elements.treeOutline, [0, "HTML", 1, "BODY", 0, "IFRAME", 0, "HTML", 1, "BODY"], testController, function(domElementsTreeNode) {
-        var domNode = domElementsTreeNode.representedObject;
-        // Set focus to the iframe body node and then check its style.
-        WebInspector.panels.elements.focusedDOMNode = domNode;
-        testController.runAfterPendingDispatches(function() {
-
-            function callback(styles)
-            {
-                if (!styles) {
-                    testController.notifyDone("Background property not found");
-                    return;
-                }
-
-                for (var i = styles.matchedCSSRules.length - 1; i >= 0; --i) {
-                    var rule = styles.matchedCSSRules[i];
-                    if (rule.isUser || rule.isUserAgent)
-                        continue;
-                    var bg = rule.style.getShorthandValue("background");
-                    if (bg) {
-                        testController.notifyDone("background = " + bg);
-                        return;
-                    }
-                }
-                    
-                testController.notifyDone("Background property not found");
-            }
-
-            WebInspector.cssModel.getStylesAsync(domNode.id, callback);
-        });
-    });
 }
 
 </script>
 </head>
 <body>
-    <iframe src="http://localhost:8000/inspector/resources/iframe-from-different-domain-data.html" id="receiver" onload="onIFrameLoad();"></iframe>
+    <iframe src="http://localhost:8000/inspector/resources/iframe-from-different-domain-data.html" id="receiver" onload="onIFrameLoad()"></iframe>
     <p>
     Tests that style properties of elements in iframes loaded from domain different from
     the main document domain can be inspected.

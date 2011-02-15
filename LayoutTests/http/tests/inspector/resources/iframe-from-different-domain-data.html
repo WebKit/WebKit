@@ -1,10 +1,13 @@
 <html>
 <head>
-<style type="text/css" media="screen">
-  body { background:green; }
-</style>
+<script>
+function onload()
+{
+    console.log("IFRAME HOST: " + window.location.host);
+}
+</script>
 </head>
-<body id="iframe-body">
+<body id="iframe-body" style="background:green;" onload="onload()">
 Inspect me.
 </body>
 </html>
