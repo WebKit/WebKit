@@ -62,7 +62,7 @@ InspectorTest.addResult = function(text)
 
     function clearResults()
     {
-        InspectorTest.evaluateInPage("Array.prototype.forEach.call(document.body.querySelectorAll('div.output'), function(node) { node.parentNode.removeChild(node); })");
+        InspectorTest.evaluateInPage("clearOutput()");
     }
 
     function addResultToPage(text)
@@ -135,45 +135,21 @@ InspectorTest.createKeyEvent = function(keyIdentifier)
     return evt;
 }
 
-InspectorTest.findDOMNode = function(root, filter, callback)
+InspectorTest.runTestSuite = function(testSuite)
 {
-    var found = false;
-    var pendingCalls = 1;
+    var testSuiteTests = testSuite.slice();
 
-    if (root)
-        findDOMNode(root);
-    else
-        waitForDocument();
-
-    function waitForDocument()
+    function runner()
     {
-        root = WebInspector.domAgent.document;
-        if (root)
-            findDOMNode(root);
-        else
-            InspectorTest._addSniffer(WebInspector, setDocument, waitForDocument);
-    }
-
-    function findDOMNode(node)
-    {
-        if (filter(node)) {
-            callback(node);
-            found = true;
-        } else
-            WebInspector.domAgent.getChildNodesAsync(node, processChildren);
-
-        --pendingCalls;
-
-        if (!found && !pendingCalls)
-            setTimeout(findDOMNode.bind(null, root), 0);
-
-        function processChildren(children)
-        {
-            pendingCalls += children ? children.length : 0;
-            for (var i = 0; !found && children && i < children.length; ++i)
-                findDOMNode(children[i]);
+        if (!testSuiteTests.length) {
+            InspectorTest.completeTest();
+            return;
         }
+        var nextTestFunction = testSuiteTests.shift();
+        nextTestFunction(runner);
     }
+
+    runner();
 }
 
 InspectorTest._addSniffer = function(receiver, methodName, override, opt_sticky)
@@ -268,12 +244,24 @@ function didEvaluateForTestInFrontend(callId)
     }, 0);
 }
 
+var outputElement;
+
 function output(text)
 {
-    var outputElement = document.createElement("div");
-    outputElement.className = "output";
-    outputElement.style.whiteSpace = "pre";
+    if (!outputElement) {
+        outputElement = document.createElement("div");
+        outputElement.className = "output";
+        outputElement.style.whiteSpace = "pre";
+        document.body.appendChild(outputElement);
+    }
     outputElement.appendChild(document.createTextNode(text));
     outputElement.appendChild(document.createElement("br"));
-    document.body.appendChild(outputElement);
+}
+
+function clearOutput()
+{
+    if (outputElement) {
+        outputElement.parentNode.removeChild(outputElement);
+        outputElement = null;
+    }
 }

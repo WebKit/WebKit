@@ -1,9 +1,5 @@
 var initialize_ElementTest = function() {
 
-InspectorTest.pushAllDOM = function(callback)
-{
-    InspectorTest.nodeWithId(/nonstring/, callback);
-}
 
 InspectorTest.nodeWithId = function(idValue, callback)
 {
@@ -36,6 +32,17 @@ InspectorTest.nodeWithId = function(idValue, callback)
     pendingRequests++;
     WebInspector.domAgent.getChildNodesAsync(WebInspector.domAgent.document, processChildren.bind(this, true));
 };
+
+InspectorTest.expandedNodeWithId = function(idValue)
+{
+    var result;
+    function callback(node)
+    {
+        result = node;
+    }
+    InspectorTest.nodeWithId(idValue, callback);
+    return result;
+}
 
 InspectorTest.selectNodeWithId = function(idValue, callback)
 {
@@ -123,26 +130,77 @@ InspectorTest.dumpStyleTreeItem = function(treeItem, prefix, depth)
     }
 };
 
-InspectorTest.dumpElementsTree = function()
+InspectorTest.dumpElementsTree = function(rootNode)
 {
+    function beautify(element)
+    {
+        return element.textContent.replace(/\u200b/g, "").replace(/\n/g, "").trim();
+    }
+
+    function print(treeItem, prefix)
+    {
+        if (treeItem.listItemElement) {
+            var expander;
+            if (treeItem.hasChildren) {
+                if (treeItem.expanded)
+                    expander = "- ";
+                else
+                    expander = "+ ";
+            } else
+                expander = "  ";
+
+            InspectorTest.addResult(prefix + expander + beautify(treeItem.listItemElement));
+        }
+        
+
+        if (!treeItem.expanded)
+            return;
+
+        var children = treeItem.children;
+        for (var i = 0; children && i < children.length - 1; ++i)
+            print(children[i], prefix + "    ");
+
+        // Closing tag.
+        if (children && children.length)
+            print(children[children.length - 1], prefix);
+    }
+
     WebInspector.panels.elements.updateModifiedNodes();
-    InspectorTest.addResult(WebInspector.panels.elements.treeOutline.element.textContent.replace(/\u200b/g, "").replace(/\n/g, "").replace(/</g, "\n<"));
+    var treeOutline = WebInspector.panels.elements.treeOutline;
+    print(rootNode ? treeOutline.findTreeElement(rootNode) : treeOutline, "");
 };
 
-InspectorTest.dumpLoadedDOM = function()
+InspectorTest.expandElementsTree = function(callback)
 {
-    function expand(treeItem, topLevel)
+    function expand(treeItem)
     {
         var children = treeItem.children;
         for (var i = 0; children && i < children.length; ++i) {
             children[i].expand();
-            expand(children[i], false);
+            expand(children[i]);
         }
-        if (topLevel)
-            InspectorTest.dumpElementsTree();
     }
-    WebInspector.panels.elements.updateModifiedNodes();
-    expand(WebInspector.panels.elements.treeOutline, true);
+
+    function mycallback()
+    {
+        WebInspector.panels.elements.updateModifiedNodes();
+        expand(WebInspector.panels.elements.treeOutline);
+        if (callback)
+            callback();
+    }
+    InspectorTest.nodeWithId(/nonstring/, mycallback);
+};
+
+InspectorTest.dumpDOMAgentTree = function()
+{
+    function dump(node, prefix)
+    {
+        InspectorTest.addResult(prefix + node.nodeName + "[" + node.id + "]");
+        var children = node.children;
+        for (var i = 0; children && i < children.length; ++i)
+            dump(children[i], prefix + "    ");
+    }
+    dump(WebInspector.domAgent.document, "");
 };
 
 };

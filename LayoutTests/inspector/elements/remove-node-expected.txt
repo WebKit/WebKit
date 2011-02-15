@@ -1,0 +1,28 @@
+Tests that elements panel updates dom tree structure upon node removal.
+
+========= Original ========
+- <div id="container">
+      <div id="child1"></div>
+      <div id="child2"></div>
+      <div id="child3"></div>
+      <div id="child4"></div>
+  </div>
+===== Removed first =====
+- <div id="container">
+      <div id="child2"></div>
+      <div id="child3"></div>
+      <div id="child4"></div>
+  </div>
+===== Removed middle =====
+- <div id="container">
+      <div id="child2"></div>
+      <div id="child4"></div>
+  </div>
+===== Removed last =====
+- <div id="container">
+      <div id="child2"></div>
+  </div>
+===== Removed the only =====
+- <div id="container">
+  </div>
+

@@ -1,0 +1,54 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function modifyChars()
+{
+    var node = document.getElementById("node");
+    node.firstChild.textContent = "Bar";
+}
+
+function test()
+{
+    var targetNode;
+
+    InspectorTest.runTestSuite([
+        function testDumpInitial(next)
+        {
+            function callback(node)
+            {
+                targetNode = node;
+                InspectorTest.addResult("========= Original ========");
+                InspectorTest.dumpElementsTree(targetNode);
+                next();
+            }
+            InspectorTest.selectNodeWithId("node", callback);
+        },
+
+        function testSetAttribute(next)
+        {
+            function callback()
+            {
+                InspectorTest.addResult("===== Mutated text node =====");
+                InspectorTest.dumpElementsTree(targetNode);
+                next();
+            }
+            InspectorTest.evaluateInPage("modifyChars()", callback);
+        }
+    ]);
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that elements panel updates dom tree structure upon changes to characters.
+</p>
+
+<div id="node">Foo</div>
+
+</body>
+</html>

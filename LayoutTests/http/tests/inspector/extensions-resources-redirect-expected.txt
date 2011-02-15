@@ -2,10 +2,8 @@ Tests WebInspector extension API
 
 Page reloaded.
 Started extension.
-
 Running tests...
 RUNNING TEST: extension_testGetRedirectResourceContent
-
 content: undefined, encoding: undefined
 RUNNING TEST: extension_testRedirectResourceFinished
 Finished resource: http://127.0.0.1:8000/loading/resources/redirect-methods-result.php?status=302

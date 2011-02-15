@@ -17,7 +17,7 @@ Sidebar created
     setHeight : <function>
 }
 RUNNING TEST: extension_testExtensionWatchSidebarExpression
-Sidebar content: titlef0: "expression"f1: undefinedf2: nullf3: Objectf4: Array[0]f5: Array[3]f6: Objectf7: 42f8: Locationf9: HTMLCollection[18]f10: function () {}__proto__: Object
+Sidebar content: titlef0: "expression"f1: undefinedf2: nullf3: Objectf4: Array[0]f5: Array[3]f6: Objectf7: 42f8: Locationf9: HTMLCollection[2]f10: function () {}__proto__: Object
 RUNNING TEST: extension_testExtensionWatchSidebarObject
 Watch sidebar created, callback arguments dump follows:
 {

@@ -1,0 +1,33 @@
+Tests that elements panel updates dom tree structure upon node insertion.
+
+========= Original ========
+- <div id="container">
+      <div id="child1"></div>
+      <div id="child2"></div>
+      <div id="child3"></div>
+  </div>
+===== Inserted before =====
+- <div id="container">
+      <div id="child-before"></div>
+      <div id="child1"></div>
+      <div id="child2"></div>
+      <div id="child3"></div>
+  </div>
+===== Inserted middle =====
+- <div id="container">
+      <div id="child-before"></div>
+      <div id="child1"></div>
+      <div id="child-middle"></div>
+      <div id="child2"></div>
+      <div id="child3"></div>
+  </div>
+======== Appended =========
+- <div id="container">
+      <div id="child-before"></div>
+      <div id="child1"></div>
+      <div id="child-middle"></div>
+      <div id="child2"></div>
+      <div id="child3"></div>
+      <div id="child-after"></div>
+  </div>
+

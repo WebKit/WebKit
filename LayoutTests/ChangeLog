@@ -1,3 +1,46 @@
+2011-02-15  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: implement DOM agent tests.
+        https://bugs.webkit.org/show_bug.cgi?id=54459
+
+        * http/tests/inspector/elements-test.js:
+        (initialize_ElementTest.InspectorTest.expandedNodeWithId.callback):
+        (initialize_ElementTest.InspectorTest.expandedNodeWithId):
+        (initialize_ElementTest.InspectorTest.dumpElementsTree):
+        (initialize_ElementTest.InspectorTest.dumpElementsTree.print):
+        (initialize_ElementTest.InspectorTest.expandElementsTree):
+        (initialize_ElementTest.InspectorTest.expandElementsTree.mycallback):
+        (initialize_ElementTest.InspectorTest.dumpDOMAgentTree):
+        (initialize_ElementTest):
+        * http/tests/inspector/extensions-resources-redirect-expected.txt:
+        * http/tests/inspector/inspector-test.js:
+        (initialize_InspectorTest.InspectorTest.addResult.clearResults):
+        (initialize_InspectorTest.InspectorTest.runTestSuite.runner):
+        (initialize_InspectorTest.InspectorTest.runTestSuite):
+        (output):
+        (clearOutput):
+        * inspector/debugger/dom-breakpoints.html:
+        * inspector/elements/elements-panel-limited-children-expected.txt:
+        * inspector/elements/elements-panel-rewrite-href.html:
+        * inspector/elements/elements-panel-structure-expected.txt:
+        * inspector/elements/elements-panel-structure.html:
+        * inspector/elements/elements-panel-xhtml-structure-expected.txt:
+        * inspector/elements/elements-panel-xhtml-structure.xhtml:
+        * inspector/elements/insert-node-collapsed-expected.txt: Added.
+        * inspector/elements/insert-node-collapsed.html: Added.
+        * inspector/elements/insert-node-expected.txt: Added.
+        * inspector/elements/insert-node.html: Added.
+        * inspector/elements/modify-chardata-expected.txt: Added.
+        * inspector/elements/modify-chardata.html: Added.
+        * inspector/elements/mutate-unknown-node-expected.txt: Added.
+        * inspector/elements/mutate-unknown-node.html: Added.
+        * inspector/elements/remove-node-expected.txt: Added.
+        * inspector/elements/remove-node.html: Added.
+        * inspector/elements/set-attribute.html: Added.
+        * inspector/extensions/extensions-expected.txt:
+
 2011-02-15  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed, test crashing because of failing ASSERT on GTK 64-bit debug bot.

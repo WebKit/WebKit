@@ -1,0 +1,8 @@
+Tests that elements panel updates dom tree structure upon changes to characters.
+
+Bar
+========= Original ========
+  <div id="node">Foo</div>
+===== Mutated text node =====
+  <div id="node">Bar</div>
+

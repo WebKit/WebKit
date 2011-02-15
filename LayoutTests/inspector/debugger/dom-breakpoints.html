@@ -30,7 +30,7 @@ var test = function()
     testInsertChild.step1 = function()
     {
         InspectorTest.addResult("Test that 'Subtree Modified' breakpoint is hit when appending a child.");
-        findDOMNodeById("rootElement", testInsertChild.step2);
+        InspectorTest.nodeWithId("rootElement", testInsertChild.step2);
     };
     testInsertChild.step2 = function(node)
     {
@@ -103,7 +103,7 @@ var test = function()
     testRemoveNode.step2 = function()
     {
         InspectorTest.addResult("Append elementToRemove to rootElement.");
-        findDOMNodeById("elementToRemove", testRemoveNode.step3);
+        InspectorTest.nodeWithId("elementToRemove", testRemoveNode.step3);
     }
     testRemoveNode.step3 = function(node)
     {
@@ -123,7 +123,7 @@ var test = function()
     testReload.step1 = function()
     {
         InspectorTest.addResult("Test that DOM breakpoints are persisted between page reloads.");
-        findDOMNodeById("rootElement", testReload.step2);
+        InspectorTest.nodeWithId("rootElement", testReload.step2);
     }
     testReload.step2 = function(node)
     {
@@ -141,13 +141,6 @@ var test = function()
     {
         dumpStatus(callFrames);
         InspectorTest.completeDebuggerTest();
-    }
-
-    function findDOMNodeById(id, callback)
-    {
-        InspectorTest.findDOMNode(null, function(node) {
-            return node.getAttribute("id") === id;
-        }, callback);
     }
 
     function dumpStatus(callFrames)
