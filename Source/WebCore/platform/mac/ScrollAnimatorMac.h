@@ -117,7 +117,6 @@ private:
     bool m_inScrollGesture;
     bool m_momentumScrollInProgress;
     bool m_ignoreMomentumScrolls;
-    bool m_drawingIntoLayer;
     
     CFTimeInterval m_lastMomemtumScrollTimestamp;
     FloatSize m_overflowScrollDelta;
@@ -131,6 +130,7 @@ private:
     FloatSize m_origVelocity;
     Timer<ScrollAnimatorMac> m_snapRubberBandTimer;
 #endif
+    bool m_drawingIntoLayer;
 };
 
 } // namespace WebCore

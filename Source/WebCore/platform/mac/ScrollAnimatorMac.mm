@@ -455,11 +455,11 @@ ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea* scrollableArea)
     , m_inScrollGesture(false)
     , m_momentumScrollInProgress(false)
     , m_ignoreMomentumScrolls(false)
-    , m_drawingIntoLayer(false)
     , m_lastMomemtumScrollTimestamp(0)
     , m_startTime(0)
     , m_snapRubberBandTimer(this, &ScrollAnimatorMac::snapRubberBandTimerFired)
 #endif
+    , m_drawingIntoLayer(false)
 {
     m_scrollAnimationHelperDelegate.adoptNS([[ScrollAnimationHelperDelegate alloc] initWithScrollAnimator:this]);
     m_scrollAnimationHelper.adoptNS([[NSClassFromString(@"NSScrollAnimationHelper") alloc] initWithDelegate:m_scrollAnimationHelperDelegate.get()]);
