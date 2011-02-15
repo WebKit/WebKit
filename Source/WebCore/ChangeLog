@@ -1,3 +1,9 @@
+2011-02-15  Adam Roben  <aroben@apple.com>
+
+        Windows build fix after r78533
+
+        * WebCore.vcproj/WebCore.vcproj: Fix bad XML syntax.
+
 2011-02-15  Gavin Peters  <gavinp@chromium.org>
 
         Reviewed by Antti Koivisto.
