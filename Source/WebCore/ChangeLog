@@ -1,3 +1,9 @@
+2011-02-15  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed build fix.
+
+        * page/EditorClient.h: Changed GrammarDetail forward declaration from class to struct.
+
 2011-01-26  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ryosuke Niwa.

@@ -58,7 +58,6 @@ namespace WebCore {
 class ArchiveResource;
 class CSSStyleDeclaration;
 class DocumentFragment;
-class GrammarDetail;
 class EditCommand;
 class Editor;
 class Element;
@@ -71,6 +70,8 @@ class SpellChecker;
 class TextCheckerClient;
 class VisibleSelection;
 class VisiblePosition;
+
+struct GrammarDetail;
 
 class EditorClient {
 public:
