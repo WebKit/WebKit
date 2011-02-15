@@ -1565,21 +1565,40 @@ def _check_parameter_name_against_text(parameter, text, error):
     return True
 
 
-def check_function_definition(clean_lines, line_number, function_state, error):
+def check_function_definition(filename, file_extension, clean_lines, line_number, function_state, error):
     """Check that function definitions for style issues.
 
     Specifically, check that parameter names in declarations add information.
 
     Args:
+       filename: Filename of the file that is being processed.
+       file_extension: The current file extension, without the leading dot.
        clean_lines: A CleansedLines instance containing the file.
        line_number: The number of the line to check.
        function_state: Current function name and lines in body so far.
        error: The function to call with any errors found.
     """
-    # Only do checks when we have a function declaration.
-    if line_number != function_state.body_start_position.row or not function_state.is_declaration:
+    if line_number != function_state.body_start_position.row:
         return
 
+    modifiers_and_return_type = function_state.modifiers_and_return_type()
+    if search(r'\bWEBKIT_API\b', modifiers_and_return_type):
+        if filename.find('chromium/public/') == -1:
+            error(function_state.function_name_start_position.row, 'readability/webkit_api', 5,
+                  'WEBKIT_API should only appear in the chromium public directory.')
+        elif not file_extension == "h":
+            error(function_state.function_name_start_position.row, 'readability/webkit_api', 5,
+                  'WEBKIT_API should only be used in header files.')
+        elif not function_state.is_declaration or search(r'\binline\b', modifiers_and_return_type):
+            error(function_state.function_name_start_position.row, 'readability/webkit_api', 5,
+                  'WEBKIT_API should not be used on a function with a body.')
+        elif function_state.is_pure:
+            error(function_state.function_name_start_position.row, 'readability/webkit_api', 5,
+                  'WEBKIT_API should not be used with a pure virtual function.')
+
+    # Do checks specific to function declaractions.
+    if not function_state.is_declaration:
+        return
     parameter_list = function_state.parameter_list()
     for parameter in parameter_list:
         if not parameter.name:
@@ -3313,7 +3332,7 @@ def process_line(filename, file_extension,
     check_for_function_lengths(clean_lines, line, function_state, error)
     if search(r'\bNOLINT\b', raw_lines[line]):  # ignore nolint lines
         return
-    check_function_definition(clean_lines, line, function_state, error)
+    check_function_definition(filename, file_extension, clean_lines, line, function_state, error)
     check_pass_ptr_usage(clean_lines, line, function_state, error)
     check_for_multiline_comments_and_strings(clean_lines, line, error)
     check_style(clean_lines, line, file_extension, class_state, file_state, error)
@@ -3404,6 +3423,7 @@ class CppChecker(object):
         'readability/streams',
         'readability/todo',
         'readability/utf8',
+        'readability/webkit_api',
         'runtime/arrays',
         'runtime/casting',
         'runtime/explicit',

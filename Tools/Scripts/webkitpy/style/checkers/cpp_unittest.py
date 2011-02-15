@@ -4332,6 +4332,40 @@ class WebKitStyleTest(CppStyleTestBase):
                          'One space before end of line comments'
                          '  [whitespace/comments] [5]')
 
+    def test_webkit_api_check(self):
+        webkit_api_error_rules = ('-',
+                                  '+readability/webkit_api')
+        self.assertEquals('',
+                          self.perform_lint('WEBKIT_API int foo();\n',
+                                            'chromium/public/test.h',
+                                            webkit_api_error_rules))
+        self.assertEquals('WEBKIT_API should only be used in header files.  [readability/webkit_api] [5]',
+                          self.perform_lint('WEBKIT_API int foo();\n',
+                                            'chromium/public/test.cpp',
+                                            webkit_api_error_rules))
+        self.assertEquals('WEBKIT_API should only appear in the chromium public directory.  [readability/webkit_api] [5]',
+                          self.perform_lint('WEBKIT_API int foo();\n',
+                                            'other/src/test.h',
+                                            webkit_api_error_rules))
+        self.assertEquals('WEBKIT_API should not be used on a function with a body.  [readability/webkit_api] [5]',
+                          self.perform_lint('WEBKIT_API int foo() { }\n',
+                                            'chromium/public/test.h',
+                                            webkit_api_error_rules))
+        self.assertEquals('WEBKIT_API should not be used on a function with a body.  [readability/webkit_api] [5]',
+                          self.perform_lint('WEBKIT_API inline int foo()\n'
+                                            '{\n'
+                                            '}\n',
+                                            'chromium/public/test.h',
+                                            webkit_api_error_rules))
+        self.assertEquals('WEBKIT_API should not be used with a pure virtual function.  [readability/webkit_api] [5]',
+                          self.perform_lint('{}\n'
+                                            'WEBKIT_API\n'
+                                            'virtual\n'
+                                            'int\n'
+                                            'foo() = 0;\n',
+                                            'chromium/public/test.h',
+                                            webkit_api_error_rules))
+
     def test_other(self):
         # FIXME: Implement this.
         pass
