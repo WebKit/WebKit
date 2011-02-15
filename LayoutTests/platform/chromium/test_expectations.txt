@@ -1736,7 +1736,8 @@ BUGCR28092 WIN : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PAS
 // Since we have some bots on Lighttpd and some on Apache, mark it as flaky for
 // now. Once we decide on one or the other, then we can address these tests.
 BUG_OJAN MAC LINUX : http/tests/loading/text-content-type-with-binary-extension.html = TEXT
-BUG_OJAN LINUX : http/tests/xmlhttprequest/cache-override.html = TEXT
+// Commented out until bug WK54418 is fixed
+//BUG_OJAN LINUX : http/tests/xmlhttprequest/cache-override.html = TEXT
 
 // These tests time out *and* are slow. The test should be fixed to not timeout,
 // then should be marked as SLOW/PASS.
@@ -3196,7 +3197,8 @@ BUGWK53469 GPU MAC : compositing/scroll-painted-composited-content.html = CRASH 
 BUGWK54409 GPU : compositing/direct-image-compositing.html = IMAGE
 BUGWK54409 GPU : compositing/geometry/fixed-position.html = IMAGE
 BUGWK54409 GPU : compositing/geometry/horizontal-scroll-composited.html = IMAGE
-BUGWK54409 GPU : compositing/geometry/vertical-scroll-composited.html = IMAGE
+// LINUX on this test is likely affected by both this bug and bug WK48016 above.
+BUGWK54409 GPU MAC WIN : compositing/geometry/vertical-scroll-composited.html = IMAGE
 BUGWK54409 GPU : compositing/masks/masked-ancestor.html = IMAGE
 BUGWK54409 GPU : compositing/masks/simple-composited-mask.html = IMAGE
 BUGWK54409 GPU : compositing/overflow/fixed-position-ancestor-clip.html = IMAGE
@@ -3579,4 +3581,7 @@ BUG_LOISLO LINUX : svg/text/font-size-below-point-five.svg = TEXT
 BUG_LOISLO MAC DEBUG : svg/text/font-size-below-point-five.svg = TEXT
 
 // May just need rebaseline?
-BUGNONE LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg = IMAGE
+BUGPKASTING LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg = IMAGE
+
+// Assertion failure in UTF-8 decoding
+BUGWK54418 : http/tests/xmlhttprequest/cache-override.html = CRASH
