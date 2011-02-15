@@ -436,7 +436,6 @@ public:
     bool isComposited() const { return false; }
     bool hasCompositedMask() const { return false; }
 #endif
-    virtual bool scrollbarWillRenderIntoCompositingLayer() const;
 
     bool paintsWithTransparency(PaintBehavior paintBehavior) const
     {

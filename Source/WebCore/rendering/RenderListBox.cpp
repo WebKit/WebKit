@@ -721,14 +721,6 @@ IntPoint RenderListBox::currentMousePosition() const
     return view->frameView()->currentMousePosition();
 }
 
-bool RenderListBox::scrollbarWillRenderIntoCompositingLayer() const
-{
-    RenderLayer* layer = this->enclosingLayer();
-    if (!layer)
-        return false;
-    return layer->scrollbarWillRenderIntoCompositingLayer();
-}
-
 PassRefPtr<Scrollbar> RenderListBox::createScrollbar()
 {
     RefPtr<Scrollbar> widget;

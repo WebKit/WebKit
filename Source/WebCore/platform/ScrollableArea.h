@@ -113,8 +113,6 @@ public:
     virtual IntPoint currentMousePosition() const { return IntPoint(); }
     virtual void didCompleteRubberBand(const IntSize&) const { ASSERT_NOT_REACHED(); }
 
-    virtual bool scrollbarWillRenderIntoCompositingLayer() const { return false; }
-
 private:
     // NOTE: Only called from the ScrollAnimator.
     friend class ScrollAnimator;

@@ -3488,26 +3488,6 @@ bool RenderLayer::hasCompositedMask() const
 }
 #endif
 
-bool RenderLayer::scrollbarWillRenderIntoCompositingLayer() const
-{
-#if USE(ACCELERATED_COMPOSITING)
-    if (enclosingCompositingLayer())
-        return true;
-
-    RenderView* view = renderer()->view();
-    if (!view)
-        return false;
-
-    FrameView* frameView = view->frameView();
-    if (!frameView)
-        return false;
-
-    return frameView->isEnclosedInCompositingLayer();
-#else
-    return false;
-#endif
-}
-
 bool RenderLayer::paintsWithTransform(PaintBehavior paintBehavior) const
 {
 #if USE(ACCELERATED_COMPOSITING)

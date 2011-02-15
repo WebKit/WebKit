@@ -1,5 +1,23 @@
 2011-02-15  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Beth Dakin.
+
+        Fix scrollbar rendering crash when rendered into a layer
+        https://bugs.webkit.org/show_bug.cgi?id=54494
+
+        Remove code added in r78394 which was intended to find out whether
+        a scrollbar was being rendered into a compositing layer. r78612 
+        obviated the need for this code.
+
+        * page/FrameView.h:
+        * platform/ScrollableArea.h:
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderLayer.h:
+        * rendering/RenderListBox.cpp:
+        * rendering/RenderListBox.h:
+
+2011-02-15  Simon Fraser  <simon.fraser@apple.com>
+
         Let Xcode have its way with the project.
         
         * WebCore.xcodeproj/project.pbxproj:
