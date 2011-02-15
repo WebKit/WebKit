@@ -1,3 +1,44 @@
+2011-02-15  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG animation doesn't support attribute value 'inherit'
+        https://bugs.webkit.org/show_bug.cgi?id=54410
+
+        SVG animation does not support 'inherit' as value for CSS property animations. With the patch, SVG determines
+        if the attribute of the target element is an animatable CSS Property and computes the style during the
+        animation.
+
+        This fixes the following tests on the W3C test suite:
+        * animate-elem-84-t.svg
+        * animate-elem-85-t.svg
+
+        Tests: svg/animations/animate-currentColor.html
+               svg/animations/animate-inherit-css-property.html
+
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::adjustForCurrentColor):
+        (WebCore::adjustForInheritance):
+        (WebCore::SVGAnimateElement::calculateAnimatedValue): When a property value is 'inherit' or 'currentColor'
+        during the animation, get the computed style of the property since the values could be animated themselves.
+        (WebCore::inheritsFromProperty):
+        (WebCore::attributeValueIsCurrentColor):
+        (WebCore::SVGAnimateElement::calculateFromAndToValues): Check if 'from', 'by' or 'to' value has the
+        string 'inherit' or 'currentColor' and if the attribute supports one of these values.
+        (WebCore::SVGAnimateElement::calculateFromAndByValues): Ditto.
+        * svg/SVGAnimateElement.h:
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::isTargetAttributeCSSProperty): Check if target element is stylable and
+        the attribute is an animatable CSS property by using the CSS property map in SVGStyledElement.
+        (WebCore::SVGAnimationElement::setTargetAttributeAnimatedValue): s/target/targetElement/ for consistency.
+        * svg/SVGAnimationElement.h:
+        * svg/SVGStyledElement.cpp: 
+        (WebCore::SVGStyledElement::isAnimatableCSSProperty): Checks if the CSS property is animatable.
+        * svg/SVGStyledElement.h:
+        * svg/animation/SMILTimeContainer.cpp: Use the new function isTargetAttributeCSSProperty to determine
+        if the target element is stylable and the attribute is an animatable CSS property.
+        (WebCore::SMILTimeContainer::baseValueFor):
+
 2011-02-15  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Andreas Kling.

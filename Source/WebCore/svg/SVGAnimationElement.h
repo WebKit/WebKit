@@ -55,8 +55,8 @@ public:
     virtual void beginElementAt(float offset);
     virtual void endElement();
     virtual void endElementAt(float offset);
-    
-    static bool attributeIsCSS(const String& attributeName);
+
+    static bool isTargetAttributeCSSProperty(SVGElement*, const String&);
 
 protected:
     SVGAnimationElement(const QualifiedName&, Document*);
@@ -80,7 +80,6 @@ protected:
     
     String targetAttributeBaseValue() const;
     void setTargetAttributeAnimatedValue(const String&);
-    bool targetAttributeIsCSS() const;
     
     bool isAdditive() const;
     bool isAccumulated() const;

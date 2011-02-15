@@ -196,15 +196,15 @@ String SMILTimeContainer::baseValueFor(ElementAttributePair key)
     if (it != m_savedBaseValues.end())
         return it->second;
     
-    SVGElement* target = key.first;
+    SVGElement* targetElement = key.first;
     String attributeName = key.second;
-    ASSERT(target);
+    ASSERT(targetElement);
     ASSERT(!attributeName.isEmpty());
     String baseValue;
-    if (SVGAnimationElement::attributeIsCSS(attributeName))
-        baseValue = computedStyle(target)->getPropertyValue(cssPropertyID(attributeName));
+    if (SVGAnimationElement::isTargetAttributeCSSProperty(targetElement, attributeName))
+        baseValue = computedStyle(targetElement)->getPropertyValue(cssPropertyID(attributeName));
     else
-        baseValue = target->getAttribute(attributeName);
+        baseValue = targetElement->getAttribute(attributeName);
     m_savedBaseValues.add(key, baseValue);
     return baseValue;
 }

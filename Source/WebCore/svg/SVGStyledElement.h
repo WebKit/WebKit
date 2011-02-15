@@ -53,6 +53,7 @@ public:
     void setInstanceUpdatesBlocked(bool);
 
     AnimatedAttributeType animatedPropertyTypeForCSSProperty(const QualifiedName&);
+    static bool isAnimatableCSSProperty(const QualifiedName&);
 
     virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const;
 

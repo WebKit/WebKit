@@ -24,6 +24,8 @@
 #if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
 #include "SVGAnimateElement.h"
 
+#include "CSSComputedStyleDeclaration.h"
+#include "CSSParser.h"
 #include "CSSPropertyNames.h"
 #include "ColorDistance.h"
 #include "FloatConversion.h"
@@ -35,6 +37,7 @@
 #include "SVGPathParserFactory.h"
 #include "SVGPathSegList.h"
 #include "SVGPointList.h"
+#include "SVGStyledElement.h"
 
 using namespace std;
 
@@ -85,15 +88,29 @@ static bool parseNumberValueAndUnit(const String& in, double& value, String& uni
     return ok;
 }
 
-static inline bool adjustForCurrentColor(Color& color, const String& value, SVGElement* target)
+static inline void adjustForCurrentColor(SVGElement* targetElement, Color& color)
 {
-    if (!target || !target->isStyled() || value != "currentColor")
-        return false;
+    ASSERT(targetElement);
     
-    if (RenderObject* targetRenderer = target->renderer())
+    if (RenderObject* targetRenderer = targetElement->renderer())
         color = targetRenderer->style()->visitedDependentColor(CSSPropertyColor);
+    else
+        color = Color();
+}
 
-    return true;
+static inline void adjustForInheritance(SVGElement* targetElement, const String& attributeName, String& value)
+{
+    // FIXME: At the moment the computed style gets returned as a String and needs to get parsed again.
+    // In the future we might want to work with the value type directly to avoid the String parsing.
+    ASSERT(targetElement);
+
+    Element* parent = targetElement->parentElement();
+    if (!parent || !parent->isSVGElement())
+        return;
+
+    SVGElement* svgParent = static_cast<SVGElement*>(parent);
+    if (svgParent->isStyled())
+        value = computedStyle(svgParent)->getPropertyValue(cssPropertyID(attributeName));
 }
 
 SVGAnimateElement::PropertyType SVGAnimateElement::determinePropertyType(const String& attribute) const
@@ -115,13 +132,21 @@ SVGAnimateElement::PropertyType SVGAnimateElement::determinePropertyType(const S
 
 void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement)
 {
-    ASSERT(percentage >= 0.f && percentage <= 1.f);
+    ASSERT(percentage >= 0 && percentage <= 1);
     ASSERT(resultElement);
-    bool isInFirstHalfOfAnimation = percentage < 0.5;
+    bool isInFirstHalfOfAnimation = percentage < 0.5f;
     AnimationMode animationMode = this->animationMode();
+    SVGElement* targetElement = 0;
+    // Avoid targetElement() call if possible. It might slow down animations.
+    if (m_fromPropertyValueType == InheritValue || m_toPropertyValueType == InheritValue
+        || m_fromPropertyValueType == CurrentColorValue || m_toPropertyValueType == CurrentColorValue) {
+        targetElement = this->targetElement();
+        if (!targetElement)
+            return;
+    }
     
     if (hasTagName(SVGNames::setTag))
-        percentage = 1.f;
+        percentage = 1;
     if (!resultElement->hasTagName(SVGNames::animateTag) && !resultElement->hasTagName(SVGNames::animateColorTag) 
         && !resultElement->hasTagName(SVGNames::setTag))
         return;
@@ -134,6 +159,20 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
         if (animationMode == ToAnimation)
             m_fromNumber = results->m_animatedNumber;
         
+        // Replace 'currentColor' / 'inherit' by their computed property values.
+        if (m_fromPropertyValueType == InheritValue) {
+            String fromNumberString;
+            adjustForInheritance(targetElement, attributeName(), fromNumberString);
+            if (!parseNumberValueAndUnit(fromNumberString, m_fromNumber, m_numberUnit))
+                return;
+        }
+        if (m_toPropertyValueType == InheritValue) {
+            String toNumberString;
+            adjustForInheritance(targetElement, attributeName(), toNumberString);
+            if (!parseNumberValueAndUnit(toNumberString, m_toNumber, m_numberUnit))
+                return;
+        }
+
         double number;
         if (calcMode() == CalcModeDiscrete)
             number = isInFirstHalfOfAnimation ? m_fromNumber : m_toNumber;
@@ -152,6 +191,23 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
     if (m_propertyType == ColorProperty) {
         if (animationMode == ToAnimation)
             m_fromColor = results->m_animatedColor;
+
+        // Replace 'currentColor' / 'inherit' by their computed property values.
+        if (m_fromPropertyValueType == CurrentColorValue)
+            adjustForCurrentColor(targetElement, m_fromColor);
+        else if (m_fromPropertyValueType == InheritValue) {
+            String fromColorString;
+            adjustForInheritance(targetElement, attributeName(), fromColorString);
+            m_fromColor = SVGColor::colorFromRGBColorString(fromColorString);
+        }
+        if (m_toPropertyValueType == CurrentColorValue)
+            adjustForCurrentColor(targetElement, m_toColor);
+        else if (m_toPropertyValueType == InheritValue) {
+            String toColorString;
+            adjustForInheritance(targetElement, attributeName(), toColorString);
+            m_toColor = SVGColor::colorFromRGBColorString(toColorString);
+        }
+
         Color color;
         if (calcMode() == CalcModeDiscrete)
             color = isInFirstHalfOfAnimation ? m_fromColor : m_toColor;
@@ -216,7 +272,13 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
         return;
     }
     ASSERT(animationMode == FromToAnimation || animationMode == ToAnimation || animationMode == ValuesAnimation);
-    if ((animationMode == FromToAnimation && percentage > 0.5f) || animationMode == ToAnimation || percentage == 1.0f)
+    // Replace 'currentColor' / 'inherit' by their computed property values.
+    if (m_fromPropertyValueType == InheritValue)
+        adjustForInheritance(targetElement, attributeName(), m_fromString);
+    if (m_toPropertyValueType == InheritValue)
+        adjustForInheritance(targetElement, attributeName(), m_toString);
+
+    if ((animationMode == FromToAnimation && percentage > 0.5f) || animationMode == ToAnimation || percentage == 1)
         results->m_animatedString = m_toString;
     else
         results->m_animatedString = m_fromString;
@@ -224,17 +286,45 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
     results->m_propertyType = StringProperty;
 }
 
+static bool inheritsFromProperty(SVGElement* targetElement, const String& attributeName, const String& value)
+{
+    ASSERT(targetElement);
+    DEFINE_STATIC_LOCAL(const AtomicString, inherit, ("inherit"));
+
+    if (value.isEmpty() || value != inherit || !targetElement->isStyled())
+        return false;
+    return SVGStyledElement::isAnimatableCSSProperty(QualifiedName(nullAtom, attributeName, nullAtom));
+}
+
+static bool attributeValueIsCurrentColor(const String& value)
+{
+    DEFINE_STATIC_LOCAL(const AtomicString, currentColor, ("currentColor"));
+    return value == currentColor;
+}
+
 bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const String& toString)
 {
+    SVGElement* targetElement = this->targetElement();
+    if (!targetElement)
+        return false;
+    m_fromPropertyValueType = inheritsFromProperty(targetElement, attributeName(), fromString) ? InheritValue : CurrentColorValue;
+    m_toPropertyValueType = inheritsFromProperty(targetElement, attributeName(), toString) ? InheritValue : CurrentColorValue;
+
     // FIXME: Needs more solid way determine target attribute type.
     m_propertyType = determinePropertyType(attributeName());
     if (m_propertyType == ColorProperty) {
-        SVGElement* targetElement = this->targetElement();
-        if (!adjustForCurrentColor(m_fromColor, fromString, targetElement))
+        bool fromIsCurrentColor = attributeValueIsCurrentColor(fromString);
+        bool toIsCurrentColor = attributeValueIsCurrentColor(toString);
+        if (fromIsCurrentColor)
+            m_fromPropertyValueType = CurrentColorValue;
+        else
             m_fromColor = SVGColor::colorFromRGBColorString(fromString);
-        if (!adjustForCurrentColor(m_toColor, toString, targetElement))
+        if (toIsCurrentColor)
+            m_toPropertyValueType = CurrentColorValue;
+        else
             m_toColor = SVGColor::colorFromRGBColorString(toString);
-        if ((m_fromColor.isValid() && m_toColor.isValid()) || (m_toColor.isValid() && animationMode() == ToAnimation))
+        if (((m_fromColor.isValid() || fromIsCurrentColor) && (m_toColor.isValid() || toIsCurrentColor))
+            || ((m_toColor.isValid() || toIsCurrentColor) && animationMode() == ToAnimation))
             return true;
     } else if (m_propertyType == NumberProperty) {
         m_numberUnit = String();
@@ -268,16 +358,28 @@ bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const
 
 bool SVGAnimateElement::calculateFromAndByValues(const String& fromString, const String& byString)
 {
+    SVGElement* targetElement = this->targetElement();
+    if (!targetElement)
+        return false;
+    m_fromPropertyValueType = inheritsFromProperty(targetElement, attributeName(), fromString) ? InheritValue : CurrentColorValue;
+    m_toPropertyValueType = inheritsFromProperty(targetElement, attributeName(), byString) ? InheritValue : CurrentColorValue;
+
     ASSERT(!hasTagName(SVGNames::setTag));
     m_propertyType = determinePropertyType(attributeName());
     if (m_propertyType == ColorProperty) {
-        SVGElement* targetElement = this->targetElement();
-        if (!adjustForCurrentColor(m_fromColor, fromString, targetElement))
-            m_fromColor = fromString.isEmpty() ? Color() : SVGColor::colorFromRGBColorString(fromString);
-        if (!adjustForCurrentColor(m_toColor, byString, targetElement))
+        bool fromIsCurrentColor = attributeValueIsCurrentColor(fromString);
+        bool byIsCurrentColor = attributeValueIsCurrentColor(byString);
+        if (fromIsCurrentColor)
+            m_fromPropertyValueType = CurrentColorValue;
+        else
+            m_fromColor = SVGColor::colorFromRGBColorString(fromString);
+        if (byIsCurrentColor)
+            m_toPropertyValueType = CurrentColorValue;
+        else
             m_toColor = SVGColor::colorFromRGBColorString(byString);
-        m_toColor = ColorDistance::addColorsAndClamp(m_fromColor, m_toColor);
-        if (!m_fromColor.isValid() || !m_toColor.isValid())
+        
+        if ((!m_fromColor.isValid() && !fromIsCurrentColor)
+            || (!m_toColor.isValid() && !byIsCurrentColor))
             return false;
     } else {
         m_numberUnit = String();

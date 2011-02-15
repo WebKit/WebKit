@@ -1,0 +1,14 @@
+SVG 1.1 dynamic animation tests
+
+Tests animation with 'inherit'.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS rect.style.fill is '#FF0000'
+PASS rect.style.fill is '#804000'
+PASS rect.style.fill is '#008000'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

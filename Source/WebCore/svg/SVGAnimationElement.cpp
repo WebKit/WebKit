@@ -41,6 +41,7 @@
 #include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
+#include "SVGStyledElement.h"
 #include "SVGURIReference.h"
 #include "SVGUseElement.h"
 #include "XLinkNames.h"
@@ -293,67 +294,56 @@ bool SVGAnimationElement::hasValidTarget() const
 {
     return targetElement();
 }
-    
-bool SVGAnimationElement::attributeIsCSS(const String& attributeName)
+
+bool SVGAnimationElement::isTargetAttributeCSSProperty(SVGElement* targetElement, const String& attributeName)
 {
-    // FIXME: We should have a map of all SVG properties and their attribute types so we
-    // could validate animations better. The spec is very vague about this.
-    unsigned id = cssPropertyID(attributeName);
-    // SVG range
-    if (id >= CSSPropertyClipPath && id <= CSSPropertyWritingMode)
-        return true;
-    // Regular CSS properties also in SVG
-    return id == CSSPropertyColor || id == CSSPropertyDisplay || id == CSSPropertyOpacity
-            || (id >= CSSPropertyFont && id <= CSSPropertyFontWeight) 
-            || id == CSSPropertyOverflow || id == CSSPropertyVisibility;
-}
-    
-bool SVGAnimationElement::targetAttributeIsCSS() const
-{
-    AttributeType type = attributeType();
-    if (type == AttributeTypeCSS)
-        return true;
-    if (type == AttributeTypeXML)
+    ASSERT(targetElement);
+    if (!targetElement->isStyled())
         return false;
-    return attributeIsCSS(attributeName());
+
+    return SVGStyledElement::isAnimatableCSSProperty(QualifiedName(nullAtom, attributeName, nullAtom));
 }
 
 void SVGAnimationElement::setTargetAttributeAnimatedValue(const String& value)
 {
     if (!hasValidTarget())
         return;
-    SVGElement* target = targetElement();
+    SVGElement* targetElement = this->targetElement();
     String attributeName = this->attributeName();
-    if (!target || attributeName.isEmpty() || value.isNull())
+    if (!targetElement || attributeName.isEmpty() || value.isNull())
         return;
 
     // We don't want the instance tree to get rebuild. Instances are updated in the loop below.
-    if (target->isStyled())
-        static_cast<SVGStyledElement*>(target)->setInstanceUpdatesBlocked(true);
+    if (targetElement->isStyled())
+        static_cast<SVGStyledElement*>(targetElement)->setInstanceUpdatesBlocked(true);
         
+    bool attributeIsCSSProperty = isTargetAttributeCSSProperty(targetElement, attributeName);
+    // Stop animation, if attributeType is set to CSS by the user, but the attribute itself is not a CSS property.
+    if (!attributeIsCSSProperty && attributeType() == AttributeTypeCSS)
+        return;
+
     ExceptionCode ec;
-    bool isCSS = targetAttributeIsCSS();
-    if (isCSS) {
+    if (attributeIsCSSProperty) {
         // FIXME: This should set the override style, not the inline style.
         // Sadly override styles are not yet implemented.
-        target->style()->setProperty(attributeName, value, "", ec);
+        targetElement->style()->setProperty(attributeName, value, "", ec);
     } else {
         // FIXME: This should set the 'presentation' value, not the actual 
         // attribute value. Whatever that means in practice.
-        target->setAttribute(attributeName, value, ec);
+        targetElement->setAttribute(attributeName, value, ec);
     }
     
-    if (target->isStyled())
-        static_cast<SVGStyledElement*>(target)->setInstanceUpdatesBlocked(false);
+    if (targetElement->isStyled())
+        static_cast<SVGStyledElement*>(targetElement)->setInstanceUpdatesBlocked(false);
     
     // If the target element is used in an <use> instance tree, update that as well.
-    const HashSet<SVGElementInstance*>& instances = target->instancesForElement();
+    const HashSet<SVGElementInstance*>& instances = targetElement->instancesForElement();
     const HashSet<SVGElementInstance*>::const_iterator end = instances.end();
     for (HashSet<SVGElementInstance*>::const_iterator it = instances.begin(); it != end; ++it) {
         SVGElement* shadowTreeElement = (*it)->shadowTreeElement();
         if (!shadowTreeElement)
             continue;
-        if (isCSS)
+        if (attributeIsCSSProperty)
             shadowTreeElement->style()->setProperty(attributeName, value, "", ec);
         else
             shadowTreeElement->setAttribute(attributeName, value, ec);

@@ -51,10 +51,19 @@ protected:
     virtual float calculateDistance(const String& fromString, const String& toString);
 
 private:
+    // If we have 'currentColor' or 'inherit' as animation value, we need to grab the value during the animation
+    // since the value can be animated itself.
+    enum AnimatedPropertyValueType {
+        RegularPropertyValue,
+        CurrentColorValue,
+        InheritValue
+    };
     enum PropertyType { NumberProperty, ColorProperty, StringProperty, PathProperty, PointsProperty };
     PropertyType determinePropertyType(const String& attribute) const;
     PropertyType m_propertyType;
 
+    AnimatedPropertyValueType m_fromPropertyValueType;
+    AnimatedPropertyValueType m_toPropertyValueType;
     double m_fromNumber;
     double m_toNumber;
     double m_animatedNumber;
