@@ -41,7 +41,7 @@ _log = logging.getLogger("webkitpy.layout_tests.port.mac")
 def os_version(os_version_string=None, supported_versions=None):
     # We only support Tiger, Leopard, and Snow Leopard.
     if not os_version_string:
-        if hasattr(platform, 'mac_ver'):
+        if hasattr(platform, 'mac_ver') and platform.mac_ver()[0]:
             os_version_string = platform.mac_ver()[0]
         else:
             # Make up something for testing.
