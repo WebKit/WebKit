@@ -31,7 +31,6 @@
 #ifndef ScriptHeapSnapshot_h
 #define ScriptHeapSnapshot_h
 
-#include "InspectorValues.h"
 #include "PlatformString.h"
 
 namespace WebCore {

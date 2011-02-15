@@ -1,3 +1,13 @@
+2011-02-15  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Cleanup Some Potential ENABLE(INSPECTOR) Related Building Issues
+        https://bugs.webkit.org/show_bug.cgi?id=54048
+
+        * WebCore.exp.in: moved inspector only export into ENABLE(INSPECTOR) block.
+        * bindings/js/ScriptHeapSnapshot.h: include no longer needed.
+
 2011-02-15  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by James Robinson.
