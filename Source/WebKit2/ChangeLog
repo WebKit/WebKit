@@ -1,3 +1,15 @@
+2011-02-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2: View not updated completely when coming back from a cached back/forward navigation
+        <rdar://problem/8787264>
+        https://bugs.webkit.org/show_bug.cgi?id=54419
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::restoreViewState): Invalidate the entire page
+        when completing a restore from the back/forward cache.
+
 2011-02-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

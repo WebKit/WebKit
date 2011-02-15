@@ -985,6 +985,11 @@ void WebFrameLoaderClient::restoreViewState()
     // Inform the UI process of the scale factor.
     double scaleFactor = m_frame->coreFrame()->loader()->history()->currentItem()->pageScaleFactor();
     m_frame->page()->send(Messages::WebPageProxy::ViewScaleFactorDidChange(scaleFactor));
+
+    // FIXME: This should not be necessary. WebCore should be correctly invalidating
+    // the view on restores from the back/forward cache.
+    if (m_frame == m_frame->page()->mainFrame())
+        m_frame->page()->drawingArea()->setNeedsDisplay(m_frame->page()->bounds());
 }
 
 void WebFrameLoaderClient::provisionalLoadStarted()
