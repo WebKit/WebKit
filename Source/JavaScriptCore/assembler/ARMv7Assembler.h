@@ -369,40 +369,6 @@ private:
     ThumbImmediateValue m_value;
 };
 
-class VFPImmediate {
-public:
-    VFPImmediate(double d)
-        : m_value(-1)
-    {
-        union {
-            uint64_t i;
-            double d;
-        } u;
-
-        u.d = d;
-
-        int sign = static_cast<int>(u.i >> 63);
-        int exponent = static_cast<int>(u.i >> 52) & 0x7ff;
-        uint64_t mantissa = u.i & 0x000fffffffffffffull;
-
-        if ((exponent >= 0x3fc) && (exponent <= 0x403) && !(mantissa & 0x0000ffffffffffffull))
-            m_value = (sign << 7) | ((exponent & 7) << 4) | (int)(mantissa >> 48);
-    }
-
-    bool isValid()
-    {
-        return m_value != -1;
-    }
-    
-    uint8_t value()
-    {
-        return (uint8_t)m_value;
-    }
-
-private:
-    int m_value;
-};
-
 typedef enum {
     SRType_LSL,
     SRType_LSR,
@@ -412,7 +378,6 @@ typedef enum {
     SRType_RRX = SRType_ROR
 } ARMShiftType;
 
-class ARMv7Assembler;
 class ShiftTypeAndAmount {
     friend class ARMv7Assembler;
 

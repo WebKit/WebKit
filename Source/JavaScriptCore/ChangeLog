@@ -1,3 +1,12 @@
+2011-02-15  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        Remove some dead code in ARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=54461
+
+        * assembler/ARMv7Assembler.h: remove dead code.
+
 2011-02-14  Geoffrey Garen  <ggaren@apple.com>
 
         Rubber-stamped by Gavin Barraclough.
