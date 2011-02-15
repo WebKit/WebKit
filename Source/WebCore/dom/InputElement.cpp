@@ -218,7 +218,7 @@ void InputElement::handleBeforeTextInsertedEvent(InputElementData& data, InputEl
     if (!isConformToInputMask(inputElement->data(), candidateString)) {
         textEvent->setText("");
         return;
-      }
+    }
 #endif
     textEvent->setText(sanitizeUserInputValue(inputElement, textEvent->text(), appendableLength));
 }
