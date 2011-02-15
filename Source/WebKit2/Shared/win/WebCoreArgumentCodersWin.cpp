@@ -38,6 +38,12 @@ namespace CoreIPC {
 void encodeResourceRequest(ArgumentEncoder* encoder, const WebCore::ResourceRequest& resourceRequest)
 {
 #if USE(CFNETWORK)
+    bool requestIsPresent = resourceResponse.cfURLRequest();
+    encoder->encode(requestIsPresent);
+
+    if (!requestIsPresent)
+        return;
+
     RetainPtr<CFDictionaryRef> dictionary(AdoptCF, wkCFURLRequestCreateSerializableRepresentation(resourceRequest.cfURLRequest(), CoreIPC::tokenNullTypeRef()));
     encode(encoder, dictionary.get());
 #endif
@@ -46,6 +52,15 @@ void encodeResourceRequest(ArgumentEncoder* encoder, const WebCore::ResourceRequ
 bool decodeResourceRequest(ArgumentDecoder* decoder, WebCore::ResourceRequest& resourceRequest)
 {
 #if USE(CFNETWORK)
+    bool requestIsPresent;
+    if (!decoder->decode(requestIsPresent))
+        return false;
+
+    if (!requestIsPresent) {
+        resourceRequest = WebCore::ResourceRequest();
+        return true;
+    }
+
     RetainPtr<CFDictionaryRef> dictionary;
     if (!decode(decoder, dictionary))
         return false;
@@ -79,7 +94,8 @@ bool decodeResourceResponse(ArgumentDecoder* decoder, WebCore::ResourceResponse&
 {
 #if USE(CFNETWORK)
     bool responseIsPresent;
-    decoder->decode(responseIsPresent);
+    if (!decoder->decode(responseIsPresent))
+        return false;
 
     if (!responseIsPresent) {
         resourceResponse = WebCore::ResourceResponse();
