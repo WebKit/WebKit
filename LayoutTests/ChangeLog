@@ -1,3 +1,11 @@
+2011-02-15  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed chromium-gpu baseline update. Unskip some tests that fail;
+        we want to keep running them in case they regress in unexpected ways
+        (e.g. they start to crash).
+ 
+        * platform/chromium/test_expectations.txt:
+
 2011-02-15  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

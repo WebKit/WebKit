@@ -3060,33 +3060,32 @@ BUGWK53740 MAC : fast/forms/textarea-placeholder-visibility-2.html = TEXT
 // FIXME: remove the FAIL from the following line.
 BUGNONE GPU MAC : compositing = PASS FAIL
 
-// All (?) video-related compositor tests are failing in
-// DumpRenderTree right now.
-BUGWK47231 GPU SKIP : compositing/geometry/clipped-video-controller.html = TIMEOUT
-BUGWK47231 GPU SKIP : compositing/geometry/video-fixed-scrolling.html = TIMEOUT
-BUGWK47231 GPU SKIP : compositing/geometry/video-opacity-overlay.html = TIMEOUT
-BUGWK47231 GPU SKIP : compositing/layers-inside-overflow-scroll.html = TIMEOUT
-BUGWK47231 GPU SKIP : compositing/overflow/overflow-compositing-descendant.html = TIMEOUT
-BUGWK47231 GPU SKIP : compositing/overflow/scroll-ancestor-update.html = TIMEOUT
-BUGWK47231 GPU SKIP : compositing/reflections/load-video-in-reflection.html = TIMEOUT
-BUGWK47231 GPU SKIP : compositing/self-painting-layers.html = TIMEOUT
-BUGWK47231 GPU SKIP : compositing/self-painting-layers2.html = TIMEOUT
-BUGWK47231 GPU SKIP : compositing/video/video-background-color.html = TIMEOUT
-BUGWK47231 GPU SKIP : compositing/video/video-poster.html = TIMEOUT
+// All compositor tests that load resources/video.mp4 are failing
+BUGWK47231 GPU : compositing/geometry/clipped-video-controller.html = TIMEOUT
+BUGWK47231 GPU : compositing/geometry/video-fixed-scrolling.html = TIMEOUT
+BUGWK47231 GPU : compositing/geometry/video-opacity-overlay.html = TIMEOUT
+BUGWK47231 GPU : compositing/layers-inside-overflow-scroll.html = TIMEOUT
+BUGWK47231 GPU : compositing/overflow/overflow-compositing-descendant.html = TIMEOUT
+BUGWK47231 GPU : compositing/overflow/scroll-ancestor-update.html = TIMEOUT
+BUGWK47231 GPU : compositing/reflections/load-video-in-reflection.html = TIMEOUT
+BUGWK47231 GPU : compositing/self-painting-layers.html = TIMEOUT
+BUGWK47231 GPU : compositing/self-painting-layers2.html = TIMEOUT
+BUGWK47231 GPU : compositing/video/video-background-color.html = TIMEOUT
+BUGWK47231 GPU : compositing/video/video-poster.html = TIMEOUT
 
 // The following compositor tests are currently timing out. Need to
 // investigate why.
-BUGWK47923 GPU SKIP : compositing/checkerboard.html = TIMEOUT
-BUGWK47923 GPU SKIP : compositing/color-matching/image-color-matching.html = TIMEOUT
-BUGWK47923 GPU SKIP : compositing/geometry/abs-position-inside-opacity.html = TIMEOUT
-BUGWK47923 GPU SKIP : compositing/iframes/become-overlapped-iframe.html = TIMEOUT
-BUGWK47923 GPU SKIP : compositing/masks/direct-image-mask.html = TIMEOUT
-BUGWK47923 GPU SKIP : compositing/overflow/ancestor-overflow.html = TIMEOUT
-BUGWK47923 GPU SKIP : compositing/repaint/composited-document-element.html = TIMEOUT
-BUGWK47923 GPU SKIP : compositing/shadows/shadow-drawing.html = TIMEOUT
-BUGWK47923 GPU SKIP : compositing/tiling/constrained-layer-size.html = TIMEOUT
-BUGWK47923 GPU SKIP : compositing/z-order/negative-z-index.html = TIMEOUT
-BUGWK47923 GPU SKIP : compositing/geometry/limit-layer-bounds-opacity-transition.html = TIMEOUT
+BUGWK47923 GPU : compositing/checkerboard.html = TIMEOUT
+BUGWK47923 GPU : compositing/color-matching/image-color-matching.html = TIMEOUT
+BUGWK47923 GPU : compositing/geometry/abs-position-inside-opacity.html = TIMEOUT
+BUGWK47923 GPU : compositing/iframes/become-overlapped-iframe.html = TIMEOUT
+BUGWK47923 GPU : compositing/masks/direct-image-mask.html = TIMEOUT
+BUGWK47923 GPU : compositing/overflow/ancestor-overflow.html = TIMEOUT
+BUGWK47923 GPU : compositing/repaint/composited-document-element.html = TIMEOUT
+BUGWK47923 GPU : compositing/shadows/shadow-drawing.html = TIMEOUT
+BUGWK47923 GPU : compositing/tiling/constrained-layer-size.html = TIMEOUT
+BUGWK47923 GPU : compositing/z-order/negative-z-index.html = TIMEOUT
+BUGWK47923 GPU : compositing/geometry/limit-layer-bounds-opacity-transition.html = TIMEOUT
 
 // The following test is flaky; it occasionally times out, but not always.
 BUGWK47924 GPU WIN LINUX : compositing/iframes/composited-iframe-alignment.html = TIMEOUT PASS
