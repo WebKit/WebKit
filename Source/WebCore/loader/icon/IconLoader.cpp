@@ -131,7 +131,7 @@ void IconLoader::didReceiveAuthenticationChallenge(SubresourceLoader*, const Aut
     m_resourceLoader->cancel();
 }
 
-void IconLoader::didFinishLoading(SubresourceLoader* resourceLoader)
+void IconLoader::didFinishLoading(SubresourceLoader* resourceLoader, double)
 {
     LOG(IconDatabase, "IconLoader::didFinishLoading() - Loader %p", resourceLoader);
 

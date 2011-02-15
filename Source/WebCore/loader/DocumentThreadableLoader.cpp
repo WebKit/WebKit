@@ -231,7 +231,7 @@ void DocumentThreadableLoader::didReceiveData(SubresourceLoader* loader, const c
     m_client->didReceiveData(data, lengthReceived);
 }
 
-void DocumentThreadableLoader::didFinishLoading(SubresourceLoader* loader)
+void DocumentThreadableLoader::didFinishLoading(SubresourceLoader* loader, double)
 {
     ASSERT(loader == m_loader);
     ASSERT(m_client);

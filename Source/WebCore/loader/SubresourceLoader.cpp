@@ -178,7 +178,7 @@ void SubresourceLoader::didFinishLoading(double finishTime)
     RefPtr<SubresourceLoader> protect(this);
 
     if (m_client)
-        m_client->didFinishLoading(this);
+        m_client->didFinishLoading(this, finishTime);
     
     m_handle = 0;
 

@@ -1,3 +1,26 @@
+2011-02-15  Bill Budge  <bbudge@chromium.org>
+
+        Reviewed by David Levin.
+
+        SubresourceLoader should expose finish time
+        https://bugs.webkit.org/show_bug.cgi?id=54287
+
+        No tests needed, exposes no new functionality
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::didFinishLoading):
+        * loader/DocumentThreadableLoader.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didFinishLoading):
+        * loader/SubresourceLoaderClient.h:
+        (WebCore::SubresourceLoaderClient::didFinishLoading):
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::didFinishLoading):
+        * loader/cache/CachedResourceRequest.h:
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::didFinishLoading):
+        * loader/icon/IconLoader.h:
+
 2011-02-15  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin Adler.

@@ -51,7 +51,7 @@ private:
 
     virtual void didReceiveResponse(SubresourceLoader*, const ResourceResponse&);
     virtual void didReceiveData(SubresourceLoader*, const char*, int);
-    virtual void didFinishLoading(SubresourceLoader*);
+    virtual void didFinishLoading(SubresourceLoader*, double);
     virtual void didFail(SubresourceLoader*, const ResourceError&);
 
     virtual void didReceiveAuthenticationChallenge(SubresourceLoader*, const AuthenticationChallenge&);

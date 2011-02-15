@@ -137,7 +137,7 @@ void CachedResourceRequest::willSendRequest(SubresourceLoader*, ResourceRequest&
     m_resource->setRequestedFromNetworkingLayer();
 }
 
-void CachedResourceRequest::didFinishLoading(SubresourceLoader* loader)
+void CachedResourceRequest::didFinishLoading(SubresourceLoader* loader, double)
 {
     if (m_finishing)
         return;
