@@ -80,7 +80,7 @@ editing/pasteboard/smart-paste-005.html
 editing/pasteboard/smart-paste-007.html
 editing/pasteboard/smart-paste-008.html
 editing/pasteboard/subframe-dragndrop-1.html
-inspector/timeline-event-dispatch.html
+inspector/timeline/timeline-event-dispatch.html
 fast/text/offsetForPosition-complex-fallback.html
 svg/animations/animate-path-to-animation.html
 fast/forms/input-number-change-type-on-focus.html
@@ -2175,8 +2175,8 @@ fast/workers/storage/sql-exception-codes-sync.html
 storage/multiple-databases-garbage-collection.html
 
 # Unknown failures after enabling inspector tests
-inspector/timeline-paint.html
-inspector/timeline-script-tag-1.html
+inspector/timeline/timeline-paint.html
+inspector/timeline/timeline-script-tag-1.html
 
 # Crashes the WebProcess
 editing/pasteboard/copy-standalone-image.html

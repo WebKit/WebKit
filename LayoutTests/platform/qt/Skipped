@@ -100,7 +100,7 @@ fast/text/hyphenate-character.html
 fast/text/hyphens.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=43332
-inspector/debugger/debugger/dom-breakpoints.html
+inspector/debugger/dom-breakpoints.html
 
 # This port doesn't support v8 i18n extension.
 fast/js/i18n-bindings-locale.html
@@ -4803,13 +4803,14 @@ fast/dom/beforeload/remove-video-in-beforeload-listener.html
 
 # [Qt] Some inspector test fail intermittently
 # https://bugs.webkit.org/show_bug.cgi?id=42090
-inspector/timeline-paint.html
-inspector/timeline-layout.html
-inspector/timeline-parse-html.html
-inspector/timeline-recalculate-styles.html
-inspector/audits-panel-functional.html
-inspector/elements-panel-structure.html
-inspector/extensions.html
+inspector/timeline/timeline-paint.html
+inspector/timeline/timeline-layout.html
+inspector/timeline/timeline-parse-html.html
+inspector/timeline/timeline-recalculate-styles.html
+inspector/audits/audits-panel-functional.html
+inspector/elements/elements-panel-structure.html
+inspector/elements/elements-delete-inline-style.html
+inspector/extensions/extensions.html
 
 # Directory upload is not enabled.
 fast/forms/input-file-directory-upload.html
@@ -5030,5 +5031,5 @@ http/tests/websocket/tests
 
 # [Qt]REGRESSION?(78477): inspector/timeline-network-resource.html and inspector/timeline-script-tag-1.html fail
 # https://bugs.webkit.org/show_bug.cgi?id=54442
-inspector/timeline-network-resource.html
-inspector/timeline-script-tag-1.html
+inspector/timeline/timeline-network-resource.html
+inspector/timeline/timeline-script-tag-1.html

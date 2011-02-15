@@ -1,3 +1,11 @@
+2011-02-15  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: inspector tests expectations update.
+
+        * platform/chromium/inspector/console/console-format-collections-expected.txt:
+        * platform/mac-wk2/Skipped:
+        * platform/qt/Skipped:
+
 2011-02-15  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed, skipping test timing out on SnowLeopard, GTK and Chromium bots.
