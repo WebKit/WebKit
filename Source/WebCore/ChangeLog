@@ -1,3 +1,14 @@
+2011-02-15  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/54487> Minor header clean up in RenderLayerBacking.cpp
+
+        Reviewed by Darin Adler.
+
+        * rendering/RenderLayerBacking.cpp: Remove unused
+        WebGLRenderingContext.h header, and move GraphicsContext3D.h
+        into a #if ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS)/#endif
+        block.
+
 2011-02-14  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough and Geoff Garen.

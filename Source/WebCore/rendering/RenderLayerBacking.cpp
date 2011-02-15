@@ -36,7 +36,6 @@
 #include "CSSStyleSelector.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
-#include "GraphicsContext3D.h"
 #include "GraphicsLayer.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLElement.h"
@@ -55,7 +54,10 @@
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "Settings.h"
-#include "WebGLRenderingContext.h"
+
+#if ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS)
+#include "GraphicsContext3D.h"
+#endif
 
 using namespace std;
 
