@@ -1,3 +1,15 @@
+2011-02-15  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed chromium-gpu expectations update. Update expectations after
+        tests that were unskipped by r78619 started to be run again. Most of
+        them don't time out anymore, instead they have image and/or text diffs.
+        
+        Also remove flaky expectations for fast/canvas/shadow-offset-*.html,
+        since they pass consistently now that the bug on the Chromium/V8 side 
+        (http://crbug.com/67732) has been fixed.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-15  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by James Robinson.

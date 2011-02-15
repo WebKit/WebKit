@@ -696,22 +696,6 @@ BUGCR58254 MAC : platform/mac/editing/spelling/autocorrection-simple.html = IMAG
 // Low priority, unclear if test expectations are correct (see bug)
 BUGCR6139 : fast/forms/select-writing-direction-natural.html = FAIL
 
-// Shadow offset tests crash occasionally on Mac and Linux debug.
-BUGCR67732 CPU MAC LINUX DEBUG : fast/canvas/shadow-offset-1.html = PASS CRASH
-BUGCR67732 CPU MAC LINUX DEBUG : fast/canvas/shadow-offset-2.html = PASS CRASH
-BUGCR67732 CPU MAC LINUX DEBUG : fast/canvas/shadow-offset-3.html = PASS CRASH
-BUGCR67732 CPU MAC LINUX DEBUG : fast/canvas/shadow-offset-4.html = PASS CRASH
-BUGCR67732 CPU MAC LINUX DEBUG : fast/canvas/shadow-offset-5.html = PASS CRASH
-BUGCR67732 CPU MAC LINUX DEBUG : fast/canvas/shadow-offset-6.html = PASS CRASH
-BUGCR67732 CPU MAC LINUX DEBUG : fast/canvas/shadow-offset-7.html = PASS CRASH
-BUGCR67732 GPU MAC LINUX DEBUG : fast/canvas/shadow-offset-1.html = PASS IMAGE+TEXT CRASH
-BUGCR67732 GPU MAC LINUX DEBUG : fast/canvas/shadow-offset-2.html = PASS IMAGE+TEXT CRASH
-BUGCR67732 GPU MAC LINUX DEBUG : fast/canvas/shadow-offset-3.html = PASS IMAGE+TEXT CRASH
-BUGCR67732 GPU MAC LINUX DEBUG : fast/canvas/shadow-offset-4.html = PASS IMAGE+TEXT CRASH
-BUGCR67732 GPU MAC LINUX DEBUG : fast/canvas/shadow-offset-5.html = PASS IMAGE+TEXT CRASH
-BUGCR67732 GPU MAC LINUX DEBUG : fast/canvas/shadow-offset-6.html = PASS IMAGE+TEXT CRASH
-BUGCR67732 GPU MAC LINUX DEBUG : fast/canvas/shadow-offset-7.html = PASS IMAGE+TEXT CRASH
-
 // This SVG test is occasionally crashing apparently for the same reason.
 BUGCR67732 MAC LINUX DEBUG : svg/W3C-SVG-1.1-SE/paths-dom-02-f.svg = PASS CRASH
 
@@ -3075,16 +3059,15 @@ BUGWK47231 GPU : compositing/video/video-poster.html = TIMEOUT
 
 // The following compositor tests are currently timing out. Need to
 // investigate why.
-BUGWK47923 GPU : compositing/checkerboard.html = TIMEOUT
-BUGWK47923 GPU : compositing/color-matching/image-color-matching.html = TIMEOUT
-BUGWK47923 GPU : compositing/geometry/abs-position-inside-opacity.html = TIMEOUT
-BUGWK47923 GPU : compositing/iframes/become-overlapped-iframe.html = TIMEOUT
-BUGWK47923 GPU : compositing/masks/direct-image-mask.html = TIMEOUT
-BUGWK47923 GPU : compositing/overflow/ancestor-overflow.html = TIMEOUT
-BUGWK47923 GPU : compositing/repaint/composited-document-element.html = TIMEOUT
-BUGWK47923 GPU : compositing/shadows/shadow-drawing.html = TIMEOUT
-BUGWK47923 GPU : compositing/tiling/constrained-layer-size.html = TIMEOUT
-BUGWK47923 GPU : compositing/z-order/negative-z-index.html = TIMEOUT
+BUGWK47923 GPU : compositing/checkerboard.html = IMAGE
+BUGWK47923 GPU : compositing/color-matching/image-color-matching.html = IMAGE+TEXT
+BUGWK47923 GPU : compositing/geometry/abs-position-inside-opacity.html = IMAGE+TEXT
+BUGWK47923 GPU : compositing/masks/direct-image-mask.html = IMAGE+TEXT
+BUGWK47923 GPU : compositing/overflow/ancestor-overflow.html = IMAGE+TEXT
+BUGWK47923 GPU : compositing/repaint/composited-document-element.html = IMAGE+TEXT
+BUGWK47923 GPU : compositing/shadows/shadow-drawing.html = IMAGE+TEXT
+BUGWK47923 GPU : compositing/tiling/constrained-layer-size.html = IMAGE
+BUGWK47923 GPU : compositing/z-order/negative-z-index.html = IMAGE
 BUGWK47923 GPU : compositing/geometry/limit-layer-bounds-opacity-transition.html = TIMEOUT
 
 // The following test is flaky; it occasionally times out, but not always.
@@ -3105,7 +3088,7 @@ BUGWK47925 GPU MAC : compositing/plugins/large-to-small-composited-plugin.html =
 
 // The word "compositing" appears in Chromium's pixel results and not
 // in Safari's; this should probably be fixed.
-BUGWK47926 GPU MAC LINUX : compositing/geometry/composited-html-size.html = IMAGE
+BUGWK47926 GPU MAC : compositing/geometry/composited-html-size.html = IMAGE
 
 // These tests are missing an entire layer in the layer tree output.
 BUGWK47927 DEBUG GPU WIN LINUX : compositing/geometry/limit-layer-bounds-clipping-ancestor.html = PASS TEXT
@@ -3143,7 +3126,7 @@ BUGNONE GPU MAC : compositing/repaint/opacity-between-absolute2.html = IMAGE
 BUGNONE GPU MAC : compositing/overflow/overflow-scroll.html = IMAGE PASS
 
 // Needs Linux and Mac rebaselining
-BUGWK47952 GPU MAC LINUX : compositing/transitions/scale-transition-no-start.html = IMAGE
+BUGWK47952 GPU MAC : compositing/transitions/scale-transition-no-start.html = IMAGE
 
 // WebGL canvas cleared to purely transparent is affecting the color of things under it.
 BUGWK47953 GPU WIN LINUX : compositing/webgl/webgl-background-color.html = IMAGE+TEXT
@@ -3154,7 +3137,6 @@ BUGWK47953 GPU MAC : compositing/webgl/webgl-background-color.html = IMAGE
 // needs to be investigated.
 // Became flaky on all platforms after the switch to DRT.
 BUGWK48016 GPU : compositing/geometry/limit-layer-bounds-positioned-transition.html = TEXT PASS
-BUGWK48016 GPU LINUX : compositing/geometry/vertical-scroll-composited.html = IMAGE
 
 // The following tests are failing on Mac.
 BUGWK48029 GPU MAC : compositing/tiling/crash-reparent-tiled-layer.html = TEXT
@@ -3181,21 +3163,18 @@ BUGWEBGL GPU WIN DEBUG : fast/canvas/webgl/context-attributes-alpha-depth-stenci
 // Started failing after r75648 on everything except Snow Leopard
 BUGWK52341 GPU : fast/canvas/canvas-large-dimensions.html = TEXT
 
-// This will need to rebaselined after the new path drawing lands. 
-BUG_SENORBLANCO GPU LINUX : fast/canvas/canvas-composite.html = IMAGE 
-
 BUGWK53469 GPU MAC : compositing/scroll-painted-composited-content.html = CRASH PASS
 
-BUGWK54409 GPU : compositing/direct-image-compositing.html = IMAGE
-BUGWK54409 GPU : compositing/geometry/fixed-position.html = IMAGE
-BUGWK54409 GPU : compositing/geometry/horizontal-scroll-composited.html = IMAGE
+BUGWK54409 GPU WIN : compositing/direct-image-compositing.html = IMAGE
+BUGWK54409 GPU WIN : compositing/geometry/fixed-position.html = IMAGE
+BUGWK54409 GPU WIN : compositing/geometry/horizontal-scroll-composited.html = IMAGE
 // LINUX on this test is likely affected by both this bug and bug WK48016 above.
-BUGWK54409 GPU MAC WIN : compositing/geometry/vertical-scroll-composited.html = IMAGE
-BUGWK54409 GPU : compositing/masks/masked-ancestor.html = IMAGE
-BUGWK54409 GPU : compositing/masks/simple-composited-mask.html = IMAGE
+BUGWK54409 GPU : compositing/geometry/vertical-scroll-composited.html = IMAGE
+BUGWK54409 GPU WIN : compositing/masks/masked-ancestor.html = IMAGE
+BUGWK54409 GPU WIN : compositing/masks/simple-composited-mask.html = IMAGE
 BUGWK54409 GPU : compositing/overflow/fixed-position-ancestor-clip.html = IMAGE
-BUGWK54409 GPU : fast/canvas/canvas-text-alignment.html = IMAGE
-BUGWK54409 GPU : fast/canvas/image-object-in-canvas.html = IMAGE
+BUGWK54409 GPU WIN : fast/canvas/canvas-text-alignment.html = IMAGE
+BUGWK54409 GPU WIN : fast/canvas/image-object-in-canvas.html = IMAGE
 
 BUGCR72223 : media/video-frame-accurate-seek.html = IMAGE PASS
 
