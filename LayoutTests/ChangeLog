@@ -1,3 +1,10 @@
+2011-02-15  Steve Falkenburg  <sfalken@apple.com>
+
+        Add media/audio-delete-while-slider-thumb-clicked.html to Windows skipped list.
+        Failing since r78562.
+
+        * platform/win/Skipped:
+
 2011-02-15  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; new baselines for canvas GPU tests.
