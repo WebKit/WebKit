@@ -1,3 +1,16 @@
+2011-02-15  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Andreas Kling.
+
+        svg/custom/use-css-no-effect-on-shadow-tree.svg produces empty image on Chromium Linux after r58556
+        https://bugs.webkit.org/show_bug.cgi?id=54460
+        
+        Don't use fast path for SVG. There are some additional rules for shadow trees that are not
+        implemented on fast path.
+        
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::checkSelector):
+
 2011-02-15  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Csaba Osztrogonác.
