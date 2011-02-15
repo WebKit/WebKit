@@ -1,3 +1,10 @@
+2011-02-15  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: expectations update for r78548 and r78576.
+
+        * platform/mac-leopard/inspector/extensions/extensions-resources-expected.txt: Removed.
+        * platform/qt/Skipped:
+
 2011-02-15  Martin Robinson  <mrobinson@igalia.com>
 
         Continue importing GTK+ SVG test results.

@@ -4810,6 +4810,7 @@ inspector/timeline/timeline-recalculate-styles.html
 inspector/audits/audits-panel-functional.html
 inspector/elements/elements-panel-structure.html
 inspector/elements/elements-delete-inline-style.html
+inspector/elements/mutate-unknown-node.html
 inspector/extensions/extensions.html
 
 # Directory upload is not enabled.
