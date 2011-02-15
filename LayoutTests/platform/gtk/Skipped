@@ -1651,6 +1651,9 @@ fast/loader/opaque-base-url.html
 # https://bugs.webkit.org/show_bug.cgi?id=53986
 svg/text/caret-in-svg-text.xhtml
 
+# crashes because of a failing ASSERT (see https://bugs.webkit.org/show_bug.cgi?id=54470)
+svg/text/select-textLength-spacing-squeeze-1.svg
+
 # No User Scripts
 userscripts/script-not-run-for-fragments.html
 userscripts/script-run-at-end.html
