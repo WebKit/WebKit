@@ -38,7 +38,7 @@ namespace CoreIPC {
 void encodeResourceRequest(ArgumentEncoder* encoder, const WebCore::ResourceRequest& resourceRequest)
 {
 #if USE(CFNETWORK)
-    bool requestIsPresent = resourceResponse.cfURLRequest();
+    bool requestIsPresent = resourceRequest.cfURLRequest();
     encoder->encode(requestIsPresent);
 
     if (!requestIsPresent)

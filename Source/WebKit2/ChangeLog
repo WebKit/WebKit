@@ -1,3 +1,10 @@
+2011-02-15  Sam Weinig  <sam@webkit.org>
+
+        Fix windows build.
+
+        * Shared/win/WebCoreArgumentCodersWin.cpp:
+        (CoreIPC::encodeResourceRequest):
+
 2011-02-15  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
