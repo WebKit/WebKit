@@ -1,3 +1,14 @@
+2011-02-15  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit2: Use the Database directory location specified in NSUserDefaults.
+        https://bugs.webkit.org/show_bug.cgi?id=54496
+
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformDefaultDatabaseDirectory):
+        Use the same logic as WebKit1's WebDatabaseManager::databasesDirectoryPath.
+
 2011-02-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Anders Carlsson, Darin Adler.

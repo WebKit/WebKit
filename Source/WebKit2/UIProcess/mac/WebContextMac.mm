@@ -33,6 +33,7 @@
 
 using namespace WebCore;
 
+NSString *WebDatabaseDirectoryDefaultsKey = @"WebDatabaseDirectory";
 NSString *WebKitLocalCacheDefaultsKey = @"WebKitLocalCache";
 
 namespace WebKit {
@@ -93,7 +94,10 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 
 String WebContext::platformDefaultDatabaseDirectory() const
 {
-    return [@"~/Library/WebKit/Databases" stringByStandardizingPath];
+    NSString *databasesDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebDatabaseDirectoryDefaultsKey];
+    if (!databasesDirectory || ![databasesDirectory isKindOfClass:[NSString class]])
+        databasesDirectory = @"~/Library/WebKit/Databases";
+    return [databasesDirectory stringByStandardizingPath];
 }
 
 } // namespace WebKit
