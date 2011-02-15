@@ -66,8 +66,7 @@ class ChromiumGpuTest(unittest.TestCase):
         self.assertEqual(port.default_child_processes(), 1)
         self.assertEqual(port._options.builder_name, 'foo - GPU')
 
-        # We don't support platform-specific versions of the GPU port yet.
-        self.assertEqual(port.name(), port_name)
+        self.assertTrue(port.name().startswith(port_name))
 
         # test that it has the right directories in front of the search path.
         paths = port.baseline_search_path()

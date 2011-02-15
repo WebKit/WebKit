@@ -32,9 +32,28 @@
 
 import sys
 
-ALL_PORT_NAMES = ['test', 'dryrun', 'mac', 'win', 'gtk', 'qt', 'chromium-mac',
-                  'chromium-linux', 'chromium-win', 'google-chrome-win',
-                  'google-chrome-mac', 'google-chrome-linux32', 'google-chrome-linux64']
+
+def all_port_names():
+    """Return a list of all valid, fully-specified, "real" port names.
+
+    This is the list of names that can be specified directly and can be
+    returned as a value from port.name(). This does not include any
+    "fake" names like "test" or "mock-mac", and it does not include any
+    shortcut names like "chromium-win" that would get expanded to
+    "chromium-win-xp"."""
+    # FIXME: There's probably a better way to generate this list ...
+    return ['chromium-gpu-linux',
+            'chromium-gpu-mac-snowleopard', 'chromium-gpu-mac-leopard',
+            'chromium-gpu-win-xp', 'chromium-gpu-win-vista', 'chromium-gpu-win-win7',
+            'chromium-linux',
+            'chromium-mac-leopard', 'chromium-mac-snowleopard',
+            'chromium-win-xp', 'chromium-win-vista', 'chromium-win-win7',
+            'google-chrome-linux32', 'google-chrome-linux64',
+            'gtk',
+            'mac-tiger', 'mac-leopard', 'mac-snowleopard', 'mac-wk2',
+            'qt-linux', 'qt-mac', 'qt-win', 'qt-wk2',
+            'win-xp', 'win', 'win-wk2',
+    ]
 
 
 def get(port_name=None, options=None, **kwargs):
@@ -109,8 +128,3 @@ def _get_kwargs(**kwargs):
     else:
         raise NotImplementedError('unsupported port: %s' % port_to_use)
     return maker(**kwargs)
-
-def get_all(options=None):
-    """Returns all the objects implementing the Port interface."""
-    return dict([(port_name, get(port_name, options=options))
-                 for port_name in ALL_PORT_NAMES])

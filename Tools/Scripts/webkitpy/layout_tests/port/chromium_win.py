@@ -37,12 +37,47 @@ import chromium
 _log = logging.getLogger("webkitpy.layout_tests.port.chromium_win")
 
 
+def os_version(windows_version=None):
+    if not windows_version:
+        if hasattr(sys, 'getwindowsversion'):
+            windows_version = tuple(sys.getwindowsversion()[:2])
+        else:
+            # Make up something for testing.
+            windows_version = (5, 1)
+
+    version_strings = {
+        (6, 1): 'win7',
+        (6, 0): 'vista',
+        (5, 1): 'xp',
+    }
+    return version_strings[windows_version]
+
+
 class ChromiumWinPort(chromium.ChromiumPort):
     """Chromium Win implementation of the Port class."""
+    # FIXME: Figure out how to unify this with base.TestConfiguration.all_systems()?
+    SUPPORTED_VERSIONS = ('xp', 'vista', 'win7')
 
-    def __init__(self, **kwargs):
-        kwargs.setdefault('port_name', 'chromium-win' + self.version())
-        chromium.ChromiumPort.__init__(self, **kwargs)
+    # FIXME: Do we need mac-snowleopard here, like the base win port?
+    FALLBACK_PATHS = {
+        'xp': ['chromium-win-xp', 'chromium-win-vista', 'chromium-win', 'chromium', 'win', 'mac'],
+        'vista': ['chromium-win-vista', 'chromium-win', 'chromium', 'win', 'mac'],
+        'win7': ['chromium-win', 'chromium', 'win', 'mac'],
+    }
+
+    def __init__(self, port_name=None, windows_version=None, **kwargs):
+        # We're a little generic here because this code is reused by the
+        # 'google-chrome' port as well as the 'mock-' and 'dryrun-' ports.
+        port_name = port_name or 'chromium-win'
+
+        if port_name.endswith('-win'):
+            self._version = os_version(windows_version)
+            port_name = port_name + '-' + self._version
+        else:
+            self._version = port_name[port_name.index('-win-') + 5:]
+            assert self._version in self.SUPPORTED_VERSIONS
+
+        chromium.ChromiumPort.__init__(self, port_name=port_name, **kwargs)
 
     def setup_environ_for_server(self):
         env = chromium.ChromiumPort.setup_environ_for_server(self)
@@ -62,13 +97,7 @@ class ChromiumWinPort(chromium.ChromiumPort):
         return env
 
     def baseline_search_path(self):
-        port_names = []
-        if self._name.endswith('-win-xp'):
-            port_names.append("chromium-win-xp")
-        if self._name.endswith('-win-xp') or self._name.endswith('-win-vista'):
-            port_names.append("chromium-win-vista")
-        # FIXME: This may need to include mac-snowleopard like win.py.
-        port_names.extend(["chromium-win", "chromium", "win", "mac"])
+        port_names = self.FALLBACK_PATHS[self.version()]
         return map(self._webkit_baseline_path, port_names)
 
     def check_build(self, needs_http):
@@ -87,19 +116,12 @@ class ChromiumWinPort(chromium.ChromiumPort):
 
     def test_platform_name(self):
         # We return 'win-xp', not 'chromium-win-xp' here, for convenience.
-        return 'win' + self.version()
+
+        # FIXME: Get rid of this method after rebaseline_chromium_webkit_tests dies.
+        return 'win-' + self.version()
 
     def version(self):
-        if not hasattr(sys, 'getwindowsversion'):
-            return ''
-        winver = sys.getwindowsversion()
-        if winver[0] == 6 and (winver[1] == 1):
-            return '-7'
-        if winver[0] == 6 and (winver[1] == 0):
-            return '-vista'
-        if winver[0] == 5 and (winver[1] == 1 or winver[1] == 2):
-            return '-xp'
-        return ''
+        return self._version
 
     #
     # PROTECTED ROUTINES

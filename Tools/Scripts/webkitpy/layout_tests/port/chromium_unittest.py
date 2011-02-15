@@ -90,7 +90,6 @@ class ChromiumPortTest(unittest.TestCase):
     class TestMacPort(chromium_mac.ChromiumMacPort):
         def __init__(self, options):
             chromium_mac.ChromiumMacPort.__init__(self,
-                                                  port_name='test-port',
                                                   options=options)
 
         def default_configuration(self):
@@ -100,7 +99,6 @@ class ChromiumPortTest(unittest.TestCase):
     class TestLinuxPort(chromium_linux.ChromiumLinuxPort):
         def __init__(self, options):
             chromium_linux.ChromiumLinuxPort.__init__(self,
-                                                      port_name='test-port',
                                                       options=options,
                                                       filesystem=filesystem_mock.MockFileSystem())
 

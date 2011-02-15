@@ -242,10 +242,6 @@ class TestExpectationsFile:
     SKIP: Doesn't run the test.
     SLOW: The test takes a long time to run, but does not timeout indefinitely.
     WONTFIX: For tests that we never intend to pass on a given platform.
-    DEBUG: Expectations apply only to the debug build.
-    RELEASE: Expectations apply only to release build.
-    LINUX/WIN/WIN-XP/WIN-VISTA/WIN-7/MAC: Expectations apply only to these
-        platforms.
 
     Notes:
       -A test cannot be both SLOW and TIMEOUT
@@ -496,9 +492,9 @@ class TestExpectationsFile:
                     # Do not add tags WIN-7 and WIN-VISTA to test expectations
                     # if the original line does not specify the platform
                     # option.
-                    # TODO(victorw): Remove WIN-VISTA and WIN-7 once we have
+                    # TODO(victorw): Remove WIN-VISTA and WIN-WIN7 once we have
                     # reliable Win 7 and Win Vista buildbots setup.
-                    if not p in (platform.upper(), 'WIN-VISTA', 'WIN-7'):
+                    if not p in (platform.upper(), 'WIN-VISTA', 'WIN-WIN7'):
                         new_options = parts[0] + p + ' '
                         new_line = ('%s:%s' % (new_options, parts[1]))
                         f_new.append(new_line)

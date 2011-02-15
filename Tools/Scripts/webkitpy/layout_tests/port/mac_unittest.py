@@ -27,26 +27,20 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import StringIO
-import sys
 import unittest
 
-import mac
-import port_testcase
+from webkitpy.layout_tests.port import mac
+from webkitpy.layout_tests.port import port_testcase
 
 
 class MacTest(port_testcase.PortTestCase):
-    def make_port(self, port_name=None, options=port_testcase.mock_options):
-        if sys.platform != 'darwin':
+    def port_maker(self, platform):
+        if platform != 'darwin':
             return None
-        port_obj = mac.MacPort(port_name=port_name, options=options)
-        port_obj._options.results_directory = port_obj.results_directory()
-        port_obj._options.configuration = 'Release'
-        return port_obj
+        return mac.MacPort
 
     def assert_skipped_files_for_version(self, port_name, expected_paths):
-        port = self.make_port(port_name)
-        if not port:
-            return
+        port = mac.MacPort(port_name=port_name)
         skipped_paths = port._skipped_file_paths()
         # FIXME: _skipped_file_paths should return WebKit-relative paths.
         # So to make it unit testable, we strip the WebKit directory from the path.
@@ -54,8 +48,6 @@ class MacTest(port_testcase.PortTestCase):
         self.assertEqual(relative_paths, expected_paths)
 
     def test_skipped_file_paths(self):
-        self.assert_skipped_files_for_version('mac',
-            ['/LayoutTests/platform/mac/Skipped'])
         self.assert_skipped_files_for_version('mac-snowleopard',
             ['/LayoutTests/platform/mac-snowleopard/Skipped', '/LayoutTests/platform/mac/Skipped'])
         self.assert_skipped_files_for_version('mac-leopard',
@@ -78,10 +70,39 @@ svg/batik/text/smallFonts.svg
     ]
 
     def test_tests_from_skipped_file_contents(self):
-        port = self.make_port()
-        if not port:
-            return
+        port = mac.MacPort()
         self.assertEqual(port._tests_from_skipped_file_contents(self.example_skipped_file), self.example_skipped_tests)
+
+    def assert_name(self, port_name, os_version_string, expected):
+        port = mac.MacPort(port_name=port_name,
+                           os_version_string=os_version_string)
+        self.assertEquals(expected, port.name())
+
+    def test_versions(self):
+        port = self.make_port()
+        if port:
+            self.assertTrue(port.name() in ('mac-tiger', 'mac-leopard', 'mac-snowleopard'))
+
+        self.assert_name(None, '10.4.8', 'mac-tiger')
+        self.assert_name('mac', '10.4.8', 'mac-tiger')
+        self.assert_name('mac-tiger', '10.4.8', 'mac-tiger')
+        self.assert_name('mac-tiger', '10.5.3', 'mac-tiger')
+        self.assert_name('mac-tiger', '10.6.3', 'mac-tiger')
+
+        self.assert_name(None, '10.5.3', 'mac-leopard')
+        self.assert_name('mac', '10.5.3', 'mac-leopard')
+        self.assert_name('mac-leopard', '10.4.8', 'mac-leopard')
+        self.assert_name('mac-leopard', '10.5.3', 'mac-leopard')
+        self.assert_name('mac-leopard', '10.6.3', 'mac-leopard')
+
+        self.assert_name(None, '10.6.3', 'mac-snowleopard')
+        self.assert_name('mac', '10.6.3', 'mac-snowleopard')
+        self.assert_name('mac-snowleopard', '10.4.3', 'mac-snowleopard')
+        self.assert_name('mac-snowleopard', '10.5.3', 'mac-snowleopard')
+        self.assert_name('mac-snowleopard', '10.6.3', 'mac-snowleopard')
+
+        self.assertRaises(KeyError, self.assert_name, None, '10.7.1', 'mac-leopard')
+        self.assertRaises(KeyError, self.assert_name, None, '10.3.1', 'mac-leopard')
 
 
 if __name__ == '__main__':

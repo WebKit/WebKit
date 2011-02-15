@@ -55,9 +55,7 @@ def port_fallbacks():
         back on.  All platforms fall back on 'base'.
     """
     fallbacks = {_BASE_PLATFORM: []}
-    platform_dir = os.path.join(scm.find_checkout_root(), 'LayoutTests',
-                                'platform')
-    for port_name in os.listdir(platform_dir):
+    for port_name in port_factory.all_port_names():
         try:
             platforms = port_factory.get(port_name).baseline_search_path()
         except NotImplementedError:
@@ -67,6 +65,7 @@ def port_fallbacks():
             continue
         fallbacks[port_name] = [os.path.basename(p) for p in platforms][1:]
         fallbacks[port_name].append(_BASE_PLATFORM)
+
     return fallbacks
 
 
@@ -199,6 +198,8 @@ def find_dups(hashes, port_fallbacks, relative_to):
 
         # See if any of the platforms are redundant with each other.
         for platform in platforms.keys():
+            if platform not in port_factory.all_port_names():
+                continue
             for fallback in port_fallbacks[platform]:
                 if fallback not in platforms.keys():
                     continue

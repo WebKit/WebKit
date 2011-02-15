@@ -29,13 +29,15 @@
 import os
 import sys
 import unittest
-import chromium_win
+
 from webkitpy.common.system import outputcapture
 from webkitpy.tool import mocktool
 
+from webkitpy.layout_tests.port import chromium_win
+from webkitpy.layout_tests.port import port_testcase
 
-class ChromiumWinTest(unittest.TestCase):
 
+class ChromiumWinTest(port_testcase.PortTestCase):
     class RegisterCygwinOption(object):
         def __init__(self):
             self.register_cygwin = True
@@ -47,11 +49,19 @@ class ChromiumWinTest(unittest.TestCase):
         sys.platform = self.orig_platform
         self._port = None
 
+    def port_maker(self, platform):
+        if platform not in ('cygwin', 'win32'):
+            return None
+        return chromium_win.ChromiumWinPort
+
     def _mock_path_from_chromium_base(self, *comps):
         return self._port._filesystem.join("/chromium/src", *comps)
 
     def test_setup_environ_for_server(self):
-        port = chromium_win.ChromiumWinPort()
+        port = self.make_port()
+        if not port:
+            return
+
         port._executive = mocktool.MockExecutive(should_log=True)
         self._port = port
         port.path_from_chromium_base = self._mock_path_from_chromium_base
@@ -62,16 +72,53 @@ class ChromiumWinTest(unittest.TestCase):
         self.assertNotEqual(env["PATH"], os.environ["PATH"])
 
     def test_setup_environ_for_server_register_cygwin(self):
-        sys.platform = "win32"
-        port = chromium_win.ChromiumWinPort(
-            options=ChromiumWinTest.RegisterCygwinOption())
+        port = self.make_port(options=ChromiumWinTest.RegisterCygwinOption())
+        if not port:
+            return
+
         port._executive = mocktool.MockExecutive(should_log=True)
         port.path_from_chromium_base = self._mock_path_from_chromium_base
         self._port = port
         setup_mount = self._mock_path_from_chromium_base("third_party",
-                                                         "cygwin",
-                                                         "setup_mount.bat")
+                                                        "cygwin",
+                                                        "setup_mount.bat")
         expected_stderr = "MOCK run_command: %s\n" % [setup_mount]
         output = outputcapture.OutputCapture()
         output.assert_outputs(self, port.setup_environ_for_server,
                               expected_stderr=expected_stderr)
+
+    def assert_name(self, port_name, windows_version, expected):
+        port = chromium_win.ChromiumWinPort(port_name=port_name,
+                                            windows_version=windows_version)
+        self.assertEquals(expected, port.name())
+
+    def test_versions(self):
+        port = chromium_win.ChromiumWinPort()
+        self.assertTrue(port.name() in ('chromium-win-xp', 'chromium-win-vista', 'chromium-win-7'))
+
+        self.assert_name(None, (5, 1), 'chromium-win-xp')
+        self.assert_name('chromium-win', (5, 1), 'chromium-win-xp')
+        self.assert_name('chromium-win-xp', (5, 1), 'chromium-win-xp')
+        self.assert_name('chromium-win-xp', (6, 0), 'chromium-win-xp')
+        self.assert_name('chromium-win-xp', (6, 1), 'chromium-win-xp')
+
+        self.assert_name(None, (6, 0), 'chromium-win-vista')
+        self.assert_name('chromium-win', (6, 0), 'chromium-win-vista')
+        self.assert_name('chromium-win-vista', (5, 1), 'chromium-win-vista')
+        self.assert_name('chromium-win-vista', (6, 0), 'chromium-win-vista')
+        self.assert_name('chromium-win-vista', (6, 1), 'chromium-win-vista')
+
+        self.assert_name(None, (6, 1), 'chromium-win-win7')
+        self.assert_name('chromium-win', (6, 1), 'chromium-win-win7')
+        self.assert_name('chromium-win-win7', (5, 1), 'chromium-win-win7')
+        self.assert_name('chromium-win-win7', (6, 0), 'chromium-win-win7')
+        self.assert_name('chromium-win-win7', (6, 1), 'chromium-win-win7')
+
+        self.assertRaises(KeyError, self.assert_name, None, (4, 0), 'chromium-win-xp')
+        self.assertRaises(KeyError, self.assert_name, None, (5, 0), 'chromium-win-xp')
+        self.assertRaises(KeyError, self.assert_name, None, (5, 2), 'chromium-win-xp')
+        self.assertRaises(KeyError, self.assert_name, None, (7, 1), 'chromium-win-xp')
+
+
+if __name__ == '__main__':
+    unittest.main()

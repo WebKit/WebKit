@@ -26,15 +26,48 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import chromium_mac
 import unittest
 
 from webkitpy.thirdparty.mock import Mock
 
+from webkitpy.layout_tests.port import chromium_mac
+from webkitpy.layout_tests.port import port_testcase
 
-class ChromiumMacPortTest(unittest.TestCase):
+
+class ChromiumMacPortTest(port_testcase.PortTestCase):
+    def port_maker(self, platform):
+        if platform != 'darwin':
+            return None
+        return chromium_mac.ChromiumMacPort
 
     def test_check_wdiff_install(self):
         port = chromium_mac.ChromiumMacPort()
+
         # Currently is always true, just logs if missing.
         self.assertTrue(port._check_wdiff_install())
+
+    def assert_name(self, port_name, os_version_string, expected):
+        port = chromium_mac.ChromiumMacPort(port_name=port_name,
+                                            os_version_string=os_version_string)
+        self.assertEquals(expected, port.name())
+
+    def test_versions(self):
+        port = chromium_mac.ChromiumMacPort()
+        self.assertTrue(port.name() in ('chromium-mac-leopard', 'chromium-mac-snowleopard'))
+
+        self.assert_name(None, '10.5.3', 'chromium-mac-leopard')
+        self.assert_name('chromium-mac', '10.5.3', 'chromium-mac-leopard')
+        self.assert_name('chromium-mac-leopard', '10.5.3', 'chromium-mac-leopard')
+        self.assert_name('chromium-mac-leopard', '10.6.3', 'chromium-mac-leopard')
+
+        self.assert_name(None, '10.6.3', 'chromium-mac-snowleopard')
+        self.assert_name('chromium-mac', '10.6.3', 'chromium-mac-snowleopard')
+        self.assert_name('chromium-mac-snowleopard', '10.5.3', 'chromium-mac-snowleopard')
+        self.assert_name('chromium-mac-snowleopard', '10.6.3', 'chromium-mac-snowleopard')
+
+        self.assertRaises(KeyError, self.assert_name, None, '10.7.1', 'chromium-mac-leopard')
+        self.assertRaises(AssertionError, self.assert_name, None, '10.4.1', 'chromium-mac-leopard')
+
+
+if __name__ == '__main__':
+    unittest.main()

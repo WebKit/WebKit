@@ -38,12 +38,50 @@ from webkitpy.layout_tests.port.webkit import WebKitPort
 _log = logging.getLogger("webkitpy.layout_tests.port.mac")
 
 
+def os_version(os_version_string=None, supported_versions=None):
+    # We only support Tiger, Leopard, and Snow Leopard.
+    if not os_version_string:
+        if hasattr(platform, 'mac_ver'):
+            os_version_string = platform.mac_ver()[0]
+        else:
+            # Make up something for testing.
+            os_version_string = "10.5.6"
+    release_version = int(os_version_string.split('.')[1])
+    version_strings = {
+        4: 'tiger',
+        5: 'leopard',
+        6: 'snowleopard',
+    }
+    version_string = version_strings[release_version]
+    if supported_versions:
+        assert version_string in supported_versions
+    return version_string
+
+
 class MacPort(WebKitPort):
     """WebKit Mac implementation of the Port class."""
+    # FIXME: 'wk2' probably shouldn't be a version, it should probably be
+    # a modifier, like 'chromium-gpu' is to 'chromium'.
+    SUPPORTED_VERSIONS = ('tiger', 'leopard', 'snowleopard', 'wk2')
 
-    def __init__(self, **kwargs):
-        kwargs.setdefault('port_name', 'mac' + self.version())
-        WebKitPort.__init__(self, **kwargs)
+    FALLBACK_PATHS = {
+        'tiger': ['mac-tiger', 'mac-leopard', 'mac-snowleopard', 'mac'],
+        'leopard': ['mac-leopard', 'mac-snowleopard', 'mac'],
+        'snowleopard': ['mac-snowleopard', 'mac'],
+        'wk2': ['mac-wk2', 'mac'],
+    }
+
+    def __init__(self, port_name=None, os_version_string=None, **kwargs):
+        port_name = port_name or 'mac'
+
+        if port_name == 'mac':
+            self._version = os_version(os_version_string)
+            port_name = port_name + '-' + self._version
+        else:
+            self._version = port_name[4:]
+            assert self._version in self.SUPPORTED_VERSIONS
+
+        WebKitPort.__init__(self, port_name=port_name, **kwargs)
 
     def default_child_processes(self):
         # FIXME: new-run-webkit-tests is unstable on Mac running more than
@@ -55,15 +93,7 @@ class MacPort(WebKitPort):
         return child_processes
 
     def baseline_search_path(self):
-        port_names = []
-        if self._name == 'mac-tiger':
-            port_names.append("mac-tiger")
-        if self._name in ('mac-tiger', 'mac-leopard'):
-            port_names.append("mac-leopard")
-        if self._name in ('mac-tiger', 'mac-leopard', 'mac-snowleopard'):
-            port_names.append("mac-snowleopard")
-        port_names.append("mac")
-        return map(self._webkit_baseline_path, port_names)
+        return map(self._webkit_baseline_path, self.FALLBACK_PATHS[self._version])
 
     def path_to_test_expectations_file(self):
         return self.path_from_webkit_base('LayoutTests', 'platform',
@@ -73,7 +103,7 @@ class MacPort(WebKitPort):
         # FIXME: This method will need to be made work for non-mac
         # platforms and moved into base.Port.
         skipped_files = []
-        if self._name in ('mac-tiger', 'mac-leopard', 'mac-snowleopard'):
+        if self._name in ('mac-leopard', 'mac-snowleopard'):
             skipped_files.append(self._filesystem.join(
                 self._webkit_baseline_path(self._name), 'Skipped'))
         skipped_files.append(self._filesystem.join(self._webkit_baseline_path('mac'),
@@ -81,20 +111,10 @@ class MacPort(WebKitPort):
         return skipped_files
 
     def test_platform_name(self):
-        return 'mac' + self.version()
+        return 'mac-' + self.version()
 
     def version(self):
-        os_version_string = platform.mac_ver()[0]  # e.g. "10.5.6"
-        if not os_version_string:
-            return '-leopard'
-        release_version = int(os_version_string.split('.')[1])
-        if release_version == 4:
-            return '-tiger'
-        elif release_version == 5:
-            return '-leopard'
-        elif release_version == 6:
-            return '-snowleopard'
-        return ''
+        return self._version
 
     def _build_java_test_support(self):
         java_tests_path = self._filesystem.join(self.layout_tests_dir(), "java")

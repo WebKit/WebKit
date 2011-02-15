@@ -643,7 +643,7 @@ class Port(object):
 
     def version(self):
         """Returns a string indicating the version of a given platform, e.g.
-        '-leopard' or '-xp'.
+        'leopard' or 'xp'.
 
         This is used to help identify the exact port when parsing test
         expectations, determining search paths, and logging information."""
@@ -928,12 +928,11 @@ class TestConfiguration(object):
         # FIXME: We can get the O/S and version from test_platform_name()
         # and version() for now, but those should go away and be cleaned up
         # with more generic methods like operation_system() and os_version()
-        # or something. Note that we need to strip the leading '-' off the
-        # version string if it is present.
+        # or something.
         if port:
             port_version = port.version()
-        self.os = os or port.test_platform_name().replace(port_version, '')
-        self.version = version or port_version[1:]
+        self.os = os or port.test_platform_name().replace('-' + port_version, '')
+        self.version = version or port_version
         self.architecture = architecture or 'x86'
         self.build_type = build_type or port._options.configuration.lower()
         self.graphics_type = graphics_type or port.graphics_type()

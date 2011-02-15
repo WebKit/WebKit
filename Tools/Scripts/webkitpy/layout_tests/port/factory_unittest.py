@@ -152,24 +152,6 @@ class FactoryTest(unittest.TestCase):
         self.assert_platform_port("cygwin", self.chromium_options,
                                   chromium_win.ChromiumWinPort)
 
-    def test_get_all_ports(self):
-        ports = factory.get_all()
-        for name in factory.ALL_PORT_NAMES:
-            self.assertTrue(name in ports.keys())
-        self.assert_port("test", test.TestPort, ports["test"])
-        self.assert_port("dryrun-test", dryrun.DryRunPort, ports["dryrun"])
-        self.assert_port("dryrun-mac", dryrun.DryRunPort, ports["dryrun"])
-        self.assert_port("mac", mac.MacPort, ports["mac"])
-        self.assert_port("win", win.WinPort, ports["win"])
-        self.assert_port("gtk", gtk.GtkPort, ports["gtk"])
-        self.assert_port("qt", qt.QtPort, ports["qt"])
-        self.assert_port("chromium-mac", chromium_mac.ChromiumMacPort,
-                         ports["chromium-mac"])
-        self.assert_port("chromium-linux", chromium_linux.ChromiumLinuxPort,
-                         ports["chromium-linux"])
-        self.assert_port("chromium-win", chromium_win.ChromiumWinPort,
-                         ports["chromium-win"])
-
     def test_unknown_specified(self):
         # Test what happens when you specify an unknown port.
         orig_platform = sys.platform

@@ -31,10 +31,10 @@
 
 import logging
 import os
-import platform
 import signal
 
-import chromium
+from webkitpy.layout_tests.port import mac
+from webkitpy.layout_tests.port import chromium
 
 from webkitpy.common.system.executive import Executive
 
@@ -43,20 +43,31 @@ _log = logging.getLogger("webkitpy.layout_tests.port.chromium_mac")
 
 class ChromiumMacPort(chromium.ChromiumPort):
     """Chromium Mac implementation of the Port class."""
+    SUPPORTED_OS_VERSIONS = ('leopard', 'snowleopard')
 
-    def __init__(self, **kwargs):
-        kwargs.setdefault('port_name', 'chromium-mac')
-        chromium.ChromiumPort.__init__(self, **kwargs)
+    FALLBACK_PATHS = {
+        'leopard': ['chromium-mac-leopard', 'chromium-mac-snowleopard', 'chromium-mac', 'chromium',
+                    'mac-leopard', 'mac-snowleopard', 'mac'],
+        'snowleopard': ['chromium-mac-snowleopard', 'chromium-mac', 'chromium',
+                        'mac-snowleopard', 'mac'],
+    }
+
+    def __init__(self, port_name=None, os_version_string=None, **kwargs):
+        # We're a little generic here because this code is reused by the
+        # 'google-chrome' port as well as the 'mock-' and 'dryrun-' ports.
+        port_name = port_name or 'chromium-mac'
+
+        if port_name.endswith('-mac'):
+            self._version = mac.os_version(os_version_string, self.SUPPORTED_OS_VERSIONS)
+            port_name = port_name + '-' + self._version
+        else:
+            self._version = port_name[port_name.index('-mac-') + 5:]
+            assert self._version in self.SUPPORTED_OS_VERSIONS
+
+        chromium.ChromiumPort.__init__(self, port_name=port_name, **kwargs)
 
     def baseline_search_path(self):
-        port_names = [
-            "chromium-mac" + self.version(),
-            "chromium-mac",
-            "chromium",
-            "mac" + self.version(),
-            "mac",
-        ]
-        return map(self._webkit_baseline_path, port_names)
+        return map(self._webkit_baseline_path, self.FALLBACK_PATHS[self._version])
 
     def check_build(self, needs_http):
         result = chromium.ChromiumPort.check_build(self, needs_http)
@@ -85,20 +96,12 @@ class ChromiumMacPort(chromium.ChromiumPort):
 
     def test_platform_name(self):
         # We use 'mac' instead of 'chromium-mac'
+
+        # FIXME: Get rid of this method after rebaseline_chromium_webkit_tests dies.
         return 'mac'
 
     def version(self):
-        # FIXME: It's strange that this string is -version, not just version.
-        os_version_string = platform.mac_ver()[0]  # e.g. "10.5.6"
-        if not os_version_string:
-            return '-leopard'
-        release_version = int(os_version_string.split('.')[1])
-        # we don't support 'tiger' or earlier releases
-        if release_version == 5:
-            return '-leopard'
-        elif release_version == 6:
-            return '-snowleopard'
-        return ''
+        return self._version
 
     #
     # PROTECTED METHODS

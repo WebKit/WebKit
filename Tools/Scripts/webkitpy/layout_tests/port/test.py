@@ -348,9 +348,9 @@ class TestPort(base.Port):
 
     def version(self):
         version_map = {
-            'test-win-xp': '-xp',
-            'test-win': '-7',
-            'test-mac': '-leopard',
+            'test-win-xp': 'xp',
+            'test-win': 'win7',
+            'test-mac': 'leopard',
         }
         return version_map[self._name]
 

@@ -1,5 +1,55 @@
 2011-02-14  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Mihai Parparita.
+
+        Clean up the way we handle platform names in
+        new-run-webkit-tests. Previously, if you specified
+        '--platform mac' or '--platform chromium-mac' on the command
+        line, it would use that platform name to determine baseline search
+        paths, etc. This is almost never the right thing to do, because
+        it ignores the existence of version-specific baselines.
+        
+        So, I changed this so that ports that support versions must
+        always use a version, and the version should default to the
+        version of the operating system that the port is being run on
+        (e.g., if you're running on Leopard, then passing '--platform
+        mac' will default to the 'mac-leopard' port). This means that
+        port.name() should always include a version-specific suffix if
+        the port supports versions.
+
+        However, we still support things like '--platform mac' as input
+        so that the user doesn't have to explicitly specify a version,
+        both for convenience and so we don't have to make buildbot
+        configs more complicated than they already are.
+
+        Also, I cleaned up how the baselines were being searched
+        on the chromium-mac port (this is one of the two bugs that
+        prompted this refactoring), and made the logic easier to follow
+        and more consistent across the mac and chromium ports
+        
+        Lastly, I added a port.get_all_names() method that could be used
+        to get the names of all of the ports to search, rather than having
+        to guess (incorrectly) from the list of directories under
+        LayoutTests/platform (this last thing was necessary because the
+        deduplicate_tests unittest broke as the fallback dirs changed).
+
+        https://bugs.webkit.org/show_bug.cgi?id=54248
+
+        * Scripts/webkitpy/layout_tests/deduplicate_tests.py:
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        * Scripts/webkitpy/layout_tests/port/factory_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+
+2011-02-14  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Adam Barth.
 
         update-webkit hangs in a git-only checkout
