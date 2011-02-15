@@ -375,6 +375,10 @@ void PageClientImpl::setAutodisplay(bool newState)
         [m_wkView displayIfNeeded];
     
     [[m_wkView window] setAutodisplay:newState];
+
+    // For some reason, painting doesn't happen for a long time without this call, <rdar://problem/8975229>.
+    if (newState)
+        [m_wkView displayIfNeeded];
 }
 
 CGContextRef PageClientImpl::containingWindowGraphicsContext()

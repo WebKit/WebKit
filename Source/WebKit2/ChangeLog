@@ -1,3 +1,18 @@
+2011-02-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54480
+        <rdar://problem/8975229> REGRESSION (WebKit2): A web page remains unresponsive for a long
+        time after printing
+
+        Nothing was painted until moving the mouse over browser chrome, deactivating the window,
+        or taking some other drastic measure like that.
+
+        * UIProcess/API/mac/PageClientImpl.mm: (WebKit::PageClientImpl::setAutodisplay):
+        Call -[NSView displayIfNeeded] after enabling autodisplay. For some reason, this makes
+        WebCore push updates again.
+
 2011-02-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
