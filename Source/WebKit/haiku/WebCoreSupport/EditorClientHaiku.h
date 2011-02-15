@@ -80,6 +80,8 @@ namespace WebCore {
         virtual void registerCommandForRedo(PassRefPtr<EditCommand>);
         virtual void clearUndoRedoOperations();
 
+        virtual bool canCopyCut(bool defaultValue) const;
+        virtual bool canPaste(bool defaultValue) const;
         virtual bool canUndo() const;
         virtual bool canRedo() const;
 

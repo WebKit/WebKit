@@ -166,6 +166,16 @@ void EditorClientEfl::clearUndoRedoOperations()
     notImplemented();
 }
 
+bool EditorClientEfl::canCopyCut(bool defaultValue) const
+{
+    return defaultValue;
+}
+
+bool EditorClientEfl::canPaste(bool defaultValue) const
+{
+    return defaultValue;
+}
+
 bool EditorClientEfl::canUndo() const
 {
     notImplemented();

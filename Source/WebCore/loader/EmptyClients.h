@@ -441,6 +441,8 @@ public:
     virtual void registerCommandForRedo(PassRefPtr<EditCommand>) { }
     virtual void clearUndoRedoOperations() { }
 
+    virtual bool canCopyCut(bool defaultValue) const { return defaultValue; }
+    virtual bool canPaste(bool defaultValue) const { return defaultValue; }
     virtual bool canUndo() const { return false; }
     virtual bool canRedo() const { return false; }
 

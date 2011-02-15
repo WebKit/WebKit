@@ -325,6 +325,16 @@ void EditorClientWx::clearUndoRedoOperations()
     }
 }
 
+bool EditorClientWx::canCopyCut(bool defaultValue) const
+{
+    return defaultValue;
+}
+
+bool EditorClientWx::canPaste(bool defaultValue) const
+{
+    return defaultValue;
+}
+
 bool EditorClientWx::canUndo() const
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();

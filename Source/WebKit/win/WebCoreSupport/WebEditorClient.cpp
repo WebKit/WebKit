@@ -569,6 +569,16 @@ void WebEditorClient::clearUndoRedoOperations()
     }
 }
 
+bool WebEditorClient::canCopyCut(bool defaultValue) const
+{
+    return defaultValue;
+}
+
+bool WebEditorClient::canPaste(bool defaultValue) const
+{
+    return defaultValue;
+}
+
 bool WebEditorClient::canUndo() const
 {
     BOOL result = FALSE;

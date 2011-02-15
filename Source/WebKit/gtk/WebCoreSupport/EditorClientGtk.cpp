@@ -506,6 +506,16 @@ void EditorClient::clearUndoRedoOperations()
     redoStack.clear();
 }
 
+bool EditorClient::canCopyCut(bool defaultValue) const
+{
+    return defaultValue;
+}
+
+bool EditorClient::canPaste(bool defaultValue) const
+{
+    return defaultValue;
+}
+
 bool EditorClient::canUndo() const
 {
     return !undoStack.isEmpty();

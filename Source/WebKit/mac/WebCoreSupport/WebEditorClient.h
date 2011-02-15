@@ -104,7 +104,9 @@ public:
     virtual void registerCommandForUndo(PassRefPtr<WebCore::EditCommand>);
     virtual void registerCommandForRedo(PassRefPtr<WebCore::EditCommand>);
     virtual void clearUndoRedoOperations();
-    
+
+    virtual bool canCopyCut(bool defaultValue) const;
+    virtual bool canPaste(bool defaultValue) const;
     virtual bool canUndo() const;
     virtual bool canRedo() const;
     

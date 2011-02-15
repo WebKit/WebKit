@@ -1121,14 +1121,26 @@ static bool supportedFromMenuOrKeyBinding(Frame*)
 
 static bool supportedCopyCut(Frame* frame)
 {
-    Settings* settings = frame ? frame->settings() : 0;
-    return settings && settings->javaScriptCanAccessClipboard();
+    if (!frame)
+        return false;
+
+    Settings* settings = frame->settings();
+    bool defaultValue = settings && settings->javaScriptCanAccessClipboard();
+
+    EditorClient* client = frame->editor()->client();
+    return client ? client->canCopyCut(defaultValue) : defaultValue;
 }
 
 static bool supportedPaste(Frame* frame)
 {
-    Settings* settings = frame ? frame->settings() : 0;
-    return settings && (settings->javaScriptCanAccessClipboard() ? settings->isDOMPasteAllowed() : 0);
+    if (!frame)
+        return false;
+
+    Settings* settings = frame->settings();
+    bool defaultValue = settings && settings->javaScriptCanAccessClipboard() && settings->isDOMPasteAllowed();
+
+    EditorClient* client = frame->editor()->client();
+    return client ? client->canPaste(defaultValue) : defaultValue;
 }
 
 // Enabled functions

@@ -165,6 +165,16 @@ void EditorClientWinCE::clearUndoRedoOperations()
     notImplemented();
 }
 
+bool EditorClientWinCE::canCopyCut(bool defaultValue) const
+{
+    return defaultValue;
+}
+
+bool EditorClientWinCE::canPaste(bool defaultValue) const
+{
+    return defaultValue;
+}
+
 bool EditorClientWinCE::canUndo() const
 {
     notImplemented();

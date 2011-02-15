@@ -251,6 +251,16 @@ void WebEditorClient::clearUndoRedoOperations()
     m_page->send(Messages::WebPageProxy::ClearAllEditCommands());
 }
 
+bool WebEditorClient::canCopyCut(bool defaultValue) const
+{
+    return defaultValue;
+}
+
+bool WebEditorClient::canPaste(bool defaultValue) const
+{
+    return defaultValue;
+}
+
 bool WebEditorClient::canUndo() const
 {
     notImplemented();

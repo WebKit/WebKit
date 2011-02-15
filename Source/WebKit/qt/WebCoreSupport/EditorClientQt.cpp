@@ -264,6 +264,16 @@ void EditorClientQt::clearUndoRedoOperations()
 #endif
 }
 
+bool EditorClientQt::canCopyCut(bool defaultValue) const
+{
+    return defaultValue;
+}
+
+bool EditorClientQt::canPaste(bool defaultValue) const
+{
+    return defaultValue;
+}
+
 bool EditorClientQt::canUndo() const
 {
 #ifdef QT_NO_UNDOSTACK

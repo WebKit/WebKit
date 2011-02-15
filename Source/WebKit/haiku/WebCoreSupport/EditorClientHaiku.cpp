@@ -210,6 +210,16 @@ void EditorClientHaiku::clearUndoRedoOperations()
     notImplemented();
 }
 
+bool EditorClientHaiku::canCopyCut(bool defaultValue) const
+{
+    return defaultValue;
+}
+
+bool EditorClientHaiku::canPaste(bool defaultValue) const
+{
+    return defaultValue;
+}
+
 bool EditorClientHaiku::canUndo() const
 {
     notImplemented();
