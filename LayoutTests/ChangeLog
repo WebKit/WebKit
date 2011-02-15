@@ -1,3 +1,9 @@
+2011-02-15  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: update inspector expectation path for mac-leopard.
+
+        * platform/mac-leopard/inspector/extensions/extensions-resources-expected.txt: Renamed from LayoutTests/platform/mac-leopard/inspector/extensions-resources-expected.txt.
+
 2011-02-15  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
