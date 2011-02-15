@@ -1,3 +1,10 @@
+2011-02-15  Martin Robinson  <mrobinson@igalia.com>
+
+        Reversing an expectations update, that I mistakenly uploaded in r78595.
+
+        * platform/gtk/Skipped: Skip this test, as the results are incorrect on GTK+.
+        * svg/text/lengthAdjust-text-metrics-expected.txt: Restore expectations for this test.
+
 2011-02-15  Steve Falkenburg  <sfalken@apple.com>
 
         Skip failing tests being tracked by https://bugs.webkit.org/show_bug.cgi?id=54490
