@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../inspector/inspector-test.js"></script>
+<script>
+
+function onload()
+{
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+
+    window.sessionStorage["inspector"] = "true";
+
+    if (window.layoutTestController)
+        layoutTestController.showWebInspector();
+    runTest();
+}
+
+function test()
+{
+    var storages = WebInspector.panels.resources._domStorage;
+    for (var i = 0; i < storages.length; ++i) {
+        InspectorTest.addResult("Domain: " + storages[i].domain);
+        InspectorTest.addResult("IsLocalStorage: " + storages[i].isLocalStorage);
+    }
+    InspectorTest.completeTest();
+}
+
+</script>
+
+</head>
+<body onload="onload()">
+<p>Tests that Web Inspector gets populated with DOM storages that were opened before inspector is shown.</p>
+</body>
+</html>

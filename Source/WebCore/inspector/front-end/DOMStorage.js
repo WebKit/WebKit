@@ -39,11 +39,6 @@ WebInspector.DOMStorage.prototype = {
         return this._id;
     },
 
-    get domStorage()
-    {
-        return this._domStorage;
-    },
-
     get domain()
     {
         return this._domain;

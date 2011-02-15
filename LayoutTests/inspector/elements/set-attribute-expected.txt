@@ -1,0 +1,9 @@
+Tests that elements panel updates dom tree structure upon setting attribute.
+
+========= Original ========
+  <div id="node"></div>
+===== Set attribute =====
+  <div id="node" name="value"></div>
+=== Removed attribute ===
+  <div id="node"></div>
+

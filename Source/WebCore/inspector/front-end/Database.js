@@ -107,8 +107,6 @@ WebInspector.DatabaseDispatcher._callbacks = {};
 WebInspector.DatabaseDispatcher.prototype = {
     addDatabase: function(payload)
     {
-        if (!WebInspector.panels.resources)
-            return;
         var database = new WebInspector.Database(
             payload.id,
             payload.domain,

@@ -1,3 +1,15 @@
+2011-02-15  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: test whether inspector gets populated with databases and storages upon opening.
+        https://bugs.webkit.org/show_bug.cgi?id=54469
+
+        * http/tests/inspector-enabled/database-open-expected.txt: Added.
+        * http/tests/inspector-enabled/database-open.html: Added.
+        * http/tests/inspector-enabled/dom-storage-open-expected.txt: Added.
+        * http/tests/inspector-enabled/dom-storage-open.html: Added.
+
 2011-02-15  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed, rebaseline of Gtk result.
