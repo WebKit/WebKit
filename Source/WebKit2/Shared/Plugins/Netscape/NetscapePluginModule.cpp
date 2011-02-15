@@ -27,8 +27,10 @@
 #include "NetscapePluginModule.h"
 
 #include "Module.h"
+#include "NPRuntimeUtilities.h"
 #include "NetscapeBrowserFuncs.h"
 #include <wtf/PassOwnPtr.h>
+#include <wtf/text/CString.h>
 
 namespace WebKit {
 
@@ -41,7 +43,7 @@ static Vector<NetscapePluginModule*>& initializedNetscapePluginModules()
 NetscapePluginModule::NetscapePluginModule(const String& pluginPath)
     : m_pluginPath(pluginPath)
     , m_isInitialized(false)
-    , m_pluginCount(0)
+    , m_loadCount(0)
     , m_shutdownProcPtr(0)
     , m_pluginFuncs()
 {
@@ -54,23 +56,80 @@ NetscapePluginModule::~NetscapePluginModule()
 
 void NetscapePluginModule::pluginCreated()
 {
-    if (!m_pluginCount) {
-        // Load the plug-in module if necessary.
-        load();
-    }
-        
-    m_pluginCount++;
+    incrementLoadCount();
 }
 
 void NetscapePluginModule::pluginDestroyed()
 {
-    ASSERT(m_pluginCount > 0);
-    m_pluginCount--;
-    
-    if (!m_pluginCount) {
-        shutdown();
-        unload();
+    decrementLoadCount();
+}
+
+Vector<String> NetscapePluginModule::sitesWithData()
+{
+    Vector<String> sites;
+
+    incrementLoadCount();
+    tryGetSitesWithData(sites);
+    decrementLoadCount();
+
+    return sites;
+}
+
+bool NetscapePluginModule::clearSiteData(const String& site, uint64_t flags, uint64_t maxAge)
+{
+    incrementLoadCount();
+    bool result = tryClearSiteData(site, flags, maxAge);
+    decrementLoadCount();
+
+    return result;
+}
+
+bool NetscapePluginModule::tryGetSitesWithData(Vector<String>& sites)
+{
+    if (!m_isInitialized)
+        return false;
+
+    // Check if the plug-in supports NPP_GetSitesWithData.
+    if (m_pluginFuncs.size < sizeof(NPPluginFuncs))
+        return false;
+
+    if ((m_pluginFuncs.version & 0xff) < NPVERS_HAS_CLEAR_SITE_DATA)
+        return false;
+
+    if (!m_pluginFuncs.getsiteswithdata)
+        return false;
+
+    char** siteArray = m_pluginFuncs.getsiteswithdata();
+    for (int i = 0; siteArray[i]; ++i) {
+        char* site = siteArray[i];
+
+        String siteString = String::fromUTF8(site);
+        if (!siteString.isNull())
+            sites.append(siteString);
+
+        npnMemFree(site);
     }
+
+    npnMemFree(siteArray);
+    return true;
+}
+
+bool NetscapePluginModule::tryClearSiteData(const String& site, uint64_t flags, uint64_t maxAge)
+{
+    if (!m_isInitialized)
+        return false;
+
+    // Check if the plug-in supports NPP_GetSitesWithData.
+    if (m_pluginFuncs.size < sizeof(NPPluginFuncs))
+        return false;
+    
+    if ((m_pluginFuncs.version & 0xff) < NPVERS_HAS_CLEAR_SITE_DATA)
+        return false;
+    
+    if (!m_pluginFuncs.clearsitedata)
+        return false;
+
+    return m_pluginFuncs.clearsitedata(site.utf8().data(), flags, maxAge) != NPERR_NO_ERROR;
 }
 
 void NetscapePluginModule::shutdown()
@@ -104,6 +163,27 @@ PassRefPtr<NetscapePluginModule> NetscapePluginModule::getOrCreate(const String&
         return 0;
     
     return pluginModule.release();
+}
+
+void NetscapePluginModule::incrementLoadCount()
+{
+    if (!m_loadCount) {
+        // Load the plug-in module if necessary.
+        load();
+    }
+    
+    m_loadCount++;
+}
+    
+void NetscapePluginModule::decrementLoadCount()
+{
+    ASSERT(m_loadCount > 0);
+    m_loadCount--;
+    
+    if (!m_loadCount) {
+        shutdown();
+        unload();
+    }
 }
 
 bool NetscapePluginModule::load()

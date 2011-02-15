@@ -53,10 +53,22 @@ public:
 
     const PluginQuirks& pluginQuirks() const { return m_pluginQuirks; }
 
+    // Return a list of domains for which the plug-in has data stored.
+    Vector<String> sitesWithData();
+
+    // Request that the plug-in clear the site data.
+    bool clearSiteData(const String& site, uint64_t flags, uint64_t maxAge);
+
 private:
     explicit NetscapePluginModule(const String& pluginPath);
 
     void determineQuirks();
+
+    void incrementLoadCount();
+    void decrementLoadCount();
+
+    bool tryGetSitesWithData(Vector<String>&);
+    bool tryClearSiteData(const String& site, uint64_t flags, uint64_t maxAge);
 
     bool tryLoad();
     bool load();
@@ -66,7 +78,7 @@ private:
 
     String m_pluginPath;
     bool m_isInitialized;
-    unsigned m_pluginCount;
+    unsigned m_loadCount;
 
     PluginQuirks m_pluginQuirks;
 
