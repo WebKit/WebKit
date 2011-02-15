@@ -3581,3 +3581,6 @@ BUGPKASTING LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg = IM
 BUGWK54418 : http/tests/xmlhttprequest/cache-override.html = CRASH
 
 BUGWK54472 : media/audio-delete-while-slider-thumb-clicked.html = TIMEOUT
+
+BUGPFELDMAN SKIP : inspector/debugger/dom-breakpoints.html = TIMEOUT
+BUGPFELDMAN SKIP : inspector/elements/set-attribute.html = MISSING
