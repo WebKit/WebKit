@@ -1,3 +1,21 @@
+2011-02-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Assertion failure in DrawingAreaImpl::display when calling WKPageForceRepaint on a page that uses accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=54575
+        <rdar://problem/8979594>
+
+        Add test.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/ForceRepaint.cpp: Added.
+        (TestWebKitAPI::didForceRepaint):
+        (TestWebKitAPI::didFinishLoadForFrame):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/simple-accelerated-compositing.html: Added.
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+        * TestWebKitAPI/win/copy-resources.cmd:
+
 2011-02-16  Sergio Villar Senin  <svillar@igalia.com>
 
         Reviewed by Martin Robinson.

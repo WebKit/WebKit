@@ -428,6 +428,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Tests\WebKit2\ForceRepaint.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WebKit2\find.html"
 					>
 				</File>
@@ -461,6 +465,10 @@
 				</File>
 				<File
 					RelativePath="..\Tests\WebKit2\simple-form.html"
+					>
+				</File>
+				<File
+					RelativePath="..\Tests\WebKit2\simple-accelerated-compositing.html"
 					>
 				</File>
 				<File

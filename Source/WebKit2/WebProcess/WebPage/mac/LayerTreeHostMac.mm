@@ -169,6 +169,15 @@ void LayerTreeHostMac::sizeDidChange(const IntSize& newSize)
     [CATransaction synchronize];
 }
 
+void LayerTreeHostMac::forceRepaint()
+{
+    scheduleLayerFlush();
+    flushPendingLayerChanges();
+
+    [CATransaction flush];
+    [CATransaction synchronize];
+}    
+
 void LayerTreeHostMac::didInstallPageOverlay()
 {
     createPageOverlayLayer();

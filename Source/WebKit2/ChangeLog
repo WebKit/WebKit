@@ -1,3 +1,21 @@
+2011-02-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Assertion failure in DrawingAreaImpl::display when calling WKPageForceRepaint on a page that uses accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=54575
+        <rdar://problem/8979594>
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::forceRepaint):
+        If there is a layer tree host, ask it to force a repaint instead.
+
+        * WebProcess/WebPage/LayerTreeHost.h:
+        * WebProcess/WebPage/mac/LayerTreeHostMac.h:
+        * WebProcess/WebPage/mac/LayerTreeHostMac.mm:
+        (WebKit::LayerTreeHostMac::forceRepaint):
+        Flush any layer changes, then flush and synchronize the current CA transaction.
+
 2011-02-16  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Anders Carlsson.

@@ -23,48 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LayerTreeHost_h
-#define LayerTreeHost_h
+#include "Test.h"
 
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+#include "PlatformUtilities.h"
+#include "PlatformWebView.h"
+#include <WebKit2/WebKit2.h>
+#include <WebKit2/WKRetainPtr.h>
 
-namespace WebCore {
-    class IntRect;
-    class IntSize;
-    class GraphicsLayer;
+namespace TestWebKitAPI {
+
+static bool test1Done;
+static bool test2Done;
+    
+void didForceRepaint(WKErrorRef error, void*)
+{
+    TEST_ASSERT(!error);
+    test2Done = true;
 }
 
-namespace WebKit {
+static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
+{
+    test1Done = true;
+    WKPageForceRepaint(page, 0, didForceRepaint);
+}
 
-class LayerTreeContext;
-class WebPage;
+TEST(WebKit2, ForceRepaint)
+{
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    PlatformWebView webView(context.get());
 
-class LayerTreeHost : public RefCounted<LayerTreeHost> {
-public:
-    static PassRefPtr<LayerTreeHost> create(WebPage*);
-    virtual ~LayerTreeHost();
+    WKPageLoaderClient loaderClient;
+    memset(&loaderClient, 0, sizeof(loaderClient));
 
-    virtual const LayerTreeContext& layerTreeContext() = 0;
-    virtual void scheduleLayerFlush() = 0;
-    virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) = 0;
-    virtual void invalidate() = 0;
+    loaderClient.version = 0;
+    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
+    WKPageSetPageLoaderClient(webView.page(), &loaderClient);
 
-    virtual void setNonCompositedContentsNeedDisplay(const WebCore::IntRect&) = 0;
-    virtual void scrollNonCompositedContents(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset) = 0;
-    virtual void forceRepaint() = 0;
-    virtual void sizeDidChange(const WebCore::IntSize& newSize) = 0;
+    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("simple-accelerated-compositing", "html"));
+    WKPageLoadURL(webView.page(), url.get());
 
-    virtual void didInstallPageOverlay() = 0;
-    virtual void didUninstallPageOverlay() = 0;
-    virtual void setPageOverlayNeedsDisplay(const WebCore::IntRect&) = 0;
+    Util::run(&test1Done);
+    Util::run(&test2Done);
+}
 
-protected:
-    explicit LayerTreeHost(WebPage*);
-
-    WebPage* m_webPage;
-};
-
-} // namespace WebKit
-
-#endif // LayerTreeHost_h
+} // namespace TestWebKitAPI

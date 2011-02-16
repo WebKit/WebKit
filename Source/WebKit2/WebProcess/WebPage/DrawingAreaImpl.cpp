@@ -142,6 +142,11 @@ void DrawingAreaImpl::scroll(const IntRect& scrollRect, const IntSize& scrollOff
 
 void DrawingAreaImpl::forceRepaint()
 {
+    if (m_layerTreeHost) {
+        m_layerTreeHost->forceRepaint();
+        return;
+    }
+
     m_isWaitingForDidUpdate = false;
     display();
 }
