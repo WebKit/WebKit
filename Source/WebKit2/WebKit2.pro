@@ -152,7 +152,6 @@ HEADERS += \
     Shared/API/c/WKImage.h \
     Shared/API/c/WKNumber.h \
     Shared/API/c/WKPageLoadTypes.h \
-    Shared/API/c/WKPluginSiteDataManager.h \
     Shared/API/c/WKSecurityOrigin.h \
     Shared/API/c/WKSerializedScriptValue.h \
     Shared/API/c/WKSharedAPICast.h \
@@ -233,6 +232,7 @@ HEADERS += \
     UIProcess/API/C/WKPage.h \
     UIProcess/API/C/WKPageGroup.h \
     UIProcess/API/C/WKPagePrivate.h \
+    UIProcess/API/C/WKPluginSiteDataManager.h \
     UIProcess/API/C/WKPreferences.h \
     UIProcess/API/C/WKPreferencesPrivate.h \
     UIProcess/API/C/WKProtectionSpace.h \
@@ -391,7 +391,6 @@ SOURCES += \
     Shared/API/c/WKGraphicsContext.cpp \
     Shared/API/c/WKImage.cpp \
     Shared/API/c/WKNumber.cpp \
-    Shared/API/c/WKPluginSiteDataManager.cpp \
     Shared/API/c/WKSecurityOrigin.cpp \
     Shared/API/c/WKSerializedScriptValue.cpp \
     Shared/API/c/WKString.cpp \
@@ -461,6 +460,7 @@ SOURCES += \
     UIProcess/API/C/WKNavigationData.cpp \
     UIProcess/API/C/WKPage.cpp \
     UIProcess/API/C/WKPageGroup.cpp \
+    UIProcess/API/C/WKPluginSiteDataManager.cpp \
     UIProcess/API/C/WKPreferences.cpp \
     UIProcess/API/C/WKProtectionSpace.cpp \
     UIProcess/API/cpp/qt/WKStringQt.cpp \
