@@ -3306,7 +3306,6 @@ BUGWK54322 MAC SNOWLEOPARD : svg/custom/relative-sized-use-on-symbol.xhtml = IMA
 BUGWK54322 MAC SNOWLEOPARD : svg/custom/relative-sized-use-without-attributes-on-symbol.xhtml = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/custom/resource-invalidate-on-target-update.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/custom/shapes-supporting-markers.svg = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : svg/custom/stroked-pattern.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/custom/struct-use-09-b.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/custom/svg-curve-with-relative-cordinates.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/custom/svg-fonts-with-no-element-reference.html = IMAGE
@@ -3325,7 +3324,6 @@ BUGWK54322 MAC SNOWLEOPARD : svg/dynamic-updates/SVGLinearGradientElement-svgdom
 BUGWK54322 MAC SNOWLEOPARD : svg/dynamic-updates/SVGRadialGradientElement-svgdom-gradientTransform-prop.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/filters/feComposite.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/filters/feDisplacementMap.svg = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : svg/filters/feOffset.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/filters/filter-clip.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/filters/filterRes.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/hixie/links/003-broken.xml = IMAGE
@@ -3440,3 +3438,5 @@ BUGCR73080 LINUX DEBUG : fast/forms/form-attribute-elements-order.html = PASS TI
 BUGCR73091 WIN LINUX : animations/play-state-suspend.html = PASS TEXT
 BUGCR73092 WIN : fast/dom/gc-11.html = PASS TEXT
 BUGCR73094 LINUX : http/tests/websocket/tests/send-after-close-on-unload.html = PASS TIMEOUT
+
+BUGMNAGANOV MAC : media/video-display-toggle.html = IMAGE

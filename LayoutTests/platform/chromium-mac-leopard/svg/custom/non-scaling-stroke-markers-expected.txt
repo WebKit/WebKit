@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (159,234) size 433x258
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceMarker {marker} [id="arrow1"] [markerUnits=userSpaceOnUse] [ref at (5,5)] [angle=90.00]
+        RenderSVGPath {path} at (99,0) size 13x12 [fill={[type=SOLID] [color=#0000FF]}] [data="M 5 0 L 10 10 L 0 10 Z"]
+      RenderSVGResourceMarker {marker} [id="arrow2"] [markerUnits=strokeWidth] [ref at (5,5)] [angle=90.00]
+        RenderSVGPath {path} at (99,0) size 13x12 [fill={[type=SOLID] [color=#0000FF]}] [data="M 5 0 L 10 10 L 0 10 Z"]
+    RenderSVGPath {line} at (159,234) size 427x12 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [end marker=arrow1] [x1=10.00] [y1=40.00] [x2=80.00] [y2=40.00]
+    RenderSVGPath {line} at (159,468) size 433x24 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [end marker=arrow2] [x1=10.00] [y1=80.00] [x2=80.00] [y2=80.00]
