@@ -13,9 +13,9 @@ function testExtendingLineBoundary(testNodes)
     function extendToEndAndBack(node)
     {
         getSelection().setPosition(node, 0);
-        log("  Extending forward: ");
+        log("  Extending forward:  ");
         extendAndLogSelectionToEnd("forward", "lineBoundary");
-        log("  Extending backward:  ");
+        log("  Extending backward: ");
         extendAndLogSelectionToEnd("backward", "lineBoundary");
     }
 
