@@ -1321,6 +1321,8 @@
             'dom/RangeBoundaryPoint.h',
             'dom/RangeException.h',
             'dom/RequestAnimationFrameCallback.h',
+            'dom/ScriptedAnimationController.cpp',
+            'dom/ScriptedAnimationController.h',
             'dom/RawDataDocumentParser.h',
             'dom/RegisteredEventListener.cpp',
             'dom/RegisteredEventListener.h',

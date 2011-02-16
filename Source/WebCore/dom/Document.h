@@ -152,6 +152,7 @@ class TouchList;
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
 class RequestAnimationFrameCallback;
+class ScriptedAnimationController;
 #endif
 
 typedef int ExceptionCode;
@@ -953,6 +954,9 @@ public:
     virtual void addMessage(MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack>);
     virtual void postTask(PassOwnPtr<Task>); // Executes the task on context's thread asynchronously.
 
+    virtual void suspendScriptedAnimationControllerCallbacks();
+    virtual void resumeScriptedAnimationControllerCallbacks();
+
 #if USE(JSC)
     typedef JSC::WeakGCMap<WebCore::Node*, JSNode> JSWrapperCache;
     typedef HashMap<DOMWrapperWorld*, JSWrapperCache*> JSWrapperCacheMap;
@@ -1406,9 +1410,7 @@ private:
     unsigned m_writeRecursionDepth;
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
-    typedef Vector<RefPtr<RequestAnimationFrameCallback> > RequestAnimationFrameCallbackList;
-    OwnPtr<RequestAnimationFrameCallbackList> m_requestAnimationFrameCallbacks;
-    int m_nextRequestAnimationFrameCallbackId;
+    OwnPtr<ScriptedAnimationController> m_scriptedAnimationController;
 #endif
 
     ContentSecurityPolicy m_contentSecurityPolicy;

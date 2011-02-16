@@ -1,3 +1,16 @@
+2011-02-15  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        requestAnimationFrame callbacks should not fire within a modal dialog
+        https://bugs.webkit.org/show_bug.cgi?id=53188
+
+        Tests that requestAnimationFrame callbacks are suspended while a modal
+        dialog is showing.
+
+        * fast/animation/request-animation-frame-during-modal-expected.txt: Added.
+        * fast/animation/request-animation-frame-during-modal.html: Added.
+
 2011-02-15  Benjamin Kalman  <kalman@chromium.org>
 
         Reviewed by Darin Adler.

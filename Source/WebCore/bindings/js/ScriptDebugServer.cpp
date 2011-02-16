@@ -408,10 +408,13 @@ void ScriptDebugServer::setJavaScriptPaused(Frame* frame, bool paused)
     frame->script()->setPaused(paused);
 
     Document* document = frame->document();
-    if (paused)
+    if (paused) {
+        document->suspendScriptedAnimationControllerCallbacks();
         document->suspendActiveDOMObjects(ActiveDOMObject::JavaScriptDebuggerPaused);
-    else
+    } else {
         document->resumeActiveDOMObjects();
+        document->resumeScriptedAnimationControllerCallbacks();
+    }
 
     setJavaScriptPaused(frame->view(), paused);
 }
