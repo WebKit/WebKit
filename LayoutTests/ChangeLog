@@ -1,3 +1,35 @@
+2011-02-16  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
+        Pixel tests differences on 10.6.6 32bit vs. 64bit
+        https://bugs.webkit.org/show_bug.cgi?id=54474
+
+        Update gtk/win/mac-leopard baselines.
+
+        * platform/gtk/svg/custom/resource-invalidate-on-target-update-expected.txt:
+        * platform/gtk/svg/custom/use-css-events-expected.txt:
+        * platform/gtk/svg/filters/filterRes-expected.txt:
+        * platform/gtk/svg/text/text-align-04-b-expected.txt:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/coords-viewattr-01-b-expected.txt: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/painting-marker-03-f-expected.txt: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/struct-frag-02-t-expected.txt: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/struct-frag-03-t-expected.txt: Added.
+        * platform/mac-leopard/svg/batik/masking/maskRegions-expected.txt:
+        * platform/mac-leopard/svg/custom/circular-marker-reference-2-expected.txt: Added.
+        * platform/mac-leopard/svg/custom/non-circular-marker-reference-expected.txt: Added.
+        * platform/mac-leopard/svg/custom/non-scaling-stroke-markers-expected.txt: Added.
+        * platform/mac-leopard/svg/custom/stroked-pattern-expected.txt: Added.
+        * platform/mac-leopard/svg/custom/text-rotated-gradient-expected.txt: Added.
+        * platform/mac-leopard/svg/custom/use-detach-expected.txt: Added.
+        * platform/mac-leopard/svg/hixie/links/001-expected.txt: Added.
+        * platform/mac-leopard/svg/hixie/viewbox/preserveAspectRatio/001-expected.txt:
+        * platform/mac-leopard/svg/zoom/page/zoom-coords-viewattr-01-b-expected.txt: Added.
+        * platform/mac-leopard/svg/zoom/page/zoom-mask-with-percentages-expected.txt:
+        * platform/mac-leopard/svg/zoom/text/zoom-coords-viewattr-01-b-expected.txt: Added.
+        * platform/win/svg/batik/masking/maskRegions-expected.txt:
+        * platform/win/svg/zoom/page/zoom-mask-with-percentages-expected.txt:
+
 2011-02-16  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Martin Robinson.
