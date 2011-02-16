@@ -2769,7 +2769,6 @@ BUGWK49265 MAC LINUX : svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-edg
 BUGWK49406 MAC : svg/animations/animVal-basics.html = TIMEOUT
 
 // Not investigated.
-BUG_DRT LINUX : animations/suspend-resume-animation-events.html = CRASH PASS
 BUG_DRT MAC : fast/css/line-height-determined-by-primary-font.html = IMAGE
 BUG_DRT MAC : fast/dom/Window/Plug-ins.html = TIMEOUT PASS
 BUG_DRT MAC : fast/dom/Window/alert-undefined.html = TIMEOUT PASS
