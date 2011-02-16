@@ -1,3 +1,11 @@
+2011-02-15  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Windows build fix for
+        https://bugs.webkit.org/show_bug.cgi?id=54415
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        Remove deleted files.
+
 2011-02-15  Oliver Hunt  <oliver@apple.com>
 
         Fix EFL build for
