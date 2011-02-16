@@ -36,10 +36,10 @@ namespace JSC {
     // This unholy class is used to allow us to avoid multiple exception checks
     // in certain SquirrelFish bytecodes -- effectively it just silently consumes
     // any operations performed on the result of a failed toObject call.
-    class JSNotAnObject : public JSObject {
+    class JSNotAnObject : public JSNonFinalObject {
     public:
         JSNotAnObject(ExecState* exec)
-            : JSObject(exec->globalData().notAnObjectStructure)
+            : JSNonFinalObject(exec->globalData().notAnObjectStructure)
         {
         }
 

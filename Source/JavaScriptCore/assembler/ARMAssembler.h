@@ -786,17 +786,6 @@ namespace JSC {
             patchPointerInternal(reinterpret_cast<intptr_t>(from), to);
         }
 
-        static void repatchLoadPtrToLEA(void* from)
-        {
-            // On arm, this is a patch from LDR to ADD. It is restricted conversion,
-            // from special case to special case, altough enough for its purpose
-            ARMWord* insn = reinterpret_cast<ARMWord*>(from);
-            ASSERT((*insn & 0x0ff00f00) == 0x05900000);
-
-            *insn = (*insn & 0xf00ff0ff) | 0x02800000;
-            ExecutableAllocator::cacheFlush(insn, sizeof(ARMWord));
-        }
-
         // Linkers
         static intptr_t getAbsoluteJumpAddress(void* base, int offset = 0)
         {

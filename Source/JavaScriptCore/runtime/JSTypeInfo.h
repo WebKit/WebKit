@@ -43,20 +43,21 @@ namespace JSC {
     static const unsigned OverridesGetOwnPropertySlot = 1 << 5;
     static const unsigned OverridesMarkChildren = 1 << 6;
     static const unsigned OverridesGetPropertyNames = 1 << 7;
+    static const unsigned IsJSFinalObject = 1 << 8;
 
     class TypeInfo {
         friend class JIT;
     public:
         TypeInfo(JSType type, unsigned flags = 0)
             : m_type(type)
+            , m_flags(flags & 0xFF)
+            , m_flags2(flags >> 8)
         {
-            ASSERT(flags <= 0xFF);
+            ASSERT(flags <= 0x1FF);
             ASSERT(type <= 0xFF);
             // ImplementsDefaultHasInstance means (ImplementsHasInstance & !OverridesHasInstance)
-            if ((flags & (ImplementsHasInstance | OverridesHasInstance)) == ImplementsHasInstance)
-                m_flags = flags | ImplementsDefaultHasInstance;
-            else
-                m_flags = flags;
+            if ((m_flags & (ImplementsHasInstance | OverridesHasInstance)) == ImplementsHasInstance)
+                m_flags |= ImplementsDefaultHasInstance;
         }
 
         JSType type() const { return (JSType)m_type; }
@@ -69,10 +70,12 @@ namespace JSC {
         bool overridesMarkChildren() const { return m_flags & OverridesMarkChildren; }
         bool overridesGetPropertyNames() const { return m_flags & OverridesGetPropertyNames; }
         unsigned flags() const { return m_flags; }
+        unsigned isFinal() const { return m_flags2 && (IsJSFinalObject >> 8); }
 
     private:
         unsigned char m_type;
         unsigned char m_flags;
+        unsigned char m_flags2;
     };
 
 }

@@ -1,3 +1,144 @@
+2011-02-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 54524 - Allow JSObject to fully utilize cell's capacity for inline storage.
+
+        Currently JSObject is both directly instantiated for regular JS objects, and
+        derived to implement subtypes. A consequence of this is that we need to ensure
+        that sufficient space from the cell is left unused and available for any data
+        members that will be introduced by subclasses of JSObject. By restructuring
+        the internal storage array out of JSObject we can increase the size in the
+        internal storage for regular objects.
+
+        Add classes JSFinalObject and JSNonFinalObject. JSNonFinalObject retains as
+        much additional capacity as is currently available to allow for data members
+        in subclasses. JSFinalObject utilizes all available space for internal storage,
+        and only allows construction through JSFinalObject::create().
+
+        The additional storage made available in the JSObject means that we need no
+        longer rely on a union of the internal storage with a pointer to storage that
+        is only valid for external storage. This means we can go back to always having
+        a valid pointer to property storage, regardless of whether this is internal or
+        external. This simplifies some cases of access to the array from C code, and
+        significantly simplifies JIT access, since repatching no longer needs to be
+        able to change between a load of the storage pointer / a LEA of the internal
+        storage.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectMake):
+        * assembler/ARMAssembler.h:
+        * assembler/ARMv7Assembler.h:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::repatchPointer):
+        * assembler/MIPSAssembler.h:
+        * assembler/MacroAssemblerARM.h:
+        * assembler/MacroAssemblerARMv7.h:
+        * assembler/MacroAssemblerMIPS.h:
+        * assembler/MacroAssemblerX86.h:
+        * assembler/MacroAssemblerX86_64.h:
+        * assembler/RepatchBuffer.h:
+        * assembler/X86Assembler.h:
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::DebuggerActivation):
+        * debugger/DebuggerActivation.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_resolve_global):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_resolve_global):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetDirectOffset):
+        (JSC::JIT::emit_op_get_by_pname):
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::compilePutDirectOffset):
+        (JSC::JIT::patchGetByIdSelf):
+        (JSC::JIT::patchPutByIdReplace):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::compilePutDirectOffset):
+        (JSC::JIT::compileGetDirectOffset):
+        (JSC::JIT::patchGetByIdSelf):
+        (JSC::JIT::patchPutByIdReplace):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        (JSC::JIT::emit_op_get_by_pname):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/Arguments.h:
+        (JSC::Arguments::Arguments):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::ErrorInstance):
+        * runtime/ErrorInstance.h:
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::InterruptedExecutionError::InterruptedExecutionError):
+        (JSC::TerminatedExecutionError::TerminatedExecutionError):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::JSArray):
+        * runtime/JSArray.h:
+        * runtime/JSByteArray.cpp:
+        (JSC::JSByteArray::JSByteArray):
+        * runtime/JSByteArray.h:
+        (JSC::JSByteArray::JSByteArray):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertySlot):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalObject.h:
+        (JSC::constructEmptyObject):
+        * runtime/JSNotAnObject.h:
+        (JSC::JSNotAnObject::JSNotAnObject):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::createInheritorID):
+        (JSC::JSObject::allocatePropertyStorage):
+        * runtime/JSObject.h:
+        (JSC::JSObject::propertyStorage):
+        (JSC::JSNonFinalObject::JSNonFinalObject):
+        (JSC::JSNonFinalObject::createStructure):
+        (JSC::JSFinalObject::create):
+        (JSC::JSFinalObject::createStructure):
+        (JSC::JSFinalObject::JSFinalObject):
+        (JSC::JSObject::offsetOfInlineStorage):
+        (JSC::constructEmptyObject):
+        (JSC::createEmptyObjectStructure):
+        (JSC::JSObject::JSObject):
+        (JSC::JSObject::~JSObject):
+        (JSC::Structure::isUsingInlineStorage):
+        * runtime/JSObjectWithGlobalObject.cpp:
+        (JSC::JSObjectWithGlobalObject::JSObjectWithGlobalObject):
+        * runtime/JSObjectWithGlobalObject.h:
+        (JSC::JSObjectWithGlobalObject::JSObjectWithGlobalObject):
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::TypeInfo):
+        (JSC::TypeInfo::isVanilla):
+        * runtime/JSVariableObject.h:
+        (JSC::JSVariableObject::JSVariableObject):
+        * runtime/JSWrapperObject.h:
+        (JSC::JSWrapperObject::JSWrapperObject):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::constructObject):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::ObjectPrototype):
+        * runtime/ObjectPrototype.h:
+        * runtime/StrictEvalActivation.cpp:
+        (JSC::StrictEvalActivation::StrictEvalActivation):
+        * runtime/StrictEvalActivation.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::growPropertyStorageCapacity):
+
 2011-02-16  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.

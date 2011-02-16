@@ -58,7 +58,7 @@ namespace JSC {
     };
 
 
-    class Arguments : public JSObject {
+    class Arguments : public JSNonFinalObject {
     public:
         // Use an enum because otherwise gcc insists on doing a memory
         // read.
@@ -145,7 +145,7 @@ namespace JSC {
     }
 
     inline Arguments::Arguments(CallFrame* callFrame)
-        : JSObject(callFrame->lexicalGlobalObject()->argumentsStructure())
+        : JSNonFinalObject(callFrame->lexicalGlobalObject()->argumentsStructure())
         , d(adoptPtr(new ArgumentsData))
     {
         JSFunction* callee;
@@ -185,7 +185,7 @@ namespace JSC {
     }
 
     inline Arguments::Arguments(CallFrame* callFrame, NoParametersType)
-        : JSObject(callFrame->lexicalGlobalObject()->argumentsStructure())
+        : JSNonFinalObject(callFrame->lexicalGlobalObject()->argumentsStructure())
         , d(adoptPtr(new ArgumentsData))
     {
         ASSERT(!asFunction(callFrame->callee())->jsExecutable()->parameterCount());

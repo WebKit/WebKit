@@ -332,8 +332,8 @@ namespace JSC {
         void compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident, Vector<SlowCaseEntry>::iterator& iter, bool isMethodCheck = false);
 #endif
         void compileGetDirectOffset(RegisterID base, RegisterID resultTag, RegisterID resultPayload, Structure* structure, size_t cachedOffset);
-        void compileGetDirectOffset(JSObject* base, RegisterID temp, RegisterID resultTag, RegisterID resultPayload, size_t cachedOffset);
-        void compileGetDirectOffset(RegisterID base, RegisterID resultTag, RegisterID resultPayload, RegisterID structure, RegisterID offset);
+        void compileGetDirectOffset(JSObject* base, RegisterID resultTag, RegisterID resultPayload, size_t cachedOffset);
+        void compileGetDirectOffset(RegisterID base, RegisterID resultTag, RegisterID resultPayload, RegisterID offset);
         void compilePutDirectOffset(RegisterID base, RegisterID valueTag, RegisterID valuePayload, Structure* structure, size_t cachedOffset);
 
         // Arithmetic opcode helpers
@@ -344,15 +344,11 @@ namespace JSC {
 #if CPU(X86)
         // These architecture specific value are used to enable patching - see comment on op_put_by_id.
         static const int patchOffsetPutByIdStructure = 7;
-        static const int patchOffsetPutByIdExternalLoad = 13;
-        static const int patchLengthPutByIdExternalLoad = 3;
         static const int patchOffsetPutByIdPropertyMapOffset1 = 22;
         static const int patchOffsetPutByIdPropertyMapOffset2 = 28;
         // These architecture specific value are used to enable patching - see comment on op_get_by_id.
         static const int patchOffsetGetByIdStructure = 7;
         static const int patchOffsetGetByIdBranchToSlowCase = 13;
-        static const int patchOffsetGetByIdExternalLoad = 13;
-        static const int patchLengthGetByIdExternalLoad = 3;
         static const int patchOffsetGetByIdPropertyMapOffset1 = 22;
         static const int patchOffsetGetByIdPropertyMapOffset2 = 28;
         static const int patchOffsetGetByIdPutResult = 28;
@@ -369,15 +365,11 @@ namespace JSC {
 #elif CPU(ARM_TRADITIONAL)
         // These architecture specific value are used to enable patching - see comment on op_put_by_id.
         static const int patchOffsetPutByIdStructure = 4;
-        static const int patchOffsetPutByIdExternalLoad = 16;
-        static const int patchLengthPutByIdExternalLoad = 4;
         static const int patchOffsetPutByIdPropertyMapOffset1 = 20;
         static const int patchOffsetPutByIdPropertyMapOffset2 = 28;
         // These architecture specific value are used to enable patching - see comment on op_get_by_id.
         static const int patchOffsetGetByIdStructure = 4;
         static const int patchOffsetGetByIdBranchToSlowCase = 16;
-        static const int patchOffsetGetByIdExternalLoad = 16;
-        static const int patchLengthGetByIdExternalLoad = 4;
         static const int patchOffsetGetByIdPropertyMapOffset1 = 20;
         static const int patchOffsetGetByIdPropertyMapOffset2 = 28;
         static const int patchOffsetGetByIdPutResult = 36;
@@ -410,15 +402,11 @@ namespace JSC {
 #elif CPU(ARM_THUMB2)
         // These architecture specific value are used to enable patching - see comment on op_put_by_id.
         static const int patchOffsetPutByIdStructure = 10;
-        static const int patchOffsetPutByIdExternalLoad = 26;
-        static const int patchLengthPutByIdExternalLoad = 12;
         static const int patchOffsetPutByIdPropertyMapOffset1 = 46;
         static const int patchOffsetPutByIdPropertyMapOffset2 = 58;
         // These architecture specific value are used to enable patching - see comment on op_get_by_id.
         static const int patchOffsetGetByIdStructure = 10;
         static const int patchOffsetGetByIdBranchToSlowCase = 26;
-        static const int patchOffsetGetByIdExternalLoad = 26;
-        static const int patchLengthGetByIdExternalLoad = 12;
         static const int patchOffsetGetByIdPropertyMapOffset1 = 46;
         static const int patchOffsetGetByIdPropertyMapOffset2 = 58;
         static const int patchOffsetGetByIdPutResult = 62;
@@ -451,14 +439,10 @@ namespace JSC {
 #elif CPU(MIPS)
 #if WTF_MIPS_ISA(1)
         static const int patchOffsetPutByIdStructure = 16;
-        static const int patchOffsetPutByIdExternalLoad = 48;
-        static const int patchLengthPutByIdExternalLoad = 20;
         static const int patchOffsetPutByIdPropertyMapOffset1 = 68;
         static const int patchOffsetPutByIdPropertyMapOffset2 = 84;
         static const int patchOffsetGetByIdStructure = 16;
         static const int patchOffsetGetByIdBranchToSlowCase = 48;
-        static const int patchOffsetGetByIdExternalLoad = 48;
-        static const int patchLengthGetByIdExternalLoad = 20;
         static const int patchOffsetGetByIdPropertyMapOffset1 = 68;
         static const int patchOffsetGetByIdPropertyMapOffset2 = 88;
         static const int patchOffsetGetByIdPutResult = 108;
@@ -473,14 +457,10 @@ namespace JSC {
         static const int patchOffsetMethodCheckPutFunction = 88;
 #else // WTF_MIPS_ISA(1)
         static const int patchOffsetPutByIdStructure = 12;
-        static const int patchOffsetPutByIdExternalLoad = 44;
-        static const int patchLengthPutByIdExternalLoad = 16;
         static const int patchOffsetPutByIdPropertyMapOffset1 = 60;
         static const int patchOffsetPutByIdPropertyMapOffset2 = 76;
         static const int patchOffsetGetByIdStructure = 12;
         static const int patchOffsetGetByIdBranchToSlowCase = 44;
-        static const int patchOffsetGetByIdExternalLoad = 44;
-        static const int patchLengthGetByIdExternalLoad = 16;
         static const int patchOffsetGetByIdPropertyMapOffset1 = 60;
         static const int patchOffsetGetByIdPropertyMapOffset2 = 76;
         static const int patchOffsetGetByIdPutResult = 92;
@@ -551,21 +531,17 @@ namespace JSC {
         void compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident, Vector<SlowCaseEntry>::iterator& iter, bool isMethodCheck = false);
 #endif
         void compileGetDirectOffset(RegisterID base, RegisterID result, Structure* structure, size_t cachedOffset);
-        void compileGetDirectOffset(JSObject* base, RegisterID temp, RegisterID result, size_t cachedOffset);
-        void compileGetDirectOffset(RegisterID base, RegisterID result, RegisterID structure, RegisterID offset, RegisterID scratch);
+        void compileGetDirectOffset(JSObject* base, RegisterID result, size_t cachedOffset);
+        void compileGetDirectOffset(RegisterID base, RegisterID result, RegisterID offset, RegisterID scratch);
         void compilePutDirectOffset(RegisterID base, RegisterID value, Structure* structure, size_t cachedOffset);
 
 #if CPU(X86_64)
         // These architecture specific value are used to enable patching - see comment on op_put_by_id.
         static const int patchOffsetPutByIdStructure = 10;
-        static const int patchOffsetPutByIdExternalLoad = 20;
-        static const int patchLengthPutByIdExternalLoad = 4;
         static const int patchOffsetPutByIdPropertyMapOffset = 31;
         // These architecture specific value are used to enable patching - see comment on op_get_by_id.
         static const int patchOffsetGetByIdStructure = 10;
         static const int patchOffsetGetByIdBranchToSlowCase = 20;
-        static const int patchOffsetGetByIdExternalLoad = 20;
-        static const int patchLengthGetByIdExternalLoad = 4;
         static const int patchOffsetGetByIdPropertyMapOffset = 31;
         static const int patchOffsetGetByIdPutResult = 31;
 #if ENABLE(OPCODE_SAMPLING)
@@ -581,14 +557,10 @@ namespace JSC {
 #elif CPU(X86)
         // These architecture specific value are used to enable patching - see comment on op_put_by_id.
         static const int patchOffsetPutByIdStructure = 7;
-        static const int patchOffsetPutByIdExternalLoad = 13;
-        static const int patchLengthPutByIdExternalLoad = 3;
         static const int patchOffsetPutByIdPropertyMapOffset = 22;
         // These architecture specific value are used to enable patching - see comment on op_get_by_id.
         static const int patchOffsetGetByIdStructure = 7;
         static const int patchOffsetGetByIdBranchToSlowCase = 13;
-        static const int patchOffsetGetByIdExternalLoad = 13;
-        static const int patchLengthGetByIdExternalLoad = 3;
         static const int patchOffsetGetByIdPropertyMapOffset = 22;
         static const int patchOffsetGetByIdPutResult = 22;
 #if ENABLE(OPCODE_SAMPLING)
@@ -604,14 +576,10 @@ namespace JSC {
 #elif CPU(ARM_THUMB2)
         // These architecture specific value are used to enable patching - see comment on op_put_by_id.
         static const int patchOffsetPutByIdStructure = 10;
-        static const int patchOffsetPutByIdExternalLoad = 26;
-        static const int patchLengthPutByIdExternalLoad = 12;
         static const int patchOffsetPutByIdPropertyMapOffset = 46;
         // These architecture specific value are used to enable patching - see comment on op_get_by_id.
         static const int patchOffsetGetByIdStructure = 10;
         static const int patchOffsetGetByIdBranchToSlowCase = 26;
-        static const int patchOffsetGetByIdExternalLoad = 26;
-        static const int patchLengthGetByIdExternalLoad = 12;
         static const int patchOffsetGetByIdPropertyMapOffset = 46;
         static const int patchOffsetGetByIdPutResult = 50;
 #if ENABLE(OPCODE_SAMPLING)
@@ -627,14 +595,10 @@ namespace JSC {
 #elif CPU(ARM_TRADITIONAL)
         // These architecture specific value are used to enable patching - see comment on op_put_by_id.
         static const int patchOffsetPutByIdStructure = 4;
-        static const int patchOffsetPutByIdExternalLoad = 16;
-        static const int patchLengthPutByIdExternalLoad = 4;
         static const int patchOffsetPutByIdPropertyMapOffset = 20;
         // These architecture specific value are used to enable patching - see comment on op_get_by_id.
         static const int patchOffsetGetByIdStructure = 4;
         static const int patchOffsetGetByIdBranchToSlowCase = 16;
-        static const int patchOffsetGetByIdExternalLoad = 16;
-        static const int patchLengthGetByIdExternalLoad = 4;
         static const int patchOffsetGetByIdPropertyMapOffset = 20;
         static const int patchOffsetGetByIdPutResult = 28;
 #if ENABLE(OPCODE_SAMPLING)
@@ -666,13 +630,9 @@ namespace JSC {
 #elif CPU(MIPS)
 #if WTF_MIPS_ISA(1)
         static const int patchOffsetPutByIdStructure = 16;
-        static const int patchOffsetPutByIdExternalLoad = 48;
-        static const int patchLengthPutByIdExternalLoad = 20;
         static const int patchOffsetPutByIdPropertyMapOffset = 68;
         static const int patchOffsetGetByIdStructure = 16;
         static const int patchOffsetGetByIdBranchToSlowCase = 48;
-        static const int patchOffsetGetByIdExternalLoad = 48;
-        static const int patchLengthGetByIdExternalLoad = 20;
         static const int patchOffsetGetByIdPropertyMapOffset = 68;
         static const int patchOffsetGetByIdPutResult = 88;
 #if ENABLE(OPCODE_SAMPLING)
@@ -686,13 +646,9 @@ namespace JSC {
         static const int patchOffsetMethodCheckPutFunction = 88;
 #else // WTF_MIPS_ISA(1)
         static const int patchOffsetPutByIdStructure = 12;
-        static const int patchOffsetPutByIdExternalLoad = 44;
-        static const int patchLengthPutByIdExternalLoad = 16;
         static const int patchOffsetPutByIdPropertyMapOffset = 60;
         static const int patchOffsetGetByIdStructure = 12;
         static const int patchOffsetGetByIdBranchToSlowCase = 44;
-        static const int patchOffsetGetByIdExternalLoad = 44;
-        static const int patchLengthGetByIdExternalLoad = 16;
         static const int patchOffsetGetByIdPropertyMapOffset = 60;
         static const int patchOffsetGetByIdPutResult = 76;
 #if ENABLE(OPCODE_SAMPLING)

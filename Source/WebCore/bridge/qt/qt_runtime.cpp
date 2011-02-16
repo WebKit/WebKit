@@ -1832,7 +1832,7 @@ void QtConnectionObject::execute(void **argv)
                         fimp = static_cast<JSFunction*>(m_funcObject.get());
 
                         JSObject* qt_sender = QtInstance::getQtInstance(sender(), ro, QScriptEngine::QtOwnership)->createRuntimeObject(exec);
-                        JSObject* wrapper = new (exec) JSObject(JSObject::createStructure(jsNull()));
+                        JSObject* wrapper = constructEmptyObject(exec, createEmptyObjectStructure(jsNull()));
                         PutPropertySlot slot;
                         wrapper->put(exec, Identifier(exec, "__qt_sender__"), qt_sender, slot);
                         oldsc = fimp->scope();

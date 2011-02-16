@@ -31,7 +31,7 @@
 namespace JSC {
 
 JSObjectWithGlobalObject::JSObjectWithGlobalObject(JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure)
-    : JSObject(structure)
+    : JSNonFinalObject(structure)
 {
     COMPILE_ASSERT(AnonymousSlotCount == 1, AnonymousSlotCount_must_be_one);
     ASSERT(!globalObject || globalObject->isGlobalObject());

@@ -37,8 +37,8 @@ namespace WebCore {
     class DOMWindow;
     class Frame;
 
-    class JSDOMWindowShell : public JSC::JSObject {
-        typedef JSC::JSObject Base;
+    class JSDOMWindowShell : public JSC::JSNonFinalObject {
+        typedef JSC::JSNonFinalObject Base;
     public:
         JSDOMWindowShell(PassRefPtr<DOMWindow>, DOMWrapperWorld* world);
         virtual ~JSDOMWindowShell();

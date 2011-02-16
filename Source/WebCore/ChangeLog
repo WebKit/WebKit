@@ -1,3 +1,24 @@
+2011-02-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 54524 - Allow JSObject to fully utilize cell's capacity for inline storage.
+
+        Currently JSObject is both directly instantiated for regular JS objects, and
+        derived to implement subtypes. A consequence of this is that we need to ensure
+        that sufficient space from the cell is left unused and available for any data
+        members that will be introduced by subclasses of JSObject. By restructuring
+        the internal storage array out of JSObject we can increase the size in the
+        internal storage for regular objects.
+
+        Add classes JSFinalObject and JSNonFinalObject. JSNonFinalObject retains as
+        much additional capacity as is currently available to allow for data members
+        in subclasses. JSFinalObject utilizes all available space for internal storage,
+        and only allows construction through JSFinalObject::create().
+
+        * bindings/js/JSDOMWindowShell.h:
+            Update JSObject -> JSNonFinalObject.
+
 2011-02-16  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by David Hyatt.

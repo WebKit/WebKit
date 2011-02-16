@@ -57,7 +57,7 @@ namespace JSC {
 
     enum ArrayCreationMode { CreateCompact, CreateInitialized };
 
-    class JSArray : public JSObject {
+    class JSArray : public JSNonFinalObject {
         friend class JIT;
         friend class Walker;
 

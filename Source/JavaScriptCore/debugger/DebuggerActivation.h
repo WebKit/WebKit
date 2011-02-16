@@ -32,7 +32,7 @@ namespace JSC {
 
     class JSActivation;
 
-    class DebuggerActivation : public JSObject {
+    class DebuggerActivation : public JSNonFinalObject {
     public:
         DebuggerActivation(JSGlobalData&, JSObject*);
 

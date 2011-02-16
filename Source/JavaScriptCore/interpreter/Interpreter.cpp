@@ -4279,7 +4279,7 @@ skip_id_custom_self:
             structure = asObject(proto)->inheritorID();
         else
             structure = constructor->scope().node()->globalObject->emptyObjectStructure();
-        callFrame->uncheckedR(thisRegister) = JSValue(new (&callFrame->globalData()) JSObject(structure));
+        callFrame->uncheckedR(thisRegister) = constructEmptyObject(callFrame, structure);
 
         vPC += OPCODE_LENGTH(op_create_this);
         NEXT_INSTRUCTION();

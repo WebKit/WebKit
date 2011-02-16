@@ -42,7 +42,7 @@ static EncodedJSValue JSC_HOST_CALL objectProtoFuncPropertyIsEnumerable(ExecStat
 static EncodedJSValue JSC_HOST_CALL objectProtoFuncToLocaleString(ExecState*);
 
 ObjectPrototype::ObjectPrototype(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> stucture, Structure* prototypeFunctionStructure)
-    : JSObject(stucture)
+    : JSNonFinalObject(stucture)
     , m_hasNoPropertiesWithUInt32Names(true)
 {
     putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, globalObject, prototypeFunctionStructure, 0, exec->propertyNames().toString, objectProtoFuncToString), DontEnum);

@@ -127,7 +127,7 @@ inline void JSArray::checkConsistency(ConsistencyCheckType)
 #endif
 
 JSArray::JSArray(VPtrStealingHackType)
-    : JSObject(createStructure(jsNull()))
+    : JSNonFinalObject(createStructure(jsNull()))
 {
     unsigned initialCapacity = 0;
 
@@ -144,7 +144,7 @@ JSArray::JSArray(VPtrStealingHackType)
 }
 
 JSArray::JSArray(NonNullPassRefPtr<Structure> structure)
-    : JSObject(structure)
+    : JSNonFinalObject(structure)
 {
     unsigned initialCapacity = 0;
 
@@ -159,7 +159,7 @@ JSArray::JSArray(NonNullPassRefPtr<Structure> structure)
 }
 
 JSArray::JSArray(NonNullPassRefPtr<Structure> structure, unsigned initialLength, ArrayCreationMode creationMode)
-    : JSObject(structure)
+    : JSNonFinalObject(structure)
 {
     unsigned initialCapacity;
     if (creationMode == CreateCompact)
@@ -199,7 +199,7 @@ JSArray::JSArray(NonNullPassRefPtr<Structure> structure, unsigned initialLength,
 }
 
 JSArray::JSArray(JSGlobalData& globalData, NonNullPassRefPtr<Structure> structure, const ArgList& list)
-    : JSObject(structure)
+    : JSNonFinalObject(structure)
 {
     unsigned initialCapacity = list.size();
     unsigned initialStorage;

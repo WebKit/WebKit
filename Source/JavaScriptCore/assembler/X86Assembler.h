@@ -1580,16 +1580,6 @@ public:
         setPointer(where, value);
     }
 
-    static void repatchLoadPtrToLEA(void* where)
-    {
-#if CPU(X86_64)
-        // On x86-64 pointer memory accesses require a 64-bit operand, and as such a REX prefix.
-        // Skip over the prefix byte.
-        where = reinterpret_cast<char*>(where) + 1;
-#endif
-        *reinterpret_cast<unsigned char*>(where) = static_cast<unsigned char>(OP_LEA);
-    }
-    
     static unsigned getCallReturnOffset(JmpSrc call)
     {
         ASSERT(call.m_offset >= 0);

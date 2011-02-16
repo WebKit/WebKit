@@ -271,13 +271,6 @@ public:
         return dataLabel;
     }
 
-    Label loadPtrWithPatchToLEA(Address address, RegisterID dest)
-    {
-        Label label(this);
-        load32(address, dest);
-        return label;
-    }
-
     void load16(BaseIndex address, RegisterID dest)
     {
         m_assembler.add_r(ARMRegisters::S1, address.base, m_assembler.lsl(address.index, address.scale));

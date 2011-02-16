@@ -417,13 +417,6 @@ public:
         return MacroAssemblerX86Common::branchTest8(cond, BaseIndex(scratchRegister, address.base, TimesOne), mask);
     }
 
-    Label loadPtrWithPatchToLEA(Address address, RegisterID dest)
-    {
-        Label label(this);
-        loadPtr(address, dest);
-        return label;
-    }
-
     bool supportsFloatingPoint() const { return true; }
     // See comment on MacroAssemblerARMv7::supportsFloatingPointTruncate()
     bool supportsFloatingPointTruncate() const { return true; }

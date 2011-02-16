@@ -28,7 +28,7 @@ namespace JSC {
 
     // This class is used as a base for classes such as String,
     // Number, Boolean and Date which are wrappers for primitive types.
-    class JSWrapperObject : public JSObject {
+    class JSWrapperObject : public JSNonFinalObject {
     protected:
         explicit JSWrapperObject(JSGlobalData&, NonNullPassRefPtr<Structure>);
 
@@ -51,7 +51,7 @@ namespace JSC {
     };
 
     inline JSWrapperObject::JSWrapperObject(JSGlobalData& globalData, NonNullPassRefPtr<Structure> structure)
-        : JSObject(structure)
+        : JSNonFinalObject(structure)
     {
         putAnonymousValue(globalData, 0, jsNull());
     }

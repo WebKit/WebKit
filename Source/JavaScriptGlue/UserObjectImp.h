@@ -34,7 +34,7 @@
 #include "JSObject.h"
 #include <JavaScriptCore/JSType.h>
 
-class UserObjectImp : public JSObject {
+class UserObjectImp : public JSNonFinalObject {
 public:
     UserObjectImp(PassRefPtr<Structure>, JSUserObject*);
     virtual ~UserObjectImp();

@@ -1176,7 +1176,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_create_this)
         structure = asObject(proto)->inheritorID();
     else
         structure = constructor->scope().node()->globalObject->emptyObjectStructure();
-    JSValue result = new (&callFrame->globalData()) JSObject(structure);
+    JSValue result = constructEmptyObject(callFrame, structure);
 
     return JSValue::encode(result);
 }

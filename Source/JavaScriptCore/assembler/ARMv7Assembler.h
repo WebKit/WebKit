@@ -1845,22 +1845,6 @@ public:
         setPointer(where, value);
     }
 
-    static void repatchLoadPtrToLEA(void* where)
-    {
-        ASSERT(!(reinterpret_cast<intptr_t>(where) & 1));
-        uint16_t* loadOp = reinterpret_cast<uint16_t*>(where) + 4;
-
-        ASSERT((loadOp[0] & 0xfff0) == OP_LDR_reg_T2);
-        ASSERT((loadOp[1] & 0x0ff0) == 0);
-        int rn = loadOp[0] & 0xf;
-        int rt = loadOp[1] >> 12;
-        int rm = loadOp[1] & 0xf;
-
-        loadOp[0] = OP_ADD_reg_T3 | rn;
-        loadOp[1] = rt << 8 | rm;
-        ExecutableAllocator::cacheFlush(loadOp, sizeof(uint32_t));
-    }
-
 private:
     // VFP operations commonly take one or more 5-bit operands, typically representing a
     // floating point register number.  This will commonly be encoded in the instruction

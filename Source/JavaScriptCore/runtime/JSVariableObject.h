@@ -40,7 +40,7 @@ namespace JSC {
 
     class Register;
 
-    class JSVariableObject : public JSObject {
+    class JSVariableObject : public JSNonFinalObject {
         friend class JIT;
 
     public:
@@ -84,7 +84,7 @@ namespace JSC {
         };
 
         JSVariableObject(NonNullPassRefPtr<Structure> structure, JSVariableObjectData* data)
-            : JSObject(structure)
+            : JSNonFinalObject(structure)
             , d(data) // Subclass owns this pointer.
         {
         }

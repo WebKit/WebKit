@@ -27,6 +27,7 @@
 #include <wtf/PageAllocationAligned.h>
 
 #define ASSERT_CLASS_FITS_IN_CELL(class) COMPILE_ASSERT(sizeof(class) <= MarkedBlock::CELL_SIZE, class_fits_in_cell)
+#define ASSERT_CLASS_FILLS_CELL(class) COMPILE_ASSERT(sizeof(class) == MarkedBlock::CELL_SIZE, class_fills_cell)
 
 namespace JSC {
 

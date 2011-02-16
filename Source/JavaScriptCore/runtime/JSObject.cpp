@@ -42,6 +42,8 @@
 namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSObject);
+ASSERT_CLASS_FITS_IN_CELL(JSNonFinalObject);
+ASSERT_CLASS_FILLS_CELL(JSFinalObject);
 
 const char* StrictModeReadonlyPropertyWriteError = "Attempted to assign to readonly property.";
 
@@ -555,13 +557,28 @@ NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, WriteBarr
 
 Structure* JSObject::createInheritorID()
 {
-    m_inheritorID = JSObject::createStructure(this);
+    m_inheritorID = createEmptyObjectStructure(this);
     return m_inheritorID.get();
 }
 
 void JSObject::allocatePropertyStorage(size_t oldSize, size_t newSize)
 {
-    allocatePropertyStorageInline(oldSize, newSize);
+    ASSERT(newSize > oldSize);
+
+    // It's important that this function not rely on m_structure, since
+    // we might be in the middle of a transition.
+    bool wasInline = (oldSize < JSObject::baseExternalStorageCapacity);
+
+    PropertyStorage oldPropertyStorage = m_propertyStorage;
+    PropertyStorage newPropertyStorage = new WriteBarrierBase<Unknown>[newSize];
+
+    for (unsigned i = 0; i < oldSize; ++i)
+       newPropertyStorage[i] = oldPropertyStorage[i];
+
+    if (!wasInline)
+        delete [] oldPropertyStorage;
+
+    m_propertyStorage = newPropertyStorage;
 }
 
 bool JSObject::getOwnPropertyDescriptor(ExecState*, const Identifier& propertyName, PropertyDescriptor& descriptor)

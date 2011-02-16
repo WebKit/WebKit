@@ -66,7 +66,7 @@ static ALWAYS_INLINE JSObject* constructObject(ExecState* exec, const ArgList& a
 {
     JSValue arg = args.at(0);
     if (arg.isUndefinedOrNull())
-        return new (exec) JSObject(exec->lexicalGlobalObject()->emptyObjectStructure());
+        return constructEmptyObject(exec);
     return arg.toObject(exec);
 }
 

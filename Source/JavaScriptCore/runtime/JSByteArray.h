@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-    class JSByteArray : public JSObject {
+    class JSByteArray : public JSNonFinalObject {
         friend class JSGlobalData;
     public:
         bool canAccessIndex(unsigned i) { return i < m_storage->length(); }
@@ -94,7 +94,7 @@ namespace JSC {
     private:
         enum VPtrStealingHackType { VPtrStealingHack };
         JSByteArray(VPtrStealingHackType)
-            : JSObject(createStructure(jsNull()))
+            : JSNonFinalObject(createStructure(jsNull()))
             , m_classInfo(0)
         {
         }

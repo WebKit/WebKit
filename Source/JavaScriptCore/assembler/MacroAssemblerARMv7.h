@@ -478,14 +478,6 @@ public:
         return label;
     }
 
-    Label loadPtrWithPatchToLEA(Address address, RegisterID dest)
-    {
-        Label label(this);
-        moveFixedWidthEncoding(Imm32(address.offset), dataTempRegister);
-        load32(ArmAddress(address.base, dataTempRegister), dest);
-        return label;
-    }
-
     void load16(BaseIndex address, RegisterID dest)
     {
         m_assembler.ldrh(dest, makeBaseIndexBase(address), address.index, address.scale);

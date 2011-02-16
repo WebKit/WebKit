@@ -206,7 +206,7 @@ bool JSFunction::getOwnPropertySlot(ExecState* exec, const Identifier& propertyN
         WriteBarrierBase<Unknown>* location = getDirectLocation(propertyName);
 
         if (!location) {
-            JSObject* prototype = new (exec) JSObject(scope().globalObject()->emptyObjectStructure());
+            JSObject* prototype = constructEmptyObject(exec, scope().globalObject()->emptyObjectStructure());
             prototype->putDirect(exec->globalData(), exec->propertyNames().constructor, this, DontEnum);
             putDirect(exec->globalData(), exec->propertyNames().prototype, prototype, DontDelete | DontEnum);
             location = getDirectLocation(propertyName);

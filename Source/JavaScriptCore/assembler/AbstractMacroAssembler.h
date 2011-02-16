@@ -535,11 +535,6 @@ protected:
     {
         AssemblerType::repatchPointer(dataLabelPtr.dataLocation(), value);
     }
-
-    static void repatchLoadPtrToLEA(CodeLocationInstruction instruction)
-    {
-        AssemblerType::repatchLoadPtrToLEA(instruction.dataLocation());
-    }
 };
 
 } // namespace JSC

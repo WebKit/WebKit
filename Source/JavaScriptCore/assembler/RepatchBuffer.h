@@ -92,11 +92,6 @@ public:
         MacroAssembler::repatchPointer(dataLabelPtr, value);
     }
 
-    void repatchLoadPtrToLEA(CodeLocationInstruction instruction)
-    {
-        MacroAssembler::repatchLoadPtrToLEA(instruction);
-    }
-
     void relinkCallerToTrampoline(ReturnAddressPtr returnAddress, CodeLocationLabel label)
     {
         relink(CodeLocationCall(CodePtr(returnAddress)), label);

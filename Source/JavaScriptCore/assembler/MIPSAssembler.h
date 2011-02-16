@@ -811,19 +811,7 @@ public:
         repatchInt32(from, reinterpret_cast<int32_t>(to));
     }
 
-    static void repatchLoadPtrToLEA(void* from)
-    {
-        MIPSWord* insn = reinterpret_cast<MIPSWord*>(from);
-        insn = insn + 3;
-        ASSERT((*insn & 0xfc000000) == 0x8c000000); // lw
-        /* lw -> addiu */
-        *insn = 0x24000000 | (*insn & 0x03ffffff);
-
-        ExecutableAllocator::cacheFlush(insn, sizeof(MIPSWord));
-    }
-
 private:
-
     /* Update each jump in the buffer of newBase.  */
     void relocateJumps(void* oldBase, void* newBase)
     {

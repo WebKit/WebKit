@@ -79,7 +79,7 @@ JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef jsClass, void* data)
     APIEntryShim entryShim(exec);
 
     if (!jsClass)
-        return toRef(new (exec) JSObject(exec->lexicalGlobalObject()->emptyObjectStructure())); // slightly more efficient
+        return toRef(constructEmptyObject(exec));
 
     JSCallbackObject<JSObjectWithGlobalObject>* object = new (exec) JSCallbackObject<JSObjectWithGlobalObject>(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->callbackObjectStructure(), jsClass, data);
     if (JSObject* prototype = jsClass->prototype(exec))

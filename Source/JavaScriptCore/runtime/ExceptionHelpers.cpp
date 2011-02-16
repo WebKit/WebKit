@@ -41,10 +41,10 @@
 
 namespace JSC {
 
-class InterruptedExecutionError : public JSObject {
+class InterruptedExecutionError : public JSNonFinalObject {
 public:
     InterruptedExecutionError(JSGlobalData* globalData)
-        : JSObject(globalData->interruptedExecutionErrorStructure)
+        : JSNonFinalObject(globalData->interruptedExecutionErrorStructure)
     {
     }
 
@@ -58,10 +58,10 @@ JSObject* createInterruptedExecutionException(JSGlobalData* globalData)
     return new (globalData) InterruptedExecutionError(globalData);
 }
 
-class TerminatedExecutionError : public JSObject {
+class TerminatedExecutionError : public JSNonFinalObject {
 public:
     TerminatedExecutionError(JSGlobalData* globalData)
-        : JSObject(globalData->terminatedExecutionErrorStructure)
+        : JSNonFinalObject(globalData->terminatedExecutionErrorStructure)
     {
     }
 

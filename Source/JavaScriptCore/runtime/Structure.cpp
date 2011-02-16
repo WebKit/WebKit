@@ -228,7 +228,7 @@ Structure::Structure(JSValue prototype, const TypeInfo& typeInfo, unsigned anony
     , m_prototype(prototype)
     , m_specificValueInPrevious(0)
     , m_propertyTable(0)
-    , m_propertyStorageCapacity(JSObject::inlineStorageCapacity)
+    , m_propertyStorageCapacity(typeInfo.isFinal() ? JSFinalObject_inlineStorageCapacity : JSNonFinalObject_inlineStorageCapacity)
     , m_offset(noOffset)
     , m_dictionaryKind(NoneDictionaryKind)
     , m_isPinnedPropertyTable(false)
@@ -387,8 +387,8 @@ void Structure::materializePropertyMap()
 
 void Structure::growPropertyStorageCapacity()
 {
-    if (m_propertyStorageCapacity == JSObject::inlineStorageCapacity)
-        m_propertyStorageCapacity = JSObject::nonInlineBaseStorageCapacity;
+    if (isUsingInlineStorage())
+        m_propertyStorageCapacity = JSObject::baseExternalStorageCapacity;
     else
         m_propertyStorageCapacity *= 2;
 }

@@ -608,23 +608,6 @@ public:
         return dataLabel;
     }
 
-    Label loadPtrWithPatchToLEA(Address address, RegisterID dest)
-    {
-        m_fixedWidth = true;
-        /*
-            lui         addrTemp, address.offset >> 16
-            ori         addrTemp, addrTemp, address.offset & 0xffff
-            addu        addrTemp, addrTemp, address.base
-            lw          dest, 0(addrTemp)
-        */
-        Label label(this);
-        move(Imm32(address.offset), addrTempRegister);
-        m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
-        m_assembler.lw(dest, addrTempRegister, 0);
-        m_fixedWidth = false;
-        return label;
-    }
-
     /* Need to use zero-extened load half-word for load16.  */
     void load16(ImplicitAddress address, RegisterID dest)
     {

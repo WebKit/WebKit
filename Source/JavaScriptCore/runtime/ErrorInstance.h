@@ -25,7 +25,7 @@
 
 namespace JSC {
 
-    class ErrorInstance : public JSObject {
+    class ErrorInstance : public JSNonFinalObject {
     public:
 
         virtual const ClassInfo* classInfo() const { return &info; }

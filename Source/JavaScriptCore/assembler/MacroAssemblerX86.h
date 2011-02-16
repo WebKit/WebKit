@@ -162,13 +162,6 @@ public:
         return DataLabelPtr(this);
     }
 
-    Label loadPtrWithPatchToLEA(Address address, RegisterID dest)
-    {
-        Label label(this);
-        load32(address, dest);
-        return label;
-    }
-
     bool supportsFloatingPoint() const { return m_isSSE2Present; }
     // See comment on MacroAssemblerARMv7::supportsFloatingPointTruncate()
     bool supportsFloatingPointTruncate() const { return m_isSSE2Present; }

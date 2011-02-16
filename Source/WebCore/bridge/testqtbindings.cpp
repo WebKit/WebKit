@@ -74,7 +74,7 @@ public slots:
 using namespace JSC;
 using namespace JSC::Bindings;
 
-class Global : public JSObject {
+class Global : public JSNonFinalObject {
 public:
   virtual UString className() const { return "global"; }
 };

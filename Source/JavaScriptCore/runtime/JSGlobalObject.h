@@ -401,16 +401,16 @@ namespace JSC {
         return globalData().dynamicGlobalObject;
     }
 
-    inline JSObject* constructEmptyObject(ExecState* exec)
-    {
-        return new (exec) JSObject(exec->lexicalGlobalObject()->emptyObjectStructure());
-    }
-    
     inline JSObject* constructEmptyObject(ExecState* exec, JSGlobalObject* globalObject)
     {
-        return new (exec) JSObject(globalObject->emptyObjectStructure());
+        return constructEmptyObject(exec, globalObject->emptyObjectStructure());
     }
 
+    inline JSObject* constructEmptyObject(ExecState* exec)
+    {
+        return constructEmptyObject(exec, exec->lexicalGlobalObject());
+    }
+    
     inline JSArray* constructEmptyArray(ExecState* exec)
     {
         return new (exec) JSArray(exec->lexicalGlobalObject()->arrayStructure());

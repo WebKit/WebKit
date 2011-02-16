@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-class StrictEvalActivation : public JSObject {
+class StrictEvalActivation : public JSNonFinalObject {
 public:
     StrictEvalActivation(ExecState*);
     virtual bool deleteProperty(ExecState*, const Identifier&);
