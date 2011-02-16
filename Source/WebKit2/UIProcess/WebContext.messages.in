@@ -37,6 +37,7 @@ messages -> WebContext {
 
 #if !ENABLE(PLUGIN_PROCESS)
     void DidGetSitesWithPluginData(Vector<WTF::String> sites, uint64_t callbackID)
+    void DidClearPluginSiteData(uint64_t callbackID)
 #endif
 
 }

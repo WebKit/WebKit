@@ -659,6 +659,26 @@ void WebProcess::getSitesWithPluginData(const Vector<String>& pluginPaths, uint6
 
     m_connection->send(Messages::WebContext::DidGetSitesWithPluginData(sites, callbackID), 0);
 }
+
+void WebProcess::clearPluginSiteData(const Vector<String>& pluginPaths, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
+{
+    for (size_t i = 0; i < pluginPaths.size(); ++i) {
+        RefPtr<NetscapePluginModule> netscapePluginModule = NetscapePluginModule::getOrCreate(pluginPaths[i]);
+        if (!netscapePluginModule)
+            continue;
+
+        if (sites.isEmpty()) {
+            // Clear everything.
+            netscapePluginModule->clearSiteData(String(), flags, maxAgeInSeconds);
+            continue;
+        }
+
+        for (size_t i = 0; i < sites.size(); ++i)
+            netscapePluginModule->clearSiteData(sites[i], flags, maxAgeInSeconds);
+    }
+
+    m_connection->send(Messages::WebContext::DidClearPluginSiteData(callbackID), 0);
+}
 #endif
 
 void WebProcess::downloadRequest(uint64_t downloadID, uint64_t initiatingPageID, const ResourceRequest& request)

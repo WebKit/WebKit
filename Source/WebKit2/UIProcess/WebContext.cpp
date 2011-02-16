@@ -448,7 +448,12 @@ void WebContext::getPluginPath(const String& mimeType, const String& urlString, 
 #if !ENABLE(PLUGIN_PROCESS)
 void WebContext::didGetSitesWithPluginData(const Vector<String>& sites, uint64_t callbackID)
 {
-    m_pluginSiteDataManager->didGetSitesWithPluginData(sites, callbackID);
+    m_pluginSiteDataManager->didGetSitesWithData(sites, callbackID);
+}
+
+void WebContext::didClearPluginSiteData(uint64_t callbackID)
+{
+    m_pluginSiteDataManager->didClearSiteData(callbackID);
 }
 #endif
 

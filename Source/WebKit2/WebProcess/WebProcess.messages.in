@@ -47,6 +47,7 @@ messages -> WebProcess {
 #if !ENABLE(PLUGIN_PROCESS)
     # Plug-ins.
     GetSitesWithPluginData(Vector<WTF::String> pluginPaths, uint64_t callbackID)
+    ClearPluginSiteData(Vector<WTF::String> pluginPaths, Vector<WTF::String> sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
 #endif
 
     ClearResourceCaches();

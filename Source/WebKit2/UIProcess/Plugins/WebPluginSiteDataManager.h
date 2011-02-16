@@ -32,12 +32,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 
-namespace CoreIPC {
-class ArgumentDecoder;
-class Connection;
-class MessageID;
-}
-
 namespace WebKit {
 
 class WebContext;
@@ -55,7 +49,10 @@ public:
     void clearContext() { m_webContext = 0; }
 
     void getSitesWithData(PassRefPtr<ArrayCallback>);
-    void didGetSitesWithPluginData(const Vector<String>& sites, uint64_t callbackID);
+    void didGetSitesWithData(const Vector<String>& sites, uint64_t callbackID);
+
+    void clearSiteData(ImmutableArray* sites, uint64_t flags, uint64_t maxAgeInSeconds, PassRefPtr<VoidCallback>);
+    void didClearSiteData(uint64_t callbackID);
 
 private:
     explicit WebPluginSiteDataManager(WebContext*);
@@ -64,6 +61,7 @@ private:
 
     WebContext* m_webContext;
     HashMap<uint64_t, RefPtr<ArrayCallback> > m_arrayCallbacks;
+    HashMap<uint64_t, RefPtr<VoidCallback> > m_voidCallbacks;
 };
 
 } // namespace WebKit

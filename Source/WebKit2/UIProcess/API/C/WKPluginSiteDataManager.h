@@ -42,9 +42,11 @@ enum {
     kWKClearSiteDataFlagsClearCache = 1 << 0,
 };
 typedef uint64_t WKClearSiteDataFlags;
-    
-WK_EXPORT void WKPluginSiteDataManagerClearSiteData(WKPluginSiteDataManagerRef manager, WKArrayRef sites, WKClearSiteDataFlags flags, uint64_t maxAgeInSeconds);
-WK_EXPORT void WKPluginSiteDataManagerClearAllSiteData(WKPluginSiteDataManagerRef manager);
+
+typedef void (*WKPluginSiteDataManagerClearSiteDataFunction)(WKErrorRef, void*);
+
+WK_EXPORT void WKPluginSiteDataManagerClearSiteData(WKPluginSiteDataManagerRef manager, WKArrayRef sites, WKClearSiteDataFlags flags, uint64_t maxAgeInSeconds, void* context, WKPluginSiteDataManagerClearSiteDataFunction function);
+WK_EXPORT void WKPluginSiteDataManagerClearAllSiteData(WKPluginSiteDataManagerRef manager, void* context, WKPluginSiteDataManagerClearSiteDataFunction function);
 
 #ifdef __cplusplus
 }

@@ -1,5 +1,51 @@
 2011-02-15  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Implement WKPluginSiteDataManagerClearSiteData
+        https://bugs.webkit.org/show_bug.cgi?id=54512
+        <rdar://problem/8689312>
+
+        * UIProcess/API/C/WKPluginSiteDataManager.cpp:
+        (WKPluginSiteDataManagerGetTypeID):
+        Implement this.
+
+        (toNPClearSiteDataFlags):
+        Convert WKClearSiteDataFlags to NPP_ClearSiteData flags.
+        
+        (WKPluginSiteDataManagerClearSiteData):
+        (WKPluginSiteDataManagerClearAllSiteData):
+        Call through to WebPluginSiteDataManager::clearSiteData.
+
+        * UIProcess/API/C/WKPluginSiteDataManager.h:
+        Change the clear functions to take a completion callback.
+
+        * UIProcess/Plugins/WebPluginSiteDataManager.cpp:
+        (WebKit::WebPluginSiteDataManager::clearSiteData):
+        Ask the plug-in info store for all plug-in paths and send a
+        ClearPluginSiteData message to the web process.
+        
+        (WebKit::WebPluginSiteDataManager::didClearSiteData):
+        call the callback.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::didClearPluginSiteData):
+        Call through to the plug-in site data manager.
+
+        * UIProcess/WebContext.messages.in:
+        Add ClearPluginSiteData message.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::clearPluginSiteData):
+        Iterate over all the plug-in paths, creating plug-in modules and calling
+        clearSiteData for each one.
+
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        Add DidClearPluginSiteData message.
+
+2011-02-15  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Jon Honeycutt.
 
         Implement WKPluginSiteDataManagerGetSitesWithData

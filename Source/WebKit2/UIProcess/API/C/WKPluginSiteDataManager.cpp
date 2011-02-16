@@ -31,11 +31,11 @@
 #include <WebCore/npapi.h>
 
 using namespace WebKit;
+using namespace std;
 
 WKTypeID WKPluginSiteDataManagerGetTypeID()
 {
-    // FIXME: Implement.
-    return 0;
+    return toAPI(WebPluginSiteDataManager::APIType);
 }
 
 void WKPluginSiteDataManagerGetSitesWithData(WKPluginSiteDataManagerRef managerRef, void* context, WKPluginSiteDataManagerGetSitesWithDataFunction callback)
@@ -43,12 +43,23 @@ void WKPluginSiteDataManagerGetSitesWithData(WKPluginSiteDataManagerRef managerR
     toImpl(managerRef)->getSitesWithData(ArrayCallback::create(context, callback));
 }
 
-void WKPluginSiteDataManagerClearSiteData(WKPluginSiteDataManagerRef manager, WKArrayRef sites, WKClearSiteDataFlags flags, uint64_t maxAgeInSeconds)
+static uint64_t toNPClearSiteDataFlags(WKClearSiteDataFlags flags)
 {
-    // FIXME: Implement.
+    if (flags == kWKClearSiteDataFlagsClearAll)
+        return NP_CLEAR_ALL;
+
+    uint64_t result = 0;
+    if (flags & kWKClearSiteDataFlagsClearCache)
+        result |= NP_CLEAR_CACHE;
+    return result;
 }
 
-void WKPluginSiteDataManagerClearAllSiteData(WKPluginSiteDataManagerRef manager)
+void WKPluginSiteDataManagerClearSiteData(WKPluginSiteDataManagerRef managerRef, WKArrayRef sitesRef, WKClearSiteDataFlags flags, uint64_t maxAgeInSeconds, void* context, WKPluginSiteDataManagerClearSiteDataFunction function)
 {
-    // FIXME: Implement.
+    toImpl(managerRef)->clearSiteData(toImpl(sitesRef), toNPClearSiteDataFlags(flags), maxAgeInSeconds, VoidCallback::create(context, function));
+}
+
+void WKPluginSiteDataManagerClearAllSiteData(WKPluginSiteDataManagerRef managerRef, void* context, WKPluginSiteDataManagerClearSiteDataFunction function)
+{
+    toImpl(managerRef)->clearSiteData(0, NP_CLEAR_ALL, numeric_limits<uint64_t>::max(), VoidCallback::create(context, function));
 }

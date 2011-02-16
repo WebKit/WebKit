@@ -159,6 +159,7 @@ private:
     void getPluginPath(const String& mimeType, const String& urlString, String& pluginPath);
 #if !ENABLE(PLUGIN_PROCESS)
     void didGetSitesWithPluginData(const Vector<String>& sites, uint64_t callbackID);
+    void didClearPluginSiteData(uint64_t callbackID);
 #endif
         
     // Implemented in generated WebContextMessageReceiver.cpp

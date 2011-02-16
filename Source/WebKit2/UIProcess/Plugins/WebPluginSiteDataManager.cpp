@@ -79,7 +79,7 @@ void WebPluginSiteDataManager::getSitesWithData(PassRefPtr<ArrayCallback> prpCal
 #endif
 }
 
-void WebPluginSiteDataManager::didGetSitesWithPluginData(const Vector<String>& sites, uint64_t callbackID)
+void WebPluginSiteDataManager::didGetSitesWithData(const Vector<String>& sites, uint64_t callbackID)
 {
     RefPtr<ArrayCallback> callback = m_arrayCallbacks.take(callbackID);
     if (!callback) {
@@ -94,6 +94,56 @@ void WebPluginSiteDataManager::didGetSitesWithPluginData(const Vector<String>& s
 
     RefPtr<ImmutableArray> resultArray = ImmutableArray::adopt(sitesWK);
     callback->performCallbackWithReturnValue(resultArray.get());
+}
+
+void WebPluginSiteDataManager::clearSiteData(ImmutableArray* sites, uint64_t flags, uint64_t maxAgeInSeconds, PassRefPtr<VoidCallback> prpCallback)
+{
+    RefPtr<VoidCallback> callback = prpCallback;
+    if (!m_webContext) {
+        callback->invalidate();
+        return;
+    }
+
+    // If the array is empty, don't do anything.
+    if (sites && !sites->size()) {
+        callback->performCallback();
+        return;
+    }
+
+#if ENABLE(PLUGIN_PROCESS)
+    // FIXME: Implement.
+    callback->invalidate();
+#else
+    if (!m_webContext->hasValidProcess()) {
+        callback->invalidate();
+        return;
+    }
+    uint64_t callbackID = callback->callbackID();
+    m_voidCallbacks.set(callbackID, callback.release());
+
+    Vector<String> sitesVector;
+    if (sites) {
+        for (size_t i = 0; i < sites->size(); ++i) {
+            if (WebString* site = sites->at<WebString>(i))
+                sitesVector.append(site->string());
+        }
+    }
+
+    Vector<String> pluginPaths;
+    m_webContext->pluginInfoStore()->getPluginPaths(pluginPaths);
+    m_webContext->process()->send(Messages::WebProcess::ClearPluginSiteData(pluginPaths, sitesVector, flags, maxAgeInSeconds, callbackID), 0);
+#endif
+}
+
+void WebPluginSiteDataManager::didClearSiteData(uint64_t callbackID)
+{
+    RefPtr<VoidCallback> callback = m_voidCallbacks.take(callbackID);
+    if (!callback) {
+        // FIXME: Log error or assert.
+        return;
+    }
+
+    callback->performCallback();
 }
 
 } // namespace WebKit
