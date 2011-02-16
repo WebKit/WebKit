@@ -1,3 +1,72 @@
+2011-02-15  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed chromium-gpu rebaseline. Rebaseline tests that were unskipped
+        after r78619 as well as some lingering Mac rebaselines.
+        
+        * platform/chromium-gpu-linux/compositing/color-matching/image-color-matching-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/color-matching/image-color-matching-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/color-matching/image-color-matching-expected.txt: Added.
+        * platform/chromium-gpu-linux/compositing/geometry/abs-position-inside-opacity-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/geometry/abs-position-inside-opacity-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/geometry/abs-position-inside-opacity-expected.txt: Added.
+        * platform/chromium-gpu-linux/compositing/masks/direct-image-mask-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/masks/direct-image-mask-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/masks/direct-image-mask-expected.txt: Added.
+        * platform/chromium-gpu-linux/compositing/overflow/ancestor-overflow-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/overflow/ancestor-overflow-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/overflow/ancestor-overflow-expected.txt: Added.
+        * platform/chromium-gpu-linux/compositing/repaint/composited-document-element-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/repaint/composited-document-element-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/repaint/composited-document-element-expected.txt: Added.
+        * platform/chromium-gpu-linux/compositing/shadows/shadow-drawing-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/shadows/shadow-drawing-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/shadows/shadow-drawing-expected.txt: Added.
+        * platform/chromium-gpu-mac/compositing/color-matching/image-color-matching-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/color-matching/image-color-matching-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/abs-position-inside-opacity-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/abs-position-inside-opacity-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/masks/direct-image-mask-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/masks/direct-image-mask-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/overflow/overflow-scroll-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/overflow/overflow-scroll-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/repaint/composited-document-element-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/repaint/composited-document-element-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/repaint/opacity-between-absolute2-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/repaint/opacity-between-absolute2-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/shadows/shadow-drawing-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/shadows/shadow-drawing-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/text-on-large-layer-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/text-on-large-layer-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/tiling/constrained-layer-size-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/tiling/constrained-layer-size-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/transitions/scale-transition-no-start-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/transitions/scale-transition-no-start-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/z-order/negative-z-index-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/z-order/negative-z-index-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/color-matching/image-color-matching-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/color-matching/image-color-matching-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/color-matching/image-color-matching-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/geometry/abs-position-inside-opacity-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/geometry/abs-position-inside-opacity-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/geometry/abs-position-inside-opacity-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/masks/direct-image-mask-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/masks/direct-image-mask-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/masks/direct-image-mask-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/overflow/ancestor-overflow-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/overflow/ancestor-overflow-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/overflow/ancestor-overflow-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/repaint/composited-document-element-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/repaint/composited-document-element-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/repaint/composited-document-element-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/shadows/shadow-drawing-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/shadows/shadow-drawing-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/shadows/shadow-drawing-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/tiling/constrained-layer-size-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/tiling/constrained-layer-size-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/z-order/negative-z-index-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/z-order/negative-z-index-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-02-15  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
