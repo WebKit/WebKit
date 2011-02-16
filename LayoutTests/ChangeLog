@@ -1,3 +1,14 @@
+2011-02-16  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed, Chromium test expectations update.
+
+        Remove a mac-leopard expectation since the Chromium Mac 10.5 bots at
+        least seem to be generating results that match the platform/mac images.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/mac-leopard/fast/forms/select-empty-option-height-expected.checksum: Removed.
+        * platform/mac-leopard/fast/forms/select-empty-option-height-expected.png: Removed.
+
 2011-02-16  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

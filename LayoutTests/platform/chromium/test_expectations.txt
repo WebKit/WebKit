@@ -99,6 +99,8 @@ BUGCR36539 SLOW : http/tests/misc/uncacheable-script-repeated.html = PASS
 BUGCR32018 SLOW : http/tests/websocket/tests/frame-lengths.html = PASS
 BUGCR69513 DEBUG SLOW : html5lib/webkit-resumer.html = PASS
 
+BUG_DRT WIN LINUX DEBUG SLOW : http/tests/inspector/change-iframe-src.html = PASS
+
 // -----------------------------------------------------------------
 // SKIPPED TESTS
 // -----------------------------------------------------------------
@@ -630,7 +632,6 @@ BUGCR66087 WIN LINUX : inspector/timeline/timeline-parse-html.html = CRASH TIMEO
 BUGCR68165 WIN LINUX DEBUG SLOW : inspector/styles/styles-source-lines.html = PASS
 BUGCR66087 WIN LINUX SLOW : inspector/storage-panel-dom-storage.html = PASS TEXT
 
-BUG_DRT WIN LINUX : http/tests/inspector/change-iframe-src.html = CRASH
 BUGCR66087 WIN LINUX SLOW : http/tests/inspector/console-resource-errors.html = PASS TEXT
 BUGCR66087 WIN LINUX SLOW : http/tests/inspector/inspect-iframe-from-different-domain.html = PASS TEXT
 
@@ -1957,7 +1958,7 @@ BUGCR43963 LINUX : fast/forms/searchfield-heights.html = IMAGE+TEXT TEXT
 BUGWK38705 : http/tests/security/sandbox-inherit-to-initial-document-2.html = TEXT
 
 // WebKit roll 58791:58807
-BUGCR43319 MAC : fast/forms/select-empty-option-height.html = TIMEOUT IMAGE PASS
+BUGCR43319 LINUX DEBUG SLOW : fast/forms/select-empty-option-height.html = PASS
 
 BUGCR43496 LINUX : svg/custom/repaint-stroke-width-changes.svg = IMAGE PASS
 BUGCR43497 MAC WIN : svg/custom/repaint-stroke-width-changes.svg = IMAGE PASS
@@ -2772,7 +2773,9 @@ BUG_DRT MAC : fast/dom/beforeload/script-before-load-dynamic.html = TIMEOUT PASS
 BUG_DRT : fast/dynamic/window-resize-scrollbars-test.html = IMAGE+TEXT
 BUG_DRT LINUX : fast/events/select-onchange-crash.html = CRASH
 BUG_DRT DEBUG : fast/frames/calculate-round.html = TIMEOUT PASS
-BUG_DRT BUGCR43890 LINUX : fast/forms/implicit-submission.html = CRASH PASS TEXT
+BUG_DRT BUGCR43890 WIN DEBUG SLOW : fast/forms/implicit-submission.html = PASS
+BUG_DRT BUGCR43890 LINUX : fast/forms/implicit-submission.html = CRASH
+BUG_DRT BUGCR43890 MAC DEBUG SLOW : fast/forms/implicit-submission.html = PASS TEXT
 BUG_DRT BUGCR21141 LINUX : fast/forms/select-double-onchange.html = CRASH FAIL
 BUG_DRT BUGCR21141 LINUX : fast/forms/select-script-onchange.html = CRASH FAIL
 BUG_DRT MAC : fast/images/extra-image-in-image-document.html = TIMEOUT PASS
