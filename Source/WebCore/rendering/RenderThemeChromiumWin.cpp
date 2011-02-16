@@ -62,10 +62,15 @@ namespace WebCore {
 static const int kStandardMenuListButtonWidth = 17;
 
 namespace {
+// We must not create multiple ThemePainter instances.
 class ThemePainter {
 public:
     ThemePainter(GraphicsContext* context, const IntRect& r)
     {
+#ifndef NDEBUG
+        ASSERT(!s_hasInstance);
+        s_hasInstance = true;
+#endif
         TransparencyWin::TransformMode transformMode = getTransformMode(context->getCTM());
         m_helper.init(context, getLayerMode(context, transformMode), transformMode, r);
 
@@ -85,6 +90,9 @@ public:
     ~ThemePainter()
     {
         m_helper.composite();
+#ifndef NDEBUG
+        s_hasInstance = false;
+#endif
     }
 
     GraphicsContext* context() { return m_helper.context(); }
@@ -120,7 +128,14 @@ private:
     }
 
     TransparencyWin m_helper;
+#ifndef NDEBUG
+    static bool s_hasInstance;
+#endif
 };
+
+#ifndef NDEBUG
+bool ThemePainter::s_hasInstance = false;
+#endif
 
 } // namespace
 
@@ -707,23 +722,28 @@ bool RenderThemeChromiumWin::paintInnerSpinButton(RenderObject* object, const Pa
 {
     IntRect half = rect;
 
-    half.setHeight(rect.height() / 2);
-    const ThemeData& upThemeData = getThemeData(object, SpinButtonUp);
-    ThemePainter upPainter(info.context, half);
-    PlatformBridge::paintSpinButton(upPainter.context(),
-                                    upThemeData.m_part,
-                                    upThemeData.m_state,
-                                    upThemeData.m_classicState,
-                                    upPainter.drawRect());
+    // Need explicit blocks to avoid to create multiple ThemePainter instances.
+    {
+        half.setHeight(rect.height() / 2);
+        const ThemeData& upThemeData = getThemeData(object, SpinButtonUp);
+        ThemePainter upPainter(info.context, half);
+        PlatformBridge::paintSpinButton(upPainter.context(),
+                                        upThemeData.m_part,
+                                        upThemeData.m_state,
+                                        upThemeData.m_classicState,
+                                        upPainter.drawRect());
+    }
 
-    half.setY(rect.y() + rect.height() / 2);
-    const ThemeData& downThemeData = getThemeData(object, SpinButtonDown);
-    ThemePainter downPainter(info.context, half);
-    PlatformBridge::paintSpinButton(downPainter.context(),
-                                    downThemeData.m_part,
-                                    downThemeData.m_state,
-                                    downThemeData.m_classicState,
-                                    downPainter.drawRect());
+    {
+        half.setY(rect.y() + rect.height() / 2);
+        const ThemeData& downThemeData = getThemeData(object, SpinButtonDown);
+        ThemePainter downPainter(info.context, half);
+        PlatformBridge::paintSpinButton(downPainter.context(),
+                                        downThemeData.m_part,
+                                        downThemeData.m_state,
+                                        downThemeData.m_classicState,
+                                        downPainter.drawRect());
+    }
     return false;
 }
 

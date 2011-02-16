@@ -1,3 +1,17 @@
+2011-02-15  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Rendering error of spin buttons on layers
+        https://bugs.webkit.org/show_bug.cgi?id=54427
+
+        * fast/forms/input-appearance-spinbutton-layer.html: Added.
+        * platform/mac/fast/forms/input-appearance-spinbutton-layer-expected.checksum: Added.
+        * platform/mac/fast/forms/input-appearance-spinbutton-layer-expected.png: Added.
+        * platform/mac/fast/forms/input-appearance-spinbutton-layer-expected.txt: Added.
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
 2011-02-15  Martin Robinson  <mrobinson@igalia.com>
 
         Skip all Hixie SVG performance tests on GTK+. They seem

@@ -1,3 +1,17 @@
+2011-02-15  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Rendering error of spin buttons on layers
+        https://bugs.webkit.org/show_bug.cgi?id=54427
+
+        Test: fast/forms/input-appearance-spinbutton-layer.html
+
+        * rendering/RenderThemeChromiumWin.cpp:
+          Add checks for multiple ThemePainter instances.
+        (WebCore::RenderThemeChromiumWin::paintInnerSpinButton):
+          Avoid to create multiple ThemePainter instances.
+
 2011-02-15  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.
