@@ -1,1 +1,13 @@
+2011-02-16  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [V8] DataView constructor can be applied as a regular method
+        https://bugs.webkit.org/show_bug.cgi?id=54563
+
+        Tested by adding a new test case to fast/canvas/webgl/data-view-test.html.
+
+        * bindings/v8/custom/V8DataViewCustom.cpp:
+        (WebCore::V8DataView::constructorCallback):
+
 == Rolled over to ChangeLog-2011-02-16 ==

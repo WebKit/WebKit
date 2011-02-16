@@ -36,7 +36,10 @@ namespace WebCore {
 
 v8::Handle<v8::Value> V8DataView::constructorCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.ArrayBuffer.Constructor");
+    INC_STATS("DOM.DataView.Constructor");
+
+    if (!args.IsConstructCall())
+        return throwError("DOM object constructor cannot be called as a function", V8Proxy::SyntaxError);
 
     if (args[0]->IsNull() || !V8ArrayBuffer::HasInstance(args[0]))
         return V8Proxy::throwTypeError();

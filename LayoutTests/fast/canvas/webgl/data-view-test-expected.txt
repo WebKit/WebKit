@@ -3,6 +3,9 @@ Test DataView.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+Test for constructor not called as a function
+PASS DataView(new ArrayBuffer) threw exception
+
 Test for constructor taking 1 argument
 PASS view = new DataView(arayBuffer) is defined.
 PASS view.byteOffset is 0
