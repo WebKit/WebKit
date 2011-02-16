@@ -42,7 +42,7 @@ audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
 }
 
 video:-webkit-full-page-media::-webkit-media-controls-panel {
-    bottom: -32px;
+    bottom: 0px;
 }
 
 audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button {

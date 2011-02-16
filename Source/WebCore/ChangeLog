@@ -1,3 +1,21 @@
+2011-02-15  Ami Fischman  <fischman@chromium.org>
+
+        Reviewed by David Levin.
+
+        Remove the artificial -32px shift for media controls in mediaDocuments
+        so that they overlap the canvas as they do in non-mediaDocuments.
+        This also fixes test_shell failing to update the media slider (see
+        linked crbug below).
+
+        https://bugs.webkit.org/show_bug.cgi?id=27798
+        http://crbug.com/72623
+
+        Test: media/video-controls-in-media-document.html
+        Added a render test that asserts that the controls show up in the
+        expected spot (0,208) instead of below the canvas (0,240).
+
+        * css/mediaControlsChromium.css:
+
 2011-02-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

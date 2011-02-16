@@ -291,3 +291,7 @@ fast/animation
 
 # This port doesn't support v8 i18n extension.
 fast/js/i18n-bindings-locale.html
+
+# Waiting for someone with a mac to baseline this (new) test for mac.
+# https://bugs.webkit.org/show_bug.cgi?id=54436
+media/video-controls-in-media-document.html
