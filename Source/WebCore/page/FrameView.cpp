@@ -1863,14 +1863,16 @@ void FrameView::performPostLayoutTasks()
     m_frame->selection()->setCaretRectNeedsUpdate();
     m_frame->selection()->updateAppearance();
 
-    if (m_firstLayoutCallbackPending) {
-        m_firstLayoutCallbackPending = false;
-        m_frame->loader()->didFirstLayout();
-    }
-
-    if (m_isVisuallyNonEmpty && m_firstVisuallyNonEmptyLayoutCallbackPending) {
-        m_firstVisuallyNonEmptyLayoutCallbackPending = false;
-        m_frame->loader()->didFirstVisuallyNonEmptyLayout();
+    if (m_nestedLayoutCount <= 1) {
+        if (m_firstLayoutCallbackPending) {
+            m_firstLayoutCallbackPending = false;
+            m_frame->loader()->didFirstLayout();
+        }
+        
+        if (m_isVisuallyNonEmpty && m_firstVisuallyNonEmptyLayoutCallbackPending) {
+            m_firstVisuallyNonEmptyLayoutCallbackPending = false;
+            m_frame->loader()->didFirstVisuallyNonEmptyLayout();
+        }
     }
 
     RenderView* root = m_frame->contentRenderer();
