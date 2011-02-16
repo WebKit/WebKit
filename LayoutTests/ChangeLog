@@ -1,3 +1,9 @@
+2011-02-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Begin adding GTK+ baselines for Mozilla test suites.
+
+        * platform/gtk/Skipped: Unskip tests which now have results.
+
 2011-02-16  Peter Kasting  <pkasting@google.com>
 
         Unreviewed, Chromium test expectations update.
