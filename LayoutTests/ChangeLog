@@ -2,6 +2,15 @@
 
         Unreviewed, test expectation update.
 
+        Chromium-Mac-Leopard baseline files for r78677.
+
+        * platform/chromium-mac-leopard/fast/forms/input-appearance-spinbutton-layer-expected.checksum: Added.
+        * platform/chromium-mac-leopard/fast/forms/input-appearance-spinbutton-layer-expected.png: Added.
+
+2011-02-15  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
         Chromium baseline files for a new test of r78677.
 
         * platform/chromium-linux/fast/forms/input-appearance-spinbutton-layer-expected.checksum: Added.
