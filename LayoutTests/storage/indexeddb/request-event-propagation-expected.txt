@@ -45,6 +45,8 @@ PASS captureFired is false
 PASS requestFired is false
 PASS bubbleFired is false
 PASS dbBubbleFired is false
+PASS event.target is request
+PASS event.currentTarget is db
 
 In IDBTransaction error capture
 PASS dbCaptureFired is true
@@ -52,6 +54,8 @@ PASS captureFired is false
 PASS requestFired is false
 PASS bubbleFired is false
 PASS dbBubbleFired is false
+PASS event.target is request
+PASS event.currentTarget is trans
 
 In IDBRequest handler
 PASS dbCaptureFired is true
@@ -59,6 +63,8 @@ PASS captureFired is true
 PASS requestFired is false
 PASS bubbleFired is false
 PASS dbBubbleFired is false
+PASS event.target is request
+PASS event.currentTarget is request
 
 In IDBTransaction error bubble
 PASS dbCaptureFired is true
@@ -66,6 +72,8 @@ PASS captureFired is true
 PASS requestFired is true
 PASS bubbleFired is false
 PASS dbBubbleFired is false
+PASS event.target is request
+PASS event.currentTarget is trans
 
 In IDBDatabase error bubble
 PASS dbCaptureFired is true
@@ -73,6 +81,8 @@ PASS captureFired is true
 PASS requestFired is true
 PASS bubbleFired is true
 PASS dbBubbleFired is false
+PASS event.target is request
+PASS event.currentTarget is db
 
 Transaction aborted
 PASS dbCaptureFired is true
@@ -106,6 +116,8 @@ PASS captureFired is false
 PASS requestFired is false
 PASS bubbleFired is false
 PASS dbBubbleFired is false
+PASS event.target is request
+PASS event.currentTarget is db
 
 In IDBTransaction success capture
 PASS dbCaptureFired is true
@@ -113,6 +125,8 @@ PASS captureFired is false
 PASS requestFired is false
 PASS bubbleFired is false
 PASS dbBubbleFired is false
+PASS event.target is request
+PASS event.currentTarget is trans
 
 In IDBRequest handler
 PASS dbCaptureFired is true
@@ -120,6 +134,8 @@ PASS captureFired is true
 PASS requestFired is false
 PASS bubbleFired is false
 PASS dbBubbleFired is false
+PASS event.target is request
+PASS event.currentTarget is request
 
 Transaction completed
 PASS dbCaptureFired is true

@@ -1,3 +1,28 @@
+2011-02-10  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Throwing in an IndexedDB error or success event should lead to the transaction aborting
+        https://bugs.webkit.org/show_bug.cgi?id=54249
+
+        When an exception is thrown but not handled  within an IDBRequests success/error event,
+        we should abort the transaction.
+
+        Test: storage/indexeddb/exception-in-event-aborts.html
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        * bindings/js/JSEventTarget.cpp:
+        (WebCore::toJS):
+        * bindings/v8/V8AbstractEventListener.cpp:
+        (WebCore::V8AbstractEventListener::invokeEventHandler):
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::uncaughtExceptionInEventHandler):
+        * dom/EventTarget.h:
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::uncaughtExceptionInEventHandler):
+        * storage/IDBRequest.h:
+
 2011-02-15  Ian Henderson  <ianh@apple.com>
 
         Reviewed by Darin Adler.

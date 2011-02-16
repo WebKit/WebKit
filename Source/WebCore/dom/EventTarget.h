@@ -151,6 +151,7 @@ namespace WebCore {
         virtual void removeAllEventListeners();
         virtual bool dispatchEvent(PassRefPtr<Event>);
         bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&); // DOM API
+        virtual void uncaughtExceptionInEventHandler();
 
         // Used for legacy "onEvent" attribute APIs.
         bool setAttributeEventListener(const AtomicString& eventType, PassRefPtr<EventListener>);

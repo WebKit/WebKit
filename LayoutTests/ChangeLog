@@ -1,3 +1,23 @@
+2011-02-10  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Throwing in an IndexedDB error or success event should lead to the transaction aborting
+        https://bugs.webkit.org/show_bug.cgi?id=54249
+
+        * storage/indexeddb/exception-in-event-aborts-expected.txt: Added.
+        * storage/indexeddb/exception-in-event-aborts.html: Added.
+            tests new feature
+        * storage/indexeddb/queued-commands-expected.txt:
+        * storage/indexeddb/queued-commands.html:
+            cleaned up (while debuggign something else)
+        * storage/indexeddb/request-event-propagation-expected.txt:
+        * storage/indexeddb/request-event-propagation.html:
+            a few additional tests + cleanup
+        * storage/indexeddb/transaction-event-propagation-expected.txt:
+        * storage/indexeddb/transaction-event-propagation.html:
+            a few additional tests + cleanup
+
 2011-02-15  Steve Falkenburg  <sfalken@apple.com>
 
         Windows-specific results for tests added in r78396.

@@ -12,7 +12,7 @@ function unexpectedSuccessCallback()
 
 function unexpectedErrorCallback()
 {
-    testFailed("Error function called unexpectedly: (" + event.target.code + ") " + event.target.message);
+    testFailed("Error function called unexpectedly: (" + event.target.errorCode + ") " + event.target.webkitErrorMessage);
 }
 
 function unexpectedAbortCallback()

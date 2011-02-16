@@ -126,9 +126,10 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
 
         globalObject->setCurrentEvent(savedEvent);
 
-        if (exec->hadException())
+        if (exec->hadException()) {
+            event->target()->uncaughtExceptionInEventHandler();
             reportCurrentException(exec);
-        else {
+        } else {
             if (!retval.isUndefinedOrNull() && event->storesResultAsString())
                 event->storeResult(ustringToString(retval.toString(exec)));
             if (m_isAttribute) {
