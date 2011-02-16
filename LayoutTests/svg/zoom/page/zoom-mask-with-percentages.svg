@@ -95,9 +95,9 @@
               maskContentUnits="objectBoundingBox"
               x="0" y="0" width="100%" height="100%">
             <circle cx=".25" cy=".2" r=".2" fill="#ffffff" />
-            <circle cx=".25" cy=".6" r=".2" fill="#ffffff" />
-            <circle cx=".75" cy=".2" r=".2" fill="#ffffff" />
-            <circle cx=".75" cy=".6" r=".2" fill="#ffffff" />
+            <circle cx=".25" cy=".5999999" r=".2" fill="#ffffff" />
+            <circle cx=".749999" cy=".2" r=".2" fill="#ffffff" />
+            <circle cx=".749999" cy=".5999999" r=".2" fill="#ffffff" />
         </mask>
 
         </defs>

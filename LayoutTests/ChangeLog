@@ -6,6 +6,65 @@
         https://bugs.webkit.org/show_bug.cgi?id=54474
 
         Update SnowLeopard SVG pixel test baseline, generated on a 32bit machine, where it passes with tolerance 0.
+        This is the second chunk.
+
+        It should pass on modern 64bit machines as well, using tolerance 0.01.
+
+        * platform/mac/svg/batik/masking/maskRegions-expected.checksum:
+        * platform/mac/svg/batik/masking/maskRegions-expected.png:
+        * platform/mac/svg/batik/text/smallFonts-expected.checksum:
+        * platform/mac/svg/batik/text/smallFonts-expected.png:
+        * platform/mac/svg/batik/text/textAnchor-expected.checksum:
+        * platform/mac/svg/batik/text/textAnchor-expected.png:
+        * platform/mac/svg/batik/text/textEffect-expected.checksum:
+        * platform/mac/svg/batik/text/textEffect-expected.png:
+        * platform/mac/svg/batik/text/textEffect3-expected.checksum:
+        * platform/mac/svg/batik/text/textEffect3-expected.png:
+        * platform/mac/svg/batik/text/textFeatures-expected.checksum:
+        * platform/mac/svg/batik/text/textFeatures-expected.png:
+        * platform/mac/svg/batik/text/textOnPath2-expected.checksum:
+        * platform/mac/svg/batik/text/textOnPath2-expected.png:
+        * platform/mac/svg/batik/text/textOnPath3-expected.checksum:
+        * platform/mac/svg/batik/text/textOnPath3-expected.png:
+        * platform/mac/svg/batik/text/verticalTextOnPath-expected.checksum:
+        * platform/mac/svg/batik/text/verticalTextOnPath-expected.png:
+        * platform/mac/svg/carto.net/button-expected.checksum:
+        * platform/mac/svg/carto.net/button-expected.png:
+        * platform/mac/svg/carto.net/colourpicker-expected.checksum:
+        * platform/mac/svg/carto.net/colourpicker-expected.png:
+        * platform/mac/svg/carto.net/combobox-expected.checksum:
+        * platform/mac/svg/carto.net/combobox-expected.png:
+        * platform/mac/svg/carto.net/scrollbar-expected.checksum:
+        * platform/mac/svg/carto.net/scrollbar-expected.png:
+        * platform/mac/svg/carto.net/selectionlist-expected.checksum:
+        * platform/mac/svg/carto.net/selectionlist-expected.png:
+        * platform/mac/svg/carto.net/slider-expected.checksum:
+        * platform/mac/svg/carto.net/slider-expected.png:
+        * platform/mac/svg/carto.net/textbox-expected.checksum:
+        * platform/mac/svg/carto.net/textbox-expected.png:
+        * platform/mac/svg/carto.net/window-expected.checksum:
+        * platform/mac/svg/carto.net/window-expected.png:
+        * platform/mac/svg/css/composite-shadow-example-expected.checksum:
+        * platform/mac/svg/css/composite-shadow-example-expected.png:
+        * platform/mac/svg/css/composite-shadow-text-expected.checksum:
+        * platform/mac/svg/css/composite-shadow-text-expected.png:
+        * platform/mac/svg/css/composite-shadow-with-opacity-expected.checksum:
+        * platform/mac/svg/css/composite-shadow-with-opacity-expected.png:
+        * platform/mac/svg/css/group-with-shadow-expected.checksum:
+        * platform/mac/svg/css/group-with-shadow-expected.png:
+        * platform/mac/svg/dom/SVGTransformList-basics-expected.checksum:
+        * platform/mac/svg/dom/SVGTransformList-basics-expected.png:
+        * svg/batik/masking/maskRegions.svg:
+        * svg/zoom/page/zoom-mask-with-percentages.svg:
+
+2011-02-16  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Pixel tests differences on 10.6.6 32bit vs. 64bit
+        https://bugs.webkit.org/show_bug.cgi?id=54474
+
+        Update SnowLeopard SVG pixel test baseline, generated on a 32bit machine, where it passes with tolerance 0.
         This is the first chunk of several commits, as one commit is too huge for SVN.
 
         It should pass on modern 64bit machines as well, using tolerance 0.01.
