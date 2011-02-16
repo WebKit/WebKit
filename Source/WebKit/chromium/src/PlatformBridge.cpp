@@ -539,12 +539,17 @@ void PlatformBridge::createIDBKeysFromSerializedValuesAndKeyPath(const Vector<Re
 {
     WebVector<WebSerializedScriptValue> webValues = values;
     WebVector<WebIDBKey> webKeys;
-    webKitClient()->createIDBKeysFromSerializedValuesAndKeyPath(webValues, WebString(keyPath), webKeys);
+    webKitClient()->createIDBKeysFromSerializedValuesAndKeyPath(webValues, keyPath, webKeys);
 
     size_t webKeysSize = webKeys.size();
     keys.reserveCapacity(webKeysSize);
     for (size_t i = 0; i < webKeysSize; ++i)
         keys.append(PassRefPtr<IDBKey>(webKeys[i]));
+}
+
+PassRefPtr<SerializedScriptValue> PlatformBridge::injectIDBKeyIntoSerializedValue(PassRefPtr<IDBKey> key, PassRefPtr<SerializedScriptValue> value, const String& keyPath)
+{
+    return webKitClient()->injectIDBKeyIntoSerializedValue(key, value, keyPath);
 }
 
 // Keygen ---------------------------------------------------------------------

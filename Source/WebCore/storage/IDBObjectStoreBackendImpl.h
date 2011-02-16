@@ -85,7 +85,7 @@ private:
     SQLiteDatabase& sqliteDatabase() const;
     PassRefPtr<IDBKey> genAutoIncrementKey();
     void resetAutoIncrementKeyCache() { m_autoIncrementNumber = -1; }
-    static PassRefPtr<IDBKey> selectKeyForPut(IDBObjectStoreBackendImpl*, SerializedScriptValue*, IDBKey*, PutMode, IDBCallbacks*);
+    static PassRefPtr<IDBKey> selectKeyForPut(IDBObjectStoreBackendImpl*, IDBKey*, PutMode, IDBCallbacks*, RefPtr<SerializedScriptValue>&);
 
     static void getInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>);
     static void putInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, PutMode, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendInterface>);

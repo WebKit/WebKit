@@ -49,6 +49,7 @@ public:
     WEBKIT_API static WebIDBKey createNumber(double);
     WEBKIT_API static WebIDBKey createInvalid();
     WEBKIT_API static WebIDBKey createFromValueAndKeyPath(const WebSerializedScriptValue&, const WebIDBKeyPath&);
+    WEBKIT_API static WebSerializedScriptValue injectIDBKeyIntoSerializedValue(const WebIDBKey&, const WebSerializedScriptValue&, const WebIDBKeyPath&);
 
     WebIDBKey(const WebIDBKey& e) { assign(e); }
     WebIDBKey& operator=(const WebIDBKey& e)

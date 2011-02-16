@@ -83,6 +83,11 @@ WebIDBKey WebIDBKey::createFromValueAndKeyPath(const WebSerializedScriptValue& s
     return WebCore::createIDBKeyFromSerializedValueAndKeyPath(serializedScriptValue, idbKeyPath);
 }
 
+WebSerializedScriptValue WebIDBKey::injectIDBKeyIntoSerializedValue(const WebIDBKey& key, const WebSerializedScriptValue& value, const WebIDBKeyPath& path)
+{
+    return WebCore::injectIDBKeyIntoSerializedValue(key, value, path);
+}
+
 void WebIDBKey::assign(const WebIDBKey& value)
 {
     m_private = value.m_private;

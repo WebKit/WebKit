@@ -29,15 +29,10 @@ Insert into object store with auto increment and key path, with key in the objec
 store.add({name: 'Jeffersson', number: '7010', id: 3})
 addJefferssonSuccess():
 PASS event.target.result is 3
-Insert into object store with auto increment and key path, without key in the object.
-store.add({name: 'Lincoln', number: '7012'})
-addLincolnError():
-PASS event.target.errorCode is webkitIDBDatabaseException.UNKNOWN_ERR
-event.preventDefault()
 store = trans.objectStore('StoreWithAutoIncrement')
 Insert into object store with key gen using explicit key
 store.add({name: 'Lincoln', number: '7012'}, 5)
-addLincolnSuccess():
+addLincolnWithExplicitKeySuccess():
 PASS event.target.result is 5
 store.get(5)
 getLincolnSuccess():

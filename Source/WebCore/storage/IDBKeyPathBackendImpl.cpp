@@ -37,4 +37,10 @@ void IDBKeyPathBackendImpl::createIDBKeysFromSerializedValuesAndKeyPath(const Ve
     // FIXME: Implement this method once JSC supports WireFormat for SerializedScriptValue.
 }
 
+PassRefPtr<SerializedScriptValue> IDBKeyPathBackendImpl::injectIDBKeyIntoSerializedValue(PassRefPtr<IDBKey> key, PassRefPtr<SerializedScriptValue> value, const String& keyPath)
+{
+    // FIXME: Implement this method once JSC supports WireFormat for SerializedScriptValue.
+    return 0;
+}
+
 #endif // ENABLE(INDEXED_DATABASE)

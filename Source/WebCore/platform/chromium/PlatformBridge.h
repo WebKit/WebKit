@@ -173,6 +173,8 @@ public:
     static PassRefPtr<IDBFactoryBackendInterface> idbFactory();
     // Extracts keyPath from values and returns the corresponding keys.
     static void createIDBKeysFromSerializedValuesAndKeyPath(const Vector<RefPtr<SerializedScriptValue> >& values, const String& keyPath, Vector<RefPtr<IDBKey> >& keys);
+    // Injects key via keyPath into value. Returns true on success.
+    static PassRefPtr<SerializedScriptValue> injectIDBKeyIntoSerializedValue(PassRefPtr<IDBKey>, PassRefPtr<SerializedScriptValue>, const String& keyPath);
 
     // JavaScript ---------------------------------------------------------
     static void notifyJSOutOfMemory(Frame*);

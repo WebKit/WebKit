@@ -134,6 +134,11 @@ static PassRefPtr<IDBKey> fetchKeyFromKeyPath(SerializedScriptValue* value, cons
     return keys[0].release();
 }
 
+static PassRefPtr<SerializedScriptValue> injectKeyIntoKeyPath(PassRefPtr<IDBKey> key, PassRefPtr<SerializedScriptValue> value, const String& keyPath)
+{
+    return IDBKeyPathBackendImpl::injectIDBKeyIntoSerializedValue(key, value, keyPath);
+}
+
 static bool putObjectStoreData(SQLiteDatabase& db, IDBKey* key, SerializedScriptValue* value, int64_t objectStoreId, int64_t& dataRowId)
 {
     String sql = dataRowId != IDBObjectStoreBackendImpl::InvalidId ? "UPDATE ObjectStoreData SET keyString = ?, keyDate = ?, keyNumber = ?, value = ? WHERE id = ?"
@@ -197,7 +202,7 @@ void IDBObjectStoreBackendImpl::put(PassRefPtr<SerializedScriptValue> prpValue, 
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
 }
 
-PassRefPtr<IDBKey> IDBObjectStoreBackendImpl::selectKeyForPut(IDBObjectStoreBackendImpl* objectStore, SerializedScriptValue* value, IDBKey* key, PutMode putMode, IDBCallbacks* callbacks)
+PassRefPtr<IDBKey> IDBObjectStoreBackendImpl::selectKeyForPut(IDBObjectStoreBackendImpl* objectStore, IDBKey* key, PutMode putMode, IDBCallbacks* callbacks, RefPtr<SerializedScriptValue>& value)
 {
     if (putMode == CursorUpdate)
         ASSERT(key);
@@ -220,19 +225,24 @@ PassRefPtr<IDBKey> IDBObjectStoreBackendImpl::selectKeyForPut(IDBObjectStoreBack
         if (!hasKeyPath)
             return objectStore->genAutoIncrementKey();
 
-        RefPtr<IDBKey> keyPathKey = fetchKeyFromKeyPath(value, objectStore->m_keyPath);
+        RefPtr<IDBKey> keyPathKey = fetchKeyFromKeyPath(value.get(), objectStore->m_keyPath);
         if (keyPathKey) {
             objectStore->resetAutoIncrementKeyCache();
             return keyPathKey;
         }
 
-        // FIXME: Generate auto increment key, and inject it through the key path.
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Adding data to object stores with auto increment and in-line keys not yet supported."));
-        return 0;
+        RefPtr<IDBKey> autoIncKey = objectStore->genAutoIncrementKey();
+        RefPtr<SerializedScriptValue> valueAfterInjection = injectKeyIntoKeyPath(autoIncKey, value, objectStore->m_keyPath);
+        if (!valueAfterInjection) {
+            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "The generated key could not be inserted into the object using the keyPath."));
+            return 0;
+        }
+        value = valueAfterInjection;
+        return autoIncKey.release();
     }
 
     if (hasKeyPath) {
-        RefPtr<IDBKey> keyPathKey = fetchKeyFromKeyPath(value, objectStore->m_keyPath);
+        RefPtr<IDBKey> keyPathKey = fetchKeyFromKeyPath(value.get(), objectStore->m_keyPath);
 
         if (!keyPathKey) {
             callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "The key could not be fetched from the keyPath."));
@@ -258,7 +268,7 @@ PassRefPtr<IDBKey> IDBObjectStoreBackendImpl::selectKeyForPut(IDBObjectStoreBack
 void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<SerializedScriptValue> prpValue, PassRefPtr<IDBKey> prpKey, PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendInterface> transaction)
 {
     RefPtr<SerializedScriptValue> value = prpValue;
-    RefPtr<IDBKey> key = selectKeyForPut(objectStore.get(), value.get(), prpKey.get(), putMode, callbacks.get());
+    RefPtr<IDBKey> key = selectKeyForPut(objectStore.get(), prpKey.get(), putMode, callbacks.get(), value);
     if (!key)
         return;
 

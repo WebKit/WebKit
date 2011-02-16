@@ -73,6 +73,29 @@ void checkKeyPathNullValue(SerializedScriptValue* value, const String& keyPath)
     ASSERT_FALSE(idbKey.get());
 }
 
+PassRefPtr<SerializedScriptValue> injectKey(PassRefPtr<IDBKey> key, PassRefPtr<SerializedScriptValue> value, const String& keyPath)
+{
+    Vector<IDBKeyPathElement> idbKeyPath;
+    IDBKeyPathParseError parseError;
+    IDBParseKeyPath(keyPath, idbKeyPath, parseError);
+    EXPECT_EQ(IDBKeyPathParseErrorNone, parseError);
+    return injectIDBKeyIntoSerializedValue(key, value, idbKeyPath);
+}
+
+void checkInjection(PassRefPtr<IDBKey> prpKey, PassRefPtr<SerializedScriptValue> value, const String& keyPath)
+{
+    RefPtr<IDBKey> key = prpKey;
+    RefPtr<SerializedScriptValue> newValue = injectKey(key, value, keyPath);
+    ASSERT_TRUE(newValue);
+    RefPtr<IDBKey> extractedKey = checkKeyFromValueAndKeyPathInternal(newValue.get(), keyPath);
+    EXPECT_TRUE(key->isEqual(extractedKey.get()));
+}
+
+void checkInjectionFails(PassRefPtr<IDBKey> key, PassRefPtr<SerializedScriptValue> value, const String& keyPath)
+{
+    EXPECT_FALSE(injectKey(key, value, keyPath));
+}
+
 void checkKeyPathStringValue(SerializedScriptValue* value, const String& keyPath, const String& expected)
 {
     RefPtr<IDBKey> idbKey = checkKeyFromValueAndKeyPathInternal(value, keyPath);
@@ -160,6 +183,67 @@ TEST(IDBKeyFromValueAndKeyPathTest, Array2D)
     checkKeyPathNullValue(serializedScriptValue.get(), "[4]");
 }
 
+TEST(InjectIDBKeyTest, TopLevelPropertyStringValue)
+{
+    LocalContext v8context;
+    v8::Local<v8::Object> object = v8::Object::New();
+    object->Set(v8::String::New("foo"), v8::String::New("zoo"));
+
+    checkInjection(IDBKey::createString("myNewKey"), SerializedScriptValue::create(object), "bar");
+    checkInjection(IDBKey::createNumber(1234), SerializedScriptValue::create(object), "bar");
+
+    checkInjectionFails(IDBKey::createString("key"), SerializedScriptValue::create(object), "foo.bar");
+    checkInjectionFails(IDBKey::createString("key"), SerializedScriptValue::create(object), "[3]");
+}
+
+TEST(InjectIDBKeyTest, TopLevelArrayElement)
+{
+    LocalContext v8context;
+    v8::Local<v8::Array> array = v8::Array::New();
+    array->Set(3, v8::String::New("zoo"));
+
+    checkInjection(IDBKey::createString("myNewKey"), SerializedScriptValue::create(array), "[2]");
+    checkInjection(IDBKey::createNumber(789), SerializedScriptValue::create(array), "[4]");
+    checkInjection(IDBKey::createDate(4567), SerializedScriptValue::create(array), "[1]");
+
+    checkInjectionFails(IDBKey::createString("foo"), SerializedScriptValue::create(array), "[5].bar");
+}
+
+TEST(InjectIDBKeyTest, SubProperty)
+{
+    LocalContext v8context;
+    v8::Local<v8::Object> object = v8::Object::New();
+    v8::Local<v8::Object> subProperty = v8::Object::New();
+    subProperty->Set(v8::String::New("bar"), v8::String::New("zee"));
+    object->Set(v8::String::New("foo"), subProperty);
+
+    checkInjection(IDBKey::createString("myNewKey"), SerializedScriptValue::create(object), "foo.baz");
+    checkInjection(IDBKey::createNumber(789), SerializedScriptValue::create(object), "foo.baz");
+    checkInjection(IDBKey::createDate(4567), SerializedScriptValue::create(object), "foo.baz");
+    checkInjection(IDBKey::createDate(4567), SerializedScriptValue::create(object), "bar");
+
+    checkInjectionFails(IDBKey::createString("zoo"), SerializedScriptValue::create(object), "foo.bar.baz");
+    checkInjectionFails(IDBKey::createString("zoo"), SerializedScriptValue::create(object), "foo.xyz.foo");
+}
+
+TEST(InjectIDBKeyTest, Array2D)
+{
+    LocalContext v8context;
+    v8::Local<v8::Object> object = v8::Object::New();
+    v8::Local<v8::Array> array = v8::Array::New();
+    v8::Local<v8::Array> subArray = v8::Array::New();
+    subArray->Set(7, v8::String::New("zee"));
+    array->Set(3, subArray);
+    object->Set(v8::String::New("foo"), array);
+
+    checkInjection(IDBKey::createString("myNewKey"), SerializedScriptValue::create(object), "foo[3][8]");
+    checkInjection(IDBKey::createNumber(789), SerializedScriptValue::create(object), "foo[3][8]");
+    checkInjection(IDBKey::createDate(4567), SerializedScriptValue::create(object), "foo[3][8]");
+    checkInjection(IDBKey::createString("myNewKey"), SerializedScriptValue::create(object), "bar");
+    checkInjection(IDBKey::createString("myNewKey"), SerializedScriptValue::create(object), "foo[4]");
+
+    checkInjectionFails(IDBKey::createString("zoo"), SerializedScriptValue::create(object), "foo[3][7].foo");
+}
 } // namespace
 
 #endif // ENABLE(INDEXED_DATABASE)
