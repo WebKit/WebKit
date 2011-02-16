@@ -170,8 +170,7 @@ WKGeolocationManagerRef WKContextGetGeolocationManager(WKContextRef contextRef)
 
 WKPluginSiteDataManagerRef WKContextGetPluginSiteDataManager(WKContextRef contextRef)
 {
-    // FIXME: Implement.
-    return 0;
+    return toAPI(toImpl(contextRef)->pluginSiteDataManager());
 }
 
 void WKContextStartMemorySampler(WKContextRef contextRef, WKDoubleRef interval)

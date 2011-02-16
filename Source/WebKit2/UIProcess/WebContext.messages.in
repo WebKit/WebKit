@@ -35,4 +35,8 @@ messages -> WebContext {
     GetPlugins(bool refresh) -> (Vector<WebCore::PluginInfo> plugins)
     GetPluginPath(WTF::String mimeType, WTF::String urlString) -> (WTF::String pluginPath)
 
+#if !ENABLE(PLUGIN_PROCESS)
+    void DidGetSitesWithPluginData(Vector<WTF::String> sites, uint64_t callbackID)
+#endif
+
 }

@@ -115,6 +115,14 @@ void PluginInfoStore::getPlugins(Vector<PluginInfo>& plugins)
         plugins.append(m_plugins[i].info);
 }
 
+void PluginInfoStore::getPluginPaths(Vector<String>& pluginPaths)
+{
+    loadPluginsIfNecessary();
+    
+    for (size_t i = 0; i < m_plugins.size(); ++i)
+        pluginPaths.append(m_plugins[i].path);
+}
+
 PluginInfoStore::Plugin PluginInfoStore::findPluginForMIMEType(const String& mimeType)
 {
     ASSERT(!mimeType.isNull());

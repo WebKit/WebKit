@@ -44,6 +44,11 @@ messages -> WebProcess {
     SetShouldPaintNativeControls(bool shouldPaintNativeControls)
 #endif
 
+#if !ENABLE(PLUGIN_PROCESS)
+    # Plug-ins.
+    GetSitesWithPluginData(Vector<WTF::String> pluginPaths, uint64_t callbackID)
+#endif
+
     ClearResourceCaches();
     ClearApplicationCache();
     

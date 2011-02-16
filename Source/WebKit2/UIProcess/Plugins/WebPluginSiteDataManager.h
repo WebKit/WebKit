@@ -23,32 +23,49 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKPluginSiteDataManager.h"
+#ifndef WebPluginSiteDataManagerh
+#define WebPluginSiteDataManager_h
 
-#include "WKAPICast.h"
-#include "WebPluginSiteDataManager.h"
-#include <WebCore/npapi.h>
+#include "APIObject.h"
+#include "Arguments.h"
+#include "GenericCallback.h"
+#include <wtf/HashMap.h>
+#include <wtf/PassRefPtr.h>
 
-using namespace WebKit;
-
-WKTypeID WKPluginSiteDataManagerGetTypeID()
-{
-    // FIXME: Implement.
-    return 0;
+namespace CoreIPC {
+class ArgumentDecoder;
+class Connection;
+class MessageID;
 }
 
-void WKPluginSiteDataManagerGetSitesWithData(WKPluginSiteDataManagerRef managerRef, void* context, WKPluginSiteDataManagerGetSitesWithDataFunction callback)
-{
-    toImpl(managerRef)->getSitesWithData(ArrayCallback::create(context, callback));
-}
+namespace WebKit {
 
-void WKPluginSiteDataManagerClearSiteData(WKPluginSiteDataManagerRef manager, WKArrayRef sites, WKClearSiteDataFlags flags, uint64_t maxAgeInSeconds)
-{
-    // FIXME: Implement.
-}
+class WebContext;
 
-void WKPluginSiteDataManagerClearAllSiteData(WKPluginSiteDataManagerRef manager)
-{
-    // FIXME: Implement.
-}
+typedef GenericCallback<WKArrayRef> ArrayCallback;
+
+class WebPluginSiteDataManager : public APIObject {
+public:
+    static const Type APIType = TypePluginSiteDataManager;
+
+    static PassRefPtr<WebPluginSiteDataManager> create(WebContext*);
+    virtual ~WebPluginSiteDataManager();
+
+    void invalidate();
+    void clearContext() { m_webContext = 0; }
+
+    void getSitesWithData(PassRefPtr<ArrayCallback>);
+    void didGetSitesWithPluginData(const Vector<String>& sites, uint64_t callbackID);
+
+private:
+    explicit WebPluginSiteDataManager(WebContext*);
+
+    virtual Type type() const { return APIType; }
+
+    WebContext* m_webContext;
+    HashMap<uint64_t, RefPtr<ArrayCallback> > m_arrayCallbacks;
+};
+
+} // namespace WebKit
+
+#endif // WebPluginSiteDataManager_h

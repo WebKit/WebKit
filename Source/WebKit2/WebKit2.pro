@@ -486,6 +486,7 @@ SOURCES += \
     UIProcess/Launcher/qt/ProcessLauncherQt.cpp \
     UIProcess/Launcher/qt/ThreadLauncherQt.cpp \
     UIProcess/Plugins/PluginInfoStore.cpp \
+    UIProcess/Plugins/WebPluginSiteDataManager.cpp \
     UIProcess/Plugins/qt/PluginInfoStoreQt.cpp \
     UIProcess/ResponsivenessTimer.cpp \
     UIProcess/TiledDrawingAreaProxy.cpp \

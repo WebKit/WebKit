@@ -143,6 +143,10 @@ private:
     void platformClearResourceCaches();
     void clearApplicationCache();
 
+#if !ENABLE(PLUGIN_PROCESS)
+    void getSitesWithPluginData(const Vector<String>& pluginPaths, uint64_t callbackID);
+#endif
+    
     void startMemorySampler(const SandboxExtension::Handle&, const String&, const double);
     void stopMemorySampler();
 

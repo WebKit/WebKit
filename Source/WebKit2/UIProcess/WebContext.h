@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -129,6 +129,7 @@ public:
 
     WebDatabaseManagerProxy* databaseManagerProxy() const { return m_databaseManagerProxy.get(); }
     WebGeolocationManagerProxy* geolocationManagerProxy() const { return m_geolocationManagerProxy.get(); }
+    WebPluginSiteDataManager* pluginSiteDataManager() const { return m_pluginSiteDataManager.get(); }
 
     struct Statistics {
         unsigned wkViewCount;
@@ -156,7 +157,10 @@ private:
     // Plugins
     void getPlugins(bool refresh, Vector<WebCore::PluginInfo>& plugins);
     void getPluginPath(const String& mimeType, const String& urlString, String& pluginPath);
-
+#if !ENABLE(PLUGIN_PROCESS)
+    void didGetSitesWithPluginData(const Vector<String>& sites, uint64_t callbackID);
+#endif
+        
     // Implemented in generated WebContextMessageReceiver.cpp
     void didReceiveWebContextMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     CoreIPC::SyncReplyMode didReceiveSyncWebContextMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
@@ -204,6 +208,7 @@ private:
 
     RefPtr<WebDatabaseManagerProxy> m_databaseManagerProxy;
     RefPtr<WebGeolocationManagerProxy> m_geolocationManagerProxy;
+    RefPtr<WebPluginSiteDataManager> m_pluginSiteDataManager;
 
 #if PLATFORM(WIN)
     bool m_shouldPaintNativeControls;

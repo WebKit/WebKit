@@ -2949,6 +2949,14 @@
 					RelativePath="..\UIProcess\Plugins\PluginInfoStore.h"
 					>
 				</File>
+				<File
+					RelativePath="..\UIProcess\Plugins\WebPluginSiteDataManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\Plugins\WebPluginSiteDataManager.h"
+					>
+				</File>
 				<Filter
 					Name="win"
 					>

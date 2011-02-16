@@ -41,8 +41,9 @@ public:
     void setAdditionalPluginsDirectories(const Vector<String>&);
 
     void refresh();
-    void getPlugins(Vector<WebCore::PluginInfo>& plugins);
-    
+    void getPlugins(Vector<WebCore::PluginInfo>&);
+    void getPluginPaths(Vector<String>&);
+
     // Represents a single plug-in.
     struct Plugin {
         String path;

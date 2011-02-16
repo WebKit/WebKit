@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebDatabaseManagerProxy.h"
 #include "WebGeolocationManagerProxy.h"
+#include "WebPluginSiteDataManager.h"
 #include "WebPageGroup.h"
 #include "WebMemorySampler.h"
 #include "WebProcessCreationParameters.h"
@@ -97,6 +98,7 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_memorySamplerInterval(1400.0)
     , m_databaseManagerProxy(WebDatabaseManagerProxy::create(this))
     , m_geolocationManagerProxy(WebGeolocationManagerProxy::create(this))
+    , m_pluginSiteDataManager(WebPluginSiteDataManager::create(this))
 #if PLATFORM(WIN)
     , m_shouldPaintNativeControls(true)
 #endif
@@ -119,6 +121,9 @@ WebContext::~WebContext()
 
     m_databaseManagerProxy->invalidate();
     m_databaseManagerProxy->clearContext();
+
+    m_pluginSiteDataManager->invalidate();
+    m_pluginSiteDataManager->clearContext();
 
 #ifndef NDEBUG
     webContextCounter.decrement();
@@ -245,6 +250,7 @@ void WebContext::processDidClose(WebProcessProxy* process)
 
     m_databaseManagerProxy->invalidate();
     m_geolocationManagerProxy->invalidate();
+    m_pluginSiteDataManager->invalidate();
 
     m_process = 0;
 }
@@ -438,6 +444,13 @@ void WebContext::getPluginPath(const String& mimeType, const String& urlString, 
 
     pluginPath = plugin.path;
 }
+
+#if !ENABLE(PLUGIN_PROCESS)
+void WebContext::didGetSitesWithPluginData(const Vector<String>& sites, uint64_t callbackID)
+{
+    m_pluginSiteDataManager->didGetSitesWithPluginData(sites, callbackID);
+}
+#endif
 
 uint64_t WebContext::createDownloadProxy()
 {

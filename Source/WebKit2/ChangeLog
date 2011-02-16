@@ -1,5 +1,71 @@
 2011-02-15  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Jon Honeycutt.
+
+        Implement WKPluginSiteDataManagerGetSitesWithData
+        https://bugs.webkit.org/show_bug.cgi?id=54510
+        <rdar://problem/8689312>
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetPluginSiteDataManager):
+        Call WebContext::pluginSiteDataManager.
+        
+        * UIProcess/API/C/WKPluginSiteDataManager.cpp:
+        (WKPluginSiteDataManagerGetSitesWithData):
+        Call WebPluginSiteDataManager::getSitesWithData.
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::getPluginPaths):
+        * UIProcess/Plugins/PluginInfoStore.h:
+        Populate the paths argument with the paths of all plug-ins.
+        
+        * UIProcess/Plugins/WebPluginSiteDataManager.cpp: Added.
+        (WebKit::WebPluginSiteDataManager::invalidate):
+        Invalidate the callbacks map.
+
+        (WebKit::WebPluginSiteDataManager::getSitesWithData):
+        Ask the plug-in info store for all plug-in paths and send a
+        GetSitesWithPluginData message to the web process.
+
+        (WebKit::WebPluginSiteDataManager::didGetSitesWithPluginData):
+        Call the callback.
+
+        * UIProcess/Plugins/WebPluginSiteDataManager.h: Added.
+        (WebKit::WebPluginSiteDataManager::clearContext):
+        Clear the context.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        Initialize m_pluginSiteDataManager.
+
+        (WebKit::WebContext::~WebContext):
+        Invalidate the plug-in site data manager and clear its context.
+
+        (WebKit::WebContext::processDidClose):
+        Invalidate the plug-in site data manager.
+        
+        (WebKit::WebContext::didGetSitesWithPluginData):
+        Call through to the plug-in site data manager.
+
+        * UIProcess/WebContext.h:
+        * UIProcess/WebContext.messages.in:
+        Add GetSitesWithPluginData message.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        Add new files.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::getSitesWithPluginData):
+        Iterate over all plug-in paths and get the sites from all plug-ins.
+
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        Add DidGetSitesWithPluginData.
+
+2011-02-15  Anders Carlsson  <andersca@apple.com>
+
         Fix Qt build.
 
         * WebKit2.pro:

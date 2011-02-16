@@ -67,6 +67,10 @@
 #include <unistd.h>
 #endif
 
+#if !ENABLE(PLUGIN_PROCESS)
+#include "NetscapePluginModule.h"
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -634,6 +638,28 @@ void WebProcess::clearApplicationCache()
     cacheStorage().empty();
 #endif
 }
+
+#if !ENABLE(PLUGIN_PROCESS)
+void WebProcess::getSitesWithPluginData(const Vector<String>& pluginPaths, uint64_t callbackID)
+{
+    HashSet<String> sitesSet;
+
+    for (size_t i = 0; i < pluginPaths.size(); ++i) {
+        RefPtr<NetscapePluginModule> netscapePluginModule = NetscapePluginModule::getOrCreate(pluginPaths[i]);
+        if (!netscapePluginModule)
+            continue;
+
+        Vector<String> sites = netscapePluginModule->sitesWithData();
+        for (size_t i = 0; i < sites.size(); ++i)
+            sitesSet.add(sites[i]);
+    }
+
+    Vector<String> sites;
+    copyToVector(sitesSet, sites);
+
+    m_connection->send(Messages::WebContext::DidGetSitesWithPluginData(sites, callbackID), 0);
+}
+#endif
 
 void WebProcess::downloadRequest(uint64_t downloadID, uint64_t initiatingPageID, const ResourceRequest& request)
 {
