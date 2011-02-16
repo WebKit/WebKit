@@ -2469,7 +2469,8 @@ BUGWEBGL WIN LINUX DEBUG : fast/canvas/webgl/tex-image-with-format-and-type.html
 BUGWEBGL WIN LINUX DEBUG : fast/canvas/webgl/texture-transparent-pixels-initialized.html = TEXT PASS TIMEOUT
 
 // Failing after r75175
-BUGWEBGL : fast/canvas/webgl/glsl-conformance.html = TIMEOUT CRASH
+BUGWEBGL WIN : fast/canvas/webgl/glsl-conformance.html = TIMEOUT CRASH
+BUGWEBGL MAC LINUX : fast/canvas/webgl/glsl-conformance.html = CRASH
 
 BUGWEBGL GPU WIN DEBUG SLOW : fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html = PASS
 BUGWEBGL GPU WIN DEBUG SLOW : fast/canvas/webgl/index-validation-with-resized-buffer.html = PASS
@@ -2661,7 +2662,7 @@ BUGCR62515 : printing/page-format-data-display-none.html = TEXT
 
 BUGCR60393 MAC : fast/selectors/001.html = PASS TIMEOUT
 
-BUGCR61739 MAC WIN DEBUG SLOW : animations/suspend-resume-animation-events.html = CRASH PASS
+BUGCR61739 WIN LINUX DEBUG : animations/suspend-resume-animation-events.html = CRASH TEXT PASS
 
 BUGWK49477 WIN LINUX : fast/canvas/canvas-arc-360-winding.html = TEXT
 
@@ -2881,7 +2882,7 @@ BUGCR67463 MAC : editing/selection/caret-mode-paragraph-keys-navigation.html = T
 BUGCR68436 LINUX MAC DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TIMEOUT
 BUGCR68436 WIN DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TEXT TIMEOUT
 BUGCR68576 LINUX DEBUG : svg/batik/paints/patternPreserveAspectRatioA.svg = PASS TIMEOUT CRASH
-BUGCR68599 LINUX WIN : http/tests/security/mixedContent/insecure-css-in-main-frame.html = PASS TEXT
+BUGCR68599 : http/tests/security/mixedContent/insecure-css-in-main-frame.html = PASS TEXT
 
 // Disabled scrollbars are rendered differently
 BUGWK52414 MAC : fast/body-propagation/overflow/001-xhtml.xhtml = IMAGE
@@ -2928,7 +2929,9 @@ BUG_ABARTH : svg/text/caret-in-svg-text.xhtml = TEXT
 // V8 test failures introduced by r75408
 BUGCR69181 : fast/js/exception-codegen-crash.html = FAIL
 BUGCR69181 : fast/js/kde/parse.html = FAIL
-BUGCR69181 SLOW : fast/js/large-expressions.html = TEXT
+BUGCR69181 WIN LINUX DEBUG : fast/js/large-expressions.html = TEXT TIMEOUT
+BUGCR69181 WIN LINUX RELEASE : fast/js/large-expressions.html = TEXT
+BUGCR69181 MAC : fast/js/large-expressions.html = TEXT
 
 // Flaky on Linux since r75250
 BUGCR69300 LINUX : svg/batik/text/textOnPath.svg = IMAGE PASS
@@ -3459,4 +3462,8 @@ BUGPFELDMAN SKIP : http/tests/inspector-enabled/dom-storage-open.html = TEXT
 
 BUGWK54387 : fast/js/kde/math.html = TEXT
 
-BUGCR73080 LINUX DEBUG : fast/forms/form-attribute-elements-order.html = TIMEOUT PASS
+// Flaky
+BUGCR73080 LINUX DEBUG : fast/forms/form-attribute-elements-order.html = PASS TIMEOUT
+BUGCR73091 WIN LINUX : animations/play-state-suspend.html = PASS TEXT
+BUGCR73092 WIN : fast/dom/gc-11.html = PASS TEXT
+BUGCR73094 LINUX : http/tests/websocket/tests/send-after-close-on-unload.html = PASS TIMEOUT
