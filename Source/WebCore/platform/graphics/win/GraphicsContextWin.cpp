@@ -197,4 +197,13 @@ void GraphicsContextPlatformPrivate::concatCTM(const AffineTransform& transform)
     ModifyWorldTransform(m_hdc, &xform, MWT_LEFTMULTIPLY);
 }
 
+void GraphicsContextPlatformPrivate::setCTM(const AffineTransform& transform)
+{
+    if (!m_hdc)
+        return;
+
+    XFORM xform = transform.toTransformationMatrix();
+    SetWorldTransform(m_hdc, &xform);
+}
+
 }

@@ -65,6 +65,11 @@
 
 #endif
 
+// Undocumented CGContextSetCTM function, available at least since 10.4.
+extern "C" {
+    CG_EXTERN void CGContextSetCTM(CGContextRef, CGAffineTransform);
+};
+
 using namespace std;
 
 namespace WebCore {
@@ -1082,6 +1087,15 @@ void GraphicsContext::concatCTM(const AffineTransform& transform)
         return;
     CGContextConcatCTM(platformContext(), transform);
     m_data->concatCTM(transform);
+    m_data->m_userToDeviceTransformKnownToBeIdentity = false;
+}
+
+void GraphicsContext::setCTM(const AffineTransform& transform)
+{
+    if (paintingDisabled())
+        return;
+    CGContextSetCTM(platformContext(), transform);
+    m_data->setCTM(transform);
     m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 

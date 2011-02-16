@@ -519,6 +519,29 @@ void SVGInlineTextBox::paintDecoration(GraphicsContext* context, ETextDecoration
     }
 }
 
+static inline void normalizeTransform(AffineTransform& transform)
+{
+    // Obtain consistent numerical results for the AffineTransform on both 32/64bit platforms.
+    // Tested with SnowLeopard on Core Duo vs. Core 2 Duo.
+    static const float s_floatEpsilon = std::numeric_limits<float>::epsilon();
+
+    if (fabs(transform.a() - 1) <= s_floatEpsilon)
+        transform.setA(1);
+    else if (fabs(transform.a() + 1) <= s_floatEpsilon)
+        transform.setA(-1);
+
+    if (fabs(transform.d() - 1) <= s_floatEpsilon)
+        transform.setD(1);
+    else if (fabs(transform.d() + 1) <= s_floatEpsilon)
+        transform.setD(-1);
+
+    if (fabs(transform.e()) <= s_floatEpsilon)
+        transform.setE(0);
+
+    if (fabs(transform.f()) <= s_floatEpsilon)
+        transform.setF(0);
+}
+
 void SVGInlineTextBox::paintDecorationWithStyle(GraphicsContext* context, ETextDecoration decoration, const SVGTextFragment& fragment, RenderObject* decorationRenderer)
 {
     ASSERT(!m_paintingResource);
@@ -546,7 +569,12 @@ void SVGInlineTextBox::paintDecorationWithStyle(GraphicsContext* context, ETextD
     if (scalingFactor != 1) {
         width *= scalingFactor;
         decorationOrigin.scale(scalingFactor, scalingFactor);
-        context->scale(FloatSize(1 / scalingFactor, 1 / scalingFactor));
+
+        AffineTransform newTransform = context->getCTM();
+        newTransform.scale(1 / scalingFactor);
+        normalizeTransform(newTransform);
+
+        context->setCTM(newTransform);
     }
 
     decorationOrigin.move(0, -scaledFontMetrics.floatAscent() + positionOffsetForDecoration(decoration, scaledFontMetrics, thickness));
@@ -589,13 +617,21 @@ void SVGInlineTextBox::paintTextWithShadows(GraphicsContext* context, RenderStyl
         if (shadow)
             extraOffset = applyShadowToGraphicsContext(context, shadow, shadowRect, false /* stroked */, true /* opaque */, true /* horizontal */);
 
-        if (scalingFactor != 1)
-            context->scale(FloatSize(1 / scalingFactor, 1 / scalingFactor));
+        AffineTransform originalTransform;
+        if (scalingFactor != 1) {
+            originalTransform = context->getCTM();
+
+            AffineTransform newTransform = originalTransform;
+            newTransform.scale(1 / scalingFactor);
+            normalizeTransform(newTransform);
+
+            context->setCTM(newTransform);
+        }
 
         scaledFont.drawText(context, textRun, textOrigin + extraOffset, startPosition, endPosition);
 
         if (scalingFactor != 1)
-            context->scale(FloatSize(scalingFactor, scalingFactor));
+            context->setCTM(originalTransform);
 
         restoreGraphicsContextAfterTextPainting(context, textRun);
 

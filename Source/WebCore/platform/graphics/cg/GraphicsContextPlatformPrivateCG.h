@@ -60,6 +60,7 @@ public:
     void rotate(float) {}
     void translate(float, float) {}
     void concatCTM(const AffineTransform&) {}
+    void setCTM(const AffineTransform&) {}
     void beginTransparencyLayer() {}
     void endTransparencyLayer() {}
 #endif
@@ -75,6 +76,7 @@ public:
     void rotate(float);
     void translate(float, float);
     void concatCTM(const AffineTransform&);
+    void setCTM(const AffineTransform&);
     void beginTransparencyLayer() { m_transparencyCount++; }
     void endTransparencyLayer() { m_transparencyCount--; }
 

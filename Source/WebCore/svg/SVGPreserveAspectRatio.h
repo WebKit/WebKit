@@ -62,9 +62,9 @@ public:
 
     void transformRect(FloatRect& destRect, FloatRect& srcRect);
 
-    AffineTransform getCTM(double logicX, double logicY,
-                           double logicWidth, double logicHeight,
-                           double physWidth, double physHeight) const;
+    AffineTransform getCTM(float logicX, float logicY,
+                           float logicWidth, float logicHeight,
+                           float physWidth, float physHeight) const;
 
     template<class Consumer>
     static bool parsePreserveAspectRatio(Consumer* consumer, const String& value, bool validate = true)

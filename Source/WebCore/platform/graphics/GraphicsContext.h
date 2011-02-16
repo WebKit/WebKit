@@ -404,6 +404,7 @@ namespace WebCore {
         void setURLForRect(const KURL&, const IntRect&);
 
         void concatCTM(const AffineTransform&);
+        void setCTM(const AffineTransform&);
         AffineTransform getCTM() const;
 
 #if OS(WINCE) && !PLATFORM(QT)

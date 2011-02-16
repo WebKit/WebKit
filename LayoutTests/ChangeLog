@@ -1,3 +1,125 @@
+2011-02-16  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Pixel tests differences on 10.6.6 32bit vs. 64bit
+        https://bugs.webkit.org/show_bug.cgi?id=54474
+
+        Update SnowLeopard SVG pixel test baseline, generated on a 32bit machine, where it passes with tolerance 0.
+        This is the first chunk of several commits, as one commit is too huge for SVN.
+
+        It should pass on modern 64bit machines as well, using tolerance 0.01.
+
+        * platform/mac/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-03-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-03-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-08-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-08-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-26-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-26-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-30-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-30-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-33-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-33-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-34-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-34-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-36-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-36-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-40-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-40-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-44-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-44-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-82-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-82-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-84-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-84-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-color-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-color-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-example-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-example-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-morph-01-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-morph-01-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-offset-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-offset-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/interact-order-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/interact-order-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/interact-order-02-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/interact-order-02-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/linking-a-05-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/linking-a-05-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/metadata-example-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/metadata-example-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/painting-marker-03-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-02-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-02-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-03-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-03-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-04-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-04-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-05-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-05-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-06-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-06-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-07-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-07-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-08-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-08-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-15-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-15-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-07-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-07-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-11-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-11-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-13-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-13-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/render-groups-03-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/render-groups-03-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/shapes-circle-01-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/shapes-circle-01-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/shapes-circle-02-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/shapes-circle-02-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/shapes-ellipse-01-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/shapes-ellipse-01-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/struct-frag-02-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/struct-frag-02-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/struct-frag-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-frag-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-image-02-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/struct-image-02-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-path-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/text-path-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/types-basicDOM-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/types-basicDOM-01-b-expected.png:
+        * platform/mac/svg/batik/masking/maskRegions-expected.txt:
+        * platform/mac/svg/custom/circular-marker-reference-1-expected.txt:
+        * platform/mac/svg/custom/circular-marker-reference-2-expected.txt:
+        * platform/mac/svg/custom/circular-marker-reference-3-expected.txt:
+        * platform/mac/svg/custom/circular-marker-reference-4-expected.txt:
+        * platform/mac/svg/custom/non-circular-marker-reference-expected.txt:
+        * platform/mac/svg/custom/non-scaling-stroke-markers-expected.txt:
+        * platform/mac/svg/custom/stroked-pattern-expected.txt:
+        * platform/mac/svg/custom/text-rotated-gradient-expected.txt:
+        * platform/mac/svg/custom/use-detach-expected.txt:
+        * platform/mac/svg/hixie/links/001-expected.txt:
+        * platform/mac/svg/hixie/viewbox/preserveAspectRatio/001-expected.txt:
+        * platform/mac/svg/text/small-fonts-2-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-mask-with-percentages-expected.txt:
+
 2011-02-16  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Adam Roben.

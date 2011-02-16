@@ -206,9 +206,14 @@ public:
         m_transform.rotate(rad2deg(radians));
     }
 
-    void  concatCTM(const AffineTransform& transform)
+    void concatCTM(const AffineTransform& transform)
     {
         m_transform *= transform;
+    }
+
+    void setCTM(const AffineTransform& transform)
+    {
+        m_transform = transform;
     }
 
     IntRect mapRect(const IntRect& rect) const
@@ -1122,6 +1127,11 @@ void GraphicsContext::endTransparencyLayer()
 void GraphicsContext::concatCTM(const AffineTransform& transform)
 {
     m_data->concatCTM(transform);
+}
+
+void GraphicsContext::setCTM(const AffineTransform& transform)
+{
+    m_data->setCTM(transform);
 }
 
 AffineTransform& GraphicsContext::affineTransform()

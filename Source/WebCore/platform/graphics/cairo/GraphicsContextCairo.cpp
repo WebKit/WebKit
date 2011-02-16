@@ -838,6 +838,17 @@ void GraphicsContext::concatCTM(const AffineTransform& transform)
     m_data->concatCTM(transform);
 }
 
+void GraphicsContext::setCTM(const AffineTransform& transform)
+{
+    if (paintingDisabled())
+        return;
+
+    cairo_t* cr = m_data->cr;
+    const cairo_matrix_t matrix = cairo_matrix_t(transform);
+    cairo_set_matrix(cr, &matrix);
+    m_data->setCTM(transform);
+}
+
 void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness)
 {
     if (paintingDisabled())

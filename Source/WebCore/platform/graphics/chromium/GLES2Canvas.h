@@ -68,6 +68,7 @@ public:
     void rotate(float angleInRadians);
     void scale(const FloatSize&);
     void concatCTM(const AffineTransform&);
+    void setCTM(const AffineTransform&);
     void clipPath(const Path&);
     void clipOut(const Path&);
 

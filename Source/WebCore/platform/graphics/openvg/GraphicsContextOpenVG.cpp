@@ -458,6 +458,14 @@ void GraphicsContext::concatCTM(const AffineTransform& transformation)
     m_data->concatTransformation(transformation);
 }
 
+void GraphicsContext::setCTM(const AffineTransform& transformation)
+{
+    if (paintingDisabled())
+        return;
+
+    m_data->setTransformation(transformation);
+}
+
 void GraphicsContext::setURLForRect(const KURL& link, const IntRect& destRect)
 {
     notImplemented();

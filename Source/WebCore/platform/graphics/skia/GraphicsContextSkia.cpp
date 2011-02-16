@@ -436,6 +436,17 @@ void GraphicsContext::concatCTM(const AffineTransform& affine)
     platformContext()->canvas()->concat(affine);
 }
 
+void GraphicsContext::setCTM(const AffineTransform& affine)
+{
+    if (paintingDisabled())
+        return;
+
+    if (platformContext()->useGPU())
+        platformContext()->gpuCanvas()->setCTM(affine);
+
+    platformContext()->canvas()->setMatrix(affine);
+}
+
 void GraphicsContext::drawConvexPolygon(size_t numPoints,
                                         const FloatPoint* points,
                                         bool shouldAntialias)

@@ -76,7 +76,7 @@ public:
     void rotate(float);
     void translate(float, float);
     void concatCTM(const AffineTransform&);
-    void concatCTM(const TransformationMatrix&);
+    void setCTM(const AffineTransform&);
     void beginTransparencyLayer() { m_transparencyCount++; }
     void endTransparencyLayer() { m_transparencyCount--; }
     void syncContext(PlatformGraphicsContext* cr);
@@ -91,7 +91,7 @@ public:
     void rotate(float) {}
     void translate(float, float) {}
     void concatCTM(const AffineTransform&) {}
-    void concatCTM(const TransformationMatrix&) {}
+    void setCTM(const AffineTransform&) {}
     void beginTransparencyLayer() {}
     void endTransparencyLayer() {}
     void syncContext(PlatformGraphicsContext* cr) {}

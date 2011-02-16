@@ -443,6 +443,14 @@ void GraphicsContext::concatCTM(const AffineTransform& transform)
     notImplemented();
 }
 
+void GraphicsContext::setCTM(const AffineTransform& transform)
+{
+    if (paintingDisabled())
+        return;
+
+    notImplemented();
+}
+
 void GraphicsContext::setPlatformShouldAntialias(bool enable)
 {
     if (paintingDisabled())

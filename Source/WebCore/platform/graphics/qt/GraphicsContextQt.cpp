@@ -1212,6 +1212,14 @@ void GraphicsContext::concatCTM(const AffineTransform& transform)
     m_data->p()->setWorldTransform(transform, true);
 }
 
+void GraphicsContext::setCTM(const AffineTransform& transform)
+{
+    if (paintingDisabled())
+        return;
+
+    m_data->p()->setWorldTransform(transform);
+}
+
 void GraphicsContext::setURLForRect(const KURL&, const IntRect&)
 {
     notImplemented();

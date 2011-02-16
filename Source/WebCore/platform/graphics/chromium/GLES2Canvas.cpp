@@ -263,6 +263,11 @@ void GLES2Canvas::concatCTM(const AffineTransform& affine)
     m_state->m_ctm *= affine;
 }
 
+void GLES2Canvas::setCTM(const AffineTransform& affine)
+{
+    m_state->m_ctm = affine;
+}
+
 void GLES2Canvas::clipPath(const Path& path)
 {
     bindFramebuffer();

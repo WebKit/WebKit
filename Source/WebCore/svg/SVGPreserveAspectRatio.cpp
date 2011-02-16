@@ -247,15 +247,14 @@ void SVGPreserveAspectRatio::transformRect(FloatRect& destRect, FloatRect& srcRe
     }
 }
 
-// FIXME: We should use floats here, like everywhere else!
-AffineTransform SVGPreserveAspectRatio::getCTM(double logicX, double logicY, double logicWidth, double logicHeight, double physWidth, double physHeight) const
+AffineTransform SVGPreserveAspectRatio::getCTM(float logicX, float logicY, float logicWidth, float logicHeight, float physWidth, float physHeight) const
 {
     AffineTransform transform;
     if (m_align == SVG_PRESERVEASPECTRATIO_UNKNOWN)
         return transform;
 
-    double logicalRatio = logicWidth / logicHeight;
-    double physRatio = physWidth / physHeight;
+    float logicalRatio = logicWidth / logicHeight;
+    float physRatio = physWidth / physHeight;
 
     if (m_align == SVG_PRESERVEASPECTRATIO_NONE) {
         transform.scaleNonUniform(physWidth / logicWidth, physHeight / logicHeight);
