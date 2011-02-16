@@ -68,7 +68,9 @@
 #include "Settings.h"
 #include "npruntime_impl.h"
 #include "qwebpage_p.h"
+#if USE(JSC)
 #include "runtime_root.h"
+#endif
 
 #include <QApplication>
 #include <QDesktopWidget>
@@ -88,7 +90,9 @@
 #include <runtime/JSValue.h>
 
 using JSC::ExecState;
+#if USE(JSC)
 using JSC::Interpreter;
+#endif
 using JSC::JSLock;
 using JSC::JSObject;
 using JSC::UString;

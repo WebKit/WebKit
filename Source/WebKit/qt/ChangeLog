@@ -1,3 +1,11 @@
+2011-02-15  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt][V8] Buildfix. Add missing USE(JSC) guard.
+
+        * Api/qwebelement.cpp:
+
 2011-02-15  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Darin Fisher.

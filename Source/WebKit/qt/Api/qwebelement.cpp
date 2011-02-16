@@ -49,7 +49,9 @@
 #include "StaticNodeList.h"
 #include "qwebframe.h"
 #include "qwebframe_p.h"
+#if USE(JSC)
 #include "runtime_root.h"
+#endif
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 

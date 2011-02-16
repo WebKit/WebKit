@@ -1,3 +1,11 @@
+2011-02-15  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt][V8] Buildfix. Add missing USE(JSC) guard.
+
+        * plugins/qt/PluginViewQt.cpp:
+
 2011-02-15  Ami Fischman  <fischman@chromium.org>
 
         Reviewed by David Levin.
