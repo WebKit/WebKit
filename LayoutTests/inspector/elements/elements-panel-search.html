@@ -25,26 +25,26 @@ function test()
             if (node.nodeType === Node.TEXT_NODE)
                 searchResults.push(node.nodeValue);
             else
-                InspectorBackend.getOuterHTML(node.id, addSearchResult);
+                DOMAgent.getOuterHTML(node.id, addSearchResult);
         }
     }
 
     // Plain text.
-    InspectorBackend.performSearch("Foo" + "Bar", true);
+    DOMAgent.performSearch("Foo" + "Bar", true);
     // Partial text.
-    InspectorBackend.performSearch("oo" + "Ba", true);
+    DOMAgent.performSearch("oo" + "Ba", true);
     // Start tag.
-    InspectorBackend.performSearch("<inpu" + "t", true);
+    DOMAgent.performSearch("<inpu" + "t", true);
     // Partial tag.
-    InspectorBackend.performSearch("npu" + "t", true);
+    DOMAgent.performSearch("npu" + "t", true);
     // Exact attribute name.
-    InspectorBackend.performSearch("valu" + "e", true);
+    DOMAgent.performSearch("valu" + "e", true);
     // Exact attribute val<>ue.
-    InspectorBackend.performSearch("In" + "putVa" + "l", true);
+    DOMAgent.performSearch("In" + "putVa" + "l", true);
     // Partial attribute val<>ue.
-    InspectorBackend.performSearch("n" + "putVa" + "l", true);
+    DOMAgent.performSearch("n" + "putVa" + "l", true);
     // Terminator.
-    InspectorBackend.performSearch("ter" + "mi" + "nator", true);
+    DOMAgent.performSearch("ter" + "mi" + "nator", true);
 }
 </script>
 </head>

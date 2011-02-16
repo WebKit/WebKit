@@ -57,7 +57,7 @@ WebInspector.ElementsPanel = function()
         this.panel.updateEventListeners();
 
         if (this._focusedDOMNode) {
-            InspectorBackend.addInspectedNode(this._focusedDOMNode.id);
+            DOMAgent.addInspectedNode(this._focusedDOMNode.id);
             WebInspector.extensionServer.notifyObjectSelected(this.panel.name);
         }
     };
@@ -211,7 +211,7 @@ WebInspector.ElementsPanel.prototype = {
         }
 
         if (this._selectedPathOnReset)
-            InspectorBackend.pushNodeByPathToFrontend(this._selectedPathOnReset, selectLastSelectedNode.bind(this));
+            DOMAgent.pushNodeByPathToFrontend(this._selectedPathOnReset, selectLastSelectedNode.bind(this));
         else
             selectNode.call(this);
         delete this._selectedPathOnReset;
@@ -226,7 +226,7 @@ WebInspector.ElementsPanel.prototype = {
 
         this._currentSearchResultIndex = 0;
         this._searchResults = [];
-        InspectorBackend.searchCanceled();
+        DOMAgent.searchCanceled();
     },
 
     performSearch: function(query)
@@ -242,7 +242,7 @@ WebInspector.ElementsPanel.prototype = {
         this._matchesCountUpdateTimeout = null;
         this._searchQuery = query;
 
-        InspectorBackend.performSearch(whitespaceTrimmedQuery, false);
+        DOMAgent.performSearch(whitespaceTrimmedQuery, false);
     },
 
     populateHrefContextMenu: function(contextMenu, event, anchorElement)
@@ -1023,7 +1023,7 @@ WebInspector.ElementsPanel.prototype = {
             return;
         event.clipboardData.clearData();
         event.preventDefault();
-        InspectorBackend.copyNode(this.focusedDOMNode.id);
+        DOMAgent.copyNode(this.focusedDOMNode.id);
     },
 
     rightSidebarResizerDragStart: function(event)
@@ -1070,7 +1070,7 @@ WebInspector.ElementsPanel.prototype = {
 
     setSearchingForNode: function(enabled)
     {
-        InspectorBackend.setSearchingForNode(enabled, this._setSearchingForNode.bind(this));
+        InspectorAgent.setSearchingForNode(enabled, this._setSearchingForNode.bind(this));
     },
 
     toggleSearchingForNode: function()

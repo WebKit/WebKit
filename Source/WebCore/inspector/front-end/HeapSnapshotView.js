@@ -1010,7 +1010,7 @@ WebInspector.HeapSnapshotProfileType.prototype = {
 
     buttonClicked: function()
     {
-        InspectorBackend.takeHeapSnapshot(false);
+        ProfilerAgent.takeHeapSnapshot(false);
     },
 
     get welcomeMessage()

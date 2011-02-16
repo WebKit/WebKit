@@ -11,11 +11,11 @@ function test()
         InspectorTest.addResult(String.sprintf.apply(this, arguments));
     }
 
-    InspectorBackend.setMonitoringXHREnabled(1);
-    InspectorBackend.setMonitoringXHREnabled();
-    InspectorBackend.setMonitoringXHREnabled(true, "not a function");
-    InspectorBackend.setMonitoringXHREnabled(true, undefined);
-    InspectorBackend.setMonitoringXHREnabled(false, undefined);
+    ConsoleAgent.setMonitoringXHREnabled(1);
+    ConsoleAgent.setMonitoringXHREnabled();
+    ConsoleAgent.setMonitoringXHREnabled(true, "not a function");
+    ConsoleAgent.setMonitoringXHREnabled(true, undefined);
+    ConsoleAgent.setMonitoringXHREnabled(false, undefined);
     InspectorBackend.dispatch('{"type": "event", "domain": "wrongDomain", "event": "something-strange", "data": {}}');
     InspectorBackend.dispatch('{"type": "event", "domain": "Inspector", "event": "something-strange", "data": {}}');
 

@@ -362,7 +362,7 @@ WebInspector.ScriptsPanel.prototype = {
                     this.sidebarPanes.scopechain.update(selectedCallFrame);
             }
         }
-        InspectorBackend.evaluateOnCallFrame(selectedCallFrame.id, code, objectGroup, includeCommandLineAPI, updatingCallbackWrapper.bind(this));
+        DebuggerAgent.evaluateOnCallFrame(selectedCallFrame.id, code, objectGroup, includeCommandLineAPI, updatingCallbackWrapper.bind(this));
     },
 
     _debuggerPaused: function(event)
@@ -747,7 +747,7 @@ WebInspector.ScriptsPanel.prototype = {
             this._pauseOnExceptionButton.state = pauseOnExceptionsState;
             WebInspector.settings.pauseOnExceptionState = pauseOnExceptionsState;
         }
-        InspectorBackend.setPauseOnExceptionsState(pauseOnExceptionsState, callback.bind(this));
+        DebuggerAgent.setPauseOnExceptionsState(pauseOnExceptionsState, callback.bind(this));
     },
 
     _updateDebuggerButtons: function()
@@ -865,11 +865,11 @@ WebInspector.ScriptsPanel.prototype = {
         if (this._paused) {
             this._paused = false;
             this._waitingToPause = false;
-            InspectorBackend.resume();
+            DebuggerAgent.resume();
         } else {
             this._stepping = false;
             this._waitingToPause = true;
-            InspectorBackend.pause();
+            DebuggerAgent.pause();
         }
 
         this._clearInterface();
@@ -882,7 +882,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         this._clearInterface();
 
-        InspectorBackend.stepOver();
+        DebuggerAgent.stepOver();
     },
 
     _stepIntoClicked: function()
@@ -892,7 +892,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         this._clearInterface();
 
-        InspectorBackend.stepInto();
+        DebuggerAgent.stepInto();
     },
 
     _stepOutClicked: function()
@@ -902,18 +902,18 @@ WebInspector.ScriptsPanel.prototype = {
 
         this._clearInterface();
 
-        InspectorBackend.stepOut();
+        DebuggerAgent.stepOut();
     },
 
     toggleBreakpointsClicked: function()
     {
         this.toggleBreakpointsButton.toggled = !this.toggleBreakpointsButton.toggled;
         if (this.toggleBreakpointsButton.toggled) {
-            InspectorBackend.activateBreakpoints();
+            DebuggerAgent.activateBreakpoints();
             this.toggleBreakpointsButton.title = WebInspector.UIString("Deactivate all breakpoints.");
             document.getElementById("main-panels").removeStyleClass("breakpoints-deactivated");
         } else {
-            InspectorBackend.deactivateBreakpoints();
+            DebuggerAgent.deactivateBreakpoints();
             this.toggleBreakpointsButton.title = WebInspector.UIString("Activate all breakpoints.");
             document.getElementById("main-panels").addStyleClass("breakpoints-deactivated");
         }

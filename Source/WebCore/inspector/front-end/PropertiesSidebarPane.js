@@ -59,7 +59,7 @@ WebInspector.PropertiesSidebarPane.prototype = {
                 body.appendChild(section.element);
             }
         }
-        InspectorBackend.getNodePrototypes(node.id, callback.bind(this));
+        DOMAgent.getNodePrototypes(node.id, callback.bind(this));
     }
 }
 

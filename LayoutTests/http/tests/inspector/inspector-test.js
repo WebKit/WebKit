@@ -5,7 +5,7 @@ var resultsSynchronized = false;
 
 InspectorTest.completeTest = function()
 {
-    InspectorBackend.didEvaluateForTestInFrontend(InspectorTest.completeTestCallId, "");
+    InspectorAgent.didEvaluateForTestInFrontend(InspectorTest.completeTestCallId, "");
 }
 
 InspectorTest.evaluateInConsole = function(code, callback)
@@ -40,7 +40,7 @@ InspectorTest.evaluateInPage = function(code, callback)
         if (callback)
             callback(WebInspector.RemoteObject.fromPayload(result));
     }
-    InspectorBackend.evaluate(code, "console", false, mycallback);
+    RuntimeAgent.evaluate(code, "console", false, mycallback);
 }
 
 InspectorTest.evaluateInPageWithTimeout = function(code, callback)
@@ -109,7 +109,7 @@ InspectorTest.reloadPage = function(callback)
 
     if (WebInspector.panels.network)
         WebInspector.panels.network._reset();
-    InspectorBackend.reloadPage(false);
+    InspectorAgent.reloadPage(false);
 }
 
 InspectorTest.pageReloaded = function()

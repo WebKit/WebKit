@@ -94,7 +94,7 @@ WebInspector.CPUProfileView = function(profile)
         self._updatePercentButton();
     }
 
-    InspectorBackend.getProfile(this.profile.typeId, this.profile.uid, profileCallback);
+    ProfilerAgent.getProfile(this.profile.typeId, this.profile.uid, profileCallback);
 }
 
 WebInspector.CPUProfileView.prototype = {
@@ -593,9 +593,9 @@ WebInspector.CPUProfileType.prototype = {
         this._recording = !this._recording;
 
         if (this._recording)
-            InspectorBackend.startProfiling();
+            InspectorAgent.startProfiling();
         else
-            InspectorBackend.stopProfiling();
+            InspectorAgent.stopProfiling();
     },
 
     get welcomeMessage()

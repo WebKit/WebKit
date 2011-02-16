@@ -360,9 +360,9 @@ var WebInspector = {
 
         this._highlightedDOMNodeId = nodeId;
         if (nodeId)
-            InspectorBackend.highlightDOMNode(nodeId);
+            InspectorAgent.highlightDOMNode(nodeId);
         else
-            InspectorBackend.hideDOMNodeHighlight();
+            InspectorAgent.hideDOMNodeHighlight();
     },
 
     highlightDOMNodeForTwoSeconds: function(nodeId)
@@ -550,23 +550,23 @@ WebInspector.doLoadedDone = function()
         if (!WebInspector.currentPanel)
             WebInspector.showPanel(WebInspector.settings.lastActivePanel);
     }
-    InspectorBackend.populateScriptObjects(onPopulateScriptObjects);
+    InspectorAgent.populateScriptObjects(onPopulateScriptObjects);
 
     if (Preferences.debuggerAlwaysEnabled || WebInspector.settings.debuggerEnabled)
         this.debuggerModel.enableDebugger();
     if (Preferences.profilerAlwaysEnabled || WebInspector.settings.profilerEnabled)
-        InspectorBackend.enableProfiler();
+        InspectorAgent.enableProfiler();
     if (WebInspector.settings.monitoringXHREnabled)
-        InspectorBackend.setMonitoringXHREnabled(true);
+        ConsoleAgent.setMonitoringXHREnabled(true);
 
-    InspectorBackend.setConsoleMessagesEnabled(true);
+    ConsoleAgent.setConsoleMessagesEnabled(true);
 
     function propertyNamesCallback(names)
     {
         WebInspector.cssNameCompletions = new WebInspector.CSSCompletions(names);
     }
     // As a DOMAgent method, this needs to happen after the frontend has loaded and the agent is available.
-    InspectorBackend.getSupportedCSSProperties(propertyNamesCallback);
+    CSSAgent.getSupportedCSSProperties(propertyNamesCallback);
 }
 
 WebInspector.addPanelToolbarIcon = function(toolbarElement, panel, previousToolbarItem)
@@ -727,7 +727,7 @@ WebInspector.openResource = function(resourceURL, inResourcesPanel)
         WebInspector.panels.resources.showResource(resource);
         WebInspector.showPanel("resources");
     } else
-        InspectorBackend.openInInspectedWindow(resource ? resource.url : resourceURL);
+        InspectorAgent.openInInspectedWindow(resource ? resource.url : resourceURL);
 }
 
 WebInspector._registerShortcuts = function()
@@ -875,13 +875,13 @@ WebInspector.documentKeyDown = function(event)
 
         case "U+0052": // R key
             if ((event.metaKey && isMac) || (event.ctrlKey && !isMac)) {
-                InspectorBackend.reloadPage(event.shiftKey);
+                InspectorAgent.reloadPage(event.shiftKey);
                 event.preventDefault();
             }
             break;
         case "F5":
             if (!isMac)
-                InspectorBackend.reloadPage(event.ctrlKey || event.shiftKey);
+                InspectorAgent.reloadPage(event.ctrlKey || event.shiftKey);
             break;
     }
 }

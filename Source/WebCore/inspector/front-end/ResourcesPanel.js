@@ -904,7 +904,7 @@ WebInspector.FrameTreeElement.prototype = {
         this._storagePanel.showCategoryView(this._displayName);
 
         this.listItemElement.removeStyleClass("hovered");
-        InspectorBackend.hideFrameHighlight();
+        InspectorAgent.hideFrameHighlight();
     },
 
     get displayName()
@@ -937,10 +937,10 @@ WebInspector.FrameTreeElement.prototype = {
     {
         if (hovered) {
             this.listItemElement.addStyleClass("hovered");
-            InspectorBackend.highlightFrame(this._frameId);
+            InspectorAgent.highlightFrame(this._frameId);
         } else {
             this.listItemElement.removeStyleClass("hovered");
-            InspectorBackend.hideFrameHighlight();
+            InspectorAgent.hideFrameHighlight();
         }
     }
 }
@@ -969,7 +969,7 @@ WebInspector.FrameResourceTreeElement.prototype = {
 
     ondblclick: function(event)
     {
-        InspectorBackend.openInInspectedWindow(this._resource.url);
+        InspectorAgent.openInInspectedWindow(this._resource.url);
     },
 
     onattach: function()

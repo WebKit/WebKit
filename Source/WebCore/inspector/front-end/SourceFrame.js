@@ -684,7 +684,7 @@ WebInspector.SourceFrame.prototype = {
 
         this._popup.hide();
         delete this._popup;
-        InspectorBackend.releaseWrapperObjectGroup(0, this._popoverObjectGroup);
+        RuntimeAgent.releaseWrapperObjectGroup(0, this._popoverObjectGroup);
     },
 
     _mouseHover: function(element)

@@ -120,6 +120,6 @@ WebInspector.Script.prototype = {
             this._source = source;
             callback(this._source);
         }
-        InspectorBackend.getScriptSource(this.sourceID, didGetScriptSource.bind(this));
+        DebuggerAgent.getScriptSource(this.sourceID, didGetScriptSource.bind(this));
     }
 }

@@ -410,7 +410,7 @@ WebInspector.ElementsTreeElement.prototype = {
             else
                 this.tooltip = WebInspector.UIString("%d × %d pixels (Natural: %d × %d pixels)", properties.offsetWidth, properties.offsetHeight, properties.naturalWidth, properties.naturalHeight);
         }
-        InspectorBackend.getNodeProperties(node.id, ["naturalHeight", "naturalWidth", "offsetHeight", "offsetWidth"], setTooltip.bind(this));
+        DOMAgent.getNodeProperties(node.id, ["naturalHeight", "naturalWidth", "offsetHeight", "offsetWidth"], setTooltip.bind(this));
     },
 
     updateSelection: function()
@@ -1154,7 +1154,7 @@ WebInspector.ElementsTreeElement.prototype = {
             moveToNextAttributeIfNeeded.call(newTreeItem);
         }
 
-        InspectorBackend.changeTagName(this.representedObject.id, newText, changeTagNameCallback);
+        DOMAgent.changeTagName(this.representedObject.id, newText, changeTagNameCallback);
     },
 
     _textNodeEditingCommitted: function(element, newText)
@@ -1381,7 +1381,7 @@ WebInspector.ElementsTreeElement.prototype = {
             parentElement.adjustCollapsedRange(true);
         }
 
-        InspectorBackend.removeNode(this.representedObject.id, removeNodeCallback);
+        DOMAgent.removeNode(this.representedObject.id, removeNodeCallback);
     },
 
     _editAsHTML: function()
@@ -1408,15 +1408,15 @@ WebInspector.ElementsTreeElement.prototype = {
 
         function commitChange(value)
         {
-            InspectorBackend.setOuterHTML(node.id, value, selectNode);
+            DOMAgent.setOuterHTML(node.id, value, selectNode);
         }
 
-        InspectorBackend.getOuterHTML(node.id, this._startEditingAsHTML.bind(this, commitChange));
+        DOMAgent.getOuterHTML(node.id, this._startEditingAsHTML.bind(this, commitChange));
     },
 
     _copyHTML: function()
     {
-        InspectorBackend.copyNode(this.representedObject.id);
+        DOMAgent.copyNode(this.representedObject.id);
     },
 
     _highlightSearchResults: function()

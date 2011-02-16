@@ -215,7 +215,7 @@ WebInspector.ProfilesPanel.prototype = {
 
     _clearProfiles: function()
     {
-        InspectorBackend.clearProfiles();
+        ProfilerAgent.clearProfiles();
         this._reset();
     },
 
@@ -351,7 +351,7 @@ WebInspector.ProfilesPanel.prototype = {
         sidebarParent.removeChild(profile._profilesTreeElement);
 
         if (!profile.isTemporary)
-            InspectorBackend.removeProfile(profile.typeId, profile.uid);
+            ProfilerAgent.removeProfile(profile.typeId, profile.uid);
 
         // No other item will be selected if there aren't any other profiles, so
         // make sure that view gets cleared when the last profile is removed.
@@ -424,7 +424,7 @@ WebInspector.ProfilesPanel.prototype = {
             profile._callbacks = [callback];
             profile._json = "";
             profile.sideBarElement.subtitle = WebInspector.UIString("Loading…");
-            InspectorBackend.getProfile(profile.typeId, profile.uid);
+            ProfilerAgent.getProfile(profile.typeId, profile.uid);
         }
     },
 
@@ -592,10 +592,10 @@ WebInspector.ProfilesPanel.prototype = {
     {
         if (this._profilerEnabled) {
             WebInspector.settings.profilerEnabled = false;
-            InspectorBackend.disableProfiler(true);
+            InspectorAgent.disableProfiler(true);
         } else {
             WebInspector.settings.profilerEnabled = !!optionalAlways;
-            InspectorBackend.enableProfiler();
+            InspectorAgent.enableProfiler();
         }
     },
 
@@ -612,7 +612,7 @@ WebInspector.ProfilesPanel.prototype = {
                    this._addProfileHeader(profileHeaders[i]);
         }
 
-        InspectorBackend.getProfileHeaders(populateCallback.bind(this));
+        ProfilerAgent.getProfileHeaders(populateCallback.bind(this));
 
         this._profilesWereRequested = true;
     },
@@ -658,7 +658,7 @@ WebInspector.ProfilesPanel.prototype = {
             }
             this._addProfileHeader(this._temporaryTakingSnapshot);
         }
-        InspectorBackend.takeHeapSnapshot(detailed);
+        ProfilerAgent.takeHeapSnapshot(detailed);
     },
 
     _reportHeapSnapshotProgress: function(done, total)

@@ -316,7 +316,7 @@ WebInspector.ConsoleView.prototype = {
 
     requestClearMessages: function()
     {
-        InspectorBackend.clearConsoleMessages();
+        ConsoleAgent.clearConsoleMessages();
     },
 
     clearMessages: function()
@@ -359,9 +359,9 @@ WebInspector.ConsoleView.prototype = {
         var includeCommandLineAPI = (!dotNotation && !bracketNotation);
         var injectedScriptAccess;
         if (WebInspector.panels.scripts && WebInspector.panels.scripts.paused)
-            InspectorBackend.getCompletionsOnCallFrame(WebInspector.panels.scripts.selectedCallFrameId(), expressionString, includeCommandLineAPI, reportCompletions);
+            DebuggerAgent.getCompletionsOnCallFrame(WebInspector.panels.scripts.selectedCallFrameId(), expressionString, includeCommandLineAPI, reportCompletions);
         else
-            InspectorBackend.getCompletions(expressionString, includeCommandLineAPI, reportCompletions);
+            RuntimeAgent.getCompletions(expressionString, includeCommandLineAPI, reportCompletions);
     },
 
     _reportCompletions: function(bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix, result, isException) {
@@ -417,7 +417,7 @@ WebInspector.ConsoleView.prototype = {
 
         var itemAction = function () {
             WebInspector.settings.monitoringXHREnabled = !WebInspector.settings.monitoringXHREnabled;
-            InspectorBackend.setMonitoringXHREnabled(WebInspector.settings.monitoringXHREnabled);
+            ConsoleAgent.setMonitoringXHREnabled(WebInspector.settings.monitoringXHREnabled);
         }.bind(this);
         var contextMenu = new WebInspector.ContextMenu();
         contextMenu.appendCheckboxItem(WebInspector.UIString("XMLHttpRequest logging"), itemAction, WebInspector.settings.monitoringXHREnabled)
@@ -526,7 +526,7 @@ WebInspector.ConsoleView.prototype = {
         {
             callback(WebInspector.RemoteObject.fromPayload(result));
         }
-        InspectorBackend.evaluate(expression, objectGroup, includeCommandLineAPI, evalCallback);
+        RuntimeAgent.evaluate(expression, objectGroup, includeCommandLineAPI, evalCallback);
     },
 
     _enterKeyPressed: function(event)

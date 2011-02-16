@@ -17,7 +17,7 @@ InspectorTest.timelineNonDeterministicProps = {
 
 InspectorTest.performActionsAndPrint = function(actions, typeName)
 {
-    InspectorBackend.startTimelineProfiler(step1);
+    InspectorAgent.startTimelineProfiler(step1);
     function step1()
     {
         InspectorTest.evaluateInPage(actions, step2);
@@ -25,7 +25,7 @@ InspectorTest.performActionsAndPrint = function(actions, typeName)
 
     function step2()
     {
-        InspectorBackend.stopTimelineProfiler(step3);
+        InspectorAgent.stopTimelineProfiler(step3);
     }
 
     function step3()

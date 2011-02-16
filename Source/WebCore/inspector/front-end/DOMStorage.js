@@ -51,17 +51,17 @@ WebInspector.DOMStorage.prototype = {
 
     getEntries: function(callback)
     {
-        InspectorBackend.getDOMStorageEntries(this._id, callback);
+        DOMStorageAgent.getDOMStorageEntries(this._id, callback);
     },
     
     setItem: function(key, value, callback)
     {
-        InspectorBackend.setDOMStorageItem(this._id, key, value, callback);
+        DOMStorageAgent.setDOMStorageItem(this._id, key, value, callback);
     },
     
     removeItem: function(key, callback)
     {
-        InspectorBackend.removeDOMStorageItem(this._id, key, callback);
+        DOMStorageAgent.removeDOMStorageItem(this._id, key, callback);
     }
 }
 

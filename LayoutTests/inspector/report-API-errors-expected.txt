@@ -1,8 +1,8 @@
 Tests that InspectorBackendStub is catching incorrect arguments.
 
-Protocol Error: Invalid type of argument 'enabled' for 'InspectorBackend.setMonitoringXHREnabled' call. It should be 'boolean' but it is 'number'.
-Protocol Error: Invalid number of arguments for 'InspectorBackend.setMonitoringXHREnabled' call. It should have the next arguments '{"enabled":"boolean"}'.
-Protocol Error: Optional callback argument for 'InspectorBackend.setMonitoringXHREnabled' call should be a function but its type is 'string'.
+Protocol Error: Invalid type of argument 'enabled' for 'ConsoleAgent.setMonitoringXHREnabled' call. It should be 'boolean' but it is 'number'.
+Protocol Error: Invalid number of arguments for 'ConsoleAgent.setMonitoringXHREnabled' call. It should have the next arguments '{"enabled":"boolean"}'.
+Protocol Error: Optional callback argument for 'ConsoleAgent.setMonitoringXHREnabled' call should be a function but its type is 'string'.
 Protocol Error: the message is for non-existing domain 'wrongDomain'
 Protocol Error: Attempted to dispatch an unimplemented method 'Inspector.something-strange'
 

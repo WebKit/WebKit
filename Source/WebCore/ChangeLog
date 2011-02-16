@@ -1,3 +1,148 @@
+2011-02-16  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: split all the functions of Inspector backend API by domain.
+        https://bugs.webkit.org/show_bug.cgi?id=54558
+
+        We have a number of functions from different domains in single instance of InspectorBackend.
+        It'd be better to split the functions by their domains.
+        As example 'evaluate' will be moved from InspectorBackend to RuntimeAgent container.
+
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.evaluateInTargetWindow):
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun):
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditsPanel.prototype._reloadResources):
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager.prototype._projectChanged):
+        (WebInspector.BreakpointManager.prototype.restoreDOMBreakpoints):
+        (WebInspector.BreakpointManager.prototype._saveBreakpoints):
+        (WebInspector.DOMBreakpoint.prototype._enable):
+        (WebInspector.DOMBreakpoint.prototype._disable):
+        (WebInspector.EventListenerBreakpoint.prototype._enable):
+        (WebInspector.EventListenerBreakpoint.prototype._disable):
+        (WebInspector.XHRBreakpoint.prototype._enable):
+        (WebInspector.XHRBreakpoint.prototype._disable):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel.prototype.getStylesAsync):
+        (WebInspector.CSSStyleModel.prototype.getComputedStyleAsync):
+        (WebInspector.CSSStyleModel.prototype.getInlineStyleAsync):
+        (WebInspector.CSSStyleModel.prototype.setRuleSelector.callback):
+        (WebInspector.CSSStyleModel.prototype.setRuleSelector):
+        (WebInspector.CSSStyleModel.prototype.addRule.callback):
+        (WebInspector.CSSStyleModel.prototype.addRule):
+        (WebInspector.CSSStyleModel.prototype._styleSheetChanged):
+        (WebInspector.CSSStyleModel.prototype._onRevert):
+        (WebInspector.CSSStyleDeclaration.prototype.insertPropertyAt):
+        (WebInspector.CSSProperty.prototype.setText):
+        (WebInspector.CSSProperty.prototype.setDisabled):
+        (WebInspector.CSSStyleSheet.createForId):
+        (WebInspector.CSSStyleSheet.prototype.setText):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.requestClearMessages):
+        (WebInspector.ConsoleView.prototype.completions):
+        (WebInspector.ConsoleView.prototype._handleContextMenuEvent.itemAction):
+        (WebInspector.ConsoleView.prototype._handleContextMenuEvent):
+        (WebInspector.ConsoleView.prototype.evalInInspectedWindow):
+        * inspector/front-end/CookieItemsView.js:
+        (WebInspector.CookieItemsView.prototype._deleteCookie):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent.prototype.getChildNodesAsync):
+        (WebInspector.DOMAgent.prototype.setAttributeAsync):
+        (WebInspector.DOMAgent.prototype.removeAttributeAsync):
+        (WebInspector.DOMAgent.prototype.setTextNodeValueAsync):
+        (WebInspector.ApplicationCacheDispatcher.getApplicationCachesAsync):
+        (WebInspector.Cookies.getCookiesAsync):
+        (WebInspector.EventListeners.getEventListenersForNodeAsync):
+        * inspector/front-end/DOMStorage.js:
+        (WebInspector.DOMStorage.prototype.getEntries):
+        (WebInspector.DOMStorage.prototype.setItem):
+        (WebInspector.DOMStorage.prototype.removeItem):
+        * inspector/front-end/Database.js:
+        (WebInspector.Database.prototype.getTableNames):
+        (WebInspector.Database.prototype.executeSql):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype.enableDebugger):
+        (WebInspector.DebuggerModel.prototype.disableDebugger):
+        (WebInspector.DebuggerModel.prototype.continueToLocation):
+        (WebInspector.DebuggerModel.prototype.setBreakpoint):
+        (WebInspector.DebuggerModel.prototype.setBreakpointBySourceId):
+        (WebInspector.DebuggerModel.prototype.removeBreakpoint):
+        (WebInspector.DebuggerModel.prototype.editScriptSource):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.this.treeOutline.focusedNodeChanged):
+        (WebInspector.ElementsPanel):
+        (WebInspector.ElementsPanel.prototype.setDocument):
+        (WebInspector.ElementsPanel.prototype.searchCanceled):
+        (WebInspector.ElementsPanel.prototype.performSearch):
+        (WebInspector.ElementsPanel.prototype.handleCopyEvent):
+        (WebInspector.ElementsPanel.prototype.setSearchingForNode):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._createTooltipForNode):
+        (WebInspector.ElementsTreeElement.prototype._tagNameEditingCommitted):
+        ():
+        * inspector/front-end/ExtensionPanel.js:
+        (WebInspector.ExtensionWatchSidebarPane.prototype.setExpression):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._onAddRequestHeaders):
+        (WebInspector.ExtensionServer.prototype._onReload):
+        (WebInspector.ExtensionServer.prototype._onEvaluateOnInspectedPage):
+        * inspector/front-end/HeapSnapshotView.js:
+        (WebInspector.HeapSnapshotProfileType.prototype.buttonClicked):
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkManager):
+        (WebInspector.NetworkManager.prototype.reset):
+        (WebInspector.NetworkManager.prototype.requestContent):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkDataGridNode.prototype._openInNewTab):
+        * inspector/front-end/ProfileView.js:
+        (WebInspector.CPUProfileView):
+        (WebInspector.CPUProfileType.prototype.buttonClicked):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype._clearProfiles):
+        (WebInspector.ProfilesPanel.prototype._removeProfileHeader):
+        (WebInspector.ProfilesPanel.prototype.loadHeapSnapshot):
+        (WebInspector.ProfilesPanel.prototype._toggleProfiling):
+        (WebInspector.ProfilesPanel.prototype.takeHeapSnapshot):
+        * inspector/front-end/PropertiesSidebarPane.js:
+        (WebInspector.PropertiesSidebarPane.prototype.update):
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject.resolveNode):
+        (WebInspector.RemoteObject.prototype.getProperties):
+        (WebInspector.RemoteObject.prototype.setPropertyValue):
+        (WebInspector.RemoteObject.prototype.pushNodeToFrontend):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.FrameTreeElement.prototype.onselect):
+        (WebInspector.FrameTreeElement.prototype.set hovered):
+        (WebInspector.FrameResourceTreeElement.prototype.ondblclick):
+        * inspector/front-end/Script.js:
+        (WebInspector.Script.prototype.requestSource):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.evaluateInSelectedCallFrame):
+        (WebInspector.ScriptsPanel.prototype._setPauseOnExceptions):
+        (WebInspector.ScriptsPanel.prototype._togglePause):
+        (WebInspector.ScriptsPanel.prototype._stepOverClicked):
+        (WebInspector.ScriptsPanel.prototype._stepIntoClicked):
+        (WebInspector.ScriptsPanel.prototype._stepOutClicked):
+        (WebInspector.ScriptsPanel.prototype.toggleBreakpointsClicked):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._hidePopup):
+        * inspector/front-end/TestController.js:
+        (WebInspector.TestController.prototype.notifyDone):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._toggleTimelineButtonClicked):
+        * inspector/front-end/WatchExpressionsSidebarPane.js:
+        (WebInspector.WatchExpressionsSection.prototype.update):
+        * inspector/front-end/WorkersSidebarPane.js:
+        (WebInspector.WorkersSidebarPane.prototype.setInstrumentation):
+        * inspector/front-end/inspector.js:
+        (WebInspector.highlightDOMNode):
+        (WebInspector.doLoadedDone):
+        (WebInspector.openResource):
+        (WebInspector.documentKeyDown):
+
 2011-02-16  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Martin Robinson.

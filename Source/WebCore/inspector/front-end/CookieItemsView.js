@@ -140,7 +140,7 @@ WebInspector.CookieItemsView.prototype = {
 
     _deleteCookie: function(cookie)
     {
-        InspectorBackend.deleteCookie(cookie.name, this._cookieDomain);
+        InspectorAgent.deleteCookie(cookie.name, this._cookieDomain);
         this._update();
     },
 

@@ -12,7 +12,7 @@ function doit()
 
 function test()
 {
-    InspectorBackend.evaluate("window", "console", false, evalCallback);
+    RuntimeAgent.evaluate("window", "console", false, evalCallback);
 
     function evalCallback(result)
     {

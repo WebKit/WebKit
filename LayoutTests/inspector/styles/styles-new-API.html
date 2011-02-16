@@ -47,7 +47,7 @@ function test()
 
         function nodeCallback(node)
         {
-            InspectorBackend.getStylesForNode(node.id, callback);
+            CSSAgent.getStylesForNode(node.id, callback);
         }
         InspectorTest.selectNodeWithId("mainBody", nodeCallback);
     }
@@ -67,7 +67,7 @@ function test()
 
         function nodeCallback(node)
         {
-            InspectorBackend.getStylesForNode(node.id, callback);
+            CSSAgent.getStylesForNode(node.id, callback);
         }
         InspectorTest.nodeWithId("thetable", nodeCallback);
     }
@@ -87,7 +87,7 @@ function test()
         {
             InspectorTest.addResult("");
             InspectorTest.addResult("=== Last stylesheet patched ===");
-            InspectorBackend.setStyleSheetText(styleSheet.styleSheetId, newStyleSheetText,
+            CSSAgent.setStyleSheetText(styleSheet.styleSheetId, newStyleSheetText,
                 loadAndDumpStyleSheet.bind(null, styleSheet.styleSheetId, test_changeSelector));
         }
 
@@ -98,7 +98,7 @@ function test()
             for (var i = 0; i < ids.length; ++i)
                 loadAndDumpStyleSheet(ids[i], (i < ids.length - 1) ? null : patchStyleSheet);
         }
-        InspectorBackend.getAllStyles(styleSheetIdsLoaded);
+        CSSAgent.getAllStyles(styleSheetIdsLoaded);
     }
 
     function test_changeSelector(styleSheet)
@@ -110,7 +110,7 @@ function test()
             loadAndDumpStyleSheet(rule.ruleId.styleSheetId, test_setStyleText);
         }
 
-        InspectorBackend.setRuleSelector(styleSheet.rules[0].ruleId, "html *, body[foo=\"bar\"]", didSetSelector);
+        CSSAgent.setRuleSelector(styleSheet.rules[0].ruleId, "html *, body[foo=\"bar\"]", didSetSelector);
     }
 
     function test_setStyleText(styleSheet)
@@ -122,12 +122,12 @@ function test()
             loadAndDumpStyleSheet(style.styleId.styleSheetId, test_addRule);
         }
 
-        InspectorBackend.setPropertyText(styleSheet.rules[0].style.styleId, 0, "", true);
-        InspectorBackend.setPropertyText(styleSheet.rules[0].style.styleId, 0, "", true);
+        CSSAgent.setPropertyText(styleSheet.rules[0].style.styleId, 0, "", true);
+        CSSAgent.setPropertyText(styleSheet.rules[0].style.styleId, 0, "", true);
 
         // This operation should not update the style as the new property text is not parsable.
-        InspectorBackend.setPropertyText(styleSheet.rules[0].style.styleId, 0, "zzz;", false);
-        InspectorBackend.setPropertyText(styleSheet.rules[0].style.styleId, 0, "color: white; background: black;", false, didSetStyleText);
+        CSSAgent.setPropertyText(styleSheet.rules[0].style.styleId, 0, "zzz;", false);
+        CSSAgent.setPropertyText(styleSheet.rules[0].style.styleId, 0, "color: white; background: black;", false, didSetStyleText);
     }
 
     function test_addRule()
@@ -142,15 +142,15 @@ function test()
 
         function didSetStyleText(style)
         {
-            InspectorBackend.getStylesForNode(WebInspector.domAgent.document.body.id, didGetStyles);
+            CSSAgent.getStylesForNode(WebInspector.domAgent.document.body.id, didGetStyles);
         }
 
         function ruleAdded(rule)
         {
-            InspectorBackend.setPropertyText(rule.style.styleId, 0, "font-family: serif;", false, didSetStyleText);
+            CSSAgent.setPropertyText(rule.style.styleId, 0, "font-family: serif;", false, didSetStyleText);
         }
 
-        InspectorBackend.addRule(WebInspector.domAgent.document.body.id, "body", ruleAdded);
+        CSSAgent.addRule(WebInspector.domAgent.document.body.id, "body", ruleAdded);
     }
 
     function test_disableProperty()
@@ -175,13 +175,13 @@ function test()
             // border-width: 0px;
 
             var style = styles.matchedCSSRules[1].style;
-            InspectorBackend.toggleProperty(style.styleId, 0, true); // height: 100%
-            InspectorBackend.toggleProperty(style.styleId, 7, true); // border-width: 0px
-            InspectorBackend.setPropertyText(style.styleId, 7, "font-size: 12px;", false);
-            InspectorBackend.setPropertyText(style.styleId, 9, "font-size: 14px;", false);
-            InspectorBackend.toggleProperty(style.styleId, 9, true); // font-size: 14px
-            InspectorBackend.setPropertyText(style.styleId, 8, "border-width: 1px;", true);
-            InspectorBackend.toggleProperty(style.styleId, 8, false); // border-width: 1px
+            CSSAgent.toggleProperty(style.styleId, 0, true); // height: 100%
+            CSSAgent.toggleProperty(style.styleId, 7, true); // border-width: 0px
+            CSSAgent.setPropertyText(style.styleId, 7, "font-size: 12px;", false);
+            CSSAgent.setPropertyText(style.styleId, 9, "font-size: 14px;", false);
+            CSSAgent.toggleProperty(style.styleId, 9, true); // font-size: 14px
+            CSSAgent.setPropertyText(style.styleId, 8, "border-width: 1px;", true);
+            CSSAgent.toggleProperty(style.styleId, 8, false); // border-width: 1px
             // height : 100% ; [d]
             // border: 1px solid;
             // border-width: 2px;
@@ -193,12 +193,12 @@ function test()
             // border-width: 1px;
             // font-size: 14px; [d]
 
-            InspectorBackend.setPropertyText(style.styleId, 3, "", true, didDisableProperty);
+            CSSAgent.setPropertyText(style.styleId, 3, "", true, didDisableProperty);
         }
 
         function nodeCallback(node)
         {
-            InspectorBackend.getStylesForNode(node.id, stylesCallback);
+            CSSAgent.getStylesForNode(node.id, stylesCallback);
         }
         InspectorTest.nodeWithId("toggle", nodeCallback);
     }
@@ -213,8 +213,8 @@ function test()
             InspectorTest.completeTest();
         }
 
-        InspectorBackend.toggleProperty(styleId, 6, false);
-        InspectorBackend.toggleProperty(styleId, 8, false, didEnableProperty);
+        CSSAgent.toggleProperty(styleId, 6, false);
+        CSSAgent.toggleProperty(styleId, 8, false, didEnableProperty);
     }
 
     // Data dumping
@@ -258,7 +258,7 @@ function test()
                 continuation(styleSheet);
         }
 
-        InspectorBackend.getStyleSheet(styleSheetId, styleSheetLoaded);
+        CSSAgent.getStyleSheet(styleSheetId, styleSheetLoaded);
     }
 }
 

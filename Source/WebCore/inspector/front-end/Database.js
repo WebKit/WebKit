@@ -81,7 +81,7 @@ WebInspector.Database.prototype = {
         {
             callback(names.sort());
         }
-        InspectorBackend.getDatabaseTableNames(this._id, sortingCallback);
+        DatabaseAgent.getDatabaseTableNames(this._id, sortingCallback);
     },
     
     executeSql: function(query, onSuccess, onError)
@@ -94,7 +94,7 @@ WebInspector.Database.prototype = {
             }
             WebInspector.DatabaseDispatcher._callbacks[transactionId] = {"onSuccess": onSuccess, "onError": onError};
         }
-        InspectorBackend.executeSQL(this._id, query, callback);
+        DatabaseAgent.executeSQL(this._id, query, callback);
     }
 }
 

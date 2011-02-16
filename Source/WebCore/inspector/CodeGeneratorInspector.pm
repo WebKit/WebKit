@@ -623,7 +623,10 @@ InspectorBackendStub.prototype = {
     _registerDelegate: function(commandInfo)
     {
         var commandObject = JSON.parse(commandInfo);
-        this[commandObject.command] = this.sendMessageToBackend.bind(this, commandInfo);
+        var agentName = commandObject.domain + "Agent";
+        if (!window[agentName])
+            window[agentName] = {};
+        window[agentName][commandObject.command] = this.sendMessageToBackend.bind(this, commandInfo);
     },
 
     sendMessageToBackend: function()
@@ -633,12 +636,12 @@ InspectorBackendStub.prototype = {
 
         for (var key in request.arguments) {
             if (args.length === 0) {
-                console.error("Protocol Error: Invalid number of arguments for 'InspectorBackend.%s' call. It should have the next arguments '%s'.", request.command, JSON.stringify(request.arguments));
+                console.error("Protocol Error: Invalid number of arguments for '%sAgent.%s' call. It should have the next arguments '%s'.", request.domain, request.command, JSON.stringify(request.arguments));
                 return;
             }
             var value = args.shift();
             if (request.arguments[key] && typeof value !== request.arguments[key]) {
-                console.error("Protocol Error: Invalid type of argument '%s' for 'InspectorBackend.%s' call. It should be '%s' but it is '%s'.", key, request.command, request.arguments[key], typeof value);
+                console.error("Protocol Error: Invalid type of argument '%s' for '%sAgent.%s' call. It should be '%s' but it is '%s'.", key, request.domain, request.command, request.arguments[key], typeof value);
                 return;
             }
             request.arguments[key] = value;
@@ -646,7 +649,7 @@ InspectorBackendStub.prototype = {
 
         if (args.length === 1) {
             if (typeof args[0] !== "function" && typeof args[0] !== "undefined") {
-                console.error("Protocol Error: Optional callback argument for 'InspectorBackend.%s' call should be a function but its type is '%s'.", request.command, typeof args[0]);
+                console.error("Protocol Error: Optional callback argument for '%sAgent.%s' call should be a function but its type is '%s'.", request.domain, request.command, typeof args[0]);
                 return;
             }
             request.seq = this._wrap(args[0]);

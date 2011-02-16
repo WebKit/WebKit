@@ -34,7 +34,7 @@ InspectorTest.dispatchOnMessage = function(messageId, callback, recurring)
 
 InspectorTest.runExtensionTests = function()
 {
-    InspectorBackend.evaluate("location.href", "console", false, function(result) {
+    RuntimeAgent.evaluate("location.href", "console", false, function(result) {
         var pageURL = result.description;
         var extensionURL = (/^https?:/.test(pageURL) ?
             pageURL.replace(/^(https?:\/\/[^/]*\/).*$/,"$1") :

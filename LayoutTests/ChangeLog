@@ -1,3 +1,37 @@
+2011-02-16  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: split all the functions of Inspector backend API by domain.
+        https://bugs.webkit.org/show_bug.cgi?id=54558
+
+        We have a number of functions from different domains in single instance of InspectorBackend.
+        It'd be better to split the functions by their domains.
+        As example 'evaluate' will be moved from InspectorBackend to RuntimeAgent container.
+
+        * http/tests/inspector/console-xhr-logging.html:
+        * http/tests/inspector/extensions-test.js:
+        (initialize_ExtensionsTest.InspectorTest.runExtensionTests):
+        * http/tests/inspector/inspector-test.js:
+        (initialize_InspectorTest.InspectorTest.completeTest):
+        (initialize_InspectorTest.InspectorTest.evaluateInPage):
+        (initialize_InspectorTest.InspectorTest.reloadPage):
+        * inspector/console/console-dir-global.html:
+        * inspector/debugger/debugger-autocontinue-on-syntax-error.html:
+        * inspector/debugger/debugger-pause-on-exception.html:
+        * inspector/elements/elements-panel-search.html:
+        * inspector/report-API-errors-expected.txt:
+        * inspector/report-API-errors.html:
+        * inspector/report-protocol-errors.html:
+        * inspector/styles/styles-new-API.html:
+        * inspector/styles/styles-source-offsets.html:
+        * inspector/timeline/timeline-network-resource.html:
+        * inspector/timeline/timeline-script-tag-1.html:
+        * inspector/timeline/timeline-script-tag-2.html:
+        * inspector/timeline/timeline-test.js:
+        (initialize_Timeline.InspectorTest.performActionsAndPrint.step2):
+        * inspector/timeline/timeline-trivial.html:
+
 2011-02-16  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed.

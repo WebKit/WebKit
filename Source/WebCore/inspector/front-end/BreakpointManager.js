@@ -207,7 +207,7 @@ WebInspector.BreakpointManager.prototype = {
         }
 
         if (!this._breakpointsPushedToFrontend) {
-            InspectorBackend.setAllBrowserBreakpoints(this._stickyBreakpoints);
+            BrowserDebuggerAgent.setAllBrowserBreakpoints(this._stickyBreakpoints);
             this._breakpointsPushedToFrontend = true;
         }
     },
@@ -243,7 +243,7 @@ WebInspector.BreakpointManager.prototype = {
                 continue;
             pathToNodeId[path] = 0;
             pendingCalls += 1;
-            InspectorBackend.pushNodeByPathToFrontend(path, didPushNodeByPathToFrontend.bind(this, path));
+            DOMAgent.pushNodeByPathToFrontend(path, didPushNodeByPathToFrontend.bind(this, path));
         }
         if (!pendingCalls)
             this._domBreakpointsRestored = true;
@@ -268,7 +268,7 @@ WebInspector.BreakpointManager.prototype = {
         WebInspector.settings.nativeBreakpoints = breakpoints;
 
         this._stickyBreakpoints[WebInspector.settings.projectId] = breakpoints;
-        InspectorBackend.setAllBrowserBreakpoints(this._stickyBreakpoints);
+        BrowserDebuggerAgent.setAllBrowserBreakpoints(this._stickyBreakpoints);
     },
 
     _validateBreakpoints: function(persistentBreakpoints)
@@ -331,12 +331,12 @@ WebInspector.DOMBreakpoint = function(node, type)
 WebInspector.DOMBreakpoint.prototype = {
     _enable: function()
     {
-        InspectorBackend.setDOMBreakpoint(this._nodeId, this._type);
+        BrowserDebuggerAgent.setDOMBreakpoint(this._nodeId, this._type);
     },
 
     _disable: function()
     {
-        InspectorBackend.removeDOMBreakpoint(this._nodeId, this._type);
+        BrowserDebuggerAgent.removeDOMBreakpoint(this._nodeId, this._type);
     },
 
     _serializeToJSON: function()
@@ -354,12 +354,12 @@ WebInspector.EventListenerBreakpoint = function(eventName)
 WebInspector.EventListenerBreakpoint.prototype = {
     _enable: function()
     {
-        InspectorBackend.setEventListenerBreakpoint(this._eventName);
+        BrowserDebuggerAgent.setEventListenerBreakpoint(this._eventName);
     },
 
     _disable: function()
     {
-        InspectorBackend.removeEventListenerBreakpoint(this._eventName);
+        BrowserDebuggerAgent.removeEventListenerBreakpoint(this._eventName);
     },
 
     _serializeToJSON: function()
@@ -377,12 +377,12 @@ WebInspector.XHRBreakpoint = function(url)
 WebInspector.XHRBreakpoint.prototype = {
     _enable: function()
     {
-        InspectorBackend.setXHRBreakpoint(this._url);
+        BrowserDebuggerAgent.setXHRBreakpoint(this._url);
     },
 
     _disable: function()
     {
-        InspectorBackend.removeXHRBreakpoint(this._url);
+        BrowserDebuggerAgent.removeXHRBreakpoint(this._url);
     },
 
     _serializeToJSON: function()

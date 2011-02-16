@@ -37,7 +37,7 @@ function test()
 
     function step1(node)
     {
-        InspectorBackend.getStylesForNode(node.id, step2);
+        CSSAgent.getStylesForNode(node.id, step2);
     }
 
     function step2(styles)

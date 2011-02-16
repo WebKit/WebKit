@@ -65,7 +65,7 @@ WebInspector.AuditRules.getDomainToResourcesMap = function(resources, types, nee
 
 WebInspector.AuditRules.evaluateInTargetWindow = function(func, args, callback)
 {
-    InspectorBackend.evaluateOnSelf(func.toString(), args, callback);
+    InjectedScriptAgent.evaluateOnSelf(func.toString(), args, callback);
 }
 
 
@@ -383,7 +383,7 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
                 WebInspector.CSSStyleSheet.createForId(styleSheetIds[i], styleSheetCallback.bind(null, styleSheets, i == styleSheetIds.length - 1 ? evalCallback : null));
         }
 
-        InspectorBackend.getAllStyles(allStylesCallback);
+        CSSAgent.getAllStyles(allStylesCallback);
     }
 }
 

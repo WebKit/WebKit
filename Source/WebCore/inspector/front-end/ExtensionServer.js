@@ -166,7 +166,7 @@ WebInspector.ExtensionServer.prototype = {
                     allHeaders[name] = headers[name];
             }
         }
-        InspectorBackend.setExtraHeaders(allHeaders);
+        NetworkAgent.setExtraHeaders(allHeaders);
     },
 
     _onCreatePanel: function(message, port)
@@ -255,9 +255,9 @@ WebInspector.ExtensionServer.prototype = {
     _onReload: function(message)
     {
         if (typeof message.userAgent === "string")
-            InspectorBackend.setUserAgentOverride(message.userAgent);
+            InspectorAgent.setUserAgentOverride(message.userAgent);
 
-        InspectorBackend.reloadPage(false);
+        InspectorAgent.reloadPage(false);
         return this._status.OK();
     },
 
@@ -273,7 +273,7 @@ WebInspector.ExtensionServer.prototype = {
             this._dispatchCallback(message.requestId, port, result);
         }
         var evalExpression = "JSON.stringify(eval(unescape('" + escape(message.expression) + "')));";
-        InspectorBackend.evaluate(evalExpression, "none", true, callback.bind(this));
+        RuntimeAgent.evaluate(evalExpression, "none", true, callback.bind(this));
     },
 
     _onRevealAndSelect: function(message)

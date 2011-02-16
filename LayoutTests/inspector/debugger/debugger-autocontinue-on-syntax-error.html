@@ -12,7 +12,7 @@ function test()
 
     function startDebuggerTestCallback()
     {
-        InspectorBackend.setPauseOnExceptionsState(WebInspector.ScriptsPanel.PauseOnExceptionsState.PauseOnUncaughtExceptions);
+        DebuggerAgent.setPauseOnExceptionsState(WebInspector.ScriptsPanel.PauseOnExceptionsState.PauseOnUncaughtExceptions);
         InspectorTest.showScriptSource("debugger-autocontinue-on-syntax-error.html", reloadInspectedPage);
     }
 

@@ -319,25 +319,25 @@ WebInspector.DOMAgent.prototype = {
         function mycallback() {
             callback(parent.children);
         }
-        InspectorBackend.getChildNodes(parent.id, mycallback);
+        DOMAgent.getChildNodes(parent.id, mycallback);
     },
 
     setAttributeAsync: function(node, name, value, callback)
     {
         var mycallback = this._didApplyDomChange.bind(this, node, callback);
-        InspectorBackend.setAttribute(node.id, name, value, mycallback);
+        DOMAgent.setAttribute(node.id, name, value, mycallback);
     },
 
     removeAttributeAsync: function(node, name, callback)
     {
         var mycallback = this._didApplyDomChange.bind(this, node, callback);
-        InspectorBackend.removeAttribute(node.id, name, mycallback);
+        DOMAgent.removeAttribute(node.id, name, mycallback);
     },
 
     setTextNodeValueAsync: function(node, text, callback)
     {
         var mycallback = this._didApplyDomChange.bind(this, node, callback);
-        InspectorBackend.setTextNodeValue(node.id, text, mycallback);
+        DOMAgent.setTextNodeValue(node.id, text, mycallback);
     },
 
     _didApplyDomChange: function(node, callback, success)
@@ -511,7 +511,7 @@ WebInspector.ApplicationCacheDispatcher.getApplicationCachesAsync = function(cal
             callback(applicationCaches);
     }
 
-    InspectorBackend.getApplicationCaches(mycallback);
+    ApplicationCacheAgent.getApplicationCaches(mycallback);
 }
 
 WebInspector.ApplicationCacheDispatcher.prototype = {
@@ -540,7 +540,7 @@ WebInspector.Cookies.getCookiesAsync = function(callback)
             callback(cookies, true);
     }
 
-    InspectorBackend.getCookies(mycallback);
+    InspectorAgent.getCookies(mycallback);
 }
 
 WebInspector.Cookies.buildCookiesFromString = function(rawCookieString)
@@ -585,5 +585,5 @@ WebInspector.EventListeners.getEventListenersForNodeAsync = function(node, callb
 {
     if (!node)
         return;
-    InspectorBackend.getEventListenersForNode(node.id, callback);
+    DOMAgent.getEventListenersForNode(node.id, callback);
 }
