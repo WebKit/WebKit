@@ -1,5 +1,11 @@
 2011-02-16  Martin Robinson  <mrobinson@igalia.com>
 
+        Add the next batch of GTK+ Mozilla test results.
+
+        * platform/gtk/Skipped: Unskip tests which now have results.
+
+2011-02-16  Martin Robinson  <mrobinson@igalia.com>
+
         Rebaseline media/controls-without-preload.html after r78695.
 
         * media/controls-without-preload-expected.txt: Rebaselined.
