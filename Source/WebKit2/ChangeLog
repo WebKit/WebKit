@@ -1,3 +1,13 @@
+2011-02-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54572
+        REGRESSION (WebKit2): Print Backgrounds checkbox has no effect for DOM initiated printing
+
+        * UIProcess/WebPageProxy.cpp: (WebKit::WebPageProxy::preferencesDidChange): Preferences need
+        to be propagated to Web process during synchronous printing.
+
 2011-02-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
