@@ -22,6 +22,9 @@
 # https://bugs.webkit.org/show_bug.cgi?id=33445
 http/tests/incremental/split-hex-entities.pl
 
+# Intermittently timing out
+svg/hixie/perf/003.xml
+
 # Tests in accessibility/ directory
 # An implementation of accessibilityController is required.
 #   Tests failing

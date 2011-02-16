@@ -1,3 +1,14 @@
+2011-02-15  Martin Robinson  <mrobinson@igalia.com>
+
+        Rebaseline some GTK+ tests which have different results on the bots.
+        Skip a test which appears to be timing out intermittently.
+
+        * platform/gtk/Skipped: Skip a test which has been timing out.
+        * platform/gtk/svg/custom/use-nested-transform-expected.txt:
+        * platform/gtk/svg/hixie/perf/001-expected.txt:
+        * platform/gtk/svg/hixie/perf/002-expected.txt:
+        * platform/gtk/svg/hixie/perf/007-expected.txt:
+
 2011-02-15  Jia Pu  <jpu@apple.com>
 
         Reviewed by Darin Adler.
