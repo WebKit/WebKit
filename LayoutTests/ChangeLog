@@ -1,3 +1,21 @@
+2011-02-16  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed, Chromium expectations update.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54579
+        Add expectations for where V8 passes tests JSC doesn't, or merely has
+        different errors; mark other failing tests with a V8 tracking bug.
+
+        * platform/chromium/fast/js/mozilla: Added.
+        * platform/chromium/fast/js/mozilla/strict: Added.
+        * platform/chromium/fast/js/mozilla/strict/11.1.5-expected.txt: Added.
+        * platform/chromium/fast/js/mozilla/strict/12.14.1-expected.txt: Added.
+        * platform/chromium/fast/js/mozilla/strict/13.1-expected.txt: Added.
+        * platform/chromium/fast/js/mozilla/strict/15.3.4.5-expected.txt: Added.
+        * platform/chromium/fast/js/mozilla/strict/15.3.5.2-expected.txt: Added.
+        * platform/chromium/fast/js/mozilla/strict/regress-532254-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-02-16  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed chromium-gpu expectations update. Add more tests that fail

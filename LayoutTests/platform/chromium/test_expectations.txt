@@ -3447,3 +3447,24 @@ BUGCR73092 WIN : fast/dom/gc-11.html = PASS TEXT
 BUGCR73094 LINUX : http/tests/websocket/tests/send-after-close-on-unload.html = PASS TIMEOUT
 
 BUGMNAGANOV MAC : media/video-display-toggle.html = IMAGE
+
+BUGV8_1168 : fast/js/mozilla/eval/exhaustive-fun-normalcaller-direct-strictcode.html = TEXT
+BUGV8_1168 : fast/js/mozilla/eval/exhaustive-fun-normalcaller-indirect-strictcode.html = TEXT
+BUGV8_1168 : fast/js/mozilla/eval/exhaustive-fun-strictcaller-direct-normalcode.html = TEXT
+BUGV8_1168 : fast/js/mozilla/eval/exhaustive-fun-strictcaller-direct-strictcode.html = TEXT
+BUGV8_1168 : fast/js/mozilla/eval/exhaustive-fun-strictcaller-indirect-strictcode.html = TEXT
+BUGV8_1168 : fast/js/mozilla/eval/exhaustive-global-normalcaller-direct-strictcode.html = TEXT
+BUGV8_1168 : fast/js/mozilla/eval/exhaustive-global-normalcaller-indirect-strictcode.html = TEXT
+BUGV8_1168 : fast/js/mozilla/eval/exhaustive-global-strictcaller-direct-normalcode.html = TEXT
+BUGV8_1168 : fast/js/mozilla/eval/exhaustive-global-strictcaller-direct-strictcode.html = TEXT
+BUGV8_1168 : fast/js/mozilla/eval/exhaustive-global-strictcaller-indirect-strictcode.html = TEXT
+BUGV8_1168 : fast/js/mozilla/strict/10.4.3.html = TEXT
+BUGV8_1168 : fast/js/mozilla/strict/10.6.html = TEXT
+BUGV8_1168 : fast/js/mozilla/strict/15.5.5.2.html = TEXT
+BUGV8_1168 : fast/js/mozilla/strict/8.12.5.html = TEXT
+BUGV8_1168 : fast/js/mozilla/strict/8.7.2.html = TEXT
+BUGV8_1168 : fast/js/mozilla/strict/B.1.2.html = TEXT
+BUGV8_1168 : fast/js/mozilla/strict/eval-variable-environment.html = TEXT
+BUGV8_1168 : fast/js/mozilla/strict/function-name-arity.html = TEXT
+BUGV8_1168 : fast/js/mozilla/strict/primitive-this-no-writeback.html = TEXT
+BUGV8_1168 : fast/js/mozilla/strict/this-for-function-expression-recursion.html = TEXT

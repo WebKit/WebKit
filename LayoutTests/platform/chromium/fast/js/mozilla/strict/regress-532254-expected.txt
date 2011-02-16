@@ -1,0 +1,8 @@
+PASS Function("'use strict'; function f(eval,[x]){}") threw exception of type SyntaxError.
+FAIL !!Function("function f(eval,[x]){}") should be true. Threw exception SyntaxError: Unexpected token [
+PASS true === true
+ PASSED! 
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
