@@ -1,3 +1,22 @@
+2011-02-15  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GStreamer] wrong media duration report in media/controls-after-reload.html
+        https://bugs.webkit.org/show_bug.cgi?id=51602
+
+        Refactored some media tests to be less flaky-prone.
+
+        * media/controls-after-reload.html: Trigger playback just before
+        rendering the controls.
+        * media/video-paint-test.js: Ditto.
+        (init.document.addEventListener.):
+        (init):
+        * media/video-volume-slider.html: Trigger DRT dump after volume
+        was updated.
+        * platform/gtk/Skipped: Unskip fixed tests.
+        * platform/gtk/media/video-controls-rendering-expected.txt:
+
 2011-02-15  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.

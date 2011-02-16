@@ -344,13 +344,7 @@ media/video-seek-past-end-playing.html
 # https://bugs.webkit.org/show_bug.cgi?id=30198
 media/video-source-error.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=51602
-media/controls-after-reload.html
-media/controls-strict.html
 media/video-display-toggle.html
-media/controls-styling.html
-media/video-volume-slider.html
-media/video-controls-rendering.html
 
 #   Tests generating new results
 media/video-aspect-ratio.html

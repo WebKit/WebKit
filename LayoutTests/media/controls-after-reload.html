@@ -8,17 +8,21 @@
     if (window.layoutTestController)
         layoutTestController.waitUntilDone();
 
+    function finish()
+    {
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+
     function canplaythrough()
     {
-        loadedCount++;
-        if (loadedCount == 2) {
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
-            return;
+        if (!loadedCount) {
+            video.src = findMediaFile("video", "content/test");
+            video.load();
+            video.play();
+            video.addEventListener("playing", finish);
         }
-        
-        video.src = findMediaFile("video", "content/test");
-        video.load();
+        loadedCount++;
     }
 
     function test()

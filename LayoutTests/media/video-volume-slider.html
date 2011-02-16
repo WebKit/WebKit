@@ -24,8 +24,10 @@
                 eventSender.mouseMoveTo(x, y);
             }
 
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            video.addEventListener("volumechange", function() {
+                 if (window.layoutTestController)
+                     layoutTestController.notifyDone();
+            });
         }
     </script>
 </head>
