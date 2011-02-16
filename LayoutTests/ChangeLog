@@ -1,3 +1,36 @@
+2011-02-16  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
+        Pixel tests differences on 10.6.6 32bit vs. 64bit
+        https://bugs.webkit.org/show_bug.cgi?id=54474
+
+        Update mac-leopard/win baselines. I rebaselined the wrong platforms in my last commit.
+
+        * platform/mac-leopard/svg/W3C-SVG-1.1/painting-marker-03-f-expected.txt:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/struct-frag-02-t-expected.txt:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/struct-frag-03-t-expected.txt:
+        * platform/mac-leopard/svg/custom/circular-marker-reference-2-expected.txt:
+        * platform/mac-leopard/svg/custom/non-circular-marker-reference-expected.txt:
+        * platform/mac-leopard/svg/custom/non-scaling-stroke-markers-expected.txt:
+        * platform/mac-leopard/svg/custom/stroked-pattern-expected.txt:
+        * platform/mac-leopard/svg/custom/text-rotated-gradient-expected.txt:
+        * platform/mac-leopard/svg/custom/use-detach-expected.txt:
+        * platform/mac-leopard/svg/hixie/links/001-expected.txt:
+        * platform/mac-leopard/svg/text/small-fonts-2-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/painting-marker-03-f-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1/struct-frag-02-t-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1/struct-frag-03-t-expected.txt: Added.
+        * platform/win/svg/custom/circular-marker-reference-2-expected.txt: Added.
+        * platform/win/svg/custom/non-circular-marker-reference-expected.txt: Added.
+        * platform/win/svg/custom/non-scaling-stroke-markers-expected.txt: Added.
+        * platform/win/svg/custom/stroked-pattern-expected.txt: Added.
+        * platform/win/svg/custom/text-rotated-gradient-expected.txt: Added.
+        * platform/win/svg/custom/use-detach-expected.txt: Added.
+        * platform/win/svg/hixie/links: Added.
+        * platform/win/svg/hixie/links/001-expected.txt: Added.
+        * platform/win/svg/text/small-fonts-2-expected.txt: Added.
+
 2011-02-16  Sergio Villar Senin  <svillar@igalia.com>
 
         Reviewed by Martin Robinson.

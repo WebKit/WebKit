@@ -1,24 +1,24 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (159,0) size 493x534
-    RenderSVGContainer {g} at (159,0) size 283x78 [transform={m=((0.10,0.00)(0.00,0.10)) t=(10.00,10.00)}]
+  RenderSVGRoot {svg} at (160,0) size 492x534
+    RenderSVGContainer {g} at (160,0) size 282x78 [transform={m=((0.10,0.00)(0.00,0.10)) t=(10.00,10.00)}]
       RenderSVGText {text} at (0,-109) size 467x135 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 467x135
           chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 9 width 466.67: "0,1,2,3,4"
-    RenderSVGContainer {g} at (159,84) size 283x84 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,25.00)}]
+    RenderSVGContainer {g} at (160,84) size 282x84 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,25.00)}]
       RenderSVGText {text} at (0,-11) size 47x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 47x14
           chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 9 width 46.67: "0,1,2,3,4"
-    RenderSVGContainer {g} at (159,168) size 289x144 [transform={m=((12.00,0.00)(0.00,12.00)) t=(10.00,40.00)}]
+    RenderSVGContainer {g} at (160,168) size 288x144 [transform={m=((12.00,0.00)(0.00,12.00)) t=(10.00,40.00)}]
       RenderSVGText {text} at (0,-1) size 4x2 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 4x2
           chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 9 width 3.89: "0,1,2,3,4"
-    RenderSVGContainer {g} at (159,186) size 289x288 [transform={m=((24.00,0.00)(0.00,24.00)) t=(10.00,55.00)}]
+    RenderSVGContainer {g} at (160,186) size 288x288 [transform={m=((24.00,0.00)(0.00,24.00)) t=(10.00,55.00)}]
       RenderSVGText {text} at (0,-1) size 2x2 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 2x2
           chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 9 width 1.94: "0,1,2,3,4"
-    RenderSVGContainer {g} at (159,372) size 493x162 [transform={m=((0.30,0.00)(0.00,0.30)) t=(10.00,65.00)}]
+    RenderSVGContainer {g} at (160,372) size 492x162 [transform={m=((0.30,0.00)(0.00,0.30)) t=(10.00,65.00)}]
       RenderSVGText {text} at (0,-8) size 273x86 contains 1 chunk(s)
         RenderSVGTSpan {tspan} at (0,0) size 223x11
           RenderSVGInlineText {#text} at (0,0) size 223x11
