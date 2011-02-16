@@ -56,6 +56,7 @@ public:
     {
         m_resourceRequest = &m_resourceRequestAllocation;
         m_allowStoredCredentials = p->m_allowStoredCredentials;
+        m_downloadToFile = p->m_downloadToFile;
     }
 
     virtual void dispose() { delete this; }
@@ -268,12 +269,12 @@ void WebURLRequest::setAppCacheHostID(int appCacheHostID)
 
 bool WebURLRequest::downloadToFile() const
 {
-    return m_private->m_resourceRequest->downloadToFile();
+    return m_private->m_downloadToFile;
 }
 
 void WebURLRequest::setDownloadToFile(bool downloadToFile)
 {
-    m_private->m_resourceRequest->setDownloadToFile(downloadToFile);
+    m_private->m_downloadToFile = downloadToFile;
 }
 
 ResourceRequest& WebURLRequest::toMutableResourceRequest()

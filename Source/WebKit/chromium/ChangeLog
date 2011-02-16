@@ -1,3 +1,24 @@
+2011-02-16  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r78678.
+        http://trac.webkit.org/changeset/78678
+        https://bugs.webkit.org/show_bug.cgi?id=54554
+
+        Breaks NaCl tests in Chromium (Requested by mnaganov on
+        #webkit).
+
+        * src/WebURLRequest.cpp:
+        (WebKit::WebURLRequestPrivateImpl::WebURLRequestPrivateImpl):
+        (WebKit::WebURLRequest::downloadToFile):
+        (WebKit::WebURLRequest::setDownloadToFile):
+        * src/WebURLRequestPrivate.h:
+        (WebKit::WebURLRequestPrivate::WebURLRequestPrivate):
+        * src/WebURLResponse.cpp:
+        (WebKit::WebURLResponsePrivateImpl::WebURLResponsePrivateImpl):
+        (WebKit::WebURLResponse::downloadFilePath):
+        (WebKit::WebURLResponse::setDownloadFilePath):
+        * src/WebURLResponsePrivate.h:
+
 2011-02-15  Bill Budge  <bbudge@chromium.org>
 
         Reviewed by David Levin.
