@@ -1,3 +1,14 @@
+2011-02-15  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows-specific results for tests added in r78396.
+        https://bugs.webkit.org/show_bug.cgi?id=54506
+
+        * platform/win/fast/inline: Added.
+        * platform/win/fast/inline/inline-box-background-expected.txt: Added.
+        * platform/win/fast/inline/inline-box-background-long-image-expected.txt: Added.
+        * platform/win/fast/inline/inline-box-background-repeat-x-expected.txt: Added.
+        * platform/win/fast/inline/inline-box-background-repeat-y-expected.txt: Added.
+
 2011-02-15  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed chromium-gpu rebaseline. Rebaseline tests that were unskipped
