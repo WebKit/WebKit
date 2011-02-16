@@ -35,19 +35,26 @@
 
 namespace WebCore {
 
+class Frame;
+class InspectorAgent;
 class InspectorArray;
 class InspectorDOMStorageResource;
 class InspectorFrontend;
+class InspectorOfflineResourcesBase;
 class Storage;
+class StorageArea;
 
 class InspectorDOMStorageAgent {
 public:
-    typedef HashMap<int, RefPtr<InspectorDOMStorageResource> > DOMStorageResourcesMap;
+    class Resources;
 
-    static PassOwnPtr<InspectorDOMStorageAgent> create(DOMStorageResourcesMap* domStorageResources, InspectorFrontend* frontend)
+    static PassOwnPtr<InspectorDOMStorageAgent> create(InspectorOfflineResourcesBase* domStorageResources, InspectorFrontend* frontend)
     {
         return adoptPtr(new InspectorDOMStorageAgent(domStorageResources, frontend));
     }
+
+    static PassOwnPtr<InspectorOfflineResourcesBase> createStorage();
+    static void clear(InspectorAgent*);
 
     virtual ~InspectorDOMStorageAgent();
 
@@ -59,12 +66,15 @@ public:
     // Called from the injected script.
     void selectDOMStorage(Storage* storage);
 
+    // Called from InspectorInstrumentation
+    static void didUseDOMStorage(InspectorAgent*, StorageArea*, bool isLocalStorage, Frame*);
+
 private:
-    InspectorDOMStorageAgent(DOMStorageResourcesMap*, InspectorFrontend*);
+    InspectorDOMStorageAgent(InspectorOfflineResourcesBase*, InspectorFrontend*);
 
     InspectorDOMStorageResource* getDOMStorageResourceForId(long storageId);
 
-    DOMStorageResourcesMap* m_domStorageResources;
+    Resources* m_resources;
     InspectorFrontend* m_frontend;
 };
 

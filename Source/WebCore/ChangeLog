@@ -1,3 +1,49 @@
+2011-02-16  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: move Database and DOMStorage related things from InspectorAgent to the corresponding agents.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54455
+
+        Some set of instrumentation calls should work even if we have no InspectorFrontend instance and corresponding agents.
+        At the moment we are using InspectorAgent instance for such calls.
+
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        (WebCore::InspectorAgent::createFrontendLifetimeAgents):
+        (WebCore::InspectorAgent::pushDataCollectedOffline):
+        (WebCore::InspectorAgent::didCommitLoad):
+        * inspector/InspectorAgent.h:
+        (WebCore::InspectorOfflineResourcesBase::~InspectorOfflineResourcesBase):
+        (WebCore::InspectorOfflineResourcesBase::InspectorOfflineResourcesBase):
+        (WebCore::InspectorAgent::databaseAgentResources):
+        (WebCore::InspectorAgent::domStorageAgentResources):
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::Resources::clear):
+        (WebCore::InspectorDOMStorageAgent::Resources::pushDataCollectedOffline):
+        (WebCore::InspectorDOMStorageAgent::InspectorDOMStorageAgent):
+        (WebCore::InspectorDOMStorageAgent::~InspectorDOMStorageAgent):
+        (WebCore::InspectorDOMStorageAgent::createOfflineStorage):
+        (WebCore::InspectorDOMStorageAgent::selectDOMStorage):
+        (WebCore::InspectorDOMStorageAgent::getDOMStorageResourceForId):
+        (WebCore::InspectorDOMStorageAgent::didUseDOMStorage):
+        * inspector/InspectorDOMStorageAgent.h:
+        (WebCore::InspectorDOMStorageAgent::create):
+        * inspector/InspectorDatabaseAgent.cpp:
+        (WebCore::InspectorDatabaseAgent::Resources::clear):
+        (WebCore::InspectorDatabaseAgent::Resources::pushDataCollectedOffline):
+        (WebCore::InspectorDatabaseAgent::didOpenDatabase):
+        (WebCore::InspectorDatabaseAgent::InspectorDatabaseAgent):
+        (WebCore::InspectorDatabaseAgent::createOfflineStorage):
+        (WebCore::InspectorDatabaseAgent::databaseForId):
+        (WebCore::InspectorDatabaseAgent::selectDatabase):
+        * inspector/InspectorDatabaseAgent.h:
+        (WebCore::InspectorDatabaseAgent::create):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didOpenDatabaseImpl):
+        (WebCore::InspectorInstrumentation::didUseDOMStorageImpl):
+
 2011-02-15  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Antti Koivisto.

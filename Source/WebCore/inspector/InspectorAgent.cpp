@@ -106,14 +106,11 @@
 #include <wtf/text/StringConcatenate.h>
 
 #if ENABLE(DATABASE)
-#include "Database.h"
 #include "InspectorDatabaseAgent.h"
 #endif
 
 #if ENABLE(DOM_STORAGE)
 #include "InspectorDOMStorageAgent.h"
-#include "Storage.h"
-#include "StorageArea.h"
 #endif
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
@@ -141,6 +138,12 @@ InspectorAgent::InspectorAgent(Page* page, InspectorClient* client)
     , m_client(client)
     , m_frontend(0)
     , m_cssAgent(new InspectorCSSAgent())
+#if ENABLE(DATABASE)
+    , m_databaseAgentResources(InspectorDatabaseAgent::createStorage())
+#endif
+#if ENABLE(DOM_STORAGE)
+    , m_domStorageAgentResources(InspectorDOMStorageAgent::createStorage())
+#endif
     , m_state(new InspectorState(client))
     , m_injectedScriptHost(InjectedScriptHost::create(this))
     , m_consoleAgent(new InspectorConsoleAgent(this))
@@ -387,11 +390,11 @@ void InspectorAgent::createFrontendLifetimeAgents()
     m_runtimeAgent = InspectorRuntimeAgent::create(m_injectedScriptHost.get());
 
 #if ENABLE(DATABASE)
-    m_databaseAgent = InspectorDatabaseAgent::create(&m_databaseResources, m_frontend);
+    m_databaseAgent = InspectorDatabaseAgent::create(databaseAgentResources(), m_frontend);
 #endif
 
 #if ENABLE(DOM_STORAGE)
-    m_domStorageAgent = InspectorDOMStorageAgent::create(&m_domStorageResources, m_frontend);
+    m_domStorageAgent = InspectorDOMStorageAgent::create(domStorageAgentResources(), m_frontend);
 #endif
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
@@ -456,16 +459,6 @@ void InspectorAgent::pushDataCollectedOffline()
 {
     m_domAgent->setDocument(m_inspectedPage->mainFrame()->document());
 
-#if ENABLE(DATABASE)
-    DatabaseResourcesMap::iterator databasesEnd = m_databaseResources.end();
-    for (DatabaseResourcesMap::iterator it = m_databaseResources.begin(); it != databasesEnd; ++it)
-        it->second->bind(m_frontend);
-#endif
-#if ENABLE(DOM_STORAGE)
-    DOMStorageResourcesMap::iterator domStorageEnd = m_domStorageResources.end();
-    for (DOMStorageResourcesMap::iterator it = m_domStorageResources.begin(); it != domStorageEnd; ++it)
-        it->second->bind(m_frontend);
-#endif
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(WORKERS)
     WorkersMap::iterator workersEnd = m_workers.end();
     for (WorkersMap::iterator it = m_workers.begin(); it != workersEnd; ++it) {
@@ -544,10 +537,10 @@ void InspectorAgent::didCommitLoad(DocumentLoader* loader)
         m_workers.clear();
 #endif
 #if ENABLE(DATABASE)
-        m_databaseResources.clear();
+        InspectorDatabaseAgent::clear(this);
 #endif
 #if ENABLE(DOM_STORAGE)
-        m_domStorageResources.clear();
+        InspectorDOMStorageAgent::clear(this);
 #endif
 
         if (m_frontend)
@@ -683,22 +676,6 @@ void InspectorAgent::didDestroyWorker(intptr_t id)
 }
 #endif // ENABLE(WORKERS)
 
-#if ENABLE(DATABASE)
-void InspectorAgent::didOpenDatabase(PassRefPtr<Database> database, const String& domain, const String& name, const String& version)
-{
-    if (!enabled())
-        return;
-
-    RefPtr<InspectorDatabaseResource> resource = InspectorDatabaseResource::create(database, domain, name, version);
-
-    m_databaseResources.set(resource->id(), resource);
-
-    // Resources are only bound while visible.
-    if (m_frontend)
-        resource->bind(m_frontend);
-}
-#endif
-
 void InspectorAgent::getCookies(RefPtr<InspectorArray>* cookies, WTF::String* cookiesString)
 {
     // If we can get raw cookies.
@@ -782,28 +759,6 @@ void InspectorAgent::deleteCookie(const String& cookieName, const String& domain
             WebCore::deleteCookie(document, KURL(ParsedURLString, it->second->url()), cookieName);
     }
 }
-
-#if ENABLE(DOM_STORAGE)
-void InspectorAgent::didUseDOMStorage(StorageArea* storageArea, bool isLocalStorage, Frame* frame)
-{
-    if (!enabled())
-        return;
-
-    DOMStorageResourcesMap::iterator domStorageEnd = m_domStorageResources.end();
-    for (DOMStorageResourcesMap::iterator it = m_domStorageResources.begin(); it != domStorageEnd; ++it)
-        if (it->second->isSameHostAndType(frame, isLocalStorage))
-            return;
-
-    RefPtr<Storage> domStorage = Storage::create(frame, storageArea);
-    RefPtr<InspectorDOMStorageResource> resource = InspectorDOMStorageResource::create(domStorage.get(), isLocalStorage, frame);
-
-    m_domStorageResources.set(resource->id(), resource);
-
-    // Resources are only bound while visible.
-    if (m_frontend)
-        resource->bind(m_frontend);
-}
-#endif
 
 #if ENABLE(WEB_SOCKETS)
 void InspectorAgent::didCreateWebSocket(unsigned long identifier, const KURL& requestURL, const KURL& documentURL)

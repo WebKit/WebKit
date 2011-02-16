@@ -99,6 +99,15 @@ class WebSocketHandshakeRequest;
 class WebSocketHandshakeResponse;
 #endif
 
+class InspectorOfflineResourcesBase {
+    WTF_MAKE_NONCOPYABLE(InspectorOfflineResourcesBase);
+public:
+    virtual ~InspectorOfflineResourcesBase() {}
+
+protected:
+    InspectorOfflineResourcesBase() {}
+};
+
 class InspectorAgent {
     WTF_MAKE_NONCOPYABLE(InspectorAgent);
     WTF_MAKE_FAST_ALLOCATED;
@@ -145,9 +154,11 @@ public:
     InspectorTimelineAgent* timelineAgent() { return m_timelineAgent.get(); }
 #if ENABLE(DATABASE)
     InspectorDatabaseAgent* databaseAgent() { return m_databaseAgent.get(); }
+    InspectorOfflineResourcesBase* databaseAgentResources() { return m_databaseAgentResources.get(); }
 #endif
 #if ENABLE(DOM_STORAGE)
     InspectorDOMStorageAgent* domStorageAgent() { return m_domStorageAgent.get(); }
+    InspectorOfflineResourcesBase* domStorageAgentResources() { return m_domStorageAgentResources.get(); }
 #endif
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     InspectorBrowserDebuggerAgent* browserDebuggerAgent() const { return m_browserDebuggerAgent.get(); }
@@ -181,14 +192,6 @@ public:
     void postWorkerNotificationToFrontend(const InspectorWorkerResource&, WorkerAction);
     void didCreateWorker(intptr_t, const String& url, bool isSharedWorker);
     void didDestroyWorker(intptr_t);
-#endif
-
-#if ENABLE(DATABASE)
-    void didOpenDatabase(PassRefPtr<Database>, const String& domain, const String& name, const String& version);
-#endif
-
-#if ENABLE(DOM_STORAGE)
-    void didUseDOMStorage(StorageArea*, bool isLocalStorage, Frame*);
 #endif
 
 #if ENABLE(WEB_SOCKETS)
@@ -275,10 +278,12 @@ private:
 
 #if ENABLE(DATABASE)
     OwnPtr<InspectorDatabaseAgent> m_databaseAgent;
+    OwnPtr<InspectorOfflineResourcesBase> m_databaseAgentResources;
 #endif
 
 #if ENABLE(DOM_STORAGE)
     OwnPtr<InspectorDOMStorageAgent> m_domStorageAgent;
+    OwnPtr<InspectorOfflineResourcesBase> m_domStorageAgentResources;
 #endif
 
     OwnPtr<InspectorTimelineAgent> m_timelineAgent;
@@ -292,15 +297,6 @@ private:
     RefPtr<Node> m_nodeToFocus;
     RefPtr<InspectorResourceAgent> m_resourceAgent;
     OwnPtr<InspectorRuntimeAgent> m_runtimeAgent;
-
-#if ENABLE(DATABASE)
-    typedef HashMap<int, RefPtr<InspectorDatabaseResource> > DatabaseResourcesMap;
-    DatabaseResourcesMap m_databaseResources;
-#endif
-#if ENABLE(DOM_STORAGE)
-    typedef HashMap<int, RefPtr<InspectorDOMStorageResource> > DOMStorageResourcesMap;
-    DOMStorageResourcesMap m_domStorageResources;
-#endif
 
     RefPtr<InjectedScriptHost> m_injectedScriptHost;
     OwnPtr<InspectorConsoleAgent> m_consoleAgent;

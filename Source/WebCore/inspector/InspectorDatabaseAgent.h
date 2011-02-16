@@ -36,20 +36,23 @@
 namespace WebCore {
 
 class Database;
+class InspectorAgent;
 class InspectorArray;
-class InspectorDatabaseResource;
 class InspectorFrontend;
+class InspectorOfflineResourcesBase;
 
 class InspectorDatabaseAgent {
 public:
     class FrontendProvider;
+    class Resources;
 
-    typedef HashMap<int, RefPtr<InspectorDatabaseResource> > DatabaseResourcesMap;
-
-    static PassOwnPtr<InspectorDatabaseAgent> create(DatabaseResourcesMap* databaseResources, InspectorFrontend* frontend)
+    static PassOwnPtr<InspectorDatabaseAgent> create(InspectorOfflineResourcesBase* storage, InspectorFrontend* frontend)
     {
-        return adoptPtr(new InspectorDatabaseAgent(databaseResources, frontend));
+        return adoptPtr(new InspectorDatabaseAgent(storage, frontend));
     }
+
+    static PassOwnPtr<InspectorOfflineResourcesBase> createStorage();
+    static void clear(InspectorAgent*);
 
     virtual ~InspectorDatabaseAgent();
 
@@ -61,10 +64,11 @@ public:
     Database* databaseForId(long databaseId);
     void selectDatabase(Database* database);
 
+    static void didOpenDatabase(InspectorAgent*, PassRefPtr<Database>, const String& domain, const String& name, const String& version);
 private:
-    InspectorDatabaseAgent(DatabaseResourcesMap*, InspectorFrontend*);
+    InspectorDatabaseAgent(InspectorOfflineResourcesBase*, InspectorFrontend*);
 
-    DatabaseResourcesMap* m_databaseResources;
+    Resources* m_resources;
     RefPtr<FrontendProvider> m_frontendProvider;
 };
 

@@ -42,7 +42,9 @@
 #include "InspectorApplicationCacheAgent.h"
 #include "InspectorBrowserDebuggerAgent.h"
 #include "InspectorConsoleAgent.h"
+#include "InspectorDatabaseAgent.h"
 #include "InspectorDOMAgent.h"
+#include "InspectorDOMStorageAgent.h"
 #include "InspectorDebuggerAgent.h"
 #include "InspectorProfilerAgent.h"
 #include "InspectorResourceAgent.h"
@@ -585,14 +587,14 @@ bool InspectorInstrumentation::profilerEnabledImpl(InspectorAgent* inspectorAgen
 #if ENABLE(DATABASE)
 void InspectorInstrumentation::didOpenDatabaseImpl(InspectorAgent* inspectorAgent, PassRefPtr<Database> database, const String& domain, const String& name, const String& version)
 {
-    inspectorAgent->didOpenDatabase(database, domain, name, version);
+    InspectorDatabaseAgent::didOpenDatabase(inspectorAgent, database, domain, name, version);
 }
 #endif
 
 #if ENABLE(DOM_STORAGE)
 void InspectorInstrumentation::didUseDOMStorageImpl(InspectorAgent* inspectorAgent, StorageArea* storageArea, bool isLocalStorage, Frame* frame)
 {
-    inspectorAgent->didUseDOMStorage(storageArea, isLocalStorage, frame);
+    InspectorDOMStorageAgent::didUseDOMStorage(inspectorAgent, storageArea, isLocalStorage, frame);
 }
 #endif
 

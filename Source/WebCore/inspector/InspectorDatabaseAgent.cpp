@@ -218,9 +218,53 @@ private:
 
 } // namespace
 
+typedef HashMap<int, RefPtr<InspectorDatabaseResource> > DatabaseResourcesMap;
+
+class InspectorDatabaseAgent::Resources : public InspectorOfflineResourcesBase {
+public:
+    DatabaseResourcesMap m_map;
+};
+
+void InspectorDatabaseAgent::didOpenDatabase(InspectorAgent* inspectorAgent, PassRefPtr<Database> database, const String& domain, const String& name, const String& version)
+{
+    if (!inspectorAgent->enabled())
+        return;
+
+    RefPtr<InspectorDatabaseResource> resource = InspectorDatabaseResource::create(database, domain, name, version);
+
+    Resources* resources = static_cast<Resources*>(inspectorAgent->databaseAgentResources());
+    ASSERT(resources);
+    resources->m_map.set(resource->id(), resource);
+
+    // Resources are only bound while visible.
+    if (InspectorFrontend* frontend = inspectorAgent->frontend())
+        resource->bind(frontend);
+}
+
+void InspectorDatabaseAgent::clear(InspectorAgent* inspectorAgent)
+{
+    static_cast<Resources*>(inspectorAgent->databaseAgentResources())->m_map.clear();
+}
+
+
+InspectorDatabaseAgent::InspectorDatabaseAgent(InspectorOfflineResourcesBase* resources, InspectorFrontend* frontend)
+    : m_resources(static_cast<Resources*>(resources))
+    , m_frontendProvider(FrontendProvider::create(frontend))
+{
+    ASSERT(resources);
+    DatabaseResourcesMap::iterator databasesEnd = m_resources->m_map.end();
+    for (DatabaseResourcesMap::iterator it = m_resources->m_map.begin(); it != databasesEnd; ++it)
+        it->second->bind(m_frontendProvider->frontend());
+}
+
 InspectorDatabaseAgent::~InspectorDatabaseAgent()
 {
     m_frontendProvider->clearFrontend();
+}
+
+PassOwnPtr<InspectorOfflineResourcesBase> InspectorDatabaseAgent::createStorage()
+{
+    return adoptPtr(new Resources());
 }
 
 void InspectorDatabaseAgent::getDatabaseTableNames(long databaseId, RefPtr<InspectorArray>* names)
@@ -252,8 +296,8 @@ void InspectorDatabaseAgent::executeSQL(long databaseId, const String& query, bo
 
 Database* InspectorDatabaseAgent::databaseForId(long databaseId)
 {
-    DatabaseResourcesMap::iterator it = m_databaseResources->find(databaseId);
-    if (it == m_databaseResources->end())
+    DatabaseResourcesMap::iterator it = m_resources->m_map.find(databaseId);
+    if (it == m_resources->m_map.end())
         return 0;
     return it->second->database();
 }
@@ -263,18 +307,12 @@ void InspectorDatabaseAgent::selectDatabase(Database* database)
     if (!m_frontendProvider->frontend())
         return;
 
-    for (DatabaseResourcesMap::iterator it = m_databaseResources->begin(); it != m_databaseResources->end(); ++it) {
+    for (DatabaseResourcesMap::iterator it = m_resources->m_map.begin(); it != m_resources->m_map.end(); ++it) {
         if (it->second->database() == database) {
             m_frontendProvider->frontend()->selectDatabase(it->first);
             break;
         }
     }
-}
-
-InspectorDatabaseAgent::InspectorDatabaseAgent(DatabaseResourcesMap* databaseResources, InspectorFrontend* frontend)
-    : m_databaseResources(databaseResources)
-    , m_frontendProvider(FrontendProvider::create(frontend))
-{
 }
 
 } // namespace WebCore
