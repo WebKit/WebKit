@@ -60,6 +60,7 @@ BitmapImage::BitmapImage(ImageObserver* observer)
     , m_sizeAvailable(false)
     , m_hasUniformFrameSize(true)
     , m_decodedSize(0)
+    , m_decodedPropertiesSize(0)
     , m_haveFrameCount(false)
     , m_frameCount(0)
 {
@@ -104,8 +105,12 @@ void BitmapImage::destroyMetadataAndNotify(int framesCleared)
     m_isSolidColor = false;
     invalidatePlatformData();
 
-    const int deltaBytes = framesCleared * -frameBytes(m_size);
+    int deltaBytes = framesCleared * -frameBytes(m_size);
     m_decodedSize += deltaBytes;
+    if (framesCleared > 0) {
+        deltaBytes -= m_decodedPropertiesSize;
+        m_decodedPropertiesSize = 0;
+    }
     if (deltaBytes && imageObserver())
         imageObserver()->decodedSizeChanged(this, deltaBytes);
 }
@@ -132,11 +137,33 @@ void BitmapImage::cacheFrame(size_t index)
     if (frameSize != m_size)
         m_hasUniformFrameSize = false;
     if (m_frames[index].m_frame) {
-        const int deltaBytes = frameBytes(frameSize);
+        int deltaBytes = frameBytes(frameSize);
         m_decodedSize += deltaBytes;
+        // The fully-decoded frame will subsume the partially decoded data used
+        // to determine image properties.
+        deltaBytes -= m_decodedPropertiesSize;
+        m_decodedPropertiesSize = 0;
         if (imageObserver())
             imageObserver()->decodedSizeChanged(this, deltaBytes);
     }
+}
+
+void BitmapImage::didDecodeProperties() const
+{
+    if (m_decodedSize)
+        return;
+    size_t updatedSize = m_source.bytesDecodedToDetermineProperties();
+    if (m_decodedPropertiesSize == updatedSize)
+        return;
+    int deltaBytes = updatedSize - m_decodedPropertiesSize;
+#ifndef NDEBUG
+    bool overflow = updatedSize > m_decodedPropertiesSize && deltaBytes < 0;
+    bool underflow = updatedSize < m_decodedPropertiesSize && deltaBytes > 0;
+    ASSERT(!overflow && !underflow);
+#endif
+    m_decodedPropertiesSize = updatedSize;
+    if (imageObserver())
+        imageObserver()->decodedSizeChanged(this, deltaBytes);
 }
 
 IntSize BitmapImage::size() const
@@ -144,6 +171,7 @@ IntSize BitmapImage::size() const
     if (m_sizeAvailable && !m_haveSize) {
         m_size = m_source.size();
         m_haveSize = true;
+        didDecodeProperties();
     }
     return m_size;
 }
@@ -152,12 +180,16 @@ IntSize BitmapImage::currentFrameSize() const
 {
     if (!m_currentFrame || m_hasUniformFrameSize)
         return size();
-    return m_source.frameSizeAtIndex(m_currentFrame);
+    IntSize frameSize = m_source.frameSizeAtIndex(m_currentFrame);
+    didDecodeProperties();
+    return frameSize;
 }
 
 bool BitmapImage::getHotSpot(IntPoint& hotSpot) const
 {
-    return m_source.getHotSpot(hotSpot);
+    bool result = m_source.getHotSpot(hotSpot);
+    didDecodeProperties();
+    return result;
 }
 
 bool BitmapImage::dataChanged(bool allDataReceived)
@@ -190,6 +222,7 @@ size_t BitmapImage::frameCount()
     if (!m_haveFrameCount) {
         m_haveFrameCount = true;
         m_frameCount = m_source.frameCount();
+        didDecodeProperties();
     }
     return m_frameCount;
 }
@@ -200,6 +233,7 @@ bool BitmapImage::isSizeAvailable()
         return true;
 
     m_sizeAvailable = m_source.isSizeAvailable();
+    didDecodeProperties();
 
     return m_sizeAvailable;
 }
@@ -256,6 +290,7 @@ int BitmapImage::repetitionCount(bool imageKnownToBeComplete)
         // decoder will default to cAnimationLoopOnce, and we'll try and read
         // the count again once the whole image is decoded.
         m_repetitionCount = m_source.repetitionCount();
+        didDecodeProperties();
         m_repetitionCountStatus = (imageKnownToBeComplete || m_repetitionCount == cAnimationNone) ? Certain : Uncertain;
     }
     return m_repetitionCount;

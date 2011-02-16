@@ -169,6 +169,8 @@ public:
     IntSize frameSizeAtIndex(size_t) const;
     bool getHotSpot(IntPoint&) const;
 
+    size_t bytesDecodedToDetermineProperties() const;
+
     int repetitionCount();
 
     size_t frameCount() const;

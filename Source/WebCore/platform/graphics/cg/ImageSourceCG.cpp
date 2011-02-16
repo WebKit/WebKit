@@ -222,6 +222,17 @@ bool ImageSource::getHotSpot(IntPoint& hotSpot) const
     return true;
 }
 
+size_t ImageSource::bytesDecodedToDetermineProperties() const
+{
+    // Measured by tracing malloc/calloc calls on Mac OS 10.6.6, x86_64.
+    // A non-zero value ensures cached images with no decoded frames still enter
+    // the live decoded resources list when the CGImageSource decodes image
+    // properties, allowing the cache to prune the partially decoded image.
+    // This value is likely to be inaccurate on other platforms, but the overall
+    // behavior is unchanged.
+    return 13088;
+}
+    
 int ImageSource::repetitionCount()
 {
     int result = cAnimationLoopOnce; // No property means loop once.

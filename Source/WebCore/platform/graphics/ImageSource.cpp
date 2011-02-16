@@ -115,6 +115,11 @@ bool ImageSource::getHotSpot(IntPoint&) const
     return false;
 }
 
+size_t ImageSource::bytesDecodedToDetermineProperties() const
+{
+    return 0;
+}
+
 int ImageSource::repetitionCount()
 {
     return m_decoder ? m_decoder->repetitionCount() : cAnimationNone;

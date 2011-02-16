@@ -1,3 +1,42 @@
+2011-02-15  Ian Henderson  <ianh@apple.com>
+
+        Reviewed by Darin Adler.
+
+        To determine image properties, CG allocates memory which isn't included in CachedImage's decoded size
+        https://bugs.webkit.org/show_bug.cgi?id=53281
+
+        When determining properties of an image (such as its size), CG ends up
+        decoding part of the image.  This patch adds accounting for this extra
+        decoded size so a cache prune can clean up the allocations.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+        (WebCore::BitmapImage::destroyMetadataAndNotify):
+        Clearing the source destroys the extra decoded data.  Report this
+        change in decoded size to the image observer.
+        (WebCore::BitmapImage::cacheFrame):
+        The first decoded frame subsumes the data decoded when determining
+        image properties, so we subtract it out here.
+        (WebCore::BitmapImage::didDecodeProperties):
+        Reports the extra decoded size to the image's observer.
+        (WebCore::BitmapImage::size):
+        (WebCore::BitmapImage::currentFrameSize):
+        (WebCore::BitmapImage::getHotSpot):
+        (WebCore::BitmapImage::frameCount):
+        (WebCore::BitmapImage::isSizeAvailable):
+        (WebCore::BitmapImage::repetitionCount):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::bytesDecodedToDetermineProperties):
+        The default value is 0 to match the current behavior on other
+        platforms.
+        * platform/graphics/ImageSource.h:
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::bytesDecodedToDetermineProperties):
+        Add a constant value for bytesDecodedToDetermineProperties(), measured
+        by tracing malloc/calloc calls while asking an image source for its
+        properties.
+
 2011-02-15  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

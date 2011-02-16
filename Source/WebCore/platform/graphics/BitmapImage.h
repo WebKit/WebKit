@@ -211,6 +211,12 @@ protected:
     // Whether or not size is available yet.    
     bool isSizeAvailable();
 
+    // Called after asking the source for any information that may require
+    // decoding part of the image (e.g., the image size).  We need to report
+    // the partially decoded data to our observer so it has an accurate
+    // account of the BitmapImage's memory usage.
+    void didDecodeProperties() const;
+
     // Animation.
     int repetitionCount(bool imageKnownToBeComplete);  // |imageKnownToBeComplete| should be set if the caller knows the entire image has been decoded.
     bool shouldAnimate();
@@ -277,6 +283,7 @@ protected:
     mutable bool m_hasUniformFrameSize;
 
     unsigned m_decodedSize; // The current size of all decoded frames.
+    mutable unsigned m_decodedPropertiesSize; // The size of data decoded by the source to determine image properties (e.g. size, frame count, etc).
 
     mutable bool m_haveFrameCount;
     size_t m_frameCount;
