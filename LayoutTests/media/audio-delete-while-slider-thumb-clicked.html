@@ -32,9 +32,12 @@
             
             function deleteAudio()
             {
+                var audio = document.getElementById('audio');
+                if (!audio)
+                    return;
+
                 // delete the search
                 log("<br>deleting audio element");
-                var audio = document.getElementById('audio');
                 audio.parentNode.removeChild(audio);
 
                 setTimeout(buttonClick, 10);

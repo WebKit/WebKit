@@ -1,3 +1,13 @@
+2011-02-16  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Adam Roben.
+
+        media/audio-delete-while-slider-thumb-clicked.html failing on Windows since r78562
+        https://bugs.webkit.org/show_bug.cgi?id=54502
+
+        * media/audio-delete-while-slider-thumb-clicked.html: Avoid deleting the element twice.
+        * platform/win/Skipped: unskip the test.
+
 2011-02-16  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
