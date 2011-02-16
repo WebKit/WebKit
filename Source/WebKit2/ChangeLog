@@ -1,3 +1,11 @@
+2011-02-15  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Copy over new WebKit 2 header.
+
+        Rubber-stamped by Alice Liu.
+
+        * win/WebKit2Generated.make:
+
 2011-02-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.
