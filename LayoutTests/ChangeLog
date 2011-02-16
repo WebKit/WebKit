@@ -1,5 +1,18 @@
 2011-02-15  Kent Tamura  <tkent@chromium.org>
 
+        Unreviewed, test expectation update.
+
+        Chromium baseline files for a new test of r78677.
+
+        * platform/chromium-linux/fast/forms/input-appearance-spinbutton-layer-expected.checksum: Added.
+        * platform/chromium-linux/fast/forms/input-appearance-spinbutton-layer-expected.png: Added.
+        * platform/chromium-linux/fast/forms/input-appearance-spinbutton-layer-expected.txt: Added.
+        * platform/chromium-win-xp/fast/forms/input-appearance-spinbutton-layer-expected.checksum: Added.
+        * platform/chromium-win-xp/fast/forms/input-appearance-spinbutton-layer-expected.png: Added.
+        * platform/chromium-win-xp/fast/forms/input-appearance-spinbutton-layer-expected.txt: Added.
+
+2011-02-15  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Darin Fisher.
 
         [Chromium] Rendering error of spin buttons on layers
