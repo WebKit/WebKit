@@ -1,3 +1,17 @@
+2011-02-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        XSLT with output method HTML and images crashes in debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=54462
+
+        Test that we don't try to prepare to stop twice when pasing HTML
+        generated from an XSLT.
+
+        * fast/parser/resources/xslt-with-html.xsl: Added.
+        * fast/parser/xslt-with-html-expected.txt: Added.
+        * fast/parser/xslt-with-html.xml: Added.
+
 2011-02-15  Martin Robinson  <mrobinson@igalia.com>
 
         Rebaseline some GTK+ tests which have different results on the bots.

@@ -1,3 +1,29 @@
+2011-02-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        XSLT with output method HTML and images crashes in debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=54462
+
+        http://trac.webkit.org/changeset/75577 created Document::setContent but
+        didn't notice that the code paths combined into Document::setContent
+        were subtly different.  In particular, some of the code paths called
+        parser->finish() whereas other did not.
+
+        The difference is that an explicit call to parser->finish() is required
+        in the case where there is no frame because explicitClose doesn't call
+        endIfNotLoadingMainResource if there is no frame.  This patch moves
+        that logic inside explicitClose, which is more natural.
+
+        This patch also removes removeAllChildren, which has not effect in this
+        situation and should never have been added in the first place.
+
+        Test: fast/parser/xslt-with-html.xml
+
+        * dom/Document.cpp:
+        (WebCore::Document::setContent):
+        (WebCore::Document::explicitClose):
+
 2011-02-15  Oliver Hunt  <oliver@apple.com>
 
         Fix EFL build for

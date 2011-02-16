@@ -1092,12 +1092,9 @@ KURL Document::baseURI() const
 
 void Document::setContent(const String& content)
 {
-    removeAllChildren();
-
     open();
     m_parser->append(content);
-    m_parser->finish();
-    explicitClose();
+    close();
 }
 
 // FIXME: We need to discuss the DOM API here at some point. Ideas:
@@ -2020,6 +2017,8 @@ void Document::explicitClose()
         // Because we have no frame, we don't know if all loading has completed,
         // so we just call implicitClose() immediately. FIXME: This might fire
         // the load event prematurely <http://bugs.webkit.org/show_bug.cgi?id=14568>.
+        if (m_parser)
+            m_parser->finish();
         implicitClose();
         return;
     }
