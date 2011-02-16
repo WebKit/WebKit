@@ -101,8 +101,6 @@ function dbErrorCaptureCallback()
     shouldBeFalse("requestFired");
     shouldBeFalse("bubbleFired");
     shouldBeFalse("dbBubbleFired");
-    shouldBe("event.target", "request");
-    shouldBe("event.currentTarget", "db");
     dbCaptureFired = true;
 }
 
@@ -115,8 +113,6 @@ function errorCaptureCallback()
     shouldBeFalse("requestFired");
     shouldBeFalse("bubbleFired");
     shouldBeFalse("dbBubbleFired");
-    shouldBe("event.target", "request");
-    shouldBe("event.currentTarget", "trans");
     captureFired = true;
 }
 
@@ -129,8 +125,6 @@ function errorFiredCallback()
     shouldBeFalse("requestFired");
     shouldBeFalse("bubbleFired");
     shouldBeFalse("dbBubbleFired");
-    shouldBe("event.target", "request");
-    shouldBe("event.currentTarget", "request");
     requestFired = true;
 }
 
@@ -143,8 +137,6 @@ function errorBubbleCallback()
     shouldBeTrue("requestFired");
     shouldBeFalse("bubbleFired");
     shouldBeFalse("dbBubbleFired");
-    shouldBe("event.target", "request");
-    shouldBe("event.currentTarget", "trans");
     bubbleFired = true;
 }
 
@@ -157,8 +149,6 @@ function dbErrorBubbleCallback()
     shouldBeTrue("requestFired");
     shouldBeTrue("bubbleFired");
     shouldBeFalse("dbBubbleFired");
-    shouldBe("event.target", "request");
-    shouldBe("event.currentTarget", "db");
     dbBubbleFired = true;
 }
 
@@ -208,8 +198,6 @@ function dbSuccessCaptureCallback()
     shouldBeFalse("requestFired");
     shouldBeFalse("bubbleFired");
     shouldBeFalse("dbBubbleFired");
-    shouldBe("event.target", "request");
-    shouldBe("event.currentTarget", "db");
     dbCaptureFired = true;
 }
 
@@ -222,8 +210,6 @@ function successCaptureCallback()
     shouldBeFalse("requestFired");
     shouldBeFalse("bubbleFired");
     shouldBeFalse("dbBubbleFired");
-    shouldBe("event.target", "request");
-    shouldBe("event.currentTarget", "trans");
     captureFired = true;
 }
 
@@ -236,8 +222,6 @@ function successFiredCallback()
     shouldBeFalse("requestFired");
     shouldBeFalse("bubbleFired");
     shouldBeFalse("dbBubbleFired");
-    shouldBe("event.target", "request");
-    shouldBe("event.currentTarget", "request");
     requestFired = true;
 }
 

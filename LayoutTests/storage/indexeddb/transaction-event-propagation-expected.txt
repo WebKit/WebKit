@@ -27,22 +27,16 @@ In IDBDatabase abort capture
 PASS dbCaptureFired is false
 PASS abortFired is false
 PASS dbBubbleFired1 is false
-PASS event.target is trans
-PASS event.currentTarget is db
 
 In abort handler
 PASS dbCaptureFired is true
 PASS abortFired is false
 PASS dbBubbleFired1 is false
-PASS event.target is trans
-PASS event.currentTarget is trans
 
 In IDBDatabase error bubble
 PASS dbCaptureFired is true
 PASS abortFired is true
 PASS dbBubbleFired1 is false
-PASS event.target is trans
-PASS event.currentTarget is db
 
 Verifing success.
 trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
@@ -63,15 +57,11 @@ In IDBDatabase complete capture
 PASS dbCaptureFired is false
 PASS completeFired is false
 PASS dbBubbleFired2 is false
-PASS event.target is trans
-PASS event.currentTarget is db
 
 In IDBRequest handler
 PASS dbCaptureFired is true
 PASS completeFired is false
 PASS dbBubbleFired2 is false
-PASS event.target is trans
-PASS event.currentTarget is trans
 
 PASS successfullyParsed is true
 

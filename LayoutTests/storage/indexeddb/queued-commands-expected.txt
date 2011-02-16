@@ -10,7 +10,7 @@ setVersionSuccess():
 trans = event.target.result
 PASS trans !== null is true
 Deleted all object stores.
-db.createObjectStore('storeName')
+db.createObjectStore('storeName', null)
 store.createIndex('indexName', 'x')
 store.add({x: 'value', y: 'zzz'}, 'key')
 store.add({x: 'value2', y: 'zzz2'}, 'key2')

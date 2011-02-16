@@ -246,12 +246,6 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
     return dontPreventDefault;
 }
 
-void IDBRequest::uncaughtExceptionInEventHandler()
-{
-    if (m_transaction)
-        m_transaction->backend()->abort();
-}
-
 void IDBRequest::enqueueEvent(PassRefPtr<Event> event)
 {
     ASSERT(!m_finished);

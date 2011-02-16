@@ -1,3 +1,23 @@
+2011-02-16  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r78655.
+        http://trac.webkit.org/changeset/78655
+        https://bugs.webkit.org/show_bug.cgi?id=54543
+
+        Causes too many test failures in chromium (Requested by
+        mnaganov on #webkit).
+
+        * storage/indexeddb/exception-in-event-aborts-expected.txt: Removed.
+        * storage/indexeddb/exception-in-event-aborts.html: Removed.
+        * storage/indexeddb/queued-commands-expected.txt:
+        * storage/indexeddb/queued-commands.html:
+        * storage/indexeddb/request-event-propagation-expected.txt:
+        * storage/indexeddb/request-event-propagation.html:
+        * storage/indexeddb/resources/shared.js:
+        (unexpectedErrorCallback):
+        * storage/indexeddb/transaction-event-propagation-expected.txt:
+        * storage/indexeddb/transaction-event-propagation.html:
+
 2011-02-16  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed rebaseline GTK media test result.

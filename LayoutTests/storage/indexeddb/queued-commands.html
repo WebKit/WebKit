@@ -39,7 +39,7 @@ function deleteExisting()
 
     deleteAllObjectStores(db);
 
-    window.store = evalAndLog("db.createObjectStore('storeName')");
+    window.store = evalAndLog("db.createObjectStore('storeName', null)");
     window.indexObject = evalAndLog("store.createIndex('indexName', 'x')");
 
     request = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key')");

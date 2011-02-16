@@ -85,7 +85,6 @@ public:
     virtual ScriptExecutionContext* scriptExecutionContext() const;
     virtual bool dispatchEvent(PassRefPtr<Event>);
     bool dispatchEvent(PassRefPtr<Event> event, ExceptionCode& ec) { return EventTarget::dispatchEvent(event, ec); }
-    virtual void uncaughtExceptionInEventHandler();
 
     using ThreadSafeShared<IDBCallbacks>::ref;
     using ThreadSafeShared<IDBCallbacks>::deref;
