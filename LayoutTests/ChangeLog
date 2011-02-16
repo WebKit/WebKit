@@ -1,3 +1,20 @@
+2011-02-15  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Autocorrection should respect undo.
+        https://bugs.webkit.org/show_bug.cgi?id=52221
+        <rdar://problem/8663399>
+
+        Rebaselined tests affected by code change.
+
+        * platform/mac/editing/spelling/autocorrection-contraction-expected.txt:
+        * platform/mac/editing/spelling/autocorrection-delete-expected.txt:
+        * platform/mac/editing/spelling/autocorrection-removing-underline-after-paste-expected.txt:
+        * platform/mac/editing/spelling/autocorrection-removing-underline-expected.txt:
+        * platform/mac/editing/spelling/autocorrection-simple-expected.txt:
+        * platform/mac/editing/spelling/delete-autocorrected-word-1-expected.txt:
+
 2011-02-15  Peter Kasting  <pkasting@google.com>
 
         Unreviewed, Chromium test expectations update.

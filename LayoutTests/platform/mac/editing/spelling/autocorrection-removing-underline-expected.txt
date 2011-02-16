@@ -44,8 +44,10 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 14 of #text > DIV > BO
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 14 of #text > DIV > BODY > HTML > #document to 14 of #text > DIV > BODY > HTML > #document toDOMRange:range from 4 of #text > DIV > BODY > HTML > #document to 13 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertText:notational replacingDOMRange:range from 4 of #text > DIV > BODY > HTML > #document to 13 of #text > DIV > BODY > HTML > #document givenAction:WebViewInsertActionTyped
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 14 of #text > DIV > BODY > HTML > #document to 14 of #text > DIV > BODY > HTML > #document toDOMRange:range from 4 of #text > DIV > BODY > HTML > #document to 13 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 14 of #text > DIV > BODY > HTML > #document to 14 of #text > DIV > BODY > HTML > #document toDOMRange:range from 4 of #text > DIV > BODY > HTML > #document to 13 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 14 of #text > DIV > BODY > HTML > #document to 15 of #text > DIV > BODY > HTML > #document toDOMRange:range from 14 of #text > DIV > BODY > HTML > #document to 14 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification

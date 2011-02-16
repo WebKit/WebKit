@@ -1,3 +1,62 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 2 of #text > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > DIV > BODY > HTML > #document to 2 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > DIV > BODY > HTML > #document to 3 of #text > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > DIV > BODY > HTML > #document to 3 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > DIV > BODY > HTML > #document to 4 of #text > DIV > BODY > HTML > #document toDOMRange:range from 4 of #text > DIV > BODY > HTML > #document to 4 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > DIV > BODY > HTML > #document to 5 of #text > DIV > BODY > HTML > #document toDOMRange:range from 5 of #text > DIV > BODY > HTML > #document to 5 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > DIV > BODY > HTML > #document to 6 of #text > DIV > BODY > HTML > #document toDOMRange:range from 6 of #text > DIV > BODY > HTML > #document to 6 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 7 of #text > DIV > BODY > HTML > #document to 7 of #text > DIV > BODY > HTML > #document toDOMRange:range from 7 of #text > DIV > BODY > HTML > #document to 7 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 7 of #text > DIV > BODY > HTML > #document to 8 of #text > DIV > BODY > HTML > #document toDOMRange:range from 8 of #text > DIV > BODY > HTML > #document to 8 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 8 of #text > DIV > BODY > HTML > #document to 9 of #text > DIV > BODY > HTML > #document toDOMRange:range from 9 of #text > DIV > BODY > HTML > #document to 9 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 9 of #text > DIV > BODY > HTML > #document to 10 of #text > DIV > BODY > HTML > #document toDOMRange:range from 10 of #text > DIV > BODY > HTML > #document to 10 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 10 of #text > DIV > BODY > HTML > #document to 11 of #text > DIV > BODY > HTML > #document toDOMRange:range from 11 of #text > DIV > BODY > HTML > #document to 11 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 11 of #text > DIV > BODY > HTML > #document to 12 of #text > DIV > BODY > HTML > #document toDOMRange:range from 12 of #text > DIV > BODY > HTML > #document to 12 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 12 of #text > DIV > BODY > HTML > #document to 13 of #text > DIV > BODY > HTML > #document toDOMRange:range from 13 of #text > DIV > BODY > HTML > #document to 13 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 14 of #text > DIV > BODY > HTML > #document to 14 of #text > DIV > BODY > HTML > #document toDOMRange:range from 14 of #text > DIV > BODY > HTML > #document to 14 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 14 of #text > DIV > BODY > HTML > #document to 14 of #text > DIV > BODY > HTML > #document toDOMRange:range from 7 of #text > DIV > BODY > HTML > #document to 13 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldInsertText:message replacingDOMRange:range from 7 of #text > DIV > BODY > HTML > #document to 13 of #text > DIV > BODY > HTML > #document givenAction:WebViewInsertActionTyped
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 14 of #text > DIV > BODY > HTML > #document to 14 of #text > DIV > BODY > HTML > #document toDOMRange:range from 7 of #text > DIV > BODY > HTML > #document to 13 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 14 of #text > DIV > BODY > HTML > #document to 14 of #text > DIV > BODY > HTML > #document toDOMRange:range from 7 of #text > DIV > BODY > HTML > #document to 13 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 14 of #text > DIV > BODY > HTML > #document to 15 of #text > DIV > BODY > HTML > #document toDOMRange:range from 14 of #text > DIV > BODY > HTML > #document to 14 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 6 of #text > DIV > BODY > HTML > #document to 7 of #text > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
@@ -17,13 +76,9 @@ layer at (0,0) size 800x600
           text run at (0,18) width 216: "spelling of 'mesage' several times, "
           text run at (216,18) width 558: "the spell checker will not provide 'message' as a suggestion anymore. To fix this, remove"
           text run at (0,36) width 185: "all files in ~/Library/Spelling."
-      RenderBlock (anonymous) at (0,140) size 784x140
+      RenderBlock {DIV} at (0,140) size 784x18
+        RenderText {#text} at (0,0) size 85x18
+          text run at (0,0) width 81: "it's amessage"
+          text run at (81,0) width 4: " "
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,280) size 784x0
-layer at (10,150) size 581x136 clip at (11,151) size 579x134
-  RenderTextControl {TEXTAREA} at (2,2) size 581x136 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-    RenderBlock {DIV} at (3,3) size 575x13
-      RenderText {#text} at (0,0) size 79x13
-        text run at (0,0) width 76: "it's a message"
-        text run at (76,0) width 3: " "
-caret: position 15 of child 0 {#text} of child 0 {DIV} of child 5 {TEXTAREA} of body
+caret: position 6 of child 0 {#text} of child 5 {DIV} of body
