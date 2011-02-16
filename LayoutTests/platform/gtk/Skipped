@@ -1556,9 +1556,6 @@ http/tests/xmlhttprequest/simple-cross-origin-progress-events.html
 # Fails on and off (more often fails) on the release bot
 media/event-attributes.html
 
-# GTK+ does not have layoutTestController.setWillSendRequestClearHeader.
-http/tests/security/no-referrer.html
-
 # GTK+ does not have layoutTestController.setWillSendRequestReturnsNull.
 fast/loader/onload-willSendRequest-null-for-script.html
 fast/loader/willSendRequest-null-for-preload.html

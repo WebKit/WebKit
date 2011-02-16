@@ -1,3 +1,14 @@
+2011-02-16  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] Add support for layoutTestController.setWillSendRequestClearHeader
+        https://bugs.webkit.org/show_bug.cgi?id=54537
+
+        Unskipped http/tests/security/no-referrer.html.
+
+        * platform/gtk/Skipped:
+
 2011-02-16  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

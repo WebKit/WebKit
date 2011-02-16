@@ -1,3 +1,18 @@
+2011-02-16  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] Add support for layoutTestController.setWillSendRequestClearHeader
+        https://bugs.webkit.org/show_bug.cgi?id=54537
+
+        Added handler for resource-request-starting emitted in
+        FrameLoader's willSendRequest(). The current implementation
+        removes the headers set in setWillSendRequestClearHeader.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (willSendRequestCallback):
+        (createWebView):
+
 2011-02-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Andreas Kling.

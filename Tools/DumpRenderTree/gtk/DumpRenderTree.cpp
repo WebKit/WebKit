@@ -1012,6 +1012,17 @@ static void frameCreatedCallback(WebKitWebView* webView, WebKitWebFrame* webFram
     g_signal_connect(webFrame, "notify::load-status", G_CALLBACK(webFrameLoadStatusNotified), NULL);
 }
 
+static void willSendRequestCallback(WebKitWebView* webView, WebKitWebFrame*, WebKitWebResource*, WebKitNetworkRequest* request, WebKitNetworkResponse*)
+{
+    SoupMessage* soupMessage = webkit_network_request_get_message(request);
+
+    if (soupMessage) {
+        const set<string>& clearHeaders = gLayoutTestController->willSendRequestClearHeaders();
+        for (set<string>::const_iterator header = clearHeaders.begin(); header != clearHeaders.end(); ++header)
+            soup_message_headers_remove(soupMessage->request_headers, header->c_str());
+    }
+}
+
 static WebKitWebView* createWebView()
 {
     WebKitWebView* view = WEBKIT_WEB_VIEW(webkit_web_view_new());
@@ -1040,6 +1051,7 @@ static WebKitWebView* createWebView()
                      "signal::drag-end", dragEndCallback, 0,
                      "signal::drag-failed", dragFailedCallback, 0,
                      "signal::frame-created", frameCreatedCallback, 0,
+                     "signal::resource-request-starting", willSendRequestCallback, 0,
 
                      NULL);
     connectEditingCallbacks(view);

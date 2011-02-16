@@ -1,3 +1,16 @@
+2011-02-16  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] Add support for layoutTestController.setWillSendRequestClearHeader
+        https://bugs.webkit.org/show_bug.cgi?id=54537
+
+        Headers removed from the SoupMessage should be also removed from
+        the ResourceRequest when updating the latter from the former.
+
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        (WebCore::ResourceRequest::updateFromSoupMessage):
+
 2011-02-16  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
