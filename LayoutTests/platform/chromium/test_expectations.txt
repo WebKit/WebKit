@@ -630,7 +630,6 @@ BUGCR66087 WIN LINUX : inspector/timeline/timeline-parse-html.html = CRASH TIMEO
 BUGCR68165 WIN LINUX DEBUG SLOW : inspector/styles/styles-source-lines.html = PASS
 BUGCR66087 WIN LINUX SLOW : inspector/storage-panel-dom-storage.html = PASS TEXT
 
-BUG_DRT WIN LINUX : http/tests/inspector-enabled/console-log-before-frame-navigation.html = TEXT
 BUG_DRT WIN LINUX : http/tests/inspector/change-iframe-src.html = CRASH
 BUGCR66087 WIN LINUX SLOW : http/tests/inspector/console-resource-errors.html = PASS TEXT
 BUGCR66087 WIN LINUX SLOW : http/tests/inspector/inspect-iframe-from-different-domain.html = PASS TEXT
@@ -3452,8 +3451,6 @@ BUGWK54472 : media/audio-delete-while-slider-thumb-clicked.html = TIMEOUT
 
 BUGPFELDMAN SKIP : inspector/debugger/dom-breakpoints.html = TIMEOUT
 BUGPFELDMAN SKIP : inspector/elements/set-attribute.html = MISSING
-BUGPFELDMAN SKIP : http/tests/inspector-enabled/database-open.html = CRASH
-BUGPFELDMAN SKIP : http/tests/inspector-enabled/dom-storage-open.html = TEXT
 
 BUGWK54387 : fast/js/kde/math.html = TEXT
 

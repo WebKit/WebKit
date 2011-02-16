@@ -1,3 +1,15 @@
+2011-02-16  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: chromium: DRT is crashing on the tests in inspector-enabled folder.
+        https://bugs.webkit.org/show_bug.cgi?id=54548
+
+        Bug in chromium DRT implementation was fixed.
+        The tests were enabled.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-16  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, qt and mac rebaseline of test after r78690.

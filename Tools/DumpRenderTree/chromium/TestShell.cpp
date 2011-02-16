@@ -175,7 +175,11 @@ void TestShell::runFileTest(const TestParams& params)
 
     bool inspectorTestMode = testUrl.find("/inspector/") != string::npos
         || testUrl.find("\\inspector\\") != string::npos;
-    m_prefs.developerExtrasEnabled = inspectorTestMode;
+
+    m_prefs.developerExtrasEnabled =  inspectorTestMode
+        || testUrl.find("/inspector-enabled/") != string::npos
+        || testUrl.find("\\inspector-enabled\\") != string::npos;
+
     applyPreferences();
 
     if (testUrl.find("loading/") != string::npos
