@@ -1,3 +1,88 @@
+2011-02-15  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Pixel tests differences on 10.6.6 32bit vs. 64bit
+        https://bugs.webkit.org/show_bug.cgi?id=54474
+
+        When generating a SVG pixel test baseline with a vanilla 10.6.6 installation on a 32bit machine (Core Duo MBP)
+        and comparing the run with a software-identical 64bit machine (Core 2 Duo MBP), there are about 250 differences.
+
+        These fall in two categories:
+        a) 1px differences in text AA, or when drawing circles (all _below_ a tolerance of 0.01). Only visible in the subtracted difference image.
+           The reason is probably CGFloat being typedefed to double on 64bit machines, and float on 32bit machines.
+           AffineTransform stores doubles, so on 32bit machines we loose precision from AffineTransform -> CGAffineTransform.
+
+        b) Failures >0.1% (text origin/scale is slightly different, user-visible).
+           Caused by several sources of numerical instabilities within the SVG rendering code.
+
+           -> SVGPreserveAspectRatio::getCTM() computes an AffineTransform using doubles as input parameters, but floats are passed (like everywhere else in SVG).
+              This method is used to compute the viewBox AffineTransform, that affects the rendering of every content in the document. RenderSVGRoot concats
+              this transformation matrix to the GraphicsContext CTM, resulting in a source of numerical imprecision.
+
+           -> SVGInlineTextBox::paintTextWithShadows() calculates a scaling factor for text, to scale up the specified font size, to the actual on-screen size.
+              SVGInlineTextBox uses the scaled Font object, to draw in an unscaled context, that gets scaled up again afterwards.
+              context->scale(1 / scalingFactor); scaledFont.drawText(); context->scale(scalingFactor);
+
+              To remove the scale from the current GraphicsContext CTM, "context->scale(FloatSize(1 / scalingFactor, ...)" is used. As AffineTransform stores
+              doubles internally, it's likely that "context->scale(FloatSize(1 / ctm.a(), .." doesn't give you a matrix with a=1, but something close to 1.
+              Using "context->concatCTM(AffineTransform().scale(1 / ctm.a(), ..." could be used as workaround, to preserve double precision.
+              Fixing that brings us down to just a few pixel tests that differ between 32 & 64bit. There is still numerical imprecision, as floating-point
+              number representations aren't always precise. Unfortunately CoreGraphics doesn't provide a public way to just set a CTM, it only allows to concat them.
+              Fortunately CGContextSetCTM() is available, as private method, that allows me to switch the context CTM to any arbitary CGAffineTransform.
+
+              -> Add GraphicsContext::setCTM(const AffineTransform&) and implement it for all platforms (each explicitely exposes a 'setCTM' concept, except CG)
+                 Use CGContextSetCTM() for CG, which appears to be present since at least 10.4, Cairo is using it for the same purpose since some years!
+
+              -> Instead of scaling the GraphicsContext before drawing text, grab the current CTM using context->getCTM(), scale it by '1 / scalingFactor'
+                 normalize the transform (look for values close to 0/1 using float precision, and round!), and assign it using context->setCTM(normalizedTransform).
+                 After drawing, just switch back to the preserved original CTM, both operations need GraphicsContext::setCTM.
+                 This fixes all pixel test differences between 32/64 bit machines that fall into category b).
+                 The use of GraphicsContext::setCTM() allows to switch between arbitary context transformations _without_ inducing accumulated rounding imprecision.
+
+        These combined patches fix the pixel test baseline changes.
+
+        Updated existing Snow Leopard pixel test baseline with a 32bit machine, passes here with tolerance 0.
+        The 64bit machine passes the baseline with tolerance 0.01.
+
+        * platform/graphics/GraphicsContext.h: Add setCTM(const AffineTransform&) method.
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::setCTM): Implement setCTM.
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h:
+        (WebCore::GraphicsContextPlatformPrivate::setCTM): Ditto.
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setCTM): Ditto.
+        * platform/graphics/cg/GraphicsContextPlatformPrivateCG.h:
+        (WebCore::GraphicsContextPlatformPrivate::setCTM): Ditto.
+        * platform/graphics/chromium/GLES2Canvas.cpp:
+        (WebCore::GLES2Canvas::setCTM): Ditto.
+        * platform/graphics/chromium/GLES2Canvas.h:
+        * platform/graphics/haiku/GraphicsContextHaiku.cpp:
+        (WebCore::GraphicsContext::setCTM): Ditto.
+        * platform/graphics/openvg/GraphicsContextOpenVG.cpp:
+        (WebCore::GraphicsContext::setCTM): Ditto.
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::setCTM): Ditto.
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::setCTM): Ditto.
+        * platform/graphics/win/GraphicsContextWin.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::setCTM): Ditto.
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::concatCTM):
+        (WebCore::GraphicsContextPlatformPrivate::setCTM): Ditto.
+        (WebCore::GraphicsContext::setCTM):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::setCTM): Ditto.
+        * rendering/svg/SVGInlineTextBox.cpp: Use setCTM() to switch to a scale-free AffineTransform, and also to switch back to the original CTM after rendering text.
+        (WebCore::normalizeTransform):
+        (WebCore::SVGInlineTextBox::paintDecorationWithStyle):
+        (WebCore::SVGInlineTextBox::paintTextWithShadows):
+        * svg/SVGPreserveAspectRatio.cpp: s/double/float/.
+        (WebCore::SVGPreserveAspectRatio::getCTM):
+        * svg/SVGPreserveAspectRatio.h:
+        * svg/SVGSVGElement.cpp: Simplify viewport() code, avoid using doubles.
+        (WebCore::SVGSVGElement::viewport):
+
 2011-02-16  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Dirk Schulze.
