@@ -205,8 +205,8 @@ void JavaScriptAudioNode::process(size_t framesToProcess)
             
             // Fire the event on the main thread, not this one (which is the realtime audio thread).
             m_doubleBufferIndexForEvent = m_doubleBufferIndex;
-            callOnMainThread(fireProcessEventDispatch, this);
             m_isRequestOutstanding = true;
+            callOnMainThread(fireProcessEventDispatch, this);
         }
 
         swapBuffers();
