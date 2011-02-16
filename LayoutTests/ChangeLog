@@ -1,3 +1,9 @@
+2011-02-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Rebaseline media/controls-without-preload.html after r78695.
+
+        * media/controls-without-preload-expected.txt: Rebaselined.
+
 2011-02-16  Peter Kasting  <pkasting@google.com>
 
         Unreviewed, Chromium expectations update.
