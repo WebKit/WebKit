@@ -1,5 +1,13 @@
 2011-02-15  Kenneth Russell  <kbr@google.com>
 
+        Unreviewed. Remove whitespace-only change from
+        http://trac.webkit.org/changeset/78620 (https://bugs.webkit.org/show_bug.cgi?id=54312)
+        now that the patch has passed the Windows build bots.
+
+        * Interfaces/WebKit.idl:
+
+2011-02-15  Kenneth Russell  <kbr@google.com>
+
         Reviewed by Darin Fisher.
 
         Allow controlling minimum DOMTimer interval on a per-page basis
