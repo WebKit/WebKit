@@ -41,6 +41,7 @@ namespace CoreIPC {
 namespace WebKit {
 
 class PluginProcessManager;
+class WebPluginSiteDataManager;
 class WebProcessProxy;
 struct PluginProcessCreationParameters;
 
@@ -54,7 +55,13 @@ public:
     // Asks the plug-in process to create a new connection to a web process. The connection identifier will be 
     // encoded in the given argument encoder and sent back to the connection of the given web process.
     void createWebProcessConnection(WebProcessProxy*, CoreIPC::ArgumentEncoder* reply);
-    
+
+    // Asks the plug-in process to get a list of domains for which the plug-in has data stored.
+    void getSitesWithData(WebPluginSiteDataManager*, uint64_t callbackID);
+
+    // Asks the plug-in process to clear the data for the given sites.
+    void clearSiteData(WebPluginSiteDataManager*, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID);
+
 private:
     PluginProcessProxy(PluginProcessManager*, const PluginInfoStore::Plugin&);
 
@@ -71,6 +78,8 @@ private:
     // Message handlers
     void didReceivePluginProcessProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     void didCreateWebProcessConnection(const CoreIPC::MachPort&);
+    void didGetSitesWithData(const Vector<String>& sites, uint64_t callbackID);
+    void didClearSiteData(uint64_t callbackID);
 
     void platformInitializePluginProcess(PluginProcessCreationParameters& parameters);
 
@@ -88,10 +97,21 @@ private:
 
     Deque<std::pair<RefPtr<WebProcessProxy>, CoreIPC::ArgumentEncoder*> > m_pendingConnectionReplies;
 
+    Vector<uint64_t> m_pendingGetSitesRequests;
+    HashMap<uint64_t, RefPtr<WebPluginSiteDataManager> > m_pendingGetSitesReplies;
+
+    struct ClearSiteDataRequest {
+        Vector<String> sites;
+        uint64_t flags;
+        uint64_t maxAgeInSeconds;
+        uint64_t callbackID;
+    };
+    Vector<ClearSiteDataRequest> m_pendingClearSiteDataRequests;
+    HashMap<uint64_t, RefPtr<WebPluginSiteDataManager> > m_pendingClearSiteDataReplies;
+
     // If createPluginConnection is called while the process is still launching we'll keep count of it and send a bunch of requests
     // when the process finishes launching.
     unsigned m_numPendingConnectionRequests;
-   
 };
 
 } // namespace WebKit

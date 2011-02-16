@@ -28,6 +28,7 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
+#include "ArgumentCoders.h"
 #include "MachPort.h"
 #include "NetscapePluginModule.h"
 #include "PluginProcessProxyMessages.h"
@@ -72,10 +73,7 @@ void PluginProcess::removeWebProcessConnection(WebProcessConnection* webProcessC
 
     m_webProcessConnections.remove(vectorIndex);
 
-    if (m_webProcessConnections.isEmpty()) {
-        // Start the shutdown timer.
-        m_shutdownTimer.startOneShot(shutdownTimeout);
-    }
+    startShutdownTimerIfNecessary();
 }
 
 NetscapePluginModule* PluginProcess::netscapePluginModule()
@@ -144,6 +142,43 @@ void PluginProcess::createWebProcessConnection()
 
     // Stop the shutdown timer.
     m_shutdownTimer.stop();
+}
+
+void PluginProcess::getSitesWithData(uint64_t callbackID)
+{
+    Vector<String> sites;
+    if (NetscapePluginModule* module = netscapePluginModule())
+        sites = module->sitesWithData();
+
+    m_connection->send(Messages::PluginProcessProxy::DidGetSitesWithData(sites, callbackID), 0);
+
+    startShutdownTimerIfNecessary();
+}
+
+void PluginProcess::clearSiteData(const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
+{
+    if (NetscapePluginModule* module = netscapePluginModule()) {
+        if (sites.isEmpty()) {
+            // Clear everything.
+            module->clearSiteData(String(), flags, maxAgeInSeconds);
+        } else {
+            for (size_t i = 0; i < sites.size(); ++i)
+                module->clearSiteData(sites[i], flags, maxAgeInSeconds);
+        }
+    }
+
+    m_connection->send(Messages::PluginProcessProxy::DidClearSiteData(callbackID), 0);
+
+    startShutdownTimerIfNecessary();
+}
+
+void PluginProcess::startShutdownTimerIfNecessary()
+{
+    if (!m_webProcessConnections.isEmpty())
+        return;
+
+    // Start the shutdown timer.
+    m_shutdownTimer.startOneShot(shutdownTimeout);
 }
 
 void PluginProcess::shutdownTimerFired()

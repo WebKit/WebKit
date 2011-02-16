@@ -25,6 +25,9 @@
 messages -> PluginProcessProxy {
     # FIXME: This is platform specific
     DidCreateWebProcessConnection(CoreIPC::MachPort connectionIdentifier)
+
+    DidGetSitesWithData(Vector<WTF::String> sites, uint64_t callbackID)
+    DidClearSiteData(uint64_t callbackID)
 }
 
 #endif

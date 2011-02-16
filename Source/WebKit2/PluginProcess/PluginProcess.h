@@ -71,7 +71,10 @@ private:
     void didReceivePluginProcessMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     void initializePluginProcess(const PluginProcessCreationParameters&);
     void createWebProcessConnection();
-    
+    void getSitesWithData(uint64_t callbackID);
+    void clearSiteData(const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID);
+
+    void startShutdownTimerIfNecessary();
     void shutdownTimerFired();
 
     void platformInitialize(const PluginProcessCreationParameters&);

@@ -34,6 +34,7 @@
 #include "PluginProcessMessages.h"
 #include "RunLoop.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebPluginSiteDataManager.h"
 #include "WebProcessProxy.h"
 
 namespace WebKit {
@@ -80,6 +81,39 @@ void PluginProcessProxy::createWebProcessConnection(WebProcessProxy* webProcessP
     m_connection->send(Messages::PluginProcess::CreateWebProcessConnection(), 0, CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
+void PluginProcessProxy::getSitesWithData(WebPluginSiteDataManager* webPluginSiteDataManager, uint64_t callbackID)
+{
+    ASSERT(!m_pendingGetSitesReplies.contains(callbackID));
+    m_pendingGetSitesReplies.set(callbackID, webPluginSiteDataManager);
+
+    if (m_processLauncher->isLaunching()) {
+        m_pendingGetSitesRequests.append(callbackID);
+        return;
+    }
+
+    // Ask the plug-in process for the sites with data.
+    m_connection->send(Messages::PluginProcess::GetSitesWithData(callbackID), 0);
+}
+
+void PluginProcessProxy::clearSiteData(WebPluginSiteDataManager* webPluginSiteDataManager, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
+{
+    ASSERT(!m_pendingClearSiteDataReplies.contains(callbackID));
+    m_pendingClearSiteDataReplies.set(callbackID, webPluginSiteDataManager);
+
+    if (m_processLauncher->isLaunching()) {
+        ClearSiteDataRequest request;
+        request.sites = sites;
+        request.flags = flags;
+        request.maxAgeInSeconds = maxAgeInSeconds;
+        request.callbackID = callbackID;
+        m_pendingClearSiteDataRequests.append(request);
+        return;
+    }
+
+    // Ask the plug-in process to clear the site data.
+    m_connection->send(Messages::PluginProcess::ClearSiteData(sites, flags, maxAgeInSeconds, callbackID), 0);
+}
+
 void PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch()
 {
     // The plug-in process must have crashed or exited, send any pending sync replies we might have.
@@ -92,6 +126,12 @@ void PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch()
         reply->encode(CoreIPC::MachPort(0, MACH_MSG_TYPE_MOVE_SEND));
         replyWebProcessProxy->connection()->sendSyncReply(reply);
     }
+
+    while (!m_pendingGetSitesReplies.isEmpty())
+        didGetSitesWithData(Vector<String>(), m_pendingGetSitesReplies.begin()->first);
+
+    while (!m_pendingClearSiteDataReplies.isEmpty())
+        didClearSiteData(m_pendingClearSiteDataReplies.begin()->first);
 
     // Tell the plug-in process manager to forget about this plug-in process proxy.
     m_pluginProcessManager->removePluginProcessProxy(this);
@@ -134,6 +174,16 @@ void PluginProcessProxy::didFinishLaunching(ProcessLauncher*, CoreIPC::Connectio
     m_connection->send(Messages::PluginProcess::InitializePluginProcess(parameters), 0);
 
     // Send all our pending requests.
+    for (size_t i = 0; i < m_pendingGetSitesRequests.size(); ++i)
+        m_connection->send(Messages::PluginProcess::GetSitesWithData(m_pendingGetSitesRequests[i]), 0);
+    m_pendingGetSitesRequests.clear();
+
+    for (size_t i = 0; i < m_pendingClearSiteDataRequests.size(); ++i) {
+        const ClearSiteDataRequest& request = m_pendingClearSiteDataRequests[i];
+        m_connection->send(Messages::PluginProcess::ClearSiteData(request.sites, request.flags, request.maxAgeInSeconds, request.callbackID), 0);
+    }
+    m_pendingClearSiteDataRequests.clear();
+
     for (unsigned i = 0; i < m_numPendingConnectionRequests; ++i)
         m_connection->send(Messages::PluginProcess::CreateWebProcessConnection(), 0);
     
@@ -152,6 +202,22 @@ void PluginProcessProxy::didCreateWebProcessConnection(const CoreIPC::MachPort& 
     // FIXME: This is Mac specific.
     reply->encode(CoreIPC::MachPort(machPort.port(), MACH_MSG_TYPE_MOVE_SEND));
     replyWebProcessProxy->connection()->sendSyncReply(reply);
+}
+
+void PluginProcessProxy::didGetSitesWithData(const Vector<String>& sites, uint64_t callbackID)
+{
+    RefPtr<WebPluginSiteDataManager> webPluginSiteDataManager = m_pendingGetSitesReplies.take(callbackID);
+    ASSERT(webPluginSiteDataManager);
+
+    webPluginSiteDataManager->didGetSitesWithDataForSinglePlugin(sites, callbackID);
+}
+
+void PluginProcessProxy::didClearSiteData(uint64_t callbackID)
+{
+    RefPtr<WebPluginSiteDataManager> webPluginSiteDataManager = m_pendingClearSiteDataReplies.take(callbackID);
+    ASSERT(webPluginSiteDataManager);
+    
+    webPluginSiteDataManager->didClearSiteDataForSinglePlugin(callbackID);
 }
 
 } // namespace WebKit

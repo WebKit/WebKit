@@ -658,6 +658,7 @@ void WebProcess::getSitesWithPluginData(const Vector<String>& pluginPaths, uint6
     copyToVector(sitesSet, sites);
 
     m_connection->send(Messages::WebContext::DidGetSitesWithPluginData(sites, callbackID), 0);
+    shutdownIfPossible();
 }
 
 void WebProcess::clearPluginSiteData(const Vector<String>& pluginPaths, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
@@ -678,6 +679,7 @@ void WebProcess::clearPluginSiteData(const Vector<String>& pluginPaths, const Ve
     }
 
     m_connection->send(Messages::WebContext::DidClearPluginSiteData(callbackID), 0);
+    shutdownIfPossible();
 }
 #endif
 

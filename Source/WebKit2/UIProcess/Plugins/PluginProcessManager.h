@@ -28,6 +28,7 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
+#include "PluginInfoStore.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
@@ -40,6 +41,7 @@ namespace WebKit {
 
 class PluginProcessProxy;
 class WebProcessProxy;
+class WebPluginSiteDataManager;
 
 class PluginProcessManager {
     WTF_MAKE_NONCOPYABLE(PluginProcessManager);
@@ -49,8 +51,13 @@ public:
     void getPluginProcessConnection(const String& pluginPath, WebProcessProxy*, CoreIPC::ArgumentEncoder* reply);
     void removePluginProcessProxy(PluginProcessProxy*);
 
+    void getSitesWithData(const PluginInfoStore::Plugin&, WebPluginSiteDataManager*, uint64_t callbackID);
+    void clearSiteData(const PluginInfoStore::Plugin&, WebPluginSiteDataManager*, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID);
+
 private:
     PluginProcessManager();
+
+    PluginProcessProxy* getOrCreatePluginProcess(const PluginInfoStore::Plugin&);
 
     Vector<PluginProcessProxy*> m_pluginProcesses;
 };

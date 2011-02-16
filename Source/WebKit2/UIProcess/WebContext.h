@@ -140,12 +140,13 @@ public:
 
     void setDatabaseDirectory(const String& dir) { m_overrideDatabaseDirectory = dir; }
 
+    void ensureWebProcess();
+
 private:
     WebContext(ProcessModel, const String& injectedBundlePath);
 
     virtual Type type() const { return APIType; }
 
-    void ensureWebProcess();
     void platformInitializeWebProcess(WebProcessCreationParameters&);
 
     // History client

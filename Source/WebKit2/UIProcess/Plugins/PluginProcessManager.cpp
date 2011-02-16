@@ -28,7 +28,6 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
-#include "PluginInfoStore.h"
 #include "PluginProcessProxy.h"
 #include "WebContext.h"
 #include <wtf/StdLibExtras.h>
@@ -51,20 +50,7 @@ void PluginProcessManager::getPluginProcessConnection(const String& pluginPath, 
     ASSERT(!pluginPath.isNull());
 
     PluginInfoStore::Plugin plugin = webProcessProxy->context()->pluginInfoStore()->infoForPluginWithPath(pluginPath);
-
-    PluginProcessProxy* pluginProcess = 0;
-    
-    for (size_t i = 0; i < m_pluginProcesses.size(); ++i) {
-        if (m_pluginProcesses[i]->pluginInfo().path == plugin.path) {
-            pluginProcess = m_pluginProcesses[i];
-            break;
-        }
-    }
-
-    if (!pluginProcess) {
-        pluginProcess = PluginProcessProxy::create(this, plugin).leakPtr();
-        m_pluginProcesses.append(pluginProcess);
-    }
+    PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(plugin);
 
     pluginProcess->createWebProcessConnection(webProcessProxy, reply);
 }
@@ -75,6 +61,31 @@ void PluginProcessManager::removePluginProcessProxy(PluginProcessProxy* pluginPr
     ASSERT(vectorIndex != notFound);
 
     m_pluginProcesses.remove(vectorIndex);
+}
+
+void PluginProcessManager::getSitesWithData(const PluginInfoStore::Plugin& plugin, WebPluginSiteDataManager* webPluginSiteDataManager, uint64_t callbackID)
+{
+    PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(plugin);
+    pluginProcess->getSitesWithData(webPluginSiteDataManager, callbackID);
+}
+
+void PluginProcessManager::clearSiteData(const PluginInfoStore::Plugin& plugin, WebPluginSiteDataManager* webPluginSiteDataManager, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
+{
+    PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(plugin);
+    pluginProcess->clearSiteData(webPluginSiteDataManager, sites, flags, maxAgeInSeconds, callbackID);
+}
+
+PluginProcessProxy* PluginProcessManager::getOrCreatePluginProcess(const PluginInfoStore::Plugin& plugin)
+{
+    for (size_t i = 0; i < m_pluginProcesses.size(); ++i) {
+        if (m_pluginProcesses[i]->pluginInfo().path == plugin.path)
+            return m_pluginProcesses[i];
+    }
+
+    PluginProcessProxy* pluginProcess = PluginProcessProxy::create(this, plugin).leakPtr();
+    m_pluginProcesses.append(pluginProcess);
+
+    return pluginProcess;
 }
 
 } // namespace WebKit

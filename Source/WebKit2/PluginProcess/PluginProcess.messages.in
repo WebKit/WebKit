@@ -30,6 +30,14 @@ messages -> PluginProcess {
     # The plug-in process sends back a DidCreateWebProcessConnection message with
     # a connection identifier.
     CreateWebProcessConnection()
+
+    # Asks the plug-in process for sites with data. The plug-in process sends back a 
+    # DidGetSitesWithData message with the sites.
+    GetSitesWithData(uint64_t callbackID)
+
+    # Asks the plug-in to clear data for the given sites. The plug-in process sends back
+    # a DidClearSiteData message when done.
+    ClearSiteData(Vector<WTF::String> sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
 }
 
 #endif

@@ -1,3 +1,122 @@
+2011-02-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebPluginSiteDataManager should work with plug-in process
+        https://bugs.webkit.org/show_bug.cgi?id=54523
+        <rdar://problem/8689312>
+
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::removeWebProcessConnection):
+        Call startShutdownTimerIfNecessary().
+
+        (WebKit::PluginProcess::getSitesWithData):
+        Ask the plug-in module for the sites with data and send them back
+        in a PluginProcessProxy::DidGetSitesWithData message.
+
+        (WebKit::PluginProcess::clearSiteData):
+        Clear site data and send back a DidClearSiteData message.
+
+        (WebKit::PluginProcess::startShutdownTimerIfNecessary):
+        Factor code out from removeWebProcessConnection.
+
+        * PluginProcess/PluginProcess.messages.in:
+        Add new messages.
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::plugins):
+        New function for getting all plug-ins.
+
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        (WebKit::PluginProcessManager::getPluginProcessConnection):
+        Call getOrCreatePluginProcess.
+
+        (WebKit::PluginProcessManager::getSitesWithData):
+        Get a plug-in process proxy and call getSitesWithData.
+
+        (WebKit::PluginProcessManager::clearSiteData):
+        Get a plug-in process proxy and call clearSiteData.
+
+        (WebKit::PluginProcessManager::getOrCreatePluginProcess):
+        Factor code to create a plug-in process out into a separate function.
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::getSitesWithData):
+        (WebKit::PluginProcessProxy::clearSiteData):
+        Update the pending reply struct. If the process is still launching,
+        enqueue the request. Otherwise, just send the message.
+
+        (WebKit::PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch):
+        Make sure that pending replies are sent out.
+
+        (WebKit::PluginProcessProxy::didFinishLaunching):
+        Send our pending requests.
+
+        (WebKit::PluginProcessProxy::didGetSitesWithData):
+        (WebKit::PluginProcessProxy::didClearSiteData):
+        Call down to the plug-in site data manager.
+
+        * UIProcess/Plugins/PluginProcessProxy.messages.in:
+        Add DidGetSitesWithData and DidClearSiteData messages.
+
+        * UIProcess/Plugins/WebPluginSiteDataManager.cpp:
+        (WebKit::WebPluginSiteDataManager::GetSitesWithDataState::GetSitesWithDataState):
+        Initialize the state.
+
+        (WebKit::WebPluginSiteDataManager::GetSitesWithDataState::getSitesWithDataForNextPlugin):
+        If the plug-in queue is empty, call didGetSitesWithDataForAllPlugins. Otherwise, ask
+        the plug-in process manager to get sites for the next plug-in.
+
+        (WebKit::WebPluginSiteDataManager::GetSitesWithDataState::didGetSitesWithDataForSinglePlugin):
+        Update the sites set and get sites for the next plug-in.
+
+        (WebKit::WebPluginSiteDataManager::ClearSiteDataState::ClearSiteDataState):
+        Initialize the state.
+
+        (WebKit::WebPluginSiteDataManager::ClearSiteDataState::clearSiteDataForNextPlugin):
+        If the plug-in queue is empty, call didClearSiteDataForAllPlugins. Otherwise, ask
+        the plug-in process manager to get sites for the next plug-in.
+        
+        (WebKit::WebPluginSiteDataManager::ClearSiteDataState::didClearSiteDataForSinglePlugin):
+        Update the sites set and ask the next plug-in to clear site data.
+
+        (WebKit::WebPluginSiteDataManager::~WebPluginSiteDataManager):
+        Assert that all maps are empty.
+
+        (WebKit::WebPluginSiteDataManager::invalidate):
+        Delete and clear the pending state maps.
+
+        (WebKit::WebPluginSiteDataManager::getSitesWithData):
+        In the ENABLE(PLUGIN_PROCESS) case, allocate a new GetSitesWithDataState object and
+        tell it to get sites for the next plug-in. Otherwise, make sure that the web process
+        is alive before sending a GetSitesWithPluginData message.
+        
+        (WebKit::WebPluginSiteDataManager::clearSiteData):
+        In the ENABLE(PLUGIN_PROCESS) case, allocate a new ClearSiteDataState object and
+        tell it to get sites for the next plug-in. Otherwise, make sure that the web process
+        is alive before sending a ClearPluginSiteData message.
+        
+        (WebKit::WebPluginSiteDataManager::didGetSitesWithDataForSinglePlugin):
+        Call down to the GetSitesWithDataState object.
+
+        (WebKit::WebPluginSiteDataManager::didGetSitesWithDataForAllPlugins):
+        Free the GetSitesWithDataState object and invoke the callback.
+
+        (WebKit::WebPluginSiteDataManager::didClearSiteDataForSinglePlugin):
+        Call down to the GetSitesWithDataState object.
+        
+        (WebKit::WebPluginSiteDataManager::didClearSiteDataForAllPlugins):
+        Free the GetSitesWithDataState object and invoke the callback.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::processDidClose):
+        Don't invalidate the plug-in site data manager if we're using a plug-in process.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::getSitesWithPluginData):
+        (WebKit::WebProcess::clearPluginSiteData):
+        Call shutdownIfPossible().
+
 2011-02-15  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Copy over new WebKit 2 header.

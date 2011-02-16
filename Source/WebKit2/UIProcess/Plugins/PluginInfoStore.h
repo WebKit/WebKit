@@ -57,6 +57,8 @@ public:
 #endif
     };
 
+    const Vector<Plugin>& plugins();
+
     // Returns the info for a plug-in that can handle the given MIME type.
     // If the MIME type is null, the file extension of the given url will be used to infer the
     // plug-in type. In that case, mimeType will be filled in with the right MIME type.

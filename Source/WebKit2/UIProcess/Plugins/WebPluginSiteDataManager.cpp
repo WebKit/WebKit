@@ -27,12 +27,90 @@
 #include "WebPluginSiteDataManager.h"
 
 #include "ImmutableArray.h"
+#include "PluginProcessManager.h"
 #include "WebContext.h"
 #include "WebProcessMessages.h"
 
 using namespace WebCore;
 
 namespace WebKit {
+
+#if ENABLE(PLUGIN_PROCESS)
+class WebPluginSiteDataManager::GetSitesWithDataState {
+public:
+    explicit GetSitesWithDataState(WebPluginSiteDataManager* webPluginSiteDataManager, uint64_t callbackID)
+        : m_webPluginSiteDataManager(webPluginSiteDataManager)
+        , m_callbackID(callbackID)
+        , m_plugins(webPluginSiteDataManager->m_webContext->pluginInfoStore()->plugins())
+    {
+    }
+
+    void getSitesWithDataForNextPlugin()
+    {
+        if (m_plugins.isEmpty()) {
+            Vector<String> sites;
+            copyToVector(m_sites, sites);
+
+            m_webPluginSiteDataManager->didGetSitesWithDataForAllPlugins(sites, m_callbackID);
+            return;
+        }
+
+        PluginProcessManager::shared().getSitesWithData(m_plugins.last(), m_webPluginSiteDataManager, m_callbackID);
+        m_plugins.removeLast();
+    }
+
+    void didGetSitesWithDataForSinglePlugin(const Vector<String>& sites)
+    {
+        for (size_t i = 0; i < sites.size(); ++i)
+            m_sites.add(sites[i]);
+
+        getSitesWithDataForNextPlugin();
+    }
+    
+private:
+    WebPluginSiteDataManager* m_webPluginSiteDataManager;
+    uint64_t m_callbackID;
+    Vector<PluginInfoStore::Plugin> m_plugins;
+    HashSet<String> m_sites;
+};
+
+class WebPluginSiteDataManager::ClearSiteDataState {
+public:
+    explicit ClearSiteDataState(WebPluginSiteDataManager* webPluginSiteDataManager, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
+        : m_webPluginSiteDataManager(webPluginSiteDataManager)
+        , m_sites(sites)
+        , m_flags(flags)
+        , m_maxAgeInSeconds(maxAgeInSeconds)
+        , m_callbackID(callbackID)
+        , m_plugins(webPluginSiteDataManager->m_webContext->pluginInfoStore()->plugins())
+    {
+    }
+
+    void clearSiteDataForNextPlugin()
+    {
+        if (m_plugins.isEmpty()) {
+            m_webPluginSiteDataManager->didClearSiteDataForAllPlugins(m_callbackID);
+            return;
+        }
+
+        PluginProcessManager::shared().clearSiteData(m_plugins.last(), m_webPluginSiteDataManager, m_sites, m_flags, m_maxAgeInSeconds, m_callbackID);
+        m_plugins.removeLast();
+    }
+
+    void didClearSiteDataForSinglePlugin()
+    {
+        clearSiteDataForNextPlugin();
+    }
+    
+private:
+    WebPluginSiteDataManager* m_webPluginSiteDataManager;
+    Vector<String> m_sites;
+    uint64_t m_flags;
+    uint64_t m_maxAgeInSeconds;
+    uint64_t m_callbackID;
+    Vector<PluginInfoStore::Plugin> m_plugins;
+};
+#endif // ENABLE(PLUGIN_PROCESS)
 
 PassRefPtr<WebPluginSiteDataManager> WebPluginSiteDataManager::create(WebContext* webContext)
 {
@@ -46,11 +124,24 @@ WebPluginSiteDataManager::WebPluginSiteDataManager(WebContext* webContext)
 
 WebPluginSiteDataManager::~WebPluginSiteDataManager()
 {
+    ASSERT(m_arrayCallbacks.isEmpty());
+    ASSERT(m_voidCallbacks.isEmpty());
+#if ENABLE(PLUGIN_PROCESS)
+    ASSERT(m_pendingGetSitesWithData.isEmpty());
+    ASSERT(m_pendingClearSiteData.isEmpty());
+#endif
 }
 
 void WebPluginSiteDataManager::invalidate()
 {
     invalidateCallbackMap(m_arrayCallbacks);
+
+#if ENABLE(PLUGIN_PROCESS)
+    deleteAllValues(m_pendingGetSitesWithData);
+    m_pendingGetSitesWithData.clear();
+    deleteAllValues(m_pendingClearSiteData);
+    m_pendingClearSiteData.clear();
+#endif
 }
 
 void WebPluginSiteDataManager::getSitesWithData(PassRefPtr<ArrayCallback> prpCallback)
@@ -61,20 +152,26 @@ void WebPluginSiteDataManager::getSitesWithData(PassRefPtr<ArrayCallback> prpCal
         callback->invalidate();
         return;
     }
-        
-#if ENABLE(PLUGIN_PROCESS)
-    // FIXME: Implement.
-    callback->invalidate();
-#else
-    if (!m_webContext->hasValidProcess()) {
-        callback->invalidate();
-        return;
-    }
+
     uint64_t callbackID = callback->callbackID();
     m_arrayCallbacks.set(callbackID, callback.release());
 
+#if ENABLE(PLUGIN_PROCESS)
+    ASSERT(!m_pendingGetSitesWithData.contains(callbackID));
+
+    GetSitesWithDataState* state = new GetSitesWithDataState(this, callbackID);
+    m_pendingGetSitesWithData.set(callbackID, state);
+    state->getSitesWithDataForNextPlugin();
+#else
+    if (!m_webContext->hasValidProcess()) {
+        RefPtr<ArrayCallback> callback = m_arrayCallbacks.take(callbackID);
+        callback->invalidate();
+        return;
+    }
+
     Vector<String> pluginPaths;
     m_webContext->pluginInfoStore()->getPluginPaths(pluginPaths);
+    m_webContext->ensureWebProcess();    
     m_webContext->process()->send(Messages::WebProcess::GetSitesWithPluginData(pluginPaths, callbackID), 0);
 #endif
 }
@@ -104,33 +201,40 @@ void WebPluginSiteDataManager::clearSiteData(ImmutableArray* sites, uint64_t fla
         return;
     }
 
-    // If the array is empty, don't do anything.
-    if (sites && !sites->size()) {
-        callback->performCallback();
-        return;
-    }
-
-#if ENABLE(PLUGIN_PROCESS)
-    // FIXME: Implement.
-    callback->invalidate();
-#else
-    if (!m_webContext->hasValidProcess()) {
-        callback->invalidate();
-        return;
-    }
-    uint64_t callbackID = callback->callbackID();
-    m_voidCallbacks.set(callbackID, callback.release());
-
     Vector<String> sitesVector;
+
+    // If the array is empty, don't do anything.
     if (sites) {
+        if (!sites->size()) {
+            callback->performCallback();
+            return;
+        }
+
         for (size_t i = 0; i < sites->size(); ++i) {
             if (WebString* site = sites->at<WebString>(i))
                 sitesVector.append(site->string());
         }
     }
 
+    uint64_t callbackID = callback->callbackID();
+    m_voidCallbacks.set(callbackID, callback.release());
+
+#if ENABLE(PLUGIN_PROCESS)
+    ASSERT(!m_pendingClearSiteData.contains(callbackID));
+
+    ClearSiteDataState* state = new ClearSiteDataState(this, sitesVector, flags, maxAgeInSeconds, callbackID);
+    m_pendingClearSiteData.set(callbackID, state);
+    state->clearSiteDataForNextPlugin();
+#else
+
+    if (!m_webContext->hasValidProcess()) {
+        RefPtr<VoidCallback> callback = m_voidCallbacks.take(callbackID);
+        callback->invalidate();
+        return;
+    }
     Vector<String> pluginPaths;
     m_webContext->pluginInfoStore()->getPluginPaths(pluginPaths);
+    m_webContext->ensureWebProcess();    
     m_webContext->process()->send(Messages::WebProcess::ClearPluginSiteData(pluginPaths, sitesVector, flags, maxAgeInSeconds, callbackID), 0);
 #endif
 }
@@ -145,6 +249,41 @@ void WebPluginSiteDataManager::didClearSiteData(uint64_t callbackID)
 
     callback->performCallback();
 }
+
+#if ENABLE(PLUGIN_PROCESS)
+void WebPluginSiteDataManager::didGetSitesWithDataForSinglePlugin(const Vector<String>& sites, uint64_t callbackID)
+{
+    GetSitesWithDataState* state = m_pendingGetSitesWithData.get(callbackID);
+    ASSERT(state);
+
+    state->didGetSitesWithDataForSinglePlugin(sites);
+}
+
+void WebPluginSiteDataManager::didGetSitesWithDataForAllPlugins(const Vector<String>& sites, uint64_t callbackID)
+{
+    OwnPtr<GetSitesWithDataState> state = adoptPtr(m_pendingGetSitesWithData.take(callbackID));
+    ASSERT(state);
+
+    didGetSitesWithData(sites, callbackID);
+}
+
+void WebPluginSiteDataManager::didClearSiteDataForSinglePlugin(uint64_t callbackID)
+{
+    ClearSiteDataState* state = m_pendingClearSiteData.get(callbackID);
+    ASSERT(state);
+    
+    state->didClearSiteDataForSinglePlugin();
+}
+
+void WebPluginSiteDataManager::didClearSiteDataForAllPlugins(uint64_t callbackID)
+{
+    OwnPtr<ClearSiteDataState> state = adoptPtr(m_pendingClearSiteData.take(callbackID));
+    ASSERT(state);
+
+    didClearSiteData(callbackID);
+}
+
+#endif
 
 } // namespace WebKit
 

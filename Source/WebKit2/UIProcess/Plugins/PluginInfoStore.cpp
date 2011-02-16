@@ -123,6 +123,13 @@ void PluginInfoStore::getPluginPaths(Vector<String>& pluginPaths)
         pluginPaths.append(m_plugins[i].path);
 }
 
+const Vector<PluginInfoStore::Plugin>& PluginInfoStore::plugins()
+{
+    loadPluginsIfNecessary();
+
+    return m_plugins;
+}
+
 PluginInfoStore::Plugin PluginInfoStore::findPluginForMIMEType(const String& mimeType)
 {
     ASSERT(!mimeType.isNull());
