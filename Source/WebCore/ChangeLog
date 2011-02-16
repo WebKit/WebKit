@@ -1,3 +1,32 @@
+2011-02-14  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Chromium] Landing detailed heap snapshots, part 3.
+        https://bugs.webkit.org/show_bug.cgi?id=54385
+
+        Provide node classes for data grid views:
+         - summary -- list of objects by constuctor;
+         - diff -- summaries btw two snapshots;
+         - explorer -- explore heap graph;
+         - dominators tree;
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/DetailedHeapshotGridNodes.js: Added.
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshotFilteredOrderedIterator):
+        (WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.incInstancesCount):
+        (WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.get instancesCount):
+        (WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.next):
+        (WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.resetInstancesCount):
+        (WebInspector.HeapSnapshotEdgesProvider):
+        (WebInspector.HeapSnapshotNodesProvider):
+        * inspector/front-end/PleaseWaitMessage.js:
+        (WebInspector.PleaseWaitMessage.prototype.get instance):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2011-02-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r78655.

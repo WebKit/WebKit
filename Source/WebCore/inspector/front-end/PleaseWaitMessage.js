@@ -59,7 +59,7 @@ WebInspector.PleaseWaitMessage.prototype = {
 
     get instance()
     {
-        if (!"_instance" in WebInspector.PleaseWaitMessage.prototype)
+        if (!("_instance" in WebInspector.PleaseWaitMessage.prototype))
             WebInspector.PleaseWaitMessage.prototype._instance = new WebInspector.PleaseWaitMessage();
         return WebInspector.PleaseWaitMessage.prototype._instance;
     },
