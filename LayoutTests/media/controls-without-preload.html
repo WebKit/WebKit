@@ -8,7 +8,10 @@
             function start()
             {
                 setSrcByTagName("video", findMediaFile("video", "content/test"));
-                setTimeout(finish, 200);
+                video = document.getElementsByTagName('video')[0];
+                video.load();
+                video.play();
+                video.addEventListener("canplaythrough", finish);
             }
 
             function finish()

@@ -5,9 +5,11 @@
             function toggleDisplay()
             {
                 var video = document.getElementById('vid');
-                if (video.style.display == "none")
+                if (video.style.display == "none") {
                     video.style.display = "inline-block";
-                else
+                    if (window.layoutTestController)
+                        layoutTestController.notifyDone();
+                } else
                     video.style.display = "none";
                 document.body.offsetLeft;
             }
@@ -22,9 +24,6 @@
             {
                 toggleDisplay();
                 toggleDisplay();
-
-                if (window.layoutTestController)
-                    setTimeout(function() { layoutTestController.notifyDone(); }, 100);
             }
         </script>
     </head>

@@ -344,8 +344,6 @@ media/video-seek-past-end-playing.html
 # https://bugs.webkit.org/show_bug.cgi?id=30198
 media/video-source-error.html
 
-media/video-display-toggle.html
-
 #   Tests generating new results
 media/video-aspect-ratio.html
 # Requires media engine closed caption support
@@ -2274,9 +2272,6 @@ svg/zoom/page/zoom-zoom-coords.xhtml
 
 # https://bugs.webkit.org/show_bug.cgi?id=50441
 media/controls-drag-timebar.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=50518
-media/controls-without-preload.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=50740
 editing/spelling/spelling-backspace-between-lines.html

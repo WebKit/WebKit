@@ -2,6 +2,21 @@
 
         Reviewed by Martin Robinson.
 
+        [GTK] media/controls-without-preload.html is flacky on 32-bits Debug
+        https://bugs.webkit.org/show_bug.cgi?id=50518
+
+        Refactored 2 media tests to avoid use of setTimeout and possible
+        flakyness.
+
+        * media/controls-without-preload.html:
+        * media/video-display-toggle.html:
+        * platform/gtk/Skipped:
+        * platform/gtk/media/controls-without-preload-expected.txt:
+
+2011-02-15  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         [GStreamer] wrong media duration report in media/controls-after-reload.html
         https://bugs.webkit.org/show_bug.cgi?id=51602
 
