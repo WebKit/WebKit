@@ -29,13 +29,13 @@ layer at (0,0) size 800x600
     RenderSVGText {text} at (0,150) size 747x26 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 747x26
         chunk 1 text run 1 at (0.00,170.00) startOffset 0 endOffset 88 width 747.00: "You should see the same pattern again, just a bit scaled, by the viewBox of an inner svg"
-    RenderSVGViewportContainer {svg} at (88,177) size 584x135
-      RenderSVGContainer {g} at (88,177) size 134x135 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(0.00,0.00)}]
+    RenderSVGViewportContainer {svg} at (87,177) size 585x135
+      RenderSVGContainer {g} at (87,177) size 135x135 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(0.00,0.00)}]
         RenderSVGText {text} at (100,68) size 82x43 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 82x43
             chunk 1 text run 1 at (100.00,100.00) startOffset 0 endOffset 4 width 82.00: "TEST"
-      RenderSVGContainer {g} at (238,177) size 134x135 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}]
-        RenderSVGContainer {g} at (238,177) size 134x135 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(0.00,0.00)}]
+      RenderSVGContainer {g} at (237,177) size 135x135 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}]
+        RenderSVGContainer {g} at (237,177) size 135x135 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(0.00,0.00)}]
           RenderSVGText {text} at (100,68) size 82x43 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 82x43
               chunk 1 text run 1 at (100.00,100.00) startOffset 0 endOffset 4 width 82.00: "TEST"

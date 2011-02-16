@@ -1,3 +1,15 @@
+2011-02-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        Update Qt specific expected files.
+
+        * platform/qt/svg/custom/non-scaling-stroke-markers-expected.checksum:
+        * platform/qt/svg/custom/non-scaling-stroke-markers-expected.png:
+        * platform/qt/svg/custom/non-scaling-stroke-markers-expected.txt:
+        * platform/qt/svg/custom/text-rotated-gradient-expected.txt:
+        * platform/qt/svg/zoom/page/zoom-mask-with-percentages-expected.txt:
+
 2011-02-16  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
