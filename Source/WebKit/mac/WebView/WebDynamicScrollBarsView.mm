@@ -160,11 +160,6 @@ struct WebDynamicScrollBarsViewPrivate {
     return _private->verticalScrollingAllowedButScrollerHidden || [self hasVerticalScroller];
 }
 
-- (BOOL)inProgrammaticScroll
-{
-    return _private->inProgrammaticScroll;
-}
-
 @end
 
 @implementation WebDynamicScrollBarsView (WebInternal)
@@ -592,6 +587,11 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
 - (NSPoint)scrollOrigin
 {
     return _private->scrollOrigin;
+}
+
+- (BOOL)inProgrammaticScroll
+{
+    return _private->inProgrammaticScroll;
 }
 
 @end

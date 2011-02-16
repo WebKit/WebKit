@@ -1,3 +1,22 @@
+2011-02-15  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/54505> Move -[WebDynamicScrollBarsView inProgrammaticScroll] to WebDynamicScrollBarsViewInternal.h
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebDynamicScrollBarsView.h:
+        (-[WebDynamicScrollBarsView inProgrammaticScroll]): Removed
+        declaration.
+        * WebView/WebDynamicScrollBarsView.mm:
+        (-[WebDynamicScrollBarsView inProgrammaticScroll]): Moved
+        implementation into correct category.
+        * WebView/WebDynamicScrollBarsViewInternal.h:
+        (-[WebDynamicScrollBarsView inProgrammaticScroll]): Added
+        declaration.
+        * WebView/WebHTMLView.mm: Included
+        WebDynamicScrollBarsViewInternal.h instead of
+        WebDynamicScrollBarsView.h.
+
 2011-02-14  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough and Geoff Garen.

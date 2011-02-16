@@ -55,4 +55,10 @@
 
 // Calculate the appropriate frame for the contentView based on allowsScrollersToOverlapContent.
 - (NSRect)contentViewFrame;
+
+// Returns YES if we're currently in the middle of programmatically moving the
+// scrollbar.
+// NOTE: As opposed to other places in the code, programmatically moving the
+// scrollers from inside this class should not fire JS events.
+- (BOOL)inProgrammaticScroll;
 @end
