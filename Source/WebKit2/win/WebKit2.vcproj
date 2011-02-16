@@ -870,14 +870,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\Shared\API\c\WKPluginSiteDataManager.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Shared\API\c\WKPluginSiteDataManager.h"
-					>
-				</File>
-				<File
 					RelativePath="..\Shared\API\c\WKSecurityOrigin.cpp"
 					>
 				</File>
@@ -2720,6 +2712,14 @@
 						RelativePath="..\UIProcess\API\C\WKPagePrivate.h"
 						>
 					</File>
+    				<File
+    					RelativePath="..\UIProcess\API\C\WKPluginSiteDataManager.cpp"
+    					>
+    				</File>
+    				<File
+    					RelativePath="..\UIProcess\API\C\WKPluginSiteDataManager.h"
+    					>
+    				</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKPreferences.cpp"
 						>
