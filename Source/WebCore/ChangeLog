@@ -1,3 +1,17 @@
+2011-02-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Extract a function to process ancestor and their sibling nodes from processContents
+        https://bugs.webkit.org/show_bug.cgi?id=54425
+
+        Extracted processAncestorsAndTheirSiblings.
+
+        * dom/Range.cpp:
+        (WebCore::Range::processContents): Calls processContents.
+        (WebCore::Range::processAncestorsAndTheirSiblings): Extracted from processContents.
+        * dom/Range.h:
+
 2011-02-15  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Fisher.

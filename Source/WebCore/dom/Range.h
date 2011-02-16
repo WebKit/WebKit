@@ -147,7 +147,9 @@ private:
 
     enum ActionType { DELETE_CONTENTS, EXTRACT_CONTENTS, CLONE_CONTENTS };
     PassRefPtr<DocumentFragment> processContents(ActionType, ExceptionCode&);
-    PassRefPtr<Node> processContentsBetweenOffsets(ActionType, PassRefPtr<DocumentFragment>, Node*, unsigned startOffset, unsigned endOffset, ExceptionCode&);
+    static PassRefPtr<Node> processContentsBetweenOffsets(ActionType, PassRefPtr<DocumentFragment>, Node*, unsigned startOffset, unsigned endOffset, ExceptionCode&);
+    enum ContentsProcessDirection { ProcessContentsForward, ProcessContentsBackward };
+    static PassRefPtr<Node> processAncestorsAndTheirSiblings(ActionType, Node* container, ContentsProcessDirection, PassRefPtr<Node> clonedContainer, Node* commonRoot, ExceptionCode&);
 
     RefPtr<Document> m_ownerDocument;
     RangeBoundaryPoint m_start;
