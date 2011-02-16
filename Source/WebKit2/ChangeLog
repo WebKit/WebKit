@@ -2,6 +2,17 @@
 
         Reviewed by Adam Roben.
 
+        Always disable the responsiveness timer when showing a popup menu
+        https://bugs.webkit.org/show_bug.cgi?id=54578
+        <rdar://problem/9009170>
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showPopupMenu):
+
+2011-02-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
         Assertion failure in DrawingAreaImpl::display when calling WKPageForceRepaint on a page that uses accelerated compositing
         https://bugs.webkit.org/show_bug.cgi?id=54575
         <rdar://problem/8979594>

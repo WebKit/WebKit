@@ -2048,10 +2048,8 @@ void WebPageProxy::showPopupMenu(const IntRect& rect, uint64_t textDirection, co
 
     m_activePopupMenu = m_pageClient->createPopupMenuProxy(this);
 
-#if PLATFORM(WIN)
-    // On Windows, we're about to run our own message pump in showPopupMenu(), so turn off the responsiveness timer.
+    // Since showPopupMenu() can spin a nested run loop we need to turn off the responsiveness timer.
     process()->responsivenessTimer()->stop();
-#endif
 
     RefPtr<WebPopupMenuProxy> protectedActivePopupMenu = m_activePopupMenu;
 
