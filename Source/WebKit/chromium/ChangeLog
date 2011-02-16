@@ -1,3 +1,24 @@
+2011-02-15  Bill Budge  <bbudge@chromium.org>
+
+        Reviewed by David Levin.
+
+        WebURLRequest, WebURLResponse properties should be passed to WebCore Layer
+        https://bugs.webkit.org/show_bug.cgi?id=54489
+
+        No tests needed, exposes no new functionality
+
+        * src/WebURLRequest.cpp:
+        (WebKit::WebURLRequestPrivateImpl::WebURLRequestPrivateImpl):
+        (WebKit::WebURLRequest::downloadToFile):
+        (WebKit::WebURLRequest::setDownloadToFile):
+        * src/WebURLRequestPrivate.h:
+        (WebKit::WebURLRequestPrivate::WebURLRequestPrivate):
+        * src/WebURLResponse.cpp:
+        (WebKit::WebURLResponsePrivateImpl::WebURLResponsePrivateImpl):
+        (WebKit::WebURLResponse::downloadFilePath):
+        (WebKit::WebURLResponse::setDownloadFilePath):
+        * src/WebURLResponsePrivate.h:
+
 2011-02-14  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.

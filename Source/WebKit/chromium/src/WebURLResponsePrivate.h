@@ -45,9 +45,6 @@ public:
     virtual void dispose() = 0;
 
     WebCore::ResourceResponse* m_resourceResponse;
-
-    // FIXME: Move this to ResourceResponse once we have an internal consumer.
-    WebString m_downloadFilePath;
 };
 
 } // namespace WebKit
