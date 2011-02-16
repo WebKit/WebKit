@@ -6,6 +6,157 @@
         https://bugs.webkit.org/show_bug.cgi?id=54474
 
         Update SnowLeopard SVG pixel test baseline, generated on a 32bit machine, where it passes with tolerance 0.
+        This is the third chunk.
+
+        It should pass on modern 64bit machines as well, using tolerance 0.01.
+
+        * platform/mac/svg/clip-path/clip-in-mask-expected.checksum:
+        * platform/mac/svg/clip-path/clip-in-mask-expected.png:
+        * platform/mac/svg/clip-path/clip-path-child-clipped-expected.checksum:
+        * platform/mac/svg/clip-path/clip-path-child-clipped-expected.png:
+        * platform/mac/svg/clip-path/clip-path-childs-clipped-expected.checksum:
+        * platform/mac/svg/clip-path/clip-path-childs-clipped-expected.png:
+        * platform/mac/svg/clip-path/clip-path-clipped-expected.checksum:
+        * platform/mac/svg/clip-path/clip-path-clipped-expected.png:
+        * platform/mac/svg/clip-path/clip-path-clipped-nonzero-expected.checksum:
+        * platform/mac/svg/clip-path/clip-path-clipped-nonzero-expected.png:
+        * platform/mac/svg/clip-path/clip-path-on-clipped-use-expected.checksum:
+        * platform/mac/svg/clip-path/clip-path-on-clipped-use-expected.png:
+        * platform/mac/svg/clip-path/clip-path-on-g-and-child-expected.checksum:
+        * platform/mac/svg/clip-path/clip-path-on-g-and-child-expected.png:
+        * platform/mac/svg/clip-path/clip-path-on-g-expected.checksum:
+        * platform/mac/svg/clip-path/clip-path-on-g-expected.png:
+        * platform/mac/svg/clip-path/clip-path-on-svg-and-child-expected.checksum:
+        * platform/mac/svg/clip-path/clip-path-on-svg-and-child-expected.png:
+        * platform/mac/svg/clip-path/clip-path-on-svg-expected.checksum:
+        * platform/mac/svg/clip-path/clip-path-on-svg-expected.png:
+        * platform/mac/svg/clip-path/clip-path-use-as-child-expected.checksum:
+        * platform/mac/svg/clip-path/clip-path-use-as-child-expected.png:
+        * platform/mac/svg/clip-path/clip-path-use-as-child2-expected.checksum:
+        * platform/mac/svg/clip-path/clip-path-use-as-child2-expected.png:
+        * platform/mac/svg/clip-path/clip-path-use-as-child3-expected.checksum:
+        * platform/mac/svg/clip-path/clip-path-use-as-child3-expected.png:
+        * platform/mac/svg/clip-path/clip-path-use-as-child4-expected.checksum:
+        * platform/mac/svg/clip-path/clip-path-use-as-child4-expected.png:
+        * platform/mac/svg/clip-path/nested-clip-in-mask-image-based-clipping-expected.checksum:
+        * platform/mac/svg/clip-path/nested-clip-in-mask-image-based-clipping-expected.png:
+        * platform/mac/svg/clip-path/nested-clip-in-mask-path-and-image-based-clipping-expected.checksum:
+        * platform/mac/svg/clip-path/nested-clip-in-mask-path-and-image-based-clipping-expected.png:
+        * platform/mac/svg/clip-path/nested-clip-in-mask-path-based-clipping-expected.checksum:
+        * platform/mac/svg/clip-path/nested-clip-in-mask-path-based-clipping-expected.png:
+        * platform/mac/svg/custom/absolute-sized-content-with-resources-expected.checksum:
+        * platform/mac/svg/custom/absolute-sized-content-with-resources-expected.png:
+        * platform/mac/svg/custom/animate-path-discrete-expected.checksum:
+        * platform/mac/svg/custom/animate-path-discrete-expected.png:
+        * platform/mac/svg/custom/convolution-crash-expected.checksum:
+        * platform/mac/svg/custom/convolution-crash-expected.png:
+        * platform/mac/svg/custom/createImageElement2-expected.checksum:
+        * platform/mac/svg/custom/createImageElement2-expected.png:
+        * platform/mac/svg/custom/dynamic-svg-document-creation-expected.checksum:
+        * platform/mac/svg/custom/dynamic-svg-document-creation-expected.png:
+        * platform/mac/svg/custom/feComponentTransfer-Discrete-expected.checksum:
+        * platform/mac/svg/custom/feComponentTransfer-Discrete-expected.png:
+        * platform/mac/svg/custom/feComponentTransfer-Gamma-expected.checksum:
+        * platform/mac/svg/custom/feComponentTransfer-Gamma-expected.png:
+        * platform/mac/svg/custom/feComponentTransfer-Linear-expected.checksum:
+        * platform/mac/svg/custom/feComponentTransfer-Linear-expected.png:
+        * platform/mac/svg/custom/feComponentTransfer-Table-expected.checksum:
+        * platform/mac/svg/custom/feComponentTransfer-Table-expected.png:
+        * platform/mac/svg/custom/focus-ring-expected.checksum:
+        * platform/mac/svg/custom/focus-ring-expected.png:
+        * platform/mac/svg/custom/foreign-object-skew-expected.checksum:
+        * platform/mac/svg/custom/foreign-object-skew-expected.png:
+        * platform/mac/svg/custom/glyph-transformation-with-hkern-expected.checksum:
+        * platform/mac/svg/custom/glyph-transformation-with-hkern-expected.png:
+        * platform/mac/svg/custom/gradient-rotated-bbox-expected.checksum:
+        * platform/mac/svg/custom/gradient-rotated-bbox-expected.png:
+        * platform/mac/svg/custom/gradient-stroke-width-expected.checksum:
+        * platform/mac/svg/custom/gradient-stroke-width-expected.png:
+        * platform/mac/svg/custom/grayscale-gradient-mask-expected.checksum:
+        * platform/mac/svg/custom/grayscale-gradient-mask-expected.png:
+        * platform/mac/svg/custom/inline-svg-in-xhtml-expected.checksum:
+        * platform/mac/svg/custom/inline-svg-in-xhtml-expected.png:
+        * platform/mac/svg/custom/invalid-css-expected.checksum:
+        * platform/mac/svg/custom/invalid-css-expected.png:
+        * platform/mac/svg/custom/js-late-clipPath-and-object-creation-expected.checksum:
+        * platform/mac/svg/custom/js-late-clipPath-and-object-creation-expected.png:
+        * platform/mac/svg/custom/js-late-clipPath-creation-expected.checksum:
+        * platform/mac/svg/custom/js-late-clipPath-creation-expected.png:
+        * platform/mac/svg/custom/js-late-gradient-and-object-creation-expected.checksum:
+        * platform/mac/svg/custom/js-late-gradient-and-object-creation-expected.png:
+        * platform/mac/svg/custom/js-late-gradient-creation-expected.checksum:
+        * platform/mac/svg/custom/js-late-gradient-creation-expected.png:
+        * platform/mac/svg/custom/js-late-pattern-and-object-creation-expected.checksum:
+        * platform/mac/svg/custom/js-late-pattern-and-object-creation-expected.png:
+        * platform/mac/svg/custom/linking-a-03-b-all-expected.checksum:
+        * platform/mac/svg/custom/linking-a-03-b-all-expected.png:
+        * platform/mac/svg/custom/linking-a-03-b-transform-expected.checksum:
+        * platform/mac/svg/custom/linking-a-03-b-transform-expected.png:
+        * platform/mac/svg/custom/linking-a-03-b-viewBox-transform-expected.checksum:
+        * platform/mac/svg/custom/linking-a-03-b-viewBox-transform-expected.png:
+        * platform/mac/svg/custom/marker-default-width-height-expected.checksum:
+        * platform/mac/svg/custom/marker-default-width-height-expected.png:
+        * platform/mac/svg/custom/marker-opacity-expected.checksum:
+        * platform/mac/svg/custom/marker-opacity-expected.png:
+        * platform/mac/svg/custom/mouse-move-on-svg-root-expected.checksum:
+        * platform/mac/svg/custom/mouse-move-on-svg-root-expected.png:
+        * platform/mac/svg/custom/mouse-move-on-svg-root-standalone-expected.checksum:
+        * platform/mac/svg/custom/mouse-move-on-svg-root-standalone-expected.png:
+        * platform/mac/svg/custom/non-scaling-stroke-expected.checksum:
+        * platform/mac/svg/custom/non-scaling-stroke-expected.png:
+        * platform/mac/svg/custom/pattern-skew-transformed-expected.checksum:
+        * platform/mac/svg/custom/pattern-skew-transformed-expected.png:
+        * platform/mac/svg/custom/pattern-with-transformation-expected.checksum:
+        * platform/mac/svg/custom/pattern-with-transformation-expected.png:
+        * platform/mac/svg/custom/pointer-events-image-expected.checksum:
+        * platform/mac/svg/custom/pointer-events-image-expected.png:
+        * platform/mac/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.checksum:
+        * platform/mac/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.png:
+        * platform/mac/svg/custom/relative-sized-content-with-resources-expected.checksum:
+        * platform/mac/svg/custom/relative-sized-content-with-resources-expected.png:
+        * platform/mac/svg/custom/relative-sized-inner-svg-expected.checksum:
+        * platform/mac/svg/custom/relative-sized-inner-svg-expected.png:
+        * platform/mac/svg/custom/relative-sized-use-on-symbol-expected.checksum:
+        * platform/mac/svg/custom/relative-sized-use-on-symbol-expected.png:
+        * platform/mac/svg/custom/relative-sized-use-without-attributes-on-symbol-expected.checksum:
+        * platform/mac/svg/custom/relative-sized-use-without-attributes-on-symbol-expected.png:
+        * platform/mac/svg/custom/resource-invalidate-on-target-update-expected.checksum:
+        * platform/mac/svg/custom/resource-invalidate-on-target-update-expected.png:
+        * platform/mac/svg/custom/shapes-supporting-markers-expected.checksum:
+        * platform/mac/svg/custom/shapes-supporting-markers-expected.png:
+        * platform/mac/svg/custom/stroked-pattern-expected.checksum:
+        * platform/mac/svg/custom/stroked-pattern-expected.png:
+        * platform/mac/svg/custom/struct-use-09-b-expected.checksum:
+        * platform/mac/svg/custom/struct-use-09-b-expected.png:
+        * platform/mac/svg/custom/svg-curve-with-relative-cordinates-expected.checksum:
+        * platform/mac/svg/custom/svg-curve-with-relative-cordinates-expected.png:
+        * platform/mac/svg/custom/svg-fonts-in-html-expected.checksum:
+        * platform/mac/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/mac/svg/custom/svg-fonts-with-no-element-reference-expected.checksum:
+        * platform/mac/svg/custom/svg-fonts-with-no-element-reference-expected.png:
+        * platform/mac/svg/custom/text-rotated-gradient-expected.checksum:
+        * platform/mac/svg/custom/text-rotated-gradient-expected.png:
+        * platform/mac/svg/custom/tref-update-expected.checksum:
+        * platform/mac/svg/custom/tref-update-expected.png:
+        * platform/mac/svg/custom/use-css-events-expected.checksum:
+        * platform/mac/svg/custom/use-css-events-expected.png:
+        * platform/mac/svg/custom/use-detach-expected.checksum:
+        * platform/mac/svg/custom/use-detach-expected.png:
+        * platform/mac/svg/custom/use-on-clip-path-with-transformation-expected.checksum:
+        * platform/mac/svg/custom/use-on-clip-path-with-transformation-expected.png:
+        * platform/mac/svg/custom/use-referencing-nonexisting-symbol-expected.checksum:
+        * platform/mac/svg/custom/use-referencing-nonexisting-symbol-expected.png:
+        * platform/mac/svg/custom/width-full-percentage-expected.checksum:
+        * platform/mac/svg/custom/width-full-percentage-expected.png:
+
+2011-02-16  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Pixel tests differences on 10.6.6 32bit vs. 64bit
+        https://bugs.webkit.org/show_bug.cgi?id=54474
+
+        Update SnowLeopard SVG pixel test baseline, generated on a 32bit machine, where it passes with tolerance 0.
         This is the second chunk.
 
         It should pass on modern 64bit machines as well, using tolerance 0.01.
