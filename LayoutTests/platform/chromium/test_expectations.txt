@@ -2206,8 +2206,6 @@ BUGCR48859 WIN : fast/inline/continuation-outlines-with-layers-2.html = IMAGE+TE
 // Need investigation.
 BUGWK38016 WIN : svg/custom/foreign-object-skew.svg = FAIL
 
-BUGWK42241 LINUX : svg/custom/text-rotated-gradient.svg = IMAGE PASS
-
 // These tests all fail because the expected output is wrong. The
 // reason is that JSC does not currently implement Object.freeze and
 // Object.isFrozen. These test has intentionally been marked as FAIL,
@@ -2361,7 +2359,6 @@ BUGCR51869 : http/tests/websocket/tests/frame-length-overflow.html = TEXT PASS
 BUGCR51854 WIN SLOW : http/tests/storage/callbacks-are-called-in-correct-context.html = PASS
 
 // Regressions from r65229
-BUGWK43912 WIN LINUX : svg/batik/masking/maskRegions.svg = IMAGE
 BUGWK43912 WIN LINUX : svg/custom/grayscale-gradient-mask.svg = IMAGE
 BUGWK43912 WIN LINUX : svg/custom/absolute-sized-content-with-resources.xhtml = IMAGE
 
@@ -3029,7 +3026,6 @@ BUGWK50528 MAC : svg/text/text-tspan-01-b.svg = IMAGE
 BUGWK50528 MAC : svg/text/text-ws-01-t.svg = IMAGE
 BUGWK50528 MAC : svg/text/text-ws-02-t.svg = IMAGE
 BUGWK50528 MAC : svg/text/textPathBoundsBug.svg = IMAGE
-BUGWK50528 MAC LEOPARD : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
 BUGWK50528 MAC : svg/custom/image-small-width-height.svg = IMAGE
 
 //
@@ -3250,7 +3246,6 @@ BUGWK54322 MAC SNOWLEOPARD : svg/W3C-SVG-1.1/animate-elem-34-t.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/W3C-SVG-1.1/animate-elem-36-t.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/W3C-SVG-1.1/animate-elem-84-t.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/W3C-SVG-1.1/filters-color-01-b.svg = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : svg/W3C-SVG-1.1/filters-comptran-01-b.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/W3C-SVG-1.1/filters-example-01-b.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/W3C-SVG-1.1/metadata-example-01-b.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/W3C-SVG-1.1/paths-data-02-t.svg = IMAGE
@@ -3266,11 +3261,9 @@ BUGWK54322 MAC SNOWLEOPARD : svg/W3C-SVG-1.1/pservers-grad-07-b.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/W3C-SVG-1.1/pservers-grad-11-b.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/W3C-SVG-1.1/pservers-grad-13-b.svg = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : svg/W3C-SVG-1.1/struct-frag-02-t.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/W3C-SVG-1.1/text-path-01-b.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/W3C-SVG-1.1/text-text-01-b.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/W3C-SVG-1.1/types-basicDOM-01-b.svg = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : svg/batik/masking/maskRegions.svg = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : svg/batik/text/textAnchor.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/batik/text/textEffect.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/batik/text/textEffect3.svg = IMAGE
@@ -3298,7 +3291,6 @@ BUGWK54322 MAC SNOWLEOPARD : svg/custom/grayscale-gradient-mask.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/custom/invalid-css.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/custom/js-late-clipPath-and-object-creation.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/custom/js-late-clipPath-creation.svg = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : svg/custom/js-late-gradient-and-object-creation.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/custom/js-late-gradient-creation.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/custom/js-late-pattern-and-object-creation.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/custom/junk-data.svg = IMAGE
@@ -3318,9 +3310,7 @@ BUGWK54322 MAC SNOWLEOPARD : svg/custom/stroked-pattern.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/custom/struct-use-09-b.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/custom/svg-curve-with-relative-cordinates.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/custom/svg-fonts-with-no-element-reference.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : svg/custom/text-rotated-gradient.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/custom/tref-update.svg = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : svg/custom/use-detach.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/custom/use-on-clip-path-with-transformation.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/custom/use-referencing-nonexisting-symbol.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/custom/viewbox-syntax.svg = IMAGE
@@ -3344,11 +3334,9 @@ BUGWK54322 MAC SNOWLEOPARD : svg/hixie/mixed/006.xml = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/hixie/mixed/008.xml = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/hixie/mixed/011.xml = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/hixie/perf/007.xml = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : svg/hixie/viewbox/preserveAspectRatio/001.xml = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/repaint/filter-repaint.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/text/font-size-below-point-five-2.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/text/foreignObject-text-clipping-bug.xml = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : svg/text/scaled-font.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/text/select-textLength-spacing-squeeze-1.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/text/select-textLength-spacing-squeeze-2.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/text/select-textLength-spacing-squeeze-3.svg = IMAGE
@@ -3364,17 +3352,10 @@ BUGWK54322 MAC SNOWLEOPARD : svg/text/select-textLength-spacingAndGlyphs-stretch
 BUGWK54322 MAC SNOWLEOPARD : svg/text/select-x-list-3.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/text/selection-background-color.xhtml = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/text/selection-styles.xhtml = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : svg/text/small-fonts-2.svg = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : svg/text/small-fonts-3.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/text/small-fonts-in-html5.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/text/small-fonts.svg = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : svg/transforms/text-with-mask-with-svg-transform.svg = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : svg/transforms/text-with-pattern-inside-transformed-html.xhtml = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : svg/zoom/page/zoom-coords-viewattr-01-b.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/zoom/page/zoom-foreignObject.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : svg/zoom/page/zoom-hixie-mixed-008.xml = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : svg/zoom/page/zoom-mask-with-percentages.svg = TEXT
-BUGWK54322 MAC SNOWLEOPARD : svg/zoom/text/zoom-coords-viewattr-01-b.svg = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/bugs/bug101674.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/bugs/bug10565.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : tables/mozilla/bugs/bug11026.html = IMAGE
