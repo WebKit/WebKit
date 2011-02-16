@@ -25,6 +25,8 @@
 #include "config.h"
 #include "FrameLoaderClientGtk.h"
 
+#include "AXObjectCache.h"
+#include "AccessibilityObject.h"
 #include "ArchiveResource.h"
 #include "CachedFrame.h"
 #include "Color.h"
@@ -55,6 +57,7 @@
 #include "PluginDatabase.h"
 #include "ProgressTracker.h"
 #include "RenderPart.h"
+#include "RenderView.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "ScriptController.h"
@@ -222,6 +225,51 @@ String FrameLoaderClient::userAgent(const KURL& url)
     return String::fromUTF8(webkit_web_settings_get_user_agent(settings));
 }
 
+static void notifyAccessibilityStatus(WebKitWebFrame* frame, WebKitLoadStatus loadStatus)
+{
+    if (loadStatus != WEBKIT_LOAD_PROVISIONAL
+        && loadStatus != WEBKIT_LOAD_FAILED
+        && loadStatus != WEBKIT_LOAD_FINISHED)
+        return;
+
+    WebKitWebFramePrivate* priv = frame->priv;
+    if (!priv->coreFrame || !priv->coreFrame->document())
+        return;
+
+    RenderView* contentRenderer = priv->coreFrame->contentRenderer();
+    if (!contentRenderer)
+        return;
+
+    AXObjectCache* axObjectCache = priv->coreFrame->document()->axObjectCache();
+    if (!axObjectCache)
+        return;
+
+    AccessibilityObject* coreAxObject = axObjectCache->getOrCreate(contentRenderer);
+    if (!coreAxObject)
+        return;
+
+    AtkObject* axObject = coreAxObject->wrapper();
+    if (!axObject || !ATK_IS_DOCUMENT(axObject))
+        return;
+
+    switch (loadStatus) {
+    case WEBKIT_LOAD_PROVISIONAL:
+        g_signal_emit_by_name(axObject, "state-change", "busy", true);
+        if (core(frame)->loader()->loadType() == FrameLoadTypeReload)
+            g_signal_emit_by_name(axObject, "reload");
+        break;
+    case WEBKIT_LOAD_FAILED:
+        g_signal_emit_by_name(axObject, "load-stopped");
+        g_signal_emit_by_name(axObject, "state-change", "busy", false);
+        break;
+    case WEBKIT_LOAD_FINISHED:
+        g_signal_emit_by_name(axObject, "load-complete");
+        g_signal_emit_by_name(axObject, "state-change", "busy", false);
+    default:
+        break;
+    }
+}
+
 static void notifyStatus(WebKitWebFrame* frame, WebKitLoadStatus loadStatus)
 {
     frame->priv->loadStatus = loadStatus;
@@ -231,6 +279,9 @@ static void notifyStatus(WebKitWebFrame* frame, WebKitLoadStatus loadStatus)
     if (frame == webkit_web_view_get_main_frame(webView)) {
         webView->priv->loadStatus = loadStatus;
         g_object_notify(G_OBJECT(webView), "load-status");
+
+        if (AXObjectCache::accessibilityEnabled())
+            notifyAccessibilityStatus(frame, loadStatus);
     }
 }
 
