@@ -171,4 +171,18 @@ shouldBeSyntaxError("'use strict';arguments=1;");
 shouldBeSyntaxError("'use strict';1-(arguments=1);");
 shouldBeSyntaxError("'use strict';var a=(eval=1);");
 shouldBeSyntaxError("'use strict';var a=(arguments=1);");
+
+var aGlobal = false;
+shouldBeTrue("'use strict'; try { throw 1; } catch (e) { aGlobal = true; }");
+aGlobal = false;
+shouldBeTrue("'use strict'; (function () { try { throw 1; } catch (e) { aGlobal = true; }})(); aGlobal;");
+aGlobal = false;
+shouldBeTrue("(function () {'use strict';  try { throw 1; } catch (e) { aGlobal = true; }})(); aGlobal;");
+aGlobal = false;
+shouldBeTrue("try { throw 1; } catch (e) { aGlobal = true; }");
+aGlobal = false;
+shouldBeTrue("(function () { try { throw 1; } catch (e) { aGlobal = true; }})(); aGlobal;");
+aGlobal = false;
+shouldBeTrue("(function () {try { throw 1; } catch (e) { aGlobal = true; }})(); aGlobal;");
+
 var successfullyParsed = true;

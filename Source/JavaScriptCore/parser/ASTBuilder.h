@@ -76,9 +76,9 @@ public:
     ASTBuilder(JSGlobalData* globalData, Lexer* lexer)
         : m_globalData(globalData)
         , m_lexer(lexer)
+        , m_scope(globalData)
         , m_evalCount(0)
     {
-        m_scopes.append(Scope(globalData));
     }
     
     struct BinaryExprContext {
@@ -115,10 +115,10 @@ public:
 
     JSC::SourceElements* createSourceElements() { return new (m_globalData) JSC::SourceElements(m_globalData); }
 
-    ParserArenaData<DeclarationStacks::VarStack>* varDeclarations() { return m_scopes.last().m_varDeclarations; }
-    ParserArenaData<DeclarationStacks::FunctionStack>* funcDeclarations() { return m_scopes.last().m_funcDeclarations; }
-    int features() const { return m_scopes.last().m_features; }
-    int numConstants() const { return m_scopes.last().m_numConstants; }
+    ParserArenaData<DeclarationStacks::VarStack>* varDeclarations() { return m_scope.m_varDeclarations; }
+    ParserArenaData<DeclarationStacks::FunctionStack>* funcDeclarations() { return m_scope.m_funcDeclarations; }
+    int features() const { return m_scope.m_features; }
+    int numConstants() const { return m_scope.m_numConstants; }
 
     void appendToComma(CommaNode* commaNode, ExpressionNode* expr) { commaNode->append(expr); }
 
@@ -300,7 +300,7 @@ public:
         FuncDeclNode* decl = new (m_globalData) FuncDeclNode(m_globalData, *name, body, m_lexer->sourceCode(openBracePos, closeBracePos, bodyStartLine), parameters);
         if (*name == m_globalData->propertyNames->arguments)
             usesArguments();
-        m_scopes.last().m_funcDeclarations->data.append(decl->body());
+        m_scope.m_funcDeclarations->data.append(decl->body());
         body->setLoc(bodyStartLine, bodyEndLine);
         return decl;
     }
@@ -494,7 +494,7 @@ public:
     {
         if (m_globalData->propertyNames->arguments == *ident)
             usesArguments();
-        m_scopes.last().m_varDeclarations->data.append(std::make_pair(ident, attrs));
+        m_scope.m_varDeclarations->data.append(std::make_pair(ident, attrs));
     }
 
     ExpressionNode* combineCommaNodes(ExpressionNode* list, ExpressionNode* init)
@@ -611,17 +611,17 @@ private:
         node->setExceptionSourceCode(divot, divot - start, end - divot);
     }
 
-    void incConstants() { m_scopes.last().m_numConstants++; }
-    void usesThis() { m_scopes.last().m_features |= ThisFeature; }
-    void usesCatch() { m_scopes.last().m_features |= CatchFeature; }
-    void usesClosures() { m_scopes.last().m_features |= ClosureFeature; }
-    void usesArguments() { m_scopes.last().m_features |= ArgumentsFeature; }
-    void usesAssignment() { m_scopes.last().m_features |= AssignFeature; }
-    void usesWith() { m_scopes.last().m_features |= WithFeature; }
+    void incConstants() { m_scope.m_numConstants++; }
+    void usesThis() { m_scope.m_features |= ThisFeature; }
+    void usesCatch() { m_scope.m_features |= CatchFeature; }
+    void usesClosures() { m_scope.m_features |= ClosureFeature; }
+    void usesArguments() { m_scope.m_features |= ArgumentsFeature; }
+    void usesAssignment() { m_scope.m_features |= AssignFeature; }
+    void usesWith() { m_scope.m_features |= WithFeature; }
     void usesEval() 
     {
         m_evalCount++;
-        m_scopes.last().m_features |= EvalFeature;
+        m_scope.m_features |= EvalFeature;
     }
     ExpressionNode* createNumber(double d)
     {
@@ -630,7 +630,7 @@ private:
     
     JSGlobalData* m_globalData;
     Lexer* m_lexer;
-    Vector<Scope> m_scopes;
+    Scope m_scope;
     Vector<BinaryOperand, 10> m_binaryOperandStack;
     Vector<AssignmentInfo, 10> m_assignmentInfoStack;
     Vector<pair<int, int>, 10> m_binaryOperatorStack;

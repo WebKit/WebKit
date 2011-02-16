@@ -472,8 +472,11 @@ namespace JSC {
         JSObject* base;
         while (true) {
             base = iter->get();
-            if (next == end)
-                return isStrictPut ? JSValue() : base;
+            if (next == end) {
+                if (isStrictPut && !base->getPropertySlot(callFrame, property, slot))
+                    return JSValue();
+                return base;
+            }
             if (base->getPropertySlot(callFrame, property, slot))
                 return base;
 

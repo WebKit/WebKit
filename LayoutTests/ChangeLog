@@ -1,3 +1,16 @@
+2011-02-16  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Incorrect handling of global writes in dynamic contexts
+        https://bugs.webkit.org/show_bug.cgi?id=49383
+
+        Add a few tests to ensure that global writes are actually
+        allowed inside dynamic scopes.
+
+        * fast/js/basic-strict-mode-expected.txt:
+        * fast/js/script-tests/basic-strict-mode.js:
+
 2011-02-16  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed.

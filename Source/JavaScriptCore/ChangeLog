@@ -1,3 +1,39 @@
+2011-02-16  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Incorrect handling of global writes in dynamic contexts
+        https://bugs.webkit.org/show_bug.cgi?id=49383
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+          Can't use the existing callframe to return an uncaught exception
+          as by definition that callframe has already been torn down.
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::ASTBuilder):
+        (JSC::ASTBuilder::varDeclarations):
+        (JSC::ASTBuilder::funcDeclarations):
+        (JSC::ASTBuilder::features):
+        (JSC::ASTBuilder::numConstants):
+        (JSC::ASTBuilder::createFuncDeclStatement):
+        (JSC::ASTBuilder::addVar):
+        (JSC::ASTBuilder::incConstants):
+        (JSC::ASTBuilder::usesThis):
+        (JSC::ASTBuilder::usesCatch):
+        (JSC::ASTBuilder::usesClosures):
+        (JSC::ASTBuilder::usesArguments):
+        (JSC::ASTBuilder::usesAssignment):
+        (JSC::ASTBuilder::usesWith):
+        (JSC::ASTBuilder::usesEval):
+          Don't need a vector of scopes in the ASTBuilder
+        * runtime/Operations.h:
+        (JSC::resolveBase):
+          In strict mode the optimisation that we use to skip a lookup
+          on the global object is incorrect and lead to us always
+          disallowing global writes when we needed to do a dynamic slot
+          lookup.  Now the strict mode path actually checks for the
+          property.
+
 2011-02-15  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Windows build fix for

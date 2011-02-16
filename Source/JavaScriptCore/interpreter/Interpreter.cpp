@@ -2449,14 +2449,16 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_resolve_base) {
-        /* resolve_base dst(r) property(id)
+        /* resolve_base dst(r) property(id) isStrict(bool)
 
            Searches the scope chain for an object containing
            identifier property, and if one is found, writes it to
-           register dst. If none is found, the outermost scope (which
-           will be the global object) is stored in register dst.
+           register dst. If none is found and isStrict is false, the
+           outermost scope (which will be the global object) is
+           stored in register dst.
         */
         resolveBase(callFrame, vPC);
+        CHECK_FOR_EXCEPTION();
 
         vPC += OPCODE_LENGTH(op_resolve_base);
         NEXT_INSTRUCTION();
@@ -4776,9 +4778,13 @@ skip_id_custom_self:
             // cannot fathom if we don't assign to the exceptionValue before branching)
             exceptionValue = createInterruptedExecutionException(globalData);
         }
+        JSGlobalObject* globalObject = callFrame->lexicalGlobalObject();
         handler = throwException(callFrame, exceptionValue, vPC - codeBlock->instructions().begin());
-        if (!handler)
-            return throwError(callFrame, exceptionValue);
+        if (!handler) {
+            // Can't use the callframe at this point as the scopechain, etc have
+            // been released.
+            return throwError(globalObject->globalExec(), exceptionValue);
+        }
 
         codeBlock = callFrame->codeBlock();
         vPC = codeBlock->instructions().begin() + handler->target;
