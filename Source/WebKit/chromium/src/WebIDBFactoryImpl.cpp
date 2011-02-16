@@ -58,9 +58,14 @@ WebIDBFactoryImpl::~WebIDBFactoryImpl()
 {
 }
 
-void WebIDBFactoryImpl::open(const WebString& name, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame*, const WebString& dataDir, unsigned long long maximumSize)
+void WebIDBFactoryImpl::open(const WebString& name, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame*, const WebString& dataDir, unsigned long long defaultQuota)
 {
-    m_idbFactoryBackend->open(name, IDBCallbacksProxy::create(callbacks), origin, 0, dataDir, maximumSize);
+    m_idbFactoryBackend->open(name, IDBCallbacksProxy::create(callbacks), origin, 0, dataDir, defaultQuota);
+}
+
+void WebIDBFactoryImpl::setQuota(const WebSecurityOrigin& origin, long long quota, bool persistent)
+{
+    m_idbFactoryBackend->setQuota(origin, quota, persistent);
 }
 
 } // namespace WebKit

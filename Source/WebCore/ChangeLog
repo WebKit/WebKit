@@ -1,3 +1,21 @@
+2011-02-14  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add initial support for per-origin quotas to IndexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=54421
+
+        Add support for non-persistent per-origin quotas. If one is
+        specified, it overrides the default.
+
+        No tests as this is only exposed via the Chromium webkit API.
+
+        * storage/IDBFactoryBackendImpl.cpp:
+        (WebCore::IDBFactoryBackendImpl::open):
+        (WebCore::IDBFactoryBackendImpl::setQuota):
+        * storage/IDBFactoryBackendImpl.h:
+        * storage/IDBFactoryBackendInterface.h:
+
 2011-02-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

@@ -65,6 +65,11 @@ void IDBFactoryBackendProxy::open(const String& name, PassRefPtr<IDBCallbacks> c
     m_webIDBFactory->open(name, new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir, maximumSize);
 }
 
+void IDBFactoryBackendProxy::setQuota(PassRefPtr<SecurityOrigin> origin, int64_t maximumSize, bool persistent)
+{
+    m_webIDBFactory->setQuota(origin, maximumSize, persistent);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

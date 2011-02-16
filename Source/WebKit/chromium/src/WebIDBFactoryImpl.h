@@ -42,7 +42,9 @@ public:
     WebIDBFactoryImpl();
     virtual ~WebIDBFactoryImpl();
 
-    virtual void open(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir, unsigned long long maximumSize);
+    virtual void open(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir, unsigned long long defaultQuota);
+
+    virtual void setQuota(const WebSecurityOrigin&, long long quota, bool persistent);
 
 private:
     WTF::RefPtr<WebCore::IDBFactoryBackendInterface> m_idbFactoryBackend;

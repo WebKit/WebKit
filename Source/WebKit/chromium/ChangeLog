@@ -1,3 +1,20 @@
+2011-02-14  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add initial support for per-origin quotas to IndexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=54421
+
+        * public/WebIDBFactory.h:
+        (WebKit::WebIDBFactory::setQuota):
+        * src/AssertMatchingEnums.cpp:
+        * src/IDBFactoryBackendProxy.cpp:
+        (WebCore::IDBFactoryBackendProxy::setQuota):
+        * src/IDBFactoryBackendProxy.h:
+        * src/WebIDBFactoryImpl.cpp:
+        (WebKit::WebIDBFactoryImpl::setQuota):
+        * src/WebIDBFactoryImpl.h:
+
 2011-02-15  Jia Pu  <jpu@apple.com>
 
         Reviewed by Darin Adler.

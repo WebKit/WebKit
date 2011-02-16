@@ -52,8 +52,13 @@ public:
     virtual ~WebIDBFactory() { }
 
     // The WebKit implementation of open ignores the WebFrame* parameter.
-    virtual void open(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir, unsigned long long maximumSize) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void open(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir, unsigned long long defaultQuota) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void deleteDatabase(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir) { WEBKIT_ASSERT_NOT_REACHED(); }
+
+    // FIXME: Should these constants be in a more global place?
+    static const long long defaultQuota = -1;
+    static const long long unlimitedQuota = 0;
+    virtual void setQuota(const WebSecurityOrigin&, long long quota, bool persistent) { WEBKIT_ASSERT_NOT_REACHED(); }
 };
 
 } // namespace WebKit

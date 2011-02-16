@@ -54,7 +54,9 @@ public:
     void removeIDBDatabaseBackend(const String& uniqueIdentifier);
     void removeSQLiteDatabase(const String& uniqueIdentifier);
 
-    virtual void open(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir, int64_t maximumSize);
+    virtual void open(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir, int64_t defaultQuota);
+
+    virtual void setQuota(PassRefPtr<SecurityOrigin>, int64_t quota, bool persistent);
 
 private:
     IDBFactoryBackendImpl();
@@ -64,6 +66,10 @@ private:
 
     typedef HashMap<String, IDBSQLiteDatabase*> SQLiteDatabaseMap;
     SQLiteDatabaseMap m_sqliteDatabaseMap;
+
+    typedef HashMap<String, int64_t> QuotaMap;
+    QuotaMap m_currentQuotaMap;
+    QuotaMap m_defaultQuotaMap;
 
     RefPtr<IDBTransactionCoordinator> m_transactionCoordinator;
 

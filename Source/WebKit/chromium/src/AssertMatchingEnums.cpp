@@ -45,6 +45,7 @@
 #include "GeolocationError.h"
 #include "GeolocationPosition.h"
 #include "HTMLInputElement.h"
+#include "IDBFactoryBackendInterface.h"
 #include "IDBKey.h"
 #include "MediaPlayer.h"
 #include "NotificationPresenter.h"
@@ -67,6 +68,7 @@
 #include "WebFontDescription.h"
 #include "WebGeolocationError.h"
 #include "WebGeolocationPosition.h"
+#include "WebIDBFactory.h"
 #include "WebIDBKey.h"
 #include "WebInputElement.h"
 #include "WebMediaPlayer.h"
@@ -369,6 +371,9 @@ COMPILE_ASSERT_MATCHING_ENUM(WebView::UserContentInjectInAllFrames, InjectInAllF
 COMPILE_ASSERT_MATCHING_ENUM(WebView::UserContentInjectInTopFrameOnly, InjectInTopFrameOnly);
 COMPILE_ASSERT_MATCHING_ENUM(WebView::UserStyleInjectInExistingDocuments, InjectInExistingDocuments);
 COMPILE_ASSERT_MATCHING_ENUM(WebView::UserStyleInjectInSubsequentDocuments, InjectInSubsequentDocuments);
+
+COMPILE_ASSERT_MATCHING_ENUM(WebIDBFactory::unlimitedQuota, IDBFactoryBackendInterface::unlimitedQuota);
+COMPILE_ASSERT_MATCHING_ENUM(WebIDBFactory::defaultQuota, IDBFactoryBackendInterface::defaultQuota);
 
 COMPILE_ASSERT_MATCHING_ENUM(WebIDBKey::NullType, IDBKey::NullType);
 COMPILE_ASSERT_MATCHING_ENUM(WebIDBKey::StringType, IDBKey::StringType);
