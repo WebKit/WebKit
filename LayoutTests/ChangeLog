@@ -1,3 +1,11 @@
+2011-02-15  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed chromium-gpu-linux rebaseline of 
+        compositing/geometry/vertical-scroll-composited.html.
+
+        * platform/chromium-gpu-linux/compositing/geometry/vertical-scroll-composited-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/geometry/vertical-scroll-composited-expected.png:
+
 2011-02-15  Peter Kasting  <pkasting@google.com>
 
         Unreviewed, Chromium test expectations update.
