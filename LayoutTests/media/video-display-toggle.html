@@ -18,7 +18,10 @@
                 if (window.layoutTestController)
                     layoutTestController.waitUntilDone();
                 setSrcById('vid', findMediaFile('video', 'content/test'));
-                document.getElementById('vid').addEventListener("canplaythrough", test2);
+                var video = document.getElementById('vid');
+                video.load();
+                video.play();
+                video.addEventListener("playing", test2);
             }
             function test2()
             {

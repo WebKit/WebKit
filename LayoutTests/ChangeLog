@@ -1,3 +1,14 @@
+2011-02-16  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] media/video-display-toggle.html still flaky on 32-Bits  Release
+        https://bugs.webkit.org/show_bug.cgi?id=54552
+
+        * media/video-display-toggle.html: Start playback before
+        triggering the display toggle, ensuring the controls
+        (esp. duration display) are conistent.
+
 2011-02-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
