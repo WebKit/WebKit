@@ -1,3 +1,13 @@
+2011-02-16  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Dirk Schulze.
+
+        SVGAnimateElement incorrectly uses Color::nameForRenderTreeAsText()
+        https://bugs.webkit.org/show_bug.cgi?id=54547
+
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::applyResultsToTarget):
+
 2011-02-14  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.
