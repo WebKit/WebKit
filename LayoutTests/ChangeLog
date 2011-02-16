@@ -1,3 +1,10 @@
+2011-02-16  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed chromium-gpu expectations update. Add more tests that fail
+        because of bug 54409.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-16  Jian Li  <jianli@chromium.org>
 
         Reviewed by Kenneth Russell.

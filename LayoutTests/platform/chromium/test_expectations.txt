@@ -3129,12 +3129,16 @@ BUGWK52341 GPU : fast/canvas/canvas-large-dimensions.html = TEXT
 
 BUGWK53469 GPU MAC : compositing/scroll-painted-composited-content.html = CRASH PASS
 
+BUGWK54409 GPU DEBUG : fast/canvas/image-object-in-canvas.html = IMAGE
+BUGWK54409 GPU DEBUG : fast/canvas/canvas-text-alignment.html = IMAGE
 BUGWK54409 GPU WIN : compositing/direct-image-compositing.html = IMAGE
 BUGWK54409 GPU WIN : compositing/geometry/fixed-position.html = IMAGE
 BUGWK54409 GPU WIN : compositing/geometry/horizontal-scroll-composited.html = IMAGE
 BUGWK54409 GPU MAC : compositing/geometry/vertical-scroll-composited.html = IMAGE
 BUGWK54409 GPU WIN : compositing/masks/masked-ancestor.html = IMAGE
+BUGWK54409 GPU DEBUG LINUX : compositing/masks/masked-ancestor.html = IMAGE
 BUGWK54409 GPU WIN : compositing/masks/simple-composited-mask.html = IMAGE
+BUGWK54409 GPU DEBUG LINUX : compositing/masks/simple-composited-mask.html = IMAGE
 BUGWK54409 GPU : compositing/overflow/fixed-position-ancestor-clip.html = IMAGE
 
 BUGCR72223 : media/video-frame-accurate-seek.html = IMAGE PASS
