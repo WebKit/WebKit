@@ -1,3 +1,16 @@
+2011-02-16  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by David Hyatt.
+
+        REGRESSION: Use after free in WebCore::RenderCounter::destroyCounterNode
+        https://bugs.webkit.org/show_bug.cgi?id=54478
+
+        Added this test, to evidence a bug not previously caught by the
+        Layout tests.
+
+        * fast/css/counters/render-tree-reorg-crash-expected.txt: Added.
+        * fast/css/counters/render-tree-reorg-crash.html: Added.
+
 2011-02-16  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.

@@ -385,7 +385,7 @@ static bool findPlaceForCounter(RenderObject* counterOwner, const AtomicString& 
         if (previousSibling)
             currentRenderer = previousSiblingOrParent(currentRenderer);
         else
-            currentRenderer = currentRenderer->previousInPreOrder();
+            currentRenderer = previousInPreOrder(currentRenderer);
     }
     return false;
 }
