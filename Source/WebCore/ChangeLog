@@ -1,3 +1,17 @@
+2011-02-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] r78718 introduced some assertion failures in some HTTP tests
+        https://bugs.webkit.org/show_bug.cgi?id=54592
+
+        No new tests. This fix is covered by tests that are currently failing.
+
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        (WebCore::ResourceRequest::updateFromSoupMessage): Instead of setting the existing
+        headers and then selectively removing ones that do not exist in the updated soup
+        message, just remove all headers from the map first.
+
 2011-02-16  Jian Li  <jianli@chromium.org>
 
         Reviewed by Kenneth Russell.
