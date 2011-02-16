@@ -732,7 +732,15 @@ static inline QUrl ensureAbsoluteUrl(const QUrl &url)
     if (!url.isRelative())
         return url;
 
-    return QUrl::fromLocalFile(QFileInfo(url.toLocalFile()).absoluteFilePath());
+    // This contains the URL with absolute path but without 
+    // the query and the fragment part.
+    QUrl baseUrl = QUrl::fromLocalFile(QFileInfo(url.toLocalFile()).absoluteFilePath()); 
+
+    // The path is removed so the query and the fragment parts are there.
+    QString pathRemoved = url.toString(QUrl::RemovePath);
+    QUrl toResolve(pathRemoved);
+    
+    return baseUrl.resolved(toResolve);
 }
 
 /*!

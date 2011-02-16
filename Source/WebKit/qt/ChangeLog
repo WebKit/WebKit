@@ -1,3 +1,16 @@
+2011-02-16  Aparna Nandyal  <aparna.nand@wipro.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] QWebFrame: When a relative url is loaded then it will make it absolute internally, however this strips out any query/fragments
+        https://bugs.webkit.org/show_bug.cgi?id=29424
+
+        ensureAbsoluteUrl function was stripping the query and the
+        fragment part of the url. Corrected this.
+
+        * Api/qwebframe.cpp:
+        (ensureAbsoluteUrl):
+
 2011-02-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
