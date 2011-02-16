@@ -1,3 +1,13 @@
+2011-02-15  Xianzhu Wang  <wangxianzhu@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Fixed a small bug about --no-timeout option.
+        https://bugs.webkit.org/show_bug.cgi?id=52873
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (main):
+
 2011-02-15  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Darin Fisher.

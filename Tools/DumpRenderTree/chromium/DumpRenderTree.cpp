@@ -58,7 +58,7 @@ static const char optionEnableAccelerated2DCanvas[] = "--enable-accelerated-2d-c
 static const char optionStressOpt[] = "--stress-opt";
 static const char optionStressDeopt[] = "--stress-deopt";
 static const char optionJavaScriptFlags[] = "--js-flags=";
-static const char optionNoTimeout[] = "--no-timeout=";
+static const char optionNoTimeout[] = "--no-timeout";
 
 static void runTest(TestShell& shell, TestParams& params, const string& testName, bool testShellMode)
 {
@@ -157,7 +157,7 @@ int main(int argc, char* argv[])
             stressDeopt = true;
         else if (!argument.find(optionJavaScriptFlags))
             javaScriptFlags = argument.substr(strlen(optionJavaScriptFlags));
-        else if (!argument.find(optionNoTimeout))
+        else if (argument == optionNoTimeout)
             noTimeout = true;
         else if (argument.size() && argument[0] == '-')
             fprintf(stderr, "Unknown option: %s\n", argv[i]);
