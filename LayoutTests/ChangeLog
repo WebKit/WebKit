@@ -1,5 +1,12 @@
 2011-02-16  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, qt and mac rebaseline of test after r78690.
+
+        * media/controls-without-preload-expected.txt:
+        * platform/qt/media/controls-without-preload-expected.txt:
+
+2011-02-16  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, rebaseline test after r78690.
 
         * media/controls-without-preload-expected.txt:
