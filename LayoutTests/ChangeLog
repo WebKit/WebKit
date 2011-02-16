@@ -1,3 +1,10 @@
+2011-02-15  Martin Robinson  <mrobinson@igalia.com>
+
+        Skip all Hixie SVG performance tests on GTK+. They seem
+        to be timing out on the GTK+ debug bots.
+
+        * platform/gtk/Skipped: Skip Hixie SVG performance tests.
+
 2011-02-15  Steve Falkenburg  <sfalken@apple.com>
 
         Skipped crashing test on Windows.
