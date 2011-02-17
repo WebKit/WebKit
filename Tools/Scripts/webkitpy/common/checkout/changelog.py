@@ -43,6 +43,9 @@ class ChangeLogEntry(object):
     # e.g. 2009-06-03  Eric Seidel  <eric@webkit.org>
     date_line_regexp = r'^(?P<date>\d{4}-\d{2}-\d{2})\s+(?P<name>.+?)\s+<(?P<email>[^<>]+)>$'
 
+    # e.g. == Rolled over to ChangeLog-2011-02-16 ==
+    rolled_over_regexp = r'^== Rolled over to ChangeLog-\d{4}-\d{2}-\d{2} ==$'
+
     def __init__(self, contents, committer_list=CommitterList()):
         self._contents = contents
         self._committer_list = committer_list
@@ -101,6 +104,7 @@ class ChangeLog(object):
         unicode strings.  Use codecs.open or StringIO(unicode())
         to pass file objects to this class."""
         date_line_regexp = re.compile(ChangeLogEntry.date_line_regexp)
+        rolled_over_regexp = re.compile(ChangeLogEntry.rolled_over_regexp)
         entry_lines = []
         # The first line should be a date line.
         first_line = changelog_file.readline()
@@ -111,7 +115,7 @@ class ChangeLog(object):
 
         for line in changelog_file:
             # If we've hit the next entry, return.
-            if date_line_regexp.match(line):
+            if date_line_regexp.match(line) or rolled_over_regexp.match(line):
                 # Remove the extra newline at the end
                 return ChangeLogEntry(''.join(entry_lines[:-1]))
             entry_lines.append(line)

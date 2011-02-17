@@ -1,1 +1,16 @@
+2011-02-16  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        ChangeLog.parse_latest_entry_from_file does not handle rolled over ChangeLogs
+        https://bugs.webkit.org/show_bug.cgi?id=54609
+        
+        r78737 rolled over ChangeLogs, and webkit-patch complains when landing
+        patches such as this one that are the first to add an entry to the
+        ChangeLog (since they don't see a second date line to know where the
+        entry ends).
+
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+
 == Rolled over to ChangeLog-2011-02-16 ==

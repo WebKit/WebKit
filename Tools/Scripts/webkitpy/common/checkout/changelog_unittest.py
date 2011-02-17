@@ -54,6 +54,8 @@ class ChangeLogTest(unittest.TestCase):
         * DumpRenderTree/win/TestNetscapePlugin/TestNetscapePlugin.vcproj:
 '''
 
+    _rolled_over_footer = '== Rolled over to ChangeLog-2009-06-16 =='
+
     # More example text than we need.  Eventually we need to support parsing this all and write tests for the parsing.
     _example_changelog = u"""2009-08-17  Tor Arne Vestb\xf8  <vestbo@webkit.org>
 
@@ -98,6 +100,13 @@ class ChangeLogTest(unittest.TestCase):
         self.assertEquals(latest_entry.author_email(), "pkasting@google.com")
         self.assertEquals(latest_entry.reviewer_text(), u"Tor Arne Vestb\xf8")
         self.assertTrue(latest_entry.reviewer())  # Make sure that our UTF8-based lookup of Tor works.
+
+    def test_latest_entry_parse_single_entry(self):
+        changelog_contents = u"%s\n%s" % (self._example_entry, self._rolled_over_footer)
+        changelog_file = StringIO(changelog_contents)
+        latest_entry = ChangeLog.parse_latest_entry_from_file(changelog_file)
+        self.assertEquals(latest_entry.contents(), self._example_entry)
+        self.assertEquals(latest_entry.author_name(), "Peter Kasting")
 
     @staticmethod
     def _write_tmp_file_with_contents(byte_array):
