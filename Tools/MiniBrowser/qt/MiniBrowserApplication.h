@@ -34,7 +34,7 @@
 
 struct WindowOptions {
     WindowOptions()
-        : useTiledBackingStore(false)
+        : useTiledBackingStore(true)
         , useSeparateWebProcessPerWindow(false)
     {
     }

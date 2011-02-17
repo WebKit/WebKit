@@ -58,7 +58,7 @@ void MiniBrowserApplication::handleUserOptions()
              << "[-r list]"
              << "[-robot-timeout seconds]"
              << "[-robot-extra-time seconds]"
-             << "[-tiled-backing-store]"
+             << "[-chunked-drawing-area]"
              <<  "[-separate-web-process-per-window]"
              << "URLs";
         appQuit(0);
@@ -87,8 +87,8 @@ void MiniBrowserApplication::handleUserOptions()
     if (robotExtraTimeIndex != -1)
         m_robotExtraTimeSeconds = takeOptionValue(&args, robotExtraTimeIndex).toInt();
 
-    if (args.contains("-tiled-backing-store"))
-        m_windowOptions.useTiledBackingStore = true;
+    if (args.contains("-chunked-drawing-area"))
+        m_windowOptions.useTiledBackingStore = false;
 
     if (args.contains("-separate-web-process-per-window"))
         m_windowOptions.useSeparateWebProcessPerWindow = true;

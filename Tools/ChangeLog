@@ -1,3 +1,18 @@
+2011-02-16  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Enable tiled backing store by default in MiniBrowser.
+        https://bugs.webkit.org/show_bug.cgi?id=54581
+
+        Instead of a flag to turn it on, a new flag is defined to turn
+        tiled backing store off.
+
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::handleUserOptions):
+        * MiniBrowser/qt/MiniBrowserApplication.h:
+        (WindowOptions::WindowOptions):
+
 2011-02-16  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Mihai Parparita.
