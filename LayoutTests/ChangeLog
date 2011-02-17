@@ -1,3 +1,12 @@
+2011-02-16  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed.
+
+        Web Inspector: remove custom test expectations for chromium.
+
+        * platform/chromium/http/tests/inspector/console-resource-errors-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-02-16  Dominic Mazzoni  <dmazzoni@google.com>
 
         Reviewed by Chris Fleizach.

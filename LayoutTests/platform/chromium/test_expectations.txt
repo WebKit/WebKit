@@ -632,7 +632,7 @@ BUGCR66087 WIN LINUX : inspector/timeline/timeline-parse-html.html = CRASH TIMEO
 BUGCR68165 WIN LINUX DEBUG SLOW : inspector/styles/styles-source-lines.html = PASS
 BUGCR66087 WIN LINUX SLOW : inspector/storage-panel-dom-storage.html = PASS TEXT
 
-BUGCR66087 WIN LINUX SLOW : http/tests/inspector/console-resource-errors.html = PASS TEXT
+BUGCR66087 WIN LINUX SLOW : http/tests/inspector/console-resource-errors.html = PASS
 BUGCR66087 WIN LINUX SLOW : http/tests/inspector/inspect-iframe-from-different-domain.html = PASS TEXT
 
 // -----------------------------------------------------------------
