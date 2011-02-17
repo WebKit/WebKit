@@ -193,14 +193,14 @@ InspectorTest.expandElementsTree = function(callback)
 
 InspectorTest.dumpDOMAgentTree = function()
 {
-    function dump(node, prefix)
+    function dump(node, prefix, startIndex)
     {
-        InspectorTest.addResult(prefix + node.nodeName + "[" + node.id + "]");
+        InspectorTest.addResult(prefix + node.nodeName + "[" + (node.id - startIndex)+ "]");
         var children = node.children;
         for (var i = 0; children && i < children.length; ++i)
-            dump(children[i], prefix + "    ");
+            dump(children[i], prefix + "    ", startIndex);
     }
-    dump(WebInspector.domAgent.document, "");
+    dump(WebInspector.domAgent.document, "", WebInspector.domAgent.document.id - 1);
 };
 
 };

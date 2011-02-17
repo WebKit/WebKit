@@ -36,9 +36,6 @@ function test()
     WebInspector.domAgent.document.addEventListener("DOMNodeInserted", listener.bind(this, "DOMNodeInserted"));
     WebInspector.domAgent.document.addEventListener("DOMNodeRemoved", listener.bind(this, "DOMNodeRemoved"));
 
-    InspectorTest.addResult("========= Original ========");
-    InspectorTest.dumpDOMAgentTree();
-
     InspectorTest.evaluateInPage("appendChild()", step1);
 
     function step1()
@@ -56,6 +53,14 @@ function test()
     function step3()
     {
         InspectorTest.addResult("Attribute modified");
+        InspectorTest.evaluateInPage("true", step4);
+    }
+
+    function step4()
+    {
+        InspectorTest.addResult("========= Result DOMAgent tree ========");
+        InspectorTest.dumpDOMAgentTree();
+
         InspectorTest.completeTest();
     }
 }
