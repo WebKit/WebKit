@@ -1,3 +1,12 @@
+2011-02-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] http/tests/security/xssAuditor/script-tag-with-fancy-unicode.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=54630
+
+        * platform/qt/Skipped: Add http/tests/security/xssAuditor/script-tag-with-fancy-unicode.html temporarily.
+
 2011-02-17  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed.
