@@ -3233,7 +3233,6 @@ BUGWK54322 MAC SNOWLEOPARD : fonts/sans-serif.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : http/tests/misc/acid3.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : media/audio-controls-rendering.html = TEXT
 BUGWK54322 MAC SNOWLEOPARD : media/video-aspect-ratio.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : media/video-display-toggle.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : media/video-empty-source.html = TEXT
 BUGWK54322 MAC SNOWLEOPARD : media/video-no-audio.html = TEXT
 BUGWK54322 MAC SNOWLEOPARD : media/video-volume-slider.html = TEXT

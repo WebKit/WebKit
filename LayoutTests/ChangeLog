@@ -1,3 +1,10 @@
+2011-02-17  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations update. Remove duplicate expectation
+        for media/video-display-toggle.html (on Snow Leopard only).
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-17  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
