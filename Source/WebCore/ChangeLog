@@ -1,3 +1,10 @@
+2011-02-16  Jeremy Orlow  <jorlow@chromium.org>
+
+        Fix uninitialized memory error.
+
+        * storage/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::close):
+
 2011-02-16  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -288,7 +288,7 @@ void IDBDatabaseBackendImpl::close()
         return;
 
     while (!m_pendingSetVersionCalls.isEmpty()) {
-        ExceptionCode ec;
+        ExceptionCode ec = 0;
         RefPtr<PendingSetVersionCall> pendingSetVersionCall = m_pendingSetVersionCalls.takeFirst();
         setVersion(pendingSetVersionCall->version(), pendingSetVersionCall->callbacks(), ec);
         ASSERT(!ec);
