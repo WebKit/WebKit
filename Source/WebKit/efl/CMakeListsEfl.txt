@@ -8,6 +8,7 @@ LIST(APPEND WebKit_LINK_FLAGS
 )
 
 LIST(APPEND WebKit_INCLUDE_DIRECTORIES
+    "${JAVASCRIPTCORE_DIR}/collector/handles"
     "${WEBKIT_DIR}/efl/ewk"
     "${WEBKIT_DIR}/efl/WebCoreSupport"
     "${WEBCORE_DIR}/platform/efl"
