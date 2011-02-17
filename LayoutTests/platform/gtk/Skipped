@@ -411,31 +411,6 @@ svg/animations/animate-path-nested-transforms.html
 
 # Tests in tables/ directory
 #   Tests generating new results
-tables/mozilla/dom/deleteCellsShrink1.html
-tables/mozilla/dom/deleteCellsShrink2.html
-tables/mozilla/dom/deleteCol1.html
-tables/mozilla/dom/deleteCol2.html
-tables/mozilla/dom/deleteCol3.html
-tables/mozilla/dom/deleteColGroup1.html
-tables/mozilla/dom/deleteColGroup2.html
-tables/mozilla/dom/deleteRowsRebuild1.html
-tables/mozilla/dom/deleteRowsShrink1.html
-tables/mozilla/dom/deleteTbodyExpand1.html
-tables/mozilla/dom/deleteTbodyRebuild1.html
-tables/mozilla/dom/insertCellsExpand1.html
-tables/mozilla/dom/insertCellsExpand2.html
-tables/mozilla/dom/insertCellsRebuild1.html
-tables/mozilla/dom/insertCellsRebuild2.html
-tables/mozilla/dom/insertColGroups1.html
-tables/mozilla/dom/insertColGroups2.html
-tables/mozilla/dom/insertCols1.html
-tables/mozilla/dom/insertCols2.html
-tables/mozilla/dom/insertCols3.html
-tables/mozilla/dom/insertCols4.html
-tables/mozilla/dom/insertCols5.html
-tables/mozilla/dom/insertRowsExpand1.html
-tables/mozilla/dom/insertRowsRebuild1.html
-tables/mozilla/dom/tableDom.html
 tables/mozilla/marvin/backgr_index.html
 tables/mozilla/marvin/backgr_layers-opacity.html
 tables/mozilla/marvin/backgr_position-table.html

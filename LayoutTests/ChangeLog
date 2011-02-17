@@ -2,6 +2,14 @@
 
         Unreviewed.
 
+        Add the next set (tables/mozilla/dom) of GTK+ Mozilla test suite results.
+
+        * platform/gtk/Skipped: Updated the skipped list.
+
+2011-02-17  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed.
+
         Added flaky test media/video-display-toggle.html. Fails only on
         debug bots.
 
