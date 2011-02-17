@@ -78,15 +78,9 @@ function addJefferssonSuccess()
     debug("addJefferssonSuccess():");
     shouldBe("event.target.result", "3");
 
-    //FIXME: Un-comment this code when functionality is implemented Chromium-side.
-    //debug("Insert into object store with auto increment and key path, without key in the object.");
-    //request = evalAndLog("store.add({name: 'Lincoln', number: '7012'})");
-    //request.onsuccess = addLincolnWithInjectKeySuccess;
-    //request.onerror = unexpectedErrorCallback;
-    window.store = evalAndLog("store = trans.objectStore('StoreWithAutoIncrement')");
-    debug("Insert into object store with key gen using explicit key");
-    request = evalAndLog("store.add({name: 'Lincoln', number: '7012'}, 5)");
-    request.onsuccess = addLincolnWithExplicitKeySuccess;
+    debug("Insert into object store with auto increment and key path, without key in the object.");
+    request = evalAndLog("store.add({name: 'Lincoln', number: '7012'})");
+    request.onsuccess = addLincolnWithInjectKeySuccess;
     request.onerror = unexpectedErrorCallback;
 }
 

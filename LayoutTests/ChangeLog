@@ -1,3 +1,15 @@
+2011-02-17  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        IndexedDB: enable test for auto increment key injection
+        https://bugs.webkit.org/show_bug.cgi?id=54642
+
+        Enable this test now that Chromium supports it.
+
+        * storage/indexeddb/objectstore-autoincrement-expected.txt:
+        * storage/indexeddb/objectstore-autoincrement.html:
+
 2011-02-17  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed.
