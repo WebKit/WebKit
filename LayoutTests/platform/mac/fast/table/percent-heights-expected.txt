@@ -22,11 +22,11 @@ layer at (0,0) size 800x600
               RenderText {#text} at (203,29) size 68x18
                 text run at (203,29) width 68: "Other cells"
               RenderBR {BR} at (271,43) size 0x0
-              RenderText {#text} at (173,47) size 127x18
-                text run at (173,47) width 127: "should be the height"
-              RenderBR {BR} at (300,61) size 0x0
-              RenderText {#text} at (204,65) size 65x18
-                text run at (204,65) width 65: "of this cell"
+              RenderText {#text} at (173,47) size 128x18
+                text run at (173,47) width 128: "should be the height"
+              RenderBR {BR} at (300,61) size 1x0
+              RenderText {#text} at (204,65) size 66x18
+                text run at (204,65) width 66: "of this cell"
             RenderTableCell {TD} at (474,18) size 44x58 [bgcolor=#006000] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (11,11) size 22x36
                 text run at (11,11) width 22: "TD"
