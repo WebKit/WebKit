@@ -1,3 +1,11 @@
+2011-02-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Update the GTK+ skipped list. Skip some SVG tests that now expose rounding
+        errors. Unskip a test which should have been unskipped by r78614. Skip
+        Acid2 tests, as they are currently failing on GTK+.
+
+        * platform/gtk/Skipped: Update the skipped list.
+
 2011-02-16  James Robinson  <jamesr@chromium.org>
 
         Update chromium baselines for 78751.
