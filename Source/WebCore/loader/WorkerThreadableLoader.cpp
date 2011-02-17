@@ -198,15 +198,28 @@ void WorkerThreadableLoader::MainThreadBridge::didReceiveData(const char* data, 
     m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidReceiveData, m_workerClientWrapper, vector.release()), m_taskMode);
 }
 
-static void workerContextDidFinishLoading(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, unsigned long identifier)
+static void workerContextDidReceiveCachedMetadata(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, PassOwnPtr<Vector<char> > vectorData)
 {
     ASSERT_UNUSED(context, context->isWorkerContext());
-    workerClientWrapper->didFinishLoading(identifier);
+    workerClientWrapper->didReceiveCachedMetadata(vectorData->data(), vectorData->size());
 }
 
-void WorkerThreadableLoader::MainThreadBridge::didFinishLoading(unsigned long identifier)
+void WorkerThreadableLoader::MainThreadBridge::didReceiveCachedMetadata(const char* data, int lengthReceived)
 {
-    m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidFinishLoading, m_workerClientWrapper, identifier), m_taskMode);
+    OwnPtr<Vector<char> > vector = adoptPtr(new Vector<char>(lengthReceived)); // needs to be an OwnPtr for usage with createCallbackTask.
+    memcpy(vector->data(), data, lengthReceived);
+    m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidReceiveCachedMetadata, m_workerClientWrapper, vector.release()), m_taskMode);
+}
+
+static void workerContextDidFinishLoading(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, unsigned long identifier, double finishTime)
+{
+    ASSERT_UNUSED(context, context->isWorkerContext());
+    workerClientWrapper->didFinishLoading(identifier, finishTime);
+}
+
+void WorkerThreadableLoader::MainThreadBridge::didFinishLoading(unsigned long identifier, double finishTime)
+{
+    m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidFinishLoading, m_workerClientWrapper, identifier, finishTime), m_taskMode);
 }
 
 static void workerContextDidFail(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, const ResourceError& error)

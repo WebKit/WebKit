@@ -195,7 +195,7 @@ void Notification::didReceiveData(const char* data, int lengthReceived)
     m_iconData->append(data, lengthReceived);
 }
 
-void Notification::didFinishLoading(unsigned long)
+void Notification::didFinishLoading(unsigned long, double)
 {
     finishLoading();
 }

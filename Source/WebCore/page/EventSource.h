@@ -91,8 +91,8 @@ namespace WebCore {
         virtual EventTargetData* ensureEventTargetData();
 
         virtual void didReceiveResponse(const ResourceResponse&);
-        virtual void didReceiveData(const char* data, int length);
-        virtual void didFinishLoading(unsigned long);
+        virtual void didReceiveData(const char*, int);
+        virtual void didFinishLoading(unsigned long, double);
         virtual void didFail(const ResourceError&);
         virtual void didFailRedirectCheck();
 

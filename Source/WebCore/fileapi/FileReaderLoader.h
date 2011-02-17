@@ -68,7 +68,7 @@ public:
     // ThreadableLoaderClient
     virtual void didReceiveResponse(const ResourceResponse&);
     virtual void didReceiveData(const char*, int);
-    virtual void didFinishLoading(unsigned long identifier);
+    virtual void didFinishLoading(unsigned long, double);
     virtual void didFail(const ResourceError&);
 
     String stringResult();

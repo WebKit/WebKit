@@ -1,3 +1,48 @@
+2011-02-16  Bill Budge  <bbudge@chromium.org>
+
+        Reviewed by David Levin.
+
+        Need didReceiveCachedMetadata, and finishTime for didFinishLoading exposed in ThreadableLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=54313
+
+        No tests needed, exposes no new functionality
+
+        * fileapi/FileReaderLoader.cpp:
+        (WebCore::FileReaderLoader::didFinishLoading):
+        * fileapi/FileReaderLoader.h:
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::setDefersLoading):
+        (WebCore::DocumentThreadableLoader::didReceiveCachedMetadata):
+        (WebCore::DocumentThreadableLoader::didFinishLoading):
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/DocumentThreadableLoader.h:
+        * loader/ThreadableLoaderClient.h:
+        (WebCore::ThreadableLoaderClient::didReceiveData):
+        (WebCore::ThreadableLoaderClient::didReceiveCachedMetadata):
+        (WebCore::ThreadableLoaderClient::didFinishLoading):
+        * loader/ThreadableLoaderClientWrapper.h:
+        (WebCore::ThreadableLoaderClientWrapper::didReceiveData):
+        (WebCore::ThreadableLoaderClientWrapper::didReceiveCachedMetadata):
+        (WebCore::ThreadableLoaderClientWrapper::didFinishLoading):
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::workerContextDidReceiveCachedMetadata):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveCachedMetadata):
+        (WebCore::workerContextDidFinishLoading):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFinishLoading):
+        * loader/WorkerThreadableLoader.h:
+        * notifications/Notification.cpp:
+        (WebCore::Notification::didFinishLoading):
+        * notifications/Notification.h:
+        * page/EventSource.cpp:
+        (WebCore::EventSource::didFinishLoading):
+        * page/EventSource.h:
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::didFinishLoading):
+        * workers/WorkerScriptLoader.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::didFinishLoading):
+        * xml/XMLHttpRequest.h:
+
 2011-02-16  Jeremy Orlow  <jorlow@chromium.org>
 
         Fix uninitialized memory error.

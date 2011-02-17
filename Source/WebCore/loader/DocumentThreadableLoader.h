@@ -54,6 +54,7 @@ namespace WebCore {
         virtual ~DocumentThreadableLoader();
 
         virtual void cancel();
+        virtual void setDefersLoading(bool);
 
         using RefCounted<DocumentThreadableLoader>::ref;
         using RefCounted<DocumentThreadableLoader>::deref;
@@ -75,6 +76,7 @@ namespace WebCore {
 
         virtual void didReceiveResponse(SubresourceLoader*, const ResourceResponse&);
         virtual void didReceiveData(SubresourceLoader*, const char*, int lengthReceived);
+        virtual void didReceiveCachedMetadata(SubresourceLoader*, const char*, int lengthReceived);
         virtual void didFinishLoading(SubresourceLoader*, double);
         virtual void didFail(SubresourceLoader*, const ResourceError&);
 
@@ -82,7 +84,7 @@ namespace WebCore {
         virtual void didReceiveAuthenticationChallenge(SubresourceLoader*, const AuthenticationChallenge&);
         virtual void receivedCancellation(SubresourceLoader*, const AuthenticationChallenge&);
 
-        void didFinishLoading(unsigned long identifier);
+        void didFinishLoading(unsigned long identifier, double finishTime);
         void makeSimpleCrossOriginAccessRequest(const ResourceRequest& request);
         void makeCrossOriginAccessRequestWithPreflight(const ResourceRequest& request);
         void preflightSuccess();

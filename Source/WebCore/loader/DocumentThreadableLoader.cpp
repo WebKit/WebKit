@@ -166,6 +166,12 @@ void DocumentThreadableLoader::cancel()
     m_client = 0;
 }
 
+void DocumentThreadableLoader::setDefersLoading(bool value)
+{
+    if (m_loader)
+        m_loader->setDefersLoading(value);
+}
+
 void DocumentThreadableLoader::willSendRequest(SubresourceLoader* loader, ResourceRequest& request, const ResourceResponse&)
 {
     ASSERT(m_client);
@@ -231,21 +237,31 @@ void DocumentThreadableLoader::didReceiveData(SubresourceLoader* loader, const c
     m_client->didReceiveData(data, lengthReceived);
 }
 
-void DocumentThreadableLoader::didFinishLoading(SubresourceLoader* loader, double)
+void DocumentThreadableLoader::didReceiveCachedMetadata(SubresourceLoader* loader, const char* data, int lengthReceived)
+{
+    ASSERT(m_client);
+    ASSERT_UNUSED(loader, loader == m_loader);
+
+    // Ignore response body of preflight requests.
+    if (!m_actualRequest)
+        m_client->didReceiveCachedMetadata(data, lengthReceived);
+}
+
+void DocumentThreadableLoader::didFinishLoading(SubresourceLoader* loader, double finishTime)
 {
     ASSERT(loader == m_loader);
     ASSERT(m_client);
-    didFinishLoading(loader->identifier());
+    didFinishLoading(loader->identifier(), finishTime);
 }
 
-void DocumentThreadableLoader::didFinishLoading(unsigned long identifier)
+void DocumentThreadableLoader::didFinishLoading(unsigned long identifier, double finishTime)
 {
     if (m_actualRequest) {
         ASSERT(!m_sameOriginRequest);
         ASSERT(m_options.crossOriginRequestPolicy == UseAccessControl);
         preflightSuccess();
     } else
-        m_client->didFinishLoading(identifier);
+        m_client->didFinishLoading(identifier, finishTime);
 }
 
 void DocumentThreadableLoader::didFail(SubresourceLoader* loader, const ResourceError& error)
@@ -359,7 +375,7 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
     int len = static_cast<int>(data.size());
     didReceiveData(0, bytes, len);
 
-    didFinishLoading(identifier);
+    didFinishLoading(identifier, 0.0);
 }
 
 bool DocumentThreadableLoader::isAllowedRedirect(const KURL& url)

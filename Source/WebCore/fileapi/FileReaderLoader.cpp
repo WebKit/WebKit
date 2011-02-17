@@ -176,7 +176,7 @@ void FileReaderLoader::didReceiveData(const char* data, int lengthReceived)
         m_client->didReceiveData();
 }
 
-void FileReaderLoader::didFinishLoading(unsigned long)
+void FileReaderLoader::didFinishLoading(unsigned long, double)
 {
     cleanup();
     if (m_client)

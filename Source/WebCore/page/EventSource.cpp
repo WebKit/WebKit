@@ -196,7 +196,7 @@ void EventSource::didReceiveData(const char* data, int length)
     parseEventStream();
 }
 
-void EventSource::didFinishLoading(unsigned long)
+void EventSource::didFinishLoading(unsigned long, double)
 {
     if (m_receiveBuf.size() > 0 || m_data.size() > 0) {
         append(m_receiveBuf, "\n\n");

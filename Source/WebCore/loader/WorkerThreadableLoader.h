@@ -114,8 +114,9 @@ namespace WebCore {
             static void mainThreadCancel(ScriptExecutionContext*, MainThreadBridge*);
             virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
             virtual void didReceiveResponse(const ResourceResponse&);
-            virtual void didReceiveData(const char*, int lengthReceived);
-            virtual void didFinishLoading(unsigned long identifier);
+            virtual void didReceiveData(const char*, int dataLength);
+            virtual void didReceiveCachedMetadata(const char*, int dataLength);
+            virtual void didFinishLoading(unsigned long identifier, double finishTime);
             virtual void didFail(const ResourceError&);
             virtual void didFailRedirectCheck();
             virtual void didReceiveAuthenticationCancellation(const ResourceResponse&);

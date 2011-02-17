@@ -134,7 +134,7 @@ void WorkerScriptLoader::didReceiveData(const char* data, int len)
     m_script += m_decoder->decode(data, len);
 }
 
-void WorkerScriptLoader::didFinishLoading(unsigned long identifier)
+void WorkerScriptLoader::didFinishLoading(unsigned long identifier, double)
 {
     if (m_failed)
         return;

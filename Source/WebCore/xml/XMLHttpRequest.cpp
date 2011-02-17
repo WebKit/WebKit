@@ -987,7 +987,7 @@ void XMLHttpRequest::didFailRedirectCheck()
     networkError();
 }
 
-void XMLHttpRequest::didFinishLoading(unsigned long identifier)
+void XMLHttpRequest::didFinishLoading(unsigned long identifier, double)
 {
     if (m_error)
         return;
@@ -999,7 +999,7 @@ void XMLHttpRequest::didFinishLoading(unsigned long identifier)
         m_responseBuilder.append(m_decoder->flush());
 
     m_responseBuilder.shrinkToFit();
-    
+
 #if ENABLE(XHR_RESPONSE_BLOB)
     // FIXME: Set m_responseBlob to something here in the ResponseTypeBlob case.
 #endif
