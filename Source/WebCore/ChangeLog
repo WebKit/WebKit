@@ -1,3 +1,18 @@
+2011-02-16  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Traverse the next sibling tree to find the text fragment for a first letter.
+        https://bugs.webkit.org/show_bug.cgi?id=54568
+
+        We cannot assume that the next sibling to the first letter will a text fragment
+        since there can be intermediatary Apple-style-span inline elements wrapping the
+        text fragment. So, we traverse the next sibling tree to find it.
+        Test: fast/css/first-letter-text-fragment-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetter):
+
 2011-02-16  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

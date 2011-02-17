@@ -5269,13 +5269,25 @@ void RenderBlock::updateFirstLetter()
                 firstLetter->removeChild(child);
                 newFirstLetter->addChild(child, 0);
             }
-            RenderTextFragment* remainingText = toRenderTextFragment(firstLetter->nextSibling());
-            ASSERT(remainingText->node()->renderer() == remainingText);
-            // Replace the old renderer with the new one.
-            remainingText->setFirstLetter(newFirstLetter);
+            
+            RenderTextFragment* remainingText = 0;
+            RenderObject* nextSibling = firstLetter->nextSibling();
+            RenderObject* next = nextSibling;
+            while (next) {
+                if (next->isText() && toRenderText(next)->isTextFragment()) {
+                    remainingText = toRenderTextFragment(next);
+                    break;
+                }
+                next = next->nextSibling();
+            }
+            if (remainingText) {
+                ASSERT(remainingText->node()->renderer() == remainingText);
+                // Replace the old renderer with the new one.
+                remainingText->setFirstLetter(newFirstLetter);
+            }
             firstLetter->destroy();
             firstLetter = newFirstLetter;
-            firstLetterContainer->addChild(firstLetter, remainingText);
+            firstLetterContainer->addChild(firstLetter, nextSibling);
             view()->enableLayoutState();
         } else
             firstLetter->setStyle(pseudoStyle);
