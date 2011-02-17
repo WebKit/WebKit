@@ -1,3 +1,9 @@
+2011-02-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Add the next set of GTK+ baselines for the Mozilla tables test suite.
+
+        * platform/gtk/Skipped: Unskip tests which now have results.
+
 2011-02-16  David Grogan  <dgrogan@chromium.org>
 
         Reviewed by Jeremy Orlow.
