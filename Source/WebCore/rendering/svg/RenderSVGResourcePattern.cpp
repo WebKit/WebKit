@@ -233,10 +233,8 @@ bool RenderSVGResourcePattern::buildTileImageTransform(RenderObject* renderer,
     // Apply viewBox/objectBoundingBox transformations.
     if (!viewBoxCTM.isIdentity())
         tileImageTransform = viewBoxCTM;
-    else if (attributes.boundingBoxModeContent()) {
-        tileImageTransform.translate(objectBoundingBox.x(), objectBoundingBox.y());
+    else if (attributes.boundingBoxModeContent())
         tileImageTransform.scale(objectBoundingBox.width(), objectBoundingBox.height());
-    }
 
     return true;
 }
@@ -276,6 +274,8 @@ PassOwnPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(RenderObject* 
         tileImageContext->concatCTM(tileImageTransform);
 
     AffineTransform contentTransformation;
+    if (attributes.boundingBoxModeContent())
+        contentTransformation = tileImageTransform;
 
     // Draw the content into the ImageBuffer.
     for (Node* node = attributes.patternContentElement()->firstChild(); node; node = node->nextSibling()) {

@@ -1,3 +1,26 @@
+2011-02-17  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        svg/batik/paints/patternRegions-positioned-objects.svg fails on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=44484
+
+        Pattern of pattern defined with objectBoundingBox does not render correctly
+        https://bugs.webkit.org/show_bug.cgi?id=53463
+
+        Fix <pattern> + patternContentUnits="objectBoundingBox" support.
+        We were incorrrectly translating the tile image transform, by the target objects bbox.x()/y().
+        RenderSVGResourceMask/Clipper don't have this error.
+        
+        Fix nesting <patterns> in objectBoundingBox mode, propagate the tileImageTransform as new user-space
+        when drawing the pattern children. <mask> + <clipPath> don't have the problem.
+
+        Test: svg/custom/nested-pattern-boundingBoxModeContent.svg
+
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::buildTileImageTransform):
+        (WebCore::RenderSVGResourcePattern::createTileImage):
+
 2011-02-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
