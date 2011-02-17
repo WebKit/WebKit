@@ -1,3 +1,56 @@
+2011-02-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Made MarkedBlock variable-sized
+        https://bugs.webkit.org/show_bug.cgi?id=54692
+        
+        SunSpider reports no change.
+        
+        Each MarkedBlock is now composed of a set of fixed-sized atoms, with one
+        mark bit per atom. A given cell may be composed of one or more atoms.
+        
+        * runtime/Heap.cpp:
+        (JSC::Heap::allocate): Made fixed-sizedness a property of MarkedSpace,
+        bubbling it up from MarkedBlock, since MarkedBlock now supports variable-
+        sizedness.
+
+        * runtime/JSCell.h:
+        (JSC::JSCell::MarkedBlock::allocate): Removed use of CELLS_PER_BLOCK and
+        (implicit) one constants -- these quantities are not constant anymore.
+        Updated for switch from cell to atom.
+
+        * runtime/MarkedBlock.cpp:
+        (JSC::MarkedBlock::create):
+        (JSC::MarkedBlock::destroy):
+        (JSC::MarkedBlock::MarkedBlock):
+        (JSC::MarkedBlock::sweep):
+        * runtime/MarkedBlock.h:
+        (JSC::MarkedBlock::firstAtom):
+        (JSC::MarkedBlock::atoms):
+        (JSC::MarkedBlock::isAtomAligned):
+        (JSC::MarkedBlock::blockFor):
+        (JSC::MarkedBlock::isEmpty):
+        (JSC::MarkedBlock::clearMarks):
+        (JSC::MarkedBlock::size):
+        (JSC::MarkedBlock::capacity):
+        (JSC::MarkedBlock::atomNumber):
+        (JSC::MarkedBlock::isMarked):
+        (JSC::MarkedBlock::testAndSetMarked):
+        (JSC::MarkedBlock::setMarked):
+        (JSC::MarkedBlock::forEach): Same as above. Also removed use of CELL_SIZE
+        and BLOCK_SIZE, and switched away from calling arbitrary pointers cells.
+
+        * runtime/MarkedSpace.cpp:
+        (JSC::MarkedSpace::MarkedSpace):
+        (JSC::MarkedSpace::allocateBlock):
+        (JSC::MarkedSpace::allocate):
+        (JSC::MarkedSpace::reset):
+        * runtime/MarkedSpace.h:
+        (JSC::CollectorHeap::CollectorHeap):
+        (JSC::MarkedSpace::contains): Updated for renames. Made fixed-sizedness
+        a property of MarkedSpace.
+
 2011-02-17  Oliver Hunt  <oliver@apple.com>
 
         Attempt to fix windows build

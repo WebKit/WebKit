@@ -23,17 +23,17 @@
 #define MarkedBlock_h
 
 #include <wtf/Bitmap.h>
-#include <wtf/FixedArray.h>
 #include <wtf/PageAllocationAligned.h>
-
-#define ASSERT_CLASS_FITS_IN_CELL(class) COMPILE_ASSERT(sizeof(class) <= MarkedBlock::CELL_SIZE, class_fits_in_cell)
-#define ASSERT_CLASS_FILLS_CELL(class) COMPILE_ASSERT(sizeof(class) == MarkedBlock::CELL_SIZE, class_fills_cell)
 
 namespace JSC {
 
     class Heap;
     class JSCell;
     class JSGlobalData;
+
+    typedef uintptr_t Bits;
+
+    static const size_t KB = 1024;
 
     // Efficient implementation that takes advantage of powers of two.
     template<size_t divisor> inline size_t roundUpToMultipleOf(size_t x)
@@ -45,37 +45,11 @@ namespace JSC {
     }
 
     class MarkedBlock {
-#if OS(WINCE) || OS(SYMBIAN) || PLATFORM(BREWMP)
-        static const size_t BLOCK_SIZE = 64 * 1024; // 64k
-#else
-        static const size_t BLOCK_SIZE = 256 * 1024; // 256k
-#endif
-
-        static const size_t BLOCK_MASK = ~(BLOCK_SIZE - 1);
-        static const size_t MINIMUM_CELL_SIZE = 64;
-        static const size_t CELL_ARRAY_LENGTH = (MINIMUM_CELL_SIZE / sizeof(double)) + (MINIMUM_CELL_SIZE % sizeof(double) != 0 ? sizeof(double) : 0);
     public:
-        // This is still public for now, for use in assertions.
-        static const size_t CELL_SIZE = CELL_ARRAY_LENGTH * sizeof(double);
-    private:
-        static const size_t SMALL_CELL_SIZE = CELL_SIZE / 2;
-        static const size_t CELL_MASK = CELL_SIZE - 1;
-        static const size_t CELL_ALIGN_MASK = ~CELL_MASK;
-        static const size_t BITS_PER_BLOCK = BLOCK_SIZE / CELL_SIZE;
-        static const size_t CELLS_PER_BLOCK = (BLOCK_SIZE - sizeof(WTF::Bitmap<BITS_PER_BLOCK>) - sizeof(PageAllocationAligned) - sizeof(Heap*)) / CELL_SIZE; // Division rounds down intentionally.
-        
-        struct CollectorCell {
-            FixedArray<double, CELL_ARRAY_LENGTH> memory;
-        };
-
-        // Cell size needs to be a power of two for CELL_MASK to be valid.
-        COMPILE_ASSERT(!(sizeof(CollectorCell) % 2), Collector_cell_size_is_power_of_two);
-
-    public:
-        static MarkedBlock* create(JSGlobalData*);
+        static MarkedBlock* create(JSGlobalData*, size_t cellSize);
         static void destroy(MarkedBlock*);
 
-        static bool isCellAligned(const void*);
+        static bool isAtomAligned(const void*);
         static MarkedBlock* blockFor(const void*);
         
         Heap* heap() const;
@@ -87,12 +61,13 @@ namespace JSC {
 
         void clearMarks();
         size_t markCount();
+
         size_t size();
         size_t capacity();
 
-        size_t firstCell();
+        size_t firstAtom();
 
-        size_t cellNumber(const void*);
+        size_t atomNumber(const void*);
         bool isMarked(const void*);
         bool testAndSetMarked(const void*);
         void setMarked(const void*);
@@ -100,32 +75,46 @@ namespace JSC {
         template <typename Functor> void forEach(Functor&);
 
     private:
-        MarkedBlock(const PageAllocationAligned&, JSGlobalData*);
-        CollectorCell* cells();
+#if OS(WINCE) || OS(SYMBIAN) || PLATFORM(BREWMP)
+        static const size_t blockSize = 64 * KB;
+#else
+        static const size_t blockSize = 256 * KB;
+#endif
+        static const size_t blockMask = ~(blockSize - 1); // blockSize must be a power of two.
 
-        WTF::Bitmap<BITS_PER_BLOCK> m_marks;
+        static const size_t atomSize = 64;
+        static const size_t atomMask = ~(atomSize - 1); // atomSize must be a power of two.
+
+        typedef char Atom[atomSize];
+
+        MarkedBlock(const PageAllocationAligned&, JSGlobalData*, size_t cellSize);
+        Atom* atoms();
+
+        WTF::Bitmap<blockSize / atomSize> m_marks;
+        size_t m_atomsPerCell;
+        size_t m_endAtom; // We allocate [0, m_endAtom - 1). m_endAtom - 1 is a dummy unusable cell to avoid a branch in allocate().
         PageAllocationAligned m_allocation;
         Heap* m_heap;
     };
 
-    inline size_t MarkedBlock::firstCell()
+    inline size_t MarkedBlock::firstAtom()
     {
-        return roundUpToMultipleOf<CELL_SIZE>(sizeof(MarkedBlock)) / CELL_SIZE;
+        return roundUpToMultipleOf<atomSize>(sizeof(MarkedBlock)) / atomSize;
     }
 
-    inline MarkedBlock::CollectorCell* MarkedBlock::cells()
+    inline MarkedBlock::Atom* MarkedBlock::atoms()
     {
-        return reinterpret_cast<CollectorCell*>(this);
+        return reinterpret_cast<Atom*>(this);
     }
 
-    inline bool MarkedBlock::isCellAligned(const void* p)
+    inline bool MarkedBlock::isAtomAligned(const void* p)
     {
-        return !((intptr_t)(p) & CELL_MASK);
+        return !((intptr_t)(p) & ~atomMask);
     }
 
     inline MarkedBlock* MarkedBlock::blockFor(const void* p)
     {
-        return reinterpret_cast<MarkedBlock*>(reinterpret_cast<uintptr_t>(p) & BLOCK_MASK);
+        return reinterpret_cast<MarkedBlock*>(reinterpret_cast<uintptr_t>(p) & blockMask);
     }
 
     inline Heap* MarkedBlock::heap() const
@@ -135,9 +124,9 @@ namespace JSC {
 
     inline bool MarkedBlock::isEmpty()
     {
-        m_marks.clear(CELLS_PER_BLOCK - 1); // Clear the always-set last bit to avoid confusing isEmpty().
+        m_marks.clear(m_endAtom - 1); // Clear the always-set last bit to avoid confusing isEmpty().
         bool result = m_marks.isEmpty();
-        m_marks.set(CELLS_PER_BLOCK - 1);
+        m_marks.set(m_endAtom - 1);
         return result;
     }
 
@@ -145,7 +134,7 @@ namespace JSC {
     {
         // allocate() assumes that the last mark bit is always set.
         m_marks.clearAll();
-        m_marks.set(CELLS_PER_BLOCK - 1);
+        m_marks.set(m_endAtom - 1);
     }
     
     inline size_t MarkedBlock::markCount()
@@ -155,40 +144,40 @@ namespace JSC {
 
     inline size_t MarkedBlock::size()
     {
-        return markCount() * CELL_SIZE;
+        return markCount() * m_atomsPerCell * atomSize;
     }
 
     inline size_t MarkedBlock::capacity()
     {
-        return BLOCK_SIZE;
+        return m_allocation.size();
     }
 
-    inline size_t MarkedBlock::cellNumber(const void* cell)
+    inline size_t MarkedBlock::atomNumber(const void* p)
     {
-        return (reinterpret_cast<uintptr_t>(cell) - reinterpret_cast<uintptr_t>(this)) / CELL_SIZE;
+        return (reinterpret_cast<uintptr_t>(p) - reinterpret_cast<uintptr_t>(this)) / atomSize;
     }
 
-    inline bool MarkedBlock::isMarked(const void* cell)
+    inline bool MarkedBlock::isMarked(const void* p)
     {
-        return m_marks.get(cellNumber(cell));
+        return m_marks.get(atomNumber(p));
     }
 
-    inline bool MarkedBlock::testAndSetMarked(const void* cell)
+    inline bool MarkedBlock::testAndSetMarked(const void* p)
     {
-        return m_marks.testAndSet(cellNumber(cell));
+        return m_marks.testAndSet(atomNumber(p));
     }
 
-    inline void MarkedBlock::setMarked(const void* cell)
+    inline void MarkedBlock::setMarked(const void* p)
     {
-        m_marks.set(cellNumber(cell));
+        m_marks.set(atomNumber(p));
     }
 
     template <typename Functor> inline void MarkedBlock::forEach(Functor& functor)
     {
-        for (size_t i = firstCell(); i < CELLS_PER_BLOCK - 1; ++i) { // The last cell is a dummy place-holder.
+        for (size_t i = firstAtom(); i < m_endAtom - 1; i += m_atomsPerCell) { // The last cell is a dummy place-holder.
             if (!m_marks.get(i))
                 continue;
-            functor(reinterpret_cast<JSCell*>(&cells()[i]));
+            functor(reinterpret_cast<JSCell*>(&atoms()[i]));
         }
     }
 

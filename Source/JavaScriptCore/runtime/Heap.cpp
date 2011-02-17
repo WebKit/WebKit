@@ -106,7 +106,7 @@ void* Heap::allocate(size_t s)
     ASSERT(globalData()->identifierTable == wtfThreadData().currentIdentifierTable());
     ASSERT(JSLock::lockCount() > 0);
     ASSERT(JSLock::currentThreadIsHoldingLock());
-    ASSERT_UNUSED(s, s <= MarkedBlock::CELL_SIZE);
+    ASSERT_UNUSED(s, s <= MarkedSpace::cellSize);
     ASSERT(m_operationInProgress == NoOperation);
 
 #if COLLECT_ON_EVERY_ALLOCATION

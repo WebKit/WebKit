@@ -31,6 +31,9 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
+#define ASSERT_CLASS_FITS_IN_CELL(class) COMPILE_ASSERT(sizeof(class) <= MarkedSpace::cellSize, class_fits_in_cell)
+#define ASSERT_CLASS_FILLS_CELL(class) COMPILE_ASSERT(sizeof(class) == MarkedSpace::cellSize, class_fills_cell)
+
 namespace JSC {
 
     class Heap;
@@ -43,7 +46,7 @@ namespace JSC {
     struct CollectorHeap {
         CollectorHeap()
             : nextBlock(0)
-            , nextCell(0)
+            , nextAtom(0)
         {
         }
         
@@ -53,13 +56,16 @@ namespace JSC {
         }
 
         size_t nextBlock;
-        size_t nextCell;
+        size_t nextAtom;
         Vector<MarkedBlock*> blocks;
     };
 
     class MarkedSpace {
         WTF_MAKE_NONCOPYABLE(MarkedSpace);
     public:
+        // Currently public for use in assertions.
+        static const size_t cellSize = 64;
+
         static Heap* heap(JSCell*);
 
         static bool isMarked(const JSCell*);
@@ -124,7 +130,7 @@ namespace JSC {
 
     inline bool MarkedSpace::contains(const void* x)
     {
-        if (!MarkedBlock::isCellAligned(x))
+        if (!MarkedBlock::isAtomAligned(x))
             return false;
 
         MarkedBlock* block = MarkedBlock::blockFor(x);

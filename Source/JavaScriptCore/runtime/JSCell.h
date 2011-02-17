@@ -402,19 +402,20 @@ namespace JSC {
     }
 #endif
 
-    inline void* MarkedBlock::allocate(size_t& nextCell)
+    inline void* MarkedBlock::allocate(size_t& nextAtom)
     {
         do {
-            ASSERT(nextCell < CELLS_PER_BLOCK);
-            if (!m_marks.testAndSet(nextCell)) { // Always false for the last cell in the block
-                JSCell* cell = reinterpret_cast<JSCell*>(&cells()[nextCell++]);
+            ASSERT(nextAtom < m_endAtom);
+            if (!m_marks.testAndSet(nextAtom)) { // Always false for the last cell in the block
+                JSCell* cell = reinterpret_cast<JSCell*>(&atoms()[nextAtom]);
+                nextAtom += m_atomsPerCell;
                 cell->~JSCell();
                 return cell;
             }
-            nextCell = m_marks.nextPossiblyUnset(nextCell);
-        } while (nextCell != CELLS_PER_BLOCK);
+            nextAtom += m_atomsPerCell;
+        } while (nextAtom != m_endAtom);
 
-        nextCell = firstCell();
+        nextAtom = firstAtom();
         return 0;
     }
 
