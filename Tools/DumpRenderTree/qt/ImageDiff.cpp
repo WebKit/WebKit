@@ -142,6 +142,8 @@ int main(int argc, char* argv[])
 
                 fflush(stdout);
             }
+            actualImage = QImage();
+            baselineImage = QImage();
         }
     }
 

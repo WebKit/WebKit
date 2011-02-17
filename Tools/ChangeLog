@@ -1,3 +1,13 @@
+2011-02-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] ImageDiff sometimes hangs
+        https://bugs.webkit.org/show_bug.cgi?id=54641
+
+        * DumpRenderTree/qt/ImageDiff.cpp: Clear actualImage and baselineImage after all comparison.
+        (main):
+
 2011-02-17  Peter Varga  <pvarga@webkit.org>
 
         Reviewed by Csaba Osztrogonác.
