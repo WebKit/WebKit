@@ -17,16 +17,16 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 27x18
           RenderText {#text} at (58,1) size 27x18
             text run at (58,1) width 27: "\x{25A0}\x{25A0}\x{25A0}"
-        RenderText {#text} at (85,1) size 4x18
-          text run at (85,1) width 4: "."
+        RenderText {#text} at (84,1) size 5x18
+          text run at (84,1) width 5: "."
       RenderBlock {P} at (0,69) size 784x19
         RenderText {#text} at (0,1) size 52x18
           text run at (0,1) width 52: "Circles: "
         RenderInline {SPAN} at (0,0) size 28x18
           RenderText {#text} at (52,1) size 28x18
             text run at (52,1) width 28: "\x{25E6}\x{25E6}\x{25E6}"
-        RenderText {#text} at (80,1) size 4x18
-          text run at (80,1) width 4: "."
+        RenderText {#text} at (79,1) size 5x18
+          text run at (79,1) width 5: "."
       RenderBlock {P} at (0,104) size 784x18
         RenderText {#text} at (0,0) size 81x18
           text run at (0,0) width 81: "Plain letters: "
