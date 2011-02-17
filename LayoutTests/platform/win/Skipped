@@ -400,6 +400,9 @@ svg/W3C-SVG-1.1-SE/types-dom-01-b.svg
 # Flakey http://webkit.org/b/53332
 transitions/transition-end-event-multiple-04.html
 
+# Fails (but not on all machines? Or only when run with certain other tests?) http://webkit.org/b/54655
+http/tests/security/xssAuditor/script-tag-with-fancy-unicode.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
