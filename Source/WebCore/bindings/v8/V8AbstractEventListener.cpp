@@ -147,12 +147,11 @@ void V8AbstractEventListener::invokeEventHandler(ScriptExecutionContext* context
         v8Context->Global()->SetHiddenValue(eventSymbol, jsEvent);
         tryCatch.Reset();
 
-        // Call the event handler.
         returnValue = callListenerFunction(context, jsEvent, event);
+        if (tryCatch.HasCaught())
+            event->target()->uncaughtExceptionInEventHandler();
         if (!tryCatch.CanContinue())
             return;
-
-        // If an error occurs while handling the event, it should be reported in a regular way.
         tryCatch.Reset();
 
         // Restore the old event. This must be done for all exit paths through this method.

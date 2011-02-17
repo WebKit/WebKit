@@ -305,6 +305,10 @@ bool EventTarget::dispatchEvent(PassRefPtr<Event> event)
     return fireEventListeners(event.get());
 }
 
+void EventTarget::uncaughtExceptionInEventHandler()
+{
+}
+
 bool EventTarget::fireEventListeners(Event* event)
 {
     ASSERT(!eventDispatchForbidden());

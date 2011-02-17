@@ -68,6 +68,8 @@ function dbAbortCaptureCallback()
     shouldBeFalse("dbCaptureFired");
     shouldBeFalse("abortFired");
     shouldBeFalse("dbBubbleFired1");
+    shouldBe("event.target", "trans");
+    shouldBe("event.currentTarget", "db");
     dbCaptureFired = true;
 }
 
@@ -78,6 +80,8 @@ function abortFiredCallback()
     shouldBeTrue("dbCaptureFired");
     shouldBeFalse("abortFired");
     shouldBeFalse("dbBubbleFired1");
+    shouldBe("event.target", "trans");
+    shouldBe("event.currentTarget", "trans");
     abortFired = true;
 }
 
@@ -88,6 +92,8 @@ function dbAbortBubbleCallback()
     shouldBeTrue("dbCaptureFired");
     shouldBeTrue("abortFired");
     shouldBeFalse("dbBubbleFired1");
+    shouldBe("event.target", "trans");
+    shouldBe("event.currentTarget", "db");
     dbBubbleFired1 = true;
     debug("");
     debug("Verifing success.");
@@ -116,6 +122,8 @@ function dbCompleteCaptureCallback()
     shouldBeFalse("dbCaptureFired");
     shouldBeFalse("completeFired");
     shouldBeFalse("dbBubbleFired2");
+    shouldBe("event.target", "trans");
+    shouldBe("event.currentTarget", "db");
     dbCaptureFired = true;
 }
 
@@ -126,6 +134,8 @@ function completeFiredCallback()
     shouldBeTrue("dbCaptureFired");
     shouldBeFalse("completeFired");
     shouldBeFalse("dbBubbleFired2");
+    shouldBe("event.target", "trans");
+    shouldBe("event.currentTarget", "trans");
     completeFired = true;
     debug("");
     done();

@@ -160,8 +160,14 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, EventTarget* targ
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
+    if (IDBDatabase* idbDatabase = target->toIDBDatabase())
+        return toJS(exec, idbDatabase);
+
     if (IDBRequest* idbRequest = target->toIDBRequest())
         return toJS(exec, idbRequest);
+
+    if (IDBTransaction* idbTransaction = target->toIDBTransaction())
+        return toJS(exec, idbTransaction);
 #endif
 
 #if ENABLE(WEB_AUDIO)
