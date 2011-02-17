@@ -2947,8 +2947,6 @@ BUGCR69639 : http/tests/loading/cross-origin-XHR-willLoadRequest.html = TEXT
 BUGDIMICH : fast/loader/stateobjects/pushstate-object-types.html = TEXT
 BUGDIMICH : fast/regex/cross-frame-callable.html = TEXT
 
-BUGTHAKIS LINUX WIN : media/video-display-toggle.html = IMAGE
-
 BUGRNIWA SLOW LINUX : fast/text/large-text-composed-char-dos.html = PASS
 
 // Added by http://trac.webkit.org/changeset/76548
@@ -3444,7 +3442,7 @@ BUGCR73091 WIN LINUX : animations/play-state-suspend.html = PASS TEXT
 BUGCR73092 WIN : fast/dom/gc-11.html = PASS TEXT
 BUGCR73094 LINUX : http/tests/websocket/tests/send-after-close-on-unload.html = PASS TIMEOUT
 
-BUGMNAGANOV MAC : media/video-display-toggle.html = IMAGE
+BUGWK54640 : media/video-display-toggle.html = IMAGE
 
 BUGV8_1168 : fast/js/mozilla/eval/exhaustive-fun-normalcaller-direct-strictcode.html = TEXT
 BUGV8_1168 : fast/js/mozilla/eval/exhaustive-fun-normalcaller-indirect-strictcode.html = TEXT
