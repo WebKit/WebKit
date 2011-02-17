@@ -1,3 +1,12 @@
+2011-02-16  David Grogan  <dgrogan@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        fix compile error introduced in 78752
+        https://bugs.webkit.org/show_bug.cgi?id=54604
+
+        * storage/IDBRequest.h:
+
 2011-02-16  Jeremy Orlow  <jorlow@chromium.org>
 
         Back out IndexedDB change thats no longer necessary

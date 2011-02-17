@@ -94,6 +94,9 @@ public:
 protected:
     IDBRequest(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBTransaction*);
     void enqueueEvent(PassRefPtr<Event>);
+    RefPtr<IDBAny> m_result;
+    unsigned short m_errorCode;
+    String m_errorMessage;
 
 private:
     // EventTarget
@@ -102,9 +105,6 @@ private:
     virtual EventTargetData* eventTargetData();
     virtual EventTargetData* ensureEventTargetData();
 
-    RefPtr<IDBAny> m_result;
-    unsigned short m_errorCode;
-    String m_errorMessage;
     RefPtr<IDBAny> m_source;
     RefPtr<IDBTransaction> m_transaction;
 
