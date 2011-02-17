@@ -356,9 +356,8 @@ class Port(object):
         # Make http/tests/local run as local files. This is to mimic the
         # logic in run-webkit-tests.
         #
-        # TODO(dpranke): remove the media reference and the SSL reference?
-        if (port and not relative_path.startswith("local/") and
-            not relative_path.startswith("media/")):
+        # TODO(dpranke): remove the SSL reference?
+        if (port and not relative_path.startswith("local/")):
             if relative_path.startswith("ssl/"):
                 port += 443
                 protocol = "https"

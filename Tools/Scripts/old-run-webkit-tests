@@ -766,7 +766,7 @@ for my $test (@tests) {
                     print OUT "$errorMessagePath\n";
                 }
             }
-        } elsif ($test !~ /^http\/tests\/local\// && $test !~ /^http\/tests\/ssl\// && $test !~ /^http\/tests\/wml\// && $test !~ /^http\/tests\/media\//) {
+        } elsif ($test !~ /^http\/tests\/local\// && $test !~ /^http\/tests\/ssl\// && $test !~ /^http\/tests\/wml\//) {
             my $path = canonpath($test);
             $path =~ s/^http\/tests\///;
             print OUT "http://127.0.0.1:$httpdPort/$path$suffixExpectedHash\n";

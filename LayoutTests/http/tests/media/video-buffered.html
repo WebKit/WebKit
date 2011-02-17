@@ -5,8 +5,8 @@
 <p>Start playing a video with preloading enabled, do a seek near the
   end and check multiple buffered timeranges have been created.</p>
 <video id="video" preload="auto" autobuffer></video>
-<script src=../../../media/video-test.js></script>
-<script src=../../../media/media-file.js></script>
+<script src=video-test.js></script>
+<script src=media-file.js></script>
 <script>
     function delayedSeek() {
         testExpected("video.buffered.length", 1, "==");

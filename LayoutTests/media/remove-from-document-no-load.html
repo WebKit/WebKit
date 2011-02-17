@@ -1,7 +1,7 @@
 <video controls></video>
 <p>Test that removing a media element from the tree when no media has been loaded does not generate a loadstart event.</p>
-<script src=media-file.js></script>
-<script src=video-test.js></script>
+<script src=../http/tests/media/media-file.js></script>
+<script src=../http/tests/media/video-test.js></script>
 <script>
     didReceiveLoadStartEvent = false;
     video.addEventListener('loadstart', function() { didReceiveLoadStartEvent = true; });

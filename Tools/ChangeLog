@@ -1,3 +1,15 @@
+2011-02-16  Anna Cavender  <annacc@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        http/tests/media should be served over HTTP (not from local file)
+        https://bugs.webkit.org/show_bug.cgi?id=54028
+
+        Removed special file:// treatment of http/tests/media
+
+        * Scripts/old-run-webkit-tests:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+
 2011-02-16  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Ojan Vafai.
