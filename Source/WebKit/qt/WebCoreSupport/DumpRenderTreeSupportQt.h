@@ -51,6 +51,7 @@ class QWebFrame;
 class QWebPage;
 class QWebHistoryItem;
 class QWebScriptWorld;
+class QUrl;
 
 extern QMap<int, QWebScriptWorld*> m_worldMap;
 
@@ -192,6 +193,8 @@ public:
 
     static double defaultMinimumTimerInterval(); // Not really tied to WebView
     static void setMinimumTimerInterval(QWebPage*, double);
+
+    static QUrl mediaContentUrlByElementId(QWebFrame*, const QString& elementId);
 };
 
 #endif

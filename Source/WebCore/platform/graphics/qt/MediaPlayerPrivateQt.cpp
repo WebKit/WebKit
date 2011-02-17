@@ -187,7 +187,8 @@ void MediaPlayerPrivateQt::commitLoad(const String& url)
         m_webCorePlayer->readyStateChanged();
     }
 
-    const QUrl rUrl = QUrl(QString(url));
+    KURL kUrl(ParsedURLString, url);
+    const QUrl rUrl = kUrl;
     const QString scheme = rUrl.scheme().toLower();
 
     // Grab the client media element

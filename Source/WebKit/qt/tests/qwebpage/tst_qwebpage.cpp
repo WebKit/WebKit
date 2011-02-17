@@ -85,6 +85,7 @@ private slots:
     void loadFinished();
     void acceptNavigationRequestWithNewWindow();
     void userStyleSheet();
+    void loadHtml5Video();
     void modified();
     void contextMenuCrash();
     void updatePositionDependentActionsCrash();
@@ -427,6 +428,19 @@ void tst_QWebPage::userStyleSheet()
 
     QVERIFY(networkManager->requestedUrls.count() >= 1);
     QCOMPARE(networkManager->requestedUrls.at(0), QUrl("http://does.not/exist.png"));
+}
+
+void tst_QWebPage::loadHtml5Video()
+{
+#if defined(ENABLE_QT_MULTIMEDIA) && ENABLE_QT_MULTIMEDIA
+    QByteArray url("http://does.not/exist?a=1%2Cb=2");
+    m_view->setHtml("<p><video id ='video' src='" + url + "' autoplay/></p>");
+    QTest::qWait(2000);
+    QUrl mUrl = DumpRenderTreeSupportQt::mediaContentUrlByElementId(m_page->mainFrame(), "video");
+    QCOMPARE(mUrl.toEncoded(), url);
+#else
+    QSKIP("This test requires Qt Multimedia", SkipAll);
+#endif
 }
 
 void tst_QWebPage::viewModes()

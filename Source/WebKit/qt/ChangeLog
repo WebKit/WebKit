@@ -1,3 +1,28 @@
+2011-02-17  Hui Huang  <hui.2.huang@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        The URL of HTML5 Video Element is percent encoded at websites such as youtube.
+        It is percent encoded again by QUrl constructor QUrl::QUrl(QString). This causes
+        the HTTP GET request for the video to be rejected by the service provider. 
+        https://bugs.webkit.org/show_bug.cgi?id=53973.
+
+        The bug is fixed by constructing QUrl from the encoded URL in 
+        MediaPlayerPrivateQt::commitLoad. 
+
+        New test function tst_QWebPage::loadHtml5Video() is added to load HTML content with
+        HTML5 Video element. A new public method DumpRenderTreeSupportQt::mediaContentUrlByElementId
+        is added to retrieve the URL of the media content from WebCore MediaPlayerPrivateQt.
+        A new macro ENABLE_QT_MULTIMEDIA is introduced in tests.pri to make sure that the test
+        is skipped if Qt Multimedia is not available.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::mediaContentUrlByElementId):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::loadHtml5Video):
+        * tests/tests.pri:
+
 2011-02-17  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Antti Koivisto.

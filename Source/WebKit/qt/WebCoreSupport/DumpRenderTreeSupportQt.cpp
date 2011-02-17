@@ -80,6 +80,11 @@
 #include "qwebpage_p.h"
 #include "qwebscriptworld.h"
 
+#if ENABLE(VIDEO) && ENABLE(QT_MULTIMEDIA)
+#include "HTMLVideoElement.h"
+#include "MediaPlayerPrivateQt.h"
+#endif
+
 using namespace WebCore;
 
 QMap<int, QWebScriptWorld*> m_worldMap;
@@ -955,6 +960,36 @@ void DumpRenderTreeSupportQt::setMinimumTimerInterval(QWebPage* page, double int
         return;
 
     corePage->settings()->setMinDOMTimerInterval(interval);
+}
+
+QUrl DumpRenderTreeSupportQt::mediaContentUrlByElementId(QWebFrame* frame, const QString& elementId)
+{
+    QUrl res;
+
+#if ENABLE(VIDEO) && ENABLE(QT_MULTIMEDIA)
+    Frame* coreFrame = QWebFramePrivate::core(frame);
+    if (!coreFrame)
+        return res;
+
+    Document* doc = coreFrame->document();
+    if (!doc)
+        return res;
+
+    Node* coreNode = doc->getElementById(elementId);
+    if (!coreNode)
+        return res;
+
+    HTMLVideoElement* videoElement = static_cast<HTMLVideoElement*>(coreNode);
+    PlatformMedia platformMedia = videoElement->platformMedia();
+    if (platformMedia.type != PlatformMedia::QtMediaPlayerType)
+        return res;
+
+    MediaPlayerPrivateQt* mediaPlayerQt = static_cast<MediaPlayerPrivateQt*>(platformMedia.media.qtMediaPlayer);
+    if (mediaPlayerQt && mediaPlayerQt->mediaPlayer())
+        res = mediaPlayerQt->mediaPlayer()->media().canonicalUrl();
+#endif
+
+    return res;
 }
 
 // Provide a backward compatibility with previously exported private symbols as of QtWebKit 4.6 release
