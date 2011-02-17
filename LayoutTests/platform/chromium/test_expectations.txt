@@ -2459,10 +2459,7 @@ BUGWEBGL : fast/canvas/webgl/gl-uniform-arrays.html = TEXT TIMEOUT
 BUGWEBGL : fast/canvas/webgl/point-size.html = TEXT
 BUGWEBGL MAC LINUX : fast/canvas/webgl/gl-object-get-calls.html = TEXT
 
-// These failures are due to new jpeg lib
-BUGWEBGL DEBUG : fast/canvas/webgl/gl-teximage.html = TEXT PASS TIMEOUT CRASH
-BUGWEBGL WIN LINUX DEBUG : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT PASS TIMEOUT
-BUGWEBGL WIN LINUX DEBUG : fast/canvas/webgl/texture-transparent-pixels-initialized.html = TEXT PASS TIMEOUT
+BUGWEBGL LINUX DEBUG : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT PASS
 
 // Failing after r75175
 BUGWEBGL WIN : fast/canvas/webgl/glsl-conformance.html = TIMEOUT CRASH
