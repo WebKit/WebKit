@@ -88,6 +88,7 @@
 #define WebKitZoomsTextOnlyPreferenceKey @"WebKitZoomsTextOnly"
 #define WebKitJavaScriptCanAccessClipboardPreferenceKey @"WebKitJavaScriptCanAccessClipboard"
 #define WebKitXSSAuditorEnabledPreferenceKey @"WebKitXSSAuditorEnabled"
+#define WebKitAcceleratedDrawingEnabledPreferenceKey @"WebKitAcceleratedDrawingEnabled"
 #define WebKitAcceleratedCompositingEnabledPreferenceKey @"WebKitAcceleratedCompositingEnabled"
 #define WebKitShowDebugBordersPreferenceKey @"WebKitShowDebugBorders"
 #define WebKitShowRepaintCounterPreferenceKey @"WebKitShowRepaintCounter"

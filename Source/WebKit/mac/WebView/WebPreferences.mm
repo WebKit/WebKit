@@ -358,6 +358,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitJavaScriptCanAccessClipboardPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitXSSAuditorEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAcceleratedCompositingEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO],  WebKitAcceleratedDrawingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitShowDebugBordersPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitShowRepaintCounterPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWebGLEnabledPreferenceKey,
@@ -1232,6 +1233,16 @@ static NSString *classIBCreatorID = nil;
 - (void)_setForceFTPDirectoryListings:(BOOL)force
 {
     [self _setBoolValue:force forKey:WebKitForceFTPDirectoryListings];
+}
+
+- (BOOL)acceleratedDrawingEnabled
+{
+    return [self _boolValueForKey:WebKitAcceleratedDrawingEnabledPreferenceKey];
+}
+
+- (void)setAcceleratedDrawingEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitAcceleratedDrawingEnabledPreferenceKey];
 }
 
 - (BOOL)acceleratedCompositingEnabled

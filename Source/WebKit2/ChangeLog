@@ -1,3 +1,28 @@
+2011-02-16  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Allow acceleratesDrawing for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=54511
+
+        Plumb through preference for accelerated drawing.
+        
+        If accelerated drawing is enabled, keep the DrawingAreaImpl in
+        accelerated compositing mode.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetAcceleratedDrawingEnabled):
+        (WKPreferencesGetAcceleratedDrawingEnabled):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::DrawingAreaImpl):
+        (WebKit::DrawingAreaImpl::setRootCompositingLayer):
+        (WebKit::DrawingAreaImpl::exitAcceleratedCompositingMode):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2011-02-16  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Andreas Kling.

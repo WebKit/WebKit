@@ -176,6 +176,9 @@ extern NSString *WebPreferencesRemovedNotification;
 - (NSString *)_localStorageDatabasePath;
 - (void)_setLocalStorageDatabasePath:(NSString *)path;
 
+- (BOOL)acceleratedDrawingEnabled;
+- (void)setAcceleratedDrawingEnabled:(BOOL)enabled;
+
 - (BOOL)acceleratedCompositingEnabled;
 - (void)setAcceleratedCompositingEnabled:(BOOL)enabled;
 

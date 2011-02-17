@@ -331,7 +331,9 @@ bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeR
             layer->ensureBacking();
 
 #if PLATFORM(MAC) && PLATFORM(CA)
-            if (layer->renderer()->isCanvas()) {
+            if (m_renderView->document()->settings()->acceleratedDrawingEnabled())
+                layer->backing()->graphicsLayer()->setAcceleratesDrawing(true);
+            else if (layer->renderer()->isCanvas()) {
                 HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(layer->renderer()->node());
                 if (canvas->renderingContext() && canvas->renderingContext()->isAccelerated())
                     layer->backing()->graphicsLayer()->setAcceleratesDrawing(true);

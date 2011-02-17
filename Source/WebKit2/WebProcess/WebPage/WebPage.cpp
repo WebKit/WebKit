@@ -1363,8 +1363,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #if PLATFORM(WIN)
     // Temporarily turn off accelerated compositing until we have a good solution for rendering it.
     settings->setAcceleratedCompositingEnabled(false);
+    settings->setAcceleratedDrawingEnabled(false);
 #else
     settings->setAcceleratedCompositingEnabled(store.getBoolValueForKey(WebPreferencesKey::acceleratedCompositingEnabledKey()));
+    settings->setAcceleratedDrawingEnabled(store.getBoolValueForKey(WebPreferencesKey::acceleratedDrawingEnabledKey()));
 #endif
     settings->setShowDebugBorders(store.getBoolValueForKey(WebPreferencesKey::compositingBordersVisibleKey()));
     settings->setShowRepaintCounter(store.getBoolValueForKey(WebPreferencesKey::compositingRepaintCountersVisibleKey()));

@@ -87,6 +87,7 @@ private:
     // Whether painting is suspended. We'll still keep track of the dirty region but we 
     // won't paint until painting has resumed again.
     bool m_isPaintingSuspended;
+    bool m_alwaysUseCompositing;
 
     RunLoop::Timer<DrawingAreaImpl> m_displayTimer;
     RunLoop::Timer<DrawingAreaImpl> m_exitCompositingTimer;

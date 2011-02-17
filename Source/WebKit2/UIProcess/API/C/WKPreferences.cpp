@@ -301,6 +301,16 @@ WKFontSmoothingLevel WKPreferencesGetFontSmoothingLevel(WKPreferencesRef prefere
     return toAPI(static_cast<FontSmoothingLevel>(toImpl(preferencesRef)->fontSmoothingLevel()));
 }
 
+void WKPreferencesSetAcceleratedDrawingEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setAcceleratedDrawingEnabled(flag);
+}
+
+bool WKPreferencesGetAcceleratedDrawingEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->acceleratedDrawingEnabled();
+}
+
 void WKPreferencesSetAcceleratedCompositingEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setAcceleratedCompositingEnabled(flag);

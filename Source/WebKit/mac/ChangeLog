@@ -1,3 +1,19 @@
+2011-02-16  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Allow acceleratesDrawing for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=54511
+
+        Plumb through preference for accelerated drawing.
+        
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences acceleratedDrawingEnabled]):
+        (-[WebPreferences setAcceleratedDrawingEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+
 2011-02-15  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/54505> Move -[WebDynamicScrollBarsView inProgrammaticScroll] to WebDynamicScrollBarsViewInternal.h

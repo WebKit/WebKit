@@ -34,6 +34,8 @@
 #include "WebPageCreationParameters.h"
 #include "WebProcess.h"
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/Page.h>
+#include <WebCore/Settings.h>
 
 #if !PLATFORM(MAC) && !PLATFORM(WIN)
 #error "This drawing area is not ready for use by other ports yet."
@@ -65,9 +67,15 @@ DrawingAreaImpl::DrawingAreaImpl(WebPage* webPage, const WebPageCreationParamete
     , m_inSetSize(false)
     , m_isWaitingForDidUpdate(false)
     , m_isPaintingSuspended(!parameters.isVisible)
+    , m_alwaysUseCompositing(false)
     , m_displayTimer(WebProcess::shared().runLoop(), this, &DrawingAreaImpl::display)
     , m_exitCompositingTimer(WebProcess::shared().runLoop(), this, &DrawingAreaImpl::exitAcceleratedCompositingMode)
 {
+    if (webPage->corePage()->settings()->acceleratedDrawingEnabled())
+        m_alwaysUseCompositing = true;
+        
+    if (m_alwaysUseCompositing)
+        enterAcceleratedCompositingMode(0);
 }
 
 void DrawingAreaImpl::setNeedsDisplay(const IntRect& rect)
@@ -196,10 +204,12 @@ void DrawingAreaImpl::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
         }
     } else {
         if (m_layerTreeHost) {
-            // We'll exit accelerated compositing mode on a timer, to avoid re-entering
-            // compositing code via display() and layout.
             m_layerTreeHost->setRootCompositingLayer(0);
-            exitAcceleratedCompositingModeSoon();
+            if (!m_alwaysUseCompositing) {
+                // We'll exit accelerated compositing mode on a timer, to avoid re-entering
+                // compositing code via display() and layout.
+                exitAcceleratedCompositingModeSoon();
+            }
         }
     }
 }
@@ -307,6 +317,9 @@ void DrawingAreaImpl::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLay
 
 void DrawingAreaImpl::exitAcceleratedCompositingMode()
 {
+    if (m_alwaysUseCompositing)
+        return;
+
     m_exitCompositingTimer.stop();
 
     ASSERT(m_layerTreeHost);

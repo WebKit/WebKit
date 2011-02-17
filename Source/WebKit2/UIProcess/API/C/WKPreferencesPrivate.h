@@ -47,6 +47,10 @@ typedef enum WKFontSmoothingLevel WKFontSmoothingLevel;
 WK_EXPORT void WKPreferencesSetFontSmoothingLevel(WKPreferencesRef, WKFontSmoothingLevel);
 WK_EXPORT WKFontSmoothingLevel WKPreferencesGetFontSmoothingLevel(WKPreferencesRef);
 
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetAcceleratedDrawingEnabled(WKPreferencesRef, bool);
+WK_EXPORT bool WKPreferencesGetAcceleratedDrawingEnabled(WKPreferencesRef);
+
 // Defaults to true.
 WK_EXPORT void WKPreferencesSetAcceleratedCompositingEnabled(WKPreferencesRef, bool);
 WK_EXPORT bool WKPreferencesGetAcceleratedCompositingEnabled(WKPreferencesRef);
