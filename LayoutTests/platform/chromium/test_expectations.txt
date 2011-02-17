@@ -3471,3 +3471,5 @@ BUGWK54635 SKIP : inspector/elements/mutate-unknown-node.html = TEXT PASS TIMEOU
 
 BUGWK54644 DEBUG :  storage/indexeddb/set_version_blocked.html = CRASH
 BUGWK54644 DEBUG :  storage/indexeddb/set_version_queue.html = CRASH
+
+BUGWK54659 DEBUG : inspector/debugger/debug-inlined-scripts.html = CRASH
