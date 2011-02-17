@@ -1,3 +1,11 @@
+2011-02-17  Adam Roben  <aroben@apple.com>
+
+        Skip all inspector/debugger tests on Windows
+
+        The failures are tracked by <http://webkit.org/b/54490>.
+
+        * platform/win/Skipped:
+
 2011-02-17  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, rebaseline GTK test results.
