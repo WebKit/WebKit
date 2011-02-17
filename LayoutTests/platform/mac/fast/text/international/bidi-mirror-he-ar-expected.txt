@@ -10,11 +10,11 @@ layer at (0,0) size 800x600
         RenderText {#text} at (327,0) size 457x18
           text run at (327,0) width 457: "The parenthesis should be displayed as \"(...)...\" visually from left to right"
       RenderBlock {DIV} at (0,68) size 784x19
-        RenderText {#text} at (750,1) size 34x18
-          text run at (750,1) width 34 RTL: "\x{5E9}(\x{5E9})"
+        RenderText {#text} at (751,1) size 33x18
+          text run at (751,1) width 33 RTL: "\x{5E9}(\x{5E9})"
       RenderBlock {DIV} at (0,87) size 784x18
-        RenderText {#text} at (762,0) size 22x18
-          text run at (762,0) width 22 RTL: "\x{5C6}(\x{5C6})"
+        RenderText {#text} at (750,0) size 34x18
+          text run at (750,0) width 34 RTL: "\x{5C6}(\x{5C6})"
       RenderBlock {DIV} at (0,105) size 784x28
         RenderText {#text} at (758,2) size 26x18
           text run at (758,2) width 26 RTL: "\x{644}(\x{644})"

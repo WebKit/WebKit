@@ -11,7 +11,7 @@ layer at (0,0) size 800x138
         RenderText {#text} at (0,1) size 478x18
           text run at (0,1) width 292: "If this test succeeds, you can see three words \""
           text run at (292,1) width 37 RTL: "\x{5E9}\x{5D5}\x{5BC}\x{5E8}\x{5D4}"
-          text run at (329,1) width 149: "\", separated with space."
+          text run at (328,1) width 150: "\", separated with space."
       RenderBlock {P} at (0,87) size 784x19
-        RenderText {#text} at (0,1) size 115x18
-          text run at (0,1) width 115 RTL: "\x{5E9}\x{5D5}\x{5BC}\x{5E8}\x{5D4} \x{5E9}\x{5D5}\x{5BC}\x{5E8}\x{5D4}\x{D}\x{5E9}\x{5D5}\x{5BC}\x{5E8}\x{5D4}"
+        RenderText {#text} at (0,1) size 113x18
+          text run at (0,1) width 113 RTL: "\x{5E9}\x{5D5}\x{5BC}\x{5E8}\x{5D4} \x{5E9}\x{5D5}\x{5BC}\x{5E8}\x{5D4}\x{D}\x{5E9}\x{5D5}\x{5BC}\x{5E8}\x{5D4}"

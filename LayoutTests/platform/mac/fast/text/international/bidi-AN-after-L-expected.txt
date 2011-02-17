@@ -13,4 +13,4 @@ layer at (0,0) size 800x130
         RenderText {#text} at (0,2) size 73x18
           text run at (0,2) width 22: "abc"
           text run at (22,2) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
-          text run at (49,2) width 24: "\x{661}\x{662}\x{663}"
+          text run at (48,2) width 25: "\x{661}\x{662}\x{663}"
