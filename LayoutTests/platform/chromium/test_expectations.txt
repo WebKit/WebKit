@@ -1638,7 +1638,6 @@ BUGCR24966 SLOW MAC DEBUG : fast/frames/calculate-fixed.html = PASS
 
 // WebKit Roll 49640:49684
 BUGCR25202 LINUX WIN : svg/W3C-SVG-1.1/masking-path-02-b.svg = FAIL
-BUGCR25208 LINUX WIN : svg/W3C-SVG-1.1/masking-path-05-f.svg = FAIL
 BUG_JEREMY MAC : fast/frames/onlyCommentInIFrame.html = FAIL
 
 // WebKit Roll 49684:49761

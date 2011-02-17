@@ -1,3 +1,19 @@
+2011-02-16  James Robinson  <jamesr@chromium.org>
+
+        Update chromium baselines for 78751.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1/masking-path-05-f-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/masking-path-05-f-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/masking-path-05-f-expected.txt: Added.
+        * platform/chromium-linux/svg/clip-path/clip-path-clipped-evenodd-twice-expected.checksum:
+        * platform/chromium-linux/svg/clip-path/clip-path-clipped-evenodd-twice-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/masking-path-05-f-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/masking-path-05-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/masking-path-05-f-expected.txt:
+        * platform/chromium-win/svg/clip-path/clip-path-clipped-evenodd-twice-expected.checksum:
+        * platform/chromium-win/svg/clip-path/clip-path-clipped-evenodd-twice-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-02-16  Peter Kasting  <pkasting@google.com>
 
         Unreviewed, Chromium expectations update.
