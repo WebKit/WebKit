@@ -734,7 +734,7 @@ TestSuite.prototype._waitUntilScriptsAreParsed = function(expectedScripts, callb
         if (test._scriptsAreParsed(expectedScripts))
             callback();
         else
-            test.addSniffer(WebInspector.debuggerModel, "_parsedScriptSource", waitForAllScripts);
+            test.addSniffer(WebInspector.panels.scripts, "_addScriptToFilesMenu", waitForAllScripts);
     }
 
     waitForAllScripts();

@@ -1,3 +1,11 @@
+2011-02-17  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, interactive ui test fix for r78808.
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype._waitUntilScriptsAreParsed.waitForAllScripts):
+        (.TestSuite.prototype._waitUntilScriptsAreParsed):
+
 2011-02-16  Brian Ryner  <bryner@chromium.org>
 
         Reviewed by Darin Fisher.
