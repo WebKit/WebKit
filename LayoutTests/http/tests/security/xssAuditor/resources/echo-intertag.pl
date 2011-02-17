@@ -38,5 +38,8 @@ if ($cgi->param('notifyDone')) {
 if ($cgi->param('enable-full-block')) {
     print "<p>If you see this message then the test FAILED.</p>\n";
 }
+if ($cgi->param('alert-cookie')) {
+    print "<script>alert('cookie: ' + document.cookie); document.cookie = 'testcookie=remove; max-age=-1';</script>\n";
+}
 print "</body>\n";
 print "</html>\n";

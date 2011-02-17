@@ -1,3 +1,54 @@
+2011-02-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Daniel Bates.
+
+        Import XSSAuditor tests from David Ross
+        https://bugs.webkit.org/show_bug.cgi?id=54576
+
+        Many of these tests pass, but some of them fail as well.  I'll fix the
+        failing tests in followup patches.
+
+        * http/tests/security/xssAuditor/cookie-injection-expected.txt: Added.
+        * http/tests/security/xssAuditor/cookie-injection.html: Added.
+            - We're fine here.
+        * http/tests/security/xssAuditor/form-action-expected.txt: Added.
+        * http/tests/security/xssAuditor/form-action.html: Added.
+            - We need to filter form actions.  Previously, we considered this
+              issue out of scope, but we should be able to handle it.
+        * http/tests/security/xssAuditor/iframe-injection-expected.txt: Added.
+        * http/tests/security/xssAuditor/iframe-injection.html: Added.
+            - We need to filter iframe src attributes.  Previously, we
+              considered this issue out of scope, but we should be able to
+              handle it.
+        * http/tests/security/xssAuditor/iframe-javascript-url-more-encoding-expected.txt: Added.
+        * http/tests/security/xssAuditor/iframe-javascript-url-more-encoding.html: Added.
+            - We're fine here.
+        * http/tests/security/xssAuditor/javascript-link-one-plus-one-expected.txt: Added.
+        * http/tests/security/xssAuditor/javascript-link-one-plus-one.html: Added.
+            - We're fine here.
+        * http/tests/security/xssAuditor/open-attribute-body-expected.txt: Added.
+        * http/tests/security/xssAuditor/open-attribute-body.html: Added.
+        * http/tests/security/xssAuditor/open-event-handler-iframe-expected.txt: Added.
+        * http/tests/security/xssAuditor/open-event-handler-iframe.html: Added.
+        * http/tests/security/xssAuditor/open-iframe-src-expected.txt: Added.
+        * http/tests/security/xssAuditor/open-iframe-src.html: Added.
+        * http/tests/security/xssAuditor/open-script-src-expected.txt: Added.
+        * http/tests/security/xssAuditor/open-script-src.html: Added.
+            - These are all the same class of issue.  Now that we've
+              re-designed the filter, we should be able to address this issue.
+        * http/tests/security/xssAuditor/resources/echo-inspan.pl: Added.
+        * http/tests/security/xssAuditor/resources/echo-intertag.pl:
+            - Tests infrastructure improvements.
+        * http/tests/security/xssAuditor/script-tag-with-fancy-unicode-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-with-fancy-unicode.html: Added.
+            - I'm not sure what's going on here.  Requires futher investigation.
+        * http/tests/security/xssAuditor/script-tag-with-invalid-url-encoding-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-with-invalid-url-encoding.html: Added.
+            - We're fine here.
+        * http/tests/security/xssAuditor/script-tag-with-source-data-url-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-with-source-data-url.html: Added.
+            - We're fine here.
+
 2011-02-16  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by James Robinson.
