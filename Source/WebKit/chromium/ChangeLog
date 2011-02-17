@@ -1,3 +1,14 @@
+2011-02-17  Steve Lacey  <sjl@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Roll chromium deps to 75190. Includes new dependency
+        on libjingle.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54588
+
+        * DEPS:
+
 2011-02-17  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, interactive ui test fix for r78808.
