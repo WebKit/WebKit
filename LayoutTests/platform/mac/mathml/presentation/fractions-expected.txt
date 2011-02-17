@@ -52,9 +52,9 @@ layer at (0,0) size 800x352
         RenderBlock {math} at (31,0) size 128x34
           RenderBlock {mfrac} at (1,0) size 126x34
             RenderBlock {mfrac} at (0,0) size 126x16
-              RenderInline {mtext} at (0,0) size 99x16
-                RenderText {#text} at (13,0) size 99x16
-                  text run at (13,0) width 99: "number of bugs"
+              RenderInline {mtext} at (0,0) size 100x16
+                RenderText {#text} at (13,0) size 100x16
+                  text run at (13,0) width 100: "number of bugs"
             RenderBlock {mfrac} at (0,16) size 126x18
               RenderInline {mtext} at (0,0) size 120x16
                 RenderText {#text} at (3,2) size 120x16
@@ -297,9 +297,9 @@ layer at (0,0) size 800x352
                   RenderText {#text} at (72,0) size 8x16
                     text run at (72,0) width 8: "5"
             RenderBlock {mfrac} at (0,16) size 50x18
-              RenderInline {mi} at (0,0) size 7x16
-                RenderText {#text} at (21,2) size 7x16
-                  text run at (21,2) width 7: "x"
+              RenderInline {mi} at (0,0) size 8x16
+                RenderText {#text} at (21,2) size 8x16
+                  text run at (21,2) width 8: "x"
         RenderText {#text} at (333,7) size 4x18
           text run at (333,7) width 4: " "
         RenderBlock {math} at (337,0) size 88x34

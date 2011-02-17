@@ -102,6 +102,6 @@ layer at (0,0) size 800x248
           RenderText {#text} at (235,0) size 234x18
             text run at (235,0) width 234: ", and this one centered on a new line:"
         RenderBlock {math} at (0,19) size 784x16
-          RenderInline {mi} at (0,0) size 7x16
-            RenderText {#text} at (388,0) size 7x16
-              text run at (388,0) width 7: "x"
+          RenderInline {mi} at (0,0) size 8x16
+            RenderText {#text} at (388,0) size 8x16
+              text run at (388,0) width 8: "x"

@@ -16,8 +16,8 @@ layer at (0,0) size 800x332
         RenderTableSection {TBODY} at (0,0) size 142x94
           RenderTableRow {TR} at (0,2) size 142x28
             RenderTableCell {TD} at (2,2) size 138x28 [border: none (2px solid #0000FF) none] [r=0 c=0 rs=1 cs=2]
-              RenderText {#text} at (37,4) size 63x18
-                text run at (37,4) width 63: "HERE \x{21E9}"
+              RenderText {#text} at (37,4) size 64x18
+                text run at (37,4) width 64: "HERE \x{21E9}"
           RenderTableRow {TR} at (0,32) size 142x60
             RenderTableCell {TD} at (2,48) size 65x28 [border: none (2px solid #0000FF) none] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,4) size 63x18

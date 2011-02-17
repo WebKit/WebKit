@@ -82,8 +82,8 @@ layer at (0,0) size 785x3032
       RenderTable {TABLE} at (0,516) size 90x126 [border: (10px solid #008000)]
         RenderBlock {CAPTION} at (0,0) size 70x60 [border: (3px solid #800080)]
           RenderText {#text} at (22,3) size 50x54
-            text run at (22,3) width 25: "The"
-            text run at (15,21) width 39: "table's"
+            text run at (22,3) width 26: "The"
+            text run at (15,21) width 40: "table's"
             text run at (10,39) width 50: "caption."
         RenderTableSection {TBODY} at (10,70) size 70x46
           RenderTableRow {TR} at (0,2) size 70x20
@@ -103,8 +103,8 @@ layer at (0,0) size 785x3032
       RenderTable {TABLE} at (0,642) size 90x146 [border: (10px solid #008000)]
         RenderBlock {CAPTION} at (0,0) size 70x60 [border: (3px solid #800080)]
           RenderText {#text} at (22,3) size 50x54
-            text run at (22,3) width 25: "The"
-            text run at (15,21) width 39: "table's"
+            text run at (22,3) width 26: "The"
+            text run at (15,21) width 40: "table's"
             text run at (10,39) width 50: "caption."
         RenderTableSection {TBODY} at (10,90) size 70x46
           RenderTableRow {TR} at (0,2) size 70x20
@@ -124,8 +124,8 @@ layer at (0,0) size 785x3032
       RenderTable {TABLE} at (0,803) size 90x146 [border: (10px solid #008000)]
         RenderBlock {CAPTION} at (0,0) size 70x60 [border: (3px solid #800080)]
           RenderText {#text} at (22,3) size 50x54
-            text run at (22,3) width 25: "The"
-            text run at (15,21) width 39: "table's"
+            text run at (22,3) width 26: "The"
+            text run at (15,21) width 40: "table's"
             text run at (10,39) width 50: "caption."
         RenderTableSection {TBODY} at (10,90) size 70x46
           RenderTableRow {TR} at (0,2) size 70x20
@@ -145,8 +145,8 @@ layer at (0,0) size 785x3032
       RenderTable {TABLE} at (0,969) size 90x141 [border: (10px solid #008000)]
         RenderBlock {CAPTION} at (0,0) size 70x60 [border: (3px solid #800080)]
           RenderText {#text} at (22,3) size 50x54
-            text run at (22,3) width 25: "The"
-            text run at (15,21) width 39: "table's"
+            text run at (22,3) width 26: "The"
+            text run at (15,21) width 40: "table's"
             text run at (10,39) width 50: "caption."
         RenderTableSection {TBODY} at (10,85) size 70x46
           RenderTableRow {TR} at (0,2) size 70x20
@@ -170,8 +170,8 @@ layer at (0,0) size 785x3032
       RenderTable {TABLE} at (0,1160) size 90x126 [border: (10px solid #008000)]
         RenderBlock {CAPTION} at (0,0) size 70x60 [border: (3px solid #800080)]
           RenderText {#text} at (22,3) size 50x54
-            text run at (22,3) width 25: "The"
-            text run at (15,21) width 39: "table's"
+            text run at (22,3) width 26: "The"
+            text run at (15,21) width 40: "table's"
             text run at (10,39) width 50: "caption."
         RenderTableSection {TBODY} at (10,70) size 70x46
           RenderTableRow {TR} at (0,2) size 70x20
@@ -191,8 +191,8 @@ layer at (0,0) size 785x3032
       RenderTable {TABLE} at (0,1286) size 90x126 [border: (10px solid #008000)]
         RenderBlock {CAPTION} at (20,0) size 50x60 [border: (3px solid #800080)]
           RenderText {#text} at (12,3) size 50x54
-            text run at (12,3) width 25: "The"
-            text run at (5,21) width 39: "table's"
+            text run at (12,3) width 26: "The"
+            text run at (5,21) width 40: "table's"
             text run at (3,39) width 50: "caption."
         RenderTableSection {TBODY} at (10,70) size 70x46
           RenderTableRow {TR} at (0,2) size 70x20
@@ -212,8 +212,8 @@ layer at (0,0) size 785x3032
       RenderTable {TABLE} at (0,1412) size 90x126 [border: (10px solid #008000)]
         RenderBlock {CAPTION} at (20,0) size 50x60 [border: (3px solid #800080)]
           RenderText {#text} at (12,3) size 50x54
-            text run at (12,3) width 25: "The"
-            text run at (5,21) width 39: "table's"
+            text run at (12,3) width 26: "The"
+            text run at (5,21) width 40: "table's"
             text run at (3,39) width 50: "caption."
         RenderTableSection {TBODY} at (10,70) size 70x46
           RenderTableRow {TR} at (0,2) size 70x20
@@ -258,8 +258,8 @@ layer at (0,0) size 785x3032
       RenderTable {TABLE} at (0,1714) size 90x126 [border: (10px solid #008000)]
         RenderBlock {CAPTION} at (0,66) size 70x60 [border: (3px solid #800080)]
           RenderText {#text} at (22,3) size 50x54
-            text run at (22,3) width 25: "The"
-            text run at (15,21) width 39: "table's"
+            text run at (22,3) width 26: "The"
+            text run at (15,21) width 40: "table's"
             text run at (10,39) width 50: "caption."
         RenderTableSection {TBODY} at (10,10) size 70x46
           RenderTableRow {TR} at (0,2) size 70x20
@@ -279,8 +279,8 @@ layer at (0,0) size 785x3032
       RenderTable {TABLE} at (0,1860) size 90x146 [border: (10px solid #008000)]
         RenderBlock {CAPTION} at (0,66) size 70x60 [border: (3px solid #800080)]
           RenderText {#text} at (22,3) size 50x54
-            text run at (22,3) width 25: "The"
-            text run at (15,21) width 39: "table's"
+            text run at (22,3) width 26: "The"
+            text run at (15,21) width 40: "table's"
             text run at (10,39) width 50: "caption."
         RenderTableSection {TBODY} at (10,10) size 70x46
           RenderTableRow {TR} at (0,2) size 70x20
@@ -300,8 +300,8 @@ layer at (0,0) size 785x3032
       RenderTable {TABLE} at (0,2006) size 90x146 [border: (10px solid #008000)]
         RenderBlock {CAPTION} at (0,66) size 70x60 [border: (3px solid #800080)]
           RenderText {#text} at (22,3) size 50x54
-            text run at (22,3) width 25: "The"
-            text run at (15,21) width 39: "table's"
+            text run at (22,3) width 26: "The"
+            text run at (15,21) width 40: "table's"
             text run at (10,39) width 50: "caption."
         RenderTableSection {TBODY} at (10,10) size 70x46
           RenderTableRow {TR} at (0,2) size 70x20
@@ -321,8 +321,8 @@ layer at (0,0) size 785x3032
       RenderTable {TABLE} at (0,2167) size 90x141 [border: (10px solid #008000)]
         RenderBlock {CAPTION} at (0,66) size 70x60 [border: (3px solid #800080)]
           RenderText {#text} at (22,3) size 50x54
-            text run at (22,3) width 25: "The"
-            text run at (15,21) width 39: "table's"
+            text run at (22,3) width 26: "The"
+            text run at (15,21) width 40: "table's"
             text run at (10,39) width 50: "caption."
         RenderTableSection {TBODY} at (10,10) size 70x46
           RenderTableRow {TR} at (0,2) size 70x20
@@ -346,8 +346,8 @@ layer at (0,0) size 785x3032
       RenderTable {TABLE} at (20,2362) size 90x126 [border: (10px solid #008000)]
         RenderBlock {CAPTION} at (0,0) size 70x60 [border: (3px solid #800080)]
           RenderText {#text} at (22,3) size 50x54
-            text run at (22,3) width 25: "The"
-            text run at (15,21) width 39: "table's"
+            text run at (22,3) width 26: "The"
+            text run at (15,21) width 40: "table's"
             text run at (10,39) width 50: "caption."
         RenderTableSection {TBODY} at (10,70) size 70x46
           RenderTableRow {TR} at (0,2) size 70x20
@@ -367,8 +367,8 @@ layer at (0,0) size 785x3032
       RenderTable {TABLE} at (0,2488) size 90x126 [border: (10px solid #008000)]
         RenderBlock {CAPTION} at (0,0) size 50x60 [border: (3px solid #800080)]
           RenderText {#text} at (12,3) size 50x54
-            text run at (12,3) width 25: "The"
-            text run at (5,21) width 39: "table's"
+            text run at (12,3) width 26: "The"
+            text run at (5,21) width 40: "table's"
             text run at (3,39) width 50: "caption."
         RenderTableSection {TBODY} at (10,70) size 70x46
           RenderTableRow {TR} at (0,2) size 70x20
@@ -388,8 +388,8 @@ layer at (0,0) size 785x3032
       RenderTable {TABLE} at (15,2614) size 90x126 [border: (10px solid #008000)]
         RenderBlock {CAPTION} at (0,0) size 50x60 [border: (3px solid #800080)]
           RenderText {#text} at (12,3) size 50x54
-            text run at (12,3) width 25: "The"
-            text run at (5,21) width 39: "table's"
+            text run at (12,3) width 26: "The"
+            text run at (5,21) width 40: "table's"
             text run at (3,39) width 50: "caption."
         RenderTableSection {TBODY} at (10,70) size 70x46
           RenderTableRow {TR} at (0,2) size 70x20

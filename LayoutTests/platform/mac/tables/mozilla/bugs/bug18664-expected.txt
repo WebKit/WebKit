@@ -21,9 +21,9 @@ layer at (70,70) size 173x54
         RenderTableRow {TR} at (0,0) size 173x18
           RenderTableCell {TD} at (0,0) size 173x18 [r=0 c=0 rs=1 cs=1]
             RenderBlock {P} at (0,0) size 173x18
-              RenderInline {B} at (0,0) size 50x18
-                RenderText {#text} at (61,0) size 50x18
-                  text run at (61,0) width 50: "Testing"
+              RenderInline {B} at (0,0) size 51x18
+                RenderText {#text} at (61,0) size 51x18
+                  text run at (61,0) width 51: "Testing"
     RenderTable {TABLE} at (0,18) size 173x18
       RenderTableSection {TBODY} at (0,0) size 173x18
         RenderTableRow {TR} at (0,0) size 173x18

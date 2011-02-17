@@ -13,13 +13,13 @@ layer at (0,0) size 800x574
         RenderTableSection (anonymous) at (0,0) size 308x19
           RenderTableRow {UL} at (0,0) size 308x19 [bgcolor=#00CC99]
             RenderTableCell {LI} at (0,0) size 77x19 [r=0 c=0 rs=1 cs=1]
-              RenderInline {A} at (0,0) size 54x19 [color=#0000EE]
-                RenderText {#text} at (11,0) size 54x19
-                  text run at (11,0) width 54: "people"
+              RenderInline {A} at (0,0) size 55x19 [color=#0000EE]
+                RenderText {#text} at (11,0) size 55x19
+                  text run at (11,0) width 55: "people"
             RenderTableCell {LI} at (77,0) size 77x19 [r=0 c=1 rs=1 cs=1]
-              RenderInline {A} at (0,0) size 50x19 [color=#0000EE]
-                RenderText {#text} at (13,0) size 50x19
-                  text run at (13,0) width 50: "places"
+              RenderInline {A} at (0,0) size 51x19 [color=#0000EE]
+                RenderText {#text} at (13,0) size 51x19
+                  text run at (13,0) width 51: "places"
             RenderTableCell {LI} at (154,0) size 77x19 [r=0 c=2 rs=1 cs=1]
               RenderInline {A} at (0,0) size 77x19 [color=#0000EE]
                 RenderText {#text} at (0,0) size 77x19

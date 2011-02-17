@@ -22,8 +22,8 @@ layer at (0,0) size 800x585
                 RenderText {#text} at (126,0) size 46x18
                   text run at (126,0) width 46: "border"
                 RenderBR {BR} at (172,14) size 0x0
-                RenderText {#text} at (120,18) size 57x18
-                  text run at (120,18) width 57: "bottom?"
+                RenderText {#text} at (120,18) size 58x18
+                  text run at (120,18) width 58: "bottom?"
             RenderTableCell {TD} at (300,20) size 300x164 [color=#00FF00] [bgcolor=#000000] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (1,1) size 298x162
                 RenderText {#text} at (122,0) size 54x18

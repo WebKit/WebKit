@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (0,0) size 600x184
             RenderTableRow {TR} at (0,2) size 600x44
               RenderTableCell {TD} at (2,2) size 594x44 [r=0 c=0 rs=1 cs=3]
-                RenderImage {IMG} at (7,1) size 579x42
+                RenderImage {IMG} at (8,1) size 579x42
                 RenderText {#text} at (0,0) size 0x0
             RenderTableRow {TR} at (0,48) size 600x55
               RenderTableCell {TD} at (2,55) size 594x40 [bgcolor=#99CCCC] [r=1 c=0 rs=1 cs=3]
@@ -75,7 +75,7 @@ layer at (0,0) size 800x600
                   RenderInline {FONT} at (0,0) size 115x30 [color=#CC0033]
                     RenderText {#text} at (22,1) size 115x30
                       text run at (22,1) width 115: "Download Netscape"
-                      text run at (26,16) width 106: "Communicator 4.5"
+                      text run at (26,16) width 107: "Communicator 4.5"
               RenderTableCell {TD} at (163,105) size 270x50 [r=2 c=1 rs=1 cs=1]
                 RenderInline {A} at (0,0) size 232x28 [color=#0000EE]
                   RenderImage {IMG} at (19,1) size 232x35 [border: (1px solid #0000EE)]
@@ -92,42 +92,42 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 0x0
             RenderTableRow {TR} at (0,157) size 600x20
               RenderTableCell {TD} at (2,157) size 594x20 [r=3 c=0 rs=1 cs=3]
-                RenderInline {A} at (0,0) size 47x18 [color=#0000EE]
-                  RenderInline {FONT} at (0,0) size 47x15 [color=#0066FF]
-                    RenderInline {B} at (0,0) size 47x15
-                      RenderText {#text} at (18,3) size 47x15
-                        text run at (18,3) width 47: "Contact"
-                RenderText {#text} at (65,1) size 12x18
-                  text run at (65,1) width 12: " : "
-                RenderInline {SMALL} at (0,0) size 498x15
-                  RenderInline {A} at (0,0) size 76x15 [color=#0000EE]
-                    RenderText {#text} at (77,3) size 76x15
-                      text run at (77,3) width 76: "Address Book"
-                  RenderText {#text} at (153,3) size 10x15
-                    text run at (153,3) width 10: " - "
-                  RenderInline {A} at (0,0) size 64x15 [color=#0000EE]
-                    RenderText {#text} at (163,3) size 64x15
-                      text run at (163,3) width 64: "Discussions"
-                  RenderText {#text} at (227,3) size 10x15
-                    text run at (227,3) width 10: " - "
-                  RenderInline {A} at (0,0) size 98x15 [color=#0000EE]
-                    RenderText {#text} at (237,3) size 98x15
-                      text run at (237,3) width 98: "Instant Messenger"
-                  RenderText {#text} at (335,3) size 10x15
-                    text run at (335,3) width 10: " - "
-                  RenderInline {A} at (0,0) size 79x15 [color=#0000EE]
-                    RenderText {#text} at (345,3) size 79x15
-                      text run at (345,3) width 79: "Long Distance"
-                  RenderText {#text} at (424,3) size 10x15
-                    text run at (424,3) width 10: " - "
-                  RenderInline {A} at (0,0) size 50x15 [color=#0000EE]
-                    RenderText {#text} at (434,3) size 50x15
-                      text run at (434,3) width 50: "Members"
-                  RenderText {#text} at (484,3) size 10x15
-                    text run at (484,3) width 10: " - "
-                  RenderInline {A} at (0,0) size 81x15 [color=#0000EE]
-                    RenderText {#text} at (494,3) size 81x15
-                      text run at (494,3) width 81: "WebMail< /A>"
+                RenderInline {A} at (0,0) size 48x18 [color=#0000EE]
+                  RenderInline {FONT} at (0,0) size 48x15 [color=#0066FF]
+                    RenderInline {B} at (0,0) size 48x15
+                      RenderText {#text} at (18,3) size 48x15
+                        text run at (18,3) width 48: "Contact"
+                RenderText {#text} at (65,1) size 13x18
+                  text run at (65,1) width 13: " : "
+                RenderInline {SMALL} at (0,0) size 499x15
+                  RenderInline {A} at (0,0) size 77x15 [color=#0000EE]
+                    RenderText {#text} at (77,3) size 77x15
+                      text run at (77,3) width 77: "Address Book"
+                  RenderText {#text} at (153,3) size 11x15
+                    text run at (153,3) width 11: " - "
+                  RenderInline {A} at (0,0) size 65x15 [color=#0000EE]
+                    RenderText {#text} at (163,3) size 65x15
+                      text run at (163,3) width 65: "Discussions"
+                  RenderText {#text} at (227,3) size 11x15
+                    text run at (227,3) width 11: " - "
+                  RenderInline {A} at (0,0) size 99x15 [color=#0000EE]
+                    RenderText {#text} at (237,3) size 99x15
+                      text run at (237,3) width 99: "Instant Messenger"
+                  RenderText {#text} at (335,3) size 11x15
+                    text run at (335,3) width 11: " - "
+                  RenderInline {A} at (0,0) size 80x15 [color=#0000EE]
+                    RenderText {#text} at (345,3) size 80x15
+                      text run at (345,3) width 80: "Long Distance"
+                  RenderText {#text} at (424,3) size 11x15
+                    text run at (424,3) width 11: " - "
+                  RenderInline {A} at (0,0) size 51x15 [color=#0000EE]
+                    RenderText {#text} at (434,3) size 51x15
+                      text run at (434,3) width 51: "Members"
+                  RenderText {#text} at (484,3) size 11x15
+                    text run at (484,3) width 11: " - "
+                  RenderInline {A} at (0,0) size 82x15 [color=#0000EE]
+                    RenderText {#text} at (494,3) size 82x15
+                      text run at (494,3) width 82: "WebMail< /A>"
                 RenderInline {A} at (0,0) size 0x0 [color=#0000EE]
                   RenderText {#text} at (0,0) size 0x0
             RenderTableRow {TR} at (0,179) size 600x3

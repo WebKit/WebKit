@@ -77,11 +77,11 @@ layer at (0,0) size 800x600
                 RenderTableCell {TD} at (152,0) size 304x45 [r=0 c=1 rs=1 cs=1]
                   RenderTextControl {INPUT} at (2,2) size 300x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                   RenderBR {BR} at (304,16) size 0x0
-                  RenderButton {INPUT} at (49,25) size 93x18 [bgcolor=#C0C0C0]
+                  RenderButton {INPUT} at (50,25) size 93x18 [bgcolor=#C0C0C0]
                     RenderBlock (anonymous) at (8,2) size 77x13
                       RenderText at (0,0) size 77x13
                         text run at (0,0) width 77: "Google Search"
-                  RenderButton {INPUT} at (146,25) size 108x18 [bgcolor=#C0C0C0]
+                  RenderButton {INPUT} at (147,25) size 108x18 [bgcolor=#C0C0C0]
                     RenderBlock (anonymous) at (8,2) size 92x13
                       RenderText at (0,0) size 92x13
                         text run at (0,0) width 92: "I'm Feeling Lucky"
@@ -122,20 +122,20 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (392,0) size 0x18
           RenderBR {BR} at (392,18) size 0x18
           RenderBR {BR} at (392,36) size 0x18
-          RenderInline {FONT} at (0,0) size 317x15
-            RenderInline {A} at (0,0) size 117x15 [color=#0000CC]
-              RenderText {#text} at (233,54) size 117x15
-                text run at (233,54) width 117: "Advertising Programs"
-            RenderText {#text} at (350,54) size 10x15
-              text run at (350,54) width 10: " - "
-            RenderInline {A} at (0,0) size 103x15 [color=#0000CC]
-              RenderText {#text} at (360,54) size 103x15
-                text run at (360,54) width 103: "Business Solutions"
-            RenderText {#text} at (463,54) size 10x15
-              text run at (463,54) width 10: " - "
-            RenderInline {A} at (0,0) size 77x15 [color=#0000CC]
-              RenderText {#text} at (473,54) size 77x15
-                text run at (473,54) width 77: "About Google"
+          RenderInline {FONT} at (0,0) size 318x15
+            RenderInline {A} at (0,0) size 118x15 [color=#0000CC]
+              RenderText {#text} at (233,54) size 118x15
+                text run at (233,54) width 118: "Advertising Programs"
+            RenderText {#text} at (350,54) size 11x15
+              text run at (350,54) width 11: " - "
+            RenderInline {A} at (0,0) size 104x15 [color=#0000CC]
+              RenderText {#text} at (360,54) size 104x15
+                text run at (360,54) width 104: "Business Solutions"
+            RenderText {#text} at (463,54) size 11x15
+              text run at (463,54) width 11: " - "
+            RenderInline {A} at (0,0) size 78x15 [color=#0000CC]
+              RenderText {#text} at (473,54) size 78x15
+                text run at (473,54) width 78: "About Google"
         RenderBlock {P} at (0,245) size 784x13
           RenderInline {FONT} at (0,0) size 60x13
             RenderText {#text} at (362,0) size 60x13

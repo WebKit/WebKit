@@ -75,7 +75,7 @@ layer at (0,0) size 785x791
           RenderText {#text} at (0,0) size 497x90
             text run at (0,0) width 497: "This page has two floating \"menus\" on the side; one has a green background,"
             text run at (0,18) width 231: "and the other a blue background. "
-            text run at (231,18) width 266: "Due to settings on the 'float' and 'clear'"
+            text run at (231,18) width 265: "Due to settings on the 'float' and 'clear'"
             text run at (0,36) width 497: "properties, the two menus should appear on the left side of the page, the blue"
             text run at (0,54) width 497: "below the green. There should be a 10px gap between the two menus. There"
             text run at (0,72) width 459: "should also be a 10px gap between the top menu and the top of the page."
@@ -146,7 +146,7 @@ layer at (0,0) size 785x791
                     text run at (0,0) width 283: "This page has two floating \"menus\" on the"
                     text run at (0,18) width 283: "side; one has a green background, and the"
                     text run at (0,36) width 165: "other a blue background. "
-                    text run at (165,36) width 118: "Due to settings on"
+                    text run at (165,36) width 117: "Due to settings on"
                     text run at (0,54) width 283: "the 'float' and 'clear' properties, the two"
                     text run at (0,72) width 283: "menus should appear on the left side of the"
                     text run at (0,90) width 283: "page, the blue below the green. There"

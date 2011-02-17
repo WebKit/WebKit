@@ -26,8 +26,8 @@ layer at (0,0) size 785x869
               RenderText {#text} at (2,2) size 20x18
                 text run at (2,2) width 20: "left"
             RenderTableCell {TD} at (203,26) size 171x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (66,2) size 38x18
-                text run at (66,2) width 38: "center"
+              RenderText {#text} at (66,2) size 39x18
+                text run at (66,2) width 39: "center"
             RenderTableCell {TD} at (376,26) size 196x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (165,2) size 29x18
                 text run at (165,2) width 29: "right"

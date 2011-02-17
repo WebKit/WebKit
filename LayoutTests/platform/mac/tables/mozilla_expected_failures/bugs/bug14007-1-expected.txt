@@ -40,8 +40,8 @@ layer at (0,0) size 785x664
                 RenderTableSection {THEAD} at (0,0) size 307x18
                   RenderTableRow {TR} at (0,0) size 307x18
                     RenderTableCell {TH} at (0,0) size 307x18 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (116,0) size 74x18
-                        text run at (116,0) width 74: "Header 2/1"
+                      RenderText {#text} at (116,0) size 75x18
+                        text run at (116,0) width 75: "Header 2/1"
                 RenderTableSection {TBODY} at (0,18) size 307x306
                   RenderTableRow {TR} at (0,0) size 307x306
                     RenderTableCell {TD} at (0,0) size 307x306 [r=0 c=0 rs=1 cs=1]
@@ -129,8 +129,8 @@ layer at (0,0) size 785x664
                 RenderTableSection {THEAD} at (0,0) size 307x18
                   RenderTableRow {TR} at (0,0) size 307x18
                     RenderTableCell {TH} at (0,0) size 307x18 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (116,0) size 74x18
-                        text run at (116,0) width 74: "Header 2/2"
+                      RenderText {#text} at (116,0) size 75x18
+                        text run at (116,0) width 75: "Header 2/2"
                 RenderTableSection {TBODY} at (0,18) size 307x306
                   RenderTableRow {TR} at (0,0) size 307x306
                     RenderTableCell {TD} at (0,0) size 307x306 [r=0 c=0 rs=1 cs=1]

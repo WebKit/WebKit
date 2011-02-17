@@ -501,13 +501,13 @@ layer at (0,0) size 785x1322
                 RenderText {#text} at (2,2) size 5x18
                   text run at (2,2) width 5: "-"
         RenderBlock (anonymous) at (0,1174) size 769x36
-          RenderBR {BR} at (384,0) size 0x18
+          RenderBR {BR} at (384,0) size 1x18
           RenderText {#text} at (4,18) size 761x18
             text run at (4,18) width 761: "Notice the scrollbars, they are rendered outside of the table columns, and the yellow day numbers are hidden under them."
         RenderBlock {P} at (0,1226) size 769x72
-          RenderText {#text} at (9,0) size 756x72
-            text run at (9,0) width 750: "This is probably another bug already covered, or fixed, but day 3 & 16 should have no scrollbar, but the area where the"
-            text run at (6,18) width 417: "other scrollbars are drawn is drawn funny. They are not rendered. "
-            text run at (423,18) width 339: "They seem to be whatever was drawn there before, or"
-            text run at (22,36) width 724: "drawn somewhere else. Day 16 (contaings only the letter \"?\") has a region below the ? mark that is never rendered."
-            text run at (122,54) width 524: "Resize the window so the window can scroll down and scroll the page up & down."
+          RenderText {#text} at (9,0) size 757x72
+            text run at (9,0) width 751: "This is probably another bug already covered, or fixed, but day 3 & 16 should have no scrollbar, but the area where the"
+            text run at (6,18) width 418: "other scrollbars are drawn is drawn funny. They are not rendered. "
+            text run at (423,18) width 340: "They seem to be whatever was drawn there before, or"
+            text run at (22,36) width 725: "drawn somewhere else. Day 16 (contaings only the letter \"?\") has a region below the ? mark that is never rendered."
+            text run at (122,54) width 525: "Resize the window so the window can scroll down and scroll the page up & down."

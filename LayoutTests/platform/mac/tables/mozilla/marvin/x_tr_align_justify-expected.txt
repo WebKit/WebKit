@@ -10,7 +10,7 @@ layer at (0,0) size 800x98
               RenderText {#text} at (2,2) size 292x72
                 text run at (2,2) width 292: "Cell text should be justified which means that"
                 text run at (2,20) width 89: "the right and "
-                text run at (91,20) width 203: "left margins should line up, no"
+                text run at (91,20) width 202: "left margins should line up, no"
                 text run at (2,38) width 246: "matter how long the content becomes "
                 text run at (248,38) width 46: "(except"
                 text run at (2,56) width 262: "the last line which should be left aligned)."
@@ -18,7 +18,7 @@ layer at (0,0) size 800x98
               RenderText {#text} at (2,2) size 292x72
                 text run at (2,2) width 292: "Cell text should be justified which means that"
                 text run at (2,20) width 89: "the right and "
-                text run at (91,20) width 203: "left margins should line up, no"
+                text run at (91,20) width 202: "left margins should line up, no"
                 text run at (2,38) width 246: "matter how long the content becomes "
                 text run at (248,38) width 46: "(except"
                 text run at (2,56) width 262: "the last line which should be left aligned)."

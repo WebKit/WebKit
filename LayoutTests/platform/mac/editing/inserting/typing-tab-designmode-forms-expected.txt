@@ -13,9 +13,9 @@ layer at (0,0) size 800x600
       RenderBR {BR} at (588,39) size 0x0
 layer at (13,13) size 119x13
   RenderBlock {DIV} at (3,3) size 119x13
-    RenderInline {SPAN} at (0,0) size 24x13
-      RenderText {#text} at (1,0) size 24x13
-        text run at (1,0) width 24: "\x{9}"
+    RenderInline {SPAN} at (0,0) size 28x13
+      RenderText {#text} at (1,0) size 28x13
+        text run at (1,0) width 28: "\x{9}"
 layer at (13,36) size 119x13
   RenderBlock {DIV} at (3,3) size 119x13
 caret: position 1 of child 0 {#text} of child 0 {SPAN} of child 0 {DIV} of child 1 {INPUT} of body

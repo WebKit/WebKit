@@ -52,5 +52,5 @@ layer at (11,95) size 622x69 clip at (12,96) size 620x67
 layer at (11,208) size 622x80 clip at (12,209) size 620x78
   RenderTextControl {TEXTAREA} at (1,1) size 622x80 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 616x13
-      RenderText {#text} at (0,0) size 224x13
-        text run at (0,0) width 224: "OK: the height of the textarea is 80 pixels"
+      RenderText {#text} at (0,0) size 225x13
+        text run at (0,0) width 225: "OK: the height of the textarea is 80 pixels"

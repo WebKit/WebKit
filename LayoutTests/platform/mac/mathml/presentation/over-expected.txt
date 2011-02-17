@@ -9,9 +9,9 @@ layer at (0,0) size 800x293
         RenderBlock {math} at (36,0) size 12x31
           RenderBlock {mover} at (1,0) size 10x28
             RenderBlock {mover} at (0,0) size 10x16
-              RenderInline {mi} at (0,0) size 5x12
-                RenderText {#text} at (2,3) size 5x12
-                  text run at (2,3) width 5: "x"
+              RenderInline {mi} at (0,0) size 6x12
+                RenderText {#text} at (2,3) size 6x12
+                  text run at (2,3) width 6: "x"
             RenderBlock {mover} at (0,12) size 10x16
               RenderInline {mi} at (0,0) size 10x16
                 RenderText {#text} at (0,0) size 10x16
@@ -23,9 +23,9 @@ layer at (0,0) size 800x293
         RenderBlock {math} at (36,0) size 12x31
           RenderBlock {mover} at (1,0) size 10x28
             RenderBlock {mover} at (0,0) size 10x16
-              RenderInline {mi} at (0,0) size 5x12
-                RenderText {#text} at (2,3) size 5x12
-                  text run at (2,3) width 5: "y"
+              RenderInline {mi} at (0,0) size 6x12
+                RenderText {#text} at (2,3) size 6x12
+                  text run at (2,3) width 6: "y"
             RenderBlock {mover} at (0,12) size 10x16
               RenderInline {mi} at (0,0) size 10x16
                 RenderText {#text} at (0,0) size 10x16
@@ -66,9 +66,9 @@ layer at (0,0) size 800x293
         RenderBlock {math} at (36,0) size 52x61
           RenderBlock {mover} at (1,0) size 10x61
             RenderBlock {mover} at (0,0) size 10x16
-              RenderInline {mi} at (0,0) size 5x12
-                RenderText {#text} at (2,3) size 5x12
-                  text run at (2,3) width 5: "y"
+              RenderInline {mi} at (0,0) size 6x12
+                RenderText {#text} at (2,3) size 6x12
+                  text run at (2,3) width 6: "y"
             RenderBlock {mover} at (0,12) size 10x49
               RenderBlock {mo} at (0,0) size 10x49
           RenderBlock {div} at (11,3) size 40x40

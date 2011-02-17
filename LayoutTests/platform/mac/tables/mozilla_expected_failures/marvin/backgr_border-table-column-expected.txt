@@ -72,14 +72,14 @@ layer at (0,0) size 785x1477
         RenderTableSection {THEAD} at (3,25) size 624x114
           RenderTableRow {TR} at (0,7) size 624x100
             RenderTableCell {TH} at (7,40) size 138x34 [border: (5px dashed #FFFFFF)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (46,6) size 45x22
-                text run at (46,6) width 45: "TH A"
+              RenderText {#text} at (46,6) size 46x22
+                text run at (46,6) width 46: "TH A"
             RenderTableCell {TH} at (152,32) size 220x50 [border: (13px dotted #FFFFFF)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (87,14) size 45x22
-                text run at (87,14) width 45: "TH B"
+              RenderText {#text} at (87,14) size 46x22
+                text run at (87,14) width 46: "TH B"
             RenderTableCell {TH} at (379,44) size 118x26 [border: (1px dotted #FFFFFF)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (36,2) size 45x22
-                text run at (36,2) width 45: "TH C"
+              RenderText {#text} at (36,2) size 46x22
+                text run at (36,2) width 46: "TH C"
             RenderTableCell {TH} at (504,44) size 113x26 [border: (1px dotted #FFFFFF)] [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (34,2) size 45x22
                 text run at (34,2) width 45: "TH D"
@@ -131,14 +131,14 @@ layer at (0,0) size 785x1477
         RenderTableSection {THEAD} at (2,28) size 584x100
           RenderTableRow {TR} at (0,0) size 584x100
             RenderTableCell {TH} at (0,33) size 137x33 [border: (3px dashed #FFFFFF)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (44,4) size 45x22
-                text run at (44,4) width 45: "TH A"
+              RenderText {#text} at (44,4) size 46x22
+                text run at (44,4) width 46: "TH A"
             RenderTableCell {TH} at (137,31) size 207x37 [border: (7px dotted #FFFFFF)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (81,8) size 45x22
-                text run at (81,8) width 45: "TH B"
+              RenderText {#text} at (81,8) size 46x22
+                text run at (81,8) width 46: "TH B"
             RenderTableCell {TH} at (344,35) size 125x29 [border: (3px dotted #FFFFFF)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (42,4) size 45x22
-                text run at (42,4) width 45: "TH C"
+              RenderText {#text} at (42,4) size 46x22
+                text run at (42,4) width 46: "TH C"
             RenderTableCell {TH} at (469,37) size 115x26 [border: (2px dotted #FFFFFF)] [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (36,3) size 45x22
                 text run at (36,3) width 45: "TH D"

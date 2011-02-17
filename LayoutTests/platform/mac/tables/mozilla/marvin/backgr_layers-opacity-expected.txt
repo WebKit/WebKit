@@ -65,8 +65,8 @@ layer at (0,0) size 785x1280
         RenderTableSection {TBODY} at (1,137) size 616x213
       RenderTable {TABLE} at (0,774) size 578x432 [color=#000000] [bgcolor=#FFFFFF] [border: (6px dotted #000000)]
         RenderBlock {CAPTION} at (0,0) size 577x22 [color=#FFFFFF]
-          RenderText {#text} at (143,0) size 290x22
-            text run at (143,0) width 290: "With 'border-collapse: collapse'"
+          RenderText {#text} at (143,0) size 291x22
+            text run at (143,0) width 291: "With 'border-collapse: collapse'"
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
@@ -85,16 +85,16 @@ layer at (0,0) size 785x1280
 layer at (9,341) size 616x100
   RenderTableRow {TR} at (0,7) size 616x100 [bgcolor=#FF0000]
     RenderTableCell {TH} at (144,32) size 220x50 [border: (13px dotted #000000)] [r=0 c=1 rs=1 cs=1]
-      RenderText {#text} at (87,14) size 45x22
-        text run at (87,14) width 45: "TH B"
+      RenderText {#text} at (87,14) size 46x22
+        text run at (87,14) width 46: "TH B"
     RenderTableCell {TH} at (371,55) size 118x4 [border: (1px dotted #000000)] [r=0 c=2 rs=1 cs=1]
     RenderTableCell {TH} at (496,44) size 113x26 [border: (1px dotted #000000)] [r=0 c=3 rs=1 cs=1]
       RenderText {#text} at (34,2) size 45x22
         text run at (34,2) width 45: "TH D"
 layer at (16,341) size 130x100
   RenderTableCell {TH} at (7,44) size 130x26 [bgcolor=#0000FF] [border: (1px dotted #000000)] [r=0 c=0 rs=1 cs=1]
-    RenderText {#text} at (42,2) size 45x22
-      text run at (42,2) width 45: "TH A"
+    RenderText {#text} at (42,2) size 46x22
+      text run at (42,2) width 46: "TH A"
 layer at (9,661) size 616x129
   RenderTableSection {TFOOT} at (1,350) size 616x129 [bgcolor=#FFFF00]
 layer at (9,668) size 616x115
@@ -137,16 +137,16 @@ layer at (9,570) size 616x84
 layer at (8,819) size 577x99
   RenderTableRow {TR} at (0,0) size 577x99 [bgcolor=#FF0000]
     RenderTableCell {TH} at (135,31) size 207x37 [border: (7px dotted #000000)] [r=0 c=1 rs=1 cs=1]
-      RenderText {#text} at (81,8) size 45x22
-        text run at (81,8) width 45: "TH B"
+      RenderText {#text} at (81,8) size 46x22
+        text run at (81,8) width 46: "TH B"
     RenderTableCell {TH} at (342,48) size 123x3 [border: (1px dotted #000000)] [r=0 c=2 rs=1 cs=1]
     RenderTableCell {TH} at (465,37) size 112x25 [border: (1px dotted #000000)] [r=0 c=3 rs=1 cs=1]
       RenderText {#text} at (34,2) size 45x22
         text run at (34,2) width 45: "TH D"
 layer at (8,819) size 135x99
   RenderTableCell {TH} at (0,34) size 135x31 [bgcolor=#0000FF] [border: (1px dotted #000000)] [r=0 c=0 rs=1 cs=1]
-    RenderText {#text} at (42,2) size 45x22
-      text run at (42,2) width 45: "TH A"
+    RenderText {#text} at (42,2) size 46x22
+      text run at (42,2) width 46: "TH A"
 layer at (8,1108) size 577x114
   RenderTableSection {TFOOT} at (0,317) size 577x114 [bgcolor=#FFFF00]
 layer at (8,1108) size 577x114

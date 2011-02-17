@@ -213,7 +213,7 @@ layer at (0,0) size 785x669
                 RenderBR {BR} at (78,590) size 0x0
               RenderBR {BR} at (4,593) size 0x18
             RenderTableCell {TD} at (148,0) size 486x24 [bgcolor=#660000] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=3]
-              RenderImage {IMG} at (10,4) size 465x16
+              RenderImage {IMG} at (11,4) size 465x16
           RenderTableRow {TR} at (0,24) size 634x69
             RenderTableCell {TD} at (148,24) size 128x69 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderInline {A} at (0,0) size 120x18
@@ -238,12 +238,12 @@ layer at (0,0) size 785x669
                         text run at (16,0) width 143: "Tue, 27 Jul 1999, 2:47pm EDT"
                       RenderBR {BR} at (159,9) size 0x0
                 RenderText {#text} at (0,0) size 0x0
-                RenderInline {FONT} at (0,0) size 104x15 [color=#000000]
-                  RenderInline {B} at (0,0) size 104x15
-                    RenderInline {SPAN} at (0,0) size 104x15
-                      RenderText {#text} at (35,11) size 104x15
-                        text run at (35,11) width 104: "Market Snapshot"
-                      RenderBR {BR} at (139,23) size 0x0
+                RenderInline {FONT} at (0,0) size 105x15 [color=#000000]
+                  RenderInline {B} at (0,0) size 105x15
+                    RenderInline {SPAN} at (0,0) size 105x15
+                      RenderText {#text} at (35,11) size 105x15
+                        text run at (35,11) width 105: "Market Snapshot"
+                      RenderBR {BR} at (139,23) size 1x0
                 RenderText {#text} at (0,0) size 0x0
               RenderBlock {CENTER} at (4,30) size 175x487
                 RenderInline {A} at (0,0) size 175x18
@@ -275,8 +275,8 @@ layer at (0,0) size 785x669
                     text run at (127,315) width 3: " "
                 RenderText {#text} at (0,0) size 0x0
                 RenderBR {BR} at (0,0) size 0x0
-                RenderBR {BR} at (87,326) size 0x18
-                RenderBR {BR} at (87,344) size 0x18
+                RenderBR {BR} at (87,326) size 1x18
+                RenderBR {BR} at (87,344) size 1x18
                 RenderInline {A} at (0,0) size 125x18
                   RenderText {#text} at (0,0) size 0x0
                   RenderImage {IMG} at (25,362) size 125x125

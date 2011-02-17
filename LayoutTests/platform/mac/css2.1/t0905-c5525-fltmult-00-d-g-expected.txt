@@ -9,8 +9,8 @@ layer at (0,0) size 800x228
           text run at (388,0) width 261: "matching cross section of the four blocks."
       RenderBlock (floating) {DIV} at (0,44) size 140x130 [bgcolor=#FFFF00] [border: (20px solid #000000)]
         RenderBlock {P} at (40,56) size 60x18
-          RenderText {#text} at (6,0) size 47x18
-            text run at (6,0) width 47: "Yellow"
+          RenderText {#text} at (6,0) size 48x18
+            text run at (6,0) width 48: "Yellow"
       RenderBlock (floating) {DIV} at (160,44) size 140x130 [color=#FFFFFF] [bgcolor=#0000FF] [border: (20px solid #000000)]
         RenderBlock {P} at (40,56) size 60x18
           RenderText {#text} at (15,0) size 30x18
@@ -21,8 +21,8 @@ layer at (0,0) size 800x228
             text run at (17,0) width 26: "Red"
       RenderBlock (floating) {DIV} at (480,44) size 140x130 [color=#FFFFFF] [bgcolor=#008000] [border: (20px solid #000000)]
         RenderBlock {P} at (40,56) size 60x18
-          RenderText {#text} at (10,0) size 39x18
-            text run at (10,0) width 39: "Green"
+          RenderText {#text} at (10,0) size 40x18
+            text run at (10,0) width 40: "Green"
       RenderBlock {DIV} at (0,184) size 784x18
         RenderTable {TABLE} at (0,0) size 620x18
           RenderTableSection {TBODY} at (0,0) size 620x18

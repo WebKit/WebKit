@@ -46,7 +46,7 @@ layer at (0,0) size 800x600
           text run at (0,36) width 733: "rutrum. Suspendisse sodales lectus sit amet nulla. Morbi tortor arcu, convallis blandit, elementum eu, aliquet a, tellus."
 layer at (40,180) size 258x28
   RenderBlock {DIV} at (12,12) size 258x28
-    RenderText {#text} at (1,0) size 224x28
-      text run at (1,0) width 224: "Lorem ipsum dolor"
+    RenderText {#text} at (1,0) size 222x28
+      text run at (1,0) width 222: "Lorem ipsum dolor"
 selection start: position 6 of child 0 {#text} of child 0 {DIV} of child 7 {INPUT} of body
 selection end:   position 17 of child 0 {#text} of child 0 {DIV} of child 7 {INPUT} of body

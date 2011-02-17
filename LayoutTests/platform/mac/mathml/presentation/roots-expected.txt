@@ -411,6 +411,6 @@ layer at (406,466) size 28x28
           RenderText {#text} at (13,0) size 5x12
             text run at (13,0) width 5: "y"
     RenderBlock {mfrac} at (2,12) size 22x14
-      RenderInline {mi} at (0,0) size 5x12
-        RenderText {#text} at (8,2) size 5x12
-          text run at (8,2) width 5: "z"
+      RenderInline {mi} at (0,0) size 6x12
+        RenderText {#text} at (8,2) size 6x12
+          text run at (8,2) width 6: "z"

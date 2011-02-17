@@ -44,39 +44,39 @@ layer at (0,0) size 800x600
           RenderBlock {CENTER} at (2,20) size 780x150
             RenderBlock {P} at (0,0) size 780x150
               RenderBlock {P} at (0,0) size 780x110
-                RenderText {#text} at (2,0) size 71x22
-                  text run at (2,0) width 71: "This is an"
-                RenderText {#text} at (73,0) size 5x22
-                  text run at (73,0) width 5: " "
-                RenderInline {B} at (0,0) size 82x22
-                  RenderText {#text} at (78,0) size 82x22
-                    text run at (78,0) width 82: "interactive"
-                RenderText {#text} at (160,0) size 5x22
-                  text run at (160,0) width 5: " "
-                RenderText {#text} at (165,0) size 615x44
-                  text run at (165,0) width 612: "documentation site, so please help out by posting any useful information that you've"
-                  text run at (777,0) width 3: " "
-                  text run at (325,22) width 129: "had to search out."
-                RenderBR {BR} at (454,39) size 0x0
-                RenderText {#text} at (20,44) size 110x22
-                  text run at (20,44) width 110: "(Adding to this"
-                RenderText {#text} at (130,44) size 5x22
-                  text run at (130,44) width 5: " "
-                RenderInline {A} at (0,0) size 107x22 [color=#0000EE]
-                  RenderText {#text} at (135,44) size 107x22
-                    text run at (135,44) width 107: "wiki is so easy"
-                RenderText {#text} at (242,44) size 202x22
-                  text run at (242,44) width 202: ", you can't screw it up). See"
-                RenderText {#text} at (444,44) size 5x22
-                  text run at (444,44) width 5: " "
-                RenderInline {A} at (0,0) size 114x22 [color=#0000EE]
-                  RenderText {#text} at (449,44) size 114x22
-                    text run at (449,44) width 114: "Wiki Reference"
-                RenderText {#text} at (563,44) size 5x22
-                  text run at (563,44) width 5: " "
-                RenderText {#text} at (568,44) size 191x22
-                  text run at (568,44) width 191: "for text formatting syntax."
-                RenderBR {BR} at (759,61) size 0x0
+                RenderText {#text} at (2,0) size 72x22
+                  text run at (2,0) width 72: "This is an"
+                RenderText {#text} at (73,0) size 6x22
+                  text run at (73,0) width 6: " "
+                RenderInline {B} at (0,0) size 83x22
+                  RenderText {#text} at (78,0) size 83x22
+                    text run at (78,0) width 83: "interactive"
+                RenderText {#text} at (160,0) size 6x22
+                  text run at (160,0) width 6: " "
+                RenderText {#text} at (165,0) size 616x44
+                  text run at (165,0) width 613: "documentation site, so please help out by posting any useful information that you've"
+                  text run at (777,0) width 4: " "
+                  text run at (325,22) width 130: "had to search out."
+                RenderBR {BR} at (454,39) size 1x0
+                RenderText {#text} at (20,44) size 111x22
+                  text run at (20,44) width 111: "(Adding to this"
+                RenderText {#text} at (130,44) size 6x22
+                  text run at (130,44) width 6: " "
+                RenderInline {A} at (0,0) size 108x22 [color=#0000EE]
+                  RenderText {#text} at (135,44) size 108x22
+                    text run at (135,44) width 108: "wiki is so easy"
+                RenderText {#text} at (242,44) size 203x22
+                  text run at (242,44) width 203: ", you can't screw it up). See"
+                RenderText {#text} at (444,44) size 6x22
+                  text run at (444,44) width 6: " "
+                RenderInline {A} at (0,0) size 115x22 [color=#0000EE]
+                  RenderText {#text} at (449,44) size 115x22
+                    text run at (449,44) width 115: "Wiki Reference"
+                RenderText {#text} at (563,44) size 6x22
+                  text run at (563,44) width 6: " "
+                RenderText {#text} at (568,44) size 192x22
+                  text run at (568,44) width 192: "for text formatting syntax."
+                RenderBR {BR} at (759,61) size 1x0
                 RenderText {#text} at (161,66) size 278x22
                   text run at (161,66) width 278: "Info for setting up your own wiki is at"
                 RenderText {#text} at (439,66) size 5x22
@@ -87,13 +87,13 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (614,66) size 5x22
                   text run at (614,66) width 5: "."
                 RenderBR {BR} at (619,83) size 0x0
-                RenderText {#text} at (96,88) size 509x22
-                  text run at (96,88) width 509: "Check out a cool wiki editor application that helps in wiki generation:"
-                RenderText {#text} at (605,88) size 5x22
-                  text run at (605,88) width 5: " "
-                RenderInline {A} at (0,0) size 73x22 [color=#0000EE]
-                  RenderText {#text} at (610,88) size 73x22
-                    text run at (610,88) width 73: "Wikinator"
+                RenderText {#text} at (96,88) size 510x22
+                  text run at (96,88) width 510: "Check out a cool wiki editor application that helps in wiki generation:"
+                RenderText {#text} at (605,88) size 6x22
+                  text run at (605,88) width 6: " "
+                RenderInline {A} at (0,0) size 74x22 [color=#0000EE]
+                  RenderText {#text} at (610,88) size 74x22
+                    text run at (610,88) width 74: "Wikinator"
               RenderBlock {P} at (0,128) size 780x22
                 RenderText {#text} at (85,0) size 610x22
                   text run at (85,0) width 610: "Start browsing the topics below, or use the search field at the bottom of every page."

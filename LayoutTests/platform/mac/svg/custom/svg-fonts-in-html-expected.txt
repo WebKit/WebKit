@@ -21,20 +21,20 @@ layer at (173,32) size 453x453
       RenderInline {SPAN} at (0,0) size 0x0
 layer at (173,47) size 453x188
   RenderBlock (positioned) {H1} at (0,15) size 453x188 [color=#DD9955]
-    RenderInline {SPAN} at (0,0) size 340x190
-      RenderText {#text} at (63,-1) size 340x190
+    RenderInline {SPAN} at (0,0) size 341x190
+      RenderText {#text} at (63,-1) size 341x190
         text run at (63,-1) width 327: "CSS ZEN"
-        text run at (56,93) width 340: "GARDEN"
+        text run at (56,93) width 341: "GARDEN"
 layer at (173,118) size 453x21
   RenderBlock (positioned) {H2} at (0,86) size 453x21 [color=#EEFF00]
     RenderInline {SPAN} at (0,0) size 149x19
       RenderText {#text} at (152,1) size 88x19
         text run at (152,1) width 88: "The Beauty of "
-      RenderInline {ACRONYM} at (0,0) size 21x19
-        RenderText {#text} at (240,1) size 21x19
-          text run at (240,1) width 21: "CSS"
-      RenderText {#text} at (261,1) size 40x19
-        text run at (261,1) width 40: " Design"
+      RenderInline {ACRONYM} at (0,0) size 22x19
+        RenderText {#text} at (239,1) size 22x19
+          text run at (239,1) width 22: "CSS"
+      RenderText {#text} at (260,1) size 41x19
+        text run at (260,1) width 41: " Design"
 layer at (173,351) size 453x134
   RenderBlock (positioned) {DIV} at (0,319) size 453x134
     RenderInline {P} at (0,0) size 431x29
@@ -45,13 +45,13 @@ layer at (173,351) size 453x134
         RenderInline {ACRONYM} at (0,0) size 31x15
           RenderText {#text} at (207,14) size 31x15
             text run at (207,14) width 31: "DOM"
-        RenderText {#text} at (238,14) size 112x15
-          text run at (238,14) width 112: "s, and broken "
+        RenderText {#text} at (238,14) size 111x15
+          text run at (238,14) width 111: "s, and broken "
         RenderInline {ACRONYM} at (0,0) size 27x15
-          RenderText {#text} at (350,14) size 27x15
-            text run at (350,14) width 27: "CSS"
-        RenderText {#text} at (377,14) size 65x15
-          text run at (377,14) width 65: " support."
+          RenderText {#text} at (349,14) size 27x15
+            text run at (349,14) width 27: "CSS"
+        RenderText {#text} at (376,14) size 64x15
+          text run at (376,14) width 64: " support."
     RenderText {#text} at (0,0) size 0x0
     RenderInline {P} at (0,0) size 431x43
       RenderInline {SPAN} at (0,0) size 431x43
@@ -69,12 +69,12 @@ layer at (173,351) size 453x134
             text run at (151,56) width 40: "WaSP"
         RenderText {#text} at (191,56) size 221x15
           text run at (191,56) width 221: " and the major browser creators."
-    RenderText {#text} at (412,56) size 5x15
-      text run at (412,56) width 5: " "
+    RenderText {#text} at (412,56) size 4x15
+      text run at (412,56) width 4: " "
     RenderInline {P} at (0,0) size 431x71
       RenderInline {SPAN} at (0,0) size 431x71
-        RenderText {#text} at (417,56) size 431x71
-          text run at (417,56) width 25: "The"
+        RenderText {#text} at (416,56) size 431x71
+          text run at (416,56) width 25: "The"
           text run at (11,70) width 431: "css Zen Garden invites you to relax and meditate on the"
           text run at (11,84) width 431: "important lessons of the masters. Begin to see with clarity."
           text run at (11,98) width 431: "Learn to use the (yet to be) time-honored techniques in new"

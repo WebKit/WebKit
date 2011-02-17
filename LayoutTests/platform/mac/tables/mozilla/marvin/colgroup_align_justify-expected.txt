@@ -26,8 +26,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (21,2) size 58x18
                 text run at (21,2) width 58: "Country"
             RenderTableCell {TH} at (104,26) size 300x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (135,2) size 29x18
-                text run at (135,2) width 29: "City"
+              RenderText {#text} at (135,2) size 30x18
+                text run at (135,2) width 30: "City"
             RenderTableCell {TH} at (406,26) size 110x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 106x18
                 text run at (2,2) width 106: "ABC Company"

@@ -250,7 +250,7 @@ layer at (0,0) size 800x544
                           text run at (8,7) width 12: "23"
                 RenderTableRow {mtr} at (0,38) size 78x19
                   RenderTableCell {mtd} at (0,38) size 26x19 [r=2 c=0 rs=1 cs=1]
-                    RenderBlock {msub} at (3,0) size 19x19
+                    RenderBlock {msub} at (4,0) size 19x19
                       RenderBlock {msub} at (0,0) size 7x16
                         RenderInline {mi} at (0,0) size 7x16
                           RenderText {#text} at (0,0) size 7x16
@@ -259,7 +259,7 @@ layer at (0,0) size 800x544
                         RenderText {#text} at (7,7) size 12x12
                           text run at (7,7) width 12: "31"
                   RenderTableCell {mtd} at (26,38) size 26x19 [r=2 c=1 rs=1 cs=1]
-                    RenderBlock {msub} at (3,0) size 19x19
+                    RenderBlock {msub} at (4,0) size 19x19
                       RenderBlock {msub} at (0,0) size 7x16
                         RenderInline {mi} at (0,0) size 7x16
                           RenderText {#text} at (0,0) size 7x16
@@ -268,7 +268,7 @@ layer at (0,0) size 800x544
                         RenderText {#text} at (7,7) size 12x12
                           text run at (7,7) width 12: "32"
                   RenderTableCell {mtd} at (52,38) size 26x19 [r=2 c=2 rs=1 cs=1]
-                    RenderBlock {msub} at (3,0) size 19x19
+                    RenderBlock {msub} at (4,0) size 19x19
                       RenderBlock {msub} at (0,0) size 7x16
                         RenderInline {mi} at (0,0) size 7x16
                           RenderText {#text} at (0,0) size 7x16

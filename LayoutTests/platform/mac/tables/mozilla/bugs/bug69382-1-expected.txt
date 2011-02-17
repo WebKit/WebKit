@@ -14,11 +14,11 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (2,2) size 69x18
                   text run at (2,2) width 69: "Relevance"
               RenderTableCell {TH} at (99,2) size 530x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-                RenderText {#text} at (229,2) size 71x18
-                  text run at (229,2) width 71: "Title Long"
+                RenderText {#text} at (229,2) size 72x18
+                  text run at (229,2) width 72: "Title Long"
               RenderTableCell {TH} at (631,2) size 109x22 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
-                RenderText {#text} at (29,2) size 50x18
-                  text run at (29,2) width 50: "Author"
+                RenderText {#text} at (29,2) size 51x18
+                  text run at (29,2) width 51: "Author"
               RenderTableCell {TH} at (742,2) size 36x22 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 32x18
                   text run at (2,2) width 32: "Date"

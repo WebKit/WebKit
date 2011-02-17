@@ -32,9 +32,9 @@ layer at (67,264) size 45x11
         text run at (0,0) width 26: "00:00"
 layer at (238,264) size 45x11
   RenderFlexibleBox {DIV} at (171,2) size 45x11 [color=#FFFFFF]
-    RenderBlock (anonymous) at (6,0) size 32x11
-      RenderText {#text} at (0,0) size 32x11
-        text run at (0,0) width 32: "-00:06"
+    RenderBlock (anonymous) at (7,0) size 31x11
+      RenderText {#text} at (0,0) size 31x11
+        text run at (0,0) width 31: "-00:06"
 layer at (8,282) size 320x240
   RenderBlock (relative positioned) {DIV} at (0,0) size 320x240
 layer at (8,497) size 320x25
@@ -53,6 +53,6 @@ layer at (57,504) size 45x11
         text run at (0,0) width 26: "00:00"
 layer at (228,504) size 45x11
   RenderFlexibleBox {DIV} at (171,2) size 45x11 [color=#FFFFFF]
-    RenderBlock (anonymous) at (6,0) size 32x11
-      RenderText {#text} at (0,0) size 32x11
-        text run at (0,0) width 32: "-00:06"
+    RenderBlock (anonymous) at (7,0) size 31x11
+      RenderText {#text} at (0,0) size 31x11
+        text run at (0,0) width 31: "-00:06"
