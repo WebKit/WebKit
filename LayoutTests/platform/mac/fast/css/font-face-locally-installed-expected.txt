@@ -15,11 +15,11 @@ layer at (0,0) size 800x600
           text run at (0,18) width 73: "match than "
           text run at (73,18) width 51: "the rule."
       RenderBlock {P} at (0,52) size 784x19
-        RenderText {#text} at (0,0) size 237x18
-          text run at (0,0) width 237: "This should be Lucida Grande "
-        RenderInline {I} at (0,0) size 197x18
-          RenderText {#text} at (237,1) size 197x18
-            text run at (237,1) width 197: "and this should be Times Italic."
+        RenderText {#text} at (0,0) size 236x18
+          text run at (0,0) width 236: "This should be Lucida Grande "
+        RenderInline {I} at (0,0) size 198x18
+          RenderText {#text} at (235,1) size 198x18
+            text run at (235,1) width 198: "and this should be Times Italic."
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,87) size 784x18
         RenderText {#text} at (0,0) size 140x18
