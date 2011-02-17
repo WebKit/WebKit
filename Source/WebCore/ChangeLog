@@ -1,3 +1,23 @@
+2011-02-16  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION (r61234): washingtonpost.com top bar looks wrong, doesn't animate
+        https://bugs.webkit.org/show_bug.cgi?id=53717
+
+        Test: http/tests/local/absolute-url-strip-whitespace.html
+
+        This was theoretically tested already in fast/url, however the
+        tests were disabled due to lack of any clean way to test absolute
+        url parsing in JavaScript.  I added a test which mimics the sites
+        behavior using our local http server.  There seems to be no other
+        way to test this at the moment.
+
+        * platform/KURL.cpp:
+        (WebCore::shouldTrimFromURL):
+         - Any char 0-20 should be removed (matches google-url and other browsers).
+        (WebCore::KURL::init):
+
 2011-02-16  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by James Robinson.

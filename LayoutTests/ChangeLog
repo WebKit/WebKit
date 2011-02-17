@@ -1,3 +1,14 @@
+2011-02-16  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION (r61234): washingtonpost.com top bar looks wrong, doesn't animate
+        https://bugs.webkit.org/show_bug.cgi?id=53717
+
+        * http/tests/local/absolute-url-strip-whitespace-expected.txt: Added.
+        * http/tests/local/absolute-url-strip-whitespace.html: Added.
+        * http/tests/resources/absolute-url-strip-whitespace.js: Added.
+
 2011-02-16  Martin Robinson  <mrobinson@igalia.com>
 
         Add another batch of GTK+ Mozilla test suite results.

@@ -342,6 +342,14 @@ KURL::KURL(const KURL& base, const String& relative, const TextEncoding& encodin
     init(base, relative, encoding.encodingForFormSubmission());
 }
 
+static bool shouldTrimFromURL(unsigned char c)
+{
+    // Browsers ignore leading/trailing whitespace and control
+    // characters from URLs.  Note that c is an *unsigned* char here
+    // so this comparison should only catch control characters.
+    return c <= ' ';
+}
+
 void KURL::init(const KURL& base, const String& relative, const TextEncoding& encoding)
 {
     // Allow resolutions with a null or empty base URL, but not with any other invalid one.
@@ -377,15 +385,15 @@ void KURL::init(const KURL& base, const String& relative, const TextEncoding& en
         len = strlen(str);
     }
 
-    // Get rid of leading whitespace.
-    while (*str == ' ') {
+    // Get rid of leading whitespace and control characters.
+    while (len && shouldTrimFromURL(*str)) {
         originalString = 0;
         str++;
         --len;
     }
 
-    // Get rid of trailing whitespace.
-    while (len && str[len - 1] == ' ') {
+    // Get rid of trailing whitespace and control characters.
+    while (len && shouldTrimFromURL(str[len - 1])) {
         originalString = 0;
         str[--len] = '\0';
     }
