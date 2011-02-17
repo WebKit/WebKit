@@ -35,25 +35,25 @@ layer at (0,0) size 800x600
                 text run at (1,1) width 4: " "
 layer at (13,33) size 119x13
   RenderBlock {DIV} at (3,3) size 119x13
-    RenderText {#text} at (1,0) size 48x13
-      text run at (1,0) width 48: "New Mail"
+    RenderText {#text} at (1,0) size 49x13
+      text run at (1,0) width 49: "New Mail"
 layer at (141,33) size 2x13 scrollWidth 31
   RenderBlock {DIV} at (3,3) size 2x13
     RenderText {#text} at (1,0) size 29x13
       text run at (1,0) width 29: "Reply"
-layer at (150,33) size 2x13 scrollWidth 48
+layer at (150,33) size 2x13 scrollWidth 49
   RenderBlock {DIV} at (3,3) size 2x13
-    RenderText {#text} at (1,0) size 46x13
-      text run at (1,0) width 46: "Reply All"
+    RenderText {#text} at (1,0) size 47x13
+      text run at (1,0) width 47: "Reply All"
 layer at (13,96) size 519x13
   RenderBlock {DIV} at (3,3) size 519x13
-    RenderText {#text} at (1,0) size 48x13
-      text run at (1,0) width 48: "New Mail"
+    RenderText {#text} at (1,0) size 49x13
+      text run at (1,0) width 49: "New Mail"
 layer at (541,96) size 2x13 scrollWidth 31
   RenderBlock {DIV} at (3,3) size 2x13
     RenderText {#text} at (1,0) size 29x13
       text run at (1,0) width 29: "Reply"
-layer at (550,96) size 2x13 scrollWidth 48
+layer at (550,96) size 2x13 scrollWidth 49
   RenderBlock {DIV} at (3,3) size 2x13
-    RenderText {#text} at (1,0) size 46x13
-      text run at (1,0) width 46: "Reply All"
+    RenderText {#text} at (1,0) size 47x13
+      text run at (1,0) width 47: "Reply All"
