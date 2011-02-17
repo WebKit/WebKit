@@ -102,6 +102,11 @@ symbian|maemo5|maemo6 {
 
 disable_uitools: DEFINES *= QT_NO_UITOOLS
 
+!contains(QT_CONFIG, modular) {
+    $$QT.phonon.includes = $QMAKE_INCDIR_QT/phonon
+    $$QT.phonon.libs = $$QMAKE_LIBDIR_QT
+}
+
 # Disable a few warnings on Windows. The warnings are also
 # disabled in WebKitLibraries/win/tools/vsprops/common.vsprops
 win32-msvc*|wince*: QMAKE_CXXFLAGS += -wd4291 -wd4344 -wd4396 -wd4503 -wd4800 -wd4819 -wd4996

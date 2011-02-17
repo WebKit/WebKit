@@ -1,3 +1,16 @@
+2011-02-17  Kristian Amlie  <kristian.amlie@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        Updated include paths for phonon.
+
+        [Qt] WebKit patches required to work with a modularized version of Qt
+        https://bugs.webkit.org/show_bug.cgi?id=53916
+
+        Build fix. No tests.
+
+        * WebCore.pro:
+
 2011-02-17  Hui Huang  <hui.2.huang@nokia.com>
 
         Reviewed by Laszlo Gombos.
