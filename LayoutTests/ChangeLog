@@ -1,5 +1,13 @@
 2011-02-17  Adam Roben  <aroben@apple.com>
 
+        Check in expected failure results on Windows for accessibility/canvas-fallback-content.html
+
+        Failure is tracked by <http://webkit.org/b/54654>.
+
+        * platform/win/accessibility/canvas-fallback-content-expected.txt: Added.
+
+2011-02-17  Adam Roben  <aroben@apple.com>
+
         Skip a failing test on Windows
 
         Failure is tracked by <http://webkit.org/b/54655>.
