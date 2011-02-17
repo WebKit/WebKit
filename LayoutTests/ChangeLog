@@ -1,3 +1,11 @@
+2011-02-17  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed expectations change.
+
+        Temporarily disabled tests that need rebaselining while we try to fix the rebaselining tool.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-17  Jeremy Orlow  <jorlow@chromium.org>
 
         Fix minor problem with test.
