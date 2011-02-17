@@ -57,7 +57,7 @@ protected:
     ExternalTypeBase m_value;
 };
 
-template <typename T> class WriteBarrierTranslator {
+template <typename T> class WriteBarrierTranslator : public SlotAccessor<WriteBarrierBase<T>, T> {
 public:
     typedef JSCell* WriteBarrierStorageType;
     static WriteBarrierStorageType convertToStorage(T* cell) { return reinterpret_cast<WriteBarrierStorageType>(cell); }
@@ -66,7 +66,7 @@ public:
 
 template <> class WriteBarrierTranslator<Unknown>;
 
-template <typename T> class WriteBarrierBase : public SlotAccessor<DeprecatedPtr<T>, T>, public WriteBarrierTranslator<T> {
+template <typename T> class WriteBarrierBase : public WriteBarrierTranslator<T> {
 public:
     typedef typename SlotTypes<T>::ExternalType ExternalType;
     typedef typename SlotTypes<T>::ExternalTypeBase ExternalTypeBase;
@@ -98,7 +98,7 @@ protected:
     StorageType m_value;
 };
 
-template <> class WriteBarrierTranslator<Unknown> {
+template <> class WriteBarrierTranslator<Unknown> : public SlotAccessor<WriteBarrierBase<Unknown>, Unknown> {
 public:
     void setUndefined() { static_cast<WriteBarrierBase<Unknown>*>(this)->setWithoutWriteBarrier(jsUndefined()); }
     typedef EncodedJSValue WriteBarrierStorageType;

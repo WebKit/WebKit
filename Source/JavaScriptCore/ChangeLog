@@ -1,5 +1,11 @@
 2011-02-17  Oliver Hunt  <oliver@apple.com>
 
+        Attempt to fix windows build
+
+        * runtime/WriteBarrier.h:
+
+2011-02-17  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Geoffrey Garen.
 
         Refactor WriteBarrier and DeprecatedPtr to have less code duplication.
