@@ -1,3 +1,13 @@
+2011-02-17  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, rebaseline GTK test results.
+
+        [GStreamer] media/video-zoom-controls.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=50918
+
+        * platform/gtk/Skipped:
+        * platform/gtk/media/video-zoom-controls-expected.txt:
+
 2011-02-17  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed.
