@@ -1,3 +1,19 @@
+2011-02-17  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        [Qt] Crash when calling QWebFrame::setUrl() while a previous load has pending requests
+        https://bugs.webkit.org/show_bug.cgi?id=49216
+
+        CachedResourceRequest::didFail() will protect the CachedResourceLoader's
+        document() while it runs, but if we're being called from the Document destructor,
+        the protecting RefPtr<Document> will cause a double-delete instead.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::~CachedResourceLoader): Clear the m_document
+        pointer so CachedResourceRequest::didFail() won't try to protect it.
+        (WebCore::CachedResourceLoader::frame): Add null-check for m_document.
+
 2011-02-17  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Pavel Feldman.

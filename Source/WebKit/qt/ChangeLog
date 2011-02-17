@@ -1,1 +1,10 @@
+2011-02-17  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        [Qt] Crash when calling QWebFrame::setUrl() while a previous load has pending requests
+        https://bugs.webkit.org/show_bug.cgi?id=49216
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 == Rolled over to ChangeLog-2011-02-16 ==

@@ -647,6 +647,7 @@ private slots:
     void setContent_data();
     void setContent();
     void setCacheLoadControlAttribute();
+    void setUrlWithPendingLoads();
 
 private:
     QString  evalJS(const QString&s) {
@@ -3285,6 +3286,13 @@ void tst_QWebFrame::webElementSlotOnly()
     m_page->mainFrame()->addToJavaScriptWindowObject("myWebElementSlotObject", &object);
     evalJS("myWebElementSlotObject.doSomethingWithWebElement(document.body)");
     QCOMPARE(evalJS("myWebElementSlotObject.tagName"), QString("BODY"));
+}
+
+void tst_QWebFrame::setUrlWithPendingLoads()
+{
+    QWebPage page;
+    page.mainFrame()->setHtml("<img src='dummy:'/>");
+    page.mainFrame()->setUrl(QUrl("about:blank"));
 }
 
 QTEST_MAIN(tst_QWebFrame)

@@ -96,6 +96,9 @@ CachedResourceLoader::~CachedResourceLoader()
     // FIXME: Remove this and the related code when it has served its purpose.
     if (m_isInMethod)
         CRASH();
+
+    m_document = 0;
+
     cancelRequests();
     clearPreloads();
     DocumentResourceMap::iterator end = m_documentResources.end();
@@ -120,7 +123,7 @@ CachedResource* CachedResourceLoader::cachedResource(const KURL& resourceURL) co
 
 Frame* CachedResourceLoader::frame() const
 {
-    return m_document->frame();
+    return m_document ? m_document->frame() : 0;
 }
 
 CachedImage* CachedResourceLoader::requestImage(const String& url)
