@@ -1,5 +1,11 @@
 2011-02-17  Brian Weinstein  <bweinstein@apple.com>
 
+        Qt build fix.
+
+        * WebKit2.pro: Update after renaming of MemoryCache to ResourceCache.
+
+2011-02-17  Brian Weinstein  <bweinstein@apple.com>
+
         Mac build fix.
 
         * WebKit2.xcodeproj/project.pbxproj: Use relative to group instead of absolute paths. Not everyone's home
@@ -65,18 +71,18 @@
         * UIProcess/WebProcessProxy.cpp:
         (WebKit::WebProcessProxy::didReceiveMessage): Add a new message class.
 
-        * WebProcess/MemoryCache/WebResourceCacheManager.cpp: Added.
+        * WebProcess/ResourceCache/WebResourceCacheManager.cpp: Added.
         (WebKit::WebResourceCacheManager::shared):
         (WebKit::WebResourceCacheManager::WebResourceCacheManager):
         (WebKit::WebResourceCacheManager::~WebResourceCacheManager):
         (WebKit::WebResourceCacheManager::didReceiveMessage): Calls through to didReceiveWebResourceCacheManagerMessage.
         (WebKit::WebResourceCacheManager::getCacheOrigins): Gets a list of origins with cache entries from the memory
             cache, and puts them into a vector to send to the UI process.
-        (WebKit::WebResourceCacheManager::deleteCacheForOrigin): Calls through to memoryCache to delete all cache entries
+        (WebKit::WebResourceCacheManager::deleteCacheForOrigin): Calls through to ResourceCache to delete all cache entries
             from a given origin.
         (WebKit::WebResourceCacheManager::deleteAllCache):
-        * WebProcess/MemoryCache/WebResourceCacheManager.h: Added.
-        * WebProcess/MemoryCache/WebResourceCacheManager.messages.in: Added.
+        * WebProcess/ResourceCache/WebResourceCacheManager.h: Added.
+        * WebProcess/ResourceCache/WebResourceCacheManager.messages.in: Added.
 
         * WebProcess/WebProcess.cpp:
         (WebKit::WebProcess::didReceiveMessage):

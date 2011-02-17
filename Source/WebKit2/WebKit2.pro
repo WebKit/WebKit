@@ -62,7 +62,7 @@ WEBKIT2_INCLUDEPATH = \
     WebProcess/InjectedBundle \
     WebProcess/InjectedBundle/DOM \
     WebProcess/InjectedBundle/API/c \
-    WebProcess/MemoryCache \
+    WebProcess/ResourceCache \
     WebProcess/Plugins \
     WebProcess/Plugins/Netscape \
     WebProcess/WebCoreSupport \
@@ -337,7 +337,7 @@ HEADERS += \
     WebProcess/InjectedBundle/InjectedBundlePageUIClient.h \
     WebProcess/InjectedBundle/InjectedBundleScriptWorld.h \
     WebProcess/InjectedBundle/InjectedBundleUserMessageCoders.h \
-    WebProcess/MemoryCache/WebResourceCacheManager.h \
+    WebProcess/ResourceCache/WebResourceCacheManager.h \
     WebProcess/Plugins/Netscape/JSNPMethod.h \
     WebProcess/Plugins/Netscape/JSNPObject.h \
     WebProcess/Plugins/Netscape/NPJSObject.h \
@@ -578,7 +578,7 @@ SOURCES += \
     WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp \
     WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp \
     WebProcess/InjectedBundle/qt/InjectedBundleQt.cpp \
-    WebProcess/MemoryCache/WebResourceCacheManager.cpp \
+    WebProcess/ResourceCache/WebResourceCacheManager.cpp \
     WebProcess/Plugins/Netscape/JSNPMethod.cpp \
     WebProcess/Plugins/Netscape/JSNPObject.cpp \
     WebProcess/Plugins/Netscape/NPJSObject.cpp \
