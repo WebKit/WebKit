@@ -853,6 +853,7 @@ SOURCES += \
     html/HTMLScriptElement.cpp \
     html/HTMLSelectElement.cpp \
     html/HTMLStyleElement.cpp \
+    html/HTMLSummaryElement.cpp \
     html/HTMLTableCaptionElement.cpp \
     html/HTMLTableCellElement.cpp \
     html/HTMLTableColElement.cpp \
@@ -1803,6 +1804,7 @@ HEADERS += \
     html/HTMLSelectElement.h \
     html/HTMLSourceElement.h \
     html/HTMLStyleElement.h \
+    html/HTMLSummaryElement.h \
     html/HTMLTableCaptionElement.h \
     html/HTMLTableCellElement.h \
     html/HTMLTableColElement.h \

@@ -97,6 +97,7 @@
 #include "HTMLSelectElement.cpp"
 #include "HTMLSourceElement.cpp"
 #include "HTMLStyleElement.cpp"
+#include "HTMLSummaryElement.cpp"
 #include "HTMLTableCaptionElement.cpp"
 #include "HTMLTableCellElement.cpp"
 #include "HTMLTableColElement.cpp"

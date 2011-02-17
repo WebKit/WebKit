@@ -115,7 +115,7 @@ strike interfaceName=HTMLElement
 strong interfaceName=HTMLElement
 style constructorNeedsCreatedByParser
 sub interfaceName=HTMLElement
-summary interfaceName=HTMLElement
+summary interfaceName=HTMLSummaryElement, JSInterfaceName=HTMLElement
 sup interfaceName=HTMLElement
 table
 tbody interfaceName=HTMLTableSectionElement

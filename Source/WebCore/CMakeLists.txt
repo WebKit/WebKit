@@ -951,6 +951,7 @@ SET(WebCore_SOURCES
     html/HTMLScriptElement.cpp
     html/HTMLSelectElement.cpp
     html/HTMLStyleElement.cpp
+    html/HTMLSummaryElement.cpp
     html/HTMLTableCaptionElement.cpp
     html/HTMLTableCellElement.cpp
     html/HTMLTableColElement.cpp

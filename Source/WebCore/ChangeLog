@@ -1,3 +1,26 @@
+2011-02-16  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        Summary: HTML5 <details> and <summary>: HTMLSummaryElement
+        https://bugs.webkit.org/show_bug.cgi?id=54584
+
+        Adding class HTMLSummaryElement to build systems. This class will be used in
+        the implementation of new HTML5 tag <summary>.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLElementsAllInOne.cpp:
+        * html/HTMLSummaryElement.cpp: Added.
+        (WebCore::HTMLSummaryElement::create):
+        (WebCore::HTMLSummaryElement::HTMLSummaryElement):
+        * html/HTMLSummaryElement.h: Added.
+        * html/HTMLTagNames.in:
+
 2011-02-17  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Nate Chapin.

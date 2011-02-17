@@ -1810,6 +1810,8 @@
             'html/HTMLSourceElement.h',
             'html/HTMLStyleElement.cpp',
             'html/HTMLStyleElement.h',
+            'html/HTMLSummaryElement.cpp',
+            'html/HTMLSummaryElement.h',
             'html/HTMLTableCaptionElement.cpp',
             'html/HTMLTableCaptionElement.h',
             'html/HTMLTableCellElement.cpp',

@@ -1793,6 +1793,8 @@ webcore_sources += \
 	Source/WebCore/html/HTMLSourceElement.h \
 	Source/WebCore/html/HTMLStyleElement.cpp \
 	Source/WebCore/html/HTMLStyleElement.h \
+	Source/WebCore/html/HTMLSummaryElement.cpp \
+	Source/WebCore/html/HTMLSummaryElement.h \
 	Source/WebCore/html/HTMLTableCaptionElement.cpp \
 	Source/WebCore/html/HTMLTableCaptionElement.h \
 	Source/WebCore/html/HTMLTableCellElement.cpp \
