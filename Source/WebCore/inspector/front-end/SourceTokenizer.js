@@ -48,11 +48,6 @@ WebInspector.SourceTokenizer.prototype = {
         return this._condition;
     },
 
-    get subTokenizer()
-    {
-        return this._condition.subTokenizer;
-    },
-
     getLexCondition: function()
     {
         return this.condition.lexCondition;

@@ -1,3 +1,18 @@
+2011-02-17  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Text editor] Add updateHighlight method to the highlighter
+        https://bugs.webkit.org/show_bug.cgi?id=54448
+
+        * inspector/front-end/SourceTokenizer.js:
+        * inspector/front-end/TextEditorHighlighter.js:
+        (WebInspector.TextEditorHighlighter.prototype.set mimeType):
+        (WebInspector.TextEditorHighlighter.prototype.reset):
+        (WebInspector.TextEditorHighlighter.prototype.updateHighlight):
+        (WebInspector.TextEditorHighlighter.prototype._highlightInChunks):
+        (WebInspector.TextEditorHighlighter.prototype._highlightLines):
+
 2011-02-16  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
