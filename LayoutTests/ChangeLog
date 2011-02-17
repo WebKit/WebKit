@@ -1,5 +1,12 @@
 2011-02-17  Jeremy Orlow  <jorlow@chromium.org>
 
+        Fix minor problem with test.
+
+        * storage/indexeddb/exception-in-event-aborts-expected.txt:
+        * storage/indexeddb/exception-in-event-aborts.html:
+
+2011-02-17  Jeremy Orlow  <jorlow@chromium.org>
+
         Reviewed by Nate Chapin.
 
         Throwing in an IndexedDB error or success event should lead to the transaction aborting
