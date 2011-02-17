@@ -114,6 +114,6 @@ class QtPort(WebKitPort):
         return None
 
     def setup_environ_for_server(self):
-        env = webkit.WebKitPort.setup_environ_for_server(self)
+        env = WebKitPort.setup_environ_for_server(self)
         env['QTWEBKIT_PLUGIN_PATH'] = self._build_path('lib/plugins')
         return env
