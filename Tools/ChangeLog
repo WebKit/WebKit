@@ -1,3 +1,14 @@
+2011-02-16  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Mihai Parparita.
+
+        flaky test archive uploads are always 22 bytes long
+        https://bugs.webkit.org/show_bug.cgi?id=54593
+
+        Speculative fix for the 22-bytes bug.
+
+        * Scripts/webkitpy/tool/bot/flakytestreporter.py:
+
 2011-02-16  Anna Cavender  <annacc@chromium.org>
 
         Reviewed by Mihai Parparita.

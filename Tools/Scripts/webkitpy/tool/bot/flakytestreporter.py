@@ -158,22 +158,26 @@ If you would like to track this test fix with another bug, please close this bug
                 return archived_path
         return None
 
-    def _attach_failure_diff(self, flake_bug_id, flaky_test, results_archive):
+    def _attach_failure_diff(self, flake_bug_id, flaky_test, results_archive_zip):
         results_diff_path = self._results_diff_path_for_test(flaky_test)
         # Check to make sure that the path makes sense.
         # Since we're not actually getting this path from the results.html
         # there is a chance it's wrong.
         bot_id = self._tool.status_server.bot_id or "bot"
-        archive_path = self._find_in_archive(results_diff_path, results_archive)
+        archive_path = self._find_in_archive(results_diff_path, results_archive_zip)
         if archive_path:
-            results_diff = results_archive.read(archive_path)
+            results_diff = results_archive_zip.read(archive_path)
             description = "Failure diff from %s" % bot_id
             self._tool.bugs.add_attachment_to_bug(flake_bug_id, results_diff, description, filename="failure.diff")
         else:
             _log.warn("%s does not exist in results archive, uploading entire archive." % results_diff_path)
             description = "Archive of layout-test-results from %s" % bot_id
             # results_archive is a ZipFile object, grab the File object (.fp) to pass to Mechanize for uploading.
-            self._tool.bugs.add_attachment_to_bug(flake_bug_id, results_archive.fp, description, filename="layout-test-results.zip")
+            results_archive_file = results_archive_zip.fp
+            # Rewind the file object to start (since Mechanize won't do that automatically)
+            # See https://bugs.webkit.org/show_bug.cgi?id=54593
+            results_archive_file.seek(0)
+            self._tool.bugs.add_attachment_to_bug(flake_bug_id, results_archive_file, description, filename="layout-test-results.zip")
 
     def report_flaky_tests(self, patch, flaky_test_results, results_archive):
         message = "The %s encountered the following flaky tests while processing attachment %s:\n\n" % (self._bot_name, patch.id())
