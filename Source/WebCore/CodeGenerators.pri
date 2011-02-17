@@ -67,7 +67,9 @@ STYLESHEETS_EMBED = \
 
 v8 {
     IDL_BINDINGS += \
-        html/canvas/CanvasPixelArray.idl
+        html/canvas/CanvasPixelArray.idl \
+        storage/IDBVersionChangeEvent.idl \
+        storage/IDBVersionChangeRequest.idl
 }
 
 IDL_BINDINGS += \

@@ -1,3 +1,11 @@
+2011-02-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt][V8] Buildfix after r78752.
+
+        * CodeGenerators.pri: Add missing IDL files.
+
 2011-02-17  Benjamin Kalman  <kalman@chromium.org>
 
         Reviewed by Ryosuke Niwa.
