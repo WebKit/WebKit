@@ -1,5 +1,12 @@
 2011-02-17  Sam Weinig  <sam@webkit.org>
 
+        Build fix.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performDictionaryLookupAtLocation):
+
+2011-02-17  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Maciej Stachowiak.
 
         WebKit2: Support Dictionary popup

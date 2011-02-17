@@ -279,8 +279,8 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
         return;
 
     // Ensure we have whole words.
-    selection.expandUsingGranularity(WordGranularity);
     VisibleSelection selection(characterRange.get());
+    selection.expandUsingGranularity(WordGranularity);
 
     RefPtr<Range> finalRange = selection.toNormalizedRange();
     if (!finalRange)
