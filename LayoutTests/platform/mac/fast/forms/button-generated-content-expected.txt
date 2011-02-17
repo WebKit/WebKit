@@ -31,8 +31,8 @@ layer at (0,0) size 800x270
             RenderInline (generated) at (0,0) size 35x13
               RenderText at (0,0) size 35x13
                 text run at (0,0) width 35: "before"
-            RenderText {#text} at (35,0) size 36x13
-              text run at (35,0) width 36: "button"
+            RenderText {#text} at (34,0) size 37x13
+              text run at (34,0) width 37: "button"
         RenderText {#text} at (150,1) size 4x18
           text run at (150,1) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
@@ -47,9 +47,9 @@ layer at (0,0) size 800x270
           RenderBlock (anonymous) at (8,2) size 61x13
             RenderText {#text} at (0,0) size 36x13
               text run at (0,0) width 36: "button"
-            RenderInline (generated) at (0,0) size 25x13
-              RenderText at (36,0) size 25x13
-                text run at (36,0) width 25: "after"
+            RenderInline (generated) at (0,0) size 26x13
+              RenderText at (35,0) size 26x13
+                text run at (35,0) width 26: "after"
         RenderText {#text} at (130,23) size 4x18
           text run at (130,23) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
@@ -87,8 +87,8 @@ layer at (0,0) size 800x270
             RenderInline (generated) at (0,0) size 35x13
               RenderText at (0,0) size 35x13
                 text run at (0,0) width 35: "before"
-            RenderText {#text} at (35,0) size 36x13
-              text run at (35,0) width 36: "button"
+            RenderText {#text} at (34,0) size 37x13
+              text run at (34,0) width 37: "button"
         RenderText {#text} at (150,97) size 4x18
           text run at (150,97) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
@@ -103,9 +103,9 @@ layer at (0,0) size 800x270
           RenderBlock (anonymous) at (8,2) size 61x13
             RenderText {#text} at (0,0) size 36x13
               text run at (0,0) width 36: "button"
-            RenderInline (generated) at (0,0) size 25x13
-              RenderText at (36,0) size 25x13
-                text run at (36,0) width 25: "after"
+            RenderInline (generated) at (0,0) size 26x13
+              RenderText at (35,0) size 26x13
+                text run at (35,0) width 26: "after"
         RenderText {#text} at (130,119) size 4x18
           text run at (130,119) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
@@ -121,8 +121,8 @@ layer at (0,0) size 800x270
             RenderInline (generated) at (0,0) size 35x13
               RenderText at (0,0) size 35x13
                 text run at (0,0) width 35: "before"
-            RenderText {#text} at (35,0) size 36x13
-              text run at (35,0) width 36: "button"
+            RenderText {#text} at (34,0) size 37x13
+              text run at (34,0) width 37: "button"
         RenderText {#text} at (150,141) size 4x18
           text run at (150,141) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
@@ -137,9 +137,9 @@ layer at (0,0) size 800x270
           RenderBlock (anonymous) at (8,2) size 61x13
             RenderText {#text} at (0,0) size 36x13
               text run at (0,0) width 36: "button"
-            RenderInline (generated) at (0,0) size 25x13
-              RenderText at (36,0) size 25x13
-                text run at (36,0) width 25: "after"
+            RenderInline (generated) at (0,0) size 26x13
+              RenderText at (35,0) size 26x13
+                text run at (35,0) width 26: "after"
         RenderText {#text} at (130,163) size 4x18
           text run at (130,163) width 4: " "
         RenderBR {BR} at (0,0) size 0x0

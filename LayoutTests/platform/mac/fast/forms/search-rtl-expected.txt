@@ -38,21 +38,21 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,119) size 784x18
         RenderText {#text} at (0,0) size 39x18
           text run at (0,0) width 39: "PASS"
-layer at (35,47) size 84x13 scrollX 51 scrollWidth 135
+layer at (35,47) size 84x13 scrollX 52 scrollWidth 136
   RenderBlock {DIV} at (22,0) size 84x13
-    RenderText {#text} at (-51,0) size 134x13
+    RenderText {#text} at (-51,0) size 135x13
       text run at (-51,0) width 22 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
       text run at (-29,0) width 19: "she"
-      text run at (-10,0) width 43 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
-      text run at (33,0) width 13: "he"
+      text run at (-10,0) width 44 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
+      text run at (33,0) width 14: "he"
       text run at (46,0) width 37 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
-layer at (35,70) size 134x13 scrollX 1 scrollWidth 135
+layer at (35,70) size 134x13 scrollX 2 scrollWidth 136
   RenderBlock {DIV} at (22,0) size 134x13
-    RenderText {#text} at (-1,0) size 134x13
+    RenderText {#text} at (-1,0) size 135x13
       text run at (-1,0) width 22 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
-      text run at (21,0) width 19: "she"
-      text run at (40,0) width 43 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
-      text run at (83,0) width 13: "he"
+      text run at (20,0) width 20: "she"
+      text run at (39,0) width 45 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
+      text run at (83,0) width 14: "he"
       text run at (96,0) width 37 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
 layer at (35,93) size 84x13
   RenderBlock {DIV} at (22,0) size 84x13

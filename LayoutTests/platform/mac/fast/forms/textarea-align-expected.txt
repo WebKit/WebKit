@@ -22,25 +22,25 @@ layer at (0,0) size 800x600
 layer at (10,44) size 371x32 clip at (11,45) size 369x30
   RenderTextControl {TEXTAREA} at (2,2) size 371x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 365x13
-      RenderText {#text} at (0,0) size 194x13
-        text run at (0,0) width 194: "This is should be aligned to the left."
+      RenderText {#text} at (0,0) size 193x13
+        text run at (0,0) width 193: "This is should be aligned to the left."
 layer at (10,84) size 371x32 clip at (11,85) size 369x30
   RenderTextControl {TEXTAREA} at (2,42) size 371x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 365x13
-      RenderText {#text} at (0,0) size 194x13
-        text run at (0,0) width 194: "This is should be aligned to the left."
+      RenderText {#text} at (0,0) size 193x13
+        text run at (0,0) width 193: "This is should be aligned to the left."
 layer at (10,124) size 371x32 clip at (11,125) size 369x30
   RenderTextControl {TEXTAREA} at (2,82) size 371x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 365x13
-      RenderText {#text} at (0,0) size 194x13
-        text run at (0,0) width 194: "This is should be aligned to the left."
+      RenderText {#text} at (0,0) size 193x13
+        text run at (0,0) width 193: "This is should be aligned to the left."
 layer at (10,164) size 371x32 clip at (11,165) size 369x30
   RenderTextControl {TEXTAREA} at (2,122) size 371x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 365x13
-      RenderText {#text} at (0,0) size 194x13
-        text run at (0,0) width 194: "This is should be aligned to the left."
+      RenderText {#text} at (0,0) size 193x13
+        text run at (0,0) width 193: "This is should be aligned to the left."
 layer at (10,200) size 371x32 clip at (11,201) size 369x30
   RenderTextControl {TEXTAREA} at (2,2) size 371x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 365x13
-      RenderText {#text} at (0,0) size 194x13
-        text run at (0,0) width 194: "This is should be aligned to the left."
+      RenderText {#text} at (0,0) size 193x13
+        text run at (0,0) width 193: "This is should be aligned to the left."

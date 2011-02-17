@@ -16,29 +16,29 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (12,12) size 76x204
             RenderBlock {DIV} at (0,0) size 74x204 [bgcolor=#008080] [border: (2px solid #800080)]
               RenderBlock (floating) {DIV} at (52,2) size 20x100 [bgcolor=#006400]
-              RenderText {#text} at (13,2) size 35x52
+              RenderText {#text} at (13,2) size 36x52
                 text run at (13,2) width 28: "short"
-                text run at (10,15) width 33: "words"
-                text run at (15,28) width 23: "only"
-                text run at (9,41) width 35: "please"
+                text run at (10,15) width 34: "words"
+                text run at (15,28) width 24: "only"
+                text run at (9,41) width 36: "please"
         RenderText {#text} at (0,0) size 0x0
       RenderButton {BUTTON} at (0,152) size 100x50 [bgcolor=#C0C0C0] [border: (2px outset #FFFF00)]
         RenderBlock (anonymous) at (12,12) size 76x204
           RenderBlock {DIV} at (0,0) size 74x204 [bgcolor=#008080] [border: (2px solid #800080)]
             RenderBlock (floating) {DIV} at (52,2) size 20x100 [bgcolor=#006400]
-            RenderText {#text} at (13,2) size 35x52
+            RenderText {#text} at (13,2) size 36x52
               text run at (13,2) width 28: "short"
-              text run at (10,15) width 33: "words"
-              text run at (15,28) width 23: "only"
-              text run at (9,41) width 35: "please"
+              text run at (10,15) width 34: "words"
+              text run at (15,28) width 24: "only"
+              text run at (9,41) width 36: "please"
       RenderBlock {P} at (0,218) size 784x0
 layer at (8,226) size 100x50
   RenderButton {BUTTON} at (8,226) size 100x50 [bgcolor=#C0C0C0] [border: (2px outset #FFFF00)]
     RenderBlock (anonymous) at (12,12) size 76x204
       RenderBlock {DIV} at (0,0) size 74x204 [bgcolor=#008080] [border: (2px solid #800080)]
         RenderBlock (floating) {DIV} at (52,2) size 20x100 [bgcolor=#006400]
-        RenderText {#text} at (13,2) size 35x52
+        RenderText {#text} at (13,2) size 36x52
           text run at (13,2) width 28: "short"
-          text run at (10,15) width 33: "words"
-          text run at (15,28) width 23: "only"
-          text run at (9,41) width 35: "please"
+          text run at (10,15) width 34: "words"
+          text run at (15,28) width 24: "only"
+          text run at (9,41) width 36: "please"
