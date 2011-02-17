@@ -137,7 +137,7 @@ layer at (0,0) size 785x1724
             text run at (769,0) width 0 RTL: "\x{202A}"
         RenderBlock {DIV} at (0,802) size 769x19
           RenderText {#text} at (749,1) size 20x18
-            text run at (749,1) width 0 RTL: "\x{202A}"
+            text run at (749,1) width 1 RTL: "\x{202A}"
             text run at (749,1) width 20 RTL: "\x{5D0}\x{5D1}\x{202C}"
       RenderBlock {DIV} at (0,837) size 769x821
         RenderBlock {P} at (0,0) size 769x18
@@ -261,8 +261,8 @@ layer at (0,0) size 785x1724
         RenderBlock {DIV} at (0,802) size 769x19
           RenderText {#text} at (0,1) size 20x18
             text run at (0,1) width 20 RTL: "\x{5D0}\x{5D1}"
-            text run at (20,1) width 0: "\x{202C}"
-            text run at (20,1) width 0: "\x{202A}"
+            text run at (19,1) width 1: "\x{202C}"
+            text run at (19,1) width 1: "\x{202A}"
       RenderBlock {UL} at (0,1674) size 769x18
         RenderListItem {LI} at (40,0) size 729x18
           RenderListMarker at (-17,0) size 7x18: bullet

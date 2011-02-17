@@ -13,7 +13,7 @@ layer at (0,0) size 785x1458
       RenderBlock {HR} at (0,70) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,88) size 769x19
         RenderText {#text} at (305,1) size 464x18
-          text run at (305,1) width 341: "Pure text. The following 3 lines should all display as \""
+          text run at (305,1) width 342: "Pure text. The following 3 lines should all display as \""
           text run at (646,1) width 28 RTL: "\x{5E9}\x{5E0}\x{5D1}"
           text run at (674,1) width 95: " This is a Test\""
       RenderBlock {DIV} at (0,123) size 769x19 [bgcolor=#FF0000]
