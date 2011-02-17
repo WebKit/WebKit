@@ -461,6 +461,8 @@ WebGLRenderingContext::~WebGLRenderingContext()
 {
     detachAndRemoveAllObjects();
     m_context->setContextLostCallback(0);
+    if (m_webkitLoseContext)
+        m_webkitLoseContext->contextDestroyed();
 }
 
 void WebGLRenderingContext::markContextChanged()

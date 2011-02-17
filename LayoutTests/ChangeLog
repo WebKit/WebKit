@@ -1,3 +1,14 @@
+2011-02-17  Sergey Glazunov  <serg.glazunov@gmail.com>
+
+        Reviewed by Kenneth Russell.
+
+        Null out the WEBKIT_lose_context WebGL extension's context pointer when
+        the WebGL rendering context is removed.
+        https://bugs.webkit.org/show_bug.cgi?id=54679
+
+        * fast/canvas/webgl/context-destroyed-crash-expected.txt: Added.
+        * fast/canvas/webgl/context-destroyed-crash.html: Added.
+
 2011-02-17  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Chris Marrin.

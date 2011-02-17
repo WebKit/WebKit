@@ -55,7 +55,8 @@ PassRefPtr<WebKitLoseContext> WebKitLoseContext::create(WebGLRenderingContext* c
 
 void WebKitLoseContext::loseContext()
 {
-    m_context->forceLostContext();
+    if (m_context)
+        m_context->forceLostContext();
 }
 
 } // namespace WebCore

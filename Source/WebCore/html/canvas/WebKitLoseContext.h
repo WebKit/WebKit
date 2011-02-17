@@ -42,6 +42,7 @@ public:
     virtual ExtensionName getName() const;
 
     void loseContext();
+    void contextDestroyed() { m_context = 0; }
 
 private:
     WebKitLoseContext(WebGLRenderingContext*);
