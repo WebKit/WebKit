@@ -16,8 +16,8 @@ layer at (0,0) size 800x600
           RenderTableSection {SPAN} at (0,13) size 40x18
             RenderTableRow (anonymous) at (0,0) size 40x18
               RenderTableCell (anonymous) at (0,0) size 40x18 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,0) size 35x18
-                  text run at (2,0) width 35: "Ruby"
+                RenderText {#text} at (2,0) size 36x18
+                  text run at (2,0) width 36: "Ruby"
           RenderTableSection {SPAN} at (0,0) size 40x13
             RenderTableRow (anonymous) at (0,0) size 40x13
               RenderTableCell (anonymous) at (0,0) size 40x13 [r=0 c=0 rs=1 cs=1]
@@ -34,8 +34,8 @@ layer at (0,0) size 800x600
           RenderTableSection {RB} at (0,13) size 40x18
             RenderTableRow (anonymous) at (0,0) size 40x18
               RenderTableCell (anonymous) at (0,0) size 40x18 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,0) size 35x18
-                  text run at (2,0) width 35: "Ruby"
+                RenderText {#text} at (2,0) size 36x18
+                  text run at (2,0) width 36: "Ruby"
           RenderTableSection {RT} at (0,0) size 40x13
             RenderTableRow (anonymous) at (0,0) size 40x13
               RenderTableCell (anonymous) at (0,0) size 40x13 [r=0 c=0 rs=1 cs=1]

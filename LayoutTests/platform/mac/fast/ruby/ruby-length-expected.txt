@@ -14,8 +14,8 @@ layer at (0,0) size 800x600
       RenderRuby (inline) {RUBY} at (0,0) size 184x18
         RenderRubyRun (anonymous) at (155,64) size 184x18
           RenderRubyText {RT} at (0,-10) size 184x10
-            RenderText {#text} at (77,0) size 29x10
-              text run at (77,0) width 29: "HTML5"
+            RenderText {#text} at (77,0) size 30x10
+              text run at (77,0) width 30: "HTML5"
           RenderRubyBase (anonymous) at (0,0) size 184x18
             RenderText {#text} at (0,0) size 184x18
               text run at (0,0) width 184: "Hypertext Markup Language"

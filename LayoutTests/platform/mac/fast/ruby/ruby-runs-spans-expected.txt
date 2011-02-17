@@ -15,22 +15,22 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 41x10
                 text run at (0,0) width 41: "Hyper-text"
             RenderRubyBase (anonymous) at (0,0) size 41x18
-              RenderInline {SPAN} at (0,0) size 22x18
-                RenderText {#text} at (9,0) size 22x18
-                  text run at (9,0) width 22: "HT"
+              RenderInline {SPAN} at (0,0) size 23x18
+                RenderText {#text} at (9,0) size 23x18
+                  text run at (9,0) width 23: "HT"
           RenderRubyRun (anonymous) at (196,10) size 93x18
             RenderRubyText {RT} at (0,-10) size 93x10
               RenderText {#text} at (0,0) size 93x10
                 text run at (0,0) width 93: "Markup Language Lvl. 5"
             RenderRubyBase (anonymous) at (0,0) size 93x18
-              RenderInline {SPAN} at (0,0) size 14x18
-                RenderText {#text} at (30,0) size 14x18
-                  text run at (30,0) width 14: "M"
-              RenderInline {SPAN} at (0,0) size 10x18
-                RenderText {#text} at (44,0) size 10x18
-                  text run at (44,0) width 10: "L"
-              RenderInline {SPAN} at (0,0) size 8x18
-                RenderText {#text} at (54,0) size 8x18
-                  text run at (54,0) width 8: "5"
+              RenderInline {SPAN} at (0,0) size 15x18
+                RenderText {#text} at (30,0) size 15x18
+                  text run at (30,0) width 15: "M"
+              RenderInline {SPAN} at (0,0) size 11x18
+                RenderText {#text} at (44,0) size 11x18
+                  text run at (44,0) width 11: "L"
+              RenderInline {SPAN} at (0,0) size 9x18
+                RenderText {#text} at (54,0) size 9x18
+                  text run at (54,0) width 9: "5"
         RenderText {#text} at (289,10) size 36x18
           text run at (289,10) width 36: " spec."

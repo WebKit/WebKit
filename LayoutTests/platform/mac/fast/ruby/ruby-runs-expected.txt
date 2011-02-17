@@ -17,15 +17,15 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 23x10
                 text run at (0,0) width 23: "Hyper"
             RenderRubyBase (anonymous) at (0,0) size 23x18
-              RenderText {#text} at (5,0) size 12x18
-                text run at (5,0) width 12: "H"
+              RenderText {#text} at (5,0) size 13x18
+                text run at (5,0) width 13: "H"
           RenderRubyRun (anonymous) at (178,10) size 17x18
             RenderRubyText {RT} at (0,-10) size 17x10
               RenderText {#text} at (0,0) size 17x10
                 text run at (0,0) width 17: "Text"
             RenderRubyBase (anonymous) at (0,0) size 17x18
-              RenderText {#text} at (3,0) size 10x18
-                text run at (3,0) width 10: "T"
+              RenderText {#text} at (3,0) size 11x18
+                text run at (3,0) width 11: "T"
           RenderRubyRun (anonymous) at (195,10) size 30x18
             RenderRubyText {RT} at (0,-10) size 30x10
               RenderText {#text} at (0,0) size 30x10
@@ -38,8 +38,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 37x10
                 text run at (0,0) width 37: "Language"
             RenderRubyBase (anonymous) at (0,0) size 37x18
-              RenderText {#text} at (13,0) size 10x18
-                text run at (13,0) width 10: "L"
+              RenderText {#text} at (13,0) size 11x18
+                text run at (13,0) width 11: "L"
           RenderRubyRun (anonymous) at (262,10) size 28x18
             RenderRubyText {RT} at (0,-10) size 28x10
               RenderText {#text} at (0,0) size 28x10
