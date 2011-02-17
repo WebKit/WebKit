@@ -1,3 +1,16 @@
+2011-02-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Knob proportion not quite right during rubber-band.
+        <rdar://problem/9015201>
+
+        Change knob proportion algorithm to treat overhang as making the view smaller,
+        rather than document bigger.
+
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::paint):
+
 2011-02-16  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Andreas Kling.
