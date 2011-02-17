@@ -59,6 +59,7 @@ libWebKit2_la_HEADERS = \
 	$(WebKit2)/UIProcess/API/C/WKPageGroup.h \
 	$(WebKit2)/UIProcess/API/C/WKPage.h \
 	$(WebKit2)/UIProcess/API/C/WKPagePrivate.h \
+	$(WebKit2)/UIProcess/API/C/WKPluginSiteDataManager.h \
 	$(WebKit2)/UIProcess/API/C/WKPreferences.h \
 	$(WebKit2)/UIProcess/API/C/WKPreferencesPrivate.h \
 	$(WebKit2)/UIProcess/API/C/WKProtectionSpace.h \
@@ -318,6 +319,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/UIProcess/API/C/WKPageGroup.h \
 	Source/WebKit2/UIProcess/API/C/WKPage.h \
 	Source/WebKit2/UIProcess/API/C/WKPagePrivate.h \
+	Source/WebKit2/UIProcess/API/C/WKPluginSiteDataManager.h \
+	Source/WebKit2/UIProcess/API/C/WKPluginSiteDataManager.cpp \
 	Source/WebKit2/UIProcess/API/C/WKPreferences.cpp \
 	Source/WebKit2/UIProcess/API/C/WKPreferences.h \
 	Source/WebKit2/UIProcess/API/C/WKPreferencesPrivate.h \
@@ -367,6 +370,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/UIProcess/Plugins/PluginProcessManager.h \
 	Source/WebKit2/UIProcess/Plugins/PluginProcessProxy.cpp \
 	Source/WebKit2/UIProcess/Plugins/PluginProcessProxy.h \
+	Source/WebKit2/UIProcess/Plugins/WebPluginSiteDataManager.h \
+	Source/WebKit2/UIProcess/Plugins/WebPluginSiteDataManager.cpp \
 	Source/WebKit2/UIProcess/ProcessModel.h \
 	Source/WebKit2/UIProcess/ResponsivenessTimer.cpp \
 	Source/WebKit2/UIProcess/ResponsivenessTimer.h \

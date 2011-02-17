@@ -28,7 +28,7 @@
 
 #include "Module.h"
 #include "PluginQuirks.h"
-#include <WebCore/npfunctions.h>
+#include <WebCore/npruntime_internal.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 

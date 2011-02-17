@@ -226,7 +226,7 @@ void WebProcess::setDomainRelaxationForbiddenForURLScheme(const String& urlSchem
 
 void WebProcess::setAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
 {
-    Font::setCodePath(alwaysUseComplexText ? Font::Complex : Font::Auto);
+    WebCore::Font::setCodePath(alwaysUseComplexText ? WebCore::Font::Complex : WebCore::Font::Auto);
 }
 
 void WebProcess::languageChanged(const String& language) const

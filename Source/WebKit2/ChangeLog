@@ -1,3 +1,19 @@
+2011-02-17  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Add WKPluginSiteDataManager.cpp compilation after r78647
+        https://bugs.webkit.org/show_bug.cgi?id=54564
+
+        * GNUmakefile.am: Added files to compilation.
+        * Shared/Plugins/Netscape/NetscapePluginModule.h: used
+        npruntime_internal.h in the include to avoid problems with X
+        types.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setAlwaysUsesComplexTextCodePath): fixed
+        ambiguous reference to Font caused by the X headers required by
+        the plugins.
+
 2011-02-16  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.
