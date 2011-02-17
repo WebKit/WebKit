@@ -247,8 +247,8 @@ void TiledDrawingAreaProxy::invalidate(const IntRect& contentsDirtyRect)
 
     Vector<TiledDrawingAreaTile::Coordinate> tilesToRemove;
 
-    for (unsigned yCoordinate = topLeft.y(); yCoordinate < bottomRight.y(); ++yCoordinate) {
-        for (unsigned xCoordinate = topLeft.x(); xCoordinate < bottomRight.x(); ++xCoordinate) {
+    for (unsigned yCoordinate = topLeft.y(); yCoordinate <= bottomRight.y(); ++yCoordinate) {
+        for (unsigned xCoordinate = topLeft.x(); xCoordinate <= bottomRight.x(); ++xCoordinate) {
             RefPtr<TiledDrawingAreaTile> currentTile = tileAt(TiledDrawingAreaTile::Coordinate(xCoordinate, yCoordinate));
             if (!currentTile)
                 continue;

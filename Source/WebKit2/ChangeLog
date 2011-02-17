@@ -2,6 +2,18 @@
 
         Reviewed by Andreas Kling.
 
+        [Qt] White screen is displayed when tiled backing store is enabled in MiniBrowser.
+        https://bugs.webkit.org/show_bug.cgi?id=54583
+
+        Make sure to invalidate all the tiles, including the last one.
+
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        (WebKit::TiledDrawingAreaProxy::invalidate):
+
+2011-02-16  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Andreas Kling.
+
         [Qt] Tiles are not created for webkit2 after r77286.
         https://bugs.webkit.org/show_bug.cgi?id=54577
 
