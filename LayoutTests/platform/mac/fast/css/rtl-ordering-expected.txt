@@ -37,9 +37,9 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 249x18
           text run at (0,0) width 249 LTR override: "The following lines should be identical:"
       RenderBlock {P} at (0,209) size 784x19
-        RenderText {#text} at (0,1) size 82x18
+        RenderText {#text} at (0,1) size 81x18
           text run at (0,1) width 16: "21"
-          text run at (16,1) width 66 RTL: "\x{5D4}\x{5DE}\x{5D0}\x{5D4} \x{5D4}-"
+          text run at (16,1) width 65 RTL: "\x{5D4}\x{5DE}\x{5D0}\x{5D4} \x{5D4}-"
       RenderBlock {P} at (0,244) size 784x19
-        RenderText {#text} at (0,1) size 82x18
-          text run at (0,1) width 82 LTR override: "21-\x{5D4} \x{5D4}\x{5D0}\x{5DE}\x{5D4}"
+        RenderText {#text} at (0,1) size 81x18
+          text run at (0,1) width 81 LTR override: "21-\x{5D4} \x{5D4}\x{5D0}\x{5DE}\x{5D4}"
