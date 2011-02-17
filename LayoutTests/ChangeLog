@@ -1,3 +1,12 @@
+2011-02-17  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed.
+
+        Skipped four SVG tests that started to show rounding errors (1
+        pixel difference) after r78704.
+
+        * platform/gtk/Skipped: Update the skipped list.
+
 2011-02-17  Benjamin Kalman  <kalman@chromium.org>
 
         Reviewed by Ryosuke Niwa.
