@@ -1,3 +1,9 @@
+2011-02-16  James Robinson  <jamesr@chromium.org>
+
+        Fix typo in chromium test_expectations - there is no WINDOWS (just WIN)
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-16  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Ryosuke Niwa.
