@@ -1,3 +1,16 @@
+2011-02-17  Adam Roben  <aroben@apple.com>
+
+        Make sure layout is up-to-date before rendering the layer tree in DrawingAreaImpl
+
+        Fixes <http://webkit.org/b/54646> <rdar://problem/9016889> Assertion failure in
+        FrameView::paintContents when calling WKPageForceRepaint on a page that uses accelerated
+        compositing
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::forceRepaint): Lay out before we do anything else.
+
 2011-02-17  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.

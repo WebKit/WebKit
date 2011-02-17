@@ -150,6 +150,8 @@ void DrawingAreaImpl::scroll(const IntRect& scrollRect, const IntSize& scrollOff
 
 void DrawingAreaImpl::forceRepaint()
 {
+    m_webPage->layoutIfNeeded();
+
     if (m_layerTreeHost) {
         m_layerTreeHost->forceRepaint();
         return;
