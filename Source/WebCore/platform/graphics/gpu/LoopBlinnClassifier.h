@@ -30,6 +30,7 @@
 #ifndef LoopBlinnClassifier_h
 #define LoopBlinnClassifier_h
 
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 

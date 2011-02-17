@@ -30,6 +30,7 @@
 #include "FloatPoint3D.h"
 #include "LoopBlinnConstants.h"
 #include <wtf/Assertions.h>
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 

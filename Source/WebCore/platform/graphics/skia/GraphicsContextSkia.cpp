@@ -731,6 +731,7 @@ void GraphicsContext::fillPath(const Path& pathToFill)
     if (paintingDisabled())
         return;
 
+    // FIXME: add support to GLES2Canvas for more than just solid fills.
     if (platformContext()->useGPU() && platformContext()->canAccelerate()) {
         platformContext()->prepareForHardwareDraw();
         platformContext()->gpuCanvas()->fillPath(pathToFill);

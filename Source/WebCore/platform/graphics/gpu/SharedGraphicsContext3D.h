@@ -49,6 +49,7 @@ class Color;
 class FloatRect;
 class HostWindow;
 class IntSize;
+class LoopBlinnSolidFillShader;
 class SolidFillShader;
 class TexShader;
 
@@ -61,7 +62,11 @@ public:
 
     // Functions that delegate directly to GraphicsContext3D, with caching
     void makeContextCurrent();
+    void bindBuffer(GC3Denum target, Platform3DObject);
     void bindFramebuffer(Platform3DObject framebuffer);
+    void bufferData(GC3Denum target, GC3Dsizeiptr, GC3Denum usage);
+    void bufferData(GC3Denum target, GC3Dsizeiptr, const void* data, GC3Denum usage);
+    void bufferSubData(GC3Denum target, GC3Dintptr offset, GC3Dsizeiptr, const void* data);
     void setViewport(const IntSize&);
     void scissor(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height);
     void enable(GC3Denum capacity);
@@ -73,6 +78,7 @@ public:
     void getIntegerv(GC3Denum pname, GC3Dint* value);
     void flush();
 
+    Platform3DObject createBuffer();
     Platform3DObject createFramebuffer();
     Platform3DObject createTexture();
 
@@ -117,6 +123,11 @@ public:
 
     GraphicsContext3D* graphicsContext3D() const { return m_context.get(); }
 
+    // Members for GPU-accelerated path rendering.
+    static bool useLoopBlinnForPathRendering();
+    void useLoopBlinnInteriorProgram(unsigned vertexOffset, const AffineTransform&, const Color&);
+    void useLoopBlinnExteriorProgram(unsigned vertexOffset, unsigned klmOffset, const AffineTransform&, const Color&);
+
 private:
     SharedGraphicsContext3D(PassRefPtr<GraphicsContext3D>, PassOwnPtr<SolidFillShader>, PassOwnPtr<TexShader>);
 
@@ -133,6 +144,12 @@ private:
     OwnPtr<TexShader> m_texShader;
 
     TextureHashMap m_textures;
+
+    // Members for GPU-accelerated path rendering.
+    // FIXME: support more kinds of fill types for paths.
+    OwnPtr<LoopBlinnSolidFillShader> m_loopBlinnInteriorShader;
+    OwnPtr<LoopBlinnSolidFillShader> m_loopBlinnExteriorShader;
+    bool m_oesStandardDerivativesSupported;
 };
 
 } // namespace WebCore

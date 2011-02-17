@@ -39,6 +39,7 @@
 #include "Extensions3D.h"
 #include "FloatRect.h"
 #include "IntSize.h"
+#include "LoopBlinnSolidFillShader.h"
 #include "SolidFillShader.h"
 #include "TexShader.h"
 
@@ -53,7 +54,7 @@ PassRefPtr<SharedGraphicsContext3D> SharedGraphicsContext3D::create(HostWindow* 
     GraphicsContext3D::Attributes attr;
     attr.depth = false;
     attr.stencil = true;
-    attr.antialias = false;
+    attr.antialias = useLoopBlinnForPathRendering();
     attr.canRecoverFromContextLoss = false; // Canvas contexts can not handle lost contexts.
     RefPtr<GraphicsContext3D> context = GraphicsContext3D::create(attr, hostWindow);
     if (!context)
@@ -73,6 +74,7 @@ SharedGraphicsContext3D::SharedGraphicsContext3D(PassRefPtr<GraphicsContext3D> c
     , m_quadVertices(0)
     , m_solidFillShader(solidFillShader)
     , m_texShader(texShader)
+    , m_oesStandardDerivativesSupported(false)
 {
     allContexts()->add(this);
     Extensions3D* extensions = m_context->getExtensions();
@@ -81,6 +83,9 @@ SharedGraphicsContext3D::SharedGraphicsContext3D(PassRefPtr<GraphicsContext3D> c
         extensions->ensureEnabled("GL_EXT_texture_format_BGRA8888");
         extensions->ensureEnabled("GL_EXT_read_format_bgra");
     }
+    m_oesStandardDerivativesSupported = extensions->supports("GL_OES_standard_derivatives");
+    if (m_oesStandardDerivativesSupported)
+        extensions->ensureEnabled("GL_OES_standard_derivatives");
 }
 
 SharedGraphicsContext3D::~SharedGraphicsContext3D()
@@ -139,6 +144,11 @@ void SharedGraphicsContext3D::getIntegerv(GC3Denum pname, GC3Dint* value)
 void SharedGraphicsContext3D::flush()
 {
     m_context->flush();
+}
+
+Platform3DObject SharedGraphicsContext3D::createBuffer()
+{
+    return m_context->createBuffer();
 }
 
 Platform3DObject SharedGraphicsContext3D::createFramebuffer()
@@ -324,9 +334,29 @@ void SharedGraphicsContext3D::setActiveTexture(GC3Denum textureUnit)
     m_context->activeTexture(textureUnit);
 }
 
+void SharedGraphicsContext3D::bindBuffer(GC3Denum target, Platform3DObject buffer)
+{
+    m_context->bindBuffer(target, buffer);
+}
+
 void SharedGraphicsContext3D::bindTexture(GC3Denum target, Platform3DObject texture)
 {
     m_context->bindTexture(target, texture);
+}
+
+void SharedGraphicsContext3D::bufferData(GC3Denum target, GC3Dsizeiptr size, GC3Denum usage)
+{
+    m_context->bufferData(target, size, usage);
+}
+
+void SharedGraphicsContext3D::bufferData(GC3Denum target, GC3Dsizeiptr size, const void* data, GC3Denum usage)
+{
+    m_context->bufferData(target, size, data, usage);
+}
+
+void SharedGraphicsContext3D::bufferSubData(GC3Denum target, GC3Dintptr offset, GC3Dsizeiptr size, const void* data)
+{
+    m_context->bufferSubData(target, offset, size, data);
 }
 
 void SharedGraphicsContext3D::useFillSolidProgram(const AffineTransform& transform, const Color& color)
@@ -352,6 +382,33 @@ void SharedGraphicsContext3D::setViewport(const IntSize& size)
 bool SharedGraphicsContext3D::paintsIntoCanvasBuffer() const
 {
     return m_context->paintsIntoCanvasBuffer();
+}
+
+bool SharedGraphicsContext3D::useLoopBlinnForPathRendering()
+{
+    return false;
+}
+
+void SharedGraphicsContext3D::useLoopBlinnInteriorProgram(unsigned vertexOffset, const AffineTransform& transform, const Color& color)
+{
+    if (!m_loopBlinnInteriorShader) {
+        m_loopBlinnInteriorShader = LoopBlinnSolidFillShader::create(m_context.get(),
+                                                                     LoopBlinnShader::Interior,
+                                                                     Shader::NotAntialiased);
+    }
+    ASSERT(m_loopBlinnInteriorShader);
+    m_loopBlinnInteriorShader->use(vertexOffset, 0, transform, color);
+}
+
+void SharedGraphicsContext3D::useLoopBlinnExteriorProgram(unsigned vertexOffset, unsigned klmOffset, const AffineTransform& transform, const Color& color)
+{
+    if (!m_loopBlinnExteriorShader) {
+        m_loopBlinnExteriorShader = LoopBlinnSolidFillShader::create(m_context.get(),
+                                                                     LoopBlinnShader::Exterior,
+                                                                     m_oesStandardDerivativesSupported ? Shader::Antialiased : Shader::NotAntialiased);
+    }
+    ASSERT(m_loopBlinnExteriorShader);
+    m_loopBlinnExteriorShader->use(vertexOffset, klmOffset, transform, color);
 }
 
 } // namespace WebCore

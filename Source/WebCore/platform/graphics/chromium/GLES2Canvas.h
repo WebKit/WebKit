@@ -36,6 +36,7 @@
 #include "ColorSpace.h"
 #include "GraphicsTypes.h"
 #include "ImageSource.h"
+#include "LoopBlinnPathCache.h"
 #include "Texture.h"
 
 #include <wtf/HashMap.h>
@@ -114,6 +115,10 @@ private:
     StateVector m_stateStack;
     State* m_state;
     AffineTransform m_flipMatrix;
+
+    // Members for GPU-accelerated path rendering.
+    LoopBlinnPathCache m_pathCache;
+    unsigned m_pathVertexBuffer;
 };
 
 }
