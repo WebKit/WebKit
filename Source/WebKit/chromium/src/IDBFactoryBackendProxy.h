@@ -46,7 +46,6 @@ public:
 
     PassRefPtr<DOMStringList> databases(void) const;
     virtual void open(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir, int64_t maximumSize);
-    virtual void setQuota(PassRefPtr<SecurityOrigin>, int64_t maximumSize, bool persistent);
 
 private:
     IDBFactoryBackendProxy();

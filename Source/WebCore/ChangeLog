@@ -1,3 +1,15 @@
+2011-02-16  Jeremy Orlow  <jorlow@chromium.org>
+
+        Back out IndexedDB change thats no longer necessary
+        https://bugs.webkit.org/show_bug.cgi?id=54603
+
+        Backing out 78645 as it turns out that it's not necessary.
+
+        * storage/IDBFactoryBackendImpl.cpp:
+        (WebCore::IDBFactoryBackendImpl::open):
+        * storage/IDBFactoryBackendImpl.h:
+        * storage/IDBFactoryBackendInterface.h:
+
 2011-02-16  Brian Salomon  <bsalomon@google.com>
 
         Reviewed by James Robinson.

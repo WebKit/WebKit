@@ -207,15 +207,9 @@ static bool migrateDatabase(SQLiteDatabase& sqliteDatabase)
     return true;
 }
 
-void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, Frame*, const String& dataDir, int64_t defaultQuota)
+void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, Frame*, const String& dataDir, int64_t maximumSize)
 {
-    ASSERT(defaultQuota >= 0);
     String fileIdentifier = securityOrigin->databaseIdentifier();
-    if (!m_defaultQuotaMap.contains(fileIdentifier))
-        m_defaultQuotaMap.set(fileIdentifier, defaultQuota);
-    else
-        ASSERT(m_defaultQuotaMap.get(fileIdentifier) == defaultQuota); // FIXME: Handle this case more elegently if it ever matters.
-
     String uniqueIdentifier = fileIdentifier + "@" + name;
     IDBDatabaseBackendMap::iterator it = m_databaseBackendMap.find(uniqueIdentifier);
     if (it != m_databaseBackendMap.end()) {
@@ -224,10 +218,6 @@ void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> ca
         return;
     }
 
-    int64_t quota = defaultQuota;
-    if (m_currentQuotaMap.contains(fileIdentifier))
-        quota = m_currentQuotaMap.contains(fileIdentifier);
-
     // FIXME: Everything from now on should be done on another thread.
 
     RefPtr<IDBSQLiteDatabase> sqliteDatabase;
@@ -235,7 +225,7 @@ void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> ca
     if (it2 != m_sqliteDatabaseMap.end())
         sqliteDatabase = it2->second;
     else {
-        sqliteDatabase = openSQLiteDatabase(securityOrigin.get(), dataDir, quota, fileIdentifier, this);
+        sqliteDatabase = openSQLiteDatabase(securityOrigin.get(), dataDir, maximumSize, fileIdentifier, this);
 
         if (!sqliteDatabase || !createTables(sqliteDatabase->db()) || !migrateDatabase(sqliteDatabase->db())) {
             callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
@@ -249,26 +239,6 @@ void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> ca
     databaseBackend->open();
     callbacks->onSuccess(databaseBackend.get());
     m_databaseBackendMap.set(uniqueIdentifier, databaseBackend.get());
-}
-
-void IDBFactoryBackendImpl::setQuota(PassRefPtr<SecurityOrigin> securityOrigin, int64_t quota, bool persistent)
-{
-    ASSERT(!persistent); // FIXME: Impelment persistence.
-
-    String fileIdentifier = securityOrigin->databaseIdentifier();
-    if (quota == defaultQuota) {
-        m_currentQuotaMap.remove(fileIdentifier);
-        if (!m_defaultQuotaMap.contains(fileIdentifier)) {
-            ASSERT(m_sqliteDatabaseMap.find(fileIdentifier) == m_sqliteDatabaseMap.end());
-            return;
-        }
-        quota = m_defaultQuotaMap.get(fileIdentifier);
-    } else
-        m_currentQuotaMap.set(fileIdentifier, quota);
-
-    SQLiteDatabaseMap::iterator it2 = m_sqliteDatabaseMap.find(fileIdentifier);
-    if (it2 != m_sqliteDatabaseMap.end())
-        it2->second->db().setMaximumSize(quota); // FIXME: What if we set a quota to something smaller than the file currently is?
 }
 
 } // namespace WebCore

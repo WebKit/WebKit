@@ -51,11 +51,7 @@ public:
     static PassRefPtr<IDBFactoryBackendInterface> create();
     virtual ~IDBFactoryBackendInterface() { }
 
-    virtual void open(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir, int64_t defaultQuota) = 0;
-
-    static const int64_t defaultQuota = -1;
-    static const int64_t unlimitedQuota = 0;
-    virtual void setQuota(PassRefPtr<SecurityOrigin>, int64_t quota, bool persistent) = 0;
+    virtual void open(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir, int64_t maximumSize) = 0;
 };
 
 } // namespace WebCore

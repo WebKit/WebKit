@@ -1,3 +1,19 @@
+2011-02-16  Jeremy Orlow  <jorlow@chromium.org>
+
+        Back out IndexedDB change thats no longer necessary
+        https://bugs.webkit.org/show_bug.cgi?id=54603
+
+        Backing out 78645 as it turns out that it's not necessary.
+
+        * public/WebIDBFactory.h:
+        (WebKit::WebIDBFactory::open):
+        * src/AssertMatchingEnums.cpp:
+        * src/IDBFactoryBackendProxy.cpp:
+        * src/IDBFactoryBackendProxy.h:
+        * src/WebIDBFactoryImpl.cpp:
+        (WebKit::WebIDBFactoryImpl::open):
+        * src/WebIDBFactoryImpl.h:
+
 2011-02-16  David Grogan  <dgrogan@chromium.org>
 
         Reviewed by Jeremy Orlow.
