@@ -14,14 +14,14 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (6,1) size 212x23
           RenderBlock {DIV} at (0,6) size 10x13
           RenderBlock {DIV} at (196,6) size 16x13
-layer at (23,27) size 397x47 scrollWidth 413
+layer at (23,27) size 397x47 scrollWidth 410
   RenderBlock {DIV} at (10,0) size 397x47
-    RenderText {#text} at (1,0) size 411x47
-      text run at (1,0) width 411: "value jgq not clipped"
+    RenderText {#text} at (1,0) size 408x47
+      text run at (1,0) width 408: "value jgq not clipped"
 layer at (13,113) size 423x47
   RenderBlock {DIV} at (3,17) size 423x47
-    RenderText {#text} at (1,0) size 411x47
-      text run at (1,0) width 411: "value jgq not clipped"
+    RenderText {#text} at (1,0) size 408x47
+      text run at (1,0) width 408: "value jgq not clipped"
 layer at (26,181) size 186x23
   RenderBlock {DIV} at (10,0) size 186x23
     RenderText {#text} at (1,0) size 127x23

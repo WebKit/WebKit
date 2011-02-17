@@ -7,21 +7,21 @@ layer at (0,0) size 785x632
         RenderInline {SPAN} at (0,0) size 108x56 [textStrokeWidth=1.00]
           RenderText {#text} at (0,0) size 108x56
             text run at (0,0) width 108: "This"
-        RenderText {#text} at (108,0) size 16x56
-          text run at (108,0) width 16: " "
+        RenderText {#text} at (107,0) size 17x56
+          text run at (107,0) width 17: " "
         RenderInline {SPAN} at (0,0) size 96x56 [textFillColor=#FFFFFF] [textStrokeWidth=1.00]
-          RenderText {#text} at (124,0) size 96x56
-            text run at (124,0) width 96: "text"
-        RenderText {#text} at (220,0) size 16x56
-          text run at (220,0) width 16: " "
+          RenderText {#text} at (123,0) size 96x56
+            text run at (123,0) width 96: "text"
+        RenderText {#text} at (218,0) size 17x56
+          text run at (218,0) width 17: " "
         RenderInline {SPAN} at (0,0) size 128x56 [color=#0000004C]
-          RenderText {#text} at (236,0) size 128x56
-            text run at (236,0) width 128: "casts"
-        RenderText {#text} at (364,0) size 16x56
-          text run at (364,0) width 16: " "
-        RenderInline {SPAN} at (0,0) size 205x56
-          RenderText {#text} at (380,0) size 205x56
-            text run at (380,0) width 205: "multiple"
+          RenderText {#text} at (234,0) size 128x56
+            text run at (234,0) width 128: "casts"
+        RenderText {#text} at (361,0) size 17x56
+          text run at (361,0) width 17: " "
+        RenderInline {SPAN} at (0,0) size 206x56
+          RenderText {#text} at (377,0) size 206x56
+            text run at (377,0) width 206: "multiple"
         RenderText {#text} at (0,56) size 218x56
           text run at (0,56) width 218: "shadows"
       RenderBlock {DIV} at (50,162) size 100x100
