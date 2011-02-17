@@ -61,7 +61,8 @@ public:
         unsigned rgbaShaderProgram() const { return m_rgbaShaderProgram; }
         int yuvShaderMatrixLocation() const { return m_yuvShaderMatrixLocation; }
         int rgbaShaderMatrixLocation() const { return m_rgbaShaderMatrixLocation; }
-        int yuvWidthScaleFactorLocation() const { return m_yuvWidthScaleFactorLocation; }
+        int yWidthScaleFactorLocation() const { return m_yWidthScaleFactorLocation; }
+        int uvWidthScaleFactorLocation() const { return m_uvWidthScaleFactorLocation; }
         int rgbaWidthScaleFactorLocation() const { return m_rgbaWidthScaleFactorLocation; }
         int yTextureLocation() const { return m_yTextureLocation; }
         int uTextureLocation() const { return m_uTextureLocation; }
@@ -77,7 +78,8 @@ public:
         unsigned m_yuvShaderProgram;
         unsigned m_rgbaShaderProgram;
         int m_yuvShaderMatrixLocation;
-        int m_yuvWidthScaleFactorLocation;
+        int m_yWidthScaleFactorLocation;
+        int m_uvWidthScaleFactorLocation;
         int m_rgbaShaderMatrixLocation;
         int m_rgbaWidthScaleFactorLocation;
         int m_ccMatrixLocation;

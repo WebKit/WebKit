@@ -1,3 +1,17 @@
+2011-02-16  Victoria Kirst  <vrk@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Fix green pixels at edge of certain GPU-accelerated videos
+        https://bugs.webkit.org/show_bug.cgi?id=54559
+
+        * src/VideoFrameChromiumImpl.cpp:
+        (WebKit::VideoFrameChromiumImpl::width):
+        (WebKit::VideoFrameChromiumImpl::height):
+        (WebKit::VideoFrameChromiumImpl::requiredTextureSize):
+        (WebKit::VideoFrameChromiumImpl::hasPaddingBytes):
+        * src/VideoFrameChromiumImpl.h:
+
 2011-02-16  Jeremy Orlow  <jorlow@chromium.org>
 
         Back out IndexedDB change thats no longer necessary

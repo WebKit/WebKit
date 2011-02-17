@@ -1,3 +1,22 @@
+2011-02-16  Victoria Kirst  <vrk@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Fix green pixels at edge of certain GPU-accelerated videos
+        https://bugs.webkit.org/show_bug.cgi?id=54559
+
+        Adds logic to properly resize the range of YUV textures to only
+        select legitimate values.
+
+        * platform/graphics/chromium/VideoFrameChromium.h:
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::SharedValues::SharedValues):
+        (WebCore::VideoLayerChromium::allocateTexturesIfNeeded):
+        (WebCore::VideoLayerChromium::drawYUV):
+        * platform/graphics/chromium/VideoLayerChromium.h:
+        (WebCore::VideoLayerChromium::SharedValues::yWidthScaleFactorLocation):
+        (WebCore::VideoLayerChromium::SharedValues::uvWidthScaleFactorLocation):
+
 2011-02-16  Bill Budge  <bbudge@chromium.org>
 
         Reviewed by David Levin.

@@ -56,7 +56,8 @@ VideoLayerChromium::SharedValues::SharedValues(GraphicsContext3D* context)
     , m_yuvShaderProgram(0)
     , m_rgbaShaderProgram(0)
     , m_yuvShaderMatrixLocation(0)
-    , m_yuvWidthScaleFactorLocation(0)
+    , m_yWidthScaleFactorLocation(0)
+    , m_uvWidthScaleFactorLocation(0)
     , m_rgbaShaderMatrixLocation(0)
     , m_rgbaWidthScaleFactorLocation(0)
     , m_ccMatrixLocation(0)
@@ -81,18 +82,22 @@ VideoLayerChromium::SharedValues::SharedValues(GraphicsContext3D* context)
         "attribute vec4 a_position;   \n"
         "attribute vec2 a_texCoord;   \n"
         "uniform mat4 matrix;         \n"
-        "varying vec2 v_texCoord;     \n"
-        "uniform float widthScaleFactor;  \n"
+        "varying vec2 y_texCoord;     \n"
+        "varying vec2 uv_texCoord;    \n"
+        "uniform float y_widthScaleFactor; \n"
+        "uniform float uv_widthScaleFactor; \n"
         "void main()                  \n"
         "{                            \n"
         "  gl_Position = matrix * a_position; \n"
-        "  v_texCoord = vec2(widthScaleFactor * a_texCoord.x, a_texCoord.y); \n"
+        "  y_texCoord = vec2(y_widthScaleFactor * a_texCoord.x, a_texCoord.y); \n"
+        "  uv_texCoord = vec2(uv_widthScaleFactor * a_texCoord.x, a_texCoord.y); \n"
         "}                            \n";
 
     char yuvFragmentShaderString[] =
         "precision mediump float;                             \n"
         "precision mediump int;                               \n"
-        "varying vec2 v_texCoord;                             \n"
+        "varying vec2 y_texCoord;                             \n"
+        "varying vec2 uv_texCoord;                            \n"
         "uniform sampler2D y_texture;                         \n"
         "uniform sampler2D u_texture;                         \n"
         "uniform sampler2D v_texture;                         \n"
@@ -101,21 +106,21 @@ VideoLayerChromium::SharedValues::SharedValues(GraphicsContext3D* context)
         "uniform mat3 cc_matrix;                              \n"
         "void main()                                          \n"
         "{                                                    \n"
-        "  float y = texture2D(y_texture, v_texCoord).x;      \n"
-        "  float u = texture2D(u_texture, v_texCoord).x - adj; \n"
-        "  float v = texture2D(v_texture, v_texCoord).x - adj; \n"
+        "  float y = texture2D(y_texture, y_texCoord).x;      \n"
+        "  float u = texture2D(u_texture, uv_texCoord).x - adj; \n"
+        "  float v = texture2D(v_texture, uv_texCoord).x - adj; \n"
         "  vec3 rgb = cc_matrix * vec3(y, u, v);              \n"
         "  gl_FragColor = vec4(rgb, float(1)) * alpha;        \n"
         "}                                                    \n";
 
     char rgbaFragmentShaderString[] =
         "precision mediump float;                             \n"
-        "varying vec2 v_texCoord;                             \n"
+        "varying vec2 y_texCoord;                             \n"
         "uniform sampler2D rgba_texture;                      \n"
         "uniform float alpha;                                 \n"
         "void main()                                          \n"
         "{                                                    \n"
-        "  vec4 texColor = texture2D(rgba_texture, vec2(v_texCoord.x, float(1) - v_texCoord.y)); \n"
+        "  vec4 texColor = texture2D(rgba_texture, vec2(y_texCoord.x, float(1) - y_texCoord.y)); \n"
         "  gl_FragColor = vec4(texColor.x, texColor.y, texColor.z, texColor.w) * alpha; \n"
         "}                                                    \n";
 
@@ -132,7 +137,8 @@ VideoLayerChromium::SharedValues::SharedValues(GraphicsContext3D* context)
     }
 
     m_yuvShaderMatrixLocation = m_context->getUniformLocation(m_yuvShaderProgram, "matrix");
-    m_yuvWidthScaleFactorLocation = m_context->getUniformLocation(m_yuvShaderProgram, "widthScaleFactor");
+    m_yWidthScaleFactorLocation = m_context->getUniformLocation(m_yuvShaderProgram, "y_widthScaleFactor");
+    m_uvWidthScaleFactorLocation = m_context->getUniformLocation(m_yuvShaderProgram, "uv_widthScaleFactor");
     m_yTextureLocation = m_context->getUniformLocation(m_yuvShaderProgram, "y_texture");
     m_uTextureLocation = m_context->getUniformLocation(m_yuvShaderProgram, "u_texture");
     m_vTextureLocation = m_context->getUniformLocation(m_yuvShaderProgram, "v_texture");
@@ -141,7 +147,8 @@ VideoLayerChromium::SharedValues::SharedValues(GraphicsContext3D* context)
     m_yuvAlphaLocation = m_context->getUniformLocation(m_yuvShaderProgram, "alpha");
 
     ASSERT(m_yuvShaderMatrixLocation != -1);
-    ASSERT(m_yuvWidthScaleFactorLocation != -1);
+    ASSERT(m_yWidthScaleFactorLocation != -1);
+    ASSERT(m_uvWidthScaleFactorLocation != -1);
     ASSERT(m_yTextureLocation != -1);
     ASSERT(m_uTextureLocation != -1);
     ASSERT(m_vTextureLocation != -1);
@@ -151,7 +158,7 @@ VideoLayerChromium::SharedValues::SharedValues(GraphicsContext3D* context)
 
     m_rgbaShaderMatrixLocation = m_context->getUniformLocation(m_rgbaShaderProgram, "matrix");
     m_rgbaTextureLocation = m_context->getUniformLocation(m_rgbaShaderProgram, "rgba_texture");
-    m_rgbaWidthScaleFactorLocation = m_context->getUniformLocation(m_rgbaShaderProgram, "widthScaleFactor");
+    m_rgbaWidthScaleFactorLocation = m_context->getUniformLocation(m_rgbaShaderProgram, "y_widthScaleFactor");
     m_rgbaAlphaLocation = m_context->getUniformLocation(m_rgbaShaderProgram, "alpha");
 
     ASSERT(m_rgbaShaderMatrixLocation != -1);
@@ -297,9 +304,27 @@ bool VideoLayerChromium::allocateTexturesIfNeeded(GraphicsContext3D* context, Vi
         if (!planeTextureSize.isZero() && planeTextureSize != m_textureSizes[plane]) {
             allocateTexture(context, m_textures[plane], planeTextureSize, textureFormat);
             m_textureSizes[plane] = planeTextureSize;
-            m_frameSizes[plane] = IntSize(frame->width(), frame->height());
+            int frameWidth = frame->width(plane);
+            int frameHeight = frame->height(plane);
+            // When there are dead pixels at the edge of the texture, decrease
+            // the frame width by 1 to prevent the rightmost pixels from
+            // interpolating with the dead pixels.
+            if (frame->hasPaddingBytes(plane))
+                --frameWidth;
+            m_frameSizes[plane] = IntSize(frameWidth, frameHeight);
         }
     }
+
+    // In YV12, every 2x2 square of Y values corresponds to one U and
+    // one V value. If we decrease the width of the UV plane, we must decrease the
+    // width of the Y texture by 2 for proper alignment. This must happen
+    // always, even if Y's texture does not have padding bytes.
+    if (frame->format() == VideoFrameChromium::YV12) {
+        int yPlaneOriginalWidth = frame->width(VideoFrameChromium::yPlane);
+        if (frame->hasPaddingBytes(VideoFrameChromium::uPlane))
+            m_frameSizes[VideoFrameChromium::yPlane].setWidth(yPlaneOriginalWidth - 2);
+    }
+
     return true;
 }
 
@@ -370,10 +395,16 @@ void VideoLayerChromium::drawYUV(const SharedValues* sv)
     GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_textures[VideoFrameChromium::vPlane]));
 
     layerRenderer()->useShader(sv->yuvShaderProgram());
-    unsigned frameWidth = m_frameSizes[VideoFrameChromium::yPlane].width();
-    unsigned textureWidth = m_textureSizes[VideoFrameChromium::yPlane].width();
-    float widthScaleFactor = static_cast<float>(frameWidth) / textureWidth;
-    GLC(context, context->uniform1f(sv->yuvWidthScaleFactorLocation(), widthScaleFactor));
+    unsigned yFrameWidth = m_frameSizes[VideoFrameChromium::yPlane].width();
+    unsigned yTextureWidth = m_textureSizes[VideoFrameChromium::yPlane].width();
+    // Arbitrarily take the u sizes because u and v dimensions are identical.
+    unsigned uvFrameWidth = m_frameSizes[VideoFrameChromium::uPlane].width();
+    unsigned uvTextureWidth = m_textureSizes[VideoFrameChromium::uPlane].width();
+
+    float yWidthScaleFactor = static_cast<float>(yFrameWidth) / yTextureWidth;
+    float uvWidthScaleFactor = static_cast<float>(uvFrameWidth) / uvTextureWidth;
+    GLC(context, context->uniform1f(sv->yWidthScaleFactorLocation(), yWidthScaleFactor));
+    GLC(context, context->uniform1f(sv->uvWidthScaleFactorLocation(), uvWidthScaleFactor));
 
     GLC(context, context->uniform1i(sv->yTextureLocation(), 1));
     GLC(context, context->uniform1i(sv->uTextureLocation(), 2));

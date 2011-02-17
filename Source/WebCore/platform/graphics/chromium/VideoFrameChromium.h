@@ -69,12 +69,15 @@ public:
     virtual SurfaceType surfaceType() const = 0;
     virtual Format format() const = 0;
     virtual unsigned width() const = 0;
+    virtual unsigned width(unsigned plane) const = 0;
     virtual unsigned height() const = 0;
+    virtual unsigned height(unsigned plane) const = 0;
     virtual unsigned planes() const = 0;
     virtual int stride(unsigned plane) const = 0;
     virtual const void* data(unsigned plane) const = 0;
     virtual unsigned texture(unsigned plane) const = 0;
     virtual const IntSize requiredTextureSize(unsigned plane) const = 0;
+    virtual bool hasPaddingBytes(unsigned plane) const = 0;
 };
 
 } // namespace WebCore

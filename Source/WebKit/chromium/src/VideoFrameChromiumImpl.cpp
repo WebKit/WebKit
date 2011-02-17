@@ -72,11 +72,27 @@ unsigned VideoFrameChromiumImpl::width() const
     return 0;
 }
 
+unsigned VideoFrameChromiumImpl::width(unsigned plane) const
+{
+    unsigned planeWidth = width();
+    if (format() == YV12 && plane != static_cast<unsigned>(yPlane))
+        planeWidth /= 2;
+    return planeWidth;
+}
+
 unsigned VideoFrameChromiumImpl::height() const
 {
     if (m_webVideoFrame)
         return m_webVideoFrame->height();
     return 0;
+}
+
+unsigned VideoFrameChromiumImpl::height(unsigned plane) const
+{
+    unsigned planeHeight = height();
+    if (format() == YV12 && plane != static_cast<unsigned>(yPlane))
+        planeHeight /= 2;
+    return planeHeight;
 }
 
 unsigned VideoFrameChromiumImpl::planes() const
@@ -109,21 +125,14 @@ unsigned VideoFrameChromiumImpl::texture(unsigned plane) const
 
 const IntSize VideoFrameChromiumImpl::requiredTextureSize(unsigned plane) const
 {
-    switch (format()) {
-    case RGBA:
-    case YV16:
-        return IntSize(stride(plane), height());
-    case YV12:
-        if (plane == static_cast<unsigned>(yPlane))
-            return IntSize(stride(plane), height());
-        else if (plane == static_cast<unsigned>(uPlane))
-            return IntSize(stride(plane), height() / 2);
-        else if (plane == static_cast<unsigned>(vPlane))
-            return IntSize(stride(plane), height() / 2);
-    default:
-        break;
-    }
-    return IntSize();
+    return IntSize(stride(plane), height(plane));
+}
+
+bool VideoFrameChromiumImpl::hasPaddingBytes(unsigned plane) const
+{
+    if (m_webVideoFrame)
+        return stride(plane) - width(plane) > 0;
+    return false;
 }
 
 } // namespace WebKit
