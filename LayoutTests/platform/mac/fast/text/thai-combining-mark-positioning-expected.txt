@@ -4,5 +4,5 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x101
-        RenderText {#text} at (0,0) size 385x101
-          text run at (0,0) width 385: "\x{E43}\x{E2B}\x{E49}\x{E21}\x{E35}\x{E02}\x{E36}\x{E49}\x{E19} \x{E01}\x{E32}\x{E23}\x{E17}\x{E4D}\x{E32}\x{E43}\x{E2B}\x{E49}"
+        RenderText {#text} at (0,0) size 384x101
+          text run at (0,0) width 384: "\x{E43}\x{E2B}\x{E49}\x{E21}\x{E35}\x{E02}\x{E36}\x{E49}\x{E19} \x{E01}\x{E32}\x{E23}\x{E17}\x{E4D}\x{E32}\x{E43}\x{E2B}\x{E49}"
