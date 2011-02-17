@@ -42,8 +42,8 @@ public:
 
     virtual int selectionTop() { return m_y; }
     virtual int selectionHeight() { return m_logicalHeight; }
-    virtual int offsetForPosition(int x, bool includePartialGlyphs = true) const;
-    virtual int positionForOffset(int offset) const;
+    virtual int offsetForPosition(float x, bool includePartialGlyphs = true) const;
+    virtual float positionForOffset(int offset) const;
 
     void paintSelectionBackground(PaintInfo&);
     virtual void paint(PaintInfo&, int tx, int ty);

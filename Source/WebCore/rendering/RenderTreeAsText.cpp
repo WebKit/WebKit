@@ -470,11 +470,17 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
 
 static void writeTextRun(TextStream& ts, const RenderText& o, const InlineTextBox& run)
 {
-    // FIXME: Table cell adjustment is temporary until results can be updated.
+    // FIXME: For now use an "enclosingIntRect" model for x, y and logicalWidth, although this makes it harder
+    // to detect any changes caused by the conversion to floating point. :(
+    int x = run.m_x;
     int y = run.m_y;
+    int logicalWidth = ceilf(run.m_x + run.m_logicalWidth) - x;
+
+    // FIXME: Table cell adjustment is temporary until results can be updated.
     if (o.containingBlock()->isTableCell())
         y -= toRenderTableCell(o.containingBlock())->intrinsicPaddingBefore();
-    ts << "text run at (" << run.m_x << "," << y << ") width " << run.m_logicalWidth;
+        
+    ts << "text run at (" << x << "," << y << ") width " << logicalWidth;
     if (!run.isLeftToRightDirection() || run.m_dirOverride) {
         ts << (!run.isLeftToRightDirection() ? " RTL" : " LTR");
         if (run.m_dirOverride)

@@ -854,13 +854,13 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
     drawFocusRingForPath(m_data->p(), path, color, m_data->antiAliasingForRectsAndLines);
 }
 
-void GraphicsContext::drawLineForText(const IntPoint& origin, int width, bool)
+void GraphicsContext::drawLineForText(const FloatPoint& origin, float width, bool)
 {
     if (paintingDisabled())
         return;
 
-    IntPoint startPoint = origin;
-    IntPoint endPoint = origin + IntSize(width, 0);
+    FloatPoint startPoint = origin;
+    FloatPoint endPoint = origin + FloatSize(width, 0);
 
     // If paintengine type is X11 to avoid artifacts
     // like bug https://bugs.webkit.org/show_bug.cgi?id=42248
@@ -880,10 +880,11 @@ void GraphicsContext::drawLineForText(const IntPoint& origin, int width, bool)
     }
 #endif // defined(Q_WS_X11)
 
-    drawLine(startPoint, endPoint);
+    // FIXME: Loss of precision here. Might consider rounding.
+    drawLine(IntPoint(startPoint.x(), startPoint.y()), IntPoint(endPoint.x(), endPoint.y()));
 }
 
-void GraphicsContext::drawLineForTextChecking(const IntPoint&, int, TextCheckingLineStyle)
+void GraphicsContext::drawLineForTextChecking(const FloatPoint&, float, TextCheckingLineStyle)
 {
     if (paintingDisabled())
         return;

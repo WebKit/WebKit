@@ -485,7 +485,7 @@ private:
 
     void skipTrailingWhitespace(InlineIterator&, bool isLineEmpty, bool previousLineBrokeCleanly);
     int skipLeadingWhitespace(InlineBidiResolver&, bool firstLine, bool isLineEmpty, bool previousLineBrokeCleanly, FloatingObject* lastFloatFromPreviousLine);
-    void fitBelowFloats(int widthToFit, bool firstLine, int& availableWidth);
+    void fitBelowFloats(float widthToFit, bool firstLine, float& availableWidth);
     InlineIterator findNextLineBreak(InlineBidiResolver&, bool firstLine, bool& isLineEmpty, bool& previousLineBrokeCleanly, bool& hyphenated, EClear*, FloatingObject* lastFloatFromPreviousLine);
     RootInlineBox* constructLine(unsigned runCount, BidiRun* firstRun, BidiRun* lastRun, bool firstLine, bool lastLine, RenderObject* endObject);
     InlineFlowBox* createLineBoxes(RenderObject*, bool firstLine);

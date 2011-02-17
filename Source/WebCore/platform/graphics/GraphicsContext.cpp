@@ -375,7 +375,7 @@ void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const 
 }
 
 #if !OS(WINCE) || PLATFORM(QT)
-void GraphicsContext::drawText(const Font& font, const TextRun& run, const IntPoint& point, int from, int to)
+void GraphicsContext::drawText(const Font& font, const TextRun& run, const FloatPoint& point, int from, int to)
 {
     if (paintingDisabled())
         return;
@@ -384,7 +384,7 @@ void GraphicsContext::drawText(const Font& font, const TextRun& run, const IntPo
 }
 #endif
 
-void GraphicsContext::drawEmphasisMarks(const Font& font, const TextRun& run, const AtomicString& mark, const IntPoint& point, int from, int to)
+void GraphicsContext::drawEmphasisMarks(const Font& font, const TextRun& run, const AtomicString& mark, const FloatPoint& point, int from, int to)
 {
     if (paintingDisabled())
         return;
@@ -422,13 +422,13 @@ void GraphicsContext::drawBidiText(const Font& font, const TextRun& run, const F
         bidiRun = bidiRun->next();
         // FIXME: Have Font::drawText return the width of what it drew so that we don't have to re-measure here.
         if (bidiRun)
-            currPoint.move(font.floatWidth(subrun), 0.f);
+            currPoint.move(font.width(subrun), 0);
     }
 
     bidiResolver.deleteRuns();
 }
 
-void GraphicsContext::drawHighlightForText(const Font& font, const TextRun& run, const IntPoint& point, int h, const Color& backgroundColor, ColorSpace colorSpace, int from, int to)
+void GraphicsContext::drawHighlightForText(const Font& font, const TextRun& run, const FloatPoint& point, int h, const Color& backgroundColor, ColorSpace colorSpace, int from, int to)
 {
     if (paintingDisabled())
         return;

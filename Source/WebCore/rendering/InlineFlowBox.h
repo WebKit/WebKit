@@ -85,7 +85,7 @@ public:
     virtual void deleteLine(RenderArena*);
     virtual void extractLine();
     virtual void attachLine();
-    virtual void adjustPosition(int dx, int dy);
+    virtual void adjustPosition(float dx, float dy);
 
     virtual void extractLineBoxFromRenderObject();
     virtual void attachLineBoxToRenderObject();
@@ -93,6 +93,8 @@ public:
 
     virtual void clearTruncation();
 
+    IntRect roundedFrameRect() const;
+    
     virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
     virtual void paintMask(PaintInfo&, int tx, int ty);
     void paintFillLayers(const PaintInfo&, const Color&, const FillLayer*, int tx, int ty, int w, int h, CompositeOperator = CompositeSourceOver);
@@ -155,7 +157,7 @@ public:
     void determineSpacingForFlowBoxes(bool lastLine, RenderObject* endObject);
     int getFlowSpacingLogicalWidth();
     bool onEndChain(RenderObject* endObject);
-    int placeBoxesInInlineDirection(int logicalLeft, bool& needsWordSpacing, GlyphOverflowAndFallbackFontsMap&);
+    float placeBoxesInInlineDirection(float logicalLeft, bool& needsWordSpacing, GlyphOverflowAndFallbackFontsMap&);
     void computeLogicalBoxHeights(int& maxPositionTop, int& maxPositionBottom,
                                   int& maxAscent, int& maxDescent, bool& setMaxAscent, bool& setMaxDescent,
                                   bool strictMode, GlyphOverflowAndFallbackFontsMap&, FontBaseline, VerticalPositionCache&);
@@ -176,7 +178,7 @@ public:
     virtual RenderObject::SelectionState selectionState();
 
     virtual bool canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth);
-    virtual int placeEllipsisBox(bool ltr, int blockLeftEdge, int blockRightEdge, int ellipsisWidth, bool&);
+    virtual float placeEllipsisBox(bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, bool&);
 
     bool hasTextChildren() const { return m_hasTextChildren; }
 
@@ -187,10 +189,10 @@ public:
     // For horizontal-tb and vertical-lr they will match physical directions, but for horizontal-bt and vertical-rl, the top/bottom and left/right
     // respectively are flipped when compared to their physical counterparts.  For example minX is on the left in vertical-lr, but it is on the right in vertical-rl.
     int minYLayoutOverflow() const { return m_overflow ? m_overflow->minYLayoutOverflow() : m_y; }
-    int maxYLayoutOverflow() const { return m_overflow ? m_overflow->maxYLayoutOverflow() : m_y + height(); }
+    int maxYLayoutOverflow() const { return m_overflow ? m_overflow->maxYLayoutOverflow() : ceilf(m_y + height()); }
     int minXLayoutOverflow() const { return m_overflow ? m_overflow->minXLayoutOverflow() : m_x; }
-    int maxXLayoutOverflow() const { return m_overflow ? m_overflow->maxXLayoutOverflow() : m_x + width(); }
-    IntRect layoutOverflowRect() const { return m_overflow ? m_overflow->layoutOverflowRect() : IntRect(m_x, m_y, width(), height()); }
+    int maxXLayoutOverflow() const { return m_overflow ? m_overflow->maxXLayoutOverflow() : ceilf(m_x + width()); }
+    IntRect layoutOverflowRect() const { return m_overflow ? m_overflow->layoutOverflowRect() : enclosingIntRect(FloatRect(m_x, m_y, width(), height())); }
     int logicalLeftLayoutOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? minXLayoutOverflow() : minYLayoutOverflow(); }
     int logicalRightLayoutOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? maxXLayoutOverflow() : maxYLayoutOverflow(); }
     int logicalTopLayoutOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? minYVisualOverflow() : minXVisualOverflow(); }
@@ -204,10 +206,10 @@ public:
     }
 
     int minYVisualOverflow() const { return m_overflow ? m_overflow->minYVisualOverflow() : m_y; }
-    int maxYVisualOverflow() const { return m_overflow ? m_overflow->maxYVisualOverflow() : m_y + height(); }
+    int maxYVisualOverflow() const { return m_overflow ? m_overflow->maxYVisualOverflow() : ceilf(m_y + height()); }
     int minXVisualOverflow() const { return m_overflow ? m_overflow->minXVisualOverflow() : m_x; }
-    int maxXVisualOverflow() const { return m_overflow ? m_overflow->maxXVisualOverflow() : m_x + width(); }
-    IntRect visualOverflowRect() const { return m_overflow ? m_overflow->visualOverflowRect() : IntRect(m_x, m_y, width(), height()); }
+    int maxXVisualOverflow() const { return m_overflow ? m_overflow->maxXVisualOverflow() : ceilf(m_x + width()); }
+    IntRect visualOverflowRect() const { return m_overflow ? m_overflow->visualOverflowRect() : enclosingIntRect(FloatRect(m_x, m_y, width(), height())); }
     int logicalLeftVisualOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? minXVisualOverflow() : minYVisualOverflow(); }
     int logicalRightVisualOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? maxXVisualOverflow() : maxYVisualOverflow(); }
     int logicalTopVisualOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? minYVisualOverflow() : minXVisualOverflow(); }

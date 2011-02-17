@@ -47,7 +47,7 @@ SVGInlineTextBox::SVGInlineTextBox(RenderObject* object)
 {
 }
 
-int SVGInlineTextBox::offsetForPosition(int, bool) const
+int SVGInlineTextBox::offsetForPosition(float, bool) const
 {
     // SVG doesn't use the standard offset <-> position selection system, as it's not suitable for SVGs complex needs.
     // vertical text selection, inline boxes spanning multiple lines (contrary to HTML, etc.)
@@ -76,7 +76,7 @@ int SVGInlineTextBox::offsetForPositionInFragment(const SVGTextFragment& fragmen
     return fragment.positionListOffset - start() + textRenderer->scaledFont().offsetForPosition(textRun, position * scalingFactor, includePartialGlyphs);
 }
 
-int SVGInlineTextBox::positionForOffset(int) const
+float SVGInlineTextBox::positionForOffset(int) const
 {
     // SVG doesn't use the offset <-> position selection system. 
     ASSERT_NOT_REACHED();
@@ -414,9 +414,6 @@ TextRun SVGInlineTextBox::constructTextRun(RenderStyle* style, const SVGTextFrag
 #if ENABLE(SVG_FONTS)
     run.setReferencingRenderObject(text);
 #endif
-
-    // Disable any word/character rounding.
-    run.disableRoundingHacks();
 
     // We handle letter & word spacing ourselves.
     run.disableSpacing();

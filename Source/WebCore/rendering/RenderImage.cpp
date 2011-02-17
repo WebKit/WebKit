@@ -81,7 +81,7 @@ static const unsigned short paddingHeight = 4;
 
 // Alt text is restricted to this maximum size, in pixels.  These are
 // signed integers because they are compared with other signed values.
-static const int maxAltTextWidth = 1024;
+static const float maxAltTextWidth = 1024;
 static const int maxAltTextHeight = 256;
 
 IntSize RenderImage::imageSizeForError(CachedImage* newImage) const

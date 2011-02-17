@@ -701,20 +701,22 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
     cairo_restore(cr);
 }
 
-void GraphicsContext::drawLineForText(const IntPoint& origin, int width, bool printing)
+void GraphicsContext::drawLineForText(const FloatPoint& origin, float width, bool printing)
 {
     if (paintingDisabled())
         return;
 
-    IntPoint endPoint = origin + IntSize(width, 0);
-    drawLine(origin, endPoint);
+    FloatPoint endPoint = origin + FloatSize(width, 0);
+    
+    // FIXME: Loss of precision here. Might consider rounding.
+    drawLine(IntPoint(origin.x(), origin.y()), IntPoint(endPoint.x(), endPoint.y()));
 }
 
 #if !PLATFORM(GTK)
 #include "DrawErrorUnderline.h"
 #endif
 
-void GraphicsContext::drawLineForTextChecking(const IntPoint& origin, int width, TextCheckingLineStyle style)
+void GraphicsContext::drawLineForTextChecking(const FloatPoint& origin, float width, TextCheckingLineStyle style)
 {
     if (paintingDisabled())
         return;

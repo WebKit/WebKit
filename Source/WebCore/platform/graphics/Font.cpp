@@ -39,17 +39,6 @@ using namespace Unicode;
 
 namespace WebCore {
 
-const uint8_t Font::gRoundingHackCharacterTable[256] = {
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 1 /*\t*/, 1 /*\n*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    1 /*space*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 /*-*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 /*?*/,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    1 /*no-break space*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-};
-
 Font::CodePath Font::s_codePath = Auto;
 
 // ============================================================================================
@@ -176,7 +165,7 @@ void Font::drawEmphasisMarks(GraphicsContext* context, const TextRun& run, const
         drawEmphasisMarksForComplexText(context, run, mark, point, from, to);
 }
 
-float Font::floatWidth(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+float Font::width(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
 #if ENABLE(SVG_FONTS)
     if (primaryFont()->isSVGFont())
@@ -194,7 +183,7 @@ float Font::floatWidth(const TextRun& run, HashSet<const SimpleFontData*>* fallb
     return floatWidthForComplexText(run, fallbackFonts, glyphOverflow);
 }
 
-float Font::floatWidth(const TextRun& run, int extraCharsAvailable, int& charsConsumed, String& glyphName) const
+float Font::width(const TextRun& run, int extraCharsAvailable, int& charsConsumed, String& glyphName) const
 {
 #if !ENABLE(SVG_FONTS)
     UNUSED_PARAM(extraCharsAvailable);

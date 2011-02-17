@@ -606,7 +606,7 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     platformContext()->canvas()->drawPoints(SkCanvas::kLines_PointMode, 2, pts, paint);
 }
 
-void GraphicsContext::drawLineForTextChecking(const IntPoint& pt, int width, TextCheckingLineStyle style)
+void GraphicsContext::drawLineForTextChecking(const FloatPoint& pt, float width, TextCheckingLineStyle style)
 {
     if (paintingDisabled())
         return;
@@ -655,8 +655,8 @@ void GraphicsContext::drawLineForTextChecking(const IntPoint& pt, int width, Tex
     }
 
     // Offset it vertically by 1 so that there's some space under the text.
-    SkScalar originX = SkIntToScalar(pt.x());
-    SkScalar originY = SkIntToScalar(pt.y()) + 1;
+    SkScalar originX = WebCoreFloatToSkScalar(pt.x());
+    SkScalar originY = WebCoreFloatToSkScalar(pt.y()) + 1;
 
     // Make a shader for the bitmap with an origin of the box we'll draw. This
     // shader is refcounted and will have an initial refcount of 1.
@@ -678,13 +678,13 @@ void GraphicsContext::drawLineForTextChecking(const IntPoint& pt, int width, Tex
     SkRect rect;
     rect.set(originX,
              originY,
-             originX + SkIntToScalar(width),
+             originX + WebCoreFloatToSkScalar(width),
              originY + SkIntToScalar(misspellBitmap->height()));
     platformContext()->canvas()->drawRect(rect, paint);
 }
 
-void GraphicsContext::drawLineForText(const IntPoint& pt,
-                                      int width,
+void GraphicsContext::drawLineForText(const FloatPoint& pt,
+                                      float width,
                                       bool printing)
 {
     if (paintingDisabled())
@@ -697,9 +697,9 @@ void GraphicsContext::drawLineForText(const IntPoint& pt,
 
     int thickness = SkMax32(static_cast<int>(strokeThickness()), 1);
     SkRect r;
-    r.fLeft = SkIntToScalar(pt.x());
-    r.fTop = SkIntToScalar(pt.y());
-    r.fRight = r.fLeft + SkIntToScalar(width);
+    r.fLeft = WebCoreFloatToSkScalar(pt.x());
+    r.fTop = WebCoreFloatToSkScalar(pt.y());
+    r.fRight = r.fLeft + WebCoreFloatToSkScalar(width);
     r.fBottom = r.fTop + SkIntToScalar(thickness);
 
     SkPaint paint;

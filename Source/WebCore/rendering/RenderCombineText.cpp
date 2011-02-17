@@ -52,7 +52,7 @@ void RenderCombineText::setTextInternal(PassRefPtr<StringImpl> text)
     m_needsFontUpdate = true;
 }
 
-unsigned RenderCombineText::width(unsigned from, unsigned length, const Font& font, int xPosition, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+float RenderCombineText::width(unsigned from, unsigned length, const Font& font, float xPosition, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     if (!characters())
         return 0;
@@ -63,7 +63,7 @@ unsigned RenderCombineText::width(unsigned from, unsigned length, const Font& fo
     return RenderText::width(from, length, font, xPosition, fallbackFonts, glyphOverflow);
 }
 
-void RenderCombineText::adjustTextOrigin(IntPoint& textOrigin, const IntRect& boxRect) const
+void RenderCombineText::adjustTextOrigin(FloatPoint& textOrigin, const FloatRect& boxRect) const
 {
     if (m_isCombined)
         textOrigin.move(boxRect.height() / 2 - ceilf(m_combinedTextWidth) / 2, style()->font().pixelSize());
@@ -98,7 +98,7 @@ void RenderCombineText::combineText()
     bool shouldUpdateFont = false;
 
     description.setOrientation(Horizontal); // We are going to draw combined text horizontally.
-    m_combinedTextWidth = style()->font().floatWidth(run);
+    m_combinedTextWidth = style()->font().width(run);
     m_isCombined = m_combinedTextWidth <= emWidth;
 
     if (m_isCombined)
@@ -110,7 +110,7 @@ void RenderCombineText::combineText()
             description.setWidthVariant(widthVariants[i]);
             Font compressedFont = Font(description, style()->font().letterSpacing(), style()->font().wordSpacing());
             compressedFont.update(style()->font().fontSelector());
-            float runWidth = compressedFont.floatWidth(run);
+            float runWidth = compressedFont.width(run);
             if (runWidth <= emWidth) {
                 m_combinedTextWidth = runWidth;
                 m_isCombined = true;

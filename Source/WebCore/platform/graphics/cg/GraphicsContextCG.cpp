@@ -1144,7 +1144,7 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect)
     return FloatRect(roundedOrigin, roundedLowerRight - roundedOrigin);
 }
 
-void GraphicsContext::drawLineForText(const IntPoint& point, int width, bool printing)
+void GraphicsContext::drawLineForText(const FloatPoint& point, float width, bool printing)
 {
     if (paintingDisabled())
         return;

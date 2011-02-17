@@ -53,7 +53,6 @@ struct WidthIterator {
     float m_expansion;
     float m_expansionPerOpportunity;
     bool m_isAfterExpansion;
-    float m_finalRoundingWidth;
 
 private:
     UChar32 normalizeVoicingMarks(int currentCharacter);

@@ -261,18 +261,13 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const S
         return true;
 
     // Convert all chars that should be treated as spaces to use the space glyph.
-    // We also create a map that allows us to quickly go from space glyphs or rounding
-    // hack glyphs back to their corresponding characters.
+    // We also create a map that allows us to quickly go from space glyphs back to their corresponding characters.
     Vector<int> spaceCharacters(glyphs.size());
     spaceCharacters.fill(-1);
-    Vector<int> roundingHackCharacters(glyphs.size());
-    roundingHackCharacters.fill(-1);
-    Vector<int> roundingHackWordBoundaries(glyphs.size());
-    roundingHackWordBoundaries.fill(-1);
 
     const float cLogicalScale = fontData->platformData().useGDI() ? 1.0f : 32.0f;
     unsigned logicalSpaceWidth = fontData->spaceWidth() * cLogicalScale;
-    float roundedSpaceWidth = roundf(fontData->spaceWidth());
+    float spaceWidth = fontData->spaceWidth();
 
     for (int k = 0; k < len; k++) {
         UChar ch = *(str + k);
@@ -285,21 +280,6 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const S
             advances[clusters[k]] = treatAsSpace ? logicalSpaceWidth : 0;
             if (treatAsSpace)
                 spaceCharacters[clusters[k]] = m_currentCharacter + k + item.iCharPos;
-        }
-
-        if (Font::isRoundingHackCharacter(ch))
-            roundingHackCharacters[clusters[k]] = m_currentCharacter + k + item.iCharPos;
-
-        int boundary = k + m_currentCharacter + item.iCharPos;
-        if (boundary < m_run.length()) {
-            // When at the last character in the str, don't look one past the end for a rounding hack character.
-            // Instead look ahead to the first character of next item, if there is a next one. 
-            if (k + 1 == len) {
-                if (i + 2 < m_items.size() // Check for at least 2 items remaining. The last item is a terminating item containing no characters.
-                    && Font::isRoundingHackCharacter(*(cp + m_items[i + 1].iCharPos)))
-                    roundingHackWordBoundaries[clusters[k]] = boundary;
-            } else if (Font::isRoundingHackCharacter(*(str + k + 1)))
-                roundingHackWordBoundaries[clusters[k]] = boundary;
         }
     }
 
@@ -324,14 +304,6 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const S
 
         advance += fontData->syntheticBoldOffset();
 
-        // We special case spaces in two ways when applying word rounding.
-        // First, we round spaces to an adjusted width in all fonts.
-        // Second, in fixed-pitch fonts we ensure that all glyphs that
-        // match the width of the space glyph have the same width as the space glyph.
-        if (roundedAdvance == roundedSpaceWidth && (fontData->pitch() == FixedPitch || glyph == fontData->spaceGlyph()) &&
-            m_run.applyWordRounding())
-            advance = fontData->adjustedSpaceWidth();
-
         if (hasExtraSpacing) {
             // If we're a glyph with an advance, go ahead and add in letter-spacing.
             // That way we weed out zero width lurkers.  This behavior matches the fast text code path.
@@ -350,9 +322,8 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const S
                         advance += m_padding;
                         m_padding = 0;
                     } else {
-                        float previousPadding = m_padding;
                         m_padding -= m_padPerSpace;
-                        advance += roundf(previousPadding) - roundf(m_padding);
+                        advance += m_padPerSpace;
                     }
                 }
 
@@ -360,25 +331,6 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const S
                 if (characterIndex > 0 && !Font::treatAsSpace(*m_run.data(characterIndex - 1)) && m_font.wordSpacing())
                     advance += m_font.wordSpacing();
             }
-        }
-
-        // Deal with the float/integer impedance mismatch between CG and WebCore. "Words" (characters 
-        // followed by a character defined by isRoundingHackCharacter()) are always an integer width.
-        // We adjust the width of the last character of a "word" to ensure an integer width.
-        // Force characters that are used to determine word boundaries for the rounding hack
-        // to be integer width, so the following words will start on an integer boundary.
-        int roundingHackIndex = roundingHackCharacters[k];
-        if (m_run.applyWordRounding() && roundingHackIndex != -1)
-            advance = ceilf(advance);
-
-        // Check to see if the next character is a "rounding hack character", if so, adjust the
-        // width so that the total run width will be on an integer boundary.
-        int position = m_currentCharacter + len;
-        bool lastGlyph = (k == glyphs.size() - 1) && (m_run.rtl() ? i == 0 : i == m_items.size() - 2) && (position >= m_end);
-        if ((m_run.applyWordRounding() && roundingHackWordBoundaries[k] != -1) ||
-            (m_run.applyRunRounding() && lastGlyph)) { 
-            float totalWidth = m_runWidthSoFar + advance;
-            advance += ceilf(totalWidth) - totalWidth;
         }
 
         m_runWidthSoFar += advance;

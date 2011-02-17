@@ -184,7 +184,7 @@ static const Color& grammarPatternColor() {
     return grammarColor;
 }
 
-void GraphicsContext::drawLineForTextChecking(const IntPoint& point, int width, TextCheckingLineStyle style)
+void GraphicsContext::drawLineForTextChecking(const FloatPoint& point, float width, TextCheckingLineStyle style)
 {
     if (paintingDisabled())
         return;
@@ -204,7 +204,7 @@ void GraphicsContext::drawLineForTextChecking(const IntPoint& point, int width, 
     // bounds (e.g. when at the edge of a view) and could make it appear that the
     // space between adjacent misspelled words was underlined.
     // allow slightly more considering that the pattern ends with a transparent pixel
-    int widthMod = width % patternWidth;
+    float widthMod = fmodf(width, patternWidth);
     if (patternWidth - widthMod > cMisspellingLinePatternGapWidth)
         width -= widthMod;
       

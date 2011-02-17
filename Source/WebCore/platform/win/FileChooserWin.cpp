@@ -46,9 +46,9 @@ String FileChooser::basenameForWidth(const Font& font, int width) const
         LPWSTR basename = PathFindFileNameW(tmpFilename.charactersWithNullTermination());
         string = String(basename);
     } else
-        return StringTruncator::rightTruncate(String::number(m_filenames.size()) + " files", width, font, false);
+        return StringTruncator::rightTruncate(String::number(m_filenames.size()) + " files", width, font);
 
-    return StringTruncator::centerTruncate(string, width, font, false);
+    return StringTruncator::centerTruncate(string, width, font);
 }
 
 } // namespace WebCore

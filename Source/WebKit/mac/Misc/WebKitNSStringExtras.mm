@@ -91,7 +91,6 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
 
         Font webCoreFont(FontPlatformData(font, [font pointSize]), ![nsContext isDrawingToScreen], fontSmoothingIsAllowed ? AutoSmoothing : Antialiased);
         TextRun run(buffer.data(), length);
-        run.disableRoundingHacks();
 
         CGFloat red;
         CGFloat green;
@@ -137,8 +136,7 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
     if (canUseFastRenderer(buffer.data(), length)) {
         Font webCoreFont(FontPlatformData(font, [font pointSize]), ![[NSGraphicsContext currentContext] isDrawingToScreen]);
         TextRun run(buffer.data(), length);
-        run.disableRoundingHacks();
-        return webCoreFont.floatWidth(run);
+        return webCoreFont.width(run);
     }
 
     return [self sizeWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, nil]].width;

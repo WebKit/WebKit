@@ -1,3 +1,258 @@
+2011-02-16  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54244
+        
+        Convert the line box tree to floating point and eliminate font rounding hacks.  This patch removes all of the rounding
+        hacks from the Font code and makes sure all Font APIs involving width measurement and width offsets use floats.
+        
+        The line box tree's x, y and logicalWidth members have all been converted to floats and all of the line box APIs have
+        been changed as well.
+        
+        In terms of pixel adjustments, overflow is using an enclosing model (so it will be enclosingIntRect of a line box's x/y/width/height).
+        
+        Background and border painting is using a rounding model, so borders and backgrounds will round to the nearest pixel when painting.
+        
+        Replaced elements still snap to integer positions on lines, and they use a rounding model as well, although their underlying line boxes
+        still have a precise floating point position.
+
+        Justification will now allow subpixel positioning to occur as well.  Platforms that don't support subpixel positioning should already
+        be rounding justification spacing in their font code.
+
+        Many layout test results change on Mac, since rounding hacks were used there and are now gone.
+
+        * WebCore.exp.in:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        * platform/chromium/FileChooserChromium.cpp:
+        (WebCore::FileChooser::basenameForWidth):
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::width):
+        * platform/graphics/Font.h:
+        (WebCore::Font::spaceWidth):
+        (WebCore::Font::tabWidth):
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::getGlyphsAndAdvancesForSimpleText):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawText):
+        (WebCore::GraphicsContext::drawEmphasisMarks):
+        (WebCore::GraphicsContext::drawBidiText):
+        (WebCore::GraphicsContext::drawHighlightForText):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::SimpleFontData):
+        (WebCore::SimpleFontData::platformGlyphInit):
+        * platform/graphics/SimpleFontData.h:
+        (WebCore::SimpleFontData::spaceWidth):
+        * platform/graphics/StringTruncator.cpp:
+        (WebCore::stringWidth):
+        (WebCore::truncateString):
+        (WebCore::StringTruncator::centerTruncate):
+        (WebCore::StringTruncator::rightTruncate):
+        (WebCore::StringTruncator::width):
+        * platform/graphics/StringTruncator.h:
+        * platform/graphics/TextRun.h:
+        (WebCore::TextRun::TextRun):
+        (WebCore::TextRun::xPos):
+        (WebCore::TextRun::expansion):
+        (WebCore::TextRun::directionalOverride):
+        (WebCore::TextRun::disableSpacing):
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::WidthIterator):
+        (WebCore::WidthIterator::advance):
+        * platform/graphics/WidthIterator.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawLineForText):
+        (WebCore::GraphicsContext::drawLineForTextChecking):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawLineForText):
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::ComplexTextController):
+        (WebCore::ComplexTextController::advance):
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances):
+        * platform/graphics/mac/ComplexTextController.h:
+        * platform/graphics/mac/FontComplexTextMac.cpp:
+        (WebCore::Font::getGlyphsAndAdvancesForComplexText):
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawLineForTextChecking):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::drawLineForText):
+        (WebCore::GraphicsContext::drawLineForTextChecking):
+        * platform/graphics/qt/SimpleFontDataQt.cpp:
+        (WebCore::SimpleFontData::platformGlyphInit):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::drawLineForTextChecking):
+        (WebCore::GraphicsContext::drawLineForText):
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::drawLineForTextChecking):
+        * platform/graphics/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::shapeAndPlaceItem):
+        * platform/gtk/FileChooserGtk.cpp:
+        (WebCore::FileChooser::basenameForWidth):
+        * platform/mac/DragImageMac.mm:
+        (WebCore::widthWithFont):
+        (WebCore::drawAtPoint):
+        * platform/mac/FileChooserMac.mm:
+        (WebCore::FileChooser::basenameForWidth):
+        * platform/win/DragImageWin.cpp:
+        (WebCore::createDragImageForLink):
+        * platform/win/FileChooserWin.cpp:
+        (WebCore::FileChooser::basenameForWidth):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::calculatePositionAndSize):
+        * platform/win/WebCoreTextRenderer.cpp:
+        (WebCore::WebCoreTextFloatWidth):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::addNodeToRectBasedTestResult):
+        * rendering/HitTestResult.h:
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::adjustPosition):
+        (WebCore::InlineBox::placeEllipsisBox):
+        (WebCore::InlineBox::locationIncludingFlipping):
+        (WebCore::InlineBox::flipForWritingMode):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::InlineBox):
+        (WebCore::InlineBox::adjustLineDirectionPosition):
+        (WebCore::InlineBox::adjustBlockDirectionPosition):
+        (WebCore::InlineBox::setX):
+        (WebCore::InlineBox::x):
+        (WebCore::InlineBox::setY):
+        (WebCore::InlineBox::y):
+        (WebCore::InlineBox::width):
+        (WebCore::InlineBox::height):
+        (WebCore::InlineBox::logicalLeft):
+        (WebCore::InlineBox::logicalRight):
+        (WebCore::InlineBox::setLogicalLeft):
+        (WebCore::InlineBox::pixelSnappedLogicalLeft):
+        (WebCore::InlineBox::pixelSnappedLogicalRight):
+        (WebCore::InlineBox::setLogicalWidth):
+        (WebCore::InlineBox::logicalWidth):
+        (WebCore::InlineBox::verticalAlign):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::roundedFrameRect):
+        (WebCore::InlineFlowBox::adjustPosition):
+        (WebCore::InlineFlowBox::placeBoxesInInlineDirection):
+        (WebCore::InlineFlowBox::adjustMaxAscentAndDescent):
+        (WebCore::verticalPositionForBox):
+        (WebCore::InlineFlowBox::computeLogicalBoxHeights):
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        (WebCore::InlineFlowBox::addBoxShadowVisualOverflow):
+        (WebCore::InlineFlowBox::addTextBoxVisualOverflow):
+        (WebCore::InlineFlowBox::computeOverflow):
+        (WebCore::InlineFlowBox::setLayoutOverflow):
+        (WebCore::InlineFlowBox::setVisualOverflow):
+        (WebCore::InlineFlowBox::nodeAtPoint):
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        (WebCore::InlineFlowBox::paintMask):
+        (WebCore::InlineFlowBox::placeEllipsisBox):
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::maxYLayoutOverflow):
+        (WebCore::InlineFlowBox::maxXLayoutOverflow):
+        (WebCore::InlineFlowBox::layoutOverflowRect):
+        (WebCore::InlineFlowBox::maxYVisualOverflow):
+        (WebCore::InlineFlowBox::maxXVisualOverflow):
+        (WebCore::InlineFlowBox::visualOverflowRect):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::placeEllipsisBox):
+        (WebCore::InlineTextBox::nodeAtPoint):
+        (WebCore::paintTextWithShadows):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintCompositionBackground):
+        (WebCore::InlineTextBox::paintDecoration):
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::paintDocumentMarkers):
+        (WebCore::InlineTextBox::paintCompositionUnderline):
+        (WebCore::InlineTextBox::textPos):
+        (WebCore::InlineTextBox::offsetForPosition):
+        (WebCore::InlineTextBox::positionForOffset):
+        * rendering/InlineTextBox.h:
+        (WebCore::InlineTextBox::setExpansion):
+        * rendering/RenderBR.h:
+        (WebCore::RenderBR::width):
+        * rendering/RenderBlock.cpp:
+        (WebCore::stripTrailingSpace):
+        (WebCore::updatePreferredWidth):
+        (WebCore::RenderBlock::computeInlinePreferredLogicalWidths):
+        (WebCore::RenderBlock::adjustForBorderFit):
+        (WebCore::RenderBlock::addFocusRingRects):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine):
+        (WebCore::RenderBlock::fitBelowFloats):
+        (WebCore::textWidth):
+        (WebCore::tryHyphenating):
+        (WebCore::RenderBlock::findNextLineBreak):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::positionLineBox):
+        (WebCore::RenderBox::flipForWritingMode):
+        * rendering/RenderBox.h:
+        * rendering/RenderCombineText.cpp:
+        (WebCore::RenderCombineText::width):
+        (WebCore::RenderCombineText::adjustTextOrigin):
+        (WebCore::RenderCombineText::combineText):
+        * rendering/RenderCombineText.h:
+        (WebCore::RenderCombineText::combinedTextWidth):
+        * rendering/RenderCounter.cpp:
+        (WebCore::RenderCounter::computePreferredLogicalWidths):
+        * rendering/RenderCounter.h:
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::getReplacementTextGeometry):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::computePreferredLogicalWidths):
+        * rendering/RenderImage.cpp:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::linesBoundingBox):
+        (WebCore::RenderInline::linesVisualOverflowBoundingBox):
+        (WebCore::RenderInline::addFocusRingRects):
+        (WebCore::RenderInline::paintOutline):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::paintItemForeground):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::updateOptionsWidth):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::localCaretRect):
+        (WebCore::RenderText::widthFromCache):
+        (WebCore::RenderText::trimmedPrefWidths):
+        (WebCore::RenderText::minLogicalWidth):
+        (WebCore::RenderText::maxLogicalWidth):
+        (WebCore::RenderText::computePreferredLogicalWidths):
+        (WebCore::RenderText::firstRunOrigin):
+        (WebCore::RenderText::firstRunX):
+        (WebCore::RenderText::firstRunY):
+        (WebCore::RenderText::width):
+        (WebCore::RenderText::linesBoundingBox):
+        * rendering/RenderText.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::getAvgCharWidth):
+        (WebCore::RenderTextControl::paintPlaceholder):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeTextRun):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::placeEllipsis):
+        (WebCore::RootInlineBox::placeEllipsisBox):
+        (WebCore::RootInlineBox::adjustPosition):
+        (WebCore::RootInlineBox::beforeAnnotationsAdjustment):
+        (WebCore::RootInlineBox::paddedLayoutOverflowRect):
+        * rendering/RootInlineBox.h:
+        * rendering/VerticalPositionCache.h:
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::offsetForPosition):
+        (WebCore::SVGInlineTextBox::positionForOffset):
+        (WebCore::SVGInlineTextBox::constructTextRun):
+        * rendering/svg/SVGInlineTextBox.h:
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeRenderSVGTextBox):
+        * rendering/svg/SVGTextMetrics.cpp:
+        (WebCore::SVGTextMetrics::SVGTextMetrics):
+        (WebCore::constructTextRun):
+        * svg/SVGFont.cpp:
+        (WebCore::floatWidthMissingGlyphCallback):
+        (WebCore::Font::drawTextUsingSVGFont):
+
 2011-02-17  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

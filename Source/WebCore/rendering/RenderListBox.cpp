@@ -111,7 +111,7 @@ void RenderListBox::updateFromElement()
             }
                 
             if (!text.isEmpty()) {
-                float textWidth = itemFont.floatWidth(TextRun(text.impl(), false, 0, 0, TextRun::AllowTrailingExpansion, false, false, false, false));
+                float textWidth = itemFont.width(TextRun(text.impl(), false, 0, 0, TextRun::AllowTrailingExpansion, false, false));
                 width = max(width, textWidth);
             }
         }
@@ -333,7 +333,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, int tx, int ty, in
 
     unsigned length = itemText.length();
     const UChar* string = itemText.characters();
-    TextRun textRun(string, length, false, 0, 0, TextRun::AllowTrailingExpansion, !itemStyle->isLeftToRightDirection(), itemStyle->unicodeBidi() == Override, false, false);
+    TextRun textRun(string, length, false, 0, 0, TextRun::AllowTrailingExpansion, !itemStyle->isLeftToRightDirection(), itemStyle->unicodeBidi() == Override);
 
     // Draw the item text
     if (itemStyle->visibility() != HIDDEN)

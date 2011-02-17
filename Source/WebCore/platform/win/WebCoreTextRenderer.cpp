@@ -101,7 +101,7 @@ void WebCoreDrawDoubledTextAtPoint(GraphicsContext& context, const String& text,
 
 float WebCoreTextFloatWidth(const String& text, const Font& font)
 {
-    return StringTruncator::width(text, font, false);
+    return StringTruncator::width(text, font);
 }
 
 void WebCoreSetShouldUseFontSmoothing(bool smooth)

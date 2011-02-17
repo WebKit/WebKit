@@ -158,8 +158,7 @@ static float widthWithFont(NSString *string, NSFont *font)
     if (canUseFastRenderer(buffer.data(), length)) {
         Font webCoreFont(FontPlatformData(font, [font pointSize]), ![[NSGraphicsContext currentContext] isDrawingToScreen]);
         TextRun run(buffer.data(), length);
-        run.disableRoundingHacks();
-        return webCoreFont.floatWidth(run);
+        return webCoreFont.width(run);
     }
     
     return [string sizeWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, nil]].width;
@@ -197,8 +196,7 @@ static void drawAtPoint(NSString *string, NSPoint point, NSFont *font, NSColor *
             
         Font webCoreFont(FontPlatformData(font, [font pointSize]), ![nsContext isDrawingToScreen], Antialiased);
         TextRun run(buffer.data(), length);
-        run.disableRoundingHacks();
-        
+
         CGFloat red;
         CGFloat green;
         CGFloat blue;

@@ -362,7 +362,7 @@ static void floatWidthMissingGlyphCallback(const TextRun& run, SVGTextRunWalkerM
     Font font(fontDescription, 0, 0); // spacing handled by SVG text code.
     font.update(data.font->fontSelector());
 
-    data.length += font.floatWidth(run);
+    data.length += font.width(run);
 }
 
 
@@ -573,9 +573,9 @@ void Font::drawTextUsingSVGFont(GraphicsContext* context, const TextRun& run,
                 font.drawText(context, fallbackCharacterRun, currentPoint);
 
                 if (isVerticalText)
-                    currentPoint.move(0.0f, font.floatWidth(fallbackCharacterRun));
+                    currentPoint.move(0.0f, font.width(fallbackCharacterRun));
                 else
-                    currentPoint.move(font.floatWidth(fallbackCharacterRun), 0.0f);
+                    currentPoint.move(font.width(fallbackCharacterRun), 0.0f);
 
                 fallbackCharacterIndex++;
             }

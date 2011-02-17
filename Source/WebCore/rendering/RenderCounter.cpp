@@ -493,7 +493,7 @@ PassRefPtr<StringImpl> RenderCounter::originalText() const
     return text.impl();
 }
 
-void RenderCounter::computePreferredLogicalWidths(int lead)
+void RenderCounter::computePreferredLogicalWidths(float lead)
 {
     setTextInternal(originalText());
     RenderText::computePreferredLogicalWidths(lead);

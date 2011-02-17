@@ -105,12 +105,12 @@ public:
 
 private:
     virtual void clearTruncation() { m_truncation = cNoTruncation; }
-    virtual int placeEllipsisBox(bool flowIsLTR, int visibleLeftEdge, int visibleRightEdge, int ellipsisWidth, bool& foundBox);
+    virtual float placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, float visibleRightEdge, float ellipsisWidth, bool& foundBox);
 
 public:
     virtual bool isLineBreak() const;
 
-    void setExpansion(int expansion) { m_logicalWidth -= m_expansion; m_expansion = expansion; m_logicalWidth += m_expansion; }
+    void setExpansion(float expansion) { m_logicalWidth -= m_expansion; m_expansion = expansion; m_logicalWidth += m_expansion; }
 
 private:
     virtual bool isInlineTextBox() const { return true; }    
@@ -122,11 +122,11 @@ public:
 private:
     virtual unsigned caretMaxRenderedOffset() const;
 
-    int textPos() const; // returns the x position relative to the left start of the text line.
+    float textPos() const; // returns the x position relative to the left start of the text line.
 
 public:
-    virtual int offsetForPosition(int x, bool includePartialGlyphs = true) const;
-    virtual int positionForOffset(int offset) const;
+    virtual int offsetForPosition(float x, bool includePartialGlyphs = true) const;
+    virtual float positionForOffset(int offset) const;
 
     bool containsCaretOffset(int offset) const; // false for offset after line break
 
@@ -144,18 +144,18 @@ private:
                       // denote no truncation (the whole run paints) and full truncation (nothing paints at all).
 
 protected:
-    void paintCompositionBackground(GraphicsContext*, const IntPoint& boxOrigin, RenderStyle*, const Font&, int startPos, int endPos);
-    void paintDocumentMarkers(GraphicsContext*, const IntPoint& boxOrigin, RenderStyle*, const Font&, bool background);
-    void paintCompositionUnderline(GraphicsContext*, const IntPoint& boxOrigin, const CompositionUnderline&);
+    void paintCompositionBackground(GraphicsContext*, const FloatPoint& boxOrigin, RenderStyle*, const Font&, int startPos, int endPos);
+    void paintDocumentMarkers(GraphicsContext*, const FloatPoint& boxOrigin, RenderStyle*, const Font&, bool background);
+    void paintCompositionUnderline(GraphicsContext*, const FloatPoint& boxOrigin, const CompositionUnderline&);
 #if PLATFORM(MAC)
     void paintCustomHighlight(int tx, int ty, const AtomicString& type);
 #endif
 
 private:
-    void paintDecoration(GraphicsContext*, const IntPoint& boxOrigin, int decoration, const ShadowData*);
-    void paintSelection(GraphicsContext*, const IntPoint& boxOrigin, RenderStyle*, const Font&);
-    void paintSpellingOrGrammarMarker(GraphicsContext*, const IntPoint& boxOrigin, const DocumentMarker&, RenderStyle*, const Font&, bool grammar);
-    void paintTextMatchMarker(GraphicsContext*, const IntPoint& boxOrigin, const DocumentMarker&, RenderStyle*, const Font&);
+    void paintDecoration(GraphicsContext*, const FloatPoint& boxOrigin, int decoration, const ShadowData*);
+    void paintSelection(GraphicsContext*, const FloatPoint& boxOrigin, RenderStyle*, const Font&);
+    void paintSpellingOrGrammarMarker(GraphicsContext*, const FloatPoint& boxOrigin, const DocumentMarker&, RenderStyle*, const Font&, bool grammar);
+    void paintTextMatchMarker(GraphicsContext*, const FloatPoint& boxOrigin, const DocumentMarker&, RenderStyle*, const Font&);
     void computeRectForReplacementMarker(const DocumentMarker&, RenderStyle*, const Font&);
 
     TextRun::TrailingExpansionBehavior trailingExpansionBehavior() const { return m_expansion && nextLeafChild() ? TextRun::AllowTrailingExpansion : TextRun::ForbidTrailingExpansion; }

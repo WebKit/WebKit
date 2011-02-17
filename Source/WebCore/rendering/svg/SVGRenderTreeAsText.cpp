@@ -435,7 +435,10 @@ static void writeRenderSVGTextBox(TextStream& ts, const RenderBlock& text)
     if (!box)
         return;
 
-    ts << " at (" << text.x() << "," << text.y() << ") size " << box->logicalWidth() << "x" << box->logicalHeight();
+    // FIXME: For now use an int for logicalWidth, although this makes it harder
+    // to detect any changes caused by the conversion to floating point. :(
+    int logicalWidth = ceilf(box->x() + box->logicalWidth()) - box->x();
+    ts << " at (" << text.x() << "," << text.y() << ") size " << logicalWidth << "x" << box->logicalHeight();
     
     // FIXME: Remove this hack, once the new text layout engine is completly landed. We want to preserve the old layout test results for now.
     ts << " contains 1 chunk(s)";

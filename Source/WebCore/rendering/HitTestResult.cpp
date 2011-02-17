@@ -545,6 +545,23 @@ bool HitTestResult::addNodeToRectBasedTestResult(Node* node, int x, int y, const
     return !rect.contains(rectForPoint(x, y));
 }
 
+bool HitTestResult::addNodeToRectBasedTestResult(Node* node, int x, int y, const FloatRect& rect)
+{
+    // If it is not a rect-based hit test, this method has to be no-op.
+    // Return false, so the hit test stops.
+    if (!isRectBasedTest())
+        return false;
+
+    // If node is null, return true so the hit test can continue.
+    if (!node)
+        return true;
+
+    node = node->shadowAncestorNode();
+    m_rectBasedTestResult.add(node);
+
+    return !rect.contains(rectForPoint(x, y));
+}
+
 void HitTestResult::append(const HitTestResult& other)
 {
     ASSERT(isRectBasedTest() && other.isRectBasedTest());

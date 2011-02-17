@@ -30,13 +30,13 @@ public:
     RenderCombineText(Node*, PassRefPtr<StringImpl>);
 
     void combineText();
-    void adjustTextOrigin(IntPoint& textOrigin, const IntRect& boxRect) const;
+    void adjustTextOrigin(FloatPoint& textOrigin, const FloatRect& boxRect) const;
     void charactersToRender(int start, const UChar*& characters, int& length) const;
     bool isCombined() const { return m_isCombined; }
-    int combinedTextWidth(const Font& font) const { return font.size(); }
+    float combinedTextWidth(const Font& font) const { return font.size(); }
 
 private:
-    virtual unsigned width(unsigned from, unsigned length, const Font&, int xPosition, HashSet<const SimpleFontData*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
+    virtual float width(unsigned from, unsigned length, const Font&, float xPosition, HashSet<const SimpleFontData*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
     virtual const char* renderName() const { return "RenderCombineText"; }
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
     virtual void setTextInternal(PassRefPtr<StringImpl>);

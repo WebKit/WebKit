@@ -34,8 +34,6 @@ namespace WebCore {
 class RenderObject;
 
 // Values for vertical alignment.
-const int PositionTop = -0x7fffffff;
-const int PositionBottom = 0x7fffffff;
 const int PositionUndefined = 0x80000000;
 
 class VerticalPositionCache {

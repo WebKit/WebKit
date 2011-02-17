@@ -38,8 +38,7 @@ public:
         ForbidTrailingExpansion
     };
 
-    TextRun(const UChar* c, int len, bool allowTabs = false, int xpos = 0, int expansion = 0, TrailingExpansionBehavior trailingExpansionBehavior = AllowTrailingExpansion, bool rtl = false, bool directionalOverride = false,
-              bool applyRunRounding = true, bool applyWordRounding = true)
+    TextRun(const UChar* c, int len, bool allowTabs = false, float xpos = 0, float expansion = 0, TrailingExpansionBehavior trailingExpansionBehavior = AllowTrailingExpansion, bool rtl = false, bool directionalOverride = false)
         : m_characters(c)
         , m_len(len)
         , m_xpos(xpos)
@@ -51,8 +50,6 @@ public:
         , m_allowTabs(allowTabs)
         , m_rtl(rtl)
         , m_directionalOverride(directionalOverride)
-        , m_applyRunRounding(applyRunRounding)
-        , m_applyWordRounding(applyWordRounding)
         , m_disableSpacing(false)
 #if ENABLE(SVG_FONTS)
         , m_referencingRenderObject(0)
@@ -61,8 +58,7 @@ public:
     {
     }
 
-    TextRun(const String& s, bool allowTabs = false, int xpos = 0, int expansion = 0, TrailingExpansionBehavior trailingExpansionBehavior = AllowTrailingExpansion, bool rtl = false, bool directionalOverride = false,
-              bool applyRunRounding = true, bool applyWordRounding = true)
+    TextRun(const String& s, bool allowTabs = false, float xpos = 0, float expansion = 0, TrailingExpansionBehavior trailingExpansionBehavior = AllowTrailingExpansion, bool rtl = false, bool directionalOverride = false)
         : m_characters(s.characters())
         , m_len(s.length())
         , m_xpos(xpos)
@@ -74,8 +70,6 @@ public:
         , m_allowTabs(allowTabs)
         , m_rtl(rtl)
         , m_directionalOverride(directionalOverride)
-        , m_applyRunRounding(applyRunRounding)
-        , m_applyWordRounding(applyWordRounding)
         , m_disableSpacing(false)
 #if ENABLE(SVG_FONTS)
         , m_referencingRenderObject(0)
@@ -98,18 +92,15 @@ public:
 #endif
 
     bool allowTabs() const { return m_allowTabs; }
-    int xPos() const { return m_xpos; }
-    int expansion() const { return m_expansion; }
+    float xPos() const { return m_xpos; }
+    float expansion() const { return m_expansion; }
     bool allowsTrailingExpansion() const { return m_trailingExpansionBehavior == AllowTrailingExpansion; }
     bool rtl() const { return m_rtl; }
     bool ltr() const { return !m_rtl; }
     bool directionalOverride() const { return m_directionalOverride; }
-    bool applyRunRounding() const { return m_applyRunRounding; }
-    bool applyWordRounding() const { return m_applyWordRounding; }
     bool spacingDisabled() const { return m_disableSpacing; }
 
     void disableSpacing() { m_disableSpacing = true; }
-    void disableRoundingHacks() { m_applyRunRounding = m_applyWordRounding = false; }
     void setRTL(bool b) { m_rtl = b; }
     void setDirectionalOverride(bool override) { m_directionalOverride = override; }
 
@@ -128,8 +119,8 @@ private:
     // m_xpos is the x position relative to the left start of the text line, not relative to the left
     // start of the containing block. In the case of right alignment or center alignment, left start of
     // the text line is not the same as left start of the containing block.
-    int m_xpos;  
-    int m_expansion;
+    float m_xpos;  
+    float m_expansion;
     TrailingExpansionBehavior m_trailingExpansionBehavior;
 #if ENABLE(SVG)
     float m_horizontalGlyphStretch;
@@ -137,8 +128,6 @@ private:
     bool m_allowTabs;
     bool m_rtl;
     bool m_directionalOverride;
-    bool m_applyRunRounding;
-    bool m_applyWordRounding;
     bool m_disableSpacing;
 
 #if ENABLE(SVG_FONTS)

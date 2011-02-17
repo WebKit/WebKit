@@ -60,8 +60,8 @@ String FileChooser::basenameForWidth(const Font& font, int width) const
         gchar* systemBasename = g_path_get_basename(systemFilename.data());
         stringByAdoptingFileSystemRepresentation(systemBasename, string);
     } else if (m_filenames.size() > 1)
-        return StringTruncator::rightTruncate(multipleFileUploadText(m_filenames.size()), width, font, false);
+        return StringTruncator::rightTruncate(multipleFileUploadText(m_filenames.size()), width, font);
 
-    return StringTruncator::centerTruncate(string, width, font, false);
+    return StringTruncator::centerTruncate(string, width, font);
 }
 }

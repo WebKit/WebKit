@@ -112,7 +112,6 @@ public:
     float platformWidthForGlyph(Glyph) const;
 
     float spaceWidth() const { return m_spaceWidth; }
-    float adjustedSpaceWidth() const { return m_adjustedSpaceWidth; }
 
 #if PLATFORM(CG) || PLATFORM(CAIRO) || PLATFORM(WX)
     float syntheticBoldOffset() const { return m_syntheticBoldOffset; }
@@ -230,7 +229,6 @@ private:
 
     Glyph m_spaceGlyph;
     float m_spaceWidth;
-    float m_adjustedSpaceWidth;
 
     Glyph m_zeroWidthSpaceGlyph;
 

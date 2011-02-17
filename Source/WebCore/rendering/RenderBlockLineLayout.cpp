@@ -318,8 +318,8 @@ RootInlineBox* RenderBlock::constructLine(unsigned runCount, BidiRun* firstRun, 
 void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox, bool firstLine, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd, GlyphOverflowAndFallbackFontsMap& textBoxDataMap)
 {
     // First determine our total logical width.
-    int availableLogicalWidth = availableLogicalWidthForLine(logicalHeight(), firstLine);
-    int totalLogicalWidth = lineBox->getFlowSpacingLogicalWidth();
+    float availableLogicalWidth = availableLogicalWidthForLine(logicalHeight(), firstLine);
+    float totalLogicalWidth = lineBox->getFlowSpacingLogicalWidth();
     bool needsWordSpacing = false;
     unsigned expansionOpportunityCount = 0;
     bool isAfterExpansion = true;
@@ -386,7 +386,7 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
     // we now examine our text-align property in order to determine where to position the
     // objects horizontally.  The total width of the line can be increased if we end up
     // justifying text.
-    int logicalLeft = logicalLeftOffsetForLine(logicalHeight(), firstLine);
+    float logicalLeft = logicalLeftOffsetForLine(logicalHeight(), firstLine);
     switch (textAlign) {
         case LEFT:
         case WEBKIT_LEFT:
@@ -394,7 +394,7 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
             // particular with RTL blocks, wide lines should still spill out to the left.
             if (style()->isLeftToRightDirection()) {
                 if (totalLogicalWidth > availableLogicalWidth && trailingSpaceRun)
-                    trailingSpaceRun->m_box->setLogicalWidth(max(0, trailingSpaceRun->m_box->logicalWidth() - totalLogicalWidth + availableLogicalWidth));
+                    trailingSpaceRun->m_box->setLogicalWidth(max<float>(0, trailingSpaceRun->m_box->logicalWidth() - totalLogicalWidth + availableLogicalWidth));
             } else {
                 if (trailingSpaceRun)
                     trailingSpaceRun->m_box->setLogicalWidth(0);
@@ -416,7 +416,7 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
             // for right to left fall through to right aligned
             if (style()->isLeftToRightDirection()) {
                 if (totalLogicalWidth > availableLogicalWidth && trailingSpaceRun)
-                    trailingSpaceRun->m_box->setLogicalWidth(max(0, trailingSpaceRun->m_box->logicalWidth() - totalLogicalWidth + availableLogicalWidth));
+                    trailingSpaceRun->m_box->setLogicalWidth(max<float>(0, trailingSpaceRun->m_box->logicalWidth() - totalLogicalWidth + availableLogicalWidth));
                 break;
             }
         case RIGHT:
@@ -433,7 +433,7 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
                     logicalLeft += availableLogicalWidth - totalLogicalWidth;
             } else {
                 if (totalLogicalWidth > availableLogicalWidth && trailingSpaceRun) {
-                    trailingSpaceRun->m_box->setLogicalWidth(max(0, trailingSpaceRun->m_box->logicalWidth() - totalLogicalWidth + availableLogicalWidth));
+                    trailingSpaceRun->m_box->setLogicalWidth(max<float>(0, trailingSpaceRun->m_box->logicalWidth() - totalLogicalWidth + availableLogicalWidth));
                     totalLogicalWidth -= trailingSpaceRun->m_box->logicalWidth();
                 } else
                     logicalLeft += availableLogicalWidth - totalLogicalWidth;
@@ -441,14 +441,14 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
             break;
         case CENTER:
         case WEBKIT_CENTER:
-            int trailingSpaceWidth = 0;
+            float trailingSpaceWidth = 0;
             if (trailingSpaceRun) {
                 totalLogicalWidth -= trailingSpaceRun->m_box->logicalWidth();
                 trailingSpaceWidth = min(trailingSpaceRun->m_box->logicalWidth(), (availableLogicalWidth - totalLogicalWidth + 1) / 2);
-                trailingSpaceRun->m_box->setLogicalWidth(max(0, trailingSpaceWidth));
+                trailingSpaceRun->m_box->setLogicalWidth(max<float>(0, trailingSpaceWidth));
             }
             if (style()->isLeftToRightDirection())
-                logicalLeft += max((availableLogicalWidth - totalLogicalWidth) / 2, 0);
+                logicalLeft += max<float>((availableLogicalWidth - totalLogicalWidth) / 2, 0);
             else
                 logicalLeft += totalLogicalWidth > availableLogicalWidth ? (availableLogicalWidth - totalLogicalWidth) : (availableLogicalWidth - totalLogicalWidth) / 2 - trailingSpaceWidth;
             break;
@@ -468,7 +468,7 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
                 // Only justify text if whitespace is collapsed.
                 if (r->m_object->style()->collapseWhiteSpace()) {
                     InlineTextBox* textBox = static_cast<InlineTextBox*>(r->m_box);
-                    int expansion = (availableLogicalWidth - totalLogicalWidth) * opportunitiesInRun / expansionOpportunityCount;
+                    float expansion = (availableLogicalWidth - totalLogicalWidth) * opportunitiesInRun / expansionOpportunityCount;
                     textBox->setExpansion(expansion);
                     totalLogicalWidth += expansion;
                 }
@@ -1369,13 +1369,13 @@ static bool shouldSkipWhitespaceAfterStartObject(RenderBlock* block, RenderObjec
     return false;
 }
 
-void RenderBlock::fitBelowFloats(int widthToFit, bool firstLine, int& availableWidth)
+void RenderBlock::fitBelowFloats(float widthToFit, bool firstLine, float& availableWidth)
 {
     ASSERT(widthToFit > availableWidth);
 
     int floatLogicalBottom;
     int lastFloatLogicalBottom = logicalHeight();
-    int newLineWidth = availableWidth;
+    float newLineWidth = availableWidth;
     while (true) {
         floatLogicalBottom = nextFloatLogicalBottomBelow(lastFloatLogicalBottom);
         if (!floatLogicalBottom)
@@ -1393,19 +1393,19 @@ void RenderBlock::fitBelowFloats(int widthToFit, bool firstLine, int& availableW
     }
 }
 
-static inline unsigned textWidth(RenderText* text, unsigned from, unsigned len, const Font& font, int xPos, bool isFixedPitch, bool collapseWhiteSpace)
+static inline float textWidth(RenderText* text, unsigned from, unsigned len, const Font& font, float xPos, bool isFixedPitch, bool collapseWhiteSpace)
 {
     if (isFixedPitch || (!from && len == text->textLength()) || text->style()->hasTextCombine())
         return text->width(from, len, font, xPos);
     return font.width(TextRun(text->characters() + from, len, !collapseWhiteSpace, xPos));
 }
 
-static void tryHyphenating(RenderText* text, const Font& font, const AtomicString& localeIdentifier, int lastSpace, int pos, int xPos, int availableWidth, bool isFixedPitch, bool collapseWhiteSpace, int lastSpaceWordSpacing, InlineIterator& lineBreak, int nextBreakable, bool& hyphenated)
+static void tryHyphenating(RenderText* text, const Font& font, const AtomicString& localeIdentifier, int lastSpace, int pos, float xPos, int availableWidth, bool isFixedPitch, bool collapseWhiteSpace, int lastSpaceWordSpacing, InlineIterator& lineBreak, int nextBreakable, bool& hyphenated)
 {
     const AtomicString& hyphenString = text->style()->hyphenString();
     int hyphenWidth = font.width(TextRun(hyphenString.characters(), hyphenString.length()));
 
-    int maxPrefixWidth = availableWidth - xPos - hyphenWidth - lastSpaceWordSpacing;
+    float maxPrefixWidth = availableWidth - xPos - hyphenWidth - lastSpaceWordSpacing;
     // If the maximum width available for the prefix before the hyphen is small, then it is very unlikely
     // that an hyphenation opportunity exists, so do not bother to look for it.
     if (maxPrefixWidth <= font.pixelSize() * 5 / 4)
@@ -1420,7 +1420,7 @@ static void tryHyphenating(RenderText* text, const Font& font, const AtomicStrin
         return;
 
 #if !ASSERT_DISABLED
-    int prefixWidth = hyphenWidth + textWidth(text, lastSpace, prefixLength, font, xPos, isFixedPitch, collapseWhiteSpace) + lastSpaceWordSpacing;
+    float prefixWidth = hyphenWidth + textWidth(text, lastSpace, prefixLength, font, xPos, isFixedPitch, collapseWhiteSpace) + lastSpaceWordSpacing;
     ASSERT(xPos + prefixWidth <= availableWidth);
 #else
     UNUSED_PARAM(isFixedPitch);
@@ -1440,10 +1440,10 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
     bool appliedStartWidth = resolver.position().pos > 0;
     LineMidpointState& lineMidpointState = resolver.midpointState();
     
-    int width = skipLeadingWhitespace(resolver, firstLine, isLineEmpty, previousLineBrokeCleanly, lastFloatFromPreviousLine);
+    float width = skipLeadingWhitespace(resolver, firstLine, isLineEmpty, previousLineBrokeCleanly, lastFloatFromPreviousLine);
 
-    int w = 0;
-    int tmpW = 0;
+    float w = 0;
+    float tmpW = 0;
 
     if (resolver.position().atEnd())
         return resolver.position();
@@ -1462,8 +1462,8 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
 
     InlineIterator lBreak = resolver.position();
 
-    RenderObject *o = resolver.position().obj;
-    RenderObject *last = o;
+    RenderObject* o = resolver.position().obj;
+    RenderObject* last = o;
     unsigned pos = resolver.position().pos;
     int nextBreakable = resolver.position().nextBreakablePosition;
     bool atStart = true;
@@ -1660,22 +1660,22 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
             bool canHyphenate = style->hyphens() == HyphensAuto && WebCore::canHyphenate(style->hyphenationLocale());
 
             int lastSpace = pos;
-            int wordSpacing = o->style()->wordSpacing();
-            int lastSpaceWordSpacing = 0;
+            float wordSpacing = o->style()->wordSpacing();
+            float lastSpaceWordSpacing = 0;
 
             // Non-zero only when kerning is enabled, in which case we measure words with their trailing
             // space, then subtract its width.
-            int wordTrailingSpaceWidth = f.typesettingFeatures() & Kerning ? f.width(TextRun(&space, 1)) + wordSpacing : 0;
+            float wordTrailingSpaceWidth = f.typesettingFeatures() & Kerning ? f.width(TextRun(&space, 1)) + wordSpacing : 0;
 
-            int wrapW = tmpW + inlineLogicalWidth(o, !appliedStartWidth, true);
-            int charWidth = 0;
+            float wrapW = tmpW + inlineLogicalWidth(o, !appliedStartWidth, true);
+            float charWidth = 0;
             bool breakNBSP = autoWrap && o->style()->nbspMode() == SPACE;
             // Auto-wrapping text should wrap in the middle of a word only if it could not wrap before the word,
             // which is only possible if the word is the first thing on the line, that is, if |w| is zero.
             bool breakWords = o->style()->breakWords() && ((autoWrap && !w) || currWS == PRE);
             bool midWordBreak = false;
             bool breakAll = o->style()->wordBreak() == BreakAllWordBreak && autoWrap;
-            int hyphenWidth = 0;
+            float hyphenWidth = 0;
 
             if (t->isWordBreak()) {
                 w += tmpW;
@@ -1744,7 +1744,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                         }
                     }
 
-                    int additionalTmpW;
+                    float additionalTmpW;
                     if (wordTrailingSpaceWidth && currentCharacterIsSpace)
                         additionalTmpW = textWidth(t, lastSpace, pos + 1 - lastSpace, f, w + tmpW, isFixedPitch, collapseWhiteSpace) - wordTrailingSpaceWidth + lastSpaceWordSpacing;
                     else
@@ -1894,7 +1894,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
             }
 
             // IMPORTANT: pos is > length here!
-            int additionalTmpW = ignoringSpaces ? 0 : textWidth(t, lastSpace, pos - lastSpace, f, w + tmpW, isFixedPitch, collapseWhiteSpace) + lastSpaceWordSpacing;
+            float additionalTmpW = ignoringSpaces ? 0 : textWidth(t, lastSpace, pos - lastSpace, f, w + tmpW, isFixedPitch, collapseWhiteSpace) + lastSpaceWordSpacing;
             tmpW += additionalTmpW;
             tmpW += inlineLogicalWidth(o, !appliedStartWidth, true);
 

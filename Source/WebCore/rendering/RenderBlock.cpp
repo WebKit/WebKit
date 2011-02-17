@@ -4616,7 +4616,7 @@ static int getBorderPaddingMargin(const RenderBoxModelObject* child, bool endOfI
                child->borderStart();
 }
 
-static inline void stripTrailingSpace(int& inlineMax, int& inlineMin,
+static inline void stripTrailingSpace(float& inlineMax, float& inlineMin,
                                       RenderObject* trailingSpaceChild)
 {
     if (trailingSpaceChild && trailingSpaceChild->isText()) {
@@ -4624,17 +4624,23 @@ static inline void stripTrailingSpace(int& inlineMax, int& inlineMin,
         RenderText* t = toRenderText(trailingSpaceChild);
         const UChar space = ' ';
         const Font& font = t->style()->font(); // FIXME: This ignores first-line.
-        int spaceWidth = font.width(TextRun(&space, 1));
+        float spaceWidth = font.width(TextRun(&space, 1));
         inlineMax -= spaceWidth + font.wordSpacing();
         if (inlineMin > inlineMax)
             inlineMin = inlineMax;
     }
 }
 
+static inline void updatePreferredWidth(int& preferredWidth, float& result)
+{
+    int snappedResult = ceilf(result);
+    preferredWidth = max(snappedResult, preferredWidth);
+}
+
 void RenderBlock::computeInlinePreferredLogicalWidths()
 {
-    int inlineMax = 0;
-    int inlineMin = 0;
+    float inlineMax = 0;
+    float inlineMin = 0;
 
     int cw = containingBlock()->contentLogicalWidth();
 
@@ -4695,15 +4701,15 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
             // the width of the last non-breakable run and use that to start a new line
             // (unless we end in whitespace).
             RenderStyle* cstyle = child->style();
-            int childMin = 0;
-            int childMax = 0;
+            float childMin = 0;
+            float childMax = 0;
 
             if (!child->isText()) {
                 // Case (1) and (2).  Inline replaced and inline flow elements.
                 if (child->isRenderInline()) {
                     // Add in padding/border/margin from the appropriate side of
                     // the element.
-                    int bpm = getBorderPaddingMargin(toRenderInline(child), childIterator.endOfInline);
+                    float bpm = getBorderPaddingMargin(toRenderInline(child), childIterator.endOfInline);
                     childMin += bpm;
                     childMax += bpm;
 
@@ -4713,7 +4719,7 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                     child->setPreferredLogicalWidthsDirty(false);
                 } else {
                     // Inline replaced elts add in their margins to their min/max values.
-                    int margins = 0;
+                    float margins = 0;
                     Length startMargin = cstyle->marginStart();
                     Length endMargin = cstyle->marginEnd();
                     if (startMargin.isFixed())
@@ -4743,13 +4749,13 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
 
                 bool canBreakReplacedElement = !child->isImage() || allowImagesToBreak;
                 if ((canBreakReplacedElement && (autoWrap || oldAutoWrap)) || clearPreviousFloat) {
-                    m_minPreferredLogicalWidth = max(inlineMin, m_minPreferredLogicalWidth);
+                    updatePreferredWidth(m_minPreferredLogicalWidth, inlineMin);
                     inlineMin = 0;
                 }
 
                 // If we're supposed to clear the previous float, then terminate maxwidth as well.
                 if (clearPreviousFloat) {
-                    m_maxPreferredLogicalWidth = max(inlineMax, m_maxPreferredLogicalWidth);
+                    updatePreferredWidth(m_maxPreferredLogicalWidth, inlineMax);
                     inlineMax = 0;
                 }
 
@@ -4767,12 +4773,12 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
 
                 if (!autoWrap || !canBreakReplacedElement) {
                     if (child->isFloating())
-                        m_minPreferredLogicalWidth = max(childMin, m_minPreferredLogicalWidth);
+                        updatePreferredWidth(m_minPreferredLogicalWidth, childMin);
                     else
                         inlineMin += childMin;
                 } else {
                     // Now check our line.
-                    m_minPreferredLogicalWidth = max(childMin, m_minPreferredLogicalWidth);
+                    updatePreferredWidth(m_minPreferredLogicalWidth, childMin);
 
                     // Now start a new line.
                     inlineMin = 0;
@@ -4789,7 +4795,7 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                 RenderText* t = toRenderText(child);
 
                 if (t->isWordBreak()) {
-                    m_minPreferredLogicalWidth = max(inlineMin, m_minPreferredLogicalWidth);
+                    updatePreferredWidth(m_minPreferredLogicalWidth, inlineMin);
                     inlineMin = 0;
                     continue;
                 }
@@ -4803,9 +4809,9 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                 // then they shouldn't be considered in the breakable char
                 // check.
                 bool hasBreakableChar, hasBreak;
-                int beginMin, endMin;
+                float beginMin, endMin;
                 bool beginWS, endWS;
-                int beginMax, endMax;
+                float beginMax, endMax;
                 t->trimmedPrefWidths(inlineMax, beginMin, beginWS, endMin, endWS,
                                      hasBreakableChar, hasBreak, beginMax, endMax,
                                      childMin, childMax, stripFrontSpaces);
@@ -4813,7 +4819,7 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                 // This text object will not be rendered, but it may still provide a breaking opportunity.
                 if (!hasBreak && childMax == 0) {
                     if (autoWrap && (beginWS || endWS)) {
-                        m_minPreferredLogicalWidth = max(inlineMin, m_minPreferredLogicalWidth);
+                        updatePreferredWidth(m_minPreferredLogicalWidth, inlineMin);
                         inlineMin = 0;
                     }
                     continue;
@@ -4843,10 +4849,10 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                     // we start and end with whitespace.
                     if (beginWS)
                         // Go ahead and end the current line.
-                        m_minPreferredLogicalWidth = max(inlineMin, m_minPreferredLogicalWidth);
+                        updatePreferredWidth(m_minPreferredLogicalWidth, inlineMin);
                     else {
                         inlineMin += beginMin;
-                        m_minPreferredLogicalWidth = max(inlineMin, m_minPreferredLogicalWidth);
+                        updatePreferredWidth(m_minPreferredLogicalWidth, inlineMin);
                         childMin -= ti;
                     }
 
@@ -4855,18 +4861,18 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                     if (endWS) {
                         // We end in whitespace, which means we can go ahead
                         // and end our current line.
-                        m_minPreferredLogicalWidth = max(inlineMin, m_minPreferredLogicalWidth);
+                        updatePreferredWidth(m_minPreferredLogicalWidth, inlineMin);
                         inlineMin = 0;
                     } else {
-                        m_minPreferredLogicalWidth = max(inlineMin, m_minPreferredLogicalWidth);
+                        updatePreferredWidth(m_minPreferredLogicalWidth, inlineMin);
                         inlineMin = endMin;
                     }
                 }
 
                 if (hasBreak) {
                     inlineMax += beginMax;
-                    m_maxPreferredLogicalWidth = max(inlineMax, m_maxPreferredLogicalWidth);
-                    m_maxPreferredLogicalWidth = max(childMax, m_maxPreferredLogicalWidth);
+                    updatePreferredWidth(m_maxPreferredLogicalWidth, inlineMax);
+                    updatePreferredWidth(m_maxPreferredLogicalWidth, childMax);
                     inlineMax = endMax;
                 } else
                     inlineMax += childMax;
@@ -4876,8 +4882,8 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
             if (child->isListMarker())
                 stripFrontSpaces = true;
         } else {
-            m_minPreferredLogicalWidth = max(inlineMin, m_minPreferredLogicalWidth);
-            m_maxPreferredLogicalWidth = max(inlineMax, m_maxPreferredLogicalWidth);
+            updatePreferredWidth(m_minPreferredLogicalWidth, inlineMin);
+            updatePreferredWidth(m_maxPreferredLogicalWidth, inlineMax);
             inlineMin = inlineMax = 0;
             stripFrontSpaces = true;
             trailingSpaceChild = 0;
@@ -4889,8 +4895,8 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
     if (style()->collapseWhiteSpace())
         stripTrailingSpace(inlineMax, inlineMin, trailingSpaceChild);
 
-    m_minPreferredLogicalWidth = max(inlineMin, m_minPreferredLogicalWidth);
-    m_maxPreferredLogicalWidth = max(inlineMax, m_maxPreferredLogicalWidth);
+    updatePreferredWidth(m_minPreferredLogicalWidth, inlineMin);
+    updatePreferredWidth(m_maxPreferredLogicalWidth, inlineMax);
 }
 
 // Use a very large value (in effect infinite).
@@ -5468,9 +5474,9 @@ void RenderBlock::adjustForBorderFit(int x, int& left, int& right) const
         if (childrenInline()) {
             for (RootInlineBox* box = firstRootBox(); box; box = box->nextRootBox()) {
                 if (box->firstChild())
-                    left = min(left, x + box->firstChild()->x());
+                    left = min(left, x + static_cast<int>(box->firstChild()->x()));
                 if (box->lastChild())
-                    right = max(right, x + box->lastChild()->x() + box->lastChild()->logicalWidth());
+                    right = max(right, x + static_cast<int>(ceilf(box->lastChild()->logicalRight())));
             }
         }
         else {
@@ -5770,8 +5776,8 @@ void RenderBlock::addFocusRingRects(Vector<IntRect>& rects, int tx, int ty)
 
     if (!hasOverflowClip() && !hasControlClip()) {
         for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
-            int top = max(curr->lineTop(), curr->y());
-            int bottom = min(curr->lineBottom(), curr->y() + curr->logicalHeight());
+            int top = max(curr->lineTop(), curr->logicalTop());
+            int bottom = min(curr->lineBottom(), curr->logicalTop() + curr->logicalHeight());
             IntRect rect(tx + curr->x(), ty + top, curr->logicalWidth(), bottom - top);
             if (!rect.isEmpty())
                 rects.append(rect);

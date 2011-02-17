@@ -94,9 +94,8 @@ public:
     void drawText(GraphicsContext*, const TextRun&, const FloatPoint&, int from = 0, int to = -1) const;
     void drawEmphasisMarks(GraphicsContext*, const TextRun&, const AtomicString& mark, const FloatPoint&, int from = 0, int to = -1) const;
 
-    int width(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts = 0, GlyphOverflow* glyphOverflow = 0) const { return lroundf(floatWidth(run, fallbackFonts, glyphOverflow)); }
-    float floatWidth(const TextRun&, HashSet<const SimpleFontData*>* fallbackFonts = 0, GlyphOverflow* glyphOverflow = 0) const;
-    float floatWidth(const TextRun& run, int extraCharsAvailable, int& charsConsumed, String& glyphName) const;
+    float width(const TextRun&, HashSet<const SimpleFontData*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
+    float width(const TextRun&, int extraCharsAvailable, int& charsConsumed, String& glyphName) const;
 
     int offsetForPosition(const TextRun&, float position, bool includePartialGlyphs) const;
     FloatRect selectionRectForText(const TextRun&, const FloatPoint&, int h, int from = 0, int to = -1) const;
@@ -129,8 +128,8 @@ public:
 
     // Metrics that we query the FontFallbackList for.
     const FontMetrics& fontMetrics() const { return primaryFont()->fontMetrics(); }
-    int spaceWidth() const { return (int)ceilf(primaryFont()->adjustedSpaceWidth() + m_letterSpacing); }
-    float tabWidth(const SimpleFontData& fontData) const { return 8 * ceilf(fontData.adjustedSpaceWidth() + letterSpacing()); }
+    int spaceWidth() const { return primaryFont()->spaceWidth() + m_letterSpacing; }
+    float tabWidth(const SimpleFontData& fontData) const { return 8 * fontData.spaceWidth() + letterSpacing(); }
     int emphasisMarkAscent(const AtomicString&) const;
     int emphasisMarkDescent(const AtomicString&) const;
     int emphasisMarkHeight(const AtomicString&) const;
@@ -200,12 +199,6 @@ public:
     static void setCodePath(CodePath);
     static CodePath codePath();
     static CodePath s_codePath;
-
-    static const uint8_t gRoundingHackCharacterTable[256];
-    static bool isRoundingHackCharacter(UChar32 c)
-    {
-        return (((c & ~0xFF) == 0 && gRoundingHackCharacterTable[c]));
-    }
 
     FontSelector* fontSelector() const;
     static bool treatAsSpace(UChar c) { return c == ' ' || c == '\t' || c == '\n' || c == noBreakSpace; }

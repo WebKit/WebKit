@@ -20,6 +20,7 @@
 #ifndef HitTestResult_h
 #define HitTestResult_h
 
+#include "FloatRect.h"
 #include "IntPoint.h"
 #include "IntRect.h"
 #include "IntSize.h"
@@ -109,7 +110,8 @@ public:
 
     // Returns true if it is rect-based hit test and needs to continue until the rect is fully
     // enclosed by the boundaries of a node.
-    bool addNodeToRectBasedTestResult(Node*, int x, int y, const IntRect& rect = IntRect());
+    bool addNodeToRectBasedTestResult(Node*, int x, int y, const IntRect& = IntRect());
+    bool addNodeToRectBasedTestResult(Node*, int x, int y, const FloatRect&);
     const ListHashSet<RefPtr<Node> >& rectBasedTestResult() const { return m_rectBasedTestResult; }
     void append(const HitTestResult&);
 

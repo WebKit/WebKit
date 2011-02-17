@@ -506,15 +506,19 @@ IntRect RenderText::localCaretRect(InlineBox* inlineBox, int caretOffset, int* e
     int height = box->root()->selectionHeight();
     int top = box->root()->selectionTop();
 
-    int left = box->positionForOffset(caretOffset);
+    // Go ahead and round left to snap it to the nearest pixel.
+    float left = box->positionForOffset(caretOffset);
 
     // Distribute the caret's width to either side of the offset.
     int caretWidthLeftOfOffset = caretWidth / 2;
     left -= caretWidthLeftOfOffset;
     int caretWidthRightOfOffset = caretWidth - caretWidthLeftOfOffset;
 
-    int rootLeft = box->root()->logicalLeft();
-    int rootRight = rootLeft + box->root()->logicalWidth();
+    left = roundf(left);
+
+    float rootLeft = box->root()->logicalLeft();
+    float rootRight = box->root()->logicalRight();
+
     // FIXME: should we use the width of the root inline box or the
     // width of the containing block for this?
     if (extraWidthToEndOfLine)
@@ -522,14 +526,14 @@ IntRect RenderText::localCaretRect(InlineBox* inlineBox, int caretOffset, int* e
 
     RenderBlock* cb = containingBlock();
     RenderStyle* cbStyle = cb->style();
-    int leftEdge;
-    int rightEdge;
+    float leftEdge;
+    float rightEdge;
     if (style()->autoWrap()) {
         leftEdge = cb->logicalLeft();
         rightEdge = cb->logicalRight();
     } else {
-        leftEdge = min(cb->logicalLeft(), rootLeft);
-        rightEdge = max(cb->logicalRight(), rootRight);
+        leftEdge = min(static_cast<float>(cb->logicalLeft()), rootLeft);
+        rightEdge = max(static_cast<float>(cb->logicalRight()), rootRight);
     }
 
     bool rightAligned = false;
@@ -560,7 +564,7 @@ IntRect RenderText::localCaretRect(InlineBox* inlineBox, int caretOffset, int* e
     return style()->isHorizontalWritingMode() ? IntRect(left, top, caretWidth, height) : IntRect(top, left, height, caretWidth);
 }
 
-ALWAYS_INLINE int RenderText::widthFromCache(const Font& f, int start, int len, int xPos, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+ALWAYS_INLINE float RenderText::widthFromCache(const Font& f, int start, int len, float xPos, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     if (style()->hasTextCombine()) {
         const RenderCombineText* combineText = toRenderCombineText(this);
@@ -569,9 +573,9 @@ ALWAYS_INLINE int RenderText::widthFromCache(const Font& f, int start, int len, 
     }
 
     if (f.isFixedPitch() && !f.isSmallCaps() && m_isAllASCII) {
-        int monospaceCharacterWidth = f.spaceWidth();
-        int tabWidth = allowTabs() ? monospaceCharacterWidth * 8 : 0;
-        int w = 0;
+        float monospaceCharacterWidth = f.spaceWidth();
+        float tabWidth = allowTabs() ? monospaceCharacterWidth * 8 : 0;
+        float w = 0;
         bool isSpace;
         bool previousCharWasSpace = true; // FIXME: Preserves historical behavior, but seems wrong for start > 0.
         ASSERT(m_text);
@@ -583,7 +587,7 @@ ALWAYS_INLINE int RenderText::widthFromCache(const Font& f, int start, int len, 
                     w += monospaceCharacterWidth;
                     isSpace = true;
                 } else if (c == '\t') {
-                    w += tabWidth ? tabWidth - ((xPos + w) % tabWidth) : monospaceCharacterWidth;
+                    w += tabWidth ? tabWidth - fmodf(xPos + w, tabWidth) : monospaceCharacterWidth;
                     isSpace = true;
                 } else
                     isSpace = false;
@@ -601,12 +605,12 @@ ALWAYS_INLINE int RenderText::widthFromCache(const Font& f, int start, int len, 
     return f.width(TextRun(text()->characters() + start, len, allowTabs(), xPos), fallbackFonts, glyphOverflow);
 }
 
-void RenderText::trimmedPrefWidths(int leadWidth,
-                                   int& beginMinW, bool& beginWS,
-                                   int& endMinW, bool& endWS,
+void RenderText::trimmedPrefWidths(float leadWidth,
+                                   float& beginMinW, bool& beginWS,
+                                   float& endMinW, bool& endWS,
                                    bool& hasBreakableChar, bool& hasBreak,
-                                   int& beginMaxW, int& endMaxW,
-                                   int& minW, int& maxW, bool& stripFrontSpaces)
+                                   float& beginMaxW, float& endMaxW,
+                                   float& minW, float& maxW, bool& stripFrontSpaces)
 {
     bool collapseWhiteSpace = style()->collapseWhiteSpace();
     if (!collapseWhiteSpace)
@@ -646,7 +650,7 @@ void RenderText::trimmedPrefWidths(int leadWidth,
         const Font& f = style()->font(); // FIXME: This ignores first-line.
         if (stripFrontSpaces) {
             const UChar space = ' ';
-            int spaceWidth = f.width(TextRun(&space, 1));
+            float spaceWidth = f.width(TextRun(&space, 1));
             maxW -= spaceWidth;
         } else
             maxW += f.wordSpacing();
@@ -695,7 +699,7 @@ static inline bool isSpaceAccordingToStyle(UChar c, RenderStyle* style)
     return c == ' ' || (c == noBreakSpace && style->nbspMode() == SPACE);
 }
 
-int RenderText::minPreferredLogicalWidth() const
+float RenderText::minLogicalWidth() const
 {
     if (preferredLogicalWidthsDirty())
         const_cast<RenderText*>(this)->computePreferredLogicalWidths(0);
@@ -703,7 +707,7 @@ int RenderText::minPreferredLogicalWidth() const
     return m_minWidth;
 }
 
-int RenderText::maxPreferredLogicalWidth() const
+float RenderText::maxLogicalWidth() const
 {
     if (preferredLogicalWidthsDirty())
         const_cast<RenderText*>(this)->computePreferredLogicalWidths(0);
@@ -711,7 +715,7 @@ int RenderText::maxPreferredLogicalWidth() const
     return m_maxWidth;
 }
 
-void RenderText::computePreferredLogicalWidths(int leadWidth)
+void RenderText::computePreferredLogicalWidths(float leadWidth)
 {
     HashSet<const SimpleFontData*> fallbackFonts;
     GlyphOverflow glyphOverflow;
@@ -720,7 +724,7 @@ void RenderText::computePreferredLogicalWidths(int leadWidth)
         m_knownToHaveNoOverflowAndNoFallbackFonts = true;
 }
 
-void RenderText::computePreferredLogicalWidths(int leadWidth, HashSet<const SimpleFontData*>& fallbackFonts, GlyphOverflow& glyphOverflow)
+void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const SimpleFontData*>& fallbackFonts, GlyphOverflow& glyphOverflow)
 {
     ASSERT(m_hasTab || preferredLogicalWidthsDirty() || !m_knownToHaveNoOverflowAndNoFallbackFonts);
 
@@ -732,8 +736,8 @@ void RenderText::computePreferredLogicalWidths(int leadWidth, HashSet<const Simp
     if (isBR())
         return;
 
-    int currMinWidth = 0;
-    int currMaxWidth = 0;
+    float currMinWidth = 0;
+    float currMaxWidth = 0;
     m_hasBreakableChar = false;
     m_hasBreak = false;
     m_hasTab = false;
@@ -741,7 +745,7 @@ void RenderText::computePreferredLogicalWidths(int leadWidth, HashSet<const Simp
     m_hasEndWS = false;
 
     const Font& f = style()->font(); // FIXME: This ignores first-line.
-    int wordSpacing = style()->wordSpacing();
+    float wordSpacing = style()->wordSpacing();
     int len = textLength();
     const UChar* txt = characters();
     bool needsWordSpacing = false;
@@ -821,7 +825,7 @@ void RenderText::computePreferredLogicalWidths(int leadWidth, HashSet<const Simp
 
         int wordLen = j - i;
         if (wordLen) {
-            int w = widthFromCache(f, i, wordLen, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow);
+            float w = widthFromCache(f, i, wordLen, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow);
             if (firstGlyphLeftOverflow < 0)
                 firstGlyphLeftOverflow = glyphOverflow.left;
             currMinWidth += w;
@@ -933,17 +937,17 @@ bool RenderText::containsOnlyWhitespace(unsigned from, unsigned len) const
     return currPos >= (from + len);
 }
 
-IntPoint RenderText::firstRunOrigin() const
+FloatPoint RenderText::firstRunOrigin() const
 {
     return IntPoint(firstRunX(), firstRunY());
 }
 
-int RenderText::firstRunX() const
+float RenderText::firstRunX() const
 {
     return m_firstTextBox ? m_firstTextBox->m_x : 0;
 }
 
-int RenderText::firstRunY() const
+float RenderText::firstRunY() const
 {
     return m_firstTextBox ? m_firstTextBox->m_y : 0;
 }
@@ -1223,7 +1227,7 @@ void RenderText::positionLineBox(InlineBox* box)
     m_containsReversedText |= !s->isLeftToRightDirection();
 }
 
-unsigned RenderText::width(unsigned from, unsigned len, int xPos, bool firstLine, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+float RenderText::width(unsigned from, unsigned len, float xPos, bool firstLine, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     if (from >= textLength())
         return 0;
@@ -1234,13 +1238,13 @@ unsigned RenderText::width(unsigned from, unsigned len, int xPos, bool firstLine
     return width(from, len, style(firstLine)->font(), xPos, fallbackFonts, glyphOverflow);
 }
 
-unsigned RenderText::width(unsigned from, unsigned len, const Font& f, int xPos, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+float RenderText::width(unsigned from, unsigned len, const Font& f, float xPos, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     ASSERT(from + len <= textLength());
     if (!characters())
         return 0;
 
-    int w;
+    float w;
     if (&f == &style()->font()) {
         if (!style()->preserveNewline() && !from && len == textLength()) {
             if (fallbackFonts) {
@@ -1252,7 +1256,7 @@ unsigned RenderText::width(unsigned from, unsigned len, const Font& f, int xPos,
                 }
                 w = m_maxWidth;
             } else
-                w = maxPreferredLogicalWidth();
+                w = maxLogicalWidth();
         } else
             w = widthFromCache(f, from, len, xPos, fallbackFonts, glyphOverflow);
     } else
@@ -1268,8 +1272,8 @@ IntRect RenderText::linesBoundingBox() const
     ASSERT(!firstTextBox() == !lastTextBox());  // Either both are null or both exist.
     if (firstTextBox() && lastTextBox()) {
         // Return the width of the minimal left side and the maximal right side.
-        int logicalLeftSide = 0;
-        int logicalRightSide = 0;
+        float logicalLeftSide = 0;
+        float logicalRightSide = 0;
         for (InlineTextBox* curr = firstTextBox(); curr; curr = curr->nextTextBox()) {
             if (curr == firstTextBox() || curr->logicalLeft() < logicalLeftSide)
                 logicalLeftSide = curr->logicalLeft();
@@ -1279,11 +1283,11 @@ IntRect RenderText::linesBoundingBox() const
         
         bool isHorizontal = style()->isHorizontalWritingMode();
         
-        int x = isHorizontal ? logicalLeftSide : firstTextBox()->x();
-        int y = isHorizontal ? firstTextBox()->y() : logicalLeftSide;
-        int width = isHorizontal ? logicalRightSide - logicalLeftSide : lastTextBox()->logicalBottom() - x;
-        int height = isHorizontal ? lastTextBox()->logicalBottom() - y : logicalRightSide - logicalLeftSide;
-        result = IntRect(x, y, width, height);
+        float x = isHorizontal ? logicalLeftSide : firstTextBox()->x();
+        float y = isHorizontal ? firstTextBox()->y() : logicalLeftSide;
+        float width = isHorizontal ? logicalRightSide - logicalLeftSide : lastTextBox()->logicalBottom() - x;
+        float height = isHorizontal ? lastTextBox()->logicalBottom() - y : logicalRightSide - logicalLeftSide;
+        result = enclosingIntRect(FloatRect(x, y, width, height));
     }
 
     return result;

@@ -47,9 +47,9 @@ String FileChooser::basenameForWidth(const Font& font, int width) const
     else if (m_filenames.size() == 1)
         strToTruncate = [[NSFileManager defaultManager] displayNameAtPath:(m_filenames[0])];
     else
-        return StringTruncator::rightTruncate(multipleFileUploadText(m_filenames.size()), width, font, false);
+        return StringTruncator::rightTruncate(multipleFileUploadText(m_filenames.size()), width, font);
 
-    return StringTruncator::centerTruncate(strToTruncate, width, font, false);
+    return StringTruncator::centerTruncate(strToTruncate, width, font);
 }
 
 }

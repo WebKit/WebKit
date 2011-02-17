@@ -153,10 +153,10 @@ void RenderMenuList::updateOptionsWidth()
             if (RenderStyle* optionStyle = element->renderStyle())
                 optionWidth += optionStyle->textIndent().calcMinValue(0);
             if (!text.isEmpty())
-                optionWidth += style()->font().floatWidth(text);
+                optionWidth += style()->font().width(text);
             maxOptionWidth = max(maxOptionWidth, optionWidth);
         } else if (!text.isEmpty())
-            maxOptionWidth = max(maxOptionWidth, style()->font().floatWidth(text));
+            maxOptionWidth = max(maxOptionWidth, style()->font().width(text));
     }
 
     int width = static_cast<int>(ceilf(maxOptionWidth));

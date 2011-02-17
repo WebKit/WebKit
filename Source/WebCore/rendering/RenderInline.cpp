@@ -559,8 +559,8 @@ IntRect RenderInline::linesBoundingBox() const
     ASSERT(!firstLineBox() == !lastLineBox());  // Either both are null or both exist.
     if (firstLineBox() && lastLineBox()) {
         // Return the width of the minimal left side and the maximal right side.
-        int logicalLeftSide = 0;
-        int logicalRightSide = 0;
+        float logicalLeftSide = 0;
+        float logicalRightSide = 0;
         for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
             if (curr == firstLineBox() || curr->logicalLeft() < logicalLeftSide)
                 logicalLeftSide = curr->logicalLeft();
@@ -570,11 +570,11 @@ IntRect RenderInline::linesBoundingBox() const
         
         bool isHorizontal = style()->isHorizontalWritingMode();
         
-        int x = isHorizontal ? logicalLeftSide : firstLineBox()->x();
-        int y = isHorizontal ? firstLineBox()->y() : logicalLeftSide;
-        int width = isHorizontal ? logicalRightSide - logicalLeftSide : lastLineBox()->logicalBottom() - x;
-        int height = isHorizontal ? lastLineBox()->logicalBottom() - y : logicalRightSide - logicalLeftSide;
-        result = IntRect(x, y, width, height);
+        float x = isHorizontal ? logicalLeftSide : firstLineBox()->x();
+        float y = isHorizontal ? firstLineBox()->y() : logicalLeftSide;
+        float width = isHorizontal ? logicalRightSide - logicalLeftSide : lastLineBox()->logicalBottom() - x;
+        float height = isHorizontal ? lastLineBox()->logicalBottom() - y : logicalRightSide - logicalLeftSide;
+        result = enclosingIntRect(FloatRect(x, y, width, height));
     }
 
     return result;
@@ -586,20 +586,20 @@ IntRect RenderInline::linesVisualOverflowBoundingBox() const
         return IntRect();
 
     // Return the width of the minimal left side and the maximal right side.
-    int logicalLeftSide = numeric_limits<int>::max();
-    int logicalRightSide = numeric_limits<int>::min();
+    float logicalLeftSide = numeric_limits<int>::max();
+    float logicalRightSide = numeric_limits<int>::min();
     for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
-        logicalLeftSide = min(logicalLeftSide, curr->logicalLeftVisualOverflow());
-        logicalRightSide = max(logicalRightSide, curr->logicalRightVisualOverflow());
+        logicalLeftSide = min(logicalLeftSide, static_cast<float>(curr->logicalLeftVisualOverflow()));
+        logicalRightSide = max(logicalRightSide, static_cast<float>(curr->logicalRightVisualOverflow()));
     }
 
     bool isHorizontal = style()->isHorizontalWritingMode();
         
-    int x = isHorizontal ? logicalLeftSide : firstLineBox()->minXVisualOverflow();
-    int y = isHorizontal ? firstLineBox()->minYVisualOverflow() : logicalLeftSide;
-    int width = isHorizontal ? logicalRightSide - logicalLeftSide : lastLineBox()->maxXVisualOverflow() - firstLineBox()->minXVisualOverflow();
-    int height = isHorizontal ? lastLineBox()->maxYVisualOverflow() - firstLineBox()->minYVisualOverflow() : logicalRightSide - logicalLeftSide;
-    return IntRect(x, y, width, height);
+    float x = isHorizontal ? logicalLeftSide : firstLineBox()->minXVisualOverflow();
+    float y = isHorizontal ? firstLineBox()->minYVisualOverflow() : logicalLeftSide;
+    float width = isHorizontal ? logicalRightSide - logicalLeftSide : lastLineBox()->maxXVisualOverflow() - firstLineBox()->minXVisualOverflow();
+    float height = isHorizontal ? lastLineBox()->maxYVisualOverflow() - firstLineBox()->minYVisualOverflow() : logicalRightSide - logicalLeftSide;
+    return enclosingIntRect(FloatRect(x, y, width, height));
 }
 
 IntRect RenderInline::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
@@ -963,8 +963,8 @@ void RenderInline::addFocusRingRects(Vector<IntRect>& rects, int tx, int ty)
 {
     for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
         RootInlineBox* root = curr->root();
-        int top = max(root->lineTop(), curr->y());
-        int bottom = min(root->lineBottom(), curr->y() + curr->logicalHeight());
+        int top = max(root->lineTop(), curr->logicalTop());
+        int bottom = min(root->lineBottom(), curr->logicalBottom());
         IntRect rect(tx + curr->x(), ty + top, curr->logicalWidth(), bottom - top);
         if (!rect.isEmpty())
             rects.append(rect);
@@ -1015,8 +1015,8 @@ void RenderInline::paintOutline(GraphicsContext* graphicsContext, int tx, int ty
     rects.append(IntRect());
     for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
         RootInlineBox* root = curr->root();
-        int top = max(root->lineTop(), curr->y());
-        int bottom = min(root->lineBottom(), curr->y() + curr->logicalHeight());
+        int top = max(root->lineTop(), curr->logicalTop());
+        int bottom = min(root->lineBottom(), curr->logicalBottom());
         rects.append(IntRect(curr->x(), top, curr->logicalWidth(), bottom - top));
     }
     rects.append(IntRect());

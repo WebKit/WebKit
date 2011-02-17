@@ -47,8 +47,9 @@ SVGTextMetrics::SVGTextMetrics(RenderSVGInlineText* textRenderer, const TextRun&
     int length = 0;
 
     // Calculate width/height using the scaled font, divide this result by the scalingFactor afterwards.
-    m_width = scaledFont.floatWidth(run, extraCharsAvailable, length, m_glyph.name) / scalingFactor;
+    m_width = scaledFont.width(run, extraCharsAvailable, length, m_glyph.name) / scalingFactor;
     m_height = scaledFont.fontMetrics().floatHeight() / scalingFactor;
+
     m_glyph.unicodeString = String(run.characters(), length);
     m_glyph.isValid = true;
 
@@ -78,9 +79,6 @@ static TextRun constructTextRun(RenderSVGInlineText* text, const UChar* characte
 #if ENABLE(SVG_FONTS)
     run.setReferencingRenderObject(text);
 #endif
-
-    // Disable any word/character rounding.
-    run.disableRoundingHacks();
 
     // We handle letter & word spacing ourselves.
     run.disableSpacing();

@@ -385,6 +385,8 @@ public:
     IntPoint flipForWritingModeIncludingColumns(const IntPoint&) const;
     IntSize flipForWritingMode(const IntSize&) const;
     void flipForWritingMode(IntRect&) const;
+    FloatPoint flipForWritingMode(const FloatPoint&) const;
+    void flipForWritingMode(FloatRect&) const;
     IntSize locationOffsetIncludingFlipping() const;
 
     IntRect logicalVisualOverflowRectForPropagation(RenderStyle*) const;

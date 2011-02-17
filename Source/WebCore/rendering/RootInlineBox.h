@@ -45,7 +45,7 @@ public:
     RootInlineBox* nextRootBox() const { return static_cast<RootInlineBox*>(m_nextLineBox); }
     RootInlineBox* prevRootBox() const { return static_cast<RootInlineBox*>(m_prevLineBox); }
 
-    virtual void adjustPosition(int dx, int dy);
+    virtual void adjustPosition(float dx, float dy);
 
     int lineTop() const { return m_lineTop; }
     int lineBottom() const { return m_lineBottom; }
@@ -78,8 +78,8 @@ public:
     void childRemoved(InlineBox* box);
 
     bool canAccommodateEllipsis(bool ltr, int blockEdge, int lineBoxEdge, int ellipsisWidth);
-    void placeEllipsis(const AtomicString& ellipsisStr, bool ltr, int blockLeftEdge, int blockRightEdge, int ellipsisWidth, InlineBox* markupBox = 0);
-    virtual int placeEllipsisBox(bool ltr, int blockLeftEdge, int blockRightEdge, int ellipsisWidth, bool& foundBox);
+    void placeEllipsis(const AtomicString& ellipsisStr, bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, InlineBox* markupBox = 0);
+    virtual float placeEllipsisBox(bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, bool& foundBox);
 
     EllipsisBox* ellipsisBox() const;
 

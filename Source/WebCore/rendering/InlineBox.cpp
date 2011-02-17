@@ -150,14 +150,12 @@ void InlineBox::attachLine()
         toRenderBox(m_renderer)->setInlineBoxWrapper(this);
 }
 
-void InlineBox::adjustPosition(int dx, int dy)
+void InlineBox::adjustPosition(float dx, float dy)
 {
     m_x += dx;
     m_y += dy;
-    if (m_renderer->isReplaced()) {
-        RenderBox* box = toRenderBox(m_renderer);
-        box->move(dx, dy);
-    }
+    if (m_renderer->isReplaced())
+        toRenderBox(m_renderer)->positionLineBox(this);
 }
 
 void InlineBox::paint(PaintInfo& paintInfo, int tx, int ty)
@@ -278,21 +276,35 @@ bool InlineBox::canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidt
     return !(boxRect.intersects(ellipsisRect));
 }
 
-int InlineBox::placeEllipsisBox(bool, int, int, int, bool&)
+float InlineBox::placeEllipsisBox(bool, float, float, float, bool&)
 {
     // Use -1 to mean "we didn't set the position."
     return -1;
 }
 
-IntPoint InlineBox::locationIncludingFlipping()
+FloatPoint InlineBox::locationIncludingFlipping()
 {
     if (!renderer()->style()->isFlippedBlocksWritingMode())
-        return IntPoint(x(), y());
+        return FloatPoint(x(), y());
     RenderBlock* block = root()->block();
     if (block->style()->isHorizontalWritingMode())
-        return IntPoint(x(), block->height() - height() - y());
+        return FloatPoint(x(), block->height() - height() - y());
     else
-        return IntPoint(block->width() - width() - x(), y());
+        return FloatPoint(block->width() - width() - x(), y());
+}
+
+void InlineBox::flipForWritingMode(FloatRect& rect)
+{
+    if (!renderer()->style()->isFlippedBlocksWritingMode())
+        return;
+    root()->block()->flipForWritingMode(rect);
+}
+
+FloatPoint InlineBox::flipForWritingMode(const FloatPoint& point)
+{
+    if (!renderer()->style()->isFlippedBlocksWritingMode())
+        return point;
+    return root()->block()->flipForWritingMode(point);
 }
 
 void InlineBox::flipForWritingMode(IntRect& rect)

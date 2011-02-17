@@ -1327,7 +1327,7 @@ void RenderBox::positionLineBox(InlineBox* box)
         box->remove();
         box->destroy(renderArena());
     } else if (isReplaced()) {
-        setLocation(box->x(), box->y());
+        setLocation(lroundf(box->x()), lroundf(box->y()));
         m_inlineBoxWrapper = box;
     }
 }
@@ -3344,6 +3344,24 @@ IntSize RenderBox::flipForWritingMode(const IntSize& offset) const
     if (!style()->isFlippedBlocksWritingMode())
         return offset;
     return style()->isHorizontalWritingMode() ? IntSize(offset.width(), height() - offset.height()) : IntSize(width() - offset.width(), offset.height());
+}
+
+FloatPoint RenderBox::flipForWritingMode(const FloatPoint& position) const
+{
+    if (!style()->isFlippedBlocksWritingMode())
+        return position;
+    return style()->isHorizontalWritingMode() ? FloatPoint(position.x(), height() - position.y()) : FloatPoint(width() - position.x(), position.y());
+}
+
+void RenderBox::flipForWritingMode(FloatRect& rect) const
+{
+    if (!style()->isFlippedBlocksWritingMode())
+        return;
+
+    if (style()->isHorizontalWritingMode())
+        rect.setY(height() - rect.maxY());
+    else
+        rect.setX(width() - rect.maxX());
 }
 
 IntSize RenderBox::locationOffsetIncludingFlipping() const

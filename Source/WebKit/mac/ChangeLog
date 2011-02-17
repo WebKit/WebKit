@@ -1,3 +1,31 @@
+2011-02-16  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54244
+        
+        Convert the line box tree to floating point and eliminate font rounding hacks.  This patch removes all of the rounding
+        hacks from the Font code and makes sure all Font APIs involving width measurement and width offsets use floats.
+        
+        The line box tree's x, y and logicalWidth members have all been converted to floats and all of the line box APIs have
+        been changed as well.
+        
+        In terms of pixel adjustments, overflow is using an enclosing model (so it will be enclosingIntRect of a line box's x/y/width/height).
+        
+        Background and border painting is using a rounding model, so borders and backgrounds will round to the nearest pixel when painting.
+        
+        Replaced elements still snap to integer positions on lines, and they use a rounding model as well, although their underlying line boxes
+        still have a precise floating point position.
+
+        Justification will now allow subpixel positioning to occur as well.  Platforms that don't support subpixel positioning should already
+        be rounding justification spacing in their font code.
+
+        Many layout test results change on Mac, since rounding hacks were used there and are now gone.
+
+        * Misc/WebKitNSStringExtras.mm:
+        (-[NSString _web_drawAtPoint:font:textColor:allowingFontSmoothing:]):
+        (-[NSString _web_widthWithFont:]):
+
 2011-02-10  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Adam Roben.

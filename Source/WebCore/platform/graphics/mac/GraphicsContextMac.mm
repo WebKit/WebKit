@@ -112,14 +112,14 @@ static NSColor* createPatternColor(NSString* name, NSColor* defaultColor, bool& 
 }
 
 // WebKit on Mac is a standard platform component, so it must use the standard platform artwork for underline.
-void GraphicsContext::drawLineForTextChecking(const IntPoint& point, int width, TextCheckingLineStyle style)
+void GraphicsContext::drawLineForTextChecking(const FloatPoint& point, float width, TextCheckingLineStyle style)
 {
     if (paintingDisabled())
         return;
         
     // These are the same for misspelling or bad grammar.
     int patternHeight = cMisspellingLineThickness;
-    int patternWidth = cMisspellingLinePatternWidth;
+    float patternWidth = cMisspellingLinePatternWidth;
 
     bool usingDot;
     NSColor *patternColor;
@@ -165,7 +165,7 @@ void GraphicsContext::drawLineForTextChecking(const IntPoint& point, int width, 
     // space between adjacent misspelled words was underlined.
     if (usingDot) {
         // allow slightly more considering that the pattern ends with a transparent pixel
-        int widthMod = width % patternWidth;
+        float widthMod = fmodf(width, patternWidth);
         if (patternWidth - widthMod > cMisspellingLinePatternGapWidth)
             width -= widthMod;
     }

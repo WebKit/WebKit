@@ -68,7 +68,7 @@ public:
     {
     }
 
-    InlineBox(RenderObject* obj, int x, int y, int logicalWidth, bool firstLine, bool constructed,
+    InlineBox(RenderObject* obj, float x, float y, float logicalWidth, bool firstLine, bool constructed,
               bool dirty, bool extracted, bool isHorizontal, InlineBox* next, InlineBox* prev, InlineFlowBox* parent)
         : m_next(next)
         , m_prev(prev)
@@ -112,15 +112,15 @@ public:
 
     virtual bool isLineBreak() const { return false; }
 
-    virtual void adjustPosition(int dx, int dy);
-    void adjustLineDirectionPosition(int delta)
+    virtual void adjustPosition(float dx, float dy);
+    void adjustLineDirectionPosition(float delta)
     {
         if (isHorizontal())
             adjustPosition(delta, 0);
         else
             adjustPosition(0, delta);
     }
-    void adjustBlockDirectionPosition(int delta)
+    void adjustBlockDirectionPosition(float delta)
     {
         if (isHorizontal())
             adjustPosition(0, delta);
@@ -220,28 +220,28 @@ public:
     RootInlineBox* root();
 
     // x() is the left side of the box in the containing block's coordinate system.
-    void setX(int x) { m_x = x; }
-    int x() const { return m_x; }
+    void setX(float x) { m_x = x; }
+    float x() const { return m_x; }
 
     // y() is the top side of the box in the containing block's coordinate system.
-    void setY(int y) { m_y = y; }
-    int y() const { return m_y; }
+    void setY(float y) { m_y = y; }
+    float y() const { return m_y; }
 
-    int width() const { return isHorizontal() ? logicalWidth() : logicalHeight(); }
-    int height() const { return isHorizontal() ? logicalHeight() : logicalWidth(); }
-
-    IntRect frameRect() const { return IntRect(x(), y(), width(), height()); }
+    float width() const { return isHorizontal() ? logicalWidth() : logicalHeight(); }
+    float height() const { return isHorizontal() ? logicalHeight() : logicalWidth(); }
 
     // The logicalLeft position is the left edge of the line box in a horizontal line and the top edge in a vertical line.
-    int logicalLeft() const { return isHorizontal() ? m_x : m_y; }
-    int logicalRight() const { return logicalLeft() + logicalWidth(); }
-    void setLogicalLeft(int left)
+    float logicalLeft() const { return isHorizontal() ? m_x : m_y; }
+    float logicalRight() const { return logicalLeft() + logicalWidth(); }
+    void setLogicalLeft(float left)
     {
         if (isHorizontal())
             m_x = left;
         else
             m_y = left;
     }
+    int pixelSnappedLogicalLeft() const { return logicalLeft(); }
+    int pixelSnappedLogicalRight() const { return ceilf(logicalRight()); }
 
     // The logicalTop[ position is the top edge of the line box in a horizontal line and the left edge in a vertical line.
     int logicalTop() const { return isHorizontal() ? m_y : m_x; }
@@ -255,8 +255,8 @@ public:
     }
 
     // The logical width is our extent in the line's overall inline direction, i.e., width for horizontal text and height for vertical text.
-    void setLogicalWidth(int w) { m_logicalWidth = w; }
-    int logicalWidth() const { return m_logicalWidth; }
+    void setLogicalWidth(float w) { m_logicalWidth = w; }
+    float logicalWidth() const { return m_logicalWidth; }
 
     // The logical height is our extent in the block flow direction, i.e., height for horizontal text and width for vertical text.
     int logicalHeight() const;
@@ -286,7 +286,7 @@ public:
 
     virtual bool canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth);
     // visibleLeftEdge, visibleRightEdge are in the parent's coordinate system.
-    virtual int placeEllipsisBox(bool ltr, int visibleLeftEdge, int visibleRightEdge, int ellipsisWidth, bool&);
+    virtual float placeEllipsisBox(bool ltr, float visibleLeftEdge, float visibleRightEdge, float ellipsisWidth, bool&);
 
     void setHasBadParent();
 
@@ -294,6 +294,8 @@ public:
     
     bool visibleToHitTesting() const { return renderer()->style()->visibility() == VISIBLE && renderer()->style()->pointerEvents() != PE_NONE; }
     
+    EVerticalAlign verticalAlign() const { return renderer()->style(m_firstLine)->verticalAlign(); }
+
     // Use with caution! The type is not checked!
     RenderBoxModelObject* boxModelObject() const
     { 
@@ -302,7 +304,9 @@ public:
         return 0;
     }
 
-    IntPoint locationIncludingFlipping();
+    FloatPoint locationIncludingFlipping();
+    void flipForWritingMode(FloatRect&);
+    FloatPoint flipForWritingMode(const FloatPoint&);
     void flipForWritingMode(IntRect&);
     IntPoint flipForWritingMode(const IntPoint&);
 
@@ -315,9 +319,9 @@ private:
 public:
     RenderObject* m_renderer;
 
-    int m_x;
-    int m_y;
-    int m_logicalWidth;
+    float m_x;
+    float m_y;
+    float m_logicalWidth;
     
     // Some of these bits are actually for subclasses and moved here to compact the structures.
 

@@ -97,7 +97,7 @@ bool RootInlineBox::canAccommodateEllipsis(bool ltr, int blockEdge, int lineBoxE
     return InlineFlowBox::canAccommodateEllipsis(ltr, blockEdge, ellipsisWidth);
 }
 
-void RootInlineBox::placeEllipsis(const AtomicString& ellipsisStr,  bool ltr, int blockLeftEdge, int blockRightEdge, int ellipsisWidth,
+void RootInlineBox::placeEllipsis(const AtomicString& ellipsisStr,  bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth,
                                   InlineBox* markupBox)
 {
     // Create an ellipsis box.
@@ -123,9 +123,9 @@ void RootInlineBox::placeEllipsis(const AtomicString& ellipsisStr,  bool ltr, in
     ellipsisBox->m_x = placeEllipsisBox(ltr, blockLeftEdge, blockRightEdge, ellipsisWidth, foundBox);
 }
 
-int RootInlineBox::placeEllipsisBox(bool ltr, int blockLeftEdge, int blockRightEdge, int ellipsisWidth, bool& foundBox)
+float RootInlineBox::placeEllipsisBox(bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, bool& foundBox)
 {
-    int result = InlineFlowBox::placeEllipsisBox(ltr, blockLeftEdge, blockRightEdge, ellipsisWidth, foundBox);
+    float result = InlineFlowBox::placeEllipsisBox(ltr, blockLeftEdge, blockRightEdge, ellipsisWidth, foundBox);
     if (result == -1)
         result = ltr ? blockRightEdge - ellipsisWidth : blockLeftEdge;
     return result;
@@ -198,10 +198,10 @@ bool RootInlineBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     return InlineFlowBox::nodeAtPoint(request, result, x, y, tx, ty);
 }
 
-void RootInlineBox::adjustPosition(int dx, int dy)
+void RootInlineBox::adjustPosition(float dx, float dy)
 {
     InlineFlowBox::adjustPosition(dx, dy);
-    int blockDirectionDelta = isHorizontal() ? dy : dx;
+    int blockDirectionDelta = isHorizontal() ? dy : dx; // The block direction delta will always be integral.
     m_lineTop += blockDirectionDelta;
     m_lineBottom += blockDirectionDelta;
     m_blockLogicalHeight += blockDirectionDelta;
@@ -289,7 +289,7 @@ int RootInlineBox::beforeAnnotationsAdjustment() const
 
         // Annotations over this line may push us further down.
         int highestAllowedPosition = prevRootBox() ? min(prevRootBox()->lineBottom(), lineTop()) + result : block()->borderBefore();
-        result =  computeOverAnnotationAdjustment(highestAllowedPosition);
+        result = computeOverAnnotationAdjustment(highestAllowedPosition);
     } else {
         // Annotations under this line may push us up.
         if (hasAnnotationsBefore())
@@ -544,14 +544,14 @@ IntRect RootInlineBox::paddedLayoutOverflowRect(int endPadding) const
     
     if (isHorizontal()) {
         if (isLeftToRightDirection())
-            lineLayoutOverflow.shiftMaxXEdgeTo(max(lineLayoutOverflow.maxX(), logicalRight() + endPadding));
+            lineLayoutOverflow.shiftMaxXEdgeTo(max(lineLayoutOverflow.maxX(), pixelSnappedLogicalRight() + endPadding));
         else
-            lineLayoutOverflow.shiftXEdgeTo(min(lineLayoutOverflow.x(), logicalLeft() - endPadding));
+            lineLayoutOverflow.shiftXEdgeTo(min(lineLayoutOverflow.x(), pixelSnappedLogicalLeft() - endPadding));
     } else {
         if (isLeftToRightDirection())
-            lineLayoutOverflow.shiftMaxYEdgeTo(max(lineLayoutOverflow.maxY(), logicalRight() + endPadding));
+            lineLayoutOverflow.shiftMaxYEdgeTo(max(lineLayoutOverflow.maxY(), pixelSnappedLogicalRight() + endPadding));
         else
-            lineLayoutOverflow.shiftYEdgeTo(min(lineLayoutOverflow.y(), logicalRight() - endPadding));
+            lineLayoutOverflow.shiftYEdgeTo(min(lineLayoutOverflow.y(), pixelSnappedLogicalLeft() - endPadding));
     }
     
     return lineLayoutOverflow;
