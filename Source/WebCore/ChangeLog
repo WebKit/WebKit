@@ -1,3 +1,17 @@
+2011-02-16  Robin Cao  <robin.cao@torchmobile.com.cn>
+
+        Reviewed by James Robinson.
+
+        PlatformContextSkia::applyAntiAliasedClipPaths does not work for paths which have evenOdd property
+        https://bugs.webkit.org/show_bug.cgi?id=54336
+
+        We need to take fill type of paths into account when drawing them.
+
+        No new tests, covered by svg/W3C-SVG-1.1/masking-path-05-f.svg.
+
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::applyAntiAliasedClipPaths):
+
 2011-02-16  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
