@@ -691,9 +691,6 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                                          TRUE,
                                                          flags));
 
-    COMPILE_ASSERT(static_cast<int>(WEBKIT_EDITING_BEHAVIOR_MAC) == static_cast<int>(WebCore::EditingMacBehavior), editing_behavior_type_mac_match);
-    COMPILE_ASSERT(static_cast<int>(WEBKIT_EDITING_BEHAVIOR_WINDOWS) == static_cast<int>(WebCore::EditingWindowsBehavior), editing_behavior_type_windows_match);
-    COMPILE_ASSERT(static_cast<int>(WEBKIT_EDITING_BEHAVIOR_UNIX) == static_cast<int>(WebCore::EditingUnixBehavior), editing_behavior_type_unix_match);
 
     /**
     * WebKitWebSettings:editing-behavior

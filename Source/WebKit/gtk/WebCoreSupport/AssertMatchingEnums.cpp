@@ -22,15 +22,29 @@
 #include "config.h"
 
 #include "DumpRenderTreeSupportGtk.h"
+#include "EditingBehaviorTypes.h"
 #include "FindOptions.h"
+#include "FrameLoaderTypes.h"
+#include "webkitwebnavigationaction.h"
+#include "webkitwebsettings.h"
 #include <wtf/Assertions.h>
 
 #define COMPILE_ASSERT_MATCHING_ENUM(webkit_name, webcore_name) \
-    COMPILE_ASSERT(int(WebKit::webkit_name) == int(WebCore::webcore_name), mismatching_enums)
+    COMPILE_ASSERT(int(webkit_name) == int(WebCore::webcore_name), mismatching_enums)
 
-COMPILE_ASSERT_MATCHING_ENUM(WebFindOptionsCaseInsensitive , CaseInsensitive);
-COMPILE_ASSERT_MATCHING_ENUM(WebFindOptionsAtWordStarts, AtWordStarts);
-COMPILE_ASSERT_MATCHING_ENUM(WebFindOptionsTreatMedialCapitalAsWordStart, TreatMedialCapitalAsWordStart);
-COMPILE_ASSERT_MATCHING_ENUM(WebFindOptionsBackwards, Backwards);
-COMPILE_ASSERT_MATCHING_ENUM(WebFindOptionsWrapAround, WrapAround);
-COMPILE_ASSERT_MATCHING_ENUM(WebFindOptionsStartInSelection, StartInSelection);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_EDITING_BEHAVIOR_MAC, EditingMacBehavior);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_EDITING_BEHAVIOR_WINDOWS, EditingWindowsBehavior);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_EDITING_BEHAVIOR_UNIX, EditingUnixBehavior);
+
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_WEB_NAVIGATION_REASON_LINK_CLICKED, NavigationTypeLinkClicked);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_WEB_NAVIGATION_REASON_FORM_SUBMITTED, NavigationTypeFormSubmitted);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_WEB_NAVIGATION_REASON_BACK_FORWARD, NavigationTypeBackForward);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_WEB_NAVIGATION_REASON_RELOAD, NavigationTypeReload);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_WEB_NAVIGATION_REASON_FORM_RESUBMITTED, NavigationTypeFormResubmitted);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_WEB_NAVIGATION_REASON_OTHER, NavigationTypeOther);
+
+COMPILE_ASSERT_MATCHING_ENUM(WebKit::WebFindOptionsAtWordStarts, AtWordStarts);
+COMPILE_ASSERT_MATCHING_ENUM(WebKit::WebFindOptionsTreatMedialCapitalAsWordStart, TreatMedialCapitalAsWordStart);
+COMPILE_ASSERT_MATCHING_ENUM(WebKit::WebFindOptionsBackwards, Backwards);
+COMPILE_ASSERT_MATCHING_ENUM(WebKit::WebFindOptionsWrapAround, WrapAround);
+COMPILE_ASSERT_MATCHING_ENUM(WebKit::WebFindOptionsStartInSelection, StartInSelection);
