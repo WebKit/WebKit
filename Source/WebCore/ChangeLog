@@ -1,3 +1,23 @@
+2011-02-16  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Layout Test fast/canvas/setWidthResetAfterForcedRender.html fails on
+        accelerated 2D canvas w/compositor enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=54561
+
+        When resetting the CanvasRenderingContext2D, we also need to send a
+        contentChanged() to the relevant RenderLayer.  This is similar to what
+        is done in didDraw().
+
+        Covered by fast/canvas/setWidthResetAfterForcedRender.html, but note 
+        that this test will still fail pixel tests because the compositor
+        is not compatible with repaint tests (the green square is now white,
+        but the half-transparent grey repaint rect does not appear).
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::reset):
+
 2011-02-17  Sergey Glazunov  <serg.glazunov@gmail.com>
 
         Reviewed by Kenneth Russell.
