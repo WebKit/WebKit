@@ -1,0 +1,17 @@
+SVG 1.1 dynamic animation tests
+
+Test calcMode discrete with from-to animation on colors with alpha channel. You should see a green 100x100 rect and only PASS messages
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.defaultView.getComputedStyle(rect).getPropertyValue('color') is "rgba(0, 255, 255, 0.398438)"
+PASS document.defaultView.getComputedStyle(rect).getPropertyValue('color') is "rgba(255, 0, 0, 0.597656)"
+PASS document.defaultView.getComputedStyle(rect).getPropertyValue('color') is "rgba(255, 0, 0, 0.597656)"
+PASS document.defaultView.getComputedStyle(rect).getPropertyValue('color') is "rgba(0, 255, 255, 0.796875)"
+PASS document.defaultView.getComputedStyle(rect).getPropertyValue('color') is "rgba(0, 255, 255, 0.796875)"
+PASS document.defaultView.getComputedStyle(rect).getPropertyValue('color') is "rgba(0, 255, 255, 0.398438)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

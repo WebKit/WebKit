@@ -1,3 +1,14 @@
+2011-02-17  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Dirk Schulze.
+
+        SVG: Add test for color animation with alpha value in calcMode=discrete
+        https://bugs.webkit.org/show_bug.cgi?id=54666
+
+        * svg/animations/animate-color-rgba-calcMode-discrete-expected.txt: Added.
+        * svg/animations/animate-color-rgba-calcMode-discrete.html: Added.
+        * svg/animations/script-tests/animate-color-rgba-calcMode-discrete.js: Added.
+
 2011-02-17  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium expectations update. Remove duplicate expectation
