@@ -249,6 +249,8 @@ bool XSSFilter::filterTokenInitial(HTMLToken& token)
         didBlockScript |= filterMetaToken(token);
     else if (hasName(token, baseTag))
         didBlockScript |= filterBaseToken(token);
+    else if (hasName(token, formTag))
+        didBlockScript |= filterFormToken(token);
 
     return didBlockScript;
 }
@@ -367,6 +369,15 @@ bool XSSFilter::filterBaseToken(HTMLToken& token)
     ASSERT(hasName(token, baseTag));
 
     return eraseAttributeIfInjected(token, hrefAttr);
+}
+
+bool XSSFilter::filterFormToken(HTMLToken& token)
+{
+    ASSERT(m_state == Initial);
+    ASSERT(token.type() == HTMLToken::StartTag);
+    ASSERT(hasName(token, formTag));
+
+    return eraseAttributeIfInjected(token, actionAttr);
 }
 
 bool XSSFilter::eraseDangerousAttributesIfInjected(HTMLToken& token)
