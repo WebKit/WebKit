@@ -1,3 +1,15 @@
+2011-02-17  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed.
+
+        [GTK] Failing canvas security tests
+        https://bugs.webkit.org/show_bug.cgi?id=30580
+
+        Test is working fine locally in both release and debug builds so
+        unskipping it.
+
+        * platform/gtk/Skipped: Updated the skipped list.
+
 2011-02-17  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed, skipping failing test on GTK bots.

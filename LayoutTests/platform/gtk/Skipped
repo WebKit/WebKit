@@ -1003,9 +1003,6 @@ http/tests/security/isolatedWorld
 # Missing DRT ability return a null request for willSendRequest redirect calls
 http/tests/misc/will-send-request-returns-null-on-redirect.html
 
-# Canvas security issues https://bugs.webkit.org/show_bug.cgi?id=30580
-http/tests/security/canvas-remote-read-data-url-svg-image.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=30577
 editing/selection/move-left-right.html
 
