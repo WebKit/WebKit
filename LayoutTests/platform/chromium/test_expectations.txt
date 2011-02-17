@@ -3469,3 +3469,5 @@ BUGV8_1168 : fast/js/mozilla/strict/primitive-this-no-writeback.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/this-for-function-expression-recursion.html = TEXT
 
 BUGWK54634 SKIP : media/video-controls-in-media-document.html = TIMEOUT
+
+BUGWK54635 : inspector/elements/mutate-unknown-node.html = TEXT PASS
