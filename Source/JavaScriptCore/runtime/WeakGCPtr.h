@@ -32,11 +32,11 @@
 namespace JSC {
 // A smart pointer whose get() function returns 0 for cells that have died
 
-template <typename T> class WeakGCPtr : public HandleConverter<WeakGCPtr<T>, T> {
+template <typename T> class WeakGCPtr : public SlotAccessor<WeakGCPtr<T>, T> {
     WTF_MAKE_NONCOPYABLE(WeakGCPtr);
 
 public:
-    typedef typename HandleTypes<T>::ExternalType ExternalType;
+    typedef typename SlotTypes<T>::ExternalType ExternalType;
     
     WeakGCPtr()
         : m_slot(0)
@@ -56,7 +56,7 @@ public:
         internalSet(value);
     }
 
-    ExternalType get() const { return  HandleTypes<T>::getFromSlot(m_slot); }
+    ExternalType get() const { return  SlotTypes<T>::getFromSlot(m_slot); }
     
     void clear()
     {
@@ -91,7 +91,7 @@ private:
     void internalSet(ExternalType value)
     {
         ASSERT(m_slot);
-        JSValue newValue(HandleTypes<T>::toJSValue(value));
+        JSValue newValue(SlotTypes<T>::toJSValue(value));
         HandleHeap::heapFor(m_slot)->writeBarrier(m_slot, newValue);
         *m_slot = newValue;
     }

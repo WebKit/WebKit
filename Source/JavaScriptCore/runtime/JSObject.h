@@ -454,7 +454,7 @@ inline bool JSValue::inherits(const ClassInfo* classInfo) const
 ALWAYS_INLINE bool JSObject::inlineGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     if (WriteBarrierBase<Unknown>* location = getDirectLocation(propertyName)) {
-        if (m_structure->hasGetterSetterProperties() && location->isGetterSetter())
+        if (m_structure->hasGetterSetterProperties() && (*location)->isGetterSetter())
             fillGetterPropertySlot(slot, location);
         else
             slot.setValue(this, location->get(), offsetForLocation(location));

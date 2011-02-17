@@ -132,7 +132,7 @@ public:
 protected:
     void internalSet(ExternalType value)
     {
-        JSValue newValue(HandleTypes<T>::toJSValue(value));
+        JSValue newValue(SlotTypes<T>::toJSValue(value));
         HandleSlot slot = this->slot();
         ASSERT(slot);
         HandleHeap::heapFor(slot)->writeBarrier(slot, newValue);

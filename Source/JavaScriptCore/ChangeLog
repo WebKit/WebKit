@@ -1,3 +1,51 @@
+2011-02-17  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Refactor WriteBarrier and DeprecatedPtr to have less code duplication.
+        https://bugs.webkit.org/show_bug.cgi?id=54608
+
+        Make use of the tricks used for Handle, et al to avoid duplicating all
+        of the logic for DeprecatedPtr and WriteBarrier simply to support known
+        vs. unknown types.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * collector/handles/Global.h:
+        (JSC::Global::internalSet):
+        * collector/handles/Handle.h:
+        (JSC::Handle::Handle):
+        (JSC::Handle::get):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::sortNumeric):
+        * runtime/JSObject.h:
+        (JSC::JSObject::inlineGetOwnPropertySlot):
+        * runtime/SlotAccessor.h: Added.
+        (JSC::SlotTypes::getFromBaseType):
+        (JSC::SlotTypes::convertToBaseType):
+        (JSC::SlotTypes::getFromSlot):
+        (JSC::SlotTypes::toJSValue):
+        (JSC::SlotTypes::validateUpcast):
+        (JSC::SlotAccessor::operator->):
+        (JSC::SlotAccessor::operator*):
+        * runtime/WeakGCPtr.h:
+        (JSC::WeakGCPtr::get):
+        (JSC::WeakGCPtr::internalSet):
+        * runtime/WriteBarrier.h:
+        (JSC::DeprecatedPtr::DeprecatedPtr):
+        (JSC::DeprecatedPtr::get):
+        (JSC::DeprecatedPtr::slot):
+        (JSC::DeprecatedPtr::operator=):
+        (JSC::WriteBarrierTranslator::convertToStorage):
+        (JSC::WriteBarrierTranslator::convertFromStorage):
+        (JSC::WriteBarrierBase::set):
+        (JSC::WriteBarrierBase::get):
+        (JSC::WriteBarrierBase::clear):
+        (JSC::WriteBarrierBase::slot):
+        (JSC::WriteBarrierBase::operator UnspecifiedBoolType*):
+        (JSC::WriteBarrierBase::operator!):
+        (JSC::WriteBarrierBase::setWithoutWriteBarrier):
+        (JSC::WriteBarrier::WriteBarrier):
+
 2011-02-17  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Revert incorrect blind fix and restore previous working code.

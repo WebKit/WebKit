@@ -898,7 +898,7 @@ void JSArray::sortNumeric(ExecState* exec, JSValue compareFunction, CallType cal
     bool allValuesAreNumbers = true;
     size_t size = storage->m_numValuesInVector;
     for (size_t i = 0; i < size; ++i) {
-        if (!storage->m_vector[i].isNumber()) {
+        if (!storage->m_vector[i]->isNumber()) {
             allValuesAreNumbers = false;
             break;
         }
