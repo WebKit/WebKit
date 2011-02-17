@@ -1,3 +1,19 @@
+2011-02-16  Mike Reed  <reed@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Use non-asserting pack function for decoding images, since webgl may want
+        a non-premultiplied version of the image.
+        https://bugs.webkit.org/show_bug.cgi?id=54023
+
+        No new tests.
+        fast/canvas/webgl/gl-teximage.html
+        fast/canvas/webgl/tex-image-with-format-and-type.html
+        fast/canvas/webgl/texture-transparent-pixels-initialized.html
+
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageFrame::setRGBA):
+
 2011-02-16  David Grogan  <dgrogan@chromium.org>
 
         Reviewed by Jeremy Orlow.

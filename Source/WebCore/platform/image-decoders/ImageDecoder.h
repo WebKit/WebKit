@@ -23,7 +23,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef ImageDecoder_h
@@ -176,7 +176,10 @@ namespace WebCore {
                     b = static_cast<unsigned>(b * alphaPercent);
                 }
 #if PLATFORM(SKIA)
-                *dest = SkPackARGB32(a, r, g, b);
+                // we are sure to call the NoCheck version, since we may
+                // deliberately pass non-premultiplied values, and we don't want
+                // an assert.
+                *dest = SkPackARGB32NoCheck(a, r, g, b);
 #else
                 *dest = (a << 24 | r << 16 | g << 8 | b);
 #endif
