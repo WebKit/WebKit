@@ -1,1 +1,15 @@
+2011-02-16  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Tiles are not created for webkit2 after r77286.
+        https://bugs.webkit.org/show_bug.cgi?id=54577
+
+        When using the default tile size of 1024x1024, only one tile is created.
+        Make sure to create this tile by undoing what seems to be a typo in r77286.
+
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        (WebKit::TiledDrawingAreaProxy::paint):
+        (WebKit::TiledDrawingAreaProxy::createTiles):
+
 == Rolled over to ChangeLog-2011-02-16 ==
