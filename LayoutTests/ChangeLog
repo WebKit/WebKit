@@ -1,3 +1,12 @@
+2011-02-17  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed.
+
+        Added a bunch of GTK+ baselines for Mozilla test suites
+        (tables/mozilla/marvin).
+
+        * platform/gtk/Skipped: Unskip tests which now have results.
+
 2011-02-17  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, test expectations update.
