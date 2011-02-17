@@ -33,6 +33,7 @@
 #include "SandboxExtension.h"
 #include "TextChecker.h"
 #include "WKContextPrivate.h"
+#include "WebResourceCacheManagerProxy.h"
 #include "WebContextMessageKinds.h"
 #include "WebContextUserMessageCoders.h"
 #include "WebCoreArgumentCoders.h"
@@ -96,6 +97,7 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_clearApplicationCacheForNewWebProcess(false)
     , m_memorySamplerEnabled(false)
     , m_memorySamplerInterval(1400.0)
+    , m_resourceCacheManagerProxy(WebResourceCacheManagerProxy::create(this))
     , m_databaseManagerProxy(WebDatabaseManagerProxy::create(this))
     , m_geolocationManagerProxy(WebGeolocationManagerProxy::create(this))
     , m_pluginSiteDataManager(WebPluginSiteDataManager::create(this))
@@ -115,6 +117,9 @@ WebContext::~WebContext()
     removeLanguageChangeObserver(this);
 
     WebProcessManager::shared().contextWasDestroyed(this);
+
+    m_resourceCacheManagerProxy->invalidate();
+    m_resourceCacheManagerProxy->clearContext();
 
     m_geolocationManagerProxy->invalidate();
     m_geolocationManagerProxy->clearContext();
@@ -503,6 +508,11 @@ void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         if (DownloadProxy* downloadProxy = m_downloads.get(arguments->destinationID()).get())
             downloadProxy->didReceiveDownloadProxyMessage(connection, messageID, arguments);
         
+        return;
+    }
+
+    if (messageID.is<CoreIPC::MessageClassWebResourceCacheManagerProxy>()) {
+        m_resourceCacheManagerProxy->didReceiveWebResourceCacheManagerProxyMessage(connection, messageID, arguments);
         return;
     }
 

@@ -1,3 +1,87 @@
+2011-02-16  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        WebKit2: Need a way to manage the WebCore Cache
+        https://bugs.webkit.org/show_bug.cgi?id=54501
+        
+        Implement a WebKit2 API to manage the WebCore memory cache. This API exposes three functions:
+        
+        1) A method to get a list of all security origins that have entries in the WebCore memory cache.
+        2) A method to remove all entries in the WebCore memory cache from a SecurityOrigin.
+        3) A method to remove all entries from the WebCore memory cache.
+
+        * Platform/CoreIPC/MessageID.h: Add two new MessageClasses.
+        * Shared/API/c/WKBase.h:
+        * Shared/APIObject.h: Add a CacheManager type.
+        * Shared/WebSecurityOrigin.h: Typedef WKCacheManagerRef.
+        (WebKit::WebSecurityOrigin::createFromString): Creates a WebCore::SecurityOrigin using 
+            SecurityOrigin::createFromString.
+        (WebKit::WebSecurityOrigin::toString): Calls through to SecurityOrigin::toString.
+        * UIProcess/API/C/WKAPICast.h:
+
+        * UIProcess/API/C/WKCacheManager.cpp: Added.
+        (WKCacheManagerGetTypeID): Returns the WebResourceCacheManagerProxy type.
+        (WKCacheManagerGetCacheOrigins): Calls through to WebResourceCacheManagerProxy::getCacheOrigins.
+        (callGetCacheOriginsBlockBlockAndDispose):
+        (WKCacheManagerGetCacheOrigins_b):
+        (WKCacheManagerDeleteCacheForOrigin): Calls through to WebResourceCacheManagerProxy::deleteCacheForOrigin.
+        (WKCacheManagerDeleteAllCache): Calls through to WebResourceCacheManagerProxy::deleteAllCache.
+        * UIProcess/API/C/WKCacheManager.h: Added.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetCacheManager): Calls to get the WebResourceCacheManagerProxy.
+        * UIProcess/API/C/WKContext.h:
+
+        * UIProcess/WebResourceCacheManagerProxy.cpp: Added.
+        (WebKit::WebResourceCacheManagerProxy::create): Calls through to the constructor.
+        (WebKit::WebResourceCacheManagerProxy::WebResourceCacheManagerProxy): Initialize the m_webContext variable.
+        (WebKit::WebResourceCacheManagerProxy::~WebResourceCacheManagerProxy):
+        (WebKit::WebResourceCacheManagerProxy::invalidate): Invalidate the callback map.
+        (WebKit::WebResourceCacheManagerProxy::getCacheOrigins): Call through to the web process to get the cache
+            origins.
+        (WebKit::WebResourceCacheManagerProxy::didGetCacheOrigins): Call the callback.
+        (WebKit::WebResourceCacheManagerProxy::deleteCacheForOrigin): Call through to the web process to delete cache
+            for the given origin. 
+        (WebKit::WebResourceCacheManagerProxy::deleteAllCache): Call through to the web process to delete all of the cache.
+        * UIProcess/WebResourceCacheManagerProxy.h: Added.
+        (WebKit::WebResourceCacheManagerProxy::clearContext):
+        (WebKit::WebResourceCacheManagerProxy::type):
+        * UIProcess/WebResourceCacheManagerProxy.messages.in: Added.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext): Initialize new member variable.
+        (WebKit::WebContext::~WebContext):  Invalidates new member variable.
+        (WebKit::WebContext::didReceiveMessage): Passes cache messages to the cache manager.
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::cacheManagerProxy):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveMessage): Add a new message class.
+
+        * WebProcess/MemoryCache/WebResourceCacheManager.cpp: Added.
+        (WebKit::WebResourceCacheManager::shared):
+        (WebKit::WebResourceCacheManager::WebResourceCacheManager):
+        (WebKit::WebResourceCacheManager::~WebResourceCacheManager):
+        (WebKit::WebResourceCacheManager::didReceiveMessage): Calls through to didReceiveWebResourceCacheManagerMessage.
+        (WebKit::WebResourceCacheManager::getCacheOrigins): Gets a list of origins with cache entries from the memory
+            cache, and puts them into a vector to send to the UI process.
+        (WebKit::WebResourceCacheManager::deleteCacheForOrigin): Calls through to memoryCache to delete all cache entries
+            from a given origin.
+        (WebKit::WebResourceCacheManager::deleteAllCache):
+        * WebProcess/MemoryCache/WebResourceCacheManager.h: Added.
+        * WebProcess/MemoryCache/WebResourceCacheManager.messages.in: Added.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveMessage):
+        (WebKit::WebProcess::clearResourceCaches): Tell the memory cache to evict its resources. This was done on WebKit1, 
+            but not WebKit2.
+        * WebProcess/WebProcess.h:
+        
+        * WebKit2.xcodeproj/project.pbxproj: Added new files.
+        * win/WebKit2.vcproj: Ditto.
+        * win/WebKit2Common.vsprops: Added new include directory.
+        * win/WebKit2Generated.make: Added new header.
+
 2011-02-16  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

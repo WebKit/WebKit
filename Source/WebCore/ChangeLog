@@ -1,3 +1,22 @@
+2011-02-16  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        WebKit2: Need a way to manage the WebCore Cache
+        https://bugs.webkit.org/show_bug.cgi?id=54501
+        
+        Add a way to get a set of all of the origins that have entries in the
+        WebCore memory cache, and a method to remove all resources from the memory
+        cache from a given security origin.
+
+        No change in behavior.
+
+        * WebCore.exp.in: Add functions that need to be exported.
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::removeResourcesWithOrigin):
+        (WebCore::MemoryCache::getOriginsWithCache):
+        * loader/cache/MemoryCache.h:
+
 2011-02-16  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

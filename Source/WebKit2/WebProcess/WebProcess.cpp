@@ -33,6 +33,7 @@
 #include "InjectedBundleUserMessageCoders.h"
 #include "RunLoop.h"
 #include "SandboxExtension.h"
+#include "WebResourceCacheManager.h"
 #include "WebContextMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebDatabaseManager.h"
@@ -50,6 +51,7 @@
 #include <WebCore/CrossOriginPreflightResultCache.h>
 #include <WebCore/Font.h>
 #include <WebCore/Language.h>
+#include <WebCore/MemoryCache.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/SchemeRegistry.h>
@@ -514,6 +516,11 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         return;
     }
 
+    if (messageID.is<CoreIPC::MessageClassWebResourceCacheManager>()) {
+        WebResourceCacheManager::shared().didReceiveMessage(connection, messageID, arguments);
+        return;
+    }
+
     if (messageID.is<CoreIPC::MessageClassWebDatabaseManager>()) {
         WebDatabaseManager::shared().didReceiveMessage(connection, messageID, arguments);
         return;
@@ -626,6 +633,8 @@ void WebProcess::clearResourceCaches()
     CacheModel cacheModel = m_cacheModel;
     setCacheModel(CacheModelDocumentViewer);
     setCacheModel(cacheModel);
+
+    memoryCache()->evictResources();
 
     // Empty the cross-origin preflight cache.
     CrossOriginPreflightResultCache::shared().empty();

@@ -499,6 +499,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\SecurityOriginData.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\SecurityOriginData.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\SelectionState.h"
 				>
 			</File>
@@ -1342,6 +1350,22 @@
 					>
 				</File>
 			</Filter>
+            <Filter
+                Name="ResourceCache"
+                >
+                <File
+					RelativePath="..\WebProcess\ResourceCache\WebResourceCacheManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\ResourceCache\WebResourceCacheManager.h"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\ResourceCache\WebResourceCacheManager.messages.in"
+					>
+				</File>
+            </Filter>
 			<Filter
 				Name="WebCoreSupport"
 				>
@@ -2258,6 +2282,18 @@
 				RelativePath="..\UIProcess\WebBackForwardList.h"
 				>
 			</File>
+            <File
+				RelativePath="..\UIProcess\WebResourceCacheManagerProxy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebResourceCacheManagerProxy.h"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebResourceCacheManagerProxy.messages.in"
+				>
+			</File>
 			<File
 				RelativePath="..\UIProcess\WebContext.cpp"
 				>
@@ -2558,6 +2594,14 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKBackForwardListItem.h"
+						>
+					</File>
+                    <File
+						RelativePath="..\UIProcess\API\C\WKResourceCacheManager.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKResourceCacheManager.h"
 						>
 					</File>
 					<File
@@ -3308,6 +3352,22 @@
 			</File>
 			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\DrawingAreaProxyMessages.h"
+				>
+			</File>
+            <File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebResourceCacheManagerMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebResourceCacheManagerMessages.h"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebResourceCacheManagerProxyMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebResourceCacheManagerProxyMessages.h"
 				>
 			</File>
 			<File

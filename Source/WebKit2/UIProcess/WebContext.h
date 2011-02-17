@@ -45,6 +45,7 @@
 namespace WebKit {
 
 class DownloadProxy;
+class WebResourceCacheManagerProxy;
 class WebDatabaseManagerProxy;
 class WebGeolocationManagerProxy;
 class WebPageGroup;
@@ -127,6 +128,7 @@ public:
 
     static HashSet<String, CaseFoldingHash> pdfAndPostScriptMIMETypes();
 
+    WebResourceCacheManagerProxy* resourceCacheManagerProxy() const { return m_resourceCacheManagerProxy.get(); }
     WebDatabaseManagerProxy* databaseManagerProxy() const { return m_databaseManagerProxy.get(); }
     WebGeolocationManagerProxy* geolocationManagerProxy() const { return m_geolocationManagerProxy.get(); }
     WebPluginSiteDataManager* pluginSiteDataManager() const { return m_pluginSiteDataManager.get(); }
@@ -208,6 +210,7 @@ private:
     bool m_memorySamplerEnabled;
     double m_memorySamplerInterval;
 
+    RefPtr<WebResourceCacheManagerProxy> m_resourceCacheManagerProxy;
     RefPtr<WebDatabaseManagerProxy> m_databaseManagerProxy;
     RefPtr<WebGeolocationManagerProxy> m_geolocationManagerProxy;
     RefPtr<WebPluginSiteDataManager> m_pluginSiteDataManager;

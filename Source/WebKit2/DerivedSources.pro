@@ -78,6 +78,7 @@ VPATH = \
     WebProcess/Authentication \
     WebProcess/Geolocation \
     WebProcess/Plugins \
+    WebProcess/ResourceCache \
     WebProcess/WebCoreSupport \
     WebProcess/WebPage \
     WebProcess \
@@ -103,7 +104,9 @@ MESSAGE_RECEIVERS = \
     WebPageProxy.messages.in \
     WebProcess.messages.in \
     WebProcessConnection.messages.in \
-    WebProcessProxy.messages.in
+    WebProcessProxy.messages.in \
+    WebResourceCacheManager.messages.in \
+    WebResourceCacheManagerProxy.messages.in
 
 SCRIPTS = \
     $$PWD/Scripts/generate-message-receiver.py \

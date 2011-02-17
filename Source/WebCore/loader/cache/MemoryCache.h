@@ -40,6 +40,8 @@ class CachedCSSStyleSheet;
 class CachedResource;
 class CachedResourceLoader;
 class KURL;
+class SecurityOrigin;
+struct SecurityOriginHash;
 
 // This cache holds subresources used by Web pages: images, scripts, stylesheets, etc.
 
@@ -125,6 +127,8 @@ public:
     // still live on if they are referenced by some Web page though.
     void setDisabled(bool);
     bool disabled() const { return m_disabled; }
+
+    void evictResources();
     
     void setPruneEnabled(bool enabled) { m_pruneEnabled = enabled; }
     void prune()
@@ -162,6 +166,10 @@ public:
     Statistics getStatistics();
     
     void resourceAccessed(CachedResource*);
+
+    typedef HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash> SecurityOriginSet;
+    void removeResourcesWithOrigin(SecurityOrigin*);
+    void getOriginsWithCache(SecurityOriginSet& origins);
 
 private:
     MemoryCache();

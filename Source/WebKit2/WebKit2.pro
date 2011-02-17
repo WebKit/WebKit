@@ -62,6 +62,7 @@ WEBKIT2_INCLUDEPATH = \
     WebProcess/InjectedBundle \
     WebProcess/InjectedBundle/DOM \
     WebProcess/InjectedBundle/API/c \
+    WebProcess/MemoryCache \
     WebProcess/Plugins \
     WebProcess/Plugins/Netscape \
     WebProcess/WebCoreSupport \
@@ -91,6 +92,8 @@ WEBKIT2_GENERATED_HEADERS = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessProxyMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProxyMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebResourceCacheManagerMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebResourceCacheManagerProxyMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebContextMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebDatabaseManagerMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebDatabaseManagerProxyMessages.h \
@@ -111,6 +114,8 @@ WEBKIT2_GENERATED_SOURCES = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProxyMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebResourceCacheManagerMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebResourceCacheManagerProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebContextMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebDatabaseManagerMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebDatabaseManagerProxyMessageReceiver.cpp \
@@ -178,6 +183,7 @@ HEADERS += \
     Shared/PlatformPopupMenuData.h \
     Shared/PrintInfo.h \
     Shared/SameDocumentNavigationType.h \
+    Shared/SecurityOriginData.h \
     Shared/SessionState.h \
     Shared/StringPairVector.h \
     Shared/UserMessageCoders.h \
@@ -214,6 +220,7 @@ HEADERS += \
     UIProcess/API/C/WKAuthenticationDecisionListener.h \
     UIProcess/API/C/WKBackForwardList.h \
     UIProcess/API/C/WKBackForwardListItem.h \
+    UIProcess/API/C/WKResourceCacheManager.h \
     UIProcess/API/C/WKContext.h \
     UIProcess/API/C/WKContextPrivate.h \
     UIProcess/API/C/WKCredential.h \
@@ -271,6 +278,7 @@ HEADERS += \
     UIProcess/TextChecker.h \
     UIProcess/TiledDrawingAreaProxy.h \
     UIProcess/VisitedLinkProvider.h \
+    UIProcess/WebResourceCacheManagerProxy.h \
     UIProcess/WebContext.h \
     UIProcess/WebContextInjectedBundleClient.h \
     UIProcess/WebContextMenuProxy.h \
@@ -329,6 +337,7 @@ HEADERS += \
     WebProcess/InjectedBundle/InjectedBundlePageUIClient.h \
     WebProcess/InjectedBundle/InjectedBundleScriptWorld.h \
     WebProcess/InjectedBundle/InjectedBundleUserMessageCoders.h \
+    WebProcess/MemoryCache/WebResourceCacheManager.h \
     WebProcess/Plugins/Netscape/JSNPMethod.h \
     WebProcess/Plugins/Netscape/JSNPObject.h \
     WebProcess/Plugins/Netscape/NPJSObject.h \
@@ -410,6 +419,7 @@ SOURCES += \
     Shared/OriginAndDatabases.cpp \
     Shared/PlatformPopupMenuData.cpp \
     Shared/PrintInfo.cpp \
+    Shared/SecurityOriginData.cpp \
     Shared/SessionState.cpp \
     Shared/VisitedLinkTable.cpp \
     Shared/WebBackForwardListItem.cpp \
@@ -445,6 +455,7 @@ SOURCES += \
     UIProcess/API/C/WKAuthenticationDecisionListener.cpp \
     UIProcess/API/C/WKBackForwardList.cpp \
     UIProcess/API/C/WKBackForwardListItem.cpp \
+    UIProcess/API/C/WKResourceCacheManager.cpp \
     UIProcess/API/C/WKContext.cpp \
     UIProcess/API/C/WKCredential.cpp \
     UIProcess/API/C/WKDatabaseManager.cpp \
@@ -493,6 +504,7 @@ SOURCES += \
     UIProcess/VisitedLinkProvider.cpp \
     UIProcess/WebBackForwardList.cpp \
     UIProcess/WebContext.cpp \
+    UIProcess/WebResourceCacheManagerProxy.cpp \
     UIProcess/WebContextInjectedBundleClient.cpp \
     UIProcess/WebContextMenuProxy.cpp \
     UIProcess/WebDatabaseManagerProxy.cpp \
@@ -566,6 +578,7 @@ SOURCES += \
     WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp \
     WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp \
     WebProcess/InjectedBundle/qt/InjectedBundleQt.cpp \
+    WebProcess/MemoryCache/WebResourceCacheManager.cpp \
     WebProcess/Plugins/Netscape/JSNPMethod.cpp \
     WebProcess/Plugins/Netscape/JSNPObject.cpp \
     WebProcess/Plugins/Netscape/NPJSObject.cpp \

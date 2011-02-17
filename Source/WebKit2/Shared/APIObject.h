@@ -63,6 +63,7 @@ public:
         // UIProcess types
         TypeBackForwardList,
         TypeBackForwardListItem,
+        TypeCacheManager,
         TypeContext,
         TypeDatabaseManager,
         TypeDownload,

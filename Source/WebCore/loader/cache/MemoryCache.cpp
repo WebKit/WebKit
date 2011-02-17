@@ -37,6 +37,7 @@
 #include "Logging.h"
 #include "ResourceHandle.h"
 #include "SecurityOrigin.h"
+#include "SecurityOriginHash.h"
 #include <stdio.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/text/CString.h>
@@ -474,6 +475,31 @@ void MemoryCache::resourceAccessed(CachedResource* resource)
     insertInLRUList(resource);
 }
 
+void MemoryCache::removeResourcesWithOrigin(SecurityOrigin* origin)
+{
+    Vector<CachedResource*> resourcesWithOrigin;
+
+    CachedResourceMap::iterator e = m_resources.end();
+    for (CachedResourceMap::iterator it = m_resources.begin(); it != e; ++it) {
+        CachedResource* resource = it->second;
+        RefPtr<SecurityOrigin> resourceOrigin = SecurityOrigin::createFromString(resource->url());
+        if (!resourceOrigin)
+            continue;
+        if (resourceOrigin->equal(origin))
+            resourcesWithOrigin.append(resource);
+    }
+
+    for (size_t i = 0; i < resourcesWithOrigin.size(); ++i)
+        remove(resourcesWithOrigin[i]);
+}
+
+void MemoryCache::getOriginsWithCache(SecurityOriginSet& origins)
+{
+    CachedResourceMap::iterator e = m_resources.end();
+    for (CachedResourceMap::iterator it = m_resources.begin(); it != e; ++it)
+        origins.add(SecurityOrigin::create(KURL(KURL(), it->second->url())));
+}
+
 void MemoryCache::removeFromLiveDecodedResourcesList(CachedResource* resource)
 {
     // If we've never been accessed, then we're brand new and not in any list.
@@ -620,6 +646,15 @@ void MemoryCache::setDisabled(bool disabled)
             break;
         evict(i->second);
     }
+}
+
+void MemoryCache::evictResources()
+{
+    if (disabled())
+        return;
+
+    setDisabled(true);
+    setDisabled(false);
 }
 
 #ifndef NDEBUG

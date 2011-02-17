@@ -26,6 +26,7 @@ VPATH = \
     $(WebKit2)/WebProcess/Authentication \
     $(WebKit2)/WebProcess/Geolocation \
     $(WebKit2)/WebProcess/Plugins \
+    $(WebKit2)/WebProcess/ResourceCache \
     $(WebKit2)/WebProcess/WebCoreSupport \
     $(WebKit2)/WebProcess/WebPage \
     $(WebKit2)/WebProcess \
@@ -56,6 +57,8 @@ MESSAGE_RECEIVERS = \
     WebProcess \
     WebProcessConnection \
     WebProcessProxy \
+    WebResourceCacheManager \
+    WebResourceCacheManagerProxy \
 #
 
 SCRIPTS = \
