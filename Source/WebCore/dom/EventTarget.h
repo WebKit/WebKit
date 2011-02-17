@@ -52,6 +52,7 @@ namespace WebCore {
     class IDBDatabase;
     class IDBRequest;
     class IDBTransaction;
+    class IDBVersionChangeRequest;
     class JavaScriptAudioNode;
     class MessagePort;
     class Node;
@@ -142,6 +143,7 @@ namespace WebCore {
         virtual IDBDatabase* toIDBDatabase();
         virtual IDBRequest* toIDBRequest();
         virtual IDBTransaction* toIDBTransaction();
+        virtual IDBVersionChangeRequest* toIDBVersionChangeRequest();
 #endif
 
         virtual ScriptExecutionContext* scriptExecutionContext() const = 0;

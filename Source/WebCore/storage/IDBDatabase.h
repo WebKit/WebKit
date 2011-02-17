@@ -43,8 +43,8 @@
 
 namespace WebCore {
 
-class IDBAny;
-class IDBRequest;
+class IDBVersionChangeRequest;
+class ScriptExecutionContext;
 
 class IDBDatabase : public RefCounted<IDBDatabase>, public EventTarget, public ActiveDOMObject {
 public:
@@ -66,7 +66,7 @@ public:
 
     PassRefPtr<IDBObjectStore> createObjectStore(const String& name, const OptionsObject&, ExceptionCode&);
     void deleteObjectStore(const String& name, ExceptionCode&);
-    PassRefPtr<IDBRequest> setVersion(ScriptExecutionContext*, const String& version, ExceptionCode&);
+    PassRefPtr<IDBVersionChangeRequest> setVersion(ScriptExecutionContext*, const String& version, ExceptionCode&);
     void close();
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(abort);

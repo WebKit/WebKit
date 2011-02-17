@@ -28,6 +28,7 @@
 
 #include "IDBCallbacks.h"
 #include "IDBDatabase.h"
+#include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 
@@ -53,6 +54,7 @@ public:
 
     static const int64_t InvalidId = 0;
     int64_t id() const { return m_id; }
+    void open();
 
     virtual String name() const { return m_name; }
     virtual String version() const { return m_version; }
@@ -94,6 +96,11 @@ private:
     ObjectStoreMap m_objectStores;
 
     RefPtr<IDBTransactionCoordinator> m_transactionCoordinator;
+
+    int m_openConnectionCount;
+
+    class PendingSetVersionCall;
+    Deque<RefPtr<PendingSetVersionCall> > m_pendingSetVersionCalls;
 };
 
 } // namespace WebCore

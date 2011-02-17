@@ -192,6 +192,13 @@ bool Event::isStorageEvent() const
 }
 #endif
 
+#if ENABLE(INDEXED_DATABASE)
+bool Event::isIDBVersionChangeEvent() const
+{
+    return false;
+}
+#endif
+
 bool Event::isErrorEvent() const
 {
     return false;

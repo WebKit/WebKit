@@ -193,6 +193,10 @@ IDBTransaction* EventTarget::toIDBTransaction()
 {
     return 0;
 }
+IDBVersionChangeRequest* EventTarget::toIDBVersionChangeRequest()
+{
+    return 0;
+}
 #endif
 
 bool EventTarget::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)

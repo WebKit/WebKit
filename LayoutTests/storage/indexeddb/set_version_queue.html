@@ -1,0 +1,100 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("An open connection blocks a separate connection's setVersion call");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+connections = []
+function test()
+{
+    if ('webkitIndexedDB' in window)
+        IndexedDB = webkitIndexedDB;
+    else if ('mozIndexedDB' in window)
+        IndexedDB = mozIndexedDB;
+    shouldBeFalse("IndexedDB == null");
+    openDBConnection();
+}
+
+function openDBConnection()
+{
+    result = evalAndLog("IndexedDB.open('some db name')");
+    result.onsuccess = openSuccess;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    connection = event.target.result;
+    connections.push(connection);
+    if (connections.length < 3)
+        openDBConnection();
+    else {
+        result = evalAndLog("connections[0].setVersion('version 1')");
+        result.onerror = unexpectedErrorCallback;
+        result.onsuccess = inSetVersion;
+        result.onblocked = blocked1;
+        result2 = evalAndLog("connections[1].setVersion('version 2')");
+        result2.onerror = unexpectedErrorCallback;
+        result2.onsuccess = inSetVersion2;
+        result2.onblocked = blocked2;
+        result3 = evalAndLog("connections[2].setVersion('version 3')");
+        result3.onerror = unexpectedErrorCallback;
+        result3.onsuccess = inSetVersion3;
+        result3.onblocked = blocked3;
+        debug("");
+    }
+}
+
+blocked1fired = false;
+blocked3fired = false;
+function blocked1()
+{
+    evalAndLog("connections[2].close()");
+    blocked1fired = true;
+}
+
+function blocked2()
+{
+    shouldBeTrue("blocked1fired");
+    shouldBeFalse("blocked3fired");
+}
+
+function blocked3()
+{
+    evalAndLog("connections[0].close()");
+    blocked3fired = true;
+}
+
+function inSetVersion()
+{
+    debug("FIXME: The first setVersion shouldn't get fired");
+}
+
+function inSetVersion2()
+{
+    testPassed("inSetVersion2");
+}
+
+function inSetVersion3()
+{
+    debug("FIXME: The third setVersion shouldn't get fired");
+    done();
+}
+
+var successfullyParsed = true;
+
+test();
+
+</script>
+</body>
+</html>

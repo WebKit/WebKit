@@ -99,6 +99,11 @@ void IDBCallbacksProxy::onSuccess(PassRefPtr<SerializedScriptValue> serializedSc
     m_callbacks->onSuccess(WebKit::WebSerializedScriptValue(serializedScriptValue));
 }
 
+void IDBCallbacksProxy::onBlocked()
+{
+    m_callbacks->onBlocked();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

@@ -66,6 +66,7 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
 
     bool resetReadyState(IDBTransaction*);
+    IDBAny* source();
 
     // IDBCallbacks
     virtual void onError(PassRefPtr<IDBDatabaseError>);
@@ -76,6 +77,7 @@ public:
     virtual void onSuccess(PassRefPtr<IDBObjectStoreBackendInterface>);
     virtual void onSuccess(PassRefPtr<IDBTransactionBackendInterface>);
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>);
+    virtual void onBlocked();
 
     // ActiveDOMObject
     virtual bool hasPendingActivity() const;
@@ -89,11 +91,11 @@ public:
     using ThreadSafeShared<IDBCallbacks>::ref;
     using ThreadSafeShared<IDBCallbacks>::deref;
 
-private:
+protected:
     IDBRequest(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBTransaction*);
-
     void enqueueEvent(PassRefPtr<Event>);
 
+private:
     // EventTarget
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }

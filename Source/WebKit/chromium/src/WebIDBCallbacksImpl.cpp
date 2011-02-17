@@ -96,6 +96,11 @@ void WebIDBCallbacksImpl::onSuccess(const WebKit::WebSerializedScriptValue& seri
     m_callbacks->onSuccess(serializedScriptValue);
 }
 
+void WebIDBCallbacksImpl::onBlocked()
+{
+    m_callbacks->onBlocked();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

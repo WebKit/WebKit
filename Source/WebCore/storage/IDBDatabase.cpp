@@ -32,7 +32,7 @@
 #include "IDBFactoryBackendInterface.h"
 #include "IDBIndex.h"
 #include "IDBObjectStore.h"
-#include "IDBRequest.h"
+#include "IDBVersionChangeRequest.h"
 #include "IDBTransaction.h"
 #include "ScriptExecutionContext.h"
 #include <limits>
@@ -96,9 +96,9 @@ void IDBDatabase::deleteObjectStore(const String& name, ExceptionCode& ec)
     m_backend->deleteObjectStore(name, m_setVersionTransaction->backend(), ec);
 }
 
-PassRefPtr<IDBRequest> IDBDatabase::setVersion(ScriptExecutionContext* context, const String& version, ExceptionCode& ec)
+PassRefPtr<IDBVersionChangeRequest> IDBDatabase::setVersion(ScriptExecutionContext* context, const String& version, ExceptionCode& ec)
 {
-    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), 0);
+    RefPtr<IDBVersionChangeRequest> request = IDBVersionChangeRequest::create(context, IDBAny::create(this), version);
     m_backend->setVersion(version, request, ec);
     return request;
 }
@@ -135,7 +135,10 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
 
 void IDBDatabase::close()
 {
+    if (m_noNewTransactions)
+        return;
     m_noNewTransactions = true;
+    m_backend->close();
 }
 
 bool IDBDatabase::hasPendingActivity() const

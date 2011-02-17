@@ -1,1 +1,15 @@
+2011-02-16  David Grogan  <dgrogan@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        indexeddb: make setVersion fire blocked event if other connections are open
+        https://bugs.webkit.org/show_bug.cgi?id=53728
+
+        * src/IDBCallbacksProxy.cpp:
+        (WebCore::IDBCallbacksProxy::onBlocked):
+        * src/IDBCallbacksProxy.h:
+        * src/WebIDBCallbacksImpl.cpp:
+        (WebCore::WebIDBCallbacksImpl::onBlocked):
+        * src/WebIDBCallbacksImpl.h:
+
 == Rolled over to ChangeLog-2011-02-16 ==

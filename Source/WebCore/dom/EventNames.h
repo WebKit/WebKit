@@ -36,6 +36,7 @@ namespace WebCore {
     macro(beforepaste) \
     macro(beforeprocess) \
     macro(beforeunload) \
+    macro(blocked) \
     macro(blur) \
     macro(cached) \
     macro(change) \

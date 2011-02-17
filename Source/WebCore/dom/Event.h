@@ -125,6 +125,9 @@ namespace WebCore {
 #if ENABLE(DOM_STORAGE)
         virtual bool isStorageEvent() const;
 #endif
+#if ENABLE(INDEXED_DATABASE)
+        virtual bool isIDBVersionChangeEvent() const;
+#endif
 #if ENABLE(WEB_AUDIO)
         virtual bool isAudioProcessingEvent() const;
 #endif

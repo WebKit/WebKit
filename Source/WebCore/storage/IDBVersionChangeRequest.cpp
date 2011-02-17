@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,37 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIDBCallbacksImpl_h
-#define WebIDBCallbacksImpl_h
-
-#include "WebIDBCallbacks.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
+#include "config.h"
+#include "IDBVersionChangeRequest.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBVersionChangeEvent.h"
+#include "ScriptExecutionContext.h"
+
 namespace WebCore {
 
-class IDBCallbacks;
+PassRefPtr<IDBVersionChangeRequest> IDBVersionChangeRequest::create(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, const String& version)
+{
+    return adoptRef(new IDBVersionChangeRequest(context, source, version));
+}
 
-class WebIDBCallbacksImpl : public WebKit::WebIDBCallbacks {
-public:
-    WebIDBCallbacksImpl(PassRefPtr<IDBCallbacks>);
-    virtual ~WebIDBCallbacksImpl();
+IDBVersionChangeRequest::IDBVersionChangeRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, const String& version)
+    : IDBRequest(context, source, 0)
+    , m_version(version)
+{
+}
 
-    virtual void onError(const WebKit::WebIDBDatabaseError&);
-    virtual void onSuccess(WebKit::WebIDBCursor*);
-    virtual void onSuccess(WebKit::WebIDBDatabase*);
-    virtual void onSuccess(const WebKit::WebIDBKey&);
-    virtual void onSuccess(WebKit::WebIDBIndex*);
-    virtual void onSuccess(WebKit::WebIDBObjectStore*);
-    virtual void onSuccess(WebKit::WebIDBTransaction*);
-    virtual void onSuccess(const WebKit::WebSerializedScriptValue&);
-    virtual void onBlocked();
+IDBVersionChangeRequest::~IDBVersionChangeRequest()
+{
+}
 
-private:
-    RefPtr<IDBCallbacks> m_callbacks;
-};
+void IDBVersionChangeRequest::onBlocked()
+{
+    ASSERT(!m_errorCode && m_errorMessage.isNull() && !m_result);
+    enqueueEvent(IDBVersionChangeEvent::create(m_version));
+}
 
 } // namespace WebCore
 
 #endif
-
-#endif // WebIDBCallbacksImpl_h

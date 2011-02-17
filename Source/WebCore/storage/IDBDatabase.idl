@@ -40,7 +40,7 @@ module storage {
             raises (IDBDatabaseException);
         void deleteObjectStore(in DOMString name)
             raises (IDBDatabaseException);
-        [CallWith=ScriptExecutionContext] IDBRequest setVersion(in DOMString version)
+        [CallWith=ScriptExecutionContext] IDBVersionChangeRequest setVersion(in DOMString version)
             raises (IDBDatabaseException);
         [CallWith=ScriptExecutionContext] IDBTransaction transaction(in [Optional] DOMStringList storeNames, in [Optional] unsigned short mode)
             raises (IDBDatabaseException);

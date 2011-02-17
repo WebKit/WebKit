@@ -1,3 +1,17 @@
+2011-02-16  David Grogan  <dgrogan@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        indexeddb: make setVersion fire blocked event if other connections are open
+        https://bugs.webkit.org/show_bug.cgi?id=53728
+
+        * storage/indexeddb/resources/shared.js:
+        (unexpectedBlockedCallback):
+        * storage/indexeddb/set_version_blocked-expected.txt: Added.
+        * storage/indexeddb/set_version_blocked.html: Added.
+        * storage/indexeddb/set_version_queue-expected.txt: Added.
+        * storage/indexeddb/set_version_queue.html: Added.
+
 2011-02-16  Martin Robinson  <mrobinson@igalia.com>
 
         Add the next set of GTK+ Mozilla test suite results.

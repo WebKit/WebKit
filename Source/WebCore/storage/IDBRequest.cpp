@@ -205,6 +205,11 @@ bool IDBRequest::hasPendingActivity() const
     return !m_finished || ActiveDOMObject::hasPendingActivity();
 }
 
+void IDBRequest::onBlocked()
+{
+    ASSERT_NOT_REACHED();
+}
+
 ScriptExecutionContext* IDBRequest::scriptExecutionContext() const
 {
     return ActiveDOMObject::scriptExecutionContext();
@@ -216,7 +221,8 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
     ASSERT(scriptExecutionContext());
     ASSERT(event->target() == this);
     ASSERT(m_readyState < DONE);
-    m_readyState = DONE;
+    if (event->type() != eventNames().blockedEvent)
+        m_readyState = DONE;
 
     Vector<RefPtr<EventTarget> > targets;
     targets.append(this);
@@ -230,10 +236,11 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
     }
 
     // FIXME: When we allow custom event dispatching, this will probably need to change.
-    ASSERT(event->type() == eventNames().successEvent || event->type() == eventNames().errorEvent);
+    ASSERT(event->type() == eventNames().successEvent || event->type() == eventNames().errorEvent || event->type() == eventNames().blockedEvent);
     bool dontPreventDefault = IDBEventDispatcher::dispatch(event.get(), targets);
 
     // If the result was of type IDBCursor, then we'll fire again.
+//    if (m_result && m_result->type() != IDBAny::IDBCursorType && event->type() != eventNames.blockedEvent)
     if (m_result && m_result->type() != IDBAny::IDBCursorType)
         m_finished = true;
 
@@ -257,6 +264,11 @@ void IDBRequest::enqueueEvent(PassRefPtr<Event> event)
     EventQueue* eventQueue = static_cast<Document*>(scriptExecutionContext())->eventQueue();
     event->setTarget(this);
     eventQueue->enqueueEvent(event);
+}
+
+IDBAny* IDBRequest::source()
+{
+    return m_source.get();
 }
 
 EventTargetData* IDBRequest::eventTargetData()

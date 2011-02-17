@@ -56,6 +56,7 @@ public:
     virtual void onSuccess(PassRefPtr<IDBObjectStoreBackendInterface>) = 0;
     virtual void onSuccess(PassRefPtr<IDBTransactionBackendInterface>) = 0;
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>) = 0;
+    virtual void onBlocked() = 0;
 };
 
 } // namespace WebCore

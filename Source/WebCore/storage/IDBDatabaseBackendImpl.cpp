@@ -41,6 +41,24 @@
 
 namespace WebCore {
 
+class IDBDatabaseBackendImpl::PendingSetVersionCall : public RefCounted<PendingSetVersionCall> {
+public:
+    static PassRefPtr<PendingSetVersionCall> create(const String& version, PassRefPtr<IDBCallbacks> callbacks)
+    {
+        return adoptRef(new PendingSetVersionCall(version, callbacks));
+    }
+    String version() { return m_version; }
+    PassRefPtr<IDBCallbacks> callbacks() { return m_callbacks; }
+private:
+    PendingSetVersionCall(const String& version, PassRefPtr<IDBCallbacks> callbacks)
+        : m_version(version)
+        , m_callbacks(callbacks)
+    {
+    }
+    String m_version;
+    RefPtr<IDBCallbacks> m_callbacks;
+};
+
 static bool extractMetaData(SQLiteDatabase& sqliteDatabase, const String& name, String& foundVersion, int64& foundId)
 {
     SQLiteStatement databaseQuery(sqliteDatabase, "SELECT id, version FROM Databases WHERE name = ?");
@@ -95,6 +113,7 @@ IDBDatabaseBackendImpl::IDBDatabaseBackendImpl(const String& name, IDBSQLiteData
     , m_identifier(uniqueIdentifier)
     , m_factory(factory)
     , m_transactionCoordinator(coordinator)
+    , m_openConnectionCount(0)
 {
     ASSERT(!m_name.isNull());
 
@@ -213,6 +232,15 @@ void IDBDatabaseBackendImpl::setVersion(const String& version, PassRefPtr<IDBCal
 {
     RefPtr<IDBDatabaseBackendImpl> database = this;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
+
+    // FIXME: Only continue if the connection is still open.
+    if (m_openConnectionCount > 1) {
+        callbacks->onBlocked();
+        RefPtr<PendingSetVersionCall> pendingSetVersionCall = PendingSetVersionCall::create(version, callbacks);
+        m_pendingSetVersionCalls.append(pendingSetVersionCall);
+        return;
+    }
+
     RefPtr<DOMStringList> objectStoreNames = DOMStringList::create();
     RefPtr<IDBTransactionBackendInterface> transaction = IDBTransactionBackendImpl::create(objectStoreNames.get(), IDBTransaction::VERSION_CHANGE, this);
     if (!transaction->scheduleTask(createCallbackTask(&IDBDatabaseBackendImpl::setVersionInternal, database, version, callbacks, transaction),
@@ -247,9 +275,24 @@ PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::transaction(D
     return IDBTransactionBackendImpl::create(objectStoreNames, mode, this);
 }
 
+void IDBDatabaseBackendImpl::open()
+{
+    m_openConnectionCount++;
+}
+
 void IDBDatabaseBackendImpl::close()
 {
-    // FIXME: Implement.
+    m_openConnectionCount--;
+    ASSERT(m_openConnectionCount >= 0);
+    if (m_openConnectionCount > 1)
+        return;
+
+    while (!m_pendingSetVersionCalls.isEmpty()) {
+        ExceptionCode ec;
+        RefPtr<PendingSetVersionCall> pendingSetVersionCall = m_pendingSetVersionCalls.takeFirst();
+        setVersion(pendingSetVersionCall->version(), pendingSetVersionCall->callbacks(), ec);
+        ASSERT(!ec);
+    }
 }
 
 void IDBDatabaseBackendImpl::loadObjectStores()

@@ -1,0 +1,24 @@
+An open connection blocks a separate connection's setVersion call
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS IndexedDB == null is false
+IndexedDB.open('some db name')
+IndexedDB.open('some db name')
+IndexedDB.open('some db name')
+connections[0].setVersion('version 1')
+connections[1].setVersion('version 2')
+connections[2].setVersion('version 3')
+
+connections[2].close()
+PASS blocked1fired is true
+PASS blocked3fired is false
+connections[0].close()
+FIXME: The first setVersion shouldn't get fired
+PASS inSetVersion2
+FIXME: The third setVersion shouldn't get fired
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

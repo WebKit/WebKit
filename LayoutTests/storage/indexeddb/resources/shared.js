@@ -25,6 +25,11 @@ function unexpectedCompleteCallback()
     testFailed("oncomplete function called unexpectedly!");
 }
 
+function unexpectedBlockedCallback()
+{
+    testFailed("onblocked called unexpectedly");
+}
+
 function evalAndExpectException(cmd, expected)
 {
     debug("Expecting exception from " + cmd);

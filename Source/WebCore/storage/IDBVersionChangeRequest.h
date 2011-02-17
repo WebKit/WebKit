@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIDBCallbacksImpl_h
-#define WebIDBCallbacksImpl_h
-
-#include "WebIDBCallbacks.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
+#ifndef IDBVersionChangeRequest_h
+#define IDBVersionChangeRequest_h
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBRequest.h"
+
 namespace WebCore {
 
-class IDBCallbacks;
-
-class WebIDBCallbacksImpl : public WebKit::WebIDBCallbacks {
+class IDBVersionChangeRequest : public IDBRequest {
 public:
-    WebIDBCallbacksImpl(PassRefPtr<IDBCallbacks>);
-    virtual ~WebIDBCallbacksImpl();
+    static PassRefPtr<IDBVersionChangeRequest> create(ScriptExecutionContext*, PassRefPtr<IDBAny> source, const String& version);
+    virtual ~IDBVersionChangeRequest();
 
-    virtual void onError(const WebKit::WebIDBDatabaseError&);
-    virtual void onSuccess(WebKit::WebIDBCursor*);
-    virtual void onSuccess(WebKit::WebIDBDatabase*);
-    virtual void onSuccess(const WebKit::WebIDBKey&);
-    virtual void onSuccess(WebKit::WebIDBIndex*);
-    virtual void onSuccess(WebKit::WebIDBObjectStore*);
-    virtual void onSuccess(WebKit::WebIDBTransaction*);
-    virtual void onSuccess(const WebKit::WebSerializedScriptValue&);
     virtual void onBlocked();
 
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(blocked);
+
 private:
-    RefPtr<IDBCallbacks> m_callbacks;
+    IDBVersionChangeRequest(ScriptExecutionContext*, PassRefPtr<IDBAny> source, const String& version);
+
+    String m_version;
 };
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(INDEXED_DATABASE)
 
-#endif // WebIDBCallbacksImpl_h
+#endif // IDBRequest_h
