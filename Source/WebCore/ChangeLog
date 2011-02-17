@@ -1,3 +1,15 @@
+2011-02-16  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] libsoup critical warnings
+        https://bugs.webkit.org/show_bug.cgi?id=54557
+
+        Avoid pausing a soup message for already downloaded resources.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::platformSetDefersLoading):
+
 2011-02-16  Brian Ryner  <bryner@chromium.org>
 
         Reviewed by Darin Fisher.

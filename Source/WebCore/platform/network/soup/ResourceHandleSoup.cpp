@@ -698,10 +698,14 @@ void ResourceHandle::platformSetDefersLoading(bool defersLoading)
     if (!d->m_soupMessage)
         return;
 
+    SoupMessage* soupMessage = d->m_soupMessage.get();
+    if (soupMessage->status_code != SOUP_STATUS_NONE)
+        return;
+
     if (defersLoading)
-        soup_session_pause_message(defaultSession(), d->m_soupMessage.get());
+        soup_session_pause_message(defaultSession(), soupMessage);
     else
-        soup_session_unpause_message(defaultSession(), d->m_soupMessage.get());
+        soup_session_unpause_message(defaultSession(), soupMessage);
 }
 
 bool ResourceHandle::loadsBlocked()
