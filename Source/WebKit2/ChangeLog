@@ -1,3 +1,10 @@
+2011-02-17  Brian Weinstein  <bweinstein@apple.com>
+
+        Mac build fix.
+
+        * WebKit2.xcodeproj/project.pbxproj: Use relative to group instead of absolute paths. Not everyone's home
+            directory is /Users/brian_weinstein.
+
 2011-02-16  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Brady Eidson.
