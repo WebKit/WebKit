@@ -821,7 +821,7 @@ void PlatformContextSkia::syncSoftwareCanvas() const
     if (!m_useGPU) {
 #if ENABLE(SKIA_GPU)
         if (m_gpuCanvas)
-            m_gpuCanvas->bindFramebuffer();
+            m_gpuCanvas->context()->makeContextCurrent();
 #endif
         return;
     }

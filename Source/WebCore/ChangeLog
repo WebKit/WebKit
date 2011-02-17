@@ -1,3 +1,14 @@
+2011-02-16  Brian Salomon  <bsalomon@google.com>
+
+        Reviewed by James Robinson.
+
+        Skia's gpu backed just needs the correct context bound before drawing. It will bind the correct FBO itself and doing so externally confuses it unless resetContext is called.
+
+        No new tests required.
+
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::syncSoftwareCanvas):
+
 2011-02-16  Mike Reed  <reed@google.com>
 
         Reviewed by Kenneth Russell.
