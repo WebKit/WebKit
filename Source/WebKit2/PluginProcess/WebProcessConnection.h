@@ -45,14 +45,14 @@ public:
     virtual ~WebProcessConnection();
 
     CoreIPC::Connection* connection() const { return m_connection.get(); }
-
     NPRemoteObjectMap* npRemoteObjectMap() const { return m_npRemoteObjectMap.get(); }
+
+    void removePluginControllerProxy(PluginControllerProxy*);
 
 private:
     WebProcessConnection(CoreIPC::Connection::Identifier);
 
     void addPluginControllerProxy(PassOwnPtr<PluginControllerProxy>);
-    void removePluginControllerProxy(PluginControllerProxy*);
 
     void destroyPluginControllerProxy(PluginControllerProxy*);
 

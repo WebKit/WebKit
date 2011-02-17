@@ -1007,6 +1007,18 @@ bool PluginView::isPrivateBrowsingEnabled()
     return settings->privateBrowsingEnabled();
 }
 
+void PluginView::protectPluginFromDestruction()
+{
+    if (!m_isBeingDestroyed)
+        ref();
+}
+
+void PluginView::unprotectPluginFromDestruction()
+{
+    if (!m_isBeingDestroyed)
+        deref();
+}
+
 void PluginView::didFinishLoad(WebFrame* webFrame)
 {
     RefPtr<URLRequest> request = m_pendingFrameLoads.take(webFrame);

@@ -394,6 +394,8 @@ void PluginProxy::getPluginElementNPObject(uint64_t& pluginElementNPObjectID)
 
 void PluginProxy::evaluate(const NPVariantData& npObjectAsVariantData, const String& scriptString, bool allowPopups, bool& returnValue, NPVariantData& resultData)
 {
+    PluginController::PluginDestructionProtector protector(m_pluginController);
+
     NPVariant npObjectAsVariant = m_connection->npRemoteObjectMap()->npVariantDataToNPVariant(npObjectAsVariantData);
     ASSERT(NPVARIANT_IS_OBJECT(npObjectAsVariant));
 

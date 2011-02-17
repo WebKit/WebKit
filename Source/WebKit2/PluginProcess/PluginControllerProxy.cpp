@@ -58,6 +58,8 @@ PluginControllerProxy::PluginControllerProxy(WebProcessConnection* connection, u
     , m_isPrivateBrowsingEnabled(isPrivateBrowsingEnabled)
     , m_isAcceleratedCompositingEnabled(isAcceleratedCompositingEnabled)
     , m_paintTimer(RunLoop::main(), this, &PluginControllerProxy::paint)
+    , m_pluginDestructionProtectCount(0)
+    , m_shouldDestroyPluginWhenCountReachesZero(false)
     , m_waitingForDidUpdate(false)
     , m_pluginCanceledManualStreamLoad(false)
 #if PLATFORM(MAC)
@@ -93,10 +95,20 @@ void PluginControllerProxy::destroy()
 {
     ASSERT(m_plugin);
 
+    if (m_pluginDestructionProtectCount) {
+        // We have plug-in code on the stack so we can't destroy it right now.
+        // Destroy it later.
+        m_shouldDestroyPluginWhenCountReachesZero = true;
+        return;
+    }
+
     m_plugin->destroy();
     m_plugin = 0;
 
     platformDestroy();
+
+    // This will delete the plug-in controller proxy object.
+    m_connection->removePluginControllerProxy(this);
 }
 
 void PluginControllerProxy::paint()
@@ -205,6 +217,8 @@ NPObject* PluginControllerProxy::pluginElementNPObject()
 
 bool PluginControllerProxy::evaluate(NPObject* npObject, const String& scriptString, NPVariant* result, bool allowPopups)
 {
+    PluginDestructionProtector protector(this);
+
     NPVariant npObjectAsNPVariant;
     OBJECT_TO_NPVARIANT(npObject, npObjectAsNPVariant);
 
@@ -283,6 +297,20 @@ void PluginControllerProxy::setCookiesForURL(const String& urlString, const Stri
 bool PluginControllerProxy::isPrivateBrowsingEnabled()
 {
     return m_isPrivateBrowsingEnabled;
+}
+
+void PluginControllerProxy::protectPluginFromDestruction()
+{
+    m_pluginDestructionProtectCount++;
+}
+
+void PluginControllerProxy::unprotectPluginFromDestruction()
+{
+    ASSERT(m_pluginDestructionProtectCount);
+
+    m_pluginDestructionProtectCount--;
+    if (!m_pluginDestructionProtectCount && m_shouldDestroyPluginWhenCountReachesZero)
+        destroy();
 }
 
 void PluginControllerProxy::frameDidFinishLoading(uint64_t requestID)

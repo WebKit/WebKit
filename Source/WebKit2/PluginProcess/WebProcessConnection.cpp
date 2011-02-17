@@ -65,10 +65,9 @@ void WebProcessConnection::addPluginControllerProxy(PassOwnPtr<PluginControllerP
 
 void WebProcessConnection::destroyPluginControllerProxy(PluginControllerProxy* pluginController)
 {
+    // This may end up calling removePluginControllerProxy which ends up deleting
+    // the WebProcessConnection object if this was the last object.
     pluginController->destroy();
-    
-    // This will delete the plug-in controller proxy object.
-    removePluginControllerProxy(pluginController);
 }
 
 void WebProcessConnection::removePluginControllerProxy(PluginControllerProxy* pluginController)
@@ -101,9 +100,14 @@ void WebProcessConnection::didReceiveMessage(CoreIPC::Connection* connection, Co
         ASSERT_NOT_REACHED();
         return;
     }
-    
-    if (PluginControllerProxy* pluginControllerProxy = m_pluginControllers.get(arguments->destinationID()))
-        pluginControllerProxy->didReceivePluginControllerProxyMessage(connection, messageID, arguments);
+
+    PluginControllerProxy* pluginControllerProxy = m_pluginControllers.get(arguments->destinationID());
+    if (!pluginControllerProxy)
+        return;
+
+    PluginController::PluginDestructionProtector protector(pluginControllerProxy->asPluginController());
+
+    pluginControllerProxy->didReceivePluginControllerProxyMessage(connection, messageID, arguments);
 }
 
 CoreIPC::SyncReplyMode WebProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
@@ -116,10 +120,14 @@ CoreIPC::SyncReplyMode WebProcessConnection::didReceiveSyncMessage(CoreIPC::Conn
     if (messageID.is<CoreIPC::MessageClassNPObjectMessageReceiver>())
         return m_npRemoteObjectMap->didReceiveSyncMessage(connection, messageID, arguments, reply);
 
-    if (PluginControllerProxy* pluginControllerProxy = m_pluginControllers.get(destinationID))
-        return pluginControllerProxy->didReceiveSyncPluginControllerProxyMessage(connection, messageID, arguments, reply);
+    PluginControllerProxy* pluginControllerProxy = m_pluginControllers.get(arguments->destinationID());
+    if (!pluginControllerProxy)
+        return CoreIPC::AutomaticReply;
 
-    return CoreIPC::AutomaticReply;
+    PluginController::PluginDestructionProtector protector(pluginControllerProxy->asPluginController());
+    CoreIPC::SyncReplyMode replyMode = pluginControllerProxy->didReceiveSyncPluginControllerProxyMessage(connection, messageID, arguments, reply);
+
+    return replyMode;
 }
 
 void WebProcessConnection::didClose(CoreIPC::Connection*)

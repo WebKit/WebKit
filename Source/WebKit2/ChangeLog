@@ -1,3 +1,49 @@
+2011-02-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Web and/or plug-in process crashes when NPN_Evaluate destroys the plug-in
+        https://bugs.webkit.org/show_bug.cgi?id=54686
+        <rdar://problem/9013384>
+
+        This patch fixes two bugs with a plug-in calling NPN_Evaluate to destroy itself:
+
+        - The PluginProxy object would be destroyed in the middle of PluginProxy::evaluate.
+          This would cause the web process to crash.
+
+        - The PluginControllerProxy would call NPP_Destroy while the plug-in was busy running
+          code. This would cause the plug-in process to crash.
+
+        To fix this, we add protectPluginFromDestruction/unprotectPluginFromDestruction to
+        PluginControllerProxy and use it to defer calling destroy() in the plug-in process,
+        and defer actually destroying the plug-in in the web process.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54171 tracks adding a test for this.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::PluginControllerProxy):
+        (WebKit::PluginControllerProxy::destroy):
+        (WebKit::PluginControllerProxy::evaluate):
+        (WebKit::PluginControllerProxy::protectPluginFromDestruction):
+        (WebKit::PluginControllerProxy::unprotectPluginFromDestruction):
+        * PluginProcess/PluginControllerProxy.h:
+        (WebKit::PluginControllerProxy::asPluginController):
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::destroyPluginControllerProxy):
+        (WebKit::WebProcessConnection::didReceiveMessage):
+        (WebKit::WebProcessConnection::didReceiveSyncMessage):
+        * PluginProcess/WebProcessConnection.h:
+        (WebKit::WebProcessConnection::connection):
+        * WebProcess/Plugins/PluginController.h:
+        (WebKit::PluginController::PluginDestructionProtector::PluginDestructionProtector):
+        (WebKit::PluginController::PluginDestructionProtector::~PluginDestructionProtector):
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::evaluate):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::protectPluginFromDestruction):
+        (WebKit::PluginView::unprotectPluginFromDestruction):
+        * WebProcess/Plugins/PluginView.h:
+
 2011-02-17  Sam Weinig  <sam@webkit.org>
 
         Build fix.

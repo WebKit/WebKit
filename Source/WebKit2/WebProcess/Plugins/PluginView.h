@@ -138,6 +138,8 @@ private:
     virtual String cookiesForURL(const String&);
     virtual void setCookiesForURL(const String& urlString, const String& cookieString);
     virtual bool isPrivateBrowsingEnabled();
+    virtual void protectPluginFromDestruction();
+    virtual void unprotectPluginFromDestruction();
 
     // WebFrame::LoadListener
     virtual void didFinishLoad(WebFrame*);

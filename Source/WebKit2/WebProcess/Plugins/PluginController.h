@@ -108,6 +108,30 @@ public:
     // Returns whether private browsing is enabled.
     virtual bool isPrivateBrowsingEnabled() = 0;
 
+    // Increments a counter that prevents the plug-in from being destroyed.
+    virtual void protectPluginFromDestruction() = 0;
+
+    // Decrements a counter that, when it reaches 0, stops preventing the plug-in from being destroyed.
+    virtual void unprotectPluginFromDestruction() = 0;
+
+    // Helper class for delaying destruction of a plug-in.
+    class PluginDestructionProtector {
+    public:
+        explicit PluginDestructionProtector(PluginController* pluginController)
+            : m_pluginController(pluginController)
+        {
+            m_pluginController->protectPluginFromDestruction();
+        }
+        
+        ~PluginDestructionProtector()
+        {
+            m_pluginController->unprotectPluginFromDestruction();
+        }
+        
+    private:
+        PluginController* m_pluginController;
+    };
+    
 protected:
     virtual ~PluginController() { }
 };
