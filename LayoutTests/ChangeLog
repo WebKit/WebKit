@@ -1,3 +1,11 @@
+2011-02-16  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed. Skip recently added tests for adjusting minimum timer
+        interval per page due to absence of
+        LayoutTestController.setMinimumTimerInterval.
+
+        * platform/mac-wk2/Skipped:
+
 2011-02-16  Martin Robinson  <mrobinson@igalia.com>
 
         Add the next set of GTK+ baselines for the Mozilla tables test suite.
