@@ -1,3 +1,16 @@
+2011-02-17  Benjamin Kalman  <kalman@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        RTL lineboundary left/right is reversed when cursor is at start of RTL container
+        https://bugs.webkit.org/show_bug.cgi?id=54534
+
+        Test extending the selection left/right by lineboundary from both the leftmost/rightmost ends of LTR and RTL
+        containers with both LTR and RTL text.
+
+        * editing/selection/extend-left-right-by-lineboundary-expected.txt: Added.
+        * editing/selection/extend-left-right-by-lineboundary.html: Added.
+
 2011-02-17  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, fix media-file.js path after r78778.

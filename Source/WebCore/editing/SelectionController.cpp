@@ -429,11 +429,16 @@ VisiblePosition SelectionController::modifyExtendingRight(TextGranularity granul
         else
             pos = previousWordPosition(pos);
         break;
+    case LineBoundary:
+        if (directionOfEnclosingBlock() == LTR)
+            pos = modifyExtendingForward(granularity);
+        else
+            pos = modifyExtendingBackward(granularity);
+        break;
     case SentenceGranularity:
     case LineGranularity:
     case ParagraphGranularity:
     case SentenceBoundary:
-    case LineBoundary:
     case ParagraphBoundary:
     case DocumentBoundary:
         // FIXME: implement all of the above?
@@ -441,7 +446,7 @@ VisiblePosition SelectionController::modifyExtendingRight(TextGranularity granul
     }
     return pos;
 }
-        
+
 VisiblePosition SelectionController::modifyExtendingForward(TextGranularity granularity)
 {
     VisiblePosition pos(m_selection.extent(), m_selection.affinity());
@@ -582,11 +587,16 @@ VisiblePosition SelectionController::modifyExtendingLeft(TextGranularity granula
         else
             pos = nextWordPosition(pos);
         break;
+    case LineBoundary:
+        if (directionOfEnclosingBlock() == LTR)
+            pos = modifyExtendingBackward(granularity);
+        else
+            pos = modifyExtendingForward(granularity);
+        break;
     case SentenceGranularity:
     case LineGranularity:
     case ParagraphGranularity:
     case SentenceBoundary:
-    case LineBoundary:
     case ParagraphBoundary:
     case DocumentBoundary:
         pos = modifyExtendingBackward(granularity);

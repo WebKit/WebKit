@@ -1,0 +1,25 @@
+Testing ltr container with contents "זחט יךכ לםמ זחט יךכ לםמ":
+PASS (extend left from left)
+PASS (extend right from left)
+PASS (extend right from right)
+PASS (extend left from right)
+
+Testing ltr container with contents "this is some ltr text in an rtl container":
+PASS (extend left from left)
+PASS (extend right from left)
+PASS (extend right from right)
+PASS (extend left from right)
+
+Testing rtl container with contents "זחט יךכ לםמ זחט יךכ לםמ":
+PASS (extend left from left)
+PASS (extend right from left)
+PASS (extend right from right)
+PASS (extend left from right)
+
+Testing rtl container with contents "this is some ltr text in an rtl container":
+PASS (extend left from left)
+PASS (extend right from left)
+PASS (extend right from right)
+PASS (extend left from right)
+
+

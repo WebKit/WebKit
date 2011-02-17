@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<div contenteditable dir="ltr">&#1494;&#1495;&#1496; &#1497;&#1498;&#1499; &#1500;&#1501;&#1502; &#1494;&#1495;&#1496; &#1497;&#1498;&#1499; &#1500;&#1501;&#1502;</div>
+<div contenteditable dir="ltr">this is some ltr text in an rtl container</div>
+<div contenteditable dir="rtl">&#1494;&#1495;&#1496; &#1497;&#1498;&#1499; &#1500;&#1501;&#1502; &#1494;&#1495;&#1496; &#1497;&#1498;&#1499; &#1500;&#1501;&#1502;</div>
+<div contenteditable dir="rtl">this is some ltr text in an rtl container</div>
+<pre id="console"></pre>
+
+<script>
+function log(text)
+{
+    document.getElementById("console").appendChild(document.createTextNode(text + "\n"));
+}
+
+function showNode(node)
+{
+    var tagName = node.tagName ? node.tagName : "TEXT";
+    return "<" + tagName + ">" + node.textContent + "</" + tagName + ">";
+}
+
+function assertSelectionExtentEquals(expectedNode, expectedOffset, message)
+{
+    var actualNode = getSelection().extentNode;
+    var actualOffset = getSelection().extentOffset;
+    if (actualNode !== expectedNode || actualOffset !== expectedOffset)
+        log("FAIL (" + message + "): expected offset " + expectedOffset + " in node " + showNode(expectedNode) +
+            " but got offset " + actualOffset + " in node " + showNode(actualNode));
+    else
+        log("PASS (" + message + ")");
+}
+
+function runTestForContainer(container)
+{
+    log("Testing " + container.dir + " container with contents \"" + container.textContent + "\":");
+
+    var textNode = container.childNodes[0];
+    var rightmostOffset = container.dir === "rtl" ? 0 : textNode.length;
+    var leftmostOffset = container.dir === "rtl" ? textNode.length : 0;
+
+    getSelection().setPosition(textNode, leftmostOffset);
+    getSelection().modify("extend", "left", "lineboundary");
+    assertSelectionExtentEquals(textNode, leftmostOffset, "extend left from left");
+
+    getSelection().setPosition(textNode, leftmostOffset);
+    getSelection().modify("extend", "right", "lineboundary");
+    assertSelectionExtentEquals(textNode, rightmostOffset, "extend right from left");
+
+    getSelection().setPosition(textNode, rightmostOffset);
+    getSelection().modify("extend", "right", "lineboundary");
+    assertSelectionExtentEquals(textNode, rightmostOffset, "extend right from right");
+
+    getSelection().setPosition(textNode, rightmostOffset);
+    getSelection().modify("extend", "left", "lineboundary");
+    assertSelectionExtentEquals(textNode, leftmostOffset, "extend left from right");
+
+    log("");
+}
+
+var testContainers = document.getElementsByTagName("div");
+for (var i = 0; i < testContainers.length; i++)
+    runTestForContainer(testContainers[i]);
+
+if (window.layoutTestController) {
+    while (testContainers.length > 0)
+        document.body.removeChild(testContainers[0]);
+    layoutTestController.dumpAsText();
+}
+</script>

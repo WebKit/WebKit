@@ -1,3 +1,18 @@
+2011-02-17  Benjamin Kalman  <kalman@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        RTL lineboundary left/right is reversed when cursor is at start of RTL container
+        https://bugs.webkit.org/show_bug.cgi?id=54534
+
+        Test: editing/selection/extend-left-right-by-lineboundary.html
+
+        Add missing cases for extending left/right by lineboundary.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::modifyExtendingRight):
+        (WebCore::SelectionController::modifyExtendingLeft):
+
 2011-02-16  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.
