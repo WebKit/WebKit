@@ -1,3 +1,16 @@
+2011-02-17  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Kent Tamura.
+
+        [EFL] Possible crash of ewk_frame_contents_set
+        https://bugs.webkit.org/show_bug.cgi?id=54091
+
+        Use length of contents if contents_size parameter is bigger than length
+        of contents.
+
+        * ewk/ewk_frame.cpp:
+        (_ewk_frame_contents_set_internal):
+
 2011-02-17  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Reviewed by Kent Tamura.

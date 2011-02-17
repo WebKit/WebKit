@@ -510,8 +510,9 @@ Eina_Bool ewk_frame_contents_size_get(const Evas_Object* o, Evas_Coord* w, Evas_
 
 static Eina_Bool _ewk_frame_contents_set_internal(Ewk_Frame_Smart_Data *sd, const char* contents, size_t contents_size, const char* mime_type, const char* encoding, const char* base_uri, const char* unreachable_uri)
 {
-    if (contents_size < 1)
-        contents_size = strlen(contents);
+    size_t len = strlen(contents);
+    if (contents_size < 1 || contents_size > len)
+        contents_size = len;
     if (!mime_type)
         mime_type = "text/html";
     if (!encoding)
