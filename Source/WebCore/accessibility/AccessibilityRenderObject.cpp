@@ -3015,7 +3015,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         return ImageRole;
     }
     if (node && node->hasTagName(canvasTag))
-        return ImageRole;
+        return CanvasRole;
 
     if (cssBox && cssBox->isRenderView())
         return WebAreaRole;
@@ -3277,7 +3277,7 @@ bool AccessibilityRenderObject::canHaveChildren() const
 {
     if (!m_renderer)
         return false;
-    
+
     // Elements that should not have children
     switch (roleValue()) {
     case ImageRole:

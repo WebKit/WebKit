@@ -1,3 +1,34 @@
+2011-02-16  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Reviewed by Chris Fleizach.
+
+        Add support for canvas fallback content.
+        https://bugs.webkit.org/show_bug.cgi?id=50126
+
+        Test: accessibility/canvas-fallback-content.html
+
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        (WebCore::AccessibilityRenderObject::canHaveChildren):
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (atkRole):
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::isFocusable):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::recursiveSetNoNeedsLayout):
+        (WebCore::RenderHTMLCanvas::layout):
+        (WebCore::RenderHTMLCanvas::nodeAtPoint):
+        * rendering/RenderHTMLCanvas.h:
+        (WebCore::RenderHTMLCanvas::children):
+        (WebCore::RenderHTMLCanvas::canHaveChildren):
+        (WebCore::RenderHTMLCanvas::virtualChildren):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaint):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+
 2011-02-16  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.

@@ -1,3 +1,16 @@
+2011-02-16  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Reviewed by Chris Fleizach.
+
+        Add new role for canvas elements.
+
+        https://bugs.webkit.org/show_bug.cgi?id=50126
+
+        Test: accessibility/canvas-fallback-content.html
+
+        * AccessibleBase.cpp:
+        (MSAARole):
+
 2011-02-15  Kenneth Russell  <kbr@google.com>
 
         Unreviewed. Remove whitespace-only change from

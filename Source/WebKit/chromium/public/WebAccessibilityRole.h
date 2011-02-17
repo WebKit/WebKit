@@ -87,6 +87,7 @@ enum WebAccessibilityRole {
     WebAccessibilityRoleCell,
     WebAccessibilityRoleColumnHeader,
     WebAccessibilityRoleRowHeader,
+    WebAccessibilityRoleCanvas,
 
     WebAccessibilityRoleWebCoreLink,
     WebAccessibilityRoleImageMapLink,
