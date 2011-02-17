@@ -97,10 +97,9 @@ public:
     bool isContentEditable() const;
     bool isContentRichlyEditable() const;
     Node* shadowTreeRootNode() const;
-    
-    void debugPosition() const;
 
 #ifndef NDEBUG
+    void debugPosition() const;
     void formatForDebugger(char* buffer, unsigned length) const;
     void showTreeForThis() const;
 #endif

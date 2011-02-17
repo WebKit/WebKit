@@ -1956,10 +1956,8 @@ void Range::getBorderAndTextQuads(Vector<FloatQuad>& quads) const
 void showTree(const WebCore::Range* range)
 {
     if (range && range->boundaryPointsValid()) {
-        WebCore::Position start = range->startPosition();
-        WebCore::Position end = range->endPosition();
-        start.node()->showTreeAndMark(start.node(), "S", end.node(), "E");
-        fprintf(stderr, "start offset: %d, end offset: %d\n", start.deprecatedEditingOffset(), end.deprecatedEditingOffset());
+        range->startContainer()->showTreeAndMark(range->startContainer(), "S", range->endContainer(), "E");
+        fprintf(stderr, "start offset: %d, end offset: %d\n", range->startOffset(), range->endOffset());
     }
 }
 

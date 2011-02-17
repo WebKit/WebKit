@@ -75,7 +75,6 @@
 #include "UserGestureIndicator.h"
 #include "UserTypingGestureIndicator.h"
 #include "WheelEvent.h"
-#include "htmlediting.h" // for comparePositions()
 #include <wtf/CurrentTime.h>
 #include <wtf/StdLibExtras.h>
 

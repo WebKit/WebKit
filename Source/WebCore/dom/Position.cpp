@@ -1234,11 +1234,29 @@ void Position::formatForDebugger(char* buffer, unsigned length) const
     strncpy(buffer, result.utf8().data(), length - 1);
 }
 
+void Position::showAnchorTypeAndOffset() const
+{
+    if (m_isLegacyEditingPosition)
+        fputs("legacy, ", stderr);
+    switch (anchorType()) {
+    case PositionIsOffsetInAnchor:
+        fputs("offset", stderr);
+        break;
+    case PositionIsAfterAnchor:
+        fputs("after", stderr);
+        break;
+    case PositionIsBeforeAnchor:
+        fputs("before", stderr);
+        break;
+    }
+    fprintf(stderr, ", offset:%d\n", m_offset);
+}
+
 void Position::showTreeForThis() const
 {
     if (node()) {
         node()->showTreeForThis();
-        fprintf(stderr, "offset: %d\n", m_offset);
+        showAnchorTypeAndOffset();
     }
 }
 

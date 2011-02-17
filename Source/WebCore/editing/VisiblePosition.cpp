@@ -570,15 +570,17 @@ int VisiblePosition::xOffsetForVerticalNavigation() const
     return renderer->localToAbsolute(localRect.location()).x();
 }
 
+#ifndef NDEBUG
+
 void VisiblePosition::debugPosition(const char* msg) const
 {
     if (isNull())
         fprintf(stderr, "Position [%s]: null\n", msg);
-    else
-        fprintf(stderr, "Position [%s]: %s [%p] at %d\n", msg, m_deepPosition.node()->nodeName().utf8().data(), m_deepPosition.node(), m_deepPosition.deprecatedEditingOffset());
+    else {
+        fprintf(stderr, "Position [%s]: %s, ", msg, m_deepPosition.node()->nodeName().utf8().data());
+        m_deepPosition.showAnchorTypeAndOffset();
+    }
 }
-
-#ifndef NDEBUG
 
 void VisiblePosition::formatForDebugger(char* buffer, unsigned length) const
 {

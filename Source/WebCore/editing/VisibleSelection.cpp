@@ -575,29 +575,26 @@ Node* VisibleSelection::shadowTreeRootNode() const
     return start().node() ? start().node()->shadowTreeRootNode() : 0;
 }
 
+#ifndef NDEBUG
+
 void VisibleSelection::debugPosition() const
 {
-    if (!m_start.node())
-        return;
+    fprintf(stderr, "VisibleSelection ===============\n");
 
-    fprintf(stderr, "VisibleSelection =================\n");
-
-    if (m_start == m_end) {
-        Position pos = m_start;
-        fprintf(stderr, "pos:        %s %p:%d\n", pos.node()->nodeName().utf8().data(), pos.node(), pos.deprecatedEditingOffset());
+    if (!m_start.anchorNode())
+        fputs("pos:   null", stderr);
+    else if (m_start == m_end) {
+        fprintf(stderr, "pos:   %s ", m_start.anchorNode()->nodeName().utf8().data());
+        m_start.showAnchorTypeAndOffset();
     } else {
-        Position pos = m_start;
-        fprintf(stderr, "start:      %s %p:%d\n", pos.node()->nodeName().utf8().data(), pos.node(), pos.deprecatedEditingOffset());
-        fprintf(stderr, "-----------------------------------\n");
-        pos = m_end;
-        fprintf(stderr, "end:        %s %p:%d\n", pos.node()->nodeName().utf8().data(), pos.node(), pos.deprecatedEditingOffset());
-        fprintf(stderr, "-----------------------------------\n");
+        fprintf(stderr, "start: %s ", m_start.anchorNode()->nodeName().utf8().data());
+        m_start.showAnchorTypeAndOffset();
+        fprintf(stderr, "end:   %s ", m_end.anchorNode()->nodeName().utf8().data());
+        m_end.showAnchorTypeAndOffset();
     }
 
     fprintf(stderr, "================================\n");
 }
-
-#ifndef NDEBUG
 
 void VisibleSelection::formatForDebugger(char* buffer, unsigned length) const
 {
@@ -622,9 +619,12 @@ void VisibleSelection::formatForDebugger(char* buffer, unsigned length) const
 
 void VisibleSelection::showTreeForThis() const
 {
-    if (start().node()) {
-        start().node()->showTreeAndMark(start().node(), "S", end().node(), "E");
-        fprintf(stderr, "start offset: %d, end offset: %d\n", start().deprecatedEditingOffset(), end().deprecatedEditingOffset());
+    if (start().anchorNode()) {
+        start().anchorNode()->showTreeAndMark(start().anchorNode(), "S", end().anchorNode(), "E");
+        fputs("start: ", stderr);
+        start().showAnchorTypeAndOffset();
+        fputs("end: ", stderr);
+        end().showAnchorTypeAndOffset();
     }
 }
 

@@ -80,9 +80,7 @@ public:
 
     UChar32 characterAfter() const;
     UChar32 characterBefore() const { return previous().characterAfter(); }
-    
-    void debugPosition(const char* msg = "") const;
-    
+
     Element* rootEditableElement() const { return m_deepPosition.isNotNull() ? m_deepPosition.node()->rootEditableElement() : 0; }
     
     void getInlineBoxAndOffset(InlineBox*& inlineBox, int& caretOffset) const
@@ -104,6 +102,7 @@ public:
     int xOffsetForVerticalNavigation() const;
     
 #ifndef NDEBUG
+    void debugPosition(const char* msg = "") const;
     void formatForDebugger(char* buffer, unsigned length) const;
     void showTreeForThis() const;
 #endif

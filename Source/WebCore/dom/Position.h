@@ -166,6 +166,7 @@ public:
 
 #ifndef NDEBUG
     void formatForDebugger(char* buffer, unsigned length) const;
+    void showAnchorTypeAndOffset() const;
     void showTreeForThis() const;
 #endif
     
