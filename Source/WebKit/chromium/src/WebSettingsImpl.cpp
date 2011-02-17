@@ -46,6 +46,7 @@ namespace WebKit {
 
 WebSettingsImpl::WebSettingsImpl(Settings* settings)
     : m_settings(settings)
+    , m_compositeToTextureEnabled(false)
 {
     ASSERT(settings);
 }
@@ -292,6 +293,11 @@ void WebSettingsImpl::setEditingBehavior(EditingBehavior behavior)
 void WebSettingsImpl::setAcceleratedCompositingEnabled(bool enabled)
 {
     m_settings->setAcceleratedCompositingEnabled(enabled);
+}
+
+void WebSettingsImpl::setCompositeToTextureEnabled(bool enabled)
+{
+    m_compositeToTextureEnabled = enabled;
 }
 
 void WebSettingsImpl::setAcceleratedCompositingFor3DTransformsEnabled(bool enabled)

@@ -1,3 +1,25 @@
+2011-02-17  W. James MacLean  <wjmaclean@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Add command-line flag to enable composite to offscreen texture.
+        https://bugs.webkit.org/show_bug.cgi?id=52311
+
+        Add plumbing to allow command-line switch to enable offscreen compositing. Function
+        LayerRendererChromium::copyOffscreenTextureToDisplay used for now to mimic
+        normal renderer operation.
+
+        Existing functionality not changed; offscreen compositing will be tested via GPU test framework.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::setRootLayer):
+        (WebCore::LayerRendererChromium::setCompositeOffscreen):
+        (WebCore::LayerRendererChromium::copyOffscreenTextureToDisplay):
+        (WebCore::LayerRendererChromium::useRenderSurface):
+        (WebCore::LayerRendererChromium::setScissorToRect):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore::LayerRendererChromium::isCompositingOffscreen):
+
 2011-02-17  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fixes after recent changes.

@@ -88,8 +88,9 @@ public:
     bool hardwareCompositing() const { return m_hardwareCompositing; }
 
     void setCompositeOffscreen(bool);
-    bool isCompositingOffscreen() { return m_compositeOffscreen; }
+    bool isCompositingOffscreen() const { return m_compositeOffscreen; }
     LayerTexture* getOffscreenLayerTexture() { return m_compositeOffscreen ? m_rootLayer->m_renderSurface->m_contentsTexture.get() : 0; }
+    void copyOffscreenTextureToDisplay();
 
     void setRootLayerCanvasSize(const IntSize&);
 

@@ -90,6 +90,8 @@ public:
     virtual void setShowDebugBorders(bool);
     virtual void setEditingBehavior(EditingBehavior);
     virtual void setAcceleratedCompositingEnabled(bool);
+    virtual void setCompositeToTextureEnabled(bool);
+    virtual bool compositeToTextureEnabled() const { return m_compositeToTextureEnabled; }
     virtual void setAcceleratedCompositingFor3DTransformsEnabled(bool);
     virtual void setAcceleratedCompositingForVideoEnabled(bool);
     virtual void setAcceleratedCompositingForPluginsEnabled(bool);
@@ -105,6 +107,7 @@ public:
 
 private:
     WebCore::Settings* m_settings;
+    bool m_compositeToTextureEnabled;
 };
 
 } // namespace WebKit

@@ -341,6 +341,8 @@ void LayerRendererChromium::present()
 void LayerRendererChromium::setRootLayer(PassRefPtr<LayerChromium> layer)
 {
     m_rootLayer = layer;
+    if (m_rootLayer)
+        m_rootLayer->setLayerRenderer(this);
     m_rootLayerTiler->invalidateEntireLayer();
     if (m_horizontalScrollbarTiler)
         m_horizontalScrollbarTiler->invalidateEntireLayer();
@@ -649,19 +651,27 @@ void LayerRendererChromium::updateLayersRecursive(LayerChromium* layer, const Tr
 
 void LayerRendererChromium::setCompositeOffscreen(bool compositeOffscreen)
 {
+    if (m_compositeOffscreen == compositeOffscreen)
+       return;
+
     m_compositeOffscreen = compositeOffscreen;
 
-    if (!m_rootLayer) {
-        m_compositeOffscreen = false;
-        return;
-    }
-
-    if (m_compositeOffscreen) {
-        // Need to explicitly set a LayerRendererChromium for the layer with the offscreen texture,
-        // or else the call to prepareContentsTexture() in useRenderSurface() will fail.
-        m_rootLayer->setLayerRenderer(this);
-    } else
+    if (!m_compositeOffscreen && m_rootLayer)
         m_rootLayer->m_renderSurface.clear();
+}
+
+void LayerRendererChromium::copyOffscreenTextureToDisplay()
+{
+    if (m_compositeOffscreen) {
+        makeContextCurrent();
+
+        useRenderSurface(0);
+        m_defaultRenderSurface->m_drawTransform.makeIdentity();
+        m_defaultRenderSurface->m_drawTransform.translate3d(0.5 * m_defaultRenderSurface->m_contentRect.width(),
+                                                            0.5 * m_defaultRenderSurface->m_contentRect.height(), 0);
+        m_defaultRenderSurface->m_drawOpacity = 1;
+        m_defaultRenderSurface->draw();
+    }
 }
 
 bool LayerRendererChromium::useRenderSurface(RenderSurfaceChromium* renderSurface)
@@ -671,9 +681,12 @@ bool LayerRendererChromium::useRenderSurface(RenderSurfaceChromium* renderSurfac
 
     m_currentRenderSurface = renderSurface;
 
-    if (renderSurface == m_defaultRenderSurface && !m_compositeOffscreen) {
+    if ((renderSurface == m_defaultRenderSurface && !m_compositeOffscreen) || (!renderSurface && m_compositeOffscreen)) {
         GLC(m_context.get(), m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0));
-        setDrawViewportRect(renderSurface->m_contentRect, true);
+        if (renderSurface)
+            setDrawViewportRect(renderSurface->m_contentRect, true);
+        else
+            setDrawViewportRect(m_defaultRenderSurface->m_contentRect, true);
         return true;
     }
 
@@ -734,9 +747,11 @@ void LayerRendererChromium::drawLayer(LayerChromium* layer, RenderSurfaceChromiu
 // scissorRect has its origin at the top left corner of the current visible rect.
 void LayerRendererChromium::setScissorToRect(const IntRect& scissorRect)
 {
+    IntRect contentRect = (m_currentRenderSurface ? m_currentRenderSurface->m_contentRect : m_defaultRenderSurface->m_contentRect);
+
     // The scissor coordinates must be supplied in viewport space so we need to offset
     // by the relative position of the top left corner of the current render surface.
-    int scissorX = scissorRect.x() - m_currentRenderSurface->m_contentRect.x();
+    int scissorX = scissorRect.x() - contentRect.x();
     // When rendering to the default render surface we're rendering upside down so the top
     // of the GL scissor is the bottom of our layer.
     // But, if rendering to offscreen texture, we reverse our sense of 'upside down'.
@@ -744,7 +759,7 @@ void LayerRendererChromium::setScissorToRect(const IntRect& scissorRect)
     if (m_currentRenderSurface == m_defaultRenderSurface && !m_compositeOffscreen)
         scissorY = m_currentRenderSurface->m_contentRect.height() - (scissorRect.maxY() - m_currentRenderSurface->m_contentRect.y());
     else
-        scissorY = scissorRect.y() - m_currentRenderSurface->m_contentRect.y();
+        scissorY = scissorRect.y() - contentRect.y();
     GLC(m_context.get(), m_context->scissor(scissorX, scissorY, scissorRect.width(), scissorRect.height()));
 }
 

@@ -1,3 +1,23 @@
+2011-02-17  W. James MacLean  <wjmaclean@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Add command-line flag to enable composite to offscreen texture.
+        https://bugs.webkit.org/show_bug.cgi?id=52311
+
+        Add plumbing to allow command-line switch to enable offscreen compositing. Function
+        LayerRendererChromium::copyOffscreenTextureToDisplay used for now to mimic
+        normal renderer operation.
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::WebSettingsImpl):
+        (WebKit::WebSettingsImpl::setCompositeToTextureEnabled):
+        * src/WebSettingsImpl.h:
+        (WebKit::WebSettingsImpl::compositeToTextureEnabled):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::doComposite):
+
 2011-02-10  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Adam Roben.

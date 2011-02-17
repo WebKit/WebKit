@@ -2393,7 +2393,10 @@ void WebViewImpl::doComposite()
     WebViewImplTilePaintInterface tilePaint(this);
 
     WebViewImplScrollbarPaintInterface scrollbarPaint(this);
+    m_layerRenderer->setCompositeOffscreen(settings()->compositeToTextureEnabled());
     m_layerRenderer->drawLayers(visibleRect, contentRect, scroll, tilePaint, scrollbarPaint);
+    if (m_layerRenderer->isCompositingOffscreen())
+        m_layerRenderer->copyOffscreenTextureToDisplay();
 }
 
 void WebViewImpl::reallocateRenderer()
