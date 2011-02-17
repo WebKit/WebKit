@@ -1,3 +1,13 @@
+2011-02-16  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed, Chromium expectations update.
+
+        Removed duplicate expected results, update some test expectations.
+
+        * platform/chromium-mac/svg/clip-path/clip-path-clipped-evenodd-twice-expected.checksum: Removed.
+        * platform/chromium-mac/svg/clip-path/clip-path-clipped-evenodd-twice-expected.png: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-02-16  Kenneth Russell  <kbr@google.com>
 
         Unreviewed. Skip recently added tests for adjusting minimum timer

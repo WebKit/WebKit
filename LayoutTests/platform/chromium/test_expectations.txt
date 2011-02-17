@@ -1958,7 +1958,7 @@ BUGCR43963 LINUX : fast/forms/searchfield-heights.html = IMAGE+TEXT TEXT
 BUGWK38705 : http/tests/security/sandbox-inherit-to-initial-document-2.html = TEXT
 
 // WebKit roll 58791:58807
-BUGCR43319 LINUX DEBUG SLOW : fast/forms/select-empty-option-height.html = PASS
+BUGCR43319 LINUX DEBUG : fast/forms/select-empty-option-height.html = PASS TIMEOUT
 
 BUGCR43496 LINUX : svg/custom/repaint-stroke-width-changes.svg = IMAGE PASS
 BUGCR43497 MAC WIN : svg/custom/repaint-stroke-width-changes.svg = IMAGE PASS
@@ -2958,7 +2958,7 @@ BUGCR70686 MAC : fast/text/international/cjk-segmentation.html = TEXT
 // Added by http://trac.webkit.org/changeset/76674
 BUGCR70882 WIN : fast/text/offsetForPosition-complex-fallback.html = TEXT
 
-BUGCR70942 LINUX : editing/execCommand/break-out-of-empty-list-item.html = PASS TIMEOUT
+BUGCR70942 WINDOWS : editing/execCommand/break-out-of-empty-list-item.html = PASS TIMEOUT
 BUGRNIWA SLOW WIN : editing/execCommand/4786404-1.html = PASS
 
 // Added by and started crashing at http://trac.webkit.org/changeset/76743
