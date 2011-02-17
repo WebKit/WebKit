@@ -274,8 +274,7 @@ void StyleChange::extractTextStyles(Document* document, CSSMutableStyleDeclarati
     }
 
     if (style->getPropertyCSSValue(CSSPropertyColor)) {
-        // FIXME: Use Color::serialized() instead.
-        m_applyFontColor = Color(getRGBAFontColor(style)).nameForRenderTreeAsText();
+        m_applyFontColor = Color(getRGBAFontColor(style)).serialized();
         style->removeProperty(CSSPropertyColor);
     }
 

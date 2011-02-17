@@ -45,8 +45,8 @@ testSingleToggle("unlink", 'hello <b>world</b>', selectAll, 'hello <b>world</b>'
 testSingleToggle("unlink", '<a href="http://webkit.org/"><u>hello world</u></a>', selectAll, '<u>hello world</u>');
 testSingleToggle("unlink", 'hello <i><a href="http://webkit.org/">world</a></i>', selectAll, 'hello <i>world</i>');
 testSingleToggle("unlink", 'hello <a href="http://webkit.org/" style="font-weight: bold;">world</a>', selectAll, 'hello <b>world</b>');
-testSingleToggle("unlink", 'hello <a href="http://webkit.org/" style="color: blue;">world</a> WebKit', selectAll, 'hello <font class="Apple-style-span" color="#0000FF">world</font> WebKit');
-testSingleToggle("unlink", 'hello <a href="http://webkit.org/" style="color: blue; display: block;">world</a> WebKit', selectAll, 'hello <font class="Apple-style-span" color="#0000FF"><span class="Apple-style-span" style="display: block;">world</span></font> WebKit');
+testSingleToggle("unlink", 'hello <a href="http://webkit.org/" style="color: blue;">world</a> WebKit', selectAll, 'hello <font class="Apple-style-span" color="#0000ff">world</font> WebKit');
+testSingleToggle("unlink", 'hello <a href="http://webkit.org/" style="color: blue; display: block;">world</a> WebKit', selectAll, 'hello <font class="Apple-style-span" color="#0000ff"><span class="Apple-style-span" style="display: block;">world</span></font> WebKit');
 testSingleToggle("unlink", '<a href="http://webkit.org/" style="font-size: large;">hello world</a> WebKit',
     selectLastTwoWords, '<a href="http://webkit.org/" style="font-size: large;">hello </a><font class="Apple-style-span" size="4">world</font> WebKit');
 testSingleToggle("unlink", 'hello <a href="http://webkit.org/" style="font-size: large;">world <span style="font-size: small; ">WebKit</span> rocks</a>',

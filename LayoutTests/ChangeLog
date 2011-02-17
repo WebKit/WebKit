@@ -1,3 +1,21 @@
+2011-02-16  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Editing styles should not emit #RRGGBBAA colors
+        https://bugs.webkit.org/show_bug.cgi?id=54540
+
+        Added a test to editing/style/inline-style-container.html
+        that would cause invalid #RRGGBBAA output with the previous code.
+
+        * editing/execCommand/delete-image-in-anchor-expected.txt:
+        * editing/execCommand/script-tests/toggle-unlink.js:
+        * editing/execCommand/toggle-unlink-expected.txt:
+        * editing/style/fore-color-by-name-expected.txt:
+        * editing/style/inline-style-container-expected.txt:
+        * editing/style/script-tests/inline-style-container.js:
+        * editing/style/style-text-node-without-editable-parent-expected.txt:
+
 2011-02-16  Martin Robinson  <mrobinson@igalia.com>
 
         Update the GTK+ skipped list. Skip some SVG tests that now expose rounding

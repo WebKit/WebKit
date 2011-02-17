@@ -3,7 +3,7 @@
 | "hello "
 | <font>
 |   class="Apple-style-span"
-|   color="#FF0000"
+|   color="#ff0000"
 |   "<#selection-anchor>world<#selection-focus>"
 
 there should be no span or font elements:

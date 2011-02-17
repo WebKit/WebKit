@@ -83,7 +83,7 @@ strikeThrough all:
 foreColor first:
 | <font>
 |   class="Apple-style-span"
-|   color="#0000FF"
+|   color="#0000ff"
 |   "<#selection-anchor>hello, <#selection-focus>"
 | "world WebKit"
 
@@ -91,7 +91,7 @@ foreColor middle:
 | "hello, "
 | <font>
 |   class="Apple-style-span"
-|   color="#0000FF"
+|   color="#0000ff"
 |   "<#selection-anchor>world<#selection-focus>"
 | " WebKit"
 
@@ -99,13 +99,13 @@ foreColor last:
 | "hello, world"
 | <font>
 |   class="Apple-style-span"
-|   color="#0000FF"
+|   color="#0000ff"
 |   "<#selection-anchor> WebKit<#selection-focus>"
 
 foreColor all:
 | <font>
 |   class="Apple-style-span"
-|   color="#0000FF"
+|   color="#0000ff"
 |   "<#selection-anchor>hello, world WebKit<#selection-focus>"
 
 hiliteColor first:
