@@ -1,3 +1,27 @@
+2011-02-16  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Remove the early bail added in r75823 since we can run into anonymous
+        blocks when traversing the parents chain for clearing floats.
+        https://bugs.webkit.org/show_bug.cgi?id=54601
+
+        removeFloatingOrPositionedChildFromBlockLists tries to find the topmost
+        parent containing "this" block and then tries to remove it from its floats
+        list and mark all descendants blocks for layout. I added a bailout condition
+        in r75823 because we thought that if one of the parent render block does not 
+        contain "this" float, then it is safe to assume that none of the grand parents
+        will have it. This is a wrong assumption since anonymous blocks do not have
+        float objects and we need to go higher in the chain to find the top most parent
+        containing this float. Instead of breaking out of the loop, it is ok to keep
+        traversing the chain till we find that parent. Otherwise, we will leave deleted
+        floats in the grand parents floats list.
+
+        Test: fast/block/float/floats-not-cleared-from-grand-parents.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::removeFloatingOrPositionedChildFromBlockLists):
+
 2011-02-16  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Ryosuke Niwa.

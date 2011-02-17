@@ -1,3 +1,14 @@
+2011-02-16  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Tests that we do not crash when floats are not cleared in cases where parents
+        chain has anonymous blocks.
+        https://bugs.webkit.org/show_bug.cgi?id=54601
+
+        * fast/block/float/floats-not-cleared-from-grand-parents-expected.txt: Added.
+        * fast/block/float/floats-not-cleared-from-grand-parents.html: Added.
+
 2011-02-16  James Robinson  <jamesr@chromium.org>
 
         Fix typo in chromium test_expectations - there is no WINDOWS (just WIN)
