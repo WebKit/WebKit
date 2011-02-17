@@ -627,7 +627,7 @@ BUGCR26734 MAC SKIP : http/tests/inspector-enabled = PASS
 
 BUGCR66087 WIN LINUX SLOW : inspector/styles/styles-disable-then-enable.html = PASS TEXT
 BUGCR66087 WIN LINUX : inspector/timeline/timeline-layout.html = CRASH TIMEOUT PASS TEXT
-BUGCR66087 WIN LINUX : inspector/timeline/timeline-parse-html.html = CRASH TIMEOUT PASS TEXT
+BUGCR66087 WIN LINUX DEBUG SLOW : inspector/timeline/timeline-parse-html.html = PASS
 // WebKit roll 74708:74711
 BUGCR68165 WIN LINUX DEBUG SLOW : inspector/styles/styles-source-lines.html = PASS
 BUGCR66087 WIN LINUX SLOW : inspector/storage-panel-dom-storage.html = PASS TEXT

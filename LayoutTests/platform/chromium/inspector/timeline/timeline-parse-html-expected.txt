@@ -1,5 +1,6 @@
 Tests the Timeline API instrumentation of ParseHTML
 
+Test data
 ParseHTML Properties:
 {
     startTime : <number>
@@ -30,4 +31,4 @@ ParseHTML Properties:
     usedHeapSize : <number>
     totalHeapSize : <number>
 }
-Test data
+
