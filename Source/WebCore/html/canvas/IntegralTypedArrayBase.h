@@ -45,11 +45,9 @@ class IntegralTypedArrayBase : public TypedArrayBase<T> {
             return;
         if (isnan(value)) // Clamp NaN to 0
             value = 0;
-        if (value < std::numeric_limits<T>::min())
-            value = std::numeric_limits<T>::min();
-        else if (value > std::numeric_limits<T>::max())
-            value = std::numeric_limits<T>::max();
-        TypedArrayBase<T>::data()[index] = static_cast<T>(value);
+        // The double cast is necessary to get the correct wrapping
+        // for out-of-range values with Int32Array and Uint32Array.
+        TypedArrayBase<T>::data()[index] = static_cast<T>(static_cast<int64_t>(value));
     }
 
     // Invoked by the indexed getter. Does not perform range checks; caller

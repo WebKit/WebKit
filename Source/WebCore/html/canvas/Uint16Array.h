@@ -40,8 +40,8 @@ public:
     static PassRefPtr<Uint16Array> create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length);
 
     // Can’t use "using" here due to a bug in the RVCT compiler.
-    void set(TypedArrayBase<unsigned short>* array, unsigned offset, ExceptionCode& ec) { return TypedArrayBase<unsigned short>::set(array, offset, ec); }
-    void set(unsigned index, double value) { return IntegralTypedArrayBase<unsigned short>::set(index, value); }
+    void set(TypedArrayBase<unsigned short>* array, unsigned offset, ExceptionCode& ec) { TypedArrayBase<unsigned short>::set(array, offset, ec); }
+    void set(unsigned index, double value) { IntegralTypedArrayBase<unsigned short>::set(index, value); }
 
     PassRefPtr<Uint16Array> subarray(int start) const;
     PassRefPtr<Uint16Array> subarray(int start, int end) const;

@@ -104,25 +104,6 @@ PassRefPtr<C> constructArrayBufferViewWithArrayBufferArgument(JSC::ExecState* ex
     return array;
 }
 
-template<typename T>
-inline T convertArrayValue(JSC::ExecState* exec, JSC::JSValue v)
-{
-    // For integral types, NaN values must be converted to zero.
-    return static_cast<T>(v.toInteger(exec));
-}
-
-template<>
-inline float convertArrayValue(JSC::ExecState* exec, JSC::JSValue v)
-{
-    return static_cast<float>(v.toNumber(exec));
-}
-
-template<>
-inline double convertArrayValue(JSC::ExecState* exec, JSC::JSValue v)
-{
-    return static_cast<double>(v.toNumber(exec));
-}
-
 template<class C, typename T>
 PassRefPtr<C> constructArrayBufferView(JSC::ExecState* exec)
 {
@@ -152,24 +133,19 @@ PassRefPtr<C> constructArrayBufferView(JSC::ExecState* exec)
         if (view)
             return view;
     
-        JSC::JSObject* array = asObject(exec->argument(0));
-        unsigned length = array->get(exec, JSC::Identifier(exec, "length")).toUInt32(exec);
-        void* tempValues;
-        if (!tryFastCalloc(length, sizeof(T)).getValue(tempValues)) {
-            JSC::throwError(exec, createError(exec, "Error"));
-            return 0;
-        }
-        
-        OwnFastMallocPtr<T> values(static_cast<T*>(tempValues));
-        for (unsigned i = 0; i < length; ++i) {
-            JSC::JSValue v = array->get(exec, i);
-            values.get()[i] = convertArrayValue<T>(exec, v);
-        }
-        
-        RefPtr<C> result = C::create(values.get(), length);
-        if (!result)
+        JSC::JSObject* srcArray = asObject(exec->argument(0));
+        uint32_t length = srcArray->get(exec, JSC::Identifier(exec, "length")).toUInt32(exec);
+        RefPtr<C> array = C::create(length);
+        if (!array) {
             setDOMException(exec, INDEX_SIZE_ERR);
-        return result;
+            return array;
+        }
+
+        for (unsigned i = 0; i < length; ++i) {
+            JSC::JSValue v = srcArray->get(exec, i);
+            array->set(i, v.toNumber(exec));
+        }
+        return array;
     }
 
     int length = exec->argument(0).toInt32(exec);

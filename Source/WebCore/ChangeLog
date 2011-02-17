@@ -1,3 +1,31 @@
+2011-02-17  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Chris Marrin.
+
+        Construction of Uint8Array from JS Array (and possibly others) incorrectly clamps values
+        https://bugs.webkit.org/show_bug.cgi?id=52768
+
+        Removed incorrect clamping code from IntegralTypedArrayBase. Fixed
+        code which casts from incoming double to the destination type.
+        Changed the JSC bindings to use this code, rather than a copy of
+        the casting code and a different constructor, in order to reuse
+        the fix.
+
+        * bindings/js/JSArrayBufferViewHelper.h:
+        (WebCore::constructArrayBufferView):
+        * html/canvas/Int32Array.h:
+        (WebCore::Int32Array::set):
+        * html/canvas/Int8Array.h:
+        (WebCore::Int8Array::set):
+        * html/canvas/IntegralTypedArrayBase.h:
+        (WebCore::IntegralTypedArrayBase::set):
+        * html/canvas/Uint16Array.h:
+        (WebCore::Uint16Array::set):
+        * html/canvas/Uint32Array.h:
+        (WebCore::Uint32Array::set):
+        * html/canvas/Uint8Array.h:
+        (WebCore::Uint8Array::set):
+
 2011-02-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

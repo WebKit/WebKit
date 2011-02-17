@@ -1,3 +1,17 @@
+2011-02-17  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Chris Marrin.
+
+        Construction of Uint8Array from JS Array (and possibly others) incorrectly clamps values
+        https://bugs.webkit.org/show_bug.cgi?id=52768
+
+        Synchronized array-unit-tests.html with version in Khronos
+        repository. Tested in Chromium, Safari, Chromium DRT on Mac and
+        WebKit DRT on Mac.
+
+        * fast/canvas/webgl/array-unit-tests-expected.txt:
+        * fast/canvas/webgl/array-unit-tests.html:
+
 2011-02-17  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed expectations change.

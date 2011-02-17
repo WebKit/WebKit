@@ -16,7 +16,8 @@ PASS test Float32Array SetFromArray
 PASS negativeTest Float32Array SetFromArray
 PASS test Float32Array Subarray
 PASS negativeTest Float32Array Subarray
-PASS test Float32Array BoundaryConditions(-500.5, -500.5, 500.5, 500.5)
+PASS test Float32Array SetBoundaryConditions
+PASS test Float32Array ConstructionBoundaryConditions
 PASS Construction of Float32Array with null buffer threw exception
 PASS Construction of Float32Array with (null buffer, 0) threw exception
 PASS Construction of Float32Array with (null buffer, 0, 0) threw exception
@@ -48,6 +49,7 @@ PASS test storing NaN in Float32Array
 PASS test Int8Array SetAndGetPos10ToNeg10
 PASS test Int8Array ConstructWithArrayOfSignedValues
 PASS test Int8Array ConstructWithTypedArrayOfSignedValues
+PASS test integral array truncation behavior for Int8Array
 Testing Int8Array GetWithOutOfRangeIndices
 PASS array[2] is undefined.
 PASS array[-1] is undefined.
@@ -59,7 +61,8 @@ PASS test Int8Array SetFromArray
 PASS negativeTest Int8Array SetFromArray
 PASS test Int8Array Subarray
 PASS negativeTest Int8Array Subarray
-PASS test Int8Array BoundaryConditions(-128, -128, 127, 127)
+PASS test Int8Array SetBoundaryConditions
+PASS test Int8Array ConstructionBoundaryConditions
 PASS Construction of Int8Array with null buffer threw exception
 PASS Construction of Int8Array with (null buffer, 0) threw exception
 PASS Construction of Int8Array with (null buffer, 0, 0) threw exception
@@ -87,6 +90,7 @@ PASS test storing NaN in Int8Array
 PASS test Int16Array SetAndGetPos10ToNeg10
 PASS test Int16Array ConstructWithArrayOfSignedValues
 PASS test Int16Array ConstructWithTypedArrayOfSignedValues
+PASS test integral array truncation behavior for Int16Array
 Testing Int16Array GetWithOutOfRangeIndices
 PASS array[2] is undefined.
 PASS array[-1] is undefined.
@@ -98,7 +102,8 @@ PASS test Int16Array SetFromArray
 PASS negativeTest Int16Array SetFromArray
 PASS test Int16Array Subarray
 PASS negativeTest Int16Array Subarray
-PASS test Int16Array BoundaryConditions(-32768, -32768, 32767, 32767)
+PASS test Int16Array SetBoundaryConditions
+PASS test Int16Array ConstructionBoundaryConditions
 PASS Construction of Int16Array with null buffer threw exception
 PASS Construction of Int16Array with (null buffer, 0) threw exception
 PASS Construction of Int16Array with (null buffer, 0, 0) threw exception
@@ -130,6 +135,7 @@ PASS test storing NaN in Int16Array
 PASS test Int32Array SetAndGetPos10ToNeg10
 PASS test Int32Array ConstructWithArrayOfSignedValues
 PASS test Int32Array ConstructWithTypedArrayOfSignedValues
+PASS test integral array truncation behavior for Int32Array
 Testing Int32Array GetWithOutOfRangeIndices
 PASS array[2] is undefined.
 PASS array[-1] is undefined.
@@ -141,7 +147,8 @@ PASS test Int32Array SetFromArray
 PASS negativeTest Int32Array SetFromArray
 PASS test Int32Array Subarray
 PASS negativeTest Int32Array Subarray
-PASS test Int32Array BoundaryConditions(-2147483648, -2147483648, 2147483647, 2147483647)
+PASS test Int32Array SetBoundaryConditions
+PASS test Int32Array ConstructionBoundaryConditions
 PASS Construction of Int32Array with null buffer threw exception
 PASS Construction of Int32Array with (null buffer, 0) threw exception
 PASS Construction of Int32Array with (null buffer, 0, 0) threw exception
@@ -173,6 +180,7 @@ PASS test storing NaN in Int32Array
 PASS test Uint8Array SetAndGet10To1
 PASS test Uint8Array ConstructWithArrayOfUnsignedValues
 PASS test Uint8Array ConstructWithTypedArrayOfUnsignedValues
+PASS test integral array truncation behavior for Uint8Array
 Testing Uint8Array GetWithOutOfRangeIndices
 PASS array[2] is undefined.
 PASS array[-1] is undefined.
@@ -184,7 +192,8 @@ PASS test Uint8Array SetFromArray
 PASS negativeTest Uint8Array SetFromArray
 PASS test Uint8Array Subarray
 PASS negativeTest Uint8Array Subarray
-PASS test Uint8Array BoundaryConditions(0, 0, 255, 255)
+PASS test Uint8Array SetBoundaryConditions
+PASS test Uint8Array ConstructionBoundaryConditions
 PASS Construction of Uint8Array with null buffer threw exception
 PASS Construction of Uint8Array with (null buffer, 0) threw exception
 PASS Construction of Uint8Array with (null buffer, 0, 0) threw exception
@@ -212,6 +221,7 @@ PASS test storing NaN in Uint8Array
 PASS test Uint16Array SetAndGet10To1
 PASS test Uint16Array ConstructWithArrayOfUnsignedValues
 PASS test Uint16Array ConstructWithTypedArrayOfUnsignedValues
+PASS test integral array truncation behavior for Uint16Array
 Testing Uint16Array GetWithOutOfRangeIndices
 PASS array[2] is undefined.
 PASS array[-1] is undefined.
@@ -223,7 +233,8 @@ PASS test Uint16Array SetFromArray
 PASS negativeTest Uint16Array SetFromArray
 PASS test Uint16Array Subarray
 PASS negativeTest Uint16Array Subarray
-PASS test Uint16Array BoundaryConditions(0, 0, 65535, 65535)
+PASS test Uint16Array SetBoundaryConditions
+PASS test Uint16Array ConstructionBoundaryConditions
 PASS Construction of Uint16Array with null buffer threw exception
 PASS Construction of Uint16Array with (null buffer, 0) threw exception
 PASS Construction of Uint16Array with (null buffer, 0, 0) threw exception
@@ -255,6 +266,7 @@ PASS test storing NaN in Uint16Array
 PASS test Uint32Array SetAndGet10To1
 PASS test Uint32Array ConstructWithArrayOfUnsignedValues
 PASS test Uint32Array ConstructWithTypedArrayOfUnsignedValues
+PASS test integral array truncation behavior for Uint32Array
 Testing Uint32Array GetWithOutOfRangeIndices
 PASS array[2] is undefined.
 PASS array[-1] is undefined.
@@ -266,7 +278,8 @@ PASS test Uint32Array SetFromArray
 PASS negativeTest Uint32Array SetFromArray
 PASS test Uint32Array Subarray
 PASS negativeTest Uint32Array Subarray
-PASS test Uint32Array BoundaryConditions(0, 0, 4294967295, 4294967295)
+PASS test Uint32Array SetBoundaryConditions
+PASS test Uint32Array ConstructionBoundaryConditions
 PASS Construction of Uint32Array with null buffer threw exception
 PASS Construction of Uint32Array with (null buffer, 0) threw exception
 PASS Construction of Uint32Array with (null buffer, 0, 0) threw exception
