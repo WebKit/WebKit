@@ -43,6 +43,7 @@ public:
     virtual String submitButtonDefaultLabel() = 0;
     virtual String fileButtonChooseFileLabel() = 0;
     virtual String fileButtonNoFileSelectedLabel() = 0;
+    virtual String defaultDetailsSummaryText() = 0;
 
 #if PLATFORM(MAC)
     virtual String copyImageUnknownFileLabel() = 0;

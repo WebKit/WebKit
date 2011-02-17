@@ -39,6 +39,7 @@ namespace WebCore {
     String submitButtonDefaultLabel();
     String fileButtonChooseFileLabel();
     String fileButtonNoFileSelectedLabel();
+    String defaultDetailsSummaryText();
 
 #if PLATFORM(MAC)
     String copyImageUnknownFileLabel();

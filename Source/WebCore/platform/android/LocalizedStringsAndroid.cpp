@@ -368,6 +368,11 @@ String resetButtonDefaultLabel()
     return String("Reset");
 }
 
+String defaultDetailsSummaryText()
+{
+    return String("Details");
+}
+
 String submitButtonDefaultLabel()
 {
     return String("Submit");

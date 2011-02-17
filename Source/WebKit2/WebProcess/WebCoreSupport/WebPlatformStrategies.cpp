@@ -175,6 +175,11 @@ String WebPlatformStrategies::fileButtonNoFileSelectedLabel()
     return UI_STRING("no file selected", "text to display in file button used in HTML forms when no file is selected");
 }
 
+String WebPlatformStrategies::defaultDetailsSummaryText()
+{
+    return UI_STRING("Details", "text to display in <details> tag when it has no <summary> child");
+}
+
 #if PLATFORM(MAC)
 String WebPlatformStrategies::copyImageUnknownFileLabel()
 {

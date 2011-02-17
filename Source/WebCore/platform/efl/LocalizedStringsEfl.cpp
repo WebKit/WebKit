@@ -53,6 +53,11 @@ String resetButtonDefaultLabel()
     return String::fromUTF8("Reset");
 }
 
+String defaultDetailsSummaryText()
+{
+    return String::fromUTF8("Details");
+}
+
 String searchableIndexIntroduction()
 {
     return String::fromUTF8("_Searchable Index");

@@ -47,6 +47,11 @@ String resetButtonDefaultLabel()
     return String("Reset"); 
 }
 
+String defaultDetailsSummaryText()
+{
+    return String("Details");
+}
+
 String platformDefaultLanguage() 
 { 
     return String("en"); 

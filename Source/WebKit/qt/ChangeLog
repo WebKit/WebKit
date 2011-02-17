@@ -1,3 +1,17 @@
+2011-02-10  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Adam Roben.
+
+        HTML5 <details> and <summary>: localized text
+        https://bugs.webkit.org/show_bug.cgi?id=54260
+
+        The method defaultDetailsSummaryText was added to LocalizationStrategy class. It is used to
+        provide the default label to be used by a <details> tag that has no <summary> child.
+
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebPlatformStrategies::defaultDetailsSummaryText):
+        * WebCoreSupport/WebPlatformStrategies.h:
+
 2011-02-17  Hui Huang  <hui.2.huang@nokia.com>
 
         Reviewed by Laszlo Gombos.

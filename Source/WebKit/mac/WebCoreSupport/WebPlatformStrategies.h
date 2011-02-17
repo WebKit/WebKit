@@ -55,6 +55,7 @@ private:
     virtual WTF::String fileButtonChooseFileLabel();
     virtual WTF::String fileButtonNoFileSelectedLabel();
     virtual WTF::String copyImageUnknownFileLabel();
+    virtual WTF::String defaultDetailsSummaryText();
 #if ENABLE(CONTEXT_MENUS)
     virtual WTF::String contextMenuItemTagOpenLinkInNewWindow();
     virtual WTF::String contextMenuItemTagDownloadLinkToDisk();

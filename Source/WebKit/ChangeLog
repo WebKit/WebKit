@@ -1,3 +1,14 @@
+2011-02-16  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Adam Roben.
+
+        HTML5 <details> and <summary>: localized text
+        https://bugs.webkit.org/show_bug.cgi?id=54260
+
+        Default details summary text must be localizable.
+
+        * English.lproj/Localizable.strings:
+
 2011-02-06  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Andreas Kling.

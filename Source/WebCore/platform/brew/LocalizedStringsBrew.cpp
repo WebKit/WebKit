@@ -46,6 +46,11 @@ String resetButtonDefaultLabel()
     return "Reset";
 }
 
+String defaultDetailsSummaryText()
+{
+    return "Details";
+}
+
 String searchableIndexIntroduction()
 {
     return "Searchable Index";

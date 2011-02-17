@@ -60,6 +60,7 @@ private:
     virtual WTF::String submitButtonDefaultLabel();
     virtual WTF::String fileButtonChooseFileLabel();
     virtual WTF::String fileButtonNoFileSelectedLabel();
+    virtual WTF::String defaultDetailsSummaryText();
     virtual WTF::String contextMenuItemTagOpenLinkInNewWindow();
     virtual WTF::String contextMenuItemTagDownloadLinkToDisk();
     virtual WTF::String contextMenuItemTagCopyLinkToClipboard();

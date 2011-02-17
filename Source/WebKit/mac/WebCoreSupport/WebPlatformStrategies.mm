@@ -109,6 +109,11 @@ String WebPlatformStrategies::submitButtonDefaultLabel()
     return UI_STRING("Submit", "default label for Submit buttons in forms on web pages");
 }
 
+String WebPlatformStrategies::defaultDetailsSummaryText()
+{
+    return UI_STRING("Details", "text to display in <details> tag when it has no <summary> child");
+}
+
 String WebPlatformStrategies::fileButtonChooseFileLabel()
 {
     return UI_STRING("Choose File", "title for file button used in HTML forms");

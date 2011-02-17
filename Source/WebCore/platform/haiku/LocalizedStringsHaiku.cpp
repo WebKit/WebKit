@@ -48,6 +48,11 @@ String resetButtonDefaultLabel()
     return "Reset";
 }
 
+String defaultDetailsSummaryText()
+{
+    return "Details";
+}
+
 String defaultLanguage()
 {
     return "en";

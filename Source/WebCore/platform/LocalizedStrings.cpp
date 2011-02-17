@@ -66,6 +66,11 @@ String fileButtonNoFileSelectedLabel()
     return platformStrategies()->localizationStrategy()->fileButtonNoFileSelectedLabel();
 }
 
+String defaultDetailsSummaryText()
+{
+    return platformStrategies()->localizationStrategy()->defaultDetailsSummaryText();
+}
+
 #if PLATFORM(MAC)
 String copyImageUnknownFileLabel()
 {

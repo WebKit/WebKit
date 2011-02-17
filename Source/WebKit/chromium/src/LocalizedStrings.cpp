@@ -87,6 +87,12 @@ String fileButtonChooseFileLabel()
     return query(WebLocalizedString::FileButtonChooseFileLabel);
 }
 
+String defaultDetailsSummaryText()
+{
+    notImplemented();
+    return String("Details");
+}
+
 String fileButtonNoFileSelectedLabel()
 {
     return query(WebLocalizedString::FileButtonNoFileSelectedLabel);
