@@ -14,5 +14,5 @@ layer at (0,0) size 800x585
           RenderImage {IMG} at (1,1) size 1000x0
           RenderText {#text} at (18,1) size 66x36
             text run at (18,1) width 66: "Text Goes"
-            text run at (35,19) width 31: "Here"
+            text run at (35,19) width 32: "Here"
         RenderText {#text} at (0,0) size 0x0
