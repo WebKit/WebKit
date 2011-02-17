@@ -1,5 +1,15 @@
 2011-02-17  Adam Roben  <aroben@apple.com>
 
+        Skip a new spinbutton test on Windows
+
+        Also updated the Bugzilla URL for these tests to point to a bug that isn't marked Resolved,
+        since clearly there's still an unresolved bug here! The new bug is
+        <http://webkit.org/b/54662>.
+
+        * platform/win/Skipped: Added fast/forms/input-appearance-spinbutton-layer.html.
+
+2011-02-17  Adam Roben  <aroben@apple.com>
+
         Check in expected failure results on Windows for accessibility/canvas-fallback-content.html
 
         Failure is tracked by <http://webkit.org/b/54654>.
