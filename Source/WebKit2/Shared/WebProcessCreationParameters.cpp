@@ -67,6 +67,9 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
     encoder->encode(uiProcessBundleResourcePath);
 #elif PLATFORM(WIN)
     encoder->encode(shouldPaintNativeControls);
+    encoder->encode(cfURLCachePath);
+    encoder->encode(cfURLCacheDiskCapacity);
+    encoder->encode(cfURLCacheMemoryCapacity);
 #endif
 }
 
@@ -116,6 +119,12 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
         return false;
 #elif PLATFORM(WIN)
     if (!decoder->decode(parameters.shouldPaintNativeControls))
+        return false;
+    if (!decoder->decode(parameters.cfURLCachePath))
+        return false;
+    if (!decoder->decode(parameters.cfURLCacheDiskCapacity))
+        return false;
+    if (!decoder->decode(parameters.cfURLCacheMemoryCapacity))
         return false;
 #endif
 

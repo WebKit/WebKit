@@ -30,6 +30,11 @@
 #include "WebProcessMessages.h"
 #include <WebCore/FileSystem.h>
 
+#if USE(CFNETWORK)
+#include <CFNetwork/CFURLCachePriv.h>
+#include <WebKitSystemInterface/WebKitSystemInterface.h> 
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -51,6 +56,17 @@ void WebContext::setShouldPaintNativeControls(bool b)
 void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
     parameters.shouldPaintNativeControls = m_shouldPaintNativeControls;
+
+#if USE(CFNETWORK)
+    RetainPtr<CFURLCacheRef> cfurlCache(AdoptCF, CFURLCacheCopySharedURLCache());
+    parameters.cfURLCacheDiskCapacity = CFURLCacheDiskCapacity(cfurlCache.get());
+    parameters.cfURLCacheMemoryCapacity = CFURLCacheMemoryCapacity(cfurlCache.get());
+
+    RetainPtr<CFStringRef> cfURLCachePath(AdoptCF, wkCopyFoundationCacheDirectory());
+    parameters.cfURLCachePath = String(cfURLCachePath.get());
+    // Remove the ending '/' (necessary to have CFNetwork find the Cache file).
+    parameters.cfURLCachePath.remove(parameters.cfURLCachePath.length() - 1);
+#endif
 }
 
 String WebContext::platformDefaultDatabaseDirectory() const

@@ -85,6 +85,10 @@ struct WebProcessCreationParameters {
 
     CString uiProcessBundleResourcePath;
 #elif PLATFORM(WIN)
+    String cfURLCachePath;
+    uint64_t cfURLCacheDiskCapacity;
+    uint64_t cfURLCacheMemoryCapacity;
+
     bool shouldPaintNativeControls;
 #endif
 };

@@ -108,6 +108,17 @@ void WebProcess::platformClearResourceCaches()
 void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters& parameters, CoreIPC::ArgumentDecoder*)
 {
     setShouldPaintNativeControls(parameters.shouldPaintNativeControls);
+
+#if USE(CFNETWORK)
+    RetainPtr<CFStringRef> cachePath(AdoptCF, parameters.cfURLCachePath.createCFString());
+    if (!cachePath)
+        return;
+
+    CFIndex cacheDiskCapacity = parameters.cfURLCacheDiskCapacity;
+    CFIndex cacheMemoryCapacity = parameters.cfURLCacheMemoryCapacity;
+    RetainPtr<CFURLCacheRef> uiProcessCache(AdoptCF, CFURLCacheCreate(kCFAllocatorDefault, cacheMemoryCapacity, cacheDiskCapacity, cachePath.get()));
+    CFURLCacheSetSharedURLCache(uiProcessCache.get());
+#endif
 }
 
 void WebProcess::platformShutdown()
