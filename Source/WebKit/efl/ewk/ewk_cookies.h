@@ -18,6 +18,11 @@
     Boston, MA 02110-1301, USA.
 */
 
+/**
+ * @file    ewk_cookies.h
+ * @brief   The Ewk cookies API.
+ */
+
 #ifndef ewk_cookies_h
 #define ewk_cookies_h
 
@@ -28,24 +33,44 @@
 extern "C" {
 #endif
 
+/**
+ * \struct  _Ewk_Cookie
+ *
+ * @brief   Describes properties of an HTTP cookie.
+ */
 struct _Ewk_Cookie {
+    /// the cookie name
     char *name;
+    /// the cookie value
     char *value;
+    /// the "domain" attribute, or else the hostname that the cookie came from
     char *domain;
+    /// the "path" attribute, or @c 0
     char *path;
+    /// the cookie expiration time, or @c 0 for a session cookie
     time_t expires;
+    /// @c EINA_TRUE if the cookie should only be tranferred over SSL
     Eina_Bool secure;
-    Eina_Bool http_only;
+    /// @c EINA_TRUE if the cookie should not be exposed to scripts
+    Eina_Bool http_only;    
 };
-
+/// Creates a type name for the _Ewk_Cookie.
 typedef struct _Ewk_Cookie Ewk_Cookie;
 
+/**
+ * \enum    _Ewk_Cookie_Policy
+ *
+ * @brief   Contains a policy for the cookies.
+ */
 enum _Ewk_Cookie_Policy {
+    /// Rejects all cookies.
     EWK_COOKIE_JAR_ACCEPT_NEVER,
+    /// Accepts every cookie sent from any page.
     EWK_COOKIE_JAR_ACCEPT_ALWAYS,
+    /// Accepts cookies only from the main page.
     EWK_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY
 };
-
+/// Creates a type name for the _Ewk_Cookie_Policy.
 typedef enum _Ewk_Cookie_Policy Ewk_Cookie_Policy;
 
 /************************** Exported functions ***********************/
