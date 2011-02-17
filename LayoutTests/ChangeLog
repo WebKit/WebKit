@@ -1,3 +1,9 @@
+2011-02-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Add another group of GTK+ Mozilla test results.
+
+        * platform/gtk/Skipped: Unskip tests which now have results.
+
 2011-02-16  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
