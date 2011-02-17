@@ -99,6 +99,9 @@
 #include <runtime/JSLock.h>
 #include <runtime/JSValue.h>
 
+#include <WebCore/Range.h>
+#include <WebCore/VisiblePosition.h>
+
 #if PLATFORM(MAC) || PLATFORM(WIN)
 #include <WebCore/LegacyWebArchive.h>
 #endif
@@ -1306,7 +1309,7 @@ void WebPage::forceRepaint(uint64_t callbackID)
     m_drawingArea->forceRepaint();
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
-    
+
 void WebPage::preferencesDidChange(const WebPreferencesStore& store)
 {
     WebPreferencesStore::removeTestRunnerOverrides();

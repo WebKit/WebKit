@@ -186,6 +186,7 @@ HEADERS += \
     Shared/SecurityOriginData.h \
     Shared/SessionState.h \
     Shared/StringPairVector.h \
+    Shared/TextInfo.h \
     Shared/UserMessageCoders.h \
     Shared/VisitedLinkTable.h \
     Shared/WebCoreArgumentCoders.h \
@@ -421,6 +422,7 @@ SOURCES += \
     Shared/PrintInfo.cpp \
     Shared/SecurityOriginData.cpp \
     Shared/SessionState.cpp \
+    Shared/TextInfo.cpp \
     Shared/VisitedLinkTable.cpp \
     Shared/WebBackForwardListItem.cpp \
     Shared/WebContextMenuItem.cpp \

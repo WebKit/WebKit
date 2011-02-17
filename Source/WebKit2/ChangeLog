@@ -1,3 +1,57 @@
+2011-02-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        WebKit2: Support Dictionary popup
+        <rdar://problem/7660670>
+
+        * Shared/TextInfo.cpp: Added.
+        (WebKit::TextInfo::encode):
+        (WebKit::TextInfo::decode):
+        * Shared/TextInfo.h: Added.
+        (WebKit::TextInfo::TextInfo):
+        Add class to represent the location and style of a run of text.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::didPerformDictionaryLookup):
+        Invoke the dictionary popup.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView performLookupAtCurrentMouseLocation]):
+        Tell the WebProcess to get get the text under the mouse and cause
+        the dictionary popup to appear.
+
+        * UIProcess/API/mac/WKViewPrivate.h:
+        Add performLookupAtCurrentMouseLocation.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::performDictionaryLookupAtLocation):
+        (WebKit::WebPageProxy::didPerformDictionaryLookup):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        Pipe messages through.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::characterRangeAtPoint): Fix to return PassRefPtr
+        and not potentially stale pointers.
+
+        (WebKit::WebPage::characterIndexForPoint):
+        Change to use a RefPtr.
+
+        (WebKit::WebPage::performDictionaryLookupAtLocation):
+        Add simple heuristic to get the word at the current point (or the current selection
+        if it is at that point) and grab the style of the word to send the UIProcess.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        Add new files.
+
 2011-02-17  Brian Weinstein  <bweinstein@apple.com>
 
         Qt build fix.

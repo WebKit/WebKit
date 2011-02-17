@@ -133,6 +133,8 @@ public:
     virtual void setAutodisplay(bool) = 0;
 
     virtual CGContextRef containingWindowGraphicsContext() = 0;
+
+    virtual void didPerformDictionaryLookup(const String&, const TextInfo&) = 0;
 #endif
 
     virtual void didChangeScrollbarsForMainFrame() const = 0;

@@ -23,16 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@interface WKView (Private)
+#include "config.h"
+#include "TextInfo.h"
 
-// Stops updating the size of the page as the WKView frame size updates.
-// This should always be followed by enableFrameSizeUpdates. Calls can be nested.
-- (void)disableFrameSizeUpdates;
-// Immediately updates the size of the page to match WKView's frame size
-// and allows subsequent updates as the frame size is set. Calls can be nested.
-- (void)enableFrameSizeUpdates;
-- (BOOL)frameSizeUpdatesDisabled;
+#include "WebCoreArgumentCoders.h"
 
-- (void)performLookupAtCurrentMouseLocation;
+#if PLATFORM(MAC)
+#include "ArgumentCodersCF.h"
+#endif
 
-@end
+namespace WebKit {
+
+void TextInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
+{
+    encoder->encode(baselineOrigin);
+#if PLATFORM(MAC)
+    CoreIPC::encode(encoder, fontAttributeDictionary.get());
+    encoder->encode(fontOverrideSize);
+#endif
+}
+
+bool TextInfo::decode(CoreIPC::ArgumentDecoder* decoder, TextInfo& result)
+{
+    if (!decoder->decode(result.baselineOrigin))
+        return false;
+#if PLATFORM(MAC)
+    if (!CoreIPC::decode(decoder, result.fontAttributeDictionary))
+        return false;
+    if (!decoder->decode(result.fontOverrideSize))
+        return false;
+#endif
+    return true;
+}
+
+} // namespace WebKit

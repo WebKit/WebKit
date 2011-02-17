@@ -1,3 +1,14 @@
+2011-02-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        WebKit2: Support Dictionary popup
+        <rdar://problem/7660670>
+
+        Add some necessary exports.
+
+        * WebCore.exp.in:
+
 2011-02-17  W. James MacLean  <wjmaclean@chromium.org>
 
         Reviewed by James Robinson.

@@ -23,16 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@interface WKView (Private)
+#ifndef TextInfo_h
+#define TextInfo_h
 
-// Stops updating the size of the page as the WKView frame size updates.
-// This should always be followed by enableFrameSizeUpdates. Calls can be nested.
-- (void)disableFrameSizeUpdates;
-// Immediately updates the size of the page to match WKView's frame size
-// and allows subsequent updates as the frame size is set. Calls can be nested.
-- (void)enableFrameSizeUpdates;
-- (BOOL)frameSizeUpdatesDisabled;
+#include <WebCore/FloatPoint.h>
+#include <wtf/RetainPtr.h>
 
-- (void)performLookupAtCurrentMouseLocation;
+namespace CoreIPC {
+    class ArgumentDecoder;
+    class ArgumentEncoder;
+}
 
-@end
+namespace WebKit {
+
+class TextInfo {
+public:
+    TextInfo() { }
+
+    void encode(CoreIPC::ArgumentEncoder*) const;
+    static bool decode(CoreIPC::ArgumentDecoder*, TextInfo&);
+
+    WebCore::FloatPoint baselineOrigin;
+#if PLATFORM(MAC)
+    RetainPtr<CFDictionaryRef> fontAttributeDictionary;
+    double fontOverrideSize;
+#endif
+};
+
+} // namespace WebKit
+
+#endif // TextInfo_h

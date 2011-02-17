@@ -29,6 +29,7 @@
 #import "AccessibilityWebPageObject.h"
 #import "DataReference.h"
 #import "PluginView.h"
+#import "TextInfo.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebEvent.h"
 #import "WebFrame.h"
@@ -163,29 +164,29 @@ void WebPage::getMarkedRange(uint64_t& location, uint64_t& length)
     getLocationAndLengthFromRange(frame->editor()->compositionRange().get(), location, length);
 }
 
-static Range *characterRangeAtPoint(Frame* frame, const IntPoint point)
+static PassRefPtr<Range> characterRangeAtPoint(Frame* frame, const IntPoint& point)
 {
     VisiblePosition position = frame->visiblePositionForPoint(point);
     if (position.isNull())
-        return NULL;
+        return 0;
     
     VisiblePosition previous = position.previous();
     if (previous.isNotNull()) {
-        Range *previousCharacterRange = makeRange(previous, position).get();
-        NSRect rect = frame->editor()->firstRectForRange(previousCharacterRange);
-        if (NSPointInRect(point, rect))
-            return previousCharacterRange;
+        RefPtr<Range> previousCharacterRange = makeRange(previous, position);
+        IntRect rect = frame->editor()->firstRectForRange(previousCharacterRange.get());
+        if (rect.contains(point))
+            return previousCharacterRange.release();
     }
     
     VisiblePosition next = position.next();
     if (next.isNotNull()) {
-        Range *nextCharacterRange = makeRange(position, next).get();
-        NSRect rect = frame->editor()->firstRectForRange(nextCharacterRange);
-        if (NSPointInRect(point, rect))
-            return nextCharacterRange;
+        RefPtr<Range> nextCharacterRange = makeRange(position, next);
+        IntRect rect = frame->editor()->firstRectForRange(nextCharacterRange.get());
+        if (rect.contains(point))
+            return nextCharacterRange.release();
     }
     
-    return NULL;
+    return 0;
 }
     
 void WebPage::characterIndexForPoint(IntPoint point, uint64_t& index)
@@ -198,12 +199,12 @@ void WebPage::characterIndexForPoint(IntPoint point, uint64_t& index)
     HitTestResult result = frame->eventHandler()->hitTestResultAtPoint(point, false);
     frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document()->frame() : m_page->focusController()->focusedOrMainFrame();
     
-    Range *range = characterRangeAtPoint(frame, result.point());
+    RefPtr<Range> range = characterRangeAtPoint(frame, result.point());
     if (!range)
         return;
 
     uint64_t length;
-    getLocationAndLengthFromRange(range, index, length);
+    getLocationAndLengthFromRange(range.get(), index, length);
 }
 
 static PassRefPtr<Range> convertToRange(Frame* frame, NSRange nsrange)
@@ -239,6 +240,76 @@ void WebPage::firstRectForCharacterRange(uint64_t location, uint64_t length, Web
      
     IntRect rect = frame->editor()->firstRectForRange(range.get());
     resultRect = frame->view()->contentsToWindow(rect);
+}
+
+void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
+{
+    Frame* frame = m_page->mainFrame();
+    if (!frame)
+        return;
+
+    // Find the frame the point is over.
+    IntPoint point = roundedIntPoint(floatPoint);
+
+    HitTestResult result = frame->eventHandler()->hitTestResultAtPoint(point, false);
+    frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document()->frame() : m_page->focusController()->focusedOrMainFrame();
+
+    // Figure out if there are any characters under the point.
+    RefPtr<Range> characterRange = characterRangeAtPoint(frame, frame->view()->windowToContents(point));
+    if (!characterRange)
+        return;
+
+    // Grab the currently selected text.
+    RefPtr<Range> selectedRange = m_page->focusController()->focusedOrMainFrame()->selection()->selection().toNormalizedRange();
+
+    // Use the selected text if the point was anywhere in it. Assertain this by seeing if either character range
+    // the mouse is over is contained by the selection range.
+    if (characterRange && selectedRange) {
+        ExceptionCode ec = 0;
+        selectedRange->compareBoundaryPoints(Range::START_TO_START, characterRange.get(), ec);
+        if (!ec) {
+            if (selectedRange->isPointInRange(characterRange->startContainer(), characterRange->startOffset(), ec)) {
+                if (!ec)
+                    characterRange = selectedRange;
+            }
+        }
+    }
+
+    if (!characterRange)
+        return;
+
+    // Ensure we have whole words.
+    selection.expandUsingGranularity(WordGranularity);
+    VisibleSelection selection(characterRange.get());
+
+    RefPtr<Range> finalRange = selection.toNormalizedRange();
+    if (!finalRange)
+        return;
+
+    RenderObject* renderer = finalRange->startContainer()->renderer();
+    RenderStyle* style = renderer->style();
+    NSFont *font = style->font().primaryFont()->getNSFont();
+    if (!font)
+        return;
+
+    CFDictionaryRef fontDescriptorAttributes = (CFDictionaryRef)[[font fontDescriptor] fontAttributes];
+    if (!fontDescriptorAttributes)
+        return;
+
+    Vector<FloatQuad> quads;
+    finalRange->textQuads(quads);
+    if (quads.isEmpty())
+        return;
+
+    IntRect finalRangeRect = frame->view()->contentsToWindow(quads[0].enclosingBoundingBox());
+    FloatPoint baselineOrigin(finalRangeRect.x(), (finalRangeRect.y() + ([font ascender] * frame->pageScaleFactor())));
+    
+    TextInfo textInfo;
+    textInfo.baselineOrigin = baselineOrigin;
+    textInfo.fontAttributeDictionary = fontDescriptorAttributes;
+    textInfo.fontOverrideSize = frame->pageScaleFactor() == 1 ? 0 : ([[font fontDescriptor] pointSize] * frame->pageScaleFactor());
+
+    send(Messages::WebPageProxy::DidPerformDictionaryLookup(finalRange->text(), textInfo));
 }
 
 static inline void scroll(Page* page, ScrollDirection direction, ScrollGranularity granularity)

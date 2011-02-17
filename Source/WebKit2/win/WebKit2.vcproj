@@ -535,6 +535,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\TextInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\TextInfo.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\UpdateInfo.cpp"
 				>
 			</File>

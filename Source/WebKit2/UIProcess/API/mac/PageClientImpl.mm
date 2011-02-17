@@ -30,6 +30,7 @@
 #import "FindIndicator.h"
 #import "NativeWebKeyboardEvent.h"
 #import "NotImplemented.h"
+#import "TextInfo.h"
 #import "WKAPICast.h"
 #import "WKStringCF.h"
 #import "WKViewInternal.h"
@@ -414,6 +415,17 @@ void PageClientImpl::setCustomRepresentationZoomFactor(double zoomFactor)
 void PageClientImpl::flashBackingStoreUpdates(const Vector<IntRect>&)
 {
     notImplemented();
+}
+
+void PageClientImpl::didPerformDictionaryLookup(const String& text, const TextInfo& textInfo)
+{
+    NSFontDescriptor *fontDescriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:(NSDictionary *)textInfo.fontAttributeDictionary.get()];
+    NSFont *font = [NSFont fontWithDescriptor:fontDescriptor size:textInfo.fontOverrideSize];
+
+    RetainPtr<NSMutableAttributedString> attributedString(AdoptNS, [[NSMutableAttributedString alloc] initWithString:nsStringFromWebCoreString(text)]);
+    [attributedString.get() addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, [attributedString.get() length])];
+
+    [m_wkView showDefinitionForAttributedString:attributedString.get() atPoint:textInfo.baselineOrigin];
 }
 
 } // namespace WebKit

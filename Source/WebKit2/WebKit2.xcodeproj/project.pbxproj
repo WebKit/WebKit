@@ -485,6 +485,8 @@
 		BC40762B124FF0400068F20A /* WKURLResponseNS.h in Headers */ = {isa = PBXBuildFile; fileRef = BC407625124FF0400068F20A /* WKURLResponseNS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC40762C124FF0400068F20A /* WKURLResponseNS.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC407626124FF0400068F20A /* WKURLResponseNS.mm */; };
 		BC40783D1250FADD0068F20A /* WKEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = BC40783C1250FADD0068F20A /* WKEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BC454234130C5F3F0073E1C1 /* TextInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BC454232130C5F3F0073E1C1 /* TextInfo.h */; };
+		BC454235130C5F3F0073E1C1 /* TextInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC454233130C5F3F0073E1C1 /* TextInfo.cpp */; };
 		BC498618124D10E200D834E1 /* InjectedBundleHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = BC498616124D10E200D834E1 /* InjectedBundleHitTestResult.h */; };
 		BC498619124D10E200D834E1 /* InjectedBundleHitTestResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC498617124D10E200D834E1 /* InjectedBundleHitTestResult.cpp */; };
 		BC49862F124D18C100D834E1 /* WKBundleHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = BC49862D124D18C100D834E1 /* WKBundleHitTestResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1285,6 +1287,8 @@
 		BC407625124FF0400068F20A /* WKURLResponseNS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKURLResponseNS.h; sourceTree = "<group>"; };
 		BC407626124FF0400068F20A /* WKURLResponseNS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKURLResponseNS.mm; sourceTree = "<group>"; };
 		BC40783C1250FADD0068F20A /* WKEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKEvent.h; sourceTree = "<group>"; };
+		BC454232130C5F3F0073E1C1 /* TextInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextInfo.h; sourceTree = "<group>"; };
+		BC454233130C5F3F0073E1C1 /* TextInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextInfo.cpp; sourceTree = "<group>"; };
 		BC498616124D10E200D834E1 /* InjectedBundleHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleHitTestResult.h; sourceTree = "<group>"; };
 		BC498617124D10E200D834E1 /* InjectedBundleHitTestResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleHitTestResult.cpp; sourceTree = "<group>"; };
 		BC49862D124D18C100D834E1 /* WKBundleHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleHitTestResult.h; sourceTree = "<group>"; };
@@ -1882,6 +1886,9 @@
 				1A6420E312DCE2FF00CAAE2C /* ShareableBitmap.h */,
 				BCBD3C3A125BFA7A00D2C29F /* StringPairVector.h */,
 				1A5E4DA312D3BD3D0099A2BB /* TextCheckerState.h */,
+				BC454233130C5F3F0073E1C1 /* TextInfo.cpp */,
+				BC454232130C5F3F0073E1C1 /* TextInfo.h */,
+				1A64245D12DE29A100CAAE2C /* UpdateInfo.cpp */,
 				1A64245C12DE29A100CAAE2C /* UpdateInfo.h */,
 				BCB0B0DF12305AB100B1341E /* UserMessageCoders.h */,
 				1A0F29C9120B37160053D1B9 /* VisitedLinkTable.cpp */,
@@ -1939,7 +1946,6 @@
 				F6113E24126CE1820057D0A7 /* WebUserContentURLPattern.h */,
 				C0337DD0127A2980008FF4F4 /* WebWheelEvent.cpp */,
 				BC9585C712F095B800755821 /* WebGestureEvent.cpp */,
-				1A64245D12DE29A100CAAE2C /* UpdateInfo.cpp */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -3235,6 +3241,7 @@
 				BCA56A1C12F9028E00C566C7 /* WebGraphicsContext.h in Headers */,
 				BCA56A6512F9C8F900C566C7 /* WKGraphicsContext.h in Headers */,
 				BCA56A6912F9C9AD00C566C7 /* WKGraphicsContextCG.h in Headers */,
+				BC454234130C5F3F0073E1C1 /* TextInfo.h in Headers */,
 				1AC86FF4130B46D3002C1257 /* WKPluginSiteDataManager.h in Headers */,
 				1AC8702D130B49A2002C1257 /* WebPluginSiteDataManager.h in Headers */,
 				33367630130C9998006C9DE2 /* WebResourceCacheManager.h in Headers */,
@@ -3720,6 +3727,7 @@
 				BCA56A6612F9C8F900C566C7 /* WKGraphicsContext.cpp in Sources */,
 				BCA56A6A12F9C9AD00C566C7 /* WKGraphicsContextCG.cpp in Sources */,
 				659C551E130006410025C0C2 /* InjectedBundlePageResourceLoadClient.cpp in Sources */,
+				BC454235130C5F3F0073E1C1 /* TextInfo.cpp in Sources */,
 				1AC86FF3130B46D3002C1257 /* WKPluginSiteDataManager.cpp in Sources */,
 				1AC8702E130B49A2002C1257 /* WebPluginSiteDataManager.cpp in Sources */,
 				3336762F130C9998006C9DE2 /* WebResourceCacheManager.cpp in Sources */,

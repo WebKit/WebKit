@@ -72,6 +72,7 @@ namespace WebCore {
     class KeyboardEvent;
     class Page;
     class PrintContext;
+    class Range;
     class ResourceRequest;
     class SharedBuffer;
 }
@@ -414,6 +415,8 @@ private:
     void setCustomTextEncodingName(const String&);
 
 #if PLATFORM(MAC)
+    void performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
+
     void setWindowIsVisible(bool windowIsVisible);
     void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates, const WebCore::IntPoint& accessibilityViewCoordinates);
 #endif

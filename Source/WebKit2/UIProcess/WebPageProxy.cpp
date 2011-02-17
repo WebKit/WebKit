@@ -39,6 +39,7 @@
 #include "StringPairVector.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
+#include "TextInfo.h"
 #include "WKContextPrivate.h"
 #include "WebBackForwardList.h"
 #include "WebBackForwardListItem.h"
@@ -1169,6 +1170,16 @@ void WebPageProxy::forceRepaint(PassRefPtr<VoidCallback> prpCallback)
     m_voidCallbacks.set(callbackID, callback.get());
     process()->send(Messages::WebPage::ForceRepaint(callbackID), m_pageID); 
 }
+
+#if PLATFORM(MAC)
+void WebPageProxy::performDictionaryLookupAtLocation(const WebCore::FloatPoint& point)
+{
+    if (!isValid())
+        return;
+
+    process()->send(Messages::WebPage::PerformDictionaryLookupAtLocation(point), m_pageID); 
+}
+#endif
 
 void WebPageProxy::preferencesDidChange()
 {
@@ -2422,6 +2433,10 @@ void WebPageProxy::computedPagesCallback(const Vector<WebCore::IntRect>& pageRec
 }
 
 #if PLATFORM(MAC)
+void WebPageProxy::didPerformDictionaryLookup(const String& text, const TextInfo& textInfo)
+{
+    m_pageClient->didPerformDictionaryLookup(text, textInfo);
+}
     
 void WebPageProxy::registerWebProcessAccessibilityToken(const CoreIPC::DataReference& data)
 {

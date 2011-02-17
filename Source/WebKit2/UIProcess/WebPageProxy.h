@@ -88,6 +88,7 @@ class NativeWebKeyboardEvent;
 class PageClient;
 class PlatformCertificateInfo;
 class StringPairVector;
+class TextInfo;
 class WebBackForwardList;
 class WebBackForwardListItem;
 class WebContextMenuProxy;
@@ -297,7 +298,7 @@ public:
     void getWebArchiveOfFrame(WebFrameProxy*, PassRefPtr<DataCallback>);
     void runJavaScriptInMainFrame(const String&, PassRefPtr<StringCallback>);
     void forceRepaint(PassRefPtr<VoidCallback>);
-    
+
     float headerHeight(WebFrameProxy*);
     float footerHeight(WebFrameProxy*);
     void drawHeader(WebFrameProxy*, const WebCore::FloatRect&);
@@ -305,6 +306,9 @@ public:
 
 #if PLATFORM(MAC)
     void setAutodisplay(bool);
+
+    // Dictionary.
+    void performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
 #endif
 
     void receivedPolicyDecision(WebCore::PolicyAction, WebFrameProxy*, uint64_t listenerID);
@@ -543,6 +547,9 @@ private:
     void getIsSpeaking(bool&);
     void speak(const String&);
     void stopSpeaking();
+
+    // Dictionary.
+    void didPerformDictionaryLookup(const String&, const TextInfo&);
 #endif
 
     // Spelling and grammar.

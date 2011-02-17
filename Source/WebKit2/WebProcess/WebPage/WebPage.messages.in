@@ -74,6 +74,11 @@ messages -> WebPage {
     # FIXME: This should be a drawing area message.
     ForceRepaint(uint64_t callbackID)
 
+#if PLATFORM(MAC)
+    # Dictionary support.
+    PerformDictionaryLookupAtLocation(WebCore::FloatPoint point)
+#endif
+
     PreferencesDidChange(WebKit::WebPreferencesStore store)
 
     SetUserAgent(WTF::String userAgent)
