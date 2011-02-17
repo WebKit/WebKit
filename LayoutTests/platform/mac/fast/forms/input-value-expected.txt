@@ -95,7 +95,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 222x18
                   text run at (1,1) width 222: "image with value property changed"
               RenderTableCell {TD} at (389,128) size 243x15 [r=5 c=1 rs=1 cs=1]
-                RenderImage {INPUT} at (1,1) size 35x13
+                RenderImage {INPUT} at (1,1) size 34x13
               RenderTableCell {TD} at (634,126) size 62x20 [r=5 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x18
                   text run at (1,1) width 28: "after"

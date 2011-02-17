@@ -11,6 +11,6 @@ layer at (0,0) size 800x600
           text run at (0,0) width 644: "Tests option-deleting a word. If the test succeeds, the word \"word\" should end up with a space after it."
 layer at (13,13) size 119x13
   RenderBlock {DIV} at (3,3) size 119x13
-    RenderText {#text} at (1,0) size 30x13
-      text run at (1,0) width 30: "word "
+    RenderText {#text} at (1,0) size 31x13
+      text run at (1,0) width 31: "word "
 caret: position 5 of child 0 {#text} of child 0 {DIV} of child 0 {INPUT} of body

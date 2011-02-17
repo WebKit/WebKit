@@ -10,5 +10,5 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 0x0
 layer at (13,31) size 119x13
   RenderBlock {DIV} at (3,3) size 119x13
-    RenderText {#text} at (1,0) size 116x13
-      text run at (1,0) width 116: "This should be white."
+    RenderText {#text} at (1,0) size 115x13
+      text run at (1,0) width 115: "This should be white."

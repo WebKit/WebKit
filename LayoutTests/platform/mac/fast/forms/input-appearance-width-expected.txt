@@ -28,8 +28,8 @@ layer at (13,77) size 269x13
       text run at (1,0) width 39: "size 50"
 layer at (11,100) size 194x13
   RenderBlock {DIV} at (3,3) size 194x13
-    RenderText {#text} at (1,0) size 161x13
-      text run at (1,0) width 161: "styled width 200px & size=10"
+    RenderText {#text} at (1,0) size 162x13
+      text run at (1,0) width 162: "styled width 200px & size=10"
 layer at (13,123) size 69x13
   RenderBlock {DIV} at (3,3) size 69x13
     RenderText {#text} at (1,0) size 39x13

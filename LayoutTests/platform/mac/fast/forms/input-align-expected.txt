@@ -27,21 +27,21 @@ layer at (0,0) size 800x600
         RenderTextControl {INPUT} at (2,2) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
 layer at (13,47) size 119x13
   RenderBlock {DIV} at (3,3) size 119x13
-    RenderText {#text} at (1,0) size 99x13
-      text run at (1,0) width 99: "The quick brown..."
+    RenderText {#text} at (1,0) size 100x13
+      text run at (1,0) width 100: "The quick brown..."
 layer at (13,70) size 119x13
   RenderBlock {DIV} at (3,3) size 119x13
-    RenderText {#text} at (1,0) size 99x13
-      text run at (1,0) width 99: "The quick brown..."
+    RenderText {#text} at (1,0) size 100x13
+      text run at (1,0) width 100: "The quick brown..."
 layer at (13,93) size 119x13
   RenderBlock {DIV} at (3,3) size 119x13
-    RenderText {#text} at (1,0) size 99x13
-      text run at (1,0) width 99: "The quick brown..."
+    RenderText {#text} at (1,0) size 100x13
+      text run at (1,0) width 100: "The quick brown..."
 layer at (13,116) size 119x13
   RenderBlock {DIV} at (3,3) size 119x13
-    RenderText {#text} at (1,0) size 99x13
-      text run at (1,0) width 99: "The quick brown..."
+    RenderText {#text} at (1,0) size 100x13
+      text run at (1,0) width 100: "The quick brown..."
 layer at (13,139) size 119x13
   RenderBlock {DIV} at (3,3) size 119x13
-    RenderText {#text} at (1,0) size 99x13
-      text run at (1,0) width 99: "The quick brown..."
+    RenderText {#text} at (1,0) size 100x13
+      text run at (1,0) width 100: "The quick brown..."

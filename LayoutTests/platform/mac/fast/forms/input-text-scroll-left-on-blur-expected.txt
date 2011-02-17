@@ -16,16 +16,16 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 784x36
           text run at (0,0) width 784: "Tests scrolling back to the beginning when a text field blurs. The first field should be scrolled to the left, the second and third"
           text run at (0,18) width 125: "scrolled to the right."
-layer at (13,13) size 119x13 scrollWidth 321
+layer at (13,13) size 119x13 scrollWidth 319
   RenderBlock {DIV} at (3,3) size 119x13
-    RenderText {#text} at (1,0) size 319x13
-      text run at (1,0) width 319: "this text field has a lot of text in it so that it needs to scroll"
-layer at (146,13) size 119x13 scrollX 201 scrollWidth 320
+    RenderText {#text} at (1,0) size 317x13
+      text run at (1,0) width 317: "this text field has a lot of text in it so that it needs to scroll"
+layer at (146,13) size 119x13 scrollX 199 scrollWidth 318
   RenderBlock {DIV} at (3,3) size 119x13
-    RenderText {#text} at (-201,0) size 319x13
-      text run at (-201,0) width 319: "this text field has a lot of text in it so that it needs to scroll"
-layer at (279,13) size 119x13 scrollX 201 scrollWidth 321
+    RenderText {#text} at (-198,0) size 317x13
+      text run at (-198,0) width 316: "this text field has a lot of text in it so that it needs to scroll"
+layer at (279,13) size 119x13 scrollX 198 scrollWidth 319
   RenderBlock {DIV} at (3,3) size 119x13
-    RenderText {#text} at (1,0) size 319x13
-      text run at (1,0) width 319: "this text field has a lot of text in it so that it needs to scroll"
+    RenderText {#text} at (1,0) size 317x13
+      text run at (1,0) width 317: "this text field has a lot of text in it so that it needs to scroll"
 caret: position 66 of child 0 {#text} of child 0 {DIV} of child 4 {INPUT} of body
