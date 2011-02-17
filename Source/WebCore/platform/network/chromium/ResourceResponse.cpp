@@ -39,7 +39,8 @@ PassOwnPtr<CrossThreadResourceResponseData> ResourceResponse::doPlatformCopyData
     data->m_wasAlternateProtocolAvailable = m_wasAlternateProtocolAvailable;
     data->m_wasFetchedViaProxy = m_wasFetchedViaProxy;
     data->m_responseTime = m_responseTime;
-    data->m_socketAddress = m_socketAddress;
+    data->m_remoteIPAddress = m_remoteIPAddress;
+    data->m_remotePort = m_remotePort;
     data->m_downloadFilePath = m_downloadFilePath;
     return data;
 }
@@ -55,7 +56,8 @@ void ResourceResponse::doPlatformAdopt(PassOwnPtr<CrossThreadResourceResponseDat
     m_wasAlternateProtocolAvailable = data->m_wasAlternateProtocolAvailable;
     m_wasFetchedViaProxy = data->m_wasFetchedViaProxy;
     m_responseTime = data->m_responseTime;
-    m_socketAddress = data->m_socketAddress;
+    m_remoteIPAddress = data->m_remoteIPAddress;
+    m_remotePort = data->m_remotePort;
     m_downloadFilePath = data->m_downloadFilePath;
 }
 

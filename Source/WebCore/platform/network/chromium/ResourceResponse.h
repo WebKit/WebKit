@@ -44,6 +44,7 @@ namespace WebCore {
             , m_wasAlternateProtocolAvailable(false)
             , m_wasFetchedViaProxy(false)
             , m_responseTime(0)
+            , m_remotePort(0)
         {
         }
 
@@ -57,6 +58,7 @@ namespace WebCore {
             , m_wasAlternateProtocolAvailable(false)
             , m_wasFetchedViaProxy(false)
             , m_responseTime(0)
+            , m_remotePort(0)
         {
         }
 
@@ -96,8 +98,11 @@ namespace WebCore {
         double responseTime() const { return m_responseTime; }
         void setResponseTime(double responseTime) { m_responseTime = responseTime; }
 
-        const String& socketAddress() const { return m_socketAddress; }
-        void setSocketAddress(const String& value) { m_socketAddress = value; }
+        const String& remoteIPAddress() const { return m_remoteIPAddress; }
+        void setRemoteIPAddress(const String& value) { m_remoteIPAddress = value; }
+
+        unsigned short remotePort() const { return m_remotePort; }
+        void setRemotePort(unsigned short value) { m_remotePort = value; }
 
         const String& downloadFilePath() const { return m_downloadFilePath; }
         void setDownloadFilePath(const String& downloadFilePath) { m_downloadFilePath = downloadFilePath; }
@@ -150,9 +155,11 @@ namespace WebCore {
         // responses, this time could be "far" in the past.
         double m_responseTime;
 
-        // Remote address of the socket which fetched this resource, for presenting
-        // to inquisitive users.  Can be "ipv4:port", "[ipv6]:port", or empty.
-        String m_socketAddress;
+        // Remote IP address of the socket which fetched this resource.
+        String m_remoteIPAddress;
+
+        // Remote port number of the socket which fetched this resource.
+        unsigned short m_remotePort;
 
         // The path to the downloaded file.
         String m_downloadFilePath;
@@ -168,7 +175,8 @@ namespace WebCore {
         bool m_wasAlternateProtocolAvailable;
         bool m_wasFetchedViaProxy;
         double m_responseTime;
-        String m_socketAddress;
+        String m_remoteIPAddress;
+        unsigned short m_remotePort;
         String m_downloadFilePath;
     };
 
