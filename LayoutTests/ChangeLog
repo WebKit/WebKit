@@ -1,3 +1,9 @@
+2011-02-17  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, fix media-file.js path after r78778.
+
+        * media/video-display-aspect-ratio.html:
+
 2011-02-16  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.
