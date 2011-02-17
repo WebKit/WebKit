@@ -80,10 +80,6 @@ IntRect Widget::frameRect() const
 
 void Widget::setFrameRect(const IntRect& rect)
 {
-    // Take a reference to this Widget, because calling functions of the PlatformWidget can invoke arbitrary
-    // code, which can deref it.
-    RefPtr<Widget> protectedThis(this);
-
     if (PlatformWidget widget = platformWidget())
         widget->SetSize(rect);
     

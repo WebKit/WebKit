@@ -1,3 +1,16 @@
+2011-02-17  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fixes after recent changes.
+
+        * dom/ScriptedAnimationController.h:
+        * platform/graphics/wx/FontWx.cpp:
+        (WebCore::Font::drawComplexText):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::drawLineForText):
+        (WebCore::GraphicsContext::drawLineForTextChecking):
+        * platform/wx/WidgetWx.cpp:
+        (WebCore::Widget::setFrameRect):
+
 2011-02-16  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Brady Eidson.

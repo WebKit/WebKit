@@ -549,3 +549,8 @@ void LayoutTestController::setSerializeHTTPLoads(bool)
 {
     // FIXME: Implement.
 }
+
+void LayoutTestController::setMinimumTimerInterval(double interval) {
+
+}
+    

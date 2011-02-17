@@ -139,7 +139,7 @@ void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const F
         controller.advance(run.length());
         startX += controller.runWidthSoFar() - afterWidth;
 #else
-        startX += controller.totalWidth() + controller.finalRoundingWidth() - afterWidth;
+        startX += controller.totalWidth() - afterWidth;
         for (int i = 0, end = glyphBuffer.size() - 1; i < glyphBuffer.size() / 2; ++i, --end)
             glyphBuffer.swap(i, end);
 #endif

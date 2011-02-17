@@ -336,17 +336,17 @@ void GraphicsContext::clipPath(const Path&, WindRule)
     notImplemented();
 }
 
-void GraphicsContext::drawLineForText(const IntPoint& origin, int width, bool printing)
+void GraphicsContext::drawLineForText(const FloatPoint& origin, float width, bool printing)
 {
     if (paintingDisabled())
         return;
 
-    IntPoint endPoint = origin + IntSize(width, 0);
+    FloatPoint endPoint = origin + FloatSize(width, 0);
     m_data->context->SetPen(wxPen(strokeColor(), strokeThickness(), wxSOLID));
     m_data->context->DrawLine(origin.x(), origin.y(), endPoint.x(), endPoint.y());
 }
 
-void GraphicsContext::drawLineForTextChecking(const IntPoint& origin, int width, TextCheckingLineStyle style)
+void GraphicsContext::drawLineForTextChecking(const FloatPoint& origin, float width, TextCheckingLineStyle style)
 {
     switch (style) {
     case TextCheckingSpellingLineStyle:

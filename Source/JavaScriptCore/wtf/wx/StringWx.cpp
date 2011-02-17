@@ -39,9 +39,10 @@ String::String(const wxString& wxstr)
     #error "This code only works in Unicode build of wxWidgets"
 #endif
 
-#if SIZEOF_WCHAR_T == U_SIZEOF_UCHAR
+#if SIZEOF_WCHAR_T == 2
 
-    m_impl = StringImpl::create(wxstr.wc_str(), wxstr.length());
+    const UChar* str = wxstr.wc_str(); 
+    const size_t len = wxstr.length(); 
 
 #else // SIZEOF_WCHAR_T == 4
 
@@ -58,13 +59,18 @@ String::String(const wxString& wxstr)
 #endif
     size_t wideLength = wxstr.length();
 
-    UChar* data;
     wxMBConvUTF16 conv;
-    unsigned utf16Length = conv.FromWChar(0, 0, wideString, wideLength);
-    m_impl = StringImpl::createUninitialized(utf16Length, data);
-    conv.FromWChar((char*)data, utf16Length, wideString, wideLength);
 
-#endif // SIZEOF_WCHAR_T == 4
+    const size_t utf16bufLen = conv.FromWChar(0, 0, wideString, wideLength); 
+    wxCharBuffer utf16buf(utf16bufLen); 
+
+    const UChar* str = (const UChar*)utf16buf.data(); 
+    size_t len = conv.FromWChar(utf16buf.data(), utf16bufLen, wideString, wideLength) / 2; 
+
+#endif // SIZEOF_WCHAR_T == 2
+
+    m_impl = StringImpl::create(str, len);
+
 }
 
 String::operator wxString() const

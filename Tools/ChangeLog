@@ -1,3 +1,11 @@
+2011-02-17  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fixes after recent changes.
+
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::setMinimumTimerInterval):
+        * wx/build/settings.py:
+
 2011-02-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Andreas Kling.

@@ -227,6 +227,7 @@ def build(bld):
             wk_includes.append(fullpath)
 
     wk_includes.append('Source')
+    wk_includes.append(os.path.join(jscore_dir, 'collector', 'handles'))
     wk_includes.append(os.path.join(jscore_dir, 'wtf', 'unicode'))
     wk_includes.append(os.path.join(jscore_dir, 'wtf', 'unicode', 'icu'))
     wk_includes += common_includes + full_dirs

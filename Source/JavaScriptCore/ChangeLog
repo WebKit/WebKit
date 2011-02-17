@@ -1,3 +1,10 @@
+2011-02-17  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Revert incorrect blind fix and restore previous working code.
+
+        * wtf/wx/StringWx.cpp:
+        (WTF::String::String):
+
 2011-02-16  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.

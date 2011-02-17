@@ -1,3 +1,9 @@
+2011-02-17  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix after introduction of JavaScriptCore/collector.
+        
+        * wscript:
+
 2011-02-17  Kristian Amlie  <kristian.amlie@nokia.com>
 
         Reviewed by Laszlo Gombos.

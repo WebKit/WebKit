@@ -26,6 +26,7 @@
 #ifndef ScriptedAnimationController_h
 #define ScriptedAnimationController_h
 
+#if ENABLE(REQUEST_ANIMATION_FRAME)
 #include "DOMTimeStamp.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
@@ -66,6 +67,8 @@ private:
 };
 
 }
+
+#endif // ENABLE(REQUEST_ANIMATION_FRAME)
 
 #endif // ScriptedAnimationController_h
 

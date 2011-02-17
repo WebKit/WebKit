@@ -612,7 +612,7 @@ bool FrameLoaderClientWx::canCachePage() const
 void FrameLoaderClientWx::setMainDocumentError(WebCore::DocumentLoader* loader, const WebCore::ResourceError&)
 {
     if (m_firstData) {
-        loader->frameLoader()->writer()->setEncoding(m_response.textEncodingName(), false);
+        loader->writer()->setEncoding(m_response.textEncodingName(), false);
         m_firstData = false;
     }
 }
@@ -737,8 +737,7 @@ void FrameLoaderClientWx::dispatchDidFinishLoading(DocumentLoader*, unsigned lon
 void FrameLoaderClientWx::dispatchDidFailLoading(DocumentLoader* loader, unsigned long, const ResourceError&)
 {
     if (m_firstData) {
-        FrameLoader* fl = loader->frameLoader();
-        fl->writer()->setEncoding(m_response.textEncodingName(), false);
+        loader->writer()->setEncoding(m_response.textEncodingName(), false);
         m_firstData = false;
     }
     if (m_webView) {
