@@ -3464,7 +3464,4 @@ BUGV8_1168 : fast/js/mozilla/strict/this-for-function-expression-recursion.html 
 
 BUGWK54634 SKIP : media/video-controls-in-media-document.html = TIMEOUT
 
-BUGWK54644 DEBUG :  storage/indexeddb/set_version_blocked.html = CRASH
-BUGWK54644 DEBUG :  storage/indexeddb/set_version_queue.html = CRASH
-
 BUGWK54659 DEBUG : inspector/debugger/debug-inlined-scripts.html = CRASH

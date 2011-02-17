@@ -1,3 +1,14 @@
+2011-02-17  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed test expectations update.
+
+        [Chromium] set_version_blocked.html and set_version_queue.html started crashing on Chromium dbg bots after WK roll 78748:78777
+        https://bugs.webkit.org/show_bug.cgi?id=54644
+
+        Re-enabling tests now that they pass again.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-17  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Jeremy Orlow.
