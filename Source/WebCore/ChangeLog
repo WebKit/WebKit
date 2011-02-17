@@ -1,3 +1,18 @@
+2011-02-17  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        'ex' coordinates fail, when SVGFont doesn't provide an explicit xHeight attribute
+        https://bugs.webkit.org/show_bug.cgi?id=54672
+
+        Measure the xHeight from the 'x' glyph of a SVGFont, if the font itself doesn't explicitely specify an x-height attribute.
+        Fixes the modern version of SVG 1.1 2nd Edition coords-units-03-b.svg.
+
+        Test: svg/W3C-SVG-1.1-SE/coords-units-03-b.svg
+
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::SimpleFontData):
+
 2011-02-10  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Adam Roben.

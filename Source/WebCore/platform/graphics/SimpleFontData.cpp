@@ -83,14 +83,21 @@ SimpleFontData::SimpleFontData(PassOwnPtr<SVGFontData> svgFontData, int size, bo
     float ascent = svgFontFaceElement->ascent() * scale;
     float descent = svgFontFaceElement->descent() * scale;
     float lineGap = 0.1f * size;
+
+    SVGFontElement* associatedFontElement = svgFontFaceElement->associatedFontElement();
+    if (!xHeight) {    
+        // Fallback if x_heightAttr is not specified for the font element.
+        Vector<SVGGlyphIdentifier> letterXGlyphs;
+        associatedFontElement->getGlyphIdentifiersForString(String("x", 1), letterXGlyphs);
+        xHeight = letterXGlyphs.isEmpty() ? 2 * ascent / 3 : letterXGlyphs.first().horizontalAdvanceX * scale;
+    }
+
     m_fontMetrics.setUnitsPerEm(unitsPerEm);
     m_fontMetrics.setAscent(ascent);
     m_fontMetrics.setDescent(descent);
     m_fontMetrics.setLineGap(lineGap);
     m_fontMetrics.setLineSpacing(roundf(ascent) + roundf(descent) + roundf(lineGap));
     m_fontMetrics.setXHeight(xHeight);
-
-    SVGFontElement* associatedFontElement = svgFontFaceElement->associatedFontElement();
 
     Vector<SVGGlyphIdentifier> spaceGlyphs;
     associatedFontElement->getGlyphIdentifiersForString(String(" ", 1), spaceGlyphs);
