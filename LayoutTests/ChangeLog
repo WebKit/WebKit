@@ -1,3 +1,21 @@
+2011-02-16  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: show all inlined scripts from single document in the same source frame.
+        https://bugs.webkit.org/show_bug.cgi?id=54544
+
+        Currently when debugging synchronously executed inlined scripts each script is shown in it's own source frame ("example.html:24").
+        We should show such scripts in the same source frame "example.html" with <script></script> framing.
+
+        * http/tests/inspector/debugger-test.js:
+        (initialize_DebuggerTest.InspectorTest._pausedScript):
+        (initialize_DebuggerTest.InspectorTest._resumedScript):
+        * inspector/debugger/debug-inlined-scripts-expected.txt: Added.
+        * inspector/debugger/debug-inlined-scripts.html: Added.
+        * inspector/debugger/debugger-breakpoints-not-activated-on-reload.html:
+        * inspector/debugger/debugger-pause-on-breakpoint.html:
+
 2011-02-17  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

@@ -21,10 +21,10 @@ var test = function()
         InspectorTest.showScriptSource(testName, step2);
     }
 
-    function step2()
+    function step2(sourceFrame)
     {
         InspectorTest.addResult("Main resource was shown.");
-        InspectorTest.setBreakpointInVisibleView(8, "", true);
+        sourceFrame._setBreakpoint(8, "", true);
         WebInspector.panels.scripts.toggleBreakpointsButton.element.click();
         InspectorTest.reloadPage(step4);
     }

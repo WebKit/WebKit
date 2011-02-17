@@ -1,0 +1,95 @@
+<html>
+<head>
+  <script>  function f1() { return 0; }; f1();  </script>     <script>function f2() { return 0; }</script><script>
+function f3() { return 0; }
+</script>
+
+<script>
+function f4()
+{
+    return 0;
+}
+f4();
+</script>
+
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+
+<script>
+
+var test = function()
+{
+    InspectorTest.startDebuggerTest(step1, true);
+
+    function step1()
+    {
+        InspectorTest.showScriptSource("debug-inlined-scripts.html", step2);
+    }
+
+    function step2(sourceFrame)
+    {
+        InspectorTest.addResult("Script source was shown.");
+        WebInspector.panels.scripts._resourceForURL = function() { return new WebInspector.Resource(); };
+        sourceFrame._setBreakpoint(2, "", true);
+        sourceFrame._setBreakpoint(9, "", true);
+        InspectorTest.waitUntilPaused(step3);
+        InspectorTest.reloadPage(InspectorTest.completeDebuggerTest.bind(InspectorTest));
+    }
+
+    function step3(callFrames)
+    {
+        InspectorTest.addResult("Script execution paused.");
+        InspectorTest.captureStackTrace(callFrames);
+        InspectorTest.showScriptSource("debug-inlined-scripts.html", step4);
+    }
+
+    function step4(sourceFrame)
+    {
+        dumpSourceFrameContents(sourceFrame);
+        InspectorTest.resumeExecution(InspectorTest.waitUntilPaused.bind(null, step5));
+    }
+
+    function step5(callFrames)
+    {
+        if (callFrames[0].line !== 9) {
+            InspectorTest.resumeExecution(InspectorTest.waitUntilPaused.bind(null, step5));
+            return;
+        }
+        InspectorTest.addResult("Script execution paused.");
+        InspectorTest.captureStackTrace(callFrames);
+        InspectorTest.showScriptSource("debug-inlined-scripts.html", step6);
+    }
+
+    function step6(sourceFrame)
+    {
+        dumpSourceFrameContents(sourceFrame);
+        InspectorTest.resumeExecution(InspectorTest.waitUntilPaused.bind(null, step7));
+    }
+
+    function step7()
+    {
+        InspectorTest.resumeExecution(InspectorTest.waitUntilPaused.bind(null, step5));
+    }
+
+    function dumpSourceFrameContents(sourceFrame)
+    {
+        InspectorTest.addResult("==Source frame contents start==");
+        var textModel = sourceFrame._textModel;
+        for (var i = 0; i < textModel.linesCount; ++i)
+            InspectorTest.addResult(textModel.line(i));
+        InspectorTest.addResult("==Source frame contents end==");
+    }
+}
+
+</script>
+
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that all inlined scripts from the same document are shown in the same source frame with html script tags.
+<a href="https://bugs.webkit.org/show_bug.cgi?id=54544">Bug 54544.</a>
+</p>
+
+</body>
+</html>

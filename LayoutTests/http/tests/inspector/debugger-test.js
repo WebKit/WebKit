@@ -1,7 +1,8 @@
 var initialize_DebuggerTest = function() {
 
-InspectorTest.startDebuggerTest = function(callback)
+InspectorTest.startDebuggerTest = function(callback, quiet)
 {
+    InspectorTest._quiet = quiet;
     WebInspector.showPanel("scripts");
 
     if (WebInspector.panels.scripts._debuggerEnabled)
@@ -90,14 +91,10 @@ InspectorTest.captureStackTrace = function(callFrames)
     }
 };
 
-InspectorTest.setBreakpointInVisibleView = function(lineNumber, condition, enabled)
-{
-    WebInspector.currentPanel.visibleView._setBreakpoint(lineNumber, condition, enabled);
-}
-
 InspectorTest._pausedScript = function(details)
 {
-    InspectorTest.addResult("Script execution paused.");
+    if (!InspectorTest._quiet)
+        InspectorTest.addResult("Script execution paused.");
     InspectorTest._callFrames = details.callFrames;
     if (InspectorTest._waitUntilPausedCallback) {
         var callback = InspectorTest._waitUntilPausedCallback;
@@ -108,7 +105,8 @@ InspectorTest._pausedScript = function(details)
 
 InspectorTest._resumedScript = function()
 {
-    InspectorTest.addResult("Script execution resumed.");
+    if (!InspectorTest._quiet)
+        InspectorTest.addResult("Script execution resumed.");
     delete InspectorTest._callFrames;
     if (InspectorTest._waitUntilResumedCallback) {
         var callback = InspectorTest._waitUntilResumedCallback;

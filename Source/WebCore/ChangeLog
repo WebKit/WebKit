@@ -1,3 +1,32 @@
+2011-02-16  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: show all inlined scripts from single document in the same source frame.
+        https://bugs.webkit.org/show_bug.cgi?id=54544
+
+        Currently when debugging synchronously executed inlined scripts each script is shown in it's own source frame ("example.html:24").
+        We should show such scripts in the same source frame "example.html" with <script></script> framing.
+
+        Test: inspector/debugger/debug-inlined-scripts.html
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._scriptSourceChanged):
+        (WebInspector.ScriptsPanel.prototype._addScript):
+        (WebInspector.ScriptsPanel.prototype._resourceForURL):
+        (WebInspector.ScriptsPanel.prototype._resourceLoadingFinished):
+        (WebInspector.ScriptsPanel.prototype.addConsoleMessage):
+        (WebInspector.ScriptsPanel.prototype.clearConsoleMessages):
+        (WebInspector.ScriptsPanel.prototype.reset):
+        (WebInspector.ScriptsPanel.prototype._sourceFrameForResource):
+        (WebInspector.ScriptsPanel.prototype._sourceFrameForScript):
+        (WebInspector.ScriptsPanel.prototype._recreateSourceFrame):
+        (WebInspector.ScriptsPanel.prototype._showScriptOrResource):
+        (WebInspector.ScriptsPanel.prototype._addScriptToFilesMenu.optionCompare):
+        (WebInspector.ScriptsPanel.prototype._addScriptToFilesMenu):
+        (WebInspector.SourceFrameContentProviderForScript.prototype.requestContent):
+        (WebInspector.SourceFrameContentProviderForScript.prototype._buildSource):
+
 2011-02-17  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

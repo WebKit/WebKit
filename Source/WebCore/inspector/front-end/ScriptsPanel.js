@@ -255,23 +255,14 @@ WebInspector.ScriptsPanel.prototype = {
         var sourceID = event.data.sourceID;
         var oldSource = event.data.oldSource;
 
-        var oldView, newView;
         var script = WebInspector.debuggerModel.scriptForSourceID(sourceID);
         if (script.resource) {
-            oldView = this._urlToSourceFrame[script.resource.url];
-            delete this._urlToSourceFrame[script.resource.url];
-            newView = this._sourceFrameForResource(script.resource);
             var revertHandle = WebInspector.debuggerModel.editScriptSource.bind(WebInspector.debuggerModel, sourceID, oldSource);
             script.resource.setContent(script.source, revertHandle);
-        } else {
-            var oldView = script._sourceFrame;
-            delete script._sourceFrame;
-            newView = this._sourceFrameForScript(script);
         }
-        newView.scrollTop = oldView.scrollTop;
 
-        if (this.visibleView === oldView)
-            this.visibleView = newView;
+        var sourceName = script.sourceURL || script.sourceID;
+        this._recreateSourceFrame(sourceName, script.resource || script);
 
         var callFrames = WebInspector.debuggerModel.callFrames;
         if (callFrames.length)
@@ -280,11 +271,17 @@ WebInspector.ScriptsPanel.prototype = {
 
     _addScript: function(script)
     {
-        var resource = WebInspector.networkManager.inflightResourceForURL(script.sourceURL) || WebInspector.resourceForURL(script.sourceURL);
+        if (!script.sourceURL) {
+            // Anonymous scripts are shown only when stepping.
+            return;
+        }
+
+        var resource = this._resourceForURL(script.sourceURL);
         if (resource) {
             if (resource.finished) {
                 // Resource is finished, bind the script right away.
-                script.resource = resource;
+                resource._scriptsPendingResourceLoad = [script];
+                this._resourceLoadingFinished({ target: resource });
             } else {
                 // Resource is not finished, bind the script later.
                 if (!resource._scriptsPendingResourceLoad) {
@@ -292,40 +289,43 @@ WebInspector.ScriptsPanel.prototype = {
                     resource.addEventListener("finished", this._resourceLoadingFinished, this);
                 }
                 resource._scriptsPendingResourceLoad.push(script);
+
+                // Source frame content is outdated since we have new script parsed.
+                this._recreateSourceFrame(script.sourceURL, script.resource || script);
             }
+        } else {
+            // This is a dynamic script with "//@ sourceURL=" comment.
+            this._addScriptToFilesMenu(script);
         }
-        this._addScriptToFilesMenu(script);
+    },
+
+    _resourceForURL: function(url)
+    {
+        return WebInspector.networkManager.inflightResourceForURL(url) || WebInspector.resourceForURL(url);
     },
 
     _resourceLoadingFinished: function(e)
     {
         var resource = e.target;
 
-        var visible = false;
-        var select = this.filesSelectElement;
         for (var i = 0; i < resource._scriptsPendingResourceLoad.length; ++i) {
             // Bind script to resource.
             var script = resource._scriptsPendingResourceLoad[i];
             script.resource = resource;
-
-            if (select.options[select.selectedIndex] === script.filesSelectOption)
-                visible = true;
-
-            // Remove script from the files list.
-            script.filesSelectOption.parentElement.removeChild(script.filesSelectOption);
         }
+
+        // Recreate source frame to show resource content.
+        this._recreateSourceFrame(resource.url, resource);
+
         // Adding first script will add resource.
         this._addScriptToFilesMenu(resource._scriptsPendingResourceLoad[0]);
         delete resource._scriptsPendingResourceLoad;
-
-        if (visible)
-            this._showScriptOrResource(resource, { initialLoad: true });
     },
 
     addConsoleMessage: function(message)
     {
         this._messages.push(message);
-        var sourceFrame = this._urlToSourceFrame[message.url];
+        var sourceFrame = this._sourceNameToSourceFrame[message.url];
         if (sourceFrame)
             sourceFrame.addMessage(message);
     },
@@ -333,8 +333,8 @@ WebInspector.ScriptsPanel.prototype = {
     clearConsoleMessages: function()
     {
         this._messages = [];
-        for (var url in this._urlToSourceFrame)
-            this._urlToSourceFrame[url].clearMessages();
+        for (var url in this._sourceNameToSourceFrame)
+            this._sourceNameToSourceFrame[url].clearMessages();
     },
 
     selectedCallFrameId: function()
@@ -425,9 +425,9 @@ WebInspector.ScriptsPanel.prototype = {
         this._currentBackForwardIndex = -1;
         this._updateBackAndForwardButtons();
 
-        this._urlToSourceFrame = {};
+        this._sourceNameToSourceFrame = {};
+        this._sourceNameToFilesSelectOption = {};
         this._messages = [];
-        this._resourceForURLInFilesSelect = {};
         this.filesSelectElement.removeChildren();
         this.functionsSelectElement.removeChildren();
         this.viewsContainerElement.removeChildren();
@@ -509,9 +509,10 @@ WebInspector.ScriptsPanel.prototype = {
 
     _sourceFrameForResource: function(resource)
     {
-        var sourceFrame = this._urlToSourceFrame[resource.url];
+        var sourceFrame = this._sourceNameToSourceFrame[resource.url];
         if (sourceFrame)
             return sourceFrame;
+
         var contentProvider = new WebInspector.SourceFrameContentProviderForResource(resource);
         var isScript = resource.type === WebInspector.Resource.Type.Script;
         sourceFrame = new WebInspector.SourceFrame(contentProvider, resource.url, isScript);
@@ -520,17 +521,36 @@ WebInspector.ScriptsPanel.prototype = {
             if (this._messages[i].url === resource.url)
                 sourceFrame.addMessage(message);
         }
-        this._urlToSourceFrame[resource.url] = sourceFrame;
+        this._sourceNameToSourceFrame[resource.url] = sourceFrame;
         return sourceFrame;
     },
 
     _sourceFrameForScript: function(script)
     {
-        if (script._sourceFrame)
-            return script._sourceFrame;
+        var sourceName = script.sourceURL || script.sourceID;
+        var sourceFrame = this._sourceNameToSourceFrame[sourceName];
+        if (sourceFrame)
+            return sourceFrame;
+
         var contentProvider = new WebInspector.SourceFrameContentProviderForScript(script);
-        script._sourceFrame = new WebInspector.SourceFrame(contentProvider, script.sourceURL, true);
-        return script._sourceFrame;
+        var isScript = !script.lineOffset && !script.columnOffset;
+        sourceFrame = new WebInspector.SourceFrame(contentProvider, script.sourceURL, isScript);
+        this._sourceNameToSourceFrame[sourceName] = sourceFrame;
+        return sourceFrame;
+    },
+
+    _recreateSourceFrame: function(sourceName, scriptOrResource)
+    {
+        var oldSourceFrame = this._sourceNameToSourceFrame[sourceName];
+        if (!oldSourceFrame)
+            return;
+        delete this._sourceNameToSourceFrame[sourceName];
+        if (this.visibleView !== oldSourceFrame)
+            return;
+
+        var newSourceFrame = this._sourceFrameForScriptOrResource(scriptOrResource)
+        newSourceFrame.scrollTop = oldSourceFrame.scrollTop;
+        this.visibleView = newSourceFrame;
     },
 
     _showScriptOrResource: function(scriptOrResource, options)
@@ -579,55 +599,42 @@ WebInspector.ScriptsPanel.prototype = {
 
         var option;
         if (scriptOrResource instanceof WebInspector.Script) {
-            option = scriptOrResource.filesSelectOption;
+            var sourceName = scriptOrResource.sourceURL || scriptOrResource.sourceID;
+            option = this._sourceNameToFilesSelectOption[sourceName];
 
-            // hasn't been added yet - happens for stepping in evals,
-            // so use the force option to force the script into the menu.
+            // Hasn't been added yet - happens for stepping in inline scripts and evals.
             if (!option) {
-                this._addScriptToFilesMenu(scriptOrResource, true);
-                option = scriptOrResource.filesSelectOption;
+                this._addScriptToFilesMenu(scriptOrResource);
+                option = this._sourceNameToFilesSelectOption[sourceName];
             }
 
             console.assert(option);
         } else
-            option = scriptOrResource.filesSelectOption;
+            option = this._sourceNameToFilesSelectOption[scriptOrResource.url];
 
         if (option)
             this.filesSelectElement.selectedIndex = option.index;
     },
 
-    _addScriptToFilesMenu: function(script, force)
+    _addScriptToFilesMenu: function(script)
     {
-        if (!script.sourceURL && !force)
+        var sourceName = script.sourceURL || script.sourceID;
+        if (sourceName in this._sourceNameToFilesSelectOption)
             return;
-
-        if (script.resource) {
-            if (this._resourceForURLInFilesSelect[script.resource.url])
-                return;
-            this._resourceForURLInFilesSelect[script.resource.url] = script.resource;
-        }
 
         var displayName = script.sourceURL ? WebInspector.displayNameForURL(script.sourceURL) : WebInspector.UIString("(program)");
 
         var select = this.filesSelectElement;
         var option = document.createElement("option");
         option.representedObject = script.resource || script;
-        option.url = displayName;
-        option.startingLine = script.startingLine;
-        option.text = script.resource || script.startingLine === 1 ? displayName : String.sprintf("%s:%d", displayName, script.startingLine);
+        option.text = displayName;
+        this._sourceNameToFilesSelectOption[sourceName] = option;
 
         function optionCompare(a, b)
         {
-            if (a.url < b.url)
-                return -1;
-            else if (a.url > b.url)
-                return 1;
-
-            if (typeof a.startingLine !== "number")
-                return -1;
-            if (typeof b.startingLine !== "number")
-                return -1;
-            return a.startingLine - b.startingLine;
+            if (a.text === b.text)
+                return 0;
+            return a.text < b.text ? -1 : 1;
         }
 
         var insertionIndex = insertionIndexForObjectInListSortedByFunction(option, select.childNodes, optionCompare);
@@ -635,11 +642,6 @@ WebInspector.ScriptsPanel.prototype = {
             select.appendChild(option);
         else
             select.insertBefore(option, select.childNodes.item(insertionIndex));
-
-        if (script.resource)
-            script.resource.filesSelectOption = option;
-        else
-            script.filesSelectOption = option;
 
         if (select.options[select.selectedIndex] === option) {
             // Call _showScriptOrResource if the option we just appended ended up being selected.
@@ -649,18 +651,12 @@ WebInspector.ScriptsPanel.prototype = {
             // If not first item, check to see if this was the last viewed
             var url = option.representedObject.url || option.representedObject.sourceURL;
             var lastURL = WebInspector.settings.lastViewedScriptFile;
-            if (url && url === lastURL) {
-                // For resources containing multiple <script> tags, we first report them separately and
-                // then glue them all together. They all share url and there is no need to show them all one
-                // by one.
-                var isResource = !!option.representedObject.url;
-                if (isResource || !this.visibleView || !this.visibleView.script || this.visibleView.script.sourceURL !== url)
-                    this._showScriptOrResource(option.representedObject, {initialLoad: true});
-            }
+            if (url && url === lastURL)
+                this._showScriptOrResource(option.representedObject, {initialLoad: true});
         }
 
         if (script.worldType === WebInspector.Script.WorldType.EXTENSIONS_WORLD)
-            script.filesSelectOption.addStyleClass("extension-script");
+            option.addStyleClass("extension-script");
     },
 
     _clearCurrentExecutionLine: function()
@@ -1062,21 +1058,74 @@ WebInspector.SourceFrameContentProviderForScript = function(script)
 WebInspector.SourceFrameContentProviderForScript.prototype = {
     requestContent: function(callback)
     {
-        function didRequestSource(source)
-        {
-            if (source) {
-                var prefix = "";
-                for (var i = 0; i < this._script.lineOffset; ++i)
-                    prefix += "\n";
-                source = prefix + source;
-            } else
-                source = WebInspector.UIString("<source is not available>");
+        var scripts = [this._script];
+        if (this._script.sourceURL)
+            scripts = WebInspector.debuggerModel.scriptsForURL(this._script.sourceURL);
+        scripts.sort(function(x, y) { return x.lineOffset - y.lineOffset || x.columnOffset - y.columnOffset; });
 
+        var scriptsLeft = scripts.length;
+        var sources = [];
+        function didRequestSource(index, source)
+        {
+            sources[index] = source;
+            if (--scriptsLeft)
+                return;
+            var result = this._buildSource(scripts, sources);
             var sourceMapping = new WebInspector.IdenticalSourceMapping();
-            var scriptRanges = WebInspector.ScriptFormatter.findScriptRanges(source.lineEndings(), [this._script]);
-            callback("text/javascript", new WebInspector.SourceFrameContent(source, sourceMapping, scriptRanges));
+            callback(result.mimeType, new WebInspector.SourceFrameContent(result.source, sourceMapping, result.scriptRanges));
+
         }
-        this._script.requestSource(didRequestSource.bind(this));
+        for (var i = 0; i < scripts.length; ++i)
+            scripts[i].requestSource(didRequestSource.bind(this, i));
+    },
+
+    _buildSource: function(scripts, sources)
+    {
+        var source = "";
+        var lineNumber = 0;
+        var columnNumber = 0;
+        var scriptRanges = [];
+        function appendChunk(chunk, isScript)
+        {
+            var start = { lineNumber: lineNumber, columnNumber: columnNumber };
+            source += chunk;
+            var lineEndings = chunk.lineEndings();
+            var lineCount = lineEndings.length;
+            if (lineCount === 1)
+                columnNumber += chunk.length;
+            else {
+                lineNumber += lineCount - 1;
+                columnNumber = lineEndings[lineCount - 1] - lineEndings[lineCount - 2] - 1;
+            }
+            var end = { lineNumber: lineNumber, columnNumber: columnNumber };
+            if (isScript)
+                scriptRanges.push({ start: start, end: end });
+        }
+
+        var mimeType;
+        if (scripts.length === 1 && !scripts[0].lineOffset && !scripts[0].columnOffset) {
+            // Single script source.
+            mimeType = "text/javascript";
+            appendChunk(sources[0], true);
+        } else {
+            // Scripts inlined in html document.
+            mimeType = "text/html";
+            var scriptOpenTag = "<script>";
+            var scriptCloseTag = "</script>";
+            for (var i = 0; i < scripts.length; ++i) {
+                // Fill the gap with whitespace characters.
+                while (lineNumber < scripts[i].lineOffset)
+                    appendChunk("\n");
+                while (columnNumber < scripts[i].columnOffset - scriptOpenTag.length)
+                    appendChunk(" ");
+
+                // Add script tag.
+                appendChunk(scriptOpenTag);
+                appendChunk(sources[i], true);
+                appendChunk(scriptCloseTag);
+            }
+        }
+        return { mimeType: mimeType, source: source, scriptRanges: scriptRanges };
     }
 }
 

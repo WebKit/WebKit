@@ -19,10 +19,10 @@ var test = function()
         InspectorTest.showScriptSource("debugger-pause-on-breakpoint.html", step2);
     }
 
-    function step2()
+    function step2(sourceFrame)
     {
         InspectorTest.addResult("Script source was shown.");
-        InspectorTest.setBreakpointInVisibleView(8, "", true);
+        sourceFrame._setBreakpoint(8, "", true);
         InspectorTest.runTestFunctionAndWaitUntilPaused(step3);
     }
 
