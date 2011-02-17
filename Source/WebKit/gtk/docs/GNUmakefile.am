@@ -42,8 +42,8 @@ FIXXREF_OPTIONS=
 # Used for dependencies. The docs will be rebuilt if any of these change.
 # e.g. HFILE_GLOB=$(top_srcdir)/gtk/*.h
 # e.g. CFILE_GLOB=$(top_srcdir)/gtk/*.c
-HFILE_GLOB=$(top_srcdir)/WebKit/gtk/webkit/*.h
-CFILE_GLOB=$(top_srcdir)/WebKit/gtk/webkit/*.cpp
+HFILE_GLOB=$(top_srcdir)/Source/WebKit/gtk/webkit/*.h
+CFILE_GLOB=$(top_srcdir)/Source/WebKit/gtk/webkit/*.cpp
 
 # Header files to ignore when scanning.
 # e.g. IGNORE_HFILES=gtkdebug.h gtkintl.h
@@ -68,17 +68,17 @@ expand_content_files=
 # e.g. INCLUDES=-I$(top_srcdir) -I$(top_builddir) $(GTK_DEBUG_FLAGS)
 # e.g. GTKDOC_LIBS=$(top_builddir)/gtk/$(gtktargetlib)
 INCLUDES= \
-	-I$(top_srcdir)/WebKit/gtk \
-	-I$(top_builddir)/WebKit/gtk \
+	-I$(top_srcdir)/Source/WebKit/gtk \
+	-I$(top_builddir)/Source/WebKit/gtk \
 	$(global_cppflags) \
 	$(global_cflags) \
-	-I$(top_srcdir) \
+	-I$(top_srcdir)/Source \
 	-I$(top_srcdir)/Source/JavaScriptCore \
 	-I$(top_srcdir)/Source/JavaScriptCore/ForwardingHeaders \
 	-I$(top_srcdir)/Source/JavaScriptCore/parser \
 	-I$(top_srcdir)/Source/JavaScriptCore/wtf \
 	-I$(top_builddir)/DerivedSources \
-	-I$(top_srcdir)/WebCore/platform/network/soup/cache \
+	-I$(top_srcdir)/Source/WebCore/platform/network/soup/cache \
 	$(GLOBALDEPS_CFLAGS) \
 	$(CAIRO_CFLAGS) \
 	$(GLIB_CFLAGS) \
