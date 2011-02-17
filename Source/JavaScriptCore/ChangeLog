@@ -1,1 +1,26 @@
+2011-02-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Intermittent crashes beneath MarkStack::drain
+        https://bugs.webkit.org/show_bug.cgi?id=54614
+        <rdar://problem/8971070>
+        
+        The crashes were caused by a GC happening after the global object's
+        property table had grown (due to compilation), but before the properties
+        had been fully initialized by program execution.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator): Explicitly resize the global
+        object's register storage immediately, without waiting for program
+        execution to do it for us. This ensures that the global object's count
+        of global variables is consistent with the size of its global variable
+        storage at all times, and it ensures that all global variables are
+        properly initialized from the get-go.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::resizeRegisters):
+        * runtime/JSGlobalObject.h: Added a helper function for growing the
+        global object's register storage, and initializing new registers.
+
 == Rolled over to ChangeLog-2011-02-16 ==

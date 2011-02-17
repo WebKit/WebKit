@@ -260,6 +260,8 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, const ScopeChain&
         // Shift new symbols so they get stored prior to existing symbols.
         m_nextGlobalIndex -= symbolTable->size();
 
+        size_t oldSymbolTableSize = symbolTable->size();
+
         for (size_t i = 0; i < functionStack.size(); ++i) {
             FunctionBodyNode* function = functionStack[i];
             globalObject->removeDirect(function->ident()); // Make sure our new function is not shadowed by an old property.
@@ -267,9 +269,12 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, const ScopeChain&
         }
 
         Vector<RegisterID*, 32> newVars;
-        for (size_t i = 0; i < varStack.size(); ++i)
+        for (size_t i = 0; i < varStack.size(); ++i) {
             if (!globalObject->hasProperty(exec, *varStack[i].first))
                 newVars.append(addGlobalVar(*varStack[i].first, varStack[i].second & DeclarationStacks::IsConstant));
+        }
+
+        globalObject->resizeRegisters(oldSymbolTableSize, symbolTable->size());
 
         preserveLastVar();
 

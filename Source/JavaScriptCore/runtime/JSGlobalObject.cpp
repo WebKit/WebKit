@@ -422,6 +422,27 @@ void JSGlobalObject::copyGlobalsTo(RegisterFile& registerFile)
     }
 }
 
+void JSGlobalObject::resizeRegisters(int oldSize, int newSize)
+{
+    ASSERT(symbolTable().size() == newSize);
+    if (newSize == oldSize)
+        return;
+    ASSERT(newSize && newSize > oldSize);
+
+    if (d()->registerArray || !d()->registers) {
+        ASSERT(static_cast<size_t>(oldSize) == d()->registerArraySize);
+        Register* registerArray = new Register[newSize];
+        memcpy(registerArray + newSize - oldSize, d()->registerArray.get(), oldSize * sizeof(Register));
+        setRegisters(registerArray + newSize, registerArray, newSize);
+    } else {
+        ASSERT(static_cast<size_t>(newSize) < globalData().interpreter->registerFile().maxGlobals());
+        globalData().interpreter->registerFile().setNumGlobals(newSize);
+    }
+
+    for (int i = -newSize; i < -oldSize; ++i)
+        d()->registers[i] = jsUndefined();
+}
+
 void* JSGlobalObject::operator new(size_t size, JSGlobalData* globalData)
 {
     return globalData->heap.allocate(size);
