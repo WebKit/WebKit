@@ -435,6 +435,8 @@ void PluginControllerProxy::snapshot(WebCore::IntSize& bufferSize, SharedMemory:
 {
     ASSERT(m_plugin);
     RefPtr<ShareableBitmap> bitmap = m_plugin->snapshot();
+    if (!bitmap)
+        return;
 
     bitmap->createHandle(backingStoreHandle);
     bufferSize = bitmap->size();

@@ -482,7 +482,7 @@ void NetscapePlugin::paint(GraphicsContext* context, const IntRect& dirtyRect)
 
 PassRefPtr<ShareableBitmap> NetscapePlugin::snapshot()
 {
-    if (!supportsSnapshotting())
+    if (!supportsSnapshotting() || m_frameRect.isEmpty())
         return 0;
 
     ASSERT(m_isStarted);

@@ -2,6 +2,21 @@
 
         Reviewed by Simon Fraser.
 
+        Fix assertion in SharedMemory::create when trying to snapshot 0x0 plug-in
+        https://bugs.webkit.org/show_bug.cgi?id=54768
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::snapshot):
+        Don't try to create a handle from a null ShareableBitmap.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::snapshot):
+        Check for a zero sized plug-in before trying to create a snapshot.
+
+2011-02-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Simon Fraser.
+
         WKView flashes when entering/exiting compositing mode
         https://bugs.webkit.org/show_bug.cgi?id=54695
         <rdar://problem/9011554>
