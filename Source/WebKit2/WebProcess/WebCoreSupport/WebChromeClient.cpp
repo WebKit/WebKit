@@ -64,13 +64,15 @@ namespace WebKit {
 
 static double area(WebFrame* frame)
 {
-    IntSize size = frame->size();
+    IntSize size = frame->visibleContentBoundsExcludingScrollbars().size();
     return static_cast<double>(size.height()) * size.width();
 }
 
 
 static WebFrame* findLargestFrameInFrameSet(WebPage* page)
 {
+    // Approximate what a user could consider a default target frame for application menu operations.
+
     WebFrame* mainFrame = page->mainFrame();
     if (!mainFrame->isFrameSet())
         return 0;

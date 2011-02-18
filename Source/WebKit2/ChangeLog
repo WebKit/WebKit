@@ -1,3 +1,17 @@
+2011-02-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        REGRESSION (WebKit2): Wrong frame printed on tivofaq.com
+        https://bugs.webkit.org/show_bug.cgi?id=54677
+        <rdar://problem/8994133>
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::area): Use visible frame bounds.
+        (WebKit::findLargestFrameInFrameSet): Added a comment explaining what we're up to here.
+        WebKit2 shouldn't be making policy decisions for the client, but it gets dangerously close
+        to that. We used to expose the same as WK1 API though.
+
 2011-02-18  Balazs Kelemen  <kbalazs@webkit.org>
 
         Unreviwed.
