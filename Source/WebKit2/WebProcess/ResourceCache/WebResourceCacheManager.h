@@ -38,7 +38,7 @@ class MessageID;
 
 namespace WebKit {
 
-class SecurityOriginData;
+struct SecurityOriginData;
 
 class WebResourceCacheManager {
     WTF_MAKE_NONCOPYABLE(WebResourceCacheManager);

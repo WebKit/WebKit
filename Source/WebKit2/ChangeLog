@@ -1,3 +1,10 @@
+2011-02-17  Dan Bernstein  <mitz@apple.com>
+
+        LLVM Compiler build fix.
+
+        * UIProcess/WebResourceCacheManagerProxy.h:
+        * WebProcess/ResourceCache/WebResourceCacheManager.h:
+
 2011-02-17  Simon Fraser  <simon.fraser@apple.com>
 
         Fix Windows and Qt builds by fixing signature of platformPaint().

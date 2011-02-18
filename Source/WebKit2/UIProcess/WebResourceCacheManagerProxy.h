@@ -40,7 +40,7 @@ class MessageID;
 
 namespace WebKit {
 
-class SecurityOriginData;
+struct SecurityOriginData;
 class WebContext;
 class WebSecurityOrigin;
 
