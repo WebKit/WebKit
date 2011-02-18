@@ -92,6 +92,9 @@ class MacPort(WebKitPort):
             return 4
         return child_processes
 
+    def default_worker_model(self):
+        return 'processes'
+
     def baseline_search_path(self):
         return map(self._webkit_baseline_path, self.FALLBACK_PATHS[self._version])
 
