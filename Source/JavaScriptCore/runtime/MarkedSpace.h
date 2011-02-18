@@ -135,17 +135,10 @@ namespace JSC {
             return false;
 
         MarkedBlock* block = MarkedBlock::blockFor(x);
-        if (!block)
+        if (!block || !m_blocks.contains(block))
             return false;
 
-        size_t size = m_heap.blocks.size();
-        for (size_t i = 0; i < size; i++) {
-            if (block != m_heap.collectorBlock(i))
-                continue;
-            return block->contains(x);
-        }
-        
-        return false;
+        return block->contains(x);
     }
 
     template <typename Functor> inline void MarkedSpace::forEach(Functor& functor)

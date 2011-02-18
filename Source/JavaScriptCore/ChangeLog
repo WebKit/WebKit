@@ -2,6 +2,20 @@
 
         Reviewed by Sam Weinig.
 
+        Use hashing instead of linear search in the conservative pointer test
+        https://bugs.webkit.org/show_bug.cgi?id=54767
+        
+        SunSpider reports no change.
+
+        * runtime/MarkedSpace.h:
+        (JSC::MarkedSpace::contains): Variable-sized objects will use more,
+        smaller blocks, so it's important for the contains check not to be O(n)
+        in the number of blocks.
+
+2011-02-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Tightened some usage accounting code in MarkedSpace
         https://bugs.webkit.org/show_bug.cgi?id=54761
         
