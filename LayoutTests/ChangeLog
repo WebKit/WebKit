@@ -1,3 +1,13 @@
+2011-02-18  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip a GTK media test affected by pixel diferrence
+        between 32/64-Bits bots.
+
+        [GTK] media/video-display-toggle.html is flaky on debug bots
+        https://bugs.webkit.org/show_bug.cgi?id=54637
+
+        * platform/gtk/Skipped:
+
 2011-02-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
