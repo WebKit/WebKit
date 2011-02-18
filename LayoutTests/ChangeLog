@@ -1,3 +1,9 @@
+2011-02-17  Martin Robinson  <mrobinson@igalia.com>
+
+        Continue importing GTK+ results for the Mozilla table tests.
+
+        * platform/gtk/Skipped: Unskip tests which now have results.
+
 2011-02-17  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed expectations change.
