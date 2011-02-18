@@ -1,5 +1,11 @@
 2011-02-18  Andrew Wilson  <atwilson@chromium.org>
 
+        Unreviewed expectations change.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-02-18  Andrew Wilson  <atwilson@chromium.org>
+
         Unreviewed rebaselines for Chromium.
 
         * platform/chromium-mac/compositing/reflections/deeply-nested-reflections-expected.checksum: Added.

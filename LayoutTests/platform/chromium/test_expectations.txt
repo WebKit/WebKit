@@ -3477,3 +3477,11 @@ BUGWK54659 DEBUG : inspector/debugger/debug-inlined-scripts.html = CRASH TIMEOUT
 // we figure this out.
 BUGATWILSON : svg/W3C-SVG-1.1-SE/coords-units-03-b.svg = IMAGE+TEXT
 BUGATWILSON WIN LINUX : compositing/reflections/deeply-nested-reflections.html = IMAGE+TEXT
+
+// No rebaseline files in archive for some reason - try to add them later.
+BUGATWILSON :  fast/dom/HTMLElement/attr-dir-auto-change-before-text-node.html = TEXT
+BUGATWILSON :  fast/dom/HTMLElement/attr-dir-auto-change-child-node.html = TEXT
+BUGATWILSON :  fast/dom/HTMLElement/attr-dir-auto-change-text.html = TEXT
+BUGATWILSON :  fast/dom/HTMLElement/attr-dir-auto-remove-add-children.html = TEXT
+BUGATWILSON :  fast/dom/HTMLElement/attr-dir-auto.html = TEXT
+BUGATWILSON :  fast/dom/HTMLElement/attr-dir-value-change.html = TEXT
