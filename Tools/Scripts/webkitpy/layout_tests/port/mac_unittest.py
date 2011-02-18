@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import StringIO
+import sys
 import unittest
 
 from webkitpy.layout_tests.port import mac
@@ -48,6 +49,11 @@ class MacTest(port_testcase.PortTestCase):
         self.assertEqual(relative_paths, expected_paths)
 
     def test_skipped_file_paths(self):
+        # We skip this on win32 because we use '/' as the dir separator and it's
+        # not worth making platform-independent.
+        if sys.platform == 'win32':
+            return None
+
         self.assert_skipped_files_for_version('mac-snowleopard',
             ['/LayoutTests/platform/mac-snowleopard/Skipped', '/LayoutTests/platform/mac/Skipped'])
         self.assert_skipped_files_for_version('mac-leopard',

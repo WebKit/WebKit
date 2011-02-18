@@ -2,6 +2,19 @@
 
         Reviewed by Adam Roben.
 
+        Skip mac.test_skipped_file_paths() when running on win32; the
+        test has hardcoded '/' directory separators and since it's a
+        port-specific test and we have coverage on other ports it's not
+        worth it to make the test more generic.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54698
+
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+
+2011-02-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Adam Roben.
+
         Fix webkitpy.layout_tests.port.config_unittest to work on Win32.
 
         https://bugs.webkit.org/show_bug.cgi?id=54703
