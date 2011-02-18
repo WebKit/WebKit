@@ -1,3 +1,42 @@
+2011-02-18  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Text editor] Optimize editing updates in main panel
+        https://bugs.webkit.org/show_bug.cgi?id=54661
+
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer):
+        (WebInspector.TextViewer.prototype._textChanged):
+        (WebInspector.TextViewer.prototype._enterInternalTextChangeMode):
+        (WebInspector.TextViewer.prototype._exitInternalTextChangeMode):
+        (WebInspector.TextViewer.prototype._syncDecorationsForLine):
+        (WebInspector.TextEditorChunkedPanel.prototype.textChanged):
+        (WebInspector.TextEditorChunkedPanel.prototype._scroll):
+        (WebInspector.TextEditorChunkedPanel.prototype.chunkForLine):
+        (WebInspector.TextEditorChunkedPanel.prototype._totalHeight):
+        (WebInspector.TextEditorGutterPanel.prototype._expandChunks):
+        (WebInspector.TextEditorGutterChunk):
+        (WebInspector.TextEditorGutterChunk.prototype.addDecoration):
+        (WebInspector.TextEditorGutterChunk.prototype.removeDecoration):
+        (WebInspector.TextEditorMainPanel):
+        (WebInspector.TextEditorMainPanel.prototype._expandChunks):
+        (WebInspector.TextEditorMainPanel.prototype._highlightDataReady):
+        (WebInspector.TextEditorMainPanel.prototype._markSkippedPaintLines):
+        (WebInspector.TextEditorMainPanel.prototype._paintSkippedLines):
+        (WebInspector.TextEditorMainPanel.prototype._paintLines):
+        (WebInspector.TextEditorMainPanel.prototype._paintLine):
+        (WebInspector.TextEditorMainPanel.prototype._positionToSelection):
+        (WebInspector.TextEditorMainPanel.prototype._applyDomUpdates):
+        (WebInspector.TextEditorMainPanel.prototype._updateChunksForRanges):
+        (WebInspector.TextEditorMainPanel.prototype._updateHighlightsForRange):
+        (WebInspector.TextEditorMainPanel.prototype._collectLinesFromDiv):
+        (WebInspector.TextEditorMainChunk):
+        (WebInspector.TextEditorMainChunk.prototype.get startLine):
+        (WebInspector.TextEditorMainChunk.prototype.set startLine):
+        (WebInspector.TextEditorMainChunk.prototype.getExpandedLineRow):
+        (WebInspector.TextEditorMainChunk.prototype.updateCollapsedLineRow):
+
 2011-02-18  Steve Block  <steveblock@google.com>
 
         Reviewed by Andreas Kling
