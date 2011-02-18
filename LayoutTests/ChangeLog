@@ -1,3 +1,10 @@
+2011-02-18  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK baselines for two new tests.
+
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.txt: Added.
+        * platform/gtk/svg/custom/nested-pattern-boundingBoxModeContent-expected.txt: Added.
+
 2011-02-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
