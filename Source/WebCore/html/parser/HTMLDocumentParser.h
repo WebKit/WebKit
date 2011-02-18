@@ -51,6 +51,8 @@ class HTMLPreloadScanner;
 class ScriptController;
 class ScriptSourceCode;
 
+struct PumpSession;
+
 class HTMLDocumentParser :  public ScriptableDocumentParser, HTMLScriptRunnerHost, CachedResourceClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -116,6 +118,7 @@ private:
         AllowYield,
         ForceSynchronous,
     };
+    bool canTakeNextToken(SynchronousMode, PumpSession&);
     void pumpTokenizer(SynchronousMode);
     void pumpTokenizerIfPossible(SynchronousMode);
 

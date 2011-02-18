@@ -34,6 +34,19 @@ namespace WebCore {
 
 class HTMLDocumentParser;
 
+struct PumpSession {
+    PumpSession()
+        : processedTokens(0)
+        , startTime(currentTime())
+        , needsYield(false)
+    {
+    }
+
+    int processedTokens;
+    double startTime;
+    bool needsYield;
+};
+
 class HTMLParserScheduler {
     WTF_MAKE_NONCOPYABLE(HTMLParserScheduler); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -43,34 +56,19 @@ public:
     }
     ~HTMLParserScheduler();
 
-    struct PumpSession {
-        PumpSession()
-            : processedTokens(0)
-            , startTime(currentTime())
-        {
-        }
-
-        int processedTokens;
-        double startTime;
-    };
-
     // Inline as this is called after every token in the parser.
-    bool shouldContinueParsing(PumpSession& session)
+    void checkForYieldBeforeToken(PumpSession& session)
     {
         if (session.processedTokens > m_parserChunkSize) {
             session.processedTokens = 0;
             double elapsedTime = currentTime() - session.startTime;
-            if (elapsedTime > m_parserTimeLimit) {
-                // Schedule the parser to continue and yield from the parser.
-                m_continueNextChunkTimer.startOneShot(0);
-                return false;
-            }
+            if (elapsedTime > m_parserTimeLimit)
+                session.needsYield = true;
         }
-
         ++session.processedTokens;
-        return true;
     }
 
+    void scheduleForResume();
     bool isScheduledForResume() const { return m_isSuspendedWithActiveTimer || m_continueNextChunkTimer.isActive(); }
 
     void suspend();

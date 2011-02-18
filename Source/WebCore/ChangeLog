@@ -1,3 +1,37 @@
+2011-02-16  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Refactor pumpTokenizer loop
+        https://bugs.webkit.org/show_bug.cgi?id=54574
+
+        1. This makes pumpTokenizer() safe to call when waiting for a script or when about to get
+           the next token, although ASSERTs still enforce that we aren't waiting for a script. This
+           enables resumeParsingAfterYield() to call pumpTokenizer with no modifications even if we
+           yield before running a script rather than before taking a token (see bug 54355).
+        2. This also picks up the refCount >= 1 assert when stopped.
+
+        Tested PerformanceTests/Parser to verify no regression. If anything it got faster.
+        Before:
+          avg 985.05
+          median 985.5
+          stdev 3.007906248539007
+          min 980
+          max 990
+        After:
+          avg 980.05
+          median 981
+          stdev 3.122098653149833
+          min 974
+          max 985
+
+        No new tests because no new functionality.
+
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::canTakeNextToken): Added.
+        (WebCore::HTMLDocumentParser::pumpTokenizer):
+        * html/parser/HTMLDocumentParser.h:
+
 2011-02-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r79003.

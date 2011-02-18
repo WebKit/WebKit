@@ -200,6 +200,36 @@ bool HTMLDocumentParser::runScriptsForPausedTreeBuilder()
     return m_scriptRunner->execute(scriptElement.release(), scriptStartPosition);
 }
 
+bool HTMLDocumentParser::canTakeNextToken(SynchronousMode mode, PumpSession& session)
+{
+    if (isStopped())
+        return false;
+
+    // The parser will pause itself when waiting on a script to load or run.
+    if (m_treeBuilder->isPaused()) {
+        // If we're paused waiting for a script, we try to execute scripts before continuing.
+        bool shouldContinueParsing = runScriptsForPausedTreeBuilder();
+        m_treeBuilder->setPaused(!shouldContinueParsing);
+        if (!shouldContinueParsing || isStopped())
+            return false;
+    }
+
+    // FIXME: It's wrong for the HTMLDocumentParser to reach back to the
+    //        Frame, but this approach is how the old parser handled
+    //        stopping when the page assigns window.location.  What really
+    //        should happen is that assigning window.location causes the
+    //        parser to stop parsing cleanly.  The problem is we're not
+    //        perpared to do that at every point where we run JavaScript.
+    if (!m_treeBuilder->isParsingFragment()
+        && document()->frame() && document()->frame()->navigationScheduler()->locationChangePending())
+        return false;
+
+    if (mode == AllowYield)
+        m_parserScheduler->checkForYieldBeforeToken(session);
+
+    return true;
+}
+
 void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
 {
     ASSERT(!isStopped());
@@ -215,19 +245,8 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
     // much we parsed as part of didWriteHTML instead of willWriteHTML.
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willWriteHTML(document(), m_input.current().length(), m_tokenizer->lineNumber());
 
-    HTMLParserScheduler::PumpSession session;
-    // FIXME: This loop body has is now too long and needs cleanup.
-    while (mode == ForceSynchronous || m_parserScheduler->shouldContinueParsing(session)) {
-        // FIXME: It's wrong for the HTMLDocumentParser to reach back to the
-        //        Frame, but this approach is how the old parser handled
-        //        stopping when the page assigns window.location.  What really
-        //        should happen is that assigning window.location causes the
-        //        parser to stop parsing cleanly.  The problem is we're not
-        //        perpared to do that at every point where we run JavaScript.
-        if (!m_treeBuilder->isParsingFragment()
-            && document()->frame() && document()->frame()->navigationScheduler()->locationChangePending())
-            break;
-
+    PumpSession session;
+    while (canTakeNextToken(mode, session) && !session.needsYield) {
         m_sourceTracker.start(m_input, m_token);
         if (!m_tokenizer->nextToken(m_input.current(), m_token))
             break;
@@ -237,30 +256,17 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
 
         m_treeBuilder->constructTreeFromToken(m_token);
         m_token.clear();
-
-        // JavaScript may have stopped or detached the parser.
-        if (isStopped())
-            return;
-
-        // The parser will pause itself when waiting on a script to load or run.
-        if (!m_treeBuilder->isPaused())
-            continue;
-
-        // If we're paused waiting for a script, we try to execute scripts before continuing.
-        bool shouldContinueParsing = runScriptsForPausedTreeBuilder();
-        m_treeBuilder->setPaused(!shouldContinueParsing);
-
-        // JavaScript may have stopped or detached the parser.
-        if (isStopped())
-            return;
-
-        if (!shouldContinueParsing)
-            break;
     }
 
     // Ensure we haven't been totally deref'ed after pumping. Any caller of this
     // function should be holding a RefPtr to this to ensure we weren't deleted.
     ASSERT(refCount() >= 1);
+
+    if (isStopped())
+        return;
+
+    if (session.needsYield)
+        m_parserScheduler->scheduleForResume();
 
     if (isWaitingForScripts()) {
         ASSERT(m_tokenizer->state() == HTMLTokenizer::DataState);

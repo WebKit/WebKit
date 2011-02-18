@@ -93,6 +93,12 @@ void HTMLParserScheduler::continueNextChunkTimerFired(Timer<HTMLParserScheduler>
     m_parser->resumeParsingAfterYield();
 }
 
+void HTMLParserScheduler::scheduleForResume()
+{
+    m_continueNextChunkTimer.startOneShot(0);
+}
+
+
 void HTMLParserScheduler::suspend()
 {
     ASSERT(!m_isSuspendedWithActiveTimer);
