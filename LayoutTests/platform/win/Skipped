@@ -403,6 +403,9 @@ transitions/transition-end-event-multiple-04.html
 # Fails (but not on all machines? Or only when run with certain other tests?) http://webkit.org/b/54655
 http/tests/security/xssAuditor/script-tag-with-fancy-unicode.html
 
+# Needs windows-specific pixel results http://webkit.org/b/54757
+media/video-controls-in-media-document.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
