@@ -1,5 +1,11 @@
 2011-02-18  Martin Robinson  <mrobinson@igalia.com>
 
+        Unskip the final set of tests on GTK+ that are missing results.
+
+        * platform/gtk/Skipped: Unskip tests that now have results.
+
+2011-02-18  Martin Robinson  <mrobinson@igalia.com>
+
         Import the final set of GTK+ baselines for the Mozilla table test suite.
 
         * platform/gtk/Skipped: Unskip tests which now have results.

@@ -410,57 +410,8 @@ svg/custom/pattern-excessive-malloc.svg
 svg/animations/animate-path-nested-transforms.html
 
 # Tests that failed because we don't have an eventSender implementation
-editing/input/scroll-viewport-page-up-down.html
 http/tests/plugins/plugin-document-has-focus.html
 
-# Requires expected results that we don't have atm
-editing/inserting/break-blockquote-after-delete.html
-fast/backgrounds/size/backgroundSize20.html
-fast/backgrounds/size/backgroundSize21.html
-fast/backgrounds/size/backgroundSize22.html
-fast/canvas/image-pattern-rotate.html
-fast/css/attribute-selector-dynamic.xml
-fast/css/font-smoothing.html
-fast/css/nested-floating-relative-position-percentages.html
-fast/css/nth-child-dynamic.html
-fast/css/positioned-overflow-scroll.html
-fast/css/pseudo-cache-stale.html
-fast/css/rem-dynamic-scaling.html
-fast/css/rem-units-on-root.html
-fast/css/text-rendering.html
-fast/dom/HTMLTableColElement/resize-table-using-col-width.html
-fast/overflow/overflow-with-local-background-attachment.html
-fast/overflow/position-fixed-transform-clipping.html
-fast/repaint/background-generated.html
-fast/repaint/background-misaligned.html
-fast/repaint/float-in-new-block-with-layout-delta.html
-fast/repaint/float-new-in-block.html
-fast/repaint/line-in-scrolled-clipped-block.html
-fast/repaint/positioned-document-element.html
-fast/text/international/khmer-selection.html
-fast/text/text-letter-spacing.html
-svg/batik/filters/feTile.svg
-svg/custom/createImageElement.svg
-svg/custom/createImageElement2.xhtml
-svg/custom/gradient-userSpaceOnUse-with-percentage.svg
-svg/custom/js-update-image-and-display2.svg
-svg/custom/js-update-image-and-display3.svg
-svg/custom/js-update-image-and-display.svg
-svg/custom/mask-with-default-value.svg
-svg/custom/outer-svg-unknown-feature.svg
-svg/filters/feComposite.svg
-svg/filters/feMerge.svg
-svg/filters/feMerge-wrong-input.svg
-svg/filters/feOffset.svg
-svg/filters/feTile.svg
-svg/filters/filter-source-position.svg
-svg/filters/filteredImage.svg
-svg/filters/sourceAlpha.svg
-svg/filters/subRegion-in-userSpace.svg
-
-# ------------------
-# Tests with bugs attached : Enable these tests again once these bugs are fixed.
-# ------------------
 # See Bug #27905 - http://bugs.webkit.org/show_bug.cgi?id=27905
 # Missing resource load callback ability in DRT
 http/tests/loading/redirect-methods.html
@@ -535,34 +486,6 @@ fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
 
 # This port doesn't have a global history delegate yet
 http/tests/globalhistory
-
-# Ruby tests
-fast/ruby/ruby-beforeafter.html
-fast/ruby/ruby-empty-rt.html
-fast/ruby/ruby-inline-table.html
-fast/ruby/ruby-length.html
-fast/ruby/ruby-run-break.html
-fast/ruby/ruby-runs-spans.html
-fast/ruby/ruby-runs.html
-fast/ruby/ruby-simple-rp.html
-fast/ruby/ruby-simple.html
-fast/ruby/ruby-trailing.html
-fast/ruby/rubyDOM-insert-rt.html
-fast/ruby/rubyDOM-insert-text1.html
-fast/ruby/rubyDOM-insert-text2.html
-fast/ruby/rubyDOM-insert-text3.html
-fast/ruby/rubyDOM-remove-rt1.html
-fast/ruby/rubyDOM-remove-rt2.html
-fast/ruby/rubyDOM-remove-text1.html
-fast/ruby/rubyDOM-remove-text2.html
-
-# New color correction tests
-fast/css/color-correction-backgrounds-and-text.html
-fast/css/color-correction-on-backgrounds.html
-fast/css/color-correction-on-text.html
-fast/css/color-correction.html
-fast/css/color-correction-on-box-shadow.html
-fast/css/color-correction-on-text-shadow.html
 
 # Flakey test
 platform/gtk/accessibility/name-from-label.html
@@ -920,6 +843,7 @@ svg/zoom/page/zoom-mask-with-percentages.svg
 svg/css/circle-in-mask-with-shadow.svg
 svg/filters/shadow-on-filter.svg
 svg/filters/shadow-on-rect-with-filter.svg
+svg/filters/sourceAlpha.svg
 svg/css/clippath-with-shadow.svg
 # The shadow in this image is square, while it should be shaped like the layer above.
 svg/W3C-SVG-1.1/filters-example-01-b.svg
@@ -940,6 +864,7 @@ svg/custom/mask-child-changes.svg
 svg/custom/mask-excessive-malloc.svg
 svg/custom/mask-inside-defs.svg
 svg/custom/mask-with-all-units.svg
+svg/custom/mask-with-default-value.svg
 svg/custom/visibility-override-mask.svg
 svg/clip-path
 # No matching language preference set
@@ -1001,6 +926,7 @@ canvas/philip/tests/2d.text.font.parse.complex.html
 canvas/philip/tests/2d.text.font.parse.invalid.html
 canvas/philip/tests/2d.text.font.parse.size.percentage.html
 canvas/philip/tests/2d.text.font.parse.size.percentage.default.html
+svg/filters/sourceAlpha.svg
 canvas/philip/tests/2d.text.font.parse.system.html
 canvas/philip/tests/2d.text.measure.width.space.html
 canvas/philip/tests/toDataURL.jpeg.alpha.html
