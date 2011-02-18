@@ -1,33 +1,300 @@
-# We should keep the tests listed in the same order as they appear in the output.
-# This makes it easier to look for differences on the actual output and
-# what the skip list contains.
-# Also, no grouping should occur. Every test for itself. An exception is when
-# an entire directory of tests is to be skipped due to the feature being
-# unsupported.
-#
-# You can get a list of actual failed/timed out/crashed/new tests by piping
-# the output of running the tests to this command:
-#
-#     egrep -- '-> (failed|timed out|crashed|new test)' | cut -d ' ' -f $n
-#
-# where $n would be replaced with 2 if you're running the run-webkit-tests script
-# with the --verbose option, or 1 otherwise.
-#
-# To get the name of the tests only, for easy diff'ing, from this file,
-# pipe it through the following:
-#
-#     grep -v '^#' | grep -v '^$'
+# Welcome to the GTK+ Skipped list! This list is divided into several sections
+# to make it easy for us to triage and close issues.
+
+# 1. TESTS THAT REQUIRE NEW RESULTS
+# Please don't add any tests to this list. Instead just ping a GTK+ developer
+# to generate results for you.
+
+# 2. FLAKY TESTS
+# When appropriate, open a bug for flaky tests with the test diff and information
+# about which bots the test fails on.
+
+# 3. TESTS TIMING OUT
+# Please open a bug for each test timing out with any important information.
+
+# 3. TESTS CRASHING
+# Please open a bug for each test crashing with any important information.
+# These are in a separate section than failing tests, because they should be
+# priority fixes.
+
+# 4. EXPECTED FAILURES
+# This list is divided into two parts:
+# a. Tests that we never expect to pass, because they use features we likely
+#    will never implement (Mac-only features, for instance).
+# b. Missing WebCore/WebKit features that we'll want someday.
+
+# 5. TESTS FAILING
+# Each test should (eventually) have a bug. Missing DRT features also go here.
+
+###############################################################################
+# TESTS THAT REQUIRE NEW RESULTS
+###############################################################################
+editing/deleting/non-smart-delete.html
+fast/repaint/no-caret-repaint-in-non-content-editable-element.html
+fast/runin/generated2.html
+fast/runin/generated3.html
+fast/runin/generated4.html
+media/video-aspect-ratio.html
+
+###############################################################################
+# FLAKY TESTS
+###############################################################################
+# Anonymous flaky tests.
+fast/block/float/marquee-shrink-to-avoid-floats.html
+fast/events/overflow-events.html
+http/tests/xmlhttprequest/interactive-state.html
+media/event-attributes.html
+platform/gtk/accessibility/name-from-label.html
+
+# As explained in https://bugs.webkit.org/show_bug.cgi?id=34372 this
+# test seems to suffer from a race condition that just turned to the
+# failing side with the normalization of priorities; it used to fail
+# consistently for me locally (kov@webkit.org), and now passes from
+# time to time, but the situation is inversed in the bot, so I'm
+# skipping it.
+# See also https://bugs.webkit.org/show_bug.cgi?id=36165
+media/video-played-collapse.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37550
+fast/dom/Window/HTMLBodyElement-window-eventListener-attributes.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37557
+http/tests/misc/image-blocked-src-change.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37560
+svg/dom/SVGScriptElement/script-set-href.svg
+
+# https://bugs.webkit.org/show_bug.cgi?id=37562
+plugins/update-widgets-crash.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37572
+plugins/open-and-close-window-with-plugin.html
+
+# Flaky due to JSC debugger issue.
+# https://bugs.webkit.org/show_bug.cgi?id=43034
+inspector/debugger/debugger-breakpoints-not-activated-on-reload.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=53995
+editing/selection/end-of-document.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=51325
+editing/selection/extend-by-character-003.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=51699
+editing/selection/extend-by-character-004.html
+editing/selection/extend-by-character-005.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=53074
+editing/selection/extend-selection-bidi.html
+
+# Still working out flakiness issues with the perf tests.
+# https://bugs.webkit.org/show_bug.cgi?id=44199
+perf/
+
+# https://bugs.webkit.org/show_bug.cgi?id=47727
+mathml/presentation
+
+# https://bugs.webkit.org/show_bug.cgi?id=53428
+http/tests/misc/favicon-as-image.html
+
+k# https://bugs.webkit.org/show_bug.cgi?id=53683
+http/tests/websocket
+
+# 1 & 2 pixels diff in 32-bit & 64-bit
+# https://bugs.webkit.org/show_bug.cgi?id=54637
+media/video-display-toggle.html
+media/video-controls-in-media-document.html
+media/controls-after-reload.html
+
+###############################################################################
+# TESTS TIMING OUT
+###############################################################################
+# These SVG performance tests seem to cause the debug bots to time out.
+svg/hixie/perf
 
 # Intermittently timing out on Gtk Debug Bot:
 # https://bugs.webkit.org/show_bug.cgi?id=33445
 http/tests/incremental/split-hex-entities.pl
 
-# These SVG performance tests seem to cause the debug bots to time out.
-svg/hixie/perf
+# Times out, see https://bugs.webkit.org/show_bug.cgi?id=33026
+http/tests/xmlhttprequest/simple-cross-origin-progress-events.html
 
-# Tests in accessibility/ directory
-# An implementation of accessibilityController is required.
-#   Tests failing
+#  https://bugs.webkit.org/show_bug.cgi?id=46644
+fast/text/large-text-composed-char-dos.html
+
+###############################################################################
+# TESTS CRASHING
+###############################################################################
+# This test is crashing when run along with other tests on the release build.
+fast/dynamic/layer-hit-test-crash.html
+
+# Two anonymous crashers with no bug.
+http/tests/security/cross-origin-xsl-BLOCKED.html
+http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=50155
+# crashes on GStreamer side when loading one of the media elements of the test
+fast/events/tabindex-focus-blur-all.html
+
+# ASSERTION FAILED: currentThread() == m_openingThread in WebCore::SQLiteDatabase::sqlite3Handle()
+# https://bugs.webkit.org/show_bug.cgi?id=30814
+storage
+fast/js/excessive-comma-usage.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=39346
+fast/workers/storage
+
+# crashes because of a failing ASSERT (see https://bugs.webkit.org/show_bug.cgi?id=54470)
+svg/text/select-textLength-spacing-squeeze-1.svg
+k
+# Test crashing on release bot
+# https://bugs.webkit.org/show_bug.cgi?id=31433
+plugins/document-open.html
+
+# Crashes on debug bots, see https://bugs.webkit.org/show_bug.cgi?id=35085
+plugins/iframe-shims.html
+fast/loader/loadInProgress.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37574
+plugins/window-open.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37616
+fast/workers/shared-worker-frame-lifecycle.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37623
+scrollbars/scrollbar-crash-on-refresh.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37914
+fast/frames/frame-crash-with-page-cache.html
+
+# For some reason crashes when run with all tests. Passes individually.
+fast/forms/multiple-form-submission-protection-mouse.html
+
+# This test crashes whatever test follows it. Perhaps it's related to the previous failure.
+fast/dom/gc-10.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=54234 
+fast/files/apply-blob-url-to-xhr.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=51104
+http/tests/cache/subresource-fragment-identifier.html
+http/tests/misc/authentication-sent-to-redirect.html
+
+###############################################################################
+# EXPECTED FAILURES
+###############################################################################
+# Ignored because we do not have OBJC bindings (via Chromium)
+editing/pasteboard/paste-RTFD.html
+editing/pasteboard/paste-TIFF.html
+
+# Deletion UI is a Mail-ism. We don't need to worry about this. (via Chromium)
+editing/deleting/deletionUI-single-instance.html
+fast/dom/Element/id-in-deletebutton.html
+
+# WebKitGTK+ uses different keyboard accelerators than Safari. (via Chromium)
+fast/events/option-tab.html
+
+# We have no need to support Dashboard compatibility mode. (via Chromium)
+fast/canvas/canvas-gradient-addStop-error.html
+http/tests/xmlhttprequest/default-content-type-dashboard.html
+http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html
+svg/custom/embedded-svg-disallowed-in-dashboard.xml
+svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html
+svg/custom/manually-parsed-svg-disallowed-in-dashboard.html
+svg/custom/svg-disallowed-in-dashboard-object.html
+
+# These tests expect a TIFF decoder. (via Chromium)
+fast/images/embed-image.html
+fast/images/object-image.html
+
+# Mac Safari under certain circumstances automatically places
+# a caret in editable document even when none was requested programatically.
+editing/selection/designmode-no-caret.html
+
+# These tests require loading a PDF as an image, which we do not support. (via Chromium)
+fast/images/pdf-as-background.html
+fast/images/pdf-as-image-landscape.html
+fast/images/pdf-as-image.html
+fast/images/pdf-as-tiled-background.html
+fast/replaced/pdf-as-image.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=35824 - Doesn't apply to platforms that don't enforce the CFNetwork-style 3rd party cookie policy
+http/tests/cookies/third-party-cookie-relaxing.html
+
+# WebKitGTK+ does not support webarchives. (via Chromium)
+webarchive
+http/tests/webarchive
+svg/webarchive
+svg/custom/image-with-prefix-in-webarchive.svg
+
+# This test is specific to QuickTime media engine
+media/video-does-not-loop.html
+
+# Pre-HMTL5 parser quirks only apply to the mac port for now.
+fast/parser/pre-html5-parser-quirks.html
+
+# This test assumes we cannot play RTSP, but we can.
+# See https://bugs.webkit.org/show_bug.cgi?id=53056
+media/unsupported-rtsp.html
+
+# Features that we want eventually:
+# DeviceMotion and DeviceOrientation are not enabled by default.
+fast/dom/Window/window-properties-device-orientation.html
+fast/dom/DeviceMotion
+fast/dom/DeviceOrientation
+
+# Desktop notifications are not supported
+fast/notifications
+http/tests/notifications
+
+# We lack userscripts support.
+userscripts
+
+# Tests requiring 3D_RENDERING and ACCELERATED_COMPOSITING support
+transforms/3d
+compositing
+
+# These tests require touch support
+fast/events/touch
+
+# IndexedDB is not yet enabled.
+storage/indexeddb
+
+# Speech input is not yet enabled.
+fast/speech
+
+# Web Timing is not enabled.
+# https://bugs.webkit.org/show_bug.cgi?id=42432
+fast/dom/Window/window-properties-performance.html
+fast/dom/navigation-type-back-forward.html
+fast/dom/navigation-type-navigate.html
+fast/dom/navigation-type-reload.html
+fast/dom/webtiming.html
+fast/dom/webtiming-navigate-within-document.html
+fast/dom/webtiming-document-open.html
+http/tests/misc/webtiming-origins.html
+http/tests/misc/webtiming-one-redirect.php
+http/tests/misc/webtiming-slow-load.php
+http/tests/misc/webtiming-ssl.php
+http/tests/misc/webtiming-two-redirects.php
+
+# FileSystem API is not supported.
+fast/filesystem
+http/tests/local/fileapi
+http/tests/security/filesystem-iframe-from-remote.html
+
+# Requires WebP support.
+fast/images/webp-image-decoding.html
+
+# Request ENABLE(REQUEST_ANIMATION_FRAME) support
+fast/animation
+
+# Requires media engine closed caption support
+media/media-captions.html
+
+###############################################################################
+# TESTS FAILING
+###############################################################################
 accessibility/aria-checkbox-checked.html
 accessibility/aria-combobox.html
 accessibility/aria-help.html
@@ -112,11 +379,10 @@ editing/pasteboard/copy-standalone-image.html
 # https://bugs.webkit.org/show_bug.cgi?id=53644
  editing/deleting/5408255.html
 
+# Missing delegates:
 # Need proper frame loader callbacks reporting
 # See https://bugs.webkit.org/show_bug.cgi?id=32170
 http/tests/security/mixedContent/empty-url-plugin-in-frame.html
-
-# Missing delegates:
 # Tests failing because of missing resource load delegate callbacks.
 fast/loader/main-document-url-for-non-http-loads.html
 # Tests failing because of missing policy delegate callbacks.
@@ -157,10 +423,6 @@ fast/forms/option-mouseevents.html
 http/tests/misc/acid2-pixel.html
 http/tests/misc/acid2.html
 
-# Ignored because we do not have OBJC bindings (via Chromium)
-editing/pasteboard/paste-RTFD.html
-editing/pasteboard/paste-TIFF.html
-
 # These tests call dumpAsText, but still perform normal render tree dumps.
 # https://bugs.webkit.org/show_bug.cgi?id=53955 
 fast/dom/object-embed-plugin-scripting.html
@@ -190,52 +452,6 @@ fast/dom/Window/window-resize.html
 # The background is not clipped in this test, as observed in the pixel output.
 fast/backgrounds/background-clip-text.html
 
-# DeviceMotion and DeviceOrientation are not enabled by default.
-fast/dom/Window/window-properties-device-orientation.html
-fast/dom/DeviceMotion
-fast/dom/DeviceOrientation
-
-# Desktop notifications are not supported
-fast/notifications
-http/tests/notifications
-
-# Deletion UI is a Mail-ism. We don't need to worry about this. (via Chromium)
-editing/deleting/deletionUI-single-instance.html
-fast/dom/Element/id-in-deletebutton.html
-
-# WebKitGTK+ uses different keyboard accelerators than Safari. (via Chromium)
-fast/events/option-tab.html
-
-# We have no need to support Dashboard compatibility mode. (via Chromium)
-fast/canvas/canvas-gradient-addStop-error.html
-http/tests/xmlhttprequest/default-content-type-dashboard.html
-http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html
-svg/custom/embedded-svg-disallowed-in-dashboard.xml
-svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html
-svg/custom/manually-parsed-svg-disallowed-in-dashboard.html
-svg/custom/svg-disallowed-in-dashboard-object.html
-
-# Mac Safari under certain circumstances automatically places
-# a caret in editable document even when none was requested programatically.
-editing/selection/designmode-no-caret.html
-
-# These tests expect a TIFF decoder. (via Chromium)
-fast/images/embed-image.html
-fast/images/object-image.html
-
-# These tests require loading a PDF as an image, which we do not support. (via Chromium)
-fast/images/pdf-as-background.html
-fast/images/pdf-as-image-landscape.html
-fast/images/pdf-as-image.html
-fast/images/pdf-as-tiled-background.html
-fast/replaced/pdf-as-image.html
-
-# WebKitGTK+ does not support webarchives. (via Chromium)
-webarchive
-http/tests/webarchive
-svg/webarchive
-svg/custom/image-with-prefix-in-webarchive.svg
-
 # These fast XMLHttpRequest tests fail because 3D_CANVAS is not enabled.
 fast/xmlhttprequest/xmlhttprequest-responsetype-abort.html
 fast/xmlhttprequest/xmlhttprequest-responsetype-arraybuffer.html
@@ -248,8 +464,6 @@ fast/dom/elementFromPoint-relative-to-viewport.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=51213
 fast/dom/gc-11.html
-# This test crashes whatever test follows it. Perhaps it's related to the previous failure.
-fast/dom/gc-10.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=51242
 fast/dom/global-constructors.html
@@ -257,9 +471,6 @@ fast/dom/global-constructors.html
 # https://bugs.webkit.org/show_bug.cgi?id=53085
 # Cairo doesn't support repeat-x and repeat-y
 fast/canvas/patternfill-repeat.html
-
-# This test is crashing when run along with other tests on the release build.
-fast/dynamic/layer-hit-test-crash.html
 
 # keygen element rendering is broken
 # https://bugs.webkit.org/show_bug.cgi?id=54136
@@ -333,13 +544,6 @@ http/tests/xmlhttprequest/cross-origin-cookie-storage.html
 http/tests/xmlhttprequest/cross-origin-no-authorization.html
 
 http/tests/xmlhttprequest/xmlhttprequest-contenttype-empty.html
-# Tests crashing - https://bugs.webkit.org/show_bug.cgi?id=51104
-http/tests/cache/subresource-fragment-identifier.html
-http/tests/misc/authentication-sent-to-redirect.html
-
-#   Tests crashing
-http/tests/security/cross-origin-xsl-BLOCKED.html
-http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
 
 # Tests in media/ directory
 #   Tests failing
@@ -349,20 +553,6 @@ media/video-size-intrinsic-scale.html
 media/video-seek-past-end-playing.html
 # https://bugs.webkit.org/show_bug.cgi?id=30198
 media/video-source-error.html
-
-#   Tests generating new results
-media/video-aspect-ratio.html
-# Requires media engine closed caption support
-media/media-captions.html
-
-
-# Test specific to QuickTime media engine
-media/video-does-not-loop.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=50155
-# crashes on GStreamer side when loading one of the media elements of
-# the test
-fast/events/tabindex-focus-blur-all.html
 
 # Tests in plugins/ directory
 #   Tests failing, need to implement NPP_HandleEvent() in TestNetscapePlugin
@@ -440,14 +630,6 @@ media/audio-delete-while-step-button-clicked.html
 # https://bugs.webkit.org/show_bug.cgi?id=30620
 fast/xsl/sort-locale.xml
 
-# ASSERTION FAILED: currentThread() == m_openingThread in WebCore::SQLiteDatabase::sqlite3Handle()
-# https://bugs.webkit.org/show_bug.cgi?id=30814
-storage
-fast/js/excessive-comma-usage.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=39346
-fast/workers/storage
-
 # https://bugs.webkit.org/show_bug.cgi?id=30816
 fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll.html
 
@@ -460,23 +642,6 @@ fast/loader/opaque-base-url.html
 # https://bugs.webkit.org/show_bug.cgi?id=53986
 svg/text/caret-in-svg-text.xhtml
 
-# crashes because of a failing ASSERT (see https://bugs.webkit.org/show_bug.cgi?id=54470)
-svg/text/select-textLength-spacing-squeeze-1.svg
-
-# No User Scripts
-userscripts/script-not-run-for-fragments.html
-userscripts/script-run-at-end.html
-userscripts/script-run-at-start.html
-userscripts/user-script-all-frames.html
-userscripts/user-script-audio-document.html
-userscripts/user-script-image-document.html
-userscripts/user-script-plugin-document.html
-userscripts/user-script-top-frame-only.html
-userscripts/user-script-video-document.html
-userscripts/user-style-top-frame-only.html
-userscripts/window-onerror-for-isolated-world-1.html
-userscripts/window-onerror-for-isolated-world-2.html
-
 # No authentication challenge handling
 http/tests/loading/basic-credentials-sent-automatically.html
 
@@ -487,23 +652,8 @@ fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
 # This port doesn't have a global history delegate yet
 http/tests/globalhistory
 
-# Flakey test
-platform/gtk/accessibility/name-from-label.html
-
-# Test crashing on release bot
-# See https://bugs.webkit.org/show_bug.cgi?id=31433
-plugins/document-open.html
-
-# Tests failing once in a while
-fast/events/overflow-events.html
-http/tests/xmlhttprequest/interactive-state.html
-
 # Need to add functionality to DumpRenderTree to handle error pages
 fast/history/back-forward-reset-after-error-handling.html
-
-# Tests requiring 3D_RENDERING and ACCELERATED_COMPOSITING support
-transforms/3d
-compositing
 
 # Missing textInputController
 editing/selection/mixed-editability-10.html
@@ -517,18 +667,9 @@ http/tests/xmlhttprequest/origin-whitelisting-removal.html
 # See: https://bugzilla.gnome.org/show_bug.cgi?id=603825
 fast/cookies/local-file-can-set-cookies.html
 
-# These tests require touch support
-fast/events/touch
-
 # https://bugs.webkit.org/show_bug.cgi?id=32604
 # Fails on the release bot because of, apparently, rouding errors
 svg/custom/path-getTotalLength.svg
-
-# Times out, see https://bugs.webkit.org/show_bug.cgi?id=33026
-http/tests/xmlhttprequest/simple-cross-origin-progress-events.html
-
-# Fails on and off (more often fails) on the release bot
-media/event-attributes.html
 
 # GTK+ does not have layoutTestController.setWillSendRequestReturnsNull.
 fast/loader/onload-willSendRequest-null-for-script.html
@@ -548,10 +689,6 @@ fast/loader/crash-copying-backforwardlist.html
 
 # Implement LayoutTestController::callShouldCloseOnWebView()
 fast/events/onbeforeunload-focused-iframe.html
-
-# Crashes on debug bots, see https://bugs.webkit.org/show_bug.cgi?id=35085
-plugins/iframe-shims.html
-fast/loader/loadInProgress.html
 
 # Needs platform specific API implemented in DRT, maybe not relevant for non-Mac and non-Windows ports
 fast/loader/api-test-new-window-data-load-base-url.html
@@ -578,12 +715,6 @@ http/tests/loading/307-after-303-after-post.html
 
 # DumpRenderTree code to enable Java is currently a no-op
 java
-
-# https://bugs.webkit.org/show_bug.cgi?id=35824 - Doesn't apply to platforms that don't enforce the CFNetwork-style 3rd party cookie policy
-http/tests/cookies/third-party-cookie-relaxing.html
-
-# For some reason crashes when run with all tests. Passes individually.
-fast/forms/multiple-form-submission-protection-mouse.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=36003
 # mouseScrollBy() and continuousMouseScrollBy() are not yet implemented in the GTK EventSender API.
@@ -625,15 +756,6 @@ fast/dom/Geolocation/permission-denied-already-success.html
 fast/dom/Geolocation/permission-denied-stops-watches.html
 fast/dom/Geolocation/permission-denied.html
 
-# As explained in https://bugs.webkit.org/show_bug.cgi?id=34372 this
-# test seems to suffer from a race condition that just turned to the
-# failing side with the normalization of priorities; it used to fail
-# consistently for me locally (kov@webkit.org), and now passes from
-# time to time, but the situation is inversed in the bot, so I'm
-# skipping it.
-# See also https://bugs.webkit.org/show_bug.cgi?id=36165
-media/video-played-collapse.html
-
 # Misses setMediaType() implementation
 fast/media/print-restores-previous-mediatype.html
 
@@ -645,12 +767,6 @@ fast/loader/stateobjects/replacestate-in-iframe.html
 # See https://bugs.webkit.org/show_bug.cgi?id=36627 for what's needed
 # for a real fix.
 editing/selection/extend-after-mouse-selection.html
-
-editing/deleting/non-smart-delete.html
-fast/repaint/no-caret-repaint-in-non-content-editable-element.html
-fast/runin/generated2.html
-fast/runin/generated3.html
-fast/runin/generated4.html
 
 # MediaPlayerPrivateGStreamer doesn't return to NETWORK_IDLE and hence doesn't fire a suspend event
 # https://bugs.webkit.org/show_bug.cgi?id=37034
@@ -678,36 +794,9 @@ svg/custom/use-on-clip-path-with-transformation.svg
 # https://bugs.webkit.org/show_bug.cgi?id=37544
 svg/custom/use-instanceRoot-as-event-target.xhtml
 
-# https://bugs.webkit.org/show_bug.cgi?id=37550
-fast/dom/Window/HTMLBodyElement-window-eventListener-attributes.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=37557
-http/tests/misc/image-blocked-src-change.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=37560
-svg/dom/SVGScriptElement/script-set-href.svg
-
-# https://bugs.webkit.org/show_bug.cgi?id=37562
-plugins/update-widgets-crash.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=37572
-plugins/open-and-close-window-with-plugin.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=37574
-plugins/window-open.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=37613
 printing
 editing/execCommand/print.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=37616
-fast/workers/shared-worker-frame-lifecycle.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=37623
-scrollbars/scrollbar-crash-on-refresh.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=37914
-fast/frames/frame-crash-with-page-cache.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=38569
 http/tests/workers/text-encoding.html
@@ -790,9 +879,6 @@ fast/loader/null-request-after-willSendRequest.html
 editing/spelling/context-menu-suggestions.html
 editing/selection/context-menu-on-text.html
 
-# IndexedDB is not yet enabled.
-storage/indexeddb
-
 # https://bugs.webkit.org/show_bug.cgi?id=40153
 fast/dom/Geolocation/callback-to-remote-context.html
 fast/dom/Geolocation/callback-to-remote-context2.html
@@ -820,8 +906,7 @@ editing/selection/5354455-1.html
 editing/selection/5354455-2.html
 media/controls-right-click-on-timebar.html
 
-# Gtk doesn't implement dumpResourceResponseMIMETypes which is required for the
-# preloader tests.
+# Gtk doesn't implement dumpResourceResponseMIMETypes which is required for the preloader tests.
 fast/preloader
 http/tests/mime/uppercase-mime-type.html
 
@@ -999,33 +1084,14 @@ sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.
 # https://bugs.webkit.org/show_bug.cgi?id=38437
 editing/pasteboard/5761530-1.html
 
-# Speech input is not yet enabled.
-fast/speech
-
 # Missing DRT API.
 http/tests/loading/preload-slow-loading.php
 
 # Directory upload is not enabled.
 fast/forms/input-file-directory-upload.html
 
-
 # Need setPrinting. See https://bugs.webkit.org/show_bug.cgi?id=20011
 printing/setPrinting.html
-
-# Web Timing is not enabled.
-# https://bugs.webkit.org/show_bug.cgi?id=42432
-fast/dom/Window/window-properties-performance.html
-fast/dom/navigation-type-back-forward.html
-fast/dom/navigation-type-navigate.html
-fast/dom/navigation-type-reload.html
-fast/dom/webtiming.html
-fast/dom/webtiming-navigate-within-document.html
-fast/dom/webtiming-document-open.html
-http/tests/misc/webtiming-origins.html
-http/tests/misc/webtiming-one-redirect.php
-http/tests/misc/webtiming-slow-load.php
-http/tests/misc/webtiming-ssl.php
-http/tests/misc/webtiming-two-redirects.php
 
 # Accuracy problems in the results
 # https://bugs.webkit.org/show_bug.cgi?id=42624
@@ -1051,8 +1117,6 @@ editing/pasteboard/drop-link.html
 # https://bugs.webkit.org/show_bug.cgi?id=52882
 http/tests/security/drag-drop-same-unique-origin.html
 
-# This test crashes: https://bugs.webkit.org/show_bug.cgi?id=54234 
-fast/files/apply-blob-url-to-xhr.html
 # Fails with "Received error from worker: ReferenceError: Can't find variable: revokeObjectURL
 # Should recheck it when the above bug is fixed.
 fast/files/workers/worker-apply-blob-url-to-xhr.html
@@ -1081,27 +1145,10 @@ editing/pasteboard/smart-drag-drop.html
 editing/selection/drag-start-event-client-x-y.html
 editing/selection/doubleclick-beside-cr-span.html
 
-# Flaky due to JSC debugger issue.
-# https://bugs.webkit.org/show_bug.cgi?id=43034
-inspector/debugger/debugger-breakpoints-not-activated-on-reload.html
-
 # Fails because multiple clicks in a row in the same place
 # register as a triple-click even though the mouse have moved
 # outside of the double-click distance.
 editing/selection/5195166-1.html
-
-# flaky test in the GTK 64-bit Debug bot (see https://bugs.webkit.org/show_bug.cgi?id=53995)
-editing/selection/end-of-document.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=51325
-editing/selection/extend-by-character-003.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=51699
-editing/selection/extend-by-character-004.html
-editing/selection/extend-by-character-005.html
-
-# flaky test (see https://bugs.webkit.org/show_bug.cgi?id=53074)
-editing/selection/extend-selection-bidi.html
 
 # Remaining Sputnik failures
 # https://bugs.webkit.org/show_bug.cgi?id=43568
@@ -1154,10 +1201,6 @@ sputnik/Unicode/Unicode_510/S7.6_A3.2.html
 sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html
 sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html
 
-# Still working out flakiness issues with the perf tests.
-# https://bugs.webkit.org/show_bug.cgi?id=44199
-perf/
-
 # https://bugs.webkit.org/show_bug.cgi?id=43332
 inspector/debugger/dom-breakpoints.html
 
@@ -1185,20 +1228,9 @@ fast/viewport/viewport-87.html
 fast/viewport/viewport-126.html
 fast/viewport/viewport-127.html
 
-# Pre-HMTL5 parser quirks only apply to the mac port for now.
-fast/parser/pre-html5-parser-quirks.html
-
-# FileSystem API is not supported.
-fast/filesystem
-http/tests/local/fileapi
-http/tests/security/filesystem-iframe-from-remote.html
-
 # Needs more investigation like QT
 fast/dom/nodesFromRect-links-and-text.html
 fast/dom/nodesFromRect-inner-documents.html
-
-#  https://bugs.webkit.org/show_bug.cgi?id=46644
-fast/text/large-text-composed-char-dos.html
 
 # LayoutTestController::addUserScript not implemented for gtk
 plugins/plugin-document-load-prevented-userscript.html
@@ -1206,14 +1238,8 @@ plugins/plugin-document-load-prevented-userscript.html
 # https://bugs.webkit.org/show_bug.cgi?id=46942
 http/tests/websocket/tests/bad-sub-protocol-control-chars.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=47244
-editing/pasteboard/dataTransfer-setData-getData.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=47564
 platform/gtk/accessibility/aria-table-hierarchy.html
-
-# Requires WebP support.
-fast/images/webp-image-decoding.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=47832
 http/tests/inspector/console-xhr-logging.html
@@ -1254,9 +1280,6 @@ fast/canvas/canvas-strokePath-shadow.html
 fast/canvas/canvas-transforms-fillRect-shadow.html
 fast/canvas/canvas-scale-strokePath-shadow.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=47727
-mathml/presentation
-
 # While zooming we sometimes appear to have ~1 pixel differences
 # with font metrics to other ports
 # https://bugs.webkit.org/show_bug.cgi?id=50313
@@ -1270,22 +1293,10 @@ media/controls-drag-timebar.html
 editing/spelling/spelling-backspace-between-lines.html
 editing/spelling/spellcheck-paste.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=50873
-fast/dom/StyleSheet/detached-style-2.html
-fast/dom/StyleSheet/detached-style-pi-2.xhtml
-fast/dom/StyleSheet/detached-style-pi.xhtml
-fast/dom/StyleSheet/detached-style.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=50886
-fast/dom/Window/timer-resume-on-navigation-back.html
-
 # For https://bugs.webkit.org/show_bug.cgi?id=50758
 # These require DRT setSerializeHTTPLoads implementation to be reliable.
 http/tests/local/link-stylesheet-load-order.html
 http/tests/local/link-stylesheet-load-order-preload.html
-
-# Request ENABLE(REQUEST_ANIMATION_FRAME) support
-fast/animation
 
 # https://bugs.webkit.org/show_bug.cgi?id=51380
 http/tests/inspector/console-websocket-error.html
@@ -1308,13 +1319,6 @@ http/tests/security/local-iFrame-from-remote.html
 http/tests/security/local-image-from-remote.html
 http/tests/security/local-user-CSS-from-remote.html
 
-# This test is skipped because it assumes we cannot play RTSP, but we can.
-# See https://bugs.webkit.org/show_bug.cgi?id=53056
-media/unsupported-rtsp.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=53428
-http/tests/misc/favicon-as-image.html
-
 # Need an implementation of setSelectTrailingWhitespace
 # https://bugs.webkit.org/show_bug.cgi?id=53603
 editing/selection/doubleclick-whitespace.html
@@ -1323,21 +1327,9 @@ editing/selection/doubleclick-whitespace.html
 # https://bugs.webkit.org/show_bug.cgi?id=53605
 editing/text-iterator/basic-iteration.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=53683
-http/tests/websocket
-
 # LayoutTestController needs layoutTestController.displayInvalidatedRegion
 # https://bugs.webkit.org/show_bug.cgi?id=54073
 plugins/invalidate_rect.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=54389
 http/tests/misc/generated-content-inside-table.html
-
-# This test appears to be flaky
-fast/block/float/marquee-shrink-to-avoid-floats.html
-
-# flaky test on debug bots (1 & 2 pixels diff in 32-bit & 64-bit)
-# https://bugs.webkit.org/show_bug.cgi?id=54637
-media/video-display-toggle.html
-media/video-controls-in-media-document.html
-media/controls-after-reload.html

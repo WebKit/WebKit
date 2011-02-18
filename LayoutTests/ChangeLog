@@ -1,3 +1,10 @@
+2011-02-18  Martin Robinson  <mrobinson@igalia.com>
+
+        Reorganize the GTK+ skipped list to make it easier to triage issues
+        and ease any future switch to test_expectations.txt format.
+
+        * platform/gtk/Skipped: Reorganize the GTK+ skipped list.
+
 2011-02-18  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Dave Hyatt.
