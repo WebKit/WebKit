@@ -1,5 +1,12 @@
 2011-02-18  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, build fix after r78981
+
+        * configure.ac: datagrid is datagrid, it is not database. Also
+        meter is not progress. Fixed copy/paste mistakes.
+
+2011-02-18  Philippe Normand  <pnormand@igalia.com>
+
         Reviewed by Martin Robinson.
 
         [GTK] minimal build unrecognized options

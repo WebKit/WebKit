@@ -384,8 +384,8 @@ AC_MSG_CHECKING([whether to enable HTML5 meter tag])
 AC_ARG_ENABLE(meter_tag,
               AC_HELP_STRING([--enable-meter-tag],
                              [enable HTML5 meter [default=no]]),
-              [],[enable_progress_tag="no"])
-AC_MSG_RESULT([$enable_progress_tag])
+              [],[enable_meter_tag="no"])
+AC_MSG_RESULT([$enable_meter_tag])
 
 # check whether to enable the progress tag
 AC_MSG_CHECKING([whether to enable HTML5 progress tag])
@@ -408,8 +408,8 @@ AC_MSG_CHECKING([whether to enable HTML5 datagrid support])
 AC_ARG_ENABLE(datagrid,
               AC_HELP_STRING([--enable-datagrid],
                              [enable HTML5 datagrid support [default=no]]),
-              [],[enable_database="no"])
-AC_MSG_RESULT([$enable_database])
+              [],[enable_datagrid="no"])
+AC_MSG_RESULT([$enable_datagrid])
 
 # check whether to enable HTML5 Offline Web Applications support
 AC_MSG_CHECKING([whether to enable HTML5 offline web applications support])
