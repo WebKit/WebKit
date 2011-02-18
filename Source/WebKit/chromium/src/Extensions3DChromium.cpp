@@ -97,6 +97,24 @@ void Extensions3DChromium::copyTextureToParentTextureCHROMIUM(unsigned texture, 
     m_internal->copyTextureToParentTextureCHROMIUM(texture, parentTexture);
 }
 
+Platform3DObject Extensions3DChromium::createVertexArrayOES()
+{
+    return 0;
+}
+
+void Extensions3DChromium::deleteVertexArrayOES(Platform3DObject)
+{
+}
+
+GC3Dboolean Extensions3DChromium::isVertexArrayOES(Platform3DObject)
+{
+    return 0;
+}
+
+void Extensions3DChromium::bindVertexArrayOES(Platform3DObject)
+{
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBGL)

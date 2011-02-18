@@ -2033,6 +2033,7 @@ HEADERS += \
     platform/graphics/GraphicsLayer.h \
     platform/graphics/GraphicsLayerClient.h \
     platform/graphics/GraphicsTypes.h \
+    platform/graphics/GraphicsTypes3D.h \
     platform/graphics/Image.h \
     platform/graphics/ImageSource.h \
     platform/graphics/IntPoint.h \
@@ -3690,6 +3691,8 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         html/canvas/WebGLShader.h \
         html/canvas/OESStandardDerivatives.h \
         html/canvas/OESTextureFloat.h \
+        html/canvas/OESVertexArrayObject.h \
+        html/canvas/OESVertexArray.h \
         html/canvas/WebGLTexture.h \
         html/canvas/WebGLUniformLocation.h \
         html/canvas/WebKitLoseContext.h \
@@ -3717,6 +3720,8 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         html/canvas/WebGLShader.cpp \
         html/canvas/OESStandardDerivatives.cpp \
         html/canvas/OESTextureFloat.cpp \
+        html/canvas/OESVertexArrayObject.cpp \
+        html/canvas/OESVertexArray.cpp \
         html/canvas/WebGLTexture.cpp \
         html/canvas/WebGLUniformLocation.cpp \
         html/canvas/WebKitLoseContext.cpp \

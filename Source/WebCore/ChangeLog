@@ -1,3 +1,116 @@
+2011-02-18  Ben Vanik  <benvanik@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Bug 53940: Implement the OES_vertex_array_object WebGL extension
+        https://bugs.webkit.org/show_bug.cgi?id=53940
+
+        Initial implementation of the OES_vertex_array_object extension adding the OESVertexArrayObject
+        extension container and WebGLVertexArrayObjectOES VAO object. The extension is plumbed through
+        the Extensions3D interface and implemented in the Extensions3DOpenGL (WebKit/OSX) version when
+        it is available.
+        Two big changes touching code outside of the extension files:
+        * Moved the typedefs at the top of GraphicsContext3D.h to GraphicsTypes3D.h (modeled after
+          GraphicsTypes.h). They are not namespaced as they weren't before.
+        * To make the code cleaner/clearer all vertex attribute state has been moved to the
+          WebGLVertexArrayObjectOES type (struct VertexAttribState) except for values which are still
+          on the WebGLRenderingContext. A default VAO is now used to store the existing attribute
+          states for when no other VAO is used. Code in WebGLRenderingContext dealing with buffers and
+          vertex attributes now defers to or stores values in the bound array object.
+
+        Tested against the WebGL conformance suite and the new
+        oes-vertex-array-object test:
+        https://cvs.khronos.org/svn/repos/registry/trunk/public/webgl/sdk/tests/conformance/oes-vertex-array-object.html
+
+        * CMakeLists.txt:
+        * CodeGenerators.pri:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gyp: Modified property svn:ignore.
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::toJS):
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::toV8Object):
+        * html/canvas/OESVertexArrayObject.cpp: Added.
+        (WebCore::OESVertexArrayObject::OESVertexArrayObject):
+        (WebCore::OESVertexArrayObject::~OESVertexArrayObject):
+        (WebCore::OESVertexArrayObject::getName):
+        (WebCore::OESVertexArrayObject::create):
+        (WebCore::OESVertexArrayObject::createVertexArrayOES):
+        (WebCore::OESVertexArrayObject::deleteVertexArrayOES):
+        (WebCore::OESVertexArrayObject::isVertexArrayOES):
+        (WebCore::OESVertexArrayObject::bindVertexArrayOES):
+        * html/canvas/OESVertexArrayObject.h: Added.
+        * html/canvas/OESVertexArrayObject.idl: Added.
+        * html/canvas/WebGLExtension.h:
+        * html/canvas/WebGLGetInfo.cpp:
+        (WebCore::WebGLGetInfo::WebGLGetInfo):
+        (WebCore::WebGLGetInfo::getWebGLVertexArrayObjectOES):
+        * html/canvas/WebGLGetInfo.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::initializeNewContext):
+        (WebCore::WebGLRenderingContext::bindBuffer):
+        (WebCore::WebGLRenderingContext::deleteBuffer):
+        (WebCore::WebGLRenderingContext::disableVertexAttribArray):
+        (WebCore::WebGLRenderingContext::validateElementArraySize):
+        (WebCore::WebGLRenderingContext::validateIndexArrayConservative):
+        (WebCore::WebGLRenderingContext::validateIndexArrayPrecise):
+        (WebCore::WebGLRenderingContext::validateRenderingState):
+        (WebCore::WebGLRenderingContext::drawElements):
+        (WebCore::WebGLRenderingContext::enableVertexAttribArray):
+        (WebCore::WebGLRenderingContext::getExtension):
+        (WebCore::WebGLRenderingContext::getParameter):
+        (WebCore::WebGLRenderingContext::getSupportedExtensions):
+        (WebCore::WebGLRenderingContext::getVertexAttrib):
+        (WebCore::WebGLRenderingContext::vertexAttribPointer):
+        (WebCore::WebGLRenderingContext::validateBufferDataParameters):
+        (WebCore::WebGLRenderingContext::vertexAttribfImpl):
+        (WebCore::WebGLRenderingContext::vertexAttribfvImpl):
+        (WebCore::WebGLRenderingContext::initVertexAttrib0):
+        (WebCore::WebGLRenderingContext::simulateVertexAttrib0):
+        (WebCore::WebGLRenderingContext::restoreStatesAfterVertexAttrib0Simulation):
+        (WebCore::WebGLRenderingContext::getNumberOfExtensions):
+        (WebCore::WebGLRenderingContext::getExtensionNumber):
+        * html/canvas/WebGLRenderingContext.h:
+        (WebCore::WebGLRenderingContext::getMaxVertexAttribs):
+        (WebCore::WebGLRenderingContext::setBoundVertexArrayObject):
+        (WebCore::WebGLRenderingContext::VertexAttribValue::VertexAttribValue):
+        * html/canvas/WebGLVertexArrayObjectOES.cpp: Added.
+        (WebCore::WebGLVertexArrayObjectOES::create):
+        (WebCore::WebGLVertexArrayObjectOES::WebGLVertexArrayObjectOES):
+        (WebCore::WebGLVertexArrayObjectOES::deleteObjectImpl):
+        * html/canvas/WebGLVertexArrayObjectOES.h: Added.
+        (WebCore::WebGLVertexArrayObjectOES::~WebGLVertexArrayObjectOES):
+        (WebCore::WebGLVertexArrayObjectOES::VertexAttribState::VertexAttribState):
+        (WebCore::WebGLVertexArrayObjectOES::isDefaultObject):
+        (WebCore::WebGLVertexArrayObjectOES::hasEverBeenBound):
+        (WebCore::WebGLVertexArrayObjectOES::setHasEverBeenBound):
+        (WebCore::WebGLVertexArrayObjectOES::getElementArrayBuffer):
+        (WebCore::WebGLVertexArrayObjectOES::setElementArrayBuffer):
+        (WebCore::WebGLVertexArrayObjectOES::getVertexAttribState):
+        (WebCore::WebGLVertexArrayObjectOES::isVertexArray):
+        * html/canvas/WebGLVertexArrayObjectOES.idl: Added.
+        * platform/graphics/Extensions3D.h:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/GraphicsTypes3D.h: Added.
+        * platform/graphics/chromium/Extensions3DChromium.h:
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::supports):
+        (WebCore::Extensions3DOpenGL::createVertexArrayOES):
+        (WebCore::Extensions3DOpenGL::deleteVertexArrayOES):
+        (WebCore::Extensions3DOpenGL::isVertexArrayOES):
+        (WebCore::Extensions3DOpenGL::bindVertexArrayOES):
+        * platform/graphics/opengl/Extensions3DOpenGL.h:
+        * platform/graphics/qt/Extensions3DQt.cpp:
+        (WebCore::Extensions3DQt::createVertexArrayOES):
+        (WebCore::Extensions3DQt::deleteVertexArrayOES):
+        (WebCore::Extensions3DQt::isVertexArrayOES):
+        (WebCore::Extensions3DQt::bindVertexArrayOES):
+        * platform/graphics/qt/Extensions3DQt.h:
+
 2011-02-17  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

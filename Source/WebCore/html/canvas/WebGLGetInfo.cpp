@@ -38,6 +38,7 @@
 #include "WebGLProgram.h"
 #include "WebGLRenderbuffer.h"
 #include "WebGLTexture.h"
+#include "WebGLVertexArrayObjectOES.h"
 
 namespace WebCore {
 
@@ -134,6 +135,12 @@ WebGLGetInfo::WebGLGetInfo(PassRefPtr<Uint8Array> value)
 {
 }
 
+WebGLGetInfo::WebGLGetInfo(PassRefPtr<WebGLVertexArrayObjectOES> value)
+    : m_type(kTypeWebGLVertexArrayObjectOES)
+    , m_webglVertexArrayObject(value)
+{
+}
+
 WebGLGetInfo::~WebGLGetInfo()
 {
 }
@@ -225,6 +232,12 @@ PassRefPtr<Uint8Array> WebGLGetInfo::getWebGLUnsignedByteArray() const
 {
     ASSERT(getType() == kTypeWebGLUnsignedByteArray);
     return m_webglUnsignedByteArray;
+}
+
+PassRefPtr<WebGLVertexArrayObjectOES> WebGLGetInfo::getWebGLVertexArrayObjectOES() const
+{
+    ASSERT(getType() == kTypeWebGLVertexArrayObjectOES);
+    return m_webglVertexArrayObject;
 }
 
 } // namespace WebCore

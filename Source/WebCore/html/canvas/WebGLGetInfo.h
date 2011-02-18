@@ -36,6 +36,7 @@
 #include "WebGLProgram.h"
 #include "WebGLRenderbuffer.h"
 #include "WebGLTexture.h"
+#include "WebGLVertexArrayObjectOES.h"
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -65,7 +66,8 @@ public:
         kTypeWebGLProgram,
         kTypeWebGLRenderbuffer,
         kTypeWebGLTexture,
-        kTypeWebGLUnsignedByteArray
+        kTypeWebGLUnsignedByteArray,
+        kTypeWebGLVertexArrayObjectOES,
     };
 
     WebGLGetInfo(bool value);
@@ -86,6 +88,7 @@ public:
     WebGLGetInfo(PassRefPtr<WebGLRenderbuffer> value);
     WebGLGetInfo(PassRefPtr<WebGLTexture> value);
     WebGLGetInfo(PassRefPtr<Uint8Array> value);
+    WebGLGetInfo(PassRefPtr<WebGLVertexArrayObjectOES> value);
 
     virtual ~WebGLGetInfo();
 
@@ -107,6 +110,7 @@ public:
     PassRefPtr<WebGLRenderbuffer> getWebGLRenderbuffer() const;
     PassRefPtr<WebGLTexture> getWebGLTexture() const;
     PassRefPtr<Uint8Array> getWebGLUnsignedByteArray() const;
+    PassRefPtr<WebGLVertexArrayObjectOES> getWebGLVertexArrayObjectOES() const;
 
 private:
     Type m_type;
@@ -126,6 +130,7 @@ private:
     RefPtr<WebGLRenderbuffer> m_webglRenderbuffer;
     RefPtr<WebGLTexture> m_webglTexture;
     RefPtr<Uint8Array> m_webglUnsignedByteArray;
+    RefPtr<WebGLVertexArrayObjectOES> m_webglVertexArrayObject;
 };
 
 } // namespace WebCore

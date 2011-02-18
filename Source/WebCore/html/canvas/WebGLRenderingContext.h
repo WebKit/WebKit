@@ -59,6 +59,8 @@ class ImageData;
 class IntSize;
 class OESStandardDerivatives;
 class OESTextureFloat;
+class OESVertexArrayObject;
+class WebGLVertexArrayObjectOES;
 
 class WebGLRenderingContext : public CanvasRenderingContext {
 public:
@@ -286,6 +288,8 @@ public:
     virtual void paintRenderingResultsToCanvas();
 
     void removeObject(WebGLObject*);
+    
+    unsigned getMaxVertexAttribs() const { return m_maxVertexAttribs; }
 
     // Helpers for JSC bindings.
     int getNumberOfExtensions();
@@ -293,6 +297,7 @@ public:
 
   private:
     friend class WebGLObject;
+    friend class OESVertexArrayObject;
 
     WebGLRenderingContext(HTMLCanvasElement*, PassRefPtr<GraphicsContext3D>, GraphicsContext3D::Attributes);
     void initializeNewContext();
@@ -362,24 +367,24 @@ public:
 
     // List of bound VBO's. Used to maintain info about sizes for ARRAY_BUFFER and stored values for ELEMENT_ARRAY_BUFFER
     RefPtr<WebGLBuffer> m_boundArrayBuffer;
-    RefPtr<WebGLBuffer> m_boundElementArrayBuffer;
-
-    // Cached values for vertex attrib range checks
-    class VertexAttribState {
+    
+    RefPtr<WebGLVertexArrayObjectOES> m_defaultVertexArrayObject;
+    RefPtr<WebGLVertexArrayObjectOES> m_boundVertexArrayObject;
+    void setBoundVertexArrayObject(PassRefPtr<WebGLVertexArrayObjectOES> arrayObject)
+    {
+        if (arrayObject)
+            m_boundVertexArrayObject = arrayObject;
+        else
+            m_boundVertexArrayObject = m_defaultVertexArrayObject;
+    }
+    
+    class VertexAttribValue {
     public:
-        VertexAttribState()
-            : enabled(false)
-            , bytesPerElement(0)
-            , size(4)
-            , type(GraphicsContext3D::FLOAT)
-            , normalized(false)
-            , stride(16)
-            , originalStride(0)
-            , offset(0)
+        VertexAttribValue()
         {
             initValue();
         }
-
+        
         void initValue()
         {
             value[0] = 0.0f;
@@ -387,20 +392,10 @@ public:
             value[2] = 0.0f;
             value[3] = 1.0f;
         }
-
-        bool enabled;
-        RefPtr<WebGLBuffer> bufferBinding;
-        GC3Dsizei bytesPerElement;
-        GC3Dint size;
-        GC3Denum type;
-        bool normalized;
-        GC3Dsizei stride;
-        GC3Dsizei originalStride;
-        GC3Dintptr offset;
+        
         GC3Dfloat value[4];
     };
-
-    Vector<VertexAttribState> m_vertexAttribState;
+    Vector<VertexAttribValue> m_vertexAttribValue;
     unsigned m_maxVertexAttribs;
     RefPtr<WebGLBuffer> m_vertexAttrib0Buffer;
     long m_vertexAttrib0BufferSize;
@@ -462,6 +457,7 @@ public:
     // Enabled extension objects.
     RefPtr<OESTextureFloat> m_oesTextureFloat;
     RefPtr<OESStandardDerivatives> m_oesStandardDerivatives;
+    RefPtr<OESVertexArrayObject> m_oesVertexArrayObject;
     RefPtr<WebKitLoseContext> m_webkitLoseContext;
 
     // Helpers for getParameter and others

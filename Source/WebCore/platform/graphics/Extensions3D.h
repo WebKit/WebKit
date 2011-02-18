@@ -26,6 +26,8 @@
 #ifndef Extensions3D_h
 #define Extensions3D_h
 
+#include "GraphicsTypes3D.h"
+
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -53,6 +55,7 @@ public:
     //   GL_OES_texture_float
     //   GL_OES_standard_derivatives
     //   GL_OES_rgb8_rgba8
+    //   GL_OES_vertex_array_object
 
     // Takes full name of extension; for example,
     // "GL_EXT_texture_format_BGRA8888".
@@ -92,6 +95,9 @@ public:
         // GL_OES_rgb8_rgba8 names
         RGB8_OES = 0x8051,
         RGBA8_OES = 0x8058,
+        
+        // GL_OES_vertex_array_object names
+        VERTEX_ARRAY_BINDING_OES = 0x85B5,
     };
 
     // GL_ARB_robustness
@@ -101,7 +107,13 @@ public:
     virtual void blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter) = 0;
     
     // GL_ANGLE_framebuffer_multisample
-    virtual void renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height) = 0;    
+    virtual void renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height) = 0;
+    
+    // GL_OES_vertex_array_object
+    virtual Platform3DObject createVertexArrayOES() = 0;
+    virtual void deleteVertexArrayOES(Platform3DObject) = 0;
+    virtual GC3Dboolean isVertexArrayOES(Platform3DObject) = 0;
+    virtual void bindVertexArrayOES(Platform3DObject) = 0;
 };
 
 } // namespace WebCore

@@ -1,3 +1,18 @@
+2011-02-18  Ben Vanik  <benvanik@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Bug 53940: Implement the OES_vertex_array_object WebGL extension
+        https://bugs.webkit.org/show_bug.cgi?id=53940
+
+        Stubbed out methods for the new OES_vertex_array_object methods.
+
+        * src/Extensions3DChromium.cpp:
+        (WebCore::Extensions3DChromium::createVertexArrayOES):
+        (WebCore::Extensions3DChromium::deleteVertexArrayOES):
+        (WebCore::Extensions3DChromium::isVertexArrayOES):
+        (WebCore::Extensions3DChromium::bindVertexArrayOES):
+
 2011-02-17  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Shinichiro Hamaji.

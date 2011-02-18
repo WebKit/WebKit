@@ -39,6 +39,8 @@
 #include "JSImageData.h"
 #include "JSOESStandardDerivatives.h"
 #include "JSOESTextureFloat.h"
+#include "JSOESVertexArrayObject.h"
+#include "JSWebGLVertexArrayObjectOES.h"
 #include "JSWebGLBuffer.h"
 #include "JSFloat32Array.h"
 #include "JSWebGLFramebuffer.h"
@@ -53,6 +55,8 @@
 #include "NotImplemented.h"
 #include "OESStandardDerivatives.h"
 #include "OESTextureFloat.h"
+#include "OESVertexArrayObject.h"
+#include "WebGLVertexArrayObjectOES.h"
 #include "WebGLBuffer.h"
 #include "Float32Array.h"
 #include "WebGLExtension.h"
@@ -115,6 +119,8 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebG
         return toJS(exec, globalObject, info.getWebGLTexture());
     case WebGLGetInfo::kTypeWebGLUnsignedByteArray:
         return toJS(exec, globalObject, info.getWebGLUnsignedByteArray());
+    case WebGLGetInfo::kTypeWebGLVertexArrayObjectOES:
+        return toJS(exec, globalObject, info.getWebGLVertexArrayObjectOES());
     default:
         notImplemented();
         return jsUndefined();
@@ -179,6 +185,8 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebGLExten
         return toJS(exec, globalObject, static_cast<OESStandardDerivatives*>(extension));
     case WebGLExtension::OESTextureFloatName:
         return toJS(exec, globalObject, static_cast<OESTextureFloat*>(extension));
+    case WebGLExtension::OESVertexArrayObjectName:
+        return toJS(exec, globalObject, static_cast<OESVertexArrayObject*>(extension));
     }
     ASSERT_NOT_REACHED();
     return jsNull();

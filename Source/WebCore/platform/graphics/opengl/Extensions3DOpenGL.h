@@ -43,7 +43,12 @@ public:
     virtual void ensureEnabled(const String&);
     virtual int getGraphicsResetStatusARB();
     virtual void blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter);
-    virtual void renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height);    
+    virtual void renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height);
+    
+    virtual Platform3DObject createVertexArrayOES();
+    virtual void deleteVertexArrayOES(Platform3DObject);
+    virtual GC3Dboolean isVertexArrayOES(Platform3DObject);
+    virtual void bindVertexArrayOES(Platform3DObject);
 
 private:
     // This class only needs to be instantiated by GraphicsContext3D implementations.

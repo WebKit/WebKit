@@ -50,6 +50,7 @@
 #include "V8Int8Array.h"
 #include "V8OESStandardDerivatives.h"
 #include "V8OESTextureFloat.h"
+#include "V8OESVertexArrayObject.h"
 #include "V8Proxy.h"
 #include "V8Uint16Array.h"
 #include "V8Uint32Array.h"
@@ -61,6 +62,7 @@
 #include "V8WebGLShader.h"
 #include "V8WebGLTexture.h"
 #include "V8WebGLUniformLocation.h"
+#include "V8WebGLVertexArrayObjectOES.h"
 #include "WebGLRenderingContext.h"
 #include <wtf/FastMalloc.h>
 
@@ -146,6 +148,8 @@ static v8::Handle<v8::Value> toV8Object(const WebGLGetInfo& info)
         return toV8(info.getWebGLTexture());
     case WebGLGetInfo::kTypeWebGLUnsignedByteArray:
         return toV8(info.getWebGLUnsignedByteArray());
+    case WebGLGetInfo::kTypeWebGLVertexArrayObjectOES:
+        return toV8(info.getWebGLVertexArrayObjectOES());
     default:
         notImplemented();
         return v8::Undefined();
@@ -166,6 +170,9 @@ static v8::Handle<v8::Value> toV8Object(WebGLExtension* extension, v8::Handle<v8
         break;
     case WebGLExtension::OESTextureFloatName:
         extensionObject = toV8(static_cast<OESTextureFloat*>(extension));
+        break;
+    case WebGLExtension::OESVertexArrayObjectName:
+        extensionObject = toV8(static_cast<OESVertexArrayObject*>(extension));
         break;
     }
     ASSERT(!extensionObject.IsEmpty());

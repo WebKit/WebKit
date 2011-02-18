@@ -312,6 +312,8 @@ DOM_CLASSES = \
     NotificationCenter \
     OESStandardDerivatives \
     OESTextureFloat \
+     OESVertexArrayObject \
+     WebGLVertexArrayObjectOES \
     OverflowEvent \
     PageTransitionEvent \
     Performance \

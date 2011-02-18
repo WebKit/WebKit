@@ -294,6 +294,7 @@ SET(WebCore_IDL_FILES
     html/canvas/Int8Array.idl
     html/canvas/OESStandardDerivatives.idl
     html/canvas/OESTextureFloat.idl
+    html/canvas/OESVertexArrayObject.idl
     html/canvas/Uint16Array.idl
     html/canvas/Uint32Array.idl
     html/canvas/Uint8Array.idl
@@ -307,6 +308,7 @@ SET(WebCore_IDL_FILES
     html/canvas/WebGLShader.idl
     html/canvas/WebGLTexture.idl
     html/canvas/WebGLUniformLocation.idl
+    html/canvas/WebGLVertexArrayObjectOES.idl
     html/canvas/WebKitLoseContext.idl
 
     inspector/InjectedScriptHost.idl

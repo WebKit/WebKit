@@ -87,6 +87,10 @@ bool Extensions3DOpenGL::supports(const String& name)
     // GL_OES_texture_half_float as available.
     if (name == "GL_OES_texture_float" || name == "GL_OES_texture_half_float")
         return m_availableExtensions.contains("GL_ARB_texture_float");
+    
+    // GL_OES_vertex_array_object
+    if (name == "GL_OES_vertex_array_object")
+        return m_availableExtensions.contains("GL_APPLE_vertex_array_object");
 
     // Desktop GL always supports the standard derivative functions
     if (name == "GL_OES_standard_derivatives")
@@ -125,6 +129,53 @@ void Extensions3DOpenGL::blitFramebuffer(long srcX0, long srcY0, long srcX1, lon
 void Extensions3DOpenGL::renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height)
 {
     ::glRenderbufferStorageMultisampleEXT(target, samples, internalformat, width, height);
+}
+
+Platform3DObject Extensions3DOpenGL::createVertexArrayOES()
+{
+    m_context->makeContextCurrent();
+#if GL_APPLE_vertex_array_object
+    GLuint array = 0;
+    glGenVertexArraysAPPLE(1, &array);
+    return array;
+#else
+    return 0;
+#endif
+}
+
+void Extensions3DOpenGL::deleteVertexArrayOES(Platform3DObject array)
+{
+    if (!array)
+        return;
+    
+    m_context->makeContextCurrent();
+#if GL_APPLE_vertex_array_object
+    glDeleteVertexArraysAPPLE(1, &array);
+#else
+#endif
+}
+
+GC3Dboolean Extensions3DOpenGL::isVertexArrayOES(Platform3DObject array)
+{
+    if (!array)
+        return GL_FALSE;
+    
+    m_context->makeContextCurrent();
+#if GL_APPLE_vertex_array_object
+    return glIsVertexArrayAPPLE(array);
+#else
+    return GL_FALSE;
+#endif
+}
+
+void Extensions3DOpenGL::bindVertexArrayOES(Platform3DObject array)
+{
+    m_context->makeContextCurrent();
+#if GL_APPLE_vertex_array_object
+    glBindVertexArrayAPPLE(array);
+#else
+    ASSERT_UNUSED(array, supports(array));
+#endif
 }
 
 } // namespace WebCore

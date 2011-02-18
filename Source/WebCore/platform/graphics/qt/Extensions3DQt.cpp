@@ -64,6 +64,24 @@ void Extensions3DQt::renderbufferStorageMultisample(unsigned long target, unsign
 {
 }
 
+Platform3DObject Extensions3DQt::createVertexArrayOES()
+{
+    return 0;
+}
+
+void Extensions3DQt::deleteVertexArrayOES(Platform3DObject)
+{
+}
+
+GC3Dboolean Extensions3DQt::isVertexArrayOES(Platform3DObject)
+{
+    return GL_FALSE;
+}
+
+void Extensions3DQt::bindVertexArrayOES(Platform3DObject)
+{
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBGL)

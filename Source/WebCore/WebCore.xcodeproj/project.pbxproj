@@ -1631,6 +1631,15 @@
 		76FC2B0B12370DA0006A991A /* DOMTokenList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76FC2B0812370DA0006A991A /* DOMTokenList.cpp */; };
 		76FC2B0C12370DA0006A991A /* DOMTokenList.h in Headers */ = {isa = PBXBuildFile; fileRef = 76FC2B0912370DA0006A991A /* DOMTokenList.h */; };
 		76FF17E311235673001D61B5 /* PluginViewNone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76FF17E211235673001D61B5 /* PluginViewNone.cpp */; };
+		77A17A7112F28182004E02F6 /* OESVertexArrayObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77A17A6E12F28182004E02F6 /* OESVertexArrayObject.cpp */; };
+		77A17A7212F28182004E02F6 /* OESVertexArrayObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 77A17A6F12F28182004E02F6 /* OESVertexArrayObject.h */; };
+		77A17A7712F28642004E02F6 /* WebGLVertexArrayObjectOES.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77A17A7412F28642004E02F6 /* WebGLVertexArrayObjectOES.cpp */; };
+		77A17A7812F28642004E02F6 /* WebGLVertexArrayObjectOES.h in Headers */ = {isa = PBXBuildFile; fileRef = 77A17A7512F28642004E02F6 /* WebGLVertexArrayObjectOES.h */; };
+		77A17A7B12F2890B004E02F6 /* GraphicsTypes3D.h in Headers */ = {isa = PBXBuildFile; fileRef = 77A17A7A12F2890B004E02F6 /* GraphicsTypes3D.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		77A17AA612F28B2A004E02F6 /* JSOESVertexArrayObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77A17AA212F28B2A004E02F6 /* JSOESVertexArrayObject.cpp */; };
+		77A17AA712F28B2A004E02F6 /* JSOESVertexArrayObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 77A17AA312F28B2A004E02F6 /* JSOESVertexArrayObject.h */; };
+		77EF62F312F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77EF62F112F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.cpp */; };
+		77EF62F412F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.h in Headers */ = {isa = PBXBuildFile; fileRef = 77EF62F212F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.h */; };
 		79AC9218109945C80021266E /* JSCompositionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79AC9216109945C80021266E /* JSCompositionEvent.cpp */; };
 		79AC9219109945C80021266E /* JSCompositionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 79AC9217109945C80021266E /* JSCompositionEvent.h */; };
 		79F2F5A11091939A000D87CB /* CompositionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79F2F59E1091939A000D87CB /* CompositionEvent.cpp */; };
@@ -8068,6 +8077,17 @@
 		76FC2B0912370DA0006A991A /* DOMTokenList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMTokenList.h; sourceTree = "<group>"; };
 		76FC2B0A12370DA0006A991A /* DOMTokenList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMTokenList.idl; sourceTree = "<group>"; };
 		76FF17E211235673001D61B5 /* PluginViewNone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginViewNone.cpp; sourceTree = "<group>"; };
+		77A17A6E12F28182004E02F6 /* OESVertexArrayObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OESVertexArrayObject.cpp; path = canvas/OESVertexArrayObject.cpp; sourceTree = "<group>"; };
+		77A17A6F12F28182004E02F6 /* OESVertexArrayObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OESVertexArrayObject.h; path = canvas/OESVertexArrayObject.h; sourceTree = "<group>"; };
+		77A17A7012F28182004E02F6 /* OESVertexArrayObject.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = OESVertexArrayObject.idl; path = canvas/OESVertexArrayObject.idl; sourceTree = "<group>"; };
+		77A17A7412F28642004E02F6 /* WebGLVertexArrayObjectOES.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLVertexArrayObjectOES.cpp; path = canvas/WebGLVertexArrayObjectOES.cpp; sourceTree = "<group>"; };
+		77A17A7512F28642004E02F6 /* WebGLVertexArrayObjectOES.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLVertexArrayObjectOES.h; path = canvas/WebGLVertexArrayObjectOES.h; sourceTree = "<group>"; };
+		77A17A7612F28642004E02F6 /* WebGLVertexArrayObjectOES.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLVertexArrayObjectOES.idl; path = canvas/WebGLVertexArrayObjectOES.idl; sourceTree = "<group>"; };
+		77A17A7A12F2890B004E02F6 /* GraphicsTypes3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsTypes3D.h; sourceTree = "<group>"; };
+		77A17AA212F28B2A004E02F6 /* JSOESVertexArrayObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOESVertexArrayObject.cpp; sourceTree = "<group>"; };
+		77A17AA312F28B2A004E02F6 /* JSOESVertexArrayObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOESVertexArrayObject.h; sourceTree = "<group>"; };
+		77EF62F112F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLVertexArrayObjectOES.cpp; sourceTree = "<group>"; };
+		77EF62F212F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLVertexArrayObjectOES.h; sourceTree = "<group>"; };
 		79AC9216109945C80021266E /* JSCompositionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCompositionEvent.cpp; sourceTree = "<group>"; };
 		79AC9217109945C80021266E /* JSCompositionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCompositionEvent.h; sourceTree = "<group>"; };
 		79F2F59E1091939A000D87CB /* CompositionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompositionEvent.cpp; sourceTree = "<group>"; };
@@ -13291,6 +13311,9 @@
 				6EBF0E4512A8926100DB1709 /* OESTextureFloat.cpp */,
 				6EBF0E4612A8926100DB1709 /* OESTextureFloat.h */,
 				6EBF0E4712A8926100DB1709 /* OESTextureFloat.idl */,
+				77A17A6E12F28182004E02F6 /* OESVertexArrayObject.cpp */,
+				77A17A6F12F28182004E02F6 /* OESVertexArrayObject.h */,
+				77A17A7012F28182004E02F6 /* OESVertexArrayObject.idl */,
 				6E96BB1B11986EE1007D94CD /* TypedArrayBase.h */,
 				49EECDDC10503C2300099FAB /* Uint16Array.cpp */,
 				49EECDDD10503C2400099FAB /* Uint16Array.h */,
@@ -13339,6 +13362,9 @@
 				0C3F1F5710C8871200D72CE1 /* WebGLUniformLocation.cpp */,
 				0C3F1F5810C8871200D72CE1 /* WebGLUniformLocation.h */,
 				0C3F1F5910C8871200D72CE1 /* WebGLUniformLocation.idl */,
+				77A17A7412F28642004E02F6 /* WebGLVertexArrayObjectOES.cpp */,
+				77A17A7512F28642004E02F6 /* WebGLVertexArrayObjectOES.h */,
+				77A17A7612F28642004E02F6 /* WebGLVertexArrayObjectOES.idl */,
 				93F1D5B712D532C400832BEC /* WebKitLoseContext.cpp */,
 				93F1D5B812D532C400832BEC /* WebKitLoseContext.h */,
 				93F1D5B912D532C400832BEC /* WebKitLoseContext.idl */,
@@ -16211,6 +16237,8 @@
 				9001787F12E0370700648462 /* JSOESStandardDerivatives.h */,
 				6EBF0E7412A9868800DB1709 /* JSOESTextureFloat.cpp */,
 				6EBF0E7512A9868800DB1709 /* JSOESTextureFloat.h */,
+				77A17AA212F28B2A004E02F6 /* JSOESVertexArrayObject.cpp */,
+				77A17AA312F28B2A004E02F6 /* JSOESVertexArrayObject.h */,
 				BCEF45F30E687B5C001C1287 /* JSTextMetrics.cpp */,
 				BCEF45F40E687B5C001C1287 /* JSTextMetrics.h */,
 				E44614120CD6826900FADA75 /* JSTimeRanges.cpp */,
@@ -16243,6 +16271,8 @@
 				49C7B9921042D2D30009D447 /* JSWebGLTexture.h */,
 				0C45342510CDBBFA00869157 /* JSWebGLUniformLocation.cpp */,
 				0C45342610CDBBFA00869157 /* JSWebGLUniformLocation.h */,
+				77EF62F112F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.cpp */,
+				77EF62F212F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.h */,
 				93F1D5BE12D5335600832BEC /* JSWebKitLoseContext.cpp */,
 				93F1D5BF12D5335600832BEC /* JSWebKitLoseContext.h */,
 			);
@@ -17480,6 +17510,7 @@
 				0F580B0B0F12A2690051D689 /* GraphicsLayerClient.h */,
 				B2A015940AF6CD53006BCE0E /* GraphicsTypes.cpp */,
 				B2A015950AF6CD53006BCE0E /* GraphicsTypes.h */,
+				77A17A7A12F2890B004E02F6 /* GraphicsTypes3D.h */,
 				B27535400B053814002CE64F /* Icon.h */,
 				B27535410B053814002CE64F /* Image.cpp */,
 				B27535420B053814002CE64F /* Image.h */,
@@ -22435,6 +22466,11 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				9343CB8212F25E510033C5EE /* TextCodecUTF8.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSFilter.h in Headers */,
+				77A17A7212F28182004E02F6 /* OESVertexArrayObject.h in Headers */,
+				77A17A7812F28642004E02F6 /* WebGLVertexArrayObjectOES.h in Headers */,
+				77A17A7B12F2890B004E02F6 /* GraphicsTypes3D.h in Headers */,
+				77A17AA712F28B2A004E02F6 /* JSOESVertexArrayObject.h in Headers */,
+				77EF62F412F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.h in Headers */,
 				975CA28B130365F800E99AD9 /* Crypto.h in Headers */,
 				975CA2A21303679D00E99AD9 /* JSCrypto.h in Headers */,
 				26E98A10130A9FCA008EB7B2 /* TextCodecASCIIFastPath.h in Headers */,
@@ -25117,6 +25153,10 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				9343CB8112F25E510033C5EE /* TextCodecUTF8.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSFilter.cpp in Sources */,
+				77A17A7112F28182004E02F6 /* OESVertexArrayObject.cpp in Sources */,
+				77A17A7712F28642004E02F6 /* WebGLVertexArrayObjectOES.cpp in Sources */,
+				77A17AA612F28B2A004E02F6 /* JSOESVertexArrayObject.cpp in Sources */,
+				77EF62F312F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.cpp in Sources */,
 				0F29C16E1300C2E2002D794E /* AccessibilityAllInOne.cpp in Sources */,
 				975CA28A130365F800E99AD9 /* Crypto.cpp in Sources */,
 				975CA2A11303679D00E99AD9 /* JSCrypto.cpp in Sources */,

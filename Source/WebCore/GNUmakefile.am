@@ -486,6 +486,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSOESStandardDerivatives.h \
 	DerivedSources/WebCore/JSOESTextureFloat.cpp \
 	DerivedSources/WebCore/JSOESTextureFloat.h \
+	DerivedSources/WebCore/JSOESVertexArrayObject.cpp \
+	DerivedSources/WebCore/JSOESVertexArrayObject.h \
 	DerivedSources/WebCore/JSOverflowEvent.cpp \
 	DerivedSources/WebCore/JSOverflowEvent.h \
 	DerivedSources/WebCore/JSPageTransitionEvent.cpp \
@@ -592,6 +594,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSWebGLTexture.h \
 	DerivedSources/WebCore/JSWebGLUniformLocation.cpp \
 	DerivedSources/WebCore/JSWebGLUniformLocation.h \
+	DerivedSources/WebCore/JSWebGLVertexArrayObjectOES.cpp \
+	DerivedSources/WebCore/JSWebGLVertexArrayObjectOES.h \
 	DerivedSources/WebCore/JSWebKitAnimationEvent.cpp \
 	DerivedSources/WebCore/JSWebKitAnimationEvent.h \
 	DerivedSources/WebCore/JSWebKitCSSKeyframeRule.cpp \
@@ -1587,13 +1591,7 @@ webcore_sources += \
 	Source/WebCore/html/canvas/Int8Array.cpp \
 	Source/WebCore/html/canvas/Int8Array.h \
 	Source/WebCore/html/canvas/IntegralTypedArrayBase.h \
-	Source/WebCore/html/canvas/OESStandardDerivatives.cpp \
-	Source/WebCore/html/canvas/OESStandardDerivatives.h \
-	Source/WebCore/html/canvas/OESTextureFloat.cpp \
-	Source/WebCore/html/canvas/OESTextureFloat.h \
 	Source/WebCore/html/canvas/TypedArrayBase.h \
-	Source/WebCore/html/canvas/WebKitLoseContext.cpp \
-	Source/WebCore/html/canvas/WebKitLoseContext.h \
 	Source/WebCore/html/canvas/Uint16Array.cpp \
 	Source/WebCore/html/canvas/Uint16Array.h \
 	Source/WebCore/html/canvas/Uint32Array.cpp \
@@ -2439,6 +2437,7 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/GraphicsLayer.h \
 	Source/WebCore/platform/graphics/GraphicsTypes.cpp \
 	Source/WebCore/platform/graphics/GraphicsTypes.h \
+	Source/WebCore/platform/graphics/GraphicsTypes3D.h \
 	Source/WebCore/platform/graphics/Icon.h \
 	Source/WebCore/platform/graphics/ImageBuffer.cpp \
 	Source/WebCore/platform/graphics/ImageBuffer.h \
@@ -4823,7 +4822,19 @@ webcore_sources += \
 	Source/WebCore/html/canvas/WebGLTexture.cpp \
 	Source/WebCore/html/canvas/WebGLTexture.h \
 	Source/WebCore/html/canvas/WebGLUniformLocation.cpp \
-	Source/WebCore/html/canvas/WebGLUniformLocation.h
+	Source/WebCore/html/canvas/WebGLUniformLocation.h \
+	Source/WebCore/html/canvas/WebGLVertexArrayObjectOES.cpp \
+	Source/WebCore/html/canvas/WebGLVertexArrayObjectOES.h \
+	Source/WebCore/html/canvas/OESStandardDerivatives.cpp \
+	Source/WebCore/html/canvas/OESStandardDerivatives.h \
+	Source/WebCore/html/canvas/OESTextureFloat.cpp \
+	Source/WebCore/html/canvas/OESTextureFloat.h \
+	Source/WebCore/html/canvas/OESVertexArrayObject.cpp \
+	Source/WebCore/html/canvas/OESVertexArrayObject.h \
+	Source/WebCore/html/canvas/OESVertexArray.cpp \
+	Source/WebCore/html/canvas/OESVertexArray.h \
+	Source/WebCore/html/canvas/WebKitLoseContext.cpp \
+	Source/WebCore/html/canvas/WebKitLoseContext.h
 endif  # END ENABLE_WEBGL
 
 DerivedSources/WebCore/CSSPropertyNames.cpp: DerivedSources/WebCore/CSSPropertyNames.h

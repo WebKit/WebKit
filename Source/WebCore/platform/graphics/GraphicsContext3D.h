@@ -28,6 +28,7 @@
 
 #include "IntSize.h"
 #include "GraphicsLayer.h"
+#include "GraphicsTypes3D.h"
 #include "PlatformString.h"
 
 #include <wtf/HashMap.h>
@@ -41,25 +42,6 @@
 // This define is from the X11 headers, but it's used below, so we must undefine it.
 #undef VERSION
 #endif
-
-// GC3D types match the corresponding GL types as defined in OpenGL ES 2.0
-// header file gl2.h from khronos.org.
-typedef unsigned int GC3Denum;
-typedef unsigned char GC3Dboolean;
-typedef unsigned int GC3Dbitfield;
-typedef signed char GC3Dbyte;
-typedef unsigned char GC3Dubyte;
-typedef short GC3Dshort;
-typedef unsigned short GC3Dushort;
-typedef int GC3Dint;
-typedef int GC3Dsizei;
-typedef unsigned int GC3Duint;
-typedef float GC3Dfloat;
-typedef float GC3Dclampf;
-typedef signed long int GC3Dintptr;
-typedef signed long int GC3Dsizeiptr;
-
-typedef GC3Duint Platform3DObject;
 
 #if PLATFORM(MAC)
 #include "ANGLEWebKitBridge.h"
