@@ -1,3 +1,14 @@
+2011-02-17  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Antonio Gomes.
+
+        make event handling work in Gecko
+        https://bugs.webkit.org/show_bug.cgi?id=54702
+
+        Gecko doesn't support the global event property. It's an IE-ism.
+
+        * code-review.js:
+
 2011-02-14  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.

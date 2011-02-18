@@ -1382,21 +1382,21 @@ var CODE_REVIEW_UNITTEST;
     return node.hasClass('DiffBlock');
   }
 
-  $('textarea').live('keydown', function() {
+  $('textarea').live('keydown', function(e) {
     var unicode_escape = 'U+001B';
-    if (event.keyIdentifier == unicode_escape)
+    if (e.keyIdentifier == unicode_escape)
       handleEscapeKeyDownInTextarea(this);
   });
 
-  $('body').live('keypress', function() {
+  $('body').live('keypress', function(e) {
     // FIXME: There's got to be a better way to avoid seeing these keypress
     // events.
-    if (event.target.nodeName == 'TEXTAREA')
+    if (e.target.nodeName == 'TEXTAREA')
       return;
     
     var handled = false;
 
-    switch (event.charCode) {
+    switch (e.charCode) {
     case kCharCodeForN:
       handled = focusNext(isComment, DIRECTION.FORWARD);
       break;
@@ -1419,7 +1419,7 @@ var CODE_REVIEW_UNITTEST;
     }
     
     if (handled)
-      event.preventDefault();
+      e.preventDefault();
   });
   
   function handleEscapeKeyDownInTextarea(textarea) {
@@ -1509,7 +1509,7 @@ var CODE_REVIEW_UNITTEST;
   }).live('mousedown', function(e) {
     // preventDefault to avoid selecting text when dragging to select comment context lines.
     // FIXME: should we use user-modify CSS instead?
-    event.preventDefault();
+    e.preventDefault();
     if (e.shiftKey)
       return;
 
