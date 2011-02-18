@@ -1,3 +1,9 @@
+2011-02-18  Martin Robinson  <mrobinson@igalia.com>
+
+        Continue importing GTK+ results for Mozilla table tests.
+
+        * platform/gtk/Skipped: Unskip test which now have results.
+
 2011-02-18  Jessie Berlin  <jberlin@apple.com>
 
         (new) media/video-controls-in-media-documents.html needs baselines for win & mac
