@@ -1,3 +1,28 @@
+2011-02-17  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] Video-related compositor tests failing in DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=47231
+        
+        Make tests fall back to .ogv (Theora) videos if they can't play the
+        .mp4/.mov files.
+
+        * compositing/geometry/clipped-video-controller.html:
+        * compositing/geometry/video-fixed-scrolling.html:
+        * compositing/geometry/video-opacity-overlay.html:
+        * compositing/layers-inside-overflow-scroll.html:
+        * compositing/overflow/overflow-compositing-descendant.html:
+        * compositing/overflow/scroll-ancestor-update.html:
+        * compositing/reflections/load-video-in-reflection.html:
+        * compositing/resources/alpha-gradient-small.ogv: Added.
+        * compositing/resources/video.ogv: Added.
+        * compositing/self-painting-layers.html:
+        * compositing/self-painting-layers2.html:
+        * compositing/video/video-background-color.html:
+        * compositing/video/video-poster.html:
+        * platform/chromium/test_expectations.txt:
+
 2011-02-17  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed expectations tweak in attempt to green up the chromium canaries.

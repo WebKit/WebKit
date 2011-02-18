@@ -49,7 +49,7 @@
       window.addEventListener('load', function() {
         var video = document.getElementById('video');
         video.addEventListener('loadeddata', testOnLoad, false);
-        video.src = "resources/video.mp4";
+        video.src = 'resources/video.' + (video.canPlayType('video/ogg') ? 'ogv' : 'mp4');
       }, false);
     </script>
   </head>

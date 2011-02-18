@@ -32,7 +32,7 @@
                 {
                     case "load":
                         checkLayers("No src, no poster", false);
-                        video.src = "../resources/video.mp4"
+                        video.src = "../resources/video." + (video.canPlayType("video/ogg") ? "ogv" : "mp4");
                         video.poster = "../resources/apple.jpg";
                         break;
                     case "canplaythrough":

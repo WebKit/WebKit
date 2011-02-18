@@ -30,12 +30,13 @@
   <div class="wrapper">
     <img src="../resources/alpha-gradient-small.png">
   </div>
-  <video src="../resources/alpha-gradient-small.mov" autoplay loop></video>
+  <video autoplay loop></video>
 
   <p>Top and bottom should look the same.</p>
 
   <script type="text/javascript" charset="utf-8">
     var video = document.getElementsByTagName('video')[0];
+    video.src = '../resources/alpha-gradient-small.' + (video.canPlayType('video/ogg') ? 'ogv' : 'mov');
     video.addEventListener('canplaythrough', function() {
       if (window.layoutTestController)
         layoutTestController.notifyDone();

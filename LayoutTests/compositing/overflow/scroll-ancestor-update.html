@@ -74,10 +74,11 @@
     <p>The green box should obscure the red box, and move when you drag the scrollbar.</p>
   </div>
   
-  <video src="../resources/video.mp4"></video>
+  <video></video>
 
   <script type="text/javascript" charset="utf-8">
     var video = document.getElementsByTagName('video')[0];
+    video.src = '../resources/video.' + (video.canPlayType('video/ogg') ? 'ogv' : 'mp4');
     video.addEventListener('canplaythrough', function() {
       scrollTestDiv();
       if (window.layoutTestController)

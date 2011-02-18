@@ -30,13 +30,14 @@
   </script>
 </head>
 <body>
-    <video src="../resources/video.mp4"></video>
+    <video></video>
 
     <p>The blue bar should be in front of the video, and at the top of the page.</p>
     <div id="fixed-bar"></div>
 
   <script type="text/javascript" charset="utf-8">
     var video = document.getElementsByTagName('video')[0];
+    video.src = '../resources/video.' + (video.canPlayType('video/ogg') ? 'ogv' : 'mp4');
     video.addEventListener('canplaythrough', function() {
       window.scrollBy(50, 50);
       if (window.layoutTestController)

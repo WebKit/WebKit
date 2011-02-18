@@ -41,13 +41,14 @@
 <body>
   <p>The orange bar should be in front of the video.</p>
   <div class="container">
-    <video src="../resources/video.mp4"></video>
+    <video></video>
     <div class="controls" id="controls">
       <div id="control-bar"></div>
     </div>
   </div>
   <script type="text/javascript" charset="utf-8">
     var video = document.getElementsByTagName('video')[0];
+    video.src = '../resources/video.' + (video.canPlayType('video/ogg') ? 'ogv' : 'mp4');
     video.addEventListener('canplaythrough', function() {
       if (window.layoutTestController)
         layoutTestController.notifyDone();

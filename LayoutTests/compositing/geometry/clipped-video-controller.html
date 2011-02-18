@@ -26,10 +26,11 @@
 <body>
     <p>The video controller should not be visible below</p>
     <div id="box">
-      <video src="../resources/video.mp4" controls></video>
+      <video controls></video>
     </div>
     <script type="text/javascript" charset="utf-8">
       var video = document.getElementsByTagName('video')[0];
+      video.src = '../resources/video.' + (video.canPlayType('video/ogg') ? 'ogv' : 'mp4');
       video.addEventListener('canplaythrough', function() {
         if (window.layoutTestController)
           layoutTestController.notifyDone();
