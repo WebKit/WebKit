@@ -1,3 +1,9 @@
+2011-02-18  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, update GTK media test baselines
+
+        * platform/gtk/media/controls-styling-expected.txt:
+
 2011-02-17  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed.
