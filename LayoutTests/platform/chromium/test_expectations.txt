@@ -3471,7 +3471,7 @@ BUGV8_1168 : fast/js/mozilla/strict/this-for-function-expression-recursion.html 
 
 BUGWK54634 SKIP : media/video-controls-in-media-document.html = TIMEOUT
 
-BUGWK54659 DEBUG : inspector/debugger/debug-inlined-scripts.html = CRASH
+BUGWK54659 DEBUG : inspector/debugger/debug-inlined-scripts.html = CRASH TIMEOUT
 
 // For some reason, we can't rebaseline these because they don't end up in the archive. Disable while
 // we figure this out.
