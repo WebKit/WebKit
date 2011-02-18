@@ -2,6 +2,16 @@
 
         Reviewed by Adam Roben.
 
+        Skip pretty patch unit tests if ruby isn't installed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54699
+
+        * Scripts/webkitpy/common/prettypatch_unittest.py:
+
+2011-02-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Adam Roben.
+
         Skip mac.test_skipped_file_paths() when running on win32; the
         test has hardcoded '/' directory separators and since it's a
         port-specific test and we have coverage on other ports it's not

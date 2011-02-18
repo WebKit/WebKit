@@ -34,6 +34,13 @@ from webkitpy.common.prettypatch import PrettyPatch
 
 
 class PrettyPatchTest(unittest.TestCase):
+    def check_ruby(self):
+        executive = Executive()
+        try:
+            result = executive.run_command(['ruby', '--version'])
+        except OSError, e:
+            return False
+        return True
 
     _diff_with_multiple_encodings = """
 Index: utf8_test
@@ -59,12 +66,18 @@ Index: latin1_test
         return webkit_root
 
     def test_pretty_diff_encodings(self):
+        if not self.check_ruby():
+            return
+
         pretty_patch = PrettyPatch(Executive(), self._webkit_root())
         pretty = pretty_patch.pretty_diff(self._diff_with_multiple_encodings)
         self.assertTrue(pretty)  # We got some output
         self.assertTrue(isinstance(pretty, str))  # It's a byte array, not unicode
 
     def test_pretty_print_empty_string(self):
+        if not self.check_ruby():
+            return
+
         # Make sure that an empty diff does not hang the process.
         pretty_patch = PrettyPatch(Executive(), self._webkit_root())
         self.assertEqual(pretty_patch.pretty_diff(""), "")
