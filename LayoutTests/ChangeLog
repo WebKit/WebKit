@@ -1,3 +1,9 @@
+2011-02-18  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Qt] Unreviewed, skip failing inspector/styles/styles-update-from-js.html.
+
+        * platform/qt/Skipped:
+
 2011-02-18  Jessie Berlin  <jberlin@apple.com>
 
         [Windows 7 Release Tests] ~26 tests failing after r78846

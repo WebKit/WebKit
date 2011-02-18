@@ -4515,6 +4515,7 @@ inspector/elements/elements-panel-structure.html
 inspector/elements/elements-delete-inline-style.html
 inspector/elements/mutate-unknown-node.html
 inspector/extensions/extensions.html
+inspector/styles/styles-update-from-js.html
 
 # Directory upload is not enabled.
 fast/forms/input-file-directory-upload.html
