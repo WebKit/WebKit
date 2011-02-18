@@ -1918,9 +1918,9 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 {
     ASSERT(_data->_layerHostingView);
 
+    [_data->_layerHostingView.get() removeFromSuperview];
     [_data->_layerHostingView.get() setLayer:nil];
     [_data->_layerHostingView.get() setWantsLayer:NO];
-    [_data->_layerHostingView.get() removeFromSuperview];
     
     _data->_layerHostingView = nullptr;
 }

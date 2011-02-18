@@ -185,6 +185,18 @@ void DrawingAreaImpl::setPageOverlayNeedsDisplay(const IntRect& rect)
     setNeedsDisplay(rect);
 }
 
+void DrawingAreaImpl::layerHostDidFlushLayers()
+{
+    ASSERT(m_layerTreeHost);
+
+    m_layerTreeHost->forceRepaint();
+
+    if (!m_layerTreeHost)
+        return;
+
+    m_webPage->send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(generateSequenceNumber(), m_layerTreeHost->layerTreeContext()));
+}
+
 void DrawingAreaImpl::attachCompositingContext()
 {
 }
@@ -210,7 +222,12 @@ void DrawingAreaImpl::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
             if (!m_alwaysUseCompositing) {
                 // We'll exit accelerated compositing mode on a timer, to avoid re-entering
                 // compositing code via display() and layout.
-                exitAcceleratedCompositingModeSoon();
+                // If we're leaving compositing mode because of a setSize, it is safe to
+                // exit accelerated compositing mode right away.
+                if (m_inSetSize)
+                    exitAcceleratedCompositingMode();
+                else
+                    exitAcceleratedCompositingModeSoon();
             }
         }
     }
@@ -304,6 +321,9 @@ void DrawingAreaImpl::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLay
     ASSERT(!m_layerTreeHost);
 
     m_layerTreeHost = LayerTreeHost::create(m_webPage);
+    if (!m_inSetSize)
+        m_layerTreeHost->setShouldNotifyAfterNextScheduledLayerFlush();
+
     m_layerTreeHost->setRootCompositingLayer(graphicsLayer);
     
     // Non-composited content will now be handled exclusively by the layer tree host.
@@ -312,9 +332,6 @@ void DrawingAreaImpl::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLay
     m_scrollOffset = IntSize();
     m_displayTimer.stop();
     m_isWaitingForDidUpdate = false;
-
-    if (!m_inSetSize)
-        m_webPage->send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(generateSequenceNumber(), m_layerTreeHost->layerTreeContext()));
 }
 
 void DrawingAreaImpl::exitAcceleratedCompositingMode()

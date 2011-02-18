@@ -40,6 +40,8 @@ public:
     static PassRefPtr<DrawingAreaImpl> create(WebPage*, const WebPageCreationParameters&);
     virtual ~DrawingAreaImpl();
 
+    void layerHostDidFlushLayers();
+
 private:
     DrawingAreaImpl(WebPage*, const WebPageCreationParameters&);
 

@@ -1,3 +1,55 @@
+2011-02-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        WKView flashes when entering/exiting compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=54695
+        <rdar://problem/9011554>
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _exitAcceleratedCompositingMode]):
+        Remove the layer hosting view before clearing out its layer, otherwise we can get
+        white flashes when exiting accelerated compositing mode.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        When entering accelerated compositing mode, we want to defer sending the message
+        until we've actually committed the layer tree and pushed all changes over to the
+        UI process.
+
+        (WebKit::DrawingAreaImpl::layerHostDidFlushLayers):
+        Tell the layer tree host to force a repaint. This will ensure that all layer tree
+        changes are pushed over to the UI process. When that is done, send the new layer tree
+        context over to the UI process.
+
+        (WebKit::DrawingAreaImpl::setRootCompositingLayer):
+        When exiting compositing mode in response to a didSetSize, we want to exit accelerated 
+        compositing mode right away to avoid flashes. This is safe since we've laid out the page
+        already so we won't end up reentering setRootCompositingLayer.
+
+        (WebKit::DrawingAreaImpl::enterAcceleratedCompositingMode):
+        Tell the layer tree host to notify us when the next layer tree flush happened, so we can
+        let the UI process know. If we're entering accelerated compositing mode in response to a
+        SetSize message, the new layer tree context will be passed in the DidSetSize message.
+
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        Add layerHostDidFlushLayers.
+
+        * WebProcess/WebPage/LayerTreeHost.h:
+        Add setShouldNotifyAfterNextScheduledLayerFlush.
+
+        * WebProcess/WebPage/mac/LayerTreeHostMac.h:
+        Add a m_notifyAfterScheduledLayerFlush flag.
+
+        * WebProcess/WebPage/mac/LayerTreeHostMac.mm:
+        (WebKit::LayerTreeHostMac::LayerTreeHostMac):
+        Initialize m_notifyAfterScheduledLayerFlush to false.
+
+        (WebKit::LayerTreeHostMac::setShouldNotifyAfterNextScheduledLayerFlush):
+        Set m_notifyAfterScheduledLayerFlush to true.
+
+        (WebKit::LayerTreeHostMac::flushPendingLayerChangesRunLoopObserverCallback):
+        If m_notifyAfterScheduledLayerFlush is true, call DrawingAreaImpl::layerHostDidFlushLayers.
+
 2011-02-18  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Adele Peterson.

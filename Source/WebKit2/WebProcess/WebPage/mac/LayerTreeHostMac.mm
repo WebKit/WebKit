@@ -26,6 +26,7 @@
 #import "config.h"
 #import "LayerTreeHostMac.h"
 
+#import "DrawingAreaImpl.h"
 #import "WebPage.h"
 #import "WebProcess.h"
 #import <QuartzCore/CATransaction.h>
@@ -51,6 +52,7 @@ PassRefPtr<LayerTreeHostMac> LayerTreeHostMac::create(WebPage* webPage)
 LayerTreeHostMac::LayerTreeHostMac(WebPage* webPage)
     : LayerTreeHost(webPage)
     , m_isValid(true)
+    , m_notifyAfterScheduledLayerFlush(false)
 {
     mach_port_t serverPort = WebProcess::shared().compositingRenderServerPort();
     m_remoteLayerClient = WKCARemoteLayerClientMakeWithServerPort(serverPort);
@@ -114,6 +116,11 @@ void LayerTreeHostMac::scheduleLayerFlush()
     m_flushPendingLayerChangesRunLoopObserver.adoptCF(CFRunLoopObserverCreate(0, kCFRunLoopBeforeWaiting | kCFRunLoopExit, true, runLoopOrder, flushPendingLayerChangesRunLoopObserverCallback, &context));
 
     CFRunLoopAddObserver(currentRunLoop, m_flushPendingLayerChangesRunLoopObserver.get(), kCFRunLoopCommonModes);
+}
+
+void LayerTreeHostMac::setShouldNotifyAfterNextScheduledLayerFlush()
+{
+    m_notifyAfterScheduledLayerFlush = true;
 }
 
 void LayerTreeHostMac::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
@@ -250,6 +257,12 @@ void LayerTreeHostMac::flushPendingLayerChangesRunLoopObserverCallback()
     ASSERT(m_flushPendingLayerChangesRunLoopObserver);
     CFRunLoopObserverInvalidate(m_flushPendingLayerChangesRunLoopObserver.get());
     m_flushPendingLayerChangesRunLoopObserver = 0;
+
+    if (m_notifyAfterScheduledLayerFlush) {
+        // Let the drawing area know that we've done a flush of the layer changes.
+        static_cast<DrawingAreaImpl*>(m_webPage->drawingArea())->layerHostDidFlushLayers();
+        m_notifyAfterScheduledLayerFlush = false;
+    }
 }
 
 bool LayerTreeHostMac::flushPendingLayerChanges()
