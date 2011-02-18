@@ -830,9 +830,8 @@ void NetscapePlugin::windowVisibilityChanged(bool)
 
 uint64_t NetscapePlugin::pluginComplexTextInputIdentifier() const
 {
-    // This is never called for NetscapePlugin.
-    ASSERT_NOT_REACHED();
-    return 0;
+    // Just return a dummy value; this is only called for in-process plug-ins, which we don't support on Mac.
+    return static_cast<uint64_t>(reinterpret_cast<uintptr_t>(this));
 }
 
 
