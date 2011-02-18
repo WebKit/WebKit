@@ -1,5 +1,16 @@
 2011-02-18  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Adam Roben.
+
+        r78494 fixed the chromium_win unittest failing under win32,
+        but not cygwin. This fixes cygwin as well.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54652
+
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+
+2011-02-18  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Ojan Vafai, Mihai Parparita.
 
         new-run-webkit-tests: r78522 made it impossible to create a

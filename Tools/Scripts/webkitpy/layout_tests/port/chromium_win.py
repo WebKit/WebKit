@@ -102,7 +102,7 @@ class ChromiumWinPort(chromium.ChromiumPort):
         # python executable to run cgi program.
         env["CYGWIN_PATH"] = self.path_from_chromium_base(
             "third_party", "cygwin", "bin")
-        if (sys.platform == "win32" and self.get_option('register_cygwin')):
+        if (sys.platform in ("cygwin", "win32") and self.get_option('register_cygwin')):
             setup_mount = self.path_from_chromium_base("third_party",
                                                        "cygwin",
                                                        "setup_mount.bat")
