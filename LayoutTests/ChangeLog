@@ -1,3 +1,17 @@
+2011-02-17  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] media/video-controls-in-media-document.html potentially flaky
+        https://bugs.webkit.org/show_bug.cgi?id=54631
+
+        Refactored the test to roll the element to play before dumping the
+        DRT. Also added baselines for GTK and fixed the media-file.js
+        include after r78778.
+
+        * media/video-controls-in-media-document.html:
+        * platform/gtk/media/video-controls-in-media-document-expected.txt: Added.
+
 2011-02-18  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, update GTK media test baselines

@@ -1,12 +1,21 @@
 <p>Test that controls don't increase the size of the container (i.e. are
 rendered overlapping with the video canvas).<p>
-<script src="media-file.js" type="text/javascript"></script>
+<script src="../http/tests/media/media-file.js" type="text/javascript"></script>
 
 <iframe style="width: 400px; height: 300px; border: 0px;" id="container"> </iframe>
 
 <script type="text/javascript">
 var iframe = document.getElementById("container");
 layoutTestController.waitUntilDone();
-iframe.onload = function() { layoutTestController.notifyDone(); };
+
+function finish() { layoutTestController.notifyDone(); };
+
+function start() {
+    var iframeDocument = document.getElementById("container").contentDocument;
+    var video = iframeDocument.querySelector("video");
+    video.addEventListener("timeupdate", finish);
+};
+
+iframe.onload = start;
 iframe.src = findMediaFile("video", "content/test");
 </script>

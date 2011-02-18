@@ -1,0 +1,35 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 690x19
+          text run at (0,0) width 690: "Test that controls don't increase the size of the container (i.e. are rendered overlapping with the video canvas)."
+      RenderBlock {P} at (0,35) size 784x300
+        RenderPartObject {IFRAME} at (0,0) size 400x300
+          layer at (0,0) size 400x300
+            RenderView at (0,0) size 400x300
+          layer at (0,0) size 400x300
+            RenderBlock {HTML} at (0,0) size 400x300
+              RenderBody {BODY} at (8,8) size 384x284 [bgcolor=#262626]
+          layer at (40,30) size 320x240
+            RenderVideo {VIDEO} at (40,30) size 320x240
+          layer at (40,30) size 320x240
+            RenderBlock (relative positioned) {DIV} at (0,0) size 320x240
+          layer at (40,46) size 320x240 scrollHeight 250
+            RenderFlexibleBox (positioned) {DIV} at (0,16) size 320x240
+              RenderButton {INPUT} at (0,220) size 20x20
+              RenderFlexibleBox {DIV} at (20,220) size 220x20 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
+                RenderBlock (anonymous) at (1,0) size 65x30
+                  RenderBlock {DIV} at (0,0) size 65x30
+                    RenderText {#text} at (5,5) size 55x12
+                      text run at (5,5) width 55: "00:00 / 00:06"
+                RenderSlider {INPUT} at (66,0) size 153x20
+                  RenderBlock {DIV} at (11,4) size 12x12
+              RenderButton {INPUT} at (240,220) size 20x20
+              RenderButton {INPUT} at (260,220) size 20x20
+              RenderButton {INPUT} at (280,220) size 20x20
+              RenderButton {INPUT} at (300,220) size 20x20
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
