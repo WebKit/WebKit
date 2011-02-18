@@ -62,14 +62,14 @@ layer at (8,60) size 406x206 clip at (9,61) size 404x204
 layer at (10,831) size 161x32 clip at (11,832) size 144x30 scrollHeight 56
   RenderTextControl {TEXTAREA} at (2,56) size 161x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 140x52
-      RenderText {#text} at (0,0) size 130x52
-        text run at (0,0) width 109: "Demo text here that"
-        text run at (109,0) width 3: " "
-        text run at (0,13) width 123: "wraps a bit and should"
-        text run at (123,13) width 3: " "
-        text run at (0,26) width 89: "demonstrate the"
-        text run at (89,26) width 3: " "
-        text run at (0,39) width 130: "goodness of line-height"
+      RenderText {#text} at (0,0) size 129x52
+        text run at (0,0) width 108: "Demo text here that"
+        text run at (107,0) width 5: " "
+        text run at (0,13) width 122: "wraps a bit and should"
+        text run at (121,13) width 5: " "
+        text run at (0,26) width 88: "demonstrate the"
+        text run at (87,26) width 5: " "
+        text run at (0,39) width 129: "goodness of line-height"
 layer at (10,907) size 161x32 clip at (11,908) size 159x30
   RenderTextControl {TEXTAREA} at (2,132) size 161x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 155x13

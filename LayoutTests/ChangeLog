@@ -1,3 +1,40 @@
+2011-02-18  Jessie Berlin  <jberlin@apple.com>
+
+        [Windows 7 Release Tests] ~26 tests failing after r78846
+        https://bugs.webkit.org/show_bug.cgi?id=54748
+
+        Unreviewed. Landing expected (failing?) results to get the Windows 7 Release bots green.
+
+        Note: the pixel test results for fast/ruby/nested-ruby.html and
+        fast/blockflow/Kusa-Makura-background-canvas.html will be landed separately.
+
+        * platform/win/css2.1/t0905-c5525-fltwidth-00-c-g-expected.txt:
+        * platform/win/css2.1/t1202-counter-04-b-expected.txt:
+        * platform/win/css2.1/t1202-counters-04-b-expected.txt:
+        * platform/win/editing/pasteboard/nested-blocks-with-text-area-expected.txt:
+        * platform/win/editing/pasteboard/pasting-tabs-expected.txt:
+        * platform/win/editing/selection/mixed-editability-10-expected.txt:
+        * platform/win/fast/blockflow/Kusa-Makura-background-canvas-expected.txt:
+        * platform/win/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/win/fast/forms/basic-selects-expected.txt:
+        * platform/win/fast/forms/basic-textareas-expected.txt:
+        * platform/win/fast/forms/basic-textareas-quirks-expected.txt:
+        * platform/win/fast/forms/select-writing-direction-natural-expected.txt:
+        * platform/win/fast/forms/textAreaLineHeight-expected.txt:
+        * platform/win/fast/forms/textarea-scrollbar-expected.txt:
+        * platform/win/fast/forms/textarea-scrolled-type-expected.txt:
+        * platform/win/fast/parser/entity-comment-in-textarea-expected.txt:
+        * platform/win/fast/parser/open-comment-in-textarea-expected.txt:
+        * platform/win/fast/ruby/nested-ruby-expected.txt:
+        * platform/win/fast/text/atsui-negative-spacing-features-expected.txt:
+        * platform/win/fast/text/backslash-to-yen-sign-euc-expected.txt:
+        * platform/win/fast/text/international/bidi-control-chars-treated-as-ZWS-expected.txt: Added.
+        * platform/win/fast/text/international/bidi-menulist-expected.txt:
+        * platform/win/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt:
+        * platform/win/fast/text/justify-ideograph-complex-expected.txt:
+        * platform/win/fast/text/justify-ideograph-simple-expected.txt:
+        * platform/win/fast/text/justify-ideograph-vertical-expected.txt:
+
 2011-02-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
