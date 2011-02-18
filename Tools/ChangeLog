@@ -2,12 +2,22 @@
 
         Reviewed by Adam Roben.
 
+        Fix webkitpy.layout_tests.port.config_unittest to work on Win32.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54703
+
+        * Scripts/webkitpy/layout_tests/port/config_unittest.py:
+
+2011-02-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Adam Roben.
+
         Change the default port we're mocking out on win32 when we
         run mock_drt_unittest. Normally we'd default to the
         port-specific default, but that would be "win", which doesn't
         currently work.
 
-        https://bugs.webkit.org/show_bug.cgi?id=38756
+        https://bugs.webkit.org/show_bug.cgi?id=54708
 
         * Scripts/webkitpy/layout_tests/port/mock_drt_unittest.py:
 

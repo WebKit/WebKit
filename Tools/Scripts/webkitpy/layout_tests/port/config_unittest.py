@@ -189,7 +189,10 @@ class ConfigTest(unittest.TestCase):
         self.assertNotEqual(base_dir[-1], '/')
 
         orig_cwd = os.getcwd()
-        os.chdir(os.environ['HOME'])
+        if sys.platform == 'win32':
+            os.chdir(os.environ['USERPROFILE'])
+        else:
+            os.chdir(os.environ['HOME'])
         c = config.Config(executive.Executive(), filesystem.FileSystem())
         try:
             base_dir_2 = c.webkit_base_dir()
