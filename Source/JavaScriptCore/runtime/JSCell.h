@@ -404,8 +404,7 @@ namespace JSC {
 
     inline void* MarkedBlock::allocate(size_t& nextAtom)
     {
-        while (nextAtom != m_endAtom) {
-            ASSERT(nextAtom < m_endAtom);
+        while (nextAtom < m_endAtom) {
             if (!m_marks.testAndSet(nextAtom)) {
                 JSCell* cell = reinterpret_cast<JSCell*>(&atoms()[nextAtom]);
                 nextAtom += m_atomsPerCell;

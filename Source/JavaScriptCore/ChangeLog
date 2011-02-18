@@ -2,6 +2,30 @@
 
         Reviewed by Sam Weinig.
 
+        Fixed some math errors when when using variable-sized cells
+        https://bugs.webkit.org/show_bug.cgi?id=54717
+        
+        SunSpider reports no change.
+        
+        Computer Science Barbie says, "Math is not so hard afterall!"
+
+        * runtime/JSCell.h:
+        (JSC::JSCell::MarkedBlock::allocate): Round up when calculating the
+        minimum number of atoms required for a cell, since rounding down
+        will get you splinched.
+
+        * runtime/MarkedBlock.cpp:
+        (JSC::MarkedBlock::MarkedBlock):
+        (JSC::MarkedBlock::sweep):
+        * runtime/MarkedBlock.h:
+        (JSC::MarkedBlock::forEach): Changed a bunch of != tests to < tests
+        because m_endAtom is actually a fuzzy end -- iterating from firstAtom()
+        may not hit m_endAtom exactly.
+
+2011-02-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
         A little more abstraction for MarkedSpace::contains
         https://bugs.webkit.org/show_bug.cgi?id=54715
 

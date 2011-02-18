@@ -46,14 +46,14 @@ void MarkedBlock::destroy(MarkedBlock* block)
 }
 
 MarkedBlock::MarkedBlock(const PageAllocationAligned& allocation, JSGlobalData* globalData, size_t cellSize)
-    : m_atomsPerCell(cellSize / atomSize)
-    , m_endAtom((allocation.size() - sizeof(MarkedBlock)) / cellSize) // Intentionally rounds down.
+    : m_atomsPerCell((cellSize + atomSize - 1) / atomSize)
+    , m_endAtom(atomsPerBlock - m_atomsPerCell + 1)
     , m_allocation(allocation)
     , m_heap(&globalData->heap)
 {
     ASSERT(cellSize <= atomSize);
     Structure* dummyMarkableCellStructure = globalData->dummyMarkableCellStructure.get();
-    for (size_t i = firstAtom(); i != m_endAtom; i += m_atomsPerCell)
+    for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell)
         new (&atoms()[i]) JSCell(dummyMarkableCellStructure);
 }
 
@@ -63,7 +63,7 @@ void MarkedBlock::sweep()
     Structure* dummyMarkableCellStructure = m_heap->globalData()->dummyMarkableCellStructure.get();
 #endif
 
-    for (size_t i = firstAtom(); i != m_endAtom; i += m_atomsPerCell) {
+    for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
         if (m_marks.get(i))
             continue;
 
