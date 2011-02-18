@@ -55,7 +55,7 @@ void NetscapePlugin::platformGeometryDidChange()
     notImplemented();
 }
 
-void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirtyRect)
+void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirtyRect, bool)
 {
     notImplemented();
 }

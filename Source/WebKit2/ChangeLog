@@ -1,3 +1,10 @@
+2011-02-18  Alejandro G. Castro  <alex@igalia.com>
+
+        Fix GTK build by fixing signature of platformPaint(), required after r78956.
+
+        * WebProcess/Plugins/Netscape/gtk/NetscapePluginGtk.cpp:
+        (WebKit::NetscapePlugin::platformPaint):
+
 2011-02-17  Dan Bernstein  <mitz@apple.com>
 
         LLVM Compiler build fix.
