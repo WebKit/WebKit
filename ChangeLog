@@ -1,3 +1,14 @@
+2011-02-18  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] minimal build unrecognized options
+        https://bugs.webkit.org/show_bug.cgi?id=50890
+
+        * configure.ac: added new configure options to enable/disable the
+        meter element, progress element, datagrid and client-based
+        geolocation support.
+
 2011-02-17  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix after introduction of JavaScriptCore/collector.

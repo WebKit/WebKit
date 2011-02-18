@@ -349,11 +349,11 @@ AC_MSG_RESULT([$enable_optimizations])
 
 # check whether to enable 3D transforms support
 AC_MSG_CHECKING([whether to enable support for 3D Transforms])
-AC_ARG_ENABLE(3D_transforms,
-              AC_HELP_STRING([--enable-3D-transforms],
+AC_ARG_ENABLE(3d_transforms,
+              AC_HELP_STRING([--enable-3d-transforms],
                              [enable support for 3D transforms [default=no]]),
-              [],[enable_3D_transforms="no"])
-AC_MSG_RESULT([$enable_3D_transforms])
+              [],[enable_3d_transforms="no"])
+AC_MSG_RESULT([$enable_3d_transforms])
 
 # check whether to enable WebGL support
 AC_MSG_CHECKING([whether to enable WebGL support])
@@ -371,6 +371,30 @@ AC_ARG_ENABLE(channel_messaging,
               [],[enable_channel_messaging="yes"])
 AC_MSG_RESULT([$enable_channel_messaging])
 
+# check whether to enable notifications
+AC_MSG_CHECKING([whether to enable notifications])
+AC_ARG_ENABLE(notifications,
+              AC_HELP_STRING([--enable-notifications],
+                             [enable notifications [default=no]]),
+              [],[enable_notifications="no"])
+AC_MSG_RESULT([$enable_notifications])
+
+# check whether to enable the meter tag
+AC_MSG_CHECKING([whether to enable HTML5 meter tag])
+AC_ARG_ENABLE(meter_tag,
+              AC_HELP_STRING([--enable-meter-tag],
+                             [enable HTML5 meter [default=no]]),
+              [],[enable_progress_tag="no"])
+AC_MSG_RESULT([$enable_progress_tag])
+
+# check whether to enable the progress tag
+AC_MSG_CHECKING([whether to enable HTML5 progress tag])
+AC_ARG_ENABLE(progress_tag,
+              AC_HELP_STRING([--enable-progress-tag],
+                             [enable HTML5 progress [default=yes]]),
+              [],[enable_progress_tag="yes"])
+AC_MSG_RESULT([$enable_progress_tag])
+
 # check whether to enable JavaScript debugger/profiler support
 AC_MSG_CHECKING([whether to enable JavaScript debugger/profiler support])
 AC_ARG_ENABLE(javascript_debugger,
@@ -378,6 +402,14 @@ AC_ARG_ENABLE(javascript_debugger,
                              [enable JavaScript debugger/profiler support [default=yes]]),
               [],[enable_javascript_debugger="yes"])
 AC_MSG_RESULT([$enable_javascript_debugger])
+
+# check whether to build with datagrid support
+AC_MSG_CHECKING([whether to enable HTML5 datagrid support])
+AC_ARG_ENABLE(datagrid,
+              AC_HELP_STRING([--enable-datagrid],
+                             [enable HTML5 datagrid support [default=no]]),
+              [],[enable_database="no"])
+AC_MSG_RESULT([$enable_database])
 
 # check whether to enable HTML5 Offline Web Applications support
 AC_MSG_CHECKING([whether to enable HTML5 offline web applications support])
@@ -515,6 +547,14 @@ AC_ARG_ENABLE(geolocation,
               [],[enable_geolocation="no"])
 AC_MSG_RESULT([$enable_geolocation])
 
+# check whether to enable client-based geolocation support
+AC_MSG_CHECKING([whether to enable client-based geolocation support])
+AC_ARG_ENABLE(client_based_geolocation,
+              AC_HELP_STRING([--enable-client-based-geolocation],
+                             [enable support for client-based geolocation [default=no]]),
+              [],[enable_client_based_geolocation="no"])
+AC_MSG_RESULT([$enable_client_based_geolocation])
+
 # check whether to enable MathML support
 AC_MSG_CHECKING([whether to enable MathML support])
 AC_ARG_ENABLE(mathml,
@@ -538,6 +578,14 @@ AC_ARG_ENABLE(wml,
                              [enable support for WML [default=no]]),
               [],[enable_wml="no"])
 AC_MSG_RESULT([$enable_wml])
+
+# check whether to enable WCSS support
+AC_MSG_CHECKING([whether to enable WCSS support])
+AC_ARG_ENABLE(wcss,
+              AC_HELP_STRING([--enable-wcss],
+                             [enable support for WCSS [default=no]]),
+              [],[enable_wcss="no"])
+AC_MSG_RESULT([$enable_wcss])
 
 # check whether to enable SharedWorkers support
 AC_MSG_CHECKING([whether to enable SharedWorkers support])
@@ -943,13 +991,16 @@ AM_CONDITIONAL([USE_GSTREAMER], [test "$have_gstreamer" = "yes"])
 
 # WebKit feature conditionals
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug" = "yes"])
-AM_CONDITIONAL([ENABLE_3D_TRANSFORMS],[test "$enable_3D_transforms" = "yes"])
+AM_CONDITIONAL([ENABLE_3D_TRANSFORMS],[test "$enable_3d_transforms" = "yes"])
 AM_CONDITIONAL([ENABLE_WEBGL],[test "$enable_webgl" = "yes"])
 AM_CONDITIONAL([ENABLE_BLOB],[test "$enable_blob" = "yes"])
+AM_CONDITIONAL([ENABLE_METER_TAG],[test "$enable_meter_tag" = "yes"])
+AM_CONDITIONAL([ENABLE_PROGRESS_TAG],[test "$enable_progress_tag" = "yes"])
 AM_CONDITIONAL([ENABLE_CHANNEL_MESSAGING],[test "$enable_channel_messaging" = "yes"])
 AM_CONDITIONAL([ENABLE_JAVASCRIPT_DEBUGGER],[test "$enable_javascript_debugger" = "yes"])
 AM_CONDITIONAL([ENABLE_OFFLINE_WEB_APPLICATIONS],[test "$enable_offline_web_applications" = "yes"])
 AM_CONDITIONAL([ENABLE_DIRECTORY_UPLOAD],[test "$enable_directory_upload" = "yes"])
+AM_CONDITIONAL([ENABLE_DATAGRID],[test "$enable_datagrid" = "yes"])
 AM_CONDITIONAL([ENABLE_DOM_STORAGE],[test "$enable_dom_storage" = "yes"])
 AM_CONDITIONAL([ENABLE_DATABASE],[test "$enable_database" = "yes"])
 AM_CONDITIONAL([ENABLE_DATALIST],[test "$enable_datalist" = "yes"])
@@ -965,6 +1016,7 @@ AM_CONDITIONAL([ENABLE_XPATH],[test "$enable_xpath" = "yes"])
 AM_CONDITIONAL([ENABLE_XSLT],[test "$enable_xslt" = "yes"])
 AM_CONDITIONAL([ENABLE_FILTERS],[test "$enable_filters" = "yes"])
 AM_CONDITIONAL([ENABLE_GEOLOCATION], [test "$enable_geolocation" = "yes"])
+AM_CONDITIONAL([ENABLE_CLIENT_BASED_GEOLOCATION], [test "$enable_client_based_geolocation" = "yes"])
 AM_CONDITIONAL([ENABLE_MATHML], [test "$enable_mathml" = "yes"])
 AM_CONDITIONAL([ENABLE_VIDEO],[test "$enable_video" = "yes"])
 AM_CONDITIONAL([ENABLE_MEDIA_STATISTICS],[test "$enable_media_statistics" = "yes"])
@@ -980,6 +1032,7 @@ AM_CONDITIONAL([ENABLE_SVG_USE],[test "$enable_svg_use" = "yes"])
 AM_CONDITIONAL([ENABLE_COVERAGE],[test "$enable_coverage" = "yes"])
 AM_CONDITIONAL([ENABLE_FAST_MALLOC],[test "$enable_fast_malloc" = "yes"])
 AM_CONDITIONAL([ENABLE_WML],[test "$enable_wml" = "yes"])
+AM_CONDITIONAL([ENABLE_WCSS],[test "$enable_wcss" = "yes"])
 AM_CONDITIONAL([ENABLE_WORKERS],[test "$enable_workers" = "yes"])
 AM_CONDITIONAL([ENABLE_SHARED_WORKERS],[test "$enable_shared_workers" = "yes"])
 AM_CONDITIONAL([SVG_FLAGS],[test "$svg_flags" = "yes"])
@@ -1033,7 +1086,7 @@ Build configuration:
  Font backend                                             : $with_font_backend
  Optimized memory allocator                               : $enable_fast_malloc
 Features:
- 3D Transforms                                            : $enable_3D_transforms
+ 3D Transforms                                            : $enable_3d_transforms
  WebGL                                                    : $enable_webgl
  Blob support                                             : $enable_blob
  Directory upload                                         : $enable_directory_upload
@@ -1041,13 +1094,17 @@ Features:
  JIT compilation                                          : $enable_jit
  Filters support                                          : $enable_filters
  Geolocation support                                      : $enable_geolocation
+ Client-based geolocation support                         : $enable_client_based_geolocation
  JavaScript debugger/profiler support                     : $enable_javascript_debugger
  MathML support                                           : $enable_mathml
  Media statistics                                         : $enable_media_statistics
  HTML5 offline web applications support                   : $enable_offline_web_applications
  HTML5 channel messaging support                          : $enable_channel_messaging
+ HTML5 meter element support                              : $enable_meter_tag
+ HTML5 progress element support                           : $enable_progress_tag
  HTML5 client-side session and persistent storage support : $enable_dom_storage
  HTML5 client-side database storage support               : $enable_database
+ HTML5 datagrid support                                   : $enable_datagrid
  HTML5 FileSystem API support                             : $enable_file_system
  HTML5 sandboxed iframe support                           : $enable_sandbox
  HTML5 server-sent events support                         : $enable_eventsource
@@ -1066,6 +1123,7 @@ Features:
  SVG as image support                                     : $enable_svg_as_image
  SVG use element support                                  : $enable_svg_use
  WML support                                              : $enable_wml
+ WCSS support                                             : $enable_wcss
  Web Audio support                                        : $enable_web_audio
  Web Sockets support                                      : $enable_web_sockets
  Web Timing support                                       : $enable_web_timing

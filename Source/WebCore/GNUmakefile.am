@@ -3913,22 +3913,28 @@ webcoregtk_sources += \
 endif # END USE_PANGO
 
 # ----
-# HTML Data Grid - disable for now.
+# HTML Data Grid
 # ----
-FEATURE_DEFINES += ENABLE_DATAGRID=0
-webcore_cppflags += -DENABLE_DATAGRID=0
+if ENABLE_DATAGRID
+FEATURE_DEFINES += ENABLE_DATAGRID=1
+webcore_cppflags += -DENABLE_DATAGRID=1
+endif
 
 # ----
 # HTML Meter Element
 # ----
+if ENABLE_METER_TAG
 FEATURE_DEFINES += ENABLE_METER_TAG=1
 webcore_cppflags += -DENABLE_METER_TAG=1
+endif # END ENABLE_METER_TAG
 
 # ----
 # HTML Progress Element
 # ----
+if ENABLE_PROGRESS_TAG
 FEATURE_DEFINES += ENABLE_PROGRESS_TAG=1
 webcore_cppflags += -DENABLE_PROGRESS_TAG=1
+endif # END ENABLE_PROGRESS_TAG
 
 # ----
 # JavaScript Debugger/Profiler
@@ -4265,6 +4271,14 @@ DerivedSources/WebCore/WMLNames.cpp: DerivedSources/WebCore/WMLElementFactory.cp
 DerivedSources/WebCore/WMLElementFactory.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/wml/WMLTagNames.in $(WebCore)/wml/WMLAttributeNames.in
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/wml/WMLTagNames.in --attrs $(WebCore)/wml/WMLAttributeNames.in --factory --wrapperFactory --outputDir "$(GENSOURCES_WEBCORE)"
 endif # END ENABLE_WML
+
+# ----
+# WCSS Support
+# ----
+if ENABLE_WCSS
+FEATURE_DEFINES += ENABLE_WCSS=1
+webcore_cppflags += -DENABLE_WCSS=1
+endif # END ENABLE_WCSS
 
 # ----
 # Filters
