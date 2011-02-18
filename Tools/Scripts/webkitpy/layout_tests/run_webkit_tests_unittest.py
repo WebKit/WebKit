@@ -470,6 +470,10 @@ class MainTest(unittest.TestCase):
         if compare_version(sys, '2.6')[0] >= 0:
             self.assertTrue(passing_run(['--worker-model', 'processes']))
 
+    def test_worker_model__processes_and_dry_run(self):
+        if compare_version(sys, '2.6')[0] >= 0:
+            self.assertTrue(passing_run(['--worker-model', 'processes', '--dry-run']))
+
     def test_worker_model__threads(self):
         self.assertTrue(passing_run(['--worker-model', 'threads']))
 

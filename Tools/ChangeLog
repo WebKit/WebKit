@@ -1,3 +1,15 @@
+2011-02-17  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Fix a hang in new-run-webkit-tests when run with
+        --dry-run --worker-model=processes
+
+        https://bugs.webkit.org/show_bug.cgi?id=54595
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_runner2.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2011-02-17  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fixes after recent changes.

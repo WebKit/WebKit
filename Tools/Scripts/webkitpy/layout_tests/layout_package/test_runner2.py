@@ -117,6 +117,9 @@ class TestRunner2(test_runner.TestRunner):
         self._worker_states = {}
 
         num_workers = self._num_workers()
+        keyboard_interrupted = False
+        interrupted = False
+        thread_timings = []
 
         self._printer.print_update('Sharding tests ...')
         test_lists = self._shard_tests(file_list,
@@ -125,6 +128,10 @@ class TestRunner2(test_runner.TestRunner):
 
         manager_connection = manager_worker_broker.get(self._port, self._options,
                                                        self, worker.Worker)
+
+        if self._options.dry_run:
+            return (keyboard_interrupted, interrupted, thread_timings,
+                    self._group_stats, self._all_results)
 
         self._printer.print_update('Starting %s ...' %
                                    grammar.pluralize('worker', num_workers))
@@ -150,26 +157,23 @@ class TestRunner2(test_runner.TestRunner):
         for i in xrange(num_workers):
             manager_connection.post_message('stop')
 
-        keyboard_interrupted = False
-        interrupted = False
         try:
-            if not self._options.dry_run:
-                while not self.is_done():
-                    # We loop with a timeout in order to be able to detect wedged threads.
-                    manager_connection.run_message_loop(delay_secs=1.0)
+            while not self.is_done():
+                # We loop with a timeout in order to be able to detect wedged threads.
+                manager_connection.run_message_loop(delay_secs=1.0)
 
-                if any(worker_state.wedged for worker_state in self._worker_states.values()):
-                    _log.error('')
-                    _log.error('Remaining workers are wedged, bailing out.')
-                    _log.error('')
-                else:
-                    _log.debug('No wedged threads')
+            if any(worker_state.wedged for worker_state in self._worker_states.values()):
+                _log.error('')
+                _log.error('Remaining workers are wedged, bailing out.')
+                _log.error('')
+            else:
+                _log.debug('No wedged threads')
 
-                # Make sure all of the workers have shut down (if possible).
-                for worker_state in self._worker_states.values():
-                    if not worker_state.wedged and worker_state.worker_connection.is_alive():
-                        worker_state.worker_connection.join(0.5)
-                        assert not worker_state.worker_connection.is_alive()
+            # Make sure all of the workers have shut down (if possible).
+            for worker_state in self._worker_states.values():
+                if not worker_state.wedged and worker_state.worker_connection.is_alive():
+                    worker_state.worker_connection.join(0.5)
+                    assert not worker_state.worker_connection.is_alive()
 
         except KeyboardInterrupt:
             _log.info("Interrupted, exiting")
