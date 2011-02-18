@@ -159,8 +159,8 @@ layer at (0,0) size 785x1747
               text run at (0,1) width 232: "Thank you for your time filling this out."
         RenderBlock {DIV} at (1,1655) size 600x51 [border: (1px dashed #A6A972) none]
           RenderBlock {SPAN} at (0,16) size 600x20 [color=#333333]
-            RenderText {#text} at (245,1) size 109x18
-              text run at (245,1) width 109: "\x{A9}2003 Kevin Davis"
+            RenderText {#text} at (245,1) size 110x18
+              text run at (245,1) width 110: "\x{A9}2003 Kevin Davis"
 layer at (439,302) size 180x16
   RenderBlock {DIV} at (2,3) size 180x16
 layer at (439,326) size 180x16
