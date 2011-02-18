@@ -5039,3 +5039,7 @@ inspector/timeline/timeline-script-tag-1.html
 # [Qt] http/tests/security/xssAuditor/script-tag-with-fancy-unicode.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=54630
 http/tests/security/xssAuditor/script-tag-with-fancy-unicode.html
+
+# [Qt]REGRESSION(r78846): editing/selection/mixed-editability-10.html
+# https://bugs.webkit.org/show_bug.cgi?id=54725
+editing/selection/mixed-editability-10.html

@@ -7,13 +7,13 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 357x24
           RenderText {#text} at (3,16) size 357x24
             text run at (3,16) width 357: "a b c d "
-        RenderText {#text} at (360,16) size 650x74
-          text run at (360,16) width 293: "e f g h"
+        RenderText {#text} at (360,16) size 649x74
+          text run at (360,16) width 292: "e f g h"
           text run at (3,66) width 300: "xxxxxxxxxxx "
         RenderBR {BR} at (0,0) size 0x0
         RenderInline {SPAN} at (0,0) size 357x24
           RenderText {#text} at (3,116) size 357x24
             text run at (3,116) width 357: "a b c d "
-        RenderText {#text} at (360,116) size 650x74
-          text run at (360,116) width 293: "e f g h"
+        RenderText {#text} at (360,116) size 649x74
+          text run at (360,116) width 292: "e f g h"
           text run at (3,166) width 275: "xxxxxxxxxxx"
