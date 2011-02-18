@@ -3033,17 +3033,25 @@ BUGWK50528 MAC : svg/custom/image-small-width-height.svg = IMAGE
 BUGNONE GPU MAC : compositing = PASS FAIL
 
 // All compositor tests that load resources/video.mp4 are failing
-BUGWK54694 GPU : compositing/geometry/clipped-video-controller.html = IMAGE
-BUGWK54694 GPU : compositing/geometry/video-fixed-scrolling.html = IMAGE
-BUGWK54694 GPU : compositing/geometry/video-opacity-overlay.html = IMAGE
-BUGWK54694 GPU : compositing/layers-inside-overflow-scroll.html = IMAGE
-BUGWK54694 GPU : compositing/overflow/overflow-compositing-descendant.html = IMAGE
-BUGWK54694 GPU : compositing/overflow/scroll-ancestor-update.html = IMAGE
-BUGWK54694 GPU : compositing/reflections/load-video-in-reflection.html = IMAGE
-BUGWK54694 GPU : compositing/self-painting-layers.html = IMAGE
-BUGWK54694 GPU : compositing/self-painting-layers2.html = IMAGE
-BUGWK54694 GPU : compositing/video/video-background-color.html = IMAGE
-BUGWK54694 GPU : compositing/video/video-poster.html = IMAGE
+// Windows and Linux need text rebaselines too.
+BUGWK54694 GPU WIN LINUX : compositing/geometry/clipped-video-controller.html = IMAGE+TEXT
+BUGWK54694 GPU MAC : compositing/geometry/clipped-video-controller.html = IMAGE
+BUGWK54694 GPU WIN LINUX : compositing/geometry/video-fixed-scrolling.html = IMAGE
+BUGWK54694 GPU MAC : compositing/geometry/video-fixed-scrolling.html = IMAGE
+BUGWK54694 GPU WIN LINUX : compositing/geometry/video-opacity-overlay.html = IMAGE
+BUGWK54694 GPU MAC : compositing/geometry/video-opacity-overlay.html = IMAGE
+BUGWK54694 GPU WIN LINUX : compositing/layers-inside-overflow-scroll.html = IMAGE
+BUGWK54694 GPU MAC : compositing/layers-inside-overflow-scroll.html = IMAGE
+BUGWK54694 GPU WIN LINUX : compositing/overflow/overflow-compositing-descendant.html = IMAGE
+BUGWK54694 GPU MAC : compositing/overflow/overflow-compositing-descendant.html = IMAGE
+BUGWK54694 GPU WIN LINUX : compositing/overflow/scroll-ancestor-update.html = IMAGE
+BUGWK54694 GPU MAC : compositing/overflow/scroll-ancestor-update.html = IMAGE
+BUGWK54694 GPU WIN LINUX : compositing/reflections/load-video-in-reflection.html = IMAGE
+BUGWK54694 GPU MAC : compositing/reflections/load-video-in-reflection.html = IMAGE
+BUGWK54694 GPU WIN LINUX : compositing/self-painting-layers.html = IMAGE
+BUGWK54694 GPU MAC : compositing/self-painting-layers.html = IMAGE
+BUGWK54694 GPU WIN LINUX : compositing/video/video-background-color.html = IMAGE
+BUGWK54694 GPU MAC : compositing/video/video-background-color.html = IMAGE
 
 BUGWK47923 GPU : compositing/geometry/limit-layer-bounds-opacity-transition.html = TIMEOUT
 BUGWK54509 GPU : compositing/checkerboard.html = IMAGE

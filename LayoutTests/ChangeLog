@@ -1,5 +1,12 @@
 2011-02-17  Mihai Parparita  <mihaip@chromium.org>
 
+        Unreviewed Chromium expectations update. Fix expectations after r78951
+        (there are text difs too on Windows and Linux).
+
+        * platform/chromium/test_expectations.txt:
+
+2011-02-17  Mihai Parparita  <mihaip@chromium.org>
+
         Reviewed by Kent Tamura.
 
         [chromium] Video-related compositor tests failing in DumpRenderTree
