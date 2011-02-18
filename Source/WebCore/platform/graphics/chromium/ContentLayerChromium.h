@@ -82,15 +82,28 @@ public:
 protected:
     explicit ContentLayerChromium(GraphicsLayerChromium* owner);
 
-    void updateTextureRect(void* pixels, const IntSize& requiredTextureSize, const IntRect& updateRect);
-
     virtual void cleanupResources();
     bool requiresClippedUpdateRect() const;
+    void resizeUploadBuffer(const IntSize&);
+    void resizeUploadBufferForImage(const IntSize&);
 
     OwnPtr<LayerTexture> m_contentsTexture;
     bool m_skipsDraw;
 
+    // The size of the upload buffer (also the size of our backing texture).
+    IntSize m_uploadBufferSize;
+    // The portion of the upload buffer that has a pending update, in the coordinates of the texture.
+    IntRect m_uploadUpdateRect;
+    // On platforms using Skia, we use the skia::PlatformCanvas for content layers
+    // and the m_uploadPixelData buffer for image layers.
+    // FIXME: We should be using memory we control for all uploads.
+#if PLATFORM(SKIA)
+    OwnPtr<skia::PlatformCanvas> m_uploadPixelCanvas;
+#endif
+    OwnPtr<Vector<uint8_t> > m_uploadPixelData;
+
 private:
+    void updateTextureIfNeeded();
 
     IntRect m_visibleRectInLayerCoords;
     FloatPoint m_layerCenterInSurfaceCoords;

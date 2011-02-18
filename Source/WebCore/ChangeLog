@@ -1,3 +1,43 @@
+2011-02-18  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Update texture for ContentLayerChromiums in draw() call instead of updateContents..() call
+        https://bugs.webkit.org/show_bug.cgi?id=54315
+
+        This defers all operations on the compositor's GL context until the
+        draw() call which is a prerequisite for moving the draw() off-thread.
+        Also cleans up the update cycle a bit - there were some unused local
+        variables and whatnot.
+
+        One consequence of this change is that the upload buffer is retained
+        across updates now instead of allocated by each paint.  This is
+        necessary so that the full layer contents can be uploaded if the
+        texture manager evicts the layer's backing texture.  This costs more
+        persistent memory but avoids lots of allocator churn on updates.
+        Another nonobvious detail is that I have to update the texture for
+        ContentLayerChromiums in bindContentsTexture() because mask layers
+        never draw(), they are instead bound to the secondary texture unit.
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::requiresClippedUpdateRect):
+        (WebCore::ContentLayerChromium::updateContentsIfDirty):
+        (WebCore::ContentLayerChromium::resizeUploadBufferForImage):
+        (WebCore::ContentLayerChromium::resizeUploadBuffer):
+        (WebCore::SkBitmapConditionalAutoLockerPixels::SkBitmapConditionalAutoLockerPixels):
+        (WebCore::SkBitmapConditionalAutoLockerPixels::~SkBitmapConditionalAutoLockerPixels):
+        (WebCore::SkBitmapConditionalAutoLockerPixels::lockPixels):
+        (WebCore::ContentLayerChromium::updateTextureIfNeeded):
+        (WebCore::ContentLayerChromium::draw):
+        (WebCore::ContentLayerChromium::unreserveContentsTexture):
+        (WebCore::ContentLayerChromium::bindContentsTexture):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::updateContentsIfDirty):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::setBounds):
+        * platform/graphics/chromium/LayerChromium.h:
+
 2011-02-18  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, Chromium build fix on certain Linux platforms.

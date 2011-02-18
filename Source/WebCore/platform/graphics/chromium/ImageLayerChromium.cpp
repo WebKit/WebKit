@@ -84,46 +84,33 @@ void ImageLayerChromium::updateContentsIfDirty()
         return;
     }
 
-    void* pixels = 0;
-    IntSize bitmapSize;
-
     NativeImagePtr nativeImage = m_contents->nativeImageForCurrentFrame();
 
 #if PLATFORM(SKIA)
     // The layer contains an Image.
     NativeImageSkia* skiaImage = static_cast<NativeImageSkia*>(nativeImage);
     const SkBitmap* skiaBitmap = skiaImage;
-    bitmapSize = IntSize(skiaBitmap->width(), skiaBitmap->height());
+    IntSize bitmapSize(skiaBitmap->width(), skiaBitmap->height());
     ASSERT(skiaBitmap);
 #elif PLATFORM(CG)
     // NativeImagePtr is a CGImageRef on Mac OS X.
     int width = CGImageGetWidth(nativeImage);
     int height = CGImageGetHeight(nativeImage);
-    bitmapSize = IntSize(width, height);
+    IntSize bitmapSize(width, height);
 #endif
 
-    // Clip the dirty rect to the bitmap dimensions.
-    IntRect dirtyRect(m_dirtyRect);
-    dirtyRect.intersect(IntRect(IntPoint(0, 0), bitmapSize));
-
-    if (!m_contentsTexture || !m_contentsTexture->isValid(bitmapSize, GraphicsContext3D::RGBA))
-        dirtyRect = IntRect(IntPoint(0, 0), bitmapSize);
-    else if (!m_contentsDirty) {
-        m_contentsTexture->reserve(bitmapSize, GraphicsContext3D::RGBA);
-        return;
-    }
+    if (m_uploadBufferSize != bitmapSize)
+        resizeUploadBufferForImage(bitmapSize);
+    m_uploadUpdateRect = IntRect(IntPoint(0, 0), bitmapSize);
 
 #if PLATFORM(SKIA)
     SkAutoLockPixels lock(*skiaBitmap);
-    SkBitmap::Config skiaConfig = skiaBitmap->config();
     // FIXME: do we need to support more image configurations?
-    if (skiaConfig == SkBitmap::kARGB_8888_Config)
-        pixels = skiaBitmap->getPixels();
+    ASSERT(skiaBitmap->config()== SkBitmap::kARGB_8888_Config);
+    skiaBitmap->copyPixelsTo(m_uploadPixelData->data(), m_uploadPixelData->size());
 #elif PLATFORM(CG)
     // FIXME: we should get rid of this temporary copy where possible.
     int tempRowBytes = width * 4;
-    Vector<uint8_t> tempVector;
-    tempVector.resize(height * tempRowBytes);
     // Note we do not zero this vector since we are going to
     // completely overwrite its contents with the image below.
     // Try to reuse the color space from the image to preserve its colors.
@@ -143,7 +130,7 @@ void ImageLayerChromium::updateContentsIfDirty()
         colorSpace = colorSpaceReleaser.get();
         break;
     }
-    RetainPtr<CGContextRef> tempContext(AdoptCF, CGBitmapContextCreate(tempVector.data(),
+    RetainPtr<CGContextRef> tempContext(AdoptCF, CGBitmapContextCreate(m_uploadPixelData->data(),
                                                                        width, height, 8, tempRowBytes,
                                                                        colorSpace,
                                                                        kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
@@ -151,13 +138,9 @@ void ImageLayerChromium::updateContentsIfDirty()
     CGContextDrawImage(tempContext.get(),
                        CGRectMake(0, 0, static_cast<CGFloat>(width), static_cast<CGFloat>(height)),
                        nativeImage);
-    pixels = tempVector.data();
 #else
 #error "Need to implement for your platform."
 #endif
-
-    if (pixels)
-        updateTextureRect(pixels, bitmapSize,  dirtyRect);
 }
 
 }

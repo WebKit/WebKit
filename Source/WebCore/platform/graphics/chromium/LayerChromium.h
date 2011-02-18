@@ -265,7 +265,6 @@ private:
     LayerChromium* m_superlayer;
 
     // Layer properties.
-    IntSize m_backingStoreSize;
     FloatPoint m_position;
     FloatPoint m_anchorPoint;
     Color m_backgroundColor;

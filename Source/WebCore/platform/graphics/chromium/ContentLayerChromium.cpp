@@ -154,9 +154,9 @@ bool ContentLayerChromium::requiresClippedUpdateRect() const
     // one of the layer's dimensions is larger than 2000 pixels or the size of
     // surface it's rendering into. This is a temporary measure until layer tiling is implemented.
     static const int maxLayerSize = 2000;
-    return (m_bounds.width() > max(maxLayerSize, m_targetRenderSurface->contentRect().width())
-            || m_bounds.height() > max(maxLayerSize, m_targetRenderSurface->contentRect().height())
-            || !layerRenderer()->checkTextureSize(m_bounds));
+    return (bounds().width() > max(maxLayerSize, m_targetRenderSurface->contentRect().width())
+            || bounds().height() > max(maxLayerSize, m_targetRenderSurface->contentRect().height())
+            || !layerRenderer()->checkTextureSize(bounds()));
 }
 
 void ContentLayerChromium::updateContentsIfDirty()
@@ -169,12 +169,9 @@ void ContentLayerChromium::updateContentsIfDirty()
 
     ASSERT(layerRenderer());
 
-    void* pixels = 0;
     IntRect dirtyRect;
-    IntRect updateRect;
-    IntSize requiredTextureSize;
-    IntSize bitmapSize;
-    IntRect boundsRect(IntPoint(0, 0), m_bounds);
+    IntRect boundsRect(IntPoint(0, 0), bounds());
+    IntPoint paintingOffset;
 
     // FIXME: Remove this test when tiled layers are implemented.
     if (requiresClippedUpdateRect()) {
@@ -190,7 +187,7 @@ void ContentLayerChromium::updateContentsIfDirty()
         const IntRect clipRect = m_targetRenderSurface->contentRect();
 
         TransformationMatrix layerOriginTransform = drawTransform();
-        layerOriginTransform.translate3d(-0.5 * m_bounds.width(), -0.5 * m_bounds.height(), 0);
+        layerOriginTransform.translate3d(-0.5 * bounds().width(), -0.5 * bounds().height(), 0);
 
         // For now we apply the large layer treatment only for layers that are either untransformed
         // or are purely translated. Their matrix is expected to be invertible.
@@ -198,7 +195,7 @@ void ContentLayerChromium::updateContentsIfDirty()
 
         TransformationMatrix targetToLayerMatrix = layerOriginTransform.inverse();
         IntRect visibleRectInLayerCoords = targetToLayerMatrix.mapRect(clipRect);
-        visibleRectInLayerCoords.intersect(IntRect(0, 0, m_bounds.width(), m_bounds.height()));
+        visibleRectInLayerCoords.intersect(IntRect(0, 0, bounds().width(), bounds().height()));
 
         // For normal layers, the center of the texture corresponds with the center of the layer.
         // In large layers the center of the texture is the center of the visible region so we have
@@ -212,9 +209,13 @@ void ContentLayerChromium::updateContentsIfDirty()
             return;
         }
 
-        // If the visible portion of the layer is different from the last upload, or if our backing
-        // texture has been evicted, then the whole layer is considered dirty.
-        if (visibleRectInLayerCoords != m_visibleRectInLayerCoords || !m_contentsTexture || !m_contentsTexture->isValid(requiredTextureSize, GraphicsContext3D::RGBA))
+        // If we need to resize the upload buffer we have to repaint everything.
+        if (m_uploadBufferSize != visibleRectInLayerCoords.size()) {
+            resizeUploadBuffer(visibleRectInLayerCoords.size());
+            m_dirtyRect = boundsRect;
+        }
+        // If the visible portion of the layer is different from the last upload.
+        if (visibleRectInLayerCoords != m_visibleRectInLayerCoords)
             m_dirtyRect = boundsRect;
         m_visibleRectInLayerCoords = visibleRectInLayerCoords;
 
@@ -224,93 +225,130 @@ void ContentLayerChromium::updateContentsIfDirty()
 
         // What the rectangles mean:
         //   dirtyRect: The region of this layer that will be updated.
-        //   updateRect: The region of the layer's texture that will be uploaded into.
-        //   requiredTextureSize: is the required size of this layer's texture.
+        //   m_uploadUpdateRect: The region of the layer's texture that will be uploaded into.
         dirtyRect = visibleDirtyRectInLayerSpace;
-        updateRect = dirtyRect;
+        m_uploadUpdateRect = dirtyRect;
         IntSize visibleRectOffsetInLayerCoords(visibleRectInLayerCoords.x(), visibleRectInLayerCoords.y());
-        updateRect.move(-visibleRectOffsetInLayerCoords);
-        requiredTextureSize = visibleRectInLayerCoords.size();
+        paintingOffset = IntPoint(visibleRectOffsetInLayerCoords);
+        m_uploadUpdateRect.move(-visibleRectOffsetInLayerCoords);
     } else {
         dirtyRect = IntRect(m_dirtyRect);
-        requiredTextureSize = m_bounds;
         // If the texture needs to be reallocated then we must redraw the entire
         // contents of the layer.
-        if (!m_contentsTexture || !m_contentsTexture->isValid(requiredTextureSize, GraphicsContext3D::RGBA))
+        if (m_uploadBufferSize != bounds()) {
+            resizeUploadBuffer(bounds());
             dirtyRect = boundsRect;
-        else {
+        } else {
             // Clip the dirtyRect to the size of the layer to avoid drawing
             // outside the bounds of the backing texture.
             dirtyRect.intersect(boundsRect);
         }
-        updateRect = dirtyRect;
+        m_uploadUpdateRect = dirtyRect;
     }
 
     if (dirtyRect.isEmpty())
         return;
 
 #if PLATFORM(SKIA)
-    const SkBitmap* skiaBitmap = 0;
-    OwnPtr<skia::PlatformCanvas> canvas;
     OwnPtr<PlatformContextSkia> skiaContext;
-    OwnPtr<GraphicsContext> graphicsContext;
 
-    canvas.set(new skia::PlatformCanvas(dirtyRect.width(), dirtyRect.height(), false));
-    skiaContext.set(new PlatformContextSkia(canvas.get()));
+    skiaContext.set(new PlatformContextSkia(m_uploadPixelCanvas.get()));
 
     // This is needed to get text to show up correctly.
-    // FIXME: Does this take us down a very slow text rendering path?
     skiaContext->setDrawingToImageBuffer(true);
 
-    graphicsContext.set(new GraphicsContext(reinterpret_cast<PlatformGraphicsContext*>(skiaContext.get())));
+    GraphicsContext graphicsContext(reinterpret_cast<PlatformGraphicsContext*>(skiaContext.get()));
 
-    // Bring the canvas into the coordinate system of the paint rect.
-    canvas->translate(static_cast<SkScalar>(-dirtyRect.x()), static_cast<SkScalar>(-dirtyRect.y()));
-
-    m_owner->paintGraphicsLayerContents(*graphicsContext, dirtyRect);
-    const SkBitmap& bitmap = canvas->getDevice()->accessBitmap(false);
-    skiaBitmap = &bitmap;
-    ASSERT(skiaBitmap);
-
-    SkAutoLockPixels lock(*skiaBitmap);
-    SkBitmap::Config skiaConfig = skiaBitmap->config();
-    // FIXME: do we need to support more image configurations?
-    if (skiaConfig == SkBitmap::kARGB_8888_Config) {
-        pixels = skiaBitmap->getPixels();
-        bitmapSize = IntSize(skiaBitmap->width(), skiaBitmap->height());
-    }
 #elif PLATFORM(CG)
-    Vector<uint8_t> tempVector;
-    int rowBytes = 4 * dirtyRect.width();
-    tempVector.resize(rowBytes * dirtyRect.height());
-    memset(tempVector.data(), 0, tempVector.size());
+    // FIXME: Do we need to clear the dirty rectangle in the upload buffer?
     RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
-    RetainPtr<CGContextRef> contextCG(AdoptCF, CGBitmapContextCreate(tempVector.data(),
-                                                                     dirtyRect.width(), dirtyRect.height(), 8, rowBytes,
+    size_t rowBytes = m_uploadBufferSize.width() * 4;
+    RetainPtr<CGContextRef> contextCG(AdoptCF, CGBitmapContextCreate(m_uploadPixelData->data(),
+                                                                     m_uploadBufferSize.width(), m_uploadBufferSize.height(), 8, rowBytes,
                                                                      colorSpace.get(),
                                                                      kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
-    CGContextTranslateCTM(contextCG.get(), 0, dirtyRect.height());
+    CGContextTranslateCTM(contextCG.get(), 0, m_uploadBufferSize.height());
     CGContextScaleCTM(contextCG.get(), 1, -1);
 
     GraphicsContext graphicsContext(contextCG.get());
-
-    // Translate the graphics context into the coordinate system of the dirty rect.
-    graphicsContext.translate(-dirtyRect.x(), -dirtyRect.y());
-
-    m_owner->paintGraphicsLayerContents(graphicsContext, dirtyRect);
-
-    pixels = tempVector.data();
-    bitmapSize = dirtyRect.size();
 #else
 #error "Need to implement for your platform."
 #endif
 
-    if (pixels)
-        updateTextureRect(pixels, requiredTextureSize, updateRect);
+    graphicsContext.save();
+    graphicsContext.translate(-paintingOffset.x(), -paintingOffset.y());
+    graphicsContext.clearRect(dirtyRect);
+    graphicsContext.clip(dirtyRect);
+
+    m_owner->paintGraphicsLayerContents(graphicsContext, dirtyRect);
+    graphicsContext.restore();
 }
 
-void ContentLayerChromium::updateTextureRect(void* pixels, const IntSize& requiredTextureSize, const IntRect& updateRect)
+void ContentLayerChromium::resizeUploadBufferForImage(const IntSize& size)
 {
+    size_t bufferSize = size.width() * size.height() * 4;
+    m_uploadPixelData = new Vector<uint8_t>(bufferSize);
+#if PLATFORM(CG)
+    memset(m_uploadPixelData->data(), 0, bufferSize);
+#endif
+    m_uploadBufferSize = size;
+}
+void ContentLayerChromium::resizeUploadBuffer(const IntSize& size)
+{
+#if PLATFORM(SKIA)
+    m_uploadPixelCanvas = new skia::PlatformCanvas(size.width(), size.height(), false);
+    m_uploadBufferSize = size;
+#else
+    resizeUploadBufferForImage(size);
+#endif
+}
+
+#if PLATFORM(SKIA)
+class SkBitmapConditionalAutoLockerPixels {
+    WTF_MAKE_NONCOPYABLE(SkBitmapConditionalAutoLockerPixels);
+public:
+    SkBitmapConditionalAutoLockerPixels()
+        : m_bitmap(0)
+    {
+    }
+
+    ~SkBitmapConditionalAutoLockerPixels()
+    {
+        if (m_bitmap)
+            m_bitmap->unlockPixels();
+    }
+
+    void lockPixels(const SkBitmap* bitmap)
+    {
+        bitmap->lockPixels();
+        m_bitmap = bitmap;
+    }
+
+private:
+    const SkBitmap* m_bitmap;
+};
+#endif
+
+void ContentLayerChromium::updateTextureIfNeeded()
+{
+    uint8_t* pixels = 0;
+#if PLATFORM(SKIA)
+    SkBitmapConditionalAutoLockerPixels locker;
+#endif
+    if (!m_uploadUpdateRect.isEmpty()) {
+#if PLATFORM(SKIA)
+        if (m_uploadPixelCanvas) {
+            const SkBitmap& bitmap = m_uploadPixelCanvas->getDevice()->accessBitmap(false);
+            locker.lockPixels(&bitmap);
+            // FIXME: do we need to support more image configurations?
+            if (bitmap.config() == SkBitmap::kARGB_8888_Config)
+                pixels = static_cast<uint8_t*>(bitmap.getPixels());
+        }
+#endif
+        if (m_uploadPixelData)
+            pixels = m_uploadPixelData->data();
+    }
+
     if (!pixels)
         return;
 
@@ -318,15 +356,43 @@ void ContentLayerChromium::updateTextureRect(void* pixels, const IntSize& requir
     if (!m_contentsTexture)
         m_contentsTexture = LayerTexture::create(context, layerRenderer()->textureManager());
 
-    if (!m_contentsTexture->reserve(requiredTextureSize, GraphicsContext3D::RGBA)) {
+    // If we have to allocate a new texture we have to upload the full contents.
+    if (!m_contentsTexture->isValid(m_uploadBufferSize, GraphicsContext3D::RGBA))
+        m_uploadUpdateRect = IntRect(IntPoint(0, 0), m_uploadBufferSize);
+
+    if (!m_contentsTexture->reserve(m_uploadBufferSize, GraphicsContext3D::RGBA)) {
         m_skipsDraw = true;
         return;
     }
 
+    IntRect srcRect = IntRect(IntPoint(0, 0), m_uploadBufferSize);
+    if (requiresClippedUpdateRect())
+        srcRect = m_visibleRectInLayerCoords;
+
+    const size_t destStride = m_uploadUpdateRect.width() * 4;
+    const size_t srcStride = srcRect.width() * 4;
+
+    uint8_t* uploadPixels = pixels + srcStride * m_uploadUpdateRect.x();
+    Vector<uint8_t> uploadBuffer;
+    if (srcStride != destStride) {
+        uploadBuffer.resize(m_uploadUpdateRect.height() * destStride);
+        for (int row = 0; row < m_uploadUpdateRect.height(); ++row) {
+            size_t srcOffset = (m_uploadUpdateRect.y() + row) * srcStride + m_uploadUpdateRect.x() * 4;
+            ASSERT(srcOffset + destStride < static_cast<size_t>(m_uploadBufferSize.width() * m_uploadBufferSize.height() * 4));
+            size_t destOffset = row * destStride;
+            ASSERT(destOffset  + destStride < uploadBuffer.size());
+            memcpy(uploadBuffer.data() + destOffset, pixels + srcOffset, destStride);
+        }
+        uploadPixels = uploadBuffer.data();
+    }
+
     m_contentsTexture->bindTexture();
+    GLC(context, context->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0,
+                                        m_uploadUpdateRect.x(), m_uploadUpdateRect.y(), m_uploadUpdateRect.width(), m_uploadUpdateRect.height(),
+                                        GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE,
+                                        uploadPixels));
 
-    GLC(context, context->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, updateRect.x(), updateRect.y(), updateRect.width(), updateRect.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, pixels));
-
+    m_uploadUpdateRect = IntRect();
     m_dirtyRect.setSize(FloatSize());
     // Large layers always stay dirty, because they need to update when the content rect changes.
     m_contentsDirty = requiresClippedUpdateRect();
@@ -334,6 +400,8 @@ void ContentLayerChromium::updateTextureRect(void* pixels, const IntSize& requir
 
 void ContentLayerChromium::draw()
 {
+    updateTextureIfNeeded();
+
     if (m_skipsDraw)
         return;
 
@@ -357,7 +425,7 @@ void ContentLayerChromium::draw()
                          sv->shaderMatrixLocation(), sv->shaderAlphaLocation());
     } else {
         drawTexturedQuad(context, layerRenderer()->projectionMatrix(),
-                         drawTransform(), m_bounds.width(), m_bounds.height(),
+                         drawTransform(), bounds().width(), bounds().height(),
                          drawOpacity(), sv->shaderMatrixLocation(),
                          sv->shaderAlphaLocation());
     }
@@ -366,13 +434,15 @@ void ContentLayerChromium::draw()
 
 void ContentLayerChromium::unreserveContentsTexture()
 {
-    if (m_contentsTexture)
+    if (!m_skipsDraw && m_contentsTexture)
         m_contentsTexture->unreserve();
 }
 
 void ContentLayerChromium::bindContentsTexture()
 {
-    if (m_contentsTexture)
+    updateTextureIfNeeded();
+
+    if (!m_skipsDraw && m_contentsTexture)
         m_contentsTexture->bindTexture();
 }
 

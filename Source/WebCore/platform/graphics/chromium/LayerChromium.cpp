@@ -323,7 +323,6 @@ void LayerChromium::setBounds(const IntSize& size)
     bool firstResize = !m_bounds.width() && !m_bounds.height() && size.width() && size.height();
 
     m_bounds = size;
-    m_backingStoreSize = size;
 
     if (firstResize)
         setNeedsDisplay(FloatRect(0, 0, m_bounds.width(), m_bounds.height()));
