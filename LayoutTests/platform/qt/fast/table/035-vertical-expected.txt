@@ -22,5 +22,5 @@ layer at (671,0) size 129x600
         RenderText {#text} at (0,199) size 21x186
           text run at (0,199) width 186: "This div is aligned \"center\""
       RenderBlock {DIV} at (92,0) size 21x584
-        RenderText {#text} at (0,185) size 21x213
+        RenderText {#text} at (0,185) size 21x214
           text run at (0,185) width 213: "This div is aligned \"CENTER\""

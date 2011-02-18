@@ -7,8 +7,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 555x21
           text run at (0,0) width 555: "This tests that inherited block properties do not propigate to the editing style span."
       RenderBlock {DIV} at (50,37) size 734x21
-        RenderText {#text} at (267,0) size 149x21
-          text run at (267,0) width 149: "Some text that is bold."
+        RenderText {#text} at (267,0) size 150x21
+          text run at (267,0) width 150: "Some text that is bold."
       RenderBlock {DIV} at (0,58) size 784x42
         RenderBlock (anonymous) at (0,0) size 784x21
           RenderText {#text} at (0,0) size 115x21

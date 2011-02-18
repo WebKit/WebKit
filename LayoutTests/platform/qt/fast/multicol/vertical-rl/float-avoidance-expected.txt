@@ -10,9 +10,9 @@ layer at (635,208) size 141x435
       RenderText {#text} at (0,0) size 105x415
         text run at (0,0) width 415: "This technology preview of our award winning next"
         text run at (21,0) width 138: "generation browser "
-        text run at (21,138) width 277: "is a sign of things to come from Mozilla."
+        text run at (21,138) width 276: "is a sign of things to come from Mozilla."
         text run at (42,0) width 204: "Powerful yet easy to use. This "
-        text run at (42,204) width 211: "maintenance release provides a"
+        text run at (42,204) width 210: "maintenance release provides a"
         text run at (63,0) width 341: "few updates based on user feedback - including "
-        text run at (63,341) width 74: "changes to"
+        text run at (63,341) width 73: "changes to"
         text run at (84,0) width 310: "the Extension System and icon improvements."

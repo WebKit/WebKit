@@ -105,7 +105,7 @@ layer at (0,0) size 784x740
                 RenderText {#text} at (0,0) size 746x42
                   text run at (0,0) width 746: "The four floating DIV elements below should appear next to each other horizontally. The table at the bottom"
                   text run at (0,21) width 511: "of this page indicates how the DIV elements should be laid out horizontally. "
-                  text run at (511,21) width 235: "They should align with each other."
+                  text run at (511,21) width 234: "They should align with each other."
               RenderBlock (floating) {DIV} at (4,56) size 140x100 [bgcolor=#FFFF00] [border: (20px solid #000000)]
                 RenderBlock {P} at (40,40) size 60x20
                   RenderText {#text} at (0,0) size 49x20
