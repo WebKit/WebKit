@@ -4742,3 +4742,7 @@ inspector/timeline/timeline-script-tag-1.html
 # [Qt]REGRESSION(r78846): editing/selection/mixed-editability-10.html
 # https://bugs.webkit.org/show_bug.cgi?id=54725
 editing/selection/mixed-editability-10.html
+
+# ----- FIXME: QtWebkit supports client based and LayoutTest for the same is yet to be implemented. Tracked in #54334 ------ 
+fast/dom/Geolocation
+fast/dom/Window/window-properties-geolocation.html

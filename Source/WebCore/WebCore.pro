@@ -3356,12 +3356,11 @@ contains(DEFINES, ENABLE_QT_BEARER=1) {
 }
 
 contains(DEFINES, ENABLE_GEOLOCATION=1) {
-    DEFINES += WTF_USE_PREEMPT_GEOLOCATION_PERMISSION
-    HEADERS += \
-        platform/qt/GeolocationServiceQt.h
-    SOURCES += \
-        platform/qt/GeolocationServiceQt.cpp
-
+     HEADERS += \
+        $$PWD/../WebKit/qt/WebCoreSupport/GeolocationClientQt.h
+     SOURCES += \
+        $$PWD/../WebKit/qt/WebCoreSupport/GeolocationClientQt.cpp
+ 
     CONFIG += mobility
     MOBILITY += location
 

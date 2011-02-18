@@ -181,10 +181,10 @@ namespace WebCore {
 
         virtual void setCursor(const Cursor&);
 
-        virtual void scrollRectIntoView(const IntRect&, const ScrollView*) const {}
+        virtual void scrollRectIntoView(const IntRect&, const ScrollView*) const { }
 
-        virtual void requestGeolocationPermissionForFrame(Frame*, Geolocation*);
-        virtual void cancelGeolocationPermissionRequestForFrame(Frame*, Geolocation*);
+        virtual void requestGeolocationPermissionForFrame(Frame*, Geolocation*) { }
+        virtual void cancelGeolocationPermissionRequestForFrame(Frame*, Geolocation*) { }
 
         virtual bool selectItemWritingDirectionIsNatural();
         virtual bool selectItemAlignmentFollowsMenuWritingDirection();

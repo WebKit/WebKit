@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GeolocationServiceQt_h
-#define GeolocationServiceQt_h
+#ifndef GeolocationClientQt_h
+#define GeolocationClientQt_h
 
-#include "GeolocationService.h"
+#include "GeolocationClient.h"
 #include <QGeoPositionInfoSource>
 #include <wtf/RefPtr.h>
 
@@ -35,36 +35,39 @@
 // QtMobility namespace in slots throws up error and its required to be fixed in qtmobility.
 using namespace QtMobility;
 
+class QWebPage;
+
 namespace WebCore {
 
 // This class provides a implementation of a GeolocationService for qtWebkit.
 // It uses QtMobility (v1.0.0) location service to get positions
-class GeolocationServiceQt : public QObject, GeolocationService {
+class GeolocationClientQt : public QObject, public GeolocationClient {
     Q_OBJECT
 
 public:
-    static GeolocationService* create(GeolocationServiceClient*);
+    GeolocationClientQt(QWebPage*);
+    virtual ~GeolocationClientQt();
 
-    GeolocationServiceQt(GeolocationServiceClient*);
-    virtual ~GeolocationServiceQt();
-
-    virtual bool startUpdating(PositionOptions*);
+    virtual void geolocationDestroyed();
+    virtual void startUpdating();
     virtual void stopUpdating();
 
-    virtual Geoposition* lastPosition() const { return m_lastPosition.get(); }
-    virtual PositionError* lastError() const { return m_lastError.get(); }
+    void setEnableHighAccuracy(bool);
+    virtual GeolocationPosition* lastPosition() { return m_lastPosition.get(); }
 
-public Q_SLOTS:
+    virtual void requestPermission(Geolocation*);
+    virtual void cancelPermissionRequest(Geolocation*);
+
+private Q_SLOTS:
     // QGeoPositionInfoSource
     void positionUpdated(const QGeoPositionInfo&);
 
 private:
-    RefPtr<Geoposition> m_lastPosition;
-    RefPtr<PositionError> m_lastError;
-
+    QWebPage* m_page;
+    RefPtr<GeolocationPosition> m_lastPosition;
     QtMobility::QGeoPositionInfoSource* m_location;
 };
 
 } // namespace WebCore
 
-#endif // GeolocationServiceQt_h
+#endif // GeolocationClientQt_h

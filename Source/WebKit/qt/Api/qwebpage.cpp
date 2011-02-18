@@ -62,6 +62,7 @@
 #include "FrameLoaderClientQt.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "GeolocationClientQt.h"
 #include "GeolocationPermissionClientQt.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameOwnerElement.h"
@@ -323,6 +324,9 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
 #if ENABLE(DEVICE_ORIENTATION)
     pageClients.deviceOrientationClient = new DeviceOrientationClientQt(q);
     pageClients.deviceMotionClient = new DeviceMotionClientQt(q);
+#endif
+#if ENABLE(GEOLOCATION)
+    pageClients.geolocationClient = new GeolocationClientQt(q);
 #endif
     page = new Page(pageClients);
 

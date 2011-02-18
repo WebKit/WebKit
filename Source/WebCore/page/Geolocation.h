@@ -215,3 +215,4 @@ private:
 } // namespace WebCore
 
 #endif // Geolocation_h
+
