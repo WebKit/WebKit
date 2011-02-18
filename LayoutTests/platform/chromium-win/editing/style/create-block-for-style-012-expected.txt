@@ -25,12 +25,12 @@ layer at (0,0) size 800x600
               text run at (0,0) width 32: "foo"
           RenderBlock {DIV} at (14,42) size 756x84 [border: (2px solid #FF0000)]
             RenderBlock {DIV} at (14,14) size 728x28
-              RenderText {#text} at (348,0) size 37x27
-                text run at (348,0) width 31: "bar"
-                text run at (379,0) width 6: " "
+              RenderText {#text} at (348,0) size 38x27
+                text run at (348,0) width 32: "bar"
+                text run at (379,0) width 7: " "
             RenderBlock {DIV} at (14,42) size 728x28
-              RenderText {#text} at (347,0) size 33x27
-                text run at (347,0) width 33: "baz"
+              RenderText {#text} at (347,0) size 34x27
+                text run at (347,0) width 34: "baz"
             RenderBlock (anonymous) at (14,70) size 728x0
 selection start: position 0 of child 0 {#text} of child 0 {DIV} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of body
 selection end:   position 1 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of body

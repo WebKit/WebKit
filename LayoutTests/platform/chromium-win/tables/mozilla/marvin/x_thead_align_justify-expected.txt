@@ -13,7 +13,7 @@ layer at (0,0) size 800x206
               RenderText {#text} at (2,2) size 290x79
                 text run at (2,2) width 290: "This THEAD text should be justified which"
                 text run at (2,22) width 124: "means that the right "
-                text run at (126,22) width 166: "and left margins should line"
+                text run at (126,22) width 165: "and left margins should line"
                 text run at (2,42) width 236: "up, no matter how long the content "
                 text run at (238,42) width 54: "becomes"
                 text run at (2,62) width 289: "(except the last line which should be left aligned)"

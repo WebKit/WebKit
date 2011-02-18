@@ -97,8 +97,8 @@ layer at (0,0) size 785x974
           RenderTableRow {TR} at (0,2) size 769x48
             RenderTableCell {TD} at (2,2) size 765x48 [r=0 c=0 rs=1 cs=1]
               RenderBlock (anonymous) at (1,1) size 763x20
-                RenderText {#text} at (328,0) size 106x19
-                  text run at (328,0) width 106: "Text, followed by"
+                RenderText {#text} at (328,0) size 107x19
+                  text run at (328,0) width 107: "Text, followed by"
               RenderTable {TABLE} at (355,21) size 54x26
                 RenderTableSection {TBODY} at (0,0) size 54x26
                   RenderTableRow {TR} at (0,2) size 54x22
@@ -113,15 +113,15 @@ layer at (0,0) size 785x974
           RenderTableRow {TR} at (0,2) size 769x48
             RenderTableCell {TD} at (2,2) size 765x48 [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 763x20
-                RenderText {#text} at (328,0) size 106x19
-                  text run at (328,0) width 106: "Text, followed by"
+                RenderText {#text} at (328,0) size 107x19
+                  text run at (328,0) width 107: "Text, followed by"
               RenderTable {TABLE} at (1,21) size 763x26
                 RenderTableSection {TBODY} at (0,0) size 763x26
                   RenderTableRow {TR} at (0,2) size 763x22
                     RenderTableCell {TD} at (2,2) size 759x22 [r=0 c=0 rs=1 cs=1]
                       RenderBlock {DIV} at (1,1) size 757x20
-                        RenderText {#text} at (354,0) size 48x19
-                          text run at (354,0) width 48: "A table."
+                        RenderText {#text} at (354,0) size 49x19
+                          text run at (354,0) width 49: "A table."
       RenderBlock {P} at (0,760) size 769x72
         RenderBlock (anonymous) at (0,0) size 769x20
           RenderText {#text} at (0,0) size 379x19
@@ -131,8 +131,8 @@ layer at (0,0) size 785x974
             RenderTableRow {TR} at (0,2) size 769x48
               RenderTableCell {TD} at (2,2) size 765x48 [r=0 c=0 rs=1 cs=1]
                 RenderBlock {DIV} at (1,1) size 763x20
-                  RenderText {#text} at (328,0) size 106x19
-                    text run at (328,0) width 106: "Text, followed by"
+                  RenderText {#text} at (328,0) size 107x19
+                    text run at (328,0) width 107: "Text, followed by"
                 RenderTable {TABLE} at (1,21) size 763x26
                   RenderTableSection {TBODY} at (0,0) size 763x26
                     RenderTableRow {TR} at (0,2) size 763x22

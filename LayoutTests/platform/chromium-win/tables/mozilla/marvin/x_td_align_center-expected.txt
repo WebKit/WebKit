@@ -17,8 +17,8 @@ layer at (0,0) size 800x274
         RenderTableSection (anonymous) at (1,1) size 782x28
           RenderTableRow {tr} at (0,2) size 782x24
             RenderTableCell {td} at (2,2) size 778x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (289,2) size 199x19
-                text run at (289,2) width 199: "Cell text should be center aligned"
+              RenderText {#text} at (289,2) size 200x19
+                text run at (289,2) width 200: "Cell text should be center aligned"
       RenderBlock {p} at (0,138) size 784x40
         RenderInline {b} at (0,0) size 74x19
           RenderText {#text} at (0,0) size 74x19
@@ -31,8 +31,8 @@ layer at (0,0) size 800x274
         RenderTableSection (anonymous) at (1,1) size 504x54
           RenderTableRow {tr} at (0,2) size 504x24
             RenderTableCell {td} at (2,2) size 500x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (150,2) size 199x19
-                text run at (150,2) width 199: "Cell text should be center aligned"
+              RenderText {#text} at (150,2) size 200x19
+                text run at (150,2) width 200: "Cell text should be center aligned"
           RenderTableRow {tr} at (0,28) size 504x24
             RenderTableCell {td} at (2,28) size 500x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 496x19

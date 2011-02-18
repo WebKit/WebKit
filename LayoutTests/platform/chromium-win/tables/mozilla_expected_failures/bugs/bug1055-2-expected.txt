@@ -23,9 +23,9 @@ layer at (0,0) size 785x939
                 RenderText {#text} at (1,1) size 85x19
                   text run at (1,1) width 85: "test pr\x{E9}c\x{E9}dent"
             RenderTableCell {TD} at (146,24) size 284x22 [r=1 c=1 rs=1 cs=1]
-              RenderInline {B} at (0,0) size 129x19
-                RenderText {#text} at (77,1) size 129x19
-                  text run at (77,1) width 129: "Cadres de tableaux"
+              RenderInline {B} at (0,0) size 130x19
+                RenderText {#text} at (77,1) size 130x19
+                  text run at (77,1) width 130: "Cadres de tableaux"
             RenderTableCell {TD} at (432,24) size 142x22 [r=1 c=2 rs=1 cs=1]
               RenderInline {A} at (0,0) size 66x19 [color=#0000EE]
                 RenderText {#text} at (75,1) size 66x19
@@ -145,9 +145,9 @@ layer at (0,0) size 785x939
               RenderText {#text} at (1,1) size 85x19
                 text run at (1,1) width 85: "test pr\x{E9}c\x{E9}dent"
             RenderTableCell {TD} at (146,24) size 284x22 [r=1 c=1 rs=1 cs=1]
-              RenderInline {B} at (0,0) size 129x19
-                RenderText {#text} at (77,1) size 129x19
-                  text run at (77,1) width 129: "Cadres de tableaux"
+              RenderInline {B} at (0,0) size 130x19
+                RenderText {#text} at (77,1) size 130x19
+                  text run at (77,1) width 130: "Cadres de tableaux"
             RenderTableCell {TD} at (432,24) size 142x22 [r=1 c=2 rs=1 cs=1]
               RenderInline {A} at (0,0) size 66x19 [color=#0000EE]
                 RenderText {#text} at (75,1) size 66x19

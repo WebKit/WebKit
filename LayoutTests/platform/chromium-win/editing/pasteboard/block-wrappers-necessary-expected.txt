@@ -44,20 +44,20 @@ layer at (0,0) size 800x600
           RenderBlock {CENTER} at (2,20) size 780x144
             RenderBlock {P} at (0,0) size 780x144
               RenderBlock {P} at (0,0) size 780x105
-                RenderText {#text} at (7,0) size 70x20
-                  text run at (7,0) width 70: "This is an"
-                RenderText {#text} at (77,0) size 5x20
-                  text run at (77,0) width 5: " "
-                RenderInline {B} at (0,0) size 81x20
-                  RenderText {#text} at (82,0) size 81x20
-                    text run at (82,0) width 81: "interactive"
-                RenderText {#text} at (163,0) size 5x20
-                  text run at (163,0) width 5: " "
-                RenderText {#text} at (168,0) size 609x41
-                  text run at (168,0) width 604: "documentation site, so please help out by posting any useful information that you've"
-                  text run at (772,0) width 5: " "
-                  text run at (325,21) width 129: "had to search out."
-                RenderBR {BR} at (454,37) size 0x0
+                RenderText {#text} at (7,0) size 71x20
+                  text run at (7,0) width 71: "This is an"
+                RenderText {#text} at (77,0) size 6x20
+                  text run at (77,0) width 6: " "
+                RenderInline {B} at (0,0) size 82x20
+                  RenderText {#text} at (82,0) size 82x20
+                    text run at (82,0) width 82: "interactive"
+                RenderText {#text} at (163,0) size 6x20
+                  text run at (163,0) width 6: " "
+                RenderText {#text} at (168,0) size 610x41
+                  text run at (168,0) width 605: "documentation site, so please help out by posting any useful information that you've"
+                  text run at (772,0) width 6: " "
+                  text run at (325,21) width 130: "had to search out."
+                RenderBR {BR} at (454,37) size 1x0
                 RenderText {#text} at (27,42) size 106x20
                   text run at (27,42) width 106: "(Adding to this"
                 RenderText {#text} at (133,42) size 5x20
@@ -87,15 +87,15 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (611,63) size 5x20
                   text run at (611,63) width 5: "."
                 RenderBR {BR} at (616,79) size 0x0
-                RenderText {#text} at (104,84) size 495x20
-                  text run at (104,84) width 495: "Check out a cool wiki editor application that helps in wiki generation:"
-                RenderText {#text} at (599,84) size 5x20
-                  text run at (599,84) width 5: " "
-                RenderInline {A} at (0,0) size 71x20 [color=#0000EE]
-                  RenderText {#text} at (604,84) size 71x20
-                    text run at (604,84) width 71: "Wikinator"
+                RenderText {#text} at (104,84) size 496x20
+                  text run at (104,84) width 496: "Check out a cool wiki editor application that helps in wiki generation:"
+                RenderText {#text} at (599,84) size 6x20
+                  text run at (599,84) width 6: " "
+                RenderInline {A} at (0,0) size 72x20 [color=#0000EE]
+                  RenderText {#text} at (604,84) size 72x20
+                    text run at (604,84) width 72: "Wikinator"
               RenderBlock {P} at (0,123) size 780x21
-                RenderText {#text} at (88,0) size 603x20
-                  text run at (88,0) width 603: "Start browsing the topics below, or use the search field at the bottom of every page."
+                RenderText {#text} at (88,0) size 604x20
+                  text run at (88,0) width 604: "Start browsing the topics below, or use the search field at the bottom of every page."
               RenderBlock (anonymous) at (0,162) size 780x0
 caret: position 85 of child 0 {#text} of child 1 {P} of child 1 {P} of child 1 {CENTER} of child 1 {DIV} of child 3 {DIV} of body

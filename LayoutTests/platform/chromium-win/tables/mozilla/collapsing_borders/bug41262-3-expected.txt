@@ -120,8 +120,8 @@ layer at (0,0) size 785x676
               RenderText {#text} at (21,2) size 8x19
                 text run at (21,2) width 8: "b"
             RenderTableCell {TD} at (100,0) size 50x24 [border: (1px none #000000)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (21,2) size 7x19
-                text run at (21,2) width 7: "c"
+              RenderText {#text} at (21,2) size 8x19
+                text run at (21,2) width 8: "c"
           RenderTableRow {TR} at (0,24) size 150x24 [border: (2px solid #000000) none]
             RenderTableCell {TD} at (0,24) size 50x24 [border: (1px none #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (21,2) size 8x19

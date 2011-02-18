@@ -15,9 +15,9 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 41x12
                 text run at (0,0) width 41: "Hyper-text"
             RenderRubyBase (anonymous) at (0,0) size 41x20
-              RenderInline {SPAN} at (0,0) size 20x19
-                RenderText {#text} at (10,0) size 20x19
-                  text run at (10,0) width 20: "HT"
+              RenderInline {SPAN} at (0,0) size 21x19
+                RenderText {#text} at (10,0) size 21x19
+                  text run at (10,0) width 21: "HT"
           RenderRubyRun (anonymous) at (187,12) size 95x20
             RenderRubyText {RT} at (0,-12) size 95x12
               RenderText {#text} at (0,0) size 95x12

@@ -13,8 +13,8 @@ layer at (0,0) size 800x600
               RenderRuby (inline) {RUBY} at (0,0) size 81x19
                 RenderRubyRun (anonymous) at (0,12) size 16x20
                   RenderRubyText {RT} at (0,-12) size 16x12
-                    RenderText {#text} at (1,0) size 13x12
-                      text run at (1,0) width 13: "\x{3053}\x{3046}"
+                    RenderText {#text} at (1,0) size 14x12
+                      text run at (1,0) width 14: "\x{3053}\x{3046}"
                   RenderRubyBase (anonymous) at (0,0) size 16x20
                     RenderText {#text} at (0,0) size 16x19
                       text run at (0,0) width 16: "\x{653B}"
@@ -44,5 +44,5 @@ layer at (0,0) size 800x600
                     RenderText {#text} at (0,0) size 17x12
                       text run at (0,0) width 17: "\x{305F}\x{3044}"
                   RenderRubyBase (anonymous) at (0,0) size 17x20
-                    RenderText {#text} at (0,0) size 16x19
-                      text run at (0,0) width 16: "\x{968A}"
+                    RenderText {#text} at (0,0) size 17x19
+                      text run at (0,0) width 17: "\x{968A}"

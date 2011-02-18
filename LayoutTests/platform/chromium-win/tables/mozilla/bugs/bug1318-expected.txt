@@ -13,9 +13,9 @@ layer at (0,0) size 800x600
                   text run at (2,21) width 176: "The Supreme Court says "
                   text run at (178,21) width 533: "Wisconsin can continue using tuition vouchers to help poor parents send their "
                   text run at (711,21) width 71: "children to"
-                  text run at (256,40) width 136: "church-run schools. "
-                  text run at (392,40) width 135: "What's your stand? "
-                RenderBR {BR} at (527,55) size 0x0
+                  text run at (256,40) width 137: "church-run schools. "
+                  text run at (392,40) width 136: "What's your stand? "
+                RenderBR {BR} at (527,55) size 1x0
                 RenderBR {BR} at (392,59) size 0x18
               RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,79) size 784x18
@@ -43,7 +43,7 @@ layer at (0,0) size 800x600
               RenderInline {FONT} at (0,0) size 0x0
                 RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (622,115) size 162x28 [r=3 c=2 rs=1 cs=2]
-              RenderButton {INPUT} at (61,3) size 39x22 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+              RenderButton {INPUT} at (62,3) size 39x22 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                 RenderBlock (anonymous) at (8,3) size 23x16
                   RenderText at (0,0) size 23x16
                     text run at (0,0) width 23: "vote"

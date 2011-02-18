@@ -38,5 +38,5 @@ layer at (0,0) size 800x600
           RenderText {#text} at (27,13) size 566x297
             text run at (27,13) width 566: "This sentence is too"
             text run at (90,121) width 420: "long to fit on a"
-            text run at (133,229) width 313: "single line."
+            text run at (133,229) width 314: "single line."
         RenderText {#text} at (0,0) size 0x0

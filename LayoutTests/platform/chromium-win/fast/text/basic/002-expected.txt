@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 100: "This paragraph"
           text run at (0,20) width 100: "contains justified"
           text run at (0,40) width 34: "text. "
-          text run at (34,40) width 66: "Within the"
+          text run at (34,40) width 65: "Within the"
           text run at (0,60) width 69: "constrained"
           text run at (0,80) width 100: "width, this text"
           text run at (0,100) width 100: "should be"

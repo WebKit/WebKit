@@ -36,8 +36,8 @@ layer at (0,0) size 800x358
         RenderBR {br} at (0,20) size 0x19
       RenderTable {table} at (0,212) size 179x122
         RenderBlock {caption} at (0,0) size 179x20
-          RenderText {#text} at (65,0) size 48x19
-            text run at (65,0) width 48: "TABLE"
+          RenderText {#text} at (65,0) size 49x19
+            text run at (65,0) width 49: "TABLE"
         RenderTableCol {colgroup} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0
         RenderTableCol {colgroup} at (0,0) size 0x0

@@ -27,8 +27,8 @@ layer at (0,0) size 800x600
                 RenderTableSection {TBODY} at (0,32) size 387x33 [bgcolor=#FFFF00]
                   RenderTableRow {TR} at (0,2) size 387x29
                     RenderTableCell {TD} at (2,2) size 383x29 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (154,1) size 74x26
-                        text run at (154,1) width 74: "TBODY"
+                      RenderText {#text} at (154,1) size 75x26
+                        text run at (154,1) width 75: "TBODY"
             RenderTableCell {TD} at (393,2) size 389x127 [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 387x27 [bgcolor=#D0D0D0]
                 RenderText {#text} at (93,0) size 201x26
@@ -47,5 +47,5 @@ layer at (0,0) size 800x600
                 RenderTableSection {TBODY} at (0,32) size 387x33 [bgcolor=#FFFF00]
                   RenderTableRow {TR} at (0,2) size 387x29
                     RenderTableCell {TD} at (2,2) size 383x29 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (154,1) size 74x26
-                        text run at (154,1) width 74: "TBODY"
+                      RenderText {#text} at (154,1) size 75x26
+                        text run at (154,1) width 75: "TBODY"

@@ -13,15 +13,15 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 782x204
           RenderTableRow {TR} at (0,2) size 782x24
             RenderTableCell {TH} at (2,2) size 571x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderText {#text} at (230,2) size 110x19
-                text run at (230,2) width 110: "Airport Location"
+              RenderText {#text} at (230,2) size 111x19
+                text run at (230,2) width 111: "Airport Location"
             RenderTableCell {TH} at (575,2) size 205x24 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=3]
-              RenderText {#text} at (24,2) size 156x19
-                text run at (24,2) width 156: "Car Rental Information"
+              RenderText {#text} at (24,2) size 157x19
+                text run at (24,2) width 157: "Car Rental Information"
           RenderTableRow {TR} at (0,28) size 782x44
             RenderTableCell {TH} at (2,38) size 191x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (68,2) size 54x19
-                text run at (68,2) width 54: "Country"
+              RenderText {#text} at (68,2) size 55x19
+                text run at (68,2) width 55: "Country"
             RenderTableCell {TH} at (195,38) size 378x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (175,2) size 28x19
                 text run at (175,2) width 28: "City"
@@ -35,7 +35,7 @@ layer at (0,0) size 800x600
                 text run at (2,22) width 63: "Company"
             RenderTableCell {TH} at (713,28) size 67x44 [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
               RenderText {#text} at (18,2) size 63x39
-                text run at (18,2) width 30: "XYZ"
+                text run at (18,2) width 31: "XYZ"
                 text run at (2,22) width 63: "Company"
           RenderTableRow {TR} at (0,74) size 782x24
             RenderTableCell {TD} at (2,74) size 191x24 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]

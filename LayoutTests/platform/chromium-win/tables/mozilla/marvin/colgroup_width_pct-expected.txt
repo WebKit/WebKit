@@ -13,15 +13,15 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 779x184
           RenderTableRow {TR} at (0,2) size 779x24
             RenderTableCell {TH} at (2,2) size 461x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderText {#text} at (175,2) size 110x19
-                text run at (175,2) width 110: "Airport Location"
+              RenderText {#text} at (175,2) size 111x19
+                text run at (175,2) width 111: "Airport Location"
             RenderTableCell {TH} at (465,2) size 312x24 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=3]
               RenderText {#text} at (78,2) size 156x19
                 text run at (78,2) width 156: "Car Rental Information"
           RenderTableRow {TR} at (0,28) size 779x24
             RenderTableCell {TH} at (2,28) size 153x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (49,2) size 54x19
-                text run at (49,2) width 54: "Country"
+              RenderText {#text} at (49,2) size 55x19
+                text run at (49,2) width 55: "Country"
             RenderTableCell {TH} at (157,28) size 306x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (139,2) size 28x19
                 text run at (139,2) width 28: "City"
@@ -32,8 +32,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 98x19
                 text run at (2,2) width 98: "EFG Company"
             RenderTableCell {TH} at (675,28) size 102x24 [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 97x19
-                text run at (2,2) width 97: "XYZ Company"
+              RenderText {#text} at (2,2) size 98x19
+                text run at (2,2) width 98: "XYZ Company"
           RenderTableRow {TR} at (0,54) size 779x24
             RenderTableCell {TD} at (2,54) size 153x24 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 42x19

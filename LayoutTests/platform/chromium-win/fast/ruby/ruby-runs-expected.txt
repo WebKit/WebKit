@@ -17,15 +17,15 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 24x12
                 text run at (0,0) width 24: "Hyper"
             RenderRubyBase (anonymous) at (0,0) size 24x20
-              RenderText {#text} at (6,0) size 11x19
-                text run at (6,0) width 11: "H"
+              RenderText {#text} at (6,0) size 12x19
+                text run at (6,0) width 12: "H"
           RenderRubyRun (anonymous) at (170,12) size 16x20
             RenderRubyText {RT} at (0,-12) size 16x12
               RenderText {#text} at (0,0) size 16x12
                 text run at (0,0) width 16: "Text"
             RenderRubyBase (anonymous) at (0,0) size 16x20
-              RenderText {#text} at (3,0) size 9x19
-                text run at (3,0) width 9: "T"
+              RenderText {#text} at (3,0) size 10x19
+                text run at (3,0) width 10: "T"
           RenderRubyRun (anonymous) at (186,12) size 30x20
             RenderRubyText {RT} at (0,-12) size 30x12
               RenderText {#text} at (0,0) size 30x12
@@ -38,14 +38,14 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 38x12
                 text run at (0,0) width 38: "Language"
             RenderRubyBase (anonymous) at (0,0) size 38x20
-              RenderText {#text} at (14,0) size 9x19
-                text run at (14,0) width 9: "L"
+              RenderText {#text} at (14,0) size 10x19
+                text run at (14,0) width 10: "L"
           RenderRubyRun (anonymous) at (254,12) size 29x20
             RenderRubyText {RT} at (0,-12) size 29x12
               RenderText {#text} at (0,0) size 29x12
                 text run at (0,0) width 29: "Level 5"
             RenderRubyBase (anonymous) at (0,0) size 29x20
-              RenderText {#text} at (10,0) size 8x19
-                text run at (10,0) width 8: "5"
+              RenderText {#text} at (10,0) size 9x19
+                text run at (10,0) width 9: "5"
         RenderText {#text} at (283,12) size 42x19
           text run at (283,12) width 42: " specs."

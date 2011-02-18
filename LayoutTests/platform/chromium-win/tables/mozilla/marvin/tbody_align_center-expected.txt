@@ -26,9 +26,9 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,29) size 634x28
           RenderTableRow {TR} at (0,2) size 634x24
             RenderTableCell {TD} at (2,2) size 314x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (78,2) size 157x19
-                text run at (78,2) width 157: "This text is in the TBODY"
+              RenderText {#text} at (78,2) size 158x19
+                text run at (78,2) width 158: "This text is in the TBODY"
             RenderTableCell {TD} at (318,2) size 314x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (78,2) size 157x19
-                text run at (78,2) width 157: "This text is in the TBODY"
+              RenderText {#text} at (78,2) size 158x19
+                text run at (78,2) width 158: "This text is in the TBODY"
         RenderTableSection {TBODY} at (1,57) size 634x2

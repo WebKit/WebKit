@@ -38,8 +38,8 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,21) size 102x80
           RenderTableRow {TR} at (0,2) size 102x24
             RenderTableCell {TH} at (2,2) size 49x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (8,2) size 32x19
-                text run at (8,2) width 32: "Fruit"
+              RenderText {#text} at (8,2) size 33x19
+                text run at (8,2) width 33: "Fruit"
             RenderTableCell {TH} at (53,2) size 47x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (5,2) size 37x19
                 text run at (5,2) width 37: "Color"
@@ -61,9 +61,9 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,0) size 0x19
       RenderTable {TABLE} at (0,300) size 129x102 [border: (1px outset #808080)]
         RenderBlock {CAPTION} at (0,0) size 127x20
-          RenderInline {B} at (0,0) size 76x19
-            RenderText {#text} at (25,0) size 76x19
-              text run at (25,0) width 76: "Vegetabley"
+          RenderInline {B} at (0,0) size 77x19
+            RenderText {#text} at (25,0) size 77x19
+              text run at (25,0) width 77: "Vegetabley"
         RenderTableSection {TBODY} at (1,21) size 127x80
           RenderTableRow {TR} at (0,2) size 127x24
             RenderTableCell {TH} at (2,2) size 72x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

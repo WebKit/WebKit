@@ -28,13 +28,13 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (2,2) size 124x51 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderImage {IMG} at (3,3) size 118x25
                       RenderBR {BR} at (121,28) size 0x0
-                      RenderText {#text} at (24,28) size 5x19
-                        text run at (24,28) width 5: "["
-                      RenderInline {I} at (0,0) size 65x19
-                        RenderText {#text} at (29,28) size 65x19
-                          text run at (29,28) width 65: " Site Map "
-                      RenderText {#text} at (94,28) size 5x19
-                        text run at (94,28) width 5: "]"
+                      RenderText {#text} at (24,28) size 6x19
+                        text run at (24,28) width 6: "["
+                      RenderInline {I} at (0,0) size 66x19
+                        RenderText {#text} at (29,28) size 66x19
+                          text run at (29,28) width 66: " Site Map "
+                      RenderText {#text} at (94,28) size 6x19
+                        text run at (94,28) width 6: "]"
       RenderBlock {P} at (0,157) size 784x20
         RenderText {#text} at (0,0) size 180x19
           text run at (0,0) width 180: "Same as above, but removed "
@@ -59,10 +59,10 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (2,2) size 124x51 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderImage {IMG} at (3,3) size 118x25
                       RenderBR {BR} at (121,28) size 0x0
-                      RenderText {#text} at (24,28) size 5x19
-                        text run at (24,28) width 5: "["
-                      RenderInline {I} at (0,0) size 65x19
-                        RenderText {#text} at (29,28) size 65x19
-                          text run at (29,28) width 65: " Site Map "
-                      RenderText {#text} at (94,28) size 5x19
-                        text run at (94,28) width 5: "]"
+                      RenderText {#text} at (24,28) size 6x19
+                        text run at (24,28) width 6: "["
+                      RenderInline {I} at (0,0) size 66x19
+                        RenderText {#text} at (29,28) size 66x19
+                          text run at (29,28) width 66: " Site Map "
+                      RenderText {#text} at (94,28) size 6x19
+                        text run at (94,28) width 6: "]"

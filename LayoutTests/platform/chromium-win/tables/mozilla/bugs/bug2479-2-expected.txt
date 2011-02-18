@@ -17,17 +17,17 @@ layer at (0,0) size 800x572
                 RenderText {#text} at (10,0) size 55x18
                   text run at (10,0) width 55: "people"
             RenderTableCell {LI} at (75,0) size 75x18 [r=0 c=1 rs=1 cs=1]
-              RenderInline {A} at (0,0) size 52x18 [color=#0000EE]
-                RenderText {#text} at (11,0) size 52x18
-                  text run at (11,0) width 52: "places"
+              RenderInline {A} at (0,0) size 53x18 [color=#0000EE]
+                RenderText {#text} at (11,0) size 53x18
+                  text run at (11,0) width 53: "places"
             RenderTableCell {LI} at (150,0) size 75x18 [r=0 c=2 rs=1 cs=1]
               RenderInline {A} at (0,0) size 75x18 [color=#0000EE]
                 RenderText {#text} at (0,0) size 75x18
                   text run at (0,0) width 75: "members"
             RenderTableCell {LI} at (225,0) size 75x18 [r=0 c=3 rs=1 cs=1]
-              RenderInline {A} at (0,0) size 38x18 [color=#0000EE]
-                RenderText {#text} at (18,0) size 38x18
-                  text run at (18,0) width 38: "links"
+              RenderInline {A} at (0,0) size 39x18 [color=#0000EE]
+                RenderText {#text} at (18,0) size 39x18
+                  text run at (18,0) width 39: "links"
       RenderBlock {DIV} at (3,85) size 680x356
         RenderBlock (anonymous) at (16,16) size 648x18
           RenderText {#text} at (0,0) size 523x18

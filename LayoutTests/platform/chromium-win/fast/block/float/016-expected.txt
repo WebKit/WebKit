@@ -9,33 +9,33 @@ layer at (0,0) size 800x514
             RenderBlock {B} at (0,0) size 160x70 [border: (40px solid #00000000) (69px solid #CCCCCC) (40px solid #00000000)]
             RenderBlock {B} at (0,70) size 160x70 [border: (69px solid #CCCCCC) (40px solid #00000000) none (40px solid #00000000)]
             RenderBlock {SPAN} at (8,61) size 144x19 [color=#000000]
-              RenderInline {ABBR} at (0,0) size 34x18
-                RenderText {#text} at (19,0) size 34x18
-                  text run at (19,0) width 34: "CSS"
-              RenderText {#text} at (53,0) size 71x18
-                text run at (53,0) width 71: " examples"
+              RenderInline {ABBR} at (0,0) size 35x18
+                RenderText {#text} at (19,0) size 35x18
+                  text run at (19,0) width 35: "CSS"
+              RenderText {#text} at (53,0) size 72x18
+                text run at (53,0) width 72: " examples"
         RenderListItem {LI} at (0,119) size 246x71
           RenderBlock {A} at (0,0) size 160x138 [color=#CCCCCC]
             RenderBlock {B} at (0,0) size 160x70 [border: (40px solid #00000000) (69px solid #CCCCCC) (40px solid #00000000)]
             RenderBlock {B} at (0,70) size 160x70 [border: (69px solid #CCCCCC) (40px solid #00000000) none (40px solid #00000000)]
             RenderBlock {SPAN} at (8,61) size 144x19 [color=#000000]
-              RenderText {#text} at (42,0) size 59x18
-                text run at (42,0) width 59: "Favelets"
+              RenderText {#text} at (42,0) size 60x18
+                text run at (42,0) width 60: "Favelets"
         RenderListItem {LI} at (246,119) size 160x71
           RenderBlock {A} at (0,0) size 160x138 [color=#CCCCCC]
             RenderBlock {B} at (0,0) size 160x70 [border: (40px solid #00000000) (69px solid #CCCCCC) (40px solid #00000000)]
             RenderBlock {B} at (0,70) size 160x70 [border: (69px solid #CCCCCC) (40px solid #00000000) none (40px solid #00000000)]
             RenderBlock {SPAN} at (8,61) size 144x19 [color=#000000]
-              RenderInline {ABBR} at (0,0) size 23x18
-                RenderText {#text} at (60,0) size 23x18
-                  text run at (60,0) width 23: "CV"
+              RenderInline {ABBR} at (0,0) size 24x18
+                RenderText {#text} at (60,0) size 24x18
+                  text run at (60,0) width 24: "CV"
         RenderListItem {LI} at (0,190) size 283x71
           RenderBlock {A} at (123,0) size 160x138 [color=#CCCCCC]
             RenderBlock {B} at (0,0) size 160x70 [border: (40px solid #00000000) (69px solid #CCCCCC) (40px solid #00000000)]
             RenderBlock {B} at (0,70) size 160x70 [border: (69px solid #CCCCCC) (40px solid #00000000) none (40px solid #00000000)]
             RenderBlock {SPAN} at (8,61) size 144x19 [color=#000000]
-              RenderText {#text} at (61,0) size 21x18
-                text run at (61,0) width 21: "log"
+              RenderText {#text} at (61,0) size 22x18
+                text run at (61,0) width 22: "log"
         RenderListItem {LI} at (0,261) size 246x71
           RenderBlock {A} at (0,0) size 160x138 [color=#CCCCCC]
             RenderBlock {B} at (0,0) size 160x70 [border: (40px solid #00000000) (69px solid #CCCCCC) (40px solid #00000000)]

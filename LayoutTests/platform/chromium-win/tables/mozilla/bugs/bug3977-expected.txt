@@ -75,8 +75,8 @@ layer at (0,0) size 785x965
               RenderText {#text} at (2,2) size 73x19
                 text run at (2,2) width 73: "just an IMG"
             RenderTableCell {TH} at (113,161) size 473x24 [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=2]
-              RenderText {#text} at (205,2) size 62x19
-                text run at (205,2) width 62: "text links"
+              RenderText {#text} at (205,2) size 63x19
+                text run at (205,2) width 63: "text links"
       RenderBlock {HR} at (0,524) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,542) size 769x20
         RenderInline {B} at (0,0) size 493x19

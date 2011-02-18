@@ -14,5 +14,5 @@ layer at (0,0) size 800x72
               RenderText {#text} at (20,2) size 52x19
                 text run at (20,2) width 52: "xxx xxx"
             RenderTableCell {th} at (96,28) size 93x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (20,2) size 52x19
-                text run at (20,2) width 52: "xxx xxx"
+              RenderText {#text} at (20,2) size 53x19
+                text run at (20,2) width 53: "xxx xxx"

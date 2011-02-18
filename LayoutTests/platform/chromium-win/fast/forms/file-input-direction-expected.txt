@@ -15,8 +15,8 @@ layer at (0,0) size 800x585
               RenderText {#text} at (68,1) size 110x19
                 text run at (68,1) width 110: "text-align:center"
             RenderTableCell {TH} at (828,2) size 246x22 [r=0 c=4 rs=1 cs=1]
-              RenderText {#text} at (73,1) size 99x19
-                text run at (73,1) width 99: "text-align:right"
+              RenderText {#text} at (73,1) size 100x19
+                text run at (73,1) width 100: "text-align:right"
           RenderTableRow {TR} at (0,26) size 1076x30
             RenderTableCell {TH} at (2,40) size 80x2 [r=1 c=0 rs=1 cs=1]
             RenderTableCell {TD} at (84,26) size 246x30 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]

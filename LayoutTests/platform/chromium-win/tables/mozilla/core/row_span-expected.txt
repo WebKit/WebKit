@@ -127,8 +127,8 @@ layer at (0,0) size 785x904
                 text run at (2,2) width 23: "two"
           RenderTableRow {TR} at (0,28) size 59x24
             RenderTableCell {TD} at (2,28) size 55x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (12,2) size 30x19
-                text run at (12,2) width 30: "three"
+              RenderText {#text} at (12,2) size 31x19
+                text run at (12,2) width 31: "three"
       RenderTable {TABLE} at (0,474) size 56x30 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 54x28
           RenderTableRow {TR} at (0,2) size 54x0

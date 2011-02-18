@@ -23,14 +23,14 @@ layer at (0,0) size 800x378
         RenderTableSection {TBODY} at (0,0) size 620x260
           RenderTableRow {TR} at (0,2) size 620x22
             RenderTableCell {TD} at (2,2) size 204x22 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (59,1) size 85x19
-                text run at (59,1) width 85: "Word spacing"
+              RenderText {#text} at (59,1) size 86x19
+                text run at (59,1) width 86: "Word spacing"
             RenderTableCell {TD} at (208,2) size 204x22 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (59,1) size 85x19
-                text run at (59,1) width 85: "Letter spacing"
+              RenderText {#text} at (59,1) size 86x19
+                text run at (59,1) width 86: "Letter spacing"
             RenderTableCell {TD} at (414,2) size 204x22 [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (67,1) size 69x19
-                text run at (67,1) width 69: "Justification"
+              RenderText {#text} at (67,1) size 70x19
+                text run at (67,1) width 70: "Justification"
           RenderTableRow {TR} at (0,26) size 620x232
             RenderTableCell {TD} at (2,26) size 204x192 [r=1 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 202x190

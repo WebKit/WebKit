@@ -5,20 +5,20 @@ layer at (0,0) size 785x1034
     RenderBody {BODY} at (8,16) size 769x1014
       RenderBlock {DIV} at (16,0) size 737x60
         RenderBlock {P} at (0,0) size 737x20
-          RenderInline {A} at (0,0) size 94x18 [color=#0000EE]
-            RenderText {#text} at (261,1) size 94x18
-              text run at (261,1) width 94: "Full version"
-          RenderText {#text} at (355,1) size 12x18
-            text run at (355,1) width 12: ", "
-          RenderInline {A} at (0,0) size 108x18 [color=#0000EE]
-            RenderText {#text} at (367,1) size 108x18
-              text run at (367,1) width 108: "Basic version"
+          RenderInline {A} at (0,0) size 95x18 [color=#0000EE]
+            RenderText {#text} at (261,1) size 95x18
+              text run at (261,1) width 95: "Full version"
+          RenderText {#text} at (355,1) size 13x18
+            text run at (355,1) width 13: ", "
+          RenderInline {A} at (0,0) size 109x18 [color=#0000EE]
+            RenderText {#text} at (367,1) size 109x18
+              text run at (367,1) width 109: "Basic version"
         RenderBlock {P} at (0,20) size 737x20
-          RenderText {#text} at (173,1) size 152x18
-            text run at (173,1) width 152: "Specification link: "
-          RenderInline {A} at (0,0) size 238x18 [color=#0000EE]
-            RenderText {#text} at (325,1) size 238x18
-              text run at (325,1) width 238: "3.4 How groups are rendered"
+          RenderText {#text} at (173,1) size 153x18
+            text run at (173,1) width 153: "Specification link: "
+          RenderInline {A} at (0,0) size 239x18 [color=#0000EE]
+            RenderText {#text} at (325,1) size 239x18
+              text run at (325,1) width 239: "3.4 How groups are rendered"
         RenderBlock {P} at (0,40) size 737x20
           RenderInline {A} at (0,0) size 202x18 [color=#0000EE]
             RenderText {#text} at (153,1) size 202x18

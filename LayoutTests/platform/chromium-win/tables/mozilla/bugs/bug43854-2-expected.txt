@@ -7,26 +7,26 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 783x381
           RenderTableRow {TR} at (0,0) size 783x23
             RenderTableCell {TH} at (0,0) size 111x23 [border: (1px solid #005A8C)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (43,2) size 25x19
-                text run at (43,2) width 25: "Sun"
-            RenderTableCell {TH} at (111,0) size 112x23 [border: (1px solid #005A8C)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (40,2) size 32x19
-                text run at (40,2) width 32: "Mon"
-            RenderTableCell {TH} at (223,0) size 112x23 [border: (1px solid #005A8C)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (43,2) size 26x19
-                text run at (43,2) width 26: "Tue"
+                text run at (43,2) width 26: "Sun"
+            RenderTableCell {TH} at (111,0) size 112x23 [border: (1px solid #005A8C)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (40,2) size 33x19
+                text run at (40,2) width 33: "Mon"
+            RenderTableCell {TH} at (223,0) size 112x23 [border: (1px solid #005A8C)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (43,2) size 27x19
+                text run at (43,2) width 27: "Tue"
             RenderTableCell {TH} at (335,0) size 112x23 [border: (1px solid #005A8C)] [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (41,2) size 31x19
                 text run at (41,2) width 31: "Wed"
             RenderTableCell {TH} at (447,0) size 112x23 [border: (1px solid #005A8C)] [r=0 c=4 rs=1 cs=1]
-              RenderText {#text} at (43,2) size 26x19
-                text run at (43,2) width 26: "Thu"
+              RenderText {#text} at (43,2) size 27x19
+                text run at (43,2) width 27: "Thu"
             RenderTableCell {TH} at (559,0) size 112x23 [border: (1px solid #005A8C)] [r=0 c=5 rs=1 cs=1]
               RenderText {#text} at (47,2) size 19x19
                 text run at (47,2) width 19: "Fri"
             RenderTableCell {TH} at (671,0) size 112x23 [border: (1px solid #005A8C)] [r=0 c=6 rs=1 cs=1]
-              RenderText {#text} at (45,2) size 22x19
-                text run at (45,2) width 22: "Sat"
+              RenderText {#text} at (45,2) size 23x19
+                text run at (45,2) width 23: "Sat"
           RenderTableRow {TR} at (0,23) size 783x43
             RenderTableCell {TD} at (0,23) size 559x3 [border: (1px solid #005A8C)] [r=1 c=0 rs=1 cs=5]
             RenderTableCell {TD} at (559,23) size 112x43 [border: (1px solid #005A8C)] [r=1 c=5 rs=1 cs=1]

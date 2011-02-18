@@ -11,8 +11,8 @@ layer at (0,0) size 800x600
           RenderText {#text} at (107,2) size 90x19
             text run at (107,2) width 90: "This is div one."
         RenderBlock {DIV} at (392,0) size 304x24 [border: (2px solid #0000FF)]
-          RenderText {#text} at (106,2) size 91x19
-            text run at (106,2) width 91: "This is div two."
+          RenderText {#text} at (106,2) size 92x19
+            text run at (106,2) width 92: "This is div two."
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,44) size 784x68
         RenderText {#text} at (0,0) size 691x19

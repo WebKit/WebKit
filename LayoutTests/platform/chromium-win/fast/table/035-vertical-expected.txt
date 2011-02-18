@@ -19,7 +19,7 @@ layer at (676,0) size 124x600
               RenderText {#text} at (1,1) size 19x191
                 text run at (1,1) width 191: "This table is aligned \"CENTER\""
       RenderBlock {DIV} at (68,0) size 20x584
-        RenderText {#text} at (0,213) size 19x157
+        RenderText {#text} at (0,213) size 19x158
           text run at (0,213) width 157: "This div is aligned \"center\""
       RenderBlock {DIV} at (88,0) size 20x584
         RenderText {#text} at (0,202) size 19x180

@@ -46,10 +46,10 @@ layer at (0,0) size 785x928
           RenderTableSection {TBODY} at (1,1) size 217x565
             RenderTableRow {TR} at (0,0) size 33x565
               RenderTableCell {TH} at (0,0) size 33x190 [border: (2px solid #800080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (6,54) size 19x82
+                RenderText {#text} at (6,54) size 19x83
                   text run at (6,54) width 82: "Header One"
               RenderTableCell {TH} at (0,190) size 33x178 [border: (2px solid #800080)] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (6,48) size 19x82
+                RenderText {#text} at (6,48) size 19x83
                   text run at (6,48) width 82: "Header Two"
               RenderTableCell {TH} at (0,368) size 33x197 [border: (2px solid #800080)] [r=0 c=2 rs=1 cs=1]
                 RenderText {#text} at (6,52) size 19x94
@@ -102,10 +102,10 @@ layer at (0,0) size 785x928
           RenderTableSection {TBODY} at (3,3) size 284x562
             RenderTableRow {TR} at (0,16) size 36x562
               RenderTableCell {TH} at (16,16) size 36x121 [border: (3px solid #800080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (8,19) size 19x82
+                RenderText {#text} at (8,19) size 19x83
                   text run at (8,19) width 82: "Header One"
               RenderTableCell {TH} at (16,153) size 36x143 [border: (3px solid #800080)] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (8,30) size 19x82
+                RenderText {#text} at (8,30) size 19x83
                   text run at (8,30) width 82: "Header Two"
               RenderTableCell {TH} at (16,312) size 36x234 [border: (3px solid #800080)] [r=0 c=2 rs=1 cs=1]
                 RenderText {#text} at (8,70) size 19x94
@@ -157,13 +157,13 @@ layer at (0,0) size 785x928
           RenderTableSection {TBODY} at (3,3) size 332x562
             RenderTableRow {TR} at (0,8) size 36x562
               RenderTableCell {TH} at (8,0) size 36x145 [border: (3px solid #800080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (8,31) size 19x82
+                RenderText {#text} at (8,31) size 19x83
                   text run at (8,31) width 82: "Header One"
               RenderTableCell {TH} at (8,145) size 36x204 [border: (3px solid #800080)] [r=0 c=1 rs=1 cs=1]
                 RenderText {#text} at (8,61) size 19x82
                   text run at (8,61) width 82: "Header Two"
               RenderTableCell {TH} at (8,349) size 36x213 [border: (3px solid #800080)] [r=0 c=2 rs=1 cs=1]
-                RenderText {#text} at (8,59) size 19x94
+                RenderText {#text} at (8,59) size 19x95
                   text run at (8,59) width 94: "Header Three"
             RenderTableRow {TR} at (0,52) size 132x562
               RenderTableCell {TD} at (52,30) size 132x85 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=1]
@@ -224,10 +224,10 @@ layer at (0,0) size 785x928
                 RenderText {#text} at (8,35) size 19x82
                   text run at (8,35) width 82: "Header One"
               RenderTableCell {TH} at (0,168) size 36x155 [border: (3px solid #800080)] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (8,36) size 19x82
+                RenderText {#text} at (8,36) size 19x83
                   text run at (8,36) width 82: "Header Two"
               RenderTableCell {TH} at (0,331) size 36x223 [border: (3px solid #800080)] [r=0 c=2 rs=1 cs=1]
-                RenderText {#text} at (8,64) size 19x94
+                RenderText {#text} at (8,64) size 19x95
                   text run at (8,64) width 94: "Header Three"
             RenderTableRow {TR} at (0,36) size 112x562
               RenderTableCell {TD} at (36,28) size 112x112 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=1]
@@ -293,10 +293,10 @@ layer at (0,0) size 785x928
           RenderTableSection {THEAD} at (20,0) size 34x568 [border: (3px solid #FF0000)]
             RenderTableRow {TR} at (0,2) size 30x568 [border: (3px solid #FF0000)]
               RenderTableCell {TH} at (2,2) size 30x93 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (5,5) size 19x82
+                RenderText {#text} at (5,5) size 19x83
                   text run at (5,5) width 82: "Header One"
               RenderTableCell {TH} at (2,97) size 30x245 [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (5,81) size 19x82
+                RenderText {#text} at (5,81) size 19x83
                   text run at (5,81) width 82: "Header Two"
               RenderTableCell {TH} at (2,344) size 30x222 [r=0 c=2 rs=1 cs=1]
                 RenderText {#text} at (5,64) size 19x94

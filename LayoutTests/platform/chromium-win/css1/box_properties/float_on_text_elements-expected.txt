@@ -62,7 +62,7 @@ layer at (0,0) size 785x2846
         RenderText {#text} at (48,0) size 769x59
           text run at (48,0) width 721: "he first letter (a \"T\") of this paragraph should float left and be twice the font-size of the rest of the paragraph, as well as"
           text run at (48,20) width 431: "bold, with a content width of 1.5em and a background-color of silver. "
-          text run at (479,20) width 290: "The top of the big letter \"T\" should be vertically"
+          text run at (479,20) width 289: "The top of the big letter \"T\" should be vertically"
           text run at (0,40) width 559: "aligned with the top of the first line of this paragraph. This is commonly known as \"drop-cap\"."
       RenderBlock (anonymous) at (0,552) size 769x20
         RenderBR {BR} at (0,0) size 0x19
@@ -86,10 +86,10 @@ layer at (0,0) size 785x2846
           text run at (0,40) width 133: "\"sidebar\" on the right. "
           text run at (133,40) width 280: "The content of this element should flow around"
           text run at (0,60) width 126: "the floated element. "
-          text run at (126,60) width 287: "However, the floated element may or may not"
+          text run at (126,60) width 286: "However, the floated element may or may not"
           text run at (0,80) width 413: "be obscured by the blue background of this element, as the"
           text run at (0,100) width 342: "specification does not say which is drawn \"on top.\" "
-          text run at (342,100) width 71: "Even if the"
+          text run at (342,100) width 70: "Even if the"
           text run at (0,120) width 413: "floated element is obscured, it still forces the content of this element"
           text run at (0,140) width 107: "to flow around it. "
           text run at (107,140) width 306: "If the floated element is not obscured, then the blue"
@@ -149,18 +149,18 @@ layer at (0,0) size 785x2846
               text run at (0,0) width 144: "See description in the"
               text run at (0,20) width 118: "box on the left side."
         RenderBlock {P} at (0,0) size 576x120
-          RenderText {#text} at (0,0) size 576x119
+          RenderText {#text} at (0,0) size 575x119
             text run at (0,0) width 350: "This paragraph is inside a DIV which is floated left. The "
             text run at (350,0) width 72: "background"
             text run at (0,20) width 320: "of the DIV element is blue and its width is 75%. This "
-            text run at (320,20) width 102: "text should all be"
+            text run at (320,20) width 101: "text should all be"
             text run at (0,40) width 248: "inside the blue rectangle. The blue DIV "
-            text run at (248,40) width 328: "element has another DIV element as a child. It has a"
+            text run at (248,40) width 327: "element has another DIV element as a child. It has a"
             text run at (0,60) width 45: "yellow "
             text run at (45,60) width 367: "background color and is floated to the right. Since it is a "
-            text run at (412,60) width 164: "child of the blue DIV, the"
+            text run at (412,60) width 163: "child of the blue DIV, the"
             text run at (0,80) width 236: "yellow DIV should appear inside the "
-            text run at (236,80) width 340: "blue rectangle. Due to it being floated to the right and"
+            text run at (236,80) width 339: "blue rectangle. Due to it being floated to the right and"
             text run at (0,100) width 42: "having "
             text run at (42,100) width 394: "a 10px right margin, the yellow rectange should have a 10px blue "
             text run at (436,100) width 131: "stripe on its right side."
@@ -239,7 +239,7 @@ layer at (0,0) size 785x2846
                 RenderText {#text} at (48,0) size 747x59
                   text run at (48,0) width 699: "he first letter (a \"T\") of this paragraph should float left and be twice the font-size of the rest of the paragraph, as well"
                   text run at (48,20) width 460: "as bold, with a content width of 1.5em and a background-color of silver. "
-                  text run at (508,20) width 239: "The top of the big letter \"T\" should be"
+                  text run at (508,20) width 238: "The top of the big letter \"T\" should be"
                   text run at (0,40) width 616: "vertically aligned with the top of the first line of this paragraph. This is commonly known as \"drop-cap\"."
               RenderBlock (anonymous) at (4,576) size 747x20
                 RenderBR {BR} at (0,0) size 0x19
@@ -261,15 +261,15 @@ layer at (0,0) size 785x2846
                   text run at (0,0) width 391: "This paragraph is not floating. If there is enough room, the textual"
                   text run at (0,20) width 391: "content of the paragraph should appear on the left side of the"
                   text run at (0,40) width 181: "yellow \"sidebar\" on the right. "
-                  text run at (181,40) width 210: "The content of this element should"
+                  text run at (181,40) width 209: "The content of this element should"
                   text run at (0,60) width 207: "flow around the floated element. "
-                  text run at (207,60) width 184: "However, the floated element"
+                  text run at (207,60) width 183: "However, the floated element"
                   text run at (0,80) width 391: "may or may not be obscured by the blue background of this"
                   text run at (0,100) width 391: "element, as the specification does not say which is drawn \"on"
                   text run at (0,120) width 35: "top.\" "
-                  text run at (35,120) width 356: "Even if the floated element is obscured, it still forces the"
+                  text run at (35,120) width 355: "Even if the floated element is obscured, it still forces the"
                   text run at (0,140) width 249: "content of this element to flow around it. "
-                  text run at (249,140) width 142: "If the floated element is"
+                  text run at (249,140) width 141: "If the floated element is"
                   text run at (0,160) width 391: "not obscured, then the blue rectangle of this paragraph should"
                   text run at (0,180) width 391: "extend 10px above and to the right of the sidebar's red border,"
                   text run at (0,200) width 304: "due to the margin styles set for the floated element."
@@ -326,21 +326,21 @@ layer at (0,0) size 785x2846
                       text run at (0,0) width 140: "See description in the"
                       text run at (0,20) width 118: "box on the left side."
                 RenderBlock {P} at (0,0) size 560x140
-                  RenderText {#text} at (0,0) size 560x139
+                  RenderText {#text} at (0,0) size 559x139
                     text run at (0,0) width 338: "This paragraph is inside a DIV which is floated left. The "
                     text run at (338,0) width 72: "background"
                     text run at (0,20) width 326: "of the DIV element is blue and its width is 75%. This "
-                    text run at (326,20) width 84: "text should all"
+                    text run at (326,20) width 83: "text should all"
                     text run at (0,40) width 257: "be inside the blue rectangle. The blue DIV "
-                    text run at (257,40) width 303: "element has another DIV element as a child. It has"
+                    text run at (257,40) width 302: "element has another DIV element as a child. It has"
                     text run at (0,60) width 55: "a yellow "
                     text run at (55,60) width 348: "background color and is floated to the right. Since it is a "
-                    text run at (403,60) width 157: "child of the blue DIV, the"
+                    text run at (403,60) width 155: "child of the blue DIV, the"
                     text run at (0,80) width 230: "yellow DIV should appear inside the "
-                    text run at (230,80) width 330: "blue rectangle. Due to it being floated to the right and"
+                    text run at (230,80) width 329: "blue rectangle. Due to it being floated to the right and"
                     text run at (0,100) width 43: "having "
-                    text run at (43,100) width 413: "a 10px right margin, the yellow rectange should have a 10px blue "
-                    text run at (456,100) width 104: "stripe on its right"
+                    text run at (43,100) width 412: "a 10px right margin, the yellow rectange should have a 10px blue "
+                    text run at (455,100) width 103: "stripe on its right"
                     text run at (0,120) width 28: "side."
               RenderBlock (anonymous) at (4,1262) size 747x140
                 RenderBR {BR} at (560,0) size 0x19
