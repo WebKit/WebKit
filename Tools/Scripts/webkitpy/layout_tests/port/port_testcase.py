@@ -54,8 +54,9 @@ class PortTestCase(unittest.TestCase):
         if not maker:
             return None
 
-        port = maker(options=mock_options)
-        port._options.results_directory = port.results_directory()
+        port = maker(options=options)
+        if hasattr(options, "results_directory"):
+            port._options.results_directory = port.results_directory()
         return port
 
     def test_driver_cmd_line(self):

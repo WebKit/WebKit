@@ -96,6 +96,12 @@ class ChromiumWinPort(chromium.ChromiumPort):
             self._executive.run_command([setup_mount])
         return env
 
+    def baseline_path(self):
+        if self.version() == 'win7':
+            # Win 7 is the newest version of windows, so it gets the base dir.
+            return self._webkit_baseline_path('chromium-win')
+        return self._webkit_baseline_path(self.name())
+
     def baseline_search_path(self):
         port_names = self.FALLBACK_PATHS[self.version()]
         return map(self._webkit_baseline_path, port_names)

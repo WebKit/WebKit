@@ -41,6 +41,7 @@ class ChromiumWinTest(port_testcase.PortTestCase):
     class RegisterCygwinOption(object):
         def __init__(self):
             self.register_cygwin = True
+            self.results_directory = '/'
 
     def setUp(self):
         self.orig_platform = sys.platform
@@ -94,7 +95,7 @@ class ChromiumWinTest(port_testcase.PortTestCase):
 
     def test_versions(self):
         port = chromium_win.ChromiumWinPort()
-        self.assertTrue(port.name() in ('chromium-win-xp', 'chromium-win-vista', 'chromium-win-7'))
+        self.assertTrue(port.name() in ('chromium-win-xp', 'chromium-win-vista', 'chromium-win-win7'))
 
         self.assert_name(None, (5, 1), 'chromium-win-xp')
         self.assert_name('chromium-win', (5, 1), 'chromium-win-xp')
