@@ -2,6 +2,25 @@
 
         Reviewed by Sam Weinig.
 
+        Made object allocation secretly variable-sized (Shhhh!)
+        https://bugs.webkit.org/show_bug.cgi?id=54721
+        
+        SunSpider reports no change.
+        
+        Internally, MarkedBlock now makes variable-sized allocations, even
+        though MarkedSpace doesn't take advantage of this yet.
+
+        * runtime/MarkedBlock.cpp:
+        (JSC::MarkedBlock::MarkedBlock): No need to ASSERT that allocations are
+        fixed-sized.
+
+        * runtime/MarkedBlock.h: Shrunk the atom size so we can allocate things
+        that are not multiples of 64 bytes.
+
+2011-02-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Fixed some math errors when when using variable-sized cells
         https://bugs.webkit.org/show_bug.cgi?id=54717
         

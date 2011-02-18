@@ -83,7 +83,7 @@ namespace JSC {
 #endif
         static const size_t blockMask = ~(blockSize - 1); // blockSize must be a power of two.
 
-        static const size_t atomSize = 64;
+        static const size_t atomSize = sizeof(double); // Ensures natural alignment for all built-in types.
         static const size_t atomMask = ~(atomSize - 1); // atomSize must be a power of two.
         
         static const size_t atomsPerBlock = blockSize / atomSize;
