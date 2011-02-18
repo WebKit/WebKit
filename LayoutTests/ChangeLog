@@ -60,6 +60,12 @@
 
 2011-02-18  Andrew Wilson  <atwilson@chromium.org>
 
+        Unreviewed expectations update.
+
+        * platform/chromium-win/inspector/styles-update-from-js-expected.txt: Added.
+
+2011-02-18  Andrew Wilson  <atwilson@chromium.org>
+
         Unreviewed, rolling out r79007.
         http://trac.webkit.org/changeset/79007
 
