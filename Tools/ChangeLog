@@ -2,6 +2,18 @@
 
         Reviewed by Adam Roben.
 
+        test-webkitpy doesn't work with the multiprocessing module on win32
+        or cygwin, so we skip it for now.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54520
+
+        * Scripts/webkitpy/layout_tests/layout_package/manager_worker_broker_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/run_webkit_tests_unittest.py:
+
+2011-02-17  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Adam Roben.
+
         Fix version, baseline_search_path for chromium-win-win7. Also
         fix chromium_win_unittests, and fix port_testcase.make_port()
         to correctly use the options passed into it and only set

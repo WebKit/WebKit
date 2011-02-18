@@ -225,7 +225,8 @@ class InlineBrokerTests(_TestsMixin, unittest.TestCase):
         self.assertRaises(AssertionError, worker.log_wedged_worker, None)
 
 
-if multiprocessing:
+# FIXME: https://bugs.webkit.org/show_bug.cgi?id=54520.
+if multiprocessing and sys.platform not in ('cygwin', 'win32'):
 
     class MultiProcessBrokerTests(_TestsMixin, unittest.TestCase):
         def setUp(self):
