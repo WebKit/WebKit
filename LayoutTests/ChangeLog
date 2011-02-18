@@ -1,3 +1,12 @@
+2011-02-18  Jessie Berlin  <jberlin@apple.com>
+
+        [Windows 7 Release Tests] ~26 tests failing after r78846
+        https://bugs.webkit.org/show_bug.cgi?id=54748
+
+        Unreviewed. Missed the contents of one of the expected result files.
+
+        * platform/win/fast/text/backslash-to-yen-sign-euc-expected.txt:
+
 2011-02-17  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
