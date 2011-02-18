@@ -27,7 +27,7 @@
 #include "PageAllocationAligned.h"
 #include <wtf/Bitmap.h>
 #include <wtf/FixedArray.h>
-#include <wtf/HashCountedSet.h>
+#include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
@@ -103,6 +103,7 @@ namespace JSC {
         void clearMarks(MarkedBlock*);
 
         CollectorHeap m_heap;
+        HashSet<MarkedBlock*> m_blocks;
         size_t m_waterMark;
         size_t m_highWaterMark;
         JSGlobalData* m_globalData;

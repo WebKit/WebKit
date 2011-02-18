@@ -34,8 +34,7 @@ MarkedSpace::MarkedSpace(JSGlobalData* globalData)
     , m_highWaterMark(0)
     , m_globalData(globalData)
 {
-    allocateBlock();
-    m_heap.nextAtom = m_heap.collectorBlock(0)->firstAtom();
+    m_heap.nextAtom = MarkedBlock::firstAtom();
 }
 
 void MarkedSpace::destroy()
@@ -51,12 +50,15 @@ NEVER_INLINE MarkedBlock* MarkedSpace::allocateBlock()
 {
     MarkedBlock* block = MarkedBlock::create(globalData(), cellSize);
     m_heap.blocks.append(block);
+    m_blocks.add(block);
     return block;
 }
 
 NEVER_INLINE void MarkedSpace::freeBlock(size_t block)
 {
     MarkedBlock::destroy(m_heap.blocks[block]);
+
+    m_blocks.remove(m_heap.blocks.last());
 
     // swap with the last block so we compact as we go
     m_heap.blocks[block] = m_heap.blocks.last();
@@ -65,14 +67,13 @@ NEVER_INLINE void MarkedSpace::freeBlock(size_t block)
 
 void* MarkedSpace::allocate(size_t)
 {
-    do {
-        ASSERT(m_heap.nextBlock < m_heap.blocks.size());
+    for ( ; m_heap.nextBlock < m_heap.blocks.size(); ++m_heap.nextBlock) {
         MarkedBlock* block = m_heap.collectorBlock(m_heap.nextBlock);
         if (void* result = block->allocate(m_heap.nextAtom))
             return result;
 
         m_waterMark += block->capacity();
-    } while (++m_heap.nextBlock != m_heap.blocks.size());
+    }
 
     if (m_waterMark < m_highWaterMark)
         return allocateBlock()->allocate(m_heap.nextAtom);
@@ -129,7 +130,7 @@ size_t MarkedSpace::capacity() const
 void MarkedSpace::reset()
 {
     m_heap.nextBlock = 0;
-    m_heap.nextAtom = m_heap.collectorBlock(0)->firstAtom();
+    m_heap.nextAtom = MarkedBlock::firstAtom();
     m_waterMark = 0;
 #if ENABLE(JSC_ZOMBIES)
     sweep();

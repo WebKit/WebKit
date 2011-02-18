@@ -51,6 +51,7 @@ namespace JSC {
 
         static bool isAtomAligned(const void*);
         static MarkedBlock* blockFor(const void*);
+        static size_t firstAtom();
         
         Heap* heap() const;
         
@@ -64,8 +65,6 @@ namespace JSC {
 
         size_t size();
         size_t capacity();
-
-        size_t firstAtom();
 
         bool contains(const void*);
         size_t atomNumber(const void*);

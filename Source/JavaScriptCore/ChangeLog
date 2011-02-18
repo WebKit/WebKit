@@ -1,3 +1,37 @@
+2011-02-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Tightened some usage accounting code in MarkedSpace
+        https://bugs.webkit.org/show_bug.cgi?id=54761
+        
+        SunSpider reports no change.
+
+        * runtime/Heap.cpp:
+        (JSC::Heap::Heap): Initialize the marked space high water mark on
+        construction, instead of relying on some implicit subtleties to make
+        not initializing it work out OK.
+
+        * runtime/Heap.h: Fixed up includes.
+
+        * runtime/MarkedBlock.h: Made firstAtom() static so clients can call it
+        even without having allocated a block.
+
+        * runtime/MarkedSpace.cpp:
+        (JSC::MarkedSpace::MarkedSpace): Don't pre-allocate a block, since this
+        would be prohibitively expensive with multiple size classes.
+
+        (JSC::MarkedSpace::allocateBlock):
+        (JSC::MarkedSpace::freeBlock): Track allocated blocks in a hash set,
+        since linear search in the contains check will be prohibitively
+        expensive once we're using lots of smaller blocks.
+
+        (JSC::MarkedSpace::allocate): Don't assume that we always have a block
+        allocated, since we don't anymore. (See above.)
+
+        (JSC::MarkedSpace::reset):
+        * runtime/MarkedSpace.h: Updated for changes mentioned above.
+
 2011-02-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

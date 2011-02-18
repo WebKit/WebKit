@@ -51,6 +51,7 @@ Heap::Heap(JSGlobalData* globalData)
     , m_handleHeap(globalData)
     , m_extraCost(0)
 {
+    m_markedSpace.setHighWaterMark(minBytesPerCycle);
     (*m_activityCallback)();
 }
 
