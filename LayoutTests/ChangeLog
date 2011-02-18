@@ -1,3 +1,10 @@
+2011-02-18  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, update platform/gtk/accessibility test baselines as
+        requested by Mario Sanchez Prada.
+
+        * platform/gtk/accessibility/combo-box-collapsed-selection-changed-expected.txt:
+
 2011-02-17  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Jeremy Orlow.
