@@ -29,6 +29,7 @@
 #include "NPRuntimeObjectMap.h"
 #include "NetscapePluginStream.h"
 #include "PluginController.h"
+#include "ShareableBitmap.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/IntRect.h>
@@ -479,6 +480,23 @@ void NetscapePlugin::paint(GraphicsContext* context, const IntRect& dirtyRect)
     platformPaint(context, dirtyRect);
 }
 
+PassRefPtr<ShareableBitmap> NetscapePlugin::snapshot()
+{
+    if (!supportsSnapshotting())
+        return 0;
+
+    ASSERT(m_isStarted);
+    
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(m_frameRect.size());
+    OwnPtr<GraphicsContext> context = bitmap->createGraphicsContext();
+
+    context->translate(-m_frameRect.x(), -m_frameRect.y());
+
+    platformPaint(context.get(), m_frameRect, true);
+    
+    return bitmap.release();
+}
+
 void NetscapePlugin::geometryDidChange(const IntRect& frameRect, const IntRect& clipRect)
 {
     ASSERT(m_isStarted);
@@ -670,6 +688,14 @@ void NetscapePlugin::privateBrowsingStateChanged(bool privateBrowsingEnabled)
     //   The value will be true when private mode is on.
     NPBool value = privateBrowsingEnabled;
     NPP_SetValue(NPNVprivateModeBool, &value);
+}
+
+bool NetscapePlugin::supportsSnapshotting() const
+{
+#if PLATFORM(MAC)
+    return m_pluginModule && m_pluginModule->pluginQuirks().contains(PluginQuirks::SupportsSnapshotting);
+#endif
+    return false;
 }
 
 PluginController* NetscapePlugin::controller()

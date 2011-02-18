@@ -28,6 +28,7 @@
 
 #include "NPRuntimeUtilities.h"
 #include "Plugin.h"
+#include "ShareableBitmap.h"
 #include "WebEvent.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
@@ -521,7 +522,10 @@ void PluginView::paint(GraphicsContext* context, const IntRect& dirtyRect)
     context->save();
     context->translate(-documentOriginInWindowCoordinates.x(), -documentOriginInWindowCoordinates.y());
 
-    m_plugin->paint(context, paintRectInWindowCoordinates);
+    if (m_snapshot)
+        m_snapshot->paint(*context, paintRectInWindowCoordinates.location(), m_snapshot->bounds());
+    else
+        m_plugin->paint(context, paintRectInWindowCoordinates);
 
     context->restore();
 }
@@ -577,7 +581,20 @@ void PluginView::handleEvent(Event* event)
     if (didHandleEvent)
         event->setDefaultHandled();
 }
-    
+
+void PluginView::notifyWidget(WidgetNotification notification)
+{
+    switch (notification) {
+    case WillPaintFlattened:
+        if (m_plugin)
+            m_snapshot = m_plugin->snapshot();
+        break;
+    case DidPaintFlattened:
+        m_snapshot = nullptr;
+        break;
+    }
+}
+
 void PluginView::viewGeometryDidChange()
 {
     if (!m_isInitialized || !m_plugin || !parent())

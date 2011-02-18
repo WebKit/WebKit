@@ -431,6 +431,15 @@ void PluginControllerProxy::paintEntirePlugin()
     paint();
 }
 
+void PluginControllerProxy::snapshot(WebCore::IntSize& bufferSize, SharedMemory::Handle& backingStoreHandle)
+{
+    ASSERT(m_plugin);
+    RefPtr<ShareableBitmap> bitmap = m_plugin->snapshot();
+
+    bitmap->createHandle(backingStoreHandle);
+    bufferSize = bitmap->size();
+}
+
 void PluginControllerProxy::setFocus(bool hasFocus)
 {
     m_plugin->setFocus(hasFocus);

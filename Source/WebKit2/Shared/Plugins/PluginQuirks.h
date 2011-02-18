@@ -36,8 +36,9 @@ public:
         // The plug-in wants the call to getprogame() to return "WebKitPluginHost".
         // Adobe Flash Will not handle key down events otherwise.
         PrognameShouldBeWebKitPluginHost,
+        // Supports receiving a paint event, even when using CoreAnimation rendering.
+        SupportsSnapshotting,
 #endif
-
         NumPluginQuirks
     };
     

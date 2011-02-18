@@ -100,7 +100,10 @@ messages -> PluginControllerProxy {
     WindowVisibilityChanged(bool isVisible)
 #endif
 
-    # Set when private browsing is enabled or disabled
+    # Return a snapshot of the plugin
+    Snapshot() -> (WebCore::IntSize size, WebKit::SharedMemory::Handle backingStoreHandle)
+    
+    # Sent when private browsing is enabled or disabled
     PrivateBrowsingStateChanged(bool isPrivateBrowsingEnabled)
 }
 

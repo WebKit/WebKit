@@ -45,6 +45,7 @@ namespace WebCore {
 
 namespace WebKit {
 
+class ShareableBitmap;
 class WebKeyboardEvent;
 class WebMouseEvent;
 class WebWheelEvent;
@@ -75,6 +76,9 @@ public:
     // Tells the plug-in to paint itself into the given graphics context. The passed-in context and
     // dirty rect are in window coordinates. The context is saved/restored by the caller.
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect) = 0;
+
+    // Tells the plug-in to draw itself into a bitmap, and return that.
+    virtual PassRefPtr<ShareableBitmap> snapshot() = 0;
 
 #if PLATFORM(MAC)
     // If a plug-in is using the Core Animation drawing model, this returns its plug-in layer.

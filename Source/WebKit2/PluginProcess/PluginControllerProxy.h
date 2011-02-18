@@ -121,6 +121,7 @@ private:
     void handleMouseLeaveEvent(const WebMouseEvent&, bool& handled);
     void handleKeyboardEvent(const WebKeyboardEvent&, bool& handled);
     void paintEntirePlugin();
+    void snapshot(WebCore::IntSize& bufferSize, SharedMemory::Handle& backingStoreHandle);
     void setFocus(bool);
     void didUpdate();
     void getPluginScriptableNPObject(uint64_t& pluginScriptableNPObjectID);

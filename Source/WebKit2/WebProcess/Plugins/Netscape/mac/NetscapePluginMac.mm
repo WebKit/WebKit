@@ -373,7 +373,7 @@ static EventModifiers modifiersForEvent(const WebEvent& event)
 
 #endif
 
-void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirtyRect)
+void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirtyRect, bool isSnapshot)
 {
     CGContextRef platformContext = context->platformContext();
 
@@ -383,7 +383,7 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
     switch (m_eventModel) {
         case NPEventModelCocoa: {
             // Don't send draw events when we're using the Core Animation drawing model.
-            if (m_drawingModel == NPDrawingModelCoreAnimation)
+            if (!isSnapshot && m_drawingModel == NPDrawingModelCoreAnimation)
                 return;
 
             NPCocoaEvent event = initializeEvent(NPCocoaEventDrawRect);

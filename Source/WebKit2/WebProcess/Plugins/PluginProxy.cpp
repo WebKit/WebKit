@@ -148,6 +148,16 @@ void PluginProxy::paint(GraphicsContext* graphicsContext, const IntRect& dirtyRe
     }
 }
 
+PassRefPtr<ShareableBitmap> PluginProxy::snapshot()
+{
+    IntSize bufferSize;
+    SharedMemory::Handle snapshotStoreHandle;
+    m_connection->connection()->sendSync(Messages::PluginControllerProxy::Snapshot(), Messages::PluginControllerProxy::Snapshot::Reply(bufferSize, snapshotStoreHandle), m_pluginInstanceID);
+
+    RefPtr<ShareableBitmap> snapshotBuffer = ShareableBitmap::create(bufferSize, snapshotStoreHandle);
+    return snapshotBuffer.release();
+}
+
 void PluginProxy::geometryDidChange(const IntRect& frameRect, const IntRect& clipRect)
 {
     ASSERT(m_isStarted);

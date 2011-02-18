@@ -110,6 +110,7 @@ private:
     virtual void frameRectsChanged();
     virtual void setParent(WebCore::ScrollView*);
     virtual void handleEvent(WebCore::Event*);
+    virtual void notifyWidget(WebCore::WidgetNotification);
 
     // WebCore::MediaCanStartListener
     virtual void mediaCanStart();
@@ -181,6 +182,8 @@ private:
     WebCore::ResourceResponse m_manualStreamResponse;
     WebCore::ResourceError m_manualStreamError;
     RefPtr<WebCore::SharedBuffer> m_manualStreamData;
+    
+    RefPtr<ShareableBitmap> m_snapshot;
 };
 
 } // namespace WebKit

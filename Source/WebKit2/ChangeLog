@@ -1,3 +1,53 @@
+2011-02-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKit2 snapshots don't show plug-ins
+        https://bugs.webkit.org/show_bug.cgi?id=54716
+        
+        Fix WebKit2 plug-ins to do a software paint for
+        snapshotting.
+
+        * PluginProcess/PluginControllerProxy.h:
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::snapshot): Respond to the snapshot
+        message by getting a sharable bitmap from the plugin, and returning
+        a handle to it in the reply.
+
+        * PluginProcess/PluginControllerProxy.messages.in: Add the snapshot
+        message.
+        
+        * Shared/Plugins/PluginQuirks.h:
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::NetscapePluginModule::determineQuirks): Add a quirk for the
+        ability to be snapshotted, which we only set for Flash at the moment.
+        
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::snapshot): Create a shareable bitmap, and
+        paint into it.
+        (WebKit::NetscapePlugin::supportsSnapshotting): Test the quirk.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformPaint): Allow the paint to happen
+        if we're snapshotting, even when using the CoreAnimation drawing
+        model.
+        
+        * WebProcess/Plugins/Plugin.h: New snapshot method.
+        
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::snapshot): Send a sync message to the plugin process,
+        asking for a snapshot in a shareble bitmap.
+        
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::paint): Use the snapshot if we have one, to avoid
+        calling into the plugin to draw, which may run script.
+        
+        (WebKit::PluginView::notifyWidget): Generate the snapshot before
+        a flattening paint, and throw it away after.
+
 2011-02-17  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Adam Roben.
