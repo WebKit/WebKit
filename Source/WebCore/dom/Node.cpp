@@ -2483,9 +2483,9 @@ bool Node::removeEventListener(const AtomicString& eventType, EventListener* lis
             break;
         }
 
-        ASSERT(foundListener);
+        ASSERT_UNUSED(foundListener, foundListener);
 
-        if (entry->isEmpty()) {                
+        if (entry->isEmpty()) {
             delete entry;
             data->eventListenerMap.remove(result);
         }

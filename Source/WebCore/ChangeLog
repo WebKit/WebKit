@@ -1,3 +1,16 @@
+2011-02-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by Andreas Kling.
+
+        Warning fix. Use ASSERT_UNUSED() instead of ASSERT().
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::lastChildConsideringContinuation):
+        * dom/Node.cpp:
+        (WebCore::Node::removeEventListener):
+        * html/DateComponents.cpp:
+        (WebCore::DateComponents::parseTime):
+
 2011-02-18  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Pavel Feldman.

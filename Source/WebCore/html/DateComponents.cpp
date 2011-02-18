@@ -444,7 +444,7 @@ bool DateComponents::parseTime(const UChar* src, unsigned length, unsigned start
                         millisecond *= 10;
                     } else // digitsLength >= 3
                         ok = toInt(src, length, index, 3, millisecond);
-                    ASSERT(ok);
+                    ASSERT_UNUSED(ok, ok);
                     index += digitsLength;
                 }
             }

@@ -182,7 +182,7 @@ static inline RenderObject* lastChildConsideringContinuation(RenderObject* rende
 
         if (cur->isRenderInline()) {
             cur = toRenderInline(cur)->inlineElementContinuation();
-            ASSERT(cur || !toRenderInline(prev)->continuation());
+            ASSERT_UNUSED(prev, cur || !toRenderInline(prev)->continuation());
         } else
             cur = toRenderBlock(cur)->inlineElementContinuation();
     }
