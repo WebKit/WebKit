@@ -1,5 +1,12 @@
 2011-02-17  Kenneth Russell  <kbr@google.com>
 
+        Unreviewed. Skip fast/canvas/webgl/context-destroyed-crash.html
+        due to missing LayoutTestController.overridePreference.
+
+        * platform/mac-wk2/Skipped:
+
+2011-02-17  Kenneth Russell  <kbr@google.com>
+
         Unreviewed. Fixed skip entries for
         LayoutTestController.setMinimumTimerInterval which I messed up the
         first time.

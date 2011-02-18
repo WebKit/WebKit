@@ -1034,6 +1034,7 @@ fast/canvas/webgl/buffer-data-array-buffer.html
 fast/canvas/webgl/canvas-test.html
 fast/canvas/webgl/constants.html
 fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html
+fast/canvas/webgl/context-destroyed-crash.html
 fast/canvas/webgl/copy-tex-image-and-sub-image-2d.html
 fast/canvas/webgl/css-webkit-canvas-repaint.html
 fast/canvas/webgl/css-webkit-canvas.html
