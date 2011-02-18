@@ -1,5 +1,16 @@
 2011-02-18  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, rolling out r78979.
+        http://trac.webkit.org/changeset/78979
+        https://bugs.webkit.org/show_bug.cgi?id=53146
+
+        causes multiple crashes on GTK
+
+        * platform/gtk/accessibility/combo-box-collapsed-selection-changed-expected.txt: Removed.
+        * platform/gtk/accessibility/combo-box-collapsed-selection-changed.html: Removed.
+
+2011-02-18  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, rolling out r78982.
         http://trac.webkit.org/changeset/78982
 
