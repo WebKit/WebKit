@@ -27,6 +27,7 @@
 
 #include "LoopBlinnSolidFillShader.h"
 
+#include "Color.h"
 #include "GraphicsContext3D.h"
 
 namespace WebCore {

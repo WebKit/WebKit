@@ -1,3 +1,9 @@
+2011-02-18  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, Chromium build fix on certain Linux platforms.
+
+        * platform/graphics/gpu/LoopBlinnSolidFillShader.cpp:
+
 2011-02-18  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
