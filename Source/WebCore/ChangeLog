@@ -1,3 +1,19 @@
+2011-02-18  Steve Block  <steveblock@google.com>
+
+        Reviewed by Andreas Kling
+
+        Memory allocation error in convertV8ObjectToNPVariant() for strings
+        https://bugs.webkit.org/show_bug.cgi?id=54737
+
+        Include the termination character in the length when allocating memory
+        and copying the string. This fixes a crashing bug on Android.
+
+        This should be tested by the java/ tests on Chromium, but these
+        tests are currently skipped.
+
+        * bindings/v8/V8NPUtils.cpp:
+        (WebCore::convertV8ObjectToNPVariant):
+
 2011-02-18  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, rolling out r78979.
