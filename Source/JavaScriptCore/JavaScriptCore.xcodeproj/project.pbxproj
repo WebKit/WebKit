@@ -374,7 +374,6 @@
 		A7C40C0A130B057D00D002A1 /* BlockStack.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C40C07130B057D00D002A1 /* BlockStack.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7C40C0B130B057D00D002A1 /* SentinelLinkedList.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C40C08130B057D00D002A1 /* SentinelLinkedList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7C40C0C130B057D00D002A1 /* SinglyLinkedList.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C40C09130B057D00D002A1 /* SinglyLinkedList.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A7C40D2D130C8E4200D002A1 /* SlotAccessor.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C40D2C130C8E4200D002A1 /* SlotAccessor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7C530E4102A3813005BC741 /* MarkStackPosix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7C530E3102A3813005BC741 /* MarkStackPosix.cpp */; };
 		A7D649AA1015224E009B2E1B /* PossiblyNull.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D649A91015224E009B2E1B /* PossiblyNull.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7DCB97312E5193F00911940 /* WriteBarrier.h in Headers */ = {isa = PBXBuildFile; fileRef = A7DCB77912E3D90500911940 /* WriteBarrier.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1040,7 +1039,6 @@
 		A7C40C07130B057D00D002A1 /* BlockStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockStack.h; sourceTree = "<group>"; };
 		A7C40C08130B057D00D002A1 /* SentinelLinkedList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SentinelLinkedList.h; sourceTree = "<group>"; };
 		A7C40C09130B057D00D002A1 /* SinglyLinkedList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SinglyLinkedList.h; sourceTree = "<group>"; };
-		A7C40D2C130C8E4200D002A1 /* SlotAccessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlotAccessor.h; sourceTree = "<group>"; };
 		A7C530E3102A3813005BC741 /* MarkStackPosix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkStackPosix.cpp; sourceTree = "<group>"; };
 		A7D649A91015224E009B2E1B /* PossiblyNull.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PossiblyNull.h; sourceTree = "<group>"; };
 		A7DCB77912E3D90500911940 /* WriteBarrier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WriteBarrier.h; sourceTree = "<group>"; };
@@ -1898,7 +1896,6 @@
 				14035DB010DBFB2A00FFFFE7 /* WeakGCPtr.h */,
 				1420BE7A10AA6DDB00F455D2 /* WeakRandom.h */,
 				A7DCB77912E3D90500911940 /* WriteBarrier.h */,
-				A7C40D2C130C8E4200D002A1 /* SlotAccessor.h */,
 			);
 			path = runtime;
 			sourceTree = "<group>";
@@ -2449,7 +2446,6 @@
 				A7C40C0A130B057D00D002A1 /* BlockStack.h in Headers */,
 				A7C40C0B130B057D00D002A1 /* SentinelLinkedList.h in Headers */,
 				A7C40C0C130B057D00D002A1 /* SinglyLinkedList.h in Headers */,
-				A7C40D2D130C8E4200D002A1 /* SlotAccessor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -26,94 +26,129 @@
 #ifndef WriteBarrier_h
 #define WriteBarrier_h
 
-#include "SlotAccessor.h"
+#include "JSValue.h"
 
 namespace JSC {
 class JSCell;
 class JSGlobalData;
 
-template <class T> class DeprecatedPtr : public SlotAccessor<DeprecatedPtr<T>, T> {
+typedef enum { } Unknown;
+typedef JSValue* HandleSlot;
+
+template <class T> class DeprecatedPtr {
 public:
-    typedef typename SlotTypes<T>::ExternalType ExternalType;
-    typedef typename SlotTypes<T>::ExternalTypeBase ExternalTypeBase;
+    DeprecatedPtr() : m_cell(0) { }
+    DeprecatedPtr(T* cell) : m_cell(reinterpret_cast<JSCell*>(cell)) { }
+    T* get() const { return reinterpret_cast<T*>(m_cell); }
+    T* operator*() const { return static_cast<T*>(m_cell); }
+    T* operator->() const { return static_cast<T*>(m_cell); }
     
-    DeprecatedPtr() : m_value() { }
-    DeprecatedPtr(ExternalType value) : m_value(SlotTypes<T>::convertToBaseType(value)) { }
-    ExternalType get() const { return SlotTypes<T>::getFromBaseType(m_value); }
+    JSCell** slot() { return &m_cell; }
     
-    ExternalTypeBase* slot() { return &m_value; }
-    
-    typedef ExternalType (DeprecatedPtr::*UnspecifiedBoolType);
-    operator UnspecifiedBoolType*() const { return m_value ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0; }
-    
-    bool operator!() const { return !m_value; }
-    const DeprecatedPtr& operator=(ExternalType value)
-    {
-        m_value = SlotTypes<T>::convertToBaseType(value);
-        return *this;
-    }
-    
-protected:
-    ExternalTypeBase m_value;
-};
+    typedef T* (DeprecatedPtr::*UnspecifiedBoolType);
+    operator UnspecifiedBoolType*() const { return m_cell ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0; }
 
-template <typename T> class WriteBarrierTranslator : public SlotAccessor<WriteBarrierBase<T>, T> {
-public:
-    typedef JSCell* WriteBarrierStorageType;
-    static WriteBarrierStorageType convertToStorage(T* cell) { return reinterpret_cast<WriteBarrierStorageType>(cell); }
-    static T* convertFromStorage(WriteBarrierStorageType storage) { return reinterpret_cast<T*>(storage); }
-};
-
-template <> class WriteBarrierTranslator<Unknown>;
-
-template <typename T> class WriteBarrierBase : public WriteBarrierTranslator<T> {
-public:
-    typedef typename SlotTypes<T>::ExternalType ExternalType;
-    typedef typename SlotTypes<T>::ExternalTypeBase ExternalTypeBase;
-    typedef typename WriteBarrierTranslator<T>::WriteBarrierStorageType StorageType;
-
-    void set(JSGlobalData&, const JSCell*, ExternalType value) { this->m_value = WriteBarrierTranslator<T>::convertToStorage(value); }
-    
-    ExternalType get() const { return WriteBarrierTranslator<T>::convertFromStorage(m_value); }
-    void clear() { m_value = 0; }
-    
-    ExternalTypeBase* slot()
-    {
-        union {
-            StorageType* intype;
-            ExternalTypeBase* outtype;
-        } u;
-        u.intype = &m_value;
-        return u.outtype;
-    }
-    
-    typedef ExternalType (WriteBarrierBase::*UnspecifiedBoolType);
-    operator UnspecifiedBoolType*() const { return m_value ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0; }
-    
-    bool operator!() const { return !m_value; }
-
-    void setWithoutWriteBarrier(ExternalType value) { this->m_value = WriteBarrierTranslator<T>::convertToStorage(value); }
+    bool operator!() const { return !m_cell; }
 
 protected:
-    StorageType m_value;
+    JSCell* m_cell;
 };
 
-template <> class WriteBarrierTranslator<Unknown> : public SlotAccessor<WriteBarrierBase<Unknown>, Unknown> {
+template <> class DeprecatedPtr<Unknown> {
 public:
-    void setUndefined() { static_cast<WriteBarrierBase<Unknown>*>(this)->setWithoutWriteBarrier(jsUndefined()); }
-    typedef EncodedJSValue WriteBarrierStorageType;
-    static WriteBarrierStorageType convertToStorage(JSValue value) { return JSValue::encode(value); }
-    static JSValue convertFromStorage(WriteBarrierStorageType storage) { return JSValue::decode(storage); }
+    DeprecatedPtr() { }
+    DeprecatedPtr(JSValue value) : m_value(value) { }
+    DeprecatedPtr(JSCell* value) : m_value(value) { }
+    const JSValue& get() const { return m_value; }
+    const JSValue* operator*() const { return &m_value; }
+    const JSValue* operator->() const { return &m_value; }
+    
+    JSValue* slot() { return &m_value; }
+    
+    typedef JSValue (DeprecatedPtr::*UnspecifiedBoolType);
+    operator UnspecifiedBoolType*() const { return m_value ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0; }
+    bool operator!() const { return !m_value; }
+    
+private:
+    JSValue m_value;
+};
+
+template <typename T> struct WriteBarrierCheck {
+    static const bool IsJSValue = false;
+};
+
+template <> struct WriteBarrierCheck<JSValue> {
+    static const bool IsJSValue = true;
+};
+
+template <typename T> class WriteBarrierBase {
+public:
+    COMPILE_ASSERT(!WriteBarrierCheck<T>::IsJSValue, WriteBarrier_JSValue_is_invalid__use_unknown);
+    void set(JSGlobalData&, const JSCell*, T* value) { this->m_cell = reinterpret_cast<JSCell*>(value); }
+    
+    T* get() const { return reinterpret_cast<T*>(m_cell); }
+    T* operator*() const { return static_cast<T*>(m_cell); }
+    T* operator->() const { return static_cast<T*>(m_cell); }
+    void clear() { m_cell = 0; }
+    
+    JSCell** slot() { return &m_cell; }
+    
+    typedef T* (WriteBarrierBase::*UnspecifiedBoolType);
+    operator UnspecifiedBoolType*() const { return m_cell ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0; }
+    
+    bool operator!() const { return !m_cell; }
+
+    void setWithoutWriteBarrier(T* value) { this->m_cell = reinterpret_cast<JSCell*>(value); }
+
+protected:
+    JSCell* m_cell;
 };
 
 template <typename T> class WriteBarrier : public WriteBarrierBase<T> {
 public:
-    WriteBarrier() { this->clear(); }
-    WriteBarrier(JSGlobalData& globalData, const JSCell* owner, typename WriteBarrierBase<T>::ExternalType value)
+    WriteBarrier() { this->m_cell = 0; }
+    WriteBarrier(JSGlobalData& globalData, const JSCell* owner, T* value)
     {
         this->set(globalData, owner, value);
     }
 
+};
+
+template <> class WriteBarrierBase<Unknown> {
+public:
+    void set(JSGlobalData&, const JSCell*, JSValue value) { m_value = JSValue::encode(value); }
+    void setWithoutWriteBarrier(JSValue value) { m_value = JSValue::encode(value); }
+    JSValue get() const { return JSValue::decode(m_value); }
+    void clear() { m_value = JSValue::encode(JSValue()); }
+    void setUndefined() { m_value = JSValue::encode(jsUndefined()); }
+    bool isNumber() const { return get().isNumber(); }
+    bool isGetterSetter() const { return get().isGetterSetter(); }
+    
+    JSValue* slot()
+    { 
+        union {
+            EncodedJSValue* v;
+            JSValue* slot;
+        } u;
+        u.v = &m_value;
+        return u.slot;
+    }
+    
+    typedef JSValue (WriteBarrierBase::*UnspecifiedBoolType);
+    operator UnspecifiedBoolType*() const { return get() ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0; }
+    bool operator!() const { return !get(); } 
+    
+protected:
+    EncodedJSValue m_value;
+};
+
+template <> class WriteBarrier<Unknown> : public WriteBarrierBase<Unknown> {
+public:
+    WriteBarrier() { m_value = JSValue::encode(JSValue()); }
+    WriteBarrier(JSGlobalData& globalData, const JSCell* owner, JSValue value)
+    {
+        this->set(globalData, owner, value);
+    }
 };
 
 template <typename U, typename V> inline bool operator==(const DeprecatedPtr<U>& lhs, const DeprecatedPtr<V>& rhs)
@@ -126,8 +161,6 @@ template <typename U, typename V> inline bool operator==(const WriteBarrierBase<
     return lhs.get() == rhs.get();
 }
 
-COMPILE_ASSERT(sizeof(WriteBarrier<Unknown>) == sizeof(JSValue), WriteBarrier_Unknown_should_be_sizeof_JSValue);
-COMPILE_ASSERT(sizeof(WriteBarrier<JSCell>) == sizeof(JSCell*), WriteBarrier_Unknown_should_be_sizeof_JSCell_pointer);
 }
 
 #endif // WriteBarrier_h
