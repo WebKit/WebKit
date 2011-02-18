@@ -124,7 +124,7 @@ bool HTMLElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry
     }
     if (attrName == dirAttr) {
         result = hasLocalName(bdoTag) ? eBDO : eUniversal;
-        return false;
+        return true;
     }
 
     return StyledElement::mapToEntry(attrName, result);
@@ -155,7 +155,9 @@ void HTMLElement::parseMappedAttribute(Attribute* attr)
     } else if (attr->name() == langAttr) {
         // FIXME: Implement
     } else if (attr->name() == dirAttr) {
-        addCSSProperty(attr, CSSPropertyDirection, attr->value());
+        if (!equalIgnoringCase(attr->value(), "auto"))
+            addCSSProperty(attr, CSSPropertyDirection, attr->value());
+        dirAttributeChanged(attr);
         addCSSProperty(attr, CSSPropertyUnicodeBidi, hasLocalName(bdoTag) ? CSSValueBidiOverride : CSSValueEmbed);
     } else if (attr->name() == draggableAttr) {
         const AtomicString& value = attr->value();
@@ -876,6 +878,147 @@ void HTMLElement::dispatchInputEvents()
     Node::dispatchInputEvents();
     if (ownerForm)
         ownerForm->dispatchFormInput();
+}
+
+static void setHasDirAutoFlagRecursively(Node* firstNode, bool flag, Node* lastNode = 0)
+{
+    firstNode->setSelfOrAncestorHasDirAutoAttribute(flag);
+
+    Node* node = firstNode->firstChild();
+
+    while (node) {
+        if (node->selfOrAncestorHasDirAutoAttribute() == flag)
+            return;
+
+        if (node->isHTMLElement() && toElement(node)->hasAttribute(dirAttr)) {
+            if (node == lastNode)
+                return;
+            node = node->traverseNextSibling(firstNode);
+            continue;
+        }
+        node->setSelfOrAncestorHasDirAutoAttribute(flag);
+        if (node == lastNode)
+            return;
+        node = node->traverseNextNode(firstNode);
+    }
+}
+
+void HTMLElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+{
+    StyledElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    adjustDirectionalityIfNeededAfterChildrenChanged(beforeChange, childCountDelta);
+}
+
+TextDirection HTMLElement::directionalityIfhasDirAutoAttribute(bool& isAuto) const
+{
+    if (!(selfOrAncestorHasDirAutoAttribute() && equalIgnoringCase(getAttribute(dirAttr), "auto"))) {
+        isAuto = false;
+        return LTR;
+    }
+
+    isAuto = true;
+    return directionality();
+}
+
+TextDirection HTMLElement::directionality(Node** strongDirectionalityTextNode) const
+{
+    Node* node = firstChild();
+    while (node) {
+        // Skip bdi, script and style elements
+        if (equalIgnoringCase(node->nodeName(), "bdi") || node->hasTagName(scriptTag) || node->hasTagName(styleTag)) {
+            node = node->traverseNextSibling(this);
+            continue;
+        }
+
+        // Skip elements with valid dir attribute
+        if (node->isElementNode()) {
+            AtomicString dirAttributeValue = toElement(node)->fastGetAttribute(dirAttr);
+            if (equalIgnoringCase(dirAttributeValue, "rtl") || equalIgnoringCase(dirAttributeValue, "ltr") || equalIgnoringCase(dirAttributeValue, "auto")) {
+                node = node->traverseNextSibling(this);
+                continue;
+            }
+        }
+
+        if (node->isTextNode()) {
+            bool hasStrongDirectionality;
+            WTF::Unicode::Direction textDirection = node->textContent(true).defaultWritingDirection(&hasStrongDirectionality);
+            if (hasStrongDirectionality) {
+                if (strongDirectionalityTextNode)
+                    *strongDirectionalityTextNode = node;
+                return (textDirection == WTF::Unicode::LeftToRight) ? LTR : RTL;
+            }
+        }
+        node = node->traverseNextNode(this);
+    }
+    if (strongDirectionalityTextNode)
+        *strongDirectionalityTextNode = 0;
+    return LTR;
+}
+
+void HTMLElement::dirAttributeChanged(Attribute* attribute)
+{
+    Element* parent = parentElement();
+
+    if (parent && parent->isHTMLElement() && parent->selfOrAncestorHasDirAutoAttribute())
+        toHTMLElement(parent)->adjustDirectionalityIfNeededAfterChildAttributeChanged(this);
+
+    if (equalIgnoringCase(attribute->value(), "auto"))
+        calculateAndAdjustDirectionality();
+}
+
+void HTMLElement::adjustDirectionalityIfNeededAfterChildAttributeChanged(Element* child)
+{
+    ASSERT(selfOrAncestorHasDirAutoAttribute());
+    Node* strongDirectionalityTextNode;
+    TextDirection textDirection = directionality(&strongDirectionalityTextNode);
+    setHasDirAutoFlagRecursively(child, false);
+    if (renderer() && renderer()->style() && renderer()->style()->direction() != textDirection) {
+        Element* elementToAdjust = this;
+        for (; elementToAdjust; elementToAdjust = elementToAdjust->parentElement()) {
+            if (elementToAdjust->hasAttribute(dirAttr)) {
+                elementToAdjust->setNeedsStyleRecalc();
+                return;
+            }
+        }
+    }
+}
+
+void HTMLElement::calculateAndAdjustDirectionality()
+{
+    Node* strongDirectionalityTextNode;
+    TextDirection textDirection = directionality(&strongDirectionalityTextNode);
+    setHasDirAutoFlagRecursively(this, true, strongDirectionalityTextNode);
+    if (renderer() && renderer()->style() && renderer()->style()->direction() != textDirection)
+        setNeedsStyleRecalc();
+}
+
+void HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged(Node* beforeChange, int childCountDelta)
+{
+    if ((!document() || document()->renderer()) && childCountDelta < 0) {
+        Node* node = beforeChange ? beforeChange->traverseNextSibling() : 0;
+        for (int counter = 0; node && counter < childCountDelta; counter++, node = node->traverseNextSibling()) {
+            if (node->isElementNode() && toElement(node)->hasAttribute(dirAttr))
+                continue;
+
+            setHasDirAutoFlagRecursively(node, false);
+        }
+    }
+
+    if (!selfOrAncestorHasDirAutoAttribute())
+        return;
+
+    Node* oldMarkedNode = beforeChange ? beforeChange->traverseNextSibling() : 0;
+    while (oldMarkedNode && oldMarkedNode->isHTMLElement() && toHTMLElement(oldMarkedNode)->hasAttribute(dirAttr))
+        oldMarkedNode = oldMarkedNode->traverseNextSibling(this);
+    if (oldMarkedNode)
+        setHasDirAutoFlagRecursively(oldMarkedNode, false);
+
+    for (Element* elementToAdjust = this; elementToAdjust; elementToAdjust = elementToAdjust->parentElement()) {
+        if (elementToAdjust->isHTMLElement() && elementToAdjust->hasAttribute(dirAttr)) {
+            toHTMLElement(elementToAdjust)->calculateAndAdjustDirectionality();
+            return;
+        }
+    }
 }
 
 } // namespace WebCore

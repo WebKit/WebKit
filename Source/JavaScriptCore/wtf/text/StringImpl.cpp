@@ -1005,15 +1005,23 @@ bool equalIgnoringNullity(StringImpl* a, StringImpl* b)
     return false;
 }
 
-WTF::Unicode::Direction StringImpl::defaultWritingDirection()
+WTF::Unicode::Direction StringImpl::defaultWritingDirection(bool* hasStrongDirectionality)
 {
     for (unsigned i = 0; i < m_length; ++i) {
         WTF::Unicode::Direction charDirection = WTF::Unicode::direction(m_data[i]);
-        if (charDirection == WTF::Unicode::LeftToRight)
+        if (charDirection == WTF::Unicode::LeftToRight) {
+            if (hasStrongDirectionality)
+                *hasStrongDirectionality = true;
             return WTF::Unicode::LeftToRight;
-        if (charDirection == WTF::Unicode::RightToLeft || charDirection == WTF::Unicode::RightToLeftArabic)
+        }
+        if (charDirection == WTF::Unicode::RightToLeft || charDirection == WTF::Unicode::RightToLeftArabic) {
+            if (hasStrongDirectionality)
+                *hasStrongDirectionality = true;
             return WTF::Unicode::RightToLeft;
+        }
     }
+    if (hasStrongDirectionality)
+        *hasStrongDirectionality = false;
     return WTF::Unicode::LeftToRight;
 }
 

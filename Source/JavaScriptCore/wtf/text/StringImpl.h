@@ -316,7 +316,7 @@ public:
     PassRefPtr<StringImpl> replace(StringImpl*, StringImpl*);
     PassRefPtr<StringImpl> replace(unsigned index, unsigned len, StringImpl*);
 
-    WTF::Unicode::Direction defaultWritingDirection();
+    WTF::Unicode::Direction defaultWritingDirection(bool* hasStrongDirectionality = 0);
 
 #if PLATFORM(CF)
     CFStringRef createCFString();

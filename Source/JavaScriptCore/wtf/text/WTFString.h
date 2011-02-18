@@ -331,7 +331,14 @@ public:
     static String fromUTF8WithLatin1Fallback(const char*, size_t);
     
     // Determines the writing direction using the Unicode Bidi Algorithm rules P2 and P3.
-    WTF::Unicode::Direction defaultWritingDirection() const { return m_impl ? m_impl->defaultWritingDirection() : WTF::Unicode::LeftToRight; }
+    WTF::Unicode::Direction defaultWritingDirection(bool* hasStrongDirectionality = 0) const
+    {
+        if (m_impl)
+            return m_impl->defaultWritingDirection(hasStrongDirectionality);
+        if (hasStrongDirectionality)
+            *hasStrongDirectionality = false;
+        return WTF::Unicode::LeftToRight;
+    }
 
     bool containsOnlyASCII() const { return charactersAreAllASCII(characters(), length()); }
     bool containsOnlyLatin1() const { return charactersAreAllLatin1(characters(), length()); }

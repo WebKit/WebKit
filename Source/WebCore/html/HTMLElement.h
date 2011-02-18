@@ -87,6 +87,8 @@ public:
     virtual void dispatchChangeEvents();
     virtual void dispatchInputEvents();
 
+    TextDirection directionalityIfhasDirAutoAttribute(bool& isAuto) const;
+
 protected:
     HTMLElement(const QualifiedName& tagName, Document*);
 
@@ -94,6 +96,8 @@ protected:
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(Attribute*);
+
+    virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
 private:
     virtual String nodeName() const;
@@ -106,6 +110,12 @@ private:
     PassRefPtr<DocumentFragment> textToFragment(const String&, ExceptionCode&);
 
     HTMLFormElement* shadowAncestorOwnerForm();
+
+    void dirAttributeChanged(Attribute*);
+    void adjustDirectionalityIfNeededAfterChildAttributeChanged(Element* child);
+    void calculateAndAdjustDirectionality();
+    void adjustDirectionalityIfNeededAfterChildrenChanged(Node* beforeChange, int childCountDelta);
+    TextDirection directionality(Node** strongDirectionalityTextNode= 0) const;
 };
 
 inline HTMLElement* toHTMLElement(Node* node)

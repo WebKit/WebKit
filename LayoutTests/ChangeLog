@@ -1,3 +1,25 @@
+2011-02-18  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Dave Hyatt.
+
+        Add support for dir=auto
+        https://bugs.webkit.org/show_bug.cgi?id=50916
+
+        * fast/dom/HTMLElement/attr-dir-auto-change-before-text-node.html: Added.
+        * fast/dom/HTMLElement/attr-dir-auto-change-before-text-node-expected.txt: Added.
+        * fast/dom/HTMLElement/attr-dir-auto-change-child-node-expected.txt: Added.
+        * fast/dom/HTMLElement/attr-dir-auto-change-child-node.html: Added.
+        * fast/dom/HTMLElement/attr-dir-auto-change-text-expected.txt: Added.
+        * fast/dom/HTMLElement/attr-dir-auto-change-text.html: Added.
+        * fast/dom/HTMLElement/attr-dir-auto-children-expected.txt: Added.
+        * fast/dom/HTMLElement/attr-dir-auto-children.html: Added.
+        * fast/dom/HTMLElement/attr-dir-auto-expected.txt: Added.
+        * fast/dom/HTMLElement/attr-dir-auto-remove-add-children-expected.txt: Added.
+        * fast/dom/HTMLElement/attr-dir-auto-remove-add-children.html: Added.
+        * fast/dom/HTMLElement/attr-dir-auto.html: Added.
+        * fast/dom/HTMLElement/attr-dir-value-change-expected.txt: Added.
+        * fast/dom/HTMLElement/attr-dir-value-change.html: Added.
+
 2011-02-17  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Antonio Gomes.

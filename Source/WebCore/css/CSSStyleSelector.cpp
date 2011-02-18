@@ -477,6 +477,26 @@ static const MediaQueryEvaluator& printEval()
     return staticPrintEval;
 }
 
+static CSSMutableStyleDeclaration* leftToRightDeclaration()
+{
+    DEFINE_STATIC_LOCAL(RefPtr<CSSMutableStyleDeclaration>, leftToRightDecl, (CSSMutableStyleDeclaration::create()));
+    if (!leftToRightDecl->length()) {
+        leftToRightDecl->setProperty(CSSPropertyDirection, "ltr", false, false);
+        leftToRightDecl->setStrictParsing(false);
+    }
+    return leftToRightDecl.get();
+}
+
+static CSSMutableStyleDeclaration* rightToLeftDeclaration()
+{
+    DEFINE_STATIC_LOCAL(RefPtr<CSSMutableStyleDeclaration>, rightToLeftDecl, (CSSMutableStyleDeclaration::create()));
+    if (!rightToLeftDecl->length()) {
+        rightToLeftDecl->setProperty(CSSPropertyDirection, "rtl", false, false);
+        rightToLeftDecl->setStrictParsing(false);
+    }
+    return rightToLeftDecl.get();
+}
+
 CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleSheets, CSSStyleSheet* mappedElementSheet,
                                    CSSStyleSheet* pageUserSheet, const Vector<RefPtr<CSSStyleSheet> >* pageGroupUserSheets,
                                    bool strictParsing, bool matchAuthorAndUserStyles)
@@ -1106,6 +1126,9 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* n) const
                 return false;
 #endif
 
+            if (equalIgnoringCase(s->fastGetAttribute(dirAttr), "auto") || equalIgnoringCase(m_element->fastGetAttribute(dirAttr), "auto"))
+                return false;
+
             bool classesMatch = true;
             if (s->hasClass()) {
                 const AtomicString& class1 = m_element->fastGetAttribute(classAttr);
@@ -1412,6 +1435,12 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
                     for (unsigned i = 0; i < additionalDeclsSize; i++)
                         addMatchedDeclaration(m_additionalAttributeStyleDecls[i]);
                 }
+            }
+            if (m_styledElement->isHTMLElement()) {
+                bool isAuto;
+                TextDirection textDirection = toHTMLElement(m_styledElement)->directionalityIfhasDirAutoAttribute(isAuto);
+                if (isAuto)
+                    addMatchedDeclaration(textDirection == LTR ? leftToRightDeclaration() : rightToLeftDeclaration());
             }
         }
     

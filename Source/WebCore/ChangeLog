@@ -1,5 +1,56 @@
 2011-02-18  Yael Aharon  <yael.aharon@nokia.com>
 
+        Reviewed by Dave Hyatt.
+
+        Add support for dir=auto
+        https://bugs.webkit.org/show_bug.cgi?id=50916
+
+        When an element has dir attribute with value "auto", call defaultWritingMode
+        to find its directionality.
+        Added a flag SelfOrAncestorHasDirAutoFlag, and added hooks in the DOM to set
+        and check this flag. This flag is set on every node between an element with
+        dir=auto attribute and its first text node. Changes in the DOM between those
+        elements will trigger re-evaluating the directionality, but changes not
+        between those element do not need to be concerned.
+        The DOM hooks were added to childrenChanged, and to parseMappedAttribute.
+        The directionality is evaluated when children are added, and cleared when they are
+        removed. Directionality flag is also cleared on a child that is no longer determining
+        the directionality due to a sibling being added before that child.
+
+        Added 2 static CSSMutableStyleDeclarations to be used for elements with dir=auto.
+        We cannot used the mapped declaration, because it can take only one value.
+
+        Tests: fast/dom/HTMLElement/attr-dir-auto-change-before-text-node.html
+               fast/dom/HTMLElement/attr-dir-auto-change-child-node.html
+               fast/dom/HTMLElement/attr-dir-auto-change-text.html
+               fast/dom/HTMLElement/attr-dir-auto-children.html
+               fast/dom/HTMLElement/attr-dir-auto-remove-add-children.html
+               fast/dom/HTMLElement/attr-dir-auto.html
+               fast/dom/HTMLElement/attr-dir-value-change.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::leftToRightDeclaration):
+        (WebCore::rightToLeftDeclaration):
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+        (WebCore::CSSStyleSelector::styleForElement):
+        * dom/Node.h:
+        (WebCore::Node::selfOrAncestorHasDirAutoAttribute):
+        (WebCore::Node::setSelfOrAncestorHasDirAutoAttribute):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::mapToEntry):
+        (WebCore::HTMLElement::parseMappedAttribute):
+        (WebCore::setHasDirAutoFlagRecursively):
+        (WebCore::HTMLElement::childrenChanged):
+        (WebCore::HTMLElement::directionalityIfhasDirAutoAttribute):
+        (WebCore::HTMLElement::directionality):
+        (WebCore::HTMLElement::dirAttributeChanged):
+        (WebCore::HTMLElement::adjustDirectionalityIfNeededAfterChildAttributeChanged):
+        (WebCore::HTMLElement::calculateAndAdjustDirectionality):
+        (WebCore::HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged):
+        * html/HTMLElement.h:
+
+2011-02-18  Yael Aharon  <yael.aharon@nokia.com>
+
         Reviewed by Antonio Gomes.
 
         Navigating downwards / upwards does not focus on the links spread across more than one line.
