@@ -1,3 +1,32 @@
+2011-02-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai, Mihai Parparita.
+
+        new-run-webkit-tests: r78522 made it impossible to create a
+        'chromium-win' or 'chromium-mac' port; they would always get the
+        version tacked on to the end. It turns out that we actually need
+        to be able to create these ports in order for
+        rebaseline-chromium-webkit-tests to work correctly given the
+        broken coverage of our layout bots. As soon as we get SL and
+        Win 7 bots running reliably on the canaries, we can get rid of
+        this change. Note that we only need to change the chromium_mac
+        and win ports because linux doesn't yet use versions and that
+        script doesn't work with non-chromium ports.
+
+        Also, this change fixes a bug where we were using
+        "platform/chromium-win-win7" and
+        "platform/chromium-mac-snowleopard" as the baseline dirs for
+        Win 7 and SL; we should've been using the generic directories
+        instead since they are the newest versions of the os's.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54691
+
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+
 2011-02-16  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.

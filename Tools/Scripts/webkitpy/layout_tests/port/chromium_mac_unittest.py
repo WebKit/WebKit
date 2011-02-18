@@ -68,6 +68,23 @@ class ChromiumMacPortTest(port_testcase.PortTestCase):
         self.assertRaises(KeyError, self.assert_name, None, '10.7.1', 'chromium-mac-leopard')
         self.assertRaises(AssertionError, self.assert_name, None, '10.4.1', 'chromium-mac-leopard')
 
+    def test_generic_rebaselining_port(self):
+        port = chromium_mac.ChromiumMacPort(rebaselining=True)
+        self.assertEquals(port.name(), 'chromium-mac')
+        self.assertEquals(port.version(), '')
+        self.assertEquals(port.baseline_path(), port._webkit_baseline_path(port.name()))
+
+        port = chromium_mac.ChromiumMacPort(port_name='chromium-mac-leopard', rebaselining=True)
+        self.assertEquals(port.name(), 'chromium-mac-leopard')
+        self.assertEquals(port.baseline_path(), port._webkit_baseline_path(port.name()))
+
+    def test_baseline_path(self):
+        port = chromium_mac.ChromiumMacPort(port_name='chromium-mac-leopard')
+        self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-mac-leopard'))
+
+        port = chromium_mac.ChromiumMacPort(port_name='chromium-mac-snowleopard')
+        self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-mac'))
+
 
 if __name__ == '__main__':
     unittest.main()

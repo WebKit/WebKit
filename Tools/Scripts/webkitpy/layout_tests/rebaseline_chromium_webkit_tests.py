@@ -160,9 +160,11 @@ class Rebaseliner(object):
         self._filesystem = running_port._filesystem
         self._target_port = target_port
 
+        # FIXME: See the comments in chromium_{win,mac}.py about why we need
+        # the 'rebaselining' keyword.
         self._rebaseline_port = port.get(
             self._target_port.test_platform_name_to_name(platform), options,
-            filesystem=self._filesystem)
+            filesystem=self._filesystem, rebaselining=True)
         self._rebaselining_tests = []
         self._rebaselined_tests = []
 
