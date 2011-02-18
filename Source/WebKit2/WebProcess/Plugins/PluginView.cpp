@@ -512,22 +512,23 @@ void PluginView::paint(GraphicsContext* context, const IntRect& dirtyRect)
         return;
 
     IntRect dirtyRectInWindowCoordinates = parent()->contentsToWindow(dirtyRect);
-    
     IntRect paintRectInWindowCoordinates = intersection(dirtyRectInWindowCoordinates, clipRectInWindowCoordinates());
     if (paintRectInWindowCoordinates.isEmpty())
         return;
 
-    // context is in document coordinates. Translate it to window coordinates.
-    IntPoint documentOriginInWindowCoordinates = parent()->contentsToWindow(IntPoint());
-    context->save();
-    context->translate(-documentOriginInWindowCoordinates.x(), -documentOriginInWindowCoordinates.y());
-
     if (m_snapshot)
-        m_snapshot->paint(*context, paintRectInWindowCoordinates.location(), m_snapshot->bounds());
-    else
-        m_plugin->paint(context, paintRectInWindowCoordinates);
-
-    context->restore();
+        m_snapshot->paint(*context, frameRect().location(), m_snapshot->bounds());
+    else {
+        // The plugin is given a frame rect which is parent()->contentsToWindow(frameRect()),
+        // and un-translates by the its origin when painting. The current CTM reflects
+        // this widget's frame is its parent (the document), so we have to offset the CTM by
+        // the document's window coordinates.
+        IntPoint documentOriginInWindowCoordinates = parent()->contentsToWindow(IntPoint());
+        context->save();
+        context->translate(-documentOriginInWindowCoordinates.x(), -documentOriginInWindowCoordinates.y());
+        m_plugin->paint(context, dirtyRect);
+        context->restore();
+    }
 }
 
 void PluginView::frameRectsChanged()

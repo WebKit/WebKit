@@ -1,3 +1,18 @@
+2011-02-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Plugin snapshot location is wrong for subframes
+        https://bugs.webkit.org/show_bug.cgi?id=54776
+        
+        Only change the CTM to the way that the plugin expects it
+        when painting the plugin, not when drawing the snapshot.
+        This fixes the snapshot location when painting flattened
+        frames.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::paint):
+
 2011-02-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Simon Fraser.
