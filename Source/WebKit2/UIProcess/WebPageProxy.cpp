@@ -145,6 +145,8 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, WebContext* context, WebPageG
     , m_currentDragOperation(DragOperationNone)
     , m_mainFrameHasHorizontalScrollbar(false)
     , m_mainFrameHasVerticalScrollbar(false)
+    , m_mainFrameIsPinnedToLeftSide(false)
+    , m_mainFrameIsPinnedToRightSide(false)
 {
 #ifndef NDEBUG
     webPageProxyCounter.increment();
@@ -298,6 +300,9 @@ void WebPageProxy::close()
 
     m_mainFrameHasHorizontalScrollbar = false;
     m_mainFrameHasVerticalScrollbar = false;
+
+    m_mainFrameIsPinnedToLeftSide = false;
+    m_mainFrameIsPinnedToRightSide = false;
 
     invalidateCallbackMap(m_voidCallbacks);
     invalidateCallbackMap(m_dataCallbacks);
@@ -2532,6 +2537,9 @@ void WebPageProxy::processDidCrash()
     m_mainFrameHasHorizontalScrollbar = false;
     m_mainFrameHasVerticalScrollbar = false;
 
+    m_mainFrameIsPinnedToLeftSide = false;
+    m_mainFrameIsPinnedToRightSide = false;
+
     invalidateCallbackMap(m_voidCallbacks);
     invalidateCallbackMap(m_dataCallbacks);
     invalidateCallbackMap(m_stringCallbacks);
@@ -2687,6 +2695,12 @@ void WebPageProxy::didChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, 
     m_mainFrameHasVerticalScrollbar = hasVerticalScrollbar;
 
     m_pageClient->didChangeScrollbarsForMainFrame();
+}
+
+void WebPageProxy::didChangeScrollOffsetPinningForMainFrame(bool pinnedToLeftSide, bool pinnedToRightSide)
+{
+    m_mainFrameIsPinnedToLeftSide = pinnedToLeftSide;
+    m_mainFrameIsPinnedToRightSide = pinnedToRightSide;
 }
 
 void WebPageProxy::didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference& dataReference)

@@ -156,6 +156,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_pageID(pageID)
     , m_canRunModal(parameters.canRunModal)
     , m_isRunningModal(false)
+    , m_cachedMainFrameIsPinnedToLeftSide(false)
+    , m_cachedMainFrameIsPinnedToRightSide(false)
 {
     ASSERT(m_pageID);
 
@@ -1678,6 +1680,23 @@ void WebPage::replaceSelectionWithText(Frame* frame, const String& text)
 bool WebPage::mainFrameHasCustomRepresentation() const
 {
     return static_cast<WebFrameLoaderClient*>(mainFrame()->coreFrame()->loader()->client())->frameHasCustomRepresentation();
+}
+
+void WebPage::didChangeScrollOffsetForMainFrame()
+{
+    Frame* frame = m_page->mainFrame();
+    IntPoint scrollPosition = frame->view()->scrollPosition();
+    IntPoint maximumScrollPosition = frame->view()->maximumScrollPosition();
+
+    bool isPinnedToLeftSide = (scrollPosition.x() <= 0);
+    bool isPinnedToRightSide = (scrollPosition.x() >= maximumScrollPosition.x());
+
+    if (isPinnedToLeftSide != m_cachedMainFrameIsPinnedToLeftSide || isPinnedToRightSide != m_cachedMainFrameIsPinnedToRightSide) {
+        send(Messages::WebPageProxy::DidChangeScrollOffsetPinningForMainFrame(isPinnedToLeftSide, isPinnedToRightSide));
+        
+        m_cachedMainFrameIsPinnedToLeftSide = isPinnedToLeftSide;
+        m_cachedMainFrameIsPinnedToRightSide = isPinnedToRightSide;
+    }
 }
 
 #if PLATFORM(MAC)

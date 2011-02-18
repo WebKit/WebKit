@@ -332,6 +332,8 @@ public:
 
     bool mainFrameHasCustomRepresentation() const;
 
+    void didChangeScrollOffsetForMainFrame();
+
     bool canRunModal() const { return m_canRunModal; }
     void runModal();
 
@@ -538,6 +540,9 @@ private:
 
     bool m_canRunModal;
     bool m_isRunningModal;
+
+    bool m_cachedMainFrameIsPinnedToLeftSide;
+    bool m_cachedMainFrameIsPinnedToRightSide;
 };
 
 } // namespace WebKit

@@ -273,6 +273,9 @@ public:
     bool hasHorizontalScrollbar() const { return m_mainFrameHasHorizontalScrollbar; }
     bool hasVerticalScrollbar() const { return m_mainFrameHasVerticalScrollbar; }
 
+    bool isPinnedToLeftSide() const { return m_mainFrameIsPinnedToLeftSide; }
+    bool isPinnedToRightSide() const { return m_mainFrameIsPinnedToRightSide; }
+
 #if PLATFORM(MAC)
     // Called by the web process through a message.
     void registerWebProcessAccessibilityToken(const CoreIPC::DataReference&);
@@ -496,6 +499,7 @@ private:
     void runModal() { m_uiClient.runModal(this); }
     void didCompleteRubberBandForMainFrame(const WebCore::IntSize&);
     void didChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar);
+    void didChangeScrollOffsetPinningForMainFrame(bool pinnedToLeftSide, bool pinnedToRightSide);
 
     void reattachToWebProcess();
     void reattachToWebProcessWithItem(WebBackForwardListItem*);
@@ -704,6 +708,9 @@ private:
 
     bool m_mainFrameHasHorizontalScrollbar;
     bool m_mainFrameHasVerticalScrollbar;
+
+    bool m_mainFrameIsPinnedToLeftSide;
+    bool m_mainFrameIsPinnedToRightSide;
 
     static WKPageDebugPaintFlags s_debugPaintFlags;
 };

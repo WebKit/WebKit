@@ -1,3 +1,40 @@
+2011-02-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add the ability to ask the WKPage if the main frame is pinned
+        to the right or left hand side.
+        Part of <rdar://problem/9017043>.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageIsPinnedToLeftSide):
+        (WKPageIsPinnedToRightSide):
+        * UIProcess/API/C/WKPage.h:
+        Add new API calls.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::processDidCrash):
+        (WebKit::WebPageProxy::didChangeScrollOffsetPinningForMainFrame):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isPinnedToLeftSide):
+        (WebKit::WebPageProxy::isPinnedToRightSide):
+        Initialize, reset and update the pinned state.
+
+        * UIProcess/WebPageProxy.messages.in:
+        Add message to update the pinned state.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::didChangeScrollOffset):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::didChangeScrollOffsetForMainFrame):
+        * WebProcess/WebPage/WebPage.h:
+        Cache the pinned state, and only update the UIProcess when it
+        changes.
+
 2011-02-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Simon Fraser.

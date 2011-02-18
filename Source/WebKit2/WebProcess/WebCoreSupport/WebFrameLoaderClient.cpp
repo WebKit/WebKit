@@ -1293,6 +1293,18 @@ bool WebFrameLoaderClient::shouldUsePluginDocument(const String& /*mimeType*/) c
     return false;
 }
 
+void WebFrameLoaderClient::didChangeScrollOffset()
+{
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    if (!m_frame->isMainFrame())
+        return;
+
+    webPage->didChangeScrollOffsetForMainFrame();
+}
+
 PassRefPtr<FrameNetworkingContext> WebFrameLoaderClient::createNetworkingContext()
 {
     return WebFrameNetworkingContext::create(m_frame->coreFrame());

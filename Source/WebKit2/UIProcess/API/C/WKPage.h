@@ -318,6 +318,9 @@ WK_EXPORT WKSize WKPageFixedLayoutSize(WKPageRef page);
 WK_EXPORT bool WKPageHasHorizontalScrollbar(WKPageRef page);
 WK_EXPORT bool WKPageHasVerticalScrollbar(WKPageRef page);
 
+WK_EXPORT bool WKPageIsPinnedToLeftSide(WKPageRef page);
+WK_EXPORT bool WKPageIsPinnedToRightSide(WKPageRef page);
+
 WK_EXPORT void WKPageFindString(WKPageRef page, WKStringRef string, WKFindOptions findOptions, unsigned maxMatchCount);
 WK_EXPORT void WKPageHideFindUI(WKPageRef page);
 WK_EXPORT void WKPageCountStringMatches(WKPageRef page, WKStringRef string, WKFindOptions findOptions, unsigned maxMatchCount);

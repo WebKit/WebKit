@@ -213,7 +213,9 @@ private:
 #endif
     
     virtual bool shouldUsePluginDocument(const String& /*mimeType*/) const;
-    
+
+    virtual void didChangeScrollOffset();
+
     virtual PassRefPtr<WebCore::FrameNetworkingContext> createNetworkingContext();
 
     WebFrame* m_frame;

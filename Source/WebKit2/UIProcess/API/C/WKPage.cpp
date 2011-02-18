@@ -306,6 +306,16 @@ bool WKPageHasVerticalScrollbar(WKPageRef pageRef)
     return toImpl(pageRef)->hasVerticalScrollbar();
 }
 
+bool WKPageIsPinnedToLeftSide(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->isPinnedToLeftSide();
+}
+
+bool WKPageIsPinnedToRightSide(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->isPinnedToRightSide();
+}
+
 void WKPageFindString(WKPageRef pageRef, WKStringRef string, WKFindOptions options, unsigned maxMatchCount)
 {
     toImpl(pageRef)->findString(toImpl(string)->string(), toFindOptions(options), maxMatchCount);
