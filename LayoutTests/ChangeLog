@@ -1,3 +1,13 @@
+2011-02-17  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        Navigating downwards / upwards does not focus on the links spread across more than one line.
+        https://bugs.webkit.org/show_bug.cgi?id=54639
+
+        * fast/spatial-navigation/snav-two-elements-one-line-expected.txt: Added.
+        * fast/spatial-navigation/snav-two-elements-one-line.html: Added.
+
 2011-02-18  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed, rolling out r79007.

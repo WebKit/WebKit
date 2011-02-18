@@ -1,3 +1,24 @@
+2011-02-18  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        Navigating downwards / upwards does not focus on the links spread across more than one line.
+        https://bugs.webkit.org/show_bug.cgi?id=54639
+
+        When 2 anchor elements span more than one line each, and one ends on the same line that the
+        second starts on, the rects reported by their renderers are overlapping. When handling
+        2 overlapping nodes, check for this case, and don't assume that one of the nodes is on a higher layer.   
+
+        Test: fast/spatial-navigation/snav-two-elements-one-line.html
+
+        * page/FocusController.cpp:
+        (WebCore::updateFocusCandidateIfNeeded):
+        (WebCore::FocusController::findFocusCandidateInContainer):
+        * page/SpatialNavigation.cpp:
+        (WebCore::areElementsOnSameLine):
+        (WebCore::distanceDataForNode):
+        * page/SpatialNavigation.h:
+
 2011-02-18  Ben Vanik  <benvanik@google.com>
 
         Reviewed by Kenneth Russell.

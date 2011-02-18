@@ -421,7 +421,7 @@ void FocusController::setActive(bool active)
         dispatchEventsOnWindowAndFocusedNode(m_focusedFrame->document(), active);
 }
 
-static void updateFocusCandidateIfNeeded(FocusDirection direction, const IntRect& startingRect, FocusCandidate& candidate, FocusCandidate& closest)
+static void updateFocusCandidateIfNeeded(FocusDirection direction, const FocusCandidate& current, FocusCandidate& candidate, FocusCandidate& closest)
 {
     ASSERT(candidate.visibleNode->isElementNode());
     ASSERT(candidate.visibleNode->renderer());
@@ -434,8 +434,6 @@ static void updateFocusCandidateIfNeeded(FocusDirection direction, const IntRect
     if (candidate.isOffscreen && !canBeScrolledIntoView(direction, candidate))
         return;
 
-    FocusCandidate current;
-    current.rect = startingRect;
     distanceDataForNode(direction, current, candidate);
     if (candidate.distance == maxDistance())
         return;
@@ -449,7 +447,7 @@ static void updateFocusCandidateIfNeeded(FocusDirection direction, const IntRect
     }
 
     IntRect intersectionRect = intersection(candidate.rect, closest.rect);
-    if (!intersectionRect.isEmpty()) {
+    if (!intersectionRect.isEmpty() && !areElementsOnSameLine(closest, candidate)) {
         // If 2 nodes are intersecting, do hit test to find which node in on top.
         int x = intersectionRect.x() + intersectionRect.width() / 2;
         int y = intersectionRect.y() + intersectionRect.height() / 2;
@@ -478,6 +476,11 @@ void FocusController::findFocusCandidateInContainer(Node* container, const IntRe
     Node* focusedNode = (focusedFrame() && focusedFrame()->document()) ? focusedFrame()->document()->focusedNode() : 0;
 
     Node* node = container->firstChild();
+    FocusCandidate current;
+    current.rect = startingRect;
+    current.focusableNode = focusedNode;
+    current.visibleNode = focusedNode;
+
     for (; node; node = (node->isFrameOwnerElement() || canScrollInDirection(node, direction)) ? node->traverseNextSibling(container) : node->traverseNextNode(container)) {
         if (node == focusedNode)
             continue;
@@ -493,7 +496,7 @@ void FocusController::findFocusCandidateInContainer(Node* container, const IntRe
             continue;
 
         candidate.enclosingScrollableBox = container;
-        updateFocusCandidateIfNeeded(direction, startingRect, candidate, closest);
+        updateFocusCandidateIfNeeded(direction, current, candidate, closest);
     }
 }
 

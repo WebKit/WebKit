@@ -39,6 +39,7 @@
 #include "IntRect.h"
 #include "Node.h"
 #include "Page.h"
+#include "RenderInline.h"
 #include "RenderLayer.h"
 #include "Settings.h"
 
@@ -594,12 +595,39 @@ void entryAndExitPointsForDirection(FocusDirection direction, const IntRect& sta
     }
 }
 
+bool areElementsOnSameLine(const FocusCandidate& firstCandidate, const FocusCandidate& secondCandidate)
+{
+    if (firstCandidate.isNull() || secondCandidate.isNull())
+        return false;
+
+    if (!firstCandidate.visibleNode->renderer() || !secondCandidate.visibleNode->renderer())
+        return false;
+
+    if (!firstCandidate.rect.intersects(secondCandidate.rect))
+        return false;
+
+    if (firstCandidate.focusableNode->hasTagName(HTMLNames::areaTag) || secondCandidate.focusableNode->hasTagName(HTMLNames::areaTag))
+        return false;
+
+    if (!firstCandidate.visibleNode->renderer()->isRenderInline() || !secondCandidate.visibleNode->renderer()->isRenderInline())
+        return false;
+
+    if (firstCandidate.visibleNode->renderer()->containingBlock() != secondCandidate.visibleNode->renderer()->containingBlock())
+        return false;
+
+    return true;
+}
+
 void distanceDataForNode(FocusDirection direction, const FocusCandidate& current, FocusCandidate& candidate)
 {
-    if (candidate.isNull())
-        return;
-    if (!candidate.visibleNode->renderer())
-        return;
+    if (areElementsOnSameLine(current, candidate)) {
+        if ((direction == FocusDirectionUp && current.rect.y() > candidate.rect.y()) || (direction == FocusDirectionDown && candidate.rect.y() > current.rect.y())) {
+            candidate.distance = 0;
+            candidate.alignment = Full;
+            return;
+        }
+    }
+
     IntRect nodeRect = candidate.rect;
     IntRect currentRect = current.rect;
     deflateIfOverlapped(currentRect, nodeRect);
