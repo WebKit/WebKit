@@ -71,6 +71,7 @@ function addMore()
     request = evalAndLog("event.target.source.add({x: 'value2', y: 'zzz2', z: 2.71}, 'key2')");
     request.onsuccess = getData;
     request.onerror = unexpectedErrorCallback;
+    window.indexObject4 = evalAndLog("store.createIndex('indexWhileAddIsInFlight', 'x')");
 }
 
 function getData()
@@ -125,14 +126,22 @@ function getObjectDataFail()
 
     request = evalAndLog("indexObject.get('does not exist')");
     request.onsuccess = unexpectedSuccessCallback;
-    request.onerror = openKeyCursor;
+    request.onerror = getObjectData4;
+}
+
+function getObjectData4()
+{
+    shouldBe("event.target.errorCode", "webkitIDBDatabaseException.NOT_FOUND_ERR");
+    evalAndLog("event.preventDefault()");
+
+    request = evalAndLog("indexObject4.getKey('value2')");
+    request.onsuccess = openKeyCursor;
+    request.onerror =  unexpectedErrorCallback;
 }
 
 function openKeyCursor()
 {
-    shouldBe("event.target.errorCode", "webkitIDBDatabaseException.NOT_FOUND_ERR");
-
-    evalAndLog("event.preventDefault()");
+    shouldBeEqualToString("event.target.result", "key2");
 
     window.request = evalAndLog("indexObject.openKeyCursor()");
     request.onsuccess = cursor1Continue;

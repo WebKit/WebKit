@@ -1,3 +1,20 @@
+2011-02-17  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        IndexedDB: Populate indexes created for object stores with data
+        https://bugs.webkit.org/show_bug.cgi?id=54669
+
+        Make sure that indices for object stores that already hold data get
+        populated.
+
+        * storage/IDBIndexBackendImpl.h:
+        (WebCore::IDBIndexBackendImpl::hasValidId):
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::putInternal):
+        (WebCore::populateIndex):
+        (WebCore::IDBObjectStoreBackendImpl::createIndexInternal):
+
 2011-02-18  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Martin Robinson.

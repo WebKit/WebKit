@@ -56,6 +56,7 @@ public:
         return m_id;
     }
     void setId(int64_t id) { m_id = id; }
+    bool hasValidId() const { return m_id != InvalidId; };
 
     bool addingKeyAllowed(IDBKey*);
 

@@ -325,6 +325,8 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
 
     int i = 0;
     for (IndexMap::iterator it = objectStore->m_indexes.begin(); it != objectStore->m_indexes.end(); ++it, ++i) {
+        if (!it->second->hasValidId())
+            continue; // The index object has been created, but does not exist in the database yet.
         if (!putIndexData(objectStore->sqliteDatabase(), indexKeys[i].get(), it->second->id(), dataRowId)) {
             // FIXME: The Indexed Database specification does not have an error code dedicated to I/O errors.
             callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Error writing data to stable storage."));
@@ -417,6 +419,24 @@ void IDBObjectStoreBackendImpl::clearInternal(ScriptExecutionContext*, PassRefPt
     callbacks->onSuccess(SerializedScriptValue::undefinedValue());
 }
 
+static bool populateIndex(SQLiteDatabase& db, int64_t objectStoreId, int64_t indexId, const String& indexKeyPath)
+{
+    SQLiteStatement select(db, "SELECT id, value FROM ObjectStoreData WHERE objectStoreId = ?");
+    if (select.prepare() != SQLResultOk)
+        return false;
+
+    select.bindInt64(1, objectStoreId);
+    while (select.step() == SQLResultRow) {
+        int64_t objectStoreDataId = select.getColumnInt64(0);
+        RefPtr<SerializedScriptValue> objectValue = SerializedScriptValue::createFromWire(select.getColumnBlobAsString(1));
+        RefPtr<IDBKey> indexKey = fetchKeyFromKeyPath(objectValue.get(), indexKeyPath);
+        if (!putIndexData(db, indexKey.get(), indexId, objectStoreDataId))
+            return false;
+    }
+
+    return true;
+}
+
 PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::createIndex(const String& name, const String& keyPath, bool unique, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     if (m_indexes.contains(name)) {
@@ -460,6 +480,12 @@ void IDBObjectStoreBackendImpl::createIndexInternal(ScriptExecutionContext*, Pas
     }
     int64_t id = objectStore->sqliteDatabase().lastInsertRowID();
     index->setId(id);
+
+    if (!populateIndex(objectStore->sqliteDatabase(), objectStore->m_id, id, index->keyPath())) {
+        transaction->abort();
+        return;
+    }
+
     transaction->didCompleteTaskEvents();
 }
 
