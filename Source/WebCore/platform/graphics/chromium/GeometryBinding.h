@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,45 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#ifndef PluginLayerChromium_h
-#define PluginLayerChromium_h
+#ifndef GeometryBinding_h
+#define GeometryBinding_h
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "LayerChromium.h"
+#include "PlatformString.h"
 
 namespace WebCore {
 
-// A Layer containing a the rendered output of a plugin instance.
-class PluginLayerChromium : public LayerChromium {
+class GraphicsContext3D;
+
+class GeometryBinding {
 public:
-    static PassRefPtr<PluginLayerChromium> create(GraphicsLayerChromium* owner = 0);
-    virtual bool drawsContent() { return true; }
-    virtual void updateContentsIfDirty();
-    virtual void draw();
-    
-    void setTextureId(unsigned textureId);
-        
-    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexAlpha> Program;
+    explicit GeometryBinding(GraphicsContext3D*);
+    ~GeometryBinding();
+
+    bool initialized() const { return m_initialized; }
+
+    GraphicsContext3D* context() const { return m_context; }
+    unsigned quadVerticesVbo() const { return m_quadVerticesVbo; }
+    unsigned quadElementsVbo() const { return m_quadElementsVbo; }
+
+    void prepareForDraw();
+
+    // All layer shaders share the same attribute locations for the vertex
+    // positions and texture coordinates. This allows switching shaders without
+    // rebinding attribute arrays.
+    static int positionAttribLocation() { return 0; }
+    static int texCoordAttribLocation() { return 1; }
 
 private:
-    PluginLayerChromium(GraphicsLayerChromium* owner);
-    unsigned m_textureId;
+    GraphicsContext3D* m_context;
+    unsigned m_quadVerticesVbo;
+    unsigned m_quadElementsVbo;
+    bool m_initialized;
 };
 
-}
+} // namespace WebCore
+
 #endif // USE(ACCELERATED_COMPOSITING)
 
 #endif

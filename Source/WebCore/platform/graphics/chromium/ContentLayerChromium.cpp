@@ -50,81 +50,6 @@
 
 namespace WebCore {
 
-ContentLayerChromium::SharedValues::SharedValues(GraphicsContext3D* context)
-    : m_context(context)
-    , m_contentShaderProgram(0)
-    , m_shaderSamplerLocation(-1)
-    , m_shaderMatrixLocation(-1)
-    , m_shaderAlphaLocation(-1)
-    , m_initialized(false)
-{
-    // Shaders for drawing the layer contents.
-    char vertexShaderString[] =
-        "attribute vec4 a_position;   \n"
-        "attribute vec2 a_texCoord;   \n"
-        "uniform mat4 matrix;         \n"
-        "varying vec2 v_texCoord;     \n"
-        "void main()                  \n"
-        "{                            \n"
-        "  gl_Position = matrix * a_position; \n"
-        "  v_texCoord = a_texCoord;   \n"
-        "}                            \n";
-
-#if PLATFORM(SKIA)
-    // Color is in RGBA order.
-    char rgbaFragmentShaderString[] =
-        "precision mediump float;                            \n"
-        "varying vec2 v_texCoord;                            \n"
-        "uniform sampler2D s_texture;                        \n"
-        "uniform float alpha;                                \n"
-        "void main()                                         \n"
-        "{                                                   \n"
-        "  vec4 texColor = texture2D(s_texture, v_texCoord); \n"
-        "  gl_FragColor = texColor * alpha; \n"
-        "}                                                   \n";
-#endif
-
-    // Color is in BGRA order.
-    char bgraFragmentShaderString[] =
-        "precision mediump float;                            \n"
-        "varying vec2 v_texCoord;                            \n"
-        "uniform sampler2D s_texture;                        \n"
-        "uniform float alpha;                                \n"
-        "void main()                                         \n"
-        "{                                                   \n"
-        "  vec4 texColor = texture2D(s_texture, v_texCoord); \n"
-        "  gl_FragColor = vec4(texColor.z, texColor.y, texColor.x, texColor.w) * alpha; \n"
-        "}                                                   \n";
-
-#if PLATFORM(SKIA)
-    // Assuming the packing is either Skia default RGBA or Chromium default BGRA.
-    char* fragmentShaderString = SK_B32_SHIFT ? rgbaFragmentShaderString : bgraFragmentShaderString;
-#else
-    char* fragmentShaderString = bgraFragmentShaderString;
-#endif
-    m_contentShaderProgram = createShaderProgram(m_context, vertexShaderString, fragmentShaderString);
-    if (!m_contentShaderProgram) {
-        LOG_ERROR("ContentLayerChromium: Failed to create shader program");
-        return;
-    }
-
-    m_shaderSamplerLocation = m_context->getUniformLocation(m_contentShaderProgram, "s_texture");
-    m_shaderMatrixLocation = m_context->getUniformLocation(m_contentShaderProgram, "matrix");
-    m_shaderAlphaLocation = m_context->getUniformLocation(m_contentShaderProgram, "alpha");
-    ASSERT(m_shaderSamplerLocation != -1);
-    ASSERT(m_shaderMatrixLocation != -1);
-    ASSERT(m_shaderAlphaLocation != -1);
-
-    m_initialized = true;
-}
-
-ContentLayerChromium::SharedValues::~SharedValues()
-{
-    if (m_contentShaderProgram)
-        GLC(m_context, m_context->deleteProgram(m_contentShaderProgram));
-}
-
-
 PassRefPtr<ContentLayerChromium> ContentLayerChromium::create(GraphicsLayerChromium* owner)
 {
     return adoptRef(new ContentLayerChromium(owner));
@@ -407,13 +332,13 @@ void ContentLayerChromium::draw()
 
     ASSERT(layerRenderer());
 
-    const ContentLayerChromium::SharedValues* sv = layerRenderer()->contentLayerSharedValues();
-    ASSERT(sv && sv->initialized());
+    const ContentLayerChromium::Program* program = layerRenderer()->contentLayerProgram();
+    ASSERT(program && program->initialized());
     GraphicsContext3D* context = layerRendererContext();
     GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
     bindContentsTexture();
-    layerRenderer()->useShader(sv->contentShaderProgram());
-    GLC(context, context->uniform1i(sv->shaderSamplerLocation(), 0));
+    layerRenderer()->useShader(program->program());
+    GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
 
     if (requiresClippedUpdateRect()) {
         float m43 = drawTransform().m43();
@@ -422,12 +347,13 @@ void ContentLayerChromium::draw()
         drawTexturedQuad(context, layerRenderer()->projectionMatrix(),
                          transform, m_visibleRectInLayerCoords.width(),
                          m_visibleRectInLayerCoords.height(), drawOpacity(),
-                         sv->shaderMatrixLocation(), sv->shaderAlphaLocation());
+                         program->vertexShader().matrixLocation(),
+                         program->fragmentShader().alphaLocation());
     } else {
         drawTexturedQuad(context, layerRenderer()->projectionMatrix(),
                          drawTransform(), bounds().width(), bounds().height(),
-                         drawOpacity(), sv->shaderMatrixLocation(),
-                         sv->shaderAlphaLocation());
+                         drawOpacity(), program->vertexShader().matrixLocation(),
+                         program->fragmentShader().alphaLocation());
     }
     unreserveContentsTexture();
 }

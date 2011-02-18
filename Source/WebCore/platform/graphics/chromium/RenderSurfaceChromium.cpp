@@ -35,91 +35,6 @@
 
 namespace WebCore {
 
-RenderSurfaceChromium::SharedValues::SharedValues(GraphicsContext3D* context)
-    : m_context(context)
-    , m_shaderProgram(0)
-    , m_maskShaderProgram(0)
-    , m_shaderSamplerLocation(-1)
-    , m_shaderMatrixLocation(-1)
-    , m_shaderAlphaLocation(-1)
-    , m_maskShaderSamplerLocation(-1)
-    , m_maskShaderMaskSamplerLocation(-1)
-    , m_maskShaderMatrixLocation(-1)
-    , m_maskShaderAlphaLocation(-1)
-    , m_initialized(false)
-{
-    char vertexShaderString[] =
-        "attribute vec4 a_position;   \n"
-        "attribute vec2 a_texCoord;   \n"
-        "uniform mat4 matrix;         \n"
-        "varying vec2 v_texCoord;     \n"
-        "void main()                  \n"
-        "{                            \n"
-        "  gl_Position = matrix * a_position; \n"
-        "  v_texCoord = a_texCoord;   \n"
-        "}                            \n";
-    char fragmentShaderString[] =
-        "precision mediump float;                            \n"
-        "varying vec2 v_texCoord;                            \n"
-        "uniform sampler2D s_texture;                        \n"
-        "uniform float alpha;                                \n"
-        "void main()                                         \n"
-        "{                                                   \n"
-        "  vec4 texColor = texture2D(s_texture, v_texCoord); \n"
-        "  gl_FragColor = vec4(texColor.x, texColor.y, texColor.z, texColor.w) * alpha; \n"
-        "}                                                   \n";
-    char fragmentShaderWithMaskString[] =
-        "precision mediump float;                            \n"
-        "varying vec2 v_texCoord;                            \n"
-        "uniform sampler2D s_texture;                        \n"
-        "uniform sampler2D s_mask;                           \n"
-        "uniform float alpha;                                \n"
-        "void main()                                         \n"
-        "{                                                   \n"
-        "  vec4 texColor = texture2D(s_texture, v_texCoord); \n"
-        "  vec4 maskColor = texture2D(s_mask, v_texCoord);   \n"
-        "  gl_FragColor = vec4(texColor.x, texColor.y, texColor.z, texColor.w) * alpha * maskColor.w; \n"
-        "}                                                   \n";
-
-    m_shaderProgram = LayerChromium::createShaderProgram(m_context, vertexShaderString, fragmentShaderString);
-    m_maskShaderProgram = LayerChromium::createShaderProgram(m_context, vertexShaderString, fragmentShaderWithMaskString);
-    if (!m_shaderProgram || !m_maskShaderProgram) {
-        LOG_ERROR("RenderSurfaceChromium: Failed to create shader program");
-        return;
-    }
-
-    GLC(m_context, m_shaderSamplerLocation = m_context->getUniformLocation(m_shaderProgram, "s_texture"));
-    GLC(m_context, m_shaderMatrixLocation = m_context->getUniformLocation(m_shaderProgram, "matrix"));
-    GLC(m_context, m_shaderAlphaLocation = m_context->getUniformLocation(m_shaderProgram, "alpha"));
-
-    GLC(m_context, m_maskShaderSamplerLocation = m_context->getUniformLocation(m_maskShaderProgram, "s_texture"));
-    GLC(m_context, m_maskShaderMaskSamplerLocation = m_context->getUniformLocation(m_maskShaderProgram, "s_mask"));
-    GLC(m_context, m_maskShaderMatrixLocation = m_context->getUniformLocation(m_maskShaderProgram, "matrix"));
-    GLC(m_context, m_maskShaderAlphaLocation = m_context->getUniformLocation(m_maskShaderProgram, "alpha"));
-
-    if (m_shaderSamplerLocation == -1 || m_shaderMatrixLocation == -1 || m_shaderAlphaLocation == -1
-        || m_maskShaderSamplerLocation == -1 || m_maskShaderMaskSamplerLocation == -1 || m_maskShaderMatrixLocation == -1 || m_maskShaderAlphaLocation == -1) {
-        LOG_ERROR("Failed to initialize render surface shaders.");
-        return;
-    }
-
-    GLC(m_context, m_context->useProgram(m_shaderProgram));
-    GLC(m_context, m_context->uniform1i(m_shaderSamplerLocation, 0));
-    GLC(m_context, m_context->useProgram(m_maskShaderProgram));
-    GLC(m_context, m_context->uniform1i(m_maskShaderSamplerLocation, 0));
-    GLC(m_context, m_context->uniform1i(m_maskShaderMaskSamplerLocation, 1));
-    GLC(m_context, m_context->useProgram(0));
-    m_initialized = true;
-}
-
-RenderSurfaceChromium::SharedValues::~SharedValues()
-{
-    if (m_shaderProgram)
-        GLC(m_context, m_context->deleteProgram(m_shaderProgram));
-    if (m_maskShaderProgram)
-        GLC(m_context, m_context->deleteProgram(m_maskShaderProgram));
-}
-
 RenderSurfaceChromium::RenderSurfaceChromium(LayerChromium* owningLayer)
     : m_owningLayer(owningLayer)
     , m_maskLayer(0)
@@ -185,30 +100,34 @@ void RenderSurfaceChromium::drawSurface(LayerChromium* maskLayer, const Transfor
 
     int shaderMatrixLocation = -1;
     int shaderAlphaLocation = -1;
-    const RenderSurfaceChromium::SharedValues* sv = layerRenderer()->renderSurfaceSharedValues();
-    ASSERT(sv && sv->initialized());
+    const RenderSurfaceChromium::Program* program = layerRenderer()->renderSurfaceProgram();
+    const RenderSurfaceChromium::MaskProgram* maskProgram = layerRenderer()->renderSurfaceMaskProgram();
+    ASSERT(program && program->initialized());
     bool useMask = false;
     if (maskLayer && maskLayer->drawsContent()) {
         maskLayer->updateContentsIfDirty();
         if (!maskLayer->bounds().isEmpty()) {
             context3D->makeContextCurrent();
-            layerRenderer()->useShader(sv->maskShaderProgram());
+            layerRenderer()->useShader(maskProgram->program());
             GLC(context3D, context3D->activeTexture(GraphicsContext3D::TEXTURE0));
+            GLC(context3D, context3D->uniform1i(maskProgram->fragmentShader().samplerLocation(), 0));
             m_contentsTexture->bindTexture();
             GLC(context3D, context3D->activeTexture(GraphicsContext3D::TEXTURE1));
+            GLC(context3D, context3D->uniform1i(maskProgram->fragmentShader().maskSamplerLocation(), 1));
             maskLayer->bindContentsTexture();
             GLC(context3D, context3D->activeTexture(GraphicsContext3D::TEXTURE0));
-            shaderMatrixLocation = sv->maskShaderMatrixLocation();
-            shaderAlphaLocation = sv->maskShaderAlphaLocation();
+            shaderMatrixLocation = maskProgram->vertexShader().matrixLocation();
+            shaderAlphaLocation = maskProgram->fragmentShader().alphaLocation();
             useMask = true;
         }
     }
 
     if (!useMask) {
-        layerRenderer()->useShader(sv->shaderProgram());
+        layerRenderer()->useShader(program->program());
         m_contentsTexture->bindTexture();
-        shaderMatrixLocation = sv->shaderMatrixLocation();
-        shaderAlphaLocation = sv->shaderAlphaLocation();
+        GLC(context3D, context3D->uniform1i(program->fragmentShader().samplerLocation(), 0));
+        shaderMatrixLocation = program->vertexShader().matrixLocation();
+        shaderAlphaLocation = program->fragmentShader().alphaLocation();
     }
     
     LayerChromium::drawTexturedQuad(layerRenderer()->context(), layerRenderer()->projectionMatrix(), drawTransform,

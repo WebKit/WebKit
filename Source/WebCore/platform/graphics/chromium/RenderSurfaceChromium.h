@@ -31,6 +31,8 @@
 
 #include "FloatRect.h"
 #include "IntRect.h"
+#include "ProgramBinding.h"
+#include "ShaderChromium.h"
 #include "TextureManager.h"
 #include "TransformationMatrix.h"
 #include <wtf/Noncopyable.h>
@@ -60,39 +62,8 @@ public:
 
     TransformationMatrix drawTransform() const { return m_drawTransform; }
 
-    // Stores values that are shared between instances of this class that are
-    // associated with the same LayerRendererChromium (and hence the same GL
-    // context).
-    class SharedValues {
-    public:
-        explicit SharedValues(GraphicsContext3D*);
-        ~SharedValues();
-
-        unsigned shaderProgram() const { return m_shaderProgram; }
-        unsigned maskShaderProgram() const { return m_maskShaderProgram; }
-        int shaderSamplerLocation() const { return m_shaderSamplerLocation; }
-        int shaderMatrixLocation() const { return m_shaderMatrixLocation; }
-        int shaderAlphaLocation() const { return m_shaderAlphaLocation; }
-        int maskShaderSamplerLocation() const { return m_maskShaderSamplerLocation; }
-        int maskShaderMaskSamplerLocation() const { return m_maskShaderMaskSamplerLocation; }
-        int maskShaderMatrixLocation() const { return m_maskShaderMatrixLocation; }
-        int maskShaderAlphaLocation() const { return m_maskShaderAlphaLocation; }
-        bool initialized() const { return m_initialized; }
-
-    private:
-        GraphicsContext3D* m_context;
-
-        unsigned m_shaderProgram;
-        unsigned m_maskShaderProgram;
-        int m_shaderSamplerLocation;
-        int m_shaderMatrixLocation;
-        int m_shaderAlphaLocation;
-        int m_maskShaderSamplerLocation;
-        int m_maskShaderMaskSamplerLocation;
-        int m_maskShaderMatrixLocation;
-        int m_maskShaderAlphaLocation;
-        bool m_initialized;
-    };
+    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexAlpha> Program;
+    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexAlphaMask> MaskProgram;
 
 private:
     LayerRendererChromium* layerRenderer();

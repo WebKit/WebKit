@@ -35,6 +35,7 @@
 #include "LayerRendererChromium.h"
 
 #include "Canvas2DLayerChromium.h"
+#include "GeometryBinding.h"
 #include "GraphicsContext3D.h"
 #include "LayerChromium.h"
 #include "LayerTexture.h"
@@ -236,7 +237,7 @@ void LayerRendererChromium::drawLayers(const IntRect& visibleRect, const IntRect
     GLC(m_context.get(), m_context->viewport(0, 0, visibleRectWidth, visibleRectHeight));
 
     // Bind the common vertex attributes used for drawing all the layers.
-    LayerChromium::prepareForDraw(layerSharedValues());
+    m_sharedGeometry->prepareForDraw();
 
     // FIXME: These calls can be made once, when the compositor context is initialized.
     GLC(m_context.get(), m_context->disable(GraphicsContext3D::DEPTH_TEST));
@@ -808,17 +809,23 @@ bool LayerRendererChromium::initializeSharedObjects()
     // Create an FBO for doing offscreen rendering.
     GLC(m_context.get(), m_offscreenFramebufferId = m_context->createFramebuffer());
 
-    m_layerSharedValues = adoptPtr(new LayerChromium::SharedValues(m_context.get()));
-    m_contentLayerSharedValues = adoptPtr(new ContentLayerChromium::SharedValues(m_context.get()));
-    m_canvasLayerSharedValues = adoptPtr(new CanvasLayerChromium::SharedValues(m_context.get()));
-    m_videoLayerSharedValues = adoptPtr(new VideoLayerChromium::SharedValues(m_context.get()));
-    m_pluginLayerSharedValues = adoptPtr(new PluginLayerChromium::SharedValues(m_context.get()));
-    m_renderSurfaceSharedValues = adoptPtr(new RenderSurfaceChromium::SharedValues(m_context.get()));
-    m_tilerSharedValues = adoptPtr(new LayerTilerChromium::SharedValues(m_context.get()));
+    m_sharedGeometry = adoptPtr(new GeometryBinding(m_context.get()));
+    m_borderProgram = adoptPtr(new LayerChromium::BorderProgram(m_context.get()));
+    m_contentLayerProgram = adoptPtr(new ContentLayerChromium::Program(m_context.get()));
+    m_canvasLayerProgram = adoptPtr(new CanvasLayerChromium::Program(m_context.get()));
+    m_videoLayerRGBAProgram = adoptPtr(new VideoLayerChromium::RGBAProgram(m_context.get()));
+    m_videoLayerYUVProgram = adoptPtr(new VideoLayerChromium::YUVProgram(m_context.get()));
+    m_pluginLayerProgram = adoptPtr(new PluginLayerChromium::Program(m_context.get()));
+    m_renderSurfaceProgram = adoptPtr(new RenderSurfaceChromium::Program(m_context.get()));
+    m_renderSurfaceMaskProgram = adoptPtr(new RenderSurfaceChromium::MaskProgram(m_context.get()));
+    m_tilerProgram = adoptPtr(new LayerTilerChromium::Program(m_context.get()));
 
-    if (!m_layerSharedValues->initialized() || !m_contentLayerSharedValues->initialized() || !m_canvasLayerSharedValues->initialized()
-        || !m_videoLayerSharedValues->initialized() || !m_pluginLayerSharedValues->initialized() || !m_renderSurfaceSharedValues->initialized()
-        || !m_tilerSharedValues->initialized()) {
+    if (!m_sharedGeometry->initialized() || !m_borderProgram->initialized()
+        || !m_contentLayerProgram->initialized() || !m_canvasLayerProgram->initialized()
+        || !m_videoLayerRGBAProgram->initialized() || !m_videoLayerYUVProgram->initialized()
+        || !m_pluginLayerProgram->initialized() || !m_renderSurfaceProgram->initialized()
+        || !m_renderSurfaceMaskProgram->initialized() || !m_tilerProgram->initialized()) {
+        LOG_ERROR("Compositor failed to initialize shaders. Falling back to software.");
         cleanupSharedObjects();
         return false;
     }
@@ -831,13 +838,16 @@ void LayerRendererChromium::cleanupSharedObjects()
 {
     makeContextCurrent();
 
-    m_layerSharedValues.clear();
-    m_contentLayerSharedValues.clear();
-    m_canvasLayerSharedValues.clear();
-    m_videoLayerSharedValues.clear();
-    m_pluginLayerSharedValues.clear();
-    m_renderSurfaceSharedValues.clear();
-    m_tilerSharedValues.clear();
+    m_sharedGeometry.clear();
+    m_borderProgram.clear();
+    m_contentLayerProgram.clear();
+    m_canvasLayerProgram.clear();
+    m_videoLayerRGBAProgram.clear();
+    m_videoLayerYUVProgram.clear();
+    m_pluginLayerProgram.clear();
+    m_renderSurfaceProgram.clear();
+    m_renderSurfaceMaskProgram.clear();
+    m_tilerProgram.clear();
     if (m_offscreenFramebufferId)
         GLC(m_context.get(), m_context->deleteFramebuffer(m_offscreenFramebufferId));
 

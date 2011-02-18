@@ -63,27 +63,7 @@ public:
     // Change the tile size.  This may invalidate all the existing tiles.
     void setTileSize(const IntSize& size);
 
-    class SharedValues {
-    public:
-        explicit SharedValues(GraphicsContext3D*);
-        ~SharedValues();
-
-        unsigned tilerShaderProgram() const { return m_tilerShaderProgram; }
-        int shaderSamplerLocation() const { return m_shaderSamplerLocation; }
-        int shaderMatrixLocation() const { return m_shaderMatrixLocation; }
-        int shaderAlphaLocation() const { return m_shaderAlphaLocation; }
-        int shaderTexTransformLocation() const { return m_shaderTexTransformLocation; }
-        int initialized() const { return m_initialized; }
-
-    private:
-        GraphicsContext3D* m_context;
-        unsigned m_tilerShaderProgram;
-        int m_shaderSamplerLocation;
-        int m_shaderMatrixLocation;
-        int m_shaderAlphaLocation;
-        int m_shaderTexTransformLocation;
-        int m_initialized;
-    };
+    typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderTexAlpha> Program;
 
 private:
     LayerTilerChromium(LayerRendererChromium*, const IntSize& tileSize, BorderTexelOption);
@@ -108,7 +88,7 @@ private:
                           float width, float height, float opacity,
                           float texTranslateX, float texTranslateY,
                           float texScaleX, float texScaleY,
-                          const LayerTilerChromium::SharedValues*);
+                          const LayerTilerChromium::Program*);
 
     void resizeLayer(const IntSize& size);
     // Grow layer size to contain this rectangle.

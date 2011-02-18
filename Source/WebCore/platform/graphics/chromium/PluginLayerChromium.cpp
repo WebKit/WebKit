@@ -35,58 +35,6 @@
 
 namespace WebCore {
 
-PluginLayerChromium::SharedValues::SharedValues(GraphicsContext3D* context)
-    : m_context(context)
-    , m_shaderProgram(0)
-    , m_shaderSamplerLocation(-1)
-    , m_shaderMatrixLocation(-1)
-    , m_shaderAlphaLocation(-1)
-    , m_initialized(false)
-{
-    char vertexShaderString[] =
-        "attribute vec4 a_position;   \n"
-        "attribute vec2 a_texCoord;   \n"
-        "uniform mat4 matrix;         \n"
-        "varying vec2 v_texCoord;     \n"
-        "void main()                  \n"
-        "{                            \n"
-        "  gl_Position = matrix * a_position; \n"
-        "  v_texCoord = a_texCoord;   \n"
-        "}                            \n";
-
-    char fragmentShaderString[] =
-        "precision mediump float;                            \n"
-        "varying vec2 v_texCoord;                            \n"
-        "uniform sampler2D s_texture;                        \n"
-        "uniform float alpha;                                \n"
-        "void main()                                         \n"
-        "{                                                   \n"
-        "  vec4 texColor = texture2D(s_texture, vec2(v_texCoord.x, v_texCoord.y)); \n"
-        "  gl_FragColor = vec4(texColor.x, texColor.y, texColor.z, texColor.w) * alpha; \n"
-        "}                                                   \n";
-
-    m_shaderProgram = createShaderProgram(m_context, vertexShaderString, fragmentShaderString);
-    if (!m_shaderProgram) {
-        LOG_ERROR("PluginLayerChromium: Failed to create shader program");
-        return;
-    }
-
-    m_shaderSamplerLocation = m_context->getUniformLocation(m_shaderProgram, "s_texture");
-    m_shaderMatrixLocation = m_context->getUniformLocation(m_shaderProgram, "matrix");
-    m_shaderAlphaLocation = m_context->getUniformLocation(m_shaderProgram, "alpha");
-    ASSERT(m_shaderSamplerLocation != -1);
-    ASSERT(m_shaderMatrixLocation != -1);
-    ASSERT(m_shaderAlphaLocation != -1);
-
-    m_initialized = true;
-}
-
-PluginLayerChromium::SharedValues::~SharedValues()
-{
-    if (m_shaderProgram)
-        GLC(m_context, m_context->deleteProgram(m_shaderProgram));
-}
-
 PassRefPtr<PluginLayerChromium> PluginLayerChromium::create(GraphicsLayerChromium* owner)
 {
     return adoptRef(new PluginLayerChromium(owner));
@@ -109,8 +57,8 @@ void PluginLayerChromium::updateContentsIfDirty()
 void PluginLayerChromium::draw()
 {
     ASSERT(layerRenderer());
-    const PluginLayerChromium::SharedValues* sv = layerRenderer()->pluginLayerSharedValues();
-    ASSERT(sv && sv->initialized());
+    const PluginLayerChromium::Program* program = layerRenderer()->pluginLayerProgram();
+    ASSERT(program && program->initialized());
     GraphicsContext3D* context = layerRendererContext();
     GLC(context, context->activeTexture(GL_TEXTURE0));
     GLC(context, context->bindTexture(GL_TEXTURE_2D, m_textureId));
@@ -122,11 +70,12 @@ void PluginLayerChromium::draw()
     GLC(context, context->texParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
     GLC(context, context->texParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
     
-    layerRenderer()->useShader(sv->shaderProgram());
-    GLC(context, context->uniform1i(sv->shaderSamplerLocation(), 0));
+    layerRenderer()->useShader(program->program());
+    GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
     drawTexturedQuad(context, layerRenderer()->projectionMatrix(), drawTransform(),
                      bounds().width(), bounds().height(), drawOpacity(),
-                     sv->shaderMatrixLocation(), sv->shaderAlphaLocation());
+                     program->vertexShader().matrixLocation(),
+                     program->fragmentShader().alphaLocation());
 }
 
 }

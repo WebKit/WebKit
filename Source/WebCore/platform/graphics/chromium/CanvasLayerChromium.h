@@ -45,25 +45,7 @@ public:
 
     virtual void draw();
 
-    class SharedValues {
-    public:
-        explicit SharedValues(GraphicsContext3D*);
-        ~SharedValues();
-
-        unsigned canvasShaderProgram() const { return m_canvasShaderProgram; }
-        int shaderSamplerLocation() const { return m_shaderSamplerLocation; }
-        int shaderMatrixLocation() const { return m_shaderMatrixLocation; }
-        int shaderAlphaLocation() const { return m_shaderAlphaLocation; }
-        bool initialized() const { return m_initialized; }
-
-    private:
-        GraphicsContext3D* m_context;
-        unsigned m_canvasShaderProgram;
-        int m_shaderSamplerLocation;
-        int m_shaderMatrixLocation;
-        int m_shaderAlphaLocation;
-        bool m_initialized;
-    };
+    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexFlipAlpha> Program;
 
 protected:
     explicit CanvasLayerChromium(GraphicsLayerChromium* owner);

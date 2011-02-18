@@ -38,7 +38,9 @@
 #include "GraphicsContext.h"
 #include "GraphicsLayerChromium.h"
 #include "PlatformString.h"
+#include "ProgramBinding.h"
 #include "RenderSurfaceChromium.h"
+#include "ShaderChromium.h"
 #include "TransformationMatrix.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -60,7 +62,6 @@ class LayerRendererChromium;
 // this class.
 class LayerChromium : public RefCounted<LayerChromium> {
     friend class LayerRendererChromium;
-    friend class LayerTilerChromium;
 public:
     static PassRefPtr<LayerChromium> create(GraphicsLayerChromium* owner = 0);
 
@@ -172,45 +173,15 @@ public:
 
     RenderSurfaceChromium* createRenderSurface();
 
-    // Stores values that are shared between instances of this class that are
-    // associated with the same LayerRendererChromium (and hence the same GL
-    // context).
-    class SharedValues {
-    public:
-        explicit SharedValues(GraphicsContext3D*);
-        ~SharedValues();
-
-        GraphicsContext3D* context() const { return m_context; }
-        unsigned quadVerticesVbo() const { return m_quadVerticesVbo; }
-        unsigned quadElementsVbo() const { return m_quadElementsVbo; }
-        int maxTextureSize() const { return m_maxTextureSize; }
-        unsigned borderShaderProgram() const { return m_borderShaderProgram; }
-        int borderShaderMatrixLocation() const { return m_borderShaderMatrixLocation; }
-        int borderShaderColorLocation() const { return m_borderShaderColorLocation; }
-        bool initialized() const { return m_initialized; }
-
-    private:
-        GraphicsContext3D* m_context;
-        unsigned m_quadVerticesVbo;
-        unsigned m_quadElementsVbo;
-        int m_maxTextureSize;
-        unsigned m_borderShaderProgram;
-        int m_borderShaderMatrixLocation;
-        int m_borderShaderColorLocation;
-        bool m_initialized;
-    };
-
-    static void prepareForDraw(const SharedValues*);
-
     LayerRendererChromium* layerRenderer() const { return m_layerRenderer.get(); }
 
-    static unsigned createShaderProgram(GraphicsContext3D*, const char* vertexShaderSource, const char* fragmentShaderSource);
     static void toGLMatrix(float*, const TransformationMatrix&);
 
     static void drawTexturedQuad(GraphicsContext3D*, const TransformationMatrix& projectionMatrix, const TransformationMatrix& layerMatrix,
                                  float width, float height, float opacity,
                                  int matrixLocation, int alphaLocation);
 
+    typedef ProgramBinding<VertexShaderPos, FragmentShaderColor> BorderProgram;
 protected:
     GraphicsLayerChromium* m_owner;
     LayerChromium(GraphicsLayerChromium* owner);
@@ -236,12 +207,6 @@ protected:
     // to an ancestor of this layer. The target render surface determines the
     // coordinate system the layer's transforms are relative to.
     RenderSurfaceChromium* m_targetRenderSurface;
-
-    // All layer shaders share the same attribute locations for the vertex positions
-    // and texture coordinates. This allows switching shaders without rebinding attribute
-    // arrays.
-    static const unsigned s_positionAttribLocation;
-    static const unsigned s_texCoordAttribLocation;
 
 private:
     void setNeedsCommit();

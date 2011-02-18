@@ -48,93 +48,6 @@ namespace WebCore {
 
 using namespace std;
 
-const unsigned LayerChromium::s_positionAttribLocation = 0;
-const unsigned LayerChromium::s_texCoordAttribLocation = 1;
-
-static unsigned loadShader(GraphicsContext3D* context, unsigned type, const char* shaderSource)
-{
-    unsigned shader = context->createShader(type);
-    if (!shader)
-        return 0;
-    String sourceString(shaderSource);
-    GLC(context, context->shaderSource(shader, sourceString));
-    GLC(context, context->compileShader(shader));
-    int compiled = 0;
-    GLC(context, context->getShaderiv(shader, GraphicsContext3D::COMPILE_STATUS, &compiled));
-    if (!compiled) {
-        GLC(context, context->deleteShader(shader));
-        return 0;
-    }
-    return shader;
-}
-
-LayerChromium::SharedValues::SharedValues(GraphicsContext3D* context)
-    : m_context(context)
-    , m_quadVerticesVbo(0)
-    , m_quadElementsVbo(0)
-    , m_maxTextureSize(0)
-    , m_borderShaderProgram(0)
-    , m_borderShaderMatrixLocation(-1)
-    , m_borderShaderColorLocation(-1)
-    , m_initialized(false)
-{
-    // Vertex positions and texture coordinates for the 4 corners of a 1x1 quad.
-    float vertices[] = { -0.5f,  0.5f, 0.0f, 0.0f,  1.0f,
-                         -0.5f, -0.5f, 0.0f, 0.0f,  0.0f,
-                         0.5f, -0.5f, 0.0f, 1.0f,  0.0f,
-                         0.5f,  0.5f, 0.0f, 1.0f,  1.0f };
-    uint16_t indices[] = { 0, 1, 2, 0, 2, 3, // The two triangles that make up the layer quad.
-                           0, 1, 2, 3}; // A line path for drawing the layer border.
-
-    GLC(m_context, m_quadVerticesVbo = m_context->createBuffer());
-    GLC(m_context, m_quadElementsVbo = m_context->createBuffer());
-    GLC(m_context, m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_quadVerticesVbo));
-    GLC(m_context, m_context->bufferData(GraphicsContext3D::ARRAY_BUFFER, sizeof(vertices), vertices, GraphicsContext3D::STATIC_DRAW));
-    GLC(m_context, m_context->bindBuffer(GraphicsContext3D::ELEMENT_ARRAY_BUFFER, m_quadElementsVbo));
-    GLC(m_context, m_context->bufferData(GraphicsContext3D::ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GraphicsContext3D::STATIC_DRAW));
-
-    // Get the max texture size supported by the system.
-    GLC(m_context, m_context->getIntegerv(GraphicsContext3D::MAX_TEXTURE_SIZE, &m_maxTextureSize));
-
-    // Shaders for drawing the debug borders around the layers.
-    char borderVertexShaderString[] =
-        "attribute vec4 a_position;   \n"
-        "uniform mat4 matrix;         \n"
-        "void main()                  \n"
-        "{                            \n"
-        "   gl_Position = matrix * a_position; \n"
-        "}                            \n";
-    char borderFragmentShaderString[] =
-        "precision mediump float;                            \n"
-        "uniform vec4 color;                                 \n"
-        "void main()                                         \n"
-        "{                                                   \n"
-        "  gl_FragColor = vec4(color.xyz * color.w, color.w);\n"
-        "}                                                   \n";
-
-    m_borderShaderProgram = createShaderProgram(m_context, borderVertexShaderString, borderFragmentShaderString);
-    if (!m_borderShaderProgram) {
-        LOG_ERROR("ContentLayerChromium: Failed to create shader program");
-        return;
-    }
-
-    m_borderShaderMatrixLocation = m_context->getUniformLocation(m_borderShaderProgram, "matrix");
-    m_borderShaderColorLocation = m_context->getUniformLocation(m_borderShaderProgram, "color");
-    ASSERT(m_borderShaderMatrixLocation != -1);
-    ASSERT(m_borderShaderColorLocation != -1);
-
-    m_initialized = true;
-}
-
-LayerChromium::SharedValues::~SharedValues()
-{
-    GLC(m_context, m_context->deleteBuffer(m_quadVerticesVbo));
-    GLC(m_context, m_context->deleteBuffer(m_quadElementsVbo));
-    if (m_borderShaderProgram)
-        GLC(m_context, m_context->deleteProgram(m_borderShaderProgram));
-}
-
-
 PassRefPtr<LayerChromium> LayerChromium::create(GraphicsLayerChromium* owner)
 {
     return adoptRef(new LayerChromium(owner));
@@ -199,48 +112,6 @@ RenderSurfaceChromium* LayerChromium::createRenderSurface()
 {
     m_renderSurface = new RenderSurfaceChromium(this);
     return m_renderSurface.get();
-}
-
-unsigned LayerChromium::createShaderProgram(GraphicsContext3D* context, const char* vertexShaderSource, const char* fragmentShaderSource)
-{
-    unsigned vertexShader = loadShader(context, GraphicsContext3D::VERTEX_SHADER, vertexShaderSource);
-    if (!vertexShader) {
-        LOG_ERROR("Failed to create vertex shader");
-        return 0;
-    }
-
-    unsigned fragmentShader = loadShader(context, GraphicsContext3D::FRAGMENT_SHADER, fragmentShaderSource);
-    if (!fragmentShader) {
-        GLC(context, context->deleteShader(vertexShader));
-        LOG_ERROR("Failed to create fragment shader");
-        return 0;
-    }
-
-    unsigned programObject = context->createProgram();
-    if (!programObject) {
-        LOG_ERROR("Failed to create shader program");
-        return 0;
-    }
-
-    GLC(context, context->attachShader(programObject, vertexShader));
-    GLC(context, context->attachShader(programObject, fragmentShader));
-
-    // Bind the common attrib locations.
-    GLC(context, context->bindAttribLocation(programObject, s_positionAttribLocation, "a_position"));
-    GLC(context, context->bindAttribLocation(programObject, s_texCoordAttribLocation, "a_texCoord"));
-
-    GLC(context, context->linkProgram(programObject));
-    int linked = 0;
-    GLC(context, context->getProgramiv(programObject, GraphicsContext3D::LINK_STATUS, &linked));
-    if (!linked) {
-        LOG_ERROR("Failed to link shader program");
-        GLC(context, context->deleteProgram(programObject));
-        return 0;
-    }
-
-    GLC(context, context->deleteShader(vertexShader));
-    GLC(context, context->deleteShader(fragmentShader));
-    return programObject;
 }
 
 void LayerChromium::setNeedsCommit()
@@ -451,16 +322,16 @@ void LayerChromium::drawDebugBorder()
         return;
 
     ASSERT(layerRenderer());
-    const SharedValues* sv = layerRenderer()->layerSharedValues();
-    ASSERT(sv && sv->initialized());
-    layerRenderer()->useShader(sv->borderShaderProgram());
+    const BorderProgram* program = layerRenderer()->borderProgram();
+    ASSERT(program && program->initialized());
+    layerRenderer()->useShader(program->program());
     TransformationMatrix renderMatrix = drawTransform();
     renderMatrix.scale3d(bounds().width(), bounds().height(), 1);
     toGLMatrix(&glMatrix[0], layerRenderer()->projectionMatrix() * renderMatrix);
     GraphicsContext3D* context = layerRendererContext();
-    GLC(context, context->uniformMatrix4fv(sv->borderShaderMatrixLocation(), false, &glMatrix[0], 1));
+    GLC(context, context->uniformMatrix4fv(program->vertexShader().matrixLocation(), false, &glMatrix[0], 1));
 
-    GLC(context, context->uniform4f(sv->borderShaderColorLocation(), borderColor().red() / 255.0, borderColor().green() / 255.0, borderColor().blue() / 255.0, 1));
+    GLC(context, context->uniform4f(program->fragmentShader().colorLocation(), borderColor().red() / 255.0, borderColor().green() / 255.0, borderColor().blue() / 255.0, 1));
 
     GLC(context, context->lineWidth(borderWidth()));
 
@@ -498,20 +369,6 @@ bool LayerChromium::descendantsDrawContentRecursive()
         if (sublayers[i]->descendantsDrawContentRecursive())
             return true;
     return false;
-}
-
-// static
-void LayerChromium::prepareForDraw(const SharedValues* sv)
-{
-    GraphicsContext3D* context = sv->context();
-    GLC(context, context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, sv->quadVerticesVbo()));
-    GLC(context, context->bindBuffer(GraphicsContext3D::ELEMENT_ARRAY_BUFFER, sv->quadElementsVbo()));
-    unsigned offset = 0;
-    GLC(context, context->vertexAttribPointer(s_positionAttribLocation, 3, GraphicsContext3D::FLOAT, false, 5 * sizeof(float), offset));
-    offset += 3 * sizeof(float);
-    GLC(context, context->vertexAttribPointer(s_texCoordAttribLocation, 2, GraphicsContext3D::FLOAT, false, 5 * sizeof(float), offset));
-    GLC(context, context->enableVertexAttribArray(s_positionAttribLocation));
-    GLC(context, context->enableVertexAttribArray(s_texCoordAttribLocation));
 }
 
 }

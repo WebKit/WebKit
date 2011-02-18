@@ -1,3 +1,127 @@
+2011-02-15  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Clean up shader code from LayerChromium classes
+        https://bugs.webkit.org/show_bug.cgi?id=54484
+
+        This is a refactoring and there should be no change in functionality.
+        All shader code is pulled out into classes in ShaderChromium.
+        The SharedValues classes are now turned into ProgramBinding, one per
+        shader program.  These contain shader classes that know about what
+        variables they can bind.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/CanvasLayerChromium.cpp:
+        (WebCore::CanvasLayerChromium::draw):
+        * platform/graphics/chromium/CanvasLayerChromium.h:
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::draw):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        * platform/graphics/chromium/GeometryBinding.cpp: Added.
+        (WebCore::GeometryBinding::GeometryBinding):
+        (WebCore::GeometryBinding::~GeometryBinding):
+        (WebCore::GeometryBinding::prepareForDraw):
+        * platform/graphics/chromium/GeometryBinding.h: Copied from Source/WebCore/platform/graphics/chromium/PluginLayerChromium.h.
+        (WebCore::GeometryBinding::initialized):
+        (WebCore::GeometryBinding::context):
+        (WebCore::GeometryBinding::quadVerticesVbo):
+        (WebCore::GeometryBinding::quadElementsVbo):
+        (WebCore::GeometryBinding::positionAttribLocation):
+        (WebCore::GeometryBinding::texCoordAttribLocation):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::drawDebugBorder):
+        * platform/graphics/chromium/LayerChromium.h:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        (WebCore::LayerRendererChromium::cleanupSharedObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore::LayerRendererChromium::sharedGeometry):
+        (WebCore::LayerRendererChromium::borderProgram):
+        (WebCore::LayerRendererChromium::contentLayerProgram):
+        (WebCore::LayerRendererChromium::canvasLayerProgram):
+        (WebCore::LayerRendererChromium::videoLayerRGBAProgram):
+        (WebCore::LayerRendererChromium::videoLayerYUVProgram):
+        (WebCore::LayerRendererChromium::pluginLayerProgram):
+        (WebCore::LayerRendererChromium::renderSurfaceProgram):
+        (WebCore::LayerRendererChromium::renderSurfaceMaskProgram):
+        (WebCore::LayerRendererChromium::tilerProgram):
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::draw):
+        (WebCore::LayerTilerChromium::drawTexturedQuad):
+        * platform/graphics/chromium/LayerTilerChromium.h:
+        * platform/graphics/chromium/PluginLayerChromium.cpp:
+        (WebCore::PluginLayerChromium::draw):
+        * platform/graphics/chromium/PluginLayerChromium.h:
+        * platform/graphics/chromium/ProgramBinding.cpp: Added.
+        (WebCore::ProgramBindingBase::ProgramBindingBase):
+        (WebCore::ProgramBindingBase::~ProgramBindingBase):
+        (WebCore::ProgramBindingBase::init):
+        (WebCore::ProgramBindingBase::loadShader):
+        (WebCore::ProgramBindingBase::createShaderProgram):
+        * platform/graphics/chromium/ProgramBinding.h: Added.
+        (WebCore::ProgramBindingBase::program):
+        (WebCore::ProgramBindingBase::initialized):
+        (WebCore::ProgramBinding::ProgramBinding):
+        (WebCore::ProgramBinding::vertexShader):
+        (WebCore::ProgramBinding::fragmentShader):
+        * platform/graphics/chromium/RenderSurfaceChromium.cpp:
+        (WebCore::RenderSurfaceChromium::drawSurface):
+        * platform/graphics/chromium/RenderSurfaceChromium.h:
+        * platform/graphics/chromium/ShaderChromium.cpp: Added.
+        (WebCore::VertexShaderPosTex::VertexShaderPosTex):
+        (WebCore::VertexShaderPosTex::init):
+        (WebCore::VertexShaderPosTex::getShaderString):
+        (WebCore::VertexShaderPosTexYUVStretch::VertexShaderPosTexYUVStretch):
+        (WebCore::VertexShaderPosTexYUVStretch::init):
+        (WebCore::VertexShaderPosTexYUVStretch::getShaderString):
+        (WebCore::VertexShaderPos::VertexShaderPos):
+        (WebCore::VertexShaderPos::init):
+        (WebCore::VertexShaderPos::getShaderString):
+        (WebCore::VertexShaderPosTexTransform::VertexShaderPosTexTransform):
+        (WebCore::VertexShaderPosTexTransform::init):
+        (WebCore::VertexShaderPosTexTransform::getShaderString):
+        (WebCore::FragmentTexAlphaBinding::FragmentTexAlphaBinding):
+        (WebCore::FragmentTexAlphaBinding::init):
+        (WebCore::FragmentShaderRGBATexFlipAlpha::getShaderString):
+        (WebCore::FragmentShaderRGBATexAlpha::getShaderString):
+        (WebCore::FragmentShaderBGRATexAlpha::getShaderString):
+        (WebCore::FragmentShaderRGBATexAlphaMask::FragmentShaderRGBATexAlphaMask):
+        (WebCore::FragmentShaderRGBATexAlphaMask::init):
+        (WebCore::FragmentShaderRGBATexAlphaMask::getShaderString):
+        (WebCore::FragmentShaderYUVVideo::FragmentShaderYUVVideo):
+        (WebCore::FragmentShaderYUVVideo::init):
+        (WebCore::FragmentShaderYUVVideo::getShaderString):
+        (WebCore::FragmentShaderColor::FragmentShaderColor):
+        (WebCore::FragmentShaderColor::init):
+        (WebCore::FragmentShaderColor::getShaderString):
+        * platform/graphics/chromium/ShaderChromium.h: Added.
+        (WebCore::VertexShaderPosTex::matrixLocation):
+        (WebCore::VertexShaderPosTexYUVStretch::matrixLocation):
+        (WebCore::VertexShaderPosTexYUVStretch::yWidthScaleFactorLocation):
+        (WebCore::VertexShaderPosTexYUVStretch::uvWidthScaleFactorLocation):
+        (WebCore::VertexShaderPos::matrixLocation):
+        (WebCore::VertexShaderPosTexTransform::matrixLocation):
+        (WebCore::VertexShaderPosTexTransform::texTransformLocation):
+        (WebCore::FragmentTexAlphaBinding::alphaLocation):
+        (WebCore::FragmentTexAlphaBinding::samplerLocation):
+        (WebCore::FragmentShaderRGBATexAlphaMask::alphaLocation):
+        (WebCore::FragmentShaderRGBATexAlphaMask::samplerLocation):
+        (WebCore::FragmentShaderRGBATexAlphaMask::maskSamplerLocation):
+        (WebCore::FragmentShaderYUVVideo::yTextureLocation):
+        (WebCore::FragmentShaderYUVVideo::uTextureLocation):
+        (WebCore::FragmentShaderYUVVideo::vTextureLocation):
+        (WebCore::FragmentShaderYUVVideo::alphaLocation):
+        (WebCore::FragmentShaderYUVVideo::ccMatrixLocation):
+        (WebCore::FragmentShaderYUVVideo::signAdjLocation):
+        (WebCore::FragmentShaderColor::colorLocation):
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::draw):
+        (WebCore::VideoLayerChromium::drawYUV):
+        (WebCore::VideoLayerChromium::drawRGBA):
+        * platform/graphics/chromium/VideoLayerChromium.h:
+
 2011-02-18  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.

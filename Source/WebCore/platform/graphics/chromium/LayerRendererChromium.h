@@ -57,6 +57,7 @@
 
 namespace WebCore {
 
+class GeometryBinding;
 class GraphicsContext3D;
 
 // Class that handles drawing of composited render layers using GL.
@@ -107,13 +108,16 @@ public:
 
     bool checkTextureSize(const IntSize&);
 
-    const LayerChromium::SharedValues* layerSharedValues() const { return m_layerSharedValues.get(); }
-    const ContentLayerChromium::SharedValues* contentLayerSharedValues() const { return m_contentLayerSharedValues.get(); }
-    const CanvasLayerChromium::SharedValues* canvasLayerSharedValues() const { return m_canvasLayerSharedValues.get(); }
-    const VideoLayerChromium::SharedValues* videoLayerSharedValues() const { return m_videoLayerSharedValues.get(); }
-    const PluginLayerChromium::SharedValues* pluginLayerSharedValues() const { return m_pluginLayerSharedValues.get(); }
-    const RenderSurfaceChromium::SharedValues* renderSurfaceSharedValues() const { return m_renderSurfaceSharedValues.get(); }
-    const LayerTilerChromium::SharedValues* tilerSharedValues() const { return m_tilerSharedValues.get(); }
+    const GeometryBinding* sharedGeometry() const { return m_sharedGeometry.get(); }
+    const LayerChromium::BorderProgram* borderProgram() const { return m_borderProgram.get(); }
+    const ContentLayerChromium::Program* contentLayerProgram() const { return m_contentLayerProgram.get(); }
+    const CanvasLayerChromium::Program* canvasLayerProgram() const { return m_canvasLayerProgram.get(); }
+    const VideoLayerChromium::RGBAProgram* videoLayerRGBAProgram() const { return m_videoLayerRGBAProgram.get(); }
+    const VideoLayerChromium::YUVProgram* videoLayerYUVProgram() const { return m_videoLayerYUVProgram.get(); }
+    const PluginLayerChromium::Program* pluginLayerProgram() const { return m_pluginLayerProgram.get(); }
+    const RenderSurfaceChromium::Program* renderSurfaceProgram() const { return m_renderSurfaceProgram.get(); }
+    const RenderSurfaceChromium::MaskProgram* renderSurfaceMaskProgram() const { return m_renderSurfaceMaskProgram.get(); }
+    const LayerTilerChromium::Program* tilerProgram() const { return m_tilerProgram.get(); }
 
     void resizeOnscreenContent(const IntSize&);
 
@@ -190,13 +194,16 @@ private:
     // associated with this instance of the compositor. Since there can be
     // multiple instances of the compositor running in the same renderer process
     // we cannot store these values in static variables.
-    OwnPtr<LayerChromium::SharedValues> m_layerSharedValues;
-    OwnPtr<ContentLayerChromium::SharedValues> m_contentLayerSharedValues;
-    OwnPtr<CanvasLayerChromium::SharedValues> m_canvasLayerSharedValues;
-    OwnPtr<VideoLayerChromium::SharedValues> m_videoLayerSharedValues;
-    OwnPtr<PluginLayerChromium::SharedValues> m_pluginLayerSharedValues;
-    OwnPtr<RenderSurfaceChromium::SharedValues> m_renderSurfaceSharedValues;
-    OwnPtr<LayerTilerChromium::SharedValues> m_tilerSharedValues;
+    OwnPtr<GeometryBinding> m_sharedGeometry;
+    OwnPtr<LayerChromium::BorderProgram> m_borderProgram;
+    OwnPtr<ContentLayerChromium::Program> m_contentLayerProgram;
+    OwnPtr<CanvasLayerChromium::Program> m_canvasLayerProgram;
+    OwnPtr<VideoLayerChromium::RGBAProgram> m_videoLayerRGBAProgram;
+    OwnPtr<VideoLayerChromium::YUVProgram> m_videoLayerYUVProgram;
+    OwnPtr<PluginLayerChromium::Program> m_pluginLayerProgram;
+    OwnPtr<RenderSurfaceChromium::Program> m_renderSurfaceProgram;
+    OwnPtr<RenderSurfaceChromium::MaskProgram> m_renderSurfaceMaskProgram;
+    OwnPtr<LayerTilerChromium::Program> m_tilerProgram;
 
     OwnPtr<TextureManager> m_textureManager;
 

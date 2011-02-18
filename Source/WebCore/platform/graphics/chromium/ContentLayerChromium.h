@@ -56,28 +56,7 @@ public:
     virtual void draw();
     virtual bool drawsContent() { return m_owner && m_owner->drawsContent(); }
 
-    // Stores values that are shared between instances of this class that are
-    // associated with the same LayerRendererChromium (and hence the same GL
-    // context).
-    class SharedValues {
-    public:
-        explicit SharedValues(GraphicsContext3D*);
-        ~SharedValues();
-
-        unsigned contentShaderProgram() const { return m_contentShaderProgram; }
-        int shaderSamplerLocation() const { return m_shaderSamplerLocation; }
-        int shaderMatrixLocation() const { return m_shaderMatrixLocation; }
-        int shaderAlphaLocation() const { return m_shaderAlphaLocation; }
-        int initialized() const { return m_initialized; }
-
-    private:
-        GraphicsContext3D* m_context;
-        unsigned m_contentShaderProgram;
-        int m_shaderSamplerLocation;
-        int m_shaderMatrixLocation;
-        int m_shaderAlphaLocation;
-        int m_initialized;
-    };
+    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderTexAlpha> Program;
 
 protected:
     explicit ContentLayerChromium(GraphicsLayerChromium* owner);

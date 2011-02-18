@@ -391,9 +391,9 @@ void LayerTilerChromium::draw(const IntRect& contentRect)
         return;
 
     GraphicsContext3D* context = layerRendererContext();
-    const LayerTilerChromium::SharedValues* sharedValues = layerRenderer()->tilerSharedValues();
-    layerRenderer()->useShader(sharedValues->tilerShaderProgram());
-    GLC(context, context->uniform1i(sharedValues->shaderSamplerLocation(), 0));
+    const LayerTilerChromium::Program* program = layerRenderer()->tilerProgram();
+    layerRenderer()->useShader(program->program());
+    GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
 
     int left, top, right, bottom;
     contentRectToTileIndices(contentRect, left, top, right, bottom);
@@ -421,7 +421,7 @@ void LayerTilerChromium::draw(const IntRect& contentRect)
             float texScaleX = tileRect.width() / tileWidth;
             float texScaleY = tileRect.height() / tileHeight;
 
-            drawTexturedQuad(context, layerRenderer()->projectionMatrix(), tileMatrix, tileRect.width(), tileRect.height(), 1, texTranslateX, texTranslateY, texScaleX, texScaleY, sharedValues);
+            drawTexturedQuad(context, layerRenderer()->projectionMatrix(), tileMatrix, tileRect.width(), tileRect.height(), 1, texTranslateX, texTranslateY, texScaleX, texScaleY, program);
 
             tile->texture()->unreserve();
         }
@@ -465,7 +465,7 @@ void LayerTilerChromium::drawTexturedQuad(GraphicsContext3D* context, const Tran
                                      float width, float height, float opacity,
                                      float texTranslateX, float texTranslateY,
                                      float texScaleX, float texScaleY,
-                                     const LayerTilerChromium::SharedValues* sv)
+                                     const LayerTilerChromium::Program* program)
 {
     static float glMatrix[16];
 
@@ -477,91 +477,14 @@ void LayerTilerChromium::drawTexturedQuad(GraphicsContext3D* context, const Tran
     // Apply the projection matrix before sending the transform over to the shader.
     LayerChromium::toGLMatrix(&glMatrix[0], projectionMatrix * renderMatrix);
 
-    GLC(context, context->uniformMatrix4fv(sv->shaderMatrixLocation(), false, &glMatrix[0], 1));
+    GLC(context, context->uniformMatrix4fv(program->vertexShader().matrixLocation(), false, &glMatrix[0], 1));
 
-    GLC(context, context->uniform1f(sv->shaderAlphaLocation(), opacity));
+    GLC(context, context->uniform1f(program->fragmentShader().alphaLocation(), opacity));
 
-    GLC(context, context->uniform4f(sv->shaderTexTransformLocation(),
+    GLC(context, context->uniform4f(program->vertexShader().texTransformLocation(),
         texTranslateX, texTranslateY, texScaleX, texScaleY));
 
     GLC(context, context->drawElements(GraphicsContext3D::TRIANGLES, 6, GraphicsContext3D::UNSIGNED_SHORT, 0));
-}
-
-LayerTilerChromium::SharedValues::SharedValues(GraphicsContext3D* context)
-    : m_context(context)
-    , m_tilerShaderProgram(0)
-    , m_shaderSamplerLocation(-1)
-    , m_shaderMatrixLocation(-1)
-    , m_shaderAlphaLocation(-1)
-    , m_initialized(false)
-{
-    // Shaders for drawing the layer contents.
-    char vertexShaderString[] =
-        "attribute vec4 a_position;   \n"
-        "attribute vec2 a_texCoord;   \n"
-        "uniform mat4 matrix;         \n"
-        "uniform vec4 texTransform;   \n"
-        "varying vec2 v_texCoord;     \n"
-        "void main()                  \n"
-        "{                            \n"
-        "  gl_Position = matrix * a_position; \n"
-        "  v_texCoord = a_texCoord * texTransform.zw + texTransform.xy;\n"
-        "}                            \n";
-
-#if PLATFORM(SKIA)
-    // Color is in RGBA order.
-    char rgbaFragmentShaderString[] =
-        "precision mediump float;                            \n"
-        "varying vec2 v_texCoord;                            \n"
-        "uniform sampler2D s_texture;                        \n"
-        "uniform float alpha;                                \n"
-        "void main()                                         \n"
-        "{                                                   \n"
-        "  vec4 texColor = texture2D(s_texture, v_texCoord); \n"
-        "  gl_FragColor = texColor * alpha; \n"
-        "}                                                   \n";
-#endif
-
-    // Color is in BGRA order.
-    char bgraFragmentShaderString[] =
-        "precision mediump float;                            \n"
-        "varying vec2 v_texCoord;                            \n"
-        "uniform sampler2D s_texture;                        \n"
-        "uniform float alpha;                                \n"
-        "void main()                                         \n"
-        "{                                                   \n"
-        "  vec4 texColor = texture2D(s_texture, v_texCoord); \n"
-        "  gl_FragColor = vec4(texColor.z, texColor.y, texColor.x, texColor.w) * alpha; \n"
-        "}                                                   \n";
-
-#if PLATFORM(SKIA)
-    // Assuming the packing is either Skia default RGBA or Chromium default BGRA.
-    char* fragmentShaderString = SK_B32_SHIFT ? rgbaFragmentShaderString : bgraFragmentShaderString;
-#else
-    char* fragmentShaderString = bgraFragmentShaderString;
-#endif
-    m_tilerShaderProgram = LayerChromium::createShaderProgram(m_context, vertexShaderString, fragmentShaderString);
-    if (!m_tilerShaderProgram) {
-        LOG_ERROR("LayerTilerChromium: Failed to create shader program");
-        return;
-    }
-
-    m_shaderSamplerLocation = m_context->getUniformLocation(m_tilerShaderProgram, "s_texture");
-    m_shaderMatrixLocation = m_context->getUniformLocation(m_tilerShaderProgram, "matrix");
-    m_shaderAlphaLocation = m_context->getUniformLocation(m_tilerShaderProgram, "alpha");
-    m_shaderTexTransformLocation = m_context->getUniformLocation(m_tilerShaderProgram, "texTransform");
-    ASSERT(m_shaderSamplerLocation != -1);
-    ASSERT(m_shaderMatrixLocation != -1);
-    ASSERT(m_shaderAlphaLocation != -1);
-    ASSERT(m_shaderTexTransformLocation != -1);
-
-    m_initialized = true;
-}
-
-LayerTilerChromium::SharedValues::~SharedValues()
-{
-    if (m_tilerShaderProgram)
-        GLC(m_context, m_context->deleteProgram(m_tilerShaderProgram));
 }
 
 } // namespace WebCore
