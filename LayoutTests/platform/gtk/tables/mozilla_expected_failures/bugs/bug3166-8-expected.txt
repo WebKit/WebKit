@@ -9,8 +9,8 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 778x345 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderTable {TABLE} at (2,2) size 774x341 [border: (3px solid #008000)]
                 RenderBlock {CAPTION} at (0,0) size 406x25 [border: (3px solid #FFA500)]
-                  RenderText {#text} at (89,3) size 227x19
-                    text run at (89,3) width 227: "caption text caption text caption text"
+                  RenderText {#text} at (89,3) size 228x19
+                    text run at (89,3) width 228: "caption text caption text caption text"
                 RenderTableSection {TBODY} at (3,28) size 768x310
                   RenderTableRow {TR} at (0,2) size 768x306
                     RenderTableCell {TD} at (2,2) size 764x306 [r=0 c=0 rs=1 cs=1]

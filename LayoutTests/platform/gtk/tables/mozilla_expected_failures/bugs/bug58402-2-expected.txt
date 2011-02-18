@@ -22,8 +22,8 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 37: "row 1"
             RenderTableCell {TD} at (45,27) size 210x210 [border: (1px inset #808080)] [r=1 c=1 rs=3 cs=3]
               RenderBlock (floating) {DIV} at (2,2) size 206x206 [border: (3px solid #FF0000)]
-                RenderText {#text} at (84,3) size 37x19
-                  text run at (84,3) width 37: "tjosan"
+                RenderText {#text} at (84,3) size 38x19
+                  text run at (84,3) width 38: "tjosan"
           RenderTableRow {TR} at (0,52) size 257x50
             RenderTableCell {TD} at (2,65) size 41x23 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 37x19

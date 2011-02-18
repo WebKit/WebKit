@@ -42,14 +42,14 @@ layer at (0,0) size 800x600
               RenderText {#text} at (11,2) size 28x19
                 text run at (11,2) width 28: "One"
             RenderTableCell {TH} at (54,2) size 94x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (31,2) size 31x19
-                text run at (31,2) width 31: "Two"
+              RenderText {#text} at (31,2) size 32x19
+                text run at (31,2) width 32: "Two"
             RenderTableCell {TH} at (150,2) size 99x23 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (29,2) size 41x19
                 text run at (29,2) width 41: "Three"
             RenderTableCell {TH} at (251,2) size 95x23 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (30,2) size 34x19
-                text run at (30,2) width 34: "Four"
+              RenderText {#text} at (30,2) size 35x19
+                text run at (30,2) width 35: "Four"
           RenderTableRow {TR} at (0,27) size 348x23
             RenderTableCell {TD} at (2,27) size 50x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 26x19

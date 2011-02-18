@@ -11,8 +11,8 @@ layer at (0,0) size 781x700
                 RenderTableSection {THEAD} at (0,0) size 229x19
                   RenderTableRow {TR} at (0,0) size 229x19
                     RenderTableCell {TH} at (0,0) size 229x19 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (77,0) size 74x19
-                        text run at (77,0) width 74: "Header 1/1"
+                      RenderText {#text} at (77,0) size 75x19
+                        text run at (77,0) width 75: "Header 1/1"
                 RenderTableSection {TBODY} at (0,19) size 229x323
                   RenderTableRow {TR} at (0,0) size 229x323
                     RenderTableCell {TD} at (0,0) size 229x323 [r=0 c=0 rs=1 cs=1]
@@ -100,8 +100,8 @@ layer at (0,0) size 781x700
                 RenderTableSection {THEAD} at (0,0) size 229x19
                   RenderTableRow {TR} at (0,0) size 229x19
                     RenderTableCell {TH} at (0,0) size 229x19 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (77,0) size 74x19
-                        text run at (77,0) width 74: "Header 1/2"
+                      RenderText {#text} at (77,0) size 75x19
+                        text run at (77,0) width 75: "Header 1/2"
                 RenderTableSection {TBODY} at (0,19) size 229x323
                   RenderTableRow {TR} at (0,0) size 229x323
                     RenderTableCell {TD} at (0,0) size 229x323 [r=0 c=0 rs=1 cs=1]

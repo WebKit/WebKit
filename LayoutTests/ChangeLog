@@ -1,5 +1,29 @@
 2011-02-18  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, update GTK tables/mozilla_expected_failures baselines
+
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug10140-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug10216-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug104898-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug1055-2-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug106966-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug1128-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug14007-1-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug14007-2-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug29058-2-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug3166-11-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug3166-12-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug3166-4-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug3166-5-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug3166-6-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug3166-7-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug3166-8-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug58402-2-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug89315-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug91057-expected.txt:
+
+2011-02-18  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, update GTK media test baselines
 
         * platform/gtk/media/video-controls-in-media-document-expected.txt:

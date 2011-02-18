@@ -6,8 +6,8 @@ layer at (0,0) size 800x421
       RenderBlock {P} at (0,0) size 784x6 [border: (3px solid #800080)]
       RenderTable {TABLE} at (0,22) size 133x75 [border: (3px solid #008000)]
         RenderBlock {CAPTION} at (0,0) size 63x25 [border: (3px solid #FFA500)]
-          RenderText {#text} at (20,3) size 22x19
-            text run at (20,3) width 22: "cap"
+          RenderText {#text} at (20,3) size 23x19
+            text run at (20,3) width 23: "cap"
         RenderTableSection {TBODY} at (35,28) size 63x44
           RenderTableRow {TR} at (0,2) size 63x40
             RenderTableCell {TD} at (2,2) size 59x40 [r=0 c=0 rs=1 cs=1]
@@ -20,8 +20,8 @@ layer at (0,0) size 800x421
       RenderBlock {P} at (0,135) size 784x6 [border: (3px solid #800080)]
       RenderTable {TABLE} at (325,157) size 133x75 [border: (3px solid #008000)]
         RenderBlock {CAPTION} at (0,0) size 63x25 [border: (3px solid #FFA500)]
-          RenderText {#text} at (20,3) size 22x19
-            text run at (20,3) width 22: "cap"
+          RenderText {#text} at (20,3) size 23x19
+            text run at (20,3) width 23: "cap"
         RenderTableSection {TBODY} at (35,28) size 63x44
           RenderTableRow {TR} at (0,2) size 63x40
             RenderTableCell {TD} at (2,2) size 59x40 [r=0 c=0 rs=1 cs=1]
@@ -34,8 +34,8 @@ layer at (0,0) size 800x421
       RenderBlock {P} at (0,270) size 784x6 [border: (3px solid #800080)]
       RenderTable {TABLE} at (0,292) size 133x75 [border: (3px solid #008000)]
         RenderBlock {CAPTION} at (0,0) size 63x25 [border: (3px solid #FFA500)]
-          RenderText {#text} at (20,3) size 22x19
-            text run at (20,3) width 22: "cap"
+          RenderText {#text} at (20,3) size 23x19
+            text run at (20,3) width 23: "cap"
         RenderTableSection {TBODY} at (35,28) size 63x44
           RenderTableRow {TR} at (0,2) size 63x40
             RenderTableCell {TD} at (2,2) size 59x40 [r=0 c=0 rs=1 cs=1]

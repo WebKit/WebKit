@@ -12,8 +12,8 @@ layer at (0,0) size 781x737
             text run at (3,0) width 68: "The table's"
             text run at (12,19) width 50: "caption,"
             text run at (13,38) width 48: "with no"
-            text run at (19,57) width 35: "align."
-            text run at (6,76) width 61: "Default is"
+            text run at (19,57) width 36: "align."
+            text run at (6,76) width 62: "Default is"
             text run at (18,95) width 38: "\"top\"."
         RenderTableSection {TBODY} at (1,115) size 74x52
           RenderTableRow {TR} at (0,2) size 74x23
@@ -98,8 +98,8 @@ layer at (0,0) size 781x737
       RenderTable {TABLE} at (0,597) size 87x111 [border: (1px outset #808080)]
         RenderBlock {CAPTION} at (0,0) size 85x57
           RenderText {#text} at (8,0) size 87x57
-            text run at (8,0) width 68: "The table's"
-            text run at (1,19) width 82: "caption, with"
+            text run at (8,0) width 69: "The table's"
+            text run at (1,19) width 83: "caption, with"
             text run at (0,38) width 87: "align=\"right\"."
         RenderTableSection {TBODY} at (1,58) size 85x52
           RenderTableRow {TR} at (0,2) size 85x23
