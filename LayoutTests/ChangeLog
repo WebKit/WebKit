@@ -1,3 +1,13 @@
+2011-02-18  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed mac baseline update. Update some lingering failures after
+        r78846 (initial baselines in r78884 and r78855 were incorrect).
+
+        * media/controls-without-preload-expected.txt:
+        * platform/mac/fast/forms/text-control-intrinsic-widths-expected.txt:
+        * platform/mac/fast/text/international/bidi-control-chars-treated-as-ZWS-expected.txt:
+        * platform/mac/fast/text/international/bidi-mirror-he-ar-expected.txt:
+
 2011-02-18  Martin Robinson  <mrobinson@igalia.com>
 
         Reorganize the GTK+ skipped list to make it easier to triage issues
