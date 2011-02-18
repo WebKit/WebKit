@@ -141,11 +141,7 @@ namespace JSC {
         for (size_t i = 0; i < size; i++) {
             if (block != m_heap.collectorBlock(i))
                 continue;
-
-            // x is a pointer into the heap. Now, verify that the cell it
-            // points to is live. (If the cell is dead, we must not mark it,
-            // since that would revive it in a zombie state.)
-            return block->isMarked(x);
+            return block->contains(x);
         }
         
         return false;

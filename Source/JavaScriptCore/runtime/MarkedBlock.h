@@ -67,6 +67,7 @@ namespace JSC {
 
         size_t firstAtom();
 
+        bool contains(const void*);
         size_t atomNumber(const void*);
         bool isMarked(const void*);
         bool testAndSetMarked(const void*);
@@ -145,6 +146,17 @@ namespace JSC {
     inline size_t MarkedBlock::capacity()
     {
         return m_allocation.size();
+    }
+
+    inline bool MarkedBlock::contains(const void* p)
+    {
+        // Since we mark the first atom of every cell when allocating and/or
+        // marking, any pointer to a marked atom points to the head of a valid,
+        // live cell. Checking the mark bit guards against reviving an object
+        // in a zombie state.
+
+        ASSERT(p && isAtomAligned(p));
+        return isMarked(p);
     }
 
     inline size_t MarkedBlock::atomNumber(const void* p)
