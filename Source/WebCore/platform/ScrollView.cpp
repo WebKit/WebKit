@@ -318,31 +318,6 @@ IntPoint ScrollView::adjustScrollPositionWithinRange(const IntPoint& scrollPoint
     return newScrollPosition;
 }
 
-int ScrollView::scrollXForFixedPosition() const
-{
-    int x = scrollX();
-    if (x < 0)
-        x = 0;
-    else if (x > contentsWidth() - visibleContentRect().width())
-        x = contentsWidth() - visibleContentRect().width();
-    return x;
-}
-
-int ScrollView::scrollYForFixedPosition() const
-{
-    int y = scrollY();
-    if (y < 0)
-        y = 0;
-    else if (y > contentsHeight() - visibleContentRect().height())
-        y = contentsHeight() - visibleContentRect().height();
-    return y;
-}
-
-IntSize ScrollView::scrollOffsetForFixedPosition() const
-{
-    return IntSize(scrollXForFixedPosition(), scrollYForFixedPosition());
-}
-
 int ScrollView::scrollSize(ScrollbarOrientation orientation) const
 {
     Scrollbar* scrollbar = ((orientation == HorizontalScrollbar) ? m_horizontalScrollbar : m_verticalScrollbar).get();

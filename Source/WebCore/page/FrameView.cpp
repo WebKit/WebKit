@@ -1089,6 +1089,63 @@ void FrameView::removeFixedObject()
         updateCanBlitOnScrollRecursively();
 }
 
+int FrameView::scrollXForFixedPosition() const
+{
+    int visibleContentWidth = visibleContentRect().width();
+    int maxX = contentsWidth() - visibleContentWidth;
+
+    if (maxX == 0)
+        return 0;
+
+    int x = scrollX();
+
+    if (x < 0)
+        x = 0;
+    else if (x > maxX)
+        x = maxX;
+
+    if (!m_frame)
+        return x;
+
+    float pageScaleFactor = m_frame->pageScaleFactor();
+
+    // When the page is scaled, the scaled "viewport" with respect to which fixed object are positioned
+    // doesn't move as fast as the content view, so that when the content is scrolled all the way to the
+    // end, the bottom of the scaled "viewport" touches the bottom of the real viewport.
+    float dragFactor = (contentsWidth() - visibleContentWidth * pageScaleFactor) / maxX;
+
+    return x * dragFactor / pageScaleFactor;
+}
+
+int FrameView::scrollYForFixedPosition() const
+{
+    int visibleContentHeight = visibleContentRect().height();
+
+    int maxY = contentsHeight() - visibleContentHeight;
+    if (maxY == 0)
+        return 0;
+
+    int y = scrollY();
+
+    if (y < 0)
+        y = 0;
+    else if (y > maxY)
+        y = maxY;
+
+    if (!m_frame)
+        return y;
+
+    float pageScaleFactor = m_frame->pageScaleFactor();
+    float dragFactor = (contentsHeight() - visibleContentHeight * pageScaleFactor) / maxY;
+
+    return y * dragFactor / pageScaleFactor;
+}
+
+IntSize FrameView::scrollOffsetForFixedPosition() const
+{
+    return IntSize(scrollXForFixedPosition(), scrollYForFixedPosition());
+}
+
 IntPoint FrameView::currentMousePosition() const
 {
     return m_frame ? m_frame->eventHandler()->currentMousePosition() : IntPoint();

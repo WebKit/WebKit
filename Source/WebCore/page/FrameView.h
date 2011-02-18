@@ -174,6 +174,12 @@ public:
     void addFixedObject();
     void removeFixedObject();
 
+    // Functions for querying the current scrolled position, negating the effects of overhang
+    // and adjusting for page scale.
+    int scrollXForFixedPosition() const;
+    int scrollYForFixedPosition() const;
+    IntSize scrollOffsetForFixedPosition() const;
+
     void beginDeferredRepaints();
     void endDeferredRepaints();
     void checkStopDelayingDeferredRepaints();

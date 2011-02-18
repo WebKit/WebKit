@@ -263,7 +263,8 @@ void HTMLBodyElement::setVLink(const String& value)
 
 static int adjustForZoom(int value, Document* document)
 {
-    float zoomFactor = document->frame()->pageZoomFactor();
+    Frame* frame = document->frame();
+    float zoomFactor = frame->pageZoomFactor() * frame->pageScaleFactor();
     if (zoomFactor == 1)
         return value;
     // Needed because of truncation (rather than rounding) when scaling up.
@@ -291,7 +292,7 @@ void HTMLBodyElement::setScrollLeft(int scrollLeft)
     FrameView* view = frame->view();
     if (!view)
         return;
-    view->setScrollPosition(IntPoint(static_cast<int>(scrollLeft * frame->pageZoomFactor()), view->scrollY()));
+    view->setScrollPosition(IntPoint(static_cast<int>(scrollLeft * frame->pageZoomFactor() * frame->pageScaleFactor()), view->scrollY()));
 }
 
 int HTMLBodyElement::scrollTop() const
@@ -313,7 +314,7 @@ void HTMLBodyElement::setScrollTop(int scrollTop)
     FrameView* view = frame->view();
     if (!view)
         return;
-    view->setScrollPosition(IntPoint(view->scrollX(), static_cast<int>(scrollTop * frame->pageZoomFactor())));
+    view->setScrollPosition(IntPoint(view->scrollX(), static_cast<int>(scrollTop * frame->pageZoomFactor() * frame->pageScaleFactor())));
 }
 
 int HTMLBodyElement::scrollHeight() const

@@ -1,3 +1,29 @@
+2011-02-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/8898595> Pages that use fixed positioning display poorly when scaled
+
+        * html/HTMLBodyElement.cpp:
+        (WebCore::adjustForZoom): Account for page scale.
+        (WebCore::HTMLBodyElement::setScrollLeft): Ditto.
+        (WebCore::HTMLBodyElement::setScrollTop): Ditto.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollXForFixedPosition): Moved from ScrollView here and changed to
+        account for page scale: when the page is scaled, the “viewport” with respect to which fixed
+        objects are positioned is scaled as well. Since it’s now bigger than the real viewport (that is,
+        the frame view), we move it around in proportion to the document scroll, so that when the document
+        is fully scrolled to the bottom-right, the bottom right of the scaled viewport is visible.
+        (WebCore::FrameView::scrollYForFixedPosition): Ditto.
+        (WebCore::FrameView::scrollOffsetForFixedPosition): Moved from ScrollView here.
+        * page/FrameView.h:
+        * platform/ScrollView.cpp: Moved functions to FrameView.
+        * platform/ScrollView.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateRepaintRectsAfterScroll): Account for the RenderView being transformed.
+        (WebCore::RenderLayer::calculateClipRects): Used scrollOffsetForFixedPosition().
+        (WebCore::RenderLayer::backgroundClipRect): Ditto.
+
 2011-02-17  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.

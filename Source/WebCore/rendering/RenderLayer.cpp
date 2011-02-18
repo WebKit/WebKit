@@ -407,7 +407,7 @@ void RenderLayer::updateRepaintRectsAfterScroll(bool fixed)
     if (fixed || renderer()->style()->position() == FixedPosition) {
         computeRepaintRects();
         fixed = true;
-    } else if (renderer()->hasTransform()) {
+    } else if (renderer()->hasTransform() && !renderer()->isRenderView()) {
         // Transforms act as fixed position containers, so nothing inside a
         // transformed element can be fixed relative to the viewport if the
         // transformed element is not fixed itself or child of a fixed element.
@@ -3215,8 +3215,8 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer, ClipRects& cl
         RenderView* view = renderer()->view();
         ASSERT(view);
         if (view && clipRects.fixed() && rootLayer->renderer() == view) {
-            x -= view->frameView()->scrollX();
-            y -= view->frameView()->scrollY();
+            x -= view->frameView()->scrollXForFixedPosition();
+            y -= view->frameView()->scrollYForFixedPosition();
         }
         
         if (renderer()->hasOverflowClip()) {
@@ -3258,7 +3258,7 @@ IntRect RenderLayer::backgroundClipRect(const RenderLayer* rootLayer, bool tempo
         RenderView* view = renderer()->view();
         ASSERT(view);
         if (view && parentRects.fixed() && rootLayer->renderer() == view)
-            backgroundRect.move(view->frameView()->scrollX(), view->frameView()->scrollY());
+            backgroundRect.move(view->frameView()->scrollXForFixedPosition(), view->frameView()->scrollYForFixedPosition());
     }
     return backgroundRect;
 }
