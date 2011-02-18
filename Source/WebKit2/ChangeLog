@@ -1,3 +1,12 @@
+2011-02-18  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Unreviwed.
+
+        Remove CleanupHandler since we do not use it anymore.
+
+        * Shared/qt/CleanupHandler.cpp: Removed.
+        * Shared/qt/CleanupHandler.h: Removed.
+
 2011-02-18  Alejandro G. Castro  <alex@igalia.com>
 
         Fix GTK build by fixing signature of platformPaint(), required after r78956.
