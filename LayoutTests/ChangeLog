@@ -1,5 +1,11 @@
 2011-02-17  Andrew Wilson  <atwilson@chromium.org>
 
+        Unreviewed expectations tweak in attempt to green up the chromium canaries.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-02-17  Andrew Wilson  <atwilson@chromium.org>
+
         Unreviewed test expectations change to ignore errors for coords-units-03-b.svg until we can rebaseline it.
 
         * platform/chromium/test_expectations.txt:
