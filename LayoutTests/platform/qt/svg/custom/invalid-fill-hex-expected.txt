@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 697x215
+    RenderSVGContainer {g} at (0,0) size 697x215
+      RenderSVGPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderSVGPath {rect} at (0,0) size 100x100 [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderSVGContainer {g} at (10,114) size 687x101
+        RenderSVGText {text} at (10,114) size 213x21 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 213x21
+            chunk 1 text run 1 at (10.00,130.00) startOffset 0 endOffset 29 width 213.00: "The above rect should be RED."
+        RenderSVGText {text} at (10,134) size 687x21 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 687x21
+            chunk 1 text run 1 at (10.00,150.00) startOffset 0 endOffset 100 width 687.00: "SVG 1.1 FULL says there should be a \"highly perceivable error\" message when an invalid fill is used."
+        RenderSVGText {text} at (10,154) size 502x21 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 502x21
+            chunk 1 text run 1 at (10.00,170.00) startOffset 0 endOffset 77 width 502.00: "Browsers don't display such an error, instead use some sort of fill-fallback."
+        RenderSVGText {text} at (10,174) size 601x21 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 601x21
+            chunk 1 text run 1 at (10.00,190.00) startOffset 0 endOffset 99 width 601.00: "If there's an invalid fill color, but no fallback specified, it is as if fill=\"none\" was specified."
+        RenderSVGText {text} at (10,194) size 591x21 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 591x21
+            chunk 1 text run 1 at (10.00,210.00) startOffset 0 endOffset 84 width 591.00: "This has recently been changed in SVG 1.1 2nd edition. Our result matches Opera now."

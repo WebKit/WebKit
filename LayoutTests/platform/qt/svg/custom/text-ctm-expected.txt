@@ -1,8 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-    RenderSVGContainer {svg} at (100,72) size 94x38
-      RenderSVGContainer {g} at (100,72) size 94x38 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
-        RenderSVGContainer {svg} at (100,72) size 94x38
-          RenderSVGText {text} at (70,70) size 800x19
-            RenderSVGInlineText {#text} at (0,-14) size 47x19
-              text run at (0,-14) width 47: "Passed"
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (100,68) size 92x42
+    RenderSVGContainer {g} at (100,68) size 92x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
+      RenderSVGViewportContainer {svg} at (100,68) size 92x42
+        RenderSVGText {text} at (70,54) size 46x21 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 46x21
+            chunk 1 text run 1 at (70.00,70.00) startOffset 0 endOffset 6 width 46.00: "Passed"

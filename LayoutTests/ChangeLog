@@ -1,3 +1,12 @@
+2011-02-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] Add Qt specific expected results for passing svg/custom tests.
+
+        * platform/qt/Skipped: Unskip passing tests.
+        * platform/qt/svg/custom/ [...] : Added.
+
 2011-02-18  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed expectations change.
