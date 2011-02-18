@@ -3146,7 +3146,7 @@ BUGWK54409 GPU : compositing/overflow/fixed-position-ancestor-clip.html = IMAGE
 BUGCR72223 : media/video-frame-accurate-seek.html = IMAGE PASS
 
 // Failure after r77818/77819
-BUG_ZMO : fast/css/text-overflow-ellipsis.html = IMAGE+TEXT PASS
+BUG_ZMO : fast/css/text-overflow-ellipsis.html = IMAGE IMAGE+TEXT PASS
 
 BUG_ZMO : fast/table/colspanMinWidth-vertical.html = IMAGE+TEXT PASS
 
