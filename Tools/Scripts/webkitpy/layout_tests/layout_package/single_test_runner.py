@@ -32,6 +32,7 @@ import time
 
 from webkitpy.layout_tests.port import base
 from webkitpy.layout_tests.layout_package import test_failures
+from webkitpy.layout_tests.layout_package import test_result_writer
 from webkitpy.layout_tests.layout_package.test_results import TestResult
 
 
@@ -185,6 +186,9 @@ class SingleTestRunner:
             # we still want to see the text and image output.
             if not driver_output.crash:
                 failures.extend(new_failures)
+            test_result_writer.write_test_result(
+                self._port, self._options.results_directory, self._filename,
+                driver_output, expected_driver_output, new_failures)
             time_for_diffs[test_type.__class__.__name__] = (
                 time.time() - start_diff_time)
 

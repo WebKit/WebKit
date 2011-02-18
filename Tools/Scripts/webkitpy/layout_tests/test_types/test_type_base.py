@@ -44,14 +44,6 @@ _wdiff_available = True
 
 class TestTypeBase(object):
 
-    # Filename pieces when writing failures to the test results directory.
-    FILENAME_SUFFIX_ACTUAL = "-actual"
-    FILENAME_SUFFIX_EXPECTED = "-expected"
-    FILENAME_SUFFIX_DIFF = "-diff"
-    FILENAME_SUFFIX_WDIFF = "-wdiff.html"
-    FILENAME_SUFFIX_PRETTY_PATCH = "-pretty-diff.html"
-    FILENAME_SUFFIX_COMPARE = "-diff.png"
-
     def __init__(self, port, root_output_dir):
         """Initialize a TestTypeBase object.
 
@@ -61,33 +53,6 @@ class TestTypeBase(object):
         """
         self._root_output_dir = root_output_dir
         self._port = port
-
-    def _make_output_directory(self, filename):
-        """Creates the output directory (if needed) for a given test
-        filename."""
-        fs = self._port._filesystem
-        output_filename = fs.join(self._root_output_dir,
-            self._port.relative_test_filename(filename))
-        fs.maybe_make_directory(fs.dirname(output_filename))
-
-    def output_filename(self, filename, modifier):
-        """Returns a filename inside the output dir that contains modifier.
-
-        For example, if filename is c:/.../fast/dom/foo.html and modifier is
-        "-expected.txt", the return value is
-        c:/cygwin/tmp/layout-test-results/fast/dom/foo-expected.txt
-
-        Args:
-          filename: absolute filename to test file
-          modifier: a string to replace the extension of filename with
-
-        Return:
-          The absolute windows path to the output filename
-        """
-        fs = self._port._filesystem
-        output_filename = fs.join(self._root_output_dir,
-            self._port.relative_test_filename(filename))
-        return fs.splitext(output_filename)[0] + modifier
 
     def compare_output(self, port, filename, options, actual_driver_output,
                         expected_driver_output):
@@ -109,63 +74,3 @@ class TestTypeBase(object):
           a list of TestFailure objects, empty if the test passes
         """
         raise NotImplementedError
-
-    def _write_into_file_at_path(self, file_path, contents, encoding):
-        """This method assumes that byte_array is already encoded
-        into the right format."""
-        fs = self._port._filesystem
-        if encoding is None:
-            fs.write_binary_file(file_path, contents)
-            return
-        fs.write_text_file(file_path, contents)
-
-    def write_output_files(self, filename, file_type,
-                           output, expected, encoding,
-                           print_text_diffs=False):
-        """Writes the test output, the expected output and optionally the diff
-        between the two to files in the results directory.
-
-        The full output filename of the actual, for example, will be
-          <filename>-actual<file_type>
-        For instance,
-          my_test-actual.txt
-
-        Args:
-          filename: The test filename
-          file_type: A string describing the test output file type, e.g. ".txt"
-          output: A string containing the test output
-          expected: A string containing the expected test output
-          print_text_diffs: True for text diffs. (FIXME: We should be able to get this from the file type?)
-        """
-        self._make_output_directory(filename)
-        actual_filename = self.output_filename(filename, self.FILENAME_SUFFIX_ACTUAL + file_type)
-        expected_filename = self.output_filename(filename, self.FILENAME_SUFFIX_EXPECTED + file_type)
-        # FIXME: This function is poorly designed.  We should be passing in some sort of
-        # encoding information from the callers.
-        if output:
-            self._write_into_file_at_path(actual_filename, output, encoding)
-        if expected:
-            self._write_into_file_at_path(expected_filename, expected, encoding)
-
-        if not output or not expected:
-            return
-
-        if not print_text_diffs:
-            return
-
-        # Note: We pass encoding=None for all diff writes, as we treat diff
-        # output as binary.  Diff output may contain multiple files in
-        # conflicting encodings.
-        diff = self._port.diff_text(expected, output, expected_filename, actual_filename)
-        diff_filename = self.output_filename(filename, self.FILENAME_SUFFIX_DIFF + file_type)
-        self._write_into_file_at_path(diff_filename, diff, encoding=None)
-
-        # Shell out to wdiff to get colored inline diffs.
-        wdiff = self._port.wdiff_text(expected_filename, actual_filename)
-        wdiff_filename = self.output_filename(filename, self.FILENAME_SUFFIX_WDIFF)
-        self._write_into_file_at_path(wdiff_filename, wdiff, encoding=None)
-
-        # Use WebKit's PrettyPatch.rb to get an HTML diff.
-        pretty_patch = self._port.pretty_patch_text(diff_filename)
-        pretty_patch_filename = self.output_filename(filename, self.FILENAME_SUFFIX_PRETTY_PATCH)
-        self._write_into_file_at_path(pretty_patch_filename, pretty_patch, encoding=None)

@@ -1,3 +1,22 @@
+2011-02-07  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Get rid of code which writes test results from test_type's
+        compare_output() method.
+        Writing test results now happens in single_test_runner, using
+        newly introduced test_result_writer module.
+
+        Subsequent patches will eliminate test_type/* classes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53908
+
+        * Scripts/webkitpy/layout_tests/layout_package/single_test_runner.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_result_writer.py: Added.
+        * Scripts/webkitpy/layout_tests/test_types/image_diff.py:
+        * Scripts/webkitpy/layout_tests/test_types/test_type_base.py:
+        * Scripts/webkitpy/layout_tests/test_types/text_diff.py:
+
 2011-02-17  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Adam Roben.

@@ -64,13 +64,7 @@ class TestTextDiff(test_type_base.TestTypeBase):
         # Assuming expected_text is already normalized.
         expected_text = expected_driver_output.text
 
-        # Write output files for new tests, too.
         if port.compare_text(actual_text, expected_text):
-            # Text doesn't match, write output files.
-            self.write_output_files(filename, ".txt", actual_text,
-                                    expected_text, encoding=None,
-                                    print_text_diffs=True)
-
             if expected_text == '':
                 failures.append(test_failures.FailureMissingResult())
             else:

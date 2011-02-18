@@ -49,25 +49,6 @@ _log = logging.getLogger("webkitpy.layout_tests.test_types.image_diff")
 
 class ImageDiff(test_type_base.TestTypeBase):
 
-    def _copy_image(self, filename, actual_image, expected_image):
-        self.write_output_files(filename, '.png',
-                                output=actual_image, expected=expected_image,
-                                encoding=None, print_text_diffs=False)
-
-    def _copy_image_hash(self, filename, actual_image_hash, expected_image_hash):
-        self.write_output_files(filename, '.checksum',
-                                actual_image_hash, expected_image_hash,
-                                encoding="ascii", print_text_diffs=False)
-
-    def _create_diff_image(self, port, filename, actual_image, expected_image):
-        """Creates the visual diff of the expected/actual PNGs.
-
-        Returns True if the images are different.
-        """
-        diff_filename = self.output_filename(filename,
-                                             self.FILENAME_SUFFIX_COMPARE)
-        return port.diff_image(actual_image, expected_image, diff_filename)
-
     def compare_output(self, port, filename, options, actual_driver_output,
                        expected_driver_output):
         """Implementation of CompareOutput that checks the output image and
@@ -81,37 +62,14 @@ class ImageDiff(test_type_base.TestTypeBase):
 
         if not expected_driver_output.image:
             # Report a missing expected PNG file.
-            self._copy_image(filename, actual_driver_output.image, expected_image=None)
-            self._copy_image_hash(filename, actual_driver_output.image_hash,
-                                  expected_driver_output.image_hash)
             failures.append(test_failures.FailureMissingImage())
             return failures
         if not expected_driver_output.image_hash:
             # Report a missing expected checksum file.
-            self._copy_image(filename, actual_driver_output.image,
-                             expected_driver_output.image)
-            self._copy_image_hash(filename, actual_driver_output.image_hash,
-                                  expected_image_hash=None)
             failures.append(test_failures.FailureMissingImageHash())
             return failures
-
-        if actual_driver_output.image_hash == expected_driver_output.image_hash:
-            # Hash matched (no diff needed, okay to return).
-            return failures
-
-        self._copy_image(filename, actual_driver_output.image,
-                         expected_driver_output.image)
-        self._copy_image_hash(filename, actual_driver_output.image_hash,
-                              expected_driver_output.image_hash)
-
-        # Even though we only use the result in one codepath below but we
-        # still need to call CreateImageDiff for other codepaths.
-        images_are_different = self._create_diff_image(port, filename,
-                                                       actual_driver_output.image,
-                                                       expected_driver_output.image)
-        if not images_are_different:
-            failures.append(test_failures.FailureImageHashIncorrect())
-        else:
+        if actual_driver_output.image_hash != expected_driver_output.image_hash:
             failures.append(test_failures.FailureImageHashMismatch())
+            return failures
 
         return failures
