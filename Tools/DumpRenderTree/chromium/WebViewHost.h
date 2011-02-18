@@ -32,6 +32,7 @@
 #define WebViewHost_h
 
 #include "MockSpellCheck.h"
+#include "Task.h"
 #include "TestNavigationController.h"
 #include "WebAccessibilityNotification.h"
 #include "WebCursorInfo.h"
@@ -216,7 +217,25 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     // Geolocation client mocks for LayoutTestController
     WebKit::WebGeolocationClientMock* geolocationClientMock();
 
+    // Pending task list, Note taht the method is referred from MethodTask class.
+    TaskList* taskList() { return &m_taskList; }
+
 private:
+
+    class HostMethodTask : public MethodTask<WebViewHost> {
+    public:
+        typedef void (WebViewHost::*CallbackMethodType)();
+        HostMethodTask(WebViewHost* object, CallbackMethodType callback)
+            : MethodTask<WebViewHost>(object)
+            , m_callback(callback)
+        { }
+
+        virtual void runIfValid() { (m_object->*m_callback)(); }
+
+    private:
+        CallbackMethodType m_callback;
+    };
+
     LayoutTestController* layoutTestController() const;
 
     // Called the title of the page changes.
@@ -327,6 +346,8 @@ private:
 
     WebKit::WebString m_lastRequestedTextCheckString;
     WebKit::WebTextCheckingCompletion* m_lastRequestedTextCheckingCompletion;
+
+    TaskList m_taskList;
 };
 
 #endif // WebViewHost_h

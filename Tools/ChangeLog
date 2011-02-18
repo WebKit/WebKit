@@ -1,3 +1,22 @@
+2011-02-16  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium][DRT] some PostDelayedTask() accesses possibly dangling this pointer.
+        http://webkit.org/b/53899
+
+        Replaced static invocation wrappers with MethodTask objects,
+        which are removed on WebViewHost destructor.
+        
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::requestCheckingOfText):
+        (WebViewHost::scheduleAnimation):
+        (WebViewHost::closeWidgetSoon):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost::HostMethodTask::HostMethodTask):
+        (WebViewHost::HostMethodTask::runIfValid):
+        (WebViewHost::taskList):
+
 2011-02-07  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Ojan Vafai.
