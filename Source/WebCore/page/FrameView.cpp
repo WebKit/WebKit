@@ -663,10 +663,8 @@ bool FrameView::isEnclosedInCompositingLayer() const
     if (frameOwnerRenderer && frameOwnerRenderer->containerForRepaint())
         return true;
 
-    if (Frame* parentFrame = m_frame->tree()->parent()) {
-        if (FrameView* parentView = parentFrame->view())
-            return parentView->isEnclosedInCompositingLayer();
-    }
+    if (FrameView* parentView = parentFrameView())
+        return parentView->isEnclosedInCompositingLayer();
 #endif
     return false;
 }
@@ -1024,10 +1022,8 @@ bool FrameView::useSlowRepaints() const
     if (m_useSlowRepaints || m_slowRepaintObjectCount > 0 || (platformWidget() && m_fixedObjectCount > 0) || m_isOverlapped || !m_contentIsOpaque)
         return true;
 
-    if (Frame* parentFrame = m_frame->tree()->parent()) {
-        if (FrameView* parentView = parentFrame->view())
-            return parentView->useSlowRepaints();
-    }
+    if (FrameView* parentView = parentFrameView())
+        return parentView->useSlowRepaints();
 
     return false;
 }
@@ -1037,10 +1033,8 @@ bool FrameView::useSlowRepaintsIfNotOverlapped() const
     if (m_useSlowRepaints || m_slowRepaintObjectCount > 0 || (platformWidget() && m_fixedObjectCount > 0) || !m_contentIsOpaque)
         return true;
 
-    if (Frame* parentFrame = m_frame->tree()->parent()) {
-        if (FrameView* parentView = parentFrame->view())
-            return parentView->useSlowRepaintsIfNotOverlapped();
-    }
+    if (FrameView* parentView = parentFrameView())
+        return parentView->useSlowRepaintsIfNotOverlapped();
 
     return false;
 }
@@ -1266,11 +1260,9 @@ bool FrameView::isOverlappedIncludingAncestors() const
     if (isOverlapped())
         return true;
 
-    if (Frame* parentFrame = m_frame->tree()->parent()) {
-        if (FrameView* parentView = parentFrame->view()) {
-            if (parentView->isOverlapped())
-                return true;
-        }
+    if (FrameView* parentView = parentFrameView()) {
+        if (parentView->isOverlapped())
+            return true;
     }
 
     return false;
@@ -2190,6 +2182,15 @@ bool FrameView::hasCustomScrollbars() const
     return false;
 }
 
+FrameView* FrameView::parentFrameView() const
+{
+    if (Widget* parentView = parent()) {
+        if (parentView->isFrameView())
+            return static_cast<FrameView*>(parentView);
+    }
+    return 0;
+}
+
 void FrameView::updateControlTints()
 {
     // This is called when control tints are changed from aqua/graphite to clear and vice versa.
@@ -2275,6 +2276,12 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
 #endif
 
     PaintBehavior oldPaintBehavior = m_paintBehavior;
+    
+    if (FrameView* parentView = parentFrameView()) {
+        if (parentView->paintBehavior() & PaintBehaviorFlattenCompositingLayers)
+            m_paintBehavior |= PaintBehaviorFlattenCompositingLayers;
+    }
+    
     if (m_paintBehavior == PaintBehaviorNormal)
         document->markers()->invalidateRenderedRectsForMarkersInRect(rect);
 

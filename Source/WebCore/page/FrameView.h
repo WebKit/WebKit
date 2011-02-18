@@ -330,6 +330,8 @@ private:
     virtual void updateScrollCorner();
     virtual void paintScrollCorner(GraphicsContext*, const IntRect& cornerRect);
 
+    FrameView* parentFrameView() const;
+
     virtual AXObjectCache* axObjectCache() const;
     void notifyWidgetsInAllFrames(WidgetNotification);
     

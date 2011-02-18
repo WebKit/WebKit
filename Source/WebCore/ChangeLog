@@ -1,3 +1,27 @@
+2011-02-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Composited iframe content is missing from snapshots in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=54696
+
+        We need to propagate the 'flattening' paint behavior flag
+        down to subviews while painting. WebKit1 does this via
+        code in WebFrameView, but this is a more general fix
+        that works in WebKit2 as well.
+        
+        Made a utility method, parentFrameView(), which I changed
+        some other methods to use as well.
+        
+        * page/FrameView.cpp:
+        (WebCore::FrameView::isEnclosedInCompositingLayer):
+        (WebCore::FrameView::useSlowRepaints):
+        (WebCore::FrameView::useSlowRepaintsIfNotOverlapped):
+        (WebCore::FrameView::isOverlappedIncludingAncestors):
+        (WebCore::FrameView::parentFrameView):
+        (WebCore::FrameView::paintContents):
+        * page/FrameView.h:
+
 2011-02-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
