@@ -1,5 +1,15 @@
 2011-02-17  Andrew Wilson  <atwilson@chromium.org>
 
+        Unreviewed expectations change.
+
+        Added expectations for new test (still disabled for linux until canaries catch up).
+
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.checksum: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-02-17  Andrew Wilson  <atwilson@chromium.org>
+
         Unreviewed win expectations update after recent font rendering changes.
 
         * platform/chromium-win/css1/box_properties/clear_float-expected.checksum:

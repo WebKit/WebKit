@@ -3464,3 +3464,6 @@ BUGV8_1168 : fast/js/mozilla/strict/this-for-function-expression-recursion.html 
 BUGWK54634 SKIP : media/video-controls-in-media-document.html = TIMEOUT
 
 BUGWK54659 DEBUG : inspector/debugger/debug-inlined-scripts.html = CRASH
+
+// Need to rebaseline this when the canaries catch up.
+BUGATWILSON LINUX : svg/W3C-SVG-1.1-SE/coords-units-03-b.svg = IMAGE+TEXT
