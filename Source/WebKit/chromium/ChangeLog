@@ -1,3 +1,15 @@
+2011-02-17  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed, rolling out r78936.
+        http://trac.webkit.org/changeset/78936
+        https://bugs.webkit.org/show_bug.cgi?id=54632
+
+        Breaks chromium build
+
+        * public/WebFrame.h:
+        * src/WebFrameImpl.cpp:
+        * src/WebFrameImpl.h:
+
 2011-02-17  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Shinichiro Hamaji.
