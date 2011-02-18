@@ -407,6 +407,7 @@ static void resetDefaultsToConsistentValues()
 
     [defaults setBool:NO forKey:@"AppleScrollAnimationEnabled"];
     [defaults setBool:NO forKey:@"NSOverlayScrollersEnabled"];
+    [defaults setObject:@"Always" forKey:@"AppleShowScrollBars"];
 
     if (initialValue)
         CFPreferencesSetValue(CFSTR("AppleScrollBarVariant"), initialValue.get(), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);

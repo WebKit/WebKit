@@ -1,3 +1,13 @@
+2011-02-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Set a preference to ensure that scrollbars are in a predictable
+        state for DRT.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+
 2011-02-17  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Adam Roben.
