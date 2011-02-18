@@ -243,6 +243,7 @@ protected:
 
 private:
     CSSStyleDeclaration* inlineStyle() const;
+    const String& elementStyleText() const;
     bool getStyleAttributeRanges(RefPtr<CSSStyleSourceData>* result);
 
     RefPtr<Element> m_element;

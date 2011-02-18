@@ -375,6 +375,9 @@ WebInspector.ElementsPanel.prototype = {
         this.recentlyModifiedNodes.push({node: event.target, updated: true});
         if (this.visible)
             this._updateModifiedNodesSoon();
+
+        if (!this.sidebarPanes.styles.isModifyingStyle && event.target === this.focusedDOMNode)
+            this._styleSheetChanged();
     },
 
     _characterDataModified: function(event)

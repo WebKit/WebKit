@@ -1,3 +1,13 @@
+2011-02-17  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: reflect changes to styles when they happen outside inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=44620
+
+        * inspector/styles/styles-update-from-js-expected.txt: Added.
+        * inspector/styles/styles-update-from-js.html: Added.
+
 2011-02-18  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed expectations changes for Chromium.

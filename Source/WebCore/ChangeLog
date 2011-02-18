@@ -1,3 +1,50 @@
+2011-02-17  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: reflect changes to styles when they happen outside inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=44620
+
+        Notify InspectorInstrumentation of inline style changes from CSSMutableStyleDeclaration
+        whenever the style change does not come from a direct "style" attribute modification.
+        The performance regression occurs only with the Web Inspector opened, when inline styles
+        are modified through setting style.cssText or style.<styleAttribute>: according to the Web Inspector protocol,
+        an attribute change requires that all attributes for the node in question be pushed into the frontend.
+
+        Test: inspector/styles/styles-update-from-js.html
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::setNeedsStyleRecalc):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::RevalidateStyleAttributeTask::reset):
+        (WebCore::RevalidateStyleAttributeTask::RevalidateStyleAttributeTask):
+        (WebCore::RevalidateStyleAttributeTask::scheduleFor):
+        (WebCore::RevalidateStyleAttributeTask::onTimer):
+        (WebCore::InspectorDOMAgent::reset):
+        (WebCore::InspectorDOMAgent::didInvalidateStyleAttr):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didInvalidateStyleAttrImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didInvalidateStyleAttr):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheetForInlineStyle::didModifyElementAttribute):
+        (WebCore::InspectorStyleSheetForInlineStyle::ensureParsedDataReady):
+        (WebCore::InspectorStyleSheetForInlineStyle::elementStyleText):
+        * inspector/InspectorStyleSheet.h:
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype._attributesUpdated):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._rebuildSectionsForStyleRules):
+        (WebInspector.StylesSidebarPane.prototype.addBlankSection):
+        (WebInspector.StylePropertiesSection.prototype.onpopulate):
+        (WebInspector.StylePropertiesSection.prototype.addNewBlankProperty):
+        (WebInspector.ComputedStylePropertiesSection.prototype.onpopulate):
+        (WebInspector.BlankStylePropertiesSection):
+        (WebInspector.StylePropertyTreeElement):
+        (WebInspector.StylePropertyTreeElement.prototype):
+        (WebInspector.StylePropertyTreeElement.prototype.element.userInput.previousContent.context.moveDirection):
+
 2011-02-16  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Eric Seidel.

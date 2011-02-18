@@ -31,6 +31,7 @@
 #include "CSSValueList.h"
 #include "Document.h"
 #include "ExceptionCode.h"
+#include "InspectorInstrumentation.h"
 #include "StyledElement.h"
 
 using namespace std;
@@ -470,6 +471,8 @@ void CSSMutableStyleDeclaration::setNeedsStyleRecalc()
         if (isInlineStyleDeclaration) {
             m_node->setNeedsStyleRecalc(InlineStyleChange);
             static_cast<StyledElement*>(m_node)->invalidateStyleAttribute();
+            if (m_node->document())
+                InspectorInstrumentation::didInvalidateStyleAttr(m_node->document(), m_node);
         } else
             m_node->setNeedsStyleRecalc(FullStyleChange);
         return;

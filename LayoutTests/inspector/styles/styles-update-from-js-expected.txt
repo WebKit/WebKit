@@ -1,0 +1,48 @@
+Tests that changes to an inline style from JavaScript are reflected in the Styles pane and Elements tree.
+
+'style' attribute modified:
+<div id="container" style="color: #daC0DE; border: 1px solid black;"></div>
+[expanded] element.style { ()
+color: #DAC0DE;
+border: 1px solid black;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-style: solid;
+    border-right-style: solid;
+    border-bottom-style: solid;
+    border-left-style: solid;
+    border-top-color: black;
+    border-right-color: black;
+    border-bottom-color: black;
+    border-left-color: black;
+
+
+cssText modified:
+<div id="container" style="color: rgb(192, 255, 238); "></div>
+[expanded] element.style { ()
+color: #C0FFEE;
+
+
+parsed attributes modified:
+<div id="container" style="color: rgb(192, 255, 238); border-top-style: dashed; border-right-style: dashed; border-bottom-style: dashed; border-left-style: dashed; border-top-color: green; border-right-color: green; border-bottom-color: green; border-left-color: green; border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; "></div>
+[expanded] element.style { ()
+color: #C0FFEE;
+border: 3px dashed green;
+    border-top-style: dashed;
+    border-right-style: dashed;
+    border-bottom-style: dashed;
+    border-left-style: dashed;
+    border-top-color: green;
+    border-right-color: green;
+    border-bottom-color: green;
+    border-left-color: green;
+border-width: 3px;
+    border-top-width: 3px;
+    border-right-width: 3px;
+    border-bottom-width: 3px;
+    border-left-width: 3px;
+
+
+

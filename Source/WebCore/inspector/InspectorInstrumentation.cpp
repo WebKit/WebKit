@@ -148,6 +148,12 @@ void InspectorInstrumentation::didModifyDOMAttrImpl(InspectorAgent* inspectorAge
         domAgent->didModifyDOMAttr(element);
 }
 
+void InspectorInstrumentation::didInvalidateStyleAttrImpl(InspectorAgent* inspectorAgent, Node* node)
+{
+    if (InspectorDOMAgent* domAgent = inspectorAgent->domAgent())
+        domAgent->didInvalidateStyleAttr(node);
+}
+
 void InspectorInstrumentation::mouseDidMoveOverElementImpl(InspectorAgent* inspectorAgent, const HitTestResult& result, unsigned modifierFlags)
 {
     inspectorAgent->mouseDidMoveOverElement(result, modifierFlags);

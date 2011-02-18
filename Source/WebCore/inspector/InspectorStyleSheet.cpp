@@ -1131,7 +1131,7 @@ InspectorStyleSheetForInlineStyle::InspectorStyleSheetForInlineStyle(const Strin
 
 void InspectorStyleSheetForInlineStyle::didModifyElementAttribute()
 {
-    String newStyleText = m_element->getAttribute("style");
+    String newStyleText = elementStyleText();
     bool shouldDropSourceData = false;
     if (m_element->isStyledElement() && m_element->style() != m_inspectorStyle->cssStyle()) {
         m_inspectorStyle = InspectorStyle::create(InspectorCSSId(id(), 0), inlineStyle(), this);
@@ -1168,6 +1168,13 @@ Document* InspectorStyleSheetForInlineStyle::ownerDocument() const
 
 bool InspectorStyleSheetForInlineStyle::ensureParsedDataReady()
 {
+    // The "style" property value can get changed indirectly, e.g. via element.style.borderWidth = "2px".
+    const String& currentStyleText = elementStyleText();
+    if (m_styleText != currentStyleText) {
+        m_ruleSourceData.clear();
+        m_styleText = currentStyleText;
+    }
+
     if (m_ruleSourceData)
         return true;
 
@@ -1190,6 +1197,11 @@ PassRefPtr<InspectorStyle> InspectorStyleSheetForInlineStyle::inspectorStyleForI
 CSSStyleDeclaration* InspectorStyleSheetForInlineStyle::inlineStyle() const
 {
     return m_element->style();
+}
+
+const String& InspectorStyleSheetForInlineStyle::elementStyleText() const
+{
+    return m_element->getAttribute("style").string();
 }
 
 bool InspectorStyleSheetForInlineStyle::getStyleAttributeRanges(RefPtr<CSSStyleSourceData>* result)

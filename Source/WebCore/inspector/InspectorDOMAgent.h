@@ -39,6 +39,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -56,6 +57,7 @@ class MatchJob;
 class NameNodeMap;
 class Node;
 class Page;
+class RevalidateStyleAttributeTask;
 
 #if ENABLE(INSPECTOR)
 
@@ -123,6 +125,7 @@ public:
     void didRemoveDOMNode(Node*);
     void didModifyDOMAttr(Element*);
     void characterDataModified(CharacterData*);
+    void didInvalidateStyleAttr(Node*);
 
     Node* nodeForId(long nodeId);
     long pushNodePathToFrontend(Node*);
@@ -185,6 +188,7 @@ private:
     Timer<InspectorDOMAgent> m_matchJobsTimer;
     HashSet<RefPtr<Node> > m_searchResults;
     Vector<long> m_inspectedNodes;
+    OwnPtr<RevalidateStyleAttributeTask> m_revalidateStyleAttrTask;
 };
 
 #endif // ENABLE(INSPECTOR)

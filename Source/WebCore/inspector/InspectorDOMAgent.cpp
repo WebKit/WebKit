@@ -108,6 +108,19 @@ protected:
     String m_query;
 };
 
+class RevalidateStyleAttributeTask {
+public:
+    RevalidateStyleAttributeTask(InspectorDOMAgent*);
+    void scheduleFor(Element*);
+    void reset() { m_timer.stop(); }
+    void onTimer(Timer<RevalidateStyleAttributeTask>*);
+
+private:
+    InspectorDOMAgent* m_domAgent;
+    Timer<RevalidateStyleAttributeTask> m_timer;
+    HashSet<RefPtr<Element> > m_elements;
+};
+
 namespace {
 
 class MatchExactIdJob : public WebCore::MatchJob {
@@ -207,6 +220,28 @@ public:
 
 }
 
+RevalidateStyleAttributeTask::RevalidateStyleAttributeTask(InspectorDOMAgent* domAgent)
+    : m_domAgent(domAgent)
+    , m_timer(this, &RevalidateStyleAttributeTask::onTimer)
+{
+}
+
+void RevalidateStyleAttributeTask::scheduleFor(Element* element)
+{
+    m_elements.add(element);
+    if (!m_timer.isActive())
+        m_timer.startOneShot(0);
+}
+
+void RevalidateStyleAttributeTask::onTimer(Timer<RevalidateStyleAttributeTask>*)
+{
+    // The timer is stopped on m_domAgent destruction, so this method will never be called after m_domAgent has been destroyed.
+    for (HashSet<RefPtr<Element> >::iterator it = m_elements.begin(), end = m_elements.end(); it != end; ++it)
+        m_domAgent->didModifyDOMAttr(it->get());
+
+    m_elements.clear();
+}
+
 InspectorDOMAgent::InspectorDOMAgent(InjectedScriptHost* injectedScriptHost, InspectorFrontend* frontend)
     : m_injectedScriptHost(injectedScriptHost)
     , m_frontend(frontend)
@@ -237,6 +272,8 @@ void InspectorDOMAgent::reset()
 {
     searchCanceled();
     discardBindings();
+    if (m_revalidateStyleAttrTask)
+        m_revalidateStyleAttrTask->reset();
 }
 
 void InspectorDOMAgent::setDOMListener(DOMListener* listener)
@@ -1015,6 +1052,18 @@ void InspectorDOMAgent::characterDataModified(CharacterData* characterData)
     if (!id)
         return;
     m_frontend->characterDataModified(id, characterData->data());
+}
+
+void InspectorDOMAgent::didInvalidateStyleAttr(Node* node)
+{
+    long id = m_documentNodeToIdMap.get(node);
+    // If node is not mapped yet -> ignore the event.
+    if (!id)
+        return;
+
+    if (!m_revalidateStyleAttrTask)
+        m_revalidateStyleAttrTask = new RevalidateStyleAttributeTask(this);
+    m_revalidateStyleAttrTask->scheduleFor(static_cast<Element*>(node));
 }
 
 Node* InspectorDOMAgent::nodeForPath(const String& path)

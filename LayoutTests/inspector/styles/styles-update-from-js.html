@@ -1,0 +1,100 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+function modifyStyleAttribute()
+{
+    document.getElementById("container").setAttribute("style", "color: #daC0DE; border: 1px solid black;");
+}
+
+function modifyCssText()
+{
+    document.getElementById("container").style.cssText = "color: #C0FFEE";
+}
+
+function modifyParsedAttributes()
+{
+    var style = document.getElementById("container").style;
+    style.border = "2px dashed green";
+    style.borderWidth = "3px";
+}
+
+function test()
+{
+    InspectorTest.selectNodeWithId("container", step0);
+
+    // Set style via "style" attribute.
+    function step0()
+    {
+        InspectorTest.evaluateInPage("modifyStyleAttribute()");
+        InspectorTest._addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step1);
+    }
+
+    // Set style via cssText.
+    function step1()
+    {
+        InspectorTest.addResult("'style' attribute modified:");
+        dumpAttributeAndStyles();
+
+        // Inhibit the second Styles pane update from step0().
+        function callback()
+        {
+            InspectorTest._addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step2);
+        }
+
+        InspectorTest.evaluateInPage("modifyCssText()", callback);
+    }
+
+    // Set style via parsed attributes.
+    function step2()
+    {
+        InspectorTest.addResult("cssText modified:");
+        dumpAttributeAndStyles();
+
+        InspectorTest.evaluateInPage("modifyParsedAttributes()");
+        InspectorTest._addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step3);
+    }
+
+    // Finish the test.
+    function step3()
+    {
+        InspectorTest.addResult("parsed attributes modified:");
+        dumpAttributeAndStyles();
+        InspectorTest.completeTest();
+    }
+
+    function dumpAttributeAndStyles()
+    {
+        var treeElement = findNodeTreeElement()
+        if (!treeElement) {
+            InspectorTest.addResult("'container' tree element not found");
+            return;
+        }
+        InspectorTest.addResult(treeElement.listItemElement.textContent.replace(/\u200b/g, ""));
+        InspectorTest.dumpSelectedElementStyles(true, true);
+    }
+
+    function findNodeTreeElement()
+    {
+        var expandedNode = InspectorTest.expandedNodeWithId("container");
+        if (!expandedNode) {
+            InspectorTest.addResult("'container' node not found");
+            InspectorTest.completeTest();
+        }
+        return WebInspector.panels.elements.treeOutline.findTreeElement(expandedNode);
+    }
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that changes to an inline style from JavaScript are reflected in the Styles pane and Elements tree.
+</p>
+
+<div id="container" style="font-weight:bold">
+</div>
+
+</body>
+</html>
