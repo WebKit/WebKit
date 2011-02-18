@@ -135,7 +135,7 @@ void NetscapePlugin::platformGeometryDidChange()
     ::MoveWindow(m_window, m_frameRect.x(), m_frameRect.y(), m_frameRect.width(), m_frameRect.height(), TRUE);
 }
 
-void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirtyRect)
+void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirtyRect, bool)
 {
     // FIXME: Call SetWindow here if we haven't called it yet (see r59904).
 

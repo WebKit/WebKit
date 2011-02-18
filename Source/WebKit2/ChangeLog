@@ -1,5 +1,14 @@
 2011-02-17  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix Windows and Qt builds by fixing signature of platformPaint().
+
+        * WebProcess/Plugins/Netscape/qt/NetscapePluginQt.cpp:
+        (WebKit::NetscapePlugin::platformPaint):
+        * WebProcess/Plugins/Netscape/win/NetscapePluginWin.cpp:
+        (WebKit::NetscapePlugin::platformPaint):
+
+2011-02-17  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Sam Weinig.
 
         WebKit2 snapshots don't show plug-ins
