@@ -9,10 +9,10 @@ layer at (0,0) size 800x600
           text run at (192,0) width 6: " "
           text run at (0,24) width 45: "amet"
       RenderBlock (floating) {DIV} at (224,8) size 200x48 [bgcolor=#FFFFE0]
-        RenderText {#text} at (4,0) size 196x48
+        RenderText {#text} at (4,0) size 197x48
           text run at (4,0) width 192: "Lorem ipsum dolor sit"
-          text run at (196,0) width 4: " "
-          text run at (77,24) width 45: "amet"
+          text run at (196,0) width 5: " "
+          text run at (77,24) width 46: "amet"
       RenderBlock (floating) {DIV} at (440,8) size 200x48 [bgcolor=#FFFFE0]
         RenderText {#text} at (8,0) size 192x48
           text run at (8,0) width 192: "Lorem ipsum dolor sit"
@@ -29,10 +29,10 @@ layer at (0,0) size 800x600
           text run at (0,0) width 192: "Lorem ipsum dolor sit"
           text run at (0,24) width 45: "amet"
       RenderBlock (floating) {DIV} at (440,72) size 200x48 [bgcolor=#FFFFE0]
-        RenderText {#text} at (0,0) size 196x48
+        RenderText {#text} at (0,0) size 197x48
           text run at (0,0) width 4 RTL: " "
           text run at (4,0) width 192: "Lorem ipsum dolor sit"
-          text run at (77,24) width 45: "amet"
+          text run at (77,24) width 46: "amet"
       RenderBlock (floating) {DIV} at (8,136) size 200x48 [bgcolor=#FFFFE0]
         RenderText {#text} at (2,0) size 198x48
           text run at (2,0) width 6 RTL: " "
@@ -55,8 +55,8 @@ layer at (0,0) size 800x600
           text run at (15,0) width 122: "Lorem ipsum "
           text run at (137,0) width 48 RTL: "\x{5D0}\x{5E0}\x{5D8}\x{5E3}"
           text run at (185,0) width 6: " "
-          text run at (53,24) width 42 RTL: "\x{5E9}\x{5DC}\x{5D2}\x{5D9}"
-          text run at (95,24) width 51: " amet"
+          text run at (53,24) width 43 RTL: "\x{5E9}\x{5DC}\x{5D2}\x{5D9}"
+          text run at (95,24) width 52: " amet"
       RenderBlock (floating) {DIV} at (224,200) size 200x48 [bgcolor=#FFFFE0]
         RenderText {#text} at (30,0) size 170x48
           text run at (30,0) width 122: "Lorem ipsum "
@@ -83,8 +83,8 @@ layer at (0,0) size 800x600
           text run at (9,0) width 6 RTL: " "
           text run at (15,0) width 54 RTL: " \x{5D0}\x{5E0}\x{5D8}\x{5E3}"
           text run at (69,0) width 116: "Lorem ipsum"
-          text run at (53,24) width 45: "amet"
-          text run at (98,24) width 48 RTL: "\x{5E9}\x{5DC}\x{5D2}\x{5D9} "
+          text run at (53,24) width 46: "amet"
+          text run at (98,24) width 49 RTL: "\x{5E9}\x{5DC}\x{5D2}\x{5D9} "
       RenderBlock (floating) {DIV} at (440,264) size 200x48 [bgcolor=#FFFFE0]
         RenderText {#text} at (24,0) size 176x48
           text run at (24,0) width 6 RTL: " "

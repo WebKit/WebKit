@@ -13,9 +13,9 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (132,9) size 5x3 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 1x1
             RenderTableCell {TD} at (137,0) size 304x21 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderInline {B} at (0,0) size 113x19
-                RenderText {#text} at (95,1) size 113x19
-                  text run at (95,1) width 113: "DESCRIPTION"
+              RenderInline {B} at (0,0) size 114x19
+                RenderText {#text} at (95,1) size 114x19
+                  text run at (95,1) width 114: "DESCRIPTION"
             RenderTableCell {TD} at (441,9) size 5x3 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 1x1
             RenderTableCell {TD} at (446,0) size 78x21 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
@@ -25,9 +25,9 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (524,9) size 5x3 [border: (1px inset #808080)] [r=0 c=5 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 1x1
             RenderTableCell {TD} at (529,0) size 69x21 [border: (1px inset #808080)] [r=0 c=6 rs=1 cs=1]
-              RenderInline {B} at (0,0) size 40x19
-                RenderText {#text} at (14,1) size 40x19
-                  text run at (14,1) width 40: "INFO"
+              RenderInline {B} at (0,0) size 41x19
+                RenderText {#text} at (14,1) size 41x19
+                  text run at (14,1) width 41: "INFO"
       RenderTable {TABLE} at (0,23) size 600x26 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 598x24
           RenderTableRow {TR} at (0,0) size 598x21
@@ -50,8 +50,8 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (524,9) size 5x3 [border: (1px inset #808080)] [r=0 c=5 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 1x1
             RenderTableCell {TD} at (529,0) size 69x21 [border: (1px inset #808080)] [r=0 c=6 rs=1 cs=1]
-              RenderText {#text} at (17,1) size 34x19
-                text run at (17,1) width 34: "More"
+              RenderText {#text} at (17,1) size 35x19
+                text run at (17,1) width 35: "More"
           RenderTableRow {TR} at (0,21) size 598x3
             RenderTableCell {TD} at (0,21) size 598x3 [bgcolor=#000000] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=8]
               RenderImage {IMG} at (1,1) size 1x1

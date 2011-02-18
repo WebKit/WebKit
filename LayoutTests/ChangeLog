@@ -1,5 +1,10 @@
 2011-02-17  Martin Robinson  <mrobinson@igalia.com>
 
+        Updated GTK+ expectations after r78846. Add new pixel results for tests that
+        have changed and are missing them.
+
+2011-02-17  Martin Robinson  <mrobinson@igalia.com>
+
         Continue importing GTK+ results for the Mozilla table tests.
 
         * platform/gtk/Skipped: Unskip tests which now have results.

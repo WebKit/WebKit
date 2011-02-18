@@ -8,8 +8,8 @@ layer at (0,0) size 800x600
           text run at (0,0) width 4: " "
       RenderTable {TABLE} at (0,19) size 210x96 [border: (3px solid #0000BB)]
         RenderBlock {CAPTION} at (0,0) size 204x38
-          RenderText {#text} at (3,0) size 197x38
-            text run at (3,0) width 197: "Testing BORDERCOLOR tag"
+          RenderText {#text} at (3,0) size 198x38
+            text run at (3,0) width 198: "Testing BORDERCOLOR tag"
             text run at (22,19) width 160: "the border shood be blue."
         RenderTableSection {TBODY} at (3,41) size 204x52
           RenderTableRow {TR} at (0,2) size 204x23

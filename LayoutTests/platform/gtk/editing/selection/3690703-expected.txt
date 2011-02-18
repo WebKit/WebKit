@@ -130,20 +130,20 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (392,0) size 0x19
           RenderBR {BR} at (392,19) size 0x19
           RenderBR {BR} at (392,38) size 0x19
-          RenderInline {FONT} at (0,0) size 317x15
-            RenderInline {A} at (0,0) size 117x15 [color=#0000CC]
-              RenderText {#text} at (233,57) size 117x15
-                text run at (233,57) width 117: "Advertising Programs"
-            RenderText {#text} at (350,57) size 10x15
-              text run at (350,57) width 10: " - "
-            RenderInline {A} at (0,0) size 103x15 [color=#0000CC]
-              RenderText {#text} at (360,57) size 103x15
-                text run at (360,57) width 103: "Business Solutions"
-            RenderText {#text} at (463,57) size 10x15
-              text run at (463,57) width 10: " - "
-            RenderInline {A} at (0,0) size 77x15 [color=#0000CC]
-              RenderText {#text} at (473,57) size 77x15
-                text run at (473,57) width 77: "About Google"
+          RenderInline {FONT} at (0,0) size 318x15
+            RenderInline {A} at (0,0) size 118x15 [color=#0000CC]
+              RenderText {#text} at (233,57) size 118x15
+                text run at (233,57) width 118: "Advertising Programs"
+            RenderText {#text} at (350,57) size 11x15
+              text run at (350,57) width 11: " - "
+            RenderInline {A} at (0,0) size 104x15 [color=#0000CC]
+              RenderText {#text} at (360,57) size 104x15
+                text run at (360,57) width 104: "Business Solutions"
+            RenderText {#text} at (463,57) size 11x15
+              text run at (463,57) width 11: " - "
+            RenderInline {A} at (0,0) size 78x15 [color=#0000CC]
+              RenderText {#text} at (473,57) size 78x15
+                text run at (473,57) width 78: "About Google"
         RenderBlock {P} at (0,267) size 784x12
           RenderInline {FONT} at (0,0) size 60x12
             RenderText {#text} at (362,0) size 60x12

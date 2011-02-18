@@ -8,8 +8,8 @@ layer at (0,0) size 800x600
           text run at (0,0) width 527: "The two divs below should be on the same line, since they are display: inline-block."
       RenderBlock {CENTER} at (0,19) size 784x23
         RenderBlock {DIV} at (88,0) size 304x23 [border: (2px solid #0000FF)]
-          RenderText {#text} at (103,2) size 97x19
-            text run at (103,2) width 97: "This is div one."
+          RenderText {#text} at (103,2) size 98x19
+            text run at (103,2) width 98: "This is div one."
         RenderBlock {DIV} at (392,0) size 304x23 [border: (2px solid #0000FF)]
           RenderText {#text} at (103,2) size 98x19
             text run at (103,2) width 98: "This is div two."

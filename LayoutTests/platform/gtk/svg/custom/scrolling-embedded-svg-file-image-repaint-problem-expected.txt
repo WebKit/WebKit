@@ -14,25 +14,25 @@ layer at (0,0) size 781x995
             RenderText {#text} at (364,0) size 96x19
               text run at (364,0) width 96: "Basic version"
         RenderBlock {P} at (0,20) size 733x20
-          RenderText {#text} at (198,0) size 129x19
-            text run at (198,0) width 129: "Specification link: "
-          RenderInline {A} at (0,0) size 207x19 [color=#0000EE]
-            RenderText {#text} at (327,0) size 207x19
-              text run at (327,0) width 207: "3.4 How groups are rendered"
+          RenderText {#text} at (198,0) size 130x19
+            text run at (198,0) width 130: "Specification link: "
+          RenderInline {A} at (0,0) size 208x19 [color=#0000EE]
+            RenderText {#text} at (327,0) size 208x19
+              text run at (327,0) width 208: "3.4 How groups are rendered"
         RenderBlock {P} at (0,40) size 733x20
-          RenderInline {A} at (0,0) size 172x19 [color=#0000EE]
-            RenderText {#text} at (182,0) size 172x19
-              text run at (182,0) width 172: "pservers-pattern-01-b \x{2190}"
-          RenderText {#text} at (354,0) size 4x19
-            text run at (354,0) width 4: " "
-          RenderInline {A} at (0,0) size 39x19 [color=#0000EE]
-            RenderText {#text} at (358,0) size 39x19
-              text run at (358,0) width 39: "index"
-          RenderText {#text} at (397,0) size 4x19
-            text run at (397,0) width 4: " "
-          RenderInline {A} at (0,0) size 149x19 [color=#0000EE]
-            RenderText {#text} at (401,0) size 149x19
-              text run at (401,0) width 149: "\x{2192} script-handle-01-b"
+          RenderInline {A} at (0,0) size 173x19 [color=#0000EE]
+            RenderText {#text} at (182,0) size 173x19
+              text run at (182,0) width 173: "pservers-pattern-01-b \x{2190}"
+          RenderText {#text} at (354,0) size 5x19
+            text run at (354,0) width 5: " "
+          RenderInline {A} at (0,0) size 40x19 [color=#0000EE]
+            RenderText {#text} at (358,0) size 40x19
+              text run at (358,0) width 40: "index"
+          RenderText {#text} at (397,0) size 5x19
+            text run at (397,0) width 5: " "
+          RenderInline {A} at (0,0) size 150x19 [color=#0000EE]
+            RenderText {#text} at (401,0) size 150x19
+              text run at (401,0) width 150: "\x{2192} script-handle-01-b"
           RenderText {#text} at (0,0) size 0x0
       RenderTable {TABLE} at (0,64) size 1018x551
         RenderTableSection {TBODY} at (0,0) size 1018x551
@@ -43,15 +43,15 @@ layer at (0,0) size 781x995
                   RenderTableRow {TR} at (0,2) size 998x106
                     RenderTableCell {TD} at (2,2) size 994x106 [r=0 c=0 rs=1 cs=2]
                       RenderBlock {H1} at (8,29) size 978x48
-                        RenderText {#text} at (339,6) size 299x36
-                          text run at (339,6) width 299: "render-groups-01-b"
+                        RenderText {#text} at (339,6) size 300x36
+                          text run at (339,6) width 300: "render-groups-01-b"
                   RenderTableRow {TR} at (0,110) size 998x36 [color=#FFFFFF] [bgcolor=#000000]
                     RenderTableCell {TD} at (2,110) size 496x36 [r=1 c=0 rs=1 cs=1]
                       RenderText {#text} at (206,8) size 84x19
                         text run at (206,8) width 84: "SVG Image"
                     RenderTableCell {TD} at (500,110) size 496x36 [r=1 c=1 rs=1 cs=1]
-                      RenderText {#text} at (205,8) size 85x19
-                        text run at (205,8) width 85: "PNG Image"
+                      RenderText {#text} at (205,8) size 86x19
+                        text run at (205,8) width 86: "PNG Image"
                   RenderTableRow {TR} at (0,148) size 998x381
                     RenderTableCell {TD} at (2,148) size 496x381 [r=2 c=0 rs=1 cs=1]
                       RenderEmbeddedObject {EMBED} at (8,8) size 480x360
@@ -124,17 +124,17 @@ layer at (0,0) size 781x995
             text run at (0,0) width 446: "The rendered image should match the reference image exactly."
       RenderBlock {DIV} at (16,955) size 733x20
         RenderBlock {P} at (0,0) size 733x20
-          RenderInline {A} at (0,0) size 172x19 [color=#0000EE]
-            RenderText {#text} at (182,0) size 172x19
-              text run at (182,0) width 172: "pservers-pattern-01-b \x{2190}"
-          RenderText {#text} at (354,0) size 4x19
-            text run at (354,0) width 4: " "
-          RenderInline {A} at (0,0) size 39x19 [color=#0000EE]
-            RenderText {#text} at (358,0) size 39x19
-              text run at (358,0) width 39: "index"
-          RenderText {#text} at (397,0) size 4x19
-            text run at (397,0) width 4: " "
-          RenderInline {A} at (0,0) size 149x19 [color=#0000EE]
-            RenderText {#text} at (401,0) size 149x19
-              text run at (401,0) width 149: "\x{2192} script-handle-01-b"
+          RenderInline {A} at (0,0) size 173x19 [color=#0000EE]
+            RenderText {#text} at (182,0) size 173x19
+              text run at (182,0) width 173: "pservers-pattern-01-b \x{2190}"
+          RenderText {#text} at (354,0) size 5x19
+            text run at (354,0) width 5: " "
+          RenderInline {A} at (0,0) size 40x19 [color=#0000EE]
+            RenderText {#text} at (358,0) size 40x19
+              text run at (358,0) width 40: "index"
+          RenderText {#text} at (397,0) size 5x19
+            text run at (397,0) width 5: " "
+          RenderInline {A} at (0,0) size 150x19 [color=#0000EE]
+            RenderText {#text} at (401,0) size 150x19
+              text run at (401,0) width 150: "\x{2192} script-handle-01-b"
           RenderText {#text} at (0,0) size 0x0

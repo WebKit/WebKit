@@ -7,8 +7,8 @@ layer at (0,0) size 800x121
         RenderText {#text} at (0,0) size 760x19
           text run at (0,0) width 760: "Below both lines should be centered. The first is static, the second is dynamically generated using javascript. Bug 14506."
       RenderBlock {p} at (0,35) size 784x19
-        RenderText {#text} at (331,0) size 121x19
-          text run at (331,0) width 121: "Should be centered"
+        RenderText {#text} at (331,0) size 122x19
+          text run at (331,0) width 122: "Should be centered"
       RenderBlock {p} at (0,70) size 784x19
-        RenderText {#text} at (331,0) size 121x19
-          text run at (331,0) width 121: "Should be centered"
+        RenderText {#text} at (331,0) size 122x19
+          text run at (331,0) width 122: "Should be centered"

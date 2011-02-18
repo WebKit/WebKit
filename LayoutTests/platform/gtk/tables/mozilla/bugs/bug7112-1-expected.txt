@@ -120,8 +120,8 @@ layer at (0,0) size 781x943
                   RenderTableRow {TR} at (0,2) size 759x21
                     RenderTableCell {TD} at (2,2) size 755x21 [r=0 c=0 rs=1 cs=1]
                       RenderBlock {DIV} at (1,1) size 753x19
-                        RenderText {#text} at (351,0) size 50x19
-                          text run at (351,0) width 50: "A table."
+                        RenderText {#text} at (351,0) size 51x19
+                          text run at (351,0) width 51: "A table."
       RenderBlock {P} at (0,735) size 765x69
         RenderBlock (anonymous) at (0,0) size 765x19
           RenderText {#text} at (0,0) size 399x19

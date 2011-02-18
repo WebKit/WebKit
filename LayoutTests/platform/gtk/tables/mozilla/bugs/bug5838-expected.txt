@@ -15,11 +15,11 @@ layer at (0,0) size 800x600
               RenderText {#text} at (20,2) size 57x19
                 text run at (20,2) width 57: "Average"
             RenderTableCell {TH} at (2,5) size 33x42 [border: (1px inset #808080)] [r=0 c=3 rs=2 cs=1]
-              RenderText {#text} at (2,2) size 28x19
-                text run at (2,2) width 28: "Red"
-              RenderBR {BR} at (2,17) size 0x0
-              RenderText {#text} at (2,21) size 28x19
-                text run at (2,21) width 28: "eyes"
+              RenderText {#text} at (2,2) size 29x19
+                text run at (2,2) width 29: "Red"
+              RenderBR {BR} at (2,17) size 1x0
+              RenderText {#text} at (2,21) size 29x19
+                text run at (2,21) width 29: "eyes"
           RenderTableRow {TR} at (0,27) size 197x23
             RenderTableCell {TH} at (88,27) size 46x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 42x19
@@ -29,8 +29,8 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 45: "weight"
           RenderTableRow {TR} at (0,52) size 197x23
             RenderTableCell {TH} at (136,52) size 59x23 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (9,2) size 40x19
-                text run at (9,2) width 40: "Males"
+              RenderText {#text} at (9,2) size 41x19
+                text run at (9,2) width 41: "Males"
             RenderTableCell {TD} at (88,52) size 46x23 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (24,2) size 20x19
                 text run at (24,2) width 20: "1.9"

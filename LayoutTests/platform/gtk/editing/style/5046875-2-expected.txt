@@ -10,9 +10,9 @@ layer at (0,0) size 800x600
           text run at (0,19) width 281: "the second paragraph should be left justified."
       RenderBlock {DIV} at (0,54) size 784x57
         RenderBlock (anonymous) at (0,0) size 784x19
-          RenderText {#text} at (381,0) size 21x19
-            text run at (381,0) width 21: "foo"
-          RenderBR {BR} at (402,15) size 0x0
+          RenderText {#text} at (381,0) size 22x19
+            text run at (381,0) width 22: "foo"
+          RenderBR {BR} at (402,15) size 1x0
         RenderBlock {DIV} at (0,19) size 784x19
           RenderText {#text} at (0,0) size 20x19
             text run at (0,0) width 20: "bar"

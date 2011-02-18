@@ -10,8 +10,8 @@ layer at (0,0) size 800x91
               RenderText {#text} at (1,1) size 12x19
                 text run at (1,1) width 12: "H"
             RenderTableCell {TH} at (18,2) size 14x21 [color=#FF0000] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 11x19
-                text run at (1,1) width 11: "E"
+              RenderText {#text} at (1,1) size 12x19
+                text run at (1,1) width 12: "E"
             RenderTableCell {TH} at (34,2) size 14x21 [color=#FF0000] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 12x19
                 text run at (1,1) width 12: "A"
@@ -30,8 +30,8 @@ layer at (0,0) size 800x91
               RenderText {#text} at (1,1) size 12x19
                 text run at (1,1) width 12: "O"
             RenderTableCell {TH} at (50,2) size 14x21 [color=#0000FF] [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 11x19
-                text run at (1,1) width 11: "T"
+              RenderText {#text} at (1,1) size 12x19
+                text run at (1,1) width 12: "T"
         RenderTableSection {TBODY} at (0,25) size 66x25
           RenderTableRow {TR} at (0,2) size 66x21
             RenderTableCell {TD} at (2,2) size 14x21 [color=#008000] [r=0 c=0 rs=1 cs=1]

@@ -6,18 +6,18 @@ layer at (0,0) size 781x938
       RenderBlock {DIV} at (0,0) size 765x175
         RenderBlock {HR} at (0,0) size 765x2 [border: (1px inset #000000)]
         RenderBlock {P} at (0,18) size 765x19
-          RenderInline {B} at (0,0) size 330x19
-            RenderText {#text} at (217,0) size 330x19
-              text run at (217,0) width 330: "Tables I, II, III, IV (cellpadding=0 cellspacing=5)"
+          RenderInline {B} at (0,0) size 331x19
+            RenderText {#text} at (217,0) size 331x19
+              text run at (217,0) width 331: "Tables I, II, III, IV (cellpadding=0 cellspacing=5)"
         RenderTable {TABLE} at (89,53) size 587x122 [bgcolor=#FFCC00] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 585x120
             RenderTableRow {TR} at (0,2) size 585x116
               RenderTableCell {TD} at (2,2) size 154x116 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderTable {TABLE} at (6,6) size 142x104 [bgcolor=#FFFFFF] [border: (1px outset #808080)]
                   RenderBlock {CAPTION} at (0,0) size 140x19
-                    RenderInline {NOBR} at (0,0) size 45x19
-                      RenderText {#text} at (47,0) size 45x19
-                        text run at (47,0) width 45: "Table I"
+                    RenderInline {NOBR} at (0,0) size 46x19
+                      RenderText {#text} at (47,0) size 46x19
+                        text run at (47,0) width 46: "Table I"
                   RenderTableSection {TBODY} at (1,20) size 140x83
                     RenderTableRow {TR} at (0,5) size 140x21
                       RenderTableCell {TD} at (5,5) size 22x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -119,9 +119,9 @@ layer at (0,0) size 781x938
               RenderTableCell {TD} at (314,2) size 134x116 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
                 RenderTable {TABLE} at (6,6) size 122x104 [bgcolor=#FFFFFF] [border: (1px outset #808080)]
                   RenderBlock {CAPTION} at (0,0) size 120x19
-                    RenderInline {NOBR} at (0,0) size 55x19
-                      RenderText {#text} at (32,0) size 55x19
-                        text run at (32,0) width 55: "Table III"
+                    RenderInline {NOBR} at (0,0) size 56x19
+                      RenderText {#text} at (32,0) size 56x19
+                        text run at (32,0) width 56: "Table III"
                   RenderTableSection {TBODY} at (1,20) size 120x83
                     RenderTableRow {TR} at (0,5) size 120x21
                       RenderTableCell {TD} at (5,5) size 22x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

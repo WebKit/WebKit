@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (24,-22) size 19x4
                 text run at (24,-22) width 4: " "
             RenderTableCell {TD} at (0,261) size 40x54 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=10]
-              RenderText {#text} at (1,4) size 38x47
+              RenderText {#text} at (1,4) size 38x48
                 text run at (1,4) width 45: "Middle"
                 text run at (20,3) width 47: "(1 row)"
             RenderTableCell {TD} at (0,338) size 68x176 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=12 rs=2 cs=1]

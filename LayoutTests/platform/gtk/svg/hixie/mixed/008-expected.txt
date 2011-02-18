@@ -12,6 +12,6 @@ layer at (0,0) size 800x463
           RenderSVGPath {circle} at (8,51) size 400x400 [fill={[type=SOLID] [color=#000080]}] [cx=200.00] [cy=200.00] [r=200.00]
           RenderSVGForeignObject {foreignObject} at (0,175) size 400x50 [color=#FFFFFF]
             RenderBlock {div} at (0,0) size 400x58
-              RenderText {#text} at (139,1) size 121x56
-                text run at (139,1) width 121: "TEST"
+              RenderText {#text} at (139,1) size 122x56
+                text run at (139,1) width 122: "TEST"
         RenderText {#text} at (0,0) size 0x0

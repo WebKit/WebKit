@@ -9,7 +9,7 @@ layer at (0,0) size 800x104
       RenderBlock {DIV} at (0,35) size 784x15
         RenderImage {IMG} at (384,0) size 15x15
       RenderBlock {DIV} at (0,50) size 784x15
-        RenderImage {IMG} at (384,0) size 15x15
+        RenderImage {IMG} at (385,0) size 15x15
       RenderBlock {DIV} at (0,65) size 784x15 [color=#0000FF]
-        RenderText {#text} at (384,0) size 15x15
-          text run at (384,0) width 15: "X"
+        RenderText {#text} at (384,0) size 16x15
+          text run at (384,0) width 16: "X"

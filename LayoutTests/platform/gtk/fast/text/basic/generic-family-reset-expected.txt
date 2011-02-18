@@ -41,8 +41,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (138,1) size 28x19
                 text run at (138,1) width 28: "<tt>"
             RenderTableCell {TH} at (324,212) size 369x21 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (159,1) size 50x19
-                text run at (159,1) width 50: "<span>"
+              RenderText {#text} at (159,1) size 51x19
+                text run at (159,1) width 51: "<span>"
           RenderTableRow {TR} at (0,243) size 703x17
             RenderTableCell {TD} at (10,243) size 304x17 [r=2 c=0 rs=1 cs=1]
               RenderInline {TT} at (0,0) size 211x15

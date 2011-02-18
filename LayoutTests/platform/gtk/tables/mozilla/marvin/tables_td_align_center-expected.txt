@@ -10,8 +10,8 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 285x52
           RenderTableRow {TR} at (0,2) size 285x23
             RenderTableCell {TD} at (2,2) size 281x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (62,2) size 156x19
-                text run at (62,2) width 156: "Netscape Communicator"
+              RenderText {#text} at (62,2) size 157x19
+                text run at (62,2) width 157: "Netscape Communicator"
           RenderTableRow {TR} at (0,27) size 285x23
             RenderTableCell {TD} at (2,27) size 281x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 277x19

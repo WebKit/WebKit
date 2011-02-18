@@ -18,10 +18,10 @@ layer at (0,0) size 800x600
           text run at (0,0) width 526: "These demonstrate 11475: the '\\n's at the end of the fragment should be unrendered."
         RenderBR {BR} at (526,15) size 0x0
       RenderBlock {DIV} at (0,19) size 784x38
-        RenderText {#text} at (31,0) size 725x38
-          text run at (31,0) width 721: "This test checks that pasing in a combination of nested blocks where one starts with a text field doesn't crash or fail"
-          text run at (752,0) width 4: " "
-          text run at (359,19) width 65: "assertions."
+        RenderText {#text} at (31,0) size 726x38
+          text run at (31,0) width 722: "This test checks that pasing in a combination of nested blocks where one starts with a text field doesn't crash or fail"
+          text run at (752,0) width 5: " "
+          text run at (359,19) width 66: "assertions."
       RenderBlock {DIV} at (0,57) size 784x52
         RenderBlock {DIV} at (0,0) size 784x52
           RenderText {#text} at (489,33) size 4x19

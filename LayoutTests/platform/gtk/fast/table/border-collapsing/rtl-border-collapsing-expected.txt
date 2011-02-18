@@ -23,11 +23,11 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 133x77
           RenderTableRow {TR} at (0,0) size 133x27
             RenderTableCell {TD} at (0,0) size 67x27 [border: none (1px solid #000000) none] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (17,4) size 31x19
-                text run at (17,4) width 31: "RTL"
+              RenderText {#text} at (17,4) size 32x19
+                text run at (17,4) width 32: "RTL"
             RenderTableCell {TD} at (67,0) size 66x27 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (17,4) size 31x19
-                text run at (17,4) width 31: "LTR"
+              RenderText {#text} at (17,4) size 32x19
+                text run at (17,4) width 32: "LTR"
           RenderTableRow {TR} at (0,27) size 133x50
             RenderTableCell {TD} at (0,27) size 67x50 [border: none (1px solid #000000) none] [r=1 c=0 rs=1 cs=1]
               RenderTable {TABLE} at (4,4) size 58x42 [border: none (1px solid #0000FF) none (1px solid #FF0000)]

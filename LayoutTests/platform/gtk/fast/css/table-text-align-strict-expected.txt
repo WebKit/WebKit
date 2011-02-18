@@ -11,5 +11,5 @@ layer at (0,0) size 800x62
           RenderTableSection {TBODY} at (1,1) size 106x25
             RenderTableRow {TR} at (0,2) size 106x21
               RenderTableCell {TD} at (2,2) size 102x21 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (33,1) size 35x19
-                  text run at (33,1) width 35: "hello."
+                RenderText {#text} at (33,1) size 36x19
+                  text run at (33,1) width 36: "hello."
