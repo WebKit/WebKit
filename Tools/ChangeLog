@@ -1,3 +1,16 @@
+2011-02-18  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Clean up initialization of minimum timer interval
+        https://bugs.webkit.org/show_bug.cgi?id=54772
+
+        Use new GetForegroundTabTimerInterval function in webkit_support
+        to reset the minimum timer interval before each test.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::reset):
+
 2011-02-18  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Adam Roben.

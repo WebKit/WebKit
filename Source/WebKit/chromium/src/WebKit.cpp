@@ -66,15 +66,6 @@ void initialize(WebKitClient* webKitClient)
     WTF::initializeMainThread();
     WTF::AtomicString::init();
 
-    // Chromium sets the minimum interval timeout to 4ms, overriding the
-    // default of 10ms.  We'd like to go lower, however there are poorly
-    // coded websites out there which do create CPU-spinning loops.  Using
-    // 4ms prevents the CPU from spinning too busily and provides a balance
-    // between CPU spinning and the smallest possible interval timer.
-    // FIXME: remove this call once Chromium has been changed to set
-    // this for all pages using the new WebSettings API.
-    WebCore::Settings::setDefaultMinDOMTimerInterval(0.004);
-
     // There are some code paths (for example, running WebKit in the browser
     // process and calling into LocalStorage before anything else) where the
     // UTF8 string encoding tables are used on a background thread before

@@ -1,3 +1,21 @@
+2011-02-18  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Clean up initialization of minimum timer interval
+        https://bugs.webkit.org/show_bug.cgi?id=54772
+
+        Rolled forward Chromium DEPS to pick up new webkit_support entry
+        point. Removed setting of default minimum timer interval, as this
+        is now done every time WebPreferences are applied.
+
+        Tested with Chromium DRT port built from WebKit workspace; ran
+        fast/dom/ layout tests.
+
+        * DEPS:
+        * src/WebKit.cpp:
+        (WebKit::initialize):
+
 2011-02-18  Ben Vanik  <benvanik@google.com>
 
         Reviewed by Kenneth Russell.
