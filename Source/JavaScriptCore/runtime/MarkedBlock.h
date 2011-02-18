@@ -90,9 +90,9 @@ namespace JSC {
         MarkedBlock(const PageAllocationAligned&, JSGlobalData*, size_t cellSize);
         Atom* atoms();
 
-        WTF::Bitmap<blockSize / atomSize> m_marks;
         size_t m_atomsPerCell;
-        size_t m_endAtom; // We allocate [0, m_endAtom - 1). m_endAtom - 1 is a dummy unusable cell to avoid a branch in allocate().
+        size_t m_endAtom;
+        WTF::Bitmap<blockSize / atomSize> m_marks;
         PageAllocationAligned m_allocation;
         Heap* m_heap;
     };
@@ -124,22 +124,17 @@ namespace JSC {
 
     inline bool MarkedBlock::isEmpty()
     {
-        m_marks.clear(m_endAtom - 1); // Clear the always-set last bit to avoid confusing isEmpty().
-        bool result = m_marks.isEmpty();
-        m_marks.set(m_endAtom - 1);
-        return result;
+        return m_marks.isEmpty();
     }
 
     inline void MarkedBlock::clearMarks()
     {
-        // allocate() assumes that the last mark bit is always set.
         m_marks.clearAll();
-        m_marks.set(m_endAtom - 1);
     }
     
     inline size_t MarkedBlock::markCount()
     {
-        return m_marks.count() - 1; // The last mark bit is always set.
+        return m_marks.count();
     }
 
     inline size_t MarkedBlock::size()
@@ -174,7 +169,7 @@ namespace JSC {
 
     template <typename Functor> inline void MarkedBlock::forEach(Functor& functor)
     {
-        for (size_t i = firstAtom(); i < m_endAtom - 1; i += m_atomsPerCell) { // The last cell is a dummy place-holder.
+        for (size_t i = firstAtom(); i != m_endAtom; i += m_atomsPerCell) {
             if (!m_marks.get(i))
                 continue;
             functor(reinterpret_cast<JSCell*>(&atoms()[i]));

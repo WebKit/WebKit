@@ -404,16 +404,16 @@ namespace JSC {
 
     inline void* MarkedBlock::allocate(size_t& nextAtom)
     {
-        do {
+        while (nextAtom != m_endAtom) {
             ASSERT(nextAtom < m_endAtom);
-            if (!m_marks.testAndSet(nextAtom)) { // Always false for the last cell in the block
+            if (!m_marks.testAndSet(nextAtom)) {
                 JSCell* cell = reinterpret_cast<JSCell*>(&atoms()[nextAtom]);
                 nextAtom += m_atomsPerCell;
                 cell->~JSCell();
                 return cell;
             }
             nextAtom += m_atomsPerCell;
-        } while (nextAtom != m_endAtom);
+        }
 
         nextAtom = firstAtom();
         return 0;
