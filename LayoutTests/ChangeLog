@@ -1,3 +1,11 @@
+2011-02-17  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed. Fixed skip entries for
+        LayoutTestController.setMinimumTimerInterval which I messed up the
+        first time.
+
+        * platform/mac-wk2/Skipped:
+
 2011-02-17  Sergey Glazunov  <serg.glazunov@gmail.com>
 
         Reviewed by Kenneth Russell.

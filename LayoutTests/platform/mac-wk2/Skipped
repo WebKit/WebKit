@@ -1959,10 +1959,10 @@ java
 plugins/invalidate_rect.html
 
 # WebKitTestRunner needs layoutTestController.setMinimumTimerInterval
-timer-increase-min-interval-and-reset-part-1.html
-timer-increase-min-interval-and-reset-part-2.html
-timer-increase-min-interval.html
-timer-increase-then-decrease-min-interval.html
+fast/dom/timer-increase-min-interval-and-reset-part-1.html
+fast/dom/timer-increase-min-interval-and-reset-part-2.html
+fast/dom/timer-increase-min-interval.html
+fast/dom/timer-increase-then-decrease-min-interval.html
 
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################
