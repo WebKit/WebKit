@@ -1,5 +1,12 @@
 2011-02-18  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, rolling out r78982.
+        http://trac.webkit.org/changeset/78982
+
+        * platform/gtk/accessibility/combo-box-collapsed-selection-changed-expected.txt:
+
+2011-02-18  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, update platform/gtk/accessibility test baselines as
         requested by Mario Sanchez Prada.
 
