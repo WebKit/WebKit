@@ -3467,5 +3467,5 @@ BUGWK54659 DEBUG : inspector/debugger/debug-inlined-scripts.html = CRASH
 
 // For some reason, we can't rebaseline these because they don't end up in the archive. Disable while
 // we figure this out.
-BUGATWILSON :  svg/W3C-SVG-1.1-SE/coords-units-03-b.svg = FAIL
-BUGATWILSON : compositing/reflections/deeply-nested-reflections.html = FAIL
+BUGATWILSON : svg/W3C-SVG-1.1-SE/coords-units-03-b.svg = IMAGE+TEXT
+BUGATWILSON : compositing/reflections/deeply-nested-reflections.html = IMAGE+TEXT
