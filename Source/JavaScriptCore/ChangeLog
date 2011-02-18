@@ -1,3 +1,11 @@
+2011-02-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] Buildfix.
+
+        * wtf/RetainPtr.h: Add missing PLATFORM(CF) guard.
+
 2011-02-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

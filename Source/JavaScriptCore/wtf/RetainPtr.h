@@ -25,7 +25,10 @@
 #include "NullPtr.h"
 #include "TypeTraits.h"
 #include <algorithm>
+
+#if PLATFORM(CF)
 #include <CoreFoundation/CoreFoundation.h>
+#endif
 
 #ifdef __OBJC__
 #import <Foundation/Foundation.h>
