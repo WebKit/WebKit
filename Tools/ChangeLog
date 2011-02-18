@@ -1,3 +1,14 @@
+2011-02-17  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        Add blacklist of remaining webkitpy/* modules that fail on
+        Win32, so that test-webkitpy will at least run cleanly.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54709
+
+        * Scripts/webkitpy/layout_tests/test/main.py:
+
 2011-02-17  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.
