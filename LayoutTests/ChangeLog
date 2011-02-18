@@ -1,3 +1,16 @@
+2011-02-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] http/tests/security/xssAuditor/script-tag-with-fancy-unicode.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=54630
+
+        Platform independent expected fail isn't good for Qt, because
+        this test passes on Qt, so add Qt specific expected result.
+
+        * platform/qt/Skipped: Unskip the passing test.
+        * platform/qt/http/tests/security/xssAuditor/script-tag-with-fancy-unicode-expected.txt: Added.
+
 2011-02-18  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip a GTK media test affected by pixel diferrence
