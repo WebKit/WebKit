@@ -102,30 +102,30 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (109,2) size 14x14
         RenderTextControl {INPUT} at (131,2) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (0,0) size 0x0
-layer at (14,48) size 94x10 scrollWidth 177
+layer at (14,48) size 94x10 scrollWidth 170
   RenderBlock {DIV} at (3,3) size 94x10
-    RenderText {#text} at (1,0) size 175x10
-      text run at (1,0) width 175: "A quick brown fox jumps over the lazy dog"
-layer at (14,64) size 84x10 scrollWidth 177
+    RenderText {#text} at (1,0) size 168x10
+      text run at (1,0) width 168: "A quick brown fox jumps over the lazy dog"
+layer at (14,64) size 84x10 scrollWidth 170
   RenderBlock {DIV} at (3,3) size 84x10
-    RenderText {#text} at (1,0) size 175x10
-      text run at (1,0) width 175: "A quick brown fox jumps over the lazy dog"
-layer at (14,80) size 96x11 scrollWidth 195
+    RenderText {#text} at (1,0) size 168x10
+      text run at (1,0) width 168: "A quick brown fox jumps over the lazy dog"
+layer at (14,80) size 96x11 scrollWidth 191
   RenderBlock {DIV} at (3,3) size 96x11
-    RenderText {#text} at (1,0) size 193x11
-      text run at (1,0) width 193: "A quick brown fox jumps over the lazy dog"
-layer at (14,97) size 85x11 scrollWidth 195
+    RenderText {#text} at (1,0) size 189x11
+      text run at (1,0) width 189: "A quick brown fox jumps over the lazy dog"
+layer at (14,97) size 85x11 scrollWidth 191
   RenderBlock {DIV} at (3,3) size 85x11
-    RenderText {#text} at (1,0) size 193x11
-      text run at (1,0) width 193: "A quick brown fox jumps over the lazy dog"
-layer at (14,114) size 98x12 scrollWidth 213
+    RenderText {#text} at (1,0) size 189x11
+      text run at (1,0) width 189: "A quick brown fox jumps over the lazy dog"
+layer at (14,114) size 98x12 scrollWidth 212
   RenderBlock {DIV} at (3,3) size 98x12
-    RenderText {#text} at (1,0) size 211x12
-      text run at (1,0) width 211: "A quick brown fox jumps over the lazy dog"
-layer at (14,132) size 86x12 scrollWidth 213
+    RenderText {#text} at (1,0) size 210x12
+      text run at (1,0) width 210: "A quick brown fox jumps over the lazy dog"
+layer at (14,132) size 86x12 scrollWidth 212
   RenderBlock {DIV} at (3,3) size 86x12
-    RenderText {#text} at (1,0) size 211x12
-      text run at (1,0) width 211: "A quick brown fox jumps over the lazy dog"
+    RenderText {#text} at (1,0) size 210x12
+      text run at (1,0) width 210: "A quick brown fox jumps over the lazy dog"
 layer at (16,152) size 119x13 scrollWidth 233
   RenderBlock {DIV} at (3,3) size 119x13
     RenderText {#text} at (1,0) size 231x13
@@ -134,22 +134,22 @@ layer at (16,175) size 105x13 scrollWidth 233
   RenderBlock {DIV} at (3,3) size 105x13
     RenderText {#text} at (1,0) size 231x13
       text run at (1,0) width 231: "A quick brown fox jumps over the lazy dog"
-layer at (16,198) size 121x15 scrollWidth 260
+layer at (16,198) size 121x15 scrollWidth 254
   RenderBlock {DIV} at (3,3) size 121x15
-    RenderText {#text} at (1,0) size 258x15
-      text run at (1,0) width 258: "A quick brown fox jumps over the lazy dog"
-layer at (16,223) size 106x15 scrollWidth 260
+    RenderText {#text} at (1,0) size 252x15
+      text run at (1,0) width 252: "A quick brown fox jumps over the lazy dog"
+layer at (16,223) size 106x15 scrollWidth 254
   RenderBlock {DIV} at (3,3) size 106x15
-    RenderText {#text} at (1,0) size 258x15
-      text run at (1,0) width 258: "A quick brown fox jumps over the lazy dog"
-layer at (16,248) size 142x16 scrollWidth 278
+    RenderText {#text} at (1,0) size 252x15
+      text run at (1,0) width 252: "A quick brown fox jumps over the lazy dog"
+layer at (16,248) size 142x16 scrollWidth 275
   RenderBlock {DIV} at (3,3) size 142x16
-    RenderText {#text} at (1,0) size 276x16
-      text run at (1,0) width 276: "A quick brown fox jumps over the lazy dog"
-layer at (16,274) size 126x16 scrollWidth 278
+    RenderText {#text} at (1,0) size 273x16
+      text run at (1,0) width 273: "A quick brown fox jumps over the lazy dog"
+layer at (16,274) size 126x16 scrollWidth 275
   RenderBlock {DIV} at (3,3) size 126x16
-    RenderText {#text} at (1,0) size 276x16
-      text run at (1,0) width 276: "A quick brown fox jumps over the lazy dog"
+    RenderText {#text} at (1,0) size 273x16
+      text run at (1,0) width 273: "A quick brown fox jumps over the lazy dog"
 layer at (16,300) size 144x17 scrollWidth 296
   RenderBlock {DIV} at (3,3) size 144x17
     RenderText {#text} at (1,0) size 294x17
@@ -158,46 +158,46 @@ layer at (16,327) size 127x17 scrollWidth 296
   RenderBlock {DIV} at (3,3) size 127x17
     RenderText {#text} at (1,0) size 294x17
       text run at (1,0) width 294: "A quick brown fox jumps over the lazy dog"
-layer at (174,53) size 164x18 scrollWidth 323
+layer at (174,53) size 164x18 scrollWidth 317
   RenderBlock {DIV} at (3,3) size 164x18
-    RenderText {#text} at (1,0) size 321x18
-      text run at (1,0) width 321: "A quick brown fox jumps over the lazy dog"
-layer at (174,81) size 146x18 scrollWidth 323
+    RenderText {#text} at (1,0) size 315x18
+      text run at (1,0) width 315: "A quick brown fox jumps over the lazy dog"
+layer at (174,81) size 146x18 scrollWidth 317
   RenderBlock {DIV} at (3,3) size 146x18
-    RenderText {#text} at (1,0) size 321x18
-      text run at (1,0) width 321: "A quick brown fox jumps over the lazy dog"
-layer at (174,109) size 166x18 scrollWidth 340
+    RenderText {#text} at (1,0) size 315x18
+      text run at (1,0) width 315: "A quick brown fox jumps over the lazy dog"
+layer at (174,109) size 166x18 scrollWidth 338
   RenderBlock {DIV} at (3,3) size 166x18
-    RenderText {#text} at (1,0) size 338x18
-      text run at (1,0) width 338: "A quick brown fox jumps over the lazy dog"
-layer at (174,137) size 146x18 scrollWidth 340
+    RenderText {#text} at (1,0) size 336x18
+      text run at (1,0) width 336: "A quick brown fox jumps over the lazy dog"
+layer at (174,137) size 146x18 scrollWidth 338
   RenderBlock {DIV} at (3,3) size 146x18
-    RenderText {#text} at (1,0) size 338x18
-      text run at (1,0) width 338: "A quick brown fox jumps over the lazy dog"
-layer at (174,165) size 168x20 scrollWidth 358
+    RenderText {#text} at (1,0) size 336x18
+      text run at (1,0) width 336: "A quick brown fox jumps over the lazy dog"
+layer at (174,165) size 168x20 scrollWidth 359
   RenderBlock {DIV} at (3,3) size 168x20
-    RenderText {#text} at (1,0) size 356x20
-      text run at (1,0) width 356: "A quick brown fox jumps over the lazy dog"
-layer at (174,195) size 147x20 scrollWidth 358
+    RenderText {#text} at (1,0) size 357x20
+      text run at (1,0) width 357: "A quick brown fox jumps over the lazy dog"
+layer at (174,195) size 147x20 scrollWidth 359
   RenderBlock {DIV} at (3,3) size 147x20
-    RenderText {#text} at (1,0) size 356x20
-      text run at (1,0) width 356: "A quick brown fox jumps over the lazy dog"
-layer at (174,225) size 189x21 scrollWidth 384
+    RenderText {#text} at (1,0) size 357x20
+      text run at (1,0) width 357: "A quick brown fox jumps over the lazy dog"
+layer at (174,225) size 189x21 scrollWidth 380
   RenderBlock {DIV} at (3,3) size 189x21
-    RenderText {#text} at (1,0) size 382x21
-      text run at (1,0) width 382: "A quick brown fox jumps over the lazy dog"
-layer at (174,256) size 167x21 scrollWidth 384
+    RenderText {#text} at (1,0) size 378x21
+      text run at (1,0) width 378: "A quick brown fox jumps over the lazy dog"
+layer at (174,256) size 167x21 scrollWidth 380
   RenderBlock {DIV} at (3,3) size 167x21
-    RenderText {#text} at (1,0) size 382x21
-      text run at (1,0) width 382: "A quick brown fox jumps over the lazy dog"
-layer at (174,287) size 191x22 scrollWidth 404
+    RenderText {#text} at (1,0) size 378x21
+      text run at (1,0) width 378: "A quick brown fox jumps over the lazy dog"
+layer at (174,287) size 191x22 scrollWidth 401
   RenderBlock {DIV} at (3,3) size 191x22
-    RenderText {#text} at (1,0) size 402x22
-      text run at (1,0) width 402: "A quick brown fox jumps over the lazy dog"
-layer at (174,319) size 168x22 scrollWidth 404
+    RenderText {#text} at (1,0) size 399x22
+      text run at (1,0) width 399: "A quick brown fox jumps over the lazy dog"
+layer at (174,319) size 168x22 scrollWidth 401
   RenderBlock {DIV} at (3,3) size 168x22
-    RenderText {#text} at (1,0) size 402x22
-      text run at (1,0) width 402: "A quick brown fox jumps over the lazy dog"
+    RenderText {#text} at (1,0) size 399x22
+      text run at (1,0) width 399: "A quick brown fox jumps over the lazy dog"
 layer at (379,62) size 212x23 scrollWidth 421
   RenderBlock {DIV} at (3,3) size 212x23
     RenderText {#text} at (1,0) size 419x23
@@ -206,30 +206,30 @@ layer at (379,95) size 187x23 scrollWidth 421
   RenderBlock {DIV} at (3,3) size 187x23
     RenderText {#text} at (1,0) size 419x23
       text run at (1,0) width 419: "A quick brown fox jumps over the lazy dog"
-layer at (379,128) size 214x24 scrollWidth 449
+layer at (379,128) size 214x24 scrollWidth 442
   RenderBlock {DIV} at (3,3) size 214x24
-    RenderText {#text} at (1,0) size 447x24
-      text run at (1,0) width 447: "A quick brown fox jumps over the lazy dog"
-layer at (379,162) size 188x24 scrollWidth 449
+    RenderText {#text} at (1,0) size 440x24
+      text run at (1,0) width 440: "A quick brown fox jumps over the lazy dog"
+layer at (379,162) size 188x24 scrollWidth 442
   RenderBlock {DIV} at (3,3) size 188x24
-    RenderText {#text} at (1,0) size 447x24
-      text run at (1,0) width 447: "A quick brown fox jumps over the lazy dog"
-layer at (379,196) size 235x26 scrollWidth 468
+    RenderText {#text} at (1,0) size 440x24
+      text run at (1,0) width 440: "A quick brown fox jumps over the lazy dog"
+layer at (379,196) size 235x26 scrollWidth 463
   RenderBlock {DIV} at (3,3) size 235x26
-    RenderText {#text} at (1,0) size 466x26
-      text run at (1,0) width 466: "A quick brown fox jumps over the lazy dog"
-layer at (379,232) size 208x26 scrollWidth 468
+    RenderText {#text} at (1,0) size 461x26
+      text run at (1,0) width 461: "A quick brown fox jumps over the lazy dog"
+layer at (379,232) size 208x26 scrollWidth 463
   RenderBlock {DIV} at (3,3) size 208x26
-    RenderText {#text} at (1,0) size 466x26
-      text run at (1,0) width 466: "A quick brown fox jumps over the lazy dog"
-layer at (379,268) size 237x27 scrollWidth 485
+    RenderText {#text} at (1,0) size 461x26
+      text run at (1,0) width 461: "A quick brown fox jumps over the lazy dog"
+layer at (379,268) size 237x27 scrollWidth 484
   RenderBlock {DIV} at (3,3) size 237x27
-    RenderText {#text} at (1,0) size 483x27
-      text run at (1,0) width 483: "A quick brown fox jumps over the lazy dog"
-layer at (379,305) size 209x27 scrollWidth 485
+    RenderText {#text} at (1,0) size 482x27
+      text run at (1,0) width 482: "A quick brown fox jumps over the lazy dog"
+layer at (379,305) size 209x27 scrollWidth 484
   RenderBlock {DIV} at (3,3) size 209x27
-    RenderText {#text} at (1,0) size 483x27
-      text run at (1,0) width 483: "A quick brown fox jumps over the lazy dog"
+    RenderText {#text} at (1,0) size 482x27
+      text run at (1,0) width 482: "A quick brown fox jumps over the lazy dog"
 layer at (13,357) size 105x13
   RenderBlock {DIV} at (3,3) size 105x13
 layer at (142,357) size 119x13
