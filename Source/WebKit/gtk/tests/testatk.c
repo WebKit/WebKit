@@ -62,7 +62,7 @@ static const char* listsOfItems = "<html><body><ul><li>text only</li><li><a href
 
 static const char* textForCaretBrowsing = "<html><body><h1>A text header</h1><p>A paragraph <a href='http://foo.bar.baz/'>with a link</a> in the middle</p><ol><li>A list item</li></ol><select><option selected value='foo'>An option in a combo box</option></select></body></html>";
 
-static const char* textForSelections = "<html><body><p>A paragraph with plain text</p><p>A paragraph with <a href='http://webkit.org'>a link</a> in the middle</p></body></html>";
+static const char* textForSelections = "<html><body><p>A paragraph with plain text</p><p>A paragraph with <a href='http://webkit.org'>a link</a> in the middle</p><ol><li>A list item</li></ol><select></body></html>";
 
 static const char* textWithAttributes = "<html><head><style>.st1 {font-family: monospace; color:rgb(120,121,122);} .st2 {text-decoration:underline; background-color:rgb(80,81,82);}</style></head><body><p style=\"font-size:14; text-align:right;\">This is the <i>first</i><b> sentence of this text.</b></p><p class=\"st1\">This sentence should have an style applied <span class=\"st2\">and this part should have another one</span>.</p><p>x<sub>1</sub><sup>2</sup>=x<sub>2</sub><sup>3</sup></p><p style=\"text-align:center;\">This sentence is the <strike>last</strike> one.</p></body></html>";
 
@@ -996,10 +996,18 @@ static void testWebkitAtkTextSelections()
 
     AtkText* paragraph1 = ATK_TEXT(atk_object_ref_accessible_child(object, 0));
     g_assert(ATK_IS_TEXT(paragraph1));
+
     AtkText* paragraph2 = ATK_TEXT(atk_object_ref_accessible_child(object, 1));
     g_assert(ATK_IS_TEXT(paragraph2));
+
     AtkText* link = ATK_TEXT(atk_object_ref_accessible_child(ATK_OBJECT(paragraph2), 0));
     g_assert(ATK_IS_TEXT(link));
+
+    AtkObject* list = atk_object_ref_accessible_child(object, 2);
+    g_assert(ATK_OBJECT(list));
+
+    AtkText* listItem = ATK_TEXT(atk_object_ref_accessible_child(list, 0));
+    g_assert(ATK_IS_TEXT(listItem));
 
     /* First paragraph (simple text). */
 
@@ -1096,8 +1104,36 @@ static void testWebkitAtkTextSelections()
     g_assert_cmpstr(selectedText, ==, 0);
     g_free (selectedText);
 
+    /* List item */
+
+    g_assert(atk_object_get_role(list) == ATK_ROLE_LIST);
+    g_assert_cmpint(atk_object_get_n_accessible_children(list), ==, 1);
+
+    gchar* text = atk_text_get_text(listItem, 0, -1);
+    g_assert_cmpstr(text, ==, "1. A list item");
+    g_free (text);
+
+    /* It's not possible to select text inside an item's marker. */
+    result = atk_text_set_selection (listItem, 0, 0, 9);
+    g_assert(!result);
+    result = atk_text_set_selection (listItem, 0, 9, 1);
+    g_assert(!result);
+
+    /* It should be possible to select text inside an item's text. */
+    result = atk_text_set_selection (listItem, 0, 3, 9);
+    g_assert(result);
+
+    g_assert_cmpint(atk_text_get_n_selections(listItem), ==, 1);
+    selectedText = atk_text_get_selection(listItem, 0, &startOffset, &endOffset);
+    g_assert_cmpint(startOffset, ==, 3);
+    g_assert_cmpint(endOffset, ==, 9);
+    g_assert_cmpstr(selectedText, ==, "A list");
+    g_free (selectedText);
+
     g_object_unref(paragraph1);
     g_object_unref(paragraph2);
+    g_object_unref(list);
+    g_object_unref(listItem);
     g_object_unref(webView);
 }
 

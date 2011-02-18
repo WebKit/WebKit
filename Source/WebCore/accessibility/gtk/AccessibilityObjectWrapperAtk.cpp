@@ -1122,29 +1122,28 @@ gchar* textForObject(AccessibilityRenderObject* accObject)
 static gchar* webkit_accessible_text_get_text(AtkText* text, gint startOffset, gint endOffset)
 {
     AccessibilityObject* coreObject = core(text);
-    String ret;
-    unsigned start = startOffset;
-    if (endOffset == -1) {
-        endOffset = coreObject->stringValue().length();
-        if (!endOffset)
-            endOffset = coreObject->textUnderElement().length();
-    }
-    int length = endOffset - startOffset;
 
+    int end = endOffset;
+    if (endOffset == -1) {
+        end = coreObject->stringValue().length();
+        if (!end)
+            end = coreObject->textUnderElement().length();
+    }
+
+    String ret;
     if (coreObject->isTextControl())
-        ret = coreObject->doAXStringForRange(PlainTextRange(start, length));
+        ret = coreObject->doAXStringForRange(PlainTextRange(0, endOffset));
     else {
-        ret = coreObject->stringValue().substring(start, length);
+        ret = coreObject->stringValue();
         if (!ret)
-            ret = coreObject->textUnderElement().substring(start, length);
+            ret = coreObject->textUnderElement();
     }
 
     if (!ret.length()) {
         // This can happen at least with anonymous RenderBlocks (e.g. body text amongst paragraphs)
-        ret = String(textForObject(static_cast<AccessibilityRenderObject*>(coreObject)));
-        if (!endOffset)
-            endOffset = ret.length();
-        ret = ret.substring(start, endOffset - startOffset);
+        ret = String(textForObject(toAccessibilityRenderObject(coreObject)));
+        if (!end)
+            end = ret.length();
     }
 
     // Prefix a item number/bullet if needed
@@ -1153,9 +1152,12 @@ static gchar* webkit_accessible_text_get_text(AtkText* text, gint startOffset, g
         if (objRenderer && objRenderer->isListItem()) {
             String markerText = toRenderListItem(objRenderer)->markerTextWithSuffix();
             ret = objRenderer->style()->direction() == LTR ? markerText + ret : ret + markerText;
+            if (endOffset == -1)
+                end += markerText.length();
         }
     }
 
+    ret = ret.substring(startOffset, end - startOffset);
     return g_strdup(ret.utf8().data());
 }
 
@@ -1628,6 +1630,14 @@ static void getSelectionOffsetsForObject(AccessibilityObject* coreObject, Visibl
 
     // Set values for start and end offsets.
     startOffset = TextIterator::rangeLength(rangeInParent.get());
+
+    // We need to adjust the offsets for the list item marker.
+    RenderObject* renderer = toAccessibilityRenderObject(coreObject)->renderer();
+    if (renderer && renderer->isListItem()) {
+        String markerText = toRenderListItem(renderer)->markerTextWithSuffix();
+        startOffset += markerText.length();
+    }
+
     RefPtr<Range> nodeRange = Range::create(node->document(), nodeRangeStart, nodeRangeEnd);
     endOffset = startOffset + TextIterator::rangeLength(nodeRange.get());
 }
@@ -1684,6 +1694,10 @@ static gboolean webkit_accessible_text_set_selection(AtkText* text, gint selecti
     if (selectionNum)
         return FALSE;
 
+    AccessibilityObject* coreObject = core(text);
+    if (!coreObject->isAccessibilityRenderObject())
+        return FALSE;
+
     // Consider -1 and out-of-bound values and correct them to length
     gint textCount = webkit_accessible_text_get_character_count(text);
     if (startOffset < 0 || startOffset > textCount)
@@ -1691,11 +1705,24 @@ static gboolean webkit_accessible_text_set_selection(AtkText* text, gint selecti
     if (endOffset < 0 || endOffset > textCount)
         endOffset = textCount;
 
-    AccessibilityObject* coreObject = core(text);
+    // We need to adjust the offsets for the list item marker.
+    RenderObject* renderer = toAccessibilityRenderObject(coreObject)->renderer();
+    if (renderer && renderer->isListItem()) {
+        String markerText = toRenderListItem(renderer)->markerTextWithSuffix();
+        int markerLength = markerText.length();
+        if (startOffset < markerLength || endOffset < markerLength)
+            return FALSE;
+
+        startOffset -= markerLength;
+        endOffset -= markerLength;
+    }
+
     PlainTextRange textRange(startOffset, endOffset - startOffset);
     VisiblePositionRange range = coreObject->visiblePositionRangeForRange(textRange);
-    coreObject->setSelectedVisiblePositionRange(range);
+    if (range.isNull())
+        return FALSE;
 
+    coreObject->setSelectedVisiblePositionRange(range);
     return TRUE;
 }
 

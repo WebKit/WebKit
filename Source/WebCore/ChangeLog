@@ -1,3 +1,22 @@
+2011-02-18  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] atk_text_get_selection/atk_text_set_selection fails for list items
+        https://bugs.webkit.org/show_bug.cgi?id=53453
+
+        Ensure that atk_text_{get|set}_selection() work with list items.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_text_get_text): Properly handle list item
+        markers when returning the text for an object for a given interval
+        specified through the startOffset and endOffset parameters.
+        (getSelectionOffsetsForObject): Bear in mind list item markers
+        when returning the offsets for a selection over a list item.
+        (webkit_accessible_text_set_selection): Adjust offsets if needed
+        for list items with item markers. Ensure that it returns TRUE only
+        when everything went fine setting the text selection.
+
 2011-02-18  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej Stachowiak.
