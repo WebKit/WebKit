@@ -1,5 +1,12 @@
 2011-02-17  Mihai Parparita  <mihaip@chromium.org>
 
+        Unreviewed Chromium expectations update. Actually mark Windows and Linux
+        as IMAGE+TEXT.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-02-17  Mihai Parparita  <mihaip@chromium.org>
+
         Unreviewed Chromium expectations update. Fix expectations after r78951
         (there are text difs too on Windows and Linux).
 
