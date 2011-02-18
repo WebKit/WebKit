@@ -1,0 +1,38 @@
+Accessibility object emitted "focus-event = 1" / Name: "foo" / Role: 11
+Accessibility object emitted "state-change:focused = 1" / Name: "foo" / Role: 11
+Accessibility object emitted "focus-event = 1" / Name: "bar" / Role: 11
+Accessibility object emitted "state-change:focused = 1" / Name: "bar" / Role: 11
+Accessibility object emitted "state-change:selected = 1" / Name: "bar" / Role: 34
+Accessibility object emitted "focus-event = 1" / Name: "bar" / Role: 34
+Accessibility object emitted "state-change:focused = 1" / Name: "bar" / Role: 34
+Accessibility object emitted "focus-event = 1" / Name: "baz" / Role: 11
+Accessibility object emitted "state-change:focused = 1" / Name: "baz" / Role: 11
+Accessibility object emitted "focus-event = 0" / Name: "bar" / Role: 34
+Accessibility object emitted "state-change:focused = 0" / Name: "bar" / Role: 34
+Accessibility object emitted "state-change:selected = 1" / Name: "baz" / Role: 34
+Accessibility object emitted "focus-event = 1" / Name: "baz" / Role: 34
+Accessibility object emitted "state-change:focused = 1" / Name: "baz" / Role: 34
+Accessibility object emitted "focus-event = 1" / Name: "bar" / Role: 11
+Accessibility object emitted "state-change:focused = 1" / Name: "bar" / Role: 11
+Accessibility object emitted "focus-event = 0" / Name: "baz" / Role: 34
+Accessibility object emitted "state-change:focused = 0" / Name: "baz" / Role: 34
+Accessibility object emitted "state-change:selected = 1" / Name: "bar" / Role: 34
+Accessibility object emitted "focus-event = 1" / Name: "bar" / Role: 34
+Accessibility object emitted "state-change:focused = 1" / Name: "bar" / Role: 34
+Accessibility object emitted "focus-event = 1" / Name: "foo" / Role: 11
+Accessibility object emitted "state-change:focused = 1" / Name: "foo" / Role: 11
+Accessibility object emitted "focus-event = 0" / Name: "bar" / Role: 34
+Accessibility object emitted "state-change:focused = 0" / Name: "bar" / Role: 34
+Accessibility object emitted "state-change:selected = 1" / Name: "foo" / Role: 34
+Accessibility object emitted "focus-event = 1" / Name: "foo" / Role: 34
+Accessibility object emitted "state-change:focused = 1" / Name: "foo" / Role: 34
+
+This tests that the 'state-changed:selected' signal is emitted when arrowing through the options of a combobox while collapsed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
