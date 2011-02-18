@@ -1,3 +1,20 @@
+2011-02-17  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Retry landing after fixing Chromium side.
+        Fix for Bug 54632 - [chromium] Printing causes view to scroll
+        https://bugs.webkit.org/show_bug.cgi?id=54632
+
+        Expose setScrollOffset such that Chromium can restore the scroll offset
+        after printing the document. The bug will be fixed when the counterpart
+        patch http://codereview.chromium.org/6539011/ is landed for Chromium.
+
+        * public/WebFrame.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::setScrollOffset):
+        * src/WebFrameImpl.h:
+
 2011-02-17  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed, rolling out r78936.

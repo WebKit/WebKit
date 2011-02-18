@@ -544,6 +544,12 @@ WebSize WebFrameImpl::scrollOffset() const
     return WebSize();
 }
 
+void WebFrameImpl::setScrollOffset(const WebSize& offset)
+{
+    if (FrameView* view = frameView())
+        view->setScrollOffset(IntPoint(offset.width, offset.height));
+}
+
 WebSize WebFrameImpl::contentsSize() const
 {
     return frame()->view()->contentsSize();
