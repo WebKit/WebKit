@@ -1,3 +1,11 @@
+2011-02-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] Buildfix for platforms with geolocation disabled.
+
+        * Api/qwebpage.cpp: Add the missing guard.
+
 2011-02-18  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

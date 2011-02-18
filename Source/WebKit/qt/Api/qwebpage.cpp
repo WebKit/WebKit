@@ -62,7 +62,11 @@
 #include "FrameLoaderClientQt.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+
+#if ENABLE(GEOLOCATION)
 #include "GeolocationClientQt.h"
+#endif
+
 #include "GeolocationPermissionClientQt.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameOwnerElement.h"
