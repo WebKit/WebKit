@@ -1,3 +1,13 @@
+2011-02-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Rename performLookupAtCurrentMouseLocation to performDictionaryLookupAtCurrentMouseLocation
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView performDictionaryLookupAtCurrentMouseLocation]):
+        * UIProcess/API/mac/WKViewPrivate.h:
+
 2011-02-19  Charlie Reis  <creis@chromium.org>
 
         Reviewed by Mihai Parparita.

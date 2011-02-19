@@ -2061,7 +2061,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     return _frameSizeUpdatesDisabledCount > 0;
 }
 
-- (void)performLookupAtCurrentMouseLocation
+- (void)performDictionaryLookupAtCurrentMouseLocation
 {
     NSPoint thePoint = [NSEvent mouseLocation];
     thePoint = [[self window] convertScreenToBase:thePoint];
