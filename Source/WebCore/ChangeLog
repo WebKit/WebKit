@@ -1,3 +1,14 @@
+2011-02-18  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kent Tamura.
+
+        [EFL] Fix coding style errors in RenderThemeEfl.h
+        https://bugs.webkit.org/show_bug.cgi?id=54693
+
+        Fix style errors in RenderThemeEfl.h
+
+        * platform/efl/RenderThemeEfl.h:
+
 2011-02-18  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
 
         Reviewed by Andreas Kling.

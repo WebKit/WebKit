@@ -101,7 +101,7 @@ public:
     void setEntryTextColor(int foreR, int foreG, int foreB, int foreA, int backR, int backG, int backB, int backA);
     void setSearchTextColor(int foreR, int foreG, int foreB, int foreA, int backR, int backG, int backB, int backA);
 
-    void adjustSizeConstraints(RenderStyle* style, FormType type) const;
+    void adjustSizeConstraints(RenderStyle*, FormType) const;
 
 
     // System fonts.
@@ -146,7 +146,7 @@ public:
     virtual void adjustSliderThumbStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
 
-    static void setDefaultFontSize(int size);
+    static void setDefaultFontSize(int fontsize);
 
 #if ENABLE(PROGRESS_TAG)
     virtual void adjustProgressBarStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
@@ -178,9 +178,9 @@ private:
     void createEdje();
     void applyEdjeColors();
     void applyPartDescriptions();
-    const char* edjeGroupFromFormType(FormType type) const;
-    void applyEdjeStateFromForm(Evas_Object* o, ControlStates states);
-    bool paintThemePart(RenderObject* o, FormType type, const PaintInfo& i, const IntRect& rect);
+    const char* edjeGroupFromFormType(FormType) const;
+    void applyEdjeStateFromForm(Evas_Object*, ControlStates);
+    bool paintThemePart(RenderObject*, FormType, const PaintInfo&, const IntRect&);
 
     Page* m_page;
     Color m_activeSelectionBackgroundColor;
@@ -205,8 +205,8 @@ private:
         LengthSize max;
         LengthBox padding;
     };
-    void applyPartDescriptionFallback(struct ThemePartDesc* desc);
-    void applyPartDescription(Evas_Object* o, struct ThemePartDesc* desc);
+    void applyPartDescriptionFallback(struct ThemePartDesc*);
+    void applyPartDescription(Evas_Object*, struct ThemePartDesc*);
 
     struct ThemePartCacheEntry {
         FormType type;
@@ -223,16 +223,16 @@ private:
     Vector<struct ThemePartCacheEntry *> m_partCache;
 
     // get (use, create or replace) entry from cache
-    struct ThemePartCacheEntry* cacheThemePartGet(FormType type, const IntSize& size);
+    struct ThemePartCacheEntry* cacheThemePartGet(FormType, const IntSize&);
     // flush cache, deleting all entries
     void cacheThemePartFlush();
 
     // internal, used by cacheThemePartGet()
-    bool themePartCacheEntryReset(struct ThemePartCacheEntry* ce, FormType type);
-    bool themePartCacheEntrySurfaceCreate(struct ThemePartCacheEntry* ce);
-    struct ThemePartCacheEntry* cacheThemePartNew(FormType type, const IntSize& size);
-    struct ThemePartCacheEntry* cacheThemePartReset(FormType type, struct ThemePartCacheEntry* ce);
-    struct ThemePartCacheEntry* cacheThemePartResizeAndReset(FormType type, const IntSize& size, struct ThemePartCacheEntry* ce);
+    bool themePartCacheEntryReset(struct ThemePartCacheEntry*, FormType);
+    bool themePartCacheEntrySurfaceCreate(struct ThemePartCacheEntry*);
+    struct ThemePartCacheEntry* cacheThemePartNew(FormType, const IntSize&);
+    struct ThemePartCacheEntry* cacheThemePartReset(FormType, struct ThemePartCacheEntry*);
+    struct ThemePartCacheEntry* cacheThemePartResizeAndReset(FormType, const IntSize&, struct ThemePartCacheEntry*);
 
 };
 }
