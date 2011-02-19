@@ -1,3 +1,22 @@
+2011-02-18  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] The localized vendor name for Qt SIS packages should be "Nokia"
+        https://bugs.webkit.org/show_bug.cgi?id=54742
+
+        This change was applied in the Qt repository (qt/src/3rdparty/webkit),
+        so we should do the same here in QtWebKit.
+
+        Patch by Eckhart Koppen <eckhart.koppen@nokia.com>
+        a8a84f1667966acfa093c4be0b7d4b0900ddd3d9:
+
+        The previously used name "Nokia, Qt" was not usable for Nokia
+        Content Signing, which only allows "Nokia" as the visible vendor
+        name. The unique vendor ID remains as "Nokia, Qt"
+
+        * WebCore.pro:
+
 2011-02-18  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Andreas Kling.

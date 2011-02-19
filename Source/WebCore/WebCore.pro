@@ -30,7 +30,7 @@ symbian: {
     webkitlibs.path = /sys/bin
     vendorinfo = \
         "; Localised Vendor name" \
-        "%{\"Nokia, Qt\"}" \
+        "%{\"Nokia\"}" \
         " " \
         "; Unique Vendor name" \
         ":\"Nokia, Qt\"" \
