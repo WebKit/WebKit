@@ -52,9 +52,9 @@ String FileChooser::basenameForWidth(const Font& font, int width) const
         String tmpFilename = m_filenames[0];
         string = pathGetFileName(tmpFilename);
     } else
-        return StringTruncator::rightTruncate(String::number(m_filenames.size()) + " files", width, font, false);
+        return StringTruncator::rightTruncate(String::number(m_filenames.size()) + " files", width, font);
 
-    return StringTruncator::centerTruncate(string, width, font, false);
+    return StringTruncator::centerTruncate(string, width, font);
 }
 
 } // namespace WebCore

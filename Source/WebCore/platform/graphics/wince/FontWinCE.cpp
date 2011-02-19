@@ -88,9 +88,7 @@ TextRunComponent::TextRunComponent(const UChar *start, int length, const TextRun
     : m_textRun(start, length, parentTextRun.allowTabs(), 0, 0
         , parentTextRun.allowsTrailingExpansion() ? TextRun::AllowTrailingExpansion : TextRun::ForbidTrailingExpansion
         , parentTextRun.rtl()
-        , parentTextRun.directionalOverride()
-        , parentTextRun.applyRunRounding()
-        , parentTextRun.applyWordRounding())
+        , parentTextRun.directionalOverride())
     , m_offset(o)
     , m_spaces(0)
 {

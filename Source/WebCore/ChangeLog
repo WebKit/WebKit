@@ -1,3 +1,16 @@
+2011-02-18  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed WinCE build fix for r78846.
+
+        * platform/graphics/wince/FontWinCE.cpp:
+        (WebCore::TextRunComponent::TextRunComponent):
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::GraphicsContext::drawLineForText):
+        (WebCore::GraphicsContext::drawLineForTextChecking):
+        (WebCore::GraphicsContext::drawText):
+        * platform/wince/FileChooserWinCE.cpp:
+        (WebCore::FileChooser::basenameForWidth):
+
 2011-02-18  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Darin Adler.

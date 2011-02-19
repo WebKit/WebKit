@@ -1021,18 +1021,18 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
     DrawFocusRect(dc, &rect);
 }
 
-void GraphicsContext::drawLineForText(const IntPoint& origin, int width, bool printing)
+void GraphicsContext::drawLineForText(const FloatPoint& origin, float width, bool printing)
 {
     if (paintingDisabled())
         return;
 
     StrokeStyle oldStyle = strokeStyle();
     setStrokeStyle(SolidStroke);
-    drawLine(origin, origin + IntSize(width, 0));
+    drawLine(roundedIntPoint(origin), roundedIntPoint(origin + FloatSize(width, 0)));
     setStrokeStyle(oldStyle);
 }
 
-void GraphicsContext::drawLineForTextChecking(const IntPoint&, int width, TextCheckingLineStyle style)
+void GraphicsContext::drawLineForTextChecking(const FloatPoint&, float width, TextCheckingLineStyle style)
 {
     notImplemented();
 }
@@ -1530,7 +1530,7 @@ static inline bool isCharVisible(UChar c)
     return c && c != zeroWidthSpace;
 }
 
-void GraphicsContext::drawText(const Font& font, const TextRun& run, const IntPoint& point, int from, int to)
+void GraphicsContext::drawText(const Font& font, const TextRun& run, const FloatPoint& point, int from, int to)
 {
     if (paintingDisabled() || !fillColor().alpha() || !m_data->m_opacity)
         return;
