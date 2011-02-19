@@ -1,3 +1,18 @@
+2011-02-18  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] REGRESSION(r67516) : on www.gmail.com a strange rendering issue appears on the
+        menu bar due to flash.
+        https://bugs.webkit.org/show_bug.cgi?id=54741
+
+        Only show plugins with a valid size. We then don't involve X11 if there is
+        nothing to see anyway.
+
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+        (WebCore::PluginView::platformStart):
+
 2011-02-18  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Kent Tamura.

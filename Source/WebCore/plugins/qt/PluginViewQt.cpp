@@ -141,6 +141,10 @@ void PluginView::updatePluginWidget()
     if (m_windowRect == oldWindowRect && m_clipRect == oldClipRect)
         return;
 
+    // The plugin had a zero width or height before but was resized, we need to show it again.
+    if (oldWindowRect.isEmpty())
+        show();
+
     if (!m_isWindowed && m_windowRect.size() != oldWindowRect.size()) {
 #if defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO >= 5)
         // On Maemo5, Flash always renders to 16-bit buffer
@@ -942,7 +946,9 @@ bool PluginView::platformStart()
 #endif
     }
 
-    show();
+    // If the width and the height are not zero we show the PluginView.
+    if (!frameRect().isEmpty())
+        show();
 
     NPSetWindowCallbackStruct* wsi = new NPSetWindowCallbackStruct();
     wsi->type = 0;
