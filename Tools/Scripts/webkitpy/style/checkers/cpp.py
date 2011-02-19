@@ -1582,8 +1582,8 @@ def check_function_definition(filename, file_extension, clean_lines, line_number
         return
 
     modifiers_and_return_type = function_state.modifiers_and_return_type()
-    if search(r'\bWEBKIT_API\b', modifiers_and_return_type):
-        if filename.find('chromium/public/') == -1:
+    if filename.find('/chromium/') != -1 and search(r'\bWEBKIT_API\b', modifiers_and_return_type):
+        if filename.find('/chromium/public/') == -1:
             error(function_state.function_name_start_position.row, 'readability/webkit_api', 5,
                   'WEBKIT_API should only appear in the chromium public directory.')
         elif not file_extension == "h":

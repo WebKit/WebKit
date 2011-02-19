@@ -4337,25 +4337,25 @@ class WebKitStyleTest(CppStyleTestBase):
                                   '+readability/webkit_api')
         self.assertEquals('',
                           self.perform_lint('WEBKIT_API int foo();\n',
-                                            'chromium/public/test.h',
+                                            'WebKit/chromium/public/test.h',
                                             webkit_api_error_rules))
         self.assertEquals('WEBKIT_API should only be used in header files.  [readability/webkit_api] [5]',
                           self.perform_lint('WEBKIT_API int foo();\n',
-                                            'chromium/public/test.cpp',
+                                            'WebKit/chromium/public/test.cpp',
                                             webkit_api_error_rules))
         self.assertEquals('WEBKIT_API should only appear in the chromium public directory.  [readability/webkit_api] [5]',
                           self.perform_lint('WEBKIT_API int foo();\n',
-                                            'other/src/test.h',
+                                            'WebKit/chromium/src/test.h',
                                             webkit_api_error_rules))
         self.assertEquals('WEBKIT_API should not be used on a function with a body.  [readability/webkit_api] [5]',
                           self.perform_lint('WEBKIT_API int foo() { }\n',
-                                            'chromium/public/test.h',
+                                            'WebKit/chromium/public/test.h',
                                             webkit_api_error_rules))
         self.assertEquals('WEBKIT_API should not be used on a function with a body.  [readability/webkit_api] [5]',
                           self.perform_lint('WEBKIT_API inline int foo()\n'
                                             '{\n'
                                             '}\n',
-                                            'chromium/public/test.h',
+                                            'WebKit/chromium/public/test.h',
                                             webkit_api_error_rules))
         self.assertEquals('WEBKIT_API should not be used with a pure virtual function.  [readability/webkit_api] [5]',
                           self.perform_lint('{}\n'
@@ -4363,7 +4363,15 @@ class WebKitStyleTest(CppStyleTestBase):
                                             'virtual\n'
                                             'int\n'
                                             'foo() = 0;\n',
-                                            'chromium/public/test.h',
+                                            'WebKit/chromium/public/test.h',
+                                            webkit_api_error_rules))
+        self.assertEquals('',
+                          self.perform_lint('{}\n'
+                                            'WEBKIT_API\n'
+                                            'virtual\n'
+                                            'int\n'
+                                            'foo() = 0;\n',
+                                            'test.h',
                                             webkit_api_error_rules))
 
     def test_other(self):

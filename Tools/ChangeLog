@@ -1,3 +1,15 @@
+2011-02-18  David Levin  <levin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        check-webkit-style falsely complains about WebKitGTK+ public headers
+        https://bugs.webkit.org/show_bug.cgi?id=54650
+
+        * Scripts/webkitpy/style/checker.py: Add some exceptions for the gtk files.
+        * Scripts/webkitpy/style/checkers/cpp.py: Restrict the checks for WEBKIT_API
+          to the chromium directory (and improved the checks slightly).
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py: Added corresponding tests.
+
 2011-02-18  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by James Robinson.

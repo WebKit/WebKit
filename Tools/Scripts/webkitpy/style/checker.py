@@ -144,13 +144,16 @@ _PATH_RULES_SPECIFIER = [
        "Tools/MiniBrowser/qt"],
       ["-build/include"]),
     ([# The GTK+ APIs use GTK+ naming style, which includes
-      # lower-cased, underscore-separated values.
+      # lower-cased, underscore-separated values, whitespace before
+      # parens for function calls, and always having variable names.
       # Also, GTK+ allows the use of NULL.
       "Source/WebCore/bindings/scripts/test/GObject",
-      "WebKit/gtk/webkit/",
+      "Source/WebKit/gtk/webkit/",
       "Tools/DumpRenderTree/gtk/"],
      ["-readability/naming",
-      "-readability/null"]),
+      "-readability/parameter_name",
+      "-readability/null",
+      "-whitespace/parens"]),
     ([# Header files in ForwardingHeaders have no header guards or
       # exceptional header guards (e.g., WebCore_FWD_Debugger_h).
       "/ForwardingHeaders/"],
