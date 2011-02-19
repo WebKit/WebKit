@@ -1,3 +1,14 @@
+2011-02-19  Benjamin Poulain  <ikipou@gmail.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Enable the skipped tests combining workers and database
+        https://bugs.webkit.org/show_bug.cgi?id=54802
+
+        Enable the tests that do not seem to be flaky anymore.
+
+        * platform/qt/Skipped:
+
 2011-02-19  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Adam Barth.

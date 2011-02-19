@@ -4462,8 +4462,6 @@ fast/workers/worker-lifecycle.html
 fast/workers/worker-messageport-gc.html
 fast/workers/worker-multi-port.html
 fast/workers/worker-terminate.html
-fast/workers/storage/change-version-sync.html
-fast/workers/storage/interrupt-database.html
 fast/xmlhttprequest/null-document-xmlhttprequest-open.html
 fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
 
