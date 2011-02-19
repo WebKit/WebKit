@@ -1,3 +1,15 @@
+2011-02-18  Dawit Alemayehu  <adawit@kde.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt]  Button Element is rendered w/ text off-center.
+        https://bugs.webkit.org/show_bug.cgi?id=53373
+
+        Test: LayoutTests/fast/forms/button-white-space.html 
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::adjustButtonStyle):
+
 2011-02-18  Jonathan Backer  <backer@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -547,9 +547,6 @@ void RenderThemeQt::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* s
     }
 #endif
 
-    // White-space is locked to pre
-    style->setWhiteSpace(PRE);
-
     FontDescription fontDescription = style->fontDescription();
     fontDescription.setIsAbsoluteSize(true);
 
