@@ -1,5 +1,11 @@
 2011-02-18  Andrew Wilson  <atwilson@chromium.org>
 
+        Unreviewed test expectations fix.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-02-18  Andrew Wilson  <atwilson@chromium.org>
+
         Unreviewed. Mark object-clip-rects-assertion.html as timing out.
 
         * platform/chromium/test_expectations.txt:
