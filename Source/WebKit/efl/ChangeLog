@@ -1,3 +1,16 @@
+2011-02-18  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kent Tamura.
+
+        [EFL] Fix coding style errors in ewk_view.h
+        https://bugs.webkit.org/show_bug.cgi?id=54624
+
+        Fix style errors in ewk_view.h.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_pre_render_relative_radius):
+        * ewk/ewk_view.h:
+
 2011-02-18  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed build fix after r78634 and r78786.
