@@ -1,3 +1,17 @@
+2011-02-19  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Martin Robinson.
+
+        [cairo][canvas] Drawing from/into float rectangles with width or height in range 0 to 1 fails
+        https://bugs.webkit.org/show_bug.cgi?id=54491
+
+        When width or height in float rectangle are in range (0, 0.5) or (-0.5, 0)
+        and would round to 0, alter the behaviour to ensure that width or height are
+        at least 1 pixel in size in these cases.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::roundToDevicePixels):
+
 2011-02-19  Dan Bernstein  <mitz@apple.com>
 
         LLVM Compiler build fix.

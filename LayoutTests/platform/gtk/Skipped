@@ -1019,7 +1019,6 @@ canvas/philip/tests/type.prototype.html
 
 # These tests are failing for us, but not for Mac. This likely
 # indicates platform specific problems.
-canvas/philip/tests/2d.drawImage.floatsource.html
 canvas/philip/tests/2d.drawImage.self.2.html
 canvas/philip/tests/2d.path.arc.selfintersect.1.html
 canvas/philip/tests/2d.path.arc.shape.3.html

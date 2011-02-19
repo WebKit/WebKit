@@ -38,6 +38,7 @@
 #include "CairoPath.h"
 #include "CairoUtilities.h"
 #include "ContextShadow.h"
+#include "FloatConversion.h"
 #include "FloatRect.h"
 #include "Font.h"
 #include "GraphicsContextPlatformPrivateCairo.h"
@@ -756,16 +757,30 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& frect)
     x = round(x);
     y = round(y);
     cairo_device_to_user(cr, &x, &y);
-    result.setX(static_cast<float>(x));
-    result.setY(static_cast<float>(y));
-    x = frect.width();
-    y = frect.height();
-    cairo_user_to_device_distance(cr, &x, &y);
-    x = round(x);
-    y = round(y);
-    cairo_device_to_user_distance(cr, &x, &y);
-    result.setWidth(static_cast<float>(x));
-    result.setHeight(static_cast<float>(y));
+    result.setX(narrowPrecisionToFloat(x));
+    result.setY(narrowPrecisionToFloat(y));
+
+    // We must ensure width and height are at least 1 (or -1) when
+    // we're given float values in the range between 0 and 1 (or -1 and 0).
+    double width = frect.width();
+    double height = frect.height();
+    cairo_user_to_device_distance(cr, &width, &height);
+    if (width > -1 && width < 0)
+        width = -1;
+    else if (width > 0 && width < 1)
+        width = 1;
+    else
+        width = round(width);
+    if (height > -1 && width < 0)
+        height = -1;
+    else if (height > 0 && height < 1)
+        height = 1;
+    else
+        height = round(height);
+    cairo_device_to_user_distance(cr, &width, &height);
+    result.setWidth(narrowPrecisionToFloat(width));
+    result.setHeight(narrowPrecisionToFloat(height));
+
     return result;
 }
 
