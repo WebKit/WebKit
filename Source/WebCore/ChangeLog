@@ -1,3 +1,16 @@
+2011-02-18  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Always display the media controls when requiresFullscreenForVideoPlayback() is true
+        https://bugs.webkit.org/show_bug.cgi?id=54308
+
+        For video element, it should have controls when 
+        Chrome::requiresFullscreenForVideoPlayback() is true.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::controls):
+
 2011-02-18  Adrienne Walker  <enne@google.com>
 
         Reviewed by Kenneth Russell.

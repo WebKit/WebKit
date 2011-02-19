@@ -1470,6 +1470,10 @@ bool HTMLMediaElement::controls() const
     if (frame && !frame->script()->canExecuteScripts(NotAboutToExecuteScript))
         return true;
 
+    // always show controls for video when fullscreen playback is required.
+    if (isVideo() && document()->page() && document()->page()->chrome()->requiresFullscreenForVideoPlayback())
+        return true;
+
     return hasAttribute(controlsAttr);
 }
 
