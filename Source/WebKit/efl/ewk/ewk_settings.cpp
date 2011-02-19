@@ -290,7 +290,6 @@ void ewk_settings_proxy_uri_set(const char* proxy)
     SoupURI* uri = soup_uri_new(proxy);
     EINA_SAFETY_ON_NULL_RETURN(uri);
 
-    SoupSession* session = WebCore::ResourceHandle::defaultSession();
     g_object_set(session, SOUP_SESSION_PROXY_URI, uri, NULL);
     soup_uri_free(uri);
 #elif USE(CURL)
