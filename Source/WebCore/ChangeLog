@@ -1,3 +1,23 @@
+2011-02-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add phase in addition to momentumPhase to platform wheel events
+        Part of <rdar://problem/8945362>
+
+        Rename existing phase to momentumPhase.
+
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        (WebCore::PlatformWheelEvent::momentumPhase):
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::handleWheelEvent):
+        (WebCore::ScrollAnimatorMac::smoothScrollWithEvent):
+        * platform/mac/WheelEventMac.mm:
+        (WebCore::momentumPhaseForEvent):
+        (WebCore::phaseForEvent):
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+
 2011-02-19  Gavin Barraclough  <barraclough@apple.com>
 
         Qt build fix.

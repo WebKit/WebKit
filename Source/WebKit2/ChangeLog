@@ -1,3 +1,25 @@
+2011-02-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add phase in addition to momentumPhase to platform wheel events
+        Part of <rdar://problem/8945362>
+
+        Rename existing phase to momentumPhase.
+
+        * Shared/WebEvent.h:
+        (WebKit::WebWheelEvent::momentumPhase):
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformWheelEvent::WebKit2PlatformWheelEvent):
+        * Shared/WebWheelEvent.cpp:
+        (WebKit::WebWheelEvent::WebWheelEvent):
+        (WebKit::WebWheelEvent::encode):
+        (WebKit::WebWheelEvent::decode):
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::phaseForEvent):
+        (WebKit::momentumPhaseForEvent):
+        (WebKit::WebEventFactory::createWebWheelEvent):
+
 2011-02-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

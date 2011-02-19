@@ -112,6 +112,7 @@ public:
         m_metaKey = webEvent.metaKey();
 #if PLATFORM(MAC)
         m_phase = static_cast<WebCore::PlatformWheelEventPhase>(webEvent.phase());
+        m_momentumPhase = static_cast<WebCore::PlatformWheelEventPhase>(webEvent.momentumPhase());
         m_hasPreciseScrollingDeltas = webEvent.hasPreciseScrollingDeltas();
         m_timestamp = webEvent.timestamp();
 #endif

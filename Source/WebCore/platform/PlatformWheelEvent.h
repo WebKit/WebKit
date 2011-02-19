@@ -100,6 +100,7 @@ namespace WebCore {
 #if PLATFORM(MAC)
             , m_hasPreciseScrollingDeltas(false)
             , m_phase(PlatformWheelEventPhaseNone)
+            , m_momentumPhase(PlatformWheelEventPhaseNone)
             , m_timestamp(0)
 #endif
         {
@@ -153,6 +154,7 @@ namespace WebCore {
 #endif
 
         PlatformWheelEventPhase phase() const { return m_phase; }
+        PlatformWheelEventPhase momentumPhase() const { return m_momentumPhase; }
         bool hasPreciseScrollingDeltas() const { return m_hasPreciseScrollingDeltas; }
         double timestamp() const { return m_timestamp; }
 #endif
@@ -192,6 +194,7 @@ namespace WebCore {
 #if PLATFORM(MAC)
         bool m_hasPreciseScrollingDeltas;
         PlatformWheelEventPhase m_phase;
+        PlatformWheelEventPhase m_momentumPhase;
         double m_timestamp;
 #endif
     };

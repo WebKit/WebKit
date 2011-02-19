@@ -174,6 +174,26 @@ static WebWheelEvent::Phase phaseForEvent(NSEvent *event)
 {
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
     uint32_t phase = WebWheelEvent::PhaseNone; 
+    if ([event phase] & NSEventPhaseBegan)
+        phase |= WebWheelEvent::PhaseBegan;
+    if ([event phase] & NSEventPhaseStationary)
+        phase |= WebWheelEvent::PhaseStationary;
+    if ([event phase] & NSEventPhaseChanged)
+        phase |= WebWheelEvent::PhaseChanged;
+    if ([event phase] & NSEventPhaseEnded)
+        phase |= WebWheelEvent::PhaseEnded;
+    if ([event phase] & NSEventPhaseCancelled)
+        phase |= WebWheelEvent::PhaseCancelled;
+    return static_cast<WebWheelEvent::Phase>(phase);
+#else
+    return WebWheelEvent::PhaseNone;
+#endif
+}
+
+static WebWheelEvent::Phase momentumPhaseForEvent(NSEvent *event)
+{
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    uint32_t phase = WebWheelEvent::PhaseNone; 
     if ([event momentumPhase] & NSEventPhaseBegan)
         phase |= WebWheelEvent::PhaseBegan;
     if ([event momentumPhase] & NSEventPhaseStationary)
@@ -1036,11 +1056,12 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windo
     }
 
     WebWheelEvent::Phase phase              = phaseForEvent(event);
+    WebWheelEvent::Phase momentumPhase      = momentumPhaseForEvent(event);
     bool hasPreciseScrollingDeltas          = continuous;
     WebEvent::Modifiers modifiers           = modifiersForEvent(event);
     double timestamp                        = [event timestamp];
     
-    return WebWheelEvent(WebEvent::Wheel, IntPoint(position), IntPoint(globalPosition), FloatSize(deltaX, deltaY), FloatSize(wheelTicksX, wheelTicksY), granularity, phase, hasPreciseScrollingDeltas, modifiers, timestamp);
+    return WebWheelEvent(WebEvent::Wheel, IntPoint(position), IntPoint(globalPosition), FloatSize(deltaX, deltaY), FloatSize(wheelTicksX, wheelTicksY), granularity, phase, momentumPhase, hasPreciseScrollingDeltas, modifiers, timestamp);
 }
 
 WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event, NSView *)

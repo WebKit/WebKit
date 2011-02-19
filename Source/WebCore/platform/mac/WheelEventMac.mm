@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2010 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2010, 2011 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-static PlatformWheelEventPhase phaseForEvent(NSEvent *event)
+static PlatformWheelEventPhase momentumPhaseForEvent(NSEvent *event)
 {
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     uint32_t phase = PlatformWheelEventPhaseNone; 
@@ -54,6 +54,27 @@ static PlatformWheelEventPhase phaseForEvent(NSEvent *event)
 #endif
 }
 
+static PlatformWheelEventPhase phaseForEvent(NSEvent *event)
+{
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    uint32_t phase = PlatformWheelEventPhaseNone; 
+    if ([event phase] & NSEventPhaseBegan)
+        phase |= PlatformWheelEventPhaseBegan;
+    if ([event phase] & NSEventPhaseStationary)
+        phase |= PlatformWheelEventPhaseStationary;
+    if ([event phase] & NSEventPhaseChanged)
+        phase |= PlatformWheelEventPhaseChanged;
+    if ([event phase] & NSEventPhaseEnded)
+        phase |= PlatformWheelEventPhaseEnded;
+    if ([event phase] & NSEventPhaseCancelled)
+        phase |= PlatformWheelEventPhaseCancelled;
+    return static_cast<PlatformWheelEventPhase>(phase);
+#else
+    UNUSED_PARAM(event);
+    return PlatformWheelEventPhaseNone;
+#endif
+}
+
 PlatformWheelEvent::PlatformWheelEvent(NSEvent* event, NSView *windowView)
     : m_position(pointForEvent(event, windowView))
     , m_globalPosition(globalPointForEvent(event))
@@ -64,10 +85,10 @@ PlatformWheelEvent::PlatformWheelEvent(NSEvent* event, NSView *windowView)
     , m_altKey([event modifierFlags] & NSAlternateKeyMask)
     , m_metaKey([event modifierFlags] & NSCommandKeyMask)
     , m_phase(phaseForEvent(event))
+    , m_momentumPhase(momentumPhaseForEvent(event))
     , m_timestamp([event timestamp])
 {
     BOOL continuous;
-
     wkGetWheelEventDeltas(event, &m_deltaX, &m_deltaY, &continuous);
     if (continuous) {
         m_wheelTicksX = m_deltaX / static_cast<float>(Scrollbar::pixelsPerLineStep());
