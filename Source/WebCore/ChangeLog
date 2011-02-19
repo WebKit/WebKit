@@ -1,3 +1,12 @@
+2011-02-19  Marc-Antoine Ruel  <maruel@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Split webcore_rendering off webcore_remaining to reduce its size for WPO builds
+        https://bugs.webkit.org/show_bug.cgi?id=54789
+
+        * WebCore.gyp/WebCore.gyp:
+
 2011-02-19  Bill Budge  <bbudge@chromium.org>
 
         Reviewed by David Levin.

@@ -1328,6 +1328,64 @@
       ],
     },
     {
+      'target_name': 'webcore_rendering',
+      'type': '<(library)',
+      'dependencies': [
+        'webcore_prerequisites',
+      ],
+      'sources': [
+        '<@(webcore_files)',
+      ],
+      'sources/': [
+        # Start by excluding everything then include rendering files only.
+        ['exclude', '.*'],
+        ['include', 'rendering/'],
+
+        # Exclude things that don't apply to the Chromium platform on the basis
+        # of their enclosing directories and tags at the ends of their
+        # filenames.
+        ['exclude', '(android|cairo|cf|cg|curl|gtk|haiku|html|linux|mac|opentype|platform|posix|qt|soup|svg|symbian|win|wx)/'],
+        ['exclude', '(?<!Chromium)(Android|Cairo|CF|CG|Curl|Gtk|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|Wx)\\.(cpp|mm?)$'],
+
+        # Exclude most of SVG except css and javascript bindings.
+        ['exclude', 'rendering/style/SVG[^/]+.(cpp|h)$'],
+        ['exclude', 'rendering/RenderSVG[^/]+.(cpp|h)$'],
+        ['exclude', 'rendering/SVG[^/]+.(cpp|h)$'],
+      ],
+      'conditions': [
+        ['OS=="win"', {
+          'sources/': [
+            ['exclude', 'Posix\\.cpp$'],
+          ],
+        }],
+        ['OS=="mac"', {
+          'sources/': [
+            # RenderThemeChromiumSkia is not used on mac since RenderThemeChromiumMac
+            # does not reference the Skia code that is used by Windows and Linux.
+            ['exclude', 'rendering/RenderThemeChromiumSkia\\.cpp$'],
+          ],
+        }],
+        ['(OS=="linux" or OS=="freebsd" or OS=="openbsd") and gcc_version==42', {
+          # Due to a bug in gcc 4.2.1 (the current version on hardy), we get
+          # warnings about uninitialized this.
+          'cflags': ['-Wno-uninitialized'],
+        }],
+        ['OS!="linux" and OS!="freebsd"', {
+          'sources/': [
+            ['exclude', '(Gtk|Linux)\\.cpp$'],
+          ],
+        }],
+        ['OS!="mac"', {
+          'sources/': [['exclude', 'Mac\\.(cpp|mm?)$']]
+        }],
+        ['OS!="win"', {
+          'sources/': [
+            ['exclude', 'Win\\.cpp$'],
+          ],
+        }],
+      ],
+    },
+    {
       'target_name': 'webcore_remaining',
       'type': '<(library)',
       'dependencies': [
@@ -1348,13 +1406,8 @@
         # Exclude things that don't apply to the Chromium platform on the basis
         # of their enclosing directories and tags at the ends of their
         # filenames.
-        ['exclude', '(android|cairo|cf|cg|curl|gtk|haiku|html|linux|mac|opentype|platform|posix|qt|soup|svg|symbian|win|wx)/'],
+        ['exclude', '(android|cairo|cf|cg|curl|gtk|haiku|html|linux|mac|opentype|platform|posix|qt|rendering|soup|svg|symbian|win|wx)/'],
         ['exclude', '(?<!Chromium)(Android|Cairo|CF|CG|Curl|Gtk|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|Wx)\\.(cpp|mm?)$'],
-
-        # Exclude most of SVG except css and javascript bindings.
-        ['exclude', 'rendering/style/SVG[^/]+.(cpp|h)$'],
-        ['exclude', 'rendering/RenderSVG[^/]+.(cpp|h)$'],
-        ['exclude', 'rendering/SVG[^/]+.(cpp|h)$'],
 
         # JSC-only.
         ['exclude', 'inspector/JavaScript[^/]*\\.cpp$'],
@@ -1453,16 +1506,9 @@
             ['include', '/TransparencyWin\\.cpp$'],
           ],
         }],
-        ['OS=="mac"', {
-          'sources/': [
-            # RenderThemeChromiumSkia is not used on mac since RenderThemeChromiumMac
-            # does not reference the Skia code that is used by Windows and Linux.
-            ['exclude', 'rendering/RenderThemeChromiumSkia\\.cpp$'],
-          ],
-        }],
         ['(OS=="linux" or OS=="freebsd" or OS=="openbsd") and gcc_version==42', {
           # Due to a bug in gcc 4.2.1 (the current version on hardy), we get
-          # warnings about uninitialized this.7.
+          # warnings about uninitialized this.
           'cflags': ['-Wno-uninitialized'],
         }],
         ['OS!="linux" and OS!="freebsd"', {
@@ -1493,6 +1539,7 @@
         'webcore_html',
         'webcore_platform',
         'webcore_remaining',
+        'webcore_rendering',
         # Exported.
         'webcore_bindings',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
