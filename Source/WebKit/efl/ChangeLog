@@ -1,3 +1,13 @@
+2011-02-19  Lukasz Slachciak  <l.slachciak@samsung.com>
+
+        Reviewed by Andreas Kling.
+
+        [EFL] Use standard WebCore::homeDirectoryPath method instead of reimplementing it
+        https://webkit.org/b/54781
+
+        * ewk/ewk_main.cpp:
+        (_ewk_init_body):
+
 2011-02-19  Charlie Reis  <creis@chromium.org>
 
         Reviewed by Mihai Parparita.

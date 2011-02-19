@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2009-2010 ProFUSION embedded systems
-    Copyright (C) 2009-2010 Samsung Electronics
+    Copyright (C) 2009-2011 Samsung Electronics
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -21,15 +21,15 @@
 #include "config.h"
 #include "ewk_main.h"
 
-#include "appcache/ApplicationCacheStorage.h"
 #include "EWebKit.h"
+#include "FileSystem.h"
 #include "Logging.h"
 #include "PageCache.h"
 #include "PageGroup.h"
+#include "appcache/ApplicationCacheStorage.h"
 #include "ewk_private.h"
 #include "ewk_settings.h"
 #include "runtime/InitializeThreading.h"
-#include "wtf/Threading.h"
 
 #include <Ecore.h>
 #include <Ecore_Evas.h>
@@ -38,6 +38,7 @@
 #include <Evas.h>
 #include <stdlib.h>
 #include <sys/stat.h>
+#include <wtf/Threading.h>
 
 #if ENABLE(GLIB_SUPPORT)
 #include <glib-object.h>
@@ -159,21 +160,17 @@ Eina_Bool _ewk_init_body(void)
     WebCore::pageCache()->setCapacity(3);
     WebCore::PageGroup::setShouldTrackVisitedLinks(true);
 
-    // set default location of web database path and appcache dir
-    const char* home = getenv("HOME");
-    if (!home) // don't forget about the homeless
-        home = "/tmp"; // this directory must always exist
-
-    // anyway, check it first
+    String home = WebCore::homeDirectoryPath();
     struct stat state;
-    if (stat(home, &state) == -1) {
+    // check home directory first
+    if (stat(home.utf8().data(), &state) == -1) {
         // Exit now - otherwise you may have some crash later
         int errnowas = errno;
         CRITICAL("Can't access HOME dir (or /tmp) - no place to save databases: %s", strerror(errnowas));
         return EINA_FALSE;
     }
 
-    WTF::String wkdir = WTF::String(home) + "/.webkit";
+    WTF::String wkdir = home + "/.webkit";
     ewk_settings_web_database_path_set(wkdir.utf8().data());
     ewk_settings_icon_database_path_set(wkdir.utf8().data());
 
