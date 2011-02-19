@@ -1,3 +1,9 @@
+2011-02-18  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed expectations change because my rebaselines didn't seem to work.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-18  Adrienne Walker  <enne@google.com>
 
         Reviewed by Kenneth Russell.
