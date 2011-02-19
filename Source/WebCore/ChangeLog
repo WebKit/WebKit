@@ -1,3 +1,19 @@
+2011-02-19  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Daniel Bates.
+
+        Fix xssAuditor/iframe-injection.html
+        https://bugs.webkit.org/show_bug.cgi?id=54591
+
+        We should block the iframe src attribute.  Although this technically
+        can't be used to run script, it's a pretty easy vector for stealing
+        passwords.
+
+        * html/parser/XSSFilter.cpp:
+        (WebCore::XSSFilter::filterTokenInitial):
+        (WebCore::XSSFilter::filterIframeToken):
+        * html/parser/XSSFilter.h:
+
 2011-02-18  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -245,6 +245,8 @@ bool XSSFilter::filterTokenInitial(HTMLToken& token)
         didBlockScript |= filterEmbedToken(token);
     else if (hasName(token, appletTag))
         didBlockScript |= filterAppletToken(token);
+    else if (hasName(token, iframeTag))
+        didBlockScript |= filterIframeToken(token);
     else if (hasName(token, metaTag))
         didBlockScript |= filterMetaToken(token);
     else if (hasName(token, baseTag))
@@ -351,6 +353,15 @@ bool XSSFilter::filterAppletToken(HTMLToken& token)
     didBlockScript |= eraseAttributeIfInjected(token, objectAttr);
 
     return didBlockScript;
+}
+
+bool XSSFilter::filterIframeToken(HTMLToken& token)
+{
+    ASSERT(m_state == Initial);
+    ASSERT(token.type() == HTMLToken::StartTag);
+    ASSERT(hasName(token, iframeTag));
+
+    return eraseAttributeIfInjected(token, srcAttr);
 }
 
 bool XSSFilter::filterMetaToken(HTMLToken& token)
