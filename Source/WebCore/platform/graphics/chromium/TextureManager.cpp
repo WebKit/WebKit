@@ -152,7 +152,7 @@ unsigned TextureManager::requestTexture(TextureToken token, IntSize size, unsign
     if (memoryRequiredBytes > m_memoryLimitBytes || !reduceMemoryToLimit(m_memoryLimitBytes - memoryRequiredBytes))
         return 0;
 
-    unsigned textureId = m_context->createTexture();
+    unsigned textureId;
     GLC(m_context.get(), textureId = m_context->createTexture());
     GLC(m_context.get(), m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, textureId));
     // Do basic linear filtering on resize.
