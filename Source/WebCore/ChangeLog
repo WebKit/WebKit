@@ -1,3 +1,24 @@
+2011-02-18  Noel Gordon  <noel.gordon@gmail.com>
+
+        Reviewed by James Robinson.
+
+        [Chromium] Add elliptical gradient support to GradientSkia
+        https://bugs.webkit.org/show_bug.cgi?id=51841
+
+        Covered by existing tests, these need new rebaselines once this patch
+        lands for chrome linux, win32
+
+        fast/gradients/css3-color-stop-units.html
+        fast/gradients/css3-color-stops.html
+        fast/gradients/css3-linear-angle-gradients.html
+        fast/gradients/css3-radial-gradients.html
+        fast/gradients/css3-radial-gradients2.html
+        fast/gradients/css3-radial-gradients3.html
+        fast/gradients/css3-repeating-radial-gradients.html
+
+        * platform/graphics/skia/GradientSkia.cpp:
+        (WebCore::Gradient::platformGradient):
+
 2011-02-18  James Robinson  <jamesr@chromium.org>
 
         Fix typo in boundary test in ASSERT() - test is for an inclusive range, not exclusive.
