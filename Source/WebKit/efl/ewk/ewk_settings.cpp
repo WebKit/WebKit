@@ -279,6 +279,14 @@ Evas_Object* ewk_settings_icon_database_icon_object_add(const char* url, Evas* c
 void ewk_settings_proxy_uri_set(const char* proxy)
 {
 #if USE(SOUP)
+    SoupSession* session = WebCore::ResourceHandle::defaultSession();
+
+    if (!proxy) {
+        ERR("no proxy uri. remove proxy feature in soup.");
+        soup_session_remove_feature_by_type(session, SOUP_TYPE_PROXY_RESOLVER);
+        return;
+    }
+
     SoupURI* uri = soup_uri_new(proxy);
     EINA_SAFETY_ON_NULL_RETURN(uri);
 

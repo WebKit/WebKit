@@ -1,5 +1,17 @@
 2011-02-18  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Reviewed by Antonio Gomes.
+
+        [EFL] Remove proxy feature of soup when proxy is null
+        https://bugs.webkit.org/show_bug.cgi?id=54621
+
+        When proxy value is NULL, remove proxy feature in soup.
+
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_proxy_uri_set):
+
+2011-02-18  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Reviewed by Kent Tamura.
 
         [EFL] Fix coding style errors in ewk_view.h
