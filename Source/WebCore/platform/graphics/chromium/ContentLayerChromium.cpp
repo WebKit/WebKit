@@ -303,9 +303,9 @@ void ContentLayerChromium::updateTextureIfNeeded()
         uploadBuffer.resize(m_uploadUpdateRect.height() * destStride);
         for (int row = 0; row < m_uploadUpdateRect.height(); ++row) {
             size_t srcOffset = (m_uploadUpdateRect.y() + row) * srcStride + m_uploadUpdateRect.x() * 4;
-            ASSERT(srcOffset + destStride < static_cast<size_t>(m_uploadBufferSize.width() * m_uploadBufferSize.height() * 4));
+            ASSERT(srcOffset + destStride <= static_cast<size_t>(m_uploadBufferSize.width() * m_uploadBufferSize.height() * 4));
             size_t destOffset = row * destStride;
-            ASSERT(destOffset  + destStride < uploadBuffer.size());
+            ASSERT(destOffset  + destStride <= uploadBuffer.size());
             memcpy(uploadBuffer.data() + destOffset, pixels + srcOffset, destStride);
         }
         uploadPixels = uploadBuffer.data();

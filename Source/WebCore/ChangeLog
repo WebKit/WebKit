@@ -1,3 +1,10 @@
+2011-02-18  James Robinson  <jamesr@chromium.org>
+
+        Fix typo in boundary test in ASSERT() - test is for an inclusive range, not exclusive.
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::updateTextureIfNeeded):
+
 2011-02-18  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
