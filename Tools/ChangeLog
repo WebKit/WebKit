@@ -1,3 +1,27 @@
+2011-02-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by James Robinson.
+
+        new-run-webkit-tests: enable multiple processes by default on
+        mac. This change removes the artificial restrictions we placed
+        on the # of child processes we used with the old threading
+        model, and switches to the new message-based model and multiple
+        processes, where available. If multiple processes are not
+        available (Leopard / Python 2.5), then we use the 'inline' model
+        instead of the 'old-threads' model on the 'mac' port or one
+        process on the 'chromium-mac' port. We need additional testing
+        to see if the new 'threads' model works reliably and is worth
+        supporting, or if we should just live with things being slightly
+        slow.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54596
+
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2011-02-18  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed, rolling out r79047.

@@ -42,6 +42,11 @@ import time
 import threading
 import unittest
 
+try:
+    import multiprocessing
+except ImportError:
+    multiprocessing = None
+
 from webkitpy.common import array_stream
 from webkitpy.common.system import outputcapture
 from webkitpy.common.system import filesystem_mock
@@ -469,11 +474,11 @@ class MainTest(unittest.TestCase):
     def test_worker_model__processes(self):
         # FIXME: remove this when we fix test-webkitpy to work properly
         # with the multiprocessing module (bug 54520).
-        if compare_version(sys, '2.6')[0] >= 0 and sys.platform not in ('cygwin', 'win32'):
+        if multiprocessing and sys.platform not in ('cygwin', 'win32'):
             self.assertTrue(passing_run(['--worker-model', 'processes']))
 
     def test_worker_model__processes_and_dry_run(self):
-        if compare_version(sys, '2.6')[0] >= 0 and sys.platform not in ('cygwin', 'win32'):
+        if multiprocessing and sys.platform not in ('cygwin', 'win32'):
             self.assertTrue(passing_run(['--worker-model', 'processes', '--dry-run']))
 
     def test_worker_model__threads(self):
