@@ -1,3 +1,25 @@
+2011-02-18  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix for <rdar://problem/9018729> Horizontal scroller doesn't 
+        appear when loading a page with a Horizontal scrollbar from 
+        the back/forward cache.
+
+        This patch adds a new  bool member variable to FrameView to 
+        keep track of whether we are loading a page from the back/
+        forward cache. If we are, don't suppress scrollbars on 
+        first layout.
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::reset):
+        (WebCore::FrameView::layout):
+        * page/FrameView.h:
+        (WebCore::FrameView::setIsRestoringFromBackForward):
+        (WebCore::FrameView::isRestoringFromBackForward):
+
 2011-02-18  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed WinCE build fix for r78846.

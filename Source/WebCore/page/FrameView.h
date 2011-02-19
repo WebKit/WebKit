@@ -268,6 +268,9 @@ public:
     // FIXME: Remove this method once plugin loading is decoupled from layout.
     void flushAnyPendingPostLayoutTasks();
 
+    void setIsRestoringFromBackForward(bool isRestoring) { m_isRestoringFromBackForward = isRestoring; }
+    bool isRestoringFromBackForward() const { return m_isRestoringFromBackForward; }
+
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
     virtual void scrollContentsSlowPath(const IntRect& updateRect);
@@ -407,6 +410,8 @@ private:
 
     bool m_isVisuallyNonEmpty;
     bool m_firstVisuallyNonEmptyLayoutCallbackPending;
+
+    bool m_isRestoringFromBackForward;
 
     RefPtr<Node> m_maintainScrollPositionAnchor;
 

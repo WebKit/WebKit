@@ -82,7 +82,9 @@ CachedFrameBase::~CachedFrameBase()
 void CachedFrameBase::restore()
 {
     ASSERT(m_document->view() == m_view);
-    
+
+    m_view->setIsRestoringFromBackForward(true);
+
     Frame* frame = m_view->frame();
     m_cachedFrameScriptData->restore(frame);
 
