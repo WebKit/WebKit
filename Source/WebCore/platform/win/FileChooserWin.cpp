@@ -26,10 +26,9 @@
 #include "config.h"
 #include "FileChooser.h"
 
+#include "FileSystem.h"
 #include "LocalizedStrings.h"
 #include "StringTruncator.h"
-#include <shlwapi.h>
-#include <windows.h>
 
 namespace WebCore {
 
@@ -41,11 +40,9 @@ String FileChooser::basenameForWidth(const Font& font, int width) const
     String string;
     if (m_filenames.isEmpty())
         string = fileButtonNoFileSelectedLabel();
-    else if (m_filenames.size() == 1) {
-        String tmpFilename = m_filenames[0];
-        LPWSTR basename = PathFindFileNameW(tmpFilename.charactersWithNullTermination());
-        string = String(basename);
-    } else
+    else if (m_filenames.size() == 1)
+        string = pathGetFileName(m_filenames[0]);
+    else
         return StringTruncator::rightTruncate(String::number(m_filenames.size()) + " files", width, font);
 
     return StringTruncator::centerTruncate(string, width, font);

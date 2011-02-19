@@ -1,3 +1,15 @@
+2011-02-19  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        Make FileChooserWin.cpp more portable and use it on WinCE
+        https://bugs.webkit.org/show_bug.cgi?id=54803
+
+        * CMakeListsWinCE.txt:
+        * platform/win/FileChooserWin.cpp:
+        (WebCore::FileChooser::basenameForWidth):
+        * platform/wince/FileChooserWinCE.cpp: Removed.
+
 2011-02-19  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Adam Barth.
