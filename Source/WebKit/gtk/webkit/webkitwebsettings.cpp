@@ -34,7 +34,6 @@
 #include "webkitglobalsprivate.h"
 #include "webkitversion.h"
 #include "webkitwebsettingsprivate.h"
-#include <enchant.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
 #include <glib/gi18n-lib.h>
@@ -90,7 +89,6 @@ struct _WebKitWebSettingsPrivate {
     gboolean enable_private_browsing;
     gboolean enable_spell_checking;
     gchar* spell_checking_languages;
-    GSList* enchant_dicts;
     gboolean enable_caret_browsing;
     gboolean enable_html5_database;
     gboolean enable_html5_local_storage;
@@ -920,23 +918,6 @@ static void webkit_web_settings_init(WebKitWebSettings* web_settings)
     web_settings->priv = G_TYPE_INSTANCE_GET_PRIVATE(web_settings, WEBKIT_TYPE_WEB_SETTINGS, WebKitWebSettingsPrivate);
 }
 
-static EnchantBroker* get_enchant_broker()
-{
-    static EnchantBroker* broker = 0;
-    if (!broker)
-        broker = enchant_broker_init();
-
-    return broker;
-}
-
-static void free_spell_checking_language(gpointer data, gpointer user_data)
-{
-    EnchantDict* dict = static_cast<EnchantDict*>(data);
-    EnchantBroker* broker = get_enchant_broker();
-
-    enchant_broker_free_dict(broker, dict);
-}
-
 static void webkit_web_settings_finalize(GObject* object)
 {
     WebKitWebSettings* web_settings = WEBKIT_WEB_SETTINGS(object);
@@ -952,28 +933,15 @@ static void webkit_web_settings_finalize(GObject* object)
     g_free(priv->user_stylesheet_uri);
     g_free(priv->spell_checking_languages);
 
-    g_slist_foreach(priv->enchant_dicts, free_spell_checking_language, 0);
-    g_slist_free(priv->enchant_dicts);
-
     g_free(priv->user_agent);
 
     G_OBJECT_CLASS(webkit_web_settings_parent_class)->finalize(object);
-}
-
-static void getAvailableDictionariesCallback(const char* const languageTag, const char* const, const char* const, const char* const, void* data)
-{
-    Vector<CString>* dicts = static_cast<Vector<CString>*>(data);
-
-    dicts->append(languageTag);
 }
 
 static void webkit_web_settings_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec)
 {
     WebKitWebSettings* web_settings = WEBKIT_WEB_SETTINGS(object);
     WebKitWebSettingsPrivate* priv = web_settings->priv;
-    EnchantBroker* broker;
-    EnchantDict* dict;
-    GSList* spellDictionaries = 0;
 
     switch(prop_id) {
     case PROP_DEFAULT_ENCODING:
@@ -1065,35 +1033,6 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
     case PROP_SPELL_CHECKING_LANGUAGES:
         g_free(priv->spell_checking_languages);
         priv->spell_checking_languages = g_strdup(g_value_get_string(value));
-
-        broker = get_enchant_broker();
-        if (priv->spell_checking_languages) {
-            char** langs = g_strsplit(priv->spell_checking_languages, ",", -1);
-            for (int i = 0; langs[i]; i++) {
-                if (enchant_broker_dict_exists(broker, langs[i])) {
-                    dict = enchant_broker_request_dict(broker, langs[i]);
-                    spellDictionaries = g_slist_append(spellDictionaries, dict);
-                }
-            }
-            g_strfreev(langs);
-        } else {
-            const char* language = pango_language_to_string(gtk_get_default_language());
-            if (enchant_broker_dict_exists(broker, language)) {
-                dict = enchant_broker_request_dict(broker, language);
-                spellDictionaries = g_slist_append(spellDictionaries, dict);
-            } else {
-                // No dictionaries selected, we get one from the list
-                Vector<CString> allDictionaries;
-                enchant_broker_list_dicts(broker, getAvailableDictionariesCallback, &allDictionaries);
-                if (!allDictionaries.isEmpty()) {
-                    dict = enchant_broker_request_dict(broker, allDictionaries[0].data());
-                    spellDictionaries = g_slist_append(spellDictionaries, dict);
-                }
-            }
-        }
-        g_slist_foreach(priv->enchant_dicts, free_spell_checking_language, 0);
-        g_slist_free(priv->enchant_dicts);
-        priv->enchant_dicts = spellDictionaries;
         break;
     case PROP_ENABLE_XSS_AUDITOR:
         priv->enable_xss_auditor = g_value_get_boolean(value);
@@ -1419,15 +1358,6 @@ G_CONST_RETURN gchar* webkit_web_settings_get_user_agent(WebKitWebSettings* webS
     WebKitWebSettingsPrivate* priv = webSettings->priv;
 
     return priv->user_agent;
-}
-
-GSList* webkitWebViewGetEnchantDicts(WebKitWebView* webView)
-{
-    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
-
-    WebKitWebSettings* settings = webkit_web_view_get_settings(webView);
-
-    return settings->priv->enchant_dicts;
 }
 
 namespace WebKit {

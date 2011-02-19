@@ -1,3 +1,38 @@
+2011-02-19  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Remove mandatory Enchant dependency
+        https://bugs.webkit.org/show_bug.cgi?id=51587
+
+        Extract TextCheckerClientEnchant From EditorClientGtk and remove
+        enchant dependency from other files.
+
+        * GNUmakefile.am:
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::EditorClient):
+        * WebCoreSupport/EditorClientGtk.h:
+        (WebKit::EditorClient::textChecker):
+        * WebCoreSupport/TextCheckerClientEnchant.cpp: Added.
+        (WebKit::TextCheckerClientEnchant::TextCheckerClientEnchant):
+        (WebKit::TextCheckerClientEnchant::~TextCheckerClientEnchant):
+        (WebKit::TextCheckerClientEnchant::ignoreWordInSpellDocument):
+        (WebKit::TextCheckerClientEnchant::learnWord):
+        (WebKit::TextCheckerClientEnchant::checkSpellingOfString):
+        (WebKit::TextCheckerClientEnchant::getAutoCorrectSuggestionForMisspelledWord):
+        (WebKit::TextCheckerClientEnchant::checkGrammarOfString):
+        (WebKit::TextCheckerClientEnchant::getGuessesForWord):
+        (WebKit::getAvailableDictionariesCallback):
+        (WebKit::TextCheckerClientEnchant::updateSpellCheckingLanguage):
+        (WebKit::TextCheckerClientEnchant::freeSpellCheckingLanguage):
+        * WebCoreSupport/TextCheckerClientEnchant.h: Added.
+        (WebKit::TextCheckerClientEnchant::requestCheckingOfString):
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_finalize):
+        (webkit_web_settings_set_property):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_settings_notify):
+
 2011-02-19  Charlie Reis  <creis@chromium.org>
 
         Reviewed by Mihai Parparita.

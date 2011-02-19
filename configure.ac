@@ -286,9 +286,17 @@ PKG_CHECK_MODULES(PANGO,
 AC_SUBST(PANGO_CFLAGS)
 AC_SUBST(PANGO_LIBS)
 
-PKG_CHECK_MODULES(ENCHANT, enchant >= $ENCHANT_REQUIRED_VERSION)
+AC_MSG_CHECKING([whether to enable spellcheck support])
+AC_ARG_ENABLE([spellcheck],
+  [AS_HELP_STRING([--enable-spellcheck],[enable support for spellcheck])],
+  [],[enable_spellcheck="yes"])
+AC_MSG_RESULT([$enable_spellcheck])
+
+if test "$enable_spellcheck" = "yes"; then
+PKG_CHECK_MODULES(ENCHANT, enchant >= $ENCHANT_REQUIRED_VERSION, [], [enable_spellcheck="no"])
 AC_SUBST(ENCHANT_CFLAGS)
 AC_SUBST(ENCHANT_LIBS)
+fi
 
 PKG_CHECK_MODULES(GAIL, $GAIL_PC_NAME >= $GAIL_REQUIRED_VERSION)
 AC_SUBST(GAIL_CFLAGS)
@@ -1042,6 +1050,7 @@ AM_CONDITIONAL([ENABLE_WEB_AUDIO],[test "$enable_web_audio" = "yes"])
 AM_CONDITIONAL([ENABLE_WEB_TIMING],[test "$enable_web_timing" = "yes"])
 AM_CONDITIONAL([ENABLE_OPCODE_STATS],[test "$enable_opcode_stats" = "yes"])
 AM_CONDITIONAL([ENABLE_WEBKIT2],[test "$enable_webkit2" = "yes"])
+AM_CONDITIONAL([ENABLE_SPELLCHECK],[test "$enable_spellcheck" = "yes"])
 
 # Gtk conditionals
 AM_CONDITIONAL([ENABLE_INTROSPECTION],[test "$enable_introspection" = "yes"])
@@ -1131,6 +1140,7 @@ Features:
  XHTML-MP support                                         : $enable_xhtmlmp
  XPATH support                                            : $enable_xpath
  XSLT support                                             : $enable_xslt
+ Spellcheck support                                       : $enable_spellcheck
 
 GTK+ configuration:
  GTK+ version                                             : $with_gtk

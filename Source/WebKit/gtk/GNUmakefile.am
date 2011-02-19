@@ -29,6 +29,15 @@ libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CFLA
 	$(SYMBOL_VISIBILITY) \
 	$(global_cflags)
 
+if ENABLE_SPELLCHECK
+webkitgtk_cppflags += \
+	-DENABLE_SPELLCHECK=1
+
+webkitgtk_sources += \
+	Source/WebKit/gtk/WebCoreSupport/TextCheckerClientEnchant.cpp \
+	Source/WebKit/gtk/WebCoreSupport/TextCheckerClientEnchant.h
+endif
+
 # When building WebCore/WebKit, we want WebCore/config.h and NOT JavaScriptCore/config.h,
 # hence, it's important that WebCore/ should come first before JavaScriptCore in the
 # include path.
@@ -47,6 +56,7 @@ libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPPF
 	$(webcore_cppflags) \
 	$(webcoregtk_cppflags) \
 	$(javascriptcore_cppflags) \
+	$(webkitgtk_cppflags) \
 	-fno-strict-aliasing \
 	$(HILDON_CPPFLAGS) \
 	$(COVERAGE_CFLAGS) \

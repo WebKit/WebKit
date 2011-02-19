@@ -1,3 +1,15 @@
+2011-02-19  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Remove mandatory Enchant dependency
+        https://bugs.webkit.org/show_bug.cgi?id=51587
+
+        Add enable-spellcheck option which decides whether to use enchant.
+        If disabled, WebKitGTK+ will not use enchant library.
+
+        * configure.ac:
+
 2011-02-18  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Martin Robinson.

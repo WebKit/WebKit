@@ -39,6 +39,12 @@
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 
+#if ENABLE(SPELLCHECK)
+#include "TextCheckerClientEnchant.h"
+#else
+#include "EmptyClients.h"
+#endif
+
 typedef struct _WebKitWebView WebKitWebView;
 
 namespace WebCore {
@@ -48,7 +54,7 @@ class KeyboardEvent;
 
 namespace WebKit {
 
-class EditorClient : public WebCore::EditorClient,  public WebCore::TextCheckerClient {
+class EditorClient : public WebCore::EditorClient {
     protected:
         bool m_isInRedo;
 
@@ -123,23 +129,21 @@ class EditorClient : public WebCore::EditorClient,  public WebCore::TextCheckerC
         virtual void textWillBeDeletedInTextField(WebCore::Element*);
         virtual void textDidChangeInTextArea(WebCore::Element*);
 
-        virtual WebCore::TextCheckerClient* textChecker() { return this; }
+        virtual WebCore::TextCheckerClient* textChecker() { return &m_textCheckerClient; }
 
-        virtual void ignoreWordInSpellDocument(const WTF::String&);
-        virtual void learnWord(const WTF::String&);
-        virtual void checkSpellingOfString(const UChar*, int length, int* misspellingLocation, int* misspellingLength);
-        virtual WTF::String getAutoCorrectSuggestionForMisspelledWord(const WTF::String&);
-        virtual void checkGrammarOfString(const UChar*, int length, WTF::Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength);
         virtual void updateSpellingUIWithGrammarString(const WTF::String&, const WebCore::GrammarDetail&);
         virtual void updateSpellingUIWithMisspelledWord(const WTF::String&);
         virtual void showSpellingUI(bool show);
         virtual bool spellingUIIsShowing();
-        virtual void getGuessesForWord(const WTF::String& word, const WTF::String& context, WTF::Vector<WTF::String>& guesses);
         virtual void willSetInputMethodState();
         virtual void setInputMethodState(bool enabled);
-        virtual void requestCheckingOfString(WebCore::SpellChecker*, int, const WTF::String&) {}
 
     private:
+#if ENABLE(SPELLCHECK)
+        TextCheckerClientEnchant m_textCheckerClient;
+#else
+        WebCore::EmptyTextCheckerClient m_textCheckerClient;
+#endif
         WebKitWebView* m_webView;
         bool m_preventNextCompositionCommit;
         bool m_treatContextCommitAsKeyEvent;

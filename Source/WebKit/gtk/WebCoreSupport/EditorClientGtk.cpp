@@ -27,7 +27,6 @@
 #include "DataObjectGtk.h"
 #include "EditCommand.h"
 #include "Editor.h"
-#include <enchant.h>
 #include "EventNames.h"
 #include "FocusController.h"
 #include "Frame.h"
@@ -842,6 +841,9 @@ void EditorClient::handleInputMethodMousePress()
 
 EditorClient::EditorClient(WebKitWebView* webView)
     : m_isInRedo(false)
+#if ENABLE(SPELLCHECK)
+    , m_textCheckerClient(webView)
+#endif
     , m_webView(webView)
     , m_preventNextCompositionCommit(false)
     , m_treatContextCommitAsKeyEvent(false)
@@ -897,100 +899,6 @@ void EditorClient::textDidChangeInTextArea(Element*)
     notImplemented();
 }
 
-void EditorClient::ignoreWordInSpellDocument(const String& text)
-{
-    GSList* dicts = webkitWebViewGetEnchantDicts(m_webView);
-
-    for (; dicts; dicts = dicts->next) {
-        EnchantDict* dict = static_cast<EnchantDict*>(dicts->data);
-
-        enchant_dict_add_to_session(dict, text.utf8().data(), -1);
-    }
-}
-
-void EditorClient::learnWord(const String& text)
-{
-    GSList* dicts = webkitWebViewGetEnchantDicts(m_webView);
-
-    for (; dicts; dicts = dicts->next) {
-        EnchantDict* dict = static_cast<EnchantDict*>(dicts->data);
-
-        enchant_dict_add_to_personal(dict, text.utf8().data(), -1);
-    }
-}
-
-void EditorClient::checkSpellingOfString(const UChar* text, int length, int* misspellingLocation, int* misspellingLength)
-{
-    GSList* dicts = webkitWebViewGetEnchantDicts(m_webView);
-    if (!dicts)
-        return;
-
-    gchar* ctext = g_utf16_to_utf8(const_cast<gunichar2*>(text), length, 0, 0, 0);
-    int utflen = g_utf8_strlen(ctext, -1);
-
-    PangoLanguage* language = pango_language_get_default();
-    PangoLogAttr* attrs = g_new(PangoLogAttr, utflen+1);
-
-    // pango_get_log_attrs uses an aditional position at the end of the text.
-    pango_get_log_attrs(ctext, -1, -1, language, attrs, utflen+1);
-
-    for (int i = 0; i < length+1; i++) {
-        // We go through each character until we find an is_word_start,
-        // then we get into an inner loop to find the is_word_end corresponding
-        // to it.
-        if (attrs[i].is_word_start) {
-            int start = i;
-            int end = i;
-            int wordLength;
-
-            while (attrs[end].is_word_end < 1)
-                end++;
-
-            wordLength = end - start;
-            // Set the iterator to be at the current word end, so we don't
-            // check characters twice.
-            i = end;
-
-            for (; dicts; dicts = dicts->next) {
-                EnchantDict* dict = static_cast<EnchantDict*>(dicts->data);
-                gchar* cstart = g_utf8_offset_to_pointer(ctext, start);
-                gint bytes = static_cast<gint>(g_utf8_offset_to_pointer(ctext, end) - cstart);
-                gchar* word = g_new0(gchar, bytes+1);
-                int result;
-
-                g_utf8_strncpy(word, cstart, end - start);
-
-                result = enchant_dict_check(dict, word, -1);
-                g_free(word);
-                if (result) {
-                    *misspellingLocation = start;
-                    *misspellingLength = wordLength;
-                } else {
-                    // Stop checking, this word is ok in at least one dict.
-                    *misspellingLocation = -1;
-                    *misspellingLength = 0;
-                    break;
-                }
-            }
-        }
-    }
-
-    g_free(attrs);
-    g_free(ctext);
-}
-
-String EditorClient::getAutoCorrectSuggestionForMisspelledWord(const String& inputWord)
-{
-    // This method can be implemented using customized algorithms for the particular browser.
-    // Currently, it computes an empty string.
-    return String();
-}
-
-void EditorClient::checkGrammarOfString(const UChar*, int, Vector<GrammarDetail>&, int*, int*)
-{
-    notImplemented();
-}
-
 void EditorClient::updateSpellingUIWithGrammarString(const String&, const GrammarDetail&)
 {
     notImplemented();
@@ -1010,26 +918,6 @@ bool EditorClient::spellingUIIsShowing()
 {
     notImplemented();
     return false;
-}
-
-void EditorClient::getGuessesForWord(const String& word, const String& context, WTF::Vector<String>& guesses)
-{
-    GSList* dicts = webkitWebViewGetEnchantDicts(m_webView);
-    guesses.clear();
-
-    for (; dicts; dicts = dicts->next) {
-        size_t numberOfSuggestions;
-        size_t i;
-
-        EnchantDict* dict = static_cast<EnchantDict*>(dicts->data);
-        gchar** suggestions = enchant_dict_suggest(dict, word.utf8().data(), -1, &numberOfSuggestions);
-
-        for (i = 0; i < numberOfSuggestions && i < 10; i++)
-            guesses.append(String::fromUTF8(suggestions[i]));
-
-        if (numberOfSuggestions > 0)
-            enchant_dict_free_suggestions(dict, suggestions);
-    }
 }
 
 }

@@ -3485,6 +3485,12 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
         settings->setJavaEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-hyperlink-auditing"))
         settings->setHyperlinkAuditingEnabled(g_value_get_boolean(&value));
+#if ENABLE(SPELLCHECK)
+    else if (name == g_intern_string("spell-checking-languages")) {
+        WebKit::EditorClient* client = static_cast<WebKit::EditorClient*>(core(webView)->editorClient());
+        static_cast<WebKit::TextCheckerClientEnchant*>(client->textChecker())->updateSpellCheckingLanguage(g_value_get_string(&value));
+    }
+#endif
     else if (!g_object_class_find_property(G_OBJECT_GET_CLASS(webSettings), name))
         g_warning("Unexpected setting '%s'", name);
     g_value_unset(&value);
