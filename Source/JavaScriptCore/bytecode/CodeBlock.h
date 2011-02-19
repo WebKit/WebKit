@@ -603,7 +603,7 @@ namespace JSC {
             Vector<CallReturnOffsetToBytecodeOffset> m_callReturnIndexVector;
 #endif
         };
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) || PLATFORM(QT)
         friend void WTF::deleteOwnedPtr<RareData>(RareData*);
 #endif
         OwnPtr<RareData> m_rareData;
