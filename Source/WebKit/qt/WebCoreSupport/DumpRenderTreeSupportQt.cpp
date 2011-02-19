@@ -608,8 +608,6 @@ bool DumpRenderTreeSupportQt::elementDoesAutoCompleteForElementWithId(QWebFrame*
         return false;
 
     HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(coreNode);
-    if (!inputElement)
-        return false;
 
     return inputElement->isTextField() && !inputElement->isPasswordField() && inputElement->autoComplete();
 }

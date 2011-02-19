@@ -1,3 +1,16 @@
+2011-02-18  Fabrizio Machado  <fabrizio.machado@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Remove reduntant checks.
+        https://bugs.webkit.org/show_bug.cgi?id=54764
+        
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::elementDoesAutoCompleteForElementWithId):
+        * WebCoreSupport/NotificationPresenterClientQt.cpp:
+        (WebCore::NotificationPresenterClientQt::toPage):
+
 2011-02-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.

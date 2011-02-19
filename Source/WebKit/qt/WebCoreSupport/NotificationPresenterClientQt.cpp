@@ -440,8 +440,6 @@ QWebPage* NotificationPresenterClientQt::toPage(ScriptExecutionContext* context)
         return 0;
 
     Document* document = static_cast<Document*>(context);
-    if (!document)
-        return 0;
 
     Page* page = document->page();
     if (!page || !page->mainFrame())
