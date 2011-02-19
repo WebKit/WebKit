@@ -1,3 +1,11 @@
+2011-02-19  Dan Bernstein  <mitz@apple.com>
+
+        LLVM Compiler build fix.
+
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ShadowBlur::blurLayerImage): Eliminated a file static that generated
+        a global initializer since the compiler does not evaluate sqrtf at compile time.
+
 2011-02-19  Brian Ryner  <bryner@chromium.org>
 
         Reviewed by Adam Barth.

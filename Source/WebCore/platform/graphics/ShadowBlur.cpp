@@ -144,7 +144,6 @@ ShadowBlur::ShadowBlur(float radius, const FloatSize& offset, const Color& color
 
 // Instead of integer division, we use 17.15 for fixed-point division.
 static const int blurSumShift = 15;
-static const float gaussianKernelFactor = 3 / 4.f * sqrtf(2 * piFloat);
 
 void ShadowBlur::blurLayerImage(unsigned char* imageData, const IntSize& size, int rowStride)
 {
@@ -167,6 +166,7 @@ void ShadowBlur::blurLayerImage(unsigned char* imageData, const IntSize& size, i
         // However, shadows rendered according to that spec will extend a little further than m_blurRadius,
         // so we apply a fudge factor to bring the radius down slightly.
         float stdDev = m_blurRadius / 2;
+        const float gaussianKernelFactor = 3 / 4.f * sqrtf(2 * piFloat);
         const float fudgeFactor = 0.88f;
         diameter = max(2, static_cast<int>(floorf(stdDev * gaussianKernelFactor * fudgeFactor + 0.5f)));
     }
