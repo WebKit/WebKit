@@ -3773,3 +3773,5 @@ BUGATWILSON GPU : fast/canvas/image-object-in-canvas.html = IMAGE
 BUGATWILSON GPU : compositing/masks/masked-ancestor.html = IMAGE
 BUGATWILSON GPU : compositing/masks/simple-composited-mask.html = IMAGE
 BUGATWILSON GPU : compositing/overflow/fixed-position-ancestor-clip.html = IMAGE
+
+BUG54794 GPU MAC : compositing/geometry/object-clip-rects-assertion.html = TIMEOUT
