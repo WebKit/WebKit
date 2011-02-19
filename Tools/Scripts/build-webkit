@@ -200,7 +200,7 @@ my @features = (
       define => "ENABLE_MEDIA_STATISTICS", default => 0, value => \$mediaStatisticsSupport },
 
     { option => "meter-tag", desc => "Meter Tag support",
-      define => "ENABLE_METER_TAG", default => !isGtk() && !isAppleWinWebKit(), value => \$meterTagSupport },
+      define => "ENABLE_METER_TAG", default => !isAppleWinWebKit(), value => \$meterTagSupport },
 
     { option => "netscape-plugin", desc => "Netscape Plugin support",
       define => "ENABLE_NETSCAPE_PLUGIN_API", default => !isEfl(), value => \$netscapePluginSupport },

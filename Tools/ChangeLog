@@ -1,3 +1,14 @@
+2011-02-18  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] Re-enable meter tag support
+        https://bugs.webkit.org/show_bug.cgi?id=54762
+
+        Meter tag is supported on the Gtk port, enable it by default.
+
+        * Scripts/build-webkit:
+
 2011-02-18  David Levin  <levin@chromium.org>
 
         Reviewed by Eric Seidel.

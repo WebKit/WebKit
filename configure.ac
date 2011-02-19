@@ -383,8 +383,8 @@ AC_MSG_RESULT([$enable_notifications])
 AC_MSG_CHECKING([whether to enable HTML5 meter tag])
 AC_ARG_ENABLE(meter_tag,
               AC_HELP_STRING([--enable-meter-tag],
-                             [enable HTML5 meter [default=no]]),
-              [],[enable_meter_tag="no"])
+                             [enable HTML5 meter [default=yes]]),
+              [],[enable_meter_tag="yes"])
 AC_MSG_RESULT([$enable_meter_tag])
 
 # check whether to enable the progress tag
