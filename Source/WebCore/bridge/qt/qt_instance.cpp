@@ -241,7 +241,7 @@ JSValue QtInstance::getMethod(ExecState* exec, const Identifier& propertyName)
     if (!getClass())
         return jsNull();
     MethodList methodList = m_class->methodsNamed(propertyName, this);
-    return new (exec) RuntimeMethod(exec, exec->lexicalGlobalObject(), propertyName, methodList);
+    return new (exec) RuntimeMethod(exec, exec->lexicalGlobalObject(), WebCore::deprecatedGetDOMStructure<RuntimeMethod>(exec), propertyName, methodList);
 }
 
 JSValue QtInstance::invokeMethod(ExecState*, RuntimeMethod*)
