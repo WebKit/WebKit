@@ -594,7 +594,7 @@ void PluginView::notifyWidget(WidgetNotification notification)
 {
     switch (notification) {
     case WillPaintFlattened:
-        if (m_plugin)
+        if (m_plugin && m_isInitialized)
             m_snapshot = m_plugin->snapshot();
         break;
     case DidPaintFlattened:

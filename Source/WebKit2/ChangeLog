@@ -1,3 +1,14 @@
+2011-02-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Crash when trying to take a snapshot of an uninitialized plug-in
+        https://bugs.webkit.org/show_bug.cgi?id=54812
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::notifyWidget):
+        Don't try to create a snapshot of the plug-in if it hasn't been initialized.
+
 2011-02-18  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
