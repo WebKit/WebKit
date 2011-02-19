@@ -3130,8 +3130,8 @@ BUGWK52341 GPU : fast/canvas/canvas-large-dimensions.html = TEXT
 
 BUGWK53469 GPU MAC : compositing/scroll-painted-composited-content.html = CRASH PASS
 
-BUGWK54409 GPU DEBUG : fast/canvas/image-object-in-canvas.html = IMAGE
-BUGWK54409 GPU DEBUG : fast/canvas/canvas-text-alignment.html = IMAGE
+//BUGWK54409 GPU DEBUG : fast/canvas/image-object-in-canvas.html = IMAGE
+//BUGWK54409 GPU DEBUG : fast/canvas/canvas-text-alignment.html = IMAGE
 BUGWK54409 GPU LINUX : compositing/direct-image-compositing.html = IMAGE
 BUGWK54409 GPU WIN LINUX : compositing/geometry/fixed-position.html = IMAGE
 BUGWK54409 GPU WIN LINUX : compositing/geometry/horizontal-scroll-composited.html = IMAGE
@@ -3767,6 +3767,9 @@ BUGWK54736 MAC : fast/forms/text-control-intrinsic-widths.html = TEXT
 BUGWK54736 MAC : fast/text/international/bidi-control-chars-treated-as-ZWS.html = TEXT
 BUGWK54736 MAC : svg/zoom/text/zoom-hixie-mixed-008.xml = TEXT
 
-// Need rebaselines after r79084 (GPU only)
+// Need rebaselines after r79084 (GPU only). Disable DEBUG-only lines above when done.
 BUGATWILSON GPU : fast/canvas/canvas-text-alignment.html = IMAGE
 BUGATWILSON GPU : fast/canvas/image-object-in-canvas.html = IMAGE
+BUGATWILSON GPU : compositing/masks/masked-ancestor.html = IMAGE
+BUGATWILSON GPU : compositing/masks/simple-composited-mask.html = IMAGE
+BUGATWILSON GPU : compositing/overflow/fixed-position-ancestor-clip.html = IMAGE
