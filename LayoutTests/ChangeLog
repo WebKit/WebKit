@@ -1,3 +1,15 @@
+2011-02-18  Adrienne Walker  <enne@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Adjust expectations for chromium GPU tests.
+        https://bugs.webkit.org/show_bug.cgi?id=54409
+        https://bugs.webkit.org/show_bug.cgi?id=54509
+
+        Correct baselines for the 54409 images will be generated after this lands.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-18  Peter Kasting  <pkasting@google.com>
 
         Reviewed by James Robinson.

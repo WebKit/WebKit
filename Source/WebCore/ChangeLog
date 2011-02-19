@@ -1,3 +1,18 @@
+2011-02-18  Adrienne Walker  <enne@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Use nearest-neighbor filtering for root layer.
+        https://bugs.webkit.org/show_bug.cgi?id=54409
+        https://bugs.webkit.org/show_bug.cgi?id=54509
+
+        This setting creates more consistent images for LayoutTests and
+        prevents small floating point errors in texture coordinates from
+        creating off-by-one pixel color differences.
+
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::update):
+
 2011-02-18  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Kent Tamura.
