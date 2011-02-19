@@ -53,11 +53,11 @@ public:
     NPObject* npObject() const { return m_npObject; }
 
 private:
-    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSObject::StructureFlags;
+    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::OverridesGetPropertyNames | JSObject::StructureFlags;
     
     static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)
     {
-        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount);
+        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
     }
 
     virtual JSC::CallType getCallData(JSC::CallData&);
@@ -72,8 +72,6 @@ private:
     static JSC::JSValue propertyGetter(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
     static JSC::JSValue methodGetter(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
     static JSC::JSObject* throwInvalidAccessError(JSC::ExecState*);
-
-    virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
 
     NPRuntimeObjectMap* m_objectMap;
     NPObject* m_npObject;

@@ -37,11 +37,11 @@ public:
     virtual ~JSCallbackConstructor();
     JSClassRef classRef() const { return m_class; }
     JSObjectCallAsConstructorCallback callback() const { return m_callback; }
-    static const ClassInfo info;
-    
+    static const ClassInfo s_info;
+
     static PassRefPtr<Structure> createStructure(JSValue proto) 
-    { 
-        return Structure::create(proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount); 
+    {
+        return Structure::create(proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
     }
 
 protected:
@@ -49,7 +49,6 @@ protected:
 
 private:
     virtual ConstructType getConstructData(ConstructData&);
-    virtual const ClassInfo* classInfo() const { return &info; }
 
     JSClassRef m_class;
     JSObjectCallAsConstructorCallback m_callback;

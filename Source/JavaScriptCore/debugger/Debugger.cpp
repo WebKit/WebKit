@@ -62,7 +62,7 @@ inline Recompiler::~Recompiler()
 
 inline void Recompiler::operator()(JSCell* cell)
 {
-    if (!cell->inherits(&JSFunction::info))
+    if (!cell->inherits(&JSFunction::s_info))
         return;
 
     JSFunction* function = asFunction(cell);

@@ -72,11 +72,11 @@ namespace JSC {
         inline bool isHostFunction() const;
         FunctionExecutable* jsExecutable() const;
 
-        static JS_EXPORTDATA const ClassInfo info;
+        static JS_EXPORTDATA const ClassInfo s_info;
 
         static PassRefPtr<Structure> createStructure(JSValue prototype) 
         { 
-            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount); 
+            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info); 
         }
 
         NativeFunction nativeFunction();
@@ -100,8 +100,6 @@ namespace JSC {
 
         virtual void markChildren(MarkStack&);
 
-        virtual const ClassInfo* classInfo() const { return &info; }
-
         static JSValue argumentsGetter(ExecState*, JSValue, const Identifier&);
         static JSValue callerGetter(ExecState*, JSValue, const Identifier&);
         static JSValue lengthGetter(ExecState*, JSValue, const Identifier&);
@@ -114,7 +112,7 @@ namespace JSC {
 
     inline JSFunction* asFunction(JSValue value)
     {
-        ASSERT(asObject(value)->inherits(&JSFunction::info));
+        ASSERT(asObject(value)->inherits(&JSFunction::s_info));
         return static_cast<JSFunction*>(asObject(value));
     }
 

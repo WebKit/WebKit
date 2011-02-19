@@ -1,3 +1,121 @@
+2011-02-18  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 54786 - Devirtualize JSCell::classInfo()
+
+        Instead of making a virtual function call, add a pointer to the ClassInfo
+        onto Structure.
+
+        This removes a virtual function call, and paves the way towards removing all
+        the createStructure methods, and StructureFlags/AnonymousSlotCount properties
+        (these should be able to move onto ClassInfo).
+
+        Calls to Structure::create must now pass a pointer to the ClassInfo for the
+        structure. All objects now have a ClassInfo pointer, non-object cell types
+        still do not.
+
+        Changes are most mechanical, involving three steps:
+            * Remove virtual classInfo() methods.
+            * Add &s_info parameter to calls to Structure::create.
+            * Rename ClassInfo static members on classes from 'info' to 's_info',
+              for consistency.
+
+        * API/JSCallbackConstructor.cpp:
+        * API/JSCallbackConstructor.h:
+        * API/JSCallbackFunction.cpp:
+        * API/JSCallbackFunction.h:
+        * API/JSCallbackObject.cpp:
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        * API/JSObjectRef.cpp:
+        * API/JSValueRef.cpp:
+        * API/JSWeakObjectMapRefPrivate.cpp:
+        * JavaScriptCore.exp:
+        * debugger/Debugger.cpp:
+        * debugger/DebuggerActivation.h:
+        * debugger/DebuggerCallFrame.cpp:
+        * interpreter/Interpreter.cpp:
+        * jit/JITCall32_64.cpp:
+        * jit/JITOpcodes.cpp:
+        * jit/JITStubs.cpp:
+        * profiler/Profiler.cpp:
+        * runtime/Arguments.cpp:
+        * runtime/Arguments.h:
+        * runtime/ArrayConstructor.cpp:
+        * runtime/ArrayPrototype.cpp:
+        * runtime/ArrayPrototype.h:
+        * runtime/BooleanObject.cpp:
+        * runtime/BooleanObject.h:
+        * runtime/BooleanPrototype.cpp:
+        * runtime/DateConstructor.cpp:
+        * runtime/DateInstance.cpp:
+        * runtime/DateInstance.h:
+        * runtime/DatePrototype.cpp:
+        * runtime/DatePrototype.h:
+        * runtime/ErrorInstance.cpp:
+        * runtime/ErrorInstance.h:
+        * runtime/ErrorPrototype.cpp:
+        * runtime/FunctionPrototype.cpp:
+        * runtime/FunctionPrototype.h:
+        * runtime/GetterSetter.h:
+        * runtime/GlobalEvalFunction.h:
+        * runtime/InternalFunction.cpp:
+        * runtime/InternalFunction.h:
+        * runtime/JSAPIValueWrapper.h:
+        * runtime/JSActivation.cpp:
+        * runtime/JSActivation.h:
+        * runtime/JSArray.cpp:
+        * runtime/JSArray.h:
+        * runtime/JSByteArray.cpp:
+        * runtime/JSByteArray.h:
+        * runtime/JSCell.cpp:
+        * runtime/JSCell.h:
+        * runtime/JSFunction.cpp:
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalData.cpp:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSNotAnObject.h:
+        * runtime/JSONObject.cpp:
+        * runtime/JSONObject.h:
+        * runtime/JSObject.cpp:
+        * runtime/JSObject.h:
+        * runtime/JSObjectWithGlobalObject.h:
+        * runtime/JSPropertyNameIterator.h:
+        * runtime/JSStaticScopeObject.h:
+        * runtime/JSString.h:
+        * runtime/JSVariableObject.h:
+        * runtime/JSWrapperObject.h:
+        * runtime/JSZombie.cpp:
+        * runtime/JSZombie.h:
+        * runtime/Lookup.cpp:
+        * runtime/MathObject.cpp:
+        * runtime/MathObject.h:
+        * runtime/NativeErrorConstructor.cpp:
+        * runtime/NativeErrorConstructor.h:
+        * runtime/NumberConstructor.cpp:
+        * runtime/NumberConstructor.h:
+        * runtime/NumberObject.cpp:
+        * runtime/NumberObject.h:
+        * runtime/NumberPrototype.cpp:
+        * runtime/ObjectConstructor.cpp:
+        * runtime/ObjectPrototype.cpp:
+        * runtime/RegExpConstructor.cpp:
+        * runtime/RegExpConstructor.h:
+        * runtime/RegExpObject.cpp:
+        * runtime/RegExpObject.h:
+        * runtime/RegExpPrototype.cpp:
+        * runtime/ScopeChain.cpp:
+        * runtime/StringConstructor.cpp:
+        * runtime/StringObject.cpp:
+        * runtime/StringObject.h:
+        * runtime/StringObjectThatMasqueradesAsUndefined.h:
+        * runtime/StringPrototype.cpp:
+        * runtime/StringPrototype.h:
+        * runtime/Structure.cpp:
+        * runtime/Structure.h:
+
 2011-02-19  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/54808> Change jsc target to build directly into JavaScriptCore.framework/Resources/jsc

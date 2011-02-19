@@ -46,8 +46,6 @@ public:
     virtual bool deleteProperty(ExecState* exec, const Identifier &propertyName);
     virtual bool deleteProperty(ExecState* exec, unsigned propertyName);
     
-    virtual const ClassInfo* classInfo() const { return &s_info; }
-    
     unsigned getLength() const { return getConcreteArray()->getLength(); }
     
     Bindings::Array* getConcreteArray() const { return static_cast<Bindings::Array*>(subclassData()); }
@@ -59,8 +57,15 @@ public:
         return globalObject->arrayPrototype();
     }
 
+    static PassRefPtr<Structure> createStructure(JSValue prototype)
+    {
+        return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+    }
+
+protected:
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSArray::StructureFlags;
+
 private:
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSObject::StructureFlags;
     static JSValue lengthGetter(ExecState*, JSValue, const Identifier&);
     static JSValue indexGetter(ExecState*, JSValue, unsigned);
 };

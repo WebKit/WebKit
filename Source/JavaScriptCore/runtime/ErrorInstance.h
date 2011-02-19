@@ -27,9 +27,12 @@ namespace JSC {
 
     class ErrorInstance : public JSNonFinalObject {
     public:
+        static const ClassInfo s_info;
 
-        virtual const ClassInfo* classInfo() const { return &info; }
-        static const ClassInfo info;
+        static PassRefPtr<Structure> createStructure(JSValue prototype)
+        {
+            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+        }
 
         static ErrorInstance* create(JSGlobalData*, NonNullPassRefPtr<Structure>, const UString&);
         static ErrorInstance* create(ExecState* exec, NonNullPassRefPtr<Structure>, JSValue message);

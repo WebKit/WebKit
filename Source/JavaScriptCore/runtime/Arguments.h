@@ -29,7 +29,6 @@
 #include "JSGlobalObject.h"
 #include "Interpreter.h"
 #include "ObjectConstructor.h"
-#include "PrototypeFunction.h"
 
 namespace JSC {
 
@@ -70,7 +69,7 @@ namespace JSC {
         Arguments(CallFrame*, NoParametersType);
         virtual ~Arguments();
 
-        static const ClassInfo info;
+        static const ClassInfo s_info;
 
         virtual void markChildren(MarkStack&);
 
@@ -94,7 +93,7 @@ namespace JSC {
 
         static PassRefPtr<Structure> createStructure(JSValue prototype) 
         { 
-            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount); 
+            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info); 
         }
 
     protected:
@@ -113,8 +112,6 @@ namespace JSC {
         void createStrictModeCallerIfNecessary(ExecState*);
         void createStrictModeCalleeIfNecessary(ExecState*);
 
-        virtual const ClassInfo* classInfo() const { return &info; }
-
         void init(CallFrame*);
 
         OwnPtr<ArgumentsData> d;
@@ -124,7 +121,7 @@ namespace JSC {
 
     inline Arguments* asArguments(JSValue value)
     {
-        ASSERT(asObject(value)->inherits(&Arguments::info));
+        ASSERT(asObject(value)->inherits(&Arguments::s_info));
         return static_cast<Arguments*>(asObject(value));
     }
 

@@ -29,14 +29,12 @@
 
 namespace JSC {
 
+// Ensure the compiler generates a vtable for InternalFunction!
+void InternalFunction::vtableAnchor() {}
+
 ASSERT_CLASS_FITS_IN_CELL(InternalFunction);
 
-const ClassInfo InternalFunction::info = { "Function", 0, 0, 0 };
-
-const ClassInfo* InternalFunction::classInfo() const
-{
-    return &info;
-}
+const ClassInfo InternalFunction::s_info = { "Function", &JSObjectWithGlobalObject::s_info, 0, 0 };
 
 InternalFunction::InternalFunction(NonNullPassRefPtr<Structure> structure)
     : JSObjectWithGlobalObject(structure)

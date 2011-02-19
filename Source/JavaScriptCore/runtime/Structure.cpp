@@ -223,10 +223,11 @@ void Structure::dumpStatistics()
 #endif
 }
 
-Structure::Structure(JSValue prototype, const TypeInfo& typeInfo, unsigned anonymousSlotCount)
+Structure::Structure(JSValue prototype, const TypeInfo& typeInfo, unsigned anonymousSlotCount, const ClassInfo* classInfo)
     : m_typeInfo(typeInfo)
     , m_prototype(prototype)
     , m_specificValueInPrevious(0)
+    , m_classInfo(classInfo)
     , m_propertyTable(0)
     , m_propertyStorageCapacity(typeInfo.isFinal() ? JSFinalObject_inlineStorageCapacity : JSNonFinalObject_inlineStorageCapacity)
     , m_offset(noOffset)
@@ -237,6 +238,43 @@ Structure::Structure(JSValue prototype, const TypeInfo& typeInfo, unsigned anony
     , m_attributesInPrevious(0)
     , m_specificFunctionThrashCount(0)
     , m_anonymousSlotCount(anonymousSlotCount)
+    , m_isUsingSingleSlot(true)
+{
+    m_transitions.m_singleTransition = 0;
+
+    ASSERT(m_prototype);
+    ASSERT(m_prototype->isObject() || m_prototype->isNull());
+
+#ifndef NDEBUG
+#if ENABLE(JSC_MULTIPLE_THREADS)
+    MutexLocker protect(ignoreSetMutex);
+#endif
+    if (shouldIgnoreLeaks)
+        ignoreSet.add(this);
+    else
+        structureCounter.increment();
+#endif
+
+#if DUMP_STRUCTURE_ID_STATISTICS
+    liveStructureSet.add(this);
+#endif
+}
+
+Structure::Structure(const Structure* previous)
+    : m_typeInfo(previous->typeInfo())
+    , m_prototype(previous->storedPrototype())
+    , m_specificValueInPrevious(0)
+    , m_classInfo(previous->m_classInfo)
+    , m_propertyTable(0)
+    , m_propertyStorageCapacity(previous->m_propertyStorageCapacity)
+    , m_offset(noOffset)
+    , m_dictionaryKind(NoneDictionaryKind)
+    , m_isPinnedPropertyTable(false)
+    , m_hasGetterSetterProperties(previous->m_hasGetterSetterProperties)
+    , m_hasNonEnumerableProperties(previous->m_hasNonEnumerableProperties)
+    , m_attributesInPrevious(0)
+    , m_specificFunctionThrashCount(previous->m_specificFunctionThrashCount)
+    , m_anonymousSlotCount(previous->anonymousSlotCount())
     , m_isUsingSingleSlot(true)
 {
     m_transitions.m_singleTransition = 0;
@@ -475,17 +513,13 @@ PassRefPtr<Structure> Structure::addPropertyTransition(Structure* structure, con
         return transition.release();
     }
 
-    RefPtr<Structure> transition = create(structure->m_prototype.get(), structure->typeInfo(), structure->anonymousSlotCount());
+    RefPtr<Structure> transition = create(structure);
 
     transition->m_cachedPrototypeChain = structure->m_cachedPrototypeChain;
     transition->m_previous = structure;
     transition->m_nameInPrevious = propertyName.impl();
     transition->m_attributesInPrevious = attributes;
     transition->m_specificValueInPrevious = specificValue;
-    transition->m_propertyStorageCapacity = structure->m_propertyStorageCapacity;
-    transition->m_hasGetterSetterProperties = structure->m_hasGetterSetterProperties;
-    transition->m_hasNonEnumerableProperties = structure->m_hasNonEnumerableProperties;
-    transition->m_specificFunctionThrashCount = structure->m_specificFunctionThrashCount;
 
     if (structure->m_propertyTable) {
         if (structure->m_isPinnedPropertyTable)
@@ -528,12 +562,9 @@ PassRefPtr<Structure> Structure::removePropertyTransition(Structure* structure, 
 
 PassRefPtr<Structure> Structure::changePrototypeTransition(Structure* structure, JSValue prototype)
 {
-    RefPtr<Structure> transition = create(prototype, structure->typeInfo(), structure->anonymousSlotCount());
+    RefPtr<Structure> transition = create(structure);
 
-    transition->m_propertyStorageCapacity = structure->m_propertyStorageCapacity;
-    transition->m_hasGetterSetterProperties = structure->m_hasGetterSetterProperties;
-    transition->m_hasNonEnumerableProperties = structure->m_hasNonEnumerableProperties;
-    transition->m_specificFunctionThrashCount = structure->m_specificFunctionThrashCount;
+    transition->m_prototype = prototype;
 
     // Don't set m_offset, as one can not transition to this.
 
@@ -548,12 +579,9 @@ PassRefPtr<Structure> Structure::changePrototypeTransition(Structure* structure,
 PassRefPtr<Structure> Structure::despecifyFunctionTransition(Structure* structure, const Identifier& replaceFunction)
 {
     ASSERT(structure->m_specificFunctionThrashCount < maxSpecificFunctionThrashCount);
-    RefPtr<Structure> transition = create(structure->storedPrototype(), structure->typeInfo(), structure->anonymousSlotCount());
+    RefPtr<Structure> transition = create(structure);
 
-    transition->m_propertyStorageCapacity = structure->m_propertyStorageCapacity;
-    transition->m_hasGetterSetterProperties = structure->m_hasGetterSetterProperties;
-    transition->m_hasNonEnumerableProperties = structure->m_hasNonEnumerableProperties;
-    transition->m_specificFunctionThrashCount = structure->m_specificFunctionThrashCount + 1;
+    ++transition->m_specificFunctionThrashCount;
 
     // Don't set m_offset, as one can not transition to this.
 
@@ -574,11 +602,7 @@ PassRefPtr<Structure> Structure::despecifyFunctionTransition(Structure* structur
 
 PassRefPtr<Structure> Structure::getterSetterTransition(Structure* structure)
 {
-    RefPtr<Structure> transition = create(structure->storedPrototype(), structure->typeInfo(), structure->anonymousSlotCount());
-    transition->m_propertyStorageCapacity = structure->m_propertyStorageCapacity;
-    transition->m_hasGetterSetterProperties = transition->m_hasGetterSetterProperties;
-    transition->m_hasNonEnumerableProperties = structure->m_hasNonEnumerableProperties;
-    transition->m_specificFunctionThrashCount = structure->m_specificFunctionThrashCount;
+    RefPtr<Structure> transition = create(structure);
 
     // Don't set m_offset, as one can not transition to this.
 
@@ -594,16 +618,12 @@ PassRefPtr<Structure> Structure::toDictionaryTransition(Structure* structure, Di
 {
     ASSERT(!structure->isUncacheableDictionary());
     
-    RefPtr<Structure> transition = create(structure->m_prototype.get(), structure->typeInfo(), structure->anonymousSlotCount());
-    transition->m_dictionaryKind = kind;
-    transition->m_propertyStorageCapacity = structure->m_propertyStorageCapacity;
-    transition->m_hasGetterSetterProperties = structure->m_hasGetterSetterProperties;
-    transition->m_hasNonEnumerableProperties = structure->m_hasNonEnumerableProperties;
-    transition->m_specificFunctionThrashCount = structure->m_specificFunctionThrashCount;
-    
+    RefPtr<Structure> transition = create(structure);
+
     structure->materializePropertyMapIfNecessary();
     transition->m_propertyTable = structure->copyPropertyTable();
     transition->m_isPinnedPropertyTable = true;
+    transition->m_dictionaryKind = kind;
     
     ASSERT(structure->anonymousSlotCount() == transition->anonymousSlotCount());
     return transition.release();

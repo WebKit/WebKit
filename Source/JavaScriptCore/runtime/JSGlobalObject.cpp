@@ -60,7 +60,6 @@
 #include "ObjectConstructor.h"
 #include "ObjectPrototype.h"
 #include "Profiler.h"
-#include "PrototypeFunction.h"
 #include "RegExpConstructor.h"
 #include "RegExpMatchesArray.h"
 #include "RegExpObject.h"
@@ -183,7 +182,7 @@ void JSGlobalObject::reset(JSValue prototype)
     // Prototypes
 
     d()->functionPrototype.set(exec->globalData(), this, new (exec) FunctionPrototype(exec, this, FunctionPrototype::createStructure(jsNull()))); // The real prototype will be set once ObjectPrototype is created.
-    d()->prototypeFunctionStructure = PrototypeFunction::createStructure(d()->functionPrototype.get());
+    d()->prototypeFunctionStructure = NativeFunctionWrapper::createStructure(d()->functionPrototype.get());
     d()->internalFunctionStructure = InternalFunction::createStructure(d()->functionPrototype.get());
     NativeFunctionWrapper* callFunction = 0;
     NativeFunctionWrapper* applyFunction = 0;

@@ -32,6 +32,7 @@
 #include "JNIBridgeJSC.h"
 #include "JNIUtility.h"
 #include "JNIUtilityPrivate.h"
+#include "JSDOMBinding.h"
 #include "JavaClassJSC.h"
 #include "Logging.h"
 #include "jni_jsobject.h"
@@ -40,6 +41,7 @@
 #include "runtime_root.h"
 #include <runtime/ArgList.h>
 #include <runtime/Error.h>
+#include <runtime/FunctionPrototype.h>
 #include <runtime/JSLock.h>
 
 using namespace JSC::Bindings;
@@ -114,11 +116,17 @@ JSValue JavaInstance::booleanValue() const
 class JavaRuntimeMethod : public RuntimeMethod {
 public:
     JavaRuntimeMethod(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
-        : RuntimeMethod(exec, globalObject, name, list)
+        // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
+        // We need to pass in the right global object for "i".
+        : RuntimeMethod(exec, globalObject, WebCore::deprecatedGetDOMStructure<JavaRuntimeMethod>(exec), name, list)
     {
+        ASSERT(inherits(&s_info));
     }
 
-    virtual const ClassInfo* classInfo() const { return &s_info; }
+    static PassRefPtr<Structure> createStructure(JSValue prototype)
+    {
+        return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+    }
 
     static const ClassInfo s_info;
 };

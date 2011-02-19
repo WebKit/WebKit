@@ -47,6 +47,8 @@ ASSERT_CLASS_FILLS_CELL(JSFinalObject);
 
 const char* StrictModeReadonlyPropertyWriteError = "Attempted to assign to readonly property.";
 
+const ClassInfo JSObject::s_info = { "Object", 0, 0, 0 };
+
 static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* classInfo, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     // Add properties from the static hashtables of properties
@@ -83,9 +85,8 @@ void JSObject::markChildren(MarkStack& markStack)
 UString JSObject::className() const
 {
     const ClassInfo* info = classInfo();
-    if (info)
-        return info->className;
-    return "Object";
+    ASSERT(info);
+    return info->className;
 }
 
 bool JSObject::getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)

@@ -51,7 +51,7 @@ EncodedJSValue JSC_HOST_CALL callHostFunctionAsConstructor(ExecState* exec)
 
 ASSERT_CLASS_FITS_IN_CELL(JSFunction);
 
-const ClassInfo JSFunction::info = { "Function", 0, 0, 0 };
+const ClassInfo JSFunction::s_info = { "Function", &Base::s_info, 0, 0 };
 
 bool JSFunction::isHostFunctionNonInline() const
 {

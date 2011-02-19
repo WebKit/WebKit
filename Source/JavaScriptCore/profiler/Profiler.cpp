@@ -150,14 +150,14 @@ CallIdentifier Profiler::createCallIdentifier(ExecState* exec, JSValue functionV
         return CallIdentifier(GlobalCodeExecution, defaultSourceURL, defaultLineNumber);
     if (!functionValue.isObject())
         return CallIdentifier("(unknown)", defaultSourceURL, defaultLineNumber);
-    if (asObject(functionValue)->inherits(&JSFunction::info)) {
+    if (asObject(functionValue)->inherits(&JSFunction::s_info)) {
         JSFunction* function = asFunction(functionValue);
         if (!function->executable()->isHostFunction())
             return createCallIdentifierFromFunctionImp(exec, function);
     }
-    if (asObject(functionValue)->inherits(&JSFunction::info))
+    if (asObject(functionValue)->inherits(&JSFunction::s_info))
         return CallIdentifier(static_cast<JSFunction*>(asObject(functionValue))->name(exec), defaultSourceURL, defaultLineNumber);
-    if (asObject(functionValue)->inherits(&InternalFunction::info))
+    if (asObject(functionValue)->inherits(&InternalFunction::s_info))
         return CallIdentifier(static_cast<InternalFunction*>(asObject(functionValue))->name(exec), defaultSourceURL, defaultLineNumber);
     return CallIdentifier(makeUString("(", asObject(functionValue)->className(), " object)"), defaultSourceURL, defaultLineNumber);
 }

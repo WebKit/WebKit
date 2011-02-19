@@ -61,7 +61,7 @@ namespace JSC {
 
 // ------------------------------ MathObject --------------------------------
 
-const ClassInfo MathObject::info = { "Math", 0, 0, ExecState::mathTable };
+const ClassInfo MathObject::s_info = { "Math", &JSObjectWithGlobalObject::s_info, 0, ExecState::mathTable };
 
 /* Source for MathObject.lut.h
 @begin mathTable

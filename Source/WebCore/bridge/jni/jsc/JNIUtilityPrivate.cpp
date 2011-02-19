@@ -197,7 +197,7 @@ jvalue convertValueToJValue(ExecState* exec, RootObject* rootObject, JSValue val
                     RuntimeArray* imp = static_cast<RuntimeArray*>(object);
                     JavaArray* array = static_cast<JavaArray*>(imp->getConcreteArray());
                     result.l = array->javaArray();
-                } else if (object->classInfo() == &JSArray::info) {
+                } else if (object->classInfo() == &JSArray::s_info) {
                     // Input is a Javascript Array. We need to create it to a Java Array.
                     result.l = convertArrayInstanceToJavaArray(exec, asArray(value), javaClassName);
                 } else if ((!result.l && (!strcmp(javaClassName, "java.lang.Object")))

@@ -240,7 +240,14 @@ namespace JSC {
 
         static size_t offsetOfInlineStorage();
         
+        static const ClassInfo s_info;
+
     protected:
+        static PassRefPtr<Structure> createStructure(JSValue prototype)
+        {
+            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+        }
+
         static const unsigned StructureFlags = 0;
 
         void putThisToAnonymousValue(unsigned index)
@@ -306,15 +313,16 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
         friend class JSObject;
 
     public:
+        static PassRefPtr<Structure> createStructure(JSValue prototype)
+        {
+            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+        }
+
+    protected:
         explicit JSNonFinalObject(NonNullPassRefPtr<Structure> structure)
             : JSObject(structure, m_inlineStorage)
         {
-            ASSERT(OBJECT_OFFSETOF(JSNonFinalObject, m_inlineStorage) % sizeof(double) == 0);
-        }
-
-        static PassRefPtr<Structure> createStructure(JSValue prototype)
-        {
-            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount);
+            ASSERT(!(OBJECT_OFFSETOF(JSNonFinalObject, m_inlineStorage) % sizeof(double)));
         }
 
     private:
@@ -334,7 +342,7 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
 
         static PassRefPtr<Structure> createStructure(JSValue prototype)
         {
-            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount);
+            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
     private:

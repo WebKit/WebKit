@@ -45,7 +45,7 @@ const UString* DebuggerCallFrame::functionName() const
         return 0;
 
     JSObject* function = m_callFrame->callee();
-    if (!function || !function->inherits(&JSFunction::info))
+    if (!function || !function->inherits(&JSFunction::s_info))
         return 0;
     return &asFunction(function)->name(m_callFrame);
 }
@@ -56,7 +56,7 @@ UString DebuggerCallFrame::calculatedFunctionName() const
         return UString();
 
     JSObject* function = m_callFrame->callee();
-    if (!function || !function->inherits(&JSFunction::info))
+    if (!function || !function->inherits(&JSFunction::s_info))
         return UString();
 
     return asFunction(function)->calculatedDisplayName(m_callFrame);

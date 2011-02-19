@@ -163,11 +163,6 @@ JSObject* JSCell::toThisObject(ExecState* exec) const
     return toObject(exec);
 }
 
-const ClassInfo* JSCell::classInfo() const
-{
-    return 0;
-}
-
 JSValue JSCell::getJSNumber()
 {
     return JSValue();

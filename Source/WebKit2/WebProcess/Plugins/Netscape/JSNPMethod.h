@@ -44,11 +44,10 @@ public:
 private:    
     static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)
     {
-        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount);
+        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
     }
 
     virtual JSC::CallType getCallData(JSC::CallData&);
-    virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
     
     NPIdentifier m_npIdentifier;
 };

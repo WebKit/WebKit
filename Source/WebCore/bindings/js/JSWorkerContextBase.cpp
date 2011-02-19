@@ -48,6 +48,7 @@ JSWorkerContextBase::JSWorkerContextBase(NonNullPassRefPtr<JSC::Structure> struc
     : JSDOMGlobalObject(structure, new JSDOMGlobalObjectData(normalWorld(*impl->script()->globalData())), this)
     , m_impl(impl)
 {
+    ASSERT(inherits(&s_info));
 }
 
 JSWorkerContextBase::~JSWorkerContextBase()

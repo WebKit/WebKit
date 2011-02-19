@@ -41,15 +41,14 @@ using namespace Bindings;
 
 ASSERT_CLASS_FITS_IN_CELL(RuntimeMethod);
 
-const ClassInfo RuntimeMethod::s_info = { "RuntimeMethod", &InternalFunction::info, 0, 0 };
+const ClassInfo RuntimeMethod::s_info = { "RuntimeMethod", &InternalFunction::s_info, 0, 0 };
 
-RuntimeMethod::RuntimeMethod(ExecState* exec, JSGlobalObject* globalObject, const Identifier& ident, Bindings::MethodList& m)
-    // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
-    // exec-globalData() is also likely wrong.
+RuntimeMethod::RuntimeMethod(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, const Identifier& ident, Bindings::MethodList& m)
     // Callers will need to pass in the right global object corresponding to this native object "m".
-    : InternalFunction(&exec->globalData(), globalObject, deprecatedGetDOMStructure<RuntimeMethod>(exec), ident)
+    : InternalFunction(&exec->globalData(), globalObject, structure, ident)
     , _methodList(new MethodList(m))
 {
+    ASSERT(inherits(&s_info));
 }
 
 JSValue RuntimeMethod::lengthGetter(ExecState*, JSValue slotBase, const Identifier&)

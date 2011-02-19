@@ -45,7 +45,7 @@ namespace JSC {
 template <class Base>
 inline JSCallbackObject<Base>* JSCallbackObject<Base>::asCallbackObject(JSValue value)
 {
-    ASSERT(asObject(value)->inherits(&info));
+    ASSERT(asObject(value)->inherits(&s_info));
     return static_cast<JSCallbackObject*>(asObject(value));
 }
 

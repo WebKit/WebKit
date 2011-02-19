@@ -166,11 +166,11 @@ static JSRealType valueRealType(ExecState* exec, JSValue val)
         JSObject *object = val.toObject(exec);
         if (object->inherits(&RuntimeArray::s_info))  // RuntimeArray 'inherits' from Array, but not in C++
             return RTArray;
-        else if (object->inherits(&JSArray::info))
+        else if (object->inherits(&JSArray::s_info))
             return Array;
-        else if (object->inherits(&DateInstance::info))
+        else if (object->inherits(&DateInstance::s_info))
             return Date;
-        else if (object->inherits(&RegExpObject::info))
+        else if (object->inherits(&RegExpObject::s_info))
             return RegExp;
         else if (object->inherits(&RuntimeObject::s_info))
             return QObj;
@@ -227,9 +227,9 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                 hint = QMetaType::QRegExp;
                 break;
             case Object:
-                if (object->inherits(&NumberObject::info))
+                if (object->inherits(&NumberObject::s_info))
                     hint = QMetaType::Double;
-                else if (object->inherits(&BooleanObject::info))
+                else if (object->inherits(&BooleanObject::s_info))
                     hint = QMetaType::Bool;
                 else
                     hint = QMetaType::QVariantMap;
@@ -263,7 +263,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
     int dist = -1;
     switch (hint) {
         case QMetaType::Bool:
-            if (type == Object && object->inherits(&BooleanObject::info))
+            if (type == Object && object->inherits(&BooleanObject::s_info))
                 ret = QVariant(asBooleanObject(value)->internalValue().toBoolean(exec));
             else
                 ret = QVariant(value.toBoolean(exec));
@@ -983,7 +983,7 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
 #define QW_D(Class) Class##Data* d = d_func()
 #define QW_DS(Class,Instance) Class##Data* d = Instance->d_func()
 
-const ClassInfo QtRuntimeMethod::s_info = { "QtRuntimeMethod", 0, 0, 0 };
+const ClassInfo QtRuntimeMethod::s_info = { "QtRuntimeMethod", &InternalFunction::s_info, 0, 0 };
 
 QtRuntimeMethod::QtRuntimeMethod(QtRuntimeMethodData* dd, ExecState* exec, const Identifier& ident, PassRefPtr<QtInstance> inst)
     : InternalFunction(&exec->globalData(), exec->lexicalGlobalObject(), deprecatedGetDOMStructure<QtRuntimeMethod>(exec), ident)
@@ -1828,7 +1828,7 @@ void QtConnectionObject::execute(void **argv)
                     // Stuff in the __qt_sender property, if we can
                     ScopeChain oldsc = ScopeChain(NoScopeChain());
                     JSFunction* fimp = 0;
-                    if (m_funcObject->inherits(&JSFunction::info)) {
+                    if (m_funcObject->inherits(&JSFunction::s_info)) {
                         fimp = static_cast<JSFunction*>(m_funcObject.get());
 
                         JSObject* qt_sender = QtInstance::getQtInstance(sender(), ro, QScriptEngine::QtOwnership)->createRuntimeObject(exec);

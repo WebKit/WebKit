@@ -29,7 +29,6 @@
 #include "ObjectPrototype.h"
 #include "PropertyDescriptor.h"
 #include "PropertyNameArray.h"
-#include "PrototypeFunction.h"
 
 namespace JSC {
 
@@ -44,7 +43,7 @@ static EncodedJSValue JSC_HOST_CALL objectConstructorDefineProperties(ExecState*
 static EncodedJSValue JSC_HOST_CALL objectConstructorCreate(ExecState*);
 
 ObjectConstructor::ObjectConstructor(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, ObjectPrototype* objectPrototype, Structure* prototypeFunctionStructure)
-: InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, "Object"))
+    : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, "Object"))
 {
     // ECMA 15.2.3.1
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().prototype, objectPrototype, DontEnum | DontDelete | ReadOnly);

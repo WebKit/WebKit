@@ -67,7 +67,7 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(RegExpConstructor);
 
-const ClassInfo RegExpConstructor::info = { "Function", &InternalFunction::info, 0, ExecState::regExpConstructorTable };
+const ClassInfo RegExpConstructor::s_info = { "Function", &InternalFunction::s_info, 0, ExecState::regExpConstructorTable };
 
 /* Source for RegExpConstructor.lut.h
 @begin regExpConstructorTable
@@ -296,7 +296,7 @@ JSObject* constructRegExp(ExecState* exec, const ArgList& args)
     JSValue arg0 = args.at(0);
     JSValue arg1 = args.at(1);
 
-    if (arg0.inherits(&RegExpObject::info)) {
+    if (arg0.inherits(&RegExpObject::s_info)) {
         if (!arg1.isUndefined())
             return throwError(exec, createTypeError(exec, "Cannot supply flags when constructing one RegExp from another."));
         return asObject(arg0);

@@ -61,14 +61,14 @@ namespace JSC {
 
         static PassRefPtr<Structure> createStructure(JSValue prototype)
         {
-            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount);
+            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
         virtual void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
 
-        static const ClassInfo info;
+        static const ClassInfo s_info;
 
         void performMatch(RegExp*, const UString&, int startOffset, int& position, int& length, int** ovector = 0);
         JSObject* arrayOfMatches(ExecState*) const;
@@ -91,8 +91,6 @@ namespace JSC {
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallData(CallData&);
 
-        virtual const ClassInfo* classInfo() const { return &info; }
-
         OwnPtr<RegExpConstructorPrivate> d;
     };
 
@@ -102,7 +100,7 @@ namespace JSC {
 
     inline RegExpConstructor* asRegExpConstructor(JSValue value)
     {
-        ASSERT(asObject(value)->inherits(&RegExpConstructor::info));
+        ASSERT(asObject(value)->inherits(&RegExpConstructor::s_info));
         return static_cast<RegExpConstructor*>(asObject(value));
     }
 

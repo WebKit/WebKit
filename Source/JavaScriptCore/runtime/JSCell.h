@@ -73,7 +73,7 @@ namespace JSC {
     public:
         static PassRefPtr<Structure> createDummyStructure()
         {
-            return Structure::create(jsNull(), TypeInfo(UnspecifiedType), AnonymousSlotCount);
+            return Structure::create(jsNull(), TypeInfo(UnspecifiedType), AnonymousSlotCount, 0);
         }
 
         // Querying the type.
@@ -118,7 +118,7 @@ namespace JSC {
 #endif
 
         // Object operations, with the toObject operation included.
-        virtual const ClassInfo* classInfo() const;
+        const ClassInfo* classInfo() const { return m_structure->classInfo(); }
         virtual void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
         virtual void put(ExecState*, unsigned propertyName, JSValue);
         virtual bool deleteProperty(ExecState*, const Identifier& propertyName);

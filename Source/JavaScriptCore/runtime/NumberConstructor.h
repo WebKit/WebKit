@@ -35,11 +35,11 @@ namespace JSC {
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
         JSValue getValueProperty(ExecState*, int token) const;
 
-        static const ClassInfo info;
+        static const ClassInfo s_info;
 
         static PassRefPtr<Structure> createStructure(JSValue proto) 
         { 
-            return Structure::create(proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount); 
+            return Structure::create(proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info); 
         }
 
         enum { NaNValue, NegInfinity, PosInfinity, MaxValue, MinValue };
@@ -50,8 +50,6 @@ namespace JSC {
     private:
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallData(CallData&);
-
-        virtual const ClassInfo* classInfo() const { return &info; }
     };
 
 } // namespace JSC

@@ -75,7 +75,7 @@ namespace JSC {
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
         virtual void put(ExecState*, unsigned propertyName, JSValue); // FIXME: Make protected and add setItem.
 
-        static JS_EXPORTDATA const ClassInfo info;
+        static JS_EXPORTDATA const ClassInfo s_info;
         
         unsigned length() const { return m_storage->m_length; }
         void setLength(unsigned); // OK to use on new arrays, but not if it might be a RegExpMatchArray.
@@ -127,7 +127,7 @@ namespace JSC {
 
         static PassRefPtr<Structure> createStructure(JSValue prototype)
         {
-            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount);
+            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
         
         inline void markChildrenDirect(MarkStack& markStack);
@@ -144,8 +144,6 @@ namespace JSC {
         void setSubclassData(void*);
         
     private:
-        virtual const ClassInfo* classInfo() const { return &info; }
-
         bool getOwnPropertySlotSlowCase(ExecState*, unsigned propertyName, PropertySlot&);
         void putSlowCase(ExecState*, unsigned propertyName, JSValue);
 
@@ -167,7 +165,7 @@ namespace JSC {
 
     inline JSArray* asArray(JSCell* cell)
     {
-        ASSERT(cell->inherits(&JSArray::info));
+        ASSERT(cell->inherits(&JSArray::s_info));
         return static_cast<JSArray*>(cell);
     }
 

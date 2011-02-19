@@ -42,8 +42,10 @@ public:
 
     static const ClassInfo s_info;
 
-private:
-    virtual const ClassInfo* classInfo() const { return &s_info; }
+    static PassRefPtr<Structure> createStructure(JSValue prototype)
+    {
+        return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+    }
 };
 
 }

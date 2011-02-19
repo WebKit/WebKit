@@ -30,7 +30,6 @@
 #include "JSArray.h"
 #include "JSFunction.h"
 #include "Lookup.h"
-#include "PrototypeFunction.h"
 
 namespace JSC {
 
@@ -94,7 +93,7 @@ CallType ArrayConstructor::getCallData(CallData& callData)
 
 EncodedJSValue JSC_HOST_CALL arrayConstructorIsArray(ExecState* exec)
 {
-    return JSValue::encode(jsBoolean(exec->argument(0).inherits(&JSArray::info)));
+    return JSValue::encode(jsBoolean(exec->argument(0).inherits(&JSArray::s_info)));
 }
 
 } // namespace JSC

@@ -37,11 +37,12 @@ using namespace JSC;
 
 namespace WebCore {
 
-const ClassInfo JSAudioConstructor::s_info = { "AudioConstructor", 0, 0, 0 };
+const ClassInfo JSAudioConstructor::s_info = { "AudioConstructor", &JSC::JSObject::s_info, 0, 0 };
 
 JSAudioConstructor::JSAudioConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
     : DOMConstructorWithDocument(JSAudioConstructor::createStructure(globalObject->objectPrototype()), globalObject)
 {
+    ASSERT(inherits(&s_info));
     putDirect(exec->globalData(), exec->propertyNames().prototype, JSHTMLAudioElementPrototype::self(exec, globalObject), None);
     putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontDelete | DontEnum);
 }

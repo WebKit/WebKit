@@ -49,7 +49,7 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(RegExpObject);
 
-const ClassInfo RegExpObject::info = { "RegExp", 0, 0, ExecState::regExpTable };
+const ClassInfo RegExpObject::s_info = { "RegExp", &JSObjectWithGlobalObject::s_info, 0, ExecState::regExpTable };
 
 /* Source for RegExpObject.lut.h
 @begin regExpTable

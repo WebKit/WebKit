@@ -34,6 +34,7 @@
 #import <WebCore/npruntime_impl.h>
 #import <WebCore/runtime_method.h>
 #import <runtime/Error.h>
+#import <runtime/FunctionPrototype.h>
 #import <runtime/PropertyNameArray.h>
 
 extern "C" {
@@ -179,11 +180,17 @@ JSValue ProxyInstance::invoke(JSC::ExecState* exec, InvokeType type, uint64_t id
 class ProxyRuntimeMethod : public RuntimeMethod {
 public:
     ProxyRuntimeMethod(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
-        : RuntimeMethod(exec, globalObject, name, list)
+        // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
+        // exec-globalData() is also likely wrong.
+        : RuntimeMethod(exec, globalObject, deprecatedGetDOMStructure<ProxyRuntimeMethod>(exec), name, list)
     {
+        ASSERT(inherits(&s_info));
     }
 
-    virtual const ClassInfo* classInfo() const { return &s_info; }
+    static PassRefPtr<Structure> createStructure(JSValue prototype)
+    {
+        return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+    }
 
     static const ClassInfo s_info;
 };

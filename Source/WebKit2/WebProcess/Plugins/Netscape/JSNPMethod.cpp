@@ -39,12 +39,13 @@ using namespace WebCore;
 
 namespace WebKit {
 
-const ClassInfo JSNPMethod::s_info = { "NPMethod", &InternalFunction::info, 0, 0 };
+const ClassInfo JSNPMethod::s_info = { "NPMethod", &InternalFunction::s_info, 0, 0 };
 
 JSNPMethod::JSNPMethod(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, NPIdentifier npIdentifier)
     : InternalFunction(&exec->globalData(), globalObject, createStructure(globalObject->functionPrototype()), name)
     , m_npIdentifier(npIdentifier)
 {
+    ASSERT(inherits(&s_info));
 }
 
 static EncodedJSValue JSC_HOST_CALL callMethod(ExecState* exec)

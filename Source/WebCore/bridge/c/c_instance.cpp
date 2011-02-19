@@ -31,6 +31,7 @@
 
 #include "CRuntimeObject.h"
 #include "IdentifierRep.h"
+#include "JSDOMBinding.h"
 #include "c_class.h"
 #include "c_runtime.h"
 #include "c_utility.h"
@@ -40,6 +41,7 @@
 #include <interpreter/CallFrame.h>
 #include <runtime/ArgList.h>
 #include <runtime/Error.h>
+#include <runtime/FunctionPrototype.h>
 #include <runtime/JSLock.h>
 #include <runtime/JSNumberCell.h>
 #include <runtime/PropertyNameArray.h>
@@ -111,11 +113,17 @@ bool CInstance::supportsInvokeDefaultMethod() const
 class CRuntimeMethod : public RuntimeMethod {
 public:
     CRuntimeMethod(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
-        : RuntimeMethod(exec, globalObject, name, list)
+        // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
+        // We need to pass in the right global object for "i".
+        : RuntimeMethod(exec, globalObject, WebCore::deprecatedGetDOMStructure<CRuntimeMethod>(exec), name, list)
     {
+        ASSERT(inherits(&s_info));
     }
 
-    virtual const ClassInfo* classInfo() const { return &s_info; }
+    static PassRefPtr<Structure> createStructure(JSValue prototype)
+    {
+        return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+    }
 
     static const ClassInfo s_info;
 };

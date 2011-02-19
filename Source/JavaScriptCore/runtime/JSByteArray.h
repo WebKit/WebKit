@@ -35,6 +35,8 @@ namespace JSC {
     class JSByteArray : public JSNonFinalObject {
         friend class JSGlobalData;
     public:
+        typedef JSNonFinalObject Base;
+
         bool canAccessIndex(unsigned i) { return i < m_storage->length(); }
         JSValue getIndex(ExecState*, unsigned i)
         {
@@ -66,8 +68,8 @@ namespace JSC {
                 setIndex(i, byteValue);
         }
 
-        JSByteArray(ExecState* exec, NonNullPassRefPtr<Structure>, WTF::ByteArray* storage, const JSC::ClassInfo* = &s_defaultInfo);
-        static PassRefPtr<Structure> createStructure(JSValue prototype);
+        JSByteArray(ExecState*, NonNullPassRefPtr<Structure>, WTF::ByteArray* storage);
+        static PassRefPtr<Structure> createStructure(JSValue prototype, const JSC::ClassInfo* = &s_defaultInfo);
 
         virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
         virtual bool getOwnPropertySlot(JSC::ExecState*, unsigned propertyName, JSC::PropertySlot&);
@@ -77,7 +79,6 @@ namespace JSC {
 
         virtual void getOwnPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
 
-        virtual const ClassInfo* classInfo() const { return m_classInfo; }
         static const ClassInfo s_defaultInfo;
 
         size_t length() const { return m_storage->length(); }
@@ -95,12 +96,10 @@ namespace JSC {
         enum VPtrStealingHackType { VPtrStealingHack };
         JSByteArray(VPtrStealingHackType)
             : JSNonFinalObject(createStructure(jsNull()))
-            , m_classInfo(0)
         {
         }
 
         RefPtr<WTF::ByteArray> m_storage;
-        const ClassInfo* m_classInfo;
     };
 
     JSByteArray* asByteArray(JSValue value);

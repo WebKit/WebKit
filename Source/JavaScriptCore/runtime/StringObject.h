@@ -41,14 +41,13 @@ namespace JSC {
         virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
         virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
 
-        virtual const ClassInfo* classInfo() const { return &info; }
-        static const JS_EXPORTDATA ClassInfo info;
+        static const JS_EXPORTDATA ClassInfo s_info;
 
         JSString* internalValue() const { return asString(JSWrapperObject::internalValue());}
 
         static PassRefPtr<Structure> createStructure(JSValue prototype)
         {
-            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount);
+            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
     protected:
@@ -60,7 +59,7 @@ namespace JSC {
 
     inline StringObject* asStringObject(JSValue value)
     {
-        ASSERT(asObject(value)->inherits(&StringObject::info));
+        ASSERT(asObject(value)->inherits(&StringObject::s_info));
         return static_cast<StringObject*>(asObject(value));
     }
 

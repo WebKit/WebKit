@@ -105,7 +105,7 @@ JSUserObject* KJSValueToJSObject(JSValue inValue, ExecState *exec)
 {
     JSUserObject* result = 0;
 
-    if (inValue.inherits(&UserObjectImp::info)) {
+    if (inValue.inherits(&UserObjectImp::s_info)) {
         UserObjectImp* userObjectImp = static_cast<UserObjectImp *>(asObject(inValue));
         result = userObjectImp->GetJSUserObject();
         if (result)
@@ -238,7 +238,7 @@ CFTypeRef KJSValueToCFTypeInternal(JSValue inValue, ExecState *exec, ObjectImpLi
 
         if (inValue.isObject())
             {
-                if (inValue.inherits(&UserObjectImp::info)) {
+                if (inValue.inherits(&UserObjectImp::s_info)) {
                     UserObjectImp* userObjectImp = static_cast<UserObjectImp *>(asObject(inValue));
                     JSUserObject* ptr = userObjectImp->GetJSUserObject();
                     if (ptr)
@@ -268,7 +268,7 @@ CFTypeRef KJSValueToCFTypeInternal(JSValue inValue, ExecState *exec, ObjectImpLi
 
 //[...] HACK since we do not have access to the class info we use class name instead
 #if 0
-                    if (object->inherits(&ArrayInstanceImp::info))
+                    if (object->inherits(&ArrayInstanceImp::s_info))
 #else
                     if (object->className() == "Array")
 #endif

@@ -64,10 +64,9 @@ namespace JSC {
 
         void copyRegisters();
         
-        virtual const ClassInfo* classInfo() const { return &info; }
-        static const ClassInfo info;
+        static const ClassInfo s_info;
 
-        static PassRefPtr<Structure> createStructure(JSValue proto) { return Structure::create(proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount); }
+        static PassRefPtr<Structure> createStructure(JSValue proto) { return Structure::create(proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info); }
 
     protected:
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | NeedsThisConversion | OverridesMarkChildren | OverridesGetPropertyNames | JSVariableObject::StructureFlags;
@@ -106,7 +105,7 @@ namespace JSC {
 
     inline JSActivation* asActivation(JSValue value)
     {
-        ASSERT(asObject(value)->inherits(&JSActivation::info));
+        ASSERT(asObject(value)->inherits(&JSActivation::s_info));
         return static_cast<JSActivation*>(asObject(value));
     }
 

@@ -25,7 +25,6 @@
 #include "JITCode.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
-#include "PrototypeFunction.h"
 #include "StringPrototype.h"
 
 namespace JSC {

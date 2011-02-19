@@ -33,12 +33,11 @@ using namespace WTF;
 
 namespace JSC {
 
-const ClassInfo JSByteArray::s_defaultInfo = { "ByteArray", 0, 0, 0 };
+const ClassInfo JSByteArray::s_defaultInfo = { "ByteArray", &Base::s_info, 0, 0 };
 
-JSByteArray::JSByteArray(ExecState* exec, NonNullPassRefPtr<Structure> structure, ByteArray* storage, const JSC::ClassInfo* classInfo)
+JSByteArray::JSByteArray(ExecState* exec, NonNullPassRefPtr<Structure> structure, ByteArray* storage)
     : JSNonFinalObject(structure)
     , m_storage(storage)
-    , m_classInfo(classInfo)
 {
     putDirect(exec->globalData(), exec->globalData().propertyNames->length, jsNumber(m_storage->length()), ReadOnly | DontDelete);
 }
@@ -51,10 +50,9 @@ JSByteArray::~JSByteArray()
 #endif
 
 
-PassRefPtr<Structure> JSByteArray::createStructure(JSValue prototype)
+PassRefPtr<Structure> JSByteArray::createStructure(JSValue prototype, const JSC::ClassInfo* classInfo)
 {
-    PassRefPtr<Structure> result = Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount);
-    return result;
+    return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, classInfo);
 }
 
 bool JSByteArray::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

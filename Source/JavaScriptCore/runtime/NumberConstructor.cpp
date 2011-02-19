@@ -42,7 +42,7 @@ static JSValue numberConstructorMinValue(ExecState*, JSValue, const Identifier&)
 
 namespace JSC {
 
-const ClassInfo NumberConstructor::info = { "Function", &InternalFunction::info, 0, ExecState::numberTable };
+const ClassInfo NumberConstructor::s_info = { "Function", &InternalFunction::s_info, 0, ExecState::numberTable };
 
 /* Source for NumberConstructor.lut.h
 @begin numberTable
@@ -55,7 +55,7 @@ const ClassInfo NumberConstructor::info = { "Function", &InternalFunction::info,
 */
 
 NumberConstructor::NumberConstructor(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, NumberPrototype* numberPrototype)
-    : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, numberPrototype->info.className))
+    : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, numberPrototype->s_info.className))
 {
     // Number.Prototype
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().prototype, numberPrototype, DontEnum | DontDelete | ReadOnly);

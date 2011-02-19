@@ -27,11 +27,13 @@
 #import "objc_instance.h"
 
 #import "runtime_method.h"
+#import "JSDOMBinding.h"
 #import "ObjCRuntimeObject.h"
 #import "WebScriptObject.h"
 #import <objc/objc-auto.h>
 #import <runtime/Error.h>
 #import <runtime/JSLock.h>
+#import "runtime/FunctionPrototype.h"
 #import <wtf/Assertions.h>
 
 #ifdef NDEBUG
@@ -175,11 +177,17 @@ bool ObjcInstance::supportsInvokeDefaultMethod() const
 class ObjCRuntimeMethod : public RuntimeMethod {
 public:
     ObjCRuntimeMethod(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
-        : RuntimeMethod(exec, globalObject, name, list)
+        // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
+        // We need to pass in the right global object for "i".
+        : RuntimeMethod(exec, globalObject, WebCore::deprecatedGetDOMStructure<ObjCRuntimeMethod>(exec), name, list)
     {
+        ASSERT(inherits(&s_info));
     }
 
-    virtual const ClassInfo* classInfo() const { return &s_info; }
+    static PassRefPtr<Structure> createStructure(JSValue prototype)
+    {
+        return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+    }
 
     static const ClassInfo s_info;
 };

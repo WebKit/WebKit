@@ -105,7 +105,7 @@ public:
 
     static PassRefPtr<Structure> createStructure(JSValue prototype)
     {
-        return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount);
+        return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
     }
 
 private:
@@ -118,8 +118,6 @@ private:
     virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const;
 
     virtual bool toBoolean(ExecState*) const;
-
-    virtual const ClassInfo* classInfo() const { return &s_info; }
 
     RefPtr<ObjcInstance> _instance;
     Identifier _item;

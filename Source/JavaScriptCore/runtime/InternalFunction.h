@@ -33,8 +33,7 @@ namespace JSC {
 
     class InternalFunction : public JSObjectWithGlobalObject {
     public:
-        virtual const ClassInfo* classInfo() const; 
-        static JS_EXPORTDATA const ClassInfo info;
+        static JS_EXPORTDATA const ClassInfo s_info;
 
         const UString& name(ExecState*);
         const UString displayName(ExecState*);
@@ -42,7 +41,7 @@ namespace JSC {
 
         static PassRefPtr<Structure> createStructure(JSValue proto) 
         { 
-            return Structure::create(proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount); 
+            return Structure::create(proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info); 
         }
 
     protected:
@@ -55,13 +54,15 @@ namespace JSC {
 
     private:
         virtual CallType getCallData(CallData&) = 0;
+
+        virtual void vtableAnchor();
     };
 
     InternalFunction* asInternalFunction(JSValue);
 
     inline InternalFunction* asInternalFunction(JSValue value)
     {
-        ASSERT(asObject(value)->inherits(&InternalFunction::info));
+        ASSERT(asObject(value)->inherits(&InternalFunction::s_info));
         return static_cast<InternalFunction*>(asObject(value));
     }
 

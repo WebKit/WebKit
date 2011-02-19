@@ -35,7 +35,7 @@ namespace Bindings {
 
 class RuntimeObject : public JSObjectWithGlobalObject {
 public:
-    RuntimeObject(ExecState*, JSGlobalObject*, PassRefPtr<Instance>);
+    RuntimeObject(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, PassRefPtr<Instance>);
     virtual ~RuntimeObject();
 
     virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
@@ -63,16 +63,13 @@ public:
 
     static PassRefPtr<Structure> createStructure(JSValue prototype)
     {
-        return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount);
+        return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
     }
 
 protected:
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSObject::StructureFlags;
-    RuntimeObject(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, PassRefPtr<Instance>);
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSObjectWithGlobalObject::StructureFlags;
 
 private:
-    virtual const ClassInfo* classInfo() const { return &s_info; }
-    
     static JSValue fallbackObjectGetter(ExecState*, JSValue, const Identifier&);
     static JSValue fieldGetter(ExecState*, JSValue, const Identifier&);
     static JSValue methodGetter(ExecState*, JSValue, const Identifier&);

@@ -36,7 +36,7 @@ class JSObjectWithGlobalObject : public JSNonFinalObject {
 public:
     static PassRefPtr<Structure> createStructure(JSValue proto)
     {
-        return Structure::create(proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount);
+        return Structure::create(proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
     }
 
     JSGlobalObject* globalObject() const;

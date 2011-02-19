@@ -25,6 +25,8 @@
 
 #import "config.h"
 
+#import "runtime/ObjectPrototype.h"
+#import "JSDOMBinding.h"
 #import "ObjCRuntimeObject.h"
 #import "objc_instance.h"
 
@@ -34,8 +36,11 @@ namespace Bindings {
 const ClassInfo ObjCRuntimeObject::s_info = { "ObjCRuntimeObject", &RuntimeObject::s_info, 0, 0 };
 
 ObjCRuntimeObject::ObjCRuntimeObject(ExecState* exec, JSGlobalObject* globalObject, PassRefPtr<ObjcInstance> instance)
-    : RuntimeObject(exec, globalObject, instance)
+    // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
+    // We need to pass in the right global object for "i".
+    : RuntimeObject(exec, globalObject, WebCore::deprecatedGetDOMStructure<ObjCRuntimeObject>(exec), instance)
 {
+    ASSERT(inherits(&s_info));
 }
 
 ObjCRuntimeObject::~ObjCRuntimeObject()

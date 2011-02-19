@@ -85,7 +85,7 @@ static inline bool isNumericCompareFunction(ExecState* exec, CallType callType, 
 
 // ------------------------------ ArrayPrototype ----------------------------
 
-const ClassInfo ArrayPrototype::info = {"Array", &JSArray::info, 0, ExecState::arrayTable};
+const ClassInfo ArrayPrototype::s_info = {"Array", &JSArray::s_info, 0, ExecState::arrayTable};
 
 /* Source for ArrayPrototype.lut.h
 @begin arrayTable 16
@@ -165,7 +165,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     bool isRealArray = isJSArray(&exec->globalData(), thisValue);
-    if (!isRealArray && !thisValue.inherits(&JSArray::info))
+    if (!isRealArray && !thisValue.inherits(&JSArray::s_info))
         return throwVMTypeError(exec);
     JSArray* thisObj = asArray(thisValue);
     
@@ -224,7 +224,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(&JSArray::info))
+    if (!thisValue.inherits(&JSArray::s_info))
         return throwVMTypeError(exec);
     JSObject* thisObj = asArray(thisValue);
 
@@ -330,7 +330,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState* exec)
     size_t i = 0;
     size_t argCount = exec->argumentCount();
     while (1) {
-        if (curArg.inherits(&JSArray::info)) {
+        if (curArg.inherits(&JSArray::s_info)) {
             unsigned length = curArg.get(exec, exec->propertyNames().length).toUInt32(exec);
             JSObject* curObject = curArg.toObject(exec);
             for (unsigned k = 0; k < length; ++k) {
@@ -470,7 +470,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSort(ExecState* exec)
     CallData callData;
     CallType callType = getCallData(function, callData);
 
-    if (thisObj->classInfo() == &JSArray::info) {
+    if (thisObj->classInfo() == &JSArray::s_info) {
         if (isNumericCompareFunction(exec, callType, callData))
             asArray(thisObj)->sortNumeric(exec, function, callType, callData);
         else if (callType != CallTypeNone)

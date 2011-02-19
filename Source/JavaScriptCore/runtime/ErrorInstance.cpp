@@ -23,7 +23,7 @@
 
 namespace JSC {
 
-const ClassInfo ErrorInstance::info = { "Error", 0, 0, 0 };
+const ClassInfo ErrorInstance::s_info = { "Error", &JSNonFinalObject::s_info, 0, 0 };
 
 ErrorInstance::ErrorInstance(JSGlobalData* globalData, NonNullPassRefPtr<Structure> structure)
     : JSNonFinalObject(structure)

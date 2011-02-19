@@ -44,12 +44,11 @@ namespace JSC {
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
         virtual void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
 
-        virtual const ClassInfo* classInfo() const { return &info; }
-        static JS_EXPORTDATA const ClassInfo info;
+        static JS_EXPORTDATA const ClassInfo s_info;
 
         static PassRefPtr<Structure> createStructure(JSValue prototype)
         {
-            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount);
+            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
     protected:
@@ -80,7 +79,7 @@ namespace JSC {
 
     inline RegExpObject* asRegExpObject(JSValue value)
     {
-        ASSERT(asObject(value)->inherits(&RegExpObject::info));
+        ASSERT(asObject(value)->inherits(&RegExpObject::s_info));
         return static_cast<RegExpObject*>(asObject(value));
     }
 

@@ -129,9 +129,9 @@ bool JSValueIsObjectOfClass(JSContextRef ctx, JSValueRef value, JSClassRef jsCla
     JSValue jsValue = toJS(exec, value);
     
     if (JSObject* o = jsValue.getObject()) {
-        if (o->inherits(&JSCallbackObject<JSGlobalObject>::info))
+        if (o->inherits(&JSCallbackObject<JSGlobalObject>::s_info))
             return static_cast<JSCallbackObject<JSGlobalObject>*>(o)->inherits(jsClass);
-        else if (o->inherits(&JSCallbackObject<JSObjectWithGlobalObject>::info))
+        if (o->inherits(&JSCallbackObject<JSObjectWithGlobalObject>::s_info))
             return static_cast<JSCallbackObject<JSObjectWithGlobalObject>*>(o)->inherits(jsClass);
     }
     return false;

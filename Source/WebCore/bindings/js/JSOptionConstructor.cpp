@@ -33,11 +33,12 @@ namespace WebCore {
 
 ASSERT_CLASS_FITS_IN_CELL(JSOptionConstructor);
 
-const ClassInfo JSOptionConstructor::s_info = { "OptionConstructor", 0, 0, 0 };
+const ClassInfo JSOptionConstructor::s_info = { "OptionConstructor", &JSC::JSObject::s_info, 0, 0 };
 
 JSOptionConstructor::JSOptionConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
     : DOMConstructorWithDocument(JSOptionConstructor::createStructure(globalObject->objectPrototype()), globalObject)
 {
+    ASSERT(inherits(&s_info));
     putDirect(exec->globalData(), exec->propertyNames().prototype, JSHTMLOptionElementPrototype::self(exec, globalObject), None);
     putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(4), ReadOnly | DontDelete | DontEnum);
 }

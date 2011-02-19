@@ -134,11 +134,11 @@ static inline JSValue unwrapBoxedPrimitive(ExecState* exec, JSValue value)
     if (!value.isObject())
         return value;
     JSObject* object = asObject(value);
-    if (object->inherits(&NumberObject::info))
+    if (object->inherits(&NumberObject::s_info))
         return jsNumber(object->toNumber(exec));
-    if (object->inherits(&StringObject::info))
+    if (object->inherits(&StringObject::s_info))
         return jsString(exec, object->toString(exec));
-    if (object->inherits(&BooleanObject::info))
+    if (object->inherits(&BooleanObject::s_info))
         return object->toPrimitive(exec);
     return value;
 }
@@ -212,7 +212,7 @@ Stringifier::Stringifier(ExecState* exec, JSValue replacer, JSValue space)
     if (!m_replacer.isObject())
         return;
 
-    if (asObject(m_replacer)->inherits(&JSArray::info)) {
+    if (asObject(m_replacer)->inherits(&JSArray::s_info)) {
         m_usingArrayReplacer = true;
         JSObject* array = asObject(m_replacer);
         unsigned length = array->get(exec, exec->globalData().propertyNames->length).toUInt32(exec);
@@ -234,7 +234,7 @@ Stringifier::Stringifier(ExecState* exec, JSValue replacer, JSValue space)
             }
 
             if (name.isObject()) {
-                if (!asObject(name)->inherits(&NumberObject::info) && !asObject(name)->inherits(&StringObject::info))
+                if (!asObject(name)->inherits(&NumberObject::s_info) && !asObject(name)->inherits(&StringObject::s_info))
                     continue;
                 propertyName = name.toString(exec);
                 if (exec->hadException())
@@ -376,7 +376,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(UStringBuilder&
             return StringifyFailed;
     }
 
-    if (value.isUndefined() && !holder->inherits(&JSArray::info))
+    if (value.isUndefined() && !holder->inherits(&JSArray::s_info))
         return StringifyFailedDueToUndefinedValue;
 
     if (value.isNull()) {
@@ -416,7 +416,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(UStringBuilder&
 
     CallData callData;
     if (object->getCallData(callData) != CallTypeNone) {
-        if (holder->inherits(&JSArray::info)) {
+        if (holder->inherits(&JSArray::s_info)) {
             builder.append("null");
             return StringifySucceeded;
         }
@@ -486,7 +486,7 @@ inline void Stringifier::startNewLine(UStringBuilder& builder) const
 
 inline Stringifier::Holder::Holder(JSObject* object)
     : m_object(object)
-    , m_isArray(object->inherits(&JSArray::info))
+    , m_isArray(object->inherits(&JSArray::s_info))
     , m_index(0)
 {
 }
@@ -601,7 +601,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, UStringBu
 
 // ------------------------------ JSONObject --------------------------------
 
-const ClassInfo JSONObject::info = { "JSON", 0, 0, ExecState::jsonTable };
+const ClassInfo JSONObject::s_info = { "JSON", &JSObjectWithGlobalObject::s_info, 0, ExecState::jsonTable };
 
 /* Source for JSONObject.lut.h
 @begin jsonTable
@@ -678,7 +678,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             arrayStartState:
             case ArrayStartState: {
                 ASSERT(inValue.isObject());
-                ASSERT(isJSArray(&m_exec->globalData(), asObject(inValue)) || asObject(inValue)->inherits(&JSArray::info));
+                ASSERT(isJSArray(&m_exec->globalData(), asObject(inValue)) || asObject(inValue)->inherits(&JSArray::s_info));
                 if (objectStack.size() + arrayStack.size() > maximumFilterRecursion)
                     return throwError(m_exec, createStackOverflowError(m_exec));
 
@@ -739,7 +739,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             objectStartState:
             case ObjectStartState: {
                 ASSERT(inValue.isObject());
-                ASSERT(!isJSArray(&m_exec->globalData(), asObject(inValue)) && !asObject(inValue)->inherits(&JSArray::info));
+                ASSERT(!isJSArray(&m_exec->globalData(), asObject(inValue)) && !asObject(inValue)->inherits(&JSArray::s_info));
                 if (objectStack.size() + arrayStack.size() > maximumFilterRecursion)
                     return throwError(m_exec, createStackOverflowError(m_exec));
 
@@ -806,7 +806,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                     break;
                 }
                 JSObject* object = asObject(inValue);
-                if (isJSArray(&m_exec->globalData(), object) || object->inherits(&JSArray::info))
+                if (isJSArray(&m_exec->globalData(), object) || object->inherits(&JSArray::s_info))
                     goto arrayStartState;
                 goto objectStartState;
         }

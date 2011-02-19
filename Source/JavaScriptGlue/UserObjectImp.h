@@ -39,8 +39,7 @@ public:
     UserObjectImp(PassRefPtr<Structure>, JSUserObject*);
     virtual ~UserObjectImp();
 
-    virtual const ClassInfo *classInfo() const;
-    static const ClassInfo info;
+    static const ClassInfo s_info;
 
     virtual CallType getCallData(CallData&);
 
@@ -61,7 +60,7 @@ public:
 
     static PassRefPtr<Structure> createStructure(JSValue prototype)
     {
-        return Structure::create(prototype, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | OverridesMarkChildren | OverridesGetPropertyNames), AnonymousSlotCount);
+        return Structure::create(prototype, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | OverridesMarkChildren | OverridesGetPropertyNames), AnonymousSlotCount, &s_info);
     }
 
 private:

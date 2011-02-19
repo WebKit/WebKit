@@ -32,7 +32,7 @@
 #include <JavaScriptCore/JSString.h>
 #include <JavaScriptCore/PropertyNameArray.h>
 
-const ClassInfo UserObjectImp::info = { "UserObject", 0, 0, 0 };
+const ClassInfo UserObjectImp::s_info = { "UserObject", &JSNonFinalObject::s_info, 0, 0 };
 
 UserObjectImp::UserObjectImp(PassRefPtr<Structure> structure, JSUserObject* userObject)
     : JSNonFinalObject(structure)
@@ -44,11 +44,6 @@ UserObjectImp::~UserObjectImp()
 {
     if (fJSUserObject)
         fJSUserObject->Release();
-}
-
-const ClassInfo * UserObjectImp::classInfo() const
-{
-    return &info;
 }
 
 CallType UserObjectImp::getCallData(CallData& callData)

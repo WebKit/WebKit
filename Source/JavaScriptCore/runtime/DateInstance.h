@@ -37,7 +37,7 @@ namespace JSC {
 
         double internalNumber() const { return internalValue().uncheckedGetNumber(); }
 
-        static JS_EXPORTDATA const ClassInfo info;
+        static JS_EXPORTDATA const ClassInfo s_info;
 
         const GregorianDateTime* gregorianDateTime(ExecState* exec) const
         {
@@ -55,7 +55,7 @@ namespace JSC {
 
         static PassRefPtr<Structure> createStructure(JSValue prototype)
         {
-            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount);
+            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
     protected:
@@ -64,7 +64,6 @@ namespace JSC {
     private:
         const GregorianDateTime* calculateGregorianDateTime(ExecState*) const;
         const GregorianDateTime* calculateGregorianDateTimeUTC(ExecState*) const;
-        virtual const ClassInfo* classInfo() const { return &info; }
 
         mutable RefPtr<DateInstanceData> m_data;
     };
@@ -73,7 +72,7 @@ namespace JSC {
 
     inline DateInstance* asDateInstance(JSValue value)
     {
-        ASSERT(asObject(value)->inherits(&DateInstance::info));
+        ASSERT(asObject(value)->inherits(&DateInstance::s_info));
         return static_cast<DateInstance*>(asObject(value));
     }
 

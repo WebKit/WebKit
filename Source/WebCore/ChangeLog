@@ -1,3 +1,67 @@
+2011-02-18  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 54786 - Devirtualize JSCell::classInfo()
+
+        Instead of making a virtual function call, add a pointer to the ClassInfo
+        onto Structure.
+
+        This removes a virtual function call, and paves the way towards removing all
+        the createStructure methods, and StructureFlags/AnonymousSlotCount properties
+        (these should be able to move onto ClassInfo).
+
+        Calls to Structure::create must now pass a pointer to the ClassInfo for the
+        structure. All objects now have a ClassInfo pointer, non-object cell types
+        still do not.
+
+        Changes are most mechanical, involving three steps:
+            * Remove virtual classInfo() methods.
+            * Add &s_info parameter to calls to Structure::create.
+            * Rename ClassInfo static members on classes from 'info' to 's_info',
+              for consistency.
+
+        * WebCore.exp.in:
+        * bindings/js/JSAudioConstructor.cpp:
+        * bindings/js/JSAudioConstructor.h:
+        * bindings/js/JSDOMBinding.cpp:
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMGlobalObject.cpp:
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowShell.cpp:
+        * bindings/js/JSDOMWindowShell.h:
+        * bindings/js/JSGeolocationCustom.cpp:
+        * bindings/js/JSImageConstructor.cpp:
+        * bindings/js/JSImageConstructor.h:
+        * bindings/js/JSImageDataCustom.cpp:
+        * bindings/js/JSOptionConstructor.cpp:
+        * bindings/js/JSOptionConstructor.h:
+        * bindings/js/JSWorkerContextBase.cpp:
+        * bindings/js/JSWorkerContextBase.h:
+        * bindings/js/SerializedScriptValue.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/c/CRuntimeObject.cpp:
+        * bridge/c/CRuntimeObject.h:
+        * bridge/c/c_instance.cpp:
+        * bridge/jni/jsc/JNIUtilityPrivate.cpp:
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        * bridge/jni/jsc/JavaRuntimeObject.cpp:
+        * bridge/jni/jsc/JavaRuntimeObject.h:
+        * bridge/jsc/BridgeJSC.cpp:
+        * bridge/objc/ObjCRuntimeObject.h:
+        * bridge/objc/ObjCRuntimeObject.mm:
+        * bridge/objc/objc_instance.mm:
+        * bridge/objc/objc_runtime.h:
+        * bridge/objc/objc_runtime.mm:
+        * bridge/runtime_array.cpp:
+        * bridge/runtime_array.h:
+        * bridge/runtime_method.cpp:
+        * bridge/runtime_method.h:
+        * bridge/runtime_object.cpp:
+        * bridge/runtime_object.h:
+
 2011-02-19  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Martin Robinson.

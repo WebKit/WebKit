@@ -37,7 +37,7 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSActivation);
 
-const ClassInfo JSActivation::info = { "JSActivation", 0, 0, 0 };
+const ClassInfo JSActivation::s_info = { "JSActivation", &Base::s_info, 0, 0 };
 
 JSActivation::JSActivation(CallFrame* callFrame, NonNullPassRefPtr<FunctionExecutable> functionExecutable)
     : Base(callFrame->globalData().activationStructure, new JSActivationData(functionExecutable, callFrame->registers()))
@@ -211,7 +211,7 @@ JSValue JSActivation::argumentsGetter(ExecState*, JSValue slotBase, const Identi
     callFrame->uncheckedR(argumentsRegister) = arguments;
     callFrame->uncheckedR(realArgumentsRegister) = arguments;
     
-    ASSERT(callFrame->uncheckedR(realArgumentsRegister).jsValue().inherits(&Arguments::info));
+    ASSERT(callFrame->uncheckedR(realArgumentsRegister).jsValue().inherits(&Arguments::s_info));
     return callFrame->uncheckedR(realArgumentsRegister).jsValue();
 }
 

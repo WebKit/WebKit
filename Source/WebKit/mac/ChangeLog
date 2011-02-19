@@ -1,3 +1,36 @@
+2011-02-18  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 54786 - Devirtualize JSCell::classInfo()
+
+        Instead of making a virtual function call, add a pointer to the ClassInfo
+        onto Structure.
+
+        This removes a virtual function call, and paves the way towards removing all
+        the createStructure methods, and StructureFlags/AnonymousSlotCount properties
+        (these should be able to move onto ClassInfo).
+
+        Calls to Structure::create must now pass a pointer to the ClassInfo for the
+        structure. All objects now have a ClassInfo pointer, non-object cell types
+        still do not.
+
+        Changes are most mechanical, involving three steps:
+            * Remove virtual classInfo() methods.
+            * Add &s_info parameter to calls to Structure::create.
+            * Rename ClassInfo static members on classes from 'info' to 's_info',
+              for consistency.
+
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyRuntimeMethod::ProxyRuntimeMethod):
+        (WebKit::ProxyRuntimeMethod::createStructure):
+        * Plugins/Hosted/ProxyRuntimeObject.h:
+        (WebKit::ProxyRuntimeObject::createStructure):
+        * Plugins/Hosted/ProxyRuntimeObject.mm:
+        (WebKit::ProxyRuntimeObject::ProxyRuntimeObject):
+        * WebView/WebView.mm:
+        (aeDescFromJSValue):
+
 2011-02-19  Brian Ryner  <bryner@chromium.org>
 
         Reviewed by Adam Barth.

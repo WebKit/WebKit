@@ -26,7 +26,6 @@
 #include "JSFunction.h"
 #include "JSString.h"
 #include "Operations.h"
-#include "PrototypeFunction.h"
 #include "dtoa.h"
 #include <wtf/Assertions.h>
 #include <wtf/DecimalNumber.h>

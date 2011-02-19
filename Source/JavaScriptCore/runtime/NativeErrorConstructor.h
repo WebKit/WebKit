@@ -33,15 +33,18 @@ namespace JSC {
     public:
         NativeErrorConstructor(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure> structure, NonNullPassRefPtr<Structure> prototypeStructure, const UString&);
 
-        static const ClassInfo info;
+        static const ClassInfo s_info;
+
+        static PassRefPtr<Structure> createStructure(JSValue prototype)
+        {
+            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+        }
 
         Structure* errorStructure() { return m_errorStructure.get(); }
 
     private:
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallData(CallData&);
-
-        virtual const ClassInfo* classInfo() const { return &info; }
 
         RefPtr<Structure> m_errorStructure;
     };

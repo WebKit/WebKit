@@ -11,7 +11,6 @@ EXPORTS
     ??0InternalFunction@JSC@@IAE@PAVJSGlobalData@1@PAVJSGlobalObject@1@V?$NonNullPassRefPtr@VStructure@JSC@@@WTF@@ABVIdentifier@1@@Z
     ??0JSArray@JSC@@QAE@AAVJSGlobalData@1@V?$NonNullPassRefPtr@VStructure@JSC@@@WTF@@ABVArgList@1@@Z  
     ??0JSArray@JSC@@QAE@V?$NonNullPassRefPtr@VStructure@JSC@@@WTF@@@Z
-    ??0JSByteArray@JSC@@QAE@PAVExecState@1@V?$NonNullPassRefPtr@VStructure@JSC@@@WTF@@PAVByteArray@4@PBUClassInfo@1@@Z
     ??0JSFunction@JSC@@QAE@PAVExecState@1@PAVJSGlobalObject@1@V?$NonNullPassRefPtr@VStructure@JSC@@@WTF@@HABVIdentifier@1@P6I_J0@Z@Z
     ??0JSObjectWithGlobalObject@JSC@@IAE@PAVJSGlobalObject@1@V?$NonNullPassRefPtr@VStructure@JSC@@@WTF@@@Z
     ??0MD5@WTF@@QAE@XZ
@@ -20,7 +19,6 @@ EXPORTS
     ??0RefCountedLeakCounter@WTF@@QAE@PBD@Z
     ??0RegExpObject@JSC@@QAE@PAVJSGlobalObject@1@V?$NonNullPassRefPtr@VStructure@JSC@@@WTF@@V?$NonNullPassRefPtr@VRegExp@JSC@@@4@@Z
     ??0StringObject@JSC@@QAE@PAVExecState@1@V?$NonNullPassRefPtr@VStructure@JSC@@@WTF@@ABVUString@1@@Z
-    ??0Structure@JSC@@AAE@VJSValue@1@ABVTypeInfo@1@I@Z
     ??0ThreadCondition@WTF@@QAE@XZ
     ??0UString@JSC@@QAE@PBD@Z
     ??0UString@JSC@@QAE@PBDI@Z
@@ -78,8 +76,6 @@ EXPORTS
     ?checkCurrentIdentifierTable@Identifier@JSC@@CAXPAVJSGlobalData@2@@Z
     ?checkSyntax@JSC@@YA?AVCompletion@1@PAVExecState@1@ABVSourceCode@1@@Z
     ?checksum@MD5@WTF@@QAEXAAV?$Vector@E$0BA@@2@@Z
-    ?classInfo@InternalFunction@JSC@@UBEPBUClassInfo@2@XZ
-    ?classInfo@JSCell@JSC@@UBEPBUClassInfo@2@XZ
     ?className@JSObject@JSC@@UBE?AVUString@2@XZ
     ?clear@SourceProviderCache@JSC@@QAEXXZ
     ?collate@Collator@WTF@@QBE?AW4Result@12@PB_WI0I@Z
@@ -105,7 +101,6 @@ EXPORTS
     ?createReferenceError@JSC@@YAPAVJSObject@1@PAVExecState@1@ABVUString@1@@Z
     ?createSingleCharacterString@SmallStrings@JSC@@AAEXPAVJSGlobalData@2@E@Z
     ?createStackOverflowError@JSC@@YAPAVJSObject@1@PAVExecState@1@@Z
-    ?createStructure@JSByteArray@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@VJSValue@2@@Z
     ?createSyntaxError@JSC@@YAPAVJSObject@1@PAVExecState@1@ABVUString@1@@Z
     ?createTable@HashTable@JSC@@ABEXPAVJSGlobalData@2@@Z
     ?createThread@WTF@@YAIP6APAXPAX@Z0@Z

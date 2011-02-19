@@ -52,6 +52,8 @@ namespace JSC {
     class PropertyNameArray;
     class PropertyNameArrayData;
 
+    struct ClassInfo;
+
     enum EnumerationMode {
         ExcludeDontEnumProperties,
         IncludeDontEnumProperties
@@ -61,9 +63,9 @@ namespace JSC {
     public:
         friend class JIT;
         friend class StructureTransitionTable;
-        static PassRefPtr<Structure> create(JSValue prototype, const TypeInfo& typeInfo, unsigned anonymousSlotCount)
+        static PassRefPtr<Structure> create(JSValue prototype, const TypeInfo& typeInfo, unsigned anonymousSlotCount, const ClassInfo* classInfo)
         {
-            return adoptRef(new Structure(prototype, typeInfo, anonymousSlotCount));
+            return adoptRef(new Structure(prototype, typeInfo, anonymousSlotCount, classInfo));
         }
 
         static void startIgnoringLeaks();
@@ -140,10 +142,17 @@ namespace JSC {
         void clearEnumerationCache(); // Defined in JSPropertyNameIterator.h.
         JSPropertyNameIterator* enumerationCache(); // Defined in JSPropertyNameIterator.h.
         void getPropertyNames(PropertyNameArray&, EnumerationMode mode);
-        
-    private:
 
-        Structure(JSValue prototype, const TypeInfo&, unsigned anonymousSlotCount);
+        const ClassInfo* classInfo() const { return m_classInfo; }
+
+    private:
+        Structure(JSValue prototype, const TypeInfo&, unsigned anonymousSlotCount, const ClassInfo*);
+        Structure(const Structure*);
+
+        static PassRefPtr<Structure> create(const Structure* structure)
+        {
+            return adoptRef(new Structure(structure));
+        }
         
         typedef enum { 
             NoneDictionaryKind = 0,
@@ -213,6 +222,8 @@ namespace JSC {
         RefPtr<Structure> m_previous;
         RefPtr<StringImpl> m_nameInPrevious;
         JSCell* m_specificValueInPrevious;
+
+        const ClassInfo* m_classInfo;
 
         // 'm_isUsingSingleSlot' indicates whether we are using the single transition optimisation.
         union {

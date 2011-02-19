@@ -741,7 +741,6 @@ sub GenerateHeader
     }
 
     # Class info
-    push(@headerContent, "    virtual const JSC::ClassInfo* classInfo() const { return &s_info; }\n");
     push(@headerContent, "    static const JSC::ClassInfo s_info;\n\n");
 
     # Structure ID
@@ -752,7 +751,7 @@ sub GenerateHeader
     push(@headerContent,
         "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)\n" .
         "    {\n" .
-        "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount);\n" .
+        "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);\n" .
         "    }\n\n");
 
     # markChildren function
@@ -950,7 +949,6 @@ sub GenerateHeader
     } else {
         push(@headerContent, "    static JSC::JSObject* self(JSC::ExecState*, JSC::JSGlobalObject*);\n");
     }
-    push(@headerContent, "    virtual const JSC::ClassInfo* classInfo() const { return &s_info; }\n");
     push(@headerContent, "    static const JSC::ClassInfo s_info;\n");
     if ($numFunctions > 0 || $numConstants > 0 || $dataNode->extendedAttributes->{"DelegatingPrototypeGetOwnPropertySlot"}) {
         push(@headerContent, "    virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);\n");
@@ -965,7 +963,7 @@ sub GenerateHeader
     push(@headerContent,
         "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)\n" .
         "    {\n" .
-        "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount);\n" .
+        "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);\n" .
         "    }\n");
     if ($dataNode->extendedAttributes->{"DelegatingPrototypePutFunction"}) {
         push(@headerContent, "    virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
@@ -1310,9 +1308,9 @@ sub GenerateImplementation
         push(@implContent, "{\n");
         push(@implContent, "    return getHashTableForGlobalData(exec->globalData(), &${className}PrototypeTable);\n");
         push(@implContent, "}\n");
-        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleClassName}Prototype\", 0, 0, get${className}PrototypeTable };\n\n");
+        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleClassName}Prototype\", &JSC::JSObject::s_info, 0, get${className}PrototypeTable };\n\n");
     } else {
-        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleClassName}Prototype\", 0, &${className}PrototypeTable, 0 };\n\n");
+        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleClassName}Prototype\", &JSC::JSObject::s_info, &${className}PrototypeTable, 0 };\n\n");
     }
     if ($interfaceName eq "DOMWindow") {
         push(@implContent, "void* ${className}Prototype::operator new(size_t size)\n");
@@ -1386,11 +1384,12 @@ sub GenerateImplementation
         push(@implContent, "    return getHashTableForGlobalData(exec->globalData(), &${className}Table);\n");
         push(@implContent, "}\n");
     }
+
     push(@implContent, "const ClassInfo $className" . "::s_info = { \"${visibleClassName}\", ");
     if ($hasParent) {
         push(@implContent, "&" . $parentClassName . "::s_info, ");
     } else {
-        push(@implContent, "0, ");
+        push(@implContent, "&JSC::JSObject::s_info, ");
     }
 
     if ($numAttributes > 0 && !$dataNode->extendedAttributes->{"NoStaticTables"}) {
@@ -2901,12 +2900,11 @@ sub GenerateConstructorDeclaration
 
     push(@$outputArray, "    virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);\n");
     push(@$outputArray, "    virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);\n");
-    push(@$outputArray, "    virtual const JSC::ClassInfo* classInfo() const { return &s_info; }\n");
     push(@$outputArray, "    static const JSC::ClassInfo s_info;\n");
 
     push(@$outputArray, "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)\n");
     push(@$outputArray, "    {\n");
-    push(@$outputArray, "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount);\n");
+    push(@$outputArray, "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);\n");
     push(@$outputArray, "    }\n");
 
     push(@$outputArray, "protected:\n");
@@ -2935,11 +2933,12 @@ sub GenerateConstructorDefinition
     my $callWith = $dataNode->extendedAttributes->{"CallWith"};
     my $numberOfconstructParameters = $dataNode->extendedAttributes->{"ConstructorParameters"};
 
-    push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleClassName}Constructor\", 0, &${constructorClassName}Table, 0 };\n\n");
+    push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleClassName}Constructor\", &JSC::JSObject::s_info, &${constructorClassName}Table, 0 };\n\n");
 
     push(@$outputArray, "${constructorClassName}::${constructorClassName}(ExecState* exec, JSDOMGlobalObject* globalObject)\n");
     push(@$outputArray, "    : DOMConstructorObject(${constructorClassName}::createStructure(globalObject->objectPrototype()), globalObject)\n");
     push(@$outputArray, "{\n");
+    push(@$outputArray, "    ASSERT(inherits(&s_info));\n");
     if ($interfaceName eq "DOMWindow") {
         push(@$outputArray, "    putDirect(exec->globalData(), exec->propertyNames().prototype, globalObject->prototype(), DontDelete | ReadOnly);\n");
     } else {

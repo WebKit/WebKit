@@ -2525,7 +2525,7 @@ DEFINE_STUB_FUNCTION(int, op_load_varargs)
             stackFrame.globalData->exception = createInvalidParamError(callFrame, "Function.prototype.apply", arguments);
             VM_THROW_EXCEPTION();
         }
-        if (asObject(arguments)->classInfo() == &Arguments::info) {
+        if (asObject(arguments)->classInfo() == &Arguments::s_info) {
             Arguments* argsObject = asArguments(arguments);
             argCount = argsObject->numProvidedArguments(callFrame);
             argCount = min(argCount, static_cast<uint32_t>(Arguments::MaxArguments));
@@ -2547,7 +2547,7 @@ DEFINE_STUB_FUNCTION(int, op_load_varargs)
                 VM_THROW_EXCEPTION();
             }
             array->copyToRegisters(callFrame, callFrame->registers() + argsOffset, argCount);
-        } else if (asObject(arguments)->inherits(&JSArray::info)) {
+        } else if (asObject(arguments)->inherits(&JSArray::s_info)) {
             JSObject* argObject = asObject(arguments);
             argCount = argObject->get(callFrame, callFrame->propertyNames().length).toUInt32(callFrame);
             argCount = min(argCount, static_cast<uint32_t>(Arguments::MaxArguments));

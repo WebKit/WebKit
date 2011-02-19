@@ -41,10 +41,12 @@ public:
 
     ProxyInstance* getInternalProxyInstance() const;
 
-    static const JSC::ClassInfo s_info;
+    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)
+    {
+        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+    }
 
-private:
-    virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
+    static const JSC::ClassInfo s_info;
 };
 
 }

@@ -50,7 +50,7 @@ static PassRefPtr<PositionCallback> createPositionCallback(ExecState* exec, JSDO
 {
     // The spec specifies 'FunctionOnly' for this object.
     // FIXME: This check disallows callable objects created via JSC API. It's not clear what exactly the specification intends to allow.
-    if (!value.inherits(&JSFunction::info)) {
+    if (!value.inherits(&JSFunction::s_info)) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return 0;
     }
@@ -67,7 +67,7 @@ static PassRefPtr<PositionErrorCallback> createPositionErrorCallback(ExecState* 
 
     // The spec specifies 'FunctionOnly' for this object.
     // FIXME: This check disallows callable objects created via JSC API. It's not clear what exactly the specification intends to allow.
-    if (!value.inherits(&JSFunction::info)) {
+    if (!value.inherits(&JSFunction::s_info)) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return 0;
     }

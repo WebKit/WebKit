@@ -28,7 +28,6 @@
 #include "JSStringBuilder.h"
 #include "Interpreter.h"
 #include "Lexer.h"
-#include "PrototypeFunction.h"
 
 namespace JSC {
 
@@ -86,7 +85,7 @@ static inline void insertSemicolonIfNeeded(UString& functionBody)
 EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (thisValue.inherits(&JSFunction::info)) {
+    if (thisValue.inherits(&JSFunction::s_info)) {
         JSFunction* function = asFunction(thisValue);
         if (function->isHostFunction())
             return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(exec), "() {\n    [native code]\n}"));
@@ -96,7 +95,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
         return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(exec), "(", executable->paramString(), ") ", sourceString));
     }
 
-    if (thisValue.inherits(&InternalFunction::info)) {
+    if (thisValue.inherits(&InternalFunction::s_info)) {
         InternalFunction* function = asInternalFunction(thisValue);
         return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(exec), "() {\n    [native code]\n}"));
     }
@@ -118,11 +117,11 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncApply(ExecState* exec)
     if (!array.isUndefinedOrNull()) {
         if (!array.isObject())
             return throwVMTypeError(exec);
-        if (asObject(array)->classInfo() == &Arguments::info)
+        if (asObject(array)->classInfo() == &Arguments::s_info)
             asArguments(array)->fillArgList(exec, applyArgs);
         else if (isJSArray(&exec->globalData(), array))
             asArray(array)->fillArgList(exec, applyArgs);
-        else if (asObject(array)->inherits(&JSArray::info)) {
+        else if (asObject(array)->inherits(&JSArray::s_info)) {
             unsigned length = asArray(array)->get(exec, exec->propertyNames().length).toUInt32(exec);
             for (unsigned i = 0; i < length; ++i)
                 applyArgs.append(asArray(array)->get(exec, i));

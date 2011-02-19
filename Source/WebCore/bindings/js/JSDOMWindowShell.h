@@ -60,7 +60,7 @@ namespace WebCore {
 
         static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype) 
         {
-            return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount); 
+            return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info); 
         }
 
         DOMWrapperWorld* world() { return m_world.get(); }
@@ -83,7 +83,6 @@ namespace WebCore {
         virtual JSC::JSValue lookupGetter(JSC::ExecState*, const JSC::Identifier& propertyName);
         virtual JSC::JSValue lookupSetter(JSC::ExecState*, const JSC::Identifier& propertyName);
         virtual JSC::JSObject* unwrappedObject();
-        virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
 
         JSC::WriteBarrier<JSDOMWindow> m_window;
         RefPtr<DOMWrapperWorld> m_world;

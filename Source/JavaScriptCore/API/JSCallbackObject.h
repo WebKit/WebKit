@@ -123,14 +123,14 @@ public:
     void setPrivate(void* data);
     void* getPrivate();
 
-    static const ClassInfo info;
+    static const ClassInfo s_info;
 
     JSClassRef classRef() const { return m_callbackObjectData->jsClass; }
     bool inherits(JSClassRef) const;
 
     static PassRefPtr<Structure> createStructure(JSValue proto) 
     { 
-        return Structure::create(proto, TypeInfo(ObjectType, StructureFlags), Base::AnonymousSlotCount); 
+        return Structure::create(proto, TypeInfo(ObjectType, StructureFlags), Base::AnonymousSlotCount, &s_info); 
     }
     
     JSValue getPrivateProperty(const Identifier& propertyName) const
@@ -171,7 +171,6 @@ private:
 
     virtual ConstructType getConstructData(ConstructData&);
     virtual CallType getCallData(CallData&);
-    virtual const ClassInfo* classInfo() const { return &info; }
 
     virtual void markChildren(MarkStack& markStack)
     {

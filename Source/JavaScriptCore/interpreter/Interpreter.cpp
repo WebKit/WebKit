@@ -565,7 +565,7 @@ NEVER_INLINE bool Interpreter::unwindCallFrame(CallFrame*& callFrame, JSValue ex
             oldCodeBlock->createActivation(callFrame);
             scopeChain = callFrame->scopeChain();
         }
-        while (!scopeChain->object->inherits(&JSActivation::info))
+        while (!scopeChain->object->inherits(&JSActivation::s_info))
             scopeChain = scopeChain->pop();
 
         callFrame->setScopeChain(scopeChain);
@@ -3962,7 +3962,7 @@ skip_id_custom_self:
                 exceptionValue = createInvalidParamError(callFrame, "Function.prototype.apply", arguments);
                 goto vm_throw;
             }
-            if (asObject(arguments)->classInfo() == &Arguments::info) {
+            if (asObject(arguments)->classInfo() == &Arguments::s_info) {
                 Arguments* args = asArguments(arguments);
                 argCount = args->numProvidedArguments(callFrame);
                 argCount = min<uint32_t>(argCount, Arguments::MaxArguments);
@@ -3984,7 +3984,7 @@ skip_id_custom_self:
                     goto vm_throw;
                 }
                 array->copyToRegisters(callFrame, callFrame->registers() + argsOffset, argCount);
-            } else if (asObject(arguments)->inherits(&JSArray::info)) {
+            } else if (asObject(arguments)->inherits(&JSArray::s_info)) {
                 JSObject* argObject = asObject(arguments);
                 argCount = argObject->get(callFrame, callFrame->propertyNames().length).toUInt32(callFrame);
                 argCount = min<uint32_t>(argCount, Arguments::MaxArguments);

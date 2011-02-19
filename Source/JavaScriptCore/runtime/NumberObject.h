@@ -29,19 +29,17 @@ namespace JSC {
     public:
         explicit NumberObject(JSGlobalData&, NonNullPassRefPtr<Structure>);
 
-        static const ClassInfo info;
+        static const ClassInfo s_info;
 
         static PassRefPtr<Structure> createStructure(JSValue prototype)
         {
-            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount);
+            return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
     protected:
         static const unsigned StructureFlags = JSWrapperObject::StructureFlags;
 
     private:
-        virtual const ClassInfo* classInfo() const { return &info; }
-
         virtual JSValue getJSNumber();
     };
 

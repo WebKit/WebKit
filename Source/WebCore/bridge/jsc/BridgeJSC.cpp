@@ -28,10 +28,10 @@
 #include "BridgeJSC.h"
 
 #include "JSDOMWindowBase.h"
-
 #include "runtime_object.h"
 #include "runtime_root.h"
-#include <runtime/JSLock.h>
+#include "runtime/JSLock.h"
+#include "runtime/ObjectPrototype.h"
 
 
 #if PLATFORM(QT)
@@ -103,7 +103,10 @@ JSObject* Instance::createRuntimeObject(ExecState* exec)
 RuntimeObject* Instance::newRuntimeObject(ExecState* exec)
 {
     JSLock lock(SilenceAssertionsOnly);
-    return new (exec)RuntimeObject(exec, exec->lexicalGlobalObject(), this);
+
+    // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
+    // We need to pass in the right global object for "i".
+    return new (exec) RuntimeObject(exec, exec->lexicalGlobalObject(), WebCore::deprecatedGetDOMStructure<RuntimeObject>(exec), this);
 }
 
 void Instance::willDestroyRuntimeObject(RuntimeObject* object)

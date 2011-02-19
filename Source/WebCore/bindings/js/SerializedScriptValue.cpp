@@ -242,7 +242,7 @@ private:
         if (!value.isObject())
             return false;
         JSObject* object = asObject(value);
-        return isJSArray(&m_exec->globalData(), object) || object->inherits(&JSArray::info);
+        return isJSArray(&m_exec->globalData(), object) || object->inherits(&JSArray::s_info);
     }
 
     bool startObjectInternal(JSObject* object)
@@ -367,7 +367,7 @@ private:
             return true;
         }
 
-        if (value.isObject() && asObject(value)->inherits(&DateInstance::info)) {
+        if (value.isObject() && asObject(value)->inherits(&DateInstance::s_info)) {
             write(DateTag);
             write(asDateInstance(value)->internalNumber());
             return true;
@@ -409,7 +409,7 @@ private:
                 write(data->data()->data()->data(), data->data()->length());
                 return true;
             }
-            if (obj->inherits(&RegExpObject::info)) {
+            if (obj->inherits(&RegExpObject::s_info)) {
                 RegExpObject* regExp = asRegExpObject(obj);
                 char flags[3];
                 int flagCount = 0;

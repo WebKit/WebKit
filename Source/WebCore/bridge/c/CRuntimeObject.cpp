@@ -24,11 +24,13 @@
  */
 
 #include "config.h"
+#include "CRuntimeObject.h"
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
-#include "CRuntimeObject.h"
+#include "JSDOMBinding.h"
 #include "c_instance.h"
+#include "runtime/ObjectPrototype.h"
 
 namespace JSC {
 namespace Bindings {
@@ -36,8 +38,11 @@ namespace Bindings {
 const ClassInfo CRuntimeObject::s_info = { "CRuntimeObject", &RuntimeObject::s_info, 0, 0 };
 
 CRuntimeObject::CRuntimeObject(ExecState* exec, JSGlobalObject* globalObject, PassRefPtr<CInstance> instance)
-    : RuntimeObject(exec, globalObject, instance)
+    // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
+    // We need to pass in the right global object for "i".
+    : RuntimeObject(exec, globalObject, WebCore::deprecatedGetDOMStructure<CRuntimeObject>(exec), instance)
 {
+    ASSERT(inherits(&s_info));
 }
 
 CRuntimeObject::~CRuntimeObject()

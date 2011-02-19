@@ -56,7 +56,7 @@ int ScopeChain::localDepth() const
     int scopeDepth = 0;
     ScopeChainIterator iter = this->begin();
     ScopeChainIterator end = this->end();
-    while (!(*iter)->inherits(&JSActivation::info)) {
+    while (!(*iter)->inherits(&JSActivation::s_info)) {
         ++iter;
         if (iter == end)
             break;
