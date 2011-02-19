@@ -1,3 +1,22 @@
+2011-02-19  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/54808> Change jsc target to build directly into JavaScriptCore.framework/Resources/jsc
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/Base.xcconfig: Added
+        JAVASCRIPTCORE_FRAMEWORKS_DIR variable.
+        * Configurations/JavaScriptCore.xcconfig: Used
+        JAVASCRIPTCORE_FRAMEWORKS_DIR to define INSTALL_PATH.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Set the INSTALL_PATH
+        for Production configuration of jsc target.
+        (Copy Into Framework): Removed old build phase.
+        (Fix Framework Reference): Renamed build phase to "Copy Into
+        Framework".  Added "set -x" call to make the script print the
+        commands it is running.  Added code to exit early for Production
+        builds since this was never intended for them.  Added code to
+        copy jsc into the JavaScriptCore.framework/Resources directory.
+
 2011-02-19  Siddharth Mathur  <siddharth.mathur@nokia.com>
 
         Reviewed by Laszlo Gombos.

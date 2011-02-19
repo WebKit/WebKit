@@ -200,7 +200,6 @@
 		5135FAF212D26ACE003C083B /* Decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 5135FAD512D26856003C083B /* Decoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5135FAF312D26AD1003C083B /* Encoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 5135FAD612D26856003C083B /* Encoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5D53726F0E1C54880021E549 /* Tracing.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D53726E0E1C54880021E549 /* Tracing.h */; };
-		5D5D8AB60E0D0A7200F9C692 /* jsc in Copy Into Framework */ = {isa = PBXBuildFile; fileRef = 932F5BE10822A1C700736975 /* jsc */; };
 		5D5D8AD10E0D0EBE00F9C692 /* libedit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D5D8AD00E0D0EBE00F9C692 /* libedit.dylib */; };
 		5D63E9AD10F2BD6E00FC8AE9 /* StringHasher.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D63E9AC10F2BD6E00FC8AE9 /* StringHasher.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5D6A566B0F05995500266145 /* Threading.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D6A566A0F05995500266145 /* Threading.cpp */; };
@@ -637,20 +636,6 @@
 			remoteInfo = "jsc (Upgraded)";
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		5D5D8ABA0E0D0A7300F9C692 /* Copy Into Framework */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = JavaScriptCore.framework/Resources;
-			dstSubfolderSpec = 16;
-			files = (
-				5D5D8AB60E0D0A7200F9C692 /* jsc in Copy Into Framework */,
-			);
-			name = "Copy Into Framework";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		06D358A10DAAD9C4003B174E /* MainThreadMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainThreadMac.mm; sourceTree = "<group>"; };
@@ -2518,8 +2503,7 @@
 			buildPhases = (
 				932F5BDC0822A1C700736975 /* Sources */,
 				932F5BDE0822A1C700736975 /* Frameworks */,
-				5D5D8ABA0E0D0A7300F9C692 /* Copy Into Framework */,
-				5D5D8ABF0E0D0B0300F9C692 /* Fix Framework Reference */,
+				5D5D8ABF0E0D0B0300F9C692 /* Copy Into Framework */,
 			);
 			buildRules = (
 			);
@@ -2636,7 +2620,7 @@
 			shellPath = /bin/sh;
 			shellScript = "TRACING_D=\"$SRCROOT/runtime/Tracing.d\";\nTRACING_H=\"$BUILT_PRODUCTS_DIR/DerivedSources/JavaScriptCore/TracingDtrace.h\";\n\nif [[ \"$HAVE_DTRACE\" = \"1\" && \"$TRACING_D\" -nt \"$TRACING_H\" ]];\nthen\n\tdtrace -h -o \"$TRACING_H\" -s \"$TRACING_D\";\nfi;\n";
 		};
-		5D5D8ABF0E0D0B0300F9C692 /* Fix Framework Reference */ = {
+		5D5D8ABF0E0D0B0300F9C692 /* Copy Into Framework */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2644,12 +2628,12 @@
 			inputPaths = (
 				"$(BUILT_PRODUCTS_DIR)/JavaScriptCore.framework/Resources/jsc",
 			);
-			name = "Fix Framework Reference";
+			name = "Copy Into Framework";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Update the copied jsc binary to refer to JavaScriptcore.framework relative to its location\ninstall_name_tool -change \"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/Versions/A/JavaScriptCore\" \"@loader_path/../JavaScriptCore\" \"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/Resources/jsc\"\n";
+			shellScript = "# Show what the script is doing in the build transcript.\nset -x\n\n# Skip for Production builds.\nif [[ ${CONFIGURATION:=Debug} == \"Production\" ]]; then\n    exit\nfi\n\n# Copy and update the jsc binary to refer to JavaScriptcore.framework relative to its location.\nditto \"${BUILT_PRODUCTS_DIR}/jsc\" \"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/Resources/jsc\"\ninstall_name_tool -change \"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/Versions/A/JavaScriptCore\" \"@loader_path/../JavaScriptCore\" \"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/Resources/jsc\"\n";
 		};
 		65FB3F6509D11E9100F49DEB /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3031,6 +3015,7 @@
 		149C276B08902AFE008A9EFC /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				INSTALL_PATH = "$(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/Resources";
 				PRODUCT_NAME = jsc;
 			};
 			name = Production;
