@@ -3616,6 +3616,21 @@ class WebKitStyleTest(CppStyleTestBase):
             ['More than one command on the same line in if  [whitespace/parens] [4]',
              'One line control clauses should not use braces.  [whitespace/braces] [4]'])
         self.assert_multi_line_lint(
+            'if (condition)\n'
+            '    doSomething();\n'
+            'else {\n'
+            '    doSomethingElse();\n'
+            '}\n',
+            'One line control clauses should not use braces.  [whitespace/braces] [4]')
+        self.assert_multi_line_lint(
+            'if (condition) {\n'
+            '    doSomething1();\n'
+            '    doSomething2();\n'
+            '} else {\n'
+            '    doSomethingElse();\n'
+            '}\n',
+            'One line control clauses should not use braces.  [whitespace/braces] [4]')
+        self.assert_multi_line_lint(
             'void func()\n'
             '{\n'
             '    while (condition) { }\n'
