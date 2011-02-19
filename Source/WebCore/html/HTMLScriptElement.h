@@ -39,7 +39,7 @@ public:
     KURL src() const;
 
 private:
-    HTMLScriptElement(const QualifiedName&, Document*, bool wasInsertedByParser, bool wasAlreadyStarted);
+    HTMLScriptElement(const QualifiedName&, Document*, bool wasInsertedByParser, bool alreadyStarted);
 
     virtual void parseMappedAttribute(Attribute*);
     virtual void insertedIntoDocument();
@@ -47,7 +47,6 @@ private:
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
     virtual bool isURLAttribute(Attribute*) const;
-    virtual void finishParsingChildren();
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
@@ -59,6 +58,7 @@ private:
     virtual String eventAttributeValue() const;
     virtual bool asyncAttributeValue() const;
     virtual bool deferAttributeValue() const;
+    virtual bool hasSourceAttribute() const;
 
     virtual void dispatchLoadEvent();
     virtual void dispatchErrorEvent();

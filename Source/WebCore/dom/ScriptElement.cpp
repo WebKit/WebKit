@@ -51,13 +51,16 @@
 
 namespace WebCore {
 
-ScriptElement::ScriptElement(Element* element, bool wasInsertedByParser, bool wasAlreadyStarted)
+ScriptElement::ScriptElement(Element* element, bool parserInserted, bool alreadyStarted)
     : m_element(element)
     , m_cachedScript(0)
-    , m_wasInsertedByParser(wasInsertedByParser)
+    , m_parserInserted(parserInserted)
     , m_isExternalScript(false)
-    , m_wasAlreadyStarted(wasAlreadyStarted)
+    , m_alreadyStarted(alreadyStarted)
     , m_haveFiredLoad(false)
+    , m_willBeParserExecuted(false)
+    , m_readyToBeParserExecuted(false)
+    , m_willExecuteWhenDocumentFinishedParsing(false)
 {
     ASSERT(m_element);
 }
@@ -67,22 +70,10 @@ ScriptElement::~ScriptElement()
     stopLoadRequest();
 }
 
-void ScriptElement::insertedIntoDocument(const String& sourceUrl)
+void ScriptElement::insertedIntoDocument()
 {
-    if (wasInsertedByParser() && !isAsynchronous())
-        return;
-
-    // http://www.whatwg.org/specs/web-apps/current-work/#script
-
-    if (!sourceUrl.isEmpty()) {
-        requestScript(sourceUrl);
-        return;
-    }
-
-    // If there's an empty script node, we shouldn't evaluate the script
-    // because if a script is inserted afterwards (by setting text or innerText)
-    // it should be evaluated, and evaluateScript only evaluates a script once.
-    evaluateScript(ScriptSourceCode(scriptContent(), element()->document()->url())); // FIXME: Provide a real starting line number here.
+    if (!m_parserInserted)
+        prepareScript(); // FIXME: Provide a real starting line number here.
 }
 
 void ScriptElement::removedFromDocument()
@@ -93,22 +84,8 @@ void ScriptElement::removedFromDocument()
 
 void ScriptElement::childrenChanged()
 {
-    if (wasInsertedByParser())
-        return;
-
-    // If a node is inserted as a child of the script element
-    // and the script element has been inserted in the document
-    // we evaluate the script.
-    if (m_element->inDocument() && m_element->firstChild())
-        evaluateScript(ScriptSourceCode(scriptContent(), m_element->document()->url())); // FIXME: Provide a real starting line number here
-}
-
-void ScriptElement::finishParsingChildren(const String& sourceUrl)
-{
-    // The parser just reached </script>. If we have no src and no text,
-    // allow dynamic loading later.
-    if (sourceUrl.isEmpty() && scriptContent().isEmpty())
-        m_wasInsertedByParser = false;
+    if (!m_parserInserted && m_element->inDocument())
+        prepareScript(); // FIXME: Provide a real starting line number here.
 }
 
 void ScriptElement::handleSourceAttribute(const String& sourceUrl)
@@ -116,12 +93,19 @@ void ScriptElement::handleSourceAttribute(const String& sourceUrl)
     if (ignoresLoadRequest() || sourceUrl.isEmpty())
         return;
 
-    requestScript(sourceUrl);
+    prepareScript(); // FIXME: Provide a real starting line number here.
 }
 
 // Helper function
-static bool isSupportedJavaScriptLanguage(const String& language)
+static bool isLegacySupportedJavaScriptLanguage(const String& language)
 {
+    // Mozilla 1.8 accepts javascript1.0 - javascript1.7, but WinIE 7 accepts only javascript1.1 - javascript1.3.
+    // Mozilla 1.8 and WinIE 7 both accept javascript and livescript.
+    // WinIE 7 accepts ecmascript and jscript, but Mozilla 1.8 doesn't.
+    // Neither Mozilla 1.8 nor WinIE 7 accept leading or trailing whitespace.
+    // We want to accept all the values that either of these browsers accept, but not other values.
+
+    // FIXME: This function is not HTML5 compliant. These belong in the MIME registry as "text/javascript<version>" entries.
     typedef HashSet<String, CaseFoldingHash> LanguageSet;
     DEFINE_STATIC_LOCAL(LanguageSet, languages, ());
     if (languages.isEmpty()) {
@@ -137,58 +121,133 @@ static bool isSupportedJavaScriptLanguage(const String& language)
         languages.add("javascript1.7");
         languages.add("livescript");
         languages.add("ecmascript");
-        languages.add("jscript");                
+        languages.add("jscript");
     }
 
     return languages.contains(language);
 }
 
-void ScriptElement::requestScript(const String& sourceUrl)
+bool ScriptElement::isScriptTypeSupported(LegacyTypeSupport supportLegacyTypes) const
 {
-    // FIXME: Eventually we'd like to evaluate scripts which are inserted into a 
+    // FIXME: isLegacySupportedJavaScriptLanguage() is not valid HTML5. It is used here to maintain backwards compatibility with existing layout tests. The specific violations are:
+    // - Allowing type=javascript. type= should only support MIME types, such as text/javascript.
+    // - Allowing a different set of languages for language= and type=. language= supports Javascript 1.1 and 1.4-1.6, but type= does not.
+
+    String type = typeAttributeValue();
+    String language = languageAttributeValue();
+    if (type.isEmpty() && language.isEmpty())
+        return true; // Assume text/javascript.
+    if (type.isEmpty()) {
+        type = "text/" + language.lower();
+        if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(type) || isLegacySupportedJavaScriptLanguage(language))
+            return true;
+    } else if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(type.stripWhiteSpace().lower()) || (supportLegacyTypes == AllowLegacyTypeInTypeAttribute && isLegacySupportedJavaScriptLanguage(type)))
+        return true;
+    return false;
+}
+
+// http://dev.w3.org/html5/spec/Overview.html#prepare-a-script
+bool ScriptElement::prepareScript(const TextPosition1& scriptStartPosition, LegacyTypeSupport supportLegacyTypes)
+{
+    if (m_alreadyStarted)
+        return false;
+
+    bool wasParserInserted;
+    if (m_parserInserted) {
+        wasParserInserted = true;
+        m_parserInserted = false;
+    } else
+        wasParserInserted = false;
+
+    // FIXME: HTML5 spec says we should set forceAsync.
+
+    // FIXME: HTML5 spec says we should check that all children are either comments or empty text nodes.
+    if (!hasSourceAttribute() && !m_element->firstChild())
+        return false;
+
+    if (!m_element->inDocument())
+        return false;
+
+    if (!isScriptTypeSupported(supportLegacyTypes))
+        return false;
+
+    if (wasParserInserted)
+        m_parserInserted = true;
+
+    m_alreadyStarted = true;
+
+    // FIXME: If script is parser inserted, verify it's still in the original document.
+
+    // FIXME: Eventually we'd like to evaluate scripts which are inserted into a
     // viewless document but this'll do for now.
     // See http://bugs.webkit.org/show_bug.cgi?id=5727
     if (!m_element->document()->frame())
-        return;
+        return false;
+
+    if (!m_element->document()->frame()->script()->canExecuteScripts(AboutToExecuteScript))
+        return false;
+
+    if (!isScriptForEventSupported())
+        return false;
+
+    if (!charsetAttributeValue().isEmpty())
+        m_characterEncoding = charsetAttributeValue();
+    else
+        m_characterEncoding = m_element->document()->charset();
+
+    if (hasSourceAttribute())
+        if (!requestScript(sourceAttributeValue()))
+            return false;
+
+    if (hasSourceAttribute() && deferAttributeValue() && m_parserInserted && !asyncAttributeValue()) {
+        m_willExecuteWhenDocumentFinishedParsing = true;
+        m_willBeParserExecuted = true;
+    } else if (hasSourceAttribute() && m_parserInserted && !asyncAttributeValue())
+        m_willBeParserExecuted = true;
+    else if (!hasSourceAttribute() && m_parserInserted && !m_element->document()->haveStylesheetsLoaded()) {
+        m_willBeParserExecuted = true;
+        m_readyToBeParserExecuted = true;
+    } else if (hasSourceAttribute())
+        m_cachedScript->addClient(this);
+    else
+        executeScript(ScriptSourceCode(scriptContent(), m_element->document()->url(), scriptStartPosition));
+
+    return true;
+}
+
+bool ScriptElement::requestScript(const String& sourceUrl)
+{
+    if (!m_element->document()->contentSecurityPolicy()->canLoadExternalScriptFromSrc(sourceUrl))
+        return false;
 
     RefPtr<Document> originalDocument = m_element->document();
     if (!m_element->dispatchBeforeLoadEvent(sourceUrl))
-        return;
+        return false;
     if (!m_element->inDocument() || m_element->document() != originalDocument)
-        return;
+        return false;
 
     ASSERT(!m_cachedScript);
+    // FIXME: If sourceUrl is empty, we should dispatchErrorEvent().
     m_cachedScript = m_element->document()->cachedResourceLoader()->requestScript(sourceUrl, scriptCharset());
     m_isExternalScript = true;
 
-    // m_wasInsertedByParser is never reset - always resied at the initial value set while parsing.
-    // m_wasAlreadyStarted is left untouched as well to avoid script reexecution, if a <script> element
-    // is removed and reappended to the document.
-    m_haveFiredLoad = false;
-
-    if (m_cachedScript) {
-        m_cachedScript->addClient(this);
-        return;
-    }
+    if (m_cachedScript)
+        return true;
 
     dispatchErrorEvent();
+    return false;
 }
 
-void ScriptElement::evaluateScript(const ScriptSourceCode& sourceCode)
+void ScriptElement::executeScript(const ScriptSourceCode& sourceCode)
 {
-    if (wasAlreadyStarted() || sourceCode.isEmpty() || !shouldExecuteAsJavaScript())
+    ASSERT(m_alreadyStarted);
+
+    if (sourceCode.isEmpty())
         return;
 
     RefPtr<Document> document = m_element->document();
     ASSERT(document);
     if (Frame* frame = document->frame()) {
-        if (!frame->script()->canExecuteScripts(AboutToExecuteScript))
-            return;
-
-        m_wasAlreadyStarted = true;
-
-        // http://www.whatwg.org/specs/web-apps/current-work/#script
-
         {
             IgnoreDestructiveWriteCountIncrementer ignoreDesctructiveWriteCountIncrementer(m_isExternalScript ? document.get() : 0);
             // Create a script from the script element node, using the script
@@ -201,36 +260,23 @@ void ScriptElement::evaluateScript(const ScriptSourceCode& sourceCode)
     }
 }
 
-void ScriptElement::executeScript(const ScriptSourceCode& sourceCode)
-{
-    if (wasAlreadyStarted() || sourceCode.isEmpty())
-        return;
-    RefPtr<Document> document = m_element->document();
-    ASSERT(document);
-    Frame* frame = document->frame();
-    if (!frame)
-        return;
-
-    m_wasAlreadyStarted = true;
-
-    frame->script()->executeScript(sourceCode);
-}
-
 void ScriptElement::stopLoadRequest()
 {
     if (m_cachedScript) {
-        m_cachedScript->removeClient(this);
+        if (!m_willBeParserExecuted)
+            m_cachedScript->removeClient(this);
         m_cachedScript = 0;
     }
 }
 
 void ScriptElement::execute(CachedScript* cachedScript)
 {
+    ASSERT(!m_willBeParserExecuted);
     ASSERT(cachedScript);
     if (cachedScript->errorOccurred())
         dispatchErrorEvent();
     else {
-        evaluateScript(ScriptSourceCode(cachedScript));
+        executeScript(ScriptSourceCode(cachedScript));
         dispatchLoadEvent();
     }
     cachedScript->removeClient(this);
@@ -238,6 +284,7 @@ void ScriptElement::execute(CachedScript* cachedScript)
 
 void ScriptElement::notifyFinished(CachedResource* o)
 {
+    ASSERT(!m_willBeParserExecuted);
     ASSERT_UNUSED(o, o == m_cachedScript);
     m_element->document()->asyncScriptRunner()->executeScriptSoon(this, m_cachedScript);
     m_cachedScript = 0;
@@ -245,57 +292,23 @@ void ScriptElement::notifyFinished(CachedResource* o)
 
 bool ScriptElement::ignoresLoadRequest() const
 {
-    return wasAlreadyStarted() || m_isExternalScript || wasInsertedByParser() || !m_element->inDocument();
+    return m_alreadyStarted || m_isExternalScript || m_parserInserted || !m_element->inDocument();
 }
 
-bool ScriptElement::shouldExecuteAsJavaScript() const
+bool ScriptElement::isScriptForEventSupported() const
 {
-    /*
-         Mozilla 1.8 accepts javascript1.0 - javascript1.7, but WinIE 7 accepts only javascript1.1 - javascript1.3.
-         Mozilla 1.8 and WinIE 7 both accept javascript and livescript.
-         WinIE 7 accepts ecmascript and jscript, but Mozilla 1.8 doesn't.
-         Neither Mozilla 1.8 nor WinIE 7 accept leading or trailing whitespace.
-         We want to accept all the values that either of these browsers accept, but not other values.
-     
-         FIXME: Is this HTML5 compliant?
-     */
-    String type = typeAttributeValue();
-    if (!type.isEmpty()) {
-        if (!MIMETypeRegistry::isSupportedJavaScriptMIMEType(type.stripWhiteSpace().lower()))
-            return false;
-    } else {
-        String language = languageAttributeValue();
-        if (!language.isEmpty() && !isSupportedJavaScriptLanguage(language))
-            return false;
-    }    
-
-    // No type or language is specified, so we assume the script to be JavaScript.
-
-    String forAttribute = forAttributeValue();
     String eventAttribute = eventAttributeValue();
-    if (!forAttribute.isEmpty() && !eventAttribute.isEmpty()) {
+    String forAttribute = forAttributeValue();
+    if (!eventAttribute.isEmpty() && !forAttribute.isEmpty()) {
         forAttribute = forAttribute.stripWhiteSpace();
         if (!equalIgnoringCase(forAttribute, "window"))
             return false;
-            
+
         eventAttribute = eventAttribute.stripWhiteSpace();
         if (!equalIgnoringCase(eventAttribute, "onload") && !equalIgnoringCase(eventAttribute, "onload()"))
             return false;
     }
-    
     return true;
-}
-
-String ScriptElement::scriptCharset() const
-{
-    // First we try to get encoding from charset attribute.
-    String charset = charsetAttributeValue().stripWhiteSpace();
-
-    // If charset has not been declared in script tag, fall back to frame encoding.
-    if (charset.isEmpty())
-        charset = m_element->document()->charset();
-
-    return charset;
 }
 
 String ScriptElement::scriptContent() const
@@ -323,20 +336,6 @@ String ScriptElement::scriptContent() const
         return firstTextNode->data();
 
     return String::adopt(val);
-}
-
-bool ScriptElement::isAsynchronous() const
-{
-    // Only external scripts may be asynchronous.
-    // See: http://dev.w3.org/html5/spec/Overview.html#attr-script-async
-    return !sourceAttributeValue().isEmpty() && asyncAttributeValue();
-}
-
-bool ScriptElement::isDeferred() const
-{
-    // Only external scripts may be deferred and async trumps defer to allow for backward compatibility.
-    // See: http://dev.w3.org/html5/spec/Overview.html#attr-script-defer
-    return !sourceAttributeValue().isEmpty() && !asyncAttributeValue() && deferAttributeValue();
 }
 
 ScriptElement* toScriptElement(Element* element)

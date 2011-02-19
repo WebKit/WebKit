@@ -262,17 +262,9 @@ void HTMLScriptRunner::requestDeferredScript(Element* element)
 bool HTMLScriptRunner::requestPendingScript(PendingScript& pendingScript, Element* script) const
 {
     ASSERT(!pendingScript.element());
-    const AtomicString& srcValue = script->getAttribute(srcAttr);
-    // Allow the host to disllow script loads (using the XSSAuditor, etc.)
-    // FIXME: this check should be performed on the final URL in a redirect chain.
-    if (!m_host->shouldLoadExternalScriptFromSrc(srcValue))
-        return false;
-    // FIXME: We need to resolve the url relative to the element.
-    if (!script->dispatchBeforeLoadEvent(srcValue))
-        return false;
     pendingScript.setElement(script);
     // This should correctly return 0 for empty or invalid srcValues.
-    CachedScript* cachedScript = m_document->cachedResourceLoader()->requestScript(srcValue, toScriptElement(script)->scriptCharset());
+    CachedScript* cachedScript = toScriptElement(script)->cachedScript().get();
     if (!cachedScript) {
         notImplemented(); // Dispatch error event.
         return false;
@@ -293,29 +285,24 @@ void HTMLScriptRunner::runScript(Element* script, const TextPosition1& scriptSta
 
         ScriptElement* scriptElement = toScriptElement(script);
         ASSERT(scriptElement);
-        if (!scriptElement->shouldExecuteAsJavaScript())
-            return;
-        
-        if (script->hasAttribute(srcAttr)) {
-            if (script->hasAttribute(asyncAttr)) // Async takes precendence over defer.
-                return; // Asynchronous scripts handle themselves.
 
-            if (script->hasAttribute(deferAttr))
-                requestDeferredScript(script);
-            else
-                requestParsingBlockingScript(script);
-        } else if (!m_document->haveStylesheetsLoaded() && m_scriptNestingLevel == 1) {
-            // Block inline script execution on stylesheet load, unless we are in document.write().
-            // The latter case can only happen if a script both triggers a stylesheet load
-            // and writes an inline script. Since write is blocking we have to execute the
-            // written script immediately, ignoring the pending sheets.
-            m_parsingBlockingScript.setElement(script);
-            m_parsingBlockingScript.setStartingPosition(scriptStartPosition);
-        } else {
-            ASSERT(isExecutingScript());
-            ScriptSourceCode sourceCode(script->textContent(), documentURLForScriptExecution(m_document), scriptStartPosition);
-            scriptElement->executeScript(sourceCode);
-        }
+        scriptElement->prepareScript(scriptStartPosition);
+
+        if (!scriptElement->willBeParserExecuted())
+            return;
+
+        if (scriptElement->willExecuteWhenDocumentFinishedParsing())
+            requestDeferredScript(script);
+        else if (scriptElement->readyToBeParserExecuted()) {
+            if (m_scriptNestingLevel == 1) {
+                m_parsingBlockingScript.setElement(script);
+                m_parsingBlockingScript.setStartingPosition(scriptStartPosition);
+            } else {
+                ScriptSourceCode sourceCode(script->textContent(), documentURLForScriptExecution(m_document), scriptStartPosition);
+                scriptElement->executeScript(sourceCode);
+            }
+        } else
+            requestParsingBlockingScript(script);
     }
 }
 

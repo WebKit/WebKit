@@ -11,36 +11,30 @@ if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
 }
-
-var firstLoad = true;
-
-function loaded() {
-    if (firstLoad) {
-        firstLoad = false;
-        return;
-    }
-
-    result = 'PASS';
-    if (i == 2)
-      result = 'FAIL: script ran twice';
-    else if (i > 2)
-      result = 'FAIL: script ran ' + i + ' times';
-    document.body.appendChild(document.createTextNode(result));
-
-    layoutTestController.notifyDone();
-}
-
 </script>
 </head>
 <body>
 <p>This test runs a script that clones and inserts its script element. The script should run exactly once and print PASS:</p>
-<div><script src="resources/script-clone-rerun-src.js" onload="loaded()"></script></div>
+<div><script src="resources/script-clone-rerun-src.js"></script></div>
 <script>
 
 var script = document.getElementsByTagName('script')[1];
 var div = script.parentNode;
 div.removeChild(script);
-div.appendChild(script.cloneNode(true));
+var clone = script.cloneNode(true);
+clone.addEventListener("load", function() { document.body.appendChild(document.createTextNode("FAIL: load event fired on clone")); }, false);
+div.appendChild(clone);
+
+setTimeout(function() {
+    result = 'FAIL: script never ran';
+    if (i == 1)
+      result = 'PASS';
+    else if (i > 1)
+      result = 'FAIL: script ran ' + i + ' times';
+    document.body.appendChild(document.createTextNode(result));
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+    }, 0);
 
 </script>
 </body>

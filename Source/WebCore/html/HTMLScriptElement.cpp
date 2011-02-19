@@ -35,9 +35,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-inline HTMLScriptElement::HTMLScriptElement(const QualifiedName& tagName, Document* document, bool wasInsertedByParser, bool wasAlreadyStarted)
+inline HTMLScriptElement::HTMLScriptElement(const QualifiedName& tagName, Document* document, bool wasInsertedByParser, bool alreadyStarted)
     : HTMLElement(tagName, document)
-    , ScriptElement(this, wasInsertedByParser, wasAlreadyStarted)
+    , ScriptElement(this, wasInsertedByParser, alreadyStarted)
 {
     ASSERT(hasTagName(scriptTag));
 }
@@ -74,16 +74,10 @@ void HTMLScriptElement::parseMappedAttribute(Attribute* attr)
         HTMLElement::parseMappedAttribute(attr);
 }
 
-void HTMLScriptElement::finishParsingChildren()
-{
-    ScriptElement::finishParsingChildren(sourceAttributeValue());
-    HTMLElement::finishParsingChildren();
-}
-
 void HTMLScriptElement::insertedIntoDocument()
 {
     HTMLElement::insertedIntoDocument();
-    ScriptElement::insertedIntoDocument(sourceAttributeValue());
+    ScriptElement::insertedIntoDocument();
 }
 
 void HTMLScriptElement::removedFromDocument()
@@ -160,6 +154,11 @@ bool HTMLScriptElement::deferAttributeValue() const
     return fastHasAttribute(deferAttr);
 }
 
+bool HTMLScriptElement::hasSourceAttribute() const
+{
+    return fastHasAttribute(srcAttr);
+}
+
 void HTMLScriptElement::dispatchLoadEvent()
 {
     ASSERT(!haveFiredLoadEvent());
@@ -175,7 +174,7 @@ void HTMLScriptElement::dispatchErrorEvent()
 
 PassRefPtr<Element> HTMLScriptElement::cloneElementWithoutAttributesAndChildren() const
 {
-    return adoptRef(new HTMLScriptElement(tagQName(), document(), false, wasAlreadyStarted()));
+    return adoptRef(new HTMLScriptElement(tagQName(), document(), false, alreadyStarted()));
 }
 
 }

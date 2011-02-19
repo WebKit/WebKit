@@ -23,6 +23,7 @@
 
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
+#include <wtf/text/TextPosition.h>
 
 namespace WebCore {
 
@@ -36,47 +37,49 @@ class ScriptElement : private CachedResourceClient {
 public:
     ScriptElement(Element*, bool createdByParser, bool isEvaluated);
     virtual ~ScriptElement();
-    
+
     Element* element() const { return m_element; }
 
-    // A charset for loading the script (may be overridden by HTTP headers or a BOM).
-    String scriptCharset() const;
+    enum LegacyTypeSupport { DisallowLegacyTypeInTypeAttribute, AllowLegacyTypeInTypeAttribute };
+    bool prepareScript(const TextPosition1& scriptStartPosition = TextPosition1::minimumPosition(), LegacyTypeSupport = DisallowLegacyTypeInTypeAttribute);
 
+    String scriptCharset() const { return m_characterEncoding; }
     String scriptContent() const;
-    bool shouldExecuteAsJavaScript() const;
     void executeScript(const ScriptSourceCode&);
     void execute(CachedScript*);
 
     // XML parser calls these
-    virtual String sourceAttributeValue() const = 0;
     virtual void dispatchLoadEvent() = 0;
     virtual void dispatchErrorEvent() = 0;
+    bool isScriptTypeSupported(LegacyTypeSupport) const;
 
     bool haveFiredLoadEvent() const { return m_haveFiredLoad; }
+    bool willBeParserExecuted() const { return m_willBeParserExecuted; }
+    bool readyToBeParserExecuted() const { return m_readyToBeParserExecuted; }
+    bool willExecuteWhenDocumentFinishedParsing() const { return m_willExecuteWhenDocumentFinishedParsing; }
+    CachedResourceHandle<CachedScript> cachedScript() { return m_cachedScript; }
 
 protected:
     void setHaveFiredLoadEvent(bool haveFiredLoad) { m_haveFiredLoad = haveFiredLoad; }
-    bool wasInsertedByParser() const { return m_wasInsertedByParser; }
-    bool wasAlreadyStarted() const { return m_wasAlreadyStarted; }
+    bool isParserInserted() const { return m_parserInserted; }
+    bool alreadyStarted() const { return m_alreadyStarted; }
 
     // Helper functions used by our parent classes.
-    void insertedIntoDocument(const String& sourceUrl);
+    void insertedIntoDocument();
     void removedFromDocument();
     void childrenChanged();
-    void finishParsingChildren(const String& sourceUrl);
     void handleSourceAttribute(const String& sourceUrl);
 
 private:
     bool ignoresLoadRequest() const;
-    bool isAsynchronous() const;
-    bool isDeferred() const;
+    bool isScriptForEventSupported() const;
 
-    void requestScript(const String& sourceUrl);
-    void evaluateScript(const ScriptSourceCode&);
+    bool requestScript(const String& sourceUrl);
     void stopLoadRequest();
 
     virtual void notifyFinished(CachedResource*);
 
+    virtual String sourceAttributeValue() const = 0;
     virtual String charsetAttributeValue() const = 0;
     virtual String typeAttributeValue() const = 0;
     virtual String languageAttributeValue() const = 0;
@@ -84,13 +87,19 @@ private:
     virtual String eventAttributeValue() const = 0;
     virtual bool asyncAttributeValue() const = 0;
     virtual bool deferAttributeValue() const = 0;
+    virtual bool hasSourceAttribute() const = 0;
 
     Element* m_element;
     CachedResourceHandle<CachedScript> m_cachedScript;
-    bool m_wasInsertedByParser;
-    bool m_isExternalScript;
-    bool m_wasAlreadyStarted;
-    bool m_haveFiredLoad;
+    bool m_parserInserted : 1;
+    bool m_isExternalScript : 1;
+    bool m_alreadyStarted : 1;
+    bool m_haveFiredLoad : 1;
+    bool m_willBeParserExecuted : 1; // Same as "The parser will handle executing the script."
+    bool m_readyToBeParserExecuted : 1;
+    bool m_willExecuteWhenDocumentFinishedParsing : 1;
+    String m_characterEncoding;
+    String m_fallbackCharacterEncoding;
 };
 
 ScriptElement* toScriptElement(Element*);

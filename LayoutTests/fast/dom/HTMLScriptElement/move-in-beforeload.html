@@ -8,7 +8,6 @@
 <iframe src="resources/frame.html"></iframe>
 <script>
 if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
     layoutTestController.dumpAsText();
 }
 
@@ -18,14 +17,13 @@ function test()
     s.addEventListener("beforeload", function() {
         var s = document.body.removeChild(document.getElementsByTagName("script")[2]);
         document.getElementsByTagName("iframe")[0].contentDocument.body.appendChild(s);
+        testPassed("");
     }, false);
     s.addEventListener("error", function() {
-        testFailed("error event should not fire.")
+        testFailed("error event should not fire.");
     }, false);
     s.addEventListener("load", function() {
-        testPassed("");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        testFailed("script should not be loaded");
     }, false);
     s.src = "external.js";
     document.body.appendChild(s);

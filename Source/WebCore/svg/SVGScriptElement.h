@@ -42,7 +42,7 @@ public:
     void setType(const String&);
 
 private:
-    SVGScriptElement(const QualifiedName&, Document*, bool wasInsertedByParser, bool wasAlreadyStarted);
+    SVGScriptElement(const QualifiedName&, Document*, bool wasInsertedByParser, bool alreadyStarted);
 
     virtual void parseMappedAttribute(Attribute*);
     virtual void insertedIntoDocument();
@@ -68,6 +68,7 @@ private:
     virtual String eventAttributeValue() const;
     virtual bool asyncAttributeValue() const;
     virtual bool deferAttributeValue() const;
+    virtual bool hasSourceAttribute() const;
 
     virtual void dispatchLoadEvent();
     virtual void dispatchErrorEvent();

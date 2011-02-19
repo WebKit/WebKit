@@ -1,3 +1,26 @@
+2011-02-19  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Make ScriptElement match the HTML5 spec
+        https://bugs.webkit.org/show_bug.cgi?id=54676
+
+        This implements the "prepare a script" section of the HTML5 spec in ScriptElement::prepareScript().
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/scripting-1.html#prepare-a-script
+
+        There are a couple of things missing from the spec that would be new functionality. These will be added later.
+        - Support for async=false
+        - Empty src attribute should dispatch an error.
+
+        There are a couple of slight behavioral changes to match the spec.
+        - An XHTML script that is loaded then copied will not fire load on the copy.
+        - If onbeforeload moves the script to a different document, then it will not try to execute again because wasAlreadyStarted is true.
+
+        The parsers were updated to use the new API, but not rewritten to look like the spec. That will be done separately.
+
+        * fast/dom/HTMLScriptElement/move-in-beforeload.html: Original author says test was only meant to check for crashes. Beforeload is not specified by HTML5. Test was modified to assume moved script wouldn't execute because wasAlreadyStarted is set.
+        * fast/dom/script-clone-rerun-src.xhtml: According to HTML5 spec, load should only fire after a script executes. Test was modified to match that. The old broken behavior was that load fired on the cloned element, even though it didn't execute.
+
 2011-02-19  Andrew Wilson  <atwilson@chromium.org>
 
         Updated test expectations (more fallout from r78846).

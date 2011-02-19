@@ -35,9 +35,9 @@ namespace WebCore {
 DEFINE_ANIMATED_STRING(SVGScriptElement, XLinkNames::hrefAttr, Href, href)
 DEFINE_ANIMATED_BOOLEAN(SVGScriptElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
 
-inline SVGScriptElement::SVGScriptElement(const QualifiedName& tagName, Document* document, bool wasInsertedByParser, bool wasAlreadyStarted)
+inline SVGScriptElement::SVGScriptElement(const QualifiedName& tagName, Document* document, bool wasInsertedByParser, bool alreadyStarted)
     : SVGElement(tagName, document)
-    , ScriptElement(this, wasInsertedByParser, wasAlreadyStarted)
+    , ScriptElement(this, wasInsertedByParser, alreadyStarted)
 {
 }
 
@@ -72,7 +72,7 @@ void SVGScriptElement::svgAttributeChanged(const QualifiedName& attrName)
         // Handle dynamic updates of the 'externalResourcesRequired' attribute. Only possible case: changing from 'true' to 'false'
         // causes an immediate dispatch of the SVGLoad event. If the attribute value was 'false' before inserting the script element
         // in the document, the SVGLoad event has already been dispatched.
-        if (!externalResourcesRequiredBaseValue() && !haveFiredLoadEvent() && !wasInsertedByParser()) {
+        if (!externalResourcesRequiredBaseValue() && !haveFiredLoadEvent() && !isParserInserted()) {
             setHaveFiredLoadEvent(true);
             ASSERT(haveLoadedRequiredResources());
 
@@ -111,9 +111,9 @@ void SVGScriptElement::fillAttributeToPropertyTypeMap()
 void SVGScriptElement::insertedIntoDocument()
 {
     SVGElement::insertedIntoDocument();
-    ScriptElement::insertedIntoDocument(sourceAttributeValue());
+    ScriptElement::insertedIntoDocument();
 
-    if (wasInsertedByParser())
+    if (isParserInserted())
         return;
 
     // Eventually send SVGLoad event now for the dynamically inserted script element
@@ -142,7 +142,6 @@ bool SVGScriptElement::isURLAttribute(Attribute* attr) const
 
 void SVGScriptElement::finishParsingChildren()
 {
-    ScriptElement::finishParsingChildren(sourceAttributeValue());
     SVGElement::finishParsingChildren();
 
     // A SVGLoad event has been fired by SVGElement::finishParsingChildren.
@@ -212,11 +211,16 @@ bool SVGScriptElement::deferAttributeValue() const
     return false;
 }
 
+bool SVGScriptElement::hasSourceAttribute() const
+{
+    return hasAttribute(XLinkNames::hrefAttr);
+}
+
 void SVGScriptElement::dispatchLoadEvent()
 {
     bool externalResourcesRequired = externalResourcesRequiredBaseValue();
 
-    if (wasInsertedByParser())
+    if (isParserInserted())
         ASSERT(externalResourcesRequired != haveFiredLoadEvent());
     else if (haveFiredLoadEvent()) {
         // If we've already fired an load event and externalResourcesRequired is set to 'true'
@@ -247,7 +251,7 @@ void SVGScriptElement::dispatchErrorEvent()
 
 PassRefPtr<Element> SVGScriptElement::cloneElementWithoutAttributesAndChildren() const
 {
-    return adoptRef(new SVGScriptElement(tagQName(), document(), false, wasAlreadyStarted()));
+    return adoptRef(new SVGScriptElement(tagQName(), document(), false, alreadyStarted()));
 }
 
 }

@@ -1,3 +1,66 @@
+2011-02-19  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Make ScriptElement match the HTML5 spec
+        https://bugs.webkit.org/show_bug.cgi?id=54676
+
+        This implements the "prepare a script" section of the HTML5 spec in ScriptElement::prepareScript().
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/scripting-1.html#prepare-a-script
+
+        There are a couple of things missing from the spec that would be new functionality. These will be added later.
+        - Support for async=false
+        - Empty src attribute should dispatch an error.
+
+        There are a couple of slight behavioral changes to match the spec.
+        - An XHTML script that is loaded then copied will not fire load on the copy.
+        - If onbeforeload moves the script to a different document, then it will not try to execute again because wasAlreadyStarted is true.
+
+        The parsers were updated to use the new API, but not rewritten to look like the spec. That will be done separately.
+
+        Test: All existing tests.
+
+        * dom/ScriptElement.cpp: Rewritten to match HTML5 spec.
+        (WebCore::ScriptElement::ScriptElement):
+        (WebCore::ScriptElement::insertedIntoDocument): Logic moved to prepareScript.
+        (WebCore::ScriptElement::childrenChanged): Logic moved to prepareScript.
+        (WebCore::ScriptElement::handleSourceAttribute): Logic moved to prepareScript.
+        (WebCore::isLegacySupportedJavaScriptLanguage): Added to support old script types in layout tests.
+        (WebCore::ScriptElement::isScriptTypeSupported): Derived from old shouldExecuteAsJavaScript().
+        (WebCore::ScriptElement::prepareScript): START HERE. Main change. Should read exactly like HTML5's "prepare a script." Legacy type support needed for layout tests using XML parser.
+        (WebCore::ScriptElement::requestScript): Most logic moved to prepareScript. Check security settings here.
+        (WebCore::ScriptElement::executeScript): Combined evaluateScript() and executeScript() from old code. Logic moved to prepareScript.
+        (WebCore::ScriptElement::stopLoadRequest): Ignore parser executed scripts.
+        (WebCore::ScriptElement::execute): Renamed executeScript.
+        (WebCore::ScriptElement::notifyFinished): We should only listen for non-parser executed scripts.
+        (WebCore::ScriptElement::ignoresLoadRequest): New variable names.
+        (WebCore::ScriptElement::childrenAreCommentsOrEmptyText): Added for HTML5 compliance.
+        (WebCore::ScriptElement::scriptCharset): Use HTML5 variables.
+        * dom/ScriptElement.h:
+        (WebCore::ScriptElement::willBeParserExecuted): Added.
+        (WebCore::ScriptElement::readyToBeParserExecuted): Added.
+        (WebCore::ScriptElement::willExecuteWhenDocumentFinishedParsing): Added.
+        (WebCore::ScriptElement::cachedScript): prepareScript() is the only place that should load scripts. This accessor lets the parsers listen for when loads finish.
+        (WebCore::ScriptElement::isParserInserted): Added.
+        * dom/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::endElementNs): Should behave the same. Offloads much of its work to prepareScript().
+        * dom/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::parseEndElement): Identical to libxml2 changes.
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::insertedIntoDocument): No longer needs url.
+        (WebCore::HTMLScriptElement::hasSourceAttribute): Added.
+        * html/HTMLScriptElement.h:
+        * html/parser/HTMLScriptRunner.cpp:
+        (WebCore::HTMLScriptRunner::requestPendingScript): Requesting scripts offloaded to ScriptElement.
+        (WebCore::HTMLScriptRunner::runScript): Should behave the same. Offloads much of its work to prepareScript().
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::svgAttributeChanged): New ScriptElement function names.
+        (WebCore::SVGScriptElement::insertedIntoDocument): No longer needs url.
+        (WebCore::SVGScriptElement::finishParsingChildren): ScriptElement::finishParsingChildren is gone.
+        (WebCore::SVGScriptElement::hasSourceAttribute): Added.
+        (WebCore::SVGScriptElement::dispatchLoadEvent): New ScriptElement function names.
+        * svg/SVGScriptElement.h:
+
 2011-02-19  Marc-Antoine Ruel  <maruel@chromium.org>
 
         Reviewed by James Robinson.

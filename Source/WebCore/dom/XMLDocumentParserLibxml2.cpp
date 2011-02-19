@@ -880,35 +880,32 @@ void XMLDocumentParser::endElementNs()
     ASSERT(!m_pendingScript);
     m_requestingScript = true;
 
+    bool successfullyPrepared = scriptElement->prepareScript(m_scriptStartPosition, ScriptElement::AllowLegacyTypeInTypeAttribute);
+    if (!successfullyPrepared) {
 #if ENABLE(XHTMLMP)
-    if (!scriptElement->shouldExecuteAsJavaScript())
-        document()->setShouldProcessNoscriptElement(true);
-    else
+        if (!scriptElement->isScriptTypeSupported(ScriptElement::AllowLegacyTypeInTypeAttribute))
+            document()->setShouldProcessNoscriptElement(true);
 #endif
-    {
-        // FIXME: Script execution should be shared should be shared between
+    } else {
+        // FIXME: Script execution should be shared between
         // the libxml2 and Qt XMLDocumentParser implementations.
 
         // JavaScript can detach the parser.  Make sure this is not released
         // before the end of this method.
         RefPtr<XMLDocumentParser> protect(this);
 
-        String scriptHref = scriptElement->sourceAttributeValue();
-        if (!scriptHref.isEmpty()) {
-            // we have a src attribute
-            String scriptCharset = scriptElement->scriptCharset();
-            if (element->dispatchBeforeLoadEvent(scriptHref) &&
-                (m_pendingScript = document()->cachedResourceLoader()->requestScript(scriptHref, scriptCharset))) {
-                m_scriptElement = element;
-                m_pendingScript->addClient(this);
-
-                // m_pendingScript will be 0 if script was already loaded and ref() executed it
-                if (m_pendingScript)
-                    pauseParsing();
-            } else
-                m_scriptElement = 0;
-        } else
+        if (scriptElement->readyToBeParserExecuted())
             scriptElement->executeScript(ScriptSourceCode(scriptElement->scriptContent(), document()->url(), m_scriptStartPosition));
+        else if (scriptElement->willBeParserExecuted()) {
+            m_pendingScript = scriptElement->cachedScript();
+            m_scriptElement = element;
+            m_pendingScript->addClient(this);
+
+            // m_pendingScript will be 0 if script was already loaded and addClient() executed it.
+            if (m_pendingScript)
+                pauseParsing();
+        } else
+            m_scriptElement = 0;
 
         // JavaScript may have detached the parser
         if (isDetached())
