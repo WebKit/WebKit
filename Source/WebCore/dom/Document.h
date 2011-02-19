@@ -34,7 +34,6 @@
 #include "ContainerNode.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMTimeStamp.h"
-#include "DocumentLoader.h"
 #include "DocumentOrderedMap.h"
 #include "DocumentTiming.h"
 #include "QualifiedName.h"
@@ -71,6 +70,7 @@ class DOMWindow;
 class Database;
 class DatabaseThread;
 class DocumentFragment;
+class DocumentLoader;
 class DocumentMarkerController;
 class DocumentType;
 class DocumentWeakReference;

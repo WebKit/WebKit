@@ -61,6 +61,7 @@
 #import <WebCore/ColorMac.h>
 #import <WebCore/DOMImplementation.h>
 #import <WebCore/DocumentFragment.h>
+#import <WebCore/DocumentLoader.h>
 #import <WebCore/DocumentMarkerController.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/EventNames.h>

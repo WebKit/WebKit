@@ -1,3 +1,17 @@
+2011-02-19  Brian Ryner  <bryner@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Replace the #include of DocumentLoader.h in Document.h with a
+        forward declaration, and add a missing #include now that this
+        transitive include is gone.
+        https://bugs.webkit.org/show_bug.cgi?id=50489
+
+        No new tests required.
+
+        * bindings/ScriptControllerBase.cpp:
+        * dom/Document.h:
+
 2011-02-19 Patrick Gansterer <paroga@webkit.org>
 
         Reviewed by Antonio Gomes.

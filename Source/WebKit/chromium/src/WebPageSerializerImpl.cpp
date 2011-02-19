@@ -79,6 +79,7 @@
 #include "WebPageSerializerImpl.h"
 
 #include "Document.h"
+#include "DocumentLoader.h"
 #include "DocumentType.h"
 #include "Element.h"
 #include "FrameLoader.h"

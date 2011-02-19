@@ -32,6 +32,7 @@
 #include "WebSearchableFormData.h"
 
 #include "Document.h"
+#include "DocumentLoader.h"
 #include "FormDataBuilder.h"
 #include "FormDataList.h"
 #include "Frame.h"
