@@ -1685,6 +1685,9 @@ bool WebPage::mainFrameHasCustomRepresentation() const
 void WebPage::didChangeScrollOffsetForMainFrame()
 {
     Frame* frame = m_page->mainFrame();
+    if (!frame)
+        return;
+
     IntPoint scrollPosition = frame->view()->scrollPosition();
     IntPoint maximumScrollPosition = frame->view()->maximumScrollPosition();
 
