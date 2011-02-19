@@ -1,3 +1,16 @@
+2011-02-18  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Tiled backing store area is too big.
+        Error in area calculcation causes size of backing store
+        up to 8 times bigger than viewport with default multipliers.
+        https://bugs.webkit.org/show_bug.cgi?id=54587
+
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        (WebKit::TiledDrawingAreaProxy::calculateKeepRect):
+        (WebKit::TiledDrawingAreaProxy::calculateCoverRect):
+
 2011-02-18  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Maciej Stachowiak.

@@ -213,15 +213,17 @@ void TiledBackingStore::createTiles()
     dropOverhangingTiles();
 
     IntRect keepRect = visibleRect;
-    keepRect.inflateX(visibleRect.width() * (m_keepAreaMultiplier.width() - 1.f));
-    keepRect.inflateY(visibleRect.height() * (m_keepAreaMultiplier.height() - 1.f));
+    // Inflates to both sides, so divide inflate delta by 2
+    keepRect.inflateX(visibleRect.width() * (m_keepAreaMultiplier.width() - 1.f) / 2);
+    keepRect.inflateY(visibleRect.height() * (m_keepAreaMultiplier.height() - 1.f) / 2);
     keepRect.intersect(contentsRect());
     
     dropTilesOutsideRect(keepRect);
     
     IntRect coverRect = visibleRect;
-    coverRect.inflateX(visibleRect.width() * (m_coverAreaMultiplier.width() - 1.f));
-    coverRect.inflateY(visibleRect.height() * (m_coverAreaMultiplier.height() - 1.f));
+    // Inflates to both sides, so divide inflate delta by 2
+    coverRect.inflateX(visibleRect.width() * (m_coverAreaMultiplier.width() - 1.f) / 2);
+    coverRect.inflateY(visibleRect.height() * (m_coverAreaMultiplier.height() - 1.f) / 2);
     coverRect.intersect(contentsRect());
     
     // Search for the tile position closest to the viewport center that does not yet contain a tile. 

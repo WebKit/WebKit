@@ -398,8 +398,9 @@ double TiledDrawingAreaProxy::tileDistance(const IntRect& viewport, const TiledD
 IntRect TiledDrawingAreaProxy::calculateKeepRect(const IntRect& visibleRect) const
 {
     IntRect result = visibleRect;
-    result.inflateX(visibleRect.width() * (m_keepAreaMultiplier.width() - 1));
-    result.inflateY(visibleRect.height() * (m_keepAreaMultiplier.height() - 1));
+    // Inflates to both sides, so divide inflate delta by 2
+    result.inflateX(visibleRect.width() * (m_keepAreaMultiplier.width() - 1) / 2);
+    result.inflateY(visibleRect.height() * (m_keepAreaMultiplier.height() - 1) / 2);
     result.intersect(contentsRect());
     return result;
 }
@@ -407,8 +408,9 @@ IntRect TiledDrawingAreaProxy::calculateKeepRect(const IntRect& visibleRect) con
 IntRect TiledDrawingAreaProxy::calculateCoverRect(const IntRect& visibleRect) const
 {
     IntRect result = visibleRect;
-    result.inflateX(visibleRect.width() * (m_coverAreaMultiplier.width() - 1));
-    result.inflateY(visibleRect.height() * (m_coverAreaMultiplier.height() - 1));
+    // Inflates to both sides, so divide inflate delta by 2
+    result.inflateX(visibleRect.width() * (m_coverAreaMultiplier.width() - 1) / 2);
+    result.inflateY(visibleRect.height() * (m_coverAreaMultiplier.height() - 1) / 2);
     result.intersect(contentsRect());
     return result;
 }
