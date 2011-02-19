@@ -1899,6 +1899,9 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     // Create an NSView that will host our layer tree.
     _data->_layerHostingView.adoptNS([[NSView alloc] initWithFrame:[self bounds]]);
     [_data->_layerHostingView.get() setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
     [self addSubview:_data->_layerHostingView.get()];
 
     // Create a root layer that will back the NSView.
@@ -1912,6 +1915,8 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
     [_data->_layerHostingView.get() setLayer:rootLayer.get()];
     [_data->_layerHostingView.get() setWantsLayer:YES];
+
+    [CATransaction commit];
 }
 
 - (void)_exitAcceleratedCompositingMode

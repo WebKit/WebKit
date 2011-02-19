@@ -1,3 +1,15 @@
+2011-02-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Accelerated content fades in when using a layer backed WKView
+        <rdar://problem/9021586>
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _enterAcceleratedCompositingMode:]):
+        Make a new nested CATransaction and disable animations when adding the layer 
+        hosting subview. This avoids an implicit fade animation that would otherwise occur.
+
 2011-02-18  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
