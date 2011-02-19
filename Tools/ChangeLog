@@ -1,3 +1,15 @@
+2011-02-18  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed, rolling out r79047.
+        http://trac.webkit.org/changeset/79047
+        https://bugs.webkit.org/show_bug.cgi?id=54596
+
+        Broke canary bots - please watch the canaries the next time
+        you land this
+
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+
 2011-02-18  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Darin Adler.

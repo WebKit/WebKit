@@ -111,9 +111,6 @@ class ChromiumMacPort(chromium.ChromiumPort):
 
         return chromium.ChromiumPort.default_child_processes(self)
 
-    def default_worker_model(self):
-        return 'processes'
-
     def driver_name(self):
         return "DumpRenderTree"
 
