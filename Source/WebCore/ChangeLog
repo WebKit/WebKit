@@ -3,6 +3,13 @@
         Qt build fix.
 
         * bridge/qt/qt_instance.cpp:
+        * bridge/qt/qt_pixmapruntime.cpp:
+
+2011-02-19  Gavin Barraclough  <barraclough@apple.com>
+
+        Qt build fix.
+
+        * bridge/qt/qt_instance.cpp:
         (JSC::Bindings::QtInstance::getMethod):
         * bridge/qt/qt_pixmapruntime.cpp:
         (JSC::Bindings::QtPixmapInstance::getMethod):

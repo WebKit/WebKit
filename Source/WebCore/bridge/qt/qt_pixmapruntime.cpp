@@ -34,6 +34,7 @@
 #include <runtime_method.h>
 #include <runtime_object.h>
 #include <runtime_root.h>
+#include "runtime/FunctionPrototype.h"
 
 using namespace WebCore;
 namespace JSC {
