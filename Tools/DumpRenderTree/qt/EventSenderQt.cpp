@@ -352,6 +352,9 @@ void EventSender::keyDown(const QString& string, const QStringList& modifiers, u
         } else if (string == QLatin1String("printScreen")) {
             s = QString();
             code = Qt::Key_Print;
+        } else if (string == QLatin1String("menu")) {
+            s = QString();
+            code = Qt::Key_Menu;
         }
     }
     QKeyEvent event(QEvent::KeyPress, code, modifs, s);

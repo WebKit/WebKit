@@ -1,3 +1,15 @@
+2011-02-18  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Crash in EventHandler::sendContextMenuEventForKey
+        https://bugs.webkit.org/show_bug.cgi?id=54495
+
+        Test: fast/events/menu-keydown-on-hidden-element.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::sendContextMenuEventForKey): Add null check.
+
 2011-02-15  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.

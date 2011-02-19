@@ -1,3 +1,22 @@
+2011-02-18  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Crash in EventHandler::sendContextMenuEventForKey
+        https://bugs.webkit.org/show_bug.cgi?id=54495
+
+        Add support for the context menu key (VK_APPS) to EventSender for
+        platforms that support the key.
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::keyDown):
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (keyDownCallback):
+        * DumpRenderTree/qt/EventSenderQt.cpp:
+        (EventSender::keyDown):
+        * DumpRenderTree/win/EventSender.cpp:
+        (keyDownCallback):
+
 2011-02-18  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Ojan Vafai.

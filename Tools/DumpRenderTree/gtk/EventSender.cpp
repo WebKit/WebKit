@@ -644,6 +644,8 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
             gdkKeySym = GDK_Delete;
         else if (JSStringIsEqualToUTF8CString(character, "printScreen"))
             gdkKeySym = GDK_Print;
+        else if (JSStringIsEqualToUTF8CString(character, "menu"))
+            gdkKeySym = GDK_Menu;
         else if (JSStringIsEqualToUTF8CString(character, "F1"))
             gdkKeySym = GDK_F1;
         else if (JSStringIsEqualToUTF8CString(character, "F2"))

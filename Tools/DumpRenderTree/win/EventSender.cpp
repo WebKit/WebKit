@@ -473,6 +473,8 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
         virtualKeyCode = VK_DELETE;
     else if (JSStringIsEqualToUTF8CString(character, "printScreen"))
         virtualKeyCode = VK_SNAPSHOT;
+    else if (JSStringIsEqualToUTF8CString(character, "menu"))
+        virtualKeyCode = VK_APPS;
     else {
         charCode = JSStringGetCharactersPtr(character)[0];
         virtualKeyCode = LOBYTE(VkKeyScan(charCode));

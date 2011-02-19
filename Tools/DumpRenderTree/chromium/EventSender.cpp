@@ -528,6 +528,9 @@ void EventSender::keyDown(const CppArgumentList& arguments, CppVariant* result)
         code = webkit_support::VKEY_END;
     else if ("printScreen" == codeStr)
         code = webkit_support::VKEY_SNAPSHOT;
+    else if ("menu" == codeStr)
+        // FIXME: Change this to webkit_support::VKEY_APPS.
+        code = 0x5D;
     else {
         // Compare the input string with the function-key names defined by the
         // DOM spec (i.e. "F1",...,"F24"). If the input string is a function-key

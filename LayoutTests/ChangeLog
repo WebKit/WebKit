@@ -1,3 +1,16 @@
+2011-02-18  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Crash in EventHandler::sendContextMenuEventForKey
+        https://bugs.webkit.org/show_bug.cgi?id=54495
+
+        Add test for triggering the context menu key event (VK_APPS) on a hidden
+        element.
+
+        * fast/events/menu-keydown-on-hidden-element-expected.txt: Added.
+        * fast/events/menu-keydown-on-hidden-element.html: Added.
+
 2011-02-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
