@@ -43,10 +43,10 @@ String WebCore::signedPublicKeyAndChallengeString(unsigned index, const String& 
     PCERT_PUBLIC_KEY_INFO pPubInfo = 0;
 
     // Try to delete it if it exists already
-    CryptAcquireContext(&hContext, _T("keygen_container"), MS_ENHANCED_PROV, PROV_RSA_FULL, CRYPT_DELETEKEYSET);
+    CryptAcquireContextW(&hContext, L"keygen_container", MS_ENHANCED_PROV, PROV_RSA_FULL, CRYPT_DELETEKEYSET);
 
     do {
-        if (!CryptAcquireContext(&hContext, _T("keygen_container"), MS_ENHANCED_PROV, PROV_RSA_FULL, CRYPT_NEWKEYSET))
+        if (!CryptAcquireContextW(&hContext, L"keygen_container", MS_ENHANCED_PROV, PROV_RSA_FULL, CRYPT_NEWKEYSET))
             break;
 
         DWORD dwPubInfoLength = 0;
@@ -85,7 +85,7 @@ String WebCore::signedPublicKeyAndChallengeString(unsigned index, const String& 
 
     if (pPubInfo)
         fastFree(pPubInfo);
-       
+
     if (hKey)
         CryptDestroyKey(hKey);
 
