@@ -1,3 +1,15 @@
+2011-02-18  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Marks any actions triggered by performDefaultAction as a user
+        gesture, so that a user with a screen reader isn't prevented from
+        performing operations that must be triggered by a user gesture.
+        https://bugs.webkit.org/show_bug.cgi?id=54759
+
+        * src/WebAccessibilityObject.cpp:
+        (WebKit::WebAccessibilityObject::performDefaultAction):
+
 2011-02-18  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.

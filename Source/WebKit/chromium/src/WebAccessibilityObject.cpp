@@ -39,6 +39,7 @@
 #include "Node.h"
 #include "PlatformKeyboardEvent.h"
 #include "RenderStyle.h"
+#include "UserGestureIndicator.h"
 #include "WebDocument.h"
 #include "WebNode.h"
 #include "WebPoint.h"
@@ -424,6 +425,8 @@ bool WebAccessibilityObject::performDefaultAction() const
 {
     if (!m_private)
         return false;
+
+    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
 
     m_private->updateBackingStore();
     return m_private->performDefaultAction();
