@@ -1,3 +1,15 @@
+2011-02-19  Yong Li  <yoli@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54687
+        When being built with armcc, "int" bit fields are treated as
+        unsigned integers, which will fail the comparisons like "m_offset == -1".
+        Using "signed" fixes the problem.
+
+        * assembler/ARMAssembler.h:
+        * assembler/ARMv7Assembler.h:
+
 2011-02-18  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
