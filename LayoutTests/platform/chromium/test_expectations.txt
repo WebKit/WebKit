@@ -3775,3 +3775,5 @@ BUGATWILSON GPU : compositing/masks/simple-composited-mask.html = IMAGE
 BUGATWILSON GPU : compositing/overflow/fixed-position-ancestor-clip.html = IMAGE
 
 BUGWK54794 GPU MAC : compositing/geometry/object-clip-rects-assertion.html = TIMEOUT
+
+BUGCR73510 MAC : fast/text/font-size-zero.html = TEXT

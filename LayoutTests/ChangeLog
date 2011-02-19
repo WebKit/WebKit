@@ -1,3 +1,9 @@
+2011-02-19  Andrew Wilson  <atwilson@chromium.org>
+
+        Updated test expectations (more fallout from r78846).
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-19  Charlie Reis  <creis@chromium.org>
 
         Reviewed by Mihai Parparita.
