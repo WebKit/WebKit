@@ -1,3 +1,9 @@
+2011-02-19  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed, fixed typo in the GTK+ skipped file.
+
+        * platform/gtk/Skipped:
+
 2011-02-19  Benjamin Poulain  <ikipou@gmail.com>
 
         Reviewed by Andreas Kling.
