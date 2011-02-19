@@ -1,5 +1,11 @@
 2011-02-18  Andrew Wilson  <atwilson@chromium.org>
 
+        Unreviewed expectations change for chromium.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-02-18  Andrew Wilson  <atwilson@chromium.org>
+
         Unreviewed expectations change because my rebaselines didn't seem to work.
 
         * platform/chromium/test_expectations.txt:

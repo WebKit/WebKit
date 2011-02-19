@@ -3766,3 +3766,7 @@ BUGWK54736 MAC : fast/dom/52776.html = TEXT
 BUGWK54736 MAC : fast/forms/text-control-intrinsic-widths.html = TEXT
 BUGWK54736 MAC : fast/text/international/bidi-control-chars-treated-as-ZWS.html = TEXT
 BUGWK54736 MAC : svg/zoom/text/zoom-hixie-mixed-008.xml = TEXT
+
+// Need rebaselines after r79084 (GPU only)
+BUGATWILSON GPU : fast/canvas/canvas-text-alignment.html = IMAGE
+BUGATWILSON GPU : fast/canvas/image-object-in-canvas.html = IMAGE
