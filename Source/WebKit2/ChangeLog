@@ -1,3 +1,15 @@
+2011-02-18  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/9026169>
+        https://bugs.webkit.org/show_bug.cgi?id=54780
+        pendingAPIRequestURL isn't updated for WKPageGoToBackForwardListItem
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::goToBackForwardItem):
+        Update the pending API URL.
+
 2011-02-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

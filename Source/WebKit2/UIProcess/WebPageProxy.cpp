@@ -474,6 +474,8 @@ void WebPageProxy::goToBackForwardItem(WebBackForwardListItem* item)
         reattachToWebProcessWithItem(item);
         return;
     }
+    
+    setPendingAPIRequestURL(item->url());
 
     SandboxExtension::Handle sandboxExtensionHandle;
     initializeSandboxExtensionHandle(KURL(KURL(), item->url()), sandboxExtensionHandle);
