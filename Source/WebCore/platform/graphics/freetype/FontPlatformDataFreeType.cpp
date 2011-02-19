@@ -31,7 +31,7 @@
 #include <cairo.h>
 #include <fontconfig/fcfreetype.h>
 
-#if !PLATFORM(EFL) || ENABLE(GLIB_SUPPORT)
+#if !PLATFORM(EFL)
 #include <gdk/gdk.h>
 #endif
 
@@ -103,7 +103,7 @@ void setCairoFontOptionsFromFontConfigPattern(cairo_font_options_t* options, FcP
 static const cairo_font_options_t* getDefaultFontOptions()
 {
     static const cairo_font_options_t* options = cairo_font_options_create();
-#if PLATFORM(GTK) || ENABLE(GLIB_SUPPORT)
+#if PLATFORM(GTK)
     if (GdkScreen* screen = gdk_screen_get_default()) {
         const cairo_font_options_t* screenOptions = gdk_screen_get_font_options(screen);
         if (screenOptions)

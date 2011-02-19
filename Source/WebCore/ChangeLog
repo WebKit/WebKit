@@ -1,3 +1,17 @@
+2011-02-18  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Kent Tamura.
+
+        [EFL] Remove GDK dependency.
+        https://bugs.webkit.org/show_bug.cgi?id=53978
+
+        Remove GLIB_SUPPORT macro in GDK related code.
+        Regardless of GLIB_SUPPORT, getDefaultFontOptions() will works same way.
+
+        * CMakeListsEfl.txt:
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::getDefaultFontOptions):
+
 2011-02-18  Noel Gordon  <noel.gordon@gmail.com>
 
         Reviewed by James Robinson.
