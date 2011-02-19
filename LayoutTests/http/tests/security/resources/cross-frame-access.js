@@ -126,12 +126,6 @@ function canAccessFrame(iframeURL, iframeId, passMessage, failMessage)
         }
     }, false);
 
-    var runawayTimer = setTimeout(function() {
-        log("FAIL: Subframe did not finish loading.");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
-    }, 2000);
-
     var targetWindow = frames[0];
     if (!targetWindow.document.body)
         log("FAIL: targetWindow started with no document, we won't know if the test passed or failed.");
@@ -145,7 +139,6 @@ function canAccessFrame(iframeURL, iframeId, passMessage, failMessage)
             if (targetWindow.document && targetWindow.document.getElementById('accessMe')) {
                 targetWindow.document.getElementById('accessMe').innerHTML = passMessage;
                 log(passMessage);
-                clearTimeout(runawayTimer);
                 if (window.layoutTestController)
                     layoutTestController.notifyDone();
                 return;
@@ -155,7 +148,6 @@ function canAccessFrame(iframeURL, iframeId, passMessage, failMessage)
         }
 
         log(failMessage);
-        clearTimeout(runawayTimer);
         if (window.layoutTestController)
             layoutTestController.notifyDone();
     }
@@ -175,12 +167,6 @@ function cannotAccessFrame(iframeURL, iframeId, passMessage, failMessage)
         }
     }, false);
 
-    var runawayTimer = setTimeout(function() {
-        log("FAIL: Subframe did not finish loading.");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
-    }, 2000);
-
     var targetWindow = frames[0];
     if (!targetWindow.document.body)
         log("FAIL: targetWindow started with no document, we won't know if the test passed or failed.");
@@ -194,7 +180,6 @@ function cannotAccessFrame(iframeURL, iframeId, passMessage, failMessage)
             if (targetWindow.document && targetWindow.document.getElementById('accessMe')) {
                 targetWindow.document.getElementById('accessMe').innerHTML = failMessage;
                 log(failMessage);
-                clearTimeout(runawayTimer);
                 if (window.layoutTestController)
                     layoutTestController.notifyDone();
                 return;
@@ -203,7 +188,6 @@ function cannotAccessFrame(iframeURL, iframeId, passMessage, failMessage)
         }
 
         log(passMessage);
-        clearTimeout(runawayTimer);
         if (window.layoutTestController)
             layoutTestController.notifyDone();
     }
@@ -212,7 +196,7 @@ function cannotAccessFrame(iframeURL, iframeId, passMessage, failMessage)
 function closeWindowAndNotifyDone(win)
 {
     win.close();
-    setTimeout(doneHandler, 1);
+    setTimeout(doneHandler, 5);
     function doneHandler() {
         if (win.closed) {
             if (window.layoutTestController)
@@ -220,6 +204,6 @@ function closeWindowAndNotifyDone(win)
             return;
         }
 
-        setTimeout(doneHandler, 1);
+        setTimeout(doneHandler, 5);
     }
 }

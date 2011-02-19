@@ -1,3 +1,20 @@
+2011-02-18  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by James Robinson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54605
+        Remove some time limits in a test, let test harnesses kill the test if
+        it runs long.  Also changes a busy loop from 1 ms to 5 ms repeats since
+        this should be much less CPU at little visible cost.
+
+        * http/tests/security/resources/cross-frame-access.js:
+        (canAccessFrame.test):
+        (canAccessFrame):
+        (cannotAccessFrame.test):
+        (cannotAccessFrame):
+        (closeWindowAndNotifyDone.doneHandler):
+        (closeWindowAndNotifyDone):
+
 2011-02-18  chris reiss  <christopher.reiss@nokia.com>
 
         Reviewed by Andreas Kling.
