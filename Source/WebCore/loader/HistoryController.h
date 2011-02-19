@@ -60,8 +60,6 @@ public:
 
     void invalidateCurrentItemCachedPage();
 
-    void goToItem(HistoryItem*, FrameLoadType);
-
     void updateForBackForwardNavigation();
     void updateForReload();
     void updateForStandardLoad(HistoryUpdateType updateType = UpdateAll);
@@ -85,6 +83,10 @@ public:
     void replaceState(PassRefPtr<SerializedScriptValue>, const String& title, const String& url);
 
 private:
+    friend class Page;
+    bool shouldStopLoadingForHistoryItem(HistoryItem*) const;
+    void goToItem(HistoryItem*, FrameLoadType);
+
     void initializeItem(HistoryItem*);
     PassRefPtr<HistoryItem> createItem();
     PassRefPtr<HistoryItem> createItemTree(Frame* targetFrame, bool clipAtTarget);

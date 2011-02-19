@@ -1,3 +1,16 @@
+2011-02-19  Charlie Reis  <creis@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        Ensure loading has stopped in HistoryController::goToItem
+        https://bugs.webkit.org/show_bug.cgi?id=54517
+
+        Tests that going forward within the same document does not stop loading.
+
+        * http/tests/navigation/forward-to-fragment-fires-onload.html: Added.
+        * http/tests/navigation/forward-to-fragment-fires-onload-expected.txt: Added.
+        * http/tests/navigation/resources/forward-to-fragment-fires-onload-2.html: Added.
+
 2011-02-19  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Daniel Bates.

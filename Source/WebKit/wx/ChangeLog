@@ -1,3 +1,18 @@
+2011-02-19  Charlie Reis  <creis@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        Ensure loading has stopped in HistoryController::goToItem
+        https://bugs.webkit.org/show_bug.cgi?id=54517
+
+        Add a FrameLoaderClient callback for whether to stop loading before goToItem.
+
+        Test: http/tests/navigation/forward-to-fragment-fires-onload.html
+
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::shouldStopLoadingForHistoryItem): Added.
+        * WebKitSupport/FrameLoaderClientWx.h:
+
 2011-02-17  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix after move of DocumentWriter to DocumentLoader.

@@ -1,3 +1,21 @@
+2011-02-19  Charlie Reis  <creis@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        Ensure loading has stopped in HistoryController::goToItem
+        https://bugs.webkit.org/show_bug.cgi?id=54517
+
+        Call Page::goToItem instead of HistoryController::goToItem, so that
+        FrameLoader::stopAllLoaders is called first.  Also adds a callback in
+        FrameLoaderClient for checking for pseudo-back-forward URLs.
+
+        Test: http/tests/navigation/forward-to-fragment-fires-onload.html
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::shouldStopLoadingForHistoryItem): Added.
+        * src/FrameLoaderClientImpl.h:
+        * src/WebFrameImpl.cpp:
+
 2011-02-18  Dominic Mazzoni  <dmazzoni@google.com>
 
         Reviewed by Dimitri Glazkov.

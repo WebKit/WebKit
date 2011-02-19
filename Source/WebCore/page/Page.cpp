@@ -331,25 +331,10 @@ void Page::goToItem(HistoryItem* item, FrameLoadType type)
     // stopAllLoaders may end up running onload handlers, which could cause further history traversals that may lead to the passed in HistoryItem
     // being deref()-ed. Make sure we can still use it with HistoryController::goToItem later.
     RefPtr<HistoryItem> protector(item);
-    
-    // Abort any current load unless we're navigating the current document to a new state object
-    HistoryItem* currentItem = m_mainFrame->loader()->history()->currentItem();
-    if (!item->stateObject() || !currentItem || item->documentSequenceNumber() != currentItem->documentSequenceNumber() || item == currentItem) {
-        // Define what to do with any open database connections. By default we stop them and terminate the database thread.
-        DatabasePolicy databasePolicy = DatabasePolicyStop;
 
-#if ENABLE(DATABASE)
-        // If we're navigating the history via a fragment on the same document, then we do not want to stop databases.
-        const KURL& currentURL = m_mainFrame->document()->url();
-        const KURL& newURL = item->url();
-    
-        if (newURL.hasFragmentIdentifier() && equalIgnoringFragmentIdentifier(currentURL, newURL))
-            databasePolicy = DatabasePolicyContinue;
-#endif
+    if (m_mainFrame->loader()->history()->shouldStopLoadingForHistoryItem(item))
+        m_mainFrame->loader()->stopAllLoaders();
 
-        m_mainFrame->loader()->stopAllLoaders(databasePolicy);
-    }
-        
     m_mainFrame->loader()->history()->goToItem(item, type);
 }
 

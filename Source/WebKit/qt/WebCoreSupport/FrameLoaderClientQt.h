@@ -154,6 +154,7 @@ public:
     virtual void updateGlobalHistory();
     virtual void updateGlobalHistoryRedirectLinks();
     virtual bool shouldGoToHistoryItem(HistoryItem*) const;
+    virtual bool shouldStopLoadingForHistoryItem(HistoryItem*) const;
     virtual void dispatchDidAddBackForwardItem(HistoryItem*) const;
     virtual void dispatchDidRemoveBackForwardItem(HistoryItem*) const;
     virtual void dispatchDidChangeBackForwardIndex() const;

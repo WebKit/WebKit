@@ -128,6 +128,7 @@ public:
     bool canHandleRequest(const ResourceRequest&);
 
     // Also not cool.
+    // FIXME: We no longer need DatabasePolicy, since we always stop databases now.
     void stopAllLoaders(DatabasePolicy = DatabasePolicyStop, ClearProvisionalItemPolicy = ShouldClearProvisionalItem);
     void stopForUserCancel(bool deferCheckLoadComplete = false);
 

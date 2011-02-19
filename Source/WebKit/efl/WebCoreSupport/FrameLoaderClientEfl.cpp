@@ -510,6 +510,11 @@ bool FrameLoaderClientEfl::shouldGoToHistoryItem(HistoryItem* item) const
     return item;
 }
 
+bool FrameLoaderClientEfl::shouldStopLoadingForHistoryItem(HistoryItem* item) const
+{
+    return true;
+}
+
 void FrameLoaderClientEfl::didDisplayInsecureContent()
 {
     notImplemented();

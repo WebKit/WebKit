@@ -898,8 +898,8 @@ void WebFrameImpl::loadHistoryItem(const WebHistoryItem& item)
         m_frame->page()->backForward()->setCurrentItem(currentItem.get());
     }
 
-    m_frame->loader()->history()->goToItem(
-        historyItem.get(), FrameLoadTypeIndexedBackForward);
+    m_frame->page()->goToItem(historyItem.get(),
+                              FrameLoadTypeIndexedBackForward);
 }
 
 void WebFrameImpl::loadData(const WebData& data,

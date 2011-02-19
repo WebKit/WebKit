@@ -602,6 +602,11 @@ bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem*) const
     return true;
 }
 
+bool WebFrameLoaderClient::shouldStopLoadingForHistoryItem(HistoryItem*) const
+{
+    return true;
+}
+
 void WebFrameLoaderClient::dispatchDidAddBackForwardItem(HistoryItem*) const
 {
 }

@@ -827,6 +827,11 @@ bool FrameLoaderClientQt::shouldGoToHistoryItem(WebCore::HistoryItem *) const
     return true;
 }
 
+bool FrameLoaderClientQt::shouldStopLoadingForHistoryItem(WebCore::HistoryItem *) const
+{
+    return true;
+}
+
 void FrameLoaderClientQt::dispatchDidAddBackForwardItem(WebCore::HistoryItem*) const
 {
 }

@@ -217,6 +217,18 @@ void HistoryController::invalidateCurrentItemCachedPage()
         pageCache()->remove(currentItem());
 }
 
+bool HistoryController::shouldStopLoadingForHistoryItem(HistoryItem* targetItem) const
+{
+    if (!m_currentItem)
+        return false;
+
+    // Don't abort the current load if we're navigating within the current document.
+    if (m_currentItem->shouldDoSameDocumentNavigationTo(targetItem))
+        return false;
+
+    return m_frame->loader()->client()->shouldStopLoadingForHistoryItem(targetItem);
+}
+
 // Main funnel for navigating to a previous location (back/forward, non-search snap-back)
 // This includes recursion to handle loading into framesets properly
 void HistoryController::goToItem(HistoryItem* targetItem, FrameLoadType type)

@@ -577,6 +577,11 @@ bool FrameLoaderClientWx::shouldGoToHistoryItem(WebCore::HistoryItem*) const
     return true;
 }
 
+bool FrameLoaderClientWx::shouldStopLoadingForHistoryItem(WebCore::HistoryItem*) const
+{
+    return true;
+}
+
 void FrameLoaderClientWx::dispatchDidAddBackForwardItem(WebCore::HistoryItem*) const
 {
 }

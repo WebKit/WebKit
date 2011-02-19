@@ -1135,6 +1135,14 @@ bool FrameLoaderClientImpl::shouldGoToHistoryItem(HistoryItem* item) const
     return false;
 }
 
+bool FrameLoaderClientImpl::shouldStopLoadingForHistoryItem(HistoryItem* targetItem) const
+{
+    // Don't stop loading for pseudo-back-forward URLs, since they will get
+    // translated and then pass through again.
+    const KURL& url = targetItem->url();
+    return !url.protocolIs(backForwardNavigationScheme);
+}
+
 void FrameLoaderClientImpl::dispatchDidAddBackForwardItem(HistoryItem*) const
 {
 }

@@ -866,6 +866,11 @@ bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem* item) const
     return shouldGoToBackForwardListItem;
 }
 
+bool WebFrameLoaderClient::shouldStopLoadingForHistoryItem(HistoryItem* item) const
+{
+    return true;
+}
+
 void WebFrameLoaderClient::dispatchDidAddBackForwardItem(HistoryItem*) const
 {
     notImplemented();

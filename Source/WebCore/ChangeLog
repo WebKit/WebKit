@@ -1,3 +1,24 @@
+2011-02-19  Charlie Reis  <creis@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        Ensure loading has stopped in HistoryController::goToItem
+        https://bugs.webkit.org/show_bug.cgi?id=54517
+
+        Avoid stopping all loaders in goToItem for same document navigations
+        or pseudo-back-forward URLs.  Make HistoryController::goToItem private
+        to force callers to go through Page::goToItem.  Also add a callback to
+        FrameLoaderClient to let clients decide whether to stop loading first.
+
+        Test: http/tests/navigation/forward-to-fragment-fires-onload.html
+
+        * loader/EmptyClients.h:
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/HistoryController.cpp:
+        * loader/HistoryController.h:
+        * page/Page.cpp:
+
 2011-02-19  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Daniel Bates.

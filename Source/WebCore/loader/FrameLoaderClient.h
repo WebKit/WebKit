@@ -187,6 +187,7 @@ namespace WebCore {
         virtual void updateGlobalHistoryRedirectLinks() = 0;
 
         virtual bool shouldGoToHistoryItem(HistoryItem*) const = 0;
+        virtual bool shouldStopLoadingForHistoryItem(HistoryItem*) const = 0;
         virtual void dispatchDidAddBackForwardItem(HistoryItem*) const = 0;
         virtual void dispatchDidRemoveBackForwardItem(HistoryItem*) const = 0;
         virtual void dispatchDidChangeBackForwardIndex() const = 0;
