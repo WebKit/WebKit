@@ -1,5 +1,16 @@
 2011-02-19 Patrick Gansterer <paroga@webkit.org>
 
+        Reviewed by Antonio Gomes.
+
+        [EFL] Remove WebCore::currentTime()
+        https://bugs.webkit.org/show_bug.cgi?id=53886
+
+        There is no declaration for it and we use WTF::currentTime() everywhere.
+
+        * platform/efl/SystemTimeEfl.cpp:
+
+2011-02-19 Patrick Gansterer <paroga@webkit.org>
+
         Reviewed by Andreas Kling.
 
         Move KeygenWinCE from wince into win directory
