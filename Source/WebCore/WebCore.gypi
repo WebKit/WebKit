@@ -2160,6 +2160,7 @@
             'loader/DocumentLoader.h',
             'loader/DocumentThreadableLoader.cpp',
             'loader/DocumentThreadableLoader.h',
+            'loader/DocumentThreadableLoaderClient.h',
             'loader/DocumentWriter.cpp',
             'loader/DocumentWriter.h',
             'loader/EmptyClients.h',

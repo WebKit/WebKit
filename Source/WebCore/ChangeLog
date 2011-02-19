@@ -1,3 +1,23 @@
+2011-02-19  Bill Budge  <bbudge@chromium.org>
+
+        Reviewed by David Levin.
+
+        ThreadableLoaderClient needs willSendRequest method
+        https://bugs.webkit.org/show_bug.cgi?id=54688
+
+        No new tests. Exposes no new functionality
+
+        * WebCore.gypi:
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::willSendRequest):
+        (WebCore::DocumentThreadableLoader::didReceiveData):
+        (WebCore::DocumentThreadableLoader::didReceiveCachedMetadata):
+        * loader/DocumentThreadableLoaderClient.h: Added.
+        (WebCore::DocumentThreadableLoaderClient::isDocumentThreadableLoaderClient):
+        (WebCore::DocumentThreadableLoaderClient::willSendRequest):
+        * loader/ThreadableLoaderClient.h:
+        (WebCore::ThreadableLoaderClient::isDocumentThreadableLoaderClient):
+
 2011-02-19  Charlie Reis  <creis@chromium.org>
 
         Reviewed by Mihai Parparita.

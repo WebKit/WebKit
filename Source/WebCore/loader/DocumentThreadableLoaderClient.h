@@ -28,36 +28,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ThreadableLoaderClient_h
-#define ThreadableLoaderClient_h
+#ifndef DocumentThreadableLoaderClient_h
+#define DocumentThreadableLoaderClient_h
 
+#include "ThreadableLoaderClient.h"
 
 namespace WebCore {
 
-    class ResourceError;
-    class ResourceResponse;
+class ResourceRequest;
+class ResourceResponse;
 
-    class ThreadableLoaderClient {
-        WTF_MAKE_NONCOPYABLE(ThreadableLoaderClient); WTF_MAKE_FAST_ALLOCATED;
-    public:
-        virtual void didSendData(unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/) { }
+class DocumentThreadableLoaderClient : public ThreadableLoaderClient {
+    WTF_MAKE_NONCOPYABLE(DocumentThreadableLoaderClient);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    virtual bool isDocumentThreadableLoaderClient() { return true; }
 
-        virtual void didReceiveResponse(const ResourceResponse&) { }
-        virtual void didReceiveData(const char*, int /*dataLength*/) { }
-        virtual void didReceiveCachedMetadata(const char*, int /*dataLength*/) { }
-        virtual void didFinishLoading(unsigned long /*identifier*/, double /*finishTime*/) { }
-        virtual void didFail(const ResourceError&) { }
-        virtual void didFailRedirectCheck() { }
-
-        virtual void didReceiveAuthenticationCancellation(const ResourceResponse&) { }
-
-        virtual bool isDocumentThreadableLoaderClient() { return false; }
-
-    protected:
-        ThreadableLoaderClient() { }
-        virtual ~ThreadableLoaderClient() { }
-    };
+    virtual void willSendRequest(ResourceRequest& /*newRequest*/, const ResourceResponse& /*redirectResponse*/) { }
+};
 
 } // namespace WebCore
 
-#endif // ThreadableLoaderClient_h
+#endif // DocumentThreadableLoaderClient_h

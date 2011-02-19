@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -35,6 +35,7 @@
 #include "CrossOriginAccessControl.h"
 #include "CrossOriginPreflightResultCache.h"
 #include "Document.h"
+#include "DocumentThreadableLoaderClient.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "ResourceHandle.h"
@@ -172,7 +173,7 @@ void DocumentThreadableLoader::setDefersLoading(bool value)
         m_loader->setDefersLoading(value);
 }
 
-void DocumentThreadableLoader::willSendRequest(SubresourceLoader* loader, ResourceRequest& request, const ResourceResponse&)
+void DocumentThreadableLoader::willSendRequest(SubresourceLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     ASSERT(m_client);
     ASSERT_UNUSED(loader, loader == m_loader);
@@ -181,6 +182,9 @@ void DocumentThreadableLoader::willSendRequest(SubresourceLoader* loader, Resour
         RefPtr<DocumentThreadableLoader> protect(this);
         m_client->didFailRedirectCheck();
         request = ResourceRequest();
+    } else {
+        if (m_client->isDocumentThreadableLoaderClient())
+            static_cast<DocumentThreadableLoaderClient*>(m_client)->willSendRequest(request, redirectResponse);
     }
 }
 
@@ -230,7 +234,7 @@ void DocumentThreadableLoader::didReceiveData(SubresourceLoader* loader, const c
     ASSERT(m_client);
     ASSERT_UNUSED(loader, loader == m_loader);
 
-    // Ignore response body of preflight requests.
+    // Preflight data should be invisible to clients.
     if (m_actualRequest)
         return;
 
@@ -242,9 +246,11 @@ void DocumentThreadableLoader::didReceiveCachedMetadata(SubresourceLoader* loade
     ASSERT(m_client);
     ASSERT_UNUSED(loader, loader == m_loader);
 
-    // Ignore response body of preflight requests.
-    if (!m_actualRequest)
-        m_client->didReceiveCachedMetadata(data, lengthReceived);
+    // Preflight data should be invisible to clients.
+    if (m_actualRequest)
+        return;
+
+    m_client->didReceiveCachedMetadata(data, lengthReceived);
 }
 
 void DocumentThreadableLoader::didFinishLoading(SubresourceLoader* loader, double finishTime)
