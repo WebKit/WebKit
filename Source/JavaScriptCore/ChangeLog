@@ -1,3 +1,15 @@
+2011-02-18  chris reiss  <christopher.reiss@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        REGRESSION: Date.parse("Tue Nov 23 20:40:05 2010 GMT") returns NaN
+        https://bugs.webkit.org/show_bug.cgi?id=49989
+
+        updated test fast/js/script-tests/date-parse-test.js
+
+        * wtf/DateMath.cpp:
+        (WTF::parseDateFromNullTerminatedCharacters):
+
 2011-02-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r79022.

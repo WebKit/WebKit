@@ -127,6 +127,11 @@ testDateParse("Dec 25 1995 13:30 PM GMT", "NaN");
 testDateParse("Anf 25 1995 GMT", "NaN");
 
 testDateParse("Wed Dec 25 1995 1:30 GMT", "819855000000");
+testDateParse("Wed Dec 25 1:30 1995 GMT", "819855000000");
+testDateParseExact("Wed Dec 25 1:30 1995GMT", "819855000000");
+testDateParseExact("Wed Dec 25 1:30 1995 2010 GMT", "NaN");
+testDateParseExact("Wed Dec 25 1:30 1995r GMT", "NaN");
+testDateParseExact("Wed 1:30 Dec 25 GMT", "NaN");
 
 testDateParseExpr('"Dec 25" + String.fromCharCode(9) + "1995 13:30 GMT"', "819898200000");
 testDateParseExpr('"Dec 25" + String.fromCharCode(10) + "1995 13:30 GMT"', "819898200000");
@@ -140,5 +145,7 @@ testDateParse("Dec 25 1995,13:30", "819898200000 + timeZoneOffset");
 
 testDateParse("Dec 25, 1995, 13:30", "819898200000 + timeZoneOffset");
 testDateParse("Dec 25,1995,13:30", "819898200000 + timeZoneOffset");
+
+
 
 var successfullyParsed = true;

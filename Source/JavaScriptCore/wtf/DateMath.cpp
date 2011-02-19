@@ -920,6 +920,14 @@ static double parseDateFromNullTerminatedCharacters(const char* dateString, bool
             }
         }
     }
+    
+    // The year may be after the time but before the time zone.
+    if (year <= 0) {
+       if (!parseLong(dateString, &newPosStr, 10, &year))
+          year = 0;
+       dateString = newPosStr;
+       skipSpacesAndComments(dateString);
+    }
 
     // Don't fail if the time zone is missing. 
     // Some websites omit the time zone (4275206).
