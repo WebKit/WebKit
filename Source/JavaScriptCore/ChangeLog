@@ -1,3 +1,40 @@
+2011-02-19  Siddharth Mathur  <siddharth.mathur@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Symbian] OSAllocator implementation for Symbian OS. 
+        Manages both data and code region requests. V8 and Sunspider tested
+        OK with interpreter. Not tested with JSC JIT yet as it has unrelated
+        failures. Also no thread safety yet.
+        https://bugs.webkit.org/show_bug.cgi?id=51128
+
+        * JavaScriptCore.pri: removed HAL linkage
+        * wtf/Bitmap.h:
+        (WTF::::findRunOfZeros): find run of zeros in a bitmap. quick n dirty
+        * wtf/OSAllocator.h:
+        (WTF::OSAllocator::decommitAndRelease): decommit explicitly 
+        * wtf/OSAllocatorSymbian.cpp: Impl. of OSAllocator interface 
+        (WTF::allocateCodeChunk): utility for code chunks
+        (WTF::deallocateCodeChunk): utility for code chunks
+        (WTF::dataAllocatorInstance): getter for data allocator instance
+        (WTF::OSAllocator::reserveUncommitted):
+        (WTF::OSAllocator::releaseDecommitted):
+        (WTF::OSAllocator::commit):
+        (WTF::OSAllocator::decommit):
+        (WTF::OSAllocator::reserveAndCommit):
+        (WTF::PageAllocatorSymbian::PageAllocatorSymbian): maps requests 
+        to one underlying Symbian chunk
+        (WTF::PageAllocatorSymbian::~PageAllocatorSymbian):
+        (WTF::PageAllocatorSymbian::reserve):
+        (WTF::PageAllocatorSymbian::release):
+        (WTF::PageAllocatorSymbian::commit):
+        (WTF::PageAllocatorSymbian::decommit):
+        (WTF::PageAllocatorSymbian::contains):
+        * wtf/PageAllocatorSymbian.h: Added.
+        (WTF::SymbianChunk::SymbianChunk): wrapper around RChunk  
+        (WTF::SymbianChunk::~SymbianChunk):
+        (WTF::SymbianChunk::contains):
+        
 2011-02-19  Yong Li  <yoli@rim.com>
 
         Reviewed by Eric Seidel.

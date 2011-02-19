@@ -40,6 +40,7 @@ public:
     size_t nextPossiblyUnset(size_t) const;
     void clear(size_t);
     void clearAll();
+    int64_t findRunOfZeros(size_t) const;
     size_t count(size_t = 0) const;
     size_t isEmpty() const;
     size_t isFull() const;
@@ -104,6 +105,26 @@ inline size_t Bitmap<size>::nextPossiblyUnset(size_t start) const
     if (!~bits[start / wordSize])
         return ((start / wordSize) + 1) * wordSize;
     return start + 1;
+}
+
+template<size_t size>
+inline int64_t Bitmap<size>::findRunOfZeros(size_t runLength) const
+{
+    if (!runLength) 
+        runLength = 1; 
+     
+    for (size_t i = 0; i <= (size - runLength) ; i++) {
+        bool found = true; 
+        for (size_t j = i; j <= (i + runLength - 1) ; j++) { 
+            if (get(j)) {
+                found = false; 
+                break;
+            }
+        }
+        if (found)  
+            return i; 
+    }
+    return -1;
 }
 
 template<size_t size>

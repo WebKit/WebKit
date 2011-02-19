@@ -49,12 +49,6 @@ symbian {
     INCLUDEPATH = $$JAVASCRIPTCORE_INCLUDEPATH $$INCLUDEPATH
 }
 
-symbian: {
-    LIBS += -lhal
-    # For hal.h
-    INCLUDEPATH *= $$MW_LAYER_SYSTEMINCLUDE
-}
-
 win32-*: DEFINES += _HAS_TR1=0
 
 DEFINES += BUILDING_JavaScriptCore BUILDING_WTF
