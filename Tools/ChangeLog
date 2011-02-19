@@ -1,3 +1,12 @@
+2011-02-19  Lukasz Slachciak  <l.slachciak@samsung.com>
+
+        Reviewed by Andreas Kling.
+
+        Fixed problem with launching EWebLauncher with "run-launcher --efl". Incorrect path referring to non-existing .libs directory ws set.
+        https://webkit.org/b/54778
+
+        * Scripts/webkitdirs.pm:
+
 2011-02-18  David Levin  <levin@chromium.org>
 
         Reviewed by Eric Seidel.

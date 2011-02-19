@@ -610,7 +610,7 @@ sub builtDylibPathForName
         return $libraryDir . "libwebkitgtk-1.0.$extension";
     }
     if (isEfl()) {
-        return "$configurationProductDir/$libraryName/../.libs/libewebkit.so";
+        return "$configurationProductDir/$libraryName/../WebKit/libewebkit.so";
     }
     if (isWinCE()) {
         return "$configurationProductDir/$libraryName";
