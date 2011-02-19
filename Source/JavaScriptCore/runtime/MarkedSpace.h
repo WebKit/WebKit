@@ -97,6 +97,8 @@ namespace JSC {
         template<typename Functor> void forEach(Functor&);
 
     private:
+        typedef HashSet<MarkedBlock*>::iterator BlockIterator;
+
         NEVER_INLINE MarkedBlock* allocateBlock();
         NEVER_INLINE void freeBlock(size_t);
 
@@ -143,8 +145,9 @@ namespace JSC {
 
     template <typename Functor> inline void MarkedSpace::forEach(Functor& functor)
     {
-        for (size_t i = 0; i < m_heap.blocks.size(); ++i)
-            m_heap.collectorBlock(i)->forEach(functor);
+        BlockIterator end = m_blocks.end();
+        for (BlockIterator it = m_blocks.begin(); it != end; ++it)
+            (*it)->forEach(functor);
     }
 
 } // namespace JSC

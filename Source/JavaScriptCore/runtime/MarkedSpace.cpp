@@ -93,37 +93,42 @@ void MarkedSpace::shrink()
 
 void MarkedSpace::clearMarks()
 {
-    for (size_t i = 0; i < m_heap.blocks.size(); ++i)
-        m_heap.collectorBlock(i)->clearMarks();
+    BlockIterator end = m_blocks.end();
+    for (BlockIterator it = m_blocks.begin(); it != end; ++it)
+        (*it)->clearMarks();
 }
 
 void MarkedSpace::sweep()
 {
-    for (size_t i = 0; i < m_heap.blocks.size(); ++i)
-        m_heap.collectorBlock(i)->sweep();
+    BlockIterator end = m_blocks.end();
+    for (BlockIterator it = m_blocks.begin(); it != end; ++it)
+        (*it)->sweep();
 }
 
 size_t MarkedSpace::objectCount() const
 {
     size_t result = 0;
-    for (size_t i = 0; i < m_heap.blocks.size(); ++i)
-        result += m_heap.collectorBlock(i)->markCount();
+    BlockIterator end = m_blocks.end();
+    for (BlockIterator it = m_blocks.begin(); it != end; ++it)
+        result += (*it)->markCount();
     return result;
 }
 
 size_t MarkedSpace::size() const
 {
     size_t result = 0;
-    for (size_t i = 0; i < m_heap.blocks.size(); ++i)
-        result += m_heap.collectorBlock(i)->size();
+    BlockIterator end = m_blocks.end();
+    for (BlockIterator it = m_blocks.begin(); it != end; ++it)
+        result += (*it)->size();
     return result;
 }
 
 size_t MarkedSpace::capacity() const
 {
     size_t result = 0;
-    for (size_t i = 0; i < m_heap.blocks.size(); ++i)
-        result += m_heap.collectorBlock(i)->capacity();
+    BlockIterator end = m_blocks.end();
+    for (BlockIterator it = m_blocks.begin(); it != end; ++it)
+        result += (*it)->capacity();
     return result;
 }
 

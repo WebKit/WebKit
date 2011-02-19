@@ -1,3 +1,23 @@
+2011-02-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Made MarkedSpace block iteration size-class agnostic
+        https://bugs.webkit.org/show_bug.cgi?id=54792
+        
+        SunSpider reports no change.
+
+        * runtime/MarkedSpace.cpp:
+        (JSC::MarkedSpace::clearMarks):
+        (JSC::MarkedSpace::sweep):
+        (JSC::MarkedSpace::objectCount):
+        (JSC::MarkedSpace::size):
+        (JSC::MarkedSpace::capacity):
+        * runtime/MarkedSpace.h:
+        (JSC::MarkedSpace::forEach): Iterate blocks in hashing order instead of
+        size class list order. This is a much simpler convention in a world
+        of many different size classes.
+
 2011-02-18  Kristian Amlie  <kristian.amlie@nokia.com>
 
         Reviewed by Andreas Kling.
