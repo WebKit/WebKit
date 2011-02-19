@@ -1,3 +1,16 @@
+2011-02-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Hang trying to load nytimes.com with Flash installed
+        <rdar://problem/9018113> 
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::sendSyncMessage):
+        Call beginWaitForSyncReply() before sending the message. Otherwise, in some cases we could
+        have gotten back a synchronous request before calling beginWaitForSyncReply(), and then we wouldn't
+        process it correctly. (Which would lead to the hang).
+
 2011-02-18  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Kevin Decker.
