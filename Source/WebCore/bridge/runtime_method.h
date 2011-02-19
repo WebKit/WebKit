@@ -45,12 +45,15 @@ public:
         return globalObject->functionPrototype();
     }
 
+    static PassRefPtr<Structure> createStructure(JSValue prototype)
+    {
+        return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+    }
+
 protected:
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
 
 private:
-    static PassRefPtr<Structure> createStructure(JSValue prototype); // Make this private, subclasses must implement!
-
     static JSValue lengthGetter(ExecState*, JSValue, const Identifier&);
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);

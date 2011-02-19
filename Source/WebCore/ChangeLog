@@ -2,6 +2,13 @@
 
         Qt build fix.
 
+        * bridge/runtime_method.h:
+        (JSC::RuntimeMethod::createStructure):
+
+2011-02-19  Gavin Barraclough  <barraclough@apple.com>
+
+        Qt build fix.
+
         * bridge/qt/qt_instance.cpp:
         * bridge/qt/qt_pixmapruntime.cpp:
 
