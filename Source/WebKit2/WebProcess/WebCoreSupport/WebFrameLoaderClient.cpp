@@ -1302,6 +1302,11 @@ void WebFrameLoaderClient::didChangeScrollOffset()
     if (!m_frame->isMainFrame())
         return;
 
+    // If this is called when tearing down a FrameView, the WebCore::Frame's
+    // current FrameView will be null.
+    if (!m_frame->coreFrame()->view())
+        return;
+
     webPage->didChangeScrollOffsetForMainFrame();
 }
 

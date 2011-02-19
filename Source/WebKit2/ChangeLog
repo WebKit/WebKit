@@ -1,3 +1,20 @@
+2011-02-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adele Peterson.
+
+        Real fix for <rdar://problem/9025723> CrashTracer: [USER] 
+        1 crash in WebProcess at com.apple.WebKit2: 
+        WebKit::WebPage::didChangeScrollOffsetForMainFrame + 31
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::didChangeScrollOffset):
+        Add null check for the FrameView. This function can be called when the
+        FrameView is being torn down during a transition to a new FrameView.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didChangeScrollOffsetForMainFrame):
+        Revert last attempt.
+
 2011-02-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
