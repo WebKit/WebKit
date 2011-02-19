@@ -104,6 +104,7 @@ private:
     
     // WebCore::Widget
     virtual void setFrameRect(const WebCore::IntRect&);
+    virtual void setBoundsSize(const WebCore::IntSize&);
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect&);
     virtual void invalidateRect(const WebCore::IntRect&);
     virtual void setFocus(bool);
@@ -184,6 +185,7 @@ private:
     RefPtr<WebCore::SharedBuffer> m_manualStreamData;
     
     RefPtr<ShareableBitmap> m_snapshot;
+    WebCore::IntSize m_boundsSize;
 };
 
 } // namespace WebKit

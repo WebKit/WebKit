@@ -506,6 +506,13 @@ void PluginView::setFrameRect(const WebCore::IntRect& rect)
     viewGeometryDidChange();
 }
 
+void PluginView::setBoundsSize(const WebCore::IntSize& size)
+{
+    Widget::setBoundsSize(size);
+    m_boundsSize = size;
+    viewGeometryDidChange();
+}
+
 void PluginView::paint(GraphicsContext* context, const IntRect& dirtyRect)
 {
     if (context->paintingDisabled() || !m_plugin || !m_isInitialized)
@@ -603,7 +610,7 @@ void PluginView::viewGeometryDidChange()
 
     // Get the frame rect in window coordinates.
     IntRect frameRectInWindowCoordinates = parent()->contentsToWindow(frameRect());
-
+    frameRectInWindowCoordinates.setSize(m_boundsSize);
     m_plugin->geometryDidChange(frameRectInWindowCoordinates, clipRectInWindowCoordinates());
 }
 
@@ -613,6 +620,7 @@ IntRect PluginView::clipRectInWindowCoordinates() const
 
     // Get the frame rect in window coordinates.
     IntRect frameRectInWindowCoordinates = parent()->contentsToWindow(frameRect());
+    frameRectInWindowCoordinates.setSize(m_boundsSize);
 
     // Get the window clip rect for the enclosing layer (in window coordinates).
     RenderLayer* layer = m_pluginElement->renderer()->enclosingLayer();
