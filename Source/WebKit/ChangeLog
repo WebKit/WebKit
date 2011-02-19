@@ -1,3 +1,9 @@
+2011-02-18  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed build fix after r78634 and r78786.
+
+        * CMakeLists.txt:
+
 2011-02-16  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Adam Roben.
