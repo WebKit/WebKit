@@ -43,7 +43,6 @@ void MarkedSpace::destroy()
 
     while (m_heap.blocks.size())
         freeBlock(0);
-    m_heap.blocks.clear();
 }
 
 NEVER_INLINE MarkedBlock* MarkedSpace::allocateBlock()
@@ -54,15 +53,16 @@ NEVER_INLINE MarkedBlock* MarkedSpace::allocateBlock()
     return block;
 }
 
-NEVER_INLINE void MarkedSpace::freeBlock(size_t block)
+NEVER_INLINE void MarkedSpace::freeBlock(size_t blockNumber)
 {
-    MarkedBlock::destroy(m_heap.blocks[block]);
-
-    m_blocks.remove(m_heap.blocks.last());
+    MarkedBlock* block = m_heap.blocks[blockNumber];
 
     // swap with the last block so we compact as we go
-    m_heap.blocks[block] = m_heap.blocks.last();
+    m_heap.blocks[blockNumber] = m_heap.blocks.last();
     m_heap.blocks.removeLast();
+    m_blocks.remove(block);
+
+    MarkedBlock::destroy(block);
 }
 
 void* MarkedSpace::allocate(size_t)

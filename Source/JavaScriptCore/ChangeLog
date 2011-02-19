@@ -1,3 +1,28 @@
+2011-02-18  Geoffrey Garen  <ggaren@apple.com>
+
+        (Rolled back in r79022 with crash fixed.)
+
+        Reviewed by Sam Weinig.
+
+        Use hashing instead of linear search in the conservative pointer test
+        https://bugs.webkit.org/show_bug.cgi?id=54767
+        
+        SunSpider reports no change.
+
+        * runtime/MarkedSpace.cpp:
+        (JSC::MarkedSpace::destroy): No need to explicitly clear the blocks array,
+        since freeBlock removes items for us.
+
+        (JSC::MarkedSpace::freeBlock): Fixed a typo that always removed the last
+        block from the block set instead of the block being freed. Changed to
+        remove a block from our data structures before deallocating it, since
+        this is slightly cleaner.
+
+        * runtime/MarkedSpace.h:
+        (JSC::MarkedSpace::contains): Variable-sized objects will use more,
+        smaller blocks, so it's important for the contains check not to be O(n)
+        in the number of blocks.
+
 2011-02-18  chris reiss  <christopher.reiss@nokia.com>
 
         Reviewed by Andreas Kling.
