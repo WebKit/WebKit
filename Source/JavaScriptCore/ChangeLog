@@ -1,3 +1,15 @@
+2011-02-19  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Unreviewed build fix for Symbian.
+
+        [Symbian] Revert the removal of linking 
+        against hal after r79126.
+
+        Dependency on the hal library can not be removed 
+        as it is still used (e.g. in MarkStackSymbian.cpp).
+
+        * JavaScriptCore.pri:
+
 2011-02-19  Gavin Barraclough  <barraclough@apple.com>
 
         Interpreter build fix.
