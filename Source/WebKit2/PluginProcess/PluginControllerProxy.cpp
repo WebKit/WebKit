@@ -59,7 +59,7 @@ PluginControllerProxy::PluginControllerProxy(WebProcessConnection* connection, u
     , m_isAcceleratedCompositingEnabled(isAcceleratedCompositingEnabled)
     , m_paintTimer(RunLoop::main(), this, &PluginControllerProxy::paint)
     , m_pluginDestructionProtectCount(0)
-    , m_shouldDestroyPluginWhenCountReachesZero(false)
+    , m_pluginDestroyTimer(RunLoop::main(), this, &PluginControllerProxy::destroy)
     , m_waitingForDidUpdate(false)
     , m_pluginCanceledManualStreamLoad(false)
 #if PLATFORM(MAC)
@@ -98,7 +98,7 @@ void PluginControllerProxy::destroy()
     if (m_pluginDestructionProtectCount) {
         // We have plug-in code on the stack so we can't destroy it right now.
         // Destroy it later.
-        m_shouldDestroyPluginWhenCountReachesZero = true;
+        m_pluginDestroyTimer.startOneShot(0);
         return;
     }
 
@@ -309,8 +309,6 @@ void PluginControllerProxy::unprotectPluginFromDestruction()
     ASSERT(m_pluginDestructionProtectCount);
 
     m_pluginDestructionProtectCount--;
-    if (!m_pluginDestructionProtectCount && m_shouldDestroyPluginWhenCountReachesZero)
-        destroy();
 }
 
 void PluginControllerProxy::frameDidFinishLoading(uint64_t requestID)

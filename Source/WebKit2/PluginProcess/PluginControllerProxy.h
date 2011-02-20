@@ -160,9 +160,10 @@ private:
     
     // A counter used to prevent the plug-in from being destroyed.
     unsigned m_pluginDestructionProtectCount;
-    
-    // Whether we should destroy the plug-in when the count reaches 0.
-    bool m_shouldDestroyPluginWhenCountReachesZero;
+
+    // A timer that we use to prevent destruction of the plug-in while plug-in
+    // code is on the stack.
+    RunLoop::Timer<PluginControllerProxy> m_pluginDestroyTimer;
 
     // Whether we're waiting for the plug-in proxy in the web process to draw the contents of its
     // backing store into the web process backing store.

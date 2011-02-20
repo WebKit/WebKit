@@ -29,6 +29,7 @@
 #include "NPRuntimeUtilities.h"
 #include "NetscapePlugin.h"
 #include "NotImplemented.h"
+#include "PluginController.h"
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/IdentifierRep.h>
 #include <WebCore/SharedBuffer.h>
@@ -38,6 +39,18 @@ using namespace WebCore;
 using namespace std;
 
 namespace WebKit {
+
+// Helper class for delaying destruction of a plug-in.
+class PluginDestructionProtector {
+public:
+    explicit PluginDestructionProtector(NetscapePlugin* plugin)
+        : m_protector(static_cast<Plugin*>(plugin)->controller())
+    {
+    }
+    
+private:
+    PluginController::PluginDestructionProtector m_protector;
+};
 
 static bool startsWithBlankLine(const char* bytes, unsigned length)
 {
@@ -401,13 +414,18 @@ static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
     switch (variable) {
         case NPNVWindowNPObject: {
             RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+            PluginDestructionProtector protector(plugin.get());
 
             NPObject* windowNPObject = plugin->windowScriptNPObject();
+            if (!windowNPObject)
+                return NPERR_GENERIC_ERROR;
+
             *(NPObject**)value = windowNPObject;
             break;
         }
         case NPNVPluginElementNPObject: {
             RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+            PluginDestructionProtector protector(plugin.get());
 
             NPObject* pluginElementNPObject = plugin->pluginElementNPObject();
             *(NPObject**)value = pluginElementNPObject;
@@ -605,45 +623,62 @@ static bool NPN_InvokeDefault(NPP, NPObject *npObject, const NPVariant* argument
 static bool NPN_Evaluate(NPP npp, NPObject *npObject, NPString *script, NPVariant* result)
 {
     RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+    PluginDestructionProtector protector(plugin.get());
+    
     String scriptString = String::fromUTF8WithLatin1Fallback(script->UTF8Characters, script->UTF8Length);
     
     return plugin->evaluate(npObject, scriptString, result);
 }
 
-static bool NPN_GetProperty(NPP, NPObject* npObject, NPIdentifier propertyName, NPVariant* result)
+static bool NPN_GetProperty(NPP npp, NPObject* npObject, NPIdentifier propertyName, NPVariant* result)
 {
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+    PluginDestructionProtector protector(plugin.get());
+    
     if (npObject->_class->getProperty)
         return npObject->_class->getProperty(npObject, propertyName, result);
     
     return false;
 }
 
-static bool NPN_SetProperty(NPP, NPObject* npObject, NPIdentifier propertyName, const NPVariant* value)
+static bool NPN_SetProperty(NPP npp, NPObject* npObject, NPIdentifier propertyName, const NPVariant* value)
 {
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+    PluginDestructionProtector protector(plugin.get());
+    
     if (npObject->_class->setProperty)
         return npObject->_class->setProperty(npObject, propertyName, value);
 
     return false;
 }
 
-static bool NPN_RemoveProperty(NPP, NPObject* npObject, NPIdentifier propertyName)
+static bool NPN_RemoveProperty(NPP npp, NPObject* npObject, NPIdentifier propertyName)
 {
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+    PluginDestructionProtector protector(plugin.get());
+    
     if (npObject->_class->removeProperty)
         return npObject->_class->removeProperty(npObject, propertyName);
 
     return false;
 }
 
-static bool NPN_HasProperty(NPP, NPObject* npObject, NPIdentifier propertyName)
+static bool NPN_HasProperty(NPP npp, NPObject* npObject, NPIdentifier propertyName)
 {
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+    PluginDestructionProtector protector(plugin.get());
+    
     if (npObject->_class->hasProperty)
         return npObject->_class->hasProperty(npObject, propertyName);
 
     return false;
 }
 
-static bool NPN_HasMethod(NPP, NPObject* npObject, NPIdentifier methodName)
+static bool NPN_HasMethod(NPP npp, NPObject* npObject, NPIdentifier methodName)
 {
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+    PluginDestructionProtector protector(plugin.get());
+    
     if (npObject->_class->hasMethod)
         return npObject->_class->hasMethod(npObject, methodName);
 
@@ -672,8 +707,11 @@ static void NPN_PopPopupsEnabledState(NPP npp)
     plugin->popPopupsEnabledState();
 }
     
-static bool NPN_Enumerate(NPP, NPObject* npObject, NPIdentifier** identifiers, uint32_t* identifierCount)
+static bool NPN_Enumerate(NPP npp, NPObject* npObject, NPIdentifier** identifiers, uint32_t* identifierCount)
 {
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+    PluginDestructionProtector protector(plugin.get());
+    
     if (NP_CLASS_STRUCT_VERSION_HAS_ENUM(npObject->_class) && npObject->_class->enumerate)
         return npObject->_class->enumerate(npObject, identifiers, identifierCount);
 
@@ -685,8 +723,11 @@ static void NPN_PluginThreadAsyncCall(NPP instance, void (*func) (void*), void* 
     notImplemented();
 }
 
-static bool NPN_Construct(NPP, NPObject* npObject, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
+static bool NPN_Construct(NPP npp, NPObject* npObject, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
 {
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+    PluginDestructionProtector protector(plugin.get());
+    
     if (NP_CLASS_STRUCT_VERSION_HAS_CTOR(npObject->_class) && npObject->_class->construct)
         return npObject->_class->construct(npObject, arguments, argumentCount, result);
 
@@ -716,7 +757,8 @@ static NPError NPN_GetValueForURL(NPP npp, NPNURLVariable variable, const char* 
     switch (variable) {
         case NPNURLVCookie: {
             RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
-
+            PluginDestructionProtector protector(plugin.get());
+            
             String cookies = plugin->cookiesForURL(makeURLString(url));
             if (cookies.isNull())
                 return NPERR_GENERIC_ERROR;
@@ -726,7 +768,8 @@ static NPError NPN_GetValueForURL(NPP npp, NPNURLVariable variable, const char* 
 
         case NPNURLVProxy: {
             RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
-
+            PluginDestructionProtector protector(plugin.get());
+            
             String proxies = plugin->proxiesForURL(makeURLString(url));
             if (proxies.isNull())
                 return NPERR_GENERIC_ERROR;
@@ -744,7 +787,8 @@ static NPError NPN_SetValueForURL(NPP npp, NPNURLVariable variable, const char* 
     switch (variable) {
         case NPNURLVCookie: {
             RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
-
+            PluginDestructionProtector protector(plugin.get());
+            
             plugin->setCookiesForURL(makeURLString(url), String(value, len));
             return NPERR_NO_ERROR;
         }

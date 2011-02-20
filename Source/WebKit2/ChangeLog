@@ -1,3 +1,44 @@
+2011-02-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix another crash when a plug-in is destroyed when evaluating JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=54834
+        <rdar://problem/9013384>
+
+        This contains three separate fixes:
+
+        - In unprotectPluginFromDestruction we can't just destroy the plug-in once
+          the count reaches zero, because the plug-in might still have code executing
+          on the stack. To fix this we use a zero-delay timer to defer destruction
+          of the plug-in.
+
+        - Trying to get the NPObject for the window using NPN_GetValue would return
+          NPERR_NO_ERROR, even if the returned NPObject was null. Fix this to return
+          NPERR_GENERIC_ERROR instead.
+
+        - Protect the plug-in from destruction anytime an NPAPI call that sends a 
+          synchronous IPC message is made.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::PluginControllerProxy):
+        (WebKit::PluginControllerProxy::destroy):
+        (WebKit::PluginControllerProxy::unprotectPluginFromDestruction):
+        * PluginProcess/PluginControllerProxy.h:
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::PluginDestructionProtector::PluginDestructionProtector):
+        (WebKit::NPN_GetValue):
+        (WebKit::NPN_Evaluate):
+        (WebKit::NPN_GetProperty):
+        (WebKit::NPN_SetProperty):
+        (WebKit::NPN_RemoveProperty):
+        (WebKit::NPN_HasProperty):
+        (WebKit::NPN_HasMethod):
+        (WebKit::NPN_Enumerate):
+        (WebKit::NPN_Construct):
+        (WebKit::NPN_GetValueForURL):
+        (WebKit::NPN_SetValueForURL):
+
 2011-02-19  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
