@@ -39,7 +39,8 @@ public:
 private:
     SVGAnimateTransformElement(const QualifiedName&, Document*);
     
-    virtual bool hasValidTarget() const;
+    virtual bool hasValidAttributeType() const;
+    AnimatedAttributeType determineAnimatedAttributeType(SVGElement*) const;
 
     virtual void parseMappedAttribute(Attribute*);
 
@@ -64,5 +65,3 @@ private:
 
 #endif // ENABLE(SVG)
 #endif // SVGAnimateTransformElement_h
-
-// vim:ts=4:noet

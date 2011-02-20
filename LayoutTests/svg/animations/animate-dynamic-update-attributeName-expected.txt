@@ -1,0 +1,13 @@
+SVG 1.1 dynamic animation tests
+
+Test behavior on dynamic-update of attributeName
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS rect.style.color is 'rgb(0, 128, 0)'
+FAIL rect.style.fill should be #008000. Was #FF0000.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

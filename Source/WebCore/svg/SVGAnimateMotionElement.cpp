@@ -53,14 +53,17 @@ PassRefPtr<SVGAnimateMotionElement> SVGAnimateMotionElement::create(const Qualif
     return adoptRef(new SVGAnimateMotionElement(tagName, document));
 }
 
-bool SVGAnimateMotionElement::hasValidTarget() const
+bool SVGAnimateMotionElement::hasValidAttributeType() const
 {
-    if (!SVGAnimationElement::hasValidTarget())
-        return false;
     SVGElement* targetElement = this->targetElement();
+    if (!targetElement)
+        return false;
+
+    // We don't have a special attribute name to verify the animation type. Check the element name instead.
     if (!targetElement->isStyledTransformable() && !targetElement->hasTagName(SVGNames::textTag))
         return false;
     // Spec: SVG 1.1 section 19.2.15
+    // FIXME: svgTag is missing. Needs to be checked, if transforming <svg> could cause problems.
     if (targetElement->hasTagName(gTag)
         || targetElement->hasTagName(defsTag)
         || targetElement->hasTagName(useTag)
@@ -134,11 +137,11 @@ static bool parsePoint(const String& s, FloatPoint& point)
     if (!skipOptionalSpaces(cur, end))
         return false;
     
-    float x = 0.0f;
+    float x = 0;
     if (!parseNumber(cur, end, x))
         return false;
     
-    float y = 0.0f;
+    float y = 0;
     if (!parseNumber(cur, end, y))
         return false;
     
@@ -150,10 +153,9 @@ static bool parsePoint(const String& s, FloatPoint& point)
     
 void SVGAnimateMotionElement::resetToBaseValue(const String&)
 {
-    if (!hasValidTarget())
+    if (!hasValidAttributeType())
         return;
-    SVGElement* target = targetElement();
-    AffineTransform* transform = target->supplementalTransform();
+    AffineTransform* transform = targetElement()->supplementalTransform();
     if (!transform)
         return;
     transform->makeIdentity();
@@ -177,15 +179,15 @@ bool SVGAnimateMotionElement::calculateFromAndByValues(const String& fromString,
 
 void SVGAnimateMotionElement::calculateAnimatedValue(float percentage, unsigned, SVGSMILElement*)
 {
-    SVGElement* target = targetElement();
-    if (!target)
+    SVGElement* targetElement = this->targetElement();
+    if (!targetElement)
         return;
-    AffineTransform* transform = target->supplementalTransform();
+    AffineTransform* transform = targetElement->supplementalTransform();
     if (!transform)
         return;
 
-    if (target->renderer())
-        target->renderer()->setNeedsTransformUpdate();
+    if (RenderObject* targetRenderer = targetElement->renderer())
+        targetRenderer->setNeedsTransformUpdate();
 
     if (!isAdditive())
         transform->makeIdentity();
@@ -204,7 +206,7 @@ void SVGAnimateMotionElement::calculateAnimatedValue(float percentage, unsigned,
             if (rotateMode == RotateAuto || rotateMode == RotateAutoReverse) {
                 float angle = path.normalAngleAtLength(positionOnPath, ok);
                 if (rotateMode == RotateAutoReverse)
-                    angle += 180.f;
+                    angle += 180;
                 transform->rotate(angle);
             }
         }
@@ -250,13 +252,12 @@ float SVGAnimateMotionElement::calculateDistance(const String& fromString, const
     FloatPoint from;
     FloatPoint to;
     if (!parsePoint(fromString, from))
-        return -1.f;
+        return -1;
     if (!parsePoint(toString, to))
-        return -1.f;
+        return -1;
     FloatSize diff = to - from;
     return sqrtf(diff.width() * diff.width() + diff.height() * diff.height());
 }
 
 }
-
 #endif // ENABLE(SVG)

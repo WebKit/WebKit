@@ -34,7 +34,7 @@ public:
 private:
     SVGAnimateMotionElement(const QualifiedName&, Document*);
 
-    virtual bool hasValidTarget() const;
+    virtual bool hasValidAttributeType() const;
 
     virtual void parseMappedAttribute(Attribute*);
 
@@ -73,5 +73,3 @@ private:
 
 #endif // ENABLE(SVG_ANIMATION)
 #endif // SVGAnimateMotionElement_h
-
-// vim:ts=4:noet

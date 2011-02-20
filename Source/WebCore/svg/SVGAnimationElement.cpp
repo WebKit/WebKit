@@ -69,7 +69,7 @@ static void parseKeyTimes(const String& parse, Vector<float>& result, bool verif
         String timeString = parseList[n];
         bool ok;
         float time = timeString.toFloat(&ok);
-        if (!ok || time < 0 || time > 1.f)
+        if (!ok || time < 0 || time > 1)
             goto fail;
         if (verifyOrder) {
             if (!n) {
@@ -98,25 +98,25 @@ static void parseKeySplines(const String& parse, Vector<UnitBezier>& result)
     bool delimParsed = false;
     while (cur < end) {
         delimParsed = false;
-        float posA = 0.0f;
+        float posA = 0;
         if (!parseNumber(cur, end, posA)) {
             result.clear();
             return;
         }
 
-        float posB = 0.0f;
+        float posB = 0;
         if (!parseNumber(cur, end, posB)) {
             result.clear();
             return;
         }
 
-        float posC = 0.0f;
+        float posC = 0;
         if (!parseNumber(cur, end, posC)) {
             result.clear();
             return;
         }
 
-        float posD = 0.0f;
+        float posD = 0;
         if (!parseNumber(cur, end, posD, false)) {
             result.clear();
             return;
@@ -290,27 +290,22 @@ bool SVGAnimationElement::isAccumulated() const
     return value == sum && animationMode() != ToAnimation;
 }
 
-bool SVGAnimationElement::hasValidTarget() const
-{
-    return targetElement();
-}
-
-bool SVGAnimationElement::isTargetAttributeCSSProperty(SVGElement* targetElement, const String& attributeName)
+bool SVGAnimationElement::isTargetAttributeCSSProperty(SVGElement* targetElement, const QualifiedName& attributeName)
 {
     ASSERT(targetElement);
     if (!targetElement->isStyled())
         return false;
 
-    return SVGStyledElement::isAnimatableCSSProperty(QualifiedName(nullAtom, attributeName, nullAtom));
+    return SVGStyledElement::isAnimatableCSSProperty(attributeName);
 }
 
 void SVGAnimationElement::setTargetAttributeAnimatedValue(const String& value)
 {
-    if (!hasValidTarget())
+    if (!hasValidAttributeType())
         return;
     SVGElement* targetElement = this->targetElement();
-    String attributeName = this->attributeName();
-    if (!targetElement || attributeName.isEmpty() || value.isNull())
+    QualifiedName attributeName = this->attributeName();
+    if (!targetElement || attributeName == anyQName() || value.isNull())
         return;
 
     // We don't want the instance tree to get rebuild. Instances are updated in the loop below.
@@ -326,7 +321,7 @@ void SVGAnimationElement::setTargetAttributeAnimatedValue(const String& value)
     if (attributeIsCSSProperty) {
         // FIXME: This should set the override style, not the inline style.
         // Sadly override styles are not yet implemented.
-        targetElement->style()->setProperty(attributeName, value, "", ec);
+        targetElement->style()->setProperty(attributeName.localName(), value, "", ec);
     } else {
         // FIXME: This should set the 'presentation' value, not the actual 
         // attribute value. Whatever that means in practice.
@@ -344,7 +339,7 @@ void SVGAnimationElement::setTargetAttributeAnimatedValue(const String& value)
         if (!shadowTreeElement)
             continue;
         if (attributeIsCSSProperty)
-            shadowTreeElement->style()->setProperty(attributeName, value, "", ec);
+            shadowTreeElement->style()->setProperty(attributeName.localName(), value, "", ec);
         else
             shadowTreeElement->setAttribute(attributeName, value, ec);
         (*it)->correspondingUseElement()->setNeedsStyleRecalc();
@@ -375,13 +370,13 @@ void SVGAnimationElement::calculateKeyTimesForCalcModePaced()
     // Normalize.
     for (unsigned n = 1; n < keyTimesForPaced.size() - 1; ++n)
         keyTimesForPaced[n] = keyTimesForPaced[n - 1] + keyTimesForPaced[n] / totalDistance;
-    keyTimesForPaced[keyTimesForPaced.size() - 1] = 1.f;
+    keyTimesForPaced[keyTimesForPaced.size() - 1] = 1;
 
     // Use key times calculated based on pacing instead of the user provided ones.
     m_keyTimes.swap(keyTimesForPaced);
 }
 
-static inline double solveEpsilon(double duration) { return 1. / (200. * duration); }
+static inline double solveEpsilon(double duration) { return 1 / (200 * duration); }
 
 unsigned SVGAnimationElement::calculateKeyTimesIndex(float percent) const
 {
@@ -419,9 +414,9 @@ float SVGAnimationElement::calculatePercentFromKeyPoints(float percent) const
     float toKeyPoint = m_keyPoints[index + 1];
     
     if (calcMode() == CalcModeDiscrete)
-        return percent == 1.0f ? toKeyPoint : fromKeyPoint;
+        return percent == 1 ? toKeyPoint : fromKeyPoint;
     
-    float keyPointPercent = percent == 1.0f ? 1.0f : (percent - fromPercent) / (toPercent - fromPercent);
+    float keyPointPercent = percent == 1 ? 1 : (percent - fromPercent) / (toPercent - fromPercent);
     
     if (calcMode() == CalcModeSpline) {
         ASSERT(m_keySplines.size() == m_keyPoints.size() - 1);
@@ -436,7 +431,7 @@ void SVGAnimationElement::currentValuesFromKeyPoints(float percent, float& effec
     ASSERT(m_keyPoints.size() == m_keyTimes.size());
     ASSERT(calcMode() != CalcModePaced);
     effectivePercent = calculatePercentFromKeyPoints(percent);
-    unsigned index = effectivePercent == 1.0f ? m_values.size() - 2 : static_cast<unsigned>(effectivePercent * (m_values.size() - 1));
+    unsigned index = effectivePercent == 1 ? m_values.size() - 2 : static_cast<unsigned>(effectivePercent * (m_values.size() - 1));
     from = m_values[index];
     to = m_values[index + 1];
 }
@@ -458,10 +453,10 @@ void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& 
     unsigned index = calculateKeyTimesIndex(percent);
     if (calcMode == CalcModeDiscrete) {
         if (!keyTimesCount) 
-            index = percent == 1.0f ? valuesCount - 1 : static_cast<unsigned>(percent * valuesCount);
+            index = percent == 1 ? valuesCount - 1 : static_cast<unsigned>(percent * valuesCount);
         from = m_values[index];
         to = m_values[index];
-        effectivePercent = 0.0f;
+        effectivePercent = 0;
         return;
     }
     
@@ -481,7 +476,7 @@ void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& 
     from = m_values[index];
     to = m_values[index + 1];
     ASSERT(toPercent > fromPercent);
-    effectivePercent = percent == 1.0f ? 1.0f : (percent - fromPercent) / (toPercent - fromPercent);
+    effectivePercent = percent == 1 ? 1 : (percent - fromPercent) / (toPercent - fromPercent);
     
     if (calcMode == CalcModeSpline) {
         ASSERT(m_keySplines.size() == m_values.size() - 1);
@@ -493,7 +488,7 @@ void SVGAnimationElement::startedActiveInterval()
 {
     m_animationValid = false;
 
-    if (!hasValidTarget())
+    if (!hasValidAttributeType())
         return;
 
     // These validations are appropriate for all animation modes.
@@ -569,7 +564,5 @@ void SVGAnimationElement::endedActiveInterval()
 }
 
 }
-
-// vim:ts=4:noet
 #endif // ENABLE(SVG_ANIMATION)
 

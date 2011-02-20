@@ -1,3 +1,86 @@
+2011-02-20  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG animation - analyze attribute type for animation
+        https://bugs.webkit.org/show_bug.cgi?id=54542
+
+        Analyze animated attribute type to determine the kind of animation. Removed enum PropertyType and replace it
+        with AnimatedAttributeType instead. More cleanup of the animation code.
+        Added missing fillAttributeToPropertyTypeMap() for SVGGElement.
+
+        Use QualifiedName instead of AtomicStrings for attribute names. This makes it easier to handle animated attributes
+        from a different namespace like xlink:href. The rest of the SVG code is using QualifiedNames as well.
+
+        No change of functionality on the animation code. The changes for the <g>-element affect animateTransform. Sadly
+        animateTransform is not supported by our SVG animation test script at the moment. Can still be tested manually
+        with the W3C test suite in trunk.
+
+        The change on SVGUseElement gets covered by animate-elem-39-t.svg
+
+        Test: svg/animations/animate-dynamic-update-attributeName.html
+
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::SVGAnimateElement):
+        (WebCore::SVGAnimateElement::hasValidAttributeType):
+        (WebCore::SVGAnimateElement::determineAnimatedAttributeType):
+        (WebCore::SVGAnimateElement::calculateAnimatedValue):
+        (WebCore::inheritsFromProperty):
+        (WebCore::SVGAnimateElement::calculateFromAndToValues):
+        (WebCore::SVGAnimateElement::calculateFromAndByValues):
+        (WebCore::SVGAnimateElement::resetToBaseValue):
+        (WebCore::SVGAnimateElement::applyResultsToTarget):
+        (WebCore::SVGAnimateElement::calculateDistance):
+        * svg/SVGAnimateElement.h:
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::hasValidAttributeType):
+        (WebCore::parsePoint):
+        (WebCore::SVGAnimateMotionElement::resetToBaseValue):
+        (WebCore::SVGAnimateMotionElement::calculateAnimatedValue):
+        (WebCore::SVGAnimateMotionElement::calculateDistance):
+        * svg/SVGAnimateMotionElement.h:
+        * svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::hasValidAttributeType):
+        (WebCore::SVGAnimateTransformElement::determineAnimatedAttributeType):
+        (WebCore::SVGAnimateTransformElement::resetToBaseValue):
+        (WebCore::SVGAnimateTransformElement::calculateAnimatedValue):
+        (WebCore::SVGAnimateTransformElement::calculateFromAndByValues):
+        (WebCore::SVGAnimateTransformElement::applyResultsToTarget):
+        (WebCore::SVGAnimateTransformElement::calculateDistance):
+        * svg/SVGAnimateTransformElement.h:
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::parseKeyTimes):
+        (WebCore::parseKeySplines):
+        (WebCore::SVGAnimationElement::isTargetAttributeCSSProperty):
+        (WebCore::SVGAnimationElement::setTargetAttributeAnimatedValue):
+        (WebCore::SVGAnimationElement::calculateKeyTimesForCalcModePaced):
+        (WebCore::solveEpsilon):
+        (WebCore::SVGAnimationElement::calculatePercentFromKeyPoints):
+        (WebCore::SVGAnimationElement::currentValuesFromKeyPoints):
+        (WebCore::SVGAnimationElement::currentValuesForValuesAnimation):
+        (WebCore::SVGAnimationElement::startedActiveInterval):
+        * svg/SVGAnimationElement.h:
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::fillAttributeToPropertyTypeMap):
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::attributeToPropertyTypeMap):
+        (WebCore::SVGGElement::fillAttributeToPropertyTypeMap): Added to fill the animated attribute map for this element.
+        * svg/SVGGElement.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::fillAttributeToPropertyTypeMap): Changed attribute type to AnimatedString for xlink:href.
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::baseValueFor):
+        (WebCore::SMILTimeContainer::updateAnimations):
+        * svg/animation/SMILTimeContainer.h:
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::SVGSMILElement):
+        (WebCore::constructQualifiedName): Create a QualifiedName from a attribute name.
+        (WebCore::SVGSMILElement::insertedIntoDocument): Update local varaible of attribute name.
+        (WebCore::SVGSMILElement::removedFromDocument): Ditto.
+        (WebCore::SVGSMILElement::attributeChanged): Ditto.
+        * svg/animation/SVGSMILElement.h:
+        (WebCore::SVGSMILElement::attributeName):
+
 2011-02-20  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX: Add missing UNUSED_PARAM() when !ENABLE(FULLSCREEN_API)

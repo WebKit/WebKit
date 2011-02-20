@@ -28,6 +28,7 @@
 
 #if ENABLE(SVG)
 
+#include "QualifiedName.h"
 #include "PlatformString.h"
 #include "SMILTime.h"
 #include "Timer.h"
@@ -74,7 +75,7 @@ private:
     void updateDocumentOrderIndexes();
     void sortByPriority(Vector<SVGSMILElement*>& smilElements, SMILTime elapsed);
     
-    typedef pair<SVGElement*, String> ElementAttributePair;
+    typedef pair<SVGElement*, QualifiedName> ElementAttributePair;
     String baseValueFor(ElementAttributePair);
     
     double m_beginTime;

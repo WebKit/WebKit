@@ -58,9 +58,10 @@ private:
         CurrentColorValue,
         InheritValue
     };
-    enum PropertyType { NumberProperty, ColorProperty, StringProperty, PathProperty, PointsProperty };
-    PropertyType determinePropertyType(const String& attribute) const;
-    PropertyType m_propertyType;
+    
+    virtual bool hasValidAttributeType() const;
+    AnimatedAttributeType determineAnimatedAttributeType(SVGElement*) const;
+    AnimatedAttributeType m_animatedAttributeType;
 
     AnimatedPropertyValueType m_fromPropertyValueType;
     AnimatedPropertyValueType m_toPropertyValueType;

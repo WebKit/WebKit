@@ -197,12 +197,12 @@ String SMILTimeContainer::baseValueFor(ElementAttributePair key)
         return it->second;
     
     SVGElement* targetElement = key.first;
-    String attributeName = key.second;
+    QualifiedName attributeName = key.second;
     ASSERT(targetElement);
-    ASSERT(!attributeName.isEmpty());
+    ASSERT(attributeName != anyQName());
     String baseValue;
     if (SVGAnimationElement::isTargetAttributeCSSProperty(targetElement, attributeName))
-        baseValue = computedStyle(targetElement)->getPropertyValue(cssPropertyID(attributeName));
+        baseValue = computedStyle(targetElement)->getPropertyValue(cssPropertyID(attributeName.localName()));
     else
         baseValue = targetElement->getAttribute(attributeName);
     m_savedBaseValues.add(key, baseValue);
@@ -264,10 +264,11 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed)
         SVGElement* targetElement = animation->targetElement();
         if (!targetElement)
             continue;
-        String attributeName = animation->attributeName();
-        if (attributeName.isEmpty()) {
+        
+        QualifiedName attributeName = animation->attributeName();
+        if (attributeName == anyQName()) {
             if (animation->hasTagName(SVGNames::animateMotionTag))
-                attributeName = SVGNames::animateMotionTag.localName();
+                attributeName = SVGNames::animateMotionTag;
             else
                 continue;
         }
@@ -276,6 +277,8 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed)
         ElementAttributePair key(targetElement, attributeName); 
         SVGSMILElement* resultElement = resultsElements.get(key).get();
         if (!resultElement) {
+            if (!animation->hasValidAttributeType())
+                continue;
             resultElement = animation;
             resultElement->resetToBaseValue(baseValueFor(key));
             resultsElements.add(key, resultElement);

@@ -93,6 +93,17 @@ void SVGGElement::synchronizeProperty(const QualifiedName& attrName)
         SVGTests::synchronizeProperties(this, attrName);
 }
 
+AttributeToPropertyTypeMap& SVGGElement::attributeToPropertyTypeMap()
+{
+    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_attributeToPropertyTypeMap, ());
+    return s_attributeToPropertyTypeMap;
+}
+
+void SVGGElement::fillAttributeToPropertyTypeMap()
+{
+    SVGStyledTransformableElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap());
+}
+
 RenderObject* SVGGElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
     // SVG 1.1 testsuite explicitely uses constructs like <g display="none"><linearGradient>

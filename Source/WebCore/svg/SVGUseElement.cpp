@@ -242,7 +242,7 @@ void SVGUseElement::fillAttributeToPropertyTypeMap()
     attributeToPropertyTypeMap.set(SVGNames::yAttr, AnimatedLength);
     attributeToPropertyTypeMap.set(SVGNames::widthAttr, AnimatedLength);
     attributeToPropertyTypeMap.set(SVGNames::heightAttr, AnimatedLength);
-    attributeToPropertyTypeMap.set(XLinkNames::hrefAttr, AnimatedLength);
+    attributeToPropertyTypeMap.set(XLinkNames::hrefAttr, AnimatedString);
 }
 
 static void updateContainerSize(SVGUseElement* useElement, SVGElementInstance* targetInstance)

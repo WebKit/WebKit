@@ -59,14 +59,25 @@ PassRefPtr<SVGAnimateTransformElement> SVGAnimateTransformElement::create(const 
     return adoptRef(new SVGAnimateTransformElement(tagName, document));
 }
 
-bool SVGAnimateTransformElement::hasValidTarget() const
+bool SVGAnimateTransformElement::hasValidAttributeType() const
 {
     SVGElement* targetElement = this->targetElement();
-    return SVGAnimationElement::hasValidTarget()
-        && (targetElement->isStyledTransformable()
-        || targetElement->hasTagName(SVGNames::textTag)
-        || targetElement->hasTagName(SVGNames::linearGradientTag)
-        || targetElement->hasTagName(SVGNames::radialGradientTag));
+    if (!targetElement)
+        return false;
+    
+    return determineAnimatedAttributeType(targetElement) == AnimatedTransformList;
+}
+
+AnimatedAttributeType SVGAnimateTransformElement::determineAnimatedAttributeType(SVGElement* targetElement) const
+{
+    ASSERT(targetElement);
+    
+    // Just transform lists can be animated with <animateTransform>
+    // http://www.w3.org/TR/SVG/animate.html#AnimationAttributesAndProperties
+    if (targetElement->animatedPropertyTypeForAttribute(attributeName()) != AnimatedTransformList)
+        return AnimatedUnknown;
+
+    return AnimatedTransformList;
 }
 
 void SVGAnimateTransformElement::parseMappedAttribute(Attribute* attr)
@@ -102,26 +113,27 @@ static SVGTransformList* transformListFor(SVGElement* element)
     
 void SVGAnimateTransformElement::resetToBaseValue(const String& baseValue)
 {
-    if (!hasValidTarget())
+    SVGElement* targetElement = this->targetElement();
+    if (!targetElement || determineAnimatedAttributeType(targetElement) == AnimatedUnknown)
         return;
 
-    if (targetElement()->hasTagName(SVGNames::linearGradientTag) || targetElement()->hasTagName(SVGNames::radialGradientTag)) {
-        targetElement()->setAttribute(SVGNames::gradientTransformAttr, baseValue.isEmpty() ? "matrix(1 0 0 1 0 0)" : baseValue);
+    if (targetElement->hasTagName(SVGNames::linearGradientTag) || targetElement->hasTagName(SVGNames::radialGradientTag)) {
+        targetElement->setAttribute(SVGNames::gradientTransformAttr, baseValue.isEmpty() ? "matrix(1 0 0 1 0 0)" : baseValue);
         return;
     }
 
     if (baseValue.isEmpty()) {
-        if (SVGTransformList* list = transformListFor(targetElement()))
+        if (SVGTransformList* list = transformListFor(targetElement))
             list->clear();
     } else
-        targetElement()->setAttribute(SVGNames::transformAttr, baseValue);
+        targetElement->setAttribute(SVGNames::transformAttr, baseValue);
 }
 
-void SVGAnimateTransformElement::calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement)
+void SVGAnimateTransformElement::calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement*)
 {
-    if (!hasValidTarget())
+    SVGElement* targetElement = this->targetElement();
+    if (!targetElement || determineAnimatedAttributeType(targetElement) == AnimatedUnknown)
         return;
-    SVGElement* targetElement = resultElement->targetElement();
     SVGTransformList* transformList = transformListFor(targetElement);
     ASSERT(transformList);
 
@@ -146,7 +158,6 @@ bool SVGAnimateTransformElement::calculateFromAndToValues(const String& fromStri
 
 bool SVGAnimateTransformElement::calculateFromAndByValues(const String& fromString, const String& byString)
 {
-
     m_fromTransform = parseTransformValue(fromString);
     if (!m_fromTransform.isValid())
         return false;
@@ -168,13 +179,11 @@ SVGTransform SVGAnimateTransformElement::parseTransformValue(const String& value
     
 void SVGAnimateTransformElement::applyResultsToTarget()
 {
-    if (!hasValidTarget())
-        return;
-    // We accumulate to the target element transform list so there is not much to do here.
     SVGElement* targetElement = this->targetElement();
-    if (!targetElement)
+    if (!targetElement || determineAnimatedAttributeType(targetElement) == AnimatedUnknown)
         return;
 
+    // We accumulate to the target element transform list so there is not much to do here.
     if (RenderObject* renderer = targetElement->renderer()) {
         renderer->setNeedsTransformUpdate();
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
@@ -210,10 +219,10 @@ float SVGAnimateTransformElement::calculateDistance(const String& fromString, co
     // is paced separately. To implement this we need to treat each component as individual animation everywhere.
     SVGTransform from = parseTransformValue(fromString);
     if (!from.isValid())
-        return -1.f;
+        return -1;
     SVGTransform to = parseTransformValue(toString);
     if (!to.isValid() || from.type() != to.type())
-        return -1.f;
+        return -1;
     if (to.type() == SVGTransform::SVG_TRANSFORM_TRANSLATE) {
         FloatSize diff = to.translate() - from.translate();
         return sqrtf(diff.width() * diff.width() + diff.height() * diff.height());
@@ -224,11 +233,8 @@ float SVGAnimateTransformElement::calculateDistance(const String& fromString, co
         FloatSize diff = to.scale() - from.scale();
         return sqrtf(diff.width() * diff.width() + diff.height() * diff.height());
     }
-    return -1.f;
+    return -1;
 }
 
 }
-
-// vim:ts=4:noet
 #endif // ENABLE(SVG)
-

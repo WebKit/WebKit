@@ -214,7 +214,7 @@ void SVGFilterElement::fillAttributeToPropertyTypeMap()
     attributeToPropertyTypeMap.set(SVGNames::widthAttr, AnimatedLength);
     attributeToPropertyTypeMap.set(SVGNames::heightAttr, AnimatedLength);
     attributeToPropertyTypeMap.set(SVGNames::filterResAttr, AnimatedNumberOptionalNumber);
-    attributeToPropertyTypeMap.set(XLinkNames::hrefAttr, AnimatedEnumeration);
+    attributeToPropertyTypeMap.set(XLinkNames::hrefAttr, AnimatedString);
 }
 
 void SVGFilterElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
