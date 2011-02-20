@@ -1,5 +1,21 @@
 2011-02-19  Gavin Barraclough  <barraclough@apple.com>
 
+        Interpreter build fix.
+
+        * runtime/ArrayConstructor.cpp:
+        * runtime/BooleanPrototype.cpp:
+        * runtime/DateConstructor.cpp:
+        * runtime/ErrorPrototype.cpp:
+        * runtime/FunctionPrototype.cpp:
+        * runtime/Lookup.cpp:
+        * runtime/NumberPrototype.cpp:
+        * runtime/ObjectConstructor.cpp:
+        * runtime/ObjectPrototype.cpp:
+        * runtime/RegExpPrototype.cpp:
+        * runtime/StringConstructor.cpp:
+
+2011-02-19  Gavin Barraclough  <barraclough@apple.com>
+
         Build fix!!
 
         * JavaScriptCore.exp:

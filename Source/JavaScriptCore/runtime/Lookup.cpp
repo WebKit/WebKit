@@ -22,6 +22,7 @@
 
 #include "Executable.h"
 #include "JSFunction.h"
+#include "PrototypeFunction.h"
 
 namespace JSC {
 

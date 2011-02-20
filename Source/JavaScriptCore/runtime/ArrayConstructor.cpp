@@ -30,6 +30,7 @@
 #include "JSArray.h"
 #include "JSFunction.h"
 #include "Lookup.h"
+#include "PrototypeFunction.h"
 
 namespace JSC {
 

@@ -26,6 +26,7 @@
 #include "JSFunction.h"
 #include "JSString.h"
 #include "ObjectPrototype.h"
+#include "PrototypeFunction.h"
 
 namespace JSC {
 

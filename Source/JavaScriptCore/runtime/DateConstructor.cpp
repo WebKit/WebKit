@@ -30,6 +30,7 @@
 #include "JSString.h"
 #include "JSStringBuilder.h"
 #include "ObjectPrototype.h"
+#include "PrototypeFunction.h"
 #include <math.h>
 #include <time.h>
 #include <wtf/DateMath.h>
