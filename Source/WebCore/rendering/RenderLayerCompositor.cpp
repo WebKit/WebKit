@@ -1366,6 +1366,7 @@ bool RenderLayerCompositor::requiresCompositingForFullScreen(RenderObject* rende
 #if ENABLE(FULLSCREEN_API)
     return renderer->isRenderFullScreen() && toRenderFullScreen(renderer)->isAnimating();
 #else
+    UNUSED_PARAM(renderer);
     return false;
 #endif
 }

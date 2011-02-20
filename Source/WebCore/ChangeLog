@@ -1,3 +1,12 @@
+2011-02-20  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX: Add missing UNUSED_PARAM() when !ENABLE(FULLSCREEN_API)
+
+        Not reviewed.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForFullScreen):
+
 2011-02-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
