@@ -1,3 +1,13 @@
+2011-02-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Implement PlatformKeyboardEvent::getCurrentModifierState()
+        https://bugs.webkit.org/show_bug.cgi?id=52880
+
+        * platform/gtk/KeyEventGtk.cpp:
+        (WebCore::PlatformKeyboardEvent::getCurrentModifierState):
+
 2011-02-19  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Oliver Hunt.

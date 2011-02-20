@@ -588,11 +588,13 @@ bool PlatformKeyboardEvent::currentCapsLockState()
 
 void PlatformKeyboardEvent::getCurrentModifierState(bool& shiftKey, bool& ctrlKey, bool& altKey, bool& metaKey)
 {
-    notImplemented();
-    shiftKey = false;
-    ctrlKey = false;
-    altKey = false;
-    metaKey = false;
+    GdkModifierType state;
+    gtk_get_current_event_state(&state);
+
+    shiftKey = state & GDK_SHIFT_MASK;
+    ctrlKey = state & GDK_CONTROL_MASK;
+    altKey = state & GDK_MOD1_MASK;
+    metaKey = state & GDK_META_MASK;
 }
 
 GdkEventKey* PlatformKeyboardEvent::gdkEventKey() const
