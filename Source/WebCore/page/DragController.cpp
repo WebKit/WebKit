@@ -403,8 +403,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
         RefPtr<Range> innerRange = innerFrame->selection()->toNormalizedRange();
         RefPtr<CSSStyleDeclaration> style = m_documentUnderMouse->createCSSStyleDeclaration();
         ExceptionCode ec;
-        // FIXME: Use Color::serialized() instead.
-        style->setProperty("color", color.nameForRenderTreeAsText(), ec);
+        style->setProperty("color", color.serialized(), ec);
         if (!innerFrame->editor()->shouldApplyStyle(style.get(), innerRange.get()))
             return false;
         m_client->willPerformDragDestinationAction(DragDestinationActionEdit, dragData);

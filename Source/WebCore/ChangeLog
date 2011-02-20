@@ -1,3 +1,13 @@
+2011-02-19  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        DragController should use Color::serialized() when passing colors to CSSStyleDeclaration
+        https://bugs.webkit.org/show_bug.cgi?id=54545
+
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeEditDrag):
+
 2011-02-19  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
