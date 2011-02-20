@@ -1,3 +1,12 @@
+2011-02-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Bump GTK+3 dependency to 3.0
+        https://bugs.webkit.org/show_bug.cgi?id=54394
+
+        * configure.ac:
+
 2011-02-19  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Martin Robinson.

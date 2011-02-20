@@ -199,14 +199,14 @@ case "$with_gtk" in
           GAIL_PC_NAME=gail
           GAIL_REQUIRED_VERSION=1.8
           ;;
-     3.0) GTK_REQUIRED_VERSION=2.91.7
+     3.0) GTK_REQUIRED_VERSION=3.0
           GTK_API_VERSION=3.0
           WEBKITGTK_API_MAJOR_VERSION=3
           WEBKITGTK_API_MINOR_VERSION=0
           WEBKITGTK_API_VERSION=3.0
           WEBKITGTK_PC_NAME=webkitgtk
           GAIL_PC_NAME=gail-3.0
-          GAIL_REQUIRED_VERSION=2.90.4
+          GAIL_REQUIRED_VERSION=3.0
           ;;
 esac
 
