@@ -62,7 +62,7 @@ private:
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
     // CoreIPC message handlers.
-    virtual void setSize(const WebCore::IntSize&, const WebCore::IntSize& scrollOffset);
+    virtual void setSize(uint64_t sequenceNumber, const WebCore::IntSize&, const WebCore::IntSize& scrollOffset);
     virtual void didUpdate();
     virtual void suspendPainting();
     virtual void resumePainting();
@@ -74,6 +74,8 @@ private:
     void scheduleDisplay();
     void display();
     void display(UpdateInfo&);
+
+    uint64_t m_sequenceNumber;
 
     Region m_dirtyRegion;
     WebCore::IntRect m_scrollRect;

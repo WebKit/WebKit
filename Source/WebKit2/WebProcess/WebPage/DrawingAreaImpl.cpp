@@ -45,12 +45,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static uint64_t generateSequenceNumber()
-{
-    static uint64_t sequenceNumber;
-    return ++sequenceNumber;
-}
-
 PassRefPtr<DrawingAreaImpl> DrawingAreaImpl::create(WebPage* webPage, const WebPageCreationParameters& parameters)
 {
     return adoptRef(new DrawingAreaImpl(webPage, parameters));
@@ -64,6 +58,7 @@ DrawingAreaImpl::~DrawingAreaImpl()
 
 DrawingAreaImpl::DrawingAreaImpl(WebPage* webPage, const WebPageCreationParameters& parameters)
     : DrawingArea(DrawingAreaInfo::Impl, parameters.drawingAreaInfo.identifier, webPage)
+    , m_sequenceNumber(0)
     , m_inSetSize(false)
     , m_isWaitingForDidUpdate(false)
     , m_isPaintingSuspended(!parameters.isVisible)
@@ -194,7 +189,7 @@ void DrawingAreaImpl::layerHostDidFlushLayers()
     if (!m_layerTreeHost)
         return;
 
-    m_webPage->send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(generateSequenceNumber(), m_layerTreeHost->layerTreeContext()));
+    m_webPage->send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(m_sequenceNumber, m_layerTreeHost->layerTreeContext()));
 }
 
 void DrawingAreaImpl::attachCompositingContext()
@@ -248,10 +243,13 @@ void DrawingAreaImpl::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID
 {
 }
 
-void DrawingAreaImpl::setSize(const WebCore::IntSize& size, const WebCore::IntSize& scrollOffset)
+void DrawingAreaImpl::setSize(uint64_t sequenceNumber, const WebCore::IntSize& size, const WebCore::IntSize& scrollOffset)
 {
     ASSERT(!m_inSetSize);
     m_inSetSize = true;
+
+    ASSERT_ARG(sequenceNumber, sequenceNumber > m_sequenceNumber);
+    m_sequenceNumber = sequenceNumber;
 
     // Set this to false since we're about to call display().
     m_isWaitingForDidUpdate = false;
@@ -278,7 +276,7 @@ void DrawingAreaImpl::setSize(const WebCore::IntSize& size, const WebCore::IntSi
         ASSERT(!m_layerTreeHost);
     }
 
-    m_webPage->send(Messages::DrawingAreaProxy::DidSetSize(generateSequenceNumber(), updateInfo, layerTreeContext));
+    m_webPage->send(Messages::DrawingAreaProxy::DidSetSize(m_sequenceNumber, updateInfo, layerTreeContext));
 
     m_inSetSize = false;
 }
@@ -360,7 +358,7 @@ void DrawingAreaImpl::exitAcceleratedCompositingMode()
     // Send along a complete update of the page so we can paint the contents right after we exit the
     // accelerated compositing mode, eliminiating flicker.
     if (!m_inSetSize)
-        m_webPage->send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode(generateSequenceNumber(), updateInfo));
+        m_webPage->send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode(m_sequenceNumber, updateInfo));
 }
 
 void DrawingAreaImpl::exitAcceleratedCompositingModeSoon()
@@ -408,7 +406,7 @@ void DrawingAreaImpl::display()
         return;
     }
 
-    m_webPage->send(Messages::DrawingAreaProxy::Update(generateSequenceNumber(), updateInfo));
+    m_webPage->send(Messages::DrawingAreaProxy::Update(m_sequenceNumber, updateInfo));
     m_isWaitingForDidUpdate = true;
 }
 

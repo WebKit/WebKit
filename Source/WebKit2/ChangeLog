@@ -1,3 +1,73 @@
+2011-02-21  Adam Roben  <aroben@apple.com>
+
+        Move control of the sequence number from DrawingAreaImpl to DrawingAreaProxyImpl
+
+        DrawingAreaProxyImpl has some state that, when it changes, causes all operations performed
+        before that state change to become invalid. When painting, we need to have performed at
+        least one Update for the most recent state; otherwise, we'll be painting old/incorrect bits
+        into the view.
+
+        Currently, this state consists of a single piece of data: the view's size. Whenever the
+        state (i.e., size) changes, we tell the web process via the SetSize message, and the web
+        process lets us know that it has updated to match the new state (i.e., size) via the
+        DidSetSize message.
+
+        When it's time to paint, if we're waiting for the web process to update to match our current
+        state (i.e., size), we block for a little while hoping to receive a DidSetSize message so
+        that we can paint up-to-date bits into the window. This can cause us to receive messages
+        out-of-order; the DidSetSize message will be processed immediately, and any messages that
+        were sent before the DidSetSize message will be processed later. Since the messages from
+        before the DidSetSize message correspond to an old state (i.e., size), they are no longer
+        useful (e.g., they contain bits of the page that are drawn at the wrong size/location), so
+        we discard them.
+
+        The way we identify and discard these messages is by keeping track of a sequence number.
+        Currently, DrawingAreaImpl sends a monotonically-increasing sequence number to
+        DrawingAreaProxyImpl with every message. Whenever DrawingAreaProxyImpl receives a DidSetSize
+        message, it records the sequence number that came along with it. If we then later receive
+        any messages that have a lower sequence number, we know they correspond to an old state
+        (i.e., size) and can discard them.
+
+        This patch moves control of the sequence number to DrawingAreaProxyImpl.
+        DrawingAreaProxyImpl now sends a monotonically-increasing sequence number in the SetSize
+        message. DrawingAreaImpl records this sequence number when it receives the SetSize message,
+        and sends it back to DrawingAreaProxyImpl in every message. Otherwise the logic is the same
+        as before.
+
+        This should cause no changes in behavior, but will allow DrawingAreaProxyImpl to request a
+        full backing store update (by incrementing the sequence number) at times other than when the
+        view's size changes (e.g., after it has thrown away its backing store in order to save
+        memory).
+
+        Fixes <http://webkit.org/b/54907> DrawingAreaProxyImpl should tell DrawingAreaImpl what
+        sequence number to use
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::generateSequenceNumber): Moved here from DrawingAreaImpl.cpp.
+        (WebKit::DrawingAreaProxyImpl::sendSetSize): Changed to pass a new sequence number in the
+        SetSize message.
+        (WebKit::DrawingAreaProxyImpl::waitForAndDispatchDidSetSize): Added a FIXME about a
+        potential improvement.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::setSize): Updated to match the message's new parameters.
+
+        * WebProcess/WebPage/DrawingArea.messages.in: Added a sequenceNumber parameter to SetSize.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::DrawingAreaImpl): Initialize m_sequenceNumber.
+        (WebKit::DrawingAreaImpl::setSize): Record the new sequence number from the UI process.
+
+        (WebKit::DrawingAreaImpl::layerHostDidFlushLayers):
+        (WebKit::DrawingAreaImpl::exitAcceleratedCompositingMode):
+        (WebKit::DrawingAreaImpl::display):
+        Send m_sequenceNumber, instead of a new sequence number, back to the UI process.
+
+        * WebProcess/WebPage/DrawingAreaImpl.h: Added m_sequenceNumber, updated setSize function to
+        match the base class.
+
 2011-02-21  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

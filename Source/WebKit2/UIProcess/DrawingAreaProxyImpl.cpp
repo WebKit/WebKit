@@ -42,6 +42,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static uint64_t generateSequenceNumber()
+{
+    static uint64_t sequenceNumber;
+    return ++sequenceNumber;
+}
+
 PassOwnPtr<DrawingAreaProxyImpl> DrawingAreaProxyImpl::create(WebPageProxy* webPageProxy)
 {
     return adoptPtr(new DrawingAreaProxyImpl(webPageProxy));
@@ -228,7 +234,7 @@ void DrawingAreaProxyImpl::sendSetSize()
         return;
 
     m_isWaitingForDidSetSize = true;
-    m_webPageProxy->process()->send(Messages::DrawingArea::SetSize(m_size, m_scrollOffset), m_webPageProxy->pageID());
+    m_webPageProxy->process()->send(Messages::DrawingArea::SetSize(generateSequenceNumber(), m_size, m_scrollOffset), m_webPageProxy->pageID());
     m_scrollOffset = IntSize();
 
     if (!m_layerTreeContext.isEmpty()) {
@@ -247,6 +253,11 @@ void DrawingAreaProxyImpl::waitForAndDispatchDidSetSize()
     if (m_webPageProxy->process()->isLaunching())
         return;
     
+    // FIXME: waitForAndDispatchImmediately will always return the oldest DidSetSize message that
+    // hasn't yet been processed. But it might be better to skip ahead to some other DidSetSize
+    // message, if multiple DidSetSize messages are waiting to be processed. For instance, we could
+    // choose the most recent one, or the one that is closest to our current size.
+
     // The timeout, in seconds, we use when waiting for a DidSetSize message when we're asked to paint.
     static const double didSetSizeTimeout = 0.5;
     m_webPageProxy->process()->connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidSetSize>(m_webPageProxy->pageID(), didSetSizeTimeout);
