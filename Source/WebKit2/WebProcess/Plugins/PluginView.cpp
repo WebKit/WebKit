@@ -738,7 +738,7 @@ void PluginView::performJavaScriptURLRequest(URLRequest* request)
     bool oldAllowPopups = frame->script()->allowPopupsFromPlugin();
     frame->script()->setAllowPopupsFromPlugin(request->allowPopups());
     
-    ScriptValue result = m_pluginElement->document()->frame()->script()->executeScript(jsString);
+    ScriptValue result = frame->script()->executeScript(jsString);
 
     frame->script()->setAllowPopupsFromPlugin(oldAllowPopups);
 
@@ -746,7 +746,7 @@ void PluginView::performJavaScriptURLRequest(URLRequest* request)
     if (!plugin->controller())
         return;
 
-    ScriptState* scriptState = m_pluginElement->document()->frame()->script()->globalObject(pluginWorld())->globalExec();
+    ScriptState* scriptState = frame->script()->globalObject(pluginWorld())->globalExec();
     String resultString;
     result.getString(scriptState, resultString);
   

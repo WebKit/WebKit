@@ -1,5 +1,22 @@
 2011-02-20  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        Crash when a plug-in requests a javascript: url that destroys the plug-in
+        https://bugs.webkit.org/show_bug.cgi?id=54837
+        <rdar://problem/9005475>
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::destroy):
+        Null out m_pluginController.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::performJavaScriptURLRequest):
+        Don't access the frame through m_pluginElement since it will be nulled out
+        when the plug-in is destroyed.
+
+2011-02-20  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Fix another crash when a plug-in is destroyed when evaluating JavaScript

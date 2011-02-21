@@ -84,6 +84,11 @@ void PluginTest::NPN_InvalidateRect(NPRect* invalidRect)
     browser->invalidaterect(m_npp, invalidRect);
 }
 
+NPError PluginTest::NPN_GetURL(const char* url, const char* target)
+{
+    return browser->geturl(m_npp, url, target);
+}
+
 NPIdentifier PluginTest::NPN_GetStringIdentifier(const NPUTF8 *name)
 {
     return browser->getstringidentifier(name);

@@ -62,6 +62,8 @@ public:
     virtual NPError NPP_SetWindow(NPP, NPWindow*);
 
     // NPN functions.
+    NPError NPN_GetURL(const char* url, const char* target);
+    
     void NPN_InvalidateRect(NPRect* invalidRect);
     NPIdentifier NPN_GetStringIdentifier(const NPUTF8* name);
     NPIdentifier NPN_GetIntIdentifier(int32_t intid);

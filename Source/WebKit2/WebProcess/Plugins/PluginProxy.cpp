@@ -117,6 +117,8 @@ void PluginProxy::destroy()
     m_connection->connection()->sendSync(Messages::WebProcessConnection::DestroyPlugin(m_pluginInstanceID), Messages::WebProcessConnection::DestroyPlugin::Reply(), 0);
 
     m_isStarted = false;
+    m_pluginController = 0;
+
     m_connection->removePluginProxy(this);
 }
 

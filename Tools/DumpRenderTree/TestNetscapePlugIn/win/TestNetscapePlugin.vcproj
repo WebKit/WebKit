@@ -402,6 +402,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Tests\GetURLWithJavaScriptURLDestroyingPlugin.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\Tests\NPRuntimeObjectFromDestroyedPlugin.cpp"
 				>
 			</File>

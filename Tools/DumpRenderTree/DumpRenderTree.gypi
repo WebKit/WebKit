@@ -54,6 +54,7 @@
             'TestNetscapePlugIn/TestObject.h',
             'TestNetscapePlugIn/Tests/DocumentOpenInDestroyStream.cpp',
             'TestNetscapePlugIn/Tests/EvaluateJSAfterRemovingPluginElement.cpp',
+            'TestNetscapePlugIn/Tests/GetURLWithJavaScriptURLDestroyingPlugin.cpp',
             'TestNetscapePlugIn/Tests/GetUserAgentWithNullNPPFromNPPNew.cpp',
             'TestNetscapePlugIn/Tests/NPRuntimeObjectFromDestroyedPlugin.cpp',
             'TestNetscapePlugIn/Tests/NPRuntimeRemoveProperty.cpp',

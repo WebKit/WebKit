@@ -1,3 +1,16 @@
+2011-02-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Crash when a plug-in requests a javascript: url that destroys the plug-in
+        https://bugs.webkit.org/show_bug.cgi?id=54837
+        <rdar://problem/9005475>
+
+        Add test.
+
+        * plugins/get-url-with-javascript-destroying-plugin-expected.txt: Added.
+        * plugins/get-url-with-javascript-destroying-plugin.html: Added.
+
 2011-02-20  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

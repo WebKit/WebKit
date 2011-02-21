@@ -1,3 +1,24 @@
+2011-02-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Crash when a plug-in requests a javascript: url that destroys the plug-in
+        https://bugs.webkit.org/show_bug.cgi?id=54837
+        <rdar://problem/9005475>
+
+        Add new plug-in test.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp:
+        (PluginTest::NPN_GetURL):
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.h:
+        * DumpRenderTree/TestNetscapePlugIn/Tests/GetURLWithJavaScriptURLDestroyingPlugin.cpp: Added.
+        (GetURLWithJavaScriptURLDestroyingPlugin::GetURLWithJavaScriptURLDestroyingPlugin):
+        (GetURLWithJavaScriptURLDestroyingPlugin::NPP_New):
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+
 2011-02-19  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Andreas Kling.
