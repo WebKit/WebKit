@@ -1,3 +1,21 @@
+2011-02-21  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Text editor] Optimize editing updates in gutter panel
+        https://bugs.webkit.org/show_bug.cgi?id=54866
+
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer.prototype.set startEditingListener):
+        (WebInspector.TextViewer.prototype.set endEditingListener):
+        (WebInspector.TextViewer.prototype.endUpdates):
+        (WebInspector.TextViewer.prototype._enterInternalTextChangeMode):
+        (WebInspector.TextViewer.prototype._exitInternalTextChangeMode):
+        (WebInspector.TextEditorChunkedPanel.prototype._chunkNumberForLine):
+        (WebInspector.TextEditorGutterPanel.prototype._expandChunks):
+        (WebInspector.TextEditorGutterPanel.prototype.textChanged):
+        (WebInspector.TextEditorMainPanel.prototype._updateChunksForRanges):
+
 2011-02-21  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -58,6 +58,16 @@ WebInspector.TextViewer.prototype = {
         this._mainPanel.readOnly = readOnly;
     },
 
+    set startEditingListener(startEditingListener)
+    {
+        this._startEditingListener = startEditingListener;
+    },
+
+    set endEditingListener(endEditingListener)
+    {
+        this._endEditingListener = endEditingListener;
+    },
+
     get textModel()
     {
         return this._textModel;
@@ -136,6 +146,7 @@ WebInspector.TextViewer.prototype = {
     {
         this._mainPanel.endUpdates();
         this._gutterPanel.endUpdates();
+        this._updatePanelOffsets();
     },
 
     resize: function()
@@ -158,15 +169,21 @@ WebInspector.TextViewer.prototype = {
     _enterInternalTextChangeMode: function()
     {
         this._internalTextChangeMode = true;
+
+        if (this._startEditingListener)
+            this._startEditingListener();
     },
 
     _exitInternalTextChangeMode: function(oldRange, newRange)
     {
         this._internalTextChangeMode = false;
 
-        // FIXME: Update gutter smartly!
+        // Update the gutter panel.
         this._gutterPanel.textChanged(oldRange, newRange);
         this._updatePanelOffsets();
+
+        if (this._endEditingListener)
+            this._endEditingListener(oldRange, newRange);
     },
 
     _updatePanelOffsets: function()
@@ -370,12 +387,17 @@ WebInspector.TextEditorChunkedPanel.prototype = {
 
     _chunkNumberForLine: function(lineNumber)
     {
-        for (var i = 0; i < this._textChunks.length; ++i) {
-            var line = this._textChunks[i].startLine;
-            if (lineNumber >= line && lineNumber < line + this._textChunks[i].linesCount)
-                return i;
+        // Bisect.
+        var from = 0;
+        var to = this._textChunks.length - 1;
+        while (from < to) {
+            var mid = Math.floor((from + to + 1) / 2);
+            if (this._textChunks[mid].startLine <= lineNumber)
+                from = mid;
+            else
+                to = mid - 1;
         }
-        return this._textChunks.length - 1;
+        return from;
     },
 
     chunkForLine: function(lineNumber)
@@ -471,6 +493,40 @@ WebInspector.TextEditorGutterPanel.prototype = {
     {
         for (var i = 0; i < this._textChunks.length; ++i)
             this._textChunks[i].expanded = (fromIndex <= i && i < toIndex);
+    },
+
+    textChanged: function(oldRange, newRange)
+    {
+        if (!this._textChunks) {
+            this._buildChunks();
+            return;
+        }
+
+        var linesDiff = newRange.linesCount - oldRange.linesCount;
+        if (linesDiff) {
+            // Remove old chunks (if needed).
+            for (var chunkNumber = this._textChunks.length - 1; chunkNumber >= 0 ; --chunkNumber) {
+                var chunk = this._textChunks[chunkNumber];
+                if (chunk.startLine + chunk.linesCount <= this._textModel.linesCount)
+                    break;
+                chunk.expanded = false;
+                this.element.removeChild(chunk.element);
+            }
+            this._textChunks.length = chunkNumber + 1;
+
+            // Add new chunks (if needed).
+            var totalLines = 0;
+            if (this._textChunks.length) {
+                var lastChunk = this._textChunks[this._textChunks.length - 1];
+                totalLines = lastChunk.startLine + lastChunk.linesCount;
+            }
+            for (var i = totalLines; i < this._textModel.linesCount; i += this._defaultChunkSize) {
+                var chunk = this._createNewChunk(i, i + this._defaultChunkSize);
+                this._textChunks.push(chunk);
+                this.element.appendChild(chunk.element);
+            }
+            this._repaintAll();
+        }
     }
 }
 
@@ -1257,7 +1313,12 @@ WebInspector.TextEditorMainPanel.prototype = {
         var scrollLeft = this.element.scrollLeft;
 
         // Delete all DOM elements that were either controlled by the old chunks, or have just been inserted.
-        while (firstLineRow && (typeof firstLineRow.lineNumber !== "number" || firstLineRow.lineNumber < startLine + linesCount || firstLineRow.lineNumber >= this._textModel.linesCount)) {
+        var firstUnmodifiedLineRow = null;
+        var chunk = this._textChunks[lastChunkNumber + 1];
+        if (chunk) {
+            firstUnmodifiedLineRow = chunk.expanded ? chunk.getExpandedLineRow(chunk.startLine) : chunk.element;
+        }
+        while (firstLineRow && firstLineRow !== firstUnmodifiedLineRow) {
             var lineRow = firstLineRow;
             firstLineRow = firstLineRow.nextSibling;
             this.element.removeChild(lineRow);
@@ -1267,7 +1328,7 @@ WebInspector.TextEditorMainPanel.prototype = {
         for (var chunkNumber = firstChunkNumber; linesCount > 0; ++chunkNumber) {
             var chunkLinesCount = Math.min(this._defaultChunkSize, linesCount);
             var newChunk = this._createNewChunk(startLine, startLine + chunkLinesCount);
-            this.element.insertBefore(newChunk.element, firstLineRow);
+            this.element.insertBefore(newChunk.element, firstUnmodifiedLineRow);
 
             if (chunkNumber <= lastChunkNumber)
                 this._textChunks[chunkNumber] = newChunk;
