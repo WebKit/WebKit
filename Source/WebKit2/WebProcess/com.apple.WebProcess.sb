@@ -87,6 +87,7 @@
 ;; Various services required by AppKit and other frameworks
 (allow mach-lookup
    (global-name "com.apple.CoreServices.coreservicesd")
+   (global-name "com.apple.CFPasteboardClient")
    (global-name "com.apple.DiskArbitration.diskarbitrationd")
    (global-name "com.apple.FileCoordination")
    (global-name "com.apple.FontObjectsServer")
