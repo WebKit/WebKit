@@ -331,12 +331,16 @@ var CODE_REVIEW_UNITTEST;
     else
       container.removeClass('saving');
   }
-
-  function createCommentFor(line) {
-    if (line.attr('data-has-comment')) {
+  
+  function unfreezeCommentFor(line) {
       // FIXME: This query is overly complex because we place comment blocks
       // after Lines.  Instead, comment blocks should be children of Lines.
       findCommentPositionFor(line).next().next().filter('.frozenComment').each(handleUnfreezeComment);
+  }
+
+  function createCommentFor(line) {
+    if (line.attr('data-has-comment')) {
+      unfreezeCommentFor(line);
       return;
     }
     line.attr('data-has-comment', 'true');
@@ -1453,7 +1457,15 @@ var CODE_REVIEW_UNITTEST;
       return true;
     }
 
-    return false;
+    var lines = $('.Line', focused);
+    var last = lines.last();
+    if (last.attr('data-has-comment')) {
+      unfreezeCommentFor(last);
+      return true;
+    }
+
+    addCommentForLines(lines);
+    return true;
   }
 
   function contextLinesFor(comment_base_lines, file_diff) {
@@ -1592,24 +1604,26 @@ var CODE_REVIEW_UNITTEST;
 
   function processSelectedLines() {
     drag_select_start_index = -1;
-
-    var selected = $('.selected');
-    if (!selected.size())
+    addCommentForLines($('.selected'));
+  }
+  
+  function addCommentForLines(lines) {    
+    if (!lines.size())
       return;
-    
-    var already_has_comment = selected.last().hasClass('commentContext');
-    selected.addClass('commentContext');
+
+    var already_has_comment = lines.last().hasClass('commentContext');
+    lines.addClass('commentContext');
 
     var comment_base_line;
     if (already_has_comment)
-      comment_base_line = selected.last().attr('data-comment-base-line');
+      comment_base_line = lines.last().attr('data-comment-base-line');
     else {
-      var last = lineFromLineDescendant(selected.last());
+      var last = lineFromLineDescendant(lines.last());
       addCommentFor($(last));
       comment_base_line = last.attr('id');
     }
 
-    selected.each(function() {
+    lines.each(function() {
       addDataCommentBaseLine(this, comment_base_line);
       $(this).removeClass('selected');
     });
