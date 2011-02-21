@@ -1,5 +1,14 @@
 2011-02-20  Gavin Barraclough  <barraclough@apple.com>
 
+        Build fix (remove includes).
+
+        * bindings/js/JSDOMBinding.cpp:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        * bindings/js/JSHistoryCustom.cpp:
+        * bindings/js/JSLocationCustom.cpp:
+
+2011-02-20  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Oliver Hunt.
 
         https://bugs.webkit.org/show_bug.cgi?id=54839

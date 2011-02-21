@@ -61,7 +61,6 @@
 #include <runtime/DateInstance.h>
 #include <runtime/Error.h>
 #include <runtime/JSFunction.h>
-#include <runtime/PrototypeFunction.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 

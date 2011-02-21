@@ -55,7 +55,6 @@
 #include "Settings.h"
 #include "SharedWorkerRepository.h"
 #include <runtime/JSFunction.h>
-#include <runtime/PrototypeFunction.h>
 
 #if ENABLE(SHARED_WORKERS)
 #include "JSSharedWorker.h"
