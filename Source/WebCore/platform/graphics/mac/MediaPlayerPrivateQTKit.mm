@@ -552,14 +552,14 @@ MediaPlayerPrivateQTKit::MediaRenderingMode MediaPlayerPrivateQTKit::preferredRe
     if (!m_player->frameView() || !m_qtMovie)
         return MediaRenderingNone;
 
-    if (m_player->inMediaDocument() || !QTVideoRendererClass())
-        return MediaRenderingMovieView;
-
 #if USE(ACCELERATED_COMPOSITING)
     if (supportsAcceleratedRendering() && m_player->mediaPlayerClient()->mediaPlayerRenderingCanBeAccelerated(m_player))
         return MediaRenderingMovieLayer;
 #endif
 
+    if (!QTVideoRendererClass())
+        return MediaRenderingMovieView;
+    
     return MediaRenderingSoftwareRenderer;
 }
 
@@ -1528,9 +1528,7 @@ void MediaPlayerPrivateQTKit::sawUnsupportedTracks()
 #if USE(ACCELERATED_COMPOSITING)
 bool MediaPlayerPrivateQTKit::supportsAcceleratedRendering() const
 {
-    // Also don't claim to support accelerated rendering when in the media document, as we will then render 
-    // via QTMovieView which is already accelerated.
-    return isReadyForVideoSetup() && getQTMovieLayerClass() != Nil && !m_player->inMediaDocument();
+    return isReadyForVideoSetup() && getQTMovieLayerClass() != Nil;
 }
 
 void MediaPlayerPrivateQTKit::acceleratedRenderingStateChanged()
