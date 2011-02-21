@@ -1,3 +1,19 @@
+2011-02-16  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        keyboard support for extending/shrinking comment context
+        https://bugs.webkit.org/show_bug.cgi?id=54612
+
+        ctrl+shift+up/down will extend/shrink the comment context when
+        a comment is focused or when one is being edited.
+
+        Also, switch over to using keydown instead of keypress events.
+        This lets us share code for handling escape and other key events.
+        Also, keypress is evil and should die.
+
+        * code-review.js:
+
 2011-02-20  Ojan Vafai  <ojan@chromium.org>
 
         Recommit accidental revert.

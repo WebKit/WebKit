@@ -71,13 +71,15 @@ var CODE_REVIEW_UNITTEST;
   var SIDE_BY_SIDE_DIFFS_KEY = 'sidebysidediffs';
   var g_displayed_draft_comments = false;
   var KEY_CODE = {
+    down: 40,
     enter: 13,
     escape: 27,
     j: 74,
     k: 75,
     n: 78,
     p: 80,
-    r: 82
+    r: 82,
+    up: 38
   }
 
   function idForLine(number) {
@@ -149,9 +151,7 @@ var CODE_REVIEW_UNITTEST;
     var start = numberFrom(start_line_id);
     var end = numberFrom(end_line_id);
     for (var i = start; i <= end; i++) {
-      var line = $('#line' + i);
-      line.addClass('commentContext');
-      addDataCommentBaseLine(line, end_line_id);
+      addDataCommentBaseLine($('#line' + i), end_line_id);
     }
 
     var comment_block = createCommentFor(line);
@@ -1075,6 +1075,8 @@ var CODE_REVIEW_UNITTEST;
               '<tr><td>n</td><td>focus next comment</td></tr>' +
               '<tr><td>p</td><td>focus previous comment</td></tr>' +
               '<tr><td>r</td><td>focus review select element</td></tr>' +
+              '<tr><td>ctrl + shift + up</td><td>extend context of the focused comment</td></tr>' +
+              '<tr><td>ctrl + shift + down</td><td>shrink context of the focused comment</td></tr>' +
             '</table></div>' +
           '</div>' +
         '</div>' +
@@ -1425,7 +1427,71 @@ var CODE_REVIEW_UNITTEST;
     return node.hasClass('Line');
   }
 
+  function commentTextareaForKeyTarget(key_target) {
+    if (key_target.nodeName == 'TEXTAREA')
+      return $(key_target);
+
+    var comment_textarea = $(document.activeElement).prev().find('textarea');
+    if (!comment_textarea.size())
+      return null;
+    return comment_textarea;
+  }
+
+  function extendCommentContextUp(key_target) {
+    var comment_textarea = commentTextareaForKeyTarget(key_target);
+    if (!comment_textarea)
+      return;
+
+    var comment_base_line = comment_textarea.attr('data-comment-for');
+    var diff_section = diffSectionFor(comment_textarea);
+    var lines = $('.Line', diff_section);
+    for (var i = 0; i < lines.length - 1; i++) {
+      if (hasDataCommentBaseLine(lines[i + 1], comment_base_line)) {
+        addDataCommentBaseLine(lines[i], comment_base_line);
+        break;
+      }
+    }
+  }
+
+  function shrinkCommentContextDown(key_target) {
+    var comment_textarea = commentTextareaForKeyTarget(key_target);
+    if (!comment_textarea)
+      return;
+
+    var comment_base_line = comment_textarea.attr('data-comment-for');
+    var diff_section = diffSectionFor(comment_textarea);
+    var lines = contextLinesFor(comment_base_line, diff_section);
+    if (lines.size() > 1)
+      removeDataCommentBaseLine(lines[0], comment_base_line);
+  }
+
+  function handleModifyContextKey(e) {
+    var handled = false;
+
+    if (e.shiftKey && e.ctrlKey) {
+      switch (e.keyCode) {
+      case KEY_CODE.up:
+        extendCommentContextUp(e.target);
+        handled = true;
+        break;
+
+      case KEY_CODE.down:
+        shrinkCommentContextDown(e.target);
+        handled = true;
+        break;
+      }
+    }
+
+    if (handled)
+      e.preventDefault();
+
+    return handled;
+  }
+
   $('textarea').live('keydown', function(e) {
+    if (handleModifyContextKey(e))
+      return;
+
     if (e.keyCode == KEY_CODE.escape)
       handleEscapeKeyInTextarea(this);
   });
@@ -1435,9 +1501,11 @@ var CODE_REVIEW_UNITTEST;
     // events.
     if (e.target.nodeName == 'TEXTAREA')
       return;
-    
-    var handled = false;
 
+    if (handleModifyContextKey(e))
+      return;
+
+    var handled = false;
     switch (e.keyCode) {
     case KEY_CODE.r:
       $('.review select').focus();
@@ -1467,7 +1535,7 @@ var CODE_REVIEW_UNITTEST;
       break;
       
     case KEY_CODE.enter:
-      handled = handleEnterKeyPress();
+      handled = handleEnterKey();
       break;
       
     case KEY_CODE.escape:
@@ -1489,7 +1557,7 @@ var CODE_REVIEW_UNITTEST;
     document.body.focus();
   }
   
-  function handleEnterKeyPress() {
+  function handleEnterKey() {
     if (document.activeElement.nodeName == 'BODY')
       return;
 
@@ -1543,8 +1611,6 @@ var CODE_REVIEW_UNITTEST;
         return;
 
       removeDataCommentBaseLine(this, comment_base_line);
-      if (!$(this).attr('data-comment-base-line'))
-        $(this).removeClass('commentContext');
     });
   }
 
@@ -1666,7 +1732,6 @@ var CODE_REVIEW_UNITTEST;
       return;
 
     var already_has_comment = lines.last().hasClass('commentContext');
-    lines.addClass('commentContext');
 
     var comment_base_line;
     if (already_has_comment)
@@ -1685,15 +1750,26 @@ var CODE_REVIEW_UNITTEST;
     saveDraftComments();
   }
 
-  function addDataCommentBaseLine(line, id) {
+  function hasDataCommentBaseLine(line, id) {
     var val = $(line).attr('data-comment-base-line');
+    if (!val)
+      return false;
 
-    var parts = val ? val.split(' ') : [];
+    var parts = val.split(' ');
     for (var i = 0; i < parts.length; i++) {
       if (parts[i] == id)
-        return;
+        return true;
     }
+    return false;
+  }
 
+  function addDataCommentBaseLine(line, id) {
+    $(line).addClass('commentContext');
+    if (hasDataCommentBaseLine(line, id))
+      return;
+
+    var val = $(line).attr('data-comment-base-line');
+    var parts = val ? val.split(' ') : [];
     parts.push(id);
     $(line).attr('data-comment-base-line', parts.join(' '));
   }
@@ -1705,13 +1781,19 @@ var CODE_REVIEW_UNITTEST;
 
     var base_lines = comment_base_lines.split(' ');
     var parts = val.split(' ');
-    var newVal = [];
+    var new_parts = [];
     for (var i = 0; i < parts.length; i++) {
       if (base_lines.indexOf(parts[i]) == -1)
-        newVal.push(parts[i]);
+        new_parts.push(parts[i]);
     }
 
-    $(line).attr('data-comment-base-line', newVal.join(' '));
+    var new_comment_base_line = new_parts.join(' ');
+    if (new_comment_base_line)
+      $(line).attr('data-comment-base-line', new_comment_base_line);
+    else {
+      $(line).removeAttr('data-comment-base-line');
+      $(line).removeClass('commentContext');
+    }
   }
 
   function lineFromLineDescendant(descendant) {
