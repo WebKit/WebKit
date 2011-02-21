@@ -1,3 +1,17 @@
+2011-02-21  Adam Roben  <aroben@apple.com>
+
+        Fix linker warning on Windows
+
+        r79135 tried to export JSObject::s_info by adding it to JavaScriptCore.def. This is the
+        obvious way (since it's how we export functions), but unfortunately it doesn't work correct.
+        r79222 made us export it the right way (using the JS_EXPORTDATA macro), but forgot to remove
+        it from JavaScriptCore.def. This caused us to get linker warnings about exporting the symbol
+        multiple times.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Removed JSObject::s_info.
+
 2011-02-21  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.
