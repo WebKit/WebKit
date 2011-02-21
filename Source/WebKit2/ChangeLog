@@ -1,5 +1,17 @@
 2011-02-21  Adam Roben  <aroben@apple.com>
 
+        Add some assertions about the state IDs we receive from the web process
+
+        Rubber-stamped by Anders Carlsson.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::update):
+        (WebKit::DrawingAreaProxyImpl::enterAcceleratedCompositingMode):
+        (WebKit::DrawingAreaProxyImpl::exitAcceleratedCompositingMode):
+        Assert that the state ID the web process sent us is no newer than our own state ID.
+
+2011-02-21  Adam Roben  <aroben@apple.com>
+
         Rename DrawingArea[Proxy]Impl's "sequence number" concept to "state ID".
 
         As explained in r79251, DrawingAreaProxyImpl has some state that, when it changes, causes

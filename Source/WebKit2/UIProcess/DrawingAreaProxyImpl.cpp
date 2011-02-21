@@ -139,6 +139,7 @@ void DrawingAreaProxyImpl::detachCompositingContext()
 
 void DrawingAreaProxyImpl::update(uint64_t stateID, const UpdateInfo& updateInfo)
 {
+    ASSERT_ARG(stateID, stateID <= m_currentStateID);
     if (stateID < m_currentStateID)
         return;
 
@@ -182,6 +183,7 @@ void DrawingAreaProxyImpl::didUpdateState(uint64_t stateID, const UpdateInfo& up
 
 void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(uint64_t stateID, const LayerTreeContext& layerTreeContext)
 {
+    ASSERT_ARG(stateID, stateID <= m_currentStateID);
     if (stateID < m_currentStateID)
         return;
 
@@ -190,6 +192,7 @@ void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(uint64_t stateID, con
 
 void DrawingAreaProxyImpl::exitAcceleratedCompositingMode(uint64_t stateID, const UpdateInfo& updateInfo)
 {
+    ASSERT_ARG(stateID, stateID <= m_currentStateID);
     if (stateID < m_currentStateID)
         return;
 
