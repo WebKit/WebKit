@@ -1,3 +1,14 @@
+2011-02-21  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r79029.
+        http://trac.webkit.org/changeset/79029
+        https://bugs.webkit.org/show_bug.cgi?id=54869
+
+        Revert unnecessary Chromium rebaseline (Requested by apavlov
+        on #webkit).
+
+        * platform/chromium-win/inspector/styles-update-from-js-expected.txt: Removed.
+
 2011-02-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed; Skip fast/events/menu-keydown-on-hidden-element.html on Mac WebKit 2 since it requires EventSender.
