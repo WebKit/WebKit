@@ -3467,7 +3467,6 @@ BUGWK54659 DEBUG : inspector/debugger/debug-inlined-scripts.html = CRASH TIMEOUT
 
 // For some reason, we can't rebaseline these because they don't end up in the archive. Disable while
 // we figure this out.
-BUGATWILSON : svg/W3C-SVG-1.1-SE/coords-units-03-b.svg = IMAGE+TEXT
 BUGATWILSON WIN LINUX : compositing/reflections/deeply-nested-reflections.html = IMAGE+TEXT
 
 // morrita: In addition, some tests are flaky between IMAGE, TEXT and IMAGE+TEXT. So marked then FAIL at this time.
@@ -3767,3 +3766,10 @@ BUGATWILSON GPU : compositing/overflow/fixed-position-ancestor-clip.html = IMAGE
 BUGWK54794 GPU MAC : compositing/geometry/object-clip-rects-assertion.html = TIMEOUT
 
 BUGCR73510 MAC : fast/text/font-size-zero.html = TEXT
+
+BUGCR73651 MAC : http/tests/loading/location-hash-reload-cycle.html = TEXT
+BUGCR73651 MAC : http/tests/navigation/image-load-in-unload-handler.html = TEXT
+BUGCR73651 MAC : http/tests/navigation/ping-cookie.html = TEXT
+BUGCR73651 MAC : http/tests/navigation/ping-same-origin.html = TEXT
+BUGCR73651 MAC : http/tests/security/isolatedWorld/all-window-properties.html = TEXT
+BUGCR73651 MAC : http/tests/security/isolatedWorld/all-window-prototypes.html = TEXT
