@@ -78,8 +78,14 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, b
         ASSERT_NOT_REACHED();
         return FontPlatformData();
     }
-    memcpy(logFont.lfFaceName, m_name.charactersWithNullTermination(),
-           sizeof(logFont.lfFaceName[0]) * (1 + m_name.length()));
+
+    String newName;
+    if (orientation == Vertical && !m_name.startsWith("@"))
+        newName = "@" + m_name;
+    else
+        newName = m_name;
+
+    memcpy(logFont.lfFaceName, newName.charactersWithNullTermination(), sizeof(logFont.lfFaceName[0]) * (1 + newName.length())); 
 
     // FIXME: almost identical to FillLogFont in FontCacheWin.cpp.
     // Need to refactor. 
@@ -99,7 +105,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, b
     logFont.lfWeight = bold ? 700 : 400;
 
     HFONT hfont = CreateFontIndirect(&logFont);
-    return FontPlatformData(hfont, size);
+    return FontPlatformData(hfont, size, orientation);
 #elif OS(LINUX) || OS(FREEBSD) || PLATFORM(BREWMP)
     ASSERT(m_fontReference);
     return FontPlatformData(m_fontReference, "", size, bold && !m_fontReference->isBold(), italic && !m_fontReference->isItalic(), orientation);

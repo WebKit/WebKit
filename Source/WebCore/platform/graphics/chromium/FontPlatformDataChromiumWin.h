@@ -57,7 +57,7 @@ public:
     // set everything to NULL.
     FontPlatformData(WTF::HashTableDeletedValueType);
     FontPlatformData();
-    FontPlatformData(HFONT, float size);
+    FontPlatformData(HFONT, float size, FontOrientation = Horizontal);
     FontPlatformData(float size, bool bold, bool oblique);
     FontPlatformData(const FontPlatformData&);
 
@@ -70,7 +70,7 @@ public:
     HFONT hfont() const { return m_font ? m_font->hfont() : 0; }
     float size() const { return m_size; }
 
-    FontOrientation orientation() const { return Horizontal; } // FIXME: Implement.
+    FontOrientation orientation() const { return m_orientation; }
 
     unsigned hash() const
     { 
@@ -127,6 +127,7 @@ private:
 
     RefPtr<RefCountedHFONT> m_font;
     float m_size;  // Point size of the font in pixels.
+    FontOrientation m_orientation;
 
     mutable SCRIPT_CACHE m_scriptCache;
     mutable SCRIPT_FONTPROPERTIES* m_scriptFontProperties;
