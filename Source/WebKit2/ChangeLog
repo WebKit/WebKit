@@ -55,7 +55,7 @@
 
         Fix another crash when a plug-in is destroyed when evaluating JavaScript
         https://bugs.webkit.org/show_bug.cgi?id=54834
-        <rdar://problem/9013384>
+        <rdar://problem/9005475>
 
         This contains three separate fixes:
 
