@@ -752,24 +752,26 @@ InspectorBackendStub.prototype = {
 
         for (var key in request.arguments) {
             if (args.length === 0) {
-                console.error("Protocol Error: Invalid number of arguments for '%sAgent.%s' call. It should have the next arguments '%s'.", request.domain, request.command, JSON.stringify(request.arguments));
+                console.error("Protocol Error: Invalid number of arguments for '" + request.domain + "Agent." + request.command + "' call. It should have the next arguments '" + JSON.stringify(request.arguments) + "'.");
                 return;
             }
             var value = args.shift();
             if (request.arguments[key] && typeof value !== request.arguments[key]) {
-                console.error("Protocol Error: Invalid type of argument '%s' for '%sAgent.%s' call. It should be '%s' but it is '%s'.", key, request.domain, request.command, request.arguments[key], typeof value);
+                console.error("Protocol Error: Invalid type of argument '" + key + "' for '" + request.domain + "Agent." + request.command + "' call. It should be '" + request.arguments[key] + "' but it is '" + typeof value + "'.");
                 return;
             }
             request.arguments[key] = value;
         }
 
+        var callback;
         if (args.length === 1) {
             if (typeof args[0] !== "function" && typeof args[0] !== "undefined") {
-                console.error("Protocol Error: Optional callback argument for '%sAgent.%s' call should be a function but its type is '%s'.", request.domain, request.command, typeof args[0]);
+                console.error("Protocol Error: Optional callback argument for '" + request.domain + "Agent." + request.command + "' call should be a function but its type is '" + typeof args[0] + "'.");
                 return;
             }
-            request.seq = this._wrap(args[0]);
+            callback = args[0];
         }
+        request.seq = this._wrap(callback || function() {});
 
         if (window.dumpInspectorProtocolMessages)
             console.log("frontend: " + JSON.stringify(request));
@@ -807,12 +809,12 @@ InspectorBackendStub.prototype = {
 
         if (messageObject.type === "event") {
             if (!(messageObject.domain in this._domainDispatchers)) {
-                console.error("Protocol Error: the message is for non-existing domain '%s'", messageObject.domain);
+                console.error("Protocol Error: the message is for non-existing domain '" + messageObject.domain + "'");
                 return;
             }
             var dispatcher = this._domainDispatchers[messageObject.domain];
             if (!(messageObject.event in dispatcher)) {
-                console.error("Protocol Error: Attempted to dispatch an unimplemented method '%s.%s'", messageObject.domain, messageObject.event);
+                console.error("Protocol Error: Attempted to dispatch an unimplemented method '" + messageObject.domain + "." + messageObject.event + "'");
                 return;
             }
             dispatcher[messageObject.event].apply(dispatcher, arguments);
@@ -821,7 +823,7 @@ InspectorBackendStub.prototype = {
 
     reportProtocolError: function(messageObject)
     {
-        console.error("Protocol Error: InspectorBackend request with seq = %d failed.", messageObject.seq);
+        console.error("Protocol Error: InspectorBackend request with seq = " + messageObject.seq + " failed.");
         for (var i = 0; i < messageObject.errors.length; ++i)
             console.error("    " + messageObject.errors[i]);
         this._removeResponseCallbackEntry(messageObject.seq);
