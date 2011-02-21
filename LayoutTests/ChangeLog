@@ -1,5 +1,11 @@
 2011-02-21  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed; Skip fast/events/menu-keydown-on-hidden-element.html on Mac WebKit 2 since it requires EventSender.
+
+        * platform/mac-wk2/Skipped:
+
+2011-02-21  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed; Remove incorrect Chromium test expectations.
 
         * platform/chromium/test_expectations.txt:
