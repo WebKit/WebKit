@@ -1,3 +1,14 @@
+2011-02-16  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        [V8] SerializedScriptValue: fix JS exception handling.
+        https://bugs.webkit.org/show_bug.cgi?id=54555
+
+        Added an exception throwing test case:
+        * fast/dom/Window/window-postmessage-clone-expected.txt:
+        * fast/dom/Window/window-postmessage-clone.html:
+
 2011-02-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Kent Tamura.

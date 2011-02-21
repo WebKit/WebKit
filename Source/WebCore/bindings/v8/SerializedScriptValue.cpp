@@ -51,9 +51,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
-// FIXME:
-// - catch V8 exceptions
-// - consider crashing in debug mode on deserialization errors
+// FIXME: consider crashing in debug mode on deserialization errors
 
 namespace WebCore {
 
@@ -221,14 +219,14 @@ public:
         doWriteUint32(pixelDataLength);
         append(pixelData, pixelDataLength);
     }
-    
+
     void writeRegExp(v8::Local<v8::String> pattern, v8::RegExp::Flags flags)
     {
         append(RegExpTag);
         v8::String::Utf8Value patternUtf8Value(pattern);
         doWriteString(*patternUtf8Value, patternUtf8Value.length());
         doWriteUint32(static_cast<uint32_t>(flags));
-    }    
+    }
 
     void writeArray(uint32_t length)
     {
@@ -339,25 +337,44 @@ private:
 class Serializer {
     class StateBase;
 public:
-    explicit Serializer(Writer& writer)
+    enum Status {
+        Success,
+        InputError,
+        JSException,
+        JSFailure
+    };
+
+    Serializer(Writer& writer, v8::TryCatch& tryCatch)
         : m_writer(writer)
+        , m_tryCatch(tryCatch)
         , m_depth(0)
-        , m_hasError(false)
+        , m_status(Success)
     {
+        ASSERT(!tryCatch.HasCaught());
     }
 
-    bool serialize(v8::Handle<v8::Value> value)
+    Status serialize(v8::Handle<v8::Value> value)
     {
         v8::HandleScope scope;
         StateBase* state = doSerialize(value, 0);
         while (state)
             state = state->advance(*this);
-        return !m_hasError;
+        return m_status;
     }
 
     // Functions used by serialization states.
 
     StateBase* doSerialize(v8::Handle<v8::Value> value, StateBase* next);
+
+    StateBase* checkException(StateBase* state)
+    {
+        return m_tryCatch.HasCaught() ? handleError(JSException, state) : 0;
+    }
+
+    StateBase* reportFailure(StateBase* state)
+    {
+        return handleError(JSFailure, state);
+    }
 
     StateBase* writeArray(uint32_t length, StateBase* state)
     {
@@ -447,7 +464,10 @@ private:
         {
             ++m_index;
             for (; m_index < composite()->Length(); ++m_index) {
-                if (StateBase* newState = serializer.doSerialize(composite()->Get(m_index), this))
+                v8::Handle<v8::Value> value = composite()->Get(m_index);
+                if (StateBase* newState = serializer.checkException(this))
+                    return newState;
+                if (StateBase* newState = serializer.doSerialize(value, this))
                     return newState;
             }
             return serializer.writeArray(composite()->Length(), this);
@@ -462,8 +482,7 @@ private:
     public:
         AbstractObjectState(v8::Handle<v8::Object> object, StateBase* next)
             : State<v8::Object>(object, next)
-            , m_propertyNames(object->GetPropertyNames())
-            , m_index(-1)
+            , m_index(0)
             , m_numSerializedProperties(0)
             , m_nameDone(false)
         {
@@ -471,15 +490,32 @@ private:
 
         virtual StateBase* advance(Serializer& serializer)
         {
-            ++m_index;
-            for (; m_index < m_propertyNames->Length(); ++m_index) {
-                if (m_propertyName.IsEmpty()) {
+            if (!m_index) {
+                m_propertyNames = composite()->GetPropertyNames();
+                if (StateBase* newState = serializer.checkException(this))
+                    return newState;
+                if (m_propertyNames.IsEmpty())
+                    return serializer.reportFailure(this);
+            }
+            while (m_index < m_propertyNames->Length()) {
+                if (!m_nameDone) {
                     v8::Local<v8::Value> propertyName = m_propertyNames->Get(m_index);
-                    if ((propertyName->IsString() && composite()->HasRealNamedProperty(propertyName.As<v8::String>()))
-                        || (propertyName->IsUint32() && composite()->HasRealIndexedProperty(propertyName->Uint32Value()))) {
+                    if (StateBase* newState = serializer.checkException(this))
+                        return newState;
+                    if (propertyName.IsEmpty())
+                        return serializer.reportFailure(this);
+                    bool hasStringProperty = propertyName->IsString() && composite()->HasRealNamedProperty(propertyName.As<v8::String>());
+                    if (StateBase* newState = serializer.checkException(this))
+                        return newState;
+                    bool hasIndexedProperty = !hasStringProperty && propertyName->IsUint32() && composite()->HasRealIndexedProperty(propertyName->Uint32Value());
+                    if (StateBase* newState = serializer.checkException(this))
+                        return newState;
+                    if (hasStringProperty || hasIndexedProperty)
                         m_propertyName = propertyName;
-                    } else
+                    else {
+                        ++m_index;
                         continue;
+                    }
                 }
                 ASSERT(!m_propertyName.IsEmpty());
                 if (!m_nameDone) {
@@ -488,8 +524,11 @@ private:
                         return newState;
                 }
                 v8::Local<v8::Value> value = composite()->Get(m_propertyName);
+                if (StateBase* newState = serializer.checkException(this))
+                    return newState;
                 m_nameDone = false;
                 m_propertyName.Clear();
+                ++m_index;
                 ++m_numSerializedProperties;
                 if (StateBase* newState = serializer.doSerialize(value, this))
                     return newState;
@@ -540,7 +579,7 @@ private:
     {
         ASSERT(state);
         ++m_depth;
-        return checkComposite(state) ? state : handleError(state);
+        return checkComposite(state) ? state : handleError(InputError, state);
     }
 
     StateBase* pop(StateBase* state)
@@ -552,9 +591,10 @@ private:
         return next;
     }
 
-    StateBase* handleError(StateBase* state)
+    StateBase* handleError(Status errorStatus, StateBase* state)
     {
-        m_hasError = true;
+        ASSERT(errorStatus != Success);
+        m_status = errorStatus;
         while (state) {
             StateBase* tmp = state->nextState();
             delete state;
@@ -616,7 +656,7 @@ private:
         WTF::ByteArray* pixelArray = imageData->data()->data();
         m_writer.writeImageData(imageData->width(), imageData->height(), pixelArray->data(), pixelArray->length());
     }
-    
+
     void writeRegExp(v8::Handle<v8::Value> value)
     {
         v8::Handle<v8::RegExp> regExp = value.As<v8::RegExp>();
@@ -632,19 +672,20 @@ private:
 
     static StateBase* newObjectState(v8::Handle<v8::Object> object, StateBase* next)
     {
-        // FIXME:
-        // - check not a wrapper
-        // - support File, etc.
+        // FIXME: check not a wrapper
         return new ObjectState(object, next);
     }
 
     Writer& m_writer;
+    v8::TryCatch& m_tryCatch;
     int m_depth;
-    bool m_hasError;
+    Status m_status;
 };
 
 Serializer::StateBase* Serializer::doSerialize(v8::Handle<v8::Value> value, StateBase* next)
 {
+    if (value.IsEmpty())
+        return reportFailure(next);
     if (value->IsUndefined())
         m_writer.writeUndefined();
     else if (value->IsNull())
@@ -890,7 +931,7 @@ private:
         *value = toV8(imageData.release());
         return true;
     }
-    
+
     bool readRegExp(v8::Handle<v8::Value>* value)
     {
         v8::Handle<v8::Value> pattern;
@@ -1173,12 +1214,33 @@ SerializedScriptValue::SerializedScriptValue(v8::Handle<v8::Value> value, bool& 
 {
     didThrow = false;
     Writer writer;
-    Serializer serializer(writer);
-    if (!serializer.serialize(value)) {
+    Serializer::Status status;
+    {
+        v8::TryCatch tryCatch;
+        Serializer serializer(writer, tryCatch);
+        status = serializer.serialize(value);
+        if (status == Serializer::JSException) {
+            // If there was a JS exception thrown, re-throw it.
+            didThrow = true;
+            tryCatch.ReThrow();
+            return;
+        }
+    }
+    if (status == Serializer::InputError) {
+        // If there was an input error, throw a new exception outside
+        // of the TryCatch scope.
+        didThrow = true;
         throwError(NOT_SUPPORTED_ERR);
+        return;
+    }
+    if (status == Serializer::JSFailure) {
+        // If there was a JS failure (but no exception), there's not
+        // much we can do except for unwinding the C++ stack by
+        // pretending there was a JS exception.
         didThrow = true;
         return;
     }
+    ASSERT(status == Serializer::Success);
     m_data = String(StringImpl::adopt(writer.data())).crossThreadString();
 }
 

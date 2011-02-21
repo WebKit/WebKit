@@ -187,6 +187,7 @@ for (var i = 0; i < 100000; i++)
     reallyDeepArray=[reallyDeepArray];
 tryPostMessage('reallyDeepArray', true);
 tryPostMessage('window', true);
+tryPostMessage('({get a() { throw "x" }})', true);
 
 if (window.eventSender) {
     var fileInput = document.getElementById("fileInput");

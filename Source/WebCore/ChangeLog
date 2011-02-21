@@ -1,3 +1,25 @@
+2011-02-16  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        [V8] SerializedScriptValue: fix JS exception handling.
+        https://bugs.webkit.org/show_bug.cgi?id=54555
+
+        Added checks for exceptions and empty handles:
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::Serializer::Serializer):
+        (WebCore::Serializer::serialize):
+        (WebCore::Serializer::checkException):
+        (WebCore::Serializer::reportFailure):
+        (WebCore::Serializer::ArrayState::advance):
+        (WebCore::Serializer::AbstractObjectState::AbstractObjectState):
+        (WebCore::Serializer::AbstractObjectState::advance):
+        (WebCore::Serializer::push):
+        (WebCore::Serializer::handleError):
+        (WebCore::Serializer::newObjectState):
+        (WebCore::Serializer::doSerialize):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+
 2011-02-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Kent Tamura.
