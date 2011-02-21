@@ -447,7 +447,7 @@ div:focus {
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
-<script src="code-review.js?version=35"></script>
+<script src="code-review.js?version=36"></script>
 EOF
 
     def self.revisionOrDescription(string)

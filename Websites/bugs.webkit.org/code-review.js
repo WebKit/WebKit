@@ -1349,7 +1349,7 @@ var CODE_REVIEW_UNITTEST;
   }
 
   function focusNext(filter, direction) {
-    var focusable_nodes = $('a,.frozenComment,.previousComment,.DiffBlock,.overallComments').filter(function() {
+    var focusable_nodes = $('a,.Line,.frozenComment,.previousComment,.DiffBlock,.overallComments').filter(function() {
       return !$(this).hasClass('DiffBlock') || $('.add,.remove', this).size();
     });
 
@@ -1376,6 +1376,8 @@ var CODE_REVIEW_UNITTEST;
   var kCharCodeForP = 'p'.charCodeAt(0);
   var kCharCodeForJ = 'j'.charCodeAt(0);
   var kCharCodeForK = 'k'.charCodeAt(0);
+  var kCharCodeForCapitalJ = 'J'.charCodeAt(0);
+  var kCharCodeForCapitalK = 'K'.charCodeAt(0);
   var kCharCodeForEnter = '\r'.charCodeAt(0);
 
   function isComment(node) {
@@ -1384,6 +1386,10 @@ var CODE_REVIEW_UNITTEST;
   
   function isDiffBlock(node) {
     return node.hasClass('DiffBlock');
+  }
+  
+  function isLine(node) {
+    return node.hasClass('Line');
   }
 
   $('textarea').live('keydown', function(e) {
@@ -1415,6 +1421,14 @@ var CODE_REVIEW_UNITTEST;
 
     case kCharCodeForK:
       handled = focusNext(isDiffBlock, DIRECTION.BACKWARD);
+      break;
+      
+    case kCharCodeForCapitalJ:
+      handled = focusNext(isLine, DIRECTION.FORWARD);
+      break;
+
+    case kCharCodeForCapitalK:
+      handled = focusNext(isLine, DIRECTION.BACKWARD);
       break;
     
     case kCharCodeForEnter:

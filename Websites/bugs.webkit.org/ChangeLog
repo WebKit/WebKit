@@ -2,6 +2,18 @@
 
         Reviewed by Adam Barth.
 
+        use shift+j/k to focus next/previous line
+        https://bugs.webkit.org/show_bug.cgi?id=54723
+
+        Tested on a large Hyatt change to confirm it performed fine.
+        (https://bugs.webkit.org/attachment.cgi?id=82533&action=review)
+
+        * code-review.js:
+
+2011-02-17  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
         fix escape handling in code review tool
         https://bugs.webkit.org/show_bug.cgi?id=54722
 
