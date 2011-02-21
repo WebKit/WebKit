@@ -1,3 +1,18 @@
+2011-02-21  Andoni Morales Alastruey  <amorales@flumotion.com>
+
+        Reviewed by Martin Robinson.
+
+        [GStreamer] Add 'location' property in webkitwebsrc
+        https://bugs.webkit.org/show_bug.cgi?id=54628
+
+        No new tests, this feature is dedicated to internal GStreamer use,
+        such as the upcoming HTTP Live Streaming element.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webkit_web_src_class_init):
+        (webKitWebSrcSetProperty):
+        (webKitWebSrcGetProperty):
+
 2011-02-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Kent Tamura.
