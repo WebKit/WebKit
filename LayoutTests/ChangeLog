@@ -1,3 +1,15 @@
+2011-02-21  Ami Fischman  <fischman@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Add regression test for clean shutdown during video playback.
+        DumpRenderTree used to crash if the test was ended while a video
+        was still playing.  (http://crbug.com/72730).
+        https://bugs.webkit.org/show_bug.cgi?id=54888
+
+        * media/video-plays-past-end-of-test-expected.txt: Added.
+        * media/video-plays-past-end-of-test.html: Added.
+
 2011-02-21  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
