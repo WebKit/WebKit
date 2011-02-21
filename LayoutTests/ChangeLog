@@ -1,3 +1,13 @@
+2011-02-21  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [Audits] Image dimensions in inline style not checked
+        https://bugs.webkit.org/show_bug.cgi?id=54738
+
+        * inspector/audits/audits-panel-functional-expected.txt:
+        * inspector/audits/audits-panel-functional.html:
+
 2011-02-21  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r79029.

@@ -1,3 +1,13 @@
+2011-02-21  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [Audits] Image dimensions in inline style not checked
+        https://bugs.webkit.org/show_bug.cgi?id=54738
+
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.ImageDimensionsRule.prototype.doRun):
+
 2011-02-21  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

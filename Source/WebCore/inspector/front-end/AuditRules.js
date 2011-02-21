@@ -680,6 +680,14 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
             var widthFound = "width" in styles.styleAttributes;
             var heightFound = "height" in styles.styleAttributes;
 
+            var inlineStyle = styles.inlineStyle;
+            if (inlineStyle) {
+                if (inlineStyle.getPropertyValue("width") !== "")
+                    widthFound = true;
+                if (inlineStyle.getPropertyValue("height") !== "")
+                    heightFound = true;
+            }
+
             for (var i = styles.matchedCSSRules.length - 1; i >= 0 && !(widthFound && heightFound); --i) {
                 var style = styles.matchedCSSRules[i].style;
                 if (style.getPropertyValue("width") !== "")
@@ -687,7 +695,7 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
                 if (style.getPropertyValue("height") !== "")
                     heightFound = true;
             }
-            
+
             if (!widthFound || !heightFound) {
                 if (src in context.urlToNoDimensionCount)
                     ++context.urlToNoDimensionCount[src];
