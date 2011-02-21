@@ -120,7 +120,7 @@ class WorkerMixin(object):
             self._port.stop_websocket_server()
             _log.debug('Releasing server lock ...')
             self._port.release_http_lock()
-            self.has_http_lock = False
+            self._has_http_lock = False
 
     def kill_driver(self):
         if self._driver:
