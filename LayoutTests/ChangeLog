@@ -1,3 +1,9 @@
+2011-02-21  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed added more tests with pixel differences between bots.
+
+        * platform/gtk/Skipped:
+
 2011-02-21  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed expectations change to mark tests as timing out.

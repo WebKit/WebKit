@@ -807,6 +807,7 @@ http/tests/workers/text-encoding.html
 # https://bugs.webkit.org/show_bug.cgi?id=39022
 css1/box_properties/acid_test.html
 fast/css/zoom-body-scroll.html
+fast/css/text-rendering.html
 fast/repaint/moving-shadow-on-container.html
 fast/repaint/moving-shadow-on-path.html
 fast/text/emphasis.html
@@ -819,6 +820,7 @@ svg/custom/recursive-filter.svg
 svg/custom/relative-sized-inner-svg.xhtml
 svg/custom/relative-sized-use-without-attributes-on-symbol.xhtml
 svg/custom/svg-fonts-with-no-element-reference.html
+svg/filters/filteredImage.svg
 svg/filters/parent-children-with-same-filter.svg
 svg/overflow/overflow-on-inner-svg-element.svg
 svg/W3C-SVG-1.1/animate-elem-36-t.svg
