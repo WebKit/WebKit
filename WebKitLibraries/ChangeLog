@@ -1,3 +1,12 @@
+2011-02-21  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Update WebKitSystemInterface.h on Mac. The header that was in the tree didn't
+        match the current WebKitSystemInterface.h.
+
+        * WebKitSystemInterface.h:
+
 2011-02-08  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Roben.
