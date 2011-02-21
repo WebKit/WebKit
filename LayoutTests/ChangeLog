@@ -1,5 +1,14 @@
 2011-02-21  Andrew Wilson  <atwilson@chromium.org>
 
+        Unreviewed expectations change to mark tests as timing out.
+
+        Many tests started timing out on the chrome mac canaries around r79035
+        https://bugs.webkit.org/show_bug.cgi?id=54885
+
+        * platform/chromium/test_expectations.txt:
+
+2011-02-21  Andrew Wilson  <atwilson@chromium.org>
+
         Unreviewed expectations change - ignore styles-update-from-js.html failures on chromium-win.
 
         Web Inspector: inspector/styles/styles-update-from-js.html is sporadically failing on chromium win bots
