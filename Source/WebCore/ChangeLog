@@ -1,3 +1,17 @@
+2011-02-21  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] editing/pasteboard/dataTransfer-setData-getData.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=54895
+
+        Correct the GTK+ clipboard implementation to know that "text" is an alias
+        for "text/html" data. This corrects the failing test.
+
+        * platform/gtk/ClipboardGtk.cpp:
+        (WebCore::dataObjectTypeFromHTMLClipboardType): Accept "text" as well as "Text".
+        (WebCore::ClipboardGtk::types): Advertise "text" as well as "Text".
+
 2011-02-21  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.

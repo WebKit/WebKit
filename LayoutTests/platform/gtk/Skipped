@@ -1325,6 +1325,3 @@ plugins/invalidate_rect.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=54389
 http/tests/misc/generated-content-inside-table.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=54895
-editing/pasteboard/dataTransfer-setData-getData.html

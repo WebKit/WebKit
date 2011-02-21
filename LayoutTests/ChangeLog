@@ -1,3 +1,17 @@
+2011-02-21  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] editing/pasteboard/dataTransfer-setData-getData.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=54895
+
+        Update the results for this test which now includes a few more passing
+        lines. We maintain separate results, because we seem to pass more tests
+        than other platforms.
+
+        * platform/gtk/Skipped: Unskip a test which is now passing.
+        * platform/gtk/editing/pasteboard/dataTransfer-setData-getData-expected.txt:
+
 2011-02-21  Gavin Barraclough  <barraclough@apple.com>
 
         Ruber stamped by Sam Weinig

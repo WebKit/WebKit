@@ -36,6 +36,15 @@ PASS getDataResult is ""
 --- Test set/get 'text/plain':
 PASS getDataResultType is "string"
 PASS getDataResult is "Lorem ipsum dolor sit amet."
+--- Test set 'text/plain', get 'text':
+PASS getDataResultType is "string"
+PASS getDataResult is "Lorem ipsum dolor sit amet."
+--- Test set 'text', get 'text/plain':
+PASS getDataResultType is "string"
+PASS getDataResult is "Lorem ipsum dolor sit amet."
+--- Test set/get 'text':
+PASS getDataResultType is "string"
+PASS getDataResult is "Lorem ipsum dolor sit amet."
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -83,7 +83,7 @@ static ClipboardDataType dataObjectTypeFromHTMLClipboardType(const String& rawTy
     String type(rawType.stripWhiteSpace());
 
     // Two special cases for IE compatibility
-    if (type == "Text")
+    if (type == "Text" || type == "text")
         return ClipboardDataTypeText;
     if (type == "URL")
         return ClipboardDataTypeURL;
@@ -201,6 +201,7 @@ HashSet<String> ClipboardGtk::types() const
     if (m_dataObject->hasText()) {
         types.add("text/plain");
         types.add("Text");
+        types.add("text");
     }
 
     if (m_dataObject->hasMarkup())
