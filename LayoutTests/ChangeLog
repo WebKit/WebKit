@@ -1,3 +1,13 @@
+2011-02-18  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] media/audio-delete-while-slider-thumb-clicked.html still flaky
+        https://bugs.webkit.org/show_bug.cgi?id=54747
+
+        * media/audio-delete-while-slider-thumb-clicked.html: Autoplay the
+        media element and trigger the seek after playback started.
+
 2011-02-21  MORITA Hajime  <morrita@google.com>
 
         Unreviewed expectation update.
