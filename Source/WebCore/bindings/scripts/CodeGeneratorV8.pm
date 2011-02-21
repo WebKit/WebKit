@@ -367,16 +367,14 @@ END
 v8::Handle<v8::Object> ${className}::wrap(${nativeType}* impl${forceNewObjectInput})
 {
 END
-    if ($domMapFunction) {
-        push(@headerContent, "    if (!forceNewObject) {\n") if IsDOMNodeType($interfaceName);
-        my $getWrapper = IsNodeSubType($dataNode) ? "V8DOMWrapper::getWrapper(impl)" : "${domMapFunction}.get(impl)";
-        push(@headerContent, <<END);
+    push(@headerContent, "    if (!forceNewObject) {\n") if IsDOMNodeType($interfaceName);
+    my $getWrapper = IsNodeSubType($dataNode) ? "V8DOMWrapper::getWrapper(impl)" : "${domMapFunction}.get(impl)";
+    push(@headerContent, <<END);
         v8::Handle<v8::Object> wrapper = ${getWrapper};
         if (!wrapper.IsEmpty())
             return wrapper;
 END
-        push(@headerContent, "    }\n") if IsDOMNodeType($interfaceName);
-    }
+    push(@headerContent, "    }\n") if IsDOMNodeType($interfaceName);
     push(@headerContent, <<END);
     return ${className}::wrapSlow(impl);
 }
@@ -2501,11 +2499,9 @@ END
 END
     }
 
-    if ($domMapFunction) {
-        push(@implContent, <<END);
+    push(@implContent, <<END);
     ${domMapFunction}.set(impl, v8::Persistent<v8::Object>::New(wrapper));
 END
-    }
 
     push(@implContent, <<END);
     return wrapper;
@@ -2549,7 +2545,6 @@ sub GetDomMapFunction
     my $type = shift;
     return "getDOMSVGElementInstanceMap()" if $type eq "SVGElementInstance";
     return "getDOMNodeMap()" if ($dataNode && IsNodeSubType($dataNode));
-    return "" if $type eq "DOMImplementation";
     return "getActiveDOMObjectMap()" if IsActiveDomType($type);
     return "getDOMObjectMap()";
 }

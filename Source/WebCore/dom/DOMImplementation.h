@@ -41,12 +41,12 @@ typedef int ExceptionCode;
 
 class DOMImplementation : public RefCounted<DOMImplementation> {
 public:
-    static PassRefPtr<DOMImplementation> create() { return adoptRef(new DOMImplementation); }
+    static PassRefPtr<DOMImplementation> create(Document* ownerDocument) { return adoptRef(new DOMImplementation(ownerDocument)); }
 
     // DOM methods & attributes for DOMImplementation
     static bool hasFeature(const String& feature, const String& version);
-    static PassRefPtr<DocumentType> createDocumentType(const String& qualifiedName, const String& publicId, const String &systemId, ExceptionCode&);
-    static PassRefPtr<Document> createDocument(const String& namespaceURI, const String& qualifiedName, DocumentType*, ExceptionCode&);
+    PassRefPtr<DocumentType> createDocumentType(const String& qualifiedName, const String& publicId, const String& systemId, ExceptionCode&);
+    PassRefPtr<Document> createDocument(const String& namespaceURI, const String& qualifiedName, DocumentType*, ExceptionCode&);
 
     DOMImplementation* getInterface(const String& feature);
 
@@ -54,7 +54,7 @@ public:
     static PassRefPtr<CSSStyleSheet> createCSSStyleSheet(const String& title, const String& media, ExceptionCode&);
 
     // From the HTMLDOMImplementation interface
-    static PassRefPtr<HTMLDocument> createHTMLDocument(const String& title);
+    PassRefPtr<HTMLDocument> createHTMLDocument(const String& title);
 
     // Other methods (not part of DOM)
     static PassRefPtr<Document> createDocument(const String& MIMEType, Frame*, const KURL&, bool inViewSourceMode);
@@ -62,8 +62,13 @@ public:
     static bool isXMLMIMEType(const String& MIMEType);
     static bool isTextMIMEType(const String& MIMEType);
 
+    Document* ownerDocument() { return m_ownerDocument; }
+    void ownerDocumentDestroyed() { m_ownerDocument = 0; }
+
 private:
-    DOMImplementation() { }
+    DOMImplementation(Document* ownerDocument);
+
+    Document* m_ownerDocument;
 };
 
 } //namespace

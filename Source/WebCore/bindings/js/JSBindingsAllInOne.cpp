@@ -56,6 +56,7 @@
 #include "JSDOMBinding.cpp"
 #include "JSDOMFormDataCustom.cpp"
 #include "JSDOMGlobalObject.cpp"
+#include "JSDOMImplementationCustom.cpp"
 #include "JSDOMMimeTypeArrayCustom.cpp"
 #include "JSDOMPluginArrayCustom.cpp"
 #include "JSDOMPluginCustom.cpp"

@@ -602,6 +602,9 @@ Document::~Document()
 
     if (m_mediaQueryMatcher)
         m_mediaQueryMatcher->documentDestroyed();
+
+    if (m_implementation)
+        m_implementation->ownerDocumentDestroyed();
 }
 
 MediaQueryMatcher* Document::mediaQueryMatcher()
@@ -683,10 +686,10 @@ void Document::setDocType(PassRefPtr<DocumentType> docType)
         m_docType->setDocument(this);
 }
 
-DOMImplementation* Document::implementation() const
+DOMImplementation* Document::implementation()
 {
     if (!m_implementation)
-        m_implementation = DOMImplementation::create();
+        m_implementation = DOMImplementation::create(this);
     return m_implementation.get();
 }
 

@@ -87,6 +87,7 @@ LOCAL_SRC_FILES += \
 	bindings/js/JSDOMBinding.cpp \
 	bindings/js/JSDOMFormDataCustom.cpp \
 	bindings/js/JSDOMGlobalObject.cpp \
+	bindings/js/JSDOMImplementationCustom.cpp \
 	bindings/js/JSDOMSettableTokenList.cpp \
 	bindings/js/JSDOMTokenList.cpp \
 	bindings/js/JSDOMWindowBase.cpp \

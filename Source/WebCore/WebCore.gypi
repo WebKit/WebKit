@@ -617,6 +617,7 @@
             'bindings/js/JSDOMBinding.h',
             'bindings/js/JSDOMGlobalObject.cpp',
             'bindings/js/JSDOMGlobalObject.h',
+            'bindings/js/JSDOMImplementationCustom.cpp',
             'bindings/js/JSDOMStringMapCustom.cpp',
             'bindings/js/JSDOMStringMapCustom.h',
             'bindings/js/JSDOMWindowBase.cpp',

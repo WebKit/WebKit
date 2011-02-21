@@ -290,6 +290,7 @@ public:
         if (node->isDocumentNode()) {
             Document* document = reinterpret_cast<Document*>(node);
             addDOMObjectToGroup(store, groupId, document->styleSheets());
+            addDOMObjectToGroup(store, groupId, document->implementation());
         }
 
         WrapperTypeInfo* typeInfo = V8DOMWrapper::domWrapperType(wrapper);

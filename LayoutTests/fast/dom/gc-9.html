@@ -83,6 +83,13 @@ function testEvents()
     }
 }
 
+function testDOMImplementation()
+{
+  var impl = document.implementation.createHTMLDocument('').implementation;
+  gc();
+  impl.createHTMLDocument('');  // May crash or throw an exception if we collect parent document of impl.
+}
+
 function test() 
 {
     if (window.layoutTestController)
@@ -97,6 +104,7 @@ function test()
     testPropertiesAgain();
 
     testEvents();
+    testDOMImplementation();
 }
 
 // By default, we expect that custom properties are not allowed.

@@ -306,7 +306,7 @@ public:
 
     DocumentType* doctype() const { return m_docType.get(); }
 
-    DOMImplementation* implementation() const;
+    DOMImplementation* implementation();
     
     Element* documentElement() const
     {

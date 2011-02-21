@@ -20,7 +20,9 @@
 
 module core {
 
-    interface DOMImplementation {
+    interface [
+        CustomMarkFunction
+    ] DOMImplementation {
 
         // DOM Level 1
 
