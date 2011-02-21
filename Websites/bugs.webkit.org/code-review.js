@@ -425,7 +425,15 @@ var CODE_REVIEW_UNITTEST;
     descriptor = comments.length + ' comment';
     if (comments.length > 1)
       descriptor += 's';
-    $('.help').append(' This patch has ' + descriptor + '.  Scroll through them with the "n" and "p" keys.');
+    $('.help .more').before(' This patch has ' + descriptor + '.  Scroll through them with the "n" and "p" keys. ');
+  }
+  
+  function showMoreHelp() {
+    $('.more-help').removeClass('inactive');
+  }
+  
+  function hideMoreHelp() {
+    $('.more-help').addClass('inactive');
   }
 
   function scanForStyleQueueComments(text) {
@@ -1054,6 +1062,21 @@ var CODE_REVIEW_UNITTEST;
     $(document.body).prepend('<div id="message">' +
         '<div class="help">Select line numbers to add a comment. Scroll though diffs with the "j" and "k" keys.' +
           '<div class="DiffLinks LinkContainer">' + diffLinksHtml() + '</div>' +
+          '<a href="javascript:" class="more">[more]</a>' +
+          '<div class="more-help inactive">' +
+            '<div class="winter"></div>' +
+            '<div class="lightbox"><table>' +
+              '<tr><td>enter</td><td>add/edit comment for focused item</td></tr>' +
+              '<tr><td>escape</td><td>accept current comment / close preview and help popups</td></tr>' +
+              '<tr><td>j</td><td>focus next diff</td></tr>' +
+              '<tr><td>k</td><td>focus previous diff</td></tr>' +
+              '<tr><td>shift + j</td><td>focus next line</td></tr>' +
+              '<tr><td>shift + k</td><td>focus previous line</td></tr>' +
+              '<tr><td>n</td><td>focus next comment</td></tr>' +
+              '<tr><td>p</td><td>focus previous comment</td></tr>' +
+              '<tr><td>r</td><td>focus review select element</td></tr>' +
+            '</table></div>' +
+          '</div>' +
         '</div>' +
         '</div>');
     $(document.body).append('<div id="toolbar">' +
@@ -1339,6 +1362,8 @@ var CODE_REVIEW_UNITTEST;
   $('.frozenComment').live('click', handleUnfreezeComment);
   $('.comment .discard').live('click', handleDiscardComment);
   $('.comment .ok').live('click', handleAcceptComment);
+  $('.more').live('click', showMoreHelp);
+  $('.more-help .winter').live('click', hideMoreHelp);
 
   function freezeComment(comment_block) {
     var comment_textarea = comment_block.find('textarea');
@@ -1443,6 +1468,11 @@ var CODE_REVIEW_UNITTEST;
       
     case KEY_CODE.enter:
       handled = handleEnterKeyPress();
+      break;
+      
+    case KEY_CODE.escape:
+      hideMoreHelp();
+      handled = true;
       break;
     }
     

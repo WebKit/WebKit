@@ -2,6 +2,15 @@
 
         Reviewed by Adam Barth.
 
+        [codereviewtool] add more help information
+        https://bugs.webkit.org/show_bug.cgi?id=54847
+
+        * code-review.js:
+
+2011-02-20  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
         [codereviewtool] use 'r' to focus the review select element
         https://bugs.webkit.org/show_bug.cgi?id=54845
 
