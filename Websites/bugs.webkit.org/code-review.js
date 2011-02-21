@@ -1387,8 +1387,8 @@ var CODE_REVIEW_UNITTEST;
   }
 
   $('textarea').live('keydown', function(e) {
-    var unicode_escape = 'U+001B';
-    if (e.keyIdentifier == unicode_escape)
+    var escape_key_code = 27;
+    if (e.keyCode == escape_key_code)
       handleEscapeKeyDownInTextarea(this);
   });
 

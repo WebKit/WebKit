@@ -2,6 +2,19 @@
 
         Reviewed by Adam Barth.
 
+        fix escape handling in code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=54722
+
+        This broke with http://trac.webkit.org/changeset/78948.
+        Apparently jquery events get a wrapped object that
+        does not expose keyIdentifier.
+
+        * code-review.js:
+
+2011-02-17  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
         create comments when hitting enter with a focused diff
         https://bugs.webkit.org/show_bug.cgi?id=54719
 
