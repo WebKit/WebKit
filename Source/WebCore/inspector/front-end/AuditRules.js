@@ -83,6 +83,8 @@ WebInspector.AuditRules.GzipRule.prototype = {
         var summary = result.addChild("", true);
         for (var i = 0, length = resources.length; i < length; ++i) {
             var resource = resources[i];
+            if (resource.statusCode === 304)
+                continue; // Do not test 304 Not Modified resources as their contents are always empty.
             if (this._shouldCompress(resource)) {
                 var size = resource.resourceSize;
                 candidateSize += size;
@@ -104,8 +106,11 @@ WebInspector.AuditRules.GzipRule.prototype = {
 
     _isCompressed: function(resource)
     {
-        var encoding = resource.responseHeaders["Content-Encoding"];
-        return encoding === "gzip" || encoding === "deflate";
+        var encodingHeader = resource.responseHeaders["Content-Encoding"];
+        if (!encodingHeader)
+            return false;
+
+        return /\b(?:gzip|deflate)\b/.test(encodingHeader);
     },
 
     _shouldCompress: function(resource)
