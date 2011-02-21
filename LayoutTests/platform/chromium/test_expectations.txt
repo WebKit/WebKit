@@ -3473,25 +3473,26 @@ BUGATWILSON : svg/W3C-SVG-1.1-SE/coords-units-03-b.svg = IMAGE+TEXT
 BUGATWILSON WIN LINUX : compositing/reflections/deeply-nested-reflections.html = IMAGE+TEXT
 
 // No rebaseline files in archive for some reason - try to add them later.
-// morrita: Some tests are flaky (non-deterministic result) so marked then FAIL.
 BUGATWILSON :  fast/dom/HTMLElement/attr-dir-auto-change-before-text-node.html = TEXT
 BUGATWILSON :  fast/dom/HTMLElement/attr-dir-auto-change-child-node.html = TEXT
 BUGATWILSON :  fast/dom/HTMLElement/attr-dir-auto-change-text.html = TEXT
 BUGATWILSON :  fast/dom/HTMLElement/attr-dir-auto-remove-add-children.html = TEXT
 BUGATWILSON :  fast/dom/HTMLElement/attr-dir-auto.html = TEXT
 BUGATWILSON :  fast/dom/HTMLElement/attr-dir-value-change.html = TEXT
-BUGWK54736 MAC : css2.1/t1202-counter-04-b.html = FAIL
-BUGWK54736 MAC : css2.1/t1202-counters-04-b.html = FAIL
-BUGWK54736 MAC : fast/blockflow/border-vertical-lr.html = FAIL
-BUGWK54736 MAC : fast/forms/basic-selects.html = FAIL
-BUGWK54736 MAC : fast/forms/file-input-direction.html = FAIL
+// morrita: In addition, some tests are flaky between IMAGE, TEXT and IMAGE+TEXT. So marked then FAIL at this time.
+BUGWK54736 MAC : css2.1/t1202-counter-04-b.html = FAIL PASS
+BUGWK54736 MAC : css2.1/t1202-counters-04-b.html = FAIL PASS
+BUGWK54736 MAC : fast/blockflow/border-vertical-lr.html = FAIL PASS
+BUGWK54736 MAC : fast/forms/basic-selects.html = FAIL PASS
+BUGWK54736 MAC : fast/forms/file-input-direction.html = FAIL PASS
+BUGWK54736 MAC : fast/text/international/bidi-neutral-run.html = FAIL PASS
+BUGWK54736 MAC : fast/text/international/pop-up-button-text-alignment-and-direction.html = FAIL PASS
+BUGWK54736 MAC : svg/zoom/page/zoom-hixie-mixed-008.xml = FAIL PASS
+
 BUGWK54736 MAC : fast/speech/input-appearance-speechbutton.html = IMAGE+TEXT
 BUGWK54736 MAC : fast/text/international/bidi-AN-after-L.html = IMAGE
 BUGWK54736 MAC : fast/text/international/bidi-mirror-he-ar.html = IMAGE+TEXT
-BUGWK54736 MAC : fast/text/international/bidi-neutral-run.html = TEXT
-BUGWK54736 MAC : fast/text/international/pop-up-button-text-alignment-and-direction.html = TEXT
 BUGWK54736 MAC : fast/text/international/text-combine-image-test.html = IMAGE+TEXT
-BUGWK54736 MAC : svg/zoom/page/zoom-hixie-mixed-008.xml = TEXT
 BUGWK54736 MAC : compositing/reflections/deeply-nested-reflections.html = IMAGE
 BUGWK54736 MAC : css1/box_properties/clear_float.html = IMAGE
 BUGWK54736 MAC : css1/box_properties/float_elements_in_series.html = IMAGE
