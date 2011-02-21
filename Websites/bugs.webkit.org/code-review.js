@@ -1471,7 +1471,7 @@ var CODE_REVIEW_UNITTEST;
       return true;
     }
 
-    var lines = $('.Line', focused);
+    var lines = focused.hasClass('Line') ? focused : $('.Line', focused);
     var last = lines.last();
     if (last.attr('data-has-comment')) {
       unfreezeCommentFor(last);
