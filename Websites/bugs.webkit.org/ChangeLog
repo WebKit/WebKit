@@ -1,5 +1,11 @@
 2011-02-20  Ojan Vafai  <ojan@chromium.org>
 
+        Recommit accidental revert.
+        r79180 accidentally revereted r79178.
+        * code-review.js:
+
+2011-02-20  Ojan Vafai  <ojan@chromium.org>
+
         Reviewed by Adam Barth.
 
         [codereviewtool] add more help information
