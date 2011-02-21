@@ -400,6 +400,7 @@ v8 {
         bindings/js/JSDOMBinding.cpp \
         bindings/js/JSDOMFormDataCustom.cpp \
         bindings/js/JSDOMGlobalObject.cpp \
+        bindings/js/JSDOMImplementationCustom.cpp \
         bindings/js/JSDOMMimeTypeArrayCustom.cpp \
         bindings/js/JSDOMPluginArrayCustom.cpp \
         bindings/js/JSDOMPluginCustom.cpp \
@@ -1396,7 +1397,6 @@ v8 {
         bindings/js/JSCustomXPathNSResolver.h \
         bindings/js/JSDOMBinding.h \
         bindings/js/JSDOMGlobalObject.h \
-        bindings/js/JSDOMImplementationCustom.h \
         bindings/js/JSDOMStringMapCustom.h \
         bindings/js/JSDOMWindowBase.h \
         bindings/js/JSDOMWindowCustom.h \
