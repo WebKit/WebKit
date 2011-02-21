@@ -1,3 +1,17 @@
+2011-02-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Initialize DrawingAreaProxy::m_size
+        https://bugs.webkit.org/show_bug.cgi?id=54913
+
+        This was removed in r76962 since it caused flashes when switching drawing areas due to
+        entering and exiting composited mode, but since we no longer switch drawing areas we can
+        put it back.
+
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::DrawingAreaProxy):
+
 2011-02-21  Adam Roben  <aroben@apple.com>
 
         Add some assertions about the state IDs we receive from the web process
