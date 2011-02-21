@@ -240,7 +240,7 @@ namespace JSC {
 
         static size_t offsetOfInlineStorage();
         
-        static const ClassInfo s_info;
+        static JS_EXPORTDATA const ClassInfo s_info;
 
     protected:
         static PassRefPtr<Structure> createStructure(JSValue prototype)

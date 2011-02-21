@@ -1,3 +1,16 @@
+2011-02-21  Adam Roben  <aroben@apple.com>
+
+        Export JSObject::s_info from JavaScriptCore.dll
+
+        This matches what we do for all other ClassInfo objects that WebCore needs access to.
+
+        Fixes <http://webkit.org/b/54881> REGRESSION (r79132): Lots of tests crashing in
+        JSCell::inherits on Windows
+
+        Reviewed by Sam Weinig.
+
+        * runtime/JSObject.h: Added JS_EXPORTDATA to s_info.
+
 2011-02-21  Kristian Amlie  <kristian.amlie@nokia.com>
 
         Reviewed by Andreas Kling.
