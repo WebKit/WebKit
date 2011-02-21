@@ -1,3 +1,15 @@
+2011-02-21  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed expectation update.
+
+        * platform/chromium-linux/animations/3d/matrix-transform-type-animation-expected.checksum: Added.
+        * platform/chromium-linux/animations/3d/matrix-transform-type-animation-expected.png: Added.
+        * platform/chromium-mac/animations/3d/matrix-transform-type-animation-expected.checksum: Added.
+        * platform/chromium-mac/animations/3d/matrix-transform-type-animation-expected.png: Added.
+        * platform/chromium-win/animations/3d/matrix-transform-type-animation-expected.checksum: Added.
+        * platform/chromium-win/animations/3d/matrix-transform-type-animation-expected.png: Added.
+        * platform/chromium-win/animations/3d/matrix-transform-type-animation-expected.txt: Added.
+
 2011-02-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
