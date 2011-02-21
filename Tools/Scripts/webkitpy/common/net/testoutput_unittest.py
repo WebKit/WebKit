@@ -22,7 +22,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
 import re
+import sys
 import testoutput
 import unittest
 
@@ -60,10 +62,19 @@ class FakeTestOutput(testoutput.TestOutput):
 
 class TestOutputTest(unittest.TestCase):
     def _check_name(self, filename, expected_test_name):
+        # FIXME: should consider using MockFileSystem here so as to not
+        # have to worry about platform-specific path separators.
+        if sys.platform == 'win32':
+            filename = filename.replace('/', os.path.sep)
+            expected_test_name = expected_test_name.replace('/', os.path.sep)
         r = testoutput.TextTestOutput(None, FakeFile(filename))
         self.assertEquals(expected_test_name, r.name())
 
     def _check_platform(self, filename, expected_platform):
+        # FIXME: should consider using MockFileSystem here so as to not
+        # have to worry about platform-specific path separators.
+        if sys.platform == 'win32':
+            filename = filename.replace('/', os.path.sep)
         r = testoutput.TextTestOutput(None, FakeFile(filename))
         self.assertEquals(expected_platform, r.platform())
 

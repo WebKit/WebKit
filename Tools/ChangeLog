@@ -1,3 +1,38 @@
+2011-02-20  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Fix various bugs related to handling of dir separators and real
+        vs. fake filesystems that were causing test-webkitpy to fail
+        tests on win32. These bugs have a variety of causes but are
+        lumped together because they should be easy to review.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54700
+
+        * Scripts/webkitpy/common/net/testoutput.py:
+          Here we were using os.path.sep but not escaping it prior to
+          using in a regexp, which  caused bad things on win32.
+        * Scripts/webkitpy/common/net/testoutput_unittest.py:
+          Same here.
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+          Here we were using the native filesystem instead of the mock
+          filesystem, making some tests unnecessarily platform dependent.
+          Also we weren't setting the default configuration for the
+          TestChromiumWinPort.
+        * Scripts/webkitpy/layout_tests/update_webgl_conformance_tests.py:
+          Here we *shouldn't* use os.path.join(), just so the code becomes
+          less platform dependent.
+        * Scripts/webkitpy/style/checker.py:
+          Here we should be using os.path.sep instead of "/"; the tests
+          require the native filesystem.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+          Here the underlying code is using os.path.sep, so we probably
+          should as well.
+        * Scripts/webkitpy/style/test_expectations_unittest.py:
+          Here we should be using the filesystem hanging of the port
+          object (which is the mocked filesystem) rather than the native
+          one.
+
 2011-02-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Maciej Stachowiak.

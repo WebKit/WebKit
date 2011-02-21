@@ -53,7 +53,9 @@ def translate_includes(text):
 
     for filename, path in include_mapping.items():
         search = r'(?:[^"\'= ]*/)?' + re.escape(filename)
-        replace = os.path.join(path, filename)
+        # We use '/' instead of os.path.join in order to produce consistent
+        # output cross-platform.
+        replace = path + '/' + filename
         text = re.sub(search, replace, text)
 
     return text

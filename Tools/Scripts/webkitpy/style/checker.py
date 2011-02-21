@@ -256,7 +256,7 @@ _SKIPPED_FILES_WITH_WARNING = [
 # This list should be in addition to files with FileType.NONE.  Files
 # with FileType.NONE are automatically skipped without warning.
 _SKIPPED_FILES_WITHOUT_WARNING = [
-    "LayoutTests/",
+    "LayoutTests" + os.path.sep,
     ]
 
 # Extensions of files which are allowed to contain carriage returns.
@@ -478,7 +478,7 @@ class CheckerDispatcher(object):
         elif file_extension in _XML_FILE_EXTENSIONS:
             return FileType.XML
         elif (os.path.basename(file_path).startswith('ChangeLog') or
-              (not file_extension and "Tools/Scripts/" in file_path) or
+              (not file_extension and os.path.join("Tools", "Scripts") in file_path) or
               file_extension in _TEXT_FILE_EXTENSIONS):
             return FileType.TEXT
         else:

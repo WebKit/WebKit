@@ -1002,9 +1002,9 @@ class CppStyleTest(CppStyleTestBase):
         mock_header_contents = ['']
         message = self.perform_include_what_you_use(
             '''#include "config.h"
-               #include "%s/a.h"
+               #include "%s%sa.h"
 
-               std::set<int> foo;''' % os.path.basename(os.getcwd()),
+               std::set<int> foo;''' % (os.path.basename(os.getcwd()), os.path.sep),
             filename='a.cpp',
             io=MockIo(mock_header_contents))
         self.assertEquals(message, 'Add #include <set> for set<>  '

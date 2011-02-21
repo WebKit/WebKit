@@ -67,7 +67,7 @@ class TestExpectationsTestCase(unittest.TestCase):
     def setUp(self):
         self._error_collector = ErrorCollector()
         port_obj = port.get('test')
-        self._test_file = os.path.join(port_obj.layout_tests_dir(), 'passes/text.html')
+        self._test_file = port_obj._filesystem.join(port_obj.layout_tests_dir(), 'passes/text.html')
 
     def process_expectations(self, expectations, overrides=None):
         self._checker = TestExpectationsChecker()

@@ -48,13 +48,13 @@ class TestOutput(object):
 
     def _extract_platform(self, filename):
         """Calculates the platform from the name of the file if it isn't known already"""
-        path = re.split(os.path.sep, filename)
+        path = filename.split(os.path.sep)
         if 'platform' in path:
             return path[path.index('platform') + 1]
         return None
 
     def _extract_test_name(self, filename):
-        path = re.split(os.path.sep, filename)
+        path = filename.split(os.path.sep)
         if 'LayoutTests' in path:
             path = path[1 + path.index('LayoutTests'):]
         if 'layout-test-results' in path:
