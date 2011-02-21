@@ -1,3 +1,9 @@
+2011-02-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Put JSDOMImplementationCustom.cpp where it belongs in the project.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2011-02-21  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

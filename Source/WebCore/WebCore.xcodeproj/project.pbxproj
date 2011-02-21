@@ -7007,7 +7007,7 @@
 		1CFAE3220A6D6A3F0032593D /* libobjc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libobjc.dylib; path = /usr/lib/libobjc.dylib; sourceTree = "<absolute>"; };
 		20D629241253690B00081543 /* InspectorInstrumentation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorInstrumentation.cpp; sourceTree = "<group>"; };
 		20D629251253690B00081543 /* InspectorInstrumentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorInstrumentation.h; sourceTree = "<group>"; };
-		22885E631301AE4C00526E68 /* JSDOMImplementationCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSDOMImplementationCustom.cpp; path = bindings/js/JSDOMImplementationCustom.cpp; sourceTree = "<group>"; };
+		22885E631301AE4C00526E68 /* JSDOMImplementationCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMImplementationCustom.cpp; sourceTree = "<group>"; };
 		228C284410D82500009D0D0E /* ScriptWrappable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptWrappable.h; sourceTree = "<group>"; };
 		2442BBF81194C9D300D49469 /* HashChangeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HashChangeEvent.h; sourceTree = "<group>"; };
 		24F54EAA101FE914000AE741 /* ApplicationCacheHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApplicationCacheHost.cpp; sourceTree = "<group>"; };
@@ -12423,7 +12423,6 @@
 		0867D691FE84028FC02AAC07 /* WebKit */ = {
 			isa = PBXGroup;
 			children = (
-				22885E631301AE4C00526E68 /* JSDOMImplementationCustom.cpp */,
 				65C97AF208EA908800ACD273 /* config.h */,
 				EDEC98020AED7E170059137F /* WebCorePrefix.h */,
 				9307061309E0CA8200B17FE4 /* DerivedSources.make */,
@@ -17757,6 +17756,7 @@
 				93B70D4809EB0C7C009D8468 /* JSDOMBinding.h */,
 				E1C36CBC0EB08062007410BC /* JSDOMGlobalObject.cpp */,
 				E1C36C020EB076D6007410BC /* JSDOMGlobalObject.h */,
+				22885E631301AE4C00526E68 /* JSDOMImplementationCustom.cpp */,
 				BC6932710D7E293900AE44D1 /* JSDOMWindowBase.cpp */,
 				BC6932720D7E293900AE44D1 /* JSDOMWindowBase.h */,
 				BCBFB53A0DCD29CF0019B3E5 /* JSDOMWindowShell.cpp */,
@@ -22543,6 +22543,7 @@
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
 			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
