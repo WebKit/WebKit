@@ -2,6 +2,16 @@
 
         Reviewed by Ojan Vafai.
 
+        test-webkitpy: stop skipping a bunch of tests on win32
+        https://bugs.webkit.org/show_bug.cgi?id=54788
+
+        * Scripts/webkitpy/common/net/testoutputset_unittest.py:
+        * Scripts/webkitpy/test/main.py:
+
+2011-02-20  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
         Fix various bugs related to handling of dir separators and real
         vs. fake filesystems that were causing test-webkitpy to fail
         tests on win32. These bugs have a variety of causes but are

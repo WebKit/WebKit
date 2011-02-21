@@ -22,6 +22,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import sys
+
 from webkitpy.common.system.zip_mock import MockZip
 import testoutputset
 import unittest
@@ -72,6 +74,11 @@ class TestOutputSetTest(unittest.TestCase):
         self.assertEquals(2, len(b.outputs_for('fast/dom/test')))
 
     def test_can_infer_platform_from_path_if_none_provided(self):
+        # FIXME: unclear what the right behavior on win32 is.
+        # https://bugs.webkit.org/show_bug.cgi?id=54525.
+        if sys.platform == 'win32':
+            return
+
         zip = MockZip()
         zip.insert('platform/win/some-test-expected.png', '<image data>')
         zip.insert('platform/win/some-test-expected.checksum', 'abc123')

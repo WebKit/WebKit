@@ -83,26 +83,14 @@ class Tester(object):
         # FIXME: Remove this once https://bugs.webkit.org/show_bug.cgi?id=54526 is resolved.
         if any([module_path.startswith(package) for package in [
             'webkitpy.tool',
-            'webkitpy.style',
-            'webkitpy.common.net',
             'webkitpy.common.checkout',
             'webkitpy.common.config',
             ]]):
             return False
 
         return module_path not in [
-            # FIXME: Remove this when https://bugs.webkit.org/show_bug.cgi?id=54525 is resolved.
-            'webkitpy.common.net.testoutputset_unittest',
-
             # FIXME: This file also requires common.checkout to work
             'webkitpy.layout_tests.deduplicate_tests_unittest',
-
-            'webkitpy.common.prettypatch_unittest',
-            'webkitpy.layout_tests.update_webgl_conformance_tests_unittest',
-            'webkitpy.layout_tests.port.mac_unittest',
-            'webkitpy.layout_tests.port.chromium_unittest',
-            'webkitpy.layout_tests.port.mock_drt_unittest',
-            'webkitpy.layout_tests.port.config_unittest',
         ]
 
     def run_tests(self, sys_argv, external_package_paths=None):
