@@ -178,6 +178,7 @@ TestNetscapePlugin_libtestnetscapeplugin_la_SOURCES = \
 	Tools/DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/DocumentOpenInDestroyStream.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/EvaluateJSAfterRemovingPluginElement.cpp \
+	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/GetURLWithJavaScriptURLDestroyingPlugin.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/GetUserAgentWithNullNPPFromNPPNew.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/NPRuntimeObjectFromDestroyedPlugin.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/NPRuntimeRemoveProperty.cpp \
