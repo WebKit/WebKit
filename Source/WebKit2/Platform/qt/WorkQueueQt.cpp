@@ -111,9 +111,11 @@ void WorkQueue::scheduleWork(PassOwnPtr<WorkItem> item)
     itemQt->moveToThread(m_workThread);
 }
 
-void WorkQueue::scheduleWorkAfterDelay(PassOwnPtr<WorkItem>, double)
+void WorkQueue::scheduleWorkAfterDelay(PassOwnPtr<WorkItem> item, double delayInSecond)
 {
-    notImplemented();
+    WorkQueue::WorkItemQt* itemQt = new WorkQueue::WorkItemQt(this, item.leakPtr());
+    itemQt->startTimer(static_cast<int>(delayInSecond * 1000));
+    itemQt->moveToThread(m_workThread);
 }
 
 void WorkQueue::scheduleWorkOnTermination(WebKit::PlatformProcessIdentifier process, PassOwnPtr<WorkItem> workItem)
