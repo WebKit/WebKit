@@ -2,19 +2,19 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578
-      RenderTable {TABLE} at (0,0) size 784x48 [bgcolor=#00FF00] [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x46
-          RenderTableRow {TR} at (0,2) size 782x42
-            RenderTableCell {TD} at (2,2) size 388x42 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 373x38
-                text run at (2,2) width 373: "Here is a table using the CLASS attribute. The table should"
-                text run at (2,21) width 156: "have a lime background."
-            RenderTableCell {TD} at (392,2) size 388x42 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 373x38
-                text run at (2,2) width 373: "Here is a table using the CLASS attribute. The table should"
-                text run at (2,21) width 156: "have a lime background."
-      RenderBlock {P} at (0,62) size 784x38 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 760x38
-          text run at (0,0) width 760: "This is a paragraph using the CLASS attribute. The paragraph should have a lime background. This paragraph validates"
-          text run at (0,19) width 334: "that the CLASS attribute works for multiple elements."
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderTable {TABLE} at (0,0) size 784x52 [bgcolor=#00FF00] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x50
+          RenderTableRow {TR} at (0,2) size 782x46
+            RenderTableCell {TD} at (2,2) size 388x46 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 353x42
+                text run at (2,2) width 353: "Here is a table using the CLASS attribute. The table"
+                text run at (2,23) width 216: "should have a lime background."
+            RenderTableCell {TD} at (392,2) size 388x46 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 353x42
+                text run at (2,2) width 353: "Here is a table using the CLASS attribute. The table"
+                text run at (2,23) width 216: "should have a lime background."
+      RenderBlock {P} at (0,68) size 784x42 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 761x42
+          text run at (0,0) width 761: "This is a paragraph using the CLASS attribute. The paragraph should have a lime background. This paragraph"
+          text run at (0,21) width 430: "validates that the CLASS attribute works for multiple elements."

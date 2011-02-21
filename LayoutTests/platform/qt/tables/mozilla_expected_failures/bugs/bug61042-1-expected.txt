@@ -3,29 +3,29 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x140
-        RenderTable {TABLE} at (78,0) size 627x140 [bgcolor=#0000FF] [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 625x138
-            RenderTableRow {TR} at (0,2) size 625x134
-              RenderTableCell {TD} at (2,2) size 621x134 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderBlock (anonymous) at (2,2) size 617x19
-                  RenderText {#text} at (0,0) size 41x19
-                    text run at (0,0) width 41: "before"
-                RenderTable {TABLE} at (2,21) size 617x92 [bgcolor=#FF0000] [border: (1px outset #808080)]
-                  RenderTableSection {TBODY} at (1,1) size 615x90
-                    RenderTableRow {TR} at (0,2) size 615x23
-                      RenderTableCell {TD} at (2,2) size 386x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                        RenderText {#text} at (2,2) size 266x19
-                          text run at (2,2) width 266: "This is some text. This is some text. Cell 1"
-                      RenderTableCell {TD} at (390,2) size 223x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                        RenderText {#text} at (2,2) size 151x19
-                          text run at (2,2) width 151: "This is some text. Cell 2"
-                    RenderTableRow {TR} at (0,27) size 615x61
-                      RenderTableCell {TD} at (2,27) size 611x61 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
-                        RenderText {#text} at (2,2) size 602x57
-                          text run at (2,2) width 602: "This is some text. This is some text. This is some text. This is some text. This is some text. This"
-                          text run at (2,21) width 585: "is some text. This is some text. This is some text. This is some text. This is some text. This is"
-                          text run at (2,40) width 411: "some text. This is some text. This is some text. This is some text."
-                RenderBlock (anonymous) at (2,113) size 617x19
-                  RenderText {#text} at (0,0) size 29x19
-                    text run at (0,0) width 29: "after"
+      RenderBlock {DIV} at (0,0) size 784x152
+        RenderTable {TABLE} at (78,0) size 627x152 [bgcolor=#0000FF] [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 625x150
+            RenderTableRow {TR} at (0,2) size 625x146
+              RenderTableCell {TD} at (2,2) size 621x146 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderBlock (anonymous) at (2,2) size 617x21
+                  RenderText {#text} at (0,0) size 43x21
+                    text run at (0,0) width 43: "before"
+                RenderTable {TABLE} at (2,23) size 617x100 [bgcolor=#FF0000] [border: (1px outset #808080)]
+                  RenderTableSection {TBODY} at (1,1) size 615x98
+                    RenderTableRow {TR} at (0,2) size 615x25
+                      RenderTableCell {TD} at (2,2) size 386x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                        RenderText {#text} at (2,2) size 277x21
+                          text run at (2,2) width 277: "This is some text. This is some text. Cell 1"
+                      RenderTableCell {TD} at (390,2) size 223x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                        RenderText {#text} at (2,2) size 158x21
+                          text run at (2,2) width 158: "This is some text. Cell 2"
+                    RenderTableRow {TR} at (0,29) size 615x67
+                      RenderTableCell {TD} at (2,29) size 611x67 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
+                        RenderText {#text} at (2,2) size 591x63
+                          text run at (2,2) width 591: "This is some text. This is some text. This is some text. This is some text. This is some text."
+                          text run at (2,23) width 591: "This is some text. This is some text. This is some text. This is some text. This is some text."
+                          text run at (2,44) width 472: "This is some text. This is some text. This is some text. This is some text."
+                RenderBlock (anonymous) at (2,123) size 617x21
+                  RenderText {#text} at (0,0) size 32x21
+                    text run at (0,0) width 32: "after"

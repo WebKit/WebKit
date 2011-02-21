@@ -3,36 +3,37 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 224x19
-          text run at (0,0) width 224: "cell split with color (standard mode)"
-      RenderTable {TABLE} at (0,19) size 30x29 [border: (1px outset #808080)]
-        RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#FF0000]
-        RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#0000FF]
-        RenderTableSection {TBODY} at (1,1) size 28x27
-          RenderTableRow {TR} at (0,2) size 28x23
-            RenderTableCell {TD} at (2,2) size 24x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderText {#text} at (2,2) size 20x19
-                text run at (2,2) width 20: "foo"
-      RenderBlock (anonymous) at (0,48) size 784x19
-        RenderBR {BR} at (0,0) size 0x19
-      RenderBlock {HR} at (0,74) size 602x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,83) size 784x19
-        RenderBR {BR} at (0,0) size 0x19
-      RenderTable {TABLE} at (0,102) size 600x113
-        RenderTableSection {TBODY} at (0,0) size 600x113
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 242x21
+          text run at (0,0) width 242: "cell split with color (standard mode)"
+      RenderTable {TABLE} at (0,21) size 31x31 [border: (1px outset #808080)]
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#FF0000]
+          RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#0000FF]
+        RenderTableSection {TBODY} at (1,1) size 29x29
+          RenderTableRow {TR} at (0,2) size 29x25
+            RenderTableCell {TD} at (2,2) size 25x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderText {#text} at (2,2) size 21x21
+                text run at (2,2) width 21: "foo"
+      RenderBlock (anonymous) at (0,52) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderBlock {HR} at (0,81) size 602x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,91) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderTable {TABLE} at (0,112) size 600x119
+        RenderTableSection {TBODY} at (0,0) size 600x119
           RenderTableRow {TR} at (0,2) size 600x44
             RenderTableCell {TD} at (2,2) size 594x44 [r=0 c=0 rs=1 cs=3]
-              RenderImage {IMG} at (7,1) size 579x42
+              RenderImage {IMG} at (8,1) size 579x42
               RenderText {#text} at (0,0) size 0x0
-          RenderTableRow {TR} at (0,48) size 600x40
-            RenderTableCell {TD} at (2,49) size 242x37 [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,48) size 600x44
+            RenderTableCell {TD} at (2,51) size 242x37 [r=1 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 232x35 [border: (1px solid #000000)]
-            RenderTableCell {TD} at (246,48) size 142x40 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (32,1) size 78x38
-                text run at (32,1) width 78: "Hassle-Free"
-                text run at (40,20) width 62: "Upgrades"
-          RenderTableRow {TR} at (0,90) size 600x21
-            RenderTableCell {TD} at (2,90) size 596x21 [bgcolor=#99CCCC] [r=2 c=0 rs=1 cs=4]
-              RenderText {#text} at (1,1) size 7x19
-                text run at (1,1) width 7: "x"
+            RenderTableCell {TD} at (246,48) size 142x44 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (31,1) size 80x42
+                text run at (31,1) width 80: "Hassle-Free"
+                text run at (38,22) width 66: "Upgrades"
+          RenderTableRow {TR} at (0,94) size 600x23
+            RenderTableCell {TD} at (2,94) size 596x23 [bgcolor=#99CCCC] [r=2 c=0 rs=1 cs=4]
+              RenderText {#text} at (1,1) size 8x21
+                text run at (1,1) width 8: "x"

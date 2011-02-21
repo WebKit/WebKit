@@ -1,33 +1,33 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x128
-  RenderBlock {html} at (0,0) size 800x128
-    RenderBody {body} at (8,14) size 784x106
-      RenderBlock {p} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 289x19
-          text run at (0,0) width 289: "The table caption should be aligned at the left"
-      RenderTable {table} at (0,33) size 121x73 [border: (1px outset #808080)]
-        RenderBlock {caption} at (0,0) size 119x19
-          RenderText {#text} at (28,0) size 62x19
-            text run at (28,0) width 62: "CAPTION"
-        RenderTableSection (anonymous) at (1,20) size 119x52
-          RenderTableRow {tr} at (0,2) size 119x23
-            RenderTableCell {td} at (2,2) size 37x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 33x19
-                text run at (2,2) width 33: "cell 1"
-            RenderTableCell {td} at (41,2) size 37x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 33x19
-                text run at (2,2) width 33: "cell 2"
-            RenderTableCell {td} at (80,2) size 37x23 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 33x19
-                text run at (2,2) width 33: "cell 3"
-          RenderTableRow {tr} at (0,27) size 119x23
-            RenderTableCell {td} at (2,27) size 37x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 33x19
-                text run at (2,2) width 33: "cell 4"
-            RenderTableCell {td} at (41,27) size 37x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 33x19
-                text run at (2,2) width 33: "cell 5"
-            RenderTableCell {td} at (80,27) size 37x23 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 33x19
-                text run at (2,2) width 33: "cell 6"
+layer at (0,0) size 800x140
+  RenderBlock {html} at (0,0) size 800x140
+    RenderBody {body} at (8,16) size 784x116
+      RenderBlock {p} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 307x21
+          text run at (0,0) width 307: "The table caption should be aligned at the left"
+      RenderTable {table} at (0,37) size 124x79 [border: (1px outset #808080)]
+        RenderBlock {caption} at (0,0) size 122x21
+          RenderText {#text} at (23,0) size 76x21
+            text run at (23,0) width 76: "CAPTION"
+        RenderTableSection (anonymous) at (1,22) size 122x56
+          RenderTableRow {tr} at (0,2) size 122x25
+            RenderTableCell {td} at (2,2) size 38x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 34x21
+                text run at (2,2) width 34: "cell 1"
+            RenderTableCell {td} at (42,2) size 38x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 34x21
+                text run at (2,2) width 34: "cell 2"
+            RenderTableCell {td} at (82,2) size 38x25 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 34x21
+                text run at (2,2) width 34: "cell 3"
+          RenderTableRow {tr} at (0,29) size 122x25
+            RenderTableCell {td} at (2,29) size 38x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 34x21
+                text run at (2,2) width 34: "cell 4"
+            RenderTableCell {td} at (42,29) size 38x25 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 34x21
+                text run at (2,2) width 34: "cell 5"
+            RenderTableCell {td} at (82,29) size 38x25 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 34x21
+                text run at (2,2) width 34: "cell 6"

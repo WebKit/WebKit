@@ -2,86 +2,87 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (112,8) size 680x584
-      RenderBlock {P} at (0,0) size 680x19
-        RenderText {#text} at (0,0) size 651x19
-          text run at (0,0) width 651: "text text text previous paragraph text text above the table more text text text normal paragraph etc. etc."
-      RenderTable {TABLE} at (262,33) size 155x259
-        RenderBlock {CAPTION} at (-112,0) size 112x95
-          RenderText {#text} at (47,0) size 108x95
-            text run at (47,0) width 65: "This is the"
-            text run at (4,19) width 108: "caption. It is right"
-            text run at (35,38) width 77: "aligned.Also"
-            text run at (26,57) width 86: "aligned at the"
-            text run at (68,76) width 44: "bottom"
-        RenderTableSection {TBODY} at (0,95) size 155x164
-          RenderTableRow {TR} at (0,2) size 155x22
-            RenderTableCell {TH} at (2,2) size 49x22 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 47x20
+    RenderBody {BODY} at (128,8) size 664x584
+      RenderBlock {P} at (0,0) size 664x42
+        RenderText {#text} at (0,0) size 642x42
+          text run at (0,0) width 642: "text text text previous paragraph text text above the table more text text text normal paragraph"
+          text run at (0,21) width 50: "etc. etc."
+      RenderTable {TABLE} at (254,58) size 155x282
+        RenderBlock {CAPTION} at (-128,0) size 128x105
+          RenderText {#text} at (1,0) size 127x105
+            text run at (1,0) width 127: "This is the caption."
+            text run at (66,21) width 62: "It is right"
+            text run at (45,42) width 83: "aligned.Also"
+            text run at (37,63) width 91: "aligned at the"
+            text run at (80,84) width 48: "bottom"
+        RenderTableSection {TBODY} at (0,105) size 155x177
+          RenderTableRow {TR} at (0,2) size 155x23
+            RenderTableCell {TH} at (2,2) size 49x23 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 47x21
                 text run at (1,1) width 47: "header"
-            RenderTableCell {TH} at (53,2) size 49x22 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 47x20
+            RenderTableCell {TH} at (53,2) size 49x23 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 47x21
                 text run at (1,1) width 47: "header"
-            RenderTableCell {TH} at (104,2) size 49x22 [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 47x20
+            RenderTableCell {TH} at (104,2) size 49x23 [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 47x21
                 text run at (1,1) width 47: "header"
-          RenderTableRow {TR} at (0,26) size 155x21
-            RenderTableCell {TD} at (2,26) size 49x21 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 21x19
-                text run at (1,1) width 21: "cell"
-            RenderTableCell {TD} at (53,26) size 49x21 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 21x19
-                text run at (1,1) width 21: "cell"
-            RenderTableCell {TD} at (104,26) size 49x21 [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 21x19
-                text run at (1,1) width 21: "cell"
-          RenderTableRow {TR} at (0,49) size 155x21
-            RenderTableCell {TD} at (2,49) size 49x21 [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 21x19
-                text run at (1,1) width 21: "cell"
-            RenderTableCell {TD} at (53,49) size 49x21 [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 21x19
-                text run at (1,1) width 21: "cell"
-            RenderTableCell {TD} at (104,49) size 49x21 [r=2 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 21x19
-                text run at (1,1) width 21: "cell"
-          RenderTableRow {TR} at (0,72) size 155x21
-            RenderTableCell {TD} at (2,72) size 49x21 [r=3 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 21x19
-                text run at (1,1) width 21: "cell"
-            RenderTableCell {TD} at (53,72) size 49x21 [r=3 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 21x19
-                text run at (1,1) width 21: "cell"
-            RenderTableCell {TD} at (104,72) size 49x21 [r=3 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 21x19
-                text run at (1,1) width 21: "cell"
-          RenderTableRow {TR} at (0,95) size 155x21
-            RenderTableCell {TD} at (2,95) size 49x21 [r=4 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 21x19
-                text run at (1,1) width 21: "cell"
-            RenderTableCell {TD} at (53,95) size 49x21 [r=4 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 21x19
-                text run at (1,1) width 21: "cell"
-            RenderTableCell {TD} at (104,95) size 49x21 [r=4 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 21x19
-                text run at (1,1) width 21: "cell"
-          RenderTableRow {TR} at (0,118) size 155x21
-            RenderTableCell {TD} at (2,118) size 49x21 [r=5 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 21x19
-                text run at (1,1) width 21: "cell"
-            RenderTableCell {TD} at (53,118) size 49x21 [r=5 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 21x19
-                text run at (1,1) width 21: "cell"
-            RenderTableCell {TD} at (104,118) size 49x21 [r=5 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 21x19
-                text run at (1,1) width 21: "cell"
-          RenderTableRow {TR} at (0,141) size 155x21
-            RenderTableCell {TD} at (2,141) size 49x21 [r=6 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 21x19
-                text run at (1,1) width 21: "cell"
-            RenderTableCell {TD} at (53,141) size 49x21 [r=6 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 21x19
-                text run at (1,1) width 21: "cell"
-            RenderTableCell {TD} at (104,141) size 49x21 [r=6 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 21x19
-                text run at (1,1) width 21: "cell"
+          RenderTableRow {TR} at (0,27) size 155x23
+            RenderTableCell {TD} at (2,27) size 49x23 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 22x21
+                text run at (1,1) width 22: "cell"
+            RenderTableCell {TD} at (53,27) size 49x23 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 22x21
+                text run at (1,1) width 22: "cell"
+            RenderTableCell {TD} at (104,27) size 49x23 [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 22x21
+                text run at (1,1) width 22: "cell"
+          RenderTableRow {TR} at (0,52) size 155x23
+            RenderTableCell {TD} at (2,52) size 49x23 [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 22x21
+                text run at (1,1) width 22: "cell"
+            RenderTableCell {TD} at (53,52) size 49x23 [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 22x21
+                text run at (1,1) width 22: "cell"
+            RenderTableCell {TD} at (104,52) size 49x23 [r=2 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 22x21
+                text run at (1,1) width 22: "cell"
+          RenderTableRow {TR} at (0,77) size 155x23
+            RenderTableCell {TD} at (2,77) size 49x23 [r=3 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 22x21
+                text run at (1,1) width 22: "cell"
+            RenderTableCell {TD} at (53,77) size 49x23 [r=3 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 22x21
+                text run at (1,1) width 22: "cell"
+            RenderTableCell {TD} at (104,77) size 49x23 [r=3 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 22x21
+                text run at (1,1) width 22: "cell"
+          RenderTableRow {TR} at (0,102) size 155x23
+            RenderTableCell {TD} at (2,102) size 49x23 [r=4 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 22x21
+                text run at (1,1) width 22: "cell"
+            RenderTableCell {TD} at (53,102) size 49x23 [r=4 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 22x21
+                text run at (1,1) width 22: "cell"
+            RenderTableCell {TD} at (104,102) size 49x23 [r=4 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 22x21
+                text run at (1,1) width 22: "cell"
+          RenderTableRow {TR} at (0,127) size 155x23
+            RenderTableCell {TD} at (2,127) size 49x23 [r=5 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 22x21
+                text run at (1,1) width 22: "cell"
+            RenderTableCell {TD} at (53,127) size 49x23 [r=5 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 22x21
+                text run at (1,1) width 22: "cell"
+            RenderTableCell {TD} at (104,127) size 49x23 [r=5 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 22x21
+                text run at (1,1) width 22: "cell"
+          RenderTableRow {TR} at (0,152) size 155x23
+            RenderTableCell {TD} at (2,152) size 49x23 [r=6 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 22x21
+                text run at (1,1) width 22: "cell"
+            RenderTableCell {TD} at (53,152) size 49x23 [r=6 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 22x21
+                text run at (1,1) width 22: "cell"
+            RenderTableCell {TD} at (104,152) size 49x23 [r=6 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 22x21
+                text run at (1,1) width 22: "cell"

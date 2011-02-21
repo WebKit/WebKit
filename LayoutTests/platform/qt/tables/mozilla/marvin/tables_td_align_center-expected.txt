@@ -3,16 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 771x19
-          text run at (0,0) width 771: "The TD tag uses the ALIGN attribute. The contents in the first TD tag (Netscape Communicator) should be aligned center."
-      RenderTable {TABLE} at (0,19) size 273x54 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 271x52
-          RenderTableRow {TR} at (0,2) size 271x23
-            RenderTableCell {TD} at (2,2) size 267x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (55,2) size 157x19
-                text run at (55,2) width 157: "Netscape Communicator"
-          RenderTableRow {TR} at (0,27) size 271x23
-            RenderTableCell {TD} at (2,27) size 267x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 263x19
-                text run at (2,2) width 263: "Available on the Mac/PC/UNIX platforms !"
+      RenderBlock (anonymous) at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 780x42
+          text run at (0,0) width 780: "The TD tag uses the ALIGN attribute. The contents in the first TD tag (Netscape Communicator) should be aligned"
+          text run at (0,21) width 46: "center."
+      RenderTable {TABLE} at (0,42) size 304x58 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 302x56
+          RenderTableRow {TR} at (0,2) size 302x25
+            RenderTableCell {TD} at (2,2) size 298x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (65,2) size 168x21
+                text run at (65,2) width 168: "Netscape Communicator"
+          RenderTableRow {TR} at (0,29) size 302x25
+            RenderTableCell {TD} at (2,29) size 298x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 294x21
+                text run at (2,2) width 294: "Available on the Mac/PC/UNIX platforms !"

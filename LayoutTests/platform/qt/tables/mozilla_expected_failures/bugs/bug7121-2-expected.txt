@@ -3,15 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 254x25
-        RenderTableSection {TBODY} at (0,0) size 254x25
-          RenderTableRow {TR} at (0,2) size 254x21
-            RenderTableCell {TD} at (2,2) size 3x21 [bgcolor=#000000] [r=0 c=0 rs=1 cs=15]
-              RenderBR {BR} at (1,1) size 0x19
-            RenderTableCell {TD} at (7,2) size 241x18 [bgcolor=#000000] [r=0 c=15 rs=1 cs=1]
-              RenderInline {FONT} at (0,0) size 239x16 [color=#AAAAAA]
-                RenderText {#text} at (1,1) size 239x16
-                  text run at (1,1) width 239: "Copyright \x{A9} 1998-1999 The Mozilla Organization."
+      RenderTable {TABLE} at (0,0) size 303x27
+        RenderTableSection {TBODY} at (0,0) size 303x27
+          RenderTableRow {TR} at (0,2) size 303x23
+            RenderTableCell {TD} at (2,2) size 3x23 [bgcolor=#000000] [r=0 c=0 rs=1 cs=15]
+              RenderBR {BR} at (1,1) size 0x21
+            RenderTableCell {TD} at (7,2) size 290x19 [bgcolor=#000000] [r=0 c=15 rs=1 cs=1]
+              RenderInline {FONT} at (0,0) size 288x17 [color=#AAAAAA]
+                RenderText {#text} at (1,1) size 288x17
+                  text run at (1,1) width 288: "Copyright \x{A9} 1998-1999 The Mozilla Organization."
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (250,2) size 2x21 [bgcolor=#000000] [r=0 c=16 rs=1 cs=15]
-              RenderBR {BR} at (1,1) size 0x19
+            RenderTableCell {TD} at (299,2) size 2x23 [bgcolor=#000000] [r=0 c=16 rs=1 cs=15]
+              RenderBR {BR} at (1,1) size 0x21

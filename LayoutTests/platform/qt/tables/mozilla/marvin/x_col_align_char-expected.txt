@@ -1,27 +1,27 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x109
-  RenderBlock {html} at (0,0) size 800x109
-    RenderBody {body} at (8,14) size 784x87
-      RenderBlock {p} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 335x19
-          text run at (0,0) width 335: "Numbers in table should be aligned at decimal points"
-      RenderTable {table} at (0,33) size 400x54 [border: (1px outset #808080)]
+layer at (0,0) size 800x119
+  RenderBlock {html} at (0,0) size 800x119
+    RenderBody {body} at (8,16) size 784x95
+      RenderBlock {p} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 357x21
+          text run at (0,0) width 357: "Numbers in table should be aligned at decimal points"
+      RenderTable {table} at (0,37) size 400x58 [border: (1px outset #808080)]
         RenderTableCol {colgroup} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0
-        RenderTableSection (anonymous) at (1,1) size 398x52
-          RenderTableRow {tr} at (0,2) size 398x23
-            RenderTableCell {td} at (2,2) size 182x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 36x19
+        RenderTableSection (anonymous) at (1,1) size 398x56
+          RenderTableRow {tr} at (0,2) size 398x25
+            RenderTableCell {td} at (2,2) size 182x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 36x21
                 text run at (2,2) width 36: "55.00"
-            RenderTableCell {td} at (186,2) size 210x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 60x19
+            RenderTableCell {td} at (186,2) size 210x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 60x21
                 text run at (2,2) width 60: "55555.00"
-          RenderTableRow {tr} at (0,27) size 398x23
-            RenderTableCell {td} at (2,27) size 182x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 52x19
+          RenderTableRow {tr} at (0,29) size 398x25
+            RenderTableCell {td} at (2,29) size 182x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 52x21
                 text run at (2,2) width 52: "1234.56"
-            RenderTableCell {td} at (186,27) size 210x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 44x19
+            RenderTableCell {td} at (186,29) size 210x25 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 44x21
                 text run at (2,2) width 44: "123.45"

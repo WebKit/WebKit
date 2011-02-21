@@ -3,33 +3,33 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 526x19
-          text run at (0,0) width 526: "The TH tag uses the WIDTH attribute. The first table's TH width is set to 500 pixels."
-        RenderBR {BR} at (526,14) size 0x0
-      RenderTable {TABLE} at (0,19) size 610x55 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 608x53
-          RenderTableRow {TR} at (0,2) size 608x24
-            RenderTableCell {TH} at (2,2) size 604x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (172,2) size 260x20
-                text run at (172,2) width 260: "Netscape Communicator Version 4.0.6"
-          RenderTableRow {TR} at (0,28) size 608x23
-            RenderTableCell {TD} at (2,28) size 604x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 60x19
-                text run at (2,2) width 60: "Platforms"
-      RenderBlock (anonymous) at (0,74) size 784x38
-        RenderBR {BR} at (0,0) size 0x19
-        RenderText {#text} at (0,19) size 307x19
-          text run at (0,19) width 307: "This second table's TH width is set to 200 pixels."
-        RenderBR {BR} at (307,33) size 0x0
-      RenderTable {TABLE} at (0,112) size 210x75 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 208x73
-          RenderTableRow {TR} at (0,2) size 208x44
-            RenderTableCell {TH} at (2,2) size 204x44 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (18,2) size 168x40
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 570x21
+          text run at (0,0) width 570: "The TH tag uses the WIDTH attribute. The first table's TH width is set to 500 pixels."
+        RenderBR {BR} at (570,16) size 0x0
+      RenderTable {TABLE} at (0,21) size 610x58 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 608x56
+          RenderTableRow {TR} at (0,2) size 608x25
+            RenderTableCell {TH} at (2,2) size 604x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (171,2) size 262x21
+                text run at (171,2) width 262: "Netscape Communicator Version 4.0.6"
+          RenderTableRow {TR} at (0,29) size 608x25
+            RenderTableCell {TD} at (2,29) size 604x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 66x21
+                text run at (2,2) width 66: "Platforms"
+      RenderBlock (anonymous) at (0,79) size 784x42
+        RenderBR {BR} at (0,0) size 0x21
+        RenderText {#text} at (0,21) size 324x21
+          text run at (0,21) width 324: "This second table's TH width is set to 200 pixels."
+        RenderBR {BR} at (324,37) size 0x0
+      RenderTable {TABLE} at (0,121) size 210x79 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 208x77
+          RenderTableRow {TR} at (0,2) size 208x46
+            RenderTableCell {TH} at (2,2) size 204x46 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (18,2) size 168x42
                 text run at (18,2) width 168: "Netscape Communicator"
-                text run at (58,22) width 88: "Version 4.0.6"
-          RenderTableRow {TR} at (0,48) size 208x23
-            RenderTableCell {TD} at (2,48) size 204x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 60x19
-                text run at (2,2) width 60: "Platforms"
+                text run at (57,23) width 90: "Version 4.0.6"
+          RenderTableRow {TR} at (0,50) size 208x25
+            RenderTableCell {TD} at (2,50) size 204x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 66x21
+                text run at (2,2) width 66: "Platforms"

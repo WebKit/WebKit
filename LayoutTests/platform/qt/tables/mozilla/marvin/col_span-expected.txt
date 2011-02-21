@@ -3,21 +3,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 769x38
-          text run at (0,0) width 769: "The COL element specifies attributes for a table column. In this test case, the COL element is used in conjunction with the"
-          text run at (0,19) width 97: "SPAN attribute."
-      RenderTable {TABLE} at (0,52) size 574x55 [border: (1px outset #808080)]
-        RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableSection {TBODY} at (1,1) size 572x53
-          RenderTableRow {TR} at (0,2) size 572x24
-            RenderTableCell {TH} at (2,2) size 441x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 437x20
-                text run at (2,2) width 437: "This heading should span across the two columns in this table."
-          RenderTableRow {TR} at (0,28) size 572x23
-            RenderTableCell {TD} at (2,28) size 441x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 123x19
-                text run at (2,2) width 123: "This is column one."
-            RenderTableCell {TD} at (445,28) size 125x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 121x19
-                text run at (2,2) width 121: "This is column two."
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 761x42
+          text run at (0,0) width 761: "The COL element specifies attributes for a table column. In this test case, the COL element is used in conjunction"
+          text run at (0,21) width 169: "with the SPAN attribute."
+      RenderTable {TABLE} at (0,58) size 566x58 [border: (1px outset #808080)]
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (1,1) size 564x56
+          RenderTableRow {TR} at (0,2) size 564x25
+            RenderTableCell {TH} at (2,2) size 423x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 419x21
+                text run at (2,2) width 419: "This heading should span across the two columns in this table."
+          RenderTableRow {TR} at (0,29) size 564x25
+            RenderTableCell {TD} at (2,29) size 423x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 130x21
+                text run at (2,2) width 130: "This is column one."
+            RenderTableCell {TD} at (427,29) size 135x25 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 131x21
+                text run at (2,2) width 131: "This is column two."
