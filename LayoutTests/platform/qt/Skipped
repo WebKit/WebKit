@@ -4505,3 +4505,7 @@ editing/selection/mixed-editability-10.html
 # ----- FIXME: QtWebkit supports client based and LayoutTest for the same is yet to be implemented. Tracked in #54334 ------ 
 fast/dom/Geolocation
 fast/dom/Window/window-properties-geolocation.html
+
+# [Qt]REGRESSION(r79157): plugins/get-user-agent-with-null-npp-from-npp-new.html crashes
+# https://bugs.webkit.org/show_bug.cgi?id=54863
+plugins/get-user-agent-with-null-npp-from-npp-new.html
