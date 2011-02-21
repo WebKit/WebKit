@@ -1,3 +1,9 @@
+2011-02-21  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: skip new inspector test on wk2.
+
+        * platform/mac-wk2/Skipped:
+
 2011-02-21  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Maciej Stachowiak.
