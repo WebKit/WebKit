@@ -2,6 +2,18 @@
 
         Reviewed by Adam Barth.
 
+        [codereviewtool] don't let lines/diffblocks be mouse focusable
+        https://bugs.webkit.org/show_bug.cgi?id=54851
+
+        Unfortunately, this will only work once https://bugs.webkit.org/show_bug.cgi?id=54727
+        is committed. In the interim, it won't break anything.
+
+        * code-review.js:
+
+2011-02-20  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
         [codereviewtool] use keydown instead of keypress
         https://bugs.webkit.org/show_bug.cgi?id=54849
 

@@ -1358,6 +1358,8 @@ var CODE_REVIEW_UNITTEST;
     // -1 makes the element focusable without actually putting in in the tab order.
     node.attr('tabindex', -1);
     node.focus();
+    // Remove the tabindex on blur to avoid having the node be mouse-focusable.
+    node.bind('blur', function() { node.removeAttr('tabindex'); });
     $(document).scrollTop(node.position().top - window.innerHeight / 2);
   }
 
