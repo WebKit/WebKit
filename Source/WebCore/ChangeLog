@@ -1,3 +1,12 @@
+2011-02-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt][V8]REGRESSION(r79157): Fix build
+        https://bugs.webkit.org/show_bug.cgi?id=54871
+
+        * bridge/npruntime_internal.h: Add one more undef because of evil X11 macro.
+
 2011-02-16  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by Mihai Parparita.
