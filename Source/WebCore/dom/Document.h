@@ -291,6 +291,7 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(reset);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(search);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(selectstart);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(selectionchange);
 #if ENABLE(TOUCH_EVENTS)
     DEFINE_ATTRIBUTE_EVENT_LISTENER(touchstart);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(touchmove);
@@ -1050,6 +1051,7 @@ public:
     void setContainsValidityStyleRules() { m_containsValidityStyleRules = true; }
 
     void enqueueWindowEvent(PassRefPtr<Event>);
+    void enqueueDocumentEvent(PassRefPtr<Event>);
     void enqueuePageshowEvent(PageshowEventPersistence);
     void enqueueHashchangeEvent(const String& oldURL, const String& newURL);
     void enqueuePopstateEvent(PassRefPtr<SerializedScriptValue> stateObject);

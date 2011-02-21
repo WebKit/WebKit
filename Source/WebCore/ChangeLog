@@ -1,3 +1,34 @@
+2011-02-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        Add selectionchange event
+        https://bugs.webkit.org/show_bug.cgi?id=45712
+
+        Added the support for asynchronous selectionchange event, which is fired whenever selection is changed.
+        This event is not cancelable and does not bubble. An event listener can be attached to a document by
+        body element's onselectionchange attribute or via document's onselectionchange property.
+
+        Note that WebKit's implementation fires the event asynchronously whereas Internet Explorer's implementation
+        fires it synchronously. This implies that a script that modify selection (e.g. via selection's addRange)
+        will not observe the event before the control returns to JavaScript.
+
+        See also: http://msdn.microsoft.com/en-us/library/ms536968(VS.85).aspx
+
+        Tests: fast/events/selectionchange-iframe.html
+               fast/events/selectionchange-user-initiated.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::enqueueDocumentEvent): Added.
+        * dom/Document.h: Added selectionchange event listener.
+        * dom/Document.idl: Added onselectionchagne attribute.
+        * dom/EventNames.h: Added selectionchange
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::setSelection): Fires selectionchange event.
+        * html/HTMLAttributeNames.in: Added onselectionchange.
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::parseMappedAttribute): Handles onselectionchange attribute.
+
 2011-02-21  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

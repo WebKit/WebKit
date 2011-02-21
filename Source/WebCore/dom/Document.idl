@@ -317,6 +317,7 @@ module core {
         attribute [DontEnum] EventListener onreset;
         attribute [DontEnum] EventListener onsearch;
         attribute [DontEnum] EventListener onselectstart;
+        attribute [DontEnum] EventListener onselectionchange;
         attribute [DontEnum,Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchstart;
         attribute [DontEnum,Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchmove;
         attribute [DontEnum,Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchend;

@@ -166,6 +166,8 @@ void HTMLBodyElement::parseMappedAttribute(Attribute* attr)
         document()->setWindowAttributeEventListener(eventNames().resizeEvent, createAttributeEventListener(document()->frame(), attr));
     else if (attr->name() == onscrollAttr)
         document()->setWindowAttributeEventListener(eventNames().scrollEvent, createAttributeEventListener(document()->frame(), attr));
+    else if (attr->name() == onselectionchangeAttr)
+        document()->setAttributeEventListener(eventNames().selectionchangeEvent, createAttributeEventListener(document()->frame(), attr));
     else if (attr->name() == onstorageAttr)
         document()->setWindowAttributeEventListener(eventNames().storageEvent, createAttributeEventListener(document()->frame(), attr));
     else if (attr->name() == ononlineAttr)

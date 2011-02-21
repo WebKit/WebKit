@@ -1,3 +1,19 @@
+2011-02-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        Add selectionchange event
+        https://bugs.webkit.org/show_bug.cgi?id=45712
+
+        Added a test to ensure WebKit fires selectionchange event for the correct document
+        when the document has an iframe, and a test to ensure selectionchange events are fired
+        on user-initiated events.
+
+        * fast/events/selectionchange-iframe-expected.txt: Added.
+        * fast/events/selectionchange-iframe.html: Added.
+        * fast/events/selectionchange-user-initiated-expected.txt: Added.
+        * fast/events/selectionchange-user-initiated.html: Added.
+
 2011-02-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.

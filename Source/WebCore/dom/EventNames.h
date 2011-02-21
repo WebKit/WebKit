@@ -101,6 +101,7 @@ namespace WebCore {
     macro(search) \
     macro(select) \
     macro(selectstart) \
+    macro(selectionchange) \
     macro(storage) \
     macro(submit) \
     macro(textInput) \

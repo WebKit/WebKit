@@ -3483,6 +3483,12 @@ void Document::enqueueWindowEvent(PassRefPtr<Event> event)
     m_eventQueue->enqueueEvent(event);
 }
 
+void Document::enqueueDocumentEvent(PassRefPtr<Event> event)
+{
+    event->setTarget(this);
+    m_eventQueue->enqueueEvent(event);
+}
+
 PassRefPtr<Event> Document::createEvent(const String& eventType, ExceptionCode& ec)
 {
     RefPtr<Event> event;

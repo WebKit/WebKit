@@ -200,6 +200,7 @@ void SelectionController::setSelection(const VisibleSelection& s, SetSelectionOp
     }
 
     notifyAccessibilityForSelectionChange();
+    m_frame->document()->enqueueDocumentEvent(Event::create(eventNames().selectionchangeEvent, false, false));
 }
 
 static bool removingNodeRemovesPosition(Node* node, const Position& position)
