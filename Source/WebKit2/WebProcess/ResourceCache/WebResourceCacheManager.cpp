@@ -65,6 +65,18 @@ void WebResourceCacheManager::getCacheOrigins(uint64_t callbackID) const
     MemoryCache::SecurityOriginSet origins;
     memoryCache()->getOriginsWithCache(origins);
 
+#if USE(CFURLCACHE)
+    RetainPtr<CFArrayRef> cfURLHosts = cfURLCacheHostNames(); 
+    CFIndex size = CFArrayGetCount(cfURLHosts.get());
+
+    String httpString("http");
+    for (CFIndex i = 0; i < size; ++i) {
+        CFStringRef host = static_cast<CFStringRef>(CFArrayGetValueAtIndex(cfURLHosts.get(), i));
+        origins.add(SecurityOrigin::create(httpString, host, 0));
+    }
+#endif
+
+    // Create a list with the origins in both of the caches.
     Vector<SecurityOriginData> identifiers;
     identifiers.reserveCapacity(origins.size());
 
@@ -90,6 +102,14 @@ void WebResourceCacheManager::clearCacheForOrigin(SecurityOriginData originData)
         return;
 
     memoryCache()->removeResourcesWithOrigin(origin.get());
+
+#if USE(CFURLCACHE)
+    RetainPtr<CFMutableArrayRef> hostArray(AdoptCF, CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
+    RetainPtr<CFStringRef> host(AdoptCF, origin->host().createCFString());
+    CFArrayAppendValue(hostArray.get(), host.get());
+
+    clearCFURLCacheForHostNames(hostArray.get());
+#endif
 }
 
 void WebResourceCacheManager::clearCacheForAllOrigins() const

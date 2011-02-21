@@ -1361,6 +1361,14 @@
             <Filter
                 Name="ResourceCache"
                 >
+                <Filter
+					Name="cf"
+					>
+					<File
+						RelativePath="..\WebProcess\ResourceCache\cf\WebResourceCacheManagerCFNet.cpp"
+						>
+					</File>
+				</Filter>
                 <File
 					RelativePath="..\WebProcess\ResourceCache\WebResourceCacheManager.cpp"
 					>

@@ -1,3 +1,27 @@
+2011-02-18  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebResourceCacheManager should be responsible for managing the CFURLCache as well
+        as the WebCore memory cache.
+        https://bugs.webkit.org/show_bug.cgi?id=54886
+        Part of <rdar://problem/8971738>
+
+        * WebProcess/ResourceCache/WebResourceCacheManager.cpp:
+        (WebKit::WebResourceCacheManager::getCacheOrigins): Call through to cFURLCacheHostNames, and add
+            create SecurityOrigin's for them and add them to the set of SecurityOrigins with cache.
+        (WebKit::WebResourceCacheManager::clearCacheForOrigin): Call through to clear the CFURLCache for
+            the origin's hostname.
+        * WebProcess/ResourceCache/WebResourceCacheManager.h:
+
+        * WebProcess/ResourceCache/cf: Added.
+        * WebProcess/ResourceCache/cf/WebResourceCacheManagerCFNet.cpp: Added.
+        (WebKit::WebResourceCacheManager::cfURLCacheHostNames): Call through to WebKitSystemInterface.
+        (WebKit::WebResourceCacheManager::clearCFURLCacheForHostNames): Ditto.
+
+        * win/WebKit2.vcproj: Added new file.
+        * WebKit2.xcodeproj/project.pbxproj: Ditto.
+
 2011-02-21  Adam Roben  <aroben@apple.com>
 
         Move control of the sequence number from DrawingAreaImpl to DrawingAreaProxyImpl

@@ -369,6 +369,9 @@ ScriptCode WKGetScriptCodeFromCurrentKeyboardInputSource(void);
 CFIndex WKGetHyphenationLocationBeforeIndex(CFStringRef string, CFIndex index);
 #endif
 
+CFArrayRef WKCFURLCacheCopyAllHostNamesInPersistentStore(void);
+void WKCFURLCacheDeleteHostNamesInPersistentStore(CFArrayRef hostArray);    
+
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 typedef enum {
     WKSandboxExtensionTypeReadOnly,

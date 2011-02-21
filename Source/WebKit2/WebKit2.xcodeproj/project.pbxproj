@@ -257,6 +257,7 @@
 		33367656130C9ECA006C9DE2 /* WebResourceCacheManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 33367652130C9ECA006C9DE2 /* WebResourceCacheManagerMessages.h */; };
 		33367657130C9ECA006C9DE2 /* WebResourceCacheManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33367653130C9ECA006C9DE2 /* WebResourceCacheManagerProxyMessageReceiver.cpp */; };
 		33367658130C9ECB006C9DE2 /* WebResourceCacheManagerProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 33367654130C9ECA006C9DE2 /* WebResourceCacheManagerProxyMessages.h */; };
+		33F9D5B91312F1EE000D683F /* WebResourceCacheManagerCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33F9D5B81312F1EE000D683F /* WebResourceCacheManagerCFNet.cpp */; };
 		37F623B812A57B6200E3FDF6 /* WKFindOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 37F623B712A57B6200E3FDF6 /* WKFindOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		51021E9C12B16788005C033C /* WebContextMenuClientMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51021E9B12B16788005C033C /* WebContextMenuClientMac.mm */; };
 		510FBB9A1288C95E00AFFDF4 /* WebContextMenuItemData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510FBB981288C95E00AFFDF4 /* WebContextMenuItemData.cpp */; };
@@ -1050,6 +1051,7 @@
 		33367652130C9ECA006C9DE2 /* WebResourceCacheManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebResourceCacheManagerMessages.h; sourceTree = "<group>"; };
 		33367653130C9ECA006C9DE2 /* WebResourceCacheManagerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebResourceCacheManagerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		33367654130C9ECA006C9DE2 /* WebResourceCacheManagerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebResourceCacheManagerProxyMessages.h; sourceTree = "<group>"; };
+		33F9D5B81312F1EE000D683F /* WebResourceCacheManagerCFNet.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = WebResourceCacheManagerCFNet.cpp; path = ResourceCache/cf/WebResourceCacheManagerCFNet.cpp; sourceTree = "<group>"; };
 		37F623B712A57B6200E3FDF6 /* WKFindOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFindOptions.h; sourceTree = "<group>"; };
 		51021E9B12B16788005C033C /* WebContextMenuClientMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContextMenuClientMac.mm; sourceTree = "<group>"; };
 		510FBB981288C95E00AFFDF4 /* WebContextMenuItemData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebContextMenuItemData.cpp; sourceTree = "<group>"; };
@@ -2060,11 +2062,20 @@
 		3336762B130C9978006C9DE2 /* ResourceCache */ = {
 			isa = PBXGroup;
 			children = (
+				33F9D5B71312F1B1000D683F /* cf */,
 				3336762C130C9998006C9DE2 /* WebResourceCacheManager.cpp */,
 				3336762D130C9998006C9DE2 /* WebResourceCacheManager.h */,
 				3336762E130C9998006C9DE2 /* WebResourceCacheManager.messages.in */,
 			);
 			name = ResourceCache;
+			sourceTree = "<group>";
+		};
+		33F9D5B71312F1B1000D683F /* cf */ = {
+			isa = PBXGroup;
+			children = (
+				33F9D5B81312F1EE000D683F /* WebResourceCacheManagerCFNet.cpp */,
+			);
+			name = cf;
 			sourceTree = "<group>";
 		};
 		512F588612A8834700629530 /* Authentication */ = {
@@ -3736,6 +3747,7 @@
 				33367655130C9ECA006C9DE2 /* WebResourceCacheManagerMessageReceiver.cpp in Sources */,
 				33367657130C9ECA006C9DE2 /* WebResourceCacheManagerProxyMessageReceiver.cpp in Sources */,
 				33152975130D0CB200ED2483 /* SecurityOriginData.cpp in Sources */,
+				33F9D5B91312F1EE000D683F /* WebResourceCacheManagerCFNet.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

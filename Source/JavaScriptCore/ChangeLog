@@ -1,3 +1,16 @@
+2011-02-21  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebResourceCacheManager should be responsible for managing the CFURLCache as well
+        as the WebCore memory cache.
+        https://bugs.webkit.org/show_bug.cgi?id=54886
+        Part of <rdar://problem/8971738>
+
+        Add a new use flag for using the CFURLCache.
+
+        * wtf/Platform.h:
+
 2011-02-21  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gavin Barraclough.

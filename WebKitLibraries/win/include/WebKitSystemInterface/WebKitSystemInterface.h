@@ -95,6 +95,9 @@ void wkSetClientCertificateInSSLProperties(CFMutableDictionaryRef, CFDataRef);
 CFArrayRef wkCFURLRequestCopyHTTPRequestBodyParts(CFURLRequestRef);
 void wkCFURLRequestSetHTTPRequestBodyParts(CFMutableURLRequestRef, CFArrayRef bodyParts);
 
+CFArrayRef wkCFURLCacheCopyAllHostNamesInPersistentStore();
+void wkCFURLCacheDeleteHostNamesInPersistentStore(CFArrayRef hostNames);
+
 unsigned wkInitializeMaximumHTTPConnectionCountPerHost(unsigned preferredConnectionCount);
 
 void wkSetCONNECTProxyForStream(CFReadStreamRef, CFStringRef proxyHost, CFNumberRef proxyPort);

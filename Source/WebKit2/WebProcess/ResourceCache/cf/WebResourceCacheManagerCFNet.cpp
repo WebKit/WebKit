@@ -23,48 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebResourceCacheManager_h
-#define WebResourceCacheManager_h
+#include "config.h"
+#include "WebResourceCacheManager.h"
 
-#include "Arguments.h"
-#include <wtf/Noncopyable.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/text/WTFString.h>
+#if USE(CFURLCACHE)
 
-namespace CoreIPC {
-class ArgumentDecoder;
-class Connection;
-class MessageID;
-}
+#if PLATFORM(WIN)
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
+#elif PLATFORM(MAC)
+#include "WebKitSystemInterface.h"
+#endif
+
 
 namespace WebKit {
 
-struct SecurityOriginData;
-
-class WebResourceCacheManager {
-    WTF_MAKE_NONCOPYABLE(WebResourceCacheManager);
-public:
-    static WebResourceCacheManager& shared();
-
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-
-private:
-    WebResourceCacheManager();
-    virtual ~WebResourceCacheManager();
-
-    // Implemented in generated WebResourceCacheManagerMessageReceiver.cpp
-    void didReceiveWebResourceCacheManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-
-    void getCacheOrigins(uint64_t callbackID) const;
-    void clearCacheForOrigin(SecurityOriginData origin) const;
-    void clearCacheForAllOrigins() const;
-
-#if USE(CFURLCACHE)
-    static RetainPtr<CFArrayRef> cfURLCacheHostNames();
-    static void clearCFURLCacheForHostNames(CFArrayRef);
+#if PLATFORM(WIN)
+// The Windows version of WKSI defines these functions as capitalized, while the Mac version defines them as lower case.
+static inline CFArrayRef WKCFURLCacheCopyAllHostNamesInPersistentStore() { return wkCFURLCacheCopyAllHostNamesInPersistentStore(); }
+static inline void WKCFURLCacheDeleteHostNamesInPersistentStore(CFArrayRef hostNames) { return wkCFURLCacheDeleteHostNamesInPersistentStore(hostNames); }
 #endif
-};
+
+RetainPtr<CFArrayRef> WebResourceCacheManager::cfURLCacheHostNames()
+{
+    return RetainPtr<CFArrayRef>(AdoptCF, WKCFURLCacheCopyAllHostNamesInPersistentStore());
+}
+
+void WebResourceCacheManager::clearCFURLCacheForHostNames(CFArrayRef hostNames)
+{
+    WKCFURLCacheDeleteHostNamesInPersistentStore(hostNames);
+}
 
 } // namespace WebKit
 
-#endif // WebResourceCacheManager_h
+#endif // USE(CFURLCACHE)
