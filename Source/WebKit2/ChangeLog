@@ -1,3 +1,16 @@
+2011-02-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Crash in WebProcess at com.apple.WebCore: WebCore::Page::goToItem + 46
+        <rdar://problem/8942726>
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::goForward):
+        (WebKit::WebPage::goBack):
+        (WebKit::WebPage::goToBackForwardItem):
+        Defend agains null HistoryItems.
+
 2011-02-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Maciej Stachowiak.

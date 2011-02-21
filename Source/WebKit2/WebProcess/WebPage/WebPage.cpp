@@ -487,25 +487,34 @@ void WebPage::reload(bool reloadFromOrigin)
 
 void WebPage::goForward(uint64_t backForwardItemID, const SandboxExtension::Handle& sandboxExtensionHandle)
 {
-    m_sandboxExtensionTracker.beginLoad(m_mainFrame.get(), sandboxExtensionHandle);
-
     HistoryItem* item = WebBackForwardListProxy::itemForID(backForwardItemID);
+    ASSERT(item);
+    if (!item)
+        return;
+
+    m_sandboxExtensionTracker.beginLoad(m_mainFrame.get(), sandboxExtensionHandle);
     m_page->goToItem(item, FrameLoadTypeForward);
 }
 
 void WebPage::goBack(uint64_t backForwardItemID, const SandboxExtension::Handle& sandboxExtensionHandle)
 {
-    m_sandboxExtensionTracker.beginLoad(m_mainFrame.get(), sandboxExtensionHandle);
-
     HistoryItem* item = WebBackForwardListProxy::itemForID(backForwardItemID);
+    ASSERT(item);
+    if (!item)
+        return;
+
+    m_sandboxExtensionTracker.beginLoad(m_mainFrame.get(), sandboxExtensionHandle);
     m_page->goToItem(item, FrameLoadTypeBack);
 }
 
 void WebPage::goToBackForwardItem(uint64_t backForwardItemID, const SandboxExtension::Handle& sandboxExtensionHandle)
 {
-    m_sandboxExtensionTracker.beginLoad(m_mainFrame.get(), sandboxExtensionHandle);
-
     HistoryItem* item = WebBackForwardListProxy::itemForID(backForwardItemID);
+    ASSERT(item);
+    if (!item)
+        return;
+
+    m_sandboxExtensionTracker.beginLoad(m_mainFrame.get(), sandboxExtensionHandle);
     m_page->goToItem(item, FrameLoadTypeIndexedBackForward);
 }
 
