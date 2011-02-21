@@ -3472,17 +3472,18 @@ BUGATWILSON : svg/W3C-SVG-1.1-SE/coords-units-03-b.svg = IMAGE+TEXT
 BUGATWILSON WIN LINUX : compositing/reflections/deeply-nested-reflections.html = IMAGE+TEXT
 
 // No rebaseline files in archive for some reason - try to add them later.
+// morrita: Some tests are flaky (non-deterministic result) so marked then FAIL.
 BUGATWILSON :  fast/dom/HTMLElement/attr-dir-auto-change-before-text-node.html = TEXT
 BUGATWILSON :  fast/dom/HTMLElement/attr-dir-auto-change-child-node.html = TEXT
 BUGATWILSON :  fast/dom/HTMLElement/attr-dir-auto-change-text.html = TEXT
 BUGATWILSON :  fast/dom/HTMLElement/attr-dir-auto-remove-add-children.html = TEXT
 BUGATWILSON :  fast/dom/HTMLElement/attr-dir-auto.html = TEXT
 BUGATWILSON :  fast/dom/HTMLElement/attr-dir-value-change.html = TEXT
-BUGWK54736 MAC : css2.1/t1202-counter-04-b.html = IMAGE+TEXT
-BUGWK54736 MAC : css2.1/t1202-counters-04-b.html = IMAGE+TEXT
-BUGWK54736 MAC : fast/blockflow/border-vertical-lr.html = IMAGE+TEXT
-BUGWK54736 MAC : fast/forms/basic-selects.html = IMAGE+TEXT
-BUGWK54736 MAC : fast/forms/file-input-direction.html = IMAGE+TEXT
+BUGWK54736 MAC : css2.1/t1202-counter-04-b.html = FAIL
+BUGWK54736 MAC : css2.1/t1202-counters-04-b.html = FAIL
+BUGWK54736 MAC : fast/blockflow/border-vertical-lr.html = FAIL
+BUGWK54736 MAC : fast/forms/basic-selects.html = FAIL
+BUGWK54736 MAC : fast/forms/file-input-direction.html = FAIL
 BUGWK54736 MAC : fast/speech/input-appearance-speechbutton.html = IMAGE+TEXT
 BUGWK54736 MAC : fast/text/international/bidi-AN-after-L.html = IMAGE
 BUGWK54736 MAC : fast/text/international/bidi-mirror-he-ar.html = IMAGE+TEXT
