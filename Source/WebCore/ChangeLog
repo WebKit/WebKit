@@ -1,3 +1,12 @@
+2011-02-21  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: generate protocol documentation based on IDL.
+        https://bugs.webkit.org/show_bug.cgi?id=54822
+
+        * inspector/CodeGeneratorInspector.pm:
+
 2011-02-21  Andoni Morales Alastruey  <amorales@flumotion.com>
 
         Reviewed by Martin Robinson.

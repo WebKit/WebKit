@@ -97,7 +97,8 @@ $typeTransform{"Object"} = {
     "forward" => "InspectorObject",
     "header" => "InspectorValues.h",
     "JSONType" => "Object",
-    "JSType" => "object"
+    "JSType" => "object",
+    "DocType" => "%s"
 };
 $typeTransform{"Array"} = {
     "param" => "PassRefPtr<InspectorArray>",
@@ -106,7 +107,8 @@ $typeTransform{"Array"} = {
     "forward" => "InspectorArray",
     "header" => "InspectorValues.h",
     "JSONType" => "Array",
-    "JSType" => "object"
+    "JSType" => "object",
+    "DocType" => "array of %s"
 };
 $typeTransform{"Value"} = {
     "param" => "PassRefPtr<InspectorValue>",
@@ -115,7 +117,8 @@ $typeTransform{"Value"} = {
     "forward" => "InspectorValue",
     "header" => "InspectorValues.h",
     "JSONType" => "Value",
-    "JSType" => ""
+    "JSType" => "",
+    "DocType" => "value"
 };
 $typeTransform{"String"} = {
     "param" => "const String&",
@@ -224,6 +227,9 @@ my @frontendConstantDeclarations;
 my @frontendConstantDefinitions;
 my $frontendFooter;
 
+my @documentationToc;
+my @documentationLines;
+
 # Default constructor
 sub new
 {
@@ -297,6 +303,19 @@ sub generateFunctions
         }
     }
 
+    push(@documentationToc, "<li><a href='#" . $interface->name . "'>" . $interface->name . "</a></li>");
+    push(@documentationLines, "<h2 id='" . $interface->name . "'><a name=" . $interface->name . "></a>" . $interface->name . "</h2>");
+
+    push(@documentationLines, "<h3>Events</h3>");
+    foreach my $function (grep($_->signature->extendedAttributes->{"notify"}, @{$interface->functions}) ) {
+        generateDocumentationEvent($interface, $function);
+    }
+
+    push(@documentationLines, "<h3>Commands</h3>");
+    foreach my $function (grep(!$_->signature->extendedAttributes->{"notify"}, @{$interface->functions})) {
+        generateDocumentationCommand($interface, $function);
+    }
+
     collectBackendJSStubFunctions($interface);
 }
 
@@ -310,7 +329,7 @@ sub generateFrontendFunction
     my $domain = $interface->name;
     my @argsFiltered = grep($_->direction eq "out", @{$function->parameters}); # just keep only out parameters for frontend interface.
     map($frontendTypes{$_->type} = 1, @argsFiltered); # register required types.
-    my $arguments = join(", ", map($typeTransform{$_->type}->{"param"} . " " . $_->name, @argsFiltered)); # prepare arguments for function signature.
+    my $arguments = join(", ", map(typeTraits($_->type, "param") . " " . $_->name, @argsFiltered)); # prepare arguments for function signature.
 
     my $signature = "    void ${functionName}(${arguments});";
     !$frontendMethodSignatures{${signature}} || die "Duplicate frontend function was detected for signature '$signature'.";
@@ -325,7 +344,7 @@ sub generateFrontendFunction
     push(@function, "    ${functionName}Message->setString(\"domain\", \"$domain\");");
     push(@function, "    ${functionName}Message->setString(\"event\", \"$functionName\");");
     push(@function, "    RefPtr<InspectorObject> payloadDataObject = InspectorObject::create();");
-    my @pushArguments = map("    payloadDataObject->set" . $typeTransform{$_->type}->{"JSONType"} . "(\"" . $_->name . "\", " . $_->name . ");", @argsFiltered);
+    my @pushArguments = map("    payloadDataObject->set" . typeTraits($_->type, "JSONType") . "(\"" . $_->name . "\", " . $_->name . ");", @argsFiltered);
     push(@function, @pushArguments);
     push(@function, "    ${functionName}Message->setObject(\"data\", payloadDataObject);");
     push(@function, "    m_inspectorClient->sendMessageToFrontend(${functionName}Message->toJSONString());");
@@ -333,6 +352,45 @@ sub generateFrontendFunction
     push(@function, "}");
     push(@function, "");
     push(@frontendMethodsImpl, @function);
+}
+
+sub generateDocumentationEvent
+{
+    my $interface = shift;
+    my $function = shift;
+
+    my $functionName = $function->signature->name;
+    my $domain = $interface->name;
+
+    my @argsFiltered = grep($_->direction eq "out", @{$function->parameters});
+
+    my @lines;
+    push(@lines, "<h4>" . $interface->name . "." . ${functionName} . "</h4>");
+    my $doc = $function->signature->extendedAttributes->{"doc"};
+    if ($doc) {
+        push(@lines, $doc);
+    }
+
+    push(@lines, "<pre style='background: lightGrey; padding: 10px'>");
+    push(@lines, "{");
+    push(@lines, "    seq: &lt;number&gt;,");
+    push(@lines, "    type: \"event\",");
+    push(@lines, "    domain: \"$domain\",");
+    if (scalar(@argsFiltered)) {
+        push(@lines, "    event: \"${functionName}\",");
+        push(@lines, "    data: {");
+        my @parameters;
+        foreach my $parameter (@argsFiltered) {
+            push(@parameters, "        " . parameterDocLine($parameter));
+        }
+        push(@lines, join(",\n", @parameters));
+        push(@lines, "    }");
+    } else {
+        push(@lines, "    event: \"${functionName}\"");
+    }
+    push(@lines, "}");
+    push(@lines, "</pre>");
+    push(@documentationLines, @lines);
 }
 
 sub camelCase
@@ -357,7 +415,7 @@ sub generateBackendFunction
     map($backendTypes{$_->type} = 1, @{$function->parameters}); # register required types
     my @inArgs = grep($_->direction eq "in" && !($_->name eq "callId") , @{$function->parameters});
     my @outArgs = grep($_->direction eq "out", @{$function->parameters});
-
+    
     my $signature = "    void ${fullQualifiedFunctionName}(long callId, InspectorObject* requestMessageObject);";
     !$backendMethodSignatures{${signature}} || die "Duplicate function was detected for signature '$signature'.";
     $backendMethodSignatures{${signature}} = "$fullQualifiedFunctionName";
@@ -371,14 +429,14 @@ sub generateBackendFunction
     push(@function, "");
 
     my $domain = $interface->name;
-    my $domainAccessor = $typeTransform{$domain}->{"domainAccessor"};
+    my $domainAccessor = typeTraits($domain, "domainAccessor");
     $backendTypes{$domain} = 1;
     push(@function, "    if (!$domainAccessor)");
     push(@function, "        protocolErrors->pushString(\"Protocol Error: $domain handler is not available.\");");
     push(@function, "");
 
     # declare local variables for out arguments.
-    push(@function, map("    " . $typeTransform{$_->type}->{"variable"} . " " . $_->name . " = " . $typeTransform{$_->type}->{"defaultValue"} . ";", @outArgs));
+    push(@function, map("    " . typeTraits($_->type, "variable") . " " . $_->name . " = " . typeTraits($_->type, "defaultValue") . ";", @outArgs));
 
     my $indent = "";
     if (scalar(@inArgs)) {
@@ -388,7 +446,7 @@ sub generateBackendFunction
             my $name = $parameter->name;
             my $type = $parameter->type;
             my $typeString = camelCase($parameter->type);
-            push(@function, "        " . $typeTransform{$type}->{"variable"} . " $name = get$typeString(argumentsContainer.get(), \"$name\", protocolErrors.get());");
+            push(@function, "        " . typeTraits($type, "variable") . " $name = get$typeString(argumentsContainer.get(), \"$name\", protocolErrors.get());");
         }
         push(@function, "");
         $indent = "    ";
@@ -415,7 +473,7 @@ sub generateBackendFunction
     if (scalar(@outArgs)) {
         push(@function, "        else {");
         push(@function, "            RefPtr<InspectorObject> responseData = InspectorObject::create();");
-        push(@function, map("            responseData->set" . $typeTransform{$_->type}->{"JSONType"} . "(\"" . $_->name . "\", " . $_->name . ");", @outArgs));
+        push(@function, map("            responseData->set" . typeTraits($_->type, "JSONType") . "(\"" . $_->name . "\", " . $_->name . ");", @outArgs));
         push(@function, "            responseMessage->setObject(\"data\", responseData);");
         push(@function, "        }");
     }
@@ -426,6 +484,64 @@ sub generateBackendFunction
     push(@function, "}");
     push(@function, "");
     push(@backendMethodsImpl, @function);
+}
+
+sub generateDocumentationCommand
+{
+    my $interface = shift;
+    my $function = shift;
+
+    my $functionName = $function->signature->name;
+    my $domain = $interface->name;
+
+    my @lines;
+
+    push(@lines, "<h4>" . $interface->name . "." . ${functionName} . "</h4>");
+    my $doc = $function->signature->extendedAttributes->{"doc"};
+    if ($doc) {
+        push(@lines, $doc);
+    }
+
+    my @inArgs = grep($_->direction eq "in" && !($_->name eq "callId") , @{$function->parameters});
+    push(@lines, "<pre style='background: lightGrey; padding: 10px'>");
+    push(@lines, "request: {");
+    push(@lines, "    seq: &lt;number&gt;,");
+    push(@lines, "    type: \"request\",");
+    push(@lines, "    domain: \"" . $interface->name . "\",");
+    if (scalar(@inArgs)) {
+        push(@lines, "    command: \"${functionName}\",");
+        push(@lines, "    arguments: {");
+        my @parameters;
+        foreach my $parameter (@inArgs) {
+            push(@parameters, "        " . parameterDocLine($parameter));
+        }
+        push(@lines, join(",\n", @parameters));
+        push(@lines, "    }");
+    } else {
+        push(@lines, "    command: \"${functionName}\"");
+    }
+    push(@lines, "}");
+
+    my @outArgs = grep($_->direction eq "out", @{$function->parameters});    
+    push(@lines, "");
+    push(@lines, "response: {");
+    push(@lines, "    seq: &lt;number&gt;,");
+    if (scalar(@outArgs)) {
+        push(@lines, "    type: \"response\",");
+        push(@lines, "    body: {");
+            my @parameters;
+            foreach my $parameter (@outArgs) {
+                push(@parameters, "        " . parameterDocLine($parameter));
+            }
+            push(@lines, join(",\n", @parameters));
+        push(@lines, "    }");
+    } else {
+        push(@lines, "    type: \"response\"");
+    }
+    push(@lines, "}");
+    push(@lines, "</pre>");
+
+    push(@documentationLines, @lines);
 }
 
 sub generateBackendReportProtocolError
@@ -449,10 +565,10 @@ EOF
 sub generateArgumentGetters
 {
     my $type = shift;
-    my $json = $typeTransform{$type}{"JSONType"};
-    my $variable = $typeTransform{$type}{"variable"};
-    my $defaultValue = $typeTransform{$type}{"defaultValue"};
-    my $return  = $typeTransform{$type}{"return"} ? $typeTransform{$type}{"return"} : $typeTransform{$type}{"param"};
+    my $json = typeTraits($type, "JSONType");
+    my $variable = typeTraits($type, "variable");
+    my $defaultValue = typeTraits($type, "defaultValue");
+    my $return  = typeTraits($type, "return") ? typeTraits($type, "return") : typeTraits($type, "param");
 
     my $typeString = camelCase($type);
     push(@backendConstantDeclarations, "    $return get$typeString(InspectorObject* object, const String& name, InspectorArray* protocolErrors);");
@@ -576,7 +692,7 @@ sub collectBackendJSStubFunctions
 
     foreach my $function (@functions) {
         my $name = $function->signature->name;
-        my $argumentNames = join(",", map("\"" . $_->name . "\": \"" . $typeTransform{$_->type}->{"JSType"} . "\"", grep($_->direction eq "in", @{$function->parameters})));
+        my $argumentNames = join(",", map("\"" . $_->name . "\": \"" . typeTraits($_->type, "JSType") . "\"", grep($_->direction eq "in", @{$function->parameters})));
         push(@backendJSStubs, "    this._registerDelegate('{" .
             "\"seq\": 0, " .
             "\"domain\": \"$domain\", " .
@@ -727,8 +843,8 @@ sub generateHeader
     my $methods = shift;
     my $footer = shift;
 
-    my $forwardHeaders = join("\n", sort(map("#include <" . $typeTransform{$_}->{"forwardHeader"} . ">", grep($typeTransform{$_}->{"forwardHeader"}, keys %{$types}))));
-    my $forwardDeclarations = join("\n", sort(map("class " . $typeTransform{$_}->{"forward"} . ";", grep($typeTransform{$_}->{"forward"}, keys %{$types}))));
+    my $forwardHeaders = join("\n", sort(map("#include <" . typeTraits($_, "forwardHeader") . ">", grep(typeTraits($_, "forwardHeader"), keys %{$types}))));
+    my $forwardDeclarations = join("\n", sort(map("class " . typeTraits($_, "forward") . ";", grep(typeTraits($_, "forward"), keys %{$types}))));
     my $constantDeclarations = join("\n", @{$constants});
     my $methodsDeclarations = join("\n", @{$methods});
 
@@ -780,7 +896,7 @@ sub generateSource
 
     my %headers;
     foreach my $type (keys %{$types}) {
-        $headers{"#include \"" . $typeTransform{$type}->{"header"} . "\""} = 1 if !$typeTransform{$type}->{"header"} eq  "";
+        $headers{"#include \"" . typeTraits($type, "header") . "\""} = 1 if !typeTraits($type, "header") eq  "";
     }
     push(@sourceContent, sort keys %headers);
     push(@sourceContent, "");
@@ -795,6 +911,43 @@ sub generateSource
     push(@sourceContent, "#endif // ENABLE(INSPECTOR)");
     push(@sourceContent, "");
     return @sourceContent;
+}
+
+sub typeTraits
+{
+    my $type = shift;
+    my $trait = shift;
+    return $typeTransform{$type}->{$trait};
+}
+
+sub parameterDocType
+{
+    my $parameter = shift;
+    my $subtype = $parameter->extendedAttributes->{"type"};
+    if ($subtype) {
+        my $pattern = typeTraits($parameter->type, "DocType");
+        return sprintf($pattern, "&lt;$subtype&gt;");
+    }
+
+    my $subtypeRef = $parameter->extendedAttributes->{"typeRef"};
+    if ($subtypeRef) {
+        my $pattern = typeTraits($parameter->type, "DocType");
+        return sprintf($pattern, "&lt;<a href='#$subtypeRef'>" . $subtypeRef . "</a>&gt;");
+    }
+
+    return "&lt;" . typeTraits($parameter->type, "JSType") . "&gt;";
+}
+
+sub parameterDocLine
+{
+    my $parameter = shift;
+
+    my $result = $parameter->name . ": " . parameterDocType($parameter);
+    my $doc = $parameter->extendedAttributes->{"doc"};
+    if ($doc) {
+        $result = $result . " // " . $doc;
+    }
+    return $result;
 }
 
 sub finish
@@ -819,7 +972,7 @@ sub finish
     push(@backendConstantDeclarations, "private:");
 
     foreach my $type (keys %backendTypes) {
-        if ($typeTransform{$type}{"JSONType"}) {
+        if (typeTraits($type, "JSONType")) {
             push(@backendMethodsImpl, generateArgumentGetters($type));
         }
     }
@@ -843,6 +996,14 @@ sub finish
     print $JS_STUB join("\n", generateBackendStubJS());
     close($JS_STUB);
     undef($JS_STUB);
+
+    open(my $DOCS, ">$outputDir/WebInspectorProtocol.html") || die "Couldn't open file $outputDir/WebInspectorProtocol.html";
+    print $DOCS "<ol class='toc' style='list-style: none; padding: 0'>";
+    print $DOCS join("\n", @documentationToc);
+    print $DOCS "</ol>";
+    print $DOCS join("\n", @documentationLines);
+    close($DOCS);
+    undef($DOCS);
 }
 
 1;
