@@ -29,12 +29,6 @@
 ###############################################################################
 # TESTS THAT REQUIRE NEW RESULTS
 ###############################################################################
-editing/deleting/non-smart-delete.html
-fast/repaint/no-caret-repaint-in-non-content-editable-element.html
-fast/runin/generated2.html
-fast/runin/generated3.html
-fast/runin/generated4.html
-media/video-aspect-ratio.html
 
 ###############################################################################
 # FLAKY TESTS
@@ -1241,9 +1235,6 @@ http/tests/websocket/tests/bad-sub-protocol-control-chars.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=47564
 platform/gtk/accessibility/aria-table-hierarchy.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=47832
-http/tests/inspector/console-xhr-logging.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=50872
 http/tests/misc/dns-prefetch-control.html

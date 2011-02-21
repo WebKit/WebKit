@@ -1,3 +1,28 @@
+2011-02-21  Martin Robinson  <mrobinson@igalia.com>
+
+        Add results for tests missing results and unskip a test that
+        is passing locally and when run manually on the bots.
+
+        * platform/gtk/Skipped: Unskip tests that are now passing.
+        * platform/gtk/editing/deleting/non-smart-delete-expected.checksum: Added.
+        * platform/gtk/editing/deleting/non-smart-delete-expected.png: Added.
+        * platform/gtk/editing/deleting/non-smart-delete-expected.txt: Added.
+        * platform/gtk/fast/repaint/no-caret-repaint-in-non-content-editable-element-expected.checksum: Added.
+        * platform/gtk/fast/repaint/no-caret-repaint-in-non-content-editable-element-expected.png: Added.
+        * platform/gtk/fast/repaint/no-caret-repaint-in-non-content-editable-element-expected.txt: Added.
+        * platform/gtk/fast/runin/generated2-expected.checksum: Added.
+        * platform/gtk/fast/runin/generated2-expected.png: Added.
+        * platform/gtk/fast/runin/generated2-expected.txt: Added.
+        * platform/gtk/fast/runin/generated3-expected.checksum: Added.
+        * platform/gtk/fast/runin/generated3-expected.png: Added.
+        * platform/gtk/fast/runin/generated3-expected.txt: Added.
+        * platform/gtk/fast/runin/generated4-expected.checksum: Added.
+        * platform/gtk/fast/runin/generated4-expected.png: Added.
+        * platform/gtk/fast/runin/generated4-expected.txt: Added.
+        * platform/gtk/media/video-aspect-ratio-expected.checksum: Added.
+        * platform/gtk/media/video-aspect-ratio-expected.png: Added.
+        * platform/gtk/media/video-aspect-ratio-expected.txt: Added.
+
 2011-02-21  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed added more tests with pixel differences between bots.
