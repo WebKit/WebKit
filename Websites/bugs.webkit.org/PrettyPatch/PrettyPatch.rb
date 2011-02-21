@@ -170,6 +170,10 @@ h1 :hover {
     float: right;
 }
 
+.LineSide:last-child {
+    float: right;
+}
+
 .LineSide,
 .sidebyside .DiffBlockPart.remove,
 .sidebyside .DiffBlockPart.add {

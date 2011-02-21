@@ -2,6 +2,19 @@
 
         Reviewed by Adam Barth.
 
+        [codereviewtool] fix layout nit
+        https://bugs.webkit.org/show_bug.cgi?id=54848
+
+        There is occasionally an off-by-one in the 50% width
+        calculation. This ensures that the add lines always
+        line up with the shared context lines.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2011-02-20  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
         [codereviewtool] make escape hide the preview form
         https://bugs.webkit.org/show_bug.cgi?id=54844
 
