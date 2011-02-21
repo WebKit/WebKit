@@ -791,9 +791,6 @@ BUGCR59675 BUGCR59263 SKIP : media/event-attributes.html = PASS FAIL TIMEOUT
 // These tests are flaky with subtle pixel differences.
 BUGCR60744 LINUX : media/video-layer-crash.html = IMAGE PASS
 
-// Behavior was changed by WebKit roll 69035:69062.
-BUGCR53660 BUGCR60746 MAC : media/video-transformed.html = IMAGE
-
 // This is flaky with a subtle pixel difference in the bottom right corner,
 // which I believe is due to new video scaling algorithm.
 // We should rewrite this test so that we wait for timeupdate event until the time is no less than 1. 

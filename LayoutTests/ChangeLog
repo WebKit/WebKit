@@ -1,3 +1,17 @@
+2011-02-21  Anna Cavender  <annacc@timberline.sea.corp.google.com>
+
+        Reviewed by Eric Carlson.
+
+        new baselines for video-transformed.html on mac
+        https://bugs.webkit.org/show_bug.cgi?id=54765
+
+        * platform/chromium-mac-leopard/media/video-transformed-expected.checksum: Added.
+        * platform/chromium-mac-leopard/media/video-transformed-expected.png: Renamed from LayoutTests/platform/chromium-mac/media/video-transformed-expected.png.
+        * platform/chromium-mac-snowleopard/media/video-transformed-expected.checksum: Added.
+        * platform/chromium-mac-snowleopard/media/video-transformed-expected.png: Added.
+        * platform/chromium-mac/media/video-transformed-expected.checksum: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-02-21  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed, skip
