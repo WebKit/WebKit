@@ -1,3 +1,28 @@
+2011-02-21 Benjamin Kalman  <kalman@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Make editing/selection/extend-selection tests more human readable and hand-runnable
+        https://bugs.webkit.org/show_bug.cgi?id=54712
+
+        Three changes to achieve this:
+          - Column-align the "right:", "left:", "forward:", and "backward:" labels in the output.
+          - Add buttons to switch between LTR and RTL (the test will switch everything to RTL but LTR is useful).
+          - Fix typo causing failing tests to have a js error (rather than layout error).
+
+        Expected results need to change due to column alignment.
+
+        * editing/selection/extend-selection-character-expected.txt:
+        * editing/selection/extend-selection-word-expected.txt:
+        * editing/selection/resources/extend-selection.js:
+        (logMismatchingPositions):
+        (runSelectionTestsWithGranularity):
+        (getTestNodeContainer.createButton.button.onmousedown):
+        (getTestNodeContainer.createButton):
+        (getTestNodeContainer.createButtonToSwitchDirection):
+        (getTestNodeContainer):
+        (createNode):
+
 2011-02-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Maciej Stachowiak.

@@ -81,7 +81,7 @@ function logPositions(positions)
 function logMismatchingPositions(positions, comparisonPositions)
 {
     if (positions.length !== comparisonPositions.length) {
-        log("WARNING: positions should be the same, but the length are not the same " +  positions.length + " vs. " + samePositions.length + "\n");
+        log("WARNING: positions should be the same, but the length are not the same " +  positions.length + " vs. " + comparisonPositions.length + "\n");
         return;
     }
 
@@ -121,33 +121,34 @@ function runSelectionTestsWithGranularity(testNodes, granularity)
     for (var i = 0; i < testNodes.length; ++i) {
         var testNode = testNodes[i];
 
-        testNode.style.direction = "ltr";
         log("Test " + (i + 1) + ", LTR:\n");
-        log("  Extending right: ");
+        testNode.style.direction = "ltr";
+
+        log("  Extending right:    ");
         getSelection().setPosition(testNode);
         var ltrRightPos = extendAndLogSelectionToEnd("right", granularity);
 
-        log("  Extending left:  ");
+        log("  Extending left:     ");
         var ltrLeftPos = extendAndLogSelectionToEnd("left", granularity);
 
-        log("  Extending forward: ");
+        log("  Extending forward:  ");
         getSelection().setPosition(testNode);
         var ltrForwardPos = extendAndLogSelectionToEnd("forward", granularity);
 
-        log("  Extending backward:  ");
+        log("  Extending backward: ");
         var ltrBackwardPos = extendAndLogSelectionToEnd("backward", granularity);
 
+        log("Test " + (i + 1) + ", RTL:\n");
         testNode.style.direction = "rtl";
 
-        log("Test " + (i + 1) + ", RTL:\n");
-        log("  Extending left: ");
+        log("  Extending left:     ");
         getSelection().setPosition(testNode);
         var rtlLeftPos = extendAndLogSelectionToEnd("left", granularity);
 
-        log("  Extending right:  ");
+        log("  Extending right:    ");
         var rtlRightPos = extendAndLogSelectionToEnd("right", granularity);
 
-        log("  Extending forward: ");
+        log("  Extending forward:  ");
         getSelection().setPosition(testNode);
         var rtlForwardPos = extendAndLogSelectionToEnd("forward", granularity);
 
@@ -156,7 +157,7 @@ function runSelectionTestsWithGranularity(testNodes, granularity)
 
         // validations
         log("\n\n  validating ltrRight and ltrLeft\n");
-        if (granularity == "character")
+        if (granularity === "character")
             logMismatchingPositions(ltrRightPos, ltrLeftPos.slice().reverse());
         // Order might not be reversed for extending by word because the 1-point shift by space.
 
@@ -183,6 +184,33 @@ function getTestNodeContainer()
         tests = document.createElement("div");
         tests.id = "tests";
         document.body.insertBefore(tests, document.getElementById("console"));
+
+        function createButton(name, onclick)
+        {
+            var button = document.createElement("button");
+            button.innerText = name;
+            button.onclick = onclick;
+            button.onmousedown = function(event) {
+                // Prevent the mouse event from cancelling the current selection.
+                event.preventDefault();
+            };
+            return button;
+        }
+
+        function createButtonToSwitchDirection(direction)
+        {
+            return createButton(direction, function() {
+                for (var i = 0; i < tests.childNodes.length; ++i) {
+                    var node = tests.childNodes[i];
+                    if (node.className === "testNode")
+                        node.style.direction = direction;
+                }
+            });
+        }
+
+        tests.appendChild(document.createTextNode("Use these buttons to help run the tests manually: "));
+        tests.appendChild(createButtonToSwitchDirection("ltr"));
+        tests.appendChild(createButtonToSwitchDirection("rtl"));
     }
     return tests;
 }
@@ -191,6 +219,7 @@ function createNode(content, style)
 {
     var node = document.createElement("div");
     node.innerHTML = content;
+    node.className = "testNode";
     node.contentEditable = true;
     if (style)
         node.setAttribute("style", style);
