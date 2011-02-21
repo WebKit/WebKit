@@ -3283,7 +3283,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     WebKitWebSettings* webSettings = priv->webSettings.get();
     Settings* settings = core(webView)->settings();
 
-    gchar* defaultEncoding, *cursiveFontFamily, *defaultFontFamily, *fantasyFontFamily, *monospaceFontFamily, *sansSerifFontFamily, *serifFontFamily, *userStylesheetUri;
+    gchar* defaultEncoding, *cursiveFontFamily, *defaultFontFamily, *fantasyFontFamily, *monospaceFontFamily, *sansSerifFontFamily, *serifFontFamily, *userStylesheetUri, *defaultSpellCheckingLanguages;
     gboolean autoLoadImages, autoShrinkImages, printBackgrounds,
         enableScripts, enablePlugins, enableDeveloperExtras, resizableTextAreas,
         enablePrivateBrowsing, enableCaretBrowsing, enableHTML5Database, enableHTML5LocalStorage,
@@ -3330,6 +3330,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
                  "enable-page-cache", &usePageCache,
                  "enable-java-applet", &enableJavaApplet,
                  "enable-hyperlink-auditing", &enableHyperlinkAuditing,
+                 "spell-checking-languages", &defaultSpellCheckingLanguages,
                  "enable-fullscreen", &enableFullscreen,
                  NULL);
 
@@ -3371,6 +3372,11 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
 #if ENABLE(FULLSCREEN_API)
     settings->setFullScreenEnabled(enableFullscreen);
 #endif
+#if ENABLE(SPELLCHECK)
+    WebKit::EditorClient* client = static_cast<WebKit::EditorClient*>(core(webView)->editorClient());
+    static_cast<WebKit::TextCheckerClientEnchant*>(client->textChecker())->updateSpellCheckingLanguage(defaultSpellCheckingLanguages);
+#endif
+
     Page* page = core(webView);
     if (page)
         page->setTabKeyCyclesThroughElements(tabKeyCyclesThroughElements);

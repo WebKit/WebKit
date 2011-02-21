@@ -80,11 +80,11 @@ void TextCheckerClientEnchant::checkSpellingOfString(const UChar* text, int leng
     gchar* ctext = g_utf16_to_utf8(const_cast<gunichar2*>(text), length, 0, 0, 0);
     int utflen = g_utf8_strlen(ctext, -1);
 
-    GOwnPtr<PangoLanguage> language(pango_language_get_default());
+    PangoLanguage* language(pango_language_get_default());
     GOwnPtr<PangoLogAttr> attrs(g_new(PangoLogAttr, utflen+1));
 
     // pango_get_log_attrs uses an aditional position at the end of the text.
-    pango_get_log_attrs(ctext, -1, -1, language.get(), attrs.get(), utflen+1);
+    pango_get_log_attrs(ctext, -1, -1, language, attrs.get(), utflen+1);
 
     for (int i = 0; i < length+1; i++) {
         // We go through each character until we find an is_word_start,
