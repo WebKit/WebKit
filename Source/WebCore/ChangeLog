@@ -1,3 +1,9 @@
+2011-02-21  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix GTK+ build after r79223.
+
+        * GNUmakefile.am: Add file missing from the source list.
+
 2011-02-14  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
