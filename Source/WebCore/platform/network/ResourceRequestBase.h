@@ -44,8 +44,6 @@ namespace WebCore {
         ReturnCacheDataDontLoad, // results of a post - allow stale data and only use cache
     };
 
-    const int unspecifiedTimeoutInterval = INT_MAX;
-
     class ResourceRequest;
     struct CrossThreadResourceRequestData;
 
@@ -85,7 +83,7 @@ namespace WebCore {
         ResourceRequestCachePolicy cachePolicy() const;
         void setCachePolicy(ResourceRequestCachePolicy cachePolicy);
         
-        double timeoutInterval() const;
+        double timeoutInterval() const; // May return 0 when using platform default.
         void setTimeoutInterval(double timeoutInterval);
         
         const KURL& firstPartyForCookies() const;
@@ -148,8 +146,12 @@ namespace WebCore {
         void setReportRawHeaders(bool reportRawHeaders) { m_reportRawHeaders = reportRawHeaders; }
 
         // What this request is for.
+        // FIXME: This should be moved out of ResourceRequestBase, <https://bugs.webkit.org/show_bug.cgi?id=48483>.
         TargetType targetType() const { return m_targetType; }
         void setTargetType(TargetType type) { m_targetType = type; }
+
+        static double defaultTimeoutInterval(); // May return 0 when using platform default.
+        static void setDefaultTimeoutInterval(double);
 
         static bool compare(const ResourceRequest&, const ResourceRequest&);
 
@@ -169,7 +171,7 @@ namespace WebCore {
         ResourceRequestBase(const KURL& url, ResourceRequestCachePolicy policy)
             : m_url(url)
             , m_cachePolicy(policy)
-            , m_timeoutInterval(unspecifiedTimeoutInterval)
+            , m_timeoutInterval(s_defaultTimeoutInterval)
             , m_httpMethod("GET")
             , m_allowCookies(true)
             , m_resourceRequestUpdated(true)
@@ -191,7 +193,7 @@ namespace WebCore {
         KURL m_url;
 
         ResourceRequestCachePolicy m_cachePolicy;
-        double m_timeoutInterval;
+        double m_timeoutInterval; // 0 is a magic value for platform default on platforms that have one.
         KURL m_firstPartyForCookies;
         String m_httpMethod;
         HTTPHeaderMap m_httpHeaderFields;
@@ -208,6 +210,8 @@ namespace WebCore {
 
     private:
         const ResourceRequest& asResourceRequest() const;
+
+        static double s_defaultTimeoutInterval;
     };
 
     bool equalIgnoringHeaderFields(const ResourceRequestBase&, const ResourceRequestBase&);

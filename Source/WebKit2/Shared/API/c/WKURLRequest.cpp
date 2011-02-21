@@ -47,3 +47,8 @@ WKURLRef WKURLRequestCopyURL(WKURLRequestRef requestRef)
 {
     return toCopiedURLAPI(toImpl(requestRef)->url());
 }
+
+void WKURLRequestSetDefaultTimeoutInterval(double timeoutInterval)
+{
+    WebURLRequest::setDefaultTimeoutInterval(timeoutInterval);
+}

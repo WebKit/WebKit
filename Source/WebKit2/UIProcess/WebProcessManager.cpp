@@ -69,6 +69,11 @@ WebProcessProxy* WebProcessManager::getWebProcess(WebContext* context)
     return 0;
 }
 
+void WebProcessManager::getAllWebProcessContexts(Vector<WebContext*>& contexts)
+{
+    copyKeysToVector(m_processMap, contexts);
+}
+
 void WebProcessManager::processDidClose(WebProcessProxy* process, WebContext* context)
 {
     if (process == m_sharedProcess) {

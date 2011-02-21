@@ -32,6 +32,13 @@ using namespace std;
 
 namespace WebCore {
 
+#if !PLATFORM(MAC) || USE(CFNETWORK)
+double ResourceRequestBase::s_defaultTimeoutInterval = INT_MAX;
+#else
+// Will use NSURLRequest default timeout unless set to a non-zero value with setDefaultTimeoutInterval().
+double ResourceRequestBase::s_defaultTimeoutInterval = 0;
+#endif
+
 inline const ResourceRequest& ResourceRequestBase::asResourceRequest() const
 {
     return *static_cast<const ResourceRequest*>(this);
@@ -408,11 +415,22 @@ bool ResourceRequestBase::isConditional() const
             m_httpHeaderFields.contains("If-Unmodified-Since"));
 }
 
+double ResourceRequestBase::defaultTimeoutInterval()
+{
+    return s_defaultTimeoutInterval;
+}
+
+void ResourceRequestBase::setDefaultTimeoutInterval(double timeoutInterval)
+{
+    s_defaultTimeoutInterval = timeoutInterval;
+}
+
 void ResourceRequestBase::updatePlatformRequest() const
 {
     if (m_platformRequestUpdated)
         return;
-    
+
+    ASSERT(m_resourceRequestUpdated);
     const_cast<ResourceRequest&>(asResourceRequest()).doUpdatePlatformRequest();
     m_platformRequestUpdated = true;
 }
@@ -422,6 +440,7 @@ void ResourceRequestBase::updateResourceRequest() const
     if (m_resourceRequestUpdated)
         return;
 
+    ASSERT(m_platformRequestUpdated);
     const_cast<ResourceRequest&>(asResourceRequest()).doUpdateResourceRequest();
     m_resourceRequestUpdated = true;
 }

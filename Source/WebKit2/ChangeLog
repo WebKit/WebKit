@@ -1,3 +1,43 @@
+2011-02-21  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Adam Roben.
+
+        REGRESSION (WebKit2): HTTP requests time out after 60 seconds
+        https://bugs.webkit.org/show_bug.cgi?id=54755
+        <rdar://problem/9006592>
+
+        * Shared/API/c/WKURLRequest.cpp:
+        (WKURLRequestSetDefaultTimeoutInterval):
+        * Shared/API/c/WKURLRequest.h:
+        Added an API to set a default timeout interval for requests created from URLs. The API
+        affects both the UI process and requests created internally by the Web process. Requests
+        created from NSURLRequest or CFURLRequest take timeout from those.
+
+        * Shared/WebURLRequest.cpp: (WebKit::WebURLRequest::setDefaultTimeoutInterval):
+        * Shared/WebURLRequest.h:
+        Pipe the default timeout interval from WKURLRequest down to actual implementation. Since
+        WebURLRequest is currently implemented with WebCore::ResourceRequest, it automatically respects
+        NSURLRequest default timeout interval.
+
+        * UIProcess/WebProcessManager.cpp: (WebKit::WebProcessManager::getAllWebProcessContexts):
+        * UIProcess/WebProcessManager.h:
+        Added a way to enumerate all contexts running in separate processes.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::WebProcessCreationParameters):
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        (WebKit::WebContext::ensureWebProcess):
+        (WebKit::WebContext::setDefaultRequestTimeoutInterval):
+        * UIProcess/WebContext.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::setDefaultRequestTimeoutInterval):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        Use UI process default timeout interval in separate process contexts, too.
+
 2011-02-18  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.

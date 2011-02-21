@@ -190,6 +190,8 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
     for (size_t i = 0; i < parameters.urlSchemesForWhichDomainRelaxationIsForbidden.size(); ++i)
         setDomainRelaxationForbiddenForURLScheme(parameters.urlSchemesForWhichDomainRelaxationIsForbidden[i]);
 
+    setDefaultRequestTimeoutInterval(parameters.defaultRequestTimeoutInterval);
+
     for (size_t i = 0; i < parameters.mimeTypesWithCustomRepresentation.size(); ++i)
         m_mimeTypesWithCustomRepresentations.add(parameters.mimeTypesWithCustomRepresentation[i]);
 
@@ -224,6 +226,11 @@ void WebProcess::registerURLSchemeAsSecure(const String& urlScheme) const
 void WebProcess::setDomainRelaxationForbiddenForURLScheme(const String& urlScheme) const
 {
     SecurityOrigin::setDomainRelaxationForbiddenForURLScheme(true, urlScheme);
+}
+
+void WebProcess::setDefaultRequestTimeoutInterval(double timeoutInterval)
+{
+    ResourceRequest::setDefaultTimeoutInterval(timeoutInterval);
 }
 
 void WebProcess::setAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)

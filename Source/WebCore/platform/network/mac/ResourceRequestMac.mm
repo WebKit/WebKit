@@ -40,11 +40,12 @@
 typedef unsigned NSUInteger;
 #endif
 
-@interface NSURLRequest (WebCoreContentDispositionEncoding)
+@interface NSURLRequest (WebNSURLRequestDetails)
 - (NSArray *)contentDispositionEncodingFallbackArray;
++ (void)setDefaultTimeoutInterval:(NSTimeInterval)seconds;
 @end
 
-@interface NSMutableURLRequest (WebCoreContentDispositionEncoding)
+@interface NSMutableURLRequest (WebMutableNSURLRequestDetails)
 - (void)setContentDispositionEncodingFallbackArray:(NSArray *)theEncodingFallbackArray;
 @end
 
@@ -126,8 +127,12 @@ void ResourceRequest::doUpdatePlatformRequest()
 #endif
 
     [nsRequest setCachePolicy:(NSURLRequestCachePolicy)cachePolicy()];
-    if (timeoutInterval() != unspecifiedTimeoutInterval)
-        [nsRequest setTimeoutInterval:timeoutInterval()];
+
+    double timeoutInterval = ResourceRequestBase::timeoutInterval();
+    if (timeoutInterval)
+        [nsRequest setTimeoutInterval:timeoutInterval];
+    // Otherwise, respect NSURLRequest default timeout.
+
     [nsRequest setMainDocumentURL:firstPartyForCookies()];
     if (!httpMethod().isEmpty())
         [nsRequest setHTTPMethod:httpMethod()];

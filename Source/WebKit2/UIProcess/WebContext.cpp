@@ -207,6 +207,8 @@ void WebContext::ensureWebProcess()
 
     parameters.textCheckerState = TextChecker::state();
 
+    parameters.defaultRequestTimeoutInterval = WebURLRequest::defaultTimeoutInterval();
+
     // Add any platform specific parameters
     platformInitializeWebProcess(parameters);
 
@@ -421,6 +423,14 @@ void WebContext::setCacheModel(CacheModel cacheModel)
     if (!hasValidProcess())
         return;
     m_process->send(Messages::WebProcess::SetCacheModel(static_cast<uint32_t>(m_cacheModel)), 0);
+}
+
+void WebContext::setDefaultRequestTimeoutInterval(double timeoutInterval)
+{
+    if (!hasValidProcess())
+        return;
+
+    m_process->send(Messages::WebProcess::SetDefaultRequestTimeoutInterval(timeoutInterval), 0);
 }
 
 void WebContext::addVisitedLink(const String& visitedURL)

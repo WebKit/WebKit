@@ -33,6 +33,7 @@ namespace WebKit {
 WebProcessCreationParameters::WebProcessCreationParameters()
     : shouldTrackVisitedLinks(false)
     , shouldAlwaysUseComplexTextCodePath(false)
+    , defaultRequestTimeoutInterval(INT_MAX)
 #if PLATFORM(MAC)
     , nsURLCacheMemoryCapacity(0)
     , nsURLCacheDiskCapacity(0)
@@ -57,6 +58,7 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
     encoder->encode(shouldAlwaysUseComplexTextCodePath);
     encoder->encode(languageCode);
     encoder->encode(textCheckerState);
+    encoder->encode(defaultRequestTimeoutInterval);
 #if PLATFORM(MAC)
     encoder->encode(parentProcessName);
     encoder->encode(presenterApplicationPid);
@@ -100,6 +102,8 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
     if (!decoder->decode(parameters.languageCode))
         return false;
     if (!decoder->decode(parameters.textCheckerState))
+        return false;
+    if (!decoder->decode(parameters.defaultRequestTimeoutInterval))
         return false;
 
 #if PLATFORM(MAC)

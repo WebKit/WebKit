@@ -38,6 +38,8 @@ WK_EXPORT WKURLRequestRef WKURLRequestCreateWithWKURL(WKURLRef);
 
 WK_EXPORT WKURLRef WKURLRequestCopyURL(WKURLRequestRef);
 
+WK_EXPORT void WKURLRequestSetDefaultTimeoutInterval(double);
+
 #ifdef __cplusplus
 }
 #endif

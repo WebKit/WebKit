@@ -73,6 +73,8 @@ struct WebProcessCreationParameters {
 
     TextCheckerState textCheckerState;
 
+    double defaultRequestTimeoutInterval;
+
 #if PLATFORM(MAC)
     String parentProcessName;
 

@@ -61,6 +61,9 @@ public:
 
     const String& url() const { return m_request.url(); }
 
+    static double defaultTimeoutInterval(); // May return 0 when using platform default.
+    static void setDefaultTimeoutInterval(double);
+
 private:
     explicit WebURLRequest(const WebCore::ResourceRequest&);
     explicit WebURLRequest(PlatformRequest);

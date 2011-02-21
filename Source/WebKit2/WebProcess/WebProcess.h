@@ -126,6 +126,7 @@ private:
     void registerURLSchemeAsEmptyDocument(const String&);
     void registerURLSchemeAsSecure(const String&) const;
     void setDomainRelaxationForbiddenForURLScheme(const String&) const;
+    void setDefaultRequestTimeoutInterval(double);
     void setAlwaysUsesComplexTextCodePath(bool);
     void languageChanged(const String&) const;
 #if PLATFORM(WIN)

@@ -1,3 +1,35 @@
+2011-02-21  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Adam Roben.
+
+        REGRESSION (WebKit2): HTTP requests time out after 60 seconds
+        https://bugs.webkit.org/show_bug.cgi?id=54755
+        <rdar://problem/9006592>
+
+        No new tests - it won't be great to have a test that runs for a minute.
+
+        It's now possible to set a default timeout to be used at ResourceRequest creation. If one
+        hasn't been set, ResourceRequest will behave as before (use NSURLRequest default on Mac,
+        or use INT_MAX on other platforms).
+
+        * WebCore.exp.in:
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::defaultTimeoutInterval): Get the ResourceRequest notion of
+        default timeout interval (may be 0 if using NSURLRequest default).
+        (WebCore::ResourceRequestBase::setDefaultTimeoutInterval): Set the static member variable.
+        (WebCore::ResourceRequestBase::updatePlatformRequest): Added an assertion that resource
+        request is updated. Plaform code often calls updateResourceRequest() indirectly from this
+        function, and that must obviously be a no-op.
+        (WebCore::ResourceRequestBase::updateResourceRequest): Added an assertion in the opposite
+        direction.
+        * platform/network/ResourceRequestBase.h: Changed "unspecifiedTimeoutInterval" to
+        "defaultTimeoutInterval". It has been used as default by most platforms anyway.
+        (WebCore::ResourceRequestBase::ResourceRequestBase):
+
+        * platform/network/mac/ResourceRequestMac.mm: (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        Now zero is the magic value, not INT_MAX. We'll use NSURLRequest default if neither
+        setTimeoutInterval() nor setDefaultTimeoutInterval() has been called.
+
 2011-02-21  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
