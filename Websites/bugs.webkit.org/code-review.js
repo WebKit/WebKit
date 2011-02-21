@@ -76,7 +76,8 @@ var CODE_REVIEW_UNITTEST;
     j: 74,
     k: 75,
     n: 78,
-    p: 80    
+    p: 80,
+    r: 82
   }
 
   function idForLine(number) {
@@ -1413,6 +1414,11 @@ var CODE_REVIEW_UNITTEST;
     var handled = false;
 
     switch (e.keyCode) {
+    case KEY_CODE.r:
+      $('.review select').focus();
+      handled = true;
+      break;
+
     case KEY_CODE.n:
       handled = focusNext(isComment, DIRECTION.FORWARD);
       break;
