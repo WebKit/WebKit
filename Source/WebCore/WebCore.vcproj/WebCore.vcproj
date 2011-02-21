@@ -65622,6 +65622,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\InstrumentingAgents.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\ScriptArguments.cpp"
 				>
 			</File>

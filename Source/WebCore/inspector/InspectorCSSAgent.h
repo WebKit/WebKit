@@ -55,10 +55,8 @@ public:
     static CSSStyleSheet* parentStyleSheet(StyleBase*);
     static CSSStyleRule* asCSSStyleRule(StyleBase*);
 
-    InspectorCSSAgent();
+    explicit InspectorCSSAgent(InspectorDOMAgent*);
     ~InspectorCSSAgent();
-
-    void setDOMAgent(InspectorDOMAgent* domAgent);
 
     void reset();
     void getStylesForNode(long nodeId, RefPtr<InspectorValue>* result);

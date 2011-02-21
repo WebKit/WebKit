@@ -54,6 +54,7 @@ class Event;
 class InspectorDOMAgent;
 class InspectorFrontend;
 class MatchJob;
+class InstrumentingAgents;
 class NameNodeMap;
 class Node;
 class Page;
@@ -85,13 +86,15 @@ public:
         virtual void didModifyDOMAttr(Element*) = 0;
     };
 
-    static PassOwnPtr<InspectorDOMAgent> create(InjectedScriptHost* injectedScriptHost, InspectorFrontend* frontend)
+    static PassOwnPtr<InspectorDOMAgent> create(InstrumentingAgents* instrumentingAgents, InjectedScriptHost* injectedScriptHost)
     {
-        return adoptPtr(new InspectorDOMAgent(injectedScriptHost, frontend));
+        return adoptPtr(new InspectorDOMAgent(instrumentingAgents, injectedScriptHost));
     }
 
-    InspectorDOMAgent(InjectedScriptHost*, InspectorFrontend*);
     ~InspectorDOMAgent();
+
+    void setFrontend(InspectorFrontend*);
+    void clearFrontend();
 
     Vector<Document*> documents();
     void reset();
@@ -147,6 +150,8 @@ public:
     static bool isWhitespace(Node*);
 
 private:
+    InspectorDOMAgent(InstrumentingAgents*, InjectedScriptHost*);
+
     // Node-related methods.
     typedef HashMap<RefPtr<Node>, long> NodeToIdMap;
     long bind(Node*, NodeToIdMap*);
@@ -173,6 +178,7 @@ private:
 
     InjectedScript injectedScriptForNodeId(long nodeId);
 
+    InstrumentingAgents* m_instrumentingAgents;
     InjectedScriptHost* m_injectedScriptHost;
     InspectorFrontend* m_frontend;
     DOMListener* m_domListener;

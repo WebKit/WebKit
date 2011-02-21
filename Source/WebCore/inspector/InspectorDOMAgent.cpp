@@ -61,6 +61,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "InjectedScriptHost.h"
 #include "InspectorFrontend.h"
+#include "InstrumentingAgents.h"
 #include "MutationEvent.h"
 #include "Node.h"
 #include "NodeList.h"
@@ -242,9 +243,10 @@ void RevalidateStyleAttributeTask::onTimer(Timer<RevalidateStyleAttributeTask>*)
     m_elements.clear();
 }
 
-InspectorDOMAgent::InspectorDOMAgent(InjectedScriptHost* injectedScriptHost, InspectorFrontend* frontend)
-    : m_injectedScriptHost(injectedScriptHost)
-    , m_frontend(frontend)
+InspectorDOMAgent::InspectorDOMAgent(InstrumentingAgents* instrumentingAgents, InjectedScriptHost* injectedScriptHost)
+    : m_instrumentingAgents(instrumentingAgents)
+    , m_injectedScriptHost(injectedScriptHost)
+    , m_frontend(0)
     , m_domListener(0)
     , m_lastNodeId(1)
     , m_matchJobsTimer(this, &InspectorDOMAgent::onMatchJobsTimer)
@@ -253,6 +255,21 @@ InspectorDOMAgent::InspectorDOMAgent(InjectedScriptHost* injectedScriptHost, Ins
 
 InspectorDOMAgent::~InspectorDOMAgent()
 {
+    reset();
+}
+
+void InspectorDOMAgent::setFrontend(InspectorFrontend* frontend)
+{
+    ASSERT(!m_frontend);
+    m_frontend = frontend;
+    m_instrumentingAgents->setInspectorDOMAgent(this);
+}
+
+void InspectorDOMAgent::clearFrontend()
+{
+    ASSERT(m_frontend);
+    m_frontend = 0;
+    m_instrumentingAgents->setInspectorDOMAgent(0);
     reset();
 }
 

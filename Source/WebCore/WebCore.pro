@@ -1871,6 +1871,7 @@ HEADERS += \
     inspector/InspectorState.h \
     inspector/InspectorStyleSheet.h \
     inspector/InspectorTimelineAgent.h \
+    inspector/InstrumentingAgents.h \
     inspector/ScriptGCEventListener.h \
     inspector/TimelineRecordFactory.h \
     loader/appcache/ApplicationCacheGroup.h \

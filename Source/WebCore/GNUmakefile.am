@@ -2011,6 +2011,7 @@ webcore_sources += \
 	Source/WebCore/inspector/InspectorValues.cpp \
 	Source/WebCore/inspector/InspectorValues.h \
 	Source/WebCore/inspector/InspectorWorkerResource.h \
+	Source/WebCore/inspector/InstrumentingAgents.h \
 	Source/WebCore/inspector/ScriptArguments.cpp \
 	Source/WebCore/inspector/ScriptArguments.h \
 	Source/WebCore/inspector/ScriptBreakpoint.h \

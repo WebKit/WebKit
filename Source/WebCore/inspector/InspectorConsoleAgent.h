@@ -38,8 +38,11 @@ namespace WebCore {
 
 class ConsoleMessage;
 class InspectorAgent;
+class InspectorDOMAgent;
 class InspectorFrontend;
 class InspectorState;
+class InjectedScriptHost;
+class InstrumentingAgents;
 class ResourceError;
 class ResourceResponse;
 class ScriptArguments;
@@ -49,13 +52,14 @@ class ScriptProfile;
 class InspectorConsoleAgent {
     WTF_MAKE_NONCOPYABLE(InspectorConsoleAgent);
 public:
-    InspectorConsoleAgent(InspectorAgent*);
+    InspectorConsoleAgent(InstrumentingAgents*, InspectorAgent*, InspectorState*, InjectedScriptHost*, InspectorDOMAgent*);
     ~InspectorConsoleAgent();
 
     void setConsoleMessagesEnabled(bool enabled, bool* newState);
     void clearConsoleMessages();
     void reset();
     void setFrontend(InspectorFrontend*);
+    void clearFrontend();
 
     void addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     void addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& sourceID);
@@ -77,7 +81,11 @@ private:
     void setConsoleMessagesEnabled(bool);
     void addConsoleMessage(PassOwnPtr<ConsoleMessage>);
 
+    InstrumentingAgents* m_instrumentingAgents;
     InspectorAgent* m_inspectorAgent;
+    InspectorState* m_inspectorState;
+    InjectedScriptHost* m_injectedScriptHost;
+    InspectorDOMAgent* m_inspectorDOMAgent;
     InspectorFrontend* m_frontend;
     ConsoleMessage* m_previousMessage;
     Vector<OwnPtr<ConsoleMessage> > m_consoleMessages;

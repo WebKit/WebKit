@@ -77,6 +77,7 @@ class InspectorStorageAgent;
 class InspectorTimelineAgent;
 class InspectorValue;
 class InspectorWorkerResource;
+class InstrumentingAgents;
 class IntRect;
 class KURL;
 class Node;
@@ -273,8 +274,10 @@ private:
     Page* m_inspectedPage;
     InspectorClient* m_client;
     InspectorFrontend* m_frontend;
-    OwnPtr<InspectorCSSAgent> m_cssAgent;
+    OwnPtr<InstrumentingAgents> m_instrumentingAgents;
+    RefPtr<InjectedScriptHost> m_injectedScriptHost;
     OwnPtr<InspectorDOMAgent> m_domAgent;
+    OwnPtr<InspectorCSSAgent> m_cssAgent;
 
 #if ENABLE(DATABASE)
     OwnPtr<InspectorDatabaseAgent> m_databaseAgent;
@@ -298,7 +301,6 @@ private:
     RefPtr<InspectorResourceAgent> m_resourceAgent;
     OwnPtr<InspectorRuntimeAgent> m_runtimeAgent;
 
-    RefPtr<InjectedScriptHost> m_injectedScriptHost;
     OwnPtr<InspectorConsoleAgent> m_consoleAgent;
 
     Vector<pair<long, String> > m_pendingEvaluateTestCommands;
