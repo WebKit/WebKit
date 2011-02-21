@@ -104,7 +104,6 @@ SET(JavaScriptCore_SOURCES
     runtime/FunctionPrototype.cpp
     runtime/GCActivityCallback.cpp
     runtime/GetterSetter.cpp
-    runtime/GlobalEvalFunction.cpp
     runtime/Identifier.cpp
     runtime/InitializeThreading.cpp
     runtime/InternalFunction.cpp
@@ -148,7 +147,6 @@ SET(JavaScriptCore_SOURCES
     runtime/PropertyDescriptor.cpp
     runtime/PropertyNameArray.cpp
     runtime/PropertySlot.cpp
-    runtime/PrototypeFunction.cpp
     runtime/RegExp.cpp
     runtime/RegExpCache.cpp
     runtime/RegExpConstructor.cpp

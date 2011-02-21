@@ -26,7 +26,6 @@
 #include "JSGlobalData.h"
 #include "JSVariableObject.h"
 #include "JSWeakObjectMapRefInternal.h"
-#include "NativeFunctionWrapper.h"
 #include "NumberPrototype.h"
 #include "StringPrototype.h"
 #include <wtf/HashSet.h>
@@ -42,7 +41,6 @@ namespace JSC {
     class ErrorConstructor;
     class FunctionPrototype;
     class GlobalCodeBlock;
-    class GlobalEvalFunction;
     class NativeErrorConstructor;
     class ProgramCodeBlock;
     class RegExpConstructor;
@@ -97,9 +95,9 @@ namespace JSC {
             WriteBarrier<NativeErrorConstructor> typeErrorConstructor;
             WriteBarrier<NativeErrorConstructor> URIErrorConstructor;
 
-            WriteBarrier<GlobalEvalFunction> evalFunction;
-            WriteBarrier<NativeFunctionWrapper> callFunction;
-            WriteBarrier<NativeFunctionWrapper> applyFunction;
+            WriteBarrier<JSFunction> evalFunction;
+            WriteBarrier<JSFunction> callFunction;
+            WriteBarrier<JSFunction> applyFunction;
 
             WriteBarrier<ObjectPrototype> objectPrototype;
             WriteBarrier<FunctionPrototype> functionPrototype;
@@ -123,7 +121,6 @@ namespace JSC {
             RefPtr<Structure> errorStructure;
             RefPtr<Structure> functionStructure;
             RefPtr<Structure> numberObjectStructure;
-            RefPtr<Structure> prototypeFunctionStructure;
             RefPtr<Structure> regExpMatchesArrayStructure;
             RefPtr<Structure> regExpStructure;
             RefPtr<Structure> stringObjectStructure;
@@ -193,7 +190,7 @@ namespace JSC {
         NativeErrorConstructor* typeErrorConstructor() const { return d()->typeErrorConstructor.get(); }
         NativeErrorConstructor* URIErrorConstructor() const { return d()->URIErrorConstructor.get(); }
 
-        GlobalEvalFunction* evalFunction() const { return d()->evalFunction.get(); }
+        JSFunction* evalFunction() const { return d()->evalFunction.get(); }
 
         ObjectPrototype* objectPrototype() const { return d()->objectPrototype.get(); }
         FunctionPrototype* functionPrototype() const { return d()->functionPrototype.get(); }
@@ -217,7 +214,6 @@ namespace JSC {
         Structure* errorStructure() const { return d()->errorStructure.get(); }
         Structure* functionStructure() const { return d()->functionStructure.get(); }
         Structure* numberObjectStructure() const { return d()->numberObjectStructure.get(); }
-        Structure* prototypeFunctionStructure() const { return d()->prototypeFunctionStructure.get(); }
         Structure* internalFunctionStructure() const { return d()->internalFunctionStructure.get(); }
         Structure* regExpMatchesArrayStructure() const { return d()->regExpMatchesArrayStructure.get(); }
         Structure* regExpStructure() const { return d()->regExpStructure.get(); }

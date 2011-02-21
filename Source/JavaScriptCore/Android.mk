@@ -94,7 +94,6 @@ LOCAL_SRC_FILES := \
 	runtime/FunctionPrototype.cpp \
 	runtime/GCHandle.cpp \
 	runtime/GetterSetter.cpp \
-	runtime/GlobalEvalFunction.cpp \
 	runtime/Identifier.cpp \
 	runtime/InitializeThreading.cpp \
 	runtime/InternalFunction.cpp \
@@ -137,7 +136,6 @@ LOCAL_SRC_FILES := \
 	runtime/PropertyDescriptor.cpp \
 	runtime/PropertyNameArray.cpp \
 	runtime/PropertySlot.cpp \
-	runtime/PrototypeFunction.cpp \
 	runtime/RegExp.cpp \
 	runtime/RegExpConstructor.cpp \
 	runtime/RegExpObject.cpp \

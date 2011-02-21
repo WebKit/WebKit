@@ -30,7 +30,6 @@
 #define CallData_h
 
 #include "JSValue.h"
-#include "NativeFunctionWrapper.h"
 
 namespace JSC {
 

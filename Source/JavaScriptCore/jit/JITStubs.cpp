@@ -40,7 +40,6 @@
 #include "Debugger.h"
 #include "ExceptionHelpers.h"
 #include "GetterSetter.h"
-#include "GlobalEvalFunction.h"
 #include "JIT.h"
 #include "JSActivation.h"
 #include "JSArray.h"

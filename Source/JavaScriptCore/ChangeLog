@@ -1,3 +1,86 @@
+2011-02-20  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54839
+        Remove PrototypeFunction, NativeFunctionWrapper, and GlobalEvalFunction.
+
+        Historically, Native functions used to be represented by PrototypeFunctions, however
+        since introducing call optimizations to the JIT this has used JSFunctions for host
+        calls too. At the point this change was made, the interpreter continued to use
+        PrototypeFunctions, however since fallback from the JIT to interpreter was introduced
+        the interpreter has had to be able to run using host functions represented using
+        JSFunctions - leading to an unnecessary and redundant divergence in behaviour between 
+        interpreter only builds, and situations where the JIT has fallen back to interpreting.
+
+        NativeFunctionWrapper only existed to select between PrototypeFunction and JSFunction
+        for wrappers for host functions, and as such can also be removed.
+
+        GlobalEvalFunction is a redundant wrapper that happens to be derived from
+        PrototypeFunction. It existed to hold a reference to the global object - but since all
+        functions how derive from JSObjectWithGlobalObject, this no longer requires an
+        additional class to provide this functionality.
+
+        * JavaScriptCore.JSVALUE32_64only.exp:
+        * JavaScriptCore.JSVALUE64only.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+            Removed symbols / references to files.
+
+        * runtime/GlobalEvalFunction.cpp: Removed.
+        * runtime/GlobalEvalFunction.h: Removed.
+        * runtime/NativeFunctionWrapper.h: Removed.
+        * runtime/PrototypeFunction.cpp: Removed.
+        * runtime/PrototypeFunction.h: Removed.
+            Removed.
+
+        * runtime/Executable.cpp:
+        (JSC::NativeExecutable::~NativeExecutable):
+        * runtime/Executable.h:
+        (JSC::NativeExecutable::create):
+        (JSC::NativeExecutable::NativeExecutable):
+        (JSC::JSFunction::nativeFunction):
+        * runtime/JSFunction.cpp:
+        (JSC::callHostFunctionAsConstructor):
+        (JSC::JSFunction::JSFunction):
+        (JSC::JSFunction::getCallData):
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::getHostFunction):
+        * runtime/JSGlobalData.h:
+        (JSC::JSGlobalData::getCTIStub):
+            Added interpreter-friendly constructors for NativeExecutables.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        * interpreter/Interpreter.cpp:
+        * jit/JITStubs.cpp:
+        * jsc.cpp:
+        * runtime/ArrayConstructor.cpp:
+        * runtime/BooleanPrototype.cpp:
+        * runtime/BooleanPrototype.h:
+        * runtime/CallData.h:
+        * runtime/DateConstructor.cpp:
+        * runtime/DateConstructor.h:
+        * runtime/ErrorPrototype.cpp:
+        * runtime/ErrorPrototype.h:
+        * runtime/FunctionPrototype.cpp:
+        * runtime/FunctionPrototype.h:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSGlobalObjectFunctions.cpp:
+        * runtime/Lookup.cpp:
+        * runtime/NumberPrototype.cpp:
+        * runtime/NumberPrototype.h:
+        * runtime/ObjectConstructor.cpp:
+        * runtime/ObjectConstructor.h:
+        * runtime/ObjectPrototype.cpp:
+        * runtime/ObjectPrototype.h:
+        * runtime/RegExpPrototype.cpp:
+        * runtime/RegExpPrototype.h:
+        * runtime/SmallStrings.h:
+        * runtime/StringConstructor.cpp:
+        * runtime/StringConstructor.h:
+            Removed use of redundant classes.
+
 2011-02-19  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Unreviewed build fix for Symbian.

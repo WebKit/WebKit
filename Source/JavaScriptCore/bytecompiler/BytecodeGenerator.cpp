@@ -31,7 +31,6 @@
 #include "BytecodeGenerator.h"
 
 #include "BatchedTransitionOptimizer.h"
-#include "PrototypeFunction.h"
 #include "JSFunction.h"
 #include "Interpreter.h"
 #include "UString.h"

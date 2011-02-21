@@ -25,7 +25,6 @@
 #include "JSString.h"
 #include "JSStringBuilder.h"
 #include "ObjectPrototype.h"
-#include "PrototypeFunction.h"
 #include "StringRecursionChecker.h"
 #include "UString.h"
 
@@ -36,13 +35,13 @@ ASSERT_CLASS_FITS_IN_CELL(ErrorPrototype);
 static EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(ExecState*);
 
 // ECMA 15.9.4
-ErrorPrototype::ErrorPrototype(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, Structure* prototypeFunctionStructure)
+ErrorPrototype::ErrorPrototype(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, Structure* functionStructure)
     : ErrorInstance(&exec->globalData(), structure)
 {
     // The constructor will be added later in ErrorConstructor's constructor
 
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().name, jsNontrivialString(exec, "Error"), DontEnum);
-    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, globalObject, prototypeFunctionStructure, 0, exec->propertyNames().toString, errorProtoFuncToString), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 0, exec->propertyNames().toString, errorProtoFuncToString), DontEnum);
 }
 
 EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(ExecState* exec)

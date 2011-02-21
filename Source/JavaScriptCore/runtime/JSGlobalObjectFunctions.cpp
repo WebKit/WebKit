@@ -26,7 +26,6 @@
 #include "JSGlobalObjectFunctions.h"
 
 #include "CallFrame.h"
-#include "GlobalEvalFunction.h"
 #include "Interpreter.h"
 #include "JSGlobalObject.h"
 #include "JSString.h"

@@ -42,7 +42,6 @@
 #include "EvalCodeCache.h"
 #include "ExceptionHelpers.h"
 #include "GetterSetter.h"
-#include "GlobalEvalFunction.h"
 #include "JSActivation.h"
 #include "JSArray.h"
 #include "JSByteArray.h"

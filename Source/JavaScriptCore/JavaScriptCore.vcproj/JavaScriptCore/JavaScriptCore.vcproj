@@ -758,14 +758,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\GlobalEvalFunction.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\GlobalEvalFunction.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\runtime\Identifier.cpp"
 				>
 			</File>
@@ -1042,10 +1034,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\NativeFunctionWrapper.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\runtime\NumberConstructor.cpp"
 				>
 			</File>
@@ -1127,14 +1115,6 @@
 			</File>
 			<File
 				RelativePath="..\..\runtime\Protect.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\PrototypeFunction.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\PrototypeFunction.h"
 				>
 			</File>
 			<File

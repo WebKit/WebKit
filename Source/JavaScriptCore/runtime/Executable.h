@@ -92,22 +92,29 @@ namespace JSC {
 #endif
     };
 
-#if ENABLE(JIT)
     class NativeExecutable : public ExecutableBase {
         friend class JIT;
     public:
+#if ENABLE(JIT)
         static PassRefPtr<NativeExecutable> create(MacroAssemblerCodePtr callThunk, NativeFunction function, MacroAssemblerCodePtr constructThunk, NativeFunction constructor)
         {
             if (!callThunk)
                 return adoptRef(new NativeExecutable(JITCode(), function, JITCode(), constructor));
             return adoptRef(new NativeExecutable(JITCode::HostFunction(callThunk), function, JITCode::HostFunction(constructThunk), constructor));
         }
+#else
+        static PassRefPtr<NativeExecutable> create(NativeFunction function, NativeFunction constructor)
+        {
+            return adoptRef(new NativeExecutable(function, constructor));
+        }
+#endif
 
         ~NativeExecutable();
 
         NativeFunction function() { return m_function; }
 
     private:
+#if ENABLE(JIT)
         NativeExecutable(JITCode callThunk, NativeFunction function, JITCode constructThunk, NativeFunction constructor)
             : ExecutableBase(NUM_PARAMETERS_IS_HOST)
             , m_function(function)
@@ -118,13 +125,20 @@ namespace JSC {
             m_jitCodeForCallWithArityCheck = callThunk.addressForCall();
             m_jitCodeForConstructWithArityCheck = constructThunk.addressForCall();
         }
+#else
+        NativeExecutable(NativeFunction function, NativeFunction constructor)
+            : ExecutableBase(NUM_PARAMETERS_IS_HOST)
+            , m_function(function)
+            , m_constructor(constructor)
+        {
+        }
+#endif
 
         NativeFunction m_function;
         // Probably should be a NativeConstructor, but this will currently require rewriting the JIT
         // trampoline. It may be easier to make NativeFunction be passed 'this' as a part of the ArgList.
         NativeFunction m_constructor;
     };
-#endif
 
     class VPtrHackExecutable : public ExecutableBase {
     public:
@@ -398,13 +412,11 @@ namespace JSC {
         return m_executable->isHostFunction();
     }
 
-#if ENABLE(JIT)
     inline NativeFunction JSFunction::nativeFunction()
     {
         ASSERT(isHostFunction());
         return static_cast<NativeExecutable*>(m_executable.get())->function();
     }
-#endif
 }
 
 #endif

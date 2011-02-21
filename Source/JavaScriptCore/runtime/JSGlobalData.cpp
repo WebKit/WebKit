@@ -284,6 +284,11 @@ PassRefPtr<NativeExecutable> JSGlobalData::getHostFunction(NativeFunction functi
 {
     return jitStubs->hostFunctionStub(this, function, generator);
 }
+#else
+PassRefPtr<NativeExecutable> JSGlobalData::getHostFunction(NativeFunction function)
+{
+    return NativeExecutable::create(function, callHostFunctionAsConstructor);
+}
 #endif
 
 JSGlobalData::ClientData::~ClientData()

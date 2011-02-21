@@ -277,8 +277,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/GCActivityCallback.h \
 	Source/JavaScriptCore/runtime/GetterSetter.cpp \
 	Source/JavaScriptCore/runtime/GetterSetter.h \
-	Source/JavaScriptCore/runtime/GlobalEvalFunction.cpp \
-	Source/JavaScriptCore/runtime/GlobalEvalFunction.h \
 	Source/JavaScriptCore/runtime/Identifier.cpp \
 	Source/JavaScriptCore/runtime/Identifier.h \
 	Source/JavaScriptCore/runtime/InitializeThreading.cpp \
@@ -349,7 +347,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/NativeErrorConstructor.h \
 	Source/JavaScriptCore/runtime/NativeErrorPrototype.cpp \
 	Source/JavaScriptCore/runtime/NativeErrorPrototype.h \
-	Source/JavaScriptCore/runtime/NativeFunctionWrapper.h \
 	Source/JavaScriptCore/runtime/NumberConstructor.cpp \
 	Source/JavaScriptCore/runtime/NumberConstructor.h \
 	Source/JavaScriptCore/runtime/NumberObject.cpp \
@@ -371,8 +368,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/PropertySlot.cpp \
 	Source/JavaScriptCore/runtime/PropertySlot.h \
 	Source/JavaScriptCore/runtime/Protect.h \
-	Source/JavaScriptCore/runtime/PrototypeFunction.cpp \
-	Source/JavaScriptCore/runtime/PrototypeFunction.h \
 	Source/JavaScriptCore/runtime/PutPropertySlot.h \
 	Source/JavaScriptCore/runtime/RegExpCache.cpp \
 	Source/JavaScriptCore/runtime/RegExpCache.h \

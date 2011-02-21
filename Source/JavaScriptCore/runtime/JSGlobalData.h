@@ -63,6 +63,7 @@ namespace JSC {
     class JSGlobalObject;
     class JSObject;
     class Lexer;
+    class NativeExecutable;
     class Parser;
     class RegExpCache;
     class Stringifier;
@@ -199,9 +200,10 @@ namespace JSC {
         {
             return jitStubs->ctiStub(this, generator);
         }
-        PassRefPtr<NativeExecutable> getHostFunction(NativeFunction function);
-        PassRefPtr<NativeExecutable> getHostFunction(NativeFunction function, ThunkGenerator generator);
+        PassRefPtr<NativeExecutable> getHostFunction(NativeFunction, ThunkGenerator);
 #endif
+        PassRefPtr<NativeExecutable> getHostFunction(NativeFunction);
+
         TimeoutChecker timeoutChecker;
         Terminator terminator;
         Heap heap;

@@ -35,11 +35,9 @@
 
 namespace JSC {
 
-#if ENABLE(JIT)
 NativeExecutable::~NativeExecutable()
 {
 }
-#endif
 
 VPtrHackExecutable::~VPtrHackExecutable()
 {

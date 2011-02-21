@@ -30,7 +30,6 @@
 #include "JSArray.h"
 #include "JSFunction.h"
 #include "Lookup.h"
-#include "PrototypeFunction.h"
 
 namespace JSC {
 
@@ -38,7 +37,7 @@ ASSERT_CLASS_FITS_IN_CELL(ArrayConstructor);
     
 static EncodedJSValue JSC_HOST_CALL arrayConstructorIsArray(ExecState*);
 
-ArrayConstructor::ArrayConstructor(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, ArrayPrototype* arrayPrototype, Structure* prototypeFunctionStructure)
+ArrayConstructor::ArrayConstructor(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, ArrayPrototype* arrayPrototype, Structure* functionStructure)
     : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, arrayPrototype->classInfo()->className))
 {
     // ECMA 15.4.3.1 Array.prototype
@@ -48,7 +47,7 @@ ArrayConstructor::ArrayConstructor(ExecState* exec, JSGlobalObject* globalObject
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
 
     // ES5
-    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, globalObject, prototypeFunctionStructure, 1, exec->propertyNames().isArray, arrayConstructorIsArray), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 1, exec->propertyNames().isArray, arrayConstructorIsArray), DontEnum);
 }
 
 static inline JSObject* constructArrayWithSizeQuirk(ExecState* exec, const ArgList& args)

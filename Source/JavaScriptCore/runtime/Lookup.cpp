@@ -22,7 +22,6 @@
 
 #include "Executable.h"
 #include "JSFunction.h"
-#include "PrototypeFunction.h"
 
 namespace JSC {
 
@@ -77,14 +76,14 @@ void setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* 
     WriteBarrierBase<Unknown>* location = thisObj->getDirectLocation(propertyName);
 
     if (!location) {
-        NativeFunctionWrapper* function;
+        JSFunction* function;
         JSGlobalObject* globalObject = asGlobalObject(thisObj->getAnonymousValue(0).asCell());
 #if ENABLE(JIT) && ENABLE(JIT_OPTIMIZE_NATIVE_CALL)
         if (entry->generator())
-            function = new (exec) NativeFunctionWrapper(exec, globalObject, globalObject->prototypeFunctionStructure(), entry->functionLength(), propertyName, exec->globalData().getHostFunction(entry->function(), entry->generator()));
+            function = new (exec) JSFunction(exec, globalObject, globalObject->functionStructure(), entry->functionLength(), propertyName, exec->globalData().getHostFunction(entry->function(), entry->generator()));
         else
 #endif
-            function = new (exec) NativeFunctionWrapper(exec, globalObject, globalObject->prototypeFunctionStructure(), entry->functionLength(), propertyName, entry->function());
+            function = new (exec) JSFunction(exec, globalObject, globalObject->functionStructure(), entry->functionLength(), propertyName, entry->function());
 
         thisObj->putDirectFunction(exec->globalData(), propertyName, function, entry->attributes());
         location = thisObj->getDirectLocation(propertyName);

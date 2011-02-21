@@ -42,12 +42,10 @@ using namespace WTF;
 using namespace Unicode;
 
 namespace JSC {
-#if ENABLE(JIT)
 EncodedJSValue JSC_HOST_CALL callHostFunctionAsConstructor(ExecState* exec)
 {
     return throwVMError(exec, createNotAConstructorError(exec, exec->callee()));
 }
-#endif
 
 ASSERT_CLASS_FITS_IN_CELL(JSFunction);
 
@@ -65,7 +63,6 @@ JSFunction::JSFunction(NonNullPassRefPtr<Structure> structure)
 {
 }
 
-#if ENABLE(JIT)
 JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, int length, const Identifier& name, PassRefPtr<NativeExecutable> thunk)
     : Base(globalObject, structure)
     , m_executable(thunk)
@@ -74,23 +71,14 @@ JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, NonNullPas
     putDirect(exec->globalData(), exec->globalData().propertyNames->name, jsString(exec, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
     putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
 }
-#endif
 
 JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, int length, const Identifier& name, NativeFunction func)
     : Base(globalObject, structure)
-#if ENABLE(JIT)
     , m_executable(exec->globalData().getHostFunction(func))
-#endif
     , m_scopeChain(globalObject->globalScopeChain())
 {
     putDirect(exec->globalData(), exec->globalData().propertyNames->name, jsString(exec, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
-#if ENABLE(JIT)
     putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
-#else
-    UNUSED_PARAM(length);
-    UNUSED_PARAM(func);
-    ASSERT_NOT_REACHED();
-#endif
 }
 
 JSFunction::JSFunction(ExecState* exec, NonNullPassRefPtr<FunctionExecutable> executable, ScopeChainNode* scopeChainNode)
@@ -165,12 +153,10 @@ void JSFunction::markChildren(MarkStack& markStack)
 
 CallType JSFunction::getCallData(CallData& callData)
 {
-#if ENABLE(JIT)
     if (isHostFunction()) {
         callData.native.function = nativeFunction();
         return CallTypeHost;
     }
-#endif
     callData.js.functionExecutable = jsExecutable();
     callData.js.scopeChain = scope().node();
     return CallTypeJS;
