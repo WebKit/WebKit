@@ -158,7 +158,7 @@ NSWritingDirection Editor::baseWritingDirectionForSelectionStart() const
     NSWritingDirection result = NSWritingDirectionLeftToRight;
 
     Position pos = m_frame->selection()->selection().visibleStart().deepEquivalent();
-    Node* node = pos.node();
+    Node* node = pos.deprecatedNode();
     if (!node)
         return result;
 

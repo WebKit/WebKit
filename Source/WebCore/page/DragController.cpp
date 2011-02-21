@@ -753,7 +753,7 @@ bool DragController::startDrag(Frame* src, Clipboard* clipboard, DragOperation s
         doSystemDrag(dragImage, dragLoc, mouseDraggedPoint, clipboard, src, true);
     } else if (isSelected && (m_dragSourceAction & DragSourceActionSelection)) {
         if (!clipboard->hasData()) {
-            if (isNodeInTextFormControl(src->selection()->start().node()))
+            if (isNodeInTextFormControl(src->selection()->start().deprecatedNode()))
                 clipboard->writePlainText(src->editor()->selectedText());
             else {
                 RefPtr<Range> selectionRange = src->selection()->toNormalizedRange();

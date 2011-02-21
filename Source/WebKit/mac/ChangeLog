@@ -1,3 +1,26 @@
+2011-02-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        Rename Position::node() to Position::deprecatedNode()
+        https://bugs.webkit.org/show_bug.cgi?id=54622
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _smartDeleteRangeForProposedRange:]):
+
+2011-02-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        Rename Position::node() to Position::deprecatedNode()
+        https://bugs.webkit.org/show_bug.cgi?id=54622
+        
+        Done the rename.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _smartDeleteRangeForProposedRange:]): Since newStart and newEnd are parent-anchored,
+        use containerNode() and offsetInContainerNode() instead of deprecated member functions.
+
 2011-02-18  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

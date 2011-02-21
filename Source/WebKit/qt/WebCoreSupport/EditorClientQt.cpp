@@ -420,7 +420,7 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
     if (!kevent || kevent->type() == PlatformKeyboardEvent::KeyUp)
         return;
 
-    Node* start = frame->selection()->start().node();
+    Node* start = frame->selection()->start().containerNode();
     if (!start)
         return;
 

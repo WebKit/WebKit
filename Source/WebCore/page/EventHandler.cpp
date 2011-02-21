@@ -285,7 +285,7 @@ void EventHandler::selectClosestWordOrLinkFromMouseEvent(const MouseEventWithHit
         VisibleSelection newSelection;
         Element* URLElement = result.hitTestResult().URLElement();
         VisiblePosition pos(innerNode->renderer()->positionForPoint(result.localPoint()));
-        if (pos.isNotNull() && pos.deepEquivalent().node()->isDescendantOf(URLElement))
+        if (pos.isNotNull() && pos.deepEquivalent().deprecatedNode()->isDescendantOf(URLElement))
             newSelection = VisibleSelection::selectionFromContentsOfNode(URLElement);
     
         TextGranularity granularity = CharacterGranularity;
@@ -347,7 +347,7 @@ bool EventHandler::handleMousePressEventTripleClick(const MouseEventWithHitTestR
 
 static int textDistance(const Position& start, const Position& end)
 {
-     RefPtr<Range> range = Range::create(start.node()->document(), start, end);
+     RefPtr<Range> range = Range::create(start.anchorNode()->document(), start, end);
      return TextIterator::rangeLength(range.get(), true);
 }
 
@@ -626,7 +626,7 @@ void EventHandler::updateSelectionForMouseDrag(Node* targetNode, const IntPoint&
 #if ENABLE(SVG)
     // Special case to limit selection to the containing block for SVG text.
     // FIXME: Isn't there a better non-SVG-specific way to do this?
-    if (Node* selectionBaseNode = newSelection.base().node())
+    if (Node* selectionBaseNode = newSelection.base().deprecatedNode())
         if (RenderObject* selectionBaseRenderer = selectionBaseNode->renderer())
             if (selectionBaseRenderer->isSVGText())
                 if (targetNode->renderer()->containingBlock() != selectionBaseRenderer->containingBlock())
@@ -2127,7 +2127,7 @@ bool EventHandler::sendContextMenuEventForKey()
     SelectionController* selectionController = m_frame->selection();
     Position start = selectionController->selection().start();
 
-    if (start.node() && (selectionController->rootEditableElement() || selectionController->isRange())) {
+    if (start.deprecatedNode() && (selectionController->rootEditableElement() || selectionController->isRange())) {
         RefPtr<Range> selection = selectionController->toNormalizedRange();
         IntRect firstRect = m_frame->editor()->firstRectForRange(selection.get());
 

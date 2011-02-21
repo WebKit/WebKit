@@ -397,7 +397,7 @@ static gboolean webkit_web_view_popup_menu_handler(GtkWidget* widget)
     int rightAligned = FALSE;
     IntPoint location;
 
-    if (!start.node() || !end.node()
+    if (!start.deprecatedNode() || !end.deprecatedNode()
         || (frame->selection()->selection().isCaret() && !frame->selection()->selection().isContentEditable())) {
         // If there's a focused elment, use its location.
         if (Node* focusedNode = getFocusedNode(frame)) {
@@ -406,7 +406,7 @@ static gboolean webkit_web_view_popup_menu_handler(GtkWidget* widget)
         } else
             location = IntPoint(rightAligned ? view->contentsWidth() - contextMenuMargin : contextMenuMargin, contextMenuMargin);
     } else {
-        RenderObject* renderer = start.node()->renderer();
+        RenderObject* renderer = start.deprecatedNode()->renderer();
         if (!renderer)
             return FALSE;
 

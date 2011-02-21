@@ -101,7 +101,7 @@ Node* DOMSelection::anchorNode() const
         return 0;
     if (Node* shadowAncestor = selectionShadowAncestor(m_frame))
         return shadowAncestor->parentNodeGuaranteedHostFree();
-    return anchorPosition(visibleSelection()).node();
+    return anchorPosition(visibleSelection()).deprecatedNode();
 }
 
 int DOMSelection::anchorOffset() const
@@ -119,7 +119,7 @@ Node* DOMSelection::focusNode() const
         return 0;
     if (Node* shadowAncestor = selectionShadowAncestor(m_frame))
         return shadowAncestor->parentNodeGuaranteedHostFree();
-    return focusPosition(visibleSelection()).node();
+    return focusPosition(visibleSelection()).deprecatedNode();
 }
 
 int DOMSelection::focusOffset() const
@@ -137,7 +137,7 @@ Node* DOMSelection::baseNode() const
         return 0;
     if (Node* shadowAncestor = selectionShadowAncestor(m_frame))
         return shadowAncestor->parentNodeGuaranteedHostFree();
-    return basePosition(visibleSelection()).node();
+    return basePosition(visibleSelection()).deprecatedNode();
 }
 
 int DOMSelection::baseOffset() const
@@ -155,7 +155,7 @@ Node* DOMSelection::extentNode() const
         return 0;
     if (Node* shadowAncestor = selectionShadowAncestor(m_frame))
         return shadowAncestor->parentNodeGuaranteedHostFree();
-    return extentPosition(visibleSelection()).node();
+    return extentPosition(visibleSelection()).deprecatedNode();
 }
 
 int DOMSelection::extentOffset() const

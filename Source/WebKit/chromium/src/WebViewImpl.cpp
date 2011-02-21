@@ -1276,7 +1276,7 @@ bool WebViewImpl::setComposition(
     // node, which doesn't exist any longer.
     PassRefPtr<Range> range = editor->compositionRange();
     if (range) {
-        const Node* node = range->startPosition().node();
+        const Node* node = range->startContainer();
         if (!node || !node->isContentEditable())
             return false;
     }
@@ -1325,7 +1325,7 @@ bool WebViewImpl::confirmComposition(const WebString& text)
     // node, which doesn't exist any longer.
     PassRefPtr<Range> range = editor->compositionRange();
     if (range) {
-        const Node* node = range->startPosition().node();
+        const Node* node = range->startContainer();
         if (!node || !node->isContentEditable())
             return false;
     }
@@ -1356,7 +1356,7 @@ WebTextInputType WebViewImpl::textInputType()
     if (!controller)
         return type;
 
-    const Node* node = controller->start().node();
+    const Node* node = controller->start().deprecatedNode();
     if (!node)
         return type;
 
@@ -1385,14 +1385,14 @@ WebRect WebViewImpl::caretOrSelectionBounds()
     if (!view)
         return rect;
 
-    const Node* node = controller->start().node();
+    const Node* node = controller->start().deprecatedNode();
     if (!node || !node->renderer())
         return rect;
 
     if (controller->isCaret())
         rect = view->contentsToWindow(controller->absoluteCaretBounds());
     else if (controller->isRange()) {
-        node = controller->end().node();
+        node = controller->end().deprecatedNode();
         if (!node || !node->renderer())
             return rect;
         RefPtr<Range> range = controller->toNormalizedRange();

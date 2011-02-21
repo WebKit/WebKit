@@ -169,8 +169,8 @@ void InsertParagraphSeparatorCommand::doApply()
             || isTableCell(startBlock)
             || startBlock->hasTagName(formTag)
             // FIXME: If the node is hidden, we don't have a canonical position so we will do the wrong thing for tables and <hr>. https://bugs.webkit.org/show_bug.cgi?id=40342
-            || (!canonicalPos.isNull() && canonicalPos.node()->renderer() && canonicalPos.node()->renderer()->isTable())
-            || (!canonicalPos.isNull() && canonicalPos.node()->hasTagName(hrTag))) {
+            || (!canonicalPos.isNull() && canonicalPos.deprecatedNode()->renderer() && canonicalPos.deprecatedNode()->renderer()->isTable())
+            || (!canonicalPos.isNull() && canonicalPos.deprecatedNode()->hasTagName(hrTag))) {
         applyCommandToComposite(InsertLineBreakCommand::create(document()));
         return;
     }
@@ -237,7 +237,7 @@ void InsertParagraphSeparatorCommand::doApply()
         // Recreate the same structure in the new paragraph.
         
         Vector<Element*> ancestors;
-        getAncestorsInsideBlock(insertionPosition.node(), startBlock, ancestors);      
+        getAncestorsInsideBlock(insertionPosition.deprecatedNode(), startBlock, ancestors);      
         RefPtr<Element> parent = cloneHierarchyUnderNewBlock(ancestors, blockToInsert);
         
         appendBlockPlaceholder(parent);
@@ -254,11 +254,11 @@ void InsertParagraphSeparatorCommand::doApply()
         Node *refNode;
         if (isFirstInBlock && !nestNewBlock)
             refNode = startBlock;
-        else if (insertionPosition.node() == startBlock && nestNewBlock) {
+        else if (insertionPosition.deprecatedNode() == startBlock && nestNewBlock) {
             refNode = startBlock->childNode(insertionPosition.deprecatedEditingOffset());
             ASSERT(refNode); // must be true or we'd be in the end of block case
         } else
-            refNode = insertionPosition.node();
+            refNode = insertionPosition.deprecatedNode();
 
         // find ending selection position easily before inserting the paragraph
         insertionPosition = insertionPosition.downstream();
@@ -268,7 +268,7 @@ void InsertParagraphSeparatorCommand::doApply()
         // Recreate the same structure in the new paragraph.
 
         Vector<Element*> ancestors;
-        getAncestorsInsideBlock(positionAvoidingSpecialElementBoundary(insertionPosition).node(), startBlock, ancestors);
+        getAncestorsInsideBlock(positionAvoidingSpecialElementBoundary(insertionPosition).deprecatedNode(), startBlock, ancestors);
         
         appendBlockPlaceholder(cloneHierarchyUnderNewBlock(ancestors, blockToInsert));
         
@@ -301,22 +301,22 @@ void InsertParagraphSeparatorCommand::doApply()
 
     // Build up list of ancestors in between the start node and the start block.
     Vector<Element*> ancestors;
-    getAncestorsInsideBlock(insertionPosition.node(), startBlock, ancestors);
+    getAncestorsInsideBlock(insertionPosition.deprecatedNode(), startBlock, ancestors);
 
     // Make sure we do not cause a rendered space to become unrendered.
     // FIXME: We need the affinity for pos, but pos.downstream() does not give it
     Position leadingWhitespace = insertionPosition.leadingWhitespacePosition(VP_DEFAULT_AFFINITY);
     // FIXME: leadingWhitespacePosition is returning the position before preserved newlines for positions
     // after the preserved newline, causing the newline to be turned into a nbsp.
-    if (leadingWhitespace.isNotNull() && leadingWhitespace.node()->isTextNode()) {
-        Text* textNode = static_cast<Text*>(leadingWhitespace.node());
+    if (leadingWhitespace.isNotNull() && leadingWhitespace.deprecatedNode()->isTextNode()) {
+        Text* textNode = static_cast<Text*>(leadingWhitespace.deprecatedNode());
         ASSERT(!textNode->renderer() || textNode->renderer()->style()->collapseWhiteSpace());
         replaceTextInNode(textNode, leadingWhitespace.deprecatedEditingOffset(), 1, nonBreakingSpaceString());
     }
     
     // Split at pos if in the middle of a text node.
-    if (insertionPosition.node()->isTextNode()) {
-        Text* textNode = static_cast<Text*>(insertionPosition.node());
+    if (insertionPosition.deprecatedNode()->isTextNode()) {
+        Text* textNode = static_cast<Text*>(insertionPosition.deprecatedNode());
         bool atEnd = (unsigned)insertionPosition.deprecatedEditingOffset() >= textNode->length();
         if (insertionPosition.deprecatedEditingOffset() > 0 && !atEnd) {
             splitTextNode(textNode, insertionPosition.deprecatedEditingOffset());
@@ -344,8 +344,8 @@ void InsertParagraphSeparatorCommand::doApply()
         appendNode(createBreakElement(document()).get(), blockToInsert.get());
         
     // Move the start node and the siblings of the start node.
-    if (insertionPosition.node() != startBlock) {
-        Node* n = insertionPosition.node();
+    if (insertionPosition.deprecatedNode() != startBlock) {
+        Node* n = insertionPosition.deprecatedNode();
         if (insertionPosition.deprecatedEditingOffset() >= caretMaxOffset(n))
             n = n->nextSibling();
 
@@ -382,10 +382,10 @@ void InsertParagraphSeparatorCommand::doApply()
             insertionPosition.moveToOffset(0);
         if (!insertionPosition.isRenderedCharacter()) {
             // Clear out all whitespace and insert one non-breaking space
-            ASSERT(!insertionPosition.node()->renderer() || insertionPosition.node()->renderer()->style()->collapseWhiteSpace());
+            ASSERT(!insertionPosition.deprecatedNode()->renderer() || insertionPosition.deprecatedNode()->renderer()->style()->collapseWhiteSpace());
             deleteInsignificantTextDownstream(insertionPosition);
-            if (insertionPosition.node()->isTextNode())
-                insertTextIntoNode(static_cast<Text*>(insertionPosition.node()), 0, nonBreakingSpaceString());
+            if (insertionPosition.deprecatedNode()->isTextNode())
+                insertTextIntoNode(static_cast<Text*>(insertionPosition.deprecatedNode()), 0, nonBreakingSpaceString());
         }
     }
 

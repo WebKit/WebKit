@@ -134,11 +134,11 @@ void ApplyBlockElementCommand::formatSelection(const VisiblePosition& startOfSel
         // indentIntoBlockquote could move more than one paragraph if the paragraph
         // is in a list item or a table. As a result, endAfterSelection could refer to a position
         // no longer in the document.
-        if (endAfterSelection.isNotNull() && !endAfterSelection.deepEquivalent().node()->inDocument())
+        if (endAfterSelection.isNotNull() && !endAfterSelection.deepEquivalent().anchorNode()->inDocument())
             break;
-        // Sanity check: Make sure our moveParagraph calls didn't remove endOfNextParagraph.deepEquivalent().node()
+        // Sanity check: Make sure our moveParagraph calls didn't remove endOfNextParagraph.deepEquivalent().deprecatedNode()
         // If somehow we did, return to prevent crashes.
-        if (endOfNextParagraph.isNotNull() && !endOfNextParagraph.deepEquivalent().node()->inDocument()) {
+        if (endOfNextParagraph.isNotNull() && !endOfNextParagraph.deepEquivalent().anchorNode()->inDocument()) {
             ASSERT_NOT_REACHED();
             return;
         }
@@ -182,8 +182,8 @@ void ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded(const
     RenderStyle* startStyle = renderStyleOfEnclosingTextNode(start);
     bool isStartAndEndOnSameNode = false;
     if (startStyle) {
-        isStartAndEndOnSameNode = renderStyleOfEnclosingTextNode(end) && start.node() == end.node();
-        bool isStartAndEndOfLastParagraphOnSameNode = renderStyleOfEnclosingTextNode(m_endOfLastParagraph) && start.node() == m_endOfLastParagraph.node();
+        isStartAndEndOnSameNode = renderStyleOfEnclosingTextNode(end) && start.deprecatedNode() == end.deprecatedNode();
+        bool isStartAndEndOfLastParagraphOnSameNode = renderStyleOfEnclosingTextNode(m_endOfLastParagraph) && start.deprecatedNode() == m_endOfLastParagraph.deprecatedNode();
 
         // Avoid obtanining the start of next paragraph for start
         if (startStyle->preserveNewline() && isNewLineAtPosition(start) && !isNewLineAtPosition(start.previous()) && start.offsetInContainerNode() > 0)
@@ -192,15 +192,15 @@ void ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded(const
         // If start is in the middle of a text node, split.
         if (!startStyle->collapseWhiteSpace() && start.offsetInContainerNode() > 0) {
             int startOffset = start.offsetInContainerNode();
-            splitTextNode(static_cast<Text*>(start.node()), startOffset);
-            start = positionBeforeNode(start.node());
+            splitTextNode(static_cast<Text*>(start.deprecatedNode()), startOffset);
+            start = positionBeforeNode(start.deprecatedNode());
             if (isStartAndEndOnSameNode) {
                 ASSERT(end.offsetInContainerNode() >= startOffset);
-                end = Position(end.node(), end.offsetInContainerNode() - startOffset, Position::PositionIsOffsetInAnchor);
+                end = Position(end.deprecatedNode(), end.offsetInContainerNode() - startOffset, Position::PositionIsOffsetInAnchor);
             }
             if (isStartAndEndOfLastParagraphOnSameNode) {
                 ASSERT(m_endOfLastParagraph.offsetInContainerNode() >= startOffset);
-                m_endOfLastParagraph = Position(m_endOfLastParagraph.node(), m_endOfLastParagraph.offsetInContainerNode() - startOffset,
+                m_endOfLastParagraph = Position(m_endOfLastParagraph.deprecatedNode(), m_endOfLastParagraph.offsetInContainerNode() - startOffset,
                     Position::PositionIsOffsetInAnchor);
             }
         }
@@ -208,13 +208,13 @@ void ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded(const
 
     RenderStyle* endStyle = renderStyleOfEnclosingTextNode(end);
     if (endStyle) {
-        bool isEndAndEndOfLastParagraphOnSameNode = renderStyleOfEnclosingTextNode(m_endOfLastParagraph) && end.node() == m_endOfLastParagraph.node();
+        bool isEndAndEndOfLastParagraphOnSameNode = renderStyleOfEnclosingTextNode(m_endOfLastParagraph) && end.deprecatedNode() == m_endOfLastParagraph.deprecatedNode();
         // Include \n at the end of line if we're at an empty paragraph
         if (endStyle->preserveNewline() && start == end
             && end.offsetInContainerNode() < end.containerNode()->maxCharacterOffset()) {
             int endOffset = end.offsetInContainerNode();
             if (!isNewLineAtPosition(end.previous()) && isNewLineAtPosition(end))
-                end = Position(end.node(), endOffset + 1, Position::PositionIsOffsetInAnchor);
+                end = Position(end.deprecatedNode(), endOffset + 1, Position::PositionIsOffsetInAnchor);
             if (isEndAndEndOfLastParagraphOnSameNode && end.offsetInContainerNode() >= m_endOfLastParagraph.offsetInContainerNode())
                 m_endOfLastParagraph = end;
         }
@@ -222,17 +222,17 @@ void ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded(const
         // If end is in the middle of a text node, split.
         if (!endStyle->collapseWhiteSpace() && end.offsetInContainerNode()
             && end.offsetInContainerNode() < end.containerNode()->maxCharacterOffset()) {
-            splitTextNode(static_cast<Text*>(end.node()), end.offsetInContainerNode());
+            splitTextNode(static_cast<Text*>(end.deprecatedNode()), end.offsetInContainerNode());
             if (isStartAndEndOnSameNode)
-                start = positionBeforeNode(end.node()->previousSibling());
+                start = positionBeforeNode(end.deprecatedNode()->previousSibling());
             if (isEndAndEndOfLastParagraphOnSameNode) {
                 if (m_endOfLastParagraph.offsetInContainerNode() == end.offsetInContainerNode())
-                    m_endOfLastParagraph = lastPositionInNode(end.node()->previousSibling());
+                    m_endOfLastParagraph = lastPositionInNode(end.deprecatedNode()->previousSibling());
                 else
-                    m_endOfLastParagraph = Position(end.node(), m_endOfLastParagraph.offsetInContainerNode() - end.offsetInContainerNode(),
+                    m_endOfLastParagraph = Position(end.deprecatedNode(), m_endOfLastParagraph.offsetInContainerNode() - end.offsetInContainerNode(),
                                                     Position::PositionIsOffsetInAnchor);
             }
-            end = lastPositionInNode(end.node()->previousSibling());
+            end = lastPositionInNode(end.deprecatedNode()->previousSibling());
         }
     }
 }

@@ -106,7 +106,7 @@ VisiblePosition VisiblePosition::previous(bool stayInEditableContent) const
 Position VisiblePosition::leftVisuallyDistinctCandidate() const
 {
     Position p = m_deepPosition;
-    if (!p.node())
+    if (!p.deprecatedNode())
         return Position();
 
     Position downstreamStart = p.downstream();
@@ -242,7 +242,7 @@ VisiblePosition VisiblePosition::left(bool stayInEditableContent) const
 Position VisiblePosition::rightVisuallyDistinctCandidate() const
 {
     Position p = m_deepPosition;
-    if (!p.node())
+    if (!p.deprecatedNode())
         return Position();
 
     Position downstreamStart = p.downstream();
@@ -384,7 +384,7 @@ VisiblePosition VisiblePosition::honorEditableBoundaryAtOrBefore(const VisiblePo
     Node* highestRoot = highestEditableRoot(deepEquivalent());
     
     // Return empty position if pos is not somewhere inside the editable region containing this position
-    if (highestRoot && !pos.deepEquivalent().node()->isDescendantOf(highestRoot))
+    if (highestRoot && !pos.deepEquivalent().deprecatedNode()->isDescendantOf(highestRoot))
         return VisiblePosition();
         
     // Return pos itself if the two are from the very same editable region, or both are non-editable
@@ -410,7 +410,7 @@ VisiblePosition VisiblePosition::honorEditableBoundaryAtOrAfter(const VisiblePos
     Node* highestRoot = highestEditableRoot(deepEquivalent());
     
     // Return empty position if pos is not somewhere inside the editable region containing this position
-    if (highestRoot && !pos.deepEquivalent().node()->isDescendantOf(highestRoot))
+    if (highestRoot && !pos.deepEquivalent().deprecatedNode()->isDescendantOf(highestRoot))
         return VisiblePosition();
     
     // Return pos itself if the two are from the very same editable region, or both are non-editable
@@ -451,7 +451,7 @@ Position VisiblePosition::canonicalPosition(const Position& passedPosition)
     // To fix this, we need to either a) add code to all paintCarets to pass the responsibility off to
     // the appropriate renderer for VisiblePosition's like these, or b) canonicalize to the rightmost candidate
     // unless the affinity is upstream.
-    Node* node = position.node();
+    Node* node = position.deprecatedNode();
     if (!node)
         return Position();
 
@@ -469,8 +469,8 @@ Position VisiblePosition::canonicalPosition(const Position& passedPosition)
     // blocks or enter new ones), we search forward and backward until we find one.
     Position next = canonicalizeCandidate(nextCandidate(position));
     Position prev = canonicalizeCandidate(previousCandidate(position));
-    Node* nextNode = next.node();
-    Node* prevNode = prev.node();
+    Node* nextNode = next.deprecatedNode();
+    Node* prevNode = prev.deprecatedNode();
 
     // The new position must be in the same editable element. Enforce that first.
     // Unless the descent is from a non-editable html element to an editable body.
@@ -481,7 +481,7 @@ Position VisiblePosition::canonicalPosition(const Position& passedPosition)
         
     // If the html element is editable, descending into its body will look like a descent 
     // from non-editable to editable content since rootEditableElement() always stops at the body.
-    if ((editingRoot && editingRoot->hasTagName(htmlTag)) || position.node()->isDocumentNode())
+    if ((editingRoot && editingRoot->hasTagName(htmlTag)) || position.deprecatedNode()->isDocumentNode())
         return next.isNotNull() ? next : prev;
         
     bool prevIsInSameEditableElement = prevNode && editableRootForPosition(prev) == editingRoot;
@@ -510,10 +510,10 @@ UChar32 VisiblePosition::characterAfter() const
     // We canonicalize to the first of two equivalent candidates, but the second of the two candidates
     // is the one that will be inside the text node containing the character after this visible position.
     Position pos = m_deepPosition.downstream();
-    Node* node = pos.node();
+    Node* node = pos.deprecatedNode();
     if (!node || !node->isTextNode())
         return 0;
-    Text* textNode = static_cast<Text*>(pos.node());
+    Text* textNode = static_cast<Text*>(pos.deprecatedNode());
     unsigned offset = pos.deprecatedEditingOffset();
     unsigned length = textNode->length();
     if (offset >= length)
@@ -527,7 +527,7 @@ UChar32 VisiblePosition::characterAfter() const
 
 IntRect VisiblePosition::localCaretRect(RenderObject*& renderer) const
 {
-    Node* node = m_deepPosition.node();
+    Node* node = m_deepPosition.deprecatedNode();
     if (!node) {
         renderer = 0;
         return IntRect();
@@ -577,7 +577,7 @@ void VisiblePosition::debugPosition(const char* msg) const
     if (isNull())
         fprintf(stderr, "Position [%s]: null\n", msg);
     else {
-        fprintf(stderr, "Position [%s]: %s, ", msg, m_deepPosition.node()->nodeName().utf8().data());
+        fprintf(stderr, "Position [%s]: %s, ", msg, m_deepPosition.deprecatedNode()->nodeName().utf8().data());
         m_deepPosition.showAnchorTypeAndOffset();
     }
 }
@@ -601,7 +601,7 @@ PassRefPtr<Range> makeRange(const VisiblePosition &start, const VisiblePosition 
     
     Position s = start.deepEquivalent().parentAnchoredEquivalent();
     Position e = end.deepEquivalent().parentAnchoredEquivalent();
-    return Range::create(s.node()->document(), s.node(), s.deprecatedEditingOffset(), e.node(), e.deprecatedEditingOffset());
+    return Range::create(s.anchorNode()->document(), s.deprecatedNode(), s.deprecatedEditingOffset(), e.deprecatedNode(), e.deprecatedEditingOffset());
 }
 
 VisiblePosition startVisiblePosition(const Range *r, EAffinity affinity)
@@ -622,7 +622,7 @@ bool setStart(Range *r, const VisiblePosition &visiblePosition)
         return false;
     Position p = visiblePosition.deepEquivalent().parentAnchoredEquivalent();
     int code = 0;
-    r->setStart(p.node(), p.deprecatedEditingOffset(), code);
+    r->setStart(p.deprecatedNode(), p.deprecatedEditingOffset(), code);
     return code == 0;
 }
 
@@ -632,7 +632,7 @@ bool setEnd(Range *r, const VisiblePosition &visiblePosition)
         return false;
     Position p = visiblePosition.deepEquivalent().parentAnchoredEquivalent();
     int code = 0;
-    r->setEnd(p.node(), p.deprecatedEditingOffset(), code);
+    r->setEnd(p.deprecatedNode(), p.deprecatedEditingOffset(), code);
     return code == 0;
 }
 
@@ -641,7 +641,7 @@ Element* enclosingBlockFlowElement(const VisiblePosition &visiblePosition)
     if (visiblePosition.isNull())
         return NULL;
 
-    return visiblePosition.deepEquivalent().node()->enclosingBlockFlowElement();
+    return visiblePosition.deepEquivalent().deprecatedNode()->enclosingBlockFlowElement();
 }
 
 bool isFirstVisiblePositionInNode(const VisiblePosition &visiblePosition, const Node *node)
@@ -649,11 +649,11 @@ bool isFirstVisiblePositionInNode(const VisiblePosition &visiblePosition, const 
     if (visiblePosition.isNull())
         return false;
     
-    if (!visiblePosition.deepEquivalent().node()->isDescendantOf(node))
+    if (!visiblePosition.deepEquivalent().deprecatedNode()->isDescendantOf(node))
         return false;
         
     VisiblePosition previous = visiblePosition.previous();
-    return previous.isNull() || !previous.deepEquivalent().node()->isDescendantOf(node);
+    return previous.isNull() || !previous.deepEquivalent().deprecatedNode()->isDescendantOf(node);
 }
 
 bool isLastVisiblePositionInNode(const VisiblePosition &visiblePosition, const Node *node)
@@ -661,11 +661,11 @@ bool isLastVisiblePositionInNode(const VisiblePosition &visiblePosition, const N
     if (visiblePosition.isNull())
         return false;
     
-    if (!visiblePosition.deepEquivalent().node()->isDescendantOf(node))
+    if (!visiblePosition.deepEquivalent().deprecatedNode()->isDescendantOf(node))
         return false;
                 
     VisiblePosition next = visiblePosition.next();
-    return next.isNull() || !next.deepEquivalent().node()->isDescendantOf(node);
+    return next.isNull() || !next.deepEquivalent().deprecatedNode()->isDescendantOf(node);
 }
 
 }  // namespace WebCore

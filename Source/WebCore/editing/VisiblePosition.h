@@ -81,7 +81,7 @@ public:
     UChar32 characterAfter() const;
     UChar32 characterBefore() const { return previous().characterAfter(); }
 
-    Element* rootEditableElement() const { return m_deepPosition.isNotNull() ? m_deepPosition.node()->rootEditableElement() : 0; }
+    Element* rootEditableElement() const { return m_deepPosition.isNotNull() ? m_deepPosition.deprecatedNode()->rootEditableElement() : 0; }
     
     void getInlineBoxAndOffset(InlineBox*& inlineBox, int& caretOffset) const
     {

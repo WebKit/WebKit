@@ -122,7 +122,7 @@ PassRefPtr<Range> VisibleSelection::firstRange() const
         return 0;
     Position start = m_start.parentAnchoredEquivalent();
     Position end = m_end.parentAnchoredEquivalent();
-    return Range::create(start.node()->document(), start, end);
+    return Range::create(start.anchorNode()->document(), start, end);
 }
 
 PassRefPtr<Range> VisibleSelection::toNormalizedRange() const
@@ -134,7 +134,7 @@ PassRefPtr<Range> VisibleSelection::toNormalizedRange() const
     // in the course of running edit commands which modify the DOM.
     // Failing to call this can result in equivalentXXXPosition calls returning
     // incorrect results.
-    m_start.node()->document()->updateLayout();
+    m_start.anchorNode()->document()->updateLayout();
 
     // Check again, because updating layout can clear the selection.
     if (isNone())
@@ -178,7 +178,7 @@ PassRefPtr<Range> VisibleSelection::toNormalizedRange() const
 
     // VisibleSelections are supposed to always be valid.  This constructor will ASSERT
     // if a valid range could not be created, which is fine for this callsite.
-    return Range::create(s.node()->document(), s, e);
+    return Range::create(s.anchorNode()->document(), s, e);
 }
 
 bool VisibleSelection::expandUsingGranularity(TextGranularity granularity)
@@ -192,7 +192,7 @@ bool VisibleSelection::expandUsingGranularity(TextGranularity granularity)
 
 static PassRefPtr<Range> makeSearchRange(const Position& pos)
 {
-    Node* n = pos.node();
+    Node* n = pos.deprecatedNode();
     if (!n)
         return 0;
     Document* d = n->document();
@@ -208,7 +208,7 @@ static PassRefPtr<Range> makeSearchRange(const Position& pos)
 
     Position start(pos.parentAnchoredEquivalent());
     searchRange->selectNodeContents(boundary, ec);
-    searchRange->setStart(start.node(), start.deprecatedEditingOffset(), ec);
+    searchRange->setStart(start.deprecatedNode(), start.deprecatedEditingOffset(), ec);
 
     ASSERT(!ec);
     if (ec)
@@ -296,7 +296,7 @@ void VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity(Text
             VisiblePosition wordEnd(endOfWord(originalEnd, side));
             VisiblePosition end(wordEnd);
             
-            if (isEndOfParagraph(originalEnd) && !isEmptyTableCell(m_start.node())) {
+            if (isEndOfParagraph(originalEnd) && !isEmptyTableCell(m_start.deprecatedNode())) {
                 // Select the paragraph break (the space from the end of a paragraph to the start of 
                 // the next one) to match TextEdit.
                 end = wordEnd.next();
@@ -457,7 +457,7 @@ void VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries()
     Node* startRoot = highestEditableRoot(m_start);
     Node* endRoot = highestEditableRoot(m_end);
     
-    Node* baseEditableAncestor = lowestEditableAncestor(m_base.node());
+    Node* baseEditableAncestor = lowestEditableAncestor(m_base.deprecatedNode());
     
     // The base, start and end are all in the same region.  No adjustment necessary.
     if (baseRoot == startRoot && baseRoot == endRoot)
@@ -492,17 +492,17 @@ void VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries()
     
         // The selection ends in editable content or non-editable content inside a different editable ancestor, 
         // move backward until non-editable content inside the same lowest editable ancestor is reached.
-        Node* endEditableAncestor = lowestEditableAncestor(m_end.node());
+        Node* endEditableAncestor = lowestEditableAncestor(m_end.deprecatedNode());
         if (endRoot || endEditableAncestor != baseEditableAncestor) {
             
             Position p = previousVisuallyDistinctCandidate(m_end);
             Node* shadowAncestor = endRoot ? endRoot->shadowAncestorNode() : 0;
             if (p.isNull() && endRoot && (shadowAncestor != endRoot))
                 p = lastDeepEditingPositionForNode(shadowAncestor);
-            while (p.isNotNull() && !(lowestEditableAncestor(p.node()) == baseEditableAncestor && !isEditablePosition(p))) {
+            while (p.isNotNull() && !(lowestEditableAncestor(p.deprecatedNode()) == baseEditableAncestor && !isEditablePosition(p))) {
                 Node* root = editableRootForPosition(p);
                 shadowAncestor = root ? root->shadowAncestorNode() : 0;
-                p = isAtomicNode(p.node()) ? positionInParentBeforeNode(p.node()) : previousVisuallyDistinctCandidate(p);
+                p = isAtomicNode(p.deprecatedNode()) ? positionInParentBeforeNode(p.deprecatedNode()) : previousVisuallyDistinctCandidate(p);
                 if (p.isNull() && (shadowAncestor != root))
                     p = lastDeepEditingPositionForNode(shadowAncestor);
             }
@@ -522,16 +522,16 @@ void VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries()
 
         // The selection starts in editable content or non-editable content inside a different editable ancestor, 
         // move forward until non-editable content inside the same lowest editable ancestor is reached.
-        Node* startEditableAncestor = lowestEditableAncestor(m_start.node());      
+        Node* startEditableAncestor = lowestEditableAncestor(m_start.deprecatedNode());      
         if (startRoot || startEditableAncestor != baseEditableAncestor) {
             Position p = nextVisuallyDistinctCandidate(m_start);
             Node* shadowAncestor = startRoot ? startRoot->shadowAncestorNode() : 0;
             if (p.isNull() && startRoot && (shadowAncestor != startRoot))
                 p = positionBeforeNode(shadowAncestor);
-            while (p.isNotNull() && !(lowestEditableAncestor(p.node()) == baseEditableAncestor && !isEditablePosition(p))) {
+            while (p.isNotNull() && !(lowestEditableAncestor(p.deprecatedNode()) == baseEditableAncestor && !isEditablePosition(p))) {
                 Node* root = editableRootForPosition(p);
                 shadowAncestor = root ? root->shadowAncestorNode() : 0;
-                p = isAtomicNode(p.node()) ? positionInParentAfterNode(p.node()) : nextVisuallyDistinctCandidate(p);
+                p = isAtomicNode(p.deprecatedNode()) ? positionInParentAfterNode(p.deprecatedNode()) : nextVisuallyDistinctCandidate(p);
                 if (p.isNull() && (shadowAncestor != root))
                     p = positionBeforeNode(shadowAncestor);
             }
@@ -551,7 +551,7 @@ void VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries()
     }
     
     // Correct the extent if necessary.
-    if (baseEditableAncestor != lowestEditableAncestor(m_extent.node()))
+    if (baseEditableAncestor != lowestEditableAncestor(m_extent.deprecatedNode()))
         m_extent = m_baseIsFirst ? m_end : m_start;
 }
 
@@ -572,7 +572,7 @@ Element* VisibleSelection::rootEditableElement() const
 
 Node* VisibleSelection::shadowTreeRootNode() const
 {
-    return start().node() ? start().node()->shadowTreeRootNode() : 0;
+    return start().deprecatedNode() ? start().deprecatedNode()->shadowTreeRootNode() : 0;
 }
 
 #ifndef NDEBUG

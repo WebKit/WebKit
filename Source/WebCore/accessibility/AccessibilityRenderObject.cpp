@@ -2482,13 +2482,13 @@ int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& po
         return 0;
     
     Position indexPosition = pos.deepEquivalent();
-    if (!indexPosition.node() || indexPosition.node()->rootEditableElement() != node)
+    if (!indexPosition.anchorNode() || indexPosition.anchorNode()->rootEditableElement() != node)
         return 0;
     
     ExceptionCode ec = 0;
     RefPtr<Range> range = Range::create(m_renderer->document());
     range->setStart(node, 0, ec);
-    range->setEnd(indexPosition.node(), indexPosition.deprecatedEditingOffset(), ec);
+    range->setEnd(indexPosition.anchorNode(), indexPosition.deprecatedEditingOffset(), ec);
     return TextIterator::rangeLength(range.get());
 }
 
@@ -2621,7 +2621,7 @@ int AccessibilityRenderObject::index(const VisiblePosition& position) const
     if (!isTextControl())
         return -1;
     
-    Node* node = position.deepEquivalent().node();
+    Node* node = position.deepEquivalent().deprecatedNode();
     if (!node)
         return -1;
     

@@ -150,7 +150,7 @@ void SelectionController::setSelection(const VisibleSelection& s, SetSelectionOp
         return;
     }
 
-    Node* baseNode = s.base().node();
+    Node* baseNode = s.base().deprecatedNode();
     Document* document = 0;
     if (baseNode)
         document = baseNode->document();
@@ -204,17 +204,17 @@ void SelectionController::setSelection(const VisibleSelection& s, SetSelectionOp
 
 static bool removingNodeRemovesPosition(Node* node, const Position& position)
 {
-    if (!position.node())
+    if (!position.deprecatedNode())
         return false;
 
-    if (position.node() == node)
+    if (position.deprecatedNode() == node)
         return true;
 
     if (!node->isElementNode())
         return false;
 
     Element* element = static_cast<Element*>(node);
-    return element->contains(position.node()) || element->contains(position.node()->shadowAncestorNode());
+    return element->contains(position.deprecatedNode()) || element->contains(position.deprecatedNode()->shadowAncestorNode());
 }
 
 void SelectionController::nodeWillBeRemoved(Node *node)
@@ -262,7 +262,7 @@ void SelectionController::respondToNodeModification(Node* node, bool baseRemoved
     }
 
     if (clearRenderTreeSelection) {
-        RefPtr<Document> document = m_selection.start().node()->document();
+        RefPtr<Document> document = m_selection.start().anchorNode()->document();
         document->updateStyleIfNeeded();
         if (RenderView* view = toRenderView(document->renderer()))
             view->clearSelection();
@@ -375,7 +375,7 @@ void SelectionController::willBeModified(EAlteration alter, SelectionDirection d
 
 TextDirection SelectionController::directionOfEnclosingBlock()
 {
-    Node* enclosingBlockNode = enclosingBlock(m_selection.extent().node());
+    Node* enclosingBlockNode = enclosingBlock(m_selection.extent().deprecatedNode());
     if (!enclosingBlockNode)
         return LTR;
     RenderObject* renderer = enclosingBlockNode->renderer();
@@ -931,7 +931,7 @@ int SelectionController::xPosForVerticalArrowNavigation(EPositionType type)
         break;
     }
 
-    Frame* frame = pos.node()->document()->frame();
+    Frame* frame = pos.anchorNode()->document()->frame();
     if (!frame)
         return x;
         
@@ -1008,19 +1008,19 @@ void SelectionController::setCaretRectNeedsUpdate(bool flag)
 
 void SelectionController::updateCaretRect()
 {
-    if (isNone() || !m_selection.start().node()->inDocument() || !m_selection.end().node()->inDocument()) {
+    if (isNone() || !m_selection.start().anchorNode()->inDocument() || !m_selection.end().anchorNode()->inDocument()) {
         m_caretRect = IntRect();
         return;
     }
 
-    m_selection.start().node()->document()->updateStyleIfNeeded();
+    m_selection.start().anchorNode()->document()->updateStyleIfNeeded();
     
     m_caretRect = IntRect();
         
     if (isCaret()) {
         VisiblePosition pos(m_selection.start(), m_selection.affinity());
         if (pos.isNotNull()) {
-            ASSERT(pos.deepEquivalent().node()->renderer());
+            ASSERT(pos.deepEquivalent().deprecatedNode()->renderer());
             
             // First compute a rect local to the renderer at the selection start
             RenderObject* renderer;
@@ -1054,7 +1054,7 @@ void SelectionController::updateCaretRect()
 
 RenderObject* SelectionController::caretRenderer() const
 {
-    Node* node = m_selection.start().node();
+    Node* node = m_selection.start().deprecatedNode();
     if (!node)
         return 0;
 
@@ -1161,7 +1161,7 @@ void SelectionController::invalidateCaretRect()
     if (!isCaret())
         return;
 
-    Document* d = m_selection.start().node()->document();
+    Document* d = m_selection.start().anchorNode()->document();
 
     // recomputeCaretRect will always return false for the drag caret,
     // because its m_frame is always 0.
@@ -1239,9 +1239,9 @@ void SelectionController::debugRenderer(RenderObject *r, bool selected) const
         int textLength = text.length();
         if (selected) {
             int offset = 0;
-            if (r->node() == m_selection.start().node())
+            if (r->node() == m_selection.start().deprecatedNode())
                 offset = m_selection.start().deprecatedEditingOffset();
-            else if (r->node() == m_selection.end().node())
+            else if (r->node() == m_selection.end().deprecatedNode())
                 offset = m_selection.end().deprecatedEditingOffset();
                 
             int pos;
@@ -1439,7 +1439,7 @@ bool SelectionController::setSelectedRange(Range* range, EAffinity affinity, boo
 
 bool SelectionController::isInPasswordField() const
 {
-    Node* startNode = start().node();
+    Node* startNode = start().deprecatedNode();
     if (!startNode)
         return false;
 
@@ -1585,8 +1585,8 @@ void SelectionController::updateAppearance()
     // We can get into a state where the selection endpoints map to the same VisiblePosition when a selection is deleted
     // because we don't yet notify the SelectionController of text removal.
     if (startPos.isNotNull() && endPos.isNotNull() && selection.visibleStart() != selection.visibleEnd()) {
-        RenderObject* startRenderer = startPos.node()->renderer();
-        RenderObject* endRenderer = endPos.node()->renderer();
+        RenderObject* startRenderer = startPos.deprecatedNode()->renderer();
+        RenderObject* endRenderer = endPos.deprecatedNode()->renderer();
         view->setSelection(startRenderer, startPos.deprecatedEditingOffset(), endRenderer, endPos.deprecatedEditingOffset());
     }
 }
@@ -1687,7 +1687,7 @@ void SelectionController::paintDragCaret(GraphicsContext* p, int tx, int ty, con
 #if ENABLE(TEXT_CARET)
     SelectionController* dragCaretController = m_frame->page()->dragCaretController();
     ASSERT(dragCaretController->selection().isCaret());
-    if (dragCaretController->selection().start().node()->document()->frame() == m_frame)
+    if (dragCaretController->selection().start().anchorNode()->document()->frame() == m_frame)
         dragCaretController->paintCaret(p, tx, ty, clipRect);
 #else
     UNUSED_PARAM(p);
@@ -1761,7 +1761,7 @@ HTMLFormElement* SelectionController::currentForm() const
     // Start looking either at the active (first responder) node, or where the selection is.
     Node* start = m_frame->document()->focusedNode();
     if (!start)
-        start = this->start().node();
+        start = this->start().deprecatedNode();
 
     // Try walking up the node tree to find a form element.
     Node* node;
@@ -1792,12 +1792,12 @@ void SelectionController::revealSelection(const ScrollAlignment& alignment, bool
     }
 
     Position start = this->start();
-    ASSERT(start.node());
-    if (start.node() && start.node()->renderer()) {
+    ASSERT(start.deprecatedNode());
+    if (start.deprecatedNode() && start.deprecatedNode()->renderer()) {
         // FIXME: This code only handles scrolling the startContainer's layer, but
         // the selection rect could intersect more than just that.
         // See <rdar://problem/4799899>.
-        if (RenderLayer* layer = start.node()->renderer()->enclosingLayer()) {
+        if (RenderLayer* layer = start.deprecatedNode()->renderer()->enclosingLayer()) {
             layer->scrollRectToVisible(rect, false, alignment, alignment);
             updateAppearance();
         }

@@ -1,3 +1,15 @@
+2011-02-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        Rename Position::node() to Position::deprecatedNode()
+        https://bugs.webkit.org/show_bug.cgi?id=54622
+
+        Done the rename. All calls to node() are replaced by calls to deprecatedNode().
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_popup_menu_handler):
+
 2011-02-19  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Martin Robinson.

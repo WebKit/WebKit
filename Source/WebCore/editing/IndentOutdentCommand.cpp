@@ -59,7 +59,7 @@ IndentOutdentCommand::IndentOutdentCommand(Document* document, EIndentType typeO
 bool IndentOutdentCommand::tryIndentingAsListItem(const Position& start, const Position& end)
 {
     // If our selection is not inside a list, bail out.
-    Node* lastNodeInSelectedParagraph = start.node();
+    Node* lastNodeInSelectedParagraph = start.deprecatedNode();
     RefPtr<Element> listNode = enclosingList(lastNodeInSelectedParagraph);
     if (!listNode)
         return false;
@@ -94,15 +94,15 @@ void IndentOutdentCommand::indentIntoBlockquote(const Position& start, const Pos
     Node* nodeToSplitTo;
     if (enclosingCell)
         nodeToSplitTo = enclosingCell;
-    else if (enclosingList(start.node()))
-        nodeToSplitTo = enclosingBlock(start.node());
+    else if (enclosingList(start.deprecatedNode()))
+        nodeToSplitTo = enclosingBlock(start.deprecatedNode());
     else
         nodeToSplitTo = editableRootForPosition(start);
 
     if (!nodeToSplitTo)
         return;
 
-    RefPtr<Node> outerBlock = (start.node() == nodeToSplitTo) ? start.node() : splitTreeToNode(start.node(), nodeToSplitTo);
+    RefPtr<Node> outerBlock = (start.deprecatedNode() == nodeToSplitTo) ? start.deprecatedNode() : splitTreeToNode(start.deprecatedNode(), nodeToSplitTo);
 
     if (!targetBlockquote) {
         // Create a new blockquote and insert it as a child of the root editable element. We accomplish
@@ -166,13 +166,13 @@ void IndentOutdentCommand::outdentParagraph()
 
         return;
     }
-    Node* enclosingBlockFlow = enclosingBlock(visibleStartOfParagraph.deepEquivalent().node());
+    Node* enclosingBlockFlow = enclosingBlock(visibleStartOfParagraph.deepEquivalent().deprecatedNode());
     RefPtr<Node> splitBlockquoteNode = enclosingNode;
     if (enclosingBlockFlow != enclosingNode)
         splitBlockquoteNode = splitTreeToNode(enclosingBlockFlow, enclosingNode, true);
     else {
         // We split the blockquote at where we start outdenting.
-        splitElement(static_cast<Element*>(enclosingNode), visibleStartOfParagraph.deepEquivalent().node());
+        splitElement(static_cast<Element*>(enclosingNode), visibleStartOfParagraph.deepEquivalent().deprecatedNode());
     }
     RefPtr<Node> placeholder = createBreakElement(document());
     insertNodeBefore(placeholder, splitBlockquoteNode);
@@ -205,10 +205,10 @@ void IndentOutdentCommand::outdentRegion(const VisiblePosition& startOfSelection
         // outdentParagraph could move more than one paragraph if the paragraph
         // is in a list item. As a result, endAfterSelection and endOfNextParagraph
         // could refer to positions no longer in the document.
-        if (endAfterSelection.isNotNull() && !endAfterSelection.deepEquivalent().node()->inDocument())
+        if (endAfterSelection.isNotNull() && !endAfterSelection.deepEquivalent().anchorNode()->inDocument())
             break;
             
-        if (endOfNextParagraph.isNotNull() && !endOfNextParagraph.deepEquivalent().node()->inDocument()) {
+        if (endOfNextParagraph.isNotNull() && !endOfNextParagraph.deepEquivalent().anchorNode()->inDocument()) {
             endOfCurrentParagraph = endingSelection().end();
             endOfNextParagraph = endOfParagraph(endOfCurrentParagraph.next());
         }

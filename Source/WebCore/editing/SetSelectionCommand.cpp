@@ -31,7 +31,7 @@
 namespace WebCore {
 
 SetSelectionCommand::SetSelectionCommand(const VisibleSelection& selection, SelectionController::SetSelectionOptions options)
-    : SimpleEditCommand(selection.base().node()->document())
+    : SimpleEditCommand(selection.base().anchorNode()->document())
     , m_options(options)
     , m_selectionToSet(selection)
 {

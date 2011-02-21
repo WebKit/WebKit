@@ -2651,10 +2651,10 @@ VisiblePosition RenderObject::createVisiblePosition(int offset, EAffinity affini
             // If it can be found, we prefer a visually equivalent position that is editable. 
             Position position(node, offset);
             Position candidate = position.downstream(CanCrossEditingBoundary);
-            if (candidate.node()->isContentEditable())
+            if (candidate.deprecatedNode()->isContentEditable())
                 return VisiblePosition(candidate, affinity);
             candidate = position.upstream(CanCrossEditingBoundary);
-            if (candidate.node()->isContentEditable())
+            if (candidate.deprecatedNode()->isContentEditable())
                 return VisiblePosition(candidate, affinity);
         }
         return VisiblePosition(node, offset, affinity);

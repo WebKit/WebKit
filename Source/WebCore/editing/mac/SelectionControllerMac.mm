@@ -51,7 +51,7 @@ void SelectionController::notifyAccessibilityForSelectionChange()
     Document* document = m_frame->document();
 
     if (AXObjectCache::accessibilityEnabled() && m_selection.start().isNotNull() && m_selection.end().isNotNull())
-        document->axObjectCache()->postNotification(m_selection.start().node()->renderer(), AXObjectCache::AXSelectedTextChanged, false);
+        document->axObjectCache()->postNotification(m_selection.start().deprecatedNode()->renderer(), AXObjectCache::AXSelectedTextChanged, false);
 
     // if zoom feature is enabled, insertion point changes should update the zoom
     if (!UAZoomEnabled() || !m_selection.isCaret())

@@ -230,7 +230,7 @@ PassRefPtr<CSSComputedStyleDeclaration> Position::computedStyle() const
 
 Position Position::previous(PositionMoveType moveType) const
 {
-    Node* n = node();
+    Node* n = deprecatedNode();
     if (!n)
         return *this;
     
@@ -269,7 +269,7 @@ Position Position::next(PositionMoveType moveType) const
 {
     ASSERT(moveType != BackwardDeletion);
 
-    Node* n = node();
+    Node* n = deprecatedNode();
     if (!n)
         return *this;
     
@@ -323,7 +323,7 @@ bool Position::atLastEditingPositionForNode() const
 {
     if (isNull())
         return true;
-    return m_offset >= lastOffsetForEditing(node());
+    return m_offset >= lastOffsetForEditing(deprecatedNode());
 }
 
 // A position is considered at editing boundary if one of the following is true:
@@ -336,15 +336,15 @@ bool Position::atLastEditingPositionForNode() const
 bool Position::atEditingBoundary() const
 {
     Position nextPosition = downstream(CanCrossEditingBoundary);
-    if (atFirstEditingPositionForNode() && nextPosition.isNotNull() && !nextPosition.node()->isContentEditable())
+    if (atFirstEditingPositionForNode() && nextPosition.isNotNull() && !nextPosition.deprecatedNode()->isContentEditable())
         return true;
         
     Position prevPosition = upstream(CanCrossEditingBoundary);
-    if (atLastEditingPositionForNode() && prevPosition.isNotNull() && !prevPosition.node()->isContentEditable())
+    if (atLastEditingPositionForNode() && prevPosition.isNotNull() && !prevPosition.deprecatedNode()->isContentEditable())
         return true;
         
-    return nextPosition.isNotNull() && !nextPosition.node()->isContentEditable()
-        && prevPosition.isNotNull() && !prevPosition.node()->isContentEditable();
+    return nextPosition.isNotNull() && !nextPosition.deprecatedNode()->isContentEditable()
+        && prevPosition.isNotNull() && !prevPosition.deprecatedNode()->isContentEditable();
 }
 
 Node* Position::parentEditingBoundary() const
@@ -368,26 +368,26 @@ bool Position::atStartOfTree() const
 {
     if (isNull())
         return true;
-    return !node()->parentNode() && m_offset <= 0;
+    return !deprecatedNode()->parentNode() && m_offset <= 0;
 }
 
 bool Position::atEndOfTree() const
 {
     if (isNull())
         return true;
-    return !node()->parentNode() && m_offset >= lastOffsetForEditing(node());
+    return !deprecatedNode()->parentNode() && m_offset >= lastOffsetForEditing(deprecatedNode());
 }
 
 int Position::renderedOffset() const
 {
-    if (!node()->isTextNode())
+    if (!deprecatedNode()->isTextNode())
         return m_offset;
    
-    if (!node()->renderer())
+    if (!deprecatedNode()->renderer())
         return m_offset;
                     
     int result = 0;
-    RenderText *textRenderer = toRenderText(node()->renderer());
+    RenderText* textRenderer = toRenderText(deprecatedNode()->renderer());
     for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
         int start = box->start();
         int end = box->start() + box->len();
@@ -408,7 +408,7 @@ Position Position::previousCharacterPosition(EAffinity affinity) const
     if (isNull())
         return Position();
 
-    Node *fromRootEditableElement = node()->rootEditableElement();
+    Node* fromRootEditableElement = deprecatedNode()->rootEditableElement();
 
     bool atStartOfLine = isStartOfLine(VisiblePosition(*this, affinity));
     bool rendered = isCandidate();
@@ -417,7 +417,7 @@ Position Position::previousCharacterPosition(EAffinity affinity) const
     while (!currentPos.atStartOfTree()) {
         currentPos = currentPos.previous();
 
-        if (currentPos.node()->rootEditableElement() != fromRootEditableElement)
+        if (currentPos.deprecatedNode()->rootEditableElement() != fromRootEditableElement)
             return *this;
 
         if (atStartOfLine || !rendered) {
@@ -436,7 +436,7 @@ Position Position::nextCharacterPosition(EAffinity affinity) const
     if (isNull())
         return Position();
 
-    Node *fromRootEditableElement = node()->rootEditableElement();
+    Node* fromRootEditableElement = deprecatedNode()->rootEditableElement();
 
     bool atEndOfLine = isEndOfLine(VisiblePosition(*this, affinity));
     bool rendered = isCandidate();
@@ -445,7 +445,7 @@ Position Position::nextCharacterPosition(EAffinity affinity) const
     while (!currentPos.atEndOfTree()) {
         currentPos = currentPos.next();
 
-        if (currentPos.node()->rootEditableElement() != fromRootEditableElement)
+        if (currentPos.deprecatedNode()->rootEditableElement() != fromRootEditableElement)
             return *this;
 
         if (atEndOfLine || !rendered) {
@@ -507,7 +507,7 @@ static bool isStreamer(const PositionIterator& pos)
 // in boundary, where endsOfNodeAreVisuallyDistinctPositions(boundary) is true.
 Position Position::upstream(EditingBoundaryCrossingRule rule) const
 {
-    Node* startNode = node();
+    Node* startNode = deprecatedNode();
     if (!startNode)
         return Position();
     
@@ -628,7 +628,7 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
 // in boundary after the last candidate, where endsOfNodeAreVisuallyDistinctPositions(boundary).
 Position Position::downstream(EditingBoundaryCrossingRule rule) const
 {
-    Node* startNode = node();
+    Node* startNode = deprecatedNode();
     if (!startNode)
         return Position();
 
@@ -764,7 +764,7 @@ bool Position::isCandidate() const
     if (isNull())
         return false;
         
-    RenderObject *renderer = node()->renderer();
+    RenderObject* renderer = deprecatedNode()->renderer();
     if (!renderer)
         return false;
     
@@ -772,13 +772,13 @@ bool Position::isCandidate() const
         return false;
 
     if (renderer->isBR())
-        return !m_offset && !nodeIsUserSelectNone(node()->parentNode());
+        return !m_offset && !nodeIsUserSelectNone(deprecatedNode()->parentNode());
 
     if (renderer->isText())
-        return !nodeIsUserSelectNone(node()) && inRenderedText();
+        return !nodeIsUserSelectNone(deprecatedNode()) && inRenderedText();
 
-    if (isTableElement(node()) || editingIgnoresContent(node()))
-        return (atFirstEditingPositionForNode() || atLastEditingPositionForNode()) && !nodeIsUserSelectNone(node()->parentNode());
+    if (isTableElement(deprecatedNode()) || editingIgnoresContent(deprecatedNode()))
+        return (atFirstEditingPositionForNode() || atLastEditingPositionForNode()) && !nodeIsUserSelectNone(deprecatedNode()->parentNode());
 
     if (m_anchorNode->hasTagName(htmlTag))
         return false;
@@ -786,21 +786,21 @@ bool Position::isCandidate() const
     if (renderer->isBlockFlow()) {
         if (toRenderBlock(renderer)->height() || m_anchorNode->hasTagName(bodyTag)) {
             if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(renderer))
-                return atFirstEditingPositionForNode() && !Position::nodeIsUserSelectNone(node());
-            return m_anchorNode->isContentEditable() && !Position::nodeIsUserSelectNone(node()) && atEditingBoundary();
+                return atFirstEditingPositionForNode() && !Position::nodeIsUserSelectNone(deprecatedNode());
+            return m_anchorNode->isContentEditable() && !Position::nodeIsUserSelectNone(deprecatedNode()) && atEditingBoundary();
         }
     } else
-        return m_anchorNode->isContentEditable() && !Position::nodeIsUserSelectNone(node()) && atEditingBoundary();
+        return m_anchorNode->isContentEditable() && !Position::nodeIsUserSelectNone(deprecatedNode()) && atEditingBoundary();
 
     return false;
 }
 
 bool Position::inRenderedText() const
 {
-    if (isNull() || !node()->isTextNode())
+    if (isNull() || !deprecatedNode()->isTextNode())
         return false;
         
-    RenderObject *renderer = node()->renderer();
+    RenderObject* renderer = deprecatedNode()->renderer();
     if (!renderer)
         return false;
     
@@ -833,10 +833,10 @@ static unsigned caretMaxRenderedOffset(const Node* n)
 
 bool Position::isRenderedCharacter() const
 {
-    if (isNull() || !node()->isTextNode())
+    if (isNull() || !deprecatedNode()->isTextNode())
         return false;
         
-    RenderObject* renderer = node()->renderer();
+    RenderObject* renderer = deprecatedNode()->renderer();
     if (!renderer)
         return false;
     
@@ -860,11 +860,11 @@ bool Position::rendersInDifferentPosition(const Position &pos) const
     if (isNull() || pos.isNull())
         return false;
 
-    RenderObject *renderer = node()->renderer();
+    RenderObject* renderer = deprecatedNode()->renderer();
     if (!renderer)
         return false;
     
-    RenderObject *posRenderer = pos.node()->renderer();
+    RenderObject* posRenderer = pos.deprecatedNode()->renderer();
     if (!posRenderer)
         return false;
 
@@ -872,32 +872,32 @@ bool Position::rendersInDifferentPosition(const Position &pos) const
         posRenderer->style()->visibility() != VISIBLE)
         return false;
     
-    if (node() == pos.node()) {
-        if (node()->hasTagName(brTag))
+    if (deprecatedNode() == pos.deprecatedNode()) {
+        if (deprecatedNode()->hasTagName(brTag))
             return false;
 
         if (m_offset == pos.deprecatedEditingOffset())
             return false;
             
-        if (!node()->isTextNode() && !pos.node()->isTextNode()) {
+        if (!deprecatedNode()->isTextNode() && !pos.deprecatedNode()->isTextNode()) {
             if (m_offset != pos.deprecatedEditingOffset())
                 return true;
         }
     }
     
-    if (node()->hasTagName(brTag) && pos.isCandidate())
+    if (deprecatedNode()->hasTagName(brTag) && pos.isCandidate())
         return true;
                 
-    if (pos.node()->hasTagName(brTag) && isCandidate())
+    if (pos.deprecatedNode()->hasTagName(brTag) && isCandidate())
         return true;
                 
-    if (node()->enclosingBlockFlowElement() != pos.node()->enclosingBlockFlowElement())
+    if (deprecatedNode()->enclosingBlockFlowElement() != pos.deprecatedNode()->enclosingBlockFlowElement())
         return true;
 
-    if (node()->isTextNode() && !inRenderedText())
+    if (deprecatedNode()->isTextNode() && !inRenderedText())
         return false;
 
-    if (pos.node()->isTextNode() && !pos.inRenderedText())
+    if (pos.deprecatedNode()->isTextNode() && !pos.inRenderedText())
         return false;
 
     int thisRenderedOffset = renderedOffset();
@@ -916,8 +916,8 @@ bool Position::rendersInDifferentPosition(const Position &pos) const
     LOG(Editing, "thisRenderedOffset:         %d\n", thisRenderedOffset);
     LOG(Editing, "posRenderer:            %p [%p]\n", posRenderer, b2);
     LOG(Editing, "posRenderedOffset:      %d\n", posRenderedOffset);
-    LOG(Editing, "node min/max:           %d:%d\n", caretMinOffset(node()), caretMaxRenderedOffset(node()));
-    LOG(Editing, "pos node min/max:       %d:%d\n", caretMinOffset(pos.node()), caretMaxRenderedOffset(pos.node()));
+    LOG(Editing, "node min/max:           %d:%d\n", caretMinOffset(deprecatedNode()), caretMaxRenderedOffset(deprecatedNode()));
+    LOG(Editing, "pos node min/max:       %d:%d\n", caretMinOffset(pos.deprecatedNode()), caretMaxRenderedOffset(pos.deprecatedNode()));
     LOG(Editing, "----------------------------------------------------------------------\n");
 
     if (!b1 || !b2) {
@@ -928,13 +928,13 @@ bool Position::rendersInDifferentPosition(const Position &pos) const
         return true;
     }
 
-    if (nextRenderedEditable(node()) == pos.node() && 
-        thisRenderedOffset == (int)caretMaxRenderedOffset(node()) && posRenderedOffset == 0) {
+    if (nextRenderedEditable(deprecatedNode()) == pos.deprecatedNode()
+        && thisRenderedOffset == (int)caretMaxRenderedOffset(deprecatedNode()) && !posRenderedOffset) {
         return false;
     }
     
-    if (previousRenderedEditable(node()) == pos.node() && 
-        thisRenderedOffset == 0 && posRenderedOffset == (int)caretMaxRenderedOffset(pos.node())) {
+    if (previousRenderedEditable(deprecatedNode()) == pos.deprecatedNode()
+        && !thisRenderedOffset && posRenderedOffset == (int)caretMaxRenderedOffset(pos.deprecatedNode())) {
         return false;
     }
 
@@ -948,12 +948,12 @@ Position Position::leadingWhitespacePosition(EAffinity affinity, bool considerNo
     if (isNull())
         return Position();
     
-    if (upstream().node()->hasTagName(brTag))
+    if (upstream().deprecatedNode()->hasTagName(brTag))
         return Position();
 
     Position prev = previousCharacterPosition(affinity);
-    if (prev != *this && prev.node()->inSameContainingBlockFlowElement(node()) && prev.node()->isTextNode()) {
-        String string = static_cast<Text *>(prev.node())->data();
+    if (prev != *this && prev.deprecatedNode()->inSameContainingBlockFlowElement(deprecatedNode()) && prev.deprecatedNode()->isTextNode()) {
+        String string = static_cast<Text *>(prev.deprecatedNode())->data();
         UChar c = string[prev.deprecatedEditingOffset()];
         if (considerNonCollapsibleWhitespace ? (isSpaceOrNewline(c) || c == noBreakSpace) : isCollapsibleWhitespace(c))
             if (isEditablePosition(prev))
@@ -1045,11 +1045,11 @@ static Position upstreamIgnoringEditingBoundaries(Position position)
 void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDirection, InlineBox*& inlineBox, int& caretOffset) const
 {
     caretOffset = m_offset;
-    RenderObject* renderer = node()->renderer();
+    RenderObject* renderer = deprecatedNode()->renderer();
 
     if (!renderer->isText()) {
         inlineBox = 0;
-        if (canHaveChildrenForEditing(node()) && renderer->isBlockFlow() && hasRenderedNonAnonymousDescendantsWithHeight(renderer)) {
+        if (canHaveChildrenForEditing(deprecatedNode()) && renderer->isBlockFlow() && hasRenderedNonAnonymousDescendantsWithHeight(renderer)) {
             // Try a visually equivalent position with possibly opposite editability. This helps in case |this| is in
             // an editable block but surrounded by non-editable positions. It acts to negate the logic at the beginning
             // of RenderObject::createVisiblePosition().
@@ -1211,7 +1211,7 @@ void Position::debugPosition(const char* msg) const
     if (isNull())
         fprintf(stderr, "Position [%s]: null\n", msg);
     else
-        fprintf(stderr, "Position [%s]: %s [%p] at %d\n", msg, node()->nodeName().utf8().data(), node(), m_offset);
+        fprintf(stderr, "Position [%s]: %s [%p] at %d\n", msg, deprecatedNode()->nodeName().utf8().data(), deprecatedNode(), m_offset);
 }
 
 #ifndef NDEBUG
@@ -1227,7 +1227,7 @@ void Position::formatForDebugger(char* buffer, unsigned length) const
         result += "offset ";
         result += String::number(m_offset);
         result += " of ";
-        node()->formatForDebugger(s, sizeof(s));
+        deprecatedNode()->formatForDebugger(s, sizeof(s));
         result += s;
     }
           
@@ -1254,8 +1254,8 @@ void Position::showAnchorTypeAndOffset() const
 
 void Position::showTreeForThis() const
 {
-    if (node()) {
-        node()->showTreeForThis();
+    if (anchorNode()) {
+        anchorNode()->showTreeForThis();
         showAnchorTypeAndOffset();
     }
 }

@@ -143,7 +143,7 @@ VisibleSelection Editor::selectionForCommand(Event* event)
     // If the target is a text control, and the current selection is outside of its shadow tree,
     // then use the saved selection for that text control.
     Node* target = event->target()->toNode();
-    Node* selectionStart = selection.start().node();
+    Node* selectionStart = selection.start().deprecatedNode();
     if (target && (!selectionStart || target->shadowAncestorNode() != selectionStart->shadowAncestorNode())) {
         RefPtr<Range> range;
         if (target->hasTagName(inputTag) && static_cast<HTMLInputElement*>(target)->isTextField())
@@ -306,7 +306,7 @@ bool Editor::canDeleteRange(Range* range) const
         VisiblePosition start(startContainer, range->startOffset(ec), DOWNSTREAM);
         VisiblePosition previous = start.previous();
         // FIXME: We sometimes allow deletions at the start of editable roots, like when the caret is in an empty list item.
-        if (previous.isNull() || previous.deepEquivalent().node()->rootEditableElement() != startContainer->rootEditableElement())
+        if (previous.isNull() || previous.deepEquivalent().deprecatedNode()->rootEditableElement() != startContainer->rootEditableElement())
             return false;
     }
     return true;
@@ -575,7 +575,7 @@ void Editor::respondToChangedSelection(const VisibleSelection& oldSelection)
 void Editor::respondToChangedContents(const VisibleSelection& endingSelection)
 {
     if (AXObjectCache::accessibilityEnabled()) {
-        Node* node = endingSelection.start().node();
+        Node* node = endingSelection.start().deprecatedNode();
         if (node)
             m_frame->document()->axObjectCache()->postNotification(node->renderer(), AXObjectCache::AXValueChanged, false);
     }
@@ -613,7 +613,7 @@ const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
     const SimpleFontData* font = 0;
 
     RefPtr<Range> range = m_frame->selection()->toNormalizedRange();
-    Node* startNode = range->editingStartPosition().node();
+    Node* startNode = range->editingStartPosition().deprecatedNode();
     if (startNode) {
         Node* pastEnd = range->pastLastNode();
         // In the loop below, n should eventually match pastEnd and not become nil, but we've seen at least one
@@ -648,7 +648,7 @@ WritingDirection Editor::textDirectionForSelection(bool& hasNestedOrMultipleEmbe
 
     Position position = m_frame->selection()->selection().start().downstream();
 
-    Node* node = position.node();
+    Node* node = position.deprecatedNode();
     if (!node)
         return NaturalWritingDirection;
 
@@ -680,7 +680,7 @@ WritingDirection Editor::textDirectionForSelection(bool& hasNestedOrMultipleEmbe
             hasNestedOrMultipleEmbeddings = false;
             return direction;
         }
-        node = m_frame->selection()->selection().visibleStart().deepEquivalent().node();
+        node = m_frame->selection()->selection().visibleStart().deepEquivalent().deprecatedNode();
     }
 
     // The selection is either a caret with no typing attributes or a range in which no embedding is added, so just use the start position
@@ -719,7 +719,7 @@ WritingDirection Editor::textDirectionForSelection(bool& hasNestedOrMultipleEmbe
             return NaturalWritingDirection;
 
         // In the range case, make sure that the embedding element persists until the end of the range.
-        if (m_frame->selection()->isRange() && !end.node()->isDescendantOf(node))
+        if (m_frame->selection()->isRange() && !end.deprecatedNode()->isDescendantOf(node))
             return NaturalWritingDirection;
 
         foundDirection = directionValue == CSSValueLtr ? LeftToRightWritingDirection : RightToLeftWritingDirection;
@@ -735,12 +735,12 @@ bool Editor::hasBidiSelection() const
 
     Node* startNode;
     if (m_frame->selection()->isRange()) {
-        startNode = m_frame->selection()->selection().start().downstream().node();
-        Node* endNode = m_frame->selection()->selection().end().upstream().node();
+        startNode = m_frame->selection()->selection().start().downstream().deprecatedNode();
+        Node* endNode = m_frame->selection()->selection().end().upstream().deprecatedNode();
         if (enclosingBlock(startNode) != enclosingBlock(endNode))
             return false;
     } else
-        startNode = m_frame->selection()->selection().visibleStart().deepEquivalent().node();
+        startNode = m_frame->selection()->selection().visibleStart().deepEquivalent().deprecatedNode();
 
     RenderObject* renderer = startNode->renderer();
     while (renderer && !renderer->isRenderBlock())
@@ -1003,18 +1003,18 @@ TriState Editor::selectionHasStyle(CSSStyleDeclaration* style) const
             return FalseTriState;
         state = triStateOfStyle(style, selectionStyle.get());
     } else {
-        for (Node* node = m_frame->selection()->start().node(); node; node = node->traverseNextNode()) {
+        for (Node* node = m_frame->selection()->start().deprecatedNode(); node; node = node->traverseNextNode()) {
             RefPtr<CSSComputedStyleDeclaration> nodeStyle = computedStyle(node);
             if (nodeStyle) {
                 TriState nodeState = triStateOfStyle(style, nodeStyle.get(), !node->isTextNode());
-                if (node == m_frame->selection()->start().node())
+                if (node == m_frame->selection()->start().deprecatedNode())
                     state = nodeState;
                 else if (state != nodeState && node->isTextNode()) {
                     state = MixedTriState;
                     break;
                 }
             }
-            if (node == m_frame->selection()->end().node())
+            if (node == m_frame->selection()->end().deprecatedNode())
                 break;
         }
     }
@@ -1218,7 +1218,7 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
     // that is contained in the event target.
     selection = selectionForCommand(triggeringEvent);
     if (selection.isContentEditable()) {
-        if (Node* selectionStart = selection.start().node()) {
+        if (Node* selectionStart = selection.start().deprecatedNode()) {
             RefPtr<Document> document = selectionStart->document();
             
             // Insert the text
@@ -1281,7 +1281,7 @@ void Editor::cut()
 #if REMOVE_MARKERS_UPON_EDITING
         removeSpellAndCorrectionMarkersFromWordsToBeEdited(true);
 #endif
-        if (isNodeInTextFormControl(m_frame->selection()->start().node()))
+        if (isNodeInTextFormControl(m_frame->selection()->start().deprecatedNode()))
             Pasteboard::generalPasteboard()->writePlainText(selectedText());
         else
             Pasteboard::generalPasteboard()->writeSelection(selection.get(), canSmartCopyOrDelete(), m_frame);
@@ -1299,7 +1299,7 @@ void Editor::copy()
         return;
     }
 
-    if (isNodeInTextFormControl(m_frame->selection()->start().node()))
+    if (isNodeInTextFormControl(m_frame->selection()->start().deprecatedNode()))
         Pasteboard::generalPasteboard()->writePlainText(selectedText());
     else {
         Document* document = m_frame->document();
@@ -1724,9 +1724,9 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
         // Find out what node has the composition now.
         Position base = m_frame->selection()->base().downstream();
         Position extent = m_frame->selection()->extent();
-        Node* baseNode = base.node();
+        Node* baseNode = base.deprecatedNode();
         unsigned baseOffset = base.deprecatedEditingOffset();
-        Node* extentNode = extent.node();
+        Node* extentNode = extent.deprecatedNode();
         unsigned extentOffset = extent.deprecatedEditingOffset();
 
         if (baseNode && baseNode == extentNode && baseNode->isTextNode() && baseOffset + text.length() == extentOffset) {
@@ -1792,7 +1792,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
     RefPtr<Range> spellingSearchRange(rangeOfContents(frame()->document()));
 
     bool startedWithSelection = false;
-    if (selection.start().node()) {
+    if (selection.start().deprecatedNode()) {
         startedWithSelection = true;
         if (startBeforeSelection) {
             VisiblePosition start(selection.visibleStart());
@@ -1816,7 +1816,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
             return;
         
         Position rangeCompliantPosition = position.parentAnchoredEquivalent();
-        spellingSearchRange->setStart(rangeCompliantPosition.node(), rangeCompliantPosition.deprecatedEditingOffset(), ec);
+        spellingSearchRange->setStart(rangeCompliantPosition.deprecatedNode(), rangeCompliantPosition.deprecatedEditingOffset(), ec);
         startedWithSelection = false; // won't need to wrap
     }
     
@@ -2221,7 +2221,7 @@ bool Editor::isSpellCheckingEnabledFor(Node* node) const
 
 bool Editor::isSpellCheckingEnabledInFocusedNode() const
 {
-    return isSpellCheckingEnabledFor(m_frame->selection()->start().node());
+    return isSpellCheckingEnabledFor(m_frame->selection()->start().deprecatedNode());
 }
 
 void Editor::markMisspellings(const VisibleSelection& selection, RefPtr<Range>& firstMisspellingRange)
@@ -2852,10 +2852,10 @@ bool Editor::getCompositionSelection(unsigned& selectionStart, unsigned& selecti
     if (!m_compositionNode)
         return false;
     Position start = m_frame->selection()->start();
-    if (start.node() != m_compositionNode)
+    if (start.deprecatedNode() != m_compositionNode)
         return false;
     Position end = m_frame->selection()->end();
-    if (end.node() != m_compositionNode)
+    if (end.deprecatedNode() != m_compositionNode)
         return false;
 
     if (static_cast<unsigned>(start.deprecatedEditingOffset()) < m_compositionStart)
@@ -3111,7 +3111,7 @@ IntRect Editor::firstRectForRange(Range* range) const
         return IntRect();
     startPosition.getInlineBoxAndOffset(DOWNSTREAM, startInlineBox, startCaretOffset);
 
-    RenderObject* startRenderer = startPosition.node()->renderer();
+    RenderObject* startRenderer = startPosition.deprecatedNode()->renderer();
     ASSERT(startRenderer);
     IntRect startCaretRect = startRenderer->localCaretRect(startInlineBox, startCaretOffset, &extraWidthToEndOfLine);
     if (startCaretRect != IntRect())
@@ -3124,7 +3124,7 @@ IntRect Editor::firstRectForRange(Range* range) const
         return IntRect();
     endPosition.getInlineBoxAndOffset(UPSTREAM, endInlineBox, endCaretOffset);
 
-    RenderObject* endRenderer = endPosition.node()->renderer();
+    RenderObject* endRenderer = endPosition.deprecatedNode()->renderer();
     ASSERT(endRenderer);
     IntRect endCaretRect = endRenderer->localCaretRect(endInlineBox, endCaretOffset);
     if (endCaretRect != IntRect())
@@ -3284,12 +3284,12 @@ RenderStyle* Editor::styleForSelectionStart(Node *&nodeToRemove) const
     Position position = m_frame->selection()->selection().visibleStart().deepEquivalent();
     if (!position.isCandidate())
         return 0;
-    if (!position.node())
+    if (!position.deprecatedNode())
         return 0;
 
     RefPtr<EditingStyle> typingStyle = m_frame->selection()->typingStyle();
     if (!typingStyle || !typingStyle->style())
-        return position.node()->renderer()->style();
+        return position.deprecatedNode()->renderer()->style();
 
     RefPtr<Element> styleElement = m_frame->document()->createElement(spanTag, false);
 
@@ -3301,7 +3301,7 @@ RenderStyle* Editor::styleForSelectionStart(Node *&nodeToRemove) const
     styleElement->appendChild(m_frame->document()->createEditingTextNode(""), ec);
     ASSERT(!ec);
 
-    position.node()->parentNode()->appendChild(styleElement, ec);
+    position.deprecatedNode()->parentNode()->appendChild(styleElement, ec);
     ASSERT(!ec);
 
     nodeToRemove = styleElement.get();
@@ -3537,7 +3537,7 @@ void Editor::respondToChangedSelection(const VisibleSelection& oldSelection, Sel
         // When typing we check spelling elsewhere, so don't redo it here.
         // If this is a change in selection resulting from a delete operation,
         // oldSelection may no longer be in the document.
-        if (shouldCheckSpellingAndGrammar && closeTyping && oldSelection.isContentEditable() && oldSelection.start().node() && oldSelection.start().node()->inDocument()) {
+        if (shouldCheckSpellingAndGrammar && closeTyping && oldSelection.isContentEditable() && oldSelection.start().deprecatedNode() && oldSelection.start().anchorNode()->inDocument()) {
             VisiblePosition oldStart(oldSelection.visibleStart());
             VisibleSelection oldAdjacentWords = VisibleSelection(startOfWord(oldStart, LeftWordIfOnBoundary), endOfWord(oldStart, RightWordIfOnBoundary));
             if (oldAdjacentWords != newAdjacentWords) {
@@ -3576,7 +3576,7 @@ static Node* findFirstMarkable(Node* node)
         if (node->renderer()->isText())
             return node;
         if (node->renderer()->isTextControl())
-            node = toRenderTextControl(node->renderer())->visiblePositionForIndex(1).deepEquivalent().node();
+            node = toRenderTextControl(node->renderer())->visiblePositionForIndex(1).deepEquivalent().deprecatedNode();
         else if (node->firstChild())
             node = node->firstChild();
         else
@@ -3588,7 +3588,7 @@ static Node* findFirstMarkable(Node* node)
 
 bool Editor::selectionStartHasSpellingMarkerFor(int from, int length) const
 {
-    Node* node = findFirstMarkable(m_frame->selection()->start().node());
+    Node* node = findFirstMarkable(m_frame->selection()->start().deprecatedNode());
     if (!node)
         return false;
 

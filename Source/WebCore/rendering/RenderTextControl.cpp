@@ -249,7 +249,7 @@ void setSelectionRange(Node* node, int start, int end)
     // startPosition and endPosition can be null position for example when
     // "-webkit-user-select: none" style attribute is specified.
     if (startPosition.isNotNull() && endPosition.isNotNull()) {
-        ASSERT(startPosition.deepEquivalent().node()->shadowAncestorNode() == node && endPosition.deepEquivalent().node()->shadowAncestorNode() == node);
+        ASSERT(startPosition.deepEquivalent().deprecatedNode()->shadowAncestorNode() == node && endPosition.deepEquivalent().deprecatedNode()->shadowAncestorNode() == node);
     }
     VisibleSelection newSelection = VisibleSelection(startPosition, endPosition);
 
@@ -338,13 +338,13 @@ VisiblePosition RenderTextControl::visiblePositionForIndex(int index) const
 int RenderTextControl::indexForVisiblePosition(const VisiblePosition& pos) const
 {
     Position indexPosition = pos.deepEquivalent();
-    if (!isSelectableElement(indexPosition.node()))
+    if (!isSelectableElement(indexPosition.deprecatedNode()))
         return 0;
     ExceptionCode ec = 0;
     RefPtr<Range> range = Range::create(document());
     range->setStart(m_innerText.get(), 0, ec);
     ASSERT(!ec);
-    range->setEnd(indexPosition.node(), indexPosition.deprecatedEditingOffset(), ec);
+    range->setEnd(indexPosition.deprecatedNode(), indexPosition.deprecatedEditingOffset(), ec);
     ASSERT(!ec);
     return TextIterator::rangeLength(range.get());
 }

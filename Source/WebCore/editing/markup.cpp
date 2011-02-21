@@ -437,8 +437,8 @@ static bool propertyMissingOrEqualToNone(CSSStyleDeclaration* style, int propert
 static bool needInterchangeNewlineAfter(const VisiblePosition& v)
 {
     VisiblePosition next = v.next();
-    Node* upstreamNode = next.deepEquivalent().upstream().node();
-    Node* downstreamNode = v.deepEquivalent().downstream().node();
+    Node* upstreamNode = next.deepEquivalent().upstream().deprecatedNode();
+    Node* downstreamNode = v.deepEquivalent().downstream().deprecatedNode();
     // Add an interchange newline if a paragraph break is selected and a br won't already be added to the markup to represent it.
     return isEndOfParagraph(v) && isStartOfParagraph(next) && !(upstreamNode->hasTagName(brTag) && upstreamNode == downstreamNode);
 }
@@ -571,7 +571,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
         }
 
         accumulator.appendString(interchangeNewlineString);
-        startNode = visibleStart.next().deepEquivalent().node();
+        startNode = visibleStart.next().deepEquivalent().deprecatedNode();
 
         if (pastEnd && Range::compareBoundaryPoints(startNode, 0, pastEnd, 0) >= 0) {
             if (deleteButton)
@@ -764,7 +764,7 @@ PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String
 
     Node* styleNode = context->firstNode();
     if (!styleNode) {
-        styleNode = context->startPosition().node();
+        styleNode = context->startPosition().deprecatedNode();
         if (!styleNode)
             return 0;
     }

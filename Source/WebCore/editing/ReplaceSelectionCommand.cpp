@@ -110,15 +110,15 @@ static bool isInterchangeConvertedSpaceSpan(const Node *node)
 static Position positionAvoidingPrecedingNodes(Position pos)
 {
     // If we're already on a break, it's probably a placeholder and we shouldn't change our position.
-    if (pos.node()->hasTagName(brTag))
+    if (pos.deprecatedNode()->hasTagName(brTag))
         return pos;
 
     // We also stop when changing block flow elements because even though the visual position is the
     // same.  E.g.,
     //   <div>foo^</div>^
     // The two positions above are the same visual position, but we want to stay in the same block.
-    Node* stopNode = pos.node()->enclosingBlockFlowElement();
-    while (stopNode != pos.node() && VisiblePosition(pos) == VisiblePosition(pos.next()))
+    Node* stopNode = pos.deprecatedNode()->enclosingBlockFlowElement();
+    while (stopNode != pos.deprecatedNode() && VisiblePosition(pos) == VisiblePosition(pos.next()))
         pos = pos.next();
     return pos;
 }
@@ -152,7 +152,7 @@ ReplacementFragment::ReplacementFragment(Document* document, DocumentFragment* f
         return;
     }
 
-    Node* styleNode = selection.base().node();
+    Node* styleNode = selection.base().deprecatedNode();
     RefPtr<StyledElement> holder = insertFragmentForTestRendering(styleNode);
     
     RefPtr<Range> range = VisibleSelection::selectionFromContentsOfNode(holder.get()).toNormalizedRange();
@@ -357,7 +357,7 @@ static bool hasMatchingQuoteLevel(VisiblePosition endOfExistingContent, VisibleP
 {
     Position existing = endOfExistingContent.deepEquivalent();
     Position inserted = endOfInsertedContent.deepEquivalent();
-    bool isInsideMailBlockquote = nearestMailBlockquote(inserted.node());
+    bool isInsideMailBlockquote = nearestMailBlockquote(inserted.deprecatedNode());
     return isInsideMailBlockquote && (numEnclosingMailBlockquotes(existing) == numEnclosingMailBlockquotes(inserted));
 }
 
@@ -379,11 +379,11 @@ bool ReplaceSelectionCommand::shouldMergeStart(bool selectionStartWasStartOfPara
     if (isStartOfParagraph(startOfInsertedContent) && selectionStartWasInsideMailBlockquote && hasMatchingQuoteLevel(prev, positionAtEndOfInsertedContent()))
         return true;
 
-    return !selectionStartWasStartOfParagraph && 
-           !fragmentHasInterchangeNewlineAtStart &&
-           isStartOfParagraph(startOfInsertedContent) && 
-           !startOfInsertedContent.deepEquivalent().node()->hasTagName(brTag) &&
-           shouldMerge(startOfInsertedContent, prev);
+    return !selectionStartWasStartOfParagraph
+        && !fragmentHasInterchangeNewlineAtStart
+        && isStartOfParagraph(startOfInsertedContent)
+        && !startOfInsertedContent.deepEquivalent().deprecatedNode()->hasTagName(brTag)
+        && shouldMerge(startOfInsertedContent, prev);
 }
 
 bool ReplaceSelectionCommand::shouldMergeEnd(bool selectionEndWasEndOfParagraph)
@@ -393,10 +393,10 @@ bool ReplaceSelectionCommand::shouldMergeEnd(bool selectionEndWasEndOfParagraph)
     if (next.isNull())
         return false;
 
-    return !selectionEndWasEndOfParagraph &&
-           isEndOfParagraph(endOfInsertedContent) && 
-           !endOfInsertedContent.deepEquivalent().node()->hasTagName(brTag) &&
-           shouldMerge(endOfInsertedContent, next);
+    return !selectionEndWasEndOfParagraph
+        && isEndOfParagraph(endOfInsertedContent)
+        && !endOfInsertedContent.deepEquivalent().deprecatedNode()->hasTagName(brTag)
+        && shouldMerge(endOfInsertedContent, next);
 }
 
 static bool isMailPasteAsQuotationNode(const Node* node)
@@ -453,8 +453,8 @@ bool ReplaceSelectionCommand::shouldMerge(const VisiblePosition& source, const V
     if (source.isNull() || destination.isNull())
         return false;
         
-    Node* sourceNode = source.deepEquivalent().node();
-    Node* destinationNode = destination.deepEquivalent().node();
+    Node* sourceNode = source.deepEquivalent().deprecatedNode();
+    Node* destinationNode = destination.deepEquivalent().deprecatedNode();
     Node* sourceBlock = enclosingBlock(sourceNode);
     Node* destinationBlock = enclosingBlock(destinationNode);
     return !enclosingNodeOfType(source.deepEquivalent(), &isMailPasteAsQuotationNode) &&
@@ -740,7 +740,7 @@ void ReplaceSelectionCommand::mergeEndIfNeeded()
     // To avoid this, we add a placeholder node before the start of the paragraph.
     if (endOfParagraph(startOfParagraphToMove) == destination) {
         RefPtr<Node> placeholder = createBreakElement(document());
-        insertNodeBefore(placeholder, startOfParagraphToMove.deepEquivalent().node());
+        insertNodeBefore(placeholder, startOfParagraphToMove.deepEquivalent().deprecatedNode());
         destination = VisiblePosition(positionBeforeNode(placeholder.get()));
     }
 
@@ -751,9 +751,9 @@ void ReplaceSelectionCommand::mergeEndIfNeeded()
     // only ever used to create positions where inserted content starts/ends.  Also, we sometimes insert content
     // directly into text nodes already in the document, in which case tracking inserted nodes is inadequate.
     if (mergeForward) {
-        m_lastLeafInserted = destination.previous().deepEquivalent().node();
+        m_lastLeafInserted = destination.previous().deepEquivalent().deprecatedNode();
         if (!m_firstNodeInserted->inDocument())
-            m_firstNodeInserted = endingSelection().visibleStart().deepEquivalent().node();
+            m_firstNodeInserted = endingSelection().visibleStart().deepEquivalent().deprecatedNode();
         // If we merged text nodes, m_lastLeafInserted could be null. If this is the case,
         // we use m_firstNodeInserted.
         if (!m_lastLeafInserted)
@@ -780,8 +780,8 @@ void ReplaceSelectionCommand::doApply()
 {
     VisibleSelection selection = endingSelection();
     ASSERT(selection.isCaretOrRange());
-    ASSERT(selection.start().node());
-    if (!selection.isNonOrphanedCaretOrRange() || !selection.start().node())
+    ASSERT(selection.start().deprecatedNode());
+    if (!selection.isNonOrphanedCaretOrRange() || !selection.start().deprecatedNode())
         return;
     
     bool selectionIsPlainText = !selection.isContentRichlyEditable();
@@ -793,8 +793,8 @@ void ReplaceSelectionCommand::doApply()
         return;
     
     // We can skip matching the style if the selection is plain text.
-    if ((selection.start().node()->renderer() && selection.start().node()->renderer()->style()->userModify() == READ_WRITE_PLAINTEXT_ONLY) &&
-        (selection.end().node()->renderer() && selection.end().node()->renderer()->style()->userModify() == READ_WRITE_PLAINTEXT_ONLY))
+    if ((selection.start().deprecatedNode()->renderer() && selection.start().deprecatedNode()->renderer()->style()->userModify() == READ_WRITE_PLAINTEXT_ONLY)
+        && (selection.end().deprecatedNode()->renderer() && selection.end().deprecatedNode()->renderer()->style()->userModify() == READ_WRITE_PLAINTEXT_ONLY))
         m_matchStyle = false;
     
     if (m_matchStyle)
@@ -806,10 +806,10 @@ void ReplaceSelectionCommand::doApply()
     bool selectionEndWasEndOfParagraph = isEndOfParagraph(visibleEnd);
     bool selectionStartWasStartOfParagraph = isStartOfParagraph(visibleStart);
     
-    Node* startBlock = enclosingBlock(visibleStart.deepEquivalent().node());
+    Node* startBlock = enclosingBlock(visibleStart.deepEquivalent().deprecatedNode());
     
     Position insertionPos = selection.start();
-    bool startIsInsideMailBlockquote = nearestMailBlockquote(insertionPos.node());
+    bool startIsInsideMailBlockquote = nearestMailBlockquote(insertionPos.deprecatedNode());
     
     if ((selectionStartWasStartOfParagraph && selectionEndWasEndOfParagraph && !startIsInsideMailBlockquote) ||
         startBlock == currentRoot || isListItem(startBlock) || selectionIsPlainText)
@@ -862,7 +862,7 @@ void ReplaceSelectionCommand::doApply()
     if (startIsInsideMailBlockquote && m_preventNesting && !(enclosingNodeOfType(insertionPos, &isTableStructureNode))) { 
         applyCommandToComposite(BreakBlockquoteCommand::create(document())); 
         // This will leave a br between the split. 
-        Node* br = endingSelection().start().node(); 
+        Node* br = endingSelection().start().deprecatedNode(); 
         ASSERT(br->hasTagName(brTag)); 
         // Insert content between the two blockquotes, but remove the br (since it was just a placeholder). 
         insertionPos = positionInParentBeforeNode(br);
@@ -873,18 +873,18 @@ void ReplaceSelectionCommand::doApply()
     prepareWhitespaceAtPositionForSplit(insertionPos);
 
     // If the downstream node has been removed there's no point in continuing.
-    if (!insertionPos.downstream().node())
+    if (!insertionPos.downstream().deprecatedNode())
       return;
     
     // NOTE: This would be an incorrect usage of downstream() if downstream() were changed to mean the last position after 
     // p that maps to the same visible position as p (since in the case where a br is at the end of a block and collapsed 
     // away, there are positions after the br which map to the same visible position as [br, 0]).  
-    Node* endBR = insertionPos.downstream().node()->hasTagName(brTag) ? insertionPos.downstream().node() : 0;
+    Node* endBR = insertionPos.downstream().deprecatedNode()->hasTagName(brTag) ? insertionPos.downstream().deprecatedNode() : 0;
     VisiblePosition originalVisPosBeforeEndBR;
     if (endBR)
         originalVisPosBeforeEndBR = VisiblePosition(endBR, 0, DOWNSTREAM).previous();
     
-    startBlock = enclosingBlock(insertionPos.node());
+    startBlock = enclosingBlock(insertionPos.deprecatedNode());
     
     // Adjust insertionPos to prevent nesting.
     // If the start was in a Mail blockquote, we will have already handled adjusting insertionPos above.
@@ -939,7 +939,7 @@ void ReplaceSelectionCommand::doApply()
     
     fragment.removeNode(refNode);
 
-    Node* blockStart = enclosingBlock(insertionPos.node());
+    Node* blockStart = enclosingBlock(insertionPos.deprecatedNode());
     if ((isListElement(refNode.get()) || (isStyleSpan(refNode.get()) && isListElement(refNode->firstChild())))
         && blockStart->renderer()->isListItem())
         refNode = insertAsListItems(refNode, blockStart, insertionPos);
@@ -983,7 +983,7 @@ void ReplaceSelectionCommand::doApply()
     
     // We inserted before the startBlock to prevent nesting, and the content before the startBlock wasn't in its own block and
     // didn't have a br after it, so the inserted content ended up in the same paragraph.
-    if (startBlock && insertionPos.node() == startBlock->parentNode() && (unsigned)insertionPos.deprecatedEditingOffset() < startBlock->nodeIndex() && !isStartOfParagraph(startOfInsertedContent))
+    if (startBlock && insertionPos.deprecatedNode() == startBlock->parentNode() && (unsigned)insertionPos.deprecatedEditingOffset() < startBlock->nodeIndex() && !isStartOfParagraph(startOfInsertedContent))
         insertNodeAt(createBreakElement(document()).get(), startOfInsertedContent.deepEquivalent());
     
     Position lastPositionToSelect;
@@ -1003,7 +1003,7 @@ void ReplaceSelectionCommand::doApply()
         // We need to handle the case where we need to merge the end
         // but our destination node is inside an inline that is the last in the block.
         // We insert a placeholder before the newly inserted content to avoid being merged into the inline.
-        Node* destinationNode = destination.deepEquivalent().node();
+        Node* destinationNode = destination.deepEquivalent().deprecatedNode();
         if (m_shouldMergeEnd && destinationNode != enclosingInline(destinationNode) && enclosingInline(destinationNode)->nextSibling())
             insertNodeBefore(createBreakElement(document()), refNode.get());
         
@@ -1018,16 +1018,16 @@ void ReplaceSelectionCommand::doApply()
         if (startOfParagraph(endOfInsertedContent) == startOfParagraphToMove) {
             insertNodeAt(createBreakElement(document()).get(), endOfInsertedContent.deepEquivalent());
             // Mutation events (bug 22634) triggered by inserting the <br> might have removed the content we're about to move
-            if (!startOfParagraphToMove.deepEquivalent().node()->inDocument())
+            if (!startOfParagraphToMove.deepEquivalent().anchorNode()->inDocument())
                 return;
         }
 
         // FIXME: Maintain positions for the start and end of inserted content instead of keeping nodes.  The nodes are
         // only ever used to create positions where inserted content starts/ends.
         moveParagraph(startOfParagraphToMove, endOfParagraph(startOfParagraphToMove), destination);
-        m_firstNodeInserted = endingSelection().visibleStart().deepEquivalent().downstream().node();
+        m_firstNodeInserted = endingSelection().visibleStart().deepEquivalent().downstream().deprecatedNode();
         if (!m_lastLeafInserted->inDocument())
-            m_lastLeafInserted = endingSelection().visibleEnd().deepEquivalent().upstream().node();
+            m_lastLeafInserted = endingSelection().visibleEnd().deepEquivalent().upstream().deprecatedNode();
     }
             
     endOfInsertedContent = positionAtEndOfInsertedContent();
@@ -1039,7 +1039,7 @@ void ReplaceSelectionCommand::doApply()
         if (selectionEndWasEndOfParagraph || !isEndOfParagraph(endOfInsertedContent) || next.isNull()) {
             if (!isStartOfParagraph(endOfInsertedContent)) {
                 setEndingSelection(endOfInsertedContent);
-                Node* enclosingNode = enclosingBlock(endOfInsertedContent.deepEquivalent().node());
+                Node* enclosingNode = enclosingBlock(endOfInsertedContent.deepEquivalent().deprecatedNode());
                 if (isListItem(enclosingNode)) {
                     RefPtr<Node> newListItem = createListItemElement(document());
                     insertNodeAfter(newListItem, enclosingNode);
@@ -1051,7 +1051,7 @@ void ReplaceSelectionCommand::doApply()
 
                 // Select up to the paragraph separator that was added.
                 lastPositionToSelect = endingSelection().visibleStart().deepEquivalent();
-                updateNodesInserted(lastPositionToSelect.node());
+                updateNodesInserted(lastPositionToSelect.deprecatedNode());
             }
         } else {
             // Select up to the beginning of the next paragraph.
@@ -1079,7 +1079,7 @@ void ReplaceSelectionCommand::doApply()
         if (needsTrailingSpace) {
             RenderObject* renderer = m_lastLeafInserted->renderer();
             bool collapseWhiteSpace = !renderer || renderer->style()->collapseWhiteSpace();
-            Node* endNode = positionAtEndOfInsertedContent().deepEquivalent().upstream().node();
+            Node* endNode = positionAtEndOfInsertedContent().deepEquivalent().upstream().deprecatedNode();
             if (endNode->isTextNode()) {
                 Text* text = static_cast<Text*>(endNode);
                 insertTextIntoNode(text, text->length(), collapseWhiteSpace ? nonBreakingSpaceString() : " ");
@@ -1094,7 +1094,7 @@ void ReplaceSelectionCommand::doApply()
         if (needsLeadingSpace) {
             RenderObject* renderer = m_lastLeafInserted->renderer();
             bool collapseWhiteSpace = !renderer || renderer->style()->collapseWhiteSpace();
-            Node* startNode = positionAtStartOfInsertedContent().deepEquivalent().downstream().node();
+            Node* startNode = positionAtStartOfInsertedContent().deepEquivalent().downstream().deprecatedNode();
             if (startNode->isTextNode()) {
                 Text* text = static_cast<Text*>(startNode);
                 insertTextIntoNode(text, 0, collapseWhiteSpace ? nonBreakingSpaceString() : " ");
@@ -1212,9 +1212,9 @@ Node* ReplaceSelectionCommand::insertAsListItems(PassRefPtr<Node> listElement, N
     // list items and insert these nodes between them.
     if (isMiddle) {
         int textNodeOffset = insertPos.offsetInContainerNode();
-        if (insertPos.node()->isTextNode() && textNodeOffset > 0)
-            splitTextNode(static_cast<Text*>(insertPos.node()), textNodeOffset);
-        splitTreeToNode(insertPos.node(), lastNode, true);
+        if (insertPos.deprecatedNode()->isTextNode() && textNodeOffset > 0)
+            splitTextNode(static_cast<Text*>(insertPos.deprecatedNode()), textNodeOffset);
+        splitTreeToNode(insertPos.deprecatedNode(), lastNode, true);
     }
 
     while (RefPtr<Node> listItem = listElement->firstChild()) {

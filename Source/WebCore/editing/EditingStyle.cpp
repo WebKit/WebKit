@@ -101,7 +101,7 @@ EditingStyle::EditingStyle(const Position& position)
     : m_shouldUseFixedDefaultFontSize(false)
     , m_fontSizeDelta(NoFontDelta)
 {
-    init(position.node(), OnlyInheritableProperties);
+    init(position.deprecatedNode(), OnlyInheritableProperties);
 }
 
 EditingStyle::EditingStyle(const CSSStyleDeclaration* style)
@@ -346,7 +346,7 @@ void EditingStyle::prepareToApplyAt(const Position& position, ShouldPreserveWrit
 PassRefPtr<EditingStyle> editingStyleIncludingTypingStyle(const Position& position)
 {
     RefPtr<EditingStyle> editingStyle = EditingStyle::create(position);
-    RefPtr<EditingStyle> typingStyle = position.node()->document()->frame()->selection()->typingStyle();
+    RefPtr<EditingStyle> typingStyle = position.anchorNode()->document()->frame()->selection()->typingStyle();
     if (typingStyle && typingStyle->style())
         editingStyle->style()->merge(copyEditingProperties(typingStyle->style()).get());
     return editingStyle;

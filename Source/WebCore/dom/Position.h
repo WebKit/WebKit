@@ -105,7 +105,7 @@ public:
     // FIXME: Callers should be moved off of node(), node() is not always the container for this position.
     // For nodes which editingIgnoresContent(node()) returns true, positions like [ignoredNode, 0]
     // will be treated as before ignoredNode (thus node() is really after the position, not containing it).
-    Node* node() const { return m_anchorNode.get(); }
+    Node* deprecatedNode() const { return m_anchorNode.get(); }
 
     // These should only be used for PositionIsOffsetInAnchor positions, unless
     // the position is a legacy editing position.

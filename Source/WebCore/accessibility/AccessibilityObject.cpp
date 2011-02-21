@@ -222,9 +222,9 @@ static VisiblePosition updateAXLineStartForVisiblePosition(const VisiblePosition
         if (tempPosition.isNull())
             break;
         p = tempPosition.deepEquivalent();
-        if (!p.node())
+        if (!p.deprecatedNode())
             break;
-        renderer = p.node()->renderer();
+        renderer = p.deprecatedNode()->renderer();
         if (!renderer || (renderer->isRenderBlock() && !p.deprecatedEditingOffset()))
             break;
         InlineBox* box;
@@ -318,7 +318,7 @@ VisiblePositionRange AccessibilityObject::paragraphForPosition(const VisiblePosi
 
 static VisiblePosition startOfStyleRange(const VisiblePosition visiblePos)
 {
-    RenderObject* renderer = visiblePos.deepEquivalent().node()->renderer();
+    RenderObject* renderer = visiblePos.deepEquivalent().deprecatedNode()->renderer();
     RenderObject* startRenderer = renderer;
     RenderStyle* style = renderer->style();
 
@@ -341,7 +341,7 @@ static VisiblePosition startOfStyleRange(const VisiblePosition visiblePos)
 
 static VisiblePosition endOfStyleRange(const VisiblePosition& visiblePos)
 {
-    RenderObject* renderer = visiblePos.deepEquivalent().node()->renderer();
+    RenderObject* renderer = visiblePos.deepEquivalent().deprecatedNode()->renderer();
     RenderObject* endRenderer = renderer;
     RenderStyle* style = renderer->style();
 
@@ -649,7 +649,7 @@ AccessibilityObject* AccessibilityObject::accessibilityObjectForPosition(const V
     if (visiblePos.isNull())
         return 0;
 
-    RenderObject* obj = visiblePos.deepEquivalent().node()->renderer();
+    RenderObject* obj = visiblePos.deepEquivalent().deprecatedNode()->renderer();
     if (!obj)
         return 0;
 

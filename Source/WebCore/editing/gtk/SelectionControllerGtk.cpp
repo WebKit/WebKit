@@ -84,7 +84,7 @@ void SelectionController::notifyAccessibilityForSelectionChange()
     if (!m_selection.start().isNotNull() || !m_selection.end().isNotNull())
         return;
 
-    RenderObject* focusedNode = m_selection.end().node()->renderer();
+    RenderObject* focusedNode = m_selection.end().deprecatedNode()->renderer();
     AccessibilityObject* accessibilityObject = m_frame->document()->axObjectCache()->getOrCreate(focusedNode);
 
     // Need to check this as getOrCreate could return 0,

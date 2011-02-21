@@ -1223,7 +1223,7 @@ static gint webkit_accessible_text_get_caret_offset(AtkText* text)
     if (!coreObject->isAccessibilityRenderObject())
         return 0;
 
-    Node* focusedNode = coreObject->selection().end().node();
+    Node* focusedNode = coreObject->selection().end().deprecatedNode();
     if (!focusedNode)
         return 0;
 

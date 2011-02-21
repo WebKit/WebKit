@@ -578,7 +578,7 @@ VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(TextMarkerData& 
     if (deepPos.isNull())
         return VisiblePosition();
     
-    RenderObject* renderer = deepPos.node()->renderer();
+    RenderObject* renderer = deepPos.deprecatedNode()->renderer();
     if (!renderer)
         return VisiblePosition();
     
@@ -586,7 +586,7 @@ VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(TextMarkerData& 
     if (!cache->isIDinUse(textMarkerData.axID))
         return VisiblePosition();
     
-    if (deepPos.node() != textMarkerData.node || deepPos.deprecatedEditingOffset() != textMarkerData.offset)
+    if (deepPos.deprecatedNode() != textMarkerData.node || deepPos.deprecatedEditingOffset() != textMarkerData.offset)
         return VisiblePosition();
     
     return visiblePos;
@@ -602,7 +602,7 @@ void AXObjectCache::textMarkerDataForVisiblePosition(TextMarkerData& textMarkerD
         return;
     
     Position deepPos = visiblePos.deepEquivalent();
-    Node* domNode = deepPos.node();
+    Node* domNode = deepPos.deprecatedNode();
     ASSERT(domNode);
     if (!domNode)
         return;

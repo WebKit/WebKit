@@ -67,7 +67,7 @@ void BreakBlockquoteCommand::doApply()
     
     // Find the top-most blockquote from the start.
     Element* topBlockquote = 0;
-    for (ContainerNode* node = pos.node()->parentNode(); node; node = node->parentNode()) {
+    for (ContainerNode* node = pos.deprecatedNode()->parentNode(); node; node = node->parentNode()) {
         if (isMailBlockquote(node))
             topBlockquote = static_cast<Element*>(node);
     }
@@ -103,11 +103,11 @@ void BreakBlockquoteCommand::doApply()
         pos = pos.next();
         
     // Adjust the position so we don't split at the beginning of a quote.  
-    while (isFirstVisiblePositionInNode(VisiblePosition(pos), nearestMailBlockquote(pos.node())))
+    while (isFirstVisiblePositionInNode(VisiblePosition(pos), nearestMailBlockquote(pos.deprecatedNode())))
         pos = pos.previous();
     
     // startNode is the first node that we need to move to the new blockquote.
-    Node* startNode = pos.node();
+    Node* startNode = pos.deprecatedNode();
         
     // Split at pos if in the middle of a text node.
     if (startNode->isTextNode()) {
