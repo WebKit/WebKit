@@ -1,3 +1,9 @@
+2011-02-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed Chromium test expectation update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-21  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
@@ -18,12 +24,6 @@
         on #webkit).
 
         * platform/chromium-win/inspector/styles-update-from-js-expected.txt: Removed.
-
-2011-02-21  Ryosuke Niwa  <rniwa@webkit.org>
-
-        Unreviewed Chromium test expectation update.
-
-        * platform/chromium/test_expectations.txt:
 
 2011-02-21  Ryosuke Niwa  <rniwa@webkit.org>
 
