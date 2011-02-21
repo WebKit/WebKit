@@ -1,3 +1,13 @@
+2011-02-21  Gavin Barraclough  <barraclough@apple.com>
+
+        Ruber stamped by Sam Weinig
+
+        Bug 54899 - Math.LOG10E should be 0.4342944819032518
+        This value is quoted in section 15.8.1.5 of the spec.
+
+        * fast/js/kde/math-expected.txt:
+        * fast/js/kde/script-tests/math.js:
+
 2011-02-21  Anna Cavender  <annacc@timberline.sea.corp.google.com>
 
         Reviewed by Eric Carlson.

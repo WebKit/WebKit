@@ -95,7 +95,7 @@ MathObject::MathObject(ExecState* exec, JSGlobalObject* globalObject, NonNullPas
     putDirectWithoutTransition(exec->globalData(), Identifier(exec, "LN2"), jsNumber(log(2.0)), DontDelete | DontEnum | ReadOnly);
     putDirectWithoutTransition(exec->globalData(), Identifier(exec, "LN10"), jsNumber(log(10.0)), DontDelete | DontEnum | ReadOnly);
     putDirectWithoutTransition(exec->globalData(), Identifier(exec, "LOG2E"), jsNumber(1.0 / log(2.0)), DontDelete | DontEnum | ReadOnly);
-    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "LOG10E"), jsNumber(1.0 / log(10.0)), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "LOG10E"), jsNumber(0.4342944819032518), DontDelete | DontEnum | ReadOnly); // See ECMA-262 15.8.1.5
     putDirectWithoutTransition(exec->globalData(), Identifier(exec, "PI"), jsNumber(piDouble), DontDelete | DontEnum | ReadOnly);
     putDirectWithoutTransition(exec->globalData(), Identifier(exec, "SQRT1_2"), jsNumber(sqrt(0.5)), DontDelete | DontEnum | ReadOnly);
     putDirectWithoutTransition(exec->globalData(), Identifier(exec, "SQRT2"), jsNumber(sqrt(2.0)), DontDelete | DontEnum | ReadOnly);
