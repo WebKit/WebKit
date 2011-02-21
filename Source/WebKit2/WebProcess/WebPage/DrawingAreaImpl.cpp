@@ -58,8 +58,8 @@ DrawingAreaImpl::~DrawingAreaImpl()
 
 DrawingAreaImpl::DrawingAreaImpl(WebPage* webPage, const WebPageCreationParameters& parameters)
     : DrawingArea(DrawingAreaInfo::Impl, parameters.drawingAreaInfo.identifier, webPage)
-    , m_sequenceNumber(0)
-    , m_inSetSize(false)
+    , m_stateID(0)
+    , m_inUpdateState(false)
     , m_isWaitingForDidUpdate(false)
     , m_isPaintingSuspended(!parameters.isVisible)
     , m_alwaysUseCompositing(false)
@@ -189,7 +189,7 @@ void DrawingAreaImpl::layerHostDidFlushLayers()
     if (!m_layerTreeHost)
         return;
 
-    m_webPage->send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(m_sequenceNumber, m_layerTreeHost->layerTreeContext()));
+    m_webPage->send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(m_stateID, m_layerTreeHost->layerTreeContext()));
 }
 
 void DrawingAreaImpl::attachCompositingContext()
@@ -219,7 +219,7 @@ void DrawingAreaImpl::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
                 // compositing code via display() and layout.
                 // If we're leaving compositing mode because of a setSize, it is safe to
                 // exit accelerated compositing mode right away.
-                if (m_inSetSize)
+                if (m_inUpdateState)
                     exitAcceleratedCompositingMode();
                 else
                     exitAcceleratedCompositingModeSoon();
@@ -243,13 +243,13 @@ void DrawingAreaImpl::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID
 {
 }
 
-void DrawingAreaImpl::setSize(uint64_t sequenceNumber, const WebCore::IntSize& size, const WebCore::IntSize& scrollOffset)
+void DrawingAreaImpl::updateState(uint64_t stateID, const WebCore::IntSize& size, const WebCore::IntSize& scrollOffset)
 {
-    ASSERT(!m_inSetSize);
-    m_inSetSize = true;
+    ASSERT(!m_inUpdateState);
+    m_inUpdateState = true;
 
-    ASSERT_ARG(sequenceNumber, sequenceNumber > m_sequenceNumber);
-    m_sequenceNumber = sequenceNumber;
+    ASSERT_ARG(stateID, stateID > m_stateID);
+    m_stateID = stateID;
 
     // Set this to false since we're about to call display().
     m_isWaitingForDidUpdate = false;
@@ -276,9 +276,9 @@ void DrawingAreaImpl::setSize(uint64_t sequenceNumber, const WebCore::IntSize& s
         ASSERT(!m_layerTreeHost);
     }
 
-    m_webPage->send(Messages::DrawingAreaProxy::DidSetSize(m_sequenceNumber, updateInfo, layerTreeContext));
+    m_webPage->send(Messages::DrawingAreaProxy::DidUpdateState(m_stateID, updateInfo, layerTreeContext));
 
-    m_inSetSize = false;
+    m_inUpdateState = false;
 }
 
 void DrawingAreaImpl::didUpdate()
@@ -319,7 +319,7 @@ void DrawingAreaImpl::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLay
     ASSERT(!m_layerTreeHost);
 
     m_layerTreeHost = LayerTreeHost::create(m_webPage);
-    if (!m_inSetSize)
+    if (!m_inUpdateState)
         m_layerTreeHost->setShouldNotifyAfterNextScheduledLayerFlush();
 
     m_layerTreeHost->setRootCompositingLayer(graphicsLayer);
@@ -344,7 +344,7 @@ void DrawingAreaImpl::exitAcceleratedCompositingMode()
     m_layerTreeHost->invalidate();
     m_layerTreeHost = nullptr;
 
-    if (m_inSetSize)
+    if (m_inUpdateState)
         return;
 
     UpdateInfo updateInfo;
@@ -357,8 +357,8 @@ void DrawingAreaImpl::exitAcceleratedCompositingMode()
 
     // Send along a complete update of the page so we can paint the contents right after we exit the
     // accelerated compositing mode, eliminiating flicker.
-    if (!m_inSetSize)
-        m_webPage->send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode(m_sequenceNumber, updateInfo));
+    if (!m_inUpdateState)
+        m_webPage->send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode(m_stateID, updateInfo));
 }
 
 void DrawingAreaImpl::exitAcceleratedCompositingModeSoon()
@@ -406,7 +406,7 @@ void DrawingAreaImpl::display()
         return;
     }
 
-    m_webPage->send(Messages::DrawingAreaProxy::Update(m_sequenceNumber, updateInfo));
+    m_webPage->send(Messages::DrawingAreaProxy::Update(m_stateID, updateInfo));
     m_isWaitingForDidUpdate = true;
 }
 

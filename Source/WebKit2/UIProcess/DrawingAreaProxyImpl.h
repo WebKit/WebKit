@@ -55,14 +55,14 @@ private:
     virtual void detachCompositingContext();
 
     // CoreIPC message handlers
-    virtual void update(uint64_t sequenceNumber, const UpdateInfo&);
-    virtual void didSetSize(uint64_t sequenceNumber, const UpdateInfo&, const LayerTreeContext&);
-    virtual void enterAcceleratedCompositingMode(uint64_t sequenceNumber, const LayerTreeContext&);
-    virtual void exitAcceleratedCompositingMode(uint64_t sequenceNumber, const UpdateInfo&);
+    virtual void update(uint64_t stateID, const UpdateInfo&);
+    virtual void didUpdateState(uint64_t stateID, const UpdateInfo&, const LayerTreeContext&);
+    virtual void enterAcceleratedCompositingMode(uint64_t stateID, const LayerTreeContext&);
+    virtual void exitAcceleratedCompositingMode(uint64_t stateID, const UpdateInfo&);
 
     void incorporateUpdate(const UpdateInfo&);
-    void sendSetSize();
-    void waitForAndDispatchDidSetSize();
+    void sendUpdateState();
+    void waitForAndDispatchDidUpdateState();
 
     void enterAcceleratedCompositingMode(const LayerTreeContext&);
     void exitAcceleratedCompositingMode();
@@ -72,12 +72,12 @@ private:
     // The current layer tree context.
     LayerTreeContext m_layerTreeContext;
     
-    // Whether we've sent a SetSize message and are now waiting for a DidSetSize message.
-    // Used to throttle SetSize messages so we don't send them faster than the Web process can handle.
-    bool m_isWaitingForDidSetSize;
+    // Whether we've sent a UpdateState message and are now waiting for a DidUpdateState message.
+    // Used to throttle UpdateState messages so we don't send them faster than the Web process can handle.
+    bool m_isWaitingForDidUpdateState;
 
-    // The sequence number of the last DidSetSize message
-    uint64_t m_lastDidSetSizeSequenceNumber;
+    // The state ID of the last DidUpdateState message
+    uint64_t m_currentStateID;
 
     OwnPtr<BackingStore> m_backingStore;
 };

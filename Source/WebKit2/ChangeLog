@@ -1,3 +1,43 @@
+2011-02-21  Adam Roben  <aroben@apple.com>
+
+        Rename DrawingArea[Proxy]Impl's "sequence number" concept to "state ID".
+
+        As explained in r79251, DrawingAreaProxyImpl has some state that, when it changes, causes
+        all operations performed before that state change to become invalid. Currently, this state
+        consists of a single piece of data: the view's size. Eventually it will encompass more data
+        (e.g., the backing store we're drawing into; when we start throwing away the backing store
+        to save memory, our state will have changed, and any operations that were intended for the
+        old backing store will have become invalid). r79251 effectively transformed
+        DrawingArea[Proxy]Impl's "sequence number," which incremented every time DrawingAreaImpl
+        sent DrawingAreaProxyImpl a message, to a "state ID," which only increments when the view's
+        size changes.
+
+        This patch is just a set of simple renames to reflect the transformation that r79251
+        effected. It should not introduce any changes in behavior. The renames are:
+          - Messages::DrawingArea::SetSize -> UpdateState
+          - Messages::DrawingAreaProxy::DidSetSize -> DidUpdateState
+          - DrawingAreaProxyImpl::m_lastDidSetSizeSequenceNumber -> m_currentStateID
+          - DrawingAreaProxyImpl::m_isWaitingForDidSetSize -> m_isWaitingForDidUpdateState
+          - DrawingAreaProxyImpl::waitForAndDispatchDidSetSize -> waitForAndDispatchDidUpdateState
+          - DrawingAreaImpl::m_inSetSize -> m_inUpdateState
+          - generateSequenceNumber -> generateStateID
+          - sequenceNumber -> stateID
+
+        Fixes <http://webkit.org/b/54911> DrawingArea[Proxy]Impl's "sequence number" concept should
+        be renamed to "state ID"
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/DrawingAreaProxy.messages.in:
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        * UIProcess/DrawingAreaProxyImpl.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        Performed the renames described above.
+
 2011-02-21  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Adam Roben.

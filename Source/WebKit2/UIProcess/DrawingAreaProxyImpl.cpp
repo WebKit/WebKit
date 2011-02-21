@@ -42,10 +42,10 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static uint64_t generateSequenceNumber()
+static uint64_t generateStateID()
 {
-    static uint64_t sequenceNumber;
-    return ++sequenceNumber;
+    static uint64_t stateID;
+    return ++stateID;
 }
 
 PassOwnPtr<DrawingAreaProxyImpl> DrawingAreaProxyImpl::create(WebPageProxy* webPageProxy)
@@ -55,8 +55,8 @@ PassOwnPtr<DrawingAreaProxyImpl> DrawingAreaProxyImpl::create(WebPageProxy* webP
 
 DrawingAreaProxyImpl::DrawingAreaProxyImpl(WebPageProxy* webPageProxy)
     : DrawingAreaProxy(DrawingAreaInfo::Impl, webPageProxy)
-    , m_isWaitingForDidSetSize(false)
-    , m_lastDidSetSizeSequenceNumber(0)
+    , m_isWaitingForDidUpdateState(false)
+    , m_currentStateID(0)
 {
 }
 
@@ -76,12 +76,12 @@ void DrawingAreaProxyImpl::paint(BackingStore::PlatformGraphicsContext context, 
 
     ASSERT(!isInAcceleratedCompositingMode());
 
-    if (m_isWaitingForDidSetSize) {
-        // Wait for a DidSetSize message that contains the new bits before we paint
+    if (m_isWaitingForDidUpdateState) {
+        // Wait for a DidUpdateState message that contains the new bits before we paint
         // what's currently in the backing store.
-        waitForAndDispatchDidSetSize();
+        waitForAndDispatchDidUpdateState();
 
-        // Dispatching DidSetSize could destroy our backing store or change the compositing mode.
+        // Dispatching DidUpdateState could destroy our backing store or change the compositing mode.
         if (!m_backingStore || isInAcceleratedCompositingMode())
             return;
     }
@@ -108,7 +108,7 @@ bool DrawingAreaProxyImpl::paint(const WebCore::IntRect&, PlatformDrawingContext
 
 void DrawingAreaProxyImpl::sizeDidChange()
 {
-    sendSetSize();
+    sendUpdateState();
 }
 
 void DrawingAreaProxyImpl::visibilityDidChange()
@@ -137,9 +137,9 @@ void DrawingAreaProxyImpl::detachCompositingContext()
     ASSERT_NOT_REACHED();
 }
 
-void DrawingAreaProxyImpl::update(uint64_t sequenceNumber, const UpdateInfo& updateInfo)
+void DrawingAreaProxyImpl::update(uint64_t stateID, const UpdateInfo& updateInfo)
 {
-    if (sequenceNumber < m_lastDidSetSizeSequenceNumber)
+    if (stateID < m_currentStateID)
         return;
 
     // FIXME: Handle the case where the view is hidden.
@@ -148,16 +148,16 @@ void DrawingAreaProxyImpl::update(uint64_t sequenceNumber, const UpdateInfo& upd
     m_webPageProxy->process()->send(Messages::DrawingArea::DidUpdate(), m_webPageProxy->pageID());
 }
 
-void DrawingAreaProxyImpl::didSetSize(uint64_t sequenceNumber, const UpdateInfo& updateInfo, const LayerTreeContext& layerTreeContext)
+void DrawingAreaProxyImpl::didUpdateState(uint64_t stateID, const UpdateInfo& updateInfo, const LayerTreeContext& layerTreeContext)
 {
-    ASSERT(sequenceNumber > m_lastDidSetSizeSequenceNumber);
-    m_lastDidSetSizeSequenceNumber = sequenceNumber;
+    ASSERT(stateID > m_currentStateID);
+    m_currentStateID = stateID;
 
-    ASSERT(m_isWaitingForDidSetSize);
-    m_isWaitingForDidSetSize = false;
+    ASSERT(m_isWaitingForDidUpdateState);
+    m_isWaitingForDidUpdateState = false;
 
     if (m_size != updateInfo.viewSize)
-        sendSetSize();
+        sendUpdateState();
 
     if (layerTreeContext != m_layerTreeContext) {
         if (!m_layerTreeContext.isEmpty()) {
@@ -180,17 +180,17 @@ void DrawingAreaProxyImpl::didSetSize(uint64_t sequenceNumber, const UpdateInfo&
     incorporateUpdate(updateInfo);
 }
 
-void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(uint64_t sequenceNumber, const LayerTreeContext& layerTreeContext)
+void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(uint64_t stateID, const LayerTreeContext& layerTreeContext)
 {
-    if (sequenceNumber < m_lastDidSetSizeSequenceNumber)
+    if (stateID < m_currentStateID)
         return;
 
     enterAcceleratedCompositingMode(layerTreeContext);
 }
 
-void DrawingAreaProxyImpl::exitAcceleratedCompositingMode(uint64_t sequenceNumber, const UpdateInfo& updateInfo)
+void DrawingAreaProxyImpl::exitAcceleratedCompositingMode(uint64_t stateID, const UpdateInfo& updateInfo)
 {
-    if (sequenceNumber < m_lastDidSetSizeSequenceNumber)
+    if (stateID < m_currentStateID)
         return;
 
     exitAcceleratedCompositingMode();
@@ -225,42 +225,42 @@ void DrawingAreaProxyImpl::incorporateUpdate(const UpdateInfo& updateInfo)
         m_webPageProxy->displayView();
 }
 
-void DrawingAreaProxyImpl::sendSetSize()
+void DrawingAreaProxyImpl::sendUpdateState()
 {
     if (!m_webPageProxy->isValid())
         return;
 
-    if (m_isWaitingForDidSetSize)
+    if (m_isWaitingForDidUpdateState)
         return;
 
-    m_isWaitingForDidSetSize = true;
-    m_webPageProxy->process()->send(Messages::DrawingArea::SetSize(generateSequenceNumber(), m_size, m_scrollOffset), m_webPageProxy->pageID());
+    m_isWaitingForDidUpdateState = true;
+    m_webPageProxy->process()->send(Messages::DrawingArea::UpdateState(generateStateID(), m_size, m_scrollOffset), m_webPageProxy->pageID());
     m_scrollOffset = IntSize();
 
     if (!m_layerTreeContext.isEmpty()) {
-        // Wait for the DidSetSize message. Normally we don this in DrawingAreaProxyImpl::paint, but that
+        // Wait for the DidUpdateState message. Normally we don this in DrawingAreaProxyImpl::paint, but that
         // function is never called when in accelerated compositing mode.
-        waitForAndDispatchDidSetSize();
+        waitForAndDispatchDidUpdateState();
     }
 }
 
-void DrawingAreaProxyImpl::waitForAndDispatchDidSetSize()
+void DrawingAreaProxyImpl::waitForAndDispatchDidUpdateState()
 {
-    ASSERT(m_isWaitingForDidSetSize);
+    ASSERT(m_isWaitingForDidUpdateState);
 
     if (!m_webPageProxy->isValid())
         return;
     if (m_webPageProxy->process()->isLaunching())
         return;
     
-    // FIXME: waitForAndDispatchImmediately will always return the oldest DidSetSize message that
-    // hasn't yet been processed. But it might be better to skip ahead to some other DidSetSize
-    // message, if multiple DidSetSize messages are waiting to be processed. For instance, we could
+    // FIXME: waitForAndDispatchImmediately will always return the oldest DidUpdateState message that
+    // hasn't yet been processed. But it might be better to skip ahead to some other DidUpdateState
+    // message, if multiple DidUpdateState messages are waiting to be processed. For instance, we could
     // choose the most recent one, or the one that is closest to our current size.
 
-    // The timeout, in seconds, we use when waiting for a DidSetSize message when we're asked to paint.
-    static const double didSetSizeTimeout = 0.5;
-    m_webPageProxy->process()->connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidSetSize>(m_webPageProxy->pageID(), didSetSizeTimeout);
+    // The timeout, in seconds, we use when waiting for a DidUpdateState message when we're asked to paint.
+    static const double didUpdateStateTimeout = 0.5;
+    m_webPageProxy->process()->connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidUpdateState>(m_webPageProxy->pageID(), didUpdateStateTimeout);
 }
 
 void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)

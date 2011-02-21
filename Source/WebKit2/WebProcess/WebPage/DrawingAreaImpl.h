@@ -62,7 +62,7 @@ private:
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
     // CoreIPC message handlers.
-    virtual void setSize(uint64_t sequenceNumber, const WebCore::IntSize&, const WebCore::IntSize& scrollOffset);
+    virtual void updateState(uint64_t stateID, const WebCore::IntSize&, const WebCore::IntSize& scrollOffset);
     virtual void didUpdate();
     virtual void suspendPainting();
     virtual void resumePainting();
@@ -75,14 +75,14 @@ private:
     void display();
     void display(UpdateInfo&);
 
-    uint64_t m_sequenceNumber;
+    uint64_t m_stateID;
 
     Region m_dirtyRegion;
     WebCore::IntRect m_scrollRect;
     WebCore::IntSize m_scrollOffset;
 
     // Whether we're currently processing a setSize message.
-    bool m_inSetSize;
+    bool m_inUpdateState;
 
     // Whether we're waiting for a DidUpdate message. Used for throttling paints so that the 
     // web process won't paint more frequent than the UI process can handle.

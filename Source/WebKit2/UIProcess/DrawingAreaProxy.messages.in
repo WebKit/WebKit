@@ -21,11 +21,11 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> DrawingAreaProxy {
-    Update(uint64_t sequenceNumber, WebKit::UpdateInfo updateInfo)
-    DidSetSize(uint64_t sequenceNumber, WebKit::UpdateInfo updateInfo, WebKit::LayerTreeContext context)
+    Update(uint64_t stateID, WebKit::UpdateInfo updateInfo)
+    DidUpdateState(uint64_t stateID, WebKit::UpdateInfo updateInfo, WebKit::LayerTreeContext context)
 
 #if USE(ACCELERATED_COMPOSITING)
-    EnterAcceleratedCompositingMode(uint64_t sequenceNumber, WebKit::LayerTreeContext context)
-    ExitAcceleratedCompositingMode(uint64_t sequenceNumber, WebKit::UpdateInfo updateInfo)
+    EnterAcceleratedCompositingMode(uint64_t stateID, WebKit::LayerTreeContext context)
+    ExitAcceleratedCompositingMode(uint64_t stateID, WebKit::UpdateInfo updateInfo)
 #endif
 }

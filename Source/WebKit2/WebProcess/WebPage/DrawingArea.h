@@ -85,7 +85,7 @@ protected:
 private:
     // CoreIPC message handlers.
     // FIXME: These should be pure virtual.
-    virtual void setSize(uint64_t sequenceNumber, const WebCore::IntSize& size, const WebCore::IntSize& scrollOffset) { }
+    virtual void updateState(uint64_t stateID, const WebCore::IntSize& size, const WebCore::IntSize& scrollOffset) { }
     virtual void didUpdate() { }
     virtual void suspendPainting() { }
     virtual void resumePainting() { }
