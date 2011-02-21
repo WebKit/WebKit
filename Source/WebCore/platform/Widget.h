@@ -157,8 +157,8 @@ public:
     virtual IntRect frameRect() const;
     IntRect boundsRect() const { return IntRect(0, 0, width(),  height()); }
 
-    void resize(int w, int h) { setFrameRect(IntRect(x(), y(), w, h)); }
-    void resize(const IntSize& s) { setFrameRect(IntRect(pos(), s)); }
+    void resize(int w, int h) { setFrameRect(IntRect(x(), y(), w, h)); setBoundsSize(IntSize(w, h)); }
+    void resize(const IntSize& s) { setFrameRect(IntRect(pos(), s)); setBoundsSize(s); }
     void move(int x, int y) { setFrameRect(IntRect(x, y, width(), height())); }
     void move(const IntPoint& p) { setFrameRect(IntRect(p, size())); }
 

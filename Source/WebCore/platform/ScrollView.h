@@ -222,6 +222,7 @@ public:
     
     // Widget override to update our scrollbars and notify our contents of the resize.
     virtual void setFrameRect(const IntRect&);
+    virtual void setBoundsSize(const IntSize&);
 
     // For platforms that need to hit test scrollbars from within the engine's event handlers (like Win32).
     Scrollbar* scrollbarAtPoint(const IntPoint& windowPoint);
@@ -286,6 +287,9 @@ protected:
 
     virtual void contentsResized() = 0;
     virtual void visibleContentsResized() = 0;
+
+    IntSize boundsSize() const { return m_boundsSize; }
+    void setInitialBoundsSize(const IntSize&);
 
     // These functions are used to create/destroy scrollbars.
     void setHasHorizontalScrollbar(bool);
@@ -355,6 +359,8 @@ private:
     // vertical-rl / ltr            YES                     NO
     // vertical-rl / rtl            YES                     YES
     IntPoint m_scrollOrigin;
+
+    IntSize m_boundsSize;
 
     void init();
     void destroy();

@@ -240,8 +240,8 @@ IntRect ScrollView::visibleContentRect(bool includeScrollbars) const
         ? horizontalScrollbar()->height() : 0;
 
     return IntRect(IntPoint(m_scrollOffset.width(), m_scrollOffset.height()),
-                   IntSize(max(0, width() - verticalScrollbarWidth), 
-                           max(0, height() - horizontalScrollbarHeight)));
+                   IntSize(max(0, m_boundsSize.width() - verticalScrollbarWidth), 
+                           max(0, m_boundsSize.height() - horizontalScrollbarHeight)));
 }
 #endif
 
@@ -470,7 +470,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
         bool sendContentResizedNotification = false;
         
         IntSize docSize = contentsSize();
-        IntSize frameSize = frameRect().size();
+        IntSize frameSize = m_boundsSize;
 
         if (hScroll == ScrollbarAuto) {
             newHasHorizontalScrollbar = docSize.width() > visibleWidth();
@@ -535,8 +535,8 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
         int pageStep = max(max<int>(clientWidth * Scrollbar::minFractionToStepWhenPaging(), clientWidth - Scrollbar::maxOverlapBetweenPages()), 1);
         IntRect oldRect(m_horizontalScrollbar->frameRect());
         IntRect hBarRect = IntRect(0,
-                                   height() - m_horizontalScrollbar->height(),
-                                   width() - (m_verticalScrollbar ? m_verticalScrollbar->width() : 0),
+                                   m_boundsSize.height() - m_horizontalScrollbar->height(),
+                                   m_boundsSize.width() - (m_verticalScrollbar ? m_verticalScrollbar->width() : 0),
                                    m_horizontalScrollbar->height());
         m_horizontalScrollbar->setFrameRect(hBarRect);
         if (!m_scrollbarsSuppressed && oldRect != m_horizontalScrollbar->frameRect())
@@ -555,10 +555,10 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
         m_verticalScrollbar->setEnabled(contentsHeight() > clientHeight);
         int pageStep = max(max<int>(clientHeight * Scrollbar::minFractionToStepWhenPaging(), clientHeight - Scrollbar::maxOverlapBetweenPages()), 1);
         IntRect oldRect(m_verticalScrollbar->frameRect());
-        IntRect vBarRect = IntRect(width() - m_verticalScrollbar->width(), 
+        IntRect vBarRect = IntRect(m_boundsSize.width() - m_verticalScrollbar->width(), 
                                    0,
                                    m_verticalScrollbar->width(),
-                                   height() - (m_horizontalScrollbar ? m_horizontalScrollbar->height() : 0));
+                                   m_boundsSize.height() - (m_horizontalScrollbar ? m_horizontalScrollbar->height() : 0));
         m_verticalScrollbar->setFrameRect(vBarRect);
         if (!m_scrollbarsSuppressed && oldRect != m_verticalScrollbar->frameRect())
             m_verticalScrollbar->invalidate();
@@ -794,17 +794,30 @@ void ScrollView::setFrameRect(const IntRect& newRect)
         return;
 
     Widget::setFrameRect(newRect);
+}
+
+void ScrollView::setBoundsSize(const IntSize& newSize)
+{
+    if (newSize == m_boundsSize)
+        return;
+
+    Widget::setBoundsSize(newSize);
+    m_boundsSize = newSize;
 
     if (platformWidget())
         return;
-    
-    if (newRect.width() != oldRect.width() || newRect.height() != oldRect.height()) {
-        updateScrollbars(m_scrollOffset);
-        if (!m_useFixedLayout)
-            contentsResized();
-    }
+
+    updateScrollbars(m_scrollOffset);
+    if (!m_useFixedLayout)
+        contentsResized();
 
     frameRectsChanged();
+}
+
+void ScrollView::setInitialBoundsSize(const IntSize& newSize)
+{
+    ASSERT(m_boundsSize.isZero());
+    m_boundsSize = newSize;
 }
 
 void ScrollView::frameRectsChanged()
@@ -841,18 +854,18 @@ IntRect ScrollView::scrollCornerRect() const
     if (ScrollbarTheme::nativeTheme()->usesOverlayScrollbars())
         return cornerRect;
 
-    if (m_horizontalScrollbar && width() - m_horizontalScrollbar->width() > 0) {
+    if (m_horizontalScrollbar && m_boundsSize.width() - m_horizontalScrollbar->width() > 0) {
         cornerRect.unite(IntRect(m_horizontalScrollbar->width(),
-                                 height() - m_horizontalScrollbar->height(),
-                                 width() - m_horizontalScrollbar->width(),
+                                 m_boundsSize.height() - m_horizontalScrollbar->height(),
+                                 m_boundsSize.width() - m_horizontalScrollbar->width(),
                                  m_horizontalScrollbar->height()));
     }
 
-    if (m_verticalScrollbar && height() - m_verticalScrollbar->height() > 0) {
-        cornerRect.unite(IntRect(width() - m_verticalScrollbar->width(),
+    if (m_verticalScrollbar && m_boundsSize.height() - m_verticalScrollbar->height() > 0) {
+        cornerRect.unite(IntRect(m_boundsSize.width() - m_verticalScrollbar->width(),
                                  m_verticalScrollbar->height(),
                                  m_verticalScrollbar->width(),
-                                 height() - m_verticalScrollbar->height()));
+                                 m_boundsSize.height() - m_verticalScrollbar->height()));
     }
     
     return cornerRect;
@@ -1012,8 +1025,8 @@ bool ScrollView::isPointInScrollbarCorner(const IntPoint& windowPoint)
 
 bool ScrollView::scrollbarCornerPresent() const
 {
-    return (m_horizontalScrollbar && width() - m_horizontalScrollbar->width() > 0) ||
-           (m_verticalScrollbar && height() - m_verticalScrollbar->height() > 0);
+    return (m_horizontalScrollbar && m_boundsSize.width() - m_horizontalScrollbar->width() > 0) ||
+           (m_verticalScrollbar && m_boundsSize.height() - m_verticalScrollbar->height() > 0);
 }
 
 IntRect ScrollView::convertFromScrollbarToContainingView(const Scrollbar* scrollbar, const IntRect& localRect) const

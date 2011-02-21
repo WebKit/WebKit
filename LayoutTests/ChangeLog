@@ -1,3 +1,12 @@
+2011-02-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/9028929> REGRESSION (r75897): Scaling applied twice to an iframe with a transformed ancestor
+
+        * fast/frames/iframe-scale-applied-twice-expected.txt: Added.
+        * fast/frames/iframe-scale-applied-twice.html: Added.
+
 2011-02-20  Ami Fischman  <fischman@chromium.org>
 
         Reviewed by Kent Tamura.

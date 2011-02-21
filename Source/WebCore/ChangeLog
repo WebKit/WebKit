@@ -1,3 +1,33 @@
+2011-02-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/9028929> REGRESSION (r75897): Scaling applied twice to an iframe with a transformed ancestor
+
+        Test: fast/frames/iframe-scale-applied-twice.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::create): Set the initial bounds of the view to match the
+        frame size.
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::visibleContentRect): Based on bounds, not frame size.
+        (WebCore::ScrollView::updateScrollbars): Ditto.
+        (WebCore::ScrollView::setFrameRect): Moved code that really handles bounds size
+        change to setBoundsSize().
+        (WebCore::ScrollView::setBoundsSize): Added.
+        (WebCore::ScrollView::setInitialBoundsSize): Added. Sets the bounds size but does
+        not update anything.
+        (WebCore::ScrollView::frameRectsChanged): Based on bounds, not frame size.
+        (WebCore::ScrollView::scrollbarCornerPresent): Ditto.
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::boundsSize): Added this getter.
+        * platform/Widget.h:
+        (WebCore::Widget::resize): Set the bounds size to the frame size.
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::paint): Fixed an error in the indirect drawing code
+        path where the buffer rect was resized to capture only the damaged part, but was
+        still drawn in the original location.
+
 2011-02-20  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Eric Seidel.
