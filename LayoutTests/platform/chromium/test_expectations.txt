@@ -2445,9 +2445,6 @@ BUGWK45737 DEBUG SLOW : fast/frames/frame-limit.html = PASS
 BUGDPRANKE WIN LINUX DEBUG : fast/forms/select-set-length-with-mutation-remove.html = TIMEOUT PASS
 BUGDPRANKE LINUX DEBUG : http/tests/incremental/slow-utf8-text.pl = TIMEOUT PASS
 
-// BUGCR60845 : Adding the sleep  may improves the stablility
-BUGCR60845 WIN LINUX : media/video-poster.html = PASS TEXT
-
 BUGWEBGL : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
 BUGWEBGL : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
 BUGWEBGL WIN : fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html = CRASH PASS
@@ -2786,7 +2783,6 @@ BUG_DRT LINUX : fast/text/find-soft-hyphen.html = CRASH PASS
 BUG_DRT LINUX : fast/text/justification-padding-mid-word.html = PASS CRASH
 BUG_DRT MAC LINUX : http/tests/plugins/post-url-file.html = TIMEOUT
 BUG_DRT BUGCR8729 MAC LINUX : http/tests/multipart/invalid-image-data.html = IMAGE PASS
-BUG_DRT MAC : media/video-poster.html = TEXT PASS
 // Crashes with DRT and is a text failure with TestShell
 BUG_DRT : platform/gtk/fast/forms/menulist-typeahead-find.html = CRASH TEXT
 BUG_DRT : storage/domstorage/quota.html = TEXT

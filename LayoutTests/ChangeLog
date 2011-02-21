@@ -1,3 +1,18 @@
+2011-02-20  Ami Fischman  <fischman@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Remove flakiness from media/video-poster.html by using event callbacks
+        instead of 100ms timeouts and hoping that states have transitioned in
+        time (!).
+        Removed seemingly-outdated BUG_DRT annotation from test_expectation.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54685
+        http://crbug.com/60845
+
+        * media/video-poster.html:
+        * platform/chromium/test_expectations.txt:
+
 2011-02-21 Benjamin Kalman  <kalman@chromium.org>
 
         Reviewed by Ryosuke Niwa.
