@@ -1,3 +1,17 @@
+2011-02-21  Adam Roben  <aroben@apple.com>
+
+        Protect the PluginView when evaluating javascript: URLs
+
+        Fixes <http://webkit.org/b/54884> <rdar://problem/9030864>
+        plugins/get-url-with-javascript-destroying-plugin.html crashing on Windows since it was
+        added
+
+        Reviewed by Sam Weinig.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::performRequest): Protect the PluginView, not just its parent frame,
+        when evaluating javascript: URLs.
+
 2011-02-21  Martin Robinson  <mrobinson@igalia.com>
 
         Fix GTK+ build after r79223.
