@@ -28,7 +28,7 @@ function test()
     function step0()
     {
         InspectorTest.evaluateInPage("modifyStyleAttribute()");
-        InspectorTest._addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step1);
+        InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step1);
     }
 
     // Set style via cssText.
@@ -40,7 +40,7 @@ function test()
         // Inhibit the second Styles pane update from step0().
         function callback()
         {
-            InspectorTest._addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step2);
+            InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step2);
         }
 
         InspectorTest.evaluateInPage("modifyCssText()", callback);
@@ -53,7 +53,7 @@ function test()
         dumpAttributeAndStyles();
 
         InspectorTest.evaluateInPage("modifyParsedAttributes()");
-        InspectorTest._addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step3);
+        InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step3);
     }
 
     // Finish the test.

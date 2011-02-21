@@ -10,42 +10,45 @@ InspectorTest.completeTest = function()
 
 InspectorTest.evaluateInConsole = function(code, callback)
 {
+    callback = InspectorTest.safeWrap(callback);
+
     WebInspector.console.visible = true;
     WebInspector.console.prompt.text = code;
     var event = document.createEvent("KeyboardEvent");
     event.initKeyboardEvent("keydown", true, true, null, "Enter", "");
     WebInspector.console.promptElement.dispatchEvent(event);
-    InspectorTest._addSniffer(WebInspector.ConsoleView.prototype, "addMessage",
+    InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage",
         function(commandResult) {
-            if (callback)
-                callback(commandResult.toMessageElement().textContent);
+            callback(commandResult.toMessageElement().textContent);
         });
 }
 
 InspectorTest.evaluateInConsoleAndDump = function(code, callback)
 {
+    callback = InspectorTest.safeWrap(callback);
+
     function mycallback(text)
     {
         InspectorTest.addResult(code + " = " + text);
-        if (callback)
-            callback(text);
+        callback(text);
     }
     InspectorTest.evaluateInConsole(code, mycallback);
 }
 
 InspectorTest.evaluateInPage = function(code, callback)
 {
+    callback = InspectorTest.safeWrap(callback);
+
     function mycallback(result)
     {
-        if (callback)
-            callback(WebInspector.RemoteObject.fromPayload(result));
+        callback(WebInspector.RemoteObject.fromPayload(result));
     }
     RuntimeAgent.evaluate(code, "console", false, mycallback);
 }
 
-InspectorTest.evaluateInPageWithTimeout = function(code, callback)
+InspectorTest.evaluateInPageWithTimeout = function(code)
 {
-    InspectorTest.evaluateInPage("setTimeout(unescape('" + escape(code) + "'))", callback);
+    InspectorTest.evaluateInPage("setTimeout(unescape('" + escape(code) + "'))");
 }
 
 InspectorTest.addResult = function(text)
@@ -105,7 +108,7 @@ InspectorTest.addObject = function(object, nondeterministicProps, prefix, firstL
 
 InspectorTest.reloadPage = function(callback)
 {
-    InspectorTest._reloadPageCallback = callback;
+    InspectorTest._reloadPageCallback = InspectorTest.safeWrap(callback);
 
     if (WebInspector.panels.network)
         WebInspector.panels.network._reset();
@@ -125,6 +128,8 @@ InspectorTest.pageReloaded = function()
 
 InspectorTest.runAfterPendingDispatches = function(callback)
 {
+    callback = InspectorTest.safeWrap(callback);
+
     WebInspector.TestController.prototype.runAfterPendingDispatches(callback);
 }
 
@@ -145,15 +150,35 @@ InspectorTest.runTestSuite = function(testSuite)
             InspectorTest.completeTest();
             return;
         }
-        var nextTestFunction = testSuiteTests.shift();
-        nextTestFunction(runner);
+        InspectorTest.safeWrap(testSuiteTests.shift())(runner, runner);
     }
-
     runner();
 }
 
-InspectorTest._addSniffer = function(receiver, methodName, override, opt_sticky)
+InspectorTest.safeWrap = function(func, onexception)
 {
+    function result()
+    {
+        if (!func)
+            return;
+        var wrapThis = this;
+        try {
+            return func.apply(wrapThis, arguments);
+        } catch(e) {
+            InspectorTest.addResult("Exception while running: " + func + "\n" + e);
+            if (onexception)
+                InspectorTest.safeWrap(onexception)();
+            else
+                InspectorTest.completeTest();
+        }
+    }
+    return result;
+}
+
+InspectorTest.addSniffer = function(receiver, methodName, override, opt_sticky)
+{
+    override = InspectorTest.safeWrap(override);
+
     var original = receiver[methodName];
     if (typeof original !== "function")
         throw ("Cannot find method to override: " + methodName);

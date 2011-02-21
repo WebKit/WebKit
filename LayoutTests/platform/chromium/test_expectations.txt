@@ -3430,8 +3430,6 @@ BUGWK54499 LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg = IMA
 
 BUGWK54472 : media/audio-delete-while-slider-thumb-clicked.html = TIMEOUT
 
-BUGWK54638 SKIP : inspector/debugger/dom-breakpoints.html = TIMEOUT
-
 BUGWK54387 : fast/js/kde/math.html = TEXT
 
 // Flaky

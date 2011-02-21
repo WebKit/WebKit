@@ -12,7 +12,7 @@ function submit()
 function test()
 {
     InspectorTest.evaluateInPage("submit()");
-    InspectorTest._addSniffer(WebInspector.NetworkDispatcher.prototype, "didFinishLoading", dumpHAR);
+    InspectorTest.addSniffer(WebInspector.NetworkDispatcher.prototype, "didFinishLoading", dumpHAR);
 
     function dumpHAR()
     {

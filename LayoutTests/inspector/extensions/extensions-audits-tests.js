@@ -23,7 +23,7 @@ var initialize_ExtensionsAuditsTest = function()
             InspectorTest.collectAuditResults();
             port.postMessage("");
         }
-        InspectorTest._addSniffer(WebInspector.panels.audits, "_auditFinishedCallback", onAuditsDone, true);
+        InspectorTest.addSniffer(WebInspector.panels.audits, "_auditFinishedCallback", onAuditsDone, true);
 
         launcherView._launchButtonClicked();
     }

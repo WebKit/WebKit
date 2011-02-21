@@ -1,3 +1,62 @@
+2011-02-21  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [Chromium] inspector/debugger/dom-breakpoints.html TIMEOUTs
+        https://bugs.webkit.org/show_bug.cgi?id=54638
+
+        * http/tests/inspector/change-iframe-src.html:
+        * http/tests/inspector/debugger-test.js:
+        (initialize_DebuggerTest.InspectorTest.startDebuggerTest.startTest):
+        (initialize_DebuggerTest.InspectorTest.startDebuggerTest):
+        (initialize_DebuggerTest.InspectorTest.completeDebuggerTest.disableDebugger):
+        (initialize_DebuggerTest.InspectorTest.runDebuggerTestSuite.runner):
+        (initialize_DebuggerTest.InspectorTest.runDebuggerTestSuite):
+        (initialize_DebuggerTest.InspectorTest.waitUntilPaused):
+        (initialize_DebuggerTest.InspectorTest.waitUntilPausedAndDumpStack.step1):
+        (initialize_DebuggerTest.InspectorTest.waitUntilPausedAndDumpStack):
+        (initialize_DebuggerTest.InspectorTest.waitUntilResumed):
+        (initialize_DebuggerTest.InspectorTest.resumeExecution):
+        (initialize_DebuggerTest.InspectorTest.showScriptSource):
+        (initialize_DebuggerTest.InspectorTest._showScriptSource):
+        (initialize_DebuggerTest.InspectorTest.expandProperties.expandNextPath):
+        (initialize_DebuggerTest.InspectorTest.expandProperties):
+        * http/tests/inspector/elements-test.js:
+        (initialize_ElementTest.InspectorTest.nodeWithId.processChildren):
+        (initialize_ElementTest.InspectorTest.nodeWithId):
+        (initialize_ElementTest.InspectorTest.selectNodeWithId.mycallback):
+        (initialize_ElementTest.InspectorTest.selectNodeWithId):
+        (initialize_ElementTest.InspectorTest.expandElementsTree.mycallback):
+        (initialize_ElementTest.InspectorTest.expandElementsTree):
+        (initialize_ElementTest):
+        * http/tests/inspector/inspector-test.js:
+        (initialize_InspectorTest.InspectorTest.evaluateInConsole):
+        (initialize_InspectorTest.InspectorTest.evaluateInConsoleAndDump.mycallback):
+        (initialize_InspectorTest.InspectorTest.evaluateInConsoleAndDump):
+        (initialize_InspectorTest.InspectorTest.evaluateInPage.mycallback):
+        (initialize_InspectorTest.InspectorTest.evaluateInPage):
+        (initialize_InspectorTest.InspectorTest.evaluateInPageWithTimeout):
+        (initialize_InspectorTest.InspectorTest.reloadPage):
+        (initialize_InspectorTest.InspectorTest.runAfterPendingDispatches):
+        (initialize_InspectorTest.InspectorTest.runTestSuite.runner):
+        (initialize_InspectorTest.InspectorTest.runTestSuite):
+        (initialize_InspectorTest.InspectorTest.safeWrap):
+        * http/tests/inspector/resource-parameters.html:
+        * inspector/console/console-assert.html:
+        * inspector/console/console-trace-in-eval.html:
+        * inspector/console/console-trace.html:
+        * inspector/debugger/dom-breakpoints-expected.txt:
+        * inspector/debugger/dom-breakpoints.html:
+        * inspector/extensions/extensions-audits-tests.js:
+        (initialize_ExtensionsAuditsTest.InspectorTest.startExtensionAudits):
+        (initialize_ExtensionsAuditsTest):
+        * inspector/styles/styles-iframe.html:
+        * inspector/styles/styles-update-from-js.html:
+        * inspector/timeline/timeline-network-resource.html:
+        * inspector/timeline/timeline-script-tag-1.html:
+        * inspector/timeline/timeline-script-tag-2.html:
+        * platform/chromium/test_expectations.txt:
+
 2011-02-21  Alejandro G. Castro  <alex@igalia.com>
 
         Fixed typo in gtk Skipped list.

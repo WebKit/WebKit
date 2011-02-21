@@ -3,6 +3,7 @@ var initialize_ElementTest = function() {
 
 InspectorTest.nodeWithId = function(idValue, callback)
 {
+    callback = InspectorTest.safeWrap(callback);
     var result = null;
     var topLevelChildrenRequested = false;
     var pendingRequests = 0;
@@ -16,8 +17,7 @@ InspectorTest.nodeWithId = function(idValue, callback)
             var childNode = children[i];
             if (childNode.getAttribute("id") === idValue) {
                 result = childNode;
-                if (callback)
-                    callback(result);
+                callback(result);
                 return;
             }
             pendingRequests++;
@@ -27,7 +27,7 @@ InspectorTest.nodeWithId = function(idValue, callback)
         if (topLevel)
             topLevelChildrenRequested = true;
         if (topLevelChildrenRequested && !result && !pendingRequests)
-            callback(null);    
+            callback(null);
     }
     pendingRequests++;
     WebInspector.domAgent.getChildNodesAsync(WebInspector.domAgent.document, processChildren.bind(this, true));
@@ -46,12 +46,12 @@ InspectorTest.expandedNodeWithId = function(idValue)
 
 InspectorTest.selectNodeWithId = function(idValue, callback)
 {
+    callback = InspectorTest.safeWrap(callback);
     function mycallback(node)
     {
         if (node)
             WebInspector.updateFocusedNode(node.id);
-        if (callback)
-            InspectorTest.runAfterPendingDispatches(callback.bind(null, node));
+        InspectorTest.runAfterPendingDispatches(callback.bind(null, node));
     }
     InspectorTest.nodeWithId(idValue, mycallback);
 };
@@ -172,6 +172,8 @@ InspectorTest.dumpElementsTree = function(rootNode)
 
 InspectorTest.expandElementsTree = function(callback)
 {
+    callback = InspectorTest.safeWrap(callback);
+
     function expand(treeItem)
     {
         var children = treeItem.children;
@@ -185,8 +187,7 @@ InspectorTest.expandElementsTree = function(callback)
     {
         WebInspector.panels.elements.updateModifiedNodes();
         expand(WebInspector.panels.elements.treeOutline);
-        if (callback)
-            callback();
+        callback();
     }
     InspectorTest.nodeWithId(/nonstring/, mycallback);
 };

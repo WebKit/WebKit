@@ -8,16 +8,16 @@ InspectorTest.startDebuggerTest = function(callback, quiet)
     if (WebInspector.panels.scripts._debuggerEnabled)
         startTest();
     else {
-        InspectorTest._addSniffer(WebInspector.panels.scripts, "debuggerWasEnabled", startTest);
+        InspectorTest.addSniffer(WebInspector.panels.scripts, "debuggerWasEnabled", startTest);
         WebInspector.panels.scripts._toggleDebugging(false);
     }
 
     function startTest()
     {
         InspectorTest.addResult("Debugger was enabled.");
-        InspectorTest._addSniffer(WebInspector.debuggerModel, "_pausedScript", InspectorTest._pausedScript, true);
-        InspectorTest._addSniffer(WebInspector.debuggerModel, "_resumedScript", InspectorTest._resumedScript, true);
-        callback();
+        InspectorTest.addSniffer(WebInspector.debuggerModel, "_pausedScript", InspectorTest._pausedScript, true);
+        InspectorTest.addSniffer(WebInspector.debuggerModel, "_resumedScript", InspectorTest._resumedScript, true);
+        InspectorTest.safeWrap(callback)();
     }
 };
 
@@ -35,7 +35,7 @@ InspectorTest.completeDebuggerTest = function()
         if (!scriptsPanel._debuggerEnabled)
             completeTest();
         else {
-            InspectorTest._addSniffer(WebInspector.panels.scripts, "debuggerWasDisabled", completeTest);
+            InspectorTest.addSniffer(WebInspector.panels.scripts, "debuggerWasDisabled", completeTest);
             scriptsPanel._toggleDebugging(false);
         }
     }
@@ -47,6 +47,23 @@ InspectorTest.completeDebuggerTest = function()
     }
 };
 
+InspectorTest.runDebuggerTestSuite = function(testSuite)
+{
+    var testSuiteTests = testSuite.slice();
+
+    function runner()
+    {
+        if (!testSuiteTests.length) {
+            InspectorTest.completeDebuggerTest();
+            return;
+        }
+
+        InspectorTest.safeWrap(testSuiteTests.shift())(runner, runner);
+    }
+
+    InspectorTest.startDebuggerTest(runner);
+}
+
 InspectorTest.runTestFunctionAndWaitUntilPaused = function(callback)
 {
     InspectorTest.evaluateInConsole("setTimeout(testFunction, 0)");
@@ -56,14 +73,30 @@ InspectorTest.runTestFunctionAndWaitUntilPaused = function(callback)
 
 InspectorTest.waitUntilPaused = function(callback)
 {
+    callback = InspectorTest.safeWrap(callback);
+
     if (InspectorTest._callFrames)
         callback(InspectorTest._callFrames);
     else
         InspectorTest._waitUntilPausedCallback = callback;
 };
 
+InspectorTest.waitUntilPausedAndDumpStack = function(callback)
+{
+    InspectorTest.waitUntilPaused(step1);
+
+    function step1(callFrames)
+    {
+        InspectorTest.captureStackTrace(callFrames);
+        InspectorTest.addResult(WebInspector.panels.scripts.sidebarPanes.callstack.bodyElement.lastChild.innerText);
+        InspectorTest.resumeExecution(InspectorTest.safeWrap(callback));
+    }
+};
+
 InspectorTest.waitUntilResumed = function(callback)
 {
+    callback = InspectorTest.safeWrap(callback);
+
     if (!InspectorTest._callFrames)
         callback();
     else
@@ -74,8 +107,7 @@ InspectorTest.resumeExecution = function(callback)
 {
     if (WebInspector.panels.scripts.paused)
         WebInspector.panels.scripts._togglePause();
-    if (callback)
-        InspectorTest.waitUntilResumed(callback);
+    InspectorTest.waitUntilResumed(callback);
 };
 
 InspectorTest.captureStackTrace = function(callFrames)
@@ -118,9 +150,9 @@ InspectorTest._resumedScript = function()
 InspectorTest.showScriptSource = function(scriptName, callback)
 {
     if (InspectorTest._scriptsAreParsed([scriptName]))
-        InspectorTest._showScriptSource(scriptName, callback);
+        InspectorTest._showScriptSource(scriptName, InspectorTest.safeWrap(callback));
      else
-        InspectorTest._addSniffer(WebInspector.debuggerModel, "_parsedScriptSource", InspectorTest.showScriptSource.bind(InspectorTest, scriptName, callback));
+        InspectorTest.addSniffer(WebInspector.debuggerModel, "_parsedScriptSource", InspectorTest.showScriptSource.bind(InspectorTest, scriptName, callback));
 };
 
 InspectorTest._scriptsAreParsed = function(scripts)
@@ -169,7 +201,7 @@ InspectorTest._showScriptSource = function(scriptName, callback)
     if (sourceFrame._content)
         callback(sourceFrame);
     else
-        InspectorTest._addSniffer(sourceFrame._textModel, "setText", callback.bind(null, sourceFrame));
+        InspectorTest.addSniffer(sourceFrame._textModel, "setText", callback.bind(null, sourceFrame));
 };
 
 InspectorTest.expandProperties = function(properties, callback)
@@ -178,7 +210,7 @@ InspectorTest.expandProperties = function(properties, callback)
     function expandNextPath()
     {
         if (index === properties.length) {
-            callback();
+            InspectorTest.safeWrap(callback)();
             return;
         }
         var parentTreeElement = properties[index++];
