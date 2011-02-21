@@ -1,3 +1,17 @@
+2011-02-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dirk Schulze.
+
+        REGRESSION (r73369-r73405): transform animation interpolates incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=54793
+        
+        Testcase for a matrix animation.
+
+        * animations/3d/matrix-transform-type-animation.html: Added.
+        * platform/mac/animations/3d/matrix-transform-type-animation-expected.checksum: Added.
+        * platform/mac/animations/3d/matrix-transform-type-animation-expected.png: Added.
+        * platform/mac/animations/3d/matrix-transform-type-animation-expected.txt: Added.
+
 2011-02-20  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.

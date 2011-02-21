@@ -1759,23 +1759,29 @@ bool GraphicsLayerCA::setTransformAnimationEndpoints(const KeyframeValueList& va
         basicAnim->setToValue(toTransform);
     } else {
         if (isTransformTypeNumber(transformOpType)) {
-            float value;
-            getTransformFunctionValue(startValue->value()->at(functionIndex), transformOpType, boxSize, value);
-            basicAnim->setFromValue(value);
-            getTransformFunctionValue(endValue->value()->at(functionIndex), transformOpType, boxSize, value);
-            basicAnim->setToValue(value);
+            float fromValue;
+            getTransformFunctionValue(startValue->value()->at(functionIndex), transformOpType, boxSize, fromValue);
+            basicAnim->setFromValue(fromValue);
+            
+            float toValue;
+            getTransformFunctionValue(endValue->value()->at(functionIndex), transformOpType, boxSize, toValue);
+            basicAnim->setToValue(toValue);
         } else if (isTransformTypeFloatPoint3D(transformOpType)) {
-            FloatPoint3D value;
-            getTransformFunctionValue(startValue->value()->at(functionIndex), transformOpType, boxSize, value);
-            basicAnim->setFromValue(value);
-            getTransformFunctionValue(endValue->value()->at(functionIndex), transformOpType, boxSize, value);
-            basicAnim->setToValue(value);
+            FloatPoint3D fromValue;
+            getTransformFunctionValue(startValue->value()->at(functionIndex), transformOpType, boxSize, fromValue);
+            basicAnim->setFromValue(fromValue);
+            
+            FloatPoint3D toValue;
+            getTransformFunctionValue(endValue->value()->at(functionIndex), transformOpType, boxSize, toValue);
+            basicAnim->setToValue(toValue);
         } else {
-            TransformationMatrix value;
-            getTransformFunctionValue(startValue->value()->at(functionIndex), transformOpType, boxSize, value);
-            basicAnim->setFromValue(value);
-            getTransformFunctionValue(endValue->value()->at(functionIndex), transformOpType, boxSize, value);
-            basicAnim->setToValue(value);
+            TransformationMatrix fromValue;
+            getTransformFunctionValue(startValue->value()->at(functionIndex), transformOpType, boxSize, fromValue);
+            basicAnim->setFromValue(fromValue);
+
+            TransformationMatrix toValue;
+            getTransformFunctionValue(endValue->value()->at(functionIndex), transformOpType, boxSize, toValue);
+            basicAnim->setToValue(toValue);
         }
     }
 

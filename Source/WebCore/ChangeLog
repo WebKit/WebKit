@@ -1,3 +1,23 @@
+2011-02-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dirk Schulze.
+
+        REGRESSION (r73369-r73405): transform animation interpolates incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=54793
+        
+        After the refactoring in r73380, the ending state for some types of
+        accelerated animations was computed incorrectly, because the TransformationMatrix
+        wasn't reset to identity before the ending value transformations were applied.
+        
+        Fix by cleaning up the code to use explicit, separate values for
+        starting and ending values. Only matrix-type animations had this
+        issue, but cleaned up other clauses similarly.
+
+        Test: animations/3d/matrix-transform-type-animation.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setTransformAnimationEndpoints):
+
 2011-02-20  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.
