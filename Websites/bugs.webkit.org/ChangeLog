@@ -2,6 +2,15 @@
 
         Reviewed by Adam Barth.
 
+        [codereviewtool] make escape hide the preview form
+        https://bugs.webkit.org/show_bug.cgi?id=54844
+
+        * code-review.js:
+
+2011-02-20  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
         [codereviewtool] make enter work when an individual line is focused
         https://bugs.webkit.org/show_bug.cgi?id=54843
 

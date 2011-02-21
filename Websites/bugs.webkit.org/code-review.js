@@ -70,6 +70,8 @@ var CODE_REVIEW_UNITTEST;
   var WEBKIT_BASE_DIR = "http://svn.webkit.org/repository/webkit/trunk/";
   var SIDE_BY_SIDE_DIFFS_KEY = 'sidebysidediffs';
   var g_displayed_draft_comments = false;
+  var ESCAPE_KEY_CODE = 27;
+
 
   function idForLine(number) {
     return 'line' + number;
@@ -1083,6 +1085,11 @@ var CODE_REVIEW_UNITTEST;
   function handleReviewFormLoad() {
     var review_form_contents = $('#reviewform').contents();
     if (review_form_contents[0].querySelector('#form-controls #flags')) {
+      review_form_contents.bind('keydown', function(e) {
+        if (e.keyCode == ESCAPE_KEY_CODE)
+          hideCommentForm();
+      });
+
       // This is the intial load of the review form iframe.
       var form = review_form_contents.find('form')[0];
       form.addEventListener('submit', eraseDraftComments);
@@ -1393,8 +1400,7 @@ var CODE_REVIEW_UNITTEST;
   }
 
   $('textarea').live('keydown', function(e) {
-    var escape_key_code = 27;
-    if (e.keyCode == escape_key_code)
+    if (e.keyCode == ESCAPE_KEY_CODE)
       handleEscapeKeyDownInTextarea(this);
   });
 
@@ -1471,7 +1477,7 @@ var CODE_REVIEW_UNITTEST;
       return true;
     }
 
-    var lines = focused.hasClass('Line') ? focused : $('.Line', focused);
+    var lines = $('.Line', focused);
     var last = lines.last();
     if (last.attr('data-has-comment')) {
       unfreezeCommentFor(last);
@@ -1723,9 +1729,7 @@ var CODE_REVIEW_UNITTEST;
     return quoted_comments.join('\n');
   }
 
-  $('#comment_form .winter').live('click', function() {
-    $('#comment_form').addClass('inactive');
-  });
+  $('#comment_form .winter').live('click', hideCommentForm);
 
   function fillInReviewForm() {
     var comments_in_context = []
@@ -1763,6 +1767,15 @@ var CODE_REVIEW_UNITTEST;
 
   function showCommentForm() {
     $('#comment_form').removeClass('inactive');
+    $('#reviewform').contents().find('#submitBtn').focus();
+  }
+  
+  function hideCommentForm() {
+    $('#comment_form').addClass('inactive');
+    
+    // Make sure the top document has focus so key events don't keep going to the review form.
+    document.body.tabIndex = -1;
+    document.body.focus();
   }
 
   $('#preview_comments').live('click', function() {
