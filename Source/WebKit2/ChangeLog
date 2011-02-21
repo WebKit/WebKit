@@ -1,3 +1,14 @@
+2011-02-20  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Add WebResourceCacheDataManager to the compilation after r78848
+        https://bugs.webkit.org/show_bug.cgi?id=54732
+
+        Added resource cache manager API to GTK+ compilation after r78848.
+
+        * GNUmakefile.am:
+
 2011-02-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

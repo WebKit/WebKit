@@ -64,6 +64,7 @@ libWebKit2_la_HEADERS = \
 	$(WebKit2)/UIProcess/API/C/WKPreferencesPrivate.h \
 	$(WebKit2)/UIProcess/API/C/WKProtectionSpace.h \
 	$(WebKit2)/UIProcess/API/C/WKProtectionSpaceTypes.h \
+	$(WebKit2)/UIProcess/API/C/WKResourceCacheManager.h \
 	$(WebKit2)/UIProcess/API/cpp/WKRetainPtr.h
 
 nodist_libWebKit2_la_SOURCES = \
@@ -218,6 +219,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/Shared/Plugins/PluginQuirks.h \
 	Source/WebKit2/Shared/SameDocumentNavigationType.h \
 	Source/WebKit2/Shared/SandboxExtension.h \
+	Source/WebKit2/Shared/SecurityOriginData.h \
+	Source/WebKit2/Shared/SecurityOriginData.cpp \
 	Source/WebKit2/Shared/SelectionState.h \
 	Source/WebKit2/Shared/SessionState.cpp \
 	Source/WebKit2/Shared/SessionState.h \
@@ -327,6 +330,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/UIProcess/API/C/WKProtectionSpace.cpp \
 	Source/WebKit2/UIProcess/API/C/WKProtectionSpace.h \
 	Source/WebKit2/UIProcess/API/C/WKProtectionSpaceTypes.h \
+	Source/WebKit2/UIProcess/API/C/WKResourceCacheManager.h \
+	Source/WebKit2/UIProcess/API/C/WKResourceCacheManager.cpp \
 	Source/WebKit2/UIProcess/API/cpp/WKRetainPtr.h \
 	Source/WebKit2/UIProcess/Authentication/AuthenticationChallengeProxy.cpp \
 	Source/WebKit2/UIProcess/Authentication/AuthenticationChallengeProxy.h \
@@ -439,6 +444,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/UIProcess/WebProcessManager.h \
 	Source/WebKit2/UIProcess/WebProcessProxy.cpp \
 	Source/WebKit2/UIProcess/WebProcessProxy.h \
+	Source/WebKit2/UIProcess/WebResourceCacheManagerProxy.h \
+	Source/WebKit2/UIProcess/WebResourceCacheManagerProxy.cpp \
 	Source/WebKit2/UIProcess/WebResourceLoadClient.cpp \
 	Source/WebKit2/UIProcess/WebResourceLoadClient.h \
 	Source/WebKit2/UIProcess/WebUIClient.cpp \
@@ -545,6 +552,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/WebProcess/Plugins/PluginProxy.h \
 	Source/WebKit2/WebProcess/Plugins/PluginView.cpp \
 	Source/WebKit2/WebProcess/Plugins/PluginView.h \
+	Source/WebKit2/WebProcess/ResourceCache/WebResourceCacheManager.h \
+	Source/WebKit2/WebProcess/ResourceCache/WebResourceCacheManager.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/gtk/WebContextMenuClientGtk.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/gtk/WebFrameNetworkingContext.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/gtk/WebPopupMenuGtk.cpp \
@@ -653,6 +662,7 @@ libWebKit2_la_CPPFLAGS = \
 	-I$(srcdir)/Source/WebKit2/WebProcess/InjectedBundle/DOM \
 	-I$(srcdir)/Source/WebKit2/WebProcess/InjectedBundle/gtk \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Launching \
+	-I$(srcdir)/Source/WebKit2/WebProcess/ResourceCache \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Plugins \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Plugins/Netscape \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Plugins/Netscape/gtk \
@@ -810,6 +820,10 @@ webkit2_built_sources += \
 	DerivedSources/WebKit2/WebPageProxyMessages.h \
 	DerivedSources/WebKit2/WebPageMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebPageMessages.h \
+	DerivedSources/WebKit2/WebResourceCacheManagerMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebResourceCacheManagerMessages.h \
+	DerivedSources/WebKit2/WebResourceCacheManagerProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebResourceCacheManagerProxyMessages.h \
 	DerivedSources/WebKit2/WebProcessConnectionMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebProcessConnectionMessages.h \
 	DerivedSources/WebKit2/WebProcessMessageReceiver.cpp \
@@ -833,10 +847,12 @@ vpath %.messages.in = \
 	$(WebKit2)/UIProcess/Downloads \
 	$(WebKit2)/UIProcess/Geolocation \
 	$(WebKit2)/UIProcess/Plugins \
+	$(WebKit2)/UIProcess/ResourceCache \
 	$(WebKit2)/WebProcess \
 	$(WebKit2)/WebProcess/Authentication \
 	$(WebKit2)/WebProcess/Geolocation \
 	$(WebKit2)/WebProcess/Plugins \
+	$(WebKit2)/WebProcess/ResourceCache \
 	$(WebKit2)/WebProcess/WebCoreSupport \
 	$(WebKit2)/WebProcess/WebPage
 
