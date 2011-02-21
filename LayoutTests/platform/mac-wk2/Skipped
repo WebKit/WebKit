@@ -354,6 +354,7 @@ fast/events/scroll-after-click-on-tab-index.html
 fast/events/scroll-to-anchor-in-overflow-hidden.html
 fast/events/scrollbar-double-click.html
 fast/events/select-onchange-crash.html
+fast/events/selectionchange-user-initiated.html
 fast/events/selectstart-during-autoscroll.html
 fast/events/shadow-boundary-crossing.html
 fast/events/space-scroll-event.html
