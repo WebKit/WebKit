@@ -1,3 +1,18 @@
+2011-02-21  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: navigation does not work after reopening frontend.
+        https://bugs.webkit.org/show_bug.cgi?id=54879
+
+        Test: http/tests/inspector-enabled/open-close-open.html
+
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::setFrontend):
+        * inspector/InspectorState.cpp:
+        (WebCore::InspectorState::unmute):
+        * inspector/InspectorState.h:
+
 2011-02-21  Adam Roben  <aroben@apple.com>
 
         Protect the PluginView when evaluating javascript: URLs

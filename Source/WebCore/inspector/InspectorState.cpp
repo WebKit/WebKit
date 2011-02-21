@@ -59,6 +59,11 @@ void InspectorState::mute()
     m_isOnMute = true;
 }
 
+void InspectorState::unmute()
+{
+    m_isOnMute = false;
+}
+
 void InspectorState::updateCookie()
 {
     if (!m_isOnMute)

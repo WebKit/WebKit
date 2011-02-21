@@ -1,3 +1,13 @@
+2011-02-21  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: navigation does not work after reopening frontend.
+        https://bugs.webkit.org/show_bug.cgi?id=54879
+
+        * http/tests/inspector-enabled/open-close-open-expected.txt: Added.
+        * http/tests/inspector-enabled/open-close-open.html: Added.
+
 2011-02-21  Martin Robinson  <mrobinson@igalia.com>
 
         Add results for tests missing results and unskip a test that

@@ -338,6 +338,9 @@ void InspectorAgent::setSearchingForNode(bool enabled, bool* newState)
 
 void InspectorAgent::setFrontend(InspectorFrontend* inspectorFrontend)
 {
+    // We can reconnect to existing front-end -> unmute state.
+    m_state->unmute();
+
     m_frontend = inspectorFrontend;
     createFrontendLifetimeAgents();
 

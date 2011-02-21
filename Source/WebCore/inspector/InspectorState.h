@@ -50,6 +50,7 @@ public:
     virtual ~InspectorState() {}
 
     void mute();
+    void unmute();
 
     bool getBoolean(const String& propertyName);
     String getString(const String& propertyName);
