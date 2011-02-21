@@ -2,6 +2,22 @@
 
         Reviewed by Martin Robinson.
 
+        [GStreamer] Add URI queries support in webkitwebsrc
+        https://bugs.webkit.org/show_bug.cgi?id=54627
+
+        This allow replying to URI queries from downstream elements
+        with the uri currently set in the source element.
+
+        No new tests, this feature is dedicated to internal GStreamer use,
+        such as the upcoming HTTP Live Streaming element.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcQuery):
+
+2011-02-21  Andoni Morales Alastruey  <amorales@flumotion.com>
+
+        Reviewed by Martin Robinson.
+
         [GStreamer] Add 'location' property in webkitwebsrc
         https://bugs.webkit.org/show_bug.cgi?id=54628
 

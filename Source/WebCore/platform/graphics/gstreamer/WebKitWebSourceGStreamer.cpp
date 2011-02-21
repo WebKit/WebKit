@@ -517,6 +517,12 @@ static gboolean webKitWebSrcQuery(GstPad* pad, GstQuery* query)
         }
         break;
     }
+    case GST_QUERY_URI:
+    {
+        gst_query_set_uri(query, src->priv->uri);
+        result = TRUE;
+        break;
+    }
     default:
         break;
     }
