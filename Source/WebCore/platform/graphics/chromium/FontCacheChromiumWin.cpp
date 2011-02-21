@@ -612,26 +612,17 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
     LOGFONT winfont = {0};
     FillLogFont(fontDescription, &winfont);
 
-    // Take the orientation into consideration. For vertical: add "@" in front of the family name.
-    // "@" is a built-in behaviour for Windows platform. http://msdn.microsoft.com/en-us/goglobal/bb688137
-    // Try to create hfont with family name "@font-family-name".
-    AtomicString updatedFamilyName;
-    if (fontDescription.orientation() == Vertical && !family.startsWith("@") && !family.isEmpty())
-        updatedFamilyName = "@" + String(family);
-    else
-        updatedFamilyName = family; 
-
     // Windows will always give us a valid pointer here, even if the face name 
     // is non-existent.  We have to double-check and see if the family name was 
     // really used.
     String winName;
-    HFONT hfont = createFontIndirectAndGetWinName(updatedFamilyName, &winfont, &winName);
+    HFONT hfont = createFontIndirectAndGetWinName(family, &winfont, &winName);
     if (!hfont)
         return 0;
 
     // FIXME: Do we need to use predefined fonts "guaranteed" to exist
     // when we're running in layout-test mode?
-    if (!equalIgnoringCase(updatedFamilyName, winName)) {
+    if (!equalIgnoringCase(family, winName)) {
         // For CJK fonts with both English and native names, 
         // GetTextFace returns a native name under the font's "locale"
         // and an English name under other locales regardless of 
@@ -639,20 +630,15 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
         // if a font has an alternate name. If there is, we need to
         // compare it with what's requested in the first place.
         String altName;
-        if (fontDescription.orientation() == Vertical) {
-            if (!LookupAltName(family, altName) || !equalIgnoringCase("@" + altName, winName)) {
-                DeleteObject(hfont);
-                return 0;
-            }
-        } else {
-            if (!LookupAltName(updatedFamilyName, altName) || !equalIgnoringCase(altName, winName)) {
-                DeleteObject(hfont);
-                return 0;
-            }
+        if (!LookupAltName(family, altName) || 
+            !equalIgnoringCase(altName, winName)) {
+            DeleteObject(hfont);
+            return 0;
         }
     }
 
-    return new FontPlatformData(hfont, fontDescription.computedPixelSize(), fontDescription.orientation());
+    return new FontPlatformData(hfont,
+                                fontDescription.computedPixelSize());
 }
 
 }

@@ -1,3 +1,22 @@
+2011-02-20  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r79169.
+        http://trac.webkit.org/changeset/79169
+        https://bugs.webkit.org/show_bug.cgi?id=54846
+
+        Made unexpected results for tests without CJK characters
+        (Requested by tkent on #webkit).
+
+        * platform/graphics/chromium/FontCacheChromiumWin.cpp:
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/graphics/chromium/FontPlatformDataChromiumWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::operator=):
+        * platform/graphics/chromium/FontPlatformDataChromiumWin.h:
+        (WebCore::FontPlatformData::orientation):
+        * platform/graphics/skia/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+
 2011-02-20  Chun-Lung Huang  <alvincl.huang@gmail.com>
 
         Reviewed by Kent Tamura.

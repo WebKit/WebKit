@@ -46,7 +46,6 @@ FontPlatformData::FontPlatformData(WTF::HashTableDeletedValueType)
     , m_size(-1)
     , m_scriptCache(0)
     , m_scriptFontProperties(0)
-    , m_orientation(Horizontal)
 {
 }
 
@@ -55,16 +54,14 @@ FontPlatformData::FontPlatformData()
     , m_size(0)
     , m_scriptCache(0)
     , m_scriptFontProperties(0)
-    , m_orientation(Horizontal)
 {
 }
 
-FontPlatformData::FontPlatformData(HFONT font, float size, FontOrientation orientation)
+FontPlatformData::FontPlatformData(HFONT font, float size)
     : m_font(RefCountedHFONT::create(font))
     , m_size(size)
     , m_scriptCache(0)
     , m_scriptFontProperties(0)
-    , m_orientation(orientation)
 {
 }
 
@@ -74,7 +71,6 @@ FontPlatformData::FontPlatformData(float size, bool bold, bool oblique)
     , m_size(size)
     , m_scriptCache(0)
     , m_scriptFontProperties(0)
-    , m_orientation(Horizontal)
 {
 }
 
@@ -83,7 +79,6 @@ FontPlatformData::FontPlatformData(const FontPlatformData& data)
     , m_size(data.m_size)
     , m_scriptCache(0)
     , m_scriptFontProperties(0)
-    , m_orientation(Horizontal)
 {
 }
 
@@ -92,7 +87,6 @@ FontPlatformData& FontPlatformData::operator=(const FontPlatformData& data)
     if (this != &data) {
         m_font = data.m_font;
         m_size = data.m_size;
-        m_orientation = data.m_orientation;
 
         // The following fields will get re-computed if necessary.
         ScriptFreeCache(&m_scriptCache);
