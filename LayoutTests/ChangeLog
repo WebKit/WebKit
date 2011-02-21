@@ -1,3 +1,14 @@
+2011-02-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Skip WebKit2 tests that need EventSender
+        https://bugs.webkit.org/show_bug.cgi?id=54890
+
+        These tests fail because EventSender is missing.
+
+        * platform/mac-wk2/Skipped:
+
 2011-02-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
