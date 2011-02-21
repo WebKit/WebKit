@@ -399,7 +399,7 @@ body {
   width: 6em;
 }
 
-.focused {
+div:focus {
   outline: 1px solid blue;
   outline-offset: -1px;
 }

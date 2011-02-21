@@ -1,5 +1,19 @@
 2011-02-17  Ojan Vafai  <ojan@chromium.org>
 
+        Reviewed by Adam Barth.
+
+        use actual browser focus in the code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=54726
+
+        This makes keyboard handling play better with focusable element
+        (i.e. links/textareas/buttons). Also, in theory, this makes
+        the review tool more amenable to screen readers (I think).
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2011-02-17  Ojan Vafai  <ojan@chromium.org>
+
         Reviewed by Antonio Gomes.
 
         make event handling work in Gecko

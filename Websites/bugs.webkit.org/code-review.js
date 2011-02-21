@@ -1074,9 +1074,6 @@ var CODE_REVIEW_UNITTEST;
 
     updateToolbarAnchorState();
     loadDiffState();
-
-    // Ensure the body has focus so that it receives key events.
-    document.body.focus();
   });
 
   function handleReviewFormLoad() {
@@ -1337,20 +1334,23 @@ var CODE_REVIEW_UNITTEST;
   }
 
   function focusOn(node) {
-    // FIXME: We should probably give propery browser focus here.
-    $('.focused').removeClass('focused');
     if (node.length == 0)
       return;
-    $(document).scrollTop(node.addClass('focused').position().top - window.innerHeight / 2);
+
+    // Give a tabindex so the element can receive actual browser focus.
+    // -1 makes the element focusable without actually putting in in the tab order.
+    node.attr('tabindex', -1);
+    node.focus();
+    $(document).scrollTop(node.position().top - window.innerHeight / 2);
   }
 
   function focusNext(filter, direction) {
-    var focusable_nodes = $('.frozenComment,.previousComment,.DiffBlock,.overallComments').filter(function() {
+    var focusable_nodes = $('a,.frozenComment,.previousComment,.DiffBlock,.overallComments').filter(function() {
       return !$(this).hasClass('DiffBlock') || $('.add,.remove', this).size();
     });
 
     var is_backward = direction == DIRECTION.BACKWARD;
-    var index = focusable_nodes.index($('.focused'));
+    var index = focusable_nodes.index($(document.activeElement));
     if (index == -1 && is_backward)
       index = focusable_nodes.length;
 
@@ -1432,9 +1432,10 @@ var CODE_REVIEW_UNITTEST;
   }
   
   function handleEnterKeyPress() {
-    var focused = $('.focused');
-    if (!focused.size())
-      return false;
+    if (document.activeElement.nodeName == 'BODY')
+      return;
+
+    var focused = $(document.activeElement);
 
     if (focused.hasClass('frozenComment')) {
       unfreezeComment(focused);
