@@ -1,5 +1,11 @@
 2011-02-21  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed; Remove incorrect Chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-02-21  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed; Skip fast/events/selectionchange-user-initiated.html added by r79208 on Mac WebKit 2.
 
         * platform/mac-wk2/Skipped:
