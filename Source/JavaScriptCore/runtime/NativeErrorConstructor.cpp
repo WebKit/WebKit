@@ -35,6 +35,8 @@ const ClassInfo NativeErrorConstructor::s_info = { "Function", &InternalFunction
 NativeErrorConstructor::NativeErrorConstructor(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, NonNullPassRefPtr<Structure> prototypeStructure, const UString& nameAndMessage)
     : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, nameAndMessage))
 {
+    ASSERT(inherits(&s_info));
+
     NativeErrorPrototype* prototype = new (exec) NativeErrorPrototype(exec, globalObject, prototypeStructure, nameAndMessage, this);
 
     putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(1), DontDelete | ReadOnly | DontEnum); // ECMA 15.11.7.5

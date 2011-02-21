@@ -34,6 +34,7 @@ const ClassInfo NumberObject::s_info = { "Number", &JSWrapperObject::s_info, 0, 
 NumberObject::NumberObject(JSGlobalData& globalData, NonNullPassRefPtr<Structure> structure)
     : JSWrapperObject(globalData, structure)
 {
+    ASSERT(inherits(&s_info));
 }
 
 JSValue NumberObject::getJSNumber()

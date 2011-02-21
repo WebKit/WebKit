@@ -54,6 +54,7 @@ namespace JSC {
 JSONObject::JSONObject(JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure)
     : JSObjectWithGlobalObject(globalObject, structure)
 {
+    ASSERT(inherits(&s_info));
 }
 
 // PropertyNameForFunctionCall objects must be on the stack, since the JSValue that they create is not marked.

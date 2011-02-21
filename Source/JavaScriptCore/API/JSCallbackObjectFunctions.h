@@ -54,6 +54,7 @@ JSCallbackObject<Base>::JSCallbackObject(ExecState* exec, JSGlobalObject* global
     : Base(globalObject, structure)
     , m_callbackObjectData(adoptPtr(new JSCallbackObjectData(data, jsClass)))
 {
+    ASSERT(Base::inherits(&s_info));
     init(exec);
 }
 
@@ -64,6 +65,7 @@ JSCallbackObject<Base>::JSCallbackObject(JSClassRef jsClass, NonNullPassRefPtr<S
     : Base(structure)
     , m_callbackObjectData(adoptPtr(new JSCallbackObjectData(0, jsClass)))
 {
+    ASSERT(Base::inherits(&s_info));
     ASSERT(Base::isGlobalObject());
     init(static_cast<JSGlobalObject*>(this)->globalExec());
 }

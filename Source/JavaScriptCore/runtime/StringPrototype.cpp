@@ -134,6 +134,8 @@ const ClassInfo StringPrototype::s_info = { "String", &StringObject::s_info, 0, 
 StringPrototype::StringPrototype(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure)
     : StringObject(exec, structure)
 {
+    ASSERT(inherits(&s_info));
+
     putAnonymousValue(exec->globalData(), 0, globalObject);
     // The constructor will be added later, after StringConstructor has been built
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(0), DontDelete | ReadOnly | DontEnum);

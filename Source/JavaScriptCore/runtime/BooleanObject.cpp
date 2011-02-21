@@ -30,6 +30,7 @@ const ClassInfo BooleanObject::s_info = { "Boolean", &JSWrapperObject::s_info, 0
 BooleanObject::BooleanObject(JSGlobalData& globalData, NonNullPassRefPtr<Structure> structure)
     : JSWrapperObject(globalData, structure)
 {
+    ASSERT(inherits(&s_info));
 }
 
 } // namespace JSC

@@ -99,6 +99,8 @@ RegExpConstructor::RegExpConstructor(ExecState* exec, JSGlobalObject* globalObje
     : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, "RegExp"))
     , d(adoptPtr(new RegExpConstructorPrivate))
 {
+    ASSERT(inherits(&s_info));
+
     // ECMA 15.10.5.1 RegExp.prototype
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().prototype, regExpPrototype, DontEnum | DontDelete | ReadOnly);
 

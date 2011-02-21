@@ -61,6 +61,7 @@ JSFunction::JSFunction(NonNullPassRefPtr<Structure> structure)
     , m_executable(adoptRef(new VPtrHackExecutable()))
     , m_scopeChain(NoScopeChain())
 {
+    ASSERT(inherits(&s_info));
 }
 
 JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, int length, const Identifier& name, PassRefPtr<NativeExecutable> thunk)
@@ -68,6 +69,7 @@ JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, NonNullPas
     , m_executable(thunk)
     , m_scopeChain(globalObject->globalScopeChain())
 {
+    ASSERT(inherits(&s_info));
     putDirect(exec->globalData(), exec->globalData().propertyNames->name, jsString(exec, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
     putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
 }
@@ -77,6 +79,7 @@ JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, NonNullPas
     , m_executable(exec->globalData().getHostFunction(func))
     , m_scopeChain(globalObject->globalScopeChain())
 {
+    ASSERT(inherits(&s_info));
     putDirect(exec->globalData(), exec->globalData().propertyNames->name, jsString(exec, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
     putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
 }
@@ -86,6 +89,7 @@ JSFunction::JSFunction(ExecState* exec, NonNullPassRefPtr<FunctionExecutable> ex
     , m_executable(executable)
     , m_scopeChain(scopeChainNode)
 {
+    ASSERT(inherits(&s_info));
     const Identifier& name = static_cast<FunctionExecutable*>(m_executable.get())->name();
     putDirect(exec->globalData(), exec->globalData().propertyNames->name, jsString(exec, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
 }

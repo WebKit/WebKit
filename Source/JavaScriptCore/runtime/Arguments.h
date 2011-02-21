@@ -145,6 +145,8 @@ namespace JSC {
         : JSNonFinalObject(callFrame->lexicalGlobalObject()->argumentsStructure())
         , d(adoptPtr(new ArgumentsData))
     {
+        ASSERT(inherits(&s_info));
+
         JSFunction* callee;
         ptrdiff_t firstParameterIndex;
         Register* argv;
@@ -185,6 +187,7 @@ namespace JSC {
         : JSNonFinalObject(callFrame->lexicalGlobalObject()->argumentsStructure())
         , d(adoptPtr(new ArgumentsData))
     {
+        ASSERT(inherits(&s_info));
         ASSERT(!asFunction(callFrame->callee())->jsExecutable()->parameterCount());
 
         unsigned numArguments = callFrame->argumentCount();

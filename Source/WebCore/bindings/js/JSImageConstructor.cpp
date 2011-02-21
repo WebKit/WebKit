@@ -32,7 +32,7 @@ namespace WebCore {
 
 ASSERT_CLASS_FITS_IN_CELL(JSImageConstructor);
 
-const ClassInfo JSImageConstructor::s_info = { "ImageConstructor", &JSC::JSObject::s_info, 0, 0 };
+const ClassInfo JSImageConstructor::s_info = { "ImageConstructor", &DOMConstructorWithDocument::s_info, 0, 0 };
 
 JSImageConstructor::JSImageConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
     : DOMConstructorWithDocument(JSImageConstructor::createStructure(globalObject->objectPrototype()), globalObject)

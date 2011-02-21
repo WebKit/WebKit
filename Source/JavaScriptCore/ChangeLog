@@ -1,3 +1,41 @@
+2011-02-21  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 54894 - Make inheritance structure described by ClassInfo match C++ class hierarchy.
+
+        The ClassInfo objects describe an inheritance hierarchy, with each ClassInfo instance
+        containing a pointer to its parent class. These links should reflect the inheritance
+        hierarchy of C++ classes below JSObject. For the large part it does, but in some cases
+        entries in the C++ hierarchy are skipped over. This presently likely doesn't matter,
+        since intervening C++ classes may not have ClassInfo - but would be a potential bug
+        were ClassInfo were to be added.
+
+        * API/JSCallbackConstructor.cpp:
+        * API/JSCallbackFunction.cpp:
+        * API/JSCallbackObjectFunctions.h:
+        * runtime/Arguments.h:
+        * runtime/ArrayPrototype.cpp:
+        * runtime/BooleanObject.cpp:
+        * runtime/DateInstance.cpp:
+        * runtime/DatePrototype.cpp:
+        * runtime/ErrorInstance.cpp:
+        * runtime/InternalFunction.cpp:
+        * runtime/JSActivation.cpp:
+        * runtime/JSArray.cpp:
+        * runtime/JSFunction.cpp:
+        * runtime/JSONObject.cpp:
+        * runtime/JSObject.h:
+        * runtime/JSZombie.h:
+        * runtime/MathObject.cpp:
+        * runtime/NativeErrorConstructor.cpp:
+        * runtime/NumberConstructor.cpp:
+        * runtime/NumberObject.cpp:
+        * runtime/RegExpConstructor.cpp:
+        * runtime/RegExpObject.cpp:
+        * runtime/StringObject.cpp:
+        * runtime/StringPrototype.cpp:
+
 2011-02-21  Adam Roben  <aroben@apple.com>
 
         Export JSObject::s_info from JavaScriptCore.dll

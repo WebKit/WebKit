@@ -36,7 +36,7 @@ using namespace WebCore;
 namespace JSC {
 namespace Bindings {
 
-const ClassInfo RuntimeObject::s_info = { "RuntimeObject", &JSC::JSObject::s_info, 0, 0 };
+const ClassInfo RuntimeObject::s_info = { "RuntimeObject", &JSObjectWithGlobalObject::s_info, 0, 0 };
 
 RuntimeObject::RuntimeObject(ExecState*, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, PassRefPtr<Instance> instance)
     : JSObjectWithGlobalObject(globalObject, structure)

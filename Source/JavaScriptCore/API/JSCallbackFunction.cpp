@@ -46,6 +46,7 @@ JSCallbackFunction::JSCallbackFunction(ExecState* exec, JSGlobalObject* globalOb
     : InternalFunction(&exec->globalData(), globalObject, globalObject->callbackFunctionStructure(), name)
     , m_callback(callback)
 {
+    ASSERT(inherits(&s_info));
 }
 
 EncodedJSValue JSCallbackFunction::call(ExecState* exec)

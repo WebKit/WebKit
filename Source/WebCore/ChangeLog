@@ -1,3 +1,24 @@
+2011-02-21  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 54894 - Make inheritance structure described by ClassInfo match C++ class hierarchy.
+
+        The ClassInfo objects describe an inheritance hierarchy, with each ClassInfo instance
+        containing a pointer to its parent class. These links should reflect the inheritance
+        hierarchy of C++ classes below JSObject. For the large part it does, but in some cases
+        entries in the C++ hierarchy are skipped over. This presently likely doesn't matter,
+        since intervening C++ classes may not have ClassInfo - but would be a potential bug
+        were ClassInfo were to be added.
+
+        * bindings/js/JSAudioConstructor.cpp:
+        * bindings/js/JSDOMGlobalObject.cpp:
+        * bindings/js/JSImageConstructor.cpp:
+        * bindings/js/JSOptionConstructor.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/objc/objc_runtime.mm:
+        * bridge/runtime_object.cpp:
+
 2011-02-21  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

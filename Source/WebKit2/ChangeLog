@@ -1,3 +1,18 @@
+2011-02-21  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 54894 - Make inheritance structure described by ClassInfo match C++ class hierarchy.
+
+        The ClassInfo objects describe an inheritance hierarchy, with each ClassInfo instance
+        containing a pointer to its parent class. These links should reflect the inheritance
+        hierarchy of C++ classes below JSObject. For the large part it does, but in some cases
+        entries in the C++ hierarchy are skipped over. This presently likely doesn't matter,
+        since intervening C++ classes may not have ClassInfo - but would be a potential bug
+        were ClassInfo were to be added.
+
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+
 2011-02-21  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

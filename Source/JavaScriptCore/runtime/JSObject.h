@@ -388,6 +388,7 @@ inline JSObject::JSObject(NonNullPassRefPtr<Structure> structure, PropertyStorag
     : JSCell(structure.releaseRef()) // ~JSObject balances this ref()
     , m_propertyStorage(inlineStorage)
 {
+    ASSERT(inherits(&s_info));
     ASSERT(m_structure->propertyStorageCapacity() < baseExternalStorageCapacity);
     ASSERT(m_structure->isEmpty());
     ASSERT(prototype().isNull() || Heap::heap(this) == Heap::heap(prototype()));

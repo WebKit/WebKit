@@ -39,11 +39,13 @@ const ClassInfo InternalFunction::s_info = { "Function", &JSObjectWithGlobalObje
 InternalFunction::InternalFunction(NonNullPassRefPtr<Structure> structure)
     : JSObjectWithGlobalObject(structure)
 {
+    ASSERT(inherits(&s_info));
 }
 
 InternalFunction::InternalFunction(JSGlobalData* globalData, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, const Identifier& name)
     : JSObjectWithGlobalObject(globalObject, structure)
 {
+    ASSERT(inherits(&s_info));
     putDirect(*globalData, globalData->propertyNames->name, jsString(globalData, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
 }
 

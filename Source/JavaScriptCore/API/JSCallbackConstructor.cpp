@@ -43,6 +43,7 @@ JSCallbackConstructor::JSCallbackConstructor(JSGlobalObject* globalObject, NonNu
     , m_class(jsClass)
     , m_callback(callback)
 {
+    ASSERT(inherits(&s_info));
     if (m_class)
         JSClassRetain(jsClass);
 }

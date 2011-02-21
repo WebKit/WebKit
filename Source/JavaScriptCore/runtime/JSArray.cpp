@@ -129,6 +129,8 @@ inline void JSArray::checkConsistency(ConsistencyCheckType)
 JSArray::JSArray(VPtrStealingHackType)
     : JSNonFinalObject(createStructure(jsNull()))
 {
+    ASSERT(inherits(&s_info));
+
     unsigned initialCapacity = 0;
 
     m_storage = static_cast<ArrayStorage*>(fastZeroedMalloc(storageSize(initialCapacity)));
@@ -146,6 +148,8 @@ JSArray::JSArray(VPtrStealingHackType)
 JSArray::JSArray(NonNullPassRefPtr<Structure> structure)
     : JSNonFinalObject(structure)
 {
+    ASSERT(inherits(&s_info));
+
     unsigned initialCapacity = 0;
 
     m_storage = static_cast<ArrayStorage*>(fastZeroedMalloc(storageSize(initialCapacity)));
@@ -161,6 +165,8 @@ JSArray::JSArray(NonNullPassRefPtr<Structure> structure)
 JSArray::JSArray(NonNullPassRefPtr<Structure> structure, unsigned initialLength, ArrayCreationMode creationMode)
     : JSNonFinalObject(structure)
 {
+    ASSERT(inherits(&s_info));
+
     unsigned initialCapacity;
     if (creationMode == CreateCompact)
         initialCapacity = initialLength;
@@ -201,6 +207,8 @@ JSArray::JSArray(NonNullPassRefPtr<Structure> structure, unsigned initialLength,
 JSArray::JSArray(JSGlobalData& globalData, NonNullPassRefPtr<Structure> structure, const ArgList& list)
     : JSNonFinalObject(structure)
 {
+    ASSERT(inherits(&s_info));
+
     unsigned initialCapacity = list.size();
     unsigned initialStorage;
     

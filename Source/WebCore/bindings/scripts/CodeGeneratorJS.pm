@@ -1308,9 +1308,9 @@ sub GenerateImplementation
         push(@implContent, "{\n");
         push(@implContent, "    return getHashTableForGlobalData(exec->globalData(), &${className}PrototypeTable);\n");
         push(@implContent, "}\n");
-        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleClassName}Prototype\", &JSC::JSObject::s_info, 0, get${className}PrototypeTable };\n\n");
+        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleClassName}Prototype\", &JSC::JSObjectWithGlobalObject::s_info, 0, get${className}PrototypeTable };\n\n");
     } else {
-        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleClassName}Prototype\", &JSC::JSObject::s_info, &${className}PrototypeTable, 0 };\n\n");
+        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleClassName}Prototype\", &JSC::JSObjectWithGlobalObject::s_info, &${className}PrototypeTable, 0 };\n\n");
     }
     if ($interfaceName eq "DOMWindow") {
         push(@implContent, "void* ${className}Prototype::operator new(size_t size)\n");
@@ -1385,12 +1385,7 @@ sub GenerateImplementation
         push(@implContent, "}\n");
     }
 
-    push(@implContent, "const ClassInfo $className" . "::s_info = { \"${visibleClassName}\", ");
-    if ($hasParent) {
-        push(@implContent, "&" . $parentClassName . "::s_info, ");
-    } else {
-        push(@implContent, "&JSC::JSObject::s_info, ");
-    }
+    push(@implContent, "const ClassInfo $className" . "::s_info = { \"${visibleClassName}\", &" . $parentClassName . "::s_info, ");
 
     if ($numAttributes > 0 && !$dataNode->extendedAttributes->{"NoStaticTables"}) {
         push(@implContent, "&${className}Table");
@@ -1431,6 +1426,7 @@ sub GenerateImplementation
         }
     }
     push(@implContent, "{\n");
+    push(@implContent, "    ASSERT(inherits(&s_info));\n");
     if ($numCachedAttributes > 0) {
         push(@implContent, "    for (unsigned i = Base::AnonymousSlotCount; i < AnonymousSlotCount; i++)\n");
         push(@implContent, "        putAnonymousValue(globalObject->globalData(), i, JSValue());\n");
@@ -2933,7 +2929,7 @@ sub GenerateConstructorDefinition
     my $callWith = $dataNode->extendedAttributes->{"CallWith"};
     my $numberOfconstructParameters = $dataNode->extendedAttributes->{"ConstructorParameters"};
 
-    push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleClassName}Constructor\", &JSC::JSObject::s_info, &${constructorClassName}Table, 0 };\n\n");
+    push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleClassName}Constructor\", &DOMConstructorObject::s_info, &${constructorClassName}Table, 0 };\n\n");
 
     push(@$outputArray, "${constructorClassName}::${constructorClassName}(ExecState* exec, JSDOMGlobalObject* globalObject)\n");
     push(@$outputArray, "    : DOMConstructorObject(${constructorClassName}::createStructure(globalObject->objectPrototype()), globalObject)\n");

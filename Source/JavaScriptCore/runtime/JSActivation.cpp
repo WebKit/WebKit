@@ -42,6 +42,7 @@ const ClassInfo JSActivation::s_info = { "JSActivation", &Base::s_info, 0, 0 };
 JSActivation::JSActivation(CallFrame* callFrame, NonNullPassRefPtr<FunctionExecutable> functionExecutable)
     : Base(callFrame->globalData().activationStructure, new JSActivationData(functionExecutable, callFrame->registers()))
 {
+    ASSERT(inherits(&s_info));
 }
 
 JSActivation::~JSActivation()

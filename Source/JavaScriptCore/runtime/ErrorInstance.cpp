@@ -29,6 +29,7 @@ ErrorInstance::ErrorInstance(JSGlobalData* globalData, NonNullPassRefPtr<Structu
     : JSNonFinalObject(structure)
     , m_appendSourceToMessage(false)
 {
+    ASSERT(inherits(&s_info));
     putDirect(*globalData, globalData->propertyNames->message, jsString(globalData, ""));
 }
 
@@ -36,6 +37,7 @@ ErrorInstance::ErrorInstance(JSGlobalData* globalData, NonNullPassRefPtr<Structu
     : JSNonFinalObject(structure)
     , m_appendSourceToMessage(false)
 {
+    ASSERT(inherits(&s_info));
     putDirect(*globalData, globalData->propertyNames->message, jsString(globalData, message));
 }
 

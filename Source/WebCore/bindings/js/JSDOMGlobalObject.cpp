@@ -40,7 +40,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-const ClassInfo JSDOMGlobalObject::s_info = { "DOMGlobalObject", &JSC::JSObject::s_info, 0, 0 };
+const ClassInfo JSDOMGlobalObject::s_info = { "DOMGlobalObject", &JSGlobalObject::s_info, 0, 0 };
 
 JSDOMGlobalObject::JSDOMGlobalObject(NonNullPassRefPtr<Structure> structure, JSDOMGlobalObject::JSDOMGlobalObjectData* data, JSObject* thisValue)
     : JSGlobalObject(structure, data, thisValue)

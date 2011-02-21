@@ -37,7 +37,9 @@ public:
         : JSCell(structure)
         , m_oldInfo(oldInfo)
     {
+        ASSERT(inherits(&s_info));
     }
+
     virtual bool isZombie() const { return true; }
     static Structure* leakedZombieStructure();
 
