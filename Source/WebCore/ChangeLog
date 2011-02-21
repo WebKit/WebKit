@@ -1,3 +1,17 @@
+2011-02-21  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        ProcessingInstruction should provide a way to know if it is of CSS type.
+        https://bugs.webkit.org/show_bug.cgi?id=54868
+
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::ProcessingInstruction):
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        (WebCore::ProcessingInstruction::setCSSStyleSheet):
+        * dom/ProcessingInstruction.h:
+        (WebCore::ProcessingInstruction::isCSS):
+
 2011-02-21  Simon Fraser  <simon.fraser@apple.com>
 
         Put JSDOMImplementationCustom.cpp where it belongs in the project.

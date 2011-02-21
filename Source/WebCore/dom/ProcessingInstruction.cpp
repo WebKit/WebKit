@@ -43,6 +43,7 @@ inline ProcessingInstruction::ProcessingInstruction(Document* document, const St
     , m_loading(false)
     , m_alternate(false)
     , m_createdByParser(false)
+    , m_isCSS(false)
 #if ENABLE(XSLT)
     , m_isXSL(false)
 #endif
@@ -120,13 +121,13 @@ void ProcessingInstruction::checkStyleSheet()
         if (i != attrs.end())
             type = i->second;
 
-        bool isCSS = type.isEmpty() || type == "text/css";
+        m_isCSS = type.isEmpty() || type == "text/css";
 #if ENABLE(XSLT)
         m_isXSL = (type == "text/xml" || type == "text/xsl" || type == "application/xml" ||
                    type == "application/xhtml+xml" || type == "application/rss+xml" || type == "application/atom+xml");
-        if (!isCSS && !m_isXSL)
+        if (!m_isCSS && !m_isXSL)
 #else
-        if (!isCSS)
+        if (!m_isCSS)
 #endif
             return;
 
@@ -208,9 +209,7 @@ void ProcessingInstruction::setCSSStyleSheet(const String& href, const KURL& bas
         return;
     }
 
-#if ENABLE(XSLT)
-    ASSERT(!m_isXSL);
-#endif
+    ASSERT(m_isCSS);
     RefPtr<CSSStyleSheet> newSheet = CSSStyleSheet::create(this, href, baseURL, charset);
     m_sheet = newSheet;
     // We don't need the cross-origin security check here because we are
