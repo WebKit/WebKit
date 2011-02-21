@@ -69,7 +69,7 @@ namespace JSC {
             RefPtr<RegExp> regExp;
             double lastIndex;
         };
-#if PLATFORM(WIN) || PLATFORM(QT)
+#if COMPILER(MSVC)
         friend void WTF::deleteOwnedPtr<RegExpObjectData>(RegExpObjectData*);
 #endif
         OwnPtr<RegExpObjectData> d;

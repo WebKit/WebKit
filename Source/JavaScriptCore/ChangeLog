@@ -1,3 +1,17 @@
+2011-02-21  Kristian Amlie  <kristian.amlie@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        Switched to compiler based detection, where the error actually is.
+
+        It is not the platform that needs the workaround, it is the compiler.
+
+        QtWebKit fails to compile on Windows XP with msvc-2008
+        https://bugs.webkit.org/show_bug.cgi?id=54746
+
+        * bytecode/CodeBlock.h:
+        * runtime/RegExpObject.h:
+
 2011-02-20  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
