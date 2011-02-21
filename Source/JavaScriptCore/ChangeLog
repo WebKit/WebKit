@@ -1,3 +1,21 @@
+2011-02-21  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Use ASSERT_JIT_OFFSET in JITPropertyAccess32_64.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=54901
+
+        * jit/JIT.h: swap actual and expected values in message, they were
+        reversed.
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCall): use ASSERT_JIT_OFFSET instead of
+        a simple ASSERT.
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_method_check): ditto.
+        (JSC::JIT::compileGetByIdHotPath): ditto.
+        (JSC::JIT::compileGetByIdSlowCase): ditto.
+        (JSC::JIT::emit_op_put_by_id): ditto.
+
 2011-02-21  Gavin Barraclough  <barraclough@apple.com>
 
         Ruber stamped by Sam Weinig
