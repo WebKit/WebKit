@@ -146,7 +146,7 @@ fast/workers/storage
 
 # crashes because of a failing ASSERT (see https://bugs.webkit.org/show_bug.cgi?id=54470)
 svg/text/select-textLength-spacing-squeeze-1.svg
-k
+
 # Test crashing on release bot
 # https://bugs.webkit.org/show_bug.cgi?id=31433
 plugins/document-open.html

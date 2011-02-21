@@ -1,3 +1,9 @@
+2011-02-21  Alejandro G. Castro  <alex@igalia.com>
+
+        Fixed typo in gtk Skipped list.
+
+        * platform/gtk/Skipped:
+
 2011-02-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
