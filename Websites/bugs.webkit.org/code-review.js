@@ -70,8 +70,14 @@ var CODE_REVIEW_UNITTEST;
   var WEBKIT_BASE_DIR = "http://svn.webkit.org/repository/webkit/trunk/";
   var SIDE_BY_SIDE_DIFFS_KEY = 'sidebysidediffs';
   var g_displayed_draft_comments = false;
-  var ESCAPE_KEY_CODE = 27;
-
+  var KEY_CODE = {
+    enter: 13,
+    escape: 27,
+    j: 74,
+    k: 75,
+    n: 78,
+    p: 80    
+  }
 
   function idForLine(number) {
     return 'line' + number;
@@ -1086,7 +1092,7 @@ var CODE_REVIEW_UNITTEST;
     var review_form_contents = $('#reviewform').contents();
     if (review_form_contents[0].querySelector('#form-controls #flags')) {
       review_form_contents.bind('keydown', function(e) {
-        if (e.keyCode == ESCAPE_KEY_CODE)
+        if (e.keyCode == KEY_CODE.escape)
           hideCommentForm();
       });
 
@@ -1379,14 +1385,6 @@ var CODE_REVIEW_UNITTEST;
 
   var DIRECTION = {FORWARD: 1, BACKWARD: 2};
 
-  var kCharCodeForN = 'n'.charCodeAt(0);
-  var kCharCodeForP = 'p'.charCodeAt(0);
-  var kCharCodeForJ = 'j'.charCodeAt(0);
-  var kCharCodeForK = 'k'.charCodeAt(0);
-  var kCharCodeForCapitalJ = 'J'.charCodeAt(0);
-  var kCharCodeForCapitalK = 'K'.charCodeAt(0);
-  var kCharCodeForEnter = '\r'.charCodeAt(0);
-
   function isComment(node) {
     return node.hasClass('frozenComment') || node.hasClass('previousComment') || node.hasClass('overallComments');
   }
@@ -1400,11 +1398,11 @@ var CODE_REVIEW_UNITTEST;
   }
 
   $('textarea').live('keydown', function(e) {
-    if (e.keyCode == ESCAPE_KEY_CODE)
-      handleEscapeKeyDownInTextarea(this);
+    if (e.keyCode == KEY_CODE.escape)
+      handleEscapeKeyInTextarea(this);
   });
 
-  $('body').live('keypress', function(e) {
+  $('body').live('keydown', function(e) {
     // FIXME: There's got to be a better way to avoid seeing these keypress
     // events.
     if (e.target.nodeName == 'TEXTAREA')
@@ -1412,32 +1410,30 @@ var CODE_REVIEW_UNITTEST;
     
     var handled = false;
 
-    switch (e.charCode) {
-    case kCharCodeForN:
+    switch (e.keyCode) {
+    case KEY_CODE.n:
       handled = focusNext(isComment, DIRECTION.FORWARD);
       break;
 
-    case kCharCodeForP:
+    case KEY_CODE.p:
       handled = focusNext(isComment, DIRECTION.BACKWARD);
       break;
 
-    case kCharCodeForJ:
-      handled = focusNext(isDiffBlock, DIRECTION.FORWARD);
+    case KEY_CODE.j:
+      if (e.shiftKey)
+        handled = focusNext(isLine, DIRECTION.FORWARD);
+      else
+        handled = focusNext(isDiffBlock, DIRECTION.FORWARD);
       break;
 
-    case kCharCodeForK:
-      handled = focusNext(isDiffBlock, DIRECTION.BACKWARD);
+    case KEY_CODE.k:
+      if (e.shiftKey)
+        handled = focusNext(isLine, DIRECTION.BACKWARD);
+      else
+        handled = focusNext(isDiffBlock, DIRECTION.BACKWARD);
       break;
       
-    case kCharCodeForCapitalJ:
-      handled = focusNext(isLine, DIRECTION.FORWARD);
-      break;
-
-    case kCharCodeForCapitalK:
-      handled = focusNext(isLine, DIRECTION.BACKWARD);
-      break;
-    
-    case kCharCodeForEnter:
+    case KEY_CODE.enter:
       handled = handleEnterKeyPress();
       break;
     }
@@ -1446,7 +1442,7 @@ var CODE_REVIEW_UNITTEST;
       e.preventDefault();
   });
   
-  function handleEscapeKeyDownInTextarea(textarea) {
+  function handleEscapeKeyInTextarea(textarea) {
     var comment = $(textarea).parents('.comment');
     if (comment.size())
       acceptComment(comment);
