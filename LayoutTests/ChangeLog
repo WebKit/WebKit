@@ -1,3 +1,17 @@
+2011-02-21  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=54402
+        REGRESSION (r72052): Placeholder text doesn't have the right padding for search fields on Windows
+
+        Unfortunately, this doesn't test the Windows theme, since DRT uses the Safari theme, but I also tested this change manually on Windows and Mac.
+
+        * fast/forms/placeholder-position.html: Added a case for a search field with the results button.
+        * platform/mac/fast/forms/placeholder-position-expected.checksum:
+        * platform/mac/fast/forms/placeholder-position-expected.png:
+        * platform/mac/fast/forms/placeholder-position-expected.txt:
+
 2011-02-21  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Ojan Vafai.

@@ -941,7 +941,7 @@ int RenderTextControlSingleLine::clientPaddingLeft() const
     int padding = paddingLeft();
 
     if (RenderBox* resultsRenderer = m_resultsButton ? m_resultsButton->renderBox() : 0)
-        padding += resultsRenderer->width();
+        padding += resultsRenderer->width() + resultsRenderer->marginLeft() + resultsRenderer->paddingLeft() + resultsRenderer->marginRight() + resultsRenderer->paddingRight();
 
     return padding;
 }
@@ -951,7 +951,7 @@ int RenderTextControlSingleLine::clientPaddingRight() const
     int padding = paddingRight();
 
     if (RenderBox* cancelRenderer = m_cancelButton ? m_cancelButton->renderBox() : 0)
-        padding += cancelRenderer->width();
+        padding += cancelRenderer->width() + cancelRenderer->marginLeft() + cancelRenderer->paddingLeft() + cancelRenderer->marginRight() + cancelRenderer->paddingRight();
 
     return padding;
 }

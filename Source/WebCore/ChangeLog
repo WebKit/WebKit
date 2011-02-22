@@ -1,3 +1,20 @@
+2011-02-21  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for for https://bugs.webkit.org/show_bug.cgi?id=54402
+        REGRESSION (r72052): Placeholder text doesn't have the right padding for search fields on Windows
+
+        Test: updated fast/forms/placeholder-position.html and tested manually
+
+        Consider padding and margin for the results and cancel buttons.  This is important for the Windows 
+        theme which uses padding to correctly position those buttons.  This change fixes the placeholder 
+        position, and also better aligns the results popup list with the actual text you type.
+
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::clientPaddingLeft):
+        (WebCore::RenderTextControlSingleLine::clientPaddingRight):
+
 2011-02-21  Nico Weber  <thakis@chromium.org>
 
         Reviewed by Kent Tamura.
