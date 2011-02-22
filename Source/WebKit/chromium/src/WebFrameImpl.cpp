@@ -358,7 +358,7 @@ public:
     {
     }
 
-    virtual void begin(float width)
+    virtual void begin(float width, float height)
     {
     }
 

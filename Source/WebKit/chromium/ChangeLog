@@ -1,3 +1,16 @@
+2011-02-21  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] ChromePluginPrintContext::begin() fails to override superclass method
+        https://bugs.webkit.org/show_bug.cgi?id=54914
+
+        Update subclass method signature to match superclass again. This
+        regressed in http://trac.webkit.org/changeset/71964
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::ChromePluginPrintContext::begin):
+
 2011-02-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Kent Tamura.
