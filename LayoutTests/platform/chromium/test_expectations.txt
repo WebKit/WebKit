@@ -3457,6 +3457,7 @@ BUGWK54736 MAC : editing/selection/select-from-textfield-outwards.html = IMAGE T
 BUGWK54736 MAC : editing/style/create-block-for-style-011.html = IMAGE TIMEOUT
 BUGWK54736 MAC : editing/style/create-block-for-style-012.html = IMAGE TIMEOUT
 BUGWK54736 MAC : fast/block/margin-collapse/103.html = IMAGE
+BUGWK54736 MAC : fast/blockflow/japanese-lr-selection.html = IMAGE
 BUGWK54736 MAC : fast/blockflow/japanese-lr-text.html = IMAGE
 BUGWK54736 MAC : fast/blockflow/japanese-rl-selection.html = IMAGE
 BUGWK54736 MAC : fast/blockflow/japanese-rl-text.html = IMAGE

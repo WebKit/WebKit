@@ -1,3 +1,11 @@
+2011-02-21  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed test_expectation.txt update. 
+        
+        r79285 removes too much lines. recover failed one.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-02-21  Benjamin Kalman  <kalman@chromium.org>
 
         Reviewed by Ryosuke Niwa.
