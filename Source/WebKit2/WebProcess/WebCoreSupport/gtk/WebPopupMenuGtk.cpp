@@ -27,8 +27,8 @@
 #include "config.h"
 #include "WebPopupMenu.h"
 
-#include "NotImplemented.h"
 #include "PlatformPopupMenuData.h"
+#include <WebCore/NotImplemented.h>
 
 using namespace WebCore;
 

@@ -27,7 +27,7 @@
 #include "config.h"
 #include "WebPreferences.h"
 
-#include "NotImplemented.h"
+#include <WebCore/NotImplemented.h>
 
 namespace WebKit {
 

@@ -30,9 +30,9 @@
 
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
-#include "NotImplemented.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/IdentifierRep.h>
+#include <WebCore/NotImplemented.h>
 
 using namespace WebCore;
 

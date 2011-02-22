@@ -30,11 +30,9 @@
 #include "WebPage.h"
 #include <WebCore/ContextMenu.h>
 #include <WebCore/Frame.h>
+#include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/UserGestureIndicator.h>
-
-#define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
-#include "NotImplemented.h"
 
 using namespace WebCore;
 

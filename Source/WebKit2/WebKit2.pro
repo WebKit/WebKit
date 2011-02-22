@@ -178,7 +178,6 @@ HEADERS += \
     Shared/MutableArray.h \
     Shared/MutableDictionary.h \
     Shared/NativeWebKeyboardEvent.h \
-    Shared/NotImplemented.h \
     Shared/OriginAndDatabases.h \
     Shared/PlatformPopupMenuData.h \
     Shared/PrintInfo.h \

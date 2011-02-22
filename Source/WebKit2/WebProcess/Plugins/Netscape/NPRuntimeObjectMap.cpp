@@ -29,12 +29,12 @@
 #include "JSNPObject.h"
 #include "NPJSObject.h"
 #include "NPRuntimeUtilities.h"
-#include "NotImplemented.h"
 #include "PluginView.h"
 #include <JavaScriptCore/Error.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/SourceCode.h>
 #include <WebCore/Frame.h>
+#include <WebCore/NotImplemented.h>
 
 using namespace JSC;
 using namespace WebCore;

@@ -27,7 +27,7 @@
 #include "config.h"
 #include "NetscapePlugin.h"
 
-#include "NotImplemented.h"
+#include <WebCore/NotImplemented.h>
 
 using namespace WebCore;
 

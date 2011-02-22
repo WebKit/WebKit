@@ -51,6 +51,7 @@
 #include <QtDebug>
 #include <WebCore/Cursor.h>
 #include <WebCore/FloatRect.h>
+#include <WebCore/NotImplemented.h>
 #include <WebKit2/WKFrame.h>
 #include <WebKit2/WKPageGroup.h>
 #include <WebKit2/WKRetainPtr.h>
