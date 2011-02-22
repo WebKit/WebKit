@@ -1,3 +1,21 @@
+2011-02-21  Benjamin Kalman  <kalman@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Extending selection by a boundary granularity (LineBoundary/ParagraphBoundary/DocumentBoundary) sets incorrect
+        start/end of selection for RTL
+        https://bugs.webkit.org/show_bug.cgi?id=54724
+
+        On mac, the selection should always grow when extending by a boundary granularity (line/paragraph/document).
+        This is achieved by extending from the start for the "left" direction (e.g. pressing left arrow key), or
+        extending from the end when for the "right" direction (e.g. pressing right arrow key).
+
+        However, this has a bug for RTL text, which should actually extend from the *end* when extending left (since
+        direction is obviously reversed) and likewise extend from the start when extending right.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::modify):
+
 2011-02-21  Nico Weber  <thakis@chromium.org>
 
         Reviewed by Adam Barth.

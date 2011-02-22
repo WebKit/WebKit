@@ -17,13 +17,18 @@ function showNode(node)
     return "<" + tagName + ">" + node.textContent + "</" + tagName + ">";
 }
 
-function assertSelectionExtentEquals(expectedNode, expectedOffset, message)
+function assertSelectionEquals(expectedNode, expectedBaseOffset, expectedExtentOffset, message)
 {
-    var actualNode = getSelection().extentNode;
-    var actualOffset = getSelection().extentOffset;
-    if (actualNode !== expectedNode || actualOffset !== expectedOffset)
-        log("FAIL (" + message + "): expected offset " + expectedOffset + " in node " + showNode(expectedNode) +
-            " but got offset " + actualOffset + " in node " + showNode(actualNode));
+    var selection = getSelection();
+    if (selection.baseNode !== expectedNode
+            || selection.baseOffset !== expectedBaseOffset
+            || selection.extentNode !== expectedNode
+            || selection.extentOffset !== expectedExtentOffset)
+        log("FAIL (" + message + "):\n" +
+            "     expected base offset " + expectedBaseOffset + " in node " + showNode(expectedNode) + "\n" +
+            "        and extent offset " + expectedExtentOffset + " in node " + showNode(expectedNode) + "\n" +
+            "  ... but got base offset " + selection.baseOffset + " in node " + showNode(selection.baseNode) + "\n" +
+            "        and extent offset " + selection.extentOffset + " in node " + showNode(selection.extentNode));
     else
         log("PASS (" + message + ")");
 }
@@ -38,19 +43,27 @@ function runTestForContainer(container)
 
     getSelection().setPosition(textNode, leftmostOffset);
     getSelection().modify("extend", "left", "lineboundary");
-    assertSelectionExtentEquals(textNode, leftmostOffset, "extend left from left");
+    assertSelectionEquals(textNode, leftmostOffset, leftmostOffset, "extend left from left");
+    getSelection().modify("extend", "left", "lineboundary");
+    assertSelectionEquals(textNode, leftmostOffset, leftmostOffset, "extend left from left again");
 
     getSelection().setPosition(textNode, leftmostOffset);
     getSelection().modify("extend", "right", "lineboundary");
-    assertSelectionExtentEquals(textNode, rightmostOffset, "extend right from left");
+    assertSelectionEquals(textNode, leftmostOffset, rightmostOffset, "extend right from left");
+    getSelection().modify("extend", "right", "lineboundary");
+    assertSelectionEquals(textNode, leftmostOffset, rightmostOffset, "extend right from left again");
 
     getSelection().setPosition(textNode, rightmostOffset);
     getSelection().modify("extend", "right", "lineboundary");
-    assertSelectionExtentEquals(textNode, rightmostOffset, "extend right from right");
+    assertSelectionEquals(textNode, rightmostOffset, rightmostOffset, "extend right from right");
+    getSelection().modify("extend", "right", "lineboundary");
+    assertSelectionEquals(textNode, rightmostOffset, rightmostOffset, "extend right from right again");
 
     getSelection().setPosition(textNode, rightmostOffset);
     getSelection().modify("extend", "left", "lineboundary");
-    assertSelectionExtentEquals(textNode, leftmostOffset, "extend left from right");
+    assertSelectionEquals(textNode, rightmostOffset, leftmostOffset, "extend left from right");
+    getSelection().modify("extend", "left", "lineboundary");
+    assertSelectionEquals(textNode, rightmostOffset, leftmostOffset, "extend left from right again");
 
     log("");
 }

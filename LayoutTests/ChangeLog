@@ -1,3 +1,16 @@
+2011-02-21  Benjamin Kalman  <kalman@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Extending selection by a boundary granularity (LineBoundary/ParagraphBoundary/DocumentBoundary) sets incorrect
+        start/end of selection for RTL
+        https://bugs.webkit.org/show_bug.cgi?id=54724
+
+        Augment extend-left-by-lineboundary test to extend the selection twice, which triggered the bug.
+
+        * editing/selection/extend-left-right-by-lineboundary-expected.txt:
+        * editing/selection/extend-left-right-by-lineboundary.html:
+
 2011-02-21  MORITA Hajime  <morrita@google.com>
 
         Unreviewed expectation rebaseline for r79284.

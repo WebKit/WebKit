@@ -794,7 +794,8 @@ bool SelectionController::modify(EAlteration alter, SelectionDirection direction
         if (!m_frame || !m_frame->editor()->behavior().shouldAlwaysGrowSelectionWhenExtendingToBoundary() || m_selection.isCaret() || !isBoundary(granularity))
             setExtent(position, userTriggered);
         else {
-            if (direction == DirectionForward || direction == DirectionRight)
+            TextDirection textDirection = directionOfEnclosingBlock();
+            if (direction == DirectionForward || (textDirection == LTR && direction == DirectionRight) || (textDirection == RTL && direction == DirectionLeft))
                 setEnd(position, userTriggered);
             else
                 setStart(position, userTriggered);
