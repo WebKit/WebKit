@@ -2,30 +2,31 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,14) size 784x572
-      RenderTable {TABLE} at (14,0) size 756x74 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 754x72
-          RenderTableRow {TR} at (0,2) size 754x24
-            RenderTableCell {TH} at (2,2) size 177x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (48,2) size 80x20
-                text run at (48,2) width 80: "Header One"
-            RenderTableCell {TH} at (181,2) size 269x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (94,2) size 81x20
-                text run at (94,2) width 81: "Header Two"
-            RenderTableCell {TH} at (452,2) size 300x24 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (104,2) size 91x20
-                text run at (104,2) width 91: "Header Three"
-          RenderTableRow {TR} at (0,28) size 754x42
-            RenderTableCell {TD} at (2,28) size 177x42 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 164x38
-                text run at (2,2) width 120: "This table uses the"
-                text run at (2,21) width 164: "separated borders model."
-            RenderTableCell {TD} at (181,28) size 269x42 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 253x38
-                text run at (2,2) width 253: "This means that elements within the cell"
-                text run at (2,21) width 183: "have border-spacing of 1em."
-            RenderTableCell {TD} at (452,28) size 300x42 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 286x38
-                text run at (2,2) width 211: "The borders on the header cells, "
-                text run at (213,2) width 75: "on all sides,"
-                text run at (2,21) width 198: "should be medium solid purple."
+    RenderBody {BODY} at (8,16) size 784x568
+      RenderTable {TABLE} at (16,0) size 752x100 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 750x98
+          RenderTableRow {TR} at (0,2) size 750x25
+            RenderTableCell {TH} at (2,2) size 174x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (46,2) size 82x21
+                text run at (46,2) width 82: "Header One"
+            RenderTableCell {TH} at (178,2) size 269x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (92,2) size 85x21
+                text run at (92,2) width 85: "Header Two"
+            RenderTableCell {TH} at (449,2) size 299x25 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (102,2) size 95x21
+                text run at (102,2) width 95: "Header Three"
+          RenderTableRow {TR} at (0,29) size 750x67
+            RenderTableCell {TD} at (2,29) size 174x67 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 124x63
+                text run at (2,2) width 124: "This table uses the"
+                text run at (2,23) width 123: "separated borders"
+                text run at (2,44) width 45: "model."
+            RenderTableCell {TD} at (178,39) size 269x46 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 242x42
+                text run at (2,2) width 242: "This means that elements within the"
+                text run at (2,23) width 218: "cell have border-spacing of 1em."
+            RenderTableCell {TD} at (449,39) size 299x46 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 258x42
+                text run at (2,2) width 221: "The borders on the header cells, "
+                text run at (223,2) width 37: "on all"
+                text run at (2,23) width 252: "sides, should be medium solid purple."

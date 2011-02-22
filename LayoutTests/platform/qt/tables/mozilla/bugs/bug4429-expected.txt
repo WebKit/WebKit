@@ -2,17 +2,17 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578
-      RenderBlock {FORM} at (0,0) size 784x61
-        RenderTable {TABLE} at (0,0) size 30x29 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 28x27
-            RenderTableRow {TR} at (0,2) size 28x23
-              RenderTableCell {TD} at (2,2) size 24x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
-                  text run at (2,2) width 20: "foo"
-        RenderBlock (anonymous) at (0,29) size 784x32
-          RenderButton {INPUT} at (2,2) size 50x28 [bgcolor=#C0C0C0]
-            RenderBlock (anonymous) at (6,6) size 38x17
-              RenderText at (0,0) size 38x17
-                text run at (0,0) width 38: "Submit"
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {FORM} at (0,0) size 784x66
+        RenderTable {TABLE} at (0,0) size 31x31 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 29x29
+            RenderTableRow {TR} at (0,2) size 29x25
+              RenderTableCell {TD} at (2,2) size 25x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 21x21
+                  text run at (2,2) width 21: "foo"
+        RenderBlock (anonymous) at (0,31) size 784x35
+          RenderButton {INPUT} at (2,2) size 62x31 [bgcolor=#C0C0C0]
+            RenderBlock (anonymous) at (6,6) size 50x20
+              RenderText at (0,0) size 50x20
+                text run at (0,0) width 50: "Submit"
           RenderText {#text} at (0,0) size 0x0

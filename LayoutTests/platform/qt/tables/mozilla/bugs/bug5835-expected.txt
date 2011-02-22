@@ -1,89 +1,89 @@
-layer at (0,0) size 800x681
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x681
-  RenderBlock {HTML} at (0,0) size 800x681
-    RenderBody {BODY} at (8,8) size 784x659
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 778x19
-          text run at (0,0) width 419: "This first table is the simple test case. Colspan confuses the width "
-          text run at (419,0) width 359: "allocation when there is an image in the colspanned row."
-      RenderTable {TABLE} at (0,33) size 620x95 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 618x93
-          RenderTableRow {TR} at (0,2) size 618x23
-            RenderTableCell {TD} at (2,2) size 413x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 20x19
-                text run at (2,2) width 20: "foo"
-            RenderTableCell {TD} at (417,2) size 199x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 21x19
-                text run at (2,2) width 21: "bar"
-          RenderTableRow {TR} at (0,27) size 618x64
-            RenderTableCell {TD} at (2,27) size 614x64 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
+layer at (0,0) size 784x752
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x752
+  RenderBlock {HTML} at (0,0) size 784x752
+    RenderBody {BODY} at (8,8) size 768x728
+      RenderBlock {P} at (0,0) size 768x42
+        RenderText {#text} at (0,0) size 706x42
+          text run at (0,0) width 440: "This first table is the simple test case. Colspan confuses the width "
+          text run at (440,0) width 266: "allocation when there is an image in the"
+          text run at (0,21) width 111: "colspanned row."
+      RenderTable {TABLE} at (0,58) size 620x97 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 618x95
+          RenderTableRow {TR} at (0,2) size 618x25
+            RenderTableCell {TD} at (2,2) size 413x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 21x21
+                text run at (2,2) width 21: "foo"
+            RenderTableCell {TD} at (417,2) size 199x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 24x21
+                text run at (2,2) width 24: "bar"
+          RenderTableRow {TR} at (0,29) size 618x64
+            RenderTableCell {TD} at (2,29) size 614x64 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
               RenderImage {IMG} at (2,2) size 468x60
               RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,142) size 784x19
-        RenderText {#text} at (0,0) size 639x19
-          text run at (0,0) width 383: "This second table is the same as the first, minus the second "
-          text run at (383,0) width 256: "'colspan=2' row. Widths are now correct."
-      RenderTable {TABLE} at (0,175) size 620x29 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 618x27
-          RenderTableRow {TR} at (0,2) size 618x23
-            RenderTableCell {TD} at (2,2) size 412x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 20x19
-                text run at (2,2) width 20: "foo"
-            RenderTableCell {TD} at (416,2) size 200x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 21x19
-                text run at (2,2) width 21: "bar"
-      RenderBlock {P} at (0,218) size 784x57
-        RenderText {#text} at (0,0) size 766x57
-          text run at (0,0) width 368: "An observation: Note that as the image-width approaches "
-          text run at (368,0) width 384: "the table-width, the two columns approach equal width (error"
-          text run at (0,19) width 74: "increases). "
-          text run at (74,19) width 692: "Conversely, below some threshold image-width (which is about 390px or 30px less than the TD WIDTH=420),"
-          text run at (0,38) width 186: "the error is (apparently) zero."
-      RenderBlock {P} at (0,289) size 784x19
-        RenderText {#text} at (0,0) size 167x19
-          text run at (0,0) width 167: "Here the <img width=600>"
-      RenderTable {TABLE} at (0,322) size 620x95 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 618x93
-          RenderTableRow {TR} at (0,2) size 618x23
-            RenderTableCell {TD} at (2,2) size 412x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 20x19
-                text run at (2,2) width 20: "foo"
-            RenderTableCell {TD} at (416,2) size 200x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 21x19
-                text run at (2,2) width 21: "bar"
-          RenderTableRow {TR} at (0,27) size 618x64
-            RenderTableCell {TD} at (2,27) size 614x64 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
+      RenderBlock {P} at (0,171) size 768x21
+        RenderText {#text} at (0,0) size 675x21
+          text run at (0,0) width 396: "This second table is the same as the first, minus the second "
+          text run at (396,0) width 279: "'colspan=2' row. Widths are now correct."
+      RenderTable {TABLE} at (0,208) size 620x31 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 618x29
+          RenderTableRow {TR} at (0,2) size 618x25
+            RenderTableCell {TD} at (2,2) size 412x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 21x21
+                text run at (2,2) width 21: "foo"
+            RenderTableCell {TD} at (416,2) size 200x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 24x21
+                text run at (2,2) width 24: "bar"
+      RenderBlock {P} at (0,255) size 768x63
+        RenderText {#text} at (0,0) size 766x63
+          text run at (0,0) width 393: "An observation: Note that as the image-width approaches "
+          text run at (393,0) width 373: "the table-width, the two columns approach equal width"
+          text run at (0,21) width 119: "(error increases). "
+          text run at (119,21) width 640: "Conversely, below some threshold image-width (which is about 390px or 30px less than the TD"
+          text run at (0,42) width 303: "WIDTH=420), the error is (apparently) zero."
+      RenderBlock {P} at (0,334) size 768x21
+        RenderText {#text} at (0,0) size 181x21
+          text run at (0,0) width 181: "Here the <img width=600>"
+      RenderTable {TABLE} at (0,371) size 620x97 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 618x95
+          RenderTableRow {TR} at (0,2) size 618x25
+            RenderTableCell {TD} at (2,2) size 412x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 21x21
+                text run at (2,2) width 21: "foo"
+            RenderTableCell {TD} at (416,2) size 200x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 24x21
+                text run at (2,2) width 24: "bar"
+          RenderTableRow {TR} at (0,29) size 618x64
+            RenderTableCell {TD} at (2,29) size 614x64 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
               RenderImage {IMG} at (2,2) size 600x60
               RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,431) size 784x19
-        RenderText {#text} at (0,0) size 308x19
-          text run at (0,0) width 308: "Here the <img width=400> (error is almost zero)."
-      RenderTable {TABLE} at (0,464) size 620x29 [bgcolor=#DDDDDD] [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 618x27
-          RenderTableRow {TR} at (0,2) size 618x23
-            RenderTableCell {TD} at (2,2) size 412x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 133x19
-                text run at (2,2) width 133: "foo (single row table)"
-            RenderTableCell {TD} at (416,2) size 200x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 134x19
-                text run at (2,2) width 134: "bar (single row table)"
-      RenderTable {TABLE} at (0,493) size 620x95 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 618x93
-          RenderTableRow {TR} at (0,2) size 618x23
-            RenderTableCell {TD} at (2,2) size 413x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 20x19
-                text run at (2,2) width 20: "foo"
-            RenderTableCell {TD} at (417,2) size 199x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 21x19
-                text run at (2,2) width 21: "bar"
-          RenderTableRow {TR} at (0,27) size 618x64
-            RenderTableCell {TD} at (2,27) size 614x64 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
+      RenderBlock {P} at (0,484) size 768x21
+        RenderText {#text} at (0,0) size 330x21
+          text run at (0,0) width 330: "Here the <img width=400> (error is almost zero)."
+      RenderTable {TABLE} at (0,521) size 620x31 [bgcolor=#DDDDDD] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 618x29
+          RenderTableRow {TR} at (0,2) size 618x25
+            RenderTableCell {TD} at (2,2) size 412x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 141x21
+                text run at (2,2) width 141: "foo (single row table)"
+            RenderTableCell {TD} at (416,2) size 200x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 144x21
+                text run at (2,2) width 144: "bar (single row table)"
+      RenderTable {TABLE} at (0,552) size 620x97 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 618x95
+          RenderTableRow {TR} at (0,2) size 618x25
+            RenderTableCell {TD} at (2,2) size 413x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 21x21
+                text run at (2,2) width 21: "foo"
+            RenderTableCell {TD} at (417,2) size 199x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 24x21
+                text run at (2,2) width 24: "bar"
+          RenderTableRow {TR} at (0,29) size 618x64
+            RenderTableCell {TD} at (2,29) size 614x64 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
               RenderImage {IMG} at (2,2) size 400x60
               RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,602) size 784x57
-        RenderText {#text} at (0,0) size 776x57
-          text run at (0,0) width 771: "I tested the above with M4 and May01 build for win95. (The above examples assume that images load normally -- N.B. for"
-          text run at (0,19) width 776: "May01 the images initially load, and the width error is visually apparent, but then the images get replaced by their ALT text,"
-          text run at (0,38) width 517: "and the width error is no longer present -- this is, of course, a different issue/bug.)"
-        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,665) size 768x63
+        RenderText {#text} at (0,0) size 764x63
+          text run at (0,0) width 764: "I tested the above with M4 and May01 build for win95. (The above examples assume that images load normally --"
+          text run at (0,21) width 709: "N.B. for May01 the images initially load, and the width error is visually apparent, but then the images get"
+          text run at (0,42) width 738: "replaced by their ALT text, and the width error is no longer present -- this is, of course, a different issue/bug.)"

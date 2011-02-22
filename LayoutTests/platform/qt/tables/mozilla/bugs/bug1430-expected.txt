@@ -3,32 +3,32 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x114
-        RenderText {#text} at (0,0) size 781x114
-          text run at (0,0) width 512: "Here's the HTML test case, extracted from the Netcenter Address Book page. At "
-          text run at (512,0) width 262: "the top of the address book is a \"tool bar\""
-          text run at (0,19) width 150: "with options like \"New,\" "
-          text run at (150,19) width 461: "\"Directory,\" \"Sign-out,\" \"Customize,\" etc. These are areas in a client side "
-          text run at (611,19) width 170: "image map. You should be"
-          text run at (0,38) width 337: "able to click on these areas of the map, including the "
-          text run at (337,38) width 425: "areas on the right side of the map. However, in NGLayout, the right"
-          text run at (0,57) width 70: "side of the "
-          text run at (70,57) width 456: "map isn't \"clickable\" -- the cursor doesn't change and the link cannot be "
-          text run at (526,57) width 75: "\"activated.\" "
-          text run at (601,57) width 154: "I think somewhere we're"
-          text run at (0,76) width 368: "miscalculating where the imagemap's areas are, because "
-          text run at (368,76) width 354: "the areas on the left still work, although clicking on them"
-          text run at (0,95) width 131: "sometimes crashes. "
-          text run at (131,95) width 447: "It's as though NGLayout thinks the Imagemap areas are located a few "
-          text run at (578,95) width 164: "hundred pixels to the left. "
+      RenderBlock (anonymous) at (0,0) size 784x147
+        RenderText {#text} at (0,0) size 770x147
+          text run at (0,0) width 548: "Here's the HTML test case, extracted from the Netcenter Address Book page. At "
+          text run at (548,0) width 209: "the top of the address book is a"
+          text run at (0,21) width 247: "\"tool bar\" with options like \"New,\" "
+          text run at (247,21) width 503: "\"Directory,\" \"Sign-out,\" \"Customize,\" etc. These are areas in a client side"
+          text run at (0,42) width 539: "image map. You should be able to click on these areas of the map, including the "
+          text run at (539,42) width 229: "areas on the right side of the map."
+          text run at (0,63) width 301: "However, in NGLayout, the right side of the "
+          text run at (301,63) width 469: "map isn't \"clickable\" -- the cursor doesn't change and the link cannot"
+          text run at (0,84) width 20: "be "
+          text run at (20,84) width 87: "\"activated.\" "
+          text run at (107,84) width 553: "I think somewhere we're miscalculating where the imagemap's areas are, because "
+          text run at (660,84) width 107: "the areas on the"
+          text run at (0,105) width 406: "left still work, although clicking on them sometimes crashes. "
+          text run at (406,105) width 355: "It's as though NGLayout thinks the Imagemap areas"
+          text run at (0,126) width 118: "are located a few "
+          text run at (118,126) width 176: "hundred pixels to the left. "
         RenderBR {BR} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,114) size 649x63
-        RenderTableSection {TBODY} at (0,0) size 649x63
-          RenderTableRow {TR} at (0,2) size 649x59
-            RenderTableCell {TD} at (2,21) size 189x21 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 187x19
-                text run at (1,1) width 187: "Let's put some space in here!"
-            RenderTableCell {TD} at (193,2) size 454x59 [r=0 c=1 rs=1 cs=1]
+      RenderTable {TABLE} at (0,147) size 657x63
+        RenderTableSection {TBODY} at (0,0) size 657x63
+          RenderTableRow {TR} at (0,2) size 657x59
+            RenderTableCell {TD} at (2,20) size 197x23 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 195x21
+                text run at (1,1) width 195: "Let's put some space in here!"
+            RenderTableCell {TD} at (201,2) size 454x59 [r=0 c=1 rs=1 cs=1]
               RenderTable {TABLE} at (1,1) size 452x57
                 RenderTableSection {TBODY} at (0,0) size 452x57
                   RenderTableRow {TR} at (0,2) size 452x53

@@ -3,66 +3,66 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 146x19
-          text run at (0,0) width 146: "Testcase distilled from "
-        RenderInline {A} at (0,0) size 182x19 [color=#0000EE]
-          RenderText {#text} at (146,0) size 182x19
-            text run at (146,0) width 182: "http://webdeveloper.com/xml"
-      RenderTable {TABLE} at (0,33) size 644x102 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 642x100
-          RenderTableRow {TR} at (0,0) size 642x100
-            RenderTableCell {TD} at (0,0) size 510x100 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderBlock {UL} at (1,1) size 508x84
-                RenderListItem {LI} at (40,0) size 468x84
-                  RenderListMarker at (-17,0) size 7x19: bullet
-                  RenderText {#text} at (0,0) size 190x19
-                    text run at (0,0) width 190: "The XML Files Resources List"
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 154x21
+          text run at (0,0) width 154: "Testcase distilled from "
+        RenderInline {A} at (0,0) size 196x21 [color=#0000EE]
+          RenderText {#text} at (154,0) size 196x21
+            text run at (154,0) width 196: "http://webdeveloper.com/xml"
+      RenderTable {TABLE} at (0,37) size 644x106 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 642x104
+          RenderTableRow {TR} at (0,0) size 642x104
+            RenderTableCell {TD} at (0,0) size 510x104 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {UL} at (1,1) size 508x86
+                RenderListItem {LI} at (40,0) size 468x86
+                  RenderListMarker at (-18,0) size 7x21: bullet
+                  RenderText {#text} at (0,0) size 207x21
+                    text run at (0,0) width 207: "The XML Files Resources List"
                   RenderText {#text} at (0,0) size 0x0
-                  RenderImage {IMG} at (0,19) size 468x60
+                  RenderImage {IMG} at (0,21) size 468x60
                   RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (510,20) size 132x59 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (1,1) size 130x57 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 128x55
-                  RenderTableRow {TR} at (0,2) size 128x51
-                    RenderTableCell {TD} at (2,2) size 124x51 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (510,22) size 132x60 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 130x58 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 128x56
+                  RenderTableRow {TR} at (0,2) size 128x52
+                    RenderTableCell {TD} at (2,2) size 124x52 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderImage {IMG} at (3,3) size 118x25
                       RenderBR {BR} at (121,28) size 0x0
-                      RenderText {#text} at (26,28) size 4x19
-                        text run at (26,28) width 4: "["
-                      RenderInline {I} at (0,0) size 64x19
-                        RenderText {#text} at (30,28) size 64x19
-                          text run at (30,28) width 64: " Site Map "
-                      RenderText {#text} at (94,28) size 4x19
-                        text run at (94,28) width 4: "]"
-      RenderBlock {P} at (0,149) size 784x19
-        RenderText {#text} at (0,0) size 191x19
-          text run at (0,0) width 191: "Same as above, but removed "
-        RenderInline {CODE} at (0,0) size 138x19
-          RenderText {#text} at (191,0) size 138x19
-            text run at (191,0) width 138: "<SCRIPT></SCRIPT>"
-      RenderTable {TABLE} at (0,182) size 644x102 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 642x100
-          RenderTableRow {TR} at (0,0) size 642x100
-            RenderTableCell {TD} at (0,0) size 510x100 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderBlock {UL} at (1,1) size 508x84
-                RenderListItem {LI} at (40,0) size 468x84
-                  RenderListMarker at (-17,0) size 7x19: bullet
-                  RenderText {#text} at (0,0) size 190x19
-                    text run at (0,0) width 190: "The XML Files Resources List"
-                  RenderImage {IMG} at (0,19) size 468x60
+                      RenderText {#text} at (24,28) size 5x21
+                        text run at (24,28) width 5: "["
+                      RenderInline {I} at (0,0) size 66x21
+                        RenderText {#text} at (29,28) size 66x21
+                          text run at (29,28) width 66: " Site Map "
+                      RenderText {#text} at (95,28) size 5x21
+                        text run at (95,28) width 5: "]"
+      RenderBlock {P} at (0,159) size 784x21
+        RenderText {#text} at (0,0) size 197x21
+          text run at (0,0) width 197: "Same as above, but removed "
+        RenderInline {CODE} at (0,0) size 132x16
+          RenderText {#text} at (197,3) size 132x16
+            text run at (197,3) width 132: "<SCRIPT></SCRIPT>"
+      RenderTable {TABLE} at (0,196) size 644x106 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 642x104
+          RenderTableRow {TR} at (0,0) size 642x104
+            RenderTableCell {TD} at (0,0) size 510x104 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {UL} at (1,1) size 508x86
+                RenderListItem {LI} at (40,0) size 468x86
+                  RenderListMarker at (-18,0) size 7x21: bullet
+                  RenderText {#text} at (0,0) size 207x21
+                    text run at (0,0) width 207: "The XML Files Resources List"
+                  RenderImage {IMG} at (0,21) size 468x60
                   RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (510,20) size 132x59 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (1,1) size 130x57 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 128x55
-                  RenderTableRow {TR} at (0,2) size 128x51
-                    RenderTableCell {TD} at (2,2) size 124x51 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (510,22) size 132x60 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 130x58 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 128x56
+                  RenderTableRow {TR} at (0,2) size 128x52
+                    RenderTableCell {TD} at (2,2) size 124x52 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderImage {IMG} at (3,3) size 118x25
                       RenderBR {BR} at (121,28) size 0x0
-                      RenderText {#text} at (26,28) size 4x19
-                        text run at (26,28) width 4: "["
-                      RenderInline {I} at (0,0) size 64x19
-                        RenderText {#text} at (30,28) size 64x19
-                          text run at (30,28) width 64: " Site Map "
-                      RenderText {#text} at (94,28) size 4x19
-                        text run at (94,28) width 4: "]"
+                      RenderText {#text} at (24,28) size 5x21
+                        text run at (24,28) width 5: "["
+                      RenderInline {I} at (0,0) size 66x21
+                        RenderText {#text} at (29,28) size 66x21
+                          text run at (29,28) width 66: " Site Map "
+                      RenderText {#text} at (95,28) size 5x21
+                        text run at (95,28) width 5: "]"

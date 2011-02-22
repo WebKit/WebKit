@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 76x19
-          text run at (0,0) width 76: "dom access"
-      RenderTable {TABLE} at (0,19) size 64x35 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 62x33
-          RenderTableRow {TR} at (0,1) size 62x31
-            RenderTableCell {TD} at (1,1) size 60x31 [border: (5px solid #008000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (6,6) size 48x19
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 75x21
+          text run at (0,0) width 75: "dom access"
+      RenderTable {TABLE} at (0,21) size 64x37 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 62x35
+          RenderTableRow {TR} at (0,1) size 62x33
+            RenderTableCell {TD} at (1,1) size 60x33 [border: (5px solid #008000)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (6,6) size 48x21
                 text run at (6,6) width 48: "100000"
-      RenderBlock (anonymous) at (0,54) size 784x19
-        RenderText {#text} at (0,0) size 61x19
-          text run at (0,0) width 61: "reference"
-      RenderTable {TABLE} at (0,73) size 64x35 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 62x33
-          RenderTableRow {TR} at (0,1) size 62x31
-            RenderTableCell {TD} at (1,1) size 60x31 [border: (5px solid #008000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (6,6) size 48x19
+      RenderBlock (anonymous) at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 63x21
+          text run at (0,0) width 63: "reference"
+      RenderTable {TABLE} at (0,79) size 64x37 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 62x35
+          RenderTableRow {TR} at (0,1) size 62x33
+            RenderTableCell {TD} at (1,1) size 60x33 [border: (5px solid #008000)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (6,6) size 48x21
                 text run at (6,6) width 48: "100000"

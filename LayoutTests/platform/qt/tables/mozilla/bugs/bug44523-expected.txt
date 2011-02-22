@@ -4,15 +4,15 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x0
-      RenderBlock (anonymous) at (0,0) size 784x19
-        RenderBR {BR} at (0,0) size 0x19
-      RenderTable {TABLE} at (0,19) size 381x31 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 379x29
-          RenderTableRow {TR} at (0,2) size 379x0
-            RenderTableCell {TD} at (2,3) size 211x23 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
-              RenderText {#text} at (2,2) size 207x19
-                text run at (2,2) width 207: "Canada climbs up FIFA rankings"
-          RenderTableRow {TR} at (0,4) size 379x23
-            RenderTableCell {TD} at (215,4) size 162x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 158x19
-                text run at (2,2) width 158: "drink more german beer."
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderTable {TABLE} at (0,21) size 416x33 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 414x31
+          RenderTableRow {TR} at (0,2) size 414x0
+            RenderTableCell {TD} at (2,3) size 233x25 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+              RenderText {#text} at (2,2) size 229x21
+                text run at (2,2) width 229: "Canada climbs up FIFA rankings"
+          RenderTableRow {TR} at (0,4) size 414x25
+            RenderTableCell {TD} at (237,4) size 175x25 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 171x21
+                text run at (2,2) width 171: "drink more german beer."

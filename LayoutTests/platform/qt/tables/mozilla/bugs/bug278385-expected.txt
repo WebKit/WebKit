@@ -1,20 +1,23 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x126
-  RenderBlock {HTML} at (0,0) size 800x126
-    RenderBody {BODY} at (8,8) size 784x110
-      RenderTableCol {COL} at (0,0) size 0x0
-      RenderTableCol {COL} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,0) size 79x110 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 77x108
-          RenderTableRow {TR} at (0,2) size 77x51
-            RenderTableCell {TH} at (2,25) size 34x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (38,2) size 37x51 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderBlock {P} at (2,16) size 33x19
-                RenderText {#text} at (0,0) size 33x19
-                  text run at (0,0) width 33: "TWO"
-          RenderTableRow {TR} at (0,55) size 77x51
-            RenderTableCell {TD} at (2,55) size 34x51 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderBlock {P} at (2,16) size 30x19
-                RenderText {#text} at (0,0) size 30x19
-                  text run at (0,0) width 30: "ONE"
+layer at (0,0) size 800x140
+  RenderBlock {HTML} at (0,0) size 800x140
+    RenderBody {BODY} at (8,8) size 784x124
+      RenderTable {TABLE} at (0,0) size 90x124 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 88x61
+          RenderTableRow {TR} at (0,2) size 88x57
+            RenderTableCell {TH} at (2,28) size 39x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (43,2) size 43x57 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderBlock {P} at (2,18) size 39x21
+                RenderText {#text} at (0,0) size 39x21
+                  text run at (0,0) width 39: "TWO"
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (1,62) size 88x61
+          RenderTableRow {TR} at (0,2) size 88x57
+            RenderTableCell {TD} at (2,2) size 39x57 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {P} at (2,18) size 35x21
+                RenderText {#text} at (0,0) size 35x21
+                  text run at (0,0) width 35: "ONE"
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0

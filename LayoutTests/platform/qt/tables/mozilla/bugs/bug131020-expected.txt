@@ -1,364 +1,365 @@
-layer at (0,0) size 808x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 808x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 800x584 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 798x582
-          RenderTableRow {TR} at (0,2) size 798x578
-            RenderTableCell {TD} at (2,2) size 794x578 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 790x574 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 788x572
-                  RenderTableRow {TR} at (0,2) size 788x568
-                    RenderTableCell {TD} at (2,4) size 784x564 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderPartObject {IFRAME} at (2,2) size 790x560 [border: (5px solid #0000FF)]
-                        layer at (0,0) size 764x1957
-                          RenderView at (0,0) size 764x550
-                        layer at (0,0) size 764x1957
-                          RenderBlock {HTML} at (0,0) size 764x1957
-                            RenderBody {BODY} at (0,0) size 764x1957 [bgcolor=#53799F]
-                              RenderBlock {CENTER} at (0,0) size 764x1957
-                                RenderBlock (anonymous) at (0,0) size 764x19
-                                  RenderBR {BR} at (382,0) size 0x19
-                                RenderTable {TABLE} at (19,19) size 725x1919 [border: (1px solid #000000)]
-                                  RenderTableSection {TBODY} at (1,1) size 723x1917
-                                    RenderTableRow {TR} at (0,0) size 723x21
-                                      RenderTableCell {TD} at (0,0) size 723x21 [bgcolor=#3F5694] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
-                                        RenderText {#text} at (344,1) size 35x19
-                                          text run at (344,1) width 35: "News"
-                                    RenderTableRow {TR} at (0,21) size 723x41
-                                      RenderTableCell {TD} at (0,21) size 723x41 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
-                                        RenderInline {B} at (0,0) size 92x20
-                                          RenderText {#text} at (315,1) size 92x20
-                                            text run at (315,1) width 92: "11. M\x{E4}rz 2002"
-                                        RenderBR {BR} at (407,15) size 0x0
-                                        RenderText {#text} at (49,21) size 625x19
-                                          text run at (49,21) width 489: "nun gibt es auch eine kommerzielle Version vom PopUp-Manager, mehr Info "
-                                          text run at (538,21) width 136: "unter komerz. Scripte"
-                                    RenderTableRow {TR} at (0,62) size 723x41
-                                      RenderTableCell {TD} at (0,62) size 723x41 [border: (1px solid #000000)] [r=2 c=0 rs=1 cs=1]
-                                        RenderInline {B} at (0,0) size 88x20
-                                          RenderText {#text} at (317,1) size 88x20
-                                            text run at (317,1) width 88: "09.M\x{E4}rz 2002"
-                                          RenderBR {BR} at (405,15) size 0x0
-                                        RenderText {#text} at (158,21) size 406x19
-                                          text run at (158,21) width 406: "neues Script ist online, PopUp-Manager, mehr Info unter Scripte"
-                                    RenderTableRow {TR} at (0,103) size 723x40
-                                      RenderTableCell {TD} at (0,103) size 723x40 [border: (1px solid #000000)] [r=3 c=0 rs=1 cs=1]
-                                        RenderText {#text} at (298,1) size 126x19
-                                          text run at (298,1) width 126: "17. November 2001"
-                                        RenderBR {BR} at (424,15) size 0x0
-                                        RenderText {#text} at (282,20) size 159x19
-                                          text run at (282,20) width 159: "Endlich wieder Online! :-)"
-                                    RenderTableRow {TR} at (0,143) size 723x173
-                                      RenderTableCell {TD} at (0,143) size 723x173 [border: (1px solid #000000)] [r=4 c=0 rs=1 cs=1]
-                                        RenderText {#text} at (267,1) size 188x19
-                                          text run at (267,1) width 188: "23. Oktober 2001 (21:00 Uhr)"
-                                        RenderBR {BR} at (455,15) size 0x0
-                                        RenderText {#text} at (308,20) size 107x19
-                                          text run at (308,20) width 107: "Es ist vollbracht! "
-                                        RenderBR {BR} at (415,34) size 0x0
-                                        RenderText {#text} at (201,39) size 321x19
-                                          text run at (201,39) width 321: "Ich habe nun den .htaccess-BUG bei den Scripten:"
-                                        RenderBR {BR} at (522,53) size 0x0
-                                        RenderText {#text} at (99,58) size 525x19
-                                          text run at (99,58) width 525: "The Real Topsites, Sponsor Manager, Download Manager und Password Manager"
-                                        RenderBR {BR} at (624,72) size 0x0
-                                        RenderText {#text} at (114,77) size 495x19
-                                          text run at (114,77) width 436: "abgeschafft, brauchte 2 Tage daf\x{FC}r, dabei lag der Fehler vor meiner "
-                                          text run at (550,77) width 59: "Nase ! :-)"
-                                        RenderBR {BR} at (609,91) size 0x0
-                                        RenderText {#text} at (8,96) size 715x76
-                                          text run at (8,96) width 381: "F\x{FC}r Euch hei\x{DF}t es, wenn Ihr eines der Scripte benutzt, ladet "
-                                          text run at (389,96) width 325: "Euch die admin.cgi runter und vereinbart unbedingt"
-                                          text run at (4,115) width 136: "ein neues Password! "
-                                          text run at (140,115) width 444: "Au\x{DF}erdem wurde bei der Toplist die Sache mit dem Button Load/Klick "
-                                          text run at (584,115) width 135: "um programmiert, f\x{FC}r"
-                                          text run at (24,134) width 323: "die Leute die den Button Load/Klick Modus haben, "
-                                          text run at (347,134) width 351: "Ihr m\x{FC}st Euch auch die topsites.cgi laden und im Admin"
-                                          text run at (161,153) width 89: "Bereich unter "
-                                          text run at (250,153) width 312: "Modus unten die URL zu Eurem Button angeben!"
-                                    RenderTableRow {TR} at (0,316) size 723x40
-                                      RenderTableCell {TD} at (0,316) size 723x40 [border: (1px solid #000000)] [r=5 c=0 rs=1 cs=1]
-                                        RenderText {#text} at (306,1) size 111x19
-                                          text run at (306,1) width 111: "22. Oktober 2001"
-                                        RenderBR {BR} at (417,15) size 0x0
-                                        RenderText {#text} at (123,20) size 477x19
-                                          text run at (123,20) width 431: "Download-Bereich ist vorrerst geschlo\x{DF}en, kommen Sie bitte sp\x{E4}ter "
-                                          text run at (554,20) width 46: "wieder."
-                                    RenderTableRow {TR} at (0,356) size 723x59
-                                      RenderTableCell {TD} at (0,356) size 723x59 [border: (1px solid #000000)] [r=6 c=0 rs=1 cs=1]
-                                        RenderText {#text} at (267,1) size 188x19
-                                          text run at (267,1) width 188: "21. Oktober 2001 (22:45 Uhr)"
-                                        RenderBR {BR} at (455,15) size 0x0
-                                        RenderText {#text} at (28,20) size 666x38
-                                          text run at (28,20) width 405: "OK, sorry f\x{FC}r die Unannehmlichkeiten, aber Ihr m\x{FC}sst Euch nun "
-                                          text run at (433,20) width 261: "noch mal die Scripte runter laden und die"
-                                          text run at (35,39) width 206: "admin.cgi erneuern, hier kommt "
-                                          text run at (241,39) width 446: "noch das Password-Manager-Script dazu, sollte jetzt alles sicher sein! "
+layer at (0,0) size 808x584
+  RenderView at (0,0) size 800x584
+layer at (0,0) size 800x584
+  RenderBlock {HTML} at (0,0) size 800x584
+    RenderBody {BODY} at (8,8) size 784x568
+      RenderTable {TABLE} at (0,0) size 800x568 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 798x566
+          RenderTableRow {TR} at (0,2) size 798x562
+            RenderTableCell {TD} at (2,2) size 794x562 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 790x558 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 788x556
+                  RenderTableRow {TR} at (0,2) size 788x552
+                    RenderTableCell {TD} at (2,4) size 784x548 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderPartObject {IFRAME} at (2,2) size 790x544 [border: (5px solid #0000FF)]
+                        layer at (0,0) size 764x2197
+                          RenderView at (0,0) size 764x534
+                        layer at (0,0) size 764x2197
+                          RenderBlock {HTML} at (0,0) size 764x2197
+                            RenderBody {BODY} at (0,0) size 764x2197 [bgcolor=#53799F]
+                              RenderBlock {CENTER} at (0,0) size 764x2197
+                                RenderBlock (anonymous) at (0,0) size 764x21
+                                  RenderBR {BR} at (382,0) size 0x21
+                                RenderTable {TABLE} at (19,21) size 725x2155 [border: (1px solid #000000)]
+                                  RenderTableSection {TBODY} at (1,1) size 723x2153
+                                    RenderTableRow {TR} at (0,0) size 723x23
+                                      RenderTableCell {TD} at (0,0) size 723x23 [bgcolor=#3F5694] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+                                        RenderText {#text} at (343,1) size 37x21
+                                          text run at (343,1) width 37: "News"
+                                    RenderTableRow {TR} at (0,23) size 723x44
+                                      RenderTableCell {TD} at (0,23) size 723x44 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
+                                        RenderInline {B} at (0,0) size 97x21
+                                          RenderText {#text} at (313,1) size 97x21
+                                            text run at (313,1) width 97: "11. M\x{E4}rz 2002"
+                                        RenderBR {BR} at (410,17) size 0x0
+                                        RenderText {#text} at (25,22) size 673x21
+                                          text run at (25,22) width 525: "nun gibt es auch eine kommerzielle Version vom PopUp-Manager, mehr Info "
+                                          text run at (550,22) width 148: "unter komerz. Scripte"
+                                    RenderTableRow {TR} at (0,67) size 723x44
+                                      RenderTableCell {TD} at (0,67) size 723x44 [border: (1px solid #000000)] [r=2 c=0 rs=1 cs=1]
+                                        RenderInline {B} at (0,0) size 93x21
+                                          RenderText {#text} at (315,1) size 93x21
+                                            text run at (315,1) width 93: "09.M\x{E4}rz 2002"
+                                          RenderBR {BR} at (408,17) size 0x0
+                                        RenderText {#text} at (142,22) size 439x21
+                                          text run at (142,22) width 439: "neues Script ist online, PopUp-Manager, mehr Info unter Scripte"
+                                    RenderTableRow {TR} at (0,111) size 723x44
+                                      RenderTableCell {TD} at (0,111) size 723x44 [border: (1px solid #000000)] [r=3 c=0 rs=1 cs=1]
+                                        RenderText {#text} at (296,1) size 131x21
+                                          text run at (296,1) width 131: "17. November 2001"
+                                        RenderBR {BR} at (427,17) size 0x0
+                                        RenderText {#text} at (273,22) size 177x21
+                                          text run at (273,22) width 177: "Endlich wieder Online! :-)"
+                                    RenderTableRow {TR} at (0,155) size 723x191
+                                      RenderTableCell {TD} at (0,155) size 723x191 [border: (1px solid #000000)] [r=4 c=0 rs=1 cs=1]
+                                        RenderText {#text} at (261,1) size 201x21
+                                          text run at (261,1) width 201: "23. Oktober 2001 (21:00 Uhr)"
+                                        RenderBR {BR} at (461,17) size 1x0
+                                        RenderText {#text} at (302,22) size 119x21
+                                          text run at (302,22) width 119: "Es ist vollbracht! "
+                                        RenderBR {BR} at (420,38) size 1x0
+                                        RenderText {#text} at (191,43) size 341x21
+                                          text run at (191,43) width 341: "Ich habe nun den .htaccess-BUG bei den Scripten:"
+                                        RenderBR {BR} at (532,59) size 0x0
+                                        RenderText {#text} at (80,64) size 563x21
+                                          text run at (80,64) width 563: "The Real Topsites, Sponsor Manager, Download Manager und Password Manager"
+                                        RenderBR {BR} at (643,80) size 0x0
+                                        RenderText {#text} at (99,85) size 525x21
+                                          text run at (99,85) width 464: "abgeschafft, brauchte 2 Tage daf\x{FC}r, dabei lag der Fehler vor meiner "
+                                          text run at (563,85) width 61: "Nase ! :-)"
+                                        RenderBR {BR} at (624,101) size 0x0
+                                        RenderText {#text} at (15,106) size 721x84
+                                          text run at (15,106) width 409: "F\x{FC}r Euch hei\x{DF}t es, wenn Ihr eines der Scripte benutzt, ladet "
+                                          text run at (423,106) width 285: "Euch die admin.cgi runter und vereinbart"
+                                          text run at (1,127) width 214: "unbedingt ein neues Password! "
+                                          text run at (215,127) width 485: "Au\x{DF}erdem wurde bei der Toplist die Sache mit dem Button Load/Klick "
+                                          text run at (700,127) width 22: "um"
+                                          text run at (2,148) width 482: "programmiert, f\x{FC}r die Leute die den Button Load/Klick Modus haben, "
+                                          text run at (483,148) width 238: "Ihr m\x{FC}st Euch auch die topsites.cgi"
+                                          text run at (70,169) width 242: "laden und im Admin Bereich unter "
+                                          text run at (311,169) width 342: "Modus unten die URL zu Eurem Button angeben!"
+                                    RenderTableRow {TR} at (0,346) size 723x44
+                                      RenderTableCell {TD} at (0,346) size 723x44 [border: (1px solid #000000)] [r=5 c=0 rs=1 cs=1]
+                                        RenderText {#text} at (303,1) size 117x21
+                                          text run at (303,1) width 117: "22. Oktober 2001"
+                                        RenderBR {BR} at (420,17) size 0x0
+                                        RenderText {#text} at (107,22) size 509x21
+                                          text run at (107,22) width 459: "Download-Bereich ist vorrerst geschlo\x{DF}en, kommen Sie bitte sp\x{E4}ter "
+                                          text run at (565,22) width 51: "wieder."
+                                    RenderTableRow {TR} at (0,390) size 723x65
+                                      RenderTableCell {TD} at (0,390) size 723x65 [border: (1px solid #000000)] [r=6 c=0 rs=1 cs=1]
+                                        RenderText {#text} at (261,1) size 201x21
+                                          text run at (261,1) width 201: "21. Oktober 2001 (22:45 Uhr)"
+                                        RenderBR {BR} at (461,17) size 1x0
+                                        RenderText {#text} at (10,22) size 719x42
+                                          text run at (10,22) width 445: "OK, sorry f\x{FC}r die Unannehmlichkeiten, aber Ihr m\x{FC}sst Euch nun "
+                                          text run at (455,22) width 258: "noch mal die Scripte runter laden und"
+                                          text run at (2,43) width 248: "die admin.cgi erneuern, hier kommt "
+                                          text run at (249,43) width 472: "noch das Password-Manager-Script dazu, sollte jetzt alles sicher sein! "
                                         RenderBR {BR} at (0,0) size 0x0
-                                    RenderTableRow {TR} at (0,415) size 723x116
-                                      RenderTableCell {TD} at (0,415) size 723x116 [border: (1px solid #000000)] [r=7 c=0 rs=1 cs=1]
-                                        RenderText {#text} at (267,1) size 188x19
-                                          text run at (267,1) width 188: "21. Oktober 2001 (20:50 Uhr)"
-                                        RenderBR {BR} at (455,15) size 0x0
-                                        RenderText {#text} at (171,20) size 381x19
-                                          text run at (171,20) width 381: "An alle Leute die follgende Scripte von G5-Scripts benutzen:"
-                                        RenderBR {BR} at (552,34) size 0x0
-                                        RenderText {#text} at (179,39) size 364x19
-                                          text run at (179,39) width 364: "The Real Topsites, Download Counter, Sponsor Manager"
-                                        RenderBR {BR} at (543,53) size 0x0
-                                        RenderText {#text} at (22,58) size 678x19
-                                          text run at (22,58) width 471: "bitte noch ein mal runter laden und die admin.cgi erneuern, beim Sponsor "
-                                          text run at (493,58) width 207: "Manager kommt noch eine Datei"
-                                        RenderBR {BR} at (700,72) size 0x0
-                                        RenderText {#text} at (304,77) size 114x19
-                                          text run at (304,77) width 114: "'variable.pl' dazu!!"
-                                        RenderBR {BR} at (418,91) size 0x0
-                                        RenderText {#text} at (68,96) size 586x19
-                                          text run at (68,96) width 480: "Der Grund : man hat festgestellt das .htaccess Password Schutz doch nicht "
-                                          text run at (548,96) width 106: "das sicherste ist!"
-                                    RenderTableRow {TR} at (0,531) size 723x206
-                                      RenderTableCell {TD} at (0,531) size 723x206 [border: (1px solid #000000)] [r=8 c=0 rs=1 cs=1]
-                                        RenderBlock {P} at (1,1) size 721x152
-                                          RenderText {#text} at (305,0) size 111x19
-                                            text run at (305,0) width 111: "13. Oktober 2001"
-                                          RenderBR {BR} at (416,14) size 0x0
-                                          RenderText {#text} at (76,19) size 568x19
-                                            text run at (76,19) width 486: "Ich habe es nun endlich geschafft das Gateway bei der Toplist mit IP-Sperre "
-                                            text run at (562,19) width 82: "zu versehen,"
-                                          RenderBR {BR} at (644,33) size 0x0
-                                          RenderText {#text} at (41,38) size 638x38
-                                            text run at (41,38) width 448: "dabei war der Fehler den ich vorher nicht verstand eine simple Sache, "
-                                            text run at (489,38) width 190: "h\x{E4}tte ich doch ein wenig mehr"
-                                            text run at (317,57) width 86: "nachgedacht!"
-                                          RenderBR {BR} at (403,71) size 0x0
-                                          RenderText {#text} at (0,76) size 720x76
-                                            text run at (0,76) width 434: "Des weiteren habe ich noch die Datensicherung umgeschrieben, f\x{FC}r "
-                                            text run at (434,76) width 286: "alle die Listen deren Hits ab und zu mal auf 0"
-                                            text run at (12,95) width 142: "gesetzt werden, sollte "
-                                            text run at (154,95) width 462: "jetzt nicht mehr passieren und ich habe noch den Mail Versand aus dem "
-                                            text run at (616,95) width 93: "Admin-Bereich"
-                                            text run at (11,114) width 350: "umgeschrieben und zwar wurde fr\x{FC}her der Text immer "
-                                            text run at (361,114) width 348: "zusammen gequetscht, die Enters wurden so zu sagen"
-                                            text run at (280,133) width 90: "ignoriert, jetzt "
-                                            text run at (370,133) width 71: "nicht mehr!"
-                                        RenderBlock {P} at (1,167) size 721x38
-                                          RenderText {#text} at (7,0) size 707x38
-                                            text run at (7,0) width 375: ">> F\x{FC}r alle die das Script vor dem 11.10.01 runter geladen "
-                                            text run at (382,0) width 332: "haben, Ihr solltet es Euch noch mal runter laden und"
-                                            text run at (118,19) width 143: "die folgenden Dateien "
-                                            text run at (261,19) width 342: "durch die neuen ersetzen: topsites.cgi und admin.cgi ."
-                                    RenderTableRow {TR} at (0,737) size 723x40
-                                      RenderTableCell {TD} at (0,737) size 723x40 [border: (1px solid #000000)] [r=9 c=0 rs=1 cs=1]
-                                        RenderText {#text} at (306,1) size 111x19
-                                          text run at (306,1) width 111: "11. Oktober 2001"
-                                        RenderBR {BR} at (417,15) size 0x0
-                                        RenderText {#text} at (116,20) size 490x19
-                                          text run at (116,20) width 490: "neues Script ist online, .htaccess-Password-Manager, mehr Info unter Scripte"
-                                    RenderTableRow {TR} at (0,777) size 723x40
-                                      RenderTableCell {TD} at (0,777) size 723x40 [border: (1px solid #000000)] [r=10 c=0 rs=1 cs=1]
-                                        RenderText {#text} at (296,1) size 130x19
-                                          text run at (296,1) width 130: "08. September 2001"
-                                        RenderBR {BR} at (426,15) size 0x0
-                                        RenderText {#text} at (197,20) size 328x19
-                                          text run at (197,20) width 328: "Eine neu Version des Download Counters ist online!"
-                                    RenderTableRow {TR} at (0,817) size 723x59
-                                      RenderTableCell {TD} at (0,817) size 723x59 [border: (1px solid #000000)] [r=11 c=0 rs=1 cs=1]
-                                        RenderText {#text} at (309,1) size 104x19
-                                          text run at (309,1) width 104: "11. August 2001"
-                                        RenderBR {BR} at (413,15) size 0x0
-                                        RenderText {#text} at (24,20) size 674x19
-                                          text run at (24,20) width 453: "Ich habe so eben eine random.cgi f\x{FC}r den Topsites Script geschrieben. "
-                                          text run at (477,20) width 221: "Die random.cgi f\x{FC}hrt den Besucher"
-                                        RenderBR {BR} at (698,34) size 0x0
-                                        RenderText {#text} at (250,39) size 223x19
-                                          text run at (250,39) width 223: "auf eine zuf\x{E4}llig ausgew\x{E4}hlte Seite."
-                                    RenderTableRow {TR} at (0,876) size 723x59
-                                      RenderTableCell {TD} at (0,876) size 723x59 [border: (1px solid #000000)] [r=12 c=0 rs=1 cs=1]
-                                        RenderText {#text} at (309,1) size 104x19
-                                          text run at (309,1) width 104: "08. August 2001"
-                                        RenderBR {BR} at (413,15) size 0x0
-                                        RenderText {#text} at (92,20) size 539x19
-                                          text run at (92,20) width 465: "Ich schreibe gerade eine neue Version von dem Download Counter, bitte "
-                                          text run at (557,20) width 74: "schreibt mir"
-                                        RenderBR {BR} at (631,34) size 0x0
-                                        RenderText {#text} at (183,39) size 356x19
-                                          text run at (183,39) width 356: "ins Forum was Ihr da alles haben wollt, wer das benutzt!"
-                                    RenderTableRow {TR} at (0,935) size 723x59
-                                      RenderTableCell {TD} at (0,935) size 723x59 [border: (1px solid #000000)] [r=13 c=0 rs=1 cs=1]
-                                        RenderText {#text} at (321,1) size 81x19
-                                          text run at (321,1) width 81: "09. Juli 2001"
-                                        RenderBR {BR} at (402,15) size 0x0
-                                        RenderText {#text} at (12,20) size 698x38
-                                          text run at (12,20) width 449: "eine kleiner Bug in der Topsites.cgi wurde behoben! Wer m\x{F6}chte kann "
-                                          text run at (461,20) width 249: "sich die jetzige Zip runter laden und die"
-                                          text run at (177,39) width 171: "topsites.cgi auktualisieren, "
-                                          text run at (348,39) width 197: "mu\x{DF} aber nicht unbedingt sein!"
-                                    RenderTableRow {TR} at (0,994) size 723x59
-                                      RenderTableCell {TD} at (0,994) size 723x59 [border: (1px solid #000000)] [r=14 c=0 rs=1 cs=1]
-                                        RenderText {#text} at (321,1) size 81x19
-                                          text run at (321,1) width 81: "01. Juli 2001"
-                                        RenderBR {BR} at (402,15) size 0x0
-                                        RenderText {#text} at (75,20) size 573x19
-                                          text run at (75,20) width 508: "Jetzt haben wir einen Support Forum, postet Eure Fragen da rein und versuche "
-                                          text run at (583,20) width 65: "Sie alle zu"
-                                        RenderBR {BR} at (648,34) size 0x0
-                                        RenderText {#text} at (52,39) size 619x19
-                                          text run at (52,39) width 391: "beantworten! Au\x{DF}erdem k\x{F6}nnt Ihr dort auch Eure Vorschl\x{E4}ge "
-                                          text run at (443,39) width 228: "zu den einzelnen Scripten abgeben!"
-                                    RenderTableRow {TR} at (0,1053) size 723x59
-                                      RenderTableCell {TD} at (0,1053) size 723x59 [border: (1px solid #000000)] [r=15 c=0 rs=1 cs=1]
-                                        RenderText {#text} at (321,1) size 81x19
-                                          text run at (321,1) width 81: "01. Juli 2001"
-                                        RenderBR {BR} at (402,15) size 0x0
-                                        RenderText {#text} at (109,20) size 505x19
-                                          text run at (109,20) width 481: "Und wieder eine neue Version von The Real Topsites ist online, die Version "
-                                          text run at (590,20) width 24: "3.4!"
-                                        RenderBR {BR} at (614,34) size 0x0
-                                        RenderText {#text} at (139,39) size 445x19
-                                          text run at (139,39) width 445: "Es gibt einige neue Funktionen und es wurde auch einiges verbessert!"
-                                    RenderTableRow {TR} at (0,1112) size 723x59
-                                      RenderTableCell {TD} at (0,1112) size 723x59 [border: (1px solid #000000)] [r=16 c=0 rs=1 cs=1]
-                                        RenderText {#text} at (318,1) size 86x19
-                                          text run at (318,1) width 86: "20. Juni 2001"
-                                        RenderBR {BR} at (404,15) size 0x0
-                                        RenderText {#text} at (117,20) size 489x19
-                                          text run at (117,20) width 457: "unser Hoster hat ein paar kleine Probleme also sollte irgend was an der "
-                                          text run at (574,20) width 32: "Seite"
-                                        RenderBR {BR} at (606,34) size 0x0
-                                        RenderText {#text} at (237,39) size 248x19
-                                          text run at (237,39) width 248: "nicht gehen, einfach wieder versuchen!"
-                                    RenderTableRow {TR} at (0,1171) size 723x97
-                                      RenderTableCell {TD} at (0,1171) size 723x97 [border: (1px solid #000000)] [r=17 c=0 rs=1 cs=1]
-                                        RenderText {#text} at (318,1) size 86x19
-                                          text run at (318,1) width 86: "09. Juni 2001"
-                                        RenderBR {BR} at (404,15) size 0x0
-                                        RenderText {#text} at (83,20) size 557x19
-                                          text run at (83,20) width 446: "Die neue Version (3.3) von The Real Topsites ist online, es gibt einige "
-                                          text run at (529,20) width 111: "neue Funktionen "
-                                        RenderBR {BR} at (640,34) size 0x0
-                                        RenderText {#text} at (242,39) size 239x19
-                                          text run at (242,39) width 239: "und es wurde auch einiges ver\x{E4}ndert!"
-                                        RenderBR {BR} at (481,53) size 0x0
-                                        RenderText {#text} at (235,58) size 252x19
-                                          text run at (235,58) width 252: "Mehr Info unter \"Perl Scripte\" im Men\x{FC}. "
-                                        RenderBR {BR} at (487,72) size 0x0
-                                        RenderText {#text} at (150,77) size 422x19
-                                          text run at (150,77) width 422: "P.S. den Umstieg auf die Version3.3 kann ich Euch nur empfehlen!"
-                                    RenderTableRow {TR} at (0,1268) size 723x78
-                                      RenderTableCell {TD} at (0,1268) size 723x78 [border: (1px solid #000000)] [r=18 c=0 rs=1 cs=1]
-                                        RenderText {#text} at (318,1) size 86x19
-                                          text run at (318,1) width 86: "04. Juni 2001"
-                                        RenderBR {BR} at (404,15) size 0x0
-                                        RenderText {#text} at (134,20) size 455x19
-                                          text run at (134,20) width 455: "Ein kleiner Bug bei Topsites Script wurde gefunden und sofort behoben!"
-                                        RenderBR {BR} at (589,34) size 0x0
-                                        RenderText {#text} at (139,39) size 444x19
-                                          text run at (139,39) width 444: "Bug: es wurde immer wieder die selbe Site Of The Moment angezeigt!"
-                                        RenderBR {BR} at (583,53) size 0x0
-                                        RenderText {#text} at (141,58) size 440x19
-                                          text run at (141,58) width 436: "Ladet Euch die jetzige Version runter und ersetzt nur die topsites.cgi "
-                                          text run at (577,58) width 4: "!"
-                                    RenderTableRow {TR} at (0,1346) size 723x59
-                                      RenderTableCell {TD} at (0,1346) size 723x59 [border: (1px solid #000000)] [r=19 c=0 rs=1 cs=1]
-                                        RenderText {#text} at (318,1) size 86x19
-                                          text run at (318,1) width 86: "01. Juni 2001"
-                                        RenderBR {BR} at (404,15) size 0x0
-                                        RenderText {#text} at (212,20) size 299x19
-                                          text run at (212,20) width 299: "Ein neues Script ist online! G5-ICQ Newsletter. "
-                                        RenderBR {BR} at (511,34) size 0x0
-                                        RenderText {#text} at (237,39) size 248x19
-                                          text run at (237,39) width 248: "Mehr Info unter \"Perl Scripte\" im Men\x{FC}."
-                                    RenderTableRow {TR} at (0,1405) size 723x59
-                                      RenderTableCell {TD} at (0,1405) size 723x59 [border: (1px solid #000000)] [r=20 c=0 rs=1 cs=1]
-                                        RenderText {#text} at (320,1) size 83x19
-                                          text run at (320,1) width 83: "31. Mai 2001"
-                                        RenderBR {BR} at (403,15) size 0x0
-                                        RenderText {#text} at (155,20) size 412x19
-                                          text run at (155,20) width 412: "Ich habe einen ICQ-Newsletter Script installiert, unter dem Men\x{FC}."
-                                        RenderBR {BR} at (567,34) size 0x0
-                                        RenderText {#text} at (171,39) size 380x19
-                                          text run at (171,39) width 380: "Tragt Euch ein, dann seit Ihr immer auf dem neusten Stand!"
-                                    RenderTableRow {TR} at (0,1464) size 723x40
-                                      RenderTableCell {TD} at (0,1464) size 723x40 [border: (1px solid #000000)] [r=21 c=0 rs=1 cs=1]
-                                        RenderText {#text} at (320,1) size 83x19
-                                          text run at (320,1) width 83: "26. Mai 2001"
-                                        RenderBR {BR} at (403,15) size 0x0
-                                        RenderText {#text} at (256,20) size 211x19
-                                          text run at (256,20) width 211: "The Real Topsites v3.0 ist online!"
-                                    RenderTableRow {TR} at (0,1504) size 723x59
-                                      RenderTableCell {TD} at (0,1504) size 723x59 [border: (1px solid #000000)] [r=22 c=0 rs=1 cs=1]
-                                        RenderText {#text} at (320,1) size 83x19
-                                          text run at (320,1) width 83: "25. Mai 2001"
-                                        RenderBR {BR} at (403,15) size 0x0
-                                        RenderText {#text} at (203,20) size 317x19
-                                          text run at (203,20) width 317: "Ein neues Script ist online! G5-Download Counter."
-                                        RenderBR {BR} at (520,34) size 0x0
-                                        RenderText {#text} at (237,39) size 248x19
-                                          text run at (237,39) width 248: "Mehr Info unter \"Perl Scripte\" im Men\x{FC}."
-                                    RenderTableRow {TR} at (0,1563) size 723x97
-                                      RenderTableCell {TD} at (0,1563) size 723x97 [border: (1px solid #000000)] [r=23 c=0 rs=1 cs=1]
-                                        RenderText {#text} at (320,1) size 83x19
-                                          text run at (320,1) width 83: "24. Mai 2001"
-                                        RenderBR {BR} at (403,15) size 0x0
-                                        RenderText {#text} at (114,20) size 494x19
-                                          text run at (114,20) width 423: "Ich habe es mir sehr lange \x{FC}berlegt, die Entscheidung war wirklich "
-                                          text run at (537,20) width 71: "nicht leicht!"
-                                        RenderBR {BR} at (608,34) size 0x0
-                                        RenderText {#text} at (87,39) size 549x19
-                                          text run at (87,39) width 403: "Ich habe mich entschieden den Script \"The Real Topsites\" zum "
-                                          text run at (490,39) width 146: "Download freizugeben."
-                                        RenderBR {BR} at (636,53) size 0x0
-                                        RenderText {#text} at (216,58) size 290x19
-                                          text run at (216,58) width 290: "Ihr k\x{F6}nnt es Euch jetzt kostenlos runter laden!"
-                                        RenderBR {BR} at (506,72) size 0x0
-                                        RenderText {#text} at (309,77) size 104x19
-                                          text run at (309,77) width 104: "Viel Spa\x{DF} damit!"
-                                    RenderTableRow {TR} at (0,1660) size 723x59
-                                      RenderTableCell {TD} at (0,1660) size 723x59 [border: (1px solid #000000)] [r=24 c=0 rs=1 cs=1]
-                                        RenderText {#text} at (320,1) size 83x19
-                                          text run at (320,1) width 83: "13. Mai 2001"
-                                        RenderBR {BR} at (403,15) size 0x0
-                                        RenderText {#text} at (4,20) size 715x38
-                                          text run at (4,20) width 469: "Es gab nur eine kleine Ver\x{E4}nderung bei G5-Sponsor-Manager, man kann "
-                                          text run at (473,20) width 246: "den Script jetzt auch via Java aufrufen,"
-                                          text run at (47,39) width 190: "so das Euer Server jetzt nicht "
-                                          text run at (237,39) width 369: "unbedingt SSI unterst\x{FC}tzen mu\x{DF} um den Script ausf\x{FC}hren "
-                                          text run at (606,39) width 70: "zu k\x{F6}nnen!"
-                                    RenderTableRow {TR} at (0,1719) size 723x59
-                                      RenderTableCell {TD} at (0,1719) size 723x59 [border: (1px solid #000000)] [r=25 c=0 rs=1 cs=1]
-                                        RenderText {#text} at (317,1) size 88x19
-                                          text run at (317,1) width 88: "22. April 2001"
-                                        RenderBR {BR} at (405,15) size 0x0
-                                        RenderText {#text} at (204,20) size 314x19
-                                          text run at (204,20) width 314: "Ein neues Script ist online! G5-Sponsor-Manager."
-                                        RenderBR {BR} at (518,34) size 0x0
-                                        RenderText {#text} at (237,39) size 248x19
-                                          text run at (237,39) width 248: "Mehr Info unter \"Perl Scripte\" im Men\x{FC}."
-                                    RenderTableRow {TR} at (0,1778) size 723x78
-                                      RenderTableCell {TD} at (0,1778) size 723x78 [border: (1px solid #000000)] [r=26 c=0 rs=1 cs=1]
-                                        RenderText {#text} at (317,1) size 88x19
-                                          text run at (317,1) width 88: "20. April 2001"
-                                        RenderBR {BR} at (405,15) size 0x0
-                                        RenderText {#text} at (190,20) size 342x19
-                                          text run at (190,20) width 342: "Auf einige Anfragen habe ich eine Demonstration von "
-                                        RenderBR {BR} at (532,34) size 0x0
-                                        RenderText {#text} at (206,39) size 311x19
-                                          text run at (206,39) width 311: "\"The Real Topsites\" (Toplist Script) ver\x{F6}ffentlicht!"
-                                        RenderBR {BR} at (517,53) size 0x0
-                                        RenderText {#text} at (237,58) size 248x19
-                                          text run at (237,58) width 248: "Mehr Info unter \"Perl Scripte\" im Men\x{FC}."
-                                    RenderTableRow {TR} at (0,1856) size 723x40
-                                      RenderTableCell {TD} at (0,1856) size 723x40 [border: (1px solid #000000)] [r=27 c=0 rs=1 cs=1]
-                                        RenderText {#text} at (315,1) size 92x19
-                                          text run at (315,1) width 92: "13. M\x{E4}rz 2001"
-                                        RenderBR {BR} at (407,15) size 0x0
-                                        RenderText {#text} at (221,20) size 280x19
-                                          text run at (221,20) width 280: "An diesem Tag ging die G5-Script.de online!"
-                                    RenderTableRow {TR} at (0,1896) size 723x21
-                                      RenderTableCell {TD} at (0,1896) size 723x21 [border: (1px solid #000000)] [r=28 c=0 rs=1 cs=1]
-                                        RenderText {#text} at (359,1) size 4x19
-                                          text run at (359,1) width 4: " "
-                                RenderBlock (anonymous) at (0,1938) size 764x19
-                                  RenderBR {BR} at (382,0) size 0x19
+                                    RenderTableRow {TR} at (0,455) size 723x149
+                                      RenderTableCell {TD} at (0,455) size 723x149 [border: (1px solid #000000)] [r=7 c=0 rs=1 cs=1]
+                                        RenderText {#text} at (261,1) size 201x21
+                                          text run at (261,1) width 201: "21. Oktober 2001 (20:50 Uhr)"
+                                        RenderBR {BR} at (461,17) size 1x0
+                                        RenderText {#text} at (157,22) size 409x21
+                                          text run at (157,22) width 409: "An alle Leute die follgende Scripte von G5-Scripts benutzen:"
+                                        RenderBR {BR} at (565,38) size 1x0
+                                        RenderText {#text} at (166,43) size 391x21
+                                          text run at (166,43) width 391: "The Real Topsites, Download Counter, Sponsor Manager"
+                                        RenderBR {BR} at (557,59) size 0x0
+                                        RenderText {#text} at (18,64) size 687x42
+                                          text run at (18,64) width 505: "bitte noch ein mal runter laden und die admin.cgi erneuern, beim Sponsor "
+                                          text run at (523,64) width 182: "Manager kommt noch eine"
+                                          text run at (343,85) width 37: "Datei"
+                                        RenderBR {BR} at (379,101) size 1x0
+                                        RenderText {#text} at (298,106) size 127x21
+                                          text run at (298,106) width 127: "'variable.pl' dazu!!"
+                                        RenderBR {BR} at (425,122) size 0x0
+                                        RenderText {#text} at (53,127) size 617x21
+                                          text run at (53,127) width 508: "Der Grund : man hat festgestellt das .htaccess Password Schutz doch nicht "
+                                          text run at (560,127) width 110: "das sicherste ist!"
+                                    RenderTableRow {TR} at (0,604) size 723x228
+                                      RenderTableCell {TD} at (0,604) size 723x228 [border: (1px solid #000000)] [r=8 c=0 rs=1 cs=1]
+                                        RenderBlock {P} at (1,1) size 721x168
+                                          RenderText {#text} at (302,0) size 117x21
+                                            text run at (302,0) width 117: "13. Oktober 2001"
+                                          RenderBR {BR} at (419,16) size 0x0
+                                          RenderText {#text} at (59,21) size 603x21
+                                            text run at (59,21) width 519: "Ich habe es nun endlich geschafft das Gateway bei der Toplist mit IP-Sperre "
+                                            text run at (577,21) width 85: "zu versehen,"
+                                          RenderBR {BR} at (661,37) size 1x0
+                                          RenderText {#text} at (20,42) size 681x42
+                                            text run at (20,42) width 478: "dabei war der Fehler den ich vorher nicht verstand eine simple Sache, "
+                                            text run at (497,42) width 204: "h\x{E4}tte ich doch ein wenig mehr"
+                                            text run at (315,63) width 91: "nachgedacht!"
+                                          RenderBR {BR} at (406,79) size 0x0
+                                          RenderText {#text} at (11,84) size 715x84
+                                            text run at (11,84) width 460: "Des weiteren habe ich noch die Datensicherung umgeschrieben, f\x{FC}r "
+                                            text run at (470,84) width 240: "alle die Listen deren Hits ab und zu"
+                                            text run at (9,105) width 214: "mal auf 0 gesetzt werden, sollte "
+                                            text run at (222,105) width 490: "jetzt nicht mehr passieren und ich habe noch den Mail Versand aus dem"
+                                            text run at (3,126) width 490: "Admin-Bereich umgeschrieben und zwar wurde fr\x{FC}her der Text immer "
+                                            text run at (492,126) width 226: "zusammen gequetscht, die Enters"
+                                            text run at (202,147) width 238: "wurden so zu sagen ignoriert, jetzt "
+                                            text run at (439,147) width 80: "nicht mehr!"
+                                        RenderBlock {P} at (1,185) size 721x42
+                                          RenderText {#text} at (18,0) size 685x42
+                                            text run at (18,0) width 399: ">> F\x{FC}r alle die das Script vor dem 11.10.01 runter geladen "
+                                            text run at (417,0) width 286: "haben, Ihr solltet es Euch noch mal runter"
+                                            text run at (69,21) width 223: "laden und die folgenden Dateien "
+                                            text run at (291,21) width 361: "durch die neuen ersetzen: topsites.cgi und admin.cgi ."
+                                    RenderTableRow {TR} at (0,832) size 723x44
+                                      RenderTableCell {TD} at (0,832) size 723x44 [border: (1px solid #000000)] [r=9 c=0 rs=1 cs=1]
+                                        RenderText {#text} at (303,1) size 117x21
+                                          text run at (303,1) width 117: "11. Oktober 2001"
+                                        RenderBR {BR} at (420,17) size 0x0
+                                        RenderText {#text} at (101,22) size 521x21
+                                          text run at (101,22) width 521: "neues Script ist online, .htaccess-Password-Manager, mehr Info unter Scripte"
+                                    RenderTableRow {TR} at (0,876) size 723x44
+                                      RenderTableCell {TD} at (0,876) size 723x44 [border: (1px solid #000000)] [r=10 c=0 rs=1 cs=1]
+                                        RenderText {#text} at (295,1) size 133x21
+                                          text run at (295,1) width 133: "08. September 2001"
+                                        RenderBR {BR} at (428,17) size 0x0
+                                        RenderText {#text} at (185,22) size 353x21
+                                          text run at (185,22) width 353: "Eine neu Version des Download Counters ist online!"
+                                    RenderTableRow {TR} at (0,920) size 723x65
+                                      RenderTableCell {TD} at (0,920) size 723x65 [border: (1px solid #000000)] [r=11 c=0 rs=1 cs=1]
+                                        RenderText {#text} at (307,1) size 109x21
+                                          text run at (307,1) width 109: "11. August 2001"
+                                        RenderBR {BR} at (416,17) size 0x0
+                                        RenderText {#text} at (4,22) size 715x21
+                                          text run at (4,22) width 476: "Ich habe so eben eine random.cgi f\x{FC}r den Topsites Script geschrieben. "
+                                          text run at (480,22) width 239: "Die random.cgi f\x{FC}hrt den Besucher"
+                                        RenderBR {BR} at (719,38) size 0x0
+                                        RenderText {#text} at (245,43) size 233x21
+                                          text run at (245,43) width 233: "auf eine zuf\x{E4}llig ausgew\x{E4}hlte Seite."
+                                    RenderTableRow {TR} at (0,985) size 723x65
+                                      RenderTableCell {TD} at (0,985) size 723x65 [border: (1px solid #000000)] [r=12 c=0 rs=1 cs=1]
+                                        RenderText {#text} at (307,1) size 109x21
+                                          text run at (307,1) width 109: "08. August 2001"
+                                        RenderBR {BR} at (416,17) size 0x0
+                                        RenderText {#text} at (73,22) size 577x21
+                                          text run at (73,22) width 495: "Ich schreibe gerade eine neue Version von dem Download Counter, bitte "
+                                          text run at (568,22) width 82: "schreibt mir"
+                                        RenderBR {BR} at (650,38) size 0x0
+                                        RenderText {#text} at (169,43) size 385x21
+                                          text run at (169,43) width 385: "ins Forum was Ihr da alles haben wollt, wer das benutzt!"
+                                    RenderTableRow {TR} at (0,1050) size 723x65
+                                      RenderTableCell {TD} at (0,1050) size 723x65 [border: (1px solid #000000)] [r=13 c=0 rs=1 cs=1]
+                                        RenderText {#text} at (319,1) size 85x21
+                                          text run at (319,1) width 85: "09. Juli 2001"
+                                        RenderBR {BR} at (404,17) size 0x0
+                                        RenderText {#text} at (13,22) size 697x42
+                                          text run at (13,22) width 483: "eine kleiner Bug in der Topsites.cgi wurde behoben! Wer m\x{F6}chte kann "
+                                          text run at (495,22) width 215: "sich die jetzige Zip runter laden"
+                                          text run at (137,43) width 237: "und die topsites.cgi auktualisieren, "
+                                          text run at (373,43) width 213: "mu\x{DF} aber nicht unbedingt sein!"
+                                    RenderTableRow {TR} at (0,1115) size 723x65
+                                      RenderTableCell {TD} at (0,1115) size 723x65 [border: (1px solid #000000)] [r=14 c=0 rs=1 cs=1]
+                                        RenderText {#text} at (319,1) size 85x21
+                                          text run at (319,1) width 85: "01. Juli 2001"
+                                        RenderBR {BR} at (404,17) size 0x0
+                                        RenderText {#text} at (55,22) size 613x21
+                                          text run at (55,22) width 546: "Jetzt haben wir einen Support Forum, postet Eure Fragen da rein und versuche "
+                                          text run at (601,22) width 67: "Sie alle zu"
+                                        RenderBR {BR} at (668,38) size 0x0
+                                        RenderText {#text} at (27,43) size 669x21
+                                          text run at (27,43) width 430: "beantworten! Au\x{DF}erdem k\x{F6}nnt Ihr dort auch Eure Vorschl\x{E4}ge "
+                                          text run at (457,43) width 239: "zu den einzelnen Scripten abgeben!"
+                                    RenderTableRow {TR} at (0,1180) size 723x65
+                                      RenderTableCell {TD} at (0,1180) size 723x65 [border: (1px solid #000000)] [r=15 c=0 rs=1 cs=1]
+                                        RenderText {#text} at (319,1) size 85x21
+                                          text run at (319,1) width 85: "01. Juli 2001"
+                                        RenderBR {BR} at (404,17) size 0x0
+                                        RenderText {#text} at (93,22) size 537x21
+                                          text run at (93,22) width 512: "Und wieder eine neue Version von The Real Topsites ist online, die Version "
+                                          text run at (605,22) width 25: "3.4!"
+                                        RenderBR {BR} at (630,38) size 0x0
+                                        RenderText {#text} at (127,43) size 469x21
+                                          text run at (127,43) width 469: "Es gibt einige neue Funktionen und es wurde auch einiges verbessert!"
+                                    RenderTableRow {TR} at (0,1245) size 723x65
+                                      RenderTableCell {TD} at (0,1245) size 723x65 [border: (1px solid #000000)] [r=16 c=0 rs=1 cs=1]
+                                        RenderText {#text} at (316,1) size 91x21
+                                          text run at (316,1) width 91: "20. Juni 2001"
+                                        RenderBR {BR} at (406,17) size 1x0
+                                        RenderText {#text} at (103,22) size 517x21
+                                          text run at (103,22) width 485: "unser Hoster hat ein paar kleine Probleme also sollte irgend was an der "
+                                          text run at (587,22) width 33: "Seite"
+                                        RenderBR {BR} at (619,38) size 1x0
+                                        RenderText {#text} at (230,43) size 263x21
+                                          text run at (230,43) width 263: "nicht gehen, einfach wieder versuchen!"
+                                    RenderTableRow {TR} at (0,1310) size 723x107
+                                      RenderTableCell {TD} at (0,1310) size 723x107 [border: (1px solid #000000)] [r=17 c=0 rs=1 cs=1]
+                                        RenderText {#text} at (316,1) size 91x21
+                                          text run at (316,1) width 91: "09. Juni 2001"
+                                        RenderBR {BR} at (406,17) size 1x0
+                                        RenderText {#text} at (68,22) size 587x21
+                                          text run at (68,22) width 468: "Die neue Version (3.3) von The Real Topsites ist online, es gibt einige "
+                                          text run at (535,22) width 120: "neue Funktionen "
+                                        RenderBR {BR} at (654,38) size 1x0
+                                        RenderText {#text} at (234,43) size 255x21
+                                          text run at (234,43) width 255: "und es wurde auch einiges ver\x{E4}ndert!"
+                                        RenderBR {BR} at (488,59) size 1x0
+                                        RenderText {#text} at (218,64) size 287x21
+                                          text run at (218,64) width 287: "Mehr Info unter \"Perl Scripte\" im Men\x{FC}. "
+                                        RenderBR {BR} at (504,80) size 1x0
+                                        RenderText {#text} at (135,85) size 453x21
+                                          text run at (135,85) width 453: "P.S. den Umstieg auf die Version3.3 kann ich Euch nur empfehlen!"
+                                    RenderTableRow {TR} at (0,1417) size 723x86
+                                      RenderTableCell {TD} at (0,1417) size 723x86 [border: (1px solid #000000)] [r=18 c=0 rs=1 cs=1]
+                                        RenderText {#text} at (316,1) size 91x21
+                                          text run at (316,1) width 91: "04. Juni 2001"
+                                        RenderBR {BR} at (406,17) size 1x0
+                                        RenderText {#text} at (115,22) size 493x21
+                                          text run at (115,22) width 493: "Ein kleiner Bug bei Topsites Script wurde gefunden und sofort behoben!"
+                                        RenderBR {BR} at (607,38) size 1x0
+                                        RenderText {#text} at (126,43) size 471x21
+                                          text run at (126,43) width 471: "Bug: es wurde immer wieder die selbe Site Of The Moment angezeigt!"
+                                        RenderBR {BR} at (597,59) size 0x0
+                                        RenderText {#text} at (124,64) size 475x21
+                                          text run at (124,64) width 470: "Ladet Euch die jetzige Version runter und ersetzt nur die topsites.cgi "
+                                          text run at (593,64) width 6: "!"
+                                    RenderTableRow {TR} at (0,1503) size 723x65
+                                      RenderTableCell {TD} at (0,1503) size 723x65 [border: (1px solid #000000)] [r=19 c=0 rs=1 cs=1]
+                                        RenderText {#text} at (316,1) size 91x21
+                                          text run at (316,1) width 91: "01. Juni 2001"
+                                        RenderBR {BR} at (406,17) size 1x0
+                                        RenderText {#text} at (200,22) size 323x21
+                                          text run at (200,22) width 323: "Ein neues Script ist online! G5-ICQ Newsletter. "
+                                        RenderBR {BR} at (523,38) size 0x0
+                                        RenderText {#text} at (220,43) size 283x21
+                                          text run at (220,43) width 283: "Mehr Info unter \"Perl Scripte\" im Men\x{FC}."
+                                    RenderTableRow {TR} at (0,1568) size 723x65
+                                      RenderTableCell {TD} at (0,1568) size 723x65 [border: (1px solid #000000)] [r=20 c=0 rs=1 cs=1]
+                                        RenderText {#text} at (318,1) size 87x21
+                                          text run at (318,1) width 87: "31. Mai 2001"
+                                        RenderBR {BR} at (405,17) size 0x0
+                                        RenderText {#text} at (137,22) size 449x21
+                                          text run at (137,22) width 449: "Ich habe einen ICQ-Newsletter Script installiert, unter dem Men\x{FC}."
+                                        RenderBR {BR} at (585,38) size 1x0
+                                        RenderText {#text} at (156,43) size 411x21
+                                          text run at (156,43) width 411: "Tragt Euch ein, dann seit Ihr immer auf dem neusten Stand!"
+                                    RenderTableRow {TR} at (0,1633) size 723x44
+                                      RenderTableCell {TD} at (0,1633) size 723x44 [border: (1px solid #000000)] [r=21 c=0 rs=1 cs=1]
+                                        RenderText {#text} at (318,1) size 87x21
+                                          text run at (318,1) width 87: "26. Mai 2001"
+                                        RenderBR {BR} at (405,17) size 0x0
+                                        RenderText {#text} at (250,22) size 223x21
+                                          text run at (250,22) width 223: "The Real Topsites v3.0 ist online!"
+                                    RenderTableRow {TR} at (0,1677) size 723x65
+                                      RenderTableCell {TD} at (0,1677) size 723x65 [border: (1px solid #000000)] [r=22 c=0 rs=1 cs=1]
+                                        RenderText {#text} at (318,1) size 87x21
+                                          text run at (318,1) width 87: "25. Mai 2001"
+                                        RenderBR {BR} at (405,17) size 0x0
+                                        RenderText {#text} at (189,22) size 345x21
+                                          text run at (189,22) width 345: "Ein neues Script ist online! G5-Download Counter."
+                                        RenderBR {BR} at (533,38) size 1x0
+                                        RenderText {#text} at (220,43) size 283x21
+                                          text run at (220,43) width 283: "Mehr Info unter \"Perl Scripte\" im Men\x{FC}."
+                                    RenderTableRow {TR} at (0,1742) size 723x107
+                                      RenderTableCell {TD} at (0,1742) size 723x107 [border: (1px solid #000000)] [r=23 c=0 rs=1 cs=1]
+                                        RenderText {#text} at (318,1) size 87x21
+                                          text run at (318,1) width 87: "24. Mai 2001"
+                                        RenderBR {BR} at (405,17) size 0x0
+                                        RenderText {#text} at (93,22) size 537x21
+                                          text run at (93,22) width 458: "Ich habe es mir sehr lange \x{FC}berlegt, die Entscheidung war wirklich "
+                                          text run at (550,22) width 80: "nicht leicht!"
+                                        RenderBR {BR} at (629,38) size 1x0
+                                        RenderText {#text} at (66,43) size 591x21
+                                          text run at (66,43) width 434: "Ich habe mich entschieden den Script \"The Real Topsites\" zum "
+                                          text run at (500,43) width 157: "Download freizugeben."
+                                        RenderBR {BR} at (657,59) size 0x0
+                                        RenderText {#text} at (203,64) size 317x21
+                                          text run at (203,64) width 317: "Ihr k\x{F6}nnt es Euch jetzt kostenlos runter laden!"
+                                        RenderBR {BR} at (519,80) size 1x0
+                                        RenderText {#text} at (304,85) size 115x21
+                                          text run at (304,85) width 115: "Viel Spa\x{DF} damit!"
+                                    RenderTableRow {TR} at (0,1849) size 723x86
+                                      RenderTableCell {TD} at (0,1849) size 723x86 [border: (1px solid #000000)] [r=24 c=0 rs=1 cs=1]
+                                        RenderText {#text} at (318,1) size 87x21
+                                          text run at (318,1) width 87: "13. Mai 2001"
+                                        RenderBR {BR} at (405,17) size 0x0
+                                        RenderText {#text} at (10,22) size 703x63
+                                          text run at (10,22) width 503: "Es gab nur eine kleine Ver\x{E4}nderung bei G5-Sponsor-Manager, man kann "
+                                          text run at (513,22) width 200: "den Script jetzt auch via Java"
+                                          text run at (19,43) width 271: "aufrufen, so das Euer Server jetzt nicht "
+                                          text run at (289,43) width 399: "unbedingt SSI unterst\x{FC}tzen mu\x{DF} um den Script ausf\x{FC}hren "
+                                          text run at (687,43) width 17: "zu"
+                                          text run at (333,64) width 57: "k\x{F6}nnen!"
+                                    RenderTableRow {TR} at (0,1935) size 723x65
+                                      RenderTableCell {TD} at (0,1935) size 723x65 [border: (1px solid #000000)] [r=25 c=0 rs=1 cs=1]
+                                        RenderText {#text} at (313,1) size 97x21
+                                          text run at (313,1) width 97: "22. April 2001"
+                                        RenderBR {BR} at (409,17) size 1x0
+                                        RenderText {#text} at (193,22) size 337x21
+                                          text run at (193,22) width 337: "Ein neues Script ist online! G5-Sponsor-Manager."
+                                        RenderBR {BR} at (529,38) size 1x0
+                                        RenderText {#text} at (220,43) size 283x21
+                                          text run at (220,43) width 283: "Mehr Info unter \"Perl Scripte\" im Men\x{FC}."
+                                    RenderTableRow {TR} at (0,2000) size 723x86
+                                      RenderTableCell {TD} at (0,2000) size 723x86 [border: (1px solid #000000)] [r=26 c=0 rs=1 cs=1]
+                                        RenderText {#text} at (313,1) size 97x21
+                                          text run at (313,1) width 97: "20. April 2001"
+                                        RenderBR {BR} at (409,17) size 1x0
+                                        RenderText {#text} at (177,22) size 369x21
+                                          text run at (177,22) width 369: "Auf einige Anfragen habe ich eine Demonstration von "
+                                        RenderBR {BR} at (545,38) size 1x0
+                                        RenderText {#text} at (189,43) size 345x21
+                                          text run at (189,43) width 345: "\"The Real Topsites\" (Toplist Script) ver\x{F6}ffentlicht!"
+                                        RenderBR {BR} at (534,59) size 0x0
+                                        RenderText {#text} at (220,64) size 283x21
+                                          text run at (220,64) width 283: "Mehr Info unter \"Perl Scripte\" im Men\x{FC}."
+                                    RenderTableRow {TR} at (0,2086) size 723x44
+                                      RenderTableCell {TD} at (0,2086) size 723x44 [border: (1px solid #000000)] [r=27 c=0 rs=1 cs=1]
+                                        RenderText {#text} at (313,1) size 97x21
+                                          text run at (313,1) width 97: "13. M\x{E4}rz 2001"
+                                        RenderBR {BR} at (410,17) size 0x0
+                                        RenderText {#text} at (212,22) size 299x21
+                                          text run at (212,22) width 299: "An diesem Tag ging die G5-Script.de online!"
+                                    RenderTableRow {TR} at (0,2130) size 723x23
+                                      RenderTableCell {TD} at (0,2130) size 723x23 [border: (1px solid #000000)] [r=28 c=0 rs=1 cs=1]
+                                        RenderText {#text} at (359,1) size 5x21
+                                          text run at (359,1) width 5: " "
+                                RenderBlock (anonymous) at (0,2176) size 764x21
+                                  RenderBR {BR} at (382,0) size 0x21

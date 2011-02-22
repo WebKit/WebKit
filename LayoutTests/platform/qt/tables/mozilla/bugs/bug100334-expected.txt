@@ -3,23 +3,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 150x19 [bgcolor=#FFCCCC]
-        RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableSection {TBODY} at (0,0) size 150x19
-          RenderTableRow {TR} at (0,0) size 150x19
-            RenderTableCell {TD} at (0,0) size 150x19 [r=0 c=0 rs=1 cs=2]
-              RenderText {#text} at (0,0) size 97x19
-                text run at (0,0) width 97: "Correct Display"
-          RenderTableRow {TR} at (0,19) size 150x0
-            RenderTableCell {TD} at (0,19) size 126x0 [r=1 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (126,19) size 24x0 [r=1 c=1 rs=1 cs=1]
-      RenderBlock {P} at (0,33) size 784x0
-      RenderTable {TABLE} at (0,33) size 150x19 [bgcolor=#FFCCCC]
-        RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableSection {TBODY} at (0,0) size 150x19
-          RenderTableRow {TR} at (0,0) size 150x19
-            RenderTableCell {TD} at (0,0) size 150x19 [r=0 c=0 rs=1 cs=2]
-              RenderText {#text} at (0,0) size 106x19
-                text run at (0,0) width 106: "Incorrect Display"
+      RenderTable {TABLE} at (0,0) size 150x21 [bgcolor=#FFCCCC]
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (0,0) size 150x21
+          RenderTableRow {TR} at (0,0) size 150x21
+            RenderTableCell {TD} at (0,0) size 150x21 [r=0 c=0 rs=1 cs=2]
+              RenderText {#text} at (0,0) size 108x21
+                text run at (0,0) width 108: "Correct Display"
+          RenderTableRow {TR} at (0,21) size 150x0
+            RenderTableCell {TD} at (0,21) size 123x0 [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (123,21) size 27x0 [r=1 c=1 rs=1 cs=1]
+      RenderBlock {P} at (0,37) size 784x0
+      RenderTable {TABLE} at (0,37) size 150x21 [bgcolor=#FFCCCC]
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (0,0) size 150x21
+          RenderTableRow {TR} at (0,0) size 150x21
+            RenderTableCell {TD} at (0,0) size 150x21 [r=0 c=0 rs=1 cs=2]
+              RenderText {#text} at (0,0) size 118x21
+                text run at (0,0) width 118: "Incorrect Display"

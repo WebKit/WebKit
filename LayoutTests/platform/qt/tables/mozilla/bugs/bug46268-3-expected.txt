@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 230x19
-          text run at (0,0) width 230: "table - color, tbodies color, row color"
-      RenderTable {TABLE} at (0,19) size 186x351 [bgcolor=#FFA500] [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (41,41) size 104x166 [bgcolor=#FF0000]
-          RenderTableRow {TR} at (0,40) size 104x23 [bgcolor=#FFFF00]
-            RenderTableCell {TD} at (40,40) size 24x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 20x19
-                text run at (2,2) width 20: "foo"
-          RenderTableRow {TR} at (0,103) size 104x23
-            RenderTableCell {TD} at (40,103) size 24x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 20x19
-                text run at (2,2) width 20: "foo"
-        RenderTableSection {TBODY} at (41,207) size 104x103 [bgcolor=#008000]
-          RenderTableRow {TR} at (0,40) size 104x23
-            RenderTableCell {TD} at (40,40) size 24x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 20x19
-                text run at (2,2) width 20: "foo"
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 247x21
+          text run at (0,0) width 247: "table - color, tbodies color, row color"
+      RenderTable {TABLE} at (0,21) size 187x357 [bgcolor=#FFA500] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (41,41) size 105x170 [bgcolor=#FF0000]
+          RenderTableRow {TR} at (0,40) size 105x25 [bgcolor=#FFFF00]
+            RenderTableCell {TD} at (40,40) size 25x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 21x21
+                text run at (2,2) width 21: "foo"
+          RenderTableRow {TR} at (0,105) size 105x25
+            RenderTableCell {TD} at (40,105) size 25x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 21x21
+                text run at (2,2) width 21: "foo"
+        RenderTableSection {TBODY} at (41,211) size 105x105 [bgcolor=#008000]
+          RenderTableRow {TR} at (0,40) size 105x25
+            RenderTableCell {TD} at (40,40) size 25x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 21x21
+                text run at (2,2) width 21: "foo"

@@ -2,44 +2,44 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578 [bgcolor=#FFFFFF]
-      RenderBlock {H3} at (0,0) size 784x23
-        RenderText {#text} at (0,0) size 283x22
-          text run at (0,0) width 283: "Testcase for bug 5538 - distilled from "
-        RenderInline {A} at (0,0) size 106x22 [color=#0000EE]
-          RenderText {#text} at (283,0) size 106x22
-            text run at (283,0) width 106: "www.fool.com"
-      RenderTable {TABLE} at (0,39) size 600x89
+    RenderBody {BODY} at (8,8) size 784x576 [bgcolor=#FFFFFF]
+      RenderBlock {H3} at (0,0) size 784x25
+        RenderText {#text} at (0,0) size 307x25
+          text run at (0,0) width 307: "Testcase for bug 5538 - distilled from "
+        RenderInline {A} at (0,0) size 117x25 [color=#0000EE]
+          RenderText {#text} at (307,0) size 117x25
+            text run at (307,0) width 117: "www.fool.com"
+      RenderTable {TABLE} at (0,43) size 600x89
         RenderTableSection {TBODY} at (0,0) size 600x89
           RenderTableRow {TR} at (0,0) size 600x89
             RenderTableCell {TD} at (0,0) size 128x89 [bgcolor=#336699] [r=0 c=0 rs=1 cs=1]
-              RenderInline {A} at (0,0) size 128x14 [color=#0000EE]
+              RenderInline {A} at (0,0) size 128x21 [color=#0000EE]
                 RenderImage {IMG} at (0,0) size 128x89
             RenderTableCell {TD} at (128,44) size 472x0 [r=0 c=1 rs=1 cs=1]
-      RenderTable {TABLE} at (0,128) size 600x18
+      RenderTable {TABLE} at (0,132) size 600x18
         RenderTableSection {TBODY} at (0,0) size 600x18
           RenderTableRow {TR} at (0,0) size 600x18
             RenderTableCell {TD} at (0,0) size 600x18 [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 348x18
-              RenderInline {MAP} at (0,0) size 0x14
+              RenderInline {MAP} at (0,0) size 0x21
               RenderImage {IMG} at (348,0) size 88x18
               RenderImage {IMG} at (436,0) size 55x18
-      RenderBlock {P} at (0,160) size 784x164
-        RenderBlock (anonymous) at (0,0) size 784x57
-          RenderText {#text} at (0,0) size 452x19
-            text run at (0,0) width 452: "When removing <A HREF=\"...\"> surrounding logo image in first row and"
-          RenderBR {BR} at (452,14) size 0x0
-          RenderText {#text} at (0,19) size 372x19
-            text run at (0,19) width 372: "removing <MAP> element in second row it looks OK to me:"
-          RenderBR {BR} at (372,33) size 0x0
-          RenderBR {BR} at (0,38) size 0x19
-        RenderTable {TABLE} at (0,57) size 600x89
+      RenderBlock {P} at (0,166) size 784x170
+        RenderBlock (anonymous) at (0,0) size 784x63
+          RenderText {#text} at (0,0) size 505x21
+            text run at (0,0) width 505: "When removing <A HREF=\"...\"> surrounding logo image in first row and"
+          RenderBR {BR} at (505,16) size 0x0
+          RenderText {#text} at (0,21) size 403x21
+            text run at (0,21) width 403: "removing <MAP> element in second row it looks OK to me:"
+          RenderBR {BR} at (403,37) size 0x0
+          RenderBR {BR} at (0,42) size 0x21
+        RenderTable {TABLE} at (0,63) size 600x89
           RenderTableSection {TBODY} at (0,0) size 600x89
             RenderTableRow {TR} at (0,0) size 600x89
               RenderTableCell {TD} at (0,0) size 128x89 [bgcolor=#336699] [r=0 c=0 rs=1 cs=1]
                 RenderImage {IMG} at (0,0) size 128x89
               RenderTableCell {TD} at (128,44) size 472x0 [r=0 c=1 rs=1 cs=1]
-        RenderTable {TABLE} at (0,146) size 600x18
+        RenderTable {TABLE} at (0,152) size 600x18
           RenderTableSection {TBODY} at (0,0) size 600x18
             RenderTableRow {TR} at (0,0) size 600x18
               RenderTableCell {TD} at (0,0) size 600x18 [r=0 c=0 rs=1 cs=1]

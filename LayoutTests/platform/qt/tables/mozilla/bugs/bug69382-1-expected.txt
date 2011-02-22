@@ -2,122 +2,122 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578
-      RenderBlock {FORM} at (0,0) size 784x311
-        RenderTable {TABLE} at (0,0) size 784x311 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 782x309
-            RenderTableRow {TR} at (0,2) size 782x24
-              RenderTableCell {TH} at (2,2) size 20x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (6,2) size 8x20
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {FORM} at (0,0) size 784x334
+        RenderTable {TABLE} at (0,0) size 784x334 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 782x332
+            RenderTableRow {TR} at (0,2) size 782x25
+              RenderTableCell {TH} at (2,2) size 20x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (6,2) size 8x21
                   text run at (6,2) width 8: "#"
-              RenderTableCell {TH} at (24,2) size 75x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 71x20
-                  text run at (2,2) width 71: "Relevance"
-              RenderTableCell {TH} at (101,2) size 532x24 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-                RenderText {#text} at (231,2) size 70x20
-                  text run at (231,2) width 70: "Title Long"
-              RenderTableCell {TH} at (635,2) size 105x24 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
-                RenderText {#text} at (29,2) size 47x20
-                  text run at (29,2) width 47: "Author"
-              RenderTableCell {TH} at (742,2) size 36x24 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 31x20
-                  text run at (2,2) width 31: "Date"
-            RenderTableRow {TR} at (0,28) size 782x42
-              RenderTableCell {TD} at (2,53) size 20x23 [border: (1px inset #808080)] [r=1 c=0 rs=2 cs=1]
-                RenderText {#text} at (2,2) size 16x19
+              RenderTableCell {TH} at (24,2) size 73x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 69x21
+                  text run at (2,2) width 69: "Relevance"
+              RenderTableCell {TH} at (99,2) size 531x25 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+                RenderText {#text} at (230,2) size 71x21
+                  text run at (230,2) width 71: "Title Long"
+              RenderTableCell {TH} at (632,2) size 108x25 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+                RenderText {#text} at (29,2) size 50x21
+                  text run at (29,2) width 50: "Author"
+              RenderTableCell {TH} at (742,2) size 36x25 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 32x21
+                  text run at (2,2) width 32: "Date"
+            RenderTableRow {TR} at (0,29) size 782x46
+              RenderTableCell {TD} at (2,56) size 20x25 [border: (1px inset #808080)] [r=1 c=0 rs=2 cs=1]
+                RenderText {#text} at (2,2) size 16x21
                   text run at (2,2) width 16: " 1 "
-              RenderTableCell {TD} at (24,53) size 75x23 [border: (1px inset #808080)] [r=1 c=1 rs=2 cs=1]
-                RenderText {#text} at (2,2) size 10x19
-                  text run at (2,2) width 10: "**"
-              RenderTableCell {TD} at (101,28) size 532x42 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 468x38
-                  text run at (2,2) width 468: "UNIX and Windows 2000 integration toolkit : a complete guide for systems"
-                  text run at (2,21) width 179: "administrators / Rawn Shah."
-              RenderTableCell {TD} at (635,37) size 105x23 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 81x19
-                  text run at (2,2) width 81: "Shah, Rawn."
-              RenderTableCell {TD} at (742,37) size 36x23 [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 32x19
+              RenderTableCell {TD} at (24,56) size 73x25 [border: (1px inset #808080)] [r=1 c=1 rs=2 cs=1]
+                RenderText {#text} at (2,2) size 16x21
+                  text run at (2,2) width 16: "**"
+              RenderTableCell {TD} at (99,29) size 531x46 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 506x42
+                  text run at (2,2) width 506: "UNIX and Windows 2000 integration toolkit : a complete guide for systems"
+                  text run at (2,23) width 195: "administrators / Rawn Shah."
+              RenderTableCell {TD} at (632,39) size 108x25 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 88x21
+                  text run at (2,2) width 88: "Shah, Rawn."
+              RenderTableCell {TD} at (742,39) size 36x25 [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 32x21
                   text run at (2,2) width 32: "2000"
-            RenderTableRow {TR} at (0,72) size 782x29
-              RenderTableCell {TD} at (101,72) size 679x29 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=4]
-                RenderTable {TABLE} at (2,2) size 675x25
-                  RenderTableSection {TBODY} at (0,0) size 675x25
-                    RenderTableRow {TR} at (0,2) size 675x21
-                      RenderTableCell {TD} at (2,2) size 671x21 [r=0 c=0 rs=1 cs=1]
-                        RenderText {#text} at (1,1) size 164x19
-                          text run at (1,1) width 164: "Title has multiple holdings"
-            RenderTableRow {TR} at (0,103) size 782x42
-              RenderTableCell {TD} at (2,128) size 20x23 [border: (1px inset #808080)] [r=3 c=0 rs=2 cs=1]
-                RenderText {#text} at (2,2) size 16x19
+            RenderTableRow {TR} at (0,77) size 782x31
+              RenderTableCell {TD} at (99,77) size 681x31 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=4]
+                RenderTable {TABLE} at (2,2) size 677x27
+                  RenderTableSection {TBODY} at (0,0) size 677x27
+                    RenderTableRow {TR} at (0,2) size 677x23
+                      RenderTableCell {TD} at (2,2) size 673x23 [r=0 c=0 rs=1 cs=1]
+                        RenderText {#text} at (1,1) size 178x21
+                          text run at (1,1) width 178: "Title has multiple holdings"
+            RenderTableRow {TR} at (0,110) size 782x46
+              RenderTableCell {TD} at (2,137) size 20x25 [border: (1px inset #808080)] [r=3 c=0 rs=2 cs=1]
+                RenderText {#text} at (2,2) size 16x21
                   text run at (2,2) width 16: " 2 "
-              RenderTableCell {TD} at (24,128) size 75x23 [border: (1px inset #808080)] [r=3 c=1 rs=2 cs=1]
-                RenderText {#text} at (2,2) size 10x19
-                  text run at (2,2) width 10: "**"
-              RenderTableCell {TD} at (101,112) size 532x23 [border: (1px inset #808080)] [r=3 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 241x19
-                  text run at (2,2) width 241: "Learning Red Hat Linux / Bill McCarty."
-              RenderTableCell {TD} at (635,103) size 105x42 [border: (1px inset #808080)] [r=3 c=3 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 83x38
-                  text run at (2,2) width 83: "McCarty, Bill,"
-                  text run at (2,21) width 37: "1953-"
-              RenderTableCell {TD} at (742,112) size 36x23 [border: (1px inset #808080)] [r=3 c=4 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 32x19
+              RenderTableCell {TD} at (24,137) size 73x25 [border: (1px inset #808080)] [r=3 c=1 rs=2 cs=1]
+                RenderText {#text} at (2,2) size 16x21
+                  text run at (2,2) width 16: "**"
+              RenderTableCell {TD} at (99,120) size 531x25 [border: (1px inset #808080)] [r=3 c=2 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 274x21
+                  text run at (2,2) width 274: "Learning Red Hat Linux / Bill McCarty."
+              RenderTableCell {TD} at (632,110) size 108x46 [border: (1px inset #808080)] [r=3 c=3 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 97x42
+                  text run at (2,2) width 97: "McCarty, Bill,"
+                  text run at (2,23) width 37: "1953-"
+              RenderTableCell {TD} at (742,120) size 36x25 [border: (1px inset #808080)] [r=3 c=4 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 32x21
                   text run at (2,2) width 32: "1999"
-            RenderTableRow {TR} at (0,147) size 782x29
-              RenderTableCell {TD} at (101,147) size 679x29 [border: (1px inset #808080)] [r=4 c=2 rs=1 cs=4]
-                RenderTable {TABLE} at (2,2) size 675x25
-                  RenderTableSection {TBODY} at (0,0) size 675x25
-                    RenderTableRow {TR} at (0,2) size 675x21
-                      RenderTableCell {TD} at (2,2) size 671x21 [r=0 c=0 rs=1 cs=1]
-                        RenderText {#text} at (1,1) size 164x19
-                          text run at (1,1) width 164: "Title has multiple holdings"
-            RenderTableRow {TR} at (0,178) size 782x42
-              RenderTableCell {TD} at (2,203) size 20x23 [border: (1px inset #808080)] [r=5 c=0 rs=2 cs=1]
-                RenderText {#text} at (2,2) size 16x19
+            RenderTableRow {TR} at (0,158) size 782x31
+              RenderTableCell {TD} at (99,158) size 681x31 [border: (1px inset #808080)] [r=4 c=2 rs=1 cs=4]
+                RenderTable {TABLE} at (2,2) size 677x27
+                  RenderTableSection {TBODY} at (0,0) size 677x27
+                    RenderTableRow {TR} at (0,2) size 677x23
+                      RenderTableCell {TD} at (2,2) size 673x23 [r=0 c=0 rs=1 cs=1]
+                        RenderText {#text} at (1,1) size 178x21
+                          text run at (1,1) width 178: "Title has multiple holdings"
+            RenderTableRow {TR} at (0,191) size 782x46
+              RenderTableCell {TD} at (2,218) size 20x25 [border: (1px inset #808080)] [r=5 c=0 rs=2 cs=1]
+                RenderText {#text} at (2,2) size 16x21
                   text run at (2,2) width 16: " 3 "
-              RenderTableCell {TD} at (24,203) size 75x23 [border: (1px inset #808080)] [r=5 c=1 rs=2 cs=1]
-                RenderText {#text} at (2,2) size 10x19
-                  text run at (2,2) width 10: "**"
-              RenderTableCell {TD} at (101,187) size 532x23 [border: (1px inset #808080)] [r=5 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 266x19
-                  text run at (2,2) width 266: "Learning Debian GNU/Linux / Bill Mccarty."
-              RenderTableCell {TD} at (635,178) size 105x42 [border: (1px inset #808080)] [r=5 c=3 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 83x38
-                  text run at (2,2) width 83: "McCarty, Bill,"
-                  text run at (2,21) width 37: "1953-"
-              RenderTableCell {TD} at (742,187) size 36x23 [border: (1px inset #808080)] [r=5 c=4 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 32x19
+              RenderTableCell {TD} at (24,218) size 73x25 [border: (1px inset #808080)] [r=5 c=1 rs=2 cs=1]
+                RenderText {#text} at (2,2) size 16x21
+                  text run at (2,2) width 16: "**"
+              RenderTableCell {TD} at (99,201) size 531x25 [border: (1px inset #808080)] [r=5 c=2 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 301x21
+                  text run at (2,2) width 301: "Learning Debian GNU/Linux / Bill Mccarty."
+              RenderTableCell {TD} at (632,191) size 108x46 [border: (1px inset #808080)] [r=5 c=3 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 97x42
+                  text run at (2,2) width 97: "McCarty, Bill,"
+                  text run at (2,23) width 37: "1953-"
+              RenderTableCell {TD} at (742,201) size 36x25 [border: (1px inset #808080)] [r=5 c=4 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 32x21
                   text run at (2,2) width 32: "1999"
-            RenderTableRow {TR} at (0,222) size 782x29
-              RenderTableCell {TD} at (101,222) size 679x29 [border: (1px inset #808080)] [r=6 c=2 rs=1 cs=4]
-                RenderTable {TABLE} at (2,2) size 675x25
-                  RenderTableSection {TBODY} at (0,0) size 675x25
-                    RenderTableRow {TR} at (0,2) size 675x21
-                      RenderTableCell {TD} at (2,2) size 671x21 [r=0 c=0 rs=1 cs=1]
-                        RenderText {#text} at (1,1) size 164x19
-                          text run at (1,1) width 164: "Title has multiple holdings"
-            RenderTableRow {TR} at (0,253) size 782x23
-              RenderTableCell {TD} at (2,268) size 20x23 [border: (1px inset #808080)] [r=7 c=0 rs=2 cs=1]
-                RenderText {#text} at (2,2) size 16x19
+            RenderTableRow {TR} at (0,239) size 782x31
+              RenderTableCell {TD} at (99,239) size 681x31 [border: (1px inset #808080)] [r=6 c=2 rs=1 cs=4]
+                RenderTable {TABLE} at (2,2) size 677x27
+                  RenderTableSection {TBODY} at (0,0) size 677x27
+                    RenderTableRow {TR} at (0,2) size 677x23
+                      RenderTableCell {TD} at (2,2) size 673x23 [r=0 c=0 rs=1 cs=1]
+                        RenderText {#text} at (1,1) size 178x21
+                          text run at (1,1) width 178: "Title has multiple holdings"
+            RenderTableRow {TR} at (0,272) size 782x25
+              RenderTableCell {TD} at (2,288) size 20x25 [border: (1px inset #808080)] [r=7 c=0 rs=2 cs=1]
+                RenderText {#text} at (2,2) size 16x21
                   text run at (2,2) width 16: " 4 "
-              RenderTableCell {TD} at (24,268) size 75x23 [border: (1px inset #808080)] [r=7 c=1 rs=2 cs=1]
-                RenderText {#text} at (2,2) size 10x19
-                  text run at (2,2) width 10: "**"
-              RenderTableCell {TD} at (101,253) size 532x23 [border: (1px inset #808080)] [r=7 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 386x19
-                  text run at (2,2) width 386: "Advanced Java networking / Dick Steflik, Prashant Sridharan."
-              RenderTableCell {TD} at (635,253) size 105x23 [border: (1px inset #808080)] [r=7 c=3 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 77x19
-                  text run at (2,2) width 77: "Steflik, Dick."
-              RenderTableCell {TD} at (742,253) size 36x23 [border: (1px inset #808080)] [r=7 c=4 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 32x19
+              RenderTableCell {TD} at (24,288) size 73x25 [border: (1px inset #808080)] [r=7 c=1 rs=2 cs=1]
+                RenderText {#text} at (2,2) size 16x21
+                  text run at (2,2) width 16: "**"
+              RenderTableCell {TD} at (99,272) size 531x25 [border: (1px inset #808080)] [r=7 c=2 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 426x21
+                  text run at (2,2) width 426: "Advanced Java networking / Dick Steflik, Prashant Sridharan."
+              RenderTableCell {TD} at (632,272) size 108x25 [border: (1px inset #808080)] [r=7 c=3 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 87x21
+                  text run at (2,2) width 87: "Steflik, Dick."
+              RenderTableCell {TD} at (742,272) size 36x25 [border: (1px inset #808080)] [r=7 c=4 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 32x21
                   text run at (2,2) width 32: "2000"
-            RenderTableRow {TR} at (0,278) size 782x29
-              RenderTableCell {TD} at (101,278) size 679x29 [border: (1px inset #808080)] [r=8 c=2 rs=1 cs=4]
-                RenderTable {TABLE} at (2,2) size 675x25
-                  RenderTableSection {TBODY} at (0,0) size 675x25
-                    RenderTableRow {TR} at (0,2) size 675x21
-                      RenderTableCell {TD} at (2,2) size 671x21 [r=0 c=0 rs=1 cs=1]
-                        RenderText {#text} at (1,1) size 164x19
-                          text run at (1,1) width 164: "Title has multiple holdings"
+            RenderTableRow {TR} at (0,299) size 782x31
+              RenderTableCell {TD} at (99,299) size 681x31 [border: (1px inset #808080)] [r=8 c=2 rs=1 cs=4]
+                RenderTable {TABLE} at (2,2) size 677x27
+                  RenderTableSection {TBODY} at (0,0) size 677x27
+                    RenderTableRow {TR} at (0,2) size 677x23
+                      RenderTableCell {TD} at (2,2) size 673x23 [r=0 c=0 rs=1 cs=1]
+                        RenderText {#text} at (1,1) size 178x21
+                          text run at (1,1) width 178: "Title has multiple holdings"
