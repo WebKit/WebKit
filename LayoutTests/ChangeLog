@@ -1,5 +1,19 @@
 2011-02-21  MORITA Hajime  <morrita@google.com>
 
+        Unreviewed expectation rebaseline for r79284.
+
+        * platform/chromium-linux/fast/forms/placeholder-position-expected.checksum:
+        * platform/chromium-linux/fast/forms/placeholder-position-expected.png:
+        * platform/chromium-linux/fast/forms/search-styled-expected.checksum:
+        * platform/chromium-linux/fast/forms/search-styled-expected.png:
+        * platform/chromium-win/fast/forms/placeholder-position-expected.checksum:
+        * platform/chromium-win/fast/forms/placeholder-position-expected.png:
+        * platform/chromium-win/fast/forms/placeholder-position-expected.txt:
+        * platform/chromium-win/fast/forms/search-styled-expected.checksum:
+        * platform/chromium-win/fast/forms/search-styled-expected.png:
+
+2011-02-21  MORITA Hajime  <morrita@google.com>
+
         Unreviewed test_expectation.txt update. 
 
         Removed BUGWK54736 lines which are no longer failed.
