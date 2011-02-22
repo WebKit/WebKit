@@ -1,3 +1,33 @@
+2011-02-22  Steve Lacey  <sjl@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Rename new media statistics apis to better names
+
+        https://bugs.webkit.org/show_bug.cgi?id=54784
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::webkitAudioDecodedByteCount):
+        (WebCore::HTMLMediaElement::webkitVideoDecodedByteCount):
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::webkitDecodedFrameCount):
+        (WebCore::HTMLVideoElement::webkitDroppedFrameCount):
+        * html/HTMLVideoElement.h:
+        * html/HTMLVideoElement.idl:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::decodedFrameCount):
+        (WebCore::MediaPlayer::droppedFrameCount):
+        (WebCore::MediaPlayer::audioDecodedByteCount):
+        (WebCore::MediaPlayer::videoDecodedByteCount):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::decodedFrameCount):
+        (WebCore::MediaPlayerPrivateInterface::droppedFrameCount):
+        (WebCore::MediaPlayerPrivateInterface::audioDecodedByteCount):
+        (WebCore::MediaPlayerPrivateInterface::videoDecodedByteCount):
+
 2011-02-21  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Kent Tamura.

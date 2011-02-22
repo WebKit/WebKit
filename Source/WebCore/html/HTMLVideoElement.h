@@ -57,8 +57,8 @@ public:
 
 #if ENABLE(MEDIA_STATISTICS)
     // Statistics
-    unsigned long webkitDecodedFrames() const;
-    unsigned long webkitDroppedFrames() const;
+    unsigned webkitDecodedFrameCount() const;
+    unsigned webkitDroppedFrameCount() const;
 #endif
 
     // Used by canvas to gain raw pixel access

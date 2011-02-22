@@ -264,20 +264,20 @@ void HTMLVideoElement::willMoveToNewOwnerDocument()
 }
 
 #if ENABLE(MEDIA_STATISTICS)
-unsigned long HTMLVideoElement::webkitDecodedFrames() const
+unsigned HTMLVideoElement::webkitDecodedFrameCount() const
 {
     if (!player())
         return 0;
 
-    return player()->decodedFrames();
+    return player()->decodedFrameCount();
 }
 
-unsigned long HTMLVideoElement::webkitDroppedFrames() const
+unsigned HTMLVideoElement::webkitDroppedFrameCount() const
 {
     if (!player())
         return 0;
 
-    return player()->droppedFrames();
+    return player()->droppedFrameCount();
 }
 #endif
 

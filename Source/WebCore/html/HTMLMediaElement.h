@@ -131,8 +131,8 @@ public:
 
 #if ENABLE(MEDIA_STATISTICS)
 // Statistics
-    unsigned long webkitAudioBytesDecoded() const;
-    unsigned long webkitVideoBytesDecoded() const;
+    unsigned webkitAudioDecodedByteCount() const;
+    unsigned webkitVideoDecodedByteCount() const;
 #endif
 
 // controls

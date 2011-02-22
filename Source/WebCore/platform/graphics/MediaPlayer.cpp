@@ -692,24 +692,24 @@ double MediaPlayer::maximumDurationToCacheMediaTime() const
     return m_private->maximumDurationToCacheMediaTime();
 }
 
-unsigned long MediaPlayer::decodedFrames() const
+unsigned MediaPlayer::decodedFrameCount() const
 {
-    return m_private->decodedFrames();
+    return m_private->decodedFrameCount();
 }
 
-unsigned long MediaPlayer::droppedFrames() const
+unsigned MediaPlayer::droppedFrameCount() const
 {
-    return m_private->droppedFrames();
+    return m_private->droppedFrameCount();
 }
 
-unsigned long MediaPlayer::audioBytesDecoded() const
+unsigned MediaPlayer::audioDecodedByteCount() const
 {
-    return m_private->audioBytesDecoded();
+    return m_private->audioDecodedByteCount();
 }
 
-unsigned long MediaPlayer::videoBytesDecoded() const
+unsigned MediaPlayer::videoDecodedByteCount() const
 {
-    return m_private->videoBytesDecoded();
+    return m_private->videoDecodedByteCount();
 }
 
 void MediaPlayer::reloadTimerFired(Timer<MediaPlayer>*)

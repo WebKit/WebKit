@@ -282,10 +282,10 @@ public:
 
     double maximumDurationToCacheMediaTime() const;
 
-    unsigned long decodedFrames() const;
-    unsigned long droppedFrames() const;
-    unsigned long audioBytesDecoded() const;
-    unsigned long videoBytesDecoded() const;
+    unsigned decodedFrameCount() const;
+    unsigned droppedFrameCount() const;
+    unsigned audioDecodedByteCount() const;
+    unsigned videoDecodedByteCount() const;
 
 private:
     MediaPlayer(MediaPlayerClient*);

@@ -2490,18 +2490,18 @@ bool HTMLMediaElement::webkitHasClosedCaptions() const
 }
 
 #if ENABLE(MEDIA_STATISTICS)
-unsigned long HTMLMediaElement::webkitAudioBytesDecoded() const
+unsigned HTMLMediaElement::webkitAudioDecodedByteCount() const
 {
     if (!m_player)
         return 0;
-    return m_player->audioBytesDecoded();
+    return m_player->audioDecodedByteCount();
 }
 
-unsigned long HTMLMediaElement::webkitVideoBytesDecoded() const
+unsigned HTMLMediaElement::webkitVideoDecodedByteCount() const
 {
     if (!m_player)
         return 0;
-    return m_player->videoBytesDecoded();
+    return m_player->videoDecodedByteCount();
 }
 #endif
 
